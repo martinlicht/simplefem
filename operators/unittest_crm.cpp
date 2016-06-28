@@ -19,7 +19,9 @@ int main()
 	ConjugateResidualMethod CRM(S);
 
 	FloatVector rhs(10), x(10);
-	x.zero(); rhs.zero();
+	x.random(); rhs.zero();
+	
+	cout << x << endl;
 	
 	CRM.solve( x, rhs );
 	

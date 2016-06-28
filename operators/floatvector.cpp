@@ -49,7 +49,7 @@ void FloatVector::zero()
 void FloatVector::random() 
 {
 	for( int p = 0; p < dimension; p++ )
-		setentry( p, exp( rand() ) ); 
+		setentry( p, sqrt( rand() ) ); 
 }
 
 void FloatVector::scale( Float alpha ) 
@@ -60,14 +60,14 @@ void FloatVector::scale( Float alpha )
 
 Float FloatVector::setentry( int p, Float value )
 {
-	assert( 0 <= p && p <= dimension );
+	assert( 0 <= p && p < dimension );
 	data[p] = value;
 	return data[p];
 }
 
 Float FloatVector::getentry( int p ) const 
 {
-	assert( 0 <= p && p <= dimension );
+	assert( 0 <= p && p < dimension );
 	return data[p];
 }
 	

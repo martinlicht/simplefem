@@ -35,7 +35,7 @@
     assert( x.getdimension() == dimension );
 	assert( b.getdimension() == dimension );
 	
-	int restart_period = 100;
+	int restart_period = 0;
 	
 	/* Build up data */
     
@@ -75,6 +75,10 @@
     
     /* Main iteration */
     
+	std::cout << "iteration: " << iter << "/" << max_iteration_count << " : " << rho << " vs " << error_tolerance << std::endl;
+      
+      
+	
     /* while keep running */
     while( iter < max_iteration_count && rho > error_tolerance ) {
     
@@ -112,6 +116,9 @@
 	  
       iter++;
     
+	  std::cout << "iteration: " << iter << " : " << rho << std::endl;
+      
+      
     }
     /* FINISHED */
     
