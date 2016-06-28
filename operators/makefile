@@ -29,6 +29,6 @@ crm.o: crm.hpp crm.cpp floatvector.hpp iterativesolver.hpp iterativesolver.o
 	$(CC) crm.cpp -c -o crm.o 
 
 unittest_crm: crm.o floatvector.o unittest_crm.cpp 
-	$(CC) unittest_crm.cpp crm.o iterativesolver.o scalingoperator.o floatvector.o linearoperator.o -o unittest_crm
+	$(CC) unittest_crm.cpp crm.o iterativesolver.o scalingoperator.o floatvector.o linearoperator.o sparsematrix.o -o unittest_crm
 
 all: floatvector.o unittest_floatvector linearoperator.o scalingoperator.o unittest_scalingoperator sparsematrix.o unittest_sparsematrix crm.o unittest_crm
