@@ -14,9 +14,9 @@ class FloatVector
 	
 	public:
 
-		FloatVector( int dim );
+		explicit FloatVector( int dim );
 		FloatVector( const FloatVector& );
-		FloatVector( const FloatVector&, Float scaling );
+		explicit FloatVector( const FloatVector&, Float scaling );
 		// virtual ~FloatVector();
 		
 		void check() const;
@@ -104,8 +104,7 @@ inline FloatVector operator-( const FloatVector& V1, const FloatVector& V2 )
 
 inline FloatVector operator*( Float s, const FloatVector& vec )
 {
-	FloatVector ret(vec);
-	ret *= s;
+	FloatVector ret(vec, s );
 	return ret;
 }
 

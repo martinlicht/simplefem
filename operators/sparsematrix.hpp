@@ -32,14 +32,14 @@ public LinearOperator /* every matrix is a linear operator */
 		return first.row > second.row || first.column > second.column;
 	}
 
-	SparseMatrix(int,int);
+	explicit SparseMatrix(int,int);
 	virtual ~SparseMatrix();
 	
 	virtual void check() const override;
 	virtual void print( std::ostream& ) const override;
 	
 	void addentry( int, int, Float );
-        void addentry( MatrixEntry );
+    void addentry( MatrixEntry );
 	void clearentries();
 	
 	int getnumberofentries() const;

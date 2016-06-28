@@ -20,7 +20,7 @@
 	
 	virtual void solve( FloatVector&, const FloatVector& ) const override;
 	
-	ConjugateResidualMethod( const LinearOperator& op );
+	explicit ConjugateResidualMethod( const LinearOperator& op );
 	virtual ~ConjugateResidualMethod();
     
 	private:

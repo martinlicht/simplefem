@@ -37,7 +37,7 @@ int main()
 		
 		cout << "Now something more complicated." << endl;
 		
-		int dimension = 1000;
+		int dimension = 100000;
 		
 		FloatVector x( dimension );
 		for( int p = 0; p < dimension; p++ )
@@ -49,7 +49,7 @@ int main()
 				M.addentry( i, i-1, 1.25 );
 			if( i+1 < dimension ) 
 				M.addentry( i, i+1, 1.25 );
-			M.addentry( i, i, 11.234 );
+			M.addentry( i, i, 3.1 );
 		}
 		M.sortentries();
 		
@@ -58,7 +58,7 @@ int main()
 		FloatVector y( dimension );
 		y.random();
 		
-		cout << M << endl;
+		// cout << M << endl;
 		
 		ConjugateResidualMethod CRM(M);
 		
