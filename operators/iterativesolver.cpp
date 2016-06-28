@@ -34,8 +34,14 @@ void IterativeSolver::check() const
   residual.check();
   
 }
-    
-    
+
+void IterativeSolver::print( std::ostream& os ) const
+{
+  
+  os << "Print Iterative Solver." << std::endl;
+  
+}
+
 const LinearOperator& IterativeSolver::getInternalOperator() const
 {
 	return internalOperator;

@@ -20,10 +20,11 @@
 	
   public:  
     
-    IterativeSolver( const LinearOperator& );
+        IterativeSolver( const LinearOperator& );
 	virtual ~IterativeSolver();
 	
-	virtual void check() const;
+	virtual void check() const override;
+	virtual void print( std::ostream& ) const override;
 	
 	const LinearOperator& getInternalOperator() const;
 	const FloatVector& getResidualVector() const;

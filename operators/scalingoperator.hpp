@@ -15,13 +15,13 @@ public LinearOperator /* every matrix is a linear operator */
 		ScalingOperator( int, Float s );
 		virtual ~ScalingOperator();
 		
-		virtual void check() const override	;
-		// SparseMatrix cloneSparseMatrix() const;
+		virtual void check() const override;
+		virtual void print( std::ostream& ) const override;
 		
-		Float getscaling();
+                Float getscaling();
 		void setscaling( Float s );
 		
-		virtual void applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const;
+		virtual void applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const override;
 		
 	private:
 	

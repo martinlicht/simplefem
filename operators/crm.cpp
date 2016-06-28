@@ -140,4 +140,9 @@ void ConjugateResidualMethod::check() const
 	IterativeSolver::check();
 	assert( getdimin() == getdimout() );
 }
-	
+
+void ConjugateResidualMethod::print( std::ostream& os ) const
+{
+	os << "Print Conjugate Residual Method." << std::endl;
+}
+
