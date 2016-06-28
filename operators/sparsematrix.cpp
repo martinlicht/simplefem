@@ -35,10 +35,9 @@ void SparseMatrix::applyadd( FloatVector& dest, const FloatVector& add, Float s,
 	assert( getdimout() == dest.getdimension() );
 	assert( getdimin() == add.getdimension() );
 	
-	for( int p = 0; p < getdimin(); p++ )
-		dest.setentry( p, s * dest.getentry( p ) );
-	
-	for( const MatrixEntry& rcv : entries )
+	dest.scale( s );
+        
+        for( const MatrixEntry& rcv : entries )
 		dest.setentry( rcv.row, dest.getentry( rcv.row ) + t * rcv.value * add.getentry( rcv.column ) );
 	
 }

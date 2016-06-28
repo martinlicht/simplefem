@@ -15,9 +15,10 @@
     
     public:
 	
-	virtual void check() const;
+	virtual void check() const override;
+	virtual void print( std::ostream& ) const override;
 	
-	virtual void solve( FloatVector&, const FloatVector& ) const;
+	virtual void solve( FloatVector&, const FloatVector& ) const override;
 	
 	ConjugateResidualMethod( const LinearOperator& op );
 	virtual ~ConjugateResidualMethod();

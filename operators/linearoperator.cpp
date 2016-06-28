@@ -1,6 +1,6 @@
 
 
-#include "LinearOperator.hpp"
+#include "linearoperator.hpp"
 
     LinearOperator::LinearOperator( int out, int in )
     : dimout( out ), dimin( in )

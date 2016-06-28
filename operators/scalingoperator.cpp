@@ -19,6 +19,11 @@ void ScalingOperator::check() const
 	LinearOperator::check();	
 }
 
+void ScalingOperator::print( std::ostream& os ) const  
+{
+	os << "Print Scaling Operator with scaling: " << scaling << std::endl;
+}
+
 
 void ScalingOperator::setscaling( Float s )
 {

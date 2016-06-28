@@ -21,9 +21,10 @@ class LinearOperator
     int getdimin() const;
     int getdimout() const;
     
-	virtual void check() const = 0;
+    virtual void check() const = 0;
+    virtual void print( std::ostream& os ) const;
     
-    virtual void print( std::ostream& out ) const;
+    
     
     /* Apply the operator */
   
