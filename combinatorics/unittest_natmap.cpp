@@ -35,16 +35,20 @@ int main()
 		
 		IndexMap inj( vorne, hinten );
 		IndexMap sur( hinten, vorne );
+		cout << "daten laden..." << endl;
 		inj[2] = 0; inj[3] = 4;
 		sur[0] = 2; sur[1] = 3; sur[2] = 2; sur[3] = 2; sur[4] = 3;
 		
+		cout << "checken..." << endl;
 		inj.check();
 		sur.check();
 		
+		cout << "eigenschaften..." << endl;
 		cout << inj << endl << sur << endl;
 		cout << inj.isinjective() << " " << inj.issurjective() << endl;
 		cout << sur.isinjective() << " " << sur.issurjective() << endl;
 		
+		cout << "product..." << endl;
 		IndexMap prod = sur * inj;
 		cout << prod << endl;
 		cout << prod.isinjective() << " " << prod.issurjective() << endl;

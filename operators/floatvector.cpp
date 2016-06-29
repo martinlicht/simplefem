@@ -61,26 +61,26 @@ void FloatVector::scale( Float alpha )
 Float FloatVector::setentry( int p, Float value )
 {
 	assert( 0 <= p && p < dimension );
-	data[p] = value;
-	return data[p];
+	data.at(p) = value;
+	return data.at(p);
 }
 
 Float FloatVector::getentry( int p ) const 
 {
 	assert( 0 <= p && p < dimension );
-	return data[p];
+	return data.at(p);
 }
 
 Float& FloatVector::operator[]( int p )
 {
 	assert( 0 <= p && p < dimension );
-	return data[p];
+	return data.at(p);
 }
 
 const Float& FloatVector::operator[]( int p ) const
 {
 	assert( 0 <= p && p < dimension );
-	return data[p];
+	return data.at(p);
 }
 		
 

@@ -59,7 +59,7 @@ void IndexMap::check() const
 	dest.check();
 	assert( src.gethigh() - src.getlow() + 1 == values.size() );
 	for( int a = src.getlow(); a <= src.gethigh(); a++ )
-		assert( dest.contains( values[a] ) );
+		assert( dest.contains( values.at( a - src.getlow() ) ) );
 }
 
 void IndexMap::print( std::ostream& os ) const 
@@ -104,7 +104,7 @@ bool IndexMap::isinjective() const
 			std::cout 
 			<< a - src.getlow() << space
 			<< b  - src.getlow() << space
-			<< values[a] << space << values[b] << std::endl;
+			<< values.at(a) << space << values.at(b) << std::endl;
 			return false;
 		}
 			
