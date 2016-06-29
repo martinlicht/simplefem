@@ -71,6 +71,8 @@ class IndexMap
 
 		IndexMap inverse() const;
 	
+		IndexMap skip( int ) const;
+	
 };
 
 
@@ -100,6 +102,14 @@ inline std::ostream& operator<<( std::ostream& os, IndexMap im )
 
 
 
+static IndexMap identityIndexMap( int low, int high )
+{
+	IndexRange ir( low, high );
+	IndexMap im( ir, ir );
+	for( int i = low; i <= high; i++ )
+		im[i] = i;
+	return im;
+}
 
 
 

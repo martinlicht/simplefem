@@ -100,13 +100,7 @@ bool IndexMap::isinjective() const
 	for( int a = src.getlow(); a <= src.gethigh(); a++ )
 	for( int b = src.getlow(); b <= src.gethigh(); b++ )
 		if( a != b && values.at( a - src.getlow() ) == values.at( b - src.getlow() ) )
-		{
-			std::cout 
-			<< a - src.getlow() << space
-			<< b  - src.getlow() << space
-			<< values.at(a) << space << values.at(b) << std::endl;
 			return false;
-		}
 			
 	return true;
 }
@@ -129,4 +123,15 @@ bool IndexMap::isbijective() const
 {
 	return isinjective() && issurjective();
 }
+
+IndexMap IndexMap::skip( int i ) const 
+{
+	assert( src.contains(i) );
+	IndexMap ret( *this );
+	ret.src = IndexRange( src.getlow(), src.gethigh() - 1 );
+	ret.values.erase( ret.values.begin() + ( i - src.getlow() ) );
+	return ret;
+}
+
+
 
