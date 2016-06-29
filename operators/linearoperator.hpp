@@ -15,7 +15,7 @@ class LinearOperator
     
   public:
     
-    LinearOperator( int, int );
+    explicit LinearOperator( int, int );
     virtual ~LinearOperator();
     
     int getdimin() const;

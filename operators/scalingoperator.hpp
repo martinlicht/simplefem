@@ -12,13 +12,13 @@ public LinearOperator /* every matrix is a linear operator */
 
 	public:
 		
-		ScalingOperator( int, Float s );
+		explicit ScalingOperator( int, Float s );
 		virtual ~ScalingOperator();
 		
 		virtual void check() const override;
 		virtual void print( std::ostream& ) const override;
 		
-                Float getscaling();
+        Float getscaling();
 		void setscaling( Float s );
 		
 		virtual void applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const override;

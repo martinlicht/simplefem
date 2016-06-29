@@ -1,5 +1,5 @@
-#ifndef INCLUDEGUARD_FLOATVECTOR_HPP
-#define INCLUDEGUARD_FLOATVECTOR_HPP
+#ifndef INCLUDEGUARD_FLOATVECTOR
+#define INCLUDEGUARD_FLOATVECTOR
 
 
 
@@ -14,9 +14,9 @@ class FloatVector
 	
 	public:
 
-		FloatVector( int dim );
+		explicit FloatVector( int dim );
 		FloatVector( const FloatVector& );
-		FloatVector( const FloatVector&, Float scaling );
+		explicit FloatVector( const FloatVector&, Float scaling );
 		// virtual ~FloatVector();
 		
 		void check() const;
@@ -26,11 +26,20 @@ class FloatVector
 		void zero();
 		void random();
 		void scale( Float );
-		void copydatafrom( const FloatVector&, Float scaling = 1. );
-		void adddatafrom( const FloatVector&, Float scaling = 1. );
+		
+		void copydatafrom( const FloatVector& );
+		void copydatafrom( Float, const FloatVector& );
+		
+		void adddatafrom( const FloatVector& );
+		void adddatafrom( Float, const FloatVector& );
+		void adddatafrom( Float, Float, const FloatVector& );
+		
 		
 		Float setentry( int, Float );
 		Float getentry( int ) const;
+		
+		Float& operator[]( int );
+		const Float& operator[]( int ) const;
 		
 		int getdimension() const;
 	
@@ -84,7 +93,7 @@ inline FloatVector operator+=( FloatVector& V, const FloatVector& Vsrc )
 
 inline FloatVector operator-=( FloatVector& V, const FloatVector& Vsrc )
 {
-	V.adddatafrom( Vsrc, -1 );
+	V.adddatafrom( -1., Vsrc );
 	return V;
 }	
 	
@@ -104,8 +113,7 @@ inline FloatVector operator-( const FloatVector& V1, const FloatVector& V2 )
 
 inline FloatVector operator*( Float s, const FloatVector& vec )
 {
-	FloatVector ret(vec);
-	ret *= s;
+	FloatVector ret(vec, s );
 	return ret;
 }
 

@@ -20,7 +20,7 @@
 	
   public:  
     
-        IterativeSolver( const LinearOperator& );
+    explicit IterativeSolver( const LinearOperator& );
 	virtual ~IterativeSolver();
 	
 	virtual void check() const override;
