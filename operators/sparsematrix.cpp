@@ -73,10 +73,16 @@ void SparseMatrix::clearentries()
 		
 void SparseMatrix::sortentries() const
 {
-	// std::sort(entries.begin(), entries.end(),
-               // [](const MatrixEntry& left, const MatrixEntry& right) -> bool 
-               // { return left.row > right.row || left.column > right.column; }
-			 // );
+	
+//         auto& casted_entries = const_cast<std::list<MatrixEntry>&>(entries);
+        
+//         std::list<MatrixEntry> test = entries;
+//         
+//         auto comp = []( const SparseMatrix::MatrixEntry& left, const SparseMatrix::MatrixEntry& right) -> bool
+//         { 
+//                         return left.row < right.row || left.column < right.column || left.value < right.value;
+//         };
+        
 	const_cast<std::list<MatrixEntry>&>(entries).sort( compareMatrixEntry );
 	
 }

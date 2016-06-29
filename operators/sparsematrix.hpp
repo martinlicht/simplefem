@@ -6,13 +6,6 @@
 #include "linearoperator.hpp"
 
 
-struct MatrixEntry
-	{
-		int row;
-		int column;
-		Float value;
-	};
-
 	
 class SparseMatrix:
 public LinearOperator /* every matrix is a linear operator */
@@ -29,7 +22,12 @@ public LinearOperator /* every matrix is a linear operator */
 	
 	static bool compareMatrixEntry(const MatrixEntry& first, const MatrixEntry& second) 
 	{
-		return first.row > second.row || first.column > second.column;
+            if( first.row < second.row )
+                return true;
+            else if( first.row == second.row && first.column < second.column )
+                return true;
+            else 
+                return false;
 	}
 
 	SparseMatrix(int,int);
