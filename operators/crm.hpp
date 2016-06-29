@@ -1,12 +1,10 @@
-
 #ifndef INCLUDEGUARD_CONJUGATERESIDUAL_METHOD
 #define INCLUDEGUARD_CONJUGATERESIDUAL_METHOD
 
+
 #include <iostream>
 
-
 #include "../basic.hpp"
-
 #include "iterativesolver.hpp"
 
   class ConjugateResidualMethod

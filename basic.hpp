@@ -3,5 +3,11 @@
 
 typedef double Float;
 
+static const char space = ' ';
+
+static const char nl = '\n';
+
+static const char tab = '\t';
+
 
 #endif
