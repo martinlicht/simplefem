@@ -27,6 +27,7 @@ public LinearOperator /* every matrix is a linear operator */
         const Float& operator()( int, int ) const;
         
         void zeromatrix();
+        void randommatrix();
         void unitmatrix();
         void scale( Float );
         void set( Float );

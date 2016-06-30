@@ -122,6 +122,13 @@ void DenseMatrix::unitmatrix()
             (*this)(r,c) = 0.;
 }
 
+void DenseMatrix::randommatrix()
+{
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimin(); c++ )
+        (*this)(r,c) = sqrt( rand() );
+}
+
 void DenseMatrix::scale( Float s )
 {
     for( int r = 0; r < getdimout(); r++ )
@@ -269,7 +276,7 @@ DenseMatrix DenseMatrix::MatrixMult( const DenseMatrix& left, const DenseMatrix&
     for( int lo = 0; lo < lout; lo++ )
         for( int ri = 0; ri < rin; ri++ )
             for( int m = 0; m < rout; m++ )
-                ret( lo, ri ) *= left( lo, m ) * right( m, ri );
+                ret( lo, ri ) += left( lo, m ) * right( m, ri );
     
     return ret;
     
