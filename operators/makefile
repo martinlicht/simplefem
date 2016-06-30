@@ -36,6 +36,12 @@ densematrix.o: densematrix.hpp densematrix.cpp floatvector.hpp linearoperator.hp
 	$(CC) densematrix.cpp -c -o densematrix.o 
 
 unittest_densematrix: densematrix.o floatvector.o linearoperator.o unittest_densematrix.cpp 
-	$(CC) unittest_densematrix.cpp densematrix.o ../combinatorics/natmap.o floatvector.o linearoperator.o -o unittest_densematrix
+	$(CC) unittest_densematrix.cpp densematrix.o ../combinatorics/natmap.o floatvector.o linearoperator.o -o unittest_densematrix 
 
-all: floatvector.o unittest_floatvector linearoperator.o scalingoperator.o unittest_scalingoperator sparsematrix.o unittest_sparsematrix crm.o unittest_crm densematrix.o unittest_densematrix
+matrixalgorithm.o: matrixalgorithm.cpp densematrix.hpp floatvector.hpp crm.hpp 
+	$(CC) matrixalgorithm.cpp -c -o matrixalgorithm.o 
+
+unittest_matrixalgorithm: matrixalgorithm.o unittest_matrixalgorithm.cpp 
+	$(CC) unittest_matrixalgorithm.cpp densematrix.o matrixalgorithm.o crm.o iterativesolver.o scalingoperator.o ../combinatorics/natmap.o floatvector.o linearoperator.o -o unittest_matrixalgorithm
+
+all: floatvector.o unittest_floatvector linearoperator.o scalingoperator.o unittest_scalingoperator sparsematrix.o unittest_sparsematrix crm.o unittest_crm densematrix.o unittest_densematrix matrixalgorithm.o unittest_matrixalgorithm

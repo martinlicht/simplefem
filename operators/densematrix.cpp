@@ -143,6 +143,49 @@ void DenseMatrix::set( Float s )
         (*this)(r,c) = s;
 }
 
+
+
+FloatVector DenseMatrix::getrow( int r ) const 
+{
+	assert( 0 <= r && r < getdimout() );
+	FloatVector row( getdimin() );
+	for( int c = 0; c < getdimin(); c++ )
+		row[c] = (*this)(r,c);
+	return row;
+}
+
+void DenseMatrix::setrow( int r, const FloatVector& row )
+{
+	assert( 0 <= r && r < getdimout() );
+	assert( row.getdimension() == getdimin() );
+	for( int c = 0; c < getdimin(); c++ )
+		(*this)(r,c) = row[c];
+}
+
+FloatVector DenseMatrix::getcolumn( int c ) const 
+{
+	assert( 0 <= c && c < getdimin() );
+	FloatVector column( getdimout() );
+	for( int r = 0; r < getdimout(); r++ )
+		column[r] = (*this)(r,c);
+	return column;
+}
+
+void DenseMatrix::setcolumn( int c, const FloatVector& column )
+{
+	assert( 0 <= c && c < getdimin() );
+	assert( column.getdimension() == getdimout() );
+	for( int r = 0; r < getdimout(); r++ )
+		(*this)(r,c) = column[r];
+}
+
+		
+
+
+
+
+
+
 void DenseMatrix::indexmapping( const IndexMap& im )
 {
     assert( im.getSourceRange().getlow() == 0 );
@@ -161,84 +204,84 @@ DenseMatrix DenseMatrix::transpose() const
     DenseMatrix ret( getdimin(), getdimout() );
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin(); c++ )
-        ret(c,r) = (*this)(r,c);
+        ret.entries.at( c * getdimout() + r ) = entries.at( r * getdimin() + c );
     return ret;
 }
 
 
-DenseMatrix DenseMatrix::inverse() const
-{
-    int d = getdimout();
+// DenseMatrix DenseMatrix::inverse() const
+// {
+    // int d = getdimout();
     
-    DenseMatrix l(d,d), u(d,d), li(d,d), ui(d,d), ret(d,d);
-    Float det;
+    // DenseMatrix l(d,d), u(d,d), li(d,d), ui(d,d), ret(d,d);
+    // Float det;
     
-    gaussfactorization( l, u, li, ui, det );
+    // gaussfactorization( l, u, li, ui, det );
     
-    ret = ui * li;
+    // ret = ui * li;
     
-    return ret;
-}
+    // return ret;
+// }
         
 
-void DenseMatrix::gaussfactorization( 
-        DenseMatrix& Lower, DenseMatrix& Upper,
-        DenseMatrix& LowerInv, DenseMatrix& UpperInv,
-        Float& det ) const
-{
+// void DenseMatrix::gaussfactorization( 
+        // DenseMatrix& Lower, DenseMatrix& Upper,
+        // DenseMatrix& LowerInv, DenseMatrix& UpperInv,
+        // Float& det ) const
+// {
 
-    assert( this->issquare() && Lower.issquare() && Upper.issquare() );
-    assert( this->getdimout() == Lower.getdimout() && Lower.getdimout() == Upper.getdimout() );
-    Lower.set( 47.11 );
-    Upper.set( 47.11 );
+    // assert( this->issquare() && Lower.issquare() && Upper.issquare() );
+    // assert( this->getdimout() == Lower.getdimout() && Lower.getdimout() == Upper.getdimout() );
+    // Lower.set( 47.11 );
+    // Upper.set( 47.11 );
     
-    const int n = this->getdimout();
+    // const int n = this->getdimout();
     
-    /* Construct lower and upper matrix */
+    // /* Construct lower and upper matrix */
     
-    for( int i = 0; i < n; i++ )
-    {
+    // for( int i = 0; i < n; i++ )
+    // {
         
-        for( int j = 0; j < n; j++ )
-            if (j < i)
-                Lower( j, i ) = 0.;
-            else
-            {
-                Lower( j, i ) = (*this)( j, i );
-                for( int k = 0; k < i; k++)
-                    Lower( j, i ) = Lower( j, i ) - Lower( j, k ) * Upper( k, i );
-            }
+        // for( int j = 0; j < n; j++ )
+            // if (j < i)
+                // Lower( j, i ) = 0.;
+            // else
+            // {
+                // Lower( j, i ) = (*this)( j, i );
+                // for( int k = 0; k < i; k++)
+                    // Lower( j, i ) = Lower( j, i ) - Lower( j, k ) * Upper( k, i );
+            // }
 
-        for( int j = 0; j < n; j++ )
-            if (j < i)
-                Upper( i, j ) = 0.;
-            else if ( j == i )
-                Upper( i, j ) = 1.;
-            else
-            {
-                Upper( i, j ) = (*this)( i, j ) / Lower( i, i );
-                for( int k = 0; k < i; k++ )
-                    Upper( i, j ) = Upper( i, j ) - ( ( Lower( i, k ) * Upper( k, j ) ) / Lower( i, i ));
-            }
+        // for( int j = 0; j < n; j++ )
+            // if (j < i)
+                // Upper( i, j ) = 0.;
+            // else if ( j == i )
+                // Upper( i, j ) = 1.;
+            // else
+            // {
+                // Upper( i, j ) = (*this)( i, j ) / Lower( i, i );
+                // for( int k = 0; k < i; k++ )
+                    // Upper( i, j ) = Upper( i, j ) - ( ( Lower( i, k ) * Upper( k, j ) ) / Lower( i, i ));
+            // }
 
-    }
+    // }
     
-    /* Determinant */
+    // /* Determinant */
     
-    det = 1.;
-    for( int i = 0; i < n; i++ )
-        det *= Upper(i,i) * Lower(i,i);
+    // det = 1.;
+    // for( int i = 0; i < n; i++ )
+        // det *= Upper(i,i) * Lower(i,i);
     
-    /* Construct inverses of the triangular matrices */
+    // /* Construct inverses of the triangular matrices */
     
-    assert( LowerInv.issquare() && UpperInv.issquare() );
-    assert( this->getdimout() == LowerInv.getdimout() && LowerInv.getdimout() == UpperInv.getdimout() );
-    LowerInv.set( 47.11 );
-    UpperInv.set( 47.11 );
+    // assert( LowerInv.issquare() && UpperInv.issquare() );
+    // assert( this->getdimout() == LowerInv.getdimout() && LowerInv.getdimout() == UpperInv.getdimout() );
+    // LowerInv.set( 47.11 );
+    // UpperInv.set( 47.11 );
     
-    // TODO: Compute the Inverses via Back Substitution
+    // // TODO: Compute the Inverses via Back Substitution
 
-}
+// }
         
         
         
