@@ -65,7 +65,8 @@ class IndexMap
 		bool isinjective() const;
 		bool issurjective() const;
 		bool isbijective() const;
-
+                bool isstrictlyascending() const;
+                
 		int& operator[]( int i );
 		const int& operator[]( int i ) const;
 

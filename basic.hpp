@@ -9,5 +9,14 @@ static const char nl = '\n';
 
 static const char tab = '\t';
 
+inline int kronecker( int i, int j )
+{
+    if( i == j )
+        return 1;
+    else
+        return 0;
+}
+
+
 
 #endif

@@ -1,6 +1,6 @@
 
 # CC = g++ -O2 -std=c++11 -Wall -Wextra -pedantic
-include ../Makefile.rules 
+include ../makefile.rules 
 
 floatvector.o: floatvector.hpp floatvector.cpp 
 	$(CC) floatvector.cpp -c -o floatvector.o 
@@ -32,4 +32,10 @@ crm.o: crm.hpp crm.cpp floatvector.hpp iterativesolver.hpp iterativesolver.o
 unittest_crm: crm.o floatvector.o unittest_crm.cpp 
 	$(CC) unittest_crm.cpp crm.o iterativesolver.o scalingoperator.o floatvector.o linearoperator.o sparsematrix.o -o unittest_crm
 
-all: floatvector.o unittest_floatvector linearoperator.o scalingoperator.o unittest_scalingoperator sparsematrix.o unittest_sparsematrix crm.o unittest_crm
+densematrix.o: densematrix.hpp densematrix.cpp floatvector.hpp linearoperator.hpp 
+	$(CC) densematrix.cpp -c -o densematrix.o 
+
+unittest_densematrix: densematrix.o floatvector.o linearoperator.o unittest_densematrix.cpp 
+	$(CC) unittest_densematrix.cpp densematrix.o ../combinatorics/natmap.o floatvector.o linearoperator.o -o unittest_densematrix
+
+all: floatvector.o unittest_floatvector linearoperator.o scalingoperator.o unittest_scalingoperator sparsematrix.o unittest_sparsematrix crm.o unittest_crm densematrix.o unittest_densematrix

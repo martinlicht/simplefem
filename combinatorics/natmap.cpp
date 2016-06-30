@@ -124,6 +124,15 @@ bool IndexMap::isbijective() const
 	return isinjective() && issurjective();
 }
 
+bool IndexMap::isstrictlyascending() const
+{
+    for( int a = getSourceRange().getlow(); a < getSourceRange().gethigh(); a++ )
+        if( values.at( a - getDestRange().getlow() ) >= values.at( a - getDestRange().getlow() + 1 ) )
+            return false;
+    return true;
+}
+                
+
 IndexMap IndexMap::skip( int i ) const 
 {
 	assert( src.contains(i) );

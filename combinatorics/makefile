@@ -1,6 +1,6 @@
 
 # CC = g++ -O2 -std=c++11 -Wall -Wextra -pedantic
-include ../Makefile.rules 
+include ../makefile.rules 
 
 natmap.o: natmap.hpp natmap.cpp 
 	$(CC) natmap.cpp -c -o natmap.o 
