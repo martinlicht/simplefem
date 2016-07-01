@@ -117,6 +117,12 @@ inline FloatVector operator*( Float s, const FloatVector& vec )
 	return ret;
 }
 
+inline FloatVector operator/( const FloatVector& vec, Float s )
+{
+	FloatVector ret(vec, 1. / s );
+	return ret;
+}
+
 inline Float operator*( const FloatVector& V1, const FloatVector& V2 )
 {
 	assert( V1.getdimension() == V2.getdimension() );

@@ -52,6 +52,7 @@ int main()
 		IndexMap prod = sur * inj;
 		cout << prod << endl;
 		cout << prod.isinjective() << " " << prod.issurjective() << endl;
+		cout << prod.skip(3) << endl;
 		
 	}
 	
