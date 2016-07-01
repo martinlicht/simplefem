@@ -32,10 +32,15 @@ crm.o: crm.hpp crm.cpp floatvector.hpp iterativesolver.hpp iterativesolver.o
 unittest_crm: crm.o floatvector.o unittest_crm.cpp 
 	$(CC) unittest_crm.cpp crm.o iterativesolver.o scalingoperator.o floatvector.o linearoperator.o sparsematrix.o -o unittest_crm
 
+# moretesting: crm.o floatvector.o moretesting.cpp 
+# 	$(CC) moretesting.cpp crm.o iterativesolver.o scalingoperator.o floatvector.o linearoperator.o sparsematrix.o -o moretesting
+moretesting: crm.o floatvector.o moretesting.cpp 
+	$(CC) moretesting.cpp -o moretesting
+
 densematrix.o: densematrix.hpp densematrix.cpp floatvector.hpp linearoperator.hpp 
 	$(CC) densematrix.cpp -c -o densematrix.o 
 
 unittest_densematrix: densematrix.o floatvector.o linearoperator.o unittest_densematrix.cpp 
 	$(CC) unittest_densematrix.cpp densematrix.o ../combinatorics/natmap.o floatvector.o linearoperator.o -o unittest_densematrix
 
-all: floatvector.o unittest_floatvector linearoperator.o scalingoperator.o unittest_scalingoperator sparsematrix.o unittest_sparsematrix crm.o unittest_crm densematrix.o unittest_densematrix
+all: floatvector.o unittest_floatvector linearoperator.o scalingoperator.o unittest_scalingoperator sparsematrix.o unittest_sparsematrix crm.o unittest_crm densematrix.o unittest_densematrix moretesting
