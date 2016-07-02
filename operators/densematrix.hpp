@@ -3,7 +3,7 @@
 
 #include <vector>
 #include "../basic.hpp"
-#include "../combinatorics/natmap.hpp"
+#include "../combinatorics/indexmap.hpp"
 #include "linearoperator.hpp"
 
 

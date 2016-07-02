@@ -41,13 +41,13 @@ densematrix.o: densematrix.hpp densematrix.cpp floatvector.hpp linearoperator.hp
 	$(CC) densematrix.cpp -c -o densematrix.o 
 
 unittest.densematrix: densematrix.o floatvector.o linearoperator.o unittest.densematrix.cpp 
-	$(CC) unittest.densematrix.cpp densematrix.o ../combinatorics/natmap.o floatvector.o linearoperator.o -o unittest.densematrix 
+	$(CC) unittest.densematrix.cpp densematrix.o ../combinatorics/indexrange.o ../combinatorics/indexmap.o floatvector.o linearoperator.o -o unittest.densematrix 
 
 matrixalgorithm.o: matrixalgorithm.cpp densematrix.hpp floatvector.hpp crm.hpp 
 	$(CC) matrixalgorithm.cpp -c -o matrixalgorithm.o 
 
 unittest.matrixalgorithm: matrixalgorithm.o unittest.matrixalgorithm.cpp 
-	$(CC) unittest.matrixalgorithm.cpp densematrix.o matrixalgorithm.o crm.o iterativesolver.o scalingoperator.o ../combinatorics/natmap.o floatvector.o linearoperator.o -o unittest.matrixalgorithm
+	$(CC) unittest.matrixalgorithm.cpp densematrix.o matrixalgorithm.o crm.o iterativesolver.o scalingoperator.o ../combinatorics/indexrange.o ../combinatorics/indexmap.o floatvector.o linearoperator.o -o unittest.matrixalgorithm
 
 all: floatvector.o unittest.floatvector linearoperator.o scalingoperator.o unittest.scalingoperator sparsematrix.o unittest.sparsematrix crm.o unittest.crm densematrix.o unittest.densematrix moretesting matrixalgorithm.o unittest.matrixalgorithm
 
