@@ -3,7 +3,7 @@
 #include <cassert>
 #include <iostream>
 
-#include "natmap.hpp"
+#include "indexmap.hpp"
 #include "indexrange.hpp"
 
 

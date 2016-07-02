@@ -4,7 +4,8 @@
 
 #include <iostream>
 #include "../basic.hpp"
-#include "natmap.hpp"
+#include "indexrange.hpp"
+#include "indexmap.hpp"
 
 
 using namespace std;
