@@ -22,6 +22,7 @@ class IndexRange
 		
 		int getlow() const;
 		int gethigh() const;
+		int getlength() const;
 		
 		bool contains( int ) const;
 		bool contains( const IndexRange& subir ) const;

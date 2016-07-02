@@ -28,6 +28,12 @@ int IndexRange::gethigh() const
 	return high;
 }
 
+int IndexRange::getlength() const
+{
+	return high - low + 1;
+}
+		
+
 bool IndexRange::contains( int i ) const 
 {
 	return low <= i && i <= high;
