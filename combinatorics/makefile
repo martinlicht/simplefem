@@ -12,3 +12,6 @@ unittest.indexmap: indexmap.o indexrange.o indexmap.hpp unittest.indexmap.cpp
 	$(CC) unittest.indexmap.cpp indexmap.o indexrange.o -o unittest.indexmap
 
 all: indexrange.o indexmap.o unittest.indexmap
+
+clean: *.o *.exe *.exe.stackdump *.gch 
+	rm *.o *.exe *.exe.stackdump *.gch 
