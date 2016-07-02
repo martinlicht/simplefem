@@ -43,5 +43,15 @@ T absolute( const T& n )
 }
 
 
+template<typename T>
+T binomial( const T& n, const T& k )
+{
+	assert( 0 <= n );
+	assert( 0 <= k <= n);
+	return factorial(n) / ( factorial(k) * factorial(n-k) );
+}
+
+
+
 
 #endif

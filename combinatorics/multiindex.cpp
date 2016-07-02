@@ -87,6 +87,19 @@ void MultiIndex::operator-=( const MultiIndex& mi )
 		values[ range.place(p) ] -= mi.values[ range.place(p) ];
 }
 	
+bool MultiIndex::smallerthan( const MultiIndex& mi ) const 
+{
+	for( int p = range.getlow(); p <= range.gethigh(); p++ )
+		if( values[ range.place(p) ] >= mi.values[ range.place(p) ] )
+			return false;
+	return true;
+}
 
-
+bool MultiIndex::equals( const MultiIndex& mi ) const
+{
+	for( int p = range.getlow(); p <= range.gethigh(); p++ )
+		if( values[ range.place(p) ] != mi.values[ range.place(p) ] )
+			return false;
+	return true;
+}
 

@@ -32,6 +32,10 @@ class MultiIndex
 		void operator-=(int);
 		void operator-=( const MultiIndex&);
 		
+		bool smallerthan( const MultiIndex& ) const;
+		bool equals( const MultiIndex& ) const;
+		
+		
 	private:
 
 		IndexRange range;
@@ -76,7 +80,38 @@ MultiIndex operator-( const MultiIndex& left, const MultiIndex& right )
 	return ret;
 }
 
+
+inline bool operator==( const MultiIndex& it, const MultiIndex& mi)
+{
+	return it.equals( mi );
+}
 		
+inline bool operator!=( const MultiIndex& it, const MultiIndex& mi)
+{
+	return ! ( it == mi );
+}
 
+inline bool operator<( const MultiIndex& it, const MultiIndex& mi)
+{
+	return it < mi;
+}
+		
+inline bool operator>( const MultiIndex& it, const MultiIndex& mi)
+{
+	return mi < it;
+}
+		
+inline bool operator<=( const MultiIndex& it, const MultiIndex& mi)
+{
+	return it < mi || it == mi;
+}
+		
+inline bool operator>=( const MultiIndex& it, const MultiIndex& mi)
+{
+	return it > mi || it == mi;
+}
+	
+	
 
+		
 #endif
