@@ -35,97 +35,111 @@
     assert( x.getdimension() == dimension );
 	assert( b.getdimension() == dimension );
 	
-	int restart_period = 0;
-	
 	/* Build up data */
+    int iter = 0;
     
-	int iter = 0;
-    
-    Float rho;
-    
+    Float r_Anorm;
+    FloatVector& r = residual;
 	FloatVector  d( dimension );  d.zero();
 	FloatVector Ad( dimension ); Ad.zero();
 	FloatVector Ar( dimension ); Ar.zero();
-	FloatVector  p( dimension );  p.zero();
 	    
-    /* Algorithm */
+    /* Initiate CRM process */
+    iterationStart( x, b, residual, d, Ar, Ad, r_Anorm );
     
-    /* Initialize */
-    INITIALIZE:
-    {
-    
-      std::cout << "Initialize" << std::endl;
-      
-      /* r = b - A x */
-      residual = b - internalOperator * x;
-	  
-      /* d = r */
-      d.copydatafrom( residual );
-
-      /* Ar = A r */
-      internalOperator.apply( Ar, (const FloatVector&) residual );
-      
-      /* Ad = A d */
-      internalOperator.apply( Ad, (const FloatVector&) d );
-      
-      /* rho is r.A.r */
-      rho = residual * Ar;
-    
-    }
-    
-    /* Main iteration */
-    
-	std::cout << "iteration: " << iter << "/" << max_iteration_count << " : " << rho << " vs " << error_tolerance << std::endl;
-      
-      
+    std::cout << "Begin iteration" << std::endl;
 	
-    /* while keep running */
-    while( iter < max_iteration_count && rho > error_tolerance ) {
+	/* Perform CRM step */
+    while( iter < max_iteration_count && r_Anorm > error_tolerance ) {
     
-      std::cout << "iteration: " << iter << " : " << rho << std::endl;
-      
-      /* if restart condition holds, then jump back */
-      if( restart_period != 0 && iter % restart_period == 0 )
-		goto INITIALIZE; // MUAHAHAHAHAHA!!!!!!!!!!1111111
-      
-      /*  p = A * Ad */
-      internalOperator.apply( p, Ad, 1. );
-      
-      /*  alpha = r.A.r / d.p */
-      Float alpha = rho / ( d * p );
+	  std::cout 
+		<< "iteration: " << iter << "/" << max_iteration_count
+		<< " : "
+		<< r_Anorm << " vs " << error_tolerance
+		<< std::endl;
     
-      /*  x += alpha d */
-      x += alpha * d;
-	  
-      /*  r -= alpha Ad */
-      residual -= alpha * Ad;
-	  
-      /*  Ar -= alpha p */
-      Ar -= alpha * p;
-	  
-	  /*  beta = r.Ar / rho */
-      Float tau = rho;
-      rho = residual * Ar;
-      Float beta = rho / tau;
-      
-      /*  d = r + beta d */
-      d = residual + beta * d;
-	  
-      /*  Ad = Ar + beta Ad */
-      Ad = Ar + beta * d;
+      iterationStep( x, r, d, Ar, Ad, r_Anorm );
 	  
       iter++;
     
-	  std::cout << "iteration: " << iter << " : " << rho << std::endl;
-      
+	  std::cout << "iteration: " << iter << " : " << r_Anorm << std::endl;
       
     }
-    /* FINISHED */
     
-    recent_iteration_count = iter;
-    recent_error = rho;
+	/* FINISHED */
+    if( r_Anorm > error_tolerance )
+		std::cout << "CRM process has failed" << std::endl;
+	recent_iteration_count = iter;
+    recent_error = r_Anorm;
     
   }
+  
+  
+  
+void ConjugateResidualMethod::iterationStart( 
+	const FloatVector& x, const FloatVector& b, 
+	FloatVector& r, FloatVector& d, FloatVector& Ar, FloatVector& Ad,
+	Float& r_Anorm
+) const {
+	
+	/* r = b - A x */
+	r = b - internalOperator * x;
+
+	/* d = r */
+	d.copydatafrom( r );
+
+	/* Ar = A r */
+	internalOperator.apply( Ar, (const FloatVector&) r );
+
+	/* Ad = A d */
+	internalOperator.apply( Ad, (const FloatVector&) d );
+
+	/* rho is r.A.r */
+	r_Anorm = r * Ar;
+	
+}
+
+
+void ConjugateResidualMethod::iterationStep( 
+	FloatVector& x,
+	FloatVector& r, FloatVector& d, FloatVector& Ar, FloatVector& Ad,
+	Float& r_Anorm 
+) const {
+	
+	/*  p = A * Ad */
+    FloatVector  p( dimension );
+	p.zero();
+	internalOperator.apply( p, Ad, 1. );
+      
+	/*  alpha = r.A.r / d.p */
+	Float alpha = r_Anorm / ( d * p );
+
+	/*  x += alpha d */
+	x += alpha * d;
+
+	/*  r -= alpha Ad */
+	r -= alpha * Ad;
+
+	/*  Ar -= alpha p */
+	Ar -= alpha * p;
+
+	/*  beta = r.Ar / rho */
+	Float tau = r_Anorm;
+	r_Anorm = r * Ar;
+	Float beta = r_Anorm / tau;
+
+	/*  d = r + beta d */
+	d = r + beta * d;
+
+	/*  Ad = Ar + beta Ad */
+	Ad = Ar + beta * Ad;
+	
+}
+
+  
+  
+  
+  
   
   
 ConjugateResidualMethod::ConjugateResidualMethod( const LinearOperator& op )
