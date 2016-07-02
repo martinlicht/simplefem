@@ -6,7 +6,7 @@
 #include "densematrix.hpp"
 
 
-// DenseMatrix Inverse( const DenseMatrix& );
+void InverseAndDeterminant( const DenseMatrix&, DenseMatrix&, Float& );
 
 void PolarDecomposition( const DenseMatrix&, DenseMatrix&, DenseMatrix& );
 
@@ -14,13 +14,8 @@ void PolarDecompositionRepeated( const DenseMatrix& A, DenseMatrix& Q, DenseMatr
 
 DenseMatrix CholeskyDecomposition( const DenseMatrix& src );
 
-// Float GaussFactorization( const DenseMatrix&, DenseMatrix&, DenseMatrix& );
-
-// Float CholeskyFactorization( const DenseMatrix&, DenseMatrix& );
-
-// DenseMatrix LowerTriangularInverse( const DenseMatrix& );        
-
 DenseMatrix UpperTriangularInverse( const DenseMatrix& );        
 
+Float UpperTriangularDeterminant( const DenseMatrix& A );
 
 #endif

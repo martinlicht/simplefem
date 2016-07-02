@@ -29,15 +29,16 @@ int main()
 		cout << x << endl;
 		cout << CRM << endl;
 		CRM.solve( x, rhs );
+		// cout << x << endl;
 	
 	}
 	
 
-	{
+	if(true){
 		
 		cout << "Now something more complicated." << endl;
 		
-		int dimension = 100000;
+		int dimension = 10000;
 		
 		FloatVector x( dimension );
 		for( int p = 0; p < dimension; p++ )

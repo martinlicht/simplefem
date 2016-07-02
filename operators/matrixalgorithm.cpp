@@ -12,35 +12,13 @@
 
 
 
-// DenseMatrix Inverse( const DenseMatrix& A ){
-	
-	// assert( A.issquare() );
-	// DenseMatrix ret( A );
-	// ret.zeromatrix();
-	
-	// ConjugateResidualMethod crm( A.transpose() * A );
-	// crm.max_iteration_count = A.getdimout() * 10;
-	// crm.error_tolerance = 1e-13;
-	
-	// std::cout << A << A.transpose() << A.transpose() * A << std::endl;
-	
-	// for( int c = 0; c < A.getdimout(); c++ ) {
-		// FloatVector rhs(A.getdimout()), x(A.getdimout());
-		// rhs.zero();
-		// rhs[c] = 1.;
-		// rhs = A.transpose() * rhs;
-		// x.zero();
-		// crm.solve( x, (const FloatVector&)rhs );
-		
-		// std::cout << A.transpose() * A * x << std::endl;
-		// std::cout << A.transpose() * A * x - rhs << std::endl;
-		
-		// ret.setcolumn( c, A * x );
-		
-	// }
-		
-	// return ret;	
-// }
+void InverseAndDeterminant( const DenseMatrix& A, DenseMatrix& Ainv, Float& Adet )
+{
+	DenseMatrix Q( A ), R( A );
+	PolarDecomposition( A, Q, R );
+	Ainv = UpperTriangularInverse(R) * Q.transpose();
+	Adet = UpperTriangularDeterminant(R);
+}
 
 
 void PolarDecomposition( const DenseMatrix& A, DenseMatrix& Q, DenseMatrix& R )
@@ -90,6 +68,8 @@ Float TriangularDeterminant( const DenseMatrix& src )
 	return ret;
 }
 
+
+
 DenseMatrix UpperTriangularInverse( const DenseMatrix& src )
 {
 	assert( src.issquare() );
@@ -131,6 +111,14 @@ DenseMatrix CholeskyDecomposition( const DenseMatrix& src )
 }
 
 
+Float UpperTriangularDeterminant( const DenseMatrix& A )
+{
+	assert( A.issquare() );
+	Float ret = 1.;
+	for( int c = 0; c < A.getdimin(); c++ )
+		ret *= A(c,c);
+	return ret;
+}
 
 
 
