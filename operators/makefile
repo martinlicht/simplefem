@@ -5,8 +5,8 @@ include ../makefile.rules
 floatvector.o: floatvector.hpp floatvector.cpp 
 	$(CC) floatvector.cpp -c -o floatvector.o 
 
-unittest_floatvector: floatvector.o floatvector.hpp unittest_floatvector.cpp 
-	$(CC) unittest_floatvector.cpp floatvector.o -o unittest_floatvector
+unittest.floatvector: floatvector.o floatvector.hpp unittest.floatvector.cpp 
+	$(CC) unittest.floatvector.cpp floatvector.o -o unittest.floatvector
 
 linearoperator.o: linearoperator.hpp linearoperator.cpp 
 	$(CC) linearoperator.cpp -c -o linearoperator.o 
@@ -14,14 +14,14 @@ linearoperator.o: linearoperator.hpp linearoperator.cpp
 scalingoperator.o: scalingoperator.hpp scalingoperator.cpp floatvector.hpp linearoperator.hpp
 	$(CC) scalingoperator.cpp -c -o scalingoperator.o 
 
-unittest_scalingoperator: scalingoperator.o floatvector.o unittest_scalingoperator.cpp 
-	$(CC) unittest_scalingoperator.cpp scalingoperator.o floatvector.o linearoperator.o -o unittest_scalingoperator
+unittest.scalingoperator: scalingoperator.o floatvector.o unittest.scalingoperator.cpp 
+	$(CC) unittest.scalingoperator.cpp scalingoperator.o floatvector.o linearoperator.o -o unittest.scalingoperator
 	
 sparsematrix.o: sparsematrix.hpp sparsematrix.cpp floatvector.hpp linearoperator.hpp 
 	$(CC) sparsematrix.cpp -c -o sparsematrix.o 
 
-unittest_sparsematrix: sparsematrix.o floatvector.o unittest_sparsematrix.cpp 
-	$(CC) unittest_sparsematrix.cpp sparsematrix.o scalingoperator.o floatvector.o linearoperator.o -o unittest_sparsematrix
+unittest.sparsematrix: sparsematrix.o floatvector.o unittest.sparsematrix.cpp 
+	$(CC) unittest.sparsematrix.cpp sparsematrix.o scalingoperator.o floatvector.o linearoperator.o -o unittest.sparsematrix
 
 iterativesolver.o: iterativesolver.hpp iterativesolver.cpp 
 	$(CC) iterativesolver.cpp -c -o iterativesolver.o 
@@ -29,8 +29,8 @@ iterativesolver.o: iterativesolver.hpp iterativesolver.cpp
 crm.o: crm.hpp crm.cpp floatvector.hpp iterativesolver.hpp iterativesolver.o 
 	$(CC) crm.cpp -c -o crm.o 
 
-unittest_crm: crm.o floatvector.o unittest_crm.cpp 
-	$(CC) unittest_crm.cpp crm.o iterativesolver.o scalingoperator.o floatvector.o linearoperator.o sparsematrix.o -o unittest_crm
+unittest.crm: crm.o floatvector.o unittest.crm.cpp 
+	$(CC) unittest.crm.cpp crm.o iterativesolver.o scalingoperator.o floatvector.o linearoperator.o sparsematrix.o -o unittest.crm
 
 # moretesting: crm.o floatvector.o moretesting.cpp 
 # 	$(CC) moretesting.cpp crm.o iterativesolver.o scalingoperator.o floatvector.o linearoperator.o sparsematrix.o -o moretesting
@@ -40,14 +40,16 @@ moretesting: crm.o floatvector.o moretesting.cpp
 densematrix.o: densematrix.hpp densematrix.cpp floatvector.hpp linearoperator.hpp 
 	$(CC) densematrix.cpp -c -o densematrix.o 
 
-unittest_densematrix: densematrix.o floatvector.o linearoperator.o unittest_densematrix.cpp 
-	$(CC) unittest_densematrix.cpp densematrix.o ../combinatorics/natmap.o floatvector.o linearoperator.o -o unittest_densematrix 
+unittest.densematrix: densematrix.o floatvector.o linearoperator.o unittest.densematrix.cpp 
+	$(CC) unittest.densematrix.cpp densematrix.o ../combinatorics/natmap.o floatvector.o linearoperator.o -o unittest.densematrix 
 
 matrixalgorithm.o: matrixalgorithm.cpp densematrix.hpp floatvector.hpp crm.hpp 
 	$(CC) matrixalgorithm.cpp -c -o matrixalgorithm.o 
 
-unittest_matrixalgorithm: matrixalgorithm.o unittest_matrixalgorithm.cpp 
-	$(CC) unittest_matrixalgorithm.cpp densematrix.o matrixalgorithm.o crm.o iterativesolver.o scalingoperator.o ../combinatorics/natmap.o floatvector.o linearoperator.o -o unittest_matrixalgorithm
+unittest.matrixalgorithm: matrixalgorithm.o unittest.matrixalgorithm.cpp 
+	$(CC) unittest.matrixalgorithm.cpp densematrix.o matrixalgorithm.o crm.o iterativesolver.o scalingoperator.o ../combinatorics/natmap.o floatvector.o linearoperator.o -o unittest.matrixalgorithm
 
-all: floatvector.o unittest_floatvector linearoperator.o scalingoperator.o unittest_scalingoperator sparsematrix.o unittest_sparsematrix crm.o unittest_crm densematrix.o unittest_densematrix moretesting matrixalgorithm.o unittest_matrixalgorithm
+all: floatvector.o unittest.floatvector linearoperator.o scalingoperator.o unittest.scalingoperator sparsematrix.o unittest.sparsematrix crm.o unittest.crm densematrix.o unittest.densematrix moretesting matrixalgorithm.o unittest.matrixalgorithm
 
+clean: 
+	rm *.exe *.o *.gch *.exe.stackdump 
