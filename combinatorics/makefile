@@ -11,10 +11,10 @@ indexmap.o: indexmap.hpp indexmap.cpp
 multiindex.o: multiindex.hpp multiindex.cpp 
 	$(CC) multiindex.cpp -c -o multiindex.o 
 
-unittest.indexmap: indexmap.o indexrange.o indexmap.hpp unittest.indexmap.cpp 
-	$(CC) unittest.indexmap.cpp indexmap.o indexrange.o -o unittest.indexmap
+unittest.indexmap.out: indexmap.o indexrange.o indexmap.hpp unittest.indexmap.cpp 
+	$(CC) unittest.indexmap.cpp indexmap.o indexrange.o -o unittest.indexmap.out
 
-all: indexrange.o indexmap.o unittest.indexmap multiindex.o
+all: indexrange.o indexmap.o unittest.indexmap.out multiindex.o
 
-clean: *.o *.exe *.exe.stackdump *.gch 
-	rm *.o *.exe *.exe.stackdump *.gch 
+clean: *.o *.exe *.exe.stackdump *.gch *.out 
+	rm *.o *.exe *.exe.stackdump *.gch *.out
