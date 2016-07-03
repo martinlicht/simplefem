@@ -1,8 +1,10 @@
 #ifndef INCLUDEDGARD_BASIC_HPP
 #define INCLUDEDGARD_BASIC_HPP
 
+#include <ctime>     
+#include <cstdlib>     
 #include <cassert>     /* assert macro */
-// #include <cstdlib>     /* abs */
+
 
 
 typedef double Float;
@@ -52,6 +54,12 @@ T binomial( const T& n, const T& k )
 }
 
 
+typedef clock_t timestamp;
+
+inline timestamp gettimestamp()
+{
+	return CLOCKS_PER_SEC * static_cast<double>(clock()); 
+}
 
 
 #endif

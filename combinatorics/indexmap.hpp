@@ -1,5 +1,5 @@
-#ifndef INCLUDEGUARD_NATMAP
-#define INCLUDEGUARD_NATMAP
+#ifndef INCLUDEGUARD_INDEXMAP
+#define INCLUDEGUARD_INDEXMAP
 
 
 #include <vector>
@@ -37,7 +37,7 @@ class IndexMap
 		bool isinjective() const;
 		bool issurjective() const;
 		bool isbijective() const;
-                bool isstrictlyascending() const;
+		bool isstrictlyascending() const;
                 
 		int& operator[]( int i );
 		const int& operator[]( int i ) const;
@@ -45,6 +45,7 @@ class IndexMap
 		IndexMap inverse() const;
 	
 		IndexMap skip( int ) const;
+		IndexMap attachbefore( int ) const;
 	
 };
 

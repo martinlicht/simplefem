@@ -106,5 +106,12 @@ IndexMap IndexMap::skip( int i ) const
 	return ret;
 }
 
+IndexMap IndexMap::attachbefore( int to ) const 
+{
+	assert( dest.contains(to) );
+	IndexMap ret( *this );
+	ret.src = IndexRange( src.getlow() - 1, src.gethigh() );
+	ret.values.insert( ret.values.begin(), to );
+}
 
 

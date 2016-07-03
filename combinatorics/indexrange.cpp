@@ -11,7 +11,9 @@ IndexRange::IndexRange( int l, int h )
 {}
 
 void IndexRange::check() const 
-{ assert( low <= high); }
+{
+	
+}
 
 void IndexRange::print( std::ostream& os ) const 
 {
@@ -33,6 +35,11 @@ int IndexRange::getlength() const
 	return high - low + 1;
 }
 		
+
+bool IndexRange::isempty() const 
+{
+	return low > high;
+}
 
 bool IndexRange::contains( int i ) const 
 {
