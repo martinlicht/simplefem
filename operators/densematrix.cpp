@@ -39,9 +39,6 @@ void DenseMatrix::print( std::ostream& os ) const
     }
 }
 
-
-
-
 void DenseMatrix::applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const 
 {
     assert( dest.getdimension() == getdimout() );
@@ -51,11 +48,7 @@ void DenseMatrix::applyadd( FloatVector& dest, const FloatVector& add, Float s, 
     for( int c = 0; c < getdimin(); c++ )
         dest[r] += t * (*this)(r,c) * add[c];
 }
-        
 
-        
-        
-        
 Float DenseMatrix::get( int r, int c ) const
 {
     return (*this)( r, c );
@@ -75,15 +68,9 @@ const Float& DenseMatrix::operator()( int r, int c ) const
 {
     return entries.at( r * getdimin() + c );
 }
-        
-
-
-
-
 
 DenseMatrix DenseMatrix::submatrix( const IndexMap& rows, const IndexMap& columns ) const
 {
-    
     rows.check(); columns.check();
     assert( rows.getSourceRange().getlow() == 0 );
     assert( rows.getSourceRange().gethigh() <= getdimout() - 1 );
@@ -143,8 +130,6 @@ void DenseMatrix::set( Float s )
         (*this)(r,c) = s;
 }
 
-
-
 FloatVector DenseMatrix::getrow( int r ) const 
 {
 	assert( 0 <= r && r < getdimout() );
@@ -179,13 +164,6 @@ void DenseMatrix::setcolumn( int c, const FloatVector& column )
 		(*this)(r,c) = column[r];
 }
 
-		
-
-
-
-
-
-
 void DenseMatrix::indexmapping( const IndexMap& im )
 {
     assert( im.getSourceRange().getlow() == 0 );
@@ -196,8 +174,6 @@ void DenseMatrix::indexmapping( const IndexMap& im )
     for( int c = 0; c < im.getSourceRange().gethigh() - 1; c++ )
         (*this)( c, im[c] ) = 1.;
 }
-        
-
 
 DenseMatrix DenseMatrix::transpose() const
 {
@@ -283,8 +259,6 @@ DenseMatrix DenseMatrix::transpose() const
 
 // }
         
-        
-        
 void DenseMatrix::add( const DenseMatrix& addendum )
 {
     add( 1., addendum );
@@ -301,8 +275,6 @@ void DenseMatrix::add( Float s, Float t, const DenseMatrix& addendum )
         for( int c = 0; c < getdimin(); c++ )
             (*this)(r,c) = s * (*this)(r,c) + t * addendum(r,c);
 }
-        
-
         
 DenseMatrix DenseMatrix::MatrixMult( const DenseMatrix& left, const DenseMatrix& right )
 {
@@ -324,10 +296,6 @@ DenseMatrix DenseMatrix::MatrixMult( const DenseMatrix& left, const DenseMatrix&
     return ret;
     
 }
-
-        
-        
-        
 
 bool DenseMatrix::issquare() const
 {

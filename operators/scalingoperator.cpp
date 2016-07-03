@@ -1,7 +1,11 @@
 
-#include <iostream>
-#include "../basic.hpp"
 #include "scalingoperator.hpp"
+
+#include <iostream>
+
+#include "../basic.hpp"
+#include "floatvector.hpp"
+#include "linearoperator.hpp"
 
 
 ScalingOperator::ScalingOperator( int dimension, Float s )

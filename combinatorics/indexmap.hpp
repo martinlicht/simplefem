@@ -1,11 +1,13 @@
-#ifndef INCLUDEGUARD_NATMAP
-#define INCLUDEGUARD_NATMAP
+#ifndef INCLUDEGUARD_INDEXMAP
+#define INCLUDEGUARD_INDEXMAP
 
+
+#include <cassert>
 
 #include <vector>
 #include <limits>
 #include <iostream>
-#include <cassert>
+
 #include "../basic.hpp"
 #include "indexrange.hpp"
 

@@ -22,7 +22,7 @@
 class SimplicialMesh
 {
 
-    public:
+public:
 
     SimplicialMesh( int dim, int outerdim );
     virtual ~SimplicialMesh();
@@ -59,10 +59,7 @@ class SimplicialMesh
     void addfrom( const SimplicialMesh& );
     
     void addunitcube( const FloatVector&, Float );
-    
-    
-    
-    
+        
 private:
 
     int innerdimension;

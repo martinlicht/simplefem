@@ -1,6 +1,7 @@
 
 #include "crm.hpp"
-  
+
+#include "floatvector.hpp"
 
 /* 
  * 
@@ -28,51 +29,45 @@
   
 
   
-  void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
-  {
-    
-	check();
+void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
+{
+    check();
     assert( x.getdimension() == dimension );
-	assert( b.getdimension() == dimension );
-	
-	/* Build up data */
+    assert( b.getdimension() == dimension );
+    
+    /* Build up data */
     int iter = 0;
     
     Float r_Anorm;
     FloatVector& r = residual;
-	FloatVector  d( dimension );  d.zero();
-	FloatVector Ad( dimension ); Ad.zero();
-	FloatVector Ar( dimension ); Ar.zero();
-	    
-    /* Initiate CRM process */
-    iterationStart( x, b, residual, d, Ar, Ad, r_Anorm );
+    FloatVector  d( dimension );  d.zero();
+    FloatVector Ad( dimension ); Ad.zero();
+    FloatVector Ar( dimension ); Ar.zero();
+    
+    iterationStart( x, b, residual, d, Ar, Ad, r_Anorm ); /* Initiate CRM process */
     
     std::cout << "Begin iteration" << std::endl;
-	
-	/* Perform CRM step */
-    while( iter < max_iteration_count && r_Anorm > error_tolerance ) {
-    
-	  std::cout 
-		<< "iteration: " << iter << "/" << max_iteration_count
-		<< " : "
-		<< r_Anorm << " vs " << error_tolerance
-		<< std::endl;
-    
-      iterationStep( x, r, d, Ar, Ad, r_Anorm );
-	  
-      iter++;
-    
-	  std::cout << "iteration: " << iter << " : " << r_Anorm << std::endl;
-      
+
+    while( iter < max_iteration_count && r_Anorm > error_tolerance ) /* Perform CRM step */
+    {
+        std::cout 
+            << "iteration: " << iter << "/" << max_iteration_count
+            << " : "
+            << r_Anorm << " vs " << error_tolerance
+            << std::endl;
+            
+        iterationStep( x, r, d, Ar, Ad, r_Anorm );
+        
+        iter++;
     }
     
-	/* FINISHED */
+    /* FINISHED */
     if( r_Anorm > error_tolerance )
-		std::cout << "CRM process has failed" << std::endl;
-	recent_iteration_count = iter;
+        std::cout << "CRM process has failed" << std::endl;
+    recent_iteration_count = iter;
     recent_error = r_Anorm;
     
-  }
+}
   
   
   
@@ -107,7 +102,7 @@ void ConjugateResidualMethod::iterationStep(
 ) const {
 	
 	/*  p = A * Ad */
-    FloatVector  p( dimension );
+        FloatVector p( dimension );
 	p.zero();
 	internalOperator.apply( p, Ad, 1. );
       

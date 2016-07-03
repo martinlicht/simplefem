@@ -1,26 +1,24 @@
 #ifndef INCLUDEGUARD_ITERATIVESOLVER
 #define INCLUDEGUARD_ITERATIVESOLVER
 
-#include <iostream>
 
+#include <iostream>
 
 #include "../basic.hpp"
 #include "linearoperator.hpp"
   
-  class IterativeSolver
-  : public LinearOperator
-  {
-    
+class IterativeSolver
+: public LinearOperator
+{
 	
   protected:
 	
 	const LinearOperator& internalOperator;
 	mutable FloatVector residual;
 	
-	
   public:  
     
-    explicit IterativeSolver( const LinearOperator& );
+        explicit IterativeSolver( const LinearOperator& );
 	virtual ~IterativeSolver();
 	
 	virtual void check() const override;

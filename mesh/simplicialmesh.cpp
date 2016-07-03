@@ -25,7 +25,6 @@ SimplicialMesh::SimplicialMesh( int dim, int outerdim )
     subsimplex_list(),
     supersimplex_list()
 {
-    
     // 0 and n dimensional simplices are active, though empty 
     simplex_list_active[0] = simplex_list_active[dim] = true;
     simplex_list_count[0] = simplex_list_count[dim] = 0;
@@ -33,7 +32,6 @@ SimplicialMesh::SimplicialMesh( int dim, int outerdim )
     // there is a n->0 subsimplex list 
     auto key_n_0 = std::make_pair(dim,0);
     subsimplex_list.insert( std::make_pair( key_n_0, std::vector<int>() ) );
-    
 }
 
 

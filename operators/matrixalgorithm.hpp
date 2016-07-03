@@ -2,7 +2,9 @@
 #define INCLUDEGUARD_MATRIXALGORITHM
 
 #include <vector>
+
 #include "../basic.hpp"
+
 #include "densematrix.hpp"
 
 

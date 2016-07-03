@@ -31,7 +31,6 @@ void SparseMatrix::print( std::ostream& os ) const
 
 void SparseMatrix::applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const 
 {
-	
 	assert( getdimout() == dest.getdimension() );
 	assert( getdimin() == add.getdimension() );
 	
@@ -39,7 +38,6 @@ void SparseMatrix::applyadd( FloatVector& dest, const FloatVector& add, Float s,
         
         for( const MatrixEntry& rcv : entries )
 		dest.setentry( rcv.row, dest.getentry( rcv.row ) + t * rcv.value * add.getentry( rcv.column ) );
-	
 }
 
 

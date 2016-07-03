@@ -16,5 +16,5 @@ unittest.indexmap.out: indexmap.o indexrange.o indexmap.hpp unittest.indexmap.cp
 
 all: indexrange.o indexmap.o unittest.indexmap.out multiindex.o
 
-clean: *.o *.exe *.exe.stackdump *.gch *.out 
+clean: 
 	rm *.o *.exe *.exe.stackdump *.gch *.out

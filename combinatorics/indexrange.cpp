@@ -1,9 +1,10 @@
 
 
-#include <cassert>
-#include <iostream>
-
 #include "indexrange.hpp"
+
+#include <cassert>
+
+#include <iostream>
 
 
 IndexRange::IndexRange( int l, int h )

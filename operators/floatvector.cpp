@@ -1,12 +1,12 @@
 
-#include "../basic.hpp"
-#include "floatvector.hpp"
-#include <ostream>
-#include <iostream>
-
 #include <cstdlib>
 #include <cmath>
 
+#include <ostream>
+#include <iostream>
+
+#include "../basic.hpp"
+#include "floatvector.hpp"
 
 FloatVector::FloatVector( int dim )
 : dimension(dim), data(dim)

@@ -30,9 +30,7 @@ using namespace std;
       
     }
     
-    
     virtual void run() const override;
-    
     
   };
   

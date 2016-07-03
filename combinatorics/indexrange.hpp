@@ -2,10 +2,12 @@
 #define INCLUDEGUARD_INDEXRANGE
 
 
+#include <cassert>
+
 #include <vector>
 #include <limits>
 #include <iostream>
-#include <cassert>
+
 #include "../basic.hpp"
 
 

@@ -2,6 +2,8 @@
 
 #include "linearoperator.hpp"
 
+#include "floatvector.hpp"
+
     LinearOperator::LinearOperator( int out, int in )
     : dimout( out ), dimin( in )
     {
@@ -38,9 +40,7 @@
     /* x := A y */
     void LinearOperator::apply( FloatVector& dest, const FloatVector& src, Float f ) const
     {
-      
       applyadd( dest, src, 0.0, f );
-      
     }
     
     

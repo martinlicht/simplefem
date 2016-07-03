@@ -12,3 +12,6 @@ unittest.coordinates.out: coordinates.o coordinates.hpp unittest.coordinates.cpp
 	$(CC) unittest.coordinates.cpp ../combinatorics/indexmap.o ../combinatorics/indexrange.o -o unittest.coordinates.out
 
 all: coordinates.o simplicialmesh.o unittest.coordinates.out
+
+clean:
+	rm *.exe *.o *.gch *.exe.stackdump *.out 

@@ -2,6 +2,7 @@
 #define INCLUDEGUARD_DENSEMATRIX
 
 #include <vector>
+
 #include "../basic.hpp"
 #include "../combinatorics/indexmap.hpp"
 #include "linearoperator.hpp"
@@ -13,13 +14,13 @@ public LinearOperator /* every matrix is a linear operator */
 
     public:
 	
-		DenseMatrix(int,int);
-		virtual ~DenseMatrix();
-		
-		virtual void check() const override;
-		virtual void print( std::ostream& ) const override;
-		
-		virtual void applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const override;
+        DenseMatrix(int,int);
+        virtual ~DenseMatrix();
+        
+        virtual void check() const override;
+        virtual void print( std::ostream& ) const override;
+        
+        virtual void applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const override;
         
         Float get(int,int) const;
         void set(int,int,Float);
@@ -41,10 +42,10 @@ public LinearOperator /* every matrix is a linear operator */
         // DenseMatrix inverse() const;
         // void gaussfactorization( DenseMatrix&, DenseMatrix&, DenseMatrix&, DenseMatrix&, Float& ) const;
 
-		FloatVector getrow( int r ) const;
-		void setrow( int r, const FloatVector& row );
-		FloatVector getcolumn( int c ) const;
-		void setcolumn( int c, const FloatVector& column );
+        FloatVector getrow( int r ) const;
+        void setrow( int r, const FloatVector& row );
+        FloatVector getcolumn( int c ) const;
+        void setcolumn( int c, const FloatVector& column );
 
         void add( const DenseMatrix& );
         void add( Float, const DenseMatrix& );
