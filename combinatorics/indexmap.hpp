@@ -27,6 +27,7 @@ class IndexMap
 	public:
 	
 		IndexMap( IndexRange, IndexRange );
+		IndexMap( IndexRange, IndexRange, std::vector<int> );
 		
 		void check() const;
 		void print( std::ostream& ) const;

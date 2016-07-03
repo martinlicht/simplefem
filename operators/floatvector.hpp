@@ -41,6 +41,8 @@ class FloatVector
 		Float& operator[]( int );
 		const Float& operator[]( int ) const;
 		
+		const std::vector<Float>& getdata() const;
+		
 		int getdimension() const;
 	
 	private:

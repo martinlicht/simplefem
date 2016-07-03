@@ -42,6 +42,8 @@ T absolute( const T& n )
 		return -n;
 }
 
+int binomial(int,int);
+
 
 
 #endif

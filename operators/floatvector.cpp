@@ -122,3 +122,10 @@ void FloatVector::adddatafrom( Float scalingself, Float scalingsource, const Flo
 		setentry( p, scalingself * getentry( p ) + scalingsource * source.getentry( p ) ); 	
 }
 	
+
+const std::vector<Float>& FloatVector::getdata() const
+{
+    return data;
+}
+	
+	
