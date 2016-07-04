@@ -1,5 +1,6 @@
 
 #include "iterativesolver.hpp"
+
 #include "scalingoperator.hpp"
 	
 IterativeSolver::IterativeSolver( const LinearOperator& op )
@@ -19,7 +20,6 @@ IterativeSolver::~IterativeSolver()
 
 void IterativeSolver::check() const
 {
-  
   LinearOperator::check();
   
   assert( error_tolerance >= 0. );
@@ -32,14 +32,11 @@ void IterativeSolver::check() const
   
   internalOperator.check();
   residual.check();
-  
 }
 
 void IterativeSolver::print( std::ostream& os ) const
 {
-  
   os << "Print Iterative Solver." << std::endl;
-  
 }
 
 const LinearOperator& IterativeSolver::getInternalOperator() const

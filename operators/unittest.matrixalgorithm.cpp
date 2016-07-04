@@ -17,7 +17,6 @@ int main()
 	std::cout.setf( std::ios::fixed, std:: ios::floatfield );
 	std::cout << std::showpos;
 	
-
 	const int D = 10;
 	DenseMatrix A(D,D);
 	A(0,0) = 1.; A(0,1) = 1.; A(0,2) = 0.; 
@@ -30,7 +29,6 @@ int main()
 		A(s,t) = 3 * kronecker(s,t) - kronecker(s,t-1) - kronecker(s,t+1);
 		
 	{
-	
 		DenseMatrix Q(D,D), R(D,D);
 		
 		PolarDecomposition( A, Q, R );
@@ -60,7 +58,6 @@ int main()
 	}
 
 	{
-		
 		DenseMatrix M = A.transpose() * A;
 		M = M * M;
 		DenseMatrix R = CholeskyDecomposition( M );

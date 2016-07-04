@@ -1,11 +1,12 @@
 
+#include "matrixalgorithm.hpp"
+
 #include <iostream>
 #include <algorithm>
 #include <iterator>
 #include <list>
 #include <cctype>
 
-#include "matrixalgorithm.hpp"
 #include "densematrix.hpp"
 #include "floatvector.hpp"
 #include "crm.hpp"

@@ -51,5 +51,5 @@ unittest.matrixalgorithm.out: matrixalgorithm.o unittest.matrixalgorithm.cpp
 
 all: floatvector.o unittest.floatvector.out linearoperator.o scalingoperator.o unittest.scalingoperator.out sparsematrix.o unittest.sparsematrix.out crm.o unittest.crm.out densematrix.o unittest.densematrix.out moretesting matrixalgorithm.o unittest.matrixalgorithm.out
 
-clean: *.exe *.o *.gch *.exe.stackdump *.out 
+clean:
 	rm *.exe *.o *.gch *.exe.stackdump *.out 

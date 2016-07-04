@@ -1,12 +1,12 @@
 
-#include "../basic.hpp"
-#include "floatvector.hpp"
-#include <ostream>
-#include <iostream>
-
 #include <cstdlib>
 #include <cmath>
 
+#include <ostream>
+#include <iostream>
+
+#include "../basic.hpp"
+#include "floatvector.hpp"
 
 FloatVector::FloatVector( int dim )
 : dimension(dim), data(dim)
@@ -121,4 +121,11 @@ void FloatVector::adddatafrom( Float scalingself, Float scalingsource, const Flo
 	for( int p = 0; p < dimension; p++ )
 		setentry( p, scalingself * getentry( p ) + scalingsource * source.getentry( p ) ); 	
 }
+	
+
+const std::vector<Float>& FloatVector::getdata() const
+{
+    return data;
+}
+	
 	

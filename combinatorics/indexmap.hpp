@@ -2,10 +2,12 @@
 #define INCLUDEGUARD_INDEXMAP
 
 
+#include <cassert>
+
 #include <vector>
 #include <limits>
 #include <iostream>
-#include <cassert>
+
 #include "../basic.hpp"
 #include "indexrange.hpp"
 
@@ -27,6 +29,7 @@ class IndexMap
 	public:
 	
 		IndexMap( IndexRange, IndexRange );
+		IndexMap( IndexRange, IndexRange, std::vector<int> );
 		
 		void check() const;
 		void print( std::ostream& ) const;

@@ -3,7 +3,7 @@
 
 #include "../basic.hpp"
 #include "linearoperator.hpp"
-// #include "sparsematrix.hpp"
+
 
 
 class ScalingOperator:
@@ -18,7 +18,7 @@ public LinearOperator /* every matrix is a linear operator */
 		virtual void check() const override;
 		virtual void print( std::ostream& ) const override;
 		
-        Float getscaling();
+                Float getscaling();
 		void setscaling( Float s );
 		
 		virtual void applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const override;

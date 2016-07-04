@@ -44,6 +44,8 @@ T absolute( const T& n )
 		return -n;
 }
 
+int binomial(int,int);
+
 
 template<typename T>
 T binomial( const T& n, const T& k )

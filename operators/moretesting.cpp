@@ -26,7 +26,6 @@ int main()
 	cout << "Unit Test for Conjugate Residual Method" << endl;
 	
 	{
-		
 		cout << "First Something Simple" << endl;
 		
 		ScalingOperator S( 10, 3.141 );
@@ -38,12 +37,10 @@ int main()
 		cout << x << endl;
 		cout << CRM << endl;
 		CRM.solve( x, rhs );
-	
 	}
 	
 
 	{
-		
 		cout << "Now something more complicated." << endl;
 		
 		int dimension = 100000;
@@ -77,8 +74,7 @@ int main()
                 CRM.solve(y,b);
                 clock_t end = clock();
                 cout << "time elapsed: " << ( (double)end - (double)start ) / CLOCKS_PER_SEC << endl;
-
-		
+                
 	}
 	
 	cout << "Finished Unit Test" << endl;
