@@ -49,9 +49,19 @@ template<typename T>
 T binomial( const T& n, const T& k )
 {
 	assert( 0 <= n );
-	assert( 0 <= k <= n);
+	assert( 0 <= k && k <= n );
 	return factorial(n) / ( factorial(k) * factorial(n-k) );
 }
+
+
+static int integerpower( int base, int exponent )
+{
+	assert( exponent >= 0 );
+	if( exponent == 0 ) return 1;
+	return base * integerpower( base, exponent - 1 );
+}
+
+
 
 
 typedef clock_t timestamp;
