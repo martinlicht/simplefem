@@ -6,24 +6,28 @@
 /* 
  * 
  * Input: A, b, x
- * initialization
+ *****************
  * r := b - A x
  * d := r
  * Ar = A r
  * Ad = A d
  * rho = r . Ar
  * loop until exit condition
- *   if restart then reinitialize
  *   p = A * Ad
  *   alpha = rho / d . p
+ *
  *   x += alpha d
  *   r -= alpha Ad
  *   Ar -= alpha p
- *   tau = rho
- *   rho = r. Ar
- *   beta = rho / tau
+ *   rho' = r. Ar
+ *   beta = rho' / rho
+ *   
+ *   rho = rho'
  *   d = r + beta d
  *   Ad = Ar + beta Ad
+ * 
+ * 
+ * 
  * 
  */  
   
@@ -43,6 +47,7 @@ void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) cons
     FloatVector  d( dimension );  d.zero();
     FloatVector Ad( dimension ); Ad.zero();
     FloatVector Ar( dimension ); Ar.zero();
+    FloatVector  p( dimension );  p.zero();
     
     iterationStart( x, b, residual, d, Ar, Ad, r_Anorm ); /* Initiate CRM process */
     
@@ -56,7 +61,7 @@ void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) cons
             << r_Anorm << " vs " << error_tolerance
             << std::endl;
             
-        iterationStep( x, r, d, Ar, Ad, r_Anorm );
+        iterationStep( x, r, d, Ar, Ad, r_Anorm, p );
         
         iter++;
     }
@@ -98,12 +103,13 @@ void ConjugateResidualMethod::iterationStart(
 void ConjugateResidualMethod::iterationStep( 
 	FloatVector& x,
 	FloatVector& r, FloatVector& d, FloatVector& Ar, FloatVector& Ad,
-	Float& r_Anorm 
+	Float& r_Anorm,
+        FloatVector& p
 ) const {
 	
 	/*  p = A * Ad */
-        FloatVector p( dimension );
-	p.zero();
+//         FloatVector p( dimension );
+// 	p.zero();
 	internalOperator.apply( p, Ad, 1. );
       
 	/*  alpha = r.A.r / d.p */

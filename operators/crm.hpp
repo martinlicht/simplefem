@@ -24,7 +24,7 @@
     
 	void iterationStep( FloatVector& x,
 						FloatVector& r, FloatVector& d, FloatVector& Ar, FloatVector& Ad,
-						Float& rAnorm ) const;
+						Float& rAnorm, FloatVector& p ) const;
 	
 	explicit ConjugateResidualMethod( const LinearOperator& op );
 	virtual ~ConjugateResidualMethod();
