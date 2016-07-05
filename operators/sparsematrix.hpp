@@ -42,6 +42,7 @@ public LinearOperator /* every matrix is a linear operator */
             
             int getnumberofentries() const;
             void sortentries() const;
+            void compressentries() const;
             
             virtual void applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const override;
   

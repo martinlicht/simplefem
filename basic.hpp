@@ -4,7 +4,9 @@
 #include <ctime>     
 #include <cstdlib>     
 #include <cassert>     /* assert macro */
-
+#include <list>
+#include <iterator>
+#include <functional>
 
 
 typedef double Float;
@@ -72,6 +74,33 @@ inline timestamp gettimestamp()
 {
 	return CLOCKS_PER_SEC * static_cast<double>(clock()); 
 }
+
+
+template<typename T>
+void mergeelementsinsortedlist
+( std::list<T>& L, 
+  std::function<T( const T&, const T& )> merge,
+  std::function<bool( const T&, const T& )> compare
+)
+{
+	typename std::list<T>::iterator it = L.begin();
+	while( it != L.end() ){
+		
+		typename std::list<T>::iterator now = it; 
+		typename std::list<T>::iterator next = ++it;
+		
+		if( next == L.end() ) return;
+		
+		if( compare( *it, *next ) ) {
+			*now = merge( *now, *next );
+			L.erase( next );
+			it = now;
+		} 
+		
+	}
+}
+
+
 
 
 #endif
