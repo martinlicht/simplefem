@@ -52,12 +52,11 @@ class IndexMap
 	
 		IndexMap skip( int ) const;
 		IndexMap attachbefore( int ) const;
-                
+
                 bool comparablewith( const IndexMap& ) const;
                 bool equals( const IndexMap& ) const;
                 bool less( const IndexMap& ) const;
-                
-	
+
 };
 
 

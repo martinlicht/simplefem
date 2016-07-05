@@ -23,14 +23,10 @@ SimplicialMesh::SimplicialMesh( int dim, int outerdim )
     innerdimension(dim),
     outerdimension(outerdim),
     coordinates(outerdim,0),
-    // simplex_list_active(dim+1,false),
-    // simplex_list_count(dim+1,0),
     subsimplex_list(),
     supersimplex_list()
 {
-    // 0 and n dimensional simplices are active, though empty 
-    // simplex_list_active[0] = simplex_list_active[dim] = true; // FIXME: New code plan 
-    // simplex_list_count[0] = simplex_list_count[dim] = 0;
+    // FIXME: Write constructor 
     
     // there is a n->0 subsimplex list 
     auto key_n_0 = std::make_pair(dim,0);
@@ -149,6 +145,7 @@ bool SimplicialMesh::hassupersimplexlist( int from, int to ) const
 void SimplicialMesh::buildsimplexlist( int dim )
 {
     /* set up the basics */
+<<<<<<< HEAD
     assert( 0 <= dim && dim <= getinnerdimension() );
     assert( ! hassimplexlist(dim) );
     std::vector<IndexMap> sigmas
@@ -172,7 +169,6 @@ void SimplicialMesh::buildsimplexlist( int dim )
     std::unique( list_full.begin(), list_full.end() );
     
     subsimplex_list.insert( std::make_pair( std::make_pair(dim,0), list_full ) );
-
 }
     
 

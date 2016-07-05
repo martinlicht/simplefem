@@ -25,7 +25,6 @@ generateIndexMaps( const IndexRange& from, const IndexRange& to )
 	return ret;
 }
 
-
 int signPermutation( const IndexMap& im )
 {
 	assert( im.isbijective() );
@@ -33,19 +32,16 @@ int signPermutation( const IndexMap& im )
 	const IndexRange& ir = im.getSourceRange();
 	int zaehler = 1;
 	int nenner = 1;
-	for( int s = ir.min(); s <= ir.max(); s++ )
+
+        for( int s = ir.min(); s <= ir.max(); s++ )
 		for( int t = s+1; t <= ir.max(); t++ ) {
-			nenner *= ( t - s );
+                        nenner *= ( t - s );
 			zaehler *= ( im[ t ] - im[ s ] );
 		}
 	int ret = zaehler / nenner;
 	assert( ret == 1 || ret == -1 );
 	return ret;
 }
-
-
-
-
 
 std::vector<IndexMap> 
 generatePermutations( const IndexRange& ir )
@@ -57,7 +53,6 @@ generatePermutations( const IndexRange& ir )
 		);
 	return ret;
 }
-
 
 std::vector<IndexMap> 
 generateSigmas( const IndexRange& from, const IndexRange& to )
