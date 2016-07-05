@@ -28,7 +28,9 @@ class IndexMap
 	
 	public:
 	
+		IndexMap( IndexRange );
 		IndexMap( IndexRange, IndexRange );
+		IndexMap( IndexRange, std::vector<int> );
 		IndexMap( IndexRange, IndexRange, std::vector<int> );
 		
 		void check() const;
@@ -44,7 +46,8 @@ class IndexMap
                 
 		int& operator[]( int i );
 		const int& operator[]( int i ) const;
-
+		const std::vector<int>& getvalues() const;
+		
 		IndexMap inverse() const;
 	
 		IndexMap skip( int ) const;

@@ -38,7 +38,7 @@ int main()
 		
 		cout << "Now something more complicated." << endl;
 		
-		int dimension = 10000;
+		int dimension = 100000;
 		
 		FloatVector x( dimension );
 		for( int p = 0; p < dimension; p++ )
@@ -50,7 +50,7 @@ int main()
 				M.addentry( i, i-1, 1.25 );
 			if( i+1 < dimension ) 
 				M.addentry( i, i+1, 1.25 );
-			M.addentry( i, i, 3.1 );
+			M.addentry( i, i, 2.6 );
 		}
 		M.sortentries();
 		
@@ -62,8 +62,14 @@ int main()
 		// cout << M << endl;
 		
 		ConjugateResidualMethod CRM(M);
+		CRM.max_iteration_count = 10000;
+		CRM.error_tolerance = 1e-20;
 		
+		timestamp start, end;
+		start = gettimestamp();
 		CRM.solve(y,b);
+		end = gettimestamp();
+		cout << end - start << endl;
 
 		
 	}
