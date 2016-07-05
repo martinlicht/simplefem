@@ -8,52 +8,52 @@
 
 
 IndexRange::IndexRange( int l, int h )
-: low(l), high(h)
+: minimum(l), maximum(h)
 {}
 
 void IndexRange::check() const 
-{ assert( low <= high); }
+{ assert( minimum <= maximum); }
 
 void IndexRange::print( std::ostream& os ) const 
 {
-	os << "Index Range: [ " << low << " : " << high << " ]" << std::endl;
+	os << "Index Range: [ " << minimum << " : " << maximum << " ]" << std::endl;
 }
 
-int IndexRange::getlow() const
+int IndexRange::min() const
 {
-	return low;
+	return minimum;
 }
 
-int IndexRange::gethigh() const
+int IndexRange::max() const
 {
-	return high;
+	return maximum;
 }
 
 int IndexRange::getlength() const
 {
-	return high - low + 1;
+	return maximum - minimum + 1;
 }
 		
 
 bool IndexRange::contains( int i ) const 
 {
-	return low <= i && i <= high;
+	return minimum <= i && i <= maximum;
 }
 
 bool IndexRange::contains( const IndexRange& subir ) const 
 {
-	return low <= subir.low && subir.high <= high;
+	return minimum <= subir.minimum && subir.maximum <= maximum;
 }
 
 bool IndexRange::operator== ( const IndexRange& other ) const
 {
-	return this->low == other.low && this->high == other.high;
+	return this->minimum == other.minimum && this->maximum == other.maximum;
 }
 
 int IndexRange::place( int i ) const 
 {
 	assert( contains(i) );
-	return i - low;
+	return i - minimum;
 }
 
 

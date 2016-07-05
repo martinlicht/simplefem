@@ -94,13 +94,13 @@ const IndexMap SimplicialMesh::getsubsimplices( int dimfrom, int cell, int dimto
     assert( 0 <= cell && cell < countsimplices(dimfrom) );
     assert( ! hassubsimplexlist(cell,dimto) );
     
-    std::vector<int> tempvec = subsimplex_list.find( std::make_pair(cell,dimto) )->second;
+    std::vector<int> fromto_list = subsimplex_list.find( std::make_pair(cell,dimto) )->second;
     int tempn = countsubsimplices(dimfrom,dimto);
     
     IndexMap ret = IndexMap( 
         IndexRange(0, tempn ), 
-        Nat0,
-        std::vector<int>( tempvec.begin() + tempn * cell, tempvec.end() + tempn * (cell+1) )
+        IndexRange(0,countsimplices(dimto)),
+        std::vector<int>( fromto_list.begin() + tempn * cell, fromto_list.end() + tempn * (cell+1) )
     );
     
     return ret;

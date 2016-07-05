@@ -21,14 +21,14 @@ MultiIndex::MultiIndex( IndexRange ir )
 void MultiIndex::check() const
 {
 	range.check();
-	for( int p = range.getlow(); p <= range.gethigh(); p++ )
+	for( int p = range.min(); p <= range.max(); p++ )
 		assert( values[range.place(p)] >= 0 );
 }
 
 void MultiIndex::print( std::ostream& os ) const
 {
 	range.check();
-	for( int p = range.getlow(); p <= range.gethigh(); p++ )
+	for( int p = range.min(); p <= range.max(); p++ )
 		os << values[range.place(p)] << "\t";
 	os << std::endl;
 }
@@ -53,7 +53,7 @@ int MultiIndex::operator[](int p)
 int MultiIndex::absolute() const
 {
 	int ret = 0;
-	for( int p = range.getlow(); p <= range.gethigh(); p++ )
+	for( int p = range.min(); p <= range.max(); p++ )
 		ret += ::absolute<int>( values[range.place(p)] );
 	return ret;
 }
@@ -61,7 +61,7 @@ int MultiIndex::absolute() const
 int MultiIndex::factorial() const
 {
 	int ret = 1;
-	for( int p = range.getlow(); p <= range.gethigh(); p++ )
+	for( int p = range.min(); p <= range.max(); p++ )
 		ret *= ::factorial<int>( values[range.place(p)] );
 	return ret;
 }
@@ -75,7 +75,7 @@ void MultiIndex::operator+=( int p )
 void MultiIndex::operator+=( const MultiIndex& mi )
 {
 	assert( range == mi.getIndexRange() );
-	for( int p = range.getlow(); p <= range.gethigh(); p++ )
+	for( int p = range.min(); p <= range.max(); p++ )
 		values[ range.place(p) ] += mi.values[ range.place(p) ];
 }
 
@@ -88,7 +88,7 @@ void MultiIndex::operator-=( int p )
 void MultiIndex::operator-=( const MultiIndex& mi )
 {
 	assert( range == mi.getIndexRange() );
-	for( int p = range.getlow(); p <= range.gethigh(); p++ )
+	for( int p = range.min(); p <= range.max(); p++ )
 		values[ range.place(p) ] -= mi.values[ range.place(p) ];
 }
 	

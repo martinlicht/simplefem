@@ -22,8 +22,8 @@ class IndexRange
 		void check() const;
 		void print( std::ostream& ) const;
 		
-		int getlow() const;
-		int gethigh() const;
+		int min() const;
+		int max() const;
 		int getlength() const;
 		
 		bool contains( int ) const;
@@ -33,8 +33,8 @@ class IndexRange
 		
 	private:
 
-		int low;
-		int high;
+		int minimum;
+		int maximum;
 		
 };
 
@@ -44,9 +44,9 @@ inline std::ostream& operator<<( std::ostream& os, const IndexRange& ir )
 	return os;
 }
 
-static const IndexRange  Nat0 = IndexRange( 0, std::numeric_limits<int>::max() );
-static const IndexRange  Nat1 = IndexRange( 1, std::numeric_limits<int>::max() );
-static const IndexRange& Nat  = Nat1;
+static const IndexRange  NonNegativeIntegers = IndexRange( 0, std::numeric_limits<int>::max() );
+static const IndexRange  PositiveIntegers = IndexRange( 1, std::numeric_limits<int>::max() );
+
 
 
 

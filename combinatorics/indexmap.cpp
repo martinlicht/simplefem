@@ -14,16 +14,16 @@ IndexMap::IndexMap( IndexRange from, IndexRange to )
 {
 	src.check();
 	to.check();
-	values.resize( src.gethigh() - src.getlow() + 1 );
+	values.resize( src.max() - src.min() + 1 );
 }
 
 void IndexMap::check() const 
 { 
 	src.check();
 	dest.check();
-	assert( src.gethigh() - src.getlow() + 1 == values.size() );
-	for( int a = src.getlow(); a <= src.gethigh(); a++ )
-		assert( dest.contains( values.at( a - src.getlow() ) ) );
+	assert( src.max() - src.min() + 1 == values.size() );
+	for( int a = src.min(); a <= src.max(); a++ )
+		assert( dest.contains( values.at( a - src.min() ) ) );
 }
 
 void IndexMap::print( std::ostream& os ) const 
@@ -31,7 +31,7 @@ void IndexMap::print( std::ostream& os ) const
 	os << "From" << std::endl
 	   << getSourceRange() << "To" << std::endl
 	   << getDestRange() << std::endl;
-	for( int i = getSourceRange().getlow(); i <= getSourceRange().gethigh(); i++ )
+	for( int i = getSourceRange().min(); i <= getSourceRange().max(); i++ )
 		os << i << " -> " << (*this)[i] << std::endl;
 }
 
@@ -48,22 +48,22 @@ const IndexRange& IndexMap::getDestRange() const
 int& IndexMap::operator[]( int i )
 {
 	assert( src.contains(i) );
-	assert( 0 <= i - src.getlow() );
-	assert( i - src.getlow() < values.size() );
-	return values.at( i - src.getlow() );
+	assert( 0 <= i - src.min() );
+	assert( i - src.min() < values.size() );
+	return values.at( i - src.min() );
 }
 
 const int& IndexMap::operator[]( int i ) const
 {
 	assert( src.contains(i) );
-	return values.at( i - src.getlow() );
+	return values.at( i - src.min() );
 }
 
 bool IndexMap::isinjective() const 
 {
-	for( int a = src.getlow(); a <= src.gethigh(); a++ )
-	for( int b = src.getlow(); b <= src.gethigh(); b++ )
-		if( a != b && values.at( a - src.getlow() ) == values.at( b - src.getlow() ) )
+	for( int a = src.min(); a <= src.max(); a++ )
+	for( int b = src.min(); b <= src.max(); b++ )
+		if( a != b && values.at( a - src.min() ) == values.at( b - src.min() ) )
 			return false;
 			
 	return true;
@@ -71,11 +71,11 @@ bool IndexMap::isinjective() const
 
 bool IndexMap::issurjective() const 
 {
-	for( int a = dest.getlow(); a <= dest.gethigh(); a++ ) 
+	for( int a = dest.min(); a <= dest.max(); a++ ) 
 	{
 		bool flag = false;
-		for( int b = src.getlow(); b <= src.gethigh(); b++ )
-			if( values.at( b - src.getlow() ) == a )
+		for( int b = src.min(); b <= src.max(); b++ )
+			if( values.at( b - src.min() ) == a )
 				flag = true;
 		if( !flag )
 			return false;
@@ -90,8 +90,8 @@ bool IndexMap::isbijective() const
 
 bool IndexMap::isstrictlyascending() const
 {
-    for( int a = getSourceRange().getlow(); a < getSourceRange().gethigh(); a++ )
-        if( values.at( a - getDestRange().getlow() ) >= values.at( a - getDestRange().getlow() + 1 ) )
+    for( int a = getSourceRange().min(); a < getSourceRange().max(); a++ )
+        if( values.at( a - getDestRange().min() ) >= values.at( a - getDestRange().min() + 1 ) )
             return false;
     return true;
 }
@@ -101,8 +101,8 @@ IndexMap IndexMap::skip( int i ) const
 {
 	assert( src.contains(i) );
 	IndexMap ret( *this );
-	ret.src = IndexRange( src.getlow(), src.gethigh() - 1 );
-	ret.values.erase( ret.values.begin() + ( i - src.getlow() ) );
+	ret.src = IndexRange( src.min(), src.max() - 1 );
+	ret.values.erase( ret.values.begin() + ( i - src.min() ) );
 	return ret;
 }
 

@@ -72,18 +72,18 @@ const Float& DenseMatrix::operator()( int r, int c ) const
 DenseMatrix DenseMatrix::submatrix( const IndexMap& rows, const IndexMap& columns ) const
 {
     rows.check(); columns.check();
-    assert( rows.getSourceRange().getlow() == 0 );
-    assert( rows.getSourceRange().gethigh() <= getdimout() - 1 );
-    assert( rows.getDestRange().getlow() == 0 );
-    assert( rows.getDestRange().gethigh() == getdimout() - 1 );
-    assert( columns.getSourceRange().getlow() == 0 );
-    assert( columns.getSourceRange().gethigh() <= getdimin() - 1 );
-    assert( columns.getDestRange().getlow() == 0 );
-    assert( columns.getDestRange().gethigh() == getdimin() - 1 );
+    assert( rows.getSourceRange().min() == 0 );
+    assert( rows.getSourceRange().max() <= getdimout() - 1 );
+    assert( rows.getDestRange().min() == 0 );
+    assert( rows.getDestRange().max() == getdimout() - 1 );
+    assert( columns.getSourceRange().min() == 0 );
+    assert( columns.getSourceRange().max() <= getdimin() - 1 );
+    assert( columns.getDestRange().min() == 0 );
+    assert( columns.getDestRange().max() == getdimin() - 1 );
     assert( rows.isstrictlyascending() );
     assert( columns.isstrictlyascending() );
     
-    DenseMatrix ret( rows.getSourceRange().gethigh() - 1, columns.getSourceRange().gethigh() - 1 );
+    DenseMatrix ret( rows.getSourceRange().max() - 1, columns.getSourceRange().max() - 1 );
     for( int nr = 0; nr < ret.getdimout(); nr++ )
     for( int nc = 0; nc < ret.getdimin();  nc++ )
         ret( nr, nc ) = (*this)( rows[nr], columns[nc] );
@@ -166,12 +166,12 @@ void DenseMatrix::setcolumn( int c, const FloatVector& column )
 
 void DenseMatrix::indexmapping( const IndexMap& im )
 {
-    assert( im.getSourceRange().getlow() == 0 );
-    assert( im.getSourceRange().gethigh() <= getdimin() - 1 );
-    assert( im.getDestRange().getlow() == 0 );
-    assert( im.getDestRange().gethigh() == getdimout() - 1 );
+    assert( im.getSourceRange().min() == 0 );
+    assert( im.getSourceRange().max() <= getdimin() - 1 );
+    assert( im.getDestRange().min() == 0 );
+    assert( im.getDestRange().max() == getdimout() - 1 );
     zeromatrix();
-    for( int c = 0; c < im.getSourceRange().gethigh() - 1; c++ )
+    for( int c = 0; c < im.getSourceRange().max() - 1; c++ )
         (*this)( c, im[c] ) = 1.;
 }
 

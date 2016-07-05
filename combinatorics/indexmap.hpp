@@ -63,7 +63,7 @@ inline IndexMap operator*( const IndexMap& leave, const IndexMap& enter )
 	
 	IndexMap ret( src, dest );
 	
-	for( int i = src.getlow(); i <= src.gethigh(); i++ )
+	for( int i = src.min(); i <= src.max(); i++ )
 		ret[i] = leave[ enter[i] ];
 		
 	return ret;
