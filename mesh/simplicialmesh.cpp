@@ -2,6 +2,8 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <utility>
+#include <algorithm>
 #include <iostream>
 #include <fstream>
 
@@ -20,14 +22,14 @@ SimplicialMesh::SimplicialMesh( int dim, int outerdim )
     innerdimension(dim),
     outerdimension(outerdim),
     coordinates(outerdim,0),
-    simplex_list_active(dim+1,false),
-    simplex_list_count(dim+1,0),
+    // simplex_list_active(dim+1,false),
+    // simplex_list_count(dim+1,0),
     subsimplex_list(),
     supersimplex_list()
 {
     // 0 and n dimensional simplices are active, though empty 
-    simplex_list_active[0] = simplex_list_active[dim] = true;
-    simplex_list_count[0] = simplex_list_count[dim] = 0;
+    // simplex_list_active[0] = simplex_list_active[dim] = true; // FIXME: New code plan 
+    // simplex_list_count[0] = simplex_list_count[dim] = 0;
     
     // there is a n->0 subsimplex list 
     auto key_n_0 = std::make_pair(dim,0);
@@ -80,8 +82,8 @@ const Coordinates& SimplicialMesh::getcoordinates() const
 int SimplicialMesh::countsimplices( int d ) const
 {
     assert( 0 <= d && d <= getinnerdimension() );
-    assert( simplex_list_active.at(d) );
-    return simplex_list_count.at(d);
+    assert( hassimplexlist(d) );
+    // return simplex_list_count.at(d); FIXME: New method
 }
 
 
@@ -127,8 +129,9 @@ const IndexMap SimplicialMesh::getsupersimplices( int dimfrom, int cell, int dim
 
 bool SimplicialMesh::hassimplexlist( int d ) const
 {
-    assert( 0 <= d && d <= getinnerdimension() );
-    return simplex_list_active.at( d );
+    // assert( 0 <= d && d <= getinnerdimension() );
+    // return simplex_list_active.at( d );
+	return hassubsimplexlist( d, 0 );
 }
 
 
@@ -151,9 +154,37 @@ bool SimplicialMesh::hassupersimplexlist( int from, int to ) const
 
 void SimplicialMesh::buildsimplexlist( int dim )
 {
-    assert( 0 <= dim && dim <= getinnerdimension() );
+    /* set up the basics */
+	assert( 0 <= dim && dim <= getinnerdimension() );
     assert( ! hassimplexlist(dim) );
-    // FIXME: add code - depends on Sigmas
+	std::vector<IndexMap> sigmas
+	= generateSigmas( IndexRange(0,dim), IndexRange(0,innerdimension) );
+	const int counteach = sigmas.size();
+	
+	/* generate all subsimplices with duplicates */
+	std::vector<std::vector<int>> list_full( 
+		countsimplices(innerdimension) * counteach,
+		std::vector<int>(dim+1) );
+	for( int S = 0; S < countsimplices(innerdimension); S++ )
+	for( int s = 0; s < counteach; s++ )
+	{
+		// list_full[ S * counteach + s ]
+		// = ( sigmas[ s ] * subsimplex_list[ std::make_pair(innerdimension,0) ].at( S ) ); 
+		// FIXME: Check types 
+	}
+	
+	/* eleminate duplicates */
+	std::sort( list_full.begin(), list_full.end() );
+	std::unique( list_full.begin(), list_full.end() );
+	
+	/* create new list */
+	std::vector<IndexMap>& temp
+	=
+	subsimplex_list.insert( std::make_pair( std::make_pair(dim,0), std::vector<IndexMap>( list_full.size(), IndexMap( IndexRange(0,dim), IndexRange(0,countsimplices(0)-1) ) ) ) ).first->second;
+	
+	/* fill up that list */
+	for( int t = 0; t < list_full.size(); t++ )
+		temp[t] = IndexMap( IndexRange(0,dim), IndexRange(0,countsimplices(0)-1), list_full[t] );
 }
     
 
