@@ -49,6 +49,18 @@ static const IndexRange  NonNegativeIntegers = IndexRange( 0, std::numeric_limit
 static const IndexRange  PositiveIntegers = IndexRange( 1, std::numeric_limits<int>::max() );
 
 
+inline IndexRange operator|( const IndexRange& left, const IndexRange& right )
+{
+	return IndexRange( std::min( left.min(), right.min() ), std::max( left.max(), right.max() ) );
+}
+
+inline IndexRange operator&( const IndexRange& left, const IndexRange& right )
+{
+	return IndexRange( std::max( left.min(), right.min() ), std::min( left.max(), right.max() ) );
+}
+
+
+
 
 
 
