@@ -85,4 +85,23 @@ void SparseMatrix::sortentries() const
 	
 }
 	
+void SparseMatrix::compressentries() const
+{
+	sortentries();
+	
+	auto mergeMatrixEntry = []( const SparseMatrix::MatrixEntry& left, 
+					const SparseMatrix::MatrixEntry& right)
+	-> SparseMatrix::MatrixEntry {
+	 SparseMatrix::MatrixEntry ret;
+	 assert( left.row == right.row && left.column == right.column );
+	 ret.row = left.row; ret.column = left.column;
+	 ret.value = left.value + right.value;
+     return ret; 
+	};
+						
+	mergeelementsinsortedlist<SparseMatrix::MatrixEntry>
+	( const_cast<std::list<MatrixEntry>&>(entries), 
+	mergeMatrixEntry, compareMatrixEntry );
+	
+}
 	

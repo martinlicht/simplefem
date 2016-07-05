@@ -9,7 +9,7 @@ IterativeSolver::IterativeSolver( const LinearOperator& op )
   residual(op.getdimout()), 
   error_tolerance( 1.E-10 ), 
   recent_error( 0. ), 
-  max_iteration_count(100),
+  max_iteration_count(op.getdimout()),
   recent_iteration_count(0)
 {
   check();

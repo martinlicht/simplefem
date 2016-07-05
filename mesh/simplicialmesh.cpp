@@ -2,6 +2,8 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <utility>
+#include <algorithm>
 #include <iostream>
 #include <fstream>
 
@@ -9,6 +11,7 @@
 #include "../basic.hpp"
 #include "../combinatorics/indexrange.hpp"
 #include "../combinatorics/indexmap.hpp"
+#include "../combinatorics/generateindexmaps.hpp"
 #include "../operators/floatvector.hpp"
 #include "coordinates.hpp"
 #include "simplicialmesh.hpp"
@@ -20,18 +23,18 @@ SimplicialMesh::SimplicialMesh( int dim, int outerdim )
     innerdimension(dim),
     outerdimension(outerdim),
     coordinates(outerdim,0),
-    simplex_list_active(dim+1,false),
-    simplex_list_count(dim+1,0),
+    // simplex_list_active(dim+1,false),
+    // simplex_list_count(dim+1,0),
     subsimplex_list(),
     supersimplex_list()
 {
     // 0 and n dimensional simplices are active, though empty 
-    simplex_list_active[0] = simplex_list_active[dim] = true;
-    simplex_list_count[0] = simplex_list_count[dim] = 0;
+    // simplex_list_active[0] = simplex_list_active[dim] = true; // FIXME: New code plan 
+    // simplex_list_count[0] = simplex_list_count[dim] = 0;
     
     // there is a n->0 subsimplex list 
     auto key_n_0 = std::make_pair(dim,0);
-    subsimplex_list.insert( std::make_pair( key_n_0, std::vector<int>() ) );
+    subsimplex_list.insert( std::make_pair( key_n_0, std::vector<IndexMap>() ) );
 }
 
 
@@ -46,9 +49,9 @@ void SimplicialMesh::check() const
     // FIXME: add code 
 }
 
-void SimplicialMesh::print( std::ostream& out ) const
+void SimplicialMesh::print( std::ostream& os ) const
 {
-    // FIXME: add code 
+    os << "Printe Mesh!" << std::endl;
 }
 
 
@@ -80,8 +83,8 @@ const Coordinates& SimplicialMesh::getcoordinates() const
 int SimplicialMesh::countsimplices( int d ) const
 {
     assert( 0 <= d && d <= getinnerdimension() );
-    assert( simplex_list_active.at(d) );
-    return simplex_list_count.at(d);
+    assert( hassimplexlist(d) );
+    return subsimplex_list.find( std::make_pair(d,0) )->second.size();
 }
 
 
@@ -94,14 +97,9 @@ const IndexMap SimplicialMesh::getsubsimplices( int dimfrom, int cell, int dimto
     assert( 0 <= cell && cell < countsimplices(dimfrom) );
     assert( ! hassubsimplexlist(cell,dimto) );
     
-    std::vector<int> fromto_list = subsimplex_list.find( std::make_pair(cell,dimto) )->second;
-    int tempn = countsubsimplices(dimfrom,dimto);
+    std::vector<IndexMap> fromto_list = subsimplex_list.find( std::make_pair(cell,dimto) )->second;
     
-    IndexMap ret = IndexMap( 
-        IndexRange(0, tempn ), 
-        IndexRange(0,countsimplices(dimto)),
-        std::vector<int>( fromto_list.begin() + tempn * cell, fromto_list.end() + tempn * (cell+1) )
-    );
+    IndexMap ret = fromto_list[cell];
     
     return ret;
 }
@@ -127,8 +125,7 @@ const IndexMap SimplicialMesh::getsupersimplices( int dimfrom, int cell, int dim
 
 bool SimplicialMesh::hassimplexlist( int d ) const
 {
-    assert( 0 <= d && d <= getinnerdimension() );
-    return simplex_list_active.at( d );
+    return hassubsimplexlist( d, 0 );
 }
 
 
@@ -151,9 +148,31 @@ bool SimplicialMesh::hassupersimplexlist( int from, int to ) const
 
 void SimplicialMesh::buildsimplexlist( int dim )
 {
+    /* set up the basics */
     assert( 0 <= dim && dim <= getinnerdimension() );
     assert( ! hassimplexlist(dim) );
-    // FIXME: add code - depends on Sigmas
+    std::vector<IndexMap> sigmas
+    = generateSigmas( IndexRange(0,dim), IndexRange(0,innerdimension) );
+    const int countsigmas = sigmas.size();
+
+    /* generate all subsimplices with duplicates */
+    std::vector<IndexMap> list_full( 
+            countsimplices(innerdimension) * countsigmas,
+            IndexMap( IndexRange(0,dim), IndexRange(0,countsimplices(0)) ) );
+
+    for( int S = 0; S < countsimplices(innerdimension); S++ )
+    for( int s = 0; s < countsigmas; s++ )
+    {
+        list_full[ S * countsigmas + s ]
+        = sigmas[ s ] * subsimplex_list[ std::make_pair(innerdimension,0) ].at( S ); 
+    }
+
+    /* eleminate duplicates */
+    std::sort( list_full.begin(), list_full.end() );
+    std::unique( list_full.begin(), list_full.end() );
+    
+    subsimplex_list.insert( std::make_pair( std::make_pair(dim,0), list_full ) );
+
 }
     
 

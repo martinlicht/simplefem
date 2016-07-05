@@ -67,12 +67,8 @@ private:
 
     Coordinates coordinates;
 
-    /* List of simplices */
-    std::vector<bool> simplex_list_active;
-    std::vector<int> simplex_list_count;
-
     /* subcell lists */
-    std::map< std::pair<int,int>, std::vector<int> > subsimplex_list;
+    std::map< std::pair<int,int>, std::vector<IndexMap> > subsimplex_list;
     
     /* supercell lists */
     std::map< std::pair<int,int>, std::vector<IndexMap> > supersimplex_list;

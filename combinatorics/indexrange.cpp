@@ -12,7 +12,10 @@ IndexRange::IndexRange( int l, int h )
 {}
 
 void IndexRange::check() const 
-{ assert( minimum <= maximum); }
+{
+    
+}
+
 
 void IndexRange::print( std::ostream& os ) const 
 {
@@ -34,6 +37,11 @@ int IndexRange::getlength() const
 	return maximum - minimum + 1;
 }
 		
+
+bool IndexRange::isempty() const 
+{
+	return minimum > maximum;
+}
 
 bool IndexRange::contains( int i ) const 
 {

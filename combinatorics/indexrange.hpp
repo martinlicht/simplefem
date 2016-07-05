@@ -26,6 +26,7 @@ class IndexRange
 		int max() const;
 		int getlength() const;
 		
+		bool isempty() const;
 		bool contains( int ) const;
 		bool contains( const IndexRange& subir ) const;
 		bool operator== ( const IndexRange& ) const;
