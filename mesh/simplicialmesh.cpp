@@ -145,7 +145,6 @@ bool SimplicialMesh::hassupersimplexlist( int from, int to ) const
 void SimplicialMesh::buildsimplexlist( int dim )
 {
     /* set up the basics */
-<<<<<<< HEAD
     assert( 0 <= dim && dim <= getinnerdimension() );
     assert( ! hassimplexlist(dim) );
     std::vector<IndexMap> sigmas
