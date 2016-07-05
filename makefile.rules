@@ -1,5 +1,5 @@
 # Global definition of compiler and its flags 
 
-CC = g++ -Ofast -std=c++11 -Wall -Wextra -pedantic -Werror=implicit
+CC = g++ -Ofast -fno-exceptions -std=c++11 -Wall -Wextra -pedantic -Werror=implicit
 
 
