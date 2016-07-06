@@ -63,12 +63,24 @@ void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) cons
             
         iterationStep( x, r, d, Ar, Ad, r_Anorm, p );
         
+		FloatVector test = internalOperator * x - b;
+		Float r_Anorm_test = test * ( internalOperator * test );
+		std::cout << "ratio: " << r_Anorm / r_Anorm_test << std::endl;
+		
         iter++;
     }
     
     /* FINISHED */
     if( r_Anorm > error_tolerance )
         std::cout << "CRM process has failed" << std::endl;
+	else {
+		iterationStart( x, b, residual, d, Ar, Ad, r_Anorm );
+		std::cout 
+            << "iteration: " << iter << "/" << max_iteration_count
+            << " : "
+            << r_Anorm << " vs " << error_tolerance
+            << std::endl;
+	}
     recent_iteration_count = iter;
     recent_error = r_Anorm;
     
@@ -113,7 +125,7 @@ void ConjugateResidualMethod::iterationStep(
 	internalOperator.apply( p, Ad, 1. );
       
 	/*  alpha = r.A.r / d.p */
-	Float alpha = r_Anorm / ( d * p );
+	Float alpha = r_Anorm / ( Ad * Ad );
 
 	/*  x += alpha d */
 	x += alpha * d;

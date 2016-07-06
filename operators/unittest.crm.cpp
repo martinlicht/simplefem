@@ -50,7 +50,7 @@ int main()
 				M.addentry( i, i-1, 1.25 );
 			if( i+1 < dimension ) 
 				M.addentry( i, i+1, 1.25 );
-			M.addentry( i, i, 2.6 );
+			M.addentry( i, i, 2.51 );
 		}
 		M.sortentries();
 		
