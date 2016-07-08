@@ -12,85 +12,85 @@
 IndexMap::IndexMap( IndexRange from, IndexRange to )
 : src(from), dest(to), values(0)
 {
-	src.check();
-	to.check();
-	values.resize( src.max() - src.min() + 1 );
+    src.check();
+    to.check();
+    values.resize( src.max() - src.min() + 1 );
 }
 
 void IndexMap::check() const 
 { 
-	src.check();
-	dest.check();
-	assert( src.max() - src.min() + 1 == values.size() );
-	for( int a = src.min(); a <= src.max(); a++ )
-		assert( dest.contains( values.at( a - src.min() ) ) );
+    src.check();
+    dest.check();
+    assert( src.max() - src.min() + 1 == values.size() );
+    for( int a = src.min(); a <= src.max(); a++ )
+        assert( dest.contains( values.at( a - src.min() ) ) );
 }
 
 void IndexMap::print( std::ostream& os ) const 
 {
-	os << "From" << std::endl
-	   << getSourceRange() << "To" << std::endl
-	   << getDestRange() << std::endl;
-	for( int i = getSourceRange().min(); i <= getSourceRange().max(); i++ )
-		os << i << " -> " << (*this)[i] << std::endl;
+    os << "From" << std::endl
+        << getSourceRange() << "To" << std::endl
+        << getDestRange() << std::endl;
+    for( int i = getSourceRange().min(); i <= getSourceRange().max(); i++ )
+        os << i << " -> " << (*this)[i] << std::endl;
 }
 
 const IndexRange& IndexMap::getSourceRange() const 
 {
-	return src;
+    return src;
 }
-		
+
 const IndexRange& IndexMap::getDestRange() const 
 {
-	return dest;
+    return dest;
 }
 
 const std::vector<int>& IndexMap::getvalues() const 
 {
-	return values;
+    return values;
 }
 
 int& IndexMap::operator[]( int i )
 {
-	assert( src.contains(i) );
-	assert( 0 <= i - src.min() );
-	assert( i - src.min() < values.size() );
-	return values.at( i - src.min() );
+    assert( src.contains(i) );
+    assert( 0 <= i - src.min() );
+    assert( i - src.min() < values.size() );
+    return values.at( i - src.min() );
 }
 
 const int& IndexMap::operator[]( int i ) const
 {
-	assert( src.contains(i) );
-	return values.at( i - src.min() );
+    assert( src.contains(i) );
+    return values.at( i - src.min() );
 }
 
 bool IndexMap::isinjective() const 
 {
-	for( int a = src.min(); a <= src.max(); a++ )
-	for( int b = src.min(); b <= src.max(); b++ )
-		if( a != b && values.at( a - src.min() ) == values.at( b - src.min() ) )
-			return false;
-			
-	return true;
+    for( int a = src.min(); a <= src.max(); a++ )
+        for( int b = src.min(); b <= src.max(); b++ )
+            if( a != b && values.at( a - src.min() ) == values.at( b - src.min() ) )
+                return false;
+
+    return true;
 }
 
 bool IndexMap::issurjective() const 
 {
-	for( int a = dest.min(); a <= dest.max(); a++ ) 
-	{
-		bool flag = false;
-		for( int b = src.min(); b <= src.max(); b++ )
-			if( values.at( b - src.min() ) == a )
-				flag = true;
-		if( !flag )
-			return false;
-	}
-	return true;
+    for( int a = dest.min(); a <= dest.max(); a++ ) 
+    {
+        bool flag = false;
+        for( int b = src.min(); b <= src.max(); b++ )
+            if( values.at( b - src.min() ) == a )
+                flag = true;
+        if( !flag )
+        return false;
+    }
+    return true;
 }
 
 bool IndexMap::isbijective() const 
 {
-	return isinjective() && issurjective();
+    return isinjective() && issurjective();
 }
 
 bool IndexMap::isstrictlyascending() const
@@ -123,19 +123,19 @@ bool IndexMap::less( const IndexMap& im ) const
 
 IndexMap IndexMap::skip( int i ) const 
 {
-	assert( src.contains(i) );
-	IndexMap ret( *this );
-	ret.src = IndexRange( src.min(), src.max() - 1 );
-	ret.values.erase( ret.values.begin() + ( i - src.min() ) );
-	return ret;
+    assert( src.contains(i) );
+    IndexMap ret( *this );
+    ret.src = IndexRange( src.min(), src.max() - 1 );
+    ret.values.erase( ret.values.begin() + ( i - src.min() ) );
+    return ret;
 }
 
 IndexMap IndexMap::attachbefore( int to ) const 
 {
-	assert( dest.contains(to) );
-	IndexMap ret( *this );
-	ret.src = IndexRange( src.min() - 1, src.max() );
-	ret.values.insert( ret.values.begin(), to );
+    assert( dest.contains(to) );
+    IndexMap ret( *this );
+    ret.src = IndexRange( src.min() - 1, src.max() );
+    ret.values.insert( ret.values.begin(), to );
 }
 
 

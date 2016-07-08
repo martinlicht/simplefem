@@ -252,6 +252,41 @@ void SimplicialMesh::addunitcube( const FloatVector&, Float )
     // Lade die 2^n verschiedenen vertices 
     // Erstelle die n simplices mittels iteration ueber die Permutationen
     
+    assert( innerdimension == outerdimension );
+    
+    Coordinates coords( outerdimension, 1 << outerdimension );
+    for( int v = 0; v < ( 1 << outerdimension ); v++ )
+        for( int p = 0; p < outerdimension; p++ )
+            coords.getvector(v).setentry( p, ( v >> p ) % 2 );
+
+    IndexRange ir( 0, outerdimension-1 );
+    std::vector<IndexMap> perms = generatePermutations( ir );
+    
+    std::vector<IndexMap> newsimplices( perms.size(), 
+                                        IndexMap( IndexRange(0,innerdimension), 
+                                                  IndexRange(0,coords.getnumber()-1)
+                                                )
+                                        );
+    int picounter=0;
+    for( auto pi = perms.begin(); pi != perms.end(); pi++, picounter++ )
+    {
+        int index = 0;
+
+        std::vector<int> newsimplex(innerdimension+1);
+        newsimplex[0] = index;
+
+        for( int p = 1; p < innerdimension+1; p++ ) {
+            index += 1 << (*pi)[p];
+            newsimplex[p] = index;
+        }
+        
+        newsimplices[picounter] = IndexMap( IndexRange(0,innerdimension),
+                                            IndexRange(0,coords.getnumber()-1),
+                                            newsimplex );
+    }
+    
+    // FIXME: Koordinaten und Simplizes verarbeiten 
+    
 }
 
 

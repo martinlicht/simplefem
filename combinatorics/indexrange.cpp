@@ -11,57 +11,56 @@ IndexRange::IndexRange( int l, int h )
 : minimum(l), maximum(h)
 {}
 
-void IndexRange::check() const 
+void IndexRange::check() const
 {
-    
+    // NOTE: Nothing to do here so far ...
 }
 
 
-void IndexRange::print( std::ostream& os ) const 
+void IndexRange::print( std::ostream& os ) const
 {
-	os << "Index Range: [ " << minimum << " : " << maximum << " ]" << std::endl;
+    os << "Index Range: [ " << minimum << " : " << maximum << " ]" << std::endl;
 }
 
 int IndexRange::min() const
 {
-	return minimum;
+    return minimum;
 }
 
 int IndexRange::max() const
 {
-	return maximum;
+    return maximum;
 }
 
 int IndexRange::getlength() const
 {
-	return maximum - minimum + 1;
-}
-		
-
-bool IndexRange::isempty() const 
-{
-	return minimum > maximum;
+    return maximum - minimum + 1;
 }
 
-bool IndexRange::contains( int i ) const 
+bool IndexRange::isempty() const
 {
-	return minimum <= i && i <= maximum;
+    return minimum > maximum;
 }
 
-bool IndexRange::contains( const IndexRange& subir ) const 
+bool IndexRange::contains( int i ) const
 {
-	return minimum <= subir.minimum && subir.maximum <= maximum;
+    return minimum <= i && i <= maximum;
+}
+
+bool IndexRange::contains( const IndexRange& subir ) const
+{
+    return minimum <= subir.minimum && subir.maximum <= maximum;
 }
 
 bool IndexRange::operator== ( const IndexRange& other ) const
 {
-	return this->minimum == other.minimum && this->maximum == other.maximum;
+    return this->minimum == other.minimum && this->maximum == other.maximum;
 }
 
-int IndexRange::place( int i ) const 
+int IndexRange::place( int i ) const
 {
-	assert( contains(i) );
-	return i - minimum;
+    assert( contains(i) );
+    return i - minimum;
 }
 
 
