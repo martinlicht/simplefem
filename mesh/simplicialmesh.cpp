@@ -101,7 +101,7 @@ const IndexMap SimplicialMesh::getsubsimplices( int dimfrom, int cell, int dimto
 }
 
 
-const IndexMap SimplicialMesh::getsupersimplices( int dimfrom, int cell, int dimto ) const
+const std::list<int> SimplicialMesh::getsupersimplices( int dimfrom, int cell, int dimto ) const
 {
     assert( 0 <= dimto && dimto <= getinnerdimension() );
     assert( ! hassimplexlist(dimto) );
@@ -110,7 +110,7 @@ const IndexMap SimplicialMesh::getsupersimplices( int dimfrom, int cell, int dim
     assert( 0 <= cell && cell < countsimplices(dimfrom) );
     assert( ! hassupersimplexlist(dimfrom,dimto) );
     
-    std::vector<IndexMap> tempvec = supersimplex_list.find( std::make_pair(dimfrom,dimto) )->second;
+    std::vector<std::list<int>> tempvec = supersimplex_list.find( std::make_pair(dimfrom,dimto) )->second;
     
     return tempvec.at( cell );
 }
@@ -175,7 +175,30 @@ void SimplicialMesh::buildsubsimplexlist( int from, int to )
 {
     assert( 0 <= to && to < from && from <= innerdimension );
     assert( ! hassubsimplexlist(from,to) );
-    // FIXME: add code 
+    assert( hassubsimplexlist(from,0) );
+    assert( hassubsimplexlist(to,0) );
+    
+    const int N = countsubsimplices( from, to );
+    auto mynewlist = std::vector<IndexMap>( 
+        countsimplices(from),
+        IndexMap( IndexRange(0,N-1), IndexRange(0,countsimplices(to)-1) )
+    );
+    
+    // FIXME: Inefficient implementation
+    const std::vector<IndexMap> sigmas = generateSigmas( IndexRange(0,to), IndexRange(0,from) );
+    assert( N == sigmas.size() );
+    for( int S = 0; S < countsimplices(from); S++ )
+    for( int s = 0; s < N; s++ )
+    {
+        int it = 0;
+        while( getsubsimplices( to, it, 0 ) != sigmas.at(s) * getsubsimplices( from, S, 0 ) )
+            it++;
+        assert( it < countsimplices(to) );
+        mynewlist.at(S)[s] = it;
+    }
+    
+    subsimplex_list.insert( std::make_pair( std::make_pair(from,to), mynewlist ) );
+    
 }
 
 
@@ -183,7 +206,26 @@ void SimplicialMesh::buildsupersimplexlist( int from, int to )
 {
     assert( 0 <= from && from < to && to <= innerdimension );
     assert( ! hassupersimplexlist(from,to) );
-    // FIXME: add code 
+    assert( hassubsimplexlist(from,0) );
+    assert( hassubsimplexlist(to,0) );
+    assert( hassubsimplexlist(to,from) );
+    
+    // FIXME: More efficient implementation
+    
+    std::vector<std::list<int>> mynewlist( countsimplices(from), std::list<int>() );
+    
+    for( int S = 0; S < countsimplices(to); S++ ) {
+
+        const IndexMap& sub_of_S = getsubsimplices( to, S, from );
+
+        for( int s = 0; s < countsubsimplices(to,from); s++ ) {
+            mynewlist[ sub_of_S[s] ].push_back( S );
+        }
+
+    }
+    
+    supersimplex_list.insert( std::make_pair( std::make_pair(from,to), mynewlist ) );
+    
 }
 
 
@@ -203,7 +245,13 @@ void SimplicialMesh::addfrom( const SimplicialMesh& )
 
 void SimplicialMesh::addunitcube( const FloatVector&, Float )
 {
-    // FIXME: add code 
+    // TODO: Kuhn triangulatin of unit cube 
+    // * Lade die Liste der Permutationen
+    // * Rename this method to KuhnTriangulation
+    // * make it a static method
+    // Lade die 2^n verschiedenen vertices 
+    // Erstelle die n simplices mittels iteration ueber die Permutationen
+    
 }
 
 

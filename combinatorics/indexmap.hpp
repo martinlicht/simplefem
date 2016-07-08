@@ -84,6 +84,12 @@ inline bool operator==( const IndexMap& left, const IndexMap& right )
     return left.equals( right );
 }
 
+inline bool operator!=( const IndexMap& left, const IndexMap& right )
+{
+    assert( left.comparablewith( right ) );
+    return !( left.equals( right ) );
+}
+
 inline bool operator<( const IndexMap& left, const IndexMap& right )
 {
     assert( left.comparablewith( right ) );

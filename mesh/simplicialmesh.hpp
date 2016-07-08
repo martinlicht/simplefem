@@ -40,7 +40,7 @@ public:
     
     int countsimplices(int) const;
     const IndexMap getsubsimplices( int, int, int ) const;
-    const IndexMap getsupersimplices( int, int, int ) const;
+    const std::list<int> getsupersimplices( int, int, int ) const;
 
     /* General management */
     
@@ -71,7 +71,7 @@ private:
     std::map< std::pair<int,int>, std::vector<IndexMap> > subsimplex_list;
     
     /* supercell lists */
-    std::map< std::pair<int,int>, std::vector<IndexMap> > supersimplex_list;
+    std::map< std::pair<int,int>, std::vector<std::list<int>> > supersimplex_list;
     
 };
 
