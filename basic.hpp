@@ -29,21 +29,21 @@ inline int kronecker( int i, int j )
 template<typename T>
 T factorial( const T& n )
 {
-	if( n == 0 )
-		return 1;
-	else if( n < 0 )
-		assert(false);
-	else
-		return factorial<T>(n-1);
+    if( n == 0 )
+        return 1;
+    else if( n < 0 )
+        assert(false);
+    else
+        return factorial<T>(n-1);
 }
 
 template<typename T>
 T absolute( const T& n )
 {
-	if( n >= 0 )
-		return n;
-	else
-		return -n;
+    if( n >= 0 )
+        return n;
+    else
+        return -n;
 }
 
 int binomial(int,int);
@@ -52,17 +52,17 @@ int binomial(int,int);
 template<typename T>
 T binomial( const T& n, const T& k )
 {
-	assert( 0 <= n );
-	assert( 0 <= k && k <= n );
-	return factorial(n) / ( factorial(k) * factorial(n-k) );
+    assert( 0 <= n );
+    assert( 0 <= k && k <= n );
+    return factorial(n) / ( factorial(k) * factorial(n-k) );
 }
 
 
 static inline int integerpower( int base, int exponent )
 {
-	assert( exponent >= 0 );
-	if( exponent == 0 ) return 1;
-	return base * integerpower( base, exponent - 1 );
+    assert( exponent >= 0 );
+    if( exponent == 0 ) return 1;
+    return base * integerpower( base, exponent - 1 );
 }
 
 
@@ -72,7 +72,7 @@ typedef clock_t timestamp;
 
 inline timestamp gettimestamp()
 {
-	return CLOCKS_PER_SEC * static_cast<double>(clock()); 
+    return CLOCKS_PER_SEC * static_cast<double>(clock()); 
 }
 
 
@@ -81,23 +81,23 @@ void mergeelementsinsortedlist
 ( std::list<T>& L, 
   std::function<T( const T&, const T& )> merge,
   std::function<bool( const T&, const T& )> compare
-)
-{
-	typename std::list<T>::iterator it = L.begin();
-	while( it != L.end() ){
-		
-		typename std::list<T>::iterator now = it; 
-		typename std::list<T>::iterator next = ++it;
-		
-		if( next == L.end() ) return;
-		
-		if( compare( *it, *next ) ) {
-			*now = merge( *now, *next );
-			L.erase( next );
-			it = now;
-		} 
-		
-	}
+) {
+    typename std::list<T>::iterator it = L.begin();
+    while( it != L.end() ){
+
+        typename std::list<T>::iterator now = it; 
+        typename std::list<T>::iterator next = ++it;
+
+        if( next == L.end() ) return;
+
+        if( compare( *it, *next ) )
+        {
+            *now = merge( *now, *next );
+            L.erase( next );
+            it = now;
+        } 
+
+    }
 }
 
 

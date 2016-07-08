@@ -15,7 +15,7 @@ class MultiIndex
 
 	public:
 	
-		MultiIndex( IndexRange ir );
+		MultiIndex( const IndexRange& ir );
 		
 		void check() const;
 		void print( std::ostream& ) const;

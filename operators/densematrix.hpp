@@ -13,7 +13,7 @@ public LinearOperator /* every matrix is a linear operator */
 {
 
     public:
-	
+        
         DenseMatrix(int,int);
         virtual ~DenseMatrix();
         

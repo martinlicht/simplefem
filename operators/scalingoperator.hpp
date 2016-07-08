@@ -10,22 +10,23 @@ class ScalingOperator:
 public LinearOperator /* every matrix is a linear operator */
 {
 
-	public:
-		
-		explicit ScalingOperator( int, Float s );
-		virtual ~ScalingOperator();
-		
-		virtual void check() const override;
-		virtual void print( std::ostream& ) const override;
-		
-                Float getscaling();
-		void setscaling( Float s );
-		
-		virtual void applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const override;
-		
-	private:
-	
-		Float scaling;
+    public:
+
+        explicit ScalingOperator( int, Float s );
+        virtual ~ScalingOperator();
+
+        virtual void check() const override;
+        virtual void print( std::ostream& ) const override;
+
+        Float getscaling();
+        void setscaling( Float s );
+
+        virtual void applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const override;
+
+    private:
+
+        Float scaling;
+    
 };
   
   
