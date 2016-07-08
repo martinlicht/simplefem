@@ -27,6 +27,13 @@ public:
     SimplicialMesh( int dim, int outerdim );
     virtual ~SimplicialMesh();
 
+    SimplicialMesh( 
+        int dim, int outerdim,
+        const Coordinates& coords,
+        std::map< std::pair<int,int>, std::vector<IndexMap> >& sub,
+        std::map< std::pair<int,int>, std::vector<std::list<int>> >& super 
+    );
+    
     virtual void check() const;
 
     virtual void print( std::ostream& out ) const;

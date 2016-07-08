@@ -26,11 +26,27 @@ SimplicialMesh::SimplicialMesh( int dim, int outerdim )
     subsimplex_list(),
     supersimplex_list()
 {
-    // FIXME: Write constructor 
+    // FIXME: Write minimal constructor 
     
     // there is a n->0 subsimplex list 
     auto key_n_0 = std::make_pair(dim,0);
     subsimplex_list.insert( std::make_pair( key_n_0, std::vector<IndexMap>() ) );
+}
+
+
+SimplicialMesh::SimplicialMesh( int dim, int outerdim,
+    const Coordinates& coords,
+    std::map< std::pair<int,int>, std::vector<IndexMap> >& sub,
+    std::map< std::pair<int,int>, std::vector<std::list<int>> >& super 
+)
+:
+    innerdimension(dim),
+    outerdimension(outerdim),
+    coordinates(coords),
+    subsimplex_list(sub),
+    supersimplex_list(super)
+{
+    // TODO: Check whether this constructor is complete
 }
 
 
@@ -49,6 +65,25 @@ void SimplicialMesh::print( std::ostream& os ) const
 {
     os << "Printe Mesh!" << std::endl;
 }
+
+
+
+
+    
+    
+/* Manage mesh data */
+
+
+void SimplicialMesh::addfrom( const SimplicialMesh& )
+{
+    // FIXME: add code 
+}
+
+
+
+
+
+
 
 
 /* Element Access */
@@ -228,66 +263,6 @@ void SimplicialMesh::buildsupersimplexlist( int from, int to )
     
 }
 
-
-    
-    
-/* Construction of a concrete mesh */
-
-void SimplicialMesh::addfromstream( std::istream& in )
-{
-    // FIXME: add code 
-}
-
-void SimplicialMesh::addfrom( const SimplicialMesh& )
-{
-    // FIXME: add code 
-}
-
-void SimplicialMesh::addunitcube( const FloatVector&, Float )
-{
-    // TODO: Kuhn triangulatin of unit cube 
-    // * Lade die Liste der Permutationen
-    // * Rename this method to KuhnTriangulation
-    // * make it a static method
-    // Lade die 2^n verschiedenen vertices 
-    // Erstelle die n simplices mittels iteration ueber die Permutationen
-    
-    assert( innerdimension == outerdimension );
-    
-    Coordinates coords( outerdimension, 1 << outerdimension );
-    for( int v = 0; v < ( 1 << outerdimension ); v++ )
-        for( int p = 0; p < outerdimension; p++ )
-            coords.getvector(v).setentry( p, ( v >> p ) % 2 );
-
-    IndexRange ir( 0, outerdimension-1 );
-    std::vector<IndexMap> perms = generatePermutations( ir );
-    
-    std::vector<IndexMap> newsimplices( perms.size(), 
-                                        IndexMap( IndexRange(0,innerdimension), 
-                                                  IndexRange(0,coords.getnumber()-1)
-                                                )
-                                        );
-    int picounter=0;
-    for( auto pi = perms.begin(); pi != perms.end(); pi++, picounter++ )
-    {
-        int index = 0;
-
-        std::vector<int> newsimplex(innerdimension+1);
-        newsimplex[0] = index;
-
-        for( int p = 1; p < innerdimension+1; p++ ) {
-            index += 1 << (*pi)[p];
-            newsimplex[p] = index;
-        }
-        
-        newsimplices[picounter] = IndexMap( IndexRange(0,innerdimension),
-                                            IndexRange(0,coords.getnumber()-1),
-                                            newsimplex );
-    }
-    
-    // FIXME: Koordinaten und Simplizes verarbeiten 
-    
-}
 
 
     
