@@ -25,14 +25,14 @@
 SimplicialMesh UnitCubeTriangulation( int innerdim, int outerdim )
 {
 
-    // TODO: Kuhn triangulatin of unit cube 
+    // NOTE: Kuhn triangulatin of unit cube 
     // * Lade die Liste der Permutationen
     // * Rename this method to KuhnTriangulation
     // * make it a static method
     // Lade die 2^n verschiedenen vertices 
     // Erstelle die n simplices mittels iteration ueber die Permutationen
     
-    assert( innerdim <= outerdim     );
+    assert( innerdim <= outerdim );
     
     Coordinates coords( outerdim, 1 << innerdim );
     for( int v = 0; v < ( 1 << innerdim ); v++ ) {
@@ -50,6 +50,7 @@ SimplicialMesh UnitCubeTriangulation( int innerdim, int outerdim )
                                                   IndexRange(0,coords.getnumber()-1)
                                                 )
                                         );
+    
     int picounter=0;
     for( auto pi = perms.begin(); pi != perms.end(); pi++, picounter++ )
     {
@@ -69,6 +70,13 @@ SimplicialMesh UnitCubeTriangulation( int innerdim, int outerdim )
     }
     
     // FIXME: Koordinaten und Simplizes verarbeiten 
+    std::map< std::pair<int,int>, std::vector<IndexMap> > thatthing;
+    thatthing.insert( std::make_pair( std::make_pair(innerdim,0), newsimplices ) );
+    
+    std::map< std::pair<int,int>, std::vector<std::list<int>> > thatotherthing;
+    
+    return SimplicialMesh( innerdim, outerdim, coords, thatthing, thatotherthing );
+    return SimplicialMesh(0,0);
     
 }
 

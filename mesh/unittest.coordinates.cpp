@@ -11,15 +11,16 @@ using namespace std;
 
 int main()
 {
-	cout << "Unit Test for Coordinates" << endl;
-	
-	{
-		
-		
-	}
-	
-	
-	cout << "Finished Unit Test" << endl;
+    cout << "Unit Test for Coordinates" << endl;
 
-	return 0;
+    {
+
+        Coordinates coords(5,0);
+
+    }
+
+
+    cout << "Finished Unit Test" << endl;
+
+    return 0;
 }

@@ -21,8 +21,8 @@ class MultiIndex
 		void print( std::ostream& ) const;
 		
 		IndexRange getIndexRange() const;
-		const int operator[](int) const;
-		int operator[](int);
+		const int& operator[](int) const;
+		int& operator[](int);
 		
 		int absolute() const;
 		int factorial() const;
@@ -93,7 +93,7 @@ inline bool operator!=( const MultiIndex& it, const MultiIndex& mi)
 
 inline bool operator<( const MultiIndex& it, const MultiIndex& mi)
 {
-	return it < mi;
+	return it.smallerthan( mi );
 }
 		
 inline bool operator>( const MultiIndex& it, const MultiIndex& mi)

@@ -18,9 +18,9 @@
 
 
 
-SimplicialMesh::SimplicialMesh( int dim, int outerdim )
+SimplicialMesh::SimplicialMesh( int innerdim, int outerdim )
 :
-    innerdimension(dim),
+    innerdimension(innerdim),
     outerdimension(outerdim),
     coordinates(outerdim,0),
     subsimplex_list(),
@@ -29,18 +29,18 @@ SimplicialMesh::SimplicialMesh( int dim, int outerdim )
     // FIXME: Write minimal constructor 
     
     // there is a n->0 subsimplex list 
-    auto key_n_0 = std::make_pair(dim,0);
+    auto key_n_0 = std::make_pair(innerdim,0);
     subsimplex_list.insert( std::make_pair( key_n_0, std::vector<IndexMap>() ) );
 }
 
 
-SimplicialMesh::SimplicialMesh( int dim, int outerdim,
+SimplicialMesh::SimplicialMesh( int innerdim, int outerdim,
     const Coordinates& coords,
-    std::map< std::pair<int,int>, std::vector<IndexMap> >& sub,
-    std::map< std::pair<int,int>, std::vector<std::list<int>> >& super 
+    const std::map< std::pair<int,int>, std::vector<IndexMap> >& sub,
+    const std::map< std::pair<int,int>, std::vector<std::list<int>> >& super 
 )
 :
-    innerdimension(dim),
+    innerdimension(innerdim),
     outerdimension(outerdim),
     coordinates(coords),
     subsimplex_list(sub),
@@ -220,8 +220,10 @@ void SimplicialMesh::buildsubsimplexlist( int from, int to )
     );
     
     // FIXME: Inefficient implementation
+    
     const std::vector<IndexMap> sigmas = generateSigmas( IndexRange(0,to), IndexRange(0,from) );
     assert( N == sigmas.size() );
+    
     for( int S = 0; S < countsimplices(from); S++ )
     for( int s = 0; s < N; s++ )
     {
@@ -245,7 +247,7 @@ void SimplicialMesh::buildsupersimplexlist( int from, int to )
     assert( hassubsimplexlist(to,0) );
     assert( hassubsimplexlist(to,from) );
     
-    // FIXME: More efficient implementation
+    // FIXME: Inefficient implementation
     
     std::vector<std::list<int>> mynewlist( countsimplices(from), std::list<int>() );
     

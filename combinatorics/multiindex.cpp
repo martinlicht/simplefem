@@ -38,13 +38,13 @@ IndexRange MultiIndex::getIndexRange() const
 	return range;
 }
 
-const int MultiIndex::operator[](int p) const 
+const int& MultiIndex::operator[](int p) const 
 {
 	assert( range.contains(p) );
 	return values[range.place(p)];
 }
 
-int MultiIndex::operator[](int p)
+int& MultiIndex::operator[](int p)
 {
 	assert( range.contains(p) );
 	return values[range.place(p)];

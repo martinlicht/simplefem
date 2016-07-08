@@ -9,13 +9,35 @@
 
 
 
-IndexMap::IndexMap( IndexRange from, IndexRange to )
+IndexMap::IndexMap( const IndexRange& range )
+: IndexMap( range, range )
+{
+    check();
+}
+
+IndexMap::IndexMap( const IndexRange& from, const IndexRange& to )
 : src(from), dest(to), values(0)
 {
     src.check();
     to.check();
     values.resize( src.max() - src.min() + 1 );
+    check();
 }
+
+IndexMap::IndexMap( const IndexRange& range, const std::vector<int>& values )
+: IndexMap( range, range, values )
+{
+    check();
+}
+
+IndexMap::IndexMap( const IndexRange& from, const IndexRange& to, const std::vector<int>& values )
+: src(from), dest(to), values(values)
+{
+    check();
+}
+
+
+
 
 void IndexMap::check() const 
 { 
@@ -136,6 +158,7 @@ IndexMap IndexMap::attachbefore( int to ) const
     IndexMap ret( *this );
     ret.src = IndexRange( src.min() - 1, src.max() );
     ret.values.insert( ret.values.begin(), to );
+    return ret;
 }
 
 

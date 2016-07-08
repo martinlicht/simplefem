@@ -28,10 +28,10 @@ class IndexMap
 	
 	public:
 	
-		IndexMap( IndexRange );
-		IndexMap( IndexRange, IndexRange );
-		IndexMap( IndexRange, std::vector<int> );
-		IndexMap( IndexRange, IndexRange, std::vector<int> );
+		IndexMap( const IndexRange& );
+		IndexMap( const IndexRange&, const IndexRange& );
+		IndexMap( const IndexRange&, const std::vector<int>& );
+		IndexMap( const IndexRange&, const IndexRange&, const std::vector<int>& );
 		
 		void check() const;
 		void print( std::ostream& ) const;

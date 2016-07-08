@@ -9,8 +9,13 @@
 
 
 Coordinates::Coordinates( int dimension, int number )
-: dimension( dimension ), number( number ), data( dimension * number )
-{}
+: 
+    dimension( dimension ), 
+    number( number ), 
+    data( dimension * number )
+{
+    // NOTE: Nothing to do here yet.
+}
 
 
 void Coordinates::check() const

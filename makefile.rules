@@ -1,6 +1,6 @@
 # Global definition of compiler and its flags 
 
-CC = g++ -O3 -fmax-errors=1 -fno-exceptions -std=c++11 -Wall -Wextra -pedantic -Werror=implicit
+CC = clang++ -O3 -fmax-errors=1 -fno-exceptions -std=c++11 -Wall -Wextra -pedantic -Werror=implicit
 
 
 
