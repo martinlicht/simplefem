@@ -14,7 +14,7 @@ Coordinates::Coordinates( int dimension, int number )
     number( number ), 
     data( dimension * number )
 {
-    // NOTE: Nothing to do here yet.
+    check();
 }
 
 
@@ -27,9 +27,10 @@ void Coordinates::check() const
 
 void Coordinates::print( std::ostream& os ) const
 {
-    for( int n = 0; n < number; n++ ) {
+    os << "dimension: " << dimension << " - #vertices: " << number << std::endl;
+	for( int n = 0; n < number; n++ ) {
         for( int d = 0; d < dimension; d++ )
-            os << getdata( n, d );
+            os << getdata( n, d ) << " ";
         os << std::endl;
     }
 }
@@ -61,20 +62,20 @@ int Coordinates::getnumber() const
 }
 
 
-Float Coordinates::getdata( int d, int n ) const
+Float Coordinates::getdata( int n, int d ) const
 {
     assert( 0 <= n && n < number && 0 <= d && d < dimension );
     return data.at( n * dimension + d );
 }
 
-void Coordinates::setdata( int d, int n, Float v )
+void Coordinates::setdata( int n, int d, Float v )
 {
     assert( 0 <= n && n < number && 0 <= d && d < dimension );
     data.at( n * dimension + d ) = v;
 }
 
 
-FloatVector Coordinates::getvector( int n ) const
+FloatVector Coordinates::getvectorclone( int n ) const
 {
     assert( 0 <= n && n < number );
     FloatVector ret( dimension );
@@ -83,7 +84,7 @@ FloatVector Coordinates::getvector( int n ) const
     return ret;
 }
 
-void Coordinates::setvector( int n, const FloatVector& input ) 
+void Coordinates::loadvector( int n, const FloatVector& input ) 
 {
     assert( 0 <= n && n < number );
     for( int d = 0; d < dimension; d++ )
@@ -107,9 +108,9 @@ void Coordinates::shift( const FloatVector& add )
 {
     assert( add.getdimension() == dimension );
     for( int n = 0; n < number; n++ ) {
-        FloatVector temp = getvector( n );
+        FloatVector temp = getvectorclone( n );
         temp += add;
-        setvector( n, temp );
+        loadvector( n, temp );
     }
 }
 
@@ -117,9 +118,9 @@ void Coordinates::lineartransform( const LinearOperator& op )
 {
     assert( op.getdimin() == dimension );
     for( int n = 0; n < number; n++ ) {
-        FloatVector temp = getvector( n );
+        FloatVector temp = getvectorclone( n );
         temp = op * temp;
-        setvector( n, temp );
+        loadvector( n, temp );
     }
 }
 

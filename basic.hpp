@@ -34,7 +34,7 @@ T factorial( const T& n )
     else if( n < 0 )
         assert(false);
     else
-        return factorial<T>(n-1);
+        return n * factorial<T>(n-1);
 }
 
 template<typename T>
@@ -64,6 +64,12 @@ static inline int integerpower( int base, int exponent )
     if( exponent == 0 ) return 1;
     return base * integerpower( base, exponent - 1 );
 }
+
+static inline int getbit( unsigned int value, unsigned int bitnumber )
+{
+    return ( value >> bitnumber ) % 2;
+}
+
 
 
 

@@ -18,7 +18,7 @@
 #include "simplicialmesh.hpp"
 
 
-SimplicialMesh unitcubetriangulation( int innerdim, int outerdim );
+SimplicialMesh UnitCubeTriangulation( int innerdim, int outerdim );
 
 void generateMeshFromStream( std::istream& in );
 

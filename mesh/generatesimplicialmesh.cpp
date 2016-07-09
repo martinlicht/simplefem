@@ -17,7 +17,7 @@
 #include "coordinates.hpp"
 #include "simplicialmesh.hpp"
 
-
+using namespace std;
 
 
 
@@ -34,49 +34,49 @@ SimplicialMesh UnitCubeTriangulation( int innerdim, int outerdim )
     
     assert( innerdim <= outerdim );
     
-    Coordinates coords( outerdim, 1 << innerdim );
-    for( int v = 0; v < ( 1 << innerdim ); v++ ) {
-        for( int p = 0; p < innerdim; p++ )
-            coords.getvector(v).setentry( p, ( v >> p ) % 2 );
+	Coordinates coords( outerdim, integerpower(2,innerdim) );
+    for( int v = 0; v < coords.getnumber(); v++ ) {
+        for( int p = 0; p < innerdim; p++ ) {
+			coords.setdata( v, p, getbit(v,p) );
+		}
         for( int p = innerdim; p < outerdim; p++ )
-            coords.getvector(v).setentry( p, 0. );
+            coords.setdata( v, p, 0. );
     }
-        
-    IndexRange ir( 0, innerdim-1 );
-    std::vector<IndexMap> perms = generatePermutations( ir );
     
-    std::vector<IndexMap> newsimplices( perms.size(), 
+	IndexRange ir( 1, innerdim );
+    std::vector<IndexMap> perms = generatePermutations( ir ); // generateIndexMaps( ir, ir );
+	
+	std::vector<IndexMap> newsimplices( perms.size(), 
                                         IndexMap( IndexRange(0,innerdim), 
                                                   IndexRange(0,coords.getnumber()-1)
                                                 )
                                         );
     
-    int picounter=0;
+	int picounter=0;
     for( auto pi = perms.begin(); pi != perms.end(); pi++, picounter++ )
     {
         int index = 0;
-
-        std::vector<int> newsimplex(innerdim+1);
+		
+		std::vector<int> newsimplex(innerdim+1);
         newsimplex[0] = index;
 
-        for( int p = 1; p < innerdim+1; p++ ) {
-            index += 1 << (*pi)[p];
+        for( int p = 1; p <= innerdim; p++ ) {
+            index += integerpower( 2, (*pi)[p]-1 );
             newsimplex[p] = index;
+			assert( index <= coords.getnumber()-1 );
         }
         
-        newsimplices[picounter] = IndexMap( IndexRange(0,innerdim),
+		newsimplices[picounter] = IndexMap( IndexRange(0,innerdim),
                                             IndexRange(0,coords.getnumber()-1),
                                             newsimplex );
     }
     
-    // FIXME: Koordinaten und Simplizes verarbeiten 
     std::map< std::pair<int,int>, std::vector<IndexMap> > thatthing;
     thatthing.insert( std::make_pair( std::make_pair(innerdim,0), newsimplices ) );
     
     std::map< std::pair<int,int>, std::vector<std::list<int>> > thatotherthing;
     
     return SimplicialMesh( innerdim, outerdim, coords, thatthing, thatotherthing );
-    return SimplicialMesh(0,0);
     
 }
 

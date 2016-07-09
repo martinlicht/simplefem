@@ -31,8 +31,8 @@ class Coordinates
         Float getdata( int, int ) const;
         void setdata( int, int, Float );
         
-        FloatVector getvector( int ) const;
-        void setvector( int, const FloatVector& );
+        FloatVector getvectorclone( int ) const;
+        void loadvector( int, const FloatVector& );
         
         void scale( Float );
         void shift( const FloatVector& );

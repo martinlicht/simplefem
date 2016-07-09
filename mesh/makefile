@@ -15,7 +15,7 @@ generatesimplicialmesh.o: generatesimplicialmesh.hpp generatesimplicialmesh.cpp 
 	$(CC) generatesimplicialmesh.cpp -c -o generatesimplicialmesh.o 
 
 unittest.simplicialmesh.out: simplicialmesh.o simplicialmesh.hpp unittest.simplicialmesh.cpp generatesimplicialmesh.o
-	$(CC) unittest.simplicialmesh.cpp simplicialmesh.o generatesimplicialmesh.o coordinates.o ../operators/*.o ../combinatorics/*.o -o unittest.simplicialmesh.out
+	$(CC) unittest.simplicialmesh.cpp coordinates.o simplicialmesh.o generatesimplicialmesh.o ../operators/*.o ../combinatorics/*.o -o unittest.simplicialmesh.out
 
 all: coordinates.o unittest.coordinates.out simplicialmesh.o unittest.simplicialmesh.out generatesimplicialmesh.o
 

@@ -93,6 +93,11 @@ static inline int countsubsimplices( int n, int k )
 
 
 
+inline std::ostream& operator<<( std::ostream& os, const SimplicialMesh& sm )
+{
+    sm.print( os );
+    return os;
+}
 
 
 #endif

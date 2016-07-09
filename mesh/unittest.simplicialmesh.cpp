@@ -17,9 +17,11 @@ int main()
 	
 	{
 		
+		SimplicialMesh M = UnitCubeTriangulation(2,2);
+		
+		cout << M << endl;
 		
 	}
-	
 	
 	cout << "Finished Unit Test" << endl;
 

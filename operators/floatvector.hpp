@@ -62,57 +62,57 @@ class FloatVector
  *
  */
 	
-inline FloatVector operator+( const FloatVector& V )
+inline FloatVector operator+( const FloatVector& vec )
 {
-    return V;
+    return vec;
 }
 
-inline FloatVector operator-( const FloatVector& V )
+inline FloatVector operator-( const FloatVector& vec )
 {
-    FloatVector ret( V, -1. ); 
+    FloatVector ret( vec, -1. ); 
     return ret;
 }
 
 /* Scaling operations */ 
 
-inline FloatVector operator*=( FloatVector& V, Float scaling )
+inline FloatVector operator*=( FloatVector& vec, Float scaling )
 {
-    V.scale( scaling );
-    return V;
+    vec.scale( scaling );
+    return vec;
 }
 	
-inline FloatVector operator/=( FloatVector& V, Float scaling )
+inline FloatVector operator/=( FloatVector& vec, Float scaling )
 {
-    V.scale( 1. / scaling );
-    return V;
+    vec.scale( 1. / scaling );
+    return vec;
 }
 
 /* Adding and Subtracting operations */ 
 
-inline FloatVector operator+=( FloatVector& V, const FloatVector& Vsrc )
+inline FloatVector operator+=( FloatVector& vec, const FloatVector& src )
 {
-    V.adddatafrom( Vsrc );
-    return V;
+    vec.adddatafrom( src );
+    return vec;
 }
 
-inline FloatVector operator-=( FloatVector& V, const FloatVector& Vsrc )
+inline FloatVector operator-=( FloatVector& vec, const FloatVector& src )
 {
-    V.adddatafrom( -1., Vsrc );
-    return V;
+    vec.adddatafrom( -1., src );
+    return vec;
 }	
 	
-inline FloatVector operator+( const FloatVector& V1, const FloatVector& V2 )
+inline FloatVector operator+( const FloatVector& left, const FloatVector& right )
 {
-    FloatVector V( V1 );
-    V += V2;
-    return V;
+    FloatVector vec( left );
+    vec += right;
+    return vec;
 }
 
-inline FloatVector operator-( const FloatVector& V1, const FloatVector& V2 )
+inline FloatVector operator-( const FloatVector& left, const FloatVector& right )
 {
-    FloatVector V( V1 );
-    V -= V2; 
-    return V;
+    FloatVector vec( left );
+    vec -= right; 
+    return vec;
 }	
 
 inline FloatVector operator*( Float s, const FloatVector& vec )
@@ -127,20 +127,20 @@ inline FloatVector operator/( const FloatVector& vec, Float s )
     return ret;
 }
 
-inline Float operator*( const FloatVector& V1, const FloatVector& V2 )
+inline Float operator*( const FloatVector& left, const FloatVector& right )
 {
-    assert( V1.getdimension() == V2.getdimension() );
+    assert( left.getdimension() == right.getdimension() );
     Float ret = 0.;
-    for( int p = 0; p < V1.getdimension(); p++ )
-        ret += V1.getentry(p) * V2.getentry(p);
+    for( int p = 0; p < left.getdimension(); p++ )
+        ret += left.getentry(p) * right.getentry(p);
     return ret;
 }	
 
 
 /* Output stream notation */
-inline std::ostream& operator<<( std::ostream& out, const FloatVector& V )
+inline std::ostream& operator<<( std::ostream& out, const FloatVector& vec )
 {
-    V.print( out );
+    vec.print( out );
     return out;
 }	
  

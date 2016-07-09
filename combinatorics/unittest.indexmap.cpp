@@ -34,6 +34,7 @@ int main()
 		IndexRange vorne( 2,3 );
 		IndexRange hinten( 0,4 );
 		
+		cout << "Abbildungen" << endl;
 		IndexMap inj( vorne, hinten );
 		IndexMap sur( hinten, vorne );
 		cout << "daten laden..." << endl;

@@ -19,7 +19,8 @@ generateIndexMaps( const IndexRange& from, const IndexRange& to )
 		for( int digit = 0; digit < from.getlength(); digit++ ) {
 			ret[it][ from.min() + digit ] 
 			=
-			( num / integerpower( to.getlength(), digit ) ) % to.getlength();
+			to.min() + 
+			( it / integerpower( to.getlength(), digit ) ) % ( to.getlength() );
 		}
 	}
 	return ret;
@@ -47,7 +48,7 @@ std::vector<IndexMap>
 generatePermutations( const IndexRange& ir )
 {
 	std::vector<IndexMap> allmappings = generateIndexMaps( ir, ir );
-	std::vector<IndexMap> ret( factorial( ir.getlength() ), IndexMap(ir,ir) );
+	std::vector<IndexMap> ret( factorial( ir.getlength() ), IndexMap(ir) );
 	std::copy_if( allmappings.begin(), allmappings.end(), ret.begin(),
 		[]( const IndexMap& im ) -> bool { return im.isbijective(); }
 		);

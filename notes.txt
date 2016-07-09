@@ -7,5 +7,13 @@
  
  * YES: Maintainability, Flexibility, Produce qualitative results
  * NO: Performance, industry
- * NOT YET: parallel,
+
+ * Features for the future:
+ * * ( Learn VTK and ParaView ) (2d)
+ * * VTK output of meshes (1d)
+ * * mesh refinement in several dimensions (10h)
+ * * product operators, operator block matrices (5h)
+ * * better preconditioners (4h)
+ * * move semantics for floatvectors and densematrices (3h)
+ * * parallelism (lots and lots)
  

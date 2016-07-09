@@ -19,12 +19,12 @@ public:
     virtual void solve( FloatVector&, const FloatVector& ) const override;
     
     void iterationStart( const FloatVector& x, const FloatVector& b, 
-                                            FloatVector& r, FloatVector& d, FloatVector& Ar, FloatVector& Ad,
-                                            Float& rAnorm ) const;
+                         FloatVector& r, FloatVector& d, FloatVector& Ar, FloatVector& Ad,
+                         Float& rAnorm ) const;
 
     void iterationStep( FloatVector& x,
-                                            FloatVector& r, FloatVector& d, FloatVector& Ar, FloatVector& Ad,
-                                            Float& rAnorm, FloatVector& p ) const;
+                        FloatVector& r, FloatVector& d, FloatVector& Ar, FloatVector& Ad,
+                        Float& rAnorm, FloatVector& p ) const;
     
     explicit ConjugateResidualMethod( const LinearOperator& op );
     virtual ~ConjugateResidualMethod();

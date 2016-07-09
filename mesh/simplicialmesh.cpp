@@ -26,8 +26,6 @@ SimplicialMesh::SimplicialMesh( int innerdim, int outerdim )
     subsimplex_list(),
     supersimplex_list()
 {
-    // FIXME: Write minimal constructor 
-    
     // there is a n->0 subsimplex list 
     auto key_n_0 = std::make_pair(innerdim,0);
     subsimplex_list.insert( std::make_pair( key_n_0, std::vector<IndexMap>() ) );
@@ -64,6 +62,8 @@ void SimplicialMesh::check() const
 void SimplicialMesh::print( std::ostream& os ) const
 {
     os << "Printe Mesh!" << std::endl;
+	os << "Coordinates: " << coordinates;
+	// FIXME: Ausgabe der subsimplexlisten und so 
 }
 
 

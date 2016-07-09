@@ -16,11 +16,10 @@ IndexMap::IndexMap( const IndexRange& range )
 }
 
 IndexMap::IndexMap( const IndexRange& from, const IndexRange& to )
-: src(from), dest(to), values(0)
+: src(from), dest(to), values( src.max() - src.min() + 1, to.min() )
 {
     src.check();
     to.check();
-    values.resize( src.max() - src.min() + 1 );
     check();
 }
 
@@ -50,11 +49,10 @@ void IndexMap::check() const
 
 void IndexMap::print( std::ostream& os ) const 
 {
-    os << "From" << std::endl
-        << getSourceRange() << "To" << std::endl
-        << getDestRange() << std::endl;
+    os << "From" << std::endl << getSourceRange();
+    os << "To" << std::endl << getDestRange();
     for( int i = getSourceRange().min(); i <= getSourceRange().max(); i++ )
-        os << i << " -> " << (*this)[i] << std::endl;
+        os << i << " -> " << values.at( i - src.min() ) << std::endl;
 }
 
 const IndexRange& IndexMap::getSourceRange() const 
@@ -118,7 +116,7 @@ bool IndexMap::isbijective() const
 bool IndexMap::isstrictlyascending() const
 {
     for( int a = getSourceRange().min(); a < getSourceRange().max(); a++ )
-        if( values.at( a - getDestRange().min() ) >= values.at( a - getDestRange().min() + 1 ) )
+        if( values.at( a - getSourceRange().min() ) >= values.at( a - getSourceRange().min() + 1 ) )
             return false;
     return true;
 }
