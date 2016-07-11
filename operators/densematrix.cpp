@@ -13,7 +13,16 @@
 DenseMatrix::DenseMatrix( int rows, int columns )
 : LinearOperator( rows, columns), entries( rows * columns )
 {
-    
+    check();
+}
+
+DenseMatrix::DenseMatrix( int rows, int columns, std::function<Float(int,int)> generator )
+: LinearOperator( rows, columns), entries( rows * columns )
+{
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimin(); c++ )
+        (*this)(r,c) = generator(r,c);
+    check();
 }
 
 DenseMatrix::~DenseMatrix()
@@ -27,6 +36,7 @@ DenseMatrix::~DenseMatrix()
 void DenseMatrix::check() const 
 {
     LinearOperator::check();
+    assert( getdimout() * getdimin() == entries.size() );
 }
 
 void DenseMatrix::print( std::ostream& os ) const
@@ -71,7 +81,8 @@ const Float& DenseMatrix::operator()( int r, int c ) const
 
 DenseMatrix DenseMatrix::submatrix( const IndexMap& rows, const IndexMap& columns ) const
 {
-    rows.check(); columns.check();
+    rows.check(); 
+    columns.check();
     assert( rows.getSourceRange().min() == 0 );
     assert( rows.getSourceRange().max() <= getdimout() - 1 );
     assert( rows.getDestRange().min() == 0 );

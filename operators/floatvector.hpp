@@ -7,6 +7,7 @@
 
 #include <ostream>
 #include <vector>
+#include <functional>
 
 #include "../basic.hpp"
 
@@ -17,26 +18,19 @@ class FloatVector
     public:
 
         explicit FloatVector( int dim );
+        explicit FloatVector( int dim, Float initivalue );
         FloatVector( const FloatVector& );
         explicit FloatVector( const FloatVector&, Float scaling );
+        FloatVector( int dimension, const std::function<Float(int)>& generator );
+        FloatVector( int dimension, const std::function<Float(int)>& generator, Float scaling );
         // virtual ~FloatVector();
 
         void check() const;
 
         void print( std::ostream& ) const;
 
-        void zero();
-        void random();
-        void scale( Float );
-
-        void copydatafrom( const FloatVector& );
-        void copydatafrom( Float, const FloatVector& );
-
-        void adddatafrom( const FloatVector& );
-        void adddatafrom( Float, const FloatVector& );
-        void adddatafrom( Float, Float, const FloatVector& );
-
-
+        int getdimension() const;
+        
         Float setentry( int, Float );
         Float getentry( int ) const;
 
@@ -44,12 +38,24 @@ class FloatVector
         const Float& operator[]( int ) const;
 
         const std::vector<Float>& getdata() const;
+        
+        void zero();
+        void random();
+        void scale( Float );
 
-        int getdimension() const;
+        void copydatafrom( const FloatVector& );
+        void copydatafrom( Float, const FloatVector& );
 
+        void generatedatafrom( const std::function<Float(int)>& );
+        void generatedatafrom( Float, const std::function<Float(int)>& );
+
+        void adddatafrom( const FloatVector& );
+        void adddatafrom( Float, const FloatVector& );
+        void adddatafrom( Float, Float, const FloatVector& );
+        
     private:
 
-        int dimension;
+        // int dimension;
         std::vector<Float> data;
 
 };

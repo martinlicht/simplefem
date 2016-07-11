@@ -14,29 +14,30 @@
 
 class IndexRange
 {
-
+    
     public:
-
+        
         IndexRange( int, int );
-
+        
         void check() const;
         void print( std::ostream& ) const;
-
+        
         int min() const;
         int max() const;
         int getlength() const;
-
+        
         bool isempty() const;
         bool contains( int ) const;
         bool contains( const IndexRange& subir ) const;
         bool operator== ( const IndexRange& ) const;
-        int place( int ) const;
-
+        int element2position( int ) const;
+        int position2element( int ) const;
+        
     private:
 
         int minimum;
         int maximum;
-
+        
 };
 
 inline std::ostream& operator<<( std::ostream& os, const IndexRange& ir )
@@ -51,12 +52,18 @@ inline std::ostream& operator<<( std::ostream& os, const IndexRange& ir )
 
 inline IndexRange operator|( const IndexRange& left, const IndexRange& right )
 {
-    return IndexRange( std::min( left.min(), right.min() ), std::max( left.max(), right.max() ) );
+    return IndexRange( 
+        std::min( left.min(), right.min() ),
+        std::max( left.max(), right.max() )
+        );
 }
 
 inline IndexRange operator&( const IndexRange& left, const IndexRange& right )
 {
-    return IndexRange( std::max( left.min(), right.min() ), std::min( left.max(), right.max() ) );
+    return IndexRange( 
+        std::max( left.min(), right.min() ), 
+        std::min( left.max(), right.max() ) 
+        );
 }
 
 

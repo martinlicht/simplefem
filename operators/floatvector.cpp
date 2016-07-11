@@ -9,88 +9,125 @@
 #include "floatvector.hpp"
 
 FloatVector::FloatVector( int dim )
-: dimension(dim), data(dim)
+:
+ data(dim)
 {
-	zero();
+	check();
+}
+
+FloatVector::FloatVector( int dim, Float initialvalue )
+:
+ data(dim,initialvalue)
+{
+    check();
 }
 
 FloatVector::FloatVector( const FloatVector& src )
-: dimension( src.getdimension() ), data( src.getdimension() )
+: 
+ data( src.getdimension() )
 {
 	copydatafrom( src );
+    check();
 }
 
 FloatVector::FloatVector( const FloatVector& src, Float alpha )
-: dimension( src.getdimension() ), data( src.getdimension() )
+: 
+ data( src.getdimension() )
 {
 	copydatafrom( alpha, src );
+    check();
 }
+
+FloatVector::FloatVector( int dimension, const std::function<Float(int)>& generator )
+: 
+ data( dimension )
+{
+	generatedatafrom( generator );
+    check();
+}
+
+FloatVector::FloatVector( int dimension, const std::function<Float(int)>& generator, Float alpha )
+: 
+ data( dimension )
+{
+	generatedatafrom( alpha, generator );
+    check();
+}
+
+
 
 void FloatVector::check() const 
 {
-	assert( dimension >= 0 );
-	if( dimension == 0 ) std::cout << "WARNING: VECTOR OF DIMENSION ZERO." << std::endl;
+	assert( getdimension() >= 0 );
+	if( getdimension() == 0 )
+        std::cout << "WARNING: VECTOR OF DIMENSION ZERO." << std::endl;
+	assert( getdimension() == data.size() );
 }
 
 void FloatVector::print( std::ostream& output ) const 
 {
-	for( int p = 0; p < dimension; p++ )
+	output << "float vector of dimension: " << getdimension() << std::endl;
+    for( int p = 0; p < getdimension(); p++ )
 		output << p << ": " << getentry(p) << std::endl;
 }
 
-
-
-void FloatVector::zero() 
+int FloatVector::getdimension() const 
 {
-	for( int p = 0; p < dimension; p++ )
-		setentry( p, 0. ); 
-}
-
-void FloatVector::random() 
-{
-	for( int p = 0; p < dimension; p++ )
-		setentry( p, sqrt( rand() ) ); 
-}
-
-void FloatVector::scale( Float alpha ) 
-{
-	for( int p = 0; p < dimension; p++ )
-		setentry( p, alpha * getentry( p ) ); 
+	return data.size();
 }
 
 Float FloatVector::setentry( int p, Float value )
 {
-	assert( 0 <= p && p < dimension );
+	assert( 0 <= p && p < data.size() );
 	data.at(p) = value;
 	return data.at(p);
 }
 
 Float FloatVector::getentry( int p ) const 
 {
-	assert( 0 <= p && p < dimension );
+	assert( 0 <= p && p < data.size() );
 	return data.at(p);
 }
 
 Float& FloatVector::operator[]( int p )
 {
-	assert( 0 <= p && p < dimension );
+	assert( 0 <= p && p < data.size() );
 	return data.at(p);
 }
 
 const Float& FloatVector::operator[]( int p ) const
 {
-	assert( 0 <= p && p < dimension );
+	assert( 0 <= p && p < data.size() );
 	return data.at(p);
 }
 		
-
-	
-int FloatVector::getdimension() const 
+const std::vector<Float>& FloatVector::getdata() const
 {
-	return dimension;
+    return data;
 }
 
+	
 
+
+
+
+void FloatVector::zero() 
+{
+	for( int p = 0; p < getdimension(); p++ )
+		setentry( p, 0. ); 
+}
+
+void FloatVector::random() 
+{
+	for( int p = 0; p < getdimension(); p++ )
+		setentry( p, sqrt( rand() ) ); 
+}
+
+void FloatVector::scale( Float alpha ) 
+{
+	for( int p = 0; p < getdimension(); p++ )
+		setentry( p, alpha * getentry( p ) ); 
+}
 
 void FloatVector::copydatafrom( const FloatVector& source )
 {
@@ -99,9 +136,21 @@ void FloatVector::copydatafrom( const FloatVector& source )
 
 void FloatVector::copydatafrom( Float scaling, const FloatVector& source )
 {
-    assert( dimension == source.getdimension() );
-	for( int p = 0; p < dimension; p++ )
+    assert( getdimension() == source.getdimension() );
+	for( int p = 0; p < getdimension(); p++ )
 		setentry( p, scaling * source.getentry( p ) ); 	
+}
+	
+	
+void FloatVector::generatedatafrom( const std::function<Float(int)>& generator )
+{
+	generatedatafrom( 1., generator );
+}
+
+void FloatVector::generatedatafrom( Float scaling, const std::function<Float(int)>& generator )
+{
+    for( int p = 0; p < getdimension(); p++ )
+		setentry( p, scaling * generator( p ) ); 	
 }
 	
 	
@@ -117,15 +166,11 @@ void FloatVector::adddatafrom( Float scalingsource, const FloatVector& source )
 	
 void FloatVector::adddatafrom( Float scalingself, Float scalingsource, const FloatVector& source )
 {
-    assert( dimension == source.getdimension() );
-	for( int p = 0; p < dimension; p++ )
+    assert( getdimension() == source.getdimension() );
+	for( int p = 0; p < getdimension(); p++ )
 		setentry( p, scalingself * getentry( p ) + scalingsource * source.getentry( p ) ); 	
 }
 	
 
-const std::vector<Float>& FloatVector::getdata() const
-{
-    return data;
-}
 	
 	

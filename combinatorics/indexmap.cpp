@@ -18,6 +18,7 @@ IndexMap::IndexMap( const IndexRange& range )
 IndexMap::IndexMap( const IndexRange& from, const IndexRange& to )
 : src(from), dest(to), values( src.max() - src.min() + 1, to.min() )
 {
+    std::cout << "Index Map initialized without actual values" << std::endl;
     src.check();
     to.check();
     check();
@@ -32,6 +33,20 @@ IndexMap::IndexMap( const IndexRange& range, const std::vector<int>& values )
 IndexMap::IndexMap( const IndexRange& from, const IndexRange& to, const std::vector<int>& values )
 : src(from), dest(to), values(values)
 {
+    check();
+}
+
+IndexMap::IndexMap( const IndexRange& range, const std::function<int(int)>& generator )
+: IndexMap( range, range, generator )
+{
+    check();
+}
+
+IndexMap::IndexMap( const IndexRange& from, const IndexRange& to, const std::function<int(int)>& generator )
+: src(from), dest(to), values( src.max() - src.min() + 1, to.min() )
+{
+    for( int e = src.min(); e <= src.max(); e++ )
+        values.at( src.element2position(e) ) = generator(e);
     check();
 }
 

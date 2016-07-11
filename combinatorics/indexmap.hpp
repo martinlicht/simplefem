@@ -18,45 +18,47 @@
 
 class IndexMap
 {
-
+    
     private:
-
+        
         IndexRange src;
         IndexRange dest;
-
+        
         std::vector<int> values;
-
+        
     public:
-
+        
         IndexMap( const IndexRange& );
         IndexMap( const IndexRange&, const IndexRange& );
         IndexMap( const IndexRange&, const std::vector<int>& );
         IndexMap( const IndexRange&, const IndexRange&, const std::vector<int>& );
-
+        IndexMap( const IndexRange&, const std::function<int(int)>& );
+        IndexMap( const IndexRange&, const IndexRange&, const std::function<int(int)>& );
+        
         void check() const;
         void print( std::ostream& ) const;
-
+        
         const IndexRange& getSourceRange() const;
         const IndexRange& getDestRange() const;
-
+        
         bool isinjective() const;
         bool issurjective() const;
         bool isbijective() const;
         bool isstrictlyascending() const;
-
+        
         int& operator[]( int i );
         const int& operator[]( int i ) const;
         const std::vector<int>& getvalues() const;
-
+        
         IndexMap inverse() const;
-
+        
         IndexMap skip( int ) const;
         IndexMap attachbefore( int ) const;
-
+        
         bool comparablewith( const IndexMap& ) const;
         bool equals( const IndexMap& ) const;
         bool less( const IndexMap& ) const;
-                
+        
 };
 
 

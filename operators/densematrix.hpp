@@ -14,7 +14,8 @@ public LinearOperator /* every matrix is a linear operator */
 
     public:
         
-        DenseMatrix(int,int);
+        DenseMatrix( int rows, int columns );
+        DenseMatrix( int rows, int columns, std::function<Float(int,int)> generator );
         virtual ~DenseMatrix();
         
         virtual void check() const override;

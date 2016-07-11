@@ -57,12 +57,19 @@ bool IndexRange::operator== ( const IndexRange& other ) const
     return this->minimum == other.minimum && this->maximum == other.maximum;
 }
 
-int IndexRange::place( int i ) const
+int IndexRange::element2position( int i ) const
 {
     assert( contains(i) );
     return i - minimum;
 }
 
+int IndexRange::position2element( int i ) const
+{
+    assert( 0 <= i && i <= maximum - minimum );
+    int ret = i + minimum;
+    assert( contains(ret) );
+    return ret;
+}
 
 
 
