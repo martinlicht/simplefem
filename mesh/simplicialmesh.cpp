@@ -35,7 +35,7 @@ SimplicialMesh::SimplicialMesh( int innerdim, int outerdim )
 SimplicialMesh::SimplicialMesh( int innerdim, int outerdim,
     const Coordinates& coords,
     const std::map< std::pair<int,int>, std::vector<IndexMap> >& sub,
-    const std::map< std::pair<int,int>, std::vector<std::list<int>> >& super 
+    const std::map< std::pair<int,int>, std::vector<std::list<int>> >& super
 )
 :
     innerdimension(innerdim),
@@ -114,21 +114,25 @@ const Coordinates& SimplicialMesh::getcoordinates() const
 int SimplicialMesh::countsimplices( int d ) const
 {
     assert( 0 <= d && d <= getinnerdimension() );
-    assert( hassimplexlist(d) );
-    return subsimplex_list.find( std::make_pair(d,0) )->second.size();
+    if( d == 0 ) {
+        return coordinates.getnumber();
+    } else {
+        assert( hassimplexlist(d) );
+        return subsimplex_list.find( std::make_pair(d,0) )->second.size();
+    }
 }
 
 
 const IndexMap SimplicialMesh::getsubsimplices( int dimfrom, int cell, int dimto ) const
 {
-    assert( 0 <= dimfrom && dimfrom <= getinnerdimension() );
-    assert( ! hassimplexlist(dimfrom) );
+    assert( 1 <= dimfrom && dimfrom <= getinnerdimension() );
+    assert( hassimplexlist(dimfrom) );
     assert( 0 <= dimto && dimto < dimfrom );
-    assert( ! hassimplexlist(dimto) );
+    assert( hassimplexlist(dimto) );
     assert( 0 <= cell && cell < countsimplices(dimfrom) );
-    assert( ! hassubsimplexlist(cell,dimto) );
+    assert( hassubsimplexlist(dimfrom,dimto) );
     
-    std::vector<IndexMap> fromto_list = subsimplex_list.find( std::make_pair(cell,dimto) )->second;
+    std::vector<IndexMap> fromto_list = subsimplex_list.find( std::make_pair(dimfrom,dimto) )->second;
     
     IndexMap ret = fromto_list[cell];
     
@@ -138,12 +142,12 @@ const IndexMap SimplicialMesh::getsubsimplices( int dimfrom, int cell, int dimto
 
 const std::list<int> SimplicialMesh::getsupersimplices( int dimfrom, int cell, int dimto ) const
 {
-    assert( 0 <= dimto && dimto <= getinnerdimension() );
-    assert( ! hassimplexlist(dimto) );
+    assert( 1 <= dimto && dimto <= getinnerdimension() );
+    assert( hassimplexlist(dimto) );
     assert( 0 <= dimfrom && dimfrom < dimto );
-    assert( ! hassimplexlist(dimfrom) );
+    assert( hassimplexlist(dimfrom) );
     assert( 0 <= cell && cell < countsimplices(dimfrom) );
-    assert( ! hassupersimplexlist(dimfrom,dimto) );
+    assert( hassupersimplexlist(dimfrom,dimto) );
     
     std::vector<std::list<int>> tempvec = supersimplex_list.find( std::make_pair(dimfrom,dimto) )->second;
     
@@ -156,7 +160,10 @@ const std::list<int> SimplicialMesh::getsupersimplices( int dimfrom, int cell, i
 
 bool SimplicialMesh::hassimplexlist( int d ) const
 {
-    return hassubsimplexlist( d, 0 );
+    if( d == 0 )
+        return true;
+    else 
+        return hassubsimplexlist( d, 0 );
 }
 
 
@@ -180,7 +187,7 @@ bool SimplicialMesh::hassupersimplexlist( int from, int to ) const
 void SimplicialMesh::buildsimplexlist( int dim )
 {
     /* set up the basics */
-    assert( 0 <= dim && dim <= getinnerdimension() );
+    assert( 0 < dim && dim <= getinnerdimension() );
     assert( ! hassimplexlist(dim) );
     std::vector<IndexMap> sigmas
     = generateSigmas( IndexRange(0,dim), IndexRange(0,innerdimension) );

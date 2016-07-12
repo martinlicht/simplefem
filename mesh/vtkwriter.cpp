@@ -50,8 +50,9 @@ void VTK_MeshWriter::writeTopDimensionalCells()
     const int innerdim = mesh.getinnerdimension();
     std::ostream& os = std::cout;
     os << "CELLS " 
-       << mesh.countsimplices(innerdim) 
-       << innerdim+1
+       << mesh.countsimplices(innerdim)
+       << space 
+       << innerdim+1 
        << nl;
     for( int S = 0; S < mesh.countsimplices(innerdim); S++ ) {
         for( int v = 0; v <= innerdim; v++ )

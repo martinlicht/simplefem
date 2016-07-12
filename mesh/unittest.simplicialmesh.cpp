@@ -24,8 +24,8 @@ int main()
 		
         VTK_MeshWriter vtk( M, cout );
         vtk.writePreamble( "Mein erster Test" );
-        // vtk.writeCoordinateBlock();
-        // vtk.writeTopDimensionalCells();
+        vtk.writeCoordinateBlock();
+        vtk.writeTopDimensionalCells();
         
     
 	}

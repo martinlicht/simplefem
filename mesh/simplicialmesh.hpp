@@ -31,7 +31,7 @@ class SimplicialMesh
             int dim, int outerdim,
             const Coordinates& coords,
             const std::map< std::pair<int,int>, std::vector<IndexMap> >& sub,
-            const std::map< std::pair<int,int>, std::vector<std::list<int>> >& super 
+            const std::map< std::pair<int,int>, std::vector<std::list<int>> >& super
         );
         
         virtual void check() const;

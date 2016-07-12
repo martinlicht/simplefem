@@ -17,7 +17,7 @@ generatesimplicialmesh.o: generatesimplicialmesh.hpp generatesimplicialmesh.cpp 
 vtkwriter.o: vtkwriter.hpp vtkwriter.cpp coordinates.o simplicialmesh.o
 	$(CC) vtkwriter.cpp -c -o vtkwriter.o  
 
-unittest.simplicialmesh.out: simplicialmesh.o simplicialmesh.hpp unittest.simplicialmesh.cpp generatesimplicialmesh.o
+unittest.simplicialmesh.out: simplicialmesh.o simplicialmesh.hpp unittest.simplicialmesh.cpp generatesimplicialmesh.o vtkwriter.o
 	$(CC) unittest.simplicialmesh.cpp coordinates.o simplicialmesh.o generatesimplicialmesh.o vtkwriter.o ../operators/*.o ../combinatorics/*.o -o unittest.simplicialmesh.out
 
 all: coordinates.o unittest.coordinates.out simplicialmesh.o unittest.simplicialmesh.out generatesimplicialmesh.o vtkwriter.o
