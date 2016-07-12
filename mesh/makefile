@@ -14,10 +14,13 @@ simplicialmesh.o: simplicialmesh.hpp simplicialmesh.cpp coordinates.o
 generatesimplicialmesh.o: generatesimplicialmesh.hpp generatesimplicialmesh.cpp simplicialmesh.o coordinates.o
 	$(CC) generatesimplicialmesh.cpp -c -o generatesimplicialmesh.o 
 
-unittest.simplicialmesh.out: simplicialmesh.o simplicialmesh.hpp unittest.simplicialmesh.cpp generatesimplicialmesh.o
-	$(CC) unittest.simplicialmesh.cpp coordinates.o simplicialmesh.o generatesimplicialmesh.o ../operators/*.o ../combinatorics/*.o -o unittest.simplicialmesh.out
+vtkwriter.o: vtkwriter.hpp vtkwriter.cpp coordinates.o simplicialmesh.o
+	$(CC) vtkwriter.cpp -c -o vtkwriter.o  
 
-all: coordinates.o unittest.coordinates.out simplicialmesh.o unittest.simplicialmesh.out generatesimplicialmesh.o
+unittest.simplicialmesh.out: simplicialmesh.o simplicialmesh.hpp unittest.simplicialmesh.cpp generatesimplicialmesh.o
+	$(CC) unittest.simplicialmesh.cpp coordinates.o simplicialmesh.o generatesimplicialmesh.o vtkwriter.o ../operators/*.o ../combinatorics/*.o -o unittest.simplicialmesh.out
+
+all: coordinates.o unittest.coordinates.out simplicialmesh.o unittest.simplicialmesh.out generatesimplicialmesh.o vtkwriter.o
 
 clean:
 	rm *.exe *.o *.gch *.exe.stackdump *.out 

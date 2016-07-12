@@ -7,6 +7,7 @@
 #include "coordinates.hpp"
 #include "simplicialmesh.hpp"
 #include "generatesimplicialmesh.hpp"
+#include "vtkwriter.hpp"
 
 
 using namespace std;
@@ -21,7 +22,15 @@ int main()
 		
 		cout << M << endl;
 		
+        VTK_MeshWriter vtk( M, cout );
+        vtk.writePreamble( "Mein erster Test" );
+        // vtk.writeCoordinateBlock();
+        // vtk.writeTopDimensionalCells();
+        
+    
 	}
+    
+        
 	
 	cout << "Finished Unit Test" << endl;
 
