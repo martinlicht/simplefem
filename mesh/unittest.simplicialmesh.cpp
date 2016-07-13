@@ -3,6 +3,8 @@
 /**/
 
 #include <iostream>
+#include <fstream>
+
 #include "../basic.hpp"
 #include "coordinates.hpp"
 #include "simplicialmesh.hpp"
@@ -21,13 +23,19 @@ int main()
 		SimplicialMesh M = UnitCubeTriangulation(2,2);
 		
 		cout << M << endl;
-		cout << std::flush;
-        VTK_MeshWriter vtk( M, cout );
-        cout << string("Hallo") << endl;
-        vtk.writePreamble( "Mein erster Test" );
-        vtk.writeCoordinateBlock();
-        vtk.writeTopDimensionalCells();
-        cout << endl;
+
+        fstream fs( "./gitter.vtk", std::fstream::out );
+        
+        {
+            
+            VTK_MeshWriter vtk( M, fs );
+            vtk.writePreamble( "Mein erster Test" );
+            vtk.writeCoordinateBlock();
+            vtk.writeTopDimensionalCells();
+            
+        }
+        
+        fs.close();
 	}
     
         
