@@ -16,7 +16,7 @@ class VTK_MeshWriter
         
         VTK_MeshWriter( SimplicialMesh& sm, std::ostream& os );
         
-        void writePreamble( const std::string& name );
+        void writePreamble( const char* name );
         
         void writeCoordinateBlock();
         

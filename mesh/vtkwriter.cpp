@@ -9,9 +9,9 @@ VTK_MeshWriter::VTK_MeshWriter( SimplicialMesh& sm, std::ostream& os )
 }
 
 
-void VTK_MeshWriter::writePreamble( const std::string& name )
+void VTK_MeshWriter::writePreamble( const char* name )
 {
-    std::ostream& os = std::cout;
+    // std::ostream& os = std::cout;
     os << "# vtk DataFile Version 3.0" << nl;
     os << name << nl;
     os << "ASCII" << nl;
@@ -21,7 +21,7 @@ void VTK_MeshWriter::writePreamble( const std::string& name )
 
 void VTK_MeshWriter::writeCoordinateBlock()
 {
-    std::ostream& os = std::cout;
+    // std::ostream& os = std::cout;
     os << "POINTS " << mesh.countsimplices(0) << " double" << nl;
     for( int v = 0; v < mesh.countsimplices(0); v++ )
         if( mesh.getouterdimension() == 2 ) {
@@ -48,7 +48,7 @@ void VTK_MeshWriter::writeCoordinateBlock()
 void VTK_MeshWriter::writeTopDimensionalCells()
 {
     const int innerdim = mesh.getinnerdimension();
-    std::ostream& os = std::cout;
+    // std::ostream& os = std::cout;
     os << "CELLS " 
        << mesh.countsimplices(innerdim)
        << space 
@@ -56,7 +56,7 @@ void VTK_MeshWriter::writeTopDimensionalCells()
        << nl;
     for( int S = 0; S < mesh.countsimplices(innerdim); S++ ) {
         for( int v = 0; v <= innerdim; v++ )
-            os << mesh.getsubsimplices( innerdim, S, 0 )[v];
+            os << mesh.getsubsimplices( innerdim, S, 0 )[v] << space;
         os << nl;
     }
     for( int S = 0; S < mesh.countsimplices(innerdim); S++ )
