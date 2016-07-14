@@ -20,6 +20,8 @@
 
 SimplicialMesh UnitCubeTriangulation( int innerdim, int outerdim );
 
+SimplicialMesh UnitSquareTriangulation( int xstep, int ystep );
+
 void generateMeshFromStream( std::istream& in );
 
 

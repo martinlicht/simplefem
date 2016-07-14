@@ -81,6 +81,56 @@ SimplicialMesh UnitCubeTriangulation( int innerdim, int outerdim )
 }
 
 
+
+SimplicialMesh UnitSquareTriangulation( int xstep, int ystep )
+{
+    assert( 1 <= xstep && 1 <= ystep );
+    
+	Coordinates coords( 3, (xstep+1)*(ystep+1) );
+    for( int v = 0; v < coords.getnumber(); v++ ) {
+        coords.setdata( v, 0, v / (ystep+1) );
+        coords.setdata( v, 1, v % (ystep+1) );
+        // coords.setdata( v, 2, ( v / (ystep+1) ) + 0.01 * ( v % (ystep+1) ) );
+        coords.setdata( v, 2, 0. );
+    }
+    
+	std::vector<IndexMap> newsimplices( 2 * xstep * ystep, 
+                                        IndexMap( IndexRange(0,2), 
+                                                  IndexRange(0,coords.getnumber()-1)
+                                                )
+                                        );
+    
+	for( int x = 0; x < xstep; x++ )
+	for( int y = 0; y < ystep; y++ )
+    {
+        int base = 2 * ( x * ystep + y );
+        assert( base + 1 < 2 * xstep * ystep );
+        newsimplices[base+0][0] = ( x + 0 ) * (ystep+1) + y + 0;
+        newsimplices[base+0][1] = ( x + 1 ) * (ystep+1) + y + 0;
+        newsimplices[base+0][2] = ( x + 1 ) * (ystep+1) + y + 1;
+        newsimplices[base+1][0] = ( x + 0 ) * (ystep+1) + y + 0;
+        newsimplices[base+1][1] = ( x + 0 ) * (ystep+1) + y + 1;
+        newsimplices[base+1][2] = ( x + 1 ) * (ystep+1) + y + 1;
+    }
+        
+    std::map< std::pair<int,int>, std::vector<IndexMap> > new_subsimplexlist;
+    new_subsimplexlist.insert( std::make_pair( std::make_pair(2,0), newsimplices ) );
+    
+    std::map< std::pair<int,int>, std::vector<std::list<int>> > dummy_supersimplexlist;
+    
+    return SimplicialMesh( 2, 3, coords, new_subsimplexlist, dummy_supersimplexlist );
+    
+}
+
+
+
+
+
+
+
+
+
+
 void generateMeshFromStream( std::istream& in )
 {
     // TODO: add code 

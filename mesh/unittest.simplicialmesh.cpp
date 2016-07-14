@@ -20,7 +20,8 @@ int main()
 	
 	{
 		
-		SimplicialMesh M = UnitCubeTriangulation(2,2);
+		// SimplicialMesh M = UnitCubeTriangulation(3,3);
+		SimplicialMesh M = UnitSquareTriangulation(10,5);
 		
 		cout << M << endl;
 
