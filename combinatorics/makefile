@@ -2,6 +2,8 @@
 # CC = g++ -O2 -std=c++11 -Wall -Wextra -pedantic
 include ../makefile.rules 
 
+default: all
+
 indexrange.o: indexrange.hpp indexrange.cpp 
 	$(CC) indexrange.cpp -c -o indexrange.o 
 

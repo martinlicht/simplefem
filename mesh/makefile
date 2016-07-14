@@ -2,6 +2,8 @@
 # CC = g++ -O2 -std=c++11 -Wall -Wextra -pedantic
 include ../makefile.rules 
 
+default: all
+
 coordinates.o: coordinates.hpp coordinates.cpp 
 	$(CC) coordinates.cpp -c -o coordinates.o 
 

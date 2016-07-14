@@ -2,6 +2,8 @@
 # CC = g++ -O2 -std=c++11 -Wall -Wextra -pedantic
 include ../makefile.rules 
 
+default: all
+
 floatvector.o: floatvector.hpp floatvector.cpp 
 	$(CC) floatvector.cpp -c -o floatvector.o 
 
