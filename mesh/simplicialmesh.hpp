@@ -14,6 +14,7 @@
 #include "../combinatorics/indexrange.hpp"
 #include "../combinatorics/indexmap.hpp"
 #include "../operators/floatvector.hpp"
+#include "../operators/densematrix.hpp"
 #include "coordinates.hpp"
 
 
@@ -66,7 +67,16 @@ class SimplicialMesh
         void addfrom( const SimplicialMesh& );
         
         void addunitcube( const FloatVector&, Float );
-            
+        
+        /* obtain geometric information */
+        
+        DenseMatrix getLinearPart( int, int ) const;
+        FloatVector getShiftPart( int, int ) const;
+        Float getVolume( int, int ) const;
+        Float getDiameter( int, int ) const;
+        FloatVector getMidpoint( int, int ) const;
+        
+        
     private:
 
         int innerdimension;

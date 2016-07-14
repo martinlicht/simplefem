@@ -14,6 +14,8 @@ public LinearOperator /* every matrix is a linear operator */
 
     public:
         
+        DenseMatrix( int dim );
+        DenseMatrix( int dim, std::function<Float(int,int)> generator );
         DenseMatrix( int rows, int columns );
         DenseMatrix( int rows, int columns, std::function<Float(int,int)> generator );
         virtual ~DenseMatrix();
@@ -23,10 +25,25 @@ public LinearOperator /* every matrix is a linear operator */
         
         virtual void applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const override;
         
+        /* Questions */
+        
+        bool issquare() const;
+        
+        /* Access entries */
+        
         Float get(int,int) const;
         void set(int,int,Float);
         Float& operator()( int, int );
         const Float& operator()( int, int ) const;
+        
+        /* Access rows and columns */
+        
+        FloatVector getrow( int r ) const;
+        void setrow( int r, const FloatVector& row );
+        FloatVector getcolumn( int c ) const;
+        void setcolumn( int c, const FloatVector& column );
+
+        /* Basic manipulation */
         
         void zeromatrix();
         void randommatrix();
@@ -35,25 +52,20 @@ public LinearOperator /* every matrix is a linear operator */
         void set( Float );
         void indexmapping( const IndexMap& );
         
+        /* Special operations */
+        
         DenseMatrix submatrix( const IndexMap& rows, const IndexMap& columns ) const;
         Float determinant() const;
-        
         DenseMatrix adjunctMatrix() const;
         DenseMatrix transpose() const;
-        // DenseMatrix inverse() const;
-        // void gaussfactorization( DenseMatrix&, DenseMatrix&, DenseMatrix&, DenseMatrix&, Float& ) const;
-
-        FloatVector getrow( int r ) const;
-        void setrow( int r, const FloatVector& row );
-        FloatVector getcolumn( int c ) const;
-        void setcolumn( int c, const FloatVector& column );
-
+        
+        /* Arithmetic operations */
+        
         void add( const DenseMatrix& );
         void add( Float, const DenseMatrix& );
         void add( Float, Float, const DenseMatrix& );
         static DenseMatrix MatrixMult( const DenseMatrix&, const DenseMatrix& );
         
-        bool issquare() const;
         
     private:
 	

@@ -52,6 +52,9 @@ class FloatVector
         void adddatafrom( const FloatVector& );
         void adddatafrom( Float, const FloatVector& );
         void adddatafrom( Float, Float, const FloatVector& );
+
+        Float scalarproductwith( const FloatVector& ) const;
+        Float norm() const;
         
     private:
 
@@ -135,11 +138,12 @@ inline FloatVector operator/( const FloatVector& vec, Float s )
 
 inline Float operator*( const FloatVector& left, const FloatVector& right )
 {
-    assert( left.getdimension() == right.getdimension() );
-    Float ret = 0.;
-    for( int p = 0; p < left.getdimension(); p++ )
-        ret += left.getentry(p) * right.getentry(p);
-    return ret;
+    // assert( left.getdimension() == right.getdimension() );
+    // Float ret = 0.;
+    // for( int p = 0; p < left.getdimension(); p++ )
+        // ret += left.getentry(p) * right.getentry(p);
+    // return ret;
+    return left.scalarproductwith( right );
 }	
 
 

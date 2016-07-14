@@ -170,7 +170,21 @@ void FloatVector::adddatafrom( Float scalingself, Float scalingsource, const Flo
 	for( int p = 0; p < getdimension(); p++ )
 		setentry( p, scalingself * getentry( p ) + scalingsource * source.getentry( p ) ); 	
 }
-	
+
+
+Float FloatVector::scalarproductwith( const FloatVector& right ) const
+{
+    assert( getdimension() == right.getdimension() );
+    Float ret = 0.;
+    for( int p = 0; p < getdimension(); p++ )
+        ret += getentry(p) * right.getentry(p);
+    return ret;
+}
+
+Float FloatVector::norm() const 
+{
+    return sqrt( scalarproductwith( *this ) );
+}
 
 	
 	
