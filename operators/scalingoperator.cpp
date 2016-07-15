@@ -34,7 +34,7 @@ void ScalingOperator::setscaling( Float s )
 	scaling = s;
 }
 
-Float ScalingOperator::getscaling()
+Float ScalingOperator::getscaling() const
 {
 	return scaling;
 }

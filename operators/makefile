@@ -16,6 +16,12 @@ linearoperator.o: linearoperator.hpp linearoperator.cpp
 scalingoperator.o: scalingoperator.hpp scalingoperator.cpp floatvector.hpp linearoperator.hpp
 	$(CC) scalingoperator.cpp -c -o scalingoperator.o 
 
+productoperator.o: productoperator.hpp productoperator.cpp floatvector.hpp linearoperator.hpp scalingoperator.hpp
+	$(CC) productoperator.cpp -c -o productoperator.o 
+
+sumoperator.o: sumoperator.hpp sumoperator.cpp floatvector.hpp linearoperator.hpp scalingoperator.hpp
+	$(CC) sumoperator.cpp -c -o sumoperator.o 
+
 unittest.scalingoperator.out: scalingoperator.o floatvector.o unittest.scalingoperator.cpp 
 	$(CC) unittest.scalingoperator.cpp scalingoperator.o floatvector.o linearoperator.o -o unittest.scalingoperator.out
 	
@@ -49,7 +55,7 @@ densematrix.o: densematrix.hpp densematrix.cpp floatvector.hpp linearoperator.hp
 	$(CC) densematrix.cpp -c -o densematrix.o 
 
 unittest.densematrix.out: densematrix.o floatvector.o linearoperator.o unittest.densematrix.cpp 
-	$(CC) unittest.densematrix.cpp densematrix.o ../combinatorics/indexrange.o ../combinatorics/indexmap.o floatvector.o linearoperator.o -o unittest.densematrix.out 
+	$(CC) unittest.densematrix.cpp densematrix.o ../combinatorics/indexrange.o ../combinatorics/indexmap.o floatvector.o linearoperator.o matrixalgorithm.o productoperator.o -o unittest.densematrix.out 
 
 matrixalgorithm.o: matrixalgorithm.cpp densematrix.hpp floatvector.hpp crm.hpp 
 	$(CC) matrixalgorithm.cpp -c -o matrixalgorithm.o 
@@ -57,7 +63,7 @@ matrixalgorithm.o: matrixalgorithm.cpp densematrix.hpp floatvector.hpp crm.hpp
 unittest.matrixalgorithm.out: matrixalgorithm.o unittest.matrixalgorithm.cpp 
 	$(CC) unittest.matrixalgorithm.cpp densematrix.o matrixalgorithm.o crm.o iterativesolver.o scalingoperator.o ../combinatorics/indexrange.o ../combinatorics/indexmap.o floatvector.o linearoperator.o -o unittest.matrixalgorithm.out
 
-all: floatvector.o unittest.floatvector.out linearoperator.o scalingoperator.o unittest.scalingoperator.out diagonaloperator.o unittest.diagonaloperator.out sparsematrix.o unittest.sparsematrix.out crm.o unittest.crm.out densematrix.o unittest.densematrix.out moretesting matrixalgorithm.o unittest.matrixalgorithm.out
+all: floatvector.o unittest.floatvector.out linearoperator.o scalingoperator.o unittest.scalingoperator.out diagonaloperator.o unittest.diagonaloperator.out sparsematrix.o unittest.sparsematrix.out crm.o unittest.crm.out densematrix.o unittest.densematrix.out moretesting matrixalgorithm.o unittest.matrixalgorithm.out sumoperator.o productoperator.o
 
 clean:
 	rm *.exe *.o *.gch *.exe.stackdump *.out 

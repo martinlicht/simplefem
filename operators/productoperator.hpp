@@ -3,6 +3,7 @@
 
 #include "../basic.hpp"
 #include "linearoperator.hpp"
+#include "scalingoperator.hpp"
 #include "densematrix.hpp"
 
 
@@ -34,7 +35,15 @@ inline ProductOperator operator*( const LinearOperator& left, const LinearOperat
     return ProductOperator( left, right );
 }
 
+inline ProductOperator operator*( Float left, const LinearOperator& right )
+{
+    return ProductOperator( ScalingOperator(right.getdimout(),left), right );
+}
 
+inline ProductOperator operator*( const LinearOperator& left, Float right )
+{
+    return ProductOperator( left, ScalingOperator(left.getdimin(),right) );
+}
 
 
 

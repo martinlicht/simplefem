@@ -18,7 +18,7 @@ public LinearOperator /* every matrix is a linear operator */
         virtual void check() const override;
         virtual void print( std::ostream& ) const override;
 
-        Float getscaling();
+        Float getscaling() const;
         void setscaling( Float s );
 
         virtual void applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const override;
@@ -28,6 +28,16 @@ public LinearOperator /* every matrix is a linear operator */
         Float scaling;
     
 };
+  
+  
+inline ScalingOperator operator*( const ScalingOperator& left, const ScalingOperator& right )
+{
+    assert( left.getdimin() == right.getdimout() );
+    assert( left.getdimout() == right.getdimin() );
+    
+    return ScalingOperator( left.getdimout(), left.getscaling() * right.getscaling() );
+}  
+  
   
   
 

@@ -31,4 +31,27 @@ public LinearOperator /* every matrix is a linear operator */
   
   
 
+inline DiagonalOperator operator*( const DiagonalOperator& left, const DiagonalOperator& right )
+{
+    assert( left.getdimin() == right.getdimout() );
+    assert( left.getdimout() == right.getdimin() );
+    const FloatVector& leftdia = left.getdiagonal();
+    const FloatVector& rightdia = right.getdiagonal();
+    const int dimension = leftdia.getdimension();
+    assert( leftdia.getdimension() == rightdia.getdimension() );
+    
+    return DiagonalOperator( left.getdimout(), 
+                             FloatVector( leftdia.getdimension(), 
+                                          [&](int d) -> Float { 
+                                            assert( 0 <= d && d < dimension ); 
+                                            return leftdia[d] * rightdia[d];
+                                          }
+                                        )
+                           );
+}  
+  
+  
+  
+  
+  
 #endif
