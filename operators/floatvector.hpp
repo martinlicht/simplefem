@@ -29,6 +29,8 @@ class FloatVector
 
         void print( std::ostream& ) const;
 
+        /* information and data access */
+        
         int getdimension() const;
         
         Float setentry( int, Float );
@@ -39,10 +41,14 @@ class FloatVector
 
         const std::vector<Float>& getdata() const;
         
+        /* basic manipulation */
+        
         void zero();
         void random();
         void scale( Float );
 
+        /* arithmetics and assignments */
+        
         void copydatafrom( const FloatVector& );
         void copydatafrom( Float, const FloatVector& );
 
@@ -54,7 +60,13 @@ class FloatVector
         void adddatafrom( Float, Float, const FloatVector& );
 
         Float scalarproductwith( const FloatVector& ) const;
+        
+        /* Calculations */
+        
         Float norm() const;
+        Float maxnorm() const;
+        Float lpnorm( Float ) const;
+        
         
     private:
 
