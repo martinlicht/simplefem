@@ -202,7 +202,7 @@ SimplicialMesh UnitCubeTriangulation3D( int xstep, int ystep, int zstep )
 
 
 
-void generateMeshFromStream( std::istream& in )
+void generateMeshFromStream( std::istream& )
 {
     // TODO: add code 
 }

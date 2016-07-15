@@ -116,5 +116,5 @@ CWARNINGS5.2=-Wabi\
 # -Wunsuffixed-float-constants\
  
 
-CC = g++ -O3 -g -fmax-errors=1 -fno-exceptions -Wno-unused-parameter -Wno-unused-variable -Wno-sign-compare -std=c++11 -Wall -Wextra -pedantic -Werror=implicit
+CC = g++ -O3 -g -fmax-errors=1 -fno-exceptions -Wno-unused-variable -Wno-sign-compare -std=c++11 -Wall -Wextra -pedantic -Werror=implicit
 
