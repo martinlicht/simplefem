@@ -35,4 +35,4 @@ unittests = unittest.indexmap.out unittest.generateindexmaps.out
 all: $(objects) $(unittests) 
 
 clean: 
-	rm *.o *.exe *.exe.stackdump *.gch *.out
+	rm -f *.o *.exe *.exe.stackdump *.gch *.out

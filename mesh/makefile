@@ -36,4 +36,4 @@ all: $(objects) $(unittests)
 
 
 clean:
-	rm *.exe *.o *.gch *.exe.stackdump *.out 
+	rm -f *.exe *.o *.gch *.exe.stackdump *.out 
