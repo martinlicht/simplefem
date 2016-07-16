@@ -37,24 +37,24 @@ crm.o: crm.hpp crm.cpp floatvector.hpp iterativesolver.hpp iterativesolver.o
 matrixalgorithm.o: matrixalgorithm.cpp densematrix.hpp floatvector.hpp crm.hpp 
 	$(CC) matrixalgorithm.cpp -c -o matrixalgorithm.o 
 
-objects: floatvector.o linearoperator.o productoperator.o sumoperator.o scalingoperator.o diagonaloperator.o densematrix.o sparsematrix.o iterativesolver.o crm.o matrixalgorithm.o
+objects = floatvector.o linearoperator.o productoperator.o sumoperator.o scalingoperator.o diagonaloperator.o densematrix.o sparsematrix.o iterativesolver.o crm.o matrixalgorithm.o
 
 
 
 
-unittest.floatvector.out: floatvector.o floatvector.hpp unittest.floatvector.cpp 
+unittest.floatvector.out: floatvector.o floatvector.hpp unittest.floatvector.cpp $(objects) 
 	$(CC) unittest.floatvector.cpp floatvector.o -o unittest.floatvector.out
 
-unittest.scalingoperator.out: unittest.scalingoperator.cpp scalingoperator.o
+unittest.scalingoperator.out: unittest.scalingoperator.cpp scalingoperator.o $(objects)
 	$(CC) unittest.scalingoperator.cpp scalingoperator.o floatvector.o linearoperator.o -o unittest.scalingoperator.out
 	
-unittest.diagonaloperator.out: unittest.diagonaloperator.cpp diagonaloperator.o
+unittest.diagonaloperator.out: unittest.diagonaloperator.cpp diagonaloperator.o $(objects)
 	$(CC) unittest.diagonaloperator.cpp diagonaloperator.o scalingoperator.o floatvector.o linearoperator.o -o unittest.diagonaloperator.out
 	
-unittest.sparsematrix.out: unittest.sparsematrix.cpp sparsematrix.o
+unittest.sparsematrix.out: unittest.sparsematrix.cpp sparsematrix.o $(objects)
 	$(CC) unittest.sparsematrix.cpp ../combinatorics/*.o *.o -o unittest.sparsematrix.out
 
-unittest.crm.out: unittest.crm.cpp crm.o
+unittest.crm.out: unittest.crm.cpp crm.o $(objects)
 	$(CC) unittest.crm.cpp ../combinatorics/*.o *.o -o unittest.crm.out
 
 # moretesting: crm.o floatvector.o moretesting.cpp 
@@ -62,15 +62,15 @@ unittest.crm.out: unittest.crm.cpp crm.o
 # moretesting: moretesting.cpp objects
 #	# $(CC) moretesting.cpp ../combinatorics/*.o *.o -o moretesting
 
-unittest.densematrix.out: unittest.densematrix.cpp densematrix.o 
+unittest.densematrix.out: unittest.densematrix.cpp densematrix.o $(objects) 
 	$(CC) unittest.densematrix.cpp densematrix.o ../combinatorics/indexrange.o ../combinatorics/indexmap.o floatvector.o linearoperator.o matrixalgorithm.o productoperator.o -o unittest.densematrix.out 
 
-unittest.matrixalgorithm.out: unittest.matrixalgorithm.cpp matrixalgorithm.o 
+unittest.matrixalgorithm.out: unittest.matrixalgorithm.cpp matrixalgorithm.o $(objects) 
 	$(CC) unittest.matrixalgorithm.cpp densematrix.o matrixalgorithm.o crm.o iterativesolver.o scalingoperator.o ../combinatorics/indexrange.o ../combinatorics/indexmap.o floatvector.o linearoperator.o -o unittest.matrixalgorithm.out
 
-unittests: unittest.floatvector.out unittest.scalingoperator.out unittest.diagonaloperator.out unittest.sparsematrix.out unittest.crm.out unittest.densematrix.out unittest.matrixalgorithm.out 
+unittests = unittest.floatvector.out unittest.scalingoperator.out unittest.diagonaloperator.out unittest.sparsematrix.out unittest.crm.out unittest.densematrix.out unittest.matrixalgorithm.out 
     
-all: objects unittests
+all: $(objects) $(unittests)
 
 clean:
 	rm *.exe *.o *.gch *.exe.stackdump *.out 
