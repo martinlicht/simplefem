@@ -17,11 +17,11 @@ int main()
 	cout << "Unit Test for Simplicial Mesh" << endl;
 	
 	{
-		
-		SimplicialMesh M = UnitCubeTriangulation(2,2);
-		
-		cout << M << endl;
-		cout << std::flush;
+	
+	SimplicialMesh M = UnitCubeTriangulation(2,2);
+	
+	cout << M << endl;
+	cout << std::flush;
         VTK_MeshWriter vtk( M, cout );
         cout << string("Hallo") << endl;
         vtk.writePreamble( "Mein erster Test" );

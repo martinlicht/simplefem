@@ -60,7 +60,8 @@ void VTK_MeshWriter::writeTopDimensionalCells()
         os << nl;
     }
     for( int S = 0; S < mesh.countsimplices(innerdim); S++ )
-        os << ( innerdim == 3 ? 10 : 5 ) << nl;
+        os << ( innerdim == 3 ? 10 : 5 )
+           << nl;
     
     os << nl;
 }
