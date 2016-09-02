@@ -112,6 +112,15 @@ const int& IndexMap::operator[]( int i ) const
     return values.at( i - src.min() );
 }
 
+
+
+
+bool IndexMap::isempty() const 
+{
+    return getSourceRange().isempty();
+}
+
+
 bool IndexMap::isinjective() const 
 {
     for( int a = src.min(); a <= src.max(); a++ )
@@ -131,7 +140,7 @@ bool IndexMap::issurjective() const
             if( values.at( b - src.min() ) == a )
                 flag = true;
         if( !flag )
-        return false;
+            return false;
     }
     return true;
 }

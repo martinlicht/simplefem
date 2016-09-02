@@ -11,6 +11,15 @@
 
 
 std::vector<IndexMap> 
+generateEmptyMap( const IndexRange& from, const IndexRange& to )
+{
+    assert( from.empty() );
+	std::vector<IndexMap> ret( 1, empty );
+	return ret;
+}
+
+
+std::vector<IndexMap> 
 generateIndexMaps( const IndexRange& from, const IndexRange& to )
 {
 	const int num = integerpower( to.getlength(), from.getlength() );
@@ -26,24 +35,6 @@ generateIndexMaps( const IndexRange& from, const IndexRange& to )
 	return ret;
 }
 
-int signPermutation( const IndexMap& im )
-{
-	assert( im.isbijective() );
-	assert( im.getSourceRange() == im.getDestRange() );
-	const IndexRange& ir = im.getSourceRange();
-	int zaehler = 1;
-	int nenner = 1;
-
-        for( int s = ir.min(); s <= ir.max(); s++ )
-		for( int t = s+1; t <= ir.max(); t++ ) {
-                        nenner *= ( t - s );
-			zaehler *= ( im[ t ] - im[ s ] );
-		}
-	int ret = zaehler / nenner;
-	assert( ret == 1 || ret == -1 );
-	return ret;
-}
-
 std::vector<IndexMap> 
 generatePermutations( const IndexRange& ir )
 {
@@ -52,6 +43,25 @@ generatePermutations( const IndexRange& ir )
 	std::copy_if( allmappings.begin(), allmappings.end(), ret.begin(),
 		[]( const IndexMap& im ) -> bool { return im.isbijective(); }
 		);
+	return ret;
+}
+
+int signPermutation( const IndexMap& im )
+{
+	assert( im.isbijective() );
+	assert( im.getSourceRange() == im.getDestRange() );
+	const IndexRange& ir = im.getSourceRange();
+	int zaehler = 1;
+	int nenner = 1;
+    
+    for( int s = ir.min(); s <= ir.max(); s++ )
+    for( int t = s+1; t <= ir.max(); t++ ) {
+        nenner *= ( t - s );
+        zaehler *= ( im[ t ] - im[ s ] );
+    }
+    assert( zaehler % nenner == 0 );
+	int ret = zaehler / nenner;
+	assert( ret == 1 || ret == -1 );
 	return ret;
 }
 

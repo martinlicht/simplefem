@@ -9,6 +9,12 @@
 #include "indexrange.hpp"
 
 
+/********************
+**** 
+****  Class that describes multiindices over an IndexRange 
+****  basic arithmetic functionality
+**** 
+********************/
 
 class MultiIndex
 {

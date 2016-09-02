@@ -10,6 +10,13 @@
 
 #include "../basic.hpp"
 
+/*****
+**
+**  This class models a range of indices, i.e. integers,
+**  of the form \{ min, min+1, ..., max \}.
+**  The index range may be empty.
+**
+******/
 
 
 class IndexRange

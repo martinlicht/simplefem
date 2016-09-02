@@ -12,7 +12,13 @@
 #include "indexrange.hpp"
 
 
-
+/*****
+**
+**  This class models a mapping of indices.
+**  It has a 'source' and 'target' range.
+**  The mapping may be empty.
+**
+******/
 
 
 
@@ -41,6 +47,7 @@ class IndexMap
         const IndexRange& getSourceRange() const;
         const IndexRange& getDestRange() const;
         
+        bool isempty() const;
         bool isinjective() const;
         bool issurjective() const;
         bool isbijective() const;
