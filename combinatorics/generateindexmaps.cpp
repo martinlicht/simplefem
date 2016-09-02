@@ -13,7 +13,8 @@
 std::vector<IndexMap> 
 generateEmptyMap( const IndexRange& from, const IndexRange& to )
 {
-    assert( from.empty() );
+    assert( from.isempty() );
+    IndexMap empty = IndexMap( from, to );
 	std::vector<IndexMap> ret( 1, empty );
 	return ret;
 }

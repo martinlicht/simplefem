@@ -93,6 +93,14 @@ const Coordinates& SimplicialMesh::getcoordinates() const
 }
 
 
+int SimplicialMesh::countdimensionscounted() const
+{
+    int ret = 0;
+    for( int d = 0; d <= getinnerdimension(); d++ )
+        if( hassimplexlist(d) ) ret++;
+    return ret;
+}
+        
 
 int SimplicialMesh::countsimplices( int d ) const
 {
@@ -257,6 +265,18 @@ void SimplicialMesh::buildsupersimplexlist( int from, int to )
 
 
 
+
+const std::map< std::pair<int,int>, std::vector<IndexMap> >& SimplicialMesh::getsub() const
+{
+    return subsimplex_list;
+}
+
+
+const std::map< std::pair<int,int>, std::vector<std::list<int>> >& SimplicialMesh::getsuper() const
+{
+    return supersimplex_list;
+}
+        
     
     
 DenseMatrix SimplicialMesh::getLinearPart( int dimension, int cell ) const

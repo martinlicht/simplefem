@@ -19,7 +19,7 @@
 
 
 
-void writeSimplicialMesh( const char* filename, const SimplicialMesh& mesh, bool sugar )
+void writeSimplicialMeshPath( const char* filename, const SimplicialMesh& mesh, bool sugar )
 {
     std::fstream myfile;
     myfile.open(filename, std::ios::out );
@@ -47,13 +47,14 @@ void writeSimplicialMesh( std::ostream& out, const SimplicialMesh& mesh, bool su
     out << mesh.getouterdimension() << std::endl;
     
     /* Coordinates */
-    writeCoordinates( out, mesh.getcoordinates() );
+    writeCoordinates( out, mesh.getcoordinates(), sugar );
     
     /* Combinatorial data - count of subsimplices */
+    out << mesh.countdimensionscounted() << std::endl;
     for( int d = 0; d <= mesh.getinnerdimension(); d++ ) {
-        out << mesh.countsimplices(d) << " ";
+        if( !mesh.hassimplexlist( d ) ) continue;
+        out << d << " " << mesh.countsimplices(d) << std::endl;
     }
-    out << std::endl;
     
     /* Combinatorial data - subsimplices */
     if( sugar ) out << "Sub simplex lists" << std::endl;
@@ -68,13 +69,13 @@ void writeSimplicialMesh( std::ostream& out, const SimplicialMesh& mesh, bool su
         if( sugar ) out << "sub simplex list from/to: ";
         out << subentry.first.first << " " << subentry.first.second << std::endl;
         const auto& vecoim = subentry.second;
-        if( sugar ) out << "number of lists: ";
-        out << vecoim.size();
+        if( sugar ) out << "number of subsimplex lists: ";
+        out << vecoim.size() << std::endl;
         for( int supsim = 0; supsim < vecoim.size(); supsim++ ) {
             if( sugar ) out << supsim << ": ";
             int CSS = countsubsimplices( subentry.first.first, subentry.first.second );
             for( int sub = 0; sub < CSS; sub++ ) {
-                out << vecoim.at(supsim).at( sub );
+                out << vecoim.at(supsim).at( sub ) << space;
             }
             out << std::endl;
         }
@@ -112,9 +113,9 @@ void writeSimplicialMesh( std::ostream& out, const SimplicialMesh& mesh, bool su
     /* Finished */
 }
 
-SimplicialMesh readSimplicialMeshPath( std::istream& in )
+SimplicialMesh readSimplicialMesh( std::istream& in )
 {
-    assert( false );
+    
     int innerdimension;
     int outerdimension;
     /* Preamble */
@@ -124,9 +125,14 @@ SimplicialMesh readSimplicialMeshPath( std::istream& in )
     /* Combinatorial data */
     
     /* Combinatorial data - count of subsimplices */
-    std::vector<int> simplexcounter(innerdimension+1);
-    for( int d = 0; d <= innerdimension; d++ )
-        in >> simplexcounter.at(d);
+    std::map<int,int> simplexcounter;
+    int Ncounter;
+    in >> Ncounter;
+    for( int c = 0; c < Ncounter; c++ ) {
+        int dimcounted;
+        in >> dimcounted;
+        in >> simplexcounter[dimcounted];
+    }
     
     /* Combinatorial data - subsimplices */
     std::map< std::pair<int,int>, std::vector<IndexMap> > sub;

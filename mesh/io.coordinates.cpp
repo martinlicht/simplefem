@@ -21,7 +21,7 @@
 
 
 
-void writeCoordinates( const char* filename, const Coordinates& coords, bool sugar )
+void writeCoordinatesPath( const char* filename, const Coordinates& coords, bool sugar )
 {
     std::fstream myfile;
     myfile.open(filename, std::ios::out );
@@ -43,10 +43,10 @@ void writeCoordinates( std::ostream& out, const Coordinates& coords, bool sugar 
 {
     /* Preamble */
     if( sugar ) out << "Writing coordinates" << std::endl;
-    if( sugar ) out << "Dimension of coordinates: " << std::endl;
-    out << coords.getdimension();
+    if( sugar ) out << "Dimension of coordinates: ";
+    out << coords.getdimension() << std::endl;
     if( sugar ) out << "Number of points: " << std::endl;
-    out << coords.getnumber();
+    out << coords.getnumber() << std::endl;
     
     /* data */
     for( int p = 0; p < coords.getnumber(); p++ ) {
@@ -57,7 +57,7 @@ void writeCoordinates( std::ostream& out, const Coordinates& coords, bool sugar 
     }
 }
 
-Coordinates readCoordinatesPath( std::istream& in )
+Coordinates readCoordinates( std::istream& in )
 {
     int dimension;
     int numpoints;

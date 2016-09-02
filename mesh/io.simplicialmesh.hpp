@@ -7,6 +7,8 @@
 #include <map>
 #include <utility>
 #include <iostream>
+#include <istream>
+#include <ostream>
 #include <fstream>
 
 

@@ -56,6 +56,7 @@ class SimplicialMesh
         Coordinates& getcoordinates();
         const Coordinates& getcoordinates() const;
         
+        int countdimensionscounted() const;
         int countsimplices(int) const;
         const IndexMap getsubsimplices( int, int, int ) const;
         const std::list<int> getsupersimplices( int, int, int ) const;
