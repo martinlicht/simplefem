@@ -10,7 +10,16 @@
 
 DiagonalOperator::DiagonalOperator( int dimension, const FloatVector& dia )
 : LinearOperator(dimension,dimension), diagonal(dia)
-{}
+{
+    check();
+}
+		
+DiagonalOperator::DiagonalOperator( int dimension, const ScalingOperator& scaling )
+: LinearOperator(dimension,dimension), 
+  diagonal( FloatVector( dimension, scaling.getscaling() ) )
+{
+    check();
+}
 		
 DiagonalOperator::~DiagonalOperator()
 {
@@ -22,6 +31,8 @@ void DiagonalOperator::check() const
 	std::cout << "Check Diagonal Operator:" << std::endl;
 	diagonal.check();
 	LinearOperator::check();	
+    assert( getdimin() == getdimout() );
+    assert( getdimin() == diagonal.getdimension() );
 }
 
 void DiagonalOperator::print( std::ostream& os ) const  
@@ -40,18 +51,6 @@ const FloatVector& DiagonalOperator::getdiagonal() const
 {
 	return diagonal;
 }
-
-
-
-
-// SparseMatrix DiagonalOperator::cloneSparseMatrix() const 
-// {
-	// SparseMatrix M(dimin,dimout);
-	// for( int p = 0; p < dimin; p++ )
-		// M.addentry( p, p, scaling );
-	// return M;
-// };
-		
 
 
 void DiagonalOperator::applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const 

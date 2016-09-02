@@ -3,10 +3,24 @@
 
 #include <vector>
 
+class DenseMatrix;
+
 #include "../basic.hpp"
 #include "../combinatorics/indexmap.hpp"
 #include "linearoperator.hpp"
+#include "scalingoperator.hpp"
+#include "diagonaloperator.hpp"
+#include "sparsematrix.hpp"
 
+
+
+/************************
+****
+****  Class for Dense Matrices 
+****  - instantiates LinearOperator
+****  - only basic linear arithmetics 
+****  
+************************/
 
 class DenseMatrix:
 public LinearOperator /* every matrix is a linear operator */
@@ -14,10 +28,14 @@ public LinearOperator /* every matrix is a linear operator */
 
     public:
         
-        DenseMatrix( int dim );
+        explicit DenseMatrix( int dim );
         DenseMatrix( int dim, std::function<Float(int,int)> generator );
         DenseMatrix( int rows, int columns );
         DenseMatrix( int rows, int columns, std::function<Float(int,int)> generator );
+        explicit DenseMatrix( const ScalingOperator& );
+        explicit DenseMatrix( const DiagonalOperator& );
+        explicit DenseMatrix( const SparseMatrix& );
+        explicit DenseMatrix( const FloatVector& );
         virtual ~DenseMatrix();
         
         virtual void check() const override;
@@ -43,14 +61,17 @@ public LinearOperator /* every matrix is a linear operator */
         FloatVector getcolumn( int c ) const;
         void setcolumn( int c, const FloatVector& column );
 
-        /* Basic manipulation */
+        /* Generate standard matrices */
         
         void zeromatrix();
         void randommatrix();
         void unitmatrix();
+        void indexmapping( const IndexMap& );
+        
+        /* Basic manipulation */
+        
         void scale( Float );
         void set( Float );
-        void indexmapping( const IndexMap& );
         
         /* Special operations */
         
@@ -65,7 +86,6 @@ public LinearOperator /* every matrix is a linear operator */
         void add( Float, const DenseMatrix& );
         void add( Float, Float, const DenseMatrix& );
         static DenseMatrix MatrixMult( const DenseMatrix&, const DenseMatrix& );
-        
         
     private:
 	

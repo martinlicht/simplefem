@@ -5,6 +5,13 @@
 #include "linearoperator.hpp"
 
 
+/************************
+****
+****  Class for Scalings 
+****  - instantiates LinearOperator
+****  
+************************/
+
 
 class ScalingOperator:
 public LinearOperator /* every matrix is a linear operator */

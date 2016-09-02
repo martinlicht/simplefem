@@ -10,7 +10,35 @@
 
 SparseMatrix::SparseMatrix( int dimout, int dimin )
 : LinearOperator(dimout,dimin)
-{}
+{
+    check();
+}
+
+SparseMatrix::SparseMatrix( const ScalingOperator& matrix )
+: LinearOperator( matrix.getdimout(), matrix.getdimin() )
+{
+    for( int r = 0; r < getdimout(); r++ )
+        entries.push_back( { r, r, matrix.getscaling() } );
+    check();    
+}
+
+SparseMatrix::SparseMatrix( const DiagonalOperator& matrix )
+: LinearOperator( matrix.getdimout(), matrix.getdimin() )
+{
+    for( int r = 0; r < getdimout(); r++ )
+        entries.push_back( { r, r, matrix.getdiagonal().at(r) } );
+    check();    
+}
+
+SparseMatrix::SparseMatrix( const DenseMatrix& matrix )
+: LinearOperator( matrix.getdimout(), matrix.getdimin() )
+{
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimin(); c++ )
+        entries.push_back( { r, c, matrix.get(r,c) } );
+    check();    
+}
+
 
 
 SparseMatrix::~SparseMatrix()
@@ -19,6 +47,10 @@ SparseMatrix::~SparseMatrix()
 void SparseMatrix::check() const
 {
 	LinearOperator::check();
+    for( const MatrixEntry& me : entries ) {
+        assert( 0 <= me.row && me.row < getdimout() );
+        assert( 0 <= me.column && me.column < getdimin() );
+    }
 }
 
 void SparseMatrix::print( std::ostream& os ) const
@@ -43,14 +75,14 @@ void SparseMatrix::applyadd( FloatVector& dest, const FloatVector& add, Float s,
 
 void SparseMatrix::addentry( int r, int c, Float v )
 {
-	MatrixEntry temp;
+	SparseMatrix::MatrixEntry temp;
 	temp.row = r;
 	temp.column = c;
 	temp.value = v;
 	addentry( temp );
 }
 
-void SparseMatrix::addentry( MatrixEntry entry )
+void SparseMatrix::addentry( SparseMatrix::MatrixEntry entry )
 {
 	assert( 0 <= entry.row && entry.row <= getdimout() );
 	assert( 0 <= entry.column && entry.column <= getdimin() );
@@ -65,6 +97,12 @@ int SparseMatrix::getnumberofentries() const
 void SparseMatrix::clearentries()
 {
 	entries.clear();
+}
+
+const std::list<SparseMatrix::MatrixEntry>& SparseMatrix::getentries() const
+// const std::list<MatrixEntry>& SparseMatrix::getentries() const
+{
+	return entries;
 }
 		
 

@@ -10,6 +10,14 @@
 #include "floatvector.hpp"
 
 
+
+/******************
+*** 
+***  Linear Operator on an abstract level 
+***  - applyAdd is a purely virtual function
+***
+******************/
+
 class LinearOperator
 {
 

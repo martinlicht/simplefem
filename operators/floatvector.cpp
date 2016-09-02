@@ -89,6 +89,16 @@ Float FloatVector::getentry( int p ) const
 	return data.at(p);
 }
 
+Float& FloatVector::at( int p )
+{
+    return (*this)[p];
+}
+
+const Float& FloatVector::at( int p ) const
+{
+    return (*this)[p];
+}
+
 Float& FloatVector::operator[]( int p )
 {
 	assert( 0 <= p && p < data.size() );

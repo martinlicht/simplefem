@@ -6,6 +6,14 @@
 #include "densematrix.hpp"
 
 
+/************************
+****
+****  Class for Arithmetic Sum of Operators  
+****  - instantiates LinearOperator
+****  
+************************/
+
+
 
 class SumOperator:
 public LinearOperator /* every matrix is a linear operator */

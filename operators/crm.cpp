@@ -26,9 +26,6 @@
  *   d = r + beta d
  *   Ad = Ar + beta Ad
  * 
- * 
- * 
- * 
  */  
   
 
@@ -180,3 +177,56 @@ void ConjugateResidualMethod::print( std::ostream& os ) const
 	os << "Print Conjugate Residual Method." << std::endl;
 }
 
+
+
+/* 
+ * 
+ * Input: A, b, x
+ *****************
+ * r := b - A x
+ * d := r
+ * Ar = A r
+ * Ad = A d
+ * rho = r . Ar
+ * loop until exit condition
+ *   p = A * Ad
+ *   alpha = rho / Ad . Ad
+ *
+ *   x += alpha d
+ *   r -= alpha Ad
+ *   Ar -= alpha p
+ *   rho' = r. Ar
+ *   beta = rho' / rho
+ *   
+ *   rho = rho'
+ *   d = r + beta d
+ *   Ad = Ar + beta Ad
+ * 
+ */  
+
+ /* 
+ * 
+ * Input: A, b, x
+ *****************
+ * r := b - A x
+ * d := r
+ * Ar = A r
+ * Ad = A d
+ * rho = r . Ar
+ * p = A * Ad 
+ * alpha = rho / Ad . Ad
+ * loop until exit condition
+ *
+ *   x += alpha d
+ *   r -= alpha Ad
+ *   Ar -= alpha p
+ *   rho' = r. Ar
+ *   beta = rho' / rho
+ *   
+ *   rho = rho'
+ *   d = r + beta d
+ *   Ad = Ar + beta Ad
+ *   p = A * Ad
+ *   alpha = rho / Ad . Ad
+ * 
+ */  

@@ -8,6 +8,18 @@
 #include "densematrix.hpp"
 
 
+/***********************
+****  
+****  Algorithm for nonlinear dense matrix operations 
+****  
+****  - Inverse and Determinant 
+****  - Polar Decomposition 
+****  - Cholesky 
+****  - Determinant of Upper triangular 
+****  
+***********************/
+
+
 void InverseAndDeterminant( const DenseMatrix&, DenseMatrix&, Float& );
 
 void PolarDecomposition( const DenseMatrix&, DenseMatrix&, DenseMatrix& );
