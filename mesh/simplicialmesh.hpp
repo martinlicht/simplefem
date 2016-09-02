@@ -18,6 +18,16 @@
 #include "coordinates.hpp"
 
 
+/*******************
+****  
+****  
+****  SimplicialMesh Class 
+****  
+****  - contains Coordinate Class 
+****  - intrinsic and exterior dimension
+****  - provides relation about sub and supersimplices
+****  
+*******************/
 
 
 class SimplicialMesh
@@ -60,13 +70,8 @@ class SimplicialMesh
         void buildsubsimplexlist(int,int);
         void buildsupersimplexlist(int,int);
         
-        /* Construction of a concrete mesh */
-        
-        void addfromstream( std::istream& in );
-        
-        void addfrom( const SimplicialMesh& );
-        
-        void addunitcube( const FloatVector&, Float );
+        const std::map< std::pair<int,int>, std::vector<IndexMap> >& getsub() const;
+        const std::map< std::pair<int,int>, std::vector<std::list<int>> >& getsuper() const;
         
         /* obtain geometric information */
         

@@ -69,23 +69,6 @@ void SimplicialMesh::print( std::ostream& os ) const
 
 
 
-    
-    
-/* Manage mesh data */
-
-
-void SimplicialMesh::addfrom( const SimplicialMesh& )
-{
-    // FIXME: add code 
-}
-
-
-
-
-
-
-
-
 /* Element Access */
 
 int SimplicialMesh::getinnerdimension() const

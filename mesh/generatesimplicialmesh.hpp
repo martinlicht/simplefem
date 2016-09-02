@@ -18,6 +18,21 @@
 #include "simplicialmesh.hpp"
 
 
+
+/*******************
+****  
+****  
+****  Generate example meshes 
+****  
+****  - Unit cube, any dimension, simple triangulation
+****  - Unit cube, 2D + 3D, resolution can be controlled 
+****  - Load mesh from stream 
+****  
+*******************/
+
+
+
+
 SimplicialMesh UnitCubeTriangulation( int innerdim, int outerdim );
 
 SimplicialMesh UnitCubeTriangulation2D( int xstep, int ystep );

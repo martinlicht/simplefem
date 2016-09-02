@@ -9,6 +9,19 @@
 #include "../mesh/simplicialmesh.hpp"
 
 
+/*******************
+****  
+****  
+****  Write a mesh as VTK File 
+****  
+****  - write Preamble, Coordinate Block, Top-dimensional cells
+****  
+****  
+****  
+*******************/
+
+
+
 class VTK_MeshWriter
 {
     

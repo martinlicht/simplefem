@@ -15,10 +15,16 @@ simplicialmesh.o: simplicialmesh.hpp simplicialmesh.cpp coordinates.o
 generatesimplicialmesh.o: generatesimplicialmesh.hpp generatesimplicialmesh.cpp simplicialmesh.o coordinates.o
 	$(CC) generatesimplicialmesh.cpp -c -o generatesimplicialmesh.o 
 
+io.simplicialmesh.o: io.simplicialmesh.hpp io.simplicialmesh.cpp simplicialmesh.o coordinates.o
+	$(CC) io.simplicialmesh.cpp -c -o io.simplicialmesh.o 
+
+io.coordinates.o: io.coordinates.hpp io.coordinates.cpp coordinates.o simplicialmesh.o
+	$(CC) io.coordinates.cpp -c -o io.coordinates.o 
+
 vtkwriter.o: vtkwriter.hpp vtkwriter.cpp coordinates.o simplicialmesh.o
 	$(CC) vtkwriter.cpp -c -o vtkwriter.o  
 
-objects = coordinates.o simplicialmesh.o generatesimplicialmesh.o vtkwriter.o 
+objects = coordinates.o simplicialmesh.o io.simplicialmesh.o io.coordinates.o generatesimplicialmesh.o vtkwriter.o 
 
 
 
