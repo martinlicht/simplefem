@@ -22,6 +22,22 @@ void InverseAndDeterminant( const DenseMatrix& A, DenseMatrix& Ainv, Float& Adet
 }
 
 
+DenseMatrix Inverse( const DenseMatrix& A )
+{
+	DenseMatrix Q( A ), R( A );
+	PolarDecomposition( A, Q, R );
+	return UpperTriangularInverse(R) * Q.transpose();
+}
+
+Float Determinant( const DenseMatrix& A )
+{
+    DenseMatrix Q( A );
+    DenseMatrix R( A );
+    PolarDecomposition( A, Q, R );
+    return UpperTriangularDeterminant( R );
+}
+
+
 void PolarDecomposition( const DenseMatrix& A, DenseMatrix& Q, DenseMatrix& R )
 {
 	
@@ -122,8 +138,36 @@ Float UpperTriangularDeterminant( const DenseMatrix& A )
 }
 
 
+DenseMatrix TensorProduct( const DenseMatrix& left, const DenseMatrix& right )
+{
+    int newrows = left.getdimout() * right.getdimout();
+    int newcols = left.getdimin() * right.getdimin();
+    DenseMatrix ret( newrows, newcols );
+    assert( ret.getdimout() == newrows );
+    assert( ret.getdimin() == newcols );
+    for( int rl = 0; rl < left.getdimout(); rl++ )
+    for( int cl = 0; cl < left.getdimin(); cl++ )
+    for( int rr = 0; rr < right.getdimout(); rr++ )
+    for( int cr = 0; cr < right.getdimin(); cr++ )
+    {
+        ret( rl * right.getdimout() + rr, cl * right.getdimin() + cr )
+        =
+        left( rl, cl ) * right( rr, cr );
+    }
+	return ret;
+}
 
 
+
+DenseMatrix Subdeterminantmatrix( const DenseMatrix& A, int k )
+{
+    assert( A.issquare() );
+    assert( 1 <= k && k <= A.getdimin() );
+    DenseMatrix ret( binomial<int>( A.getdimin(), k) );
+    // TODO: calculate the minors.
+    // (i) list the sigmas (ii) get the submatrices (iii) get the determinants
+    return ret;
+}
 
 
 

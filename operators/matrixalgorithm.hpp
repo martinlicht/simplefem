@@ -16,11 +16,16 @@
 ****  - Polar Decomposition 
 ****  - Cholesky 
 ****  - Determinant of Upper triangular 
+****  - tensor product matrix 
 ****  
 ***********************/
 
 
 void InverseAndDeterminant( const DenseMatrix&, DenseMatrix&, Float& );
+
+DenseMatrix Inverse( const DenseMatrix& );
+
+Float Determinant( const DenseMatrix& );
 
 void PolarDecomposition( const DenseMatrix&, DenseMatrix&, DenseMatrix& );
 
@@ -31,5 +36,11 @@ DenseMatrix CholeskyDecomposition( const DenseMatrix& src );
 DenseMatrix UpperTriangularInverse( const DenseMatrix& );        
 
 Float UpperTriangularDeterminant( const DenseMatrix& A );
+
+DenseMatrix TensorProduct( const DenseMatrix& left, const DenseMatrix& right );
+
+DenseMatrix Subdeterminantmatrix( const DenseMatrix& A, int k );
+
+
 
 #endif
