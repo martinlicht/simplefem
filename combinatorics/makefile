@@ -18,7 +18,10 @@ generateindexmaps.o: generateindexmaps.hpp generateindexmaps.cpp
 multiindex.o: multiindex.hpp multiindex.cpp 
 	$(CC) multiindex.cpp -c -o multiindex.o 
 
-objects = indexrange.o indexmap.o generateindexmaps.o multiindex.o
+generatemultiindices.o: generatemultiindices.hpp generatemultiindices.cpp 
+	$(CC) generatemultiindices.cpp -c -o generatemultiindices.o 
+
+objects = indexrange.o indexmap.o generateindexmaps.o multiindex.o generatemultiindices.o
 
     
     
@@ -28,7 +31,10 @@ unittest.indexmap.out: indexmap.o indexrange.o indexmap.hpp unittest.indexmap.cp
 unittest.generateindexmaps.out: generateindexmaps.o indexmap.o indexrange.o indexmap.hpp unittest.generateindexmaps.cpp 
 	$(CC) unittest.generateindexmaps.cpp generateindexmaps.o indexmap.o indexrange.o -o unittest.generateindexmaps.out
 
-unittests = unittest.indexmap.out unittest.generateindexmaps.out 
+unittest.generatemultiindices.out: generatemultiindices.o indexmap.o indexrange.o multiindex.o unittest.generatemultiindices.cpp 
+	$(CC) unittest.generatemultiindices.cpp generatemultiindices.o multiindex.o indexmap.o indexrange.o -o unittest.generatemultiindices.out
+
+unittests = unittest.indexmap.out unittest.generateindexmaps.out unittest.generatemultiindices.out
     
 
     

@@ -41,7 +41,6 @@ class MultiIndex
 		bool smallerthan( const MultiIndex& ) const;
 		bool equals( const MultiIndex& ) const;
 		
-		
 	private:
 
 		IndexRange range;
@@ -58,28 +57,28 @@ inline std::ostream& operator<<( std::ostream& os, const MultiIndex& mi )
 	return os;
 }
 
-MultiIndex operator+( const MultiIndex& left, int right )
+inline MultiIndex operator+( const MultiIndex& left, int right )
 {
 	MultiIndex ret = left;
 	ret += right;
 	return ret;
 }
 
-MultiIndex operator-( const MultiIndex& left, int right )
+inline MultiIndex operator-( const MultiIndex& left, int right )
 {
 	MultiIndex ret = left;
 	ret -= right;
 	return ret;
 }
 
-MultiIndex operator+( const MultiIndex& left, const MultiIndex& right )
+inline MultiIndex operator+( const MultiIndex& left, const MultiIndex& right )
 {
 	MultiIndex ret = left;
 	ret += right;
 	return ret;
 }
 
-MultiIndex operator-( const MultiIndex& left, const MultiIndex& right )
+inline MultiIndex operator-( const MultiIndex& left, const MultiIndex& right )
 {
 	MultiIndex ret = left;
 	ret -= right;
