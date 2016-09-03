@@ -9,6 +9,7 @@
 #include "../basic.hpp"
 #include "../combinatorics/indexrange.hpp"
 #include "../combinatorics/indexmap.hpp"
+#include "../combinatorics/multiindex.hpp"
 #include "../operators/floatvector.hpp"
 #include "../operators/densematrix.hpp"
 #include "../operators/linearoperator.hpp"
@@ -29,21 +30,31 @@
 
 
 // Calculates the mass matrix for the barycentric polynomials 
-DenseMatrix calculateScalarMassMatrix(
-                int, int, // inner and outer dimension 
-                vector<floatvector>, // vertices of simplex 
-                int, // polynomial degree 
+Float integrateBarycentricPolynomialUnitsimplex( MultiIndex alpha );
+
+
+
+// Calculates the mass matrix for the barycentric polynomials 
+DenseMatrix calculateScalarMassMatrixUnitSimplex(
+                int // polynomial degree 
                 );
 
 // Calculates the mass matrix for the barycentric exterior derivatives 
-DenseMatrix calculateVectorMassMatrix(
+DenseMatrix calculateBarycentricDiffs(
                 int, int, // inner and outer dimension 
-                vector<floatvector> // vertices of simplex 
+                const std::vector<FloatVector>& // vertices of simplex 
+                );
+
+// Calculates the mass matrix for the barycentric exterior derivatives 
+DenseMatrix calculateBDproductMatrix(
+                int, int, // inner and outer dimension 
+                const std::vector<FloatVector>&, // vertices of simplex 
+                int // form degree 
                 );
 
 DenseMatrix calculateElementMassMatrix(
                 int, int, // inner and outer dimension 
-                vector<floatvector>, // vertices of simplex 
+                const std::vector<FloatVector>&, // vertices of simplex 
                 int, // polynomial degree 
                 int // form degree 
                 );

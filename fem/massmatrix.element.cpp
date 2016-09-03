@@ -5,188 +5,90 @@
 #include <vector>
 #include <iterator>
 
-#include "coordinates.hpp"
+#include "../combinatorics/multiindex.hpp"
+#include "../combinatorics/generatemultiindices.hpp"
+#include "massmatrix.element.hpp"
 
 
-Coordinates::Coordinates( int dimension, int number )
-: 
-    dimension( dimension ), 
-    number( number ), 
-    data( dimension * number )
+
+
+Float integrateBarycentricPolynomialUnitsimplex( MultiIndex alpha )
 {
-    check();
-}
-
-
-void Coordinates::check() const
-{
-    assert( dimension >= 0 && number >= 0 );
-}
-
-
-
-void Coordinates::print( std::ostream& os ) const
-{
-    os << "dimension: " << dimension << " - #vertices: " << number << std::endl;
-	for( int n = 0; n < number; n++ ) {
-        for( int d = 0; d < dimension; d++ )
-            os << getdata( n, d ) << " ";
-        os << std::endl;
-    }
-}
-
-
-void Coordinates::read( std::istream& is ) 
-{
-    for( int n = 0; n < number; n++ ) {
-        for( int d = 0; d < dimension; d++ ) {
-            Float temp;
-            is >> temp;
-            setdata( n, d, temp );
-        }
-    }
-}
-		
-
-
-
-
-int Coordinates::getdimension() const
-{
-    return dimension;
-}
-
-int Coordinates::getnumber() const
-{
-    return number;
-}
-
-IndexRange Coordinates::getIndexRange() const
-{
-    return IndexRange( 0, getnumber() - 1 );
-}
-
-
-Float Coordinates::getdata( int n, int d ) const
-{
-    assert( 0 <= n && n < number && 0 <= d && d < dimension );
-    return data.at( n * dimension + d );
-}
-
-void Coordinates::setdata( int n, int d, Float v )
-{
-    assert( 0 <= n && n < number && 0 <= d && d < dimension );
-    data.at( n * dimension + d ) = v;
-}
-
-
-FloatVector Coordinates::getvectorclone( int n ) const
-{
-    assert( 0 <= n && n < number );
-    return getvectorclone( n, 1. );
-}
-
-FloatVector Coordinates::getvectorclone( int n, Float scale ) const
-{
-    assert( 0 <= n && n < number );
-    FloatVector ret( dimension );
-    for( int d = 0; d < dimension; d++ )
-        ret[ d ] = scale * data.at( n * dimension + d );
-    return ret;
-}
-
-void Coordinates::loadvector( int n, const FloatVector& input ) 
-{
-    loadvector( n, input, 1. );
-}
-
-void Coordinates::loadvector( int n, const FloatVector& input, Float scale ) 
-{
-    assert( 0 <= n && n < number );
-    for( int d = 0; d < dimension; d++ )
-        data.at( n * dimension + d ) = scale * input[ d ];
+    int dimension = alpha.getIndexRange().cardinality();
+    return factorial(dimension) * alpha.factorial() 
+            / factorial( dimension + alpha.absolute() );
 }
 
 
 
 
-
-
-
-void Coordinates::scale( Float alpha )
+DenseMatrix calculateScalarMassMatrixUnitSimplex( int dimension, int polydegree )
 {
-    for( int n = 0; n < number; n++ )
-        for( int d = 0; d < dimension; d++ )
-            data.at( n * dimension + d ) *= alpha;
-}
-                                
-void Coordinates::shift( const FloatVector& add )
-{
-    assert( add.getdimension() == dimension );
-    for( int n = 0; n < number; n++ ) {
-        FloatVector temp = getvectorclone( n );
-        temp += add;
-        loadvector( n, temp );
-    }
-}
-
-void Coordinates::lineartransform( const LinearOperator& op )
-{
-    assert( op.getdimin() == dimension );
-    for( int n = 0; n < number; n++ ) {
-        FloatVector temp = getvectorclone( n );
-        temp = op * temp;
-        loadvector( n, temp );
-    }
+    assert( polydegree >= 0 );
+    IndexRange ir( 0, dimension );
+    std::vector<MultiIndex> mis = generateMultiIndices( ir, polydegree );
+    DenseMatrix ret( mis.size() );
+    for( int l = 0; l < mis.size(); l++ ) 
+        for( int r = 0; r < mis.size(); r++ )
+            ret( l, r ) = integrateBarycentricPolynomialUnitsimplex( mis[l] + mis[r] );
+    return ret;        
 }
 
 
 
-void Coordinates::append( const Coordinates& co )
+
+DenseMatrix calculateBarycentricDiffs(
+                int innerdim, int outerdim, 
+                const std::vector<FloatVector>& vertices 
+                )
 {
-    assert( dimension == co.getdimension() );
-    data.insert( this->data.end(), co.data.begin(), co.data.end() );
+    assert( outerdim >= 0 && innerdim >= 0 ); 
+    assert( vertices.size() + 1 == innerdim );
+    
+    DenseMatrix ret( outerdim, innerdim+1 );
+    /* The differentials d\lambda_0, \dots, d\lambda_m of the 
+       barycentric coordinates \lambda_0, \dots, \lambda_m. */
+    /* TODO: Either with Polar decomposition or solving a linear system */
+    /* Probably Polar decomposition is the better choice */
 }
                 
-void Coordinates::append( const FloatVector& v )
+
+                
+                
+DenseMatrix calculateBDproductMatrix(
+                int innerdim, int outerdim,
+                const std::vector<FloatVector>& vertices,
+                int formdegree
+                )
 {
-    assert( dimension == v.getdimension() );
-    const std::vector<Float>& t = v.getdata();
-    data.insert( data.end(), t.begin(), t.end() );
-    number++;
-}
-
-
-
-DenseMatrix Coordinates::getLinearPart( const IndexMap& im ) const
-{
-    assert( im.getDestRange() == getIndexRange() );
+    assert( outerdim >= 0 && innerdim >= 0 ); 
+    assert( vertices.size() + 1 == innerdim );
+    assert( 0 <= formdegree && formdegree <= innerdim );
     
-    IndexRange imsrc = im.getSourceRange();
-    assert( imsrc.min() == 0 && imsrc.max() <= getdimension() );
-    
-    DenseMatrix ret( getdimension(), imsrc.max()-1 );
-    assert( ret.getdimout() == getdimension() );
-    assert( ret.getdimin() == imsrc.max()-1 );
-    
-    for( int p = 1; p <= imsrc.max(); p++ )
-        ret.setcolumn( p-1, 
-            getvectorclone( im[p] ) - getvectorclone( im[0] ) 
-            );
-    
-    return ret;
-}
-
-FloatVector Coordinates::getShiftPart( const IndexMap& im ) const
-{
-    assert( im.getDestRange() == getIndexRange() );
-    IndexRange imsrc = im.getSourceRange();
-    assert( imsrc.min() == 0 && imsrc.max() <= getdimension() );
-    int index = im[0];
-    return getvectorclone( index );
+    DenseMatrix BD = calculateBarycentricDiffs( innerdim, outerdim, vertices );
+    DenseMatrix BDSP = BD.transpose() * BD;
+    return Subdeterminantmatrix( BDSP, formdegree );
 }
 
 
 
 
-
+DenseMatrix calculateElementMassMatrix(
+                int innerdim, int outerdim,
+                const std::vector<FloatVector>& vertices,
+                int polydegree,
+                int formdegree 
+                )
+{
+    assert( outerdim >= 0 && innerdim >= 0 ); 
+    assert( vertices.size() + 1 == innerdim );
+    assert( 0 <= formdegree && formdegree <= innerdim );
+    assert( 0 <= polydegree && polydegree <= innerdim );
+    
+    DenseMatrix poly_part = calculateScalarMassMatrixUnitSimplex( innerdim, polydegree );
+    DenseMatrix form_part = calculateScalarMassMatrixUnitSimplex( innerdim, outerdim, vertices, formdegree );
+    Float volume = simplexvolume( vertices );
+    
+    return volume * MatrixTensorProduct( poly_part, form_part );
+    
+}

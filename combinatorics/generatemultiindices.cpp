@@ -11,10 +11,9 @@
 #include "multiindex.hpp"
 
 
-std::vector<MultiIndex> generateMultiindices( int dimension, int r )
+std::vector<MultiIndex> generateMultiIndices( const IndexRange& ir, int degree )
 {
-    assert( dimension >= 0 );
-    assert( r >= 0 );
+    assert( degree >= 0 );
     std::vector<MultiIndex> ret;
     // TODO: Implement 
     return ret;
