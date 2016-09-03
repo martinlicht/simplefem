@@ -140,6 +140,10 @@ DenseMatrix DenseMatrix::submatrix( const IndexMap& rows, const IndexMap& column
 {
     rows.check(); 
     columns.check();
+    
+    if( getdimin() == 0 || getdimout() == 0 )
+        return *this;
+    
     assert( rows.getSourceRange().min() == 0 );
     assert( rows.getSourceRange().max() <= getdimout() - 1 );
     assert( rows.getDestRange().min() == 0 );
@@ -234,6 +238,8 @@ void DenseMatrix::setcolumn( int c, const FloatVector& column )
 
 void DenseMatrix::indexmapping( const IndexMap& im )
 {
+    if( im.getSourceRange().isempty() )
+        return;
     assert( im.getSourceRange().min() == 0 );
     assert( im.getSourceRange().max() <= getdimin() - 1 );
     assert( im.getDestRange().min() == 0 );

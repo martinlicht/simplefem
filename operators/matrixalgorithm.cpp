@@ -7,6 +7,7 @@
 #include <list>
 #include <cctype>
 
+#include "../combinatorics/generateindexmaps.hpp"
 #include "densematrix.hpp"
 #include "floatvector.hpp"
 #include "crm.hpp"
@@ -138,7 +139,7 @@ Float UpperTriangularDeterminant( const DenseMatrix& A )
 }
 
 
-DenseMatrix TensorProduct( const DenseMatrix& left, const DenseMatrix& right )
+DenseMatrix MatrixTensorProduct( const DenseMatrix& left, const DenseMatrix& right )
 {
     int newrows = left.getdimout() * right.getdimout();
     int newcols = left.getdimin() * right.getdimin();
@@ -162,10 +163,18 @@ DenseMatrix TensorProduct( const DenseMatrix& left, const DenseMatrix& right )
 DenseMatrix Subdeterminantmatrix( const DenseMatrix& A, int k )
 {
     assert( A.issquare() );
-    assert( 1 <= k && k <= A.getdimin() );
-    DenseMatrix ret( binomial<int>( A.getdimin(), k) );
-    // TODO: calculate the minors.
-    // (i) list the sigmas (ii) get the submatrices (iii) get the determinants
+    assert( 0 <= k && k <= A.getdimin() );
+    
+    int n = A.getdimin();
+    IndexRange fromrange = IndexRange( 0, k-1 );
+    IndexRange torange = IndexRange( 0, n-1 );
+    std::vector<IndexMap> sigmas = generateSigmas( fromrange, torange );
+    DenseMatrix ret( sigmas.size() );
+    for( int rim = 0; rim < sigmas.size(); rim++ )
+    for( int cim = 0; cim < sigmas.size(); cim++ )
+    {
+        ret(rim,cim) = A.submatrix( sigmas.at(rim), sigmas.at(cim) ).determinant();
+    }
     return ret;
 }
 

@@ -33,13 +33,13 @@ void PolarDecompositionRepeated( const DenseMatrix& A, DenseMatrix& Q, DenseMatr
 
 DenseMatrix CholeskyDecomposition( const DenseMatrix& src );
 
-DenseMatrix UpperTriangularInverse( const DenseMatrix& );        
+DenseMatrix UpperTriangularInverse( const DenseMatrix& A );        
 
 Float UpperTriangularDeterminant( const DenseMatrix& A );
 
-DenseMatrix TensorProduct( const DenseMatrix& left, const DenseMatrix& right );
+DenseMatrix MatrixTensorProduct( const DenseMatrix& left, const DenseMatrix& right );
 
-DenseMatrix Subdeterminantmatrix( const DenseMatrix& A, int k );
+DenseMatrix SubdeterminantMatrix( const DenseMatrix& A, int k );
 
 
 

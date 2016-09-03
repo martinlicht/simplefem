@@ -22,28 +22,26 @@ class LinearOperator
 {
 
     public:
-
+        
         explicit LinearOperator( int, int );
         virtual ~LinearOperator();
-
+        
         int getdimin() const;
         int getdimout() const;
-
-        virtual void check() const = 0;
+        
+        virtual void check() const;
         virtual void print( std::ostream& os ) const;
-
-
-
+        
         /* Apply the operator */
-
+        
         /* x := s A y */
         void apply( FloatVector& dest, const FloatVector& src, Float scaling = 1. ) const;
-
+        
         /* x := s x + t A y */
         virtual void applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const = 0;
-
+        
     private:
-
+        
         int dimout;
         int dimin;
     
