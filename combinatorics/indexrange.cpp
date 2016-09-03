@@ -34,7 +34,12 @@ int IndexRange::max() const
 
 int IndexRange::getlength() const
 {
-    return maximum - minimum + 1;
+    return std::max( 0, maximum - minimum + 1 );
+}
+
+int IndexRange::cardinality() const
+{
+    return getlength();
 }
 
 bool IndexRange::isempty() const

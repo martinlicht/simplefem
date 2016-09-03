@@ -32,6 +32,7 @@ class IndexRange
         int min() const;
         int max() const;
         int getlength() const;
+        int cardinality() const;
         
         bool isempty() const;
         bool contains( int ) const;
