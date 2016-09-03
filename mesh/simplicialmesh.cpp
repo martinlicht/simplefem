@@ -279,6 +279,46 @@ const std::map< std::pair<int,int>, std::vector<std::list<int>> >& SimplicialMes
         
     
     
+
+void SimplicialMesh::completesimplexlists()
+{
+    assert( hassimplexlist( innerdimension ) );
+    for( int d = 1; d < innerdimension; d++ )
+        if( !hassimplexlist( d ) ) buildsimplexlist( d );
+}
+
+void SimplicialMesh::completesubsimplexlists()
+{
+    for( int D = 1; D < innerdimension; D++ )
+        for( int d = 1; d < D; d++ )
+            if( !hassubsimplexlist( D, d ) ) buildsubsimplexlist( D, d );
+}
+
+void SimplicialMesh::completesupersimplexlists()
+{
+    for( int D = 1; D < innerdimension; D++ )
+        for( int d = 1; d < D; d++ )
+            if( !hassupersimplexlist( d, D ) ) buildsupersimplexlist( d, D );
+}
+
+void SimplicialMesh::complete()
+{
+    completesimplexlists();
+    completesubsimplexlists();
+    completesupersimplexlists();
+}
+        
+            
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 DenseMatrix SimplicialMesh::getLinearPart( int dimension, int cell ) const
 {
     assert( 0 <= dimension && dimension <= getinnerdimension() );

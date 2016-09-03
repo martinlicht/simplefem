@@ -74,6 +74,11 @@ class SimplicialMesh
         const std::map< std::pair<int,int>, std::vector<IndexMap> >& getsub() const;
         const std::map< std::pair<int,int>, std::vector<std::list<int>> >& getsuper() const;
         
+        void completesimplexlists();
+        void completesubsimplexlists();
+        void completesupersimplexlists();
+        void complete();
+        
         /* obtain geometric information */
         
         DenseMatrix getLinearPart( int, int ) const;
