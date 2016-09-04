@@ -12,6 +12,14 @@
 #include "../basic.hpp"
 
 
+/**********************
+***
+***  Describes a vector of Floating point numbers 
+***  offers basic arithmetic operations
+***
+**********************/
+
+
 class FloatVector
 {
 
@@ -36,6 +44,8 @@ class FloatVector
         Float setentry( int, Float );
         Float getentry( int ) const;
 
+        Float& at( int );
+        const Float& at( int ) const;
         Float& operator[]( int );
         const Float& operator[]( int ) const;
 

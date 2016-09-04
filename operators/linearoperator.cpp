@@ -7,13 +7,13 @@
     LinearOperator::LinearOperator( int out, int in )
     : dimout( out ), dimin( in )
     {
-		/* Nothing left to do */
+		check();
     }
     
     LinearOperator::~LinearOperator()
     {
     
-      /* todo */
+      check();
       
     }
     

@@ -3,8 +3,17 @@
 
 #include "../basic.hpp"
 #include "linearoperator.hpp"
+#include "scalingoperator.hpp"
 
 
+
+/************************
+****
+****  Class for diagonal matrices 
+****  - instantiates LinearOperator
+****  - only square matrices 
+****  
+************************/
 
 class DiagonalOperator:
 public LinearOperator /* every matrix is a linear operator */
@@ -13,6 +22,7 @@ public LinearOperator /* every matrix is a linear operator */
     public:
 
         explicit DiagonalOperator( int, const FloatVector& dia );
+        explicit DiagonalOperator( int, const ScalingOperator& scaling );
         virtual ~DiagonalOperator();
 
         virtual void check() const override;
@@ -20,7 +30,7 @@ public LinearOperator /* every matrix is a linear operator */
 
         FloatVector& getdiagonal();
         const FloatVector& getdiagonal() const;
-
+        
         virtual void applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const override;
 
     private:

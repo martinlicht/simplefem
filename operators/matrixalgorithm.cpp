@@ -7,6 +7,7 @@
 #include <list>
 #include <cctype>
 
+#include "../combinatorics/generateindexmaps.hpp"
 #include "densematrix.hpp"
 #include "floatvector.hpp"
 #include "crm.hpp"
@@ -19,6 +20,22 @@ void InverseAndDeterminant( const DenseMatrix& A, DenseMatrix& Ainv, Float& Adet
 	PolarDecomposition( A, Q, R );
 	Ainv = UpperTriangularInverse(R) * Q.transpose();
 	Adet = UpperTriangularDeterminant(R);
+}
+
+
+DenseMatrix Inverse( const DenseMatrix& A )
+{
+	DenseMatrix Q( A ), R( A );
+	PolarDecomposition( A, Q, R );
+	return UpperTriangularInverse(R) * Q.transpose();
+}
+
+Float Determinant( const DenseMatrix& A )
+{
+    DenseMatrix Q( A );
+    DenseMatrix R( A );
+    PolarDecomposition( A, Q, R );
+    return UpperTriangularDeterminant( R );
 }
 
 
@@ -122,8 +139,44 @@ Float UpperTriangularDeterminant( const DenseMatrix& A )
 }
 
 
+DenseMatrix MatrixTensorProduct( const DenseMatrix& left, const DenseMatrix& right )
+{
+    int newrows = left.getdimout() * right.getdimout();
+    int newcols = left.getdimin() * right.getdimin();
+    DenseMatrix ret( newrows, newcols );
+    assert( ret.getdimout() == newrows );
+    assert( ret.getdimin() == newcols );
+    for( int rl = 0; rl < left.getdimout(); rl++ )
+    for( int cl = 0; cl < left.getdimin(); cl++ )
+    for( int rr = 0; rr < right.getdimout(); rr++ )
+    for( int cr = 0; cr < right.getdimin(); cr++ )
+    {
+        ret( rl * right.getdimout() + rr, cl * right.getdimin() + cr )
+        =
+        left( rl, cl ) * right( rr, cr );
+    }
+	return ret;
+}
 
 
+
+DenseMatrix Subdeterminantmatrix( const DenseMatrix& A, int k )
+{
+    assert( A.issquare() );
+    assert( 0 <= k && k <= A.getdimin() );
+    
+    int n = A.getdimin();
+    IndexRange fromrange = IndexRange( 0, k-1 );
+    IndexRange torange = IndexRange( 0, n-1 );
+    std::vector<IndexMap> sigmas = generateSigmas( fromrange, torange );
+    DenseMatrix ret( sigmas.size() );
+    for( int rim = 0; rim < sigmas.size(); rim++ )
+    for( int cim = 0; cim < sigmas.size(); cim++ )
+    {
+        ret(rim,cim) = A.submatrix( sigmas.at(rim), sigmas.at(cim) ).determinant();
+    }
+    return ret;
+}
 
 
 

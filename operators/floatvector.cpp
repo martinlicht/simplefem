@@ -89,6 +89,16 @@ Float FloatVector::getentry( int p ) const
 	return data.at(p);
 }
 
+Float& FloatVector::at( int p )
+{
+    return (*this)[p];
+}
+
+const Float& FloatVector::at( int p ) const
+{
+    return (*this)[p];
+}
+
 Float& FloatVector::operator[]( int p )
 {
 	assert( 0 <= p && p < data.size() );
@@ -189,8 +199,8 @@ Float FloatVector::norm() const
 Float FloatVector::maxnorm() const
 {
     assert( getdimension() > 0 );
-    Float ret = absolute( data.at(0) );
-    for( int d = 1; d < getdimension(); d++ )
+    Float ret = 0.;
+    for( int d = 0; d < getdimension(); d++ )
         ret = std::max( ret, absolute( data.at(d) ) );
     return ret;
 }
@@ -200,9 +210,8 @@ Float FloatVector::lpnorm( Float p ) const
     assert( p > 0 );
     assert( getdimension() > 0 );
     
-    Float ret = pow( absolute( data.at(0) ), p );
-    
-    for( int d = 1; d < getdimension(); d++ )
+    Float ret = 0.;
+    for( int d = 0; d < getdimension(); d++ )
         ret += pow( absolute( data.at(d) ), p );
     return pow( ret, 1./p );
 }

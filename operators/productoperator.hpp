@@ -7,6 +7,12 @@
 #include "densematrix.hpp"
 
 
+/************************
+****
+****  Class for Products of LinearOperators 
+****  - instantiates LinearOperator
+****  
+************************/
 
 class ProductOperator:
 public LinearOperator /* every matrix is a linear operator */

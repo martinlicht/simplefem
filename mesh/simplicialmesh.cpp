@@ -69,23 +69,6 @@ void SimplicialMesh::print( std::ostream& os ) const
 
 
 
-    
-    
-/* Manage mesh data */
-
-
-void SimplicialMesh::addfrom( const SimplicialMesh& )
-{
-    // FIXME: add code 
-}
-
-
-
-
-
-
-
-
 /* Element Access */
 
 int SimplicialMesh::getinnerdimension() const
@@ -110,6 +93,14 @@ const Coordinates& SimplicialMesh::getcoordinates() const
 }
 
 
+int SimplicialMesh::countdimensionscounted() const
+{
+    int ret = 0;
+    for( int d = 0; d <= getinnerdimension(); d++ )
+        if( hassimplexlist(d) ) ret++;
+    return ret;
+}
+        
 
 int SimplicialMesh::countsimplices( int d ) const
 {
@@ -274,6 +265,58 @@ void SimplicialMesh::buildsupersimplexlist( int from, int to )
 
 
 
+
+const std::map< std::pair<int,int>, std::vector<IndexMap> >& SimplicialMesh::getsub() const
+{
+    return subsimplex_list;
+}
+
+
+const std::map< std::pair<int,int>, std::vector<std::list<int>> >& SimplicialMesh::getsuper() const
+{
+    return supersimplex_list;
+}
+        
+    
+    
+
+void SimplicialMesh::completesimplexlists()
+{
+    assert( hassimplexlist( innerdimension ) );
+    for( int d = 1; d < innerdimension; d++ )
+        if( !hassimplexlist( d ) ) buildsimplexlist( d );
+}
+
+void SimplicialMesh::completesubsimplexlists()
+{
+    for( int D = 1; D < innerdimension; D++ )
+        for( int d = 1; d < D; d++ )
+            if( !hassubsimplexlist( D, d ) ) buildsubsimplexlist( D, d );
+}
+
+void SimplicialMesh::completesupersimplexlists()
+{
+    for( int D = 1; D < innerdimension; D++ )
+        for( int d = 1; d < D; d++ )
+            if( !hassupersimplexlist( d, D ) ) buildsupersimplexlist( d, D );
+}
+
+void SimplicialMesh::complete()
+{
+    completesimplexlists();
+    completesubsimplexlists();
+    completesupersimplexlists();
+}
+        
+            
+    
+    
+    
+    
+    
+    
+    
+    
     
     
 DenseMatrix SimplicialMesh::getLinearPart( int dimension, int cell ) const

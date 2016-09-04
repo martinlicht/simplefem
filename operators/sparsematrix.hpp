@@ -2,11 +2,26 @@
 #define INCLUDEGUARD_SPARSEMATRIX
 
 #include <list>
+
+class SparseMatrix;
+// class MatrixEntry;
+
 #include "../basic.hpp"
 #include "linearoperator.hpp"
+#include "diagonaloperator.hpp"
+#include "densematrix.hpp"
 
 
-	
+
+/************************
+****
+****  Class for Sparse Matrices  
+****  - instantiates LinearOperator
+****  
+************************/
+
+
+
 class SparseMatrix:
 public LinearOperator /* every matrix is a linear operator */
 {
@@ -31,6 +46,9 @@ public LinearOperator /* every matrix is a linear operator */
         }
 
         explicit SparseMatrix(int,int);
+        explicit SparseMatrix( const ScalingOperator& matrix );
+        explicit SparseMatrix( const DiagonalOperator& matrix );
+        explicit SparseMatrix( const DenseMatrix& );
         virtual ~SparseMatrix();
 
         virtual void check() const override;
@@ -38,6 +56,7 @@ public LinearOperator /* every matrix is a linear operator */
 
         void addentry( int, int, Float );
         void addentry( MatrixEntry );
+        const std::list<MatrixEntry>& getentries() const;
         void clearentries();
 
         int getnumberofentries() const;

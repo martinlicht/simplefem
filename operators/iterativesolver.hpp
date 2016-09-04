@@ -6,6 +6,17 @@
 
 #include "../basic.hpp"
 #include "linearoperator.hpp"
+
+
+/************************
+****
+****  Abstract class for iterative solvers  
+****  - instantiates LinearOperator
+****  - uses iteration counter, error tolerance, and internal residual vector 
+****  
+************************/
+
+
   
 class IterativeSolver
 : public LinearOperator

@@ -2,21 +2,25 @@
 
 /**/
 
+// #include "../basic.hpp"
+// #include "floatvector.cpp"
+// #include "scalingoperator.cpp"
+// #include "diagonaloperator.cpp"
+// #include "linearoperator.cpp"
+// #include "sparsematrix.cpp"
+// #include "iterativesolver.cpp"
+// #include "crm.cpp"
+
 #include <iostream>
 #include <ctime>
 
-// #include "../basic.hpp"
-// #include "floatvector.hpp"
-// #include "scalingoperator.hpp"
-// #include "sparsematrix.hpp"
-// #include "crm.hpp"
 #include "../basic.hpp"
-#include "floatvector.cpp"
-#include "scalingoperator.cpp"
-#include "linearoperator.cpp"
-#include "sparsematrix.cpp"
-#include "iterativesolver.cpp"
-#include "crm.cpp"
+#include "floatvector.hpp"
+#include "scalingoperator.hpp"
+#include "diagonaloperator.hpp"
+#include "sparsematrix.hpp"
+#include "iterativesolver.hpp"
+#include "crm.hpp"
 
 
 using namespace std;

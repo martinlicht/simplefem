@@ -7,6 +7,21 @@
 #include "../basic.hpp"
 #include "iterativesolver.hpp"
 
+
+
+
+/************************
+****
+****  Class for Conjugate Residual Method
+****  - instantiates IterativeSolver
+****  - features iteration start and iteration step,
+****    which can be called as such, or from solve().
+****  
+************************/
+
+
+
+
 class ConjugateResidualMethod
 : public IterativeSolver
 {

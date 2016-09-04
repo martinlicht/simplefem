@@ -17,6 +17,20 @@
 
 
 
+/*******************
+****  
+****  Class for Coordiante Collections 
+****  
+****  - Most basic functionality
+****  
+****  
+****  
+****  
+*******************/
+
+
+
+
 class Coordinates
 {
 
@@ -33,21 +47,31 @@ class Coordinates
         int getnumber() const;
         IndexRange getIndexRange() const;
         
+        /* get/set coordinates as per entry  */
+        
         Float getdata( int, int ) const;
         void setdata( int, int, Float );
+        
+        /* get/set coordinates as vectors  */
         
         FloatVector getvectorclone( int ) const;
         FloatVector getvectorclone( int, Float ) const;
         void loadvector( int, const FloatVector& );
         void loadvector( int, const FloatVector&, Float );
         
+        /* transform all coordinates  */
+        
         void scale( Float );
         void shift( const FloatVector& );
         void lineartransform( const LinearOperator& );
         
+        /* Add additional coordiantes */
+        
         void append( const Coordinates& );
         void append( const FloatVector& );
 
+        /* Obtain information about reference transformation of simplex */
+        
         DenseMatrix getLinearPart( const IndexMap& ) const;
         FloatVector getShiftPart( const IndexMap& ) const;
         

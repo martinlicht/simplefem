@@ -39,6 +39,49 @@ DenseMatrix::DenseMatrix( int rows, int columns, std::function<Float(int,int)> g
     check();
 }
 
+
+DenseMatrix::DenseMatrix( const ScalingOperator& scaling )
+: LinearOperator( scaling.getdimout(), scaling.getdimin() ), 
+  entries( scaling.getdimout() * scaling.getdimin() )
+{
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimin(); c++ )
+        (*this)(r,c) = ( ( r == c ) ? scaling.getscaling() : 0. );
+    check();
+}
+        
+DenseMatrix::DenseMatrix( const DiagonalOperator& dia )
+: LinearOperator( dia.getdimout(), dia.getdimin() ), 
+  entries( dia.getdimout() * dia.getdimin() )
+{
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimin(); c++ )
+        (*this)(r,c) = ( ( r == c ) ? dia.getdiagonal().at(r) : 0. );
+    check();
+}
+        
+DenseMatrix::DenseMatrix( const SparseMatrix& matrix )
+: LinearOperator( matrix.getdimout(), matrix.getdimin() ), 
+  entries( matrix.getdimout() * matrix.getdimin(), 0. )
+{
+    for( const SparseMatrix::MatrixEntry& entry : matrix.getentries() )
+    {
+        (*this)( entry.row, entry.column ) += entry.value;
+    }
+    check();
+}
+        
+DenseMatrix::DenseMatrix( const FloatVector& myvector )
+: LinearOperator( myvector.getdimension(), 1 ), 
+  entries( myvector.getdimension(), 0. )
+{
+    for( int r = 0; r < myvector.getdimension(); r++ )
+    {
+        (*this)( r, 0 ) = myvector[r];
+    }
+    check();
+}
+        
 DenseMatrix::~DenseMatrix()
 {
     
@@ -97,6 +140,10 @@ DenseMatrix DenseMatrix::submatrix( const IndexMap& rows, const IndexMap& column
 {
     rows.check(); 
     columns.check();
+    
+    if( getdimin() == 0 || getdimout() == 0 )
+        return *this;
+    
     assert( rows.getSourceRange().min() == 0 );
     assert( rows.getSourceRange().max() <= getdimout() - 1 );
     assert( rows.getDestRange().min() == 0 );
@@ -191,6 +238,8 @@ void DenseMatrix::setcolumn( int c, const FloatVector& column )
 
 void DenseMatrix::indexmapping( const IndexMap& im )
 {
+    if( im.getSourceRange().isempty() )
+        return;
     assert( im.getSourceRange().min() == 0 );
     assert( im.getSourceRange().max() <= getdimin() - 1 );
     assert( im.getDestRange().min() == 0 );

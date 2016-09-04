@@ -35,6 +35,9 @@ SimplicialMesh UnitCubeTriangulation( int innerdim, int outerdim )
     assert( innerdim <= outerdim );
     
 	Coordinates coords( outerdim, integerpower(2,innerdim) );
+    assert( coords.getdimension() == outerdim );
+    assert( coords.getnumber() == integerpower(2,innerdim) );
+    cout << "############" << coords.getnumber() << std::endl;
     for( int v = 0; v < coords.getnumber(); v++ ) {
         for( int p = 0; p < innerdim; p++ ) {
 			coords.setdata( v, p, getbit(v,p) );
