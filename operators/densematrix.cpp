@@ -39,6 +39,15 @@ DenseMatrix::DenseMatrix( int rows, int columns, std::function<Float(int,int)> g
     check();
 }
 
+DenseMatrix::DenseMatrix( int rows, int columns, const std::vector<FloatVector>& coldata )
+: LinearOperator( rows, columns), entries( rows * columns )
+{
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimin(); c++ )
+        (*this)(r,c) = coldata.at(c).at(r);
+    check();
+}
+        
 
 DenseMatrix::DenseMatrix( const ScalingOperator& scaling )
 : LinearOperator( scaling.getdimout(), scaling.getdimin() ), 
@@ -202,6 +211,13 @@ void DenseMatrix::set( Float s )
         (*this)(r,c) = s;
 }
 
+void DenseMatrix::add( Float s )
+{
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimin(); c++ )
+        (*this)(r,c) += s;
+}
+
 FloatVector DenseMatrix::getrow( int r ) const 
 {
 	assert( 0 <= r && r < getdimout() );
@@ -236,6 +252,26 @@ void DenseMatrix::setcolumn( int c, const FloatVector& column )
 		(*this)(r,c) = column[r];
 }
 
+void DenseMatrix::swaprow( int r1, int r2 )
+{
+	assert( 0 <= r1 && r1 < getdimout() );
+	assert( 0 <= r2 && r2 < getdimout() );
+	if( r1 == r2 ) return;
+	for( int c = 0; c < getdimin(); c++ )
+		std::swap( (*this)(r1,c), (*this)(r2,c) );
+}
+
+void DenseMatrix::swapcolumn( int c1, int c2 )
+{
+	assert( 0 <= c1 && c1 < getdimin() );
+	assert( 0 <= c2 && c2 < getdimin() );
+    if( c1 == c2 ) return;
+	for( int r = 0; r < getdimout(); r++ )
+		std::swap( (*this)(r,c1), (*this)(r,c2) );
+}
+
+
+        
 void DenseMatrix::indexmapping( const IndexMap& im )
 {
     if( im.getSourceRange().isempty() )

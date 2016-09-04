@@ -32,6 +32,7 @@ public LinearOperator /* every matrix is a linear operator */
         DenseMatrix( int dim, std::function<Float(int,int)> generator );
         DenseMatrix( int rows, int columns );
         DenseMatrix( int rows, int columns, std::function<Float(int,int)> generator );
+        DenseMatrix( int rows, int columns, const std::vector<FloatVector>& coldata );
         explicit DenseMatrix( const ScalingOperator& );
         explicit DenseMatrix( const DiagonalOperator& );
         explicit DenseMatrix( const SparseMatrix& );
@@ -60,6 +61,8 @@ public LinearOperator /* every matrix is a linear operator */
         void setrow( int r, const FloatVector& row );
         FloatVector getcolumn( int c ) const;
         void setcolumn( int c, const FloatVector& column );
+        void swaprow( int r1, int r2 );
+        void swapcolumn( int c1, int c2 );
 
         /* Generate standard matrices */
         
@@ -72,6 +75,7 @@ public LinearOperator /* every matrix is a linear operator */
         
         void scale( Float );
         void set( Float );
+        void add( Float );
         
         /* Special operations */
         
