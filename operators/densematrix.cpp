@@ -7,8 +7,22 @@
 
 #include "densematrix.hpp"
 
+#include "matrixalgorithm.hpp"
+// #include "productoperator.hpp"
 
 
+
+DenseMatrix::DenseMatrix( int dim )
+: DenseMatrix( dim, dim )
+{
+    check();
+}
+
+DenseMatrix::DenseMatrix( int dim, std::function<Float(int,int)> generator )
+: DenseMatrix( dim, dim, generator )
+{
+    check();
+}
 
 DenseMatrix::DenseMatrix( int rows, int columns )
 : LinearOperator( rows, columns), entries( rows * columns )
@@ -194,6 +208,20 @@ DenseMatrix DenseMatrix::transpose() const
         ret.entries.at( c * getdimout() + r ) = entries.at( r * getdimin() + c );
     return ret;
 }
+
+
+Float DenseMatrix::determinant() const
+{
+    assert( issquare() );
+    DenseMatrix dummy( getdimin() );
+    Float ret;
+    InverseAndDeterminant( *this, dummy, ret );
+    return ret;
+}
+        
+
+
+
 
 
 // DenseMatrix DenseMatrix::inverse() const

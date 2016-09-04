@@ -81,7 +81,128 @@ SimplicialMesh UnitCubeTriangulation( int innerdim, int outerdim )
 }
 
 
-void generateMeshFromStream( std::istream& in )
+
+SimplicialMesh UnitCubeTriangulation2D( int xstep, int ystep )
+{
+    assert( 1 <= xstep && 1 <= ystep );
+    
+	Coordinates coords( 3, (xstep+1)*(ystep+1) );
+    for( int v = 0; v < coords.getnumber(); v++ ) {
+        coords.setdata( v, 0, ( v / (ystep+1) ) / (Float)xstep );
+        coords.setdata( v, 1, ( v % (ystep+1) ) / (Float)ystep );
+        coords.setdata( v, 2, 0. );
+    }
+    
+	std::vector<IndexMap> newsimplices( 2 * xstep * ystep, 
+                                        IndexMap( IndexRange(0,2), 
+                                                  IndexRange(0,coords.getnumber()-1)
+                                                )
+                                        );
+    
+	for( int x = 0; x < xstep; x++ )
+	for( int y = 0; y < ystep; y++ )
+    {
+        int base = 2 * ( x * ystep + y );
+        assert( base + 1 < 2 * xstep * ystep );
+        newsimplices[base+0][0] = ( x + 0 ) * (ystep+1) + y + 0;
+        newsimplices[base+0][1] = ( x + 1 ) * (ystep+1) + y + 0;
+        newsimplices[base+0][2] = ( x + 1 ) * (ystep+1) + y + 1;
+        newsimplices[base+1][0] = ( x + 0 ) * (ystep+1) + y + 0;
+        newsimplices[base+1][1] = ( x + 0 ) * (ystep+1) + y + 1;
+        newsimplices[base+1][2] = ( x + 1 ) * (ystep+1) + y + 1;
+    }
+        
+    std::map< std::pair<int,int>, std::vector<IndexMap> > new_subsimplexlist;
+    new_subsimplexlist.insert( std::make_pair( std::make_pair(2,0), newsimplices ) );
+    
+    std::map< std::pair<int,int>, std::vector<std::list<int>> > dummy_supersimplexlist;
+    
+    return SimplicialMesh( 2, 3, coords, new_subsimplexlist, dummy_supersimplexlist );
+    
+}
+
+
+
+SimplicialMesh UnitCubeTriangulation3D( int xstep, int ystep, int zstep )
+{
+    assert( 1 <= xstep && 1 <= ystep && 1 <= zstep );
+    
+	Coordinates coords( 3, (xstep+1)*(ystep+1)*(zstep+1) );
+    for( int x = 0; x <= xstep; x++ )
+    for( int y = 0; y <= ystep; y++ )
+    for( int z = 0; z <= zstep; z++ )
+    {
+        Float xcoord = x / (Float)xstep;
+        Float ycoord = y / (Float)ystep;
+        Float zcoord = z / (Float)zstep;
+        int v = x * (ystep+1)*(zstep+1) + y * (zstep+1) + z;
+        assert( 0 <= v && v < coords.getnumber() );
+        coords.setdata( v, 0, xcoord );
+        coords.setdata( v, 1, ycoord );
+        coords.setdata( v, 2, zcoord );
+    }
+    
+    std::vector<IndexMap> newsimplices( 6 * xstep * ystep * zstep, 
+                                        IndexMap( IndexRange(0,3), 
+                                                  IndexRange(0,coords.getnumber()-1)
+                                                )
+                                        );
+    
+	for( int x = 0; x < xstep; x++ )
+	for( int y = 0; y < ystep; y++ )
+    for( int z = 0; z < zstep; z++ )
+    {
+        int base = 6 * ( x * ystep * zstep + y * zstep + z );
+        assert( base + 5 < 6 * xstep * ystep * zstep );
+        // Simplex z y x 
+        newsimplices.at(base+0)[0] = ( x + 0 ) * (ystep+1) * (zstep+1) + ( y + 0 ) * (zstep+1) + z + 0;
+        newsimplices.at(base+0)[1] = ( x + 0 ) * (ystep+1) * (zstep+1) + ( y + 0 ) * (zstep+1) + z + 1;
+        newsimplices.at(base+0)[2] = ( x + 0 ) * (ystep+1) * (zstep+1) + ( y + 1 ) * (zstep+1) + z + 1;
+        newsimplices.at(base+0)[3] = ( x + 1 ) * (ystep+1) * (zstep+1) + ( y + 1 ) * (zstep+1) + z + 1;
+        // Simplex z x y 
+        newsimplices.at(base+1)[0] = ( x + 0 ) * (ystep+1) * (zstep+1) + ( y + 0 ) * (zstep+1) + z + 0;
+        newsimplices.at(base+1)[1] = ( x + 0 ) * (ystep+1) * (zstep+1) + ( y + 0 ) * (zstep+1) + z + 1;
+        newsimplices.at(base+1)[2] = ( x + 1 ) * (ystep+1) * (zstep+1) + ( y + 0 ) * (zstep+1) + z + 1;
+        newsimplices.at(base+1)[3] = ( x + 1 ) * (ystep+1) * (zstep+1) + ( y + 1 ) * (zstep+1) + z + 1;
+        // Simplex x z y 
+        newsimplices.at(base+2)[0] = ( x + 0 ) * (ystep+1) * (zstep+1) + ( y + 0 ) * (zstep+1) + z + 0;
+        newsimplices.at(base+2)[1] = ( x + 1 ) * (ystep+1) * (zstep+1) + ( y + 0 ) * (zstep+1) + z + 0;
+        newsimplices.at(base+2)[2] = ( x + 1 ) * (ystep+1) * (zstep+1) + ( y + 0 ) * (zstep+1) + z + 1;
+        newsimplices.at(base+2)[3] = ( x + 1 ) * (ystep+1) * (zstep+1) + ( y + 1 ) * (zstep+1) + z + 1;
+        // Simplex x y z 
+        newsimplices.at(base+3)[0] = ( x + 0 ) * (ystep+1) * (zstep+1) + ( y + 0 ) * (zstep+1) + z + 0;
+        newsimplices.at(base+3)[1] = ( x + 1 ) * (ystep+1) * (zstep+1) + ( y + 0 ) * (zstep+1) + z + 0;
+        newsimplices.at(base+3)[2] = ( x + 1 ) * (ystep+1) * (zstep+1) + ( y + 1 ) * (zstep+1) + z + 0;
+        newsimplices.at(base+3)[3] = ( x + 1 ) * (ystep+1) * (zstep+1) + ( y + 1 ) * (zstep+1) + z + 1;
+        // Simplex y x z 
+        newsimplices.at(base+4)[0] = ( x + 0 ) * (ystep+1) * (zstep+1) + ( y + 0 ) * (zstep+1) + z + 0;
+        newsimplices.at(base+4)[1] = ( x + 0 ) * (ystep+1) * (zstep+1) + ( y + 1 ) * (zstep+1) + z + 0;
+        newsimplices.at(base+4)[2] = ( x + 1 ) * (ystep+1) * (zstep+1) + ( y + 1 ) * (zstep+1) + z + 0;
+        newsimplices.at(base+4)[3] = ( x + 1 ) * (ystep+1) * (zstep+1) + ( y + 1 ) * (zstep+1) + z + 1;
+        // Simplex y z x  
+        newsimplices.at(base+5)[0] = ( x + 0 ) * (ystep+1) * (zstep+1) + ( y + 0 ) * (zstep+1) + z + 0;
+        newsimplices.at(base+5)[1] = ( x + 0 ) * (ystep+1) * (zstep+1) + ( y + 1 ) * (zstep+1) + z + 0;
+        newsimplices.at(base+5)[2] = ( x + 0 ) * (ystep+1) * (zstep+1) + ( y + 1 ) * (zstep+1) + z + 1;
+        newsimplices.at(base+5)[3] = ( x + 1 ) * (ystep+1) * (zstep+1) + ( y + 1 ) * (zstep+1) + z + 1;
+        
+    }
+        
+    std::map< std::pair<int,int>, std::vector<IndexMap> > new_subsimplexlist;
+    new_subsimplexlist.insert( std::make_pair( std::make_pair(3,0), newsimplices ) );
+    
+    std::map< std::pair<int,int>, std::vector<std::list<int>> > dummy_supersimplexlist;
+    
+    return SimplicialMesh( 3, 3, coords, new_subsimplexlist, dummy_supersimplexlist );
+    
+}
+
+
+
+
+
+
+
+void generateMeshFromStream( std::istream& )
 {
     // TODO: add code 
 }

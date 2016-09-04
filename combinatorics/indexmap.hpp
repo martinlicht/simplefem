@@ -46,6 +46,8 @@ class IndexMap
         bool isbijective() const;
         bool isstrictlyascending() const;
         
+        int& at( int i );
+        const int& at( int i ) const;
         int& operator[]( int i );
         const int& operator[]( int i ) const;
         const std::vector<int>& getvalues() const;
@@ -54,6 +56,8 @@ class IndexMap
         
         IndexMap skip( int ) const;
         IndexMap attachbefore( int ) const;
+        
+        bool rangecontains( int ) const;
         
         bool comparablewith( const IndexMap& ) const;
         bool equals( const IndexMap& ) const;
@@ -115,7 +119,16 @@ inline IndexMap identityIndexMap( int low, int high )
 }
 
 
-
+inline int fehlstelle( const IndexMap& sub, const IndexMap& super )
+{
+    assert( sub.getSourceRange().getlength() == super.getSourceRange().getlength() + 1 );
+    for( int i : sub.getSourceRange() )
+        assert( super.rangecontains(i) );
+    for( int j : super.getSourceRange() )
+        if( ! sub.rangecontains(j) )
+            return j;
+    assert(false);
+}
 
 
 

@@ -276,4 +276,67 @@ void SimplicialMesh::buildsupersimplexlist( int from, int to )
 
     
     
-    
+DenseMatrix SimplicialMesh::getLinearPart( int dimension, int cell ) const
+{
+    assert( 0 <= dimension && dimension <= getinnerdimension() );
+    assert( hassimplexlist(dimension) );
+    IndexMap im = getsubsimplices( dimension, cell, 0 );
+    return getcoordinates().getLinearPart( im );        
+}
+
+FloatVector SimplicialMesh::getShiftPart( int dimension, int cell ) const
+{
+    assert( 0 <= dimension && dimension <= getinnerdimension() );
+    assert( hassimplexlist(dimension) );
+    IndexMap im = getsubsimplices( dimension, cell, 0 );
+    return getcoordinates().getShiftPart( im ); 
+}
+
+Float SimplicialMesh::getVolume( int dimension, int cell ) const
+{
+    assert( 0 <= dimension && dimension <= getinnerdimension() );
+    assert( hassimplexlist(dimension) );
+    IndexMap im = getsubsimplices( dimension, cell, 0 );
+    return getcoordinates().getLinearPart( im ).determinant() / factorial(dimension);
+}
+
+Float SimplicialMesh::getDiameter( int dimension, int cell ) const
+{
+    assert( 0 <= dimension && dimension <= getinnerdimension() );
+    assert( hassimplexlist(dimension) );
+    IndexMap im = getsubsimplices( dimension, cell, 0 );
+    Float ret = 0.;
+    for( int i = 0; i <= dimension; i++ )
+        for( int j = 0; j <= dimension; j++ )
+            if( i != j )
+                ret = std::max( ret, ( coordinates.getvectorclone(i) - coordinates.getvectorclone(j) ).norm() );
+    return ret;
+}
+
+FloatVector SimplicialMesh::getMidpoint( int dimension, int cell ) const
+{
+    assert( 0 <= dimension && dimension <= getinnerdimension() );
+    assert( hassimplexlist(dimension) );
+    IndexMap im = getsubsimplices( dimension, cell, 0 );
+    Float scaling = 1. / (1+getouterdimension());
+    FloatVector ret = coordinates.getvectorclone( im[0], scaling );
+    for( int i = 1; i <= dimension; i++ )
+        ret += coordinates.getvectorclone( im[0], scaling );
+    return ret;
+}
+
+
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        

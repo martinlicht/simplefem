@@ -85,6 +85,19 @@ const std::vector<int>& IndexMap::getvalues() const
     return values;
 }
 
+
+
+
+int& IndexMap::at( int i )
+{
+    return (*this)[i];
+}
+
+const int& IndexMap::at( int i ) const
+{
+    return (*this)[i];
+}
+
 int& IndexMap::operator[]( int i )
 {
     assert( src.contains(i) );
@@ -137,6 +150,16 @@ bool IndexMap::isstrictlyascending() const
 }
           
 
+bool IndexMap::rangecontains( int p ) const
+{
+    assert( getDestRange().contains(p) );
+    for( int i : getSourceRange() )
+        if( at(i) == p )
+            return true;
+    return false;
+} 
+
+        
 bool IndexMap::comparablewith( const IndexMap& im ) const
 {
     return getSourceRange() == im.getSourceRange() && getDestRange() == im.getDestRange();

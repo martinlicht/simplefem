@@ -170,7 +170,44 @@ void FloatVector::adddatafrom( Float scalingself, Float scalingsource, const Flo
 	for( int p = 0; p < getdimension(); p++ )
 		setentry( p, scalingself * getentry( p ) + scalingsource * source.getentry( p ) ); 	
 }
-	
 
-	
-	
+
+Float FloatVector::scalarproductwith( const FloatVector& right ) const
+{
+    assert( getdimension() == right.getdimension() );
+    Float ret = 0.;
+    for( int p = 0; p < getdimension(); p++ )
+        ret += getentry(p) * right.getentry(p);
+    return ret;
+}
+
+Float FloatVector::norm() const 
+{
+    return sqrt( scalarproductwith( *this ) );
+}
+
+Float FloatVector::maxnorm() const
+{
+    assert( getdimension() > 0 );
+    Float ret = absolute( data.at(0) );
+    for( int d = 1; d < getdimension(); d++ )
+        ret = std::max( ret, absolute( data.at(d) ) );
+    return ret;
+}
+
+Float FloatVector::lpnorm( Float p ) const
+{
+    assert( p > 0 );
+    assert( getdimension() > 0 );
+    
+    Float ret = pow( absolute( data.at(0) ), p );
+    
+    for( int d = 1; d < getdimension(); d++ )
+        ret += pow( absolute( data.at(d) ), p );
+    return pow( ret, 1./p );
+}
+
+
+
+
+
