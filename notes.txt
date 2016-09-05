@@ -9,7 +9,6 @@
  * NO: Performance, industry
 
  * PENDING NEAR FUTURE 
-   - generate multiindices
    - complete all missing functions 
    - barycentric differentials
    - check funktionen in combinatorics schreiben 
