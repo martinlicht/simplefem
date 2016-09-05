@@ -8,6 +8,14 @@
  * YES: Maintainability, Flexibility, Produce qualitative results
  * NO: Performance, industry
 
+ * PENDING NEAR FUTURE 
+   - generate multiindices
+   - complete all missing functions 
+   - barycentric differentials
+   - check funktionen in combinatorics schreiben 
+   - check funktionen in operators schreiben 
+   - compute simplex volume 
+
  * Features for the future:
  * * ( Learn VTK and ParaView ) (2d)
  * * VTK output of meshes (1d)
