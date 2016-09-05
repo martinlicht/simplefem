@@ -13,7 +13,10 @@ IndexRange::IndexRange( int l, int h )
 
 void IndexRange::check() const
 {
-    // NOTE: Nothing to do here so far ...
+    assert( minimum > std::numeric_limits<decltype(minimum)>::min() );
+    assert( minimum < std::numeric_limits<decltype(minimum)>::max() );
+    assert( maximum > std::numeric_limits<decltype(minimum)>::min() );
+    assert( maximum < std::numeric_limits<decltype(minimum)>::max() );
 }
 
 
