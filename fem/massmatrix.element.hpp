@@ -4,7 +4,7 @@
 
 #include <vector>
 #include <iostream>
-#include <cassert>
+// #include <cassert>
 
 #include "../basic.hpp"
 #include "../combinatorics/indexrange.hpp"
@@ -40,7 +40,7 @@ DenseMatrix calculateScalarMassMatrixUnitSimplex(
                 );
 
 // Calculates the mass matrix for the barycentric exterior derivatives 
-DenseMatrix calculateBarycentricDiffs(
+std::vector<FloatVector> calculateBarycentricDiffs(
                 int, int, // inner and outer dimension 
                 const std::vector<FloatVector>& // vertices of simplex 
                 );
@@ -58,6 +58,21 @@ DenseMatrix calculateElementMassMatrix(
                 int, // polynomial degree 
                 int // form degree 
                 );
+
+Float simplexvolume( int, int, const std::vector<FloatVector>& );
+
+
+std::vector<FloatVector> calculateSimplexheightpoints(
+                int innerdim, int outerdim, 
+                const std::vector<FloatVector>& vertices 
+                );
+                
+std::vector<FloatVector> calculateSimplexheightvectors(
+                int innerdim, int outerdim, 
+                const std::vector<FloatVector>& vertices 
+                );
+                
+
 
 
 

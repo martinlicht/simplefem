@@ -31,13 +31,16 @@ sparsematrix.o: sparsematrix.hpp sparsematrix.cpp floatvector.hpp linearoperator
 iterativesolver.o: iterativesolver.hpp iterativesolver.cpp 
 	$(CC) iterativesolver.cpp -c -o iterativesolver.o 
 
-crm.o: crm.hpp crm.cpp floatvector.hpp iterativesolver.hpp iterativesolver.o 
+crm.o: crm.hpp crm.cpp floatvector.hpp iterativesolver.hpp 
 	$(CC) crm.cpp -c -o crm.o 
+
+necrm.o: necrm.hpp necrm.cpp floatvector.hpp densematrix.hpp crm.hpp 
+	$(CC) necrm.cpp -c -o necrm.o 
 
 matrixalgorithm.o: matrixalgorithm.cpp densematrix.hpp floatvector.hpp crm.hpp 
 	$(CC) matrixalgorithm.cpp -c -o matrixalgorithm.o 
 
-objects = floatvector.o linearoperator.o productoperator.o sumoperator.o scalingoperator.o diagonaloperator.o densematrix.o sparsematrix.o iterativesolver.o crm.o matrixalgorithm.o
+objects = floatvector.o linearoperator.o productoperator.o sumoperator.o scalingoperator.o diagonaloperator.o densematrix.o sparsematrix.o iterativesolver.o crm.o necrm.o matrixalgorithm.o
 
 
 

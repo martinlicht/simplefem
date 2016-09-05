@@ -43,7 +43,11 @@ inline void __customassert( const char* exp, const char* msg, const char* file, 
     std::cout << msg << std::endl;
   
   if( shallithrow )
+#ifdef __EXCEPTIONS
     throw std::runtime_error( "Runtime error exception thrown." );
+#else
+    abort();
+#endif 
   else
     std::cout << "Proceed with execution." << std::endl;
   

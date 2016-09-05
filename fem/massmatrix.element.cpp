@@ -1,12 +1,13 @@
 
 
-#include <cassert>
+// #include <cassert>
 #include <iostream>
 #include <vector>
 #include <iterator>
 
 #include "../combinatorics/multiindex.hpp"
 #include "../combinatorics/generatemultiindices.hpp"
+#include "../operators/matrixalgorithm.hpp"
 #include "massmatrix.element.hpp"
 
 
@@ -37,7 +38,7 @@ DenseMatrix calculateScalarMassMatrixUnitSimplex( int dimension, int polydegree 
 
 
 
-DenseMatrix calculateBarycentricDiffs(
+std::vector<FloatVector> calculateBarycentricDiffs(
                 int innerdim, int outerdim, 
                 const std::vector<FloatVector>& vertices 
                 )
@@ -45,11 +46,12 @@ DenseMatrix calculateBarycentricDiffs(
     assert( outerdim >= 0 && innerdim >= 0 ); 
     assert( vertices.size() + 1 == innerdim );
     
-    DenseMatrix ret( outerdim, innerdim+1 );
-    /* The differentials d\lambda_0, \dots, d\lambda_m of the 
-       barycentric coordinates \lambda_0, \dots, \lambda_m. */
-    /* TODO: Either with Polar decomposition or solving a linear system */
-    /* Probably Polar decomposition is the better choice */
+    std::vector<FloatVector> ret = calculateSimplexheightvectors(innerdim, outerdim, vertices);
+    
+    for( int v = 0; v < innerdim+1; v++ ) 
+        ret[v] /= std::pow( ret[v].norm(), 2. );
+    
+    return ret;
 }
                 
 
@@ -65,9 +67,9 @@ DenseMatrix calculateBDproductMatrix(
     assert( vertices.size() + 1 == innerdim );
     assert( 0 <= formdegree && formdegree <= innerdim );
     
-    DenseMatrix BD = calculateBarycentricDiffs( innerdim, outerdim, vertices );
+    DenseMatrix BD( calculateBarycentricDiffs( innerdim, outerdim, vertices ) );
     DenseMatrix BDSP = BD.transpose() * BD;
-    return Subdeterminantmatrix( BDSP, formdegree );
+    return SubdeterminantMatrix( BDSP, formdegree );
 }
 
 
@@ -86,9 +88,64 @@ DenseMatrix calculateElementMassMatrix(
     assert( 0 <= polydegree && polydegree <= innerdim );
     
     DenseMatrix poly_part = calculateScalarMassMatrixUnitSimplex( innerdim, polydegree );
-    DenseMatrix form_part = calculateScalarMassMatrixUnitSimplex( innerdim, outerdim, vertices, formdegree );
-    Float volume = simplexvolume( vertices );
+    DenseMatrix form_part = calculateBDproductMatrix( innerdim, outerdim, vertices, formdegree );
+    Float volume = simplexvolume( innerdim, outerdim, vertices );
     
     return volume * MatrixTensorProduct( poly_part, form_part );
     
 }
+
+
+
+Float simplexvolume( int innerdim, int outerdim, const std::vector<FloatVector>& vertices )
+{
+    
+    assert( outerdim >= 0 && innerdim >= 0 ); 
+    assert( vertices.size() + 1 == innerdim );
+    
+    /* Volume formula according to 
+    http://www.mathpages.com/home/kmath664/kmath664.htm
+    */
+    DenseMatrix temp( outerdim, innerdim+1, vertices );
+    temp = temp.transpose() * temp;
+    temp.add( 1. );
+    Float fakinnerdim = factorial( innerdim );
+    return temp.determinant() / ( fakinnerdim * fakinnerdim );
+}
+
+
+
+
+std::vector<FloatVector> calculateSimplexheightpoints(
+                int innerdim, int outerdim, 
+                const std::vector<FloatVector>& vertices 
+                )
+{
+    assert( outerdim >= 0 && innerdim >= 0 ); 
+    assert( vertices.size() + 1 == innerdim );
+    
+    DenseMatrix ret( outerdim, innerdim+1 );
+
+    /* TODO */
+    /* https://www.math.auckland.ac.nz/~waldron/Preprints/Barycentric/barycentric.pdf */
+    
+    return ret;
+}
+
+
+std::vector<FloatVector> calculateSimplexheightvectors(
+                int innerdim, int outerdim, 
+                const std::vector<FloatVector>& vertices 
+                )
+{
+    assert( outerdim >= 0 && innerdim >= 0 ); 
+    assert( vertices.size() + 1 == innerdim );
+    
+    std::vector<FloatVector> ret = calculateSimplexheightpoints( innerdim, outerdim, vertices );
+    
+    for( int v = 0; v < innerdim+1; v++ ) 
+        ret[v] = vertices[v] - ret[v];
+    
+    return ret;
+}
+

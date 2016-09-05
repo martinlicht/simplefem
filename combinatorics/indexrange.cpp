@@ -2,7 +2,7 @@
 
 #include "indexrange.hpp"
 
-#include <cassert>
+// #include <cassert>
 
 #include <iostream>
 

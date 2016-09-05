@@ -1,7 +1,7 @@
 
 #include "indexmap.hpp"
 
-#include <cassert>
+// #include <cassert>
 #include <iostream>
 
 #include "indexrange.hpp"

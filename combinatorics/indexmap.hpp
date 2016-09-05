@@ -2,7 +2,7 @@
 #define INCLUDEGUARD_INDEXMAP
 
 
-#include <cassert>
+// #include <cassert>
 
 #include <vector>
 #include <limits>

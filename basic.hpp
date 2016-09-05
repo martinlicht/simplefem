@@ -3,11 +3,12 @@
 
 #include <ctime>     
 #include <cstdlib>     
-#include <cassert>     /* assert macro */
+// #include <cassert>     /* assert macro */
 #include <list>
 #include <iterator>
 #include <functional>
 
+#include "assertion.hpp"
 
 typedef double Float;
 
@@ -34,7 +35,7 @@ T factorial( const T& n )
     if( n == 0 )
         return 1;
     else if( n < 0 )
-        assert(false);
+        { assert(false); return n; }
     else
         return n * factorial<T>(n-1);
 }
