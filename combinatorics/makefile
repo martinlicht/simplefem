@@ -25,6 +25,9 @@ objects = indexrange.o indexmap.o generateindexmaps.o multiindex.o generatemulti
 
     
     
+unittest.indexrange.out: indexrange.o indexrange.hpp unittest.indexrange.cpp 
+	$(CC) unittest.indexrange.cpp indexrange.o -o unittest.indexrange.out
+
 unittest.indexmap.out: indexmap.o indexrange.o indexmap.hpp unittest.indexmap.cpp 
 	$(CC) unittest.indexmap.cpp indexmap.o indexrange.o -o unittest.indexmap.out
 
@@ -34,7 +37,7 @@ unittest.generateindexmaps.out: generateindexmaps.o indexmap.o indexrange.o inde
 unittest.generatemultiindices.out: generatemultiindices.o indexmap.o indexrange.o multiindex.o unittest.generatemultiindices.cpp 
 	$(CC) unittest.generatemultiindices.cpp generatemultiindices.o multiindex.o indexmap.o indexrange.o -o unittest.generatemultiindices.out
 
-unittests = unittest.indexmap.out unittest.generateindexmaps.out unittest.generatemultiindices.out
+unittests = unittest.indexrange.out unittest.indexmap.out unittest.generateindexmaps.out unittest.generatemultiindices.out
     
 
     
