@@ -5,11 +5,11 @@
 #include "floatvector.hpp"
 
 
-NormalEquationsConjugateResidualMethod::NormalEquationsConjugateResidualMethod( const DenseMatrix& op )
+NormalEquationsConjugateResidualMethod::NormalEquationsConjugateResidualMethod( const DenseMatrix& op, const DenseMatrix& opt, const DenseMatrix& opsys )
 : matrix_original( op ), 
-  matrix_transposed( matrix_original.transpose() ), 
-  matrix_system( matrix_transposed * matrix_original ),
-  crm( matrix_system )
+  matrix_transposed( opt ), 
+  matrix_system( opsys ),
+  crm( opsys )
 {
     
 }
