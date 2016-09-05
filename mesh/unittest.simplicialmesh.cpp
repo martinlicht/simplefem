@@ -25,19 +25,20 @@ int main()
 		
 		cout << M << endl;
 
-        fstream fs( "./gitter.vtk", std::fstream::out );
-        
-        {
-            
-            VTK_MeshWriter vtk( M, fs );
-            vtk.writePreamble( "Mein erster Test" );
-            vtk.writeCoordinateBlock();
-            vtk.writeTopDimensionalCells();
-            
+                fstream fs( "./gitter.vtk", std::fstream::out );
+                
+                {
+                    
+                    VTK_MeshWriter vtk( M, fs );
+                    vtk.writePreamble( "Mein erster Test" );
+                    vtk.writeCoordinateBlock();
+                    vtk.writeTopDimensionalCells();
+                    
+                }
+                
+                fs.close();
+
         }
-        
-        fs.close();
-	}
     
         
 	
