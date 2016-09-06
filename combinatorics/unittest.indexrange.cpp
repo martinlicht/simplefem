@@ -16,7 +16,7 @@ int main()
 	
 	cout << "Test invalid index ranges" << std::endl;
 	
-// 	attest( false );
+// 	assert( false );
 	
 	if( false ) {
 	  IndexRange dummy( 0, std::numeric_limits<int>::max() );
@@ -28,45 +28,45 @@ int main()
 	
 	IndexRange irE( 3, 2 );
 	
-	attest( irE.isempty() );
-	attest( irE.cardinality() == 0 );
-	attest( irE.cardinality() == irE.getlength() );
+	assert( irE.isempty() );
+	assert( irE.cardinality() == 0 );
+	assert( irE.cardinality() == irE.getlength() );
 	
 	cout << "Test non-empty index ranges" << std::endl;
 	
 	IndexRange irA( 3, 7 );
 	IndexRange irB( 5, 5 );
 	
-	attest( irA.cardinality() == 5 );
+	assert( irA.cardinality() == 5 );
 	
-	attest( irA.getlength() == irA.cardinality() );
+	assert( irA.getlength() == irA.cardinality() );
 	
-	attest( !irA.contains(2) );
-	attest( irA.contains(3) );
-	attest( irA.contains(4) );
-	attest( irA.contains(5) );
-	attest( irA.contains(6) );
-	attest( irA.contains(7) );
-	attest( !irA.contains(8) );
+	assert( !irA.contains(2) );
+	assert( irA.contains(3) );
+	assert( irA.contains(4) );
+	assert( irA.contains(5) );
+	assert( irA.contains(6) );
+	assert( irA.contains(7) );
+	assert( !irA.contains(8) );
 	
-	attest( irB.getlength() == irB.cardinality() );
+	assert( irB.getlength() == irB.cardinality() );
 	
-	attest( irB.cardinality() == 1 );
+	assert( irB.cardinality() == 1 );
 	
-	attest( irB.contains(5) );
-	attest( !irB.contains(4) );
-	attest( !irB.contains(6) );
+	assert( irB.contains(5) );
+	assert( !irB.contains(4) );
+	assert( !irB.contains(6) );
 	
 	cout << "Test indexing in non-empty index ranges" << std::endl;
 	
-	attest( irB.element2position(5) == 0 );
-	attest( irB.position2element(0) == 5 );
-	attest( irA.element2position(3) == 0 );
-	attest( irA.element2position(5) == 2 );
-	attest( irA.element2position(7) == 4 );
-	attest( irA.position2element(0) == 3 );
-	attest( irA.position2element(2) == 5 );
-	attest( irA.position2element(4) == 7 );
+	assert( irB.element2position(5) == 0 );
+	assert( irB.position2element(0) == 5 );
+	assert( irA.element2position(3) == 0 );
+	assert( irA.element2position(5) == 2 );
+	assert( irA.element2position(7) == 4 );
+	assert( irA.position2element(0) == 3 );
+	assert( irA.position2element(2) == 5 );
+	assert( irA.position2element(4) == 7 );
 	
 // 	cout << "Test combination of index ranges" << std::endl;
 // 	

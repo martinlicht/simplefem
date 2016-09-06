@@ -79,16 +79,16 @@ bool IndexRange::operator== ( const IndexRange& other ) const
 int IndexRange::element2position( int i ) const
 {
     check();
-    attest( contains(i) );
+    assert( contains(i) );
     return i - minimum;
 }
 
 int IndexRange::position2element( int i ) const
 {
     check();
-    attest( 0 <= i && i <= maximum - minimum );
+    assert( 0 <= i && i <= maximum - minimum );
     int ret = i + minimum;
-    attest( contains(ret) );
+    assert( contains(ret) );
     return ret;
 }
 

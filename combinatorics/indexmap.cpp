@@ -71,9 +71,9 @@ void IndexMap::check() const
 { 
     src.check();
     dest.check();
-    attest( src.max() - src.min() + 1 == values.size() );
+    assert( src.max() - src.min() + 1 == values.size() );
     for( int a = src.min(); a <= src.max(); a++ )
-        attest( dest.contains( values.at( a - src.min() ) ) );
+        assert( dest.contains( values.at( a - src.min() ) ) );
 }
 
 void IndexMap::print( std::ostream& os ) const 
@@ -115,18 +115,18 @@ const int& IndexMap::at( int i ) const
 int& IndexMap::operator[]( int i )
 {
     check();
-    attest( src.contains(i) );
-    attest( 0 <= i - src.min() );
-    attest( i - src.min() < values.size() );
+    assert( src.contains(i) );
+    assert( 0 <= i - src.min() );
+    assert( i - src.min() < values.size() );
     return values.at( i - src.min() );
 }
 
 const int& IndexMap::operator[]( int i ) const
 {
     check();
-    attest( src.contains(i) );
-    attest( 0 <= i - src.min() );
-    attest( i - src.min() < values.size() );
+    assert( src.contains(i) );
+    assert( 0 <= i - src.min() );
+    assert( i - src.min() < values.size() );
     return values.at( i - src.min() );
 }
 
@@ -185,7 +185,7 @@ bool IndexMap::isstrictlyascending() const
 bool IndexMap::rangecontains( int p ) const
 {
     check();
-    attest( getDestRange().contains(p) );
+    assert( getDestRange().contains(p) );
     for( int i : src )
         if( at(i) == p )
             return true;
@@ -203,7 +203,7 @@ bool IndexMap::equals( const IndexMap& im ) const
 {
     check();
     im.check();
-    attest( comparablewith( im ) );
+    assert( comparablewith( im ) );
     return getvalues() == im.getvalues();
 } 
 
@@ -211,7 +211,7 @@ bool IndexMap::less( const IndexMap& im ) const
 {
     check();
     im.check();
-    attest( comparablewith( im ) );
+    assert( comparablewith( im ) );
     return getvalues() < im.getvalues();
 } 
 
@@ -220,7 +220,7 @@ bool IndexMap::less( const IndexMap& im ) const
 // IndexMap IndexMap::skip( int i ) const 
 // {
 //     check();
-//     attest( src.contains(i) );
+//     assert( src.contains(i) );
 //     IndexMap ret( *this );
 //     ret.src = IndexRange( src.min(), src.max() - 1 );
 //     ret.values.erase( ret.values.begin() + ( i - src.min() ) );
@@ -231,7 +231,7 @@ bool IndexMap::less( const IndexMap& im ) const
 // IndexMap IndexMap::attachbefore( int to ) const 
 // {
 //     check();
-//     attest( dest.contains(to) );
+//     assert( dest.contains(to) );
 //     IndexMap ret( *this );
 //     ret.src = IndexRange( src.min() - 1, src.max() );
 //     ret.values.insert( ret.values.begin(), to );

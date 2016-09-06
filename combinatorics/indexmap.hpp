@@ -81,7 +81,7 @@ inline IndexMap operator*( const IndexMap& leave, const IndexMap& enter )
     IndexRange src  = enter.getSourceRange();
     IndexRange dest = leave.getDestRange();
 
-    attest( enter.getDestRange() == leave.getSourceRange() );
+    assert( enter.getDestRange() == leave.getSourceRange() );
 
     IndexMap ret( src, dest );
 
@@ -96,7 +96,7 @@ inline bool operator==( const IndexMap& left, const IndexMap& right )
 {
     left.check();
     right.check();
-    attest( left.comparablewith( right ) );
+    assert( left.comparablewith( right ) );
     return left.equals( right );
 }
 
@@ -104,7 +104,7 @@ inline bool operator!=( const IndexMap& left, const IndexMap& right )
 {
     left.check();
     right.check();
-    attest( left.comparablewith( right ) );
+    assert( left.comparablewith( right ) );
     return !( left.equals( right ) );
 }
 
@@ -112,7 +112,7 @@ inline bool operator<( const IndexMap& left, const IndexMap& right )
 {
     left.check();
     right.check();
-    attest( left.comparablewith( right ) );
+    assert( left.comparablewith( right ) );
     return left.less( right );
 }
 
@@ -146,9 +146,9 @@ inline IndexMap identityIndexMap( int low, int high )
 // {
 //     sub.check();
 //     super.check();
-//     attest( sub.getSourceRange().getlength() == super.getSourceRange().getlength() + 1 );
+//     assert( sub.getSourceRange().getlength() == super.getSourceRange().getlength() + 1 );
 //     for( int i : sub.getSourceRange() )
-//         attest( super.rangecontains(i) );
+//         assert( super.rangecontains(i) );
 //     for( int j : super.getSourceRange() )
 //         if( ! sub.rangecontains(j) )
 //             return j;

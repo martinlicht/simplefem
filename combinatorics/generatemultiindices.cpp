@@ -13,7 +13,7 @@
 
 std::vector<MultiIndex> generateMultiIndices( const IndexRange& ir, int degree )
 {
-    attest( degree >= 0 );
+    assert( degree >= 0 );
     ir.check();
     std::vector<MultiIndex> ret;
     
@@ -42,7 +42,7 @@ std::vector<MultiIndex> generateMultiIndices( const IndexRange& ir, int degree )
         
     }
     
-    attest( ret.size() == binomial<int>( ir.getlength()-1 + degree, ir.getlength()-1 ) );
+    assert( ret.size() == binomial<int>( ir.getlength()-1 + degree, ir.getlength()-1 ) );
     return ret;
 }
 

@@ -4,11 +4,11 @@
 
 #include<cassert>
 
-#ifdef attest
-#error Attest macro already defined 
-#else
-#define attest(EX) assert(EX)
-#endif
+// #ifdef attest
+// #error Attest macro already defined 
+// #else
+// #define attest(EX) assert(EX)
+// #endif
 
 // // // // #include<iostream>
 // // // // #include<exception>

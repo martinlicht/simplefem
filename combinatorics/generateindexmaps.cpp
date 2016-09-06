@@ -13,16 +13,25 @@
 std::vector<IndexMap> 
 generateEmptyMap( const IndexRange& from, const IndexRange& to )
 {
-    attest( from.isempty() );
-    IndexMap empty = IndexMap( from, to );
-	std::vector<IndexMap> ret( 1, empty );
-	return ret;
+    from.check();
+    to.check();
+    assert( from.isempty() );
+    std::cout << "Y" << std::endl; std::cout.flush();
+    IndexMap myempty = IndexMap( from, to );
+    myempty.check();
+    std::cout << "Y" << std::endl; std::cout.flush();
+    std::vector<IndexMap> ret;
+    ret.push_back( myempty );
+    std::cout << "Z" << std::endl; std::cout.flush();
+    return ret;
 }
 
 
 std::vector<IndexMap> 
 generateIndexMaps( const IndexRange& from, const IndexRange& to )
 {
+	from.check();
+	to.check();
 	const int num = integerpower( to.getlength(), from.getlength() );
 	std::vector<IndexMap> ret( num, IndexMap( from, to ) );
 	for( int it = 0; it < num; it++ ) {
@@ -39,6 +48,7 @@ generateIndexMaps( const IndexRange& from, const IndexRange& to )
 std::vector<IndexMap> 
 generatePermutations( const IndexRange& ir )
 {
+	ir.check();
 	std::vector<IndexMap> allmappings = generateIndexMaps( ir, ir );
 	std::vector<IndexMap> ret( factorial( ir.getlength() ), IndexMap(ir) );
 	std::copy_if( allmappings.begin(), allmappings.end(), ret.begin(),
@@ -49,8 +59,9 @@ generatePermutations( const IndexRange& ir )
 
 int signPermutation( const IndexMap& im )
 {
-	attest( im.isbijective() );
-	attest( im.getSourceRange() == im.getDestRange() );
+	im.check();
+	assert( im.isbijective() );
+	assert( im.getSourceRange() == im.getDestRange() );
 	const IndexRange& ir = im.getSourceRange();
 	int zaehler = 1;
 	int nenner = 1;
@@ -60,15 +71,17 @@ int signPermutation( const IndexMap& im )
         nenner *= ( t - s );
         zaehler *= ( im[ t ] - im[ s ] );
     }
-    attest( zaehler % nenner == 0 );
+    assert( zaehler % nenner == 0 );
 	int ret = zaehler / nenner;
-	attest( ret == 1 || ret == -1 );
+	assert( ret == 1 || ret == -1 );
 	return ret;
 }
 
 std::vector<IndexMap> 
 generateSigmas( const IndexRange& from, const IndexRange& to )
 {
+	from.check();
+	to.check();
 	std::vector<IndexMap> allmappings = generateIndexMaps( from, to );
 	std::vector<IndexMap> ret( binomial<int>( to.getlength(), from.getlength() ), IndexMap(from,to) );
 	std::copy_if( allmappings.begin(), allmappings.end(), ret.begin(),

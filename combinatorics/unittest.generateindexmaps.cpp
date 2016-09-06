@@ -15,7 +15,7 @@ int main()
 {
 	cout << "Unit Test for Index Map Generators" << endl;
 	
-	if(false){
+	if(true){
 		
 		cout << "Teste generator for all" << endl;
 		
@@ -27,7 +27,7 @@ int main()
 		
 	}
 	
-	if(false){
+	if(true){
 		
 		cout << "Teste generator for permutations" << endl;
 		
@@ -38,9 +38,8 @@ int main()
 			cout << im << endl;
 		
 	}
-	cout << "Finished Unit Test" << endl;
-
-	{
+	
+	if(true){
 		
 		cout << "Teste generator for sigmas" << endl;
 		
@@ -53,7 +52,21 @@ int main()
 		
 	}
 	
-
-
+	if(true){
+		
+		cout << "Teste generator for empty index map" << endl;
+		
+		IndexRange from( 1,-3 );
+		IndexRange targ( 2,5 );
+		cout << "X" << endl; cout.flush();
+		std::vector<IndexMap>  all = generateEmptyMap( from, targ );
+		cout << "X" << endl; cout.flush();
+		for( const IndexMap& im : all )
+			cout << im << endl;
+		
+	}
+	
+	cout << "Finished Unit Test" << endl;
+	
 	return 0;
 }
