@@ -14,7 +14,13 @@
 std::vector<MultiIndex> generateMultiIndices( const IndexRange& ir, int degree )
 {
     attest( degree >= 0 );
+    ir.check();
     std::vector<MultiIndex> ret;
+    
+    if( ir.isempty() ) {
+      ret.push_back( MultiIndex(ir) );
+      return ret;
+    }
     
     int max_candidate = integerpower( degree+1, ir.getlength() );
     int min_index = ir.min();
@@ -30,13 +36,13 @@ std::vector<MultiIndex> generateMultiIndices( const IndexRange& ir, int degree )
             candidate_copy /= degree+1;
         }
         
+        mi_candidate.check();
         if( mi_candidate.absolute() == degree )
             ret.push_back( mi_candidate );
         
     }
     
     attest( ret.size() == binomial<int>( ir.getlength()-1 + degree, ir.getlength()-1 ) );
-    
     return ret;
 }
 

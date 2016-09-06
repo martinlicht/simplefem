@@ -13,10 +13,14 @@
     MultiIndex
     * check 
     * check im constructor 
-    - unittest komplett 
-    
-    GenerateIndexMaps
-    - unittest komplett 
+    * unittest komplett 
     
     generateMultiIndices 
+    * robusten
+    * unittest komplett 
+    
+    GenerateIndexMaps
+    - robusten
     - unittest komplett 
+    
+    
