@@ -13,6 +13,7 @@
 std::vector<IndexMap> 
 generateEmptyMap( const IndexRange& from, const IndexRange& to )
 {
+    
     from.check();
     to.check();
     assert( from.isempty() );
@@ -22,6 +23,7 @@ generateEmptyMap( const IndexRange& from, const IndexRange& to )
     std::vector<IndexMap> ret;
     ret.push_back( myempty );
     return ret;
+    
 }
 
 
@@ -63,39 +65,55 @@ generateIndexMaps( const IndexRange& from, const IndexRange& to )
 		ret.push_back( IndexMap( from, to, values ) );
 		
 	}
-	return ret;
+	
+	for( const auto& foo : ret )
+            assert( (foo.check(),1) );
+        
+        return ret;
+        
 }
 
 std::vector<IndexMap> 
 generatePermutations( const IndexRange& ir )
 {
-	ir.check();
+	
+        ir.check();
 	std::vector<IndexMap> allmappings = generateIndexMaps( ir, ir );
 	std::vector<IndexMap> ret( factorial( ir.getlength() ), IndexMap(ir) );
 	std::copy_if( allmappings.begin(), allmappings.end(), ret.begin(),
 		[]( const IndexMap& im ) -> bool { return im.isbijective(); }
 		);
-	return ret;
+        
+        for( const auto& perm : ret )
+            assert( (perm.check(),1) && perm.isbijective() );
+        
+        return ret;
+        
 }
 
 int signPermutation( const IndexMap& im )
 {
-	im.check();
-	assert( im.isbijective() );
-	assert( im.getSourceRange() == im.getDestRange() );
-	const IndexRange& ir = im.getSourceRange();
-	int zaehler = 1;
-	int nenner = 1;
+	
+    im.check();
+    assert( im.isbijective() );
+    assert( im.getSourceRange() == im.getDestRange() );
+    
+    const IndexRange& ir = im.getSourceRange();
+    int zaehler = 1;
+    int nenner = 1;
     
     for( int s = ir.min(); s <= ir.max(); s++ )
-    for( int t = s+1; t <= ir.max(); t++ ) {
+    for( int t = s+1; t <= ir.max(); t++ )
+    {
         nenner *= ( t - s );
         zaehler *= ( im[ t ] - im[ s ] );
     }
+    
     assert( zaehler % nenner == 0 );
-	int ret = zaehler / nenner;
-	assert( ret == 1 || ret == -1 );
-	return ret;
+    int ret = zaehler / nenner;
+    assert( ret == 1 || ret == -1 );
+    return ret;
+    
 }
 
 std::vector<IndexMap> 

@@ -20,7 +20,7 @@
     * unittest komplett 
     
     GenerateIndexMaps
-    - robusten
-    - unittest komplett 
+    * robusten
+    * unittest komplett 
     
     
