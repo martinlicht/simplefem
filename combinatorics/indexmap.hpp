@@ -31,13 +31,14 @@ class IndexMap
         
     public:
         
-        IndexMap( const IndexRange& );
-        IndexMap( const IndexRange&, const IndexRange& );
+        explicit IndexMap( const IndexRange& );
         IndexMap( const IndexRange&, const std::vector<int>& );
-        IndexMap( const IndexRange&, const IndexRange&, const std::vector<int>& );
         IndexMap( const IndexRange&, const std::function<int(int)>& );
-        IndexMap( const IndexRange&, const IndexRange&, const std::function<int(int)>& );
         IndexMap( const IndexRange&, const std::initializer_list<int>& );
+        
+	IndexMap( const IndexRange&, const IndexRange& );
+        IndexMap( const IndexRange&, const IndexRange&, const std::vector<int>& );
+        IndexMap( const IndexRange&, const IndexRange&, const std::function<int(int)>& );
         IndexMap( const IndexRange&, const IndexRange&, const std::initializer_list<int>& );
         
         void check() const;

@@ -14,43 +14,55 @@
 MultiIndex::MultiIndex( const IndexRange& ir )
 : range(ir), values( ir.getlength() )
 {
-    //
+    check();
 }
-		
+
+MultiIndex::MultiIndex( const IndexRange& ir, const std::vector<int>& vals )
+: range(ir), values( vals )
+{
+    assert( ir.cardinality() == vals.size() );
+    check();
+}
+
 void MultiIndex::check() const
 {
     range.check();
+    assert( range.cardinality() == values.size() );
     for( int p = range.min(); p <= range.max(); p++ )
-        attest( values[ range.element2position(p) ] >= 0 );
+        attest( values.at( range.element2position(p) ) >= 0 );
 }
 
 void MultiIndex::print( std::ostream& os ) const
 {
-    range.check();
+    check();
     for( int p = range.min(); p <= range.max(); p++ )
-        os << values[range.element2position(p)] << "\t";
+        os << values.at( range.element2position(p) ) << "\t";
     os << std::endl;
 }
 
 IndexRange MultiIndex::getIndexRange() const
 {
+    check();
     return range;
 }
 
 const int& MultiIndex::operator[]( int p ) const 
 {
+    check();
     attest( range.contains(p) );
-    return values[range.element2position(p)];
+    return values.at( range.element2position(p) );
 }
 
 int& MultiIndex::operator[]( int p )
 {
+    check();
     attest( range.contains(p) );
-    return values[range.element2position(p)];
+    return values.at( range.element2position(p) );
 }
 
 int MultiIndex::absolute() const
 {
+    check();
     int ret = 0;
     for( int p = range.min(); p <= range.max(); p++ )
         ret += ::absolute<int>( values[range.element2position(p)] );
@@ -59,6 +71,7 @@ int MultiIndex::absolute() const
 
 int MultiIndex::factorial() const
 {
+    check();
     int ret = 1;
     for( int p = range.min(); p <= range.max(); p++ )
         ret *= ::factorial<int>( values[range.element2position(p)] );
@@ -67,32 +80,42 @@ int MultiIndex::factorial() const
 
 void MultiIndex::operator+=( int p )
 {
+    check();
     attest( range.contains(p) );
     values[ range.element2position(p) ]++;
 }
 
 void MultiIndex::operator+=( const MultiIndex& mi )
 {
+    check();
+    mi.check();
     attest( range == mi.getIndexRange() );
     for( int p = range.min(); p <= range.max(); p++ )
         values[ range.element2position(p) ] += mi.values[ range.element2position(p) ];
+    check();
 }
 
 void MultiIndex::operator-=( int p )
 {
+    check();
     attest( range.contains(p) );
     values[ range.element2position(p) ]--;
 }
 
 void MultiIndex::operator-=( const MultiIndex& mi )
 {
+    check();
+    mi.check();
     attest( range == mi.getIndexRange() );
     for( int p = range.min(); p <= range.max(); p++ )
         values[ range.element2position(p) ] -= mi.values[ range.element2position(p) ];
+    check();
 }
 	
-bool MultiIndex::smallerthan( const MultiIndex& mi ) const 
+bool MultiIndex::less( const MultiIndex& mi ) const 
 {
+    check();
+    mi.check();
     for( int p = range.min(); p <= range.max(); p++ )
         if( values[ range.element2position(p) ] >= mi.values[ range.element2position(p) ] )
             return false;
@@ -101,6 +124,8 @@ bool MultiIndex::smallerthan( const MultiIndex& mi ) const
 
 bool MultiIndex::equals( const MultiIndex& mi ) const
 {
+    check();
+    mi.check();
     for( int p = range.min(); p <= range.max(); p++ )
         if( values[ range.element2position(p) ] != mi.values[ range.element2position(p) ] )
             return false;

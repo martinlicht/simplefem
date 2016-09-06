@@ -21,6 +21,7 @@ class MultiIndex
 	public:
 	
 		MultiIndex( const IndexRange& ir );
+		MultiIndex( const IndexRange& ir, const std::vector<int>& );
 		
 		void check() const;
 		void print( std::ostream& ) const;
@@ -37,7 +38,7 @@ class MultiIndex
 		void operator-=(int);
 		void operator-=( const MultiIndex&);
 		
-		bool smallerthan( const MultiIndex& ) const;
+		bool less( const MultiIndex& ) const;
 		bool equals( const MultiIndex& ) const;
 		
 	private:
@@ -52,66 +53,89 @@ class MultiIndex
 
 inline std::ostream& operator<<( std::ostream& os, const MultiIndex& mi )
 {
+	mi.check();
 	mi.print( os );
 	return os;
 }
 
 inline MultiIndex operator+( const MultiIndex& left, int right )
 {
+	left.check();
 	MultiIndex ret = left;
 	ret += right;
+	ret.check();
 	return ret;
 }
 
 inline MultiIndex operator-( const MultiIndex& left, int right )
 {
+	left.check();
 	MultiIndex ret = left;
 	ret -= right;
+	ret.check();
 	return ret;
 }
 
 inline MultiIndex operator+( const MultiIndex& left, const MultiIndex& right )
 {
+	left.check();
+	right.check();
 	MultiIndex ret = left;
 	ret += right;
+	ret.check();
 	return ret;
 }
 
 inline MultiIndex operator-( const MultiIndex& left, const MultiIndex& right )
 {
+	left.check();
+	right.check();
 	MultiIndex ret = left;
 	ret -= right;
+	ret.check();
 	return ret;
 }
 
 
 inline bool operator==( const MultiIndex& it, const MultiIndex& mi)
 {
+	it.check();
+	mi.check();
 	return it.equals( mi );
 }
 		
 inline bool operator!=( const MultiIndex& it, const MultiIndex& mi)
 {
+	it.check();
+	mi.check();
 	return ! ( it == mi );
 }
 
 inline bool operator<( const MultiIndex& it, const MultiIndex& mi)
 {
-	return it.smallerthan( mi );
+	it.check();
+	mi.check();
+	return it.less( mi );
 }
 		
 inline bool operator>( const MultiIndex& it, const MultiIndex& mi)
 {
+	it.check();
+	mi.check();
 	return mi < it;
 }
 		
 inline bool operator<=( const MultiIndex& it, const MultiIndex& mi)
 {
+	it.check();
+	mi.check();
 	return it < mi || it == mi;
 }
 		
 inline bool operator>=( const MultiIndex& it, const MultiIndex& mi)
 {
+	it.check();
+	mi.check();
 	return it > mi || it == mi;
 }
 	

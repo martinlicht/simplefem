@@ -10,12 +10,12 @@
     * check im constructor 
     * unittest komplett 
     
-    GenerateIndexMaps
+    MultiIndex
+    * check 
+    * check im constructor 
     - unittest komplett 
     
-    MultiIndex
-    - check 
-    - check im constructor 
+    GenerateIndexMaps
     - unittest komplett 
     
     generateMultiIndices 
