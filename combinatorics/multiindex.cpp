@@ -2,7 +2,6 @@
 
 #include "multiindex.hpp"
 
-// #include <cassert>
 
 #include <vector>
 #include <iostream>
@@ -22,7 +21,7 @@ void MultiIndex::check() const
 {
     range.check();
     for( int p = range.min(); p <= range.max(); p++ )
-        assert( values[ range.element2position(p) ] >= 0 );
+        attest( values[ range.element2position(p) ] >= 0 );
 }
 
 void MultiIndex::print( std::ostream& os ) const
@@ -40,13 +39,13 @@ IndexRange MultiIndex::getIndexRange() const
 
 const int& MultiIndex::operator[]( int p ) const 
 {
-    assert( range.contains(p) );
+    attest( range.contains(p) );
     return values[range.element2position(p)];
 }
 
 int& MultiIndex::operator[]( int p )
 {
-    assert( range.contains(p) );
+    attest( range.contains(p) );
     return values[range.element2position(p)];
 }
 
@@ -68,26 +67,26 @@ int MultiIndex::factorial() const
 
 void MultiIndex::operator+=( int p )
 {
-    assert( range.contains(p) );
+    attest( range.contains(p) );
     values[ range.element2position(p) ]++;
 }
 
 void MultiIndex::operator+=( const MultiIndex& mi )
 {
-    assert( range == mi.getIndexRange() );
+    attest( range == mi.getIndexRange() );
     for( int p = range.min(); p <= range.max(); p++ )
         values[ range.element2position(p) ] += mi.values[ range.element2position(p) ];
 }
 
 void MultiIndex::operator-=( int p )
 {
-    assert( range.contains(p) );
+    attest( range.contains(p) );
     values[ range.element2position(p) ]--;
 }
 
 void MultiIndex::operator-=( const MultiIndex& mi )
 {
-    assert( range == mi.getIndexRange() );
+    attest( range == mi.getIndexRange() );
     for( int p = range.min(); p <= range.max(); p++ )
         values[ range.element2position(p) ] -= mi.values[ range.element2position(p) ];
 }

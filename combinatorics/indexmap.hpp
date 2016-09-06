@@ -1,9 +1,6 @@
 #ifndef INCLUDEGUARD_INDEXMAP
 #define INCLUDEGUARD_INDEXMAP
 
-
-// #include <cassert>
-
 #include <vector>
 #include <limits>
 #include <iostream>
@@ -79,7 +76,7 @@ inline IndexMap operator*( const IndexMap& leave, const IndexMap& enter )
     IndexRange src  = enter.getSourceRange();
     IndexRange dest = leave.getDestRange();
 
-    assert( enter.getDestRange() == leave.getSourceRange() );
+    attest( enter.getDestRange() == leave.getSourceRange() );
 
     IndexMap ret( src, dest );
 
@@ -91,19 +88,19 @@ inline IndexMap operator*( const IndexMap& leave, const IndexMap& enter )
 
 inline bool operator==( const IndexMap& left, const IndexMap& right )
 {
-    assert( left.comparablewith( right ) );
+    attest( left.comparablewith( right ) );
     return left.equals( right );
 }
 
 inline bool operator!=( const IndexMap& left, const IndexMap& right )
 {
-    assert( left.comparablewith( right ) );
+    attest( left.comparablewith( right ) );
     return !( left.equals( right ) );
 }
 
 inline bool operator<( const IndexMap& left, const IndexMap& right )
 {
-    assert( left.comparablewith( right ) );
+    attest( left.comparablewith( right ) );
     return left.less( right );
 }
 
@@ -128,9 +125,9 @@ inline IndexMap identityIndexMap( int low, int high )
 
 inline int fehlstelle( const IndexMap& sub, const IndexMap& super )
 {
-    assert( sub.getSourceRange().getlength() == super.getSourceRange().getlength() + 1 );
+    attest( sub.getSourceRange().getlength() == super.getSourceRange().getlength() + 1 );
     for( int i : sub.getSourceRange() )
-        assert( super.rangecontains(i) );
+        attest( super.rangecontains(i) );
     for( int j : super.getSourceRange() )
         if( ! sub.rangecontains(j) )
             return j;

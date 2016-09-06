@@ -35,7 +35,7 @@ T factorial( const T& n )
     if( n == 0 )
         return 1;
     else if( n < 0 )
-        { assert(false); return n; }
+        { attest(false); return n; }
     else
         return n * factorial<T>(n-1);
 }
@@ -55,15 +55,15 @@ int binomial(int,int);
 template<typename T>
 T binomial( const T& n, const T& k )
 {
-    assert( 0 <= n );
-    assert( 0 <= k && k <= n );
+    attest( 0 <= n );
+    attest( 0 <= k && k <= n );
     return factorial(n) / ( factorial(k) * factorial(n-k) );
 }
 
 
 static inline int integerpower( int base, int exponent )
 {
-    assert( exponent >= 0 );
+    attest( exponent >= 0 );
     if( exponent == 0 ) return 1;
     return base * integerpower( base, exponent - 1 );
 }

@@ -13,7 +13,7 @@
 
 std::vector<MultiIndex> generateMultiIndices( const IndexRange& ir, int degree )
 {
-    assert( degree >= 0 );
+    attest( degree >= 0 );
     std::vector<MultiIndex> ret;
     
     int max_candidate = integerpower( degree+1, ir.getlength() );
@@ -35,7 +35,7 @@ std::vector<MultiIndex> generateMultiIndices( const IndexRange& ir, int degree )
         
     }
     
-    assert( ret.size() == binomial<int>( ir.getlength()-1 + degree, ir.getlength()-1 ) );
+    attest( ret.size() == binomial<int>( ir.getlength()-1 + degree, ir.getlength()-1 ) );
     
     return ret;
 }

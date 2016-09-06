@@ -1,7 +1,6 @@
 
 #include "indexmap.hpp"
 
-// #include <cassert>
 #include <iostream>
 
 #include "indexrange.hpp"
@@ -57,9 +56,9 @@ void IndexMap::check() const
 { 
     src.check();
     dest.check();
-    assert( src.max() - src.min() + 1 == values.size() );
+    attest( src.max() - src.min() + 1 == values.size() );
     for( int a = src.min(); a <= src.max(); a++ )
-        assert( dest.contains( values.at( a - src.min() ) ) );
+        attest( dest.contains( values.at( a - src.min() ) ) );
 }
 
 void IndexMap::print( std::ostream& os ) const 
@@ -100,15 +99,15 @@ const int& IndexMap::at( int i ) const
 
 int& IndexMap::operator[]( int i )
 {
-    assert( src.contains(i) );
-    assert( 0 <= i - src.min() );
-    assert( i - src.min() < values.size() );
+    attest( src.contains(i) );
+    attest( 0 <= i - src.min() );
+    attest( i - src.min() < values.size() );
     return values.at( i - src.min() );
 }
 
 const int& IndexMap::operator[]( int i ) const
 {
-    assert( src.contains(i) );
+    attest( src.contains(i) );
     return values.at( i - src.min() );
 }
 
@@ -161,7 +160,7 @@ bool IndexMap::isstrictlyascending() const
 
 bool IndexMap::rangecontains( int p ) const
 {
-    assert( getDestRange().contains(p) );
+    attest( getDestRange().contains(p) );
     for( int i : getSourceRange() )
         if( at(i) == p )
             return true;
@@ -176,13 +175,13 @@ bool IndexMap::comparablewith( const IndexMap& im ) const
 
 bool IndexMap::equals( const IndexMap& im ) const
 {
-    assert( comparablewith( im ) );
+    attest( comparablewith( im ) );
     return getvalues() == im.getvalues();
 } 
 
 bool IndexMap::less( const IndexMap& im ) const
 {
-    assert( comparablewith( im ) );
+    attest( comparablewith( im ) );
     return getvalues() < im.getvalues();
 } 
 
@@ -190,7 +189,7 @@ bool IndexMap::less( const IndexMap& im ) const
 
 IndexMap IndexMap::skip( int i ) const 
 {
-    assert( src.contains(i) );
+    attest( src.contains(i) );
     IndexMap ret( *this );
     ret.src = IndexRange( src.min(), src.max() - 1 );
     ret.values.erase( ret.values.begin() + ( i - src.min() ) );
@@ -199,7 +198,7 @@ IndexMap IndexMap::skip( int i ) const
 
 IndexMap IndexMap::attachbefore( int to ) const 
 {
-    assert( dest.contains(to) );
+    attest( dest.contains(to) );
     IndexMap ret( *this );
     ret.src = IndexRange( src.min() - 1, src.max() );
     ret.values.insert( ret.values.begin(), to );

@@ -2,21 +2,21 @@
 
 #include "indexrange.hpp"
 
-// #include <cassert>
-
 #include <iostream>
 
 
 IndexRange::IndexRange( int l, int h )
 : minimum(l), maximum(h)
-{}
+{
+  check();
+}
 
 void IndexRange::check() const
 {
     assert( minimum > std::numeric_limits<decltype(minimum)>::min() );
     assert( minimum < std::numeric_limits<decltype(minimum)>::max() );
-    assert( maximum > std::numeric_limits<decltype(minimum)>::min() );
-    assert( maximum < std::numeric_limits<decltype(minimum)>::max() );
+    assert( maximum > std::numeric_limits<decltype(maximum)>::min() );
+    assert( maximum < std::numeric_limits<decltype(maximum)>::max() );
 }
 
 
@@ -67,15 +67,15 @@ bool IndexRange::operator== ( const IndexRange& other ) const
 
 int IndexRange::element2position( int i ) const
 {
-    assert( contains(i) );
+    attest( contains(i) );
     return i - minimum;
 }
 
 int IndexRange::position2element( int i ) const
 {
-    assert( 0 <= i && i <= maximum - minimum );
+    attest( 0 <= i && i <= maximum - minimum );
     int ret = i + minimum;
-    assert( contains(ret) );
+    attest( contains(ret) );
     return ret;
 }
 

@@ -13,7 +13,7 @@
 std::vector<IndexMap> 
 generateEmptyMap( const IndexRange& from, const IndexRange& to )
 {
-    assert( from.isempty() );
+    attest( from.isempty() );
     IndexMap empty = IndexMap( from, to );
 	std::vector<IndexMap> ret( 1, empty );
 	return ret;
@@ -49,8 +49,8 @@ generatePermutations( const IndexRange& ir )
 
 int signPermutation( const IndexMap& im )
 {
-	assert( im.isbijective() );
-	assert( im.getSourceRange() == im.getDestRange() );
+	attest( im.isbijective() );
+	attest( im.getSourceRange() == im.getDestRange() );
 	const IndexRange& ir = im.getSourceRange();
 	int zaehler = 1;
 	int nenner = 1;
@@ -60,9 +60,9 @@ int signPermutation( const IndexMap& im )
         nenner *= ( t - s );
         zaehler *= ( im[ t ] - im[ s ] );
     }
-    assert( zaehler % nenner == 0 );
+    attest( zaehler % nenner == 0 );
 	int ret = zaehler / nenner;
-	assert( ret == 1 || ret == -1 );
+	attest( ret == 1 || ret == -1 );
 	return ret;
 }
 
