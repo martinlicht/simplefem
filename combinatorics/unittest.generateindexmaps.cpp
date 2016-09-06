@@ -20,7 +20,7 @@ int main()
 		cout << "Teste generator for all" << endl;
 		
 		IndexRange bereich( 1,3 );
-		std::vector<IndexMap>  all = generateIndexMaps( bereich, bereich );
+		std::vector<IndexMap> all = generateIndexMaps( bereich, bereich );
 
 		for( const IndexMap& im : all )
 			cout << im << endl;
