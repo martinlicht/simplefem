@@ -56,10 +56,10 @@ class IndexMap
         const int& operator[]( int i ) const;
         const std::vector<int>& getvalues() const;
         
-        IndexMap inverse() const;
+//         IndexMap inverse() const;
         
-        IndexMap skip( int ) const;
-        IndexMap attachbefore( int ) const;
+//         IndexMap skip( int ) const;
+//         IndexMap attachbefore( int ) const;
         
         bool rangecontains( int ) const;
         
@@ -73,6 +73,8 @@ class IndexMap
 
 inline IndexMap operator*( const IndexMap& leave, const IndexMap& enter )
 {
+    leave.check();
+    enter.check();
     IndexRange src  = enter.getSourceRange();
     IndexRange dest = leave.getDestRange();
 
@@ -83,23 +85,30 @@ inline IndexMap operator*( const IndexMap& leave, const IndexMap& enter )
     for( int i = src.min(); i <= src.max(); i++ )
         ret[i] = leave[ enter[i] ];
 
+    ret.check();
     return ret;
 }
 
 inline bool operator==( const IndexMap& left, const IndexMap& right )
 {
+    left.check();
+    right.check();
     attest( left.comparablewith( right ) );
     return left.equals( right );
 }
 
 inline bool operator!=( const IndexMap& left, const IndexMap& right )
 {
+    left.check();
+    right.check();
     attest( left.comparablewith( right ) );
     return !( left.equals( right ) );
 }
 
 inline bool operator<( const IndexMap& left, const IndexMap& right )
 {
+    left.check();
+    right.check();
     attest( left.comparablewith( right ) );
     return left.less( right );
 }
@@ -107,32 +116,42 @@ inline bool operator<( const IndexMap& left, const IndexMap& right )
 
 inline std::ostream& operator<<( std::ostream& os, IndexMap im )
 {
+    im.check();
     im.print( os );
     return os;
 }
 
 
 
-inline IndexMap identityIndexMap( int low, int high )
+inline IndexMap identityIndexMap( const IndexRange& ir )
 {
-    IndexRange ir( low, high );
+    ir.check();
     IndexMap im( ir, ir );
-    for( int i = low; i <= high; i++ )
-            im[i] = i;
+    for( int i = ir.min(); i <= ir.max(); i++ )
+        im[i] = i;
+    im.check();
     return im;
 }
 
-
-inline int fehlstelle( const IndexMap& sub, const IndexMap& super )
+inline IndexMap identityIndexMap( int low, int high )
 {
-    attest( sub.getSourceRange().getlength() == super.getSourceRange().getlength() + 1 );
-    for( int i : sub.getSourceRange() )
-        attest( super.rangecontains(i) );
-    for( int j : super.getSourceRange() )
-        if( ! sub.rangecontains(j) )
-            return j;
-    assert(false);
+    return identityIndexMap( IndexRange( low, high ) );
 }
+
+
+// inline int fehlstelle( const IndexMap& sub, const IndexMap& super )
+// {
+//     sub.check();
+//     super.check();
+//     attest( sub.getSourceRange().getlength() == super.getSourceRange().getlength() + 1 );
+//     for( int i : sub.getSourceRange() )
+//         attest( super.rangecontains(i) );
+//     for( int j : super.getSourceRange() )
+//         if( ! sub.rangecontains(j) )
+//             return j;
+//         else 
+//             assert(false);
+// }
 
 
 

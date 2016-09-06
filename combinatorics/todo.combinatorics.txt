@@ -2,17 +2,20 @@
 	 
     Indexrange
     * check
-    - unittest komplett 
+    * check im constructor 
+    * unittest komplett 
     
     IndexMap 
-    - check 
-    - unittest komplett 
+    * check 
+    * check im constructor 
+    * unittest komplett 
     
     GenerateIndexMaps
     - unittest komplett 
     
     MultiIndex
     - check 
+    - check im constructor 
     - unittest komplett 
     
     generateMultiIndices 

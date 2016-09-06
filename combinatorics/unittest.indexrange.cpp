@@ -68,6 +68,10 @@ int main()
 	attest( irA.position2element(2) == 5 );
 	attest( irA.position2element(4) == 7 );
 	
+// 	cout << "Test combination of index ranges" << std::endl;
+// 	
+// 	
+	
 	cout << "Finished Unit Test" << endl;
 
 	return 0;

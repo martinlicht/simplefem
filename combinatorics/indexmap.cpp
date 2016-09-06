@@ -99,6 +99,7 @@ const int& IndexMap::at( int i ) const
 
 int& IndexMap::operator[]( int i )
 {
+    check();
     attest( src.contains(i) );
     attest( 0 <= i - src.min() );
     attest( i - src.min() < values.size() );
@@ -107,7 +108,10 @@ int& IndexMap::operator[]( int i )
 
 const int& IndexMap::operator[]( int i ) const
 {
+    check();
     attest( src.contains(i) );
+    attest( 0 <= i - src.min() );
+    attest( i - src.min() < values.size() );
     return values.at( i - src.min() );
 }
 
@@ -116,12 +120,14 @@ const int& IndexMap::operator[]( int i ) const
 
 bool IndexMap::isempty() const 
 {
+    check();
     return getSourceRange().isempty();
 }
 
 
 bool IndexMap::isinjective() const 
 {
+    check();
     for( int a = src.min(); a <= src.max(); a++ )
         for( int b = src.min(); b <= src.max(); b++ )
             if( a != b && values.at( a - src.min() ) == values.at( b - src.min() ) )
@@ -132,6 +138,7 @@ bool IndexMap::isinjective() const
 
 bool IndexMap::issurjective() const 
 {
+    check();
     for( int a = dest.min(); a <= dest.max(); a++ ) 
     {
         bool flag = false;
@@ -146,13 +153,15 @@ bool IndexMap::issurjective() const
 
 bool IndexMap::isbijective() const 
 {
+    check();
     return isinjective() && issurjective();
 }
 
 bool IndexMap::isstrictlyascending() const
 {
-    for( int a = getSourceRange().min(); a < getSourceRange().max(); a++ )
-        if( values.at( a - getSourceRange().min() ) >= values.at( a - getSourceRange().min() + 1 ) )
+    check();
+    for( int a = src.min(); a < src.max(); a++ )
+        if( values.at( a - src.min() ) >= values.at( a - src.min() + 1 ) )
             return false;
     return true;
 }
@@ -160,8 +169,9 @@ bool IndexMap::isstrictlyascending() const
 
 bool IndexMap::rangecontains( int p ) const
 {
+    check();
     attest( getDestRange().contains(p) );
-    for( int i : getSourceRange() )
+    for( int i : src )
         if( at(i) == p )
             return true;
     return false;
@@ -170,39 +180,48 @@ bool IndexMap::rangecontains( int p ) const
         
 bool IndexMap::comparablewith( const IndexMap& im ) const
 {
+    check();
     return getSourceRange() == im.getSourceRange() && getDestRange() == im.getDestRange();
 } 
 
 bool IndexMap::equals( const IndexMap& im ) const
 {
+    check();
+    im.check();
     attest( comparablewith( im ) );
     return getvalues() == im.getvalues();
 } 
 
 bool IndexMap::less( const IndexMap& im ) const
 {
+    check();
+    im.check();
     attest( comparablewith( im ) );
     return getvalues() < im.getvalues();
 } 
 
 
 
-IndexMap IndexMap::skip( int i ) const 
-{
-    attest( src.contains(i) );
-    IndexMap ret( *this );
-    ret.src = IndexRange( src.min(), src.max() - 1 );
-    ret.values.erase( ret.values.begin() + ( i - src.min() ) );
-    return ret;
-}
-
-IndexMap IndexMap::attachbefore( int to ) const 
-{
-    attest( dest.contains(to) );
-    IndexMap ret( *this );
-    ret.src = IndexRange( src.min() - 1, src.max() );
-    ret.values.insert( ret.values.begin(), to );
-    return ret;
-}
+// IndexMap IndexMap::skip( int i ) const 
+// {
+//     check();
+//     attest( src.contains(i) );
+//     IndexMap ret( *this );
+//     ret.src = IndexRange( src.min(), src.max() - 1 );
+//     ret.values.erase( ret.values.begin() + ( i - src.min() ) );
+//     ret.check();
+//     return ret;
+// }
+// 
+// IndexMap IndexMap::attachbefore( int to ) const 
+// {
+//     check();
+//     attest( dest.contains(to) );
+//     IndexMap ret( *this );
+//     ret.src = IndexRange( src.min() - 1, src.max() );
+//     ret.values.insert( ret.values.begin(), to );
+//     ret.check();
+//     return ret;
+// }
 
 
