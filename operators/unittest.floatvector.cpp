@@ -11,14 +11,15 @@ using namespace std;
 
 int main()
 {
+	cout << std::unitbuf;
 	cout << "Unit Test for Vector class" << endl;
 	
 	FloatVector a(5);
 	
 	a.check();
 	
-	a.zero();
 	cout << "Should be zero vector:" << endl;
+	a.zero();
 	cout << a << endl;
 	
 	for( int i = 0; i < 5; i++ )
@@ -50,6 +51,10 @@ int main()
 	
 	cout << "Now the scalar product with itself:" << endl;
 	cout << a*a << endl;
+	
+	FloatVector e(0);
+	cout << "Should be the zero-dimensional vector:" << endl;
+	cout << e << endl;
 	
 	cout << "Finished Unit Test" << endl;
 

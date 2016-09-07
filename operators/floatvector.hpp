@@ -26,9 +26,11 @@ class FloatVector
     public:
 
         explicit FloatVector( int dim );
-        explicit FloatVector( int dim, Float initivalue );
+        FloatVector( int dim, Float initivalue );
         FloatVector( const FloatVector& );
-        explicit FloatVector( const FloatVector&, Float scaling );
+        explicit FloatVector( const std::vector<Float>& );
+        FloatVector( const std::vector<Float>&, Float );
+        FloatVector( const FloatVector&, Float scaling );
         FloatVector( int dimension, const std::function<Float(int)>& generator );
         FloatVector( int dimension, const std::function<Float(int)>& generator, Float scaling );
         // virtual ~FloatVector();

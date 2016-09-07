@@ -1,0 +1,79 @@
+	
+	 
+    FloatVector
+    * initializer list constructor
+    * check
+    * check im constructor 
+    * unittest komplett 
+    
+    DenseMatrix
+    - check
+    - check im constructor 
+    - unittest komplett 
+    - remove linear operations
+    
+    ScalingOperator
+    - check
+    - check im constructor 
+    - unittest komplett 
+    
+    DiagonalOperator
+    - check
+    - check im constructor 
+    - unittest komplett 
+    
+    SparseMatrix
+    - check
+    - check im constructor 
+    - unittest komplett 
+    
+    SumOperator
+    - check
+    - check im constructor 
+    - unittest komplett 
+    
+    ProductOperator
+    - check
+    - check im constructor 
+    - unittest komplett 
+    
+    MatrixAlgorithms
+    - check
+    - check im constructor 
+    - unittest komplett 
+    
+    CRM
+    - check
+    - check im constructor 
+    - unittest komplett 
+    - flag for high precision evaluation 
+    
+    NE-CRM
+    - check
+    - check im constructor 
+    - unittest komplett 
+    
+    -----------------------------------------
+    
+    FloatVector
+    - interne daten umstellen auf C-style arrays 
+      C++ vector nur noch als kopie zurückgeben
+    - high accuracy scalar product (assembler)
+    - high speed scalar product (assembler)
+    - getInternalPointer 
+    
+    DenseMatrix
+    - interne daten umstellen auf C-style arrays 
+    - high speed product 
+    
+    DiagonalOperator
+    - interne daten umstellen auf C-style arrays 
+    
+    SparseMatrix
+    - Umstellen auf CSR-Format 
+    - high speed evaluation
+    
+    MatrixAlgorithms
+    - intern niederdimensionale spezialisierungen verwenden  
+    
+    

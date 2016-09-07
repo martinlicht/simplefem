@@ -9,48 +9,53 @@
 #include "floatvector.hpp"
 
 FloatVector::FloatVector( int dim )
-:
- data(dim)
+: data(dim)
 {
-	check();
+    check();
 }
 
 FloatVector::FloatVector( int dim, Float initialvalue )
-:
- data(dim,initialvalue)
+: data(dim,initialvalue)
 {
     check();
 }
 
 FloatVector::FloatVector( const FloatVector& src )
-: 
- data( src.getdimension() )
+: data( src.getdimension() )
 {
-	copydatafrom( src );
+    copydatafrom( src );
     check();
 }
 
 FloatVector::FloatVector( const FloatVector& src, Float alpha )
-: 
- data( src.getdimension() )
+: data( src.getdimension() )
 {
-	copydatafrom( alpha, src );
+    copydatafrom( alpha, src );
     check();
 }
 
-FloatVector::FloatVector( int dimension, const std::function<Float(int)>& generator )
-: 
- data( dimension )
+FloatVector::FloatVector( const std::vector<Float>& vals )
+: FloatVector( vals, 1. )
 {
-	generatedatafrom( generator );
+  check();
+}
+
+FloatVector::FloatVector( const std::vector<Float>& vals, Float alpha )
+: FloatVector( vals.size(), [&vals](int i) -> Float{ return vals.at(i); }, alpha )
+{
+  check();
+}
+
+FloatVector::FloatVector( int dimension, const std::function<Float(int)>& generator )
+: FloatVector( dimension, generator, 1. ) 
+{
     check();
 }
 
 FloatVector::FloatVector( int dimension, const std::function<Float(int)>& generator, Float alpha )
-: 
- data( dimension )
+: data( dimension )
 {
-	generatedatafrom( alpha, generator );
+    generatedatafrom( alpha, generator );
     check();
 }
 
@@ -58,132 +63,153 @@ FloatVector::FloatVector( int dimension, const std::function<Float(int)>& genera
 
 void FloatVector::check() const 
 {
-	assert( getdimension() >= 0 );
-	if( getdimension() == 0 )
-        std::cout << "WARNING: VECTOR OF DIMENSION ZERO." << std::endl;
-	assert( getdimension() == data.size() );
+//     std::cout << "CHECK." << std::endl;
+    assert( getdimension() >= 0 );
+    if( getdimension() == 0 )
+    std::cout << "WARNING: VECTOR OF DIMENSION ZERO." << std::endl;
+    assert( getdimension() == data.size() );
 }
 
 void FloatVector::print( std::ostream& output ) const 
 {
-	output << "float vector of dimension: " << getdimension() << std::endl;
+    check();
+    output << "float vector of dimension: " << getdimension() << std::endl;
     for( int p = 0; p < getdimension(); p++ )
-		output << p << ": " << getentry(p) << std::endl;
+	output << p << ": " << getentry(p) << std::endl;
 }
 
 int FloatVector::getdimension() const 
 {
-	return data.size();
+    /* No check at this point */
+    return data.size();
 }
 
 Float FloatVector::setentry( int p, Float value )
 {
-	assert( 0 <= p && p < data.size() );
-	data.at(p) = value;
-	return data.at(p);
+    check();
+    assert( 0 <= p && p < data.size() );
+    data.at(p) = value;
+    return data.at(p);
 }
 
 Float FloatVector::getentry( int p ) const 
 {
-	assert( 0 <= p && p < data.size() );
-	return data.at(p);
+    check();
+    assert( 0 <= p && p < data.size() );
+    return data.at(p);
 }
 
 Float& FloatVector::at( int p )
 {
+    check();
     return (*this)[p];
 }
 
 const Float& FloatVector::at( int p ) const
 {
+    check();
     return (*this)[p];
 }
 
 Float& FloatVector::operator[]( int p )
 {
-	assert( 0 <= p && p < data.size() );
-	return data.at(p);
+    check();
+    assert( 0 <= p && p < data.size() );
+    return data.at(p);
 }
 
 const Float& FloatVector::operator[]( int p ) const
 {
-	assert( 0 <= p && p < data.size() );
-	return data.at(p);
+    check();
+    assert( 0 <= p && p < data.size() );
+    return data.at(p);
 }
-		
+                
 const std::vector<Float>& FloatVector::getdata() const
 {
+    check();
     return data;
 }
 
-	
+        
 
 
 
 
 void FloatVector::zero() 
 {
-	for( int p = 0; p < getdimension(); p++ )
-		setentry( p, 0. ); 
+    check();
+    for( int p = 0; p < getdimension(); p++ )
+	setentry( p, 0. ); 
 }
 
 void FloatVector::random() 
 {
-	for( int p = 0; p < getdimension(); p++ )
-		setentry( p, sqrt( rand() ) ); 
+    check();
+    for( int p = 0; p < getdimension(); p++ )
+        setentry( p, sqrt( rand() ) ); 
 }
 
 void FloatVector::scale( Float alpha ) 
 {
-	for( int p = 0; p < getdimension(); p++ )
-		setentry( p, alpha * getentry( p ) ); 
+    check();
+    for( int p = 0; p < getdimension(); p++ )
+        setentry( p, alpha * getentry( p ) ); 
 }
 
 void FloatVector::copydatafrom( const FloatVector& source )
 {
-	copydatafrom( 1., source );
+    check();
+    copydatafrom( 1., source );
 }
 
 void FloatVector::copydatafrom( Float scaling, const FloatVector& source )
 {
+    check();
     assert( getdimension() == source.getdimension() );
-	for( int p = 0; p < getdimension(); p++ )
-		setentry( p, scaling * source.getentry( p ) ); 	
+        for( int p = 0; p < getdimension(); p++ )
+            setentry( p, scaling * source.getentry( p ) );         
 }
-	
-	
+        
+        
 void FloatVector::generatedatafrom( const std::function<Float(int)>& generator )
 {
-	generatedatafrom( 1., generator );
+    check();
+    generatedatafrom( 1., generator );
 }
 
 void FloatVector::generatedatafrom( Float scaling, const std::function<Float(int)>& generator )
 {
+    check();
     for( int p = 0; p < getdimension(); p++ )
-		setentry( p, scaling * generator( p ) ); 	
+        setentry( p, scaling * generator( p ) );         
 }
-	
-	
+        
+        
 void FloatVector::adddatafrom( const FloatVector& source )
 {
-	adddatafrom( 1., source );
+    check();
+    adddatafrom( 1., source );
 }
 
 void FloatVector::adddatafrom( Float scalingsource, const FloatVector& source )
 {
-	adddatafrom( 1., scalingsource, source );
+    check();
+    adddatafrom( 1., scalingsource, source );
 }
-	
+        
 void FloatVector::adddatafrom( Float scalingself, Float scalingsource, const FloatVector& source )
 {
+    check();
     assert( getdimension() == source.getdimension() );
-	for( int p = 0; p < getdimension(); p++ )
-		setentry( p, scalingself * getentry( p ) + scalingsource * source.getentry( p ) ); 	
+        for( int p = 0; p < getdimension(); p++ )
+            setentry( p, scalingself * getentry( p ) + scalingsource * source.getentry( p ) );         
 }
 
 
 Float FloatVector::scalarproductwith( const FloatVector& right ) const
 {
+    check();
     assert( getdimension() == right.getdimension() );
     Float ret = 0.;
     for( int p = 0; p < getdimension(); p++ )
@@ -193,11 +219,13 @@ Float FloatVector::scalarproductwith( const FloatVector& right ) const
 
 Float FloatVector::norm() const 
 {
+    check();
     return sqrt( scalarproductwith( *this ) );
 }
 
 Float FloatVector::maxnorm() const
 {
+    check();
     assert( getdimension() > 0 );
     Float ret = 0.;
     for( int d = 0; d < getdimension(); d++ )
@@ -207,8 +235,10 @@ Float FloatVector::maxnorm() const
 
 Float FloatVector::lpnorm( Float p ) const
 {
+    check();
     assert( p > 0 );
-    assert( getdimension() > 0 );
+    assert( std::isfinite(p) );
+    assert( std::isnormal(p) );
     
     Float ret = 0.;
     for( int d = 0; d < getdimension(); d++ )
