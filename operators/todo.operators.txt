@@ -6,35 +6,39 @@
     * check im constructor 
     * unittest komplett 
     
+    LinearOperator
+    * check
+    * check in all methods 
+    * (no unittest because purely virtual)
+    
     DenseMatrix
-    - check
-    - check im constructor 
+    * check
+    * check im constructor 
     - unittest komplett 
-    - remove linear operations
     
     ScalingOperator
-    - check
-    - check im constructor 
+    * check
+    * check im constructor 
     - unittest komplett 
     
     DiagonalOperator
-    - check
-    - check im constructor 
+    * check
+    * check im constructor 
     - unittest komplett 
     
     SparseMatrix
-    - check
-    - check im constructor 
+    * check
+    * check im constructor 
     - unittest komplett 
     
     SumOperator
-    - check
-    - check im constructor 
+    * check
+    * check im constructor 
     - unittest komplett 
     
     ProductOperator
-    - check
-    - check im constructor 
+    * check
+    * check im constructor 
     - unittest komplett 
     
     MatrixAlgorithms

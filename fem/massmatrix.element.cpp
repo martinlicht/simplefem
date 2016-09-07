@@ -67,7 +67,7 @@ DenseMatrix calculateBDproductMatrix(
     assert( vertices.size() + 1 == innerdim );
     assert( 0 <= formdegree && formdegree <= innerdim );
     
-    DenseMatrix BD( calculateBarycentricDiffs( innerdim, outerdim, vertices ) );
+    DenseMatrix BD( outerdim, innerdim+1, calculateBarycentricDiffs( innerdim, outerdim, vertices ) );
     DenseMatrix BDSP = BD.transpose() * BD;
     return SubdeterminantMatrix( BDSP, formdegree );
 }
@@ -106,6 +106,7 @@ Float simplexvolume( int innerdim, int outerdim, const std::vector<FloatVector>&
     /* Volume formula according to 
     http://www.mathpages.com/home/kmath664/kmath664.htm
     */
+    
     DenseMatrix temp( outerdim, innerdim+1, vertices );
     temp = temp.transpose() * temp;
     temp.add( 1. );
@@ -124,7 +125,7 @@ std::vector<FloatVector> calculateSimplexheightpoints(
     assert( outerdim >= 0 && innerdim >= 0 ); 
     assert( vertices.size() + 1 == innerdim );
     
-    DenseMatrix ret( outerdim, innerdim+1 );
+    std::vector<FloatVector> ret( innerdim+1, FloatVector(outerdim) );
 
     /* TODO */
     /* https://www.math.auckland.ac.nz/~waldron/Preprints/Barycentric/barycentric.pdf */

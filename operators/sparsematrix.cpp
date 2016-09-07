@@ -46,7 +46,7 @@ SparseMatrix::~SparseMatrix()
 	
 void SparseMatrix::check() const
 {
-	LinearOperator::check();
+    LinearOperator::check();
     for( const MatrixEntry& me : entries ) {
         assert( 0 <= me.row && me.row < getdimout() );
         assert( 0 <= me.column && me.column < getdimin() );
@@ -55,61 +55,71 @@ void SparseMatrix::check() const
 
 void SparseMatrix::print( std::ostream& os ) const
 {
-	os << "SparseMatrix Entries:" << std::endl;
-	for( const MatrixEntry& entry : entries )
-		os << entry.row << " " << entry.column << " : " << entry.value << std::endl; 
+    os << "SparseMatrix Entries:" << std::endl;
+    for( const MatrixEntry& entry : entries )
+        os << entry.row << " " << entry.column << " : " << entry.value << std::endl; 
 }
 	
 
 void SparseMatrix::applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const 
 {
-	assert( getdimout() == dest.getdimension() );
-	assert( getdimin() == add.getdimension() );
-	
-	dest.scale( s );
-        
-        for( const MatrixEntry& rcv : entries )
-		dest.setentry( rcv.row, dest.getentry( rcv.row ) + t * rcv.value * add.getentry( rcv.column ) );
+    check();
+    dest.check();
+    add.check();
+    assert( getdimout() == dest.getdimension() );
+    assert( getdimin() == add.getdimension() );
+    
+    dest.scale( s );
+    
+    for( const MatrixEntry& rcv : entries )
+        dest.setentry( rcv.row, dest.getentry( rcv.row ) + t * rcv.value * add.getentry( rcv.column ) );
+
+    dest.check();
 }
 
 
 void SparseMatrix::addentry( int r, int c, Float v )
 {
-	SparseMatrix::MatrixEntry temp;
-	temp.row = r;
-	temp.column = c;
-	temp.value = v;
-	addentry( temp );
+    check();
+    SparseMatrix::MatrixEntry temp;
+    temp.row = r;
+    temp.column = c;
+    temp.value = v;
+    addentry( temp );
+    check();
 }
 
 void SparseMatrix::addentry( SparseMatrix::MatrixEntry entry )
 {
-	assert( 0 <= entry.row && entry.row <= getdimout() );
-	assert( 0 <= entry.column && entry.column <= getdimin() );
-	entries.push_back( entry );
+    check();
+    assert( 0 <= entry.row && entry.row <= getdimout() );
+    assert( 0 <= entry.column && entry.column <= getdimin() );
+    entries.push_back( entry );
+    check();
 }
 
 int SparseMatrix::getnumberofentries() const 
 {
-	return entries.size();
+    return entries.size();
 }
 	
 void SparseMatrix::clearentries()
 {
-	entries.clear();
+    check();
+    entries.clear();
+    check();
 }
 
 const std::list<SparseMatrix::MatrixEntry>& SparseMatrix::getentries() const
-// const std::list<MatrixEntry>& SparseMatrix::getentries() const
 {
-	return entries;
+    return entries;
 }
 		
 
 		
 void SparseMatrix::sortentries() const
 {
-	
+   check();
 //         auto& casted_entries = const_cast<std::list<MatrixEntry>&>(entries);
         
 //         std::list<MatrixEntry> test = entries;
@@ -119,27 +129,34 @@ void SparseMatrix::sortentries() const
 //                         return left.row < right.row || left.column < right.column || left.value < right.value;
 //         };
         
-	const_cast<std::list<MatrixEntry>&>(entries).sort( compareMatrixEntry );
-	
+    const_cast<std::list<MatrixEntry>&>(entries).sort( compareMatrixEntry );
+    
+    check();
 }
-	
+
 void SparseMatrix::compressentries() const
 {
-	sortentries();
-	
-	auto mergeMatrixEntry = []( const SparseMatrix::MatrixEntry& left, 
-					const SparseMatrix::MatrixEntry& right)
-	-> SparseMatrix::MatrixEntry {
-	 SparseMatrix::MatrixEntry ret;
-	 assert( left.row == right.row && left.column == right.column );
-	 ret.row = left.row; ret.column = left.column;
-	 ret.value = left.value + right.value;
-     return ret; 
-	};
-						
-	mergeelementsinsortedlist<SparseMatrix::MatrixEntry>
-	( const_cast<std::list<MatrixEntry>&>(entries), 
-	mergeMatrixEntry, compareMatrixEntry );
-	
+    check();
+    
+    sortentries();
+    
+    auto mergeMatrixEntry 
+    =
+    []( const SparseMatrix::MatrixEntry& left, 
+        const SparseMatrix::MatrixEntry& right )
+      -> SparseMatrix::MatrixEntry
+      {
+        SparseMatrix::MatrixEntry ret;
+        assert( left.row == right.row && left.column == right.column );
+        ret.row = left.row; ret.column = left.column;
+        ret.value = left.value + right.value;
+        return ret; 
+      };
+                                            
+    mergeelementsinsortedlist<SparseMatrix::MatrixEntry>
+    ( const_cast<std::list<MatrixEntry>&>(entries), 
+    mergeMatrixEntry, compareMatrixEntry );
+    
+    check();  
 }
-	
+

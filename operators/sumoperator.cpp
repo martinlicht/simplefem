@@ -30,8 +30,7 @@ SumOperator::~SumOperator()
 
 void SumOperator::check() const  
 {
-	std::cout << "Check Sum Operator: " << std::endl;
-	LinearOperator::check();
+    LinearOperator::check();
     left.check();
     right.check();
     assert( left.getdimin() == right.getdimin() );
@@ -40,18 +39,22 @@ void SumOperator::check() const
 
 void SumOperator::print( std::ostream& os ) const  
 {
-	os << "Print Sum Operator: " << std::endl;
+    os << "Print Sum Operator: " << std::endl;
 }
 
 
 
 void SumOperator::applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const 
 {
-	
-	assert( getdimin() == getdimout() );
-	assert( getdimout() == dest.getdimension() );
-	assert( getdimin() == add.getdimension() );
-	
+    check();
+    dest.check();
+    add.check();
+    
+    assert( getdimin() == getdimout() );
+    assert( getdimout() == dest.getdimension() );
+    assert( getdimin() == add.getdimension() );
+      
     dest = s * dest + t * leftscale * ( left * add ) + t * rightscale * ( right * add );
     
+    dest.check();
 }

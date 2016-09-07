@@ -173,7 +173,7 @@ DenseMatrix Subdeterminantmatrix( const DenseMatrix& A, int k )
     for( int rim = 0; rim < sigmas.size(); rim++ )
     for( int cim = 0; cim < sigmas.size(); cim++ )
     {
-        ret(rim,cim) = A.submatrix( sigmas.at(rim), sigmas.at(cim) ).determinant();
+        ret(rim,cim) = determinant( A.submatrix( sigmas.at(rim), sigmas.at(cim) ) );
     }
     return ret;
 }

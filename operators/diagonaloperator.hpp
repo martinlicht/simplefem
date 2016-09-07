@@ -43,6 +43,8 @@ public LinearOperator /* every matrix is a linear operator */
 
 inline DiagonalOperator operator*( const DiagonalOperator& left, const DiagonalOperator& right )
 {
+    left.check();
+    right.check();
     assert( left.getdimin() == right.getdimout() );
     assert( left.getdimout() == right.getdimin() );
     const FloatVector& leftdia = left.getdiagonal();

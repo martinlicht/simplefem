@@ -23,4 +23,9 @@
     * robusten
     * unittest komplett 
     
+    ---------------------------
+    
+    IndexMap
+    - interne daten besser konzentrieren auf wenige function calls 
+    - C++ vector ersetzen durch C style array 
     

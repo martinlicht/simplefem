@@ -51,14 +51,19 @@ class LinearOperator
   
 inline FloatVector operator*( const LinearOperator& op, const FloatVector& vec )
 {
+    op.check();
+    vec.check();
     FloatVector ret( op.getdimout() );
     op.apply( ret, vec );
+    vec.check();
     return ret;
 }
   
 inline std::ostream& operator<<( std::ostream& os, const LinearOperator& op )
 {
+    op.check();
     op.print( os );
+    op.check();
     return os;
 }
   

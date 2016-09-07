@@ -11,32 +11,32 @@
 ScalingOperator::ScalingOperator( int dimension, Float s )
 : LinearOperator(dimension,dimension), scaling(s)
 {}
-		
+
 ScalingOperator::~ScalingOperator()
 {
-	/* Nothing */ 
+    /* Nothing */ 
 }
 
 void ScalingOperator::check() const  
 {
-	std::cout << "Check Scaling Operator with scaling: " << scaling << std::endl;
-	LinearOperator::check();	
+    std::cout << "Check Scaling Operator with scaling: " << scaling << std::endl;
+    LinearOperator::check();	
 }
 
 void ScalingOperator::print( std::ostream& os ) const  
 {
-	os << "Print Scaling Operator with scaling: " << scaling << std::endl;
+    os << "Print Scaling Operator with scaling: " << scaling << std::endl;
 }
 
 
 void ScalingOperator::setscaling( Float s )
 {
-	scaling = s;
+    scaling = s;
 }
 
 Float ScalingOperator::getscaling() const
 {
-	return scaling;
+    return scaling;
 }
 
 
@@ -53,16 +53,20 @@ Float ScalingOperator::getscaling() const
 
 void ScalingOperator::applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const 
 {
-	
-	assert( getdimin() == getdimout() );
-	assert( getdimout() == dest.getdimension() );
-	assert( getdimin() == add.getdimension() );
-	
-	for( int p = 0; p < getdimin(); p++ ) {
-		dest.setentry( p, 
-			s * dest.getentry( p ) + t * scaling * add.getentry( p )
-		);
-	}
-	
-	
+    check();
+    dest.check();
+    add.check();
+    
+    assert( getdimin() == getdimout() );
+    assert( getdimout() == dest.getdimension() );
+    assert( getdimin() == add.getdimension() );
+    
+    for( int p = 0; p < getdimin(); p++ ) {
+        dest.setentry( p, 
+            s * dest.getentry( p ) + t * scaling * add.getentry( p )
+        );
+    }
+    
+    dest.check();
+    
 }

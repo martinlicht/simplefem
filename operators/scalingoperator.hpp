@@ -39,6 +39,8 @@ public LinearOperator /* every matrix is a linear operator */
   
 inline ScalingOperator operator*( const ScalingOperator& left, const ScalingOperator& right )
 {
+    left.check();
+    right.check();
     assert( left.getdimin() == right.getdimout() );
     assert( left.getdimout() == right.getdimin() );
     

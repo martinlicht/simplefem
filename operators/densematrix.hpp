@@ -11,6 +11,7 @@ class DenseMatrix;
 #include "scalingoperator.hpp"
 #include "diagonaloperator.hpp"
 #include "sparsematrix.hpp"
+#include "matrixalgorithm.hpp"
 
 
 
@@ -18,7 +19,7 @@ class DenseMatrix;
 ****
 ****  Class for Dense Matrices 
 ****  - instantiates LinearOperator
-****  - only basic linear arithmetics 
+****  - only basic linear arithmetics, and also matrix multiplication 
 ****  
 ************************/
 
@@ -89,7 +90,6 @@ public LinearOperator /* every matrix is a linear operator */
         void add( const DenseMatrix& );
         void add( Float, const DenseMatrix& );
         void add( Float, Float, const DenseMatrix& );
-        static DenseMatrix MatrixMult( const DenseMatrix&, const DenseMatrix& );
         
     private:
 	
@@ -97,7 +97,48 @@ public LinearOperator /* every matrix is a linear operator */
 	
 };
   
+
+inline DenseMatrix MatrixMult( const DenseMatrix& left, const DenseMatrix& right )
+{
+  left.check();
+  right.check();
   
+  const int lin = left.getdimin();
+  const int lout = left.getdimout();
+  const int rin = right.getdimin();
+  const int rout = right.getdimout();
+  
+  assert( lin == rout );
+  
+  DenseMatrix ret( lout, rin );
+  ret.zeromatrix();
+  
+  for( int lo = 0; lo < lout; lo++ )
+  for( int ri = 0; ri < rin; ri++ )
+  for( int m = 0; m < rout; m++ )
+  ret( lo, ri ) += left( lo, m ) * right( m, ri );
+  
+  ret.check();
+  return ret;
+  
+}
+
+
+void InverseAndDeterminant( const DenseMatrix&, DenseMatrix&, Float& );
+
+inline Float determinant( const DenseMatrix& mat ) 
+{
+  mat.check();
+  assert( mat.issquare() );
+  DenseMatrix dummy( mat.getdimin() );
+  Float ret;
+  InverseAndDeterminant( mat, dummy, ret );
+  return ret;
+}
+
+
+
+
 
 inline DenseMatrix& operator+=( DenseMatrix& left, const DenseMatrix& right )
 {
@@ -114,7 +155,7 @@ inline DenseMatrix& operator-=( DenseMatrix& left, const DenseMatrix& right )
 inline DenseMatrix& operator*=( DenseMatrix& left, const DenseMatrix& right )
 {
     DenseMatrix temp( left );
-    temp = DenseMatrix::MatrixMult( left, right );
+    temp = MatrixMult( left, right );
     left = temp;
     return left;
 }

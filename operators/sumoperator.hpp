@@ -41,6 +41,7 @@ public LinearOperator /* every matrix is a linear operator */
 
 inline SumOperator operator+( const LinearOperator& left, const LinearOperator& right )
 {
+    left.check(); right.check();
     return SumOperator( left, right );
 }
 
