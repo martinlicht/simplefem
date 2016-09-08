@@ -29,6 +29,8 @@ SimplicialMesh::SimplicialMesh( int innerdim, int outerdim )
     // there is a n->0 subsimplex list 
     auto key_n_0 = std::make_pair(innerdim,0);
     subsimplex_list.insert( std::make_pair( key_n_0, std::vector<IndexMap>() ) );
+    
+    check();
 }
 
 
@@ -44,7 +46,7 @@ SimplicialMesh::SimplicialMesh( int innerdim, int outerdim,
     subsimplex_list(sub),
     supersimplex_list(super)
 {
-    // TODO: Check whether this constructor is complete
+    check();
 }
 
 
@@ -57,13 +59,14 @@ SimplicialMesh::~SimplicialMesh()
 void SimplicialMesh::check() const
 {
     // FIXME: add code 
+    /* checke welche listen vorhanden sein sollen. */
+    /* check die alle subsimplex listen. Dabei auch die supersimplex liste prüfen */
+    /* Supersimplex listen checken */
 }
 
 void SimplicialMesh::print( std::ostream& os ) const
 {
     os << "Printe Mesh!" << std::endl;
-	os << "Coordinates: " << coordinates;
-	// FIXME: Ausgabe der subsimplexlisten und so 
 }
 
 
@@ -161,6 +164,7 @@ bool SimplicialMesh::hassimplexlist( int d ) const
 bool SimplicialMesh::hassubsimplexlist( int from, int to ) const
 {
     assert( 0 <= to && to < from && from <= innerdimension );
+    assert( hassimplexlist( from ) && hassimplexlist( to ) );
     auto key = std::make_pair(from,to);
     return subsimplex_list.end() != subsimplex_list.find(key);
 }
@@ -169,6 +173,7 @@ bool SimplicialMesh::hassubsimplexlist( int from, int to ) const
 bool SimplicialMesh::hassupersimplexlist( int from, int to ) const
 {
     assert( 0 <= from && from < to && to <= innerdimension );
+    assert( hassimplexlist( from ) && hassimplexlist( to ) );
     auto key = std::make_pair(from,to);
     return supersimplex_list.end() != supersimplex_list.find(key);
 }
@@ -180,6 +185,7 @@ void SimplicialMesh::buildsimplexlist( int dim )
     /* set up the basics */
     assert( 0 < dim && dim <= getinnerdimension() );
     assert( ! hassimplexlist(dim) );
+    
     std::vector<IndexMap> sigmas
     = generateSigmas( IndexRange(0,dim), IndexRange(0,innerdimension) );
     const int countsigmas = sigmas.size();
@@ -207,17 +213,15 @@ void SimplicialMesh::buildsimplexlist( int dim )
 void SimplicialMesh::buildsubsimplexlist( int from, int to )
 {
     assert( 0 <= to && to < from && from <= innerdimension );
-    assert( ! hassubsimplexlist(from,to) );
     assert( hassubsimplexlist(from,0) );
     assert( hassubsimplexlist(to,0) );
+    assert( ! hassubsimplexlist(from,to) );
     
     const int N = countsubsimplices( from, to );
-    auto mynewlist = std::vector<IndexMap>( 
+    auto mynewIMvector = std::vector<IndexMap>( 
         countsimplices(from),
         IndexMap( IndexRange(0,N-1), IndexRange(0,countsimplices(to)-1) )
     );
-    
-    // FIXME: Inefficient implementation
     
     const std::vector<IndexMap> sigmas = generateSigmas( IndexRange(0,to), IndexRange(0,from) );
     assert( N == sigmas.size() );
@@ -229,10 +233,10 @@ void SimplicialMesh::buildsubsimplexlist( int from, int to )
         while( getsubsimplices( to, it, 0 ) != sigmas.at(s) * getsubsimplices( from, S, 0 ) )
             it++;
         assert( it < countsimplices(to) );
-        mynewlist.at(S)[s] = it;
+        mynewIMvector.at(S)[s] = it;
     }
     
-    subsimplex_list.insert( std::make_pair( std::make_pair(from,to), mynewlist ) );
+    subsimplex_list.insert( std::make_pair( std::make_pair(from,to), mynewIMvector ) );
     
 }
 
@@ -240,12 +244,10 @@ void SimplicialMesh::buildsubsimplexlist( int from, int to )
 void SimplicialMesh::buildsupersimplexlist( int from, int to )
 {
     assert( 0 <= from && from < to && to <= innerdimension );
-    assert( ! hassupersimplexlist(from,to) );
     assert( hassubsimplexlist(from,0) );
     assert( hassubsimplexlist(to,0) );
     assert( hassubsimplexlist(to,from) );
-    
-    // FIXME: Inefficient implementation
+    assert( ! hassupersimplexlist(from,to) );
     
     std::vector<std::list<int>> mynewlist( countsimplices(from), std::list<int>() );
     
@@ -282,13 +284,13 @@ const std::map< std::pair<int,int>, std::vector<std::list<int>> >& SimplicialMes
 
 void SimplicialMesh::completesimplexlists()
 {
-    assert( hassimplexlist( innerdimension ) );
     for( int d = 1; d < innerdimension; d++ )
         if( !hassimplexlist( d ) ) buildsimplexlist( d );
 }
 
 void SimplicialMesh::completesubsimplexlists()
 {
+    completesimplexlists();
     for( int D = 1; D < innerdimension; D++ )
         for( int d = 1; d < D; d++ )
             if( !hassubsimplexlist( D, d ) ) buildsubsimplexlist( D, d );
@@ -296,7 +298,8 @@ void SimplicialMesh::completesubsimplexlists()
 
 void SimplicialMesh::completesupersimplexlists()
 {
-    for( int D = 1; D < innerdimension; D++ )
+  completesubsimplexlists();
+  for( int D = 1; D < innerdimension; D++ )
         for( int d = 1; d < D; d++ )
             if( !hassupersimplexlist( d, D ) ) buildsupersimplexlist( d, D );
 }
@@ -340,7 +343,7 @@ Float SimplicialMesh::getVolume( int dimension, int cell ) const
     assert( 0 <= dimension && dimension <= getinnerdimension() );
     assert( hassimplexlist(dimension) );
     IndexMap im = getsubsimplices( dimension, cell, 0 );
-    return getcoordinates().getLinearPart( im ).determinant() / factorial(dimension);
+    return Determinant( getcoordinates().getLinearPart( im ) ) / factorial(dimension);
 }
 
 Float SimplicialMesh::getDiameter( int dimension, int cell ) const

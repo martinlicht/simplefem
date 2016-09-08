@@ -24,3 +24,7 @@
  * * move semantics for floatvectors and densematrices (3h)
  * * parallelism (lots and lots)
  
+    -----------------------
+    prefixes: 
+        eval, get, set, calc, compute, generate, derive, check, complete, count, 
+    

@@ -1,6 +1,8 @@
 
 #include "iterativesolver.hpp"
 
+#include <cmath>
+
 #include "scalingoperator.hpp"
 	
 IterativeSolver::IterativeSolver( const LinearOperator& op )

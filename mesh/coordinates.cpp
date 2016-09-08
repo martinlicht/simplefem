@@ -21,6 +21,7 @@ Coordinates::Coordinates( int dimension, int number )
 void Coordinates::check() const
 {
     assert( dimension >= 0 && number >= 0 );
+    assert( data.size() == dimension * number );
 }
 
 
@@ -43,6 +44,7 @@ void Coordinates::read( std::istream& is )
             Float temp;
             is >> temp;
             setdata( n, d, temp );
+            assert( ! is.fail() );
         }
     }
 }
@@ -103,6 +105,7 @@ void Coordinates::loadvector( int n, const FloatVector& input )
 void Coordinates::loadvector( int n, const FloatVector& input, Float scale ) 
 {
     assert( 0 <= n && n < number );
+    assert( input.getdimension() == dimension );
     for( int d = 0; d < dimension; d++ )
         data.at( n * dimension + d ) = scale * input[ d ];
 }
@@ -133,6 +136,7 @@ void Coordinates::shift( const FloatVector& add )
 void Coordinates::lineartransform( const LinearOperator& op )
 {
     assert( op.getdimin() == dimension );
+    assert( op.getdimout() == dimension );
     for( int n = 0; n < number; n++ ) {
         FloatVector temp = getvectorclone( n );
         temp = op * temp;
@@ -152,7 +156,7 @@ void Coordinates::append( const FloatVector& v )
 {
     assert( dimension == v.getdimension() );
     const std::vector<Float>& t = v.getdata();
-    data.insert( data.end(), t.begin(), t.end() );
+    data.insert( this->data.end(), t.begin(), t.end() );
     number++;
 }
 
@@ -165,9 +169,9 @@ DenseMatrix Coordinates::getLinearPart( const IndexMap& im ) const
     IndexRange imsrc = im.getSourceRange();
     assert( imsrc.min() == 0 && imsrc.max() <= getdimension() );
     
-    DenseMatrix ret( getdimension(), imsrc.max()-1 );
+    DenseMatrix ret( getdimension(), std::max(0,imsrc.max()-1) );
     assert( ret.getdimout() == getdimension() );
-    assert( ret.getdimin() == imsrc.max()-1 );
+    assert( ret.getdimin() == std::max(0,imsrc.max()-1) );
     
     for( int p = 1; p <= imsrc.max(); p++ )
         ret.setcolumn( p-1, 
@@ -181,7 +185,7 @@ FloatVector Coordinates::getShiftPart( const IndexMap& im ) const
 {
     assert( im.getDestRange() == getIndexRange() );
     IndexRange imsrc = im.getSourceRange();
-    assert( imsrc.min() == 0 && imsrc.max() <= getdimension() );
+    assert( !(im.isempty()) && imsrc.min() == 0 && imsrc.max() <= getdimension() );
     int index = im[0];
     return getvectorclone( index );
 }
