@@ -20,45 +20,54 @@ IterativeSolver::~IterativeSolver()
 
 void IterativeSolver::check() const
 {
-  LinearOperator::check();
-  
-  assert( error_tolerance >= 0. );
-  assert( max_iteration_count >= 0 );
-  assert( recent_iteration_count >= 0 );
-  assert( recent_iteration_count <= max_iteration_count );
-  
-  assert( internalOperator.getdimout() == getdimout() );
-  assert( internalOperator.getdimin()  == getdimin() );
-  
-  internalOperator.check();
-  residual.check();
+    LinearOperator::check();
+    
+    assert( std::isnormal( error_tolerance ) && error_tolerance >= 0. );
+    assert( std::isnormal( recent_error ) && recent_error >= 0. );
+    assert( max_iteration_count >= 0 );
+    assert( recent_iteration_count >= 0 );
+    assert( recent_iteration_count <= max_iteration_count );
+    
+    assert( internalOperator.getdimout() == getdimout() );
+    assert( internalOperator.getdimin()  == getdimin() );
+    
+    internalOperator.check();
+    residual.check();
 }
 
 void IterativeSolver::print( std::ostream& os ) const
 {
-  os << "Print Iterative Solver." << std::endl;
+    os << "Print Iterative Solver." << std::endl;
 }
 
 const LinearOperator& IterativeSolver::getInternalOperator() const
 {
-	return internalOperator;
+    return internalOperator;
 }
 
 const FloatVector& IterativeSolver::getResidualVector() const
 {
-	return residual;
+    return residual;
 }
 
 
 void IterativeSolver::applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const
 {
-	FloatVector temp( getdimout() );
-	temp.zero();
-	solve( temp, add );
-	ScalingOperator unitmatrix( getdimout(), 1. );
-	unitmatrix.applyadd( dest, temp, s, t );
+    check();
+    dest.check();
+    add.check();
+    
+    FloatVector temp( getdimout() );
+    temp.zero();
+    solve( temp, add );
+    
+//     ScalingOperator unitmatrix( getdimout(), 1. );
+//     unitmatrix.applyadd( dest, temp, s, t );
+    dest = s * dest + t * temp;
+    
+    dest.check();
 }
-	
-	
+
+      
 
     

@@ -11,7 +11,7 @@ class DenseMatrix;
 #include "scalingoperator.hpp"
 #include "diagonaloperator.hpp"
 #include "sparsematrix.hpp"
-#include "matrixalgorithm.hpp"
+// #include "matrixalgorithm.hpp"
 
 
 
@@ -58,6 +58,7 @@ public LinearOperator /* every matrix is a linear operator */
         
         /* Access rows and columns */
         
+        /* TODO: Refined methods to change rows and columns */
         FloatVector getrow( int r ) const;
         void setrow( int r, const FloatVector& row );
         FloatVector getcolumn( int c ) const;
@@ -124,16 +125,11 @@ inline DenseMatrix MatrixMult( const DenseMatrix& left, const DenseMatrix& right
 }
 
 
-void InverseAndDeterminant( const DenseMatrix&, DenseMatrix&, Float& );
+Float Determinant( const DenseMatrix& );
 
 inline Float determinant( const DenseMatrix& mat ) 
 {
-  mat.check();
-  assert( mat.issquare() );
-  DenseMatrix dummy( mat.getdimin() );
-  Float ret;
-  InverseAndDeterminant( mat, dummy, ret );
-  return ret;
+  return Determinant(mat);
 }
 
 

@@ -16,14 +16,31 @@ NormalEquationsConjugateResidualMethod::NormalEquationsConjugateResidualMethod( 
 
 NormalEquationsConjugateResidualMethod::~NormalEquationsConjugateResidualMethod()
 {
-    /* TODO */
+    /* Nothing to do here */
+}
+
+
+
+void NormalEquationsConjugateResidualMethod::check() const
+{
+  matrix_original.check();
+  matrix_transposed.check();
+  matrix_system.check();
+  crm.check();
+}
+
+void NormalEquationsConjugateResidualMethod::print( std::ostream& os ) const
+{
+  os << "Print Normal Equations Conjugate Residual Method." << std::endl;
 }
 
   
 void NormalEquationsConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
 {
-    
     check();
+    x.check();
+    b.check();
+    
     assert( x.getdimension() == matrix_original.getdimin() );
     assert( b.getdimension() == matrix_original.getdimout() );
     
@@ -34,16 +51,5 @@ void NormalEquationsConjugateResidualMethod::solve( FloatVector& x, const FloatV
   
 
   
-	
-  
-void NormalEquationsConjugateResidualMethod::check() const
-{
-	
-}
-
-void NormalEquationsConjugateResidualMethod::print( std::ostream& os ) const
-{
-	os << "Print Normal Equations Conjugate Residual Method." << std::endl;
-}
 
 
