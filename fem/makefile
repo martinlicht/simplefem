@@ -9,7 +9,10 @@ default: all
 massmatrix.element.o: massmatrix.element.hpp massmatrix.element.cpp 
 	$(CC) massmatrix.element.cpp -c -o massmatrix.element.o 
 
-objects = massmatrix.element.o 
+diffmatrix.element.o: diffmatrix.element.hpp diffmatrix.element.cpp 
+	$(CC) diffmatrix.element.cpp -c -o diffmatrix.element.o 
+
+objects = massmatrix.element.o diffmatrix.element.o
 
     
     

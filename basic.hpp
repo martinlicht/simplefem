@@ -63,6 +63,7 @@ T binomial( const T& n, const T& k )
 
 static inline int integerpower( int base, int exponent )
 {
+    assert( exponent != 0 || base != 0 );
     assert( exponent >= 0 );
     if( exponent == 0 ) return 1;
     return base * integerpower( base, exponent - 1 );

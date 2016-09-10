@@ -192,6 +192,15 @@ bool IndexMap::rangecontains( int p ) const
     return false;
 } 
 
+int IndexMap::rangeposition( int p ) const
+{
+    check();
+    assert( getDestRange().contains(p) );
+    for( int i : src )
+        if( at(i) == p )
+            return p;
+    assert(false);
+} 
         
 bool IndexMap::comparablewith( const IndexMap& im ) const
 {

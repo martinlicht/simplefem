@@ -65,6 +65,7 @@ class IndexMap
 //         IndexMap attachbefore( int ) const;
         
         bool rangecontains( int ) const;
+        int rangeposition( int ) const;
         
         bool comparablewith( const IndexMap& ) const;
         bool equals( const IndexMap& ) const;
