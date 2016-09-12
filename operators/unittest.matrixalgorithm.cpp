@@ -17,13 +17,10 @@ int main()
 	std::cout.setf( std::ios::fixed, std:: ios::floatfield );
 	std::cout << std::showpos;
 	
-	const int D = 10;
+	const int D = 8;
 	DenseMatrix A(D,D);
-	A(0,0) = 1.; A(0,1) = 1.; A(0,2) = 0.; 
-	A(1,0) = 1.; A(1,1) = 0.; A(1,2) = 1.; 
-	A(2,0) = 0.; A(2,1) = 1.; A(2,2) = 1.; 
-		
-	A.zeromatrix();
+	
+        A.zeromatrix();
 	for( int s = 0; s < D; s++ )
 	for( int t = 0; t < D; t++ )
 		A(s,t) = 3 * kronecker(s,t) - kronecker(s,t-1) - kronecker(s,t+1);
@@ -53,12 +50,14 @@ int main()
 		cout << "Matrix Rinv * Q^t * A:" << Rinv * Qt * A;
 		cout << "Matrix A * Rinv * Q^t:" << A * Rinv * Qt;
 
-		cout << endl << "Now for Cholesky" << endl;
 		
 	}
 
 	{
-		DenseMatrix M = A.transpose() * A;
+		
+                cout << endl << "Now for Cholesky" << endl;
+                
+                DenseMatrix M = A.transpose() * A;
 		M = M * M;
 		DenseMatrix R = CholeskyDecomposition( M );
 		DenseMatrix Rinv = UpperTriangularInverse(R);
@@ -68,8 +67,8 @@ int main()
 		cout << "Matrix Rt * R:" << R.transpose() * R;
 		cout << "Matrix Rinv * Rtinv:" << Rinv * Rinv.transpose();
 		cout << "Matrix M * Rinv * Rtinv:" << M * Rinv * Rinv.transpose();
-		
-		
+		cout << "Matrix Rinv * Rtinv * M:" << Rinv * Rinv.transpose() * M;
+                
 	}
 	
 	

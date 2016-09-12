@@ -303,6 +303,48 @@ void DenseMatrix::swapcolumn( int c1, int c2 )
 }
 
 
+void DenseMatrix::scalerow( int r, Float alpha )
+{
+    check();
+    assert( 0 <= r && r < getdimout() );
+    for( int c = 0; c < getdimin(); c++ )
+      (*this)(r,c) *= alpha;
+}
+
+void DenseMatrix::scalecolumn( int c, Float alpha )
+{
+    check();
+    assert( 0 <= c && c < getdimin() );
+    for( int r = 0; r < getdimout(); c++ )
+      (*this)(r,c) *= alpha;
+}
+
+void DenseMatrix::addrow( int r1, int r2, Float alpha )
+{
+    check();
+    assert( 0 <= r1 && r1 < getdimout() );
+    assert( 0 <= r2 && r2 < getdimout() );
+    for( int c = 0; c < getdimin(); c++ )
+        (*this)(r1,c) += alpha * (*this)(r2,c);
+    check();
+}
+
+void DenseMatrix::addcolumn( int c1, int c2, Float alpha )
+{
+    check();
+    assert( 0 <= c1 && c1 < getdimin() );
+    assert( 0 <= c2 && c2 < getdimin() );
+    for( int r = 0; r < getdimout(); r++ )
+        (*this)(r,c1) += alpha * (*this)(r,c2);
+    check();
+}
+
+
+        
+
+
+
+
         
 void DenseMatrix::indexmapping( const IndexMap& im )
 {
@@ -358,6 +400,17 @@ void DenseMatrix::add( Float s, Float t, const DenseMatrix& addendum )
 bool DenseMatrix::issquare() const
 {
     return getdimout() == getdimin();
+}
+
+
+Float DenseMatrix::maxabsoluteentry() const
+{
+    check();
+    Float ret = - std::numeric_limits<Float>::infinity();
+    for( int r = 0; r < getdimout(); r++ )
+        for( int c = 0; c < getdimin(); c++ )
+            ret = std::max( ret, (*this)(r,c) );
+    return ret;
 }
 
 

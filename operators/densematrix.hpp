@@ -58,14 +58,17 @@ public LinearOperator /* every matrix is a linear operator */
         
         /* Access rows and columns */
         
-        /* TODO: Refined methods to change rows and columns */
         FloatVector getrow( int r ) const;
-        void setrow( int r, const FloatVector& row );
         FloatVector getcolumn( int c ) const;
+        void setrow( int r, const FloatVector& row );
         void setcolumn( int c, const FloatVector& column );
         void swaprow( int r1, int r2 );
         void swapcolumn( int c1, int c2 );
-
+        void scalerow( int r, Float alpha );
+        void scalecolumn( int c, Float alpha );
+        void addrow( int r1, int r2, Float alpha );
+        void addcolumn( int c1, int c2, Float alpha );
+        
         /* Generate standard matrices */
         
         void zeromatrix();
@@ -91,6 +94,9 @@ public LinearOperator /* every matrix is a linear operator */
         void add( const DenseMatrix& );
         void add( Float, const DenseMatrix& );
         void add( Float, Float, const DenseMatrix& );
+        
+        /* Measurements */
+        Float maxabsoluteentry() const;
         
     private:
 	
