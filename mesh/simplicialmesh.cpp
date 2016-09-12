@@ -157,7 +157,7 @@ bool SimplicialMesh::hassimplexlist( int d ) const
     if( d == 0 )
         return true;
     else 
-        return hassubsimplexlist( d, 0 );
+        return subsimplex_list.end() != subsimplex_list.find(std::make_pair(d,0));
 }
 
 
