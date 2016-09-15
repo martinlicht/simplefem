@@ -38,7 +38,8 @@ class FloatVector
         void check() const;
 
         void print( std::ostream& ) const;
-
+        void printplain( std::ostream& ) const;
+        
         /* information and data access */
         
         int getdimension() const;

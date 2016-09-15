@@ -53,6 +53,7 @@ public LinearOperator /* every matrix is a linear operator */
 
         virtual void check() const override;
         virtual void print( std::ostream& ) const override;
+        virtual void printplain( std::ostream& ) const;
 
         void addentry( int, int, Float );
         void addentry( MatrixEntry );

@@ -78,6 +78,16 @@ void FloatVector::print( std::ostream& output ) const
 	output << p << ": " << getentry(p) << std::endl;
 }
 
+void FloatVector::printplain( std::ostream& output ) const 
+{
+    check();
+    output << getdimension() << nl;
+    for( int p = 0; p < getdimension(); p++ )
+        output << getentry(p) << nl;
+}
+
+
+
 int FloatVector::getdimension() const 
 {
     /* No check at this point */

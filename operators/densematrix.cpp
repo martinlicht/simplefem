@@ -106,12 +106,25 @@ void DenseMatrix::check() const
 void DenseMatrix::print( std::ostream& os ) const
 {
     check();
-    os << "Print Matrix " << getdimout() << "x" << getdimin() << std::endl;
+    os << "Print Matrix " << getdimout() << "x" << getdimin() << nl;
     for( int r = 0; r < getdimout(); r++ ) {
         for( int c = 0; c < getdimin(); c++ )
             os << (*this)(r,c) << "\t";
-        os << std::endl;
+        os << nl;
     }
+    os << std::endl;
+}
+
+void DenseMatrix::printplain( std::ostream& os ) const
+{
+    check();
+    os << getdimout() << space << getdimin() << nl;
+    for( int r = 0; r < getdimout(); r++ ) {
+        for( int c = 0; c < getdimin(); c++ )
+            os << (*this)(r,c) << "\t";
+        os << nl;
+    }
+    os << std::endl;
 }
 
 void DenseMatrix::applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const 

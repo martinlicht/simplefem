@@ -58,8 +58,16 @@ void SparseMatrix::print( std::ostream& os ) const
     os << "SparseMatrix Entries:" << std::endl;
     for( const MatrixEntry& entry : entries )
         os << entry.row << " " << entry.column << " : " << entry.value << std::endl; 
+    os << std::endl;
 }
-	
+
+void SparseMatrix::printplain( std::ostream& os ) const
+{
+    for( const MatrixEntry& entry : entries )
+        os << entry.row << " " << entry.column << " " << entry.value << nl;
+    os << std::endl;
+}
+
 
 void SparseMatrix::applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const 
 {
