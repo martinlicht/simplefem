@@ -35,7 +35,15 @@ class VTK_MeshWriter
         
         void writeTopDimensionalCells();
         
-        // writeVertexData();
+        void writeVertexScalarData
+        ( const FloatVector&, 
+          const char* name, Float scaling = 1. );
+        
+        void writeCellVectorData
+        ( const FloatVector& x, 
+          const FloatVector& y, 
+          const FloatVector& z, 
+          const char* name, Float scaling = 1. );
         
     private:
     

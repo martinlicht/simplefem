@@ -34,10 +34,13 @@ unittest.coordinates.out: unittest.coordinates.cpp coordinates.o coordinates.hpp
 unittest.simplicialmesh.out: unittest.simplicialmesh.cpp simplicialmesh.o simplicialmesh.hpp unittest.simplicialmesh.cpp generatesimplicialmesh.o vtkwriter.o
 	$(CC) unittest.simplicialmesh.cpp coordinates.o simplicialmesh.o generatesimplicialmesh.o vtkwriter.o ../operators/*.o ../combinatorics/*.o -o unittest.simplicialmesh.out
 
+unittest.vtkwriter.out: unittest.vtkwriter.cpp simplicialmesh.o generatesimplicialmesh.o vtkwriter.o
+	$(CC) unittest.vtkwriter.cpp coordinates.o simplicialmesh.o generatesimplicialmesh.o vtkwriter.o ../operators/*.o ../combinatorics/*.o -o unittest.vtkwriter.out
+
 unittest.io.out: unittest.io.cpp coordinates.o simplicialmesh.o generatesimplicialmesh.o io.coordinates.o io.simplicialmesh.o 
 	$(CC) unittest.io.cpp coordinates.o simplicialmesh.o generatesimplicialmesh.o io.coordinates.o io.simplicialmesh.o ../operators/*.o ../combinatorics/*.o -o unittest.io.out
 
-unittests = unittest.coordinates.out unittest.simplicialmesh.out unittest.io.out 
+unittests = unittest.coordinates.out unittest.simplicialmesh.out unittest.io.out unittest.vtkwriter.out
 
 
 

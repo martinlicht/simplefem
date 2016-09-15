@@ -34,42 +34,42 @@ SimplicialMesh UnitCubeTriangulation( int innerdim, int outerdim )
     
     assert( innerdim <= outerdim );
     
-	Coordinates coords( outerdim, integerpower(2,innerdim) );
+    Coordinates coords( outerdim, integerpower(2,innerdim) );
     assert( coords.getdimension() == outerdim );
     assert( coords.getnumber() == integerpower(2,innerdim) );
     cout << "############" << coords.getnumber() << std::endl;
     for( int v = 0; v < coords.getnumber(); v++ ) {
         for( int p = 0; p < innerdim; p++ ) {
-			coords.setdata( v, p, getbit(v,p) );
-		}
+            coords.setdata( v, p, getbit(v,p) );
+        }
         for( int p = innerdim; p < outerdim; p++ )
             coords.setdata( v, p, 0. );
     }
     
-	IndexRange ir( 1, innerdim );
+    IndexRange ir( 1, innerdim );
     std::vector<IndexMap> perms = generatePermutations( ir ); // generateIndexMaps( ir, ir );
-	
-	std::vector<IndexMap> newsimplices( perms.size(), 
+  
+    std::vector<IndexMap> newsimplices( perms.size(), 
                                         IndexMap( IndexRange(0,innerdim), 
                                                   IndexRange(0,coords.getnumber()-1)
                                                 )
                                         );
     
-	int picounter=0;
+    int picounter=0;
     for( auto pi = perms.begin(); pi != perms.end(); pi++, picounter++ )
     {
         int index = 0;
-		
-		std::vector<int> newsimplex(innerdim+1);
+        
+        std::vector<int> newsimplex(innerdim+1);
         newsimplex[0] = index;
 
         for( int p = 1; p <= innerdim; p++ ) {
             index += integerpower( 2, (*pi)[p]-1 );
             newsimplex[p] = index;
-			assert( index <= coords.getnumber()-1 );
+            assert( index <= coords.getnumber()-1 );
         }
         
-		newsimplices[picounter] = IndexMap( IndexRange(0,innerdim),
+        newsimplices[picounter] = IndexMap( IndexRange(0,innerdim),
                                             IndexRange(0,coords.getnumber()-1),
                                             newsimplex );
     }
@@ -89,21 +89,26 @@ SimplicialMesh UnitCubeTriangulation2D( int xstep, int ystep )
 {
     assert( 1 <= xstep && 1 <= ystep );
     
-	Coordinates coords( 3, (xstep+1)*(ystep+1) );
+    Coordinates coords( 3, (xstep+1)*(ystep+1) );
     for( int v = 0; v < coords.getnumber(); v++ ) {
-        coords.setdata( v, 0, ( v / (ystep+1) ) / (Float)xstep );
-        coords.setdata( v, 1, ( v % (ystep+1) ) / (Float)ystep );
-        coords.setdata( v, 2, 0. );
+      
+        Float xcoord = ( v / (ystep+1) ) / (Float)xstep;
+        Float ycoord = ( v % (ystep+1) ) / (Float)ystep;
+        Float zcoord = xcoord * ycoord;
+        
+        coords.setdata( v, 0, xcoord );
+        coords.setdata( v, 1, ycoord );
+        coords.setdata( v, 2, zcoord );
     }
     
-	std::vector<IndexMap> newsimplices( 2 * xstep * ystep, 
-                                        IndexMap( IndexRange(0,2), 
-                                                  IndexRange(0,coords.getnumber()-1)
-                                                )
-                                        );
-    
-	for( int x = 0; x < xstep; x++ )
-	for( int y = 0; y < ystep; y++ )
+    std::vector<IndexMap> newsimplices( 2 * xstep * ystep, 
+                                    IndexMap( IndexRange(0,2), 
+                                              IndexRange(0,coords.getnumber()-1)
+                                            )
+                                    );
+
+    for( int x = 0; x < xstep; x++ )
+    for( int y = 0; y < ystep; y++ )
     {
         int base = 2 * ( x * ystep + y );
         assert( base + 1 < 2 * xstep * ystep );
@@ -130,7 +135,7 @@ SimplicialMesh UnitCubeTriangulation3D( int xstep, int ystep, int zstep )
 {
     assert( 1 <= xstep && 1 <= ystep && 1 <= zstep );
     
-	Coordinates coords( 3, (xstep+1)*(ystep+1)*(zstep+1) );
+      Coordinates coords( 3, (xstep+1)*(ystep+1)*(zstep+1) );
     for( int x = 0; x <= xstep; x++ )
     for( int y = 0; y <= ystep; y++ )
     for( int z = 0; z <= zstep; z++ )
@@ -138,8 +143,10 @@ SimplicialMesh UnitCubeTriangulation3D( int xstep, int ystep, int zstep )
         Float xcoord = x / (Float)xstep;
         Float ycoord = y / (Float)ystep;
         Float zcoord = z / (Float)zstep;
+        
         int v = x * (ystep+1)*(zstep+1) + y * (zstep+1) + z;
         assert( 0 <= v && v < coords.getnumber() );
+        
         coords.setdata( v, 0, xcoord );
         coords.setdata( v, 1, ycoord );
         coords.setdata( v, 2, zcoord );
@@ -151,10 +158,11 @@ SimplicialMesh UnitCubeTriangulation3D( int xstep, int ystep, int zstep )
                                                 )
                                         );
     
-	for( int x = 0; x < xstep; x++ )
-	for( int y = 0; y < ystep; y++ )
+    for( int x = 0; x < xstep; x++ )
+    for( int y = 0; y < ystep; y++ )
     for( int z = 0; z < zstep; z++ )
     {
+    
         int base = 6 * ( x * ystep * zstep + y * zstep + z );
         assert( base + 5 < 6 * xstep * ystep * zstep );
         // Simplex z y x 

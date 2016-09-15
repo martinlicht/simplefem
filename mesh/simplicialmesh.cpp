@@ -363,11 +363,14 @@ FloatVector SimplicialMesh::getMidpoint( int dimension, int cell ) const
 {
     assert( 0 <= dimension && dimension <= getinnerdimension() );
     assert( hassimplexlist(dimension) );
+    
     IndexMap im = getsubsimplices( dimension, cell, 0 );
     Float scaling = 1. / (1+getouterdimension());
-    FloatVector ret = coordinates.getvectorclone( im[0], scaling );
-    for( int i = 1; i <= dimension; i++ )
+    FloatVector ret( getouterdimension(), 0. );
+    
+    for( int i = 0; i <= dimension; i++ )
         ret += coordinates.getvectorclone( im[0], scaling );
+    
     return ret;
 }
 
