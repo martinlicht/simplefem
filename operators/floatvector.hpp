@@ -62,8 +62,8 @@ class FloatVector
 
         /* slices */
         
-        void fromslice( const FloatVector&, int, int );
-        void intoslice( FloatVector&, int, int ) const;
+        FloatVector getslice( int, int ) const;
+        void setslice( int, const FloatVector& );
         
         /* arithmetics and assignments */
         

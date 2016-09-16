@@ -28,7 +28,7 @@ public LinearOperator /* every matrix is a linear operator */
         Float getscaling() const;
         void setscaling( Float s );
 
-        virtual void applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const override;
+        virtual FloatVector apply( const FloatVector& src, Float scaling ) const override;
 
     private:
 

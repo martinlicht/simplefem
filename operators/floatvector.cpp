@@ -169,21 +169,22 @@ void FloatVector::scale( Float alpha )
 
 
 
-void FloatVector::fromslice( const FloatVector& slice, int base, int len )
+FloatVector FloatVector::getslice( int base, int len ) const 
 {
     check();
-    slice.check();
     assert( 0 <= base && base < getdimension() );
     assert( 0 <= len && len < getdimension() );
     assert( 0 <= base+len && base+len < getdimension() );
+    FloatVector ret( len );
     for( int p = 0; p < len; p++ )
-      slice[p] = data.at( base + p );
+      ret[p] = data.at( base + p );
+    return ret;
 }
 
-void FloatVector::intoslice( FloatVector& slice, int base, int len ) const
+void FloatVector::setslice( int base, const FloatVector& slice )
 {
     check();
-    slice.check();
+    const int len = slice.getdimension();
     assert( 0 <= base && base < getdimension() );
     assert( 0 <= len && len < getdimension() );
     assert( 0 <= base+len && base+len < getdimension() );

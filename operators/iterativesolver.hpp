@@ -40,7 +40,7 @@ class IterativeSolver
 
         virtual void solve( FloatVector& unknown, const FloatVector& rhs ) const = 0;
 
-        virtual void applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const override;
+        virtual FloatVector apply( const FloatVector& src, Float scaling ) const override;
 
         mutable Float error_tolerance;
         mutable Float recent_error;

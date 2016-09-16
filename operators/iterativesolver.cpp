@@ -53,21 +53,15 @@ const FloatVector& IterativeSolver::getResidualVector() const
 }
 
 
-void IterativeSolver::applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const
+FloatVector IterativeSolver::apply( const FloatVector& src, Float scaling ) const
 {
     check();
-    dest.check();
-    add.check();
+    src.check();
     
-    FloatVector temp( getdimout() );
-    temp.zero();
-    solve( temp, add );
+    FloatVector temp( getdimout(), 0. );
+    solve( temp, src );
     
-//     ScalingOperator unitmatrix( getdimout(), 1. );
-//     unitmatrix.applyadd( dest, temp, s, t );
-    dest = s * dest + t * temp;
-    
-    dest.check();
+    return scaling * temp;
 }
 
       

@@ -52,21 +52,18 @@ const FloatVector& DiagonalOperator::getdiagonal() const
 }
 
 
-void DiagonalOperator::applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const 
+FloatVector DiagonalOperator::apply( const FloatVector& src, Float scaling ) const 
 {
     check();
-    dest.check();
-    add.check();
+    src.check();
     
     assert( getdimin() == getdimout() );
-    assert( getdimout() == dest.getdimension() );
-    assert( getdimin() == add.getdimension() );
+    assert( getdimin() == src.getdimension() );
     
-    for( int p = 0; p < getdimin(); p++ ) {
-        dest.setentry( p, 
-            s * dest.getentry( p ) + t * diagonal.getentry( p ) * add.getentry( p )
-        );
+    FloatVector ret( getdimout() );
+    for( int p = 0; p < getdimout(); p++ ) {
+        ret.setentry( p, scaling * src.getentry( p ) );
     }
     
-    dest.check();
+    return ret;
 }

@@ -37,18 +37,18 @@ void ProductOperator::print( std::ostream& os ) const
 
 
 
-void ProductOperator::applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const 
+FloatVector ProductOperator::apply( const FloatVector& src, Float scaling ) const 
 {
     check();
-    dest.check();
-    add.check();
+    src.check();
+    assert( getdimin() == src.getdimension() );
     
-    assert( getdimin() == getdimout() );
-    assert( getdimout() == dest.getdimension() );
-    assert( getdimin() == add.getdimension() );
-      
-    FloatVector temp = right * add;
-    dest = s * dest + t * ( left * temp );
-    
-    dest.check();
+    return scaling * left * right * src;
 }
+
+
+
+
+
+
+

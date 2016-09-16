@@ -51,22 +51,19 @@ Float ScalingOperator::getscaling() const
 		
 
 
-void ScalingOperator::applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const 
+FloatVector ScalingOperator::apply( const FloatVector& src, Float scaling ) const 
 {
     check();
-    dest.check();
-    add.check();
+    src.check();
     
     assert( getdimin() == getdimout() );
-    assert( getdimout() == dest.getdimension() );
-    assert( getdimin() == add.getdimension() );
+    assert( getdimin() == src.getdimension() );
     
-    for( int p = 0; p < getdimin(); p++ ) {
-        dest.setentry( p, 
-            s * dest.getentry( p ) + t * scaling * add.getentry( p )
-        );
-    }
+    FloatVector ret( getdimout() );
     
-    dest.check();
+    for( int p = 0; p < getdimin(); p++ )
+        ret.setentry( p, scaling * src.getentry( p ) );
+    
+    return ret;
     
 }

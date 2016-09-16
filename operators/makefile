@@ -22,6 +22,9 @@ scalingoperator.o: scalingoperator.hpp scalingoperator.cpp floatvector.hpp linea
 diagonaloperator.o: diagonaloperator.hpp diagonaloperator.cpp floatvector.hpp linearoperator.hpp
 	$(CC) diagonaloperator.cpp -c -o diagonaloperator.o 
 
+blockdiagonaloperator.o: blockdiagonaloperator.hpp blockdiagonaloperator.cpp floatvector.hpp linearoperator.hpp
+	$(CC) blockdiagonaloperator.cpp -c -o blockdiagonaloperator.o 
+
 densematrix.o: densematrix.hpp densematrix.cpp floatvector.hpp linearoperator.hpp 
 	$(CC) densematrix.cpp -c -o densematrix.o 
 
@@ -40,7 +43,7 @@ necrm.o: necrm.hpp necrm.cpp floatvector.hpp densematrix.hpp crm.hpp
 matrixalgorithm.o: matrixalgorithm.cpp densematrix.hpp floatvector.hpp crm.hpp 
 	$(CC) matrixalgorithm.cpp -c -o matrixalgorithm.o 
 
-objects = floatvector.o linearoperator.o productoperator.o sumoperator.o scalingoperator.o diagonaloperator.o densematrix.o sparsematrix.o iterativesolver.o crm.o necrm.o matrixalgorithm.o
+objects = floatvector.o linearoperator.o productoperator.o sumoperator.o scalingoperator.o diagonaloperator.o blockdiagonaloperator.o densematrix.o sparsematrix.o iterativesolver.o crm.o necrm.o matrixalgorithm.o
 
 
 

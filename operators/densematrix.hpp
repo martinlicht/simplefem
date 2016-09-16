@@ -44,7 +44,7 @@ public LinearOperator /* every matrix is a linear operator */
         virtual void print( std::ostream& ) const override;
         virtual void printplain( std::ostream& ) const;
         
-        virtual void applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const override;
+        virtual FloatVector apply( const FloatVector& add, Float scaling ) const override;
         
         /* Questions */
         

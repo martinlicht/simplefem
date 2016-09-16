@@ -127,20 +127,18 @@ void DenseMatrix::printplain( std::ostream& os ) const
     os << std::endl;
 }
 
-void DenseMatrix::applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const 
+FloatVector DenseMatrix::apply( const FloatVector& add, Float scaling ) const 
 {
-    check();
-    dest.check();
     add.check();
-    assert( dest.getdimension() == getdimout() );
+    FloatVector ret( getdimout() );
+    assert( ret.getdimension() == getdimout() );
     assert( add.getdimension() == getdimin() );
     
-    dest.scale( s );
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin(); c++ )
-        dest[r] += t * (*this)(r,c) * add[c];
+        ret[r] += scaling * (*this)(r,c) * add[c];
     
-    dest.check();
+    return ret;
 }
 
 Float DenseMatrix::get( int r, int c ) const

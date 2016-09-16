@@ -64,7 +64,7 @@ public LinearOperator /* every matrix is a linear operator */
         void sortentries() const;
         void compressentries() const;
 
-        virtual void applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const override;
+        virtual FloatVector apply( const FloatVector& add, Float scaling ) const override;
 
     private:
 

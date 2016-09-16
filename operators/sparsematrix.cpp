@@ -69,20 +69,17 @@ void SparseMatrix::printplain( std::ostream& os ) const
 }
 
 
-void SparseMatrix::applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const 
+FloatVector SparseMatrix::apply( const FloatVector& add, Float scaling ) const 
 {
     check();
-    dest.check();
     add.check();
-    assert( getdimout() == dest.getdimension() );
     assert( getdimin() == add.getdimension() );
     
-    dest.scale( s );
-    
+    FloatVector ret( getdimout(), 0. );
     for( const MatrixEntry& rcv : entries )
-        dest.setentry( rcv.row, dest.getentry( rcv.row ) + t * rcv.value * add.getentry( rcv.column ) );
+        ret.setentry( rcv.row, ret.getentry( rcv.row ) + scaling * rcv.value * add.getentry( rcv.column ) );
 
-    dest.check();
+    return ret;
 }
 
 

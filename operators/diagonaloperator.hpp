@@ -31,7 +31,7 @@ public LinearOperator /* every matrix is a linear operator */
         FloatVector& getdiagonal();
         const FloatVector& getdiagonal() const;
         
-        virtual void applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const override;
+        virtual FloatVector apply( const FloatVector& src, Float scaling ) const override;
 
     private:
 
