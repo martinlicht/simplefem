@@ -60,6 +60,11 @@ class FloatVector
         void random();
         void scale( Float );
 
+        /* slices */
+        
+        void fromslice( const FloatVector&, int, int );
+        void intoslice( FloatVector&, int, int ) const;
+        
         /* arithmetics and assignments */
         
         void copydatafrom( const FloatVector& );

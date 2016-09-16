@@ -167,6 +167,39 @@ void FloatVector::scale( Float alpha )
         setentry( p, alpha * getentry( p ) ); 
 }
 
+
+
+void FloatVector::fromslice( const FloatVector& slice, int base, int len )
+{
+    check();
+    slice.check();
+    assert( 0 <= base && base < getdimension() );
+    assert( 0 <= len && len < getdimension() );
+    assert( 0 <= base+len && base+len < getdimension() );
+    for( int p = 0; p < len; p++ )
+      slice[p] = data.at( base + p );
+}
+
+void FloatVector::intoslice( FloatVector& slice, int base, int len ) const
+{
+    check();
+    slice.check();
+    assert( 0 <= base && base < getdimension() );
+    assert( 0 <= len && len < getdimension() );
+    assert( 0 <= base+len && base+len < getdimension() );
+    for( int p = 0; p < len; p++ )
+      data.at( base + p ) = slice[p];
+}
+        
+        
+
+
+
+
+
+
+
+
 void FloatVector::copydatafrom( const FloatVector& source )
 {
     check();
