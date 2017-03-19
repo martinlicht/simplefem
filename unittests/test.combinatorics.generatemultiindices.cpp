@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include "../basic.hpp"
-#include "generatemultiindices.hpp"
+#include "../combinatorics/generatemultiindices.hpp"
 
 
 using namespace std;

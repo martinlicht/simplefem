@@ -4,11 +4,11 @@
 
 #include <iostream>
 #include "../basic.hpp"
-#include "coordinates.hpp"
-#include "simplicialmesh.hpp"
-#include "generatesimplicialmesh.hpp"
-#include "io.coordinates.hpp"
-#include "io.simplicialmesh.hpp"
+#include "../mesh/coordinates.hpp"
+#include "../mesh/simplicialmesh.hpp"
+#include "../mesh/generatesimplicialmesh.hpp"
+#include "../mesh/io.coordinates.hpp"
+#include "../mesh/io.simplicialmesh.hpp"
 
 
 using namespace std;

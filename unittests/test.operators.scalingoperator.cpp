@@ -4,8 +4,8 @@
 
 #include <iostream>
 #include "../basic.hpp"
-#include "floatvector.hpp"
-#include "scalingoperator.hpp"
+#include "../operators/floatvector.hpp"
+#include "../operators/scalingoperator.hpp"
 
 
 using namespace std;

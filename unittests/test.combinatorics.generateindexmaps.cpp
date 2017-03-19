@@ -4,9 +4,9 @@
 
 #include <iostream>
 #include "../basic.hpp"
-#include "indexrange.hpp"
-#include "indexmap.hpp"
-#include "generateindexmaps.hpp"
+#include "../combinatorics/indexrange.hpp"
+#include "../combinatorics/indexmap.hpp"
+#include "../combinatorics/generateindexmaps.hpp"
 
 
 using namespace std;

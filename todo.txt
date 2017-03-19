@@ -1,0 +1,102 @@
+
+
+  ************* General layout: 
+  
+  - Reduce dense matrix module to the core functions of dense matrices
+  - Module for Matrix I/O 
+  
+  
+  
+  
+  
+  
+  ************* Dense Matrix algorithms to implement:
+  
+  - Gerschgorin (row/column) circles, and maximal estimate 
+    perhaps more estimators 
+  
+  - Diagonal solve 
+  - Left triangular solve 
+  - Right triangular solve 
+  - Unit Left triangular solve 
+  - Unit Right triangular solve 
+  - (Averages between left and right triangular solves)
+  
+  - check whether diagonal 
+  - check whether (unit) left/right triangular 
+  
+  - LU decomposition 
+  - LU decomposition, row pivot
+  - LU decomposition, column pivot 
+  - LU decomposition, full pivot 
+  
+  - Cholesky 
+  - Cholesky, pivot 
+   
+  - stabilized Gram-Schmidt 
+  
+  - QR decomposition 
+  
+  
+  
+  
+  
+  
+  ************* SparseMatrix algorithms 
+  
+  - Gerschgorin rows 
+
+  - Diagonal solve 
+  - Left triangular solve 
+  - Right triangular solve 
+  - Unit Left triangular solve 
+  - Unit Right triangular solve 
+  
+  - check whether diagonal 
+  - check whether (unit) left/right triangular 
+  
+  - Input/Output routines 
+  
+  
+  
+  
+  
+  
+  ************* Iterative solvers to implement: 
+  
+  - Richardson with relaxation parameter 
+  - Richardson with preconditioner 
+  
+  - Jacobi preconditioner
+  - different scaling preconditioners 
+  - Gauss Seidel preconditioner
+  - SOR preconditioner
+  - SSOR preconditioner
+  
+  - Advanced:
+    block diagonal preconditioner (block size and layout variable)
+    block gauss seidel preconditioner 
+    adjustable gauss seidel 
+  
+  - Gradient energy descent 
+  - Gradient residual descent 
+   
+  - Symmetric Lanczos minimum residual method 
+  - Conjugate Gradient 
+  - Conjugate Residual 
+  
+  - Poly preconditioner varianten einbauen 
+  
+  (Arnoldi, GMRES, etc...)
+  
+  
+  
+  
+  ************* FE Matrices: 
+  
+  - Static condensation kann einfacher implementiert werden, 
+    falls die entsprechenden Freiheitsgrade schon vorher aussortiert werden. 
+  
+  
+  
+  

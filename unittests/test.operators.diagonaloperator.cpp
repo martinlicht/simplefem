@@ -2,11 +2,11 @@
 
 /**/
 
-#include "diagonaloperator.hpp"
+#include "../operators/diagonaloperator.hpp"
 
 #include <iostream>
 #include "../basic.hpp"
-#include "floatvector.hpp"
+#include "../operators/floatvector.hpp"
 
 
 using namespace std;

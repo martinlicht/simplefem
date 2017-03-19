@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include "../basic.hpp"
-#include "matrixalgorithm.hpp"
+#include "../dense/matrixalgorithm.hpp"
 
 
 using namespace std;

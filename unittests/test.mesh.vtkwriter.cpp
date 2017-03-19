@@ -7,10 +7,10 @@
 #include <cmath>
 
 #include "../basic.hpp"
-#include "coordinates.hpp"
-#include "simplicialmesh.hpp"
-#include "generatesimplicialmesh.hpp"
-#include "vtkwriter.hpp"
+#include "../mesh/coordinates.hpp"
+#include "../mesh/simplicialmesh.hpp"
+#include "../mesh/generatesimplicialmesh.hpp"
+#include "../mesh/vtkwriter.hpp"
 
 
 using namespace std;

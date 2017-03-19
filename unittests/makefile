@@ -4,93 +4,96 @@ include ../makefile.rules
 
 default: all
 
+Objects = ../combinatorics/*.o ../operators/*.o ../dense/*.o ../sparse/*.o ../solver/*.o ../mesh/*.o
+Headers = ../combinatorics/*.hpp ../operators/*.hpp ../dense/*.hpp ../sparse/*.hpp ../solver/*.hpp ../mesh/*.hpp
 
+Includes = $(Headers) $(Objects) 
 
-unittest.indexrange.out: indexrange.o indexrange.hpp unittest.indexrange.cpp 
-	$(CC) unittest.indexrange.cpp indexrange.o -o unittest.indexrange.out
+test.combinatorics.indexrange.out: test.combinatorics.indexrange.cpp $(Includes) 
+	$(CC) test.combinatorics.indexrange.cpp $(Objects) -o test.combinatorics.indexrange.out
 
-unittest.indexmap.out: indexmap.o indexrange.o indexmap.hpp unittest.indexmap.cpp 
-	$(CC) unittest.indexmap.cpp indexmap.o indexrange.o -o unittest.indexmap.out
+test.combinatorics.indexmap.out: test.combinatorics.indexmap.cpp $(Includes) 
+	$(CC) test.combinatorics.indexmap.cpp $(Objects) -o test.combinatorics.indexmap.out
 
-unittest.multiindex.out: multiindex.o indexrange.o indexmap.hpp unittest.multiindex.cpp 
-	$(CC) unittest.multiindex.cpp indexmap.o indexrange.o multiindex.o -o unittest.multiindex.out
+test.combinatorics.multiindex.out: test.combinatorics.multiindex.cpp $(Includes) 
+	$(CC) test.combinatorics.multiindex.cpp $(Objects) -o test.combinatorics.multiindex.out
 
-unittest.generateindexmaps.out: generateindexmaps.o indexmap.o indexrange.o indexmap.hpp unittest.generateindexmaps.cpp 
-	$(CC) unittest.generateindexmaps.cpp generateindexmaps.o indexmap.o indexrange.o -o unittest.generateindexmaps.out
+test.combinatorics.generateindexmaps.out: test.combinatorics.generateindexmaps.cpp $(Includes) 
+	$(CC) test.combinatorics.generateindexmaps.cpp $(Objects) -o test.combinatorics.generateindexmaps.out
 
-unittest.generatemultiindices.out: generatemultiindices.o indexmap.o indexrange.o multiindex.o unittest.generatemultiindices.cpp 
-	$(CC) unittest.generatemultiindices.cpp generatemultiindices.o multiindex.o indexmap.o indexrange.o -o unittest.generatemultiindices.out
+test.combinatorics.generatemultiindices.out: test.combinatorics.generatemultiindices.cpp $(Includes) 
+	$(CC) test.combinatorics.generatemultiindices.cpp $(Objects) -o test.combinatorics.generatemultiindices.out
 
-combinatorics.unittests = unittest.indexrange.out unittest.indexmap.out unittest.multiindex.out unittest.generateindexmaps.out unittest.generatemultiindices.out
+combinatorics.tests = test.combinatorics.indexrange.out test.combinatorics.indexmap.out test.combinatorics.multiindex.out test.combinatorics.generateindexmaps.out test.combinatorics.generatemultiindices.out
     
 
 
 
-unittest.floatvector.out: floatvector.o floatvector.hpp unittest.floatvector.cpp $(objects) 
-	$(CC) unittest.floatvector.cpp floatvector.o -o unittest.floatvector.out
+test.operators.floatvector.out: $(Includes) 
+	$(CC) test.operators.floatvector.cpp $(Objects) -o test.operators.floatvector.out
 
-unittest.scalingoperator.out: unittest.scalingoperator.cpp scalingoperator.o $(objects)
-	$(CC) unittest.scalingoperator.cpp scalingoperator.o floatvector.o linearoperator.o -o unittest.scalingoperator.out
+test.operators.scalingoperator.out: test.operators.scalingoperator.cpp $(Includes)
+	$(CC) test.operators.scalingoperator.cpp $(Objects) -o test.operators.scalingoperator.out
 	
-unittest.diagonaloperator.out: unittest.diagonaloperator.cpp diagonaloperator.o $(objects)
-	$(CC) unittest.diagonaloperator.cpp diagonaloperator.o scalingoperator.o floatvector.o linearoperator.o -o unittest.diagonaloperator.out
+test.operators.diagonaloperator.out: test.operators.diagonaloperator.cpp $(Includes)
+	$(CC) test.operators.diagonaloperator.cpp $(Objects) -o test.operators.diagonaloperator.out
 	
-operators.unittests = unittest.floatvector.out unittest.scalingoperator.out unittest.diagonaloperator.out 
+operators.tests = test.operators.floatvector.out test.operators.scalingoperator.out test.operators.diagonaloperator.out 
 
 
     
     
     
     
-unittest.densematrix.out: unittest.densematrix.cpp densematrix.o $(objects) 
-	$(CC) unittest.densematrix.cpp ../combinatorics/*.o ../operators/*.o ../dense/*.o ../sparse/*.o *.o -o unittest.densematrix.out 
+test.dense.densematrix.out: test.dense.densematrix.cpp $(Includes) 
+	$(CC) test.dense.densematrix.cpp $(Objects) -o test.dense.densematrix.out 
 
-unittest.matrixalgorithm.out: unittest.matrixalgorithm.cpp matrixalgorithm.o $(objects) 
-	$(CC) unittest.matrixalgorithm.cpp ../combinatorics/*.o ../operators/*.o ../dense/*.o ../sparse/*.o *.o -o unittest.matrixalgorithm.out
+test.dense.matrixalgorithm.out: test.dense.matrixalgorithm.cpp $(Includes) 
+	$(CC) test.dense.matrixalgorithm.cpp $(Objects) -o test.dense.matrixalgorithm.out
 
-dense.unittests = unittest.densematrix.out unittest.matrixalgorithm.out
-
-
-
-
-unittest.sparsematrix.out: unittest.sparsematrix.cpp sparsematrix.o $(objects)
-	$(CC) unittest.sparsematrix.cpp ../combinatorics/*.o ../operators/*.o ../dense/*.o *.o -o unittest.sparsematrix.out
-
-sparse.unittests = unittest.sparsematrix.out 
-
-
-
-unittest.crm.out: unittest.crm.cpp crm.o $(objects)
-	$(CC) unittest.crm.cpp ../combinatorics/*.o ../operators/*.o ../dense/*.o ../sparse/*.o *.o -o unittest.crm.out
-
-moretesting.out: moretesting.cpp crm.o $(objects)
-	$(CC) moretesting.cpp ../combinatorics/*.o ../operators/*.o ../dense/*.o ../sparse/*.o *.o -o moretesting.out
-
-solver.unittests = unittest.crm.out moretesting.out 
+dense.tests = test.dense.densematrix.out test.dense.matrixalgorithm.out
 
 
 
 
+test.sparse.sparsematrix.out: test.sparse.sparsematrix.cpp $(Includes)
+	$(CC) test.sparse.sparsematrix.cpp $(Objects) -o test.sparse.sparsematrix.out
 
-unittest.coordinates.out: unittest.coordinates.cpp coordinates.o coordinates.hpp unittest.coordinates.cpp 
-	$(CC) unittest.coordinates.cpp coordinates.o ../combinatorics/*.o ../operators/*.o -o unittest.coordinates.out
+sparse.tests = test.sparse.sparsematrix.out 
 
-unittest.simplicialmesh.out: unittest.simplicialmesh.cpp simplicialmesh.o simplicialmesh.hpp unittest.simplicialmesh.cpp generatesimplicialmesh.o vtkwriter.o
-	$(CC) unittest.simplicialmesh.cpp coordinates.o simplicialmesh.o generatesimplicialmesh.o vtkwriter.o ../operators/*.o ../combinatorics/*.o -o unittest.simplicialmesh.out
 
-unittest.vtkwriter.out: unittest.vtkwriter.cpp simplicialmesh.o generatesimplicialmesh.o vtkwriter.o
-	$(CC) unittest.vtkwriter.cpp coordinates.o simplicialmesh.o generatesimplicialmesh.o vtkwriter.o ../operators/*.o ../combinatorics/*.o -o unittest.vtkwriter.out
 
-unittest.io.out: unittest.io.cpp coordinates.o simplicialmesh.o generatesimplicialmesh.o io.coordinates.o io.simplicialmesh.o 
-	$(CC) unittest.io.cpp coordinates.o simplicialmesh.o generatesimplicialmesh.o io.coordinates.o io.simplicialmesh.o ../operators/*.o ../combinatorics/*.o -o unittest.io.out
+test.solver.crm.out: test.solver.crm.cpp $(Includes)
+	$(CC) test.solver.crm.cpp $(Objects) -o test.solver.crm.out
 
-mesh.unittests = unittest.coordinates.out unittest.simplicialmesh.out unittest.io.out unittest.vtkwriter.out
+test.solver.moretesting.out: test.solver.moretesting.cpp $(Includes)
+	$(CC) test.solver.moretesting.cpp $(Objects) -o test.solver.moretesting.out
+
+solver.tests = test.solver.crm.out test.solver.moretesting.out 
+
+
+
+
+
+test.mesh.coordinates.out: test.mesh.coordinates.cpp $(Includes) 
+	$(CC) test.mesh.coordinates.cpp $(Objects) -o test.mesh.coordinates.out
+
+test.mesh.simplicialmesh.out: test.mesh.simplicialmesh.cpp $(Includes)
+	$(CC) test.mesh.simplicialmesh.cpp $(Objects) -o test.mesh.simplicialmesh.out
+
+test.mesh.vtkwriter.out: test.mesh.vtkwriter.cpp $(Includes)
+	$(CC) test.mesh.vtkwriter.cpp $(Objects) -o test.mesh.vtkwriter.out
+
+test.mesh.io.out: test.mesh.io.cpp $(Includes)
+	$(CC) test.mesh.io.cpp $(Objects) -o test.mesh.io.out
+
+mesh.tests = test.mesh.coordinates.out test.mesh.simplicialmesh.out test.mesh.io.out test.mesh.vtkwriter.out
 
 
 
 
     
-all: $(combinatorics.unittests) $(operators.unittests) $(dense.unittests) $(sparse.unittests) $(solver.unittests) $(mesh.unittests)
+all: $(combinatorics.tests) $(operators.tests) $(dense.tests) $(sparse.tests) $(solver.tests) $(mesh.tests)
 
 clean:
 	rm -f *.exe *.o *.gch *.exe.stackdump *.out 

@@ -2,12 +2,25 @@
 
 /**/
 
+// #include "../basic.hpp"
+// #include "floatvector.cpp"
+// #include "scalingoperator.cpp"
+// #include "diagonaloperator.cpp"
+// #include "linearoperator.cpp"
+// #include "sparsematrix.cpp"
+// #include "iterativesolver.cpp"
+// #include "crm.cpp"
+
 #include <iostream>
+#include <ctime>
+
 #include "../basic.hpp"
 #include "../operators/floatvector.hpp"
 #include "../operators/scalingoperator.hpp"
+#include "../operators/diagonaloperator.hpp"
 #include "../sparse/sparsematrix.hpp"
-#include "crm.hpp"
+#include "../solver/iterativesolver.hpp"
+#include "../solver/crm.hpp"
 
 
 using namespace std;
@@ -17,7 +30,6 @@ int main()
 	cout << "Unit Test for Conjugate Residual Method" << endl;
 	
 	{
-		
 		cout << "First Something Simple" << endl;
 		
 		ScalingOperator S( 10, 3.141 );
@@ -29,13 +41,10 @@ int main()
 		cout << x << endl;
 		cout << CRM << endl;
 		CRM.solve( x, rhs );
-		// cout << x << endl;
-	
 	}
 	
 
-	if(true){
-		
+	{
 		cout << "Now something more complicated." << endl;
 		
 		int dimension = 100000;
@@ -50,7 +59,7 @@ int main()
 				M.addentry( i, i-1, 1.25 );
 			if( i+1 < dimension ) 
 				M.addentry( i, i+1, 1.25 );
-			M.addentry( i, i, 2.51 );
+			M.addentry( i, i, 2.501 );
 		}
 		M.sortentries();
 		
@@ -62,16 +71,14 @@ int main()
 		// cout << M << endl;
 		
 		ConjugateResidualMethod CRM(M);
-		CRM.max_iteration_count = 10000;
-		CRM.error_tolerance = 1e-20;
-		
-		timestamp start, end;
-		start = gettimestamp();
-		CRM.solve(y,b);
-		end = gettimestamp();
-		cout << end - start << endl;
-
-		
+                CRM.max_iteration_count = 100000;
+		CRM.error_tolerance = 1e-16;
+                
+                clock_t start = clock();
+                CRM.solve(y,b);
+                clock_t end = clock();
+                cout << "time elapsed: " << ( (double)end - (double)start ) / CLOCKS_PER_SEC << endl;
+                
 	}
 	
 	cout << "Finished Unit Test" << endl;

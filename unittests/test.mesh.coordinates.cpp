@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include "../basic.hpp"
-#include "coordinates.hpp"
+#include "../mesh/coordinates.hpp"
 
 
 using namespace std;

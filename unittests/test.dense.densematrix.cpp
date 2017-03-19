@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include "../basic.hpp"
-#include "densematrix.hpp"
+#include "../dense/densematrix.hpp"
 
 
 using namespace std;

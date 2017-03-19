@@ -5,7 +5,7 @@
 #include <iostream>
 #include "../basic.hpp"
 #include "../operators/floatvector.hpp"
-#include "sparsematrix.hpp"
+#include "../sparse/sparsematrix.hpp"
 
 
 using namespace std;
