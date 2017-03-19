@@ -10,12 +10,7 @@ sparsematrix.o: sparsematrix.hpp sparsematrix.cpp ../operators/floatvector.hpp .
 objects = sparsematrix.o 
 
 
-unittest.sparsematrix.out: unittest.sparsematrix.cpp sparsematrix.o $(objects)
-	$(CC) unittest.sparsematrix.cpp ../combinatorics/*.o ../operators/*.o ../dense/*.o *.o -o unittest.sparsematrix.out
-
-unittests = unittest.sparsematrix.out 
-
-all: $(objects) $(unittests)
+all: $(objects) 
 
 clean:
 	rm -f *.exe *.o *.gch *.exe.stackdump *.out 

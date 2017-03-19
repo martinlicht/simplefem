@@ -10,8 +10,8 @@
 #include "../combinatorics/indexrange.hpp"
 #include "../combinatorics/indexmap.hpp"
 #include "../operators/floatvector.hpp"
-#include "../operators/densematrix.hpp"
 #include "../operators/linearoperator.hpp"
+#include "../dense/densematrix.hpp"
 // #include "../.hpp"
 // #include "../.hpp"
 

@@ -6,8 +6,9 @@ default:
 	cd ./dense; make; cd ..
 	cd ./sparse; make; cd ..
 	cd ./solver; make; cd ..
-# 	cd ./mesh; make; cd ..
-	echo "finished building." 
+	cd ./mesh; make; cd ..
+	cd ./unittests; make; cd ..
+# 	echo "finished building." 
     
 clean:
 	cd ./combinatorics; make clean; cd ..
@@ -16,5 +17,6 @@ clean:
 	cd ./sparse; make clean; cd ..
 	cd ./solver; make clean; cd ..
 	cd ./mesh; make clean; cd ..
+	cd ./unittests; make clean; cd ..
 	echo "finished cleaning." 
     

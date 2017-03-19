@@ -15,15 +15,7 @@ necrm.o: necrm.hpp necrm.cpp ../operators/floatvector.hpp crm.hpp
 
 objects = iterativesolver.o crm.o necrm.o 
 
-unittest.crm.out: unittest.crm.cpp crm.o $(objects)
-	$(CC) unittest.crm.cpp ../combinatorics/*.o ../operators/*.o ../dense/*.o ../sparse/*.o *.o -o unittest.crm.out
-
-moretesting.out: moretesting.cpp crm.o $(objects)
-	$(CC) moretesting.cpp ../combinatorics/*.o ../operators/*.o ../dense/*.o ../sparse/*.o *.o -o moretesting.out
-
-unittests = unittest.crm.out moretesting.out 
-
-all: $(objects) $(unittests)
+all: $(objects)
 
 clean:
 	rm -f *.exe *.o *.gch *.exe.stackdump *.out 

@@ -14,7 +14,7 @@
 #include "../combinatorics/indexrange.hpp"
 #include "../combinatorics/indexmap.hpp"
 #include "../operators/floatvector.hpp"
-#include "../operators/densematrix.hpp"
+#include "../dense/densematrix.hpp"
 #include "coordinates.hpp"
 
 
