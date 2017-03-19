@@ -15,15 +15,16 @@ objects = densematrix.o matrixalgorithm.o
 
 
 
-unittest.densematrix.out: unittest.densematrix.cpp densematrix.o $(objects) 
-	$(CC) unittest.densematrix.cpp ../combinatorics/*.o ../operators/*.o *.o -o unittest.densematrix.out 
-
-unittest.matrixalgorithm.out: unittest.matrixalgorithm.cpp matrixalgorithm.o $(objects) 
-	$(CC) unittest.matrixalgorithm.cpp ../combinatorics/*.o ../operators/*.o *.o -o unittest.matrixalgorithm.out
-
-unittests = unittest.densematrix.out unittest.matrixalgorithm.out
+# unittest.densematrix.out: unittest.densematrix.cpp densematrix.o $(objects) 
+# 	$(CC) unittest.densematrix.cpp ../combinatorics/*.o ../operators/*.o *.o -o unittest.densematrix.out 
+# 
+# unittest.matrixalgorithm.out: unittest.matrixalgorithm.cpp matrixalgorithm.o $(objects) 
+# 	$(CC) unittest.matrixalgorithm.cpp ../combinatorics/*.o ../operators/*.o *.o -o unittest.matrixalgorithm.out
+# 
+# unittests = unittest.densematrix.out unittest.matrixalgorithm.out
     
-all: $(objects) $(unittests)
+# all: $(objects) $(unittests)
+all: $(objects)
 
 clean:
 	rm -f *.exe *.o *.gch *.exe.stackdump *.out 

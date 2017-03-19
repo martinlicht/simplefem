@@ -5,8 +5,8 @@
 #include <iostream>
 
 #include "../basic.hpp"
+#include "../dense/densematrix.hpp"
 #include "iterativesolver.hpp"
-#include "densematrix.hpp"
 #include "crm.hpp"
 
 

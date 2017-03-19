@@ -4,7 +4,6 @@
 #include "../basic.hpp"
 #include "linearoperator.hpp"
 #include "scalingoperator.hpp"
-#include "densematrix.hpp"
 
 
 /************************

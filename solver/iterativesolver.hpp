@@ -5,7 +5,7 @@
 #include <iostream>
 
 #include "../basic.hpp"
-#include "linearoperator.hpp"
+#include "../operators/linearoperator.hpp"
 
 
 /************************

@@ -7,9 +7,9 @@ class SparseMatrix;
 // class MatrixEntry;
 
 #include "../basic.hpp"
-#include "linearoperator.hpp"
-#include "diagonaloperator.hpp"
-#include "densematrix.hpp"
+#include "../operators/linearoperator.hpp"
+#include "../operators/diagonaloperator.hpp"
+#include "../dense/densematrix.hpp"
 
 
 

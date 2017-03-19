@@ -11,7 +11,7 @@ objects = sparsematrix.o
 
 
 unittest.sparsematrix.out: unittest.sparsematrix.cpp sparsematrix.o $(objects)
-	$(CC) unittest.sparsematrix.cpp ../combinatorics/*.o *.o -o unittest.sparsematrix.out
+	$(CC) unittest.sparsematrix.cpp ../combinatorics/*.o ../operators/*.o ../dense/*.o *.o -o unittest.sparsematrix.out
 
 unittests = unittest.sparsematrix.out 
 

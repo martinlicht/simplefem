@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include "../basic.hpp"
-#include "floatvector.hpp"
+#include "../operators/floatvector.hpp"
 #include "sparsematrix.hpp"
 
 

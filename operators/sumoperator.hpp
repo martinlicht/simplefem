@@ -3,7 +3,6 @@
 
 #include "../basic.hpp"
 #include "linearoperator.hpp"
-#include "densematrix.hpp"
 
 
 /************************

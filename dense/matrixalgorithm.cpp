@@ -9,8 +9,8 @@
 
 #include "../combinatorics/generateindexmaps.hpp"
 #include "densematrix.hpp"
-#include "floatvector.hpp"
-#include "crm.hpp"
+#include "../operators/floatvector.hpp"
+#include "../solver/crm.hpp"
 
 
 

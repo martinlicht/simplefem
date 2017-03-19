@@ -2,7 +2,7 @@
 #include "crm.hpp"
 #include "necrm.hpp"
 
-#include "floatvector.hpp"
+#include "../operators/floatvector.hpp"
 
 
 NormalEquationsConjugateResidualMethod::NormalEquationsConjugateResidualMethod( const DenseMatrix& op, const DenseMatrix& opt, const DenseMatrix& opsys )

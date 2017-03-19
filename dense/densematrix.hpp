@@ -7,10 +7,10 @@ class DenseMatrix;
 
 #include "../basic.hpp"
 #include "../combinatorics/indexmap.hpp"
-#include "linearoperator.hpp"
-#include "scalingoperator.hpp"
-#include "diagonaloperator.hpp"
-#include "sparsematrix.hpp"
+#include "../operators/linearoperator.hpp"
+#include "../operators/scalingoperator.hpp"
+#include "../operators/diagonaloperator.hpp"
+#include "../sparse/sparsematrix.hpp"
 // #include "matrixalgorithm.hpp"
 
 

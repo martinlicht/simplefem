@@ -1,10 +1,10 @@
 
-#include "iterativesolver.hpp"
-
 #include <cmath>
 
-#include "scalingoperator.hpp"
-	
+#include "../operators/scalingoperator.hpp"
+#include "iterativesolver.hpp"
+
+
 IterativeSolver::IterativeSolver( const LinearOperator& op )
 : LinearOperator( op.getdimout(), op.getdimin() ), 
   internalOperator( op ), 

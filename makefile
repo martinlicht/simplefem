@@ -6,7 +6,7 @@ default:
 	cd ./dense; make; cd ..
 	cd ./sparse; make; cd ..
 	cd ./solver; make; cd ..
-	cd ./mesh; make; cd ..
+# 	cd ./mesh; make; cd ..
 	echo "finished building." 
     
 clean:

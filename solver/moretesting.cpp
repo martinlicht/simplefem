@@ -15,10 +15,10 @@
 #include <ctime>
 
 #include "../basic.hpp"
-#include "floatvector.hpp"
-#include "scalingoperator.hpp"
-#include "diagonaloperator.hpp"
-#include "sparsematrix.hpp"
+#include "../operators/floatvector.hpp"
+#include "../operators/scalingoperator.hpp"
+#include "../operators/diagonaloperator.hpp"
+#include "../sparse/sparsematrix.hpp"
 #include "iterativesolver.hpp"
 #include "crm.hpp"
 

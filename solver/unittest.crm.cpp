@@ -4,9 +4,9 @@
 
 #include <iostream>
 #include "../basic.hpp"
-#include "floatvector.hpp"
-#include "scalingoperator.hpp"
-#include "sparsematrix.hpp"
+#include "../operators/floatvector.hpp"
+#include "../operators/scalingoperator.hpp"
+#include "../sparse/sparsematrix.hpp"
 #include "crm.hpp"
 
 

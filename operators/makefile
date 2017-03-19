@@ -43,9 +43,9 @@ blockdiagonaloperator.o: blockdiagonaloperator.hpp blockdiagonaloperator.cpp flo
 # matrixalgorithm.o: matrixalgorithm.cpp densematrix.hpp floatvector.hpp crm.hpp 
 # 	$(CC) matrixalgorithm.cpp -c -o matrixalgorithm.o 
 
-objects = floatvector.o linearoperator.o productoperator.o sumoperator.o scalingoperator.o diagonaloperator.o blockdiagonaloperator.o sparsematrix.o iterativesolver.o crm.o necrm.o 
+objects = floatvector.o linearoperator.o productoperator.o sumoperator.o scalingoperator.o diagonaloperator.o blockdiagonaloperator.o 
 
-# densematrix.o matrixalgorithm.o
+# densematrix.o matrixalgorithm.o sparsematrix.o iterativesolver.o crm.o necrm.o 
 
 
 unittest.floatvector.out: floatvector.o floatvector.hpp unittest.floatvector.cpp $(objects) 
