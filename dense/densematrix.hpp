@@ -86,9 +86,9 @@ public LinearOperator /* every matrix is a linear operator */
         /* Special operations */
         
         DenseMatrix submatrix( const IndexMap& rows, const IndexMap& columns ) const;
-        Float determinant() const;
-        DenseMatrix adjunctMatrix() const;
-        DenseMatrix transpose() const;
+        Float determinant() const; // TODO: Move to algorithms 
+        DenseMatrix adjunctMatrix() const; // TODO: Move to algorithms 
+        DenseMatrix transpose() const; // TODO: Move to algorithms 
         
         /* Arithmetic operations */
         

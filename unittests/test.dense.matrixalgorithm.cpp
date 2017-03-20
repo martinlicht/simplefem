@@ -4,7 +4,8 @@
 
 #include <iostream>
 #include "../basic.hpp"
-#include "../dense/matrixalgorithm.hpp"
+#include "../dense/dense.functions.hpp"
+#include "../dense/dense.factorization.hpp"
 
 
 using namespace std;
@@ -28,7 +29,7 @@ int main()
 	{
 		DenseMatrix Q(D,D), R(D,D);
 		
-		PolarDecomposition( A, Q, R );
+		QRFactorization( A, Q, R );
 		
 		// for( int r = 0; r < D; r++ )
 		// for( int c = 0; c < D; c++ )

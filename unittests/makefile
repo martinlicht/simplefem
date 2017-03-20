@@ -10,19 +10,19 @@ Headers = ../combinatorics/*.hpp ../operators/*.hpp ../dense/*.hpp ../sparse/*.h
 Includes = $(Headers) $(Objects) 
 
 test.combinatorics.indexrange.out: test.combinatorics.indexrange.cpp $(Includes) 
-	$(CC) test.combinatorics.indexrange.cpp $(Objects) -o test.combinatorics.indexrange.out
+	$(CC) test.combinatorics.indexrange.cpp ../combinatorics/*.o -o test.combinatorics.indexrange.out
 
 test.combinatorics.indexmap.out: test.combinatorics.indexmap.cpp $(Includes) 
-	$(CC) test.combinatorics.indexmap.cpp $(Objects) -o test.combinatorics.indexmap.out
+	$(CC) test.combinatorics.indexmap.cpp ../combinatorics/*.o -o test.combinatorics.indexmap.out
 
 test.combinatorics.multiindex.out: test.combinatorics.multiindex.cpp $(Includes) 
-	$(CC) test.combinatorics.multiindex.cpp $(Objects) -o test.combinatorics.multiindex.out
+	$(CC) test.combinatorics.multiindex.cpp ../combinatorics/*.o -o test.combinatorics.multiindex.out
 
 test.combinatorics.generateindexmaps.out: test.combinatorics.generateindexmaps.cpp $(Includes) 
-	$(CC) test.combinatorics.generateindexmaps.cpp $(Objects) -o test.combinatorics.generateindexmaps.out
+	$(CC) test.combinatorics.generateindexmaps.cpp ../combinatorics/*.o -o test.combinatorics.generateindexmaps.out
 
 test.combinatorics.generatemultiindices.out: test.combinatorics.generatemultiindices.cpp $(Includes) 
-	$(CC) test.combinatorics.generatemultiindices.cpp $(Objects) -o test.combinatorics.generatemultiindices.out
+	$(CC) test.combinatorics.generatemultiindices.cpp ../combinatorics/*.o -o test.combinatorics.generatemultiindices.out
 
 combinatorics.tests = test.combinatorics.indexrange.out test.combinatorics.indexmap.out test.combinatorics.multiindex.out test.combinatorics.generateindexmaps.out test.combinatorics.generatemultiindices.out
     
