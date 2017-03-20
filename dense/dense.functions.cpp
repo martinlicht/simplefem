@@ -34,15 +34,46 @@ DenseMatrix TransposeSquare( const DenseMatrix& src )
     return Transpose( src );
 }
 
-DenseMatrix TransposeSquareInSitu( const DenseMatrix& src ) 
+void TransposeInSitu( DenseMatrix& src )
+{
+  src.check();
+  const int numrows = src.getdimout();
+  const int numcols = src.getdimin();
+  
+  for( unsigned int start = 0; start < numcols * numrows; ++start )
+  {
+    
+    unsigned int next = start;
+    unsigned int i = 0;
+    
+    do {
+      ++i;
+      next = (next % numrows) * numcols + next / numrows;
+    } while (next > start);
+
+    if ( next >= start && i != 1 )
+    {
+      const double tmp = src( start / numcols, start % numcols );
+      next = start;
+      do {
+        i = (next % numrows) * numcols + next / numrows;
+        src( next / numcols, next % numcols ) = ( i == start ) ? tmp : src( i / numcols, i % numcols );
+        next = i;
+      } while (next > start);
+    }
+  
+  }
+  
+}
+
+
+void TransposeSquareInSitu( DenseMatrix& src ) 
 {
     src.check();
-    DenseMatrix ret( src.getdimin(), src.getdimout() );
     for( int r = 0; r < src.getdimout(); r++ )
     for( int c = r+1; c < src.getdimin(); c++ )
-        { Float t = ret(c,r); ret(c,r) = ret(r,c); ret(r,c) = t; };
-    ret.check();
-    return ret;
+        { Float t = src(c,r); src(c,r) = src(r,c); src(r,c) = t; };
+    src.check();
 }
 
 //         ret.entries.at( c * src.getdimout() + r ) = src.entries.at( r * src.getdimin() + c );

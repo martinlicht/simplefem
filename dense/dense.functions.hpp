@@ -22,6 +22,12 @@
  
  // Tranpose, giving new matrix 
  // Tranpose, in-place
+
+ DenseMatrix Transpose( const DenseMatrix& ); 
+ void TransposeInSitu( DenseMatrix& );
+ DenseMatrix TransposeSquare( const DenseMatrix& ); 
+ void TransposeSquareinSitu( DenseMatrix& ); 
+
  
  // matrix trace 
  
@@ -54,10 +60,6 @@
 
 
 
-DenseMatrix Transpose( const DenseMatrix& ); 
-// void TransposeInSitu( DenseMatrix& ); // TODO : Matrix in situ transposition 
-DenseMatrix TransposeSquare( const DenseMatrix& ); 
-void TransposeSquareinSitu( DenseMatrix& ); 
         
         
 
