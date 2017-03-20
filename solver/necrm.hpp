@@ -6,6 +6,7 @@
 
 #include "../basic.hpp"
 #include "../dense/densematrix.hpp"
+#include "../dense/dense.functions.hpp"
 #include "iterativesolver.hpp"
 #include "crm.hpp"
 
@@ -45,7 +46,7 @@ class NormalEquationsConjugateResidualMethod
     public:
     
         explicit NormalEquationsConjugateResidualMethod( const DenseMatrix& op )
-        : NormalEquationsConjugateResidualMethod( op, op.transpose() ){ };
+        : NormalEquationsConjugateResidualMethod( op, Transpose( op ) ){ };
         
         ~NormalEquationsConjugateResidualMethod();
         

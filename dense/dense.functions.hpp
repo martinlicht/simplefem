@@ -7,34 +7,68 @@
 
 #include "densematrix.hpp"
 
-
-/***********************
-****  
-****  Algorithm for dense matrix operations 
-****  
-****  - Inverse and Determinant 
-****  - QR Decomposition 
-****  - Cholesky 
-****  - Determinant of Upper triangular 
-****  - tensor product matrix 
-****  
-***********************/
  
  // Tranpose, giving new matrix 
  // Tranpose, in-place
 
- DenseMatrix Transpose( const DenseMatrix& ); 
- void TransposeInSitu( DenseMatrix& );
- DenseMatrix TransposeSquare( const DenseMatrix& ); 
- void TransposeSquareinSitu( DenseMatrix& ); 
+DenseMatrix Transpose( const DenseMatrix& ); 
+void TransposeInSitu( DenseMatrix& );
+DenseMatrix TransposeSquare( const DenseMatrix& ); 
+void TransposeSquareinSitu( DenseMatrix& ); 
 
- 
- // matrix trace 
- 
- // Gerschgorin circles : row/column 
- 
- // Norms: Frobenius, row norm, column norm,
- 
+// matrix trace 
+
+Float MatrixTrace( const DenseMatrix& x );
+
+// Gerschgorin circles : row/column 
+
+DenseMatrix Gerschgorin( const DenseMatrix& );
+DenseMatrix GerschgorinRow( const DenseMatrix& );
+DenseMatrix GerschgorinColumn( const DenseMatrix& );
+
+// Matrix norms 
+
+Float NormL1( const DenseMatrix& );
+Float NormFrobenius( const DenseMatrix& );
+Float NormMax( const DenseMatrix& );
+Float NormLp( const DenseMatrix&, Float p );
+Float NormRowCol( const DenseMatrix&, Float p, Float q );
+Float NormColRow( const DenseMatrix&, Float p, Float q );
+
+Float NormOperatorL1( const DenseMatrix& );
+Float NormOperatorMax( const DenseMatrix& );
+
+
+
+
+
+
+
+ // determinant 
+ // adjunct matrix 
+ // Inverse 
+ // Inverse and determinant 
+ // SubdeterminantMatrix
+
+void InverseAndDeterminant( const DenseMatrix&, DenseMatrix&, Float& );
+
+DenseMatrix Inverse( const DenseMatrix& );
+
+Float Determinant( const DenseMatrix& );
+
+DenseMatrix adjunctMatrix( const DenseMatrix& ); 
+
+DenseMatrix SubdeterminantMatrix( const DenseMatrix& A, int k );
+
+
+// Tensorproduct matrix 
+
+DenseMatrix MatrixTensorProduct( const DenseMatrix& left, const DenseMatrix& right );
+
+
+
+
+// TODO: Put triangular solves somewhere else 
  // Diagonal inverse
  // Left triangular inverse 
  // Right triangular inverse 
@@ -48,37 +82,13 @@
  // Unit Right triangular solve 
  
  // (Weighting between left and right triangular solves)
-  
- 
- // determinant 
- // adjunct matrix 
- // Inverse 
- // Solve 
- // Inverse and determinant 
- // Tensorproduct matrix 
- // SubdeterminantMatrix
-
-
-
-        
-        
-
-
-void InverseAndDeterminant( const DenseMatrix&, DenseMatrix&, Float& );
-
-DenseMatrix Inverse( const DenseMatrix& );
-
-Float Determinant( const DenseMatrix& );
 
 DenseMatrix UpperTriangularInverse( const DenseMatrix& A );        
 
 Float UpperTriangularDeterminant( const DenseMatrix& A );
 
-DenseMatrix MatrixTensorProduct( const DenseMatrix& left, const DenseMatrix& right );
 
-DenseMatrix SubdeterminantMatrix( const DenseMatrix& A, int k );
 
-DenseMatrix adjunctMatrix( const DenseMatrix& ); 
 
 
 

@@ -45,7 +45,16 @@ DenseMatrix::DenseMatrix( int rows, int columns, const std::vector<FloatVector>&
         (*this)(r,c) = coldata.at(c).at(r);
     check();
 }
-        
+
+DenseMatrix::DenseMatrix( int rows, int columns, Float value )
+: LinearOperator( rows, columns), entries( rows * columns )
+{
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimin(); c++ )
+        (*this)(r,c) = value;
+    check();
+}
+
 
 DenseMatrix::DenseMatrix( const ScalingOperator& scaling )
 : LinearOperator( scaling.getdimout(), scaling.getdimin() ), 

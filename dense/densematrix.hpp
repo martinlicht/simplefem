@@ -34,6 +34,7 @@ public LinearOperator /* every matrix is a linear operator */
         DenseMatrix( int rows, int columns );
         DenseMatrix( int rows, int columns, std::function<Float(int,int)> generator );
         DenseMatrix( int rows, int columns, const std::vector<FloatVector>& coldata );
+        DenseMatrix( int rows, int columns, Float value );
         explicit DenseMatrix( const ScalingOperator& );
         explicit DenseMatrix( const DiagonalOperator& );
         explicit DenseMatrix( const SparseMatrix& );

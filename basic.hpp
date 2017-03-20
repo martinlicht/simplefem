@@ -49,6 +49,24 @@ T absolute( const T& n )
         return -n;
 }
 
+template<typename T>
+T maximum( const T& a, const T& b )
+{
+    if( a >= b )
+        return a;
+    else
+        return b;
+}
+
+template<typename T>
+T minimum( const T& a, const T& b )
+{
+    if( a <= b )
+        return a;
+    else
+        return b;
+}
+
 int binomial(int,int);
 
 
