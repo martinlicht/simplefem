@@ -86,9 +86,6 @@ public LinearOperator /* every matrix is a linear operator */
         /* Special operations */
         
         DenseMatrix submatrix( const IndexMap& rows, const IndexMap& columns ) const;
-        Float determinant() const; // TODO: Move to algorithms 
-        DenseMatrix adjunctMatrix() const; // TODO: Move to algorithms 
-        DenseMatrix transpose() const; // TODO: Move to algorithms 
         
         /* Arithmetic operations */
         
@@ -97,6 +94,7 @@ public LinearOperator /* every matrix is a linear operator */
         void add( Float, Float, const DenseMatrix& );
         
         /* Measurements */
+        
         Float maxabsoluteentry() const;
         
     private:

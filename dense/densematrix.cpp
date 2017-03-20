@@ -373,15 +373,6 @@ void DenseMatrix::indexmapping( const IndexMap& im )
     check();
 }
 
-DenseMatrix DenseMatrix::transpose() const
-{
-    check();DenseMatrix ret( getdimin(), getdimout() );
-    for( int r = 0; r < getdimout(); r++ )
-    for( int c = 0; c < getdimin(); c++ )
-        ret.entries.at( c * getdimout() + r ) = entries.at( r * getdimin() + c );
-    ret.check();
-    return ret;
-}
 
 
 

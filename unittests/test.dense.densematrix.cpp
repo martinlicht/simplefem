@@ -17,7 +17,6 @@ int main()
 	A.randommatrix();
 	
 	cout << A << endl;
-	cout << A.transpose() << endl;
 	cout << 3 * A << endl;
 	
 	DenseMatrix B( 3, 4 );

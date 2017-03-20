@@ -54,7 +54,12 @@
 
 
 
-
+DenseMatrix Transpose( const DenseMatrix& ); 
+// void TransposeInSitu( DenseMatrix& ); // TODO : Matrix in situ transposition 
+DenseMatrix TransposeSquare( const DenseMatrix& ); 
+void TransposeSquareinSitu( DenseMatrix& ); 
+        
+        
 
 
 void InverseAndDeterminant( const DenseMatrix&, DenseMatrix&, Float& );
@@ -70,6 +75,9 @@ Float UpperTriangularDeterminant( const DenseMatrix& A );
 DenseMatrix MatrixTensorProduct( const DenseMatrix& left, const DenseMatrix& right );
 
 DenseMatrix SubdeterminantMatrix( const DenseMatrix& A, int k );
+
+DenseMatrix adjunctMatrix( const DenseMatrix& ); 
+
 
 
 

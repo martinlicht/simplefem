@@ -12,7 +12,7 @@ using namespace std;
 
 int main()
 {
-	cout << "Unit Test for Matrix Algorithms class" << endl;
+	cout << "Unit Test for Dense Matrix Module" << endl;
 	
 	std::cout.precision(5);
 	std::cout.setf( std::ios::fixed, std:: ios::floatfield );
@@ -36,7 +36,7 @@ int main()
 			// cout << ;
 		
 		DenseMatrix Rinv = UpperTriangularInverse(R);
-		DenseMatrix Qt = Q.transpose();
+		DenseMatrix Qt = Transpose(Q);
 		
 		cout << "Matrix A:" << A;
 		cout << "Matrix Q:" << Q;
@@ -58,17 +58,17 @@ int main()
 		
                 cout << endl << "Now for Cholesky" << endl;
                 
-                DenseMatrix M = A.transpose() * A;
+                DenseMatrix M = Transpose(A) * A;
 		M = M * M;
 		DenseMatrix R = CholeskyDecomposition( M );
 		DenseMatrix Rinv = UpperTriangularInverse(R);
 		
 		cout << "Matrix M:" << M;
 		cout << "Matrix R:" << R;
-		cout << "Matrix Rt * R:" << R.transpose() * R;
-		cout << "Matrix Rinv * Rtinv:" << Rinv * Rinv.transpose();
-		cout << "Matrix M * Rinv * Rtinv:" << M * Rinv * Rinv.transpose();
-		cout << "Matrix Rinv * Rtinv * M:" << Rinv * Rinv.transpose() * M;
+		cout << "Matrix Rt * R:" << Transpose(R) * R;
+		cout << "Matrix Rinv * Rtinv:" << Rinv * Transpose(Rinv);
+		cout << "Matrix M * Rinv * Rtinv:" << M * Rinv * Transpose(Rinv);
+		cout << "Matrix Rinv * Rtinv * M:" << Rinv * Transpose(Rinv) * M;
                 
 	}
 	

@@ -15,11 +15,44 @@
 
 
 
+
+
+DenseMatrix Transpose( const DenseMatrix& src ) 
+{
+    src.check();
+    DenseMatrix ret( src.getdimin(), src.getdimout() );
+    for( int r = 0; r < src.getdimout(); r++ )
+    for( int c = 0; c < src.getdimin(); c++ )
+        ret(c,r) = ret(r,c);
+    ret.check();
+    return ret;
+}
+
+DenseMatrix TransposeSquare( const DenseMatrix& src ) 
+{
+    src.check();
+    return Transpose( src );
+}
+
+DenseMatrix TransposeSquareInSitu( const DenseMatrix& src ) 
+{
+    src.check();
+    DenseMatrix ret( src.getdimin(), src.getdimout() );
+    for( int r = 0; r < src.getdimout(); r++ )
+    for( int c = r+1; c < src.getdimin(); c++ )
+        { Float t = ret(c,r); ret(c,r) = ret(r,c); ret(r,c) = t; };
+    ret.check();
+    return ret;
+}
+
+//         ret.entries.at( c * src.getdimout() + r ) = src.entries.at( r * src.getdimin() + c );
+
+
 void InverseAndDeterminant( const DenseMatrix& A, DenseMatrix& Ainv, Float& Adet )
 {
     DenseMatrix Q( A ), R( A );
     QRFactorization( A, Q, R );
-    Ainv = UpperTriangularInverse(R) * Q.transpose();
+    Ainv = UpperTriangularInverse(R) * Transpose(Q);
     Adet = UpperTriangularDeterminant(R);
 }
 
@@ -28,7 +61,7 @@ DenseMatrix Inverse( const DenseMatrix& A )
 {
     DenseMatrix Q( A ), R( A );
     QRFactorization( A, Q, R );
-    return UpperTriangularInverse(R) * Q.transpose();
+    return UpperTriangularInverse(R) * Transpose(Q);
 }
 
 Float Determinant( const DenseMatrix& A )
