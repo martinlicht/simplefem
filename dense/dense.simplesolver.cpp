@@ -37,14 +37,12 @@ DenseMatrix DiagonalInverse( const DenseMatrix& A )
     return Ret;
 }
 
-DenseMatrix InvertDiagonal( DenseMatrix& A )
+void InvertDiagonal( DenseMatrix& A )
 {
     A.check();
     assert( A.issquare() );
-    DenseMatrix Ret( A.getdimout(), A.getdimin(), 0. );
     for( int c = 0; c < A.getdimin(); c++ )
         A(c,c) = 1. / A(c,c); 
-    return Ret;
 }
 
 Float DiagonalDeterminant( const DenseMatrix& A )
@@ -83,25 +81,41 @@ DenseMatrix LowerTriangularPart( const DenseMatrix& A )
     return Ret;
 }
 
-// DenseMatrix LowerTriangularInverse( const DenseMatrix& A )
-// {
-//     assert( false ); // TODO: Change order here. 
-//     assert( A.issquare() );
-//     DenseMatrix ret( A );
-//     ret.zeromatrix();
-//     const int D = A.getdimout();
-//     for( int c = D-1; c >= 0; c-- ) {
-//         ret(c,c) = 1. / A(c,c);
-//         for( int r = c-1; r >= 0; r-- ) {
-//             ret(r,c) = 0.;
-//             for( int k = c; k > r; k-- )
-//                     ret(r,c) -= A(r,k) * ret(k,c);
-//             ret(r,c) /= A(r,r);
-//         }
-//     }
-//     ret.check();
-//     return ret;
-// }
+DenseMatrix LowerTriangularInverse( const DenseMatrix& A )
+{
+    assert( A.issquare() );
+    DenseMatrix ret( A );
+    ret.zeromatrix();
+    
+    const int D = A.getdimout();
+    
+    for( int r = 0; r < D; r++ ) {
+        ret(r,r) = 1. / A(r,r);
+        for( int c = r-1; c >= 0; c-- ) {
+            ret(r,c) = 0.;
+            for( int k = c; k > r; k-- )
+                    ret(r,c) -= A(r,k) * ret(k,c);
+            ret(r,c) /= A(r,r);
+        }
+    }
+    ret.check();
+    return ret;
+}
+
+void InvertLowerTriangular( DenseMatrix& A )
+{
+    assert( A.issquare() );
+    const int D = A.getdimout();
+    for( int r = 0; r < D; r++ ) {
+        A(r,r) = 1. / A(r,r);
+        for( int c = r-1; c >= 0; c-- ) {
+            Float temp = 0.;
+            for( int k = c; k > r; k-- )
+                    temp -= A(r,k) * A(k,c);
+            A(r,c) = temp / A(r,r);
+        }
+    }
+}
 
 Float LowerTriangularDeterminant( const DenseMatrix& A )
 {
@@ -113,7 +127,21 @@ Float LowerTriangularDeterminant( const DenseMatrix& A )
     return ret;
 }
 
-// void LowerTriangularSolve( const DenseMatrix& A, FloatVector& x, const FloatVector& b );
+void LowerTriangularSolve( const DenseMatrix& A, FloatVector& x, const FloatVector& b )
+{
+    A.check();
+    x.check();
+    b.check();
+    assert( A.issquare() );
+    assert( x.getdimension() == A.getdimin() );
+    assert( b.getdimension() == A.getdimout() );
+    for( int r = 0; r < A.getdimout(); r++ ) {
+        x[r] = b[r];
+        for( int c = 0; c < r-1; c++ )
+            x[r] = x[r] - A(r,c) * x[c];
+        x[r] = x[r] / A(r,r);
+    }
+}
 
 
 
@@ -152,6 +180,21 @@ DenseMatrix UpperTriangularInverse( const DenseMatrix& A )
     return Ret;
 }
 
+void InvertUpperTriangular( DenseMatrix& A )
+{
+    assert( A.issquare() );
+    const int D = A.getdimout();
+    for( int c = D-1; c >= 0; c-- ) {
+        A(c,c) = 1. / A(c,c);
+        for( int r = c-1; r >= 0; r-- ) {
+            Float temp = 0.;
+            for( int k = c; k > r; k-- )
+                    temp -= A(r,k) * A(k,c);
+            A(r,c) = temp / A(r,r);
+        }
+    }
+}
+
 Float UpperTriangularDeterminant( const DenseMatrix& A )
 {
     A.check();
@@ -162,7 +205,21 @@ Float UpperTriangularDeterminant( const DenseMatrix& A )
     return ret;
 }
 
-// void UpperTriangularSolve( const DenseMatrix& A, FloatVector& x, const FloatVector& b );
+void UpperTriangularSolve( const DenseMatrix& A, FloatVector& x, const FloatVector& b )
+{
+    A.check();
+    x.check();
+    b.check();
+    assert( A.issquare() );
+    assert( x.getdimension() == A.getdimin() );
+    assert( b.getdimension() == A.getdimout() );
+    for( int r = A.getdimout()-1; r >= 0; r-- ) {
+        x[r] = b[r];
+        for( int c = r+1; c < A.getdimin()-1; c++ )
+            x[r] = x[r] - A(r,c) * x[c];
+        x[r] = x[r] / A(r,r);
+    }
+}
 
 
 
@@ -184,9 +241,54 @@ DenseMatrix LowerUnitTriangularPart( const DenseMatrix& A )
     return Ret;
 }
 
-// DenseMatrix LowerUnitTriangularInverse( const DenseMatrix& A );
+DenseMatrix LowerUnitTriangularInverse( const DenseMatrix& A )
+{
+    assert( A.issquare() );
+    DenseMatrix ret( A );
+    ret.zeromatrix();
+    
+    const int D = A.getdimout();
+    
+    for( int r = 0; r < D; r++ ) {
+        ret(r,r) = 1.;
+        for( int c = r-1; c >= 0; c-- ) {
+            ret(r,c) = 0.;
+            for( int k = c; k > r; k-- )
+                    ret(r,c) -= A(r,k) * ret(k,c);
+        }
+    }
+    ret.check();
+    return ret;
+}
 
-// void LowerUnitTriangularSolve( const DenseMatrix& A, FloatVector& x, const FloatVector& b );
+void InvertLowerUnitTriangular( DenseMatrix& A )
+{
+    assert( A.issquare() );
+    const int D = A.getdimout();
+    for( int r = 0; r < D; r++ ) {
+        for( int c = r-1; c >= 0; c-- ) {
+            Float temp = 0.;
+            for( int k = c; k > r; k-- )
+                    temp -= A(r,k) * A(k,c);
+            A(r,c) = temp;
+        }
+    }
+}
+
+void LowerUnitTriangularSolve( const DenseMatrix& A, FloatVector& x, const FloatVector& b )
+{
+    A.check();
+    x.check();
+    b.check();
+    assert( A.issquare() );
+    assert( x.getdimension() == A.getdimin() );
+    assert( b.getdimension() == A.getdimout() );
+    for( int r = 0; r < A.getdimout(); r++ ) {
+        x[r] = b[r];
+        for( int c = 0; c < r-1; c++ )
+            x[r] = x[r] - A(r,c) * x[c];
+    }
+}
 
 
 
@@ -206,9 +308,56 @@ DenseMatrix UpperUnitTriangularPart( const DenseMatrix& A )
     return Ret;
 }
 
-// DenseMatrix UpperUnitTriangularInverse( const DenseMatrix& A );
+DenseMatrix UpperUnitTriangularInverse( const DenseMatrix& A )
+{
+    assert( A.issquare() );
+    DenseMatrix Ret( A );
+    Ret.zeromatrix();
+    
+    const int D = A.getdimout();
+    
+    for( int c = D-1; c >= 0; c-- ) {
+        Ret(c,c) = 1.;
+        for( int r = c-1; r >= 0; r-- ) {
+            Ret(r,c) = 0.;
+            for( int k = c; k > r; k-- )
+                    Ret(r,c) -= A(r,k) * Ret(k,c);
+        }
+    }
+    
+    Ret.check();
+    return Ret;
+}
 
-// void UpperUnitTriangularSolve( const DenseMatrix& A, FloatVector& x, const FloatVector& b );
+void InvertUpperUnitTriangular( DenseMatrix& A )
+{
+    assert( A.issquare() );
+    const int D = A.getdimout();
+    for( int c = D-1; c >= 0; c-- ) {
+        A(c,c) = 1.;
+        for( int r = c-1; r >= 0; r-- ) {
+            Float temp = 0.;
+            for( int k = c; k > r; k-- )
+                    temp -= A(r,k) * A(k,c);
+            A(r,c) = temp;
+        }
+    }
+}
+
+void UpperUnitTriangularSolve( const DenseMatrix& A, FloatVector& x, const FloatVector& b )
+{
+    A.check();
+    x.check();
+    b.check();
+    assert( A.issquare() );
+    assert( x.getdimension() == A.getdimin() );
+    assert( b.getdimension() == A.getdimout() );
+    for( int r = A.getdimout()-1; r >= 0; r-- ) {
+        x[r] = b[r];
+        for( int c = r+1; c < A.getdimin()-1; c++ )
+            x[r] = x[r] - A(r,c) * x[c];
+    }
+}
 
 
 
