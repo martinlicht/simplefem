@@ -13,10 +13,19 @@ dense.functions.o: dense.functions.cpp dense.functions.hpp ../operators/floatvec
 dense.simplesolver.o: dense.simplesolver.cpp dense.simplesolver.hpp ../operators/floatvector.hpp
 	$(CC) dense.simplesolver.cpp -c -o dense.simplesolver.o 
 
-dense.factorization.o: dense.factorization.cpp densematrix.hpp ../operators/floatvector.hpp
+dense.factorization.o: dense.factorization.cpp dense.factorization.hpp ../operators/floatvector.hpp
 	$(CC) dense.factorization.cpp -c -o dense.factorization.o 
 
-objects = densematrix.o dense.functions.o dense.simplesolver.o dense.factorization.o
+qr.factorization.o: qr.factorization.cpp qr.factorization.hpp ../operators/floatvector.hpp
+	$(CC) qr.factorization.cpp -c -o qr.factorization.o 
+
+lu.factorization.o: lu.factorization.cpp lu.factorization.hpp ../operators/floatvector.hpp
+	$(CC) lu.factorization.cpp -c -o lu.factorization.o 
+
+cholesky.o: cholesky.cpp cholesky.hpp ../operators/floatvector.hpp
+	$(CC) cholesky.cpp -c -o cholesky.o 
+
+objects = densematrix.o dense.functions.o dense.simplesolver.o qr.factorization.o lu.factorization.o cholesky.o
 
 all: $(objects)
 

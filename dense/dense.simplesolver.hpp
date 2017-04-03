@@ -28,13 +28,13 @@ Float UpperTriangularDeterminant( const DenseMatrix& A );
 void UpperTriangularSolve( const DenseMatrix& A, FloatVector& x, const FloatVector& b );
 
 DenseMatrix LowerUnitTriangularPart( const DenseMatrix& A );
-DenseMatrix LowerUnitTriangularInverse( const DenseMatrix& A );
-void InvertLowerUnitTriangular( DenseMatrix& A );
+DenseMatrix LowerUnitTriangularInverse( const DenseMatrix& A, bool writediagonalones = false );
+void InvertLowerUnitTriangular( DenseMatrix& A, bool writediagonalones = false );
 void LowerUnitTriangularSolve( const DenseMatrix& A, FloatVector& x, const FloatVector& b );
 
 DenseMatrix UpperUnitTriangularPart( const DenseMatrix& A );
-DenseMatrix UpperUnitTriangularInverse( const DenseMatrix& A );
-void InvertUpperUnitTriangular( DenseMatrix& A );
+DenseMatrix UpperUnitTriangularInverse( const DenseMatrix& A, bool writediagonalones = false );
+void InvertUpperUnitTriangular( DenseMatrix& A, bool writediagonalones = false );
 void UpperUnitTriangularSolve( const DenseMatrix& A, FloatVector& x, const FloatVector& b );
 
 

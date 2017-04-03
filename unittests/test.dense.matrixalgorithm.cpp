@@ -5,7 +5,9 @@
 #include <iostream>
 #include "../basic.hpp"
 #include "../dense/dense.functions.hpp"
-#include "../dense/dense.factorization.hpp"
+#include "../dense/qr.factorization.hpp"
+#include "../dense/lu.factorization.hpp"
+#include "../dense/cholesky.hpp"
 
 
 using namespace std;

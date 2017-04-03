@@ -9,7 +9,8 @@
 
 #include "../combinatorics/generateindexmaps.hpp"
 #include "densematrix.hpp"
-#include "dense.factorization.hpp"
+#include "qr.factorization.hpp"
+#include "lu.factorization.hpp"
 #include "../operators/floatvector.hpp"
 #include "../solver/crm.hpp"
 
