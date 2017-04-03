@@ -1,0 +1,28 @@
+  
+  
+  
+  Unit tests : Allgemein 
+  
+  - logging class that allows for prefixes 
+  - how to get git version, date, time, 
+  
+  - andere verwendungszwecke werden in einzelne klassen gekapselt
+  
+  - erst ein paar beispiele, dann erfahrung aufschreiben,
+    und entsprechend designen 
+  
+  The unit tests contain several blocks, some of which may be switched off.
+  It would be nice to have a message like 
+  'Test topic: tested' or 'Test topic: not tested'
+  so this is shown more naturally 
+  
+  An explicit call to the user for visual inspection (or other action) should be added. 
+  
+  It should finish with a line like "Unit test [Topic] finished"
+    
+  --------------------------------------------------------------  
+  
+  Unit tests : Combinatorics 
+  
+  - All functions in index map should be tested thoroughly.
+  

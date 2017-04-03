@@ -30,4 +30,4 @@ objects = densematrix.o dense.functions.o dense.simplesolver.o qr.factorization.
 all: $(objects)
 
 clean:
-	rm -f *.exe *.o *.gch *.exe.stackdump *.out 
+	rm -f *.exe *.o *.gch *.exe.stackdump *.out *.out.stackdump 

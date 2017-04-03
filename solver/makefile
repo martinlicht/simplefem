@@ -10,6 +10,9 @@ iterativesolver.o: iterativesolver.hpp iterativesolver.cpp
 crm.o: crm.hpp crm.cpp ../operators/floatvector.hpp iterativesolver.hpp 
 	$(CC) crm.cpp -c -o crm.o 
 
+descent.residual.o: descent.residual.hpp descent.residual.cpp ../operators/floatvector.hpp iterativesolver.hpp 
+	$(CC) descent.residual.cpp -c -o descent.residual.o 
+
 necrm.o: necrm.hpp necrm.cpp ../operators/floatvector.hpp crm.hpp 
 	$(CC) necrm.cpp -c -o necrm.o 
 

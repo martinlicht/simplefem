@@ -34,4 +34,4 @@ objects = floatvector.o linearoperator.o productoperator.o sumoperator.o scaling
 all: $(objects) 
 
 clean:
-	rm -f *.exe *.o *.gch *.exe.stackdump *.out 
+	rm -f *.exe *.o *.gch *.exe.stackdump *.out *.out.stackdump 

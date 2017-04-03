@@ -45,7 +45,7 @@ void LQFactorization( const DenseMatrix& A, DenseMatrix& L, DenseMatrix& Q )
     L.check();
     Q.check();
     
-    // TODO: has not been corrected yet. check up on the role of L and Q
+    // TODO: check algorithm
     assert(false);
     
     assert( A.getdimout() == Q.getdimout() );
@@ -56,14 +56,14 @@ void LQFactorization( const DenseMatrix& A, DenseMatrix& L, DenseMatrix& Q )
     
     L.zeromatrix();
     
-    for( int c = 0; c < A.getdimin(); c++ ) {
-        FloatVector u = A.getcolumn(c);
-        for( int j = 0; j < c; j++ ){
-                L(j,c) = u * Q.getcolumn(j);
-                u -= L(j,c) * Q.getcolumn(j);
+    for( int r = 0; r < A.getdimout(); r++ ) {
+        FloatVector v = A.getrow(r);
+        for( int i = 0; i < r; i++ ){
+                L(r,i) = v * Q.getrow(i);
+                v -= L(r,i) * Q.getrow(i);
         }
-        L(c,c) = sqrt( u*u );
-        Q.setcolumn( c, u / L(c,c) );
+        L(r,r) = sqrt( v*v );
+        Q.setrow( r, v / L(r,r) );
     }
     
 }
@@ -88,7 +88,6 @@ void QRFactorizationRepeated( const DenseMatrix& A, DenseMatrix& Q, DenseMatrix&
 
 void LQFactorizationRepeated( const DenseMatrix& A, DenseMatrix& L, DenseMatrix& Q, unsigned int t )
 {
-    // TODO: correct usage of L and Q
     assert(false);
     
     if( t == 0 )
@@ -98,10 +97,10 @@ void LQFactorizationRepeated( const DenseMatrix& A, DenseMatrix& L, DenseMatrix&
     else {
         DenseMatrix Qw(Q), Qv(Q);
         DenseMatrix Lw(L), Lv(L);
-        LQFactorizationRepeated( A, Qw, Lw, t-1 );
+        LQFactorizationRepeated( A, Lw, Qw, t-1 );
         LQFactorization( Qw, Lv, Qv );
         Q = Qv;
-        L = Lv * Lw;
+        L = Lw * Lv;
     }
 }
 

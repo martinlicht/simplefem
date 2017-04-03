@@ -1,4 +1,34 @@
+  
+  
+  
+  **** TODO ***
+  
+  Makefiles:
+    - clean up in gemeinsamer makefile und dann referenzieren 
 
+  Question:
+    - how to manage unit test for a software library?
+    - how to manage makefiles? what dependencies to make explicit?
+    
+  todo-listen in jedem modul:
+    - liste der klassen und standard punkte 
+      - fertig
+      - check
+      - unittest 
+    - liste der methodenpakete und standard punkte 
+      - unittest 
+    - Feature liste welche erwünscht ist: near/far future 
+    
+  unit test layout:
+    logstream that is reference to std::cout 
+    TEST_DECL_MODULE( str );
+    TEST_DECL_CLASS ( str );
+    TEST_DECL_BASIC (     );
+    TEST_DECL_TOPIC ( str );
+    TEST_ANNOUNCE();
+    
+    
+    
 
   ************* General layout: 
   

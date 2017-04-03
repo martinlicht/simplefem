@@ -264,10 +264,34 @@ DenseMatrix Inverse( const DenseMatrix& A )
 
 Float Determinant( const DenseMatrix& A )
 {
-    DenseMatrix Q( A );
-    DenseMatrix R( A );
-    QRFactorization( A, Q, R );
-    return UpperTriangularDeterminant( R );
+    assert( A.issquare() );
+    
+    if( A.getdimin() == 1 ) {
+        
+        return A(1,1);
+        
+    } if( A.getdimin() == 2 ) {
+        
+        return A(1,1) * A(2,2) - A(1,2) * A(2,1);
+        
+    } else if( A.getdimin() == 2 ) {
+        
+        return + A(1,1) * A(2,2) * A(3,3) // 1 2 3 + 
+              - A(1,1) * A(2,3) * A(3,2) // 1 3 2 - 
+              - A(1,2) * A(2,1) * A(3,3) // 2 1 3 - 
+              + A(1,2) * A(2,3) * A(3,1) // 2 3 1 + 
+              - A(1,3) * A(2,2) * A(3,1) // 3 2 1 - 
+              + A(1,3) * A(2,1) * A(3,2) // 3 1 2 + 
+              ;
+        
+    } else {
+        
+        DenseMatrix Q( A );
+        DenseMatrix R( A );
+        QRFactorization( A, Q, R );
+        return UpperTriangularDeterminant( R );
+        
+    }
 }
 
 

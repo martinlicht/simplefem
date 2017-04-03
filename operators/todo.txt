@@ -10,11 +10,7 @@
     * check
     * check in all methods 
     * (no unittest because purely virtual)
-    
-    DenseMatrix
-    * check
-    * check im constructor 
-    - unittest komplett 
+    - function wrapper 
     
     ScalingOperator
     * check
@@ -22,11 +18,6 @@
     - unittest komplett 
     
     DiagonalOperator
-    * check
-    * check im constructor 
-    - unittest komplett 
-    
-    SparseMatrix
     * check
     * check im constructor 
     - unittest komplett 
@@ -41,22 +32,6 @@
     * check im constructor 
     - unittest komplett 
     
-    MatrixAlgorithms
-    * check
-    * check im constructor 
-    - unittest komplett 
-    
-    CRM
-    * check
-    * check im constructor 
-    - unittest komplett 
-    - flag for high precision evaluation 
-    
-    NE-CRM
-    * check
-    * check im constructor 
-    - unittest komplett 
-    
     -----------------------------------------
     
     FloatVector
@@ -66,18 +41,8 @@
     - high speed scalar product (assembler)
     - getInternalPointer 
     
-    DenseMatrix
-    - interne daten umstellen auf C-style arrays 
-    - high speed product 
-    
     DiagonalOperator
     - interne daten umstellen auf C-style arrays 
     
-    SparseMatrix
-    - Umstellen auf CSR-Format 
-    - high speed evaluation
-    
-    MatrixAlgorithms
-    - intern niederdimensionale spezialisierungen verwenden  
     
     

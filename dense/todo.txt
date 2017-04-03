@@ -1,0 +1,59 @@
+  
+  
+  ************* Dense Matrix algorithms to implement:
+  
+  DenseMatrix
+    * check
+    * check im constructor 
+    - unittest komplett 
+    
+  DenseMatrix
+    - interne daten umstellen auf C-style arrays 
+    - high speed product 
+    
+    
+  - Gerschgorin (row/column) circles, and maximal estimate 
+    perhaps more estimators 
+  
+  - Diagonal solve 
+  - Left triangular solve 
+  - Right triangular solve 
+  - Unit Left triangular solve 
+  - Unit Right triangular solve 
+  - (Averages between left and right triangular solves)
+  
+  - check whether diagonal 
+  - check whether (unit) left/right triangular 
+  
+  - LU decomposition 
+  - LU decomposition, row pivot
+  - LU decomposition, column pivot 
+  - LU decomposition, full pivot 
+  
+  - Cholesky 
+  - Cholesky, pivot 
+   
+  - stabilized Gram-Schmidt 
+  
+  - QR decomposition 
+  
+  
+  MatrixAlgorithms
+    - intern niederdimensionale spezialisierungen verwenden  
+    
+  MatrixAlgorithms
+    * check
+    * check im constructor 
+    - unittest komplett 
+    
+      
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  

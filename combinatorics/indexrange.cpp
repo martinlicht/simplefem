@@ -38,16 +38,16 @@ int IndexRange::max() const
     return maximum;
 }
 
-int IndexRange::getlength() const
+int IndexRange::cardinality() const
 {
     check();
     return std::max( 0, maximum - minimum + 1 );
 }
 
-int IndexRange::cardinality() const
+int IndexRange::getlength() const
 {
     check();
-    return getlength();
+    return cardinality();
 }
 
 bool IndexRange::isempty() const
