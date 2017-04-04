@@ -29,7 +29,7 @@ combinatorics.tests = test.combinatorics.indexrange.out test.combinatorics.index
 
 
 
-test.operators.floatvector.out: $(Includes) 
+test.operators.floatvector.out: test.operators.floatvector.cpp $(Includes) 
 	$(CC) test.operators.floatvector.cpp $(Objects) -o test.operators.floatvector.out
 
 test.operators.scalingoperator.out: test.operators.scalingoperator.cpp $(Includes)
@@ -95,5 +95,6 @@ mesh.tests = test.mesh.coordinates.out test.mesh.simplicialmesh.out test.mesh.io
     
 all: $(combinatorics.tests) $(operators.tests) $(dense.tests) $(sparse.tests) $(solver.tests) $(mesh.tests)
 
-clean:
-	rm -f *.exe *.o *.gch *.exe.stackdump *.out 
+include ../makefile.clean
+
+
