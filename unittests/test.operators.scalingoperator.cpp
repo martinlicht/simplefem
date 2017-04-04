@@ -36,6 +36,13 @@ int main()
         cout << ScalingOperator(10,4) * ScalingOperator(10,11) << endl;
         cout << ScalingOperator(10,11) * ScalingOperator(10,4) << endl;
         
+        FloatVector b(10);
+        for( int i = 0; i < 10; i++ )
+                b.setentry( i, i+1 );
+        
+        cout << ScalingOperator(10,11) * ScalingOperator(10,4) * b << endl;
+        
+        
         cout << "Finished Unit Test" << endl;
 
         return 0;

@@ -15,7 +15,7 @@
 
 
 class SumOperator:
-public LinearOperator /* every matrix is a linear operator */
+public LinearOperator 
 {
 
     public:

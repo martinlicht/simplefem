@@ -43,7 +43,7 @@ FloatVector ProductOperator::apply( const FloatVector& src, Float scaling ) cons
     src.check();
     assert( getdimin() == src.getdimension() );
     
-    return scaling * left * right * src;
+    return scaling * ( left * ( right * src ) );
 }
 
 

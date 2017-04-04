@@ -43,7 +43,7 @@ Float ScalingOperator::getscaling() const
 
 
 
-FloatVector ScalingOperator::apply( const FloatVector& src, Float scaling ) const 
+FloatVector ScalingOperator::apply( const FloatVector& src, Float s ) const 
 {
     check();
     src.check();
@@ -54,7 +54,7 @@ FloatVector ScalingOperator::apply( const FloatVector& src, Float scaling ) cons
     FloatVector ret( getdimout() );
     
     for( int p = 0; p < getdimin(); p++ )
-        ret.setentry( p, scaling * src.getentry( p ) );
+        ret.setentry( p, s * scaling * src.getentry( p ) );
     
     return ret;
     

@@ -25,12 +25,12 @@
     SumOperator
     * check
     * check im constructor 
-    - unittest komplett 
+    * unittest with scaling operator
     
     ProductOperator
     * check
     * check im constructor 
-    - unittest komplett 
+    * unittest with scaling operator
     
     -----------------------------------------
     
@@ -44,5 +44,15 @@
     DiagonalOperator
     - interne daten umstellen auf C-style arrays 
     
+    Sum and Product operators 
+    - Einige derivierte operatorklassen haben spezialisierte summen und produkte.
+      Um diese kompatibel zu halten mit den allgemeinen Summen und Produkten,
+      wollen wir einen Cast-Mechanismus verwenden. Eine Option ist es, 
+      intern zu speichern dass eine Summe / ein Produkt als Wrapper fungiert 
+      eines anderen Operators 
     
-    
+    Allgemein:
+    - Move-Semantik und weitere fortgeschrittene Konzepte sollten helfen, 
+      den Code zu verbessern und automatische Optimierung greifbarer werden lassen.
+      
+      

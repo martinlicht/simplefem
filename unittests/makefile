@@ -38,7 +38,13 @@ test.operators.scalingoperator.out: test.operators.scalingoperator.cpp $(Include
 test.operators.diagonaloperator.out: test.operators.diagonaloperator.cpp $(Includes)
 	$(CC) test.operators.diagonaloperator.cpp $(Objects) -o test.operators.diagonaloperator.out
 	
-operators.tests = test.operators.floatvector.out test.operators.scalingoperator.out test.operators.diagonaloperator.out 
+test.operators.sumoperator.out: test.operators.sumoperator.cpp $(Includes)
+	$(CC) test.operators.sumoperator.cpp $(Objects) -o test.operators.sumoperator.out
+	
+test.operators.productoperator.out: test.operators.productoperator.cpp $(Includes)
+	$(CC) test.operators.productoperator.cpp $(Objects) -o test.operators.productoperator.out
+	
+operators.tests = test.operators.floatvector.out test.operators.scalingoperator.out test.operators.diagonaloperator.out test.operators.sumoperator.out test.operators.productoperator.out 
 
 
     
@@ -93,7 +99,9 @@ mesh.tests = test.mesh.coordinates.out test.mesh.simplicialmesh.out test.mesh.io
 
 
     
-all: $(combinatorics.tests) $(operators.tests) $(dense.tests) $(sparse.tests) $(solver.tests) $(mesh.tests)
+all: $(combinatorics.tests) $(operators.tests) 
+
+# $(dense.tests) $(sparse.tests) $(solver.tests) $(mesh.tests)
 
 include ../makefile.clean
 
