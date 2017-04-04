@@ -16,7 +16,7 @@
 ************************/
 
 class DiagonalOperator:
-public LinearOperator /* every matrix is a linear operator */
+public LinearOperator 
 {
 
     public:
@@ -45,11 +45,14 @@ inline DiagonalOperator operator*( const DiagonalOperator& left, const DiagonalO
 {
     left.check();
     right.check();
+    
     assert( left.getdimin() == right.getdimout() );
     assert( left.getdimout() == right.getdimin() );
+    
     const FloatVector& leftdia = left.getdiagonal();
     const FloatVector& rightdia = right.getdiagonal();
     const int dimension = leftdia.getdimension();
+    
     assert( leftdia.getdimension() == rightdia.getdimension() );
     
     return DiagonalOperator( left.getdimout(), 

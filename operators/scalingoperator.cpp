@@ -41,14 +41,6 @@ Float ScalingOperator::getscaling() const
 
 
 
-// SparseMatrix ScalingOperator::cloneSparseMatrix() const 
-// {
-	// SparseMatrix M(dimin,dimout);
-	// for( int p = 0; p < dimin; p++ )
-		// M.addentry( p, p, scaling );
-	// return M;
-// };
-		
 
 
 FloatVector ScalingOperator::apply( const FloatVector& src, Float scaling ) const 

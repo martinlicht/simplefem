@@ -14,7 +14,8 @@
 /******************
 *** 
 ***  Linear Operator on an abstract level 
-***  - applyAdd is a purely virtual function
+***  - applyAdd is a purely virtual function that implements y <- A x with optional scaling of the result
+***  - all other apply adds are defined in terms of that, but overwriting in derived classes is possible
 ***
 ******************/
 

@@ -14,7 +14,7 @@
 
 
 class ScalingOperator:
-public LinearOperator /* every matrix is a linear operator */
+public LinearOperator /* every scaling operation is a linear operator */
 {
 
     public:
