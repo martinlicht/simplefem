@@ -26,5 +26,4 @@ unittests =
     
 all: $(objects) $(unittests) 
 
-clean: 
-	rm -f *.o *.exe *.exe.stackdump *.gch *.out
+include ../makefile.clean

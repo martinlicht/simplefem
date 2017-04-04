@@ -20,5 +20,4 @@ objects = iterativesolver.o crm.o necrm.o
 
 all: $(objects)
 
-clean:
-	rm -f *.exe *.o *.gch *.exe.stackdump *.out 
+include ../makefile.clean

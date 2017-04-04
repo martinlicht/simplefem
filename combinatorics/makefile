@@ -29,5 +29,4 @@ objects = indexrange.o indexmap.o multiindex.o generateindexmaps.o generatemulti
     
 all: $(objects) 
 
-clean: 
-	rm -f *.o *.exe *.exe.stackdump *.gch *.out *.out.stackdump 
+include ../makefile.clean

@@ -32,5 +32,4 @@ objects = coordinates.o simplicialmesh.o io.simplicialmesh.o io.coordinates.o ge
 all: $(objects) $(unittests) 
 
 
-clean:
-	rm -f *.exe *.o *.gch *.exe.stackdump *.out *.temp
+include ../makefile.clean

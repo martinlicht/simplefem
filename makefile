@@ -8,7 +8,7 @@ default:
 	cd ./solver; make; cd ..
 	cd ./mesh; make; cd ..
 	cd ./unittests; make; cd ..
-# 	echo "finished building." 
+	echo "finished building." 
     
 clean:
 	cd ./combinatorics; make clean; cd ..
