@@ -22,10 +22,10 @@ SumOperator::SumOperator( const LinearOperator& left, const LinearOperator& righ
 {
     check();
 }
-		
+
 SumOperator::~SumOperator()
 {
-	/* Nothing */ 
+    /* Nothing */ 
 }
 
 void SumOperator::check() const  

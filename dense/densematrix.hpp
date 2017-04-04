@@ -99,9 +99,9 @@ public LinearOperator /* every matrix is a linear operator */
         Float maxabsoluteentry() const;
         
     private:
-	
+        
         std::vector<Float> entries;
-	
+        
 };
   
 

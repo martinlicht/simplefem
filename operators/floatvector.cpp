@@ -75,7 +75,7 @@ void FloatVector::print( std::ostream& output ) const
     check();
     output << "float vector of dimension: " << getdimension() << std::endl;
     for( int p = 0; p < getdimension(); p++ )
-	output << p << ": " << getentry(p) << std::endl;
+        output << p << ": " << getentry(p) << std::endl;
 }
 
 void FloatVector::printplain( std::ostream& output ) const 
@@ -150,7 +150,7 @@ void FloatVector::zero()
 {
     check();
     for( int p = 0; p < getdimension(); p++ )
-	setentry( p, 0. ); 
+        setentry( p, 0. ); 
 }
 
 void FloatVector::random() 

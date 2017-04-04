@@ -100,7 +100,7 @@ class FloatVector
  * Overload Operators  
  *
  */
-	
+
 inline FloatVector operator+( const FloatVector& vec )
 {
     return vec;
@@ -119,7 +119,7 @@ inline FloatVector operator*=( FloatVector& vec, Float scaling )
     vec.scale( scaling );
     return vec;
 }
-	
+
 inline FloatVector operator/=( FloatVector& vec, Float scaling )
 {
     vec.scale( 1. / scaling );
@@ -138,8 +138,8 @@ inline FloatVector operator-=( FloatVector& vec, const FloatVector& src )
 {
     vec.adddatafrom( -1., src );
     return vec;
-}	
-	
+}
+
 inline FloatVector operator+( const FloatVector& left, const FloatVector& right )
 {
     FloatVector vec( left );
@@ -152,7 +152,7 @@ inline FloatVector operator-( const FloatVector& left, const FloatVector& right 
     FloatVector vec( left );
     vec -= right; 
     return vec;
-}	
+}
 
 inline FloatVector operator*( Float s, const FloatVector& vec )
 {
@@ -174,7 +174,7 @@ inline Float operator*( const FloatVector& left, const FloatVector& right )
         // ret += left.getentry(p) * right.getentry(p);
     // return ret;
     return left.scalarproductwith( right );
-}	
+}
 
 
 /* Output stream notation */
@@ -182,7 +182,7 @@ inline std::ostream& operator<<( std::ostream& out, const FloatVector& vec )
 {
     vec.print( out );
     return out;
-}	
+}
  
 
 
