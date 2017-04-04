@@ -22,7 +22,4 @@
     
   --------------------------------------------------------------  
   
-  Unit tests : Combinatorics 
-  
-  - All functions in index map should be tested thoroughly.
   

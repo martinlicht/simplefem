@@ -17,7 +17,23 @@ int main()
         
         if(true){
                 
-                cout << "Teste generator for all" << endl;
+                cout << "Teste generator for empty index map" << endl;
+                
+                IndexRange from( 1,-3 );
+                IndexRange targ( 2,5 );
+                
+                std::vector<IndexMap>  all = generateEmptyMap( from, targ );
+                
+                for( const IndexMap& im : all )
+                        cout << im << endl;
+                
+                cout << "Tested" << endl;
+                
+        }
+        
+        if(true){
+                
+                cout << "Teste generator for all: [1,3] -> [1,3]" << endl;
                 
                 IndexRange bereich( 1,3 );
                 std::vector<IndexMap> all = generateIndexMaps( bereich, bereich );
@@ -25,23 +41,27 @@ int main()
                 for( const IndexMap& im : all )
                         cout << im << endl;
                 
+                cout << "Tested" << endl;
+                
         }
         
         if(true){
                 
-                cout << "Teste generator for permutations" << endl;
+                cout << "Teste generator for permutations of [1,3]" << endl;
                 
                 IndexRange bereich( 1,3 );
                 std::vector<IndexMap>  all = generatePermutations( bereich );
 
                 for( const IndexMap& im : all )
-                        cout << im << endl;
+                        cout << im << endl << "signum: " << signPermutation( im ) << endl;
+                
+                cout << "Tested" << endl;
                 
         }
         
         if(true){
                 
-                cout << "Teste generator for sigmas" << endl;
+                cout << "Teste generator for sigmas [1,3] -> [2,5]" << endl;
                 
                 IndexRange from( 1,3 );
                 IndexRange targ( 2,5 );
@@ -50,19 +70,7 @@ int main()
                 for( const IndexMap& im : all )
                         cout << im << endl;
                 
-        }
-        
-        if(true){
-                
-                cout << "Teste generator for empty index map" << endl;
-                
-                IndexRange from( 1,-3 );
-                IndexRange targ( 2,5 );
-                cout << "X" << endl; cout.flush();
-                std::vector<IndexMap>  all = generateEmptyMap( from, targ );
-                cout << "X" << endl; cout.flush();
-                for( const IndexMap& im : all )
-                        cout << im << endl;
+                cout << "Tested" << endl;
                 
         }
         

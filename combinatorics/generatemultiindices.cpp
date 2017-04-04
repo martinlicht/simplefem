@@ -17,10 +17,17 @@ std::vector<MultiIndex> generateMultiIndices( const IndexRange& ir, int degree )
     ir.check();
     std::vector<MultiIndex> ret;
     
+    /* if the index range is empty, then only the empty mapping is returned */
+    
     if( ir.isempty() ) {
       ret.push_back( MultiIndex(ir) );
       return ret;
     }
+    
+    /* otherwise, we iterate through a large list of candidates */
+    /* and pick those that have the right properties            */
+    
+    ret.reserve( binomial<int>( ir.getlength()-1 + degree, ir.getlength()-1 ) );
     
     int max_candidate = integerpower( degree+1, ir.getlength() );
     int min_index = ir.min();
@@ -43,6 +50,9 @@ std::vector<MultiIndex> generateMultiIndices( const IndexRange& ir, int degree )
     }
     
     assert( ret.size() == binomial<int>( ir.getlength()-1 + degree, ir.getlength()-1 ) );
+    
+    assert( ret.size() == ret.capacity() );
+    
     return ret;
 }
 

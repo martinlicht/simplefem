@@ -3,9 +3,6 @@
   
   **** TODO ***
   
-  Makefiles:
-    - clean up in gemeinsamer makefile und dann referenzieren 
-
   Question:
     - how to manage unit test for a software library?
     - how to manage makefiles? what dependencies to make explicit?

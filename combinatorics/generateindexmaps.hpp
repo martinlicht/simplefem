@@ -17,6 +17,7 @@
 ***  1) generate all possible mappings 
 ***  2) generate Permuations, and tell their sign 
 ***  3) generate the Sigma mappings 
+***  
 ***************/
 
 std::vector<IndexMap> generateEmptyMap( const IndexRange& from, const IndexRange& to );

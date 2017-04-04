@@ -20,6 +20,7 @@ generateEmptyMap( const IndexRange& from, const IndexRange& to )
     
     IndexMap myempty = IndexMap( from, to );
     myempty.check();
+    
     std::vector<IndexMap> ret;
     ret.push_back( myempty );
     return ret;
@@ -30,10 +31,10 @@ generateEmptyMap( const IndexRange& from, const IndexRange& to )
 std::vector<IndexMap> 
 generateIndexMaps( const IndexRange& from, const IndexRange& to )
 {
-	
+        
         from.check();
-	to.check();
-	
+        to.check();
+        
         if( from.isempty() )
             return generateEmptyMap( from, to );
         
@@ -44,9 +45,10 @@ generateIndexMaps( const IndexRange& from, const IndexRange& to )
         assert( to.cardinality() > 0 );
         
         const int num = integerpower( to.cardinality(), from.cardinality() );
-	std::vector<IndexMap> ret;
-//         ( num, IndexMap( from, to ) );
-	for( int it = 0; it < num; it++ ) {
+        std::vector<IndexMap> ret;
+        ret.reserve( num );
+        
+        for( int it = 0; it < num; it++ ) {
                 
                 std::vector<int> values( from.getlength() );
                 int it_clone = it;
@@ -54,20 +56,13 @@ generateIndexMaps( const IndexRange& from, const IndexRange& to )
                     values[digit] = to.min() + it_clone % to.cardinality();
                     it_clone /= to.cardinality();
                 }
-		/*
-                for( int digit = 0; digit < from.getlength(); digit++ ) {
-			ret[it][ from.min() + digit ] 
-			=
-			to.min() + 
-			( it / integerpower( to.getlength(), digit ) ) % ( to.getlength() );
-		}*/
-		
-		ret.push_back( IndexMap( from, to, values ) );
-		
-	}
-	
-	for( const auto& foo : ret )
-            assert( (foo.check(),1) );
+
+                ret.push_back( IndexMap( from, to, values ) );
+                
+        }
+        
+        for( const auto& foo : ret )
+            foo.check();
         
         return ret;
         
@@ -76,13 +71,15 @@ generateIndexMaps( const IndexRange& from, const IndexRange& to )
 std::vector<IndexMap> 
 generatePermutations( const IndexRange& ir )
 {
-	
+        
         ir.check();
-	std::vector<IndexMap> allmappings = generateIndexMaps( ir, ir );
-	std::vector<IndexMap> ret( factorial( ir.getlength() ), IndexMap(ir) );
-	std::copy_if( allmappings.begin(), allmappings.end(), ret.begin(),
-		[]( const IndexMap& im ) -> bool { return im.isbijective(); }
-		);
+        std::vector<IndexMap> allmappings = generateIndexMaps( ir, ir );
+        
+        std::vector<IndexMap> ret( factorial( ir.getlength() ), IndexMap(ir) );
+        
+        std::copy_if( allmappings.begin(), allmappings.end(), ret.begin(),
+                []( const IndexMap& im ) -> bool { return im.isbijective(); }
+                );
         
         for( const auto& perm : ret )
             assert( (perm.check(),1) && perm.isbijective() );
@@ -93,7 +90,7 @@ generatePermutations( const IndexRange& ir )
 
 int signPermutation( const IndexMap& im )
 {
-	
+        
     im.check();
     assert( im.isbijective() );
     assert( im.getSourceRange() == im.getDestRange() );
@@ -101,6 +98,8 @@ int signPermutation( const IndexMap& im )
     const IndexRange& ir = im.getSourceRange();
     int zaehler = 1;
     int nenner = 1;
+    
+    /* TODO: checks for integer limits */
     
     for( int s = ir.min(); s <= ir.max(); s++ )
     for( int t = s+1; t <= ir.max(); t++ )
@@ -119,14 +118,18 @@ int signPermutation( const IndexMap& im )
 std::vector<IndexMap> 
 generateSigmas( const IndexRange& from, const IndexRange& to )
 {
-	from.check();
-	to.check();
-	std::vector<IndexMap> allmappings = generateIndexMaps( from, to );
-	std::vector<IndexMap> ret( binomial<int>( to.getlength(), from.getlength() ), IndexMap(from,to) );
-	std::copy_if( allmappings.begin(), allmappings.end(), ret.begin(),
-		[]( const IndexMap& im ) -> bool { return im.isstrictlyascending(); }
-		);
-	return ret;
+        from.check();
+        to.check();
+        
+        std::vector<IndexMap> allmappings = generateIndexMaps( from, to );
+        
+        std::vector<IndexMap> ret( binomial<int>( to.getlength(), from.getlength() ), IndexMap(from,to) );
+        
+        std::copy_if( allmappings.begin(), allmappings.end(), ret.begin(),
+                []( const IndexMap& im ) -> bool { return im.isstrictlyascending(); }
+                );
+        
+                return ret;
 }
 
 

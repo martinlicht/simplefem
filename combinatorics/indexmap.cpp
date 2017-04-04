@@ -71,9 +71,15 @@ void IndexMap::check() const
 { 
     src.check();
     dest.check();
+    
+    assert( getSourceRange().cardinality() == values.size() );
     assert( std::max( src.max() - src.min() + 1, 0 ) == values.size() );
+    
     for( int a = src.min(); a <= src.max(); a++ )
         assert( dest.contains( values.at( a - src.min() ) ) );
+    
+    if( ! getSourceRange().isempty() )
+        assert( ! getDestRange().isempty() );
 }
 
 void IndexMap::print( std::ostream& os ) const 
@@ -147,7 +153,7 @@ bool IndexMap::isinjective() const
         for( int b = src.min(); b <= src.max(); b++ )
             if( a != b && values.at( a - src.min() ) == values.at( b - src.min() ) )
                 return false;
-
+    
     return true;
 }
 
@@ -180,7 +186,6 @@ bool IndexMap::isstrictlyascending() const
             return false;
     return true;
 }
-          
 
 bool IndexMap::rangecontains( int p ) const
 {
@@ -198,7 +203,7 @@ int IndexMap::rangeposition( int p ) const
     assert( getDestRange().contains(p) );
     for( int i : src )
         if( at(i) == p )
-            return p;
+            return i;
     assert(false);
 } 
         
