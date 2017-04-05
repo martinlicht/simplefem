@@ -24,6 +24,8 @@
   
   Scalar functions
     * unit test
+    - p, q norms
+    - infty as special value 
   
   Simplesolver
     - unit test
