@@ -66,6 +66,9 @@ test.dense.densematrix.out: test.dense.densematrix.cpp $(Includes)
 test.dense.transpose.out: test.dense.transpose.cpp $(Includes) 
 	$(CC) test.dense.transpose.cpp $(Objects) -o test.dense.transpose.out
 
+test.dense.scalarfunctions.out: test.dense.scalarfunctions.cpp $(Includes) 
+	$(CC) test.dense.scalarfunctions.cpp $(Objects) -o test.dense.scalarfunctions.out
+
 test.dense.detinvcof.out: test.dense.detinvcof.cpp $(Includes) 
 	$(CC) test.dense.detinvcof.cpp $(Objects) -o test.dense.detinvcof.out
 
@@ -75,7 +78,7 @@ test.dense.matrixalgorithm.out: test.dense.matrixalgorithm.cpp $(Includes)
 test.dense.cholesky.out: test.dense.cholesky.cpp $(Includes) 
 	$(CC) test.dense.cholesky.cpp $(Objects) -o test.dense.cholesky.out
 
-dense.tests = test.dense.densematrix.out test.dense.transpose.out test.dense.detinvcof.out test.dense.matrixalgorithm.out test.dense.cholesky.out
+dense.tests = test.dense.densematrix.out test.dense.transpose.out test.dense.detinvcof.out test.dense.matrixalgorithm.out test.dense.cholesky.out test.dense.scalarfunctions.out
 
 
 

@@ -17,26 +17,30 @@
   matrix tensor product 
    - unit test 
   
-  Simplesolver
-    - unit test
-     
-  QR Factorization
-    - unit test
-  
   Matrix functions: det, inv, transpose 
     * unit test : transpose
-    - unit test : inverse and determinant 
+    * unit test : inverse and determinant 
     - unit test : subdeterminant matrix 
   
   Scalar functions
+    * unit test
+  
+  Simplesolver
     - unit test
+     
+  LU Factorization
+    - algorithmen 
+    - unit test 
   
   Cholesky 
     * unit test
+    - in place inversion 
     - different access patterns 
   
-  Simple Solver
-    * unit test 
+  QR Factorization (Gram-Schmidt)
+    - unit test
+  
+  
   
   
   ************* Dense Matrix algorithms to implement:

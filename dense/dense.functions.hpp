@@ -62,6 +62,13 @@ DenseMatrix SubdeterminantMatrix( const DenseMatrix& A, int k );
 
 
 
+/*
+ *
+ * Internal functions 
+ * 
+ */
+
+Float Determinant_laplaceexpansion( const DenseMatrix& );
 
 
 

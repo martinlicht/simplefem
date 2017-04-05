@@ -54,9 +54,9 @@ DenseMatrix GerschgorinRow( const DenseMatrix& src )
         ret( r, 0 ) = src(r,r);
         ret( r, 1 ) = 0.;
         for( int c = 0; c < r; c++ )
-            ret( r, 1 ) += absolute( ret(r,c) );
+            ret( r, 1 ) += absolute( src(r,c) );
         for( int c = r+1; c < src.getdimout(); c++ )
-            ret( r, 1 ) += absolute( ret(r,c) );
+            ret( r, 1 ) += absolute( src(r,c) );
     }
     return ret;
 }
@@ -71,9 +71,9 @@ DenseMatrix GerschgorinColumn( const DenseMatrix& src )
         ret( c, 0 ) = src(c,c);
         ret( c, 1 ) = 0.;
         for( int r = 0; r < c; r++ )
-            ret( c, 1 ) += absolute( ret(r,c) );
+            ret( c, 1 ) += absolute( src(r,c) );
         for( int r = c+1; r < src.getdimout(); r++ )
-            ret( c, 1 ) += absolute( ret(r,c) );
+            ret( c, 1 ) += absolute( src(r,c) );
     }
     return ret;
 }
@@ -98,8 +98,10 @@ Float NormFrobenius( const DenseMatrix& src )
     src.check();
     Float ret = 0.;
     for( int r = 0; r < src.getdimout(); r++ )
-    for( int c = 0; c < src.getdimin(); c++ )
-        ret += absolute( src(r,c) ) * absolute( src(r,c) );
+    for( int c = 0; c < src.getdimin(); c++ ) {
+        Float av = absolute( src(r,c) );
+        ret += av * av;
+    }
     ret = sqrt( ret );
     return ret;
 }

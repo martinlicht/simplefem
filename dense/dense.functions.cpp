@@ -333,6 +333,39 @@ Float Determinant( const DenseMatrix& A )
 }
 
 
+Float Determinant_laplaceexpansion( const DenseMatrix& A )
+{
+    assert( A.issquare() );
+    
+    if( A.getdimin() == 0 )
+        return 0.;
+    
+    Float ret = 0.;
+    int sign  = 1;
+    
+    int i = 77;
+    std::vector<int>  aux( A.getdimin() );
+    std::vector<int> perm( A.getdimin() );
+    for( int j = 0; j < perm.size(); j++ ) perm[j] = j;
+    
+    HeapsAlgorithmInit( i, aux, perm );
+    
+    do {
+      
+      Float summand = sign;
+      for( int r = 0; r < A.getdimout(); r++ )
+        summand *= A( r, perm[r] );
+      
+      ret += summand;
+        
+      sign = -sign;
+      
+    } while ( HeapsAlgorithmStep( i, aux, perm ) );
+    
+    return ret;
+    
+}
+
 
 
 
