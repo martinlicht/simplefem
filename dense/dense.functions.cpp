@@ -8,6 +8,7 @@
 #include <cctype>
 
 #include "../combinatorics/generateindexmaps.hpp"
+#include "../combinatorics/heapsalgorithm.hpp"
 #include "densematrix.hpp"
 #include "qr.factorization.hpp"
 #include "lu.factorization.hpp"
@@ -248,18 +249,23 @@ void TransposeSquareInSitu( DenseMatrix& src )
 
 void InverseAndDeterminant( const DenseMatrix& A, DenseMatrix& Ainv, Float& Adet )
 {
-    DenseMatrix Q( A ), R( A );
-    QRFactorization( A, Q, R );
-    Ainv = UpperTriangularInverse(R) * Transpose(Q);
-    Adet = UpperTriangularDeterminant(R);
+    assert( A.issquare() ); 
+    DenseMatrix Cof = CofactorMatrix( A );
+    Adet = Determinant( A );
+    Ainv = Cof / Adet;
+       
+//     DenseMatrix Q( A ), R( A );
+//     QRFactorization( A, Q, R );
+//     Ainv = UpperTriangularInverse(R) * Transpose(Q);
+//     Adet = UpperTriangularDeterminant(R);
+       
 }
 
 
 DenseMatrix Inverse( const DenseMatrix& A )
 {
-    DenseMatrix Q( A ), R( A );
-    QRFactorization( A, Q, R );
-    return UpperTriangularInverse(R) * Transpose(Q);
+    assert( A.issquare() ); 
+    return CofactorMatrix( A ) / Determinant( A );
 }
 
 Float Determinant( const DenseMatrix& A )
@@ -274,23 +280,72 @@ Float Determinant( const DenseMatrix& A )
         
         return A(1,1) * A(2,2) - A(1,2) * A(2,1);
         
-    } else if( A.getdimin() == 2 ) {
+    } else if( A.getdimin() == 3 ) {
         
         return + A(1,1) * A(2,2) * A(3,3) // 1 2 3 + 
-              - A(1,1) * A(2,3) * A(3,2) // 1 3 2 - 
-              - A(1,2) * A(2,1) * A(3,3) // 2 1 3 - 
-              + A(1,2) * A(2,3) * A(3,1) // 2 3 1 + 
-              - A(1,3) * A(2,2) * A(3,1) // 3 2 1 - 
-              + A(1,3) * A(2,1) * A(3,2) // 3 1 2 + 
-              ;
+               - A(1,1) * A(2,3) * A(3,2) // 1 3 2 - 
+               - A(1,2) * A(2,1) * A(3,3) // 2 1 3 - 
+               + A(1,2) * A(2,3) * A(3,1) // 2 3 1 + 
+               - A(1,3) * A(2,2) * A(3,1) // 3 2 1 - 
+               + A(1,3) * A(2,1) * A(3,2) // 3 1 2 + 
+               ;
+        
+    } else if( A.getdimin() == 4 ) {
+        
+        return + A(1,1) * A(2,2) * A(3,3) * A(4,4) // 1 2 3 4 + 
+               - A(1,1) * A(2,3) * A(3,2) * A(4,4) // 1 3 2 4 - 
+               - A(1,2) * A(2,1) * A(3,3) * A(4,4) // 2 1 3 4 - 
+               + A(1,2) * A(2,3) * A(3,1) * A(4,4) // 2 3 1 4 + 
+               - A(1,3) * A(2,2) * A(3,1) * A(4,4) // 3 2 1 4 - 
+               + A(1,3) * A(2,1) * A(3,2) * A(4,4) // 3 1 2 4 + 
+               
+               - A(1,1) * A(2,2) * A(3,4) * A(4,3) // 1 2 4 3 - 
+               + A(1,1) * A(2,3) * A(3,4) * A(4,2) // 1 3 4 2 + 
+               + A(1,2) * A(2,1) * A(3,4) * A(4,3) // 2 1 4 3 + 
+               - A(1,2) * A(2,3) * A(3,4) * A(4,1) // 2 3 4 1 - 
+               + A(1,3) * A(2,2) * A(3,4) * A(4,1) // 3 2 4 1 + 
+               - A(1,3) * A(2,1) * A(3,4) * A(4,2) // 3 1 4 2 - 
+               
+               + A(1,1) * A(2,4) * A(3,2) * A(4,3) // 1 4 2 3 + 
+               - A(1,1) * A(2,4) * A(3,3) * A(4,2) // 1 4 3 2 - 
+               - A(1,2) * A(2,4) * A(3,1) * A(4,3) // 2 4 1 3 - 
+               + A(1,2) * A(2,4) * A(3,3) * A(4,1) // 2 4 3 1 + 
+               - A(1,3) * A(2,4) * A(3,2) * A(4,1) // 3 4 2 1 - 
+               + A(1,3) * A(2,4) * A(3,1) * A(4,2) // 3 4 1 2 + 
+               
+               - A(1,4) * A(2,1) * A(3,2) * A(4,3) // 4 1 2 3 - 
+               + A(1,4) * A(2,1) * A(3,3) * A(4,2) // 4 1 3 2 + 
+               + A(1,4) * A(2,2) * A(3,1) * A(4,3) // 4 2 1 3 + 
+               - A(1,4) * A(2,2) * A(3,3) * A(4,1) // 4 2 3 1 - 
+               + A(1,4) * A(2,3) * A(3,2) * A(4,1) // 4 3 2 1 + 
+               - A(1,4) * A(2,3) * A(3,1) * A(4,2) // 4 3 1 2 - 
+               ;
         
     } else {
+      
+        Float ret = 1.;
+        int sign  = 1;
         
-        DenseMatrix Q( A );
-        DenseMatrix R( A );
-        QRFactorization( A, Q, R );
-        return UpperTriangularDeterminant( R );
+        int i = 77;
+        std::vector<int>  aux( A.getdimin() );
+        std::vector<int> perm( A.getdimin() );
+        for( int i = 0; i < perm.size(); i++ ) perm[i] = i;
         
+        HeapsAlgorithmInit( i, aux, perm );
+        
+        do {
+          
+          Float summand = sign;
+          for( int r = 0; r < A.getdimout(); r++ )
+            summand *= A( r, perm[r] );
+          
+          ret += summand;
+            
+          sign = -sign;
+          
+        } while ( HeapsAlgorithmStep( i, aux, perm ) );
+        
+        return ret;
     }
 }
 
@@ -324,7 +379,15 @@ DenseMatrix MatrixTensorProduct( const DenseMatrix& left, const DenseMatrix& rig
 
 
 
-DenseMatrix Subdeterminantmatrix( const DenseMatrix& A, int k )
+DenseMatrix CofactorMatrix( const DenseMatrix& A )
+{
+  return SubdeterminantMatrix( A, A.getdimout() - 1 );
+}
+
+
+
+
+DenseMatrix SubdeterminantMatrix( const DenseMatrix& A, int k )
 {
     A.check();
     assert( A.issquare() );

@@ -63,13 +63,16 @@ operators.tests = test.operators.floatvector.out test.operators.scalingoperator.
 test.dense.densematrix.out: test.dense.densematrix.cpp $(Includes) 
 	$(CC) test.dense.densematrix.cpp $(Objects) -o test.dense.densematrix.out 
 
+test.dense.transpose.out: test.dense.transpose.cpp $(Includes) 
+	$(CC) test.dense.transpose.cpp $(Objects) -o test.dense.transpose.out
+
 test.dense.matrixalgorithm.out: test.dense.matrixalgorithm.cpp $(Includes) 
 	$(CC) test.dense.matrixalgorithm.cpp $(Objects) -o test.dense.matrixalgorithm.out
 
 test.dense.cholesky.out: test.dense.cholesky.cpp $(Includes) 
 	$(CC) test.dense.cholesky.cpp $(Objects) -o test.dense.cholesky.out
 
-dense.tests = test.dense.densematrix.out test.dense.matrixalgorithm.out test.dense.cholesky.out
+dense.tests = test.dense.densematrix.out test.dense.transpose.out test.dense.matrixalgorithm.out test.dense.cholesky.out
 
 
 

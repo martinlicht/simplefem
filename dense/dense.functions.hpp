@@ -14,7 +14,7 @@
 DenseMatrix Transpose( const DenseMatrix& ); 
 void TransposeInSitu( DenseMatrix& );
 DenseMatrix TransposeSquare( const DenseMatrix& ); 
-void TransposeSquareinSitu( DenseMatrix& ); 
+void TransposeSquareInSitu( DenseMatrix& ); 
 
 // // // // // // // // matrix trace 
 // // // // // // // 
@@ -56,7 +56,7 @@ DenseMatrix Inverse( const DenseMatrix& );
 
 Float Determinant( const DenseMatrix& );
 
-DenseMatrix adjunctMatrix( const DenseMatrix& ); 
+DenseMatrix CofactorMatrix( const DenseMatrix& ); 
 
 DenseMatrix SubdeterminantMatrix( const DenseMatrix& A, int k );
 
@@ -68,24 +68,10 @@ DenseMatrix MatrixTensorProduct( const DenseMatrix& left, const DenseMatrix& rig
 
 
 
-// TODO: Put triangular solves somewhere else 
- // Diagonal inverse
- // Left triangular inverse 
- // Right triangular inverse 
- // Unit Left triangular inverse
- // Unit Right triangular inverse 
- 
- // Diagonal solve 
- // Left triangular solve 
- // Right triangular solve 
- // Unit Left triangular solve 
- // Unit Right triangular solve 
- 
- // (Weighting between left and right triangular solves)
 
-DenseMatrix UpperTriangularInverse( const DenseMatrix& A );        
+// DenseMatrix UpperTriangularInverse( const DenseMatrix& A );        
 
-Float UpperTriangularDeterminant( const DenseMatrix& A );
+// Float UpperTriangularDeterminant( const DenseMatrix& A );
 
 
 
