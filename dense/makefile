@@ -7,8 +7,8 @@ default: all
 densematrix.o: densematrix.hpp densematrix.cpp ../operators/floatvector.hpp ../operators/linearoperator.hpp 
 	$(CC) densematrix.cpp -c -o densematrix.o 
 
-dense.matrixtensorproduct.o: dense.matrixtensorproduct.cpp dense.matrixtensorproduct.hpp ../operators/floatvector.hpp
-	$(CC) dense.matrixtensorproduct.cpp -c -o dense.matrixtensorproduct.o 
+matrixtensorproduct.o: matrixtensorproduct.cpp matrixtensorproduct.hpp ../operators/floatvector.hpp
+	$(CC) matrixtensorproduct.cpp -c -o matrixtensorproduct.o 
 
 dense.functions.o: dense.functions.cpp dense.functions.hpp ../operators/floatvector.hpp
 	$(CC) dense.functions.cpp -c -o dense.functions.o 
@@ -28,7 +28,7 @@ lu.factorization.o: lu.factorization.cpp lu.factorization.hpp ../operators/float
 cholesky.o: cholesky.cpp cholesky.hpp ../operators/floatvector.hpp
 	$(CC) cholesky.cpp -c -o cholesky.o 
 
-objects = densematrix.o dense.functions.o dense.scalarfunctions.o dense.simplesolver.o qr.factorization.o lu.factorization.o cholesky.o dense.matrixtensorproduct.o
+objects = densematrix.o dense.functions.o dense.scalarfunctions.o dense.simplesolver.o qr.factorization.o lu.factorization.o cholesky.o matrixtensorproduct.o
 
 all: $(objects)
 

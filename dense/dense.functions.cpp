@@ -251,58 +251,62 @@ Float Determinant( const DenseMatrix& A )
 {
     assert( A.issquare() );
     
-    if( A.getdimin() == 1 ) {
+    if( A.getdimin() == 0 ) {
         
-        return A(1,1);
+        return 0.;
         
-    } if( A.getdimin() == 2 ) {
+    } else if( false && A.getdimin() == 1 ) {
         
-        return A(1,1) * A(2,2) - A(1,2) * A(2,1);
+        return A(0,0);
         
-    } else if( A.getdimin() == 3 ) {
+    } else if( false && A.getdimin() == 2 ) {
         
-        return + A(1,1) * A(2,2) * A(3,3) // 1 2 3 + 
-               - A(1,1) * A(2,3) * A(3,2) // 1 3 2 - 
-               - A(1,2) * A(2,1) * A(3,3) // 2 1 3 - 
-               + A(1,2) * A(2,3) * A(3,1) // 2 3 1 + 
-               - A(1,3) * A(2,2) * A(3,1) // 3 2 1 - 
-               + A(1,3) * A(2,1) * A(3,2) // 3 1 2 + 
+        return A(0,0) * A(1,1) - A(0,1) * A(1,0);
+        
+    } else if( false && A.getdimin() == 3 ) {
+        
+        return + A(0,0) * A(1,1) * A(2,2) // 1 2 3 + 
+               - A(0,0) * A(1,2) * A(2,1) // 1 3 2 - 
+               - A(0,1) * A(1,0) * A(2,2) // 2 1 3 - 
+               + A(0,1) * A(1,2) * A(2,0) // 2 3 1 + 
+               - A(0,2) * A(1,1) * A(2,0) // 3 2 1 - 
+               + A(0,2) * A(1,0) * A(2,1) // 3 1 2 + 
                ;
         
-    } else if( A.getdimin() == 4 ) {
+    } else if( false && A.getdimin() == 4 ) {
         
-        return + A(1,1) * A(2,2) * A(3,3) * A(4,4) // 1 2 3 4 + 
-               - A(1,1) * A(2,3) * A(3,2) * A(4,4) // 1 3 2 4 - 
-               - A(1,2) * A(2,1) * A(3,3) * A(4,4) // 2 1 3 4 - 
-               + A(1,2) * A(2,3) * A(3,1) * A(4,4) // 2 3 1 4 + 
-               - A(1,3) * A(2,2) * A(3,1) * A(4,4) // 3 2 1 4 - 
-               + A(1,3) * A(2,1) * A(3,2) * A(4,4) // 3 1 2 4 + 
+        return + A(0,0) * A(1,1) * A(2,2) * A(3,3) // 0 1 2 3 + 
+               - A(0,0) * A(1,2) * A(2,1) * A(3,3) // 0 2 1 3 - 
+               - A(0,1) * A(1,0) * A(2,2) * A(3,3) // 1 0 2 3 - 
+               + A(0,1) * A(1,2) * A(2,0) * A(3,3) // 1 2 0 3 + 
+               - A(0,2) * A(1,1) * A(2,0) * A(3,3) // 2 1 0 3 - 
+               + A(0,2) * A(1,0) * A(2,1) * A(3,3) // 2 0 1 3 + 
                
-               - A(1,1) * A(2,2) * A(3,4) * A(4,3) // 1 2 4 3 - 
-               + A(1,1) * A(2,3) * A(3,4) * A(4,2) // 1 3 4 2 + 
-               + A(1,2) * A(2,1) * A(3,4) * A(4,3) // 2 1 4 3 + 
-               - A(1,2) * A(2,3) * A(3,4) * A(4,1) // 2 3 4 1 - 
-               + A(1,3) * A(2,2) * A(3,4) * A(4,1) // 3 2 4 1 + 
-               - A(1,3) * A(2,1) * A(3,4) * A(4,2) // 3 1 4 2 - 
+               - A(0,0) * A(1,1) * A(2,3) * A(3,2) // 0 1 3 2 - 
+               + A(0,0) * A(1,2) * A(2,3) * A(3,1) // 0 2 3 1 + 
+               + A(0,1) * A(1,0) * A(2,3) * A(3,2) // 1 0 3 2 + 
+               - A(0,1) * A(1,2) * A(2,3) * A(3,0) // 1 2 3 0 - 
+               + A(0,2) * A(1,1) * A(2,3) * A(3,0) // 2 1 3 0 + 
+               - A(0,2) * A(1,0) * A(2,3) * A(3,1) // 2 0 3 1 - 
                
-               + A(1,1) * A(2,4) * A(3,2) * A(4,3) // 1 4 2 3 + 
-               - A(1,1) * A(2,4) * A(3,3) * A(4,2) // 1 4 3 2 - 
-               - A(1,2) * A(2,4) * A(3,1) * A(4,3) // 2 4 1 3 - 
-               + A(1,2) * A(2,4) * A(3,3) * A(4,1) // 2 4 3 1 + 
-               - A(1,3) * A(2,4) * A(3,2) * A(4,1) // 3 4 2 1 - 
-               + A(1,3) * A(2,4) * A(3,1) * A(4,2) // 3 4 1 2 + 
+               + A(0,0) * A(1,3) * A(2,1) * A(3,2) // 0 3 1 2 + 
+               - A(0,0) * A(1,3) * A(2,2) * A(3,1) // 0 3 2 1 - 
+               - A(0,1) * A(1,3) * A(2,0) * A(3,2) // 1 3 0 2 - 
+               + A(0,1) * A(1,3) * A(2,2) * A(3,0) // 1 3 2 0 + 
+               - A(0,2) * A(1,3) * A(2,1) * A(3,0) // 2 3 1 0 - 
+               + A(0,2) * A(1,3) * A(2,0) * A(3,1) // 2 3 0 1 + 
                
-               - A(1,4) * A(2,1) * A(3,2) * A(4,3) // 4 1 2 3 - 
-               + A(1,4) * A(2,1) * A(3,3) * A(4,2) // 4 1 3 2 + 
-               + A(1,4) * A(2,2) * A(3,1) * A(4,3) // 4 2 1 3 + 
-               - A(1,4) * A(2,2) * A(3,3) * A(4,1) // 4 2 3 1 - 
-               + A(1,4) * A(2,3) * A(3,2) * A(4,1) // 4 3 2 1 + 
-               - A(1,4) * A(2,3) * A(3,1) * A(4,2) // 4 3 1 2 - 
+               - A(0,3) * A(1,0) * A(2,1) * A(3,2) // 3 0 1 2 - 
+               + A(0,3) * A(1,0) * A(2,2) * A(3,1) // 3 0 2 1 + 
+               + A(0,3) * A(1,1) * A(2,0) * A(3,2) // 3 1 0 2 + 
+               - A(0,3) * A(1,1) * A(2,2) * A(3,0) // 3 1 2 0 - 
+               + A(0,3) * A(1,2) * A(2,1) * A(3,0) // 3 2 1 0 + 
+               - A(0,3) * A(1,2) * A(2,0) * A(3,1) // 3 2 0 1 - 
                ;
         
     } else {
       
-        Float ret = 1.;
+        Float ret = 0.;
         int sign  = 1;
         
         int i = 77;
@@ -334,12 +338,17 @@ Float Determinant( const DenseMatrix& A )
 
 DenseMatrix CofactorMatrix( const DenseMatrix& A )
 {
+  assert( A.issquare() );
+  
+  if( A.getdimin() == 0 ) 
+    return DenseMatrix( 0, 0 );
+  
   int i = 77;
   std::vector<int>  aux( A.getdimin() - 1 );
   std::vector<int> perm( A.getdimin() - 1 );
   for( int j = 0; j < perm.size(); j++ ) perm[j] = j;
   
-  DenseMatrix cof( A.getdimin(), 0. );
+  DenseMatrix cof( A.getdimin(), A.getdimin(), 0. );
   
   HeapsAlgorithmInit( i, aux, perm );
   
@@ -354,10 +363,10 @@ DenseMatrix CofactorMatrix( const DenseMatrix& A )
       int sign_entry = integerpower( -1, r+c );
       
       Float summand = sign_perm * sign_entry;
-      assert( summand == 1 || summand == -1 );
+      assert( summand == 1. || summand == -1. );
       
       for( int i = 0; i < A.getdimin() - 1; i++ )
-        summand *= A( i < r ? i : i+1, perm[i] < r ? perm[i] : perm[i]+1 );
+        summand *= A( i < c ? i : i+1, perm[i] < r ? perm[i] : perm[i]+1 );
       
       cof(r,c) += summand;
       
@@ -415,29 +424,6 @@ DenseMatrix SubdeterminantMatrix( const DenseMatrix& A, int k )
 
 
 
-DenseMatrix MatrixTensorProduct( const DenseMatrix& left, const DenseMatrix& right )
-{
-    left.check(); right.check();
-    int newrows = left.getdimout() * right.getdimout();
-    int newcols = left.getdimin() * right.getdimin();
-    
-    DenseMatrix ret( newrows, newcols );
-    assert( ret.getdimout() == newrows );
-    assert( ret.getdimin() == newcols );
-    
-    for( int rl = 0; rl < left.getdimout(); rl++ )
-    for( int cl = 0; cl < left.getdimin(); cl++ )
-    for( int rr = 0; rr < right.getdimout(); rr++ )
-    for( int cr = 0; cr < right.getdimin(); cr++ )
-    {
-        ret( rl * right.getdimout() + rr, cl * right.getdimin() + cr )
-        =
-        left( rl, cl ) * right( rr, cr );
-    }
-    
-    ret.check();
-    return ret;
-}
 
 
 

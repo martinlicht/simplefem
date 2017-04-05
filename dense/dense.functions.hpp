@@ -61,9 +61,6 @@ void InverseAndDeterminant( const DenseMatrix&, DenseMatrix&, Float& );
 DenseMatrix SubdeterminantMatrix( const DenseMatrix& A, int k );
 
 
-// Tensorproduct matrix 
-
-DenseMatrix MatrixTensorProduct( const DenseMatrix& left, const DenseMatrix& right );
 
 
 
