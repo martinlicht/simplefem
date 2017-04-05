@@ -14,6 +14,9 @@
     
   ************* Dense Matrix algorithms 
   
+  matrix tensor product 
+   - unit test 
+  
   Simplesolver
     - unit test
      
@@ -21,8 +24,9 @@
     - unit test
   
   Matrix functions: det, inv, transpose 
-    - unit test : transpose
+    * unit test : transpose
     - unit test : inverse and determinant 
+    - unit test : subdeterminant matrix 
   
   Scalar functions
     - unit test

@@ -45,18 +45,18 @@ void TransposeSquareInSitu( DenseMatrix& );
 
 
  // determinant 
- // adjunct matrix 
+ // cofactor matrix 
  // Inverse 
  // Inverse and determinant 
  // SubdeterminantMatrix
 
-void InverseAndDeterminant( const DenseMatrix&, DenseMatrix&, Float& );
-
-DenseMatrix Inverse( const DenseMatrix& );
-
 Float Determinant( const DenseMatrix& );
 
 DenseMatrix CofactorMatrix( const DenseMatrix& ); 
+
+DenseMatrix Inverse( const DenseMatrix& );
+
+void InverseAndDeterminant( const DenseMatrix&, DenseMatrix&, Float& );
 
 DenseMatrix SubdeterminantMatrix( const DenseMatrix& A, int k );
 
@@ -68,10 +68,6 @@ DenseMatrix MatrixTensorProduct( const DenseMatrix& left, const DenseMatrix& rig
 
 
 
-
-// DenseMatrix UpperTriangularInverse( const DenseMatrix& A );        
-
-// Float UpperTriangularDeterminant( const DenseMatrix& A );
 
 
 

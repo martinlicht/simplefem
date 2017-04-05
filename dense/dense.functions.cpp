@@ -247,27 +247,6 @@ void TransposeSquareInSitu( DenseMatrix& src )
 
 
 
-void InverseAndDeterminant( const DenseMatrix& A, DenseMatrix& Ainv, Float& Adet )
-{
-    assert( A.issquare() ); 
-    DenseMatrix Cof = CofactorMatrix( A );
-    Adet = Determinant( A );
-    Ainv = Cof / Adet;
-       
-//     DenseMatrix Q( A ), R( A );
-//     QRFactorization( A, Q, R );
-//     Ainv = UpperTriangularInverse(R) * Transpose(Q);
-//     Adet = UpperTriangularDeterminant(R);
-       
-}
-
-
-DenseMatrix Inverse( const DenseMatrix& A )
-{
-    assert( A.issquare() ); 
-    return CofactorMatrix( A ) / Determinant( A );
-}
-
 Float Determinant( const DenseMatrix& A )
 {
     assert( A.issquare() );
@@ -329,7 +308,7 @@ Float Determinant( const DenseMatrix& A )
         int i = 77;
         std::vector<int>  aux( A.getdimin() );
         std::vector<int> perm( A.getdimin() );
-        for( int i = 0; i < perm.size(); i++ ) perm[i] = i;
+        for( int j = 0; j < perm.size(); j++ ) perm[j] = j;
         
         HeapsAlgorithmInit( i, aux, perm );
         
@@ -353,36 +332,61 @@ Float Determinant( const DenseMatrix& A )
 
 
 
-DenseMatrix MatrixTensorProduct( const DenseMatrix& left, const DenseMatrix& right )
-{
-    left.check(); right.check();
-    int newrows = left.getdimout() * right.getdimout();
-    int newcols = left.getdimin() * right.getdimin();
-    
-    DenseMatrix ret( newrows, newcols );
-    assert( ret.getdimout() == newrows );
-    assert( ret.getdimin() == newcols );
-    
-    for( int rl = 0; rl < left.getdimout(); rl++ )
-    for( int cl = 0; cl < left.getdimin(); cl++ )
-    for( int rr = 0; rr < right.getdimout(); rr++ )
-    for( int cr = 0; cr < right.getdimin(); cr++ )
-    {
-        ret( rl * right.getdimout() + rr, cl * right.getdimin() + cr )
-        =
-        left( rl, cl ) * right( rr, cr );
-    }
-    
-    ret.check();
-    return ret;
-}
-
-
-
 DenseMatrix CofactorMatrix( const DenseMatrix& A )
 {
-  return SubdeterminantMatrix( A, A.getdimout() - 1 );
+  int i = 77;
+  std::vector<int>  aux( A.getdimin() - 1 );
+  std::vector<int> perm( A.getdimin() - 1 );
+  for( int j = 0; j < perm.size(); j++ ) perm[j] = j;
+  
+  DenseMatrix cof( A.getdimin(), 0. );
+  
+  HeapsAlgorithmInit( i, aux, perm );
+  
+  int sign_perm = 1;
+  
+  do {
+    
+    for( int r = 0; r < A.getdimin(); r++ )
+    for( int c = 0; c < A.getdimin(); c++ )
+    {
+      
+      int sign_entry = integerpower( -1, r+c );
+      
+      Float summand = sign_perm * sign_entry;
+      assert( summand == 1 || summand == -1 );
+      
+      for( int i = 0; i < A.getdimin() - 1; i++ )
+        summand *= A( i < r ? i : i+1, perm[i] < r ? perm[i] : perm[i]+1 );
+      
+      cof(r,c) += summand;
+      
+    }
+    
+    sign_perm *= -1;
+    
+  } while ( HeapsAlgorithmStep( i, aux, perm ) );
+  
+  return cof;
 }
+
+
+DenseMatrix Inverse( const DenseMatrix& A )
+{
+    assert( A.issquare() ); 
+    return CofactorMatrix( A ) / Determinant( A );
+}
+
+
+void InverseAndDeterminant( const DenseMatrix& A, DenseMatrix& Ainv, Float& Adet )
+{
+    assert( A.issquare() ); 
+    DenseMatrix Cof = CofactorMatrix( A );
+    Adet = Determinant( A );
+    Ainv = Cof / Adet;
+    
+}
+
 
 
 
@@ -403,6 +407,32 @@ DenseMatrix SubdeterminantMatrix( const DenseMatrix& A, int k )
     for( int cim = 0; cim < sigmas.size(); cim++ )
     {
         ret(rim,cim) = determinant( A.submatrix( sigmas.at(rim), sigmas.at(cim) ) );
+    }
+    
+    ret.check();
+    return ret;
+}
+
+
+
+DenseMatrix MatrixTensorProduct( const DenseMatrix& left, const DenseMatrix& right )
+{
+    left.check(); right.check();
+    int newrows = left.getdimout() * right.getdimout();
+    int newcols = left.getdimin() * right.getdimin();
+    
+    DenseMatrix ret( newrows, newcols );
+    assert( ret.getdimout() == newrows );
+    assert( ret.getdimin() == newcols );
+    
+    for( int rl = 0; rl < left.getdimout(); rl++ )
+    for( int cl = 0; cl < left.getdimin(); cl++ )
+    for( int rr = 0; rr < right.getdimout(); rr++ )
+    for( int cr = 0; cr < right.getdimin(); cr++ )
+    {
+        ret( rl * right.getdimout() + rr, cl * right.getdimin() + cr )
+        =
+        left( rl, cl ) * right( rr, cr );
     }
     
     ret.check();
