@@ -18,5 +18,6 @@ clean:
 	cd ./solver; make clean; cd ..
 	cd ./mesh; make clean; cd ..
 	cd ./unittests; make clean; cd ..
+	make -f makefile.clean clean
 	echo "finished cleaning." 
     
