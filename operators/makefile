@@ -25,9 +25,12 @@ diagonaloperator.o: diagonaloperator.hpp diagonaloperator.cpp floatvector.hpp li
 blockdiagonaloperator.o: blockdiagonaloperator.hpp blockdiagonaloperator.cpp floatvector.hpp linearoperator.hpp
 	$(CC) blockdiagonaloperator.cpp -c -o blockdiagonaloperator.o 
 
+blockoperator.o: blockoperator.hpp blockoperator.cpp floatvector.hpp linearoperator.hpp
+	$(CC) blockoperator.cpp -c -o blockoperator.o 
 
 
-objects = floatvector.o linearoperator.o productoperator.o sumoperator.o scalingoperator.o diagonaloperator.o blockdiagonaloperator.o 
+
+objects = floatvector.o linearoperator.o productoperator.o sumoperator.o scalingoperator.o diagonaloperator.o blockdiagonaloperator.o blockoperator.o 
 
 
 

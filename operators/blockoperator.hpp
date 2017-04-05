@@ -1,5 +1,5 @@
-#ifndef INCLUDEGUARD_BLOCKDIAGONALOPERATOR
-#define INCLUDEGUARD_BLOCKDIAGONALOPERATOR
+#ifndef INCLUDEGUARD_BLOCKOPERATOR
+#define INCLUDEGUARD_BLOCKOPERATOR
 
 #include "../basic.hpp"
 #include "linearoperator.hpp"
@@ -13,14 +13,16 @@
 ************************/
 
 
-class BlockDiagonalOperator:
+class BlockOperator:
 public LinearOperator /* every matrix is a linear operator */
 {
 
     public:
         
-        explicit BlockDiagonalOperator( int dimout, int dimin, std::vector<LinearOperator*> ops );
-        virtual ~BlockDiagonalOperator();
+        explicit BlockOperator( int dimout, int dimin, 
+                                std::vector<std::vector<LinearOperator*>> ops );
+        
+        virtual ~BlockOperator();
         
         virtual void check() const override;
         virtual void print( std::ostream& ) const override;
@@ -29,7 +31,11 @@ public LinearOperator /* every matrix is a linear operator */
         
     private:
         
-        std::vector<LinearOperator*> ops;
+        std::vector<std::vector<LinearOperator*>> ops;
+        
+        std::vector<int> dimouts;
+        std::vector<int>  dimins;
+        
         
 };
   

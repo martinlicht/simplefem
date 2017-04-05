@@ -173,8 +173,8 @@ FloatVector FloatVector::getslice( int base, int len ) const
 {
     check();
     assert( 0 <= base && base < getdimension() );
-    assert( 0 <= len && len < getdimension() );
-    assert( 0 <= base+len && base+len < getdimension() );
+    assert( 0 <= len && len <= getdimension() );
+    assert( 0 <= base+len && base+len <= getdimension() );
     FloatVector ret( len );
     for( int p = 0; p < len; p++ )
       ret[p] = data.at( base + p );
@@ -186,13 +186,22 @@ void FloatVector::setslice( int base, const FloatVector& slice )
     check();
     const int len = slice.getdimension();
     assert( 0 <= base && base < getdimension() );
-    assert( 0 <= len && len < getdimension() );
-    assert( 0 <= base+len && base+len < getdimension() );
+    assert( 0 <= len && len <= getdimension() );
+    assert( 0 <= base+len && base+len <= getdimension() );
     for( int p = 0; p < len; p++ )
       data.at( base + p ) = slice[p];
 }
-        
-        
+
+void FloatVector::addslice( int base, const FloatVector& slice, Float s )
+{
+    check();
+    const int len = slice.getdimension();
+    assert( 0 <= base && base < getdimension() );
+    assert( 0 <= len && len <= getdimension() );
+    assert( 0 <= base+len && base+len <= getdimension() );
+    for( int p = 0; p < len; p++ )
+      data.at( base + p ) += s * slice[p];
+}
 
 
 

@@ -62,6 +62,10 @@ int main()
         a.setslice( 1, t.getslice(1,3) );
         cout << a << endl;
         
+        cout << "Add the middle slice:" << endl;
+        a.addslice( 1, t.getslice(1,3), 1000. );
+        cout << a << endl;
+        
         FloatVector e(0);
         cout << "Should be the zero-dimensional vector:" << endl;
         cout << e << endl;

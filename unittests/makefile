@@ -44,7 +44,13 @@ test.operators.sumoperator.out: test.operators.sumoperator.cpp $(Includes)
 test.operators.productoperator.out: test.operators.productoperator.cpp $(Includes)
 	$(CC) test.operators.productoperator.cpp $(Objects) -o test.operators.productoperator.out
 	
-operators.tests = test.operators.floatvector.out test.operators.scalingoperator.out test.operators.diagonaloperator.out test.operators.sumoperator.out test.operators.productoperator.out 
+test.operators.blockdiagonaloperator.out: test.operators.blockdiagonaloperator.cpp $(Includes)
+	$(CC) test.operators.blockdiagonaloperator.cpp $(Objects) -o test.operators.blockdiagonaloperator.out
+	
+test.operators.blockoperator.out: test.operators.blockoperator.cpp $(Includes)
+	$(CC) test.operators.blockoperator.cpp $(Objects) -o test.operators.blockoperator.out
+	
+operators.tests = test.operators.floatvector.out test.operators.scalingoperator.out test.operators.diagonaloperator.out test.operators.sumoperator.out test.operators.productoperator.out test.operators.blockdiagonaloperator.out test.operators.blockoperator.out
 
 
     

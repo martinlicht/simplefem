@@ -24,11 +24,13 @@ void BlockDiagonalOperator::check() const
     
     int temp_in = 0;
     int temp_out = 0;
+    
     for( const auto& op : ops ) { 
       op->check();
       temp_in += op->getdimin();
       temp_out += op->getdimout();
     }
+    
     assert( temp_in == getdimin() );
     assert( temp_out == getdimout() );
 }
@@ -54,7 +56,9 @@ FloatVector BlockDiagonalOperator::apply( const FloatVector& src, Float scaling 
     
     for( const auto& op : ops ) {
         
-        ret.setslice( base_out, op->apply( src.getslice( base_in, op->getdimin() ), scaling ) );
+        ret.setslice( base_out,
+                      op->apply( src.getslice( base_in, op->getdimin() ), scaling )
+                    );
         
         base_in += op->getdimin();
         base_out += op->getdimout();
