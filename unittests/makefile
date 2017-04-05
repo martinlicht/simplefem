@@ -24,7 +24,10 @@ test.combinatorics.generateindexmaps.out: test.combinatorics.generateindexmaps.c
 test.combinatorics.generatemultiindices.out: test.combinatorics.generatemultiindices.cpp $(Includes) 
 	$(CC) test.combinatorics.generatemultiindices.cpp ../combinatorics/*.o -o test.combinatorics.generatemultiindices.out
 
-combinatorics.tests = test.combinatorics.indexrange.out test.combinatorics.indexmap.out test.combinatorics.multiindex.out test.combinatorics.generateindexmaps.out test.combinatorics.generatemultiindices.out
+test.combinatorics.heapsalgorithm.out: test.combinatorics.heapsalgorithm.cpp $(Includes) 
+	$(CC) test.combinatorics.heapsalgorithm.cpp ../combinatorics/*.o -o test.combinatorics.heapsalgorithm.out
+
+combinatorics.tests = test.combinatorics.indexrange.out test.combinatorics.indexmap.out test.combinatorics.multiindex.out test.combinatorics.generateindexmaps.out test.combinatorics.generatemultiindices.out test.combinatorics.heapsalgorithm.out 
     
 
 
