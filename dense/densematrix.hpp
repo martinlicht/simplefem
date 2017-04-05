@@ -64,6 +64,9 @@ public LinearOperator /* every matrix is a linear operator */
         FloatVector getcolumn( int c ) const;
         void setrow( int r, const FloatVector& row );
         void setcolumn( int c, const FloatVector& column );
+        void addrow( int r, const FloatVector& row, Float s );
+        void addcolumn( int c, const FloatVector& column, Float s );
+        
         void swaprow( int r1, int r2 );
         void swapcolumn( int c1, int c2 );
         void scalerow( int r, Float alpha );

@@ -1,17 +1,42 @@
   
   
-  ************* Dense Matrix algorithms to implement:
+  ************* Dense Matrix class 
   
   DenseMatrix
     * check
     * check im constructor 
     - unittest komplett 
     
-  DenseMatrix
+  Future features 
     - interne daten umstellen auf C-style arrays 
     - high speed product 
     
     
+  ************* Dense Matrix algorithms 
+  
+  Simplesolver
+    - unit test
+     
+  QR Factorization
+    - unit test
+  
+  Matrix functions: det, inv, transpose 
+    - unit test : transpose
+    - unit test : inverse and determinant 
+  
+  Scalar functions
+    - unit test
+  
+  Cholesky 
+    * unit test
+    - different access patterns 
+  
+  Simple Solver
+    * unit test 
+  
+  
+  ************* Dense Matrix algorithms to implement:
+  
   - Gerschgorin (row/column) circles, and maximal estimate 
     perhaps more estimators 
   

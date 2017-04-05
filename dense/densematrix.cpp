@@ -300,6 +300,26 @@ void DenseMatrix::setcolumn( int c, const FloatVector& column )
         (*this)(r,c) = column[r];
 }
 
+void DenseMatrix::addrow( int r, const FloatVector& row, Float s )
+{
+    check();
+    row.check();
+    assert( 0 <= r && r < getdimout() );
+    assert( row.getdimension() == getdimin() );
+    for( int c = 0; c < getdimin(); c++ )
+      (*this)(r,c) += s * row[c];
+}
+
+void DenseMatrix::addcolumn( int c, const FloatVector& column, Float s )
+{
+    check();
+    column.check();
+    assert( 0 <= c && c < getdimin() );
+    assert( column.getdimension() == getdimout() );
+    for( int r = 0; r < getdimout(); r++ )
+        (*this)(r,c) += s * column[r];
+}
+
 void DenseMatrix::swaprow( int r1, int r2 )
 {
     check();

@@ -15,32 +15,44 @@
 
 
 
-
-DenseMatrix CholeskyDecomposition( const DenseMatrix& src )
+DenseMatrix CholeskyDecomposition( const DenseMatrix& A )
 {
-    src.check();
-    assert( src.issquare() );
+  return CholeskyDecompositionBanachchiewicz( A );
+}
+
+
+DenseMatrix CholeskyDecompositionBanachchiewicz( const DenseMatrix& A )
+{
+  A.check();
+  assert( A.issquare() );
+  
+  DenseMatrix L = A;
+  L.set( 0. );
+  const int dim = A.getdimout();
+  
+  for( int r = 0; r < dim; r++ ){
     
-    DenseMatrix ret = src;
-    ret.set( 0. );
-    const int D = src.getdimout();
-    
-    for( int k = 0; k < D; k++ ){
-        ret(k,k) = src(k,k);
-        for( int j = 0; j < k; j++ )
-            ret(k,k) -= ret(j,k) * ret(j,k);
-        ret(k,k) = sqrt( ret(k,k) );
-        for( int i = k+1; i < D; i++ ) {
-            ret(k,i) = src(k,i);
-            for( int j = 0; j < k; j++ )
-                    ret(k,i) -= ret(j,i) * ret(j,k);
-            ret(k,i) /= ret(k,k);
-        }
+    for( int c = 0; c < r; c++ ) {
+      
+      L(r,c) = A(r,c);
+      for( int k = 0; k < c; k++ )
+        L(r,c) -= L(r,k) * L(c,k);
+      L(r,c) /= L(c,c);
+      
     }
     
-    ret.check();
-    return ret;
+    L(r,r) = A(r,r);
+    for( int k = 0; k < r; k++ )
+      L(r,r) -= L(r,k) * L(r,k);
+    L(r,r) = sqrt( L(r,r) );
+    
+  }
+  
+  L.check();
+  return L;
 }
+
+
 
 
 

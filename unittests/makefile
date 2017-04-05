@@ -63,7 +63,10 @@ test.dense.densematrix.out: test.dense.densematrix.cpp $(Includes)
 test.dense.matrixalgorithm.out: test.dense.matrixalgorithm.cpp $(Includes) 
 	$(CC) test.dense.matrixalgorithm.cpp $(Objects) -o test.dense.matrixalgorithm.out
 
-dense.tests = test.dense.densematrix.out test.dense.matrixalgorithm.out
+test.dense.cholesky.out: test.dense.cholesky.cpp $(Includes) 
+	$(CC) test.dense.cholesky.cpp $(Objects) -o test.dense.cholesky.out
+
+dense.tests = test.dense.densematrix.out test.dense.matrixalgorithm.out test.dense.cholesky.out
 
 
 
@@ -105,9 +108,9 @@ mesh.tests = test.mesh.coordinates.out test.mesh.simplicialmesh.out test.mesh.io
 
 
     
-all: $(combinatorics.tests) $(operators.tests) 
+all: $(combinatorics.tests) $(operators.tests) $(dense.tests) 
 
-# $(dense.tests) $(sparse.tests) $(solver.tests) $(mesh.tests)
+# $(sparse.tests) $(solver.tests) $(mesh.tests)
 
 include ../makefile.clean
 
