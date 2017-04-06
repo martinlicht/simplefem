@@ -30,6 +30,9 @@ Float NormColRow( const DenseMatrix&, Float p, Float q );
 Float NormOperatorL1( const DenseMatrix& );
 Float NormOperatorMax( const DenseMatrix& );
 
+// Crude eigenvalue estimate 
+
+Float EigenvalueEstimate( const DenseMatrix& );
 
 
 

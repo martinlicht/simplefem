@@ -14,6 +14,10 @@
       - determinante 
       - cofactor matrix / subdeterminant
       - inverse
+    - iterative matrix inversion: 
+      - newton-based methods 
+      - fixpoint iteration (Richardson) with preconditioner 
+      - others?
     
     
   ************* Dense Matrix algorithms 
