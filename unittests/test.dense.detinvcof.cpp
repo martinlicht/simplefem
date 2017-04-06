@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include "../basic.hpp"
-#include "../dense/dense.functions.hpp"
+#include "../dense/functions.hpp"
 
 
 using namespace std;

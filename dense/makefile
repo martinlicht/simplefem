@@ -10,14 +10,14 @@ densematrix.o: densematrix.hpp densematrix.cpp ../operators/floatvector.hpp ../o
 matrixtensorproduct.o: matrixtensorproduct.cpp matrixtensorproduct.hpp ../operators/floatvector.hpp
 	$(CC) matrixtensorproduct.cpp -c -o matrixtensorproduct.o 
 
-dense.functions.o: dense.functions.cpp dense.functions.hpp ../operators/floatvector.hpp
-	$(CC) dense.functions.cpp -c -o dense.functions.o 
+functions.o: functions.cpp functions.hpp ../operators/floatvector.hpp
+	$(CC) functions.cpp -c -o functions.o 
 
-dense.scalarfunctions.o: dense.scalarfunctions.cpp dense.scalarfunctions.hpp ../operators/floatvector.hpp
-	$(CC) dense.scalarfunctions.cpp -c -o dense.scalarfunctions.o 
+scalarfunctions.o: scalarfunctions.cpp scalarfunctions.hpp ../operators/floatvector.hpp
+	$(CC) scalarfunctions.cpp -c -o scalarfunctions.o 
 
-dense.simplesolver.o: dense.simplesolver.cpp dense.simplesolver.hpp ../operators/floatvector.hpp
-	$(CC) dense.simplesolver.cpp -c -o dense.simplesolver.o 
+simplesolver.o: simplesolver.cpp simplesolver.hpp ../operators/floatvector.hpp
+	$(CC) simplesolver.cpp -c -o simplesolver.o 
 
 qr.factorization.o: qr.factorization.cpp qr.factorization.hpp ../operators/floatvector.hpp
 	$(CC) qr.factorization.cpp -c -o qr.factorization.o 
@@ -28,7 +28,7 @@ lu.factorization.o: lu.factorization.cpp lu.factorization.hpp ../operators/float
 cholesky.o: cholesky.cpp cholesky.hpp ../operators/floatvector.hpp
 	$(CC) cholesky.cpp -c -o cholesky.o 
 
-objects = densematrix.o dense.functions.o dense.scalarfunctions.o dense.simplesolver.o qr.factorization.o lu.factorization.o cholesky.o matrixtensorproduct.o
+objects = densematrix.o functions.o scalarfunctions.o simplesolver.o qr.factorization.o lu.factorization.o cholesky.o matrixtensorproduct.o
 
 all: $(objects)
 

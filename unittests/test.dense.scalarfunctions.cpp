@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include "../basic.hpp"
-#include "../dense/dense.scalarfunctions.hpp"
+#include "../dense/scalarfunctions.hpp"
 
 
 using namespace std;
@@ -31,10 +31,47 @@ int main()
     cout << "Norm Max:       " << NormMax( S ) << endl;
     
     Float p = 1.01;
-    cout << endl << "Norm Lp with p=" << p << ": " << NormLp( S, 1.01 ) << endl << endl;
+    cout << endl << "Norm Lp with p=" << p << ": " << NormLp( S, p ) << endl << endl;
+    
+    Float p1 = 100.0001;
+    Float p2 = 1.00001;
+    cout << endl << "Row " << p1 << space
+                 << "Col " << p2 << space
+                 << NormRowCol( S, p1, p2 ) << endl;
+    cout << endl << "Col " << p1 << space
+                 << "Row " << p2 << space 
+                 << NormColRow( S, p1, p2 ) << endl;
+    cout << endl;
+    
+    cout << endl << "Row " << 1. << space
+                 << "Col " << 1. << space
+                 << NormRowCol( S, 1., 1. ) << endl;
+    cout << endl << "Col " << 1. << space
+                 << "Row " << 1. << space 
+                 << NormColRow( S, 1., 1. ) << endl;
+    cout << endl;
+    
+    cout << endl << "Row " << 2. << space
+                 << "Col " << 2. << space
+                 << NormRowCol( S, 2., 2. ) << endl;
+    cout << endl << "Col " << 2. << space
+                 << "Row " << 2. << space 
+                 << NormColRow( S, 2., 2. ) << endl;
+    cout << endl;
+    
+    cout << endl << "Row " << 20. << space
+                 << "Col " << 20. << space
+                 << NormRowCol( S, 20., 20. ) << endl;
+    cout << endl << "Col " << 20. << space
+                 << "Row " << 20. << space 
+                 << NormColRow( S, 20., 20. ) << endl;
+    cout << endl;
+    
+    
     
     cout << "Norm Operator L1:  " << NormOperatorL1( S ) << endl;
     cout << "Norm Operator Max: " << NormOperatorMax( S ) << endl;
+    cout << endl;
     
     cout << "GerschgorinRow:    " << GerschgorinRow( S ) << endl;
     cout << "GerschgorinColumn: " << GerschgorinColumn( S ) << endl;

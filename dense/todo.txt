@@ -10,12 +10,16 @@
   Future features 
     - interne daten umstellen auf C-style arrays 
     - high speed product 
+    - einige algorithmen intern spezialisieren:
+      - determinante 
+      - cofactor matrix / subdeterminant
+      - inverse
     
     
   ************* Dense Matrix algorithms 
   
   matrix tensor product 
-   - unit test 
+    * unit test 
   
   Matrix functions: det, inv, transpose 
     * unit test : transpose
@@ -24,7 +28,6 @@
   
   Scalar functions
     * unit test
-    - p, q norms
     - infty as special value 
   
   Simplesolver

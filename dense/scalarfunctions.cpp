@@ -1,5 +1,5 @@
 
-#include "dense.scalarfunctions.hpp"
+#include "scalarfunctions.hpp"
 
 #include <iostream>
 #include <algorithm>

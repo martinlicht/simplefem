@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include "../basic.hpp"
-#include "../dense/dense.functions.hpp"
+#include "../dense/functions.hpp"
 #include "../dense/qr.factorization.hpp"
 #include "../dense/lu.factorization.hpp"
 #include "../dense/cholesky.hpp"
@@ -40,9 +40,12 @@ int main()
       
     {
     
+        int dim = 3;
+        DenseMatrix A(dim);
+        
         A.zeromatrix();
-        for( int s = 0; s < D; s++ )
-        for( int t = 0; t < D; t++ )
+        for( int s = 0; s < dim; s++ )
+        for( int t = 0; t < dim; t++ )
             A(s,t) = 3 * kronecker(s,t) - kronecker(s,t-1) - kronecker(s,t+1);
         
         DenseMatrix L = CholeskyDecomposition( A );

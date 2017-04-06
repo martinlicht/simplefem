@@ -1,5 +1,5 @@
 
-#include "dense.functions.hpp"
+#include "functions.hpp"
 
 #include <iostream>
 #include <algorithm>

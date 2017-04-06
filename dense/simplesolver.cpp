@@ -1,5 +1,5 @@
 
-#include "dense.simplesolver.hpp"
+#include "simplesolver.hpp"
 
 #include <iostream>
 #include <algorithm>

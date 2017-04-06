@@ -6,7 +6,7 @@
 
 #include "../basic.hpp"
 #include "../dense/densematrix.hpp"
-#include "../dense/dense.functions.hpp"
+#include "../dense/functions.hpp"
 #include "iterativesolver.hpp"
 #include "crm.hpp"
 
