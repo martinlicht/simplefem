@@ -28,7 +28,10 @@ lu.factorization.o: lu.factorization.cpp lu.factorization.hpp ../operators/float
 cholesky.o: cholesky.cpp cholesky.hpp ../operators/floatvector.hpp
 	$(CC) cholesky.cpp -c -o cholesky.o 
 
-objects = densematrix.o functions.o scalarfunctions.o simplesolver.o qr.factorization.o lu.factorization.o cholesky.o matrixtensorproduct.o
+iterativeinverse.o: iterativeinverse.cpp iterativeinverse.hpp ../operators/floatvector.hpp
+	$(CC) iterativeinverse.cpp -c -o iterativeinverse.o 
+
+objects = densematrix.o functions.o scalarfunctions.o simplesolver.o qr.factorization.o lu.factorization.o cholesky.o matrixtensorproduct.o iterativeinverse.o
 
 all: $(objects)
 
