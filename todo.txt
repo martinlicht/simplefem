@@ -6,6 +6,13 @@
   Question:
     - how to manage unit test for a software library?
     - how to manage makefiles? what dependencies to make explicit?
+  
+  Documentation:
+    Sphinx seems viable 
+    http://www.sphinx-doc.org/en/stable/
+    Videos at 
+    https://en.wikipedia.org/wiki/Sphinx_(documentation_generator)
+    Could be used for personal websites 
     
   todo-listen in jedem modul:
     - liste der klassen und standard punkte 

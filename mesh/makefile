@@ -12,6 +12,9 @@ coordinates.o: coordinates.hpp coordinates.cpp
 simplicialmesh.o: simplicialmesh.hpp simplicialmesh.cpp
 	$(CC) simplicialmesh.cpp -c -o simplicialmesh.o 
 
+manifold.2D.o: manifold.2D.hpp manifold.2D.cpp
+	$(CC) manifold.2D.cpp -c -o manifold.2D.o 
+
 generatesimplicialmesh.o: generatesimplicialmesh.hpp generatesimplicialmesh.cpp
 	$(CC) generatesimplicialmesh.cpp -c -o generatesimplicialmesh.o 
 
@@ -24,7 +27,7 @@ io.coordinates.o: io.coordinates.hpp io.coordinates.cpp
 vtkwriter.o: vtkwriter.hpp vtkwriter.cpp
 	$(CC) vtkwriter.cpp -c -o vtkwriter.o  
 
-objects = coordinates.o simplicialmesh.o io.simplicialmesh.o io.coordinates.o generatesimplicialmesh.o vtkwriter.o io.coordinates.o io.simplicialmesh.o 
+objects = coordinates.o simplicialmesh.o manifold.2D.o io.simplicialmesh.o io.coordinates.o generatesimplicialmesh.o vtkwriter.o io.coordinates.o io.simplicialmesh.o 
 
 
 
