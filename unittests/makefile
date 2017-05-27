@@ -78,10 +78,10 @@ test.dense.matrixalgorithm.out: test.dense.matrixalgorithm.cpp $(Includes)
 test.dense.cholesky.out: test.dense.cholesky.cpp $(Includes) 
 	$(CC) test.dense.cholesky.cpp $(Objects) -o test.dense.cholesky.out
 
-test.dense.iterativeinversion.out: test.dense.iterativeinversion.cpp $(Includes) 
-	$(CC) test.dense.iterativeinversion.cpp $(Objects) -o test.dense.iterativeinversion.out
+test.dense.iterativeinverse.out: test.dense.iterativeinverse.cpp $(Includes) 
+	$(CC) test.dense.iterativeinverse.cpp $(Objects) -o test.dense.iterativeinverse.out
 
-dense.tests = test.dense.densematrix.out test.dense.transpose.out test.dense.detinvcof.out test.dense.matrixalgorithm.out test.dense.cholesky.out test.dense.scalarfunctions.out test.dense.iterativeinversion.out
+dense.tests = test.dense.densematrix.out test.dense.transpose.out test.dense.detinvcof.out test.dense.matrixalgorithm.out test.dense.cholesky.out test.dense.scalarfunctions.out test.dense.iterativeinverse.out
 
 
 
@@ -111,21 +111,24 @@ test.mesh.coordinates.out: test.mesh.coordinates.cpp $(Includes)
 test.mesh.simplicialmesh.out: test.mesh.simplicialmesh.cpp $(Includes)
 	$(CC) test.mesh.simplicialmesh.cpp $(Objects) -o test.mesh.simplicialmesh.out
 
+test.mesh.manifold.2D.out: test.mesh.manifold.2D.cpp $(Includes)
+	$(CC) test.mesh.manifold.2D.cpp $(Objects) -o test.mesh.manifold.2D.out
+
 test.mesh.vtkwriter.out: test.mesh.vtkwriter.cpp $(Includes)
 	$(CC) test.mesh.vtkwriter.cpp $(Objects) -o test.mesh.vtkwriter.out
 
 test.mesh.io.out: test.mesh.io.cpp $(Includes)
 	$(CC) test.mesh.io.cpp $(Objects) -o test.mesh.io.out
 
-mesh.tests = test.mesh.coordinates.out test.mesh.simplicialmesh.out test.mesh.io.out test.mesh.vtkwriter.out
+mesh.tests = test.mesh.coordinates.out test.mesh.simplicialmesh.out test.mesh.manifold.2D.out test.mesh.io.out test.mesh.vtkwriter.out
 
 
 
 
     
-all: $(combinatorics.tests) $(operators.tests) $(dense.tests) 
+all: $(combinatorics.tests) $(operators.tests) $(dense.tests) $(mesh.tests) 
 
-# $(sparse.tests) $(solver.tests) $(mesh.tests)
+# $(sparse.tests) $(solver.tests)
 
 include ../makefile.clean
 

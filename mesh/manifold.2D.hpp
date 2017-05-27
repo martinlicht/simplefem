@@ -24,7 +24,10 @@
 ****  ManifoldTriangulation2D Class 
 ****  
 ****  - specialized mesh class 
+****  - 
 ****  
+****  
+****   
 ****    Rationale:
 ****    - for every triangle, we save the 3 vertices 
 ****    - for every triangle, we save the 3 edges 
@@ -32,19 +35,27 @@
 ****    - for every vertex, we save the first parent 
 ****     
 ****    Traversing the triangles of a vertex is tricky.
+****    
 ****    - if the enumeration in each vertex is oriented, 
 ****      then no additional data is needed, except the first triangle 
 ****    - alternatively:
 ****      we save the next triangle for each triangle 3x
 ****    - a good compromise:
-****      save the first two triangles,
-****      which dictates the transversal
+****      save the first two triangles, which dictates the transversal
+****    - Finally, we can fix an orientation for each triangle,
+****      which could e.g. be computed on-the-fly from the vertex enumeration,
+****      and base our traversal on that. 
+****    
 ****    From the definition of the Euler characteristic we deduce 
 ****    that in a typical triangulation we have got as many edges 
 ****    as we have got triangles and vertices. Moreover, 
 ****    bisecting an interior edge introduces more triangles 
 ****    than vertices, so we expect this require less memory.  
-****  
+****    
+****    
+****    
+****    
+****    
 *******************/
 
 
@@ -53,7 +64,7 @@ class ManifoldTriangulation2D
 
     public:
     
-        ManifoldTriangulation2D( int outerdim );
+        ManifoldTriangulation2D( int outerdim = 2 );
         
         ManifoldTriangulation2D( 
             int outerdim,
@@ -94,9 +105,9 @@ class ManifoldTriangulation2D
         int indexof_edge_vertex    ( int e, int v ) const;
         
         /* get the subsimplices */
-        const  std::array<int,3>  get_triangle_edges   ( int t ) const; 
-        const  std::array<int,3>  get_triangle_vertices( int t ) const;
-        const  std::array<int,2>  get_edge_vertices    ( int e ) const;
+        const std::array<int,3> get_triangle_edges   ( int t ) const; 
+        const std::array<int,3> get_triangle_vertices( int t ) const;
+        const std::array<int,2> get_edge_vertices    ( int e ) const;
         
         
         /* Triangle neighbors */
@@ -105,7 +116,7 @@ class ManifoldTriangulation2D
         
         int indexof_triangle_neighbor( int t, int nt ) const; 
         
-        const  std::array<int,3>  get_triangle_neighbors( int t ) const; 
+        const std::array<int,3> get_triangle_neighbors( int t ) const; 
         
         bool is_edge_between( int t1, int t2, int e ) const;
         
@@ -121,12 +132,15 @@ class ManifoldTriangulation2D
         
         int count_edge_parents( int e ) const;
         
-        const  std::array<int,2>  get_edge_parents( int e ) const;
+        const std::array<int,2> get_edge_parents( int e ) const;
         
+        int orientation_induced( int t, int el ) const; 
         
         
         
         /* index conversion */
+        
+        static int is_not_nullindex( int i ){ return i != nullindex; }
         
         static int neighborindex_to_edgeindex( int );
         
@@ -134,9 +148,15 @@ class ManifoldTriangulation2D
         
         static std::array<int,2> edgeindex_to_vertexindices( int );
         
+        static std::array<int,2> duple_from_triple( std::array<int,3>, std::array<int,2> );
+        
         static int vertexindex_to_opposing_edgeindex( int );
         
         static int edgeindex_to_opposing_vertexindex( int );
+        
+        static bool vertexlists_equivalent( std::array<int,2>, std::array<int,2> );
+        
+        
         
         
         
@@ -178,14 +198,6 @@ class ManifoldTriangulation2D
         
         
 };
-
-
-
-static inline int countsubsimplices( int n, int k )
-{
-    assert( 0 <= k && k <= n );
-    return binomial<int>( n+1, k+1 );
-}
 
 
 
