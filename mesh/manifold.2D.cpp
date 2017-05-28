@@ -19,20 +19,6 @@
 
 
 
-/* from local edge index, get the local vertex indices */
-
-
-
-
-
-
-
-
-
-
-
-
-
 ManifoldTriangulation2D::ManifoldTriangulation2D( int outerdim )
 :
     outerdimension(outerdim),
@@ -58,7 +44,7 @@ ManifoldTriangulation2D::ManifoldTriangulation2D(
 )
 :
     outerdimension(outerdim),
-    coordinates(outerdim,0),
+    coordinates(coords),
     
     counter_triangles( triangle_vertex_list.size() ),
     counter_edges(0),
@@ -121,26 +107,83 @@ ManifoldTriangulation2D::~ManifoldTriangulation2D()
 
 void ManifoldTriangulation2D::check() const
 {
-    // TODO: add code 
-    
     /* * Data integrity
      * 
      * - each triangle: each vertex is non-null
      * - each triangle: each vertex is unique
      * - each triangle: each edge is non-null
      * - each triangle: each edge is unique
+     * 
+     */
+    
+    assert( counter_triangles == data_triangle_vertices.size() );
+    assert( counter_triangles == data_triangle_edges.size() );
+    
+    for( int t = 0; t < counter_triangles; t++ )
+    {
+        assert( data_triangle_vertices[t][0] != nullindex );
+        assert( data_triangle_vertices[t][1] != nullindex );
+        assert( data_triangle_vertices[t][2] != nullindex );
+        
+        assert( data_triangle_vertices[t][0] != data_triangle_vertices[t][1] );
+        assert( data_triangle_vertices[t][1] != data_triangle_vertices[t][2] );
+        assert( data_triangle_vertices[t][2] != data_triangle_vertices[t][0] );
+        
+        assert( data_triangle_edges[t][0] != nullindex );
+        assert( data_triangle_edges[t][1] != nullindex );
+        assert( data_triangle_edges[t][2] != nullindex );
+        
+        assert( data_triangle_edges[t][0] != data_triangle_edges[t][1] );
+        assert( data_triangle_edges[t][1] != data_triangle_edges[t][2] );
+        assert( data_triangle_edges[t][2] != data_triangle_edges[t][0] );
+        
+    }
+    
+    /* * Data integrity
+     * 
      * - each edge: the parents are unique
      * - each edge: at least one parent is non-null 
      * - each edge: the first parent is non-null
      * - each edge: each parent triangle points to the edge
      * 
      */
+    
+    assert( counter_edges == data_edge_parents.size() );
+    
+    for( int e = 0; e < counter_edges; e++ )
+    {
+        
+        assert( data_edge_parents[e][0] != data_edge_parents[e][1] );
+        assert( data_edge_parents[e][0] != nullindex || data_edge_parents[e][1] != nullindex );
+        assert( data_edge_parents[e][0] != nullindex );
+        
+        int p0 = data_edge_parents[e][0];
+        
+        assert( data_triangle_edges[p0][0] == e || data_triangle_edges[p0][1] == e || data_triangle_edges[p0][2] == e );
+        
+        int p1 = data_edge_parents[e][1];
+        
+        if( p1 == nullindex) break; 
+        
+        assert( data_triangle_edges[p1][0] == e || data_triangle_edges[p1][1] == e || data_triangle_edges[p1][2] == e );
+        
+    }
+    
+    
+    
 }
 
 void ManifoldTriangulation2D::print( std::ostream& os ) const
 {
     os << "Printe Triangulation of 2D Manifold!" << std::endl;
 }
+
+
+
+
+
+
+
 
 
 
@@ -174,6 +217,8 @@ const Coordinates& ManifoldTriangulation2D::getcoordinates() const
 
 int ManifoldTriangulation2D::count_triangles() const
 {
+    assert( counter_triangles == data_triangle_edges.size() );
+    assert( counter_triangles == data_triangle_vertices.size() );
     return counter_triangles;
 }
 
@@ -246,7 +291,6 @@ int ManifoldTriangulation2D::indexof_triangle_edge   ( int t, int e ) const
     else                                      assert(false);
 } 
 
- 
 int ManifoldTriangulation2D::indexof_triangle_vertex( int t, int v ) const
 {
     assert( 0 <= t && t < counter_triangles );
@@ -256,7 +300,6 @@ int ManifoldTriangulation2D::indexof_triangle_vertex( int t, int v ) const
     else if( data_triangle_vertices[t][2] == v ) return 2;
     else                                         assert(false);
 } 
-
 
 int ManifoldTriangulation2D::indexof_edge_vertex    ( int e, int v ) const
 {
@@ -303,11 +346,8 @@ const std::array<int,2> ManifoldTriangulation2D::get_edge_vertices    ( int e ) 
     assert( contains_triangle_edge( t, e ) );
     
     std::array<int,2> vi = edgeindex_to_vertexindices( e );
-    std::array<int,2> vs;
-    vs[0] = data_triangle_vertices[t][vi[0]];
-    vs[1] = data_triangle_vertices[t][vi[0]];
     
-    return vs;
+    return { data_triangle_vertices[t][ vi[0] ], data_triangle_vertices[t][ vi[1] ] };
 }
 
 
@@ -386,7 +426,7 @@ bool ManifoldTriangulation2D::is_edge_between( int t1, int t2, int e ) const
     
     assert( 0 <= e && e < counter_edges );
     
-    if( ! is_triangle_neighbor( t1, t2 ) ) return false;
+    if( ! is_triangle_neighbor( t1, t2 )  ) return false;
     if( ! contains_triangle_edge( t1, e ) ) return false;
     if( ! contains_triangle_edge( t2, e ) ) return false;
     
@@ -403,7 +443,6 @@ int ManifoldTriangulation2D::get_edge_between( int t1, int t2 ) const
     int n = indexof_triangle_neighbor( t1, t2 );
     
     return neighborindex_to_edgeindex( n );
-    
 }
 
 
@@ -413,8 +452,62 @@ int ManifoldTriangulation2D::get_edge_between( int t1, int t2 ) const
 
 
 
+int ManifoldTriangulation2D::get_prev_edge    ( int el, int o )
+{
+    assert( 0 <= el && el < 3 );
+    assert( o == 1 || o == -1 ); assert( false );
+    return 0; 
+}
+
+int ManifoldTriangulation2D::get_next_edge    ( int el, int o )
+{
+    assert( 0 <= el && el < 3 );
+    assert( o == 1 || o == -1 ); assert( false );
+    return 0; 
+}
+
+int ManifoldTriangulation2D::get_prev_neighbor( int nl, int o )
+{
+    assert( 0 <= nl && nl < 3 );
+    assert( o == 1 || o == -1 ); assert( false );
+    return 0; 
+}
+
+int ManifoldTriangulation2D::get_next_neighbor( int nl, int o )
+{
+    assert( 0 <= nl && nl < 3 );
+    assert( o == 1 || o == -1 ); assert( false );
+    return 0; 
+}
+
+int ManifoldTriangulation2D::get_prev_vertex  ( int vl, int o )
+{
+    assert( 0 <= vl && vl < 3 );
+    assert( o == 1 || o == -1 ); assert( false );
+    return 0; 
+}
+
+int ManifoldTriangulation2D::get_next_vertex  ( int vl, int o )
+{
+    assert( 0 <= vl && vl < 3 );
+    assert( o == 1 || o == -1 ); assert( false );
+    return 0; 
+}
+
+int ManifoldTriangulation2D::get_first_vertex( int o )
+{
+    assert( o == 1 || o == -1 );
+    if( o == 1 ) return 0; else return 1; 
+}
+
+int ManifoldTriangulation2D::get_last_vertex ( int o )
+{
+    assert( o == 1 || o == -1 );
+    if( o == 1 ) return 1; else return 0;
+}
 
 
+      
 
 
 
@@ -439,12 +532,9 @@ int ManifoldTriangulation2D::indexof_edge_parent( int t, int e ) const
     assert( 0 <=  t &&  t < counter_triangles );
     assert( 0 <=  e &&  e < counter_edges );
     
-    if( data_edge_parents[e][0] == t )
-      return 0;
-    else if( data_edge_parents[e][1] == t )
-      return 1;
-    else
-      assert(false);
+    if     ( data_edge_parents[e][0] == t ) return 0;
+    else if( data_edge_parents[e][1] == t ) return 1;
+    else                                    assert(false);
 }
 
 
@@ -452,15 +542,10 @@ int ManifoldTriangulation2D::count_edge_parents( int e ) const
 {
     assert( 0 <=  e &&  e < counter_edges );
     
-    if( data_edge_parents[e][0] != nullindex && data_edge_parents[e][1] != nullindex )
-      return 2;
-    else if( data_edge_parents[e][0] != nullindex && data_edge_parents[e][1] == nullindex )
-      return 1;
-    else if( data_edge_parents[e][0] == nullindex && data_edge_parents[e][1] != nullindex )
-      return 1;
-    else 
-      assert(false);
-    
+    if     ( data_edge_parents[e][0] != nullindex && data_edge_parents[e][1] != nullindex ) return 2;
+    else if( data_edge_parents[e][0] != nullindex && data_edge_parents[e][1] == nullindex ) return 1;
+    else if( data_edge_parents[e][0] == nullindex && data_edge_parents[e][1] != nullindex ) return 1;
+    else                                                                                    assert(false);
 }
 
 const std::array<int,2> ManifoldTriangulation2D::get_edge_parents( int e ) const
@@ -468,24 +553,30 @@ const std::array<int,2> ManifoldTriangulation2D::get_edge_parents( int e ) const
     assert( 0 <=  e &&  e < counter_edges );
     
     return data_edge_parents[e];
-    
 }
 
+int ManifoldTriangulation2D::get_edge_otherparent( int t, int e ) const
+{
+    assert( 0 <=  t &&  t < counter_triangles );
+    assert( 0 <=  e &&  e < counter_edges );
+    
+    const auto& parents = get_edge_parents(e);
+    if( parents[0] == t ) return parents[1]; else return parents[0];
+}
 
 int ManifoldTriangulation2D::orientation_induced( int t, int el ) const
 {
-    assert( 0 <=  t  &&  t  < counter_triangles );
-    assert( 0 <=  el &&  el < 3 );
+    assert( 0 <= t  && t  < counter_triangles );
+    assert( 0 <= el && el < 3 );
     
-    const auto& edge_global = get_edge_vertices( el );
-    const auto& edge_local  = duple_from_triple( data_triangle_edges[t], edgeindex_to_vertexindices( el ) );
+    const std::array<int,2>& edge_global = get_edge_vertices( data_triangle_edges[t][el] );
+    const std::array<int,2>& edge_local  = duple_from_triple( data_triangle_vertices[t], edgeindex_to_vertexindices( el ) );
     
     assert( vertexlists_equivalent( edge_global, edge_local ) );
     
-    if( edge_global[0] == edge_local[0] ) return 1;
-    return -1;
+    if( edge_global[0] == edge_local[0] ) return 1; else return -1;
 }
-        
+
 
 
 
@@ -539,12 +630,11 @@ int ManifoldTriangulation2D::edgeindex_to_opposing_vertexindex( int e )
 
 bool ManifoldTriangulation2D::vertexlists_equivalent( std::array<int,2> e1, std::array<int,2> e2 )
 {
-    if( e1[0] == e2[0] && e1[1] == e2[1] )
-      return true;
-    else if( e1[0] == e2[1] && e1[1] == e2[0] )
-      return true;
-    else
-      return false;
+    assert( e1[0] != e1[1] && e2[0] != e2[1] );
+    
+    if     ( e1[0] == e2[0] && e1[1] == e2[1] ) return true;
+    else if( e1[0] == e2[1] && e1[1] == e2[0] ) return true;
+    else                                        return false;
 }
 
 

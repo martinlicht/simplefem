@@ -37,6 +37,7 @@ class Coordinates
     public:
 
         Coordinates( int, int );
+        Coordinates( int, int, const std::vector<Float>& );
 
         void check() const;
         void print( std::ostream& ) const;
@@ -69,7 +70,8 @@ class Coordinates
         
         void append( const Coordinates& );
         void append( const FloatVector& );
-
+        void append( const std::vector<FloatVector>& );
+        
         /* Obtain information about reference transformation of simplex */
         
         DenseMatrix getLinearPart( const IndexMap& ) const;

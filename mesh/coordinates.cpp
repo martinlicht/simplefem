@@ -17,6 +17,14 @@ Coordinates::Coordinates( int dimension, int number )
     check();
 }
 
+Coordinates::Coordinates( int dimension, int number, const std::vector<Float>& data )
+: 
+    dimension( dimension ), 
+    number( number ), 
+    data( data )
+{
+    check();
+}
 
 void Coordinates::check() const
 {

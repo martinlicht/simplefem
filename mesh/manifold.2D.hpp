@@ -32,7 +32,7 @@
 ****    - for every triangle, we save the 3 vertices 
 ****    - for every triangle, we save the 3 edges 
 ****    - for every edge, we save the 2 parents in ascending order 
-****    - for every vertex, we save the first parent 
+****    --- for every vertex, we save the first parent 
 ****     
 ****    Traversing the triangles of a vertex is tricky.
 ****    
@@ -123,6 +123,19 @@ class ManifoldTriangulation2D
         int get_edge_between( int t1, int t2 ) const;
         
         
+        /* orientation-related things */
+        
+        static int get_prev_edge    ( int el, int o );
+        static int get_next_edge    ( int el, int o );
+        static int get_prev_neighbor( int nl, int o );
+        static int get_next_neighbor( int nl, int o );
+        static int get_prev_vertex  ( int vl, int o );
+        static int get_next_vertex  ( int vl, int o );
+        
+        static int get_first_vertex( int o );
+        static int get_last_vertex ( int o );
+        
+        
         
         /* parents of an edge */
         
@@ -134,7 +147,12 @@ class ManifoldTriangulation2D
         
         const std::array<int,2> get_edge_parents( int e ) const;
         
+        int get_edge_otherparent( int t, int e ) const;
+        
         int orientation_induced( int t, int el ) const; 
+        
+        
+        
         
         
         
@@ -158,16 +176,25 @@ class ManifoldTriangulation2D
         
         
         
+//         void get_firstvertexparent_triangle( int v, int& t, bool& orientation );
+//         void get_nextvertexparent_triangle ( int v, int& t, bool& orientation );
+//         void is_lastvertexparent_triangle  ( int v, int& t, bool& orientation );
+//         
+//         void get_firstvertexparent_edges( int v, int& e, bool& orientation ); // orientation is not enough
+//         void get_nextvertexparent_edges ( int v, int& e, bool& orientation );
+//         void is_lastvertexparent_edges  ( int v, int& e, bool& orientation );
+//         
+//         int are_vertexparents_cyclic     ( int v );
+//         int count_vertexparents_triangles( int v );
+//         int count_vertexparents_edges    ( int v );
+//         
+//         void initialize_vertexparents();
+//         void initialize_vertexparents( int t );
+
         
+        /* uniform refinement */
         
-        
-        
-        
-// //         int is_vertexparents_cyclic( int v );
-// //         int count_vertexparents( int v, int* ts );
-// //         int list_vertexparents( int v, int* ts );
-// //         int count_vertexparents_edges( int v, int* es );
-// //         int list_vertexparents_edges( int v, int* es );
+        void uniformrefinement();
         
         
         
@@ -194,7 +221,10 @@ class ManifoldTriangulation2D
         std::vector< std::array<int,3> > data_triangle_vertices;
         std::vector< std::array<int,3> > data_triangle_edges;
         std::vector< std::array<int,2> > data_edge_parents;
-//         std::vector< std::array<int,2> > data_vertex_firstparents;
+        
+        struct orientedtriangle{ int parenttriangle; signed char orientation; };
+        
+        std::vector< orientedtriangle > data_vertex_firstparents;
         
         
 };
@@ -207,6 +237,120 @@ inline std::ostream& operator<<( std::ostream& os, const ManifoldTriangulation2D
     mt2d.print( os );
     return os;
 }
+
+
+
+ManifoldTriangulation2D UnitSquare()
+{
+    return ManifoldTriangulation2D(
+      2,
+      Coordinates( 2, 2, {
+        -1., -1., // 0
+        -1.,  1., // 1
+         1., -1., // 2
+         1.,  1.  // 3
+      } ),
+      {
+        { 0, 1, 3 },
+        { 0, 2, 3 }
+      }
+    );
+}
+
+ManifoldTriangulation2D StandardSquare()
+{
+    return ManifoldTriangulation2D(
+      2,
+      Coordinates( 2, 2, {
+         0.,  0., // 0
+         1.,  0., // 1
+         1.,  1., // 2
+         0.,  1., // 3
+        -1.,  1., // 4
+        -1.,  0., // 5
+        -1., -1., // 6
+         0., -1., // 7
+         1., -1.  // 8
+      } ),
+      {
+        { 0, 1, 2 },
+        { 0, 2, 3 },
+        { 0, 3, 4 },
+        { 0, 4, 5 },
+        { 0, 5, 6 },
+        { 0, 6, 7 },
+        { 0, 7, 8 },
+        { 0, 8, 1 }
+      }
+    );
+}
+
+
+
+ManifoldTriangulation2D LShapedDomain()
+{
+    return ManifoldTriangulation2D(
+      2,
+      Coordinates( 2, 2, {
+         0.,  0., // 0
+         1.,  0., // 1
+         1.,  1., // 2
+         0.,  1., // 3
+        -1.,  1., // 4
+        -1.,  0., // 5
+        -1., -1., // 6
+         0., -1.  // 7
+      } ),
+      {
+        { 0, 1, 2 },
+        { 0, 2, 3 },
+        { 0, 3, 4 },
+        { 0, 4, 5 },
+        { 0, 5, 6 },
+        { 0, 6, 7 }
+      }
+    );
+}
+
+
+
+ManifoldTriangulation2D SlitDomain()
+{
+    return ManifoldTriangulation2D(
+      2,
+      Coordinates( 2, 2, {
+         0.,  0., // 0
+         1.,  0., // 1
+         1.,  1., // 2
+         0.,  1., // 3
+        -1.,  1., // 4
+        -1.,  0., // 5
+        -1., -1., // 6
+         0., -1., // 7
+         1., -1., // 8
+         1.,  0.  // 9
+      } ),
+      {
+        { 0, 1, 2 }, // 0
+        { 0, 2, 3 }, // 1
+        { 0, 3, 4 }, // 2
+        { 0, 4, 5 }, // 3
+        { 0, 5, 6 }, // 4
+        { 0, 6, 7 }, // 5
+        { 0, 7, 8 }, // 6
+        { 0, 8, 9 }  // 7
+      }
+    );
+}
+
+
+
+
+
+
+
+
+
 
 
 #endif
