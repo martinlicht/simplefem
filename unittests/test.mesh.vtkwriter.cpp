@@ -22,7 +22,7 @@ int main()
     
     {
         
-        SimplicialMesh M = UnitCubeTriangulation2D(5,5);
+        SimplicialMesh M = UnitCubeTriangulation2D(1,1);
         
         cout << M << endl;
 

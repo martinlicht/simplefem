@@ -59,11 +59,17 @@ ManifoldTriangulation2D::ManifoldTriangulation2D(
     /* 1. Count triangles, transfer data */ 
     /* DONE */
     
+    for( const auto& tuple : data_triangle_vertices )
+      std::cout << tuple[0] << space << tuple[1] << space << tuple[2] << nl;
+      
+    
     /* 2. Count vertices */
     counter_vertices = 0;
     for( const auto& tuple : data_triangle_vertices )
     for( const int& vertex : tuple )
-      counter_vertices = maximum( counter_vertices, vertex );
+      counter_vertices = counter_vertices < vertex ? vertex : counter_vertices; 
+//       maximum( counter_vertices, vertex );
+    counter_vertices += 1;
       
     /* 3. Count edges, T->E, E->T  */
     /* FIXME: quadratic run-time. Can be pushed down to linearlogarithmic. */
@@ -95,6 +101,8 @@ ManifoldTriangulation2D::ManifoldTriangulation2D(
         }
     }
     
+    counter_edges = data_edge_parents.size();
+    
     check();
 }
 
@@ -118,6 +126,9 @@ void ManifoldTriangulation2D::check() const
     
     assert( counter_triangles == data_triangle_vertices.size() );
     assert( counter_triangles == data_triangle_edges.size() );
+    
+//     cout << count_vertices() << space << coordinates.getnumber() << nl;
+//     assert( count_vertices() == coordinates.getnumber() );
     
     for( int t = 0; t < counter_triangles; t++ )
     {
@@ -329,13 +340,13 @@ int ManifoldTriangulation2D::indexof_edge_vertex    ( int e, int v ) const
 const std::array<int,3> ManifoldTriangulation2D::get_triangle_edges   ( int t ) const
 {
     assert( 0 <= t && t < counter_triangles );
-    return data_triangle_vertices[t];
+    return data_triangle_edges[t];
 } 
 
 const std::array<int,3> ManifoldTriangulation2D::get_triangle_vertices( int t ) const
 {
     assert( 0 <= t && t < counter_triangles );
-    return data_triangle_edges[t];
+    return data_triangle_vertices[t];
 }
 
 const std::array<int,2> ManifoldTriangulation2D::get_edge_vertices    ( int e ) const
@@ -455,43 +466,46 @@ int ManifoldTriangulation2D::get_edge_between( int t1, int t2 ) const
 int ManifoldTriangulation2D::get_prev_edge    ( int el, int o )
 {
     assert( 0 <= el && el < 3 );
-    assert( o == 1 || o == -1 ); assert( false );
-    return 0; 
+    assert( o == 1 || o == -1 );
+    return ( el + ( o==1 ? 1 : -1 ) ) % 3; 
 }
 
 int ManifoldTriangulation2D::get_next_edge    ( int el, int o )
 {
     assert( 0 <= el && el < 3 );
-    assert( o == 1 || o == -1 ); assert( false );
-    return 0; 
+    assert( o == 1 || o == -1 );
+    return ( el + ( o==1 ? 1 : -1 ) ) % 3; 
 }
 
 int ManifoldTriangulation2D::get_prev_neighbor( int nl, int o )
 {
     assert( 0 <= nl && nl < 3 );
-    assert( o == 1 || o == -1 ); assert( false );
-    return 0; 
+    assert( o == 1 || o == -1 );
+    return ( nl + ( o==1 ? 1 : -1 ) ) % 3; 
 }
+
+
+// 01 02 12 -> 2 1 0
 
 int ManifoldTriangulation2D::get_next_neighbor( int nl, int o )
 {
     assert( 0 <= nl && nl < 3 );
-    assert( o == 1 || o == -1 ); assert( false );
-    return 0; 
+    assert( o == 1 || o == -1 );
+    return ( nl + ( o==1 ? 1 : -1 ) ) % 3; 
 }
 
 int ManifoldTriangulation2D::get_prev_vertex  ( int vl, int o )
 {
     assert( 0 <= vl && vl < 3 );
-    assert( o == 1 || o == -1 ); assert( false );
-    return 0; 
+    assert( o == 1 || o == -1 );
+    return ( vl + ( o==1 ? 1 : -1 ) ) % 3; 
 }
 
 int ManifoldTriangulation2D::get_next_vertex  ( int vl, int o )
 {
     assert( 0 <= vl && vl < 3 );
-    assert( o == 1 || o == -1 ); assert( false );
-    return 0; 
+    assert( o == 1 || o == -1 );
+    return ( vl + ( o==1 ? 1 : -1 ) ) % 3; 
 }
 
 int ManifoldTriangulation2D::get_first_vertex( int o )
@@ -658,6 +672,33 @@ void ManifoldTriangulation2D::bisect_edge( int e )
 {
     assert( 0 <= e && e < counter_edges );
 }
+
+
+
+
+FloatVector ManifoldTriangulation2D::get_triangle_midpoint( int t )
+{
+    assert( 0 <= t && t < counter_triangles );
+    FloatVector mid( getouterdimension() );
+    for( int d = 0; d < getouterdimension(); d++ )
+      mid[d] = coordinates.getdata( get_triangle_vertices(t)[0], d )
+             + coordinates.getdata( get_triangle_vertices(t)[1], d )
+             + coordinates.getdata( get_triangle_vertices(t)[2], d );
+    return mid; 
+}
+
+FloatVector ManifoldTriangulation2D::get_edge_midpoint    ( int e )
+{
+    assert( 0 <= e && e < counter_edges );
+    FloatVector mid( getouterdimension() );
+    for( int d = 0; d < getouterdimension(); d++ )
+      mid[d] = coordinates.getdata( get_edge_vertices(e)[0], d ) 
+             + coordinates.getdata( get_edge_vertices(e)[1], d );
+    return mid;
+}
+
+
+        
 
 
 

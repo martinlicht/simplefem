@@ -1,27 +1,26 @@
-#ifndef INCLUDEGUARD_VTK_WRITER
-#define INCLUDEGUARD_VTK_WRITER
+#ifndef INCLUDEGUARD_VTK_MANIFOLD2D_WRITER
+#define INCLUDEGUARD_VTK_MANIFOLD2D_WRITER
 
 #include <iostream>
 #include <string>
 
 #include "../basic.hpp"
 #include "../mesh/coordinates.hpp"
-#include "../mesh/simplicialmesh.hpp"
+#include "../mesh/manifold.2D.hpp"
 
 /*******************
 ****  
 ****  Write a mesh as VTK File 
-****  
 ****  - write Preamble, Coordinate Block, Top-dimensional cells
 ****  
 *******************/
 
-class VTK_MeshWriter
+class VTK_MeshWriter_Manifold2D
 {
     
     public:
         
-        VTK_MeshWriter( SimplicialMesh& sm, std::ostream& os );
+        VTK_MeshWriter_Manifold2D( ManifoldTriangulation2D& m2d, std::ostream& os );
         
         void writePreamble( const char* name );
         
@@ -41,8 +40,9 @@ class VTK_MeshWriter
         
     private:
     
-        const SimplicialMesh& mesh;
+        const ManifoldTriangulation2D& mesh;
         std::ostream& os;
+        
 };
 
 #endif

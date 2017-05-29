@@ -3,12 +3,12 @@
 
 #include <ctime>     
 #include <cstdlib>     
-// #include <cassert>     /* assert macro */
+#include <cassert>     /* assert macro */
 #include <list>
 #include <iterator>
 #include <functional>
 
-#include "assertion.hpp"
+// // #include "assertion.hpp"
 
 typedef double Float;
 

@@ -207,6 +207,13 @@ class ManifoldTriangulation2D
         void bisect_outer_edge( int e );
         
         
+        /* other things */
+        
+        FloatVector get_triangle_midpoint( int t );
+        FloatVector get_edge_midpoint    ( int e );
+        
+        
+        
         
     private:
 
@@ -240,11 +247,16 @@ inline std::ostream& operator<<( std::ostream& os, const ManifoldTriangulation2D
 
 
 
-ManifoldTriangulation2D UnitSquare()
+
+
+
+
+
+inline ManifoldTriangulation2D UnitSquare()
 {
     return ManifoldTriangulation2D(
       2,
-      Coordinates( 2, 2, {
+      Coordinates( 2, 4, {
         -1., -1., // 0
         -1.,  1., // 1
          1., -1., // 2
@@ -257,11 +269,11 @@ ManifoldTriangulation2D UnitSquare()
     );
 }
 
-ManifoldTriangulation2D StandardSquare()
+inline ManifoldTriangulation2D StandardSquare()
 {
     return ManifoldTriangulation2D(
       2,
-      Coordinates( 2, 2, {
+      Coordinates( 2, 9, {
          0.,  0., // 0
          1.,  0., // 1
          1.,  1., // 2
@@ -287,11 +299,11 @@ ManifoldTriangulation2D StandardSquare()
 
 
 
-ManifoldTriangulation2D LShapedDomain()
+inline ManifoldTriangulation2D LShapedDomain()
 {
     return ManifoldTriangulation2D(
       2,
-      Coordinates( 2, 2, {
+      Coordinates( 2, 8, {
          0.,  0., // 0
          1.,  0., // 1
          1.,  1., // 2
@@ -314,11 +326,11 @@ ManifoldTriangulation2D LShapedDomain()
 
 
 
-ManifoldTriangulation2D SlitDomain()
+inline ManifoldTriangulation2D SlitDomain()
 {
     return ManifoldTriangulation2D(
       2,
-      Coordinates( 2, 2, {
+      Coordinates( 2, 10, {
          0.,  0., // 0
          1.,  0., // 1
          1.,  1., // 2

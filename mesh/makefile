@@ -27,7 +27,10 @@ io.coordinates.o: io.coordinates.hpp io.coordinates.cpp
 vtkwriter.o: vtkwriter.hpp vtkwriter.cpp
 	$(CC) vtkwriter.cpp -c -o vtkwriter.o  
 
-objects = coordinates.o simplicialmesh.o manifold.2D.o io.simplicialmesh.o io.coordinates.o generatesimplicialmesh.o vtkwriter.o io.coordinates.o io.simplicialmesh.o 
+vtkwriter.manifold2D.o: vtkwriter.manifold2D.hpp vtkwriter.manifold2D.cpp
+	$(CC) vtkwriter.manifold2D.cpp -c -o vtkwriter.manifold2D.o  
+
+objects = coordinates.o simplicialmesh.o manifold.2D.o io.simplicialmesh.o io.coordinates.o generatesimplicialmesh.o vtkwriter.o vtkwriter.manifold2D.o io.coordinates.o io.simplicialmesh.o 
 
 
 

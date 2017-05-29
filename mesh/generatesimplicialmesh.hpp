@@ -21,7 +21,6 @@
 
 /*******************
 ****  
-****  
 ****  Generate example meshes 
 ****  
 ****  - Unit cube, any dimension, simple triangulation

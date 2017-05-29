@@ -17,7 +17,9 @@ int main()
 {
 	cout << "Unit Test for Manifold 2D Module" << endl;
 	
-        ManifoldTriangulation2D M;
+        ManifoldTriangulation2D M = LShapedDomain();
+        
+        M.check();
 	
         cout << M << endl;
         
