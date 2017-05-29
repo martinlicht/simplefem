@@ -78,7 +78,7 @@ class ManifoldTriangulation2D
 
         virtual void print( std::ostream& out ) const;
 
-        static const int nullindex = std::numeric_limits<int>::max();
+        static const int nullindex = 777777; // std::numeric_limits<int>::max();
         
         
         /* Coordinates */

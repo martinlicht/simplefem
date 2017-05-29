@@ -25,6 +25,18 @@ int main()
         
         cout << M << endl;
 
+        for( int c = 0; c < 100; c++ ) 
+        {
+          int e = c % M.count_edges();
+          cout << "Bisect edge: " << e << nl;
+          M.bisect_edge( e );
+          
+//           cout << M << endl;
+          
+          M.check();
+        }
+        
+        
         FloatVector sampledata( M.count_vertices() );
         
         assert( M.count_vertices() == M.getcoordinates().getnumber() );
