@@ -161,7 +161,7 @@ void ManifoldTriangulation2D::check() const
     for( int e = 0; e < counter_edges; e++ )
     {
         
-//         std::cout << "vergleich: " << data_edge_parents[e][0] << space << data_edge_parents[e][1] << nl;
+//         std::cout << "vergleich " << e << " : " << data_edge_parents[e][0] << space << data_edge_parents[e][1] << nl;
         
         assert( data_edge_parents[e][0] != data_edge_parents[e][1] );
         assert( data_edge_parents[e][0] != nullindex || data_edge_parents[e][1] != nullindex );
@@ -171,11 +171,28 @@ void ManifoldTriangulation2D::check() const
         
         assert( data_triangle_edges[p0][0] == e || data_triangle_edges[p0][1] == e || data_triangle_edges[p0][2] == e );
         
+        {
+          std::array<int,2> e_vertices1 = get_edge_vertices( e );
+          std::array<int,2> e_vertices2 = duple_from_triple( data_triangle_vertices[p0], edgeindex_to_vertexindices( indexof_triangle_edge( p0, e ) ) );
+          
+          assert( vertexlists_equivalent( e_vertices1, e_vertices2 ) );
+        }
+        
         int p1 = data_edge_parents[e][1];
         
         if( p1 == nullindex) continue; 
         
         assert( data_triangle_edges[p1][0] == e || data_triangle_edges[p1][1] == e || data_triangle_edges[p1][2] == e );
+        
+        {
+          std::array<int,2> e_vertices1 = get_edge_vertices( e );
+          std::array<int,2> e_vertices2 = duple_from_triple( data_triangle_vertices[p1], edgeindex_to_vertexindices( indexof_triangle_edge( p1, e ) ) );
+          
+          assert( vertexlists_equivalent( e_vertices1, e_vertices2 ) );
+        }
+        
+        
+        
         
     }
     
@@ -486,6 +503,46 @@ int ManifoldTriangulation2D::get_edge_between( int t1, int t2 ) const
 
 
 
+int ManifoldTriangulation2D::get_forwarding_edge ( int t, int el, int o )
+{
+    assert( 0 <=  t &&  t < counter_triangles );
+    assert( 0 <= el && el < 3 );
+    assert( o == 1 || o == -1 );
+    
+    int e = data_triangle_edges[t][el];
+    
+    std::array<int,2> e_vertices = get_edge_vertices(e);
+    
+    int v = ( o == 1 ) ? e_vertices[0] : e_vertices[1];
+    
+    assert( contains_triangle_vertex( t, v ) );
+    
+    int v_local = indexof_triangle_vertex( t, v );
+    
+    return vertexindex_to_opposing_edgeindex( v_local );
+}
+
+int ManifoldTriangulation2D::get_backwarding_edge( int t, int el, int o )
+{
+    assert( 0 <=  t &&  t < counter_triangles );
+    assert( 0 <= el && el < 3 );
+    assert( o == 1 || o == -1 );
+    
+    int e = data_triangle_edges[t][el];
+    
+    std::array<int,2> e_vertices = get_edge_vertices(e);
+    
+    int v = ( o == 1 ) ? e_vertices[1] : e_vertices[0];
+    
+    assert( contains_triangle_vertex( t, v ) );
+    
+    int v_local = indexof_triangle_vertex( t, v );
+    
+    return vertexindex_to_opposing_edgeindex( v_local );
+}
+
+
+
 int ManifoldTriangulation2D::get_prev_edge    ( int el, int o )
 {
     assert( 0 <= el && el < 3 );
@@ -739,15 +796,10 @@ void ManifoldTriangulation2D::bisect_edge( int e )
         assert(false);
 }
 
-void ManifoldTriangulation2D::bisect_inner_edge( int e )
-{
-    assert( 0 <= e && e < counter_edges );
-    
-    
-}
-
 void ManifoldTriangulation2D::bisect_outer_edge( int e )
 {
+    std::cout << "Outer bisection" << nl;
+  
     assert( 0 <= e && e < counter_edges );
     assert( count_edge_parents( e ) == 1 );
     
@@ -756,41 +808,41 @@ void ManifoldTriangulation2D::bisect_outer_edge( int e )
     FloatVector midpoint = get_edge_midpoint( e );
     coordinates.append( midpoint );
     
-    int t       = get_edge_parents(e)[0];
-    int el      = indexof_triangle_edge( t, e );
-    int el_prev = get_prev_edge( el, o );
-    int el_next = get_next_edge( el, o );
+    int t            = get_edge_parents(e)[0];
+    int e_local      = indexof_triangle_edge( t, e );
+    int e_local_prev = get_prev_edge( e_local, o );
+    int e_local_next = get_next_edge( e_local, o );
     
-    assert( el != el_prev && el != el_next && el_next != el_prev );
+    assert( e_local != e_local_prev && e_local != e_local_next && e_local_next != e_local_prev );
     
-    assert( data_triangle_edges[t][el] == get_triangle_edges(t)[el] );
-    assert( e == get_triangle_edges(t)[el] );
+    assert( data_triangle_edges[t][e_local] == get_triangle_edges(t)[e_local] );
+    assert( e == get_triangle_edges(t)[e_local] );
     
-    int e_prev = get_triangle_edges(t)[ el_prev ];
-    int n_prev = get_triangle_neighbors(t)[ edgeindex_to_neighborindex(el_prev) ];
-    int e_next = get_triangle_edges(t)[ el_next ];
-    int n_next = get_triangle_neighbors(t)[ edgeindex_to_neighborindex(el_next) ];
+    int e_prev = get_triangle_edges(t)[ e_local_prev ];
+    int e_next = get_triangle_edges(t)[ e_local_next ];
+    int n_prev = get_triangle_neighbors(t)[ edgeindex_to_neighborindex(e_local_prev) ];
+    int n_next = get_triangle_neighbors(t)[ edgeindex_to_neighborindex(e_local_next) ];
     
     assert( e != e_prev && e != e_next && e_next != e_prev );
     assert( t != n_prev && t != n_next );
     if( n_prev != nullindex ) assert( n_next != n_prev );
     
-    int vl_opp  = edgeindex_to_opposing_vertexindex( el );
-    int vl_forw = edgeindex_to_opposing_vertexindex( el_prev );
-    int vl_back = edgeindex_to_opposing_vertexindex( el_next );
+    int v_local_opp  = edgeindex_to_opposing_vertexindex( e_local );
+    int v_local_forw = edgeindex_to_opposing_vertexindex( e_local_prev );
+    int v_local_back = edgeindex_to_opposing_vertexindex( e_local_next );
     
-    assert( vl_opp != vl_forw && vl_opp != vl_back && vl_forw != vl_back );
+    assert( v_local_opp != v_local_forw && v_local_opp != v_local_back && v_local_forw != v_local_back );
     
     std::array<int,3> t_new_vertices_back 
-      = { get_triangle_vertices(t)[vl_opp ],
-          get_triangle_vertices(t)[vl_back],
+      = { get_triangle_vertices(t)[v_local_opp ],
+          get_triangle_vertices(t)[v_local_back],
           counter_vertices
         };
     
-    std::array<int,3> t_new_vertices_forward
+    std::array<int,3> t_new_vertices_forw
       = { counter_vertices,
-          get_triangle_vertices(t)[vl_forw],
-          get_triangle_vertices(t)[vl_opp ]
+          get_triangle_vertices(t)[v_local_forw],
+          get_triangle_vertices(t)[v_local_opp ]
         };
     
     std::array<int,3> t_new_edges_back;
@@ -798,35 +850,202 @@ void ManifoldTriangulation2D::bisect_outer_edge( int e )
     t_new_edges_back[ vertexindex_to_opposing_edgeindex(1) ] = counter_edges + 1;
     t_new_edges_back[ vertexindex_to_opposing_edgeindex(2) ] = e_prev;
     
-    std::array<int,3> t_new_edges_forward;
-    t_new_edges_forward[ vertexindex_to_opposing_edgeindex(0) ] = e_next;
-    t_new_edges_forward[ vertexindex_to_opposing_edgeindex(1) ] = counter_edges + 1;
-    t_new_edges_forward[ vertexindex_to_opposing_edgeindex(2) ] = counter_edges;
+    std::array<int,3> t_new_edges_forw;
+    t_new_edges_forw[ vertexindex_to_opposing_edgeindex(0) ] = e_next;
+    t_new_edges_forw[ vertexindex_to_opposing_edgeindex(1) ] = counter_edges + 1;
+    t_new_edges_forw[ vertexindex_to_opposing_edgeindex(2) ] = counter_edges;
     
     std::array<int,2> e_new_parents_back    = {                 t, nullindex };
-    std::array<int,2> e_new_parents_forward = { counter_triangles, nullindex };
-    std::array<int,2> e_new_pair            = { counter_triangles, t };
+    std::array<int,2> e_new_parents_forw = { counter_triangles, nullindex };
+    std::array<int,2> e_new_pair_of_t            = { counter_triangles, t };
     
     
     data_triangle_vertices[t] = t_new_vertices_back;
+    data_triangle_vertices.push_back( t_new_vertices_forw );
+    
     data_triangle_edges   [t] = t_new_edges_back;
-    data_triangle_vertices.push_back( t_new_vertices_forward );
-    data_triangle_edges.push_back   ( t_new_edges_forward );
+    data_triangle_edges.push_back   ( t_new_edges_forw );
     
     data_edge_parents[e] = e_new_parents_back;
-    data_edge_parents.push_back( e_new_parents_forward );
-    data_edge_parents.push_back( e_new_pair );
+    data_edge_parents.push_back( e_new_parents_forw );
+    data_edge_parents.push_back( e_new_pair_of_t );
     
-//     std::cout << "test: " << el << space << el_prev << space << el_next << nl;
+//     std::cout << "test: " << e_local << space << e_local_prev << space << e_local_next << nl;
 //     std::cout << "test: " << e << space << e_prev << space << e_next << nl;
 //     std::cout << "test: " << t << space << n_prev << space << n_next << nl;
-    data_edge_parents[e_prev] = {                 t, n_prev };
-    data_edge_parents[e_next] = { counter_triangles, n_next };
+    data_edge_parents[ e_prev ] = {                 t, n_prev };
+    data_edge_parents[ e_next ] = { counter_triangles, n_next };
     
     counter_triangles += 1;
     counter_edges     += 2;
     counter_vertices  += 1;
     
+}
+
+void ManifoldTriangulation2D::bisect_inner_edge( int e )
+{
+    std::cout << "Inner bisection" << nl;
+  
+    assert( 0 <= e && e < counter_edges );
+    assert( count_edge_parents( e ) == 2 );
+    
+    FloatVector midpoint = get_edge_midpoint( e );
+    coordinates.append( midpoint );
+    
+    /* gather auxiliary variables */
+    
+    /* TODO: extract vertices, use them to declare orientations */
+    
+    int t1 = get_edge_parents(e)[0];
+    int t2 = get_edge_parents(e)[1];
+    
+    int edge_vertex_backward = get_edge_vertices( e )[0];
+    int edge_vertex_forward  = get_edge_vertices( e )[1];
+    
+    int e1_local      = indexof_triangle_edge( t1, e );
+    int e2_local      = indexof_triangle_edge( t2, e );
+    
+    int v1_local_opp  = edgeindex_to_opposing_vertexindex( e1_local );
+    int v2_local_opp  = edgeindex_to_opposing_vertexindex( e2_local );
+    
+    int v1_local_back = indexof_triangle_vertex( t1, edge_vertex_backward );
+    int v2_local_back = indexof_triangle_vertex( t2, edge_vertex_backward );
+    int v1_local_forw = indexof_triangle_vertex( t1, edge_vertex_forward  );
+    int v2_local_forw = indexof_triangle_vertex( t2, edge_vertex_forward  );
+    
+//     int v1_local_back = edgeindex_to_opposing_vertexindex( e1_local_prev );
+//     int v2_local_forw = edgeindex_to_opposing_vertexindex( e2_local_prev );
+//     int v1_local_back = edgeindex_to_opposing_vertexindex( e1_local_next );
+//     int v2_local_back = edgeindex_to_opposing_vertexindex( e2_local_next );
+    
+    assert( v1_local_opp != v1_local_forw && v1_local_opp != v1_local_back && v1_local_forw != v1_local_back );
+    assert( v2_local_opp != v2_local_forw && v2_local_opp != v2_local_back && v2_local_forw != v2_local_back );
+    
+    assert( data_triangle_vertices[t1][v1_local_back] == data_triangle_vertices[t2][v2_local_back] );
+    assert( data_triangle_vertices[t1][v1_local_forw] == data_triangle_vertices[t2][v2_local_forw] );
+    
+//     int o1 = orientation_induced( t1, indexof_triangle_edge( t1, e ) );
+//     int o2 = orientation_induced( t2, indexof_triangle_edge( t2, e ) );
+    
+    int e1_local_prev = vertexindex_to_opposing_edgeindex( v1_local_forw );
+    int e2_local_prev = vertexindex_to_opposing_edgeindex( v2_local_forw );
+    int e1_local_next = vertexindex_to_opposing_edgeindex( v1_local_back );
+    int e2_local_next = vertexindex_to_opposing_edgeindex( v2_local_back );
+    
+//     int e1_local_prev = get_backwarding_edge( t1, e1_local, o1 );
+//     int e2_local_prev = get_backwarding_edge( t2, e2_local, o2 );
+//     int e1_local_next = get_forwarding_edge( t1, e1_local, o1 );
+//     int e2_local_next = get_forwarding_edge( t2, e2_local, o2 );
+    
+    assert( e1_local != e1_local_prev && e1_local != e1_local_next && e1_local_next != e1_local_prev );
+    assert( e2_local != e2_local_prev && e2_local != e2_local_next && e2_local_next != e2_local_prev );
+    
+    assert( data_triangle_edges[t1][e1_local] == get_triangle_edges(t1)[e1_local] );
+    assert( data_triangle_edges[t2][e2_local] == get_triangle_edges(t2)[e2_local] );
+    assert( e == get_triangle_edges(t1)[e1_local] );
+    assert( e == get_triangle_edges(t2)[e2_local] );
+    
+    int e1_prev = get_triangle_edges(t1)[ e1_local_prev ];
+    int e2_prev = get_triangle_edges(t2)[ e2_local_prev ];
+    int e1_next = get_triangle_edges(t1)[ e1_local_next ];
+    int e2_next = get_triangle_edges(t2)[ e2_local_next ];
+    int n1_prev = get_triangle_neighbors(t1)[ edgeindex_to_neighborindex(e1_local_prev) ];
+    int n2_prev = get_triangle_neighbors(t2)[ edgeindex_to_neighborindex(e2_local_prev) ];
+    int n1_next = get_triangle_neighbors(t1)[ edgeindex_to_neighborindex(e1_local_next) ];
+    int n2_next = get_triangle_neighbors(t2)[ edgeindex_to_neighborindex(e2_local_next) ];
+    
+    assert( e != e1_prev && e != e1_next && e1_next != e1_prev );
+    assert( e != e2_prev && e != e2_next && e2_next != e2_prev );
+    assert( t1 != n1_prev && t1 != n1_next );
+    assert( t2 != n2_prev && t2 != n2_next );
+    if( n1_prev != nullindex ) assert( n1_next != n1_prev );
+    if( n2_prev != nullindex ) assert( n2_next != n2_prev );
+    
+    
+    /* assemble new data */
+    
+    int t1_new = counter_triangles;
+    int t2_new = counter_triangles + 1;
+        
+    int e_half_back = e;
+    int e_half_forw = counter_edges;
+    int e1_section  = counter_edges + 1;
+    int e2_section  = counter_edges + 2;
+    
+    std::array<int,3> t1_new_vertices_back 
+      = { get_triangle_vertices(t1)[v1_local_opp ],
+          get_triangle_vertices(t1)[v1_local_back],
+          counter_vertices
+        };
+    
+    std::array<int,3> t2_new_vertices_back 
+      = { get_triangle_vertices(t2)[v2_local_opp ],
+          get_triangle_vertices(t2)[v2_local_back],
+          counter_vertices
+        };
+    
+    std::array<int,3> t1_new_vertices_forw
+      = { counter_vertices,
+          get_triangle_vertices(t1)[v1_local_forw],
+          get_triangle_vertices(t1)[v1_local_opp ]
+        };
+    
+    std::array<int,3> t2_new_vertices_forw
+      = { counter_vertices,
+          get_triangle_vertices(t2)[v2_local_forw],
+          get_triangle_vertices(t2)[v2_local_opp ]
+        };
+        
+    std::array<int,3> t1_new_edges_back;
+    t1_new_edges_back[ vertexindex_to_opposing_edgeindex(0) ] = e_half_back;
+    t1_new_edges_back[ vertexindex_to_opposing_edgeindex(1) ] = e1_section;
+    t1_new_edges_back[ vertexindex_to_opposing_edgeindex(2) ] = e1_prev;
+    
+    std::array<int,3> t1_new_edges_forw;
+    t1_new_edges_forw[ vertexindex_to_opposing_edgeindex(0) ] = e1_next;
+    t1_new_edges_forw[ vertexindex_to_opposing_edgeindex(1) ] = e1_section;
+    t1_new_edges_forw[ vertexindex_to_opposing_edgeindex(2) ] = e_half_forw;
+    
+    std::array<int,3> t2_new_edges_back;
+    t2_new_edges_back[ vertexindex_to_opposing_edgeindex(0) ] = e_half_back;
+    t2_new_edges_back[ vertexindex_to_opposing_edgeindex(1) ] = e2_section;
+    t2_new_edges_back[ vertexindex_to_opposing_edgeindex(2) ] = e2_prev;
+    
+    std::array<int,3> t2_new_edges_forw;
+    t2_new_edges_forw[ vertexindex_to_opposing_edgeindex(0) ] = e2_next;
+    t2_new_edges_forw[ vertexindex_to_opposing_edgeindex(1) ] = e2_section;
+    t2_new_edges_forw[ vertexindex_to_opposing_edgeindex(2) ] = e_half_forw;
+    
+    std::array<int,2> e_new_parents_back = { t1    , t2     };
+    std::array<int,2> e_new_parents_forw = { t1_new, t2_new };
+    std::array<int,2> e_new_pair_of_t1   = { t1    , t1_new };
+    std::array<int,2> e_new_pair_of_t2   = { t2    , t2_new };
+    
+    /* transfer the new data */
+    
+    data_triangle_vertices[t1] = t1_new_vertices_back;
+    data_triangle_vertices[t2] = t2_new_vertices_back;
+    data_triangle_vertices.push_back( t1_new_vertices_forw );
+    data_triangle_vertices.push_back( t2_new_vertices_forw );
+    
+    data_triangle_edges   [t1] = t1_new_edges_back;
+    data_triangle_edges   [t2] = t2_new_edges_back;
+    data_triangle_edges.push_back   ( t1_new_edges_forw );
+    data_triangle_edges.push_back   ( t2_new_edges_forw );
+    
+    data_edge_parents[e] = e_new_parents_back;
+    data_edge_parents.push_back( e_new_parents_forw );
+    data_edge_parents.push_back( e_new_pair_of_t1 );
+    data_edge_parents.push_back( e_new_pair_of_t2 );
+    
+    data_edge_parents[ e1_prev ] = { t1    , n1_prev };
+    data_edge_parents[ e2_prev ] = { t2    , n2_prev };
+    data_edge_parents[ e1_next ] = { t1_new, n1_next };
+    data_edge_parents[ e2_next ] = { t2_new, n2_next };
+    
+    counter_triangles += 2;
+    counter_edges     += 3;
+    counter_vertices  += 1;
 }
 
 

@@ -125,6 +125,9 @@ class ManifoldTriangulation2D
         
         /* orientation-related things */
         
+        int get_forwarding_edge  ( int t, int el, int o );
+        int get_backwarding_edge ( int t, int el, int o );
+                
         static int get_prev_edge    ( int el, int o );
         static int get_next_edge    ( int el, int o );
         static int get_prev_neighbor( int nl, int o );
