@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <cstdlib>
 #include <cmath>
 
 #include "../basic.hpp"
@@ -21,21 +22,35 @@ int main()
     
     {
         
-        ManifoldTriangulation2D M = UnitSquare();
+        ManifoldTriangulation2D M =  UnitSquare();
         
         cout << M << endl;
 
-        for( int c = 0; c < 100; c++ ) 
-        {
-          int e = c % M.count_edges();
-          cout << "Bisect edge: " << e << nl;
-          M.bisect_edge( e );
-          
-//           cout << M << endl;
-          
-          M.check();
-        }
+        srand( 4711 );
         
+//         for( int c = 0; c < 10; c++ ) 
+//         for( int c = 0; c < 100; c++ ) 
+//         {
+//           int e = 7 + c % 2; c % M.count_edges();
+//           cout << "Bisect edge: " << e << nl;
+//           
+//           M.bisect_edge( e );
+//           
+// //           cout << M << endl;
+//           
+//           M.check();
+//         }
+        
+        for( int c = 0; c < 6; c++ )
+        {
+          cout << "Uniform refinement: " << c << endl;
+          M.uniformrefinement();
+          
+          cout << M << endl;
+          cout << "check " << c << endl;
+          M.check();
+          
+        }
         
         FloatVector sampledata( M.count_vertices() );
         
@@ -48,7 +63,7 @@ int main()
           =
           std::sin( 1. * 2. * 3.14159 * xcoord) 
           *
-          std::sin( 1. * 2. * 3.14159 * ycoord) + 0.1;
+          std::sin( 1. * 2. * 3.14159 * ycoord) + 0.0;
         }
         
         FloatVector samplevectorx( M.count_triangles() );

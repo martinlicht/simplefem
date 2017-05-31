@@ -250,6 +250,24 @@ inline std::ostream& operator<<( std::ostream& os, const ManifoldTriangulation2D
 
 
 
+inline bool duple_equivalent( std::array<int,2> d1, std::array<int,2> d2 )
+{
+  if( d1[0] == d2[0] && d1[1] == d2[1] ) return true;
+  if( d1[0] == d2[1] && d1[1] == d2[0] ) return true;
+  return false;
+}
+
+inline bool triple_equivalent( std::array<int,3> d1, std::array<int,3> d2 )
+{
+  if( d1[0] == d2[0] && d1[1] == d2[1] && d1[2] == d2[2] ) return true;
+  if( d1[0] == d2[0] && d1[2] == d2[1] && d1[1] == d2[2] ) return true;
+  if( d1[1] == d2[0] && d1[0] == d2[1] && d1[2] == d2[2] ) return true;
+  if( d1[1] == d2[0] && d1[2] == d2[1] && d1[0] == d2[2] ) return true;
+  if( d1[2] == d2[0] && d1[0] == d2[1] && d1[1] == d2[2] ) return true;
+  if( d1[2] == d2[0] && d1[1] == d2[1] && d1[0] == d2[2] ) return true;
+  return false;
+}
+
 
 
 
@@ -332,18 +350,18 @@ inline ManifoldTriangulation2D LShapedDomain()
 inline ManifoldTriangulation2D SlitDomain()
 {
     return ManifoldTriangulation2D(
-      2,
-      Coordinates( 2, 10, {
-         0.,  0., // 0
-         1.,  0., // 1
-         1.,  1., // 2
-         0.,  1., // 3
-        -1.,  1., // 4
-        -1.,  0., // 5
-        -1., -1., // 6
-         0., -1., // 7
-         1., -1., // 8
-         1.,  0.  // 9
+      3,
+      Coordinates( 3, 10, {
+         0.,  0., 0, // 0
+         1.,  0., 0.5, // 1
+         1.,  1., 0, // 2
+         0.,  1., 0, // 3
+        -1.,  1., 0, // 4
+        -1.,  0., 0, // 5
+        -1., -1., 0, // 6
+         0., -1., 0, // 7
+         1., -1., 0, // 8
+         1.,  0., -0.5,  // 9
       } ),
       {
         { 0, 1, 2 }, // 0

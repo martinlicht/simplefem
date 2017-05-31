@@ -146,6 +146,21 @@
     Reading only ASCII
   
   
+  ************* Mesh
+  - Mesh
+    - manifold 2D
+    - manifold 3D
+    - allgemeine manifold
+    - allgemeines mesh
+  - uniform refinement:
+    zuerst verstehen, dann implementieren
+  - Konstruktion der FE-Spaces so weit wie geht allgemein halten
+  - bisection refinement:
+    zuerst verstehen, dann implementieren
+  - Ein eigenes Ausgabeformat ist notwendig
+    Unterscheidung nach Spezialklassen
+    I/O in andere Formate ist zweitrangig
+  
   
   
   

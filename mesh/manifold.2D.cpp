@@ -121,11 +121,12 @@ void ManifoldTriangulation2D::check() const
      * 
      */
     
+//     cout << count_vertices() << space << coordinates.getnumber() << nl;
+
     assert( counter_triangles == data_triangle_vertices.size() );
     assert( counter_triangles == data_triangle_edges.size() );
-    
-//     cout << count_vertices() << space << coordinates.getnumber() << nl;
-//     assert( count_vertices() == coordinates.getnumber() );
+    assert( counter_edges     == data_edge_parents.size() );
+    assert( count_vertices() == coordinates.getnumber() );
     
     for( int t = 0; t < counter_triangles; t++ )
     {
@@ -191,18 +192,37 @@ void ManifoldTriangulation2D::check() const
           assert( vertexlists_equivalent( e_vertices1, e_vertices2 ) );
         }
         
-        
-        
-        
     }
     
+    /* check for duplicates */
     
+    for( int t1 = 0; t1 < counter_triangles; t1++ )
+    for( int t2 = 0; t2 < t1; t2++ )
+    {
+      assert( ! triple_equivalent( data_triangle_edges[t1], data_triangle_edges[t2] ) );
+      assert( ! triple_equivalent( data_triangle_vertices[t1], data_triangle_vertices[t2] ) );
+    }
+    
+//     for( int e1 = 0; e1 < counter_edges; e1++ )
+//     for( int e2 = 0; e2 < e1; e2++ )
+//       if     ( data_edge_parents[e1][0] == nullindex && data_edge_parents[e2][0] == nullindex )
+//         assert( data_edge_parents[e1][1] != data_edge_parents[e2][1] );
+//       else if( data_edge_parents[e1][0] == nullindex && data_edge_parents[e2][1] == nullindex )
+//         assert( data_edge_parents[e1][1] != data_edge_parents[e2][0] );
+//       else if( data_edge_parents[e1][1] == nullindex && data_edge_parents[e2][0] == nullindex )
+//         assert( data_edge_parents[e1][0] != data_edge_parents[e2][1] );
+//       else if( data_edge_parents[e1][1] == nullindex && data_edge_parents[e2][1] == nullindex )
+//         assert( data_edge_parents[e1][0] != data_edge_parents[e2][0] );
+//       else
+//         assert( ! duple_equivalent( data_edge_parents[e1], data_edge_parents[e2] ) );
     
 }
 
 void ManifoldTriangulation2D::print( std::ostream& os ) const
 {
     os << "Printe Triangulation of 2D Manifold!" << std::endl;
+    
+    os << counter_triangles << space << counter_edges << space << counter_vertices << nl;
     
     os << "Triangle vertices" << std::endl;
     
@@ -222,8 +242,9 @@ void ManifoldTriangulation2D::print( std::ostream& os ) const
     os << "Edge vertices" << std::endl;
     
     for( int e = 0; e < counter_edges; e++ )
-      std::cout << get_edge_vertices(e)[0] << space << get_edge_vertices(e)[1] << nl;
+      std::cout << e << ":" << get_edge_vertices(e)[0] << space << get_edge_vertices(e)[1] << nl;
     
+    os << "Finished printing" << nl;
     
 }
 
@@ -803,7 +824,7 @@ void ManifoldTriangulation2D::bisect_outer_edge( int e )
     assert( 0 <= e && e < counter_edges );
     assert( count_edge_parents( e ) == 1 );
     
-    int o = 1;
+    int o = 1; /* TODO: Bisection of outer simplices abgleichen mit bisection innerer simplizes */
     
     FloatVector midpoint = get_edge_midpoint( e );
     coordinates.append( midpoint );
@@ -855,9 +876,9 @@ void ManifoldTriangulation2D::bisect_outer_edge( int e )
     t_new_edges_forw[ vertexindex_to_opposing_edgeindex(1) ] = counter_edges + 1;
     t_new_edges_forw[ vertexindex_to_opposing_edgeindex(2) ] = counter_edges;
     
-    std::array<int,2> e_new_parents_back    = {                 t, nullindex };
+    std::array<int,2> e_new_parents_back = {                 t, nullindex };
     std::array<int,2> e_new_parents_forw = { counter_triangles, nullindex };
-    std::array<int,2> e_new_pair_of_t            = { counter_triangles, t };
+    std::array<int,2> e_new_pair_of_t    = { counter_triangles, t         };
     
     
     data_triangle_vertices[t] = t_new_vertices_back;
@@ -1052,8 +1073,219 @@ void ManifoldTriangulation2D::bisect_inner_edge( int e )
 
 
 
+void ManifoldTriangulation2D::uniformrefinement()
+{
+    int offset_triangles = counter_triangles;
+    int offset_edges     = counter_edges;
+    int offset_vertices  = counter_vertices;
+    
+    /* Add new vertices */
+    
+    for( int e = 0; e < counter_edges; e++ )
+    {
+      const auto mid = get_edge_midpoint( e );
+      coordinates.append( mid );
+    }
+    
+    
+    /* update the list of triangles -> vertices */
+    
+    data_triangle_vertices.resize( 4 * counter_triangles );
+    
+    
+    /* sweep over the triangles and update/create the data */
+    
+    for( int t = 0; t < counter_triangles; t++ )
+    {
+        /* Gather auxiliary data */
+      
+        int v_00 = data_triangle_vertices[t][0];
+        int v_11 = data_triangle_vertices[t][1];
+        int v_22 = data_triangle_vertices[t][2];
+        
+        int v_01 = offset_vertices + data_triangle_edges[t][ 0 ];
+        int v_02 = offset_vertices + data_triangle_edges[t][ 1 ];
+        int v_12 = offset_vertices + data_triangle_edges[t][ 2 ];
+        
+        std::array<int,3> new_triangle_vertices_0, new_triangle_vertices_1, new_triangle_vertices_2, new_triangle_vertices_m;
+        
+        new_triangle_vertices_0[0] = v_00;
+        new_triangle_vertices_0[1] = v_01;
+        new_triangle_vertices_0[2] = v_02;
+        
+        new_triangle_vertices_1[0] = v_11;
+        new_triangle_vertices_1[1] = v_01;
+        new_triangle_vertices_1[2] = v_12;
+        
+        new_triangle_vertices_2[0] = v_22;
+        new_triangle_vertices_2[1] = v_02;
+        new_triangle_vertices_2[2] = v_12;
+        
+        new_triangle_vertices_m[0] = v_01;
+        new_triangle_vertices_m[1] = v_02;
+        new_triangle_vertices_m[2] = v_12;
+        
+        data_triangle_vertices[ t + 0 * offset_triangles ] = new_triangle_vertices_0;
+        data_triangle_vertices[ t + 1 * offset_triangles ] = new_triangle_vertices_1;
+        data_triangle_vertices[ t + 2 * offset_triangles ] = new_triangle_vertices_2;
+        data_triangle_vertices[ t + 3 * offset_triangles ] = new_triangle_vertices_m;
+        
+    }
+    
+    
+    
+    /* Count edges, T->E, E->T  */
+    
+    /* delete all edges and fill up with nullindices */ 
+    
+    data_triangle_edges.resize(0);
+    data_triangle_edges.resize( 4 * counter_triangles, { nullindex, nullindex, nullindex } );
+    
+    /* delete all edge parent index */ 
+    
+    data_edge_parents.resize(0);
+    data_edge_parents.reserve( 2 * counter_edges + 3 * counter_triangles );
+    
+    /* first the inner edges */
+    
+    for( int t1 = 0; t1 < data_triangle_vertices.size(); t1++ )
+    for( int t2 = 0; t2 < t1                           ; t2++ )
+    for( int e1 = 0; e1 < 3; e1++ )
+    for( int e2 = 0; e2 < 3; e2++ )
+    {
+        const auto& ve1 = duple_from_triple( data_triangle_vertices[t1], edgeindex_to_vertexindices( e1 ) );
+        const auto& ve2 = duple_from_triple( data_triangle_vertices[t2], edgeindex_to_vertexindices( e2 ) );
+        if( vertexlists_equivalent( ve1, ve2 ) )
+        {
+            data_edge_parents.push_back( { t1, t2 } );
+            data_triangle_edges[t1][ e1 ] = data_edge_parents.size() - 1;
+            data_triangle_edges[t2][ e2 ] = data_edge_parents.size() - 1;
+        }
+    }
+    
+    /* then the outer edges */
+    
+    for( int t = 0; t < data_triangle_vertices.size(); t++ )
+    for( int e = 0; e < 3; e++ )
+    {
+        if( data_triangle_edges[t][e] == nullindex ) 
+        {
+            data_edge_parents.push_back( { t, nullindex } );
+            data_triangle_edges[t][e] = data_edge_parents.size() - 1;
+        }
+    }
+    
+//     counter_edges = data_edge_parents.size();
+    
+    /* update the counters */
+    
+    counter_vertices  = counter_vertices + counter_edges;
+    counter_edges     = 2 * counter_edges + 3 * counter_triangles;
+    counter_triangles = 4 * counter_triangles;
+    
+}
 
 
+
+
+// void ManifoldTriangulation2D::uniformrefinement()
+// {
+//     assert( false );
+//     
+//     int offset_t = counter_triangles;
+//     int offset_e = counter_edges;
+//     int offset_v = counter_vertices;
+//     
+//     /* Add new vertices */
+//     
+//     for( int e = 0; e < counter_edges; e++ )
+//     {
+//       const auto mid = get_edge_midpoint( e );
+//       coordinates.append( mid );
+//     }
+//     
+//     /* resize container */
+//     
+//     data_edges_parents.resize( 2 * counter_edges + 3 * counter_triangles );
+//     
+//     data_triangle_edges.resize( 4 * counter_triangles );
+//     
+//     data_triangle_vertices.resize( 4 * counter_triangles );
+//     
+//     
+//     /* sweep over the triangles and update/create the data */
+//     
+//     /* TODO: We need to keep the old data throughout the whole process
+//     /*       in order to keep up with the parents. Maybe there are other alternatives? */
+//     
+//     for( int t = 0; t < counter_triangles; t++ )
+//     {
+//         /* Gather auxiliary data */
+//       
+//         /* TODO: This is wrong ... */
+//       
+//         int e_01_v0 = data_triangle_edges[t][0];
+//         int e_02_v0 = data_triangle_edges[t][1];
+//         int e_12_v1 = data_triangle_edges[t][2];
+//         
+//         int e_01_v1 = counter_edges + data_triangle_edges[t][0];
+//         int e_02_v2 = counter_edges + data_triangle_edges[t][1];
+//         int e_12_v2 = counter_edges + data_triangle_edges[t][2];
+//         
+//         /* TODO: ... until here */
+//       
+//         int e_m0    = 2 * counter_edges + 0 * counter_triangles + t;
+//         int e_m1    = 2 * counter_edges + 1 * counter_triangles + t;
+//         int e_m2    = 2 * counter_edges + 2 * counter_triangles + t;
+//         
+//         int v_00 = data_triangle_vertices[t][0];
+//         int v_11 = data_triangle_vertices[t][1];
+//         int v_22 = data_triangle_vertices[t][2];
+//         
+//         int v_01 = offset_vertices + offset_edges * vertexindex_to_opposing_edgeindex(2)
+//                    + data_triangle_edges[t][ vertexindex_to_opposing_edgeindex(2) ];
+//         int v_02 = offset_vertices + offset_edges * vertexindex_to_opposing_edgeindex(1) 
+//                    + data_triangle_edges[t][ vertexindex_to_opposing_edgeindex(1) ];
+//         int v_12 = offset_vertices + offset_edges * vertexindex_to_opposing_edgeindex(0) 
+//                    + data_triangle_edges[t][ vertexindex_to_opposing_edgeindex(0) ];
+//         
+//         /* TODO: gather auxiliary data about parents */
+//         
+//         /* Prepare new data sets */
+//       
+//         std:array<int,3> new_triangle_edges_0,    new_triangle_edges_1,    new_triangle_edges_2,    new_triangle_edges_m;
+//         std:array<int,3> new_triangle_vertices_0, new_triangle_vertices_1, new_triangle_vertices_2, new_triangle_vertices_m;
+//         
+//         new_triangle_vertices_0[0] = v_00;      new_triangle_edges_0[0] = ;
+//         new_triangle_vertices_0[1] = v_01;      new_triangle_edges_0[1] = ;
+//         new_triangle_vertices_0[2] = v_02;      new_triangle_edges_0[2] = ;
+//         
+//         new_triangle_vertices_1[0] = v_11;      new_triangle_edges_1[0] = ;
+//         new_triangle_vertices_1[1] = v_01;      new_triangle_edges_1[1] = ;
+//         new_triangle_vertices_1[2] = v_12;      new_triangle_edges_1[2] = ;
+//         
+//         new_triangle_vertices_2[0] = v_22;      new_triangle_edges_2[0] = ;
+//         new_triangle_vertices_2[1] = v_02;      new_triangle_edges_2[1] = ;
+//         new_triangle_vertices_2[2] = v_12;      new_triangle_edges_2[2] = ;
+//         
+//         new_triangle_vertices_m[0] = v_01;      new_triangle_edges_m[0] = ;
+//         new_triangle_vertices_m[1] = v_02;      new_triangle_edges_m[1] = ;
+//         new_triangle_vertices_m[2] = v_12;      new_triangle_edges_m[2] = ;
+//         
+//         /* Update data */
+//       
+//         
+//     }
+//     
+//     
+//     /* update the counters */
+//     
+//     counter_vertices  = counter_edges;
+//     counter_edges     = 2 * counter_edges + 3 * counter_triangles;
+//     counter_triangles = 4 * counter_triangles
+//     
+// }
+        
 
 
 
