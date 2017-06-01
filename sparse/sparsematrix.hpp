@@ -45,10 +45,11 @@ public LinearOperator /* every matrix is a linear operator */
                 return false;
         }
 
-        explicit SparseMatrix(int,int);
+        explicit SparseMatrix( int dimout, int dimin );
         explicit SparseMatrix( const ScalingOperator& matrix );
         explicit SparseMatrix( const DiagonalOperator& matrix );
         explicit SparseMatrix( const DenseMatrix& );
+//         explicit SparseMatrix( int dimout, int dimin, int numentries, std::function<MatrixEntry(int)> generator ); 
         virtual ~SparseMatrix();
 
         virtual void check() const override;
@@ -64,6 +65,8 @@ public LinearOperator /* every matrix is a linear operator */
         void sortentries() const;
         void compressentries() const;
 
+        SparseMatrix getTranspose() const;
+        
         virtual FloatVector apply( const FloatVector& add, Float scaling ) const override;
 
     private:
