@@ -7,6 +7,9 @@ default: all
 densematrix.o: densematrix.hpp densematrix.cpp ../operators/floatvector.hpp ../operators/linearoperator.hpp 
 	$(CC) densematrix.cpp -c -o densematrix.o 
 
+readwrite.o: readwrite.hpp readwrite.cpp ../operators/floatvector.hpp ../operators/linearoperator.hpp 
+	$(CC) readwrite.cpp -c -o readwrite.o 
+
 matrixtensorproduct.o: matrixtensorproduct.cpp matrixtensorproduct.hpp ../operators/floatvector.hpp
 	$(CC) matrixtensorproduct.cpp -c -o matrixtensorproduct.o 
 
@@ -31,7 +34,7 @@ cholesky.o: cholesky.cpp cholesky.hpp ../operators/floatvector.hpp
 iterativeinverse.o: iterativeinverse.cpp iterativeinverse.hpp ../operators/floatvector.hpp
 	$(CC) iterativeinverse.cpp -c -o iterativeinverse.o 
 
-objects = densematrix.o functions.o scalarfunctions.o simplesolver.o qr.factorization.o lu.factorization.o cholesky.o matrixtensorproduct.o iterativeinverse.o
+objects = densematrix.o readwrite.o functions.o scalarfunctions.o simplesolver.o qr.factorization.o lu.factorization.o cholesky.o matrixtensorproduct.o iterativeinverse.o
 
 all: $(objects)
 

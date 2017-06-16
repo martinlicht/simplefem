@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <iterator>
 #include <list>
+#include <vector>
 #include <cctype>
 
 #include "sparsematrix.hpp"
@@ -14,45 +15,57 @@ SparseMatrix::SparseMatrix( int dimout, int dimin )
     check();
 }
 
+SparseMatrix::SparseMatrix( int dimout, int dimin, int numentries )
+: LinearOperator(dimout,dimin), 
+  entries(numentries)
+{
+    check();
+}
+
 SparseMatrix::SparseMatrix( const ScalingOperator& matrix )
-: LinearOperator( matrix.getdimout(), matrix.getdimin() )
+: LinearOperator( matrix.getdimout(), matrix.getdimin() ),
+  entries( matrix.getdimout() )
 {
     assert( getdimin() == getdimout() );
     for( int r = 0; r < getdimout(); r++ )
-        entries.push_back( { r, r, matrix.getscaling() } );
+        entries[r] = { r, r, matrix.getscaling() };
     check();    
 }
 
 SparseMatrix::SparseMatrix( const DiagonalOperator& matrix )
-: LinearOperator( matrix.getdimout(), matrix.getdimin() )
+: LinearOperator( matrix.getdimout(), matrix.getdimin() ),
+  entries( matrix.getdimout() )
 {
     assert( getdimin() == getdimout() );
     for( int r = 0; r < getdimout(); r++ )
-        entries.push_back( { r, r, matrix.getdiagonal().at(r) } );
+        entries[r] = { r, r, matrix.getdiagonal().at(r) };
     check();    
 }
 
 SparseMatrix::SparseMatrix( const DenseMatrix& matrix )
-: LinearOperator( matrix.getdimout(), matrix.getdimin() )
+: LinearOperator( matrix.getdimout(), matrix.getdimin() ), 
+  entries( matrix.getdimout() )
 {
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin(); c++ )
-        entries.push_back( { r, c, matrix.get(r,c) } );
+        entries[ r * getdimin() + c ] = { r, c, matrix.get(r,c) };
     check();    
 }
 
-// SparseMatrix::SparseMatrix( int dimout, int dimin, int numentries, std::function<MatrixEntry(int)> generator )
-// : LinearOperator( matrix.getdimout(), matrix.getdimin() )
-// {
-//     assert( 0 <= numentries );
-//     
-//     for( int i = 0; i < numentries; i++ ) 
-//     {
-//       entries.push_back( generator(i) );
-//     }
-//     
-//     check();    
-// }
+SparseMatrix::SparseMatrix( int dimout, int dimin, int numentries, std::function<MatrixEntry(int)> generator )
+: LinearOperator( dimout, dimin ), 
+  entries(0)
+{
+    assert( 0 <= numentries );
+    entries.reserve( numentries );
+    
+    for( int i = 0; i < numentries; i++ ) 
+    {
+      entries.push_back( generator(i) );
+    }
+    
+    check();    
+}
 
 
 
@@ -100,6 +113,19 @@ FloatVector SparseMatrix::apply( const FloatVector& add, Float scaling ) const
 }
 
 
+
+const SparseMatrix::MatrixEntry& SparseMatrix::getentry( int i ) const
+{
+    assert( 0 <= i && i < getnumberofentries() );
+    return entries[i];
+}
+
+SparseMatrix::MatrixEntry& SparseMatrix::getentry( int i )
+{
+    assert( 0 <= i && i < getnumberofentries() );
+    return entries[i];
+}
+        
 void SparseMatrix::addentry( int r, int c, Float v )
 {
     check();
@@ -132,7 +158,7 @@ void SparseMatrix::clearentries()
     check();
 }
 
-const std::list<SparseMatrix::MatrixEntry>& SparseMatrix::getentries() const
+const std::vector<SparseMatrix::MatrixEntry>& SparseMatrix::getentries() const
 {
     return entries;
 }
@@ -151,7 +177,9 @@ void SparseMatrix::sortentries() const
 //                         return left.row < right.row || left.column < right.column || left.value < right.value;
 //         };
         
-    const_cast<std::list<MatrixEntry>&>(entries).sort( compareMatrixEntry );
+//     const_cast<std::vector<MatrixEntry>&>(entries).sort( compareMatrixEntry );
+   
+   // TODO: Use STL for sorting the entries of a std::vector
     
     check();
 }
@@ -162,22 +190,26 @@ void SparseMatrix::compressentries() const
     
     sortentries();
     
-    auto mergeMatrixEntry 
-    =
-    []( const SparseMatrix::MatrixEntry& left, 
-        const SparseMatrix::MatrixEntry& right )
-      -> SparseMatrix::MatrixEntry
-      {
-        SparseMatrix::MatrixEntry ret;
-        assert( left.row == right.row && left.column == right.column );
-        ret.row = left.row; ret.column = left.column;
-        ret.value = left.value + right.value;
-        return ret; 
-      };
-                                            
-    mergeelementsinsortedlist<SparseMatrix::MatrixEntry>
-    ( const_cast<std::list<MatrixEntry>&>(entries), 
-    mergeMatrixEntry, compareMatrixEntry );
+    // TODO: 
+    // Develop compression of sparse matrix
+    // when the entries are in a std::vector 
+    
+//     auto mergeMatrixEntry 
+//     =
+//     []( const SparseMatrix::MatrixEntry& left, 
+//         const SparseMatrix::MatrixEntry& right )
+//       -> SparseMatrix::MatrixEntry
+//       {
+//         SparseMatrix::MatrixEntry ret;
+//         assert( left.row == right.row && left.column == right.column );
+//         ret.row = left.row; ret.column = left.column;
+//         ret.value = left.value + right.value;
+//         return ret; 
+//       };
+//                                             
+//     mergeelementsinsortedlist<SparseMatrix::MatrixEntry>
+//     ( const_cast<std::list<MatrixEntry>&>(entries), 
+//     mergeMatrixEntry, compareMatrixEntry );
     
     check();  
 }

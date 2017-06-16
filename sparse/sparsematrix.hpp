@@ -1,7 +1,7 @@
 #ifndef INCLUDEGUARD_SPARSEMATRIX
 #define INCLUDEGUARD_SPARSEMATRIX
 
-#include <list>
+#include <vector>
 
 class SparseMatrix;
 // class MatrixEntry;
@@ -46,19 +46,22 @@ public LinearOperator /* every matrix is a linear operator */
         }
 
         explicit SparseMatrix( int dimout, int dimin );
+        explicit SparseMatrix( int dimout, int dimin, int numentries );
         explicit SparseMatrix( const ScalingOperator& matrix );
         explicit SparseMatrix( const DiagonalOperator& matrix );
         explicit SparseMatrix( const DenseMatrix& );
-//         explicit SparseMatrix( int dimout, int dimin, int numentries, std::function<MatrixEntry(int)> generator ); 
+        explicit SparseMatrix( int dimout, int dimin, int numentries, std::function<MatrixEntry(int)> generator ); 
         virtual ~SparseMatrix();
 
         virtual void check() const override;
         virtual void print( std::ostream& ) const override;
         virtual void printplain( std::ostream& ) const;
 
+        const MatrixEntry& getentry( int ) const;
+        MatrixEntry& getentry( int );
         void addentry( int, int, Float );
         void addentry( MatrixEntry );
-        const std::list<MatrixEntry>& getentries() const;
+        const std::vector<MatrixEntry>& getentries() const;
         void clearentries();
 
         int getnumberofentries() const;
@@ -71,7 +74,7 @@ public LinearOperator /* every matrix is a linear operator */
 
     private:
 
-        std::list<MatrixEntry> entries;
+        std::vector<MatrixEntry> entries; // TODO: Change from list to vector 
     
 };
   
