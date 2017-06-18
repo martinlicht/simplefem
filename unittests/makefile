@@ -149,6 +149,9 @@ mesh.tests = test.mesh.coordinates.out test.mesh.simplicialmesh.out test.mesh.ma
 
 
 
+test.container.out: test.container.cpp 
+	$(CC) test.container.cpp  -o test.container.out
+
 
     
 all: $(combinatorics.tests) $(operators.tests) $(dense.tests) $(mesh.tests) 
