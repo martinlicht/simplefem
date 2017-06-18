@@ -6,6 +6,7 @@
 #include <iterator>
 #include <list>
 #include <cctype>
+#include <cmath>
 
 #include "../combinatorics/generateindexmaps.hpp"
 #include "densematrix.hpp"

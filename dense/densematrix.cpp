@@ -4,6 +4,7 @@
 #include <iterator>
 #include <list>
 #include <cctype>
+#include <cmath>
 
 #include "densematrix.hpp"
 

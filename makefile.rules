@@ -117,5 +117,6 @@ CWARNINGS5.2=-Wabi\
  
 # -fno-exceptions
 # -fmax-errors=1
-CC = g++ -O3 -g -Wno-unused-variable -Wno-sign-compare -std=c++11 -Wall -Wextra -pedantic -Werror=implicit
+
+CC = g++ -O3 -g -std=c++1z -pedantic -Wall -Wextra -Wno-unused-variable -Wno-sign-compare -Werror=implicit
 
