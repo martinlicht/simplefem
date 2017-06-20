@@ -15,7 +15,6 @@
 #include "../combinatorics/generateindexmaps.hpp"
 #include "../operators/floatvector.hpp"
 #include "coordinates.hpp"
-#include "simplicialmesh.hpp"
 #include "io.coordinates.hpp"
 
 

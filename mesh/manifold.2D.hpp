@@ -140,7 +140,7 @@ class ManifoldTriangulation2D
         
         
         
-        /* parents of an edge */
+        /* triangle parents of an edge */
         
         bool is_edge_parent( int t, int e ) const;
         

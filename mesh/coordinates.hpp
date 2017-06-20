@@ -36,8 +36,8 @@ class Coordinates
 
     public:
 
-        Coordinates( int, int );
-        Coordinates( int, int, const std::vector<Float>& );
+        Coordinates( int dimension, int number );
+        Coordinates( int dimension, int number, const std::vector<Float>& );
 
         void check() const;
         void print( std::ostream& ) const;

@@ -8,7 +8,6 @@
 #include "../basic.hpp"
 #include "../mesh/coordinates.hpp"
 #include "../mesh/manifold.2D.hpp"
-#include "../mesh/vtkwriter.hpp"
 
 
 using namespace std;
