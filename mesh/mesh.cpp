@@ -120,7 +120,7 @@ bool Mesh::is_supersimplex( int sup, int sub, int cellsup, int cellsub ) const
 }
 
 
-int Mesh::get_supersimplix_index( int sup, int sub, int cellsup, int cellsub ) const
+int Mesh::get_supersimplex_index( int sup, int sub, int cellsup, int cellsub ) const
 {
   
   assert( supersimplices_listed( sup, sub ) );

@@ -44,7 +44,16 @@ class Mesh
         
         virtual void print( std::ostream& out ) const = 0;
         
-        static const int nullindex = 777777; // std::numeric_limits<int>::max();
+        #ifdef NDEBUG
+        static const int nullindex = std::numeric_limits<int>::max();
+        #else
+        static const int nullindex = 777777; 
+        #endif
+        
+        static int is_not_nullindex( int i ){ return i != nullindex; }
+        
+        static int is_nullindex( int i ){ return i == nullindex; }
+        
         
         
         /* Basic data */
@@ -100,14 +109,15 @@ class Mesh
         virtual bool supersimplices_listed( int sup, int sub ) const = 0;
         
         virtual const std::vector<int> getsupersimplices( int sup, int sub, int cell ) const = 0;
-        // TODO: implement this via an iterator template 
         
         virtual bool is_supersimplex( int sup, int sub, int cellsup, int cellsub ) const;
         
-        virtual int get_supersimplix_index( int sup, int sub, int cellsup, int cellsub ) const;
+        virtual int get_supersimplex_index( int sup, int sub, int cellsup, int cellsub ) const;
         
+        // TODO: Iterator interface
+        // ContainerInterface -- container.hpp 
+        // derive from that class 
         
-        static int is_not_nullindex( int i ){ return i != nullindex; }
         
         
         
@@ -115,8 +125,6 @@ class Mesh
         
         int innerdimension;
         int outerdimension;
-        
-    protected:
         
         Coordinates coordinates;
         

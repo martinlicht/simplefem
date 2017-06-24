@@ -14,7 +14,7 @@
 #include "../combinatorics/generateindexmaps.hpp"
 #include "../operators/floatvector.hpp"
 #include "coordinates.hpp"
-#include "mesh.manifold.2D.hpp"
+#include "mesh.manifold2D.hpp"
 
 
 
@@ -54,7 +54,7 @@ MeshManifold2D::MeshManifold2D(
 //     data_vertex_firstparent(0)
 {
     
-    coordinates = coords;
+    getcoordinates() = coords;
     
     /* 1. Count triangles, transfer data */ 
     /* DONE */
@@ -121,12 +121,12 @@ void MeshManifold2D::check() const
      * 
      */
     
-//     cout << count_vertices() << space << coordinates.getnumber() << nl;
+//     cout << count_vertices() << space << getcoordinates().getnumber() << nl;
 
     assert( counter_triangles == data_triangle_vertices.size() );
     assert( counter_triangles == data_triangle_edges.size() );
     assert( counter_edges     == data_edge_parents.size() );
-    assert( count_vertices() == coordinates.getnumber() );
+    assert( count_vertices() == getcoordinates().getnumber() );
     
     for( int t = 0; t < counter_triangles; t++ )
     {
@@ -987,7 +987,7 @@ void MeshManifold2D::bisect_outer_edge( int e )
     int o = 1; /* TODO: Bisection of outer simplices abgleichen mit bisection innerer simplizes */
     
     FloatVector midpoint = get_edge_midpoint( e );
-    coordinates.append( midpoint );
+    getcoordinates().append( midpoint );
     
     int t            = get_triangle_edge_parents(e)[0];
     int e_local      = indexof_triangle_edge( t, e );
@@ -1071,7 +1071,7 @@ void MeshManifold2D::bisect_inner_edge( int e )
     assert( count_triangle_edge_parents( e ) == 2 );
     
     FloatVector midpoint = get_edge_midpoint( e );
-    coordinates.append( midpoint );
+    getcoordinates().append( midpoint );
     
     /* gather auxiliary variables */
     
@@ -1244,7 +1244,7 @@ void MeshManifold2D::uniformrefinement()
     for( int e = 0; e < counter_edges; e++ )
     {
       const auto mid = get_edge_midpoint( e );
-      coordinates.append( mid );
+      getcoordinates().append( mid );
     }
     
     
@@ -1361,7 +1361,7 @@ void MeshManifold2D::uniformrefinement()
 //     for( int e = 0; e < counter_edges; e++ )
 //     {
 //       const auto mid = get_edge_midpoint( e );
-//       coordinates.append( mid );
+//       getcoordinates().append( mid );
 //     }
 //     
 //     /* resize container */
@@ -1459,9 +1459,9 @@ FloatVector MeshManifold2D::get_triangle_midpoint( int t )
     assert( 0 <= t && t < counter_triangles );
     FloatVector mid( getouterdimension() );
     for( int d = 0; d < getouterdimension(); d++ )
-      mid[d] = (   coordinates.getdata( get_triangle_vertices(t)[0], d )
-                 + coordinates.getdata( get_triangle_vertices(t)[1], d )
-                 + coordinates.getdata( get_triangle_vertices(t)[2], d )
+      mid[d] = (   getcoordinates().getdata( get_triangle_vertices(t)[0], d )
+                 + getcoordinates().getdata( get_triangle_vertices(t)[1], d )
+                 + getcoordinates().getdata( get_triangle_vertices(t)[2], d )
                ) / 3.;
     return mid; 
 }
@@ -1471,8 +1471,8 @@ FloatVector MeshManifold2D::get_edge_midpoint    ( int e )
     assert( 0 <= e && e < counter_edges );
     FloatVector mid( getouterdimension() );
     for( int d = 0; d < getouterdimension(); d++ )
-      mid[d] = ( coordinates.getdata( get_edge_vertices(e)[0], d ) 
-                 + coordinates.getdata( get_edge_vertices(e)[1], d )
+      mid[d] = ( getcoordinates().getdata( get_edge_vertices(e)[0], d ) 
+                 + getcoordinates().getdata( get_edge_vertices(e)[1], d )
                ) / 2.;
     return mid;
 }

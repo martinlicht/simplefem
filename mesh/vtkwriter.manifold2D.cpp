@@ -2,7 +2,7 @@
 #include "vtkwriter.manifold2D.hpp"
 
 
-VTK_MeshWriter_Manifold2D::VTK_MeshWriter_Manifold2D( ManifoldTriangulation2D& m2d, std::ostream& os )
+VTK_MeshWriter_Manifold2D::VTK_MeshWriter_Manifold2D( MeshManifold2D& m2d, std::ostream& os )
 : mesh(m2d), os(os)
 {
     m2d.check();

@@ -133,11 +133,11 @@ test.mesh.coordinates.out: test.mesh.coordinates.cpp $(Includes.mesh)
 # test.mesh.simplicialmesh.out: test.mesh.simplicialmesh.cpp $(Includes.mesh)
 # 	$(CC) test.mesh.simplicialmesh.cpp $(Objects) -o test.mesh.simplicialmesh.out
 
-test.mesh.manifold.2D.out: test.mesh.manifold.2D.cpp $(Includes.mesh)
-	$(CC) test.mesh.manifold.2D.cpp $(Objects) -o test.mesh.manifold.2D.out
+test.mesh.manifold2D.out: test.mesh.manifold2D.cpp $(Includes.mesh)
+	$(CC) test.mesh.manifold2D.cpp $(Objects) -o test.mesh.manifold2D.out
 
-test.mesh.mesh.manifold.2D.out: test.mesh.mesh.manifold.2D.cpp $(Includes.mesh)
-	$(CC) test.mesh.mesh.manifold.2D.cpp $(Objects) -o test.mesh.mesh.manifold.2D.out
+# test.mesh.mesh.manifold.2D.out: test.mesh.mesh.manifold.2D.cpp $(Includes.mesh)
+# 	$(CC) test.mesh.mesh.manifold.2D.cpp $(Objects) -o test.mesh.mesh.manifold.2D.out
 
 # test.mesh.vtkwriter.out: test.mesh.vtkwriter.cpp $(Includes.mesh)
 # 	$(CC) test.mesh.vtkwriter.cpp $(Objects) -o test.mesh.vtkwriter.out
@@ -148,8 +148,8 @@ test.mesh.vtkwriter.manifold2D.out: test.mesh.vtkwriter.manifold2D.cpp $(Include
 # test.mesh.io.out: test.mesh.io.cpp $(Includes.mesh)
 # 	$(CC) test.mesh.io.cpp $(Objects) -o test.mesh.io.out
 
-mesh.tests = test.mesh.coordinates.out test.mesh.manifold.2D.out test.mesh.mesh.manifold.2D.out test.mesh.vtkwriter.manifold2D.out
-# test.mesh.simplicialmesh.out test.mesh.io.out test.mesh.vtkwriter.out 
+mesh.tests = test.mesh.coordinates.out test.mesh.manifold2D.out test.mesh.vtkwriter.manifold2D.out
+# test.mesh.simplicialmesh.out test.mesh.io.out test.mesh.vtkwriter.out test.mesh.mesh.manifold.2D.out 
 
 
 test.container.out: test.container.cpp 

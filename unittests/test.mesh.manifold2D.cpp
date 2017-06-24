@@ -7,7 +7,7 @@
 
 #include "../basic.hpp"
 #include "../mesh/coordinates.hpp"
-#include "../mesh/mesh.manifold.2D.hpp"
+#include "../mesh/mesh.manifold2D.hpp"
 
 
 using namespace std;

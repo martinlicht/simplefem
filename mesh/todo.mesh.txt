@@ -1,26 +1,16 @@
 
 
-    SimplicialMesh
-    - check 
-    - robusten 
-    
     Coordinates 
     - check 
     - robusten 
     
-    Generate SimplicialMesh
-    - robusten 
-    - unittest 
-    - 2D Torus 
-    - Duplikation 
+    Abstract Mesh Class
+    - simplify the interface and the access to super simplices 
+    - move the coordinates member somewhere different 
     
-    VTKWriter
-    - Ausgabe von Skalarwerten 
-    - Ausgabe von Vektorfeldern
-    
-    ---------------------------------------
-    
-    SimplicialMesh
-    - uniform refinement 
-    - local refinement 
-    
+    Mesh 2D Triangulation 
+    - clean up the naming of variables
+      (temporarily copy the class declaration into the cpp file, edit, copy back)
+    - develop vertex-parent lists as local data.
+    - improve upon the bisection methods
+    - introduce a for-each interface to improve the navigation

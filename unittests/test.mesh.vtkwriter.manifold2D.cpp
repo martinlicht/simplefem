@@ -9,7 +9,7 @@
 
 #include "../basic.hpp"
 #include "../mesh/coordinates.hpp"
-#include "../mesh/manifold.2D.hpp"
+#include "../mesh/mesh.manifold2D.hpp"
 #include "../mesh/vtkwriter.manifold2D.hpp"
 
 
@@ -22,7 +22,7 @@ int main()
     
     {
         
-        ManifoldTriangulation2D M =  UnitSquare();
+        MeshManifold2D M =  UnitSquare();
         
         cout << M << endl;
 

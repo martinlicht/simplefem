@@ -6,7 +6,7 @@
 
 #include "../basic.hpp"
 #include "../mesh/coordinates.hpp"
-#include "../mesh/manifold.2D.hpp"
+#include "../mesh/mesh.manifold2D.hpp"
 
 /*******************
 ****  
@@ -20,7 +20,7 @@ class VTK_MeshWriter_Manifold2D
     
     public:
         
-        VTK_MeshWriter_Manifold2D( ManifoldTriangulation2D& m2d, std::ostream& os );
+        VTK_MeshWriter_Manifold2D( MeshManifold2D& m2d, std::ostream& os );
         
         void writePreamble( const char* name );
         
@@ -40,7 +40,7 @@ class VTK_MeshWriter_Manifold2D
         
     private:
     
-        const ManifoldTriangulation2D& mesh;
+        const MeshManifold2D& mesh;
         std::ostream& os;
         
 };

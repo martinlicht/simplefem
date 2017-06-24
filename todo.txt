@@ -3,6 +3,12 @@
   
   **** TODO ***
   
+  Mehs class umbenennen in MeshInterface or so ...
+  
+  Namespaces
+    - introduce a namespace for FEECPP
+    - subnamespaces below that level 
+  
   Question:
     - how to manage unit test for a software library?
     - how to manage makefiles? what dependencies to make explicit?
