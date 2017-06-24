@@ -1,21 +1,31 @@
 
 
+#include <algorithm>
+
+
 #include "mesh.hpp"
+#include "../combinatorics/generateindexmaps.hpp"
+
 
 Mesh::Mesh( int inner, int outer )
 : innerdimension(inner), outerdimension(outer),
-  Coordinates(outer,0)
+  coordinates(outer,0)
 {
   
-  /* TODO: Build up the static auxiliary data */
+  /* Build up the static auxiliary data */
   for( int sup = 0; sup <= innerdimension; sup++ )
   for( int sub = 0; sub <= sup; sub++ )
   {
-    IndexRange from;
-    IndexRange to;
+//     std::cout << sup << space << sub << std::endl;
+    IndexRange from( 0, countsubsimplices( sup, sub ) - 1 );
+    IndexRange to( 0, innerdimension );
+//     std::cout << "generate sigmas" << nl << from << nl << to << std::endl;
     std::vector<IndexMap> sigmas = generateSigmas( from, to );
-    auxdata[ pair<int,int>(sup,sub) ] = sigmas;
+//     std::cout << "insert sigmas" << std::endl;
+    auxdata[ std::pair<int,int>(sup,sub) ] = sigmas;
   }
+  
+//   std::cout << "mesh constructor" << std::endl;
   
 }
 
@@ -45,7 +55,7 @@ void Mesh::check() const
 {
   
   // check dimension 
-  assert( outerdimension == coordinates.getouterdimension() );
+  assert( outerdimension == coordinates.getdimension() );
   
   // the vertices and volumes must be counted 
   assert( dimensioncounted( innerdimension ) );

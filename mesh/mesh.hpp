@@ -35,15 +35,6 @@
 class Mesh
 {
     
-//     public:
-//         
-//         enum class {
-//           unique_cells                = 0b00000001,
-//           has_top_dimension_container = 0b00000010,
-//           restricted_faces            = 0b00000111
-//           //
-//         } mesh_attribute
-        
     public:
         
         
@@ -116,6 +107,8 @@ class Mesh
         virtual int get_supersimplix_index( int sup, int sub, int cellsup, int cellsub ) const;
         
         
+        static int is_not_nullindex( int i ){ return i != nullindex; }
+        
         
         
     private:
@@ -123,15 +116,17 @@ class Mesh
         int innerdimension;
         int outerdimension;
         
+    protected:
+        
         Coordinates coordinates;
         
     private:
         
-        static std::map< pair<int,int>, std::vector<IndexMap> > auxdata;
+        std::map< std::pair<int,int>, std::vector<IndexMap> > auxdata;
         
     public: 
         
-        static const auto& getauxdata() const { return auxdata };
+        const auto& getauxdata() { return auxdata; };
         
 };
 
