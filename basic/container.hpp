@@ -1,5 +1,5 @@
-#ifndef INCLUDEDGARD_CONTAINER_HPP
-#define INCLUDEDGARD_CONTAINER_HPP
+#ifndef INCLUDEGUARD_CONTAINER_HPP
+#define INCLUDEGUARD_CONTAINER_HPP
 
 #include <ctime>     
 #include <cstdlib>     

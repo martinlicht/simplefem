@@ -17,7 +17,7 @@
 ***  
 ***************/
 
-std::vector<MultiIndex> generateMultiIndices( const IndexRange&, int );
+std::vector<MultiIndex> generateMultiIndices( const IndexRange& ir, int absval );
 
 
 

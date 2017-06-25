@@ -10,6 +10,7 @@ Objects.dense = ../dense/*.o
 Objects.sparse = ../sparse/*.o
 Objects.solver = ../solver/*.o
 Objects.mesh = ../mesh/*.o
+Objects.vtk = ../vtk/*.o
 
 Headers.combinatorics = ../combinatorics/*.o
 Headers.operators = ../operators/*.o
@@ -17,6 +18,7 @@ Headers.dense = ../dense/*.o
 Headers.sparse = ../sparse/*.o
 Headers.solver = ../solver/*.o
 Headers.mesh = ../mesh/*.o
+Headers.vtk = ../vtk/*.o
 
 Includes.combinatorics = $(Headers.combinatorics) $(Objects.combinatorics) 
 Includes.operators = $(Headers.operators) $(Objects.operators) $(Includes.combinatorics)
@@ -24,10 +26,11 @@ Includes.dense = $(Headers.dense) $(Objects.dense) $(Includes.operators)
 Includes.sparse = $(Headers.sparse) $(Objects.sparse) $(Includes.operators)
 Includes.solver = $(Headers.solver) $(Objects.solver) $(Includes.operators)
 Includes.mesh = $(Headers.mesh) $(Objects.mesh) $(Objects.combinatorics) $(Includes.operators)
+Includes.vtk = $(Headers.vtk) $(Objects.vtk) $(Includes.mesh)
 
 
-Objects = ../combinatorics/*.o ../operators/*.o ../dense/*.o ../sparse/*.o ../solver/*.o ../mesh/*.o
-Headers = ../combinatorics/*.hpp ../operators/*.hpp ../dense/*.hpp ../sparse/*.hpp ../solver/*.hpp ../mesh/*.hpp
+Objects = ../combinatorics/*.o ../operators/*.o ../dense/*.o ../sparse/*.o ../solver/*.o ../mesh/*.o ../vtk/*.o
+Headers = ../combinatorics/*.hpp ../operators/*.hpp ../dense/*.hpp ../sparse/*.hpp ../solver/*.hpp ../mesh/*.hpp ../vtk/*.hpp
 
 Includes = $(Headers) $(Objects) 
 
@@ -115,6 +118,9 @@ sparse.tests = test.sparse.sparsematrix.out
 
 
 
+
+
+
 test.solver.crm.out: test.solver.crm.cpp $(Includes.solver)
 	$(CC) test.solver.crm.cpp $(Objects) -o test.solver.crm.out
 
@@ -139,17 +145,28 @@ test.mesh.manifold2D.out: test.mesh.manifold2D.cpp $(Includes.mesh)
 # test.mesh.mesh.manifold.2D.out: test.mesh.mesh.manifold.2D.cpp $(Includes.mesh)
 # 	$(CC) test.mesh.mesh.manifold.2D.cpp $(Objects) -o test.mesh.mesh.manifold.2D.out
 
-# test.mesh.vtkwriter.out: test.mesh.vtkwriter.cpp $(Includes.mesh)
-# 	$(CC) test.mesh.vtkwriter.cpp $(Objects) -o test.mesh.vtkwriter.out
-
-test.mesh.vtkwriter.manifold2D.out: test.mesh.vtkwriter.manifold2D.cpp $(Includes.mesh)
-	$(CC) test.mesh.vtkwriter.manifold2D.cpp $(Objects) -o test.mesh.vtkwriter.manifold2D.out
-
 # test.mesh.io.out: test.mesh.io.cpp $(Includes.mesh)
 # 	$(CC) test.mesh.io.cpp $(Objects) -o test.mesh.io.out
 
 mesh.tests = test.mesh.coordinates.out test.mesh.manifold2D.out test.mesh.vtkwriter.manifold2D.out
 # test.mesh.simplicialmesh.out test.mesh.io.out test.mesh.vtkwriter.out test.mesh.mesh.manifold.2D.out 
+
+
+
+
+
+# test.vtk.vtkwriter.out: test.vtk.vtkwriter.cpp $(Includes.vtk)
+# 	$(CC) test.vtk.vtkwriter.cpp $(Objects) -o test.vtk.vtkwriter.out
+
+test.vtk.vtkwriter.manifold2D.out: test.vtk.vtkwriter.manifold2D.cpp $(Includes.vtk)
+	$(CC) test.vtk.vtkwriter.manifold2D.cpp $(Objects) -o test.vtk.vtkwriter.manifold2D.out
+
+vtk.tests = test.mesh.vtkwriter.manifold2D.out
+
+
+
+
+
 
 
 test.container.out: test.container.cpp 

@@ -1,5 +1,5 @@
-#ifndef INCLUDEDGARD_BASIC_HPP
-#define INCLUDEDGARD_BASIC_HPP
+#ifndef INCLUDEGUARD_BASIC_HPP
+#define INCLUDEGUARD_BASIC_HPP
 
 #include <ctime>     
 #include <cstdlib>     

@@ -23,7 +23,7 @@ class IndexRange
     
     public:
         
-        IndexRange( int, int );
+        IndexRange( int from, int to );
         
         void check() const;
         void print( std::ostream& ) const;
@@ -34,11 +34,11 @@ class IndexRange
         int getlength() const; /* synonym to cardinality */
         
         bool isempty() const;
-        bool contains( int ) const;
+        bool contains( int element ) const;
         bool contains( const IndexRange& subir ) const;
-        bool operator== ( const IndexRange& ) const;
-        int element2position( int ) const;
-        int position2element( int ) const;
+        bool operator== ( const IndexRange&  ) const;
+        int element2position( int element ) const;
+        int position2element( int position ) const;
         
         /* For each semantics */ 
         
