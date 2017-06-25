@@ -14,7 +14,38 @@
 #include "../operators/densematrix.hpp"
 #include "../operators/linearoperator.hpp"
 
-#include "diffmatrix.element.hpp"
+#include "element.matrix.hpp"
+
+
+
+
+
+
+
+
+
+int polysigmaindex2fullindex( int n, int r, int k, int poly_i, int sigma_i )
+{
+  int poly_n = binomial( n + r, r );
+  int sigma_n = binomial( n + 1, k );
+  assert( 0 <= poly_i && poly_i < poly_n );
+  assert( 0 <= sigma_i && sigma_i < sigma_n );
+  return poly_i * poly_n + sigma_i;
+}
+
+int fullindex2polysigmaindex( int n, int r, int k, int full_i, int& poly_i, int& sigma_i )
+{
+  int poly_n = binomial( n + r, r );
+  int sigma_n = binomial( n + 1, k );
+  assert( 0 <= full_i && full_i < poly_n * sigma_n );
+  poly_i = full_i / poly_n;
+  sigma_i = full_i % poly_n;
+}
+
+
+
+
+
 
 
 

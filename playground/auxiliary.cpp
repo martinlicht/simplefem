@@ -8,7 +8,7 @@
 #include "../combinatorics/multiindex.hpp"
 #include "../combinatorics/generatemultiindices.hpp"
 #include "../operators/matrixalgorithm.hpp"
-#include "massmatrix.element.hpp"
+#include "auxiliary.hpp"
 
 
 

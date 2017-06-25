@@ -1,5 +1,5 @@
-#ifndef INCLUDEGUARD_MASSMATRIX_ELEMENT
-#define INCLUDEGUARD_MASSMATRIX_ELEMENT
+#ifndef INCLUDEGUARD_FEM_AUXILIARY
+#define INCLUDEGUARD_FEM_AUXILIARY
 
 
 #include <vector>
@@ -21,9 +21,9 @@
 ****  
 ****  Method produces an element mass matrix 
 ****  
-****  - workds completely stand alone 
-****  - any dimension 
-****  - 
+****  - works completely stand alone 
+****  - any dimension, polynomial degree, form degree
+****  - uses only the distances between the vertices
 ****  
 ****  
 *******************/
