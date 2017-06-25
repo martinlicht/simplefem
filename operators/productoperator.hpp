@@ -1,5 +1,5 @@
-#ifndef INCLUDEGUARD_PRODUCTOPERATOR
-#define INCLUDEGUARD_PRODUCTOPERATOR
+#ifndef INCLUDEGUARD_OPERATOR_PRODUCT
+#define INCLUDEGUARD_OPERATOR_PRODUCT
 
 #include "../basic.hpp"
 #include "linearoperator.hpp"

@@ -1,5 +1,5 @@
-#ifndef INCLUDEGUARD_SUMOPERATOR
-#define INCLUDEGUARD_SUMOPERATOR
+#ifndef INCLUDEGUARD_OPERATOR_SUM
+#define INCLUDEGUARD_OPERATOR_SUM
 
 #include "../basic.hpp"
 #include "linearoperator.hpp"

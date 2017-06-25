@@ -1,5 +1,5 @@
-#ifndef INCLUDEGUARD_SCALINGOPERATOR
-#define INCLUDEGUARD_SCALINGOPERATOR
+#ifndef INCLUDEGUARD_OPERATOR_SCALING
+#define INCLUDEGUARD_OPERATOR_SCALING
 
 #include "../basic.hpp"
 #include "linearoperator.hpp"

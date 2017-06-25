@@ -1,5 +1,5 @@
-#ifndef INCLUDEGUARD_DIAGONALOPERATOR
-#define INCLUDEGUARD_DIAGONALOPERATOR
+#ifndef INCLUDEGUARD_OPERATOR_DIAGONAL
+#define INCLUDEGUARD_OPERATOR_DIAGONAL
 
 #include "../basic.hpp"
 #include "linearoperator.hpp"
