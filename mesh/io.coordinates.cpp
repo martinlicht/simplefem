@@ -4,7 +4,8 @@
 #include <map>
 #include <utility>
 #include <algorithm>
-#include <iostream>
+#include <istream>
+#include <ostream>
 #include <fstream>
 
 
@@ -20,7 +21,7 @@
 
 
 
-void writeCoordinatesPath( const char* filename, const Coordinates& coords, bool sugar )
+void writeCoordinates( const char* filename, const Coordinates& coords, bool sugar )
 {
     std::fstream myfile;
     myfile.open(filename, std::ios::out );
@@ -28,7 +29,7 @@ void writeCoordinatesPath( const char* filename, const Coordinates& coords, bool
     myfile.close();
 }
 
-Coordinates readCoordinatesPath( const char* filename )
+Coordinates readCoordinates( const char* filename )
 {
     std::fstream myfile;
     myfile.open(filename, std::ios::in );
@@ -42,9 +43,9 @@ void writeCoordinates( std::ostream& out, const Coordinates& coords, bool sugar 
 {
     /* Preamble */
     if( sugar ) out << "Writing coordinates" << std::endl;
-    if( sugar ) out << "Dimension of coordinates: ";
+    if( sugar ) out << "Dimension: "         << std::endl;;
     out << coords.getdimension() << std::endl;
-    if( sugar ) out << "Number of points: " << std::endl;
+    if( sugar ) out << "Number of points: "  << std::endl;
     out << coords.getnumber() << std::endl;
     
     /* data */

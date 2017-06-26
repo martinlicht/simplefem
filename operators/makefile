@@ -7,6 +7,9 @@ default: all
 floatvector.o: floatvector.hpp floatvector.cpp 
 	$(CC) floatvector.cpp -c -o floatvector.o 
 
+io.floatvector.o: io.floatvector.hpp io.floatvector.cpp floatvector.hpp floatvector.cpp 
+	$(CC) io.floatvector.cpp -c -o io.floatvector.o 
+
 linearoperator.o: linearoperator.hpp linearoperator.cpp 
 	$(CC) linearoperator.cpp -c -o linearoperator.o 
 
@@ -30,7 +33,7 @@ blockoperator.o: blockoperator.hpp blockoperator.cpp floatvector.hpp linearopera
 
 
 
-objects = floatvector.o linearoperator.o productoperator.o sumoperator.o scalingoperator.o diagonaloperator.o blockdiagonaloperator.o blockoperator.o 
+objects = floatvector.o io.floatvector.o linearoperator.o productoperator.o sumoperator.o scalingoperator.o diagonaloperator.o blockdiagonaloperator.o blockoperator.o 
 
 
 

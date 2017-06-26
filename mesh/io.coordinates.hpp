@@ -1,15 +1,10 @@
-#ifndef INCLUDEGUARD_MESH_IOCOORDINATES
-#define INCLUDEGUARD_MESH_IOCOORDINATES
+#ifndef INCLUDEGUARD_MESH_IO_COORDINATES
+#define INCLUDEGUARD_MESH_IO_COORDINATES
 
 
 #include <string>
-#include <vector>
-#include <map>
-#include <utility>
-#include <iostream>
 #include <istream>
 #include <ostream>
-#include <fstream>
 
 
 #include "../basic.hpp"
@@ -18,18 +13,18 @@
 
 /*******************
 ****  
-****  Input / Output of simplicial meshes 
+****  Input / Output of coordinate objects 
 ****  
 *******************/
 
 
-void writeCoordinates( std::ostream&, const Coordinates&, bool = false );
+void writeCoordinates( std::ostream& out, const Coordinates& coordinates, bool sugar = false );
 
-Coordinates readCoordinates( std::istream& );
+Coordinates readCoordinates( std::istream& in );
 
-void writeCoordinatesPath( const char*, const Coordinates&, bool = false );
+void writeCoordinates( const char* filename, const Coordinates& coordinates, bool sugar = false );
 
-Coordinates readCoordinatesPath( const char* );
+Coordinates readCoordinates( const char* filename );
 
 
 

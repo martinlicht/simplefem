@@ -66,13 +66,22 @@ class MeshManifold2D
 
     public:
     
+        MeshManifold2D( int outerdim = 2 );
+        
         MeshManifold2D( 
             int outerdim,
             const Coordinates& coords,
-            const std::vector<std::array<int,3>> triangles
+            const std::vector<std::array<int,3>> triangle_vertices
         );
         
-        MeshManifold2D( int outerdim = 2 );
+        MeshManifold2D( 
+            int outerdim,
+            const Coordinates& coords,
+            const std::vector<std::array<int,3>> triangle_vertices,
+            const std::vector<std::array<int,3>> triangle_edges,
+            const std::vector<std::array<int,2>> edge_parents
+        );
+        
         
         virtual ~MeshManifold2D();
         

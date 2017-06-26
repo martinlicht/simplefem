@@ -104,6 +104,32 @@ MeshManifold2D::MeshManifold2D(
 }
 
 
+MeshManifold2D::MeshManifold2D( 
+    int outerdim,
+    const Coordinates& coords,
+    const std::vector<std::array<int,3>> triangle_vertices,
+    const std::vector<std::array<int,3>> triangle_edges,
+    const std::vector<std::array<int,2>> edge_parents
+)
+:
+    Mesh( 2, outerdim ),
+    
+    counter_triangles( triangle_vertices.size() ),
+    counter_edges( edge_parents.size() ),
+    counter_vertices( coords.getnumber() ),
+    
+    data_triangle_vertices( triangle_vertices ),
+    data_triangle_edges( triangle_edges ),
+    data_edge_parents( edge_parents )
+//     data_vertex_firstparent(0)
+{
+    
+    getcoordinates() = coords;
+    
+    check();
+}
+
+
 MeshManifold2D::~MeshManifold2D()
 {
     
