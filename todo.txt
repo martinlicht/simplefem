@@ -3,11 +3,50 @@
   
   **** TODO ***
   
-  Mehs class umbenennen in MeshInterface or so ...
+  o Argument names in all header files 
+    The function/method declarations in the header files should provide minimalist. 
+    The names shall coincide in the header and code files. 
+  
+  o implement minimalist file stream wrapper 
+    openinputfile( std::string );
+    openoutputfile( std::string );
+    
+  
+  
+  - zeige die ersten zeilen aller header dateien an
+    for datei in ./*/*.hpp; do head -n 2 $datei; done
+    include guards umbenennen 
   
   Namespaces
     - introduce a namespace for FEECPP
     - subnamespaces below that level 
+  
+  - class for one-dimensional meshes: graphs with no abandoned nodes
+  
+  - hash-tabelle 
+  
+  
+  Zwischenziele: 
+  - zweidimensionales mesh ausgeben und visualisieren 
+  - scalar mass matrix aufstellen 
+  - funktion interpolieren 
+  - interpolante ausgeben 
+  --->  
+  
+  - solve poisson problem with natural boundary conditions 
+  - output of solution data, error measurement  
+    - interpolation of functions to P\Lambda: punkte aussuchen, polynome auswerten  
+  - randbedingungen
+  - 
+  
+  
+  
+  
+  
+  
+  https://scicomp.stackexchange.com/questions/23882/what-is-a-common-file-data-format-for-a-mesh-for-fem
+  Gmsh file format: http://gmsh.info/doc/texinfo/gmsh.html
+  Gambit:           http://web.stanford.edu/class/me469b/handouts/gambit_write.pdf
   
   Question:
     - how to manage unit test for a software library?
@@ -39,7 +78,7 @@
     
     
     
-
+  
   ************* General layout: 
   
   - Reduce dense matrix module to the core functions of dense matrices
@@ -85,7 +124,7 @@
   ************* SparseMatrix algorithms 
   
   - Gerschgorin rows 
-
+  
   - Diagonal solve 
   - Left triangular solve 
   - Right triangular solve 
@@ -166,6 +205,7 @@
   - Ein eigenes Ausgabeformat ist notwendig
     Unterscheidung nach Spezialklassen
     I/O in andere Formate ist zweitrangig
+  
   
   
   

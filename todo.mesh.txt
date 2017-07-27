@@ -1,0 +1,64 @@
+
+
+
+  o rename Mesh class to MeshInterface or something similar
+    The general mesh class will serve as a general interface 
+    for all finite element methods. The details of implementation 
+    are deferred to the particular classes of meshes 
+    that provide the data structures, IO, and refinement.
+    The common mesh interface will provide:
+    - check feature availability
+    - navigate according to features 
+    - NO mesh manipulation
+  
+  o mesh input/output:
+      - coordinates io -> readwrite.coordinates
+      - readwrite      -> mesh.manifold2D
+      - use your own file format for the time being
+    - argument namen auch in den header files
+    - argument namen abgleichen 
+    
+  o implement IO for each concrete mesh class 
+    Each mesh class that contains actual data shall provide 
+    an input/output functionality. The data of the mesh 
+    are written AS IS into a stream and loaded AS IS
+    from a stream. Flags shall control the level of detail 
+    that is being written. 
+    DEPENDENCY: file stream wrappers 
+    
+  o split off coordinate object 
+    Coordinates become a fully independent object.
+    They are temporarily owned by a mesh which forwards them 
+    to applications and in turn conducts manipulations to the 
+    vertices in accordance to the changes of its own topology.
+    
+  o uniform refinement 2D
+    implement the two dimensional refinement algorithm 
+    with optimal complexity.
+  
+  o bisection refinement 2D
+    check whether the complexity is optimal in each case.
+  
+  o One-dimensional mesh
+    A class of meshes equivalent to a graph without abandoned nodes. 
+    Local refinement and (consecutively) global refinement.
+  
+  o implement submesh class 
+    - These objects inherit the mesh interface and implement it. 
+    - Their internal function consists of the capabilities.  
+      of pointing to another mesh. 
+    - pointers to the original mesh objects so that data 
+      can be transfered.
+  
+  o implement patch constructor 
+    The star constructor will construct submeshes from a given mesh
+    
+  o Three-dimensional meshes 
+    A class for three-dimensional manifold-like meshes.
+    Implement IO interface.
+    Implement newest-vertex-bisection and global uniform refinement.
+    
+  
+  
+  
+  
