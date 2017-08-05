@@ -22,9 +22,9 @@
 
 class FloatVector
 {
-
+    
     public:
-
+        
         explicit FloatVector( int dim );
         FloatVector( int dim, Float initivalue );
         FloatVector( const FloatVector& );
@@ -34,9 +34,9 @@ class FloatVector
         FloatVector( int dimension, const std::function<Float(int)>& generator );
         FloatVector( int dimension, const std::function<Float(int)>& generator, Float scaling );
         // virtual ~FloatVector();
-
+        
         void check() const;
-
+        
         void print( std::ostream& ) const;
         void printplain( std::ostream& ) const;
         
@@ -46,12 +46,12 @@ class FloatVector
         
         Float setentry( int, Float );
         Float getentry( int ) const;
-
+        
         Float& at( int );
         const Float& at( int ) const;
         Float& operator[]( int );
         const Float& operator[]( int ) const;
-
+        
         const std::vector<Float>& getdata() const;
         
         /* basic manipulation */
@@ -59,7 +59,7 @@ class FloatVector
         void zero();
         void random();
         void scale( Float );
-
+        
         /* slices */
         
         FloatVector getslice( int, int ) const;
@@ -70,14 +70,14 @@ class FloatVector
         
         void copydatafrom( const FloatVector& );
         void copydatafrom( Float, const FloatVector& );
-
+        
         void generatedatafrom( const std::function<Float(int)>& );
         void generatedatafrom( Float, const std::function<Float(int)>& );
-
+        
         void adddatafrom( const FloatVector& );
         void adddatafrom( Float, const FloatVector& );
         void adddatafrom( Float, Float, const FloatVector& );
-
+        
         Float scalarproductwith( const FloatVector& ) const;
         
         /* Calculations */

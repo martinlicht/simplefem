@@ -109,30 +109,33 @@ Float FloatVector::getentry( int p ) const
     return data.at(p);
 }
 
+
 Float& FloatVector::at( int p )
 {
     check();
-    return (*this)[p];
+    enforce_attest( 0 <= p && p < data.size() );
+    return data.at(p);
 }
 
 const Float& FloatVector::at( int p ) const
 {
     check();
-    return (*this)[p];
+    enforce_attest( 0 <= p && p < data.size() );
+    return data.at(p);
 }
 
 Float& FloatVector::operator[]( int p )
 {
     check();
     assert( 0 <= p && p < data.size() );
-    return data.at(p);
+    return data[p];
 }
 
 const Float& FloatVector::operator[]( int p ) const
 {
     check();
     assert( 0 <= p && p < data.size() );
-    return data.at(p);
+    return data[p];
 }
                 
 const std::vector<Float>& FloatVector::getdata() const

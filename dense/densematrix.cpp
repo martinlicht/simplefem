@@ -9,8 +9,6 @@
 #include "densematrix.hpp"
 
 
-
-
 DenseMatrix::DenseMatrix( int dim )
 : DenseMatrix( dim, dim )
 {
@@ -161,12 +159,28 @@ void DenseMatrix::set( int r, int c, Float v )
     (*this)( r, c ) = v;
 }        
 
+Float& DenseMatrix::at( int r, int c )
+{
+    check();
+    enforce_attest( 0 <= r && r < getdimout() );
+    enforce_attest( 0 <= c && c < getdimin() );
+    return entries.at( r * getdimin() + c );
+}
+
+const Float& DenseMatrix::at( int r, int c ) const
+{
+    check();
+    enforce_attest( 0 <= r && r < getdimout() );
+    enforce_attest( 0 <= c && c < getdimin() );
+    return entries.at( r * getdimin() + c );
+}
+
 Float& DenseMatrix::operator()( int r, int c )
 {
     check();
     assert( 0 <= r && r < getdimout() );
     assert( 0 <= c && c < getdimin() );
-    return entries.at( r * getdimin() + c );
+    return entries[ r * getdimin() + c ];
 }
 
 const Float& DenseMatrix::operator()( int r, int c ) const
@@ -174,7 +188,7 @@ const Float& DenseMatrix::operator()( int r, int c ) const
     check();
     assert( 0 <= r && r < getdimout() );
     assert( 0 <= c && c < getdimin() );
-    return entries.at( r * getdimin() + c );
+    return entries[ r * getdimin() + c ];
 }
 
 DenseMatrix DenseMatrix::submatrix( const IndexMap& rows, const IndexMap& columns ) const

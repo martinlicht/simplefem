@@ -55,6 +55,8 @@ public LinearOperator /* every matrix is a linear operator */
         
         Float get(int,int) const;
         void set(int,int,Float);
+        Float& at( int, int );
+        const Float& at( int, int ) const;
         Float& operator()( int, int );
         const Float& operator()( int, int ) const;
         
