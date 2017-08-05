@@ -12,7 +12,7 @@
     Use the custom assert macro throughout the library.
   
   
-  o guarded element access 
+  x guarded element access 
   
     All objects that feature element access via brackets,
     either blocky brackets or round brackets,
@@ -21,17 +21,19 @@
     always perform bound checks,
     which may not the case for the bracket access methods.
     
-    o Enforce the effective behavior
-    o Enforce the bound check policy.
+    x Enforce the effective behavior
+    x Enforce the bound check policy.
   
   
-  o implement minimalist file stream wrapper 
+  x implement minimalist file stream wrapper 
+  
     openinputfile( std::string );
     openoutputfile( std::string );
     
   
   
   o Argument names in all header files 
+    
     The function/method declarations in the header files 
     should provide argument names. 
     The names shall coincide in the header and code files. 
