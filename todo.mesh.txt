@@ -17,11 +17,27 @@
   
   
   
-  
+
+
+    Coordinates 
+    - check 
+    - robusten 
+    
+    Abstract Mesh Class
+    - simplify the interface and the access to super simplices 
+    - move the coordinates member somewhere different 
+    
+    Mesh 2D Triangulation 
+    - clean up the naming of variables
+      (temporarily copy the class declaration into the cpp file, edit, copy back)
+    - develop vertex-parent lists as local data.
+    - improve upon the bisection methods
+    - introduce a for-each interface to improve the navigation  
   
   
   
   o rename Mesh class to MeshInterface or something similar
+    
     The general mesh class will serve as a general interface 
     for all finite element methods. The details of implementation 
     are deferred to the particular classes of meshes 
@@ -29,10 +45,18 @@
     The common mesh interface will provide:
     - check feature availability
     - navigate according to features 
-    - NO mesh manipulation
+    - but NOT ANY mesh manipulation
+  
+  
+  o One-dimensional mesh
+  
+    A class of meshes equivalent to a graph without abandoned nodes. 
+    Local refinement and (consecutively) global refinement.
+    - implement local and global refinement
   
   
   o mesh input/output:
+    
       - coordinates io -> readwrite.coordinates
       - readwrite      -> mesh.manifold2D
       - use your own file format for the time being
@@ -41,6 +65,7 @@
   
   
   o implement IO for each concrete mesh class 
+  
     Each mesh class that contains actual data shall provide 
     an input/output functionality. The data of the mesh 
     are written AS IS into a stream and loaded AS IS
@@ -50,10 +75,20 @@
   
   
   o split off coordinate object 
+  
     Coordinates become a fully independent object.
     They are temporarily owned by a mesh which forwards them 
     to applications and in turn conducts manipulations to the 
     vertices in accordance to the changes of its own topology.
+  
+  
+  o Three-dimensional meshes 
+  
+    A class for three-dimensional manifold-like meshes.
+    Implement IO interface.
+    Implement global uniform refinement without any optimization
+    Implement bisection local method.
+    
   
   
   o uniform refinement 2D
@@ -63,11 +98,6 @@
   
   o bisection refinement 2D
     check whether the complexity is optimal in each case.
-  
-  
-  o One-dimensional mesh
-    A class of meshes equivalent to a graph without abandoned nodes. 
-    Local refinement and (consecutively) global refinement.
   
   
   o implement submesh class 
@@ -82,11 +112,6 @@
     The star constructor will construct submeshes from a given mesh
   
   
-  o Three-dimensional meshes 
-    A class for three-dimensional manifold-like meshes.
-    Implement IO interface.
-    Implement newest-vertex-bisection and global uniform refinement.
-    
   
   
   
