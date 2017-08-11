@@ -284,8 +284,9 @@ void MeshManifold2D::print( std::ostream& os ) const
 
 
 
-bool MeshManifold2D::dimensioncounted( int ) const
+bool MeshManifold2D::dimensioncounted( int dim ) const
 {
+    assert( 0 <= dim && dim <= 2 );
     return true;
 }
 
@@ -301,9 +302,10 @@ int MeshManifold2D::countsimplices( int dim ) const
     assert(false);
 }
 
-bool MeshManifold2D::subsimplices_listed( int, int ) const
+bool MeshManifold2D::subsimplices_listed( int sup, int sub ) const
 {
-  return true;
+    assert( 0 <= sub && sub < sup && sup <= 1 );
+    return true;
 }
 
 const IndexMap MeshManifold2D::getsubsimplices( int sup, int sub, int cell ) const
