@@ -316,9 +316,7 @@ int MeshManifold1D::count_vertices() const
 
 
 
-
-
-
+/* subsimplex relation of edges and vertices */
 
 bool MeshManifold1D::contains_edge_vertex( int e, int v ) const
 {
@@ -327,12 +325,6 @@ bool MeshManifold1D::contains_edge_vertex( int e, int v ) const
     
     return ( data_edge_vertices[e][0] == v ) || ( data_edge_vertices[e][1] == v );
 } 
-
-
-
-
-
-
 
 int MeshManifold1D::indexof_edge_vertex( int e, int v ) const
 {
@@ -343,11 +335,6 @@ int MeshManifold1D::indexof_edge_vertex( int e, int v ) const
     else                                     assert(false);
 } 
 
-
-
-
-
-
 const std::array<int,2> MeshManifold1D::get_edge_vertices( int e ) const
 {
     assert( 0 <= e && e < counter_edges );
@@ -357,14 +344,38 @@ const std::array<int,2> MeshManifold1D::get_edge_vertices( int e ) const
 
 
 
-
-
-
-
-
-
-
 /* edge parents of a vertex */
+
+int MeshManifold1D::count_vertex_edge_parents( int v ) const
+{
+  return get_edge_parents_of_vertex( v ).size();
+}
+
+int MeshManifold1D::get_vertex_firstparent( int v ) const
+{
+  assert( 0 <= v && v < counter_vertices );
+  return data_vertex_firstparent[ v ];
+}
+
+int MeshManifold1D::get_vertex_nextparent( int v, int e ) const
+{
+  assert( 0 <= v && v < counter_vertices );
+  assert( 0 <= e && e < counter_edges    );
+  
+  if( data_edge_vertices[e][0] == v )
+    return data_edge_nextparents[e][0];
+  else if( data_edge_vertices[e][1] == v )
+    return data_edge_nextparents[e][1];
+  else
+    assert(false);
+}
+
+bool MeshManifold1D::is_edge_vertex_parent( int e, int v ) const
+{
+  assert( 0 <= v && v < counter_vertices );
+  assert( 0 <= e && e < counter_edges    );
+  return data_edge_vertices[e][0] == v || data_edge_vertices[e][1] == v;
+}
 
 int MeshManifold1D::indexof_edge_vertex_parent( int e, int v ) const
 {
@@ -375,11 +386,6 @@ int MeshManifold1D::indexof_edge_vertex_parent( int e, int v ) const
   assert( iter != edges.end() );
   
   return iter - edges.begin();
-}
-
-int MeshManifold1D::count_vertex_edge_parents( int v ) const
-{
-  return get_edge_parents_of_vertex( v ).size();
 }
 
 std::vector<int> MeshManifold1D::get_edge_parents_of_vertex( int v ) const
@@ -399,8 +405,99 @@ std::vector<int> MeshManifold1D::get_edge_parents_of_vertex( int v ) const
 
 
 
-
-
+void MeshManifold1D::refineedge( int e )
+{
+    assert( 0 <= e && e < counter_edges );
+    check();
+    
+    /* Collect the old data */
+    
+    int vertex_back  = data_edge_vertices[e][0];
+    int vertex_front = data_edge_vertices[e][1];
+    int nextparent_back  = data_edge_nextparents[e][0];
+    int nextparent_front = data_edge_nextparents[e][1];
+    int firstparent_back  = data_vertex_firstparent[vertex_back ];
+    int firstparent_front = data_vertex_firstparent[vertex_front];
+    
+    int back_previousparent   = nullindex;
+    int back_previousparent_localindex = nullindex;
+    if( firstparent_back != get_vertex_firstparent( vertex_back ) )
+      for( int back_previousparent = get_vertex_firstparent( vertex_back  );
+          back_previousparent != nullindex && get_vertex_nextparent(vertex_back,back_previousparent) != e; 
+          back_previousparent = get_vertex_nextparent(vertex_back,back_previousparent) ); 
+    if( back_previousparent  != nullindex )
+      back_previousparent_localindex  = indexof_edge_vertex( back_previousparent,  vertex_back  );
+    
+    int front_previousparent  = nullindex;
+    int front_previousparent_localindex = nullindex;
+    if( firstparent_front != get_vertex_firstparent( vertex_front ) )
+      for( int front_previousparent = get_vertex_firstparent( vertex_front );
+         front_previousparent != nullindex && get_vertex_nextparent(vertex_back,front_previousparent) != e; 
+         front_previousparent = get_vertex_nextparent(vertex_back,front_previousparent) ); 
+    if( front_previousparent != nullindex )
+      front_previousparent_localindex = indexof_edge_vertex( front_previousparent, vertex_front );
+    
+    
+    
+    /* Assemble the data */
+    
+    int ne = counter_edges;
+    int nv = counter_vertices;
+    
+    int back_backvertex       = vertex_back;
+    int back_frontvertex      = nv;
+    int front_backvertex      = nv;
+    int front_frontvertex     = vertex_front;
+    
+    int back_backnextparent   = nextparent_back;
+    int back_frontnextparent  = ne;
+    int front_backnextparent  = nullindex;
+    int front_frontnextparent = nextparent_front;
+    
+    int firstparent_newvertex = nv;
+    
+    
+    /* Allocate memory */
+    
+    data_edge_nextparents.resize  ( counter_edges    + 1 );
+    data_edge_vertices.resize     ( counter_edges    + 1 );
+    data_vertex_firstparent.resize( counter_vertices + 1 );
+    
+    /* Write in the data */
+    
+    data_edge_vertices[e ][0] = back_backvertex;
+    data_edge_vertices[e ][1] = back_frontvertex;
+    data_edge_vertices[ne][0] = front_backvertex;
+    data_edge_vertices[ne][1] = front_frontvertex;
+    
+    data_edge_nextparents[e ][0] = back_backnextparent;
+    data_edge_nextparents[e ][1] = back_frontnextparent;
+    data_edge_nextparents[ne][0] = front_backnextparent;
+    data_edge_nextparents[ne][1] = front_frontnextparent;
+    
+    data_vertex_firstparent[nv] = e;
+    
+    if( back_previousparent  != nullindex ) {
+      assert( data_edge_nextparents[ back_previousparent ][ back_previousparent_localindex ] == e );
+      data_edge_nextparents[ back_previousparent ][ back_previousparent_localindex ] = e;
+    } else {
+      assert( data_vertex_firstparent[ vertex_back ] == e );
+      data_vertex_firstparent[ vertex_back ] = e;
+    }
+    
+    if( front_previousparent != nullindex ) {
+      data_edge_nextparents[ front_previousparent ][ front_previousparent_localindex ] = ne;
+    } else {
+      assert( data_edge_nextparents[ front_previousparent ][ front_previousparent_localindex ] == ne );
+      assert( data_vertex_firstparent[ vertex_front ] == e );
+      data_vertex_firstparent[ vertex_front ] = ne;
+    }    
+    
+    /* Done */
+    
+    check();
+    
+}
 
 
 
@@ -411,9 +508,9 @@ FloatVector MeshManifold1D::get_edge_midpoint    ( int e )
     assert( 0 <= e && e < counter_edges );
     FloatVector mid( getouterdimension() );
     for( int d = 0; d < getouterdimension(); d++ )
-      mid[d] = ( getcoordinates().getdata( get_edge_vertices(e)[0], d ) 
+      mid[d] = (   getcoordinates().getdata( get_edge_vertices(e)[0], d ) 
                  + getcoordinates().getdata( get_edge_vertices(e)[1], d )
-               ) / 2.;
+                ) / 2.;
     return mid;
 }
 

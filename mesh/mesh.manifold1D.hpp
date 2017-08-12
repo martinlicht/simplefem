@@ -25,7 +25,9 @@
 ****  MeshManifold1D Class 
 ****  
 ****  - specialized mesh class for one-dimensional meshes 
-****  - looks like an undirected graph
+****  - looks like an undirected graph. Parallel edges are allowed.
+****  - We want to get from every edge to its vertices 
+****    and from every vertex we want to traverse its parent edges 
 ****  
 ****    Rationale:
 ****    - for every edge, we save the 2 vertices 
@@ -89,13 +91,12 @@ class MeshManifold1D
         int count_edges()    const;
         int count_vertices() const;
         
-        /* contains a subsimplex? */
+        /* subsimplex relation of edges and vertices */
+        
         bool contains_edge_vertex( int e, int v ) const;
         
-        /* get local index of a subsimplex */
         int indexof_edge_vertex( int e, int v ) const;
         
-        /* get the subsimplices */
         const std::array<int,2> get_edge_vertices ( int e ) const;
         
         
@@ -107,17 +108,24 @@ class MeshManifold1D
         
         int get_vertex_nextparent( int v, int e ) const;
         
+        bool is_edge_vertex_parent( int e, int v ) const;
+        
         int indexof_edge_vertex_parent( int e, int v ) const;
         
         std::vector<int> get_edge_parents_of_vertex( int v ) const;
-
+        
+        
+        /* refinement */
+        
+        void refineedge( int e );
+        
         
         /* other things */
         
         FloatVector get_edge_midpoint( int e );
         
         
-        
+//         TODO: Uniform refinement
         
     private:
 
