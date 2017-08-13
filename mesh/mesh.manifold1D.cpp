@@ -69,10 +69,12 @@ MeshManifold1D::MeshManifold1D(
     
     /* 3. For each vertex, set the first parent and the neighboring parents */
     
-    for( int e =  0; e  < counter_edges; e++  )
-    for( int vi = 0; vi <             1; vi++ )
+    for( int e =  0; e  <  counter_edges; e++  )
+    for( int vi = 0; vi <=             1; vi++ )
     {
       int v = data_edge_vertices[e][vi];
+      
+      assert( 0 <= v && v < counter_vertices );
       
       if( data_vertex_firstparent[v] == nullindex ) {
         
@@ -89,6 +91,11 @@ MeshManifold1D::MeshManifold1D(
         data_edge_nextparents[ e ][ vi ] = old_first_parent;
         
       }
+      
+      assert( data_vertex_firstparent[v] != nullindex );
+      assert( 0 <= data_vertex_firstparent[v] && data_vertex_firstparent[v] < counter_edges );
+      
+      
       
     }
     
@@ -192,8 +199,8 @@ void MeshManifold1D::check() const
      * 
      */
     
-    for( int e  = 0; e  < counter_edges;     e++ )
-    for( int vi = 0; vi < counter_vertices; vi++ )
+    for( int e  = 0; e  <  counter_edges; e++ )
+    for( int vi = 0; vi <=             1; vi++ )
     {
       
       int v = data_edge_vertices[e][vi];
@@ -417,13 +424,13 @@ void MeshManifold1D::uniformrefinement()
     data_vertex_firstparent.reserve( old_counter_vertices  );
     
     for( int e = 0; e < old_counter_edges; e++ )
-      refineedge( e );
+      bisect_edge( e );
       
     check();
 }
 
 
-void MeshManifold1D::refineedge( int e )
+void MeshManifold1D::bisect_edge( int e )
 {
     assert( 0 <= e && e < counter_edges );
     check();
@@ -439,23 +446,27 @@ void MeshManifold1D::refineedge( int e )
     
     int back_previousparent   = nullindex;
     int back_previousparent_localindex = nullindex;
-    if( firstparent_back != get_vertex_firstparent( vertex_back ) )
-      for( int back_previousparent = get_vertex_firstparent( vertex_back  );
-          back_previousparent != nullindex && get_vertex_nextparent(vertex_back,back_previousparent) != e; 
-          back_previousparent = get_vertex_nextparent(vertex_back,back_previousparent) ); 
-    if( back_previousparent  != nullindex )
+    if( e != get_vertex_firstparent( vertex_back ) )
+      for( back_previousparent = get_vertex_firstparent( vertex_back  );
+           back_previousparent != nullindex && get_vertex_nextparent(vertex_back,back_previousparent) != e; 
+           back_previousparent = get_vertex_nextparent(vertex_back,back_previousparent) 
+         ); 
+    if( back_previousparent  != nullindex ) 
       back_previousparent_localindex  = indexof_edge_vertex( back_previousparent,  vertex_back  );
     
     int front_previousparent  = nullindex;
     int front_previousparent_localindex = nullindex;
-    if( firstparent_front != get_vertex_firstparent( vertex_front ) )
-      for( int front_previousparent = get_vertex_firstparent( vertex_front );
-         front_previousparent != nullindex && get_vertex_nextparent(vertex_back,front_previousparent) != e; 
-         front_previousparent = get_vertex_nextparent(vertex_back,front_previousparent) ); 
+    if( e != get_vertex_firstparent( vertex_front ) )
+      for( front_previousparent = get_vertex_firstparent( vertex_front );
+           front_previousparent != nullindex && get_vertex_nextparent(vertex_front,front_previousparent) != e; 
+           front_previousparent = get_vertex_nextparent(vertex_front,front_previousparent) 
+         ); 
     if( front_previousparent != nullindex )
       front_previousparent_localindex = indexof_edge_vertex( front_previousparent, vertex_front );
     
     /* Assemble the data */
+    
+    FloatVector midcoordinate = get_edge_midpoint( e );
     
     int ne = counter_edges;
     int nv = counter_vertices;
@@ -501,14 +512,21 @@ void MeshManifold1D::refineedge( int e )
     }
     
     if( front_previousparent != nullindex ) {
+      assert( data_edge_nextparents[ front_previousparent ][ front_previousparent_localindex ] == ne );
       data_edge_nextparents[ front_previousparent ][ front_previousparent_localindex ] = ne;
     } else {
-      assert( data_edge_nextparents[ front_previousparent ][ front_previousparent_localindex ] == ne );
       assert( data_vertex_firstparent[ vertex_front ] == e );
       data_vertex_firstparent[ vertex_front ] = ne;
     }    
     
+    getcoordinates().append( midcoordinate );
+        
+    /* Update counter */
+    counter_edges++;
+    counter_vertices++;
+    
     /* Done */
+    
     
     check();
     

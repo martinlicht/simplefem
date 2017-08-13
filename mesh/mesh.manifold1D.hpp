@@ -115,7 +115,7 @@ class MeshManifold1D
         
         /* refinement */
         
-        void refineedge( int e );
+        void bisect_edge( int e );
         
         void uniformrefinement();
 

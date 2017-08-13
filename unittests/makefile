@@ -147,6 +147,9 @@ test.mesh.coordinates.out: test.mesh.coordinates.cpp $(Includes.mesh)
 # test.mesh.simplicialmesh.out: test.mesh.simplicialmesh.cpp $(Includes.mesh)
 # 	$(CC) test.mesh.simplicialmesh.cpp $(Links.mesh) -o test.mesh.simplicialmesh.out
 
+test.mesh.manifold1D.out: test.mesh.manifold1D.cpp $(Includes.mesh)
+	$(CC) test.mesh.manifold1D.cpp $(Links.mesh) -o test.mesh.manifold1D.out
+
 test.mesh.manifold2D.out: test.mesh.manifold2D.cpp $(Includes.mesh)
 	$(CC) test.mesh.manifold2D.cpp $(Links.mesh) -o test.mesh.manifold2D.out
 
@@ -156,7 +159,7 @@ test.mesh.manifold2D.out: test.mesh.manifold2D.cpp $(Includes.mesh)
 # test.mesh.io.out: test.mesh.io.cpp $(Includes.mesh)
 # 	$(CC) test.mesh.io.cpp $(Links.mesh) -o test.mesh.io.out
 
-mesh.tests = test.mesh.coordinates.out test.mesh.manifold2D.out 
+mesh.tests = test.mesh.coordinates.out test.mesh.manifold1D.out test.mesh.manifold2D.out 
 # test.mesh.simplicialmesh.out test.mesh.io.out test.mesh.vtkwriter.out test.mesh.mesh.manifold.2D.out 
 
 
