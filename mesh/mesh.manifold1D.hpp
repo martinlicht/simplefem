@@ -83,8 +83,6 @@ class MeshManifold1D
         virtual const std::vector<int> getsupersimplices( int sup, int sub, int cell ) const override;
         
         
-        
-        
         /* General management */
         
         /* count the simplices of a certain type */
@@ -143,19 +141,10 @@ class MeshManifold1D
 
 
 
-inline std::ostream& operator<<( std::ostream& os, const MeshManifold1D& mt2d )
+inline std::ostream& operator<<( std::ostream& os, const MeshManifold1D& mt1d )
 {
-    mt2d.print( os );
+    mt1d.print( os );
     return os;
-}
-
-
-
-inline bool duple_equivalent( std::array<int,2> d1, std::array<int,2> d2 )
-{
-  if( d1[0] == d2[0] && d1[1] == d2[1] ) return true;
-  if( d1[0] == d2[1] && d1[1] == d2[0] ) return true;
-  return false;
 }
 
 
@@ -180,7 +169,7 @@ inline MeshManifold1D StandardSquare()
     return MeshManifold1D(
       1,
       Coordinates( 1, 2, {
-        -1., // 0
+         0., // 0
          1., // 1
       } ),
       {

@@ -14,6 +14,7 @@
 #include "../combinatorics/generateindexmaps.hpp"
 #include "../operators/floatvector.hpp"
 #include "coordinates.hpp"
+#include "mesh.hpp"
 
 #include "mesh.manifold1D.hpp"
 
@@ -454,8 +455,6 @@ void MeshManifold1D::refineedge( int e )
     if( front_previousparent != nullindex )
       front_previousparent_localindex = indexof_edge_vertex( front_previousparent, vertex_front );
     
-    
-    
     /* Assemble the data */
     
     int ne = counter_edges;
@@ -472,7 +471,6 @@ void MeshManifold1D::refineedge( int e )
     int front_frontnextparent = nextparent_front;
     
     int firstparent_newvertex = nv;
-    
     
     /* Allocate memory */
     
