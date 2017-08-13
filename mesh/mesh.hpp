@@ -44,11 +44,7 @@ class Mesh
         
         virtual void print( std::ostream& out ) const = 0;
         
-        #ifdef NDEBUG
-        static const int nullindex = std::numeric_limits<int>::max();
-        #else
-        static const int nullindex = 777777; 
-        #endif
+        static const int nullindex; 
         
         static int is_not_nullindex( int i ){ return i != nullindex; }
         
@@ -137,7 +133,6 @@ class Mesh
         const auto& getauxdata() { return auxdata; };
         
 };
-
 
 
 

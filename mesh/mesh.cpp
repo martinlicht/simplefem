@@ -3,12 +3,20 @@
 #include <algorithm>
 
 
-#include "mesh.hpp"
 #include "../combinatorics/generateindexmaps.hpp"
+#include "mesh.hpp"
+
+
+#ifdef NDEBUG
+const int Mesh::nullindex = std::numeric_limits<int>::max(); 
+#else
+const int Mesh::nullindex = 777777; 
+#endif
 
 
 Mesh::Mesh( int inner, int outer )
-: innerdimension(inner), outerdimension(outer),
+: innerdimension(inner), 
+  outerdimension(outer),
   coordinates(outer,0)
 {
   
