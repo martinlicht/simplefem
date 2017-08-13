@@ -169,6 +169,22 @@ void Coordinates::append( const FloatVector& v )
 }
 
 
+void Coordinates::addcapacity( int capacity )
+{
+    assert( capacity >= 0 );
+    data.reserve( data.size() + dimension * capacity );
+}
+
+void Coordinates::addcoordinates( int add_number )
+{
+    assert( add_number >= 0 );
+    data.resize( data.size() + dimension * add_number );
+    number += add_number;
+}
+
+
+
+
 
 DenseMatrix Coordinates::getLinearPart( const IndexMap& im ) const
 {

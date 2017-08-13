@@ -412,24 +412,6 @@ std::vector<int> MeshManifold1D::get_edge_parents_of_vertex( int v ) const
 
 
 
-void MeshManifold1D::uniformrefinement()
-{
-    int old_counter_edges    = counter_edges;
-    int old_counter_vertices = counter_vertices;
-    
-    check();
-    
-    data_edge_nextparents.reserve  ( 2 * old_counter_edges );
-    data_edge_vertices.reserve     ( 2 * old_counter_edges );
-    data_vertex_firstparent.reserve( old_counter_vertices  );
-    
-    for( int e = 0; e < old_counter_edges; e++ )
-      bisect_edge( e );
-      
-    check();
-}
-
-
 void MeshManifold1D::bisect_edge( int e )
 {
     assert( 0 <= e && e < counter_edges );
@@ -531,6 +513,104 @@ void MeshManifold1D::bisect_edge( int e )
     check();
     
 }
+
+
+void MeshManifold1D::uniformrefinement()
+{
+    int old_counter_edges    = counter_edges;
+    int old_counter_vertices = counter_vertices;
+    
+    check();
+    
+    data_edge_nextparents.reserve  ( 2 * old_counter_edges );
+    data_edge_vertices.reserve     ( 2 * old_counter_edges );
+    data_vertex_firstparent.reserve( old_counter_vertices  );
+    getcoordinates().addcapacity   ( old_counter_edges     );
+    
+    for( int e = 0; e < old_counter_edges; e++ )
+      bisect_edge( e );
+      
+    check();
+}
+
+
+
+void MeshManifold1D::improved_uniformrefinement()
+{
+    check();
+    
+    /* FIXME: Only primitive data access allowed here. */
+    
+    /* resize the arrays */
+    
+    data_edge_nextparents.resize  ( counter_edges * 2 );
+    data_edge_vertices.resize     ( counter_edges * 2 );
+    data_vertex_firstparent.resize( counter_edges + counter_vertices );
+    getcoordinates().addcoordinates( counter_edges );
+    
+    /* create the new coordinates and fill them up */
+    
+    for( int vn = counter_vertices; vn < counter_vertices + counter_edges; vn++ )
+    {
+      getcoordinates().loadvector( vn , get_edge_midpoint( vn - counter_vertices ) );
+    }
+    
+    
+    /* for each old vertex, transverse the vertex list and fill it up again */
+    
+    for( int v = 0; v < counter_vertices; v++ )
+    {
+      int p = data_vertex_firstparent[v];
+      
+      assert( p != nullindex );
+      assert( data_edge_vertices[p][0] == v || data_edge_vertices[p][1] == v );
+      
+      while( p != nullindex )
+      {
+        int vi = ( data_edge_vertices[p][0] == v ) ? 0 : 1;
+        assert( data_edge_vertices[p][vi] == v );
+        
+        if( vi == 0 )
+          p = data_edge_nextparents[p][0]; /* no change */
+        else {
+          data_edge_nextparents[ p + counter_edges ][1] = data_edge_nextparents[ p ][1];
+          p = data_edge_nextparents[p][1];
+        }
+      }
+      
+    }
+    
+    
+    
+    /* for each new vertex, create the first and second parent */
+    
+    for( int vn = counter_vertices; vn < counter_vertices + counter_edges; vn++ )
+    {
+      data_vertex_firstparent[vn] = vn - counter_vertices;
+      data_edge_nextparents[vn - counter_vertices                 ][1] = vn - counter_vertices + counter_edges;
+      data_edge_nextparents[vn - counter_vertices + counter_edges ][0] = nullindex;
+    }
+    
+    
+    /* for each edge, create the new vertices */
+    
+    for( int e = 0; e < counter_edges; e++ )
+    {
+      int vertex_back  = data_edge_vertices[e][0];
+      int vertex_front = data_edge_vertices[e][1];
+      
+      data_edge_vertices[e                ][0] = vertex_back;
+      data_edge_vertices[e                ][1] = counter_vertices + e;
+      data_edge_vertices[e + counter_edges][0] = counter_vertices + e;
+      data_edge_vertices[e + counter_edges][1] = vertex_front;
+    }
+    
+    
+    /* update the counters */
+    
+    check();
+}
+
 
 
 

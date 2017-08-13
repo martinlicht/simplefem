@@ -70,6 +70,9 @@ class Coordinates
         void append( const FloatVector& );
         void append( const std::vector<FloatVector>& );
         
+        void addcapacity( int );
+        void addcoordinates( int );
+        
         /* Obtain information about reference transformation of simplex */
         
         DenseMatrix getLinearPart( const IndexMap& ) const;

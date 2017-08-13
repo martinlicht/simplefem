@@ -85,9 +85,11 @@ class MeshManifold1D
         
         /* General management */
         
+        
         /* count the simplices of a certain type */
         int count_edges()    const;
         int count_vertices() const;
+        
         
         /* subsimplex relation of edges and vertices */
         
@@ -118,7 +120,9 @@ class MeshManifold1D
         void bisect_edge( int e );
         
         void uniformrefinement();
-
+        
+        void improved_uniformrefinement();
+        
         
         /* other things */
         
