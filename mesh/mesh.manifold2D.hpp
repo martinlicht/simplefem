@@ -25,9 +25,6 @@
 ****  MeshManifold2D Class 
 ****  
 ****  - specialized mesh class 
-****  - 
-****  
-****  
 ****   
 ****    Rationale:
 ****    - for every triangle, we save the 3 vertices 

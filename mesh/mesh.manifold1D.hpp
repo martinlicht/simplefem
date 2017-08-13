@@ -119,13 +119,13 @@ class MeshManifold1D
         
         void refineedge( int e );
         
+        void uniformrefinement();
+
         
         /* other things */
         
         FloatVector get_edge_midpoint( int e );
         
-        
-//         TODO: Uniform refinement
         
     private:
 

@@ -404,6 +404,23 @@ std::vector<int> MeshManifold1D::get_edge_parents_of_vertex( int v ) const
 
 
 
+void MeshManifold1D::uniformrefinement()
+{
+    int old_counter_edges    = counter_edges;
+    int old_counter_vertices = counter_vertices;
+    
+    check();
+    
+    data_edge_nextparents.reserve  ( 2 * old_counter_edges );
+    data_edge_vertices.reserve     ( 2 * old_counter_edges );
+    data_vertex_firstparent.reserve( old_counter_vertices  );
+    
+    for( int e = 0; e < old_counter_edges; e++ )
+      refineedge( e );
+      
+    check();
+}
+
 
 void MeshManifold1D::refineedge( int e )
 {
