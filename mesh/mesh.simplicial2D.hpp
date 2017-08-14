@@ -176,11 +176,10 @@ class MeshSimplicial2D
         
         void uniformrefinement();
         
-        void improved_uniformrefinement();
-        
         
         /* other things */
         
+        FloatVector get_triangle_midpoint( int t );
         FloatVector get_edge_midpoint( int e );
         
         

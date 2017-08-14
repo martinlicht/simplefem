@@ -72,6 +72,8 @@ MeshSimplicial2D::MeshSimplicial2D(
     
     getcoordinates() = coords;
     
+    // TODO: Update this function
+    
     /* 1. Count edges, transfer data */ 
     /* DONE */
     
@@ -170,10 +172,117 @@ void MeshSimplicial2D::check() const
 {
     
     /* 1. Check the array sizes */
+    
+    assert( counter_triangles == data_triangle_edges.size() );
+    assert( counter_triangles == data_triangle_nextparents_of_edges.size() );
+    assert( counter_triangles == data_triangle_vertices.size() );
+    assert( counter_triangles == data_triangle_nextparents_of_vertices.size() );
     assert( counter_edges == data_edge_vertices.size() );
     assert( counter_edges == data_edge_nextparents_of_vertices.size() );
+    assert( counter_edges == data_edge_firstparent_triangle.size() );
     assert( counter_vertices == data_vertex_firstparent_edge.size() );
+    assert( counter_vertices == data_vertex_firstparent_triangle.size() );
+    
     assert( count_vertices() == getcoordinates().getnumber() );
+    
+    
+    /* * * * * Data integrity
+     * 
+     * each triangle: each edge is a valid index
+     * each triangle: each edge is unique 
+     * each triangle: the next parents are unique
+     * each triangle: the next parents are actually parents 
+     * 
+     */
+    
+    for( int t = 0; t < counter_triangles; t++ )
+    {
+        
+        assert( data_triangle_edges[t][0] != nullindex );
+        assert( data_triangle_edges[t][1] != nullindex );
+        assert( data_triangle_edges[t][2] != nullindex );
+        
+        assert( data_triangle_edges[t][0] != data_triangle_edges[t][1] );
+        assert( data_triangle_edges[t][0] != data_triangle_edges[t][2] );
+        assert( data_triangle_edges[t][1] != data_triangle_edges[t][2] );
+        
+        
+        if( data_triangle_nextparents_of_edges[t][0] != nullindex || data_triangle_nextparents_of_edges[t][1] != nullindex )
+          assert( data_triangle_nextparents_of_edges[t][0] != data_triangle_nextparents_of_edges[t][1] );
+        
+        if( data_triangle_nextparents_of_edges[t][0] != nullindex || data_triangle_nextparents_of_edges[t][2] != nullindex )
+          assert( data_triangle_nextparents_of_edges[t][0] != data_triangle_nextparents_of_edges[t][2] );
+        
+        if( data_triangle_nextparents_of_edges[t][1] != nullindex || data_triangle_nextparents_of_edges[t][2] != nullindex )
+          assert( data_triangle_nextparents_of_edges[t][1] != data_triangle_nextparents_of_edges[t][2] );
+        
+        for( int ei = 0; ei < 3; ei++ )
+        {
+            
+            if( data_triangle_nextparents_of_edges[t][ei] != nullindex )
+              assert( 0 <= data_triangle_nextparents_of_edges[t][ei] && data_triangle_nextparents_of_edges[t][ei] < counter_triangles );
+        
+            if( data_triangle_nextparents_of_edges[t][ei] != nullindex )
+              assert( data_triangle_edges[ data_triangle_nextparents_of_edges[t][ei] ][0] == data_triangle_edges[t][ei] 
+                      ||
+                      data_triangle_edges[ data_triangle_nextparents_of_edges[t][ei] ][1] == data_triangle_edges[t][ei] 
+                      ||
+                      data_triangle_edges[ data_triangle_nextparents_of_edges[t][ei] ][2] == data_triangle_edges[t][ei] );
+            
+        }
+        
+        
+    }
+    
+    
+    /* * * * * Data integrity
+     * 
+     * each triangle: each vertex is a valid index
+     * each triangle: each vertex is unique 
+     * each triangle: the next parents are unique
+     * each triangle: the next parents are actually parents 
+     * 
+     */
+    
+    for( int t = 0; t < counter_triangles; t++ )
+    {
+        
+        assert( data_triangle_vertices[t][0] != nullindex );
+        assert( data_triangle_vertices[t][1] != nullindex );
+        assert( data_triangle_vertices[t][2] != nullindex );
+        
+        assert( data_triangle_vertices[t][0] != data_triangle_vertices[t][1] );
+        assert( data_triangle_vertices[t][0] != data_triangle_vertices[t][2] );
+        assert( data_triangle_vertices[t][1] != data_triangle_vertices[t][2] );
+        
+        
+        if( data_triangle_nextparents_of_vertices[t][0] != nullindex || data_triangle_nextparents_of_vertices[t][1] != nullindex )
+          assert( data_triangle_nextparents_of_vertices[t][0] != data_triangle_nextparents_of_vertices[t][1] );
+        
+        if( data_triangle_nextparents_of_vertices[t][0] != nullindex || data_triangle_nextparents_of_vertices[t][2] != nullindex )
+          assert( data_triangle_nextparents_of_vertices[t][0] != data_triangle_nextparents_of_vertices[t][2] );
+        
+        if( data_triangle_nextparents_of_vertices[t][1] != nullindex || data_triangle_nextparents_of_vertices[t][2] != nullindex )
+          assert( data_triangle_nextparents_of_vertices[t][1] != data_triangle_nextparents_of_vertices[t][2] );
+        
+        
+        for( int vi = 0; vi < 3; vi++ )
+        {
+            
+            if( data_triangle_nextparents_of_vertices[t][vi] != nullindex )
+              assert( 0 <= data_triangle_nextparents_of_vertices[t][vi] && data_triangle_nextparents_of_vertices[t][vi] < counter_triangles );
+        
+            if( data_triangle_nextparents_of_vertices[t][vi] != nullindex )
+              assert( data_triangle_vertices[ data_triangle_nextparents_of_vertices[t][vi] ][0] == data_triangle_vertices[t][vi] 
+                      ||
+                      data_triangle_vertices[ data_triangle_nextparents_of_vertices[t][vi] ][1] == data_triangle_vertices[t][vi] 
+                      ||
+                      data_triangle_vertices[ data_triangle_nextparents_of_vertices[t][vi] ][2] == data_triangle_vertices[t][vi] );
+            
+        }
+        
+        
+    }
     
     
     /* * * * * Data integrity
@@ -181,6 +290,7 @@ void MeshSimplicial2D::check() const
      * each edge: each vertex is a valid index
      * each edge: each vertex is unique 
      * each edge: the next parents make sense 
+     * each edge: the next parents are actually parents
      * 
      */
     
@@ -193,26 +303,85 @@ void MeshSimplicial2D::check() const
         if( data_edge_nextparents_of_vertices[e][0] != nullindex || data_edge_nextparents_of_vertices[e][1] != nullindex )
           assert( data_edge_nextparents_of_vertices[e][0] != data_edge_nextparents_of_vertices[e][1] );
         
-        if( data_edge_nextparents_of_vertices[e][0] != nullindex )
-          assert( 0 <= data_edge_nextparents_of_vertices[e][0] && data_edge_nextparents_of_vertices[e][0] < counter_edges );
+          
+        for( int vi = 0; vi < 2; vi++ )
+        {
+          
+          if( data_edge_nextparents_of_vertices[e][vi] != nullindex )
+          assert( 0 <= data_edge_nextparents_of_vertices[e][vi] && data_edge_nextparents_of_vertices[e][vi] < counter_edges );
+          
+          if( data_edge_nextparents_of_vertices[e][vi] != nullindex )
+            assert( data_edge_vertices[ data_edge_nextparents_of_vertices[e][vi] ][0] == data_edge_vertices[e][vi] 
+                    ||
+                    data_edge_vertices[ data_edge_nextparents_of_vertices[e][vi] ][1] == data_edge_vertices[e][vi] 
+                  );
+          
+        }
         
-        if( data_edge_nextparents_of_vertices[e][0] != nullindex )
-          assert( data_edge_vertices[ data_edge_nextparents_of_vertices[e][0] ][0] == data_edge_vertices[e][0] 
-                  ||
-                  data_edge_vertices[ data_edge_nextparents_of_vertices[e][0] ][1] == data_edge_vertices[e][0] );
+    }
+    
+    
+    
+    
+    /* * * * * Data integrity
+     * 
+     * each triangle: each edge is listed correctly
+     * 
+     */
+    
+    for( int t = 0; t < counter_triangles; t++ )
+    {
         
-        if( data_edge_nextparents_of_vertices[e][1] != nullindex )
-          assert( 0 <= data_edge_nextparents_of_vertices[e][1] && data_edge_nextparents_of_vertices[e][1] < counter_edges );
-
-        if( data_edge_nextparents_of_vertices[e][1] != nullindex )
-          assert( data_edge_vertices[ data_edge_nextparents_of_vertices[e][1] ][0] == data_edge_vertices[e][1] 
-                  ||
-                  data_edge_vertices[ data_edge_nextparents_of_vertices[e][1] ][1] == data_edge_vertices[e][1] );
+        assert( data_edge_vertices[ data_triangle_edges[t][0] ][0] == data_triangle_vertices[t][0] );
+        assert( data_edge_vertices[ data_triangle_edges[t][0] ][1] == data_triangle_vertices[t][1] );
+        assert( data_edge_vertices[ data_triangle_edges[t][1] ][0] == data_triangle_vertices[t][0] );
+        assert( data_edge_vertices[ data_triangle_edges[t][1] ][1] == data_triangle_vertices[t][2] );
+        assert( data_edge_vertices[ data_triangle_edges[t][2] ][0] == data_triangle_vertices[t][1] );
+        assert( data_edge_vertices[ data_triangle_edges[t][2] ][1] == data_triangle_vertices[t][2] );
+        
+    }
+    
+    
+    
+    
+    
+    
+    
+    /* * * * * * Data integrity
+     * 
+     * each first parent triangle of an edge: first parent is non-null and a valid parent
+     * 
+     */
+    
+    for( int e = 0; e < counter_edges; e++ )
+    {
+        int p = data_edge_firstparent_triangle[e];
+        
+        assert( p != nullindex );
+        assert( 0 <= p && p < counter_triangles );
+        
+        assert( data_triangle_edges[p][0] == e || data_triangle_edges[p][1] == e || data_triangle_edges[p][2] == e );
     }
     
     /* * * * * * Data integrity
      * 
-     * each vertex_firstparent: first parent is non-null 
+     * each first parent triangle of a vertex: first parent is non-null and a valid parent
+     * 
+     */
+    
+    for( int v = 0; v < counter_vertices; v++ )
+    {
+        int p = data_vertex_firstparent_triangle[v];
+        
+        assert( p != nullindex );
+        assert( 0 <= p && p < counter_triangles );
+        
+        assert( data_triangle_vertices[p][0] == v || data_triangle_vertices[p][1] == v || data_triangle_vertices[p][2] == v );
+    }
+    
+    /* * * * * * Data integrity
+     * 
+     * each first parent edge of a vertex: first parent is non-null and a valid parent
      * 
      */
     
@@ -226,14 +395,77 @@ void MeshSimplicial2D::check() const
         assert( data_edge_vertices[p][0] == v || data_edge_vertices[p][1] == v );
     }
     
+    
+    
+    
     /* * * * * * Data integrity
      * 
-     * check that each is listed as parent somewhere 
+     * check that each parent triangle of an edge is listed as a parent 
      * 
      */
     
-    for( int e  = 0; e  <  counter_edges; e++ )
-    for( int vi = 0; vi <=             1; vi++ )
+    for( int t  = 0; t  < counter_triangles; t++ )
+    for( int ei = 0; ei <                 3; ei++ )
+    {
+      
+      int e = data_triangle_edges[t][ei];
+      
+      int p = data_vertex_firstparent_edge[e];
+      
+      assert( p != nullindex );
+      
+      while( p != t && p != nullindex )
+        if( data_triangle_edges[p][0] == e )
+          p = data_triangle_nextparents_of_edges[p][0];
+        else if( data_triangle_edges[p][1] == e )
+          p = data_triangle_nextparents_of_edges[p][1];
+        else if( data_triangle_edges[p][2] == e )
+          p = data_triangle_nextparents_of_edges[p][2];
+        else
+          assert(false);
+        
+      assert( p == t );
+      
+    }
+    
+    /* * * * * * Data integrity
+     * 
+     * check that each parent triangle of a vertex is listed as a parent 
+     * 
+     */
+    
+    for( int t  = 0; t  < counter_triangles; t++ )
+    for( int vi = 0; vi <                 3; vi++ )
+    {
+      
+      int v = data_triangle_vertices[t][vi];
+      
+      int p = data_vertex_firstparent_triangle[v];
+      
+      assert( p != nullindex );
+      
+      while( p != t && p != nullindex )
+        if( data_triangle_vertices[p][0] == v )
+          p = data_triangle_nextparents_of_vertices[p][0];
+        else if( data_triangle_vertices[p][1] == v )
+          p = data_triangle_nextparents_of_vertices[p][1];
+        else if( data_triangle_vertices[p][2] == v )
+          p = data_triangle_nextparents_of_vertices[p][2];
+        else
+          assert(false);
+        
+      assert( p == t );
+      
+    }
+    
+    /* * * * * * Data integrity
+     * 
+     * check that each parent edge of a vertex is listed as a parent 
+     * 
+     */
+    
+    for( int e  = 0; e  < counter_edges; e++ )
+    for( int vi = 0; vi <             2; vi++ )
     {
       
       int v = data_edge_vertices[e][vi];
@@ -259,9 +491,39 @@ void MeshSimplicial2D::check() const
 
 void MeshSimplicial2D::print( std::ostream& os ) const
 {
-    os << "Printe Triangulation of 1D Manifold!" << std::endl;
+    os << "Printe Triangulation of 2D Manifold!" << std::endl;
     
-    os << counter_edges << space << counter_vertices << nl;
+    os << counter_triangles << space << counter_edges << space << counter_vertices << nl;
+    
+    os << "Triangle edges" << std::endl;
+    
+    for( const auto& triple : data_triangle_vertices )
+      std::cout << triple[0] << space << triple[1] << space << triple[2] << nl;
+    
+    os << "Edge first parent triangles" << std::endl;
+    
+    for( int fp : data_edge_firstparent_triangle )
+      std::cout << fp << nl;
+    
+    os << "Triangle next parents of edges" << std::endl;
+    
+    for( const auto& triple : data_edge_nextparents_of_vertices )
+      std::cout << triple[0] << space << triple[1] << space << triple[2] << nl;
+    
+    os << "Triangle vertices" << std::endl;
+    
+    for( const auto& triple : data_triangle_vertices )
+      std::cout << triple[0] << space << triple[1] << space << triple[2] << nl;
+    
+    os << "Edge first parent triangles" << std::endl;
+    
+    for( int fp : data_vertex_firstparent_triangle )
+      std::cout << fp << nl;
+    
+    os << "Triangle next parents of edges" << std::endl;
+    
+    for( const auto& triple : data_triangle_nextparents_of_vertices )
+      std::cout << triple[0] << space << triple[1] << space << triple[2] << nl;
     
     os << "Edge vertices" << std::endl;
     
@@ -289,7 +551,7 @@ void MeshSimplicial2D::print( std::ostream& os ) const
 
 bool MeshSimplicial2D::dimensioncounted( int dim ) const
 {
-    assert( 0 <= dim && dim <= 1 );
+    assert( 0 <= dim && dim <= 2 );
     return true;
 }
 
@@ -299,18 +561,22 @@ int MeshSimplicial2D::countsimplices( int dim ) const
     return count_vertices();
   else if( dim == 1 )
     return count_edges();
+  else if( dim == 2 )
+    return count_triangles();
   else
     assert(false);
 }
 
 bool MeshSimplicial2D::subsimplices_listed( int sup, int sub ) const
 {
-    assert( 0 <= sub && sub < sup && sup <= 1 );
+    assert( 0 <= sub && sub < sup && sup <= 2 );
     return true;
 }
 
 const IndexMap MeshSimplicial2D::getsubsimplices( int sup, int sub, int cell ) const
 {
+  // TODO: Update this function
+  
   assert( 1 == sup );
   assert( 0 == sub );
   assert( 0 <= cell && cell < count_edges() );
@@ -322,12 +588,14 @@ const IndexMap MeshSimplicial2D::getsubsimplices( int sup, int sub, int cell ) c
 
 bool MeshSimplicial2D::supersimplices_listed( int sup, int sub ) const
 {
-    assert( 0 <= sub && sub < sup && sup <= 1 );
+    assert( 0 <= sub && sub < sup && sup <= 2 );
     return true;
 }
 
 const std::vector<int> MeshSimplicial2D::getsupersimplices( int sup, int sub, int cell ) const
 {
+  // TODO: Update this function
+  
   assert( 1 == sup );
   assert( 0 == sub );
   assert( 0 <= cell && cell < count_vertices() );
@@ -345,6 +613,11 @@ const std::vector<int> MeshSimplicial2D::getsupersimplices( int sup, int sub, in
 
 /* Count number of elements */
 
+int MeshSimplicial2D::count_triangles() const
+{
+    return counter_triangles;
+}
+
 int MeshSimplicial2D::count_edges() const
 {
     return counter_edges;
@@ -354,6 +627,66 @@ int MeshSimplicial2D::count_vertices() const
 {
     return counter_vertices;
 }
+
+
+
+
+// TODO: Proofread the following methods 
+
+/* subsimplex relation of triangles and edges */
+
+bool MeshSimplicial2D::contains_triangle_edge( int t, int e ) const
+{
+    assert( 0 <= t && t < counter_triangles );
+    assert( 0 <= e && e < counter_edges );
+    
+    return ( data_triangle_edges[t][0] == e ) || ( data_triangle_edges[t][1] == e ) || ( data_triangle_edges[t][2] == e );
+} 
+
+int MeshSimplicial2D::indexof_triangle_edge( int t, int e ) const
+{
+    assert( 0 <= t && t < counter_triangles );
+    assert( 0 <= e && e < counter_edges );
+    if     ( data_triangle_edges[t][0] == e ) return 0;
+    else if( data_triangle_edges[t][1] == e ) return 1;
+    else if( data_triangle_edges[t][2] == e ) return 2;
+    else                                      assert(false);
+} 
+
+const std::array<int,3> MeshSimplicial2D::get_triangle_edges( int t ) const
+{
+    assert( 0 <= t && t < counter_triangles );
+    return data_triangle_edges[t];
+} 
+
+
+
+/* subsimplex relation of triangle and vertices */
+
+bool MeshSimplicial2D::contains_triangle_vertex( int t, int v ) const
+{
+    assert( 0 <= t && t < counter_triangles );
+    assert( 0 <= v && v < counter_vertices );
+    
+    return ( data_triangle_vertices[t][0] == v ) || ( data_triangle_vertices[t][1] == v ) || ( data_triangle_vertices[t][2] == v );
+} 
+
+int MeshSimplicial2D::indexof_triangle_vertex( int t, int v ) const
+{
+    assert( 0 <= t && t < counter_triangles );
+    assert( 0 <= v && v < counter_vertices );
+    if     ( data_triangle_vertices[t][0] == v ) return 0;
+    else if( data_triangle_vertices[t][1] == v ) return 1;
+    else if( data_triangle_vertices[t][2] == v ) return 2;
+    else                                         assert(false);
+} 
+
+const std::array<int,3> MeshSimplicial2D::get_triangle_vertices( int t ) const
+{
+    assert( 0 <= t && t < counter_triangles );
+    return data_triangle_vertices[t];
+} 
+
 
 
 
@@ -381,6 +714,132 @@ const std::array<int,2> MeshSimplicial2D::get_edge_vertices( int e ) const
     assert( 0 <= e && e < counter_edges );
     return data_edge_vertices[e];
 } 
+
+
+
+
+// TODO: Proofread the following methods 
+
+/* triangle parents of a edge */
+
+int MeshSimplicial2D::count_edge_triangle_parents( int e ) const
+{
+  return get_triangle_parents_of_edge( e ).size();
+}
+
+int MeshSimplicial2D::get_edge_firstparent_triangle( int e ) const
+{
+  assert( 0 <= e && e < counter_edges );
+  return data_edge_firstparent_triangle[ e ];
+}
+
+int MeshSimplicial2D::get_edge_nextparent_triangle( int e, int t ) const
+{
+  assert( 0 <= e && e < counter_edges );
+  assert( 0 <= t && t < counter_triangles );
+  
+  if( data_triangle_edges[t][0] == e )
+    return data_triangle_nextparents_of_edges[t][0];
+  else if( data_triangle_edges[t][1] == e )
+    return data_triangle_nextparents_of_edges[t][1];
+  else if( data_triangle_edges[t][2] == e )
+    return data_triangle_nextparents_of_edges[t][2];
+  else
+    assert(false);
+}
+
+bool MeshSimplicial2D::is_triangle_edge_parent( int t, int e ) const
+{
+  assert( 0 <= e && e < counter_edges );
+  assert( 0 <= t && t < counter_triangles );
+  return data_triangle_edges[t][0] == e || data_triangle_edges[t][1] == e || data_triangle_edges[t][2] == e;
+}
+
+int MeshSimplicial2D::indexof_triangle_edge_parent( int t, int e ) const
+{
+  assert( 0 <= e && e < count_edges() );
+  std::vector<int> triangles = get_triangle_parents_of_edge( e );
+  
+  auto iter = std::find( triangles.begin(), triangles.end(), t ); 
+  assert( iter != triangles.end() );
+  
+  return iter - triangles.begin();
+}
+
+std::vector<int> MeshSimplicial2D::get_triangle_parents_of_edge( int e ) const
+{
+  assert( 0 <= e && e < count_edges() );
+  
+  std::vector<int> ret;
+  
+  for( int t = 0; t < count_triangles(); t++ ) 
+    for( int te : get_triangle_edges(t) )
+      if( e == te )
+        ret.push_back( t );
+  
+  return ret;
+}
+
+
+/* triangle parents of a vertex */
+
+int MeshSimplicial2D::count_vertex_triangle_parents( int v ) const
+{
+  return get_triangle_parents_of_vertex( v ).size();
+}
+
+int MeshSimplicial2D::get_vertex_firstparent_triangle( int v ) const
+{
+  assert( 0 <= v && v < counter_vertices );
+  return data_vertex_firstparent_triangle[ v ];
+}
+
+int MeshSimplicial2D::get_vertex_nextparent_triangle( int v, int t ) const
+{
+  assert( 0 <= v && v < counter_vertices );
+  assert( 0 <= t && t < counter_triangles );
+  
+  if( data_triangle_vertices[t][0] == v )
+    return data_triangle_nextparents_of_vertices[t][0];
+  else if( data_triangle_vertices[t][1] == v )
+    return data_triangle_nextparents_of_vertices[t][1];
+  else if( data_triangle_vertices[t][2] == v )
+    return data_triangle_nextparents_of_vertices[t][2];
+  else
+    assert(false);
+}
+
+bool MeshSimplicial2D::is_triangle_vertex_parent( int t, int v ) const
+{
+  assert( 0 <= v && v < counter_vertices );
+  assert( 0 <= t && t < counter_triangles );
+  return data_triangle_vertices[t][0] == v || data_triangle_vertices[t][1] == v || data_triangle_vertices[t][2] == v;
+}
+
+int MeshSimplicial2D::indexof_triangle_vertex_parent( int t, int v ) const
+{
+  assert( 0 <= v && v < count_vertices() );
+  std::vector<int> triangles = get_triangle_parents_of_vertex( v );
+  
+  auto iter = std::find( triangles.begin(), triangles.end(), t ); 
+  assert( iter != triangles.end() );
+  
+  return iter - triangles.begin();
+}
+
+std::vector<int> MeshSimplicial2D::get_triangle_parents_of_vertex( int v ) const
+{
+  assert( 0 <= v && v < count_vertices() );
+  
+  std::vector<int> ret;
+  
+  for( int t = 0; t < count_triangles(); t++ ) 
+    for( int tv : get_triangle_vertices(t) )
+      if( v == tv )
+        ret.push_back( t );
+  
+  return ret;
+}
 
 
 
@@ -445,8 +904,12 @@ std::vector<int> MeshSimplicial2D::get_edge_parents_of_vertex( int v ) const
 
 
 
+
+
 void MeshSimplicial2D::bisect_edge( int e )
 {
+    // TODO: Rewrite this section for the 2D case 
+    
     assert( 0 <= e && e < counter_edges );
     check();
     
@@ -550,26 +1013,8 @@ void MeshSimplicial2D::bisect_edge( int e )
 
 void MeshSimplicial2D::uniformrefinement()
 {
-    int old_counter_edges    = counter_edges;
-    int old_counter_vertices = counter_vertices;
+    // TODO: Rewrite this section for the 2D case 
     
-    check();
-    
-    data_edge_nextparents_of_vertices.reserve  ( 2 * old_counter_edges );
-    data_edge_vertices.reserve     ( 2 * old_counter_edges );
-    data_vertex_firstparent_edge.reserve( old_counter_vertices  );
-    getcoordinates().addcapacity   ( old_counter_edges     );
-    
-    for( int e = 0; e < old_counter_edges; e++ )
-      bisect_edge( e );
-      
-    check();
-}
-
-
-
-void MeshSimplicial2D::improved_uniformrefinement()
-{
     check();
     
     /* resize the arrays */
@@ -674,6 +1119,18 @@ void MeshSimplicial2D::improved_uniformrefinement()
 
 
 
+FloatVector MeshSimplicial2D::get_triangle_midpoint    ( int t )
+{
+    assert( 0 <= t && t < counter_triangles );
+    FloatVector mid( getouterdimension() );
+    for( int d = 0; d < getouterdimension(); d++ )
+      mid[d] = (   getcoordinates().getdata( get_triangle_vertices(t)[0], d ) 
+                 + getcoordinates().getdata( get_triangle_vertices(t)[1], d ) 
+                 + getcoordinates().getdata( get_triangle_vertices(t)[2], d )
+                ) / 3.;
+    return mid;
+}
+
 FloatVector MeshSimplicial2D::get_edge_midpoint    ( int e )
 {
     assert( 0 <= e && e < counter_edges );
@@ -685,8 +1142,6 @@ FloatVector MeshSimplicial2D::get_edge_midpoint    ( int e )
     return mid;
 }
 
-
-        
 
 
 
