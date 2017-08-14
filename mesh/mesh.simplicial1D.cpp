@@ -30,7 +30,7 @@ MeshSimplicial1D::MeshSimplicial1D( int outerdim )
     
     data_edge_vertices(0),
     data_vertex_firstparent_edge(0),
-    data_edge_nextparent_edge(0)
+    data_edge_nextparent_of_vertices(0)
 {
     check();
 }
@@ -49,7 +49,7 @@ MeshSimplicial1D::MeshSimplicial1D(
     
     data_edge_vertices( edge_vertices ),
     data_vertex_firstparent_edge( 0 ),
-    data_edge_nextparent_edge( counter_edges, { nullindex, nullindex } )
+    data_edge_nextparent_of_vertices( counter_edges, { nullindex, nullindex } )
 {
     
     getcoordinates() = coords;
@@ -85,10 +85,10 @@ MeshSimplicial1D::MeshSimplicial1D(
         int old_first_parent = data_vertex_firstparent_edge[v];
         
         assert( 0 <= old_first_parent && old_first_parent < counter_edges );
-        assert( data_edge_nextparent_edge[ e ][ vi ] == nullindex );
+        assert( data_edge_nextparent_of_vertices[ e ][ vi ] == nullindex );
         
         data_vertex_firstparent_edge[v] = e;
-        data_edge_nextparent_edge[ e ][ vi ] = old_first_parent;
+        data_edge_nextparent_of_vertices[ e ][ vi ] = old_first_parent;
         
       }
       
@@ -107,18 +107,18 @@ MeshSimplicial1D::MeshSimplicial1D(
     int outerdim,
     const Coordinates& coords,
     const std::vector<std::array<int,2>> edge_vertices,
-    const std::vector<int              > vertex_firstparent,
-    const std::vector<std::array<int,2>> edge_nextparents
+    const std::vector<std::array<int,2>> edge_nextparent_of_vertices,
+    const std::vector<int              > vertex_firstparent_edge
 )
 :
     Mesh( 1, outerdim ),
     
     counter_edges( edge_vertices.size() ),
-    counter_vertices( vertex_firstparent.size() ),
+    counter_vertices( vertex_firstparent_edge.size() ),
     
     data_edge_vertices( edge_vertices ),
-    data_vertex_firstparent_edge( vertex_firstparent ),
-    data_edge_nextparent_edge( edge_nextparents )
+    data_vertex_firstparent_edge( vertex_firstparent_edge ),
+    data_edge_nextparent_of_vertices( edge_nextparent_of_vertices )
 {
     
     getcoordinates() = coords;
@@ -138,7 +138,7 @@ void MeshSimplicial1D::check() const
     
     /* 1. Check the array sizes */
     assert( counter_edges == data_edge_vertices.size() );
-    assert( counter_edges == data_edge_nextparent_edge.size() );
+    assert( counter_edges == data_edge_nextparent_of_vertices.size() );
     assert( counter_vertices == data_vertex_firstparent_edge.size() );
     assert( count_vertices() == getcoordinates().getnumber() );
     
@@ -157,24 +157,24 @@ void MeshSimplicial1D::check() const
         assert( data_edge_vertices[e][1] != nullindex );
         assert( data_edge_vertices[e][0] != data_edge_vertices[e][1] );
         
-        if( data_edge_nextparent_edge[e][0] != nullindex || data_edge_nextparent_edge[e][1] != nullindex )
-          assert( data_edge_nextparent_edge[e][0] != data_edge_nextparent_edge[e][1] );
+        if( data_edge_nextparent_of_vertices[e][0] != nullindex || data_edge_nextparent_of_vertices[e][1] != nullindex )
+          assert( data_edge_nextparent_of_vertices[e][0] != data_edge_nextparent_of_vertices[e][1] );
         
-        if( data_edge_nextparent_edge[e][0] != nullindex )
-          assert( 0 <= data_edge_nextparent_edge[e][0] && data_edge_nextparent_edge[e][0] < counter_edges );
+        if( data_edge_nextparent_of_vertices[e][0] != nullindex )
+          assert( 0 <= data_edge_nextparent_of_vertices[e][0] && data_edge_nextparent_of_vertices[e][0] < counter_edges );
         
-        if( data_edge_nextparent_edge[e][0] != nullindex )
-          assert( data_edge_vertices[ data_edge_nextparent_edge[e][0] ][0] == data_edge_vertices[e][0] 
+        if( data_edge_nextparent_of_vertices[e][0] != nullindex )
+          assert( data_edge_vertices[ data_edge_nextparent_of_vertices[e][0] ][0] == data_edge_vertices[e][0] 
                   ||
-                  data_edge_vertices[ data_edge_nextparent_edge[e][0] ][1] == data_edge_vertices[e][0] );
+                  data_edge_vertices[ data_edge_nextparent_of_vertices[e][0] ][1] == data_edge_vertices[e][0] );
         
-        if( data_edge_nextparent_edge[e][1] != nullindex )
-          assert( 0 <= data_edge_nextparent_edge[e][1] && data_edge_nextparent_edge[e][1] < counter_edges );
+        if( data_edge_nextparent_of_vertices[e][1] != nullindex )
+          assert( 0 <= data_edge_nextparent_of_vertices[e][1] && data_edge_nextparent_of_vertices[e][1] < counter_edges );
 
-        if( data_edge_nextparent_edge[e][1] != nullindex )
-          assert( data_edge_vertices[ data_edge_nextparent_edge[e][1] ][0] == data_edge_vertices[e][1] 
+        if( data_edge_nextparent_of_vertices[e][1] != nullindex )
+          assert( data_edge_vertices[ data_edge_nextparent_of_vertices[e][1] ][0] == data_edge_vertices[e][1] 
                   ||
-                  data_edge_vertices[ data_edge_nextparent_edge[e][1] ][1] == data_edge_vertices[e][1] );
+                  data_edge_vertices[ data_edge_nextparent_of_vertices[e][1] ][1] == data_edge_vertices[e][1] );
     }
     
     /* * * * * * Data integrity
@@ -210,7 +210,7 @@ void MeshSimplicial1D::check() const
       assert( p != nullindex );
       
       while( p != e && p != nullindex )
-        p = data_edge_nextparent_edge[p][ ( data_edge_vertices[p][0] == v ) ? 0 : 1 ];
+        p = data_edge_nextparent_of_vertices[p][ ( data_edge_vertices[p][0] == v ) ? 0 : 1 ];
       
       assert( p == e );
       
@@ -242,7 +242,7 @@ void MeshSimplicial1D::print( std::ostream& os ) const
     
     os << "Edge next parents " << std::endl;
     
-    for( const auto& duple : data_edge_nextparent_edge )
+    for( const auto& duple : data_edge_nextparent_of_vertices )
       std::cout << duple[0] << space << duple[1] << nl;
     
     os << "Finished printing" << nl;
@@ -359,21 +359,21 @@ int MeshSimplicial1D::count_vertex_edge_parents( int v ) const
   return get_edge_parents_of_vertex( v ).size();
 }
 
-int MeshSimplicial1D::get_vertex_firstparent( int v ) const
+int MeshSimplicial1D::get_vertex_firstparent_edge( int v ) const
 {
   assert( 0 <= v && v < counter_vertices );
   return data_vertex_firstparent_edge[ v ];
 }
 
-int MeshSimplicial1D::get_vertex_nextparent( int v, int e ) const
+int MeshSimplicial1D::get_vertex_nextparent_edge( int v, int e ) const
 {
   assert( 0 <= v && v < counter_vertices );
   assert( 0 <= e && e < counter_edges    );
   
   if( data_edge_vertices[e][0] == v )
-    return data_edge_nextparent_edge[e][0];
+    return data_edge_nextparent_of_vertices[e][0];
   else if( data_edge_vertices[e][1] == v )
-    return data_edge_nextparent_edge[e][1];
+    return data_edge_nextparent_of_vertices[e][1];
   else
     assert(false);
 }
@@ -421,27 +421,27 @@ void MeshSimplicial1D::bisect_edge( int e )
     
     int vertex_back  = data_edge_vertices[e][0];
     int vertex_front = data_edge_vertices[e][1];
-    int nextparent_back  = data_edge_nextparent_edge[e][0];
-    int nextparent_front = data_edge_nextparent_edge[e][1];
+    int nextparent_back  = data_edge_nextparent_of_vertices[e][0];
+    int nextparent_front = data_edge_nextparent_of_vertices[e][1];
     int firstparent_back  = data_vertex_firstparent_edge[vertex_back ];
     int firstparent_front = data_vertex_firstparent_edge[vertex_front];
     
     int back_previousparent   = nullindex;
     int back_previousparent_localindex = nullindex;
-    if( e != get_vertex_firstparent( vertex_back ) )
-      for( back_previousparent = get_vertex_firstparent( vertex_back  );
-           back_previousparent != nullindex && get_vertex_nextparent(vertex_back,back_previousparent) != e; 
-           back_previousparent = get_vertex_nextparent(vertex_back,back_previousparent) 
+    if( e != get_vertex_firstparent_edge( vertex_back ) )
+      for( back_previousparent = get_vertex_firstparent_edge( vertex_back  );
+           back_previousparent != nullindex && get_vertex_nextparent_edge(vertex_back,back_previousparent) != e; 
+           back_previousparent = get_vertex_nextparent_edge(vertex_back,back_previousparent) 
          ); 
     if( back_previousparent  != nullindex ) 
       back_previousparent_localindex  = indexof_edge_vertex( back_previousparent,  vertex_back  );
     
     int front_previousparent  = nullindex;
     int front_previousparent_localindex = nullindex;
-    if( e != get_vertex_firstparent( vertex_front ) )
-      for( front_previousparent = get_vertex_firstparent( vertex_front );
-           front_previousparent != nullindex && get_vertex_nextparent(vertex_front,front_previousparent) != e; 
-           front_previousparent = get_vertex_nextparent(vertex_front,front_previousparent) 
+    if( e != get_vertex_firstparent_edge( vertex_front ) )
+      for( front_previousparent = get_vertex_firstparent_edge( vertex_front );
+           front_previousparent != nullindex && get_vertex_nextparent_edge(vertex_front,front_previousparent) != e; 
+           front_previousparent = get_vertex_nextparent_edge(vertex_front,front_previousparent) 
          ); 
     if( front_previousparent != nullindex )
       front_previousparent_localindex = indexof_edge_vertex( front_previousparent, vertex_front );
@@ -467,7 +467,7 @@ void MeshSimplicial1D::bisect_edge( int e )
     
     /* Allocate memory */
     
-    data_edge_nextparent_edge.resize  ( counter_edges    + 1 );
+    data_edge_nextparent_of_vertices.resize  ( counter_edges    + 1 );
     data_edge_vertices.resize     ( counter_edges    + 1 );
     data_vertex_firstparent_edge.resize( counter_vertices + 1 );
     
@@ -478,24 +478,24 @@ void MeshSimplicial1D::bisect_edge( int e )
     data_edge_vertices[ne][0] = front_backvertex;
     data_edge_vertices[ne][1] = front_frontvertex;
     
-    data_edge_nextparent_edge[e ][0] = back_backnextparent;
-    data_edge_nextparent_edge[e ][1] = back_frontnextparent;
-    data_edge_nextparent_edge[ne][0] = front_backnextparent;
-    data_edge_nextparent_edge[ne][1] = front_frontnextparent;
+    data_edge_nextparent_of_vertices[e ][0] = back_backnextparent;
+    data_edge_nextparent_of_vertices[e ][1] = back_frontnextparent;
+    data_edge_nextparent_of_vertices[ne][0] = front_backnextparent;
+    data_edge_nextparent_of_vertices[ne][1] = front_frontnextparent;
     
     data_vertex_firstparent_edge[nv] = e;
     
     if( back_previousparent  != nullindex ) {
-      assert( data_edge_nextparent_edge[ back_previousparent ][ back_previousparent_localindex ] == e );
-      data_edge_nextparent_edge[ back_previousparent ][ back_previousparent_localindex ] = e;
+      assert( data_edge_nextparent_of_vertices[ back_previousparent ][ back_previousparent_localindex ] == e );
+      data_edge_nextparent_of_vertices[ back_previousparent ][ back_previousparent_localindex ] = e;
     } else {
       assert( data_vertex_firstparent_edge[ vertex_back ] == e );
       data_vertex_firstparent_edge[ vertex_back ] = e;
     }
     
     if( front_previousparent != nullindex ) {
-      assert( data_edge_nextparent_edge[ front_previousparent ][ front_previousparent_localindex ] == ne );
-      data_edge_nextparent_edge[ front_previousparent ][ front_previousparent_localindex ] = ne;
+      assert( data_edge_nextparent_of_vertices[ front_previousparent ][ front_previousparent_localindex ] == ne );
+      data_edge_nextparent_of_vertices[ front_previousparent ][ front_previousparent_localindex ] = ne;
     } else {
       assert( data_vertex_firstparent_edge[ vertex_front ] == e );
       data_vertex_firstparent_edge[ vertex_front ] = ne;
@@ -522,7 +522,7 @@ void MeshSimplicial1D::uniformrefinement()
     
     check();
     
-    data_edge_nextparent_edge.reserve  ( 2 * old_counter_edges );
+    data_edge_nextparent_of_vertices.reserve  ( 2 * old_counter_edges );
     data_edge_vertices.reserve     ( 2 * old_counter_edges );
     data_vertex_firstparent_edge.reserve( old_counter_vertices  );
     getcoordinates().addcapacity   ( old_counter_edges     );
@@ -541,7 +541,7 @@ void MeshSimplicial1D::improved_uniformrefinement()
     
     /* resize the arrays */
     
-    data_edge_nextparent_edge.resize  ( counter_edges * 2 );
+    data_edge_nextparent_of_vertices.resize  ( counter_edges * 2 );
     data_edge_vertices.resize     ( counter_edges * 2 );
     data_vertex_firstparent_edge.resize( counter_edges + counter_vertices );
     getcoordinates().addcoordinates( counter_edges );
@@ -577,13 +577,13 @@ void MeshSimplicial1D::improved_uniformrefinement()
     for( int e  = 0; e  < counter_edges;  e++ )
     for( int vi = 0; vi <=            1; vi++ )
     {
-      int q = data_edge_nextparent_edge[e][vi];
+      int q = data_edge_nextparent_of_vertices[e][vi];
       
       int v = data_edge_vertices[e][vi];
       
       if( q == nullindex ) {
         
-        data_edge_nextparent_edge[e + vi * counter_edges ][vi] = nullindex;
+        data_edge_nextparent_of_vertices[e + vi * counter_edges ][vi] = nullindex;
         
       } else if( q != nullindex ) {
         
@@ -592,7 +592,7 @@ void MeshSimplicial1D::improved_uniformrefinement()
         assert( data_edge_vertices[q][0] == v || data_edge_vertices[q][1] == v );
         assert( data_edge_vertices[q][vinp] == v );
         
-        data_edge_nextparent_edge[ e + vi * counter_edges ][vi] = q + vinp * counter_edges;
+        data_edge_nextparent_of_vertices[ e + vi * counter_edges ][vi] = q + vinp * counter_edges;
       
       } 
       
@@ -606,8 +606,8 @@ void MeshSimplicial1D::improved_uniformrefinement()
     {
       data_vertex_firstparent_edge[counter_vertices + e] = e;
       
-      data_edge_nextparent_edge[e                ][1] = e + counter_edges;
-      data_edge_nextparent_edge[e + counter_edges][0] = nullindex;
+      data_edge_nextparent_of_vertices[e                ][1] = e + counter_edges;
+      data_edge_nextparent_of_vertices[e + counter_edges][0] = nullindex;
     }
     
     

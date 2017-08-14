@@ -56,8 +56,8 @@ class MeshSimplicial1D
             int outerdim,
             const Coordinates& coords,
             const std::vector<std::array<int,2>> edge_vertices,
-            const std::vector<int              > vertex_firstparent,
-            const std::vector<std::array<int,2>> edge_nextparents
+            const std::vector<std::array<int,2>> edge_nextparents_of_vertices,
+            const std::vector<int              > vertex_firstparent_edge
         );
         
         
@@ -104,9 +104,9 @@ class MeshSimplicial1D
         
         int count_vertex_edge_parents( int v ) const;
         
-        int get_vertex_firstparent( int v ) const;
+        int get_vertex_firstparent_edge( int v ) const;
         
-        int get_vertex_nextparent( int v, int e ) const;
+        int get_vertex_nextparent_edge( int v, int e ) const;
         
         bool is_edge_vertex_parent( int e, int v ) const;
         
@@ -136,7 +136,7 @@ class MeshSimplicial1D
         
         std::vector< std::array<int,2> > data_edge_vertices;
         std::vector< int               > data_vertex_firstparent_edge;
-        std::vector< std::array<int,2> > data_edge_nextparent_edge;
+        std::vector< std::array<int,2> > data_edge_nextparent_of_vertices;
         
         
         
