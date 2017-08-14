@@ -137,9 +137,11 @@ void MeshSimplicial1D::check() const
 {
     
     /* 1. Check the array sizes */
+    
     assert( counter_edges == data_edge_vertices.size() );
     assert( counter_edges == data_edge_nextparent_of_vertices.size() );
     assert( counter_vertices == data_vertex_firstparent_edge.size() );
+    
     assert( count_vertices() == getcoordinates().getnumber() );
     
     
@@ -160,21 +162,37 @@ void MeshSimplicial1D::check() const
         if( data_edge_nextparent_of_vertices[e][0] != nullindex || data_edge_nextparent_of_vertices[e][1] != nullindex )
           assert( data_edge_nextparent_of_vertices[e][0] != data_edge_nextparent_of_vertices[e][1] );
         
-        if( data_edge_nextparent_of_vertices[e][0] != nullindex )
-          assert( 0 <= data_edge_nextparent_of_vertices[e][0] && data_edge_nextparent_of_vertices[e][0] < counter_edges );
-        
-        if( data_edge_nextparent_of_vertices[e][0] != nullindex )
-          assert( data_edge_vertices[ data_edge_nextparent_of_vertices[e][0] ][0] == data_edge_vertices[e][0] 
-                  ||
-                  data_edge_vertices[ data_edge_nextparent_of_vertices[e][0] ][1] == data_edge_vertices[e][0] );
-        
-        if( data_edge_nextparent_of_vertices[e][1] != nullindex )
-          assert( 0 <= data_edge_nextparent_of_vertices[e][1] && data_edge_nextparent_of_vertices[e][1] < counter_edges );
+        for( int vi = 0; vi < 2; vi++ )
+        {
+          
+          if( data_edge_nextparent_of_vertices[e][vi] != nullindex )
+          assert( 0 <= data_edge_nextparent_of_vertices[e][vi] && data_edge_nextparent_of_vertices[e][vi] < counter_edges );
+          
+          if( data_edge_nextparent_of_vertices[e][vi] != nullindex )
+            assert( data_edge_vertices[ data_edge_nextparent_of_vertices[e][vi] ][0] == data_edge_vertices[e][vi] 
+                    ||
+                    data_edge_vertices[ data_edge_nextparent_of_vertices[e][vi] ][1] == data_edge_vertices[e][vi] 
+                  );
+          
+        }
+          
+//         if( data_edge_nextparent_of_vertices[e][0] != nullindex )
+//           assert( 0 <= data_edge_nextparent_of_vertices[e][0] && data_edge_nextparent_of_vertices[e][0] < counter_edges );
+//         
+//         if( data_edge_nextparent_of_vertices[e][0] != nullindex )
+//           assert( data_edge_vertices[ data_edge_nextparent_of_vertices[e][0] ][0] == data_edge_vertices[e][0] 
+//                   ||
+//                   data_edge_vertices[ data_edge_nextparent_of_vertices[e][0] ][1] == data_edge_vertices[e][0] );
+//         
+//         
+//         if( data_edge_nextparent_of_vertices[e][1] != nullindex )
+//           assert( 0 <= data_edge_nextparent_of_vertices[e][1] && data_edge_nextparent_of_vertices[e][1] < counter_edges );
+// 
+//         if( data_edge_nextparent_of_vertices[e][1] != nullindex )
+//           assert( data_edge_vertices[ data_edge_nextparent_of_vertices[e][1] ][0] == data_edge_vertices[e][1] 
+//                   ||
+//                   data_edge_vertices[ data_edge_nextparent_of_vertices[e][1] ][1] == data_edge_vertices[e][1] );
 
-        if( data_edge_nextparent_of_vertices[e][1] != nullindex )
-          assert( data_edge_vertices[ data_edge_nextparent_of_vertices[e][1] ][0] == data_edge_vertices[e][1] 
-                  ||
-                  data_edge_vertices[ data_edge_nextparent_of_vertices[e][1] ][1] == data_edge_vertices[e][1] );
     }
     
     /* * * * * * Data integrity
