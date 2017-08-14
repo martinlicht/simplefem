@@ -554,10 +554,6 @@ void MeshManifold1D::improved_uniformrefinement()
       getcoordinates().loadvector( e , get_edge_midpoint( e ) );
     }
     
-    std::cout << "parents of old vertices" << std::endl;
-    
-    
-    
     
     /* for each vertex, set the new parent edge */
     
@@ -585,42 +581,26 @@ void MeshManifold1D::improved_uniformrefinement()
       
       int v = data_edge_vertices[e][vi];
       
-      if( vi == 0 && q == nullindex ) {
+      if( q == nullindex ) {
         
-        data_edge_nextparents[e][vi] = nullindex;
+        data_edge_nextparents[e + vi * counter_edges ][vi] = nullindex;
         
-      } else if( vi == 0 && q != nullindex ) {
+      } else if( q != nullindex ) {
         
         int vinp = ( data_edge_vertices[q][0] == v ? 0 : 1 );
         
         assert( data_edge_vertices[q][0] == v || data_edge_vertices[q][1] == v );
         assert( data_edge_vertices[q][vinp] == v );
         
-        data_edge_nextparents[e][vi] = q + vinp * counter_edges;
+        data_edge_nextparents[ e + vi * counter_edges ][vi] = q + vinp * counter_edges;
       
-      } else if( vi == 1 && q == nullindex ) {
-        
-        data_edge_nextparents[e + counter_edges ][vi] = nullindex;
-      
-      } else if( vi == 1 && q != nullindex ) {
-        
-        assert( data_edge_vertices[q][0] == v || data_edge_vertices[q][1] == v );
-        
-        int vinp = ( data_edge_vertices[q][0] == v ? 0 : 1 );
-        
-        assert( data_edge_vertices[q][vinp] == v );
-        
-        data_edge_nextparents[ e + counter_edges ][vi] = q + vinp * counter_edges;
-      
-      }
+      } 
       
     }
     
     
     
     /* for each new vertex, create the first and second parent */
-    
-    std::cout << "parents of new vertices" << std::endl;
     
     for( int e = 0; e < counter_edges; e++ )
     {
@@ -632,8 +612,6 @@ void MeshManifold1D::improved_uniformrefinement()
     
     
     /* for each edge, create the new vertices */
-    
-    std::cout << "edge vertices" << std::endl;
     
     for( int e = 0; e < counter_edges; e++ )
     {
@@ -654,29 +632,6 @@ void MeshManifold1D::improved_uniformrefinement()
     
     
     /* DONE */
-    
-    for( int e  = 0; e  <  counter_edges; e++  )
-    for( int vi = 0; vi <=             1; vi++ )
-    {
-      
-      int v = data_edge_vertices[e][vi];
-      
-      int p = data_vertex_firstparent[v];
-      
-      assert( p != nullindex );
-      
-      while( p != e && p != nullindex ) {
-        std::cout << p << std::endl;
-        assert( data_edge_vertices[p][0] == v || data_edge_vertices[p][1] == v );
-        assert( data_edge_vertices[p][ ( data_edge_vertices[p][0] == v ) ? 0 : 1 ] == v );
-        std::cout << ( ( data_edge_vertices[p][0] == v ) ? 0 : 1 ) << std::endl;
-        std::cout << ( p = data_edge_nextparents[p][ ( data_edge_vertices[p][0] == v ) ? 0 : 1 ] ) << std::endl;
-      }
-        
-      std::cout << p << space << e << space << vi << space << v << std::endl;
-      assert( p == e );
-      
-    }
     
     check();
 }
