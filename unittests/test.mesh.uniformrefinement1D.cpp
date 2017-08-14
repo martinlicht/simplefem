@@ -26,7 +26,8 @@ int main()
         
         cout << "Start refinement" << endl;
         
-        M.improved_uniformrefinement();
+        for( int c = 0; c < 10; c++ )
+          M.improved_uniformrefinement();
         
         cout << "Finished Unit Test" << endl;
 

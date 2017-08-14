@@ -559,70 +559,70 @@ void MeshManifold1D::improved_uniformrefinement()
     
     
     
-    /* for each old vertex, transverse the vertex list and fill it up again */
+    /* for each vertex, set the new parent edge */
     
     for( int v = 0; v < counter_vertices; v++ )
     {
       int p = data_vertex_firstparent[v];
       
-      assert( p != nullindex && 0 <= p && p < counter_edges );
+      assert( p != nullindex );
       
-      int vi = ( data_edge_vertices[p][0] == v ) ? 0 : 1;
+      int vi = ( ( data_edge_vertices[p][0] == v ) ? 0 : 1 );
       
+      assert( data_edge_vertices[p][0] == v || data_edge_vertices[p][1] == v );
       assert( data_edge_vertices[p][vi] == v );
       
-      if( vi == 1 ) {
-        data_vertex_firstparent[v] += counter_edges;
-      }
+      data_vertex_firstparent[v] = p + vi * counter_edges;
+    }
+    
+    
+    /* for each edge, relocate the data of the old vertices' parents */
+    
+    for( int e  = 0; e  < counter_edges;  e++ )
+    for( int vi = 0; vi <=            1; vi++ )
+    {
+      int q = data_edge_nextparents[e][vi];
       
-      /* 
-       * 
-       * Der anfangsindex zeigt schon auf die neue erste kante.
-       * loop
-       *   bestimme dieser parent hinkommt -> dort wirst du hineinschreiben 
-       *   wenn next parent null, dann schreibe null, sonst
-       *     bestimme wo next parent hinkommt -> daten zum schreiben 
-       *     schreibe die daten
-       *     gehe zum nächsten physischen loop
-       * 
-       */
+      int v = data_edge_vertices[e][vi];
       
-      while( p != nullindex )
-      {
-        assert( p != nullindex && 0 <= p && p < counter_edges );
+      if( vi == 0 && q == nullindex ) {
         
-        int vi1 = ( data_edge_vertices[p][0] == v ) ? 0 : 1;
-        assert( data_edge_vertices[p][vi1] == v );
+        data_edge_nextparents[e][vi] = nullindex;
         
-        int q = data_edge_nextparents[p][vi1];
+      } else if( vi == 0 && q != nullindex ) {
         
-        if( q == nullindex ) {
-          
-          data_edge_nextparents[ p + vi1 * counter_edges ][vi1]
-            = nullindex;
-          
-        } else {
-          
-          int vi2 = ( data_edge_vertices[ q ][0] == v ) ? 0 : 1;
-          assert( data_edge_vertices[ q ][vi2] == v );
-          
-          data_edge_nextparents[ p + vi1 * counter_edges ][ vi1 ]
-            = q + vi2 * counter_edges;
-          
-        }
+        int vinp = ( data_edge_vertices[q][0] == v ? 0 : 1 );
         
-        p = q;
+        assert( data_edge_vertices[q][0] == v || data_edge_vertices[q][1] == v );
+        assert( data_edge_vertices[q][vinp] == v );
         
+        data_edge_nextparents[e][vi] = q + vinp * counter_edges;
+      
+      } else if( vi == 1 && q == nullindex ) {
+        
+        data_edge_nextparents[e + counter_edges ][vi] = nullindex;
+      
+      } else if( vi == 1 && q != nullindex ) {
+        
+        assert( data_edge_vertices[q][0] == v || data_edge_vertices[q][1] == v );
+        
+        int vinp = ( data_edge_vertices[q][0] == v ? 0 : 1 );
+        
+        assert( data_edge_vertices[q][vinp] == v );
+        
+        data_edge_nextparents[ e + counter_edges ][vi] = q + vinp * counter_edges;
+      
       }
       
     }
+    
     
     
     /* for each new vertex, create the first and second parent */
     
     std::cout << "parents of new vertices" << std::endl;
     
-    for( int e = counter_edges; e < counter_edges; e++ )
+    for( int e = 0; e < counter_edges; e++ )
     {
       data_vertex_firstparent[counter_vertices + e] = e;
       
@@ -655,7 +655,7 @@ void MeshManifold1D::improved_uniformrefinement()
     
     /* DONE */
     
-    for( int e  = 0; e  <  counter_edges; e++ )
+    for( int e  = 0; e  <  counter_edges; e++  )
     for( int vi = 0; vi <=             1; vi++ )
     {
       
