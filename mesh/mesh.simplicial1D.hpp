@@ -136,7 +136,7 @@ class MeshSimplicial1D
         
         std::vector< std::array<int,2> > data_edge_vertices;
         std::vector< int               > data_vertex_firstparent_edge;
-        std::vector< std::array<int,2> > data_edge_nextparent_of_vertices;
+        std::vector< std::array<int,2> > data_edge_nextparents_of_vertices;
         
         
         
