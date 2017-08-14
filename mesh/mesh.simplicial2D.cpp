@@ -575,15 +575,31 @@ bool MeshSimplicial2D::subsimplices_listed( int sup, int sub ) const
 
 const IndexMap MeshSimplicial2D::getsubsimplices( int sup, int sub, int cell ) const
 {
-  // TODO: Update this function
   
-  assert( 1 == sup );
-  assert( 0 == sub );
-  assert( 0 <= cell && cell < count_edges() );
-  
-  auto temp = get_edge_vertices(cell);
-  return IndexMap( IndexRange(0,1), std::vector<int>( temp.begin(), temp.end() ) );
+  if( sup == 2 && sub == 1 ) {
     
+    assert( 0 <= cell && cell < count_triangles() );
+    auto temp = get_triangle_edges(cell);
+    return IndexMap( IndexRange(0,2), std::vector<int>( temp.begin(), temp.end() ) );
+    
+  } else if( sup == 2 && sub == 0 ) {
+    
+    assert( 0 <= cell && cell < count_triangles() );
+    auto temp = get_triangle_vertices(cell);
+    return IndexMap( IndexRange(0,2), std::vector<int>( temp.begin(), temp.end() ) );
+    
+  } else if( sup == 1 && sub == 0 ) {
+    
+    assert( 0 <= cell && cell < count_edges() );
+    auto temp = get_edge_vertices(cell);
+    return IndexMap( IndexRange(0,1), std::vector<int>( temp.begin(), temp.end() ) );
+    
+  } else {
+    
+    assert(false);
+    
+  }
+   
 }
 
 bool MeshSimplicial2D::supersimplices_listed( int sup, int sub ) const
@@ -594,14 +610,35 @@ bool MeshSimplicial2D::supersimplices_listed( int sup, int sub ) const
 
 const std::vector<int> MeshSimplicial2D::getsupersimplices( int sup, int sub, int cell ) const
 {
-  // TODO: Update this function
   
   assert( 1 == sup );
   assert( 0 == sub );
   assert( 0 <= cell && cell < count_vertices() );
   
-  auto temp = get_edge_parents_of_vertex( cell ); 
-  return std::vector<int>( temp.begin(), temp.end() );
+  if( sup == 2 && sub == 1 ) {
+    
+    assert( 0 <= cell && cell < count_edges() );
+    auto temp = get_triangle_parents_of_edge( cell ); 
+    return std::vector<int>( temp.begin(), temp.end() );
+    
+  } else if( sup == 2 && sub == 0 ) {
+    
+    assert( 0 <= cell && cell < count_vertices() );
+    auto temp = get_triangle_parents_of_vertex( cell ); 
+    return std::vector<int>( temp.begin(), temp.end() );
+    
+  } else if( sup == 1 && sub == 0 ) {
+    
+    assert( 0 <= cell && cell < count_vertices() );
+    auto temp = get_edge_parents_of_vertex( cell ); 
+    return std::vector<int>( temp.begin(), temp.end() );
+    
+  } else {
+    
+    assert(false);
+    
+  }
+  
 }
 
 
