@@ -7,7 +7,7 @@
 
 #include "../basic.hpp"
 #include "../mesh/coordinates.hpp"
-#include "../mesh/mesh.manifold1D.hpp"
+#include "../mesh/mesh.simplicial1D.hpp"
 
 
 using namespace std;
@@ -16,7 +16,7 @@ int main()
 {
 	cout << "Unit Test for Manifold 1D Module" << endl;
 	
-        MeshManifold1D M = UnitSquare();
+        MeshSimplicial1D M = UnitSquare();
         
         cout << "Check" << endl;
         

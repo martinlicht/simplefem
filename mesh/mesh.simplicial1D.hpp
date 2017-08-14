@@ -22,7 +22,7 @@
 /*******************
 ****  
 ****  
-****  MeshManifold1D Class 
+****  MeshSimplicial1D Class 
 ****  
 ****  - specialized mesh class for one-dimensional meshes 
 ****  - looks like an undirected graph. Parallel edges are allowed.
@@ -38,21 +38,21 @@
 *******************/
 
 
-class MeshManifold1D
+class MeshSimplicial1D
 : public Mesh
 {
 
     public:
     
-        MeshManifold1D( int outerdim = 1 );
+        MeshSimplicial1D( int outerdim = 1 );
         
-        MeshManifold1D( 
+        MeshSimplicial1D( 
             int outerdim,
             const Coordinates& coords,
             const std::vector<std::array<int,2>> edge_vertices
         );
         
-        MeshManifold1D( 
+        MeshSimplicial1D( 
             int outerdim,
             const Coordinates& coords,
             const std::vector<std::array<int,2>> edge_vertices,
@@ -61,7 +61,7 @@ class MeshManifold1D
         );
         
         
-        virtual ~MeshManifold1D();
+        virtual ~MeshSimplicial1D();
         
         virtual void check() const;
         
@@ -135,8 +135,8 @@ class MeshManifold1D
         int counter_vertices;
         
         std::vector< std::array<int,2> > data_edge_vertices;
-        std::vector< int               > data_vertex_firstparent;
-        std::vector< std::array<int,2> > data_edge_nextparents;
+        std::vector< int               > data_vertex_firstparent_edge;
+        std::vector< std::array<int,2> > data_edge_nextparent_edge;
         
         
         
@@ -145,7 +145,7 @@ class MeshManifold1D
 
 
 
-inline std::ostream& operator<<( std::ostream& os, const MeshManifold1D& mt1d )
+inline std::ostream& operator<<( std::ostream& os, const MeshSimplicial1D& mt1d )
 {
     mt1d.print( os );
     return os;
@@ -154,9 +154,9 @@ inline std::ostream& operator<<( std::ostream& os, const MeshManifold1D& mt1d )
 
 
 
-inline MeshManifold1D UnitSquare()
+inline MeshSimplicial1D UnitSquare()
 {
-    return MeshManifold1D(
+    return MeshSimplicial1D(
       1,
       Coordinates( 1, 2, {
         -1., // 0
@@ -168,9 +168,9 @@ inline MeshManifold1D UnitSquare()
     );
 }
 
-inline MeshManifold1D StandardSquare()
+inline MeshSimplicial1D StandardSquare()
 {
-    return MeshManifold1D(
+    return MeshSimplicial1D(
       1,
       Coordinates( 1, 2, {
          0., // 0
