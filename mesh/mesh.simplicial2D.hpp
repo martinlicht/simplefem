@@ -24,15 +24,7 @@
 ****  
 ****  MeshSimplicial2D Class 
 ****  
-****  - specialized mesh class for one-dimensional meshes 
-****  - looks like an undirected graph. Parallel edges are allowed.
-****  - We want to get from every edge to its vertices 
-****    and from every vertex we want to traverse its parent edges 
-****  
-****    Rationale:
-****    - for every edge, we save the 2 vertices 
-****    - for every vertex, we save the first parent edge
-****    - for every edge, we save the next parents of each vertex. 
+****  - specialized mesh class for finite two-dimensional simplicial complexes
 ****    
 ****    
 *******************/
