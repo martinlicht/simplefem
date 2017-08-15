@@ -145,12 +145,10 @@ void MeshSimplicial1D::check() const
     assert( count_vertices() == getcoordinates().getnumber() );
     
     
-    /* * * * * Data integrity
-     * 
+    /* 
      * each edge: each vertex is a valid index
      * each edge: each vertex is unique 
      * each edge: the next parents make sense 
-     * 
      */
     
     for( int e = 0; e < counter_edges; e++ )
@@ -176,29 +174,21 @@ void MeshSimplicial1D::check() const
           
         }
           
-//         if( data_edge_nextparents_of_vertices[e][0] != nullindex )
-//           assert( 0 <= data_edge_nextparents_of_vertices[e][0] && data_edge_nextparents_of_vertices[e][0] < counter_edges );
-//         
-//         if( data_edge_nextparents_of_vertices[e][0] != nullindex )
-//           assert( data_edge_vertices[ data_edge_nextparents_of_vertices[e][0] ][0] == data_edge_vertices[e][0] 
-//                   ||
-//                   data_edge_vertices[ data_edge_nextparents_of_vertices[e][0] ][1] == data_edge_vertices[e][0] );
-//         
-//         
-//         if( data_edge_nextparents_of_vertices[e][1] != nullindex )
-//           assert( 0 <= data_edge_nextparents_of_vertices[e][1] && data_edge_nextparents_of_vertices[e][1] < counter_edges );
-// 
-//         if( data_edge_nextparents_of_vertices[e][1] != nullindex )
-//           assert( data_edge_vertices[ data_edge_nextparents_of_vertices[e][1] ][0] == data_edge_vertices[e][1] 
-//                   ||
-//                   data_edge_vertices[ data_edge_nextparents_of_vertices[e][1] ][1] == data_edge_vertices[e][1] );
-
     }
     
-    /* * * * * * Data integrity
-     * 
+    /* 
+     * check that all edges are unique, even up to permutation
+     */
+    
+    for( int e1 = 0; e1 < counter_edges; e1++ )
+    for( int e2 = 0; e2 < counter_edges; e2++ )
+    {
+        assert( data_edge_vertices[e1][0] != data_edge_vertices[e2][0] || data_edge_vertices[e1][1] != data_edge_vertices[e1][1] );
+        assert( data_edge_vertices[e1][0] != data_edge_vertices[e2][1] || data_edge_vertices[e1][1] != data_edge_vertices[e1][0] );
+    }
+    
+    /* 
      * each vertex_firstparent: first parent is non-null 
-     * 
      */
     
     for( int v = 0; v < counter_vertices; v++ )
@@ -211,10 +201,8 @@ void MeshSimplicial1D::check() const
         assert( data_edge_vertices[p][0] == v || data_edge_vertices[p][1] == v );
     }
     
-    /* * * * * * Data integrity
-     * 
+    /* 
      * check that each is listed as parent somewhere 
-     * 
      */
     
     for( int e  = 0; e  <  counter_edges; e++ )

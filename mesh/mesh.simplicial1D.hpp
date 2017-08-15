@@ -24,12 +24,10 @@
 ****  
 ****  MeshSimplicial1D Class 
 ****  
-****  - specialized mesh class for one-dimensional meshes 
-****  - looks like an undirected graph. Parallel edges are allowed.
-****  - We want to get from every edge to its vertices 
-****    and from every vertex we want to traverse its parent edges 
+****  - specialized mesh class for finite one-dimensional simplicial complexes 
+****  - looks like an undirected graph without loops or parallel edges.
 ****  
-****    Rationale:
+****    Content:
 ****    - for every edge, we save the 2 vertices 
 ****    - for every vertex, we save the first parent edge
 ****    - for every edge, we save the next parents of each vertex. 
