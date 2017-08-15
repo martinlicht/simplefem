@@ -67,9 +67,9 @@ MeshSimplicial2D::MeshSimplicial2D(
     data_vertex_firstparent_triangle( 0 ),
     data_triangle_nextparents_of_vertices( triangle_vertices.size(), { nullindex, nullindex, nullindex } ),
     
-    data_edge_vertices( triangle_vertices.size() ),
+    data_edge_vertices( 0 ),
     data_vertex_firstparent_edge( 0 ),
-    data_edge_nextparents_of_vertices( 0, { nullindex, nullindex } )
+    data_edge_nextparents_of_vertices( 0 )
 {
     
     getcoordinates() = coords;
@@ -80,17 +80,19 @@ MeshSimplicial2D::MeshSimplicial2D(
     for( int t  = 0; t  < counter_triangles; t++  )
     for( int ei = 0; ei <                 3; ei++ )
     {
-      data_edge_vertices[ t + 0 * counter_triangles ] = { data_triangle_vertices[t][0], data_triangle_vertices[t][1] };
-      data_edge_vertices[ t + 1 * counter_triangles ] = { data_triangle_vertices[t][0], data_triangle_vertices[t][2] };
-      data_edge_vertices[ t + 2 * counter_triangles ] = { data_triangle_vertices[t][1], data_triangle_vertices[t][2] };
+      data_edge_vertices[ 0 * counter_triangles + t ] = { data_triangle_vertices[t][0], data_triangle_vertices[t][1] };
+      data_edge_vertices[ 1 * counter_triangles + t ] = { data_triangle_vertices[t][0], data_triangle_vertices[t][2] };
+      data_edge_vertices[ 2 * counter_triangles + t ] = { data_triangle_vertices[t][1], data_triangle_vertices[t][2] };
     }
     
-    std::unique( data_edge_vertices.begin(), data_edge_vertices.end() );
+    std::sort( data_edge_vertices.begin(), data_edge_vertices.end() );
+    auto it = std::unique( data_edge_vertices.begin(), data_edge_vertices.end() );
+    data_edge_vertices.resize( it - data_edge_vertices.begin() );
     
     counter_edges = data_edge_vertices.size();
     
-    data_edge_firstparent_triangle.resize( counter_edges );
-    data_edge_nextparents_of_vertices.resize( counter_edges );
+    data_edge_firstparent_triangle.resize   ( counter_edges, nullindex );
+    data_edge_nextparents_of_vertices.resize( counter_edges, { nullindex, nullindex } );
     
     /* 2. Count vertices, allocate memory */
     
@@ -103,7 +105,12 @@ MeshSimplicial2D::MeshSimplicial2D(
     data_vertex_firstparent_triangle.resize( counter_vertices, nullindex );
     data_vertex_firstparent_edge.resize( counter_vertices, nullindex );
     
-    
+    for( auto t : data_triangle_vertices )
+      std::cout << t[0] << space << t[1] << space << t[2] << std::endl;
+    for( auto e : data_edge_vertices )
+      std::cout << e[0] << space << e[1] << std::endl;
+    std::cout << std::endl;
+      
     /* 3. For each vertex, set the first parent triangle and the neighboring parent triangles */
     
     for( int t =  0; t  < counter_triangles; t++  )
@@ -162,7 +169,7 @@ MeshSimplicial2D::MeshSimplicial2D(
       assert( 0 <= data_vertex_firstparent_edge[v] && data_vertex_firstparent_edge[v] < counter_edges );  
     }
     
-    /* 5.  */
+    /* 5. For each edge, set the first parent triangle and the neighboring parent triangles */
     
     for( int t = 0; t < counter_triangles; t++ )
     for( int e = 0; e <     counter_edges; e++ )
@@ -181,6 +188,8 @@ MeshSimplicial2D::MeshSimplicial2D(
       if( voe0 == vot1 && voe1 == vot2 ) eot = 2;
       
       if( eot == nullindex ) continue;
+      
+      data_triangle_edges[t][eot] = e;
       
       if( data_edge_firstparent_triangle[e] == nullindex ) {
         
@@ -202,6 +211,7 @@ MeshSimplicial2D::MeshSimplicial2D(
       assert( data_edge_firstparent_triangle[e] != nullindex );
       assert( 0 <= data_edge_firstparent_triangle[e] && data_edge_firstparent_triangle[e] < counter_triangles );  
     }
+    
     
     
     
@@ -338,14 +348,14 @@ void MeshSimplicial2D::check() const
         assert( data_triangle_vertices[t][1] != data_triangle_vertices[t][2] );
         
         
-        if( data_triangle_nextparents_of_vertices[t][0] != nullindex || data_triangle_nextparents_of_vertices[t][1] != nullindex )
-          assert( data_triangle_nextparents_of_vertices[t][0] != data_triangle_nextparents_of_vertices[t][1] );
-        
-        if( data_triangle_nextparents_of_vertices[t][0] != nullindex || data_triangle_nextparents_of_vertices[t][2] != nullindex )
-          assert( data_triangle_nextparents_of_vertices[t][0] != data_triangle_nextparents_of_vertices[t][2] );
-        
-        if( data_triangle_nextparents_of_vertices[t][1] != nullindex || data_triangle_nextparents_of_vertices[t][2] != nullindex )
-          assert( data_triangle_nextparents_of_vertices[t][1] != data_triangle_nextparents_of_vertices[t][2] );
+//         if( data_triangle_nextparents_of_vertices[t][0] != nullindex || data_triangle_nextparents_of_vertices[t][1] != nullindex )
+//           assert( data_triangle_nextparents_of_vertices[t][0] != data_triangle_nextparents_of_vertices[t][1] );
+//         
+//         if( data_triangle_nextparents_of_vertices[t][0] != nullindex || data_triangle_nextparents_of_vertices[t][2] != nullindex )
+//           assert( data_triangle_nextparents_of_vertices[t][0] != data_triangle_nextparents_of_vertices[t][2] );
+//         
+//         if( data_triangle_nextparents_of_vertices[t][1] != nullindex || data_triangle_nextparents_of_vertices[t][2] != nullindex )
+//           assert( data_triangle_nextparents_of_vertices[t][1] != data_triangle_nextparents_of_vertices[t][2] );
         
         
         for( int vi = 0; vi < 3; vi++ )
@@ -380,8 +390,8 @@ void MeshSimplicial2D::check() const
         assert( data_edge_vertices[e][1] != nullindex );
         assert( data_edge_vertices[e][0] != data_edge_vertices[e][1] );
         
-        if( data_edge_nextparents_of_vertices[e][0] != nullindex || data_edge_nextparents_of_vertices[e][1] != nullindex )
-          assert( data_edge_nextparents_of_vertices[e][0] != data_edge_nextparents_of_vertices[e][1] );
+//         if( data_edge_nextparents_of_vertices[e][0] != nullindex || data_edge_nextparents_of_vertices[e][1] != nullindex )
+//           assert( data_edge_nextparents_of_vertices[e][0] != data_edge_nextparents_of_vertices[e][1] );
         
           
         for( int vi = 0; vi < 2; vi++ )
@@ -409,6 +419,8 @@ void MeshSimplicial2D::check() const
     for( int e1 = 0; e1 < counter_edges; e1++ )
     for( int e2 = 0; e2 < counter_edges; e2++ )
     {
+        if( e1 == e2 ) continue;
+        
         assert( data_edge_vertices[e1][0] != data_edge_vertices[e2][0] || data_edge_vertices[e1][1] != data_edge_vertices[e2][1] );
         assert( data_edge_vertices[e1][0] != data_edge_vertices[e2][1] || data_edge_vertices[e1][1] != data_edge_vertices[e2][0] );
     }
@@ -422,6 +434,8 @@ void MeshSimplicial2D::check() const
     for( int t1 = 0; t1 < counter_triangles; t1++ )
     for( int t2 = 0; t2 < counter_triangles; t2++ )
     {
+        if( t1 == t2 ) continue;
+        
         assert( data_triangle_vertices[t1][0] != data_triangle_vertices[t2][0] || data_triangle_vertices[t1][1] != data_triangle_vertices[t2][1] || data_triangle_vertices[t1][2] != data_triangle_vertices[t2][2] );
         assert( data_triangle_vertices[t1][0] != data_triangle_vertices[t2][0] || data_triangle_vertices[t1][1] != data_triangle_vertices[t2][2] || data_triangle_vertices[t1][2] != data_triangle_vertices[t2][1] );
         assert( data_triangle_vertices[t1][0] != data_triangle_vertices[t2][1] || data_triangle_vertices[t1][1] != data_triangle_vertices[t2][0] || data_triangle_vertices[t1][2] != data_triangle_vertices[t2][2] );
@@ -521,7 +535,7 @@ void MeshSimplicial2D::check() const
       
       int e = data_triangle_edges[t][ei];
       
-      int p = data_vertex_firstparent_edge[e];
+      int p = data_edge_firstparent_triangle[e];
       
       assert( p != nullindex );
       
@@ -1157,27 +1171,39 @@ void MeshSimplicial2D::bisect_edge( int e )
 
 void MeshSimplicial2D::uniformrefinement()
 {
-    // TODO: Rewrite this section for the 2D case 
-    
     check();
     
     /* resize the arrays */
     
-    data_edge_nextparents_of_vertices.resize  ( counter_edges * 2 );
-    data_edge_vertices.resize     ( counter_edges * 2 );
-    data_vertex_firstparent_edge.resize( counter_edges + counter_vertices );
+    data_triangle_edges.resize               ( 4 * counter_triangles                     );
+    data_edge_firstparent_triangle.resize    ( 2 * counter_edges + 3 * counter_triangles );
+    data_triangle_nextparents_of_edges.resize( 4 * counter_triangles                     );
+    
+    data_triangle_vertices.resize               ( 4 * counter_triangles            );
+    data_vertex_firstparent_triangle.resize     ( counter_vertices + counter_edges );
+    data_triangle_nextparents_of_vertices.resize( 4 * counter_triangles            );
+    
+    data_edge_vertices.resize               ( 2 * counter_edges + 3 * counter_triangles );
+    data_vertex_firstparent_edge.resize     ( counter_vertices + counter_edges          );
+    data_edge_nextparents_of_vertices.resize( 2 * counter_edges + 3 * counter_triangles );
+    
     getcoordinates().addcoordinates( counter_edges );
+    
     
     
     /* create the new coordinates and fill them up */
     
     for( int e = 0; e < counter_edges; e++ )
     {
-      getcoordinates().loadvector( e , get_edge_midpoint( e ) );
+      getcoordinates().loadvector( counter_vertices + e, get_edge_midpoint( e ) );
     }
     
     
-    /* for each vertex, set the new parent edge */
+    
+    
+    /**** Edge -- Vertex Relation ****/
+    
+    /* for each old vertex, set the new parent edge */
     
     for( int v = 0; v < counter_vertices; v++ )
     {
@@ -1185,7 +1211,7 @@ void MeshSimplicial2D::uniformrefinement()
       
       assert( p != nullindex );
       
-      int vi = ( ( data_edge_vertices[p][0] == v ) ? 0 : 1 );
+      int vi = data_edge_vertices[p][0] == v ? 0 : 1;
       
       assert( data_edge_vertices[p][0] == v || data_edge_vertices[p][1] == v );
       assert( data_edge_vertices[p][vi] == v );
@@ -1194,7 +1220,7 @@ void MeshSimplicial2D::uniformrefinement()
     }
     
     
-    /* for each edge, relocate the data of the old vertices' parents */
+    /* for each old edge, relocate the data of the old vertices' old parent edges */
     
     for( int e  = 0; e  < counter_edges;  e++ )
     for( int vi = 0; vi <=            1; vi++ )
@@ -1221,8 +1247,10 @@ void MeshSimplicial2D::uniformrefinement()
     }
     
     
-    
-    /* for each new vertex, create the first and second parent */
+    /* for each new vertex, 
+     * create the first and second parent edge 
+     * from the old edge 
+     */
     
     for( int e = 0; e < counter_edges; e++ )
     {
@@ -1231,6 +1259,55 @@ void MeshSimplicial2D::uniformrefinement()
       data_edge_nextparents_of_vertices[e                ][1] = e + counter_edges;
       data_edge_nextparents_of_vertices[e + counter_edges][0] = nullindex;
     }
+    
+    
+    /* for each old edge, run over the adjacent triangles 
+     * and add the corresponding new edges to the list of 
+     * parent edges of new vertex.
+     */
+    
+    for( int e = 0; e < counter_edges; e++ )
+    {
+      int t = data_edge_firstparent_triangle[e];
+      
+      while( t != nullindex ) {
+        
+        int ei   = nullindex;
+        int e_1  = nullindex; 
+        int e_2  = nullindex;
+        int vi_1 = nullindex;
+        int vi_2 = nullindex;
+        
+        // [ 01 02 12 ] -> [ 01 02 ] [ 01 12 ] [ 02 12 ]
+        
+        if( data_triangle_edges[t][0] == e ) {
+          ei = 0; e_1 = 0; e_2 = 1; vi_1 = 0; vi_2 = 0; 
+        } else if( data_triangle_edges[t][1] == e ) {
+          ei = 1; e_1 = 0; e_2 = 2; vi_1 = 1; vi_2 = 0; 
+        } else if( data_triangle_edges[t][2] == e ) {
+          ei = 2; e_1 = 1; e_2 = 2; vi_1 = 1; vi_2 = 1; 
+        } else
+          assert(false);
+        
+        assert( ei  != nullindex && e_1 != nullindex && e_2 != nullindex );
+        
+        int old_first_parent = data_vertex_firstparent_edge[ counter_vertices + e ];
+        
+        data_vertex_firstparent_edge[ counter_vertices + e ]
+          = 2 * counter_edges + e_1 * counter_triangles + t;
+        
+        data_edge_nextparents_of_vertices[ 2 * counter_edges + e_1 * counter_triangles + t ][ vi_1 ]
+          = 2 * counter_edges + e_2 * counter_triangles + t;
+        
+        data_edge_nextparents_of_vertices[ 2 * counter_edges + e_2 * counter_triangles + t ][ vi_2 ]
+          = old_first_parent;
+        
+        t = data_triangle_nextparents_of_edges[ t ][ ei ];
+        
+      }
+      
+    }
+    
     
     
     /* for each edge, create the new vertices */
@@ -1247,10 +1324,289 @@ void MeshSimplicial2D::uniformrefinement()
     }
     
     
+    
+    /**** Triangle -- Vertex Relation ****/
+    
+    /* for each old vertex, set the new parent triangle */
+    
+    for( int v = 0; v < counter_vertices; v++ )
+    {
+      int p = data_vertex_firstparent_triangle[v];
+      
+      assert( p != nullindex );
+      
+      int vi = data_triangle_vertices[p][0] == v ? 0 : data_triangle_vertices[p][1] == v ? 1 : 2;
+      
+      assert( data_triangle_vertices[p][0] == v || data_triangle_vertices[p][1] == v  || data_triangle_vertices[p][2] == v );
+      assert( data_triangle_vertices[p][vi] == v );
+      
+      data_vertex_firstparent_triangle[v] = vi * counter_triangles + p;
+    }
+    
+    
+    /* for each old triangle, relocate the data of the old vertices' parent triangle */
+    
+    for( int t  = 0; t  < counter_triangles;  t++ )
+    for( int vi = 0; vi <                3; vi++ )
+    {
+      int q = data_triangle_nextparents_of_vertices[t][vi];
+      
+      int v = data_triangle_vertices[t][vi];
+      
+      if( q == nullindex ) {
+        
+        data_triangle_nextparents_of_vertices[t + vi * counter_triangles ][vi] = nullindex;
+        
+      } else if( q != nullindex ) {
+        
+        int vinp = data_triangle_vertices[q][0] == v ? 0 : data_triangle_vertices[q][1] == v ? 1 : 2;
+        
+        assert( data_triangle_vertices[q][0] == v || data_triangle_vertices[q][1] == v || data_triangle_vertices[q][2] == v );
+        assert( data_triangle_vertices[q][vinp] == v );
+        
+        data_triangle_nextparents_of_vertices[ t + vi * counter_triangles ][vi] = q + vinp * counter_triangles;
+      
+      } 
+      
+    }
+    
+    /* for each old edge, run over the adjacent triangles 
+     * and add the corresponding new triangles to the list of 
+     * parent triangles of new vertex.
+     */
+    
+    for( int e = 0; e < counter_edges; e++ )
+    {
+      int t = data_edge_firstparent_triangle[e];
+      
+      while( t != nullindex ) {
+        
+        int ei   = nullindex;
+        int t_1  = nullindex; 
+        int t_2  = nullindex;
+        int t_3  = nullindex;
+        int vi_1 = nullindex;
+        int vi_2 = nullindex;
+        int vi_3 = nullindex;
+        
+        // [ 01 02 12 ] -> [ 01 02 ] [ 01 12 ] [ 02 12 ]
+        // [ 00 01 02 ], [ 01 11 12 ], [ 02 12 22 ], [ 01 02 12 ]
+        
+        if( data_triangle_edges[t][0] == e ) {
+          ei = 0; 
+          t_1 = 0; t_2 = 3; t_3 = 1; vi_1 = 1; vi_2 = 0; vi_3 = 0;  
+        } else if( data_triangle_edges[t][1] == e ) {
+          ei = 1; 
+          t_1 = 0; t_2 = 3; t_3 = 2; vi_1 = 2; vi_2 = 1; vi_3 = 0;  
+        } else if( data_triangle_edges[t][2] == e ) {
+          ei = 2; 
+          t_1 = 1; t_2 = 3; t_3 = 2; vi_1 = 2; vi_2 = 2; vi_3 = 1; 
+        } else
+          assert(false);
+        
+        assert( ei  != nullindex );
+        
+        int old_first_parent = data_vertex_firstparent_triangle[ counter_vertices + e ];
+        
+        data_vertex_firstparent_triangle[ counter_vertices + e ]
+          = t_1 * counter_triangles + t;
+        
+        data_triangle_nextparents_of_vertices[ t_1 * counter_triangles + t ][ vi_1 ]
+          = t_2 * counter_triangles + t;
+        
+        data_triangle_nextparents_of_vertices[ t_2 * counter_triangles + t ][ vi_2 ]
+          = t_3 * counter_triangles + t;
+        
+        data_triangle_nextparents_of_vertices[ t_3 * counter_triangles + t ][ vi_3 ]
+          = old_first_parent;
+        
+        t = data_triangle_nextparents_of_edges[ t ][ ei ];
+        
+      }
+      
+    }
+    
+    
+    
+    /* for each triangle, create the new vertices */
+    
+    for( int t = 0; t < counter_triangles; t++ )
+    {
+      int v00 = data_triangle_vertices[t][0];
+      int v11 = data_triangle_vertices[t][1];
+      int v22 = data_triangle_vertices[t][2];
+      
+      int v01 = data_triangle_edges[t][0];
+      int v02 = data_triangle_edges[t][1];
+      int v12 = data_triangle_edges[t][2];
+      
+      // [ 00 01 02 ], [ 01 11 12 ], [ 02 12 22 ], [ 01 02 12 ]
+        
+      data_triangle_vertices[ 0 * counter_triangles + t ][0] = v00;
+      data_triangle_vertices[ 0 * counter_triangles + t ][1] = v01;
+      data_triangle_vertices[ 0 * counter_triangles + t ][2] = v02;
+      
+      data_triangle_vertices[ 1 * counter_triangles + t ][0] = v01;
+      data_triangle_vertices[ 1 * counter_triangles + t ][1] = v11;
+      data_triangle_vertices[ 1 * counter_triangles + t ][2] = v12;
+      
+      data_triangle_vertices[ 2 * counter_triangles + t ][0] = v02;
+      data_triangle_vertices[ 2 * counter_triangles + t ][1] = v12;
+      data_triangle_vertices[ 2 * counter_triangles + t ][2] = v22;
+      
+      data_triangle_vertices[ 3 * counter_triangles + t ][0] = v01;
+      data_triangle_vertices[ 3 * counter_triangles + t ][1] = v02;
+      data_triangle_vertices[ 3 * counter_triangles + t ][2] = v12;
+      
+    }
+    
+    
+    // TODO: Check code until here.
+    // TODO: Create missing code below.
+    
+    /**** Triangle -- Edge Relation ****/
+    
+    /* for each old edge, set the new parent triangle */
+    
+    for( int e = 0; e < counter_edges; e++ )
+    {
+      int p = data_edge_firstparent_triangle[e];
+      
+      assert( p != nullindex );
+      
+      int ei = data_triangle_edges[p][0] == e ? 0 : data_triangle_edges[p][1] == e ? 1 : 2;
+      
+      assert( data_triangle_edges[p][0] == e || data_triangle_edges[p][1] == e || data_triangle_edges[p][2] == e );
+      assert( data_triangle_edges[p][ei] == e );
+      
+      data_edge_firstparent_triangle[e] = ei * counter_triangles + p;
+    }
+    
+    
+    /* for each triangle, relocate the data of the old edges' parent triangle */
+    
+    for( int t  = 0; t  < counter_triangles;  t++ )
+    for( int vi = 0; vi <                3; vi++ )
+    {
+      int q = data_triangle_nextparents_of_vertices[t][vi];
+      
+      int v = data_triangle_vertices[t][vi];
+      
+      if( q == nullindex ) {
+        
+        data_triangle_nextparents_of_vertices[t + vi * counter_triangles ][vi] = nullindex;
+        
+      } else if( q != nullindex ) {
+        
+        int vinp = data_triangle_vertices[q][0] == v ? 0 : data_triangle_vertices[q][1] == v ? 1 : 2;
+        
+        assert( data_triangle_vertices[q][0] == v || data_triangle_vertices[q][1] == v || data_triangle_vertices[q][2] == v );
+        assert( data_triangle_vertices[q][vinp] == v );
+        
+        data_triangle_nextparents_of_vertices[ t + vi * counter_triangles ][vi] = q + vinp * counter_triangles;
+      
+      } 
+      
+    }
+    
+    /* for each old edge, run over the adjacent triangles 
+     * and add the corresponding new triangles to the list of 
+     * parent triangles of new vertex.
+     */
+    
+    for( int e = 0; e < counter_edges; e++ )
+    {
+      int t = data_edge_firstparent_triangle[e];
+      
+      while( t != nullindex ) {
+        
+        int ei   = nullindex;
+        int t_1  = nullindex; 
+        int t_2  = nullindex;
+        int t_3  = nullindex;
+        int vi_1 = nullindex;
+        int vi_2 = nullindex;
+        int vi_3 = nullindex;
+        
+        // [ 01 02 12 ] -> [ 01 02 ] [ 01 12 ] [ 02 12 ]
+        // [ 00 01 02 ], [ 01 11 12 ], [ 02 12 22 ], [ 01 02 12 ]
+        
+        if( data_triangle_edges[t][0] == e ) {
+          ei = 0; 
+          t_1 = 0; t_2 = 3; t_3 = 1; vi_1 = 1; vi_2 = 0; vi_3 = 0;  
+        } else if( data_triangle_edges[t][1] == e ) {
+          ei = 1; 
+          t_1 = 0; t_2 = 3; t_3 = 2; vi_1 = 2; vi_2 = 1; vi_3 = 0;  
+        } else if( data_triangle_edges[t][2] == e ) {
+          ei = 2; 
+          t_1 = 1; t_2 = 3; t_3 = 2; vi_1 = 2; vi_2 = 2; vi_3 = 1; 
+        } else
+          assert(false);
+        
+        assert( ei  != nullindex );
+        
+        int old_first_parent = data_vertex_firstparent_triangle[ counter_vertices + e ];
+        
+        data_vertex_firstparent_triangle[ counter_vertices + e ]
+          = t_1 * counter_triangles + t;
+        
+        data_triangle_nextparents_of_vertices[ t_1 * counter_triangles + t ][ vi_1 ]
+          = t_2 * counter_triangles + t;
+        
+        data_triangle_nextparents_of_vertices[ t_2 * counter_triangles + t ][ vi_2 ]
+          = t_3 * counter_triangles + t;
+        
+        data_triangle_nextparents_of_vertices[ t_3 * counter_triangles + t ][ vi_3 ]
+          = old_first_parent;
+        
+        t = data_triangle_nextparents_of_edges[ t ][ ei ];
+        
+      }
+      
+    }
+    
+    
+    
+    /* for each triangle, create the new vertices */
+    
+    for( int t = 0; t < counter_triangles; t++ )
+    {
+      int v00 = data_triangle_vertices[t][0];
+      int v11 = data_triangle_vertices[t][1];
+      int v22 = data_triangle_vertices[t][2];
+      
+      int v01 = data_triangle_edges[t][0];
+      int v02 = data_triangle_edges[t][1];
+      int v12 = data_triangle_edges[t][2];
+      
+      // [ 00 01 02 ], [ 01 11 12 ], [ 02 12 22 ], [ 01 02 12 ]
+        
+      data_triangle_vertices[ 0 * counter_triangles + t ][0] = v00;
+      data_triangle_vertices[ 0 * counter_triangles + t ][1] = v01;
+      data_triangle_vertices[ 0 * counter_triangles + t ][2] = v02;
+      
+      data_triangle_vertices[ 1 * counter_triangles + t ][0] = v01;
+      data_triangle_vertices[ 1 * counter_triangles + t ][1] = v11;
+      data_triangle_vertices[ 1 * counter_triangles + t ][2] = v12;
+      
+      data_triangle_vertices[ 2 * counter_triangles + t ][0] = v02;
+      data_triangle_vertices[ 2 * counter_triangles + t ][1] = v12;
+      data_triangle_vertices[ 2 * counter_triangles + t ][2] = v22;
+      
+      data_triangle_vertices[ 3 * counter_triangles + t ][0] = v01;
+      data_triangle_vertices[ 3 * counter_triangles + t ][1] = v02;
+      data_triangle_vertices[ 3 * counter_triangles + t ][2] = v12;
+      
+    }
+    
+    
+    
+    
     /* update the counters */
     
-    counter_vertices += counter_edges;
-    counter_edges += counter_edges;
+    counter_vertices  = counter_vertices + counter_edges;
+    counter_edges     = 2 * counter_edges + 3 * counter_triangles;
+    counter_triangles = 4 * counter_triangles;
     
     
     /* DONE */

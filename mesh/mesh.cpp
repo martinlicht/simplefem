@@ -10,7 +10,7 @@
 #ifdef NDEBUG
 const int Mesh::nullindex = std::numeric_limits<int>::max(); 
 #else
-const int Mesh::nullindex = 777777; 
+const int Mesh::nullindex = -17; 
 #endif
 
 
