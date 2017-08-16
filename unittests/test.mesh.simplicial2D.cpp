@@ -14,15 +14,22 @@ using namespace std;
 
 int main()
 {
-	cout << "Unit Test for Simplicial 2D Module" << endl;
-	
+        cout << "Unit Test for Simplicial 2D Module" << endl;
+        
         MeshSimplicial2D M = UnitSquare();
         
         M.check();
-	
+        
+        cout << "Refinement" << endl;
+        
+        for( int c = 0; c < 1; c++ )
+          M.uniformrefinement();
+        
+        M.check();
+        
         cout << M << endl;
         
         cout << "Finished Unit Test" << endl;
-
-	return 0;
+        
+        return 0;
 }
