@@ -155,22 +155,25 @@ void MeshSimplicial1D::check() const
     {
         assert( data_edge_vertices[e][0] != nullindex );
         assert( data_edge_vertices[e][1] != nullindex );
+        assert( 0 <= data_edge_vertices[e][0] && data_edge_vertices[e][0] < counter_vertices );
+        assert( 0 <= data_edge_vertices[e][1] && data_edge_vertices[e][1] < counter_vertices );
         assert( data_edge_vertices[e][0] != data_edge_vertices[e][1] );
         
         if( data_edge_nextparents_of_vertices[e][0] != nullindex || data_edge_nextparents_of_vertices[e][1] != nullindex )
           assert( data_edge_nextparents_of_vertices[e][0] != data_edge_nextparents_of_vertices[e][1] );
         
-        for( int vi = 0; vi < 2; vi++ )
-        {
+        for( int vi = 0; vi < 2; vi++ ) {
           
-          if( data_edge_nextparents_of_vertices[e][vi] != nullindex )
-          assert( 0 <= data_edge_nextparents_of_vertices[e][vi] && data_edge_nextparents_of_vertices[e][vi] < counter_edges );
-          
-          if( data_edge_nextparents_of_vertices[e][vi] != nullindex )
+          if( data_edge_nextparents_of_vertices[e][vi] != nullindex ) {
+            
+            assert( 0 <= data_edge_nextparents_of_vertices[e][vi] && data_edge_nextparents_of_vertices[e][vi] < counter_edges );
+            
             assert( data_edge_vertices[ data_edge_nextparents_of_vertices[e][vi] ][0] == data_edge_vertices[e][vi] 
                     ||
                     data_edge_vertices[ data_edge_nextparents_of_vertices[e][vi] ][1] == data_edge_vertices[e][vi] 
                   );
+                  
+          }
           
         }
           
@@ -211,9 +214,11 @@ void MeshSimplicial1D::check() const
       
       int v = data_edge_vertices[e][vi];
       
+      assert( 0 <= v && v < counter_vertices );
+      
       int p = data_vertex_firstparent_edge[v];
       
-      assert( p != nullindex );
+      assert( p != nullindex && 0 <= p && p < counter_edges );
       
       while( p != e && p != nullindex )
         p = data_edge_nextparents_of_vertices[p][ ( data_edge_vertices[p][0] == v ) ? 0 : 1 ];
@@ -579,7 +584,7 @@ void MeshSimplicial1D::improved_uniformrefinement()
       
       assert( p != nullindex );
       
-      int vi = ( ( data_edge_vertices[p][0] == v ) ? 0 : 1 );
+      int vi = data_edge_vertices[p][0] == v ? 0 : 1;
       
       assert( data_edge_vertices[p][0] == v || data_edge_vertices[p][1] == v );
       assert( data_edge_vertices[p][vi] == v );
@@ -588,7 +593,7 @@ void MeshSimplicial1D::improved_uniformrefinement()
     }
     
     
-    /* for each old edge, relocate the data of the old vertices' parent edges */
+    /* for each old edge, relocate the data of the old vertices' old parent edges */
     
     for( int e  = 0; e  < counter_edges;  e++ )
     for( int vi = 0; vi <             2; vi++ )
@@ -601,9 +606,11 @@ void MeshSimplicial1D::improved_uniformrefinement()
         
         data_edge_nextparents_of_vertices[ e + vi * counter_edges ][vi] = nullindex;
         
-      } else if( q != nullindex ) {
+      } else {
         
-        int vinp = ( data_edge_vertices[q][0] == v ? 0 : 1 );
+        assert( 0 <= q && q < counter_edges );
+        
+        int vinp = data_edge_vertices[q][0] == v ? 0 : 1;
         
         assert( data_edge_vertices[q][0] == v || data_edge_vertices[q][1] == v );
         assert( data_edge_vertices[q][vinp] == v );
@@ -616,7 +623,7 @@ void MeshSimplicial1D::improved_uniformrefinement()
     
     
     
-    /* for each new vertex, create the first and second parent edge */
+    /* for each new vertex, set the first and second parent edge from the old edges */
     
     for( int e = 0; e < counter_edges; e++ )
     {
@@ -627,7 +634,7 @@ void MeshSimplicial1D::improved_uniformrefinement()
     }
     
     
-    /* for each edge, create the new vertices */
+    /* for each edge, set the vertices */
     
     for( int e = 0; e < counter_edges; e++ )
     {
