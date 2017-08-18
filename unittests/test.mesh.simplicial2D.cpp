@@ -22,7 +22,7 @@ int main()
         
         cout << "Refinement" << endl;
         
-        for( int c = 0; c < 1; c++ )
+        for( int c = 0; c < 2; c++ )
           M.uniformrefinement();
         
         M.check();

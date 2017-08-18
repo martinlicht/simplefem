@@ -296,6 +296,10 @@ void MeshSimplicial2D::check() const
         assert( data_triangle_edges[t][1] != nullindex );
         assert( data_triangle_edges[t][2] != nullindex );
         
+        assert( 0 <= data_triangle_edges[t][0] && data_triangle_edges[t][0] < counter_edges );
+        assert( 0 <= data_triangle_edges[t][1] && data_triangle_edges[t][1] < counter_edges );
+        assert( 0 <= data_triangle_edges[t][2] && data_triangle_edges[t][2] < counter_edges );
+        
         assert( data_triangle_edges[t][0] != data_triangle_edges[t][1] );
         assert( data_triangle_edges[t][0] != data_triangle_edges[t][2] );
         assert( data_triangle_edges[t][1] != data_triangle_edges[t][2] );
@@ -343,6 +347,10 @@ void MeshSimplicial2D::check() const
         assert( data_triangle_vertices[t][1] != nullindex );
         assert( data_triangle_vertices[t][2] != nullindex );
         
+        assert( 0 <= data_triangle_vertices[t][0] && data_triangle_vertices[t][0] < counter_vertices );
+        assert( 0 <= data_triangle_vertices[t][1] && data_triangle_vertices[t][1] < counter_vertices );
+        assert( 0 <= data_triangle_vertices[t][2] && data_triangle_vertices[t][2] < counter_vertices );
+        
         assert( data_triangle_vertices[t][0] != data_triangle_vertices[t][1] );
         assert( data_triangle_vertices[t][0] != data_triangle_vertices[t][2] );
         assert( data_triangle_vertices[t][1] != data_triangle_vertices[t][2] );
@@ -388,6 +396,8 @@ void MeshSimplicial2D::check() const
     {
         assert( data_edge_vertices[e][0] != nullindex );
         assert( data_edge_vertices[e][1] != nullindex );
+        assert( 0 <= data_edge_vertices[e][0] && data_edge_vertices[e][0] < counter_vertices );
+        assert( 0 <= data_edge_vertices[e][1] && data_edge_vertices[e][0] < counter_vertices );
         assert( data_edge_vertices[e][0] != data_edge_vertices[e][1] );
         
 //         if( data_edge_nextparents_of_vertices[e][0] != nullindex || data_edge_nextparents_of_vertices[e][1] != nullindex )
@@ -1175,17 +1185,17 @@ void MeshSimplicial2D::uniformrefinement()
     
     /* resize the arrays */
     
-    data_triangle_edges.resize               ( 4 * counter_triangles                     );
-    data_edge_firstparent_triangle.resize    ( 2 * counter_edges + 3 * counter_triangles );
-    data_triangle_nextparents_of_edges.resize( 4 * counter_triangles                     );
+    data_triangle_edges.resize               ( 4 * counter_triangles                    , { nullindex, nullindex, nullindex } );
+    data_edge_firstparent_triangle.resize    ( 2 * counter_edges + 3 * counter_triangles, nullindex                           );
+    data_triangle_nextparents_of_edges.resize( 4 * counter_triangles                    , { nullindex, nullindex, nullindex } );
     
-    data_triangle_vertices.resize               ( 4 * counter_triangles            );
-    data_vertex_firstparent_triangle.resize     ( counter_vertices + counter_edges );
-    data_triangle_nextparents_of_vertices.resize( 4 * counter_triangles            );
+    data_triangle_vertices.resize               ( 4 * counter_triangles           , { nullindex, nullindex, nullindex } );
+    data_vertex_firstparent_triangle.resize     ( counter_vertices + counter_edges, nullindex                           );
+    data_triangle_nextparents_of_vertices.resize( 4 * counter_triangles           , { nullindex, nullindex, nullindex } );
     
-    data_edge_vertices.resize               ( 2 * counter_edges + 3 * counter_triangles );
-    data_vertex_firstparent_edge.resize     ( counter_vertices + counter_edges          );
-    data_edge_nextparents_of_vertices.resize( 2 * counter_edges + 3 * counter_triangles );
+    data_edge_vertices.resize               ( 2 * counter_edges + 3 * counter_triangles, { nullindex, nullindex } );
+    data_vertex_firstparent_edge.resize     ( counter_vertices + counter_edges         , nullindex                );
+    data_edge_nextparents_of_vertices.resize( 2 * counter_edges + 3 * counter_triangles, { nullindex, nullindex } );
     
     getcoordinates().addcoordinates( counter_edges );
     
@@ -1209,14 +1219,14 @@ void MeshSimplicial2D::uniformrefinement()
     {
       int p = data_vertex_firstparent_edge[v];
       
-      assert( p != nullindex );
+      assert( p != nullindex && 0 <= p && p < counter_edges );
       
       int vi = data_edge_vertices[p][0] == v ? 0 : 1;
       
       assert( data_edge_vertices[p][0] == v || data_edge_vertices[p][1] == v );
       assert( data_edge_vertices[p][vi] == v );
       
-      data_vertex_firstparent_edge[v] = p + vi * counter_edges;
+      data_vertex_firstparent_edge[v] = vi * counter_edges + p;
     }
     
     
@@ -1229,18 +1239,22 @@ void MeshSimplicial2D::uniformrefinement()
       
       int v = data_edge_vertices[e][vi];
       
+      assert( v != nullindex && 0 <= v && v < counter_vertices );
+      
       if( q == nullindex ) {
         
-        data_edge_nextparents_of_vertices[e + vi * counter_edges ][vi] = nullindex;
+        data_edge_nextparents_of_vertices[ vi * counter_edges + e ][vi] = nullindex;
         
-      } else if( q != nullindex ) {
+      } else {
         
-        int vinp = ( data_edge_vertices[q][0] == v ? 0 : 1 );
+        assert( 0 <= q && q < counter_edges );
+        
+        int vinp = data_edge_vertices[q][0] == v ? 0 : 1;
         
         assert( data_edge_vertices[q][0] == v || data_edge_vertices[q][1] == v );
         assert( data_edge_vertices[q][vinp] == v );
         
-        data_edge_nextparents_of_vertices[ e + vi * counter_edges ][vi] = q + vinp * counter_edges;
+        data_edge_nextparents_of_vertices[ vi * counter_edges + e ][vi] = vinp * counter_edges + q;
       
       } 
       
@@ -1248,16 +1262,15 @@ void MeshSimplicial2D::uniformrefinement()
     
     
     /* for each new vertex, 
-     * create the first and second parent edge 
-     * from the old edge 
+     * set the first and second parent edge from the old edge 
      */
     
     for( int e = 0; e < counter_edges; e++ )
     {
       data_vertex_firstparent_edge[counter_vertices + e] = e;
       
-      data_edge_nextparents_of_vertices[e                ][1] = e + counter_edges;
-      data_edge_nextparents_of_vertices[e + counter_edges][0] = nullindex;
+      data_edge_nextparents_of_vertices[ 0 * counter_edges + e ][1] = counter_edges + e;
+      data_edge_nextparents_of_vertices[ 1 * counter_edges + e ][0] = nullindex;
     }
     
     
@@ -1280,7 +1293,7 @@ void MeshSimplicial2D::uniformrefinement()
         
         // [ 01 02 12 ] -> [ 01 02 ] [ 01 12 ] [ 02 12 ]
         
-        if( data_triangle_edges[t][0] == e ) {
+        if(        data_triangle_edges[t][0] == e ) {
           ei = 0; e_1 = 0; e_2 = 1; vi_1 = 0; vi_2 = 0; 
         } else if( data_triangle_edges[t][1] == e ) {
           ei = 1; e_1 = 0; e_2 = 2; vi_1 = 1; vi_2 = 0; 
@@ -1308,9 +1321,7 @@ void MeshSimplicial2D::uniformrefinement()
       
     }
     
-    
-    
-    /* for each edge, create the new vertices */
+    /* for each edge created from an old edge, set the vertices */
     
     for( int e = 0; e < counter_edges; e++ )
     {
@@ -1323,6 +1334,17 @@ void MeshSimplicial2D::uniformrefinement()
       data_edge_vertices[e + counter_edges][1] = vertex_front;
     }
     
+    /* for each triangle, set the vertices of the new edge */
+    
+    for( int t = 0; t < counter_triangles; t++ )
+    {
+      data_edge_vertices[ 2 * counter_edges + 0 * counter_triangles + t ][0] = counter_vertices + data_triangle_edges[t][0];
+      data_edge_vertices[ 2 * counter_edges + 0 * counter_triangles + t ][1] = counter_vertices + data_triangle_edges[t][1];
+      data_edge_vertices[ 2 * counter_edges + 1 * counter_triangles + t ][0] = counter_vertices + data_triangle_edges[t][0];
+      data_edge_vertices[ 2 * counter_edges + 1 * counter_triangles + t ][1] = counter_vertices + data_triangle_edges[t][2];
+      data_edge_vertices[ 2 * counter_edges + 2 * counter_triangles + t ][0] = counter_vertices + data_triangle_edges[t][1];
+      data_edge_vertices[ 2 * counter_edges + 2 * counter_triangles + t ][1] = counter_vertices + data_triangle_edges[t][2];
+    }
     
     
     /**** Triangle -- Vertex Relation ****/
@@ -1333,7 +1355,7 @@ void MeshSimplicial2D::uniformrefinement()
     {
       int p = data_vertex_firstparent_triangle[v];
       
-      assert( p != nullindex );
+      assert( p != nullindex && 0 <= p && p < counter_triangles );
       
       int vi = data_triangle_vertices[p][0] == v ? 0 : data_triangle_vertices[p][1] == v ? 1 : 2;
       
@@ -1347,7 +1369,7 @@ void MeshSimplicial2D::uniformrefinement()
     /* for each old triangle, relocate the data of the old vertices' parent triangle */
     
     for( int t  = 0; t  < counter_triangles;  t++ )
-    for( int vi = 0; vi <                3; vi++ )
+    for( int vi = 0; vi <                 3; vi++ )
     {
       int q = data_triangle_nextparents_of_vertices[t][vi];
       
@@ -1355,20 +1377,23 @@ void MeshSimplicial2D::uniformrefinement()
       
       if( q == nullindex ) {
         
-        data_triangle_nextparents_of_vertices[t + vi * counter_triangles ][vi] = nullindex;
+        data_triangle_nextparents_of_vertices[ vi * counter_triangles + t ][vi] = nullindex;
         
-      } else if( q != nullindex ) {
+      } else {
         
         int vinp = data_triangle_vertices[q][0] == v ? 0 : data_triangle_vertices[q][1] == v ? 1 : 2;
         
         assert( data_triangle_vertices[q][0] == v || data_triangle_vertices[q][1] == v || data_triangle_vertices[q][2] == v );
         assert( data_triangle_vertices[q][vinp] == v );
         
-        data_triangle_nextparents_of_vertices[ t + vi * counter_triangles ][vi] = q + vinp * counter_triangles;
+        data_triangle_nextparents_of_vertices[ vi * counter_triangles + t ][vi] = vinp * counter_triangles + q;
       
       } 
       
     }
+    
+//     FIXME: Proofread until here
+    
     
     /* for each old edge, run over the adjacent triangles 
      * and add the corresponding new triangles to the list of 
@@ -1392,7 +1417,7 @@ void MeshSimplicial2D::uniformrefinement()
         // [ 01 02 12 ] -> [ 01 02 ] [ 01 12 ] [ 02 12 ]
         // [ 00 01 02 ], [ 01 11 12 ], [ 02 12 22 ], [ 01 02 12 ]
         
-        if( data_triangle_edges[t][0] == e ) {
+        if(        data_triangle_edges[t][0] == e ) {
           ei = 0; 
           t_1 = 0; t_2 = 3; t_3 = 1; vi_1 = 1; vi_2 = 0; vi_3 = 0;  
         } else if( data_triangle_edges[t][1] == e ) {
@@ -1404,19 +1429,20 @@ void MeshSimplicial2D::uniformrefinement()
         } else
           assert(false);
         
-        assert( ei  != nullindex );
-        
         int old_first_parent = data_vertex_firstparent_triangle[ counter_vertices + e ];
         
         data_vertex_firstparent_triangle[ counter_vertices + e ]
           = t_1 * counter_triangles + t;
         
+        if( t_1 != 0 ) assert( data_triangle_nextparents_of_vertices[ t_1 * counter_triangles + t ][ vi_1 ] == nullindex );
         data_triangle_nextparents_of_vertices[ t_1 * counter_triangles + t ][ vi_1 ]
           = t_2 * counter_triangles + t;
         
+        if( t_2 != 0 ) assert( data_triangle_nextparents_of_vertices[ t_2 * counter_triangles + t ][ vi_2 ] == nullindex );
         data_triangle_nextparents_of_vertices[ t_2 * counter_triangles + t ][ vi_2 ]
           = t_3 * counter_triangles + t;
         
+        if( t_3 != 0 ) assert( data_triangle_nextparents_of_vertices[ t_3 * counter_triangles + t ][ vi_3 ] == nullindex );
         data_triangle_nextparents_of_vertices[ t_3 * counter_triangles + t ][ vi_3 ]
           = old_first_parent;
         
@@ -1428,37 +1454,37 @@ void MeshSimplicial2D::uniformrefinement()
     
     
     
-    /* for each triangle, create the new vertices */
-    
-    for( int t = 0; t < counter_triangles; t++ )
-    {
-      int v00 = data_triangle_vertices[t][0];
-      int v11 = data_triangle_vertices[t][1];
-      int v22 = data_triangle_vertices[t][2];
-      
-      int v01 = data_triangle_edges[t][0];
-      int v02 = data_triangle_edges[t][1];
-      int v12 = data_triangle_edges[t][2];
-      
-      // [ 00 01 02 ], [ 01 11 12 ], [ 02 12 22 ], [ 01 02 12 ]
-        
-      data_triangle_vertices[ 0 * counter_triangles + t ][0] = v00;
-      data_triangle_vertices[ 0 * counter_triangles + t ][1] = v01;
-      data_triangle_vertices[ 0 * counter_triangles + t ][2] = v02;
-      
-      data_triangle_vertices[ 1 * counter_triangles + t ][0] = v01;
-      data_triangle_vertices[ 1 * counter_triangles + t ][1] = v11;
-      data_triangle_vertices[ 1 * counter_triangles + t ][2] = v12;
-      
-      data_triangle_vertices[ 2 * counter_triangles + t ][0] = v02;
-      data_triangle_vertices[ 2 * counter_triangles + t ][1] = v12;
-      data_triangle_vertices[ 2 * counter_triangles + t ][2] = v22;
-      
-      data_triangle_vertices[ 3 * counter_triangles + t ][0] = v01;
-      data_triangle_vertices[ 3 * counter_triangles + t ][1] = v02;
-      data_triangle_vertices[ 3 * counter_triangles + t ][2] = v12;
-      
-    }
+//     /* for each triangle, create the new vertices */
+//     
+//     for( int t = 0; t < counter_triangles; t++ )
+//     {
+//       int v00 = data_triangle_vertices[t][0];
+//       int v11 = data_triangle_vertices[t][1];
+//       int v22 = data_triangle_vertices[t][2];
+//       
+//       int v01 = counter_vertices + data_triangle_edges[t][0];
+//       int v02 = counter_vertices + data_triangle_edges[t][1];
+//       int v12 = counter_vertices + data_triangle_edges[t][2];
+//       
+//       // [ 00 01 02 ], [ 01 11 12 ], [ 02 12 22 ], [ 01 02 12 ]
+//         
+//       data_triangle_vertices[ 0 * counter_triangles + t ][0] = v00;
+//       data_triangle_vertices[ 0 * counter_triangles + t ][1] = v01;
+//       data_triangle_vertices[ 0 * counter_triangles + t ][2] = v02;
+//       
+//       data_triangle_vertices[ 1 * counter_triangles + t ][0] = v01;
+//       data_triangle_vertices[ 1 * counter_triangles + t ][1] = v11;
+//       data_triangle_vertices[ 1 * counter_triangles + t ][2] = v12;
+//       
+//       data_triangle_vertices[ 2 * counter_triangles + t ][0] = v02;
+//       data_triangle_vertices[ 2 * counter_triangles + t ][1] = v12;
+//       data_triangle_vertices[ 2 * counter_triangles + t ][2] = v22;
+//       
+//       data_triangle_vertices[ 3 * counter_triangles + t ][0] = v01;
+//       data_triangle_vertices[ 3 * counter_triangles + t ][1] = v02;
+//       data_triangle_vertices[ 3 * counter_triangles + t ][2] = v12;
+//       
+//     }
     
     
     // TODO: Check code until here.
@@ -1466,7 +1492,7 @@ void MeshSimplicial2D::uniformrefinement()
     
     /* for each old edge, set the new first parent triangle */
     /* for each new edge, set the new first parent triangle */
-    
+    // checked
     for( int e = 0; e < counter_edges; e++ )
     {
       int p = data_edge_firstparent_triangle[e];
@@ -1490,25 +1516,26 @@ void MeshSimplicial2D::uniformrefinement()
       assert( data_triangle_edges[p][0] == e || data_triangle_edges[p][1] == e || data_triangle_edges[p][2] == e );
       assert( data_triangle_edges[p][ei] == e );
       
-      data_edge_firstparent_triangle[ 0 * counter_edges + e ] = 2 * counter_edges + nfp_back  * counter_triangles + p;
-      data_edge_firstparent_triangle[ 1 * counter_edges + e ] = 2 * counter_edges + nfp_front * counter_triangles + p;
+      data_edge_firstparent_triangle[ 0 * counter_edges + e ] = nfp_back  * counter_triangles + p;
+      data_edge_firstparent_triangle[ 1 * counter_edges + e ] = nfp_front * counter_triangles + p;
       
     }
     
     
     /* for each triangle, relocate the data of the old edges' parent triangle */
-    
+    /* additionally, set the new parents */
+    // checked
     for( int t  = 0; t  < counter_triangles;  t++ )
     for( int ei = 0; ei <                 3; ei++ )
     {
-      int q = data_triangle_nextparents_of_edges[t][ei];
-      
       int e = data_triangle_edges[t][ei];
       
       int t_back  = nullindex;
       int t_front = nullindex;
       int e_back  = nullindex;
       int e_front = nullindex;
+      
+      // [ 00 01 02 ], [ 01 11 12 ], [ 02 12 22 ], [ 01 02 12 ]
       
       if( ei == 0 ){
         t_back = 0; t_front = 1; e_back = 0; e_front = 0; 
@@ -1520,10 +1547,12 @@ void MeshSimplicial2D::uniformrefinement()
         assert(false);
       
       
+      int q = data_triangle_nextparents_of_edges[t][ei];
+      
       if( q == nullindex ) {
         
-        data_triangle_nextparents_of_edges[ 2 * counter_edges + t_back  * counter_triangles + t ][ e_back  ] = nullindex;
-        data_triangle_nextparents_of_edges[ 2 * counter_edges + t_front * counter_triangles + t ][ e_front ] = nullindex;
+        data_triangle_nextparents_of_edges[ t_back  * counter_triangles + t ][ e_back  ] = nullindex;
+        data_triangle_nextparents_of_edges[ t_front * counter_triangles + t ][ e_front ] = nullindex;
         
       } else if( q != nullindex ) {
         
@@ -1531,7 +1560,7 @@ void MeshSimplicial2D::uniformrefinement()
         int q_nfp_back  = nullindex;
         int q_nfp_front = nullindex;
         
-        if( data_triangle_edges[q][0] == e ){
+        if(        data_triangle_edges[q][0] == e ){
           q_ei = 0; q_nfp_back = 0; q_nfp_front = 1;
         } else if( data_triangle_edges[q][1] == e ) {
           q_ei = 1; q_nfp_back = 0; q_nfp_front = 2;
@@ -1544,27 +1573,23 @@ void MeshSimplicial2D::uniformrefinement()
         assert( data_triangle_edges[q][0] == e || data_triangle_edges[q][1] == e || data_triangle_edges[q][2] == e );
         assert( data_triangle_edges[q][q_ei] == e );
         
-        data_triangle_nextparents_of_edges[ 2 * counter_edges + t_back  * counter_triangles + t ][ e_back  ]
-          = 2 * counter_edges + q_nfp_back  * counter_triangles + q;
-        data_triangle_nextparents_of_edges[ 2 * counter_edges + t_front * counter_triangles + t ][ e_front ]
-          = 2 * counter_edges + q_nfp_front * counter_triangles + q;
+        data_triangle_nextparents_of_edges[ t_back  * counter_triangles + t ][ e_back  ] = q_nfp_back  * counter_triangles + q;
+        data_triangle_nextparents_of_edges[ t_front * counter_triangles + t ][ e_front ] = q_nfp_front * counter_triangles + q;
         
       } 
       
     }
     
-    /* for each triangle, run over the new edges 
-     * and add firstparents and parents
-     */
-    
+    /* for each triangle, run over the new edges and add firstparents and parents */
+    // checked 
     for( int t = 0; t < counter_triangles; t++ )
     {
-      data_edge_firstparent_triangle[ 2 * counter_edges + 0 * counter_triangles + t ] 
-        = 3 * counter_triangles + t;
-      data_edge_firstparent_triangle[ 2 * counter_edges + 1 * counter_triangles + t ] 
-        = 3 * counter_triangles + t;
-      data_edge_firstparent_triangle[ 2 * counter_edges + 2 * counter_triangles + t ] 
-        = 3 * counter_triangles + t;
+      // [ 00 01 02 ], [ 01 11 12 ], [ 02 12 22 ], [ 01 02 12 ]
+      // new edges [ 01 02 ], [ 01 12 ], [ 02 12 ]
+      
+      data_edge_firstparent_triangle[ 2 * counter_edges + 0 * counter_triangles + t ] = 3 * counter_triangles + t;
+      data_edge_firstparent_triangle[ 2 * counter_edges + 1 * counter_triangles + t ] = 3 * counter_triangles + t;
+      data_edge_firstparent_triangle[ 2 * counter_edges + 2 * counter_triangles + t ] = 3 * counter_triangles + t;
       
       data_triangle_nextparents_of_edges[ 3 * counter_triangles + t ][0] = 0 * counter_triangles + t;
       data_triangle_nextparents_of_edges[ 3 * counter_triangles + t ][1] = 1 * counter_triangles + t;
@@ -1579,16 +1604,16 @@ void MeshSimplicial2D::uniformrefinement()
     
     
     /* for each new triangle, create the new vertices */
-    
+    // checked
     for( int t = 0; t < counter_triangles; t++ )
     {
       int v00 = data_triangle_vertices[t][0];
       int v11 = data_triangle_vertices[t][1];
       int v22 = data_triangle_vertices[t][2];
       
-      int v01 = data_triangle_edges[t][0];
-      int v02 = data_triangle_edges[t][1];
-      int v12 = data_triangle_edges[t][2];
+      int v01 = counter_vertices + data_triangle_edges[t][0];
+      int v02 = counter_vertices + data_triangle_edges[t][1];
+      int v12 = counter_vertices + data_triangle_edges[t][2];
       
       // [ 00 01 02 ], [ 01 11 12 ], [ 02 12 22 ], [ 01 02 12 ]
         
@@ -1611,6 +1636,7 @@ void MeshSimplicial2D::uniformrefinement()
     }
     
     /* for each new triangle, create the new edges */
+    // checked
     for( int t = 0; t < counter_triangles; t++ )
     {
       int e00_01 = 0 * counter_edges + data_triangle_edges[t][0];
@@ -1626,21 +1652,21 @@ void MeshSimplicial2D::uniformrefinement()
       
       // [ 00 01 02 ], [ 01 11 12 ], [ 02 12 22 ], [ 01 02 12 ]
         
-      data_triangle_vertices[ 0 * counter_triangles + t ][0] = e00_01;
-      data_triangle_vertices[ 0 * counter_triangles + t ][1] = e00_02;
-      data_triangle_vertices[ 0 * counter_triangles + t ][2] = e01_02;
+      data_triangle_edges[ 0 * counter_triangles + t ][0] = e00_01;
+      data_triangle_edges[ 0 * counter_triangles + t ][1] = e00_02;
+      data_triangle_edges[ 0 * counter_triangles + t ][2] = e01_02;
       
-      data_triangle_vertices[ 1 * counter_triangles + t ][0] = e01_11;
-      data_triangle_vertices[ 1 * counter_triangles + t ][1] = e01_12;
-      data_triangle_vertices[ 1 * counter_triangles + t ][2] = e11_12;
+      data_triangle_edges[ 1 * counter_triangles + t ][0] = e01_11;
+      data_triangle_edges[ 1 * counter_triangles + t ][1] = e01_12;
+      data_triangle_edges[ 1 * counter_triangles + t ][2] = e11_12;
       
-      data_triangle_vertices[ 2 * counter_triangles + t ][0] = e02_12;
-      data_triangle_vertices[ 2 * counter_triangles + t ][1] = e02_22;
-      data_triangle_vertices[ 2 * counter_triangles + t ][2] = e12_22;
+      data_triangle_edges[ 2 * counter_triangles + t ][0] = e02_12;
+      data_triangle_edges[ 2 * counter_triangles + t ][1] = e02_22;
+      data_triangle_edges[ 2 * counter_triangles + t ][2] = e12_22;
       
-      data_triangle_vertices[ 3 * counter_triangles + t ][0] = e01_02;
-      data_triangle_vertices[ 3 * counter_triangles + t ][1] = e01_12;
-      data_triangle_vertices[ 3 * counter_triangles + t ][2] = e02_12;
+      data_triangle_edges[ 3 * counter_triangles + t ][0] = e01_02;
+      data_triangle_edges[ 3 * counter_triangles + t ][1] = e01_12;
+      data_triangle_edges[ 3 * counter_triangles + t ][2] = e02_12;
       
     }
     
