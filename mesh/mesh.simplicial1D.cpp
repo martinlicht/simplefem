@@ -354,6 +354,13 @@ int MeshSimplicial1D::indexof_edge_vertex( int e, int v ) const
     else                                     assert(false);
 } 
 
+int MeshSimplicial1D::get_edge_vertex( int e, int vi ) const
+{
+    assert( 0 <= e && e < counter_edges );
+    assert( 0 <= vi && vi < 2 );
+    return data_edge_vertices[e][vi];
+}
+
 const std::array<int,2> MeshSimplicial1D::get_edge_vertices( int e ) const
 {
     assert( 0 <= e && e < counter_edges );
@@ -388,6 +395,14 @@ int MeshSimplicial1D::get_vertex_nextparent_edge( int v, int e ) const
   else
     assert(false);
 }
+
+int MeshSimplicial1D::get_edge_nextparent_of_vertex( int e, int vi ) const
+{
+  assert( 0 <= e  && e  < counter_edges    );
+  assert( 0 <= vi && vi < 2 );
+  return data_edge_nextparents_of_vertices[e][vi];
+}
+
 
 bool MeshSimplicial1D::is_edge_vertex_parent( int e, int v ) const
 {

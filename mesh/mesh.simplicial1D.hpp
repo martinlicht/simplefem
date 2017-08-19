@@ -95,6 +95,8 @@ class MeshSimplicial1D
         
         int indexof_edge_vertex( int e, int v ) const;
         
+        int get_edge_vertex( int e, int vi ) const;
+        
         const std::array<int,2> get_edge_vertices ( int e ) const;
         
         
@@ -105,6 +107,8 @@ class MeshSimplicial1D
         int get_vertex_firstparent_edge( int v ) const;
         
         int get_vertex_nextparent_edge( int v, int e ) const;
+        
+        int get_edge_nextparent_of_vertex( int e, int vi ) const;
         
         bool is_edge_vertex_parent( int e, int v ) const;
         
