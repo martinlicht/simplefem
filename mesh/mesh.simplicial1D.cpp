@@ -252,7 +252,8 @@ void MeshSimplicial1D::check() const
       
     }
     
-  
+    Mesh::check();
+    
 }
 
 
