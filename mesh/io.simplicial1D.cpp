@@ -41,7 +41,6 @@ MeshSimplicial1D readMeshSimplicial1D( const char* filename )
 }
 
 
-// TODO: IO anpassen an die Datenstrukturen 
 
 void writeMeshSimplicial1D( std::ostream& out, const MeshSimplicial1D& mesh, bool sugar )
 {
@@ -83,6 +82,8 @@ void writeMeshSimplicial1D( std::ostream& out, const MeshSimplicial1D& mesh, boo
             << std::endl;
     }
     
+    assert( out.good() );
+    
     writeCoordinates( out, mesh.getcoordinates(), sugar );
 }
 
@@ -110,6 +111,8 @@ MeshSimplicial1D readMeshSimplicial1D( std::istream& in )
         in >> edge_nextparents_of_vertices[e][0] >> edge_nextparents_of_vertices[e][1];
     
     Coordinates coords = readCoordinates( in );
+    
+    assert( in.good() );
     
     return MeshSimplicial1D( dim, coords, edge_vertices, edge_nextparents_of_vertices, vertex_firstparent_edge );    
 }

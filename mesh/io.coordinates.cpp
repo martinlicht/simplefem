@@ -55,6 +55,9 @@ void writeCoordinates( std::ostream& out, const Coordinates& coords, bool sugar 
             out << coords.getdata(p,d) << " ";
         out << std::endl;
     }
+    
+    assert( out.good() );
+    
 }
 
 Coordinates readCoordinates( std::istream& in )
@@ -71,6 +74,9 @@ Coordinates readCoordinates( std::istream& in )
             coords.setdata( p, d, tempvalue );
         }
     }
+    
+    assert( in.good() );
+    
     return coords;
 }
 
