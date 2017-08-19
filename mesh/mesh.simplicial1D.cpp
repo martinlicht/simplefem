@@ -133,6 +133,26 @@ MeshSimplicial1D::~MeshSimplicial1D()
 }
 
 
+
+bool MeshSimplicial1D::operator== ( const MeshSimplicial1D& mesh ) const 
+{
+  return counter_edges == mesh.counter_edges
+         &&
+         counter_vertices == mesh.counter_vertices
+         &&
+         data_edge_vertices == mesh.data_edge_vertices 
+         &&
+         data_vertex_firstparent_edge == mesh.data_vertex_firstparent_edge
+         &&
+         data_edge_nextparents_of_vertices == mesh.data_edge_nextparents_of_vertices
+         &&
+         getcoordinates() == mesh.getcoordinates()
+         &&
+         true;
+}
+        
+        
+
 void MeshSimplicial1D::check() const
 {
     

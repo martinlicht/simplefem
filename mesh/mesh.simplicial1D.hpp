@@ -61,6 +61,8 @@ class MeshSimplicial1D
         
         virtual ~MeshSimplicial1D();
         
+        bool operator== ( const MeshSimplicial1D& ) const;
+        
         virtual void check() const;
         
         virtual void print( std::ostream& out ) const override;
