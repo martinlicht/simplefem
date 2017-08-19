@@ -20,7 +20,7 @@ class VTK_MeshWriter_Mesh2D
     
     public:
         
-        VTK_MeshWriter_Mesh2D( Mesh& m2d, std::ostream& os );
+        VTK_MeshWriter_Mesh2D( Mesh& m2D, std::ostream& os );
         
         void writePreamble( const char* name );
         

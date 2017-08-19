@@ -2,15 +2,15 @@
 #include "vtkwriter.mesh1D.hpp"
 
 
-VTK_MeshWriter_Mesh1D::VTK_MeshWriter_Mesh1D( Mesh& m2d, std::ostream& os )
-: mesh(m2d), os(os)
+VTK_MeshWriter_Mesh1D::VTK_MeshWriter_Mesh1D( Mesh& m1D, std::ostream& os )
+: mesh(m1D), os(os)
 {
-    m2d.check();
-    assert( m2d.getouterdimension() == 2 || m2d.getouterdimension() == 3 );
-    assert( m2d.getinnerdimension() == 2 );
-    assert( m2d.dimensioncounted(1) );
-    assert( m2d.dimensioncounted(0) );
-    assert( m2d.subsimplices_listed( 1, 0 ) );
+    m1D.check();
+    assert( m1D.getouterdimension() == 2 || m1D.getouterdimension() == 3 );
+    assert( m1D.getinnerdimension() == 2 );
+    assert( m1D.dimensioncounted(1) );
+    assert( m1D.dimensioncounted(0) );
+    assert( m1D.subsimplices_listed( 1, 0 ) );
         
 }
 

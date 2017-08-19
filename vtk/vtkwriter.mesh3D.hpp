@@ -1,5 +1,5 @@
-#ifndef INCLUDEGUARD_VTK_MESH1D_WRITER
-#define INCLUDEGUARD_VTK_MESH1D_WRITER
+#ifndef INCLUDEGUARD_VTK_MESH3D_WRITER
+#define INCLUDEGUARD_VTK_MESH3D_WRITER
 
 #include <iostream>
 #include <string>
@@ -15,12 +15,12 @@
 ****  
 *******************/
 
-class VTK_MeshWriter_Mesh1D
+class VTK_MeshWriter_Mesh3D
 {
     
     public:
         
-        VTK_MeshWriter_Mesh1D( Mesh& m1D, std::ostream& os );
+        VTK_MeshWriter_Mesh3D( Mesh& m3D, std::ostream& os );
         
         void writePreamble( const char* name );
         

@@ -187,7 +187,10 @@ test.vtk.vtkwriter.mesh1D.out: test.vtk.vtkwriter.mesh1D.cpp $(Includes.vtk)
 test.vtk.vtkwriter.mesh2D.out: test.vtk.vtkwriter.mesh2D.cpp $(Includes.vtk)
 	$(CC) test.vtk.vtkwriter.mesh2D.cpp $(Links.vtk) -o test.vtk.vtkwriter.mesh2D.out
 
-vtk.tests = test.vtk.vtkwriter.mesh2D.out test.vtk.vtkwriter.mesh1D.out
+test.vtk.vtkwriter.mesh3D.out: test.vtk.vtkwriter.mesh3D.cpp $(Includes.vtk)
+	$(CC) test.vtk.vtkwriter.mesh3D.cpp $(Links.vtk) -o test.vtk.vtkwriter.mesh3D.out
+
+vtk.tests = test.vtk.vtkwriter.mesh1D.out test.vtk.vtkwriter.mesh2D.out test.vtk.vtkwriter.mesh3D.out
 
 
 
