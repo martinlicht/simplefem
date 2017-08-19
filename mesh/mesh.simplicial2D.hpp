@@ -132,6 +132,8 @@ class MeshSimplicial2D
         
         int get_edge_nextparent_triangle( int e, int t ) const;
         
+        int get_triangle_nextparent_of_edge( int t, int ei ) const;
+        
         bool is_triangle_edge_parent( int t, int e ) const;
         
         int indexof_triangle_edge_parent( int t, int e ) const;
@@ -147,6 +149,8 @@ class MeshSimplicial2D
         
         int get_vertex_nextparent_triangle( int v, int t ) const;
         
+        int get_triangle_nextparent_of_vertex( int t, int vi ) const;
+        
         bool is_triangle_vertex_parent( int t, int v ) const;
         
         int indexof_triangle_vertex_parent( int t, int v ) const;
@@ -161,6 +165,8 @@ class MeshSimplicial2D
         int get_vertex_firstparent_edge( int v ) const;
         
         int get_vertex_nextparent_edge( int v, int e ) const;
+        
+        int get_edge_nextparent_of_vertex( int e, int vi ) const;
         
         bool is_edge_vertex_parent( int e, int v ) const;
         

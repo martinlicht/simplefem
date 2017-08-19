@@ -972,6 +972,13 @@ int MeshSimplicial2D::get_edge_nextparent_triangle( int e, int t ) const
     assert(false);
 }
 
+int MeshSimplicial2D::get_triangle_nextparent_of_edge( int t, int ei ) const
+{
+  assert( 0 <= t  && t  < counter_triangles );
+  assert( 0 <= ei && ei < 3 );
+  return data_triangle_nextparents_of_edges[t][ei];
+}
+
 bool MeshSimplicial2D::is_triangle_edge_parent( int t, int e ) const
 {
   assert( 0 <= e && e < counter_edges );
@@ -1033,6 +1040,13 @@ int MeshSimplicial2D::get_vertex_nextparent_triangle( int v, int t ) const
     assert(false);
 }
 
+int MeshSimplicial2D::get_triangle_nextparent_of_vertex( int t, int vi ) const
+{
+  assert( 0 <= t  && t  < counter_triangles );
+  assert( 0 <= vi && vi < 3 );
+  return data_triangle_nextparents_of_vertices[t][vi];
+}
+
 bool MeshSimplicial2D::is_triangle_vertex_parent( int t, int v ) const
 {
   assert( 0 <= v && v < counter_vertices );
@@ -1092,6 +1106,13 @@ int MeshSimplicial2D::get_vertex_nextparent_edge( int v, int e ) const
     return data_edge_nextparents_of_vertices[e][1];
   else
     assert(false);
+}
+
+int MeshSimplicial2D::get_edge_nextparent_of_vertex( int e, int vi ) const
+{
+  assert( 0 <= e  && e  < counter_edges );
+  assert( 0 <= vi && vi < 2 );
+  return data_edge_nextparents_of_vertices[e][vi];
 }
 
 bool MeshSimplicial2D::is_edge_vertex_parent( int e, int v ) const
