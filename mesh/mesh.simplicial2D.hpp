@@ -65,6 +65,7 @@ class MeshSimplicial2D
         
         virtual void print( std::ostream& out ) const override;
         
+        bool operator== ( const MeshSimplicial2D& mesh ) const; 
         
         /* inherited methods */
         

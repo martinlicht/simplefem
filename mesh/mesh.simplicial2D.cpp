@@ -264,6 +264,41 @@ MeshSimplicial2D::~MeshSimplicial2D()
 }
 
 
+bool MeshSimplicial2D::operator== ( const MeshSimplicial2D& mesh ) const 
+{
+  return counter_triangles == mesh.counter_triangles
+         &&
+         counter_edges == mesh.counter_edges
+         &&
+         counter_vertices == mesh.counter_vertices
+         &&
+         data_triangle_edges == mesh.data_triangle_edges
+         &&
+         data_edge_firstparent_triangle == mesh.data_edge_firstparent_triangle
+         &&
+         data_triangle_nextparents_of_edges == mesh.data_triangle_nextparents_of_edges
+         &&
+         data_triangle_vertices == mesh.data_triangle_vertices 
+         &&
+         data_vertex_firstparent_triangle == mesh.data_vertex_firstparent_triangle
+         &&
+         data_triangle_nextparents_of_vertices == mesh.data_triangle_nextparents_of_vertices
+         &&
+         data_edge_vertices == mesh.data_edge_vertices 
+         &&
+         data_vertex_firstparent_edge == mesh.data_vertex_firstparent_edge
+         &&
+         data_edge_nextparents_of_vertices == mesh.data_edge_nextparents_of_vertices
+         &&
+         getinnerdimension() == mesh.getinnerdimension()
+         &&
+         getouterdimension() == mesh.getouterdimension()
+         &&
+         getcoordinates() == mesh.getcoordinates()
+         &&
+         true;
+}
+
 void MeshSimplicial2D::check() const
 {
     

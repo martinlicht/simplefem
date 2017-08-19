@@ -146,6 +146,10 @@ bool MeshSimplicial1D::operator== ( const MeshSimplicial1D& mesh ) const
          &&
          data_edge_nextparents_of_vertices == mesh.data_edge_nextparents_of_vertices
          &&
+         getinnerdimension() == mesh.getinnerdimension()
+         &&
+         getouterdimension() == mesh.getouterdimension()
+         &&
          getcoordinates() == mesh.getcoordinates()
          &&
          true;
