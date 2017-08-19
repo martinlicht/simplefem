@@ -48,15 +48,15 @@ class Coordinates
         
         /* get/set coordinates as per entry  */
         
-        Float getdata( int, int ) const;
-        void setdata( int, int, Float );
+        Float getdata( int n, int d) const;
+        void setdata( int n, int d, Float v );
         
         /* get/set coordinates as vectors  */
         
-        FloatVector getvectorclone( int ) const;
-        FloatVector getvectorclone( int, Float ) const;
-        void loadvector( int, const FloatVector& );
-        void loadvector( int, const FloatVector&, Float );
+        FloatVector getvectorclone( int n ) const;
+        FloatVector getvectorclone( int n, Float s ) const;
+        void loadvector( int n, const FloatVector& value );
+        void loadvector( int n, const FloatVector& value, Float s );
         
         /* transform all coordinates  */
         
@@ -86,10 +86,17 @@ class Coordinates
         
 };
 
+bool compare( const Coordinates& coords_left, const Coordinates& coords_right, Float tolerance = 0.00001 );
+
 inline std::ostream& operator<<( std::ostream& os, const Coordinates& ir )
 {
     ir.print( os );
     return os;
+}
+
+inline bool operator==( const Coordinates& coords_left, const Coordinates& coords_right )
+{
+    return compare( coords_left, coords_right, 0.00001 );
 }
 
 

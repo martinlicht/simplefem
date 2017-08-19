@@ -218,3 +218,31 @@ FloatVector Coordinates::getShiftPart( const IndexMap& im ) const
 
 
 
+bool compare( const Coordinates& coords_left, const Coordinates& coords_right, Float tolerance )
+{
+    if( coords_left.getnumber() != coords_right.getnumber() )
+      return false;
+    
+    if( coords_left.getdimension() != coords_right.getdimension() )
+      return false;
+    
+    for( int n = 0; n < coords_left.getnumber(); n++ )
+    for( int d = 0; d < coords_left.getdimension(); d++ )
+      if( absolute( coords_left.getdata( n, d ) - coords_right.getdata( n, d ) ) > tolerance )
+        return false;
+    
+    return true;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
