@@ -7,6 +7,7 @@ default:
 	cd ./sparse; make; cd ..
 	cd ./solver; make; cd ..
 	cd ./mesh; make; cd ..
+	cd ./vtk; make; cd ..
 	cd ./unittests; make; cd ..
 	echo "finished building." 
     
@@ -17,6 +18,7 @@ clean:
 	cd ./sparse; make clean; cd ..
 	cd ./solver; make clean; cd ..
 	cd ./mesh; make clean; cd ..
+	cd ./vtk; make clean; cd ..
 	cd ./unittests; make clean; cd ..
 	make -f makefile.clean clean
 	echo "finished cleaning." 

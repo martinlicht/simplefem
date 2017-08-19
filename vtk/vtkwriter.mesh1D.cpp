@@ -1,20 +1,21 @@
 
-#include "vtkwriter.mesh2D.hpp"
+#include "vtkwriter.mesh1D.hpp"
 
 
-VTK_MeshWriter_Mesh2D::VTK_MeshWriter_Mesh2D( Mesh& m2d, std::ostream& os )
+VTK_MeshWriter_Mesh1D::VTK_MeshWriter_Mesh1D( Mesh& m2d, std::ostream& os )
 : mesh(m2d), os(os)
 {
     m2d.check();
     assert( m2d.getouterdimension() == 2 || m2d.getouterdimension() == 3 );
     assert( m2d.getinnerdimension() == 2 );
-    assert( m2d.dimensioncounted(2) );
+    assert( m2d.dimensioncounted(1) );
     assert( m2d.dimensioncounted(0) );
-    assert( m2d.subsimplices_listed( 2, 0 ) );
+    assert( m2d.subsimplices_listed( 1, 0 ) );
+        
 }
 
 
-void VTK_MeshWriter_Mesh2D::writePreamble( const char* name )
+void VTK_MeshWriter_Mesh1D::writePreamble( const char* name )
 {
     // std::ostream& os = std::cout;
     os << "# vtk DataFile Version 3.0" << nl;
@@ -24,7 +25,7 @@ void VTK_MeshWriter_Mesh2D::writePreamble( const char* name )
 }
 
 
-void VTK_MeshWriter_Mesh2D::writeCoordinateBlock()
+void VTK_MeshWriter_Mesh1D::writeCoordinateBlock()
 {
     // std::ostream& os = std::cout;
     os << "POINTS " << mesh.countsimplices(0) << " double" << nl;
@@ -45,44 +46,43 @@ void VTK_MeshWriter_Mesh2D::writeCoordinateBlock()
               << nl;
       } else
           assert(false);
+        
     
     os << nl;
 }
         
         
-void VTK_MeshWriter_Mesh2D::writeTopDimensionalCells()
+void VTK_MeshWriter_Mesh1D::writeTopDimensionalCells()
 {
     // std::ostream& os = std::cout;
     
     os << "CELLS " 
-       << mesh.countsimplices(2)
+       << mesh.countsimplices(1)
        << space 
-       << 3 * mesh.countsimplices(2) + mesh.countsimplices(2)
+       << 2 * mesh.countsimplices(1) + mesh.countsimplices(1)
        << nl;
     
-    for( int S = 0; S < mesh.countsimplices(2); S++ ) 
-        os << 3 
+    for( int S = 0; S < mesh.countsimplices(1); S++ ) 
+        os << 2 
            << space
-           << mesh.getsubsimplices(2,0,S)[0]
+           << mesh.getsubsimplices(1,0,S)[0]
            << space
-           << mesh.getsubsimplices(2,0,S)[1]
-           << space
-           << mesh.getsubsimplices(2,0,S)[2]
+           << mesh.getsubsimplices(1,0,S)[1]
            << nl;
     
     os << std::endl;
     
-    os << "CELL_TYPES" << space << mesh.countsimplices(2) << nl;
+    os << "CELL_TYPES" << space << mesh.countsimplices(1) << nl;
     
-    for( int S = 0; S < mesh.countsimplices(2); S++ )
-        os << 5 << nl;
+    for( int S = 0; S < mesh.countsimplices(1); S++ )
+        os << 3 << nl;
     
     os << nl;
 }
 
 
 
-void VTK_MeshWriter_Mesh2D::writeVertexScalarData( const FloatVector& data, const char* name, Float scaling )
+void VTK_MeshWriter_Mesh1D::writeVertexScalarData( const FloatVector& data, const char* name, Float scaling )
 {
     
     assert( name != nullptr );
@@ -101,7 +101,7 @@ void VTK_MeshWriter_Mesh2D::writeVertexScalarData( const FloatVector& data, cons
 }
 
 
-void VTK_MeshWriter_Mesh2D::writeCellVectorData( 
+void VTK_MeshWriter_Mesh1D::writeCellVectorData( 
     const FloatVector& datax,
     const FloatVector& datay,
     const FloatVector& dataz,
@@ -112,13 +112,13 @@ void VTK_MeshWriter_Mesh2D::writeCellVectorData(
     assert( name != nullptr );
     assert( datax.getdimension() == datay.getdimension() );
     assert( datax.getdimension() == dataz.getdimension() );
-    assert( datax.getdimension() == mesh.countsimplices(2) );
+    assert( datax.getdimension() == mesh.countsimplices(1) );
     
-    os << "CELL_DATA " << mesh.countsimplices(2) << nl;
+    os << "CELL_DATA " << mesh.countsimplices(1) << nl;
     os << "VECTORS " << name << " double" << nl;
     // VECTORS (name_of_data) Datentyp(=float) 
     
-    for( int c = 0; c < mesh.countsimplices(2); c++ )
+    for( int c = 0; c < mesh.countsimplices(1); c++ )
       os << scaling * datax.at(c) << space 
          << scaling * datay.at(c) << space 
          << scaling * dataz.at(c) 

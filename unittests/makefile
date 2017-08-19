@@ -181,10 +181,13 @@ mesh.tests = test.mesh.coordinates.out test.mesh.simplicial1D.out test.io.simpli
 # test.vtk.vtkwriter.out: test.vtk.vtkwriter.cpp $(Includes.vtk)
 # 	$(CC) test.vtk.vtkwriter.cpp $(Links.vtk) -o test.vtk.vtkwriter.out
 
+test.vtk.vtkwriter.mesh1D.out: test.vtk.vtkwriter.mesh1D.cpp $(Includes.vtk)
+	$(CC) test.vtk.vtkwriter.mesh1D.cpp $(Links.vtk) -o test.vtk.vtkwriter.mesh1D.out
+
 test.vtk.vtkwriter.mesh2D.out: test.vtk.vtkwriter.mesh2D.cpp $(Includes.vtk)
 	$(CC) test.vtk.vtkwriter.mesh2D.cpp $(Links.vtk) -o test.vtk.vtkwriter.mesh2D.out
 
-vtk.tests = test.vtk.vtkwriter.mesh2D.out
+vtk.tests = test.vtk.vtkwriter.mesh2D.out test.vtk.vtkwriter.mesh1D.out
 
 
 
