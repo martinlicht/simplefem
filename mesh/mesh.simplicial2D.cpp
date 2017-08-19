@@ -821,6 +821,13 @@ int MeshSimplicial2D::indexof_triangle_edge( int t, int e ) const
     else                                      assert(false);
 } 
 
+int MeshSimplicial2D::get_triangle_edge( int t, int ei ) const
+{
+    assert( 0 <= t  && t  < counter_triangles );
+    assert( 0 <= ei && ei < 3 );
+    return data_triangle_edges[t][ei];
+} 
+
 const std::array<int,3> MeshSimplicial2D::get_triangle_edges( int t ) const
 {
     assert( 0 <= t && t < counter_triangles );
@@ -849,6 +856,13 @@ int MeshSimplicial2D::indexof_triangle_vertex( int t, int v ) const
     else                                         assert(false);
 } 
 
+int MeshSimplicial2D::get_triangle_vertex( int t, int vi ) const
+{
+    assert( 0 <= t  && t  < counter_triangles );
+    assert( 0 <= vi && vi < 3 );
+    return data_triangle_vertices[t][vi];
+} 
+
 const std::array<int,3> MeshSimplicial2D::get_triangle_vertices( int t ) const
 {
     assert( 0 <= t && t < counter_triangles );
@@ -875,6 +889,13 @@ int MeshSimplicial2D::indexof_edge_vertex( int e, int v ) const
     if     ( data_edge_vertices[e][0] == v ) return 0;
     else if( data_edge_vertices[e][1] == v ) return 1;
     else                                     assert(false);
+} 
+
+int MeshSimplicial2D::get_edge_vertex( int e, int vi ) const
+{
+    assert( 0 <= e  && e  < counter_edges );
+    assert( 0 <= vi && vi < 2 );
+    return data_edge_vertices[e][vi];
 } 
 
 const std::array<int,2> MeshSimplicial2D::get_edge_vertices( int e ) const
@@ -1391,9 +1412,6 @@ void MeshSimplicial2D::uniformrefinement()
       } 
       
     }
-    
-//     FIXME: Proofread until here
-    
     
     /* for each old edge, run over the adjacent triangles 
      * and add the corresponding new triangles to the list of 

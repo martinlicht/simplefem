@@ -96,6 +96,8 @@ class MeshSimplicial2D
         
         int indexof_triangle_edge( int t, int e ) const;
         
+        int get_triangle_edge( int t, int ei ) const;
+        
         const std::array<int,3> get_triangle_edges( int t ) const;
         
         
@@ -105,6 +107,8 @@ class MeshSimplicial2D
         
         int indexof_triangle_vertex( int t, int v ) const;
         
+        int get_triangle_vertex( int t, int vi ) const;
+        
         const std::array<int,3> get_triangle_vertices ( int t ) const;
         
         
@@ -113,6 +117,8 @@ class MeshSimplicial2D
         bool contains_edge_vertex( int e, int v ) const;
         
         int indexof_edge_vertex( int e, int v ) const;
+        
+        int get_edge_vertex( int e, int vi ) const;
         
         const std::array<int,2> get_edge_vertices ( int e ) const;
         
