@@ -87,6 +87,9 @@ void writeMeshSimplicial1D( std::ostream& out, const MeshSimplicial1D& mesh, boo
     writeCoordinates( out, mesh.getcoordinates(), sugar );
 }
 
+
+
+
 MeshSimplicial1D readMeshSimplicial1D( std::istream& in )
 {
     int counter_edges, counter_vertices, dim;
@@ -96,6 +99,8 @@ MeshSimplicial1D readMeshSimplicial1D( std::istream& in )
        >> dim;
     
     int nullindex = MeshSimplicial1D::nullindex;
+    
+    /* edge -> vertices */
     
     std::vector< std::array<int,2> > edge_vertices( counter_edges, { nullindex, nullindex } );
     std::vector< int               > vertex_firstparent_edge( counter_vertices, nullindex );
@@ -110,9 +115,13 @@ MeshSimplicial1D readMeshSimplicial1D( std::istream& in )
     for( int e = 0; e < counter_edges; e++ )
         in >> edge_nextparents_of_vertices[e][0] >> edge_nextparents_of_vertices[e][1];
     
+    /* coordinates */
+    
     Coordinates coords = readCoordinates( in );
     
     assert( in.good() );
+    
+    /* return */
     
     return MeshSimplicial1D( dim, coords, edge_vertices, edge_nextparents_of_vertices, vertex_firstparent_edge );    
 }

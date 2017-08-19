@@ -21,6 +21,9 @@ io.simplicial1D.o: io.simplicial1D.hpp io.simplicial1D.cpp
 mesh.simplicial2D.o: mesh.simplicial2D.hpp mesh.simplicial2D.cpp
 	$(CC) mesh.simplicial2D.cpp -c -o mesh.simplicial2D.o 
 
+io.simplicial2D.o: io.simplicial2D.hpp io.simplicial2D.cpp
+	$(CC) io.simplicial2D.cpp -c -o io.simplicial2D.o 
+
 mesh.manifold2D.o: mesh.manifold2D.hpp mesh.manifold2D.cpp
 	$(CC) mesh.manifold2D.cpp -c -o mesh.manifold2D.o 
 
@@ -33,7 +36,7 @@ io.manifold2D.o: io.manifold2D.hpp io.manifold2D.cpp
 vtkwriter.manifold2D.o: vtkwriter.manifold2D.hpp vtkwriter.manifold2D.cpp
 	$(CC) vtkwriter.manifold2D.cpp -c -o vtkwriter.manifold2D.o  
 
-objects = coordinates.o mesh.o mesh.simplicial1D.o io.simplicial1D.o mesh.simplicial2D.o mesh.manifold2D.o io.coordinates.o io.manifold2D.o  
+objects = coordinates.o mesh.o mesh.simplicial1D.o io.simplicial1D.o mesh.simplicial2D.o io.simplicial2D.o mesh.manifold2D.o io.coordinates.o io.manifold2D.o  
 # io.simplicialmesh.o simplicialmesh.o io.simplicialmesh.o generatesimplicialmesh.o vtkwriter.o manifold.2D.o 
 
 
