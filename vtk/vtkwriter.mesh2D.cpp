@@ -2,14 +2,20 @@
 #include "vtkwriter.manifold2D.hpp"
 
 
-VTK_MeshWriter_Manifold2D::VTK_MeshWriter_Manifold2D( MeshManifold2D& m2d, std::ostream& os )
+VTK_MeshWriter_Mesh2D::VTK_MeshWriter_Mesh2D( Mesh& m2d, std::ostream& os )
 : mesh(m2d), os(os)
 {
     m2d.check();
+    assert( m2d.getouterdimension() == 2 || m2d.getouterdimension() == 3 );
+    assert( m2d.getinnerdimension() == 2 );
+    assert( m2d.dimensioncounted(2) );
+    assert( m2d.dimensioncounted(0) );
+    assert( m2d.subsimplices_listed( 2, 0 ) );
+        
 }
 
 
-void VTK_MeshWriter_Manifold2D::writePreamble( const char* name )
+void VTK_MeshWriter_Mesh2D::writePreamble( const char* name )
 {
     // std::ostream& os = std::cout;
     os << "# vtk DataFile Version 3.0" << nl;
@@ -19,11 +25,11 @@ void VTK_MeshWriter_Manifold2D::writePreamble( const char* name )
 }
 
 
-void VTK_MeshWriter_Manifold2D::writeCoordinateBlock()
+void VTK_MeshWriter_Mesh2D::writeCoordinateBlock()
 {
     // std::ostream& os = std::cout;
-    os << "POINTS " << mesh.count_vertices() << " double" << nl;
-    for( int v = 0; v < mesh.count_vertices(); v++ )
+    os << "POINTS " << mesh.countsimplices(0) << " double" << nl;
+    for( int v = 0; v < mesh.countsimplices(0); v++ )
     {
         
         if( mesh.getouterdimension() == 2 ) {
@@ -49,32 +55,32 @@ void VTK_MeshWriter_Manifold2D::writeCoordinateBlock()
 }
         
         
-void VTK_MeshWriter_Manifold2D::writeTopDimensionalCells()
+void VTK_MeshWriter_Mesh2D::writeTopDimensionalCells()
 {
     const int innerdim = 2;
     // std::ostream& os = std::cout;
     
     os << "CELLS " 
-       << mesh.count_triangles()
+       << mesh.countsimplices(2)
        << space 
-       << 3 * mesh.count_triangles() + mesh.count_triangles()
+       << 3 * mesh.countsimplices(2) + mesh.countsimplices(2)
        << nl;
 
-    for( int S = 0; S < mesh.count_triangles(); S++ ) 
+    for( int S = 0; S < mesh.countsimplices(2); S++ ) 
         os << 3 
            << space
-           << mesh.get_triangle_vertices(S)[0]
+           << mesh.getsubsimplices(2,0,S)[0]
            << space
-           << mesh.get_triangle_vertices(S)[1]
+           << mesh.getsubsimplices(2,0,S)[1]
            << space
-           << mesh.get_triangle_vertices(S)[2]
+           << mesh.getsubsimplices(2,0,S)[2]
            << nl;
     
     os << std::endl;
     
-    os << "CELL_TYPES" << space << mesh.count_triangles() << nl;
+    os << "CELL_TYPES" << space << mesh.countsimplices(2) << nl;
     
-    for( int S = 0; S < mesh.count_triangles(); S++ )
+    for( int S = 0; S < mesh.countsimplices(2); S++ )
         os << ( innerdim == 3 ? 10 : 5 )
            << nl;
     
@@ -83,18 +89,18 @@ void VTK_MeshWriter_Manifold2D::writeTopDimensionalCells()
 
 
 
-void VTK_MeshWriter_Manifold2D::writeVertexScalarData( const FloatVector& data, const char* name, Float scaling )
+void VTK_MeshWriter_Mesh2D::writeVertexScalarData( const FloatVector& data, const char* name, Float scaling )
 {
     
     assert( name != nullptr );
-    assert( data.getdimension() == mesh.count_vertices() );
+    assert( data.getdimension() == mesh.countsimplices(0) );
     
-    os << "POINT_DATA " << mesh.count_vertices() << nl;
+    os << "POINT_DATA " << mesh.countsimplices(0) << nl;
     os << "SCALARS " << name << " double 1" << nl;
     // SCALARS (name_of_data) Datentyp(=float) AnzahlKomponenten(=1)
     os << "LOOKUP_TABLE default" << nl;
     
-    for( int v = 0; v < mesh.count_vertices(); v++ )
+    for( int v = 0; v < mesh.countsimplices(0); v++ )
         os << scaling * data.at(v) << nl;
     
     os << std::endl;
@@ -102,7 +108,7 @@ void VTK_MeshWriter_Manifold2D::writeVertexScalarData( const FloatVector& data, 
 }
 
 
-void VTK_MeshWriter_Manifold2D::writeCellVectorData( 
+void VTK_MeshWriter_Mesh2D::writeCellVectorData( 
     const FloatVector& datax,
     const FloatVector& datay,
     const FloatVector& dataz,
@@ -113,15 +119,15 @@ void VTK_MeshWriter_Manifold2D::writeCellVectorData(
     assert( name != nullptr );
     assert( datax.getdimension() == datay.getdimension() );
     assert( datax.getdimension() == dataz.getdimension() );
-    assert( datax.getdimension() == mesh.count_triangles() );
+    assert( datax.getdimension() == mesh.countsimplices(2) );
     
     const int innerdim = 2;
     
-    os << "CELL_DATA " << mesh.count_triangles() << nl;
+    os << "CELL_DATA " << mesh.countsimplices(2) << nl;
     os << "VECTORS " << name << " double" << nl;
     // VECTORS (name_of_data) Datentyp(=float) 
     
-    for( int c = 0; c < mesh.count_triangles(); c++ )
+    for( int c = 0; c < mesh.countsimplices(2); c++ )
     {
       os << scaling * datax.at(c) << space 
          << scaling * datay.at(c) << space 

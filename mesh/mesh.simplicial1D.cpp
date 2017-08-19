@@ -318,8 +318,8 @@ const IndexMap MeshSimplicial1D::getsubsimplices( int sup, int sub, int cell ) c
   assert( 0 == sub );
   assert( 0 <= cell && cell < count_edges() );
   
-  auto temp = get_edge_vertices(cell);
-  return IndexMap( IndexRange(0,1), std::vector<int>( temp.begin(), temp.end() ) );
+  auto temp = get_edge_vertices(cell); 
+  return IndexMap( IndexRange(0,1), IndexRange( 0, count_vertices() ), std::vector<int>( temp.begin(), temp.end() ) );
     
 }
 

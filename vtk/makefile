@@ -6,10 +6,10 @@ default: all
 
 
 
-vtkwriter.manifold2D.o: vtkwriter.manifold2D.hpp vtkwriter.manifold2D.cpp
-	$(CC) vtkwriter.manifold2D.cpp -c -o vtkwriter.manifold2D.o  
+vtkwriter.mesh2D.o: vtkwriter.mesh2D.hpp vtkwriter.mesh2D.cpp
+	$(CC) vtkwriter.mesh2D.cpp -c -o vtkwriter.mesh2D.o  
 
-objects = vtkwriter.manifold2D.o   
+objects = vtkwriter.mesh2D.o   
 
 
 

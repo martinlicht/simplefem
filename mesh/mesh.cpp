@@ -70,7 +70,7 @@ void Mesh::check() const
   assert( dimensioncounted( 0 ) );
   
   // the counting of the vertices must agree 
-  assert( dimensioncounted(0) == coordinates.getnumber() );
+  assert( countsimplices(0) == coordinates.getnumber() );
   
   /* * Data integrity
      * 

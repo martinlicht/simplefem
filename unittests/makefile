@@ -12,13 +12,13 @@ Objects.solver = ../solver/*.o
 Objects.mesh = ../mesh/*.o
 Objects.vtk = ../vtk/*.o
 
-Headers.combinatorics = ../combinatorics/*.o
-Headers.operators = ../operators/*.o
-Headers.dense = ../dense/*.o
-Headers.sparse = ../sparse/*.o
-Headers.solver = ../solver/*.o
-Headers.mesh = ../mesh/*.o
-Headers.vtk = ../vtk/*.o
+Headers.combinatorics = ../combinatorics/*.hpp
+Headers.operators = ../operators/*.hpp
+Headers.dense = ../dense/*.hpp
+Headers.sparse = ../sparse/*.hpp
+Headers.solver = ../solver/*.hpp
+Headers.mesh = ../mesh/*.hpp
+Headers.vtk = ../vtk/*.hpp
 
 Includes.combinatorics = $(Headers.combinatorics) $(Objects.combinatorics) 
 Includes.operators = $(Headers.operators) $(Objects.operators) $(Includes.combinatorics)
@@ -34,7 +34,7 @@ Links.dense         = $(Objects.dense) $(Objects.sparse) $(Objects.operators) $(
 Links.sparse        = $(Objects.sparse) $(Objects.operators)
 Links.solver        = $(Objects.solver) $(Objects.operators)
 Links.mesh          = $(Objects.mesh) $(Objects.combinatorics) $(Objects.operators) $(Objects.dense) $(Objects.sparse) 
-Links.vtk           = $(Objects.vtk) $(Objects.mesh)
+Links.vtk           = $(Objects.vtk) $(Objects.mesh) $(Objects.dense) $(Objects.sparse) $(Objects.combinatorics) $(Objects.operators)
 
 
 Objects = ../combinatorics/*.o ../operators/*.o ../dense/*.o ../sparse/*.o ../solver/*.o ../mesh/*.o ../vtk/*.o
@@ -181,10 +181,10 @@ mesh.tests = test.mesh.coordinates.out test.mesh.simplicial1D.out test.io.simpli
 # test.vtk.vtkwriter.out: test.vtk.vtkwriter.cpp $(Includes.vtk)
 # 	$(CC) test.vtk.vtkwriter.cpp $(Links.vtk) -o test.vtk.vtkwriter.out
 
-test.vtk.vtkwriter.manifold2D.out: test.vtk.vtkwriter.manifold2D.cpp $(Includes.vtk)
-	$(CC) test.vtk.vtkwriter.manifold2D.cpp $(Links.vtk) -o test.vtk.vtkwriter.manifold2D.out
+test.vtk.vtkwriter.mesh2D.out: test.vtk.vtkwriter.mesh2D.cpp $(Includes.vtk)
+	$(CC) test.vtk.vtkwriter.mesh2D.cpp $(Links.vtk) -o test.vtk.vtkwriter.mesh2D.out
 
-vtk.tests = test.mesh.vtkwriter.manifold2D.out
+vtk.tests = test.vtk.vtkwriter.mesh2D.out
 
 
 
@@ -197,7 +197,7 @@ test.container.out: test.container.cpp
 
 
 
-all: $(combinatorics.tests) $(operators.tests) $(dense.tests) $(mesh.tests) 
+all: $(combinatorics.tests) $(operators.tests) $(dense.tests) $(mesh.tests) $(vtk.tests) 
 
 # $(sparse.tests) $(solver.tests)
 

@@ -746,19 +746,19 @@ const IndexMap MeshSimplicial2D::getsubsimplices( int sup, int sub, int cell ) c
     
     assert( 0 <= cell && cell < count_triangles() );
     auto temp = get_triangle_edges(cell);
-    return IndexMap( IndexRange(0,2), std::vector<int>( temp.begin(), temp.end() ) );
+    return IndexMap( IndexRange(0,2), IndexRange( 0, count_edges() ), std::vector<int>( temp.begin(), temp.end() ) );
     
   } else if( sup == 2 && sub == 0 ) {
     
     assert( 0 <= cell && cell < count_triangles() );
     auto temp = get_triangle_vertices(cell);
-    return IndexMap( IndexRange(0,2), std::vector<int>( temp.begin(), temp.end() ) );
+    return IndexMap( IndexRange(0,2), IndexRange( 0, count_vertices() ) , std::vector<int>( temp.begin(), temp.end() ) );
     
   } else if( sup == 1 && sub == 0 ) {
     
     assert( 0 <= cell && cell < count_edges() );
     auto temp = get_edge_vertices(cell);
-    return IndexMap( IndexRange(0,1), std::vector<int>( temp.begin(), temp.end() ) );
+    return IndexMap( IndexRange(0,1), IndexRange( 0, count_vertices() ) , std::vector<int>( temp.begin(), temp.end() ) );
     
   } else {
     

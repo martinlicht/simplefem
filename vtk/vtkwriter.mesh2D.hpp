@@ -1,12 +1,12 @@
-#ifndef INCLUDEGUARD_VTK_MANIFOLD2D_WRITER
-#define INCLUDEGUARD_VTK_MANIFOLD2D_WRITER
+#ifndef INCLUDEGUARD_VTK_MESH2D_WRITER
+#define INCLUDEGUARD_VTK_MESH2D_WRITER
 
 #include <iostream>
 #include <string>
 
 #include "../basic.hpp"
 #include "../mesh/coordinates.hpp"
-#include "../mesh/mesh.manifold2D.hpp"
+#include "../mesh/mesh.hpp"
 
 /*******************
 ****  
@@ -15,12 +15,12 @@
 ****  
 *******************/
 
-class VTK_MeshWriter_Manifold2D
+class VTK_MeshWriter_Mesh2D
 {
     
     public:
         
-        VTK_MeshWriter_Manifold2D( MeshManifold2D& m2d, std::ostream& os );
+        VTK_MeshWriter_Mesh2D( Mesh& m2d, std::ostream& os );
         
         void writePreamble( const char* name );
         
@@ -40,7 +40,7 @@ class VTK_MeshWriter_Manifold2D
         
     private:
     
-        const MeshManifold2D& mesh;
+        const Mesh& mesh;
         std::ostream& os;
         
 };

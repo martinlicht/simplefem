@@ -6,22 +6,22 @@
 #include <fstream>
 
 #include "../basic.hpp"
-#include "coordinates.hpp"
-#include "simplicialmesh.hpp"
-#include "generatesimplicialmesh.hpp"
-#include "vtkwriter.hpp"
+#include "../mesh/coordinates.hpp"
+#include "../mesh/mesh.hpp"
+#include "../mesh/mesh.simplicial2D.hpp"
+#include "../vtk/vtkwriter.mesh2D.hpp"
 
 
 using namespace std;
 
 int main()
 {
-	cout << "Unit Test for Simplicial Mesh" << endl;
+	cout << "Unit Test for VTK output of Simplicial Mesh" << endl;
 	
 	{
 		
-		// SimplicialMesh M = UnitCubeTriangulation(3,3);
-		SimplicialMesh M = UnitCubeTriangulation3D(3,3,3);
+		// MeshSimplicial2D M = UnitCubeTriangulation(3,3);
+		MeshSimplicial2D M = UnitSquare();
 		
 		cout << M << endl;
 
@@ -31,7 +31,7 @@ int main()
                 
                 {
                     
-                    VTK_MeshWriter vtk( M, fs );
+                    VTK_MeshWriter_Mesh2D vtk( M, fs );
                     vtk.writePreamble( "Mein erster Test" );
                     vtk.writeCoordinateBlock();
                     vtk.writeTopDimensionalCells();
