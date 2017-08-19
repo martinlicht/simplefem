@@ -1,0 +1,47 @@
+
+
+/**/
+
+#include <iostream>
+#include <sstream>
+#include "../basic.hpp"
+#include "../mesh/mesh.simplicial1D.hpp"
+#include "../mesh/io.simplicial1D.hpp"
+
+
+using namespace std;
+
+int main()
+{
+    cout << "Unit Test for Simplicial 1D Mesh IO" << endl;
+    
+    {
+        
+        MeshSimplicial1D mesh = UnitSquare();
+        
+        for( int c = 0; c < 14; c++ ) mesh.improved_uniformrefinement();
+        
+        mesh.check();
+        
+        cout << "start IO..." << std::endl;
+        
+        std::stringstream ss;
+        
+        writeMeshSimplicial1D( ss, mesh );
+        
+        ss.seekg( std::ios_base::beg );
+        
+        MeshSimplicial1D mesh2 = readMeshSimplicial1D( ss );
+        
+        cout << "check original mesh..." << std::endl;
+        mesh.check();
+        cout << "check replicated mesh..." << std::endl;
+        mesh2.check();
+        cout << "check mesh equivalence..." << std::endl;
+        assert( mesh == mesh2 );
+    }
+    
+    cout << "Finished Unit Test" << endl;
+    
+    return 0;
+}

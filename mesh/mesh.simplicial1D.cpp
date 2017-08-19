@@ -206,6 +206,7 @@ void MeshSimplicial1D::check() const
     for( int e1 = 0; e1 < counter_edges; e1++ )
     for( int e2 = 0; e2 < counter_edges; e2++ )
     {
+        if( e1 == e2 ) continue;
         assert( data_edge_vertices[e1][0] != data_edge_vertices[e2][0] || data_edge_vertices[e1][1] != data_edge_vertices[e2][1] );
         assert( data_edge_vertices[e1][0] != data_edge_vertices[e2][1] || data_edge_vertices[e1][1] != data_edge_vertices[e2][0] );
     }
