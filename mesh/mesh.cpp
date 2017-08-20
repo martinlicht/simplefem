@@ -90,6 +90,30 @@ void Mesh::check() const
 
 
 
+int Mesh::index_from_pair( int maxdimension, int sup, int sub ) 
+{
+  assert( 0 <= sub && sub < sup && sup <= maxdimension );
+  return sub + (sup-1) * sup / 2;
+}
+
+void Mesh::index_to_pair( int maxdimension, int index, int& sup, int& sub ) 
+{
+  // TODO: improve this incredibly ineffecient computation.
+  assert( 0 <= sub && sub <= sup && sup <= maxdimension );
+  for( int _sup = 1; _sup <= maxdimension; _sup++ )
+  for( int _sub = 0; _sub < sup; _sub++ )
+    if( index == index_from_pair( maxdimension, _sup, _sub ) ){
+      sup = _sup; sub = _sub; return;
+    }
+}
+
+int Mesh::count_subsimplices( int maxdimension, int sup, int sub )
+{
+  assert( 0 <= sub && sub <= sup && sup <= maxdimension );
+  return binomial( sup + 1, sub + 1);
+}
+
+
 
 
 bool Mesh::is_subsimplex( int sup, int sub, int cellsup, int cellsub ) const
@@ -108,7 +132,11 @@ int  Mesh::get_subsimplix_index( int sup, int sub, int cellsup, int cellsub ) co
   
 }
 
-
+int Mesh::get_subsimplix( int sup, int sub, int cellsup, int localindex ) const
+{
+  const IndexMap im = getsubsimplices( sup, sub, cellsup );
+  return im[ localindex ];  
+}
 
 bool Mesh::is_supersimplex( int sup, int sub, int cellsup, int cellsub ) const
 {

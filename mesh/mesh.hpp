@@ -64,6 +64,16 @@ class Mesh
         
         
         
+        /* Static auxiliary functions */
+        
+        static int index_from_pair( int maxdimension, int sup, int sub );
+        
+        static void index_to_pair( int maxdimension, int index, int& sup, int& sub );
+        
+        static int count_subsimplices( int maxdimension, int sup, int sub );
+        
+        
+        
         /* Counting simplices */
         
         virtual bool dimensioncounted( int dim ) const = 0;
@@ -79,6 +89,7 @@ class Mesh
          * - get the subsimplex list of a cell
          * - test for subsimplex relation 
          * - get local index of subsimplex 
+         * - get listed subsimplex 
          * 
          */
         
@@ -89,6 +100,8 @@ class Mesh
         bool is_subsimplex( int sup, int sub, int cellsup, int cellsub ) const;
         
         int get_subsimplix_index( int sup, int sub, int cellsup, int cellsub ) const;
+        
+        int get_subsimplix( int sup, int sub, int cellsup, int localindex ) const;
         
         
         
