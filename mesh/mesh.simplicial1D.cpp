@@ -154,8 +154,13 @@ bool MeshSimplicial1D::operator== ( const MeshSimplicial1D& mesh ) const
          &&
          true;
 }
-        
-        
+
+
+bool MeshSimplicial1D::operator!= ( const MeshSimplicial1D& mesh ) const 
+{
+  return ! ( *this == mesh );
+}
+
 
 void MeshSimplicial1D::check() const
 {
@@ -320,7 +325,7 @@ const IndexMap MeshSimplicial1D::getsubsimplices( int sup, int sub, int cell ) c
   assert( 0 <= cell && cell < count_edges() );
   
   auto temp = get_edge_vertices(cell); 
-  return IndexMap( IndexRange(0,1), IndexRange( 0, count_vertices() ), std::vector<int>( temp.begin(), temp.end() ) );
+  return IndexMap( IndexRange(0,1), IndexRange( 0, count_vertices()-1 ), std::vector<int>( temp.begin(), temp.end() ) );
     
 }
 

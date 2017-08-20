@@ -66,11 +66,11 @@ class Mesh
         
         /* Static auxiliary functions */
         
-        static int index_from_pair( int maxdimension, int sup, int sub );
+        int index_from_pair( int sup, int sub ) const;
         
-        static void index_to_pair( int maxdimension, int index, int& sup, int& sub );
+        void index_to_pair( int index, int& sup, int& sub ) const;
         
-        static int count_subsimplices( int maxdimension, int sup, int sub );
+        int count_subsimplices( int sup, int sub ) const;
         
         
         
@@ -99,9 +99,9 @@ class Mesh
         
         bool is_subsimplex( int sup, int sub, int cellsup, int cellsub ) const;
         
-        int get_subsimplix_index( int sup, int sub, int cellsup, int cellsub ) const;
+        int get_subsimplex_index( int sup, int sub, int cellsup, int cellsub ) const;
         
-        int get_subsimplix( int sup, int sub, int cellsup, int localindex ) const;
+        int get_subsimplex( int sup, int sub, int cellsup, int localindex ) const;
         
         
         

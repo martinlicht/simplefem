@@ -35,18 +35,20 @@ class MeshSimplicialND
 
     public:
     
-        MeshSimplicialND( int outerdim = 1 );
+        MeshSimplicialND( int innerdim, int outerdim );
         
         MeshSimplicialND( 
             int innerdim,
             int outerdim,
             const Coordinates& coords,
-            const std::vector<int> volume_vertices;
+            const std::vector<int> volume_vertices
         );
         
         virtual ~MeshSimplicialND();
         
         bool operator== ( const MeshSimplicialND& ) const;
+        
+        bool operator!= ( const MeshSimplicialND& ) const;
         
         virtual void check() const;
         
@@ -68,7 +70,6 @@ class MeshSimplicialND
         virtual const std::vector<int> getsupersimplices( int sup, int sub, int cell ) const override;
         
         
-        
         /* refinement */
         
         void bisect_edge( int e );
@@ -79,31 +80,33 @@ class MeshSimplicialND
         
         FloatVector get_simplex_midpoint( int dim, int cell ) const;
         
+        
     private: 
         
-        rebuild();
+        void rebuild();
         
-        static int 
+        int relationindex( int sup, int sub ) const;
+        
+        int subsimplexnumber( int sup, int sub ) const;
+        
         
     private:
         
         std::vector<int> counter_simplices;
         
-        std::vector<???> data_simplex_subsimplices;
-        std::vector<???> data_simplex_firstparent_simplex;
-        std::vector<???> data_simplex_nextparent_of_subsimplices;
-        
-        
-        
-        
+        std::vector<std::vector<int>> data_simplex_subsimplices;
+        std::vector<std::vector<int>> data_simplex_firstparent_simplex;
+        std::vector<std::vector<int>> data_simplex_nextparent_of_subsimplices;
+    
+    
 };
 
 
 
 
-inline std::ostream& operator<<( std::ostream& os, const MeshSimplicialND& mt1d )
+inline std::ostream& operator<<( std::ostream& os, const MeshSimplicialND& mND )
 {
-    mt1d.print( os );
+    mND.print( os );
     return os;
 }
 
@@ -113,13 +116,13 @@ inline std::ostream& operator<<( std::ostream& os, const MeshSimplicialND& mt1d 
 inline MeshSimplicialND UnitSquare()
 {
     return MeshSimplicialND(
-      1,
-      Coordinates( 1, 2, {
-        -1., // 0
-         1., // 1
+      1, 3, 
+      Coordinates( 3, 2, {
+        -1., 0., 1., // 0
+         1., 3., 2., // 1
       } ),
       {
-        { 0, 1 }
+        0, 1 
       }
     );
 }
@@ -127,13 +130,13 @@ inline MeshSimplicialND UnitSquare()
 inline MeshSimplicialND StandardSquare()
 {
     return MeshSimplicialND(
-      1,
+      1, 1, 
       Coordinates( 1, 2, {
          0., // 0
          1., // 1
       } ),
       {
-        { 0, 1 }
+        0, 1
       }
     );
 }

@@ -99,6 +99,10 @@ inline bool operator==( const Coordinates& coords_left, const Coordinates& coord
     return compare( coords_left, coords_right, 0.00001 );
 }
 
+inline bool operator!=( const Coordinates& coords_left, const Coordinates& coords_right )
+{
+    return ! ( coords_left == coords_right );
+}
 
 
 #endif

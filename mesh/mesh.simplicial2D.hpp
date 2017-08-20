@@ -67,6 +67,8 @@ class MeshSimplicial2D
         
         bool operator== ( const MeshSimplicial2D& mesh ) const; 
         
+        bool operator!= ( const MeshSimplicial2D& mesh ) const; 
+        
         /* inherited methods */
         
         virtual bool dimensioncounted( int dim ) const override;
