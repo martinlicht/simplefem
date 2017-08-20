@@ -130,7 +130,7 @@ class MeshSimplicial1D
         
         /* other things */
         
-        FloatVector get_edge_midpoint( int e );
+        FloatVector get_edge_midpoint( int e ) const;
         
         
     private:

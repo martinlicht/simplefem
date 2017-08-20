@@ -157,7 +157,7 @@ test.mesh.uniformrefinement1D.out: test.mesh.uniformrefinement1D.cpp $(Includes.
 	$(CC) test.mesh.uniformrefinement1D.cpp $(Links.mesh) -o test.mesh.uniformrefinement1D.out
 
 # test.mesh.manifold2D.out: test.mesh.manifold2D.cpp $(Includes.mesh)
-	$(CC) test.mesh.manifold2D.cpp $(Links.mesh) -o test.mesh.manifold2D.out
+# 	$(CC) test.mesh.manifold2D.cpp $(Links.mesh) -o test.mesh.manifold2D.out
 
 test.mesh.simplicial2D.out: test.mesh.simplicial2D.cpp $(Includes.mesh)
 	$(CC) test.mesh.simplicial2D.cpp $(Links.mesh) -o test.mesh.simplicial2D.out

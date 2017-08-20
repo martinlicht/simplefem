@@ -1765,7 +1765,7 @@ void MeshSimplicial2D::uniformrefinement()
 
 
 
-FloatVector MeshSimplicial2D::get_triangle_midpoint( int t )
+FloatVector MeshSimplicial2D::get_triangle_midpoint( int t ) const
 {
     assert( 0 <= t && t < counter_triangles );
     FloatVector mid( getouterdimension() );
@@ -1777,7 +1777,7 @@ FloatVector MeshSimplicial2D::get_triangle_midpoint( int t )
     return mid;
 }
 
-FloatVector MeshSimplicial2D::get_edge_midpoint    ( int e )
+FloatVector MeshSimplicial2D::get_edge_midpoint    ( int e ) const
 {
     assert( 0 <= e && e < counter_edges );
     FloatVector mid( getouterdimension() );

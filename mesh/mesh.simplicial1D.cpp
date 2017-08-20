@@ -705,7 +705,7 @@ void MeshSimplicial1D::improved_uniformrefinement()
 
 
 
-FloatVector MeshSimplicial1D::get_edge_midpoint    ( int e )
+FloatVector MeshSimplicial1D::get_edge_midpoint    ( int e ) const
 {
     assert( 0 <= e && e < counter_edges );
     FloatVector mid( getouterdimension() );

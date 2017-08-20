@@ -184,8 +184,8 @@ class MeshSimplicial2D
         
         /* other things */
         
-        FloatVector get_triangle_midpoint( int t );
-        FloatVector get_edge_midpoint( int e );
+        FloatVector get_triangle_midpoint( int t ) const;
+        FloatVector get_edge_midpoint( int e ) const;
         
         
     private:
