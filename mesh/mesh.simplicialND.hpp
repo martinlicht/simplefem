@@ -63,7 +63,7 @@ class MeshSimplicialND
         
         virtual bool subsimplices_listed( int sup, int sub ) const override;
         
-        virtual const IndexMap getsubsimplices( int sup, int sub, int cell ) const override;
+        virtual IndexMap getsubsimplices( int sup, int sub, int cell ) const override;
         
         virtual bool supersimplices_listed( int sup, int sub ) const override;
         
@@ -104,11 +104,11 @@ class MeshSimplicialND
 
 
 
-inline std::ostream& operator<<( std::ostream& os, const MeshSimplicialND& mND )
-{
-    mND.print( os );
-    return os;
-}
+// inline std::ostream& operator<<( std::ostream& os, const MeshSimplicialND& mND )
+// {
+//     mND.print( os );
+//     return os;
+// }
 
 
 

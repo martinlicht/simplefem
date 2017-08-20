@@ -26,7 +26,7 @@ Mesh::Mesh( int inner, int outer )
   for( int sub = 0; sub <= sup; sub++ )
   {
 //     std::cout << sup << space << sub << std::endl;
-    IndexRange from( 0, countsubsimplices( sup, sub ) - 1 );
+    IndexRange from( 0, count_subsimplices( sup, sub ) - 1 );
     IndexRange to( 0, innerdimension );
 //     std::cout << "generate sigmas" << nl << from << nl << to << std::endl;
     std::vector<IndexMap> sigmas = generateSigmas( from, to );
@@ -117,6 +117,12 @@ int Mesh::count_subsimplices( int sup, int sub ) const
 
 
 
+ /*
+  * 
+  * Accessing subsimplices 
+  *
+  */
+
 bool Mesh::is_subsimplex( int sup, int sub, int cellsup, int cellsub ) const
 {
   
@@ -139,6 +145,16 @@ int Mesh::get_subsimplex( int sup, int sub, int cellsup, int localindex ) const
   return im[ localindex ];  
 }
 
+
+
+
+
+ /*
+  * 
+  * Accessing supersimplices 
+  *
+  */
+
 bool Mesh::is_supersimplex( int sup, int sub, int cellsup, int cellsub ) const
 {
   
@@ -156,17 +172,54 @@ bool Mesh::is_supersimplex( int sup, int sub, int cellsup, int cellsub ) const
   
 }
 
-
-int Mesh::get_supersimplex_index( int sup, int sub, int cellsup, int cellsub ) const
+int Mesh::get_firstparent_of_subsimplex( int sup, int sub, int cellsub ) const
 {
-  
+  assert( supersimplices_listed( sup, sub ) );
+  std::vector<int> parents = getsupersimplices( sup, sub, cellsub );
+  return parents[0];
+}
+
+int Mesh::get_nextparent_of_subsimplex( int sup, int sub, int cellsup, int cellsub ) const
+{
+  assert( supersimplices_listed( sup, sub ) );
+  std::vector<int> parents = getsupersimplices( sup, sub, cellsub );
+  auto it = std::find( parents.begin(), parents.end(), cellsup );
+  assert( it != parents.end() );
+  it++;
+  if( it == parents.end() )
+    return nullindex;
+  else
+    return *it;
+}
+
+int Mesh::get_nextparent_by_localindex( int sup, int sub, int cellsup, int localindex ) const
+{
+  assert( supersimplices_listed( sup, sub ) );
+  assert( subsimplices_listed( sup, sub ) );
+  int cellsub = getsubsimplices( sup, sub, cellsup )[localindex];
+  std::vector<int> parents = getsupersimplices( sup, sub, cellsub );
+  auto it = std::find( parents.begin(), parents.end(), cellsup );
+  assert( it != parents.end() );
+  it++;
+  if( it == parents.end() )
+    return nullindex;
+  else
+    return *it;
+}
+
+int Mesh::get_index_of_supersimplex( int sup, int sub, int cellsup, int cellsub ) const
+{
   assert( supersimplices_listed( sup, sub ) );
   std::vector<int> parents = getsupersimplices( sup, sub, cellsub );
   auto it = std::find( parents.begin(), parents.end(), cellsup );
   assert( it != parents.end() );
   return it - parents.begin();
-  
 }
 
-
+int Mesh::get_supersimplex_by_index( int sup, int sub, int cellsub, int parentindex ) const
+{
+  assert( supersimplices_listed( sup, sub ) );
+  std::vector<int> parents = getsupersimplices( sup, sub, cellsub );
+  return parents[ parentindex ];
+}
 

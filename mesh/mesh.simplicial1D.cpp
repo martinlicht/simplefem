@@ -318,7 +318,7 @@ bool MeshSimplicial1D::subsimplices_listed( int sup, int sub ) const
     return true;
 }
 
-const IndexMap MeshSimplicial1D::getsubsimplices( int sup, int sub, int cell ) const
+IndexMap MeshSimplicial1D::getsubsimplices( int sup, int sub, int cell ) const
 {
   assert( 1 == sup );
   assert( 0 == sub );

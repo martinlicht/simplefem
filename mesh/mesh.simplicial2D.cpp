@@ -745,7 +745,7 @@ bool MeshSimplicial2D::subsimplices_listed( int sup, int sub ) const
     return true;
 }
 
-const IndexMap MeshSimplicial2D::getsubsimplices( int sup, int sub, int cell ) const
+IndexMap MeshSimplicial2D::getsubsimplices( int sup, int sub, int cell ) const
 {
   
   if( sup == 2 && sub == 1 ) {

@@ -95,13 +95,13 @@ class Mesh
         
         virtual bool subsimplices_listed( int sup, int sub ) const = 0;
         
-        virtual const IndexMap getsubsimplices( int sup, int sub, int cell ) const = 0;
+        virtual IndexMap getsubsimplices( int sup, int sub, int cell ) const = 0;
         
-        bool is_subsimplex( int sup, int sub, int cellsup, int cellsub ) const;
+        virtual bool is_subsimplex( int sup, int sub, int cellsup, int cellsub ) const;
         
-        int get_subsimplex_index( int sup, int sub, int cellsup, int cellsub ) const;
+        virtual int get_subsimplex_index( int sup, int sub, int cellsup, int cellsub ) const;
         
-        int get_subsimplex( int sup, int sub, int cellsup, int localindex ) const;
+        virtual int get_subsimplex( int sup, int sub, int cellsup, int localindex ) const;
         
         
         
@@ -121,7 +121,17 @@ class Mesh
         
         virtual bool is_supersimplex( int sup, int sub, int cellsup, int cellsub ) const;
         
-        virtual int get_supersimplex_index( int sup, int sub, int cellsup, int cellsub ) const;
+        virtual int get_firstparent_of_subsimplex( int sup, int sub, int cellsub ) const;
+        
+        virtual int get_nextparent_of_subsimplex( int sup, int sub, int cellsup, int cellsub ) const;
+        
+        virtual int get_nextparent_by_localindex( int sup, int sub, int cellsup, int localindex ) const;
+        
+//         virtual IndexMap getnextparents( int sup, int sub, int cell ) const;
+        
+        virtual int get_index_of_supersimplex( int sup, int sub, int cellsup, int cellsub ) const;
+        
+        virtual int get_supersimplex_by_index( int sup, int sub, int cellsub, int parentindex ) const;
         
         // TODO: Iterator interface
         // ContainerInterface -- container.hpp 
@@ -150,29 +160,29 @@ class Mesh
 
 
 
-
-static inline int countsubsimplices( int n, int k )
+inline std::ostream& operator<<( std::ostream& os, const Mesh& mesh )
 {
-    assert( 0 <= k && k <= n );
-    return binomial<int>( n+1, k+1 );
-}
-
-
-
-
-
-
-
-
-
-
-
-
-inline std::ostream& operator<<( std::ostream& os, const Mesh& sm )
-{
-    sm.print( os );
+    mesh.print( os );
     return os;
 }
+
+
+
+
+// static inline int countsubsimplices( int n, int k )
+// {
+//     assert( 0 <= k && k <= n );
+//     return binomial<int>( n+1, k+1 );
+// }
+
+
+
+
+
+
+
+
+
 
 
 #endif

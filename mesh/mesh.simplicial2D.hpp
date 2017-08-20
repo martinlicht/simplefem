@@ -77,7 +77,7 @@ class MeshSimplicial2D
         
         virtual bool subsimplices_listed( int sup, int sub ) const override;
         
-        virtual const IndexMap getsubsimplices( int sup, int sub, int cell ) const override;
+        virtual IndexMap getsubsimplices( int sup, int sub, int cell ) const override;
         
         virtual bool supersimplices_listed( int sup, int sub ) const override;
         
@@ -213,11 +213,11 @@ class MeshSimplicial2D
 
 
 
-inline std::ostream& operator<<( std::ostream& os, const MeshSimplicial2D& mt1d )
-{
-    mt1d.print( os );
-    return os;
-}
+// inline std::ostream& operator<<( std::ostream& os, const MeshSimplicial2D& mt2d )
+// {
+//     mt2d.print( os );
+//     return os;
+// }
 
 
 
