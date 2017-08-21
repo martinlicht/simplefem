@@ -323,7 +323,7 @@ IndexMap MeshSimplicial1D::getsubsimplices( int sup, int sub, int cell ) const
   if( sup == 0 && sub == 0 ) {
     
     assert( 0 <= cell && cell < count_vertices() );
-    return IndexMap( IndexRange(0,0), IndexRange(0,0), { cell } );
+    return IndexMap( IndexRange(0,0), IndexRange(0,count_vertices()-1), { cell } );
     
   } else if( sup == 1 && sub == 0 ) {
     
@@ -334,7 +334,7 @@ IndexMap MeshSimplicial1D::getsubsimplices( int sup, int sub, int cell ) const
   } else if( sup == 1 && sub == 1 ) {
     
     assert( 0 <= cell && cell < count_edges() );
-    return IndexMap( IndexRange(0,0), IndexRange(0,0), { cell } );
+    return IndexMap( IndexRange(0,0), IndexRange(0,count_edges()-1), { cell } );
     
   } else
     assert(false); 
