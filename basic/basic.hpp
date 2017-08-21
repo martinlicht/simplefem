@@ -7,6 +7,7 @@
 #include <list>
 #include <iterator>
 #include <functional>
+#include <iostream>
 
 // // #include "assertion.hpp"
 
@@ -127,6 +128,25 @@ void mergeelementsinsortedlist
 
     }
 }
+
+
+
+
+
+inline void ping() { std::cout << "ping" << std::endl; }
+
+inline void pong() { std::cout << "pong" << std::endl; }
+
+inline void peng() { std::cout << "peng" << std::endl; }
+
+inline void pang() { std::cout << "pang" << std::endl; }
+
+inline void pung() { std::cout << "pung" << std::endl; }
+
+
+
+
+
 
 
 
