@@ -314,35 +314,58 @@ int MeshSimplicial1D::countsimplices( int dim ) const
 
 bool MeshSimplicial1D::subsimplices_listed( int sup, int sub ) const
 {
-    assert( 0 <= sub && sub < sup && sup <= 1 );
+    assert( 0 <= sub && sub <= sup && sup <= 1 );
     return true;
 }
 
 IndexMap MeshSimplicial1D::getsubsimplices( int sup, int sub, int cell ) const
 {
-  assert( 1 == sup );
-  assert( 0 == sub );
-  assert( 0 <= cell && cell < count_edges() );
-  
-  auto temp = get_edge_vertices(cell); 
-  return IndexMap( IndexRange(0,1), IndexRange( 0, count_vertices()-1 ), std::vector<int>( temp.begin(), temp.end() ) );
+  if( sup == 0 && sub == 0 ) {
     
+    assert( 0 <= cell && cell < count_vertices() );
+    return IndexMap( IndexRange(0,0), IndexRange(0,0), { cell } );
+    
+  } else if( sup == 1 && sub == 0 ) {
+    
+    assert( 0 <= cell && cell < count_edges() );
+    auto temp = get_edge_vertices(cell); 
+    return IndexMap( IndexRange(0,1), IndexRange( 0, count_vertices()-1 ), std::vector<int>( temp.begin(), temp.end() ) );
+    
+  } else if( sup == 1 && sub == 1 ) {
+    
+    assert( 0 <= cell && cell < count_edges() );
+    return IndexMap( IndexRange(0,0), IndexRange(0,0), { cell } );
+    
+  } else
+    assert(false); 
 }
 
 bool MeshSimplicial1D::supersimplices_listed( int sup, int sub ) const
 {
-    assert( 0 <= sub && sub < sup && sup <= 1 );
+    assert( 0 <= sub && sub <= sup && sup <= 1 );
     return true;
 }
 
 const std::vector<int> MeshSimplicial1D::getsupersimplices( int sup, int sub, int cell ) const
 {
-  assert( 1 == sup );
-  assert( 0 == sub );
-  assert( 0 <= cell && cell < count_vertices() );
-  
-  auto temp = get_edge_parents_of_vertex( cell ); 
-  return std::vector<int>( temp.begin(), temp.end() );
+  if( sup == 0 && sub == 0 ) {
+    
+    assert( 0 <= cell && cell < count_vertices() );
+    return { cell };
+    
+  } else if( sup == 1 && sub == 0 ) {
+    
+    assert( 0 <= cell && cell < count_vertices() );
+    auto temp = get_edge_parents_of_vertex( cell ); 
+    return std::vector<int>( temp.begin(), temp.end() );
+    
+  } else if( sup == 1 && sub == 1 ) {
+    
+    assert( 0 <= cell && cell < count_edges() );
+    return { cell };
+    
+  } else
+    assert(false); 
 }
 
 

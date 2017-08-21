@@ -741,14 +741,19 @@ int MeshSimplicial2D::countsimplices( int dim ) const
 
 bool MeshSimplicial2D::subsimplices_listed( int sup, int sub ) const
 {
-    assert( 0 <= sub && sub < sup && sup <= 2 );
+    assert( 0 <= sub && sub <= sup && sup <= 2 );
     return true;
 }
 
 IndexMap MeshSimplicial2D::getsubsimplices( int sup, int sub, int cell ) const
 {
   
-  if( sup == 2 && sub == 1 ) {
+  if( sup == 2 && sub == 2 ) {
+    
+    assert( 0 <= cell && cell < count_triangles() );
+    return IndexMap( IndexRange(0,0), IndexRange(0,0), { cell } );;
+    
+  } else if( sup == 2 && sub == 1 ) {
     
     assert( 0 <= cell && cell < count_triangles() );
     auto temp = get_triangle_edges(cell);
@@ -760,11 +765,21 @@ IndexMap MeshSimplicial2D::getsubsimplices( int sup, int sub, int cell ) const
     auto temp = get_triangle_vertices(cell);
     return IndexMap( IndexRange(0,2), IndexRange( 0, count_vertices()-1 ) , std::vector<int>( temp.begin(), temp.end() ) );
     
+  } else if( sup == 1 && sub == 1 ) {
+    
+    assert( 0 <= cell && cell < count_edges() );
+    return IndexMap( IndexRange(0,0), IndexRange(0,0), { cell } );;
+    
   } else if( sup == 1 && sub == 0 ) {
     
     assert( 0 <= cell && cell < count_edges() );
     auto temp = get_edge_vertices(cell);
     return IndexMap( IndexRange(0,1), IndexRange( 0, count_vertices()-1 ) , std::vector<int>( temp.begin(), temp.end() ) );
+    
+  } else if( sup == 0 && sub == 0 ) {
+    
+    assert( 0 <= cell && cell < count_vertices() );
+    return IndexMap( IndexRange(0,0), IndexRange(0,0), { cell } );;
     
   } else {
     
@@ -776,18 +791,19 @@ IndexMap MeshSimplicial2D::getsubsimplices( int sup, int sub, int cell ) const
 
 bool MeshSimplicial2D::supersimplices_listed( int sup, int sub ) const
 {
-    assert( 0 <= sub && sub < sup && sup <= 2 );
+    assert( 0 <= sub && sub <= sup && sup <= 2 );
     return true;
 }
 
 const std::vector<int> MeshSimplicial2D::getsupersimplices( int sup, int sub, int cell ) const
 {
   
-  assert( 1 == sup );
-  assert( 0 == sub );
-  assert( 0 <= cell && cell < count_vertices() );
-  
-  if( sup == 2 && sub == 1 ) {
+  if( sup == 2 && sub == 2 ) {
+    
+    assert( 0 <= cell && cell < count_triangles() );
+    return { cell };
+    
+  } else if( sup == 2 && sub == 1 ) {
     
     assert( 0 <= cell && cell < count_edges() );
     auto temp = get_triangle_parents_of_edge( cell ); 
@@ -799,11 +815,21 @@ const std::vector<int> MeshSimplicial2D::getsupersimplices( int sup, int sub, in
     auto temp = get_triangle_parents_of_vertex( cell ); 
     return std::vector<int>( temp.begin(), temp.end() );
     
+  } else if( sup == 1 && sub == 1 ) {
+    
+    assert( 0 <= cell && cell < count_edges() );
+    return { cell };
+    
   } else if( sup == 1 && sub == 0 ) {
     
     assert( 0 <= cell && cell < count_vertices() );
     auto temp = get_edge_parents_of_vertex( cell ); 
     return std::vector<int>( temp.begin(), temp.end() );
+    
+  } else if( sup == 0 && sub == 0 ) {
+    
+    assert( 0 <= cell && cell < count_vertices() );
+    return { cell };
     
   } else {
     

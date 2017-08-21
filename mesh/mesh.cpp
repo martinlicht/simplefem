@@ -93,16 +93,16 @@ void Mesh::check() const
 
 int Mesh::index_from_pair( int sup, int sub ) const
 {
-  assert( 0 <= sub && sub < sup && sup <= innerdimension );
-  return sub + (sup-1) * sup / 2;
+  assert( 0 <= sub && sub <= sup && sup <= innerdimension );
+  return sub + (sup+1) * sup / 2;
 }
 
 void Mesh::index_to_pair( int index, int& sup, int& sub ) const
 {
-  // TODO: improve this incredibly ineffecient computation.
+  // FIXME: improve this incredibly ineffecient computation.
   assert( 0 <= sub && sub <= sup && sup <= innerdimension );
   for( int _sup = 1; _sup <= innerdimension; _sup++ )
-  for( int _sub = 0; _sub < sup; _sub++ )
+  for( int _sub = 0; _sub <= sup; _sub++ )
     if( index == index_from_pair( _sup, _sub ) ){
       sup = _sup; sub = _sub; return;
     }

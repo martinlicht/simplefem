@@ -94,9 +94,9 @@ class MeshSimplicialND
         
         std::vector<int> counter_simplices;
         
-        std::vector<std::vector<int>> data_simplex_subsimplices;
-        std::vector<std::vector<int>> data_simplex_firstparent_simplex;
-        std::vector<std::vector<int>> data_simplex_nextparent_of_subsimplices;
+        std::vector<std::vector<int>> data_subsimplices;
+        std::vector<std::vector<int>> data_firstparents;
+        std::vector<std::vector<int>> data_nextparents;
     
     
 };
