@@ -75,14 +75,22 @@ generatePermutations( const IndexRange& ir )
         ir.check();
         std::vector<IndexMap> allmappings = generateIndexMaps( ir, ir );
         
-        std::vector<IndexMap> ret( factorial( ir.getlength() ), IndexMap(ir) );
+        std::vector<IndexMap> ret;
+        ret.reserve( factorial( ir.getlength() ) );
         
-        std::copy_if( allmappings.begin(), allmappings.end(), ret.begin(),
-                []( const IndexMap& im ) -> bool { return im.isbijective(); }
-                );
+        for( const auto& mapping : allmappings )
+          if( mapping.isbijective() )
+            ret.push_back( mapping );
+        
+//         std::vector<IndexMap> ret( factorial( ir.getlength() ), IndexMap(ir) );
+//         
+//         std::vector<IndexMap>
+//         std::copy_if( allmappings.begin(), allmappings.end(), ret.begin(),
+//                 []( const IndexMap& im ) -> bool { return im.isbijective(); }
+//                 );
         
         for( const auto& perm : ret )
-            assert( (perm.check(),1) && perm.isbijective() );
+            assert( (perm.check(),true) && perm.isbijective() );
         
         return ret;
         
@@ -123,13 +131,23 @@ generateSigmas( const IndexRange& from, const IndexRange& to )
         
         std::vector<IndexMap> allmappings = generateIndexMaps( from, to );
         
-        std::vector<IndexMap> ret( binomial<int>( to.getlength(), from.getlength() ), IndexMap(from,to) );
+        std::vector<IndexMap> ret;
+        ret.reserve( binomial<int>( to.getlength(), from.getlength() ) );
         
-        std::copy_if( allmappings.begin(), allmappings.end(), ret.begin(),
-                []( const IndexMap& im ) -> bool { return im.isstrictlyascending(); }
-                );
+        for( const auto& mapping : allmappings )
+          if( mapping.isstrictlyascending() )
+            ret.push_back( mapping );
         
-                return ret;
+//         std::vector<IndexMap> ret( , IndexMap(from,to) );
+//         
+//         std::copy_if( allmappings.begin(), allmappings.end(), ret.begin(),
+//                 []( const IndexMap& im ) -> bool { return im.isstrictlyascending(); }
+//                 );
+        
+        for( const auto& sigma : ret )
+            assert( (sigma.check(),true) && sigma.isstrictlyascending() );
+        
+        return ret;
 }
 
 

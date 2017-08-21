@@ -17,7 +17,8 @@ IndexMap::IndexMap( const IndexRange& range )
 IndexMap::IndexMap( const IndexRange& from, const IndexRange& to )
 : src(from), dest(to), values( std::max( src.max() - src.min() + 1, 0 ), to.min() )
 {
-    std::cout << "Index Map initialized without actual values" << std::endl;
+    if( src.max() >= src.min() )
+      std::cout << "Index Map initialized without actual values" << std::endl;
     src.check();
     to.check();
     check();
