@@ -50,11 +50,11 @@ inline int __feecpp_attest( const char* msg,
 
 #define warnings_are_fatal false
 
-#define enforce_attest(EX)      ((void) (__feecpp_attest( "Error: the following attestion has failed.", #EX, __FILE__, __LINE__ ),0))
-#define enforce_warning(EX)     ((void) (__feecpp_attest( "Warning: the following attestion has failed.", #EX, __FILE__, __LINE__, warnings_are_fatal ),0))
-#define enforce_shout(msg)      ((void) (__feecpp_attest( msg, nullptr, __FILE__, __LINE__, warnings_are_fatal ),0))
-#define enforce_raiseerror(msg) ((void) (__feecpp_attest( "Error:", msg, __FILE__, __LINE__ ),0))
-#define enforce_unreachable()   ((void) (__feecpp_attest( "Error: unreachable code has been reached!", "", __FILE__, __LINE__ ),0))
+#define enforce_attest(EX)      { if(!(EX)){ __feecpp_attest( "Error: the following attestion has failed.", #EX, __FILE__, __LINE__ );}}
+#define enforce_warning(EX)     { if(!(EX)){__feecpp_attest( "Warning: the following attestion has failed.", #EX, __FILE__, __LINE__, warnings_are_fatal );}}
+#define enforce_shout(msg)      {          {__feecpp_attest( msg, nullptr, __FILE__, __LINE__, warnings_are_fatal );}}
+#define enforce_raiseerror(msg) {          {__feecpp_attest( "Error:", msg, __FILE__, __LINE__ );}}
+#define enforce_unreachable()   {          {__feecpp_attest( "Error: unreachable code has been reached!", "", __FILE__, __LINE__ );}}
 
 
 
