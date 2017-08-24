@@ -49,16 +49,16 @@ generateIndexMaps( const IndexRange& from, const IndexRange& to )
         ret.reserve( num );
         
         for( int it = 0; it < num; it++ ) {
-                
-                std::vector<int> values( from.getlength() );
-                int it_clone = it;
-                for( int digit = 0; digit < from.getlength(); digit++ ) {
-                    values[digit] = to.min() + it_clone % to.cardinality();
-                    it_clone /= to.cardinality();
-                }
+          
+          std::vector<int> values( from.getlength() );
+          int it_clone = it;
+          for( int digit = 0; digit < from.getlength(); digit++ ) {
+              values[digit] = to.min() + it_clone % to.cardinality();
+              it_clone /= to.cardinality();
+          }
 
-                ret.push_back( IndexMap( from, to, values ) );
-                
+          ret.push_back( IndexMap( from, to, values ) );
+          
         }
         
         for( const auto& foo : ret )
@@ -132,6 +132,7 @@ generateSigmas( const IndexRange& from, const IndexRange& to )
         std::vector<IndexMap> allmappings = generateIndexMaps( from, to );
         
         std::vector<IndexMap> ret;
+        assert( to.getlength() >= from.getlength() ); // TODO: Handle this warning
         ret.reserve( binomial<int>( to.getlength(), from.getlength() ) );
         
         for( const auto& mapping : allmappings )

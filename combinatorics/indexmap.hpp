@@ -84,10 +84,10 @@ inline IndexMap operator*( const IndexMap& leave, const IndexMap& enter )
 
     assert( enter.getDestRange() == leave.getSourceRange() );
 
-    IndexMap ret( src, dest );
+    IndexMap ret( src, dest, [ &leave, &enter ]( int i ) -> int { return leave[ enter[i] ]; } );
 
-    for( int i = src.min(); i <= src.max(); i++ )
-        ret[i] = leave[ enter[i] ];
+//     for( int i = src.min(); i <= src.max(); i++ )
+//         ret[i] = leave[ enter[i] ];
 
     ret.check();
     return ret;
@@ -130,9 +130,9 @@ inline std::ostream& operator<<( std::ostream& os, IndexMap im )
 inline IndexMap identityIndexMap( const IndexRange& ir )
 {
     ir.check();
-    IndexMap im( ir, ir );
-    for( int i = ir.min(); i <= ir.max(); i++ )
-        im[i] = i;
+    IndexMap im( ir, ir, []( int i ) -> int { return i; } );
+//     for( int i = ir.min(); i <= ir.max(); i++ )
+//         im[i] = i;
     im.check();
     return im;
 }
