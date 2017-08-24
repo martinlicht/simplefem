@@ -72,9 +72,9 @@ class MeshSimplicial1D
         
         /* inherited methods */
         
-        virtual bool dimensioncounted( int dim ) const override;
+        virtual bool dimension_counted( int dim ) const override;
         
-        virtual int countsimplices( int dim ) const override;
+        virtual int count_simplices( int dim ) const override;
         
         virtual bool subsimplices_listed( int sup, int sub ) const override;
         

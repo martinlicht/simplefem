@@ -296,13 +296,13 @@ void MeshSimplicial1D::print( std::ostream& os ) const
 
 
 
-bool MeshSimplicial1D::dimensioncounted( int dim ) const
+bool MeshSimplicial1D::dimension_counted( int dim ) const
 {
     assert( 0 <= dim && dim <= 1 );
     return true;
 }
 
-int MeshSimplicial1D::countsimplices( int dim ) const
+int MeshSimplicial1D::count_simplices( int dim ) const
 {
   if( dim == 0 )
     return count_vertices();

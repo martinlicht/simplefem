@@ -721,13 +721,13 @@ void MeshSimplicial2D::print( std::ostream& os ) const
 
 
 
-bool MeshSimplicial2D::dimensioncounted( int dim ) const
+bool MeshSimplicial2D::dimension_counted( int dim ) const
 {
     assert( 0 <= dim && dim <= 2 );
     return true;
 }
 
-int MeshSimplicial2D::countsimplices( int dim ) const
+int MeshSimplicial2D::count_simplices( int dim ) const
 {
   if( dim == 0 )
     return count_vertices();

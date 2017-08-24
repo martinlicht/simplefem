@@ -68,11 +68,11 @@ void Mesh::check() const
   assert( outerdimension == coordinates.getdimension() );
   
   // the vertices and volumes must be counted 
-  assert( dimensioncounted( innerdimension ) );
-  assert( dimensioncounted( 0 ) );
+  assert( dimension_counted( innerdimension ) );
+  assert( dimension_counted( 0 ) );
   
   // the counting of the vertices must agree 
-  assert( countsimplices(0) == coordinates.getnumber() );
+  assert( count_simplices(0) == coordinates.getnumber() );
   
   /* * Data integrity
      * 

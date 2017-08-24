@@ -168,13 +168,16 @@ test.io.simplicial2D.out: test.io.simplicial2D.cpp $(Includes.mesh)
 test.mesh.simplicialND.out: test.mesh.simplicialND.cpp $(Includes.mesh)
 	$(CC) test.mesh.simplicialND.cpp $(Links.mesh) -o test.mesh.simplicialND.out
 
+test.io.simplicialND.out: test.io.simplicialND.cpp $(Includes.mesh)
+	$(CC) test.io.simplicialND.cpp $(Links.mesh) -o test.io.simplicialND.out
+
 # test.mesh.mesh.manifold.2D.out: test.mesh.mesh.manifold.2D.cpp $(Includes.mesh)
 # 	$(CC) test.mesh.mesh.manifold.2D.cpp $(Links.mesh) -o test.mesh.mesh.manifold.2D.out
 
 # test.mesh.io.out: test.mesh.io.cpp $(Includes.mesh)
 # 	$(CC) test.mesh.io.cpp $(Links.mesh) -o test.mesh.io.out
 
-mesh.tests = test.mesh.coordinates.out test.mesh.simplicial1D.out test.io.simplicial1D.out test.mesh.uniformrefinement1D.out test.mesh.simplicial2D.out test.io.simplicial2D.out test.mesh.simplicialND.out
+mesh.tests = test.mesh.coordinates.out test.mesh.simplicial1D.out test.io.simplicial1D.out test.mesh.uniformrefinement1D.out test.mesh.simplicial2D.out test.io.simplicial2D.out test.mesh.simplicialND.out test.io.simplicialND.out
 # test.mesh.simplicialmesh.out test.mesh.io.out test.mesh.vtkwriter.out test.mesh.mesh.manifold.2D.out  test.mesh.manifold2D.out
 
 

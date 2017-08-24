@@ -99,13 +99,13 @@ bool MeshSimplicialND::operator== ( const MeshSimplicialND& mesh ) const
   if( getcoordinates()    != mesh.getcoordinates()    ) return false;
   
   for( int d = 0; d <= getinnerdimension(); d++ )
-    if( countsimplices(d) != mesh.countsimplices(d) ) return false;
+    if( count_simplices(d) != mesh.count_simplices(d) ) return false;
   
   /* comparison of subsimplex lists and neighbor lists */
   
   for( int sup = 1; sup <= getinnerdimension(); sup++ )
   for( int sub = 0; sub <                  sup; sub++ )
-    for( int S = 0; S < countsimplices(sup); S++ )
+    for( int S = 0; S < count_simplices(sup); S++ )
       for( int si = 0; si < count_subsimplices(sup,sub); si++ )
         if( data_subsimplices[index_from_pair(sup,sub)][ S * count_subsimplices(sup,sub) + si ]
             !=
@@ -121,7 +121,7 @@ bool MeshSimplicialND::operator== ( const MeshSimplicialND& mesh ) const
   
   for( int sup = 1; sup <= getinnerdimension(); sup++ )
   for( int sub = 0; sub <                  sup; sub++ )
-    for( int s = 0; s < countsimplices(sub); s++ )
+    for( int s = 0; s < count_simplices(sub); s++ )
       if( data_firstparents[index_from_pair(sup,sub)][ s ]
           !=
           mesh.data_firstparents[index_from_pair(sup,sub)][ s ]
@@ -157,7 +157,7 @@ void MeshSimplicialND::check() const
     /* check the simplex counter function */
     
     for( int dim = 0; dim <= getinnerdimension(); dim++ )
-      assert( counter_simplices[dim] == countsimplices(dim) );
+      assert( counter_simplices[dim] == count_simplices(dim) );
     
     /* check the subsimplex lists:
      *   - non nullindex
@@ -167,12 +167,12 @@ void MeshSimplicialND::check() const
     
     for( int sup = 1; sup <=         getinnerdimension(); sup++ )
     for( int sub = 0; sub <                          sup; sub++ )
-    for( int S   = 0; S   <          countsimplices(sup); S++   )
+    for( int S   = 0; S   <          count_simplices(sup); S++   )
     for( int si  = 0; si  <  count_subsimplices(sup,sub); si++  )
     {
       assert( data_subsimplices[index_from_pair(sup,sub)][ S * count_subsimplices(sup,sub) + si ] != nullindex          );
       assert( data_subsimplices[index_from_pair(sup,sub)][ S * count_subsimplices(sup,sub) + si ] >= 0                  );
-      assert( data_subsimplices[index_from_pair(sup,sub)][ S * count_subsimplices(sup,sub) + si ] < countsimplices(sub) );
+      assert( data_subsimplices[index_from_pair(sup,sub)][ S * count_subsimplices(sup,sub) + si ] < count_simplices(sub) );
       
       for( int ti = 0; ti < si; ti++ )
         assert( data_subsimplices[index_from_pair(sup,sub)][ S * count_subsimplices(sup,sub) + si ] 
@@ -190,7 +190,7 @@ void MeshSimplicialND::check() const
     {
       std::vector<IndexMap> sigmas = generateSigmas( IndexRange(0,sub), IndexRange(0,sup) );
       
-      for( int S  = 0; S  <         countsimplices(sup);  S++ )
+      for( int S  = 0; S  <         count_simplices(sup);  S++ )
       for( int si = 0; si < count_subsimplices(sup,sub); si++ )
       {
         int s = get_subsimplex( sup, sub, S, si );
@@ -210,7 +210,7 @@ void MeshSimplicialND::check() const
     
     for( int sup = 1; sup <=         getinnerdimension(); sup++ )
     for( int sub = 0; sub <                          sup; sub++ )
-    for( int S   = 0; S   <          countsimplices(sup); S++   )
+    for( int S   = 0; S   <          count_simplices(sup); S++   )
     for( int si  = 0; si  <  count_subsimplices(sup,sub); si++  )
     {
       if( data_nextparents[index_from_pair(sup,sub)][ S * count_subsimplices(sup,sub) + si ] == nullindex )
@@ -219,7 +219,7 @@ void MeshSimplicialND::check() const
       std::cout << sup << space << sub << space << S << space << si << space 
                 << data_nextparents[index_from_pair(sup,sub)][ S * count_subsimplices(sup,sub) + si ] << std::endl;     
       assert( data_nextparents[index_from_pair(sup,sub)][ S * count_subsimplices(sup,sub) + si ] >= 0                   );
-      assert( data_nextparents[index_from_pair(sup,sub)][ S * count_subsimplices(sup,sub) + si ] <  countsimplices(sup) );
+      assert( data_nextparents[index_from_pair(sup,sub)][ S * count_subsimplices(sup,sub) + si ] <  count_simplices(sup) );
     }
     
     
@@ -287,7 +287,7 @@ void MeshSimplicialND::print( std::ostream& os ) const
     
     os << "counting simplices per dimension" << nl;
     for( int d = 0; d <= getinnerdimension(); d++ )
-      os << d << tab << countsimplices(d) << nl;
+      os << d << tab << count_simplices(d) << nl;
       
     os << "subsimplices" << nl;
     for( int sup = 1; sup <= getinnerdimension(); sup++ )
@@ -295,7 +295,7 @@ void MeshSimplicialND::print( std::ostream& os ) const
     {
       
       os << sup << " -> " << sub << nl;
-      for( int S =  0; S < countsimplices(sup); S++ )
+      for( int S =  0; S < count_simplices(sup); S++ )
       {
         
         os << sup << ": ";
@@ -313,7 +313,7 @@ void MeshSimplicialND::print( std::ostream& os ) const
     {
       
       os << sup << " -> " << sub << nl;
-      for( int S =  0; S < countsimplices(sup); S++ )
+      for( int S =  0; S < count_simplices(sup); S++ )
       {
         
         os << sup << ": ";
@@ -331,7 +331,7 @@ void MeshSimplicialND::print( std::ostream& os ) const
     {
       
       os << sup << " -> " << sub << nl;
-      for( int s =  0; s < countsimplices(sub); s++ )
+      for( int s =  0; s < count_simplices(sub); s++ )
         os << get_firstparent_of_subsimplex(sup,sub,s) << space;
       os << nl;
       
@@ -348,13 +348,13 @@ void MeshSimplicialND::print( std::ostream& os ) const
 
 
 
-bool MeshSimplicialND::dimensioncounted( int dim ) const
+bool MeshSimplicialND::dimension_counted( int dim ) const
 {
     assert( 0 <= dim && dim <= getinnerdimension() );
     return true;
 }
 
-int MeshSimplicialND::countsimplices( int dim ) const
+int MeshSimplicialND::count_simplices( int dim ) const
 {
   assert( 0 <= dim && dim <= getinnerdimension() );
   return counter_simplices[dim];
@@ -603,7 +603,52 @@ void MeshSimplicialND::bisect_edge( int e )
 
 void MeshSimplicialND::uniformrefinement()
 {
+    const int M = factorial<int>( getinnerdimension() );
+    
+    /*
+     * iterate over the edges and create new vertices
+     * integrate vertices into the coordinate block
+     */
+    
+    getcoordinates().addcoordinates( counter_simplices[1] );
+    
+    for( int e = 0; e < counter_simplices[1]; e++ )
+      getcoordinates().loadvector( 
+        counter_simplices[0] + e, get_simplex_midpoint( 1, e )
+      );
+    
+    /*
+     * resize the array for top-dimensional simplices 
+     * auxiliary save the pattern for new simplices 
+     * iterate over main array to create the new top-dimensional simplices 
+     */
+    
+    for( int S = 0; S < counter_simplices[getinnerdimension()]; S++ )
+    for( int i = 0; i <                                      M; i++ )
+    {
+      ; // TODO 
+    }
+    
+    /*
+     * Update counters for vertices and volumes 
+     */
+    
+    counter_simplices[0] = counter_simplices[0] + counter_simplices[1];
+    
+    counter_simplices[ getinnerdimension() ] = M * counter_simplices[ getinnerdimension() ];
+    
+    /*
+     * Rebuild 
+     */
+    
+    rebuild();
+    
+    /*
+     * Check 
+     */
+    
     check();
+    
 }
 
 

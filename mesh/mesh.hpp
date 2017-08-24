@@ -76,9 +76,9 @@ class Mesh
         
         /* Counting simplices */
         
-        virtual bool dimensioncounted( int dim ) const = 0;
+        virtual bool dimension_counted( int dim ) const = 0;
         
-        virtual int countsimplices( int dim ) const = 0;
+        virtual int count_simplices( int dim ) const = 0;
         
         
         

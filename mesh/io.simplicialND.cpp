@@ -47,44 +47,37 @@ void writeMeshSimplicialND( std::ostream& out, const MeshSimplicialND& mesh, boo
     /* Preamble */
     if( sugar ) out << "Writing simplicial ND Mesh..." << std::endl;
     
-    if( sugar ) out << "number of edges: " << std::endl;;
-    out << mesh.count_edges() << std::endl;
+    if( sugar ) out << "inner dimension: " << std::endl;;
+    out << mesh.getinnerdimension() << std::endl;
+    
+    if( sugar ) out << "number of top-dimensional simplices: " << std::endl;;
+    out << mesh.count_simplices( mesh.getinnerdimension() ) << std::endl;
     
     if( sugar ) out << "number of vertices: " << std::endl;
-    out << mesh.count_vertices() << std::endl;
+    out << mesh.count_simplices(0) << std::endl;
     
     if( sugar ) out << "external dimension: " << std::endl;
     out << mesh.getcoordinates().getdimension() << std::endl;
     
-    /* edge -> vertices */
-    if( sugar ) out << "for each edge, the vertices: " << std::endl;
-    for( int e = 0; e < mesh.count_edges(); e++ ) {
-        if( sugar ) out << e << ": ";
-        out << mesh.get_edge_vertex( e, 0 )
-            << space
-            << mesh.get_edge_vertex( e, 1 ) << std::endl;
-    }
-    
-    if( sugar ) out << "for each vertex, the first parent edge: " << std::endl;
-    for( int v = 0; v < mesh.count_vertices(); v++ ) {
-        if( sugar ) out << v << ": ";
-        out << mesh.get_vertex_firstparent_edge( v )
-            << std::endl;
-    }
-    
-    /* edge -> next parent of vertex vertices */
-    if( sugar ) out << "for each edge, the next neighbors: " << std::endl;
-    for( int e = 0; e < mesh.count_edges(); e++ ) {
-        if( sugar ) out << e << ": ";
-        out << mesh.get_edge_nextparent_of_vertex( e, 0 )
-            << space
-            << mesh.get_edge_nextparent_of_vertex( e, 1 )
-            << std::endl;
+    /* simplices -> vertices */
+    if( sugar ) out << "for each simplex, the vertices: " << std::endl;
+    for( int S = 0; S < mesh.count_simplices( mesh.getinnerdimension() ); S++ ) {
+        
+        if( sugar ) out << S << ": ";
+        
+        for( int d = 0; d <= mesh.getinnerdimension(); d++ )
+          out << mesh.get_subsimplex( mesh.getinnerdimension(), 0, S, d ) << space;
+        
+        out << std::endl;
     }
     
     assert( out.good() );
     
     writeCoordinates( out, mesh.getcoordinates(), sugar );
+    writeCoordinates( std::cout, mesh.getcoordinates(), sugar );
+    
+    assert( out.good() );
+    
 }
 
 
@@ -92,38 +85,36 @@ void writeMeshSimplicialND( std::ostream& out, const MeshSimplicialND& mesh, boo
 
 MeshSimplicialND readMeshSimplicialND( std::istream& in )
 {
-    int counter_edges, counter_vertices, dim;
+    int innerdim, counter_simplices, counter_vertices, outerdim;
     
-    in >> counter_edges
+    in >> innerdim
+       >> counter_simplices
        >> counter_vertices
-       >> dim;
+       >> outerdim;
     
     int nullindex = MeshSimplicialND::nullindex;
     
     /* edge -> vertices */
     
-    std::vector< std::array<int,2> > edge_vertices( counter_edges, { nullindex, nullindex } );
-    std::vector< int               > vertex_firstparent_edge( counter_vertices, nullindex );
-    std::vector< std::array<int,2> > edge_nextparents_of_vertices( counter_edges, { nullindex, nullindex } );
+    std::vector<int> simplex_vertices( counter_simplices * ( innerdim + 1 ), nullindex );
     
-    for( int e = 0; e < counter_edges; e++ )
-        in >> edge_vertices[e][0] >> edge_vertices[e][1];
+    for( int S = 0; S < counter_simplices; S++ )
+      for( int d = 0; d <= innerdim; d++ )
+        in >> simplex_vertices[ S * (innerdim+1) +  d ];
     
-    for( int v = 0; v < counter_vertices; v++ )
-        in >> vertex_firstparent_edge[v];
-    
-    for( int e = 0; e < counter_edges; e++ )
-        in >> edge_nextparents_of_vertices[e][0] >> edge_nextparents_of_vertices[e][1];
+    assert( in.good() );
     
     /* coordinates */
     
     Coordinates coords = readCoordinates( in );
+    writeCoordinates( std::cout, coords );
     
     assert( in.good() );
     
     /* return */
     
-    return MeshSimplicialND( dim, coords, edge_vertices, edge_nextparents_of_vertices, vertex_firstparent_edge );    
+    return MeshSimplicialND( innerdim, outerdim, coords, simplex_vertices );
+    
 }
 
 
