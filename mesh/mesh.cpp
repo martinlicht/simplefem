@@ -26,13 +26,14 @@ Mesh::Mesh( int inner, int outer )
   for( int sub = 0; sub <= sup; sub++ )
   {
 //     std::cout << sup << space << sub << std::endl;
-    IndexRange from( 0, count_subsimplices( sup, sub ) - 1 );
-    IndexRange to( 0, innerdimension );
+    IndexRange from( 0, sub );
+    IndexRange to( 0, sup );
 //     std::cout << "generate sigmas" << nl << from << nl << to << std::endl;
     std::vector<IndexMap> sigmas = generateSigmas( from, to );
 //     std::cout << "insert sigmas" << std::endl;
     auxdata[ std::pair<int,int>(sup,sub) ] = sigmas;
   }
+  pong();
   
 //   std::cout << "mesh constructor" << std::endl;
   
@@ -102,8 +103,9 @@ void Mesh::index_to_pair( int index, int& sup, int& sub ) const
   // FIXME: improve this incredibly ineffecient computation.
   assert( 0 <= sub && sub <= sup && sup <= innerdimension );
   for( int _sup = 1; _sup <= innerdimension; _sup++ )
-  for( int _sub = 0; _sub <= sup; _sub++ )
-    if( index == index_from_pair( _sup, _sub ) ){
+  for( int _sub = 0; _sub <=            sup; _sub++ )
+    if( index == index_from_pair( _sup, _sub ) )
+    {
       sup = _sup; sub = _sub; return;
     }
 }
@@ -125,18 +127,14 @@ int Mesh::count_subsimplices( int sup, int sub ) const
 
 bool Mesh::is_subsimplex( int sup, int sub, int cellsup, int cellsub ) const
 {
-  
   const IndexMap im = getsubsimplices( sup, sub, cellsup );
   return im.rangecontains( cellsub );
-  
 }
 
 int  Mesh::get_subsimplex_index( int sup, int sub, int cellsup, int cellsub ) const
 {
-  
   const IndexMap im = getsubsimplices( sup, sub, cellsup );
   return im.rangeposition( cellsub );
-  
 }
 
 int Mesh::get_subsimplex( int sup, int sub, int cellsup, int localindex ) const
