@@ -61,12 +61,10 @@ MeshSimplicialND::MeshSimplicialND( const Mesh& mesh )
     /* use input data */
     
     const int innerdim = getinnerdimension();
+    std::vector<int>& ref = data_subsimplices[index_from_pair(innerdim,0)];
     
     counter_simplices[innerdim] = mesh.count_simplices( innerdim );
-    
     counter_simplices[0]        = mesh.count_simplices( 0 );
-    
-    std::vector<int>& ref = data_subsimplices[index_from_pair(innerdim,0)];
     
     ref.resize( mesh.count_simplices( innerdim ) * ( innerdim+1 ), nullindex );
     
@@ -88,7 +86,7 @@ MeshSimplicialND::MeshSimplicialND( const Mesh& mesh )
     assert( getcoordinates().getnumber()-1 == *std::max_element( ref.begin(), ref.end() ) );
     
     
-    /* check */
+    /* rebuild and check */
     
     rebuild();
     

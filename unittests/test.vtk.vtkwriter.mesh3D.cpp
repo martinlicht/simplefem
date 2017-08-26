@@ -8,7 +8,7 @@
 #include "../basic.hpp"
 #include "../mesh/coordinates.hpp"
 #include "../mesh/mesh.hpp"
-#include "../mesh/mesh.simplicial2D.hpp"
+#include "../mesh/mesh.simplicialND.hpp"
 #include "../vtk/vtkwriter.mesh3D.hpp"
 
 
@@ -20,7 +20,7 @@ int main()
         
         {
                 
-                MeshSimplicial2D M = UnitSquare();
+                MeshSimplicialND M = StandardSquare3D();
                 // TODO: This should be a 3D mesh class
                 
                 cout << M << endl;

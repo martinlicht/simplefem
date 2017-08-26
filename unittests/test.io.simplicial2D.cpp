@@ -17,7 +17,7 @@ int main()
     
     {
         
-        MeshSimplicial2D mesh = UnitSquare();
+        MeshSimplicial2D mesh = UnitSquare2D();
         
         for( int c = 0; c < 3; c++ ) mesh.uniformrefinement();
         

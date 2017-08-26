@@ -223,7 +223,7 @@ class MeshSimplicial2D
 
 
 
-inline MeshSimplicial2D UnitSquare()
+inline MeshSimplicial2D UnitSquare2D()
 {
     return MeshSimplicial2D(
       2,
@@ -240,7 +240,7 @@ inline MeshSimplicial2D UnitSquare()
     );
 }
 
-inline MeshSimplicial2D StandardSquare()
+inline MeshSimplicial2D StandardSquare2D()
 {
     return MeshSimplicial2D(
       2,
@@ -270,7 +270,7 @@ inline MeshSimplicial2D StandardSquare()
 
 
 
-inline MeshSimplicial2D LShapedDomain()
+inline MeshSimplicial2D LShapedDomain2D()
 {
     return MeshSimplicial2D(
       2,
@@ -297,7 +297,7 @@ inline MeshSimplicial2D LShapedDomain()
 
 
 
-inline MeshSimplicial2D SlitDomain()
+inline MeshSimplicial2D SlitDomain2D()
 {
     return MeshSimplicial2D(
       3,
@@ -327,7 +327,7 @@ inline MeshSimplicial2D SlitDomain()
 }
 
 
-inline MeshSimplicial2D TetrahedralSurface()
+inline MeshSimplicial2D TetrahedralSurface2D()
 {
     return MeshSimplicial2D(
       3,

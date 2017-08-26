@@ -16,7 +16,7 @@ int main()
 {
 	cout << "Unit Test for N-dimensional simplicial mesh" << endl;
 	
-        MeshSimplicialND M = HypertetrahedralSurface();
+        MeshSimplicialND M = HypertetrahedralSurface4D();
         
         cout << "Check" << endl;
         

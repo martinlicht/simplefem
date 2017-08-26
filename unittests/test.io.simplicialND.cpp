@@ -17,7 +17,7 @@ int main()
     
     {
         
-        MeshSimplicialND mesh = UnitSquare();
+        MeshSimplicialND mesh = UnitSquareND();
         
         mesh.check();
         

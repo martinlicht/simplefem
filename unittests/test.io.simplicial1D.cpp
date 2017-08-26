@@ -17,7 +17,7 @@ int main()
     
     {
         
-        MeshSimplicial1D mesh = UnitSquare();
+        MeshSimplicial1D mesh = UnitSquare1D();
         
         for( int c = 0; c < 14; c++ ) mesh.improved_uniformrefinement();
         
