@@ -44,6 +44,8 @@ class MeshSimplicialND
             const std::vector<int> volume_vertices
         );
         
+        MeshSimplicialND( const Mesh& mesh );
+        
         virtual ~MeshSimplicialND();
         
         bool operator== ( const MeshSimplicialND& ) const;

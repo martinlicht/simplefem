@@ -35,6 +35,68 @@ MeshSimplicialND::MeshSimplicialND( int innerdim, int outerdim )
 }
 
 
+MeshSimplicialND::MeshSimplicialND( const Mesh& mesh )
+:
+    Mesh( mesh.getinnerdimension(), mesh.getouterdimension() ),
+    
+    counter_simplices( mesh.getinnerdimension()+1 ),
+    data_subsimplices( (mesh.getinnerdimension()+2) * (mesh.getinnerdimension()+1) / 2, std::vector<int>() ),
+    data_firstparents( (mesh.getinnerdimension()+2) * (mesh.getinnerdimension()+1) / 2, std::vector<int>() ),
+    data_nextparents ( (mesh.getinnerdimension()+2) * (mesh.getinnerdimension()+1) / 2, std::vector<int>() )   
+{
+    
+    /* load coordinates */
+    
+    getcoordinates() = mesh.getcoordinates();
+    
+    
+    /* check input data */
+    
+    assert( getinnerdimension()             == mesh.getinnerdimension() );
+    assert( getouterdimension()             == mesh.getouterdimension() );
+    assert( getcoordinates().getdimension() ==      getouterdimension() );
+    assert( getcoordinates().getnumber()     >                        0 );
+    
+    
+    /* use input data */
+    
+    const int innerdim = getinnerdimension();
+    
+    counter_simplices[innerdim] = mesh.count_simplices( innerdim );
+    
+    counter_simplices[0]        = mesh.count_simplices( 0 );
+    
+    std::vector<int>& ref = data_subsimplices[index_from_pair(innerdim,0)];
+    
+    ref.resize( mesh.count_simplices( innerdim ) * ( innerdim+1 ), nullindex );
+    
+    for( int S = 0; S <  mesh.count_simplices( innerdim ); S++ )
+    for( int i = 0; i <=                         innerdim; i++ )
+      ref[ S * ( innerdim + 1 ) + i ] 
+        = mesh.get_subsimplex( innerdim, 0, S, i );
+    
+    
+    
+    /* check more stuff */
+    
+    assert( counter_simplices[0]-1 == *std::max_element( ref.begin(), ref.end() ) );
+    
+    assert( ref.size() > 0 );
+    
+    assert( ref.size() % (getinnerdimension()+1) == 0 );
+    
+    assert( getcoordinates().getnumber()-1 == *std::max_element( ref.begin(), ref.end() ) );
+    
+    
+    /* check */
+    
+    rebuild();
+    
+    check();
+    
+}
+
+
 MeshSimplicialND::MeshSimplicialND( 
     int innerdim,
     int outerdim,
