@@ -83,11 +83,11 @@ MeshSimplicial3D::MeshSimplicial3D(
     data_vertex_firstparent_tetrahedron( 0 ),
     data_tetrahedron_nextparents_of_vertices( tetrahedron_vertices.size(), { nullindex, nullindex, nullindex, nullindex } ),
     
-    data_face_edges( tetrahedron_vertices.size(), { nullindex, nullindex, nullindex } ),
+    data_face_edges( 0, { nullindex, nullindex, nullindex } ),
     data_edge_firstparent_face( 0 ),
     data_face_nextparents_of_edges( tetrahedron_vertices.size(), { nullindex, nullindex, nullindex } ),
     
-    data_face_vertices( tetrahedron_vertices.size(), { nullindex, nullindex, nullindex } ),
+    data_face_vertices( 0, { nullindex, nullindex, nullindex } ),
     data_vertex_firstparent_face( 0 ),
     data_face_nextparents_of_vertices( tetrahedron_vertices.size(), { nullindex, nullindex, nullindex } ),
     
@@ -143,8 +143,8 @@ MeshSimplicial3D::MeshSimplicial3D(
     /* 3. Count vertices */
     
     counter_vertices = 0;
-    for( const auto& duple : data_edge_vertices )
-    for( const int& vertex : duple )
+    for( const auto& quartett : data_tetrahedron_vertices )
+    for( const int& vertex : quartett )
       counter_vertices = counter_vertices < vertex ? vertex : counter_vertices; 
     counter_vertices += 1;
     
@@ -160,15 +160,17 @@ MeshSimplicial3D::MeshSimplicial3D(
     data_tetrahedron_nextparents_of_edges.resize( counter_tetrahedra, { nullindex, nullindex, nullindex, nullindex, nullindex, nullindex } );
     data_tetrahedron_nextparents_of_vertices.resize( counter_tetrahedra, { nullindex, nullindex, nullindex, nullindex } );
     
-    data_face_nextparents_of_vertices.resize( counter_faces, { nullindex, nullindex, nullindex } );
     data_face_nextparents_of_edges.resize( counter_faces, { nullindex, nullindex, nullindex } );
+    data_face_nextparents_of_vertices.resize( counter_faces, { nullindex, nullindex, nullindex } );
     
     data_edge_nextparents_of_vertices.resize( counter_edges, { nullindex, nullindex } );
     
     
     data_face_firstparent_tetrahedron.resize( counter_faces, nullindex );
+    
     data_edge_firstparent_tetrahedron.resize( counter_edges, nullindex );
     data_edge_firstparent_face.resize( counter_edges, nullindex );
+    
     data_vertex_firstparent_tetrahedron.resize( counter_vertices, nullindex );
     data_vertex_firstparent_face.resize( counter_vertices, nullindex );
     data_vertex_firstparent_edge.resize( counter_vertices, nullindex );
@@ -203,6 +205,7 @@ MeshSimplicial3D::MeshSimplicial3D(
       assert( 0 <= data_vertex_firstparent_tetrahedron[v] && data_vertex_firstparent_tetrahedron[v] < counter_tetrahedra );  
     }
     
+    
     /* 6. For each vertex, set the first parent face and the neighboring parent faces */
     
     for( int f =  0; f  < counter_faces; f++  )
@@ -231,6 +234,7 @@ MeshSimplicial3D::MeshSimplicial3D(
       assert( data_vertex_firstparent_face[v] != nullindex );
       assert( 0 <= data_vertex_firstparent_face[v] && data_vertex_firstparent_face[v] < counter_faces );  
     }
+    
     
     /* 7. For each vertex, set the first parent edge and the neighboring parent edges */
     
@@ -427,6 +431,7 @@ MeshSimplicial3D::MeshSimplicial3D(
     const std::vector<std::array<int,3>> face_edges,
     const std::vector<int              > edge_firstparent_face,
     const std::vector<std::array<int,3>> face_nextparents_of_edges,
+    
     const std::vector<std::array<int,3>> face_vertices,
     const std::vector<int              > vertex_firstparent_face,
     const std::vector<std::array<int,3>> face_nextparents_of_vertices,
@@ -441,7 +446,7 @@ MeshSimplicial3D::MeshSimplicial3D(
     counter_tetrahedra( tetrahedron_vertices.size() ),
     counter_faces( face_vertices.size() ),
     counter_edges( edge_vertices.size() ),
-    counter_vertices( vertex_firstparent_face.size() ),
+    counter_vertices( vertex_firstparent_tetrahedron.size() ),
     
     data_tetrahedron_faces( tetrahedron_faces ),
     data_face_firstparent_tetrahedron( face_firstparent_tetrahedron ),
@@ -556,10 +561,12 @@ void MeshSimplicial3D::check() const
     assert( counter_faces == data_face_nextparents_of_edges.size() );
     assert( counter_faces == data_face_vertices.size() );
     assert( counter_faces == data_face_nextparents_of_vertices.size() );
+    
     assert( counter_faces == data_face_firstparent_tetrahedron.size() );
     
     assert( counter_edges == data_edge_vertices.size() );
     assert( counter_edges == data_edge_nextparents_of_vertices.size() );
+    
     assert( counter_edges == data_edge_firstparent_face.size() );
     assert( counter_edges == data_edge_firstparent_tetrahedron.size() );
     
@@ -1423,19 +1430,19 @@ IndexMap MeshSimplicial3D::getsubsimplices( int sup, int sub, int cell ) const
     
     assert( 0 <= cell && cell < count_tetrahedra() );
     auto temp = get_tetrahedron_faces(cell);
-    return IndexMap( IndexRange(0,0), IndexRange(0,count_faces()-1), std::vector<int>( temp.begin(), temp.end() ) );
+    return IndexMap( IndexRange(0,3), IndexRange(0,count_faces()-1), std::vector<int>( temp.begin(), temp.end() ) );
     
   } else if( sup == 3 && sub == 1 ) {
     
     assert( 0 <= cell && cell < count_tetrahedra() );
     auto temp = get_tetrahedron_edges(cell);
-    return IndexMap( IndexRange(0,2), IndexRange( 0, count_edges()-1 ), std::vector<int>( temp.begin(), temp.end() ) );
+    return IndexMap( IndexRange(0,5), IndexRange( 0, count_edges()-1 ), std::vector<int>( temp.begin(), temp.end() ) );
     
   } else if( sup == 3 && sub == 0 ) {
     
     assert( 0 <= cell && cell < count_tetrahedra() );
     auto temp = get_tetrahedron_vertices(cell);
-    return IndexMap( IndexRange(0,2), IndexRange( 0, count_vertices()-1 ) , std::vector<int>( temp.begin(), temp.end() ) );
+    return IndexMap( IndexRange(0,3), IndexRange( 0, count_vertices()-1 ) , std::vector<int>( temp.begin(), temp.end() ) );
     
   } else if( sup == 2 && sub == 2 ) {
     
@@ -1589,7 +1596,13 @@ bool MeshSimplicial3D::contains_tetrahedron_face( int t, int f ) const
     assert( 0 <= t && t < counter_tetrahedra );
     assert( 0 <= f && f < counter_faces );
     
-    return ( data_tetrahedron_faces[t][0] == f ) || ( data_tetrahedron_faces[t][1] == f ) || ( data_tetrahedron_faces[t][2] == f ) || ( data_tetrahedron_faces[t][3] == f );
+    return ( data_tetrahedron_faces[t][0] == f ) 
+           ||
+           ( data_tetrahedron_faces[t][1] == f )
+           ||
+           ( data_tetrahedron_faces[t][2] == f ) 
+           ||
+           ( data_tetrahedron_faces[t][3] == f );
     
 } 
 
@@ -1642,7 +1655,7 @@ int MeshSimplicial3D::indexof_tetrahedron_edge( int t, int e ) const
     else if( data_tetrahedron_edges[t][3] == e ) return 3;
     else if( data_tetrahedron_edges[t][4] == e ) return 4;
     else if( data_tetrahedron_edges[t][5] == e ) return 5;
-    else                                      assert(false);
+    else                                         assert(false);
 } 
 
 int MeshSimplicial3D::get_tetrahedron_edge( int t, int ei ) const
@@ -1668,7 +1681,13 @@ bool MeshSimplicial3D::contains_tetrahedron_vertex( int t, int v ) const
     assert( 0 <= t && t < counter_tetrahedra );
     assert( 0 <= v && v < counter_vertices );
     
-    return ( data_tetrahedron_vertices[t][0] == v ) || ( data_tetrahedron_vertices[t][1] == v ) || ( data_tetrahedron_vertices[t][2] == v ) || ( data_tetrahedron_vertices[t][3] == v );
+    return ( data_tetrahedron_vertices[t][0] == v ) 
+           ||
+           ( data_tetrahedron_vertices[t][1] == v )
+           ||
+           ( data_tetrahedron_vertices[t][2] == v )
+           || 
+           ( data_tetrahedron_vertices[t][3] == v );
     
 } 
 
@@ -1680,7 +1699,7 @@ int MeshSimplicial3D::indexof_tetrahedron_vertex( int t, int v ) const
     else if( data_tetrahedron_vertices[t][1] == v ) return 1;
     else if( data_tetrahedron_vertices[t][2] == v ) return 2;
     else if( data_tetrahedron_vertices[t][3] == v ) return 3;
-    else                                        assert(false);
+    else                                            assert(false);
 } 
 
 int MeshSimplicial3D::get_tetrahedron_vertex( int t, int vi ) const
@@ -1804,9 +1823,6 @@ const std::array<int,2> MeshSimplicial3D::get_edge_vertices( int e ) const
 
 
 
-// TODO: Update the following methods 
-
-
 
 /* tetrahedron parents of a face */
 
@@ -1849,7 +1865,13 @@ bool MeshSimplicial3D::is_tetrahedron_face_parent( int t, int f ) const
 {
   assert( 0 <= f && f < counter_faces );
   assert( 0 <= t && t < counter_tetrahedra );
-  return data_tetrahedron_faces[t][0] == f || data_tetrahedron_faces[t][1] == f || data_tetrahedron_faces[t][2] == f || data_tetrahedron_faces[t][3] == f;
+  return data_tetrahedron_faces[t][0] == f 
+         ||
+         data_tetrahedron_faces[t][1] == f
+         ||
+         data_tetrahedron_faces[t][2] == f
+         ||
+         data_tetrahedron_faces[t][3] == f;
 }
 
 int MeshSimplicial3D::indexof_tetrahedron_face_parent( int t, int f ) const
@@ -1999,7 +2021,13 @@ bool MeshSimplicial3D::is_tetrahedron_vertex_parent( int t, int v ) const
 {
   assert( 0 <= v && v < counter_vertices );
   assert( 0 <= t && t < counter_tetrahedra );
-  return data_tetrahedron_vertices[t][0] == v || data_tetrahedron_vertices[t][1] == v || data_tetrahedron_vertices[t][2] == v || data_tetrahedron_vertices[t][3] == v;
+  return data_tetrahedron_vertices[t][0] == v
+         ||
+         data_tetrahedron_vertices[t][1] == v
+         ||
+         data_tetrahedron_vertices[t][2] == v 
+         ||
+         data_tetrahedron_vertices[t][3] == v;
 }
 
 int MeshSimplicial3D::indexof_tetrahedron_vertex_parent( int t, int v ) const
