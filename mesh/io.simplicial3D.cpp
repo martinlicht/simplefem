@@ -48,7 +48,7 @@ void writeMeshSimplicial3D( std::ostream& out, const MeshSimplicial3D& mesh, boo
     if( sugar ) out << "Writing simplicial 3D Mesh..." << std::endl;
     
     if( sugar ) out << "number of tetrahedra: " << std::endl;;
-    out << mesh.count_triangles() << std::endl;
+    out << mesh.count_tetrahedra() << std::endl;
     
     if( sugar ) out << "number of faces: " << std::endl;;
     out << mesh.count_faces() << std::endl;
@@ -295,7 +295,7 @@ MeshSimplicial3D readMeshSimplicial3D( std::istream& in )
            >> tetrahedron_faces[t][2]
            >> tetrahedron_faces[t][3];
     
-    for( int f = 0; f < tetrahedron_faces; f++ )
+    for( int f = 0; f < counter_faces; f++ )
         in >> face_firstparent_tetrahedron[f];
     
     for( int t = 0; t < counter_tetrahedra; t++ )
@@ -310,7 +310,7 @@ MeshSimplicial3D readMeshSimplicial3D( std::istream& in )
     
     std::vector< std::array<int,6> > tetrahedron_edges( counter_tetrahedra, { nullindex, nullindex, nullindex, nullindex, nullindex, nullindex } );
     std::vector< int               > edge_firstparent_tetrahedron( counter_edges, nullindex );
-    std::vector< std::array<int,6> > face_nextparents_of_tetrahedra( counter_tetrahedra, { nullindex, nullindex, nullindex, nullindex, nullindex, nullindex } );
+    std::vector< std::array<int,6> > tetrahedron_nextparents_of_edges( counter_tetrahedra, { nullindex, nullindex, nullindex, nullindex, nullindex, nullindex } );
     
     for( int t = 0; t < counter_tetrahedra; t++ )
         in >> tetrahedron_edges[t][0]

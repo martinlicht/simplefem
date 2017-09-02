@@ -493,12 +493,12 @@ void MeshSimplicial2D::check() const
         assert( data_triangle_vertices[t1][0] != data_triangle_vertices[t2][2] || data_triangle_vertices[t1][1] != data_triangle_vertices[t2][0] || data_triangle_vertices[t1][2] != data_triangle_vertices[t2][1] );
         assert( data_triangle_vertices[t1][0] != data_triangle_vertices[t2][2] || data_triangle_vertices[t1][1] != data_triangle_vertices[t2][1] || data_triangle_vertices[t1][2] != data_triangle_vertices[t2][0] );
         
-        assert( data_edge_vertices[t1][0] != data_edge_vertices[t2][0] || data_edge_vertices[t1][1] != data_edge_vertices[t2][1] || data_edge_vertices[t1][2] != data_edge_vertices[t2][2] );
-        assert( data_edge_vertices[t1][0] != data_edge_vertices[t2][0] || data_edge_vertices[t1][1] != data_edge_vertices[t2][2] || data_edge_vertices[t1][2] != data_edge_vertices[t2][1] );
-        assert( data_edge_vertices[t1][0] != data_edge_vertices[t2][1] || data_edge_vertices[t1][1] != data_edge_vertices[t2][0] || data_edge_vertices[t1][2] != data_edge_vertices[t2][2] );
-        assert( data_edge_vertices[t1][0] != data_edge_vertices[t2][1] || data_edge_vertices[t1][1] != data_edge_vertices[t2][2] || data_edge_vertices[t1][2] != data_edge_vertices[t2][0] );
-        assert( data_edge_vertices[t1][0] != data_edge_vertices[t2][2] || data_edge_vertices[t1][1] != data_edge_vertices[t2][0] || data_edge_vertices[t1][2] != data_edge_vertices[t2][1] );
-        assert( data_edge_vertices[t1][0] != data_edge_vertices[t2][2] || data_edge_vertices[t1][1] != data_edge_vertices[t2][1] || data_edge_vertices[t1][2] != data_edge_vertices[t2][0] );
+        assert( data_triangle_edges[t1][0] != data_triangle_edges[t2][0] || data_triangle_edges[t1][1] != data_triangle_edges[t2][1] || data_triangle_edges[t1][2] != data_triangle_edges[t2][2] );
+        assert( data_triangle_edges[t1][0] != data_triangle_edges[t2][0] || data_triangle_edges[t1][1] != data_triangle_edges[t2][2] || data_triangle_edges[t1][2] != data_triangle_edges[t2][1] );
+        assert( data_triangle_edges[t1][0] != data_triangle_edges[t2][1] || data_triangle_edges[t1][1] != data_triangle_edges[t2][0] || data_triangle_edges[t1][2] != data_triangle_edges[t2][2] );
+        assert( data_triangle_edges[t1][0] != data_triangle_edges[t2][1] || data_triangle_edges[t1][1] != data_triangle_edges[t2][2] || data_triangle_edges[t1][2] != data_triangle_edges[t2][0] );
+        assert( data_triangle_edges[t1][0] != data_triangle_edges[t2][2] || data_triangle_edges[t1][1] != data_triangle_edges[t2][0] || data_triangle_edges[t1][2] != data_triangle_edges[t2][1] );
+        assert( data_triangle_edges[t1][0] != data_triangle_edges[t2][2] || data_triangle_edges[t1][1] != data_triangle_edges[t2][1] || data_triangle_edges[t1][2] != data_triangle_edges[t2][0] );
         
         
     }
@@ -667,9 +667,11 @@ void MeshSimplicial2D::print( std::ostream& os ) const
     
     os << counter_triangles << space << counter_edges << space << counter_vertices << nl;
     
+    
+    
     os << "Triangle edges" << std::endl;
     
-    for( const auto& triple : data_triangle_vertices )
+    for( const auto& triple : data_triangle_edges )
       std::cout << triple[0] << space << triple[1] << space << triple[2] << nl;
     
     os << "Edge first parent triangles" << std::endl;
@@ -679,8 +681,11 @@ void MeshSimplicial2D::print( std::ostream& os ) const
     
     os << "Triangle next parents of edges" << std::endl;
     
-    for( const auto& triple : data_edge_nextparents_of_vertices )
+    for( const auto& triple : data_triangle_nextparents_of_edges )
       std::cout << triple[0] << space << triple[1] << space << triple[2] << nl;
+    
+    
+    
     
     os << "Triangle vertices" << std::endl;
     
@@ -696,6 +701,8 @@ void MeshSimplicial2D::print( std::ostream& os ) const
     
     for( const auto& triple : data_triangle_nextparents_of_vertices )
       std::cout << triple[0] << space << triple[1] << space << triple[2] << nl;
+    
+    
     
     os << "Edge vertices" << std::endl;
     

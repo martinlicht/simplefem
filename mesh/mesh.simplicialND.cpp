@@ -663,7 +663,7 @@ void MeshSimplicialND::bisect_edge( int e )
 
 void MeshSimplicialND::uniformrefinement()
 {
-    const int M = factorial<int>( getinnerdimension() );
+    const int M = poweroftwo( getinnerdimension() );
     
     /*
      * iterate over the edges and create new vertices
@@ -678,15 +678,24 @@ void MeshSimplicialND::uniformrefinement()
       );
     
     /*
-     * resize the array for top-dimensional simplices 
+     * working copy of the array for top-dimensional simplices 
      * auxiliary save the pattern for new simplices 
      * iterate over main array to create the new top-dimensional simplices 
      */
     
+    std::vector<int> temp( counter_simplices[getinnerdimension()] * M, nullindex );
+    
     for( int S = 0; S < counter_simplices[getinnerdimension()]; S++ )
     for( int i = 0; i <                                      M; i++ )
     {
-      ; // TODO 
+      
+      std::vector<int> code1( getinnerdimension() + 1, 0 );
+      std::vector<int> code2( getinnerdimension() + 1, 0 );
+      for( int v = 0; v < getinnerdimension(); v++ )
+      {
+        // ( i >> v ) % 2; // TODO
+      }
+      
     }
     
     /*
