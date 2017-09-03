@@ -102,7 +102,6 @@ MeshSimplicial3D::MeshSimplicial3D(
     
     data_face_vertices.resize( counter_tetrahedra * 4 );
     for( int t  = 0; t  < counter_tetrahedra;  t++ )
-    for( int fi = 0; fi <                  4; fi++ )
     {
       data_face_vertices[ 0 * counter_tetrahedra + t ] = { data_tetrahedron_vertices[t][0], data_tetrahedron_vertices[t][1], data_tetrahedron_vertices[t][2] };
       data_face_vertices[ 1 * counter_tetrahedra + t ] = { data_tetrahedron_vertices[t][0], data_tetrahedron_vertices[t][1], data_tetrahedron_vertices[t][3] };
@@ -122,7 +121,6 @@ MeshSimplicial3D::MeshSimplicial3D(
     
     data_edge_vertices.resize( counter_tetrahedra * 6 );
     for( int t  = 0; t  < counter_tetrahedra;  t++ )
-    for( int ei = 0; ei <                  6; ei++ )
     {
       data_edge_vertices[ 0 * counter_tetrahedra + t ] = { data_tetrahedron_vertices[t][0], data_tetrahedron_vertices[t][1] };
       data_edge_vertices[ 1 * counter_tetrahedra + t ] = { data_tetrahedron_vertices[t][0], data_tetrahedron_vertices[t][2] };
@@ -153,7 +151,7 @@ MeshSimplicial3D::MeshSimplicial3D(
     
     data_tetrahedron_faces.resize( counter_tetrahedra, { nullindex, nullindex, nullindex, nullindex } );
     data_tetrahedron_edges.resize( counter_tetrahedra, { nullindex, nullindex, nullindex, nullindex, nullindex, nullindex } );
-    data_face_edges.resize( counter_tetrahedra, { nullindex, nullindex, nullindex } );
+    data_face_edges.resize( counter_faces, { nullindex, nullindex, nullindex } );
     
     
     data_tetrahedron_nextparents_of_faces.resize( counter_tetrahedra, { nullindex, nullindex, nullindex, nullindex } );
@@ -397,7 +395,7 @@ MeshSimplicial3D::MeshSimplicial3D(
         data_face_firstparent_tetrahedron[f] = t;
         
         assert( data_tetrahedron_nextparents_of_faces[ t ][ fot ] == nullindex );
-        data_tetrahedron_nextparents_of_edges[ t ][ fot ] = old_first_parent;
+        data_tetrahedron_nextparents_of_faces[ t ][ fot ] = old_first_parent;
         
       }
       
@@ -548,7 +546,7 @@ bool MeshSimplicial3D::operator!= ( const MeshSimplicial3D& mesh ) const
 void MeshSimplicial3D::check() const
 {
     
-    /* 1. Check the array sizes */
+    /* 1. Check the array sizes */ // OK
     
     assert( counter_tetrahedra == data_tetrahedron_faces.size() );
     assert( counter_tetrahedra == data_tetrahedron_nextparents_of_faces.size() );
@@ -657,7 +655,6 @@ void MeshSimplicial3D::check() const
         assert( data_tetrahedron_edges[t][0] != data_tetrahedron_edges[t][3] );
         assert( data_tetrahedron_edges[t][0] != data_tetrahedron_edges[t][4] );
         assert( data_tetrahedron_edges[t][0] != data_tetrahedron_edges[t][5] );
-        assert( data_tetrahedron_edges[t][0] != data_tetrahedron_edges[t][6] );
         assert( data_tetrahedron_edges[t][1] != data_tetrahedron_edges[t][2] );
         assert( data_tetrahedron_edges[t][1] != data_tetrahedron_edges[t][3] );
         assert( data_tetrahedron_edges[t][1] != data_tetrahedron_edges[t][4] );
@@ -672,23 +669,25 @@ void MeshSimplicial3D::check() const
         
         for( int ei = 0; ei < 6; ei++ )
         {
-            
-            if( data_tetrahedron_nextparents_of_edges[t][ei] != nullindex )
-              assert( 0 <= data_tetrahedron_nextparents_of_edges[t][ei] && data_tetrahedron_nextparents_of_edges[t][ei] < counter_faces );
-        
-            if( data_tetrahedron_nextparents_of_edges[t][ei] != nullindex )
-              assert( data_tetrahedron_edges[ data_tetrahedron_nextparents_of_edges[t][ei] ][0] == data_tetrahedron_edges[t][ei] 
-                      ||
-                      data_tetrahedron_edges[ data_tetrahedron_nextparents_of_edges[t][ei] ][1] == data_tetrahedron_edges[t][ei] 
-                      ||
-                      data_tetrahedron_edges[ data_tetrahedron_nextparents_of_edges[t][ei] ][2] == data_tetrahedron_edges[t][ei] 
-                      ||
-                      data_tetrahedron_edges[ data_tetrahedron_nextparents_of_edges[t][ei] ][3] == data_tetrahedron_edges[t][ei] 
-                      ||
-                      data_tetrahedron_edges[ data_tetrahedron_nextparents_of_edges[t][ei] ][4] == data_tetrahedron_edges[t][ei] 
-                      ||
-                      data_tetrahedron_edges[ data_tetrahedron_nextparents_of_edges[t][ei] ][5] == data_tetrahedron_edges[t][ei] );
-            
+          
+          if( data_tetrahedron_nextparents_of_edges[t][ei] != nullindex )
+            assert( 0 <= data_tetrahedron_nextparents_of_edges[t][ei]
+                    &&
+                    data_tetrahedron_nextparents_of_edges[t][ei] < counter_tetrahedra );
+      
+          if( data_tetrahedron_nextparents_of_edges[t][ei] != nullindex )
+            assert( data_tetrahedron_edges[ data_tetrahedron_nextparents_of_edges[t][ei] ][0] == data_tetrahedron_edges[t][ei] 
+                    ||
+                    data_tetrahedron_edges[ data_tetrahedron_nextparents_of_edges[t][ei] ][1] == data_tetrahedron_edges[t][ei] 
+                    ||
+                    data_tetrahedron_edges[ data_tetrahedron_nextparents_of_edges[t][ei] ][2] == data_tetrahedron_edges[t][ei] 
+                    ||
+                    data_tetrahedron_edges[ data_tetrahedron_nextparents_of_edges[t][ei] ][3] == data_tetrahedron_edges[t][ei] 
+                    ||
+                    data_tetrahedron_edges[ data_tetrahedron_nextparents_of_edges[t][ei] ][4] == data_tetrahedron_edges[t][ei] 
+                    ||
+                    data_tetrahedron_edges[ data_tetrahedron_nextparents_of_edges[t][ei] ][5] == data_tetrahedron_edges[t][ei] );
+          
         }
         
         
