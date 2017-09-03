@@ -923,26 +923,87 @@ void MeshSimplicial3D::check() const
      * check both the vertices, the edges, and the faces listed for each tetrahedron
      */
     
+    const auto permutation_of_six_objects = generatePermutations( IndexRange( 0, 5 ) );
+      
     for( int t1 = 0; t1 < counter_tetrahedra; t1++ )
     for( int t2 = 0; t2 < counter_tetrahedra; t2++ )
     {
         if( t1 == t2 ) continue;
         
-        // TODO
+        /* vertices */
         
-//         assert( data_face_vertices[f1][0] != data_face_vertices[f2][0] || data_face_vertices[f1][1] != data_face_vertices[f2][1] || data_face_vertices[f1][2] != data_face_vertices[f2][2] || data_face_vertices[f1][3] != data_face_vertices[f2][2] );
-//         assert( data_face_vertices[f1][0] != data_face_vertices[f2][0] || data_face_vertices[f1][1] != data_face_vertices[f2][2] || data_face_vertices[f1][2] != data_face_vertices[f2][1] || data_face_vertices[f1][3] != data_face_vertices[f2][2] );
-//         assert( data_face_vertices[f1][0] != data_face_vertices[f2][1] || data_face_vertices[f1][1] != data_face_vertices[f2][0] || data_face_vertices[f1][2] != data_face_vertices[f2][2] || data_face_vertices[f1][3] != data_face_vertices[f2][2] );
-//         assert( data_face_vertices[f1][0] != data_face_vertices[f2][1] || data_face_vertices[f1][1] != data_face_vertices[f2][2] || data_face_vertices[f1][2] != data_face_vertices[f2][0] || data_face_vertices[f1][3] != data_face_vertices[f2][2] );
-//         assert( data_face_vertices[f1][0] != data_face_vertices[f2][2] || data_face_vertices[f1][1] != data_face_vertices[f2][0] || data_face_vertices[f1][2] != data_face_vertices[f2][1] || data_face_vertices[f1][3] != data_face_vertices[f2][2] );
-//         assert( data_face_vertices[f1][0] != data_face_vertices[f2][2] || data_face_vertices[f1][1] != data_face_vertices[f2][1] || data_face_vertices[f1][2] != data_face_vertices[f2][0] || data_face_vertices[f1][3] != data_face_vertices[f2][2] );
-//         
-//         assert( data_edge_vertices[f1][0] != data_edge_vertices[f2][0] || data_edge_vertices[f1][1] != data_edge_vertices[f2][1] || data_edge_vertices[f1][2] != data_edge_vertices[f2][2] );
-//         assert( data_edge_vertices[f1][0] != data_edge_vertices[f2][0] || data_edge_vertices[f1][1] != data_edge_vertices[f2][2] || data_edge_vertices[f1][2] != data_edge_vertices[f2][1] );
-//         assert( data_edge_vertices[f1][0] != data_edge_vertices[f2][1] || data_edge_vertices[f1][1] != data_edge_vertices[f2][0] || data_edge_vertices[f1][2] != data_edge_vertices[f2][2] );
-//         assert( data_edge_vertices[f1][0] != data_edge_vertices[f2][1] || data_edge_vertices[f1][1] != data_edge_vertices[f2][2] || data_edge_vertices[f1][2] != data_edge_vertices[f2][0] );
-//         assert( data_edge_vertices[f1][0] != data_edge_vertices[f2][2] || data_edge_vertices[f1][1] != data_edge_vertices[f2][0] || data_edge_vertices[f1][2] != data_edge_vertices[f2][1] );
-//         assert( data_edge_vertices[f1][0] != data_edge_vertices[f2][2] || data_edge_vertices[f1][1] != data_edge_vertices[f2][1] || data_edge_vertices[f1][2] != data_edge_vertices[f2][0] );
+        const auto& refv = data_tetrahedron_vertices;
+        assert( refv[t1][0] != refv[t2][0] || refv[t1][1] != refv[t2][1] || refv[t1][2] != refv[t2][2] || refv[t1][3] != refv[t2][3] );
+        assert( refv[t1][0] != refv[t2][0] || refv[t1][1] != refv[t2][1] || refv[t1][2] != refv[t2][3] || refv[t1][3] != refv[t2][2] );
+        assert( refv[t1][0] != refv[t2][0] || refv[t1][1] != refv[t2][2] || refv[t1][2] != refv[t2][1] || refv[t1][3] != refv[t2][3] );
+        assert( refv[t1][0] != refv[t2][0] || refv[t1][1] != refv[t2][2] || refv[t1][2] != refv[t2][3] || refv[t1][3] != refv[t2][1] );
+        assert( refv[t1][0] != refv[t2][0] || refv[t1][1] != refv[t2][3] || refv[t1][2] != refv[t2][1] || refv[t1][3] != refv[t2][2] );
+        assert( refv[t1][0] != refv[t2][0] || refv[t1][1] != refv[t2][3] || refv[t1][2] != refv[t2][2] || refv[t1][3] != refv[t2][1] );
+        
+        assert( refv[t1][0] != refv[t2][1] || refv[t1][1] != refv[t2][0] || refv[t1][2] != refv[t2][2] || refv[t1][3] != refv[t2][3] );
+        assert( refv[t1][0] != refv[t2][1] || refv[t1][1] != refv[t2][0] || refv[t1][2] != refv[t2][1] || refv[t1][3] != refv[t2][2] );
+        assert( refv[t1][0] != refv[t2][1] || refv[t1][1] != refv[t2][2] || refv[t1][2] != refv[t2][0] || refv[t1][3] != refv[t2][3] );
+        assert( refv[t1][0] != refv[t2][1] || refv[t1][1] != refv[t2][2] || refv[t1][2] != refv[t2][3] || refv[t1][3] != refv[t2][0] );
+        assert( refv[t1][0] != refv[t2][1] || refv[t1][1] != refv[t2][3] || refv[t1][2] != refv[t2][0] || refv[t1][3] != refv[t2][2] );
+        assert( refv[t1][0] != refv[t2][1] || refv[t1][1] != refv[t2][3] || refv[t1][2] != refv[t2][2] || refv[t1][3] != refv[t2][0] );
+        
+        assert( refv[t1][0] != refv[t2][2] || refv[t1][1] != refv[t2][0] || refv[t1][2] != refv[t2][1] || refv[t1][3] != refv[t2][3] );
+        assert( refv[t1][0] != refv[t2][2] || refv[t1][1] != refv[t2][0] || refv[t1][2] != refv[t2][3] || refv[t1][3] != refv[t2][1] );
+        assert( refv[t1][0] != refv[t2][2] || refv[t1][1] != refv[t2][1] || refv[t1][2] != refv[t2][0] || refv[t1][3] != refv[t2][3] );
+        assert( refv[t1][0] != refv[t2][2] || refv[t1][1] != refv[t2][1] || refv[t1][2] != refv[t2][3] || refv[t1][3] != refv[t2][0] );
+        assert( refv[t1][0] != refv[t2][2] || refv[t1][1] != refv[t2][3] || refv[t1][2] != refv[t2][0] || refv[t1][3] != refv[t2][1] );
+        assert( refv[t1][0] != refv[t2][2] || refv[t1][1] != refv[t2][3] || refv[t1][2] != refv[t2][1] || refv[t1][3] != refv[t2][0] );
+        
+        assert( refv[t1][0] != refv[t2][3] || refv[t1][1] != refv[t2][0] || refv[t1][2] != refv[t2][1] || refv[t1][3] != refv[t2][2] );
+        assert( refv[t1][0] != refv[t2][3] || refv[t1][1] != refv[t2][0] || refv[t1][2] != refv[t2][2] || refv[t1][3] != refv[t2][1] );
+        assert( refv[t1][0] != refv[t2][3] || refv[t1][1] != refv[t2][1] || refv[t1][2] != refv[t2][0] || refv[t1][3] != refv[t2][2] );
+        assert( refv[t1][0] != refv[t2][3] || refv[t1][1] != refv[t2][1] || refv[t1][2] != refv[t2][2] || refv[t1][3] != refv[t2][0] );
+        assert( refv[t1][0] != refv[t2][3] || refv[t1][1] != refv[t2][2] || refv[t1][2] != refv[t2][0] || refv[t1][3] != refv[t2][1] );
+        assert( refv[t1][0] != refv[t2][3] || refv[t1][1] != refv[t2][2] || refv[t1][2] != refv[t2][1] || refv[t1][3] != refv[t2][0] );
+        
+        
+        /* edges */
+        
+        const auto& refe = data_tetrahedron_edges;
+        
+        const auto& perms = permutation_of_six_objects;
+      
+        for( auto perm : perms )
+          assert( refe[t1][0] != refe[t2][ perm[0] ] || refe[t1][1] != refe[t2][ perm[1] ] || refe[t1][2] != refe[t2][ perm[2] ]
+                  ||
+                  refe[t1][3] != refe[t2][ perm[3] ] || refe[t1][4] != refe[t2][ perm[4] ] || refe[t1][5] != refe[t2][ perm[5] ] );
+        
+        
+        /* faces */
+        
+        const auto& reff = data_tetrahedron_faces;
+        assert( reff[t1][0] != reff[t2][0] || reff[t1][1] != reff[t2][1] || reff[t1][2] != reff[t2][2] || reff[t1][3] != reff[t2][3] );
+        assert( reff[t1][0] != reff[t2][0] || reff[t1][1] != reff[t2][1] || reff[t1][2] != reff[t2][3] || reff[t1][3] != reff[t2][2] );
+        assert( reff[t1][0] != reff[t2][0] || reff[t1][1] != reff[t2][2] || reff[t1][2] != reff[t2][1] || reff[t1][3] != reff[t2][3] );
+        assert( reff[t1][0] != reff[t2][0] || reff[t1][1] != reff[t2][2] || reff[t1][2] != reff[t2][3] || reff[t1][3] != reff[t2][1] );
+        assert( reff[t1][0] != reff[t2][0] || reff[t1][1] != reff[t2][3] || reff[t1][2] != reff[t2][1] || reff[t1][3] != reff[t2][2] );
+        assert( reff[t1][0] != reff[t2][0] || reff[t1][1] != reff[t2][3] || reff[t1][2] != reff[t2][2] || reff[t1][3] != reff[t2][1] );
+        
+        assert( reff[t1][0] != reff[t2][1] || reff[t1][1] != reff[t2][0] || reff[t1][2] != reff[t2][2] || reff[t1][3] != reff[t2][3] );
+        assert( reff[t1][0] != reff[t2][1] || reff[t1][1] != reff[t2][0] || reff[t1][2] != reff[t2][1] || reff[t1][3] != reff[t2][2] );
+        assert( reff[t1][0] != reff[t2][1] || reff[t1][1] != reff[t2][2] || reff[t1][2] != reff[t2][0] || reff[t1][3] != reff[t2][3] );
+        assert( reff[t1][0] != reff[t2][1] || reff[t1][1] != reff[t2][2] || reff[t1][2] != reff[t2][3] || reff[t1][3] != reff[t2][0] );
+        assert( reff[t1][0] != reff[t2][1] || reff[t1][1] != reff[t2][3] || reff[t1][2] != reff[t2][0] || reff[t1][3] != reff[t2][2] );
+        assert( reff[t1][0] != reff[t2][1] || reff[t1][1] != reff[t2][3] || reff[t1][2] != reff[t2][2] || reff[t1][3] != reff[t2][0] );
+        
+        assert( reff[t1][0] != reff[t2][2] || reff[t1][1] != reff[t2][0] || reff[t1][2] != reff[t2][1] || reff[t1][3] != reff[t2][3] );
+        assert( reff[t1][0] != reff[t2][2] || reff[t1][1] != reff[t2][0] || reff[t1][2] != reff[t2][3] || reff[t1][3] != reff[t2][1] );
+        assert( reff[t1][0] != reff[t2][2] || reff[t1][1] != reff[t2][1] || reff[t1][2] != reff[t2][0] || reff[t1][3] != reff[t2][3] );
+        assert( reff[t1][0] != reff[t2][2] || reff[t1][1] != reff[t2][1] || reff[t1][2] != reff[t2][3] || reff[t1][3] != reff[t2][0] );
+        assert( reff[t1][0] != reff[t2][2] || reff[t1][1] != reff[t2][3] || reff[t1][2] != reff[t2][0] || reff[t1][3] != reff[t2][1] );
+        assert( reff[t1][0] != reff[t2][2] || reff[t1][1] != reff[t2][3] || reff[t1][2] != reff[t2][1] || reff[t1][3] != reff[t2][0] );
+        
+        assert( reff[t1][0] != reff[t2][3] || reff[t1][1] != reff[t2][0] || reff[t1][2] != reff[t2][1] || reff[t1][3] != reff[t2][2] );
+        assert( reff[t1][0] != reff[t2][3] || reff[t1][1] != reff[t2][0] || reff[t1][2] != reff[t2][2] || reff[t1][3] != reff[t2][1] );
+        assert( reff[t1][0] != reff[t2][3] || reff[t1][1] != reff[t2][1] || reff[t1][2] != reff[t2][0] || reff[t1][3] != reff[t2][2] );
+        assert( reff[t1][0] != reff[t2][3] || reff[t1][1] != reff[t2][1] || reff[t1][2] != reff[t2][2] || reff[t1][3] != reff[t2][0] );
+        assert( reff[t1][0] != reff[t2][3] || reff[t1][1] != reff[t2][2] || reff[t1][2] != reff[t2][0] || reff[t1][3] != reff[t2][1] );
+        assert( reff[t1][0] != reff[t2][3] || reff[t1][1] != reff[t2][2] || reff[t1][2] != reff[t2][1] || reff[t1][3] != reff[t2][0] );
         
         
     }
@@ -956,14 +1017,49 @@ void MeshSimplicial3D::check() const
      * each tetrahedron: each face is listed correctly
      */
     
-    // TODO
+    for( int t = 0; t < counter_tetrahedra; t++ )
+    {
+        assert( data_face_vertices[ data_tetrahedron_faces[t][0] ][0] == data_tetrahedron_vertices[t][0] );
+        assert( data_face_vertices[ data_tetrahedron_faces[t][0] ][1] == data_tetrahedron_vertices[t][1] );
+        assert( data_face_vertices[ data_tetrahedron_faces[t][0] ][2] == data_tetrahedron_vertices[t][2] );
+        
+        assert( data_face_vertices[ data_tetrahedron_faces[t][1] ][0] == data_tetrahedron_vertices[t][0] );
+        assert( data_face_vertices[ data_tetrahedron_faces[t][1] ][1] == data_tetrahedron_vertices[t][1] );
+        assert( data_face_vertices[ data_tetrahedron_faces[t][1] ][2] == data_tetrahedron_vertices[t][3] );
+        
+        assert( data_face_vertices[ data_tetrahedron_faces[t][2] ][0] == data_tetrahedron_vertices[t][0] );
+        assert( data_face_vertices[ data_tetrahedron_faces[t][2] ][1] == data_tetrahedron_vertices[t][2] );
+        assert( data_face_vertices[ data_tetrahedron_faces[t][2] ][2] == data_tetrahedron_vertices[t][3] );
+        
+        assert( data_face_vertices[ data_tetrahedron_faces[t][3] ][0] == data_tetrahedron_vertices[t][1] );
+        assert( data_face_vertices[ data_tetrahedron_faces[t][3] ][1] == data_tetrahedron_vertices[t][2] );
+        assert( data_face_vertices[ data_tetrahedron_faces[t][3] ][2] == data_tetrahedron_vertices[t][3] );
+    }
     
     /*
      * each tetrahedron: each edge is listed correctly
      */
     
-    // TODO
-    
+    for( int t = 0; t < counter_tetrahedra; t++ )
+    {
+        assert( data_edge_vertices[ data_tetrahedron_edges[t][0] ][0] == data_tetrahedron_vertices[t][0] );
+        assert( data_edge_vertices[ data_tetrahedron_edges[t][0] ][1] == data_tetrahedron_vertices[t][1] );
+        
+        assert( data_edge_vertices[ data_tetrahedron_edges[t][1] ][0] == data_tetrahedron_vertices[t][0] );
+        assert( data_edge_vertices[ data_tetrahedron_edges[t][1] ][1] == data_tetrahedron_vertices[t][2] );
+        
+        assert( data_edge_vertices[ data_tetrahedron_edges[t][2] ][0] == data_tetrahedron_vertices[t][0] );
+        assert( data_edge_vertices[ data_tetrahedron_edges[t][2] ][1] == data_tetrahedron_vertices[t][3] );
+        
+        assert( data_edge_vertices[ data_tetrahedron_edges[t][3] ][0] == data_tetrahedron_vertices[t][1] );
+        assert( data_edge_vertices[ data_tetrahedron_edges[t][3] ][1] == data_tetrahedron_vertices[t][2] );
+        
+        assert( data_edge_vertices[ data_tetrahedron_edges[t][4] ][0] == data_tetrahedron_vertices[t][1] );
+        assert( data_edge_vertices[ data_tetrahedron_edges[t][4] ][1] == data_tetrahedron_vertices[t][3] );
+        
+        assert( data_edge_vertices[ data_tetrahedron_edges[t][5] ][0] == data_tetrahedron_vertices[t][2] );
+        assert( data_edge_vertices[ data_tetrahedron_edges[t][5] ][1] == data_tetrahedron_vertices[t][3] );
+    }
     
     /*
      * each face: each edge is listed correctly
@@ -971,14 +1067,14 @@ void MeshSimplicial3D::check() const
     
     for( int f = 0; f < counter_faces; f++ )
     {
-        
         assert( data_edge_vertices[ data_face_edges[f][0] ][0] == data_face_vertices[f][0] );
         assert( data_edge_vertices[ data_face_edges[f][0] ][1] == data_face_vertices[f][1] );
+        
         assert( data_edge_vertices[ data_face_edges[f][1] ][0] == data_face_vertices[f][0] );
         assert( data_edge_vertices[ data_face_edges[f][1] ][1] == data_face_vertices[f][2] );
+        
         assert( data_edge_vertices[ data_face_edges[f][2] ][0] == data_face_vertices[f][1] );
         assert( data_edge_vertices[ data_face_edges[f][2] ][1] == data_face_vertices[f][2] );
-        
     }
     
     
