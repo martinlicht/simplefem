@@ -89,7 +89,9 @@ class MeshSimplicial2D
         
         /* count the simplices of a certain type */
         int count_triangles() const;
+        
         int count_edges()     const;
+        
         int count_vertices()  const;
         
         

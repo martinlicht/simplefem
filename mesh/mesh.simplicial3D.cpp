@@ -1801,7 +1801,7 @@ int MeshSimplicial3D::get_tetrahedron_vertex( int t, int vi ) const
 {
     assert( 0 <= t  && t  < counter_tetrahedra );
     assert( 0 <= vi && vi < 4 );
-    return data_tetrahedron_faces[t][vi];
+    return data_tetrahedron_vertices[t][vi];
 } 
 
 const std::array<int,4> MeshSimplicial3D::get_tetrahedron_vertices( int t ) const
@@ -2470,25 +2470,187 @@ void MeshSimplicial3D::bisect_edge( int e )
 }
 
 
+
+
+
+
+
+
+
+
+/*
+ *
+ *  Split Tetrahedra: 8T 
+ *  
+ *    00 11 22 33
+ *       00 01 02 03
+ *       01 11 12 13
+ *       02 12 22 23
+ *       03 13 23 33
+ *       
+ *       01 02 03 13
+ *       01 02 12 13 
+ *       02 03 13 23
+ *       02 12 13 23
+ *
+ *  Split Faces:    4F
+ *    
+ *    00 11 22
+ *       00 01 02
+ *       01 11 12
+ *       02 12 22
+ *       01 02 12
+ *    00 11 33
+ *       00 01 03
+ *       01 11 13
+ *       03 13 33
+ *       01 03 13
+ *    00 22 33
+ *       00 02 03
+ *       02 22 23
+ *       03 23 33
+ *       02 03 23
+ *    11 22 33
+ *       11 12 13
+ *       12 22 23
+ *       13 23 33
+ *       12 13 23
+ *       
+ *  Completely New Faces: 8T
+ *       
+ *       01 02 03
+ *       01 12 13
+ *       02 12 23
+ *       03 13 23
+ *       
+ *       01 02 13
+ *       02 03 13
+ *       02 12 13
+ *       02 13 23
+ *       
+ * 
+ *  Split Edges: 2 E 
+ *    
+ *    00 11
+ *       00 01
+ *       01 11
+ *    00 22
+ *       00 02
+ *       02 22
+ *    00 33
+ *       00 03
+ *       03 33
+ *    11 22
+ *       11 12
+ *       12 22
+ *    11 33
+ *       11 13
+ *       13 33
+ *    22 33
+ *       22 23
+ *       23 33
+ *    
+ *  Completely New Edge: 12F + 1T
+ *       
+ *       
+ *       01 02
+ *       01 12
+ *       02 12
+ *       
+ *       01 03
+ *       01 13
+ *       03 13
+ *       
+ *       02 03
+ *       02 23
+ *       03 23
+ *       
+ *       12 13
+ *       12 23
+ *       13 23
+ *       
+ * 
+ * 
+ *       02 13
+ *      
+ *
+ *
+ *
+ */
+
+
+
+
 // TODO: Update the uniform refinement method 
 
 void MeshSimplicial3D::uniformrefinement()
 {
     check();
     
+    
+    int new_counter_tetrahedra = 8 * counter_tetrahedra;
+    int new_counter_faces      = 4 * counter_faces + 8 * counter_tetrahedra;
+    int new_counter_edges      = 2 * counter_edges + 3  * counter_faces + 1 * counter_tetrahedra;
+    int new_counter_vertices   = 1 * counter_vertices + 2 * counter_edges;
+    
+    
     /* resize the arrays */
     
-    data_face_edges.resize               ( 4 * counter_faces                    , { nullindex, nullindex, nullindex } );
-    data_edge_firstparent_face.resize    ( 2 * counter_edges + 3 * counter_faces, nullindex                           );
-    data_face_nextparents_of_edges.resize( 4 * counter_faces                    , { nullindex, nullindex, nullindex } );
+    /* tetrahedron -> face */
     
-    data_face_vertices.resize               ( 4 * counter_faces           , { nullindex, nullindex, nullindex } );
-    data_vertex_firstparent_face.resize     ( counter_vertices + counter_edges, nullindex                           );
-    data_face_nextparents_of_vertices.resize( 4 * counter_faces           , { nullindex, nullindex, nullindex } );
+    data_tetrahedron_faces.resize( new_counter_tetrahedra, { nullindex, nullindex, nullindex, nullindex } );
     
-    data_edge_vertices.resize               ( 2 * counter_edges + 3 * counter_faces, { nullindex, nullindex } );
-    data_vertex_firstparent_edge.resize     ( counter_vertices + counter_edges         , nullindex                );
-    data_edge_nextparents_of_vertices.resize( 2 * counter_edges + 3 * counter_faces, { nullindex, nullindex } );
+    data_face_firstparent_tetrahedron.resize( new_counter_faces, nullindex );
+    
+    data_tetrahedron_nextparents_of_faces.resize( new_counter_tetrahedra, { nullindex, nullindex, nullindex, nullindex } );
+    
+    
+    /* tetrahedron -> edge */
+    
+    data_tetrahedron_edges.resize( new_counter_tetrahedra, { nullindex, nullindex, nullindex, nullindex, nullindex, nullindex } );
+    
+    data_edge_firstparent_tetrahedron.resize( new_counter_edges, nullindex );
+    
+    data_tetrahedron_nextparents_of_edges.resize( new_counter_tetrahedra, { nullindex, nullindex, nullindex, nullindex, nullindex, nullindex } );
+    
+    
+    /* tetrahedron -> vertex */
+    
+    data_tetrahedron_vertices.resize( new_counter_tetrahedra, { nullindex, nullindex, nullindex, nullindex } );
+    
+    data_vertex_firstparent_tetrahedron.resize( new_counter_vertices, nullindex );
+    
+    data_tetrahedron_nextparents_of_vertices.resize( new_counter_tetrahedra, { nullindex, nullindex, nullindex, nullindex } );
+    
+    
+    /* face -> edge */
+    
+    data_face_edges.resize( new_counter_faces, { nullindex, nullindex, nullindex } );
+    
+    data_edge_firstparent_face.resize( new_counter_edges, nullindex );
+    
+    data_face_nextparents_of_edges.resize( new_counter_faces, { nullindex, nullindex, nullindex } );
+    
+    
+    /* face -> vertex */
+    
+    data_face_vertices.resize( new_counter_faces, { nullindex, nullindex, nullindex } );
+    
+    data_vertex_firstparent_face.resize( new_counter_vertices, nullindex );
+    
+    data_face_nextparents_of_vertices.resize( new_counter_faces, { nullindex, nullindex, nullindex } );
+    
+    
+    /* edge -> vertex */
+    
+    data_edge_vertices.resize( new_counter_edges, { nullindex, nullindex } );
+    
+    data_vertex_firstparent_edge.resize( new_counter_vertices, nullindex );
+    
+    data_edge_nextparents_of_vertices.resize( new_counter_edges, { nullindex, nullindex } );
+    
+    
+    /* coordinates */
     
     getcoordinates().addcoordinates( counter_edges );
     
@@ -2503,8 +2665,6 @@ void MeshSimplicial3D::uniformrefinement()
     
     
     
-    
-    /**** Edge -- Vertex Relation ****/
     
     /* for each old vertex, set the new parent edge */
     
@@ -2640,7 +2800,7 @@ void MeshSimplicial3D::uniformrefinement()
     }
     
     
-    /**** Face -- Vertex Relation ****/
+    
     
     /* for each old vertex, set the new parent face */
     
@@ -2743,42 +2903,6 @@ void MeshSimplicial3D::uniformrefinement()
     }
     
     
-    
-//     /* for each face, create the new vertices */
-//     
-//     for( int f = 0; f < counter_faces; f++ )
-//     {
-//       int v00 = data_face_vertices[f][0];
-//       int v11 = data_face_vertices[f][1];
-//       int v22 = data_face_vertices[f][2];
-//       
-//       int v01 = counter_vertices + data_face_edges[f][0];
-//       int v02 = counter_vertices + data_face_edges[f][1];
-//       int v12 = counter_vertices + data_face_edges[f][2];
-//       
-//       // [ 00 01 02 ], [ 01 11 12 ], [ 02 12 22 ], [ 01 02 12 ]
-//         
-//       data_face_vertices[ 0 * counter_faces + f ][0] = v00;
-//       data_face_vertices[ 0 * counter_faces + f ][1] = v01;
-//       data_face_vertices[ 0 * counter_faces + f ][2] = v02;
-//       
-//       data_face_vertices[ 1 * counter_faces + f ][0] = v01;
-//       data_face_vertices[ 1 * counter_faces + f ][1] = v11;
-//       data_face_vertices[ 1 * counter_faces + f ][2] = v12;
-//       
-//       data_face_vertices[ 2 * counter_faces + f ][0] = v02;
-//       data_face_vertices[ 2 * counter_faces + f ][1] = v12;
-//       data_face_vertices[ 2 * counter_faces + f ][2] = v22;
-//       
-//       data_face_vertices[ 3 * counter_faces + f ][0] = v01;
-//       data_face_vertices[ 3 * counter_faces + f ][1] = v02;
-//       data_face_vertices[ 3 * counter_faces + f ][2] = v12;
-//       
-//     }
-    
-    
-    // TODO: Check code until here.
-    /**** Face -- Edge Relation ****/
     
     /* for each old edge, set the new first parent face */
     /* for each new edge, set the new first parent face */
@@ -2963,17 +3087,332 @@ void MeshSimplicial3D::uniformrefinement()
     
     
     
+    
+    /* for each new tetrahedron, set the new vertices */
+    
+    for( int t = 0; t < counter_tetrahedra; t++ )
+    {
+      
+      int v00 = data_tetrahedron_vertices[t][0];
+      int v11 = data_tetrahedron_vertices[t][1];
+      int v22 = data_tetrahedron_vertices[t][2];
+      int v33 = data_tetrahedron_vertices[t][3];
+      
+      int v01 = counter_vertices + data_tetrahedron_edges[t][0];
+      int v02 = counter_vertices + data_tetrahedron_edges[t][1];
+      int v03 = counter_vertices + data_tetrahedron_edges[t][2];
+      int v12 = counter_vertices + data_tetrahedron_edges[t][3];
+      int v13 = counter_vertices + data_tetrahedron_edges[t][4];
+      int v23 = counter_vertices + data_tetrahedron_edges[t][5];
+      
+      //       00 01 02 03
+      data_tetrahedron_vertices[ 0 * counter_tetrahedra + t ][0] = v00;
+      data_tetrahedron_vertices[ 0 * counter_tetrahedra + t ][1] = v01;
+      data_tetrahedron_vertices[ 0 * counter_tetrahedra + t ][2] = v02;
+      data_tetrahedron_vertices[ 0 * counter_tetrahedra + t ][3] = v03;
+      
+      //       01 11 12 13
+      data_tetrahedron_vertices[ 1 * counter_tetrahedra + t ][0] = v01;
+      data_tetrahedron_vertices[ 1 * counter_tetrahedra + t ][1] = v11;
+      data_tetrahedron_vertices[ 1 * counter_tetrahedra + t ][2] = v12;
+      data_tetrahedron_vertices[ 1 * counter_tetrahedra + t ][3] = v13;
+      
+      //       02 12 22 23
+      data_tetrahedron_vertices[ 2 * counter_tetrahedra + t ][0] = v02;
+      data_tetrahedron_vertices[ 2 * counter_tetrahedra + t ][1] = v12;
+      data_tetrahedron_vertices[ 2 * counter_tetrahedra + t ][2] = v22;
+      data_tetrahedron_vertices[ 2 * counter_tetrahedra + t ][3] = v23;
+      
+      //       03 13 23 33
+      data_tetrahedron_vertices[ 3 * counter_tetrahedra + t ][0] = v03;
+      data_tetrahedron_vertices[ 3 * counter_tetrahedra + t ][1] = v13;
+      data_tetrahedron_vertices[ 3 * counter_tetrahedra + t ][2] = v23;
+      data_tetrahedron_vertices[ 3 * counter_tetrahedra + t ][3] = v33;
+      
+      
+      //       01 02 03 13
+      data_tetrahedron_vertices[ 4 * counter_tetrahedra + t ][0] = v01;
+      data_tetrahedron_vertices[ 4 * counter_tetrahedra + t ][1] = v02;
+      data_tetrahedron_vertices[ 4 * counter_tetrahedra + t ][2] = v03;
+      data_tetrahedron_vertices[ 4 * counter_tetrahedra + t ][3] = v13;
+      
+      //       01 02 12 13 
+      data_tetrahedron_vertices[ 5 * counter_tetrahedra + t ][0] = v01;
+      data_tetrahedron_vertices[ 5 * counter_tetrahedra + t ][1] = v02;
+      data_tetrahedron_vertices[ 5 * counter_tetrahedra + t ][2] = v12;
+      data_tetrahedron_vertices[ 5 * counter_tetrahedra + t ][3] = v13;
+      
+      //       02 03 13 23
+      data_tetrahedron_vertices[ 6 * counter_tetrahedra + t ][0] = v02;
+      data_tetrahedron_vertices[ 6 * counter_tetrahedra + t ][1] = v03;
+      data_tetrahedron_vertices[ 6 * counter_tetrahedra + t ][2] = v13;
+      data_tetrahedron_vertices[ 6 * counter_tetrahedra + t ][3] = v23;
+      
+      //       02 12 13 23
+      data_tetrahedron_vertices[ 7 * counter_tetrahedra + t ][0] = v02;
+      data_tetrahedron_vertices[ 7 * counter_tetrahedra + t ][1] = v12;
+      data_tetrahedron_vertices[ 7 * counter_tetrahedra + t ][2] = v13;
+      data_tetrahedron_vertices[ 7 * counter_tetrahedra + t ][3] = v23;
+      
+    }
+    
+    /* for each new tetrahedron, set the new edges */
+    for( int t = 0; t < counter_tetrahedra; t++ )
+    {
+        // 00 11 22 33 
+        
+        // From old edges ...
+        int e00_01 = data_tetrahedron_edges[t][0] + 0 * counter_edges;
+        int e01_11 = data_tetrahedron_edges[t][0] + 1 * counter_edges;
+        
+        int e00_02 = data_tetrahedron_edges[t][1] + 0 * counter_edges;
+        int e02_22 = data_tetrahedron_edges[t][1] + 1 * counter_edges;
+        
+        int e00_03 = data_tetrahedron_edges[t][2] + 0 * counter_edges;
+        int e03_33 = data_tetrahedron_edges[t][2] + 1 * counter_edges;
+        
+        int e11_12 = data_tetrahedron_edges[t][3] + 0 * counter_edges;
+        int e12_22 = data_tetrahedron_edges[t][3] + 1 * counter_edges;
+        
+        int e11_13 = data_tetrahedron_edges[t][4] + 0 * counter_edges;
+        int e13_33 = data_tetrahedron_edges[t][4] + 1 * counter_edges;
+        
+        int e22_23 = data_tetrahedron_edges[t][5] + 0 * counter_edges;
+        int e23_33 = data_tetrahedron_edges[t][5] + 1 * counter_edges;
+        
+        
+        // ... from old faces ... 
+        
+        // 00 11 22  
+        int e01_02 = 2 * counter_edges + 0 * counter_faces + data_tetrahedron_faces[t][0];
+        int e01_12 = 2 * counter_edges + 1 * counter_faces + data_tetrahedron_faces[t][0];
+        int e02_12 = 2 * counter_edges + 2 * counter_faces + data_tetrahedron_faces[t][0];
+        
+        // 00 11 33 
+        int e01_03 = 2 * counter_edges + 0 * counter_faces + data_tetrahedron_faces[t][1];
+        int e01_13 = 2 * counter_edges + 1 * counter_faces + data_tetrahedron_faces[t][1];
+        int e03_13 = 2 * counter_edges + 2 * counter_faces + data_tetrahedron_faces[t][1];
+        
+        // 00 22 33 
+        int e02_03 = 2 * counter_edges + 0 * counter_faces + data_tetrahedron_faces[t][2];
+        int e02_23 = 2 * counter_edges + 1 * counter_faces + data_tetrahedron_faces[t][2];
+        int e03_23 = 2 * counter_edges + 2 * counter_faces + data_tetrahedron_faces[t][2];
+        
+        // 11 22 33 
+        int e12_13 = 2 * counter_edges + 0 * counter_faces + data_tetrahedron_faces[t][3];
+        int e12_23 = 2 * counter_edges + 1 * counter_faces + data_tetrahedron_faces[t][3];
+        int e13_23 = 2 * counter_edges + 2 * counter_faces + data_tetrahedron_faces[t][3];
+        
+        // ... and the single new internal one. 
+        
+        int e02_13 = 2 * counter_edges + 3 * counter_faces + t;
+        
+        
+        // fill in to the tetrahedra
+        
+        //       00 01 02 03
+        data_tetrahedron_edges[ 0 * counter_tetrahedra + t ][0] = e00_01;
+        data_tetrahedron_edges[ 0 * counter_tetrahedra + t ][1] = e00_02;
+        data_tetrahedron_edges[ 0 * counter_tetrahedra + t ][2] = e00_03;
+        data_tetrahedron_edges[ 0 * counter_tetrahedra + t ][3] = e01_02;
+        data_tetrahedron_edges[ 0 * counter_tetrahedra + t ][4] = e01_03;
+        data_tetrahedron_edges[ 0 * counter_tetrahedra + t ][5] = e02_03;
+        
+        //       01 11 12 13
+        data_tetrahedron_edges[ 1 * counter_tetrahedra + t ][0] = e01_11;
+        data_tetrahedron_edges[ 1 * counter_tetrahedra + t ][1] = e01_12;
+        data_tetrahedron_edges[ 1 * counter_tetrahedra + t ][2] = e01_13;
+        data_tetrahedron_edges[ 1 * counter_tetrahedra + t ][3] = e11_12;
+        data_tetrahedron_edges[ 1 * counter_tetrahedra + t ][4] = e11_13;
+        data_tetrahedron_edges[ 1 * counter_tetrahedra + t ][5] = e12_13;
+        
+        //       02 12 22 23
+        data_tetrahedron_edges[ 2 * counter_tetrahedra + t ][0] = e02_12;
+        data_tetrahedron_edges[ 2 * counter_tetrahedra + t ][1] = e02_22;
+        data_tetrahedron_edges[ 2 * counter_tetrahedra + t ][2] = e02_23;
+        data_tetrahedron_edges[ 2 * counter_tetrahedra + t ][3] = e12_22;
+        data_tetrahedron_edges[ 2 * counter_tetrahedra + t ][4] = e12_23;
+        data_tetrahedron_edges[ 2 * counter_tetrahedra + t ][5] = e22_23;
+        
+        //       03 13 23 33
+        data_tetrahedron_edges[ 3 * counter_tetrahedra + t ][0] = e03_13;
+        data_tetrahedron_edges[ 3 * counter_tetrahedra + t ][1] = e03_23;
+        data_tetrahedron_edges[ 3 * counter_tetrahedra + t ][2] = e03_33;
+        data_tetrahedron_edges[ 3 * counter_tetrahedra + t ][3] = e13_23;
+        data_tetrahedron_edges[ 3 * counter_tetrahedra + t ][4] = e13_33;
+        data_tetrahedron_edges[ 3 * counter_tetrahedra + t ][5] = e23_33;
+        
+        
+        //       01 02 03 13
+        data_tetrahedron_edges[ 4 * counter_tetrahedra + t ][0] = e01_02;
+        data_tetrahedron_edges[ 4 * counter_tetrahedra + t ][1] = e01_03;
+        data_tetrahedron_edges[ 4 * counter_tetrahedra + t ][2] = e01_13;
+        data_tetrahedron_edges[ 4 * counter_tetrahedra + t ][3] = e02_03;
+        data_tetrahedron_edges[ 4 * counter_tetrahedra + t ][4] = e02_13;
+        data_tetrahedron_edges[ 4 * counter_tetrahedra + t ][5] = e03_13;
+        
+        //       01 02 12 13 
+        data_tetrahedron_edges[ 5 * counter_tetrahedra + t ][0] = e01_02;
+        data_tetrahedron_edges[ 5 * counter_tetrahedra + t ][1] = e01_12;
+        data_tetrahedron_edges[ 5 * counter_tetrahedra + t ][2] = e01_13;
+        data_tetrahedron_edges[ 5 * counter_tetrahedra + t ][3] = e02_12;
+        data_tetrahedron_edges[ 5 * counter_tetrahedra + t ][4] = e02_13;
+        data_tetrahedron_edges[ 5 * counter_tetrahedra + t ][5] = e12_13;
+        
+        //       02 03 13 23
+        data_tetrahedron_edges[ 6 * counter_tetrahedra + t ][0] = e02_03;
+        data_tetrahedron_edges[ 6 * counter_tetrahedra + t ][1] = e02_13;
+        data_tetrahedron_edges[ 6 * counter_tetrahedra + t ][2] = e02_23;
+        data_tetrahedron_edges[ 6 * counter_tetrahedra + t ][3] = e03_13;
+        data_tetrahedron_edges[ 6 * counter_tetrahedra + t ][4] = e03_23;
+        data_tetrahedron_edges[ 6 * counter_tetrahedra + t ][5] = e13_23;
+        
+        //       02 12 13 23
+        data_tetrahedron_edges[ 7 * counter_tetrahedra + t ][0] = e02_12;
+        data_tetrahedron_edges[ 7 * counter_tetrahedra + t ][1] = e02_13;
+        data_tetrahedron_edges[ 7 * counter_tetrahedra + t ][2] = e02_23;
+        data_tetrahedron_edges[ 7 * counter_tetrahedra + t ][3] = e12_13;
+        data_tetrahedron_edges[ 7 * counter_tetrahedra + t ][4] = e12_23;
+        data_tetrahedron_edges[ 7 * counter_tetrahedra + t ][5] = e13_23;
+        
+    }
+    
+    /* for each new tetrahedron, set the new faces */
+    
+    for( int t = 0; t < counter_tetrahedra; t++ )
+    {
+      // 00 11 22 33 
+      
+      // From old faces ... 
+      
+      // 00 11 22 
+      int f00_01_02 = data_tetrahedron_faces[t][0] + 0 * counter_faces;
+      int f01_11_12 = data_tetrahedron_faces[t][0] + 1 * counter_faces;
+      int f02_12_22 = data_tetrahedron_faces[t][0] + 2 * counter_faces;
+      int f01_02_12 = data_tetrahedron_faces[t][0] + 3 * counter_faces;
+      
+      // 00 11 33 
+      int f00_01_03 = data_tetrahedron_faces[t][1] + 0 * counter_faces;
+      int f01_11_13 = data_tetrahedron_faces[t][1] + 1 * counter_faces;
+      int f03_13_33 = data_tetrahedron_faces[t][1] + 2 * counter_faces;
+      int f01_03_13 = data_tetrahedron_faces[t][1] + 3 * counter_faces;
+      
+      // 00 22 33 
+      int f00_02_03 = data_tetrahedron_faces[t][2] + 0 * counter_faces;
+      int f02_22_23 = data_tetrahedron_faces[t][2] + 1 * counter_faces;
+      int f03_23_33 = data_tetrahedron_faces[t][2] + 2 * counter_faces;
+      int f02_03_23 = data_tetrahedron_faces[t][2] + 3 * counter_faces;
+      
+      // 11 22 33 
+      int f11_12_13 = data_tetrahedron_faces[t][3] + 0 * counter_faces;
+      int f12_22_23 = data_tetrahedron_faces[t][3] + 1 * counter_faces;
+      int f13_23_33 = data_tetrahedron_faces[t][3] + 2 * counter_faces;
+      int f12_13_23 = data_tetrahedron_faces[t][3] + 3 * counter_faces;
+      
+      // ... new internal faces. 
+      
+      // 01 02 03
+      // 01 12 13
+      // 02 12 23
+      // 03 13 23
+      int f01_02_03 = 4 * counter_faces + 0 * counter_tetrahedra + t;
+      int f01_12_13 = 4 * counter_faces + 1 * counter_tetrahedra + t;
+      int f02_12_23 = 4 * counter_faces + 2 * counter_tetrahedra + t;
+      int f03_13_23 = 4 * counter_faces + 3 * counter_tetrahedra + t;
+      
+      // 01 02 13
+      // 02 03 13
+      // 02 12 13
+      // 02 13 23
+      int f01_02_13 = 4 * counter_faces + 4 * counter_tetrahedra + t;
+      int f02_03_13 = 4 * counter_faces + 5 * counter_tetrahedra + t;
+      int f02_12_13 = 4 * counter_faces + 6 * counter_tetrahedra + t;
+      int f02_13_23 = 4 * counter_faces + 8 * counter_tetrahedra + t;
+      
+      
+      
+      
+      //       00 01 02 03
+      data_tetrahedron_faces[ 0 * counter_tetrahedra + t ][0] = f00_01_02;
+      data_tetrahedron_faces[ 0 * counter_tetrahedra + t ][1] = f00_01_03;
+      data_tetrahedron_faces[ 0 * counter_tetrahedra + t ][2] = f00_02_03;
+      data_tetrahedron_faces[ 0 * counter_tetrahedra + t ][3] = f01_02_03;
+      
+      //       01 11 12 13
+      data_tetrahedron_faces[ 1 * counter_tetrahedra + t ][0] = f01_11_12;
+      data_tetrahedron_faces[ 1 * counter_tetrahedra + t ][1] = f01_11_13;
+      data_tetrahedron_faces[ 1 * counter_tetrahedra + t ][2] = f01_12_13;
+      data_tetrahedron_faces[ 1 * counter_tetrahedra + t ][3] = f11_12_13;
+      
+      //       02 12 22 23
+      data_tetrahedron_faces[ 2 * counter_tetrahedra + t ][0] = f02_12_22;
+      data_tetrahedron_faces[ 2 * counter_tetrahedra + t ][1] = f02_12_23;
+      data_tetrahedron_faces[ 2 * counter_tetrahedra + t ][2] = f02_22_23;
+      data_tetrahedron_faces[ 2 * counter_tetrahedra + t ][3] = f12_22_23;
+      
+      //       03 13 23 33
+      data_tetrahedron_faces[ 3 * counter_tetrahedra + t ][0] = f03_13_23;
+      data_tetrahedron_faces[ 3 * counter_tetrahedra + t ][1] = f03_13_33;
+      data_tetrahedron_faces[ 3 * counter_tetrahedra + t ][2] = f03_23_33;
+      data_tetrahedron_faces[ 3 * counter_tetrahedra + t ][3] = f13_23_33;
+      
+      
+      //       01 02 03 13
+      data_tetrahedron_faces[ 4 * counter_tetrahedra + t ][0] = f01_02_03;
+      data_tetrahedron_faces[ 4 * counter_tetrahedra + t ][1] = f01_02_13;
+      data_tetrahedron_faces[ 4 * counter_tetrahedra + t ][2] = f01_03_13;
+      data_tetrahedron_faces[ 4 * counter_tetrahedra + t ][3] = f02_03_13;
+      
+      //       01 02 12 13 
+      data_tetrahedron_faces[ 5 * counter_tetrahedra + t ][0] = f01_02_12;
+      data_tetrahedron_faces[ 5 * counter_tetrahedra + t ][1] = f01_02_13;
+      data_tetrahedron_faces[ 5 * counter_tetrahedra + t ][2] = f01_12_13;
+      data_tetrahedron_faces[ 5 * counter_tetrahedra + t ][3] = f02_12_13;
+      
+      //       02 03 13 23
+      data_tetrahedron_faces[ 6 * counter_tetrahedra + t ][0] = f02_03_13;
+      data_tetrahedron_faces[ 6 * counter_tetrahedra + t ][1] = f02_03_23;
+      data_tetrahedron_faces[ 6 * counter_tetrahedra + t ][2] = f02_13_23;
+      data_tetrahedron_faces[ 6 * counter_tetrahedra + t ][3] = f03_13_23;
+      
+      //       02 12 13 23
+      data_tetrahedron_faces[ 7 * counter_tetrahedra + t ][0] = f02_12_13;
+      data_tetrahedron_faces[ 7 * counter_tetrahedra + t ][1] = f02_12_23;
+      data_tetrahedron_faces[ 7 * counter_tetrahedra + t ][2] = f02_13_23;
+      data_tetrahedron_faces[ 7 * counter_tetrahedra + t ][3] = f12_13_23;
+      
+    }
+    
+    
+    
+    
     /* update the counters */
     
-    counter_vertices  = counter_vertices + counter_edges;
-    counter_edges     = 2 * counter_edges + 3 * counter_faces;
-    counter_faces     = 4 * counter_faces;
-    
+    counter_vertices   = new_counter_vertices;
+    counter_edges      = new_counter_edges;
+    counter_faces      = new_counter_faces;
+    counter_tetrahedra = new_counter_tetrahedra;
     
     /* DONE */
     
     check();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

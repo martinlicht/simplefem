@@ -13,6 +13,7 @@ using namespace std;
 
 int main()
 {
+    
     cout << "Unit Test for Simplicial 3D Mesh IO" << endl;
     
     {
@@ -28,6 +29,8 @@ int main()
         writeMeshSimplicial3D( ss, mesh );
         
         ss.seekg( std::ios_base::beg );
+        
+        cout << "create next mesh..." << std::endl;
         
         MeshSimplicial3D mesh2 = readMeshSimplicial3D( ss );
         

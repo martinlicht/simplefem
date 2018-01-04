@@ -1189,110 +1189,348 @@ std::vector<int> MeshSimplicial2D::get_edge_parents_of_vertex( int v ) const
 
 
 
-
+/*
+ * * * * * NEWEST VERTEX BISECTION
+ */
+    
 void MeshSimplicial2D::bisect_edge( int e )
 {
-    // TODO: Rewrite this section for the 2D case 
-    
     assert( 0 <= e && e < counter_edges );
     check();
     
-    /* Collect the old data */
+    /* 
+     * DESCRIPTION
+     * 
+     * The Bisection works as follows:
+     * 
+     * triangle -> edge 
+     * 
+     *          T2E: 
+     *          
+     *            just fill in the data. 
+     *          
+     *          next parents + first parent:
+     *            
+     *            for outer edges:
+     *            start with the first parent pointer and run over all parents,
+     *            replacing the old triangle with the new triangle if need be.
+     *            
+     *            for inner edges: 
+     *            fill in the data
+     *            
+     *            Finally, create parent data for the two new edges 
+     *          
+     * 
+     * triangle -> vertex 
+     *          
+     *          T2V: 
+     *          
+     *            just fill in the data.
+     *          
+     *          next parents + first parent:
+     *          
+     *            for front,back,opposing vertex:
+     *            start with the first parent pointer and run over all parents,
+     *            replacing the old triangle with the new triangle if need be.
+     *            
+     *            Finally, create new data for new vertex.
+     *          
+     *  
+     * edge -> vertex 
+     * 
+     *          E2V: 
+     *          
+     *            just fill in the data.
+     *            
+     *          next parents + first parent:
+     *          
+     *            for back vertex:
+     *                  [nothing changes]
+     *            for front vertex:
+     *                  run over all parents and replace the old edge.
+     *            for opposing vertex:
+     *                  add the additional edge as first parent
+     * 
+     * 
+     * */
     
-    int vertex_back  = data_edge_vertices[e][0];
-    int vertex_front = data_edge_vertices[e][1];
-    int nextparents_back  = data_edge_nextparents_of_vertices[e][0];
-    int nextparents_front = data_edge_nextparents_of_vertices[e][1];
-    int firstparent_back  = data_vertex_firstparent_edge[vertex_back ];
-    int firstparent_front = data_vertex_firstparent_edge[vertex_front];
     
-    int back_previousparent   = nullindex;
-    int back_previousparent_localindex = nullindex;
-    if( e != get_vertex_firstparent_edge( vertex_back ) )
-      for( back_previousparent = get_vertex_firstparent_edge( vertex_back  );
-           back_previousparent != nullindex && get_vertex_nextparent_edge(vertex_back,back_previousparent) != e; 
-           back_previousparent = get_vertex_nextparent_edge(vertex_back,back_previousparent) 
-         ); 
-    if( back_previousparent  != nullindex ) 
-      back_previousparent_localindex  = indexof_edge_vertex( back_previousparent,  vertex_back  );
     
-    int front_previousparent  = nullindex;
-    int front_previousparent_localindex = nullindex;
-    if( e != get_vertex_firstparent_edge( vertex_front ) )
-      for( front_previousparent = get_vertex_firstparent_edge( vertex_front );
-           front_previousparent != nullindex && get_vertex_nextparent_edge(vertex_front,front_previousparent) != e; 
-           front_previousparent = get_vertex_nextparent_edge(vertex_front,front_previousparent) 
-         ); 
-    if( front_previousparent != nullindex )
-      front_previousparent_localindex = indexof_edge_vertex( front_previousparent, vertex_front );
     
-    /* Assemble the data */
+    /*
+     * DATA COLLECTION 
+     */
     
-    FloatVector midcoordinate = get_edge_midpoint( e );
+    int e_back_vertex  = data_edge_vertices[ e ][ 0 ];
+    int e_front_vertex = data_edge_vertices[ e ][ 1 ];
     
-    int ne = counter_edges;
-    int nv = counter_vertices;
+    std::vector<int> old_triangles = get_triangle_parents_of_edge( e );
     
-    int back_backvertex       = vertex_back;
-    int back_frontvertex      = nv;
-    int front_backvertex      = nv;
-    int front_frontvertex     = vertex_front;
+    std::vector<int> localindex_of_refinementedge( old_triangles.size() );
     
-    int back_backnextparent   = nextparents_back;
-    int back_frontnextparent  = ne;
-    int front_backnextparent  = nullindex;
-    int front_frontnextparent = nextparents_front;
     
-    int firstparent_newvertex = nv;
     
-    /* Allocate memory */
+    /*
+     * ALLOCATE MEMORY FOR THE DATA  
+     */
     
-    data_edge_nextparents_of_vertices.resize  ( counter_edges    + 1 );
-    data_edge_vertices.resize     ( counter_edges    + 1 );
-    data_vertex_firstparent_edge.resize( counter_vertices + 1 );
+    data_triangle_nextparents_of_edges.resize( counter_triangles + old_triangles.size()     );
+    data_triangle_edges.resize               ( counter_triangles + old_triangles.size()     );
+    data_edge_firstparent_triangle.resize    ( counter_edges     + old_triangles.size() + 1 );
     
-    /* Write in the data */
+    data_triangle_nextparents_of_vertices.resize( counter_triangles + old_triangles.size() );
+    data_triangle_vertices.resize               ( counter_triangles + old_triangles.size() );
+    data_vertex_firstparent_triangle.resize     ( counter_vertices  + 1 );
     
-    data_edge_vertices[e ][0] = back_backvertex;
-    data_edge_vertices[e ][1] = back_frontvertex;
-    data_edge_vertices[ne][0] = front_backvertex;
-    data_edge_vertices[ne][1] = front_frontvertex;
+    data_edge_nextparents_of_vertices.resize( counter_edges    + old_triangles.size() + 1 );
+    data_edge_vertices.resize               ( counter_edges    + old_triangles.size() + 1 );
+    data_vertex_firstparent_edge.resize     ( counter_vertices + 1 );
     
-    data_edge_nextparents_of_vertices[e ][0] = back_backnextparent;
-    data_edge_nextparents_of_vertices[e ][1] = back_frontnextparent;
-    data_edge_nextparents_of_vertices[ne][0] = front_backnextparent;
-    data_edge_nextparents_of_vertices[ne][1] = front_frontnextparent;
     
-    data_vertex_firstparent_edge[nv] = e;
     
-    if( back_previousparent  != nullindex ) {
-      assert( data_edge_nextparents_of_vertices[ back_previousparent ][ back_previousparent_localindex ] == e );
-      data_edge_nextparents_of_vertices[ back_previousparent ][ back_previousparent_localindex ] = e;
-    } else {
-      assert( data_vertex_firstparent_edge[ vertex_back ] == e );
-      data_vertex_firstparent_edge[ vertex_back ] = e;
+    /*
+     * SOME ABBREVIATIONS
+     */
+    
+    
+    /*
+     * FILL IN DATA
+     */
+    
+    data_edge_vertices[ e ][ 0 ] = e_back_vertex;
+    data_edge_vertices[ e ][ 1 ] = counter_vertices;
+      
+    data_edge_vertices[ counter_edges ][ 0 ] = counter_vertices;
+    data_edge_vertices[ counter_edges ][ 1 ] = e_front_vertex;
+    
+    
+    // data_edge_nextparents_of_vertices[ e ][ 0 ] = data_edge_nextparents_of_vertices[ e ][ 0 ];
+    data_edge_nextparents_of_vertices[ counter_edges ][ 1 ] = data_edge_nextparents_of_vertices[ e ][ 1 ];
+    
+    data_vertex_firstparent_edge[ counter_vertices ] = e;
+    data_edge_nextparents_of_vertices[ e ][ 1 ] = counter_edges;
+    data_edge_nextparents_of_vertices[ counter_edges ][ 0 ] = counter_edges + 1;
+    
+    // edge parent list of back vertex stays the same 
+    // run over the front vertex edge parent list and replace 'e' by 'counter_edges'
+    if( data_vertex_firstparent_edge[ e_front_vertex ] == e ) 
+      data_vertex_firstparent_edge[ e_front_vertex ] = counter_edges;
+    else {
+      int current_edge = data_vertex_firstparent_edge[ e_front_vertex ];
+      while( data_edge_nextparents_of_vertices[ current_edge ][ indexof_edge_vertex( current_edge, e_front_vertex ) ] != e )
+        current_edge = data_edge_nextparents_of_vertices[ current_edge ][ indexof_edge_vertex( current_edge, e_front_vertex ) ];
+      data_edge_nextparents_of_vertices[ current_edge ][ indexof_edge_vertex( current_edge, e_front_vertex ) ] = counter_edges;
     }
     
-    if( front_previousparent != nullindex ) {
-      assert( data_edge_nextparents_of_vertices[ front_previousparent ][ front_previousparent_localindex ] == ne );
-      data_edge_nextparents_of_vertices[ front_previousparent ][ front_previousparent_localindex ] = ne;
-    } else {
-      assert( data_vertex_firstparent_edge[ vertex_front ] == e );
-      data_vertex_firstparent_edge[ vertex_front ] = ne;
-    }    
+    data_vertex_firstparent_triangle[ counter_vertices ] = nullindex;
     
-    getcoordinates().append( midcoordinate );
+    
+    
+    for( int ot = 0; ot < old_triangles.size(); ot++ ) {
+      
+      int t_old = old_triangles[ ot ];
+      int t_new = old_triangles[ counter_triangles + ot ];
+      
+      int t_v0 = data_triangle_vertices[ t_old ][ 0 ];
+      int t_v1 = data_triangle_vertices[ t_old ][ 1 ];
+      int t_v2 = data_triangle_vertices[ t_old ][ 2 ];
+      
+      int t_e0 = data_triangle_edges[ t_old ][ 0 ];
+      int t_e1 = data_triangle_edges[ t_old ][ 1 ];
+      int t_e2 = data_triangle_edges[ t_old ][ 2 ];
+      
+      localindex_of_refinementedge[ ot ] = ( t_e0 == e ) ? 0 : ( ( t_e1 == e ) ? 1 : 2 );
+      assert( data_triangle_edges[ t_old ][ localindex_of_refinementedge[ ot ] ] == e );
+      
+      
+      
+      if( localindex_of_refinementedge[ ot ] == 0 ) { // 0 1 
         
-    /* Update counter */
-    counter_edges++;
-    counter_vertices++;
+        /* triangle vertices */
+        data_triangle_vertices[ t_old ][0] = t_v0;
+        data_triangle_vertices[ t_old ][1] = counter_vertices;
+        data_triangle_vertices[ t_old ][2] = t_v2;
+        
+        data_triangle_vertices[ t_new ][0] = counter_vertices;
+        data_triangle_vertices[ t_new ][1] = t_v1;
+        data_triangle_vertices[ t_new ][2] = t_v2;
+        
+        /* triangle edges */
+        data_triangle_edges[ t_old ][0] = e;
+        data_triangle_edges[ t_old ][1] = t_e1;
+        data_triangle_edges[ t_old ][2] = counter_edges + 1 + ot;
+        
+        data_triangle_edges[ t_new ][0] = counter_edges;
+        data_triangle_edges[ t_new ][1] = counter_edges + 1 + ot;
+        data_triangle_edges[ t_new ][2] = t_e2;
+        
+        /* bisection edge vertices */
+        data_edge_vertices[ counter_edges + 1 + ot ][0] = counter_vertices;
+        data_edge_vertices[ counter_edges + 1 + ot ][1] = t_v2;
+        
+        
+        /* add new parent edge for the new vertex */
+        int new_vertex_firstparent_edge = data_vertex_firstparent_edge[ counter_vertices ];
+        data_vertex_firstparent_edge[ counter_vertices ] = counter_edges + 1 + ot;
+        data_edge_nextparents_of_vertices[ counter_edges + 1 + ot ][0] = new_vertex_firstparent_edge;
+        
+        /* add new parent triangles for the new vertex, move old data */
+        
+        /* add parent triangles for the bisection edge, move old data */
+        
+        /* add new parent edge for the opposing vertex */
+        int opposing_vertex_firstparent_edge = data_vertex_firstparent_edge[ t_v2 ];
+        data_vertex_firstparent_edge[ t_v2 ] = counter_edges + 1 + ot;
+        data_edge_nextparents_of_vertices[ counter_edges + 1 + ot ][1] = opposing_vertex_firstparent_edge;
+        
+        /* add new parent triangle (front triangle) for the opposing vertex, move old data */
+        int opposing_vertex_firstparent_triangle = data_vertex_firstparent_triangle[ t_v2 ];
+        data_vertex_firstparent_triangle[ t_v2 ] = counter_triangles + ot;
+        data_triangle_nextparents_of_vertices[ counter_triangles + ot ][1] = opposing_vertex_firstparent_triangle;
+        
+        /* add parent triangle (front triangle) for the parent list of the front edge */
+        
+      } else if( localindex_of_refinementedge[ ot ] == 1 ) { // 0 2 
+        
+        data_triangle_vertices[ t_old ][0] = t_v0;
+        data_triangle_vertices[ t_old ][1] = t_v1;
+        data_triangle_vertices[ t_old ][2] = counter_vertices;
+        
+        data_triangle_vertices[ t_new ][0] = t_v1;
+        data_triangle_vertices[ t_new ][1] = counter_vertices;
+        data_triangle_vertices[ t_new ][2] = t_v2;
+        
+        data_triangle_edges[ t_old ][0] = t_e0;
+        data_triangle_edges[ t_old ][1] = e;
+        data_triangle_edges[ t_old ][2] = counter_edges + 1 + ot;
+        
+        data_triangle_edges[ t_new ][0] = counter_edges + 1 + ot;
+        data_triangle_edges[ t_new ][1] = t_e2;
+        data_triangle_edges[ t_new ][2] = counter_edges;
+        
+        data_edge_vertices[ counter_edges + 1 + ot ][0] = t_v1;
+        data_edge_vertices[ counter_edges + 1 + ot ][1] = counter_vertices;
+        
+        {
+          int new_vertex_firstparent_edge = data_vertex_firstparent_edge[ counter_vertices ];
+          data_vertex_firstparent_edge[ counter_vertices ] = counter_edges + 1 + ot;
+          data_edge_nextparents_of_vertices[ counter_edges + 1 + ot ][1] = new_vertex_firstparent_edge;
+        }
+        
+        {
+          int opposing_vertex_firstparent_edge = data_vertex_firstparent_edge[ t_v1 ];
+          data_vertex_firstparent_edge[ t_v1 ] = counter_edges + 1 + ot;
+          data_edge_nextparents_of_vertices[ counter_edges + 1 + ot ][0] = opposing_vertex_firstparent_edge;
+        }
+        
+        {
+          int opposing_vertex_firstparent_triangle = data_vertex_firstparent_triangle[ t_v1 ];
+          data_vertex_firstparent_triangle[ t_v1 ] = counter_triangles + ot;
+          data_triangle_nextparents_of_vertices[ counter_triangles + ot ][0] = opposing_vertex_firstparent_triangle;
+        }
+        
+        /* TODO: triangle parents of the front outer edge */
+        /* TODO: triangle parents of opposing vertex */
+        
+      } else if( localindex_of_refinementedge[ ot ] == 2 ) { // 1 2 
+        
+        data_triangle_vertices[ t_old ][0] = t_v0;
+        data_triangle_vertices[ t_old ][1] = t_v1;
+        data_triangle_vertices[ t_old ][2] = counter_vertices;
+        
+        data_triangle_vertices[ t_new ][0] = t_v0;
+        data_triangle_vertices[ t_new ][1] = counter_vertices;
+        data_triangle_vertices[ t_new ][2] = t_v2;
+        
+        data_triangle_edges[ t_old ][0] = t_e0;
+        data_triangle_edges[ t_old ][1] = counter_edges + 1 + ot;
+        data_triangle_edges[ t_old ][2] = e;
+        
+        data_triangle_edges[ t_new ][0] = counter_edges + 1 + ot;
+        data_triangle_edges[ t_new ][1] = counter_edges;
+        data_triangle_edges[ t_new ][2] = t_e1;
+        
+        data_edge_vertices[ counter_edges + 1 + ot ][0] = t_v0;
+        data_edge_vertices[ counter_edges + 1 + ot ][1] = counter_vertices;
+        
+        {
+          int new_vertex_firstparent_edge = data_vertex_firstparent_edge[ counter_vertices ];
+          data_vertex_firstparent_edge[ counter_vertices ] = counter_edges + 1 + ot;
+          data_edge_nextparents_of_vertices[ counter_edges + 1 + ot ][1] = new_vertex_firstparent_edge;
+        }
+        
+        {
+          int opposing_vertex_firstparent_edge = data_vertex_firstparent_edge[ t_v0 ];
+          data_vertex_firstparent_edge[ t_v0 ] = counter_edges + 1 + ot;
+          data_edge_nextparents_of_vertices[ counter_edges + 1 + ot ][0] = opposing_vertex_firstparent_edge;
+        }
+        
+        {
+          int opposing_vertex_firstparent_triangle = data_vertex_firstparent_triangle[ t_v0 ];
+          data_vertex_firstparent_triangle[ t_v0 ] = counter_triangles + ot;
+          data_triangle_nextparents_of_vertices[ counter_triangles + ot ][0] = opposing_vertex_firstparent_triangle;
+        }
+        
+        /* TODO: triangle parents of the front outer edge */
+        /* TODO: triangle parents of opposing vertex */
+        
+      } else {
+        
+        assert(false);
+        
+      } 
+      
+    }
+    
+    
+    
+    /* Run over the front vertex' parent triangles and conduct manipulations */
+
+    int* pointer_to_index = &data_vertex_firstparent_triangle[ e_front_vertex ];
+    
+    while( *pointer_to_index != nullindex ){ 
+      
+      std::vector<int>::iterator it = std::find( old_triangles.begin(), old_triangles.end(), *pointer_to_index );
+      
+      if( it != old_triangles.end() ) {
+        
+        *pointer_to_index = counter_triangles + ( it - old_triangles.begin() );
+        
+      }
+      int localindex_of_front_vertex; // FIXME: Find value 
+      pointer_to_index = &( data_triangle_nextparents_of_vertices[ *pointer_to_index ][ localindex_of_front_vertex ] );
+      
+    }
+    
+    
+    
+    /*
+     *  UPDATE COUNTERS 
+     */
+    
+    counter_triangles += old_triangles.size();
+    counter_edges     += 1 + old_triangles.size();
+    counter_vertices  += 1;
+    
+    
+    
+    
     
     /* Done */
-    
     
     check();
     
 }
+
+/*
+ * * * * * NEWEST VERTEX BISECTION
+ */
+    
+
+
+
+
+
 
 
 void MeshSimplicial2D::uniformrefinement()
@@ -1829,3 +2067,26 @@ FloatVector MeshSimplicial2D::get_edge_midpoint    ( int e ) const
 
 
 
+//         if( data_edge_firstparent_triangle[ t_e2 ] == t_old ) {
+//           
+//           data_edge_firstparent_triangle[ t_e2 ] = counter_triangles + ot;
+//           
+//         } else {
+//           
+//           int current_edge = data_vertex_firstparent_edge[ e_front_vertex ];
+//           while( data_edge_nextparents_of_vertices[ current_edge ][ indexof_edge_vertex( current_edge, e_front_vertex ) ] != e )
+//             current_edge = data_edge_nextparents_of_vertices[ current_edge ][ indexof_edge_vertex( current_edge, e_front_vertex ) ];
+//           data_edge_nextparents_of_vertices[ current_edge ][ indexof_edge_vertex( current_edge, e_front_vertex ) ] = counter_edge;
+//           
+//         }
+//       
+//         /* TODO: triangle parents of opposing vertex */
+//         if( data_vertex_firstparent_triangle[ t_v2 ] == t_old ) { 
+//           int nextparent_tri = data_triangle_nextparents_of_vertices[ current_tri ][ 2 ];
+//           data_vertex_firstparent_triangle[ t_v2 ] = counter_edges;
+//         } else {
+//           int current_tri = data_vertex_firstparent_triangle[ t_v2 ];
+//           while( data_triangle_nextparents_of_vertices[ current_tri ][ 2 ] != t_old )
+//             current_tri = data_triangle_nextparents_of_vertices[ current_tri ][ 2 ];
+//           data_triangle_nextparents_of_vertices[ current_tri ][ 2 ] = counter_edge;
+//         }

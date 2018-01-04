@@ -67,13 +67,13 @@ void writeMeshSimplicial3D( std::ostream& out, const MeshSimplicial3D& mesh, boo
     if( sugar ) out << "for each tetrahedron, the faces: " << std::endl;
     for( int t = 0; t < mesh.count_tetrahedra(); t++ ) {
         if( sugar ) out << t << ": ";
-        out << mesh.get_tetrahedron_edge( t, 0 )
+        out << mesh.get_tetrahedron_face( t, 0 )
             << space
-            << mesh.get_tetrahedron_edge( t, 1 )
+            << mesh.get_tetrahedron_face( t, 1 )
             << space
-            << mesh.get_tetrahedron_edge( t, 2 )
+            << mesh.get_tetrahedron_face( t, 2 )
             << space
-            << mesh.get_tetrahedron_edge( t, 3 ) << std::endl;
+            << mesh.get_tetrahedron_face( t, 3 ) << std::endl;
     }
     
     if( sugar ) out << "for each face, the first parent tetrahedron: " << std::endl;
@@ -320,8 +320,8 @@ MeshSimplicial3D readMeshSimplicial3D( std::istream& in )
            >> tetrahedron_edges[t][4]
            >> tetrahedron_edges[t][5];
     
-    for( int v = 0; v < counter_edges; v++ )
-        in >> edge_firstparent_tetrahedron[v];
+    for( int e = 0; e < counter_edges; e++ )
+        in >> edge_firstparent_tetrahedron[e];
     
     for( int t = 0; t < counter_tetrahedra; t++ )
         in >> tetrahedron_nextparents_of_edges[t][0] 
@@ -424,12 +424,12 @@ MeshSimplicial3D readMeshSimplicial3D( std::istream& in )
     /* return */
     
     return MeshSimplicial3D( dim, coords, 
-                             tetrahedron_faces, face_firstparent_tetrahedron, tetrahedron_nextparents_of_faces, 
-                             tetrahedron_edges, edge_firstparent_tetrahedron, tetrahedron_nextparents_of_edges, 
+                             tetrahedron_faces,    face_firstparent_tetrahedron,   tetrahedron_nextparents_of_faces, 
+                             tetrahedron_edges,    edge_firstparent_tetrahedron,   tetrahedron_nextparents_of_edges, 
                              tetrahedron_vertices, vertex_firstparent_tetrahedron, tetrahedron_nextparents_of_vertices, 
-                             face_edges, edge_firstparent_face, face_nextparents_of_edges, 
-                             face_vertices, vertex_firstparent_face, face_nextparents_of_vertices, 
-                             edge_vertices, vertex_firstparent_edge, edge_nextparents_of_vertices
+                             face_edges,           edge_firstparent_face,          face_nextparents_of_edges, 
+                             face_vertices,        vertex_firstparent_face,        face_nextparents_of_vertices, 
+                             edge_vertices,        vertex_firstparent_edge,        edge_nextparents_of_vertices
                            );    
 }
 
