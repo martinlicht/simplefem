@@ -22,8 +22,12 @@ int main()
         
         cout << "Refinement" << endl;
         
-        for( int c = 0; c < 100; c++ )
+        for( int c = 0; c < 100; c++ ) {
           M.bisect_edge( c );
+          M.bisect_edge( M.count_edges() - c - 1 );
+          
+        }
+          
         
         M.check();
         

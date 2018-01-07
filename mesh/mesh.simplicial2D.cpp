@@ -2175,6 +2175,11 @@ void MeshSimplicial2D::uniformrefinement()
 
 
 
+
+
+
+
+
 void MeshSimplicial2D::midpoint_refinement( int t )
 {
     check();
@@ -2196,7 +2201,6 @@ void MeshSimplicial2D::midpoint_refinement( int t )
     data_edge_nextparents_of_vertices.resize( counter_edges + 3,   { nullindex, nullindex } );
     
     getcoordinates().addcoordinates( 1 );
-    
     
     
     /* load the new coordinate */
@@ -2226,8 +2230,8 @@ void MeshSimplicial2D::midpoint_refinement( int t )
     int t1 = counter_triangles;
     int t2 = counter_triangles + 1;
     
-    int e0 = counter_edges + 0; // 0 -> vn
-    int e1 = counter_edges + 1; // 1 -> vn
+    int e0 = counter_edges + 0; //  0 -> vn
+    int e1 = counter_edges + 1; //  1 -> vn
     int e2 = counter_edges + 2; // vn -> 2
     
     int vn = counter_vertices;
@@ -2254,8 +2258,8 @@ void MeshSimplicial2D::midpoint_refinement( int t )
     data_triangle_edges[ t1 ][1] = t_e1;
     data_triangle_edges[ t1 ][2] = e2;
     
-    data_triangle_edges[ t2 ][0] = t_e2;
-    data_triangle_edges[ t2 ][1] = e1;
+    data_triangle_edges[ t2 ][0] = e1;
+    data_triangle_edges[ t2 ][1] = t_e2;
     data_triangle_edges[ t2 ][2] = e2;
     
     data_edge_vertices[ e0 ][0] = t_v0;
@@ -2268,7 +2272,6 @@ void MeshSimplicial2D::midpoint_refinement( int t )
     data_edge_vertices[ e2 ][1] = t_v2;
     
     /* fill in: parentlist */
-    // TODO
     data_triangle_nextparents_of_edges[ t0 ][0] = t_e_n0;
     data_triangle_nextparents_of_edges[ t0 ][1] = t1;
     data_triangle_nextparents_of_edges[ t0 ][2] = t2;
@@ -2277,8 +2280,8 @@ void MeshSimplicial2D::midpoint_refinement( int t )
     data_triangle_nextparents_of_edges[ t1 ][1] = t_e_n1;
     data_triangle_nextparents_of_edges[ t1 ][2] = t2;
     
-    data_triangle_nextparents_of_edges[ t2 ][0] = t_e_n2;
-    data_triangle_nextparents_of_edges[ t2 ][1] = nullindex;
+    data_triangle_nextparents_of_edges[ t2 ][0] = nullindex;
+    data_triangle_nextparents_of_edges[ t2 ][1] = t_e_n2;
     data_triangle_nextparents_of_edges[ t2 ][2] = nullindex;
     
     data_triangle_nextparents_of_vertices[ t0 ][0] = t1;
@@ -2303,7 +2306,7 @@ void MeshSimplicial2D::midpoint_refinement( int t )
     
     data_edge_nextparents_of_vertices[ e2 ][0] = nullindex;
     data_edge_nextparents_of_vertices[ e2 ][1] = data_vertex_firstparent_edge[ t_v2 ];
-    data_vertex_firstparent_edge[ t_v1 ] = e2;
+    data_vertex_firstparent_edge[ t_v2 ] = e2;
     
     /* edge t_e0: nothing needs to change */
     
@@ -2367,10 +2370,17 @@ void MeshSimplicial2D::midpoint_refinement( int t )
     data_vertex_firstparent_edge[ counter_vertices ] = e0;
     
     
+    /* Counters */
+    counter_triangles = counter_triangles + 2;
+    counter_edges     = counter_edges     + 3;
+    counter_vertices  = counter_vertices  + 1;
+    
     /* DONE */
     
     check();
 }
+
+
 
 void MeshSimplicial2D::midpoint_refinement_global()
 {
@@ -2379,7 +2389,7 @@ void MeshSimplicial2D::midpoint_refinement_global()
     int N = counter_triangles;
     
     for( int t = 0; t < N; t++ ) {
-      
+      std::cout << t << std::endl;
       midpoint_refinement( t );
       
     }

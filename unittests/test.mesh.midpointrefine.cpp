@@ -7,26 +7,31 @@
 
 #include "../basic.hpp"
 #include "../mesh/coordinates.hpp"
-#include "../mesh/mesh.simplicial3D.hpp"
+#include "../mesh/mesh.simplicial2D.hpp"
 
 
 using namespace std;
 
 int main()
 {
-        cout << "Unit Test for Simplicial 3D Module" << endl;
+        cout << "Unit Test for Simplicial 2D Module" << endl;
         
-        MeshSimplicial3D M = StandardSquare3D();
+        MeshSimplicial2D M = UnitSquare2D();
         
         M.check();
         
         cout << "Refinement" << endl;
         
-        M.uniformrefinement();
+        for( int c = 0; c < 5; c++ ) {
+
+          M.midpoint_refinement_global();
+          
+        }
+          
         
         M.check();
         
-        cout << M << endl;
+        // cout << M << endl;
         
         cout << "Finished Unit Test" << endl;
         
