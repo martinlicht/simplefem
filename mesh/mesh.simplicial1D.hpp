@@ -129,6 +129,11 @@ class MeshSimplicial1D
         
         void improved_uniformrefinement();
         
+        void midpoint_refinement( int e );
+        
+        void midpoint_refinement_global();
+        
+        
         
         /* other things */
         

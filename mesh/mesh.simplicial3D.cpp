@@ -2363,111 +2363,627 @@ std::vector<int> MeshSimplicial3D::get_edge_parents_of_vertex( int v ) const
 
 
 
-// TODO: Update the bisection method 
-
+/*
+ * * * * * NEWEST VERTEX BISECTION
+ */
+    
 void MeshSimplicial3D::bisect_edge( int e )
 {
-    // TODO: Rewrite this section for the 3D case 
-    
     assert( 0 <= e && e < counter_edges );
     check();
     
-    /* Collect the old data */
     
-    int vertex_back  = data_edge_vertices[e][0];
-    int vertex_front = data_edge_vertices[e][1];
-    int nextparents_back  = data_edge_nextparents_of_vertices[e][0];
-    int nextparents_front = data_edge_nextparents_of_vertices[e][1];
-    int firstparent_back  = data_vertex_firstparent_edge[vertex_back ];
-    int firstparent_front = data_vertex_firstparent_edge[vertex_front];
     
-    int back_previousparent   = nullindex;
-    int back_previousparent_localindex = nullindex;
-    if( e != get_vertex_firstparent_edge( vertex_back ) )
-      for( back_previousparent = get_vertex_firstparent_edge( vertex_back  );
-           back_previousparent != nullindex && get_vertex_nextparent_edge(vertex_back,back_previousparent) != e; 
-           back_previousparent = get_vertex_nextparent_edge(vertex_back,back_previousparent) 
-         ); 
-    if( back_previousparent  != nullindex ) 
-      back_previousparent_localindex  = indexof_edge_vertex( back_previousparent,  vertex_back  );
     
-    int front_previousparent  = nullindex;
-    int front_previousparent_localindex = nullindex;
-    if( e != get_vertex_firstparent_edge( vertex_front ) )
-      for( front_previousparent = get_vertex_firstparent_edge( vertex_front );
-           front_previousparent != nullindex && get_vertex_nextparent_edge(vertex_front,front_previousparent) != e; 
-           front_previousparent = get_vertex_nextparent_edge(vertex_front,front_previousparent) 
-         ); 
-    if( front_previousparent != nullindex )
-      front_previousparent_localindex = indexof_edge_vertex( front_previousparent, vertex_front );
     
-    /* Assemble the data */
+    /*
+     * DATA COLLECTION 
+     */
+    
+    int e_back_vertex  = data_edge_vertices[ e ][ 0 ];
+    int e_front_vertex = data_edge_vertices[ e ][ 1 ];
+    
+    std::vector<int> old_faces      = get_face_parents_of_edge( e );
+    std::vector<int> old_tetrahedra = get_tetrahedron_parents_of_edge( e );
+    
+    std::vector<int> localindex_of_face_refinementedge( old_faces.size() );
+    std::vector<int> localindex_of_tetrahedron_refinementedge( old_tetrahedra.size() );
+    
     
     FloatVector midcoordinate = get_edge_midpoint( e );
     
-    int ne = counter_edges;
-    int nv = counter_vertices;
     
-    int back_backvertex       = vertex_back;
-    int back_frontvertex      = nv;
-    int front_backvertex      = nv;
-    int front_frontvertex     = vertex_front;
     
-    int back_backnextparent   = nextparents_back;
-    int back_frontnextparent  = ne;
-    int front_backnextparent  = nullindex;
-    int front_frontnextparent = nextparents_front;
+    /*
+     * ALLOCATE MEMORY FOR THE DATA  
+     */
     
-    int firstparent_newvertex = nv;
+    data_tetrahedron_nextparents_of_faces.resize( counter_tetrahedra + old_tetrahedra.size(),               { nullindex, nullindex, nullindex, nullindex } );
+    data_tetrahedron_faces.resize               ( counter_tetrahedra + old_tetrahedra.size(),               { nullindex, nullindex, nullindex, nullindex } );
+    data_face_firstparent_tetrahedron.resize    ( counter_faces + old_faces.size() + old_tetrahedra.size(),                                      nullindex );
     
-    /* Allocate memory */
+    data_tetrahedron_nextparents_of_edges.resize( counter_tetrahedra + old_tetrahedra.size(), { nullindex, nullindex, nullindex, nullindex, nullindex, nullindex } );
+    data_tetrahedron_edges.resize               ( counter_tetrahedra + old_tetrahedra.size(), { nullindex, nullindex, nullindex, nullindex, nullindex, nullindex } );
+    data_edge_firstparent_tetrahedron.resize    ( counter_edges + old_faces.size() + 1,                                                                  nullindex );
     
-    data_edge_nextparents_of_vertices.resize  ( counter_edges    + 1 );
-    data_edge_vertices.resize     ( counter_edges    + 1 );
-    data_vertex_firstparent_edge.resize( counter_vertices + 1 );
+    data_tetrahedron_nextparents_of_vertices.resize( counter_tetrahedra + old_tetrahedra.size(), { nullindex, nullindex, nullindex, nullindex } );
+    data_tetrahedron_vertices.resize               ( counter_tetrahedra + old_tetrahedra.size(), { nullindex, nullindex, nullindex, nullindex } );
+    data_vertex_firstparent_tetrahedron.resize     ( counter_vertices + 1,                                                            nullindex );
     
-    /* Write in the data */
+    data_face_nextparents_of_edges.resize( counter_faces + old_faces.size() + old_tetrahedra.size(), { nullindex, nullindex, nullindex } );
+    data_face_edges.resize               ( counter_faces + old_faces.size() + old_tetrahedra.size(), { nullindex, nullindex, nullindex } );
+    data_edge_firstparent_face.resize    ( counter_edges     + old_faces.size() + 1,                                           nullindex );
     
-    data_edge_vertices[e ][0] = back_backvertex;
-    data_edge_vertices[e ][1] = back_frontvertex;
-    data_edge_vertices[ne][0] = front_backvertex;
-    data_edge_vertices[ne][1] = front_frontvertex;
+    data_face_nextparents_of_vertices.resize( counter_faces + old_faces.size() + old_tetrahedra.size(), { nullindex, nullindex, nullindex } );
+    data_face_vertices.resize               ( counter_faces + old_faces.size() + old_tetrahedra.size(), { nullindex, nullindex, nullindex } );
+    data_vertex_firstparent_face.resize     ( counter_vertices + 1,                                                               nullindex );
     
-    data_edge_nextparents_of_vertices[e ][0] = back_backnextparent;
-    data_edge_nextparents_of_vertices[e ][1] = back_frontnextparent;
-    data_edge_nextparents_of_vertices[ne][0] = front_backnextparent;
-    data_edge_nextparents_of_vertices[ne][1] = front_frontnextparent;
+    data_edge_nextparents_of_vertices.resize( counter_edges    + old_faces.size() + 1, { nullindex, nullindex } );
+    data_edge_vertices.resize               ( counter_edges    + old_faces.size() + 1, { nullindex, nullindex } );
+    data_vertex_firstparent_edge.resize     ( counter_vertices + 1,                                   nullindex );
     
-    data_vertex_firstparent_edge[nv] = e;
     
-    if( back_previousparent  != nullindex ) {
-      assert( data_edge_nextparents_of_vertices[ back_previousparent ][ back_previousparent_localindex ] == e );
-      data_edge_nextparents_of_vertices[ back_previousparent ][ back_previousparent_localindex ] = e;
+    
+    
+    /* TODO: Bis hierhin geupdated ^^^^^^ */
+    /*
+     * FILL IN DATA
+     */
+    
+    /* vertices of the bisected edge */
+    data_edge_vertices[ e ][ 0 ] = e_back_vertex;
+    data_edge_vertices[ e ][ 1 ] = counter_vertices;
+      
+    data_edge_vertices[ counter_edges ][ 0 ] = counter_vertices;
+    data_edge_vertices[ counter_edges ][ 1 ] = e_front_vertex;
+    
+    /* next parent of back vertex stays the same */
+    /* next parent of front vertex */
+    data_edge_nextparents_of_vertices[ counter_edges ][ 1 ] = data_edge_nextparents_of_vertices[ e ][ 1 ];
+    
+    // edge parent list of back vertex stays the same 
+    // run over the front vertex edge parent list and replace 'e' by 'counter_edges'
+    if( data_vertex_firstparent_edge[ e_front_vertex ] == e ) {
+      
+      data_vertex_firstparent_edge[ e_front_vertex ] = counter_edges;
+      
     } else {
-      assert( data_vertex_firstparent_edge[ vertex_back ] == e );
-      data_vertex_firstparent_edge[ vertex_back ] = e;
+      
+      int current_edge = data_vertex_firstparent_edge[ e_front_vertex ];
+      
+      while( data_edge_nextparents_of_vertices[ current_edge ][ indexof_edge_vertex( current_edge, e_front_vertex ) ] != e )
+        current_edge = data_edge_nextparents_of_vertices[ current_edge ][ indexof_edge_vertex( current_edge, e_front_vertex ) ];
+      
+      data_edge_nextparents_of_vertices[ current_edge ][ indexof_edge_vertex( current_edge, e_front_vertex ) ] = counter_edges;
+      
     }
     
-    if( front_previousparent != nullindex ) {
-      assert( data_edge_nextparents_of_vertices[ front_previousparent ][ front_previousparent_localindex ] == ne );
-      data_edge_nextparents_of_vertices[ front_previousparent ][ front_previousparent_localindex ] = ne;
-    } else {
-      assert( data_vertex_firstparent_edge[ vertex_front ] == e );
-      data_vertex_firstparent_edge[ vertex_front ] = ne;
-    }    
+    /* first and next parents of new vertex */
+    data_vertex_firstparent_edge[ counter_vertices ] = e;
+    data_edge_nextparents_of_vertices[ e ][ 1 ] = counter_edges;
+    data_edge_nextparents_of_vertices[ counter_edges ][ 0 ] = nullindex;
+    
+    // no parent faces yet for the new vertex; will be filled in below */
+    data_vertex_firstparent_face[ counter_vertices ] = nullindex;
+    
+    // no parent faces yet for the front edge; will be filled in below */
+    data_edge_firstparent_face[ counter_edges ] = nullindex;
+    
+    
+    
+    std::cout << "FIRST BIG LOOP" << std::endl;
+    
+    for( int of = 0; of < old_faces.size(); of++ ) {
+      
+      int f_old = old_faces[ of ];
+      int f_new = counter_faces + of;
+      
+      int f_e0 = data_face_edges[ f_old ][ 0 ];
+      int f_e1 = data_face_edges[ f_old ][ 1 ];
+      int f_e2 = data_face_edges[ f_old ][ 2 ];
+      
+      int f_v0 = data_face_vertices[ f_old ][ 0 ];
+      int f_v1 = data_face_vertices[ f_old ][ 1 ];
+      int f_v2 = data_face_vertices[ f_old ][ 2 ];
+      
+      int f_e_n0 = data_face_nextparents_of_edges[ f_old ][ 0 ];
+      int f_e_n1 = data_face_nextparents_of_edges[ f_old ][ 1 ];
+      int f_e_n2 = data_face_nextparents_of_edges[ f_old ][ 2 ];
+      
+      int f_v_n0 = data_face_nextparents_of_vertices[ f_old ][ 0 ];
+      int f_v_n1 = data_face_nextparents_of_vertices[ f_old ][ 1 ];
+      int f_v_n2 = data_face_nextparents_of_vertices[ f_old ][ 2 ];
+      
+      localindex_of_face_refinementedge[ of ] = ( f_e0 == e ) ? 0 : ( ( f_e1 == e ) ? 1 : 2 );
+      assert( data_face_edges[ f_old ][ localindex_of_face_refinementedge[ of ] ] == e );
+      
+      
+      
+      if( localindex_of_face_refinementedge[ of ] == 0 ) { // 0 1 
+        
+        assert( f_v0 == e_back_vertex && f_v1 == e_front_vertex && e == f_e0 );
+        
+        /* face vertices */
+        data_face_vertices[ f_old ][0] = f_v0;
+        data_face_vertices[ f_old ][1] = counter_vertices;
+        data_face_vertices[ f_old ][2] = f_v2;
+        
+        data_face_vertices[ f_new ][0] = counter_vertices;
+        data_face_vertices[ f_new ][1] = f_v1;
+        data_face_vertices[ f_new ][2] = f_v2;
+        
+        /* face edges */
+        data_face_edges[ f_old ][0] = e;
+        data_face_edges[ f_old ][1] = f_e1;
+        data_face_edges[ f_old ][2] = counter_edges + 1 + of;
+        
+        data_face_edges[ f_new ][0] = counter_edges;
+        data_face_edges[ f_new ][1] = counter_edges + 1 + of;
+        data_face_edges[ f_new ][2] = f_e2;
+        
+        /* bisection edge vertices */
+        data_edge_vertices[ counter_edges + 1 + of ][0] = counter_vertices;
+        data_edge_vertices[ counter_edges + 1 + of ][1] = f_v2;
+        
+        
+        /* face vertex neighbors */
+        data_face_nextparents_of_vertices[ f_old ][0] = f_v_n0;
+        data_face_nextparents_of_vertices[ f_old ][1] = counter_faces + of;
+        data_face_nextparents_of_vertices[ f_old ][2] = counter_faces + of;
+        
+        data_face_nextparents_of_vertices[ f_new ][0] = data_vertex_firstparent_face[ counter_vertices ];
+        data_face_nextparents_of_vertices[ f_new ][1] = f_v_n1;
+        data_face_nextparents_of_vertices[ f_new ][2] = f_v_n2;
+        
+        data_vertex_firstparent_face[ counter_vertices ] = f_old;
+        
+        /* face edge neighbors */
+        data_face_nextparents_of_edges[ f_old ][0] = f_e_n0;
+        data_face_nextparents_of_edges[ f_old ][1] = f_e_n1;
+        data_face_nextparents_of_edges[ f_old ][2] = counter_faces + of;
+        
+        data_face_nextparents_of_edges[ f_new ][0] = data_edge_firstparent_face[ counter_edges ];
+        data_face_nextparents_of_edges[ f_new ][1] = nullindex;
+        data_face_nextparents_of_edges[ f_new ][2] = f_e_n2;
+        
+        data_edge_firstparent_face[ counter_edges ] = f_new;
+        
+        data_edge_firstparent_face[ counter_edges + 1 + of ] = f_old;
+        
+        /* run over the front outer edge parent face list and replace 'f_old' by 'f_new' */
+        if( data_edge_firstparent_face[ f_e2 ] == f_old ) 
+          data_edge_firstparent_face[ f_e2 ] = f_new;
+        else {
+          int current_face = data_edge_firstparent_face[ f_e2 ];
+          while( data_face_nextparents_of_edges[ current_face ][ indexof_face_edge( current_face, f_e2 ) ] != f_old 
+                 &&
+                 data_face_nextparents_of_edges[ current_face ][ indexof_face_edge( current_face, f_e2 ) ] != nullindex )
+            current_face = data_face_nextparents_of_edges[ current_face ][ indexof_face_edge( current_face, f_e2 ) ];
+          assert( data_face_nextparents_of_edges[ current_face ][ indexof_face_edge( current_face, f_e2 ) ] != nullindex );
+          data_face_nextparents_of_edges[ current_face ][ indexof_face_edge( current_face, f_e2 ) ] = f_new;
+        }
+        
+        
+        /* add new parent edge for the new vertex */
+        int new_vertex_firstparent_edge = data_vertex_firstparent_edge[ counter_vertices ];
+        data_vertex_firstparent_edge[ counter_vertices ] = counter_edges + 1 + of;
+        data_edge_nextparents_of_vertices[ counter_edges + 1 + of ][0] = new_vertex_firstparent_edge;
+        
+        /* add new parent edge for the opposing vertex */
+        int opposing_vertex_firstparent_edge = data_vertex_firstparent_edge[ f_v2 ];
+        data_vertex_firstparent_edge[ f_v2 ] = counter_edges + 1 + of;
+        data_edge_nextparents_of_vertices[ counter_edges + 1 + of ][1] = opposing_vertex_firstparent_edge;
+        
+        
+        
+      } else if( localindex_of_face_refinementedge[ of ] == 1 ) { // 0 2 
+        
+        assert( f_v0 == e_back_vertex && f_v2 == e_front_vertex && e == f_e1 );
+        
+        /* face vertices */
+        data_face_vertices[ f_old ][0] = f_v0;
+        data_face_vertices[ f_old ][1] = f_v1;
+        data_face_vertices[ f_old ][2] = counter_vertices;
+        
+        data_face_vertices[ f_new ][0] = f_v1;
+        data_face_vertices[ f_new ][1] = counter_vertices;
+        data_face_vertices[ f_new ][2] = f_v2;
+        
+        /* face edges */
+        data_face_edges[ f_old ][0] = f_e0;
+        data_face_edges[ f_old ][1] = e;
+        data_face_edges[ f_old ][2] = counter_edges + 1 + of;
+        
+        data_face_edges[ f_new ][0] = counter_edges + 1 + of;
+        data_face_edges[ f_new ][1] = f_e2;
+        data_face_edges[ f_new ][2] = counter_edges;
+        
+        /* bisection edge vertices */
+        data_edge_vertices[ counter_edges + 1 + of ][0] = f_v1;
+        data_edge_vertices[ counter_edges + 1 + of ][1] = counter_vertices;
+        
+        
+        /* face vertex neighbors */
+        data_face_nextparents_of_vertices[ f_old ][0] = f_v_n0;
+        data_face_nextparents_of_vertices[ f_old ][1] = counter_faces + of;
+        data_face_nextparents_of_vertices[ f_old ][2] = counter_faces + of;
+        
+        data_face_nextparents_of_vertices[ f_new ][0] = f_v_n1;
+        data_face_nextparents_of_vertices[ f_new ][1] = data_vertex_firstparent_face[ counter_vertices ];
+        data_face_nextparents_of_vertices[ f_new ][2] = f_v_n2;
+        
+        data_vertex_firstparent_face[ counter_vertices ] = f_old;
+        
+        /* face edge neighbors */
+        data_face_nextparents_of_edges[ f_old ][0] = f_e_n0;
+        data_face_nextparents_of_edges[ f_old ][1] = f_e_n1;
+        data_face_nextparents_of_edges[ f_old ][2] = counter_faces + of;
+        
+        data_face_nextparents_of_edges[ f_new ][0] = nullindex;
+        data_face_nextparents_of_edges[ f_new ][1] = f_e_n2;
+        data_face_nextparents_of_edges[ f_new ][2] = data_edge_firstparent_face[ counter_edges ];
+        
+        data_edge_firstparent_face[ counter_edges ] = f_new;
+        
+        data_edge_firstparent_face[ counter_edges + 1 + of ] = f_old;
+        
+        /* run over the front outer edge parent face list and replace 'f_old' by 'f_new' */
+        if( data_edge_firstparent_face[ f_e2 ] == f_old ) 
+          data_edge_firstparent_face[ f_e2 ] = f_new;
+        else {
+          int current_face = data_edge_firstparent_face[ f_e2 ];
+          while( data_face_nextparents_of_edges[ current_face ][ indexof_face_edge( current_face, f_e2 ) ] != f_old 
+                 &&
+                 data_face_nextparents_of_edges[ current_face ][ indexof_face_edge( current_face, f_e2 ) ] != nullindex )
+            current_face = data_face_nextparents_of_edges[ current_face ][ indexof_face_edge( current_face, f_e2 ) ];
+          assert( data_face_nextparents_of_edges[ current_face ][ indexof_face_edge( current_face, f_e2 ) ] != nullindex );
+          data_face_nextparents_of_edges[ current_face ][ indexof_face_edge( current_face, f_e2 ) ] = f_new;
+        }
+        
+        
+        /* add new parent edge for the new vertex */
+        int new_vertex_firstparent_edge = data_vertex_firstparent_edge[ counter_vertices ];
+        data_vertex_firstparent_edge[ counter_vertices ] = counter_edges + 1 + of;
+        data_edge_nextparents_of_vertices[ counter_edges + 1 + of ][1] = new_vertex_firstparent_edge;
+        
+        /* add new parent edge for the opposing vertex */
+        int opposing_vertex_firstparent_edge = data_vertex_firstparent_edge[ f_v1 ];
+        data_vertex_firstparent_edge[ f_v1 ] = counter_edges + 1 + of;
+        data_edge_nextparents_of_vertices[ counter_edges + 1 + of ][0] = opposing_vertex_firstparent_edge;
+        
+        
+      } else if( localindex_of_face_refinementedge[ of ] == 2 ) { // 1 2 
+        
+        assert( f_v1 == e_back_vertex && f_v2 == e_front_vertex && e == f_e2 );
+        
+        /* face vertices */
+        data_face_vertices[ f_old ][0] = f_v0;
+        data_face_vertices[ f_old ][1] = f_v1;
+        data_face_vertices[ f_old ][2] = counter_vertices;
+        
+        data_face_vertices[ f_new ][0] = f_v0;
+        data_face_vertices[ f_new ][1] = counter_vertices;
+        data_face_vertices[ f_new ][2] = f_v2;
+        
+        /* face edges */
+        data_face_edges[ f_old ][0] = f_e0;
+        data_face_edges[ f_old ][1] = counter_edges + 1 + of;
+        data_face_edges[ f_old ][2] = e;
+        
+        data_face_edges[ f_new ][0] = counter_edges + 1 + of;
+        data_face_edges[ f_new ][1] = f_e1;
+        data_face_edges[ f_new ][2] = counter_edges;
+        
+        /* bisection edge vertices */
+        data_edge_vertices[ counter_edges + 1 + of ][0] = f_v0;
+        data_edge_vertices[ counter_edges + 1 + of ][1] = counter_vertices;
+        
+        
+        /* face vertex neighbors */
+        data_face_nextparents_of_vertices[ f_old ][0] = counter_faces + of;
+        data_face_nextparents_of_vertices[ f_old ][1] = f_v_n1;
+        data_face_nextparents_of_vertices[ f_old ][2] = counter_faces + of;
+        
+        data_face_nextparents_of_vertices[ f_new ][0] = f_v_n0;
+        data_face_nextparents_of_vertices[ f_new ][1] = data_vertex_firstparent_face[ counter_vertices ];
+        data_face_nextparents_of_vertices[ f_new ][2] = f_v_n2;
+        
+        data_vertex_firstparent_face[ counter_vertices ] = f_old;
+        
+        /* face edge neighbors */
+        data_face_nextparents_of_edges[ f_old ][0] = f_e_n0;
+        data_face_nextparents_of_edges[ f_old ][1] = counter_faces + of;
+        data_face_nextparents_of_edges[ f_old ][2] = f_e_n2;
+        
+        data_face_nextparents_of_edges[ f_new ][0] = nullindex;
+        data_face_nextparents_of_edges[ f_new ][1] = f_e_n1;
+        data_face_nextparents_of_edges[ f_new ][2] = data_edge_firstparent_face[ counter_edges ];
+        
+        data_edge_firstparent_face[ counter_edges ] = f_new;
+        
+        data_edge_firstparent_face[ counter_edges + 1 + of ] = f_old;
+        
+        /* run over the front outer edge parent face list and replace 'f_old' by 'f_new' */
+        if( data_edge_firstparent_face[ f_e1 ] == f_old ) 
+          data_edge_firstparent_face[ f_e1 ] = f_new;
+        else {
+          int current_face = data_edge_firstparent_face[ f_e1 ];
+          while( data_face_nextparents_of_edges[ current_face ][ indexof_face_edge( current_face, f_e1 ) ] != f_old 
+                 &&
+                 data_face_nextparents_of_edges[ current_face ][ indexof_face_edge( current_face, f_e1 ) ] != nullindex )
+            current_face = data_face_nextparents_of_edges[ current_face ][ indexof_face_edge( current_face, f_e1 ) ];
+          assert( data_face_nextparents_of_edges[ current_face ][ indexof_face_edge( current_face, f_e1 ) ] != nullindex );
+          data_face_nextparents_of_edges[ current_face ][ indexof_face_edge( current_face, f_e1 ) ] = f_new;
+        }
+        
+        
+        /* add new parent edge for the new vertex */
+        int new_vertex_firstparent_edge = data_vertex_firstparent_edge[ counter_vertices ];
+        data_vertex_firstparent_edge[ counter_vertices ] = counter_edges + 1 + of;
+        data_edge_nextparents_of_vertices[ counter_edges + 1 + of ][1] = new_vertex_firstparent_edge;
+        
+        /* add new parent edge for the opposing vertex */
+        int opposing_vertex_firstparent_edge = data_vertex_firstparent_edge[ f_v0 ];
+        data_vertex_firstparent_edge[ f_v0 ] = counter_edges + 1 + of;
+        data_edge_nextparents_of_vertices[ counter_edges + 1 + of ][0] = opposing_vertex_firstparent_edge;
+        
+      } else {
+        
+        assert(false);
+        
+      } 
+      
+    }
+    
+    
+    std::cout << "FIRST BIG LOOP END" << std::endl;
+    
+    
+    /* Run over the front vertex' parent faces and conduct manipulations */
+
+    int* pointer_to_index = &data_vertex_firstparent_face[ e_front_vertex ];
+    
+    while( *pointer_to_index != nullindex ) { 
+      
+      std::vector<int>::iterator it = std::find( old_faces.begin(), old_faces.end(), *pointer_to_index );
+      
+      if( it != old_faces.end() ) {
+        
+        assert( *pointer_to_index == *it );
+        assert( *it == old_faces[ it - old_faces.begin() ] );
+        
+        *pointer_to_index = counter_faces + ( it - old_faces.begin() );
+        
+        std::cout << "manipulate" << std::endl;
+        
+      } else std::cout << "keep" << std::endl;
+      
+      int localindex_of_front_vertex = nullindex;
+      if( data_face_vertices[ *pointer_to_index ][ 0 ] == e_front_vertex ) localindex_of_front_vertex = 0;
+      if( data_face_vertices[ *pointer_to_index ][ 1 ] == e_front_vertex ) localindex_of_front_vertex = 1;
+      if( data_face_vertices[ *pointer_to_index ][ 2 ] == e_front_vertex ) localindex_of_front_vertex = 2;
+      assert( localindex_of_front_vertex != nullindex );
+      
+      pointer_to_index = &( data_face_nextparents_of_vertices[ *pointer_to_index ][ localindex_of_front_vertex ] );
+      
+    }
     
     getcoordinates().append( midcoordinate );
+    
+    
+    
+    
+    // /* TODO: Fill in the data for the case distinctions below */
+    
+    // std::cout << "SECOND BIG LOOP BEGIN" << std::endl;
+    
+    // for( int ot = 0; ot < old_tetrahedra.size(); ot++ ) {
+      
+    //   int t_old = old_tetrahedra[ ot ];
+    //   int t_new = counter_tetrahedra + ot;
+      
+    //   int f_new = counter_faces + old_faces.size() + ot;
+      
+    //   int t_f0 = data_tetrahedron_faces[ t_old ][ 0 ];
+    //   int t_f1 = data_tetrahedron_faces[ t_old ][ 1 ];
+    //   int t_f2 = data_tetrahedron_faces[ t_old ][ 2 ];
+    //   int t_f3 = data_tetrahedron_faces[ t_old ][ 3 ];
+      
+    //   int t_e0 = data_tetrahedron_edges[ t_old ][ 0 ];
+    //   int t_e1 = data_tetrahedron_edges[ t_old ][ 1 ];
+    //   int t_e2 = data_tetrahedron_edges[ t_old ][ 2 ];
+    //   int t_e3 = data_tetrahedron_edges[ t_old ][ 3 ];
+    //   int t_e4 = data_tetrahedron_edges[ t_old ][ 4 ];
+    //   int t_e5 = data_tetrahedron_edges[ t_old ][ 5 ];
+      
+    //   int t_v0 = data_tetrahedron_vertices[ t_old ][ 0 ];
+    //   int t_v1 = data_tetrahedron_vertices[ t_old ][ 1 ];
+    //   int t_v2 = data_tetrahedron_vertices[ t_old ][ 2 ];
+    //   int t_v3 = data_tetrahedron_vertices[ t_old ][ 3 ];
+      
+    //   int t_f_n0 = data_tetrahedron_nextparents_of_faces[ t_old ][ 0 ];
+    //   int t_f_n1 = data_tetrahedron_nextparents_of_faces[ t_old ][ 1 ];
+    //   int t_f_n2 = data_tetrahedron_nextparents_of_faces[ t_old ][ 2 ];
+    //   int t_f_n3 = data_tetrahedron_nextparents_of_faces[ t_old ][ 3 ];
+      
+    //   int t_e_n0 = data_tetrahedron_nextparents_of_edges[ t_old ][ 0 ];
+    //   int t_e_n1 = data_tetrahedron_nextparents_of_edges[ t_old ][ 1 ];
+    //   int t_e_n2 = data_tetrahedron_nextparents_of_edges[ t_old ][ 2 ];
+    //   int t_e_n3 = data_tetrahedron_nextparents_of_edges[ t_old ][ 3 ];
+    //   int t_e_n4 = data_tetrahedron_nextparents_of_edges[ t_old ][ 4 ];
+    //   int t_e_n5 = data_tetrahedron_nextparents_of_edges[ t_old ][ 5 ];
+      
+    //   int t_v_n0 = data_tetrahedron_nextparents_of_vertices[ t_old ][ 0 ];
+    //   int t_v_n1 = data_tetrahedron_nextparents_of_vertices[ t_old ][ 1 ];
+    //   int t_v_n2 = data_tetrahedron_nextparents_of_vertices[ t_old ][ 2 ];
+    //   int t_v_n3 = data_tetrahedron_nextparents_of_vertices[ t_old ][ 3 ];
+      
+    //   localindex_of_tetrahedron_refinementedge[ ot ] = nullindex;
+    //   if( t_e0 == e ) localindex_of_tetrahedron_refinementedge[ ot ] = 0;
+    //   if( t_e1 == e ) localindex_of_tetrahedron_refinementedge[ ot ] = 1;
+    //   if( t_e2 == e ) localindex_of_tetrahedron_refinementedge[ ot ] = 2;
+    //   if( t_e3 == e ) localindex_of_tetrahedron_refinementedge[ ot ] = 3;
+    //   if( t_e4 == e ) localindex_of_tetrahedron_refinementedge[ ot ] = 4;
+    //   if( t_e5 == e ) localindex_of_tetrahedron_refinementedge[ ot ] = 5;
+    //   assert( localindex_of_tetrahedron_refinementedge[ ot ] != nullindex );
+    //   assert( data_tetrahedron_edges[ t_old ][ localindex_of_tetrahedron_refinementedge[ ot ] ] == e );
+      
+      
+      
+    //   if(        localindex_of_face_refinementedge[ ot ] == 0 ) { // 0 1 
         
-    /* Update counter */
-    counter_edges++;
-    counter_vertices++;
+    //     assert( t_v0 == e_back_vertex && t_v1 == e_front_vertex && e == t_e0 );
+        
+        
+        
+    //   } else if( localindex_of_face_refinementedge[ ot ] == 1 ) { // 0 2 
+        
+    //     assert( t_v0 == e_back_vertex && t_v2 == e_front_vertex && e == t_e1 );
+        
+    //     /* Tetrahedron -> Faces */
+    //     data_tetrahedron_faces[ t_old ][0] = ;
+    //     data_tetrahedron_faces[ t_old ][1] = ;
+    //     data_tetrahedron_faces[ t_old ][2] = ;
+    //     data_tetrahedron_faces[ t_old ][3] = ;
+        
+    //     data_tetrahedron_faces[ t_new ][0] = ;
+    //     data_tetrahedron_faces[ t_new ][1] = ;
+    //     data_tetrahedron_faces[ t_new ][2] = ;
+    //     data_tetrahedron_faces[ t_new ][3] = ;
+        
+    //     /* Tetrahedron -> Edges */
+    //     data_tetrahedron_edges[ t_old ][0] = ;
+    //     data_tetrahedron_edges[ t_old ][1] = ;
+    //     data_tetrahedron_edges[ t_old ][2] = ;
+    //     data_tetrahedron_edges[ t_old ][3] = ;
+    //     data_tetrahedron_edges[ t_old ][4] = ;
+    //     data_tetrahedron_edges[ t_old ][5] = ;
+        
+    //     data_tetrahedron_edges[ t_new ][0] = ;
+    //     data_tetrahedron_edges[ t_new ][1] = ;
+    //     data_tetrahedron_edges[ t_new ][2] = ;
+    //     data_tetrahedron_edges[ t_new ][3] = ;
+    //     data_tetrahedron_edges[ t_new ][4] = ;
+    //     data_tetrahedron_edges[ t_new ][5] = ;
+        
+    //     /* Tetrahedron -> Vertices */
+    //     data_triangles_vertices[ t_old ][0] = t_v0;
+    //     data_triangles_vertices[ t_old ][1] = counter_vertices;
+    //     data_triangles_vertices[ t_old ][2] = t_v2;
+    //     data_triangles_vertices[ t_old ][3] = t_v3;
+        
+    //     data_triangles_vertices[ t_new ][0] = counter_vertices;
+    //     data_triangles_vertices[ t_new ][1] = t_v1;
+    //     data_triangles_vertices[ t_new ][2] = t_v2;
+    //     data_triangles_vertices[ t_new ][3] = t_v3;
+        
+    //     /* Face -> Edges */
+    //     data_face_edges[ t_old ][0] = ;
+    //     data_face_edges[ t_old ][1] = ;
+    //     data_face_edges[ t_old ][2] = ;
+        
+    //     data_face_edges[ t_new ][0] = ;
+    //     data_face_edges[ t_new ][1] = ;
+    //     data_face_edges[ t_new ][2] = ;
+        
+    //     /* Face -> Vertices */
+    //     data_face_vertices[ t_old ][0] = ;
+    //     data_face_vertices[ t_old ][1] = ;
+    //     data_face_vertices[ t_old ][2] = ;
+        
+    //     data_face_vertices[ t_new ][0] = ;
+    //     data_face_vertices[ t_new ][1] = ;
+    //     data_face_vertices[ t_new ][2] = ;
+        
+    //     /* Neighbors: Tetrahedron -> Faces */
+    //     /* Neighbors: Tetrahedron -> Edges */
+    //     /* Neighbors: Tetrahedron -> Vertices */
+        
+    //     /* Neighbors: Face -> Edges */
+    //     /* Neighbors: Face -> Vertices */
+        
+    //     /* run over the front outer face parent tetrahedra and replace 't_old' by 't_new' */
+    //     if( data_face_firstparent_tetrahedron[ t_f? ] == t_old ) 
+    //       data_face_firstparent_tetrahedron[ t_f? ] = t_new;
+    //     else {
+    //       int current_tetrahedron = data_face_firstparent_tetrahedron[ t_f? ];
+    //       while( data_tetrahedron_nextparents_of_faces[ current_tetrahedron ][ indexof_tetrahedron_face( current_tetrahedron, t_f? ) ] != t_old 
+    //              &&
+    //              data_tetrahedron_nextparents_of_faces[ current_tetrahedron ][ indexof_tetrahedron_face( current_tetrahedron, t_f? ) ] != nullindex )
+    //         current_tetrahedron = data_tetrahedron_nextparents_of_faces[ current_tetrahedron ][ indexof_tetrahedron_face( current_tetrahedron, t_e? ) ];
+    //       assert( data_tetrahedron_nextparents_of_faces[ current_tetrahedron ][ indexof_tetrahedron_face( current_tetrahedron, t_f? ) ] != nullindex );
+    //       data_tetrahedron_nextparents_of_faces[ current_tetrahedron ][ indexof_tetrahedron_face( current_tetrahedron, t_f? ) ] = t_new;
+    //     }
+        
+    //     /* add new parent tetrahedron for the new vertex */
+    //     int new_vertex_firstparent_tetrahedron = data_vertex_firstparent_tetrahedron[ counter_vertices ];
+    //     data_vertex_firstparent_tetrahedron[ counter_vertices ] = ;
+    //     data_edge_nextparents_of_vertices[  ][ ] = int new_vertex_firstparent_tetrahedron;
+        
+    //     /* add new parent face for the opposing edge and its vertices */
+        
+        
+    
+    //   } else if( localindex_of_face_refinementedge[ ot ] == 2 ) { // 0 3 
+        
+    //     assert( t_v0 == e_back_vertex && t_v3 == e_front_vertex && e == t_e2 );
+    
+    //   } else if( localindex_of_face_refinementedge[ ot ] == 3 ) { // 1 2 
+        
+    //     assert( t_v1 == e_back_vertex && t_v2 == e_front_vertex && e == t_e3 );
+    
+    //   } else if( localindex_of_face_refinementedge[ ot ] == 4 ) { // 1 3 
+        
+    //     assert( t_v1 == e_back_vertex && t_v3 == e_front_vertex && e == t_e4 );
+    
+    //   } else if( localindex_of_face_refinementedge[ ot ] == 5 ) { // 2 3 
+        
+    //     assert( t_v2 == e_back_vertex && t_v3 == e_front_vertex && e == t_e5 );
+    
+    //   } else {
+        
+    //     assert( false );
+        
+    //   }
+       
+      
+    // }
+      
+    // std::cout << "SECOND BIG LOOP END" << std::endl;
+    
+    
+    
+    /* SOME FINISHINGS HERE, such as updating the adjacent tetrahedra for front vertex and front edges */
+    
+    
+    
+    
+    
+    
+    std::cout << "FINISHED" << std::endl;
+    
+    /*
+     *  UPDATE COUNTERS 
+     */
+    
+    counter_faces += old_faces.size();
+    counter_edges     += 1 + old_faces.size();
+    counter_vertices  += 1;
+    
+    
+    
+    
     
     /* Done */
-    
     
     check();
     
 }
+
+/*
+ * * * * * NEWEST VERTEX BISECTION
+ */
+
 
 
 
@@ -2550,7 +3066,7 @@ void MeshSimplicial3D::bisect_edge( int e )
  *       22 23
  *       23 33
  *    
- *  Completely New Edge: 12F + 1T
+ *  Completely New Edge: 3F + 1T
  *       
  *       
  *       01 02
@@ -2591,7 +3107,7 @@ void MeshSimplicial3D::uniformrefinement()
     int new_counter_tetrahedra = 8 * counter_tetrahedra;
     int new_counter_faces      = 4 * counter_faces + 8 * counter_tetrahedra;
     int new_counter_edges      = 2 * counter_edges + 3  * counter_faces + 1 * counter_tetrahedra;
-    int new_counter_vertices   = 1 * counter_vertices + 2 * counter_edges;
+    int new_counter_vertices   = 1 * counter_vertices + 1 * counter_edges;
     
     
     /* resize the arrays */
@@ -3408,6 +3924,32 @@ void MeshSimplicial3D::uniformrefinement()
 
 
 
+
+
+void MeshSimplicial3D::midpoint_refinement( int t )
+{
+    check();
+    
+    
+    
+    check();
+}
+
+
+void MeshSimplicial3D::midpoint_refinement_global()
+{
+    check();
+    
+    int N = counter_tetrahedra;
+    
+    for( int t = 0; t < N; t++ ) {
+      
+      midpoint_refinement( t );
+      
+    }
+    
+    check();
+}
 
 
 

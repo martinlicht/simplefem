@@ -2175,6 +2175,232 @@ void MeshSimplicial2D::uniformrefinement()
 
 
 
+void MeshSimplicial2D::midpoint_refinement( int t )
+{
+    check();
+    
+    assert( 0 <= t && t < counter_triangles );
+    
+    /* Allocate memory */
+    
+    data_triangle_edges.resize               ( counter_triangles + 2, { nullindex, nullindex, nullindex } );
+    data_edge_firstparent_triangle.resize    ( counter_edges + 3,                             nullindex   );
+    data_triangle_nextparents_of_edges.resize( counter_triangles + 2, { nullindex, nullindex, nullindex } );
+    
+    data_triangle_vertices.resize               ( counter_triangles + 2, { nullindex, nullindex, nullindex } );
+    data_vertex_firstparent_triangle.resize     ( counter_vertices + 1,                          nullindex   );
+    data_triangle_nextparents_of_vertices.resize( counter_triangles + 2, { nullindex, nullindex, nullindex } );
+    
+    data_edge_vertices.resize               ( counter_edges + 3,   { nullindex, nullindex } );
+    data_vertex_firstparent_edge.resize     ( counter_vertices + 1,             nullindex   );
+    data_edge_nextparents_of_vertices.resize( counter_edges + 3,   { nullindex, nullindex } );
+    
+    getcoordinates().addcoordinates( 1 );
+    
+    
+    
+    /* load the new coordinate */
+    
+    getcoordinates().loadvector( counter_vertices, get_triangle_midpoint( t ) );
+    
+    
+    /* assemble the data and auxiliary variables */
+    int t_e0 = data_triangle_edges[t][0];
+    int t_e1 = data_triangle_edges[t][1];
+    int t_e2 = data_triangle_edges[t][2];
+    
+    int t_v0 = data_triangle_vertices[t][0];
+    int t_v1 = data_triangle_vertices[t][1];
+    int t_v2 = data_triangle_vertices[t][2];
+    
+    int t_e_n0 = data_triangle_nextparents_of_edges[t][0];
+    int t_e_n1 = data_triangle_nextparents_of_edges[t][1];
+    int t_e_n2 = data_triangle_nextparents_of_edges[t][2];
+    
+    int t_v_n0 = data_triangle_nextparents_of_vertices[t][0];
+    int t_v_n1 = data_triangle_nextparents_of_vertices[t][1];
+    int t_v_n2 = data_triangle_nextparents_of_vertices[t][2];
+    
+    
+    int t0 = t;
+    int t1 = counter_triangles;
+    int t2 = counter_triangles + 1;
+    
+    int e0 = counter_edges + 0; // 0 -> vn
+    int e1 = counter_edges + 1; // 1 -> vn
+    int e2 = counter_edges + 2; // vn -> 2
+    
+    int vn = counter_vertices;
+    
+    
+    /* fill in: downward */
+    data_triangle_vertices[ t0 ][0] = t_v0;
+    data_triangle_vertices[ t0 ][1] = t_v1;
+    data_triangle_vertices[ t0 ][2] = vn;
+    
+    data_triangle_vertices[ t1 ][0] = t_v0;
+    data_triangle_vertices[ t1 ][1] = vn;
+    data_triangle_vertices[ t1 ][2] = t_v2;
+    
+    data_triangle_vertices[ t2 ][0] = t_v1;
+    data_triangle_vertices[ t2 ][1] = vn;
+    data_triangle_vertices[ t2 ][2] = t_v2;
+    
+    data_triangle_edges[ t0 ][0] = t_e0;
+    data_triangle_edges[ t0 ][1] = e0;
+    data_triangle_edges[ t0 ][2] = e1;
+    
+    data_triangle_edges[ t1 ][0] = e0;
+    data_triangle_edges[ t1 ][1] = t_e1;
+    data_triangle_edges[ t1 ][2] = e2;
+    
+    data_triangle_edges[ t2 ][0] = t_e2;
+    data_triangle_edges[ t2 ][1] = e1;
+    data_triangle_edges[ t2 ][2] = e2;
+    
+    data_edge_vertices[ e0 ][0] = t_v0;
+    data_edge_vertices[ e0 ][1] = vn;
+    
+    data_edge_vertices[ e1 ][0] = t_v1;
+    data_edge_vertices[ e1 ][1] = vn;
+    
+    data_edge_vertices[ e2 ][0] = vn;
+    data_edge_vertices[ e2 ][1] = t_v2;
+    
+    /* fill in: parentlist */
+    // TODO
+    data_triangle_nextparents_of_edges[ t0 ][0] = t_e_n0;
+    data_triangle_nextparents_of_edges[ t0 ][1] = t1;
+    data_triangle_nextparents_of_edges[ t0 ][2] = t2;
+    
+    data_triangle_nextparents_of_edges[ t1 ][0] = nullindex;
+    data_triangle_nextparents_of_edges[ t1 ][1] = t_e_n1;
+    data_triangle_nextparents_of_edges[ t1 ][2] = t2;
+    
+    data_triangle_nextparents_of_edges[ t2 ][0] = t_e_n2;
+    data_triangle_nextparents_of_edges[ t2 ][1] = nullindex;
+    data_triangle_nextparents_of_edges[ t2 ][2] = nullindex;
+    
+    data_triangle_nextparents_of_vertices[ t0 ][0] = t1;
+    data_triangle_nextparents_of_vertices[ t0 ][1] = t2;
+    data_triangle_nextparents_of_vertices[ t0 ][2] = t1;
+    
+    data_triangle_nextparents_of_vertices[ t1 ][0] = t_v_n0;
+    data_triangle_nextparents_of_vertices[ t1 ][1] = t2;
+    data_triangle_nextparents_of_vertices[ t1 ][2] = t2;
+    
+    data_triangle_nextparents_of_vertices[ t2 ][0] = t_v_n1;
+    data_triangle_nextparents_of_vertices[ t2 ][1] = nullindex;
+    data_triangle_nextparents_of_vertices[ t2 ][2] = t_v_n2;
+    
+    data_edge_nextparents_of_vertices[ e0 ][0] = data_vertex_firstparent_edge[ t_v0 ];
+    data_edge_nextparents_of_vertices[ e0 ][1] = e1;
+    data_vertex_firstparent_edge[ t_v0 ] = e0;
+    
+    data_edge_nextparents_of_vertices[ e1 ][0] = data_vertex_firstparent_edge[ t_v1 ];
+    data_edge_nextparents_of_vertices[ e1 ][1] = e2;
+    data_vertex_firstparent_edge[ t_v1 ] = e1;
+    
+    data_edge_nextparents_of_vertices[ e2 ][0] = nullindex;
+    data_edge_nextparents_of_vertices[ e2 ][1] = data_vertex_firstparent_edge[ t_v2 ];
+    data_vertex_firstparent_edge[ t_v1 ] = e2;
+    
+    /* edge t_e0: nothing needs to change */
+    
+    /* edge t_e1: relink */
+    if( data_edge_firstparent_triangle[ t_e1 ] == t ) 
+      data_edge_firstparent_triangle[ t_e1 ] = t1;
+    else {
+      int current_triangle = data_edge_firstparent_triangle[ t_e1 ];
+      while( data_triangle_nextparents_of_edges[ current_triangle ][ indexof_triangle_edge( current_triangle, t_e1 ) ] != t 
+             &&
+             data_triangle_nextparents_of_edges[ current_triangle ][ indexof_triangle_edge( current_triangle, t_e1 ) ] != nullindex )
+        current_triangle = data_triangle_nextparents_of_edges[ current_triangle ][ indexof_triangle_edge( current_triangle, t_e1 ) ];
+      assert( data_triangle_nextparents_of_edges[ current_triangle ][ indexof_triangle_edge( current_triangle, t_e1 ) ] != nullindex );
+      assert( data_triangle_nextparents_of_edges[ current_triangle ][ indexof_triangle_edge( current_triangle, t_e1 ) ] == t );
+      data_triangle_nextparents_of_edges[ current_triangle ][ indexof_triangle_edge( current_triangle, t_e1 ) ] = t1;
+    }
+        
+    /* edge t_e2: relink */
+    if( data_edge_firstparent_triangle[ t_e2 ] == t ) 
+      data_edge_firstparent_triangle[ t_e2 ] = t2;
+    else {
+      int current_triangle = data_edge_firstparent_triangle[ t_e2 ];
+      while( data_triangle_nextparents_of_edges[ current_triangle ][ indexof_triangle_edge( current_triangle, t_e2 ) ] != t 
+             &&
+             data_triangle_nextparents_of_edges[ current_triangle ][ indexof_triangle_edge( current_triangle, t_e2 ) ] != nullindex )
+        current_triangle = data_triangle_nextparents_of_edges[ current_triangle ][ indexof_triangle_edge( current_triangle, t_e2 ) ];
+      assert( data_triangle_nextparents_of_edges[ current_triangle ][ indexof_triangle_edge( current_triangle, t_e2 ) ] != nullindex );
+      assert( data_triangle_nextparents_of_edges[ current_triangle ][ indexof_triangle_edge( current_triangle, t_e2 ) ] == t );
+      data_triangle_nextparents_of_edges[ current_triangle ][ indexof_triangle_edge( current_triangle, t_e2 ) ] = t2;
+    }
+    
+    /* vertex t_v0: nothing needs to change */
+    
+    /* vertex t_v1: nothing needs to change */
+    
+    /* vertex t_v2: relink */ 
+    if( data_vertex_firstparent_triangle[ t_v2 ] == t ) 
+      data_vertex_firstparent_triangle[ t_v2 ] = t1;
+    else {
+      int current_triangle = data_vertex_firstparent_triangle[ t_v2 ];
+      while( data_triangle_nextparents_of_vertices[ current_triangle ][ indexof_triangle_vertex( current_triangle, t_v2 ) ] != t 
+             &&
+             data_triangle_nextparents_of_vertices[ current_triangle ][ indexof_triangle_vertex( current_triangle, t_v2 ) ] != nullindex )
+        current_triangle = data_triangle_nextparents_of_vertices[ current_triangle ][ indexof_triangle_vertex( current_triangle, t_v2 ) ];
+      assert( data_triangle_nextparents_of_vertices[ current_triangle ][ indexof_triangle_vertex( current_triangle, t_v2 ) ] != nullindex );
+      assert( data_triangle_nextparents_of_vertices[ current_triangle ][ indexof_triangle_vertex( current_triangle, t_v2 ) ] == t );
+      data_triangle_nextparents_of_vertices[ current_triangle ][ indexof_triangle_vertex( current_triangle, t_v2 ) ] = t1;
+    }
+    
+    /* edge e0: link */
+    data_edge_firstparent_triangle[ e0 ] = t0;
+    
+    /* edge e1: link */
+    data_edge_firstparent_triangle[ e1 ] = t0;
+    
+    /* edge e2: link */
+    data_edge_firstparent_triangle[ e2 ] = t1;
+    
+    /* vertex vn: link */
+    data_vertex_firstparent_triangle[ counter_vertices ] = t0;
+    data_vertex_firstparent_edge[ counter_vertices ] = e0;
+    
+    
+    /* DONE */
+    
+    check();
+}
+
+void MeshSimplicial2D::midpoint_refinement_global()
+{
+    check();
+    
+    int N = counter_triangles;
+    
+    for( int t = 0; t < N; t++ ) {
+      
+      midpoint_refinement( t );
+      
+    }
+    
+    check();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 FloatVector MeshSimplicial2D::get_triangle_midpoint( int t ) const
 {

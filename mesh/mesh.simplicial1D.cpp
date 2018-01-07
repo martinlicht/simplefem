@@ -730,6 +730,26 @@ void MeshSimplicial1D::improved_uniformrefinement()
 
 
 
+void MeshSimplicial1D::midpoint_refinement( int e )
+{
+    check();
+    
+    bisect_edge( e );
+    
+    check();
+}
+
+void MeshSimplicial1D::midpoint_refinement_global()
+{
+    check();
+    
+    improved_uniformrefinement();
+    
+    check();
+}
+
+
+
 
 
 
