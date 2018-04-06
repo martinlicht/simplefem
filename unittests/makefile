@@ -214,14 +214,15 @@ vtk.tests = test.vtk.vtkwriter.mesh1D.out test.vtk.vtkwriter.mesh2D.out test.vtk
 
 
 
-
+test.compiler.out: test.compiler.cpp 
+	$(CC) test.compiler.cpp  -o test.compiler.out
 
 test.container.out: test.container.cpp 
 	$(CC) test.container.cpp  -o test.container.out
 
 
 
-all: $(combinatorics.tests) $(operators.tests) $(dense.tests) $(mesh.tests) $(vtk.tests) 
+all: test.compiler.out $(combinatorics.tests) $(operators.tests) $(dense.tests) $(mesh.tests) $(vtk.tests) 
 
 # $(sparse.tests) $(solver.tests)
 
