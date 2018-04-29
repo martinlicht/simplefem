@@ -51,14 +51,14 @@ IndexRange MultiIndex::getIndexRange() const
 const int& MultiIndex::at( int p ) const 
 {
     check();
-    enforce_attest( range.contains(p) );
+    assert( range.contains(p) );
     return values.at( range.element2position(p) );
 }
 
 int& MultiIndex::at( int p )
 {
     check();
-    enforce_attest( range.contains(p) );
+    assert( range.contains(p) );
     return values.at( range.element2position(p) );
 }
 

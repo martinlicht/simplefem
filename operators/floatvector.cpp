@@ -113,14 +113,14 @@ Float FloatVector::getentry( int p ) const
 Float& FloatVector::at( int p )
 {
     check();
-    enforce_attest( 0 <= p && p < data.size() );
+    assert( 0 <= p && p < data.size() );
     return data.at(p);
 }
 
 const Float& FloatVector::at( int p ) const
 {
     check();
-    enforce_attest( 0 <= p && p < data.size() );
+    assert( 0 <= p && p < data.size() );
     return data.at(p);
 }
 

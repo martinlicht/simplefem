@@ -112,18 +112,18 @@ const std::vector<int>& IndexMap::getvalues() const
 int& IndexMap::at( int i )
 {
     check();
-    enforce_attest( src.contains(i) );
-    enforce_attest( 0 <= i - src.min() );
-    enforce_attest( i - src.min() < values.size() );
+    assert( src.contains(i) );
+    assert( 0 <= i - src.min() );
+    assert( i - src.min() < values.size() );
     return values.at( i - src.min() );
 }
 
 const int& IndexMap::at( int i ) const
 {
     check();
-    enforce_attest( src.contains(i) );
-    enforce_attest( 0 <= i - src.min() );
-    enforce_attest( i - src.min() < values.size() );
+    assert( src.contains(i) );
+    assert( 0 <= i - src.min() );
+    assert( i - src.min() < values.size() );
     return values.at( i - src.min() );
 }
 

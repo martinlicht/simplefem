@@ -162,16 +162,16 @@ void DenseMatrix::set( int r, int c, Float v )
 Float& DenseMatrix::at( int r, int c )
 {
     check();
-    enforce_attest( 0 <= r && r < getdimout() );
-    enforce_attest( 0 <= c && c < getdimin() );
+    assert( 0 <= r && r < getdimout() );
+    assert( 0 <= c && c < getdimin() );
     return entries.at( r * getdimin() + c );
 }
 
 const Float& DenseMatrix::at( int r, int c ) const
 {
     check();
-    enforce_attest( 0 <= r && r < getdimout() );
-    enforce_attest( 0 <= c && c < getdimin() );
+    assert( 0 <= r && r < getdimout() );
+    assert( 0 <= c && c < getdimin() );
     return entries.at( r * getdimin() + c );
 }
 
