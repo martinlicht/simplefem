@@ -85,7 +85,8 @@ MeshSimplicial2D::MeshSimplicial2D(
       data_edge_vertices[ 2 * counter_triangles + t ] = { data_triangle_vertices[t][1], data_triangle_vertices[t][2] };
     }
     
-    std::sort( data_edge_vertices.begin(), data_edge_vertices.end() );
+//     std::sort( data_edge_vertices.begin(), data_edge_vertices.end() ); 
+    sorthack( data_edge_vertices );
     auto it = std::unique( data_edge_vertices.begin(), data_edge_vertices.end() );
     data_edge_vertices.resize( it - data_edge_vertices.begin() );
     

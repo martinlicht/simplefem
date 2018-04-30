@@ -110,7 +110,8 @@ MeshSimplicial3D::MeshSimplicial3D(
     }
     
     {
-      std::sort( data_face_vertices.begin(), data_face_vertices.end() );
+//       std::sort( data_face_vertices.begin(), data_face_vertices.end() ); 
+      sorthack( data_face_vertices );
       auto it = std::unique( data_face_vertices.begin(), data_face_vertices.end() );
       data_face_vertices.resize( it - data_face_vertices.begin() );
     }
@@ -131,7 +132,8 @@ MeshSimplicial3D::MeshSimplicial3D(
     }
     
     {
-      std::sort( data_edge_vertices.begin(), data_edge_vertices.end() );
+//       std::sort( data_edge_vertices.begin(), data_edge_vertices.end() ); 
+      sorthack( data_edge_vertices );
       auto it = std::unique( data_edge_vertices.begin(), data_edge_vertices.end() );
       data_edge_vertices.resize( it - data_edge_vertices.begin() );
     }
