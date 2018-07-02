@@ -189,8 +189,8 @@ test.io.simplicialND.out: test.io.simplicialND.cpp $(Includes.mesh)
 # test.mesh.io.out: test.mesh.io.cpp $(Includes.mesh)
 # 	$(CC) test.mesh.io.cpp $(Links.mesh) -o test.mesh.io.out
 
-mesh.tests = test.mesh.coordinates.out test.mesh.simplicial1D.out test.io.simplicial1D.out test.mesh.uniformrefinement1D.out test.mesh.simplicial2D.out test.mesh.2DBisection.out test.mesh.midpointrefine.out test.io.simplicial2D.out test.mesh.simplicial3D.out test.io.simplicial3D.out test.mesh.simplicialND.out test.io.simplicialND.out
-# test.mesh.simplicialmesh.out test.mesh.io.out test.mesh.vtkwriter.out test.mesh.mesh.manifold.2D.out  test.mesh.manifold2D.out
+mesh.tests = test.mesh.coordinates.out test.mesh.simplicial1D.out test.io.simplicial1D.out test.mesh.uniformrefinement1D.out test.mesh.simplicial2D.out test.mesh.2DBisection.out test.mesh.midpointrefine.out test.io.simplicial2D.out test.mesh.simplicialND.out test.io.simplicialND.out
+# test.mesh.simplicialmesh.out test.mesh.io.out test.mesh.vtkwriter.out test.mesh.mesh.manifold.2D.out  test.mesh.manifold2D.out test.mesh.simplicial3D.out test.io.simplicial3D.out
 
 
 
@@ -208,7 +208,8 @@ test.vtk.vtkwriter.mesh2D.out: test.vtk.vtkwriter.mesh2D.cpp $(Includes.vtk)
 test.vtk.vtkwriter.mesh3D.out: test.vtk.vtkwriter.mesh3D.cpp $(Includes.vtk)
 	$(CC) test.vtk.vtkwriter.mesh3D.cpp $(Links.vtk) -o test.vtk.vtkwriter.mesh3D.out
 
-vtk.tests = test.vtk.vtkwriter.mesh1D.out test.vtk.vtkwriter.mesh2D.out test.vtk.vtkwriter.mesh3D.out
+vtk.tests = test.vtk.vtkwriter.mesh1D.out test.vtk.vtkwriter.mesh2D.out
+# test.vtk.vtkwriter.mesh3D.out
 
 
 
