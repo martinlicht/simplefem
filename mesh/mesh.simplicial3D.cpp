@@ -3692,8 +3692,6 @@ void MeshSimplicial3D::uniformrefinement()
     /*** TREAT THE FACE-BASED EDGES AND THEIR CONNECTION TO INTERIOR FACES ****/
     /*** TREAT THE SINGLE INTERIOR EDGE AND ITS CONNECTION TO INTERIOR FACES ****/
     
-    /* TODO */
-    
     for( int t = 0; t < counter_tetrahedra; t++ )
     {
       
@@ -3810,6 +3808,13 @@ void MeshSimplicial3D::uniformrefinement()
       data_face_nextparents_of_vertices[ f_03_13_23 ][ 2 ] = f_02_13_23;
       data_face_nextparents_of_vertices[ f_02_13_23 ][ 2 ] = fp_e_13_23;
       
+      
+      data_edge_firstparent_face[ e_02_13 ] = f_01_02_13;
+      data_face_nextparents_of_vertices[ f_01_02_13 ][ 2 ] = f_02_03_13;
+      data_face_nextparents_of_vertices[ f_02_03_13 ][ 1 ] = f_02_12_13;
+      data_face_nextparents_of_vertices[ f_02_12_13 ][ 1 ] = f_02_13_23;
+      data_face_nextparents_of_vertices[ f_02_13_23 ][ 0 ] = fp_e_13_23;
+      
     }
     
     
@@ -3857,7 +3862,55 @@ void MeshSimplicial3D::uniformrefinement()
     for( int t = 0; t < counter_tetrahedra; t++ )
     {
       
-      /* TODO */
+      int v01 = 2 * counter_vertices + data_tetrahedron_edges[t][0];
+      int v02 = 2 * counter_vertices + data_tetrahedron_edges[t][1];
+      int v03 = 2 * counter_vertices + data_tetrahedron_edges[t][2];
+      int v12 = 2 * counter_vertices + data_tetrahedron_edges[t][3];
+      int v13 = 2 * counter_vertices + data_tetrahedron_edges[t][4];
+      int v23 = 2 * counter_vertices + data_tetrahedron_edges[t][5];
+      
+      int f_01_02_03 = 4 * counter_faces + 0 * counter_tetrahedra + t;
+      int f_01_12_13 = 4 * counter_faces + 1 * counter_tetrahedra + t;
+      int f_02_12_23 = 4 * counter_faces + 2 * counter_tetrahedra + t;
+      int f_03_13_23 = 4 * counter_faces + 3 * counter_tetrahedra + t;
+      int f_01_02_13 = 4 * counter_faces + 4 * counter_tetrahedra + t;
+      int f_02_03_13 = 4 * counter_faces + 5 * counter_tetrahedra + t;
+      int f_02_12_13 = 4 * counter_faces + 6 * counter_tetrahedra + t;
+      int f_02_13_23 = 4 * counter_faces + 7 * counter_tetrahedra + t;
+      
+      data_face_vertices[ f_01_02_03 ][0] = v01;
+      data_face_vertices[ f_01_02_03 ][1] = v02;
+      data_face_vertices[ f_01_02_03 ][2] = v03;
+      
+      data_face_vertices[ f_01_12_13 ][0] = v01;
+      data_face_vertices[ f_01_12_13 ][1] = v12;
+      data_face_vertices[ f_01_12_13 ][2] = v13;
+      
+      data_face_vertices[ f_02_12_23 ][0] = v02;
+      data_face_vertices[ f_02_12_23 ][1] = v12;
+      data_face_vertices[ f_02_12_23 ][2] = v23;
+      
+      data_face_vertices[ f_03_13_23 ][0] = v03;
+      data_face_vertices[ f_03_13_23 ][1] = v13;
+      data_face_vertices[ f_03_13_23 ][2] = v23;
+      
+      data_face_vertices[ f_01_02_13 ][0] = v01;
+      data_face_vertices[ f_01_02_13 ][1] = v02;
+      data_face_vertices[ f_01_02_13 ][2] = v03;
+      
+      data_face_vertices[ f_02_03_13 ][0] = v02;
+      data_face_vertices[ f_02_03_13 ][1] = v03;
+      data_face_vertices[ f_02_03_13 ][2] = v13;
+      
+      data_face_vertices[ f_02_12_13 ][0] = v02;
+      data_face_vertices[ f_02_12_13 ][1] = v12;
+      data_face_vertices[ f_02_12_13 ][2] = v13;
+      
+      data_face_vertices[ f_02_13_23 ][0] = v02;
+      data_face_vertices[ f_02_13_23 ][1] = v13;
+      data_face_vertices[ f_02_13_23 ][2] = v23;
+      
+      
       
     }
     
@@ -3903,6 +3956,70 @@ void MeshSimplicial3D::uniformrefinement()
     {
       
       /* TODO */
+      
+      int f_01_02_03 = 4 * counter_faces + 0 * counter_tetrahedra + t;
+      int f_01_12_13 = 4 * counter_faces + 1 * counter_tetrahedra + t;
+      int f_02_12_23 = 4 * counter_faces + 2 * counter_tetrahedra + t;
+      int f_03_13_23 = 4 * counter_faces + 3 * counter_tetrahedra + t;
+      int f_01_02_13 = 4 * counter_faces + 4 * counter_tetrahedra + t;
+      int f_02_03_13 = 4 * counter_faces + 5 * counter_tetrahedra + t;
+      int f_02_12_13 = 4 * counter_faces + 6 * counter_tetrahedra + t;
+      int f_02_13_23 = 4 * counter_faces + 7 * counter_tetrahedra + t;
+      
+      int f_012 = 0 * counter_faces + t;
+      int f_013 = 1 * counter_faces + t;
+      int f_023 = 2 * counter_faces + t;
+      int f_123 = 3 * counter_faces + t;
+      
+      int e_01_02 = 2 * counter_edges + 0 * counter_faces + f_012;
+      int e_01_12 = 2 * counter_edges + 1 * counter_faces + f_012;
+      int e_02_12 = 2 * counter_edges + 2 * counter_faces + f_012;
+      
+      int e_01_03 = 2 * counter_edges + 0 * counter_faces + f_013;
+      int e_01_13 = 2 * counter_edges + 1 * counter_faces + f_013;
+      int e_03_13 = 2 * counter_edges + 2 * counter_faces + f_013;
+      
+      int e_02_03 = 2 * counter_edges + 0 * counter_faces + f_023;
+      int e_02_23 = 2 * counter_edges + 1 * counter_faces + f_023;
+      int e_03_23 = 2 * counter_edges + 2 * counter_faces + f_023;
+      
+      int e_12_13 = 2 * counter_edges + 0 * counter_faces + f_123;
+      int e_12_23 = 2 * counter_edges + 1 * counter_faces + f_123;
+      int e_13_23 = 2 * counter_edges + 2 * counter_faces + f_123;
+      
+      int e_02_13 = 2 * counter_edges + 3 * counter_faces + t;
+      
+      data_face_edges[ f_01_02_03 ][0] = e_01_02;
+      data_face_edges[ f_01_02_03 ][1] = e_01_03;
+      data_face_edges[ f_01_02_03 ][2] = e_02_03;
+      
+      data_face_edges[ f_01_12_13 ][0] = e_01_12;
+      data_face_edges[ f_01_12_13 ][1] = e_01_13;
+      data_face_edges[ f_01_12_13 ][2] = e_12_13;
+      
+      data_face_edges[ f_02_12_23 ][0] = e_02_12;
+      data_face_edges[ f_02_12_23 ][1] = e_02_23;
+      data_face_edges[ f_02_12_23 ][2] = e_12_23;
+      
+      data_face_edges[ f_03_13_23 ][0] = e_03_13;
+      data_face_edges[ f_03_13_23 ][1] = e_03_23;
+      data_face_edges[ f_03_13_23 ][2] = e_13_23;
+      
+      data_face_edges[ f_01_02_13 ][0] = e_01_02;
+      data_face_edges[ f_01_02_13 ][1] = e_01_13;
+      data_face_edges[ f_01_02_13 ][2] = e_02_13;
+      
+      data_face_edges[ f_02_03_13 ][0] = e_02_03;
+      data_face_edges[ f_02_03_13 ][1] = e_02_13;
+      data_face_edges[ f_02_03_13 ][2] = e_03_13;
+      
+      data_face_edges[ f_02_12_13 ][0] = e_02_12;
+      data_face_edges[ f_02_12_13 ][1] = e_02_13;
+      data_face_edges[ f_02_12_13 ][2] = e_12_13;
+      
+      data_face_edges[ f_02_13_23 ][0] = e_02_13;
+      data_face_edges[ f_02_13_23 ][1] = e_02_23;
+      data_face_edges[ f_02_13_23 ][2] = e_13_23;
       
     }
     
