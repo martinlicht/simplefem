@@ -45,7 +45,6 @@ MeshSimplicial2D::MeshSimplicial2D( int outerdim )
 }
 
 
-// TODO: Update this function
 
 MeshSimplicial2D::MeshSimplicial2D( 
     int outerdim,
@@ -84,6 +83,10 @@ MeshSimplicial2D::MeshSimplicial2D(
       data_edge_vertices[ 1 * counter_triangles + t ] = { data_triangle_vertices[t][0], data_triangle_vertices[t][2] };
       data_edge_vertices[ 2 * counter_triangles + t ] = { data_triangle_vertices[t][1], data_triangle_vertices[t][2] };
     }
+    
+    
+    /* Due to an obscure bug in the C++ standard itself (!), we cannot use the standard sort function here */
+    /* For that reason, a hand-written sort is used. No complexity estimates are guaranteed. */
     
 //     std::sort( data_edge_vertices.begin(), data_edge_vertices.end() ); 
     sorthack( data_edge_vertices );

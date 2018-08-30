@@ -110,6 +110,10 @@ MeshSimplicial3D::MeshSimplicial3D(
     }
     
     {
+
+    /* Due to an obscure bug in the C++ standard itself (!), we cannot use the standard sort function here */
+    /* For that reason, a hand-written sort is used. No complexity estimates are guaranteed. */
+    
 //       std::sort( data_face_vertices.begin(), data_face_vertices.end() ); 
       sorthack( data_face_vertices );
       auto it = std::unique( data_face_vertices.begin(), data_face_vertices.end() );
@@ -132,6 +136,10 @@ MeshSimplicial3D::MeshSimplicial3D(
     }
     
     {
+
+    /* Due to an obscure bug in the C++ standard itself (!), we cannot use the standard sort function here */
+    /* For that reason, a hand-written sort is used. No complexity estimates are guaranteed. */
+    
 //       std::sort( data_edge_vertices.begin(), data_edge_vertices.end() ); 
       sorthack( data_edge_vertices );
       auto it = std::unique( data_edge_vertices.begin(), data_edge_vertices.end() );
