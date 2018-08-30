@@ -16,13 +16,15 @@ int main()
 {
         cout << "Unit Test for Simplicial 3D Module" << endl;
         
-        MeshSimplicial3D M = StandardSquare3D();
+        MeshSimplicial3D M = UnitSimplex3D();
         
         M.check();
         
-        cout << "Refinement" << endl;
+        cout << "Refinement..." << endl;
         
         M.uniformrefinement();
+        
+        cout << "...done" << endl;
         
         M.check();
         

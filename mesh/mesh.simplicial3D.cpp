@@ -553,6 +553,12 @@ bool MeshSimplicial3D::operator!= ( const MeshSimplicial3D& mesh ) const
 }
 
 
+
+
+
+
+
+
 void MeshSimplicial3D::check() const
 {
     
@@ -586,10 +592,159 @@ void MeshSimplicial3D::check() const
     
     
     
+    /* VERTEX EDGE STUFF */
     
     /* 
-     * each tet: each face is a valid index
-     * each tet: each face is unique 
+     * each edge: each vertex is a valid index
+     * each edge: each vertex is unique 
+     * each edge: the next parents make sense 
+     * each edge: the next parents are actually parents
+     */
+    
+    for( int e = 0; e < counter_edges; e++ )
+    {
+        assert( data_edge_vertices[e][0] != nullindex );
+        assert( data_edge_vertices[e][1] != nullindex );
+        assert( 0 <= data_edge_vertices[e][0] && data_edge_vertices[e][0] < counter_vertices );
+        assert( 0 <= data_edge_vertices[e][1] && data_edge_vertices[e][0] < counter_vertices );
+        assert( data_edge_vertices[e][0] != data_edge_vertices[e][1] );
+        
+//         if( data_edge_nextparents_of_vertices[e][0] != nullindex || data_edge_nextparents_of_vertices[e][1] != nullindex )
+//           assert( data_edge_nextparents_of_vertices[e][0] != data_edge_nextparents_of_vertices[e][1] );
+        
+          
+        for( int vi = 0; vi < 2; vi++ )
+        {
+          
+          if( data_edge_nextparents_of_vertices[e][vi] != nullindex )
+          assert( 0 <= data_edge_nextparents_of_vertices[e][vi] && data_edge_nextparents_of_vertices[e][vi] < counter_edges );
+          
+          if( data_edge_nextparents_of_vertices[e][vi] != nullindex )
+            assert( data_edge_vertices[ data_edge_nextparents_of_vertices[e][vi] ][0] == data_edge_vertices[e][vi] 
+                    ||
+                    data_edge_vertices[ data_edge_nextparents_of_vertices[e][vi] ][1] == data_edge_vertices[e][vi] 
+                  );
+          
+        }
+        
+    }
+    
+    
+    
+    
+    
+    
+    /* VERTEX FACE STUFF */
+    
+    /*
+     * each face: each vertex is a valid index
+     * each face: each vertex is unique 
+     * each face: the next parents are unique
+     * each face: the next parents are actually parents 
+     */
+    
+    for( int f = 0; f < counter_faces; f++ )
+    {
+        
+        assert( data_face_vertices[f][0] != nullindex );
+        assert( data_face_vertices[f][1] != nullindex );
+        assert( data_face_vertices[f][2] != nullindex );
+        
+        assert( 0 <= data_face_vertices[f][0] && data_face_vertices[f][0] < counter_vertices );
+        assert( 0 <= data_face_vertices[f][1] && data_face_vertices[f][1] < counter_vertices );
+        assert( 0 <= data_face_vertices[f][2] && data_face_vertices[f][2] < counter_vertices );
+        
+        assert( data_face_vertices[f][0] != data_face_vertices[f][1] );
+        assert( data_face_vertices[f][0] != data_face_vertices[f][2] );
+        assert( data_face_vertices[f][1] != data_face_vertices[f][2] );
+        
+        
+        for( int vi = 0; vi < 3; vi++ )
+        {
+            
+            if( data_face_nextparents_of_vertices[f][vi] != nullindex )
+              assert( 0 <= data_face_nextparents_of_vertices[f][vi] && data_face_nextparents_of_vertices[f][vi] < counter_faces );
+        
+            if( data_face_nextparents_of_vertices[f][vi] != nullindex )
+              assert( data_face_vertices[ data_face_nextparents_of_vertices[f][vi] ][0] == data_face_vertices[f][vi] 
+                      ||
+                      data_face_vertices[ data_face_nextparents_of_vertices[f][vi] ][1] == data_face_vertices[f][vi] 
+                      ||
+                      data_face_vertices[ data_face_nextparents_of_vertices[f][vi] ][2] == data_face_vertices[f][vi] );
+            
+        }
+        
+        
+    }
+    
+    
+    
+    
+    
+    
+    
+    /* EDGE FACE STUFF */
+    
+    
+    /* 
+     * each face: each edge is a valid index
+     * each face: each edge is unique 
+     * each face: the next parents are unique
+     * each face: the next parents are actually parents 
+     */
+    
+    for( int f = 0; f < counter_faces; f++ )
+    {
+        
+        assert( data_face_edges[f][0] != nullindex );
+        assert( data_face_edges[f][1] != nullindex );
+        assert( data_face_edges[f][2] != nullindex );
+        
+        assert( 0 <= data_face_edges[f][0] && data_face_edges[f][0] < counter_edges );
+        assert( 0 <= data_face_edges[f][1] && data_face_edges[f][1] < counter_edges );
+        assert( 0 <= data_face_edges[f][2] && data_face_edges[f][2] < counter_edges );
+        
+        assert( data_face_edges[f][0] != data_face_edges[f][1] );
+        assert( data_face_edges[f][0] != data_face_edges[f][2] );
+        assert( data_face_edges[f][1] != data_face_edges[f][2] );
+        
+        
+        if( data_face_nextparents_of_edges[f][0] != nullindex || data_face_nextparents_of_edges[f][1] != nullindex )
+          assert( data_face_nextparents_of_edges[f][0] != data_face_nextparents_of_edges[f][1] );
+        
+        if( data_face_nextparents_of_edges[f][0] != nullindex || data_face_nextparents_of_edges[f][2] != nullindex )
+          assert( data_face_nextparents_of_edges[f][0] != data_face_nextparents_of_edges[f][2] );
+        
+        if( data_face_nextparents_of_edges[f][1] != nullindex || data_face_nextparents_of_edges[f][2] != nullindex )
+          assert( data_face_nextparents_of_edges[f][1] != data_face_nextparents_of_edges[f][2] );
+        
+        for( int ei = 0; ei < 3; ei++ )
+        {
+            
+            if( data_face_nextparents_of_edges[f][ei] != nullindex )
+              assert( 0 <= data_face_nextparents_of_edges[f][ei] && data_face_nextparents_of_edges[f][ei] < counter_faces );
+        
+            if( data_face_nextparents_of_edges[f][ei] != nullindex )
+              assert( data_face_edges[ data_face_nextparents_of_edges[f][ei] ][0] == data_face_edges[f][ei] 
+                      ||
+                      data_face_edges[ data_face_nextparents_of_edges[f][ei] ][1] == data_face_edges[f][ei] 
+                      ||
+                      data_face_edges[ data_face_nextparents_of_edges[f][ei] ][2] == data_face_edges[f][ei] );
+            
+        }
+        
+        
+    }
+    
+    
+    
+    
+    
+    /* VERTEX TET STUFF */
+    
+    /* 
+     * each tet: each vertex is a valid index
+     * each tet: each vertex is unique 
      * each tet: the next parents are unique
      * each tet: the next parents are actually parents 
      */
@@ -597,44 +752,47 @@ void MeshSimplicial3D::check() const
     for( int t = 0; t < counter_tetrahedra; t++ )
     {
         
-        assert( data_tetrahedron_faces[t][0] != nullindex );
-        assert( data_tetrahedron_faces[t][1] != nullindex );
-        assert( data_tetrahedron_faces[t][2] != nullindex );
-        assert( data_tetrahedron_faces[t][3] != nullindex );
+        assert( data_tetrahedron_vertices[t][0] != nullindex );
+        assert( data_tetrahedron_vertices[t][1] != nullindex );
+        assert( data_tetrahedron_vertices[t][2] != nullindex );
+        assert( data_tetrahedron_vertices[t][3] != nullindex );
         
-        assert( 0 <= data_tetrahedron_faces[t][0] && data_tetrahedron_faces[t][0] < counter_faces );
-        assert( 0 <= data_tetrahedron_faces[t][1] && data_tetrahedron_faces[t][1] < counter_faces );
-        assert( 0 <= data_tetrahedron_faces[t][2] && data_tetrahedron_faces[t][2] < counter_faces );
-        assert( 0 <= data_tetrahedron_faces[t][3] && data_tetrahedron_faces[t][3] < counter_faces );
+        assert( 0 <= data_tetrahedron_vertices[t][0] && data_tetrahedron_vertices[t][0] < counter_vertices );
+        assert( 0 <= data_tetrahedron_vertices[t][1] && data_tetrahedron_vertices[t][1] < counter_vertices );
+        assert( 0 <= data_tetrahedron_vertices[t][2] && data_tetrahedron_vertices[t][2] < counter_vertices );
+        assert( 0 <= data_tetrahedron_vertices[t][3] && data_tetrahedron_vertices[t][3] < counter_vertices );
         
-        assert( data_tetrahedron_faces[t][0] != data_tetrahedron_faces[t][1] );
-        assert( data_tetrahedron_faces[t][0] != data_tetrahedron_faces[t][2] );
-        assert( data_tetrahedron_faces[t][0] != data_tetrahedron_faces[t][3] );
-        assert( data_tetrahedron_faces[t][1] != data_tetrahedron_faces[t][2] );
-        assert( data_tetrahedron_faces[t][1] != data_tetrahedron_faces[t][3] );
-        assert( data_tetrahedron_faces[t][2] != data_tetrahedron_faces[t][3] );
+        assert( data_tetrahedron_vertices[t][0] != data_tetrahedron_vertices[t][1] );
+        assert( data_tetrahedron_vertices[t][0] != data_tetrahedron_vertices[t][2] );
+        assert( data_tetrahedron_vertices[t][0] != data_tetrahedron_vertices[t][3] );
+        assert( data_tetrahedron_vertices[t][1] != data_tetrahedron_vertices[t][2] );
+        assert( data_tetrahedron_vertices[t][1] != data_tetrahedron_vertices[t][3] );
+        assert( data_tetrahedron_vertices[t][2] != data_tetrahedron_vertices[t][3] );
         
         
-        for( int fi = 0; fi < 4; fi++ )
+        for( int vi = 0; vi < 4; vi++ )
         {
             
-            if( data_tetrahedron_nextparents_of_faces[t][fi] != nullindex )
-              assert( 0 <= data_tetrahedron_nextparents_of_faces[t][fi] && data_tetrahedron_nextparents_of_faces[t][fi] < counter_faces );
+            if( data_tetrahedron_nextparents_of_vertices[t][vi] != nullindex )
+              assert( 0 <= data_tetrahedron_nextparents_of_vertices[t][vi] && data_tetrahedron_nextparents_of_vertices[t][vi] < counter_vertices );
         
-            if( data_tetrahedron_nextparents_of_faces[t][fi] != nullindex )
-              assert( data_tetrahedron_faces[ data_tetrahedron_nextparents_of_faces[t][fi] ][0] == data_tetrahedron_faces[t][fi] 
+            if( data_tetrahedron_nextparents_of_vertices[t][vi] != nullindex )
+              assert( data_tetrahedron_vertices[ data_tetrahedron_nextparents_of_vertices[t][vi] ][0] == data_tetrahedron_vertices[t][vi] 
                       ||
-                      data_tetrahedron_faces[ data_tetrahedron_nextparents_of_faces[t][fi] ][1] == data_tetrahedron_faces[t][fi] 
+                      data_tetrahedron_vertices[ data_tetrahedron_nextparents_of_vertices[t][vi] ][1] == data_tetrahedron_vertices[t][vi] 
                       ||
-                      data_tetrahedron_faces[ data_tetrahedron_nextparents_of_faces[t][fi] ][2] == data_tetrahedron_faces[t][fi] 
+                      data_tetrahedron_vertices[ data_tetrahedron_nextparents_of_vertices[t][vi] ][2] == data_tetrahedron_vertices[t][vi] 
                       ||
-                      data_tetrahedron_faces[ data_tetrahedron_nextparents_of_faces[t][fi] ][3] == data_tetrahedron_faces[t][fi] );
+                      data_tetrahedron_vertices[ data_tetrahedron_nextparents_of_vertices[t][vi] ][3] == data_tetrahedron_vertices[t][vi] );
             
         }
         
         
     }
     
+    
+    
+    /* EDGE TET STUFF */
     
     /* 
      * each tet: each edge is a valid index
@@ -704,9 +862,14 @@ void MeshSimplicial3D::check() const
     }
     
     
+    
+    
+    
+    /* FACE TET STUFF */
+    
     /* 
-     * each tet: each vertex is a valid index
-     * each tet: each vertex is unique 
+     * each tet: each face is a valid index
+     * each tet: each face is unique 
      * each tet: the next parents are unique
      * each tet: the next parents are actually parents 
      */
@@ -714,38 +877,38 @@ void MeshSimplicial3D::check() const
     for( int t = 0; t < counter_tetrahedra; t++ )
     {
         
-        assert( data_tetrahedron_vertices[t][0] != nullindex );
-        assert( data_tetrahedron_vertices[t][1] != nullindex );
-        assert( data_tetrahedron_vertices[t][2] != nullindex );
-        assert( data_tetrahedron_vertices[t][3] != nullindex );
+        assert( data_tetrahedron_faces[t][0] != nullindex );
+        assert( data_tetrahedron_faces[t][1] != nullindex );
+        assert( data_tetrahedron_faces[t][2] != nullindex );
+        assert( data_tetrahedron_faces[t][3] != nullindex );
         
-        assert( 0 <= data_tetrahedron_vertices[t][0] && data_tetrahedron_vertices[t][0] < counter_vertices );
-        assert( 0 <= data_tetrahedron_vertices[t][1] && data_tetrahedron_vertices[t][1] < counter_vertices );
-        assert( 0 <= data_tetrahedron_vertices[t][2] && data_tetrahedron_vertices[t][2] < counter_vertices );
-        assert( 0 <= data_tetrahedron_vertices[t][3] && data_tetrahedron_vertices[t][3] < counter_vertices );
+        assert( 0 <= data_tetrahedron_faces[t][0] && data_tetrahedron_faces[t][0] < counter_faces );
+        assert( 0 <= data_tetrahedron_faces[t][1] && data_tetrahedron_faces[t][1] < counter_faces );
+        assert( 0 <= data_tetrahedron_faces[t][2] && data_tetrahedron_faces[t][2] < counter_faces );
+        assert( 0 <= data_tetrahedron_faces[t][3] && data_tetrahedron_faces[t][3] < counter_faces );
         
-        assert( data_tetrahedron_vertices[t][0] != data_tetrahedron_vertices[t][1] );
-        assert( data_tetrahedron_vertices[t][0] != data_tetrahedron_vertices[t][2] );
-        assert( data_tetrahedron_vertices[t][0] != data_tetrahedron_vertices[t][3] );
-        assert( data_tetrahedron_vertices[t][1] != data_tetrahedron_vertices[t][2] );
-        assert( data_tetrahedron_vertices[t][1] != data_tetrahedron_vertices[t][3] );
-        assert( data_tetrahedron_vertices[t][2] != data_tetrahedron_vertices[t][3] );
+        assert( data_tetrahedron_faces[t][0] != data_tetrahedron_faces[t][1] );
+        assert( data_tetrahedron_faces[t][0] != data_tetrahedron_faces[t][2] );
+        assert( data_tetrahedron_faces[t][0] != data_tetrahedron_faces[t][3] );
+        assert( data_tetrahedron_faces[t][1] != data_tetrahedron_faces[t][2] );
+        assert( data_tetrahedron_faces[t][1] != data_tetrahedron_faces[t][3] );
+        assert( data_tetrahedron_faces[t][2] != data_tetrahedron_faces[t][3] );
         
         
-        for( int vi = 0; vi < 4; vi++ )
+        for( int fi = 0; fi < 4; fi++ )
         {
             
-            if( data_tetrahedron_nextparents_of_vertices[t][vi] != nullindex )
-              assert( 0 <= data_tetrahedron_nextparents_of_vertices[t][vi] && data_tetrahedron_nextparents_of_vertices[t][vi] < counter_vertices );
+            if( data_tetrahedron_nextparents_of_faces[t][fi] != nullindex )
+              assert( 0 <= data_tetrahedron_nextparents_of_faces[t][fi] && data_tetrahedron_nextparents_of_faces[t][fi] < counter_faces );
         
-            if( data_tetrahedron_nextparents_of_vertices[t][vi] != nullindex )
-              assert( data_tetrahedron_vertices[ data_tetrahedron_nextparents_of_vertices[t][vi] ][0] == data_tetrahedron_vertices[t][vi] 
+            if( data_tetrahedron_nextparents_of_faces[t][fi] != nullindex )
+              assert( data_tetrahedron_faces[ data_tetrahedron_nextparents_of_faces[t][fi] ][0] == data_tetrahedron_faces[t][fi] 
                       ||
-                      data_tetrahedron_vertices[ data_tetrahedron_nextparents_of_vertices[t][vi] ][1] == data_tetrahedron_vertices[t][vi] 
+                      data_tetrahedron_faces[ data_tetrahedron_nextparents_of_faces[t][fi] ][1] == data_tetrahedron_faces[t][fi] 
                       ||
-                      data_tetrahedron_vertices[ data_tetrahedron_nextparents_of_vertices[t][vi] ][2] == data_tetrahedron_vertices[t][vi] 
+                      data_tetrahedron_faces[ data_tetrahedron_nextparents_of_faces[t][fi] ][2] == data_tetrahedron_faces[t][fi] 
                       ||
-                      data_tetrahedron_vertices[ data_tetrahedron_nextparents_of_vertices[t][vi] ][3] == data_tetrahedron_vertices[t][vi] );
+                      data_tetrahedron_faces[ data_tetrahedron_nextparents_of_faces[t][fi] ][3] == data_tetrahedron_faces[t][fi] );
             
         }
         
@@ -754,134 +917,17 @@ void MeshSimplicial3D::check() const
     
     
     
-    /* 
-     * each face: each edge is a valid index
-     * each face: each edge is unique 
-     * each face: the next parents are unique
-     * each face: the next parents are actually parents 
-     */
-    
-    for( int f = 0; f < counter_faces; f++ )
-    {
-        
-        assert( data_face_edges[f][0] != nullindex );
-        assert( data_face_edges[f][1] != nullindex );
-        assert( data_face_edges[f][2] != nullindex );
-        
-        assert( 0 <= data_face_edges[f][0] && data_face_edges[f][0] < counter_edges );
-        assert( 0 <= data_face_edges[f][1] && data_face_edges[f][1] < counter_edges );
-        assert( 0 <= data_face_edges[f][2] && data_face_edges[f][2] < counter_edges );
-        
-        assert( data_face_edges[f][0] != data_face_edges[f][1] );
-        assert( data_face_edges[f][0] != data_face_edges[f][2] );
-        assert( data_face_edges[f][1] != data_face_edges[f][2] );
-        
-        
-        if( data_face_nextparents_of_edges[f][0] != nullindex || data_face_nextparents_of_edges[f][1] != nullindex )
-          assert( data_face_nextparents_of_edges[f][0] != data_face_nextparents_of_edges[f][1] );
-        
-        if( data_face_nextparents_of_edges[f][0] != nullindex || data_face_nextparents_of_edges[f][2] != nullindex )
-          assert( data_face_nextparents_of_edges[f][0] != data_face_nextparents_of_edges[f][2] );
-        
-        if( data_face_nextparents_of_edges[f][1] != nullindex || data_face_nextparents_of_edges[f][2] != nullindex )
-          assert( data_face_nextparents_of_edges[f][1] != data_face_nextparents_of_edges[f][2] );
-        
-        for( int ei = 0; ei < 3; ei++ )
-        {
-            
-            if( data_face_nextparents_of_edges[f][ei] != nullindex )
-              assert( 0 <= data_face_nextparents_of_edges[f][ei] && data_face_nextparents_of_edges[f][ei] < counter_faces );
-        
-            if( data_face_nextparents_of_edges[f][ei] != nullindex )
-              assert( data_face_edges[ data_face_nextparents_of_edges[f][ei] ][0] == data_face_edges[f][ei] 
-                      ||
-                      data_face_edges[ data_face_nextparents_of_edges[f][ei] ][1] == data_face_edges[f][ei] 
-                      ||
-                      data_face_edges[ data_face_nextparents_of_edges[f][ei] ][2] == data_face_edges[f][ei] );
-            
-        }
-        
-        
-    }
     
     
-    /*
-     * each face: each vertex is a valid index
-     * each face: each vertex is unique 
-     * each face: the next parents are unique
-     * each face: the next parents are actually parents 
-     */
-    
-    for( int f = 0; f < counter_faces; f++ )
-    {
-        
-        assert( data_face_vertices[f][0] != nullindex );
-        assert( data_face_vertices[f][1] != nullindex );
-        assert( data_face_vertices[f][2] != nullindex );
-        
-        assert( 0 <= data_face_vertices[f][0] && data_face_vertices[f][0] < counter_vertices );
-        assert( 0 <= data_face_vertices[f][1] && data_face_vertices[f][1] < counter_vertices );
-        assert( 0 <= data_face_vertices[f][2] && data_face_vertices[f][2] < counter_vertices );
-        
-        assert( data_face_vertices[f][0] != data_face_vertices[f][1] );
-        assert( data_face_vertices[f][0] != data_face_vertices[f][2] );
-        assert( data_face_vertices[f][1] != data_face_vertices[f][2] );
-        
-        
-        
-        for( int vi = 0; vi < 3; vi++ )
-        {
-            
-            if( data_face_nextparents_of_vertices[f][vi] != nullindex )
-              assert( 0 <= data_face_nextparents_of_vertices[f][vi] && data_face_nextparents_of_vertices[f][vi] < counter_faces );
-        
-            if( data_face_nextparents_of_vertices[f][vi] != nullindex )
-              assert( data_face_vertices[ data_face_nextparents_of_vertices[f][vi] ][0] == data_face_vertices[f][vi] 
-                      ||
-                      data_face_vertices[ data_face_nextparents_of_vertices[f][vi] ][1] == data_face_vertices[f][vi] 
-                      ||
-                      data_face_vertices[ data_face_nextparents_of_vertices[f][vi] ][2] == data_face_vertices[f][vi] );
-            
-        }
-        
-        
-    }
     
     
-    /* 
-     * each edge: each vertex is a valid index
-     * each edge: each vertex is unique 
-     * each edge: the next parents make sense 
-     * each edge: the next parents are actually parents
-     */
     
-    for( int e = 0; e < counter_edges; e++ )
-    {
-        assert( data_edge_vertices[e][0] != nullindex );
-        assert( data_edge_vertices[e][1] != nullindex );
-        assert( 0 <= data_edge_vertices[e][0] && data_edge_vertices[e][0] < counter_vertices );
-        assert( 0 <= data_edge_vertices[e][1] && data_edge_vertices[e][0] < counter_vertices );
-        assert( data_edge_vertices[e][0] != data_edge_vertices[e][1] );
-        
-//         if( data_edge_nextparents_of_vertices[e][0] != nullindex || data_edge_nextparents_of_vertices[e][1] != nullindex )
-//           assert( data_edge_nextparents_of_vertices[e][0] != data_edge_nextparents_of_vertices[e][1] );
-        
-          
-        for( int vi = 0; vi < 2; vi++ )
-        {
-          
-          if( data_edge_nextparents_of_vertices[e][vi] != nullindex )
-          assert( 0 <= data_edge_nextparents_of_vertices[e][vi] && data_edge_nextparents_of_vertices[e][vi] < counter_edges );
-          
-          if( data_edge_nextparents_of_vertices[e][vi] != nullindex )
-            assert( data_edge_vertices[ data_edge_nextparents_of_vertices[e][vi] ][0] == data_edge_vertices[e][vi] 
-                    ||
-                    data_edge_vertices[ data_edge_nextparents_of_vertices[e][vi] ][1] == data_edge_vertices[e][vi] 
-                  );
-          
-        }
-        
-    }
+    
+    
+    
+    
+    
+    
     
     
     
@@ -1024,27 +1070,22 @@ void MeshSimplicial3D::check() const
     
     
     /*
-     * each tetrahedron: each face is listed correctly
+     * each face: each edge is listed correctly
      */
     
-    for( int t = 0; t < counter_tetrahedra; t++ )
+    for( int f = 0; f < counter_faces; f++ )
     {
-        assert( data_face_vertices[ data_tetrahedron_faces[t][0] ][0] == data_tetrahedron_vertices[t][0] );
-        assert( data_face_vertices[ data_tetrahedron_faces[t][0] ][1] == data_tetrahedron_vertices[t][1] );
-        assert( data_face_vertices[ data_tetrahedron_faces[t][0] ][2] == data_tetrahedron_vertices[t][2] );
+        assert( data_edge_vertices[ data_face_edges[f][0] ][0] == data_face_vertices[f][0] );
+        assert( data_edge_vertices[ data_face_edges[f][0] ][1] == data_face_vertices[f][1] );
         
-        assert( data_face_vertices[ data_tetrahedron_faces[t][1] ][0] == data_tetrahedron_vertices[t][0] );
-        assert( data_face_vertices[ data_tetrahedron_faces[t][1] ][1] == data_tetrahedron_vertices[t][1] );
-        assert( data_face_vertices[ data_tetrahedron_faces[t][1] ][2] == data_tetrahedron_vertices[t][3] );
+        assert( data_edge_vertices[ data_face_edges[f][1] ][0] == data_face_vertices[f][0] );
+        assert( data_edge_vertices[ data_face_edges[f][1] ][1] == data_face_vertices[f][2] );
         
-        assert( data_face_vertices[ data_tetrahedron_faces[t][2] ][0] == data_tetrahedron_vertices[t][0] );
-        assert( data_face_vertices[ data_tetrahedron_faces[t][2] ][1] == data_tetrahedron_vertices[t][2] );
-        assert( data_face_vertices[ data_tetrahedron_faces[t][2] ][2] == data_tetrahedron_vertices[t][3] );
-        
-        assert( data_face_vertices[ data_tetrahedron_faces[t][3] ][0] == data_tetrahedron_vertices[t][1] );
-        assert( data_face_vertices[ data_tetrahedron_faces[t][3] ][1] == data_tetrahedron_vertices[t][2] );
-        assert( data_face_vertices[ data_tetrahedron_faces[t][3] ][2] == data_tetrahedron_vertices[t][3] );
+        assert( data_edge_vertices[ data_face_edges[f][2] ][0] == data_face_vertices[f][1] );
+        assert( data_edge_vertices[ data_face_edges[f][2] ][1] == data_face_vertices[f][2] );
     }
+    
+    
     
     /*
      * each tetrahedron: each edge is listed correctly
@@ -1071,20 +1112,28 @@ void MeshSimplicial3D::check() const
         assert( data_edge_vertices[ data_tetrahedron_edges[t][5] ][1] == data_tetrahedron_vertices[t][3] );
     }
     
+    
     /*
-     * each face: each edge is listed correctly
+     * each tetrahedron: each face is listed correctly
      */
     
-    for( int f = 0; f < counter_faces; f++ )
+    for( int t = 0; t < counter_tetrahedra; t++ )
     {
-        assert( data_edge_vertices[ data_face_edges[f][0] ][0] == data_face_vertices[f][0] );
-        assert( data_edge_vertices[ data_face_edges[f][0] ][1] == data_face_vertices[f][1] );
+        assert( data_face_vertices[ data_tetrahedron_faces[t][0] ][0] == data_tetrahedron_vertices[t][0] );
+        assert( data_face_vertices[ data_tetrahedron_faces[t][0] ][1] == data_tetrahedron_vertices[t][1] );
+        assert( data_face_vertices[ data_tetrahedron_faces[t][0] ][2] == data_tetrahedron_vertices[t][2] );
         
-        assert( data_edge_vertices[ data_face_edges[f][1] ][0] == data_face_vertices[f][0] );
-        assert( data_edge_vertices[ data_face_edges[f][1] ][1] == data_face_vertices[f][2] );
+        assert( data_face_vertices[ data_tetrahedron_faces[t][1] ][0] == data_tetrahedron_vertices[t][0] );
+        assert( data_face_vertices[ data_tetrahedron_faces[t][1] ][1] == data_tetrahedron_vertices[t][1] );
+        assert( data_face_vertices[ data_tetrahedron_faces[t][1] ][2] == data_tetrahedron_vertices[t][3] );
         
-        assert( data_edge_vertices[ data_face_edges[f][2] ][0] == data_face_vertices[f][1] );
-        assert( data_edge_vertices[ data_face_edges[f][2] ][1] == data_face_vertices[f][2] );
+        assert( data_face_vertices[ data_tetrahedron_faces[t][2] ][0] == data_tetrahedron_vertices[t][0] );
+        assert( data_face_vertices[ data_tetrahedron_faces[t][2] ][1] == data_tetrahedron_vertices[t][2] );
+        assert( data_face_vertices[ data_tetrahedron_faces[t][2] ][2] == data_tetrahedron_vertices[t][3] );
+        
+        assert( data_face_vertices[ data_tetrahedron_faces[t][3] ][0] == data_tetrahedron_vertices[t][1] );
+        assert( data_face_vertices[ data_tetrahedron_faces[t][3] ][1] == data_tetrahedron_vertices[t][2] );
+        assert( data_face_vertices[ data_tetrahedron_faces[t][3] ][2] == data_tetrahedron_vertices[t][3] );
     }
     
     
@@ -3101,7 +3150,7 @@ void MeshSimplicial3D::bisect_edge( int e )
 
 
 
-// TODO: Update the uniform refinement method 
+// TODO: Debug the uniform refinement method 
 
 void MeshSimplicial3D::uniformrefinement()
 {
@@ -3176,7 +3225,10 @@ void MeshSimplicial3D::uniformrefinement()
     
     
     
-    /* create the new coordinates and fill them up */
+    
+    
+    
+    /* 0. create the new coordinates and fill them up */
     
     for( int e = 0; e < counter_edges; e++ )
     {
@@ -3186,7 +3238,15 @@ void MeshSimplicial3D::uniformrefinement()
     
     
     
-    /* for each old vertex, set the new parent edge */
+    
+    /********************************/
+    /***   VERTICES AND EDGES    ****/
+    /********************************/
+    
+    
+    /*** TREAT THE OLD VERTICES AND THEIR CONNECTION TO EDGES ****/
+    
+    /* 1. for each old vertex, set the new parent edge */
     
     for( int v = 0; v < counter_vertices; v++ )
     {
@@ -3203,7 +3263,7 @@ void MeshSimplicial3D::uniformrefinement()
     }
     
     
-    /* for each old edge, relocate the data of the old vertices' old parent edges */
+    /* 2. for each old edge, relocate the data of the old vertices' old parent edges */
     
     for( int e  = 0; e  < counter_edges;  e++ )
     for( int vi = 0; vi <=            1; vi++ )
@@ -3234,7 +3294,10 @@ void MeshSimplicial3D::uniformrefinement()
     }
     
     
-    /* for each new vertex, 
+    /*** TREAT THE NEW VERTICES AND THEIR CONNECTION TO EDGES ****/
+    
+    /* 1.
+     * for each new vertex (which is in the middle of an old edge), 
      * set the first and second parent edge from the old edge 
      */
     
@@ -3247,7 +3310,9 @@ void MeshSimplicial3D::uniformrefinement()
     }
     
     
-    /* for each old edge, run over the adjacent faces 
+    
+    /* 2.
+     * for each old edge, run over the adjacent faces 
      * and add the corresponding new edges to the list of 
      * parent edges of new vertex.
      */
@@ -3294,7 +3359,40 @@ void MeshSimplicial3D::uniformrefinement()
       
     }
     
-    /* for each edge created from an old edge, set the vertices */
+    
+    
+    
+    /* 3.
+     * for each tetrahedron, include the single interior edge 02 13
+     * in the parent lists of its two vertices
+     */
+    
+    for( int t = 0; t < counter_tetrahedra; t++ )
+    {
+      /* 01 02 03 12 13 23 */
+      
+      int v02 = counter_vertices + data_tetrahedron_edges[t][1];
+      int v13 = counter_vertices + data_tetrahedron_edges[t][4];
+      
+      int ne = 2 * counter_edges + 3 * counter_faces + t;
+      
+      int fp_v02 = data_vertex_firstparent_edge[ v02 ];
+      int fp_v13 = data_vertex_firstparent_edge[ v13 ];
+      
+      data_vertex_firstparent_edge[ v02 ] = ne;
+      data_vertex_firstparent_edge[ v13 ] = ne;
+      
+      data_edge_nextparents_of_vertices[ ne ][ 0 ] = fp_v02;
+      data_edge_nextparents_of_vertices[ ne ][ 1 ] = fp_v13;
+      
+    }
+    
+    
+    
+    
+    /*** SET THE VERTICES OF ALL EDGES ****/
+    
+    /* 1. for each edge created from an old edge, set the vertices */
     
     for( int e = 0; e < counter_edges; e++ )
     {
@@ -3307,7 +3405,7 @@ void MeshSimplicial3D::uniformrefinement()
       data_edge_vertices[e + counter_edges][1] = vertex_front;
     }
     
-    /* for each face, set the vertices of the new edge */
+    /* 2. for each face, set the vertices of the new edges inside the face */
     
     for( int f = 0; f < counter_faces; f++ )
     {
@@ -3319,10 +3417,34 @@ void MeshSimplicial3D::uniformrefinement()
       data_edge_vertices[ 2 * counter_edges + 2 * counter_faces + f ][1] = counter_vertices + data_face_edges[f][2];
     }
     
+    /* 3. for each tetrahedron, set the internal vertices */
+    
+    for( int t = 0; t < counter_tetrahedra; t++ )
+    {
+      /* 01 02 03 12 13 23 */
+      
+      int v02 = counter_vertices + data_tetrahedron_edges[t][1];
+      int v13 = counter_vertices + data_tetrahedron_edges[t][4];
+      int ne = 2 * counter_edges + 3 * counter_faces + t;
+      
+      data_edge_vertices[ ne ][ 0 ] = v02;
+      data_edge_vertices[ ne ][ 1 ] = v13;
+      
+    }
     
     
     
-    /* for each old vertex, set the new parent face */
+    
+    
+    /****************************************/
+    /***   VERTICES AND EDGES AND FACES  ****/
+    /****************************************/
+    
+    
+    
+    /*** TREAT THE OLD VERTICES AND THEIR CONNECTION TO FACES ****/
+    
+    /* 1. for each old vertex, set the new parent face */
     
     for( int v = 0; v < counter_vertices; v++ )
     {
@@ -3332,18 +3454,19 @@ void MeshSimplicial3D::uniformrefinement()
       
       int vi = data_face_vertices[p][0] == v ? 0 : data_face_vertices[p][1] == v ? 1 : 2;
       
-      assert( data_face_vertices[p][0] == v || data_face_vertices[p][1] == v  || data_face_vertices[p][2] == v );
+      assert( data_face_vertices[p][0] == v || data_face_vertices[p][1] == v || data_face_vertices[p][2] == v );
       assert( data_face_vertices[p][vi] == v );
       
       data_vertex_firstparent_face[v] = vi * counter_faces + p;
     }
     
     
-    /* for each old face, relocate the data of the old vertices' parent face */
+    /* 2. for each old face, relocate the data of the old vertices' parent face */
     
     for( int f  = 0; f  < counter_faces;  f++ )
     for( int vi = 0; vi <             3; vi++ )
     {
+      
       int q = data_face_nextparents_of_vertices[f][vi];
       
       int v = data_face_vertices[f][vi];
@@ -3365,68 +3488,198 @@ void MeshSimplicial3D::uniformrefinement()
       
     }
     
-    /* for each old edge, run over the adjacent faces 
+    
+    /*** TREAT THE NEW VERTICES AND THEIR CONNECTION TO FACES ****/
+    
+    /* 1.
+     * for each old edge, run over the adjacent old faces 
      * and add the corresponding new faces to the list of 
      * parent faces of new vertex.
      */
+   
+   /* TODO: the following code is currently considered legacy */
     
-    for( int e = 0; e < counter_edges; e++ )
+//     for( int e = 0; e < counter_edges; e++ )
+//     {
+//       int f = data_edge_firstparent_face[e];
+//       
+//       while( f != nullindex ) {
+//         
+//         int ei   = nullindex;
+//         int f_1  = nullindex; 
+//         int f_2  = nullindex;
+//         int f_3  = nullindex;
+//         int vi_1 = nullindex;
+//         int vi_2 = nullindex;
+//         int vi_3 = nullindex;
+//         
+//         // [ 01 02 12 ] -> [ 01 02 ] [ 01 12 ] [ 02 12 ]
+//         // [ 00 01 02 ], [ 01 11 12 ], [ 02 12 22 ], [ 01 02 12 ]
+//         
+//         if(        data_face_edges[f][0] == e ) {
+//           ei = 0; 
+//           f_1 = 0; f_2 = 3; f_3 = 1; vi_1 = 1; vi_2 = 0; vi_3 = 0;  
+//         } else if( data_face_edges[f][1] == e ) {
+//           ei = 1; 
+//           f_1 = 0; f_2 = 3; f_3 = 2; vi_1 = 2; vi_2 = 1; vi_3 = 0;  
+//         } else if( data_face_edges[f][2] == e ) {
+//           ei = 2; 
+//           f_1 = 1; f_2 = 3; f_3 = 2; vi_1 = 2; vi_2 = 2; vi_3 = 1; 
+//         } else
+//           assert(false);
+//         
+//         int old_first_parent = data_vertex_firstparent_face[ counter_vertices + e ];
+//         
+//         data_vertex_firstparent_face[ counter_vertices + e ]
+//           = f_1 * counter_faces + f;
+//         
+//         if( f_1 != 0 ) assert( data_face_nextparents_of_vertices[ f_1 * counter_faces + f ][ vi_1 ] == nullindex );
+//         data_face_nextparents_of_vertices[ f_1 * counter_faces + f ][ vi_1 ]
+//           = f_2 * counter_faces + f;
+//         
+//         if( f_2 != 0 ) assert( data_face_nextparents_of_vertices[ f_2 * counter_faces + f ][ vi_2 ] == nullindex );
+//         data_face_nextparents_of_vertices[ f_2 * counter_faces + f ][ vi_2 ]
+//           = f_3 * counter_faces + f;
+//         
+//         if( f_3 != 0 ) assert( data_face_nextparents_of_vertices[ f_3 * counter_faces + f ][ vi_3 ] == nullindex );
+//         data_face_nextparents_of_vertices[ f_3 * counter_faces + f ][ vi_3 ]
+//           = old_first_parent;
+//         
+//         f = data_face_nextparents_of_edges[ f ][ ei ];
+//         
+//       }
+//       
+//     }
+    
+    for( int f = 0; f < counter_faces; f++ )
     {
-      int f = data_edge_firstparent_face[e];
-      
-      while( f != nullindex ) {
         
-        int ei   = nullindex;
-        int f_1  = nullindex; 
-        int f_2  = nullindex;
-        int f_3  = nullindex;
-        int vi_1 = nullindex;
-        int vi_2 = nullindex;
-        int vi_3 = nullindex;
+        int e01 = data_face_edges[ f ][0];
+        int e02 = data_face_edges[ f ][1];
+        int e12 = data_face_edges[ f ][2];
+        
+        int v01 = counter_vertices + e01;
+        int v02 = counter_vertices + e02;
+        int v12 = counter_vertices + e12;
+        
+        int f_00_01_02 = 0 * counter_faces + f;
+        int f_01_11_12 = 1 * counter_faces + f;
+        int f_02_12_22 = 2 * counter_faces + f;
+        int f_01_02_12 = 3 * counter_faces + f;
+        
+        int fp_v01 = data_vertex_firstparent_face[ v01 ];
+        int fp_v02 = data_vertex_firstparent_face[ v02 ];
+        int fp_v12 = data_vertex_firstparent_face[ v12 ];
         
         // [ 01 02 12 ] -> [ 01 02 ] [ 01 12 ] [ 02 12 ]
         // [ 00 01 02 ], [ 01 11 12 ], [ 02 12 22 ], [ 01 02 12 ]
         
-        if(        data_face_edges[f][0] == e ) {
-          ei = 0; 
-          f_1 = 0; f_2 = 3; f_3 = 1; vi_1 = 1; vi_2 = 0; vi_3 = 0;  
-        } else if( data_face_edges[f][1] == e ) {
-          ei = 1; 
-          f_1 = 0; f_2 = 3; f_3 = 2; vi_1 = 2; vi_2 = 1; vi_3 = 0;  
-        } else if( data_face_edges[f][2] == e ) {
-          ei = 2; 
-          f_1 = 1; f_2 = 3; f_3 = 2; vi_1 = 2; vi_2 = 2; vi_3 = 1; 
-        } else
-          assert(false);
+        data_vertex_firstparent_face[ v01 ] = f_00_01_02;
+        data_face_nextparents_of_vertices[ f_00_01_02 ][ 1 ] = f_01_11_12;
+        data_face_nextparents_of_vertices[ f_01_11_12 ][ 0 ] = f_01_02_12;
+        data_face_nextparents_of_vertices[ f_01_02_12 ][ 0 ] = fp_v01;
         
-        int old_first_parent = data_vertex_firstparent_face[ counter_vertices + e ];
+        data_vertex_firstparent_face[ v02 ] = f_00_01_02;
+        data_face_nextparents_of_vertices[ f_00_01_02 ][ 2 ] = f_02_12_22;
+        data_face_nextparents_of_vertices[ f_02_12_22 ][ 0 ] = f_01_02_12;
+        data_face_nextparents_of_vertices[ f_01_02_12 ][ 1 ] = fp_v02;
         
-        data_vertex_firstparent_face[ counter_vertices + e ]
-          = f_1 * counter_faces + f;
+        data_vertex_firstparent_face[ v12 ] = f_01_11_12;
+        data_face_nextparents_of_vertices[ f_01_11_12 ][ 2 ] = f_02_12_22;
+        data_face_nextparents_of_vertices[ f_02_12_22 ][ 1 ] = f_01_02_12;
+        data_face_nextparents_of_vertices[ f_01_02_12 ][ 2 ] = fp_v12;
         
-        if( f_1 != 0 ) assert( data_face_nextparents_of_vertices[ f_1 * counter_faces + f ][ vi_1 ] == nullindex );
-        data_face_nextparents_of_vertices[ f_1 * counter_faces + f ][ vi_1 ]
-          = f_2 * counter_faces + f;
-        
-        if( f_2 != 0 ) assert( data_face_nextparents_of_vertices[ f_2 * counter_faces + f ][ vi_2 ] == nullindex );
-        data_face_nextparents_of_vertices[ f_2 * counter_faces + f ][ vi_2 ]
-          = f_3 * counter_faces + f;
-        
-        if( f_3 != 0 ) assert( data_face_nextparents_of_vertices[ f_3 * counter_faces + f ][ vi_3 ] == nullindex );
-        data_face_nextparents_of_vertices[ f_3 * counter_faces + f ][ vi_3 ]
-          = old_first_parent;
-        
-        f = data_face_nextparents_of_edges[ f ][ ei ];
-        
-      }
+    }
+    
+    
+    
+    
+    
+    
+    /* for each tetrahedron, add the new interior faces to the parent lists of the new vertices */
+    
+    for( int t = 0; t < counter_tetrahedra; t++ )
+    {
+       /*
+        *       01 02 03
+        *       01 12 13
+        *       02 12 23
+        *       03 13 23
+        *       
+        *       01 02 13
+        *       02 03 13
+        *       02 12 13
+        *       02 13 23
+        */
+      
+      int v01 = counter_vertices + data_tetrahedron_edges[t][0];
+      int v02 = counter_vertices + data_tetrahedron_edges[t][1];
+      int v03 = counter_vertices + data_tetrahedron_edges[t][2];
+      int v12 = counter_vertices + data_tetrahedron_edges[t][3];
+      int v13 = counter_vertices + data_tetrahedron_edges[t][4];
+      int v23 = counter_vertices + data_tetrahedron_edges[t][5];
+      
+      int fp_v01 = data_vertex_firstparent_face[ v01 ];
+      int fp_v02 = data_vertex_firstparent_face[ v02 ];
+      int fp_v03 = data_vertex_firstparent_face[ v03 ];
+      int fp_v12 = data_vertex_firstparent_face[ v12 ];
+      int fp_v13 = data_vertex_firstparent_face[ v13 ];
+      int fp_v23 = data_vertex_firstparent_face[ v23 ];
+      
+      
+      int f_01_02_03 = 4 * counter_faces + 0 * counter_tetrahedra + t;
+      int f_01_12_13 = 4 * counter_faces + 1 * counter_tetrahedra + t;
+      int f_02_12_23 = 4 * counter_faces + 2 * counter_tetrahedra + t;
+      int f_03_13_23 = 4 * counter_faces + 3 * counter_tetrahedra + t;
+      int f_01_02_13 = 4 * counter_faces + 4 * counter_tetrahedra + t;
+      int f_02_03_13 = 4 * counter_faces + 5 * counter_tetrahedra + t;
+      int f_02_12_13 = 4 * counter_faces + 6 * counter_tetrahedra + t;
+      int f_02_13_23 = 4 * counter_faces + 7 * counter_tetrahedra + t;
+      
+      
+      data_vertex_firstparent_face[ v01 ] = f_01_02_03;
+      data_face_nextparents_of_vertices[ f_01_02_03 ][ 0 ] = f_01_12_13; 
+      data_face_nextparents_of_vertices[ f_01_12_13 ][ 0 ] = f_01_02_13; 
+      data_face_nextparents_of_vertices[ f_01_02_13 ][ 0 ] = fp_v01; 
+      
+      data_vertex_firstparent_face[ v02 ] = f_01_02_03;
+      data_face_nextparents_of_vertices[ f_01_02_03 ][ 1 ] = f_02_12_23; 
+      data_face_nextparents_of_vertices[ f_02_12_23 ][ 0 ] = f_01_02_13; 
+      data_face_nextparents_of_vertices[ f_01_02_13 ][ 1 ] = f_02_03_13; 
+      data_face_nextparents_of_vertices[ f_02_03_13 ][ 0 ] = f_02_12_13; 
+      data_face_nextparents_of_vertices[ f_02_12_13 ][ 0 ] = f_02_13_23; 
+      data_face_nextparents_of_vertices[ f_02_13_23 ][ 0 ] = fp_v02; 
+      
+      data_vertex_firstparent_face[ v03 ] = f_01_02_03;
+      data_face_nextparents_of_vertices[ f_01_02_03 ][ 2 ] = f_03_13_23; 
+      data_face_nextparents_of_vertices[ f_03_13_23 ][ 0 ] = f_02_03_13; 
+      data_face_nextparents_of_vertices[ f_02_03_13 ][ 1 ] = fp_v03; 
+      
+      data_vertex_firstparent_face[ v12 ] = f_01_12_13;
+      data_face_nextparents_of_vertices[ f_01_12_13 ][ 1 ] = f_02_12_23; 
+      data_face_nextparents_of_vertices[ f_02_12_23 ][ 1 ] = f_02_12_13; 
+      data_face_nextparents_of_vertices[ f_02_12_13 ][ 1 ] = fp_v12; 
+      
+      data_vertex_firstparent_face[ v13 ] = f_01_12_13;
+      data_face_nextparents_of_vertices[ f_01_12_13 ][ 2 ] = f_03_13_23; 
+      data_face_nextparents_of_vertices[ f_03_13_23 ][ 1 ] = f_02_03_13; 
+      data_face_nextparents_of_vertices[ f_02_03_13 ][ 2 ] = f_02_12_13; 
+      data_face_nextparents_of_vertices[ f_02_12_13 ][ 2 ] = f_02_13_23; 
+      data_face_nextparents_of_vertices[ f_02_13_23 ][ 1 ] = fp_v13; 
+      
+      data_vertex_firstparent_face[ v23 ] = f_02_12_23;
+      data_face_nextparents_of_vertices[ f_02_12_23 ][ 2 ] = f_03_13_23; 
+      data_face_nextparents_of_vertices[ f_03_13_23 ][ 2 ] = f_02_13_23; 
+      data_face_nextparents_of_vertices[ f_02_13_23 ][ 2 ] = fp_v23; 
       
     }
     
     
     
-    /* for each old edge, set the new first parent face */
-    /* for each new edge, set the new first parent face */
-    // checked
+    /*** TREAT THE BISECTED EDGES AND THEIR CONNECTION TO FACES ****/
+    
+    
+    /* for each bisected edge, set the new first parent faces of the children edges */
     for( int e = 0; e < counter_edges; e++ )
     {
       int p = data_edge_firstparent_face[e];
@@ -3458,7 +3711,6 @@ void MeshSimplicial3D::uniformrefinement()
     
     /* for each face, relocate the data of the old edges' parent face */
     /* additionally, set the new parents */
-    // checked
     for( int f  = 0; f  < counter_faces;  f++ )
     for( int ei = 0; ei <             3; ei++ )
     {
@@ -3514,8 +3766,10 @@ void MeshSimplicial3D::uniformrefinement()
       
     }
     
+    
+    /*** TREAT THE FACE-BASED EDGES AND THEIR CONNECTION TO SPLIT FACES ****/
+    
     /* for each face, run over the new edges and add firstparents and parents */
-    // checked 
     for( int f = 0; f < counter_faces; f++ )
     {
       // [ 00 01 02 ], [ 01 11 12 ], [ 02 12 22 ], [ 01 02 12 ]
@@ -3535,10 +3789,144 @@ void MeshSimplicial3D::uniformrefinement()
       
     }
     
+    /*** TREAT THE FACE-BASED EDGES AND THEIR CONNECTION TO INTERIOR FACES ****/
+    /*** TREAT THE SINGLE INTERIOR EDGE AND ITS CONNECTION TO INTERIOR FACES ****/
+    
+    for( int t = 0; t < counter_tetrahedra; t++ )
+    {
+      
+       /*
+        *       01 02 03
+        *       01 12 13
+        *       02 12 23
+        *       03 13 23
+        *       
+        *       01 02 13
+        *       02 03 13
+        *       02 12 13
+        *       02 13 23
+        */
+      
+      int f_012 = data_tetrahedron_faces[t][0];
+      int f_013 = data_tetrahedron_faces[t][1];
+      int f_023 = data_tetrahedron_faces[t][2];
+      int f_123 = data_tetrahedron_faces[t][3];
+      
+      int e_01_02 = 2 * counter_edges + 0 * counter_faces + f_012;
+      int e_01_12 = 2 * counter_edges + 1 * counter_faces + f_012;
+      int e_02_12 = 2 * counter_edges + 2 * counter_faces + f_012;
+      
+      int e_01_03 = 2 * counter_edges + 0 * counter_faces + f_013;
+      int e_01_13 = 2 * counter_edges + 1 * counter_faces + f_013;
+      int e_03_13 = 2 * counter_edges + 2 * counter_faces + f_013;
+      
+      int e_02_03 = 2 * counter_edges + 0 * counter_faces + f_023;
+      int e_02_23 = 2 * counter_edges + 1 * counter_faces + f_023;
+      int e_03_23 = 2 * counter_edges + 2 * counter_faces + f_023;
+      
+      int e_12_13 = 2 * counter_edges + 0 * counter_faces + f_123;
+      int e_12_23 = 2 * counter_edges + 1 * counter_faces + f_123;
+      int e_13_23 = 2 * counter_edges + 2 * counter_faces + f_123;
+      
+      int e_02_13 = 2 * counter_edges + 3 * counter_faces + t;
+      
+      
+      int fp_e_01_02 = data_edge_firstparent_face[ e_01_02 ];
+      int fp_e_01_12 = data_edge_firstparent_face[ e_01_12 ];
+      int fp_e_02_12 = data_edge_firstparent_face[ e_02_12 ];
+      
+      int fp_e_01_03 = data_edge_firstparent_face[ e_01_03 ];
+      int fp_e_01_13 = data_edge_firstparent_face[ e_01_13 ];
+      int fp_e_03_13 = data_edge_firstparent_face[ e_03_13 ];
+      
+      int fp_e_02_03 = data_edge_firstparent_face[ e_02_03 ];
+      int fp_e_02_23 = data_edge_firstparent_face[ e_02_23 ];
+      int fp_e_03_23 = data_edge_firstparent_face[ e_03_23 ];
+      
+      int fp_e_12_13 = data_edge_firstparent_face[ e_12_13 ];
+      int fp_e_12_23 = data_edge_firstparent_face[ e_12_23 ];
+      int fp_e_13_23 = data_edge_firstparent_face[ e_13_23 ];
+      
+      int fp_e_02_13 = data_edge_firstparent_face[ e_02_13 ];
+      
+      
+      
+      int f_01_02_03 = 4 * counter_faces + 0 * counter_tetrahedra + t;
+      int f_01_12_13 = 4 * counter_faces + 1 * counter_tetrahedra + t;
+      int f_02_12_23 = 4 * counter_faces + 2 * counter_tetrahedra + t;
+      int f_03_13_23 = 4 * counter_faces + 3 * counter_tetrahedra + t;
+      int f_01_02_13 = 4 * counter_faces + 4 * counter_tetrahedra + t;
+      int f_02_03_13 = 4 * counter_faces + 5 * counter_tetrahedra + t;
+      int f_02_12_13 = 4 * counter_faces + 6 * counter_tetrahedra + t;
+      int f_02_13_23 = 4 * counter_faces + 7 * counter_tetrahedra + t;
+      
+      
+      data_edge_firstparent_face[ e_01_02 ] = f_01_02_03;
+      data_face_nextparents_of_edges[ f_01_02_03 ][ 0 ] = f_01_02_13; 
+      data_face_nextparents_of_edges[ f_01_02_13 ][ 0 ] = fp_e_01_02; 
+      
+      data_edge_firstparent_face[ e_01_12 ] = f_01_12_13;
+      data_face_nextparents_of_edges[ f_01_12_13 ][ 0 ] = fp_e_01_12;
+      
+      data_edge_firstparent_face[ e_02_12 ] = f_02_12_23;
+      data_face_nextparents_of_edges[ f_02_12_23 ][ 0 ] = f_02_12_13;
+      data_face_nextparents_of_edges[ f_02_12_13 ][ 0 ] = fp_e_02_12;
+      
+      
+      data_edge_firstparent_face[ e_01_03 ] = f_01_02_03;
+      data_face_nextparents_of_edges[ f_01_02_03 ][ 1 ] = fp_e_01_03;
+      
+      data_edge_firstparent_face[ e_01_13 ] = f_01_12_13;
+      data_face_nextparents_of_edges[ f_01_12_13 ][ 1 ] = f_01_02_13;
+      data_face_nextparents_of_edges[ f_01_02_13 ][ 1 ] = fp_e_01_13;
+      
+      data_edge_firstparent_face[ e_03_13 ] = f_03_13_23;
+      data_face_nextparents_of_edges[ f_03_13_23 ][ 0 ] = f_02_03_13;
+      data_face_nextparents_of_edges[ f_02_03_13 ][ 2 ] = fp_e_03_13;
+      
+      
+      data_edge_firstparent_face[ e_02_03 ] = f_01_02_03;
+      data_face_nextparents_of_edges[ f_01_02_03 ][ 2 ] = f_02_03_13;
+      data_face_nextparents_of_edges[ f_02_03_13 ][ 0 ] = fp_e_02_03;
+      
+      data_edge_firstparent_face[ e_02_23 ] = f_02_12_23;
+      data_face_nextparents_of_edges[ f_02_12_23 ][ 1 ] = f_02_13_23;
+      data_face_nextparents_of_edges[ f_02_13_23 ][ 1 ] = fp_e_02_23;
+      
+      data_edge_firstparent_face[ e_03_23 ] = f_03_13_23;
+      data_face_nextparents_of_edges[ f_03_13_23 ][ 1 ] = fp_e_03_23;
+      
+      
+      data_edge_firstparent_face[ e_12_13 ] = f_01_12_13;
+      data_face_nextparents_of_edges[ f_01_12_13 ][ 2 ] = f_02_12_13;
+      data_face_nextparents_of_edges[ f_02_12_13 ][ 2 ] = fp_e_12_13;
+      
+      data_edge_firstparent_face[ e_12_23 ] = f_02_12_23;
+      data_face_nextparents_of_edges[ f_02_12_23 ][ 2 ] = fp_e_12_23;
+      
+      data_edge_firstparent_face[ e_13_23 ] = f_03_13_23;
+      data_face_nextparents_of_edges[ f_03_13_23 ][ 2 ] = f_02_13_23;
+      data_face_nextparents_of_edges[ f_02_13_23 ][ 2 ] = fp_e_13_23;
+      
+      
+      data_edge_firstparent_face[ e_02_13 ] = f_01_02_13;
+      data_face_nextparents_of_edges[ f_01_02_13 ][ 2 ] = f_02_03_13;
+      data_face_nextparents_of_edges[ f_02_03_13 ][ 1 ] = f_02_12_13;
+      data_face_nextparents_of_edges[ f_02_12_13 ][ 1 ] = f_02_13_23;
+      data_face_nextparents_of_edges[ f_02_13_23 ][ 0 ] = fp_e_02_13;
+      
+    }
     
     
-    /* for each new face, create the new vertices */
-    // checked
+    
+    
+    
+    
+    
+    /*** SET THE VERTICES AND EDGES OF ALL FACES ****/
+    
+    /* for each new outer face, set the new vertices */
+    
     for( int f = 0; f < counter_faces; f++ )
     {
       int v00 = data_face_vertices[f][0];
@@ -3549,30 +3937,104 @@ void MeshSimplicial3D::uniformrefinement()
       int v02 = counter_vertices + data_face_edges[f][1];
       int v12 = counter_vertices + data_face_edges[f][2];
       
+      int f_00_01_12 = 0 * counter_faces + f;
+      int f_01_11_12 = 1 * counter_faces + f;
+      int f_02_12_22 = 2 * counter_faces + f;
+      int f_01_02_12 = 3 * counter_faces + f;
+      
+        
+      
+      
+      
       // [ 00 01 02 ], [ 01 11 12 ], [ 02 12 22 ], [ 01 02 12 ]
         
-      data_face_vertices[ 0 * counter_faces + f ][0] = v00;
-      data_face_vertices[ 0 * counter_faces + f ][1] = v01;
-      data_face_vertices[ 0 * counter_faces + f ][2] = v02;
+      data_face_vertices[ f_00_01_12 ][0] = v00;
+      data_face_vertices[ f_00_01_12 ][1] = v01;
+      data_face_vertices[ f_00_01_12 ][2] = v02;
       
-      data_face_vertices[ 1 * counter_faces + f ][0] = v01;
-      data_face_vertices[ 1 * counter_faces + f ][1] = v11;
-      data_face_vertices[ 1 * counter_faces + f ][2] = v12;
+      data_face_vertices[ f_01_11_12 ][0] = v01;
+      data_face_vertices[ f_01_11_12 ][1] = v11;
+      data_face_vertices[ f_01_11_12 ][2] = v12;
       
-      data_face_vertices[ 2 * counter_faces + f ][0] = v02;
-      data_face_vertices[ 2 * counter_faces + f ][1] = v12;
-      data_face_vertices[ 2 * counter_faces + f ][2] = v22;
+      data_face_vertices[ f_02_12_22 ][0] = v02;
+      data_face_vertices[ f_02_12_22 ][1] = v12;
+      data_face_vertices[ f_02_12_22 ][2] = v22;
       
-      data_face_vertices[ 3 * counter_faces + f ][0] = v01;
-      data_face_vertices[ 3 * counter_faces + f ][1] = v02;
-      data_face_vertices[ 3 * counter_faces + f ][2] = v12;
+      data_face_vertices[ f_01_02_12 ][0] = v01;
+      data_face_vertices[ f_01_02_12 ][1] = v02;
+      data_face_vertices[ f_01_02_12 ][2] = v12;
       
     }
     
-    /* for each new face, create the new edges */
-    // checked
+    /* for each new interior face, set the new vertices */
+    
+    for( int t = 0; t < counter_tetrahedra; t++ )
+    {
+      
+      int v01 = counter_vertices + data_tetrahedron_edges[t][0];
+      int v02 = counter_vertices + data_tetrahedron_edges[t][1];
+      int v03 = counter_vertices + data_tetrahedron_edges[t][2];
+      int v12 = counter_vertices + data_tetrahedron_edges[t][3];
+      int v13 = counter_vertices + data_tetrahedron_edges[t][4];
+      int v23 = counter_vertices + data_tetrahedron_edges[t][5];
+      
+      assert( counter_vertices <= v01 && v01 < counter_vertices + counter_edges );
+      assert( counter_vertices <= v02 && v02 < counter_vertices + counter_edges );
+      assert( counter_vertices <= v03 && v03 < counter_vertices + counter_edges );
+      assert( counter_vertices <= v12 && v12 < counter_vertices + counter_edges );
+      assert( counter_vertices <= v13 && v13 < counter_vertices + counter_edges );
+      assert( counter_vertices <= v23 && v23 < counter_vertices + counter_edges );
+      
+      int f_01_02_03 = 4 * counter_faces + 0 * counter_tetrahedra + t;
+      int f_01_12_13 = 4 * counter_faces + 1 * counter_tetrahedra + t;
+      int f_02_12_23 = 4 * counter_faces + 2 * counter_tetrahedra + t;
+      int f_03_13_23 = 4 * counter_faces + 3 * counter_tetrahedra + t;
+      int f_01_02_13 = 4 * counter_faces + 4 * counter_tetrahedra + t;
+      int f_02_03_13 = 4 * counter_faces + 5 * counter_tetrahedra + t;
+      int f_02_12_13 = 4 * counter_faces + 6 * counter_tetrahedra + t;
+      int f_02_13_23 = 4 * counter_faces + 7 * counter_tetrahedra + t;
+      
+      data_face_vertices[ f_01_02_03 ][0] = v01;
+      data_face_vertices[ f_01_02_03 ][1] = v02;
+      data_face_vertices[ f_01_02_03 ][2] = v03;
+      
+      data_face_vertices[ f_01_12_13 ][0] = v01;
+      data_face_vertices[ f_01_12_13 ][1] = v12;
+      data_face_vertices[ f_01_12_13 ][2] = v13;
+      
+      data_face_vertices[ f_02_12_23 ][0] = v02;
+      data_face_vertices[ f_02_12_23 ][1] = v12;
+      data_face_vertices[ f_02_12_23 ][2] = v23;
+      
+      data_face_vertices[ f_03_13_23 ][0] = v03;
+      data_face_vertices[ f_03_13_23 ][1] = v13;
+      data_face_vertices[ f_03_13_23 ][2] = v23;
+      
+      data_face_vertices[ f_01_02_13 ][0] = v01;
+      data_face_vertices[ f_01_02_13 ][1] = v02;
+      data_face_vertices[ f_01_02_13 ][2] = v13;
+      
+      data_face_vertices[ f_02_03_13 ][0] = v02;
+      data_face_vertices[ f_02_03_13 ][1] = v03;
+      data_face_vertices[ f_02_03_13 ][2] = v13;
+      
+      data_face_vertices[ f_02_12_13 ][0] = v02;
+      data_face_vertices[ f_02_12_13 ][1] = v12;
+      data_face_vertices[ f_02_12_13 ][2] = v13;
+      
+      data_face_vertices[ f_02_13_23 ][0] = v02;
+      data_face_vertices[ f_02_13_23 ][1] = v13;
+      data_face_vertices[ f_02_13_23 ][2] = v23;
+      
+      
+      
+    }
+    
+    /* for each new outer face, set the new edges */
+    
     for( int f = 0; f < counter_faces; f++ )
     {
+    
       int e00_01 = 0 * counter_edges + data_face_edges[f][0];
       int e00_02 = 0 * counter_edges + data_face_edges[f][1];
       int e01_11 = 1 * counter_edges + data_face_edges[f][0];
@@ -3603,6 +4065,454 @@ void MeshSimplicial3D::uniformrefinement()
       data_face_edges[ 3 * counter_faces + f ][2] = e02_12;
       
     }
+    
+    
+    /* for each new interior face, set the new edges */
+    
+    for( int t = 0; t < counter_tetrahedra; t++ )
+    {
+      
+      int f_01_02_03 = 4 * counter_faces + 0 * counter_tetrahedra + t;
+      int f_01_12_13 = 4 * counter_faces + 1 * counter_tetrahedra + t;
+      int f_02_12_23 = 4 * counter_faces + 2 * counter_tetrahedra + t;
+      int f_03_13_23 = 4 * counter_faces + 3 * counter_tetrahedra + t;
+      int f_01_02_13 = 4 * counter_faces + 4 * counter_tetrahedra + t;
+      int f_02_03_13 = 4 * counter_faces + 5 * counter_tetrahedra + t;
+      int f_02_12_13 = 4 * counter_faces + 6 * counter_tetrahedra + t;
+      int f_02_13_23 = 4 * counter_faces + 7 * counter_tetrahedra + t;
+      
+      int f_012 = data_tetrahedron_faces[t][0];
+      int f_013 = data_tetrahedron_faces[t][1];
+      int f_023 = data_tetrahedron_faces[t][2];
+      int f_123 = data_tetrahedron_faces[t][3];
+      
+      int e_01_02 = 2 * counter_edges + 0 * counter_faces + f_012;
+      int e_01_12 = 2 * counter_edges + 1 * counter_faces + f_012;
+      int e_02_12 = 2 * counter_edges + 2 * counter_faces + f_012;
+      
+      int e_01_03 = 2 * counter_edges + 0 * counter_faces + f_013;
+      int e_01_13 = 2 * counter_edges + 1 * counter_faces + f_013;
+      int e_03_13 = 2 * counter_edges + 2 * counter_faces + f_013;
+      
+      int e_02_03 = 2 * counter_edges + 0 * counter_faces + f_023;
+      int e_02_23 = 2 * counter_edges + 1 * counter_faces + f_023;
+      int e_03_23 = 2 * counter_edges + 2 * counter_faces + f_023;
+      
+      int e_12_13 = 2 * counter_edges + 0 * counter_faces + f_123;
+      int e_12_23 = 2 * counter_edges + 1 * counter_faces + f_123;
+      int e_13_23 = 2 * counter_edges + 2 * counter_faces + f_123;
+      
+      int e_02_13 = 2 * counter_edges + 3 * counter_faces + t;
+      
+      data_face_edges[ f_01_02_03 ][0] = e_01_02;
+      data_face_edges[ f_01_02_03 ][1] = e_01_03;
+      data_face_edges[ f_01_02_03 ][2] = e_02_03;
+      
+      data_face_edges[ f_01_12_13 ][0] = e_01_12;
+      data_face_edges[ f_01_12_13 ][1] = e_01_13;
+      data_face_edges[ f_01_12_13 ][2] = e_12_13;
+      
+      data_face_edges[ f_02_12_23 ][0] = e_02_12;
+      data_face_edges[ f_02_12_23 ][1] = e_02_23;
+      data_face_edges[ f_02_12_23 ][2] = e_12_23;
+      
+      data_face_edges[ f_03_13_23 ][0] = e_03_13;
+      data_face_edges[ f_03_13_23 ][1] = e_03_23;
+      data_face_edges[ f_03_13_23 ][2] = e_13_23;
+      
+      data_face_edges[ f_01_02_13 ][0] = e_01_02;
+      data_face_edges[ f_01_02_13 ][1] = e_01_13;
+      data_face_edges[ f_01_02_13 ][2] = e_02_13;
+      
+      data_face_edges[ f_02_03_13 ][0] = e_02_03;
+      data_face_edges[ f_02_03_13 ][1] = e_02_13;
+      data_face_edges[ f_02_03_13 ][2] = e_03_13;
+      
+      data_face_edges[ f_02_12_13 ][0] = e_02_12;
+      data_face_edges[ f_02_12_13 ][1] = e_02_13;
+      data_face_edges[ f_02_12_13 ][2] = e_12_13;
+      
+      data_face_edges[ f_02_13_23 ][0] = e_02_13;
+      data_face_edges[ f_02_13_23 ][1] = e_02_23;
+      data_face_edges[ f_02_13_23 ][2] = e_13_23;
+      
+    }
+    
+    
+    
+    /**************************/
+    /***   ALL DIMENSIONS  ****/
+    /**************************/
+    
+    
+    /*** TREAT THE OLD VERTICES AND THEIR CONNECTION TO TETRAHEDRA ****/
+    
+    /* 1. for each old vertex, set the new parent tetrahedron */
+    
+    for( int v = 0; v < counter_vertices; v++ )
+    {
+      
+      int p = data_vertex_firstparent_tetrahedron[v];
+      
+      assert( p != nullindex && 0 <= p && p < counter_tetrahedra );
+      
+      int vi = nullindex;
+      if( data_tetrahedron_vertices[p][0] == v ) vi = 0;
+      if( data_tetrahedron_vertices[p][1] == v ) vi = 1;
+      if( data_tetrahedron_vertices[p][2] == v ) vi = 2;
+      if( data_tetrahedron_vertices[p][3] == v ) vi = 3;
+      assert( vi != nullindex );
+      
+      assert( data_tetrahedron_vertices[p][vi] == v );
+      
+      data_vertex_firstparent_tetrahedron[v] = vi * counter_tetrahedra + p;
+      
+    }
+    
+    
+    /* 2. for each old tetrahedron, relocate the data of the old vertices' parent tetrahedron */
+    
+    for( int t  = 0; t  < counter_tetrahedra;  t++ )
+    for( int vi = 0; vi <                  4; vi++ )
+    {
+      
+      int q = data_tetrahedron_nextparents_of_vertices[t][vi];
+      
+      int v = data_tetrahedron_vertices[t][vi];
+      
+      if( q == nullindex ) {
+        
+        data_tetrahedron_nextparents_of_vertices[ vi * counter_tetrahedra + t ][vi] = nullindex;
+        
+      } else {
+        
+        int vinp = nullindex;
+        if( data_tetrahedron_vertices[q][0] == v ) vinp = 0;
+        if( data_tetrahedron_vertices[q][1] == v ) vinp = 1;
+        if( data_tetrahedron_vertices[q][2] == v ) vinp = 2;
+        if( data_tetrahedron_vertices[q][3] == v ) vinp = 3;
+        assert( vinp != nullindex );
+        
+        assert( data_tetrahedron_vertices[q][vinp] == v );
+        
+        data_tetrahedron_nextparents_of_vertices[ vi * counter_tetrahedra + t ][vi] = vinp * counter_tetrahedra + q;
+      
+      } 
+      
+    }
+    
+    /*
+    *       00 01 02 03
+    *       01 11 12 13
+    *       02 12 22 23
+    *       03 13 23 33
+    *       
+    *       01 02 03 13
+    *       01 02 12 13 
+    *       02 03 13 23
+    *       02 12 13 23
+    */
+       
+        
+    /*** TREAT THE NEW VERTICES AND THEIR CONNECTION TO TETRAHEDRA ****/
+    
+    for( int t = 0; t < counter_tetrahedra; t++ )
+    {
+        
+        int v01 = counter_vertices + data_tetrahedron_edges[ t ][ 0 ];
+        int v02 = counter_vertices + data_tetrahedron_edges[ t ][ 1 ];
+        int v03 = counter_vertices + data_tetrahedron_edges[ t ][ 2 ];
+        int v12 = counter_vertices + data_tetrahedron_edges[ t ][ 3 ];
+        int v13 = counter_vertices + data_tetrahedron_edges[ t ][ 4 ];
+        int v23 = counter_vertices + data_tetrahedron_edges[ t ][ 5 ];
+        
+        int fp_v01 = data_vertex_firstparent_tetrahedron[ v01 ];
+        int fp_v02 = data_vertex_firstparent_tetrahedron[ v02 ];
+        int fp_v03 = data_vertex_firstparent_tetrahedron[ v03 ];
+        int fp_v12 = data_vertex_firstparent_tetrahedron[ v12 ];
+        int fp_v13 = data_vertex_firstparent_tetrahedron[ v13 ];
+        int fp_v23 = data_vertex_firstparent_tetrahedron[ v23 ];
+        
+        int t_00_01_02_03 = 0 * counter_tetrahedra + t;
+        int t_01_11_12_13 = 1 * counter_tetrahedra + t;
+        int t_02_12_22_23 = 2 * counter_tetrahedra + t;
+        int t_03_13_23_33 = 3 * counter_tetrahedra + t;
+        int t_01_02_03_13 = 4 * counter_tetrahedra + t;
+        int t_01_02_12_13 = 5 * counter_tetrahedra + t;
+        int t_02_03_13_23 = 6 * counter_tetrahedra + t;
+        int t_02_12_13_23 = 7 * counter_tetrahedra + t;
+        
+        data_vertex_firstparent_tetrahedron[ v01 ] = t_00_01_02_03;
+        data_tetrahedron_nextparents_of_vertices[ t_00_01_02_03 ][ 1 ] = t_01_11_12_13;
+        data_tetrahedron_nextparents_of_vertices[ t_01_11_12_13 ][ 0 ] = t_01_02_03_13;
+        data_tetrahedron_nextparents_of_vertices[ t_01_02_03_13 ][ 0 ] = t_01_02_12_13;
+        data_tetrahedron_nextparents_of_vertices[ t_01_02_12_13 ][ 0 ] = fp_v01;
+        
+        data_vertex_firstparent_tetrahedron[ v02 ] = t_00_01_02_03;
+        data_tetrahedron_nextparents_of_vertices[ t_00_01_02_03 ][ 2 ] = t_02_12_22_23;
+        data_tetrahedron_nextparents_of_vertices[ t_02_12_22_23 ][ 0 ] = t_01_02_03_13;
+        data_tetrahedron_nextparents_of_vertices[ t_01_02_03_13 ][ 1 ] = t_01_02_12_13;
+        data_tetrahedron_nextparents_of_vertices[ t_01_02_12_13 ][ 1 ] = t_02_03_13_23;
+        data_tetrahedron_nextparents_of_vertices[ t_02_03_13_23 ][ 0 ] = t_02_12_13_23;
+        data_tetrahedron_nextparents_of_vertices[ t_02_12_13_23 ][ 0 ] = fp_v02;
+        
+        data_vertex_firstparent_tetrahedron[ v03 ] = t_00_01_02_03;
+        data_tetrahedron_nextparents_of_vertices[ t_00_01_02_03 ][ 3 ] = t_03_13_23_33;
+        data_tetrahedron_nextparents_of_vertices[ t_03_13_23_33 ][ 0 ] = t_01_02_03_13;
+        data_tetrahedron_nextparents_of_vertices[ t_01_02_03_13 ][ 2 ] = t_02_03_13_23;
+        data_tetrahedron_nextparents_of_vertices[ t_02_03_13_23 ][ 1 ] = fp_v03;
+        
+        data_vertex_firstparent_tetrahedron[ v12 ] = t_01_11_12_13;
+        data_tetrahedron_nextparents_of_vertices[ t_01_11_12_13 ][ 2 ] = t_02_12_22_23;
+        data_tetrahedron_nextparents_of_vertices[ t_02_12_22_23 ][ 1 ] = t_01_02_12_13;
+        data_tetrahedron_nextparents_of_vertices[ t_01_02_12_13 ][ 2 ] = t_02_12_13_23;
+        data_tetrahedron_nextparents_of_vertices[ t_02_12_13_23 ][ 1 ] = fp_v12;
+        
+        data_vertex_firstparent_tetrahedron[ v13 ] = t_01_11_12_13;
+        data_tetrahedron_nextparents_of_vertices[ t_01_11_12_13 ][ 3 ] = t_03_13_23_33;
+        data_tetrahedron_nextparents_of_vertices[ t_03_13_23_33 ][ 1 ] = t_01_02_03_13;
+        data_tetrahedron_nextparents_of_vertices[ t_01_02_03_13 ][ 3 ] = t_01_02_12_13;
+        data_tetrahedron_nextparents_of_vertices[ t_01_02_12_13 ][ 3 ] = t_02_03_13_23;
+        data_tetrahedron_nextparents_of_vertices[ t_02_03_13_23 ][ 2 ] = t_02_12_13_23;
+        data_tetrahedron_nextparents_of_vertices[ t_02_12_13_23 ][ 2 ] = fp_v13;
+        
+        data_vertex_firstparent_tetrahedron[ v23 ] = t_02_12_22_23;
+        data_tetrahedron_nextparents_of_vertices[ t_02_12_22_23 ][ 3 ] = t_03_13_23_33;
+        data_tetrahedron_nextparents_of_vertices[ t_03_13_23_33 ][ 2 ] = t_02_03_13_23;
+        data_tetrahedron_nextparents_of_vertices[ t_02_03_13_23 ][ 3 ] = t_02_12_13_23;
+        data_tetrahedron_nextparents_of_vertices[ t_02_12_13_23 ][ 3 ] = fp_v23;
+        
+    }
+    
+    /*** TREAT THE BISECTED EDGES AND THEIR CONNECTION TO TETRAHEDRA ****/
+    
+    for( int t = 0; t < counter_tetrahedra; t++ )
+    {
+        
+        int e_00_01 = data_tetrahedron_edges[ t ][ 0 ];
+        int e_00_02 = data_tetrahedron_edges[ t ][ 1 ];
+        int e_00_03 = data_tetrahedron_edges[ t ][ 2 ];
+        int e_11_12 = data_tetrahedron_edges[ t ][ 3 ];
+        int e_11_13 = data_tetrahedron_edges[ t ][ 4 ];
+        int e_22_23 = data_tetrahedron_edges[ t ][ 5 ];
+        
+        int e_01_11 = counter_edges + data_tetrahedron_edges[ t ][ 0 ];
+        int e_02_22 = counter_edges + data_tetrahedron_edges[ t ][ 1 ];
+        int e_03_33 = counter_edges + data_tetrahedron_edges[ t ][ 2 ];
+        int e_12_22 = counter_edges + data_tetrahedron_edges[ t ][ 3 ];
+        int e_13_33 = counter_edges + data_tetrahedron_edges[ t ][ 4 ];
+        int e_23_33 = counter_edges + data_tetrahedron_edges[ t ][ 5 ];
+        
+        
+        int fp_e_00_01 = data_edge_firstparent_tetrahedron[ e_00_01 ];
+        int fp_e_00_02 = data_edge_firstparent_tetrahedron[ e_00_02 ];
+        int fp_e_00_03 = data_edge_firstparent_tetrahedron[ e_00_03 ];
+        int fp_e_11_12 = data_edge_firstparent_tetrahedron[ e_11_12 ];
+        int fp_e_11_13 = data_edge_firstparent_tetrahedron[ e_11_13 ];
+        int fp_e_22_23 = data_edge_firstparent_tetrahedron[ e_22_23 ];
+        
+        int fp_e_01_11 = data_edge_firstparent_tetrahedron[ e_01_11 ];
+        int fp_e_02_22 = data_edge_firstparent_tetrahedron[ e_02_22 ];
+        int fp_e_03_33 = data_edge_firstparent_tetrahedron[ e_03_33 ];
+        int fp_e_12_22 = data_edge_firstparent_tetrahedron[ e_12_22 ];
+        int fp_e_13_33 = data_edge_firstparent_tetrahedron[ e_13_33 ];
+        int fp_e_23_33 = data_edge_firstparent_tetrahedron[ e_23_33 ];
+        
+        
+        int t_00_01_02_03 = 0 * counter_tetrahedra + t;
+        int t_01_11_12_13 = 1 * counter_tetrahedra + t;
+        int t_02_12_22_23 = 2 * counter_tetrahedra + t;
+        int t_03_13_23_33 = 3 * counter_tetrahedra + t;
+
+        data_edge_firstparent_tetrahedron[ e_00_01 ] = t_00_01_02_03;
+        data_tetrahedron_nextparents_of_edges[ t_00_01_02_03 ][ 0 ] = fp_e_00_01;
+        
+        data_edge_firstparent_tetrahedron[ e_00_02 ] = t_00_01_02_03;
+        data_tetrahedron_nextparents_of_edges[ t_00_01_02_03 ][ 1 ] = fp_e_00_02;
+        
+        data_edge_firstparent_tetrahedron[ e_00_03 ] = t_00_01_02_03;
+        data_tetrahedron_nextparents_of_edges[ t_00_01_02_03 ][ 2 ] = fp_e_00_03;
+        
+        data_edge_firstparent_tetrahedron[ e_11_12 ] = t_01_11_12_13;
+        data_tetrahedron_nextparents_of_edges[ t_01_11_12_13 ][ 3 ] = fp_e_11_12;
+        
+        data_edge_firstparent_tetrahedron[ e_11_13 ] = t_01_11_12_13;
+        data_tetrahedron_nextparents_of_edges[ t_01_11_12_13 ][ 4 ] = fp_e_11_13;
+        
+        data_edge_firstparent_tetrahedron[ e_22_23 ] = t_02_12_22_23;
+        data_tetrahedron_nextparents_of_edges[ t_02_12_22_23 ][ 5 ] = fp_e_22_23;
+        
+        
+        data_edge_firstparent_tetrahedron[ e_01_11 ] = t_01_11_12_13;
+        data_tetrahedron_nextparents_of_edges[ t_01_11_12_13 ][ 0 ] = fp_e_01_11;
+        
+        data_edge_firstparent_tetrahedron[ e_02_22 ] = t_02_12_22_23;
+        data_tetrahedron_nextparents_of_edges[ t_02_12_22_23 ][ 1 ] = fp_e_02_22;
+        
+        data_edge_firstparent_tetrahedron[ e_03_33 ] = t_03_13_23_33;
+        data_tetrahedron_nextparents_of_edges[ t_03_13_23_33 ][ 2 ] = fp_e_03_33;
+        
+        data_edge_firstparent_tetrahedron[ e_12_22 ] = t_02_12_22_23;
+        data_tetrahedron_nextparents_of_edges[ t_02_12_22_23 ][ 3 ] = fp_e_12_22;
+        
+        data_edge_firstparent_tetrahedron[ e_13_33 ] = t_03_13_23_33;
+        data_tetrahedron_nextparents_of_edges[ t_03_13_23_33 ][ 4 ] = fp_e_13_33;
+        
+        data_edge_firstparent_tetrahedron[ e_23_33 ] = t_03_13_23_33;
+        data_tetrahedron_nextparents_of_edges[ t_03_13_23_33 ][ 5 ] = fp_e_23_33;
+                
+        
+    }
+    
+    
+    
+    
+    /*** TREAT THE FACE-BASED EDGES AND THEIR CONNECTION TO TETRAHEDRA ****/
+    /*** TREAT THE SINGLE INTERIOR EDGES AND THEIR CONNECTION TO TETRAHEDRA ****/
+    
+    for( int t = 0; t < counter_tetrahedra; t++ )
+    {
+        
+        int f012 = data_tetrahedron_faces[ t ][ 0 ];
+        int f013 = data_tetrahedron_faces[ t ][ 1 ];
+        int f023 = data_tetrahedron_faces[ t ][ 2 ];
+        int f123 = data_tetrahedron_faces[ t ][ 2 ];
+        
+        /* 01 02 12 */
+        /* 01 03 13 */
+        /* 02 03 23 */
+        /* 12 13 23 */
+        
+        int e_01_02 = 2 * counter_edges + 0 * counter_faces + f012;
+        int e_01_12 = 2 * counter_edges + 1 * counter_faces + f012;
+        int e_02_12 = 2 * counter_edges + 2 * counter_faces + f012;
+        
+        int e_01_03 = 2 * counter_edges + 0 * counter_faces + f013;
+        int e_01_13 = 2 * counter_edges + 1 * counter_faces + f013;
+        int e_03_13 = 2 * counter_edges + 2 * counter_faces + f013;
+        
+        int e_02_03 = 2 * counter_edges + 0 * counter_faces + f023;
+        int e_02_23 = 2 * counter_edges + 1 * counter_faces + f023;
+        int e_03_23 = 2 * counter_edges + 2 * counter_faces + f023;
+        
+        int e_12_13 = 2 * counter_edges + 0 * counter_faces + f123;
+        int e_12_23 = 2 * counter_edges + 1 * counter_faces + f123;
+        int e_13_23 = 2 * counter_edges + 2 * counter_faces + f123;
+        
+        int e_02_13 = 2 * counter_edges + 3 * counter_faces + t;
+    
+        int fp_e_01_02 = data_edge_firstparent_tetrahedron[ e_01_02 ];
+        int fp_e_01_12 = data_edge_firstparent_tetrahedron[ e_01_12 ];
+        int fp_e_02_12 = data_edge_firstparent_tetrahedron[ e_02_12 ];
+        
+        int fp_e_01_03 = data_edge_firstparent_tetrahedron[ e_01_03 ];
+        int fp_e_01_13 = data_edge_firstparent_tetrahedron[ e_01_13 ];
+        int fp_e_03_13 = data_edge_firstparent_tetrahedron[ e_03_13 ];
+        
+        int fp_e_02_03 = data_edge_firstparent_tetrahedron[ e_02_03 ];
+        int fp_e_02_23 = data_edge_firstparent_tetrahedron[ e_02_23 ];
+        int fp_e_03_23 = data_edge_firstparent_tetrahedron[ e_03_23 ];
+        
+        int fp_e_12_13 = data_edge_firstparent_tetrahedron[ e_12_13 ];
+        int fp_e_12_23 = data_edge_firstparent_tetrahedron[ e_12_23 ];
+        int fp_e_13_23 = data_edge_firstparent_tetrahedron[ e_13_23 ];
+        
+        int fp_e_02_13 = data_edge_firstparent_tetrahedron[ e_02_13 ];
+        assert( fp_e_02_13 == nullindex );
+        
+        
+        int t_00_01_02_03 = 0 * counter_tetrahedra + t;
+        int t_01_11_12_13 = 1 * counter_tetrahedra + t;
+        int t_02_12_22_23 = 2 * counter_tetrahedra + t;
+        int t_03_13_23_33 = 3 * counter_tetrahedra + t;
+        int t_01_02_03_13 = 4 * counter_tetrahedra + t;
+        int t_01_02_12_13 = 5 * counter_tetrahedra + t;
+        int t_02_03_13_23 = 6 * counter_tetrahedra + t;
+        int t_02_12_13_23 = 7 * counter_tetrahedra + t;
+        
+        
+        data_edge_firstparent_tetrahedron[ e_01_02 ] = t_00_01_02_03;
+        data_tetrahedron_nextparents_of_edges[ t_00_01_02_03 ][ 3 ] = t_01_02_03_13;
+        data_tetrahedron_nextparents_of_edges[ t_01_02_03_13 ][ 0 ] = t_01_02_12_13;
+        data_tetrahedron_nextparents_of_edges[ t_01_02_12_13 ][ 0 ] = fp_e_01_02;
+        
+        data_edge_firstparent_tetrahedron[ e_01_12 ] = t_01_11_12_13;
+        data_tetrahedron_nextparents_of_edges[ t_01_11_12_13 ][ 2 ] = t_01_02_12_13;
+        data_tetrahedron_nextparents_of_edges[ t_01_02_12_13 ][ 2 ] = fp_e_01_12;
+        
+        data_edge_firstparent_tetrahedron[ e_02_12 ] = t_02_12_22_23;
+        data_tetrahedron_nextparents_of_edges[ t_02_12_22_23 ][ 0 ] = t_01_02_12_13;
+        data_tetrahedron_nextparents_of_edges[ t_01_02_12_13 ][ 3 ] = t_02_12_13_23;
+        data_tetrahedron_nextparents_of_edges[ t_02_12_13_23 ][ 0 ] = fp_e_02_12;
+        
+        
+        data_edge_firstparent_tetrahedron[ e_01_03 ] = t_00_01_02_03;
+        data_tetrahedron_nextparents_of_edges[ t_00_01_02_03 ][ 4 ] = t_01_02_03_13;
+        data_tetrahedron_nextparents_of_edges[ t_01_02_03_13 ][ 1 ] = fp_e_01_03;
+        
+        data_edge_firstparent_tetrahedron[ e_01_13 ] = t_01_11_12_13;
+        data_tetrahedron_nextparents_of_edges[ t_01_11_12_13 ][ 2 ] = t_01_02_03_13;
+        data_tetrahedron_nextparents_of_edges[ t_01_02_03_13 ][ 2 ] = t_01_02_12_13;
+        data_tetrahedron_nextparents_of_edges[ t_01_02_12_13 ][ 2 ] = fp_e_01_13;
+        
+        data_edge_firstparent_tetrahedron[ e_03_13 ] = t_03_13_23_33;
+        data_tetrahedron_nextparents_of_edges[ t_03_13_23_33 ][ 0 ] = fp_e_03_13;
+        
+        
+        data_edge_firstparent_tetrahedron[ e_02_03 ] = t_00_01_02_03;
+        data_tetrahedron_nextparents_of_edges[ t_00_01_02_03 ][ 5 ] = t_01_02_03_13;
+        data_tetrahedron_nextparents_of_edges[ t_01_02_03_13 ][ 3 ] = t_02_03_13_23;
+        data_tetrahedron_nextparents_of_edges[ t_02_03_13_23 ][ 0 ] = fp_e_02_03;
+        
+        data_edge_firstparent_tetrahedron[ e_02_23 ] = t_02_12_22_23;
+        data_tetrahedron_nextparents_of_edges[ t_02_12_22_23 ][ 2 ] = t_02_03_13_23;
+        data_tetrahedron_nextparents_of_edges[ t_02_03_13_23 ][ 2 ] = t_02_12_13_23;
+        data_tetrahedron_nextparents_of_edges[ t_02_12_13_23 ][ 2 ] = fp_e_02_23;
+        
+        data_edge_firstparent_tetrahedron[ e_03_23 ] = t_03_13_23_33;
+        data_tetrahedron_nextparents_of_edges[ t_03_13_23_33 ][ 2 ] = t_02_03_13_23;
+        data_tetrahedron_nextparents_of_edges[ t_02_03_13_23 ][ 3 ] = fp_e_03_23;
+        
+        
+        data_edge_firstparent_tetrahedron[ e_12_13 ] = t_01_11_12_13;
+        data_tetrahedron_nextparents_of_edges[ t_01_11_12_13 ][ 5 ] = t_01_02_12_13;
+        data_tetrahedron_nextparents_of_edges[ t_01_02_12_13 ][ 5 ] = t_02_12_13_23;
+        data_tetrahedron_nextparents_of_edges[ t_02_12_13_23 ][ 3 ] = fp_e_12_13;
+        
+        data_edge_firstparent_tetrahedron[ e_12_23 ] = t_02_12_22_23;
+        data_tetrahedron_nextparents_of_edges[ t_02_12_22_23 ][ 4 ] = t_02_12_13_23;
+        data_tetrahedron_nextparents_of_edges[ t_02_12_13_23 ][ 4 ] = fp_e_12_23;
+        
+        data_edge_firstparent_tetrahedron[ e_13_23 ] = t_03_13_23_33;
+        data_tetrahedron_nextparents_of_edges[ t_03_13_23_33 ][ 3 ] = t_02_03_13_23;
+        data_tetrahedron_nextparents_of_edges[ t_02_03_13_23 ][ 5 ] = t_02_12_13_23;
+        data_tetrahedron_nextparents_of_edges[ t_02_12_13_23 ][ 5 ] = fp_e_13_23;
+        
+        
+        
+        data_edge_firstparent_tetrahedron[ e_02_13 ] = t_01_02_03_13;
+        data_tetrahedron_nextparents_of_edges[ t_01_02_03_13 ][ 4 ] = t_01_02_12_13;
+        data_tetrahedron_nextparents_of_edges[ t_01_02_12_13 ][ 4 ] = t_02_03_13_23;
+        data_tetrahedron_nextparents_of_edges[ t_02_03_13_23 ][ 3 ] = t_02_12_13_23;
+        data_tetrahedron_nextparents_of_edges[ t_02_12_13_23 ][ 1 ] = fp_e_02_13;
+        
+        
+        
+        
+    }
+    
+    
+    
+    
+    
+    /*** TREAT THE OUTER FACES AND THEIR CONNECTION TO TETRAHEDRA ****/
+    
+    /* TODO */
+    
+    
+    /*** TREAT THE INNER FACES AND THEIR CONNECTION TO TETRAHEDRA ****/
+    
+    
     
     
     
@@ -3847,7 +4757,7 @@ void MeshSimplicial3D::uniformrefinement()
       int f01_02_13 = 4 * counter_faces + 4 * counter_tetrahedra + t;
       int f02_03_13 = 4 * counter_faces + 5 * counter_tetrahedra + t;
       int f02_12_13 = 4 * counter_faces + 6 * counter_tetrahedra + t;
-      int f02_13_23 = 4 * counter_faces + 8 * counter_tetrahedra + t;
+      int f02_13_23 = 4 * counter_faces + 7 * counter_tetrahedra + t;
       
       
       
@@ -3915,7 +4825,7 @@ void MeshSimplicial3D::uniformrefinement()
     
     /* DONE */
     
-    check();
+//     check();
 }
 
 
