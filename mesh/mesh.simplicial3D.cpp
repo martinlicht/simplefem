@@ -4376,7 +4376,7 @@ void MeshSimplicial3D::uniformrefinement()
         int f012 = data_tetrahedron_faces[ t ][ 0 ];
         int f013 = data_tetrahedron_faces[ t ][ 1 ];
         int f023 = data_tetrahedron_faces[ t ][ 2 ];
-        int f123 = data_tetrahedron_faces[ t ][ 2 ];
+        int f123 = data_tetrahedron_faces[ t ][ 3 ];
         
         /* 01 02 12 */
         /* 01 03 13 */
@@ -4509,8 +4509,206 @@ void MeshSimplicial3D::uniformrefinement()
     
     /* TODO */
     
+    for( int t = 0; t < counter_tetrahedra; t++ )
+    {
+        
+        int f012 = data_tetrahedron_faces[ t ][ 0 ];
+        int f013 = data_tetrahedron_faces[ t ][ 1 ];
+        int f023 = data_tetrahedron_faces[ t ][ 2 ];
+        int f123 = data_tetrahedron_faces[ t ][ 3 ];
+        
+        
+        int f_00_01_02 = 0 * counter_faces + f012;
+        int f_01_11_12 = 1 * counter_faces + f012;
+        int f_02_12_22 = 2 * counter_faces + f012;
+        int f_01_02_12 = 3 * counter_faces + f012;
+        
+        int f_00_01_03 = 0 * counter_faces + f013;
+        int f_01_11_13 = 1 * counter_faces + f013;
+        int f_03_13_33 = 2 * counter_faces + f013;
+        int f_01_03_13 = 3 * counter_faces + f013;
+        
+        int f_00_02_03 = 0 * counter_faces + f023;
+        int f_02_22_23 = 1 * counter_faces + f023;
+        int f_03_23_33 = 2 * counter_faces + f023;
+        int f_02_03_23 = 3 * counter_faces + f023;
+        
+        int f_11_12_13 = 0 * counter_faces + f123;
+        int f_12_22_23 = 1 * counter_faces + f123;
+        int f_13_23_33 = 2 * counter_faces + f123;
+        int f_12_13_23 = 3 * counter_faces + f123;
+        
+        
+        int fp_f_00_01_02 = data_face_firstparent_tetrahedron[ f_00_01_02 ];
+        int fp_f_01_11_12 = data_face_firstparent_tetrahedron[ f_01_11_12 ];
+        int fp_f_02_12_22 = data_face_firstparent_tetrahedron[ f_02_12_22 ];
+        int fp_f_01_02_12 = data_face_firstparent_tetrahedron[ f_01_02_12 ];
+        
+        int fp_f_00_01_03 = data_face_firstparent_tetrahedron[ f_00_01_03 ];
+        int fp_f_01_11_13 = data_face_firstparent_tetrahedron[ f_01_11_13 ];
+        int fp_f_03_13_33 = data_face_firstparent_tetrahedron[ f_03_13_33 ];
+        int fp_f_01_03_13 = data_face_firstparent_tetrahedron[ f_01_03_13 ];
+        
+        int fp_f_00_02_03 = data_face_firstparent_tetrahedron[ f_00_02_03 ];
+        int fp_f_02_22_23 = data_face_firstparent_tetrahedron[ f_02_22_23 ];
+        int fp_f_03_23_33 = data_face_firstparent_tetrahedron[ f_03_23_33 ];
+        int fp_f_02_03_23 = data_face_firstparent_tetrahedron[ f_02_03_23 ];
+        
+        int fp_f_11_12_13 = data_face_firstparent_tetrahedron[ f_11_12_13 ];
+        int fp_f_12_22_23 = data_face_firstparent_tetrahedron[ f_12_22_23 ];
+        int fp_f_13_23_33 = data_face_firstparent_tetrahedron[ f_13_23_33 ];
+        int fp_f_12_13_23 = data_face_firstparent_tetrahedron[ f_12_13_23 ];
+        
+        
+        int t_00_01_02_03 = 0 * counter_tetrahedra + t;
+        int t_01_11_12_13 = 1 * counter_tetrahedra + t;
+        int t_02_12_22_23 = 2 * counter_tetrahedra + t;
+        int t_03_13_23_33 = 3 * counter_tetrahedra + t;
+        int t_01_02_03_13 = 4 * counter_tetrahedra + t;
+        int t_01_02_12_13 = 5 * counter_tetrahedra + t;
+        int t_02_03_13_23 = 6 * counter_tetrahedra + t;
+        int t_02_12_13_23 = 7 * counter_tetrahedra + t;
+        
+        data_face_firstparent_tetrahedron[ f_00_01_02 ] = t_00_01_02_03;
+        data_tetrahedron_nextparents_of_faces[ t_00_01_02_03 ][ 0 ] = fp_f_00_01_02;
+        
+        data_face_firstparent_tetrahedron[ f_01_11_12 ] = t_01_11_12_13;
+        data_tetrahedron_nextparents_of_faces[ t_01_11_12_13 ][ 0 ] = fp_f_01_11_12;
+        
+        data_face_firstparent_tetrahedron[ f_02_12_22 ] = t_02_12_22_23;
+        data_tetrahedron_nextparents_of_faces[ t_02_12_22_23 ][ 0 ] = fp_f_02_12_22;
+        
+        data_face_firstparent_tetrahedron[ f_01_02_12 ] = t_01_02_12_13;
+        data_tetrahedron_nextparents_of_faces[ t_01_02_12_13 ][ 0 ] = fp_f_01_02_12;
+        
+        
+        data_face_firstparent_tetrahedron[ f_00_01_03 ] = t_00_01_02_03;
+        data_tetrahedron_nextparents_of_faces[ t_00_01_02_03 ][ 1 ] = fp_f_00_01_03;
+        
+        data_face_firstparent_tetrahedron[ f_01_11_13 ] = t_01_11_12_13;
+        data_tetrahedron_nextparents_of_faces[ t_01_11_12_13 ][ 1 ] = fp_f_01_11_13;
+        
+        data_face_firstparent_tetrahedron[ f_03_13_33 ] = t_03_13_23_33;
+        data_tetrahedron_nextparents_of_faces[ t_03_13_23_33 ][ 1 ] = fp_f_03_13_33;
+        
+        data_face_firstparent_tetrahedron[ f_01_03_13 ] = t_01_02_03_13;
+        data_tetrahedron_nextparents_of_faces[ t_01_02_03_13 ][ 2 ] = fp_f_01_03_13;
+        
+        
+        data_face_firstparent_tetrahedron[ f_00_02_03 ] = t_00_01_02_03;
+        data_tetrahedron_nextparents_of_faces[ t_00_01_02_03 ][ 2 ] = fp_f_00_02_03;
+        
+        data_face_firstparent_tetrahedron[ f_02_22_23 ] = t_02_12_22_23;
+        data_tetrahedron_nextparents_of_faces[ t_02_12_22_23 ][ 2 ] = fp_f_02_22_23;
+        
+        data_face_firstparent_tetrahedron[ f_03_23_33 ] = t_03_13_23_33;
+        data_tetrahedron_nextparents_of_faces[ t_03_13_23_33 ][ 2 ] = fp_f_03_23_33;
+        
+        data_face_firstparent_tetrahedron[ f_02_03_23 ] = t_02_03_13_23;
+        data_tetrahedron_nextparents_of_faces[ t_02_03_13_23 ][ 1 ] = fp_f_02_03_23;
+        
+        
+        data_face_firstparent_tetrahedron[ f_11_12_13 ] = t_01_11_12_13;
+        data_tetrahedron_nextparents_of_faces[ t_01_11_12_13 ][ 3 ] = fp_f_11_12_13;
+        
+        data_face_firstparent_tetrahedron[ f_12_22_23 ] = t_02_12_22_23;
+        data_tetrahedron_nextparents_of_faces[ t_02_12_22_23 ][ 3 ] = fp_f_12_22_23;
+        
+        data_face_firstparent_tetrahedron[ f_13_23_33 ] = t_03_13_23_33;
+        data_tetrahedron_nextparents_of_faces[ t_03_13_23_33 ][ 3 ] = fp_f_13_23_33;
+        
+        data_face_firstparent_tetrahedron[ f_12_13_23 ] = t_02_12_13_23;
+        data_tetrahedron_nextparents_of_faces[ t_02_12_13_23 ][ 3 ] = fp_f_12_13_23;
+        
+    }
+    
     
     /*** TREAT THE INNER FACES AND THEIR CONNECTION TO TETRAHEDRA ****/
+    
+    for( int t = 0; t < counter_tetrahedra; t++ )
+    {
+        
+        int f012 = data_tetrahedron_faces[ t ][ 0 ];
+        int f013 = data_tetrahedron_faces[ t ][ 1 ];
+        int f023 = data_tetrahedron_faces[ t ][ 2 ];
+        int f123 = data_tetrahedron_faces[ t ][ 3 ];
+        
+        
+        int f_01_02_03 = 4 * counter_faces + 0 * counter_tetrahedra + t;
+        int f_01_12_13 = 4 * counter_faces + 1 * counter_tetrahedra + t;
+        int f_02_12_23 = 4 * counter_faces + 2 * counter_tetrahedra + t;
+        int f_03_13_23 = 4 * counter_faces + 3 * counter_tetrahedra + t;
+        int f_01_02_13 = 4 * counter_faces + 4 * counter_tetrahedra + t;
+        int f_02_03_13 = 4 * counter_faces + 5 * counter_tetrahedra + t;
+        int f_02_12_13 = 4 * counter_faces + 6 * counter_tetrahedra + t;
+        int f_02_13_23 = 4 * counter_faces + 7 * counter_tetrahedra + t;
+        
+        int fp_f_01_02_03 = data_face_firstparent_tetrahedron[ f_01_02_03 ];
+        int fp_f_01_12_13 = data_face_firstparent_tetrahedron[ f_01_12_13 ];
+        int fp_f_02_12_23 = data_face_firstparent_tetrahedron[ f_02_12_23 ];
+        int fp_f_03_13_23 = data_face_firstparent_tetrahedron[ f_03_13_23 ];
+        int fp_f_01_02_13 = data_face_firstparent_tetrahedron[ f_01_02_13 ];
+        int fp_f_02_03_13 = data_face_firstparent_tetrahedron[ f_02_03_13 ];
+        int fp_f_02_12_13 = data_face_firstparent_tetrahedron[ f_02_12_13 ];
+        int fp_f_02_13_23 = data_face_firstparent_tetrahedron[ f_02_13_23 ];
+        
+        /*
+        * 01 02 03
+        * 01 12 13
+        * 02 12 23
+        * 03 13 23
+        *       
+        * 01 02 13
+        * 02 03 13
+        * 02 12 13
+        * 02 13 23
+        */
+        
+        
+        int t_00_01_02_03 = 0 * counter_tetrahedra + t;
+        int t_01_11_12_13 = 1 * counter_tetrahedra + t;
+        int t_02_12_22_23 = 2 * counter_tetrahedra + t;
+        int t_03_13_23_33 = 3 * counter_tetrahedra + t;
+        int t_01_02_03_13 = 4 * counter_tetrahedra + t;
+        int t_01_02_12_13 = 5 * counter_tetrahedra + t;
+        int t_02_03_13_23 = 6 * counter_tetrahedra + t;
+        int t_02_12_13_23 = 7 * counter_tetrahedra + t;
+        
+        data_face_firstparent_tetrahedron[ f_01_02_03 ] = t_00_01_02_03;
+        data_tetrahedron_nextparents_of_faces[ t_00_01_02_03 ][ 3 ] = t_01_02_03_13;
+        data_tetrahedron_nextparents_of_faces[ t_01_02_03_13 ][ 0 ] = fp_f_01_02_03;
+        
+        data_face_firstparent_tetrahedron[ f_01_12_13 ] = t_01_11_12_13;
+        data_tetrahedron_nextparents_of_faces[ t_01_11_12_13 ][ 2 ] = t_01_02_12_13;
+        data_tetrahedron_nextparents_of_faces[ t_01_02_12_13 ][ 2 ] = fp_f_01_12_13;
+        
+        data_face_firstparent_tetrahedron[ f_02_12_23 ] = t_02_12_22_23;
+        data_tetrahedron_nextparents_of_faces[ t_02_12_22_23 ][ 1 ] = fp_f_02_12_23;
+        
+        data_face_firstparent_tetrahedron[ f_03_13_23 ] = t_03_13_23_33;
+        data_tetrahedron_nextparents_of_faces[ t_03_13_23_33 ][ 0 ] = t_02_03_13_23;
+        data_tetrahedron_nextparents_of_faces[ t_02_03_13_23 ][ 3 ] = fp_f_03_13_23;
+        
+        data_face_firstparent_tetrahedron[ f_01_02_13 ] = t_01_02_03_13;
+        data_tetrahedron_nextparents_of_faces[ t_01_02_03_13 ][ 1 ] = t_01_02_12_13;
+        data_tetrahedron_nextparents_of_faces[ t_01_02_12_13 ][ 1 ] = fp_f_01_02_13;
+        
+        data_face_firstparent_tetrahedron[ f_02_03_13 ] = t_01_02_03_13;
+        data_tetrahedron_nextparents_of_faces[ t_01_02_03_13 ][ 3 ] = t_02_03_13_23;
+        data_tetrahedron_nextparents_of_faces[ t_02_03_13_23 ][ 2 ] = fp_f_02_03_13;
+        
+        data_face_firstparent_tetrahedron[ f_02_12_13 ] = t_01_02_12_13;
+        data_tetrahedron_nextparents_of_faces[ t_01_02_12_13 ][ 3 ] = t_02_12_13_23;
+        data_tetrahedron_nextparents_of_faces[ t_02_12_13_23 ][ 0 ] = fp_f_02_12_13;
+        
+        data_face_firstparent_tetrahedron[ f_02_13_23 ] = t_02_03_13_23;
+        data_tetrahedron_nextparents_of_faces[ t_02_03_13_23 ][ 2 ] = t_02_12_13_23;
+        data_tetrahedron_nextparents_of_faces[ t_02_12_13_23 ][ 2 ] = fp_f_02_13_23;
+        
+        
+        
+    }
+    
     
     
     
