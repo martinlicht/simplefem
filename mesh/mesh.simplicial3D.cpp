@@ -771,9 +771,7 @@ void MeshSimplicial3D::check() const
     /* 2. check the uniqueness of simplices */
     /****************************************/
     
-    /* 
-     * check that all edges are unique, even up to permutation
-     */
+    /* check that all edges are unique, even up to permutation */
     
     for( int e1 = 0; e1 < counter_edges; e1++ )
     for( int e2 = 0; e2 < counter_edges; e2++ )
@@ -784,10 +782,8 @@ void MeshSimplicial3D::check() const
         assert( data_edge_vertices[e1][0] != data_edge_vertices[e2][1] || data_edge_vertices[e1][1] != data_edge_vertices[e2][0] );
     }
     
-    /* 
-     * check that all faces are unique, even up to permutation
-     * check both the vertices and the edges listed for each face
-     */
+    /* check that all faces are unique, even up to permutation    */
+    /* check both the vertices and the edges listed for each face */
     
     for( int f1 = 0; f1 < counter_faces; f1++ )
     for( int f2 = 0; f2 < counter_faces; f2++ )
@@ -810,10 +806,8 @@ void MeshSimplicial3D::check() const
         
     }
     
-    /* 
-     * check that all tetrahedra are unique, even up to permutation
-     * check both the vertices, the edges, and the faces listed for each tetrahedron
-     */
+    /* check that all tetrahedra are unique, even up to permutation                  */
+    /* check both the vertices, the edges, and the faces listed for each tetrahedron */
     
     const auto permutation_of_six_objects = generatePermutations( IndexRange( 0, 5 ) );
       
@@ -910,9 +904,7 @@ void MeshSimplicial3D::check() const
     /********************************************************/
     
     
-    /*
-     * each face: each edge is listed correctly
-     */
+    /* each face: each edge is listed correctly */
     
     for( int f = 0; f < counter_faces; f++ )
     {
@@ -928,9 +920,7 @@ void MeshSimplicial3D::check() const
     
     
     
-    /*
-     * each tetrahedron: each edge is listed correctly
-     */
+    /* each tetrahedron: each edge is listed correctly */
     
     for( int t = 0; t < counter_tetrahedra; t++ )
     {
@@ -954,9 +944,7 @@ void MeshSimplicial3D::check() const
     }
     
     
-    /*
-     * each tetrahedron: each face is listed correctly
-     */
+    /* each tetrahedron: each face is listed correctly */
     
     for( int t = 0; t < counter_tetrahedra; t++ )
     {
@@ -1212,9 +1200,9 @@ void MeshSimplicial3D::check() const
     
     
     
-   /****************************************/
-   /* 6. Check that all parents are listed */
-   /****************************************/
+    /****************************************/
+    /* 6. Check that all parents are listed */
+    /****************************************/
     
     
     
@@ -1382,7 +1370,7 @@ void MeshSimplicial3D::check() const
     /*************************************/
     /* CHECK FROM BASE CLASS PERSPECTIVE */
     /*************************************/
-   
+    
     
     Mesh::check();
     
