@@ -185,6 +185,8 @@ class MeshSimplicial2D
 
         void longest_edge_bisection( std::vector<int> edges );
         
+        void newest_vertex_bisection( std::vector<int> edges );
+        
         void uniformrefinement();
         
         void midpoint_refinement( int t );

@@ -1744,7 +1744,105 @@ void MeshSimplicial2D::longest_edge_bisection( std::vector<int> edges )
                 if( e != get_triangle_edge( t, ei ) && get_edge_length( get_triangle_edge(t,ei) ) > length_e )
                     todostack.push( get_triangle_edge( t, ei ) );
             
-            // if top edge is still the same, repeat 
+            // if top edge is still the same, bisect 
+            
+            if( e == todostack.top() )
+            {
+                todostack.pop();
+                bisect_edge( e );
+            }
+            
+        }
+        
+    }
+    
+    
+    // fiinished!
+    
+    check();
+}
+
+
+
+
+
+
+
+
+
+
+void MeshSimplicial2D::newest_vertex_bisection( std::vector<int> edges )
+{
+    check();
+    
+    const int old_vertex_count = counter_vertices;
+    
+    
+    /* 0. check the input */
+    
+    for( int& e : edges )
+        assert( 0 <= edges[e] && edges[e] < counter_edges );
+    
+    
+    /* 1. create stack for the edges to be bisected, and fill in first batch */
+    
+    std::stack<int> todostack;
+    
+    for( int& e : edges )
+        todostack.push( e ); // put e on top either by inserting or pulling it up!
+        
+    
+    /* 2. conduct the main loop of the refinement algorithm */
+    
+    while( ! todostack.empty() )
+    {
+        
+        // as long the stack is not empty,
+        // pick the top edge and make the following case distinction
+        // a) the edge index belongs to an edge already bisected and can be ignored 
+        // b) if the top edge is bisection edge to all its neighbors, bisect and pop
+        // c) else, push the necessary edge of each parent simplex
+        
+        int e = todostack.top();
+        
+        // to check whether e belongs to an edge that has already been bisected,
+        // we check whether one of the vertices belongs to the new vertices 
+        
+        if( get_edge_vertex( e, 0 ) >= old_vertex_count || get_edge_vertex(e,1) >= old_vertex_count ) {
+            
+            todostack.pop();
+        
+        } else {
+            
+            // run over neighbor triangles and check for necessary edges 
+            
+            for(
+                int t = get_edge_firstparent_triangle( e );
+                t != nullindex; 
+                t = get_edge_nextparent_triangle( e, t )
+            ) {
+                
+                int v0 = get_triangle_vertex( t, 0 );
+                int v1 = get_triangle_vertex( t, 1 );
+                int v2 = get_triangle_vertex( t, 2 );
+                int e0 = get_triangle_edge( t, 0 ); // 0 1
+                int e1 = get_triangle_edge( t, 1 ); // 0 2
+                int e2 = get_triangle_edge( t, 2 ); // 1 2 
+                
+                assert( e == e0 || e == e1 || e == e2 );
+                
+                int ne = nullindex;
+                if( v0 > v1 && v0 > v2 ) ne = e2;
+                if( v1 > v0 && v1 > v2 ) ne = e1;
+                if( v2 > v0 && v2 > v1 ) ne = e0;
+                assert( ne != nullindex );
+                
+                if( ne != e )
+                    todostack.push( ne );
+                
+            }
+            
+            // if top edge is still the same, bisect
             
             if( e == todostack.top() )
             {
