@@ -1,5 +1,7 @@
 
+#include <cmath>
 #include <string>
+#include <stack>
 #include <vector>
 #include <map>
 #include <utility>
@@ -1684,7 +1686,85 @@ void MeshSimplicial2D::bisect_edge( int e )
 /*
  * * * * * NEWEST VERTEX BISECTION
  */
+
+
+void MeshSimplicial2D::longest_edge_bisection( std::vector<int> edges )
+{
+    check();
     
+    const int old_vertex_count = counter_vertices;
+    
+    
+    /* 0. check the input */
+    
+    for( int& e : edges )
+        assert( 0 <= edges[e] && edges[e] < counter_edges );
+    
+    
+    /* 1. create stack for the edges to be bisected, and fill in first batch */
+    
+    std::stack<int> todostack;
+    
+    for( int& e : edges )
+        todostack.push( e ); // put e on top either by inserting or pulling it up!
+        
+    
+    /* 2. conduct the main loop of the refinement algorithm */
+    
+    while( ! todostack.empty() )
+    {
+        
+        // as long the stack is not empty,
+        // pick the top edge and make the following case distinction
+        // a) the edge index belongs to an edge already bisected and can be ignored 
+        // b) if the top edge is longer than its neighbors, bisect and pop
+        // c) else, push the longest edge of each parent simplex
+        
+        int e = todostack.top();
+        
+        // to check whether e belongs to an edge that has already been bisected,
+        // we check whether one of the vertices belongs to the new vertices 
+        
+        if( get_edge_vertex( e, 0 ) >= old_vertex_count || get_edge_vertex(e,1) >= old_vertex_count ) {
+            
+            todostack.pop();
+        
+        } else {
+            
+            Float length_e = get_edge_length( e );
+                
+            // run over neighbor triangles and check for longer edges 
+            
+            for(
+                int t = get_edge_firstparent_triangle( e );
+                t != nullindex; 
+                t = get_edge_nextparent_triangle( e, t )
+            )
+            for( int ei = 0; ei < 3; ei++ )
+                if( e != get_triangle_edge( t, ei ) && get_edge_length( get_triangle_edge(t,ei) ) > length_e )
+                    todostack.push( get_triangle_edge( t, ei ) );
+            
+            // if top edge is still the same, repeat 
+            
+            if( e == todostack.top() )
+            {
+                todostack.pop();
+                bisect_edge( e );
+            }
+            
+        }
+        
+    }
+    
+    
+    // fiinished!
+    
+    check();
+}
+
+
+
+
 
 
 
@@ -2459,6 +2539,15 @@ FloatVector MeshSimplicial2D::get_edge_midpoint    ( int e ) const
     return mid;
 }
 
+Float MeshSimplicial2D::get_edge_length( int e ) const
+{
+    assert( 0 <= e && e < counter_edges );
+    Float length = 0.;
+    for( int d = 0; d < getouterdimension(); d++ )
+      length += pow( getcoordinates().getdata( get_edge_vertices(e)[0], d ) - getcoordinates().getdata( get_edge_vertices(e)[1], d ), 2. );
+    return sqrt( length );
+}
+        
 
 
 

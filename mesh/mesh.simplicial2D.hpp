@@ -182,6 +182,8 @@ class MeshSimplicial2D
         /* refinement */
         
         void bisect_edge( int e );
+
+        void longest_edge_bisection( std::vector<int> edges );
         
         void uniformrefinement();
         
@@ -194,7 +196,7 @@ class MeshSimplicial2D
         
         FloatVector get_triangle_midpoint( int t ) const;
         FloatVector get_edge_midpoint( int e ) const;
-        
+        Float get_edge_length( int e ) const;
         
     private:
 
