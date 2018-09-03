@@ -103,6 +103,32 @@ void MeshSimplicial3D::bisect_edge( int e )
     
     
     
+    
+    
+    /*******************************************/
+    /*****                                ******/
+    /*****   Assemble sets of simplices   ******/
+    /*****   in the micropatch            ******/
+    /*****                                ******/
+    /*******************************************/
+    
+    
+    /*******************************************/
+    /*****                                ******/
+    /*****   Assemble sets of simplices   ******/
+    /*****   in the MACROpatch            ******/
+    /*****                                ******/
+    /*******************************************/
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     /****************************/
     /*                          */
     /*   FILL IN SIMPLEX DATA   */
@@ -336,21 +362,331 @@ void MeshSimplicial3D::bisect_edge( int e )
         
         assert( v_0 == e_back_vertex && v_2 == e_front_vertex && e == e_0_2 );
         
+        /* prepare stuff */ 
+        int index_f_012 = std::find( old_faces.begin(), old_faces.end(), f_012 ) - old_faces.begin();
+        int index_f_023 = std::find( old_faces.begin(), old_faces.end(), f_023 ) - old_faces.begin();
+        
+        int e_0_n = e_0_2;
+        int e_n_2 = v_n;
+        int e_1_n = counter_edges + 1 + index_f_012;
+        int e_n_3 = counter_edges + 1 + index_f_023;
+        
+        int f_01n = f_012;
+        int f_1n2 = counter_faces + index_f_012;
+        int f_0n3 = f_023;
+        int f_2n3 = counter_faces + index_f_023;
+        int f_1n3 = counter_faces + old_faces.size() + ot;
+        
+        /* Tetrahedron -> Faces */
+        data_tetrahedron_faces[ t_old ][0] = f_01n;
+        data_tetrahedron_faces[ t_old ][1] = f_013;
+        data_tetrahedron_faces[ t_old ][2] = f_0n3;
+        data_tetrahedron_faces[ t_old ][3] = f_1n3;
+        
+        data_tetrahedron_faces[ t_new ][0] = f_1n2;
+        data_tetrahedron_faces[ t_new ][1] = f_1n3;
+        data_tetrahedron_faces[ t_new ][2] = f_123;
+        data_tetrahedron_faces[ t_new ][3] = f_2n3;
+        
+        /* Tetrahedron -> Edges */
+        data_tetrahedron_edges[ t_old ][0] = e_0_1;
+        data_tetrahedron_edges[ t_old ][1] = e_0_n;
+        data_tetrahedron_edges[ t_old ][2] = e_0_3;
+        data_tetrahedron_edges[ t_old ][3] = e_1_n;
+        data_tetrahedron_edges[ t_old ][4] = e_1_3;
+        data_tetrahedron_edges[ t_old ][5] = e_n_3;
+        
+        data_tetrahedron_edges[ t_new ][0] = e_1_n;
+        data_tetrahedron_edges[ t_new ][1] = e_1_2;
+        data_tetrahedron_edges[ t_new ][2] = e_1_3;
+        data_tetrahedron_edges[ t_new ][3] = e_n_2;
+        data_tetrahedron_edges[ t_new ][4] = e_n_3;
+        data_tetrahedron_edges[ t_new ][5] = e_2_3;
+        
+        /* Tetrahedron -> Vertices */
+        data_tetrahedron_vertices[ t_old ][0] = v_0;
+        data_tetrahedron_vertices[ t_old ][1] = v_1;
+        data_tetrahedron_vertices[ t_old ][2] = v_n;
+        data_tetrahedron_vertices[ t_old ][3] = v_3;
+        
+        data_tetrahedron_vertices[ t_new ][0] = v_1;
+        data_tetrahedron_vertices[ t_new ][1] = v_n;
+        data_tetrahedron_vertices[ t_new ][2] = v_2;
+        data_tetrahedron_vertices[ t_new ][3] = v_3;
+        
+        /* Face -> Edges */
+        data_face_edges[ f_new ][0] = e_1_n;
+        data_face_edges[ f_new ][1] = e_1_3;
+        data_face_edges[ f_new ][2] = e_n_3;
+        
+        /* Face -> Vertices */
+        data_face_vertices[ f_new ][0] = v_1;
+        data_face_vertices[ f_new ][1] = v_n;
+        data_face_vertices[ f_new ][2] = v_3;
+        
       } else if( localindex_of_face_refinementedge[ ot ] == 2 ) { // 0 3 
         
         assert( v_0 == e_back_vertex && v_3 == e_front_vertex && e == e_0_3 );
+        
+        /* prepare stuff */ 
+        int index_f_013 = std::find( old_faces.begin(), old_faces.end(), f_013 ) - old_faces.begin();
+        int index_f_023 = std::find( old_faces.begin(), old_faces.end(), f_023 ) - old_faces.begin();
+        
+        int e_0_n = e_0_3;
+        int e_n_3 = v_n;
+        int e_1_n = counter_edges + 1 + index_f_013;
+        int e_2_n = counter_edges + 1 + index_f_023;
+        
+        int f_01n = f_013;
+        int f_1n3 = counter_faces + index_f_013;
+        int f_02n = f_023;
+        int f_2n3 = counter_faces + index_f_023;
+        int f_12n = counter_faces + old_faces.size() + ot;
+        
+        /* Tetrahedron -> Faces */
+        data_tetrahedron_faces[ t_old ][0] = f_012;
+        data_tetrahedron_faces[ t_old ][1] = f_01n;
+        data_tetrahedron_faces[ t_old ][2] = f_02n;
+        data_tetrahedron_faces[ t_old ][3] = f_12n;
+        
+        data_tetrahedron_faces[ t_new ][0] = f_12n;
+        data_tetrahedron_faces[ t_new ][1] = f_123;
+        data_tetrahedron_faces[ t_new ][2] = f_1n3;
+        data_tetrahedron_faces[ t_new ][3] = f_2n3;
+        
+        /* Tetrahedron -> Edges */
+        data_tetrahedron_edges[ t_old ][0] = e_0_1;
+        data_tetrahedron_edges[ t_old ][1] = e_0_2;
+        data_tetrahedron_edges[ t_old ][2] = e_0_n;
+        data_tetrahedron_edges[ t_old ][3] = e_1_2;
+        data_tetrahedron_edges[ t_old ][4] = e_1_n;
+        data_tetrahedron_edges[ t_old ][5] = e_2_n;
+        
+        data_tetrahedron_edges[ t_new ][0] = e_1_2;
+        data_tetrahedron_edges[ t_new ][1] = e_1_n;
+        data_tetrahedron_edges[ t_new ][2] = e_1_3;
+        data_tetrahedron_edges[ t_new ][3] = e_2_n;
+        data_tetrahedron_edges[ t_new ][4] = e_2_3;
+        data_tetrahedron_edges[ t_new ][5] = e_n_3;
+        
+        /* Tetrahedron -> Vertices */
+        data_tetrahedron_vertices[ t_old ][0] = v_0;
+        data_tetrahedron_vertices[ t_old ][1] = v_1;
+        data_tetrahedron_vertices[ t_old ][2] = v_2;
+        data_tetrahedron_vertices[ t_old ][3] = v_n;
+        
+        data_tetrahedron_vertices[ t_new ][0] = v_1;
+        data_tetrahedron_vertices[ t_new ][1] = v_2;
+        data_tetrahedron_vertices[ t_new ][2] = v_n;
+        data_tetrahedron_vertices[ t_new ][3] = v_3;
+        
+        /* Face -> Edges */
+        data_face_edges[ f_new ][0] = e_1_2;
+        data_face_edges[ f_new ][1] = e_1_n;
+        data_face_edges[ f_new ][2] = e_2_n;
+        
+        /* Face -> Vertices */
+        data_face_vertices[ f_new ][0] = v_1;
+        data_face_vertices[ f_new ][1] = v_2;
+        data_face_vertices[ f_new ][2] = v_n;
     
       } else if( localindex_of_face_refinementedge[ ot ] == 3 ) { // 1 2 
         
         assert( v_1 == e_back_vertex && v_2 == e_front_vertex && e == e_1_2 );
+        
+        /* prepare stuff */ 
+        int index_f_012 = std::find( old_faces.begin(), old_faces.end(), f_012 ) - old_faces.begin();
+        int index_f_123 = std::find( old_faces.begin(), old_faces.end(), f_123 ) - old_faces.begin();
+        
+        int e_1_n = e_1_2;
+        int e_n_2 = v_n;
+        int e_0_n = counter_edges + 0 + index_f_012;
+        int e_n_3 = counter_edges + 0 + index_f_123;
+        
+        int f_01n = f_012;
+        int f_0n2 = counter_faces + index_f_012;
+        int f_1n3 = f_123;
+        int f_n23 = counter_faces + index_f_123;
+        int f_0n3 = counter_faces + old_faces.size() + ot;
+        
+        /* Tetrahedron -> Faces */
+        data_tetrahedron_faces[ t_old ][0] = f_01n;
+        data_tetrahedron_faces[ t_old ][1] = f_013;
+        data_tetrahedron_faces[ t_old ][2] = f_0n3;
+        data_tetrahedron_faces[ t_old ][3] = f_1n3;
+        
+        data_tetrahedron_faces[ t_new ][0] = f_0n2;
+        data_tetrahedron_faces[ t_new ][1] = f_0n3;
+        data_tetrahedron_faces[ t_new ][2] = f_023;
+        data_tetrahedron_faces[ t_new ][3] = f_n23;
+        
+        /* Tetrahedron -> Edges */
+        data_tetrahedron_edges[ t_old ][0] = e_0_1;
+        data_tetrahedron_edges[ t_old ][1] = e_0_n;
+        data_tetrahedron_edges[ t_old ][2] = e_0_3;
+        data_tetrahedron_edges[ t_old ][3] = e_1_n;
+        data_tetrahedron_edges[ t_old ][4] = e_1_3;
+        data_tetrahedron_edges[ t_old ][5] = e_n_3;
+        
+        data_tetrahedron_edges[ t_new ][0] = e_0_n;
+        data_tetrahedron_edges[ t_new ][1] = e_0_2;
+        data_tetrahedron_edges[ t_new ][2] = e_0_3;
+        data_tetrahedron_edges[ t_new ][3] = e_n_2;
+        data_tetrahedron_edges[ t_new ][4] = e_n_3;
+        data_tetrahedron_edges[ t_new ][5] = e_2_3;
+        
+        /* Tetrahedron -> Vertices */
+        data_tetrahedron_vertices[ t_old ][0] = v_0;
+        data_tetrahedron_vertices[ t_old ][1] = v_1;
+        data_tetrahedron_vertices[ t_old ][2] = v_n;
+        data_tetrahedron_vertices[ t_old ][3] = v_3;
+        
+        data_tetrahedron_vertices[ t_new ][0] = v_0;
+        data_tetrahedron_vertices[ t_new ][1] = v_n;
+        data_tetrahedron_vertices[ t_new ][2] = v_2;
+        data_tetrahedron_vertices[ t_new ][3] = v_3;
+        
+        /* Face -> Edges */
+        data_face_edges[ f_new ][0] = e_0_n;
+        data_face_edges[ f_new ][1] = e_0_3;
+        data_face_edges[ f_new ][2] = e_n_3;
+        
+        /* Face -> Vertices */
+        data_face_vertices[ f_new ][0] = v_0;
+        data_face_vertices[ f_new ][1] = v_n;
+        data_face_vertices[ f_new ][2] = v_3;
     
       } else if( localindex_of_face_refinementedge[ ot ] == 4 ) { // 1 3 
         
         assert( v_1 == e_back_vertex && v_3 == e_front_vertex && e == e_1_3 );
+        
+        /* prepare stuff */ 
+        int index_f_013 = std::find( old_faces.begin(), old_faces.end(), f_013 ) - old_faces.begin();
+        int index_f_123 = std::find( old_faces.begin(), old_faces.end(), f_123 ) - old_faces.begin();
+        
+        int e_1_n = e_1_3;
+        int e_n_3 = v_n;
+        int e_0_n = counter_edges + 0 + index_f_013;
+        int e_2_n = counter_edges + 0 + index_f_123;
+        
+        int f_01n = f_013;
+        int f_0n3 = counter_faces + index_f_013;
+        int f_12n = f_123;
+        int f_2n3 = counter_faces + index_f_123;
+        int f_02n = counter_faces + old_faces.size() + ot;
+        
+        /* Tetrahedron -> Faces */
+        data_tetrahedron_faces[ t_old ][0] = f_012;
+        data_tetrahedron_faces[ t_old ][1] = f_01n;
+        data_tetrahedron_faces[ t_old ][2] = f_02n;
+        data_tetrahedron_faces[ t_old ][3] = f_12n;
+        
+        data_tetrahedron_faces[ t_new ][0] = f_02n;
+        data_tetrahedron_faces[ t_new ][1] = f_023;
+        data_tetrahedron_faces[ t_new ][2] = f_0n3;
+        data_tetrahedron_faces[ t_new ][3] = f_2n3;
+        
+        /* Tetrahedron -> Edges */
+        data_tetrahedron_edges[ t_old ][0] = e_0_1;
+        data_tetrahedron_edges[ t_old ][1] = e_0_2;
+        data_tetrahedron_edges[ t_old ][2] = e_0_n;
+        data_tetrahedron_edges[ t_old ][3] = e_1_2;
+        data_tetrahedron_edges[ t_old ][4] = e_1_n;
+        data_tetrahedron_edges[ t_old ][5] = e_2_n;
+        
+        data_tetrahedron_edges[ t_new ][0] = e_0_2;
+        data_tetrahedron_edges[ t_new ][1] = e_0_n;
+        data_tetrahedron_edges[ t_new ][2] = e_0_3;
+        data_tetrahedron_edges[ t_new ][3] = e_2_n;
+        data_tetrahedron_edges[ t_new ][4] = e_2_3;
+        data_tetrahedron_edges[ t_new ][5] = e_n_3;
+        
+        /* Tetrahedron -> Vertices */
+        data_tetrahedron_vertices[ t_old ][0] = v_0;
+        data_tetrahedron_vertices[ t_old ][1] = v_1;
+        data_tetrahedron_vertices[ t_old ][2] = v_2;
+        data_tetrahedron_vertices[ t_old ][3] = v_n;
+        
+        data_tetrahedron_vertices[ t_new ][0] = v_0;
+        data_tetrahedron_vertices[ t_new ][1] = v_2;
+        data_tetrahedron_vertices[ t_new ][2] = v_n;
+        data_tetrahedron_vertices[ t_new ][3] = v_3;
+        
+        /* Face -> Edges */
+        data_face_edges[ f_new ][0] = e_0_2;
+        data_face_edges[ f_new ][1] = e_0_n;
+        data_face_edges[ f_new ][2] = e_2_n;
+        
+        /* Face -> Vertices */
+        data_face_vertices[ f_new ][0] = v_0;
+        data_face_vertices[ f_new ][1] = v_2;
+        data_face_vertices[ f_new ][2] = v_n;
     
       } else if( localindex_of_face_refinementedge[ ot ] == 5 ) { // 2 3 
         
         assert( v_2 == e_back_vertex && v_3 == e_front_vertex && e == e_2_3 );
+        
+        /* prepare stuff */ 
+        int index_f_023 = std::find( old_faces.begin(), old_faces.end(), f_023 ) - old_faces.begin();
+        int index_f_123 = std::find( old_faces.begin(), old_faces.end(), f_123 ) - old_faces.begin();
+        
+        int e_2_n = e_2_3;
+        int e_n_3 = v_n;
+        int e_0_n = counter_edges + 0 + index_f_023;
+        int e_1_n = counter_edges + 0 + index_f_123;
+        
+        int f_02n = f_023;
+        int f_0n3 = counter_faces + index_f_023;
+        int f_12n = f_123;
+        int f_1n3 = counter_faces + index_f_123;
+        int f_01n = counter_faces + old_faces.size() + ot;
+        
+        /* Tetrahedron -> Faces */
+        data_tetrahedron_faces[ t_old ][0] = f_012;
+        data_tetrahedron_faces[ t_old ][1] = f_01n;
+        data_tetrahedron_faces[ t_old ][2] = f_02n;
+        data_tetrahedron_faces[ t_old ][3] = f_12n;
+        
+        data_tetrahedron_faces[ t_new ][0] = f_01n;
+        data_tetrahedron_faces[ t_new ][1] = f_013;
+        data_tetrahedron_faces[ t_new ][2] = f_0n3;
+        data_tetrahedron_faces[ t_new ][3] = f_1n3;
+        
+        /* Tetrahedron -> Edges */
+        data_tetrahedron_edges[ t_old ][0] = e_0_1;
+        data_tetrahedron_edges[ t_old ][1] = e_0_2;
+        data_tetrahedron_edges[ t_old ][2] = e_0_n;
+        data_tetrahedron_edges[ t_old ][3] = e_1_2;
+        data_tetrahedron_edges[ t_old ][4] = e_1_n;
+        data_tetrahedron_edges[ t_old ][5] = e_2_n;
+        
+        data_tetrahedron_edges[ t_new ][0] = e_0_1;
+        data_tetrahedron_edges[ t_new ][1] = e_0_n;
+        data_tetrahedron_edges[ t_new ][2] = e_0_3;
+        data_tetrahedron_edges[ t_new ][3] = e_1_n;
+        data_tetrahedron_edges[ t_new ][4] = e_1_3;
+        data_tetrahedron_edges[ t_new ][5] = e_n_3;
+        
+        /* Tetrahedron -> Vertices */
+        data_tetrahedron_vertices[ t_old ][0] = v_0;
+        data_tetrahedron_vertices[ t_old ][1] = v_1;
+        data_tetrahedron_vertices[ t_old ][2] = v_2;
+        data_tetrahedron_vertices[ t_old ][3] = v_n;
+        
+        data_tetrahedron_vertices[ t_new ][0] = v_0;
+        data_tetrahedron_vertices[ t_new ][1] = v_1;
+        data_tetrahedron_vertices[ t_new ][2] = v_n;
+        data_tetrahedron_vertices[ t_new ][3] = v_3;
+        
+        /* Face -> Edges */
+        data_face_edges[ f_new ][0] = e_0_1;
+        data_face_edges[ f_new ][1] = e_0_n;
+        data_face_edges[ f_new ][2] = e_1_n;
+        
+        /* Face -> Vertices */
+        data_face_vertices[ f_new ][0] = v_0;
+        data_face_vertices[ f_new ][1] = v_1;
+        data_face_vertices[ f_new ][2] = v_n;
     
       } else {
         
@@ -365,21 +701,23 @@ void MeshSimplicial3D::bisect_edge( int e )
     
     
     
+    /***********************************************/
+    /*****                                    ******/
+    /*****   Delete the adjaceny links        ******/
+    /*****   in the macropatch                ******/
+    /*****   regarding micropatch simplices   ******/
+    /*****                                    ******/
+    /***********************************************/
     
-    /*******************************************/
-    /*****                                ******/
-    /*****   Assemble sets of simplices   ******/
-    /*****   in the micropatch            ******/
-    /*****                                ******/
-    /*******************************************/
     
+    /***********************************************/
+    /*****                                    ******/
+    /*****   Rebuild the adjaceny links       ******/
+    /*****   in the macropatch                ******/
+    /*****   regarding micropatch simplices   ******/
+    /*****                                    ******/
+    /***********************************************/
     
-    /*******************************************/
-    /*****                                ******/
-    /*****   Assemble sets of simplices   ******/
-    /*****   in the MACROpatch            ******/
-    /*****                                ******/
-    /*******************************************/
     
     
     
@@ -409,9 +747,10 @@ void MeshSimplicial3D::bisect_edge( int e )
      *  UPDATE COUNTERS 
      */
     
-    counter_faces += old_faces.size();
-    counter_edges     += 1 + old_faces.size();
-    counter_vertices  += 1;
+    counter_tetrahedra += old_tetrahedra.size();
+    counter_faces      += old_faces.size() + old_tetrahedra.size();
+    counter_edges      += 1 + old_faces.size();
+    counter_vertices   += 1;
     
     
     
