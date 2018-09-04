@@ -74,23 +74,23 @@ void MeshSimplicial3D::bisect_edge( int e )
     /*****                                ******/
     /*******************************************/
     
-    std::set<int> micro_tetrahedra;
-    std::set<int> micro_faces;
-    std::set<int> micro_edges;
-    std::set<int> micro_vertices;
+    std::set<int> micropatch_tetrahedra;
+    std::set<int> micropatch_faces;
+    std::set<int> micropatch_edges;
+    std::set<int> micropatch_vertices;
     
     for( int t : old_tetrahedra ){
         
-        micro_tetrahedra.insert( t );
+        micropatch_tetrahedra.insert( t );
         
         for( int fi = 0; fi < 4; fi++ )
-            micro_faces.insert( data_tetrahedron_faces[t][fi] );
+            micropatch_faces.insert( data_tetrahedron_faces[t][fi] );
         
         for( int ei = 0; ei < 6; ei++ )
-            micro_edges.insert( data_tetrahedron_edges[t][ei] );
+            micropatch_edges.insert( data_tetrahedron_edges[t][ei] );
         
         for( int vi = 0; vi < 4; vi++ )
-            micro_vertices.insert( data_tetrahedron_vertices[t][vi] );
+            micropatch_vertices.insert( data_tetrahedron_vertices[t][vi] );
         
     }
     
@@ -102,29 +102,29 @@ void MeshSimplicial3D::bisect_edge( int e )
     /*****                                ******/
     /*******************************************/
     
-    std::set<int> macro_tetrahedra;
-    std::set<int> macro_faces;
-    std::set<int> macro_edges;
-    std::set<int> macro_vertices;
+    std::set<int> macropatch_tetrahedra;
+    std::set<int> macropatch_faces;
+    std::set<int> macropatch_edges;
+    std::set<int> macropatch_vertices;
     
-    for( int v : micro_vertices ){
+    for( int v : micropatch_vertices ){
         
         for(
             int t = get_vertex_firstparent_tetrahedron( v );
             t != nullindex; 
-            t = data_tetrahedron_nextparents_of_vertices( v, t )
+            t = get_vertex_nextparent_tetrahedron( v ,t )
         ) {
             
-            macro_tetrahedra.insert( t );
+            macropatch_tetrahedra.insert( t );
             
             for( int fi = 0; fi < 4; fi++ )
-                macro_faces.insert( data_tetrahedron_faces[t][fi] );
+                macropatch_faces.insert( data_tetrahedron_faces[t][fi] );
             
             for( int ei = 0; ei < 6; ei++ )
-                macro_edges.insert( data_tetrahedron_edges[t][ei] );
+                macropatch_edges.insert( data_tetrahedron_edges[t][ei] );
             
             for( int vi = 0; vi < 4; vi++ )
-                macro_vertices.insert( data_tetrahedron_vertices[t][vi] );
+                macropatch_vertices.insert( data_tetrahedron_vertices[t][vi] );
             
         }
         
@@ -201,35 +201,35 @@ void MeshSimplicial3D::bisect_edge( int e )
     for( int e : micropatch_edges ) data_edge_firstparent_tetrahedron[e] = nullindex;
     for( int f : micropatch_faces ) data_face_firstparent_tetrahedron[f] = nullindex;
     
-    for( int e : micropatch_edges ) 
+    for( int e : macropatch_edges ) 
     for( int vi = 0; vi < 2; vi++ ) 
-        if( micropatch_vertices::find( data_edge_vertices[vi] ) != micropatch_vertices::end() )
+        if( micropatch_vertices.find( data_edge_vertices[e][vi] ) != micropatch_vertices.end() )
             data_edge_nextparents_of_vertices[e][vi] = nullindex;
         
-    for( int f : micropatch_faces ) 
+    for( int f : macropatch_faces ) 
     for( int vi = 0; vi < 3; vi++ ) 
-        if( micropatch_vertices::find( data_face_vertices[vi] ) != micropatch_vertices::end() )
+        if( micropatch_vertices.find( data_face_vertices[f][vi] ) != micropatch_vertices.end() )
             data_face_nextparents_of_vertices[f][vi] = nullindex;
         
-    for( int f : micropatch_faces ) 
+    for( int f : macropatch_faces ) 
     for( int ei = 0; ei < 3; ei++ ) 
-        if( micropatch_edges::find( data_face_edges[ei] ) != micropatch_edges::end() )
+        if( micropatch_edges.find( data_face_edges[f][ei] ) != micropatch_edges.end() )
             data_face_nextparents_of_edges[f][ei] = nullindex;
         
          
-    for( int t : micropatch_tetrahedra ) 
+    for( int t : macropatch_tetrahedra ) 
     for( int vi = 0; vi < 4; vi++ ) 
-        if( micropatch_vertices::find( data_tetrahedron_vertices[vi] ) != micropatch_vertices::end() )
+        if( micropatch_vertices.find( data_tetrahedron_vertices[t][vi] ) != micropatch_vertices.end() )
             data_tetrahedron_nextparents_of_vertices[t][vi] = nullindex;
         
-    for( int t : micropatch_tetrahedra ) 
+    for( int t : macropatch_tetrahedra ) 
     for( int ei = 0; ei < 6; ei++ ) 
-        if( micropatch_edges::find( data_tetrahedron_edges[ei] ) != micropatch_edges::end() )
+        if( micropatch_edges.find( data_tetrahedron_edges[t][ei] ) != micropatch_edges.end() )
             data_tetrahedron_nextparents_of_edges[t][ei] = nullindex;
        
-    for( int t : micropatch_tetrahedra ) 
+    for( int t : macropatch_tetrahedra ) 
     for( int fi = 0; fi < 4; fi++ ) 
-        if( micropatch_faces::find( data_tetrahedron_faces[fi] ) != micropatch_faces::end() )
+        if( micropatch_faces.find( data_tetrahedron_faces[t][fi] ) != micropatch_faces.end() )
             data_tetrahedron_nextparents_of_faces[t][fi] = nullindex;
     
         
@@ -857,8 +857,117 @@ void MeshSimplicial3D::bisect_edge( int e )
     /*****                                    ******/
     /***********************************************/
     
+    for( int e : macropatch_edges )
+    for( int vi = 0; vi < 2; vi++ )
+    {
+        
+        int v = data_edge_vertices[e][vi];
+        
+        if( micropatch_vertices.find( v ) != micropatch_vertices.end() ){
+            
+            int fp = data_vertex_firstparent_edge[v]; 
+            
+            data_vertex_firstparent_edge[v] = e;
+            
+            data_edge_nextparents_of_vertices[e][vi] = fp;
+            
+        }
+        
+    }
     
     
+    for( int f : macropatch_faces )
+    for( int vi = 0; vi < 3; vi++ )
+    {
+        
+        int v = data_face_vertices[f][vi];
+        
+        if( micropatch_vertices.find( v ) != micropatch_vertices.end() ){
+            
+            int fp = data_vertex_firstparent_face[v]; 
+            
+            data_vertex_firstparent_face[v] = f;
+            
+            data_face_nextparents_of_vertices[f][vi] = fp;
+            
+        }
+        
+    }
+    
+    for( int f : macropatch_faces )
+    for( int ei = 0; ei < 3; ei++ )
+    {
+        
+        int e = data_face_edges[f][ei];
+        
+        if( micropatch_edges.find( e ) != micropatch_edges.end() ){
+            
+            int fp = data_edge_firstparent_face[e]; 
+            
+            data_edge_firstparent_face[e] = f;
+            
+            data_face_nextparents_of_edges[f][ei] = fp;
+            
+        }
+        
+    }
+    
+    
+    
+    
+    for( int t : macropatch_tetrahedra )
+    for( int vi = 0; vi < 4; vi++ )
+    {
+        
+        int v = data_tetrahedron_vertices[t][vi];
+        
+        if( micropatch_vertices.find( v ) != micropatch_vertices.end() ){
+            
+            int fp = data_vertex_firstparent_tetrahedron[v]; 
+            
+            data_vertex_firstparent_tetrahedron[v] = t;
+            
+            data_tetrahedron_nextparents_of_vertices[t][vi] = fp;
+            
+        }
+        
+    }
+    
+    for( int t : macropatch_tetrahedra )
+    for( int ei = 0; ei < 6; ei++ )
+    {
+        
+        int e = data_tetrahedron_edges[t][ei];
+        
+        if( micropatch_edges.find( e ) != micropatch_edges.end() ){
+            
+            int fp = data_edge_firstparent_tetrahedron[e]; 
+            
+            data_edge_firstparent_tetrahedron[e] = t;
+            
+            data_tetrahedron_nextparents_of_edges[t][ei] = fp;
+            
+        }
+        
+    }
+    
+    for( int t : macropatch_tetrahedra )
+    for( int fi = 0; fi < 4; fi++ )
+    {
+        
+        int f = data_tetrahedron_faces[t][fi];
+        
+        if( micropatch_faces.find( f ) != micropatch_faces.end() ){
+            
+            int fp = data_face_firstparent_tetrahedron[f]; 
+            
+            data_face_firstparent_tetrahedron[f] = t;
+            
+            data_tetrahedron_nextparents_of_faces[t][fi] = fp;
+            
+        }
+        
+    }
     
     
     /**************************/
