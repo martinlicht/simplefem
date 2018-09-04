@@ -217,13 +217,13 @@ class MeshSimplicial3D
         
         int get_vertex_firstparent_tetrahedron( int v ) const;
         
-        int get_vertex_nextparent_tetrahedron( int v, int f ) const;
+        int get_vertex_nextparent_tetrahedron( int v, int t ) const;
         
-        int get_tetrahedron_nextparent_of_vertex( int f, int vi ) const;
+        int get_tetrahedron_nextparent_of_vertex( int t, int vi ) const;
         
-        bool is_tetrahedron_vertex_parent( int f, int v ) const;
+        bool is_tetrahedron_vertex_parent( int t, int v ) const;
         
-        int indexof_tetrahedron_vertex_parent( int f, int v ) const;
+        int indexof_tetrahedron_vertex_parent( int t, int v ) const;
         
         std::vector<int> get_tetrahedron_parents_of_vertex( int v ) const;
         
