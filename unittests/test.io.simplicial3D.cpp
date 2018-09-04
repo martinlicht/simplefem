@@ -18,7 +18,7 @@ int main()
     
     {
         
-        MeshSimplicial3D mesh = StandardSquare3D();
+        MeshSimplicial3D mesh = StandardCube3D();
         
         mesh.check();
         
