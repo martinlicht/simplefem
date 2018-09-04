@@ -2,6 +2,7 @@
 #include <cmath>
 #include <string>
 #include <stack> // TODO: change to something else such as list 
+#include <list>
 #include <vector>
 #include <map>
 #include <utility>
@@ -112,10 +113,10 @@ MeshSimplicial2D::MeshSimplicial2D(
     data_vertex_firstparent_edge.resize( counter_vertices, nullindex );
     
     for( auto t : data_triangle_vertices )
-      std::cout << t[0] << space << t[1] << space << t[2] << std::endl;
+      std::clog << t[0] << space << t[1] << space << t[2] << std::endl;
     for( auto e : data_edge_vertices )
-      std::cout << e[0] << space << e[1] << std::endl;
-    std::cout << std::endl;
+      std::clog << e[0] << space << e[1] << std::endl;
+    std::clog << std::endl;
       
     /* 3. For each vertex, set the first parent triangle and the neighboring parent triangles */
     
@@ -665,17 +666,17 @@ void MeshSimplicial2D::print( std::ostream& os ) const
     os << "Triangle edges" << std::endl;
     
     for( const auto& triple : data_triangle_edges )
-      std::cout << triple[0] << space << triple[1] << space << triple[2] << nl;
+      os << triple[0] << space << triple[1] << space << triple[2] << nl;
     
     os << "Edge first parent triangles" << std::endl;
     
     for( int fp : data_edge_firstparent_triangle )
-      std::cout << fp << nl;
+      os << fp << nl;
     
     os << "Triangle next parents of edges" << std::endl;
     
     for( const auto& triple : data_triangle_nextparents_of_edges )
-      std::cout << triple[0] << space << triple[1] << space << triple[2] << nl;
+      os << triple[0] << space << triple[1] << space << triple[2] << nl;
     
     
     
@@ -683,34 +684,34 @@ void MeshSimplicial2D::print( std::ostream& os ) const
     os << "Triangle vertices" << std::endl;
     
     for( const auto& triple : data_triangle_vertices )
-      std::cout << triple[0] << space << triple[1] << space << triple[2] << nl;
+      os << triple[0] << space << triple[1] << space << triple[2] << nl;
     
     os << "Edge first parent triangles" << std::endl;
     
     for( int fp : data_vertex_firstparent_triangle )
-      std::cout << fp << nl;
+      os << fp << nl;
     
     os << "Triangle next parents of edges" << std::endl;
     
     for( const auto& triple : data_triangle_nextparents_of_vertices )
-      std::cout << triple[0] << space << triple[1] << space << triple[2] << nl;
+      os << triple[0] << space << triple[1] << space << triple[2] << nl;
     
     
     
     os << "Edge vertices" << std::endl;
     
     for( const auto& duple : data_edge_vertices )
-      std::cout << duple[0] << space << duple[1] << nl;
+      os << duple[0] << space << duple[1] << nl;
     
     os << "Vertex first parents" << std::endl;
     
     for( int fp : data_vertex_firstparent_edge )
-      std::cout << fp << nl;
+      os << fp << nl;
     
     os << "Edge next parents " << std::endl;
     
     for( const auto& duple : data_edge_nextparents_of_vertices )
-      std::cout << duple[0] << space << duple[1] << nl;
+      os << duple[0] << space << duple[1] << nl;
     
     os << "Finished printing" << nl;
     
@@ -1330,7 +1331,7 @@ void MeshSimplicial2D::bisect_edge( int e )
     
     
     
-    std::cout << "BIG LOOP" << std::endl;
+    std::clog << "BIG LOOP" << std::endl;
     
     for( int ot = 0; ot < old_triangles.size(); ot++ ) {
       
@@ -1595,7 +1596,7 @@ void MeshSimplicial2D::bisect_edge( int e )
     }
     
     
-    std::cout << "BIG LOOP END" << std::endl;
+    std::clog << "BIG LOOP END" << std::endl;
     
     
     /* Run over the front vertex' parent triangles and conduct manipulations */
@@ -1613,9 +1614,9 @@ void MeshSimplicial2D::bisect_edge( int e )
         
         *pointer_to_index = counter_triangles + ( it - old_triangles.begin() );
         
-        std::cout << "manipulate" << std::endl;
+        std::clog << "manipulate" << std::endl;
         
-      } else std::cout << "keep" << std::endl;
+      } else std::clog << "keep" << std::endl;
       
       int localindex_of_front_vertex = nullindex;
       if( data_triangle_vertices[ *pointer_to_index ][ 0 ] == e_front_vertex ) localindex_of_front_vertex = 0;
@@ -1630,7 +1631,7 @@ void MeshSimplicial2D::bisect_edge( int e )
     getcoordinates().append( midcoordinate );
     
     
-    std::cout << "FINISHED" << std::endl;
+    std::clog << "FINISHED" << std::endl;
     
     /*
      *  UPDATE COUNTERS 
@@ -1670,10 +1671,10 @@ void MeshSimplicial2D::longest_edge_bisection( std::vector<int> edges )
     
     /* 1. create stack for the edges to be bisected, and fill in first batch */
     
-    std::stack<int> todostack;
+    std::list<int> todostack;
     
     for( int& e : edges )
-        todostack.push( e ); // put e on top either by inserting or pulling it up!
+        todostack.push_back( e ); // put e on top either by inserting or pulling it up!
         
     
     /* 2. conduct the main loop of the refinement algorithm */
@@ -1687,46 +1688,30 @@ void MeshSimplicial2D::longest_edge_bisection( std::vector<int> edges )
         // b) if the top edge is longer than its neighbors, bisect and pop
         // c) else, push the longest edge of each parent simplex
         
-        int e = todostack.top();
+        int e = todostack.back();
+    
+        Float length_e = get_edge_length( e );
+            
+        // run over neighbor triangles and check for longer edges 
         
-        // to check whether e belongs to an edge that has already been bisected,
-        // we check whether one of the vertices belongs to the new vertices 
+        for(
+            int t = get_edge_firstparent_triangle( e );
+            t != nullindex; 
+            t = get_edge_nextparent_triangle( e, t )
+        )
+        for( int ei = 0; ei < 3; ei++ )
+            if( e != get_triangle_edge( t, ei ) && get_edge_length( get_triangle_edge(t,ei) ) > length_e )
+                todostack.push_back( get_triangle_edge( t, ei ) );
         
-        // TODO: This is actually unsafe
-        // A better solution is to replace the stack by a linked list 
-        // and emulate the stack behavior yourself. 
-        // Then multiple occurences of the same edge 
-        // can be removed by an STL algorithm 
+        // if top edge is still the same, bisect 
         
-        if( get_edge_vertex( e, 0 ) >= old_vertex_count || get_edge_vertex(e,1) >= old_vertex_count ) {
-            
-            todostack.pop();
-        
-        } else {
-            
-            Float length_e = get_edge_length( e );
-                
-            // run over neighbor triangles and check for longer edges 
-            
-            for(
-                int t = get_edge_firstparent_triangle( e );
-                t != nullindex; 
-                t = get_edge_nextparent_triangle( e, t )
-            )
-            for( int ei = 0; ei < 3; ei++ )
-                if( e != get_triangle_edge( t, ei ) && get_edge_length( get_triangle_edge(t,ei) ) > length_e )
-                    todostack.push( get_triangle_edge( t, ei ) );
-            
-            // if top edge is still the same, bisect 
-            
-            if( e == todostack.top() )
-            {
-                todostack.pop();
-                bisect_edge( e );
-            }
-            
+        if( e == todostack.back() )
+        {
+            todostack.remove( e );
+            bisect_edge( e );
         }
         
+    
     }
     
     
@@ -2564,7 +2549,7 @@ void MeshSimplicial2D::midpoint_refinement_global()
     int N = counter_triangles;
     
     for( int t = 0; t < N; t++ ) {
-      std::cout << t << std::endl;
+      std::clog << t << std::endl;
       midpoint_refinement( t );
       
     }

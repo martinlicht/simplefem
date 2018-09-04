@@ -47,12 +47,12 @@ void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
     /* Initiate Residual Descent process */
     iterationStart( x, b, r, r_norm );
     
-    std::cout << "Begin iteration" << std::endl;
+    std::clog << "Begin iteration" << std::endl;
 
     /* Perform Residual Descent step */
     while( iter < max_iteration_count && r_norm > error_tolerance )
     {
-        std::cout 
+        std::clog 
           << "iteration: " << iter << "/" << max_iteration_count
           << " : "
           << r_norm << " vs " << error_tolerance
@@ -62,7 +62,7 @@ void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
         
         FloatVector test = internalOperator * x - b;
         Float r_norm_test = test * test;
-        std::cout << "[ratio: " << r_norm / r_norm_test << "]" << std::endl;
+        std::clog << "[ratio: " << r_norm / r_norm_test << "]" << std::endl;
         
         iter++;
     }
@@ -70,12 +70,12 @@ void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
     /* FINISHED */
     if( r_norm > error_tolerance ) {
       
-      std::cout << "CRM process has failed" << std::endl;
+      std::clog << "CRM process has failed" << std::endl;
       
     } else {
         
       iterationStart( x, b, residual, r_norm );
-      std::cout 
+      std::clog 
         << "iteration: " << iter << "/" << max_iteration_count
         << " : "
         << r_norm << " vs " << error_tolerance

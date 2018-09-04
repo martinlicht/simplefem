@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <stack> // TODO: change to something else such as list 
+#include <list>
 #include <map>
 #include <set>
 #include <utility>
@@ -1033,10 +1034,10 @@ void MeshSimplicial3D::longest_edge_bisection( std::vector<int> edges )
     
     /* 1. create stack for the edges to be bisected, and fill in first batch */
     
-    std::stack<int> todostack;
+    std::list<int> todostack;
     
     for( int& e : edges )
-        todostack.push( e ); // put e on top either by inserting or pulling it up!
+        todostack.push_back( e ); // put e on top either by inserting or pulling it up!
         
     
     /* 2. conduct the main loop of the refinement algorithm */
@@ -1046,49 +1047,33 @@ void MeshSimplicial3D::longest_edge_bisection( std::vector<int> edges )
         
         // as long the stack is not empty,
         // pick the top edge and make the following case distinction
-        // a) the edge index belongs to an edge already bisected and can be ignored 
-        // b) if the top edge is longer than its neighbors, bisect and pop
-        // c) else, push the longest edge of each parent simplex
+        // a) if the top edge is longer than its neighbors, bisect and pop
+        // b) else, push the longest edge of each parent simplex
         
-        int e = todostack.top();
+        int e = todostack.back();
         
         // to check whether e belongs to an edge that has already been bisected,
         // we check whether one of the vertices belongs to the new vertices 
         
-        // TODO: This is actually unsafe
-        // A better solution is to replace the stack by a linked list 
-        // and emulate the stack behavior yourself. 
-        // Then multiple occurences of the same edge 
-        // can be removed by an STL algorithm 
+        Float length_e = get_edge_length( e );
+            
+        // run over neighbor tetrahedra and check for longer edges 
         
+        for(
+            int t = get_edge_firstparent_tetrahedron( e );
+            t != nullindex; 
+            t = get_edge_nextparent_tetrahedron( e, t )
+        )
+        for( int ei = 0; ei < 6; ei++ )
+            if( e != get_tetrahedron_edge( t, ei ) && get_edge_length( get_tetrahedron_edge(t,ei) ) > length_e )
+                todostack.push_back( get_tetrahedron_edge( t, ei ) );
         
-        if( get_edge_vertex( e, 0 ) >= old_vertex_count || get_edge_vertex(e,1) >= old_vertex_count ) {
-            
-            todostack.pop();
+        // if top edge is still the same, bisect 
         
-        } else {
-            
-            Float length_e = get_edge_length( e );
-                
-            // run over neighbor tetrahedra and check for longer edges 
-            
-            for(
-                int t = get_edge_firstparent_tetrahedron( e );
-                t != nullindex; 
-                t = get_edge_nextparent_tetrahedron( e, t )
-            )
-            for( int ei = 0; ei < 6; ei++ )
-                if( e != get_tetrahedron_edge( t, ei ) && get_edge_length( get_tetrahedron_edge(t,ei) ) > length_e )
-                    todostack.push( get_tetrahedron_edge( t, ei ) );
-            
-            // if top edge is still the same, bisect 
-            
-            if( e == todostack.top() )
-            {
-                todostack.pop();
-                bisect_edge( e );
-            }
-            
+        if( e == todostack.back() )
+        {
+            todostack.remove( e ); // remove all copies of e from stack 
+            bisect_edge( e );
         }
         
     }

@@ -16,7 +16,7 @@ VTK_MeshWriter_Mesh3D::VTK_MeshWriter_Mesh3D( Mesh& m3D, std::ostream& os )
 
 void VTK_MeshWriter_Mesh3D::writePreamble( const char* name )
 {
-    // std::ostream& os = std::cout;
+    // std::ostream& os = std::clog;
     os << "# vtk DataFile Version 3.0" << nl;
     os << name << nl;
     os << "ASCII" << nl;
@@ -26,7 +26,7 @@ void VTK_MeshWriter_Mesh3D::writePreamble( const char* name )
 
 void VTK_MeshWriter_Mesh3D::writeCoordinateBlock()
 {
-    // std::ostream& os = std::cout;
+    // std::ostream& os = std::clog;
     os << "POINTS " << mesh.count_simplices(0) << " double" << nl;
     for( int v = 0; v < mesh.count_simplices(0); v++ )
       os << mesh.getcoordinates().getdata(v,0)
@@ -42,7 +42,7 @@ void VTK_MeshWriter_Mesh3D::writeCoordinateBlock()
         
 void VTK_MeshWriter_Mesh3D::writeTopDimensionalCells()
 {
-    // std::ostream& os = std::cout;
+    // std::ostream& os = std::clog;
     
     os << "CELLS " 
        << mesh.count_simplices(3)

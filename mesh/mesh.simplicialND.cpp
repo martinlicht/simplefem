@@ -135,9 +135,9 @@ MeshSimplicialND::MeshSimplicialND(
     assert( counter_simplices[0]-1 == *std::max_element( simplex_vertices.begin(), simplex_vertices.end() ) );
     
     
-    std::cout << "Rebuild inside constructor..." << space << innerdim << space << outerdim << space << std::endl;
+    std::clog << "Rebuild inside constructor..." << space << innerdim << space << outerdim << space << std::endl;
     rebuild();
-    std::cout << "...done" << std::endl;
+    std::clog << "...done" << std::endl;
     
     /* check and exit */
     check();
@@ -276,7 +276,7 @@ void MeshSimplicialND::check() const
       if( data_nextparents[index_from_pair(sup,sub)][ S * count_subsimplices(sup,sub) + si ] == nullindex )
         continue;
       
-      std::cout << sup << space << sub << space << S << space << si << space 
+      std::clog << sup << space << sub << space << S << space << si << space 
                 << data_nextparents[index_from_pair(sup,sub)][ S * count_subsimplices(sup,sub) + si ] << std::endl;     
       assert( data_nextparents[index_from_pair(sup,sub)][ S * count_subsimplices(sup,sub) + si ] >= 0                   );
       assert( data_nextparents[index_from_pair(sup,sub)][ S * count_subsimplices(sup,sub) + si ] <  count_simplices(sup) );

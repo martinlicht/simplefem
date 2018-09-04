@@ -275,17 +275,17 @@ void MeshSimplicial1D::print( std::ostream& os ) const
     os << "Edge vertices" << std::endl;
     
     for( const auto& duple : data_edge_vertices )
-      std::cout << duple[0] << space << duple[1] << nl;
+      os << duple[0] << space << duple[1] << nl;
     
     os << "Vertex first parents" << std::endl;
     
     for( int fp : data_vertex_firstparent_edge )
-      std::cout << fp << nl;
+      os << fp << nl;
     
     os << "Edge next parents " << std::endl;
     
     for( const auto& duple : data_edge_nextparents_of_vertices )
-      std::cout << duple[0] << space << duple[1] << nl;
+      os << duple[0] << space << duple[1] << nl;
     
     os << "Finished printing" << nl;
     

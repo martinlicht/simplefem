@@ -63,10 +63,10 @@ FloatVector::FloatVector( int dimension, const std::function<Float(int)>& genera
 
 void FloatVector::check() const 
 {
-//     std::cout << "CHECK." << std::endl;
+//     std::clog << "CHECK." << std::endl;
     assert( getdimension() >= 0 );
     if( getdimension() == 0 )
-    std::cout << "WARNING: VECTOR OF DIMENSION ZERO." << std::endl;
+    std::clog << "WARNING: VECTOR OF DIMENSION ZERO." << std::endl;
     assert( getdimension() == data.size() );
 }
 
