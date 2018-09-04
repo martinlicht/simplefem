@@ -3,6 +3,7 @@
 #include <vector>
 #include <stack> // TODO: change to something else such as list 
 #include <map>
+#include <set>
 #include <utility>
 #include <algorithm>
 #include <iostream>
@@ -42,12 +43,12 @@ void MeshSimplicial3D::bisect_edge( int e )
     assert( 0 <= e && e < counter_edges );
     check();
     
+    
+    
+    
     /*******************/
     /* DATA COLLECTION */
     /*******************/
-    
-    
-    
     
     // gather basic data about the bisection, in particular the number of simplices involved.
     
@@ -64,6 +65,89 @@ void MeshSimplicial3D::bisect_edge( int e )
     FloatVector midcoordinate = get_edge_midpoint( e );
     
     
+    
+    
+    /*******************************************/
+    /*****                                ******/
+    /*****   Assemble sets of simplices   ******/
+    /*****   in the micropatch            ******/
+    /*****                                ******/
+    /*******************************************/
+    
+    std::set<int> micro_tetrahedra;
+    std::set<int> micro_faces;
+    std::set<int> micro_edges;
+    std::set<int> micro_vertices;
+    
+    for( int t : old_tetrahedra ){
+        
+        micro_tetrahedra.insert( t );
+        
+        for( int fi = 0; fi < 4; fi++ )
+            micro_faces.insert( data_tetrahedron_faces[t][fi] );
+        
+        for( int ei = 0; ei < 6; ei++ )
+            micro_edges.insert( data_tetrahedron_edges[t][ei] );
+        
+        for( int vi = 0; vi < 4; vi++ )
+            micro_vertices.insert( data_tetrahedron_vertices[t][vi] );
+        
+    }
+    
+    
+    /*******************************************/
+    /*****                                ******/
+    /*****   Assemble sets of simplices   ******/
+    /*****   in the MACROpatch            ******/
+    /*****                                ******/
+    /*******************************************/
+    
+    std::set<int> macro_tetrahedra;
+    std::set<int> macro_faces;
+    std::set<int> macro_edges;
+    std::set<int> macro_vertices;
+    
+    for( int v : micro_vertices ){
+        
+        for(
+            int t = get_vertex_firstparent_tetrahedron( v );
+            t != nullindex; 
+            t = data_tetrahedron_nextparents_of_vertices( v, t )
+        ) {
+            
+            macro_tetrahedra.insert( t );
+            
+            for( int fi = 0; fi < 4; fi++ )
+                macro_faces.insert( data_tetrahedron_faces[t][fi] );
+            
+            for( int ei = 0; ei < 6; ei++ )
+                macro_edges.insert( data_tetrahedron_edges[t][ei] );
+            
+            for( int vi = 0; vi < 4; vi++ )
+                macro_vertices.insert( data_tetrahedron_vertices[t][vi] );
+            
+        }
+        
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    /***********************/
+    /*                     */
+    /*   ALLOCATE MEMORY   */
+    /*                     */
+    /***********************/
     
     // allocate additional memory for the new simplex data after bisection 
     
@@ -93,6 +177,77 @@ void MeshSimplicial3D::bisect_edge( int e )
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    /***********************************************/
+    /*****                                    ******/
+    /*****   Delete the adjaceny links        ******/
+    /*****   in the macropatch                ******/
+    /*****   regarding micropatch simplices   ******/
+    /*****                                    ******/
+    /***********************************************/
+    
+    for( int v : micropatch_vertices ) data_vertex_firstparent_edge[v] = nullindex;
+    for( int v : micropatch_vertices ) data_vertex_firstparent_face[v] = nullindex;
+    for( int v : micropatch_vertices ) data_vertex_firstparent_tetrahedron[v] = nullindex;
+    for( int e : micropatch_edges ) data_edge_firstparent_face[e] = nullindex;
+    for( int e : micropatch_edges ) data_edge_firstparent_tetrahedron[e] = nullindex;
+    for( int f : micropatch_faces ) data_face_firstparent_tetrahedron[f] = nullindex;
+    
+    for( int e : micropatch_edges ) 
+    for( int vi = 0; vi < 2; vi++ ) 
+        if( micropatch_vertices::find( data_edge_vertices[vi] ) != micropatch_vertices::end() )
+            data_edge_nextparents_of_vertices[e][vi] = nullindex;
+        
+    for( int f : micropatch_faces ) 
+    for( int vi = 0; vi < 3; vi++ ) 
+        if( micropatch_vertices::find( data_face_vertices[vi] ) != micropatch_vertices::end() )
+            data_face_nextparents_of_vertices[f][vi] = nullindex;
+        
+    for( int f : micropatch_faces ) 
+    for( int ei = 0; ei < 3; ei++ ) 
+        if( micropatch_edges::find( data_face_edges[ei] ) != micropatch_edges::end() )
+            data_face_nextparents_of_edges[f][ei] = nullindex;
+        
+         
+    for( int t : micropatch_tetrahedra ) 
+    for( int vi = 0; vi < 4; vi++ ) 
+        if( micropatch_vertices::find( data_tetrahedron_vertices[vi] ) != micropatch_vertices::end() )
+            data_tetrahedron_nextparents_of_vertices[t][vi] = nullindex;
+        
+    for( int t : micropatch_tetrahedra ) 
+    for( int ei = 0; ei < 6; ei++ ) 
+        if( micropatch_edges::find( data_tetrahedron_edges[ei] ) != micropatch_edges::end() )
+            data_tetrahedron_nextparents_of_edges[t][ei] = nullindex;
+       
+    for( int t : micropatch_tetrahedra ) 
+    for( int fi = 0; fi < 4; fi++ ) 
+        if( micropatch_faces::find( data_tetrahedron_faces[fi] ) != micropatch_faces::end() )
+            data_tetrahedron_nextparents_of_faces[t][fi] = nullindex;
+    
+        
+        
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     /*********************/
     /*                   */
     /*   GEOMETRY DATA   */
@@ -100,32 +255,6 @@ void MeshSimplicial3D::bisect_edge( int e )
     /*********************/
     
     getcoordinates().append( midcoordinate );
-    
-    
-    
-    
-    
-    
-    /*******************************************/
-    /*****                                ******/
-    /*****   Assemble sets of simplices   ******/
-    /*****   in the micropatch            ******/
-    /*****                                ******/
-    /*******************************************/
-    
-    
-    /*******************************************/
-    /*****                                ******/
-    /*****   Assemble sets of simplices   ******/
-    /*****   in the MACROpatch            ******/
-    /*****                                ******/
-    /*******************************************/
-    
-    
-    
-    
-    
-    
     
     
     
@@ -301,8 +430,11 @@ void MeshSimplicial3D::bisect_edge( int e )
         int index_f_012 = std::find( old_faces.begin(), old_faces.end(), f_012 ) - old_faces.begin();
         int index_f_013 = std::find( old_faces.begin(), old_faces.end(), f_013 ) - old_faces.begin();
         
+        assert( old_faces[ index_f_012 ] == f_012 );
+        assert( old_faces[ index_f_013 ] == f_013 );
+        
         int e_0_n = e_0_1;
-        int e_n_1 = v_n;
+        int e_n_1 = counter_edges;
         int e_n_2 = counter_edges + 1 + index_f_012;
         int e_n_3 = counter_edges + 1 + index_f_013;
         
@@ -367,8 +499,11 @@ void MeshSimplicial3D::bisect_edge( int e )
         int index_f_012 = std::find( old_faces.begin(), old_faces.end(), f_012 ) - old_faces.begin();
         int index_f_023 = std::find( old_faces.begin(), old_faces.end(), f_023 ) - old_faces.begin();
         
+        assert( old_faces[ index_f_012 ] == f_012 );
+        assert( old_faces[ index_f_023 ] == f_023 );
+        
         int e_0_n = e_0_2;
-        int e_n_2 = v_n;
+        int e_n_2 = counter_edges;
         int e_1_n = counter_edges + 1 + index_f_012;
         int e_n_3 = counter_edges + 1 + index_f_023;
         
@@ -433,8 +568,11 @@ void MeshSimplicial3D::bisect_edge( int e )
         int index_f_013 = std::find( old_faces.begin(), old_faces.end(), f_013 ) - old_faces.begin();
         int index_f_023 = std::find( old_faces.begin(), old_faces.end(), f_023 ) - old_faces.begin();
         
+        assert( old_faces[ index_f_013 ] == f_013);
+        assert( old_faces[ index_f_023 ] == f_023 );
+        
         int e_0_n = e_0_3;
-        int e_n_3 = v_n;
+        int e_n_3 = counter_edges;
         int e_1_n = counter_edges + 1 + index_f_013;
         int e_2_n = counter_edges + 1 + index_f_023;
         
@@ -499,8 +637,11 @@ void MeshSimplicial3D::bisect_edge( int e )
         int index_f_012 = std::find( old_faces.begin(), old_faces.end(), f_012 ) - old_faces.begin();
         int index_f_123 = std::find( old_faces.begin(), old_faces.end(), f_123 ) - old_faces.begin();
         
+        assert( old_faces[ index_f_012 ] == f_012 );
+        assert( old_faces[ index_f_123 ] == f_123 );
+        
         int e_1_n = e_1_2;
-        int e_n_2 = v_n;
+        int e_n_2 = counter_edges;
         int e_0_n = counter_edges + 0 + index_f_012;
         int e_n_3 = counter_edges + 0 + index_f_123;
         
@@ -565,8 +706,11 @@ void MeshSimplicial3D::bisect_edge( int e )
         int index_f_013 = std::find( old_faces.begin(), old_faces.end(), f_013 ) - old_faces.begin();
         int index_f_123 = std::find( old_faces.begin(), old_faces.end(), f_123 ) - old_faces.begin();
         
+        assert( old_faces[ index_f_013 ] == f_013 );
+        assert( old_faces[ index_f_123 ] == f_123 );
+        
         int e_1_n = e_1_3;
-        int e_n_3 = v_n;
+        int e_n_3 = counter_edges;
         int e_0_n = counter_edges + 0 + index_f_013;
         int e_2_n = counter_edges + 0 + index_f_123;
         
@@ -631,8 +775,11 @@ void MeshSimplicial3D::bisect_edge( int e )
         int index_f_023 = std::find( old_faces.begin(), old_faces.end(), f_023 ) - old_faces.begin();
         int index_f_123 = std::find( old_faces.begin(), old_faces.end(), f_123 ) - old_faces.begin();
         
+        assert( old_faces[ index_f_023 ] == f_023 );
+        assert( old_faces[ index_f_123 ] == f_123 );
+        
         int e_2_n = e_2_3;
-        int e_n_3 = v_n;
+        int e_n_3 = counter_edges;
         int e_0_n = counter_edges + 0 + index_f_023;
         int e_1_n = counter_edges + 0 + index_f_123;
         
@@ -700,15 +847,6 @@ void MeshSimplicial3D::bisect_edge( int e )
       
     
     
-    
-    
-    /***********************************************/
-    /*****                                    ******/
-    /*****   Delete the adjaceny links        ******/
-    /*****   in the macropatch                ******/
-    /*****   regarding micropatch simplices   ******/
-    /*****                                    ******/
-    /***********************************************/
     
     
     /***********************************************/
