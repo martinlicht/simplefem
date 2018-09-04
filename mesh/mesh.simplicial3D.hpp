@@ -284,6 +284,8 @@ class MeshSimplicial3D
         
         void bisect_edge( int e );
         
+        void longest_edge_bisection( std::vector<int> edges );
+        
         void uniformrefinement();
         
         void midpoint_refinement( int t );
@@ -296,6 +298,7 @@ class MeshSimplicial3D
         FloatVector get_tetrahedron_midpoint( int t ) const;
         FloatVector get_face_midpoint( int f ) const;
         FloatVector get_edge_midpoint( int e ) const;
+        Float get_edge_length( int e ) const;
         
         
     private:

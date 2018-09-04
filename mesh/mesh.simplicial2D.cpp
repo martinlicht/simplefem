@@ -1,7 +1,7 @@
 
 #include <cmath>
 #include <string>
-#include <stack>
+#include <stack> // TODO: change to something else such as list 
 #include <vector>
 #include <map>
 #include <utility>
@@ -509,31 +509,18 @@ void MeshSimplicial2D::check() const
     /* each triangle: the next parents of edges are actually parents */
     
     for( int t = 0; t < counter_triangles; t++ )
+    for( int ei = 0; ei < 3; ei++ )
     {
         
-        if( data_triangle_nextparents_of_edges[t][0] != nullindex || data_triangle_nextparents_of_edges[t][1] != nullindex )
-          assert( data_triangle_nextparents_of_edges[t][0] != data_triangle_nextparents_of_edges[t][1] );
-        
-        if( data_triangle_nextparents_of_edges[t][0] != nullindex || data_triangle_nextparents_of_edges[t][2] != nullindex )
-          assert( data_triangle_nextparents_of_edges[t][0] != data_triangle_nextparents_of_edges[t][2] );
-        
-        if( data_triangle_nextparents_of_edges[t][1] != nullindex || data_triangle_nextparents_of_edges[t][2] != nullindex )
-          assert( data_triangle_nextparents_of_edges[t][1] != data_triangle_nextparents_of_edges[t][2] );
+        if( data_triangle_nextparents_of_edges[t][ei] != nullindex )
+            assert( 0 <= data_triangle_nextparents_of_edges[t][ei] && data_triangle_nextparents_of_edges[t][ei] < counter_triangles );
     
-        for( int ei = 0; ei < 3; ei++ )
-        {
-            
-            if( data_triangle_nextparents_of_edges[t][ei] != nullindex )
-              assert( 0 <= data_triangle_nextparents_of_edges[t][ei] && data_triangle_nextparents_of_edges[t][ei] < counter_triangles );
-        
-            if( data_triangle_nextparents_of_edges[t][ei] != nullindex )
-              assert( data_triangle_edges[ data_triangle_nextparents_of_edges[t][ei] ][0] == data_triangle_edges[t][ei] 
-                      ||
-                      data_triangle_edges[ data_triangle_nextparents_of_edges[t][ei] ][1] == data_triangle_edges[t][ei] 
-                      ||
-                      data_triangle_edges[ data_triangle_nextparents_of_edges[t][ei] ][2] == data_triangle_edges[t][ei] );
-            
-        }
+        if( data_triangle_nextparents_of_edges[t][ei] != nullindex )
+            assert( data_triangle_edges[ data_triangle_nextparents_of_edges[t][ei] ][0] == data_triangle_edges[t][ei] 
+                    ||
+                    data_triangle_edges[ data_triangle_nextparents_of_edges[t][ei] ][1] == data_triangle_edges[t][ei] 
+                    ||
+                    data_triangle_edges[ data_triangle_nextparents_of_edges[t][ei] ][2] == data_triangle_edges[t][ei] );
         
     }
     
@@ -541,31 +528,18 @@ void MeshSimplicial2D::check() const
     /* each triangle: the next parents of triangles are actually parents */
     
     for( int t = 0; t < counter_triangles; t++ )
+    for( int vi = 0; vi < 3; vi++ )
     {
         
-        if( data_triangle_nextparents_of_vertices[t][0] != nullindex || data_triangle_nextparents_of_vertices[t][1] != nullindex )
-          assert( data_triangle_nextparents_of_vertices[t][0] != data_triangle_nextparents_of_vertices[t][1] );
-        
-        if( data_triangle_nextparents_of_vertices[t][0] != nullindex || data_triangle_nextparents_of_vertices[t][2] != nullindex )
-          assert( data_triangle_nextparents_of_vertices[t][0] != data_triangle_nextparents_of_vertices[t][2] );
-        
-        if( data_triangle_nextparents_of_vertices[t][1] != nullindex || data_triangle_nextparents_of_vertices[t][2] != nullindex )
-          assert( data_triangle_nextparents_of_vertices[t][1] != data_triangle_nextparents_of_vertices[t][2] );
-        
-        for( int vi = 0; vi < 3; vi++ )
-        {
-            
-            if( data_triangle_nextparents_of_vertices[t][vi] != nullindex )
-              assert( 0 <= data_triangle_nextparents_of_vertices[t][vi] && data_triangle_nextparents_of_vertices[t][vi] < counter_triangles );
-        
-            if( data_triangle_nextparents_of_vertices[t][vi] != nullindex )
-              assert( data_triangle_vertices[ data_triangle_nextparents_of_vertices[t][vi] ][0] == data_triangle_vertices[t][vi] 
-                      ||
-                      data_triangle_vertices[ data_triangle_nextparents_of_vertices[t][vi] ][1] == data_triangle_vertices[t][vi] 
-                      ||
-                      data_triangle_vertices[ data_triangle_nextparents_of_vertices[t][vi] ][2] == data_triangle_vertices[t][vi] );
-            
-        }
+        if( data_triangle_nextparents_of_vertices[t][vi] != nullindex )
+            assert( 0 <= data_triangle_nextparents_of_vertices[t][vi] && data_triangle_nextparents_of_vertices[t][vi] < counter_triangles );
+    
+        if( data_triangle_nextparents_of_vertices[t][vi] != nullindex )
+            assert( data_triangle_vertices[ data_triangle_nextparents_of_vertices[t][vi] ][0] == data_triangle_vertices[t][vi] 
+                    ||
+                    data_triangle_vertices[ data_triangle_nextparents_of_vertices[t][vi] ][1] == data_triangle_vertices[t][vi] 
+                    ||
+                    data_triangle_vertices[ data_triangle_nextparents_of_vertices[t][vi] ][2] == data_triangle_vertices[t][vi] );
         
     }
     
@@ -573,27 +547,20 @@ void MeshSimplicial2D::check() const
     /* each edge: the next parents of vertices are actually parents */
     
     for( int e = 0; e < counter_edges; e++ )
+    for( int vi = 0; vi < 2; vi++ )
     {
         
-        if( data_edge_nextparents_of_vertices[e][0] != nullindex || data_edge_nextparents_of_vertices[e][1] != nullindex )
-          assert( data_edge_nextparents_of_vertices[e][0] != data_edge_nextparents_of_vertices[e][1] );
-          
-        for( int vi = 0; vi < 2; vi++ )
-        {
-          
-          if( data_edge_nextparents_of_vertices[e][vi] != nullindex )
-          assert( 0 <= data_edge_nextparents_of_vertices[e][vi] && data_edge_nextparents_of_vertices[e][vi] < counter_edges );
-          
-          if( data_edge_nextparents_of_vertices[e][vi] != nullindex )
-            assert( data_edge_vertices[ data_edge_nextparents_of_vertices[e][vi] ][0] == data_edge_vertices[e][vi] 
-                    ||
-                    data_edge_vertices[ data_edge_nextparents_of_vertices[e][vi] ][1] == data_edge_vertices[e][vi] 
-                  );
-          
-        }
+        if( data_edge_nextparents_of_vertices[e][vi] != nullindex )
+        assert( 0 <= data_edge_nextparents_of_vertices[e][vi] && data_edge_nextparents_of_vertices[e][vi] < counter_edges );
+        
+        if( data_edge_nextparents_of_vertices[e][vi] != nullindex )
+        assert( data_edge_vertices[ data_edge_nextparents_of_vertices[e][vi] ][0] == data_edge_vertices[e][vi] 
+                ||
+                data_edge_vertices[ data_edge_nextparents_of_vertices[e][vi] ][1] == data_edge_vertices[e][vi] 
+                );
         
     }
-    
+
     
     
     
@@ -1724,6 +1691,12 @@ void MeshSimplicial2D::longest_edge_bisection( std::vector<int> edges )
         
         // to check whether e belongs to an edge that has already been bisected,
         // we check whether one of the vertices belongs to the new vertices 
+        
+        // TODO: This is actually unsafe
+        // A better solution is to replace the stack by a linked list 
+        // and emulate the stack behavior yourself. 
+        // Then multiple occurences of the same edge 
+        // can be removed by an STL algorithm 
         
         if( get_edge_vertex( e, 0 ) >= old_vertex_count || get_edge_vertex(e,1) >= old_vertex_count ) {
             

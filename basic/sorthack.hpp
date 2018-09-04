@@ -19,7 +19,7 @@ void sorthack( std::vector<A>& vec )
     }
     
     for( int t = 1; t < vec.size(); t++ )
-        assert( vec[t-1] < vec[t] );
+        assert( vec[t-1] <= vec[t] );
 }
 
 #endif

@@ -1,4 +1,5 @@
 
+#include <cmath>
 #include <string>
 #include <vector>
 #include <map>
@@ -1080,7 +1081,7 @@ void MeshSimplicial3D::check() const
     
     /* VERTEX FACE STUFF */
     
-    /* each face: the next parents are unique           */
+    /* each face: the next parents make sense           */
     /* each face: the next parents are actually parents */
     
     for( int f = 0; f < counter_faces; f++ )
@@ -1101,7 +1102,7 @@ void MeshSimplicial3D::check() const
     
     /* EDGE FACE STUFF */
     
-    /* each face: the next parents are unique           */
+    /* each face: the next parents make sense           */
     /* each face: the next parents are actually parents */
     
     for( int f = 0; f < counter_faces; f++ )
@@ -1122,7 +1123,7 @@ void MeshSimplicial3D::check() const
     
     /* VERTEX TET STUFF */
     
-    /* each tet: the next parents are unique           */
+    /* each tet: the next parents make sense           */
     /* each tet: the next parents are actually parents */
     
     for( int t = 0; t < counter_tetrahedra; t++ )
@@ -1145,7 +1146,7 @@ void MeshSimplicial3D::check() const
     
     /* EDGE TET STUFF */
     
-    /* each tet: the next parents are unique           */
+    /* each tet: the next parents make sense           */
     /* each tet: the next parents are actually parents */
     
     for( int t = 0; t < counter_tetrahedra; t++ )
@@ -1174,7 +1175,7 @@ void MeshSimplicial3D::check() const
     
     /* FACE TET STUFF */
     
-    /* each tet: the next parents are unique           */
+    /* each tet: the next parents make sense           */
     /* each tet: the next parents are actually parents */
     
     for( int t = 0; t < counter_tetrahedra; t++ )
@@ -2444,8 +2445,14 @@ FloatVector MeshSimplicial3D::get_edge_midpoint    ( int e ) const
     return mid;
 }
 
-
-
+Float MeshSimplicial3D::get_edge_length( int e ) const
+{
+    assert( 0 <= e && e < counter_edges );
+    Float length = 0.;
+    for( int d = 0; d < getouterdimension(); d++ )
+      length += pow( getcoordinates().getdata( get_edge_vertices(e)[0], d ) - getcoordinates().getdata( get_edge_vertices(e)[1], d ), 2. );
+    return sqrt( length );
+}
 
 
 
