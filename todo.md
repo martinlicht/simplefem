@@ -1,26 +1,103 @@
-  
-  
-  
-    o Pointer or References
-      
-      Should the use of references be skipped altogether?
-      
-      
-    o Smart Pointers
-    
-      Should smart pointers be employed throughout the library
-      to make it more robust against user malpractice?
-    
-    
-    o namespaces for the project
-      
-      package everything into a namespace.
-      
-    
-    o extend unit tests 
-      
-      Make the unit tests for extensive for each class.
-      Test every single functionality for its accuracy.
+
+
+
+# TODO long term and comprehensively
+
+## Clean out cout references throughout code 
+
+grep 'cout' ./*/*.?pp 
+Conduct a clean out of all direct references 
+to the standard preinstalled streams throughout
+the entire project so that the above call
+should only return very few instances in the main code
+and otherwise only stuff in test files.
+
+Moreover, consider replacing all the other stuff
+by references to clog instead of cout.
+
+
+## warning command 
+
+add a warning function to the core functionality 
+so that you can emit warnings whenever the need arises
+instead of calling std::cout.
+
+
+## Copyright information in the header 
+
+Include necessary copyright information in the header 
+of each file for the entire project.
+
+The projects can be used as example for this:
+- dune 
+- fetk
+- ngsolve 
+- ????!!
+- vtk
+
+A uniform licence structure should be agreed upon 
+before mass reproducing the tests. That being said,
+you can also include the license information 
+at later stages of the project through the use 
+of some simple text manipulation programs.
+
+So for the unit tests, it's more important 
+that we have a common structure of the test modules 
+ready to go. 
+
+## Logging abstraction 
+
+Encapsulate cout, cerr, and clog within wrapper objects 
+that delegate the input to those streams. 
+You can then extend the stream wrappers at a later stage 
+
+## Unit test framework
+
+Agree to a common style for the unit tests 
+
+## Unit test file organization 
+
+Restructure the unit test directory such that 
+each topic receives its own directory.
+This should closely mimic the structure 
+of the source code 
+
+## MatrixMarket testing 
+
+Use some suits to utilize the matrix market classes 
+
+## Style checker and configuration
+
+Include a style checker such as KWstyle 
+and add the necessary configuration files 
+
+## Logging improvement 
+
+Once the logging abstraction has been completed 
+enhance the logger with different functionality.
+
+
+
+
+
+
+## Speculative issues 
+
+### Smart Pointers
+
+Should smart pointers be employed throughout the library
+to make it more robust against user malpractice?
+
+
+### namespaces for the project
+
+package everything into a namespace.
+
+
+### extend unit tests 
+
+Make the unit tests for extensive for each class.
+Test every single functionality for its accuracy.
   
   
 

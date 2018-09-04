@@ -97,6 +97,13 @@
   o bisection refinement 2D
     check whether the complexity is optimal in each case.
   
+  o longest edge refinement in 2D
+  
+  o bisection algorithm in 3D
+  
+  o longest edge refinement in 3D
+  
+  
   
   o implement submesh class 
     - These objects inherit the mesh interface and implement it. 

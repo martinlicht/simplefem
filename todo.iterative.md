@@ -1,6 +1,31 @@
   
   
+  ************* Iterative Methods implemented 
+  
+  x Residual Minimizing Descent 
+  
+  x Conjugate Residual Method 
+  
+  x Conjugate Residual Method on Normal Equations
+  
+  
+  
+  
+  
   ************* Iterative Methods to Implement
+  
+  o Rewrite algorithms to be complex number stable 
+  
+    All algorithms should be written in a manner 
+    that is also correct when using complex numbers. 
+    This should be accompanied by a written exposition
+    of Krylov subspace methods.
+  
+  o Provide Preconditioned variants for all iterative methods
+  
+    For each iterative method there should be a preconditioned 
+    method available. New iterative methods should only be added
+    if the preconditioned variant is added too.
   
   o GMRES with Restart 
   
@@ -10,20 +35,6 @@
     been constructed.
     
     
-  o Rewrite algorithms to be complex number stable 
-  
-    All algorithms should be written in a manner 
-    that is also correct when using complex numbers. 
-    This should be accompanied by a written exposition
-    of Krylov subspace methods.
-  
-  
-  o Provide Preconditioned variants for all iterative methods
-  
-    For each iterative method there should be a preconditioned 
-    method available. New iterative methods should only be added
-    if the preconditioned variant is added too.
-  
   
   o Richardson iteration 
   

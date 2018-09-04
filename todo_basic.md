@@ -1,19 +1,19 @@
   
   
-  === GENERAL TODO LIST FOR THE ENTIRE PROJECT 
+  # General TODO-List for the entire project 
   
-  1. define a custom attest macro
+  ## define a custom attest macro
     
      There is a function that performs the assert, 
      and a macro that delivers the line number and file name
      to a function invocation. No further frills.
     
-  2. Adoption of custom assert macro
+  ## Adoption of custom assert macro
     
      Use the custom assert macro throughout the library.
   
   
-  3. guarded element access 
+  ## guarded element access 
   
     All objects that feature element access via brackets,
     either blocky brackets or round brackets,
@@ -26,14 +26,14 @@
     x Enforce the bound check policy.
   
   
-  4. implement minimalist file stream wrapper 
+  ## implement minimalist file stream wrapper 
   
     openinputfile( std::string );
     openoutputfile( std::string );
     
   
   
-  5. Argument names in all header files 
+  ## Argument names in all header files 
     
     The function/method declarations in the header files 
     should provide argument names. 
