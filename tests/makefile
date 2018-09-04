@@ -42,177 +42,177 @@ Headers = ../combinatorics/*.hpp ../operators/*.hpp ../dense/*.hpp ../sparse/*.h
 
 Includes = $(Headers) $(Objects) 
 
-test.combinatorics.indexrange.out: test.combinatorics.indexrange.cpp $(Includes.combinatorics) 
-	$(CC) test.combinatorics.indexrange.cpp $(Links.combinatorics) -o test.combinatorics.indexrange.out
+combinatorics/indexrange.out: combinatorics/indexrange.cpp $(Includes.combinatorics) 
+	$(CC) combinatorics/indexrange.cpp $(Links.combinatorics) -o combinatorics/indexrange.out
 
-test.combinatorics.indexmap.out: test.combinatorics.indexmap.cpp $(Includes.combinatorics) 
-	$(CC) test.combinatorics.indexmap.cpp $(Links.combinatorics) -o test.combinatorics.indexmap.out
+combinatorics/indexmap.out: combinatorics/indexmap.cpp $(Includes.combinatorics) 
+	$(CC) combinatorics/indexmap.cpp $(Links.combinatorics) -o combinatorics/indexmap.out
 
-test.combinatorics.multiindex.out: test.combinatorics.multiindex.cpp $(Includes.combinatorics) 
-	$(CC) test.combinatorics.multiindex.cpp $(Links.combinatorics) -o test.combinatorics.multiindex.out
+combinatorics/multiindex.out: combinatorics/multiindex.cpp $(Includes.combinatorics) 
+	$(CC) combinatorics/multiindex.cpp $(Links.combinatorics) -o combinatorics/multiindex.out
 
-test.combinatorics.generateindexmaps.out: test.combinatorics.generateindexmaps.cpp $(Includes.combinatorics) 
-	$(CC) test.combinatorics.generateindexmaps.cpp $(Links.combinatorics) -o test.combinatorics.generateindexmaps.out
+combinatorics/generateindexmaps.out: combinatorics/generateindexmaps.cpp $(Includes.combinatorics) 
+	$(CC) combinatorics/generateindexmaps.cpp $(Links.combinatorics) -o combinatorics/generateindexmaps.out
 
-test.combinatorics.generatemultiindices.out: test.combinatorics.generatemultiindices.cpp $(Includes.combinatorics) 
-	$(CC) test.combinatorics.generatemultiindices.cpp $(Links.combinatorics) -o test.combinatorics.generatemultiindices.out
+combinatorics/generatemultiindices.out: combinatorics/generatemultiindices.cpp $(Includes.combinatorics) 
+	$(CC) combinatorics/generatemultiindices.cpp $(Links.combinatorics) -o combinatorics/generatemultiindices.out
 
-test.combinatorics.heapsalgorithm.out: test.combinatorics.heapsalgorithm.cpp $(Includes.combinatorics) 
-	$(CC) test.combinatorics.heapsalgorithm.cpp $(Links.combinatorics) -o test.combinatorics.heapsalgorithm.out
+combinatorics/heapsalgorithm.out: combinatorics/heapsalgorithm.cpp $(Includes.combinatorics) 
+	$(CC) combinatorics/heapsalgorithm.cpp $(Links.combinatorics) -o combinatorics/heapsalgorithm.out
 
-combinatorics.tests = test.combinatorics.indexrange.out test.combinatorics.indexmap.out test.combinatorics.multiindex.out test.combinatorics.generateindexmaps.out test.combinatorics.generatemultiindices.out test.combinatorics.heapsalgorithm.out 
+combinatorics.tests = combinatorics/indexrange.out combinatorics/indexmap.out combinatorics/multiindex.out combinatorics/generateindexmaps.out combinatorics/generatemultiindices.out combinatorics/heapsalgorithm.out 
     
 
 
 
-test.operators.floatvector.out: test.operators.floatvector.cpp $(Includes.operators) 
-	$(CC) test.operators.floatvector.cpp $(Links.operators) -o test.operators.floatvector.out
+operators/floatvector.out: operators/floatvector.cpp $(Includes.operators) 
+	$(CC) operators/floatvector.cpp $(Links.operators) -o operators/floatvector.out
 
-test.operators.scalingoperator.out: test.operators.scalingoperator.cpp $(Includes.operators)
-	$(CC) test.operators.scalingoperator.cpp $(Links.operators) -o test.operators.scalingoperator.out
+operators/scalingoperator.out: operators/scalingoperator.cpp $(Includes.operators)
+	$(CC) operators/scalingoperator.cpp $(Links.operators) -o operators/scalingoperator.out
 	
-test.operators.diagonaloperator.out: test.operators.diagonaloperator.cpp $(Includes.operators)
-	$(CC) test.operators.diagonaloperator.cpp $(Links.operators) -o test.operators.diagonaloperator.out
+operators/diagonaloperator.out: operators/diagonaloperator.cpp $(Includes.operators)
+	$(CC) operators/diagonaloperator.cpp $(Links.operators) -o operators/diagonaloperator.out
 	
-test.operators.sumoperator.out: test.operators.sumoperator.cpp $(Includes.operators)
-	$(CC) test.operators.sumoperator.cpp $(Links.operators) -o test.operators.sumoperator.out
+operators/sumoperator.out: operators/sumoperator.cpp $(Includes.operators)
+	$(CC) operators/sumoperator.cpp $(Links.operators) -o operators/sumoperator.out
 	
-test.operators.productoperator.out: test.operators.productoperator.cpp $(Includes.operators)
-	$(CC) test.operators.productoperator.cpp $(Links.operators) -o test.operators.productoperator.out
+operators/productoperator.out: operators/productoperator.cpp $(Includes.operators)
+	$(CC) operators/productoperator.cpp $(Links.operators) -o operators/productoperator.out
 	
-test.operators.blockdiagonaloperator.out: test.operators.blockdiagonaloperator.cpp $(Includes.operators)
-	$(CC) test.operators.blockdiagonaloperator.cpp $(Links.operators) -o test.operators.blockdiagonaloperator.out
+operators/blockdiagonaloperator.out: operators/blockdiagonaloperator.cpp $(Includes.operators)
+	$(CC) operators/blockdiagonaloperator.cpp $(Links.operators) -o operators/blockdiagonaloperator.out
 	
-test.operators.blockoperator.out: test.operators.blockoperator.cpp $(Includes.operators)
-	$(CC) test.operators.blockoperator.cpp $(Links.operators) -o test.operators.blockoperator.out
+operators/blockoperator.out: operators/blockoperator.cpp $(Includes.operators)
+	$(CC) operators/blockoperator.cpp $(Links.operators) -o operators/blockoperator.out
 	
-operators.tests = test.operators.floatvector.out test.operators.scalingoperator.out test.operators.diagonaloperator.out test.operators.sumoperator.out test.operators.productoperator.out test.operators.blockdiagonaloperator.out test.operators.blockoperator.out
+operators.tests = operators/floatvector.out operators/scalingoperator.out operators/diagonaloperator.out operators/sumoperator.out operators/productoperator.out operators/blockdiagonaloperator.out operators/blockoperator.out
 
 
     
     
     
     
-test.dense.densematrix.out: test.dense.densematrix.cpp $(Includes.dense) 
-	$(CC) test.dense.densematrix.cpp $(Links.dense) -o test.dense.densematrix.out 
+dense/densematrix.out: dense/densematrix.cpp $(Includes.dense) 
+	$(CC) dense/densematrix.cpp $(Links.dense) -o dense/densematrix.out 
 
-test.dense.transpose.out: test.dense.transpose.cpp $(Includes.dense) 
-	$(CC) test.dense.transpose.cpp $(Links.dense) -o test.dense.transpose.out
+dense/transpose.out: dense/transpose.cpp $(Includes.dense) 
+	$(CC) dense/transpose.cpp $(Links.dense) -o dense/transpose.out
 
-test.dense.scalarfunctions.out: test.dense.scalarfunctions.cpp $(Includes.dense) 
-	$(CC) test.dense.scalarfunctions.cpp $(Links.dense) -o test.dense.scalarfunctions.out
+dense/scalarfunctions.out: dense/scalarfunctions.cpp $(Includes.dense) 
+	$(CC) dense/scalarfunctions.cpp $(Links.dense) -o dense/scalarfunctions.out
 
-test.dense.detinvcof.out: test.dense.detinvcof.cpp $(Includes.dense) 
-	$(CC) test.dense.detinvcof.cpp $(Links.dense) -o test.dense.detinvcof.out
+dense/detinvcof.out: dense/detinvcof.cpp $(Includes.dense) 
+	$(CC) dense/detinvcof.cpp $(Links.dense) -o dense/detinvcof.out
 
-test.dense.matrixalgorithm.out: test.dense.matrixalgorithm.cpp $(Includes.dense) 
-	$(CC) test.dense.matrixalgorithm.cpp $(Links.dense) -o test.dense.matrixalgorithm.out
+dense/matrixalgorithm.out: dense/matrixalgorithm.cpp $(Includes.dense) 
+	$(CC) dense/matrixalgorithm.cpp $(Links.dense) -o dense/matrixalgorithm.out
 
-test.dense.cholesky.out: test.dense.cholesky.cpp $(Includes.dense) 
-	$(CC) test.dense.cholesky.cpp $(Links.dense) -o test.dense.cholesky.out
+dense/cholesky.out: dense/cholesky.cpp $(Includes.dense) 
+	$(CC) dense/cholesky.cpp $(Links.dense) -o dense/cholesky.out
 
-test.dense.iterativeinverse.out: test.dense.iterativeinverse.cpp $(Includes.dense) 
-	$(CC) test.dense.iterativeinverse.cpp $(Links.dense) -o test.dense.iterativeinverse.out
+dense/iterativeinverse.out: dense/iterativeinverse.cpp $(Includes.dense) 
+	$(CC) dense/iterativeinverse.cpp $(Links.dense) -o dense/iterativeinverse.out
 
-dense.tests = test.dense.densematrix.out test.dense.transpose.out test.dense.detinvcof.out test.dense.matrixalgorithm.out test.dense.cholesky.out test.dense.scalarfunctions.out test.dense.iterativeinverse.out
-
-
-
-
-test.sparse.sparsematrix.out: test.sparse.sparsematrix.cpp $(Includes.sparse)
-	$(CC) test.sparse.sparsematrix.cpp $(Links.sparse) -o test.sparse.sparsematrix.out
-
-sparse.tests = test.sparse.sparsematrix.out 
+dense.tests = dense/densematrix.out dense/transpose.out dense/detinvcof.out dense/matrixalgorithm.out dense/cholesky.out dense/scalarfunctions.out dense/iterativeinverse.out
 
 
 
 
+sparse/sparsematrix.out: sparse/sparsematrix.cpp $(Includes.sparse)
+	$(CC) sparse/sparsematrix.cpp $(Links.sparse) -o sparse/sparsematrix.out
 
-
-test.solver.crm.out: test.solver.crm.cpp $(Includes.solver)
-	$(CC) test.solver.crm.cpp $(Links.solver) -o test.solver.crm.out
-
-test.solver.moretesting.out: test.solver.moretesting.cpp $(Includes.solver)
-	$(CC) test.solver.moretesting.cpp $(Links.solver) -o test.solver.moretesting.out
-
-solver.tests = test.solver.crm.out test.solver.moretesting.out 
+sparse.tests = sparse/sparsematrix.out 
 
 
 
 
 
-test.mesh.coordinates.out: test.mesh.coordinates.cpp $(Includes.mesh) 
-	$(CC) test.mesh.coordinates.cpp $(Links.mesh) -o test.mesh.coordinates.out
 
-# test.mesh.simplicialmesh.out: test.mesh.simplicialmesh.cpp $(Includes.mesh)
-# 	$(CC) test.mesh.simplicialmesh.cpp $(Links.mesh) -o test.mesh.simplicialmesh.out
+solver/crm.out: solver/crm.cpp $(Includes.solver)
+	$(CC) solver/crm.cpp $(Links.solver) -o solver/crm.out
 
-test.mesh.simplicial1D.out: test.mesh.simplicial1D.cpp $(Includes.mesh)
-	$(CC) test.mesh.simplicial1D.cpp $(Links.mesh) -o test.mesh.simplicial1D.out
+solver/moretesting.out: solver/moretesting.cpp $(Includes.solver)
+	$(CC) solver/moretesting.cpp $(Links.solver) -o solver/moretesting.out
 
-test.io.simplicial1D.out: test.io.simplicial1D.cpp $(Includes.mesh)
-	$(CC) test.io.simplicial1D.cpp $(Links.mesh) -o test.io.simplicial1D.out
-
-test.mesh.uniformrefinement1D.out: test.mesh.uniformrefinement1D.cpp $(Includes.mesh)
-	$(CC) test.mesh.uniformrefinement1D.cpp $(Links.mesh) -o test.mesh.uniformrefinement1D.out
-
-# test.mesh.manifold2D.out: test.mesh.manifold2D.cpp $(Includes.mesh)
-# 	$(CC) test.mesh.manifold2D.cpp $(Links.mesh) -o test.mesh.manifold2D.out
-
-test.mesh.simplicial2D.out: test.mesh.simplicial2D.cpp $(Includes.mesh)
-	$(CC) test.mesh.simplicial2D.cpp $(Links.mesh) -o test.mesh.simplicial2D.out
-
-test.io.simplicial2D.out: test.io.simplicial2D.cpp $(Includes.mesh)
-	$(CC) test.io.simplicial2D.cpp $(Links.mesh) -o test.io.simplicial2D.out
-
-test.mesh.2DBisection.out: test.mesh.2DBisection.cpp $(Includes.mesh)
-	$(CC) test.mesh.2DBisection.cpp $(Links.mesh) -o test.mesh.2DBisection.out
-
-test.mesh.midpointrefine.out: test.mesh.midpointrefine.cpp $(Includes.mesh)
-	$(CC) test.mesh.midpointrefine.cpp $(Links.mesh) -o test.mesh.midpointrefine.out
-
-test.mesh.simplicial3D.out: test.mesh.simplicial3D.cpp $(Includes.mesh)
-	$(CC) test.mesh.simplicial3D.cpp $(Links.mesh) -o test.mesh.simplicial3D.out
-
-test.io.simplicial3D.out: test.io.simplicial3D.cpp $(Includes.mesh)
-	$(CC) test.io.simplicial3D.cpp $(Links.mesh) -o test.io.simplicial3D.out
-
-test.mesh.3DBisection.out: test.mesh.3DBisection.cpp $(Includes.mesh)
-	$(CC) test.mesh.3DBisection.cpp $(Links.mesh) -o test.mesh.3DBisection.out
-
-test.mesh.simplicialND.out: test.mesh.simplicialND.cpp $(Includes.mesh)
-	$(CC) test.mesh.simplicialND.cpp $(Links.mesh) -o test.mesh.simplicialND.out
-
-test.io.simplicialND.out: test.io.simplicialND.cpp $(Includes.mesh)
-	$(CC) test.io.simplicialND.cpp $(Links.mesh) -o test.io.simplicialND.out
-
-# test.mesh.mesh.manifold.2D.out: test.mesh.mesh.manifold.2D.cpp $(Includes.mesh)
-# 	$(CC) test.mesh.mesh.manifold.2D.cpp $(Links.mesh) -o test.mesh.mesh.manifold.2D.out
-
-# test.mesh.io.out: test.mesh.io.cpp $(Includes.mesh)
-# 	$(CC) test.mesh.io.cpp $(Links.mesh) -o test.mesh.io.out
-
-mesh.tests = test.mesh.coordinates.out test.mesh.simplicial1D.out test.io.simplicial1D.out test.mesh.uniformrefinement1D.out test.mesh.simplicial2D.out test.mesh.2DBisection.out test.mesh.midpointrefine.out test.io.simplicial2D.out test.mesh.simplicial3D.out test.mesh.3DBisection.out test.io.simplicial3D.out test.mesh.simplicialND.out test.io.simplicialND.out
-# test.mesh.simplicial3D.out test.mesh.io.out test.mesh.vtkwriter.out test.mesh.mesh.manifold.2D.out  test.mesh.manifold2D.out
+solver.tests = solver/crm.out solver/moretesting.out 
 
 
 
 
 
-# test.vtk.vtkwriter.out: test.vtk.vtkwriter.cpp $(Includes.vtk)
-# 	$(CC) test.vtk.vtkwriter.cpp $(Links.vtk) -o test.vtk.vtkwriter.out
+mesh/coordinates.out: mesh/coordinates.cpp $(Includes.mesh) 
+	$(CC) mesh/coordinates.cpp $(Links.mesh) -o mesh/coordinates.out
 
-test.vtk.vtkwriter.mesh1D.out: test.vtk.vtkwriter.mesh1D.cpp $(Includes.vtk)
-	$(CC) test.vtk.vtkwriter.mesh1D.cpp $(Links.vtk) -o test.vtk.vtkwriter.mesh1D.out
+# mesh/simplicialmesh.out: mesh/simplicialmesh.cpp $(Includes.mesh)
+# 	$(CC) mesh/simplicialmesh.cpp $(Links.mesh) -o mesh/simplicialmesh.out
 
-test.vtk.vtkwriter.mesh2D.out: test.vtk.vtkwriter.mesh2D.cpp $(Includes.vtk)
-	$(CC) test.vtk.vtkwriter.mesh2D.cpp $(Links.vtk) -o test.vtk.vtkwriter.mesh2D.out
+mesh/simplicial1D.out: mesh/simplicial1D.cpp $(Includes.mesh)
+	$(CC) mesh/simplicial1D.cpp $(Links.mesh) -o mesh/simplicial1D.out
 
-test.vtk.vtkwriter.mesh3D.out: test.vtk.vtkwriter.mesh3D.cpp $(Includes.vtk)
-	$(CC) test.vtk.vtkwriter.mesh3D.cpp $(Links.vtk) -o test.vtk.vtkwriter.mesh3D.out
+mesh/io.simplicial1D.out: mesh/io.simplicial1D.cpp $(Includes.mesh)
+	$(CC) mesh/io.simplicial1D.cpp $(Links.mesh) -o mesh/io.simplicial1D.out
 
-vtk.tests = test.vtk.vtkwriter.mesh1D.out test.vtk.vtkwriter.mesh2D.out
-# test.vtk.vtkwriter.mesh3D.out
+mesh/uniformrefinement1D.out: mesh/uniformrefinement1D.cpp $(Includes.mesh)
+	$(CC) mesh/uniformrefinement1D.cpp $(Links.mesh) -o mesh/uniformrefinement1D.out
+
+# mesh/manifold2D.out: mesh/manifold2D.cpp $(Includes.mesh)
+# 	$(CC) mesh/manifold2D.cpp $(Links.mesh) -o mesh/manifold2D.out
+
+mesh/simplicial2D.out: mesh/simplicial2D.cpp $(Includes.mesh)
+	$(CC) mesh/simplicial2D.cpp $(Links.mesh) -o mesh/simplicial2D.out
+
+mesh/io.simplicial2D.out: mesh/io.simplicial2D.cpp $(Includes.mesh)
+	$(CC) mesh/io.simplicial2D.cpp $(Links.mesh) -o mesh/io.simplicial2D.out
+
+mesh/2DBisection.out: mesh/2DBisection.cpp $(Includes.mesh)
+	$(CC) mesh/2DBisection.cpp $(Links.mesh) -o mesh/2DBisection.out
+
+mesh/midpointrefine.out: mesh/midpointrefine.cpp $(Includes.mesh)
+	$(CC) mesh/midpointrefine.cpp $(Links.mesh) -o mesh/midpointrefine.out
+
+mesh/simplicial3D.out: mesh/simplicial3D.cpp $(Includes.mesh)
+	$(CC) mesh/simplicial3D.cpp $(Links.mesh) -o mesh/simplicial3D.out
+
+mesh/io.simplicial3D.out: mesh/io.simplicial3D.cpp $(Includes.mesh)
+	$(CC) mesh/io.simplicial3D.cpp $(Links.mesh) -o mesh/io.simplicial3D.out
+
+mesh/3DBisection.out: mesh/3DBisection.cpp $(Includes.mesh)
+	$(CC) mesh/3DBisection.cpp $(Links.mesh) -o mesh/3DBisection.out
+
+mesh/simplicialND.out: mesh/simplicialND.cpp $(Includes.mesh)
+	$(CC) mesh/simplicialND.cpp $(Links.mesh) -o mesh/simplicialND.out
+
+mesh/io.simplicialND.out: mesh/io.simplicialND.cpp $(Includes.mesh)
+	$(CC) mesh/io.simplicialND.cpp $(Links.mesh) -o mesh/io.simplicialND.out
+
+# mesh/mesh.manifold.2D.out: mesh/mesh.manifold.2D.cpp $(Includes.mesh)
+# 	$(CC) mesh/mesh.manifold.2D.cpp $(Links.mesh) -o mesh/mesh.manifold.2D.out
+
+# mesh/io.out: mesh/io.cpp $(Includes.mesh)
+# 	$(CC) mesh/io.cpp $(Links.mesh) -o mesh/io.out
+
+mesh.tests = mesh/coordinates.out mesh/simplicial1D.out mesh/io.simplicial1D.out mesh/uniformrefinement1D.out mesh/simplicial2D.out mesh/2DBisection.out mesh/midpointrefine.out mesh/io.simplicial2D.out mesh/simplicial3D.out mesh/3DBisection.out mesh/io.simplicial3D.out mesh/simplicialND.out mesh/io.simplicialND.out
+# mesh/simplicial3D.out mesh/io.out mesh/vtkwriter.out mesh/mesh.manifold.2D.out  mesh/manifold2D.out
+
+
+
+
+
+# vtk/vtkwriter.out: vtk/vtkwriter.cpp $(Includes.vtk)
+# 	$(CC) vtk/vtkwriter.cpp $(Links.vtk) -o vtk/vtkwriter.out
+
+vtk/vtkwriter.mesh1D.out: vtk/vtkwriter.mesh1D.cpp $(Includes.vtk)
+	$(CC) vtk/vtkwriter.mesh1D.cpp $(Links.vtk) -o vtk/vtkwriter.mesh1D.out
+
+vtk/vtkwriter.mesh2D.out: vtk/vtkwriter.mesh2D.cpp $(Includes.vtk)
+	$(CC) vtk/vtkwriter.mesh2D.cpp $(Links.vtk) -o vtk/vtkwriter.mesh2D.out
+
+vtk/vtkwriter.mesh3D.out: vtk/vtkwriter.mesh3D.cpp $(Includes.vtk)
+	$(CC) vtk/vtkwriter.mesh3D.cpp $(Links.vtk) -o vtk/vtkwriter.mesh3D.out
+
+vtk.tests = vtk/vtkwriter.mesh1D.out vtk/vtkwriter.mesh2D.out
+# vtk/vtkwriter.mesh3D.out
 
 
 
@@ -230,6 +230,12 @@ all: test.compiler.out $(combinatorics.tests) $(operators.tests) $(dense.tests) 
 
 # $(sparse.tests) $(solver.tests)
 
-include ../makefile.clean
+clean: 
+	rm -f *.o *.gch
+	rm -f *.exe *.exe.stackdump
+	rm -f *.out *.out.stackdump 
+	rm -f */*.o */*.gch
+	rm -f */*.exe */*.exe.stackdump
+	rm -f */*.out */*.out.stackdump 
 
 
