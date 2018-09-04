@@ -8,7 +8,7 @@ default:
 	cd ./solver; make; cd ..
 	cd ./mesh; make; cd ..
 	cd ./vtk; make; cd ..
-	cd ./unittests; make; cd ..
+	cd ./tests; make; cd ..
 	echo "finished building." 
     
 clean:
@@ -19,7 +19,7 @@ clean:
 	cd ./solver; make clean; cd ..
 	cd ./mesh; make clean; cd ..
 	cd ./vtk; make clean; cd ..
-	cd ./unittests; make clean; cd ..
+	cd ./tests; make clean; cd ..
 	make -f makefile.clean clean
 	echo "finished cleaning." 
     
