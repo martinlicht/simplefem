@@ -84,15 +84,15 @@ void MeshSimplicial3D::bisect_edge( int e )
         
         micropatch_tetrahedra.insert( t );
         
-        for( int fi = 0; fi < 4; fi++ )
-            micropatch_faces.insert( data_tetrahedron_faces[t][fi] );
+        for( int f : data_tetrahedron_faces[t]  )
+            micropatch_faces.insert( f );
         
-        for( int ei = 0; ei < 6; ei++ )
-            micropatch_edges.insert( data_tetrahedron_edges[t][ei] );
+        for( int e : data_tetrahedron_edges[t]  )
+            micropatch_edges.insert( e );
         
-        for( int vi = 0; vi < 4; vi++ )
-            micropatch_vertices.insert( data_tetrahedron_vertices[t][vi] );
-        
+        for( int v : data_tetrahedron_vertices[t]  )
+            micropatch_vertices.insert( v );
+                
     }
     
     
@@ -186,69 +186,6 @@ void MeshSimplicial3D::bisect_edge( int e )
     
     
     
-    
-    /***********************************************/
-    /*****                                    ******/
-    /*****   Delete the adjaceny links        ******/
-    /*****   in the macropatch                ******/
-    /*****   regarding micropatch simplices   ******/
-    /*****                                    ******/
-    /***********************************************/
-    
-    for( int v : micropatch_vertices ) data_vertex_firstparent_edge[v] = nullindex;
-    for( int v : micropatch_vertices ) data_vertex_firstparent_face[v] = nullindex;
-    for( int v : micropatch_vertices ) data_vertex_firstparent_tetrahedron[v] = nullindex;
-    for( int e : micropatch_edges ) data_edge_firstparent_face[e] = nullindex;
-    for( int e : micropatch_edges ) data_edge_firstparent_tetrahedron[e] = nullindex;
-    for( int f : micropatch_faces ) data_face_firstparent_tetrahedron[f] = nullindex;
-    
-    for( int e : macropatch_edges ) 
-    for( int vi = 0; vi < 2; vi++ ) 
-        if( micropatch_vertices.find( data_edge_vertices[e][vi] ) != micropatch_vertices.end() )
-            data_edge_nextparents_of_vertices[e][vi] = nullindex;
-        
-    for( int f : macropatch_faces ) 
-    for( int vi = 0; vi < 3; vi++ ) 
-        if( micropatch_vertices.find( data_face_vertices[f][vi] ) != micropatch_vertices.end() )
-            data_face_nextparents_of_vertices[f][vi] = nullindex;
-        
-    for( int f : macropatch_faces ) 
-    for( int ei = 0; ei < 3; ei++ ) 
-        if( micropatch_edges.find( data_face_edges[f][ei] ) != micropatch_edges.end() )
-            data_face_nextparents_of_edges[f][ei] = nullindex;
-        
-         
-    for( int t : macropatch_tetrahedra ) 
-    for( int vi = 0; vi < 4; vi++ ) 
-        if( micropatch_vertices.find( data_tetrahedron_vertices[t][vi] ) != micropatch_vertices.end() )
-            data_tetrahedron_nextparents_of_vertices[t][vi] = nullindex;
-        
-    for( int t : macropatch_tetrahedra ) 
-    for( int ei = 0; ei < 6; ei++ ) 
-        if( micropatch_edges.find( data_tetrahedron_edges[t][ei] ) != micropatch_edges.end() )
-            data_tetrahedron_nextparents_of_edges[t][ei] = nullindex;
-       
-    for( int t : macropatch_tetrahedra ) 
-    for( int fi = 0; fi < 4; fi++ ) 
-        if( micropatch_faces.find( data_tetrahedron_faces[t][fi] ) != micropatch_faces.end() )
-            data_tetrahedron_nextparents_of_faces[t][fi] = nullindex;
-    
-        
-        
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     /*********************/
     /*                   */
     /*   GEOMETRY DATA   */
@@ -266,6 +203,16 @@ void MeshSimplicial3D::bisect_edge( int e )
     /*                          */
     /****************************/
     
+    
+    
+    /* insert the new vertex into the micropatch and macropatch */
+    
+    micropatch_vertices.insert( counter_vertices );
+    macropatch_vertices.insert( counter_vertices );
+    
+    
+    
+    
     /* vertices of the children of the bisected edge */
     
     data_edge_vertices[ e             ][ 0 ] = e_back_vertex;
@@ -273,6 +220,14 @@ void MeshSimplicial3D::bisect_edge( int e )
       
     data_edge_vertices[ counter_edges ][ 0 ] = counter_vertices;
     data_edge_vertices[ counter_edges ][ 1 ] = e_front_vertex;
+    
+    
+    /* insert the new edge into the micropatch and macropatch */
+    
+    micropatch_edges.insert( counter_edges );
+    macropatch_edges.insert( counter_edges );
+    
+    
     
     
     
@@ -295,6 +250,14 @@ void MeshSimplicial3D::bisect_edge( int e )
       localindex_of_face_refinementedge[ of ] = ( e_0_1 == e ) ? 0 : ( ( e_0_2 == e ) ? 1 : 2 );
       assert( data_face_edges[ f_old ][ localindex_of_face_refinementedge[ of ] ] == e );
       
+      
+      /* insert the new face and the new edge into the micropatch and macropatch */
+      
+      micropatch_faces.insert( f_new ); 
+      macropatch_faces.insert( f_new ); 
+      
+      micropatch_edges.insert( counter_edges + 1 + of );
+      macropatch_edges.insert( counter_edges + 1 + of );
       
       
       if( localindex_of_face_refinementedge[ of ] == 0 ) { // 0 1 
@@ -422,8 +385,20 @@ void MeshSimplicial3D::bisect_edge( int e )
       assert( data_tetrahedron_edges[ t_old ][ localindex_of_tetrahedron_refinementedge[ ot ] ] == e );
       
       
+      /* insert the new face and the new edge into the micropatch and macropatch */
       
-      if(        localindex_of_face_refinementedge[ ot ] == 0 ) { // 0 1 
+      micropatch_tetrahedra.insert( t_new ); 
+      macropatch_tetrahedra.insert( t_new ); 
+      
+      micropatch_faces.insert( f_new ); 
+      macropatch_faces.insert( f_new ); 
+      
+      
+      
+      
+      
+      
+      if(        localindex_of_tetrahedron_refinementedge[ ot ] == 0 ) { // 0 1 
         
         assert( v_0 == e_back_vertex && v_1 == e_front_vertex && e == e_0_1 );
         
@@ -492,7 +467,7 @@ void MeshSimplicial3D::bisect_edge( int e )
         data_face_vertices[ f_new ][1] = v_2;
         data_face_vertices[ f_new ][2] = v_3;
         
-      } else if( localindex_of_face_refinementedge[ ot ] == 1 ) { // 0 2 
+      } else if( localindex_of_tetrahedron_refinementedge[ ot ] == 1 ) { // 0 2 
         
         assert( v_0 == e_back_vertex && v_2 == e_front_vertex && e == e_0_2 );
         
@@ -561,7 +536,7 @@ void MeshSimplicial3D::bisect_edge( int e )
         data_face_vertices[ f_new ][1] = v_n;
         data_face_vertices[ f_new ][2] = v_3;
         
-      } else if( localindex_of_face_refinementedge[ ot ] == 2 ) { // 0 3 
+      } else if( localindex_of_tetrahedron_refinementedge[ ot ] == 2 ) { // 0 3 
         
         assert( v_0 == e_back_vertex && v_3 == e_front_vertex && e == e_0_3 );
         
@@ -630,7 +605,7 @@ void MeshSimplicial3D::bisect_edge( int e )
         data_face_vertices[ f_new ][1] = v_2;
         data_face_vertices[ f_new ][2] = v_n;
     
-      } else if( localindex_of_face_refinementedge[ ot ] == 3 ) { // 1 2 
+      } else if( localindex_of_tetrahedron_refinementedge[ ot ] == 3 ) { // 1 2 
         
         assert( v_1 == e_back_vertex && v_2 == e_front_vertex && e == e_1_2 );
         
@@ -643,8 +618,8 @@ void MeshSimplicial3D::bisect_edge( int e )
         
         int e_1_n = e_1_2;
         int e_n_2 = counter_edges;
-        int e_0_n = counter_edges + 0 + index_f_012;
-        int e_n_3 = counter_edges + 0 + index_f_123;
+        int e_0_n = counter_edges + 1 + index_f_012;
+        int e_n_3 = counter_edges + 1 + index_f_123;
         
         int f_01n = f_012;
         int f_0n2 = counter_faces + index_f_012;
@@ -699,7 +674,7 @@ void MeshSimplicial3D::bisect_edge( int e )
         data_face_vertices[ f_new ][1] = v_n;
         data_face_vertices[ f_new ][2] = v_3;
     
-      } else if( localindex_of_face_refinementedge[ ot ] == 4 ) { // 1 3 
+      } else if( localindex_of_tetrahedron_refinementedge[ ot ] == 4 ) { // 1 3 
         
         assert( v_1 == e_back_vertex && v_3 == e_front_vertex && e == e_1_3 );
         
@@ -712,8 +687,8 @@ void MeshSimplicial3D::bisect_edge( int e )
         
         int e_1_n = e_1_3;
         int e_n_3 = counter_edges;
-        int e_0_n = counter_edges + 0 + index_f_013;
-        int e_2_n = counter_edges + 0 + index_f_123;
+        int e_0_n = counter_edges + 1 + index_f_013;
+        int e_2_n = counter_edges + 1 + index_f_123;
         
         int f_01n = f_013;
         int f_0n3 = counter_faces + index_f_013;
@@ -768,7 +743,7 @@ void MeshSimplicial3D::bisect_edge( int e )
         data_face_vertices[ f_new ][1] = v_2;
         data_face_vertices[ f_new ][2] = v_n;
     
-      } else if( localindex_of_face_refinementedge[ ot ] == 5 ) { // 2 3 
+      } else if( localindex_of_tetrahedron_refinementedge[ ot ] == 5 ) { // 2 3 
         
         assert( v_2 == e_back_vertex && v_3 == e_front_vertex && e == e_2_3 );
         
@@ -781,8 +756,8 @@ void MeshSimplicial3D::bisect_edge( int e )
         
         int e_2_n = e_2_3;
         int e_n_3 = counter_edges;
-        int e_0_n = counter_edges + 0 + index_f_023;
-        int e_1_n = counter_edges + 0 + index_f_123;
+        int e_0_n = counter_edges + 1 + index_f_023;
+        int e_1_n = counter_edges + 1 + index_f_123;
         
         int f_02n = f_023;
         int f_0n3 = counter_faces + index_f_023;
@@ -848,6 +823,69 @@ void MeshSimplicial3D::bisect_edge( int e )
       
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    /***********************************************/
+    /*****                                    ******/
+    /*****   Delete the adjaceny links        ******/
+    /*****   in the macropatch                ******/
+    /*****   regarding micropatch simplices   ******/
+    /*****                                    ******/
+    /***********************************************/
+    
+    for( int v : micropatch_vertices ) data_vertex_firstparent_edge[v] = nullindex;
+    for( int v : micropatch_vertices ) data_vertex_firstparent_face[v] = nullindex;
+    for( int v : micropatch_vertices ) data_vertex_firstparent_tetrahedron[v] = nullindex;
+    for( int e : micropatch_edges ) data_edge_firstparent_face[e] = nullindex;
+    for( int e : micropatch_edges ) data_edge_firstparent_tetrahedron[e] = nullindex;
+    for( int f : micropatch_faces ) data_face_firstparent_tetrahedron[f] = nullindex;
+    
+    for( int e : macropatch_edges ) 
+    for( int vi = 0; vi < 2; vi++ ) 
+        if( micropatch_vertices.find( data_edge_vertices[e][vi] ) != micropatch_vertices.end() )
+            data_edge_nextparents_of_vertices[e][vi] = nullindex;
+        
+    for( int f : macropatch_faces ) 
+    for( int vi = 0; vi < 3; vi++ ) 
+        if( micropatch_vertices.find( data_face_vertices[f][vi] ) != micropatch_vertices.end() )
+            data_face_nextparents_of_vertices[f][vi] = nullindex;
+        
+    for( int f : macropatch_faces ) 
+    for( int ei = 0; ei < 3; ei++ ) 
+        if( micropatch_edges.find( data_face_edges[f][ei] ) != micropatch_edges.end() )
+            data_face_nextparents_of_edges[f][ei] = nullindex;
+        
+         
+    for( int t : macropatch_tetrahedra ) 
+    for( int vi = 0; vi < 4; vi++ ) 
+        if( micropatch_vertices.find( data_tetrahedron_vertices[t][vi] ) != micropatch_vertices.end() )
+            data_tetrahedron_nextparents_of_vertices[t][vi] = nullindex;
+        
+    for( int t : macropatch_tetrahedra ) 
+    for( int ei = 0; ei < 6; ei++ ) 
+        if( micropatch_edges.find( data_tetrahedron_edges[t][ei] ) != micropatch_edges.end() )
+            data_tetrahedron_nextparents_of_edges[t][ei] = nullindex;
+       
+    for( int t : macropatch_tetrahedra ) 
+    for( int fi = 0; fi < 4; fi++ ) 
+        if( micropatch_faces.find( data_tetrahedron_faces[t][fi] ) != micropatch_faces.end() )
+            data_tetrahedron_nextparents_of_faces[t][fi] = nullindex;
+    
+    
+        
+        
+        
+        
     
     
     /***********************************************/
@@ -983,14 +1021,6 @@ void MeshSimplicial3D::bisect_edge( int e )
     
     /**************************************************/
     
-    
-    
-        
-    
-    
-    
-    
-    std::cout << "FINISHED" << std::endl;
     
     /*
      *  UPDATE COUNTERS 

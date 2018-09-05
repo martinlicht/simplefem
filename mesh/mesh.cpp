@@ -33,8 +33,7 @@ Mesh::Mesh( int inner, int outer )
 //     std::cout << "insert sigmas" << std::endl;
     auxdata[ std::pair<int,int>(sup,sub) ] = sigmas;
   }
-  pong();
-  
+    
 //   std::cout << "mesh constructor" << std::endl;
   
 }

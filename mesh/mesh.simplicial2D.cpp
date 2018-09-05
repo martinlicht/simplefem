@@ -1,7 +1,7 @@
 
 #include <cmath>
 #include <string>
-#include <stack> // TODO: change to something else such as list 
+#include <stack> 
 #include <list>
 #include <vector>
 #include <map>
@@ -112,11 +112,6 @@ MeshSimplicial2D::MeshSimplicial2D(
     data_vertex_firstparent_triangle.resize( counter_vertices, nullindex );
     data_vertex_firstparent_edge.resize( counter_vertices, nullindex );
     
-    for( auto t : data_triangle_vertices )
-      std::clog << t[0] << space << t[1] << space << t[2] << std::endl;
-    for( auto e : data_edge_vertices )
-      std::clog << e[0] << space << e[1] << std::endl;
-    std::clog << std::endl;
       
     /* 3. For each vertex, set the first parent triangle and the neighboring parent triangles */
     
@@ -1331,8 +1326,6 @@ void MeshSimplicial2D::bisect_edge( int e )
     
     
     
-    std::clog << "BIG LOOP" << std::endl;
-    
     for( int ot = 0; ot < old_triangles.size(); ot++ ) {
       
       int t_old = old_triangles[ ot ];
@@ -1596,9 +1589,6 @@ void MeshSimplicial2D::bisect_edge( int e )
     }
     
     
-    std::clog << "BIG LOOP END" << std::endl;
-    
-    
     /* Run over the front vertex' parent triangles and conduct manipulations */
 
     int* pointer_to_index = &data_vertex_firstparent_triangle[ e_front_vertex ];
@@ -1614,9 +1604,7 @@ void MeshSimplicial2D::bisect_edge( int e )
         
         *pointer_to_index = counter_triangles + ( it - old_triangles.begin() );
         
-        std::clog << "manipulate" << std::endl;
-        
-      } else std::clog << "keep" << std::endl;
+      }
       
       int localindex_of_front_vertex = nullindex;
       if( data_triangle_vertices[ *pointer_to_index ][ 0 ] == e_front_vertex ) localindex_of_front_vertex = 0;
@@ -1630,8 +1618,6 @@ void MeshSimplicial2D::bisect_edge( int e )
     
     getcoordinates().append( midcoordinate );
     
-    
-    std::clog << "FINISHED" << std::endl;
     
     /*
      *  UPDATE COUNTERS 

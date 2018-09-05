@@ -975,14 +975,14 @@ void MeshSimplicial3D::check() const
     
     /* each first parent tetrahedron of an face: first parent is non-null and a valid parent */
     
-    for( int t = 0; t < counter_tetrahedra; t++ )
+    for( int f = 0; f < counter_faces; f++ )
     {
-        int p = data_face_firstparent_tetrahedron[t];
+        int p = data_face_firstparent_tetrahedron[f];
         
         assert( p != nullindex );
         assert( 0 <= p && p < counter_tetrahedra );
         
-        assert( data_tetrahedron_faces[p][0] == t || data_tetrahedron_faces[p][1] == t || data_tetrahedron_faces[p][2] == t || data_tetrahedron_faces[p][3] == t );
+        assert( data_tetrahedron_faces[p][0] == f || data_tetrahedron_faces[p][1] == f || data_tetrahedron_faces[p][2] == f || data_tetrahedron_faces[p][3] == f );
     }
     
     /* each first parent tetrahedron of an edge: first parent is non-null and a valid parent */
@@ -1002,14 +1002,14 @@ void MeshSimplicial3D::check() const
     
     /* each first parent tetrahedron of an vertex: first parent is non-null and a valid parent */
     
-    for( int t = 0; t < counter_tetrahedra; t++ )
+    for( int v = 0; v < counter_vertices; v++ )
     {
-        int p = data_vertex_firstparent_tetrahedron[t];
+        int p = data_vertex_firstparent_tetrahedron[v];
         
         assert( p != nullindex );
         assert( 0 <= p && p < counter_tetrahedra );
         
-        assert( data_tetrahedron_vertices[p][0] == t || data_tetrahedron_vertices[p][1] == t || data_tetrahedron_vertices[p][2] == t || data_tetrahedron_vertices[p][3] == t );
+        assert( data_tetrahedron_vertices[p][0] == v || data_tetrahedron_vertices[p][1] == v || data_tetrahedron_vertices[p][2] == v || data_tetrahedron_vertices[p][3] == v );
     }
     
     /* each first parent face of an edge: first parent is non-null and a valid parent */
@@ -1131,7 +1131,7 @@ void MeshSimplicial3D::check() const
     {
         
         if( data_tetrahedron_nextparents_of_vertices[t][vi] != nullindex )
-            assert( 0 <= data_tetrahedron_nextparents_of_vertices[t][vi] && data_tetrahedron_nextparents_of_vertices[t][vi] < counter_vertices );
+            assert( 0 <= data_tetrahedron_nextparents_of_vertices[t][vi] && data_tetrahedron_nextparents_of_vertices[t][vi] < counter_tetrahedra );
     
         if( data_tetrahedron_nextparents_of_vertices[t][vi] != nullindex )
             assert( data_tetrahedron_vertices[ data_tetrahedron_nextparents_of_vertices[t][vi] ][0] == data_tetrahedron_vertices[t][vi] 
@@ -1154,9 +1154,7 @@ void MeshSimplicial3D::check() const
     {
         
         if( data_tetrahedron_nextparents_of_edges[t][ei] != nullindex )
-        assert( 0 <= data_tetrahedron_nextparents_of_edges[t][ei]
-                &&
-                data_tetrahedron_nextparents_of_edges[t][ei] < counter_tetrahedra );
+        assert( 0 <= data_tetrahedron_nextparents_of_edges[t][ei] && data_tetrahedron_nextparents_of_edges[t][ei] < counter_tetrahedra );
     
         if( data_tetrahedron_nextparents_of_edges[t][ei] != nullindex )
         assert( data_tetrahedron_edges[ data_tetrahedron_nextparents_of_edges[t][ei] ][0] == data_tetrahedron_edges[t][ei] 
