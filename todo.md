@@ -83,6 +83,13 @@ enhance the logger with different functionality.
 
 ## Speculative issues 
 
+
+### Rename basic to base 
+
+Basic has the wrong connotation, it makes more sense 
+to call it base.
+
+
 ### Smart Pointers
 
 Should smart pointers be employed throughout the library
