@@ -20,18 +20,13 @@ int main()
         
         M.check();
         
-        cout << "Refinement" << endl;
-        
-        for( int c = 0; c < 100; c++ ) {
-          M.bisect_edge( c );
-          M.bisect_edge( M.count_edges() - c - 1 );
+        for( int c = 0; c < 5; c++ ) {
+          
+            M.bisect_edge( c % M.count_edges() );
           
         }
-          
         
         M.check();
-        
-        cout << M << endl;
         
         cout << "Finished Unit Test" << endl;
         

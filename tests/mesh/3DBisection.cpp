@@ -16,20 +16,37 @@ int main()
 {
         cout << "Unit Test for Simplicial 3D Module" << endl;
         
-        MeshSimplicial3D M = UnitSimplex3D();
-        
-        M.check();
-        
-        cout << "Refinement" << endl;
-        
-        for( int c = 0; c < 1; c++ ) {
-          M.bisect_edge( M.get_tetrahedron_edge( 0, 0 ) );
+        for( int ei = 0; ei < 6; ei++ )
+        {
+            
+            MeshSimplicial3D M = UnitSimplex3D();
+            
+            M.check();
+            
+            for( int c = 0; c < 10; c++ ) {
+                M.bisect_edge( M.get_tetrahedron_edge( 0, ei ) );
+            }
+            
+            M.check();
+            
         }
-          
         
-        M.check();
         
-        cout << M << endl;
+        {
+            
+            MeshSimplicial3D M = StandardCube3D();
+            
+            M.check();
+            
+            for( int c = 0; c < 20; c++ ) {
+                M.bisect_edge( M.get_tetrahedron_edge( c % 5, rand() % 6 ) );
+            }
+            
+            M.check();
+            
+        }
+        
+        
         
         cout << "Finished Unit Test" << endl;
         

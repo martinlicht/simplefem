@@ -4,6 +4,7 @@ include ../makefile.rules
 
 default: all
 
+Objects.basic = 
 Objects.combinatorics = ../combinatorics/*.o
 Objects.operators = ../operators/*.o
 Objects.dense = ../dense/*.o
@@ -12,6 +13,7 @@ Objects.solver = ../solver/*.o
 Objects.mesh = ../mesh/*.o
 Objects.vtk = ../vtk/*.o
 
+Headers.basic = ../basic/*.hpp
 Headers.combinatorics = ../combinatorics/*.hpp
 Headers.operators = ../operators/*.hpp
 Headers.dense = ../dense/*.hpp
@@ -20,6 +22,7 @@ Headers.solver = ../solver/*.hpp
 Headers.mesh = ../mesh/*.hpp
 Headers.vtk = ../vtk/*.hpp
 
+Includes.basic = $(Headers.basic) $(Objects.basic) 
 Includes.combinatorics = $(Headers.combinatorics) $(Objects.combinatorics) 
 Includes.operators = $(Headers.operators) $(Objects.operators) $(Includes.combinatorics)
 Includes.dense = $(Headers.dense) $(Objects.dense) $(Includes.operators)
@@ -28,6 +31,7 @@ Includes.solver = $(Headers.solver) $(Objects.solver) $(Includes.operators)
 Includes.mesh = $(Headers.mesh) $(Objects.mesh) $(Objects.combinatorics) $(Includes.operators)
 Includes.vtk = $(Headers.vtk) $(Objects.vtk) $(Includes.mesh)
 
+Links.basic         = $(Objects.basic) 
 Links.combinatorics = $(Objects.combinatorics) 
 Links.operators     = $(Objects.operators) $(Objects.combinatorics)
 Links.dense         = $(Objects.dense) $(Objects.sparse) $(Objects.operators) $(Objects.combinatorics)
@@ -37,10 +41,22 @@ Links.mesh          = $(Objects.mesh) $(Objects.combinatorics) $(Objects.operato
 Links.vtk           = $(Objects.vtk) $(Objects.mesh) $(Objects.dense) $(Objects.sparse) $(Objects.combinatorics) $(Objects.operators)
 
 
-Objects = ../combinatorics/*.o ../operators/*.o ../dense/*.o ../sparse/*.o ../solver/*.o ../mesh/*.o ../vtk/*.o
-Headers = ../combinatorics/*.hpp ../operators/*.hpp ../dense/*.hpp ../sparse/*.hpp ../solver/*.hpp ../mesh/*.hpp ../vtk/*.hpp
+Objects = ../basic/*.o ../combinatorics/*.o ../operators/*.o ../dense/*.o ../sparse/*.o ../solver/*.o ../mesh/*.o ../vtk/*.o
+Headers = ../basic/*.hpp ../combinatorics/*.hpp ../operators/*.hpp ../dense/*.hpp ../sparse/*.hpp ../solver/*.hpp ../mesh/*.hpp ../vtk/*.hpp
 
 Includes = $(Headers) $(Objects) 
+
+
+
+
+basic/sorthack.out: basic/sorthack.cpp $(Includes.basic)
+	$(CC) basic/sorthack.cpp $(Links.basic) -o basic/sorthack.out 
+
+basic.tests = basic/sorthack.out 
+
+
+
+
 
 combinatorics/indexrange.out: combinatorics/indexrange.cpp $(Includes.combinatorics) 
 	$(CC) combinatorics/indexrange.cpp $(Links.combinatorics) -o combinatorics/indexrange.out
@@ -226,7 +242,7 @@ test.container.out: test.container.cpp
 
 
 
-all: test.compiler.out $(combinatorics.tests) $(operators.tests) $(dense.tests) $(mesh.tests) $(vtk.tests) 
+all: test.compiler.out $(basic.tests) $(combinatorics.tests) $(operators.tests) $(dense.tests) $(mesh.tests) $(vtk.tests) 
 
 # $(sparse.tests) $(solver.tests)
 
