@@ -21,10 +21,10 @@ generateindexmaps.o: generateindexmaps.hpp generateindexmaps.cpp
 generatemultiindices.o: generatemultiindices.hpp generatemultiindices.cpp 
 	$(CC) generatemultiindices.cpp -c -o generatemultiindices.o 
 
-heapsalgorithm.o: heapsalgorithm.hpp heapsalgorithm.cpp 
-	$(CC) heapsalgorithm.cpp -c -o heapsalgorithm.o 
+heappermgen.o: heappermgen.hpp heappermgen.cpp 
+	$(CC) heappermgen.cpp -c -o heappermgen.o 
 
-objects = indexrange.o indexmap.o multiindex.o generateindexmaps.o generatemultiindices.o heapsalgorithm.o
+objects = indexrange.o indexmap.o multiindex.o generateindexmaps.o generatemultiindices.o heappermgen.o
 
     
     

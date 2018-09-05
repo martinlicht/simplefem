@@ -57,10 +57,10 @@ combinatorics/generateindexmaps.out: combinatorics/generateindexmaps.cpp $(Inclu
 combinatorics/generatemultiindices.out: combinatorics/generatemultiindices.cpp $(Includes.combinatorics) 
 	$(CC) combinatorics/generatemultiindices.cpp $(Links.combinatorics) -o combinatorics/generatemultiindices.out
 
-combinatorics/heapsalgorithm.out: combinatorics/heapsalgorithm.cpp $(Includes.combinatorics) 
-	$(CC) combinatorics/heapsalgorithm.cpp $(Links.combinatorics) -o combinatorics/heapsalgorithm.out
+combinatorics/heappermgen.out: combinatorics/heappermgen.cpp $(Includes.combinatorics) 
+	$(CC) combinatorics/heappermgen.cpp $(Links.combinatorics) -o combinatorics/heappermgen.out
 
-combinatorics.tests = combinatorics/indexrange.out combinatorics/indexmap.out combinatorics/multiindex.out combinatorics/generateindexmaps.out combinatorics/generatemultiindices.out combinatorics/heapsalgorithm.out 
+combinatorics.tests = combinatorics/indexrange.out combinatorics/indexmap.out combinatorics/multiindex.out combinatorics/generateindexmaps.out combinatorics/generatemultiindices.out combinatorics/heappermgen.out 
     
 
 

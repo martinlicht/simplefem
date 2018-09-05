@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include "../../basic.hpp"
-#include "../../combinatorics/heapsalgorithm.hpp"
+#include "../../combinatorics/heappermgen.hpp"
 
 
 using namespace std;

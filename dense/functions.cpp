@@ -8,7 +8,7 @@
 #include <cctype>
 
 #include "../combinatorics/generateindexmaps.hpp"
-#include "../combinatorics/heapsalgorithm.hpp"
+#include "../combinatorics/heappermgen.hpp"
 #include "densematrix.hpp"
 #include "qr.factorization.hpp"
 #include "lu.factorization.hpp"

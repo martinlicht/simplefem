@@ -13,6 +13,19 @@ that need be addressed in the future of this project.
 All tests should return 0 on successful completion
 
 
+## structure of tests 
+
+The tests should have a similar form. 
+For example, they should state the test topic and when they are done.
+This could be handled by macros.
+
+    OPEN "Test for correctness of some feature";
+    INFO "Some statement";
+    WARNING "something has happened";
+    ERROR "error has occured";
+    CLOSE "Test finished";
+
+
 ## Global structure
 
 It makes sense to order the tests mimicking the source directory:

@@ -181,23 +181,19 @@ Test every single functionality for its accuracy.
   
   - Reduce dense matrix module to the core functions of dense matrices
   - Module for Matrix I/O 
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
