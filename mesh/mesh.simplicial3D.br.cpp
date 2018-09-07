@@ -1059,7 +1059,7 @@ void MeshSimplicial3D::longest_edge_bisection( std::vector<int> edges )
     /* 0. check the input */
     
     for( int& e : edges )
-        assert( 0 <= edges[e] && edges[e] < counter_edges );
+        assert( 0 <= e && e < counter_edges );
     
     
     /* 1. create stack for the edges to be bisected, and fill in first batch */

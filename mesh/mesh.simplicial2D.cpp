@@ -1652,7 +1652,7 @@ void MeshSimplicial2D::longest_edge_bisection( std::vector<int> edges )
     /* 0. check the input */
     
     for( int& e : edges )
-        assert( 0 <= edges[e] && edges[e] < counter_edges );
+        assert( 0 <= e && e < counter_edges );
     
     
     /* 1. create stack for the edges to be bisected, and fill in first batch */
@@ -1690,7 +1690,7 @@ void MeshSimplicial2D::longest_edge_bisection( std::vector<int> edges )
                 todostack.push_back( get_triangle_edge( t, ei ) );
         
         // if top edge is still the same, bisect 
-        
+    
         if( e == todostack.back() )
         {
             todostack.remove( e );
@@ -1699,7 +1699,6 @@ void MeshSimplicial2D::longest_edge_bisection( std::vector<int> edges )
         
     
     }
-    
     
     // fiinished!
     
@@ -1725,7 +1724,7 @@ void MeshSimplicial2D::newest_vertex_bisection( std::vector<int> edges )
     /* 0. check the input */
     
     for( int& e : edges )
-        assert( 0 <= edges[e] && edges[e] < counter_edges );
+        assert( 0 <= e && e < counter_edges );
     
     
     /* 1. create stack for the edges to be bisected, and fill in first batch */

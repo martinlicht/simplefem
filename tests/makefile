@@ -184,6 +184,12 @@ mesh/io.simplicial2D.out: mesh/io.simplicial2D.cpp $(Includes.mesh)
 mesh/2DBisection.out: mesh/2DBisection.cpp $(Includes.mesh)
 	$(CC) mesh/2DBisection.cpp $(Links.mesh) -o mesh/2DBisection.out
 
+mesh/2Dleb.out: mesh/2Dleb.cpp $(Includes.mesh)
+	$(CC) mesh/2Dleb.cpp $(Links.mesh) -o mesh/2Dleb.out
+
+mesh/2Dnvb.out: mesh/2Dnvb.cpp $(Includes.mesh)
+	$(CC) mesh/2Dnvb.cpp $(Links.mesh) -o mesh/2Dnvb.out
+
 mesh/midpointrefine.out: mesh/midpointrefine.cpp $(Includes.mesh)
 	$(CC) mesh/midpointrefine.cpp $(Links.mesh) -o mesh/midpointrefine.out
 
@@ -195,6 +201,9 @@ mesh/io.simplicial3D.out: mesh/io.simplicial3D.cpp $(Includes.mesh)
 
 mesh/3DBisection.out: mesh/3DBisection.cpp $(Includes.mesh)
 	$(CC) mesh/3DBisection.cpp $(Links.mesh) -o mesh/3DBisection.out
+
+mesh/3Dleb.out: mesh/3Dleb.cpp $(Includes.mesh)
+	$(CC) mesh/3Dleb.cpp $(Links.mesh) -o mesh/3Dleb.out
 
 mesh/simplicialND.out: mesh/simplicialND.cpp $(Includes.mesh)
 	$(CC) mesh/simplicialND.cpp $(Links.mesh) -o mesh/simplicialND.out
@@ -208,7 +217,7 @@ mesh/io.simplicialND.out: mesh/io.simplicialND.cpp $(Includes.mesh)
 # mesh/io.out: mesh/io.cpp $(Includes.mesh)
 # 	$(CC) mesh/io.cpp $(Links.mesh) -o mesh/io.out
 
-mesh.tests = mesh/coordinates.out mesh/simplicial1D.out mesh/io.simplicial1D.out mesh/uniformrefinement1D.out mesh/simplicial2D.out mesh/2DBisection.out mesh/midpointrefine.out mesh/io.simplicial2D.out mesh/simplicial3D.out mesh/3DBisection.out mesh/io.simplicial3D.out mesh/simplicialND.out mesh/io.simplicialND.out
+mesh.tests = mesh/coordinates.out mesh/simplicial1D.out mesh/io.simplicial1D.out mesh/uniformrefinement1D.out mesh/simplicial2D.out mesh/2DBisection.out mesh/2Dleb.out mesh/2Dnvb.out mesh/midpointrefine.out mesh/io.simplicial2D.out mesh/simplicial3D.out mesh/3DBisection.out mesh/3Dleb.out mesh/io.simplicial3D.out mesh/simplicialND.out mesh/io.simplicialND.out
 # mesh/simplicial3D.out mesh/io.out mesh/vtkwriter.out mesh/mesh.manifold.2D.out  mesh/manifold2D.out
 
 
@@ -245,6 +254,10 @@ test.container.out: test.container.cpp
 all: test.compiler.out $(basic.tests) $(combinatorics.tests) $(operators.tests) $(dense.tests) $(mesh.tests) $(vtk.tests) 
 
 # $(sparse.tests) $(solver.tests)
+
+
+include makefile.tests
+
 
 clean: 
 	rm -f *.o *.gch

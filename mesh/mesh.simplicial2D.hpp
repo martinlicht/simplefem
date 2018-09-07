@@ -233,6 +233,21 @@ class MeshSimplicial2D
 
 
 
+inline MeshSimplicial2D UnitTriangle2D()
+{
+    return MeshSimplicial2D(
+      2,
+      Coordinates( 2, 3, {
+        0., 0., // 0
+        1., 0., // 1
+        0., 1.  // 2
+      } ),
+      {
+        { 0, 1, 2 }
+      }
+    );
+}
+
 inline MeshSimplicial2D UnitSquare2D()
 {
     return MeshSimplicial2D(

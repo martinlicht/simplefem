@@ -1,0 +1,29 @@
+
+
+tests.basic: 
+	for i in ./basic/*.out; do ./$$i || break; done
+
+tests.combinatorics: 
+	for i in ./combinatorics/*.out; do ./$$i || break; done
+
+tests.operators: 
+	for i in ./operators/*.out; do ./$$i || break; done
+
+tests.dense: 
+	for i in ./dense/*.out; do ./$$i || break; done
+
+tests.sparse: 
+	for i in ./sparse/*.out; do ./$$i || break; done
+
+tests.solver: 
+	for i in ./solver/*.out; do ./$$i || break; done
+
+tests.mesh: 
+	for i in ./solver/*.out; do ./$$i || break; done
+
+tests.vtk: 
+	for i in ./vtk/*.out; do ./$$i || break; done
+
+
+tests:
+	make tests.combinatorics

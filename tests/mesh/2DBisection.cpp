@@ -16,17 +16,35 @@ int main()
 {
         cout << "Unit Test for Simplicial 2D Module" << endl;
         
-        MeshSimplicial2D M = UnitSquare2D();
-        
-        M.check();
-        
-        for( int c = 0; c < 5; c++ ) {
-          
-            M.bisect_edge( c % M.count_edges() );
-          
+        for( int ei = 0; ei < 3; ei++ )
+        {
+            
+            MeshSimplicial2D M = UnitTriangle2D();
+            
+            M.check();
+            
+            for( int c = 0; c < 10; c++ ) {
+                M.bisect_edge( M.get_triangle_edge( 0, ei ) );
+            }
+            
+            M.check();
+            
         }
         
-        M.check();
+        
+        {
+            
+            MeshSimplicial2D M = StandardSquare2D();
+            
+            M.check();
+            
+            for( int c = 0; c < 20; c++ ) {
+                M.bisect_edge( M.get_triangle_edge( c % 2, rand() % 3 ) );
+            }
+            
+            M.check();
+            
+        }
         
         cout << "Finished Unit Test" << endl;
         
