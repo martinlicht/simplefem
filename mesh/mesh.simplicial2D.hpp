@@ -41,21 +41,21 @@ class MeshSimplicial2D
         MeshSimplicial2D( 
             int outerdim,
             const Coordinates& coords,
-            const std::vector<std::array<int,3>> triangle_vertices
+            const std::vector<std::array<int,3>>& triangle_vertices
         );
         
         MeshSimplicial2D( 
             int outerdim,
             const Coordinates& coords,
-            const std::vector<std::array<int,3>> triangle_edges,
-            const std::vector<int              > edge_firstparent_triangle,
-            const std::vector<std::array<int,3>> triangle_nextparents_of_edges,
-            const std::vector<std::array<int,3>> triangle_vertices,
-            const std::vector<int              > vertex_firstparent_triangle,
-            const std::vector<std::array<int,3>> triangle_nextparents_of_vertices,
-            const std::vector<std::array<int,2>> edge_vertices,
-            const std::vector<int              > vertex_firstparent_edge,
-            const std::vector<std::array<int,2>> edge_nextparents_of_vertices
+            const std::vector<std::array<int,3>>& triangle_edges,
+            const std::vector<int              >& edge_firstparent_triangle,
+            const std::vector<std::array<int,3>>& triangle_nextparents_of_edges,
+            const std::vector<std::array<int,3>>& triangle_vertices,
+            const std::vector<int              >& vertex_firstparent_triangle,
+            const std::vector<std::array<int,3>>& triangle_nextparents_of_vertices,
+            const std::vector<std::array<int,2>>& edge_vertices,
+            const std::vector<int              >& vertex_firstparent_edge,
+            const std::vector<std::array<int,2>>& edge_nextparents_of_vertices
         );
         
         

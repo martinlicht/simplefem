@@ -15,7 +15,7 @@ DenseMatrix::DenseMatrix( int dim )
     check();
 }
 
-DenseMatrix::DenseMatrix( int dim, std::function<Float(int,int)> generator )
+DenseMatrix::DenseMatrix( int dim, const std::function<Float(int,int)>& generator )
 : DenseMatrix( dim, dim, generator )
 {
     check();
@@ -27,7 +27,7 @@ DenseMatrix::DenseMatrix( int rows, int columns )
     check();
 }
 
-DenseMatrix::DenseMatrix( int rows, int columns, std::function<Float(int,int)> generator )
+DenseMatrix::DenseMatrix( int rows, int columns, const std::function<Float(int,int)>& generator )
 : LinearOperator( rows, columns), entries( rows * columns )
 {
     for( int r = 0; r < getdimout(); r++ )

@@ -30,9 +30,9 @@ public LinearOperator /* every matrix is a linear operator */
     public:
         
         explicit DenseMatrix( int dim );
-        DenseMatrix( int dim, std::function<Float(int,int)> generator );
+        DenseMatrix( int dim, const std::function<Float(int,int)>& generator );
         DenseMatrix( int rows, int columns );
-        DenseMatrix( int rows, int columns, std::function<Float(int,int)> generator );
+        DenseMatrix( int rows, int columns, const std::function<Float(int,int)>& generator );
         DenseMatrix( int rows, int columns, const std::vector<FloatVector>& coldata );
         DenseMatrix( int rows, int columns, Float value );
         explicit DenseMatrix( const ScalingOperator& );

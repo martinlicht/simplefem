@@ -62,7 +62,7 @@ MeshSimplicial3D::MeshSimplicial3D( int outerdim )
 MeshSimplicial3D::MeshSimplicial3D( 
     int outerdim,
     const Coordinates& coords,
-    const std::vector<std::array<int,4>> tetrahedron_vertices
+    const std::vector<std::array<int,4>>& tetrahedron_vertices
 )
 :
     Mesh( 3, outerdim ),
@@ -425,29 +425,29 @@ MeshSimplicial3D::MeshSimplicial3D(
     int outerdim,
     const Coordinates& coords,
     
-    const std::vector<std::array<int,4>> tetrahedron_faces,
-    const std::vector<int              > face_firstparent_tetrahedron,
-    const std::vector<std::array<int,4>> tetrahedron_nextparents_of_faces,
+    const std::vector<std::array<int,4>>& tetrahedron_faces,
+    const std::vector<int              >& face_firstparent_tetrahedron,
+    const std::vector<std::array<int,4>>& tetrahedron_nextparents_of_faces,
     
-    const std::vector<std::array<int,6>> tetrahedron_edges,
-    const std::vector<int              > edge_firstparent_tetrahedron,
-    const std::vector<std::array<int,6>> tetrahedron_nextparents_of_edges,
+    const std::vector<std::array<int,6>>& tetrahedron_edges,
+    const std::vector<int              >& edge_firstparent_tetrahedron,
+    const std::vector<std::array<int,6>>& tetrahedron_nextparents_of_edges,
     
-    const std::vector<std::array<int,4>> tetrahedron_vertices,
-    const std::vector<int              > vertex_firstparent_tetrahedron,
-    const std::vector<std::array<int,4>> tetrahedron_nextparents_of_vertices,
+    const std::vector<std::array<int,4>>& tetrahedron_vertices,
+    const std::vector<int              >& vertex_firstparent_tetrahedron,
+    const std::vector<std::array<int,4>>& tetrahedron_nextparents_of_vertices,
     
-    const std::vector<std::array<int,3>> face_edges,
-    const std::vector<int              > edge_firstparent_face,
-    const std::vector<std::array<int,3>> face_nextparents_of_edges,
+    const std::vector<std::array<int,3>>& face_edges,
+    const std::vector<int              >& edge_firstparent_face,
+    const std::vector<std::array<int,3>>& face_nextparents_of_edges,
     
-    const std::vector<std::array<int,3>> face_vertices,
-    const std::vector<int              > vertex_firstparent_face,
-    const std::vector<std::array<int,3>> face_nextparents_of_vertices,
+    const std::vector<std::array<int,3>>& face_vertices,
+    const std::vector<int              >& vertex_firstparent_face,
+    const std::vector<std::array<int,3>>& face_nextparents_of_vertices,
     
-    const std::vector<std::array<int,2>> edge_vertices,
-    const std::vector<int              > vertex_firstparent_edge,
-    const std::vector<std::array<int,2>> edge_nextparents_of_vertices    
+    const std::vector<std::array<int,2>>& edge_vertices,
+    const std::vector<int              >& vertex_firstparent_edge,
+    const std::vector<std::array<int,2>>& edge_nextparents_of_vertices    
 )
 :
     Mesh( 3, outerdim ),

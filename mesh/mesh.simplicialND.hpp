@@ -41,7 +41,7 @@ class MeshSimplicialND
             int innerdim,
             int outerdim,
             const Coordinates& coords,
-            const std::vector<int> volume_vertices
+            const std::vector<int>& volume_vertices
         );
         
         MeshSimplicialND( const Mesh& mesh );

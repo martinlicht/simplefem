@@ -47,15 +47,15 @@ class MeshSimplicial1D
         MeshSimplicial1D( 
             int outerdim,
             const Coordinates& coords,
-            const std::vector<std::array<int,2>> edge_vertices
+            const std::vector<std::array<int,2>>& edge_vertices
         );
         
         MeshSimplicial1D( 
             int outerdim,
             const Coordinates& coords,
-            const std::vector<std::array<int,2>> edge_vertices,
-            const std::vector<std::array<int,2>> edge_nextparents_of_vertices,
-            const std::vector<int              > vertex_firstparent_edge
+            const std::vector<std::array<int,2>>& edge_vertices,
+            const std::vector<std::array<int,2>>& edge_nextparents_of_vertices,
+            const std::vector<int              >& vertex_firstparent_edge
         );
         
         

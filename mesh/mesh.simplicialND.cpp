@@ -99,7 +99,7 @@ MeshSimplicialND::MeshSimplicialND(
     int innerdim,
     int outerdim,
     const Coordinates& coords,
-    const std::vector<int> simplex_vertices
+    const std::vector<int>& simplex_vertices
 )
 :
     Mesh( innerdim, outerdim ),
@@ -657,7 +657,7 @@ void MeshSimplicialND::rebuild()
 
 void MeshSimplicialND::bisect_edge( int e )
 {
-    check(); assert( e != e );
+    check(); assert( false );
 }
 
 
