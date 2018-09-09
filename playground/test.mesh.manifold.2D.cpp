@@ -14,28 +14,28 @@ using namespace std;
 
 int main()
 {
-	cout << "Unit Test for Manifold 2D Module" << endl;
+	clog << "Unit Test for Manifold 2D Module" << endl;
 	
         ManifoldTriangulation2D M = UnitSquare();
         
         M.check();
 	
-        cout << M << endl;
+        clog << M << endl;
         
-        cout << "Start refinement" << endl;
+        clog << "Start refinement" << endl;
         
         for( int c = 0; c < 100; c++ ) 
         {
           int e = c % M.count_edges();
-          cout << "Bisect edge: " << e << nl;
+          clog << "Bisect edge: " << e << nl;
           M.bisect_edge( e );
           
-//           cout << M << endl;
+//           clog << M << endl;
           
           M.check();
         }
         
-        cout << "Finished Unit Test" << endl;
+        clog << "Finished Unit Test" << endl;
 
 	return 0;
 }

@@ -9,7 +9,6 @@
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 
-
 using namespace std;
 
 int main()
@@ -30,8 +29,6 @@ int main()
           
         
         M.check();
-        
-        // cout << M << endl;
         
         cout << "Finished Unit Test" << endl;
         

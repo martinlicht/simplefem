@@ -25,16 +25,16 @@ Mesh::Mesh( int inner, int outer )
   for( int sup = 0; sup <= innerdimension; sup++ )
   for( int sub = 0; sub <= sup; sub++ )
   {
-//     std::cout << sup << space << sub << std::endl;
+//     std::clog << sup << space << sub << std::endl;
     IndexRange from( 0, sub );
     IndexRange to( 0, sup );
-//     std::cout << "generate sigmas" << nl << from << nl << to << std::endl;
+//     std::clog << "generate sigmas" << nl << from << nl << to << std::endl;
     std::vector<IndexMap> sigmas = generateSigmas( from, to );
-//     std::cout << "insert sigmas" << std::endl;
+//     std::clog << "insert sigmas" << std::endl;
     auxdata[ std::pair<int,int>(sup,sub) ] = sigmas;
   }
     
-//   std::cout << "mesh constructor" << std::endl;
+//   std::clog << "mesh constructor" << std::endl;
   
 }
 

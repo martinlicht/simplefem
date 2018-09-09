@@ -236,8 +236,10 @@ vtk/vtkwriter.mesh2D.out: vtk/vtkwriter.mesh2D.cpp $(Includes.vtk)
 vtk/vtkwriter.mesh3D.out: vtk/vtkwriter.mesh3D.cpp $(Includes.vtk)
 	$(CC) vtk/vtkwriter.mesh3D.cpp $(Links.vtk) -o vtk/vtkwriter.mesh3D.out
 
-vtk.tests = vtk/vtkwriter.mesh1D.out vtk/vtkwriter.mesh2D.out
-# vtk/vtkwriter.mesh3D.out
+vtk/vtkwriter.mesh2Dnvb.out: vtk/vtkwriter.mesh2Dnvb.cpp $(Includes.vtk)
+	$(CC) vtk/vtkwriter.mesh2Dnvb.cpp $(Links.vtk) -o vtk/vtkwriter.mesh2Dnvb.out
+
+vtk.tests = vtk/vtkwriter.mesh1D.out vtk/vtkwriter.mesh2D.out vtk/vtkwriter.mesh2Dnvb.out vtk/vtkwriter.mesh3D.out
 
 
 

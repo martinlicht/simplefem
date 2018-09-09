@@ -147,7 +147,7 @@ void MeshManifold2D::check() const
      * 
      */
     
-//     cout << count_vertices() << space << getcoordinates().getnumber() << nl;
+//     clog << count_vertices() << space << getcoordinates().getnumber() << nl;
 
     assert( counter_triangles == data_triangle_vertices.size() );
     assert( counter_triangles == data_triangle_edges.size() );
@@ -188,7 +188,7 @@ void MeshManifold2D::check() const
     for( int e = 0; e < counter_edges; e++ )
     {
         
-//         std::cout << "vergleich " << e << " : " << data_edge_parents[e][0] << space << data_edge_parents[e][1] << nl;
+//         std::clog << "vergleich " << e << " : " << data_edge_parents[e][0] << space << data_edge_parents[e][1] << nl;
         
         assert( data_edge_parents[e][0] != data_edge_parents[e][1] );
         assert( data_edge_parents[e][0] != nullindex || data_edge_parents[e][1] != nullindex );
@@ -258,22 +258,22 @@ void MeshManifold2D::print( std::ostream& os ) const
     os << "Triangle vertices" << std::endl;
     
     for( const auto& tuple : data_triangle_vertices )
-      std::cout << tuple[0] << space << tuple[1] << space << tuple[2] << nl;
+      std::clog << tuple[0] << space << tuple[1] << space << tuple[2] << nl;
     
     os << "Triangle edges" << std::endl;
     
     for( const auto& tuple : data_triangle_edges )
-      std::cout << tuple[0] << space << tuple[1] << space << tuple[2] << nl;
+      std::clog << tuple[0] << space << tuple[1] << space << tuple[2] << nl;
     
     os << "Edge parents " << std::endl;
     
     for( const auto& tuple : data_edge_parents )
-      std::cout << tuple[0] << space << tuple[1] << nl;
+      std::clog << tuple[0] << space << tuple[1] << nl;
     
     os << "Edge vertices" << std::endl;
     
     for( int e = 0; e < counter_edges; e++ )
-      std::cout << e << ":" << get_edge_vertices(e)[0] << space << get_edge_vertices(e)[1] << nl;
+      std::clog << e << ":" << get_edge_vertices(e)[0] << space << get_edge_vertices(e)[1] << nl;
     
     os << "Finished printing" << nl;
     
@@ -1007,7 +1007,7 @@ void MeshManifold2D::bisect_edge( int e )
 
 void MeshManifold2D::bisect_outer_edge( int e )
 {
-    std::cout << "Outer bisection" << nl;
+    std::clog << "Outer bisection" << nl;
   
     assert( 0 <= e && e < counter_edges );
     assert( count_triangle_edge_parents( e ) == 1 );
@@ -1079,9 +1079,9 @@ void MeshManifold2D::bisect_outer_edge( int e )
     data_edge_parents.push_back( e_new_parents_forw );
     data_edge_parents.push_back( e_new_pair_of_t );
     
-//     std::cout << "test: " << e_local << space << e_local_prev << space << e_local_next << nl;
-//     std::cout << "test: " << e << space << e_prev << space << e_next << nl;
-//     std::cout << "test: " << t << space << n_prev << space << n_next << nl;
+//     std::clog << "test: " << e_local << space << e_local_prev << space << e_local_next << nl;
+//     std::clog << "test: " << e << space << e_prev << space << e_next << nl;
+//     std::clog << "test: " << t << space << n_prev << space << n_next << nl;
     data_edge_parents[ e_prev ] = {                 t, n_prev };
     data_edge_parents[ e_next ] = { counter_triangles, n_next };
     
@@ -1093,7 +1093,7 @@ void MeshManifold2D::bisect_outer_edge( int e )
 
 void MeshManifold2D::bisect_inner_edge( int e )
 {
-    std::cout << "Inner bisection" << nl;
+    std::clog << "Inner bisection" << nl;
   
     assert( 0 <= e && e < counter_edges );
     assert( count_triangle_edge_parents( e ) == 2 );

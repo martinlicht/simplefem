@@ -445,9 +445,9 @@ void MeshSimplicial3D::bisect_edge( int e )
         
         *pointer_to_index = counter_faces + ( it - old_faces.begin() );
         
-        std::cout << "manipulate" << std::endl;
+        std::clog << "manipulate" << std::endl;
         
-      } else std::cout << "keep" << std::endl;
+      } else std::clog << "keep" << std::endl;
       
       int localindex_of_front_vertex = nullindex;
       if( data_face_vertices[ *pointer_to_index ][ 0 ] == e_front_vertex ) localindex_of_front_vertex = 0;
@@ -466,7 +466,7 @@ void MeshSimplicial3D::bisect_edge( int e )
     
     /* TODO: Fill in the data for the case distinctions below */
     
-    std::cout << "SECOND BIG LOOP BEGIN" << std::endl;
+    std::clog << "SECOND BIG LOOP BEGIN" << std::endl;
     
     for( int ot = 0; ot < old_tetrahedra.size(); ot++ ) {
       
@@ -638,7 +638,7 @@ void MeshSimplicial3D::bisect_edge( int e )
       
     }
       
-    std::cout << "SECOND BIG LOOP END" << std::endl;
+    std::clog << "SECOND BIG LOOP END" << std::endl;
     
     
     
@@ -649,7 +649,7 @@ void MeshSimplicial3D::bisect_edge( int e )
     
     
     
-    std::cout << "FINISHED" << std::endl;
+    std::clog << "FINISHED" << std::endl;
     
     /*
      *  UPDATE COUNTERS 

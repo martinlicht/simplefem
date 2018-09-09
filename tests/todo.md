@@ -24,6 +24,15 @@ This could be handled by macros.
     WARNING "something has happened";
     ERROR "error has occured";
     CLOSE "Test finished";
+    
+There is a difference between output of the program state 
+and output of data. The former occurs at sequence points 
+and typically does not depend on the parameters of the computation,
+it is fixed, so to say. The latter, by contrast, typically 
+involves the data and is only written to demonstrate the results 
+of the computation. It's length does depend on data.
+The logging output is of interest to the general debugging,
+whereas the data output is only helpful for visual inspection.
 
 
 ## Global structure
@@ -97,6 +106,18 @@ In a first step, this is just two streams
 with the some functionality as cout and cerr.
 
 In a second step, more functionality may be added.
+
+The logging classes that I have seen use macros to emulate 
+different log streams, their usage looks like 
+    LOG << "here is a message";
+alternatively, I would like to skip the shift operator alltogether 
+and perhaps replace by a macro to read 
+    LOG "Here is a message";
+The nice thing is that the log messages get accummulated in the data structure 
+and only on destruction of the temporary object the message gets actually written
+in the actual logging object. Thus one can impose various 
+prefixes and postfixes. 
+
 
 
 

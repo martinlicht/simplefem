@@ -11,6 +11,6 @@ using namespace std;
 
 
 int main() {
-    std::cout << "Test!" << std::endl;
+    std::clog << "Test!" << std::endl;
     return 0;
 }
