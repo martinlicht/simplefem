@@ -8,7 +8,7 @@
 #include "linearoperator.hpp"
 
 
-BlockOperator::BlockOperator( int dimension_out, int dimension_in, std::vector<std::vector<LinearOperator*>> ops )
+BlockOperator::BlockOperator( int dimension_out, int dimension_in, const std::vector<std::vector<LinearOperator*>>& ops )
 : LinearOperator( dimension_out, dimension_in ), ops(ops)
 {
   

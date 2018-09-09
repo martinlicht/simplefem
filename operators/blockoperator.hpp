@@ -19,8 +19,7 @@ public LinearOperator /* every matrix is a linear operator */
 
     public:
         
-        explicit BlockOperator( int dimout, int dimin, 
-                                std::vector<std::vector<LinearOperator*>> ops );
+        explicit BlockOperator( int dimout, int dimin, const std::vector<std::vector<LinearOperator*>>& ops );
         
         virtual ~BlockOperator();
         

@@ -50,10 +50,10 @@ class IndexRange
                 
             public:
                 
-                IndexRangeIterator(int value) : value(value) {};
+                explicit IndexRangeIterator(int value) : value(value) {};
                 inline int operator*() const { return value; };
-                inline IndexRangeIterator& operator++() { ++value; return *this; };
-                inline IndexRangeIterator operator++( int ) { return (++value)-1; };
+                inline IndexRangeIterator& operator++() { ++value; return *this; }; // pre-increment
+                inline IndexRangeIterator operator++( int ) { return IndexRangeIterator( value++ ); }; // post-increment
                 inline bool operator==( const IndexRangeIterator& irit ) const 
                     { return value == irit.value; };
                 inline bool operator!=( const IndexRangeIterator& irit ) const 

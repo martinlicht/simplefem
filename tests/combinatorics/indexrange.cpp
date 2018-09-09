@@ -24,8 +24,8 @@ int main()
           assert( irE.cardinality() == 0 );
           assert( irE.cardinality() == irE.getlength() );
           
-          for( IndexRange::IndexRangeIterator iri : irE )
-            cout << "Output :" << *iri << endl;
+          for( int i : irE )
+            cout << "Output :" << i << endl;
           
         
         } else {
@@ -85,8 +85,8 @@ int main()
           
           cout << "For each loop " << std::endl;
           
-          for( IndexRange::IndexRangeIterator iri : irC )
-            cout << "Output :" << *iri << endl;
+          for( int i : irC )
+            cout << "Output :" << i << endl;
             
           cout << "Classical For loop " << std::endl;
           

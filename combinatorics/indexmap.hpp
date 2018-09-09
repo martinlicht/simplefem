@@ -118,7 +118,7 @@ inline bool operator<( const IndexMap& left, const IndexMap& right )
 }
 
 
-inline std::ostream& operator<<( std::ostream& os, IndexMap im )
+inline std::ostream& operator<<( std::ostream& os, const IndexMap& im )
 {
     im.check();
     im.print( os );

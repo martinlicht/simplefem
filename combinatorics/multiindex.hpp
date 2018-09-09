@@ -20,7 +20,7 @@ class MultiIndex
 
         public:
         
-                MultiIndex( const IndexRange& ir );
+                explicit MultiIndex( const IndexRange& ir );
                 MultiIndex( const IndexRange& ir, const std::vector<int>& );
                 
                 void check() const;

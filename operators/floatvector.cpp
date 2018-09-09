@@ -61,6 +61,17 @@ FloatVector::FloatVector( int dimension, const std::function<Float(int)>& genera
 
 
 
+FloatVector& FloatVector::operator=( const FloatVector& vec )
+{
+    assert( getdimension() == vec.getdimension() );
+    
+    for( int p = 0; p < getdimension(); p++ )
+        setentry( p, vec.getentry(p) );
+    
+    return *this;
+}
+
+
 void FloatVector::check() const 
 {
 //     std::clog << "CHECK." << std::endl;

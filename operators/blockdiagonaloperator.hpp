@@ -19,7 +19,7 @@ public LinearOperator /* every matrix is a linear operator */
 
     public:
         
-        explicit BlockDiagonalOperator( int dimout, int dimin, std::vector<LinearOperator*> ops );
+        explicit BlockDiagonalOperator( int dimout, int dimin, const std::vector<LinearOperator*>& ops );
         virtual ~BlockDiagonalOperator();
         
         virtual void check() const override;

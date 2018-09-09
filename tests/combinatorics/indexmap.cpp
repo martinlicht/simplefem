@@ -28,9 +28,9 @@ int main()
       
       assert( id == identityIndexMap( irA.min(), irA.max() ) );
       
-      for( IndexRange::IndexRangeIterator iri : irA ) {
-        assert( id.rangecontains( *iri ) );
-        assert( id.rangeposition( *iri ) == *iri );
+      for( int a : irA ) {
+        assert( id.rangecontains( a ) );
+        assert( id.rangeposition( a ) == a );
       }
       
       assert( id.isbijective()  );
