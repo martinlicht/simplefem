@@ -8,22 +8,9 @@
 #include "../basic.hpp"
 #include "floatvector.hpp"
 
-FloatVector::FloatVector( int dim )
-: data(dim)
-{
-    check();
-}
-
 FloatVector::FloatVector( int dim, Float initialvalue )
 : data(dim,initialvalue)
 {
-    check();
-}
-
-FloatVector::FloatVector( const FloatVector& src )
-: data( src.getdimension() )
-{
-    copydatafrom( src );
     check();
 }
 
@@ -34,22 +21,10 @@ FloatVector::FloatVector( const FloatVector& src, Float alpha )
     check();
 }
 
-FloatVector::FloatVector( const std::vector<Float>& vals )
-: FloatVector( vals, 1. )
-{
-  check();
-}
-
 FloatVector::FloatVector( const std::vector<Float>& vals, Float alpha )
 : FloatVector( vals.size(), [&vals](int i) -> Float{ return vals.at(i); }, alpha )
 {
   check();
-}
-
-FloatVector::FloatVector( int dimension, const std::function<Float(int)>& generator )
-: FloatVector( dimension, generator, 1. ) 
-{
-    check();
 }
 
 FloatVector::FloatVector( int dimension, const std::function<Float(int)>& generator, Float alpha )

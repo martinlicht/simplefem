@@ -42,7 +42,7 @@ class IndexMap
         IndexMap( const IndexRange&, const IndexRange&, const std::initializer_list<int>& );
         
         void check() const;
-        void print( std::ostream& ) const;
+        void print( std::ostream&, bool embellish = false ) const;
         
         const IndexRange& getSourceRange() const;
         const IndexRange& getDestRange() const;

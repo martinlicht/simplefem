@@ -9,17 +9,20 @@
 #include "sparsematrix.hpp"
 
 
-SparseMatrix::SparseMatrix( int dimout, int dimin )
-: LinearOperator(dimout,dimin)
-{
-    check();
-}
 
-SparseMatrix::SparseMatrix( int dimout, int dimin, int numentries )
-: LinearOperator(dimout,dimin), 
-  entries(numentries)
+SparseMatrix::SparseMatrix( int dimout, int dimin, int numentries, std::function<MatrixEntry(int)> generator )
+: LinearOperator( dimout, dimin ), 
+  entries(0)
 {
-    check();
+    assert( 0 <= numentries );
+    entries.reserve( numentries );
+    
+    for( int i = 0; i < numentries; i++ ) 
+    {
+      entries.push_back( generator(i) );
+    }
+    
+    check();    
 }
 
 SparseMatrix::SparseMatrix( const ScalingOperator& matrix )
@@ -49,21 +52,6 @@ SparseMatrix::SparseMatrix( const DenseMatrix& matrix )
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin(); c++ )
         entries[ r * getdimin() + c ] = { r, c, matrix.get(r,c) };
-    check();    
-}
-
-SparseMatrix::SparseMatrix( int dimout, int dimin, int numentries, std::function<MatrixEntry(int)> generator )
-: LinearOperator( dimout, dimin ), 
-  entries(0)
-{
-    assert( 0 <= numentries );
-    entries.reserve( numentries );
-    
-    for( int i = 0; i < numentries; i++ ) 
-    {
-      entries.push_back( generator(i) );
-    }
-    
     check();    
 }
 

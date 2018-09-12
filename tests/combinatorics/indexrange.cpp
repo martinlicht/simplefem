@@ -22,7 +22,7 @@ int main()
           
           assert( irE.isempty() );
           assert( irE.cardinality() == 0 );
-          assert( irE.cardinality() == irE.getlength() );
+          assert( irE.cardinality() );
           
           for( int i : irE )
             cout << "Output :" << i << endl;
@@ -43,7 +43,7 @@ int main()
           
           assert( irA.cardinality() == 5 );
           
-          assert( irA.getlength() == irA.cardinality() );
+          assert( irA.cardinality() == irA.cardinality() );
           
           assert( !irA.contains(2) );
           assert( irA.contains(3) );
@@ -53,7 +53,7 @@ int main()
           assert( irA.contains(7) );
           assert( !irA.contains(8) );
           
-          assert( irB.getlength() == irB.cardinality() );
+          assert( irB.cardinality() == irB.cardinality() );
           
           assert( irB.cardinality() == 1 );
           

@@ -29,16 +29,19 @@ public LinearOperator /* every matrix is a linear operator */
 
     public:
         
-        explicit DenseMatrix( int dim );
+        DenseMatrix( int dim, Float value = 0. );
         DenseMatrix( int dim, const std::function<Float(int,int)>& generator );
-        DenseMatrix( int rows, int columns );
+        DenseMatrix( int dim, const std::vector<FloatVector>& coldata );
+        
+        DenseMatrix( int rows, int columns, Float value = 0. );
         DenseMatrix( int rows, int columns, const std::function<Float(int,int)>& generator );
         DenseMatrix( int rows, int columns, const std::vector<FloatVector>& coldata );
-        DenseMatrix( int rows, int columns, Float value );
+        
         explicit DenseMatrix( const ScalingOperator& );
         explicit DenseMatrix( const DiagonalOperator& );
         explicit DenseMatrix( const SparseMatrix& );
         explicit DenseMatrix( const FloatVector& );
+        
         virtual ~DenseMatrix();
         
         virtual void check() const override;

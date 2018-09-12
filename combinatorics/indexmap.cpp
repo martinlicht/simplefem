@@ -83,12 +83,18 @@ void IndexMap::check() const
         assert( ! getDestRange().isempty() );
 }
 
-void IndexMap::print( std::ostream& os ) const 
+void IndexMap::print( std::ostream& os, bool embellish ) const 
 {
-    os << "From" << std::endl << getSourceRange();
-    os << "To" << std::endl << getDestRange();
-    for( int i = getSourceRange().min(); i <= getSourceRange().max(); i++ )
-        os << i << " -> " << values.at( i - src.min() ) << std::endl;
+    if( embellish ) {
+        os << "From" << std::endl << getSourceRange();
+        os << "To" << std::endl << getDestRange();
+        for( int i = getSourceRange().min(); i <= getSourceRange().max(); i++ )
+            os << i << " -> " << values.at( i - src.min() ) << std::endl;
+    } else {
+        os << getSourceRange() << " " << getDestRange();
+        for( int i = getSourceRange().min(); i <= getSourceRange().max(); i++ )
+            os << " " << values.at( i - src.min() );
+    }
 }
 
 const IndexRange& IndexMap::getSourceRange() const 

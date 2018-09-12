@@ -8,12 +8,6 @@
 #include "linearoperator.hpp"
 
 
-SumOperator::SumOperator( const LinearOperator& left, const LinearOperator& right )
-: SumOperator( left, right, 1., 1. )
-{
-    check();
-}
-
 SumOperator::SumOperator( const LinearOperator& left, const LinearOperator& right,
  Float leftscale, Float rightscale )
 : LinearOperator(left.getdimout(),right.getdimin()), 

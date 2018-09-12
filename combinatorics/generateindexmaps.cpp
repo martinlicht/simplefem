@@ -50,9 +50,9 @@ generateIndexMaps( const IndexRange& from, const IndexRange& to )
         
         for( int it = 0; it < num; it++ ) {
           
-          std::vector<int> values( from.getlength() );
+          std::vector<int> values( from.cardinality() );
           int it_clone = it;
-          for( int digit = 0; digit < from.getlength(); digit++ ) {
+          for( int digit = 0; digit < from.cardinality(); digit++ ) {
               values[digit] = to.min() + it_clone % to.cardinality();
               it_clone /= to.cardinality();
           }
@@ -76,13 +76,13 @@ generatePermutations( const IndexRange& ir )
         std::vector<IndexMap> allmappings = generateIndexMaps( ir, ir );
         
         std::vector<IndexMap> ret;
-        ret.reserve( factorial( ir.getlength() ) );
+        ret.reserve( factorial( ir.cardinality() ) );
         
         for( const auto& mapping : allmappings )
           if( mapping.isbijective() )
             ret.push_back( mapping );
         
-//         std::vector<IndexMap> ret( factorial( ir.getlength() ), IndexMap(ir) );
+//         std::vector<IndexMap> ret( factorial( ir.cardinality() ), IndexMap(ir) );
 //         
 //         std::vector<IndexMap>
 //         std::copy_if( allmappings.begin(), allmappings.end(), ret.begin(),
@@ -132,8 +132,8 @@ generateSigmas( const IndexRange& from, const IndexRange& to )
         std::vector<IndexMap> allmappings = generateIndexMaps( from, to );
         
         std::vector<IndexMap> ret;
-        assert( to.getlength() >= from.getlength() ); // TODO: Handle this warning
-        ret.reserve( binomial<int>( to.getlength(), from.getlength() ) );
+        assert( to.cardinality() >= from.cardinality() ); // TODO: Handle this warning
+        ret.reserve( binomial<int>( to.cardinality(), from.cardinality() ) );
         
         for( const auto& mapping : allmappings )
           if( mapping.isstrictlyascending() )

@@ -24,7 +24,7 @@ class MultiIndex
                 MultiIndex( const IndexRange& ir, const std::vector<int>& );
                 
                 void check() const;
-                void print( std::ostream& ) const;
+                void print( std::ostream&, bool embellish = false ) const;
                 
                 IndexRange getIndexRange() const;
                 const int& at(int) const;

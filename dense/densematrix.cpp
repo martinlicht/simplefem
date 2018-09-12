@@ -9,8 +9,8 @@
 #include "densematrix.hpp"
 
 
-DenseMatrix::DenseMatrix( int dim )
-: DenseMatrix( dim, dim )
+DenseMatrix::DenseMatrix( int dim, Float value )
+: DenseMatrix( dim, dim, value )
 {
     check();
 }
@@ -21,9 +21,18 @@ DenseMatrix::DenseMatrix( int dim, const std::function<Float(int,int)>& generato
     check();
 }
 
-DenseMatrix::DenseMatrix( int rows, int columns )
+DenseMatrix::DenseMatrix( int dim, const std::vector<FloatVector>& coldata )
+: DenseMatrix( dim, dim, coldata )
+{
+    check();
+}
+
+DenseMatrix::DenseMatrix( int rows, int columns, Float value )
 : LinearOperator( rows, columns), entries( rows * columns )
 {
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimin(); c++ )
+        (*this)(r,c) = value;
     check();
 }
 
@@ -42,15 +51,6 @@ DenseMatrix::DenseMatrix( int rows, int columns, const std::vector<FloatVector>&
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin(); c++ )
         (*this)(r,c) = coldata.at(c).at(r);
-    check();
-}
-
-DenseMatrix::DenseMatrix( int rows, int columns, Float value )
-: LinearOperator( rows, columns), entries( rows * columns )
-{
-    for( int r = 0; r < getdimout(); r++ )
-    for( int c = 0; c < getdimin(); c++ )
-        (*this)(r,c) = value;
     check();
 }
 

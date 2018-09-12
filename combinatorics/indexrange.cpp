@@ -5,25 +5,29 @@
 #include <iostream>
 
 
-IndexRange::IndexRange( int l, int h )
-: minimum(l), maximum(h)
+IndexRange::IndexRange( int from, int to )
+: minimum(from), maximum(to)
 {
   check();
 }
 
 void IndexRange::check() const
 {
-    assert( minimum > std::numeric_limits<decltype(minimum)>::min() );
+    assert( std::numeric_limits<decltype(minimum)>::min() < minimum );
     assert( minimum < std::numeric_limits<decltype(minimum)>::max() );
-    assert( maximum > std::numeric_limits<decltype(maximum)>::min() );
+    
+    assert( std::numeric_limits<decltype(maximum)>::min() < maximum );
     assert( maximum < std::numeric_limits<decltype(maximum)>::max() );
 }
 
 
-void IndexRange::print( std::ostream& os ) const
+void IndexRange::print( std::ostream& os, bool embellish ) const
 {
     check();
-    os << "Index Range: [ " << minimum << " : " << maximum << " ]" << std::endl;
+    if( embellish )
+        os << "[" << minimum << ":" << maximum << "]" << std::endl;
+    else
+        os << minimum << " " << maximum;
 }
 
 int IndexRange::min() const
@@ -42,12 +46,6 @@ int IndexRange::cardinality() const
 {
     check();
     return std::max( 0, maximum - minimum + 1 );
-}
-
-int IndexRange::getlength() const
-{
-    check();
-    return cardinality();
 }
 
 bool IndexRange::isempty() const

@@ -45,12 +45,11 @@ public LinearOperator /* every matrix is a linear operator */
                 return false;
         }
 
-        explicit SparseMatrix( int dimout, int dimin );
-        explicit SparseMatrix( int dimout, int dimin, int numentries );
+        explicit SparseMatrix( int dimout, int dimin, int numentries = 0, 
+                               std::function<MatrixEntry(int)> generator = [](int i)->MatrixEntry{ return {i,i,0.}; } ); 
         explicit SparseMatrix( const ScalingOperator& matrix );
         explicit SparseMatrix( const DiagonalOperator& matrix );
         explicit SparseMatrix( const DenseMatrix& );
-        explicit SparseMatrix( int dimout, int dimin, int numentries, std::function<MatrixEntry(int)> generator ); 
         virtual ~SparseMatrix();
 
         virtual void check() const override;
@@ -74,7 +73,7 @@ public LinearOperator /* every matrix is a linear operator */
 
     private:
 
-        std::vector<MatrixEntry> entries; // TODO: Change from list to vector 
+        std::vector<MatrixEntry> entries; 
     
 };
   

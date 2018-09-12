@@ -20,14 +20,13 @@ public LinearOperator
 
     public:
 
-        explicit SumOperator( const LinearOperator&, const LinearOperator& );
-        explicit SumOperator( const LinearOperator&, const LinearOperator&, Float, Float );
+        explicit SumOperator( const LinearOperator& left, const LinearOperator& right, Float leftscale = 1., Float rightscale = 1. );
         virtual ~SumOperator();
 
         virtual void check() const override;
         virtual void print( std::ostream& ) const override;
 
-        virtual FloatVector apply( const FloatVector& src, Float scaling ) const override;
+        virtual FloatVector apply( const FloatVector& src, Float scaling = 1. ) const override;
 
     private:
 

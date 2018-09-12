@@ -26,12 +26,11 @@ class IndexRange
         IndexRange( int from, int to );
         
         void check() const;
-        void print( std::ostream& ) const;
+        void print( std::ostream&, bool embellish = false ) const;
         
         int min() const;
         int max() const;
         int cardinality() const;
-        int getlength() const; /* synonym to cardinality */
         
         bool isempty() const;
         bool contains( int element ) const;
@@ -48,7 +47,7 @@ class IndexRange
             
                 int value;
                 
-            public:
+            public: // TODO: reformat the following lines into something more readable.
                 
                 explicit IndexRangeIterator(int value) : value(value) {};
                 inline int operator*() const { return value; };
@@ -64,6 +63,14 @@ class IndexRange
         inline const IndexRangeIterator begin() const { return IndexRangeIterator(minimum); };
         inline const IndexRangeIterator end() const { return IndexRangeIterator(maximum+1); };
         
+        /* enum class */
+        
+        // TODO: make general conceptions about how to handle the output of objects 
+        // in these modules. Generally, we would like to control the output format by some parameter 
+        // given to each print function. We can assume that the parameters belong to some enum class 
+        // defined within a class declaration and are specifcally tailored to each class. 
+        // They are a purely optional argument for the print method and may be skipped at convenience.
+        
     private:
 
         int minimum;
@@ -77,28 +84,34 @@ inline std::ostream& operator<<( std::ostream& os, const IndexRange& ir )
     return os;
 }
 
-// static const IndexRange  NonNegativeIntegers = IndexRange( 0, std::numeric_limits<int>::max() );
-// static const IndexRange  PositiveIntegers = IndexRange( 1, std::numeric_limits<int>::max() );
+static const IndexRange  NonNegativeIntegers = IndexRange( 0, std::numeric_limits<int>::max() );
+
+static const IndexRange  PositiveIntegers = IndexRange( 1, std::numeric_limits<int>::max() );
+
+inline IndexRange operator|( const IndexRange& left, const IndexRange& right )
+{
+    return IndexRange( 
+        std::min( left.min(), right.min() ),
+        std::max( left.max(), right.max() )
+        );
+}
+
+inline IndexRange operator&( const IndexRange& left, const IndexRange& right )
+{
+    return IndexRange( 
+        std::max( left.min(), right.min() ), 
+        std::min( left.max(), right.max() ) 
+        );
+}
 
 
-// inline IndexRange operator|( const IndexRange& left, const IndexRange& right )
+// inline bool operator==( const IndexRange& left, const IndexRange& right )
 // {
-//     return IndexRange( 
-//         std::min( left.min(), right.min() ),
-//         std::max( left.max(), right.max() )
-//         );
+//     if( left.isempty() )
+//         return left.isempty() == right.isempty();
+//     else 
+//         return left.min() == right.min() && left.max() == right.max();
 // }
-// 
-// inline IndexRange operator&( const IndexRange& left, const IndexRange& right )
-// {
-//     return IndexRange( 
-//         std::max( left.min(), right.min() ), 
-//         std::min( left.max(), right.max() ) 
-//         );
-// }
-
-
-
 
 
 

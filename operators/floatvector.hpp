@@ -25,14 +25,13 @@ class FloatVector
     
     public:
         
-        explicit FloatVector( int dim );
-        FloatVector( int dim, Float initivalue );
-        FloatVector( const FloatVector& );
-        explicit FloatVector( const std::vector<Float>& );
-        FloatVector( const std::vector<Float>&, Float );
-        FloatVector( const FloatVector&, Float scaling );
-        FloatVector( int dimension, const std::function<Float(int)>& generator );
-        FloatVector( int dimension, const std::function<Float(int)>& generator, Float scaling );
+        FloatVector( int dim, Float initivalue = 0. );
+        
+        FloatVector( const FloatVector&, Float scaling = 1.);
+        
+        FloatVector( const std::vector<Float>&, Float scaling = 1. );
+        
+        FloatVector( int dimension, const std::function<Float(int)>& generator, Float scaling = 1. );
         // virtual ~FloatVector();
         
         FloatVector& operator=( const FloatVector& vec );

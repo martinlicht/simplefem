@@ -12,7 +12,7 @@
 
 
 MultiIndex::MultiIndex( const IndexRange& ir )
-: range(ir), values( ir.getlength() )
+: range(ir), values( ir.cardinality() )
 {
     check();
 }
@@ -32,12 +32,13 @@ void MultiIndex::check() const
         assert( values.at( range.element2position(p) ) >= 0 );
 }
 
-void MultiIndex::print( std::ostream& os ) const
+void MultiIndex::print( std::ostream& os, bool embellish ) const
 {
     check();
     for( int p = range.min(); p <= range.max(); p++ )
         os << values.at( range.element2position(p) ) << "\t";
-    os << std::endl;
+    if( embellish ) 
+        os << std::endl;
 }
 
 IndexRange MultiIndex::getIndexRange() const
