@@ -136,24 +136,4 @@ void mergeelementsinsortedlist
 
 
 
-
-
-inline void ping() { std::clog << "ping" << std::endl; }
-
-inline void pong() { std::clog << "pong" << std::endl; }
-
-inline void peng() { std::clog << "peng" << std::endl; }
-
-inline void pang() { std::clog << "pang" << std::endl; }
-
-inline void pung() { std::clog << "pung" << std::endl; }
-
-
-
-
-
-
-
-
-
 #endif
