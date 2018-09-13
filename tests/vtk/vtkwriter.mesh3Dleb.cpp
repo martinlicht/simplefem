@@ -8,8 +8,8 @@
 #include "../../basic.hpp"
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.hpp"
-#include "../../mesh/mesh.simplicial2D.hpp"
-#include "../../vtk/vtkwriter.mesh2D.hpp"
+#include "../../mesh/mesh.simplicial3D.hpp"
+#include "../../vtk/vtkwriter.mesh3D.hpp"
 
 
 using namespace std;
@@ -20,13 +20,13 @@ int main()
     
     {
         
-        // MeshSimplicial2D M = UnitCubeTriangulation(3,3);
-        MeshSimplicial2D M = LShapedDomain2D();
+        // MeshSimplicial3D M = UnitCubeTriangulation(3,3);
+        MeshSimplicial3D M = StandardCube3D();
 
         clog << "Conduct refinements" << nl;
         
-        for( int c = 0; c < 4; c++ ) {
-        
+        for( int c = 0; c < 2; c++ ) {
+            PING;
             std::vector<int> refinementedges;
             
             for( int k = 0; k < 3 + M.count_edges() / 10; k++ )
@@ -36,15 +36,15 @@ int main()
             auto last = std::unique( refinementedges.begin(), refinementedges.end() );
             refinementedges.erase( last, refinementedges.end() );
             
-            M.newest_vertex_bisection( refinementedges );
+            M.longest_edge_bisection( refinementedges );
         
         }
         
         
         
-        Coordinates& C = M.getcoordinates();
-        for( int c = 0; c < C.getnumber(); c++ )
-            C.setdata( c, 2, 2. * C.getdata(c,0) + 3. * C.getdata(c,1) );
+//         Coordinates& C = M.getcoordinates();
+//         for( int c = 0; c < C.getnumber(); c++ )
+//             C.setdata( c, 2, 2. * C.getdata(c,0) + 3. * C.getdata(c,1) );
 
         
         
@@ -54,7 +54,7 @@ int main()
         
         {
             
-            VTK_MeshWriter_Mesh2D vtk( M, fs );
+            VTK_MeshWriter_Mesh3D vtk( M, fs );
             vtk.writePreamble( "Mein erster Test" );
             vtk.writeCoordinateBlock();
             vtk.writeTopDimensionalCells();

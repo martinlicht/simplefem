@@ -16,14 +16,14 @@ using namespace std;
 
 int main()
 {
-	cout << "Unit Test for VTK output of Simplicial Mesh" << endl;
-	
-	{
-		
-		// MeshSimplicial2D M = UnitCubeTriangulation(3,3);
-		MeshSimplicial2D M = UnitSquare2D();
-		
-		cout << M << endl;
+    cout << "Unit Test for VTK output of Simplicial Mesh" << endl;
+    
+    {
+        
+        // MeshSimplicial2D M = UnitCubeTriangulation(3,3);
+        MeshSimplicial2D M = UnitSquare2D();
+        
+        cout << M << endl;
 
                 cout << "Print VTK-type file" << endl;
                 
@@ -43,8 +43,8 @@ int main()
         }
     
         
-	
-	cout << "Finished Unit Test" << endl;
+    
+    cout << "Finished Unit Test" << endl;
 
-	return 0;
+    return 0;
 }

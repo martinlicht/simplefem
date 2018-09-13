@@ -27,26 +27,14 @@ int main()
         
         for( int c = 0; c < 4; c++ ) {
         
-            std::vector<int> refinementedges;
-            
-            for( int k = 0; k < 3 + M.count_edges() / 10; k++ )
-                refinementedges.push_back( rand() % M.count_edges() );
-            
-            std::sort( refinementedges.begin(), refinementedges.end() );
-            auto last = std::unique( refinementedges.begin(), refinementedges.end() );
-            refinementedges.erase( last, refinementedges.end() );
-            
-            M.newest_vertex_bisection( refinementedges );
+            M.uniformrefinement();
         
         }
-        
-        
         
         Coordinates& C = M.getcoordinates();
         for( int c = 0; c < C.getnumber(); c++ )
             C.setdata( c, 2, 2. * C.getdata(c,0) + 3. * C.getdata(c,1) );
 
-        
         
         clog << "Print VTK-type file" << endl;
         
