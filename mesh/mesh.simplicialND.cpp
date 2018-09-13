@@ -121,7 +121,7 @@ MeshSimplicialND::MeshSimplicialND(
     assert( getcoordinates().getdimension() == getouterdimension() );
     assert( getcoordinates().getnumber() > 0 );
     assert( simplex_vertices.size() > 0 );
-    assert( getcoordinates().getnumber()-1 == *std::max_element( simplex_vertices.begin(), simplex_vertices.end() ) );
+    assert( getcoordinates().getnumber() - 1 == *std::max_element( simplex_vertices.begin(), simplex_vertices.end() ) );
     assert( simplex_vertices.size() % (innerdim+1) == 0 );
     
     

@@ -36,7 +36,7 @@ class MeshSimplicial3D
 
     public:
     
-        MeshSimplicial3D( int outerdim = 3 );
+        explicit MeshSimplicial3D( int outerdim = 3 );
         
         MeshSimplicial3D( 
             int outerdim,

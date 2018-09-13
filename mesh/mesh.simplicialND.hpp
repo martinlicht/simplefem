@@ -44,7 +44,7 @@ class MeshSimplicialND
             const std::vector<int>& volume_vertices
         );
         
-        MeshSimplicialND( const Mesh& mesh );
+        explicit MeshSimplicialND( const Mesh& mesh );
         
         virtual ~MeshSimplicialND();
         

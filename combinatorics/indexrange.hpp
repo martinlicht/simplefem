@@ -47,21 +47,48 @@ class IndexRange
             
                 int value;
                 
-            public: // TODO: reformat the following lines into something more readable.
+            public:
                 
-                explicit IndexRangeIterator(int value) : value(value) {};
-                inline int operator*() const { return value; };
-                inline IndexRangeIterator& operator++() { ++value; return *this; }; // pre-increment
-                inline IndexRangeIterator operator++( int ) { return IndexRangeIterator( value++ ); }; // post-increment
+                explicit IndexRangeIterator(int value) : value(value) 
+                { }
+                
+                inline int operator*() const
+                {
+                    return value;                
+                }
+                
+                inline IndexRangeIterator& operator++()
+                {
+                    ++value; 
+                    return *this;
+                } // pre-increment
+                
+                inline IndexRangeIterator operator++( int )
+                {
+                    return IndexRangeIterator( value++ );   
+                } // post-increment
+                
                 inline bool operator==( const IndexRangeIterator& irit ) const 
-                    { return value == irit.value; };
+                { 
+                    return value == irit.value;
+                }
+                
                 inline bool operator!=( const IndexRangeIterator& irit ) const 
-                    { return value != irit.value; };
+                { 
+                    return value != irit.value;
+                }
                     
         };
         
-        inline const IndexRangeIterator begin() const { return IndexRangeIterator(minimum); };
-        inline const IndexRangeIterator end() const { return IndexRangeIterator(maximum+1); };
+        inline const IndexRangeIterator begin() const
+        {
+            return IndexRangeIterator(minimum);
+        }
+        
+        inline const IndexRangeIterator end() const
+        {
+            return IndexRangeIterator(maximum+1);
+        }
         
         /* enum class */
         

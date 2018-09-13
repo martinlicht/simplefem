@@ -14,11 +14,11 @@ class Logger
 {
 public:
     
-    Logger( std::ostream&, const std::string& prefix = "", const std::string& postfix = "" );
-    Logger( Logger& parent, const std::string& prefix = "", const std::string& postfix = "" );
+    explicit Logger( std::ostream&, const std::string& prefix = "", const std::string& postfix = "" );
+    explicit Logger( Logger& parent, const std::string& prefix = "", const std::string& postfix = "" );
     
-    Logger( std::ostream&, const std::function<void(Logger&)>& prefix = Logger::affix_do_nothing(), const std::function<void(Logger&)>& postfix = Logger::affix_do_nothing() );
-    Logger( Logger& parent, const std::function<void(Logger&)>& prefix = Logger::affix_do_nothing(), const std::function<void(Logger&)>& postfix = Logger::affix_do_nothing() );
+    explicit Logger( std::ostream&, const std::function<void(Logger&)>& prefix = Logger::affix_do_nothing(), const std::function<void(Logger&)>& postfix = Logger::affix_do_nothing() );
+    explicit Logger( Logger& parent, const std::function<void(Logger&)>& prefix = Logger::affix_do_nothing(), const std::function<void(Logger&)>& postfix = Logger::affix_do_nothing() );
     
     ~Logger();
     

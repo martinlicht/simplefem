@@ -36,7 +36,7 @@ class MeshSimplicial2D
 
     public:
     
-        MeshSimplicial2D( int outerdim = 2 );
+        explicit MeshSimplicial2D( int outerdim = 2 );
         
         MeshSimplicial2D( 
             int outerdim,

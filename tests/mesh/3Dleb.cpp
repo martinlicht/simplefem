@@ -57,7 +57,8 @@ int main()
                     refinementedges.push_back( rand() % M.count_edges() );
                 
                 std::sort( refinementedges.begin(), refinementedges.end() );
-                std::unique( refinementedges.begin(), refinementedges.end() );
+                auto last = std::unique( refinementedges.begin(), refinementedges.end() );
+                refinementedges.erase( last, refinementedges.end() );
                 
                 M.longest_edge_bisection( refinementedges );
             

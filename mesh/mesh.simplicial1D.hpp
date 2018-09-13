@@ -42,7 +42,7 @@ class MeshSimplicial1D
 
     public:
     
-        MeshSimplicial1D( int outerdim = 1 );
+        explicit MeshSimplicial1D( int outerdim = 1 );
         
         MeshSimplicial1D( 
             int outerdim,
