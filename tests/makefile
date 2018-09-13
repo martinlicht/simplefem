@@ -52,7 +52,10 @@ Includes = $(Headers) $(Objects)
 basic/sorthack.out: basic/sorthack.cpp $(Includes.basic)
 	$(CC) basic/sorthack.cpp $(Links.basic) -o basic/sorthack.out 
 
-basic.tests = basic/sorthack.out 
+basic/logging.out: basic/logging.cpp $(Includes.basic)
+	$(CC) basic/logging.cpp $(Links.basic) -o basic/logging.out 
+
+basic.tests = basic/sorthack.out basic/logging.out
 
 
 

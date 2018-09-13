@@ -43,7 +43,7 @@
 // Example usage:
 //     PING;
 
-#define PING LOG << "PING" << __FILE__ << ":" << __LINE__ << std::endl;
+#define PING LOG << "PING: " << __FILE__ << ":" << __LINE__;
 
 
 
