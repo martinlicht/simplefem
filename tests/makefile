@@ -242,7 +242,19 @@ vtk/vtkwriter.mesh3D.out: vtk/vtkwriter.mesh3D.cpp $(Includes.vtk)
 vtk/vtkwriter.mesh2Dnvb.out: vtk/vtkwriter.mesh2Dnvb.cpp $(Includes.vtk)
 	$(CC) vtk/vtkwriter.mesh2Dnvb.cpp $(Links.vtk) -o vtk/vtkwriter.mesh2Dnvb.out
 
-vtk.tests = vtk/vtkwriter.mesh1D.out vtk/vtkwriter.mesh2D.out vtk/vtkwriter.mesh2Dnvb.out vtk/vtkwriter.mesh3D.out
+vtk/vtkwriter.mesh2Dleb.out: vtk/vtkwriter.mesh2Dleb.cpp $(Includes.vtk)
+	$(CC) vtk/vtkwriter.mesh2Dleb.cpp $(Links.vtk) -o vtk/vtkwriter.mesh2Dleb.out
+
+vtk/vtkwriter.mesh2Dur.out: vtk/vtkwriter.mesh2Dur.cpp $(Includes.vtk)
+	$(CC) vtk/vtkwriter.mesh2Dur.cpp $(Links.vtk) -o vtk/vtkwriter.mesh2Dur.out
+
+vtk/vtkwriter.mesh3Dur.out: vtk/vtkwriter.mesh3Dur.cpp $(Includes.vtk)
+	$(CC) vtk/vtkwriter.mesh3Dur.cpp $(Links.vtk) -o vtk/vtkwriter.mesh3Dur.out
+
+vtk/vtkwriter.mesh3Dleb.out: vtk/vtkwriter.mesh3Dleb.cpp $(Includes.vtk)
+	$(CC) vtk/vtkwriter.mesh3Dleb.cpp $(Links.vtk) -o vtk/vtkwriter.mesh3Dleb.out
+
+vtk.tests = vtk/vtkwriter.mesh1D.out vtk/vtkwriter.mesh2D.out vtk/vtkwriter.mesh2Dnvb.out vtk/vtkwriter.mesh2Dleb.out vtk/vtkwriter.mesh2Dur.out vtk/vtkwriter.mesh3D.out vtk/vtkwriter.mesh3Dur.out vtk/vtkwriter.mesh3Dleb.out
 
 
 

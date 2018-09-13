@@ -1075,37 +1075,44 @@ void MeshSimplicial3D::longest_edge_bisection( std::vector<int> edges )
     while( ! todostack.empty() )
     {
         
+        LOG << todostack.back() << space << todostack.size();
+        
         // as long the stack is not empty,
         // pick the top edge and make the following case distinction
         // a) if the top edge is longer than its neighbors, bisect and pop
         // b) else, push the longest edge of each parent simplex
         
         int e = todostack.back();
-        
-        // to check whether e belongs to an edge that has already been bisected,
-        // we check whether one of the vertices belongs to the new vertices 
-        
+    
         Float length_e = get_edge_length( e );
             
-        // run over neighbor tetrahedra and check for longer edges 
+        // run over neighbor triangles and check for longer edges 
         
-        for(
-            int t = get_edge_firstparent_tetrahedron( e );
-            t != nullindex; 
-            t = get_edge_nextparent_tetrahedron( e, t )
-        )
+        bool compatibly_divisible = true;
+        
+        for( int t = get_edge_firstparent_tetrahedron( e ); t != nullindex; t = get_edge_nextparent_tetrahedron( e, t ) )
         for( int ei = 0; ei < 6; ei++ )
-            if( e != get_tetrahedron_edge( t, ei ) && get_edge_length( get_tetrahedron_edge(t,ei) ) > length_e )
-                todostack.push_back( get_tetrahedron_edge( t, ei ) );
+        {
+            int other_e = get_tetrahedron_edge( t, ei );
+            
+            if( e != other_e && get_edge_length( other_e ) > length_e ) {
+                compatibly_divisible = false;
+                todostack.push_back( other_e );
+            }
+        }
+            
         
         // if top edge is still the same, bisect 
-        
-        if( e == todostack.back() )
+    
+        if( compatibly_divisible )
         {
-            todostack.remove( e ); // remove all copies of e from stack 
+            assert( e == todostack.back() );
+            todostack.remove( e );
             bisect_edge( e );
-        }
-        
+            assert( std::find( todostack.begin(), todostack.end(), e ) == todostack.end() );
+        } else 
+            assert( e != todostack.back() );
+           
     }
     
     

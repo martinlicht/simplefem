@@ -8,6 +8,24 @@
 
 
 
+class NilLogger
+{
+    
+    template<class T>
+    NilLogger& operator<<( const T& )
+    {
+        return *this;
+    }
+
+    
+    NilLogger& operator<<(std::ostream& (*)(std::ostream&))
+    {
+        return *this;
+    }
+    
+};
+
+
 
 
 class Logger
@@ -65,14 +83,14 @@ private:
 
 
 
-Logger::Logger( std::ostream& os, const std::string& prefix, const std::string& postfix )
+inline Logger::Logger( std::ostream& os, const std::string& prefix, const std::string& postfix )
 : Logger( os, Logger::affix_write( prefix ), Logger::affix_write( postfix ) )
 {
     
 }
 
 
-Logger::Logger( Logger& parent, const std::string& prefix, const std::string& postfix )
+inline Logger::Logger( Logger& parent, const std::string& prefix, const std::string& postfix )
 : Logger( parent, Logger::affix_write( prefix ), Logger::affix_write( postfix ) )
 {
     
@@ -80,14 +98,14 @@ Logger::Logger( Logger& parent, const std::string& prefix, const std::string& po
 
 
 
-Logger::Logger( std::ostream& os, const std::function<void(Logger&)>& prefix, const std::function<void(Logger&)>& postfix )
+inline Logger::Logger( std::ostream& os, const std::function<void(Logger&)>& prefix, const std::function<void(Logger&)>& postfix )
 : internalstream( os ), prefix( prefix ), postfix( postfix )
 {
     
 }
 
 
-Logger::Logger( Logger& parent, const std::function<void(Logger&)>& prefix, const std::function<void(Logger&)>& postfix )
+inline Logger::Logger( Logger& parent, const std::function<void(Logger&)>& prefix, const std::function<void(Logger&)>& postfix )
 : internalstream( parent.getstream() ), prefix( prefix ), postfix( postfix )
 {
     prefix( *this );
@@ -95,7 +113,7 @@ Logger::Logger( Logger& parent, const std::function<void(Logger&)>& prefix, cons
 
 
 
-Logger::~Logger()
+inline Logger::~Logger()
 {
     postfix( *this );
     internalstream.flush();
@@ -103,12 +121,12 @@ Logger::~Logger()
 
 
 
-std::ostream& Logger::getstream()
+inline std::ostream& Logger::getstream()
 {
     return internalstream;
 }
 
-Logger& Logger::write( const std::string& str )
+inline Logger& Logger::write( const std::string& str )
 {
     internalstream << str;
     return *this;

@@ -111,25 +111,25 @@ inline std::ostream& operator<<( std::ostream& os, const IndexRange& ir )
     return os;
 }
 
-static const IndexRange  NonNegativeIntegers = IndexRange( 0, std::numeric_limits<int>::max() );
-
-static const IndexRange  PositiveIntegers = IndexRange( 1, std::numeric_limits<int>::max() );
-
-inline IndexRange operator|( const IndexRange& left, const IndexRange& right )
-{
-    return IndexRange( 
-        std::min( left.min(), right.min() ),
-        std::max( left.max(), right.max() )
-        );
-}
-
-inline IndexRange operator&( const IndexRange& left, const IndexRange& right )
-{
-    return IndexRange( 
-        std::max( left.min(), right.min() ), 
-        std::min( left.max(), right.max() ) 
-        );
-}
+// static const IndexRange  NonNegativeIntegers = IndexRange( 0, std::numeric_limits<int>::max()-1 );
+// 
+// static const IndexRange  PositiveIntegers = IndexRange( 1, std::numeric_limits<int>::max()-1 );
+// 
+// inline IndexRange operator|( const IndexRange& left, const IndexRange& right )
+// {
+//     return IndexRange( 
+//         std::min( left.min(), right.min() ),
+//         std::max( left.max(), right.max() )
+//         );
+// }
+// 
+// inline IndexRange operator&( const IndexRange& left, const IndexRange& right )
+// {
+//     return IndexRange( 
+//         std::max( left.min(), right.min() ), 
+//         std::min( left.max(), right.max() ) 
+//         );
+// }
 
 
 // inline bool operator==( const IndexRange& left, const IndexRange& right )
