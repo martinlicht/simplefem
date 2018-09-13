@@ -16,9 +16,9 @@ class prefixbuffer : public std::streambuf
 
     private: 
         
+        std::streambuf * pbuf;
         bool newline;
         std::string lineprefix;
-        std::streambuf * pbuf;
         
     public:
         
@@ -26,8 +26,8 @@ class prefixbuffer : public std::streambuf
         : pbuf( pbuf ), newline( true ), lineprefix( prefix )
         {
             assert( pbuf != nullptr );
-            std::string welcome = "Welcome!\n";
-            pbuf->sputn( welcome.c_str(), welcome.length() );
+//             std::string welcome = "Welcome!\n";
+//             pbuf->sputn( welcome.c_str(), welcome.length() );
         }
 
         std::streambuf* getbuffer()
@@ -68,7 +68,7 @@ class prefixbuffer : public std::streambuf
                 if( c == '\n' )
                     newline = true;
             
-                c = std::toupper(static_cast<char>(c),getloc());
+                //c = std::toupper(static_cast<char>(c),getloc());
 
                 if ( pbuf->sputc(c) == std::char_traits<char>::eof() )
                     return std::char_traits<char>::eof();
@@ -85,7 +85,7 @@ class prefixbuffer : public std::streambuf
 
 
 
-inline void contextOpen( const std::string& prefix = "=>" ) 
+inline void openContext( const std::string& prefix = "=>" ) 
 {
     prefixbuffer* pb_log = new prefixbuffer( std::clog.rdbuf(), prefix );
     prefixbuffer* pb_err = new prefixbuffer( std::cerr.rdbuf(), prefix );
@@ -93,7 +93,7 @@ inline void contextOpen( const std::string& prefix = "=>" )
     std::cerr.rdbuf( pb_err );
 }
 
-inline void contextClose()
+inline void closeContext()
 {
     prefixbuffer* pb_log = dynamic_cast<prefixbuffer*>(std::clog.rdbuf());
     prefixbuffer* pb_err = dynamic_cast<prefixbuffer*>(std::cerr.rdbuf());

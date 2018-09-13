@@ -4,6 +4,7 @@
 #include <ostream>
 
 #include "logger.hpp"
+#include "prefixbuffer.hpp"
 
 
 

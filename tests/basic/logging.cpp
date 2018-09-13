@@ -17,7 +17,10 @@ int main()
     PING;
     LOG << "Dies ist ein test!" << 5;
     PING;
+    openContext();
     WARNING "Hallo Welt!";
+    PING;
     NOTE "Hallo Welt!";
+    closeContext();
     return 0;
 }
