@@ -26,6 +26,20 @@ public:
     
     Logger& write( const std::string& str );
     
+    template<class T>
+    Logger& operator<<( const T& t )
+    {
+        getstream() << t;
+        return *this;
+    }
+
+    
+    Logger& operator<<(std::ostream& (*f)(std::ostream&))
+    {
+        f( getstream() );
+        return *this;
+    }
+    
     static const std::function<void(Logger&)> affix_do_nothing(){ return [](Logger&){ return; }; };
 
     static const std::function<void(Logger&)> affix_write( const std::string& str )
@@ -46,36 +60,65 @@ private:
 
 
 
-template<typename T>
-Logger& operator<<( Logger& logger, const T& t )
+
+
+
+
+
+Logger::Logger( std::ostream& os, const std::string& prefix, const std::string& postfix )
+: Logger( os, Logger::affix_write( prefix ), Logger::affix_write( postfix ) )
 {
-    logger.getstream() << t;
-    return logger;
+    
+}
+
+
+Logger::Logger( Logger& parent, const std::string& prefix, const std::string& postfix )
+: Logger( parent, Logger::affix_write( prefix ), Logger::affix_write( postfix ) )
+{
+    
 }
 
 
 
-
-// returns a temporary logger to write stuff to, and line breaks on destruction 
-// Example usage:
-//     LOG << "This is a short message with a number: " << 5;      
-//     ERR << "This is an error message.";      
-
-#define LOG     Logger( clog, "", "\n" )
-#define ERR     Logger( cerr, "", "\n" )
+Logger::Logger( std::ostream& os, const std::function<void(Logger&)>& prefix, const std::function<void(Logger&)>& postfix )
+: internalstream( os ), prefix( prefix ), postfix( postfix )
+{
+    
+}
 
 
+Logger::Logger( Logger& parent, const std::function<void(Logger&)>& prefix, const std::function<void(Logger&)>& postfix )
+: internalstream( parent.getstream() ), prefix( prefix ), postfix( postfix )
+{
+    prefix( *this );
+}
 
 
-// treat the following macros as PRINT 'str' commands
-// Example usage:
-//     NOTICE "This is a short information"
 
-#define NOTE    Logger( clog, "", "\n" ) <<
+Logger::~Logger()
+{
+    postfix( *this );
+    internalstream.flush();
+}
 
-#define WARN    Logger( cerr, "", "\n" ) <<
-#define ALERT   Logger( cerr, "", "\n" ) <<
-#define ERROR   Logger( cerr, "", "\n" ) <<
+
+
+std::ostream& Logger::getstream()
+{
+    return internalstream;
+}
+
+Logger& Logger::write( const std::string& str )
+{
+    internalstream << str;
+    return *this;
+}
+    
+    
+
+
+
+
 
 
 

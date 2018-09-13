@@ -3,48 +3,66 @@
 
 #include <ostream>
 
-// 
-#define PING std::clog << "ping:" << __FILE__ << ":" << __LINE__ << std::endl;
+#include "logger.hpp"
 
 
 
 
-// Returns a thing into which you can << all sorts of stuff.
+
+
+// returns a temporary logger to write stuff to, and line breaks on destruction 
 // Example usage:
 //     LOG << "This is a short message with a number: " << 5;      
 //     ERR << "This is an error message.";      
 
-#define LOG     clog
-#define ERR     cerr
+#define LOG     Logger( std::clog, "", "\n" )
+#define ERR     Logger( std::cerr, "", "\n" )
 
 
 
 
-// Treat the following macros as PRINT 'str' commands
+// treat the following macros as PRINT 'str' commands
 // Example usage:
 //     NOTE "This is a short information"
+//     WARN "This is a short information"
+//     ALERT "This is a short information"
+//     ERROR "This is a short information"
 
-#define NOTE    clog <<
+#define NOTE    Logger( std::clog, "", "\n" ) <<
+#define NOTICE  Logger( std::clog, "", "\n" ) <<
 
-#define WARN    cerr <<
-#define ALERT   cerr <<
-#define ERROR   cerr <<
-
-
-
-inline void ping() { std::clog << "ping" << std::endl; }
-inline void pong() { std::clog << "pong" << std::endl; }
-inline void peng() { std::clog << "peng" << std::endl; }
-inline void pang() { std::clog << "pang" << std::endl; }
-inline void pung() { std::clog << "pung" << std::endl; }
+#define WARN    Logger( std::cerr, "", "\n" ) <<
+#define WARNING Logger( std::cerr, "", "\n" ) <<
+#define ALERT   Logger( std::cerr, "", "\n" ) <<
+#define ERROR   Logger( std::cerr, "", "\n" ) <<
 
 
-static std::ostream* lognotice = &std::clog;
-static std::ostream* loginfo   = &std::clog;
 
-static std::ostream* logwarn   = &std::cerr;
-static std::ostream* logalert  = &std::cerr;
-static std::ostream* logerr    = &std::cerr;
+
+// emit the current file and line number into the log stream 
+// Example usage:
+//     PING;
+
+#define PING LOG << "PING" << __FILE__ << ":" << __LINE__ << std::endl;
+
+
+
+
+
+
+// inline void ping() { std::clog << "ping" << std::endl; }
+// inline void pong() { std::clog << "pong" << std::endl; }
+// inline void peng() { std::clog << "peng" << std::endl; }
+// inline void pang() { std::clog << "pang" << std::endl; }
+// inline void pung() { std::clog << "pung" << std::endl; }
+// 
+// 
+// static std::ostream* lognotice = &std::clog;
+// static std::ostream* loginfo   = &std::clog;
+// 
+// static std::ostream* logwarn   = &std::cerr;
+// static std::ostream* logalert  = &std::cerr;
+// static std::ostream* logerr    = &std::cerr;
 
 
 
