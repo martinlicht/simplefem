@@ -7,6 +7,7 @@
 #include "../../basic.hpp"
 #include "../../mesh/mesh.simplicial1D.hpp"
 #include "../../mesh/io.simplicial1D.hpp"
+#include "../../mesh/examples1D.hpp"
 
 
 using namespace std;

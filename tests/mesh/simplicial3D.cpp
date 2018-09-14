@@ -8,6 +8,7 @@
 #include "../../basic.hpp"
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
+#include "../../mesh/examples3D.hpp"
 
 
 using namespace std;

@@ -10,6 +10,7 @@
 #include "../../mesh/mesh.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../vtk/vtkwriter.mesh2D.hpp"
+#include "../../mesh/examples2D.hpp"
 
 
 using namespace std;
@@ -21,12 +22,14 @@ int main()
     {
         
         // MeshSimplicial2D M = UnitCubeTriangulation(3,3);
-        MeshSimplicial2D M = LShapedDomain2D();
+        MeshSimplicial2D M = UnitSquare2D();
 
         clog << "Conduct refinements" << nl;
         
-        for( int c = 0; c < 4; c++ ) {
-        
+        for( int c = 0; c < 6; c++ ) {
+            
+            PING;
+            
             std::vector<int> refinementedges;
             
             for( int k = 0; k < 3 + M.count_edges() / 10; k++ )
@@ -42,9 +45,9 @@ int main()
         
         
         
-        Coordinates& C = M.getcoordinates();
-        for( int c = 0; c < C.getnumber(); c++ )
-            C.setdata( c, 2, 2. * C.getdata(c,0) + 3. * C.getdata(c,1) );
+//         Coordinates& C = M.getcoordinates();
+//         for( int c = 0; c < C.getnumber(); c++ )
+//             C.setdata( c, 2, 2. * C.getdata(c,0) + 3. * C.getdata(c,1) );
 
         
         

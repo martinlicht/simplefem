@@ -8,8 +8,9 @@
 #include "../../basic.hpp"
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.hpp"
-#include "../../mesh/mesh.simplicialND.hpp"
+// #include "../../mesh/mesh.simplicialND.hpp"
 #include "../../vtk/vtkwriter.mesh3D.hpp"
+#include "../../mesh/examples3D.hpp"
 
 
 using namespace std;
@@ -20,7 +21,7 @@ int main()
         
         {
                 
-                MeshSimplicialND M = StandardSquare3D();
+                MeshSimplicial3D M = StandardCube3D();
                 // TODO: This should be a 3D mesh class
                 
                 cout << M << endl;

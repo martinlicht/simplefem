@@ -10,6 +10,7 @@
 #include "../../mesh/mesh.hpp"
 #include "../../mesh/mesh.simplicial1D.hpp"
 #include "../../vtk/vtkwriter.mesh1D.hpp"
+#include "../../mesh/examples1D.hpp"
 
 
 using namespace std;
