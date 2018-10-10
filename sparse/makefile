@@ -5,10 +5,10 @@ include ../makefile.rules
 default: all
 
 sparsematrix.o: sparsematrix.hpp sparsematrix.cpp ../operators/floatvector.hpp ../operators/linearoperator.hpp 
-	$(CXX) sparsematrix.cpp -c -o sparsematrix.o 
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) sparsematrix.cpp -c -o sparsematrix.o 
 
 readwrite.o: readwrite.hpp readwrite.cpp ../operators/floatvector.hpp ../operators/linearoperator.hpp 
-	$(CXX) readwrite.cpp -c -o readwrite.o 
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) readwrite.cpp -c -o readwrite.o 
 
 objects = sparsematrix.o readwrite.o 
 

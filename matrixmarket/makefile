@@ -7,7 +7,7 @@ default: all
 
 
 matrixmarket.o: matrixmarket.hpp matrixmarket.cpp 
-	$(CXX) matrixmarket.cpp -c -o matrixmarket.o 
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) matrixmarket.cpp -c -o matrixmarket.o 
 
 objects = matrixmarket.o 
 

@@ -50,7 +50,7 @@ Includes = $(Headers) $(Objects)
 
 
 basic/sorthack.out: basic/sorthack.cpp $(Includes.basic)
-	$(CXX) basic/sorthack.cpp $(Links.basic) -o basic/sorthack.out 
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) basic/sorthack.cpp $(Links.basic) -o basic/sorthack.out 
 
 basic.tests = basic/sorthack.out 
 
@@ -59,22 +59,22 @@ basic.tests = basic/sorthack.out
 
 
 combinatorics/indexrange.out: combinatorics/indexrange.cpp $(Includes.combinatorics) 
-	$(CXX) combinatorics/indexrange.cpp $(Links.combinatorics) -o combinatorics/indexrange.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) combinatorics/indexrange.cpp $(Links.combinatorics) -o combinatorics/indexrange.out
 
 combinatorics/indexmap.out: combinatorics/indexmap.cpp $(Includes.combinatorics) 
-	$(CXX) combinatorics/indexmap.cpp $(Links.combinatorics) -o combinatorics/indexmap.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) combinatorics/indexmap.cpp $(Links.combinatorics) -o combinatorics/indexmap.out
 
 combinatorics/multiindex.out: combinatorics/multiindex.cpp $(Includes.combinatorics) 
-	$(CXX) combinatorics/multiindex.cpp $(Links.combinatorics) -o combinatorics/multiindex.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) combinatorics/multiindex.cpp $(Links.combinatorics) -o combinatorics/multiindex.out
 
 combinatorics/generateindexmaps.out: combinatorics/generateindexmaps.cpp $(Includes.combinatorics) 
-	$(CXX) combinatorics/generateindexmaps.cpp $(Links.combinatorics) -o combinatorics/generateindexmaps.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) combinatorics/generateindexmaps.cpp $(Links.combinatorics) -o combinatorics/generateindexmaps.out
 
 combinatorics/generatemultiindices.out: combinatorics/generatemultiindices.cpp $(Includes.combinatorics) 
-	$(CXX) combinatorics/generatemultiindices.cpp $(Links.combinatorics) -o combinatorics/generatemultiindices.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) combinatorics/generatemultiindices.cpp $(Links.combinatorics) -o combinatorics/generatemultiindices.out
 
 combinatorics/heappermgen.out: combinatorics/heappermgen.cpp $(Includes.combinatorics) 
-	$(CXX) combinatorics/heappermgen.cpp $(Links.combinatorics) -o combinatorics/heappermgen.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) combinatorics/heappermgen.cpp $(Links.combinatorics) -o combinatorics/heappermgen.out
 
 combinatorics.tests = combinatorics/indexrange.out combinatorics/indexmap.out combinatorics/multiindex.out combinatorics/generateindexmaps.out combinatorics/generatemultiindices.out combinatorics/heappermgen.out 
     
@@ -82,25 +82,25 @@ combinatorics.tests = combinatorics/indexrange.out combinatorics/indexmap.out co
 
 
 operators/floatvector.out: operators/floatvector.cpp $(Includes.operators) 
-	$(CXX) operators/floatvector.cpp $(Links.operators) -o operators/floatvector.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) operators/floatvector.cpp $(Links.operators) -o operators/floatvector.out
 
 operators/scalingoperator.out: operators/scalingoperator.cpp $(Includes.operators)
-	$(CXX) operators/scalingoperator.cpp $(Links.operators) -o operators/scalingoperator.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) operators/scalingoperator.cpp $(Links.operators) -o operators/scalingoperator.out
 	
 operators/diagonaloperator.out: operators/diagonaloperator.cpp $(Includes.operators)
-	$(CXX) operators/diagonaloperator.cpp $(Links.operators) -o operators/diagonaloperator.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) operators/diagonaloperator.cpp $(Links.operators) -o operators/diagonaloperator.out
 	
 operators/sumoperator.out: operators/sumoperator.cpp $(Includes.operators)
-	$(CXX) operators/sumoperator.cpp $(Links.operators) -o operators/sumoperator.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) operators/sumoperator.cpp $(Links.operators) -o operators/sumoperator.out
 	
 operators/productoperator.out: operators/productoperator.cpp $(Includes.operators)
-	$(CXX) operators/productoperator.cpp $(Links.operators) -o operators/productoperator.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) operators/productoperator.cpp $(Links.operators) -o operators/productoperator.out
 	
 operators/blockdiagonaloperator.out: operators/blockdiagonaloperator.cpp $(Includes.operators)
-	$(CXX) operators/blockdiagonaloperator.cpp $(Links.operators) -o operators/blockdiagonaloperator.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) operators/blockdiagonaloperator.cpp $(Links.operators) -o operators/blockdiagonaloperator.out
 	
 operators/blockoperator.out: operators/blockoperator.cpp $(Includes.operators)
-	$(CXX) operators/blockoperator.cpp $(Links.operators) -o operators/blockoperator.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) operators/blockoperator.cpp $(Links.operators) -o operators/blockoperator.out
 	
 operators.tests = operators/floatvector.out operators/scalingoperator.out operators/diagonaloperator.out operators/sumoperator.out operators/productoperator.out operators/blockdiagonaloperator.out operators/blockoperator.out
 
@@ -110,25 +110,25 @@ operators.tests = operators/floatvector.out operators/scalingoperator.out operat
     
     
 dense/densematrix.out: dense/densematrix.cpp $(Includes.dense) 
-	$(CXX) dense/densematrix.cpp $(Links.dense) -o dense/densematrix.out 
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) dense/densematrix.cpp $(Links.dense) -o dense/densematrix.out 
 
 dense/transpose.out: dense/transpose.cpp $(Includes.dense) 
-	$(CXX) dense/transpose.cpp $(Links.dense) -o dense/transpose.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) dense/transpose.cpp $(Links.dense) -o dense/transpose.out
 
 dense/scalarfunctions.out: dense/scalarfunctions.cpp $(Includes.dense) 
-	$(CXX) dense/scalarfunctions.cpp $(Links.dense) -o dense/scalarfunctions.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) dense/scalarfunctions.cpp $(Links.dense) -o dense/scalarfunctions.out
 
 dense/detinvcof.out: dense/detinvcof.cpp $(Includes.dense) 
-	$(CXX) dense/detinvcof.cpp $(Links.dense) -o dense/detinvcof.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) dense/detinvcof.cpp $(Links.dense) -o dense/detinvcof.out
 
 dense/matrixalgorithm.out: dense/matrixalgorithm.cpp $(Includes.dense) 
-	$(CXX) dense/matrixalgorithm.cpp $(Links.dense) -o dense/matrixalgorithm.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) dense/matrixalgorithm.cpp $(Links.dense) -o dense/matrixalgorithm.out
 
 dense/cholesky.out: dense/cholesky.cpp $(Includes.dense) 
-	$(CXX) dense/cholesky.cpp $(Links.dense) -o dense/cholesky.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) dense/cholesky.cpp $(Links.dense) -o dense/cholesky.out
 
 dense/iterativeinverse.out: dense/iterativeinverse.cpp $(Includes.dense) 
-	$(CXX) dense/iterativeinverse.cpp $(Links.dense) -o dense/iterativeinverse.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) dense/iterativeinverse.cpp $(Links.dense) -o dense/iterativeinverse.out
 
 dense.tests = dense/densematrix.out dense/transpose.out dense/detinvcof.out dense/matrixalgorithm.out dense/cholesky.out dense/scalarfunctions.out dense/iterativeinverse.out
 
@@ -136,7 +136,7 @@ dense.tests = dense/densematrix.out dense/transpose.out dense/detinvcof.out dens
 
 
 sparse/sparsematrix.out: sparse/sparsematrix.cpp $(Includes.sparse)
-	$(CXX) sparse/sparsematrix.cpp $(Links.sparse) -o sparse/sparsematrix.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) sparse/sparsematrix.cpp $(Links.sparse) -o sparse/sparsematrix.out
 
 sparse.tests = sparse/sparsematrix.out 
 
@@ -146,10 +146,10 @@ sparse.tests = sparse/sparsematrix.out
 
 
 solver/crm.out: solver/crm.cpp $(Includes.solver)
-	$(CXX) solver/crm.cpp $(Links.solver) -o solver/crm.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) solver/crm.cpp $(Links.solver) -o solver/crm.out
 
 solver/moretesting.out: solver/moretesting.cpp $(Includes.solver)
-	$(CXX) solver/moretesting.cpp $(Links.solver) -o solver/moretesting.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) solver/moretesting.cpp $(Links.solver) -o solver/moretesting.out
 
 solver.tests = solver/crm.out solver/moretesting.out 
 
@@ -158,55 +158,55 @@ solver.tests = solver/crm.out solver/moretesting.out
 
 
 mesh/coordinates.out: mesh/coordinates.cpp $(Includes.mesh) 
-	$(CXX) mesh/coordinates.cpp $(Links.mesh) -o mesh/coordinates.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) mesh/coordinates.cpp $(Links.mesh) -o mesh/coordinates.out
 
 # mesh/simplicialmesh.out: mesh/simplicialmesh.cpp $(Includes.mesh)
-# 	$(CXX) mesh/simplicialmesh.cpp $(Links.mesh) -o mesh/simplicialmesh.out
+# 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) mesh/simplicialmesh.cpp $(Links.mesh) -o mesh/simplicialmesh.out
 
 mesh/simplicial1D.out: mesh/simplicial1D.cpp $(Includes.mesh)
-	$(CXX) mesh/simplicial1D.cpp $(Links.mesh) -o mesh/simplicial1D.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) mesh/simplicial1D.cpp $(Links.mesh) -o mesh/simplicial1D.out
 
 mesh/io.simplicial1D.out: mesh/io.simplicial1D.cpp $(Includes.mesh)
-	$(CXX) mesh/io.simplicial1D.cpp $(Links.mesh) -o mesh/io.simplicial1D.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) mesh/io.simplicial1D.cpp $(Links.mesh) -o mesh/io.simplicial1D.out
 
 mesh/uniformrefinement1D.out: mesh/uniformrefinement1D.cpp $(Includes.mesh)
-	$(CXX) mesh/uniformrefinement1D.cpp $(Links.mesh) -o mesh/uniformrefinement1D.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) mesh/uniformrefinement1D.cpp $(Links.mesh) -o mesh/uniformrefinement1D.out
 
 # mesh/manifold2D.out: mesh/manifold2D.cpp $(Includes.mesh)
-# 	$(CXX) mesh/manifold2D.cpp $(Links.mesh) -o mesh/manifold2D.out
+# 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) mesh/manifold2D.cpp $(Links.mesh) -o mesh/manifold2D.out
 
 mesh/simplicial2D.out: mesh/simplicial2D.cpp $(Includes.mesh)
-	$(CXX) mesh/simplicial2D.cpp $(Links.mesh) -o mesh/simplicial2D.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) mesh/simplicial2D.cpp $(Links.mesh) -o mesh/simplicial2D.out
 
 mesh/io.simplicial2D.out: mesh/io.simplicial2D.cpp $(Includes.mesh)
-	$(CXX) mesh/io.simplicial2D.cpp $(Links.mesh) -o mesh/io.simplicial2D.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) mesh/io.simplicial2D.cpp $(Links.mesh) -o mesh/io.simplicial2D.out
 
 mesh/2DBisection.out: mesh/2DBisection.cpp $(Includes.mesh)
-	$(CXX) mesh/2DBisection.cpp $(Links.mesh) -o mesh/2DBisection.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) mesh/2DBisection.cpp $(Links.mesh) -o mesh/2DBisection.out
 
 mesh/midpointrefine.out: mesh/midpointrefine.cpp $(Includes.mesh)
-	$(CXX) mesh/midpointrefine.cpp $(Links.mesh) -o mesh/midpointrefine.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) mesh/midpointrefine.cpp $(Links.mesh) -o mesh/midpointrefine.out
 
 mesh/simplicial3D.out: mesh/simplicial3D.cpp $(Includes.mesh)
-	$(CXX) mesh/simplicial3D.cpp $(Links.mesh) -o mesh/simplicial3D.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) mesh/simplicial3D.cpp $(Links.mesh) -o mesh/simplicial3D.out
 
 mesh/io.simplicial3D.out: mesh/io.simplicial3D.cpp $(Includes.mesh)
-	$(CXX) mesh/io.simplicial3D.cpp $(Links.mesh) -o mesh/io.simplicial3D.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) mesh/io.simplicial3D.cpp $(Links.mesh) -o mesh/io.simplicial3D.out
 
 mesh/3DBisection.out: mesh/3DBisection.cpp $(Includes.mesh)
-	$(CXX) mesh/3DBisection.cpp $(Links.mesh) -o mesh/3DBisection.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) mesh/3DBisection.cpp $(Links.mesh) -o mesh/3DBisection.out
 
 mesh/simplicialND.out: mesh/simplicialND.cpp $(Includes.mesh)
-	$(CXX) mesh/simplicialND.cpp $(Links.mesh) -o mesh/simplicialND.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) mesh/simplicialND.cpp $(Links.mesh) -o mesh/simplicialND.out
 
 mesh/io.simplicialND.out: mesh/io.simplicialND.cpp $(Includes.mesh)
-	$(CXX) mesh/io.simplicialND.cpp $(Links.mesh) -o mesh/io.simplicialND.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) mesh/io.simplicialND.cpp $(Links.mesh) -o mesh/io.simplicialND.out
 
 # mesh/mesh.manifold.2D.out: mesh/mesh.manifold.2D.cpp $(Includes.mesh)
-# 	$(CXX) mesh/mesh.manifold.2D.cpp $(Links.mesh) -o mesh/mesh.manifold.2D.out
+# 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) mesh/mesh.manifold.2D.cpp $(Links.mesh) -o mesh/mesh.manifold.2D.out
 
 # mesh/io.out: mesh/io.cpp $(Includes.mesh)
-# 	$(CXX) mesh/io.cpp $(Links.mesh) -o mesh/io.out
+# 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) mesh/io.cpp $(Links.mesh) -o mesh/io.out
 
 mesh.tests = mesh/coordinates.out mesh/simplicial1D.out mesh/io.simplicial1D.out mesh/uniformrefinement1D.out mesh/simplicial2D.out mesh/2DBisection.out mesh/midpointrefine.out mesh/io.simplicial2D.out mesh/simplicial3D.out mesh/3DBisection.out mesh/io.simplicial3D.out mesh/simplicialND.out mesh/io.simplicialND.out
 # mesh/simplicial3D.out mesh/io.out mesh/vtkwriter.out mesh/mesh.manifold.2D.out  mesh/manifold2D.out
@@ -216,16 +216,16 @@ mesh.tests = mesh/coordinates.out mesh/simplicial1D.out mesh/io.simplicial1D.out
 
 
 # vtk/vtkwriter.out: vtk/vtkwriter.cpp $(Includes.vtk)
-# 	$(CXX) vtk/vtkwriter.cpp $(Links.vtk) -o vtk/vtkwriter.out
+# 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) vtk/vtkwriter.cpp $(Links.vtk) -o vtk/vtkwriter.out
 
 vtk/vtkwriter.mesh1D.out: vtk/vtkwriter.mesh1D.cpp $(Includes.vtk)
-	$(CXX) vtk/vtkwriter.mesh1D.cpp $(Links.vtk) -o vtk/vtkwriter.mesh1D.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) vtk/vtkwriter.mesh1D.cpp $(Links.vtk) -o vtk/vtkwriter.mesh1D.out
 
 vtk/vtkwriter.mesh2D.out: vtk/vtkwriter.mesh2D.cpp $(Includes.vtk)
-	$(CXX) vtk/vtkwriter.mesh2D.cpp $(Links.vtk) -o vtk/vtkwriter.mesh2D.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) vtk/vtkwriter.mesh2D.cpp $(Links.vtk) -o vtk/vtkwriter.mesh2D.out
 
 vtk/vtkwriter.mesh3D.out: vtk/vtkwriter.mesh3D.cpp $(Includes.vtk)
-	$(CXX) vtk/vtkwriter.mesh3D.cpp $(Links.vtk) -o vtk/vtkwriter.mesh3D.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) vtk/vtkwriter.mesh3D.cpp $(Links.vtk) -o vtk/vtkwriter.mesh3D.out
 
 vtk.tests = vtk/vtkwriter.mesh1D.out vtk/vtkwriter.mesh2D.out
 # vtk/vtkwriter.mesh3D.out
@@ -235,10 +235,10 @@ vtk.tests = vtk/vtkwriter.mesh1D.out vtk/vtkwriter.mesh2D.out
 
 
 test.compiler.out: test.compiler.cpp 
-	$(CXX) test.compiler.cpp  -o test.compiler.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) test.compiler.cpp  -o test.compiler.out
 
 test.container.out: test.container.cpp 
-	$(CXX) test.container.cpp  -o test.container.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) test.container.cpp  -o test.container.out
 
 
 
