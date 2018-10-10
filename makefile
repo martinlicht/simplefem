@@ -38,6 +38,8 @@ check:
 # 	cppcheck $(CHECK_OPTION) mesh/*.?pp
 # 	cppcheck $(CHECK_OPTION) */*.?pp
 
+cpplint:
+	( ./cpplint.py --recursive --filter=-whitespace,-legal --quiet . --exclude=tests/* --exclude=tests/*/* --exclude=legacy/* --exclude=playground/* ) | sort | uniq -c > TESTFOO
 
 
 

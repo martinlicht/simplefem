@@ -41,53 +41,50 @@ class IndexRange
         
         /* For each semantics */ 
         
-        class IndexRangeIterator {
+        class ConstIterator {
             
+            friend IndexRange;
+        
             private: 
             
                 int value;
                 
-            public:
-                
-                explicit IndexRangeIterator(int value) : value(value) 
+                explicit ConstIterator(int value) : value(value) 
                 { }
+                
+            public:
                 
                 inline int operator*() const
                 {
                     return value;                
                 }
                 
-                inline IndexRangeIterator& operator++()
+                inline ConstIterator operator++()
                 {
                     ++value; 
                     return *this;
                 } // pre-increment
                 
-                inline IndexRangeIterator operator++( int )
+                inline ConstIterator operator++( int )
                 {
-                    return IndexRangeIterator( value++ );   
+                    return ConstIterator( value++ );   
                 } // post-increment
                 
-                inline bool operator==( const IndexRangeIterator& irit ) const 
-                { 
-                    return value == irit.value;
-                }
-                
-                inline bool operator!=( const IndexRangeIterator& irit ) const 
+                inline bool operator!=( const ConstIterator& irit ) const 
                 { 
                     return value != irit.value;
                 }
                     
         };
         
-        inline const IndexRangeIterator begin() const
+        inline ConstIterator begin() const
         {
-            return IndexRangeIterator(minimum);
+            return ConstIterator(minimum);
         }
         
-        inline const IndexRangeIterator end() const
+        inline ConstIterator end() const
         {
-            return IndexRangeIterator(maximum+1);
+            return ConstIterator(maximum+1);
         }
         
         /* enum class */

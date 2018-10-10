@@ -90,12 +90,12 @@ int main()
             
           cout << "Classical For loop " << std::endl;
           
-          for( IndexRange::IndexRangeIterator iri = irC.begin(); iri != irC.end(); iri++ )
+          for( IndexRange::ConstIterator iri = irC.begin(); iri != irC.end(); iri++ )
             cout << "Output :" << *iri << endl;
             
           cout << "While Loop " << std::endl;
           
-          IndexRange::IndexRangeIterator iri = irC.begin();
+          IndexRange::ConstIterator iri = irC.begin();
           while( iri != irC.end() )
             cout << "Output :" << *(iri++) << endl;
             
