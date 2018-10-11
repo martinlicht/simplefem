@@ -1,5 +1,5 @@
 
-# CC = g++ -O2 -std=c++11 -Wall -Wextra -pedantic
+# CXX = g++ -O2 -std=c++11 -Wall -Wextra -pedantic
 include ../makefile.rules 
 
 default: all
@@ -7,7 +7,7 @@ default: all
 
 
 matrixmarket.o: matrixmarket.hpp matrixmarket.cpp 
-	$(CC) matrixmarket.cpp -c -o matrixmarket.o 
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) matrixmarket.cpp -c -o matrixmarket.o 
 
 objects = matrixmarket.o 
 

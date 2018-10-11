@@ -1,5 +1,5 @@
 
-# CC = g++ -O2 -std=c++11 -Wall -Wextra -pedantic
+# CXX = g++ -O2 -std=c++11 -Wall -Wextra -pedantic
 include ../makefile.rules 
 
 default: all
@@ -7,22 +7,22 @@ default: all
 
 
 indexrange.o: indexrange.hpp indexrange.cpp 
-	$(CC) indexrange.cpp -c -o indexrange.o 
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) indexrange.cpp -c -o indexrange.o 
 
 indexmap.o: indexmap.hpp indexmap.cpp 
-	$(CC) indexmap.cpp -c -o indexmap.o 
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) indexmap.cpp -c -o indexmap.o 
 
 multiindex.o: multiindex.hpp multiindex.cpp 
-	$(CC) multiindex.cpp -c -o multiindex.o 
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) multiindex.cpp -c -o multiindex.o 
 
 generateindexmaps.o: generateindexmaps.hpp generateindexmaps.cpp 
-	$(CC) generateindexmaps.cpp -c -o generateindexmaps.o 
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) generateindexmaps.cpp -c -o generateindexmaps.o 
 
 generatemultiindices.o: generatemultiindices.hpp generatemultiindices.cpp 
-	$(CC) generatemultiindices.cpp -c -o generatemultiindices.o 
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) generatemultiindices.cpp -c -o generatemultiindices.o 
 
 heappermgen.o: heappermgen.hpp heappermgen.cpp 
-	$(CC) heappermgen.cpp -c -o heappermgen.o 
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) heappermgen.cpp -c -o heappermgen.o 
 
 objects = indexrange.o indexmap.o multiindex.o generateindexmaps.o generatemultiindices.o heappermgen.o
 

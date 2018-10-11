@@ -1,27 +1,27 @@
 
 
 default:
-	cd ./combinatorics && make && cd ..
-	cd ./operators && make && cd ..
-	cd ./dense && make && cd ..
-	cd ./sparse && make && cd ..
-	cd ./solver && make && cd ..
-	cd ./mesh && make && cd ..
-	cd ./vtk && make && cd ..
-	cd ./tests && make && cd ..
+	cd ./combinatorics && $(MAKE) 
+	cd ./operators && $(MAKE) 
+	cd ./dense && $(MAKE) 
+	cd ./sparse && $(MAKE) 
+	cd ./solver && $(MAKE) 
+	cd ./mesh && $(MAKE) 
+	cd ./vtk && $(MAKE)
+	cd ./tests && $(MAKE)
 	echo "finished building." 
 
 clean:
-	cd ./combinatorics && make clean && cd ..
-	cd ./operators && make clean && cd ..
-	cd ./dense && make clean && cd ..
-	cd ./sparse && make clean && cd ..
-	cd ./solver && make clean && cd ..
-	cd ./mesh && make clean && cd ..
-	cd ./vtk && make clean && cd ..
-	cd ./tests && make clean && cd ..
-	make -f makefile.clean clean
-	echo "finished cleaning." 
+	cd ./combinatorics && $(MAKE) clean
+	cd ./operators && $(MAKE) clean
+	cd ./dense && $(MAKE) clean
+	cd ./sparse && $(MAKE) clean
+	cd ./solver && $(MAKE) clean
+	cd ./mesh && $(MAKE) clean
+	cd ./vtk && $(MAKE) clean
+	cd ./tests && $(MAKE) clean
+	$(MAKE) -f $(MAKE)file.clean clean
+	@echo "finished cleaning." 
 
 CHECK_OPTION= --enable=warning,style,performance,portability --std=c++11 -q
 CHECK_FILES= basic.hpp basic/*.?pp combinatorics/*.?pp operators/*.?pp
@@ -40,10 +40,6 @@ check:
 
 cpplint:
 	( ./cpplint.py --recursive --filter=-whitespace,-legal --quiet . --exclude=tests/* --exclude=tests/*/* --exclude=legacy/* --exclude=playground/* ) | sort | uniq -c > TESTFOO
-
-
-
-
 
 
 
