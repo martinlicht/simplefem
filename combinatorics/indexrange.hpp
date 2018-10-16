@@ -35,7 +35,7 @@ class IndexRange
         bool isempty() const;
         bool contains( int element ) const;
         bool contains( const IndexRange& subir ) const;
-        bool operator== ( const IndexRange&  ) const;
+        bool compare( const IndexRange&  ) const;
         int element2position( int element ) const;
         int position2element( int position ) const;
         
@@ -128,7 +128,12 @@ inline std::ostream& operator<<( std::ostream& os, const IndexRange& ir )
 //         );
 // }
 
+inline bool operator== ( const IndexRange& ir1, const IndexRange& ir2 )
+{
+    return ir1.compare( ir2 );
+}
 
+<<<<<<< HEAD
 // inline bool operator==( const IndexRange& left, const IndexRange& right )
 // {
 //     if( left.isempty() )
@@ -136,6 +141,12 @@ inline std::ostream& operator<<( std::ostream& os, const IndexRange& ir )
 //     else 
 //         return left.min() == right.min() && left.max() == right.max();
 // }
+=======
+inline bool operator!= ( const IndexRange& ir1, const IndexRange& ir2 )
+{
+    return !( ir1 == ir2 );
+}
+>>>>>>> 14f99814db93e58b4b6fc9bd5fae12939931af24
 
 
 

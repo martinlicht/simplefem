@@ -48,9 +48,7 @@ class MeshSimplicialND
         
         virtual ~MeshSimplicialND();
         
-        bool operator== ( const MeshSimplicialND& ) const;
-        
-        bool operator!= ( const MeshSimplicialND& ) const;
+        bool compare( const MeshSimplicialND& ) const;
         
         virtual void check() const;
         
@@ -113,6 +111,16 @@ class MeshSimplicialND
 // }
 
 
+
+inline bool operator==( const MeshSimplicialND& m1, const MeshSimplicialND& m2 )
+{
+    return m1.compare( m2 );
+}
+
+inline bool operator!=( const MeshSimplicialND& m1, const MeshSimplicialND& m2 )
+{
+    return !( m1 == m2 );
+}
 
 
 

@@ -61,9 +61,7 @@ class MeshSimplicial1D
         
         virtual ~MeshSimplicial1D();
         
-        bool operator== ( const MeshSimplicial1D& ) const;
-        
-        bool operator!= ( const MeshSimplicial1D& ) const;
+        bool compare( const MeshSimplicial1D& ) const;
         
         virtual void check() const;
         
@@ -163,6 +161,46 @@ class MeshSimplicial1D
 // }
 
 
+
+
+inline bool operator==( const MeshSimplicial1D& m1, const MeshSimplicial1D& m2 )
+{
+    return m1.compare( m2 );
+}
+
+inline bool operator!=( const MeshSimplicial1D& m1, const MeshSimplicial1D& m2 )
+{
+    return !( m1 == m2 );
+}
+
+
+inline MeshSimplicial1D UnitSquare1D()
+{
+    return MeshSimplicial1D(
+      2,
+      Coordinates( 2, 2, {
+        -1., 0.333, // 0
+         1., 0.444  // 1
+      } ),
+      {
+        { 0, 1 }
+      }
+    );
+}
+
+inline MeshSimplicial1D StandardSquare1D()
+{
+    return MeshSimplicial1D(
+      1,
+      Coordinates( 1, 2, {
+         0., // 0
+         1., // 1
+      } ),
+      {
+        { 0, 1 }
+      }
+    );
+}
 
 
 

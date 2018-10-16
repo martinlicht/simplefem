@@ -493,7 +493,7 @@ MeshSimplicial3D::~MeshSimplicial3D()
     
 }
 
-bool MeshSimplicial3D::operator== ( const MeshSimplicial3D& mesh ) const 
+bool MeshSimplicial3D::compare( const MeshSimplicial3D& mesh ) const 
 {
   return counter_tetrahedra == mesh.counter_tetrahedra
          &&
@@ -546,11 +546,6 @@ bool MeshSimplicial3D::operator== ( const MeshSimplicial3D& mesh ) const
          getcoordinates() == mesh.getcoordinates()
          &&
          true;
-}
-
-bool MeshSimplicial3D::operator!= ( const MeshSimplicial3D& mesh ) const 
-{
-  return ! ( *this == mesh );
 }
 
 

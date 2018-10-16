@@ -151,7 +151,7 @@ MeshSimplicialND::~MeshSimplicialND()
 
 
 
-bool MeshSimplicialND::operator== ( const MeshSimplicialND& mesh ) const 
+bool MeshSimplicialND::compare ( const MeshSimplicialND& mesh ) const 
 {
   if( getinnerdimension() != mesh.getinnerdimension() ) return false;
   if( getouterdimension() != mesh.getouterdimension() ) return false;

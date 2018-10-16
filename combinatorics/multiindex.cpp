@@ -105,14 +105,14 @@ int MultiIndex::factorial() const
 
 
 
-void MultiIndex::operator+=( int p )
+void MultiIndex::add( int p )
 {
     check();
     assert( range.contains(p) );
     values[ range.element2position(p) ]++;
 }
 
-void MultiIndex::operator-=( int p )
+void MultiIndex::sub( int p )
 {
     check();
     assert( range.contains(p) );
@@ -122,7 +122,7 @@ void MultiIndex::operator-=( int p )
 
 
 
-void MultiIndex::operator+=( const MultiIndex& mi )
+void MultiIndex::add( const MultiIndex& mi )
 {
     check();
     mi.check();
@@ -133,7 +133,7 @@ void MultiIndex::operator+=( const MultiIndex& mi )
     check();
 }
 
-void MultiIndex::operator-=( const MultiIndex& mi )
+void MultiIndex::sub( const MultiIndex& mi )
 {
     check();
     mi.check();
