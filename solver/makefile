@@ -4,14 +4,14 @@ default: all
 
 objects = iterativesolver.o crm.o necrm.o 
 
-all: $(objects) solver.so
+all: $(objects) libsolver.so
 
 include ../makefile.rules 
 
 include ../makefile.clean
 
-solver.so: $(objects)
-	g++ -shared -o solver.so $(objects)
+libsolver.so: $(objects)
+	g++ -shared -o libsolver.so $(objects)
 
 iterativesolver.o: iterativesolver.hpp iterativesolver.cpp 
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) iterativesolver.cpp -c -o iterativesolver.o 

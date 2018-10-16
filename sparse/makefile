@@ -4,14 +4,14 @@ default: all
 
 objects = sparsematrix.o readwrite.o 
 
-all: $(objects) sparse.so
+all: $(objects) libsparse.so
 
 include ../makefile.rules 
 
 include ../makefile.clean
 
-sparse.so: $(objects)
-	g++ -shared -o sparse.so $(objects)
+libsparse.so: $(objects)
+	g++ -shared -o libsparse.so $(objects)
 
 sparsematrix.o: sparsematrix.hpp sparsematrix.cpp ../operators/floatvector.hpp ../operators/linearoperator.hpp 
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) sparsematrix.cpp -c -o sparsematrix.o 

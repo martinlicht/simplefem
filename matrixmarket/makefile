@@ -4,14 +4,14 @@ default: all
 
 objects = matrixmarket.o 
 
-all: $(objects) matrixmarket.so
+all: $(objects) libmatrixmarket.so
 
 include ../makefile.rules 
 
 include ../makefile.clean
 
-matrixmarket.so: $(objects)
-	g++ -shared -o matrixmarket.so $(objects)
+libmatrixmarket.so: $(objects)
+	g++ -shared -o libmatrixmarket.so $(objects)
 
 matrixmarket.o: matrixmarket.hpp matrixmarket.cpp 
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) matrixmarket.cpp -c -o matrixmarket.o 

@@ -4,14 +4,14 @@ default: all
 
 objects = mesh.o coordinates.o io.coordinates.o mesh.simplicial1D.o io.simplicial1D.o mesh.simplicial2D.o io.simplicial2D.o mesh.simplicial3D.o io.simplicial3D.o mesh.simplicialND.o io.simplicialND.o
 
-all: $(objects) mesh.so 
+all: $(objects) libmesh.so 
 
 include ../makefile.rules 
 
 include ../makefile.clean
 
-mesh.so: $(objects)
-	g++ -shared -o mesh.so $(objects)
+libmesh.so: $(objects)
+	g++ -shared -o libmesh.so $(objects)
 
 coordinates.o: coordinates.hpp coordinates.cpp 
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) coordinates.cpp -c -o coordinates.o 
