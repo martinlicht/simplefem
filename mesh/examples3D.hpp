@@ -18,24 +18,6 @@
 
 
 
-
-inline MeshSimplicial3D UnitSimplex3D()
-{
-    return MeshSimplicial3D(
-      3,  
-      Coordinates( 3, 4, {
-         0., 0., 0., // 0
-         0., 0., 1., // 1
-         0., 1., 0., // 2
-         1., 0., 0.  // 3
-      } ),
-      {
-        { 0, 1, 2, 3 }
-      }
-    );
-}
-
-
 inline MeshSimplicial3D OctoDiamond3D()
 {
     return MeshSimplicial3D(
@@ -87,6 +69,29 @@ inline MeshSimplicial3D StandardCube3D()
       }
     );
 }
+
+
+
+
+
+
+inline MeshSimplicial3D UnitSimplex3D()
+{
+    return MeshSimplicial3D(
+      3,  
+      Coordinates( 3, 4, {
+         0., 0., 0., // 0
+         0., 0., 1., // 1
+         0., 1., 0., // 2
+         1., 0., 0.  // 3
+      } ),
+      {
+        { 0, 1, 2, 3 }
+      }
+    );
+}
+
+
 
 
 

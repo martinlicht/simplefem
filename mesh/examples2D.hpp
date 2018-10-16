@@ -19,81 +19,6 @@
 
 
 
-inline MeshSimplicial2D UnitTriangle2D()
-{
-    return MeshSimplicial2D(
-      2,
-      Coordinates( 2, 3, {
-        0., 0., // 0
-        1., 0., // 1
-        0., 1.  // 2
-      } ),
-      {
-        { 0, 1, 2 }
-      }
-    );
-}
-
-inline MeshSimplicial2D UnitSquare2D()
-{
-//     return MeshSimplicial2D(
-//       2,
-//       Coordinates( 2, 4, {
-//         -1., -1., // 0
-//         -1.,  1., // 1
-//          1., -1., // 2
-//          1.,  1.  // 3
-//       } ),
-//       {
-//         { 0, 1, 3 },
-//         { 0, 2, 3 }
-//       }
-//     );
-    return MeshSimplicial2D(
-      2,
-      Coordinates( 2, 4, {
-        -1.,  1., // 0
-         1., -1., // 1
-        -1., -1., // 2
-         1.,  1.  // 3
-      } ),
-      {
-        { 0, 1, 2 },
-        { 0, 1, 3 }
-      }
-    );
-}
-
-inline MeshSimplicial2D StandardSquare2D()
-{
-    return MeshSimplicial2D(
-      2,
-      Coordinates( 2, 9, {
-         0.,  0., // 0
-         1.,  0., // 1
-         1.,  1., // 2
-         0.,  1., // 3
-        -1.,  1., // 4
-        -1.,  0., // 5
-        -1., -1., // 6
-         0., -1., // 7
-         1., -1.  // 8
-      } ),
-      {
-        { 0, 1, 2 },
-        { 0, 2, 3 },
-        { 0, 3, 4 },
-        { 0, 4, 5 },
-        { 0, 5, 6 },
-        { 0, 6, 7 },
-        { 0, 7, 8 },
-        { 0, 8, 1 }
-      }
-    );
-}
-
-
-
 inline MeshSimplicial2D LShapedDomain2D()
 {
     return MeshSimplicial2D(
@@ -118,6 +43,8 @@ inline MeshSimplicial2D LShapedDomain2D()
       }
     );
 }
+
+
 
 
 
@@ -151,6 +78,37 @@ inline MeshSimplicial2D SlitDomain2D()
 }
 
 
+
+inline MeshSimplicial2D StandardSquare2D()
+{
+    return MeshSimplicial2D(
+      2,
+      Coordinates( 2, 9, {
+         0.,  0., // 0
+         1.,  0., // 1
+         1.,  1., // 2
+         0.,  1., // 3
+        -1.,  1., // 4
+        -1.,  0., // 5
+        -1., -1., // 6
+         0., -1., // 7
+         1., -1.  // 8
+      } ),
+      {
+        { 0, 1, 2 },
+        { 0, 2, 3 },
+        { 0, 3, 4 },
+        { 0, 4, 5 },
+        { 0, 5, 6 },
+        { 0, 6, 7 },
+        { 0, 7, 8 },
+        { 0, 8, 1 }
+      }
+    );
+}
+
+
+
 inline MeshSimplicial2D TetrahedralSurface2D()
 {
     return MeshSimplicial2D(
@@ -170,6 +128,60 @@ inline MeshSimplicial2D TetrahedralSurface2D()
     );
 }
 
+
+
+
+inline MeshSimplicial2D UnitSquare2D()
+{
+    return MeshSimplicial2D(
+      2,
+      Coordinates( 2, 4, {
+        -1., -1., // 0
+        -1.,  1., // 1
+         1., -1., // 2
+         1.,  1.  // 3
+      } ),
+      {
+        { 0, 1, 3 },
+        { 0, 2, 3 }
+      }
+    );
+}
+
+inline MeshSimplicial2D UnitSquare2D_Alternative()
+{
+    return MeshSimplicial2D(
+      2,
+      Coordinates( 2, 4, {
+        -1.,  1., // 0
+         1., -1., // 1
+        -1., -1., // 2
+         1.,  1.  // 3
+      } ),
+      {
+        { 0, 1, 2 },
+        { 0, 1, 3 }
+      }
+    );
+}
+
+
+
+
+inline MeshSimplicial2D UnitTriangle2D()
+{
+    return MeshSimplicial2D(
+      2,
+      Coordinates( 2, 3, {
+        0., 0., // 0
+        1., 0., // 1
+        0., 1.  // 2
+      } ),
+      {
+        { 0, 1, 2 }
+      }
+    );
+}
 
 
 
