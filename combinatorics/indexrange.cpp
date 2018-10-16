@@ -69,7 +69,7 @@ bool IndexRange::contains( const IndexRange& subir ) const
     return minimum <= subir.minimum && subir.maximum <= maximum;
 }
 
-bool IndexRange::operator== ( const IndexRange& other ) const
+bool IndexRange::compare( const IndexRange& other ) const
 {
     check();
     other.check();

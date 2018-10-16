@@ -266,7 +266,7 @@ MeshSimplicial2D::~MeshSimplicial2D()
 }
 
 
-bool MeshSimplicial2D::operator== ( const MeshSimplicial2D& mesh ) const 
+bool MeshSimplicial2D::compare( const MeshSimplicial2D& mesh ) const 
 {
   return counter_triangles == mesh.counter_triangles
          &&
@@ -301,10 +301,9 @@ bool MeshSimplicial2D::operator== ( const MeshSimplicial2D& mesh ) const
          true;
 }
 
-bool MeshSimplicial2D::operator!= ( const MeshSimplicial2D& mesh ) const 
-{
-  return ! ( *this == mesh );
-}
+
+
+
 
 void MeshSimplicial2D::check() const
 {

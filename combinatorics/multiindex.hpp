@@ -35,11 +35,11 @@ class MultiIndex
                 int absolute() const;
                 int factorial() const;
                 
-                void operator+=(int);
-                void operator-=(int);
+                void add( int );
+                void sub( int );
                 
-                void operator+=( const MultiIndex&);
-                void operator-=( const MultiIndex&);
+                void add( const MultiIndex& );
+                void sub( const MultiIndex& );
                 
                 bool comparablewith( const MultiIndex& ) const;
                 bool less( const MultiIndex& ) const;
@@ -61,6 +61,45 @@ inline std::ostream& operator<<( std::ostream& os, const MultiIndex& mi )
         mi.print( os );
         return os;
 }
+
+inline MultiIndex operator+=( const MultiIndex& left, int right )
+{
+        left.check();
+        MultiIndex ret = left;
+        ret.add( right );
+        ret.check();
+        return ret;
+}
+
+inline MultiIndex operator-=( const MultiIndex& left, int right )
+{
+        left.check();
+        MultiIndex ret = left;
+        ret.sub( right );
+        ret.check();
+        return ret;
+}
+
+inline MultiIndex operator+=( const MultiIndex& left, const MultiIndex& right )
+{
+        left.check();
+        right.check();
+        MultiIndex ret = left;
+        ret.add( right );
+        ret.check();
+        return ret;
+}
+
+inline MultiIndex operator-=( const MultiIndex& left, const MultiIndex& right )
+{
+        left.check();
+        right.check();
+        MultiIndex ret = left;
+        ret.sub( right );
+        ret.check();
+        return ret;
+}
+
 
 inline MultiIndex operator+( const MultiIndex& left, int right )
 {

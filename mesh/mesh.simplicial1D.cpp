@@ -134,7 +134,7 @@ MeshSimplicial1D::~MeshSimplicial1D()
 
 
 
-bool MeshSimplicial1D::operator== ( const MeshSimplicial1D& mesh ) const 
+bool MeshSimplicial1D::compare( const MeshSimplicial1D& mesh ) const 
 {
   return counter_edges == mesh.counter_edges
          &&
@@ -153,12 +153,6 @@ bool MeshSimplicial1D::operator== ( const MeshSimplicial1D& mesh ) const
          getcoordinates() == mesh.getcoordinates()
          &&
          true;
-}
-
-
-bool MeshSimplicial1D::operator!= ( const MeshSimplicial1D& mesh ) const 
-{
-  return ! ( *this == mesh );
 }
 
 

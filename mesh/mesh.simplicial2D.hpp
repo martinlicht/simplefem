@@ -65,9 +65,7 @@ class MeshSimplicial2D
         
         virtual void print( std::ostream& out ) const override;
         
-        bool operator== ( const MeshSimplicial2D& mesh ) const; 
-        
-        bool operator!= ( const MeshSimplicial2D& mesh ) const; 
+        bool compare( const MeshSimplicial2D& mesh ) const;
         
         /* inherited methods */
         
@@ -231,6 +229,17 @@ class MeshSimplicial2D
 
 
 
+
+
+inline bool operator==( const MeshSimplicial2D& m1, const MeshSimplicial2D& m2 )
+{
+    return m1.compare( m2 );
+}
+
+inline bool operator!=( const MeshSimplicial2D& m1, const MeshSimplicial2D& m2 )
+{
+    return !( m1 == m2 );
+}
 
 
 inline MeshSimplicial2D UnitSquare2D()
