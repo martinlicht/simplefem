@@ -133,20 +133,10 @@ inline bool operator== ( const IndexRange& ir1, const IndexRange& ir2 )
     return ir1.compare( ir2 );
 }
 
-<<<<<<< HEAD
-// inline bool operator==( const IndexRange& left, const IndexRange& right )
-// {
-//     if( left.isempty() )
-//         return left.isempty() == right.isempty();
-//     else 
-//         return left.min() == right.min() && left.max() == right.max();
-// }
-=======
 inline bool operator!= ( const IndexRange& ir1, const IndexRange& ir2 )
 {
     return !( ir1 == ir2 );
 }
->>>>>>> 14f99814db93e58b4b6fc9bd5fae12939931af24
 
 
 

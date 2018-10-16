@@ -11,7 +11,7 @@ default:
 	cd ./tests && $(MAKE)
 	echo "finished building." 
 
-clean: cleanshared
+clean: 
 	cd ./combinatorics && $(MAKE) clean
 	cd ./operators && $(MAKE) clean
 	cd ./dense && $(MAKE) clean
