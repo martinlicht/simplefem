@@ -4,11 +4,14 @@ default: all
 
 objects = floatvector.o io.floatvector.o linearoperator.o productoperator.o sumoperator.o scalingoperator.o diagonaloperator.o blockdiagonaloperator.o blockoperator.o 
 
-all: $(objects) 
+all: $(objects) operators.so
 
 include ../makefile.rules 
 
 include ../makefile.clean
+
+operators.so: $(objects)
+	g++ -shared -o operators.so $(objects)
 
 floatvector.o: floatvector.hpp floatvector.cpp 
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) floatvector.cpp -c -o floatvector.o 

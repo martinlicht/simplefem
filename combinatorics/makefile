@@ -4,11 +4,14 @@ default: all
 
 objects = indexrange.o indexmap.o multiindex.o generateindexmaps.o generatemultiindices.o heappermgen.o
 
-all: $(objects) 
+all: $(objects) combinatorics.so
 
 include ../makefile.rules 
 
 include ../makefile.clean
+
+combinatorics.so: $(objects)
+	g++ -shared -o combinatorics.so $(objects)
 
 indexrange.o: indexrange.hpp indexrange.cpp 
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) indexrange.cpp -c -o indexrange.o 

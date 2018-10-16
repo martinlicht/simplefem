@@ -25,6 +25,7 @@ playground/
 *.ind
 *.log
 *.o
+*.so
 *.out
 elf.*
 *.pdf

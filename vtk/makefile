@@ -4,11 +4,14 @@ default: all
 
 objects = vtkwriter.mesh1D.o vtkwriter.mesh2D.o vtkwriter.mesh3D.o   
 
-all: $(objects)
+all: $(objects) vtk.so
 
 include ../makefile.rules 
 
 include ../makefile.clean
+
+vtk.so: $(objects)
+	g++ -shared -o vtk.so $(objects)
 
 vtkwriter.mesh1D.o: vtkwriter.mesh1D.hpp vtkwriter.mesh1D.cpp
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) vtkwriter.mesh1D.cpp -c -o vtkwriter.mesh1D.o  

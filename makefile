@@ -1,4 +1,4 @@
-
+SHELL = /bin/sh
 
 default:
 	cd ./combinatorics && $(MAKE) 
@@ -11,7 +11,7 @@ default:
 	cd ./tests && $(MAKE)
 	echo "finished building." 
 
-clean:
+clean: cleanshared
 	cd ./combinatorics && $(MAKE) clean
 	cd ./operators && $(MAKE) clean
 	cd ./dense && $(MAKE) clean
@@ -20,8 +20,24 @@ clean:
 	cd ./mesh && $(MAKE) clean
 	cd ./vtk && $(MAKE) clean
 	cd ./tests && $(MAKE) clean
-	$(MAKE) -f $(MAKE)file.clean clean
+	$(MAKE) -f makefile.clean clean
 	@echo "finished cleaning." 
+
+# shared: default
+# 	mkdir build
+# 	gcc -shared -o ./build/combinatorics.so ./combinatorics/*.o
+# 	gcc -shared -o ./build/operators.so ./operators/*.o
+# 	gcc -shared -o ./build/dense.so ./dense/*.o
+# 	gcc -shared -o ./build/sparse.so ./sparse/*.o
+# 	gcc -shared -o ./build/solver.so ./solver/*.o
+# 	gcc -shared -o ./build/mesh.so ./mesh/*.o
+# 	gcc -shared -o ./build/vtk.so ./vtk/*.o
+# 
+# cleanshared:
+# 	rm -f ./build/*.so
+
+
+
 
 CHECK_OPTION= --enable=warning,style,performance,portability --std=c++11 -q
 CHECK_FILES= basic.hpp basic/*.?pp combinatorics/*.?pp operators/*.?pp

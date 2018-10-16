@@ -4,11 +4,14 @@ default: all
 
 objects = densematrix.o readwrite.o functions.o scalarfunctions.o simplesolver.o qr.factorization.o lu.factorization.o cholesky.o matrixtensorproduct.o iterativeinverse.o
 
-all: $(objects)
+all: $(objects) dense.so
 
 include ../makefile.rules 
 
 include ../makefile.clean
+
+dense.so: $(objects)
+	g++ -shared -o dense.so $(objects)
 
 densematrix.o: densematrix.hpp densematrix.cpp ../operators/floatvector.hpp ../operators/linearoperator.hpp 
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) densematrix.cpp -c -o densematrix.o 

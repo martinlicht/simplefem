@@ -1,5 +1,5 @@
 
 clean: 
-	-rm -f *.o *.gch
+	-rm -f *.o *.so *.gch
 	-rm -f *.exe *.exe.stackdump
 	-rm -f *.out *.out.stackdump 

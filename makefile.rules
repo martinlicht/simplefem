@@ -121,7 +121,7 @@ CWARNINGS5.2=-Wabi\
 # CXX = g++
 CXX = clang++-6.0
 
-CXXFLAGS = -std=c++17 -O0 -g -fno-exceptions -pedantic -Wall -Wextra -Wno-unused-variable -Wno-sign-compare -Wno-missing-braces -Wmissing-field-initializers -Werror=implicit
+CXXFLAGS = -std=c++17 -O0 -g -fno-exceptions -fpic -pedantic -Wall -Wextra -Wno-unused-variable -Wno-sign-compare -Wno-missing-braces -Wmissing-field-initializers -Werror=implicit
 
 CPPFLAGS = -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC
 
