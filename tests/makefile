@@ -1,5 +1,5 @@
+SHELL = /bin/sh
 
-# CXX = g++ -O2 -std=c++11 -Wall -Wextra -pedantic
 include ../makefile.rules 
 
 default: all
@@ -53,7 +53,7 @@ basic/sorthack.out: basic/sorthack.cpp $(Includes.basic)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) basic/sorthack.cpp $(Links.basic) -o basic/sorthack.out 
 
 basic/logging.out: basic/logging.cpp $(Includes.basic)
-	$(CC) basic/logging.cpp $(Links.basic) -o basic/logging.out 
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) basic/logging.cpp $(Links.basic) -o basic/logging.out 
 
 basic.tests = basic/sorthack.out basic/logging.out
 
@@ -188,10 +188,10 @@ mesh/2DBisection.out: mesh/2DBisection.cpp $(Includes.mesh)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) mesh/2DBisection.cpp $(Links.mesh) -o mesh/2DBisection.out
 
 mesh/2Dleb.out: mesh/2Dleb.cpp $(Includes.mesh)
-	$(CC) mesh/2Dleb.cpp $(Links.mesh) -o mesh/2Dleb.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) mesh/2Dleb.cpp $(Links.mesh) -o mesh/2Dleb.out
 
 mesh/2Dnvb.out: mesh/2Dnvb.cpp $(Includes.mesh)
-	$(CC) mesh/2Dnvb.cpp $(Links.mesh) -o mesh/2Dnvb.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) mesh/2Dnvb.cpp $(Links.mesh) -o mesh/2Dnvb.out
 
 mesh/midpointrefine.out: mesh/midpointrefine.cpp $(Includes.mesh)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) mesh/midpointrefine.cpp $(Links.mesh) -o mesh/midpointrefine.out
@@ -206,7 +206,7 @@ mesh/3DBisection.out: mesh/3DBisection.cpp $(Includes.mesh)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) mesh/3DBisection.cpp $(Links.mesh) -o mesh/3DBisection.out
 
 mesh/3Dleb.out: mesh/3Dleb.cpp $(Includes.mesh)
-	$(CC) mesh/3Dleb.cpp $(Links.mesh) -o mesh/3Dleb.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) mesh/3Dleb.cpp $(Links.mesh) -o mesh/3Dleb.out
 
 mesh/simplicialND.out: mesh/simplicialND.cpp $(Includes.mesh)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) mesh/simplicialND.cpp $(Links.mesh) -o mesh/simplicialND.out
@@ -240,19 +240,19 @@ vtk/vtkwriter.mesh3D.out: vtk/vtkwriter.mesh3D.cpp $(Includes.vtk)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) vtk/vtkwriter.mesh3D.cpp $(Links.vtk) -o vtk/vtkwriter.mesh3D.out
 
 vtk/vtkwriter.mesh2Dnvb.out: vtk/vtkwriter.mesh2Dnvb.cpp $(Includes.vtk)
-	$(CC) vtk/vtkwriter.mesh2Dnvb.cpp $(Links.vtk) -o vtk/vtkwriter.mesh2Dnvb.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) vtk/vtkwriter.mesh2Dnvb.cpp $(Links.vtk) -o vtk/vtkwriter.mesh2Dnvb.out
 
 vtk/vtkwriter.mesh2Dleb.out: vtk/vtkwriter.mesh2Dleb.cpp $(Includes.vtk)
-	$(CC) vtk/vtkwriter.mesh2Dleb.cpp $(Links.vtk) -o vtk/vtkwriter.mesh2Dleb.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) vtk/vtkwriter.mesh2Dleb.cpp $(Links.vtk) -o vtk/vtkwriter.mesh2Dleb.out
 
 vtk/vtkwriter.mesh2Dur.out: vtk/vtkwriter.mesh2Dur.cpp $(Includes.vtk)
-	$(CC) vtk/vtkwriter.mesh2Dur.cpp $(Links.vtk) -o vtk/vtkwriter.mesh2Dur.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) vtk/vtkwriter.mesh2Dur.cpp $(Links.vtk) -o vtk/vtkwriter.mesh2Dur.out
 
 vtk/vtkwriter.mesh3Dur.out: vtk/vtkwriter.mesh3Dur.cpp $(Includes.vtk)
-	$(CC) vtk/vtkwriter.mesh3Dur.cpp $(Links.vtk) -o vtk/vtkwriter.mesh3Dur.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) vtk/vtkwriter.mesh3Dur.cpp $(Links.vtk) -o vtk/vtkwriter.mesh3Dur.out
 
 vtk/vtkwriter.mesh3Dleb.out: vtk/vtkwriter.mesh3Dleb.cpp $(Includes.vtk)
-	$(CC) vtk/vtkwriter.mesh3Dleb.cpp $(Links.vtk) -o vtk/vtkwriter.mesh3Dleb.out
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) vtk/vtkwriter.mesh3Dleb.cpp $(Links.vtk) -o vtk/vtkwriter.mesh3Dleb.out
 
 vtk.tests = vtk/vtkwriter.mesh1D.out vtk/vtkwriter.mesh2D.out vtk/vtkwriter.mesh2Dnvb.out vtk/vtkwriter.mesh2Dleb.out vtk/vtkwriter.mesh2Dur.out vtk/vtkwriter.mesh3D.out vtk/vtkwriter.mesh3Dur.out vtk/vtkwriter.mesh3Dleb.out
 

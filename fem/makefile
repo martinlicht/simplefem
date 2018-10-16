@@ -1,8 +1,10 @@
+# TODO: This makefile still needs to be written properly
 
-# CXX = g++ -O2 -std=c++11 -Wall -Wextra -pedantic
-include ../makefile.rules 
+SHELL = /bin/sh
 
 default: all
+
+include ../makefile.rules 
 
 
 

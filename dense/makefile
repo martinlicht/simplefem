@@ -1,8 +1,14 @@
-
-# CXX = g++ -O2 -std=c++11 -Wall -Wextra -pedantic
-include ../makefile.rules 
+SHELL = /bin/sh
 
 default: all
+
+objects = densematrix.o readwrite.o functions.o scalarfunctions.o simplesolver.o qr.factorization.o lu.factorization.o cholesky.o matrixtensorproduct.o iterativeinverse.o
+
+all: $(objects)
+
+include ../makefile.rules 
+
+include ../makefile.clean
 
 densematrix.o: densematrix.hpp densematrix.cpp ../operators/floatvector.hpp ../operators/linearoperator.hpp 
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) densematrix.cpp -c -o densematrix.o 
@@ -33,9 +39,3 @@ cholesky.o: cholesky.cpp cholesky.hpp ../operators/floatvector.hpp
 
 iterativeinverse.o: iterativeinverse.cpp iterativeinverse.hpp ../operators/floatvector.hpp
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) iterativeinverse.cpp -c -o iterativeinverse.o 
-
-objects = densematrix.o readwrite.o functions.o scalarfunctions.o simplesolver.o qr.factorization.o lu.factorization.o cholesky.o matrixtensorproduct.o iterativeinverse.o
-
-all: $(objects)
-
-include ../makefile.clean

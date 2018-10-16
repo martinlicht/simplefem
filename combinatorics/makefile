@@ -1,10 +1,14 @@
-
-# CXX = g++ -O2 -std=c++11 -Wall -Wextra -pedantic
-include ../makefile.rules 
+SHELL = /bin/sh
 
 default: all
 
+objects = indexrange.o indexmap.o multiindex.o generateindexmaps.o generatemultiindices.o heappermgen.o
 
+all: $(objects) 
+
+include ../makefile.rules 
+
+include ../makefile.clean
 
 indexrange.o: indexrange.hpp indexrange.cpp 
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) indexrange.cpp -c -o indexrange.o 
@@ -23,13 +27,3 @@ generatemultiindices.o: generatemultiindices.hpp generatemultiindices.cpp
 
 heappermgen.o: heappermgen.hpp heappermgen.cpp 
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) heappermgen.cpp -c -o heappermgen.o 
-
-objects = indexrange.o indexmap.o multiindex.o generateindexmaps.o generatemultiindices.o heappermgen.o
-
-    
-    
-
-    
-all: $(objects) 
-
-include ../makefile.clean

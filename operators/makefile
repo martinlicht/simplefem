@@ -1,8 +1,14 @@
-
-# CXX = g++ -O2 -std=c++11 -Wall -Wextra -pedantic
-include ../makefile.rules 
+SHELL = /bin/sh
 
 default: all
+
+objects = floatvector.o io.floatvector.o linearoperator.o productoperator.o sumoperator.o scalingoperator.o diagonaloperator.o blockdiagonaloperator.o blockoperator.o 
+
+all: $(objects) 
+
+include ../makefile.rules 
+
+include ../makefile.clean
 
 floatvector.o: floatvector.hpp floatvector.cpp 
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) floatvector.cpp -c -o floatvector.o 
@@ -30,14 +36,3 @@ blockdiagonaloperator.o: blockdiagonaloperator.hpp blockdiagonaloperator.cpp flo
 
 blockoperator.o: blockoperator.hpp blockoperator.cpp floatvector.hpp linearoperator.hpp
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) blockoperator.cpp -c -o blockoperator.o 
-
-
-
-objects = floatvector.o io.floatvector.o linearoperator.o productoperator.o sumoperator.o scalingoperator.o diagonaloperator.o blockdiagonaloperator.o blockoperator.o 
-
-
-
-all: $(objects) 
-
-include ../makefile.clean
-
