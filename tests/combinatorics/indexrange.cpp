@@ -22,7 +22,6 @@ int main()
           
           assert( irE.isempty() );
           assert( irE.cardinality() == 0 );
-          assert( irE.cardinality() );
           
           for( int i : irE )
             cout << "Output :" << i << endl;

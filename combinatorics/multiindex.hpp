@@ -24,30 +24,47 @@ class MultiIndex
                 MultiIndex( const IndexRange& ir, const std::vector<int>& );
                 
                 void check() const;
+
                 void print( std::ostream&, bool embellish = false ) const;
                 
                 IndexRange getIndexRange() const;
+
+                const std::vector<int>& getvalues() const;
+        
+                
                 const int& at(int) const;
+
                 int& at(int);
+
                 const int& operator[](int) const;
+
                 int& operator[](int);
                 
+
                 int absolute() const;
+
                 int factorial() const;
                 
+
                 void add( int );
+
                 void sub( int );
                 
                 void add( const MultiIndex& );
+
                 void sub( const MultiIndex& );
                 
+
                 bool comparablewith( const MultiIndex& ) const;
+
                 bool less( const MultiIndex& ) const;
+
                 bool equals( const MultiIndex& ) const;
                 
         private:
 
                 IndexRange range;
+                
                 std::vector<int> values;
                 
 };
@@ -62,42 +79,34 @@ inline std::ostream& operator<<( std::ostream& os, const MultiIndex& mi )
         return os;
 }
 
-inline MultiIndex operator+=( const MultiIndex& left, int right )
+inline MultiIndex& operator+=( MultiIndex& left, int right )
 {
         left.check();
-        MultiIndex ret = left;
-        ret.add( right );
-        ret.check();
-        return ret;
+        left.add( right );
+        return left;
 }
 
-inline MultiIndex operator-=( const MultiIndex& left, int right )
+inline MultiIndex& operator-=( MultiIndex& left, int right )
 {
         left.check();
-        MultiIndex ret = left;
-        ret.sub( right );
-        ret.check();
-        return ret;
+        left.sub( right );
+        return left;
 }
 
-inline MultiIndex operator+=( const MultiIndex& left, const MultiIndex& right )
+inline MultiIndex& operator+=( MultiIndex& left, const MultiIndex& right )
 {
         left.check();
         right.check();
-        MultiIndex ret = left;
-        ret.add( right );
-        ret.check();
-        return ret;
+        left.add( right );
+        return left;
 }
 
-inline MultiIndex operator-=( const MultiIndex& left, const MultiIndex& right )
+inline MultiIndex& operator-=( MultiIndex& left, const MultiIndex& right )
 {
         left.check();
         right.check();
-        MultiIndex ret = left;
-        ret.sub( right );
-        ret.check();
-        return ret;
+        left.sub( right );
+        return left;
 }
 
 

@@ -43,10 +43,12 @@ IndexMap::IndexMap( const IndexRange& range, const std::function<int(int)>& gene
 }
 
 IndexMap::IndexMap( const IndexRange& from, const IndexRange& to, const std::function<int(int)>& generator )
-: src(from), dest(to), values( std::max( src.max() - src.min() + 1, 0 ), to.min() )
+: src(from), dest(to), values()
 {
+    values.reserve( std::max( src.max() - src.min() + 1, 0 ) );
     for( int e = src.min(); e <= src.max(); e++ )
-        values.at( src.element2position(e) ) = generator(e);
+//         values.at( src.element2position(e) ) = generator(e);
+        values.emplace_back( generator(e) );
     check();
 }
 

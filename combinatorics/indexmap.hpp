@@ -22,13 +22,6 @@
 class IndexMap
 {
     
-    private:
-        
-        IndexRange src;
-        IndexRange dest;
-        
-        std::vector<int> values;
-        
     public:
         
         explicit IndexMap( const IndexRange& );
@@ -41,35 +34,61 @@ class IndexMap
         IndexMap( const IndexRange&, const IndexRange&, const std::function<int(int)>& );
         IndexMap( const IndexRange&, const IndexRange&, const std::initializer_list<int>& );
         
+        IndexMap() = delete;
+        IndexMap( const IndexMap& ) = default;
+        IndexMap& operator =( const IndexMap& ) = default;
+        IndexMap( IndexMap&& ) = default;
+        IndexMap& operator =( IndexMap&& ) = default;
+        ~IndexMap() = default;
+        
         void check() const;
+        
         void print( std::ostream&, bool embellish = false ) const;
         
         const IndexRange& getSourceRange() const;
+        
         const IndexRange& getDestRange() const;
         
+        
         bool isempty() const;
+        
         bool isinjective() const;
+        
         bool issurjective() const;
+        
         bool isbijective() const;
+        
         bool isstrictlyascending() const;
         
+        
         int& at( int i );
+        
         const int& at( int i ) const;
+        
         int& operator[]( int i );
+        
         const int& operator[]( int i ) const;
+        
         const std::vector<int>& getvalues() const;
+                
+        bool rangecontains( int value ) const;
         
-//         IndexMap inverse() const;
+        int rangeposition( int value ) const;
         
-//         IndexMap skip( int ) const;
-//         IndexMap attachbefore( int ) const;
         
-        bool rangecontains( int ) const;
-        int rangeposition( int ) const;
         
         bool comparablewith( const IndexMap& ) const;
+        
         bool equals( const IndexMap& ) const;
+        
         bool less( const IndexMap& ) const;
+    
+    private:
+        
+        IndexRange src;
+        IndexRange dest;
+        
+        std::vector<int> values;
         
 };
 

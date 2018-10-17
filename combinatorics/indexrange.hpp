@@ -26,17 +26,26 @@ class IndexRange
         IndexRange( int from, int to );
         
         void check() const;
+        
         void print( std::ostream&, bool embellish = false ) const;
         
+        
         int min() const;
+        
         int max() const;
+        
         int cardinality() const;
         
         bool isempty() const;
+        
         bool contains( int element ) const;
+        
         bool contains( const IndexRange& subir ) const;
-        bool compare( const IndexRange&  ) const;
+        
+        bool compare( const IndexRange& ir ) const;
+        
         int element2position( int element ) const;
+        
         int position2element( int position ) const;
         
         /* For each semantics */ 

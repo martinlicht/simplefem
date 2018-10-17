@@ -12,7 +12,7 @@
 
 
 MultiIndex::MultiIndex( const IndexRange& ir )
-: range(ir), values( ir.cardinality() )
+: range(ir), values( ir.cardinality(), 0 )
 {
     check();
 }
@@ -28,7 +28,7 @@ void MultiIndex::check() const
 {
     range.check();
     assert( range.cardinality() == values.size() );
-    for( int p = range.min(); p <= range.max(); p++ )
+    for( int p : range )
         assert( values.at( range.element2position(p) ) >= 0 );
 }
 
@@ -46,6 +46,15 @@ IndexRange MultiIndex::getIndexRange() const
     check();
     return range;
 }
+
+const std::vector<int>& MultiIndex::getvalues() const
+{
+    check();
+    return values;
+}
+        
+
+
 
 
 
@@ -109,6 +118,7 @@ void MultiIndex::add( int p )
 {
     check();
     assert( range.contains(p) );
+    assert( 0 <= range.element2position(p) && range.element2position(p) < values.size() );
     values[ range.element2position(p) ]++;
 }
 
@@ -116,6 +126,8 @@ void MultiIndex::sub( int p )
 {
     check();
     assert( range.contains(p) );
+    assert( 0 <= range.element2position(p) && range.element2position(p) < values.size() );
+    assert( values.at( range.element2position(p) ) >= 0 );
     values[ range.element2position(p) ]--;
 }
 
