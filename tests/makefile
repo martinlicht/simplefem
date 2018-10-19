@@ -12,6 +12,7 @@ Objects.sparse = ../sparse/*.o
 Objects.solver = ../solver/*.o
 Objects.mesh = ../mesh/*.o
 Objects.vtk = ../vtk/*.o
+Objects.matrixmarket = ../matrixmarket/*.o
 
 Headers.basic = ../basic/*.hpp
 Headers.combinatorics = ../combinatorics/*.hpp
@@ -21,6 +22,7 @@ Headers.sparse = ../sparse/*.hpp
 Headers.solver = ../solver/*.hpp
 Headers.mesh = ../mesh/*.hpp
 Headers.vtk = ../vtk/*.hpp
+Headers.matrixmarket = ../matrixmarket/*.hpp
 
 Includes.basic = $(Headers.basic) $(Objects.basic) 
 Includes.combinatorics = $(Headers.combinatorics) $(Objects.combinatorics) 
@@ -30,6 +32,7 @@ Includes.sparse = $(Headers.sparse) $(Objects.sparse) $(Includes.operators)
 Includes.solver = $(Headers.solver) $(Objects.solver) $(Includes.operators)
 Includes.mesh = $(Headers.mesh) $(Objects.mesh) $(Objects.combinatorics) $(Includes.operators)
 Includes.vtk = $(Headers.vtk) $(Objects.vtk) $(Includes.mesh)
+Includes.matrixmarket = $(Headers.matrixmarket) $(Objects.matrixmarket)
 
 Links.basic         = $(Objects.basic) 
 Links.combinatorics = $(Objects.combinatorics) 
@@ -39,10 +42,11 @@ Links.sparse        = $(Objects.sparse) $(Objects.operators)
 Links.solver        = $(Objects.solver) $(Objects.operators)
 Links.mesh          = $(Objects.mesh) $(Objects.combinatorics) $(Objects.operators) $(Objects.dense) $(Objects.sparse) 
 Links.vtk           = $(Objects.vtk) $(Objects.mesh) $(Objects.dense) $(Objects.sparse) $(Objects.combinatorics) $(Objects.operators)
+Links.matrixmarket  = $(Objects.matrixmarket) 
 
 
-Objects = ../basic/*.o ../combinatorics/*.o ../operators/*.o ../dense/*.o ../sparse/*.o ../solver/*.o ../mesh/*.o ../vtk/*.o
-Headers = ../basic/*.hpp ../combinatorics/*.hpp ../operators/*.hpp ../dense/*.hpp ../sparse/*.hpp ../solver/*.hpp ../mesh/*.hpp ../vtk/*.hpp
+Objects = ../basic/*.o ../combinatorics/*.o ../operators/*.o ../dense/*.o ../sparse/*.o ../solver/*.o ../mesh/*.o ../vtk/*.o ../matrixmarket/*.o
+Headers = ../basic/*.hpp ../combinatorics/*.hpp ../operators/*.hpp ../dense/*.hpp ../sparse/*.hpp ../solver/*.hpp ../mesh/*.hpp ../vtk/*.hpp ../matrixmarket/*.hpp
 
 Includes = $(Headers) $(Objects) 
 
@@ -258,6 +262,14 @@ vtk.tests = vtk/vtkwriter.mesh1D.out vtk/vtkwriter.mesh2D.out vtk/vtkwriter.mesh
 
 
 
+matrixmarket/mm.out: matrixmarket/mm.cpp $(Includes.matrixmarket)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) matrixmarket/mm.cpp $(Links.matrixmarket) -o matrixmarket/mm.out
+
+matrixmarket.tests = matrixmarket/mm.out
+
+
+
+
 
 
 test.compiler.out: test.compiler.cpp 
@@ -268,7 +280,7 @@ test.container.out: test.container.cpp
 
 
 
-all: test.compiler.out $(basic.tests) $(combinatorics.tests) $(operators.tests) $(dense.tests) $(mesh.tests) $(vtk.tests) 
+all: test.compiler.out $(basic.tests) $(combinatorics.tests) $(operators.tests) $(dense.tests) $(mesh.tests) $(vtk.tests) $(matrixmarket.tests) 
 
 # $(sparse.tests) $(solver.tests)
 

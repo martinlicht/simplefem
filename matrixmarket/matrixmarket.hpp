@@ -23,81 +23,49 @@
 namespace MatrixMarket
 {
 
-  namespace Consts
-  {
-      
-      std::string str_magicstring = "%%MatrixMarket";
+    namespace Consts
+    {
+        
+        const std::string str_magicstring = "%%MatrixMarket";
 
-      std::string str_matrix     = "matrix";
-      
-      std::string str_array      = "array";
-      std::string str_dense      = "array";
-      std::string str_coordinate = "coordinate";
-      std::string str_sparse     = "coordinate";
-      
-      std::string str_complex    = "complex";
-      std::string str_real       = "real";
-      std::string str_integer    = "integer";
-      std::string str_pattern    = "pattern";
-      
-      std::string str_general    = "general";
-      std::string str_symmetric  = "symmetric";
-      std::string str_skew       = "skew-symmetric";
-      std::string str_hermitian  = "hermitian";
-      
-  }
-
-
-  class Banner
-  {
-      
-      public:
-          
-          Banner();
-
-          void check() const;
-          void print( std::ostream& ) const;
-          
-          enum class objecttype    { undefined, matrix };
-          enum class matrixformat  { undefined, sparse, dense };
-          enum class entrytype     { undefined, complex, real, pattern, integer };
-          enum class matrixfeature { undefined, general, symmetric, skew, hermitian };
-          
-          bool isvalid() const;
-          bool issupported() const;
-          bool isdense() const;
-          bool issparse() const;
-          
-          bool read( std::istream& );
-          
-      private:
-
-          objecttype    myobjecttype;
-          matrixformat  mymatrixformat;
-          entrytype     myentrytype;
-          matrixfeature mymatrixfeature;
-          
-  };
+        const std::string str_matrix     = "matrix";
+        
+        const std::string str_array      = "array";
+        const std::string str_dense      = "array";
+        const std::string str_coordinate = "coordinate";
+        const std::string str_sparse     = "coordinate";
+        
+        const std::string str_complex    = "complex";
+        const std::string str_real       = "real";
+        const std::string str_integer    = "integer";
+        const std::string str_pattern    = "pattern";
+        
+        const std::string str_general    = "general";
+        const std::string str_symmetric  = "symmetric";
+        const std::string str_skew       = "skew-symmetric";
+        const std::string str_hermitian  = "hermitian";
+        
+    }
 
 
-
-  Banner      ReadBanner( std::istream& );
-
-  
-  
-//   Banner      ReadDenseMatrixBanner ( std::istream& );
-//   void        ReadDenseMatrixHeader ( const std::istream&, int& numrows, int& numcols );
-//   DenseMatrix ReadDenseMatrixData   ( const std::istream& );
-// 
-//   void WriteDenseMatrixBanner( std::ostream& );
-//   void WriteDenseMatrixHeader( std::ostream&, const DenseMatrix& );
-//   void WriteDenseMatrixData  ( std::ostream&, const DenseMatrix& );
-// 
-//   void WriteComment();
-  
-  
-  
-  
+    enum class objecttype    { undefined, matrix };
+    enum class matrixformat  { undefined, sparse, dense };
+    enum class entrytype     { undefined, complex, real, pattern, integer };
+    enum class matrixfeature { undefined, general, symmetric, skew, hermitian };
+    
+    
+    
+    struct MatrixMarketEntry
+    {
+        int row;
+        int column;
+        double value;
+    };
+    
+    void Read( std::istream& input, int& rows, int& columns, std::vector<MatrixMarketEntry>& entries );
+    
+    void WriteSparse( std::ostream& output, const int& rows, const int& columns, const std::vector<MatrixMarketEntry>& entries, std::string comment = "" );
+    
 }
   
   

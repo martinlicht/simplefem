@@ -8,6 +8,7 @@ default:
 	cd ./solver && $(MAKE) 
 	cd ./mesh && $(MAKE) 
 	cd ./vtk && $(MAKE)
+	cd ./matrixmarket && $(MAKE)
 	cd ./tests && $(MAKE)
 	echo "finished building." 
 
@@ -19,6 +20,7 @@ clean:
 	cd ./solver && $(MAKE) clean
 	cd ./mesh && $(MAKE) clean
 	cd ./vtk && $(MAKE) clean
+	cd ./matrixmarket && $(MAKE) clean
 	cd ./tests && $(MAKE) clean
 	$(MAKE) -f makefile.clean clean
 	@echo "finished cleaning." 
