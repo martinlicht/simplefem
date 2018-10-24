@@ -89,13 +89,13 @@ void IndexMap::print( std::ostream& os, bool embellish ) const
 {
     if( embellish ) {
         os << "From" << std::endl << getSourceRange();
-        os << "To" << std::endl << getDestRange();
-        for( int i = getSourceRange().min(); i <= getSourceRange().max(); i++ )
-            os << i << " -> " << values.at( i - src.min() ) << std::endl;
+        os << "To"   << std::endl << getDestRange();
+        for( int i : getSourceRange() )
+            os << i << " -> " << at( i ) << std::endl;
     } else {
         os << getSourceRange() << " " << getDestRange();
-        for( int i = getSourceRange().min(); i <= getSourceRange().max(); i++ )
-            os << " " << values.at( i - src.min() );
+        for( int i : getSourceRange() )
+            os << " " << at( i );
     }
 }
 

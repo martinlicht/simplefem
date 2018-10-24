@@ -6,6 +6,7 @@
 #include <iostream>
 #include "../basic.hpp"
 #include "indexrange.hpp"
+#include "indexmap.hpp"
 
 
 /********************
@@ -16,6 +17,7 @@
 ********************/
 
 class MultiIndex
+: public IndexMap
 {
 
         public:
@@ -32,13 +34,13 @@ class MultiIndex
                 const std::vector<int>& getvalues() const;
         
                 
-                const int& at(int) const;
-
-                int& at(int);
-
-                const int& operator[](int) const;
-
-                int& operator[](int);
+//                 const int& at(int) const;
+// 
+//                 int& at(int);
+// 
+//                 const int& operator[](int) const;
+// 
+//                 int& operator[](int);
                 
 
                 int absolute() const;
@@ -49,6 +51,10 @@ class MultiIndex
                 void add( int );
 
                 void sub( int );
+                
+                void add( int, int );
+
+                void sub( int, int );
                 
                 void add( const MultiIndex& );
 
@@ -61,11 +67,11 @@ class MultiIndex
 
                 bool equals( const MultiIndex& ) const;
                 
-        private:
-
-                IndexRange range;
-                
-                std::vector<int> values;
+//         private:
+// 
+//                 IndexRange range;
+//                 
+//                 std::vector<int> values;
                 
 };
 

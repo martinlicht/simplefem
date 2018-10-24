@@ -43,7 +43,7 @@ class IndexMap
         
         void check() const;
         
-        void print( std::ostream&, bool embellish = false ) const;
+        void print( std::ostream&, bool embellish = true ) const;
         
         const IndexRange& getSourceRange() const;
         

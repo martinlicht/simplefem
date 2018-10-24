@@ -39,7 +39,7 @@ std::vector<MultiIndex> generateMultiIndices( const IndexRange& ir, int degree )
         int candidate_copy = candidate;
         
         for( int i = min_index; i <= max_index; i++ ) {
-            mi_candidate[ i ] = candidate_copy % ( degree+1 );
+            mi_candidate.at( i ) = candidate_copy % ( degree+1 );
             candidate_copy /= degree+1;
         }
         

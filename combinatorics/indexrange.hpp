@@ -117,9 +117,9 @@ inline std::ostream& operator<<( std::ostream& os, const IndexRange& ir )
     return os;
 }
 
-// static const IndexRange  NonNegativeIntegers = IndexRange( 0, std::numeric_limits<int>::max()-1 );
-// 
-// static const IndexRange  PositiveIntegers = IndexRange( 1, std::numeric_limits<int>::max()-1 );
+static const IndexRange  NonNegativeIntegers = IndexRange( 0, std::numeric_limits<int>::max()-10 );
+
+static const IndexRange  PositiveIntegers = IndexRange( 1, std::numeric_limits<int>::max()-10 );
 // 
 // inline IndexRange operator|( const IndexRange& left, const IndexRange& right )
 // {

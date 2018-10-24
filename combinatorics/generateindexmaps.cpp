@@ -10,6 +10,8 @@
 #include "indexmap.hpp"
 
 
+
+
 std::vector<IndexMap> 
 generateEmptyMap( const IndexRange& from, const IndexRange& to )
 {
@@ -26,6 +28,9 @@ generateEmptyMap( const IndexRange& from, const IndexRange& to )
     return ret;
     
 }
+
+
+
 
 
 std::vector<IndexMap> 
@@ -57,7 +62,7 @@ generateIndexMaps( const IndexRange& from, const IndexRange& to )
               it_clone /= to.cardinality();
           }
 
-          ret.push_back( IndexMap( from, to, values ) );
+          ret.emplace_back( from, to, values );
           
         }
         
@@ -67,6 +72,16 @@ generateIndexMaps( const IndexRange& from, const IndexRange& to )
         return ret;
         
 }
+
+
+
+
+
+
+
+
+
+
 
 std::vector<IndexMap> 
 generatePermutations( const IndexRange& ir )
@@ -81,14 +96,7 @@ generatePermutations( const IndexRange& ir )
         for( const auto& mapping : allmappings )
           if( mapping.isbijective() )
             ret.push_back( mapping );
-        
-//         std::vector<IndexMap> ret( factorial( ir.cardinality() ), IndexMap(ir) );
-//         
-//         std::vector<IndexMap>
-//         std::copy_if( allmappings.begin(), allmappings.end(), ret.begin(),
-//                 []( const IndexMap& im ) -> bool { return im.isbijective(); }
-//                 );
-        
+                
         for( const auto& perm : ret )
             assert( (perm.check(),true) && perm.isbijective() );
         
@@ -123,6 +131,14 @@ int signPermutation( const IndexMap& im )
     
 }
 
+
+
+
+
+
+
+
+
 std::vector<IndexMap> 
 generateSigmas( const IndexRange& from, const IndexRange& to )
 {
@@ -138,13 +154,7 @@ generateSigmas( const IndexRange& from, const IndexRange& to )
         for( const auto& mapping : allmappings )
           if( mapping.isstrictlyascending() )
             ret.push_back( mapping );
-        
-//         std::vector<IndexMap> ret( , IndexMap(from,to) );
-//         
-//         std::copy_if( allmappings.begin(), allmappings.end(), ret.begin(),
-//                 []( const IndexMap& im ) -> bool { return im.isstrictlyascending(); }
-//                 );
-        
+                
         for( const auto& sigma : ret )
             assert( (sigma.check(),true) && sigma.isstrictlyascending() );
         

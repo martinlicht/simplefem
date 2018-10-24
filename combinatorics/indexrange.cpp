@@ -8,6 +8,7 @@
 IndexRange::IndexRange( int from, int to )
 : minimum(from), maximum(to)
 {
+  if( minimum > maximum ) maximum = minimum - 1;
   check();
 }
 
