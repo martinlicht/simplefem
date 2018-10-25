@@ -24,7 +24,9 @@ class MultiIndex
         
                 explicit MultiIndex( const IndexRange& ir );
                 MultiIndex( const IndexRange& ir, const std::vector<int>& );
-                
+                MultiIndex( const IndexRange&, const std::function<int(int)>& );
+                MultiIndex( const IndexRange&, const std::initializer_list<int>& );
+        
                 void check() const;
 
                 void print( std::ostream&, bool embellish = false ) const;

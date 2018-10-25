@@ -25,8 +25,18 @@ MultiIndex::MultiIndex( const IndexRange& ir, const std::vector<int>& vals )
 }
 
 
-// IndexMap( const IndexRange&, const std::function<int(int)>& );
-// IndexMap( const IndexRange&, const std::initializer_list<int>& );
+MultiIndex::MultiIndex( const IndexRange& ir, const std::function<int(int)>& generator )
+: IndexMap( ir, generator )
+{
+    check();
+}
+
+
+MultiIndex::MultiIndex( const IndexRange& ir, const std::initializer_list<int>& il )
+: IndexMap( ir, il )
+{
+    check();
+}
         
 
 
