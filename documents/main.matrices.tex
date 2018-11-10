@@ -1,0 +1,64 @@
+\documentclass[letterpaper,10pt,draft]{amsart}
+% \usepackage[utf8]{inputenc}         % or whatever you use
+% \usepackage[T2A,T1]{fontenc}
+% \usepackage[square,sort,comma,numbers]{natbib}
+
+
+% % % 
+% % % Flag that everything is compiled for thesis itself 
+% % % 
+\def \projectcompilation {test}
+
+\input{proj.hyphenation}
+\input{proj.headercore}
+\input{proj.mathletterstyles}
+
+
+\begin{document}
+
+\title
+[Bases FEEC]
+{Construction of Matrices in FEEC}
+
+\author{Martin W. Licht}
+
+\address{UCSD Department of Mathematics, 9500 Gilman Drive MC0112, La Jolla, CA 92093-0112, USA}
+
+\email{mlicht@math.ucsd.edu}
+
+\thanks{
+This research was supported in part by NSF DMS/RTG Award 1345013 and DMS/CM Award 1262982.
+Parts of this article are based on the author's PhD Thesis.}
+
+\subjclass[2010]{65N30}
+
+\keywords{barycentric differential form, canonical spanning sets, degrees of freedom, finite element exterior calculus, geometrically decomposed bases}
+
+
+\begin{abstract}
+ THis informal document describes the construction of finite element matrices 
+ in the contex to finite element exterior calculus.
+ We consider the mass matrix, derivative and trace matrices,
+ and some auxiliary constructions.
+ % 
+\end{abstract}
+
+\maketitle 
+
+\section{Global to Local Matrix}
+
+Whitney forms are associated to subsimplices of the triangulation. 
+Furthermore, boundary conditions are imposed by filtering out certain subsimplices.
+We define the matrix which maps the continuous space of Whitney forms
+to the broken space of piecewise Whitney forms.
+
+
+
+
+
+
+  \bibliographystyle{siam}
+  \bibliography{library}
+
+  
+\end{document}
