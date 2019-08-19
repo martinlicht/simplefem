@@ -8,7 +8,10 @@
 IndexRange::IndexRange( int from, int to )
 : minimum(from), maximum(to)
 {
-  if( minimum > maximum ) maximum = minimum - 1;
+  
+  if( minimum > maximum ) 
+      maximum = minimum - 1;
+  
   check();
 }
 
@@ -34,19 +37,22 @@ void IndexRange::print( std::ostream& os, bool embellish ) const
 int IndexRange::min() const
 {
     check();
+    assert( !isempty() );
     return minimum;
 }
 
 int IndexRange::max() const
 {
     check();
+    assert( !isempty() );
     return maximum;
 }
 
 int IndexRange::cardinality() const
 {
     check();
-    return std::max( 0, maximum - minimum + 1 );
+    assert( std::max( 0, maximum - minimum + 1 ) == maximum - minimum + 1 );
+    return maximum - minimum + 1;
 }
 
 bool IndexRange::isempty() const
@@ -65,14 +71,26 @@ bool IndexRange::contains( const IndexRange& subir ) const
 {
     check();
     subir.check();
-    return minimum <= subir.minimum && subir.maximum <= maximum;
+    
+    if( subir.isempty() )
+        return true;
+    else if( isempty() )
+        return false;
+    else
+        return minimum <= subir.minimum && subir.maximum <= maximum;
 }
 
 bool IndexRange::compare( const IndexRange& other ) const
 {
     check();
     other.check();
-    return this->minimum == other.minimum && this->maximum == other.maximum;
+    
+    if( isempty() )
+        return other.isempty();
+    else if( other.isempty() )
+        return false;
+    else
+        return this->minimum == other.minimum && this->maximum == other.maximum;
 }
 
 int IndexRange::element2position( int i ) const
@@ -85,6 +103,7 @@ int IndexRange::element2position( int i ) const
 int IndexRange::position2element( int i ) const
 {
     check();
+    assert( !isempty() );
     assert( 0 <= i && i <= maximum - minimum );
     int ret = i + minimum;
     assert( contains(ret) );
