@@ -1,4 +1,7 @@
+Doxyfile
+Dox
 playground/
+private/
 *.exe
 *.stackdump
 *.opensdf
@@ -10,6 +13,7 @@ playground/
 .vs/*
 *.future
 *.gch
+*.desktop
 *.elf
 *.mesh2d
 *.gz

@@ -70,7 +70,7 @@ int main()
         
         cout << "Injection" << endl;
         
-        IndexMap inj( irB, irA );
+        IndexMap inj( irB, irA, {2,3,4} );
         inj[3] = 2; inj[4] = 3; inj[5] = 4;
         
         inj.check();
@@ -83,7 +83,7 @@ int main()
         
         cout << "Surjection" << endl;
         
-        IndexMap sur( irD, irB );
+        IndexMap sur( irD, irB, {4,3,5,4,3,5,6,3} );
         sur[0] = 4; sur[1] = 3; sur[2] = 5; sur[3] = 4;
         sur[4] = 3; sur[5] = 5; sur[6] = 4; sur[7] = 3;
 
@@ -97,7 +97,7 @@ int main()
         const IndexMap prod = inj * sur;
         cout << inj << sur << prod << endl;
         
-        IndexMap test( irD, irA );
+        IndexMap test( irD, irA, {3,2,4,3,2,4,3,2} );
         test[0] = 3; test[1] = 2; test[2] = 4; test[3] = 3;
         test[4] = 2; test[5] = 4; test[6] = 3; test[7] = 2;
         

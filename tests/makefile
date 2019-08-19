@@ -59,7 +59,10 @@ basic/sorthack.out: basic/sorthack.cpp $(Includes.basic)
 basic/logging.out: basic/logging.cpp $(Includes.basic)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) basic/logging.cpp $(Links.basic) -o basic/logging.out 
 
-basic.tests = basic/sorthack.out basic/logging.out
+basic/fixedarray.out: basic/fixedarray.cpp $(Includes.basic)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) basic/fixedarray.cpp $(Links.basic) -o basic/fixedarray.out 
+
+basic.tests = basic/sorthack.out basic/logging.out basic/fixedarray.out
 
 
 
