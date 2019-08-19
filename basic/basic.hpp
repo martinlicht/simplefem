@@ -21,7 +21,8 @@ static const char nl = '\n';
 
 static const char tab = '\t';
 
-inline int kronecker( int i, int j )
+template<typename T>
+inline int kronecker( T i, T j )
 {
     if( i == j )
         return 1;
@@ -78,6 +79,17 @@ T binomial( const T& n, const T& k )
     assert( 0 <= k && k <= n );
     return factorial(n) / ( factorial(k) * factorial(n-k) );
 }
+
+
+template<typename T>
+static inline T power( T base, T exponent )
+{
+    assert( base != 0 );
+    assert( exponent >= 0 );
+    if( exponent == 0 ) return 1;
+    return base * integerpower( base, exponent - 1 );
+}
+
 
 
 static inline int integerpower( int base, int exponent )
