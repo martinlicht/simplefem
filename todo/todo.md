@@ -3,6 +3,76 @@
 
 # TODO long term and comprehensively
 
+
+## Matrix Market
+
+Make Matrix market subdirectory fly.
+Add unit tests, then use a solver for a unit test. 
+
+## Global Index Type
+
+Replace any occurence of 'int' by a user-defined type 'Index'.
+That type should be large enough for your purposes 
+and compatible with the STL standard library.
+For example,
+    typedef std::size_t Index;
+
+## add complete constructor interfaces 
+
+Apply the rule of six and declare all constructors explicitly
+even if merely setting them to default. 
+
+## Add Header files 
+
+All targets should depend on the corresponding header files as well.
+
+## LICENSE File
+
+Include a license file into your software.
+
+## README File
+
+Include a readme file into your software.
+
+## Separate build and tests targets 
+
+Introduce two different targets, one for building 
+the object files and libraries, and the other for 
+building the test files 
+
+all: build tests
+
+## Redesign source code organization: library files 
+
+The compilation should place no temporary or output files 
+in the source directories. Instead, all output should be 
+put into a designated 'build' directory.
+
+The different source directories should specify
+the various makefile rules but otherwise not specify anything.
+In particular, no cleaning is necessary in those directories.
+
+The makefile in each source directory
+puts its output into the common build directory.
+
+There is only one cleaning command for the entire build directory.
+
+## Redesign source code organization: test files 
+
+The test codes are maintained in the source directory
+but the programs are put into the same directory.
+
+## Makefile with implicit rules 
+
+The makefile has implicit rules for cpp files
+which can greatly simplify the entire make process.
+So we may replace the handwritten rules 
+by the implicitly defined rules in many cases. 
+We merely need to specify the compiler flags.
+
+
+
+
 ## Clean out cout references throughout code 
 
 grep 'cout' ./*/*.?pp 
@@ -55,6 +125,10 @@ You can then extend the stream wrappers at a later stage
 
 Agree to a common style for the unit tests 
 
+## Container template 
+
+Flesh out the container template and maybe put it out on code review.
+
 ## Unit test file organization 
 
 Restructure the unit test directory such that 
@@ -75,6 +149,32 @@ and add the necessary configuration files
 
 Once the logging abstraction has been completed 
 enhance the logger with different functionality.
+
+
+## Reduce dense matrix module to core functionality 
+
+It suffices to have the core functions for dense linear algebra 
+present in this module. Perhaps the matrix I/O should be externalized?
+Definitely the dense linear algebra IO should be solely string-based
+and not assume specifics about the module.
+
+
+## DONE
+
+### Operators as non-member functions
+
+Check the classes for member operator functions.
+Except for some particular special cases, 
+= () [] ->
+we can and should turn them into non-member operators.
+
+
+
+
+
+
+
+
 
 
 
@@ -183,12 +283,6 @@ Test every single functionality for its accuracy.
     
     
     
-  
-  ************* General layout: 
-  
-  - Reduce dense matrix module to the core functions of dense matrices
-  - Module for Matrix I/O 
-
 
 
 

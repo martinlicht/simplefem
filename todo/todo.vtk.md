@@ -1,9 +1,11 @@
-  
-  
-  VTK OUTPUT 
-  
-  VTK is treated as a pure output format for the time being.
-  
+
+
+#  VTK OUTPUT 
+
+The general philosophy of the VTK module 
+is to treat VTK as an output format alone. 
+
+
   o improved VTK output
     - output the header information
     - output meshes 

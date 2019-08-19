@@ -1,6 +1,11 @@
   
   
-  ************* Mesh
+# Mesh module
+
+The mesh module provides an abstract base class for the management of meshes
+and several implementations 
+
+
   - Mesh
     - manifold 2D
     - manifold 3D
