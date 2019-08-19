@@ -28,9 +28,12 @@ class LinearOperator
         virtual ~LinearOperator();
         
         int getdimin() const;
+
         int getdimout() const;
         
+
         virtual void check() const;
+
         virtual void print( std::ostream& os ) const;
         
         /* Apply the operator */

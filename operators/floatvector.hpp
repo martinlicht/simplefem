@@ -32,65 +32,194 @@ class FloatVector
         FloatVector( const std::vector<Float>&, Float scaling = 1. );
         
         FloatVector( int dimension, const std::function<Float(int)>& generator, Float scaling = 1. );
+
         // virtual ~FloatVector();
         
         FloatVector& operator=( const FloatVector& vec );
 
+
         void check() const;
         
         void print( std::ostream& ) const;
+        
         void printplain( std::ostream& ) const;
+        
         
         /* information and data access */
         
         int getdimension() const;
         
         Float setentry( int, Float );
+        
         Float getentry( int ) const;
         
         Float& at( int );
+        
         const Float& at( int ) const;
+        
         Float& operator[]( int );
+        
         const Float& operator[]( int ) const;
         
         const std::vector<Float>& getdata() const;
         
+        
         /* basic manipulation */
         
         void zero();
+        
         void random();
+        
         void scale( Float );
+        
         
         /* slices */
         
         FloatVector getslice( int, int ) const;
+        
         void setslice( int, const FloatVector& );
+        
         void addslice( int, const FloatVector&, Float );
+        
         
         /* arithmetics and assignments */
         
         void copydatafrom( const FloatVector& );
+        
         void copydatafrom( Float, const FloatVector& );
         
+        
         void generatedatafrom( const std::function<Float(int)>& );
+        
         void generatedatafrom( Float, const std::function<Float(int)>& );
         
+        
         void adddatafrom( const FloatVector& );
+        
         void adddatafrom( Float, const FloatVector& );
+        
         void adddatafrom( Float, Float, const FloatVector& );
         
+        
         Float scalarproductwith( const FloatVector& ) const;
+        
         
         /* Calculations */
         
         Float norm() const;
+        
         Float maxnorm() const;
+        
         Float lpnorm( Float ) const;
+        
+        
+        
+        
+        /* For each semantics */ 
+        
+        class ConstIterator {
+            
+            friend FloatVector;
+            
+            private: 
+            
+                const FloatVector* parentvector;
+                int index;
+                
+                explicit ConstIterator( const FloatVector* parentvector, int index) : parentvector(parentvector), index(index) 
+                { }
+                
+            public:
+                
+                inline Float operator*() const
+                {
+                    return parentvector->at(index);
+                }
+                
+                inline ConstIterator operator++()
+                {
+                    ++index; 
+                    return *this;
+                } // pre-increment
+                
+                inline ConstIterator operator++( int )
+                {
+                    return ConstIterator( parentvector, index++ );   
+                } // post-increment
+                
+                inline bool operator!=( const ConstIterator& other ) const 
+                { 
+                    assert( other.parentvector == parentvector );
+                    return index != other.index;
+                }
+                    
+        };
+        
+        class Iterator {
+            
+            friend FloatVector;
+            
+            private: 
+            
+                FloatVector* parentvector;
+                int index;
+                
+                explicit Iterator( FloatVector* parentvector, int index) : parentvector(parentvector), index(index) 
+                { }
+                
+            public:
+                
+                inline Float& operator*() const
+                {
+                    return parentvector->at(index);
+                }
+                
+                inline Iterator operator++()
+                {
+                    ++index; 
+                    return *this;
+                } // pre-increment
+                
+                inline Iterator operator++( int )
+                {
+                    return Iterator( parentvector, index++ );   
+                } // post-increment
+                
+                inline bool operator!=( const Iterator& other ) const 
+                { 
+                    assert( other.parentvector == parentvector );
+                    return index != other.index;
+                }
+                    
+        };
+        
+        
+        
+        inline ConstIterator begin() const
+        {
+            return ConstIterator(this,0);
+        }
+        
+        inline ConstIterator end() const
+        {
+            return ConstIterator(this,data.size());
+        }
+
+        inline Iterator begin()
+        {
+            return Iterator(this,0);
+        }
+        
+        inline Iterator end()
+        {
+            return Iterator(this,data.size());
+        }
+
+        
         
         
     private:
 
-        // int dimension;
         std::vector<Float> data;
 
 };

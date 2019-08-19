@@ -49,10 +49,10 @@ FloatVector& FloatVector::operator=( const FloatVector& vec )
 
 void FloatVector::check() const 
 {
-//     std::clog << "CHECK." << std::endl;
+//     LOG << "CHECK." << std::endl;
     assert( getdimension() >= 0 );
     if( getdimension() == 0 )
-    std::clog << "WARNING: VECTOR OF DIMENSION ZERO." << std::endl;
+    LOG << "WARNING: VECTOR OF DIMENSION ZERO." << std::endl;
     assert( getdimension() == data.size() );
 }
 
