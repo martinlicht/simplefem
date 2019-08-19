@@ -24,22 +24,22 @@ class IndexMap
     
     public:
         
-        explicit IndexMap( const IndexRange& );
+//         explicit IndexMap( const IndexRange& );
         IndexMap( const IndexRange&, const std::vector<int>& );
         IndexMap( const IndexRange&, const std::function<int(int)>& );
         IndexMap( const IndexRange&, const std::initializer_list<int>& );
         
-        IndexMap( const IndexRange&, const IndexRange& );
+//         IndexMap( const IndexRange&, const IndexRange& );
         IndexMap( const IndexRange&, const IndexRange&, const std::vector<int>& );
         IndexMap( const IndexRange&, const IndexRange&, const std::function<int(int)>& );
         IndexMap( const IndexRange&, const IndexRange&, const std::initializer_list<int>& );
         
-        IndexMap() = delete;
-        IndexMap( const IndexMap& ) = default;
+        IndexMap()                              = delete;
+        IndexMap( const IndexMap& )             = default;
         IndexMap& operator =( const IndexMap& ) = default;
-        IndexMap( IndexMap&& ) = default;
-        IndexMap& operator =( IndexMap&& ) = default;
-        ~IndexMap() = default;
+        IndexMap( IndexMap&& )                  = default;
+        IndexMap& operator =( IndexMap&& )      = default;
+        ~IndexMap()                             = default;
         
         void check() const;
         
@@ -117,6 +117,7 @@ inline bool operator==( const IndexMap& left, const IndexMap& right )
     left.check();
     right.check();
     assert( left.comparablewith( right ) );
+
     return left.equals( right );
 }
 
@@ -125,6 +126,7 @@ inline bool operator!=( const IndexMap& left, const IndexMap& right )
     left.check();
     right.check();
     assert( left.comparablewith( right ) );
+
     return !( left.equals( right ) );
 }
 
@@ -133,6 +135,7 @@ inline bool operator<( const IndexMap& left, const IndexMap& right )
     left.check();
     right.check();
     assert( left.comparablewith( right ) );
+
     return left.less( right );
 }
 
@@ -140,7 +143,9 @@ inline bool operator<( const IndexMap& left, const IndexMap& right )
 inline std::ostream& operator<<( std::ostream& os, const IndexMap& im )
 {
     im.check();
+
     im.print( os );
+
     return os;
 }
 
@@ -149,10 +154,10 @@ inline std::ostream& operator<<( std::ostream& os, const IndexMap& im )
 inline IndexMap identityIndexMap( const IndexRange& ir )
 {
     ir.check();
+
     IndexMap im( ir, ir, []( int i ) -> int { return i; } );
-//     for( int i = ir.min(); i <= ir.max(); i++ )
-//         im[i] = i;
     im.check();
+
     return im;
 }
 

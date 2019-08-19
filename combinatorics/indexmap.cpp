@@ -8,21 +8,21 @@
 
 
 
-IndexMap::IndexMap( const IndexRange& range )
-: IndexMap( range, range )
-{
-    check();
-}
-
-IndexMap::IndexMap( const IndexRange& from, const IndexRange& to )
-: src(from), dest(to), values( std::max( src.max() - src.min() + 1, 0 ), to.min() )
-{
-    if( src.max() >= src.min() )
-      std::clog << "Index Map initialized without actual values" << std::endl;
-    src.check();
-    to.check();
-    check();
-}
+// IndexMap::IndexMap( const IndexRange& range )
+// : IndexMap( range, range )
+// {
+//     check();
+// }
+// 
+// IndexMap::IndexMap( const IndexRange& from, const IndexRange& to )
+// : src(from), dest(to), values( std::max( src.max() - src.min() + 1, 0 ), to.min() )
+// {
+//     if( src.max() >= src.min() )
+//       std::clog << "Index Map initialized without actual values" << std::endl;
+//     src.check();
+//     to.check();
+//     check();
+// }
 
 IndexMap::IndexMap( const IndexRange& range, const std::vector<int>& values )
 : IndexMap( range, range, values )

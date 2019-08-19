@@ -20,7 +20,7 @@ generateEmptyMap( const IndexRange& from, const IndexRange& to )
     to.check();
     assert( from.isempty() );
     
-    IndexMap myempty = IndexMap( from, to );
+    IndexMap myempty = IndexMap( from, to, std::vector<int>(0) );
     myempty.check();
     
     std::vector<IndexMap> ret;
