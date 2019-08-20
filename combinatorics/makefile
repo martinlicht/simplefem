@@ -1,3 +1,5 @@
+#!/usr/bin/make
+
 SHELL = /bin/sh
 
 default: all

@@ -23,11 +23,11 @@ inline DenseMatrix diffmatrix( int n, int r, int k )
     
     // TODO: catch the border cases r <= 0 or k >= n
     
-    const std::vector<MultiIndex>& multis_src  = generateMultiIndices( IndexRange( 0, n ), r );
-    const std::vector<MultiIndex>& multis_dest = generateMultiIndices( IndexRange( 0, n ), r-1 );
+    const std::vector<MultiIndex> multis_src  = generateMultiIndices( IndexRange( 0, n ), r );
+    const std::vector<MultiIndex> multis_dest = generateMultiIndices( IndexRange( 0, n ), r-1 );
     
-    const std::vector<IndexMap>&   sigmas_src  = generateSigmas( IndexRange( 0, k ), IndexRange( 0, n ) );
-    const std::vector<IndexMap>&   sigmas_dest = generateSigmas( IndexRange( 0, k+1 ), IndexRange( 0, n ) );
+    const std::vector<IndexMap>   sigmas_src  = generateSigmas( IndexRange( 0, k ), IndexRange( 0, n ) );
+    const std::vector<IndexMap>   sigmas_dest = generateSigmas( IndexRange( 0, k+1 ), IndexRange( 0, n ) );
     
     DenseMatrix ret( multis_dest.size() * sigmas_dest.size(), multis_src.size() * sigmas_scr.size(), 0. )
     
