@@ -74,7 +74,7 @@ bool IndexRange::contains( const IndexRange& subir ) const
     
     if( subir.isempty() )
         return true;
-    else if( isempty() )
+    else if( isempty() ) // so subir is not empty 
         return false;
     else
         return minimum <= subir.minimum && subir.maximum <= maximum;

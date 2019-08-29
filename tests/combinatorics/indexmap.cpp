@@ -83,7 +83,7 @@ int main()
         
         cout << "Surjection" << endl;
         
-        IndexMap sur( irD, irB, {4,3,5,4,3,5,6,3} );
+        IndexMap sur( irD, irB, {4,3,5,4,3,5,4,3} );
         sur[0] = 4; sur[1] = 3; sur[2] = 5; sur[3] = 4;
         sur[4] = 3; sur[5] = 5; sur[6] = 4; sur[7] = 3;
 

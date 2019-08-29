@@ -13,7 +13,7 @@ int main()
 {
         cout << "Unit Test for producting permutations via Heap's algorithm" << endl;
         
-        const int N = 10;
+        const int N = 5;
         
         int i = 77;
         std::vector<int> c(N);

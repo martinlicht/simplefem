@@ -78,7 +78,7 @@ int main()
     {
       
       IndexRange ir( 2, 2 );
-      std::vector<MultiIndex> vmi = generateMultiIndices( ir, 7);
+      std::vector<MultiIndex> vmi = generateMultiIndices( ir, 3);
       
       for( const auto& mi : vmi )
 	cout << mi;
@@ -90,7 +90,7 @@ int main()
     {
       
       IndexRange ir( 2, -3 );
-      std::vector<MultiIndex> vmi = generateMultiIndices( ir, 7);
+      std::vector<MultiIndex> vmi = generateMultiIndices( ir, 3);
       
       for( const auto& mi : vmi )
 	cout << mi;

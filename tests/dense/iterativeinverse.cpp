@@ -13,7 +13,7 @@ using namespace std;
 
 int main()
 {
-    cout << "Unit test for matrix determinant, inverse, cofactor matrix" << endl;
+    cout << "Unit test for iterative inversion" << endl;
     
     std::cout.precision(10);
     std::cout.setf( std::ios::fixed, std:: ios::floatfield );
@@ -42,6 +42,8 @@ int main()
       
     }
     
+    cout << "Some output line" << endl;
+
     {
       
       DenseMatrix A( 3 );
@@ -64,7 +66,7 @@ int main()
 //       for( int i = 0; i < 25; i++ )
 //         X = ( 2 * X ) - ( X * ( A * X ) );
       
-      for( int i = 0; i < 100000000; i++ )
+      for( int i = 0; i < 100; i++ )
         X = X - 0.000001 * ( A * X - I ) ;
       
       cout << X * A << endl;

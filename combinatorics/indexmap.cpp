@@ -45,10 +45,18 @@ IndexMap::IndexMap( const IndexRange& range, const std::function<int(int)>& gene
 IndexMap::IndexMap( const IndexRange& from, const IndexRange& to, const std::function<int(int)>& generator )
 : src(from), dest(to), values()
 {
-    values.reserve( std::max( src.max() - src.min() + 1, 0 ) );
-    for( int e = src.min(); e <= src.max(); e++ )
-//         values.at( src.element2position(e) ) = generator(e);
-        values.emplace_back( generator(e) );
+    if( from.isempty() ) {
+    
+        values.resize(0);
+    
+    } else {
+    
+        values.reserve( std::max( src.max() - src.min() + 1, 0 ) );
+        for( int e = src.min(); e <= src.max(); e++ )
+            // values.at( src.element2position(e) ) = generator(e);
+            values.emplace_back( generator(e) );
+        
+    }
     check();
 }
 
@@ -76,13 +84,24 @@ void IndexMap::check() const
     dest.check();
     
     assert( getSourceRange().cardinality() == values.size() );
-    assert( std::max( src.max() - src.min() + 1, 0 ) == values.size() );
     
-    for( int a = src.min(); a <= src.max(); a++ )
-        assert( dest.contains( values.at( a - src.min() ) ) );
+    if( values.size() > 0 ) {
+        
+        assert( ! getSourceRange().isempty() );
+        
+        assert( std::max( src.max() - src.min() + 1, 0 ) == values.size() );
     
-    if( ! getSourceRange().isempty() )
         assert( ! getDestRange().isempty() );
+        
+        for( int a = src.min(); a <= src.max(); a++ )
+            assert( dest.contains( values.at( a - src.min() ) ) );
+        
+    } else {
+        
+        assert( getSourceRange().isempty() );
+        
+    }
+        
 }
 
 void IndexMap::print( std::ostream& os, bool embellish ) const 
@@ -120,6 +139,7 @@ const std::vector<int>& IndexMap::getvalues() const
 int& IndexMap::at( int i )
 {
     check();
+    assert( !src.isempty() );
     assert( src.contains(i) );
     assert( 0 <= i - src.min() );
     assert( i - src.min() < values.size() );
@@ -129,6 +149,7 @@ int& IndexMap::at( int i )
 const int& IndexMap::at( int i ) const
 {
     check();
+    assert( !src.isempty() );
     assert( src.contains(i) );
     assert( 0 <= i - src.min() );
     assert( i - src.min() < values.size() );
@@ -138,6 +159,7 @@ const int& IndexMap::at( int i ) const
 int& IndexMap::operator[]( int i )
 {
     check();
+    assert( !src.isempty() );
     assert( src.contains(i) );
     assert( 0 <= i - src.min() );
     assert( i - src.min() < values.size() );
@@ -147,6 +169,7 @@ int& IndexMap::operator[]( int i )
 const int& IndexMap::operator[]( int i ) const
 {
     check();
+    assert( !src.isempty() );
     assert( src.contains(i) );
     assert( 0 <= i - src.min() );
     assert( i - src.min() < values.size() );
@@ -166,6 +189,10 @@ bool IndexMap::isempty() const
 bool IndexMap::isinjective() const 
 {
     check();
+    
+    if( getSourceRange().isempty() )
+        return true;
+    
     for( int a = src.min(); a <= src.max(); a++ )
         for( int b = src.min(); b <= src.max(); b++ )
             if( a != b && values.at( a - src.min() ) == values.at( b - src.min() ) )
@@ -177,6 +204,10 @@ bool IndexMap::isinjective() const
 bool IndexMap::issurjective() const 
 {
     check();
+    
+    if( getSourceRange().isempty() )
+        return true;
+    
     for( int a = dest.min(); a <= dest.max(); a++ ) 
     {
         bool flag = false;
@@ -186,6 +217,7 @@ bool IndexMap::issurjective() const
         if( !flag )
             return false;
     }
+    
     return true;
 }
 
@@ -198,9 +230,14 @@ bool IndexMap::isbijective() const
 bool IndexMap::isstrictlyascending() const
 {
     check();
+    
+    if( getSourceRange().isempty() )
+        return true;
+    
     for( int a = src.min(); a < src.max(); a++ )
         if( values.at( a - src.min() ) >= values.at( a - src.min() + 1 ) )
             return false;
+    
     return true;
 }
 
