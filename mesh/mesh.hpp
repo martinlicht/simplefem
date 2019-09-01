@@ -15,6 +15,7 @@
 #include "../combinatorics/indexmap.hpp"
 #include "../operators/floatvector.hpp"
 #include "../dense/densematrix.hpp"
+#include "../dense/functions.hpp"
 #include "coordinates.hpp"
 
 
@@ -138,6 +139,16 @@ class Mesh
         // derive from that class 
         
         
+        /* 
+         * Accessing geometric information about the mesh
+         * 
+         */
+        
+        DenseMatrix getVertexCoordinateMatrix( int dim, int index ) const;
+        
+        DenseMatrix getTransformationJacobian( int dim, int index ) const;
+        
+        DenseMatrix getGradientProductMatrix( int dim, int index ) const;
         
         
     private:

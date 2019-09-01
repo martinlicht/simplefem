@@ -220,3 +220,59 @@ int Mesh::get_supersimplex_by_index( int sup, int sub, int cellsub, int parentin
   return parents[ parentindex ];
 }
 
+
+
+
+
+
+DenseMatrix Mesh::getVertexCoordinateMatrix( int dim, int index ) const 
+{
+    assert( 0 <= dim && dim <= getinnerdimension() );
+    assert( 0 <= index && index < count_simplices(dim) );
+    
+    DenseMatrix ret( getouterdimension(), dim+1 );
+    
+    for( int v = 0; v <= dim; v++ )
+    for( int d = 0; d < getouterdimension(); d++ )
+        ret( d, v ) = coordinates.getdata( get_subsimplex( dim, 0, index, v ), d );
+    
+    return ret;
+}
+
+
+DenseMatrix Mesh::getTransformationJacobian( int dim, int index ) const 
+{
+    assert( 0 <= dim && dim <= getinnerdimension() );
+    assert( 0 <= index && index < count_simplices(dim) );
+    
+    DenseMatrix ret( getouterdimension(), dim );
+    
+    DenseMatrix vcm = getVertexCoordinateMatrix( dim, index );
+    
+    for( int c = 0; c < dim; c++ )
+    for( int d = 0; d < getouterdimension(); d++ )
+        ret( d, c ) = vcm( d, c+1 ) - vcm( d, 0 );
+    
+    return ret;
+}
+
+
+DenseMatrix Mesh::getGradientProductMatrix( int dim, int index ) const 
+{
+    assert( 0 <= dim && dim <= getinnerdimension() );
+    assert( 0 <= index && index < count_simplices(dim) );
+    
+    DenseMatrix multiplier( dim, dim+1, 0. );
+    for( int i = 0; i <  dim; i++ ) {
+        multiplier(i,i+1) =  1.;
+        multiplier(i,  0) = -1.;
+    }
+    
+    // D^-1 D^-t = ( D^t D )^-1
+    DenseMatrix Jac    = getTransformationJacobian( dim, index );
+    DenseMatrix middle = Inverse( Transpose(Jac) * Jac );
+    
+    return Transpose(multiplier) * middle * multiplier;
+}
+        
+
