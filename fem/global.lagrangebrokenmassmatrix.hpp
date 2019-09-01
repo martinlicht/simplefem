@@ -33,8 +33,6 @@ inline SparseMatrix LagrangeBrokenMassMatrix( Mesh& mesh, int r )
     int n = mesh.getinnerdimension();
     
     const int num_volumes = mesh.count_simplices( n );
-        
-    const int num_vertices = mesh.count_simplices( 0 );
     
     const int dim_in  = num_volumes * (n+1);
     const int dim_out = num_volumes * (n+1);
