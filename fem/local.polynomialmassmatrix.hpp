@@ -42,9 +42,13 @@ inline DenseMatrix polynomialmassmatrix( int n, int r )
         
         //  alpha! / (n+|alpha|)!
         
-        ret( i, j ) = factorial( alpha ) / factorial( n + absolute( alpha ) );
+        ret( i, j ) = alpha.factorial() / (Float) factorial( n + absolute( alpha ) );
         
     }
+    
+    
+    std::cout << ret << std::endl;
+        
     
     return ret;
 }

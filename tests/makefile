@@ -32,10 +32,10 @@ Includes.operators = $(Headers.operators) $(Objects.operators) $(Includes.combin
 Includes.dense = $(Headers.dense) $(Objects.dense) $(Includes.operators)
 Includes.sparse = $(Headers.sparse) $(Objects.sparse) $(Includes.operators)
 Includes.solver = $(Headers.solver) $(Objects.solver) $(Includes.operators)
-Includes.mesh = $(Headers.mesh) $(Objects.mesh) $(Objects.combinatorics) $(Includes.operators)
+Includes.mesh = $(Headers.mesh) $(Objects.mesh) $(Includes.combinatorics) $(Includes.operators)
 Includes.vtk = $(Headers.vtk) $(Objects.vtk) $(Includes.mesh)
 Includes.matrixmarket = $(Headers.matrixmarket) $(Objects.matrixmarket)
-Includes.fem = $(Headers.fem) $(Objects.fem)
+Includes.fem = $(Headers.fem) $(Objects.fem) $(Includes.combinatorics) $(Includes.operators) $(Includes.dense)
 
 Links.basic         = $(Objects.basic) 
 Links.combinatorics = $(Objects.combinatorics) 

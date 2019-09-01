@@ -20,7 +20,7 @@ int main()
 {
         cout << "Unit Test for FEEC Mass Matrix" << endl;
         
-        MeshSimplicial3D M = UnitSimplex3D();
+        MeshSimplicial2D M = UnitSquare2D();
         
         M.check();
         
@@ -34,9 +34,11 @@ int main()
         
         M.check();
         
+        cout << M.getcoordinates() << endl;
+        
         SparseMatrix massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, 1 );
         
-        cout << massmatrix << endl;
+//         cout << massmatrix << endl;
         
         cout << "Finished Unit Test" << endl;
         
