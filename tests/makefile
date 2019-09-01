@@ -24,7 +24,7 @@ Headers.solver = ../solver/*.hpp
 Headers.mesh = ../mesh/*.hpp
 Headers.vtk = ../vtk/*.hpp
 Headers.matrixmarket = ../matrixmarket/*.hpp
-Headers.fem = ../fem/global.lagrangemassmatrix.hpp ../fem/global.lagrangestiffnessmatrix.hpp ../fem/global.lagrangebrokenmassmatrix.hpp ../fem/global.lagrangebrokenstiffnessmatrix.hpp
+Headers.fem = ../fem/global.lagrangemassmatrix.hpp ../fem/global.lagrangestiffnessmatrix.hpp ../fem/global.lagrangebrokenmassmatrix.hpp ../fem/global.lagrangebrokenstiffnessmatrix.hpp ../fem/local.polynomialmassmatrix.hpp ../fem/local.massmatrix.hpp
 
 Includes.basic = $(Headers.basic) $(Objects.basic) 
 Includes.combinatorics = $(Headers.combinatorics) $(Objects.combinatorics) 
@@ -283,7 +283,10 @@ matrixmarket.tests = matrixmarket/mm.out
 fem/lagrange.out: fem/lagrange.cpp $(Includes.fem)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/lagrange.cpp $(Links.fem) -o fem/lagrange.out
 
-fem.tests = fem/lagrange.out
+fem/feecmass.out: fem/feecmass.cpp $(Includes.fem)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/feecmass.cpp $(Links.fem) -o fem/feecmass.out
+
+fem.tests = fem/lagrange.out fem/feecmass.out
 
 
 

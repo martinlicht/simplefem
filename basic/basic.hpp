@@ -69,7 +69,7 @@ T minimum( const T& a, const T& b )
         return b;
 }
 
-int binomial(int,int);
+// int binomial(int,int);
 
 
 template<typename T>
