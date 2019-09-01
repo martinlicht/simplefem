@@ -95,7 +95,7 @@ Float Determinant( const DenseMatrix& A )
     
     if( A.getdimin() == 0 ) {
         
-        return 0.;
+        return 1.;
         
     } else if( false && A.getdimin() == 1 ) {
         
