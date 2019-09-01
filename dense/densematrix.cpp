@@ -197,27 +197,45 @@ DenseMatrix DenseMatrix::submatrix( const IndexMap& rows, const IndexMap& column
     rows.check(); 
     columns.check();
     
-    if( getdimin() == 0 || getdimout() == 0 )
-        return *this;
-    
-    assert( rows.getSourceRange().min() == 0 );
-    assert( rows.getSourceRange().max() <= getdimout() - 1 );
-    assert( rows.getDestRange().min() == 0 );
-    assert( rows.getDestRange().max() == getdimout() - 1 );
-    assert( columns.getSourceRange().min() == 0 );
-    assert( columns.getSourceRange().max() <= getdimin() - 1 );
-    assert( columns.getDestRange().min() == 0 );
-    assert( columns.getDestRange().max() == getdimin() - 1 );
-    assert( rows.isstrictlyascending() );
+    assert( rows.isstrictlyascending()    );
     assert( columns.isstrictlyascending() );
     
-    DenseMatrix ret( std::max(0,rows.getSourceRange().max() - 1), 
-                     std::max(0,columns.getSourceRange().max() - 1) );
+    DenseMatrix ret( rows.getSourceRange().cardinality(), columns.getSourceRange().cardinality(), 0. );
+    
     for( int nr = 0; nr < ret.getdimout(); nr++ )
     for( int nc = 0; nc < ret.getdimin();  nc++ )
+    {
+        assert( rows.getSourceRange().contains(nr) );
+        assert( columns.getSourceRange().contains(nc) );
+        
         ret( nr, nc ) = (*this)( rows[nr], columns[nc] );
-    ret.check();
+    }
+    
     return ret;
+    
+//     if( getdimin() == 0 || getdimout() == 0 )
+//         return *this;
+//     
+//     assert( rows.getSourceRange().min() == 0 );
+//     assert( rows.getSourceRange().max() <= getdimout() - 1 );
+//     assert( rows.getDestRange().min() == 0 );
+//     assert( rows.getDestRange().max() == getdimout() - 1 );
+//     assert( columns.getSourceRange().min() == 0 );
+//     assert( columns.getSourceRange().max() <= getdimin() - 1 );
+//     assert( columns.getDestRange().min() == 0 );
+//     assert( columns.getDestRange().max() == getdimin() - 1 );
+//     assert( rows.isstrictlyascending() );
+//     assert( columns.isstrictlyascending() );
+//     
+//     DenseMatrix ret( std::max(0,rows.getSourceRange().max() - 1), 
+//                     std::max(0,columns.getSourceRange().max() - 1) );
+//     for( int nr = 0; nr < ret.getdimout(); nr++ )
+//     for( int nc = 0; nc < ret.getdimin();  nc++ )
+//         ret( nr, nc ) = (*this)( rows[nr], columns[nc] );
+//     
+//     ret.check();
+//     return ret;
+    
 }
         
         
