@@ -9,6 +9,7 @@ default:
 	cd ./mesh && $(MAKE) 
 	cd ./vtk && $(MAKE)
 	cd ./matrixmarket && $(MAKE)
+	cd ./fem && $(MAKE)
 	cd ./tests && $(MAKE)
 	echo "finished building." 
 
@@ -21,6 +22,7 @@ clean:
 	cd ./mesh && $(MAKE) clean
 	cd ./vtk && $(MAKE) clean
 	cd ./matrixmarket && $(MAKE) clean
+	cd ./fem && $(MAKE) clean
 	cd ./tests && $(MAKE) clean
 	$(MAKE) -f makefile.clean clean
 	@echo "finished cleaning." 

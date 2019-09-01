@@ -19,7 +19,7 @@ tests.solver:
 	for i in ./solver/*.out; do ./$$i || break; done
 
 tests.mesh: 
-	for i in ./solver/*.out; do ./$$i || break; done
+	for i in ./mesh/*.out; do ./$$i || break; done
 
 tests.vtk: 
 	for i in ./vtk/*.out; do ./$$i || break; done
