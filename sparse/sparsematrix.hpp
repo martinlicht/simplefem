@@ -46,7 +46,7 @@ public LinearOperator /* every matrix is a linear operator */
         }
 
         explicit SparseMatrix( int dimout, int dimin, int numentries = 0, 
-                               std::function<MatrixEntry(int)> generator = [](int i)->MatrixEntry{ return {i,i,0.}; } ); 
+                               std::function<MatrixEntry(int)> generator = [](int i __attribute__((unused)) )->MatrixEntry{ return {0,0,0.}; } ); 
         explicit SparseMatrix( const ScalingOperator& matrix );
         explicit SparseMatrix( const DiagonalOperator& matrix );
         explicit SparseMatrix( const DenseMatrix& );
@@ -58,6 +58,8 @@ public LinearOperator /* every matrix is a linear operator */
 
         const MatrixEntry& getentry( int ) const;
         MatrixEntry& getentry( int );
+        void setentry( int, int, int, Float );
+        void setentry( int, MatrixEntry );
         void addentry( int, int, Float );
         void addentry( MatrixEntry );
         const std::vector<MatrixEntry>& getentries() const;
@@ -65,7 +67,7 @@ public LinearOperator /* every matrix is a linear operator */
 
         int getnumberofentries() const;
         void sortentries() const;
-        void compressentries() const;
+        void sortandcompressentries() const;
 
         SparseMatrix getTranspose() const;
         
@@ -73,7 +75,7 @@ public LinearOperator /* every matrix is a linear operator */
 
     private:
 
-        std::vector<MatrixEntry> entries; 
+        /*mutable*/ std::vector<MatrixEntry> entries; 
     
 };
   

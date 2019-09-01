@@ -19,7 +19,12 @@ SparseMatrix::SparseMatrix( int dimout, int dimin, int numentries, std::function
     
     for( int i = 0; i < numentries; i++ ) 
     {
-      entries.push_back( generator(i) );
+      SparseMatrix::MatrixEntry entry = generator(i);
+      
+      assert( 0 <= entry.row && entry.row < getdimout() );
+      assert( 0 <= entry.column && entry.column < getdimin() );
+      
+      entries.push_back( entry );
     }
     
     check();    
@@ -114,6 +119,28 @@ SparseMatrix::MatrixEntry& SparseMatrix::getentry( int i )
     return entries[i];
 }
         
+void SparseMatrix::setentry( int i, int r , int c, Float v )
+{
+    check();
+    SparseMatrix::MatrixEntry temp;
+    temp.row = r;
+    temp.column = c;
+    temp.value = v;
+    setentry( i, temp );
+    check();
+}
+
+void SparseMatrix::setentry( int i, MatrixEntry entry )
+{
+    check();
+    assert( 0 <= entry.row && entry.row <= getdimout() );
+    assert( 0 <= entry.column && entry.column <= getdimin() );
+    assert( 0 <= i && i < entries.size() );
+    entries.at(i) = entry;
+    check();
+}
+        
+        
 void SparseMatrix::addentry( int r, int c, Float v )
 {
     check();
@@ -155,49 +182,47 @@ const std::vector<SparseMatrix::MatrixEntry>& SparseMatrix::getentries() const
 		
 void SparseMatrix::sortentries() const
 {
-   check();
-//         auto& casted_entries = const_cast<std::list<MatrixEntry>&>(entries);
-        
-//         std::list<MatrixEntry> test = entries;
-//         
-//         auto comp = []( const SparseMatrix::MatrixEntry& left, const SparseMatrix::MatrixEntry& right) -> bool
-//         { 
-//                         return left.row < right.row || left.column < right.column || left.value < right.value;
-//         };
-        
-//     const_cast<std::vector<MatrixEntry>&>(entries).sort( compareMatrixEntry );
-   
-   // TODO: Use STL for sorting the entries of a std::vector
+    check();
+
+//     const int N = getnumberofentries();
+//     
+//     for( int i = 0; i < N; i++ ) {
+//     
+//         MatrixEntry entry = entries.at(i);
+//         int j = i;
+//         while( j > 0 and ( entries.at(j-1).row > entry.row or entries.at(j-1).column > entry.column ) ) {
+//             entries.at(j) = entries.at(j-1);
+//             j--;
+//         }
+//         entries.at(j) = entry;
+//     }
     
     check();
 }
 
-void SparseMatrix::compressentries() const
+void SparseMatrix::sortandcompressentries() const
 {
     check();
     
     sortentries();
     
-    // TODO: 
-    // Develop compression of sparse matrix
-    // when the entries are in a std::vector 
-    
-//     auto mergeMatrixEntry 
-//     =
-//     []( const SparseMatrix::MatrixEntry& left, 
-//         const SparseMatrix::MatrixEntry& right )
-//       -> SparseMatrix::MatrixEntry
-//       {
-//         SparseMatrix::MatrixEntry ret;
-//         assert( left.row == right.row && left.column == right.column );
-//         ret.row = left.row; ret.column = left.column;
-//         ret.value = left.value + right.value;
-//         return ret; 
-//       };
-//                                             
-//     mergeelementsinsortedlist<SparseMatrix::MatrixEntry>
-//     ( const_cast<std::list<MatrixEntry>&>(entries), 
-//     mergeMatrixEntry, compareMatrixEntry );
+//     int index_dest = 0;
+//     
+//     for( int index_src  = 1; index_src < getnumberofentries(); index_src++ )
+//     {
+//         assert( index_dest < index_src );
+//     
+//         if( entries[index_src].row == entries[index_dest].row && entries[index_src].column == entries[index_dest].column ) {
+//             entries[index_dest].value += entries[index_src].value;
+//         } else {
+//             index_dest++;
+//             entries[index_dest] = entries[index_src];
+//         }
+//     }
+//     
+//     assert( index_dest <= index_src );
+//     
+//     entries.resize( index_dest+1 );
     
     check();  
 }
