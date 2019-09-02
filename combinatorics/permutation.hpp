@@ -50,74 +50,74 @@ inline std::ostream& operator<<( std::ostream& os, const Permutation& mi )
         return os;
 }
 
-inline Permutation& operator+=( Permutation& left, int right )
-{
-        left.check();
-        left.add( right );
-        return left;
-}
+// inline Permutation& operator+=( Permutation& left, int right )
+// {
+//         left.check();
+//         left.add( right );
+//         return left;
+// }
+// 
+// inline Permutation& operator-=( Permutation& left, int right )
+// {
+//         left.check();
+//         left.sub( right );
+//         return left;
+// }
+// 
+// inline Permutation& operator+=( Permutation& left, const Permutation& right )
+// {
+//         left.check();
+//         right.check();
+//         left.add( right );
+//         return left;
+// }
+// 
+// inline Permutation& operator-=( Permutation& left, const Permutation& right )
+// {
+//         left.check();
+//         right.check();
+//         left.sub( right );
+//         return left;
+// }
 
-inline Permutation& operator-=( Permutation& left, int right )
-{
-        left.check();
-        left.sub( right );
-        return left;
-}
 
-inline Permutation& operator+=( Permutation& left, const Permutation& right )
-{
-        left.check();
-        right.check();
-        left.add( right );
-        return left;
-}
-
-inline Permutation& operator-=( Permutation& left, const Permutation& right )
-{
-        left.check();
-        right.check();
-        left.sub( right );
-        return left;
-}
-
-
-inline Permutation operator+( const Permutation& left, int right )
-{
-        left.check();
-        Permutation ret = left;
-        ret += right;
-        ret.check();
-        return ret;
-}
-
-inline Permutation operator-( const Permutation& left, int right )
-{
-        left.check();
-        Permutation ret = left;
-        ret -= right;
-        ret.check();
-        return ret;
-}
-
-inline Permutation operator+( const Permutation& left, const Permutation& right )
-{
-        left.check();
-        right.check();
-        Permutation ret = left;
-        ret += right;
-        ret.check();
-        return ret;
-}
-
-inline Permutation operator-( const Permutation& left, const Permutation& right )
-{
-        left.check();
-        right.check();
-        Permutation ret = left;
-        ret -= right;
-        ret.check();
-        return ret;
-}
+// inline Permutation operator+( const Permutation& left, int right )
+// {
+//         left.check();
+//         Permutation ret = left;
+//         ret += right;
+//         ret.check();
+//         return ret;
+// }
+// 
+// inline Permutation operator-( const Permutation& left, int right )
+// {
+//         left.check();
+//         Permutation ret = left;
+//         ret -= right;
+//         ret.check();
+//         return ret;
+// }
+// 
+// inline Permutation operator+( const Permutation& left, const Permutation& right )
+// {
+//         left.check();
+//         right.check();
+//         Permutation ret = left;
+//         ret += right;
+//         ret.check();
+//         return ret;
+// }
+// 
+// inline Permutation operator-( const Permutation& left, const Permutation& right )
+// {
+//         left.check();
+//         right.check();
+//         Permutation ret = left;
+//         ret -= right;
+//         ret.check();
+//         return ret;
+// }
 
 
 inline bool operator==( const Permutation& it, const Permutation& mi)
@@ -163,16 +163,6 @@ inline bool operator>=( const Permutation& it, const Permutation& mi)
 }
         
         
-inline int absolute( const Permutation& it )
-{
-        return it.absolute();
-}
-
-
-inline int factorial( const Permutation& it )
-{
-        return it.factorial();
-}
 
 
 
