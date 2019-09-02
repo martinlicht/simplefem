@@ -32,7 +32,7 @@ MeshSimplicial1D::MeshSimplicial1D( int outerdim )
     data_vertex_firstparent_edge(0),
     data_edge_nextparents_of_vertices(0)
 {
-    check();
+    MeshSimplicial1D::check();
 }
 
 
@@ -99,7 +99,7 @@ MeshSimplicial1D::MeshSimplicial1D(
       
     }
     
-    check();
+    MeshSimplicial1D::check();
 }
 
 
@@ -123,7 +123,7 @@ MeshSimplicial1D::MeshSimplicial1D(
     
     getcoordinates() = coords;
     
-    check();
+    MeshSimplicial1D::check();
 }
 
 

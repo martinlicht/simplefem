@@ -31,7 +31,7 @@ MeshSimplicialND::MeshSimplicialND( int innerdim, int outerdim )
     data_nextparents ( (innerdim+2) * (innerdim+1) / 2, std::vector<int>() )   
 {
     rebuild();
-    check();
+    MeshSimplicialND::check();
 }
 
 
@@ -90,7 +90,7 @@ MeshSimplicialND::MeshSimplicialND( const Mesh& mesh )
     
     rebuild();
     
-    check();
+    MeshSimplicialND::check();
     
 }
 
@@ -140,7 +140,7 @@ MeshSimplicialND::MeshSimplicialND(
     std::clog << "...done" << std::endl;
     
     /* check and exit */
-    check();
+    MeshSimplicialND::check();
     
 }
 

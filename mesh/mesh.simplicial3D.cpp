@@ -55,7 +55,7 @@ MeshSimplicial3D::MeshSimplicial3D( int outerdim )
     data_vertex_firstparent_edge(0),
     data_edge_nextparents_of_vertices(0)
 {
-    check();
+    MeshSimplicial3D::check();
 }
 
 
@@ -417,7 +417,7 @@ MeshSimplicial3D::MeshSimplicial3D(
     
     
     
-    check();
+    MeshSimplicial3D::check();
 }
 
 
@@ -484,7 +484,7 @@ MeshSimplicial3D::MeshSimplicial3D(
     
     getcoordinates() = coords;
     
-    check();
+    MeshSimplicial3D::check();
 }
 
 

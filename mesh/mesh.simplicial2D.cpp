@@ -44,7 +44,7 @@ MeshSimplicial2D::MeshSimplicial2D( int outerdim )
     data_vertex_firstparent_edge(0),
     data_edge_nextparents_of_vertices(0)
 {
-    check();
+    MeshSimplicial2D::check();
 }
 
 
@@ -217,7 +217,7 @@ MeshSimplicial2D::MeshSimplicial2D(
     
     
     
-    check();
+    MeshSimplicial2D::check();
 }
 
 
@@ -256,7 +256,7 @@ MeshSimplicial2D::MeshSimplicial2D(
     
     getcoordinates() = coords;
     
-    check();
+    MeshSimplicial2D::check();
 }
 
 
@@ -2341,7 +2341,7 @@ void MeshSimplicial2D::uniformrefinement()
 
 void MeshSimplicial2D::midpoint_refinement( int t )
 {
-    check();
+    MeshSimplicial2D::check();
     
     assert( 0 <= t && t < counter_triangles );
     
@@ -2536,7 +2536,7 @@ void MeshSimplicial2D::midpoint_refinement( int t )
     
     /* DONE */
     
-    check();
+    MeshSimplicial2D::check();
 }
 
 
