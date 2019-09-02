@@ -105,6 +105,11 @@ static inline int poweroftwo( int exponent )
     return integerpower( 2, exponent );
 }
 
+static inline int signpower( int exponent )
+{
+    return integerpower( -1, exponent );
+}
+
 static inline int getbit( unsigned int value, unsigned int bitnumber )
 {
     return ( value >> bitnumber ) % 2;
@@ -145,6 +150,25 @@ void mergeelementsinsortedlist
 
     }
 }
+
+
+
+#include <vector>
+#include <algorithm>
+
+template<typename T>
+int find_index( const std::vector<T> vec, const T& t )
+{
+   const auto& it = std::find( vec.begin(), vec.end(), t );
+   assert( it != vec.end() );
+   int ret = std::distance( vec.begin(), it );
+   assert( ret >= 0 );
+   assert( ret < vec.size() );
+   return ret;
+}
+
+
+
 
 
 

@@ -12,6 +12,7 @@
 #include "../../mesh/examples3D.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/local.massmatrix.hpp"
+#include "../../fem/global.diffmatrix.hpp"
 
 
 using namespace std;
@@ -37,6 +38,8 @@ int main()
         cout << M.getcoordinates() << endl;
         
         SparseMatrix massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, 1 );
+        
+        SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, 1 );
         
 //         cout << massmatrix << endl;
         

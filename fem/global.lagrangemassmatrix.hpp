@@ -64,9 +64,9 @@ inline SparseMatrix LagrangeMassMatrix( Mesh& mesh, int r )
         DenseMatrix Jac = mesh.getTransformationJacobian( n, t );
         
         if( v1 == v2 )
-            entry.value = 2 * absolute( Determinant( Jac ) ) / factorial( 2 + n );
+            entry.value = 2. * absolute( Determinant( Jac ) ) / (Float) factorial( 2 + n );
         else
-            entry.value =     absolute( Determinant( Jac ) ) / factorial( 2 + n );
+            entry.value =      absolute( Determinant( Jac ) ) / (Float) factorial( 2 + n );
         
         ret.setentry( index_of_entry, entry );
         
