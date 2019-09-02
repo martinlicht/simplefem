@@ -12,7 +12,7 @@ ProductOperator::ProductOperator( const LinearOperator& left, const LinearOperat
 : LinearOperator(left.getdimout(),right.getdimin()), 
   left(left), right(right)
 {
-    check();
+    ProductOperator::check();
 }
 
 ProductOperator::~ProductOperator()

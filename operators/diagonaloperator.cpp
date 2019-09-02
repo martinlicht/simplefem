@@ -11,14 +11,14 @@
 DiagonalOperator::DiagonalOperator( int dimension, const FloatVector& dia )
 : LinearOperator(dimension,dimension), diagonal(dia)
 {
-    check();
+    DiagonalOperator::check();
 }
 
 DiagonalOperator::DiagonalOperator( int dimension, const ScalingOperator& scaling )
 : LinearOperator(dimension,dimension), 
   diagonal( FloatVector( dimension, scaling.getscaling() ) )
 {
-    check();
+    DiagonalOperator::check();
 }
 
 DiagonalOperator::~DiagonalOperator()

@@ -7,13 +7,13 @@
     LinearOperator::LinearOperator( int out, int in )
     : dimout( out ), dimin( in )
     {
-      check();
+      LinearOperator::check();
     }
     
     LinearOperator::~LinearOperator()
     {
     
-      check();
+      LinearOperator::check();
       
     }
     

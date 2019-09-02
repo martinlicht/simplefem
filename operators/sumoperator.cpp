@@ -14,7 +14,7 @@ SumOperator::SumOperator( const LinearOperator& left, const LinearOperator& righ
   left(left), right(right),
   leftscale(leftscale), rightscale(rightscale)
 {
-    check();
+    SumOperator::check();
 }
 
 SumOperator::~SumOperator()
