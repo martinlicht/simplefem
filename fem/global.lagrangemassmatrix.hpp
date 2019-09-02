@@ -61,7 +61,7 @@ inline SparseMatrix LagrangeMassMatrix( Mesh& mesh, int r )
         
         entry.value  = 0.;
         
-        DenseMatrix Jac = mesh.getTransformationJacobian( n, t );
+//         DenseMatrix Jac = mesh.getTransformationJacobian( n, t );
         Float measure = mesh.getMeasure( n, t );
         
         if( v1 == v2 )
