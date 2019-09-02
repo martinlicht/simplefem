@@ -11,7 +11,7 @@
 #include "../../mesh/examples2D.hpp"
 #include "../../mesh/examples3D.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
-#include "../../fem/local.massmatrix.hpp"
+#include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 
 
