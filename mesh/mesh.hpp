@@ -144,6 +144,8 @@ class Mesh
          * 
          */
         
+        Float getMeasure( int dim, int index ) const;
+        
         DenseMatrix getVertexCoordinateMatrix( int dim, int index ) const;
         
         DenseMatrix getTransformationJacobian( int dim, int index ) const;

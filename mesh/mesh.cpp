@@ -1,5 +1,6 @@
 
 
+#include <cmath>
 #include <algorithm>
 
 
@@ -223,6 +224,19 @@ int Mesh::get_supersimplex_by_index( int sup, int sub, int cellsub, int parentin
 
 
 
+
+
+Float Mesh::getMeasure( int dim, int index ) const 
+{
+    assert( 0 <= dim && dim <= getinnerdimension() );
+    assert( 0 <= index && index < count_simplices(dim) );
+    
+    DenseMatrix Jac = getTransformationJacobian( dim, index );
+    
+    DenseMatrix temp = Transpose( Jac ) * Jac;
+    
+    return std::sqrt(absolute(Determinant(temp)));
+}
 
 
 DenseMatrix Mesh::getVertexCoordinateMatrix( int dim, int index ) const 
