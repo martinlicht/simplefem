@@ -42,7 +42,7 @@ inline DenseMatrix polynomialmassmatrix( int n, int r )
         
         //  alpha! / (n+|alpha|)!
         
-        ret( i, j ) = alpha.factorial() / (Float) factorial( n + absolute( alpha ) );
+        ret( i, j ) = factorial(n) * alpha.factorial() / (Float) factorial( n + absolute( alpha ) );
         
     }
     

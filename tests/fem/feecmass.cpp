@@ -41,7 +41,7 @@ int main()
         
         SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, 1 );
         
-//         cout << massmatrix << endl;
+        cout << massmatrix << endl;
         
         cout << "Finished Unit Test" << endl;
         

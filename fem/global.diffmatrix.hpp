@@ -54,7 +54,7 @@ inline SparseMatrix FEECBrokenDiffMatrix( Mesh& mesh, int n, int k, int r )
     assert( multis_src.size()  == binomial( n+r,   n   ) );
     assert( sigmas_dest.size() == binomial( n+1,   k+1 ) );
     assert( sigmas_src.size()  == binomial( n+1,   k   ) );
-        
+    
     for( int src_poly_index = 0; src_poly_index < multis_src.size(); src_poly_index++ )
     for( int src_form_index = 0; src_form_index < sigmas_src.size(); src_form_index++ )
     for( int p = 0; p <= n; p++ )

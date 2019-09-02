@@ -52,15 +52,13 @@ inline SparseMatrix FEECBrokenMassMatrix( Mesh& mesh, int n, int k, int r )
     for( int s = 0; s < num_simplices; s++ )
     {
         
-        DenseMatrix Jac = mesh.getTransformationJacobian( n, s );
+        Float measure = mesh.getMeasure( n, s );
             
         DenseMatrix formMM = SubdeterminantMatrix( mesh.getGradientProductMatrix( n, s ), k );
     
-        DenseMatrix fullMM = MatrixTensorProduct( polyMM, formMM ) * absolute( determinant( Jac ) ) / factorial( n );
+        DenseMatrix fullMM = MatrixTensorProduct( polyMM, formMM ) * measure;
         
-//         std::cout << Jac << std::endl;
-        
-//         std::cout << absolute( determinant( Jac ) ) / factorial( n ) << std::endl;
+//         std::cout << measure << std::endl;
         
 //         std::cout << formMM << std::endl;
         
