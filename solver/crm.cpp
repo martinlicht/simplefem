@@ -164,7 +164,7 @@ ConjugateResidualMethod::ConjugateResidualMethod( const LinearOperator& op )
 : IterativeSolver( op ), dimension( op.getdimout() )
 {
     assert( op.getdimin() == op.getdimout() );
-    check();
+    ConjugateResidualMethod::check();
 }
 
 ConjugateResidualMethod::~ConjugateResidualMethod()

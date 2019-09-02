@@ -27,7 +27,7 @@ SparseMatrix::SparseMatrix( int dimout, int dimin, int numentries, std::function
       entries.push_back( entry );
     }
     
-    check();    
+    SparseMatrix::check();    
 }
 
 SparseMatrix::SparseMatrix( const ScalingOperator& matrix )
@@ -37,7 +37,7 @@ SparseMatrix::SparseMatrix( const ScalingOperator& matrix )
     assert( getdimin() == getdimout() );
     for( int r = 0; r < getdimout(); r++ )
         entries[r] = { r, r, matrix.getscaling() };
-    check();    
+    SparseMatrix::check();    
 }
 
 SparseMatrix::SparseMatrix( const DiagonalOperator& matrix )
@@ -47,7 +47,7 @@ SparseMatrix::SparseMatrix( const DiagonalOperator& matrix )
     assert( getdimin() == getdimout() );
     for( int r = 0; r < getdimout(); r++ )
         entries[r] = { r, r, matrix.getdiagonal().at(r) };
-    check();    
+    SparseMatrix::check();    
 }
 
 SparseMatrix::SparseMatrix( const DenseMatrix& matrix )
@@ -57,7 +57,7 @@ SparseMatrix::SparseMatrix( const DenseMatrix& matrix )
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin(); c++ )
         entries[ r * getdimin() + c ] = { r, c, matrix.get(r,c) };
-    check();    
+    SparseMatrix::check();    
 }
 
 
@@ -65,7 +65,9 @@ SparseMatrix::SparseMatrix( const DenseMatrix& matrix )
 
 
 SparseMatrix::~SparseMatrix()
-{}
+{
+    
+}
 
 void SparseMatrix::check() const
 {

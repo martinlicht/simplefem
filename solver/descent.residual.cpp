@@ -137,7 +137,7 @@ ResidualDescentMethod::ResidualDescentMethod( const LinearOperator& op )
 : IterativeSolver( op ), dimension( op.getdimout() )
 {
     assert( op.getdimin() == op.getdimout() );
-    check();
+    ResidualDescentMethod::check();
 }
 
 ResidualDescentMethod::~ResidualDescentMethod()

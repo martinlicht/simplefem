@@ -14,7 +14,7 @@ IterativeSolver::IterativeSolver( const LinearOperator& op )
   max_iteration_count(op.getdimout()),
   recent_iteration_count(0)
 {
-  check();
+  IterativeSolver::check();
 }
 
 IterativeSolver::~IterativeSolver()
