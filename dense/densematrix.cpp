@@ -12,19 +12,19 @@
 DenseMatrix::DenseMatrix( int dim, Float value )
 : DenseMatrix( dim, dim, value )
 {
-    check();
+    DenseMatrix::check();
 }
 
 DenseMatrix::DenseMatrix( int dim, const std::function<Float(int,int)>& generator )
 : DenseMatrix( dim, dim, generator )
 {
-    check();
+    DenseMatrix::check();
 }
 
 DenseMatrix::DenseMatrix( int dim, const std::vector<FloatVector>& coldata )
 : DenseMatrix( dim, dim, coldata )
 {
-    check();
+    DenseMatrix::check();
 }
 
 DenseMatrix::DenseMatrix( int rows, int columns, Float value )
@@ -33,7 +33,7 @@ DenseMatrix::DenseMatrix( int rows, int columns, Float value )
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin(); c++ )
         (*this)(r,c) = value;
-    check();
+    DenseMatrix::check();
 }
 
 DenseMatrix::DenseMatrix( int rows, int columns, const std::function<Float(int,int)>& generator )
@@ -42,7 +42,7 @@ DenseMatrix::DenseMatrix( int rows, int columns, const std::function<Float(int,i
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin(); c++ )
         (*this)(r,c) = generator(r,c);
-    check();
+    DenseMatrix::check();
 }
 
 DenseMatrix::DenseMatrix( int rows, int columns, const std::vector<FloatVector>& coldata )
@@ -51,7 +51,7 @@ DenseMatrix::DenseMatrix( int rows, int columns, const std::vector<FloatVector>&
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin(); c++ )
         (*this)(r,c) = coldata.at(c).at(r);
-    check();
+    DenseMatrix::check();
 }
 
 
@@ -62,7 +62,7 @@ DenseMatrix::DenseMatrix( const ScalingOperator& scaling )
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin(); c++ )
         (*this)(r,c) = ( ( r == c ) ? scaling.getscaling() : 0. );
-    check();
+    DenseMatrix::check();
 }
         
 DenseMatrix::DenseMatrix( const DiagonalOperator& dia )
@@ -72,7 +72,7 @@ DenseMatrix::DenseMatrix( const DiagonalOperator& dia )
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin(); c++ )
         (*this)(r,c) = ( ( r == c ) ? dia.getdiagonal().at(r) : 0. );
-    check();
+    DenseMatrix::check();
 }
         
 DenseMatrix::DenseMatrix( const SparseMatrix& matrix )
@@ -83,7 +83,7 @@ DenseMatrix::DenseMatrix( const SparseMatrix& matrix )
     {
         (*this)( entry.row, entry.column ) += entry.value;
     }
-    check();
+    DenseMatrix::check();
 }
         
 DenseMatrix::DenseMatrix( const FloatVector& myvector )
@@ -94,12 +94,12 @@ DenseMatrix::DenseMatrix( const FloatVector& myvector )
     {
         (*this)( r, 0 ) = myvector[r];
     }
-    check();
+    DenseMatrix::check();
 }
         
 DenseMatrix::~DenseMatrix()
 {
-    
+    DenseMatrix::check();
 }
 
 
@@ -161,33 +161,37 @@ void DenseMatrix::set( int r, int c, Float v )
 
 Float& DenseMatrix::at( int r, int c )
 {
-    check();
     assert( 0 <= r && r < getdimout() );
     assert( 0 <= c && c < getdimin() );
+    assert( 0 <= r * getdimin() + c );
+    assert( r * getdimin() + c < entries.size() );
     return entries.at( r * getdimin() + c );
 }
 
 const Float& DenseMatrix::at( int r, int c ) const
 {
-    check();
     assert( 0 <= r && r < getdimout() );
     assert( 0 <= c && c < getdimin() );
+    assert( 0 <= r * getdimin() + c );
+    assert( r * getdimin() + c < entries.size() );
     return entries.at( r * getdimin() + c );
 }
 
 Float& DenseMatrix::operator()( int r, int c )
 {
-    check();
     assert( 0 <= r && r < getdimout() );
     assert( 0 <= c && c < getdimin() );
+    assert( 0 <= r * getdimin() + c );
+    assert( r * getdimin() + c < entries.size() );
     return entries[ r * getdimin() + c ];
 }
 
 const Float& DenseMatrix::operator()( int r, int c ) const
 {
-    check();
     assert( 0 <= r && r < getdimout() );
     assert( 0 <= c && c < getdimin() );
+    assert( 0 <= r * getdimin() + c );
+    assert( r * getdimin() + c < entries.size() );
     return entries[ r * getdimin() + c ];
 }
 
