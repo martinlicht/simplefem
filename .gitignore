@@ -1,6 +1,5 @@
 Doxyfile
 Dox
-playground/
 private/
 *.exe
 *.stackdump
