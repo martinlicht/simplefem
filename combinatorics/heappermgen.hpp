@@ -1,6 +1,7 @@
 #ifndef INCLUDEGUARD_COMBINATORICS_HEAPS_ALGORITHM
 #define INCLUDEGUARD_COMBINATORICS_HEAPS_ALGORITHM
 
+
 #include <vector>
 
 #include "../basic.hpp"

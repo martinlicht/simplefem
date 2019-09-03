@@ -1,5 +1,4 @@
 
-
 #include "indexrange.hpp"
 
 #include <iostream>

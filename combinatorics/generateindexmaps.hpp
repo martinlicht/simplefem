@@ -1,11 +1,13 @@
 #ifndef INCLUDEGUARD_COMBINATORICS_GENERATEINDEXMAPS
 #define INCLUDEGUARD_COMBINATORICS_GENERATEINDEXMAPS
 
+
 #include <algorithm>
 #include <vector>
 #include <iterator>
 
 #include "../basic.hpp"
+
 #include "indexrange.hpp"
 #include "indexmap.hpp"
 

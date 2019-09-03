@@ -2,7 +2,6 @@
 #define INCLUDEGUARD_COMBINATORICS_INDEXRANGE
 
 
-
 #include <vector>
 #include <limits>
 #include <iostream>

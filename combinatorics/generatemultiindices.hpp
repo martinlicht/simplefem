@@ -1,11 +1,13 @@
 #ifndef INCLUDEGUARD_COMBINATORICS_GENERATEMULTIINDICES
 #define INCLUDEGUARD_COMBINATORICS_GENERATEMULTIINDICES
 
+
 #include <algorithm>
 #include <vector>
 #include <iterator>
 
 #include "../basic.hpp"
+
 #include "indexrange.hpp"
 #include "indexmap.hpp"
 #include "multiindex.hpp"
