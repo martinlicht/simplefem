@@ -47,6 +47,8 @@ public LinearOperator /* every matrix is a linear operator */
 
         explicit SparseMatrix( int dimout, int dimin, int numentries = 0, 
                                std::function<MatrixEntry(int)> generator = [](int i __attribute__((unused)) )->MatrixEntry{ return {0,0,0.}; } ); 
+        explicit SparseMatrix( int dimout, int dimin, const std::vector<MatrixEntry>& );
+        explicit SparseMatrix( int dimout, int dimin, const std::initializer_list<MatrixEntry>& );
         explicit SparseMatrix( const ScalingOperator& matrix );
         explicit SparseMatrix( const DiagonalOperator& matrix );
         explicit SparseMatrix( const DenseMatrix& );
@@ -75,10 +77,16 @@ public LinearOperator /* every matrix is a linear operator */
 
     private:
 
-        /*mutable*/ std::vector<MatrixEntry> entries; 
+        mutable std::vector<MatrixEntry> entries; 
     
 };
-  
+
+
+
+SparseMatrix operator&( const SparseMatrix& left, const SparseMatrix& right );
+
+
+
   
 
 #endif

@@ -30,6 +30,20 @@ SparseMatrix::SparseMatrix( int dimout, int dimin, int numentries, std::function
     SparseMatrix::check();    
 }
 
+SparseMatrix::SparseMatrix( int dimout, int dimin, const std::vector<MatrixEntry>& entries )
+: LinearOperator( dimout, dimin ), entries(entries)
+{
+    SparseMatrix::check();
+}
+
+SparseMatrix::SparseMatrix( int dimout, int dimin, const std::initializer_list<MatrixEntry>& ent )
+: LinearOperator( dimout, dimin ), entries(0)
+{
+    entries.reserve( ent.size() );
+    std::copy( ent.begin(), ent.end(), entries.begin() );
+    assert( ent.size() == entries.size() );
+}
+
 SparseMatrix::SparseMatrix( const ScalingOperator& matrix )
 : LinearOperator( matrix.getdimout(), matrix.getdimin() ),
   entries( matrix.getdimout() )
@@ -186,6 +200,10 @@ void SparseMatrix::sortentries() const
 {
     check();
 
+    std::sort( entries.begin(), entries.end(), []( MatrixEntry a, MatrixEntry b) {
+        return a.row < b.row || ( a.row == b.row && a.column < b.column );   
+    });
+    
 //     const int N = getnumberofentries();
 //     
 //     for( int i = 0; i < N; i++ ) {
@@ -208,23 +226,24 @@ void SparseMatrix::sortandcompressentries() const
     
     sortentries();
     
-//     int index_dest = 0;
-//     
-//     for( int index_src  = 1; index_src < getnumberofentries(); index_src++ )
-//     {
-//         assert( index_dest < index_src );
-//     
-//         if( entries[index_src].row == entries[index_dest].row && entries[index_src].column == entries[index_dest].column ) {
-//             entries[index_dest].value += entries[index_src].value;
-//         } else {
-//             index_dest++;
-//             entries[index_dest] = entries[index_src];
-//         }
-//     }
-//     
-//     assert( index_dest <= index_src );
-//     
-//     entries.resize( index_dest+1 );
+    int dest = 0;
+    
+    for( int src = 1; src < getnumberofentries(); src++ )
+    {
+        assert( dest < src );
+    
+        if( entries[src].row == entries[dest].row and entries[src].column == entries[dest].column ) {
+            entries[dest].value += entries[src].value;
+        } else {
+            dest++;
+            entries[dest] = entries[src];
+        }
+        
+        assert( dest <= src );
+    }
+    
+    
+    entries.resize( dest+1 );
     
     check();  
 }
@@ -250,6 +269,31 @@ SparseMatrix SparseMatrix::getTranspose() const
 
 
 
+SparseMatrix operator&( const SparseMatrix& left, const SparseMatrix& right )
+{
+    left.sortandcompressentries();
+    right.sortandcompressentries();
+    
+    int counter = 0;
+    for( SparseMatrix::MatrixEntry l : left.getentries() )
+    for( SparseMatrix::MatrixEntry r : left.getentries() )
+        if( l.column == r.row ) 
+            counter++;
+            
+    std::vector<SparseMatrix::MatrixEntry> new_entries;
+    new_entries.reserve( counter );
+    for( SparseMatrix::MatrixEntry l : left.getentries() )
+    for( SparseMatrix::MatrixEntry r : left.getentries() )
+        if( l.column == r.row ) 
+            new_entries.push_back( { l.row, r.column, l.value * r.value } );
+    
+    SparseMatrix ret( left.getdimout(), right.getdimin(), new_entries );
+        
+    ret.sortandcompressentries();
+    
+    return ret;
+    
+}
 
 
 
