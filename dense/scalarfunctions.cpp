@@ -9,11 +9,14 @@
 #include <cmath>
 
 #include "../combinatorics/generateindexmaps.hpp"
+
+#include "../operators/floatvector.hpp"
+#include "../solver/crm.hpp"
+
 #include "densematrix.hpp"
 #include "qr.factorization.hpp"
 #include "lu.factorization.hpp"
-#include "../operators/floatvector.hpp"
-#include "../solver/crm.hpp"
+
 
 
 
