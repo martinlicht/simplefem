@@ -70,6 +70,45 @@ int main()
         cout << "Should be the zero-dimensional vector:" << endl;
         cout << e << endl;
         
+        {
+            FloatVector a { 1, 3, 0 };
+            FloatVector b { -1, -3, 0 };
+            FloatVector c { 2, 4, 1 };
+            FloatVector d { -5, -4, -3 };
+            FloatVector e { 0,0,0 };
+            
+            cout << "positive:     (no ) " << a.ispositive() << endl;
+            cout << "negative:     (no ) " << a.isnegative() << endl;
+            cout << "non-negative: (yes) " << a.isnonnegative() << endl;
+            cout << "non-positive: (no ) " << a.isnonpositive() << endl;
+            cout << "zero:         (no ) " << a.iszero() << endl;
+            
+            cout << "positive:     (no ) " << b.ispositive() << endl;
+            cout << "negative:     (no ) " << b.isnegative() << endl;
+            cout << "non-negative: (no ) " << b.isnonnegative() << endl;
+            cout << "non-positive: (yes) " << b.isnonpositive() << endl;
+            cout << "zero:         (no ) " << b.iszero() << endl;
+            
+            cout << "positive:     (yes) " << c.ispositive() << endl;
+            cout << "negative:     (no ) " << c.isnegative() << endl;
+            cout << "non-positive: (no ) " << c.isnonpositive() << endl;
+            cout << "non-negative: (yes) " << c.isnonnegative() << endl;
+            cout << "zero:         (no ) " << c.iszero() << endl;
+            
+            cout << "positive:     (no ) " << d.ispositive()    << endl;
+            cout << "negative:     (yes) " << d.isnegative() << endl;
+            cout << "non-positive: (yes) " << d.isnonpositive() << endl;
+            cout << "non-negative: (no ) " << d.isnonnegative() << endl;
+            cout << "zero:         (no ) " << d.iszero() << endl;
+            
+            cout << "positive:     (no ) " << e.ispositive()    << endl;
+            cout << "negative:     (no ) " << e.isnegative()    << endl;
+            cout << "non-positive: (yes) " << e.isnonpositive() << endl;
+            cout << "non-negative: (yes) " << e.isnonnegative() << endl;
+            cout << "zero:         (yes) " << e.iszero()        << endl;
+            
+        }
+        
         cout << "Finished Unit Test" << endl;
 
         return 0;

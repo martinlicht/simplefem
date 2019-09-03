@@ -72,6 +72,12 @@ class FloatVector
         
         void scale( Float );
         
+        void scaleinverse( Float );
+        
+        void shift( Float );
+        
+        void shiftnegative( Float );
+        
         
         /* slices */
         
@@ -110,7 +116,24 @@ class FloatVector
         
         Float maxnorm() const;
         
+        Float sumnorm() const;
+        
         Float lpnorm( Float ) const;
+        
+        
+        
+        
+        /* Investigations */
+        
+        bool iszero() const;
+        
+        bool ispositive() const;
+        
+        bool isnegative() const;
+        
+        bool isnonnegative() const;
+        
+        bool isnonpositive() const;
         
         
         

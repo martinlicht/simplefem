@@ -156,6 +156,29 @@ void FloatVector::scale( Float alpha )
         setentry( p, alpha * getentry( p ) ); 
 }
 
+void FloatVector::scaleinverse( Float alpha ) 
+{
+    check();
+    for( int p = 0; p < getdimension(); p++ )
+        setentry( p, getentry( p ) / alpha ); 
+}
+
+void FloatVector::shift( Float delta ) 
+{
+    check();
+    for( int p = 0; p < getdimension(); p++ )
+        setentry( p, getentry( p ) + delta ); 
+}
+
+void FloatVector::shiftnegative( Float delta ) 
+{
+    check();
+    for( int p = 0; p < getdimension(); p++ )
+        setentry( p, getentry( p ) - delta ); 
+}
+
+
+
 
 
 FloatVector FloatVector::getslice( int base, int len ) const 
@@ -275,6 +298,16 @@ Float FloatVector::maxnorm() const
     return ret;
 }
 
+Float FloatVector::sumnorm() const
+{
+    check();
+    assert( getdimension() > 0 );
+    Float ret = 0.;
+    for( int d = 0; d < getdimension(); d++ )
+        ret = ret + absolute( data.at(d) );
+    return ret;
+}
+
 Float FloatVector::lpnorm( Float p ) const
 {
     check();
@@ -287,6 +320,55 @@ Float FloatVector::lpnorm( Float p ) const
         ret += pow( absolute( data.at(d) ), p );
     return pow( ret, 1./p );
 }
+
+
+
+
+
+
+
+
+bool FloatVector::iszero() const 
+{
+    check();
+    return std::all_of( data.cbegin(), data.cend(), [](Float f) -> bool{ return f == 0.; });
+}
+
+bool FloatVector::ispositive() const 
+{
+    check();
+    return std::all_of( data.cbegin(), data.cend(), [](Float f) -> bool{ return f > 0.; });
+}
+
+bool FloatVector::isnegative() const 
+{
+    check();
+    return std::all_of( data.cbegin(), data.cend(), [](Float f) -> bool{ return f < 0.; });
+}
+
+bool FloatVector::isnonnegative() const 
+{
+    check();
+    return std::all_of( data.cbegin(), data.cend(), [](Float f) -> bool{ return f >= 0.; });
+}
+
+bool FloatVector::isnonpositive() const 
+{
+    check();
+    return std::all_of( data.cbegin(), data.cend(), [](Float f) -> bool{ return f <= 0.; });
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
