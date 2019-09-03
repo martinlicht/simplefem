@@ -27,6 +27,12 @@ FloatVector::FloatVector( const std::vector<Float>& vals, Float alpha )
   check();
 }
 
+FloatVector::FloatVector( const std::initializer_list<Float>& l )
+: data( l )
+{
+    check();
+}
+
 FloatVector::FloatVector( int dimension, const std::function<Float(int)>& generator, Float alpha )
 : data( dimension )
 {
@@ -327,6 +333,12 @@ Float FloatVector::lpnorm( Float p ) const
 
 
 
+
+bool FloatVector::isfinite() const 
+{
+    check();
+    return std::all_of( data.cbegin(), data.cend(), [](Float f) -> bool{ return std::isfinite(f); });
+}
 
 bool FloatVector::iszero() const 
 {

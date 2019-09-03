@@ -33,6 +33,8 @@ class FloatVector
         
         FloatVector( int dimension, const std::function<Float(int)>& generator, Float scaling = 1. );
 
+        FloatVector( const std::initializer_list<Float>& l );
+
         // virtual ~FloatVector();
         
         FloatVector& operator=( const FloatVector& vec );
@@ -124,6 +126,8 @@ class FloatVector
         
         
         /* Investigations */
+        
+        bool isfinite() const;
         
         bool iszero() const;
         
