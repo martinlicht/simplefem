@@ -144,7 +144,13 @@ class Mesh
          * 
          */
         
+        Float getDiameter( int dim, int index ) const;
+        
         Float getMeasure( int dim, int index ) const;
+        
+        Float getShapemeasure( int dim, int index ) const;
+        Float getShapemeasure( int dim ) const;
+        Float getShapemeasure() const;
         
         DenseMatrix getVertexCoordinateMatrix( int dim, int index ) const;
         

@@ -226,6 +226,23 @@ int Mesh::get_supersimplex_by_index( int sup, int sub, int cellsub, int parentin
 
 
 
+Float Mesh::getDiameter( int dim, int index ) const 
+{
+    assert( 0 <= dim && dim <= getinnerdimension() );
+    assert( 0 <= index && index < count_simplices(dim) );
+    
+    DenseMatrix vcm = getVertexCoordinateMatrix( dim, index );
+    
+    DenseMatrix dist(dim+1,dim+1);
+    for( int i = 0; i <= dim; i++ )
+    for( int j = 0; j <= dim; j++ )
+        dist(i,j) = ( vcm.getcolumn(i) - vcm.getcolumn(j) ).norm();
+    
+//     assert( dist.isnonnegative() && dist.isfinite() );
+    
+    return dist.maxabsoluteentry();
+}
+
 Float Mesh::getMeasure( int dim, int index ) const 
 {
     assert( 0 <= dim && dim <= getinnerdimension() );
@@ -237,6 +254,31 @@ Float Mesh::getMeasure( int dim, int index ) const
     
     return std::sqrt(absolute(Determinant(temp)));
 }
+
+Float Mesh::getShapemeasure( int dim, int index ) const 
+{
+    assert( 0 <= dim && dim <= getinnerdimension() );
+    assert( 0 <= index && index < count_simplices(dim) );
+    
+    return power<Float>( getDiameter( dim, index ), (Float)dim ) / getMeasure( dim, index );
+}
+
+Float Mesh::getShapemeasure( int dim ) const 
+{
+    assert( 0 <= dim && dim <= getinnerdimension() );
+    
+    Float shapemeas = 0.;
+    for( int s = 0; s < count_simplices(dim); s++ )
+        shapemeas = std::max( shapemeas, power<Float>( getDiameter( dim, s ), (Float)dim ) / getMeasure( dim, s ) );
+    return shapemeas;
+}
+
+Float Mesh::getShapemeasure() const 
+{
+    return getShapemeasure( getinnerdimension() ); 
+}
+
+
 
 
 DenseMatrix Mesh::getVertexCoordinateMatrix( int dim, int index ) const 
