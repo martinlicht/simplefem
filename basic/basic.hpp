@@ -87,7 +87,7 @@ static inline T power( T base, T exponent )
     assert( base != 0 );
     assert( exponent >= 0 );
     if( exponent == 0 ) return 1;
-    return base * integerpower( base, exponent - 1 );
+    return base * power( base, exponent - 1 );
 }
 
 
@@ -166,6 +166,20 @@ int find_index( const std::vector<T> vec, const T& t )
    assert( ret < vec.size() );
    return ret;
 }
+
+
+#include <ostream>
+#include <array>
+
+
+template <typename T, size_t N>
+std::ostream& operator<<( std::ostream& stream, const std::array<T, N>& v)
+{
+    for( const auto& item : v )
+        stream << item << space;
+    stream << nl;
+}
+
 
 
 
