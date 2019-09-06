@@ -482,3 +482,105 @@ Float DenseMatrix::maxabsoluteentry() const
 }
 
 
+
+
+
+
+
+
+
+bool DenseMatrix::isfinite() const
+{
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimin();  c++ )
+        if( not std::isfinite( get(r,c) ) ) 
+            return false;
+    return true;
+}
+
+bool DenseMatrix::iszero() const
+{
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimin();  c++ )
+        if( get(r,c) != 0. ) 
+            return false;
+    return true;
+}
+
+
+
+bool DenseMatrix::ispositive() const 
+{
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimin();  c++ )
+        if( get(r,c) <= 0. ) 
+            return false;
+    return true;
+}
+
+bool DenseMatrix::isnegative() const
+{
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimin();  c++ )
+        if( get(r,c) >= 0. ) 
+            return false;
+    return true;
+}
+
+bool DenseMatrix::isnonnegative() const
+{
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimin();  c++ )
+        if( get(r,c) < 0. ) 
+            return false;
+    return true;
+}
+
+bool DenseMatrix::isnonpositive() const
+{
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimin();  c++ )
+        if( get(r,c) > 0. ) 
+            return false;
+    return true;
+}
+
+
+Float DenseMatrix::norm() const
+{
+    Float ret = 0.;
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimin();  c++ )
+        ret += get(r,c) * get(r,c);
+    return sqrt( ret );
+}
+
+Float DenseMatrix::maxnorm() const
+{
+    Float ret = 0.;
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimin();  c++ )
+        ret = std::max( ret, get(r,c) );
+    return ret;
+}
+
+Float DenseMatrix::sumnorm() const
+{
+    Float ret = 0.;
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimin();  c++ )
+        ret += absolute( get(r,c) );
+    return ret;
+}
+
+Float DenseMatrix::lpnorm( Float p ) const
+{
+    assert( p > 1. );
+    Float ret = 0.;
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimin();  c++ )
+        ret += power( absolute( get(r,c) ), p );
+    return power( ret, 1. / p );
+}
+
+

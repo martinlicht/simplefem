@@ -106,6 +106,31 @@ public LinearOperator /* every matrix is a linear operator */
         
         Float maxabsoluteentry() const;
         
+        Float norm() const;
+        
+        Float maxnorm() const;
+        
+        Float sumnorm() const;
+        
+        Float lpnorm( Float ) const;
+        
+        
+        /* Investigations */
+        
+        bool isfinite() const;
+        
+        bool iszero() const;
+        
+        bool ispositive() const;
+        
+        bool isnegative() const;
+        
+        bool isnonnegative() const;
+        
+        bool isnonpositive() const;
+        
+        
+        
     private:
         
         std::vector<Float> entries;
