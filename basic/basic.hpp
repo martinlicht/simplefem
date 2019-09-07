@@ -178,6 +178,7 @@ std::ostream& operator<<( std::ostream& stream, const std::array<T, N>& v)
     for( const auto& item : v )
         stream << item << space;
     stream << nl;
+    return stream;
 }
 
 
