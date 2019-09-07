@@ -9,7 +9,9 @@
 #include "../operators/linearoperator.hpp"
 #include "../operators/diagonaloperator.hpp"
 #include "../dense/densematrix.hpp"
-
+#include "../dense/matrixtensorproduct.hpp"
+#include "../dense/functions.hpp"
+#include "../mesh/mesh.hpp"
 
 
 /************************
@@ -20,11 +22,11 @@
 ************************/
 
 
-int SullivanSpanSize( int n, int k, int r )
+inline int SullivanSpanSize( int n, int k, int r )
 {
     assert( 0 <= n && 0 <= k && 0 <= r );
     assert( k <= n );
-    return binomial( n+1 + r, r ) * binomial( n+1, k )
+    return binomial( n+1 + r, r ) * binomial( n+1, k );
 }
 
 
@@ -36,9 +38,9 @@ int SullivanSpanSize( int n, int k, int r )
 // of the interpolation points 
 
 
-DenseMatrix InterpolationPointsBarycentricCoordinates( int dim, int r )
+inline DenseMatrix InterpolationPointsBarycentricCoordinates( int n, int r )
 {
-    const auto multi_indices = generateMultiIndices( dim, r );
+    const auto multi_indices = generateMultiIndices( IndexRange(0,n), r );
     
     assert( multi_indices.size() == binomial( n+1+r, r ) );
     
@@ -49,11 +51,11 @@ DenseMatrix InterpolationPointsBarycentricCoordinates( int dim, int r )
     DenseMatrix ret( N+1, N );
     
     for( int i = 0; i < N; i++ )
-        ret.setcolumn( i, multi_indices[i].getfloatvector().shift( delta ).scaleinverse( r + (dim+1) * delta ).getentries() );
+        ret.setcolumn( i, FloatVector(multi_indices[i].getvalues()).shift( delta ).scaleinverse( r + (n+1) * delta ) );
 
     for( int i = 0; i < N; i++ ) {
         assert( ret.getcolumn(i).isnonnegative() );
-        assert( ret.getcolumn.sumnorm() > 0.999 && ret.getcolumn.sumnorm() < 1.001 );
+        assert( ret.getcolumn(i).sumnorm() > 0.999 && ret.getcolumn(i).sumnorm() < 1.001 );
     }
     
     return ret;
@@ -69,9 +71,9 @@ DenseMatrix InterpolationPointsBarycentricCoordinates( int dim, int r )
 
 
 
-DenseMatrix EvaluationMatrix( int dim, r, DenseMatrix lpsbc )
+inline DenseMatrix EvaluationMatrix( int dim, int r, DenseMatrix lpsbc )
 {
-    const auto mis = generateMultiIndices( dim, r );
+    const auto mis = generateMultiIndices( IndexRange(0,dim), r );
     
     assert( dim        == lpsbc.getdimout() );
     assert( mis.size() == lpsbc.getdimin()  );
@@ -86,7 +88,7 @@ DenseMatrix EvaluationMatrix( int dim, r, DenseMatrix lpsbc )
         ret(r,c) = 1.;
         for( int d = 0; d <= dim; d++ )
             if( mis[c][d] != 0 )
-                ret(r,c) *= power( lpsbc(d,r), mis[c][d] );
+                ret(r,c) *= power( lpsbc(d,r), (Float) mis[c][d] );
     }
     
     return ret;
@@ -99,24 +101,68 @@ DenseMatrix EvaluationMatrix( int dim, r, DenseMatrix lpsbc )
 // this produces a matrix that transform from Euclidean coordinates 
 // to barycentric coordinates 
 
-DenseMatrix BarycentricProjectionMatrix( const DenseMatrix& Jac )
+inline DenseMatrix BarycentricProjectionMatrix( const DenseMatrix& J )
 {
-    assert( Jac.getdimout() >= Jac.getdimin() );
+    assert( J.getdimout() >= J.getdimin() );
     
     // We implement J^+ = inv( J^t J ) J^t
     
-    auto Jt = Tranpose(J);
+    auto Jt = Transpose(J);
     
     auto F = Inverse( Jt * J ) * Jt; // n x d
     
-    DenseMatrix ret( Jac.getdimin()+1, Jac.getdimout(), 0.0 );
+    DenseMatrix ret( J.getdimin()+1, J.getdimout(), 0.0 );
     
-    for( int r = 0; r < Jac.getdimin();  r++ )
-    for( int c = 0; c < Jac.getdimout(); c++ )
+    for( int r = 0; r < J.getdimin();  r++ )
+    for( int c = 0; c < J.getdimout(); c++ )
         ret( r+1, c ) = F(r,c);
     
     return ret;
 }
+
+
+
+
+
+
+inline DenseMatrix EvaluateField( 
+            int dim, int k, int r, 
+            DenseMatrix lps, 
+            std::function< FloatVector( FloatVector ) > field
+            )
+{
+    
+    assert( dim >= 0 && k >= 0 && dim >= k && r >= 0 );
+    assert( lps.getdimout() == dim );
+    
+    const auto fielddim = binomial(dim,k);
+    
+    DenseMatrix ret( fielddim, lps.getdimin() );
+    
+    for( int p = 0; p < lps.getdimin(); p++ )
+    {
+        auto point = lps.getcolumn(p);
+        
+        auto value = field( point );
+        
+        assert( value.getdimension() == binomial( dim, k ) );
+        
+        ret.setcolumn( p, value );
+    }
+    
+    return ret;
+    
+}
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -132,8 +178,8 @@ DenseMatrix BarycentricProjectionMatrix( const DenseMatrix& Jac )
 // 
 
 
-FloatVector Interpolation( const Mesh& m, int dim, int k, int r, 
-            std::function< FloatVector( std::vector<Float> ) > field
+inline FloatVector Interpolation( const Mesh& m, int dim, int k, int r, 
+            std::function< FloatVector( FloatVector ) > field
             )
 {
     
@@ -141,7 +187,7 @@ FloatVector Interpolation( const Mesh& m, int dim, int k, int r,
     assert( 0 <= k && k <= dim );
     assert( 0 <= r );
     
-    FloatVector ret( m.count_simplices(dim) * SullivanSpanSize() );
+    FloatVector ret( m.count_simplices(dim) * SullivanSpanSize(dim,k,r) );
     
     const auto lpsbc = InterpolationPointsBarycentricCoordinates( dim, r );
     
@@ -161,19 +207,22 @@ FloatVector Interpolation( const Mesh& m, int dim, int k, int r,
         auto EMinv = Inverse( EM );
         
         
-        auto Jac = m.getTransformationMatrix( dim, s );
+        auto Jac = m.getTransformationJacobian( dim, s );
         
         auto bpm = BarycentricProjectionMatrix( Jac );
         
         
         auto InterpolationMatrix = MatrixTensorProduct( EMinv, bpm );
         
+        auto Evaluations = EvaluateField( dim, k, r, lps, field );
+        auto EvaluationVector = Evaluations.flattencolumns();
         
-        auto EvaluationVector = evaluate( lps, k, field ); // TODO: implement
+        auto localResult = InterpolationMatrix * EvaluationVector;
         
-        auto localResult = InterpolationMatrix * EvaluationVector
+        assert( localResult.getdimension() == SullivanSpanSize(dim,k,r) );
         
-        // TODO: write local result into global vector 'ret'
+        
+        ret.setslice( s * SullivanSpanSize(dim,k,r), localResult );
         
     }
     

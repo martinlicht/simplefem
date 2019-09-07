@@ -14,6 +14,7 @@
 #include "../operators/linearoperator.hpp"
 #include "../dense/densematrix.hpp"
 #include "../dense/functions.hpp"
+#include "../mesh/mesh.hpp"
 
 
 

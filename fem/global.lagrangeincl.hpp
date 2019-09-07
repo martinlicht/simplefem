@@ -16,6 +16,7 @@
 #include "../dense/densematrix.hpp"
 #include "../dense/matrixtensorproduct.hpp"
 #include "../operators/linearoperator.hpp"
+#include "../mesh/mesh.hpp"
 
 #include "../fem/local.polynomialmassmatrix.hpp"
 

@@ -14,6 +14,7 @@
 #include "../dense/densematrix.hpp"
 #include "../dense/matrixtensorproduct.hpp"
 #include "../operators/linearoperator.hpp"
+#include "../mesh/mesh.hpp"
 
 #include "../fem/local.polynomialmassmatrix.hpp"
 
@@ -23,7 +24,7 @@
 
 
 
-inline SparseMatrix FEECBrokenMassMatrix( Mesh& mesh, int n, int k, int r )
+inline SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
 {
     
     // check whether the parameters are right 
