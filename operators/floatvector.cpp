@@ -27,6 +27,12 @@ FloatVector::FloatVector( const std::vector<Float>& vals, Float alpha )
   check();
 }
 
+FloatVector::FloatVector( const std::vector<int>& vals, Float alpha )
+: FloatVector( vals.size(), [&vals](int i) -> Float{ return vals.at(i); }, alpha )
+{
+  check();
+}
+
 FloatVector::FloatVector( const std::initializer_list<Float>& l )
 : data( l )
 {
