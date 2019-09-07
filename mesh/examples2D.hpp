@@ -219,7 +219,7 @@ inline MeshSimplicial2D UnitDisk( int L = 1 )
     
     std::vector<Float> Rs(L);
     Rs[0] = 1.;
-    for( int l = 1; l < L; l++ ) Rs[l] = Rs[l-1] + 1.;//1.5 * 2 * 3.14159 * Rs[l-1] / ( 3. * (1<<(l)) );
+    for( int l = 1; l < L; l++ ) Rs[l] = Rs[l-1] + 1.5 * 2 * 3.14159 * Rs[l-1] / ( 3. * (1<<(l)) );
     Float Rmax = *std::max_element(Rs.begin(),Rs.end());
     for( Float& R : Rs ) R /= Rmax;
     
@@ -329,9 +329,9 @@ inline MeshSimplicial2D Annulus( int Linner, int Louter = 1 )
     
     std::vector<Float> Rs(Louter);
     for( int l = 0; l < Linner; l++ ) Rs[l] = 1.;
-    for( int l = Linner; l < Louter; l++ ) Rs[l] = Rs[l-1] + 1.;//1.5 * 2 * 3.14159 * Rs[l-1] / ( 3. * (1<<(l)) );
+    for( int l = Linner; l < Louter; l++ ) Rs[l] = Rs[l-1] + 1.5 * 2 * 3.14159 * Rs[l-1] / ( 3. * (1<<(l)) );
     Float Rmax = *std::max_element(Rs.begin(),Rs.end());
-    for( Float& R : Rs ) R /= Rmax;
+    for( Float& R : Rs ) R = pow( R / Rmax, 1.5 );
     
     // 2.2 fill in the values
     
