@@ -465,10 +465,6 @@ void DenseMatrix::add( Float s, Float t, const DenseMatrix& addendum )
 }
         
 
-bool DenseMatrix::issquare() const
-{
-    return getdimout() == getdimin();
-}
 
 
 Float DenseMatrix::maxabsoluteentry() const
@@ -488,6 +484,35 @@ Float DenseMatrix::maxabsoluteentry() const
 
 
 
+
+bool DenseMatrix::issquare() const
+{
+    return getdimout() == getdimin();
+}
+
+bool DenseMatrix::issymmetric() const
+{
+    if( not issquare() ) return false;
+    
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c <= r; c++ )
+        if( get(r,c) != get(c,r) ) 
+            return false;
+    
+    return true;
+}
+
+bool DenseMatrix::isantisymmetric() const
+{
+    if( not issquare() ) return false;
+    
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c <= r; c++ )
+        if( get(r,c) != -get(c,r) ) 
+            return false;
+    
+    return true;
+}
 
 bool DenseMatrix::isfinite() const
 {

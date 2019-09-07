@@ -50,10 +50,6 @@ public LinearOperator /* every matrix is a linear operator */
         
         virtual FloatVector apply( const FloatVector& add, Float scaling ) const override;
         
-        /* Questions */
-        
-        bool issquare() const;
-        
         /* Access entries */
         
         Float get(int,int) const;
@@ -116,6 +112,12 @@ public LinearOperator /* every matrix is a linear operator */
         
         
         /* Investigations */
+        
+        bool issquare() const;
+        
+        bool issymmetric() const;
+        
+        bool isantisymmetric() const;
         
         bool isfinite() const;
         
