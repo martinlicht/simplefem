@@ -161,32 +161,39 @@ void FloatVector::random()
         setentry( p, sqrt( rand() ) ); 
 }
 
-void FloatVector::scale( Float alpha ) 
+
+
+
+FloatVector& FloatVector::scale( Float alpha ) 
 {
     check();
     for( int p = 0; p < getdimension(); p++ )
         setentry( p, alpha * getentry( p ) ); 
+    return *this;
 }
 
-void FloatVector::scaleinverse( Float alpha ) 
+FloatVector& FloatVector::scaleinverse( Float alpha ) 
 {
     check();
     for( int p = 0; p < getdimension(); p++ )
         setentry( p, getentry( p ) / alpha ); 
+    return *this;
 }
 
-void FloatVector::shift( Float delta ) 
+FloatVector& FloatVector::shift( Float delta ) 
 {
     check();
     for( int p = 0; p < getdimension(); p++ )
         setentry( p, getentry( p ) + delta ); 
+    return *this;
 }
 
-void FloatVector::shiftnegative( Float delta ) 
+FloatVector& FloatVector::shiftnegative( Float delta ) 
 {
     check();
     for( int p = 0; p < getdimension(); p++ )
         setentry( p, getentry( p ) - delta ); 
+    return *this;
 }
 
 

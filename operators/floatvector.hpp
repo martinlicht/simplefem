@@ -68,19 +68,22 @@ class FloatVector
         const std::vector<Float>& getdata() const;
         
         
-        /* basic manipulation */
+        /* load values */
         
         void zero();
         
         void random();
         
-        void scale( Float );
         
-        void scaleinverse( Float );
+        /* scale and shift */
         
-        void shift( Float );
+        FloatVector& scale( Float );
         
-        void shiftnegative( Float );
+        FloatVector& scaleinverse( Float );
+        
+        FloatVector& shift( Float );
+        
+        FloatVector& shiftnegative( Float );
         
         
         /* slices */
