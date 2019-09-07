@@ -50,6 +50,11 @@ public LinearOperator /* every matrix is a linear operator */
         
         virtual FloatVector apply( const FloatVector& add, Float scaling ) const override;
         
+        /* matrix level point of view */
+        
+        int numrows() const;
+        int numcolumns() const;
+        
         /* Access entries */
         
         Float get(int,int) const;
@@ -74,6 +79,12 @@ public LinearOperator /* every matrix is a linear operator */
         void scalecolumn( int c, Float alpha );
         void addrow( int r1, int r2, Float alpha );
         void addcolumn( int c1, int c2, Float alpha );
+        
+        /* Flatten (and raise?) */
+        
+        FloatVector flattencolumns() const;
+        FloatVector flattenrows() const;
+        
         
         /* Generate standard matrices */
         

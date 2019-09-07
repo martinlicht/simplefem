@@ -241,8 +241,31 @@ DenseMatrix DenseMatrix::submatrix( const IndexMap& rows, const IndexMap& column
 //     return ret;
     
 }
-        
-        
+
+
+
+
+FloatVector DenseMatrix::flattencolumns() const
+{
+    check();
+    FloatVector ret( getdimin() * getdimout() );
+    for( int c = 0; c < getdimin();  c++ )
+    for( int r = 0; r < getdimout(); r++ )
+        ret[ c * getdimout() + r ] = get(r,c);
+    return ret;
+}
+
+FloatVector DenseMatrix::flattenrows() const
+{
+    check();
+    FloatVector ret( getdimin() * getdimout() );
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimin(); c++ )
+        ret[ r * getdimin() + c ] = get(r,c);
+    return ret;
+}
+
+
 void DenseMatrix::zeromatrix()
 {
     check();
