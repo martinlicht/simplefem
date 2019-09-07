@@ -134,3 +134,8 @@ CPPFLAGS = -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC
 
 # -D_GLIBCXX_DEBUG
 
+
+tidy:
+	clang-tidy ./*.?pp -checks=llvm*,bugprone-*,clang-analyzer-*,misc-*,-llvm-header-guard,-llvm-include-order -- -std=c++17
+
+
