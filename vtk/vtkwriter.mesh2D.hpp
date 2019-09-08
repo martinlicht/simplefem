@@ -32,6 +32,10 @@ class VTK_MeshWriter_Mesh2D
         ( const FloatVector&, 
           const char* name, Float scaling = 1. );
         
+        void writeCellScalarData
+        ( const FloatVector&, 
+          const char* name, Float scaling = 1. );
+        
         void writeCellVectorData
         ( const FloatVector& x, 
           const FloatVector& y, 

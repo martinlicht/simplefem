@@ -101,6 +101,25 @@ void VTK_MeshWriter_Mesh2D::writeVertexScalarData( const FloatVector& data, cons
 }
 
 
+void VTK_MeshWriter_Mesh2D::writeCellScalarData( const FloatVector& data, const char* name, Float scaling )
+{
+    
+    assert( name != nullptr );
+    assert( data.getdimension() == mesh.count_simplices(2) );
+    
+    os << "CELL_DATA " << mesh.count_simplices(2) << nl;
+    os << "SCALARS " << name << " double 1" << nl;
+    // VECTORS (name_of_data) Datentyp(=float) AnzahlKomponenten(=1) 
+    os << "LOOKUP_TABLE default" << nl;
+    
+    for( int c = 0; c < mesh.count_simplices(2); c++ )
+        os << scaling * data.at(c) << nl;
+    
+    os << std::endl;
+    
+}
+
+
 void VTK_MeshWriter_Mesh2D::writeCellVectorData( 
     const FloatVector& datax,
     const FloatVector& datay,

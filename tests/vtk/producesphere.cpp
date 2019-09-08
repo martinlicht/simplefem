@@ -36,13 +36,13 @@ int main()
             vtk.writeTopDimensionalCells();
                 
             {
-                FloatVector V( M.count_simplices(0), 
+                FloatVector V( M.count_simplices(2), 
                                 [&M](int i)->Float{
-                                    FloatVector point = M.getcoordinates().getvectorclone(i);
+                                    FloatVector point = M.get_triangle_midpoint(i);
                                     return std::pow( point[0], 2.0 ) + std::cos( 1.0 * 2 * 3.14159 * point[1] );
                             });
                 
-                vtk.writeVertexScalarData(V,"testing_scalar_data",1.0);
+                vtk.writeCellScalarData(V,"testing_scalar_data",1.0);
             }
 
             fs.close();
