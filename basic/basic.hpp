@@ -1,6 +1,7 @@
 #ifndef INCLUDEGUARD_BASIC_HPP
 #define INCLUDEGUARD_BASIC_HPP
 
+#include <cmath>     
 #include <ctime>     
 #include <cstdlib>     
 #include <cassert>     /* assert macro */
@@ -80,6 +81,11 @@ T binomial( const T& n, const T& k )
     return factorial(n) / ( factorial(k) * factorial(n-k) );
 }
 
+
+static inline Float power( Float base, Float exponent )
+{
+    return std::pow( base, exponent );
+}
 
 template<typename T>
 static inline T power( T base, T exponent )
