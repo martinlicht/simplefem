@@ -77,6 +77,8 @@ class FloatVector
         
         /* scale and shift */
         
+        FloatVector& normalize();
+        
         FloatVector& scale( Float );
         
         FloatVector& scaleinverse( Float );

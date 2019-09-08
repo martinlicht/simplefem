@@ -164,6 +164,15 @@ void FloatVector::random()
 
 
 
+FloatVector& FloatVector::normalize() 
+{
+    check();
+    Float alpha = norm();
+    for( int p = 0; p < getdimension(); p++ )
+        setentry( p, getentry( p ) / alpha ); 
+    return *this;
+}
+
 FloatVector& FloatVector::scale( Float alpha ) 
 {
     check();
