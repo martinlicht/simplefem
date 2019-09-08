@@ -24,7 +24,7 @@ Headers.solver = ../solver/*.hpp
 Headers.mesh = ../mesh/*.hpp
 Headers.vtk = ../vtk/*.hpp
 Headers.matrixmarket = ../matrixmarket/*.hpp
-Headers.fem = ../fem/global.lagrangemassmatrix.hpp ../fem/global.lagrangestiffnessmatrix.hpp ../fem/global.lagrangebrokenmassmatrix.hpp ../fem/global.lagrangebrokenstiffnessmatrix.hpp ../fem/local.polynomialmassmatrix.hpp ../fem/global.massmatrix.hpp ../fem/global.diffmatrix.hpp
+Headers.fem = ../fem/global.lagrangemassmatrix.hpp ../fem/global.lagrangestiffnessmatrix.hpp ../fem/global.lagrangebrokenmassmatrix.hpp ../fem/global.lagrangebrokenstiffnessmatrix.hpp ../fem/local.polynomialmassmatrix.hpp ../fem/global.massmatrix.hpp ../fem/global.diffmatrix.hpp ../fem/foo.hpp
 
 Includes.basic = $(Headers.basic) $(Objects.basic) 
 Includes.combinatorics = $(Headers.combinatorics) $(Objects.combinatorics) 
@@ -253,6 +253,9 @@ vtk/producedisk.out: vtk/producedisk.cpp $(Includes.vtk)
 vtk/produceannulus.out: vtk/produceannulus.cpp $(Includes.vtk)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) vtk/produceannulus.cpp $(Links.vtk) -o vtk/produceannulus.out
 
+vtk/producesphere.out: vtk/producesphere.cpp $(Includes.vtk)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) vtk/producesphere.cpp $(Links.vtk) -o vtk/producesphere.out
+
 vtk/vtkwriter.mesh3D.out: vtk/vtkwriter.mesh3D.cpp $(Includes.vtk)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) vtk/vtkwriter.mesh3D.cpp $(Links.vtk) -o vtk/vtkwriter.mesh3D.out
 
@@ -271,7 +274,7 @@ vtk/vtkwriter.mesh3Dur.out: vtk/vtkwriter.mesh3Dur.cpp $(Includes.vtk)
 vtk/vtkwriter.mesh3Dleb.out: vtk/vtkwriter.mesh3Dleb.cpp $(Includes.vtk)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) vtk/vtkwriter.mesh3Dleb.cpp $(Links.vtk) -o vtk/vtkwriter.mesh3Dleb.out
 
-vtk.tests = vtk/vtkwriter.mesh1D.out vtk/vtkwriter.mesh2D.out vtk/producedisk.out vtk/produceannulus.out vtk/vtkwriter.mesh2Dnvb.out vtk/vtkwriter.mesh2Dleb.out vtk/vtkwriter.mesh2Dur.out vtk/vtkwriter.mesh3D.out vtk/vtkwriter.mesh3Dur.out vtk/vtkwriter.mesh3Dleb.out
+vtk.tests = vtk/vtkwriter.mesh1D.out vtk/vtkwriter.mesh2D.out vtk/producedisk.out vtk/produceannulus.out vtk/producesphere.out vtk/vtkwriter.mesh2Dnvb.out vtk/vtkwriter.mesh2Dleb.out vtk/vtkwriter.mesh2Dur.out vtk/vtkwriter.mesh3D.out vtk/vtkwriter.mesh3Dur.out vtk/vtkwriter.mesh3Dleb.out
 
 
 
@@ -292,7 +295,10 @@ fem/lagrange.out: fem/lagrange.cpp $(Includes.fem)
 fem/feecmass.out: fem/feecmass.cpp $(Includes.fem)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/feecmass.cpp $(Links.fem) -o fem/feecmass.out
 
-fem.tests = fem/lagrange.out fem/feecmass.out
+fem/interpolant.out: fem/interpolant.cpp $(Includes.fem)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/interpolant.cpp $(Links.fem) -o fem/interpolant.out
+
+fem.tests = fem/lagrange.out fem/feecmass.out fem/interpolant.out
 
 
 

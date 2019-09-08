@@ -107,6 +107,13 @@ int main()
             cout << "non-negative: (yes) " << e.isnonnegative() << endl;
             cout << "zero:         (yes) " << e.iszero()        << endl;
             
+            cout << "norm: (3.162)" << a.norm() << space << a.normalize().norm() << endl;
+            cout << "norm: (3.162)" << b.norm() << space << a.normalize().norm() << endl;
+            cout << "norm: (4.582)" << c.norm() << space << a.normalize().norm() << endl;
+            cout << "norm: (7.071)" << d.norm() << space << a.normalize().norm() << endl;
+            cout << "norm: (0.000)" << e.norm() << endl;
+            
+            
         }
         
         cout << "Finished Unit Test" << endl;

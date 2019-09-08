@@ -20,7 +20,7 @@ int main()
     cout << "Unit Test for VTK output of Simplicial Mesh" << endl;
     
     const int Lmin = 3;
-    const int Lmax = 6;
+    const int Lmax = 9;
     
     MeshSimplicial2D M = Annulus( Lmin, Lmax );
     
@@ -32,7 +32,18 @@ int main()
     vtk.writePreamble( "Attempt at a " );
     vtk.writeCoordinateBlock();
     vtk.writeTopDimensionalCells();
+    
+    {
         
+        FloatVector Vx( M.count_simplices(2), 0.0 );
+        FloatVector Vy( M.count_simplices(2), 1.0 );
+        FloatVector Vz( M.count_simplices(2), 0.0 );
+        
+        vtk.writeCellVectorData( Vx, Vy, Vz, "testing_vector_data", 0.1 );
+    }
+                    
+
+    
     fs.close();
     
         

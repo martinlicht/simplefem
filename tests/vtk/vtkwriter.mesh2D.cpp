@@ -37,6 +37,16 @@ int main()
                     vtk.writeCoordinateBlock();
                     vtk.writeTopDimensionalCells();
                     
+                    {
+                        FloatVector V( M.count_simplices(0), 
+                                     [&M](int i)->Float{
+                                        FloatVector point = M.getcoordinates().getvectorclone(i);
+                                        return point[0] * std::sin( 10 * 2 * 3.14159 * point[1] );
+                                    });
+                        
+                        vtk.writeVertexScalarData(V,"testing_scalar_data",1.0);
+                    }
+                    
                 }
                 
                 fs.close();
