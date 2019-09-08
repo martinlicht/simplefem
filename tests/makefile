@@ -298,7 +298,10 @@ fem/feecmass.out: fem/feecmass.cpp $(Includes.fem)
 fem/interpolant.out: fem/interpolant.cpp $(Includes.fem)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/interpolant.cpp $(Links.fem) -o fem/interpolant.out
 
-fem.tests = fem/lagrange.out fem/feecmass.out fem/interpolant.out
+fem/moreinterpolant.out: fem/moreinterpolant.cpp $(Includes.fem)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/moreinterpolant.cpp $(Links.fem) -o fem/moreinterpolant.out
+
+fem.tests = fem/lagrange.out fem/feecmass.out fem/interpolant.out fem/moreinterpolant.out
 
 
 
