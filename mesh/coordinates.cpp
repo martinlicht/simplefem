@@ -120,6 +120,25 @@ void Coordinates::loadvector( int n, const FloatVector& input, Float scale )
 
 
 
+/* get/set coordinates as vectors  */
+        
+FloatVector Coordinates::getdimensionclone( int d, Float s ) const // TODO: Test these routines 
+{
+    assert( 0 <= d && d < dimension );
+    FloatVector ret( number );
+    for( int n = 0; n < number; n++ )
+        ret[ n ] = s * data.at( n * dimension + d );
+    return ret;    
+}
+
+void Coordinates::loaddimension( int d, const FloatVector& value, Float s )
+{
+    assert( 0 <= d && d < dimension );
+    assert( value.getdimension() == number );
+    for( int n = 0; n < number; n++ )
+        data.at( n * dimension + d ) = s * value[ n ];    
+}
+
 
 
 

@@ -46,17 +46,22 @@ class Coordinates
         int getnumber() const;
         IndexRange getIndexRange() const;
         
-        /* get/set coordinates as per entry  */
+        /* get/set coordinates as per point  */
         
         Float getdata( int n, int d) const;
         void setdata( int n, int d, Float v );
         
-        /* get/set coordinates as vectors  */
+        /* get/set points as vectors  */
         
         FloatVector getvectorclone( int n ) const;
         FloatVector getvectorclone( int n, Float s ) const;
         void loadvector( int n, const FloatVector& value );
         void loadvector( int n, const FloatVector& value, Float s );
+        
+        /* get/set coordinates as vectors  */
+        
+        FloatVector getdimensionclone( int d, Float s = 1.0 ) const;
+        void loaddimension( int d, const FloatVector& value, Float s = 1.0 );
         
         /* transform all coordinates  */
         
