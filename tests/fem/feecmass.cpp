@@ -13,6 +13,7 @@
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
+#include "../../fem/global.elevation.hpp"
 #include "../../fem/global.lagrangeincl.hpp"
 
 
@@ -43,6 +44,8 @@ int main()
         SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, 1 );
         
         SparseMatrix inclmatrix = FEECLagrangeInclusionMatrix( M, M.getinnerdimension() );
+        
+        SparseMatrix elevmatrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 0, 1 );
         
         cout << massmatrix << endl;
         

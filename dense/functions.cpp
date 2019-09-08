@@ -275,7 +275,7 @@ void InverseAndDeterminant( const DenseMatrix& A, DenseMatrix& Ainv, Float& Adet
 
 
 
-DenseMatrix SubdeterminantMatrix( const DenseMatrix& A, int k )
+DenseMatrix SubdeterminantMatrixSquare( const DenseMatrix& A, int k )
 {
     A.check();
     assert( A.issquare() );
@@ -297,6 +297,28 @@ DenseMatrix SubdeterminantMatrix( const DenseMatrix& A, int k )
     return ret;
 }
 
+
+DenseMatrix SubdeterminantMatrix( const DenseMatrix& A, int k )
+{
+    A.check();
+    assert( 0 <= k && k <= A.getdimin() && k <= A.getdimout() );
+    
+    IndexRange range_from = IndexRange( 0, k-1 );
+    IndexRange range_rows = IndexRange( 0, A.getdimout()-1 );
+    IndexRange range_cols = IndexRange( 0, A.getdimin()-1 );
+    std::vector<IndexMap> sigmas_rows = generateSigmas( range_from, range_rows );
+    std::vector<IndexMap> sigmas_cols = generateSigmas( range_from, range_cols );
+    
+    DenseMatrix ret( sigmas_rows.size(), sigmas_cols.size(), 0. );
+    for( int rim = 0; rim < sigmas_rows.size(); rim++ )
+    for( int cim = 0; cim < sigmas_cols.size(); cim++ )
+    {
+        ret(rim,cim) = determinant( A.submatrix( sigmas_rows.at(rim), sigmas_cols.at(cim) ) );
+    }
+    
+    ret.check();
+    return ret;
+}
 
 
 

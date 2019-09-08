@@ -266,6 +266,9 @@ FloatVector DenseMatrix::flattenrows() const
 }
 
 
+
+
+
 void DenseMatrix::zeromatrix()
 {
     check();
