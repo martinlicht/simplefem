@@ -407,6 +407,39 @@ inline MeshSimplicial2D Annulus( int Linner, int Louter = 1 )
 
 
 
+inline MeshSimplicial2D SphericalSurface2D( int L = 0 )
+{
+    
+    MeshSimplicial2D ret(
+      3,
+      Coordinates( 3, 4, {
+          sqrt(8./9.),          0.0, -1./3., // 0
+         -sqrt(2./9.),  sqrt(2./3.), -1./3., // 1
+         -sqrt(2./9.), -sqrt(2./3.), -1./3., // 2
+                  0.0,          0.0,    1.0, // 3
+      } ),
+      {
+        { 0, 1, 2 },
+        { 0, 1, 3 },
+        { 0, 2, 3 },
+        { 1, 2, 3 }
+      }
+    );
+    
+    for( int l = 0; l < L; l++ )
+        ret.uniformrefinement();
+    
+    for( int n = 0; n < ret.getcoordinates().getnumber(); n++ )
+    {
+        FloatVector point = ret.getcoordinates().getvectorclone( n );
+        point.normalize();
+        ret.getcoordinates().loadvector( n, point );
+    }
+    
+    return ret;
+    
+}
+
 
 
 
