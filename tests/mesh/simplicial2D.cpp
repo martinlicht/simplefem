@@ -17,7 +17,8 @@ int main()
 {
         cout << "Unit Test for Simplicial 2D Module" << endl;
         
-        MeshSimplicial2D M = TetrahedralSurface2D();
+//        MeshSimplicial2D M = TetrahedralSurface2D();
+        MeshSimplicial2D M = StandardSquare2D();
         
         M.check();
         
@@ -29,6 +30,8 @@ int main()
         M.check();
         
         cout << M << endl;
+        
+        M.outputTikZ( cout );
         
         cout << "Finished Unit Test" << endl;
         

@@ -198,6 +198,14 @@ class MeshSimplicial2D
         FloatVector get_edge_midpoint( int e ) const;
         Float get_edge_length( int e ) const;
         
+        
+        
+        /* TikZ */
+        
+        void outputTikZ( std::ostream& os ) const;
+        
+        
+        
     private:
 
         int counter_triangles;

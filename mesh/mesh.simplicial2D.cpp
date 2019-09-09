@@ -2606,6 +2606,44 @@ Float MeshSimplicial2D::get_edge_length( int e ) const
 
 
 
+
+
+void MeshSimplicial2D::outputTikZ( std::ostream& os ) const
+{
+    const auto& coords = getcoordinates();
+    
+    for( int n = 0; n < coords.getnumber(); n++ )
+    {
+        os << "\\coordinate ("
+           << n
+           << ")  at ( ";
+        for( int d = 0; d < coords.getdimension(); d++ )
+        {
+           os << coords.getdata(n,d) 
+              << ( d == coords.getdimension()-1 ? "" : ", ");
+        }
+        
+        os << ");" << nl;
+        
+    }
+    
+    for( int t = 0; t < count_simplices(2); t++ )
+    {
+        os << "\\draw ";
+        os << "(" << get_subsimplex(2,0,t,0) << ") -- ";
+        os << "(" << get_subsimplex(2,0,t,1) << ") -- ";
+        os << "(" << get_subsimplex(2,0,t,2) << ") -- ";
+        os << "cycle;" << nl;
+    }
+    
+}
+        
+
+
+
+
+
+
 //         if( data_edge_firstparent_triangle[ t_e2 ] == t_old ) {
 //           
 //           data_edge_firstparent_triangle[ t_e2 ] = counter_triangles + ot;
