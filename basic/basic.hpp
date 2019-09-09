@@ -190,6 +190,19 @@ std::ostream& operator<<( std::ostream& stream, const std::array<T, N>& v)
 
 
 
+inline Float gaussrand()
+{
+    const int NSUM = 25;
+    
+    Float x = 0;
+    
+    for( int i = 0; i < NSUM; i++) x += rand() / (Float)RAND_MAX;
+    
+    x -= NSUM / 2.0;
+    x /= sqrt( NSUM / 12.0 );
+    
+    return x;
+}
 
 
 

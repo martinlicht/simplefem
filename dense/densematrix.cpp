@@ -294,7 +294,7 @@ void DenseMatrix::randommatrix()
     check();
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin(); c++ )
-        (*this)(r,c) = sqrt( rand() );
+        (*this)(r,c) = gaussrand(); // sqrt( rand() );
 }
 
 void DenseMatrix::randomintegermatrix( int min, int max )
