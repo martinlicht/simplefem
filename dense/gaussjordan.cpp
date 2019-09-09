@@ -1,5 +1,5 @@
 
-#include "lu.factorization.hpp"
+#include "gaussjordan.hpp"
 
 #include <iostream>
 #include <algorithm>

@@ -11,7 +11,7 @@
 #include "../combinatorics/heappermgen.hpp"
 #include "densematrix.hpp"
 #include "qr.factorization.hpp"
-#include "lu.factorization.hpp"
+#include "gaussjordan.hpp"
 #include "../operators/floatvector.hpp"
 #include "../solver/crm.hpp"
 

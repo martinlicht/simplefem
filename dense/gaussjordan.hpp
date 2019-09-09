@@ -25,20 +25,25 @@ inline DenseMatrix GaussJordan( DenseMatrix mat )
     DenseMatrix ret(n);
     ret.unitmatrix();
     
-
+//     DenseMatrix& ret = mat;
 
     // 1. eliminate lower triangular part, save coeffecients
     
     for( int i = 0; i < n; i++ ) {
         
-        for( int k = 0; k < n; k++ ) {
+        for( int k = 0; k < n; k++ ) { // each
             
             if( i == k ) continue; 
             
             Float coeff = - mat( k, i ) / mat( i, i );
             
-            for( int j = 0; j < n; j++ ) {
+            for( int j = i+1; j < n; j++ ) {
                 mat( k, j ) = mat( k, j ) + coeff * mat( i, j );
+            }
+
+            ret( k, i ) = coeff;
+            
+            for( int j = 0; j < i; j++ ) {
                 ret( k, j ) = ret( k, j ) + coeff * ret( i, j );
             }
             
@@ -48,7 +53,7 @@ inline DenseMatrix GaussJordan( DenseMatrix mat )
             
     }
     
-    // 2. normalize the diagonals
+//     2. normalize the diagonals
     
     for( int i = 0; i < n; i++ ) {
         
@@ -59,6 +64,7 @@ inline DenseMatrix GaussJordan( DenseMatrix mat )
             ret(i,k) *= coeff;
         }
         
+//         ret(i,i) = coeff;
     }
     
     // finished!

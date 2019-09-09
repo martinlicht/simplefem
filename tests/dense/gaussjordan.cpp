@@ -36,7 +36,7 @@ int main()
         
         cout << "Proposed Inverse:" << M << endl;
         
-        cout << "Product of both:" << A * M << endl;
+        cout << "Product of both:" << M * A << endl;
         
     }
       

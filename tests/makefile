@@ -141,10 +141,13 @@ dense/matrixalgorithm.out: dense/matrixalgorithm.cpp $(Includes.dense)
 dense/cholesky.out: dense/cholesky.cpp $(Includes.dense) 
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) dense/cholesky.cpp $(Links.dense) -o dense/cholesky.out
 
+dense/gaussjordan.out: dense/gaussjordan.cpp $(Includes.dense) 
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) dense/gaussjordan.cpp $(Links.dense) -o dense/gaussjordan.out
+
 dense/iterativeinverse.out: dense/iterativeinverse.cpp $(Includes.dense) 
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) dense/iterativeinverse.cpp $(Links.dense) -o dense/iterativeinverse.out
 
-dense.tests = dense/densematrix.out dense/transpose.out dense/detinvcof.out dense/matrixalgorithm.out dense/cholesky.out dense/scalarfunctions.out dense/iterativeinverse.out
+dense.tests = dense/densematrix.out dense/transpose.out dense/detinvcof.out dense/matrixalgorithm.out dense/cholesky.out dense/gaussjordan.out dense/scalarfunctions.out dense/iterativeinverse.out
 
 
 

@@ -6,7 +6,7 @@
 #include "../../basic.hpp"
 #include "../../dense/functions.hpp"
 #include "../../dense/qr.factorization.hpp"
-#include "../../dense/lu.factorization.hpp"
+#include "../../dense/gaussjordan.hpp"
 #include "../../dense/cholesky.hpp"
 
 

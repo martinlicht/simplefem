@@ -15,7 +15,7 @@
 
 #include "densematrix.hpp"
 #include "qr.factorization.hpp"
-#include "lu.factorization.hpp"
+#include "gaussjordan.hpp"
 
 
 

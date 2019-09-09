@@ -2,7 +2,7 @@ SHELL = /bin/sh
 
 default: all
 
-objects = densematrix.o readwrite.o functions.o scalarfunctions.o simplesolver.o qr.factorization.o lu.factorization.o cholesky.o matrixtensorproduct.o iterativeinverse.o
+objects = densematrix.o readwrite.o functions.o scalarfunctions.o simplesolver.o qr.factorization.o gaussjordan.o cholesky.o matrixtensorproduct.o iterativeinverse.o
 
 all: $(objects) libdense.so
 
@@ -34,8 +34,8 @@ simplesolver.o: simplesolver.cpp simplesolver.hpp ../operators/floatvector.hpp
 qr.factorization.o: qr.factorization.cpp qr.factorization.hpp ../operators/floatvector.hpp
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) qr.factorization.cpp -c -o qr.factorization.o 
 
-lu.factorization.o: lu.factorization.cpp lu.factorization.hpp ../operators/floatvector.hpp
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) lu.factorization.cpp -c -o lu.factorization.o 
+gaussjordan.o: gaussjordan.cpp gaussjordan.hpp ../operators/floatvector.hpp
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) gaussjordan.cpp -c -o gaussjordan.o 
 
 cholesky.o: cholesky.cpp cholesky.hpp ../operators/floatvector.hpp
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) cholesky.cpp -c -o cholesky.o 
