@@ -97,15 +97,15 @@ Float Determinant( const DenseMatrix& A )
         
         return 1.;
         
-    } else if( false && A.getdimin() == 1 ) {
+    } else if( A.getdimin() == 1 ) {
         
         return A(0,0);
         
-    } else if( false && A.getdimin() == 2 ) {
+    } else if( A.getdimin() == 2 ) {
         
         return A(0,0) * A(1,1) - A(0,1) * A(1,0);
         
-    } else if( false && A.getdimin() == 3 ) {
+    } else if( A.getdimin() == 3 ) {
         
         return + A(0,0) * A(1,1) * A(2,2) // 1 2 3 + 
                - A(0,0) * A(1,2) * A(2,1) // 1 3 2 - 
@@ -115,7 +115,7 @@ Float Determinant( const DenseMatrix& A )
                + A(0,2) * A(1,0) * A(2,1) // 3 1 2 + 
                ;
         
-    } else if( false && A.getdimin() == 4 ) {
+    } else if( A.getdimin() == 4 ) {
         
         return + A(0,0) * A(1,1) * A(2,2) * A(3,3) // 0 1 2 3 + 
                - A(0,0) * A(1,2) * A(2,1) * A(3,3) // 0 2 1 3 - 
@@ -146,37 +146,13 @@ Float Determinant( const DenseMatrix& A )
                - A(0,3) * A(1,2) * A(2,0) * A(3,1) // 3 2 0 1 - 
                ;
         
-    } else if( 0 <= A.getdimin() /*and A.getdimin() <= 8*/ ) {
+    } else if( 2 <= A.getdimin() and A.getdimin() <= 8 ) {
       
-        // TODO: Replace by function call
-        
-        Float ret = 0.;
-        int sign  = 1;
-        
-        int i = 77;
-        std::vector<int>  aux( A.getdimin() );
-        std::vector<int> perm( A.getdimin() );
-        for( int j = 0; j < perm.size(); j++ ) perm[j] = j;
-        
-        HeapsAlgorithmInit( i, aux, perm );
-        
-        do {
-          
-          Float summand = sign;
-          for( int r = 0; r < A.getdimout(); r++ )
-            summand *= A( r, perm[r] );
-          
-          ret += summand;
-            
-          sign = -sign;
-          
-        } while ( HeapsAlgorithmStep( i, aux, perm ) );
-        
-        return ret;
+        return Determinant_laplaceexpansion( A );
         
     } else {
         
-        assert( false );
+        return Determinant_gauss( A );
         
     }
 }
@@ -200,15 +176,15 @@ Float Determinant_laplaceexpansion( const DenseMatrix& A )
     HeapsAlgorithmInit( i, aux, perm );
     
     do {
-      
-      Float summand = sign;
-      for( int r = 0; r < A.getdimout(); r++ )
-        summand *= A( r, perm[r] );
-      
-      ret += summand;
         
-      sign = -sign;
-      
+        Float summand = sign;
+        for( int r = 0; r < A.getdimout(); r++ )
+            summand *= A( r, perm[r] );
+        
+        ret += summand;
+        
+        sign = -sign;
+        
     } while ( HeapsAlgorithmStep( i, aux, perm ) );
     
     return ret;
@@ -230,20 +206,19 @@ Float Determinant_gauss( DenseMatrix A )
     {
         
         int r = i, c = i;
-        Float maxabs = absolute( A(i,i) );
         for( int s = i; s < n; s++ )
         for( int d = i; d < n; d++ )
-            if( absolute(A(s,d)) > maxabs ) {
+            if( absolute(A(s,d)) > absolute(A(r,c)) ) {
                 r = s; c = d;
-                maxabs = A(s,d);
             }
         
         // make swappings in the range i..n
         if( r != i ) { sign = -sign; A.swaprow   ( r, i ); }
         if( c != i ) { sign = -sign; A.swapcolumn( c, i ); }
         
-        assert( absolute( A(i,i) ) != 0.0 );
-        
+        if( absolute( A(i,i) ) == 0.0 )
+            return 0.; 
+
         for( int k = i+1; k < n; k++ ) {
             
             Float coeff = - A(k,i) / A(i,i);

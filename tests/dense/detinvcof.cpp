@@ -59,6 +59,29 @@ int main()
       
     }
     
+    cout << "Compare Determinats of Matrices with random coefficients" << endl;
+    for( int t = 0; t < 7; t++ )
+    for( int i = 0; i < 6; i++ )
+    {
+        
+        DenseMatrix A(t);
+        A.randomintegermatrix(-5,5);
+      
+        cout << "Determinant " << t << " (default/gauss/laplace): "
+            << Determinant(A) << space 
+            << Determinant_gauss(A) << space 
+            << Determinant_laplaceexpansion(A) << space 
+            << endl;
+            
+        if( absolute( Determinant_gauss(A) - Determinant_laplaceexpansion(A) ) > 0.000001
+            or
+            absolute( Determinant_gauss(A) - Determinant(A) ) > 0.000001
+        ) {
+            cout << A; return 1;
+        }
+        
+    }
+    
     cout << "Finished Unit Test" << endl;
 
     return 0;

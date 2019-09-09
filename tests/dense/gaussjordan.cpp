@@ -50,7 +50,7 @@ int main()
     for( int i = 0; i < 6; i++ )
     {
         DenseMatrix A(8);
-        A.randomintegermatrix(-6,6);
+        A.randomintegermatrix(-2,2);
       
         cout << "Determinant (default): " << Determinant(A) << endl;
         cout << "Determinant (laplace): " << Determinant_laplaceexpansion(A) << endl;
@@ -62,13 +62,25 @@ int main()
 
     
     {
-        int N = 4;
+        int N = 14;
         DenseMatrix C(N);
         for( int i = 0; i < N; i++ )
         for( int j = 0; j < N; j++ )
             C(i,j) = 1. / ( i+j+1 );
         
-        cout << C * GaussJordanInplace(C,false) << nl;
+        cout << C * GaussJordanInplace(C,true) << nl;
+        
+        {
+            auto Cinv = GaussJordanInplace(C);
+            DenseMatrix I(N); I.unitmatrix();
+            Float relaxation = Cinv.norm();
+            
+            for( int t = 0; t < 2000; t++ )
+                Cinv = Cinv + 1.5/ ( std::log(N)) * ( I - C * Cinv );
+            
+            cout << C * Cinv << nl;
+        }
+        
     }
     
     cout << "Finished Unit Test" << endl;
