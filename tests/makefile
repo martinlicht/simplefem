@@ -259,6 +259,9 @@ vtk/produceannulus.out: vtk/produceannulus.cpp $(Includes.vtk)
 vtk/producesphere.out: vtk/producesphere.cpp $(Includes.vtk)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) vtk/producesphere.cpp $(Links.vtk) -o vtk/producesphere.out
 
+vtk/producehalo.out: vtk/producehalo.cpp $(Includes.vtk)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) vtk/producehalo.cpp $(Links.vtk) -o vtk/producehalo.out
+
 vtk/vtkwriter.mesh3D.out: vtk/vtkwriter.mesh3D.cpp $(Includes.vtk)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) vtk/vtkwriter.mesh3D.cpp $(Links.vtk) -o vtk/vtkwriter.mesh3D.out
 
@@ -277,7 +280,7 @@ vtk/vtkwriter.mesh3Dur.out: vtk/vtkwriter.mesh3Dur.cpp $(Includes.vtk)
 vtk/vtkwriter.mesh3Dleb.out: vtk/vtkwriter.mesh3Dleb.cpp $(Includes.vtk)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) vtk/vtkwriter.mesh3Dleb.cpp $(Links.vtk) -o vtk/vtkwriter.mesh3Dleb.out
 
-vtk.tests = vtk/vtkwriter.mesh1D.out vtk/vtkwriter.mesh2D.out vtk/producedisk.out vtk/produceannulus.out vtk/producesphere.out vtk/vtkwriter.mesh2Dnvb.out vtk/vtkwriter.mesh2Dleb.out vtk/vtkwriter.mesh2Dur.out vtk/vtkwriter.mesh3D.out vtk/vtkwriter.mesh3Dur.out vtk/vtkwriter.mesh3Dleb.out
+vtk.tests = vtk/vtkwriter.mesh1D.out vtk/vtkwriter.mesh2D.out vtk/producedisk.out vtk/producehalo.out vtk/produceannulus.out vtk/producesphere.out vtk/vtkwriter.mesh2Dnvb.out vtk/vtkwriter.mesh2Dleb.out vtk/vtkwriter.mesh2Dur.out vtk/vtkwriter.mesh3D.out vtk/vtkwriter.mesh3Dur.out vtk/vtkwriter.mesh3Dleb.out
 
 
 

@@ -191,6 +191,71 @@ inline MeshSimplicial2D UnitTriangle2D()
 
 
 
+// TODO: fix the argument names and clean up
+
+inline MeshSimplicial2D Halo( int K = 1, int L = 3 )
+{
+    assert( K >= 1 );
+    assert( L >= 3 );
+    
+    int num_vertices = L * (K+1);
+    
+    int num_triangles = 2 * L * K;
+    
+    
+    
+    // 2. Create the coordinates 
+    
+    std::vector<Float> coords;
+    coords.reserve( 3 * num_vertices );
+    
+    for( int k = 0; k <= K; k++ )
+    for( int l = 0; l < L; l++ ) {
+            coords.push_back( std::sin( 2 * 3.14159 * l / (Float)L ) );
+            coords.push_back( std::cos( 2 * 3.14159 * l / (Float)L ) );
+            coords.push_back( 0.0 + k / (Float) K );
+    }
+    
+    assert( coords.size() == 3 * num_vertices );
+    
+    std::vector<std::array<int,3>> tris;
+    tris.reserve( num_triangles );
+    
+    for( int k = 0; k < K; k++ ) 
+    for( int l = 0; l < L; l++ )
+    {
+        
+        tris.push_back( { 
+            (k+0)*L + (l    ) % L,
+            (k+1)*L + (l    ) % L, 
+            (k+1)*L + (l + 1) % L
+            } );
+        
+        tris.push_back( { 
+            (k+0)*L + (l    ) % L, 
+            (k+0)*L + (l + 1) % L,
+            (k+1)*L + (l + 1) % L
+            } );
+                
+    }
+    
+    assert( tris.size() == num_triangles );
+
+    for( auto& t : tris ) std::sort( t.begin(), t.end() );
+    
+    return MeshSimplicial2D(
+      3,
+      Coordinates( 3, num_vertices, coords ),
+      tris
+    );
+}
+
+
+
+
+
+
+
 
 
 inline MeshSimplicial2D UnitDisk( int L = 1 )
