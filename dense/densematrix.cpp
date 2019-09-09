@@ -297,6 +297,15 @@ void DenseMatrix::randommatrix()
         (*this)(r,c) = sqrt( rand() );
 }
 
+void DenseMatrix::randomintegermatrix( int min, int max )
+{
+    check();
+    assert( min+2 <= max );
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimin(); c++ )
+        (*this)(r,c) = min + rand() % (max-min);
+}
+
 void DenseMatrix::scale( Float s )
 {
     check();

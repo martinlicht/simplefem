@@ -85,18 +85,35 @@ inline DenseMatrix GaussJordan( DenseMatrix mat )
  
  
  
-inline DenseMatrix GaussJordanInplace( DenseMatrix mat )
+inline DenseMatrix GaussJordanInplace( DenseMatrix mat, bool pivoting = true )
 {
     
     assert( mat.issquare() );
     
     const int n = mat.getdimout();
     
+    int* pivots = nullptr;
+    if(pivoting) pivots = new int[n];
+    
     for( int i = 0; i < n; i++ ) {
+        
+        if( pivoting ) {
+            
+            int c_max = i;
+            for( int c = i+1; c < n; c++ )
+                if( absolute(mat(i,c)) > absolute(mat(i,c_max)) ) 
+                    c_max = c;
+            
+            pivots[i] = c_max;
+            mat.swapcolumn( c_max, i );
+            
+        }
         
         for( int k = 0; k < n; k++ ) { // each
             
             if( i == k ) continue; 
+            
+            assert( absolute(mat(i,i)) != 0.0 );
             
             Float coeff = - mat( k, i ) / mat( i, i );
             
@@ -126,8 +143,18 @@ inline DenseMatrix GaussJordanInplace( DenseMatrix mat )
             
     }
     
+    if( pivoting ) {
+        for( int i = n-1; i >= 0; i-- )
+//         for( int i = 0; i < n; i++ ) 
+        {
+//             std::cout << "swap " << i << space << pivots[i] << nl;
+            mat.swaprow( i, pivots[i] );
+        }
+    }
     
     // finished!
+    
+    if( pivoting ) delete[] pivots;
     
     return mat;
 }

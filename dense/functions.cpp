@@ -146,8 +146,10 @@ Float Determinant( const DenseMatrix& A )
                - A(0,3) * A(1,2) * A(2,0) * A(3,1) // 3 2 0 1 - 
                ;
         
-    } else {
+    } else if( 0 <= A.getdimin() /*and A.getdimin() <= 8*/ ) {
       
+        // TODO: Replace by function call
+        
         Float ret = 0.;
         int sign  = 1;
         
@@ -171,6 +173,11 @@ Float Determinant( const DenseMatrix& A )
         } while ( HeapsAlgorithmStep( i, aux, perm ) );
         
         return ret;
+        
+    } else {
+        
+        assert( false );
+        
     }
 }
 
@@ -180,7 +187,7 @@ Float Determinant_laplaceexpansion( const DenseMatrix& A )
     assert( A.issquare() );
     
     if( A.getdimin() == 0 )
-        return 0.;
+        return 1.;
     
     Float ret = 0.;
     int sign  = 1;
@@ -203,6 +210,52 @@ Float Determinant_laplaceexpansion( const DenseMatrix& A )
       sign = -sign;
       
     } while ( HeapsAlgorithmStep( i, aux, perm ) );
+    
+    return ret;
+    
+}
+
+Float Determinant_gauss( DenseMatrix A )
+{
+    assert( A.issquare() );
+    
+    if( A.getdimin() == 0 )
+        return 1.;
+    
+    const int n = A.getdimin();
+    
+    int sign = 1;
+    
+    for( int i = 0; i < n; i++ )
+    {
+        
+        int r = i, c = i;
+        Float maxabs = absolute( A(i,i) );
+        for( int s = i; s < n; s++ )
+        for( int d = i; d < n; d++ )
+            if( absolute(A(s,d)) > maxabs ) {
+                r = s; c = d;
+                maxabs = A(s,d);
+            }
+        
+        // make swappings in the range i..n
+        if( r != i ) { sign = -sign; A.swaprow   ( r, i ); }
+        if( c != i ) { sign = -sign; A.swapcolumn( c, i ); }
+        
+        assert( absolute( A(i,i) ) != 0.0 );
+        
+        for( int k = i+1; k < n; k++ ) {
+            
+            Float coeff = - A(k,i) / A(i,i);
+            
+            for( int j = i+1; j < n; j++ )
+                A( k, j ) = A( k, j ) + coeff * A( i, j );
+            
+        }
+    }
+    
+    Float ret = sign;
+    for( int i = 0; i < n; i++ ) ret *= A(i,i);
     
     return ret;
     

@@ -27,6 +27,11 @@ int main()
         A(2,0) = 3; A(2,1) = 3; A(2,2) = 1; A(2,3) = 2; 
         A(3,0) = 2; A(3,1) = 1; A(3,2) = 0; A(3,3) = 1; 
         
+        cout << "Determinant (default): " << Determinant(A) << endl;
+        cout << "Determinant (laplace): " << Determinant_laplaceexpansion(A) << endl;
+        cout << "Determinant (gauss):   " << Determinant_gauss(A) << endl;
+      
+        
 //         A(0,0) = 4; A(0,1) = 1; A(0,2) = 0; 
 //         A(1,0) = 0; A(1,1) = 1; A(1,2) = 0; 
 //         A(2,0) = 1; A(2,1) = 0; A(2,2) = 1; 
@@ -45,9 +50,25 @@ int main()
     for( int i = 0; i < 6; i++ )
     {
         DenseMatrix A(8);
-        A.randommatrix();
+        A.randomintegermatrix(-6,6);
+      
+        cout << "Determinant (default): " << Determinant(A) << endl;
+        cout << "Determinant (laplace): " << Determinant_laplaceexpansion(A) << endl;
+        cout << "Determinant (gauss):   " << Determinant_gauss(A) << endl;
+      
         
-        cout << A * GaussJordanInplace(A) << nl;
+        cout << GaussJordanInplace(A) * A << nl;
+    }
+
+    
+    {
+        int N = 4;
+        DenseMatrix C(N);
+        for( int i = 0; i < N; i++ )
+        for( int j = 0; j < N; j++ )
+            C(i,j) = 1. / ( i+j+1 );
+        
+        cout << C * GaussJordanInplace(C,false) << nl;
     }
     
     cout << "Finished Unit Test" << endl;

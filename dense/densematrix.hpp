@@ -90,6 +90,7 @@ public LinearOperator /* every matrix is a linear operator */
         
         void zeromatrix();
         void randommatrix();
+        void randomintegermatrix( int min, int max );
         void unitmatrix();
         void indexmapping( const IndexMap& );
         

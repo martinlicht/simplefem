@@ -32,7 +32,9 @@ int main()
       
       cout << A << endl;
       
-      cout << Determinant(A) << endl;
+      cout << "Determinant (default): " << Determinant(A) << endl;
+      cout << "Determinant (laplace): " << Determinant_laplaceexpansion(A) << endl;
+      cout << "Determinant (gauss):   " << Determinant_gauss(A) << endl;
       cout << CofactorMatrix( A ) << endl;
       cout << Inverse( A ) << endl;
       cout << A * Inverse( A ) << endl;
@@ -47,7 +49,9 @@ int main()
       A(1,0) = -1; A(1,1) =  1; A(1,2) =  3; 
       A(2,0) =  2; A(2,1) =  0; A(2,2) = -1; 
       
-      cout << Determinant(A) << endl;
+      cout << "Determinant (default): " << Determinant(A) << endl;
+      cout << "Determinant (laplace): " << Determinant_laplaceexpansion(A) << endl;
+      cout << "Determinant (gauss):   " << Determinant_gauss(A) << endl;
       cout << CofactorMatrix( A ) << endl;
       cout << Inverse( A ) << endl;
       cout << A * Inverse( A ) << endl;

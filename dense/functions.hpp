@@ -49,6 +49,8 @@ DenseMatrix SubdeterminantMatrix( const DenseMatrix& A, int k );
 
 Float Determinant_laplaceexpansion( const DenseMatrix& );
 
+Float Determinant_gauss( DenseMatrix );
+
 
 
 
