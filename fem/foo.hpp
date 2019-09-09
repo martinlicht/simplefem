@@ -47,12 +47,12 @@ inline DenseMatrix InterpolationPointsBarycentricCoordinates( int n, int r )
     
     assert( multi_indices.size() == binomial( n+r, r ) );
     
-    const Float delta = 0.0;
+    const Float delta = 0.1;
     
     DenseMatrix ret( n+1, multi_indices.size(), 0. );
     
     for( int i = 0; i < multi_indices.size(); i++ )
-        ret.setcolumn( i, FloatVector(multi_indices[i].getvalues()).shift( delta ).scaleinverse( r + (n+1) * delta ) );
+        ret.setcolumn( i, FloatVector( multi_indices[i].getvalues() ).shift( delta ).scaleinverse( r + (n+1) * delta ) );
 
     for( int i = 0; i < multi_indices.size(); i++ ) {
         assert( ret.getcolumn(i).isnonnegative() );
@@ -205,7 +205,7 @@ inline FloatVector Interpolation(
         
         const auto lps = coords * lpsbc;
         
-        std::cout << lps << space << lpsbc << coords << nl;
+//         std::cout << lps << space << lpsbc << coords << nl;
         
         const auto EM = EvaluationMatrix( dim, r, lpsbc );
         
@@ -223,7 +223,7 @@ inline FloatVector Interpolation(
         const auto Evaluations = EvaluateField( dim, k, r, lps, field );
         const auto EvaluationVector = Evaluations.flattencolumns();
         
-        std::cout << InterpolationMatrix.getdimin() << space << EvaluationVector.getdimension() << nl;
+//         std::cout << InterpolationMatrix.getdimin() << space << EvaluationVector.getdimension() << nl;
         
         const auto localResult = InterpolationMatrix * EvaluationVector;
         
