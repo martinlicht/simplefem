@@ -20,11 +20,12 @@ int main()
     
     {
         
-        DenseMatrix A(3,3);
+        DenseMatrix A(4,4);
         
-        A(0,0) = 1; A(0,1) = 2; A(0,2) = 3; 
-        A(1,0) = 1; A(1,1) = 1; A(1,2) = 1; 
-        A(2,0) = 3; A(2,1) = 3; A(2,2) = 1; 
+        A(0,0) = 1; A(0,1) = 2; A(0,2) = 3; A(0,3) = 5; 
+        A(1,0) = 1; A(1,1) = 1; A(1,2) = 1; A(1,3) = 6; 
+        A(2,0) = 3; A(2,1) = 3; A(2,2) = 1; A(2,3) = 2; 
+        A(3,0) = 2; A(3,1) = 1; A(3,2) = 0; A(3,3) = 1; 
         
 //         A(0,0) = 4; A(0,1) = 1; A(0,2) = 0; 
 //         A(1,0) = 0; A(1,1) = 1; A(1,2) = 0; 
@@ -32,7 +33,8 @@ int main()
         
         cout << "Original matrix:" << A << endl;
         
-        DenseMatrix M = GaussJordan( A );
+        DenseMatrix M = GaussJordanInplace( A );
+//         DenseMatrix M = GaussJordanInplace( A );
         
         cout << "Proposed Inverse:" << M << endl;
         
@@ -40,22 +42,12 @@ int main()
         
     }
       
-    if(false){
-    
-        int dim = 3;
-        DenseMatrix A(dim);
+    for( int i = 0; i < 6; i++ )
+    {
+        DenseMatrix A(8);
+        A.randommatrix();
         
-        A.zeromatrix();
-        for( int s = 0; s < dim; s++ )
-        for( int t = 0; t < dim; t++ )
-            A(s,t) = 3 * kronecker(s,t) - kronecker(s,t-1) - kronecker(s,t+1);
-        
-        DenseMatrix M = GaussJordan( A );
-        
-        cout << "Original matrix:" << A << endl;
-        
-        cout << "Result:" << M << endl;
-        
+        cout << A * GaussJordanInplace(A) << nl;
     }
     
     cout << "Finished Unit Test" << endl;
