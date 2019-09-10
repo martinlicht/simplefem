@@ -139,3 +139,7 @@ tidy:
 	clang-tidy ./*.?pp -checks=llvm*,bugprone-*,clang-analyzer-*,misc-*,-llvm-header-guard,-llvm-include-order -- -std=c++17
 
 
+LOCAL_CHECK_OPTION= --enable=warning,style,performance,portability --std=c++14 -q
+
+check:
+	cppcheck $(LOCAL_CHECK_OPTION) . 

@@ -41,6 +41,20 @@ tidy:
 	$(MAKE) -f makefile.tidy tidy
 	@echo "finished tidying." 
 
+check: 
+	cd ./combinatorics && $(MAKE) check
+	cd ./operators && $(MAKE) check
+	cd ./dense && $(MAKE) check
+	cd ./sparse && $(MAKE) check
+	cd ./solver && $(MAKE) check
+	cd ./mesh && $(MAKE) check
+	cd ./vtk && $(MAKE) check
+	cd ./matrixmarket && $(MAKE) check
+	cd ./fem && $(MAKE) check
+	cd ./tests && $(MAKE) check
+	$(MAKE) -f makefile.check check
+	@echo "finished checking." 
+
 # shared: default
 # 	mkdir build
 # 	gcc -shared -o ./build/combinatorics.so ./combinatorics/*.o
