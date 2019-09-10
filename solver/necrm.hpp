@@ -48,7 +48,7 @@ class NormalEquationsConjugateResidualMethod
         explicit NormalEquationsConjugateResidualMethod( const DenseMatrix& op )
         : NormalEquationsConjugateResidualMethod( op, Transpose( op ) ){ };
         
-        ~NormalEquationsConjugateResidualMethod();
+        virtual ~NormalEquationsConjugateResidualMethod();
         
         void check() const;
         void print( std::ostream& ) const;

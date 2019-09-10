@@ -49,7 +49,7 @@ class FixedArray
         FixedArray<T>& operator=( const FixedArray<T>& );
         FixedArray( FixedArray<T>&& );
         FixedArray<T>& operator=( FixedArray<T>&& );
-        ~FixedArray();
+        virtual ~FixedArray();
         
         const T& at( size_type i ) const;
         T& at( size_type i );

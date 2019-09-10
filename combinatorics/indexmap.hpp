@@ -41,7 +41,7 @@ class IndexMap
         IndexMap& operator =( const IndexMap& ) = default;
         IndexMap( IndexMap&& )                  = default;
         IndexMap& operator =( IndexMap&& )      = default;
-        ~IndexMap()                             = default;
+        virtual ~IndexMap()                     = default;
         
         void check() const;
         
