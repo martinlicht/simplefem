@@ -502,6 +502,31 @@ void DenseMatrix::add( Float s, Float t, const DenseMatrix& addendum )
 
 
 
+DenseMatrix DenseMatrix::symmetricPart() const 
+{
+    assert( issquare() );
+    DenseMatrix ret( getdimout() );
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimin();  c++ )
+        ret(r,c) = 0.5 * (*this)(r,c) + 0.5 * (*this)(c,r);
+    return ret;
+}
+
+DenseMatrix DenseMatrix::antisymmetricPart() const 
+{
+    assert( issquare() );
+    DenseMatrix ret( getdimout() );
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimin();  c++ )
+        ret(r,c) = 0.5 * (*this)(r,c) - 0.5 * (*this)(c,r);
+    return ret;
+}
+
+
+
+
+
+
 Float DenseMatrix::maxabsoluteentry() const
 {
     check();

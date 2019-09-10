@@ -39,7 +39,9 @@ int main()
       cout << Inverse( A ) << endl;
       cout << A * Inverse( A ) << endl;
       cout << Inverse( A ) * A << endl;
-      
+      cout << 1. / Determinant(A) - Determinant( Inverse(A) ) << endl;
+      cout << A - Inverse( Inverse(A) ) << endl;
+            
     }
     
     {
@@ -66,11 +68,12 @@ int main()
         
         DenseMatrix A(t);
         A.randomintegermatrix(-5,5);
-      
+        
         cout << "Determinant " << t << " (default/gauss/laplace): "
             << Determinant(A) << space 
             << Determinant_gauss(A) << space 
             << Determinant_laplaceexpansion(A) << space 
+            << 1. / Determinant(A) - Determinant( Inverse(A) ) << space
             << endl;
             
         if( absolute( Determinant_gauss(A) - Determinant_laplaceexpansion(A) ) > 0.000001

@@ -35,7 +35,7 @@ DenseMatrix CofactorMatrix( const DenseMatrix& );
 
 DenseMatrix Inverse( const DenseMatrix& );
 
-void InverseAndDeterminant( const DenseMatrix&, DenseMatrix&, Float& );
+// void InverseAndDeterminant( const DenseMatrix&, DenseMatrix&, Float& );
 
 DenseMatrix SubdeterminantMatrix( const DenseMatrix& A, int k );
 
@@ -50,6 +50,10 @@ DenseMatrix SubdeterminantMatrix( const DenseMatrix& A, int k );
 Float Determinant_laplaceexpansion( const DenseMatrix& );
 
 Float Determinant_gauss( DenseMatrix );
+
+DenseMatrix Inverse_CramersRule( const DenseMatrix& );
+
+DenseMatrix Inverse_gauss( DenseMatrix, bool pivoting = true );
 
 
 

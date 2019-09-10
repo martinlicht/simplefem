@@ -110,6 +110,13 @@ public LinearOperator /* every matrix is a linear operator */
         void add( Float, const DenseMatrix& );
         void add( Float, Float, const DenseMatrix& );
         
+        
+        /* Measurements */
+        
+        DenseMatrix symmetricPart() const;
+        
+        DenseMatrix antisymmetricPart() const;
+        
         /* Measurements */
         
         Float maxabsoluteentry() const;
@@ -151,6 +158,17 @@ public LinearOperator /* every matrix is a linear operator */
         
 };
   
+
+
+
+
+inline DenseMatrix IdentityMatrix( int dim )
+{
+    return DenseMatrix( dim, []( int r, int c ) -> Float{ return r==c ? 1. : 0.; } );
+}
+
+
+
 
 inline DenseMatrix MatrixMult( const DenseMatrix& left, const DenseMatrix& right )
 {
