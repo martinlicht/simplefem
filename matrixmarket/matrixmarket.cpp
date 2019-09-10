@@ -27,7 +27,7 @@ void MatrixMarket::Read( std::istream& input, int& rows, int& columns, std::vect
     
     input >> str_magicstring;
     
-    std::clog << str_magicstring << nl;
+    std::cout << str_magicstring << nl;
   
 //     std::transform( str_magicstring.begin(),   str_magicstring.end(),   str_magicstring.begin(),   ::tolower );
   
@@ -109,8 +109,8 @@ void MatrixMarket::Read( std::istream& input, int& rows, int& columns, std::vect
     }
   
   
-    std::clog << "READ:" << std::endl;
-    std::clog << str_magicstring   << space
+    std::cout << "READ:" << std::endl;
+    std::cout << str_magicstring   << space
                 << str_objecttype    << space
                 << str_matrixformat  << space
                 << str_entrytype     << space
@@ -118,15 +118,15 @@ void MatrixMarket::Read( std::istream& input, int& rows, int& columns, std::vect
                 << std::endl;
     
     
-    std::clog << "TRANFORMED:" << std::endl;
-    std::clog << str_magicstring   << space
+    std::cout << "TRANFORMED:" << std::endl;
+    std::cout << str_magicstring   << space
                 << str_objecttype    << space
                 << str_matrixformat  << space
                 << str_entrytype     << space
                 << str_matrixfeature << space
                 << std::endl;
                 
-    std::clog << "COMMENTS: " << std::endl << my_comment << std::endl;
+    std::cout << "COMMENTS: " << std::endl << my_comment << std::endl;
   
     
     

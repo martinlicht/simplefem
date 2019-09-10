@@ -74,7 +74,7 @@ void writeMeshSimplicialND( std::ostream& out, const MeshSimplicialND& mesh, boo
     assert( out.good() );
     
     writeCoordinates( out, mesh.getcoordinates(), sugar );
-    writeCoordinates( std::clog, mesh.getcoordinates(), sugar );
+    writeCoordinates( std::cout, mesh.getcoordinates(), sugar );
     
     assert( out.good() );
     
@@ -107,7 +107,7 @@ MeshSimplicialND readMeshSimplicialND( std::istream& in )
     /* coordinates */
     
     Coordinates coords = readCoordinates( in );
-    writeCoordinates( std::clog, coords );
+    writeCoordinates( std::cout, coords );
     
     assert( in.good() );
     

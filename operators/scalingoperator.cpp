@@ -19,7 +19,7 @@ ScalingOperator::~ScalingOperator()
 
 void ScalingOperator::check() const  
 {
-    std::clog << "Check Scaling Operator with scaling: " << scaling << std::endl;
+    std::cout << "Check Scaling Operator with scaling: " << scaling << std::endl;
     LinearOperator::check();
 }
 

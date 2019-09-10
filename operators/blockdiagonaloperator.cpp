@@ -19,7 +19,7 @@ BlockDiagonalOperator::~BlockDiagonalOperator()
 
 void BlockDiagonalOperator::check() const  
 {
-    std::clog << "Check Block Diagonal Operator" << std::endl;
+    std::cout << "Check Block Diagonal Operator" << std::endl;
     LinearOperator::check();
     
     int temp_in = 0;

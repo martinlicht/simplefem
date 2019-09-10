@@ -21,23 +21,23 @@ BlockOperator::~BlockOperator()
 
 void BlockOperator::check() const  
 {
-  std::clog << "Check Block Operator" << std::endl;
+  std::cout << "Check Block Operator" << std::endl;
   LinearOperator::check();
   
   if( ops.size() == 0 ) {
     
-    std::clog << "zero rows in block operator" << std::endl;
+    std::cout << "zero rows in block operator" << std::endl;
     
   } else if ( ops.at(0).size() == 0 ) {
     
-    std::clog << "empty rows in block operator" << std::endl;
+    std::cout << "empty rows in block operator" << std::endl;
     
     for( int r = 1; r < ops.size(); r++ )
       assert( ops.at(r).size() == ops.at(0).size() ); 
     
   } else {
     
-    std::clog << "full operator block matrix" << std::endl;
+    std::cout << "full operator block matrix" << std::endl;
     
     int temp_out = 0;
     
@@ -61,7 +61,7 @@ void BlockOperator::check() const
     
     assert( temp_out == getdimout() );
     
-    std::clog << "full operator block matrix" << std::endl;
+    std::cout << "full operator block matrix" << std::endl;
     
     for( int c = 0; c < ops.at(0).size(); c++ ) {
       
