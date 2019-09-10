@@ -45,7 +45,7 @@ int main()
         
         SparseMatrix inclmatrix = FEECLagrangeInclusionMatrix( M, M.getinnerdimension() );
         
-        SparseMatrix elevmatrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 0, 1 );
+        SparseMatrix elevmatrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 2, 4, 3 );
         
         cout << massmatrix << endl;
         

@@ -42,18 +42,24 @@ int main()
                 return FloatVector({ 1 + vec[0], vec[1] * vec[1] });
             };
             
+            cout << "\n... k=0" << endl;
             for( int r = 0; r <  3; r++ )
-                FloatVector results = Interpolation( M, M.getinnerdimension(), 0, r, scalarfield );
+                Interpolation( M, M.getinnerdimension(), 0, r, scalarfield ),
+                cout << " r=" << r;
             
+            cout << "\n... k=1" << endl;
             for( int r = 0; r <  3; r++ )
-                FloatVector results = Interpolation( M, M.getinnerdimension(), 1, r, vectorfield );
+                Interpolation( M, M.getinnerdimension(), 1, r, vectorfield ),
+                cout << " r=" << r;
             
+            cout << "\n... k=2" << endl;
             for( int r = 0; r <  3; r++ )
-                FloatVector results = Interpolation( M, M.getinnerdimension(), 2, r, scalarfield );
+                Interpolation( M, M.getinnerdimension(), 2, r, scalarfield ),
+                cout << " r=" << r;
 
         }
         
-        cout << "3D Calculations" << endl;
+        cout << "\n3D Calculations" << endl;
         
         {
 
@@ -61,7 +67,7 @@ int main()
 //             M.uniformrefinement();
             
             cout << "... mesh done" << endl;
-        
+            
             auto scalarfield = [](const FloatVector& vec) -> FloatVector{
                 assert( vec.getdimension() == 3 );
                 return FloatVector({ sqrt( vec[0]*vec[0] + vec[1]*vec[2] ) });

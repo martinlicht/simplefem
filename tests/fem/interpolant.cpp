@@ -23,7 +23,7 @@ int main()
 {
         cout << "Unit Test for Interpolation in FEEC" << endl;
         
-        MeshSimplicial2D M = UnitDisk(3);
+        MeshSimplicial2D M = UnitDisk(6);
         
         M.check();
         

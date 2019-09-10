@@ -33,40 +33,36 @@ inline SparseMatrix FEECBrokenElevationMatrix( Mesh& mesh, int n, int k, int r, 
     
     assert( r >= 0 );
     assert( n >= 0 && n <= mesh.getinnerdimension() );
-    assert( k >= 0 && k <  n );
+    assert( k >= 0 && k <= n );
     assert( rplus >= 1 );
     
     
     
+    const std::vector<MultiIndex> multis_adds = generateMultiIndices( IndexRange( 0, n ), rplus     );
     const std::vector<MultiIndex> multis_low  = generateMultiIndices( IndexRange( 0, n ), r         );
     const std::vector<MultiIndex> multis_high = generateMultiIndices( IndexRange( 0, n ), r + rplus );
     
+    assert( multis_adds.size() == binomial( n + rplus    , n ) );
+    assert( multis_low.size()  == binomial( n + r,         n ) );
+    assert( multis_high.size() == binomial( n + r + rplus, n ) );
+    
     const std::vector<IndexMap> sigmas = generateSigmas( IndexRange( 1, k ), IndexRange( 0, n ) );
     
-    const std::vector<IndexMap> additions = generateIndexMaps( IndexRange( 1, rplus ), IndexRange( 0, n ) );
+    assert( sigmas.size() == binomial( n+1, k ) );
     
     const int localdim_in  = multis_low.size()  * sigmas.size();
     const int localdim_out = multis_high.size() * sigmas.size();
     
     std::vector<SparseMatrix::MatrixEntry> localmatrixentries;
     
-    assert( multis_low.size()  == binomial( n + r,         n ) );
-    assert( multis_high.size() == binomial( n + r + rplus, n ) );
-    
-    assert( sigmas.size() == binomial( n+1, k ) );
-    
     for( int low_poly_index = 0; low_poly_index < multis_low.size(); low_poly_index++ )
-    for( int form_index = 0;     form_index < sigmas.size();    form_index++ )
-    //for( int p = 0; p <= n; p++ )
-    for( const auto& add : additions )
+    for( int     form_index = 0;     form_index <     sigmas.size();     form_index++ )
+    for( const MultiIndex& addendum : multis_adds )
     {
         
         const MultiIndex& low_poly = multis_low[low_poly_index];
         
-        MultiIndex high_poly = low_poly;
-        
-        for( int j = 1; j < rplus; j++ ) 
-            high_poly = high_poly + add[j];
+        MultiIndex high_poly = low_poly + addendum;
         
         int high_poly_index = find_index( multis_high, high_poly );
         

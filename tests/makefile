@@ -24,7 +24,7 @@ Headers.solver = ../solver/*.hpp
 Headers.mesh = ../mesh/*.hpp
 Headers.vtk = ../vtk/*.hpp
 Headers.matrixmarket = ../matrixmarket/*.hpp
-Headers.fem = ../fem/global.lagrangemassmatrix.hpp ../fem/global.lagrangestiffnessmatrix.hpp ../fem/global.lagrangebrokenmassmatrix.hpp ../fem/global.lagrangebrokenstiffnessmatrix.hpp ../fem/local.polynomialmassmatrix.hpp ../fem/global.massmatrix.hpp ../fem/global.diffmatrix.hpp ../fem/foo.hpp
+Headers.fem = ../fem/global.lagrangemassmatrix.hpp ../fem/global.lagrangestiffnessmatrix.hpp ../fem/global.lagrangebrokenmassmatrix.hpp ../fem/global.lagrangebrokenstiffnessmatrix.hpp ../fem/local.polynomialmassmatrix.hpp ../fem/global.elevation.hpp ../fem/global.massmatrix.hpp ../fem/global.diffmatrix.hpp ../fem/foo.hpp
 
 Includes.basic = $(Headers.basic) $(Objects.basic) 
 Includes.combinatorics = $(Headers.combinatorics) $(Objects.combinatorics) 
