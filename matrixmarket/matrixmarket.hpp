@@ -64,7 +64,7 @@ namespace MatrixMarket
     
     void Read( std::istream& input, int& rows, int& columns, std::vector<MatrixMarketEntry>& entries );
     
-    void WriteSparse( std::ostream& output, const int& rows, const int& columns, const std::vector<MatrixMarketEntry>& entries, std::string comment = "" );
+    void WriteSparse( std::ostream& output, const int& rows, const int& columns, const std::vector<MatrixMarketEntry>& entries, const std::string& comment = "" );
     
 }
   

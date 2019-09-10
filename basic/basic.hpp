@@ -163,7 +163,7 @@ void mergeelementsinsortedlist
 #include <algorithm>
 
 template<typename T>
-int find_index( const std::vector<T> vec, const T& t )
+int find_index( const std::vector<T>& vec, const T& t )
 {
    const auto& it = std::find( vec.begin(), vec.end(), t );
    assert( it != vec.end() );

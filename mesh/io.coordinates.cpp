@@ -67,7 +67,7 @@ Coordinates readCoordinates( std::istream& in )
     in >> dimension >> numpoints;
     Coordinates coords( dimension, numpoints );
     for( int p = 0; p < numpoints; p++ ) {
-        Float tempvalue;
+//         Float tempvalue; // TODO: remove me 
         for( int d = 0; d < dimension; d++ ) {
             Float tempvalue;
             in >> tempvalue;

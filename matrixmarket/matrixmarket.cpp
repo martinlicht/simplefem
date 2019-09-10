@@ -232,7 +232,7 @@ void MatrixMarket::Read( std::istream& input, int& rows, int& columns, std::vect
 }
 
 
-void MatrixMarket::WriteSparse( std::ostream& output, const int& rows, const int& columns, const std::vector<MatrixMarket::MatrixMarketEntry>& entries, std::string comment )
+void MatrixMarket::WriteSparse( std::ostream& output, const int& rows, const int& columns, const std::vector<MatrixMarket::MatrixMarketEntry>& entries, const std::string& comment )
 {
     
     assert( rows    > 0 );

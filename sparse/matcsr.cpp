@@ -13,9 +13,9 @@
 MatrixCSR::MatrixCSR( 
     int rows,
     int columns,
-    std::vector<int> A, 
-    std::vector<int> C, 
-    std::vector<Float> V
+    const std::vector<int>& A, 
+    const std::vector<int>& C, 
+    const std::vector<Float>& V
 ): LinearOperator( rows, columns ),
    A(A), C(C), V(V) 
 {
