@@ -314,15 +314,15 @@ fem.tests = fem/lagrange.out fem/feecmass.out fem/interpolant.out fem/moreinterp
 
 
 
-test.compiler.out: test.compiler.cpp 
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) test.compiler.cpp  -o test.compiler.out
+# test.compiler.out: test.compiler.cpp 
+# 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) test.compiler.cpp  -o test.compiler.out
+# 
+# test.container.out: test.container.cpp 
+# 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) test.container.cpp  -o test.container.out
 
-test.container.out: test.container.cpp 
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) test.container.cpp  -o test.container.out
 
 
-
-all: test.compiler.out $(basic.tests) $(combinatorics.tests) $(operators.tests) $(dense.tests) $(mesh.tests) $(vtk.tests) $(matrixmarket.tests) $(fem.tests) 
+all: $(basic.tests) $(combinatorics.tests) $(operators.tests) $(dense.tests) $(mesh.tests) $(vtk.tests) $(matrixmarket.tests) $(fem.tests) # test.compiler.out 
 
 # $(sparse.tests) $(solver.tests)
 

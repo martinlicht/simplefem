@@ -27,6 +27,20 @@ clean:
 	$(MAKE) -f makefile.clean clean
 	@echo "finished cleaning." 
 
+tidy: 
+	cd ./combinatorics && $(MAKE) tidy
+	cd ./operators && $(MAKE) tidy
+	cd ./dense && $(MAKE) tidy
+	cd ./sparse && $(MAKE) tidy
+	cd ./solver && $(MAKE) tidy
+	cd ./mesh && $(MAKE) tidy
+	cd ./vtk && $(MAKE) tidy
+	cd ./matrixmarket && $(MAKE) tidy
+	cd ./fem && $(MAKE) tidy
+	cd ./tests && $(MAKE) tidy
+	$(MAKE) -f makefile.tidy tidy
+	@echo "finished tidying." 
+
 # shared: default
 # 	mkdir build
 # 	gcc -shared -o ./build/combinatorics.so ./combinatorics/*.o

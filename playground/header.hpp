@@ -1,7 +1,7 @@
 #ifndef INCLUDEGUARD_UNITTEST_HEADER_HPP
 #define INCLUDEGUARD_UNITTEST_HEADER_HPP
 
-#include <strings>
+#include <string>
 #include <sstream>
 
 #include "../basic.hpp"
