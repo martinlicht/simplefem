@@ -24,13 +24,13 @@ Headers.solver = ../solver/*.hpp
 Headers.mesh = ../mesh/*.hpp
 Headers.vtk = ../vtk/*.hpp
 Headers.matrixmarket = ../matrixmarket/*.hpp
-Headers.fem = ../fem/global.lagrangemassmatrix.hpp ../fem/global.lagrangestiffnessmatrix.hpp ../fem/global.lagrangebrokenmassmatrix.hpp ../fem/global.lagrangebrokenstiffnessmatrix.hpp ../fem/local.polynomialmassmatrix.hpp ../fem/global.elevation.hpp ../fem/global.massmatrix.hpp ../fem/global.diffmatrix.hpp ../fem/foo.hpp
+Headers.fem = ../fem/global.lagrangemassmatrix.hpp ../fem/global.lagrangestiffnessmatrix.hpp ../fem/global.lagrangebrokenmassmatrix.hpp ../fem/global.lagrangebrokenstiffnessmatrix.hpp ../fem/local.polynomialmassmatrix.hpp ../fem/global.elevation.hpp ../fem/global.massmatrix.hpp ../fem/global.diffmatrix.hpp ../fem/foo.hpp ../fem/finitediff.hpp
 
 Includes.basic = $(Headers.basic) $(Objects.basic) 
 Includes.combinatorics = $(Headers.combinatorics) $(Objects.combinatorics) 
 Includes.operators = $(Headers.operators) $(Objects.operators) $(Includes.combinatorics)
 Includes.dense = $(Headers.dense) $(Objects.dense) $(Includes.operators)
-Includes.sparse = $(Headers.sparse) $(Objects.sparse) $(Includes.operators)
+Includes.sparse = $(Headers.sparse) $(Objects.sparse) $(Includes.operators) $(Includes.combinatorics)
 Includes.solver = $(Headers.solver) $(Objects.solver) $(Includes.operators)
 Includes.mesh = $(Headers.mesh) $(Objects.mesh) $(Includes.combinatorics) $(Includes.operators)
 Includes.vtk = $(Headers.vtk) $(Objects.vtk) $(Includes.mesh)
@@ -41,8 +41,8 @@ Links.basic         = $(Objects.basic)
 Links.combinatorics = $(Objects.combinatorics) 
 Links.operators     = $(Objects.operators) $(Objects.combinatorics)
 Links.dense         = $(Objects.dense) $(Objects.sparse) $(Objects.operators) $(Objects.combinatorics)
-Links.sparse        = $(Objects.sparse) $(Objects.operators)
-Links.solver        = $(Objects.solver) $(Objects.operators)
+Links.sparse        = $(Objects.sparse) $(Objects.operators) $(Objects.combinatorics) $(Objects.dense)
+Links.solver        = $(Objects.solver) $(Objects.operators) $(Objects.sparse) $(Objects.dense) $(Objects.combinatorics)
 Links.mesh          = $(Objects.mesh) $(Objects.combinatorics) $(Objects.operators) $(Objects.dense) $(Objects.sparse) 
 Links.vtk           = $(Objects.vtk) $(Objects.mesh) $(Objects.dense) $(Objects.sparse) $(Objects.combinatorics) $(Objects.operators)
 Links.matrixmarket  = $(Objects.matrixmarket) 
@@ -304,10 +304,13 @@ fem/feecmass.out: fem/feecmass.cpp $(Includes.fem)
 fem/interpolant.out: fem/interpolant.cpp $(Includes.fem)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/interpolant.cpp $(Links.fem) -o fem/interpolant.out
 
+fem/fields.out: fem/fields.cpp $(Includes.fem)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/fields.cpp $(Links.fem) -o fem/fields.out
+
 fem/moreinterpolant.out: fem/moreinterpolant.cpp $(Includes.fem)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/moreinterpolant.cpp $(Links.fem) -o fem/moreinterpolant.out
 
-fem.tests = fem/lagrange.out fem/feecmass.out fem/interpolant.out fem/moreinterpolant.out
+fem.tests = fem/lagrange.out fem/feecmass.out fem/interpolant.out fem/moreinterpolant.out fem/fields.out
 
 
 
@@ -322,7 +325,7 @@ fem.tests = fem/lagrange.out fem/feecmass.out fem/interpolant.out fem/moreinterp
 
 
 
-all: $(basic.tests) $(combinatorics.tests) $(operators.tests) $(dense.tests) $(mesh.tests) $(vtk.tests) $(matrixmarket.tests) $(fem.tests) # test.compiler.out 
+all: $(basic.tests) $(combinatorics.tests) $(operators.tests) $(dense.tests) $(sparse.tests) $(solver.tests) $(mesh.tests) $(vtk.tests) $(matrixmarket.tests) $(fem.tests) # test.compiler.out 
 
 # $(sparse.tests) $(solver.tests)
 

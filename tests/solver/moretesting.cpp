@@ -47,13 +47,15 @@ int main()
 	{
 		cout << "Now something more complicated." << endl;
 		
-		int dimension = 100000;
+		int dimension = 100;
 		
 		FloatVector x( dimension );
 		for( int p = 0; p < dimension; p++ )
 			x.setentry( p, 3. + p * 5. );
 		
 		SparseMatrix M( dimension, dimension );
+        M.reserve( 3 * dimension );
+        
 		for( int i = 0; i < dimension; i++ ){
 			if( i-1 >= 0 ) 
 				M.addentry( i, i-1, 1.25 );
@@ -61,6 +63,7 @@ int main()
 				M.addentry( i, i+1, 1.25 );
 			M.addentry( i, i, 2.501 );
 		}
+		
 		M.sortentries();
 		
 		FloatVector b = M * x;
@@ -71,7 +74,7 @@ int main()
 		// cout << M << endl;
 		
 		ConjugateResidualMethod CRM(M);
-                CRM.max_iteration_count = 100000;
+        CRM.max_iteration_count = 100;
 		CRM.error_tolerance = 1e-16;
                 
                 clock_t start = clock();
