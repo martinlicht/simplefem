@@ -348,7 +348,17 @@ inline std::ostream& operator<<( std::ostream& out, const FloatVector& vec )
     vec.print( out );
     return out;
 }
- 
+
+
+
+
+inline FloatVector unitvector( int d, int i )
+{
+    FloatVector ret( d, 0.0 );
+    ret[ i ] = 1.0;
+    return ret;
+}
+
 
 
 #endif
