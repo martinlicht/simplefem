@@ -123,6 +123,17 @@ FloatVector SparseMatrix::apply( const FloatVector& add, Float scaling ) const
 
 
 
+
+
+
+void SparseMatrix::reserve( int n ) const
+{
+    entries.reserve( n );
+}
+        
+        
+
+
 const SparseMatrix::MatrixEntry& SparseMatrix::getentry( int i ) const
 {
     assert( 0 <= i && i < getnumberofentries() );
@@ -137,44 +148,44 @@ SparseMatrix::MatrixEntry& SparseMatrix::getentry( int i )
         
 void SparseMatrix::setentry( int i, int r , int c, Float v )
 {
-    check();
+//     check();
     SparseMatrix::MatrixEntry temp;
     temp.row = r;
     temp.column = c;
     temp.value = v;
     setentry( i, temp );
-    check();
+//     check();
 }
 
 void SparseMatrix::setentry( int i, MatrixEntry entry )
 {
-    check();
+//     check();
     assert( 0 <= entry.row && entry.row <= getdimout() );
     assert( 0 <= entry.column && entry.column <= getdimin() );
     assert( 0 <= i && i < entries.size() );
     entries.at(i) = entry;
-    check();
+//     check();
 }
         
         
 void SparseMatrix::addentry( int r, int c, Float v )
 {
-    check();
+//     check();
     SparseMatrix::MatrixEntry temp;
     temp.row = r;
     temp.column = c;
     temp.value = v;
     addentry( temp );
-    check();
+//     check();
 }
 
 void SparseMatrix::addentry( SparseMatrix::MatrixEntry entry )
 {
-    check();
+//     check();
     assert( 0 <= entry.row && entry.row <= getdimout() );
     assert( 0 <= entry.column && entry.column <= getdimin() );
     entries.push_back( entry );
-    check();
+//     check();
 }
 
 int SparseMatrix::getnumberofentries() const 

@@ -58,6 +58,8 @@ public LinearOperator /* every matrix is a linear operator */
         virtual void print( std::ostream& ) const override;
         virtual void printplain( std::ostream& ) const;
 
+        void reserve( int ) const;
+        
         const MatrixEntry& getentry( int ) const;
         MatrixEntry& getentry( int );
         void setentry( int, int, int, Float );

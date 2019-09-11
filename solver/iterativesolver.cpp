@@ -24,8 +24,8 @@ void IterativeSolver::check() const
 {
     LinearOperator::check();
     
-    assert( std::isnormal( error_tolerance ) && error_tolerance >= 0. );
-    assert( std::isnormal( recent_error ) && recent_error >= 0. );
+    assert( std::isfinite( error_tolerance ) && error_tolerance >= 0. );
+    assert( std::isfinite( recent_error ) && recent_error >= 0. );
     assert( max_iteration_count >= 0 );
     assert( recent_iteration_count >= 0 );
     assert( recent_iteration_count <= max_iteration_count );
