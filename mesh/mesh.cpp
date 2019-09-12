@@ -4,9 +4,10 @@
 #include <algorithm>
 
 
-#include "../combinatorics/generateindexmaps.hpp"
-#include "mesh.hpp"
 #include "../basic.hpp"
+#include "../combinatorics/generateindexmaps.hpp"
+#include "../dense/cholesky.hpp"
+#include "mesh.hpp"
 
 
 #ifdef NDEBUG
@@ -331,4 +332,25 @@ DenseMatrix Mesh::getGradientProductMatrix( int dim, int index ) const
     return Transpose(multiplier) * middle * multiplier;
 }
         
+DenseMatrix Mesh::getGradientProductMatrixRightFactor( int dim, int index ) const 
+{
+    assert( 0 <= dim && dim <= getinnerdimension() );
+    assert( 0 <= index && index < count_simplices(dim) );
+    
+    DenseMatrix multiplier( dim, dim+1, 0. );
+    for( int i = 0; i <  dim; i++ ) {
+        multiplier(i,i+1) =  1.;
+        multiplier(i,  0) = -1.;
+    }
+    
+    // D^-1 D^-t = ( D^t D )^-1
+    DenseMatrix Jac    = getTransformationJacobian( dim, index );
+    DenseMatrix middle = Inverse( Transpose(Jac) * Jac );
+    
+    DenseMatrix middle_rightfactor = Transpose( CholeskyDecomposition( middle ) ); // TODO: Jacobi
+
+    assert( ( middle - Transpose(middle_rightfactor) * middle_rightfactor ).issmall() );
+    
+    return middle_rightfactor * multiplier; //TODO Probelesen
+}
 

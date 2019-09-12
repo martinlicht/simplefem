@@ -158,6 +158,8 @@ class Mesh
         
         DenseMatrix getGradientProductMatrix( int dim, int index ) const;
         
+        DenseMatrix getGradientProductMatrixRightFactor( int dim, int index ) const;
+        
         
     private:
         
