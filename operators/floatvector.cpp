@@ -395,6 +395,12 @@ bool FloatVector::isnonpositive() const
 
 
 
+bool FloatVector::issmall( Float eps ) const 
+{
+    check();
+    return this->norm() < eps;
+}
+
 
 
 

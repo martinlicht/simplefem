@@ -147,6 +147,9 @@ class FloatVector
         bool isnonpositive() const;
         
         
+        bool issmall( Float eps = 0.0000001 ) const;
+        
+        
         
         
         /* For each semantics */ 

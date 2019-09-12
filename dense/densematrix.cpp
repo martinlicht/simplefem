@@ -630,6 +630,11 @@ bool DenseMatrix::isnonpositive() const
     return true;
 }
 
+bool DenseMatrix::issmall( Float eps ) const
+{
+    return this->norm() < eps;
+}
+
 
 Float DenseMatrix::norm() const
 {

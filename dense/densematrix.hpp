@@ -151,6 +151,9 @@ public LinearOperator /* every matrix is a linear operator */
         bool isnonpositive() const;
         
         
+        bool issmall( Float eps = 0.000001 ) const;
+        
+        
         
     private:
         
