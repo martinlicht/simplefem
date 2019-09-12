@@ -340,7 +340,7 @@ void MeshSimplicial3D::bisect_edge( int e )
         
       } else {
         
-        assert(false);
+        unreachable();
         
       } 
       
@@ -814,7 +814,7 @@ void MeshSimplicial3D::bisect_edge( int e )
     
       } else {
         
-        assert( false );
+        unreachable();
         
       }
        

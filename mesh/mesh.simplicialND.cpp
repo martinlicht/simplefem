@@ -449,7 +449,7 @@ IndexMap MeshSimplicialND::getsubsimplices( int sup, int sub, int cell ) const
         )
       );
   
-  assert(false);
+  unreachable();
     
 }
 

@@ -21,9 +21,9 @@ struct SimplexFESpace
   : dimension(dim), polydegree(polydegree), trimmed(trimmed), mathring(mathring)
   { };
   
-  bool is_nullspace() const { assert(false) };
+  bool is_nullspace() const { unreachable() };
   
-  bool is_scalar() const { assert(false) };
+  bool is_scalar() const { unreachable() };
   
   int getdimension() const { return 0; };
   

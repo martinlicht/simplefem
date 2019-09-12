@@ -1222,7 +1222,7 @@ void MeshSimplicial3D::check() const
         else if( data_tetrahedron_faces[p][3] == f )
           p = data_tetrahedron_nextparents_of_faces[p][3];
         else
-          assert(false);
+          unreachable();
         
       assert( p == t );
       
@@ -1254,7 +1254,7 @@ void MeshSimplicial3D::check() const
         else if( data_tetrahedron_edges[p][5] == e )
           p = data_tetrahedron_nextparents_of_edges[p][5];
         else
-          assert(false);
+          unreachable();
         
       assert( p == t );
       
@@ -1282,7 +1282,7 @@ void MeshSimplicial3D::check() const
         else if( data_tetrahedron_vertices[p][3] == v )
           p = data_tetrahedron_nextparents_of_vertices[p][3];
         else
-          assert(false);
+          unreachable();
         
       assert( p == t );
       
@@ -1308,7 +1308,7 @@ void MeshSimplicial3D::check() const
         else if( data_face_edges[p][2] == e )
           p = data_face_nextparents_of_edges[p][2];
         else
-          assert(false);
+          unreachable();
         
       assert( p == f );
       
@@ -1334,7 +1334,7 @@ void MeshSimplicial3D::check() const
         else if( data_face_vertices[p][2] == v )
           p = data_face_nextparents_of_vertices[p][2];
         else
-          assert(false);
+          unreachable();
         
       assert( p == f );
       
@@ -1541,7 +1541,7 @@ int MeshSimplicial3D::count_simplices( int dim ) const
   else if( dim == 3 )
     return count_tetrahedra();
   else
-    assert(false);
+    unreachable();
 }
 
 bool MeshSimplicial3D::subsimplices_listed( int sup, int sub ) const
@@ -1611,7 +1611,7 @@ IndexMap MeshSimplicial3D::getsubsimplices( int sup, int sub, int cell ) const
     
   } else {
     
-    assert(false);
+    unreachable();
     
   }
    
@@ -1684,7 +1684,7 @@ const std::vector<int> MeshSimplicial3D::getsupersimplices( int sup, int sub, in
     
   } else {
     
-    assert(false);
+    unreachable();
     
   }
   
@@ -1746,7 +1746,7 @@ int MeshSimplicial3D::indexof_tetrahedron_face( int t, int f ) const
     else if( data_tetrahedron_faces[t][1] == f ) return 1;
     else if( data_tetrahedron_faces[t][2] == f ) return 2;
     else if( data_tetrahedron_faces[t][3] == f ) return 3;
-    else                                        assert(false);
+    else                                        unreachable();
 } 
 
 int MeshSimplicial3D::get_tetrahedron_face( int t, int fi ) const
@@ -1787,7 +1787,7 @@ int MeshSimplicial3D::indexof_tetrahedron_edge( int t, int e ) const
     else if( data_tetrahedron_edges[t][3] == e ) return 3;
     else if( data_tetrahedron_edges[t][4] == e ) return 4;
     else if( data_tetrahedron_edges[t][5] == e ) return 5;
-    else                                         assert(false);
+    else                                         unreachable();
 } 
 
 int MeshSimplicial3D::get_tetrahedron_edge( int t, int ei ) const
@@ -1831,7 +1831,7 @@ int MeshSimplicial3D::indexof_tetrahedron_vertex( int t, int v ) const
     else if( data_tetrahedron_vertices[t][1] == v ) return 1;
     else if( data_tetrahedron_vertices[t][2] == v ) return 2;
     else if( data_tetrahedron_vertices[t][3] == v ) return 3;
-    else                                            assert(false);
+    else                                            unreachable();
 } 
 
 int MeshSimplicial3D::get_tetrahedron_vertex( int t, int vi ) const
@@ -1866,7 +1866,7 @@ int MeshSimplicial3D::indexof_face_edge( int f, int e ) const
     if     ( data_face_edges[f][0] == e ) return 0;
     else if( data_face_edges[f][1] == e ) return 1;
     else if( data_face_edges[f][2] == e ) return 2;
-    else                                      assert(false);
+    else                                      unreachable();
 } 
 
 int MeshSimplicial3D::get_face_edge( int f, int ei ) const
@@ -1901,7 +1901,7 @@ int MeshSimplicial3D::indexof_face_vertex( int f, int v ) const
     if     ( data_face_vertices[f][0] == v ) return 0;
     else if( data_face_vertices[f][1] == v ) return 1;
     else if( data_face_vertices[f][2] == v ) return 2;
-    else                                     assert(false);
+    else                                     unreachable();
 } 
 
 int MeshSimplicial3D::get_face_vertex( int f, int vi ) const
@@ -1936,7 +1936,7 @@ int MeshSimplicial3D::indexof_edge_vertex( int e, int v ) const
     assert( 0 <= v && v < counter_vertices );
     if     ( data_edge_vertices[e][0] == v ) return 0;
     else if( data_edge_vertices[e][1] == v ) return 1;
-    else                                     assert(false);
+    else                                     unreachable();
 } 
 
 int MeshSimplicial3D::get_edge_vertex( int e, int vi ) const
@@ -1983,7 +1983,7 @@ int MeshSimplicial3D::get_face_nextparent_tetrahedron( int f, int t ) const
   else if( data_tetrahedron_faces[t][3] == f )
     return data_tetrahedron_nextparents_of_faces[t][3];
   else
-    assert(false);
+    unreachable();
 }
 
 int MeshSimplicial3D::get_tetrahedron_nextparent_of_face( int t, int fi ) const
@@ -2065,7 +2065,7 @@ int MeshSimplicial3D::get_edge_nextparent_tetrahedron( int e, int t ) const
   else if( data_tetrahedron_edges[t][5] == e )
     return data_tetrahedron_nextparents_of_edges[t][5];
   else
-    assert(false);
+    unreachable();
 }
 
 int MeshSimplicial3D::get_tetrahedron_nextparent_of_edge( int t, int ei ) const
@@ -2139,7 +2139,7 @@ int MeshSimplicial3D::get_vertex_nextparent_tetrahedron( int v, int t ) const
   else if( data_tetrahedron_vertices[t][3] == v )
     return data_tetrahedron_nextparents_of_vertices[t][3];
   else
-    assert(false);
+    unreachable();
 }
 
 int MeshSimplicial3D::get_tetrahedron_nextparent_of_vertex( int t, int vi ) const
@@ -2218,7 +2218,7 @@ int MeshSimplicial3D::get_edge_nextparent_face( int e, int f ) const
   else if( data_face_edges[f][2] == e )
     return data_face_nextparents_of_edges[f][2];
   else
-    assert(false);
+    unreachable();
 }
 
 int MeshSimplicial3D::get_face_nextparent_of_edge( int f, int ei ) const
@@ -2286,7 +2286,7 @@ int MeshSimplicial3D::get_vertex_nextparent_face( int v, int f ) const
   else if( data_face_vertices[f][2] == v )
     return data_face_nextparents_of_vertices[f][2];
   else
-    assert(false);
+    unreachable();
 }
 
 int MeshSimplicial3D::get_face_nextparent_of_vertex( int f, int vi ) const
@@ -2354,7 +2354,7 @@ int MeshSimplicial3D::get_vertex_nextparent_edge( int v, int e ) const
   else if( data_edge_vertices[e][1] == v )
     return data_edge_nextparents_of_vertices[e][1];
   else
-    assert(false);
+    unreachable();
 }
 
 int MeshSimplicial3D::get_edge_nextparent_of_vertex( int e, int vi ) const

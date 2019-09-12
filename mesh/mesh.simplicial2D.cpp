@@ -584,7 +584,7 @@ void MeshSimplicial2D::check() const
         else if( data_triangle_edges[p][2] == e )
           p = data_triangle_nextparents_of_edges[p][2];
         else
-          assert(false);
+          unreachable();
         
       assert( p == t );
       
@@ -610,7 +610,7 @@ void MeshSimplicial2D::check() const
         else if( data_triangle_vertices[p][2] == v )
           p = data_triangle_nextparents_of_vertices[p][2];
         else
-          assert(false);
+          unreachable();
         
       assert( p == t );
       
@@ -731,7 +731,7 @@ int MeshSimplicial2D::count_simplices( int dim ) const
   else if( dim == 2 )
     return count_triangles();
   else
-    assert(false);
+    unreachable();
 }
 
 bool MeshSimplicial2D::subsimplices_listed( int sup, int sub ) const
@@ -778,7 +778,7 @@ IndexMap MeshSimplicial2D::getsubsimplices( int sup, int sub, int cell ) const
     
   } else {
     
-    assert(false);
+    unreachable();
     
   }
    
@@ -828,7 +828,7 @@ const std::vector<int> MeshSimplicial2D::getsupersimplices( int sup, int sub, in
     
   } else {
     
-    assert(false);
+    unreachable();
     
   }
   
@@ -880,7 +880,7 @@ int MeshSimplicial2D::indexof_triangle_edge( int t, int e ) const
     if     ( data_triangle_edges[t][0] == e ) return 0;
     else if( data_triangle_edges[t][1] == e ) return 1;
     else if( data_triangle_edges[t][2] == e ) return 2;
-    else                                      assert(false);
+    else                                      unreachable();
 } 
 
 int MeshSimplicial2D::get_triangle_edge( int t, int ei ) const
@@ -915,7 +915,7 @@ int MeshSimplicial2D::indexof_triangle_vertex( int t, int v ) const
     if     ( data_triangle_vertices[t][0] == v ) return 0;
     else if( data_triangle_vertices[t][1] == v ) return 1;
     else if( data_triangle_vertices[t][2] == v ) return 2;
-    else                                         assert(false);
+    else                                         unreachable();
 } 
 
 int MeshSimplicial2D::get_triangle_vertex( int t, int vi ) const
@@ -950,7 +950,7 @@ int MeshSimplicial2D::indexof_edge_vertex( int e, int v ) const
     assert( 0 <= v && v < counter_vertices );
     if     ( data_edge_vertices[e][0] == v ) return 0;
     else if( data_edge_vertices[e][1] == v ) return 1;
-    else                                     assert(false);
+    else                                     unreachable();
 } 
 
 int MeshSimplicial2D::get_edge_vertex( int e, int vi ) const
@@ -996,7 +996,7 @@ int MeshSimplicial2D::get_edge_nextparent_triangle( int e, int t ) const
   else if( data_triangle_edges[t][2] == e )
     return data_triangle_nextparents_of_edges[t][2];
   else
-    assert(false);
+    unreachable();
 }
 
 int MeshSimplicial2D::get_triangle_nextparent_of_edge( int t, int ei ) const
@@ -1064,7 +1064,7 @@ int MeshSimplicial2D::get_vertex_nextparent_triangle( int v, int t ) const
   else if( data_triangle_vertices[t][2] == v )
     return data_triangle_nextparents_of_vertices[t][2];
   else
-    assert(false);
+    unreachable();
 }
 
 int MeshSimplicial2D::get_triangle_nextparent_of_vertex( int t, int vi ) const
@@ -1132,7 +1132,7 @@ int MeshSimplicial2D::get_vertex_nextparent_edge( int v, int e ) const
   else if( data_edge_vertices[e][1] == v )
     return data_edge_nextparents_of_vertices[e][1];
   else
-    assert(false);
+    unreachable();
 }
 
 int MeshSimplicial2D::get_edge_nextparent_of_vertex( int e, int vi ) const
@@ -1581,7 +1581,7 @@ void MeshSimplicial2D::bisect_edge( int e )
         
       } else {
         
-        assert(false);
+        unreachable();
         
       } 
       
@@ -1948,7 +1948,7 @@ void MeshSimplicial2D::uniformrefinement()
         } else if( data_triangle_edges[t][2] == e ) {
           ei = 2; e_1 = 1; e_2 = 2; vi_1 = 1; vi_2 = 1; 
         } else
-          assert(false);
+          unreachable();
         
         assert( ei  != nullindex && e_1 != nullindex && e_2 != nullindex );
         
@@ -2072,7 +2072,7 @@ void MeshSimplicial2D::uniformrefinement()
           ei = 2; 
           t_1 = 1; t_2 = 3; t_3 = 2; vi_1 = 2; vi_2 = 2; vi_3 = 1; 
         } else
-          assert(false);
+          unreachable();
         
         int old_first_parent = data_vertex_firstparent_triangle[ counter_vertices + e ];
         
@@ -2155,7 +2155,7 @@ void MeshSimplicial2D::uniformrefinement()
       } else if( data_triangle_edges[p][2] == e ) {
         ei = 2; nfp_back = 1; nfp_front = 2;
       } else 
-        assert(false);
+        unreachable();
       
       assert( ei != nullindex );
       assert( data_triangle_edges[p][0] == e || data_triangle_edges[p][1] == e || data_triangle_edges[p][2] == e );
@@ -2189,7 +2189,7 @@ void MeshSimplicial2D::uniformrefinement()
       } else if( ei == 2 ) {
         t_back = 1; t_front = 2; e_back = 2; e_front = 2; 
       } else 
-        assert(false);
+        unreachable();
       
       
       int q = data_triangle_nextparents_of_edges[t][ei];
@@ -2212,7 +2212,7 @@ void MeshSimplicial2D::uniformrefinement()
         } else if( data_triangle_edges[q][2] == e ) {
           q_ei = 2; q_nfp_back = 1; q_nfp_front = 2;
         } else 
-          assert(false);
+          unreachable();
         
         assert( q_ei != nullindex );
         assert( data_triangle_edges[q][0] == e || data_triangle_edges[q][1] == e || data_triangle_edges[q][2] == e );

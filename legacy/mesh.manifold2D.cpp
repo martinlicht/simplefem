@@ -299,7 +299,7 @@ int MeshManifold2D::countsimplices( int dim ) const
   else if( dim == 2 )
     return count_triangles();
   else
-    assert(false);
+    unreachable();
 }
 
 bool MeshManifold2D::subsimplices_listed( int sup, int sub ) const
@@ -335,7 +335,7 @@ const IndexMap MeshManifold2D::getsubsimplices( int sup, int sub, int cell ) con
     
   } else {
     
-    assert(false);
+    unreachable();
     
   }
     
@@ -373,7 +373,7 @@ const std::vector<int> MeshManifold2D::getsupersimplices( int sup, int sub, int 
     
   } else {
     
-    assert(false);
+    unreachable();
     
   }
   
@@ -462,7 +462,7 @@ int MeshManifold2D::indexof_triangle_edge   ( int t, int e ) const
     if     ( data_triangle_edges[t][0] == e ) return 0;
     else if( data_triangle_edges[t][1] == e ) return 1;
     else if( data_triangle_edges[t][2] == e ) return 2;
-    else                                      assert(false);
+    else                                      unreachable();
 } 
 
 int MeshManifold2D::indexof_triangle_vertex( int t, int v ) const
@@ -472,7 +472,7 @@ int MeshManifold2D::indexof_triangle_vertex( int t, int v ) const
     if     ( data_triangle_vertices[t][0] == v ) return 0;
     else if( data_triangle_vertices[t][1] == v ) return 1;
     else if( data_triangle_vertices[t][2] == v ) return 2;
-    else                                         assert(false);
+    else                                         unreachable();
 } 
 
 int MeshManifold2D::indexof_edge_vertex    ( int e, int v ) const
@@ -488,7 +488,7 @@ int MeshManifold2D::indexof_edge_vertex    ( int e, int v ) const
     
     if     ( data_triangle_vertices[t][vi[0]] == v ) return vi[0];
     else if( data_triangle_vertices[t][vi[1]] == v ) return vi[1];
-    else                                             assert(false); 
+    else                                             unreachable(); 
 } 
 
 
@@ -585,7 +585,7 @@ const std::array<int,3> MeshManifold2D::get_triangle_neighbors( int t ) const
         else if( data_edge_parents[e][1] == t )
           ret[ei] = data_edge_parents[e][0];
         else 
-          assert(false);
+          unreachable();
       
     }
     return ret;
@@ -678,7 +678,7 @@ int MeshManifold2D::get_prev_edge    ( int el, int o )
     if( el == 1 && o == -1 ) return 2;
     if( el == 2 && o ==  1 ) return 1;
     if( el == 2 && o == -1 ) return 0;
-    assert(false);
+    unreachable();
 }
 
 int MeshManifold2D::get_next_edge    ( int el, int o )
@@ -691,7 +691,7 @@ int MeshManifold2D::get_next_edge    ( int el, int o )
     if( el == 1 && o == -1 ) return 0;
     if( el == 2 && o ==  1 ) return 0;
     if( el == 2 && o == -1 ) return 1;
-    assert(false);
+    unreachable();
 }
 
 
@@ -707,7 +707,7 @@ int MeshManifold2D::get_prev_neighbor( int nl, int o )
     if( nl == 1 && o == -1 ) return 2;
     if( nl == 2 && o ==  1 ) return 1;
     if( nl == 2 && o == -1 ) return 0;
-    assert(false); 
+    unreachable(); 
 }
 
 int MeshManifold2D::get_next_neighbor( int nl, int o )
@@ -720,7 +720,7 @@ int MeshManifold2D::get_next_neighbor( int nl, int o )
     if( nl == 1 && o == -1 ) return 0;
     if( nl == 2 && o ==  1 ) return 0;
     if( nl == 2 && o == -1 ) return 1;
-    assert(false); 
+    unreachable(); 
 }
 
 int MeshManifold2D::get_prev_vertex  ( int vl, int o )
@@ -733,7 +733,7 @@ int MeshManifold2D::get_prev_vertex  ( int vl, int o )
     if( vl == 1 && o == -1 ) return 2;
     if( vl == 2 && o ==  1 ) return 1;
     if( vl == 2 && o == -1 ) return 0;
-    assert(false); 
+    unreachable(); 
 }
 
 int MeshManifold2D::get_next_vertex  ( int vl, int o )
@@ -746,7 +746,7 @@ int MeshManifold2D::get_next_vertex  ( int vl, int o )
     if( vl == 1 && o == -1 ) return 0;
     if( vl == 2 && o ==  1 ) return 0;
     if( vl == 2 && o == -1 ) return 1;
-    assert(false); 
+    unreachable(); 
 }
 
 int MeshManifold2D::get_first_vertex( int o )
@@ -789,7 +789,7 @@ int MeshManifold2D::indexof_triangle_edge_parent( int t, int e ) const
     
     if     ( data_edge_parents[e][0] == t ) return 0;
     else if( data_edge_parents[e][1] == t ) return 1;
-    else                                    assert(false);
+    else                                    unreachable();
 }
 
 
@@ -800,7 +800,7 @@ int MeshManifold2D::count_triangle_edge_parents( int e ) const
     if     ( data_edge_parents[e][0] != nullindex && data_edge_parents[e][1] != nullindex ) return 2;
     else if( data_edge_parents[e][0] != nullindex && data_edge_parents[e][1] == nullindex ) return 1;
     else if( data_edge_parents[e][0] == nullindex && data_edge_parents[e][1] != nullindex ) return 1;
-    else                                                                                    assert(false);
+    else                                                                                    unreachable();
 }
 
 const std::array<int,2> MeshManifold2D::get_triangle_edge_parents( int e ) const
@@ -943,7 +943,7 @@ std::array<int,2> MeshManifold2D::edgeindex_to_vertexindices( int e )
     if     ( e == 0 ) return {0,1};
     else if( e == 1 ) return {0,2};
     else if( e == 2 ) return {1,2};
-    else assert(false);
+    else unreachable();
 }
 
 std::array<int,2> MeshManifold2D::duple_from_triple( std::array<int,3> triple, std::array<int,2> duple )
@@ -956,7 +956,7 @@ int MeshManifold2D::vertexindex_to_opposing_edgeindex( int v )
     if     ( v == 0 ) return 2;
     else if( v == 1 ) return 1;
     else if( v == 2 ) return 0;
-    else assert(false);
+    else unreachable();
 }
 
 int MeshManifold2D::edgeindex_to_opposing_vertexindex( int e )
@@ -964,7 +964,7 @@ int MeshManifold2D::edgeindex_to_opposing_vertexindex( int e )
     if     ( e == 0 ) return 2;
     else if( e == 1 ) return 1;
     else if( e == 2 ) return 0;
-    else assert(false);
+    else unreachable();
 }
 
 bool MeshManifold2D::vertexpairs_equivalent( std::array<int,2> e1, std::array<int,2> e2 )
@@ -1002,7 +1002,7 @@ void MeshManifold2D::bisect_edge( int e )
     else if( count_triangle_edge_parents( e ) == 2 )
         bisect_inner_edge( e );
     else
-        assert(false);
+        unreachable();
 }
 
 void MeshManifold2D::bisect_outer_edge( int e )

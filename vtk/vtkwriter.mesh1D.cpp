@@ -45,7 +45,7 @@ void VTK_MeshWriter_Mesh1D::writeCoordinateBlock()
               << mesh.getcoordinates().getdata(v,2) 
               << nl;
       } else
-          assert(false);
+          unreachable();
         
     
     os << nl;

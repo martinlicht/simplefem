@@ -258,7 +258,7 @@ int IndexMap::rangeposition( int p ) const
     for( int i : src )
         if( at(i) == p )
             return i;
-    assert(false);
+    unreachable();
 } 
         
 bool IndexMap::comparablewith( const IndexMap& im ) const

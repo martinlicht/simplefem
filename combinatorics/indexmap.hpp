@@ -236,7 +236,7 @@ inline IndexMap expand_one( const IndexMap& im, int p )
 //         if( ! sub.rangecontains(j) )
 //             return j;
 //         else 
-//             assert(false);
+//             unreachable();
 // }
 
 

@@ -10,6 +10,8 @@
 #include <functional>
 #include <iostream>
 
+#define unreachable __builtin_unreachable
+
 // // #include "assertion.hpp"
 
 typedef long double Float;
@@ -38,7 +40,7 @@ T factorial( const T& n )
     if( n == 0 )
         return 1;
     else if( n < 0 )
-        { assert(false); return n; }
+        { unreachable(); }
     else
         return n * factorial<T>(n-1);
 }

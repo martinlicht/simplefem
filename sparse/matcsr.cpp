@@ -142,7 +142,7 @@ void MatrixCSR::sortandcompressentries() const
 //     left.sortandcompressentries();
 //     right.sortandcompressentries();
 //     
-//     assert(false);
+//     unreachable();
 //         
 //     ret.sortandcompressentries();
 //     

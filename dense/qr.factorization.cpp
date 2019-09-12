@@ -47,7 +47,7 @@ void LQFactorization( const DenseMatrix& A, DenseMatrix& L, DenseMatrix& Q )
     Q.check();
     
     // TODO: check algorithm
-    assert(false);
+    unreachable();
     
     assert( A.getdimout() == L.getdimout() );
     assert( A.getdimin()  == Q.getdimin()  ); 
@@ -89,7 +89,7 @@ void LQFactorization( const DenseMatrix& A, DenseMatrix& L, DenseMatrix& Q )
 // // // 
 // // // void LQFactorizationRepeated( const DenseMatrix& A, DenseMatrix& L, DenseMatrix& Q, unsigned int t )
 // // // {
-// // //     assert(false);
+// // //     unreachable();
 // // //     
 // // //     if( t == 0 )
 // // //         return;

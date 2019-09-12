@@ -319,7 +319,7 @@ void MeshSimplicial3D::uniformrefinement()
         } else if( data_face_edges[f][2] == e ) {
           ei = 2; e_1 = 1; e_2 = 2; vi_1 = 1; vi_2 = 1; 
         } else
-          assert(false);
+          unreachable();
         
         assert( ei  != nullindex && e_1 != nullindex && e_2 != nullindex );
         
@@ -507,7 +507,7 @@ void MeshSimplicial3D::uniformrefinement()
 //           ei = 2; 
 //           f_1 = 1; f_2 = 3; f_3 = 2; vi_1 = 2; vi_2 = 2; vi_3 = 1; 
 //         } else
-//           assert(false);
+//           unreachable();
 //         
 //         int old_first_parent = data_vertex_firstparent_face[ counter_vertices + e ];
 //         
@@ -678,7 +678,7 @@ void MeshSimplicial3D::uniformrefinement()
       } else if( data_face_edges[p][2] == e ) {
         ei = 2; nfp_back = 1; nfp_front = 2;
       } else 
-        assert(false);
+        unreachable();
       
       assert( ei != nullindex );
       assert( data_face_edges[p][0] == e || data_face_edges[p][1] == e || data_face_edges[p][2] == e );
@@ -711,7 +711,7 @@ void MeshSimplicial3D::uniformrefinement()
       } else if( ei == 2 ) {
         f_back = 1; f_front = 2; e_back = 2; e_front = 2; 
       } else 
-        assert(false);
+        unreachable();
       
       
       int q = data_face_nextparents_of_edges[f][ei];
@@ -734,7 +734,7 @@ void MeshSimplicial3D::uniformrefinement()
         } else if( data_face_edges[q][2] == e ) {
           q_ei = 2; q_nfp_back = 1; q_nfp_front = 2;
         } else 
-          assert(false);
+          unreachable();
         
         assert( q_ei != nullindex );
         assert( data_face_edges[q][0] == e || data_face_edges[q][1] == e || data_face_edges[q][2] == e );
