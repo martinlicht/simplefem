@@ -272,14 +272,14 @@ DenseMatrix CofactorMatrix( const DenseMatrix& A )
   if( A.getdimin() == 0 ) 
     return DenseMatrix( 0, 0 );
   
-  int i = 77;
+  int iter = 77;
   std::vector<int>  aux( A.getdimin() - 1 );
   std::vector<int> perm( A.getdimin() - 1 );
   for( int j = 0; j < perm.size(); j++ ) perm[j] = j;
   
   DenseMatrix cof( A.getdimin(), A.getdimin(), 0. );
   
-  HeapsAlgorithmInit( i, aux, perm );
+  HeapsAlgorithmInit( iter, aux, perm );
   
   int sign_perm = 1;
   
@@ -294,8 +294,8 @@ DenseMatrix CofactorMatrix( const DenseMatrix& A )
       Float summand = sign_perm * sign_entry;
       assert( summand == 1. || summand == -1. );
       
-      for( int i = 0; i < A.getdimin() - 1; i++ )
-        summand *= A( i < c ? i : i+1, perm[i] < r ? perm[i] : perm[i]+1 );
+      for( int j = 0; j < A.getdimin() - 1; j++ )
+        summand *= A( j < c ? j : j+1, perm[j] < r ? perm[j] : perm[j]+1 );
       
       cof(r,c) += summand;
       
@@ -303,7 +303,7 @@ DenseMatrix CofactorMatrix( const DenseMatrix& A )
     
     sign_perm *= -1;
     
-  } while ( HeapsAlgorithmStep( i, aux, perm ) );
+  } while ( HeapsAlgorithmStep( iter, aux, perm ) );
   
   return cof;
 }
