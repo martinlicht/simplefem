@@ -35,12 +35,12 @@ class IterativeSolver
         virtual void check() const override;
         virtual void print( std::ostream& ) const override;
 
+        virtual FloatVector apply( const FloatVector& src, Float scaling ) const override;
+
         const LinearOperator& getInternalOperator() const;
         const FloatVector& getResidualVector() const;
 
         virtual void solve( FloatVector& unknown, const FloatVector& rhs ) const = 0;
-
-        virtual FloatVector apply( const FloatVector& src, Float scaling ) const override;
 
         mutable Float error_tolerance;
         mutable Float recent_error;

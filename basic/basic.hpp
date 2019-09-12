@@ -12,7 +12,7 @@
 
 // // #include "assertion.hpp"
 
-typedef double Float;
+typedef long double Float;
 
 static const char space = ' ';
 

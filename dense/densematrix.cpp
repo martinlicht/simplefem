@@ -135,6 +135,15 @@ void DenseMatrix::printplain( std::ostream& os ) const
     os << std::endl;
 }
 
+
+DenseMatrix DenseMatrix::clone() const
+{
+    return DenseMatrix( *this );
+}
+
+
+
+
 FloatVector DenseMatrix::apply( const FloatVector& add, Float scaling ) const 
 {
     add.check();

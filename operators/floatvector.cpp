@@ -86,6 +86,14 @@ void FloatVector::printplain( std::ostream& output ) const
 
 
 
+FloatVector FloatVector::clone() const 
+{
+    return FloatVector( *this );
+}
+
+
+
+
 int FloatVector::getdimension() const 
 {
     /* No check at this point */
@@ -160,6 +168,31 @@ void FloatVector::random()
     for( int p = 0; p < getdimension(); p++ )
 //         setentry( p, sqrt( rand() ) ); 
         setentry( p, gaussrand() ); 
+}
+
+void FloatVector::clear() 
+{
+    check();
+    for( int p = 0; p < getdimension(); p++ )
+        setentry( p, 0. ); 
+}
+
+void FloatVector::clear_if( const std::vector<bool>& mask ) 
+{
+    check();
+    assert( mask.size() == getdimension() );
+    for( int p = 0; p < getdimension(); p++ )
+        if( mask[p] )
+            setentry( p, 0. ); 
+}
+
+void FloatVector::clear_unless( const std::vector<bool>& mask ) 
+{
+    check();
+    assert( mask.size() == getdimension() );
+    for( int p = 0; p < getdimension(); p++ )
+        if( not mask[p] )
+            setentry( p, 0. ); 
 }
 
 
@@ -310,6 +343,18 @@ Float FloatVector::scalarproductwith( const FloatVector& right ) const
         ret += getentry(p) * right.getentry(p);
     return ret;
 }
+
+Float FloatVector::scalarproductwith( const FloatVector& right, const std::vector<bool>& mask ) const
+{
+    check();
+    assert( getdimension() == right.getdimension() );
+    Float ret = 0.;
+    for( int p = 0; p < getdimension(); p++ )
+        if( not mask[p] )
+            ret += getentry(p) * right.getentry(p);
+    return ret;
+}
+
 
 Float FloatVector::norm() const 
 {

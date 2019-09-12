@@ -74,8 +74,8 @@ check:
 CHECK_OPTION= --enable=warning,style,performance,portability --std=c++11 -q
 CHECK_FILES= basic.hpp basic/*.?pp combinatorics/*.?pp operators/*.?pp
 
-check:
-	cppcheck $(CHECK_OPTION) . -ilegacy/ -iplayground/
+# check:
+# 	cppcheck $(CHECK_OPTION) . -ilegacy/ -iplayground/
 # 	cppcheck $(CHECK_OPTION) basic.hpp
 # 	cppcheck $(CHECK_OPTION) basic/*.?pp
 # 	cppcheck $(CHECK_OPTION) combinatorics/*.?pp

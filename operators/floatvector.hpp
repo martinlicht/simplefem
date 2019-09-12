@@ -49,6 +49,11 @@ class FloatVector
         void printplain( std::ostream& ) const;
         
         
+        /* Cloning */
+
+        FloatVector clone() const;
+
+
         /* information and data access */
         
         int getdimension() const;
@@ -73,6 +78,12 @@ class FloatVector
         void zero();
         
         void random();
+        
+        void clear();
+        
+        void clear_if( const std::vector<bool>& mask );
+        
+        void clear_unless( const std::vector<bool>& mask );
         
         
         /* scale and shift */
@@ -118,6 +129,8 @@ class FloatVector
         
         Float scalarproductwith( const FloatVector& ) const;
         
+        Float scalarproductwith( const FloatVector&, const std::vector<bool>& ) const;
+        
         
         /* Calculations */
         
@@ -148,6 +161,13 @@ class FloatVector
         
         
         bool issmall( Float eps = 0.0000001 ) const;
+        
+
+
+        /* Investigations */
+        
+        void clear( const std::vector<bool>& mask, bool clearif = true );
+        
         
         
         

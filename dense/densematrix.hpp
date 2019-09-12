@@ -48,6 +48,11 @@ public LinearOperator /* every matrix is a linear operator */
         virtual void print( std::ostream& ) const override;
         virtual void printplain( std::ostream& ) const;
         
+        
+        DenseMatrix clone() const;
+        
+        
+        
         virtual FloatVector apply( const FloatVector& add, Float scaling ) const override;
         
         /* matrix level point of view */

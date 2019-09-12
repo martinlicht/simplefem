@@ -143,3 +143,10 @@ LOCAL_CHECK_OPTION= --enable=warning,style,performance,portability --std=c++14 -
 
 check:
 	cppcheck $(LOCAL_CHECK_OPTION) . 
+
+
+
+
+
+cpplint:
+	( ./../cpplint.py --recursive --filter=-whitespace,-legal --quiet . ) | sort | uniq -c > TESTFOO
