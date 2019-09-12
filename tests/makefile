@@ -301,6 +301,9 @@ fem/lagrange.out: fem/lagrange.cpp $(Includes.fem)
 fem/feecmass.out: fem/feecmass.cpp $(Includes.fem)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/feecmass.cpp $(Links.fem) -o fem/feecmass.out
 
+fem/3Dfeecmass.out: fem/3Dfeecmass.cpp $(Includes.fem)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/3Dfeecmass.cpp $(Links.fem) -o fem/3Dfeecmass.out
+
 fem/interpolant.out: fem/interpolant.cpp $(Includes.fem)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/interpolant.cpp $(Links.fem) -o fem/interpolant.out
 
@@ -310,7 +313,7 @@ fem/fields.out: fem/fields.cpp $(Includes.fem)
 fem/moreinterpolant.out: fem/moreinterpolant.cpp $(Includes.fem)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/moreinterpolant.cpp $(Links.fem) -o fem/moreinterpolant.out
 
-fem.tests = fem/lagrange.out fem/feecmass.out fem/interpolant.out fem/moreinterpolant.out fem/fields.out
+fem.tests = fem/lagrange.out fem/feecmass.out fem/3Dfeecmass.out fem/interpolant.out fem/moreinterpolant.out fem/fields.out
 
 
 
