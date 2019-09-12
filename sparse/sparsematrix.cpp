@@ -266,13 +266,20 @@ void SparseMatrix::sortandcompressentries() const
 SparseMatrix SparseMatrix::getTranspose() const 
 {
     
-    SparseMatrix ret = SparseMatrix( getdimout(), getdimin() );
+    auto newentries = entries;
+
+    for( auto& newentry : newentries )
+        std::swap( newentry.row, newentry.column );
+
+    return SparseMatrix( getdimin(), getdimout(), newentries );
+
+    // SparseMatrix ret = SparseMatrix( getdimout(), getdimin() );
     
-    for( const MatrixEntry& me : entries ) {
-        ret.entries.push_back( { me.column, me.row, me.value } );
-    }
+    // for( const MatrixEntry& me : entries ) {
+    //     ret.entries.push_back( { me.column, me.row, me.value } );
+    // }
     
-    return ret;
+    // return ret;
 }
         
 
