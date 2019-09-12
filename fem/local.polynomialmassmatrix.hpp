@@ -47,7 +47,7 @@ inline DenseMatrix polynomialmassmatrix( int n, int r )
     }
     
     
-    std::cout << ret << std::endl;
+    //std::cout << ret << std::endl;
         
     
     return ret;

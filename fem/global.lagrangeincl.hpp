@@ -51,7 +51,7 @@ inline SparseMatrix FEECLagrangeInclusionMatrix( Mesh& mesh, int n )
         SparseMatrix::MatrixEntry entry;
         
         entry.row    = s * (n+1) + vi;
-        entry.column = s * mesh.get_subsimplex( n, 0, s, vi );
+        entry.column = mesh.get_subsimplex( n, 0, s, vi );
         entry.value  = 1.0;
         
         ret.setentry( index_of_entry, entry );
