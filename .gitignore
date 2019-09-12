@@ -1,6 +1,7 @@
 Doxyfile
 Dox
 private/
+callgrind.out.*
 *.exe
 *.stackdump
 *.opensdf

@@ -16,7 +16,7 @@
 //     LOG << "This is a short message with a number: " << 5;      
 //     ERR << "This is an error message.";      
 
-#define LOG     Logger( std::clog, "", "\n" )
+#define LOG     Logger( std::cout, "", "\n" )
 #define ERR     Logger( std::cerr, "", "\n" )
 
 
@@ -29,8 +29,8 @@
 //     ALERT "This is a short information"
 //     ERROR "This is a short information"
 
-#define NOTE    Logger( std::clog, "", "\n" ) <<
-#define NOTICE  Logger( std::clog, "", "\n" ) <<
+#define NOTE    Logger( std::cout, "", "\n" ) <<
+#define NOTICE  Logger( std::cout, "", "\n" ) <<
 
 #define WARN    Logger( std::cerr, "", "\n" ) <<
 #define WARNING Logger( std::cerr, "", "\n" ) <<

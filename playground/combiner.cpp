@@ -1,11 +1,12 @@
-
 #include <iostream>
 #include <vector>
 #include <string>
 #include <algorithm>
 
+
 template<class ForwardIt, class BinaryPredicate, class BinaryOp>
-ForwardIt combine_equivalents(ForwardIt first, ForwardIt last, BinaryPredicate p, BinaryOp op)
+ForwardIt accumulate_equivalents(ForwardIt first, ForwardIt last, BinaryPredicate p, BinaryOp op)
+
 {
     if (first == last)
         return last;
@@ -24,7 +25,6 @@ ForwardIt combine_equivalents(ForwardIt first, ForwardIt last, BinaryPredicate p
 }
 
 
-
 struct Payment{
     std::string name;
     int amount;
@@ -36,16 +36,19 @@ int main()
     std::vector<Payment> ps = {
         { "Alice", 100 },
         { "Bob", 50 },
-        { "Charles", 110 },
-        { "Dopinder", 70 },
+        { "Charlie", 110 },
+        { "Dania", 70 },
         { "Eve", 40 },
-        { "Charles", 60 },
+        { "Charlie", 60 },
         { "Alice", 30 },
         { "Eve", 90 },
         { "Alice", 110 },
-        { "Fangyin", 30 }
+        { "Dania", 170 },
+        { "Bob", 140 },
+        { "Faythe", 230 },
+        { "Eve", 50 }
     };
-    
+        
     for( auto& p : ps ) std::cout << p.name << ":" << p.amount << std::endl;
     std::cout << std::endl;
     
@@ -56,7 +59,7 @@ int main()
     for( auto& p : ps ) std::cout << p.name << ":" << p.amount << std::endl;
     std::cout << std::endl;
     
-    auto last = combine_equivalents( ps.begin(), ps.end(), 
+    auto last = accumulate_equivalents( ps.begin(), ps.end(), 
         []( const Payment& a, const Payment& b ) -> bool{ 
             return a.name == b.name;
         },
@@ -80,3 +83,4 @@ int main()
     
     return 0;
 }
+
