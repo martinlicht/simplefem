@@ -47,7 +47,7 @@ inline DenseMatrix InterpolationPointsBarycentricCoordinates( int n, int r )
     
     assert( multi_indices.size() == binomial_integer( n+r, r ) );
     
-    const Float delta = +0.000000000;
+    const Float delta = +0.10000000;
     
     DenseMatrix ret( n+1, multi_indices.size(), 0. );
     

@@ -30,7 +30,7 @@ inline DenseMatrix polynomialmassmatrix( int n, int r )
     
     assert( N == binomial_integer( n + r , r ) );
     
-    DenseMatrix ret( N, N );
+    DenseMatrix ret( N, N, -17. );
     
     // create the entries  
     
@@ -43,7 +43,7 @@ inline DenseMatrix polynomialmassmatrix( int n, int r )
         //  alpha! / (n+|alpha|)!
         assert( absolute( alpha ) == 2*r );
         
-        ret( i, j ) = factorial_numerical(n) * alpha.factorial() / (Float) factorial_numerical( (long long)n + 2*r ); 
+        ret( i, j ) = factorial_integer(n) * (Float)alpha.factorial() / (Float) factorial_integer( (int64_t)n + 2*r ); 
 
         if( ret( i, j ) <= 0. ) {
             std::cout << multis[i] << multis[j] << ret (i, j );

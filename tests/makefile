@@ -301,6 +301,9 @@ matrixmarket.tests = matrixmarket/mm.out
 fem/lagrange.out: fem/lagrange.cpp $(Includes.fem)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/lagrange.cpp $(Links.fem) -o fem/lagrange.out
 
+fem/localpolymatrix.out: fem/localpolymatrix.cpp $(Includes.fem)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/localpolymatrix.cpp $(Links.fem) -o fem/localpolymatrix.out
+
 fem/feecmass.out: fem/feecmass.cpp $(Includes.fem)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/feecmass.cpp $(Links.fem) -o fem/feecmass.out
 
@@ -323,7 +326,7 @@ fem/moreinterpolant.out: fem/moreinterpolant.cpp $(Includes.fem)
 fem/approx.out: fem/approx.cpp $(Includes.fem)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/approx.cpp $(Links.fem) -o fem/approx.out
 
-fem.tests = fem/lagrange.out fem/feecmass.out fem/3Dfeecmass.out fem/interpolant.out fem/moreinterpolant.out fem/fields.out fem/approx.out
+fem.tests = fem/lagrange.out fem/localpolymatrix.out fem/feecmass.out fem/3Dfeecmass.out fem/interpolant.out fem/moreinterpolant.out fem/fields.out fem/approx.out
 
 
 

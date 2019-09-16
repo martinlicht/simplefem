@@ -131,7 +131,7 @@ inline SparseMatrix FEECBrokenMassMatrixRightFactor( const Mesh& mesh, int n, in
         // std::cout << polyMM << std::endl;        
         // std::cout << ( Transpose(polyMM_right) * polyMM_right ) << std::endl;        
         // std::cout << polyMM_right.getdimin() << std::endl;        
-        std::cout << polyMM.getdimin() << space << ( Transpose(polyMM_right) * polyMM_right - polyMM ).norm() << std::endl;        
+        // std::cout << polyMM.getdimin() << space << ( Transpose(polyMM_right) * polyMM_right - polyMM ).norm() << std::endl;        
         assert( ( Transpose(polyMM_right) * polyMM_right - polyMM ).issmall() ); 
 
     }
