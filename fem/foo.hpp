@@ -125,6 +125,21 @@ inline DenseMatrix BarycentricProjectionMatrix( const DenseMatrix& J )
 }
 
 
+inline DenseMatrix BarycentricProjectionMatrixNEUERVERSUCH( const DenseMatrix& J )
+{
+    assert( J.getdimout() >= J.getdimin() );
+    
+    auto F = Transpose(J);
+    
+    DenseMatrix ret( J.getdimin()+1, J.getdimout(), 0.0 );
+    
+    for( int r = 0; r < J.getdimin();  r++ )
+    for( int c = 0; c < J.getdimout(); c++ )
+        ret( r+1, c ) = F(r,c);
+    
+    return ret;
+}
+
 
 
 
@@ -208,38 +223,47 @@ inline FloatVector Interpolation(
         
 //         std::cout << lps << space << lpsbc << coords << nl;
         
+        assert( lps.isfinite() );
+        
         const auto EM = EvaluationMatrix( dim, r, lpsbc );
         
         const auto EMinv = Inverse( EM );
         
+        assert( EM.isfinite()    );
+        assert( EMinv.isfinite() );
+        
+        
         
         const auto Jac = m.getTransformationJacobian( dim, s );
         
-        const auto bpm = BarycentricProjectionMatrix( Jac );
+        const auto bpm = BarycentricProjectionMatrixNEUERVERSUCH( Jac );
         
         const auto P = SubdeterminantMatrix( bpm, k ); //MatrixAlternatingPower( bpm, k );
         
+        assert( P.isfinite()    );
+        
         const auto InterpolationMatrix = MatrixTensorProduct( EMinv, P );
+        assert( InterpolationMatrix.isfinite()    );
         
         const auto Evaluations = EvaluateField( dim, k, r, lps, field );
         const auto EvaluationVector = Evaluations.flattencolumns();
         
+        assert( Evaluations.isfinite()    );
+        assert( EvaluationVector.isfinite()    );
+        
+
 //         std::cout << InterpolationMatrix.getdimin() << space << EvaluationVector.getdimension() << nl;
         
         const auto localResult = InterpolationMatrix * EvaluationVector;
 
+        assert( localResult.isfinite()    );
         // std::cout << EvaluationVector << std::endl;
 
-        {
-            auto lalala = MatrixTensorProduct( EM, SubdeterminantMatrix( Jac, k ) );
-            //auto InterpolationMatrixInv = Inverse( InterpolationMatrix );
-            // assert( ( lalala * InterpolationMatrix - IdentityMatrix(InterpolationMatrix.getdimin()) ).issmall() );
-            assert( ( lalala * localResult - EvaluationVector ).issmall() );
+        if( k == 0 ) {
+        
+            assert( ( EM * localResult - EvaluationVector ).issmall() );
+            assert( ( InterpolationMatrix - EMinv ).issmall() );
         }
-
-	if( k == 0 ) {
-		assert( ( InterpolationMatrix - EMinv ).issmall() );
-	}
         
         assert( localResult.getdimension() == SullivanSpanSize(dim,k,r) );
         

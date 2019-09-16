@@ -18,6 +18,7 @@
 
 typedef long double Float;
 
+static const Float notanumber = std::numeric_limits<Float>::quiet_NaN();
 
 
 

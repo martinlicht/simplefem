@@ -323,10 +323,19 @@ fem/fields.out: fem/fields.cpp $(Includes.fem)
 fem/moreinterpolant.out: fem/moreinterpolant.cpp $(Includes.fem)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/moreinterpolant.cpp $(Links.fem) -o fem/moreinterpolant.out
 
-fem/approx.out: fem/approx.cpp $(Includes.fem)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/approx.cpp $(Links.fem) -o fem/approx.out
+fem/approx0.out: fem/approx0.cpp $(Includes.fem)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/approx0.cpp $(Links.fem) -o fem/approx0.out
 
-fem.tests = fem/lagrange.out fem/localpolymatrix.out fem/feecmass.out fem/3Dfeecmass.out fem/interpolant.out fem/moreinterpolant.out fem/fields.out fem/approx.out
+fem/approxvol.out: fem/approxvol.cpp $(Includes.fem)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/approxvol.cpp $(Links.fem) -o fem/approxvol.out
+
+fem/approx1.out: fem/approx1.cpp $(Includes.fem)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/approx1.cpp $(Links.fem) -o fem/approx1.out
+
+fem/approx2.out: fem/approx2.cpp $(Includes.fem)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/approx2.cpp $(Links.fem) -o fem/approx2.out
+
+fem.tests = fem/lagrange.out fem/localpolymatrix.out fem/feecmass.out fem/3Dfeecmass.out fem/interpolant.out fem/moreinterpolant.out fem/fields.out fem/approx0.out fem/approx1.out fem/approx2.out fem/approxvol.out
 
 
 

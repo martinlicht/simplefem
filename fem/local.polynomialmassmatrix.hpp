@@ -30,7 +30,7 @@ inline DenseMatrix polynomialmassmatrix( int n, int r )
     
     assert( N == binomial_integer( n + r , r ) );
     
-    DenseMatrix ret( N, N, -17. );
+    DenseMatrix ret( N, N, notanumber );
     
     // create the entries  
     
@@ -58,6 +58,7 @@ inline DenseMatrix polynomialmassmatrix( int n, int r )
         
     }
     
+    assert( ret.isfinite() );
     
     //std::cout << ret << std::endl;
 
