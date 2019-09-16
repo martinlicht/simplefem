@@ -159,6 +159,10 @@ bool MeshSimplicial1D::compare( const MeshSimplicial1D& mesh ) const
 void MeshSimplicial1D::check() const
 {
     
+    #ifdef NDEBUG
+    return;
+    #endif
+    
     /* 1. Check the array sizes */
     
     assert( counter_edges == data_edge_vertices.size() );

@@ -193,7 +193,7 @@ inline std::ostream& operator<<( std::ostream& os, const Mesh& mesh )
 // static inline int countsubsimplices( int n, int k )
 // {
 //     assert( 0 <= k && k <= n );
-//     return binomial<int>( n+1, k+1 );
+//     return binomial_integer( n+1, k+1 );
 // }
 
 

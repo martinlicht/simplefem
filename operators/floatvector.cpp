@@ -61,11 +61,11 @@ FloatVector& FloatVector::operator=( const FloatVector& vec )
 
 void FloatVector::check() const 
 {
-//     LOG << "CHECK." << std::endl;
-    assert( getdimension() >= 0 );
-    if( getdimension() == 0 )
-    LOG << "WARNING: VECTOR OF DIMENSION ZERO." << std::endl;
-    assert( getdimension() == data.size() );
+    #ifdef NDEBUG
+    return;
+    #endif
+    
+    assert( data.size() >= 0 );
 }
 
 void FloatVector::print( std::ostream& output ) const 
@@ -102,7 +102,7 @@ int FloatVector::getdimension() const
 
 Float FloatVector::setentry( int p, Float value )
 {
-    check();
+    //check();
     assert( 0 <= p && p < data.size() );
     data.at(p) = value;
     return data.at(p);
@@ -110,7 +110,7 @@ Float FloatVector::setentry( int p, Float value )
 
 Float FloatVector::getentry( int p ) const 
 {
-    check();
+    //check();
     assert( 0 <= p && p < data.size() );
     return data.at(p);
 }
@@ -118,35 +118,35 @@ Float FloatVector::getentry( int p ) const
 
 Float& FloatVector::at( int p )
 {
-    check();
+    //check();
     assert( 0 <= p && p < data.size() );
     return data.at(p);
 }
 
 const Float& FloatVector::at( int p ) const
 {
-    check();
+    //check();
     assert( 0 <= p && p < data.size() );
     return data.at(p);
 }
 
 Float& FloatVector::operator[]( int p )
 {
-    check();
+    //check();
     assert( 0 <= p && p < data.size() );
     return data[p];
 }
 
 const Float& FloatVector::operator[]( int p ) const
 {
-    check();
+    //check();
     assert( 0 <= p && p < data.size() );
     return data[p];
 }
                 
 const std::vector<Float>& FloatVector::getdata() const
 {
-    check();
+    //check();
     return data;
 }
 

@@ -57,7 +57,7 @@ class AlternatingForm
         {
             assert( point.getdimension() == getdimension() );
             FloatVector ret = formula( point );
-            assert( ret.getdimension() == binomial(d,k) );
+            assert( ret.getdimension() == binomial_integer(d,k) );
             return ret;
         }
         
@@ -70,8 +70,8 @@ class AlternatingForm
             
             std::vector<DenseMatrix> pattern( d, DenseMatrix( sigmas_dst.size(), sigmas_src.size(), 0 ) );
             
-            assert( sigmas_dst.size() == binomial( d, k+1 ) );
-            assert( sigmas_src.size()  == binomial( d, k   ) );
+            assert( sigmas_dst.size() == binomial_integer( d, k+1 ) );
+            assert( sigmas_src.size()  == binomial_integer( d, k   ) );
             
             for( int src_form_index = 0; src_form_index < sigmas_src.size(); src_form_index++ )
             for( int p = 0; p < d; p++ ) {
@@ -97,8 +97,8 @@ class AlternatingForm
             
             auto newformula = [k,d,pattern,formula,stepsize]( const FloatVector& point ) -> FloatVector {
                 
-                int dim_src = binomial(d,k  );
-                int dim_dst = binomial(d,k+1);
+                int dim_src = binomial_integer(d,k  );
+                int dim_dst = binomial_integer(d,k+1);
                 
                 FloatVector ret( dim_dst );
                 
@@ -139,7 +139,7 @@ class AlternatingForm
             
             auto newformula = [d,k,formula,stepsize]( const FloatVector& point ) -> FloatVector {
                 
-                int fielddim = binomial(d,k);
+                int fielddim = binomial_integer(d,k);
                 
                 FloatVector ret( fielddim, 0. );
                 

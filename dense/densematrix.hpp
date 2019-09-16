@@ -293,5 +293,28 @@ inline DenseMatrix operator/( const DenseMatrix& left, Float right )
 }
 
 
+inline DenseMatrix weightedproduct( const DenseMatrix& W, FloatVector left, FloatVector right )
+{
+    assert( W.getdimin() == right.getdimension() );
+    assert( W.getdimout() == left.getdimension() );
+    std::vector<Float> vec( W.getdimin() * W.getdimout() );
+    for( int r = 0; r < W.getdimout(); r++ )
+    for( int c = 0; c < W.getdimin();  c++ )
+        vec[ r * W.getdimin() + c ] = left[r] * right[c] * W(r,c);
+
+    for( int i = 0; i < vec.size(); i++ )
+    for( int j = 0; j < vec.size(); j++ )
+        if( absolute(vec[i]) > absolute(vec[j]) )
+            std::swap( vec[i], vec[j] );
+
+    Float ret = 0.;
+    for( int i = 0; i < vec.size(); i++ )
+        ret = ret + vec[i];
+
+    return ret;
+}
+
+
+
 
 #endif

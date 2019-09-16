@@ -85,6 +85,10 @@ SparseMatrix::~SparseMatrix()
 
 void SparseMatrix::check() const
 {
+    #ifdef NDEBUG
+    return;
+    #endif
+    
     LinearOperator::check();
     for( const MatrixEntry& me : entries ) {
         assert( 0 <= me.row && me.row < getdimout() );

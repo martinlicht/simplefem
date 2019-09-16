@@ -159,7 +159,7 @@ Float Determinant( const DenseMatrix& A )
                - A(0,3) * A(1,2) * A(2,0) * A(3,1) // 3 2 0 1 - 
                ;
         
-    } else if( false and 2 <= A.getdimin() and A.getdimin() <= 8 ) {
+    } else if( 2 <= A.getdimin() and A.getdimin() <= 8 ) {
       
         return Determinant_laplaceexpansion( A );
         

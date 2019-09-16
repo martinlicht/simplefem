@@ -66,9 +66,9 @@ inline SparseMatrix LagrangeMassMatrix( Mesh& mesh, int r )
         Float measure = mesh.getMeasure( n, t );
         
         if( v1 == v2 )
-            entry.value = 2. * factorial(n) * measure / factorial( 2 + n );
+            entry.value = 2. * factorial_numerical(n) * measure / factorial_numerical( 2 + n );
         else
-            entry.value =      factorial(n) * measure / factorial( 2 + n );
+            entry.value =      factorial_numerical(n) * measure / factorial_numerical( 2 + n );
         
         ret.setentry( index_of_entry, entry );
         

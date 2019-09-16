@@ -28,7 +28,7 @@ inline DenseMatrix polynomialmassmatrix( int n, int r )
     
     const int N = multis.size();
     
-    assert( N == binomial( n + r , r ) );
+    assert( N == binomial_integer( n + r , r ) );
     
     DenseMatrix ret( N, N );
     
@@ -41,14 +41,31 @@ inline DenseMatrix polynomialmassmatrix( int n, int r )
         MultiIndex alpha = multis[i] + multis[j];
         
         //  alpha! / (n+|alpha|)!
+        assert( absolute( alpha ) == 2*r );
         
-        ret( i, j ) = factorial(n) * alpha.factorial() / (Float) factorial( n + absolute( alpha ) );
+        ret( i, j ) = factorial_numerical(n) * alpha.factorial() / (Float) factorial_numerical( (long long)n + 2*r ); 
+
+        if( ret( i, j ) <= 0. ) {
+            std::cout << multis[i] << multis[j] << ret (i, j );
+            unreachable();
+        }
+        
+
+        //// TODO unclear whether this factor makes any sense.
+	// it needs to be fixed how this matrix is scaled.
+	// if it is scaled as mass matrix of unit simplex, then we later only multiple a determinant
+        // if it is scaled so that the volume term is missing, then we multiply by the measure later.
         
     }
     
     
     //std::cout << ret << std::endl;
-        
+
+    if( not ret.ispositive() )
+        std::cout << ret;
+    
+    assert( ret.isnonnegative() );
+    assert( ret.ispositive() );
     
     return ret;
 }

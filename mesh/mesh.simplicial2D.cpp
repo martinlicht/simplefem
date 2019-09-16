@@ -308,6 +308,10 @@ bool MeshSimplicial2D::compare( const MeshSimplicial2D& mesh ) const
 void MeshSimplicial2D::check() const
 {
     
+    #ifdef NDEBUG
+    return;
+    #endif
+    
     /****************************/
     /* 1. Check the array sizes */
     /****************************/

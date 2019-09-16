@@ -57,6 +57,9 @@ Includes = $(Headers) $(Objects)
 
 
 
+basic/calc.out: basic/calc.cpp $(Includes.basic)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) basic/calc.cpp $(Links.basic) -o basic/calc.out 
+
 basic/sorthack.out: basic/sorthack.cpp $(Includes.basic)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) basic/sorthack.cpp $(Links.basic) -o basic/sorthack.out 
 
@@ -66,7 +69,7 @@ basic/logging.out: basic/logging.cpp $(Includes.basic)
 basic/fixedarray.out: basic/fixedarray.cpp $(Includes.basic)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) basic/fixedarray.cpp $(Links.basic) -o basic/fixedarray.out 
 
-basic.tests = basic/sorthack.out basic/logging.out basic/fixedarray.out
+basic.tests = basic/calc.out basic/sorthack.out basic/logging.out basic/fixedarray.out
 
 
 
@@ -304,6 +307,10 @@ fem/feecmass.out: fem/feecmass.cpp $(Includes.fem)
 fem/3Dfeecmass.out: fem/3Dfeecmass.cpp $(Includes.fem)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/3Dfeecmass.cpp $(Links.fem) -o fem/3Dfeecmass.out
 
+
+# fem/fast3Dfeecmass.out: 
+# 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) ../combinatorics/*.cpp ../operators/*.cpp ../dense/*.cpp ../sparse/*.cpp ../mesh/*.cpp fem/3Dfeecmass.cpp -o fem/fast3Dfeecmass.out
+
 fem/interpolant.out: fem/interpolant.cpp $(Includes.fem)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/interpolant.cpp $(Links.fem) -o fem/interpolant.out
 
@@ -313,7 +320,10 @@ fem/fields.out: fem/fields.cpp $(Includes.fem)
 fem/moreinterpolant.out: fem/moreinterpolant.cpp $(Includes.fem)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/moreinterpolant.cpp $(Links.fem) -o fem/moreinterpolant.out
 
-fem.tests = fem/lagrange.out fem/feecmass.out fem/3Dfeecmass.out fem/interpolant.out fem/moreinterpolant.out fem/fields.out
+fem/approx.out: fem/approx.cpp $(Includes.fem)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/approx.cpp $(Links.fem) -o fem/approx.out
+
+fem.tests = fem/lagrange.out fem/feecmass.out fem/3Dfeecmass.out fem/interpolant.out fem/moreinterpolant.out fem/fields.out fem/approx.out
 
 
 

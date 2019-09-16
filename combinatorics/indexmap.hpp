@@ -63,6 +63,12 @@ class IndexMap
         bool isstrictlyascending() const;
         
         
+        // TODO
+        // This interface looks like a std::vector 
+        // but it should really be a mapping.
+        // What's more, the return of references 
+        // breaks the binding.
+        
         int& at( int i );
         
         const int& at( int i ) const;

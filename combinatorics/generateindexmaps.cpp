@@ -91,7 +91,7 @@ generatePermutations( const IndexRange& ir )
         std::vector<IndexMap> allmappings = generateIndexMaps( ir, ir );
         
         std::vector<IndexMap> ret;
-        ret.reserve( factorial( ir.cardinality() ) );
+        ret.reserve( factorial_integer( ir.cardinality() ) );
         
         for( const auto& mapping : allmappings )
           if( mapping.isbijective() )
@@ -149,7 +149,7 @@ generateSigmas( const IndexRange& from, const IndexRange& to )
         
         std::vector<IndexMap> ret;
         assert( to.cardinality() >= from.cardinality() ); // TODO: Handle this warning
-        ret.reserve( binomial<int>( to.cardinality(), from.cardinality() ) );
+        ret.reserve( binomial_integer( to.cardinality(), from.cardinality() ) );
         
         for( const auto& mapping : allmappings )
           if( mapping.isstrictlyascending() )

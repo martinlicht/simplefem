@@ -44,6 +44,10 @@ MultiIndex::MultiIndex( const IndexRange& ir, const std::initializer_list<int>& 
 
 void MultiIndex::check() const
 {
+    #ifdef NDEBUG
+    return;
+    #endif
+    
     IndexMap::check();
 }
 
@@ -120,7 +124,7 @@ int MultiIndex::factorial() const
     check();
     int ret = 1;
     for( int p : getIndexRange()  )
-        ret *= ::factorial<int>( at( p ) );
+        ret *= factorial_integer( at( p ) );
     return ret;
 }
 

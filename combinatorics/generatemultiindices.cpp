@@ -28,7 +28,7 @@ std::vector<MultiIndex> generateMultiIndices( const IndexRange& ir, int degree )
     /* otherwise, we iterate through a large list of candidates */
     /* and pick those that have the right properties            */
     
-    ret.reserve( binomial<int>( ir.cardinality()-1 + degree, ir.cardinality()-1 ) );
+    ret.reserve( binomial_integer( ir.cardinality()-1 + degree, ir.cardinality()-1 ) );
     
     int max_candidate = integerpower( degree+1, ir.cardinality() );
     int min_index = ir.min();
@@ -50,7 +50,7 @@ std::vector<MultiIndex> generateMultiIndices( const IndexRange& ir, int degree )
         
     }
     
-    assert( ret.size() == binomial<int>( ir.cardinality()-1 + degree, ir.cardinality()-1 ) );
+    assert( ret.size() == binomial_integer( ir.cardinality()-1 + degree, ir.cardinality()-1 ) );
     
     assert( ret.size() == ret.capacity() );
     

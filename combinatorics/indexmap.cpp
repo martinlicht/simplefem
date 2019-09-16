@@ -80,6 +80,10 @@ IndexMap::IndexMap( const IndexRange& from, const IndexRange& to, const std::ini
 
 void IndexMap::check() const 
 { 
+    #ifdef NDEBUG
+    return;
+    #endif
+    
     src.check();
     dest.check();
     

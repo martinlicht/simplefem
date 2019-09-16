@@ -28,7 +28,7 @@ inline int SullivanSpanSize( int n, int k, int r )
 {
     assert( 0 <= n && 0 <= k && 0 <= r );
     assert( k <= n );
-    return binomial( n + r, r ) * binomial( n+1, k );
+    return binomial_integer( n + r, r ) * binomial_integer( n+1, k );
 }
 
 
@@ -45,18 +45,19 @@ inline DenseMatrix InterpolationPointsBarycentricCoordinates( int n, int r )
     
     const auto multi_indices = generateMultiIndices( IndexRange(0,n), r );
     
-    assert( multi_indices.size() == binomial( n+r, r ) );
+    assert( multi_indices.size() == binomial_integer( n+r, r ) );
     
-    const Float delta = 0.1;
+    const Float delta = +0.000000000;
     
     DenseMatrix ret( n+1, multi_indices.size(), 0. );
     
     for( int i = 0; i < multi_indices.size(); i++ )
         ret.setcolumn( i, FloatVector( multi_indices[i].getvalues() ).shift( delta ).scaleinverse( r + (n+1) * delta ) );
 
+    if( r != 0 )
     for( int i = 0; i < multi_indices.size(); i++ ) {
         assert( ret.getcolumn(i).isnonnegative() );
-        assert( ret.getcolumn(i).sumnorm() > 0.999 && ret.getcolumn(i).sumnorm() < 1.001 );
+        assert( ret.getcolumn(i).sumnorm() > 0.9999 && ret.getcolumn(i).sumnorm() < 1.0001 );
     }
     
     return ret;
@@ -140,7 +141,7 @@ inline DenseMatrix EvaluateField(
     assert( 0 <= r );
     assert( lps.getdimout() == dim );
     
-    const auto fielddim = binomial(dim,k);
+    const auto fielddim = binomial_integer(dim,k);
     
     DenseMatrix ret( fielddim, lps.getdimin() );
     
@@ -150,7 +151,7 @@ inline DenseMatrix EvaluateField(
         
         auto value = field( point );
         
-        assert( value.getdimension() == binomial( dim, k ) );
+        assert( value.getdimension() == binomial_integer( dim, k ) );
         
         ret.setcolumn( p, value );
     }
@@ -226,6 +227,19 @@ inline FloatVector Interpolation(
 //         std::cout << InterpolationMatrix.getdimin() << space << EvaluationVector.getdimension() << nl;
         
         const auto localResult = InterpolationMatrix * EvaluationVector;
+
+        // std::cout << EvaluationVector << std::endl;
+
+        {
+            auto lalala = MatrixTensorProduct( EM, SubdeterminantMatrix( Jac, k ) );
+            //auto InterpolationMatrixInv = Inverse( InterpolationMatrix );
+            // assert( ( lalala * InterpolationMatrix - IdentityMatrix(InterpolationMatrix.getdimin()) ).issmall() );
+            assert( ( lalala * localResult - EvaluationVector ).issmall() );
+        }
+
+	if( k == 0 ) {
+		assert( ( InterpolationMatrix - EMinv ).issmall() );
+	}
         
         assert( localResult.getdimension() == SullivanSpanSize(dim,k,r) );
         

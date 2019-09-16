@@ -29,8 +29,8 @@ int main()
         
         cout << "Refinement..." << endl;
         
-        int number_of_refinements = 1;
-        for( int i = 0; i < number_of_refinements; i++ )
+        int number_of_refinements = 3;
+        for( int i = 0; i <= number_of_refinements; i++ )
             std::cout << "Refine: " << i << nl, M.uniformrefinement();
         
         cout << "...done" << endl;

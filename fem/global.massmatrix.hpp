@@ -34,20 +34,23 @@ inline SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r 
     assert( r >= 0 );
     assert( n >= 0 && n <= mesh.getinnerdimension() );
     assert( k >= 0 && k <= n );
+    assert( binomial_integer( n+r, n ) == binomial_integer( n+r, r ) );
     
     // Auxiliary calculations and preparations
     
     const int num_simplices = mesh.count_simplices( n );
         
-    const int localdim = binomial( n+r, n ) * binomial( n, k );
+    const int localdim = binomial_integer( n+r, n ) * binomial_integer( n, k );
     
-    const int dim_in  = num_simplices * localdim;
-    const int dim_out = num_simplices * localdim;
+    const int dim_in      = num_simplices * localdim;
+    const int dim_out     = num_simplices * localdim;
     const int num_entries = num_simplices * localdim * localdim;
     
     SparseMatrix ret( dim_out, dim_in, num_entries );
     
     DenseMatrix polyMM = polynomialmassmatrix( n, r );
+
+    assert( polyMM.issquare() and polyMM.getdimin() == binomial_integer( n+r, n ) );
     
 //     std::cout << polyMM << std::endl;
         
@@ -55,10 +58,17 @@ inline SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r 
     {
         
         Float measure = mesh.getMeasure( n, s );
+
+        DenseMatrix GPM    = mesh.getGradientProductMatrix( n, s );
             
-        DenseMatrix formMM = SubdeterminantMatrix( mesh.getGradientProductMatrix( n, s ), k );
+        DenseMatrix formMM = SubdeterminantMatrix( GPM, k );
     
         DenseMatrix fullMM = MatrixTensorProduct( polyMM, formMM ) * measure;
+
+        if( k == 0 )
+        {
+            assert( ( fullMM - polyMM * measure ).issmall() );
+        }
         
 //         std::cout << measure << std::endl;
         
@@ -104,7 +114,7 @@ inline SparseMatrix FEECBrokenMassMatrixRightFactor( const Mesh& mesh, int n, in
     
     const int num_simplices = mesh.count_simplices( n );
         
-    const int localdim = binomial( n+r, n ) * binomial( n, k );
+    const int localdim = binomial_integer( n+r, n ) * binomial_integer( n, k );
     
     const int dim_in  = num_simplices * localdim;
     const int dim_out = num_simplices * localdim;
@@ -115,7 +125,17 @@ inline SparseMatrix FEECBrokenMassMatrixRightFactor( const Mesh& mesh, int n, in
     DenseMatrix polyMM = polynomialmassmatrix( n, r );
     
     DenseMatrix polyMM_right = Transpose(CholeskyDecomposition(polyMM));
-    
+
+    {
+
+        // std::cout << polyMM << std::endl;        
+        // std::cout << ( Transpose(polyMM_right) * polyMM_right ) << std::endl;        
+        // std::cout << polyMM_right.getdimin() << std::endl;        
+        std::cout << polyMM.getdimin() << space << ( Transpose(polyMM_right) * polyMM_right - polyMM ).norm() << std::endl;        
+        assert( ( Transpose(polyMM_right) * polyMM_right - polyMM ).issmall() ); 
+
+    }
+            
 //     std::cout << polyMM << std::endl;
         
     for( int s = 0; s < num_simplices; s++ )
@@ -131,10 +151,10 @@ inline SparseMatrix FEECBrokenMassMatrixRightFactor( const Mesh& mesh, int n, in
             
             /* TEST WHETHER THE ARITHMETICS WORK OUT */
             
+            DenseMatrix polyMM = polynomialmassmatrix( n, r );
             DenseMatrix formMM = SubdeterminantMatrix( mesh.getGradientProductMatrix( n, s ), k );
             DenseMatrix fullMM = MatrixTensorProduct( polyMM, formMM ) * measure;
             
-            assert( ( Transpose(polyMM_right) * polyMM_right - polyMM ).issmall() ); 
             assert( ( Transpose(formMM_right) * formMM_right - formMM ).issmall() ); 
             assert( ( Transpose(fullMM_right) * fullMM_right - fullMM ).issmall() ); 
             
@@ -176,7 +196,7 @@ inline SparseMatrix FEECBrokenMassMatrixRightFactor( const Mesh& mesh, int n, in
 //     
 //     DenseMatrix formMM = SubdeterminantMatrix( mesh.getGradientProductMatrix( n, t ), k );
 //         
-//     return TensorProduct( polyMM, formMM ) * absolute( determinant( Jacobian ) ) / factorial( n );
+//     return TensorProduct( polyMM, formMM ) * absolute( determinant( Jacobian ) ) / factorial_numerical( n );
 //     
 // }
 

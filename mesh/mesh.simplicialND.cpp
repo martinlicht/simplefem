@@ -196,6 +196,10 @@ bool MeshSimplicialND::compare ( const MeshSimplicialND& mesh ) const
 
 void MeshSimplicialND::check() const
 {
+    #ifdef NDEBUG
+    return;
+    #endif
+    
     /* check that the number of arrays makes sense */
     
     assert( data_subsimplices.size() == (getinnerdimension()+2) * (getinnerdimension()+1) / 2 );

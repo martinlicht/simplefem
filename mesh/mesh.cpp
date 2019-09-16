@@ -65,7 +65,11 @@ const Coordinates& Mesh::getcoordinates() const
 void Mesh::check() const 
 {
   
-  // check dimension 
+  #ifdef NDEBUG
+  return;
+  #endif
+    
+    // check dimension 
   assert( outerdimension == coordinates.getdimension() );
   
   // the vertices and volumes must be counted 
@@ -114,7 +118,7 @@ void Mesh::index_to_pair( int index, int& sup, int& sub ) const
 int Mesh::count_subsimplices( int sup, int sub ) const 
 {
   assert( 0 <= sub && sub <= sup && sup <= innerdimension );
-  return binomial<int>( sup + 1, sub + 1);
+  return binomial_integer( sup + 1, sub + 1);
 }
 
 
@@ -253,7 +257,7 @@ Float Mesh::getMeasure( int dim, int index ) const
     
     DenseMatrix temp = Transpose( Jac ) * Jac;
     
-    return std::sqrt(absolute(Determinant(temp)));
+    return std::sqrt(absolute(Determinant(temp))) / (Float)factorial_numerical( getinnerdimension() );
 }
 
 Float Mesh::getShapemeasure( int dim, int index ) const 

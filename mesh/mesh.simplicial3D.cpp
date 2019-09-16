@@ -569,6 +569,10 @@ bool MeshSimplicial3D::compare( const MeshSimplicial3D& mesh ) const
 void MeshSimplicial3D::check() const
 {
     
+    #ifdef NDEBUG
+    return;
+    #endif
+    
     /****************************/
     /* 1. Check the array sizes */ // OK
     /****************************/

@@ -66,7 +66,7 @@ inline SparseMatrix LagrangeStiffnessMatrix( Mesh& mesh, int r )
         
         DenseMatrix GradProds = mesh.getGradientProductMatrix( n, t );
         
-        entry.value = GradProds( v1, v2 ) * Determinant( Jac ) / factorial( n );
+        entry.value = GradProds( v1, v2 ) * Determinant( Jac ) / factorial_numerical( n );
         
         ret.setentry( index_of_entry, entry );
         

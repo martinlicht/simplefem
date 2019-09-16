@@ -107,8 +107,12 @@ DenseMatrix::~DenseMatrix()
 
 void DenseMatrix::check() const 
 {
+    #ifdef NDEBUG
+    return;
+    #endif
+    
     LinearOperator::check();
-    assert( getdimout() * getdimin() == entries.size() );
+    assert( LinearOperator::getdimout() * LinearOperator::getdimin() == entries.size() );
 }
 
 void DenseMatrix::print( std::ostream& os ) const

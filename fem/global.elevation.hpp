@@ -42,13 +42,13 @@ inline SparseMatrix FEECBrokenElevationMatrix( Mesh& mesh, int n, int k, int r, 
     const std::vector<MultiIndex> multis_low  = generateMultiIndices( IndexRange( 0, n ), r         );
     const std::vector<MultiIndex> multis_high = generateMultiIndices( IndexRange( 0, n ), r + rplus );
     
-    assert( multis_adds.size() == binomial( n + rplus    , n ) );
-    assert( multis_low.size()  == binomial( n + r,         n ) );
-    assert( multis_high.size() == binomial( n + r + rplus, n ) );
+    assert( multis_adds.size() == binomial_integer( n + rplus    , n ) );
+    assert( multis_low.size()  == binomial_integer( n + r,         n ) );
+    assert( multis_high.size() == binomial_integer( n + r + rplus, n ) );
     
     const std::vector<IndexMap> sigmas = generateSigmas( IndexRange( 1, k ), IndexRange( 0, n ) );
     
-    assert( sigmas.size() == binomial( n+1, k ) );
+    assert( sigmas.size() == binomial_integer( n+1, k ) );
     
     const int localdim_in  = multis_low.size()  * sigmas.size();
     const int localdim_out = multis_high.size() * sigmas.size();

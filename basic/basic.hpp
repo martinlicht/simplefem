@@ -1,6 +1,7 @@
 #ifndef INCLUDEGUARD_BASIC_HPP
 #define INCLUDEGUARD_BASIC_HPP
 
+#include <cstdint>     
 #include <cmath>     
 #include <ctime>     
 #include <cstdlib>     
@@ -10,7 +11,8 @@
 #include <functional>
 #include <iostream>
 
-#define unreachable __builtin_unreachable
+#define unreachable abort 
+// __builtin_unreachable
 
 // // #include "assertion.hpp"
 
@@ -33,17 +35,6 @@ inline int kronecker( T i, T j )
         return 0;
 }
 
-
-template<typename T>
-T factorial( const T& n )
-{
-    if( n == 0 )
-        return 1;
-    else if( n < 0 )
-        { unreachable(); }
-    else
-        return n * factorial<T>(n-1);
-}
 
 template<typename T>
 T absolute( const T& n )
@@ -72,16 +63,138 @@ T minimum( const T& a, const T& b )
         return b;
 }
 
-// int binomial(int,int);
 
 
-template<typename T>
-T binomial( const T& n, const T& k )
+
+
+
+static inline int64_t factorial_integer_table( int64_t n )
+{
+    switch(n){
+        case 0: return 1;
+        case 1: return 1;
+        case 2: return 2;
+        case 3: return 6;
+        case 4: return 24;
+        case 5: return 120;
+        case 6: return 720ll;
+        case 7: return 5040ll;
+        case 8: return 40320ll;
+        case 9: return 362880ll;
+        case 10: return 3628800ll;
+        case 11: return 39916800ll;
+        case 12: return 479001600ll;
+        case 13: return 6227020800ll;
+        case 14: return 87178291200ll;
+        case 15: return 1307674368000ll;
+        case 16: return 20922789888000ll;
+        case 17: return 355687428096000ll;
+        case 18: return 6402373705728000ll;
+        case 19: return 121645100408832000ll;
+        case 20: return 2432902008176640000ll;
+        // case 21: return 51090942171709440000ll;
+        // case 22: return 1124000727777607680000ll;
+        // case 23: return 25852016738884976640000ll;
+        // case 24: return 620448401733239439360000ll;
+        // case 25: return 15511210043330985984000000ll;
+        default: unreachable();
+    }
+}
+
+static inline int64_t factorial_integer_naive( int64_t n )
+{
+    assert( 0 <= n and n <>>= 21 );
+    if( n == 0 ) { 
+        return 1;
+    } else {
+        return n * factorial_integer_naive( n-1 );
+    }
+}
+
+static inline int64_t factorial_integer_loop( int64_t n )
+{
+    assert( 0 <= n and n <>>= 21 );
+    int64_t ret = 1;
+    while( n > 0 ) ret *= n--;
+    return ret;
+}
+
+static inline int64_t factorial_integer( int64_t n )
+{
+    return factorial_integer_loop( n );
+}
+
+
+
+
+
+
+
+static inline Float factorial_numerical_naive( int64_t n )
+{
+    assert( 0 <= n );
+    if( n == 0 ) { 
+        return 1.;
+    } else {
+        return n * factorial_numerical_naive( n-1 );
+    }
+}
+
+static inline Float factorial_numerical_loop( int64_t n )
+{
+    assert( 0 <= n );
+    Float ret = 1.;
+    while( n > 0 ) ret *= n--;
+    return ret;
+}
+
+static inline Float factorial_numerical( int64_t n )
+{
+    return factorial_numerical_naive( n );
+}
+
+
+
+
+
+
+
+static inline int64_t binomial_integer( int64_t n, int64_t k )
 {
     assert( 0 <= n );
     assert( 0 <= k && k <= n );
-    return factorial(n) / ( factorial(k) * factorial(n-k) );
+    return factorial_integer(n) / ( factorial_integer(k) * factorial_integer(n-k) );
 }
+
+static inline Float binomial_numerical( int64_t n, int64_t k )
+{
+    assert( 0 <= n );
+    assert( 0 <= k && k <= n );
+    return factorial_numerical(n) / ( factorial_numerical(k) * factorial_numerical(n-k) );
+}
+
+
+
+// todo: deprecate these two templated functions
+
+// template<typename T>
+// T factorial( const T& n )
+// {
+//     if( n == 0 )
+//         return 1;
+//     else if( n < 0 )
+//         { unreachable(); }
+//     else
+//         return n * factorial<T>(n-1);
+// }
+
+// template<typename T>
+// T binomial( const T& n, const T& k )
+// {
+//     assert( 0 <= n );
+//     assert( 0 <= k && k <= n );
+//     return factorial(n) / ( factorial(k) * factorial(n-k) );
+// }
 
 
 static inline Float power( Float base, Float exponent )
@@ -124,6 +237,15 @@ static inline int getbit( unsigned int value, unsigned int bitnumber )
 }
 
 
+static inline bool issmall( Float value, Float threshold = 0.00001 )
+{
+    return absolute(value) < threshold;
+}
+
+static inline bool isabout( Float value1, Float value2, Float threshold = 0.00001 )
+{
+    return issmall( value1 - value2, threshold );
+}
 
 
 
