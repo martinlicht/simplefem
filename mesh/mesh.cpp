@@ -250,7 +250,7 @@ Float Mesh::getDiameter( int dim, int index ) const
 
 Float Mesh::getMeasure( int dim, int index ) const 
 {
-    assert( 0 <= dim && dim <= getinnerdimension() );
+    assert( 0 <= dim   && dim <= getinnerdimension() );
     assert( 0 <= index && index < count_simplices(dim) );
     
     DenseMatrix Jac = getTransformationJacobian( dim, index );
@@ -310,9 +310,9 @@ DenseMatrix Mesh::getTransformationJacobian( int dim, int index ) const
     
     DenseMatrix vcm = getVertexCoordinateMatrix( dim, index );
     
-    for( int c = 0; c < dim; c++ )
-    for( int d = 0; d < getouterdimension(); d++ )
-        ret( d, c ) = vcm( d, c+1 ) - vcm( d, 0 );
+    for( int v = 0; v < dim; v++ )
+    for( int c = 0; c < getouterdimension(); c++ )
+        ret( c, v ) = vcm( c, v+1 ) - vcm( c, 0 );
     
     return ret;
 }
@@ -320,8 +320,8 @@ DenseMatrix Mesh::getTransformationJacobian( int dim, int index ) const
 
 DenseMatrix Mesh::getGradientProductMatrix( int dim, int index ) const 
 {
-    assert( 0 <= dim && dim <= getinnerdimension() );
-    assert( 0 <= index && index < count_simplices(dim) );
+    assert( 0 <= dim   && dim   <= getinnerdimension() );
+    assert( 0 <= index && index <  count_simplices(dim) );
     
     DenseMatrix multiplier( dim, dim+1, 0. );
     for( int i = 0; i <  dim; i++ ) {
@@ -331,7 +331,7 @@ DenseMatrix Mesh::getGradientProductMatrix( int dim, int index ) const
     
     // D^-1 D^-t = ( D^t D )^-1
     DenseMatrix Jac    = getTransformationJacobian( dim, index );
-    DenseMatrix middle = Inverse( Transpose(Jac) * Jac );
+    DenseMatrix middle = Inverse( Transpose(Jac) * Jac );// Transpose(Jac) * Jac;//TODO: Understand
     
     return Transpose(multiplier) * middle * multiplier;
 }
@@ -349,9 +349,9 @@ DenseMatrix Mesh::getGradientProductMatrixRightFactor( int dim, int index ) cons
     
     // D^-1 D^-t = ( D^t D )^-1
     DenseMatrix Jac    = getTransformationJacobian( dim, index );
-    DenseMatrix middle = Inverse( Transpose(Jac) * Jac );
+    DenseMatrix middle = Inverse( Transpose(Jac) * Jac ); //Transpose(Jac) * Jac; //TODO: Understand
     
-    DenseMatrix middle_rightfactor = Transpose( CholeskyDecomposition( middle ) ); // TODO: Jacobi
+    DenseMatrix middle_rightfactor = Transpose( CholeskyDecomposition( middle ) ); 
 
     assert( ( middle - Transpose(middle_rightfactor) * middle_rightfactor ).issmall() );
     
