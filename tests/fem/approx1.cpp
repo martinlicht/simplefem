@@ -58,6 +58,17 @@ int main()
             experiments_value.push_back( 4. );
             
             
+            experiments_field.push_back( 
+                [](const FloatVector& vec) -> FloatVector{
+                    assert( vec.getdimension() == 2 );
+                    Float x = vec[0]; Float y = vec[1];
+                    return FloatVector({ std::exp(x-y), std::atan(x*y) });
+                }
+            );
+
+            experiments_value.push_back( 13.5203 );
+            
+            
             
 
             
@@ -137,6 +148,26 @@ int main()
             experiments_value.push_back(1.);
             
             
+            experiments_field.push_back( 
+                [](const FloatVector& vec) -> FloatVector{
+                    assert( vec.getdimension() == 3 );
+                    return FloatVector({ 1.,-3.,-2. });
+                }
+            );
+
+            experiments_value.push_back(14.);
+            
+
+
+            experiments_field.push_back( 
+                [](const FloatVector& vec) -> FloatVector{
+                    assert( vec.getdimension() == 3 );
+                    Float x = vec[0]; Float y = vec[1]; Float z = vec[2]; 
+                    return FloatVector({ std::sin( x*y ), std::cos( z ), std::exp(x+y+z) });
+                }
+            );
+
+            experiments_value.push_back(33.42616007376754121867328484399462245509699700639766495311);
             
             
             
