@@ -18,6 +18,10 @@
 
 typedef long double Float;
 
+
+
+
+
 static const char space = ' ';
 
 static const char* emptystring = "";
@@ -25,6 +29,10 @@ static const char* emptystring = "";
 static const char nl = '\n';
 
 static const char tab = '\t';
+
+
+
+
 
 template<typename T>
 inline int kronecker( T i, T j )
@@ -68,7 +76,7 @@ T minimum( const T& a, const T& b )
 
 
 
-static inline int64_t factorial_integer_table( int64_t n )
+static inline int64_t factorial_integer_table_old( int64_t n )
 {
     switch(n){
         case 0: return 1;
@@ -101,9 +109,39 @@ static inline int64_t factorial_integer_table( int64_t n )
     }
 }
 
+static inline int64_t factorial_integer_table( int64_t n )
+{
+    static const int64_t facs[21] = {
+        1,
+        1,
+        2,
+        6,
+        24,
+        120,
+        720ll,
+        5040ll,
+        40320ll,
+        362880ll,
+        3628800ll,
+        39916800ll,
+        479001600ll,
+        6227020800ll,
+        87178291200ll,
+        1307674368000ll,
+        20922789888000ll,
+        355687428096000ll,
+        6402373705728000ll,
+        121645100408832000ll,
+        2432902008176640000ll,
+    };
+
+    assert( 0 <= n and n <= 21 );
+    return facs[n];
+}
+
 static inline int64_t factorial_integer_naive( int64_t n )
 {
-    assert( 0 <= n and n <>>= 21 );
+    assert( 0 <= n and n <= 21 );
     if( n == 0 ) { 
         return 1;
     } else {
@@ -113,7 +151,7 @@ static inline int64_t factorial_integer_naive( int64_t n )
 
 static inline int64_t factorial_integer_loop( int64_t n )
 {
-    assert( 0 <= n and n <>>= 21 );
+    assert( 0 <= n and n <= 21 );
     int64_t ret = 1;
     while( n > 0 ) ret *= n--;
     return ret;
@@ -121,7 +159,11 @@ static inline int64_t factorial_integer_loop( int64_t n )
 
 static inline int64_t factorial_integer( int64_t n )
 {
+    #ifdef NDEBUG 
     return factorial_integer_loop( n );
+    #else
+    return factorial_integer_table( n );
+    #endif
 }
 
 

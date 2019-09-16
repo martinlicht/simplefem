@@ -32,40 +32,41 @@ int main()
         for( int i = 0; i < N; i++ ) factorial_integer_naive( rand() % 21 );
         auto end_naive   = std::chrono::system_clock::now();
 
+        std::chrono::duration<double> elapsed_seconds_naive = end_naive - start_naive;
+        std::cout << "Naive method, elapsed time:    " << elapsed_seconds_naive.count()   << "s\n";
+        
         srand(0);
         auto start_loop = std::chrono::system_clock::now();
         for( int i = 0; i < N; i++ ) factorial_integer_loop( rand() % 21  );
         auto end_loop   = std::chrono::system_clock::now();
     
+        std::chrono::duration<double> elapsed_seconds_loop  = end_loop  - start_loop;
+        std::cout << "Loop method, elapsed time:     " << elapsed_seconds_loop.count()    << "s\n";
+        
         srand(0);
         auto start_table = std::chrono::system_clock::now();
         for( int i = 0; i < N; i++ ) factorial_integer_table( rand() % 21  );
         auto end_table   = std::chrono::system_clock::now();
 
+        std::chrono::duration<double> elapsed_seconds_table = end_table - start_table;
+        std::cout << "Table method, elapsed time:    " << elapsed_seconds_table.count()   << "s\n";
+        
         srand(0);
         auto start_n_naive = std::chrono::system_clock::now();
         for( int i = 0; i < N; i++ ) factorial_numerical_naive( rand() % 40 );
         auto end_n_naive   = std::chrono::system_clock::now();
 
+        std::chrono::duration<double> elapsed_seconds_n_naive = end_n_naive - start_n_naive;
+        std::cout << "N, Naive method, elapsed time: " << elapsed_seconds_n_naive.count() << "s\n";
+        
         srand(0);
         auto start_n_loop = std::chrono::system_clock::now();
         for( int i = 0; i < N; i++ ) factorial_numerical_loop( rand() % 40  );
         auto end_n_loop   = std::chrono::system_clock::now();
     
-        std::chrono::duration<double> elapsed_seconds_naive = end_naive - start_naive;
-        std::chrono::duration<double> elapsed_seconds_table = end_table - start_table;
-        std::chrono::duration<double> elapsed_seconds_loop  = end_loop  - start_loop;
-        std::chrono::duration<double> elapsed_seconds_n_naive = end_n_naive - start_n_naive;
         std::chrono::duration<double> elapsed_seconds_n_loop  = end_n_loop  - start_n_loop;
+        std::cout << "N, Loop method, elapsed time:  " << elapsed_seconds_n_loop.count()  << "s\n";
         
-        std::cout 
-                << "Naive method, elapsed time:    " << elapsed_seconds_naive.count() << "s\n"
-                << "Loop method, elapsed time:     " << elapsed_seconds_loop.count()  << "s\n"
-                << "Table method, elapsed time:    " << elapsed_seconds_table.count() << "s\n"
-                << "N, Naive method, elapsed time: " << elapsed_seconds_n_naive.count() << "s\n"
-                << "N, Loop method, elapsed time:  " << elapsed_seconds_n_loop.count()  << "s\n"
-                ;
-
 
         
         cout << "Finished Unit Test" << endl;

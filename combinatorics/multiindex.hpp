@@ -50,7 +50,7 @@ class MultiIndex
 
                 int absolute() const;
 
-                int factorial() const;
+                int64_t factorial() const;
                 
 
                 void add( int );
