@@ -3,7 +3,7 @@
 
 #include <vector>
 
-class SparseMatrix;
+// class SparseMatrix;
 // class MatrixEntry;
 
 #include "../basic.hpp"
@@ -46,7 +46,7 @@ public LinearOperator /* every matrix is a linear operator */
         }
 
         explicit SparseMatrix( int dimout, int dimin, int numentries = 0, 
-                               std::function<MatrixEntry(int)> generator = [](int i __attribute__((unused)) )->MatrixEntry{ return {0,0,0.}; } ); 
+                               std::function<MatrixEntry(int)> generator = [](int i __attribute__((unused)) )->MatrixEntry{ return {0,0,notanumber}; } ); 
         explicit SparseMatrix( int dimout, int dimin, const std::vector<MatrixEntry>& );
         explicit SparseMatrix( int dimout, int dimin, const std::initializer_list<MatrixEntry>& );
         explicit SparseMatrix( const ScalingOperator& matrix );

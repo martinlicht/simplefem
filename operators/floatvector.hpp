@@ -25,7 +25,7 @@ class FloatVector
     
     public:
         
-        explicit FloatVector( int dim, Float initivalue = 0. );
+        explicit FloatVector( int dim, Float initivalue = notanumber );
         
         FloatVector( const FloatVector&, Float scaling = 1.);
         

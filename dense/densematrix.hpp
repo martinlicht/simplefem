@@ -4,6 +4,8 @@
 #include <vector>
 
 class DenseMatrix;
+class SparseMatrix;
+
 
 #include "../basic.hpp"
 #include "../combinatorics/indexmap.hpp"
@@ -29,11 +31,11 @@ public LinearOperator /* every matrix is a linear operator */
 
     public:
         
-        DenseMatrix( int dim, Float value = 0. );
+        DenseMatrix( int dim, Float initialvalue = notanumber );
         DenseMatrix( int dim, const std::function<Float(int,int)>& generator );
         DenseMatrix( int dim, const std::vector<FloatVector>& coldata );
         
-        DenseMatrix( int rows, int columns, Float value = 0. );
+        DenseMatrix( int rows, int columns, Float initialvalue = notanumber );
         DenseMatrix( int rows, int columns, const std::function<Float(int,int)>& generator );
         DenseMatrix( int rows, int columns, const std::vector<FloatVector>& coldata );
         
@@ -90,6 +92,9 @@ public LinearOperator /* every matrix is a linear operator */
         FloatVector flattencolumns() const;
         FloatVector flattenrows() const;
         
+        /* Produce sparse matrix entries */
+        
+        // std::vector<SparseMatrix::MatrixEntry> getSparseMatrixEntries( bool clean = false ) const;
         
         /* Generate standard matrices */
         

@@ -151,7 +151,7 @@ DenseMatrix DenseMatrix::clone() const
 FloatVector DenseMatrix::apply( const FloatVector& add, Float scaling ) const 
 {
     add.check();
-    FloatVector ret( getdimout() );
+    FloatVector ret( getdimout(), 0. );
     assert( ret.getdimension() == getdimout() );
     assert( add.getdimension() == getdimin() );
     
@@ -277,6 +277,23 @@ FloatVector DenseMatrix::flattenrows() const
         ret[ r * getdimin() + c ] = get(r,c);
     return ret;
 }
+
+// std::vector<SparseMatrix::MatrixEntry> DenseMatrix::getSparseMatrixEntries( bool clean ) const
+// {
+//     check();
+//     std::vector<SparseMatrix::MatrixEntry> ret(0);
+//     ret.reserve( getdimin() * getdimout() );
+//     for( int r = 0; r < getdimout(); r++ )
+//     for( int c = 0; c < getdimin (); c++ )
+//         if( not clean or get(r,c) != 0. )
+//             ret.push_back( { r, c, get(r,c) } );
+//     ret.reserve( ret.size() );
+//     return ret;
+// }
+
+
+
+
 
 
 
