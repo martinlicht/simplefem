@@ -134,6 +134,8 @@ class FloatVector
         
         /* Calculations */
         
+        Float sum() const;
+        
         Float norm() const;
         
         Float maxnorm() const;

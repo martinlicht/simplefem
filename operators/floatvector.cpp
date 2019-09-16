@@ -356,6 +356,20 @@ Float FloatVector::scalarproductwith( const FloatVector& right, const std::vecto
 }
 
 
+
+
+
+
+Float FloatVector::sum() const 
+{
+    check();
+    assert( getdimension() > 0 );
+    Float ret = 0.;
+    for( int d = 0; d < getdimension(); d++ )
+        ret = ret + data.at(d);
+    return ret;
+}
+
 Float FloatVector::norm() const 
 {
     check();
