@@ -271,7 +271,7 @@ static inline int poweroftwo( int exponent )
 
 static inline int signpower( int exponent )
 {
-    return integerpower( -1, exponent );
+    return exponent % 2 == 0 ? 1. : -1;
 }
 
 static inline int getbit( unsigned int value, unsigned int bitnumber )
