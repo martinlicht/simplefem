@@ -42,8 +42,8 @@ class IterativeSolver
 
         virtual void solve( FloatVector& unknown, const FloatVector& rhs ) const = 0;
 
-        mutable Float error_tolerance;
-        mutable Float recent_error;
+        mutable Float tolerance;
+        mutable Float recent_deviation;
         mutable int max_iteration_count;
         mutable int recent_iteration_count;
 

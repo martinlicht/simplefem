@@ -50,12 +50,12 @@ void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
     std::cout << "Begin iteration" << std::endl;
 
     /* Perform Residual Descent step */
-    while( iter < max_iteration_count && r_norm > error_tolerance )
+    while( iter < max_iteration_count && r_norm > tolerance )
     {
         std::cout 
           << "iteration: " << iter << "/" << max_iteration_count
           << " : "
-          << r_norm << " vs " << error_tolerance
+          << r_norm << " vs " << tolerance
           << std::endl;
             
         iterationStep( x, r, r_norm );
@@ -68,7 +68,7 @@ void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
     }
     
     /* FINISHED */
-    if( r_norm > error_tolerance ) {
+    if( r_norm > tolerance ) {
       
       std::cout << "CRM process has failed" << std::endl;
       
@@ -78,13 +78,13 @@ void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
       std::cout 
         << "iteration: " << iter << "/" << max_iteration_count
         << " : "
-        << r_norm << " vs " << error_tolerance
+        << r_norm << " vs " << tolerance
         << std::endl;
         
     }
     
     recent_iteration_count = iter;
-    recent_error = r_norm;
+    recent_deviation = r_norm;
     
 }
   

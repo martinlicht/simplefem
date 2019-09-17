@@ -9,8 +9,8 @@ IterativeSolver::IterativeSolver( const LinearOperator& op )
 : LinearOperator( op.getdimout(), op.getdimin() ), 
   internalOperator( op ), 
   residual(op.getdimout()), 
-  error_tolerance( 1.E-10 ), 
-  recent_error( 0. ), 
+  tolerance( 1.E-10 ), 
+  recent_deviation( 0. ), 
   max_iteration_count(op.getdimout()),
   recent_iteration_count(0)
 {
@@ -24,8 +24,8 @@ void IterativeSolver::check() const
 {
     LinearOperator::check();
     
-    assert( std::isfinite( error_tolerance ) && error_tolerance >= 0. );
-    assert( std::isfinite( recent_error ) && recent_error >= 0. );
+    assert( std::isfinite( tolerance ) && tolerance >= 0. );
+    assert( std::isfinite( recent_deviation ) && recent_deviation >= 0. );
     assert( max_iteration_count >= 0 );
     assert( recent_iteration_count >= 0 );
     assert( recent_iteration_count <= max_iteration_count );

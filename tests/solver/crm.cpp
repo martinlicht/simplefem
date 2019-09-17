@@ -67,7 +67,7 @@ int main()
 		
 		ConjugateResidualMethod CRM(M);
 		CRM.max_iteration_count = 50;
-		CRM.error_tolerance = 1e-20;
+		CRM.tolerance = 1e-20;
 		
 		timestamp start, end;
 		start = gettimestamp();

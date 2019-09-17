@@ -51,27 +51,28 @@ void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) cons
     
     iterationStart( x, b, residual, d, Ar, Ad, r_Anorm ); /* Initiate CRM process */
     
-    std::cout << "Begin iteration" << std::endl;
+    std::cout << "Begin Conjugate Residual iteration" << std::endl;
+    std::cout << "tolerance: " << tolerance << std::endl;
 
-    while( iter < max_iteration_count && r_Anorm > error_tolerance ) /* Perform CRM step */
+    while( iter < max_iteration_count && r_Anorm > tolerance ) /* Perform CRM step */
     {
         std::cout 
-          << "iteration: " << iter << "/" << max_iteration_count
+          << "#" << iter << "/" << max_iteration_count
           << " : "
-          << r_Anorm << " vs " << error_tolerance
+          << r_Anorm //<< " vs " << tolerance
           << std::endl;
             
         iterationStep( x, r, d, Ar, Ad, r_Anorm, p );
         
-        FloatVector test = internalOperator * x - b;
-        Float r_Anorm_test = test * ( internalOperator * test );
-        std::cout << "ratio: " << r_Anorm / r_Anorm_test << std::endl;
+        // FloatVector test = internalOperator * x - b;
+        // Float r_Anorm_test = test * ( internalOperator * test );
+        // std::cout << "ratio: " << r_Anorm / r_Anorm_test << std::endl;
         
         iter++;
     }
     
-    /* FINISHED */
-    if( r_Anorm > error_tolerance ) {
+    /* FINISHED? */
+    if( r_Anorm > tolerance ) {
       
       std::cout << "CRM process has failed" << std::endl;
       
@@ -81,13 +82,13 @@ void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) cons
       std::cout 
         << "iteration: " << iter << "/" << max_iteration_count
         << " : "
-        << r_Anorm << " vs " << error_tolerance
+        << r_Anorm << " vs " << tolerance
         << std::endl;
         
     }
     
     recent_iteration_count = iter;
-    recent_error = r_Anorm;
+    recent_deviation = r_Anorm;
     
 }
   
