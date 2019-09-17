@@ -139,7 +139,7 @@ bool Mesh::is_subsimplex( int sup, int sub, int cellsup, int cellsub ) const
 int  Mesh::get_subsimplex_index( int sup, int sub, int cellsup, int cellsub ) const
 {
   const IndexMap im = getsubsimplices( sup, sub, cellsup );
-  return im.rangeposition( cellsub );
+  return im.preimageof( cellsub );
 }
 
 int Mesh::get_subsimplex( int sup, int sub, int cellsup, int localindex ) const

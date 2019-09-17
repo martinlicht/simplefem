@@ -81,7 +81,7 @@ class IndexMap
                 
         bool rangecontains( int value ) const;
         
-        int rangeposition( int value ) const;
+        int preimageof( int value ) const;
         
         
         

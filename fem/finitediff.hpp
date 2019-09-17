@@ -85,7 +85,7 @@ class AlternatingForm
                     
                     IndexMap new_form = expand_one( src_form, p );
                     int new_form_index = find_index( sigmas_dst, new_form );
-                    pattern.at(p).at( new_form_index, src_form_index ) = signpower( new_form.rangeposition(p) );
+                    pattern.at(p).at( new_form_index, src_form_index ) = signpower( new_form.preimageof(p) );
                     
                 }
                 

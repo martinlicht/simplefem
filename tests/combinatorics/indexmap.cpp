@@ -30,7 +30,7 @@ int main()
       
       for( int a : irA ) {
         assert( id.rangecontains( a ) );
-        assert( id.rangeposition( a ) == a );
+        assert( id.preimageof( a ) == a );
       }
       
       assert( id.isbijective()  );
@@ -105,9 +105,9 @@ int main()
         assert( prod == test );
         
         assert( test.rangecontains( 3 ) );
-        assert( test.rangeposition( 3 ) == 0 );
+        assert( test.preimageof( 3 ) == 0 );
         assert( test.rangecontains( 2 ) );
-        assert( test.rangeposition( 2 ) == 1 );
+        assert( test.preimageof( 2 ) == 1 );
         assert( ! test.rangecontains( 5 ) );
         
     }

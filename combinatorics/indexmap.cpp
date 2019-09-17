@@ -255,7 +255,7 @@ bool IndexMap::rangecontains( int p ) const
     return false;
 } 
 
-int IndexMap::rangeposition( int p ) const
+int IndexMap::preimageof( int p ) const
 {
     check();
     assert( getDestRange().contains(p) );
