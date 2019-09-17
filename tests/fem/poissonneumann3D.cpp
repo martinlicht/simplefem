@@ -16,6 +16,7 @@
 #include "../../mesh/examples2D.hpp"
 #include "../../mesh/examples3D.hpp"
 #include "../../vtk/vtkwriter.mesh2D.hpp"
+#include "../../vtk/vtkwriter.mesh3D.hpp"
 #include "../../solver/crm.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
@@ -35,11 +36,11 @@ int main()
 
         if(true){
 
-            cout << "Case 2D" << endl;
+            cout << "Case 3D" << endl;
             
             cout << "Initial mesh..." << endl;
             
-            MeshSimplicial2D M = UnitSquare2D();
+            MeshSimplicial3D M = UnitCube3D();
             
             M.check();
             
@@ -48,7 +49,7 @@ int main()
 
             std::function<FloatVector(const FloatVector&)> constant_one
                 = [](const FloatVector& vec) -> FloatVector{
-                        assert( vec.getdimension() == 2 );
+                        assert( vec.getdimension() == 3 );
                         return FloatVector({ 1. });
                     };
             
@@ -62,34 +63,42 @@ int main()
             
             Float xfeq = 1.;
             Float yfeq = 1.;
+            Float zfeq = 1.;
             
 
             experiments_sol.push_back( 
-                [xfeq,yfeq](const FloatVector& vec) -> FloatVector{
-                    assert( vec.getdimension() == 2 );
+                [xfeq,yfeq,zfeq](const FloatVector& vec) -> FloatVector{
+                    assert( vec.getdimension() == 3 );
                     // return FloatVector({ 1. });
-                    return FloatVector({ std::cos( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] ) });
+                    return FloatVector({ 
+                           std::cos( xfeq * Constants::pi * vec[0] )
+                         * std::cos( yfeq * Constants::pi * vec[1] )
+                         * std::cos( zfeq * Constants::pi * vec[2] )
+                         });
                 }
             );
 
             experiments_grad.push_back( 
-                [xfeq,yfeq](const FloatVector& vec) -> FloatVector{
-                    assert( vec.getdimension() == 2 );
+                [xfeq,yfeq,zfeq](const FloatVector& vec) -> FloatVector{
+                    assert( vec.getdimension() == 3 );
                     // return FloatVector({ 1. });
-                    return FloatVector( { 
-                            -xfeq * Constants::pi * std::sin( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] ),
-                            -yfeq * Constants::pi * std::cos( xfeq * Constants::pi * vec[0] ) * std::sin( yfeq * Constants::pi * vec[1] ), 
+                    return FloatVector({ 
+                            -xfeq * Constants::pi * std::sin( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] ) * std::cos( zfeq * Constants::pi * vec[2] ),
+                            -yfeq * Constants::pi * std::cos( xfeq * Constants::pi * vec[0] ) * std::sin( yfeq * Constants::pi * vec[1] ) * std::cos( zfeq * Constants::pi * vec[2] ),
+                            -zfeq * Constants::pi * std::cos( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] ) * std::sin( zfeq * Constants::pi * vec[2] )
                         });
                 }
             );
 
             experiments_rhs.push_back( 
-                [xfeq,yfeq](const FloatVector& vec) -> FloatVector{
-                    assert( vec.getdimension() == 2 );
+                [xfeq,yfeq,zfeq](const FloatVector& vec) -> FloatVector{
+                    assert( vec.getdimension() == 3 );
                     return FloatVector({ 
-                        xfeq*xfeq * Constants::pisquare * std::cos( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] )
+                        xfeq*xfeq * Constants::pisquare * std::cos( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] ) * std::cos( zfeq * Constants::pi * vec[2] )
                         +
-                        yfeq*yfeq * Constants::pisquare * std::cos( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] )
+                        yfeq*yfeq * Constants::pisquare * std::cos( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] ) * std::cos( zfeq * Constants::pi * vec[2] )
+                        +
+                        zfeq*zfeq * Constants::pisquare * std::cos( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] ) * std::cos( zfeq * Constants::pi * vec[2] )
                      });
                 }
             );
@@ -100,7 +109,7 @@ int main()
 
             cout << "Solving Poisson Problem with Neumann boundary conditions" << endl;
             
-            for( int l = 0; l <= 10; l++ ){
+            for( int l = 0; l <= 4; l++ ){
                 
                 for( int r = 1; r <= 1; r++ ) 
                 {
@@ -111,7 +120,7 @@ int main()
                     
                     SparseMatrix scalar_massmatrix_fac = FEECBrokenMassMatrixRightFactor( M, M.getinnerdimension(), 0, r );
                     
-                    cout << "...assemble vector mass matrix" << endl;
+                    cout << "...assemble vector mass matrices" << endl;
             
                     SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
                     
@@ -144,7 +153,7 @@ int main()
                         const auto& function_grad= experiments_grad[i];
                         const auto& function_rhs = experiments_rhs[i];
                         
-                        cout << "...interpolate explicit solution and rhs" << endl;
+                        cout << "...interpolate explicit solution, grad, and rhs" << endl;
             
                         FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 0, r,   function_sol  );
                         FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r-1, function_grad );
@@ -157,11 +166,6 @@ int main()
                         Float average_sol = interpol_one * ( scalar_massmatrix * interpol_sol );
                         Float average_rhs = interpol_one * ( scalar_massmatrix * interpol_rhs );
                         
-                        cout << "...measure interpolation commutativity" << endl;
-            
-                        Float commutatorerror = ( vector_massmatrix_fac * ( interpol_grad - diffmatrix * interpol_sol ) ).norm();
-                        cout << "commutator error: " << commutatorerror << endl;
-                        
                         cout << average_sol << space << average_rhs << endl;
 
                         cout << "...compute norms of solution and right-hand side:" << endl;
@@ -173,9 +177,9 @@ int main()
                         cout << "rhs norm:      " << rhs_norm << endl;
 
                         cout << "...create RHS vector" << endl;
-
+            
                         cout << "...calculation (todo)" << endl;
-                        
+            
                         FloatVector rhs = incmatrix_t * ( scalar_massmatrix * interpol_rhs );
 
                         FloatVector sol( M.count_simplices(0), 0. );
@@ -203,15 +207,14 @@ int main()
 
                         {
                     
-                            fstream fs( "./poissonneumann.vtk", std::fstream::out );
+                            fstream fs( "./poissonneumann3D.vtk", std::fstream::out );
                 
-                            VTK_MeshWriter_Mesh2D vtk( M, fs );
+                            VTK_MeshWriter_Mesh3D vtk( M, fs );
                             vtk.writePreamble( "Poisson-Neumann problem" );
                             vtk.writeCoordinateBlock();
                             vtk.writeTopDimensionalCells();
                             
                             vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
-                            // vtk.writeCellVectorData( interpol_grad, "gradient_interpolation" , 0.1 );
                             
                             fs.close();
                     
