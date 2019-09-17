@@ -193,7 +193,7 @@ static inline Float factorial_numerical_loop( int64_t n )
 
 static inline Float factorial_numerical( int64_t n )
 {
-    return factorial_numerical_naive( n );
+    return factorial_numerical_loop( n );
 }
 
 

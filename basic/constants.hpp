@@ -4,32 +4,41 @@
 namespace Constants
 {
   
-  const double pi
+  const long double pi
     = 3.141592653589793238462643383279502884197;
   
-  const double euler
+  const long double twopi
+    = 2*pi;
+
+  const long double pisquare
+    = pi*pi;
+
+  const long double fourpisquare
+    = 4*pi*pi;
+
+  const long double euler
     = 2.718281828459045235360287471352662497757;
   
   /* feigenbaum bifurcation velocity */
-  const double feigenbaum_first
+  const long double feigenbaum_first
     = 4.669201609102990671853203820466201617258;
   
-  const double feigenbaum_second
+  const long double feigenbaum_second
     = 2.502907875095892822283902873218215786381;
     
-  const double goldenratio
+  const long double goldenratio
     = 1.618033988749894848204586834365638117720;
   
-  const double gelfond
+  const long double gelfond
     = 23.14069263277926900572908636794854738026;
   
-  const double reci_fibonacci
+  const long double reci_fibonacci
     = 3.359885666243177553172011302918927179688;
   
-  const double levi
+  const long double levi
     = 3.275822918721811159787681882;
     
-  const double sirpinski
+  const long double sirpinski
     = 2.584981759579253217065893587383;
     
     
