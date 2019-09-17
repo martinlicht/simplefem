@@ -73,6 +73,34 @@ inline MeshSimplicial3D StandardCube3D()
 
 
 
+inline MeshSimplicial3D UnitCube3D()
+{
+    return MeshSimplicial3D(
+      3,  
+      Coordinates( 3, 8, {
+         -1., -1., -1., // 0
+         -1., -1., +1., // 0
+         -1., +1., -1., // 0
+         -1., +1., +1., // 0
+         +1., -1., -1., // 0
+         +1., -1., +1., // 0
+         +1., +1., -1., // 0
+         +1., +1., +1.  // 0
+      } ),
+      {
+        { 0b000, 0b100, 0b110, 0b111 }, 
+        { 0b000, 0b100, 0b101, 0b111 },
+        { 0b000, 0b010, 0b110, 0b111 },
+        { 0b000, 0b010, 0b011, 0b111 },
+        { 0b000, 0b001, 0b101, 0b111 },
+        { 0b000, 0b001, 0b011, 0b111 }
+      }
+    );
+}
+
+
+
+
 
 
 inline MeshSimplicial3D UnitSimplex3D()
