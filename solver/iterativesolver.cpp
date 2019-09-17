@@ -12,8 +12,9 @@ IterativeSolver::IterativeSolver( const LinearOperator& op )
   tolerance( 1.E-10 ), 
   recent_deviation( 0. ), 
   max_iteration_count(op.getdimout()),
-  recent_iteration_count(0)
-{
+  recent_iteration_count(0),
+  print_modulo( 1 ) 
+ {
   IterativeSolver::check();
 }
 
@@ -29,6 +30,7 @@ void IterativeSolver::check() const
     assert( max_iteration_count >= 0 );
     assert( recent_iteration_count >= 0 );
     assert( recent_iteration_count <= max_iteration_count );
+    assert( print_modulo >= 1 );
     
     assert( internalOperator.getdimout() == getdimout() );
     assert( internalOperator.getdimin()  == getdimin() );

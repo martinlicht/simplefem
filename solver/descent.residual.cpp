@@ -52,7 +52,8 @@ void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
     /* Perform Residual Descent step */
     while( iter < max_iteration_count && r_norm > tolerance )
     {
-        std::cout 
+        if( iter % print_modulo == 0 )
+          std::cout 
           << "iteration: " << iter << "/" << max_iteration_count
           << " : "
           << r_norm << " vs " << tolerance

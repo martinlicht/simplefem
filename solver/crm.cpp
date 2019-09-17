@@ -56,11 +56,12 @@ void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) cons
 
     while( iter < max_iteration_count && r_Anorm > tolerance ) /* Perform CRM step */
     {
-        std::cout 
-          << "#" << iter << "/" << max_iteration_count
-          << " : "
-          << r_Anorm //<< " vs " << tolerance
-          << std::endl;
+        if( iter % print_modulo == 0 ) 
+          std::cout 
+            << "#" << iter << "/" << max_iteration_count
+            << " : "
+            << r_Anorm //<< " vs " << tolerance
+            << std::endl;
             
         iterationStep( x, r, d, Ar, Ad, r_Anorm, p );
         

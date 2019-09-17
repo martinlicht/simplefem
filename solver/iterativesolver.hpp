@@ -46,6 +46,7 @@ class IterativeSolver
         mutable Float recent_deviation;
         mutable int max_iteration_count;
         mutable int recent_iteration_count;
+        mutable int print_modulo;
 
   };
   
