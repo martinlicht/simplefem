@@ -60,6 +60,16 @@ int main()
             experiments_field.push_back( 
                 [](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
+                    return FloatVector({ 1. });
+                }
+            );
+
+            experiments_value.push_back( 4. );
+            
+            
+            experiments_field.push_back( 
+                [](const FloatVector& vec) -> FloatVector{
+                    assert( vec.getdimension() == 2 );
                     return FloatVector({ ( vec[0] * vec[1] > 0 ) ? 1. : 0. });
                 }
             );
@@ -112,11 +122,11 @@ int main()
                         FloatVector interpol = Interpolation( M, M.getinnerdimension(), 0, r, scalarfield );
 
                         Float mass1 = interpol.scalarproductwith( massmatrix * interpol );
-                        //Float mass2 = power( ( massmatrix_rhs * interpol ).norm(), 2. );
+                        Float mass2 = power( ( massmatrix_rhs * interpol ).norm(), 2. );
 
                         cout << "[ i, l, r ] = [" << i << ", "  << l << ", " << r << "]\t";
                         
-                        cout << "mass: " << mass1 << ' ' << ' ' << should_be << endl;// << mass2
+                        cout << "mass: " << mass1 << ' ' << mass2 << ' ' << should_be << endl;// << mass2
 
                     }
                     

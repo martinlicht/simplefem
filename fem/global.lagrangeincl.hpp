@@ -26,11 +26,13 @@
 
 
 
-inline SparseMatrix FEECLagrangeInclusionMatrix( Mesh& mesh, int n )
+inline SparseMatrix FEECLagrangeInclusionMatrix( Mesh& mesh, int n, int r )
 {
     
     // check whether the parameters are right 
     assert( n >= 0 && n <= mesh.getinnerdimension() );
+    assert( r >= 1 );
+    assert( r == 1 );
     
     const int num_simplices = mesh.count_simplices( n );
     const int num_vertices  = mesh.count_simplices( 0 );

@@ -50,7 +50,7 @@ int main()
             SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), k, r );
             
             if( r == 1 && k == 0 )
-            SparseMatrix inclmatrix = FEECLagrangeInclusionMatrix( M, M.getinnerdimension() );
+            SparseMatrix inclmatrix = FEECLagrangeInclusionMatrix( M, M.getinnerdimension(), r );
             
             SparseMatrix elevmatrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 2, 4, 3 );
         }

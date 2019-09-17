@@ -35,7 +35,7 @@ Includes.solver = $(Headers.solver) $(Objects.solver) $(Includes.operators)
 Includes.mesh = $(Headers.mesh) $(Objects.mesh) $(Includes.combinatorics) $(Includes.operators)
 Includes.vtk = $(Headers.vtk) $(Objects.vtk) $(Includes.mesh)
 Includes.matrixmarket = $(Headers.matrixmarket) $(Objects.matrixmarket)
-Includes.fem = $(Headers.fem) $(Objects.fem) $(Includes.combinatorics) $(Includes.operators) $(Includes.dense)
+Includes.fem = $(Headers.fem) $(Objects.fem) $(Includes.combinatorics) $(Includes.operators) $(Includes.dense) $(Includes.solver)
 
 Links.basic         = $(Objects.basic) 
 Links.combinatorics = $(Objects.combinatorics) 
@@ -46,7 +46,7 @@ Links.solver        = $(Objects.solver) $(Objects.operators) $(Objects.sparse) $
 Links.mesh          = $(Objects.mesh) $(Objects.combinatorics) $(Objects.operators) $(Objects.dense) $(Objects.sparse) 
 Links.vtk           = $(Objects.vtk) $(Objects.mesh) $(Objects.dense) $(Objects.sparse) $(Objects.combinatorics) $(Objects.operators)
 Links.matrixmarket  = $(Objects.matrixmarket) 
-Links.fem           = $(Objects.fem) $(Objects.mesh) $(Objects.dense) $(Objects.sparse) $(Objects.combinatorics) $(Objects.operators)
+Links.fem           = $(Objects.fem) $(Objects.vtk) $(Objects.mesh) $(Objects.solver) $(Objects.dense) $(Objects.sparse) $(Objects.combinatorics) $(Objects.operators)
 
 
 Objects = ../basic/*.o ../combinatorics/*.o ../operators/*.o ../dense/*.o ../sparse/*.o ../solver/*.o ../mesh/*.o ../vtk/*.o ../matrixmarket/*.o ../fem/*.o
@@ -335,7 +335,10 @@ fem/approx1.out: fem/approx1.cpp $(Includes.fem)
 fem/approx2.out: fem/approx2.cpp $(Includes.fem)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/approx2.cpp $(Links.fem) -o fem/approx2.out
 
-fem.tests = fem/lagrange.out fem/localpolymatrix.out fem/feecmass.out fem/3Dfeecmass.out fem/interpolant.out fem/moreinterpolant.out fem/fields.out fem/approx0.out fem/approx1.out fem/approx2.out fem/approxvol.out
+fem/poissonneumann.out: fem/poissonneumann.cpp $(Includes.fem)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/poissonneumann.cpp $(Links.fem) -o fem/poissonneumann.out
+
+fem.tests = fem/lagrange.out fem/localpolymatrix.out fem/feecmass.out fem/3Dfeecmass.out fem/interpolant.out fem/moreinterpolant.out fem/fields.out fem/approx0.out fem/approx1.out fem/approx2.out fem/approxvol.out fem/poissonneumann.out
 
 
 
