@@ -329,6 +329,9 @@ fem/approx0.out: fem/approx0.cpp $(Includes.fem)
 fem/approxvol.out: fem/approxvol.cpp $(Includes.fem)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/approxvol.cpp $(Links.fem) -o fem/approxvol.out
 
+fem/commutator0.out: fem/commutator0.cpp $(Includes.fem)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/commutator0.cpp $(Links.fem) -o fem/commutator0.out
+
 fem/approx1.out: fem/approx1.cpp $(Includes.fem)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/approx1.cpp $(Links.fem) -o fem/approx1.out
 
@@ -338,7 +341,10 @@ fem/approx2.out: fem/approx2.cpp $(Includes.fem)
 fem/poissonneumann.out: fem/poissonneumann.cpp $(Includes.fem)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/poissonneumann.cpp $(Links.fem) -o fem/poissonneumann.out
 
-fem.tests = fem/lagrange.out fem/localpolymatrix.out fem/feecmass.out fem/3Dfeecmass.out fem/interpolant.out fem/moreinterpolant.out fem/fields.out fem/approx0.out fem/approx1.out fem/approx2.out fem/approxvol.out fem/poissonneumann.out
+fem/poissonneumann3D.out: fem/poissonneumann3D.cpp $(Includes.fem)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/poissonneumann3D.cpp $(Links.fem) -o fem/poissonneumann3D.out
+
+fem.tests = fem/lagrange.out fem/localpolymatrix.out fem/feecmass.out fem/3Dfeecmass.out fem/interpolant.out fem/moreinterpolant.out fem/fields.out fem/approx0.out fem/approx1.out fem/approx2.out fem/approxvol.out fem/commutator0.out fem/poissonneumann.out fem/poissonneumann3D.out
 
 
 
