@@ -10,6 +10,8 @@
 #include "../../operators/productoperator.hpp"
 // #include "../../operators/composed.hpp"
 #include "../../dense/densematrix.hpp"
+#include "../../sparse/sparsematrix.hpp"
+#include "../../sparse/matcsr.hpp"
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
@@ -143,7 +145,10 @@ int main()
                     auto opr  = vector_massmatrix_fac & opr1;
                     auto opl  = opr.getTranspose(); 
                     auto stiffness = opl & opr;
-
+                    
+                    stiffness.sortentries();
+                    auto stiffness_csr = MatrixCSR( stiffness );
+                    
                     //auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. );
                     auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
                     std::cout << "Average value of diagonal preconditioner: " << stiffness_invprecon.getdiagonal().average() << std::endl;
@@ -184,7 +189,7 @@ int main()
 
                         cout << "...create RHS vector" << endl;
 
-                        cout << "...calculation (todo)" << endl;
+                        cout << "...calculation" << endl;
                         
                         FloatVector rhs = incmatrix_t * ( scalar_massmatrix * interpol_rhs );
 
@@ -193,7 +198,7 @@ int main()
                         {
                             sol.zero();
                             timestamp start = gettimestamp();
-                            ConjugateResidualMethod CRM( stiffness );
+                            ConjugateResidualMethod CRM( stiffness_csr );
                             CRM.print_modulo = 1+sol.getdimension()/1000;
                             CRM.tolerance = 1e-10;
                             CRM.solve( sol, rhs );
@@ -204,7 +209,7 @@ int main()
                         {
                             sol.zero();
                             timestamp start = gettimestamp();
-                            PreconditionedConjugateResidualMethod PCRM( stiffness, stiffness_invprecon );
+                            PreconditionedConjugateResidualMethod PCRM( stiffness_csr, stiffness_invprecon );
                             PCRM.print_modulo = 1+sol.getdimension()/1000;
                             PCRM.tolerance = 1e-10;
                             PCRM.solve( sol, rhs );

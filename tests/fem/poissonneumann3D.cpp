@@ -10,14 +10,16 @@
 #include "../../operators/productoperator.hpp"
 // #include "../../operators/composed.hpp"
 #include "../../dense/densematrix.hpp"
+#include "../../sparse/sparsematrix.hpp"
+#include "../../sparse/matcsr.hpp"
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples2D.hpp"
 #include "../../mesh/examples3D.hpp"
-#include "../../vtk/vtkwriter.mesh2D.hpp"
 #include "../../vtk/vtkwriter.mesh3D.hpp"
 #include "../../solver/crm.hpp"
+#include "../../solver/pcrm.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
@@ -142,10 +144,22 @@ int main()
             
                     // ProductOperator 
                     // auto stiffness = incmatrix_t * diffmatrix_t * vector_massmatrix * diffmatrix * incmatrix;
-                    auto op1 = incmatrix_t * diffmatrix_t;
-                    auto op2 = op1 * vector_massmatrix;
-                    auto op3 = op2 * diffmatrix;
-                    auto stiffness = op3 * incmatrix;
+                    // auto op1 = incmatrix_t * diffmatrix_t;
+                    // auto op2 = op1 * vector_massmatrix;
+                    // auto op3 = op2 * diffmatrix;
+                    // auto stiffness = op3 * incmatrix;
+
+                    auto opr1 = diffmatrix & incmatrix;
+                    auto opr  = vector_massmatrix_fac & opr1;
+                    auto opl  = opr.getTranspose(); 
+                    auto stiffness = opl & opr;
+                    
+                    stiffness.sortentries();
+                    auto stiffness_csr = MatrixCSR( stiffness );
+                    
+                    //auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. );
+                    auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
+                    std::cout << "Average value of diagonal preconditioner: " << stiffness_invprecon.getdiagonal().average() << std::endl;
 
                     for( int i = 0; i < experiments_sol.size(); i++){
 
@@ -183,16 +197,33 @@ int main()
 
                         cout << "...create RHS vector" << endl;
             
-                        cout << "...calculation (todo)" << endl;
+                        cout << "...calculation" << endl;
             
                         FloatVector rhs = incmatrix_t * ( scalar_massmatrix * interpol_rhs );
 
                         FloatVector sol( M.count_simplices(0), 0. );
 
-                        ConjugateResidualMethod CRM( stiffness );
-                        CRM.print_modulo = 1+sol.getdimension()/10;
-                        CRM.tolerance = 1e-15;
-                        CRM.solve( sol, rhs );
+                        {
+                            sol.zero();
+                            timestamp start = gettimestamp();
+                            ConjugateResidualMethod CRM( stiffness_csr );
+                            CRM.print_modulo = 1+sol.getdimension()/1000;
+                            CRM.tolerance = 1e-10;
+                            CRM.solve( sol, rhs );
+                            timestamp end = gettimestamp();
+                            std::cout << "\t\t\t " << end - start << std::endl;
+                        }
+                        
+                        {
+                            sol.zero();
+                            timestamp start = gettimestamp();
+                            PreconditionedConjugateResidualMethod PCRM( stiffness_csr, stiffness_invprecon );
+                            PCRM.print_modulo = 1+sol.getdimension()/1000;
+                            PCRM.tolerance = 1e-10;
+                            PCRM.solve( sol, rhs );
+                            timestamp end = gettimestamp();
+                            std::cout << "\t\t\t " << end - start << std::endl;
+                        }
 
                         cout << "...compute error and residual:" << endl;
             
@@ -220,6 +251,7 @@ int main()
                             vtk.writeTopDimensionalCells();
                             
                             vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
+                            // vtk.writeCellVectorData( interpol_grad, "gradient_interpolation" , 0.1 );
                             
                             fs.close();
                     
