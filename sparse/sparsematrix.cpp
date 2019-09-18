@@ -219,10 +219,10 @@ bool SparseMatrix::is_sorted( SparseMatrix::MatrixEntrySorting manner ) const
         const auto& b = entries[  i];
 
         if( manner == MatrixEntrySorting::rowwise ){
-            if( a.row    >= b.row    and not ( a.row == b.row and a.column < b.column ) )
+            if( a.row    > b.row    or ( a.row == b.row and a.column > b.column ) )
                 return false;
         }else{
-            if( a.column >= b.column and not ( a.column == b.column and a.row < b.row ) )
+            if( a.column > b.column or ( a.column == b.column and a.row > b.row ) )
                 return false;
         }
 
@@ -259,7 +259,7 @@ void SparseMatrix::sortentries( SparseMatrix::MatrixEntrySorting manner ) const
 //         entries.at(j) = entry;
 //     }
     
-    assert( is_sorted() );
+    assert( is_sorted( manner ) );
 
     check();
 }
