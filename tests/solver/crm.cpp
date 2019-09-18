@@ -8,6 +8,7 @@
 #include "../../operators/scalingoperator.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../solver/crm.hpp"
+#include "../../solver/pcrm.hpp"
 
 
 using namespace std;
@@ -18,10 +19,29 @@ int main()
 	
 	{
 		
-		cout << "First Something Simple" << endl;
+		cout << "First Something Simple with the CRM" << endl;
 		
-		ScalingOperator S( 10, 3.141 );
-		ConjugateResidualMethod CRM(S);
+		ScalingOperator A( 10, 3.141 );
+		ConjugateResidualMethod CRM(A);
+
+		FloatVector rhs(10), x(10);
+		x.random(); rhs.zero();
+		
+		cout << x << endl;
+		cout << CRM << endl;
+		CRM.solve( x, rhs );
+		// cout << x << endl;
+	
+	}
+	
+
+	{
+		
+		cout << "First Something Simple with the Precon-CRM" << endl;
+		
+		ScalingOperator A( 10, Constants::pi );
+		ScalingOperator M( 10, Constants::euler );
+		PreconditionedConjugateResidualMethod CRM(A,M);
 
 		FloatVector rhs(10), x(10);
 		x.random(); rhs.zero();
@@ -44,37 +64,62 @@ int main()
 		for( int p = 0; p < dimension; p++ )
 			x.setentry( p, 3. + p * 5. );
 		
-		SparseMatrix M( dimension, dimension );
-		M.reserve( 3 * dimension );
+		SparseMatrix A( dimension, dimension );
+		A.reserve( 3 * dimension );
         
         for( int i = 0; i < dimension; i++ ){
 			if( i-1 >= 0 ) 
-				M.addentry( i, i-1, 1.25 );
+				A.addentry( i, i-1, 1.25 );
 			if( i+1 < dimension ) 
-				M.addentry( i, i+1, 1.25 );
-			M.addentry( i, i, 2.51 );
+				A.addentry( i, i+1, 1.25 );
+			A.addentry( i, i, 2.51 );
 		}
-		M.sortentries();
+		// A.sortentries();
 		
-		cout << "Compute stuff." << endl;
+		SparseMatrix M( dimension, dimension );
+		M.reserve( dimension );
+        
+        for( int i = 0; i < dimension; i++ ){
+			M.addentry( i, i, 1./2.51 );
+		}
+		// A.sortentries();
 		
-		FloatVector b = M * x;
+        cout << "Compute stuff." << endl;
 		
-		FloatVector y( dimension );
-		y.random();
+		FloatVector b = A * x;
 		
-		// cout << M << endl;
-		
-		ConjugateResidualMethod CRM(M);
-		CRM.max_iteration_count = 50;
-		CRM.tolerance = 1e-20;
-		
-		timestamp start, end;
-		start = gettimestamp();
-		CRM.solve(y,b);
-		end = gettimestamp();
-		cout << end - start << endl;
-
+        {
+            FloatVector y( dimension );
+            srand(0);
+			y.random();
+            
+            ConjugateResidualMethod CRM(A);
+            CRM.max_iteration_count = dimension;
+            CRM.tolerance = 1e-20;
+            
+            timestamp start, end;
+            start = gettimestamp();
+            CRM.solve(y,b);
+            end = gettimestamp();
+            cout << end - start << endl;
+        }
+        
+        {
+            FloatVector y( dimension );
+            srand(0);
+			y.random();
+            
+            PreconditionedConjugateResidualMethod PCRM(A,M);
+            PCRM.max_iteration_count = dimension;
+            PCRM.tolerance = 1e-20;
+            
+            timestamp start, end;
+            start = gettimestamp();
+            PCRM.solve(y,b);
+            end = gettimestamp();
+            cout << end - start << endl;
+        }
+        
 		
 	}
 	

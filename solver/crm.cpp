@@ -42,17 +42,21 @@ void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) cons
     /* Build up data */
     int iter = 0;
     
-    Float r_Anorm;
-    FloatVector& r = residual;
-    FloatVector  d( dimension );  d.zero();
-    FloatVector Ad( dimension ); Ad.zero();
-    FloatVector Ar( dimension ); Ar.zero();
-    FloatVector  p( dimension );  p.zero();
+    Float r_Anorm = notanumber;
+
+    FloatVector&  r = residual;
+    FloatVector   d( dimension, 0. );
+    
+    FloatVector  Ad( dimension, 0. );
+    FloatVector  Ar( dimension, 0. );
+    
+    // avoid repeated allocation of these temporary vectors 
+    FloatVector AAd( dimension, 0. );
     
     iterationStart( x, b, residual, d, Ar, Ad, r_Anorm ); /* Initiate CRM process */
     
     std::cout << "Begin Conjugate Residual iteration" << std::endl;
-    std::cout << "tolerance: " << tolerance << std::endl;
+    std::cout << "start: " << r_Anorm << "tolerance: " << tolerance << std::endl;
 
     while( iter < max_iteration_count && r_Anorm > tolerance ) /* Perform CRM step */
     {
@@ -60,33 +64,34 @@ void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) cons
           std::cout 
             << "#" << iter << "/" << max_iteration_count
             << " : "
-            << r_Anorm //<< " vs " << tolerance
+            << r_Anorm 
             << std::endl;
             
-        iterationStep( x, r, d, Ar, Ad, r_Anorm, p );
-        
-        // FloatVector test = internalOperator * x - b;
-        // Float r_Anorm_test = test * ( internalOperator * test );
-        // std::cout << "ratio: " << r_Anorm / r_Anorm_test << std::endl;
+        iterationStep( x, r, d, Ar, Ad, r_Anorm, AAd );
         
         iter++;
     }
     
-    /* FINISHED? */
+    /* HOW DID WE FINISH ? */
     if( r_Anorm > tolerance ) {
-      
-      std::cout << "CRM process has failed" << std::endl;
-      
-    } else {
-        
-      iterationStart( x, b, residual, d, Ar, Ad, r_Anorm );
-      std::cout 
+      std::cout << "CRM process has failed. ";
+    } else { 
+      std::cout << "CRM process has succeeded. ";
+    }
+
+    std::cout
+       << "iterations "
+       << iter << "/" << max_iteration_count 
+       << " : " << r_Anorm << " vs " << tolerance
+       << std::endl;
+    
+    
+    iterationStart( x, b, residual, d, Ar, Ad, r_Anorm );
+    std::cout 
         << "iteration: " << iter << "/" << max_iteration_count
         << " : "
         << r_Anorm << " vs " << tolerance
         << std::endl;
-        
-    }
     
     recent_iteration_count = iter;
     recent_deviation = r_Anorm;
@@ -127,8 +132,6 @@ void ConjugateResidualMethod::iterationStep(
 ) const {
     
     /*  p = A * Ad */
-//    FloatVector p( dimension );
-//    p.zero();
     internalOperator.apply( p, Ad, 1. );
   
     /*  alpha = r.A.r / d.p */
@@ -165,7 +168,6 @@ void ConjugateResidualMethod::iterationStep(
 ConjugateResidualMethod::ConjugateResidualMethod( const LinearOperator& op )
 : IterativeSolver( op ), dimension( op.getdimout() )
 {
-    assert( op.getdimin() == op.getdimout() );
     ConjugateResidualMethod::check();
 }
 
@@ -178,7 +180,11 @@ ConjugateResidualMethod::~ConjugateResidualMethod()
   
 void ConjugateResidualMethod::check() const
 {
+    const LinearOperator& op = internalOperator;
+    
     IterativeSolver::check();
+    assert( op.getdimin() == op.getdimout() );
+    assert( getdimin() == op.getdimin() );
     assert( getdimin() == getdimout() );
     assert( getdimin() == dimension );
 }
