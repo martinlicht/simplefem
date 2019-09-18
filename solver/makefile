@@ -2,7 +2,7 @@ SHELL = /bin/sh
 
 default: all
 
-objects = iterativesolver.o crm.o necrm.o 
+objects = iterativesolver.o crm.o pcrm.o necrm.o 
 
 all: $(objects) libsolver.so
 
@@ -18,6 +18,9 @@ iterativesolver.o: iterativesolver.hpp iterativesolver.cpp
 
 crm.o: crm.hpp crm.cpp ../operators/floatvector.hpp iterativesolver.hpp 
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) crm.cpp -c -o crm.o 
+
+pcrm.o: pcrm.hpp pcrm.cpp ../operators/floatvector.hpp iterativesolver.hpp 
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) pcrm.cpp -c -o pcrm.o 
 
 descent.residual.o: descent.residual.hpp descent.residual.cpp ../operators/floatvector.hpp iterativesolver.hpp 
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) descent.residual.cpp -c -o descent.residual.o 
