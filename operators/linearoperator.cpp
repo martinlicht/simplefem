@@ -54,6 +54,15 @@
       dest.adddatafrom( s, 1., temp );
     }
         
+    FloatVector LinearOperator::createinputvector() const
+    {
+      return FloatVector( getdimin() );
+    }
+
+    FloatVector LinearOperator::createoutputvector() const
+    {
+      return FloatVector( getdimout() );
+    }
     
     
     

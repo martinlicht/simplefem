@@ -44,6 +44,10 @@ class LinearOperator
         
         /* x := s x + t A y */
         virtual void applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const;
+
+        FloatVector createinputvector() const;
+        FloatVector createoutputvector() const;
+        
         
     private:
         
