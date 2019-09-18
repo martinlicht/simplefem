@@ -17,6 +17,7 @@
 #include "../../mesh/examples3D.hpp"
 #include "../../vtk/vtkwriter.mesh2D.hpp"
 #include "../../solver/crm.hpp"
+#include "../../solver/pcrm.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
@@ -133,10 +134,19 @@ int main()
             
                     // ProductOperator 
                     // auto stiffness = incmatrix_t * diffmatrix_t * vector_massmatrix * diffmatrix * incmatrix;
-                    auto op1 = incmatrix_t * diffmatrix_t;
-                    auto op2 = op1 * vector_massmatrix;
-                    auto op3 = op2 * diffmatrix;
-                    auto stiffness = op3 * incmatrix;
+                    // auto op1 = incmatrix_t * diffmatrix_t;
+                    // auto op2 = op1 * vector_massmatrix;
+                    // auto op3 = op2 * diffmatrix;
+                    // auto stiffness = op3 * incmatrix;
+
+                    auto opr1 = diffmatrix & incmatrix;
+                    auto opr  = vector_massmatrix_fac & opr1;
+                    auto opl  = opr.getTranspose(); 
+                    auto stiffness = opl & opr;
+
+                    //auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. );
+                    auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
+                    std::cout << "Average value of diagonal preconditioner: " << stiffness_invprecon.getdiagonal().average() << std::endl;
 
                     for( int i = 0; i < experiments_sol.size(); i++){
 
@@ -152,18 +162,18 @@ int main()
                         
                         FloatVector interpol_one  = Interpolation( M, M.getinnerdimension(), 0, r, constant_one );
                         
-                        cout << "...measure kernel component" << endl;
+                        cout << "...measure kernel component: " << std::flush;
             
                         Float average_sol = interpol_one * ( scalar_massmatrix * interpol_sol );
                         Float average_rhs = interpol_one * ( scalar_massmatrix * interpol_rhs );
                         
+                        cout << average_sol << space << average_rhs << endl;
+
                         cout << "...measure interpolation commutativity" << endl;
             
                         Float commutatorerror = ( vector_massmatrix_fac * ( interpol_grad - diffmatrix * interpol_sol ) ).norm();
                         cout << "commutator error: " << commutatorerror << endl;
                         
-                        cout << average_sol << space << average_rhs << endl;
-
                         cout << "...compute norms of solution and right-hand side:" << endl;
             
                         Float sol_norm = ( scalar_massmatrix_fac * interpol_sol ).norm();
@@ -179,11 +189,28 @@ int main()
                         FloatVector rhs = incmatrix_t * ( scalar_massmatrix * interpol_rhs );
 
                         FloatVector sol( M.count_simplices(0), 0. );
-
-                        ConjugateResidualMethod CRM( stiffness );
-                        CRM.print_modulo = 1+sol.getdimension()/10;
-                        CRM.tolerance = 1e-15;
-                        CRM.solve( sol, rhs );
+                        
+                        {
+                            sol.zero();
+                            timestamp start = gettimestamp();
+                            ConjugateResidualMethod CRM( stiffness );
+                            CRM.print_modulo = 1+sol.getdimension()/1000;
+                            CRM.tolerance = 1e-10;
+                            CRM.solve( sol, rhs );
+                            timestamp end = gettimestamp();
+                            std::cout << "\t\t\t " << end - start << std::endl;
+                        }
+                        
+                        {
+                            sol.zero();
+                            timestamp start = gettimestamp();
+                            PreconditionedConjugateResidualMethod PCRM( stiffness, stiffness_invprecon );
+                            PCRM.print_modulo = 1+sol.getdimension()/1000;
+                            PCRM.tolerance = 1e-10;
+                            PCRM.solve( sol, rhs );
+                            timestamp end = gettimestamp();
+                            std::cout << "\t\t\t " << end - start << std::endl;
+                        }
 
                         cout << "...compute error and residual:" << endl;
             

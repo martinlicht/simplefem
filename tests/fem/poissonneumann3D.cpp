@@ -161,13 +161,18 @@ int main()
                         
                         FloatVector interpol_one  = Interpolation( M, M.getinnerdimension(), 0, r, constant_one );
                         
-                        cout << "...measure kernel component" << endl;
+                        cout << "...measure kernel component: " << std::flush;
             
                         Float average_sol = interpol_one * ( scalar_massmatrix * interpol_sol );
                         Float average_rhs = interpol_one * ( scalar_massmatrix * interpol_rhs );
                         
                         cout << average_sol << space << average_rhs << endl;
 
+                        cout << "...measure interpolation commutativity" << endl;
+            
+                        Float commutatorerror = ( vector_massmatrix_fac * ( interpol_grad - diffmatrix * interpol_sol ) ).norm();
+                        cout << "commutator error: " << commutatorerror << endl;
+                        
                         cout << "...compute norms of solution and right-hand side:" << endl;
             
                         Float sol_norm = ( scalar_massmatrix_fac * interpol_sol ).norm();
