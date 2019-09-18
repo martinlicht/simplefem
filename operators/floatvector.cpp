@@ -360,6 +360,11 @@ Float FloatVector::scalarproductwith( const FloatVector& right, const std::vecto
 
 
 
+Float FloatVector::average() const 
+{
+    return sum() / getdimension();
+}
+
 Float FloatVector::sum() const 
 {
     check();

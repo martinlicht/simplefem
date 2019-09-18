@@ -134,6 +134,8 @@ class FloatVector
         
         /* Calculations */
         
+        Float average() const;
+        
         Float sum() const;
         
         Float norm() const;
