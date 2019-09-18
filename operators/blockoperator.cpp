@@ -21,7 +21,6 @@ BlockOperator::~BlockOperator()
 
 void BlockOperator::check() const  
 {
-  std::cout << "Check Block Operator" << std::endl;
   LinearOperator::check();
   
   if( ops.size() == 0 ) {
