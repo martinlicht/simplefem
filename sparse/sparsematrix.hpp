@@ -75,6 +75,8 @@ public LinearOperator /* every matrix is a linear operator */
         void clearentries();
 
         int getnumberofentries() const;
+        
+        bool is_sorted( MatrixEntrySorting manner = MatrixEntrySorting::rowwise ) const;
         void sortentries( MatrixEntrySorting manner = MatrixEntrySorting::rowwise ) const;
         void sortandcompressentries( MatrixEntrySorting manner = MatrixEntrySorting::rowwise ) const;
 

@@ -23,7 +23,9 @@ public LinearOperator /* every matrix is a linear operator */
                             const std::vector<int>& A, 
                             const std::vector<int>& C, 
                             const std::vector<Float>& V );
-    
+
+        explicit MatrixCSR( const SparseMatrix& mat );
+
         virtual ~MatrixCSR( );
 
 //         explicit MatrixCSR( const ScalingOperator& matrix );
@@ -36,8 +38,7 @@ public LinearOperator /* every matrix is a linear operator */
 
         int getnumberofentries() const;
         void sortentries() const;
-        void sortandcompressentries() const;
-
+        
         virtual FloatVector apply( const FloatVector& add, Float scaling ) const override;
 
     private:
@@ -47,10 +48,6 @@ public LinearOperator /* every matrix is a linear operator */
         mutable std::vector<Float> V; // numerical value of each term
     
 };
-
-
-
-// MatrixCSR operator&( const MatrixCSR& left, const MatrixCSR& right );
 
 
 
