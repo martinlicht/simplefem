@@ -94,6 +94,31 @@ SparseMatrix operator&( const SparseMatrix& left, const SparseMatrix& right );
 
 
 
+
+inline static DiagonalOperator InverseDiagonalPreconditioner( const SparseMatrix& mat )
+{
+
+    assert( mat.getdimin() == mat.getdimout() );
+
+    FloatVector diag( mat.getdimin(), 0. );
+
+    const std::vector<SparseMatrix::MatrixEntry>& entries = mat.getentries();
+
+    for( const auto& entry : entries )
+        if( entry.row == entry.column ) 
+            diag.at( entry.row ) += absolute( entry.value );
+
+    for( int i = 0; i < diag.getdimension(); i++ )
+        assert( diag.at( i ) > 0. );
+    
+    for( int i = 0; i < diag.getdimension(); i++ )
+        diag.at( i ) = 1. / diag.at( i );
+    
+    return DiagonalOperator( mat.getdimin(), diag );
+
+}
+
+
   
 
 #endif
