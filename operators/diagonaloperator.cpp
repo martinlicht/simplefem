@@ -8,6 +8,13 @@
 #include "linearoperator.hpp"
 
 
+DiagonalOperator::DiagonalOperator( int dimension, Float scale )
+: LinearOperator(dimension,dimension), 
+  diagonal( FloatVector( dimension, scale ) )
+{
+    DiagonalOperator::check();
+}
+
 DiagonalOperator::DiagonalOperator( int dimension, const FloatVector& dia )
 : LinearOperator(dimension,dimension), diagonal(dia)
 {
@@ -62,7 +69,7 @@ FloatVector DiagonalOperator::apply( const FloatVector& src, Float scaling ) con
     
     FloatVector ret( getdimout() );
     for( int p = 0; p < getdimout(); p++ ) {
-        ret.setentry( p, scaling * src.getentry( p ) );
+        ret.setentry( p, scaling * diagonal.at(p) * src.getentry( p ) );
     }
     
     return ret;

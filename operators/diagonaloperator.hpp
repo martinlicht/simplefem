@@ -21,6 +21,7 @@ public LinearOperator
 
     public:
 
+        explicit DiagonalOperator( int, Float s );
         explicit DiagonalOperator( int, const FloatVector& dia );
         explicit DiagonalOperator( int, const ScalingOperator& scaling );
         virtual ~DiagonalOperator();
