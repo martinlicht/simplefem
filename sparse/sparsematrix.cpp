@@ -211,13 +211,19 @@ const std::vector<SparseMatrix::MatrixEntry>& SparseMatrix::getentries() const
 		
 
 		
-void SparseMatrix::sortentries() const
+void SparseMatrix::sortentries( SparseMatrix::MatrixEntrySorting manner ) const
 {
     check();
 
-    std::sort( entries.begin(), entries.end(), []( MatrixEntry a, MatrixEntry b) {
-        return a.row < b.row || ( a.row == b.row && a.column < b.column );   
-    });
+    if( manner == MatrixEntrySorting::rowwise )
+        std::sort( entries.begin(), entries.end(), []( MatrixEntry a, MatrixEntry b) {
+            return a.row < b.row || ( a.row == b.row && a.column < b.column );   
+        });
+    else 
+        std::sort( entries.begin(), entries.end(), []( MatrixEntry a, MatrixEntry b) {
+            return a.column < b.column || ( a.column == b.column && a.row < b.row );   
+        });
+    
     
 //     const int N = getnumberofentries();
 //     
@@ -235,11 +241,11 @@ void SparseMatrix::sortentries() const
     check();
 }
 
-void SparseMatrix::sortandcompressentries() const
+void SparseMatrix::sortandcompressentries( SparseMatrix::MatrixEntrySorting manner ) const
 {
     check();
     
-    sortentries();
+    sortentries( manner );
     
     int dest = 0;
     
@@ -290,28 +296,148 @@ SparseMatrix SparseMatrix::getTranspose() const
 
 
 
-
+// TODO: 
+// split this function into an old and a new version,
+// and then use the new version. The old one is legacy.
 SparseMatrix operator&( const SparseMatrix& left, const SparseMatrix& right )
 {
-    left.sortandcompressentries();
-    right.sortandcompressentries();
+
+    std::cout << "--- SparseMatrix Product" << std::endl;
+    std::cout << "--- Sort and compress" << std::endl;
+    
+    left.sortandcompressentries( SparseMatrix::MatrixEntrySorting::columnwise );
+    right.sortandcompressentries( SparseMatrix::MatrixEntrySorting::rowwise );
+
+    std::cout << "--- Counting" << std::endl;
     
     int counter = 0;
-    for( SparseMatrix::MatrixEntry l : left.getentries() )
-    for( SparseMatrix::MatrixEntry r : left.getentries() )
+    for( SparseMatrix::MatrixEntry l : left.getentries()  )
+    for( SparseMatrix::MatrixEntry r : right.getentries() )
         if( l.column == r.row ) 
             counter++;
-            
+    
+    if(true){
+
+        std::cout << "--- Additional Counting" << std::endl;
+
+        int counter2 = 0;
+        int lbase = 0; int rbase = 0;
+        while( lbase < left.getnumberofentries() and rbase < right.getnumberofentries() ){
+            assert( lbase < left.getnumberofentries() and rbase < right.getnumberofentries() );
+            while( lbase < left.getnumberofentries() and left.getentry(lbase).column < right.getentry(rbase).row ) lbase++;
+            if( lbase == left.getnumberofentries() ) break;
+            while( rbase < right.getnumberofentries() and right.getentry(rbase).row < left.getentry(lbase).column ) rbase++;
+            if( rbase == right.getnumberofentries() ) break;
+            assert( lbase < left.getnumberofentries() and rbase < right.getnumberofentries() );
+            assert( left.getentry(lbase).column == right.getentry(rbase).row );
+            int index = left.getentry(lbase).column;
+            int lnext = lbase; int rnext = rbase;
+            while( lnext < left.getnumberofentries() and left.getentry(lnext).column == index ) lnext++;
+            while( rnext < right.getnumberofentries() and right.getentry(rnext).row == index  ) rnext++;
+            counter2 = counter2 + ( lnext - lbase ) * ( rnext - rbase );
+            lbase = lnext; rbase = rnext;
+        }
+
+        assert( counter == counter2 );
+    }
+
+    std::cout << "--- Assemble" << std::endl;
+    
     std::vector<SparseMatrix::MatrixEntry> new_entries;
     new_entries.reserve( counter );
-    for( SparseMatrix::MatrixEntry l : left.getentries() )
-    for( SparseMatrix::MatrixEntry r : left.getentries() )
+    for( SparseMatrix::MatrixEntry l : left.getentries()  )
+    for( SparseMatrix::MatrixEntry r : right.getentries() )
         if( l.column == r.row ) 
             new_entries.push_back( { l.row, r.column, l.value * r.value } );
     
+    assert( new_entries.size() == counter );
+
+    if(true){
+        std::cout << "--- Additional Assemble" << std::endl;
+
+        std::vector<SparseMatrix::MatrixEntry> new_entries2;
+        new_entries2.reserve( counter );
+        
+        int lbase = 0; int rbase = 0;
+        while( lbase < left.getnumberofentries() and rbase < right.getnumberofentries() ){
+            assert( lbase < left.getnumberofentries() and rbase < right.getnumberofentries() );
+            while( lbase < left.getnumberofentries() and left.getentry(lbase).column < right.getentry(rbase).row ) lbase++;
+            if( lbase == left.getnumberofentries() ) break;
+            while( rbase < right.getnumberofentries() and right.getentry(rbase).row < left.getentry(lbase).column ) rbase++;
+            if( rbase == right.getnumberofentries() ) break;
+            assert( lbase < left.getnumberofentries() and rbase < right.getnumberofentries() );
+            assert( left.getentry(lbase).column == right.getentry(rbase).row );
+            int index = left.getentry(lbase).column;
+            int lnext = lbase; int rnext = rbase;
+            while( lnext < left.getnumberofentries() and left.getentry(lnext).column == index ) lnext++;
+            while( rnext < right.getnumberofentries() and right.getentry(rnext).row == index  ) rnext++;
+            for( int lcurr = lbase; lcurr < lnext; lcurr++ )
+            for( int rcurr = rbase; rcurr < rnext; rcurr++ )
+                new_entries2.push_back( { 
+                                        left.getentry(lcurr).row, 
+                                        right.getentry(rcurr).column, 
+                                        left.getentry(lcurr).value * right.getentry(rcurr).value
+                                       } );
+            lbase = lnext; rbase = rnext;
+        }
+
+        assert( new_entries2.size() == counter );
+        
+        // ACHTUNG
+        new_entries = new_entries2;
+    }
+
+    assert( new_entries.size() == counter );
+
+    std::cout << "--- Construct" << std::endl;
     SparseMatrix ret( left.getdimout(), right.getdimin(), new_entries );
         
-    ret.sortandcompressentries();
+    // std::cout << "--- Sort and compress again" << std::endl;
+    // ret.sortandcompressentries();
+    
+    return ret;
+    
+}
+
+
+
+
+
+
+
+SparseMatrix SparseMatrixMultiplication( const SparseMatrix& left, const SparseMatrix& right )
+{
+
+    std::cout << "--- SparseMatrix Product" << std::endl;
+    std::cout << "--- Sort and compress" << std::endl;
+    
+    left.sortandcompressentries( SparseMatrix::MatrixEntrySorting::columnwise );
+    right.sortandcompressentries( SparseMatrix::MatrixEntrySorting::rowwise );
+
+    std::cout << "--- Counting" << std::endl;
+    
+    int counter = 0;
+    for( SparseMatrix::MatrixEntry l : left.getentries()  )
+    for( SparseMatrix::MatrixEntry r : right.getentries() )
+        if( l.column == r.row ) 
+            counter++;
+
+    std::cout << "--- Assemble" << std::endl;
+    
+    std::vector<SparseMatrix::MatrixEntry> new_entries;
+    new_entries.reserve( counter );
+    for( SparseMatrix::MatrixEntry l : left.getentries()  )
+    for( SparseMatrix::MatrixEntry r : right.getentries() )
+        if( l.column == r.row ) 
+            new_entries.push_back( { l.row, r.column, l.value * r.value } );
+    
+    assert( new_entries.size() == counter );
+    
+    std::cout << "--- Construct" << std::endl;
+    SparseMatrix ret( left.getdimout(), right.getdimin(), new_entries );
+        
+    // std::cout << "--- Sort and compress again" << std::endl;
+    // ret.sortandcompressentries();
     
     return ret;
     

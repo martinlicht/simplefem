@@ -35,15 +35,20 @@ public LinearOperator /* every matrix is a linear operator */
             Float value;
         };
 
-        static bool compareMatrixEntry(const MatrixEntry& first, const MatrixEntry& second) 
-        {
-            if( first.row < second.row )
-                return true;
-            else if( first.row == second.row && first.column < second.column )
-                return true;
-            else 
-                return false;
-        }
+        enum class MatrixEntrySorting {
+            rowwise,
+            columnwise
+        };
+
+        // static bool compareMatrixEntry(const MatrixEntry& first, const MatrixEntry& second) 
+        // {
+        //     if( first.row < second.row )
+        //         return true;
+        //     else if( first.row == second.row && first.column < second.column )
+        //         return true;
+        //     else 
+        //         return false;
+        // }
 
         explicit SparseMatrix( int dimout, int dimin, int numentries = 0, 
                                std::function<MatrixEntry(int)> generator = [](int i __attribute__((unused)) )->MatrixEntry{ return {0,0,notanumber}; } ); 
@@ -70,8 +75,8 @@ public LinearOperator /* every matrix is a linear operator */
         void clearentries();
 
         int getnumberofentries() const;
-        void sortentries() const;
-        void sortandcompressentries() const;
+        void sortentries( MatrixEntrySorting manner = MatrixEntrySorting::rowwise ) const;
+        void sortandcompressentries( MatrixEntrySorting manner = MatrixEntrySorting::rowwise ) const;
 
         SparseMatrix getTranspose() const;
         
