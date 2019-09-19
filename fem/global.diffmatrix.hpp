@@ -103,6 +103,9 @@ inline SparseMatrix FEECBrokenDiffMatrix( Mesh& mesh, int n, int k, int r )
     
     SparseMatrix ret( dim_out, dim_in, num_entries );
     
+    #if defined(_OPENMP)
+    #pragma omp parallel for
+    #endif
     for( int s = 0; s < num_simplices;   s++ )
     for( int i = 0; i < noe; i++ )
     {

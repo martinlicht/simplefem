@@ -54,6 +54,9 @@ inline SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r 
     
 //     std::cout << polyMM << std::endl;
         
+    #if defined(_OPENMP)
+    #pragma omp parallel for
+    #endif
     for( int s = 0; s < num_simplices; s++ )
     {
         
@@ -139,6 +142,9 @@ inline SparseMatrix FEECBrokenMassMatrixRightFactor( const Mesh& mesh, int n, in
             
 //     std::cout << polyMM << std::endl;
         
+    #if defined(_OPENMP)
+    #pragma omp parallel for
+    #endif
     for( int s = 0; s < num_simplices; s++ )
     {
         

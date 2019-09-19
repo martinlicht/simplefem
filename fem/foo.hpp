@@ -65,13 +65,11 @@ inline DenseMatrix InterpolationPointsBarycentricCoordinates( int n, int r )
 
 
 
-// Suppose that the columns of bc are the interpolation points
-// in barycentric coordinates, with the coordinates in the rows.
+// Suppose that the columns of lpsbc are the interpolation points
+// in barycentric coordinates.
 // 
 // we generate a matrix where each column represent a barycentric polynomial
 // and the rows correspond to the interpolation points
-
-
 
 inline DenseMatrix EvaluationMatrix( int dim, int r, const DenseMatrix& lpsbc )
 {
@@ -89,6 +87,42 @@ inline DenseMatrix EvaluationMatrix( int dim, int r, const DenseMatrix& lpsbc )
     for( int c = 0; c < N; c++ ) // c -> barycentric poly 
     for( int r = 0; r < N; r++ ) // r -> interpolation point
     {
+        ret(r,c) = 1.;
+        for( int d = 0; d <= dim; d++ )
+            if( mis[c][d] != 0 )
+                ret(r,c) *= power( lpsbc(d,r), (Float) mis[c][d] );
+    }
+    
+    return ret;
+    
+}
+
+
+
+// Suppose that the columns of lpsbc are the interpolation points
+// in barycentric coordinates.
+// 
+// we generate a matrix where each column represent a barycentric polynomial
+// and the rows correspond to the interpolation points
+
+// TODO Reread and compare with previous version 
+
+inline DenseMatrix EvaluationMatrix( std::vector<MultiIndex> mis, const DenseMatrix& lpsbc )
+{
+    
+    const int num_points = lpsbc.getdimin();
+    const int num_mis    = mis.size();
+    
+    int dim = lpsbc.getdimout() - 1;
+        
+    DenseMatrix ret( num_points, num_mis );
+    
+    for( int c = 0; c < num_mis;    c++ ) // c -> barycentric poly 
+    for( int r = 0; r < num_points; r++ ) // r -> interpolation point
+    {
+        assert( mis[c].getSourceRange().max() == dim+1 );
+        assert( mis[c].getSourceRange().min() == 0     );
+
         ret(r,c) = 1.;
         for( int d = 0; d <= dim; d++ )
             if( mis[c][d] != 0 )
@@ -212,8 +246,20 @@ inline FloatVector Interpolation(
     
     FloatVector ret( m.count_simplices(dim) * SullivanSpanSize(dim,k,r) );
     
+    //const auto degree_r_mis = generateMultiIndices( IndexRange(0,dim), r );
+    
     const auto lpsbc = InterpolationPointsBarycentricCoordinates( dim, r );
     
+    const auto EM = EvaluationMatrix( dim, r, lpsbc );
+        
+    const auto EMinv = Inverse( EM );
+    
+    assert( EM.isfinite()    );
+    assert( EMinv.isfinite() );
+    
+    #if defined(_OPENMP)
+    #pragma omp parallel for
+    #endif
     for( int s = 0; s < m.count_simplices(dim); s++ )
     {
         
@@ -224,15 +270,6 @@ inline FloatVector Interpolation(
 //         std::cout << lps << space << lpsbc << coords << nl;
         
         assert( lps.isfinite() );
-        
-        const auto EM = EvaluationMatrix( dim, r, lpsbc );
-        
-        const auto EMinv = Inverse( EM );
-        
-        assert( EM.isfinite()    );
-        assert( EMinv.isfinite() );
-        
-        
         
         const auto Jac = m.getTransformationJacobian( dim, s );
         
@@ -248,8 +285,8 @@ inline FloatVector Interpolation(
         const auto Evaluations = EvaluateField( dim, k, r, lps, field );
         const auto EvaluationVector = Evaluations.flattencolumns();
         
-        assert( Evaluations.isfinite()    );
-        assert( EvaluationVector.isfinite()    );
+        assert( Evaluations.isfinite()      );
+        assert( EvaluationVector.isfinite() );
         
 
 //         std::cout << InterpolationMatrix.getdimin() << space << EvaluationVector.getdimension() << nl;

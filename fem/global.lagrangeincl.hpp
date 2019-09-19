@@ -44,6 +44,9 @@ inline SparseMatrix FEECLagrangeInclusionMatrix( Mesh& mesh, int n, int r )
     
     SparseMatrix ret( dim_out, dim_in, num_entries );
     
+    #if defined(_OPENMP)
+    #pragma omp parallel for
+    #endif
     for( int s  = 0; s  <  num_simplices; s++  )
     for( int vi = 0; vi <= n;             vi++ )
     {
