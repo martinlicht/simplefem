@@ -14,10 +14,29 @@ FloatVector::FloatVector( int dim, Float initialvalue )
     check();
 }
 
+FloatVector::FloatVector( const FloatVector& src )
+: data( src.data )
+{
+    check();
+}
+
 FloatVector::FloatVector( const FloatVector& src, Float alpha )
 : data( src.getdimension() )
 {
     copydatafrom( alpha, src );
+    check();
+}
+
+FloatVector::FloatVector( const FloatVector&& src )
+: data( std::move(src.data) )
+{
+    check();
+}
+
+FloatVector::FloatVector( const FloatVector&& src, Float alpha )
+: data( std::move(src.data) )
+{
+    scale( alpha );
     check();
 }
 
@@ -54,6 +73,15 @@ FloatVector& FloatVector::operator=( const FloatVector& vec )
     
     for( int p = 0; p < getdimension(); p++ )
         setentry( p, vec.getentry(p) );
+    
+    return *this;
+}
+
+FloatVector& FloatVector::operator=( const FloatVector&& vec )
+{
+    assert( getdimension() == vec.getdimension() );
+    
+    this->data = std::move( vec.data );
     
     return *this;
 }
@@ -103,7 +131,7 @@ int FloatVector::getdimension() const
 Float FloatVector::setentry( int p, Float value )
 {
     //check();
-    assert( 0 <= p && p < data.size() );
+    assert( 0 <= p && p < getdimension() );
     data.at(p) = value;
     return data.at(p);
 }
@@ -111,7 +139,7 @@ Float FloatVector::setentry( int p, Float value )
 Float FloatVector::getentry( int p ) const 
 {
     //check();
-    assert( 0 <= p && p < data.size() );
+    assert( 0 <= p && p < getdimension() );
     return data.at(p);
 }
 
@@ -119,28 +147,28 @@ Float FloatVector::getentry( int p ) const
 Float& FloatVector::at( int p )
 {
     //check();
-    assert( 0 <= p && p < data.size() );
+    assert( 0 <= p && p < getdimension() );
     return data.at(p);
 }
 
 const Float& FloatVector::at( int p ) const
 {
     //check();
-    assert( 0 <= p && p < data.size() );
+    assert( 0 <= p && p < getdimension() );
     return data.at(p);
 }
 
 Float& FloatVector::operator[]( int p )
 {
     //check();
-    assert( 0 <= p && p < data.size() );
+    assert( 0 <= p && p < getdimension() );
     return data[p];
 }
 
 const Float& FloatVector::operator[]( int p ) const
 {
     //check();
-    assert( 0 <= p && p < data.size() );
+    assert( 0 <= p && p < getdimension() );
     return data[p];
 }
                 
@@ -469,6 +497,15 @@ bool FloatVector::issmall( Float eps ) const
 
 
 
+Float* FloatVector::raw()
+{
+    return data.data();
+}
+
+const Float* FloatVector::raw() const
+{
+    return data.data();
+}
 
 
 

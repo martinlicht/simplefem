@@ -27,7 +27,13 @@ class FloatVector
         
         explicit FloatVector( int dim, Float initivalue = notanumber );
         
-        FloatVector( const FloatVector&, Float scaling = 1.);
+        FloatVector( const FloatVector& );
+        
+        explicit FloatVector( const FloatVector&, Float scaling );
+        
+        explicit FloatVector( const FloatVector&& );
+        
+        explicit FloatVector( const FloatVector&&, Float scaling );
         
         explicit FloatVector( const std::vector<Float>&, Float scaling = 1. );
         
@@ -40,6 +46,8 @@ class FloatVector
         // virtual ~FloatVector();
         
         FloatVector& operator=( const FloatVector& vec );
+        
+        FloatVector& operator=( const FloatVector&& vec );
 
 
         void check() const;
@@ -168,10 +176,15 @@ class FloatVector
         
 
 
-        /* Investigations */
+        /* Clearing */
         
         void clear( const std::vector<bool>& mask, bool clearif = true );
         
+        
+        /* Raw access */
+        
+        Float* raw();
+        const Float* raw() const;
         
         
         
