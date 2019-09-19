@@ -111,9 +111,15 @@ int main()
 
             cout << "Solving Poisson Problem with Neumann boundary conditions" << endl;
             
-            for( int l = 0; l <= 4; l++ ){
+            int max_l = 8;
+            int max_r = 1;
+            
+            for( int l = 0; l <= max_l; l++ ){
                 
-                for( int r = 1; r <= 1; r++ ) 
+                cout << "Level: " << l << std::endl;
+                cout << "# T/F/E/V: " << M.count_tetrahedra() << "/" << M.count_faces() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
+                
+                for( int r = 1; r <= max_r; r++ ) 
                 {
                     
                     cout << "...assemble scalar mass matrices" << endl;
@@ -143,22 +149,22 @@ int main()
                     cout << "...assemble stiffness matrix" << endl;
             
                     // ProductOperator 
-                    // auto stiffness = incmatrix_t * diffmatrix_t * vector_massmatrix * diffmatrix * incmatrix;
-                    // auto op1 = incmatrix_t * diffmatrix_t;
-                    // auto op2 = op1 * vector_massmatrix;
-                    // auto op3 = op2 * diffmatrix;
-                    // auto stiffness = op3 * incmatrix;
+                    // DONT USE THIS auto stiffness = incmatrix_t * diffmatrix_t * vector_massmatrix * diffmatrix * incmatrix;
+                    auto op1 = incmatrix_t * diffmatrix_t;
+                    auto op2 = op1 * vector_massmatrix;
+                    auto op3 = op2 * diffmatrix;
+                    auto stiffness = op3 * incmatrix;
 
-                    auto opr1 = diffmatrix & incmatrix;
-                    auto opr  = vector_massmatrix_fac & opr1;
-                    auto opl  = opr.getTranspose(); 
-                    auto stiffness = opl & opr;
+//                     auto opr1 = diffmatrix & incmatrix;
+//                     auto opr  = vector_massmatrix_fac & opr1;
+//                     auto opl  = opr.getTranspose(); 
+//                     auto stiffness_prelim = opl & opr;
+//                     stiffness_prelim.sortentries();
+//                     auto stiffness = MatrixCSR( stiffness_prelim );
                     
-                    stiffness.sortentries();
-                    auto stiffness_csr = MatrixCSR( stiffness );
+                    auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. );
+                    //auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
                     
-                    //auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. );
-                    auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
                     std::cout << "Average value of diagonal preconditioner: " << stiffness_invprecon.getdiagonal().average() << std::endl;
 
                     for( int i = 0; i < experiments_sol.size(); i++){
@@ -197,16 +203,16 @@ int main()
 
                         cout << "...create RHS vector" << endl;
             
-                        cout << "...calculation" << endl;
-            
                         FloatVector rhs = incmatrix_t * ( scalar_massmatrix * interpol_rhs );
 
                         FloatVector sol( M.count_simplices(0), 0. );
 
+                        cout << "...iterative solver" << endl;
+                        
                         {
                             sol.zero();
                             timestamp start = gettimestamp();
-                            ConjugateResidualMethod CRM( stiffness_csr );
+                            ConjugateResidualMethod CRM( stiffness );
                             CRM.print_modulo = 1+sol.getdimension()/1000;
                             CRM.tolerance = 1e-10;
                             CRM.solve( sol, rhs );
@@ -214,10 +220,10 @@ int main()
                             std::cout << "\t\t\t " << end - start << std::endl;
                         }
                         
-                        {
+                        if(false){
                             sol.zero();
                             timestamp start = gettimestamp();
-                            PreconditionedConjugateResidualMethod PCRM( stiffness_csr, stiffness_invprecon );
+                            PreconditionedConjugateResidualMethod PCRM( stiffness, stiffness_invprecon );
                             PCRM.print_modulo = 1+sol.getdimension()/1000;
                             PCRM.tolerance = 1e-10;
                             PCRM.solve( sol, rhs );
@@ -264,7 +270,7 @@ int main()
 
                 cout << "Refinement..." << endl;
             
-                M.uniformrefinement();
+                if( l != max_l ) M.uniformrefinement();
                 
                 
 

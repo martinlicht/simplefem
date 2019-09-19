@@ -102,10 +102,16 @@ int main()
             assert( experiments_sol.size() == experiments_rhs.size() );
 
             cout << "Solving Poisson Problem with Neumann boundary conditions" << endl;
+
+            int max_l = 8;
+            int max_r = 1;
             
-            for( int l = 0; l <= 10; l++ ){
+            for( int l = 0; l <= max_l; l++ ){
                 
-                for( int r = 1; r <= 1; r++ ) 
+                cout << "Level: " << l << std::endl;
+                cout << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
+                
+                for( int r = 1; r <= max_r; r++ ) 
                 {
                     
                     cout << "...assemble scalar mass matrices" << endl;
@@ -189,13 +195,13 @@ int main()
 
                         cout << "...create RHS vector" << endl;
 
-                        cout << "...calculation" << endl;
-                        
                         FloatVector rhs = incmatrix_t * ( scalar_massmatrix * interpol_rhs );
 
                         FloatVector sol( M.count_simplices(0), 0. );
                         
-                        {
+                        cout << "...iterative solver" << endl;
+                        
+                        if(false){
                             sol.zero();
                             timestamp start = gettimestamp();
                             ConjugateResidualMethod CRM( stiffness_csr );
@@ -256,7 +262,7 @@ int main()
 
                 cout << "Refinement..." << endl;
             
-                M.uniformrefinement();
+                if( l != max_l ) M.uniformrefinement();
                 
                 
 
