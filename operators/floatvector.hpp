@@ -31,9 +31,9 @@ class FloatVector
         
         explicit FloatVector( const FloatVector&, Float scaling );
         
-        explicit FloatVector( const FloatVector&& );
+        explicit FloatVector( FloatVector&& );
         
-        explicit FloatVector( const FloatVector&&, Float scaling );
+        explicit FloatVector( FloatVector&&, Float scaling );
         
         explicit FloatVector( const std::vector<Float>&, Float scaling = 1. );
         
@@ -47,7 +47,7 @@ class FloatVector
         
         FloatVector& operator=( const FloatVector& vec );
         
-        FloatVector& operator=( const FloatVector&& vec );
+        FloatVector& operator=( FloatVector&& vec );
 
 
         void check() const;

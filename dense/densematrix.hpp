@@ -31,6 +31,11 @@ public LinearOperator /* every matrix is a linear operator */
 
     public:
         
+//         DenseMatrix( const DenseMatrix& ) = default;
+//         DenseMatrix( DenseMatrix&& ) = default;
+//         DenseMatrix& operator=( const DenseMatrix& ) = default;
+//         DenseMatrix& operator=( DenseMatrix&& ) = default;
+        
         DenseMatrix( int dim, Float initialvalue = notanumber );
         DenseMatrix( int dim, const std::function<Float(int,int)>& generator );
         DenseMatrix( int dim, const std::vector<FloatVector>& coldata );
@@ -164,7 +169,9 @@ public LinearOperator /* every matrix is a linear operator */
         bool issmall( Float eps = 0.000001 ) const;
         
         
-        
+        Float* raw();
+        const Float* raw() const;
+
     private:
         
         std::vector<Float> entries;

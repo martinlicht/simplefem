@@ -448,6 +448,10 @@ DenseMatrix SubdeterminantMatrixSquare( const DenseMatrix& A, int k )
     A.check();
     assert( A.issquare() );
     assert( 0 <= k && k <= A.getdimin() );
+
+    // performance "hacks", which can be disabled at any time
+    if( k == 0 ) return DenseMatrix(1,1,1.);
+    if( k == 1 ) return A;
     
     const int n = A.getdimin();
     IndexRange fromrange = IndexRange( 0, k-1 );
@@ -471,6 +475,10 @@ DenseMatrix SubdeterminantMatrix( const DenseMatrix& A, int k )
     A.check();
     assert( 0 <= k && k <= A.getdimin() && k <= A.getdimout() );
     
+    // performance "hacks", which can be disabled at any time
+    if( k == 0 ) return DenseMatrix(1,1,1.);
+    if( k == 1 ) return A;
+
     IndexRange range_from = IndexRange( 0, k-1 );
     IndexRange range_rows = IndexRange( 0, A.getdimout()-1 );
     IndexRange range_cols = IndexRange( 0, A.getdimin()-1 );

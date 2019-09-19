@@ -9,6 +9,31 @@
 #include "densematrix.hpp"
 
 
+// DenseMatrix::DenseMatrix( const DenseMatrix& mat )
+// : LinearOperator( mat.getdimout(), mat.getdimin() ), entries(entries)
+// {
+// }
+//         
+// DenseMatrix::DenseMatrix( const DenseMatrix&& )
+// : LinearOperator( mat.getdimout(), mat.getdimin() ), entries( std::move(entries) )
+// {
+//     DenseMatrix::check();
+// }
+//         
+// DenseMatrix::DenseMatrix& operator=( DenseMatrix& )
+// : 
+// {
+//     DenseMatrix::check();
+// }
+//         
+// DenseMatrix::DenseMatrix& operator=( DenseMatrix&& )
+// : 
+// {
+//     DenseMatrix::check();
+// }
+        
+        
+        
 DenseMatrix::DenseMatrix( int dim, Float value )
 : DenseMatrix( dim, dim, value )
 {
@@ -28,7 +53,7 @@ DenseMatrix::DenseMatrix( int dim, const std::vector<FloatVector>& coldata )
 }
 
 DenseMatrix::DenseMatrix( int rows, int columns, Float value )
-: LinearOperator( rows, columns), entries( rows * columns )
+: LinearOperator( rows, columns), entries( rows * columns, notanumber )
 {
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin(); c++ )
@@ -37,7 +62,7 @@ DenseMatrix::DenseMatrix( int rows, int columns, Float value )
 }
 
 DenseMatrix::DenseMatrix( int rows, int columns, const std::function<Float(int,int)>& generator )
-: LinearOperator( rows, columns), entries( rows * columns )
+: LinearOperator( rows, columns), entries( rows * columns, notanumber )
 {
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin(); c++ )
@@ -46,7 +71,7 @@ DenseMatrix::DenseMatrix( int rows, int columns, const std::function<Float(int,i
 }
 
 DenseMatrix::DenseMatrix( int rows, int columns, const std::vector<FloatVector>& coldata )
-: LinearOperator( rows, columns), entries( rows * columns )
+: LinearOperator( rows, columns), entries( rows * columns, notanumber )
 {
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin(); c++ )
@@ -57,7 +82,7 @@ DenseMatrix::DenseMatrix( int rows, int columns, const std::vector<FloatVector>&
 
 DenseMatrix::DenseMatrix( const ScalingOperator& scaling )
 : LinearOperator( scaling.getdimout(), scaling.getdimin() ), 
-  entries( scaling.getdimout() * scaling.getdimin() )
+  entries( scaling.getdimout() * scaling.getdimin(), notanumber )
 {
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin(); c++ )
@@ -67,7 +92,7 @@ DenseMatrix::DenseMatrix( const ScalingOperator& scaling )
         
 DenseMatrix::DenseMatrix( const DiagonalOperator& dia )
 : LinearOperator( dia.getdimout(), dia.getdimin() ), 
-  entries( dia.getdimout() * dia.getdimin() )
+  entries( dia.getdimout() * dia.getdimin(), notanumber )
 {
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin(); c++ )
@@ -88,7 +113,7 @@ DenseMatrix::DenseMatrix( const SparseMatrix& matrix )
         
 DenseMatrix::DenseMatrix( const FloatVector& myvector )
 : LinearOperator( myvector.getdimension(), 1 ), 
-  entries( myvector.getdimension(), 0. )
+  entries( myvector.getdimension(), notanumber )
 {
     for( int r = 0; r < myvector.getdimension(); r++ )
     {
@@ -160,6 +185,37 @@ FloatVector DenseMatrix::apply( const FloatVector& add, Float scaling ) const
         ret[r] += scaling * (*this)(r,c) * add[c];
     
     return ret;
+
+    /*
+    load r 0
+    .run_outer_loop
+    if r == dimout goto .end_outer_loop
+      load c 0
+      .run_inner_loop
+      if c == dimin goto .end_inner_loop
+        // perform multiplication
+      inc
+      goto .run_inner_loop
+      .end_inner_loop
+      inc r
+      goto run_outer_loop
+    .end_outer_loop
+    */
+    
+    /*
+    load r 0
+    .run_outer_loop
+        load c 0
+        .run_inner_loop
+        
+        // perform with r and c
+        
+        inc c
+        if c < dimin goto .run_inner_loop
+    inc r
+    if r < dimout goto .run_outer_loop
+    */
+
 }
 
 Float DenseMatrix::get( int r, int c ) const
@@ -704,3 +760,12 @@ Float DenseMatrix::lpnorm( Float p ) const
 }
 
 
+Float* DenseMatrix::raw()
+{
+    return entries.data();
+}
+
+const Float* DenseMatrix::raw() const
+{
+    return entries.data();
+}

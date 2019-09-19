@@ -27,13 +27,13 @@ FloatVector::FloatVector( const FloatVector& src, Float alpha )
     check();
 }
 
-FloatVector::FloatVector( const FloatVector&& src )
+FloatVector::FloatVector( FloatVector&& src )
 : data( std::move(src.data) )
 {
     check();
 }
 
-FloatVector::FloatVector( const FloatVector&& src, Float alpha )
+FloatVector::FloatVector( FloatVector&& src, Float alpha )
 : data( std::move(src.data) )
 {
     scale( alpha );
@@ -77,7 +77,7 @@ FloatVector& FloatVector::operator=( const FloatVector& vec )
     return *this;
 }
 
-FloatVector& FloatVector::operator=( const FloatVector&& vec )
+FloatVector& FloatVector::operator=( FloatVector&& vec )
 {
     assert( getdimension() == vec.getdimension() );
     
