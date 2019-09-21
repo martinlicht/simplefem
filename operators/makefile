@@ -6,7 +6,7 @@ objects = floatvector.o io.floatvector.o linearoperator.o productoperator.o sumo
 
 all: $(objects) liboperators.so
 
-include ../makefile.rules 
+include ../common.make 
 
 include ../makefile.clean
 

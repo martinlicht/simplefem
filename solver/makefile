@@ -6,7 +6,7 @@ objects = iterativesolver.o crm.o pcrm.o necrm.o
 
 all: $(objects) libsolver.so
 
-include ../makefile.rules 
+include ../common.make 
 
 include ../makefile.clean
 

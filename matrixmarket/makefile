@@ -6,7 +6,7 @@ objects = matrixmarket.o
 
 all: $(objects) libmatrixmarket.so
 
-include ../makefile.rules 
+include ../common.make 
 
 include ../makefile.clean
 

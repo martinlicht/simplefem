@@ -4,6 +4,6 @@ SHELL = /bin/sh
 
 default: all
 
-include ../makefile.rules 
+include ../common.make 
 
 include ../makefile.clean

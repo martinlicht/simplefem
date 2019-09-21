@@ -6,7 +6,7 @@ objects = vtkwriter.mesh1D.o vtkwriter.mesh2D.o vtkwriter.mesh3D.o
 
 all: $(objects) libvtk.so
 
-include ../makefile.rules 
+include ../common.make 
 
 include ../makefile.clean
 

@@ -6,7 +6,7 @@ objects = densematrix.o readwrite.o functions.o scalarfunctions.o simplesolver.o
 
 all: $(objects) libdense.so
 
-include ../makefile.rules 
+include ../common.make 
 
 include ../makefile.clean
 

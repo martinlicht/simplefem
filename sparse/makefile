@@ -6,7 +6,7 @@ objects = sparsematrix.o matcsr.o readwrite.o
 
 all: $(objects) libsparse.so
 
-include ../makefile.rules 
+include ../common.make 
 
 include ../makefile.clean
 

@@ -2,7 +2,7 @@ SHELL = /bin/sh
 
 default: all
 
-include ../makefile.rules 
+include ../common.make 
 
 Objects.basic = 
 Objects.combinatorics = ../combinatorics/*.o

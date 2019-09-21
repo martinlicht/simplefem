@@ -8,7 +8,7 @@ objects = indexrange.o indexmap.o multiindex.o generateindexmaps.o generatemulti
 
 all: $(objects) libcombinatorics.so
 
-include ../makefile.rules 
+include ../common.make 
 
 include ../makefile.clean
 

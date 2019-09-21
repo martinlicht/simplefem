@@ -6,7 +6,7 @@ objects = mesh.o coordinates.o io.coordinates.o mesh.simplicial1D.o io.simplicia
 
 all: $(objects) libmesh.so 
 
-include ../makefile.rules 
+include ../common.make 
 
 include ../makefile.clean
 
