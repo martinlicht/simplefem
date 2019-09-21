@@ -13,10 +13,10 @@ include ../makefile.clean
 libdense.so: $(objects)
 	g++ -shared -o libdense.so $(objects)
 
-densematrix.o: densematrix.hpp densematrix.cpp ../operators/floatvector.hpp ../operators/linearoperator.hpp 
+densematrix.o: densematrix.cpp densematrix.hpp ../operators/floatvector.hpp ../operators/linearoperator.hpp 
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) densematrix.cpp -c -o densematrix.o 
 
-readwrite.o: readwrite.hpp readwrite.cpp ../operators/floatvector.hpp ../operators/linearoperator.hpp 
+readwrite.o: readwrite.cpp readwrite.hpp ../operators/floatvector.hpp ../operators/linearoperator.hpp 
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) readwrite.cpp -c -o readwrite.o 
 
 matrixtensorproduct.o: matrixtensorproduct.cpp matrixtensorproduct.hpp ../operators/floatvector.hpp

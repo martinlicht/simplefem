@@ -15,20 +15,20 @@ include ../makefile.clean
 libcombinatorics.so: $(objects)
 	g++ -shared -o libcombinatorics.so $(objects)
 
-indexrange.o: indexrange.hpp indexrange.cpp 
+indexrange.o: indexrange.cpp indexrange.hpp 
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) indexrange.cpp -c -o indexrange.o 
 
-indexmap.o: indexmap.hpp indexmap.cpp 
+indexmap.o: indexmap.cpp indexmap.hpp 
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) indexmap.cpp -c -o indexmap.o 
 
-multiindex.o: multiindex.hpp multiindex.cpp 
+multiindex.o: multiindex.cpp multiindex.hpp 
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) multiindex.cpp -c -o multiindex.o 
 
-generateindexmaps.o: generateindexmaps.hpp generateindexmaps.cpp 
+generateindexmaps.o: generateindexmaps.cpp generateindexmaps.hpp 
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) generateindexmaps.cpp -c -o generateindexmaps.o 
 
-generatemultiindices.o: generatemultiindices.hpp generatemultiindices.cpp 
+generatemultiindices.o: generatemultiindices.cpp generatemultiindices.hpp 
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) generatemultiindices.cpp -c -o generatemultiindices.o 
 
-heappermgen.o: heappermgen.hpp heappermgen.cpp 
+heappermgen.o: heappermgen.cpp heappermgen.hpp 
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) heappermgen.cpp -c -o heappermgen.o 

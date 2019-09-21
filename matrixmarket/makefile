@@ -13,5 +13,5 @@ include ../makefile.clean
 libmatrixmarket.so: $(objects)
 	g++ -shared -o libmatrixmarket.so $(objects)
 
-matrixmarket.o: matrixmarket.hpp matrixmarket.cpp 
+matrixmarket.o: matrixmarket.cpp matrixmarket.hpp 
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) matrixmarket.cpp -c -o matrixmarket.o 
