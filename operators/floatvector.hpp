@@ -43,7 +43,7 @@ class FloatVector
 
         FloatVector( const std::initializer_list<Float>& l );
 
-        // virtual ~FloatVector();
+        virtual ~FloatVector();
         
         FloatVector& operator=( const FloatVector& vec );
         
@@ -78,7 +78,7 @@ class FloatVector
         
         const Float& operator[]( int ) const;
         
-        const std::vector<Float>& getdata() const;
+        const std::vector<Float> getdata() const;
         
         
         /* load values */
@@ -276,7 +276,7 @@ class FloatVector
         
         inline ConstIterator end() const
         {
-            return ConstIterator(this,data.size());
+            return ConstIterator(this,dimension);
         }
 
         inline Iterator begin()
@@ -286,7 +286,7 @@ class FloatVector
         
         inline Iterator end()
         {
-            return Iterator(this,data.size());
+            return Iterator(this,dimension);
         }
 
         
@@ -294,7 +294,8 @@ class FloatVector
         
     private:
 
-        std::vector<Float> data;
+        int dimension;
+        Float* pointer;
 
 };
 

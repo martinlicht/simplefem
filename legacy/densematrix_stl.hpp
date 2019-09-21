@@ -31,10 +31,10 @@ public LinearOperator /* every matrix is a linear operator */
 
     public:
         
-        DenseMatrix( const DenseMatrix& );
-        DenseMatrix( DenseMatrix&& );
-        DenseMatrix& operator=( const DenseMatrix& );
-        DenseMatrix& operator=( DenseMatrix&& );
+//         DenseMatrix( const DenseMatrix& ) = default;
+//         DenseMatrix( DenseMatrix&& ) = default;
+//         DenseMatrix& operator=( const DenseMatrix& ) = default;
+//         DenseMatrix& operator=( DenseMatrix&& ) = default;
         
         DenseMatrix( int dim, Float initialvalue = notanumber );
         DenseMatrix( int dim, const std::function<Float(int,int)>& generator );
@@ -174,7 +174,7 @@ public LinearOperator /* every matrix is a linear operator */
 
     private:
         
-        Float* entries;
+        std::vector<Float> entries;
         
 };
   
@@ -278,10 +278,9 @@ inline DenseMatrix operator-( const DenseMatrix& left, const DenseMatrix& right 
 
 inline DenseMatrix operator*( const DenseMatrix& left, const DenseMatrix& right )
 {
-    // DenseMatrix ret( left );
-    // ret *= right;
-    // return ret;
-    return MatrixMult( left, right );
+    DenseMatrix ret( left );
+    ret *= right;
+    return ret;
 }
 
 inline DenseMatrix operator*( Float left, const DenseMatrix& right )
