@@ -7,25 +7,34 @@ CXX = clang++-8
 # CXX = g++
 
 
+
+
 ### Compilation parameters 
 
-CXXFLAGS_LANG = -std=c++2a -pedantic 
+# Comment out the following line to disable compilation with openMP
+OPENMP_FLAG := -fopenmp
 
-CXXFLAGS_WARNINGS = -Wall -Wextra -Wno-unused-variable -Wno-sign-compare -Wno-missing-braces -Wmissing-field-initializers -Werror=implicit
+# Comment out the following line to disable built-in sanitizers 
+SANITIZER_FLAG := -fsanitize=address,leak,undefined -pg -fno-omit-frame-pointer
 
-CXXFLAGS_OPTIMIZE = -Ofast -march=native -fopenmp
+
+
+CXXFLAGS_LANG := -std=c++2a -pedantic 
+
+CXXFLAGS_WARNINGS := -Wall -Wextra -Wno-unused-variable -Wno-sign-compare -Wno-missing-braces -Wmissing-field-initializers -Werror=implicit
+
+CXXFLAGS_OPTIMIZE := -Ofast -march=native $(OPENMP_FLAG)
 # -fopenmp 
 # -O3 -Ofast -march=native -flto -frename-registers -frename-registers
 
-CXXFLAGS_MISC =  -g -fpic -fno-exceptions -fsanitize=leak,address,undefined 
-#-fsanitize=address,leak,undefined -pg -fno-omit-frame-pointer
+CXXFLAGS_MISC := -g -fpic -fno-exceptions $(SANITIZER_FLAG)
 
-CXXFLAGS = ${CXXFLAGS_LANG} ${CXXFLAGS_WARNINGS} ${CXXFLAGS_OPTIMIZE} ${CXXFLAGS_MISC}
+CXXFLAGS := ${CXXFLAGS_LANG} ${CXXFLAGS_WARNINGS} ${CXXFLAGS_OPTIMIZE} ${CXXFLAGS_MISC}
 
 
 ### Preprocessor flags 
 
-CPPFLAGS = 
+CPPFLAGS := 
 #-DNDEBUG -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC
 
 
@@ -33,20 +42,6 @@ CPPFLAGS =
 
 # *.o: ../common.make ./makefile
 
-
-
-
-# .PHONY: tidy
-# tidy:
-# 	clang-tidy ./*.?pp -checks=llvm*,bugprone-*,clang-analyzer-*,misc-*,-llvm-header-guard,-llvm-include-order -- -std=c++17
-
-# .PHONY: check
-# check:
-# 	cppcheck --enable=warning,style,performance,portability --std=c++17 -q .
-
-# .PHONY: cpplint
-# cpplint:
-# 	( ./../cpplint.py --recursive --filter=-whitespace,-legal --quiet . ) | sort | uniq -c > TESTFOO
 
 
 

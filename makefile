@@ -1,6 +1,10 @@
 SHELL = /bin/sh
 
-default:
+default: all
+
+all: lib test 
+
+lib:
 	cd ./combinatorics && $(MAKE) 
 	cd ./operators && $(MAKE) 
 	cd ./dense && $(MAKE) 
@@ -10,8 +14,12 @@ default:
 	cd ./vtk && $(MAKE)
 	cd ./matrixmarket && $(MAKE)
 	# cd ./fem && $(MAKE)
+	echo "finished building libs." 
+
+test:
 	cd ./tests && $(MAKE)
-	echo "finished building." 
+	echo "finished building tests."
+
 
 clean: 
 	cd ./combinatorics && $(MAKE) clean

@@ -1,0 +1,33 @@
+
+OUTPUT=/dev/stdout
+
+runtests.basic: 
+	for i in ./basic/*.out; do (./$$i > ${OUTPUT}) || break; done
+
+runtests.combinatorics: 
+	for i in ./combinatorics/*.out; do (./$$i > ${OUTPUT}) || break; done
+
+runtests.operators: 
+	for i in ./operators/*.out; do (./$$i > ${OUTPUT}) || break; done
+
+runtests.dense: 
+	for i in ./dense/*.out; do (./$$i > ${OUTPUT}) || break; done
+
+runtests.sparse: 
+	for i in ./sparse/*.out; do (./$$i > ${OUTPUT}) || break; done
+
+runtests.solver: 
+	for i in ./solver/*.out; do (./$$i > ${OUTPUT}) || break; done
+
+runtests.mesh: 
+	for i in ./mesh/*.out; do (./$$i > ${OUTPUT}) || break; done
+
+runtests.vtk: 
+	for i in ./vtk/*.out; do (./$$i > ${OUTPUT}) || break; done
+
+runtests.fem: 
+	for i in ./vtk/*.out; do (./$$i > ${OUTPUT}) || break; done
+
+
+runtests:
+	make runtests.combinatorics runtests.operators runtests.dense runtests.sparse runtests.solver runtests.fem

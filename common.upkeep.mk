@@ -13,7 +13,8 @@ cpplint:
 
 
 clean: 
-	-rm -f .deps/*.d
+	-if [ -d .deps/ ]; then rm -f .deps/*.d; fi 
+	-if [ -d .deps/ ]; then rmdir .deps/; fi 
 	-rm -f *.o *.d *.so *.gch
 	-rm -f *.exe *.exe.stackdump
 	-rm -f *.out *.out.stackdump 
