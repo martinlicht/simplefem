@@ -1,19 +1,6 @@
-# TODO: This makefile still needs to be written properly
+#!/usr/bin/make
 
-SHELL = /bin/sh
+# include ../common.recipe.mk 
+# include ../common.rules.mk 
+include ../common.upkeep.mk
 
-default: all
-
-include ../common.make 
-
-
-
-# global.lagrangemassmatrix.o: global.lagrangemassmatrix.hpp global.lagrangemassmatrix.cpp 
-# 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) global.lagrangemassmatrix.cpp -c -o global.lagrangemassmatrix.o 
-
-objects = 
-
-    
-all: $(objects)  
-
-include ../makefile.clean

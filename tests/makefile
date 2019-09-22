@@ -2,7 +2,7 @@ SHELL = /bin/sh
 
 default: all
 
-include ../common.make 
+include ../common.recipe.mk 
 
 Objects.basic = 
 Objects.combinatorics = ../combinatorics/*.o
@@ -69,8 +69,23 @@ basic/logging.out: basic/logging.cpp $(Includes.basic)
 basic/fixedarray.out: basic/fixedarray.cpp $(Includes.basic)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) basic/fixedarray.cpp $(Links.basic) -o basic/fixedarray.out 
 
-basic.tests = basic/calc.out basic/sorthack.out basic/logging.out basic/fixedarray.out
+basic.tests: basic/calc.out 
+basic.tests: basic/sorthack.out 
+basic.tests: basic/logging.out 
+basic.tests: basic/fixedarray.out
 
+
+
+
+combinatorics.outs := $(patsubst %.cpp,%.out,$(combinatorics.sources))
+
+$(combinatorics.outs): %.o: %.cpp | $(depdir) $(combinatorics.depdir)
+	@g++ -MM $*.cpp -MF .deps/$*.d
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(Links.combinatorics) -o $@ 
+
+-include $(combinatorics.dependencies)
+
+combinatorics.tests: $(combinatorics.outs)
 
 
 
@@ -93,7 +108,12 @@ combinatorics/generatemultiindices.out: combinatorics/generatemultiindices.cpp $
 combinatorics/heappermgen.out: combinatorics/heappermgen.cpp $(Includes.combinatorics) 
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) combinatorics/heappermgen.cpp $(Links.combinatorics) -o combinatorics/heappermgen.out
 
-combinatorics.tests = combinatorics/indexrange.out combinatorics/indexmap.out combinatorics/multiindex.out combinatorics/generateindexmaps.out combinatorics/generatemultiindices.out combinatorics/heappermgen.out 
+combinatorics.tests: combinatorics/indexrange.out 
+combinatorics.tests: combinatorics/indexmap.out 
+combinatorics.tests: combinatorics/multiindex.out
+combinatorics.tests: combinatorics/generateindexmaps.out 
+combinatorics.tests: combinatorics/generatemultiindices.out 
+combinatorics.tests: combinatorics/heappermgen.out 
     
 
 
@@ -119,7 +139,13 @@ operators/blockdiagonaloperator.out: operators/blockdiagonaloperator.cpp $(Inclu
 operators/blockoperator.out: operators/blockoperator.cpp $(Includes.operators)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) operators/blockoperator.cpp $(Links.operators) -o operators/blockoperator.out
 	
-operators.tests = operators/floatvector.out operators/scalingoperator.out operators/diagonaloperator.out operators/sumoperator.out operators/productoperator.out operators/blockdiagonaloperator.out operators/blockoperator.out
+operators.tests: operators/floatvector.out
+operators.tests: operators/scalingoperator.out 
+operators.tests: operators/diagonaloperator.out 
+operators.tests: operators/sumoperator.out 
+operators.tests: operators/productoperator.out 
+operators.tests: operators/blockdiagonaloperator.out 
+operators.tests: operators/blockoperator.out
 
 
     
@@ -150,7 +176,14 @@ dense/gaussjordan.out: dense/gaussjordan.cpp $(Includes.dense)
 dense/iterativeinverse.out: dense/iterativeinverse.cpp $(Includes.dense) 
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) dense/iterativeinverse.cpp $(Links.dense) -o dense/iterativeinverse.out
 
-dense.tests = dense/densematrix.out dense/transpose.out dense/detinvcof.out dense/matrixalgorithm.out dense/cholesky.out dense/gaussjordan.out dense/scalarfunctions.out dense/iterativeinverse.out
+dense.tests: dense/densematrix.out
+dense.tests: dense/transpose.out
+dense.tests: dense/detinvcof.out
+dense.tests: dense/matrixalgorithm.out
+dense.tests: dense/cholesky.out
+dense.tests: dense/gaussjordan.out
+dense.tests: dense/scalarfunctions.out
+dense.tests: dense/iterativeinverse.out
 
 
 
@@ -158,7 +191,7 @@ dense.tests = dense/densematrix.out dense/transpose.out dense/detinvcof.out dens
 sparse/sparsematrix.out: sparse/sparsematrix.cpp $(Includes.sparse)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) sparse/sparsematrix.cpp $(Links.sparse) -o sparse/sparsematrix.out
 
-sparse.tests = sparse/sparsematrix.out 
+sparse.tests: sparse/sparsematrix.out 
 
 
 
@@ -171,7 +204,8 @@ solver/crm.out: solver/crm.cpp $(Includes.solver)
 solver/moretesting.out: solver/moretesting.cpp $(Includes.solver)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) solver/moretesting.cpp $(Links.solver) -o solver/moretesting.out
 
-solver.tests = solver/crm.out solver/moretesting.out 
+solver.tests: solver/crm.out
+solver.tests: solver/moretesting.out 
 
 
 
@@ -237,8 +271,27 @@ mesh/io.simplicialND.out: mesh/io.simplicialND.cpp $(Includes.mesh)
 # mesh/io.out: mesh/io.cpp $(Includes.mesh)
 # 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) mesh/io.cpp $(Links.mesh) -o mesh/io.out
 
-mesh.tests = mesh/coordinates.out mesh/simplicial1D.out mesh/io.simplicial1D.out mesh/uniformrefinement1D.out mesh/simplicial2D.out mesh/2DBisection.out mesh/2Dleb.out mesh/2Dnvb.out mesh/midpointrefine.out mesh/io.simplicial2D.out mesh/simplicial3D.out mesh/3DBisection.out mesh/3Dleb.out mesh/io.simplicial3D.out mesh/simplicialND.out mesh/io.simplicialND.out
-# mesh/simplicial3D.out mesh/io.out mesh/vtkwriter.out mesh/mesh.manifold.2D.out  mesh/manifold2D.out
+mesh.tests: mesh/coordinates.out
+mesh.tests: mesh/simplicial1D.out 
+mesh.tests: mesh/io.simplicial1D.out
+mesh.tests: mesh/uniformrefinement1D.out
+mesh.tests: mesh/simplicial2D.out
+mesh.tests: mesh/2DBisection.out 
+mesh.tests: mesh/2Dleb.out 
+mesh.tests: mesh/2Dnvb.out 
+mesh.tests: mesh/midpointrefine.out 
+mesh.tests: mesh/io.simplicial2D.out 
+mesh.tests: mesh/simplicial3D.out 
+mesh.tests: mesh/3DBisection.out 
+mesh.tests: mesh/3Dleb.out 
+mesh.tests: mesh/io.simplicial3D.out 
+mesh.tests: mesh/simplicialND.out 
+mesh.tests: mesh/io.simplicialND.out
+# mesh.tests: mesh/simplicial3D.out
+# mesh.tests: mesh/io.out 
+# mesh.tests: mesh/vtkwriter.out 
+# mesh.tests: mesh/mesh.manifold.2D.out 
+# mesh.tests: mesh/manifold2D.out
 
 
 
@@ -283,7 +336,18 @@ vtk/vtkwriter.mesh3Dur.out: vtk/vtkwriter.mesh3Dur.cpp $(Includes.vtk)
 vtk/vtkwriter.mesh3Dleb.out: vtk/vtkwriter.mesh3Dleb.cpp $(Includes.vtk)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) vtk/vtkwriter.mesh3Dleb.cpp $(Links.vtk) -o vtk/vtkwriter.mesh3Dleb.out
 
-vtk.tests = vtk/vtkwriter.mesh1D.out vtk/vtkwriter.mesh2D.out vtk/producedisk.out vtk/producehalo.out vtk/produceannulus.out vtk/producesphere.out vtk/vtkwriter.mesh2Dnvb.out vtk/vtkwriter.mesh2Dleb.out vtk/vtkwriter.mesh2Dur.out vtk/vtkwriter.mesh3D.out vtk/vtkwriter.mesh3Dur.out vtk/vtkwriter.mesh3Dleb.out
+vtk.tests: vtk/vtkwriter.mesh1D.out 
+vtk.tests: vtk/vtkwriter.mesh2D.out 
+vtk.tests: vtk/producedisk.out 
+vtk.tests: vtk/producehalo.out 
+vtk.tests: vtk/produceannulus.out 
+vtk.tests: vtk/producesphere.out 
+vtk.tests: vtk/vtkwriter.mesh2Dnvb.out 
+vtk.tests: vtk/vtkwriter.mesh2Dleb.out 
+vtk.tests: vtk/vtkwriter.mesh2Dur.out 
+vtk.tests: vtk/vtkwriter.mesh3D.out 
+vtk.tests: vtk/vtkwriter.mesh3Dur.out 
+vtk.tests: vtk/vtkwriter.mesh3Dleb.out
 
 
 
@@ -292,7 +356,7 @@ vtk.tests = vtk/vtkwriter.mesh1D.out vtk/vtkwriter.mesh2D.out vtk/producedisk.ou
 matrixmarket/mm.out: matrixmarket/mm.cpp $(Includes.matrixmarket)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) matrixmarket/mm.cpp $(Links.matrixmarket) -o matrixmarket/mm.out
 
-matrixmarket.tests = matrixmarket/mm.out
+matrixmarket.tests: matrixmarket/mm.out
 
 
 
@@ -344,7 +408,20 @@ fem/poissonneumann.out: fem/poissonneumann.cpp $(Includes.fem)
 fem/poissonneumann3D.out: fem/poissonneumann3D.cpp $(Includes.fem)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) fem/poissonneumann3D.cpp $(Links.fem) -o fem/poissonneumann3D.out
 
-fem.tests = fem/lagrange.out fem/localpolymatrix.out fem/feecmass.out fem/3Dfeecmass.out fem/interpolant.out fem/moreinterpolant.out fem/fields.out fem/approx0.out fem/approx1.out fem/approx2.out fem/approxvol.out fem/commutator0.out fem/poissonneumann.out fem/poissonneumann3D.out
+fem.tests: fem/lagrange.out 
+fem.tests: fem/localpolymatrix.out 
+fem.tests: fem/feecmass.out 
+fem.tests: fem/3Dfeecmass.out 
+fem.tests: fem/interpolant.out 
+fem.tests: fem/moreinterpolant.out 
+fem.tests: fem/fields.out 
+fem.tests: fem/approx0.out 
+fem.tests: fem/approx1.out 
+fem.tests: fem/approx2.out 
+fem.tests: fem/approxvol.out 
+fem.tests: fem/commutator0.out 
+fem.tests: fem/poissonneumann.out 
+fem.tests: fem/poissonneumann3D.out
 
 
 
@@ -359,9 +436,17 @@ fem.tests = fem/lagrange.out fem/localpolymatrix.out fem/feecmass.out fem/3Dfeec
 
 
 
-all: $(basic.tests) $(combinatorics.tests) $(operators.tests) $(dense.tests) $(sparse.tests) $(solver.tests) $(mesh.tests) $(vtk.tests) $(matrixmarket.tests) $(fem.tests) # test.compiler.out 
-
-# $(sparse.tests) $(solver.tests)
+all: basic.tests 
+all: combinatorics.tests
+all: operators.tests
+all: dense.tests
+all: sparse.tests
+all: solver.tests
+all: mesh.tests
+all: vtk.tests
+all: matrixmarket.tests
+all: fem.tests
+# all: test.compiler.out 
 
 
 include makefile.tests

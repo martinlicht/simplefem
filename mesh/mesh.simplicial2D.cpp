@@ -308,6 +308,11 @@ bool MeshSimplicial2D::compare( const MeshSimplicial2D& mesh ) const
 void MeshSimplicial2D::check() const
 {
     
+    #if 1
+    #warning Check for 2D Simplicial Mesh disabled
+    return;
+    #endif
+    
     #ifdef NDEBUG
     return;
     #endif

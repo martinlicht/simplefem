@@ -4,6 +4,7 @@ SHELL = /bin/sh
 
 default: all
 
-include ../common.make 
+# include ../common.recipe.mk 
+# include ../common.rules.mk 
 
-include ../makefile.clean
+include ../common.upkeep.mk

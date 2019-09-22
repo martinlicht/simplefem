@@ -1,3 +1,4 @@
+
 # Global definition of compiler and its flags 
 
 ### Compiler 
@@ -30,19 +31,22 @@ CPPFLAGS =
 
 
 
+# *.o: ../common.make ./makefile
 
 
-.PHONY: tidy
-tidy:
-	clang-tidy ./*.?pp -checks=llvm*,bugprone-*,clang-analyzer-*,misc-*,-llvm-header-guard,-llvm-include-order -- -std=c++17
 
-.PHONY: check
-check:
-	cppcheck --enable=warning,style,performance,portability --std=c++17 -q .
 
-.PHONY: cpplint
-cpplint:
-	( ./../cpplint.py --recursive --filter=-whitespace,-legal --quiet . ) | sort | uniq -c > TESTFOO
+# .PHONY: tidy
+# tidy:
+# 	clang-tidy ./*.?pp -checks=llvm*,bugprone-*,clang-analyzer-*,misc-*,-llvm-header-guard,-llvm-include-order -- -std=c++17
+
+# .PHONY: check
+# check:
+# 	cppcheck --enable=warning,style,performance,portability --std=c++17 -q .
+
+# .PHONY: cpplint
+# cpplint:
+# 	( ./../cpplint.py --recursive --filter=-whitespace,-legal --quiet . ) | sort | uniq -c > TESTFOO
 
 
 

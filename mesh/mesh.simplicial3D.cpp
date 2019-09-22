@@ -569,6 +569,11 @@ bool MeshSimplicial3D::compare( const MeshSimplicial3D& mesh ) const
 void MeshSimplicial3D::check() const
 {
     
+    #if 1
+    #warning Check for 3D Simplicial Mesh disabled
+    return;
+    #endif
+    
     #ifdef NDEBUG
     return;
     #endif
@@ -2454,11 +2459,11 @@ Float MeshSimplicial3D::get_edge_length( int e ) const
 
 
 
-#include "mesh.simplicial3D.br.cpp"
+#include "mesh.simplicial3D.br.cxx"
 
-#include "mesh.simplicial3D.ur.cpp"
+#include "mesh.simplicial3D.ur.cxx"
 
-#include "mesh.simplicial3D.mpr.cpp"
+#include "mesh.simplicial3D.mpr.cxx"
 
 
 

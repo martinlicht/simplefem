@@ -25,6 +25,7 @@ cachegrind.out.*
 *.aux
 *.bbl
 *.blg
+*.d
 *.idx
 *.ilg
 *.ind
