@@ -373,4 +373,18 @@ inline Float gaussrand()
 
 
 
+inline void cartesian_to_polar_coordinates2D( const Float& x, const Float& y, Float& radius, Float& angle )
+{
+    radius = std::sqrt( x*x + y*y );
+    angle  = std::atan2( x, y );
+}
+
+inline void polar_to_cartesian_coordinates2D( const Float& radius, const Float& angle, Float& x, Float& y, )
+{
+    x = r * std::cos( angle );
+    y = r * std::sin( angle );
+}
+
+
+
 #endif
