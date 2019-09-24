@@ -170,7 +170,7 @@ class Mesh
         
     private:
         
-        std::map< std::pair<int,int>, std::vector<IndexMap> > auxdata;
+        std::vector< std::vector< std::vector<IndexMap> > > auxdata;
         
     public: 
         

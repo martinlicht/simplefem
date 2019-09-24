@@ -98,6 +98,12 @@ MeshSimplicial3D::MeshSimplicial3D(
 {
     
     getcoordinates() = coords;
+
+    /* 0. sort the tetrahedron vertices */
+    
+    for( auto& tet : data_tetrahedron_vertices )
+      std::sort( tet.begin(), tet.end() );
+    
     
     /* 1. create all faces */
     
@@ -569,7 +575,7 @@ bool MeshSimplicial3D::compare( const MeshSimplicial3D& mesh ) const
 void MeshSimplicial3D::check() const
 {
     
-    #if 1
+    #if defined(DO_NOT_CHECK_MESHES)
     #warning Check for 3D Simplicial Mesh disabled
     return;
     #endif

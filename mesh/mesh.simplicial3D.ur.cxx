@@ -22,6 +22,12 @@
 
 
 
+void MeshSimplicial3D::uniformrefinement( int levels )
+{
+  assert( levels >= 0 );
+  for( int l = 0; l < levels; l++ )
+    uniformrefinement();
+}
 
 
 

@@ -187,6 +187,8 @@ class MeshSimplicial2D
         
         void uniformrefinement();
         
+        void uniformrefinement( int levels );
+        
         void midpoint_refinement( int t );
         
         void midpoint_refinement_global();

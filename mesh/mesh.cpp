@@ -24,19 +24,22 @@ Mesh::Mesh( int inner, int outer )
 {
   
   /* Build up the static auxiliary data */
-  for( int sup = 0; sup <= innerdimension; sup++ )
-  for( int sub = 0; sub <= sup; sub++ )
+  auxdata.resize( innerdimension+1 );
+  for( int sup = 0; sup <= innerdimension; sup++ ) 
   {
-//     std::cout << sup << space << sub << std::endl;
-    IndexRange from( 0, sub );
-    IndexRange to( 0, sup );
-//     std::cout << "generate sigmas" << nl << from << nl << to << std::endl;
-    std::vector<IndexMap> sigmas = generateSigmas( from, to );
-//     std::cout << "insert sigmas" << std::endl;
-    auxdata[ std::pair<int,int>(sup,sub) ] = sigmas;
-  }
+  
+    auxdata[sup].resize( sup+1 );
     
-//   std::cout << "mesh constructor" << std::endl;
+    for( int sub = 0; sub <= sup; sub++ )
+    {
+        IndexRange from( 0, sub );
+        IndexRange to( 0, sup );
+        std::vector<IndexMap> sigmas = generateSigmas( from, to );
+        auxdata[ sup ][ sub ] = sigmas;
+//         auxdata[ std::pair<int,int>(sup,sub) ] = sigmas;
+    }
+  
+  }
   
 }
 

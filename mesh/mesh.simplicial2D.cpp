@@ -76,6 +76,11 @@ MeshSimplicial2D::MeshSimplicial2D(
     
     getcoordinates() = coords;
     
+    /* 0. sort the triangle vertices */
+
+    for( auto& tri : data_triangle_vertices )
+      std::sort( tri.begin(), tri.end() );
+
     /* 1. create all edges, allocate memory */
     
     data_edge_vertices.resize( counter_triangles * 3 );
@@ -308,7 +313,7 @@ bool MeshSimplicial2D::compare( const MeshSimplicial2D& mesh ) const
 void MeshSimplicial2D::check() const
 {
     
-    #if 1
+    #if defined(DO_NOT_CHECK_MESHES)
     #warning Check for 2D Simplicial Mesh disabled
     return;
     #endif
@@ -1833,6 +1838,12 @@ void MeshSimplicial2D::newest_vertex_bisection( std::vector<int> edges )
 
 
 
+void MeshSimplicial2D::uniformrefinement( int levels )
+{
+  assert( levels >= 0 );
+  for( int l = 0; l < levels; l++ )
+    uniformrefinement();
+}
 
 
 
