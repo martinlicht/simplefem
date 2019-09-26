@@ -43,6 +43,8 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
             << "#" << iter << "/" << max_iteration_count
             << " : "
             << r_MAMnorm
+            << " : "
+            << ( r * ( invprecon * r ) ) 
             << std::endl;
             
         iterationStep( x, b, r, p, Mr, Mp, AMr, AMp, r_MAMnorm, MAMp, AMAMp );
@@ -93,7 +95,7 @@ void PreconditionedConjugateResidualMethod::iterationStart(
     /* p = r */
     
     r = b - A * x;
-    p = r;
+    p = M * ( A * r );
     
     /* Mr = M r */
     /* Mp = M p */

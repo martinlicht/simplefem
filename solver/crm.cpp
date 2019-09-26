@@ -112,7 +112,7 @@ void ConjugateResidualMethod::iterationStart(
     r = b - internalOperator * x;
 
     /* d = r */
-    d.copydatafrom( r );
+    d = internalOperator * r; //d.copydatafrom( r );
 
     /* Ar = A r */
     // internalOperator.apply( Ar, (const FloatVector&) r );
@@ -155,7 +155,7 @@ void ConjugateResidualMethod::iterationStep(
     x += alpha * d;
 
     /*  r -= alpha Ad */
-    r = b - internalOperator * x; //-= alpha * Ad;
+    r -= alpha * Ad; //= b - internalOperator * x;
 
     /*  Ar -= alpha AAd */
     Ar -= alpha * AAd;
@@ -164,7 +164,7 @@ void ConjugateResidualMethod::iterationStep(
 
     /*  beta = r.Ar / rho */
     Float tau = r_Anorm;
-    r_Anorm = r * ( internalOperator * r ); //r * Ar;
+    r_Anorm = r * Ar; //r * ( internalOperator * r ); //r * Ar;
     Float beta = r_Anorm / tau;
     assert( r_Anorm >= 0. );
     
