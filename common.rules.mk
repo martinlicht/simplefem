@@ -17,7 +17,7 @@ library := lib$(dirname).so
 all: $(objects) $(library)
 
 $(library): $(objects)
-	g++ -shared -o $@ $^
+	$(CXX) $(CXXFLAGS) -shared -o $@ $^
 
 
 # $(dependencies): .deps/%.d: %.cpp | $(depdir)

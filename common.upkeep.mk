@@ -11,7 +11,13 @@ check:
 cpplint:
 	( ./../cpplint.py --recursive --filter=-whitespace,-legal --quiet . ) | sort | uniq -c > TESTFOO
 
+.PHONY: vtkclean
+vtkclean:
+	-rm -f *.vtk
+	-rm -f ./*/*.vtk
+	-rm -f ./*/*/*.vtk
 
+.PHONY: clean
 clean: 
 	-if [ -d .deps/ ]; then rm -f .deps/*.d; fi 
 	-if [ -d .deps/ ]; then rmdir .deps/; fi 
