@@ -21,6 +21,12 @@ test:
 	echo "finished building tests."
 
 
+.PHONY: vtkclean
+vtkclean:
+	-rm -f *.vtk
+	-rm -f ./*/*.vtk
+	-rm -f ./*/*/*.vtk
+
 clean: 
 	cd ./combinatorics && $(MAKE) clean
 	cd ./operators && $(MAKE) clean
