@@ -11,7 +11,6 @@
 /************************
 ****
 ****  Abstract class for iterative solvers  
-****  - instantiates LinearOperator
 ****  - uses iteration counter, error tolerance, and internal residual vector 
 ****  
 ************************/
@@ -19,7 +18,6 @@
 
   
 class IterativeSolver
-: public LinearOperator
 {
 
     protected:
@@ -32,10 +30,8 @@ class IterativeSolver
         explicit IterativeSolver( const LinearOperator& );
         virtual ~IterativeSolver();
 
-        virtual void check() const override;
-        virtual void print( std::ostream& ) const override;
-
-        virtual FloatVector apply( const FloatVector& src, Float scaling ) const override;
+        virtual void check() const;
+        virtual void print( std::ostream& ) const;
 
         const LinearOperator& getInternalOperator() const;
         const FloatVector& getResidualVector() const;

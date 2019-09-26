@@ -38,7 +38,7 @@ class ConjugateResidualMethod
                                 FloatVector& r, FloatVector& d, FloatVector& Ar, FloatVector& Ad,
                                 Float& rAnorm ) const;
 
-        void iterationStep( FloatVector& x,
+        void iterationStep( FloatVector& x, const FloatVector& b,
                                 FloatVector& r, FloatVector& d, FloatVector& Ar, FloatVector& Ad,
                                 Float& rAnorm, FloatVector& p ) const;
         

@@ -10,8 +10,9 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
     x.check();
     b.check();
     
-    assert( x.getdimension() == dimension );
-    assert( b.getdimension() == dimension );
+    assert( x.getdimension() == b.getdimension() );
+    assert( internalOperator.getdimin()  == x.getdimension() );
+    assert( internalOperator.getdimout() == b.getdimension() );
     
     /* Build up data */
     int iter = 0;
@@ -66,7 +67,7 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
     iterationStart( x, b, r, p, Mr, Mp, AMr, AMp, r_MAMnorm );
     
     std::cout 
-        << "recomputed"
+        << "recomputed "
         << r_MAMnorm << " vs " << tolerance
         << std::endl;
         
@@ -173,9 +174,6 @@ void PreconditionedConjugateResidualMethod::check() const
     assert( op.getdimin() == op.getdimout() );
     assert( invprecon.getdimin() == invprecon.getdimout() );
     assert( op.getdimin() == invprecon.getdimout() );
-    assert( getdimin() == op.getdimin() );
-    assert( getdimin() == getdimout() );
-    assert( getdimin() == dimension );
 }
 
 void PreconditionedConjugateResidualMethod::print( std::ostream& os ) const

@@ -57,17 +57,19 @@ void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) cons
     
     std::cout << "Begin Conjugate Residual iteration" << std::endl;
     std::cout << "start: " << r_Anorm << "tolerance: " << tolerance << std::endl;
-
-    while( iter < max_iteration_count && r_Anorm > tolerance ) /* Perform CRM step */
+    
+    while( iter < max_iteration_count && r * r > tolerance ) /* Perform CRM step */
     {
         if( iter % print_modulo == 0 ) 
           std::cout 
             << "#" << iter << "/" << max_iteration_count
             << " : "
             << r_Anorm 
+            << " : "
+            << r * r 
             << std::endl;
             
-        iterationStep( x, r, d, Ar, Ad, r_Anorm, AAd );
+        iterationStep( x, b, r, d, Ar, Ad, r_Anorm, AAd );
         
         iter++;
     }
@@ -87,12 +89,12 @@ void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) cons
     
     
     iterationStart( x, b, residual, d, Ar, Ad, r_Anorm );
+    
     std::cout 
-        << "iteration: " << iter << "/" << max_iteration_count
-        << " : "
+        << "recomputed "
         << r_Anorm << " vs " << tolerance
         << std::endl;
-    
+        
     recent_iteration_count = iter;
     recent_deviation = r_Anorm;
     
@@ -113,44 +115,59 @@ void ConjugateResidualMethod::iterationStart(
     d.copydatafrom( r );
 
     /* Ar = A r */
-    internalOperator.apply( Ar, (const FloatVector&) r );
+    // internalOperator.apply( Ar, (const FloatVector&) r );
+    Ar = internalOperator * r;
 
     /* Ad = A d */
-    internalOperator.apply( Ad, (const FloatVector&) d );
+    // internalOperator.apply( Ad, (const FloatVector&) d );
+    Ad = internalOperator * d;
 
     /* rho is r.A.r */
     r_Anorm = r * Ar;
+    assert( r_Anorm >= 0. );
       
 }
 
 
+
+
 void ConjugateResidualMethod::iterationStep( 
-    FloatVector& x,
+    FloatVector& x, const FloatVector& b,
     FloatVector& r, FloatVector& d, FloatVector& Ar, FloatVector& Ad,
     Float& r_Anorm,
-    FloatVector& p
+    FloatVector& AAd
 ) const {
+
+    assert( r_Anorm >= 0. );
     
-    /*  p = A * Ad */
-    internalOperator.apply( p, Ad, 1. );
-  
-    /*  alpha = r.A.r / d.p */
-    Float alpha = r_Anorm / ( Ad * Ad );
+    /*  AAd = A * Ad */
+    // internalOperator.apply( AAd, Ad, 1. );
+    AAd = internalOperator * Ad;
+
+    /*  alpha = r.A.r / d.AAd */
+    Float norm_sq_Ad = Ad * Ad;
+    Float alpha = r_Anorm / norm_sq_Ad;
+
+    assert( r_Anorm >= 0. ); assert( norm_sq_Ad >= 0. );
+    if( norm_sq_Ad < tolerance ) return;
 
     /*  x += alpha d */
     x += alpha * d;
 
     /*  r -= alpha Ad */
-    r -= alpha * Ad;
+    r = b - internalOperator * x; //-= alpha * Ad;
 
-    /*  Ar -= alpha p */
-    Ar -= alpha * p;
+    /*  Ar -= alpha AAd */
+    Ar -= alpha * AAd;
+
+    // std::cout << "deviation: " << ( Ar - internalOperator * r ).norm() << "\t";
 
     /*  beta = r.Ar / rho */
     Float tau = r_Anorm;
-    r_Anorm = r * Ar;
+    r_Anorm = r * ( internalOperator * r ); //r * Ar;
     Float beta = r_Anorm / tau;
-
+    assert( r_Anorm >= 0. );
+    
     /*  d = r + beta d */
     d = r + beta * d;
 
@@ -184,9 +201,6 @@ void ConjugateResidualMethod::check() const
     
     IterativeSolver::check();
     assert( op.getdimin() == op.getdimout() );
-    assert( getdimin() == op.getdimin() );
-    assert( getdimin() == getdimout() );
-    assert( getdimin() == dimension );
 }
 
 void ConjugateResidualMethod::print( std::ostream& os ) const
