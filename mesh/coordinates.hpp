@@ -83,6 +83,8 @@ class Coordinates
         DenseMatrix getLinearPart( const IndexMap& ) const;
         FloatVector getShiftPart( const IndexMap& ) const;
         
+        FloatVector getCenter() const;
+        
     private:
             
         int dimension;

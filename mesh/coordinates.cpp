@@ -236,6 +236,18 @@ FloatVector Coordinates::getShiftPart( const IndexMap& im ) const
 
 
 
+FloatVector Coordinates::getCenter() const
+{
+    FloatVector center( dimension, 0. );
+    for( int i = 0; i < number * dimension; i++ )
+        center[ i % dimension ] += data[ ( i / dimension ) * dimension + ( i % dimension ) ];
+    for( int d = 0; d < dimension; d++ )
+        center[ d ] /= number;
+    return center;
+}
+
+
+
 
 bool compare( const Coordinates& coords_left, const Coordinates& coords_right, Float tolerance )
 {
