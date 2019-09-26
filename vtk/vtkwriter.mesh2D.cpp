@@ -50,6 +50,25 @@ void VTK_MeshWriter_Mesh2D::writeCoordinateBlock()
 }
         
         
+void VTK_MeshWriter_Mesh2D::writeCoordinateBlock( const FloatVector& z )
+{
+    // std::ostream& os = std::clog;
+    os << "POINTS " << mesh.count_simplices(0) << " double" << nl;
+    assert( z.getdimension() == mesh.count_simplices(0) );
+    assert( mesh.getouterdimension() == 2 );
+    
+    for( int v = 0; v < mesh.count_simplices(0); v++ )
+        os << mesh.getcoordinates().getdata(v,0)
+            << space
+            << mesh.getcoordinates().getdata(v,1) 
+            << space 
+            << z.at( v )
+            << nl;
+      
+    os << nl;
+}
+        
+        
 void VTK_MeshWriter_Mesh2D::writeTopDimensionalCells()
 {
     // std::ostream& os = std::clog;
