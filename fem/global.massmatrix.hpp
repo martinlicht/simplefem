@@ -68,16 +68,18 @@ inline SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r 
     
         DenseMatrix fullMM = MatrixTensorProduct( polyMM, formMM ) * measure;
 
+        assert( measure >= 0. );
+
         if( k == 0 )
         {
             assert( ( fullMM - polyMM * measure ).issmall() );
         }
         
-//         std::cout << measure << std::endl;
+        // std::cout << measure << std::endl;
         
-//         std::cout << formMM << std::endl;
+        // std::cout << formMM << std::endl;
         
-//         std::cout << fullMM << std::endl;
+        // std::cout << fullMM << std::endl;
         
         for( int i = 0; i < localdim; i++ )
         for( int j = 0; j < localdim; j++ )
@@ -193,6 +195,44 @@ inline SparseMatrix FEECBrokenMassMatrixRightFactor( const Mesh& mesh, int n, in
     return ret;
 }
 
+
+
+
+
+inline FloatVector FEECBrokenMassMatrix_cellwisemass( const Mesh& mesh, int n, int k, int r, const FloatVector vec )
+{
+    
+    // check whether the parameters are right 
+    // only lowest order here
+    
+    assert( r >= 0 );
+    assert( n >= 0 && n <= mesh.getinnerdimension() );
+    assert( k >= 0 && k <= n );
+    assert( binomial_integer( n+r, n ) == binomial_integer( n+r, r ) );
+    
+    // Auxiliary calculations and preparations
+    
+    const int num_simplices = mesh.count_simplices( n );
+        
+    const int localdim = binomial_integer( n+r, n ) * binomial_integer( n+1, k );
+        
+    FloatVector ret( num_simplices );
+    
+    assert( vec.getdimension() == localdim * num_simplices );
+    
+    #if defined(_OPENMP)
+    #pragma omp parallel for
+    #endif
+    for( int s = 0; s < num_simplices; s++ )
+    {
+        ret[s] = 0.;
+        for( int i = 0; i < localdim; i++ )
+            ret[s] = ret[s] + vec[ s * localdim + i] * vec[ s * localdim + i];
+        
+    }
+    
+    return ret;
+}
 
 
 
