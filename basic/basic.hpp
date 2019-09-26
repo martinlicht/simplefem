@@ -379,11 +379,29 @@ inline void cartesian_to_polar_coordinates2D( const Float& x, const Float& y, Fl
     angle  = std::atan2( x, y );
 }
 
-inline void polar_to_cartesian_coordinates2D( const Float& radius, const Float& angle, Float& x, Float& y, )
+inline void polar_to_cartesian_coordinates2D( const Float& radius, const Float& angle, Float& x, Float& y )
 {
-    x = r * std::cos( angle );
-    y = r * std::sin( angle );
+    x = radius * std::cos( angle );
+    y = radius * std::sin( angle );
 }
+
+
+
+
+
+
+inline void sort_integers( int* start, int length )
+{
+    assert( start != nullptr && length >= 0 );
+    for( int i = 1; i < length; i++ )
+    for( int j = 1; j < length; j++ )
+        if( start[j-1] > start[j] ) 
+            std::swap( start[j-1], start[j] );
+}
+
+
+
+
 
 
 

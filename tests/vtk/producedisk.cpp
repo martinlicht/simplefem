@@ -19,7 +19,7 @@ int main()
 {
     cout << "Unit Test for VTK output of Simplicial Mesh" << endl;
     
-    const int Lmax = 6;
+    const int Lmax = 9;
     
     for( int L = 3; L <= Lmax; L++ )
     {
@@ -28,30 +28,29 @@ int main()
         
         cout << L << ":\t" << M.getShapemeasure() << endl;
         
-        if( L == Lmax )
         {
             
-            M.uniformrefinement();
-            M.uniformrefinement();
+            // M.uniformrefinement();
+            // M.uniformrefinement();
         
             cout << "Print VTK-type file" << endl;
         
-            fstream fs( "./rounddisk.vtk", std::fstream::out );
+            fstream fs( string("./rounddisk") + std::to_string(L) + string(".vtk"), std::fstream::out );
         
             VTK_MeshWriter_Mesh2D vtk( M, fs );
-            vtk.writePreamble( "Attempt at a " );
+            vtk.writePreamble( "Attempt at a round disk" );
             vtk.writeCoordinateBlock();
             vtk.writeTopDimensionalCells();
                 
-            {
-                FloatVector V( M.count_simplices(0), 
-                                [&M](int i)->Float{
-                                FloatVector point = M.getcoordinates().getvectorclone(i);
-                                return point[0] + std::cos( 2.0 * 2 * 3.14159 * point[1] );
-                            });
+            // {
+            //     FloatVector V( M.count_simplices(0), 
+            //                     [&M](int i)->Float{
+            //                     FloatVector point = M.getcoordinates().getvectorclone(i);
+            //                     return point[0] + std::cos( 2.0 * 2 * 3.14159 * point[1] );
+            //                 });
                 
-                vtk.writeVertexScalarData(V,"testing_scalar_data",1.0);
-            }
+            //     vtk.writeVertexScalarData(V,"testing_scalar_data",1.0);
+            // }
 
             fs.close();
 

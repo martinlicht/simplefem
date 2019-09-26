@@ -39,7 +39,6 @@ int main()
 		x.random(); rhs.zero();
 		
 		cout << x << endl;
-		cout << CRM << endl;
 		CRM.solve( x, rhs );
 	}
 	
@@ -74,7 +73,7 @@ int main()
 		// cout << M << endl;
 		
 		ConjugateResidualMethod CRM(M);
-        CRM.max_iteration_count = 100;
+	        CRM.max_iteration_count = 100;
 		CRM.tolerance = 1e-16;
                 
                 clock_t start = clock();

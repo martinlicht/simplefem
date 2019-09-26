@@ -28,7 +28,6 @@ int main()
 		x.random(); rhs.zero();
 		
 		cout << x << endl;
-		cout << CRM << endl;
 		CRM.solve( x, rhs );
 		// cout << x << endl;
 	
@@ -47,7 +46,6 @@ int main()
 		x.random(); rhs.zero();
 		
 		cout << x << endl;
-		cout << CRM << endl;
 		CRM.solve( x, rhs );
 		// cout << x << endl;
 	

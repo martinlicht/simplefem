@@ -103,7 +103,7 @@ int main()
 
             cout << "Solving Poisson Problem with Neumann boundary conditions" << endl;
 
-            int max_l = 8;
+            int max_l = 5;
             int max_r = 1;
             
             for( int l = 0; l <= max_l; l++ ){
@@ -201,7 +201,7 @@ int main()
                         
                         cout << "...iterative solver" << endl;
                         
-                        if(false){
+                        {
                             sol.zero();
                             timestamp start = gettimestamp();
                             ConjugateResidualMethod CRM( stiffness_csr );
@@ -212,7 +212,7 @@ int main()
                             std::cout << "\t\t\t " << end - start << std::endl;
                         }
                         
-                        {
+                        if(false){
                             sol.zero();
                             timestamp start = gettimestamp();
                             PreconditionedConjugateResidualMethod PCRM( stiffness_csr, stiffness_invprecon );
@@ -245,7 +245,7 @@ int main()
                 
                             VTK_MeshWriter_Mesh2D vtk( M, fs );
                             vtk.writePreamble( "Poisson-Neumann problem" );
-                            vtk.writeCoordinateBlock();
+                            vtk.writeCoordinateBlock( 0.3 * sol );
                             vtk.writeTopDimensionalCells();
                             
                             vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
