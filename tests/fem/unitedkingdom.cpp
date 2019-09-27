@@ -68,7 +68,7 @@ int main()
                     assert( vec.getdimension() == 2 );
                     // return FloatVector({ 1. });
                     return FloatVector({ 
-                        vec[0] * vec[0] * vec[1] * vec[1]
+                        0.01 * vec[0] * vec[0] * vec[1] * vec[1]
                         });
                 }
             );
@@ -78,8 +78,8 @@ int main()
                     assert( vec.getdimension() == 2 );
                     // return FloatVector({ 1. });
                     return FloatVector( { 
-                            2. * vec[0] * vec[1] * vec[1],
-                            2. * vec[1] * vec[0] * vec[0], 
+                            0.01 * 2. * vec[0] * vec[1] * vec[1],
+                            0.01 * 2. * vec[1] * vec[0] * vec[0], 
                         });
                 }
             );
@@ -88,7 +88,7 @@ int main()
                 [](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
                     return FloatVector({ 
-                        2. * vec[0] * vec[0] + 2. * vec[1] * vec[1] 
+                        0.01 * 2. * vec[0] * vec[0] + 2. * vec[1] * vec[1] 
                      });
                 }
             );
@@ -151,7 +151,7 @@ int main()
                     // stiffness.sortentries();
                     // auto stiffness_csr = MatrixCSR( stiffness );
                     
-                    //auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. );
+                    auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. );
                     // auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
                     // std::cout << "Average value of diagonal preconditioner: " << stiffness_invprecon.getdiagonal().average() << std::endl;
 
@@ -200,6 +200,18 @@ int main()
                         sol.zero();
                         FloatVector eins( sol.getdimension(), 1. );
                         
+                        for( int t = 0; t < 4; t++ )
+                        {
+                            timestamp start = gettimestamp();
+                            PreconditionedConjugateResidualMethod CRM( stiffness, stiffness  );
+                            CRM.print_modulo = 1;//+sol.getdimension()/1000;
+                            CRM.tolerance = 1e-15;
+                            CRM.solve( sol, rhs );
+                            timestamp end = gettimestamp();
+                            std::cout << "\t\t\t " << end - start << std::endl;
+                            sol = sol - ( interpol_one * ( scalar_massmatrix * ( incmatrix * sol ) ) ) * eins;
+                        }
+
                         if(false)
                         for( int t = 0; t < 4; t++ )
                         {
@@ -213,6 +225,7 @@ int main()
                             sol = sol - ( interpol_one * ( scalar_massmatrix * ( incmatrix * sol ) ) ) * eins;
                         }
 
+                        if(false)
                         for( int t = 0; t < 10; t++ )
                         {
                             timestamp start = gettimestamp();

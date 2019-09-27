@@ -41,7 +41,7 @@ int main()
             auto last = std::unique( refinementedges.begin(), refinementedges.end() );
             refinementedges.erase( last, refinementedges.end() );
             
-            M.longest_edge_bisection( refinementedges );
+            M.longest_edge_bisection_recursive( refinementedges );
         
         }
         

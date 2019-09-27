@@ -282,7 +282,9 @@ class MeshSimplicial3D
         
         void bisect_edge( int e );
         
-        void longest_edge_bisection( std::vector<int> edges );
+        // void longest_edge_bisection( std::vector<int> edges );
+        void longest_edge_bisection_recursive( const std::vector<int>& edges );
+        void longest_edge_bisection_recursive( int e );
         
         void uniformrefinement();
         

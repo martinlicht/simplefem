@@ -1049,6 +1049,9 @@ void MeshSimplicial3D::bisect_edge( int e )
 
 
 
+
+
+/*
 void MeshSimplicial3D::longest_edge_bisection( std::vector<int> edges )
 {
     check();
@@ -1056,76 +1059,243 @@ void MeshSimplicial3D::longest_edge_bisection( std::vector<int> edges )
     const int old_vertex_count = counter_vertices;
     
     
-    /* 0. check the input */
+    // 0. check the input
     
     for( int& e : edges )
         assert( 0 <= e && e < counter_edges );
     
     
-    /* 1. create stack for the edges to be bisected, and fill in first batch */
+    // 1. create stack for the edges to be bisected, and fill in first batch 
     
-    std::list<int> todostack;
+    std::stack<int> todostack;
     
     for( int& e : edges )
-        todostack.push_back( e ); // put e on top either by inserting or pulling it up!
+        todostack.push( e );
         
-    
-    /* 2. conduct the main loop of the refinement algorithm */
+    // 2. conduct the main loop of the refinement algorithm 
     
     while( ! todostack.empty() )
     {
         
-        LOG << todostack.back() << space << todostack.size();
+        std::cout << todostack.size() << " ";
         
         // as long the stack is not empty,
         // pick the top edge and make the following case distinction
-        // a) if the top edge is longer than its neighbors, bisect and pop
-        // b) else, push the longest edge of each parent simplex
+        // a) the edge index belongs to an edge already bisected and can be ignored 
+        // b) if the top edge is bisection edge to all its neighbors, bisect and pop
+        // c) else, push the necessary edge of each parent simplex
         
-        int e = todostack.back();
-    
-        Float length_e = get_edge_length( e );
+        int e = todostack.top();
+        
+        // to check whether e belongs to an edge that has already been bisected,
+        // we check whether one of the vertices belongs to the new vertices 
+        
+        if( get_edge_vertex( e, 0 ) >= old_vertex_count || get_edge_vertex(e,1) >= old_vertex_count ) {
             
-        // run over neighbor triangles and check for longer edges 
+            todostack.pop();
         
-        bool compatibly_divisible = true;
+        } else {
+            
+            // run over neighbor tetrahedra and check for necessary edges 
+            
+            for( int t = get_edge_firstparent_tetrahedron( e ); t != nullindex; t = get_edge_nextparent_tetrahedron( e, t ) )
+            {
+                
+                int e0 = get_tetrahedron_edge( t, 0 ); Float l0 = get_edge_length( e0 );
+                int e1 = get_tetrahedron_edge( t, 1 ); Float l1 = get_edge_length( e1 );
+                int e2 = get_tetrahedron_edge( t, 2 ); Float l2 = get_edge_length( e2 );
+                int e3 = get_tetrahedron_edge( t, 3 ); Float l3 = get_edge_length( e3 );
+                int e4 = get_tetrahedron_edge( t, 4 ); Float l4 = get_edge_length( e4 );
+                int e5 = get_tetrahedron_edge( t, 5 ); Float l5 = get_edge_length( e5 );
+                
+                assert( e == e0 || e == e1 || e == e2 || e == e3 || e == e4 || e == e5 );
+                
+                int ne = nullindex;
+                if( l0 >= l1 && l0 >= l2 && l0 >= l3 && l0 >= l4 && l0 >= l5 ) ne = e0;
+                if( l1 >= l0 && l1 >= l2 && l1 >= l3 && l1 >= l4 && l1 >= l5 ) ne = e1;
+                if( l2 >= l0 && l2 >= l1 && l2 >= l3 && l2 >= l4 && l2 >= l5 ) ne = e2;
+                if( l3 >= l0 && l3 >= l1 && l3 >= l2 && l3 >= l4 && l3 >= l5 ) ne = e3;
+                if( l4 >= l0 && l4 >= l1 && l4 >= l2 && l4 >= l3 && l4 >= l5 ) ne = e4;
+                if( l5 >= l0 && l5 >= l1 && l5 >= l2 && l5 >= l3 && l5 >= l4 ) ne = e5;
+                assert( ne != nullindex );
+                
+                if( ne != e )
+                    todostack.push( ne );
+                
+            }
+            
+            // if top edge is still the same, bisect
+            
+            if( e == todostack.top() )
+            {
+                todostack.pop();
+                bisect_edge( e );
+            }
+            
+        }
+        
+    }
+    
+    // fiinished!
+    
+    check();
+}*/
+
+
+
+
+
+// void MeshSimplicial3D::longest_edge_bisection( std::vector<int> edges )
+// {
+//     check();
+    
+//     const int old_vertex_count = counter_vertices;
+    
+    
+//     // 0. check the input
+    
+//     for( int& e : edges )
+//         assert( 0 <= e && e < counter_edges );
+    
+    
+//     // 1. create stack for the edges to be bisected, and fill in first batch 
+    
+//     std::list<int> todostack;
+    
+//     for( int& e : edges )
+//         todostack.push_back( e ); // put e on top either by inserting or pulling it up!
+        
+    
+//     // 2. conduct the main loop of the refinement algorithm 
+    
+//     while( ! todostack.empty() )
+//     {
+        
+//         //LOG << todostack.back() << space << todostack.size();
+        
+//         // as long the stack is not empty,
+//         // pick the top edge and make the following case distinction
+//         // a) if the top edge is longer than its neighbors, bisect and pop
+//         // b) else, push the longest edge of each parent simplex
+        
+//         int e = todostack.back();
+    
+//         // to check whether e belongs to an edge that has already been bisected,
+//         // we check whether one of the vertices belongs to the new vertices 
+        
+//         // if( get_edge_vertex( e, 0 ) >= old_vertex_count || get_edge_vertex(e,1) >= old_vertex_count ) {
+            
+//         //     todostack.pop();
+        
+//         // } else 
+//         {
+            
+//             Float length_e = get_edge_length( e );
+                
+//             // run over neighbor tetrahedra and check for longer edges 
+            
+//             bool compatibly_divisible = true;
+            
+//             for( int t = get_edge_firstparent_tetrahedron( e ); t != nullindex; t = get_edge_nextparent_tetrahedron( e, t ) )
+//             for( int ei = 0; ei < 6; ei++ )
+//             {
+//                 int other_e = get_tetrahedron_edge( t, ei );
+                
+//                 if( e != other_e && get_edge_length( other_e ) > length_e ) {
+//                     compatibly_divisible = false;
+//                     todostack.push_back( other_e );
+//                 }
+//             }
+            
+//             // if top edge is still the same, bisect 
+        
+//             if( compatibly_divisible )
+//             {
+//                 assert( e == todostack.back() );
+//                 todostack.remove( e );
+//                 bisect_edge( e );
+//                 assert( std::find( todostack.begin(), todostack.end(), e ) == todostack.end() );
+//             } else 
+//                 assert( e != todostack.back() );
+
+//         }
+           
+//     }
+    
+    
+//     // fiinished!
+    
+//     check();
+// }
+
+
+
+
+
+
+
+/*
+ * * * * * LONGEST EDGE VERTEX BISECTION
+ */
+
+void MeshSimplicial3D::longest_edge_bisection_recursive( const std::vector<int>& edges )
+{
+    check();
+
+    // 0. check the input
+    
+    for( const int& e : edges )
+        assert( 0 <= e && e < counter_edges );
+
+
+    // 1. run over the edges and apply the recursion
+
+    const int old_vertex_count = counter_vertices;
+
+    for( const int& e: edges ) {
+
+        if( get_edge_vertex( e, 0 ) >= old_vertex_count || get_edge_vertex(e,1) >= old_vertex_count )
+            continue;
+
+        longest_edge_bisection_recursive( e );
+
+    }
+
+    // 3. check the result 
+    
+    for( const int& e : edges )
+        assert( get_edge_vertex( e, 0 ) >= old_vertex_count || get_edge_vertex(e,1) >= old_vertex_count );
+    
+    check();
+}
+
+
+void MeshSimplicial3D::longest_edge_bisection_recursive( const int e )
+{
+    assert( 0 <= e && e < counter_edges );
+
+    int longest_edge = nullindex;
+        
+    do{
+
+        longest_edge = e;
         
         for( int t = get_edge_firstparent_tetrahedron( e ); t != nullindex; t = get_edge_nextparent_tetrahedron( e, t ) )
         for( int ei = 0; ei < 6; ei++ )
         {
             int other_e = get_tetrahedron_edge( t, ei );
             
-            if( e != other_e && get_edge_length( other_e ) > length_e ) {
-                compatibly_divisible = false;
-                todostack.push_back( other_e );
-            }
+            if( e != other_e && get_edge_length( other_e ) > get_edge_length( e ) )
+                longest_edge = other_e;
         }
-            
-        
-        // if top edge is still the same, bisect 
-    
-        if( compatibly_divisible )
-        {
-            assert( e == todostack.back() );
-            todostack.remove( e );
-            bisect_edge( e );
-            assert( std::find( todostack.begin(), todostack.end(), e ) == todostack.end() );
-        } else 
-            assert( e != todostack.back() );
-           
-    }
-    
-    
-    // fiinished!
-    
-    check();
+
+        if( longest_edge != e )
+            longest_edge_bisection_recursive( longest_edge );
+
+    } while ( longest_edge != e );
+
+    bisect_edge( e );
+
 }
-
-
-
-
-
-
-
 
 

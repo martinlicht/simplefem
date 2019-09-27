@@ -1650,91 +1650,211 @@ void MeshSimplicial2D::bisect_edge( int e )
     
 }
 
+
+
+
+
+
 /*
- * * * * * NEWEST VERTEX BISECTION
+ * * * * * LONGEST EDGE VERTEX BISECTION
  */
 
-
-void MeshSimplicial2D::longest_edge_bisection( std::vector<int> edges )
+void MeshSimplicial2D::longest_edge_bisection_recursive( const std::vector<int>& edges )
 {
     check();
+
+    // 0. check the input
     
-    const int old_vertex_count = counter_vertices;
-    
-    
-    /* 0. check the input */
-    
-    for( int& e : edges )
+    for( const int& e : edges )
         assert( 0 <= e && e < counter_edges );
+
+
+    // 1. run over the edges and apply the recursion
+
+    const int old_vertex_count = counter_vertices;
+
+    for( const int& e: edges ) {
+
+        if( get_edge_vertex( e, 0 ) >= old_vertex_count || get_edge_vertex(e,1) >= old_vertex_count )
+            continue;
+
+        longest_edge_bisection_recursive( e );
+
+    }
+
+    // 3. check the result 
     
+    for( const int& e : edges )
+        assert( get_edge_vertex( e, 0 ) >= old_vertex_count || get_edge_vertex(e,1) >= old_vertex_count );
     
-    /* 1. create stack for the edges to be bisected, and fill in first batch */
-    
-    std::list<int> todostack;
-    
-    for( int& e : edges )
-        todostack.push_back( e );
-    
-//     { /* remove duplicates */
-//         std::sort( todostack.begin(), todostack.end() );
-//         auto last = std::unique( todostack.begin(), todostack.end() );
-//         todostack.erase( last, todostack.end() );
-//     }
+    check();
+}
+
+
+void MeshSimplicial2D::longest_edge_bisection_recursive( const int e )
+{
+    assert( 0 <= e && e < counter_edges );
+
+    int longest_edge = nullindex;
         
-    
-    /* 2. conduct the main loop of the refinement algorithm */
-    
-    while( ! todostack.empty() )
-    {
-        
-        LOG << todostack.back() << space << todostack.size();
-        
-        // as long the stack is not empty,
-        // pick the top edge and make the following case distinction
-        // a) if the top edge is longer than its neighbors, bisect and pop
-        // b) else, push the longest edge of each parent simplex
-        
-        int e = todostack.back();
-    
-        Float length_e = get_edge_length( e );
-            
-        // run over neighbor triangles and check for longer edges 
-        
-        bool compatibly_divisible = true;
+    do{
+
+        longest_edge = e;
         
         for( int t = get_edge_firstparent_triangle( e ); t != nullindex; t = get_edge_nextparent_triangle( e, t ) )
         for( int ei = 0; ei < 3; ei++ )
         {
             int other_e = get_triangle_edge( t, ei );
             
-            if( e != other_e && get_edge_length( other_e ) > length_e ) {
-                compatibly_divisible = false;
-                todostack.push_back( other_e );
-            }
+            if( e != other_e && get_edge_length( other_e ) > get_edge_length( e ) )
+                longest_edge = other_e;
         }
-            
-        
-        // if top edge is still the same, bisect 
-    
-        if( compatibly_divisible )
-        {
-            assert( e == todostack.back() );
-            todostack.remove( e );
-            bisect_edge( e );
-            assert( std::find( todostack.begin(), todostack.end(), e ) == todostack.end() );
-        } else 
-            assert( e != todostack.back() );
-        
-    
-    }
-    
-    // fiinished!
-    
-    check();
+
+        if( longest_edge != e )
+            longest_edge_bisection_recursive( longest_edge );
+
+    } while ( longest_edge != e );
+
+    bisect_edge( e );
+
 }
 
 
 
+// void MeshSimplicial2D::longest_edge_bisection( std::vector<int> edges )
+// {
+//     check();
+    
+//     const int old_vertex_count = counter_vertices;
+    
+    
+//     /* 0. check the input */
+    
+//     for( int& e : edges )
+//         assert( 0 <= e && e < counter_edges );
+    
+    
+//     /* 1. create stack for the edges to be bisected, and fill in first batch */
+    
+//     std::stack<int> todostack;
+    
+//     for( int& e : edges )
+//         todostack.push( e );
+    
+// //     { /* remove duplicates */
+// //         std::sort( todostack.begin(), todostack.end() );
+// //         auto last = std::unique( todostack.begin(), todostack.end() );
+// //         todostack.erase( last, todostack.end() );
+// //     }
+        
+    
+//     /* 2. conduct the main loop of the refinement algorithm */
+    
+//     while( ! todostack.empty() )
+//     {
+        
+//         // as long the stack is not empty,
+//         // pick the top edge and make the following case distinction
+//         // a) the edge index belongs to an edge already bisected and can be ignored 
+//         // b) if the top edge is bisection edge to all its neighbors, bisect and pop
+//         // c) else, push the necessary edge of each parent simplex
+        
+//         int e = todostack.top();
+        
+//         // to check whether e belongs to an edge that has already been bisected,
+//         // we check whether one of the vertices belongs to the new vertices 
+        
+//         if( get_edge_vertex( e, 0 ) >= old_vertex_count || get_edge_vertex(e,1) >= old_vertex_count ) {
+            
+//             todostack.pop();
+        
+//         } else {
+            
+//             // run over neighbor triangles and check for necessary edges 
+            
+//             for( int t = get_edge_firstparent_triangle( e ); t != nullindex; t = get_edge_nextparent_triangle( e, t ) )
+//             {
+                
+//                 int e0 = get_triangle_edge( t, 0 ); Float l0 = get_edge_length( e0 );
+//                 int e1 = get_triangle_edge( t, 1 ); Float l1 = get_edge_length( e1 );
+//                 int e2 = get_triangle_edge( t, 2 ); Float l2 = get_edge_length( e2 );
+                
+//                 assert( e == e0 || e == e1 || e == e2 );
+                
+//                 int ne = nullindex;
+//                 if( l0 >= l1 && l0 >= l2 ) ne = e0;
+//                 if( l1 >= l0 && l1 >= l2 ) ne = e1;
+//                 if( l2 >= l0 && l2 >= l1 ) ne = e2;
+//                 assert( ne != nullindex );
+                
+//                 if( ne != e )
+//                     todostack.push( ne );
+                
+//             }
+            
+//             // if top edge is still the same, bisect
+            
+//             if( e == todostack.top() )
+//             {
+//                 todostack.pop();
+//                 bisect_edge( e );
+//             }
+            
+//         }
+        
+//     }
+    
+    
+//     /*
+//     while( ! todostack.empty() )
+//     {
+        
+//         LOG << todostack.back() << space << todostack.size();
+        
+//         // as long the stack is not empty,
+//         // pick the top edge and make the following case distinction
+//         // a) if the top edge is longer than its neighbors, bisect and pop
+//         // b) else, push the longest edge of each parent simplex
+        
+//         int e = todostack.back();
+    
+//         Float length_e = get_edge_length( e );
+            
+//         // run over neighbor triangles and check for longer edges 
+        
+//         bool compatibly_divisible = true;
+        
+//         for( int t = get_edge_firstparent_triangle( e ); t != nullindex; t = get_edge_nextparent_triangle( e, t ) )
+//         for( int ei = 0; ei < 3; ei++ )
+//         {
+//             int other_e = get_triangle_edge( t, ei );
+            
+//             if( e != other_e && get_edge_length( other_e ) > length_e ) {
+//                 compatibly_divisible = false;
+//                 todostack.push_back( other_e );
+//             }
+//         }
+            
+        
+//         // if top edge is still the same, bisect 
+    
+//         if( compatibly_divisible )
+//         {
+//             assert( e == todostack.back() );
+//             todostack.remove( e );
+//             bisect_edge( e );
+//             assert( std::find( todostack.begin(), todostack.end(), e ) == todostack.end() );
+//         } else 
+//             assert( e != todostack.back() );
+        
+    
+//     }
+//     */
+    
+//     // fiinished!
+    
+//     check();
+// }
 
 
 
@@ -1742,94 +1862,166 @@ void MeshSimplicial2D::longest_edge_bisection( std::vector<int> edges )
 
 
 
-void MeshSimplicial2D::newest_vertex_bisection( std::vector<int> edges )
+void MeshSimplicial2D::newest_vertex_bisection_recursive( const std::vector<int>& edges )
 {
     check();
+
+    // 0. check the input
     
-    const int old_vertex_count = counter_vertices;
-    
-    
-    /* 0. check the input */
-    
-    for( int& e : edges )
+    for( const int& e : edges )
         assert( 0 <= e && e < counter_edges );
-    
-    
-    /* 1. create stack for the edges to be bisected, and fill in first batch */
-    
-    std::stack<int> todostack;
-    
-    for( int& e : edges )
-        todostack.push( e ); // put e on top either by inserting or pulling it up!
-        
-    
-    /* 2. conduct the main loop of the refinement algorithm */
-    
-    while( ! todostack.empty() )
-    {
-        
-        // as long the stack is not empty,
-        // pick the top edge and make the following case distinction
-        // a) the edge index belongs to an edge already bisected and can be ignored 
-        // b) if the top edge is bisection edge to all its neighbors, bisect and pop
-        // c) else, push the necessary edge of each parent simplex
-        
-        int e = todostack.top();
-        
-        // to check whether e belongs to an edge that has already been bisected,
-        // we check whether one of the vertices belongs to the new vertices 
-        
-        if( get_edge_vertex( e, 0 ) >= old_vertex_count || get_edge_vertex(e,1) >= old_vertex_count ) {
-            
-            todostack.pop();
-        
-        } else {
-            
-            // run over neighbor triangles and check for necessary edges 
-            
-            for(
-                int t = get_edge_firstparent_triangle( e );
-                t != nullindex; 
-                t = get_edge_nextparent_triangle( e, t )
-            ) {
-                
-                int v0 = get_triangle_vertex( t, 0 );
-                int v1 = get_triangle_vertex( t, 1 );
-                int v2 = get_triangle_vertex( t, 2 );
-                int e0 = get_triangle_edge( t, 0 ); // 0 1
-                int e1 = get_triangle_edge( t, 1 ); // 0 2
-                int e2 = get_triangle_edge( t, 2 ); // 1 2 
-                
-                assert( e == e0 || e == e1 || e == e2 );
-                
-                int ne = nullindex;
-                if( v0 > v1 && v0 > v2 ) ne = e2;
-                if( v1 > v0 && v1 > v2 ) ne = e1;
-                if( v2 > v0 && v2 > v1 ) ne = e0;
-                assert( ne != nullindex );
-                
-                if( ne != e )
-                    todostack.push( ne );
-                
-            }
-            
-            // if top edge is still the same, bisect
-            
-            if( e == todostack.top() )
-            {
-                todostack.pop();
-                bisect_edge( e );
-            }
-            
-        }
-        
+
+
+    // 1. run over the edges and apply the recursion
+
+    const int old_vertex_count = counter_vertices;
+
+    for( const int& e: edges ) {
+
+        if( get_edge_vertex( e, 0 ) >= old_vertex_count || get_edge_vertex(e,1) >= old_vertex_count )
+            continue;
+
+        newest_vertex_bisection_recursive( e );
+
     }
+
+    // 3. check the result 
     
-    
-    // fiinished!
+    for( const int& e : edges )
+        assert( get_edge_vertex( e, 0 ) >= old_vertex_count || get_edge_vertex(e,1) >= old_vertex_count );
     
     check();
 }
+
+
+void MeshSimplicial2D::newest_vertex_bisection_recursive( const int e )
+{
+    assert( 0 <= e && e < counter_edges );
+
+    int bisection_edge = nullindex;
+        
+    do{
+
+        bisection_edge = nullindex;
+        
+        for( int t = get_edge_firstparent_triangle( e ); t != nullindex; t = get_edge_nextparent_triangle( e, t ) )
+        {
+            int v0 = get_triangle_vertex( t, 0 );
+            int v1 = get_triangle_vertex( t, 1 );
+            int v2 = get_triangle_vertex( t, 2 );
+            int e0 = get_triangle_edge( t, 0 ); // 0 1
+            int e1 = get_triangle_edge( t, 1 ); // 0 2
+            int e2 = get_triangle_edge( t, 2 ); // 1 2 
+            
+            assert( e == e0 || e == e1 || e == e2 );
+            
+            if( v0 > v1 && v0 > v2 ) bisection_edge = e2;
+            if( v1 > v0 && v1 > v2 ) bisection_edge = e1;
+            if( v2 > v0 && v2 > v1 ) bisection_edge = e0;
+            assert( bisection_edge != nullindex );
+            
+            if( bisection_edge != e ) break;       
+        }
+        
+        if( bisection_edge != e )
+            newest_vertex_bisection_recursive( bisection_edge );
+
+    } while ( bisection_edge != e );
+
+    bisect_edge( e );
+
+}
+
+
+
+// void MeshSimplicial2D::newest_vertex_bisection( std::vector<int> edges )
+// {
+//     check();
+    
+//     const int old_vertex_count = counter_vertices;
+    
+    
+//     /* 0. check the input */
+    
+//     for( int& e : edges )
+//         assert( 0 <= e && e < counter_edges );
+    
+    
+//     /* 1. create stack for the edges to be bisected, and fill in first batch */
+    
+//     std::stack<int> todostack;
+    
+//     for( int& e : edges )
+//         todostack.push( e ); // put e on top either by inserting or pulling it up!
+        
+    
+//     /* 2. conduct the main loop of the refinement algorithm */
+    
+//     while( ! todostack.empty() )
+//     {
+        
+//         // as long the stack is not empty,
+//         // pick the top edge and make the following case distinction
+//         // a) the edge index belongs to an edge already bisected and can be ignored 
+//         // b) if the top edge is bisection edge to all its neighbors, bisect and pop
+//         // c) else, push the necessary edge of each parent simplex
+        
+//         int e = todostack.top();
+        
+//         // to check whether e belongs to an edge that has already been bisected,
+//         // we check whether one of the vertices belongs to the new vertices 
+        
+//         if( get_edge_vertex( e, 0 ) >= old_vertex_count || get_edge_vertex(e,1) >= old_vertex_count ) {
+            
+//             todostack.pop();
+        
+//         } else {
+            
+//             // run over neighbor triangles and check for necessary edges 
+            
+//             for(
+//                 int t = get_edge_firstparent_triangle( e );
+//                 t != nullindex; 
+//                 t = get_edge_nextparent_triangle( e, t )
+//             ) {
+                
+//                 int v0 = get_triangle_vertex( t, 0 );
+//                 int v1 = get_triangle_vertex( t, 1 );
+//                 int v2 = get_triangle_vertex( t, 2 );
+//                 int e0 = get_triangle_edge( t, 0 ); // 0 1
+//                 int e1 = get_triangle_edge( t, 1 ); // 0 2
+//                 int e2 = get_triangle_edge( t, 2 ); // 1 2 
+                
+//                 assert( e == e0 || e == e1 || e == e2 );
+                
+//                 int ne = nullindex;
+//                 if( v0 > v1 && v0 > v2 ) ne = e2;
+//                 if( v1 > v0 && v1 > v2 ) ne = e1;
+//                 if( v2 > v0 && v2 > v1 ) ne = e0;
+//                 assert( ne != nullindex );
+                
+//                 if( ne != e )
+//                     todostack.push( ne );
+                
+//             }
+            
+//             // if top edge is still the same, bisect
+            
+//             if( e == todostack.top() )
+//             {
+//                 todostack.pop();
+//                 bisect_edge( e );
+//             }
+            
+//         }
+        
+//     }
+    
+    
+//     // fiinished!
+    
+//     check();
+// }
 
 
 

@@ -291,7 +291,7 @@ int main()
                     //     if( e % 10 == 0)
                     //         marked_edges.push_back( e );
                     
-                    M.newest_vertex_bisection( marked_edges );
+                    M.newest_vertex_bisection_recursive( marked_edges );
 
                 }
                 

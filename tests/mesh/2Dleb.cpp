@@ -36,7 +36,8 @@ int main()
                 auto last = std::unique( refinementedges.begin(), refinementedges.end() );
                 refinementedges.erase( last, refinementedges.end() );
                 
-                M.longest_edge_bisection( refinementedges );
+                std::cout << "Refine " << refinementedges.size() << "/" << M.count_edges() << "\n";
+                M.longest_edge_bisection_recursive( refinementedges );
             
             }
             
@@ -62,7 +63,8 @@ int main()
                 auto last = std::unique( refinementedges.begin(), refinementedges.end() );
                 refinementedges.erase( last, refinementedges.end() );
                 
-                M.longest_edge_bisection( refinementedges );
+                std::cout << "Refine " << refinementedges.size() << "/" << M.count_edges() << "\n";
+                M.longest_edge_bisection_recursive( refinementedges );
             
             }
             
