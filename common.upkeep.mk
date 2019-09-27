@@ -5,7 +5,7 @@ tidy:
 
 .PHONY: check
 check:
-	cppcheck --enable=warning,style,performance,portability --std=c++17 -q .
+	cppcheck --enable=warning,style,performance,portability --std=c++14 -q .
 
 .PHONY: cpplint
 cpplint:
