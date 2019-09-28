@@ -64,6 +64,42 @@ MatrixCSR::~MatrixCSR()
 
 
 
+
+
+MatrixCSR::MatrixCSR( MatrixCSR&& mat )
+: LinearOperator( mat.getdimout(), mat.getdimin() ),
+A( std::move(mat.A) ),
+C( std::move(mat.C) ),
+V( std::move(mat.V) )
+{
+    check();
+}
+
+MatrixCSR& MatrixCSR::operator=( MatrixCSR&& mat )
+{
+    assert( getdimin() == mat.getdimin() );
+    assert( getdimout() == mat.getdimout() );
+    this->A = std::move( mat.A );
+    this->C = std::move( mat.C );
+    this->V = std::move( mat.V );
+    return *this;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 void MatrixCSR::check() const
 {
     LinearOperator::check();

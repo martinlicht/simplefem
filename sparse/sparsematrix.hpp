@@ -59,6 +59,11 @@ public LinearOperator /* every matrix is a linear operator */
         explicit SparseMatrix( const DenseMatrix& );
         virtual ~SparseMatrix();
 
+        SparseMatrix( const SparseMatrix& ) = default;
+        SparseMatrix& operator=( const SparseMatrix& ) = default;
+        SparseMatrix( SparseMatrix&& );
+        SparseMatrix& operator=( SparseMatrix&& );
+
         virtual void check() const override;
         virtual void print( std::ostream& ) const override;
         virtual void printplain( std::ostream& ) const;

@@ -28,6 +28,13 @@ public LinearOperator /* every matrix is a linear operator */
 
         virtual ~MatrixCSR( );
 
+        MatrixCSR( const MatrixCSR& ) = default;
+        MatrixCSR& operator=( const MatrixCSR& ) = default;
+        MatrixCSR( MatrixCSR&& );
+        MatrixCSR& operator=( MatrixCSR&& );
+
+        
+
 //         explicit MatrixCSR( const ScalingOperator& matrix );
 //         explicit MatrixCSR( const DiagonalOperator& matrix );
 //         explicit MatrixCSR( const DenseMatrix& );

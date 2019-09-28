@@ -74,14 +74,40 @@ SparseMatrix::SparseMatrix( const DenseMatrix& matrix )
     SparseMatrix::check();    
 }
 
-
-
-
-
 SparseMatrix::~SparseMatrix()
 {
     
 }
+
+
+
+
+
+
+SparseMatrix::SparseMatrix( SparseMatrix&& mat )
+: LinearOperator( mat.getdimout(), mat.getdimin() ),
+entries( std::move(mat.entries) )
+{
+    check();
+}
+
+SparseMatrix& SparseMatrix::operator=( SparseMatrix&& mat )
+{
+    assert( getdimin() == mat.getdimin() );
+    assert( getdimout() == mat.getdimout() );
+    this->entries = std::move( mat.entries );
+    return *this;
+}
+
+
+
+
+
+
+
+
+
+
 
 void SparseMatrix::check() const
 {
