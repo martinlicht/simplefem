@@ -104,6 +104,15 @@ MeshSimplicial3D::MeshSimplicial3D(
     for( auto& tet : data_tetrahedron_vertices )
       std::sort( tet.begin(), tet.end() );
     
+    /* 0. sort the tetrahedra altogether */
+    {    
+//       std::sort( data_tetrahedron_vertices.begin(), data_tetrahedron_vertices.end() ); 
+      sorthack( data_tetrahedron_vertices );
+      auto it = std::unique( data_tetrahedron_vertices.begin(), data_tetrahedron_vertices.end() );
+      data_tetrahedron_vertices.resize( it - data_tetrahedron_vertices.begin() );
+    }
+    
+    
     
     /* 1. create all faces */
     
@@ -2461,6 +2470,25 @@ Float MeshSimplicial3D::get_edge_length( int e ) const
       length += pow( getcoordinates().getdata( get_edge_vertices(e)[0], d ) - getcoordinates().getdata( get_edge_vertices(e)[1], d ), 2. );
     return sqrt( length );
 }
+
+int MeshSimplicial3D::get_oldest_edge( int t ) const
+{
+    assert( 0 <= t && t < counter_tetrahedra );
+    int e0 = get_tetrahedron_edge( t, 0 );
+    int e1 = get_tetrahedron_edge( t, 1 );
+    int e2 = get_tetrahedron_edge( t, 2 );
+    int e3 = get_tetrahedron_edge( t, 3 );
+    int e4 = get_tetrahedron_edge( t, 4 );
+    int e5 = get_tetrahedron_edge( t, 5 );
+    if( e0 < e1 and e0 < e2 and e0 < e3 and e0 < e4 and e0 < e5 ) return e0;
+    if( e1 < e0 and e1 < e2 and e1 < e3 and e1 < e4 and e1 < e5 ) return e1;
+    if( e2 < e0 and e2 < e1 and e2 < e3 and e2 < e4 and e2 < e5 ) return e2;
+    if( e3 < e0 and e3 < e1 and e3 < e2 and e3 < e4 and e3 < e5 ) return e3;
+    if( e4 < e0 and e4 < e1 and e4 < e2 and e4 < e3 and e4 < e5 ) return e4;
+    if( e5 < e0 and e5 < e1 and e5 < e2 and e5 < e3 and e5 < e4 ) return e5;
+    unreachable();
+}
+
 
 
 

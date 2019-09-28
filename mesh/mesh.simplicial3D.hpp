@@ -302,6 +302,8 @@ class MeshSimplicial3D
         FloatVector get_edge_midpoint( int e ) const;
         Float get_edge_length( int e ) const;
         
+        int get_oldest_edge( int t ) const;
+        
         
     private:
 

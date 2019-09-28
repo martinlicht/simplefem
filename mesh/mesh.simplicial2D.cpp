@@ -81,6 +81,15 @@ MeshSimplicial2D::MeshSimplicial2D(
     for( auto& tri : data_triangle_vertices )
       std::sort( tri.begin(), tri.end() );
 
+    /* 0. sort the triangles altogether */
+    {    
+//       std::sort( data_triangle_vertices.begin(), data_triangle_vertices.end() ); 
+      sorthack( data_triangle_vertices );
+      auto it = std::unique( data_triangle_vertices.begin(), data_triangle_vertices.end() );
+      data_triangle_vertices.resize( it - data_triangle_vertices.begin() );
+    }
+
+    
     /* 1. create all edges, allocate memory */
     
     data_edge_vertices.resize( counter_triangles * 3 );
@@ -2815,6 +2824,18 @@ Float MeshSimplicial2D::get_edge_length( int e ) const
     return sqrt( length );
 }
         
+
+int MeshSimplicial2D::get_oldest_edge( int t ) const
+{
+    assert( 0 <= t && t < counter_triangles );
+    int e0 = get_triangle_edge( t, 0 );
+    int e1 = get_triangle_edge( t, 1 );
+    int e2 = get_triangle_edge( t, 2 );
+    if( e0 < e1 and e0 < e2 ) return e0;
+    if( e1 < e0 and e1 < e2 ) return e1;
+    if( e2 < e0 and e2 < e1 ) return e2;
+    unreachable();
+}
 
 
 
