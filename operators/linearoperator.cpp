@@ -41,19 +41,14 @@
     }
     
     /* x := A y */
-    void LinearOperator::apply( FloatVector& dest, const FloatVector& src, Float scaling ) const
+    FloatVector LinearOperator::apply( const FloatVector& src, Float scaling ) const
     {
       check();
-      dest.copydatafrom( apply( src, scaling ) );
+      FloatVector ret = createoutputvector();
+      apply( ret, src, scaling );
+      return ret;
     }
     
-    /* x := s x + t A y */
-    void LinearOperator::applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const
-    {
-      FloatVector temp = apply( add, t );
-      dest.adddatafrom( s, 1., temp );
-    }
-        
     FloatVector LinearOperator::createinputvector() const
     {
       return FloatVector( getdimin() );

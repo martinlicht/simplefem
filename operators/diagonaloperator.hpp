@@ -32,7 +32,7 @@ public LinearOperator
         FloatVector& getdiagonal();
         const FloatVector& getdiagonal() const;
         
-        virtual FloatVector apply( const FloatVector& src, Float scaling ) const override;
+        virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override;
 
     private:
 

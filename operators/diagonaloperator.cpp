@@ -59,18 +59,18 @@ const FloatVector& DiagonalOperator::getdiagonal() const
 }
 
 
-FloatVector DiagonalOperator::apply( const FloatVector& src, Float scaling ) const 
+void DiagonalOperator::apply( FloatVector& dest, const FloatVector& src, Float scaling ) const 
 {
     check();
     src.check();
+    dest.check();
     
     assert( getdimin() == getdimout() );
     assert( getdimin() == src.getdimension() );
+    assert( getdimout() == dest.getdimension() );
     
-    FloatVector ret( getdimout() );
     for( int p = 0; p < getdimout(); p++ ) {
-        ret.setentry( p, scaling * diagonal.at(p) * src.getentry( p ) );
+        dest.setentry( p, scaling * diagonal.at(p) * src.getentry( p ) );
     }
     
-    return ret;
 }

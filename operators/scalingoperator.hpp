@@ -28,7 +28,7 @@ public LinearOperator /* every scaling operation is a linear operator */
         Float getscaling() const;
         void setscaling( Float s );
 
-        virtual FloatVector apply( const FloatVector& src, Float scaling ) const override;
+        virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override;
 
     private:
 

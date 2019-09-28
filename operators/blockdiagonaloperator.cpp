@@ -43,19 +43,21 @@ void BlockDiagonalOperator::print( std::ostream& os ) const
 
 
 
-FloatVector BlockDiagonalOperator::apply( const FloatVector& src, Float scaling ) const 
+void BlockDiagonalOperator::apply( FloatVector& dest, const FloatVector& src, Float scaling ) const 
 {
     check();
     src.check();
+    dest.check();
+
     assert( getdimin() == src.getdimension() );
-    
-    FloatVector ret( getdimout() );
+    assert( getdimout() == dest.getdimension() );
+
     int base_in = 0;
     int base_out = 0;
     
     for( const auto& op : ops ) {
         
-        ret.setslice( base_out,
+        dest.setslice( base_out,
                       op->apply( src.getslice( base_in, op->getdimin() ), scaling )
                     );
         
@@ -65,7 +67,5 @@ FloatVector BlockDiagonalOperator::apply( const FloatVector& src, Float scaling 
     
     assert( base_in == getdimin() );
     assert( base_out == getdimout() );
-    
-    return ret;
     
 }

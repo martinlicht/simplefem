@@ -37,13 +37,16 @@ void ProductOperator::print( std::ostream& os ) const
 
 
 
-FloatVector ProductOperator::apply( const FloatVector& src, Float scaling ) const 
+void ProductOperator::apply( FloatVector& dest, const FloatVector& src, Float scaling ) const 
 {
     check();
     src.check();
+    dest.check();
+
     assert( getdimin() == src.getdimension() );
+    assert( getdimout() == dest.getdimension() );
     
-    return scaling * ( left * ( right * src ) );
+    dest = scaling * ( left * ( right * src ) );
 }
 
 

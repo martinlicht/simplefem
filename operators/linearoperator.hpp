@@ -39,12 +39,9 @@ class LinearOperator
         /* Apply the operator */
         
         /* x := s A y */
-        virtual FloatVector apply( const FloatVector& src, Float scaling = 1. ) const = 0;
-        virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling = 1. ) const;
+        virtual FloatVector apply( const FloatVector& src, Float scaling = 1. ) const;
+        virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling = 1. ) const = 0;
         
-        /* x := s x + t A y */
-        virtual void applyadd( FloatVector& dest, const FloatVector& add, Float s, Float t ) const;
-
         FloatVector createinputvector() const;
         FloatVector createoutputvector() const;
         

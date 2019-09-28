@@ -38,14 +38,16 @@ void SumOperator::print( std::ostream& os ) const
 
 
 
-FloatVector SumOperator::apply( const FloatVector& src, Float scaling ) const 
+void SumOperator::apply( FloatVector& dest, const FloatVector& src, Float scaling ) const 
 {
     check();
     src.check();
+    dest.check();
     
     assert( getdimin() == src.getdimension() );
+    assert( getdimout() == dest.getdimension() );
     
-    return scaling * leftscale * ( left * src ) + scaling * rightscale * ( right * src );
+    dest = scaling * leftscale * ( left * src ) + scaling * rightscale * ( right * src );
 }
 
 

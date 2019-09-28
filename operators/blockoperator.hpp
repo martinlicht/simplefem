@@ -26,8 +26,8 @@ public LinearOperator /* every matrix is a linear operator */
         virtual void check() const override;
         virtual void print( std::ostream& ) const override;
         
-        virtual FloatVector apply( const FloatVector& src, Float scaling ) const override;
-        
+        virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override;
+
     private:
         
         std::vector<std::vector<LinearOperator*>> ops;

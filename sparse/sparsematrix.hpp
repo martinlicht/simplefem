@@ -82,7 +82,7 @@ public LinearOperator /* every matrix is a linear operator */
 
         SparseMatrix getTranspose() const;
         
-        virtual FloatVector apply( const FloatVector& add, Float scaling ) const override;
+        virtual void apply( FloatVector& dest, const FloatVector& add, Float scaling ) const override;
 
     private:
 

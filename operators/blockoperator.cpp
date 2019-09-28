@@ -85,14 +85,17 @@ void BlockOperator::print( std::ostream& os ) const
 
 
 
-FloatVector BlockOperator::apply( const FloatVector& src, Float s ) const 
+void BlockOperator::apply( FloatVector& dest, const FloatVector& src, Float s ) const 
 {
     
     check();
     src.check();
+    dest.check();
+
     assert( getdimin() == src.getdimension() );
+    assert( getdimout() == dest.getdimension() );
     
-    FloatVector ret( getdimout() );
+    dest.zero();
     
     int base_out = 0;
     
@@ -102,7 +105,7 @@ FloatVector BlockOperator::apply( const FloatVector& src, Float s ) const
     
       for( int c = 0; c < ops.at(0).size(); c++ ) {
         
-        ret.addslice(
+        dest.addslice(
           base_out,
           ops.at(r).at(c)->apply( src.getslice( base_in, ops.at(r).at(c)->getdimin() ), s ),
           1.
@@ -120,8 +123,6 @@ FloatVector BlockOperator::apply( const FloatVector& src, Float s ) const
     
     assert( base_out == getdimout() );
     
-    return ret;
-   
 }
 
 

@@ -103,20 +103,23 @@ void MatrixCSR::printplain( std::ostream& os ) const
     print( os );
 }
 
-FloatVector MatrixCSR::apply( const FloatVector& add, Float scaling ) const
+void MatrixCSR::apply( FloatVector& dest, const FloatVector& add, Float scaling ) const
 {
     check();
     add.check();
+    dest.check();
+    
     assert( getdimin() == add.getdimension() );
+    assert( getdimout() == dest.getdimension() );
 
-    FloatVector ret( getdimout(), 0 );  
-
+    dest.zero();
+    
     for( int i = 0; i < A.size()-1; i++ ){
         for( int j = A[i]; j < A[i+1] ; j++ ){
-            ret[i] += scaling * V[j] * add[ C[j] ];
+            dest[i] += scaling * V[j] * add[ C[j] ];
         }
     }
-    return ret;
+    
 }
 
 

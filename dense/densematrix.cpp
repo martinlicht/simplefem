@@ -212,19 +212,19 @@ DenseMatrix DenseMatrix::clone() const
 
 
 
-FloatVector DenseMatrix::apply( const FloatVector& add, Float scaling ) const 
+void DenseMatrix::apply( FloatVector& dest, const FloatVector& add, Float scaling ) const 
 {
     add.check();
-    FloatVector ret( getdimout(), 0. );
-    assert( ret.getdimension() == getdimout() );
+    dest.check();
+    assert( dest.getdimension() == getdimout() );
     assert( add.getdimension() == getdimin() );
+    
+    dest.zero();
     
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin(); c++ )
-        ret[r] += scaling * (*this)(r,c) * add[c];
+        dest[r] += scaling * (*this)(r,c) * add[c];
     
-    return ret;
-
     /*
     load r 0
     .run_outer_loop

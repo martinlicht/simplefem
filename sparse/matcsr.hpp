@@ -39,7 +39,7 @@ public LinearOperator /* every matrix is a linear operator */
         int getnumberofentries() const;
         void sortentries() const;
         
-        virtual FloatVector apply( const FloatVector& add, Float scaling ) const override;
+        virtual void apply( FloatVector& dest, const FloatVector& add, Float scaling ) const override;
 
     private:
 
