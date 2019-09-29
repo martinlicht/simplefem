@@ -84,9 +84,33 @@ SparseMatrix::~SparseMatrix()
 
 
 
+SparseMatrix::SparseMatrix( const SparseMatrix& mat )
+: LinearOperator( mat.getdimout(), mat.getdimin() ),
+  entries( mat.entries )
+{
+    std::cout << "*************************************************\n";
+    std::cout << "*********** WARNING: DEEP COPY ******************\n";
+    std::cout << "***********  OF SPARSE MATRIX  ******************\n";
+    std::cout << "*************************************************\n";
+    check();
+}
+
+SparseMatrix& SparseMatrix::operator=( const SparseMatrix& mat )
+{
+    std::cout << "*************************************************\n";
+    std::cout << "********** WARNING: DEEP ASSIGN *****************\n";
+    std::cout << "***********  OF SPARSE MATRIX  ******************\n";
+    std::cout << "*************************************************\n";
+    assert( getdimin() == mat.getdimin() );
+    assert( getdimout() == mat.getdimout() );
+    this->entries = mat.entries;
+    check();
+    return *this;
+}
+
 SparseMatrix::SparseMatrix( SparseMatrix&& mat )
 : LinearOperator( mat.getdimout(), mat.getdimin() ),
-entries( std::move(mat.entries) )
+  entries( std::move(mat.entries) )
 {
     check();
 }

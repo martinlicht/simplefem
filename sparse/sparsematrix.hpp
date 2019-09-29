@@ -59,11 +59,21 @@ public LinearOperator /* every matrix is a linear operator */
         explicit SparseMatrix( const DenseMatrix& );
         virtual ~SparseMatrix();
 
-        SparseMatrix( const SparseMatrix& ) = default;
-        SparseMatrix& operator=( const SparseMatrix& ) = default;
+        SparseMatrix( const SparseMatrix& );
+        SparseMatrix& operator=( const SparseMatrix& );
         SparseMatrix( SparseMatrix&& );
         SparseMatrix& operator=( SparseMatrix&& );
 
+        virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
+            std::shared_ptr<SparseMatrix> clone = std::make_shared<SparseMatrix>( *this );
+            return clone;
+        }
+        
+        virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {
+            std::unique_ptr<SparseMatrix> heir = std::make_unique<SparseMatrix>( std::move(*this) );
+            return heir;
+        }
+        
         virtual void check() const override;
         virtual void print( std::ostream& ) const override;
         virtual void printplain( std::ostream& ) const;

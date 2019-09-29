@@ -66,11 +66,39 @@ MatrixCSR::~MatrixCSR()
 
 
 
+MatrixCSR::MatrixCSR( const MatrixCSR& mat )
+: LinearOperator( mat.getdimout(), mat.getdimin() ),
+  A( mat.A ),
+  C( mat.C ),
+  V( mat.V )
+{
+    std::cout << "*************************************************\n";
+    std::cout << "*********** WARNING: DEEP COPY ******************\n";
+    std::cout << "***********  OF CSR MATRIX     ******************\n";
+    std::cout << "*************************************************\n";
+    check();
+}
+
+MatrixCSR& MatrixCSR::operator=( const MatrixCSR& mat )
+{
+    std::cout << "*************************************************\n";
+    std::cout << "********** WARNING: DEEP ASSIGN *****************\n";
+    std::cout << "**********    OF CSR MATRIX     *****************\n";
+    std::cout << "*************************************************\n";
+    assert( getdimin() == mat.getdimin() );
+    assert( getdimout() == mat.getdimout() );
+    this->A = mat.A;
+    this->C = mat.C;
+    this->V = mat.V;
+    check();
+    return *this;
+}
+
 MatrixCSR::MatrixCSR( MatrixCSR&& mat )
 : LinearOperator( mat.getdimout(), mat.getdimin() ),
-A( std::move(mat.A) ),
-C( std::move(mat.C) ),
-V( std::move(mat.V) )
+  A( std::move(mat.A) ),
+  C( std::move(mat.C) ),
+  V( std::move(mat.V) )
 {
     check();
 }
