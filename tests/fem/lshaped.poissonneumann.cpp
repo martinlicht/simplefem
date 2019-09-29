@@ -7,7 +7,7 @@
 #include <iomanip>
 
 #include "../../basic.hpp"
-#include "../../operators/productoperator.hpp"
+#include "../../operators/composedoperators.hpp"
 // #include "../../operators/composed.hpp"
 #include "../../dense/densematrix.hpp"
 #include "../../sparse/sparsematrix.hpp"

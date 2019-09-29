@@ -7,8 +7,8 @@
 #include <iomanip>
 
 #include "../../basic.hpp"
-#include "../../operators/productoperator.hpp"
 // #include "../../operators/composedoperators.hpp"
+#include "../../operators/composedoperators.hpp"
 // #include "../../operators/composed.hpp"
 #include "../../dense/densematrix.hpp"
 #include "../../sparse/sparsematrix.hpp"
@@ -137,12 +137,12 @@ int main()
                     cout << "...assemble stiffness matrix" << endl;
             
                     // ProductOperator 
-                    // auto stiffness = ( incmatrix_t * diffmatrix_t ) * vector_massmatrix * ( diffmatrix * incmatrix );
-                    auto op1_t = incmatrix_t * diffmatrix_t;
-                    auto op2_t = op1_t * vector_massmatrix_fac_t;
-                    auto op1   = diffmatrix * incmatrix;
-                    auto op2   = vector_massmatrix_fac * op1;
-                    auto stiffness = op2_t * op2;
+                    auto stiffness = ( incmatrix_t * diffmatrix_t ) * vector_massmatrix * ( diffmatrix * incmatrix );
+                    // auto op1_t = incmatrix_t * diffmatrix_t;
+                    // auto op2_t = op1_t * vector_massmatrix_fac_t;
+                    // auto op1   = diffmatrix * incmatrix;
+                    // auto op2   = vector_massmatrix_fac * op1;
+                    // auto stiffness = op2_t * op2;
 
                     // auto opr1 = diffmatrix & incmatrix;
                     // auto opr  = vector_massmatrix_fac & opr1;
