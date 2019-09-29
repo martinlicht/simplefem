@@ -8,6 +8,7 @@
 
 #include "../../basic.hpp"
 #include "../../operators/productoperator.hpp"
+// #include "../../operators/composedoperators.hpp"
 // #include "../../operators/composed.hpp"
 #include "../../dense/densematrix.hpp"
 #include "../../sparse/sparsematrix.hpp"
@@ -43,7 +44,7 @@ int main()
             
             cout << "Initial mesh..." << endl;
             
-            MeshSimplicial2D M = UnitedKingdom(); //UnitSquare2D();
+            MeshSimplicial2D M = UnitedKingdom(); //
             
             M.check();
             
@@ -68,7 +69,7 @@ int main()
                     assert( vec.getdimension() == 2 );
                     // return FloatVector({ 1. });
                     return FloatVector({ 
-                        0.01 * vec[0] * vec[0] * vec[1] * vec[1]
+                        0.0001 * vec[0] * vec[0] * vec[1] * vec[1]
                         });
                 }
             );
@@ -78,8 +79,8 @@ int main()
                     assert( vec.getdimension() == 2 );
                     // return FloatVector({ 1. });
                     return FloatVector( { 
-                            0.01 * 2. * vec[0] * vec[1] * vec[1],
-                            0.01 * 2. * vec[1] * vec[0] * vec[0], 
+                            0.0001 * 2. * vec[0] * vec[1] * vec[1],
+                            0.0001 * 2. * vec[1] * vec[0] * vec[0], 
                         });
                 }
             );
@@ -88,7 +89,7 @@ int main()
                 [](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
                     return FloatVector({ 
-                        0.01 * 2. * vec[0] * vec[0] + 2. * vec[1] * vec[1] 
+                        0.0001 * ( 2. * vec[0] * vec[0] + 2. * vec[1] * vec[1] )
                      });
                 }
             );
@@ -136,7 +137,7 @@ int main()
                     cout << "...assemble stiffness matrix" << endl;
             
                     // ProductOperator 
-                    // auto stiffness = incmatrix_t * diffmatrix_t * vector_massmatrix * diffmatrix * incmatrix;
+                    // auto stiffness = ( incmatrix_t * diffmatrix_t ) * vector_massmatrix * ( diffmatrix * incmatrix );
                     auto op1_t = incmatrix_t * diffmatrix_t;
                     auto op2_t = op1_t * vector_massmatrix_fac_t;
                     auto op1   = diffmatrix * incmatrix;
@@ -181,6 +182,8 @@ int main()
 
                         interpol_rhs = interpol_rhs - ( average_rhs / domain_area ) * interpol_one;
 
+                        cout << interpol_one * ( scalar_massmatrix * interpol_rhs ) << endl;
+
                         cout << "...measure interpolation commutativity" << endl;
             
                         cout << "...compute norms of solution and right-hand side:" << endl;
@@ -209,7 +212,7 @@ int main()
                             CRM.solve( sol, rhs );
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t " << end - start << std::endl;
-                            sol = sol - ( interpol_one * ( scalar_massmatrix * ( incmatrix * sol ) ) ) * eins;
+                            sol = sol - ( interpol_one * ( scalar_massmatrix * incmatrix * sol ) ) / domain_area * eins;
                         }
 
                         if(false)
@@ -222,7 +225,7 @@ int main()
                             CRM.solve( sol, rhs );
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t " << end - start << std::endl;
-                            sol = sol - ( interpol_one * ( scalar_massmatrix * ( incmatrix * sol ) ) ) * eins;
+                            sol = sol - ( interpol_one * ( scalar_massmatrix * incmatrix * sol ) ) / domain_area * eins;
                         }
 
                         if(false)
@@ -232,7 +235,7 @@ int main()
                             ResidualDescent( stiffness, rhs, sol, sol.getdimension(), 1e-15 );
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t " << end - start << std::endl;
-                            sol = sol - ( interpol_one * ( scalar_massmatrix * ( incmatrix * sol ) ) ) * eins;
+                            sol = sol - ( interpol_one * ( scalar_massmatrix * incmatrix * sol ) ) / domain_area * eins;
                         }
 
 
