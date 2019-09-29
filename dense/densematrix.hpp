@@ -51,6 +51,16 @@ public LinearOperator /* every matrix is a linear operator */
         
         virtual ~DenseMatrix();
         
+        virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
+            std::shared_ptr<DenseMatrix> clone = std::make_shared<DenseMatrix>( *this );
+            return clone;
+        }
+        
+        virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {
+            std::unique_ptr<DenseMatrix> heir = std::make_unique<DenseMatrix>( std::move(*this) );
+            return heir;
+        }
+        
         virtual void check() const override;
         virtual void print( std::ostream& ) const override;
         virtual void printplain( std::ostream& ) const;
