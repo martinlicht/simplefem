@@ -5,6 +5,7 @@
 
 
 #include <ostream>
+#include <memory>
 
 #include "../basic.hpp"
 #include "floatvector.hpp"
@@ -26,6 +27,14 @@ class LinearOperator
         
         explicit LinearOperator( int, int );
         virtual ~LinearOperator();
+
+        virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& {
+            unreachable();
+        }
+        
+        virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && {
+            unreachable();
+        }
         
         int getdimin() const;
 

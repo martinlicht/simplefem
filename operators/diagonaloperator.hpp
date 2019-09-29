@@ -26,6 +26,17 @@ public LinearOperator
         explicit DiagonalOperator( int, const ScalingOperator& scaling );
         virtual ~DiagonalOperator();
 
+        virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
+            std::shared_ptr<DiagonalOperator> clone = std::make_shared<DiagonalOperator>( *this );
+            return clone;
+        }
+        
+        virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {
+            std::unique_ptr<DiagonalOperator> heir = std::make_unique<DiagonalOperator>( *this );
+            return heir;
+        }
+        
+
         virtual void check() const override;
         virtual void print( std::ostream& ) const override;
 
