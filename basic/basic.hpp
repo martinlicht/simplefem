@@ -401,6 +401,14 @@ inline void sort_integers( int* start, int length )
 
 
 
+template< typename T >
+inline void sort_and_unique( T& t )
+{
+    std::sort( t.begin(), t.end() );
+    auto last = std::unique( t.begin(), t.end() );
+    t.erase( last, t.end() );
+}
+
 
 
 
