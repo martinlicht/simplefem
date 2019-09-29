@@ -438,8 +438,16 @@ Float FloatVector::sum() const
 
 Float FloatVector::norm() const 
 {
+    return std::sqrt( norm_sq() );
+}
+
+Float FloatVector::norm_sq() const 
+{
     check();
-    return sqrt( scalarproductwith( *this ) );
+    Float ret = 0.;
+    for( int d = 0; d < getdimension(); d++ )
+        ret += absolute( pointer[d] ) * absolute( pointer[d] );
+    return ret;
 }
 
 Float FloatVector::maxnorm() const

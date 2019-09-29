@@ -148,6 +148,8 @@ class FloatVector
         
         Float norm() const;
         
+        Float norm_sq() const;
+        
         Float maxnorm() const;
         
         Float sumnorm() const;
@@ -172,7 +174,7 @@ class FloatVector
         bool isnonpositive() const;
         
         
-        bool issmall( Float eps = 0.0000001 ) const;
+        bool issmall( Float eps = 1e-5 ) const;
         
 
 
