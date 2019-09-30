@@ -58,7 +58,7 @@ $(basic.depdir): ; @mkdir -p $@
 
 $(basic.outs): basic/%.out: basic/%.cpp | $(basic.depdir)
 	g++ -MM basic/$*.cpp -MT $@ -MF basic/.deps/$*.d
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(Links.basic) -o $@ 
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(Links.basic) -o $@ $(LDLIBS)
 
 -include $(basic.dependencies)
 
@@ -90,7 +90,7 @@ $(combinatorics.outs): combinatorics/%.out: combinatorics/%.cpp | $(combinatoric
 	# @echo $(combinatorics.link)
 	@g++ -MM combinatorics/$*.cpp -MT $@ -MF combinatorics/.deps/$*.d
 	# $(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(Links.combinatorics) -o $@ 
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(combinatorics.include) $(combinatorics.rpath) $(combinatorics.link) -o $@
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(combinatorics.include) $(combinatorics.rpath) $(combinatorics.link) -o $@ $(LDLIBS)
 
 -include $(combinatorics.dependencies)
 
@@ -126,7 +126,7 @@ $(operators.outs): operators/%.out: operators/%.cpp | $(operators.depdir)
 	# @echo $(operators.link)
 	@g++ -MM operators/$*.cpp -MT $@ -MF operators/.deps/$*.d
 	# $(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(Links.operators) -o $@ 
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(operators.include) $(operators.rpath) $(operators.link) -o $@
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(operators.include) $(operators.rpath) $(operators.link) -o $@ $(LDLIBS)
 
 -include $(operators.dependencies)
 
@@ -160,7 +160,7 @@ $(dense.outs): dense/%.out: dense/%.cpp | $(dense.depdir)
 	# @echo $(dense.link)
 	@g++ -MM dense/$*.cpp -MT $@ -MF dense/.deps/$*.d
 	# $(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(Links.dense) -o $@ 
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(dense.include) $(dense.rpath) $(dense.link) -o $@
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(dense.include) $(dense.rpath) $(dense.link) -o $@ $(LDLIBS)
 
 -include $(dense.dependencies)
 
@@ -195,7 +195,7 @@ $(sparse.outs): sparse/%.out: sparse/%.cpp | $(sparse.depdir)
 	# @echo $(sparse.link)
 	@g++ -MM sparse/$*.cpp -MT $@ -MF sparse/.deps/$*.d
 	# $(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(Links.sparse) -o $@ 
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(sparse.include) $(sparse.rpath) $(sparse.link) -o $@
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(sparse.include) $(sparse.rpath) $(sparse.link) -o $@ $(LDLIBS)
 
 -include $(sparse.dependencies)
 
@@ -228,7 +228,7 @@ $(solver.outs): solver/%.out: solver/%.cpp | $(solver.depdir)
 	# @echo $(solver.link)
 	@g++ -MM solver/$*.cpp -MT $@ -MF solver/.deps/$*.d
 	# $(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(Links.solver) -o $@ 
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(solver.include) $(solver.rpath) $(solver.link) -o $@
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(solver.include) $(solver.rpath) $(solver.link) -o $@ $(LDLIBS)
 
 -include $(solver.dependencies)
 
@@ -261,7 +261,7 @@ $(mesh.outs): mesh/%.out: mesh/%.cpp | $(mesh.depdir)
 	# @echo $(mesh.link)
 	@g++ -MM mesh/$*.cpp -MT $@ -MF mesh/.deps/$*.d
 	# $(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(Links.mesh) -o $@ 
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(mesh.include) $(mesh.rpath) $(mesh.link) -o $@
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(mesh.include) $(mesh.rpath) $(mesh.link) -o $@ $(LDLIBS)
 
 -include $(mesh.dependencies)
 
@@ -294,7 +294,7 @@ $(vtk.outs): vtk/%.out: vtk/%.cpp | $(vtk.depdir)
 	# @echo $(vtk.link)
 	@g++ -MM vtk/$*.cpp -MT $@ -MF vtk/.deps/$*.d
 	# $(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(Links.vtk) -o $@ 
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(vtk.include) $(vtk.rpath) $(vtk.link) -o $@
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(vtk.include) $(vtk.rpath) $(vtk.link) -o $@ $(LDLIBS)
 
 -include $(vtk.dependencies)
 
@@ -327,7 +327,7 @@ $(matrixmarket.outs): matrixmarket/%.out: matrixmarket/%.cpp | $(matrixmarket.de
 	# @echo $(matrixmarket.link)
 	@g++ -MM matrixmarket/$*.cpp -MT $@ -MF matrixmarket/.deps/$*.d
 	# $(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(Links.matrixmarket) -o $@ 
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(matrixmarket.include) $(matrixmarket.rpath) $(matrixmarket.link) -o $@
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(matrixmarket.include) $(matrixmarket.rpath) $(matrixmarket.link) -o $@ $(LDLIBS)
 
 -include $(matrixmarket.dependencies)
 
@@ -359,7 +359,7 @@ $(fem.outs): fem/%.out: fem/%.cpp | $(fem.depdir)
 	# @echo $(fem.link)
 	@g++ -MM fem/$*.cpp -MT $@ -MF fem/.deps/$*.d
 	# $(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(Links.fem) -o $@ 
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(fem.include) $(fem.rpath) $(fem.link) -o $@
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(fem.include) $(fem.rpath) $(fem.link) -o $@ $(LDLIBS)
 
 -include $(fem.dependencies)
 
