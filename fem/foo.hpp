@@ -7,7 +7,7 @@
 #include "../basic.hpp"
 #include "../combinatorics/generatemultiindices.hpp"
 #include "../operators/linearoperator.hpp"
-#include "../operators/diagonaloperator.hpp"
+#include "../operators/scalingoperator.hpp"
 #include "../dense/densematrix.hpp"
 #include "../dense/matrixtensorproduct.hpp"
 #include "../dense/functions.hpp"
@@ -111,9 +111,8 @@ inline DenseMatrix EvaluationMatrix( std::vector<MultiIndex> mis, const DenseMat
 {
     
     const int num_points = lpsbc.getdimin();
-    const int num_mis    = mis.size();
-    
-    int dim = lpsbc.getdimout() - 1;
+    const int num_mis    = mis.size();    
+    const int dim        = lpsbc.getdimout() - 1;
         
     DenseMatrix ret( num_points, num_mis );
     
@@ -139,27 +138,27 @@ inline DenseMatrix EvaluationMatrix( std::vector<MultiIndex> mis, const DenseMat
 // this produces a matrix that transform from Euclidean coordinates 
 // to barycentric coordinates 
 
+// inline DenseMatrix BarycentricProjectionMatrixALTERVERSUCH( const DenseMatrix& J )
+// {
+//     assert( J.getdimout() >= J.getdimin() );
+    
+//     // We implement J^+ = inv( J^t J ) J^t
+    
+//     auto Jt = Transpose(J);
+    
+//     auto F = Inverse( Jt * J ) * Jt; // n x d
+    
+//     DenseMatrix ret( J.getdimin()+1, J.getdimout(), 0.0 );
+    
+//     for( int r = 0; r < J.getdimin();  r++ )
+//     for( int c = 0; c < J.getdimout(); c++ )
+//         ret( r+1, c ) = F(r,c);
+    
+//     return ret;
+// }
+
+
 inline DenseMatrix BarycentricProjectionMatrix( const DenseMatrix& J )
-{
-    assert( J.getdimout() >= J.getdimin() );
-    
-    // We implement J^+ = inv( J^t J ) J^t
-    
-    auto Jt = Transpose(J);
-    
-    auto F = Inverse( Jt * J ) * Jt; // n x d
-    
-    DenseMatrix ret( J.getdimin()+1, J.getdimout(), 0.0 );
-    
-    for( int r = 0; r < J.getdimin();  r++ )
-    for( int c = 0; c < J.getdimout(); c++ )
-        ret( r+1, c ) = F(r,c);
-    
-    return ret;
-}
-
-
-inline DenseMatrix BarycentricProjectionMatrixNEUERVERSUCH( const DenseMatrix& J )
 {
     assert( J.getdimout() >= J.getdimin() );
     
@@ -178,8 +177,12 @@ inline DenseMatrix BarycentricProjectionMatrixNEUERVERSUCH( const DenseMatrix& J
 
 
 
+
+// evaluate a field at given physical points 
+// and collect its values 
+
 inline DenseMatrix EvaluateField( 
-            int dim, int k, int r, 
+            int dim, int k,  
             const DenseMatrix& lps, 
             std::function< FloatVector( const FloatVector& ) > field
             )
@@ -187,7 +190,6 @@ inline DenseMatrix EvaluateField(
     
     assert( 0 <= dim );
     assert( 0 <= k && k <= dim );
-    assert( 0 <= r );
     assert( lps.getdimout() == dim );
     
     const auto fielddim = binomial_integer(dim,k);
@@ -273,7 +275,7 @@ inline FloatVector Interpolation(
         
         const auto Jac = m.getTransformationJacobian( dim, s );
         
-        const auto bpm = BarycentricProjectionMatrixNEUERVERSUCH( Jac );
+        const auto bpm = BarycentricProjectionMatrix( Jac );
         
         const auto P = SubdeterminantMatrix( bpm, k ); //MatrixAlternatingPower( bpm, k );
         
@@ -282,13 +284,12 @@ inline FloatVector Interpolation(
         const auto InterpolationMatrix = MatrixTensorProduct( EMinv, P );
         assert( InterpolationMatrix.isfinite()    );
         
-        const auto Evaluations = EvaluateField( dim, k, r, lps, field );
+        const auto Evaluations = EvaluateField( dim, k, lps, field );
         const auto EvaluationVector = Evaluations.flattencolumns();
         
         assert( Evaluations.isfinite()      );
         assert( EvaluationVector.isfinite() );
         
-
 //         std::cout << InterpolationMatrix.getdimin() << space << EvaluationVector.getdimension() << nl;
         
         const auto localResult = InterpolationMatrix * EvaluationVector;
@@ -297,7 +298,11 @@ inline FloatVector Interpolation(
         // std::cout << EvaluationVector << std::endl;
 
         if( k == 0 ) {
-        
+            if( !( EM * localResult - EvaluationVector ).issmall() ) {
+                std::cout << EM * localResult << space << EvaluationVector << nl;
+                std::cout << EM * localResult - EvaluationVector << nl;
+                std::cout << ( EM * localResult - EvaluationVector ).norm() << nl;
+            }
             assert( ( EM * localResult - EvaluationVector ).issmall() );
             assert( ( InterpolationMatrix - EMinv ).issmall() );
         }

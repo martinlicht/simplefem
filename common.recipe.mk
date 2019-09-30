@@ -1,43 +1,63 @@
 
 # Global definition of compiler and its flags 
 
+
+# Do you want to use tcmalloc?
+# Comment out the following line to disable tcmalloc
+# FLAG_USE_TCMALLOC=yes
+
+# Do you want to use openMP?
+# Comment out the following line to disable compilation with openMP
+# OPENMP_FLAG := -fopenmp
+
+# Do you want to DISABLE checking of meshes?
+# Comment out the following line to retain meaningful check routines for meshes
+FLAG_DO_NOT_CHECK_MESHES := -DDO_NOT_CHECK_MESHES
+
+# Do you want to use the Clang sanitizer?
+# Comment out the following line to disable compilation with the Clang sanitizer
+# FLAG_DO_USE_SANITIZER=yes
+
+
 ### Compiler 
 
 CXX = clang++-8
 # CXX = g++
 
 
-
-
 ### Compilation parameters 
 
-# Comment out the following line to disable compilation with openMP
-# OPENMP_FLAG := -fopenmp
+ifeq ($(FLAG_DO_USE_SANITIZER),yes)
+	SANITIZER_UNDEFINED_FLAG:=undefined,float-divide-by-zero,unsigned-integer-overflow,implicit-conversion,nullability-arg,nullability-assign,nullability-return
+	# SANITIZER_SAFESTACK_FLAG:=safe-stack
+	SANITIZER_ADDRESSLEAK_FLAG:=address,leak
+	# SANITIZER_CFI_FLAG:=cfi
+	# -fvisibility=hidden
 
-# FLAG_DO_NOT_CHECK_MESHES := DO_NOT_CHECK_MESHES
-
-SANITIZER_UNDEFINED_FLAG:=undefined,float-divide-by-zero,unsigned-integer-overflow,implicit-conversion,nullability-arg,nullability-assign,nullability-return
-#SANITIZER_SAFESTACK_FLAG:=safe-stack
-SANITIZER_ADDRESSLEAK_FLAG:=address,leak,
-SANITIZER_CFI_FLAG:=cfi
-#-fvisibility=hidden
-
-# Comment out the following line to disable ALL built-in sanitizers 
-SANITIZER_FLAG := -fsanitize=$(SANITIZER_UNDEFINED_FLAG),$(SANITIZER_ADDRESSLEAK_FLAG),$(SANITIZER_SAFESTACK_FLAG) -pg -fno-omit-frame-pointer
-
+	# Comment out the following line to disable ALL built-in sanitizers 
+	SANITIZER_FLAG := -fsanitize=$(SANITIZER_UNDEFINED_FLAG),$(SANITIZER_ADDRESSLEAK_FLAG),$(SANITIZER_SAFESTACK_FLAG) -pg -fno-omit-frame-pointer
+else
+	SANITIZER_FLAG := -fsanitize=$(SANITIZER_UNDEFINED_FLAG),$(SANITIZER_ADDRESSLEAK_FLAG),$(SANITIZER_SAFESTACK_FLAG) -pg -fno-omit-frame-pointer
+endif
 
 
 CXXFLAGS_LANG := -std=c++2a -pedantic 
 
 CXXFLAGS_WARNINGS := -Wall -Wextra -Wodr -Wno-unused-variable -Wno-sign-compare -Wno-missing-braces -Wmissing-field-initializers -Werror=implicit
 
-CXXFLAGS_OPTIMIZE := -O3 -march=native $(OPENMP_FLAG)
+CXXFLAGS_OPTIMIZE := -Ofast -march=native $(OPENMP_FLAG)
 # -fopenmp 
 # -O3 -Ofast -march=native -flto -frename-registers -frename-registers
 
-CXXFLAGS_MISC := -g -fpic -fno-exceptions $(SANITIZER_FLAG)
+ifeq ($(FLAG_USE_TCMALLOC),yes)
+	CXXFLAGS_MALLOC=-fno-builtin-malloc -fno-builtin-calloc -fno-builtin-realloc -fno-builtin-free
+else
+	CXXFLAGS_MALLOC=
+endif
 
-CXXFLAGS := ${CXXFLAGS_LANG} ${CXXFLAGS_WARNINGS} ${CXXFLAGS_OPTIMIZE} ${CXXFLAGS_MISC}
+CXXFLAGS_MISC := -g -fpic -fno-exceptions
+
+CXXFLAGS := ${CXXFLAGS_LANG} ${CXXFLAGS_WARNINGS} ${CXXFLAGS_OPTIMIZE} ${CXXFLAGS_MISC} $(SANITIZER_FLAG) ${CXXFLAGS_MALLOC}
 
 
 ### Preprocessor flags 
@@ -47,24 +67,14 @@ CPPFLAGS := $(FLAG_DO_NOT_CHECK_MESHES)
 
 
 
+### Linker Flags
 
-# *.o: ../common.make ./makefile
+ifeq ($(FLAG_USE_TCMALLOC),yes)
+	LDLIBS :=-l:libtcmalloc.so.4
+else
+	LDLIBS :=
+endif
 
-
-
-
-
-
-# CXXFLAGS = -std=c++17 -O3 -g -fno-exceptions -fpic -pedantic -Wall -Wextra -Wno-unused-variable -Wno-sign-compare -Wno-missing-braces -Wmissing-field-initializers -Werror=implicit
-
-# https://stackoverflow.com/questions/14492436/g-optimization-beyond-o3-ofast
- 
-
-# CXX = g++ -O0 -g -std=c++11 -pedantic -Wall -Wextra -Wno-unused-variable -Wno-sign-compare -Wno-missing-braces -Wmissing-field-initializers -Werror=implicit
-# CXX = clang++-6.0 -O0 -g -std=c++17 -fno-exceptions -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -pedantic -Wall -Wextra -Wno-unused-variable -Wno-sign-compare -Wno-missing-braces -Wmissing-field-initializers -Werror=implicit
-# CXX =     g++     -O0 -g -fno-exceptions -std=c++1z -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -pedantic -Wall -Wextra -Wno-unused-variable -Wno-sign-compare -Wno-missing-braces -Wmissing-field-initializers -Werror=implicit
-# CXX =     g++     -O0 -g -fsanitize=leak -std=c++1z -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -pedantic -Wall -Wextra -Wno-unused-variable -Wno-sign-compare -Wno-missing-braces -Wmissing-field-initializers -Werror=implicit
-# CXX =     g++ -O0 -g -fno-exceptions -std=c++14 -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -pedantic -Wall -Wextra -Wno-unused-variable -Wno-sign-compare -Wno-missing-braces -Wmissing-field-initializers -Werror=implicit
 
 
 

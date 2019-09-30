@@ -8,7 +8,7 @@
 
 #include "../basic.hpp"
 #include "../operators/linearoperator.hpp"
-#include "../operators/diagonaloperator.hpp"
+#include "../operators/scalingoperator.hpp"
 #include "../dense/densematrix.hpp"
 
 

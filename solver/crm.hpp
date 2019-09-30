@@ -5,7 +5,7 @@
 #include <iostream>
 
 #include "../basic.hpp"
-#include "../operators/diagonaloperator.hpp"
+#include "../operators/scalingoperator.hpp"
 #include "iterativesolver.hpp"
 
 

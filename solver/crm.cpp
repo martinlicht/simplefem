@@ -126,6 +126,8 @@ void ConjugateResidualMethod::iterationStart(
     r_Anorm = r * Ar;
     assert( r_Anorm >= 0. );
       
+    std::cout << "starting with r-norm=" << r.norm() << " r-Anorm=" << Ar.norm() << std::endl;
+      
 }
 
 

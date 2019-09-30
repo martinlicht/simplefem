@@ -2,22 +2,12 @@
 
 /**/
 
-// #include "../../basic.hpp"
-// #include "floatvector.cpp"
-// #include "scalingoperator.cpp"
-// #include "diagonaloperator.cpp"
-// #include "linearoperator.cpp"
-// #include "sparsematrix.cpp"
-// #include "iterativesolver.cpp"
-// #include "crm.cpp"
-
 #include <iostream>
 #include <ctime>
 
 #include "../../basic.hpp"
 #include "../../operators/floatvector.hpp"
 #include "../../operators/scalingoperator.hpp"
-#include "../../operators/diagonaloperator.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../solver/iterativesolver.hpp"
 #include "../../solver/crm.hpp"

@@ -11,7 +11,6 @@ class SparseMatrix;
 #include "../combinatorics/indexmap.hpp"
 #include "../operators/linearoperator.hpp"
 #include "../operators/scalingoperator.hpp"
-#include "../operators/diagonaloperator.hpp"
 #include "../sparse/sparsematrix.hpp"
 // #include "matrixalgorithm.hpp"
 

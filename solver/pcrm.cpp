@@ -110,7 +110,7 @@ void PreconditionedConjugateResidualMethod::iterationStart(
     /* rho is Mr.A.Mr */
     r_MAMnorm = Mr * AMr;
 
-    std::cout << "starting with " << r.norm() << space << Mr.norm() << space << r_MAMnorm << std::endl;
+    std::cout << "starting with r-norm=" << r.norm() << " r-Mnorm=" << Mr.norm() << " r-MAMnorm=" << r_MAMnorm << std::endl;
       
 }
 

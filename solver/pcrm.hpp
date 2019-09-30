@@ -5,7 +5,7 @@
 #include <iostream>
 
 #include "../basic.hpp"
-#include "../operators/diagonaloperator.hpp"
+#include "../operators/scalingoperator.hpp"
 #include "iterativesolver.hpp"
 
 
@@ -29,7 +29,7 @@ class PreconditionedConjugateResidualMethod
 
     public:
         
-        virtual void check() const;
+        virtual void check() const override;
         virtual void print( std::ostream& ) const override;
         
         virtual void solve( FloatVector&, const FloatVector& ) const override;
