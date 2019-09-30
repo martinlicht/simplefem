@@ -5,7 +5,7 @@
 #include <iostream>
 #include "../../basic.hpp"
 #include "../../operators/floatvector.hpp"
-#include "../../operators/scalingoperator.hpp"
+#include "../../operators/simpleoperators.hpp"
 #include "../../operators/composedoperators.hpp"
 
 

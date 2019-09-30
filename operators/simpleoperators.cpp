@@ -1,5 +1,5 @@
 
-#include "scalingoperator.hpp"
+#include "simpleoperators.hpp"
 
 #include <iostream>
 

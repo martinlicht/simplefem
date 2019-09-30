@@ -151,8 +151,7 @@ ResidualDescentMethod::~ResidualDescentMethod()
 void ResidualDescentMethod::check() const
 {
     IterativeSolver::check();
-    assert( getdimin() == getdimout() );
-    assert( getdimin() == dimension );
+    assert( internalOperator.getdimin() == internalOperator.getdimout() );
 }
 
 void ResidualDescentMethod::print( std::ostream& os ) const

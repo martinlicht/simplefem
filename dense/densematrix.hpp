@@ -10,7 +10,7 @@ class SparseMatrix;
 #include "../basic.hpp"
 #include "../combinatorics/indexmap.hpp"
 #include "../operators/linearoperator.hpp"
-#include "../operators/scalingoperator.hpp"
+#include "../operators/simpleoperators.hpp"
 #include "../sparse/sparsematrix.hpp"
 // #include "matrixalgorithm.hpp"
 

@@ -7,7 +7,7 @@
 
 #include "../../basic.hpp"
 #include "../../operators/floatvector.hpp"
-#include "../../operators/scalingoperator.hpp"
+#include "../../operators/simpleoperators.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../solver/iterativesolver.hpp"
 #include "../../solver/crm.hpp"
