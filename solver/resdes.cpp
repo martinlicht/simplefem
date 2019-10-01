@@ -12,7 +12,9 @@ ResidualDescentMethod::ResidualDescentMethod( const LinearOperator& op )
 }
 
 ResidualDescentMethod::~ResidualDescentMethod()
-{}
+{
+    ResidualDescentMethod::check();
+}
 
 void ResidualDescentMethod::check() const
 {

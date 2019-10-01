@@ -76,7 +76,7 @@ SparseMatrix::SparseMatrix( const DenseMatrix& matrix )
 
 SparseMatrix::~SparseMatrix()
 {
-    
+    SparseMatrix::check();    
 }
 
 
@@ -92,7 +92,7 @@ SparseMatrix::SparseMatrix( const SparseMatrix& mat )
     std::cout << "*********** WARNING: DEEP COPY ******************\n";
     std::cout << "***********  OF SPARSE MATRIX  ******************\n";
     std::cout << "*************************************************\n";
-    check();
+    SparseMatrix::check();
 }
 
 SparseMatrix& SparseMatrix::operator=( const SparseMatrix& mat )
@@ -112,7 +112,7 @@ SparseMatrix::SparseMatrix( SparseMatrix&& mat )
 : LinearOperator( mat.getdimout(), mat.getdimin() ),
   entries( std::move(mat.entries) )
 {
-    check();
+    SparseMatrix::check();
 }
 
 SparseMatrix& SparseMatrix::operator=( SparseMatrix&& mat )
@@ -120,6 +120,7 @@ SparseMatrix& SparseMatrix::operator=( SparseMatrix&& mat )
     assert( getdimin() == mat.getdimin() );
     assert( getdimout() == mat.getdimout() );
     this->entries = std::move( mat.entries );
+    check();
     return *this;
 }
 

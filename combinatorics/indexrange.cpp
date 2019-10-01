@@ -11,7 +11,7 @@ IndexRange::IndexRange( int from, int to )
   if( minimum > maximum ) 
       maximum = minimum - 1;
   
-  check();
+  IndexRange::check();
 }
 
 void IndexRange::check() const

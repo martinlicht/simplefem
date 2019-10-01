@@ -52,7 +52,7 @@ MatrixCSR::MatrixCSR(
         A[i] += A[i-1];
     }
 
-    check();
+    MatrixCSR::check();
 
 }
 
@@ -76,7 +76,7 @@ MatrixCSR::MatrixCSR( const MatrixCSR& mat )
     std::cout << "*********** WARNING: DEEP COPY ******************\n";
     std::cout << "***********  OF CSR MATRIX     ******************\n";
     std::cout << "*************************************************\n";
-    check();
+    MatrixCSR::check();
 }
 
 MatrixCSR& MatrixCSR::operator=( const MatrixCSR& mat )
@@ -100,7 +100,7 @@ MatrixCSR::MatrixCSR( MatrixCSR&& mat )
   C( std::move(mat.C) ),
   V( std::move(mat.V) )
 {
-    check();
+    MatrixCSR::check();
 }
 
 MatrixCSR& MatrixCSR::operator=( MatrixCSR&& mat )
@@ -110,6 +110,7 @@ MatrixCSR& MatrixCSR::operator=( MatrixCSR&& mat )
     this->A = std::move( mat.A );
     this->C = std::move( mat.C );
     this->V = std::move( mat.V );
+    check();
     return *this;
 }
 

@@ -10,11 +10,13 @@
 
 ScalingOperator::ScalingOperator( int dimension, Float s )
 : LinearOperator(dimension,dimension), scaling(s)
-{}
+{
+    ScalingOperator::check();
+}
 
 ScalingOperator::~ScalingOperator()
 {
-    /* Nothing */ 
+    ScalingOperator::check();
 }
 
 void ScalingOperator::check() const  

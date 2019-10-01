@@ -16,6 +16,7 @@ DenseMatrix::DenseMatrix( const DenseMatrix& mat )
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin(); c++ )
         (*this)(r,c) = mat(r,c);
+    DenseMatrix::check();
 }
         
 DenseMatrix::DenseMatrix( DenseMatrix&& mat )
@@ -159,6 +160,7 @@ DenseMatrix::DenseMatrix( const FloatVector& myvector )
         
 DenseMatrix::~DenseMatrix()
 {
+    DenseMatrix::check();
     
     if( entries != nullptr ){
         delete[] entries;

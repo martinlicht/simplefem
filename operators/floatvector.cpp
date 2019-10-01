@@ -14,7 +14,7 @@ FloatVector::FloatVector( int dim, Float initialvalue )
 {
     assert( dimension >= 0 and pointer != nullptr );
     for( int p = 0; p < dimension; p++ ) pointer[p] = initialvalue;
-    check();
+    FloatVector::check();
 }
 
 FloatVector::FloatVector( const FloatVector& src )
@@ -22,7 +22,7 @@ FloatVector::FloatVector( const FloatVector& src )
 {
     assert( dimension >= 0 and pointer != nullptr );
     for( int p = 0; p < dimension; p++ ) pointer[p] = src.pointer[p];
-    check();
+    FloatVector::check();
 }
 
 FloatVector::FloatVector( const FloatVector& src, Float alpha )
@@ -30,7 +30,7 @@ FloatVector::FloatVector( const FloatVector& src, Float alpha )
 {
     assert( dimension >= 0 and pointer != nullptr );
     for( int p = 0; p < dimension; p++ ) pointer[p] = alpha * src.pointer[p];
-    check();
+    FloatVector::check();
 }
 
 FloatVector::FloatVector( FloatVector&& src )
@@ -38,7 +38,7 @@ FloatVector::FloatVector( FloatVector&& src )
 {
     assert( dimension >= 0 and pointer != nullptr and pointer == src.pointer and dimension == src.dimension );
     src.pointer = nullptr;
-    check();
+    FloatVector::check();
 }
 
 FloatVector::FloatVector( FloatVector&& src, Float alpha )
@@ -47,19 +47,19 @@ FloatVector::FloatVector( FloatVector&& src, Float alpha )
     assert( dimension >= 0 and pointer != nullptr and pointer == src.pointer and dimension == src.dimension );
     src.pointer = nullptr;
     scale( alpha );
-    check();
+    FloatVector::check();
 }
 
 FloatVector::FloatVector( const std::vector<Float>& vals, Float alpha )
 : FloatVector( vals.size(), [&vals](int i) -> Float{ return vals.at(i); }, alpha )
 {
-  check();
+    FloatVector::check();
 }
 
 FloatVector::FloatVector( const std::vector<int>& vals, Float alpha )
 : FloatVector( vals.size(), [&vals](int i) -> Float{ return vals.at(i); }, alpha )
 {
-  check();
+    FloatVector::check();
 }
 
 FloatVector::FloatVector( const std::initializer_list<Float>& l )
@@ -68,7 +68,7 @@ FloatVector::FloatVector( const std::initializer_list<Float>& l )
     assert( dimension >= 0 and pointer != nullptr );
     int i = 0;
     for( const Float& f : l ) pointer[i++] = f;
-    check();
+    FloatVector::check();
 }
 
 FloatVector::FloatVector( int dimension, const std::function<Float(int)>& generator, Float alpha )
@@ -76,11 +76,12 @@ FloatVector::FloatVector( int dimension, const std::function<Float(int)>& genera
 {
     assert( dimension >= 0 and pointer != nullptr );
     generatedatafrom( alpha, generator );
-    check();
+    FloatVector::check();
 }
 
 FloatVector::~FloatVector()
 {
+    FloatVector::check();
     if( pointer != nullptr ){
         delete[] pointer;
     }
@@ -97,6 +98,7 @@ FloatVector& FloatVector::operator=( const FloatVector& vec )
         for( int p = 0; p < dimension; p++ ) pointer[p] = vec.pointer[p];
     }
     
+    check();
     return *this;
 }
 
@@ -112,6 +114,7 @@ FloatVector& FloatVector::operator=( FloatVector&& vec )
         vec.pointer = nullptr;
     }
     
+    check();
     return *this;
 }
 

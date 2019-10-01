@@ -12,7 +12,9 @@ PreconditionedConjugateResidualMethod::PreconditionedConjugateResidualMethod( co
 }
 
 PreconditionedConjugateResidualMethod::~PreconditionedConjugateResidualMethod()
-{}
+{
+    PreconditionedConjugateResidualMethod::check();
+}
   
 void PreconditionedConjugateResidualMethod::check() const
 {

@@ -76,7 +76,9 @@ public LinearOperator
     
         explicit ComposedOperator( int dimout, int dimin )
         : LinearOperator( dimout, dimin ), left( nullptr ), right( nullptr ) 
-        {}; 
+        {
+            ComposedOperator::check();
+        }; 
         
     public:
 
@@ -86,7 +88,7 @@ public LinearOperator
             assert( L.getdimin() == R.getdimout() );
             left  = std::make_unique<ProxyOperator>(L); 
             right = std::make_unique<ProxyOperator>(R);
-            check();
+            ComposedOperator::check();
             std::cout << "Composed Operator created LL" << nl; 
         };
         
@@ -96,7 +98,7 @@ public LinearOperator
             assert( L.getdimin() == R.getdimout() );
             left  = std::make_unique<ProxyOperator>(L); 
             right = std::move(R).get_unique_pointer_to_heir();
-            check();
+            ComposedOperator::check();
             std::cout << "Composed Operator created LR" << nl; 
         };
         
@@ -106,7 +108,7 @@ public LinearOperator
             assert( L.getdimin() == R.getdimout() );
             left  = std::move(L).get_unique_pointer_to_heir();
             right = std::make_unique<ProxyOperator>(R);
-            check();
+            ComposedOperator::check();
             std::cout << "Composed Operator created RL" << nl; 
         };
         
@@ -116,11 +118,12 @@ public LinearOperator
             assert( L.getdimin() == R.getdimout() );
             left  = std::move(L).get_unique_pointer_to_heir();
             right = std::move(R).get_unique_pointer_to_heir();
-            check();
+            ComposedOperator::check();
             std::cout << "Composed Operator created RR" << nl; 
         };
         
         virtual ~ComposedOperator() { 
+            ComposedOperator::check();
             std::cout << "Composed Operator destroyed" << nl;
         };
 
@@ -156,36 +159,41 @@ public ComposedOperator
     
         explicit ProduktOperator( int dimout, int dimin )
         : ComposedOperator( dimout, dimin ) 
-        {}; 
+        {
+            ProduktOperator::check();
+        }; 
         
     public:
 
         explicit ProduktOperator( const LinearOperator& L, const LinearOperator& R )
         : ComposedOperator( L.getdimout(), R.getdimin(), L, R ) 
         {
-            check();
+            ProduktOperator::check();
         };
         
         explicit ProduktOperator( const LinearOperator& L, LinearOperator&& R )
         : ComposedOperator( L.getdimout(), R.getdimin(), L, std::move(R) ) 
         {
-            check();
+            ProduktOperator::check();
         };
         
         explicit ProduktOperator( LinearOperator&& L, const LinearOperator& R )
         : ComposedOperator( L.getdimout(), R.getdimin(), std::move(L), R ) 
         {
-            check();
+            ProduktOperator::check();
         };
         
         explicit ProduktOperator( LinearOperator&& L, LinearOperator&& R )
         : ComposedOperator( L.getdimout(), R.getdimin(), std::move(L), std::move(R) ) 
         {
-            check();
+            ProduktOperator::check();
         };
         
-        virtual ~ProduktOperator() = default;
-        
+        virtual ~ProduktOperator()
+        {
+            ProduktOperator::check();
+        };
+
         virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
             std::shared_ptr<ProduktOperator> clone = std::make_shared<ProduktOperator>( getdimout(), getdimin() );
             clone->left  = std::move(*(left ->get_shared_pointer_to_clone())).get_unique_pointer_to_heir();
@@ -250,35 +258,40 @@ public ComposedOperator
     
         explicit SummOperator( int dimout, int dimin )
         : ComposedOperator( dimout, dimin ) 
-        {}; 
+        {
+            SummOperator::check();
+        }; 
         
     public:
 
         explicit SummOperator( const LinearOperator& L, const LinearOperator& R )
         : ComposedOperator( L.getdimout(), R.getdimin(), L, R ) 
         {
-            check();
+            SummOperator::check();
         };
         
         explicit SummOperator( const LinearOperator& L, LinearOperator&& R )
         : ComposedOperator( L.getdimout(), R.getdimin(), L, std::move(R) ) 
         {
-            check();
+            SummOperator::check();
         };
         
         explicit SummOperator( LinearOperator&& L, const LinearOperator& R )
         : ComposedOperator( L.getdimout(), R.getdimin(), std::move(L), R ) 
         {
-            check();
+            SummOperator::check();
         };
         
         explicit SummOperator( LinearOperator&& L, LinearOperator&& R )
         : ComposedOperator( L.getdimout(), R.getdimin(), std::move(L), std::move(R) ) 
         {
-            check();
+            SummOperator::check();
         };
         
-        virtual ~SummOperator() = default;
+        virtual ~SummOperator()
+        {
+            SummOperator::check();
+        };
         
         virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
             std::shared_ptr<SummOperator> clone = std::make_shared<SummOperator>( getdimout(), getdimin() );

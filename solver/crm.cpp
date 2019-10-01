@@ -13,7 +13,9 @@ ConjugateResidualMethod::ConjugateResidualMethod( const LinearOperator& op )
 }
 
 ConjugateResidualMethod::~ConjugateResidualMethod()
-{}
+{
+    ConjugateResidualMethod::check();
+}
 
 void ConjugateResidualMethod::check() const
 {
