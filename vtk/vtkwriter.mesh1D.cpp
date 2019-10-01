@@ -7,11 +7,11 @@ VTK_MeshWriter_Mesh1D::VTK_MeshWriter_Mesh1D( Mesh& m1D, std::ostream& os )
 {
     m1D.check();
     assert( m1D.getouterdimension() == 2 || m1D.getouterdimension() == 3 );
-    assert( m1D.getinnerdimension() == 2 );
+    assert( m1D.getinnerdimension() == 1 );
     assert( m1D.dimension_counted(1) );
     assert( m1D.dimension_counted(0) );
     assert( m1D.subsimplices_listed( 1, 0 ) );
-        
+       
 }
 
 
