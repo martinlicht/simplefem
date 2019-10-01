@@ -1,0 +1,21 @@
+Objects.basic = 
+Objects.combinatorics = ../combinatorics/*.o
+Objects.operators = ../operators/*.o
+Objects.dense = ../dense/*.o
+Objects.sparse = ../sparse/*.o
+Objects.solver = ../solver/*.o
+Objects.mesh = ../mesh/*.o
+Objects.vtk = ../vtk/*.o
+Objects.matrixmarket = ../matrixmarket/*.o
+Objects.fem =  
+
+Links.basic         = $(Objects.basic) 
+Links.combinatorics = $(Objects.combinatorics) 
+Links.operators     = $(Objects.operators) $(Objects.combinatorics)
+Links.dense         = $(Objects.dense) $(Objects.sparse) $(Objects.operators) $(Objects.combinatorics)
+Links.sparse        = $(Objects.sparse) $(Objects.operators) $(Objects.combinatorics) $(Objects.dense)
+Links.solver        = $(Objects.solver) $(Objects.operators) $(Objects.sparse) $(Objects.dense) $(Objects.combinatorics)
+Links.mesh          = $(Objects.mesh) $(Objects.combinatorics) $(Objects.operators) $(Objects.dense) $(Objects.sparse) 
+Links.vtk           = $(Objects.vtk) $(Objects.mesh) $(Objects.dense) $(Objects.sparse) $(Objects.combinatorics) $(Objects.operators)
+Links.matrixmarket  = $(Objects.matrixmarket) 
+Links.fem           = $(Objects.fem) $(Objects.vtk) $(Objects.mesh) $(Objects.solver) $(Objects.dense) $(Objects.sparse) $(Objects.combinatorics) $(Objects.operators)
