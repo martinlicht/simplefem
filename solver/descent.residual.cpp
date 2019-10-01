@@ -4,7 +4,122 @@
 #include "../operators/floatvector.hpp"
 
 
-/* 
+ResidualDescentMethod::ResidualDescentMethod( const LinearOperator& op )
+: IterativeSolver(), A( op )
+{
+    this->max_iteration_count = op.getdimin();
+    ResidualDescentMethod::check();
+}
+
+ResidualDescentMethod::~ResidualDescentMethod()
+{}
+
+void ResidualDescentMethod::check() const
+{
+    IterativeSolver::check();
+    assert( A.getdimin() == A.getdimout() );
+}
+
+void ResidualDescentMethod::print( std::ostream& os ) const
+{
+    os << "Print Residual Descent Method." << std::endl;
+}
+
+
+
+void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
+{
+    check();
+    x.check();
+    b.check();
+    
+    assert( x.getdimension() == b.getdimension() );
+    assert( A.getdimin()  == x.getdimension() );
+    assert( A.getdimout() == b.getdimension() );
+    
+    const int dimension = A.getdimin();
+
+    /* Build up data */
+    
+    Float r_sqnorm = notanumber;
+
+    FloatVector  r( dimension, 0. );
+    
+    // avoid repeated allocation of this temporary vector 
+    FloatVector Ar( dimension, 0. );
+    
+    recent_iteration_count = 0;
+    
+    while(true)
+    {
+        
+        /* Start / Restart CRM process */
+        if( recent_iteration_count % x.getdimension() == 0 ) {
+        
+            std::cout << "Begin Residual iteration" << std::endl;
+                
+            r = b - A * x;
+
+            r_sqnorm = r * r;
+            
+            assert( r_sqnorm >= 0. );
+            
+            std::cout << "tolerance: " << tolerance << std::endl;
+
+        }
+
+        bool continue_condition = recent_iteration_count < max_iteration_count && r_sqnorm > tolerance;
+        
+        /* Print information if it is time too */
+        if( recent_iteration_count % print_modulo == 0 or not continue_condition ) {
+            std::cout 
+                << "#" << recent_iteration_count << "/" << max_iteration_count
+                << " r-sqnorm=" << r_sqnorm 
+                << std::endl;
+        }
+
+        /* If exit condition met, exit */
+        if( not continue_condition ) 
+            break;
+            
+        /* Perform iteration step */
+        {
+
+            Ar = A * r;
+        
+            Float r_Asqnorm = r * Ar;
+            Float Ar_sqnorm = Ar * Ar;
+            assert( r_Asqnorm >= 0. && Ar_sqnorm >= 0. );
+            Float alpha = r_Asqnorm / Ar_sqnorm;
+
+            x += alpha * r;
+
+            r -= alpha * Ar;
+            
+            r_sqnorm = r*r;
+
+        }
+        
+        /* Increase iteration counter */
+        recent_iteration_count++;
+    }
+    
+    /* HOW DID WE FINISH ? */
+    if( r_sqnorm > tolerance ) {
+        std::cout << "CRM process has failed. ";
+    } else { 
+        std::cout << "CRM process has succeeded. ";
+    }
+
+    recent_deviation = r_sqnorm;
+    
+}
+  
+
+  
+  
+  
+  /* 
  * 
  * Input: A, b, x
  *****************
@@ -29,134 +144,5 @@
 
 
   
-void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
-{
-    check();
-    x.check();
-    b.check();
-    
-    assert( x.getdimension() == dimension );
-    assert( b.getdimension() == dimension );
-    
-    /* Build up data */
-    int iter = 0;
-    
-    Float r_norm;
-    FloatVector& r = residual;
-    
-    /* Initiate Residual Descent process */
-    iterationStart( x, b, r, r_norm );
-    
-    std::cout << "Begin iteration" << std::endl;
-
-    /* Perform Residual Descent step */
-    while( iter < max_iteration_count && r_norm > tolerance )
-    {
-        if( iter % print_modulo == 0 )
-          std::cout 
-          << "iteration: " << iter << "/" << max_iteration_count
-          << " : "
-          << r_norm << " vs " << tolerance
-          << std::endl;
-            
-        iterationStep( x, r, r_norm );
-        
-        FloatVector test = internalOperator * x - b;
-        Float r_norm_test = test * test;
-        std::cout << "[ratio: " << r_norm / r_norm_test << "]" << std::endl;
-        
-        iter++;
-    }
-    
-    /* FINISHED */
-    if( r_norm > tolerance ) {
-      
-      std::cout << "CRM process has failed" << std::endl;
-      
-    } else {
-        
-      iterationStart( x, b, residual, r_norm );
-      std::cout 
-        << "iteration: " << iter << "/" << max_iteration_count
-        << " : "
-        << r_norm << " vs " << tolerance
-        << std::endl;
-        
-    }
-    
-    recent_iteration_count = iter;
-    recent_deviation = r_norm;
-    
-}
   
   
-  
-void ResidualDescentMethod::iterationStart( 
-    const FloatVector& x, const FloatVector& b, 
-    FloatVector& r, 
-    Float& r_norm
-) const {
-    
-    /* r = b - A x */
-    r = b - internalOperator * x;
-
-    /* rho is r.A.r */
-    r_norm = r * r;
-      
-}
-
-
-void ResidualDescentMethod::iterationStep( 
-    FloatVector& x,
-    FloatVector& r, 
-    Float& r_norm
-) const {
-    
-    /*  Ar = A * r */
-    FloatVector Ar = internalOperator * r;
-  
-    /*  alpha = r.A.r / d.p */
-    Float alpha = r * Ar / ( Ar * Ar );
-
-    /*  x += alpha d */
-    x += alpha * r;
-
-    /*  r -= alpha Ad */
-    r -= alpha * Ar;
-    
-    r_norm = r*r;
-      
-}
-
-  
-  
-  
-  
-  
-  
-ResidualDescentMethod::ResidualDescentMethod( const LinearOperator& op )
-: IterativeSolver( op ), dimension( op.getdimout() )
-{
-    assert( op.getdimin() == op.getdimout() );
-    ResidualDescentMethod::check();
-}
-
-ResidualDescentMethod::~ResidualDescentMethod()
-{
-        
-}
-    
-        
-  
-void ResidualDescentMethod::check() const
-{
-    IterativeSolver::check();
-    assert( internalOperator.getdimin() == internalOperator.getdimout() );
-}
-
-void ResidualDescentMethod::print( std::ostream& os ) const
-{
-    os << "Print Conjugate Residual Method." << std::endl;
-}
-
-

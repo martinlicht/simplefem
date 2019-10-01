@@ -21,34 +21,26 @@
 ************************/
 
 
-
-
 class ResidualDescentMethod
 : public IterativeSolver
 {
 
-public:
-    
-    virtual void check() const override;
-    virtual void print( std::ostream& ) const override;
-    
-    virtual void solve( FloatVector&, const FloatVector& ) const override;
-    
-    void iterationStart( const FloatVector& x, const FloatVector& b, 
-                         FloatVector& r, Float& r_norm ) const;
+        public:
+        
+                explicit ResidualDescentMethod( const LinearOperator& op );
+                virtual ~ResidualDescentMethod();
 
-    void iterationStep( FloatVector& x,
-                        FloatVector& r, Float& r_norm ) const;
-    
-    explicit ResidualDescentMethod( const LinearOperator& op );
-    virtual ~ResidualDescentMethod();
+                virtual void check() const override;
+                virtual void print( std::ostream& ) const override;
+                
+                virtual void solve( FloatVector&, const FloatVector& ) const override;
 
-    private:
-    
-            int dimension;
+        private: 
 
+                const LinearOperator& A;   
 };
-  
+
+
   
   
   
