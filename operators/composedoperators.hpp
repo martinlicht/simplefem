@@ -128,7 +128,10 @@ public LinearOperator
         };
 
         virtual void check() const override { 
-            LinearOperator::check(); left->check(); right->check(); 
+            LinearOperator::check(); 
+            assert( left != nullptr );
+            assert( right != nullptr );
+            left->check(); right->check(); 
         }
         
         virtual void print( std::ostream& os ) const override { 
@@ -195,6 +198,7 @@ public ComposedOperator
         };
 
         virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
+            check();
             std::shared_ptr<ProduktOperator> clone = std::make_shared<ProduktOperator>( getdimout(), getdimin() );
             clone->left  = std::move(*(left ->get_shared_pointer_to_clone())).get_unique_pointer_to_heir();
             clone->right = std::move(*(right->get_shared_pointer_to_clone())).get_unique_pointer_to_heir();
@@ -204,6 +208,7 @@ public ComposedOperator
         };
         
         virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {
+            check();
             std::unique_ptr<ProduktOperator> heir = std::make_unique<ProduktOperator>( getdimout(), getdimin() );
             heir->left  = std::move(left);
             heir->right = std::move(right);
@@ -213,10 +218,10 @@ public ComposedOperator
         };
         
         virtual void check() const override { 
+            ComposedOperator::check();
             assert( getdimout() == left->getdimout() );
             assert( getdimin()  == right->getdimin()  );
             assert( left->getdimin() == right->getdimout() );
-            ComposedOperator::check();
         };
         
         virtual void print( std::ostream& os ) const override { 
@@ -294,6 +299,7 @@ public ComposedOperator
         };
         
         virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
+            check();
             std::shared_ptr<SummOperator> clone = std::make_shared<SummOperator>( getdimout(), getdimin() );
             clone->left  = std::move(*(left ->get_shared_pointer_to_clone())).get_unique_pointer_to_heir();
             clone->right = std::move(*(right->get_shared_pointer_to_clone())).get_unique_pointer_to_heir();
@@ -303,6 +309,7 @@ public ComposedOperator
         };
         
         virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {
+            check();
             std::unique_ptr<SummOperator> heir = std::make_unique<SummOperator>( getdimout(), getdimin() );
             heir->left  = std::move(left);
             heir->right = std::move(right);
@@ -313,13 +320,13 @@ public ComposedOperator
         
         virtual void check() const override
         { 
+            ComposedOperator::check();
             assert( getdimout() == left->getdimout() );
             assert( getdimin()  == left->getdimin()  );
             assert( getdimout() == right->getdimout() );
             assert( getdimin()  == right->getdimin()  );
             assert( left->getdimout() == right->getdimout() );
             assert( left->getdimin()  == right->getdimin()  );
-            ComposedOperator::check();
         };
         
         virtual void print( std::ostream& os ) const override
@@ -361,37 +368,43 @@ public ComposedOperator
     
         explicit DiffOperator( int dimout, int dimin )
         : ComposedOperator( dimout, dimin ) 
-        {}; 
+        {
+            DiffOperator::check();
+        }; 
         
     public:
 
         explicit DiffOperator( const LinearOperator& L, const LinearOperator& R )
         : ComposedOperator( L.getdimout(), R.getdimin(), L, R ) 
         {
-            check();
+            DiffOperator::check();
         };
         
         explicit DiffOperator( const LinearOperator& L, LinearOperator&& R )
         : ComposedOperator( L.getdimout(), R.getdimin(), L, std::move(R) ) 
         {
-            check();
+            DiffOperator::check();
         };
         
         explicit DiffOperator( LinearOperator&& L, const LinearOperator& R )
         : ComposedOperator( L.getdimout(), R.getdimin(), std::move(L), R ) 
         {
-            check();
+            DiffOperator::check();
         };
         
         explicit DiffOperator( LinearOperator&& L, LinearOperator&& R )
         : ComposedOperator( L.getdimout(), R.getdimin(), std::move(L), std::move(R) ) 
         {
-            check();
+            DiffOperator::check();
         };
         
-        virtual ~DiffOperator() = default;
+        virtual ~DiffOperator()
+        {
+            DiffOperator::check();
+        };
         
         virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
+            check();
             std::shared_ptr<DiffOperator> clone = std::make_shared<DiffOperator>( getdimout(), getdimin() );
             clone->left  = std::move(*(left ->get_shared_pointer_to_clone())).get_unique_pointer_to_heir();
             clone->right = std::move(*(right->get_shared_pointer_to_clone())).get_unique_pointer_to_heir();
@@ -401,6 +414,7 @@ public ComposedOperator
         };
         
         virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {
+            check();
             std::unique_ptr<DiffOperator> heir = std::make_unique<DiffOperator>( getdimout(), getdimin() );
             heir->left  = std::move(left);
             heir->right = std::move(right);
@@ -411,13 +425,13 @@ public ComposedOperator
         
         virtual void check() const override
         { 
+            ComposedOperator::check();
             assert( getdimout() == left->getdimout() );
             assert( getdimin()  == left->getdimin()  );
             assert( getdimout() == right->getdimout() );
             assert( getdimin()  == right->getdimin()  );
             assert( left->getdimout() == right->getdimout() );
             assert( left->getdimin()  == right->getdimin()  );
-            ComposedOperator::check();
         };
         
         virtual void print( std::ostream& os ) const override
