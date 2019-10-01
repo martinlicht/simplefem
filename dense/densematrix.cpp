@@ -160,7 +160,7 @@ DenseMatrix::DenseMatrix( const FloatVector& myvector )
         
 DenseMatrix::~DenseMatrix()
 {
-    DenseMatrix::check();
+    // DenseMatrix::check(); // explicitly disabled, might be in moved-from state 
     
     if( entries != nullptr ){
         delete[] entries;
@@ -269,7 +269,7 @@ void DenseMatrix::set( int r, int c, Float v )
     (*this)( r, c ) = v;
 }        
 
-Float& DenseMatrix::at( int r, int c )
+Float& DenseMatrix::at( int r, int c ) &
 {
     assert( 0 <= r && r < getdimout() );
     assert( 0 <= c && c < getdimin() );
@@ -278,7 +278,7 @@ Float& DenseMatrix::at( int r, int c )
     return entries[  r * getdimin() + c ];
 }
 
-const Float& DenseMatrix::at( int r, int c ) const
+const Float& DenseMatrix::at( int r, int c ) const &
 {
     assert( 0 <= r && r < getdimout() );
     assert( 0 <= c && c < getdimin() );
@@ -287,7 +287,7 @@ const Float& DenseMatrix::at( int r, int c ) const
     return entries[  r * getdimin() + c ];
 }
 
-Float& DenseMatrix::operator()( int r, int c )
+Float& DenseMatrix::operator()( int r, int c ) &
 {
     assert( 0 <= r && r < getdimout() );
     assert( 0 <= c && c < getdimin() );
@@ -296,7 +296,7 @@ Float& DenseMatrix::operator()( int r, int c )
     return entries[ r * getdimin() + c ];
 }
 
-const Float& DenseMatrix::operator()( int r, int c ) const
+const Float& DenseMatrix::operator()( int r, int c ) const &
 {
     assert( 0 <= r && r < getdimout() );
     assert( 0 <= c && c < getdimin() );

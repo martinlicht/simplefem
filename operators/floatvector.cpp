@@ -176,28 +176,28 @@ Float FloatVector::getentry( int p ) const
 }
 
 
-Float& FloatVector::at( int p )
+Float& FloatVector::at( int p ) &
 {
     //check();
     assert( 0 <= p && p < getdimension() );
     return pointer[p];
 }
 
-const Float& FloatVector::at( int p ) const
+const Float& FloatVector::at( int p ) const &
 {
     //check();
     assert( 0 <= p && p < getdimension() );
     return pointer[p];
 }
 
-Float& FloatVector::operator[]( int p )
+Float& FloatVector::operator[]( int p ) &
 {
     //check();
     assert( 0 <= p && p < getdimension() );
     return pointer[p];
 }
 
-const Float& FloatVector::operator[]( int p ) const
+const Float& FloatVector::operator[]( int p ) const &
 {
     //check();
     assert( 0 <= p && p < getdimension() );

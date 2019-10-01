@@ -69,15 +69,19 @@ class IndexMap
         // What's more, the return of references 
         // breaks the binding.
         
-        int& at( int i );
+        // As a solution, the element access should only be const 
+        // so it does not break the encapsulation of the class
+        // and there should be explicit getter/setter methods
         
-        const int& at( int i ) const;
+        int& at( int i ) &;
         
-        int& operator[]( int i );
+        const int& at( int i ) const &;
         
-        const int& operator[]( int i ) const;
+        int& operator[]( int i ) &;
         
-        const std::vector<int>& getvalues() const;
+        const int& operator[]( int i ) const &;
+        
+        const std::vector<int>& getvalues() const &;
                 
         bool rangecontains( int value ) const;
         

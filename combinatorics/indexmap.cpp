@@ -132,53 +132,55 @@ const IndexRange& IndexMap::getDestRange() const
     return dest;
 }
 
-const std::vector<int>& IndexMap::getvalues() const 
+
+
+
+
+int& IndexMap::at( int i ) &
+{
+    check();
+    assert( !src.isempty() );
+    assert( src.contains(i) );
+    assert( 0 <= i - src.min() );
+    assert( i - src.min() < values.size() );
+    return values.at( i - src.min() );
+}
+
+const int& IndexMap::at( int i ) const&
+{
+    check();
+    assert( !src.isempty() );
+    assert( src.contains(i) );
+    assert( 0 <= i - src.min() );
+    assert( i - src.min() < values.size() );
+    return values.at( i - src.min() );
+}
+
+int& IndexMap::operator[]( int i ) &
+{
+    check();
+    assert( !src.isempty() );
+    assert( src.contains(i) );
+    assert( 0 <= i - src.min() );
+    assert( i - src.min() < values.size() );
+    return values[ i - src.min() ];
+}
+
+const int& IndexMap::operator[]( int i ) const&
+{
+    check();
+    assert( !src.isempty() );
+    assert( src.contains(i) );
+    assert( 0 <= i - src.min() );
+    assert( i - src.min() < values.size() );
+    return values[ i - src.min() ];
+}
+
+const std::vector<int>& IndexMap::getvalues() const &
 {
     return values;
 }
 
-
-
-
-int& IndexMap::at( int i )
-{
-    check();
-    assert( !src.isempty() );
-    assert( src.contains(i) );
-    assert( 0 <= i - src.min() );
-    assert( i - src.min() < values.size() );
-    return values.at( i - src.min() );
-}
-
-const int& IndexMap::at( int i ) const
-{
-    check();
-    assert( !src.isempty() );
-    assert( src.contains(i) );
-    assert( 0 <= i - src.min() );
-    assert( i - src.min() < values.size() );
-    return values.at( i - src.min() );
-}
-
-int& IndexMap::operator[]( int i )
-{
-    check();
-    assert( !src.isempty() );
-    assert( src.contains(i) );
-    assert( 0 <= i - src.min() );
-    assert( i - src.min() < values.size() );
-    return values[ i - src.min() ];
-}
-
-const int& IndexMap::operator[]( int i ) const
-{
-    check();
-    assert( !src.isempty() );
-    assert( src.contains(i) );
-    assert( 0 <= i - src.min() );
-    assert( i - src.min() < values.size() );
-    return values[ i - src.min() ];
-}
 
 
 

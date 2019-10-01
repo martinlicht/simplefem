@@ -70,13 +70,14 @@ class FloatVector
         
         Float getentry( int ) const;
         
-        Float& at( int );
+
+        Float& at( int ) &;
         
-        const Float& at( int ) const;
+        const Float& at( int ) const &;
         
-        Float& operator[]( int );
+        Float& operator[]( int ) &;
         
-        const Float& operator[]( int ) const;
+        const Float& operator[]( int ) const &;
         
         const std::vector<Float> getdata() const;
         

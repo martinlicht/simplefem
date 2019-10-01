@@ -258,7 +258,7 @@ void SparseMatrix::clearentries()
     check();
 }
 
-const std::vector<SparseMatrix::MatrixEntry>& SparseMatrix::getentries() const
+const std::vector<SparseMatrix::MatrixEntry>& SparseMatrix::getentries() const & 
 {
     return entries;
 }

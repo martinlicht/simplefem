@@ -86,7 +86,7 @@ public LinearOperator /* every matrix is a linear operator */
         void setentry( int, MatrixEntry );
         void addentry( int, int, Float );
         void addentry( MatrixEntry );
-        const std::vector<MatrixEntry>& getentries() const;
+        const std::vector<MatrixEntry>& getentries() const &;
         void clearentries();
 
         int getnumberofentries() const;
