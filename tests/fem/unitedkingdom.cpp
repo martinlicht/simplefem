@@ -203,6 +203,7 @@ int main()
                         sol.zero();
                         FloatVector eins( sol.getdimension(), 1. );
                         
+                        if(false)
                         for( int t = 0; t < 4; t++ )
                         {
                             timestamp start = gettimestamp();
@@ -228,11 +229,13 @@ int main()
                             sol = sol - ( interpol_one * ( scalar_massmatrix * incmatrix * sol ) ) / domain_area * eins;
                         }
 
-                        if(false)
                         for( int t = 0; t < 10; t++ )
                         {
                             timestamp start = gettimestamp();
-                            ResidualDescent( stiffness, rhs, sol, sol.getdimension(), 1e-15 );
+                            ResidualDescentMethod RDM( stiffness );
+                            RDM.print_modulo = 1;//+sol.getdimension()/1000;
+                            RDM.tolerance = 1e-15;
+                            RDM.solve( sol, rhs );
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t " << end - start << std::endl;
                             sol = sol - ( interpol_one * ( scalar_massmatrix * incmatrix * sol ) ) / domain_area * eins;

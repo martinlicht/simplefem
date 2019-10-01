@@ -1,5 +1,5 @@
 
-#include "descent.residual.hpp"
+#include "resdes.hpp"
 
 #include "../operators/floatvector.hpp"
 
@@ -106,9 +106,9 @@ void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
     
     /* HOW DID WE FINISH ? */
     if( r_sqnorm > tolerance ) {
-        std::cout << "CRM process has failed. ";
+        std::cout << "CRM process has failed.\n";
     } else { 
-        std::cout << "CRM process has succeeded. ";
+        std::cout << "CRM process has succeeded.\n";
     }
 
     recent_deviation = r_sqnorm;
