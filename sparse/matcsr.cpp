@@ -178,6 +178,9 @@ void MatrixCSR::apply( FloatVector& dest, const FloatVector& add, Float scaling 
 
     dest.zero();
     
+    #if defined(_OPENMP)
+    #pragma omp parallel for
+    #endif
     for( int i = 0; i < A.size()-1; i++ ){
         for( int j = A[i]; j < A[i+1] ; j++ ){
             dest[i] += scaling * V[j] * add[ C[j] ];
