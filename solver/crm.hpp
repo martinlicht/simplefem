@@ -46,7 +46,7 @@ class ConjugateResidualMethod
                         ) const;
 
                 void iterationStep( 
-                        FloatVector& x, const FloatVector& b,
+                        FloatVector& x, 
                         FloatVector& r, FloatVector& d, FloatVector& Ar, FloatVector& Ad,
                         Float& r_Anorm,
                         FloatVector& AAd

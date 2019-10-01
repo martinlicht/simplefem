@@ -60,7 +60,7 @@ void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) cons
     {
         
         /* Start / Restart CRM process */
-        if( recent_iteration_count % print_modulo == 0 ) {
+        if( recent_iteration_count % x.getdimension() == 0 ) {
         
             std::cout << "Begin Conjugate Residual iteration" << std::endl;
         
@@ -86,7 +86,7 @@ void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) cons
             break;
             
         /* Perform iteration step */
-        iterationStep( x, b, r, d, Ar, Ad, r_Anorm, AAd );
+        iterationStep( x, r, d, Ar, Ad, r_Anorm, AAd );
         
         /* Increase iteration counter */
         recent_iteration_count++;
@@ -138,7 +138,7 @@ void ConjugateResidualMethod::iterationStart(
 
 
 void ConjugateResidualMethod::iterationStep( 
-    FloatVector& x, const FloatVector& b,
+    FloatVector& x, 
     FloatVector& r, FloatVector& d, FloatVector& Ar, FloatVector& Ad,
     Float& r_Anorm,
     FloatVector& AAd

@@ -46,7 +46,7 @@ class PreconditionedConjugateResidualMethod
             ) const;
 
         void iterationStep( 
-            FloatVector& x, const FloatVector& b,
+            FloatVector& x, 
             FloatVector& r, FloatVector& p, FloatVector& Mr, FloatVector& Mp, FloatVector& AMr, FloatVector& AMp,
             Float& r_MAMnorm,
             FloatVector& MAMp, FloatVector& AMAMp

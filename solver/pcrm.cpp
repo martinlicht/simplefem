@@ -67,7 +67,7 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
     {
         
         /* Start / Restart PCRM process */
-        if( recent_iteration_count % print_modulo == 0 ) {
+        if( recent_iteration_count % x.getdimension() == 0 ) {
         
             std::cout << "Begin Preconditioned Conjugate Residual iteration" << std::endl;
         
@@ -93,7 +93,7 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
             break;
             
         /* Perform iteration step */
-        iterationStep( x, b, r, p, Mr, Mp, AMr, AMp, r_MAMnorm, MAMp, AMAMp );
+        iterationStep( x, r, p, Mr, Mp, AMr, AMp, r_MAMnorm, MAMp, AMAMp );
         
         /* Increase iteration counter */
         recent_iteration_count++;
@@ -150,7 +150,7 @@ void PreconditionedConjugateResidualMethod::iterationStart(
 
 
 void PreconditionedConjugateResidualMethod::iterationStep( 
-    FloatVector& x, const FloatVector& b,
+    FloatVector& x, 
     FloatVector& r, FloatVector& p, FloatVector& Mr, FloatVector& Mp, FloatVector& AMr, FloatVector& AMp,
     Float& r_MAMnorm,
     FloatVector& MAMp, FloatVector& AMAMp
