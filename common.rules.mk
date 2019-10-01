@@ -20,8 +20,9 @@ $(library): $(objects)
 	$(CXX) $(CXXFLAGS) -shared -o $@ $^ $(LDLIBS)
 
 
-# $(dependencies): .deps/%.d: %.cpp | $(depdir)
-# g++ -MM $*.cpp -MF .deps/$*.d
+.PHONY: depender
+depender:
+	for item in $(sources); do g++ -MM $$item -MF .deps/$*.d; done
 
 $(objects): %.o: %.cpp | $(depdir)
 	@g++ -MM $*.cpp -MF .deps/$*.d
