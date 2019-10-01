@@ -36,7 +36,8 @@ class Coordinates
 
         Coordinates( int dimension, int number );
         Coordinates( int dimension, int number, const std::vector<Float>& );
-
+        ~Coordinates();
+        
         void check() const;
         void print( std::ostream& ) const;
 

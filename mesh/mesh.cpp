@@ -40,7 +40,14 @@ Mesh::Mesh( int inner, int outer )
     }
   
   }
+
+  Mesh::check();
   
+}
+
+Mesh::~Mesh()
+{
+  Mesh::check();
 }
 
 

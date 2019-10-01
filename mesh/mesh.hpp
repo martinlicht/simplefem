@@ -40,6 +40,7 @@ class Mesh
         
         
         Mesh( int inner, int outer );
+        virtual ~Mesh();
         
         void check() const;
         

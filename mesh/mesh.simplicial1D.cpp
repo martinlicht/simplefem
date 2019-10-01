@@ -129,7 +129,7 @@ MeshSimplicial1D::MeshSimplicial1D(
 
 MeshSimplicial1D::~MeshSimplicial1D()
 {
-    
+    MeshSimplicial1D::check();
 }
 
 

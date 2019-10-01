@@ -505,7 +505,7 @@ MeshSimplicial3D::MeshSimplicial3D(
 
 MeshSimplicial3D::~MeshSimplicial3D()
 {
-    
+    MeshSimplicial3D::check();
 }
 
 bool MeshSimplicial3D::compare( const MeshSimplicial3D& mesh ) const 

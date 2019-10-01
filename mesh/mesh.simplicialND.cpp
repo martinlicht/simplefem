@@ -146,7 +146,7 @@ MeshSimplicialND::MeshSimplicialND(
 
 MeshSimplicialND::~MeshSimplicialND()
 {
-    
+    MeshSimplicialND::check();    
 }
 
 

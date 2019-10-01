@@ -276,7 +276,7 @@ MeshSimplicial2D::MeshSimplicial2D(
 
 MeshSimplicial2D::~MeshSimplicial2D()
 {
-    
+    MeshSimplicial2D::check();
 }
 
 

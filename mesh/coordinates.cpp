@@ -14,7 +14,7 @@ Coordinates::Coordinates( int dimension, int number )
     number( number ), 
     data( dimension * number )
 {
-    check();
+    Coordinates::check();
 }
 
 Coordinates::Coordinates( int dimension, int number, const std::vector<Float>& data )
@@ -23,7 +23,12 @@ Coordinates::Coordinates( int dimension, int number, const std::vector<Float>& d
     number( number ), 
     data( data )
 {
-    check();
+    Coordinates::check();
+}
+
+Coordinates::~Coordinates()
+{
+    Coordinates::check();
 }
 
 void Coordinates::check() const
