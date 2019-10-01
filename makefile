@@ -41,6 +41,20 @@ clean:
 	$(MAKE) -f common.upkeep.mk clean
 	@echo "finished cleaning." 
 
+dclean: 
+	cd ./combinatorics && $(MAKE) dclean
+	cd ./operators && $(MAKE) dclean
+	cd ./dense && $(MAKE) dclean
+	cd ./sparse && $(MAKE) dclean
+	cd ./solver && $(MAKE) dclean
+	cd ./mesh && $(MAKE) dclean
+	cd ./vtk && $(MAKE) dclean
+	cd ./matrixmarket && $(MAKE) dclean
+	cd ./fem && $(MAKE) dclean
+	cd ./tests && $(MAKE) dclean
+	$(MAKE) -f common.upkeep.mk dclean
+	@echo "finished cleaning dependencies." 
+
 tidy: 
 	cd ./combinatorics && $(MAKE) tidy
 	cd ./operators && $(MAKE) tidy
