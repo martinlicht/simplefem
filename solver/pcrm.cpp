@@ -4,6 +4,33 @@
 #include "../operators/floatvector.hpp"
 
   
+PreconditionedConjugateResidualMethod::PreconditionedConjugateResidualMethod( const LinearOperator& op, const LinearOperator& M )
+: IterativeSolver(), A( op ), M( M )
+{
+    this->max_iteration_count = op.getdimin();
+    PreconditionedConjugateResidualMethod::check();
+}
+
+PreconditionedConjugateResidualMethod::~PreconditionedConjugateResidualMethod()
+{}
+  
+void PreconditionedConjugateResidualMethod::check() const
+{
+    IterativeSolver::check();
+    assert( A.getdimin() == A.getdimout() );
+    assert( M.getdimin() == M.getdimout() );
+    assert( A.getdimin() == M.getdimout() );
+}
+
+void PreconditionedConjugateResidualMethod::print( std::ostream& os ) const
+{
+    os << "Print Preconditioned Conjugate Residual Methop." << std::endl;
+}
+
+
+
+
+
 void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
 {
     check();
@@ -11,15 +38,16 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
     b.check();
     
     assert( x.getdimension() == b.getdimension() );
-    assert( internalOperator.getdimin()  == x.getdimension() );
-    assert( internalOperator.getdimout() == b.getdimension() );
-    
+    assert( A.getdimin()  == x.getdimension() );
+    assert( A.getdimout() == b.getdimension() );
+
+    const int dimension = A.getdimin();
+
     /* Build up data */
-    int iter = 0;
     
     Float r_MAMnorm = notanumber;
     
-    FloatVector&  r = residual;
+    FloatVector   r( dimension, 0. );
     FloatVector   p( dimension, 0. ); 
     
     FloatVector  Mr( dimension, 0. );
@@ -31,27 +59,47 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
     FloatVector  MAMp( dimension, 0. );    
     FloatVector AMAMp( dimension, 0. );
         
-    iterationStart( x, b, r, p, Mr, Mp, AMr, AMp, r_MAMnorm ); /* Initiate PCRM process */
-    
     std::cout << "Begin Preconditioned Conjugate Residual iteration" << std::endl;
-    std::cout << "start: " << r_MAMnorm << " tolerance: " << tolerance << std::endl;
-
-    while( iter < max_iteration_count && r_MAMnorm > tolerance ) /* Perform PCRM step */
+    
+    recent_iteration_count = 0;
+    
+    while(true)
     {
-        if( iter % print_modulo == 0 ) 
-          std::cout 
-            << "#" << iter << "/" << max_iteration_count
-            << " : "
-            << r_MAMnorm
-            << " : "
-            << ( r * ( invprecon * r ) ) 
-            << std::endl;
+        
+        /* Start / Restart PCRM process */
+        if( recent_iteration_count % print_modulo == 0 ) {
+        
+            std::cout << "Begin Preconditioned Conjugate Residual iteration" << std::endl;
+        
+            iterationStart( x, b, r, p, Mr, Mp, AMr, AMp, r_MAMnorm );
+
+            std::cout << "tolerance: " << tolerance << std::endl;
+
+        }
+
+        bool continue_condition = recent_iteration_count < max_iteration_count && r_MAMnorm > tolerance;
+        
+        /* Print information if it is time too */
+        if( recent_iteration_count % print_modulo == 0 or not continue_condition ) {
+            std::cout 
+                << "#" << recent_iteration_count << "/" << max_iteration_count
+                << " r-MAMsqnorm=" << r_MAMnorm
+                << " r-Msqnorm="   << ( r * ( M * r ) ) 
+                << std::endl;
+        }
+
+        /* If exit condition met, exit */
+        if( not continue_condition ) 
+            break;
             
+        /* Perform iteration step */
         iterationStep( x, b, r, p, Mr, Mp, AMr, AMp, r_MAMnorm, MAMp, AMAMp );
         
-        iter++;
+        /* Increase iteration counter */
+        recent_iteration_count++;
     }
-    
+        
+
     /* HOW DID WE FINISH ? */
     if( r_MAMnorm > tolerance ) {
       std::cout << "PCRM process has failed. ";
@@ -59,21 +107,6 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
       std::cout << "PCRM process has succeeded. ";
     }
 
-    std::cout
-       << "iterations "
-       << iter << "/" << max_iteration_count 
-       << " : " << r_MAMnorm << " vs " << tolerance
-       << std::endl;
-    
-        
-    iterationStart( x, b, r, p, Mr, Mp, AMr, AMp, r_MAMnorm );
-    
-    std::cout 
-        << "recomputed "
-        << r_MAMnorm << " vs " << tolerance
-        << std::endl;
-        
-    recent_iteration_count = iter;
     recent_deviation = r_MAMnorm;
     
 }
@@ -86,9 +119,6 @@ void PreconditionedConjugateResidualMethod::iterationStart(
     Float& r_MAMnorm
 ) const {
     
-    const LinearOperator& A = internalOperator;
-    const LinearOperator& M = invprecon;
-
     /* x = initial guess */
     
     /* r = b - A x */
@@ -110,7 +140,11 @@ void PreconditionedConjugateResidualMethod::iterationStart(
     /* rho is Mr.A.Mr */
     r_MAMnorm = Mr * AMr;
 
-    std::cout << "starting with r-norm=" << r.norm() << " r-Mnorm=" << Mr.norm() << " r-MAMnorm=" << r_MAMnorm << std::endl;
+    std::cout << "starting with"
+              << " r-norm="    << r.norm()
+              << " r-Mnorm="   << Mr.norm() 
+              << " r-MAMnorm=" << r_MAMnorm
+              << std::endl;
       
 }
 
@@ -122,9 +156,6 @@ void PreconditionedConjugateResidualMethod::iterationStep(
     FloatVector& MAMp, FloatVector& AMAMp
 ) const {
     
-    const LinearOperator& A = internalOperator;
-    const LinearOperator& M = invprecon;
-
     MAMp  = M *  AMp;
     AMAMp = A * MAMp;
 
@@ -153,33 +184,4 @@ void PreconditionedConjugateResidualMethod::iterationStep(
   
   
   
-
-PreconditionedConjugateResidualMethod::PreconditionedConjugateResidualMethod( const LinearOperator& op, const LinearOperator& invprecon )
-: IterativeSolver( op ), dimension( op.getdimout() ),
-  invprecon( invprecon )
-{
-    PreconditionedConjugateResidualMethod::check();
-}
-
-PreconditionedConjugateResidualMethod::~PreconditionedConjugateResidualMethod()
-{
-	
-}
-    
-	
-  
-void PreconditionedConjugateResidualMethod::check() const
-{
-    const LinearOperator& op = internalOperator;
-    
-    IterativeSolver::check();
-    assert( op.getdimin() == op.getdimout() );
-    assert( invprecon.getdimin() == invprecon.getdimout() );
-    assert( op.getdimin() == invprecon.getdimout() );
-}
-
-void PreconditionedConjugateResidualMethod::print( std::ostream& os ) const
-{
-    os << "Print Preconditioned Conjugate Residual Methop." << std::endl;
-}
 

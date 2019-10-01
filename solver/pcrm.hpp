@@ -29,27 +29,31 @@ class PreconditionedConjugateResidualMethod
 
     public:
         
+        explicit PreconditionedConjugateResidualMethod( const LinearOperator& op, const LinearOperator& M );
+        virtual ~PreconditionedConjugateResidualMethod();
+
         virtual void check() const override;
         virtual void print( std::ostream& ) const override;
         
         virtual void solve( FloatVector&, const FloatVector& ) const override;
         
-        void iterationStart( const FloatVector& x, const FloatVector& b, 
-                            FloatVector& r, FloatVector& p, FloatVector& Mr, FloatVector& Mp, FloatVector& AMr, FloatVector& AMp,
-                            Float& r_MAMnorm ) const;
-
-        void iterationStep( FloatVector& x, const FloatVector& b, 
-                            FloatVector& r, FloatVector& p, FloatVector& Mr, FloatVector& Mp, FloatVector& AMr, FloatVector& AMp,
-                            Float& r_MAMnorm,
-                            FloatVector& MAMp, FloatVector& AMAMp ) const;
-        
-        explicit PreconditionedConjugateResidualMethod( const LinearOperator& op, const LinearOperator& invprecon );
-        virtual ~PreconditionedConjugateResidualMethod();
-
     private:
-    
-            int dimension;
-            const LinearOperator& invprecon;
+
+        void iterationStart( 
+            const FloatVector& x, const FloatVector& b, 
+            FloatVector& r, FloatVector& p, FloatVector& Mr, FloatVector& Mp, FloatVector& AMr, FloatVector& AMp,
+            Float& r_MAMnorm
+            ) const;
+
+        void iterationStep( 
+            FloatVector& x, const FloatVector& b,
+            FloatVector& r, FloatVector& p, FloatVector& Mr, FloatVector& Mp, FloatVector& AMr, FloatVector& AMp,
+            Float& r_MAMnorm,
+            FloatVector& MAMp, FloatVector& AMAMp
+        ) const;
+
+        const LinearOperator& A;   
+        const LinearOperator& M;
 
 };
   
