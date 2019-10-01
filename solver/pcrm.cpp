@@ -75,6 +75,12 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
         
             iterationStart( x, b, r, p, Mr, Mp, AMr, AMp, r_MAMnorm );
 
+            std::cout << "starting with"
+                      << " r-MAMsqnorm=" << r_MAMnorm
+                      << " r-Msqnorm="   << Mr * Mr  
+                      << " r-sqnorm="    << r * r
+                      << std::endl;
+
             std::cout << "tolerance: " << tolerance << std::endl;
 
         }
@@ -141,12 +147,6 @@ void PreconditionedConjugateResidualMethod::iterationStart(
 
     /* rho is Mr.A.Mr */
     r_MAMnorm = Mr * AMr;
-
-    std::cout << "starting with"
-              << " r-norm="    << r.norm()
-              << " r-Mnorm="   << Mr.norm() 
-              << " r-MAMnorm=" << r_MAMnorm
-              << std::endl;
       
 }
 

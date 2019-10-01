@@ -68,6 +68,10 @@ void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) cons
         
             iterationStart( x, b, r, d, Ar, Ad, r_Anorm );
         
+            std::cout << "starting with"
+                      << " r-Asqnorm="   << r * Ar  
+                      << " r-sqnorm="    << r * r 
+                      << std::endl;
             std::cout << "tolerance: " << tolerance << std::endl;
 
         }
@@ -128,12 +132,7 @@ void ConjugateResidualMethod::iterationStart(
     /* rho is r.A.r */
     r_Anorm = r * Ar;
     assert( r_Anorm >= 0. );
-      
-    std::cout << "starting with"
-              << " r-norm="    << r.norm()
-              << " r-Anorm="   << Ar.norm() 
-              << std::endl;
-      
+    
 }
 
 
