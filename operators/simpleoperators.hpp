@@ -7,6 +7,53 @@
 
 /************************
 ****
+****  Class for Identity Operators 
+****  
+************************/
+
+
+class IdentityOperator:
+public LinearOperator
+{
+
+    public:
+
+        explicit IdentityOperator( int n ) : LinearOperator(n,n) { IdentityOperator::check(); };
+        virtual ~IdentityOperator() { IdentityOperator::check(); };
+
+        virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
+            std::shared_ptr<IdentityOperator> clone = std::make_shared<IdentityOperator>( *this );
+            return clone;
+        }
+        
+        virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {
+            std::unique_ptr<IdentityOperator> heir = std::make_unique<IdentityOperator>( *this );
+            return heir;
+        }
+        
+        virtual void check() const override { LinearOperator::check(); };
+        virtual void print( std::ostream& ) const override { std::cout << "Print Identity Operator" << std::endl; };
+
+        virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override { dest = scaling * src; };
+    
+};
+  
+  
+inline IdentityOperator operator*( const IdentityOperator& left, const IdentityOperator& right )
+{
+    left.check();
+    right.check();
+    assert( left.getdimin() == right.getdimout() );
+    assert( left.getdimout() == right.getdimin() );
+    
+    return IdentityOperator( left.getdimin() );
+}  
+
+
+
+
+/************************
+****
 ****  Class for Scalings 
 ****  - instantiates LinearOperator
 ****  
@@ -79,6 +126,7 @@ public LinearOperator
         explicit DiagonalOperator( int, const FloatVector& dia );
         explicit DiagonalOperator( int, const ScalingOperator& scaling );
         virtual ~DiagonalOperator();
+        // TODO: Instantiate move semantics 
 
         virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
             std::shared_ptr<DiagonalOperator> clone = std::make_shared<DiagonalOperator>( *this );
