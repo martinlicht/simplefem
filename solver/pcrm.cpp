@@ -47,7 +47,7 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
 
     /* Build up data */
     
-    Float r_MAMnorm = notanumber;
+    Float rMAMr = notanumber;
     
     FloatVector   r( dimension, 0. );
     FloatVector   p( dimension, 0. ); 
@@ -73,10 +73,10 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
         
             std::cout << "Begin Preconditioned Conjugate Residual iteration" << std::endl;
         
-            iterationStart( x, b, r, p, Mr, Mp, AMr, AMp, r_MAMnorm );
+            iterationStart( x, b, r, p, Mr, Mp, AMr, AMp, rMAMr );
 
             std::cout << "starting with"
-                      << " r-MAMsqnorm=" << r_MAMnorm
+                      << " r-MAMsqnorm=" << rMAMr
                       << " r-Msqnorm="   << Mr * Mr  
                       << " r-sqnorm="    << r * r
                       << std::endl;
@@ -85,13 +85,13 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
 
         }
 
-        bool continue_condition = recent_iteration_count < max_iteration_count && r_MAMnorm > tolerance;
+        bool continue_condition = recent_iteration_count < max_iteration_count && rMAMr > tolerance;
         
         /* Print information if it is time too */
         if( recent_iteration_count % print_modulo == 0 or not continue_condition ) {
             std::cout 
                 << "#" << recent_iteration_count << "/" << max_iteration_count
-                << " r-MAMsqnorm=" << r_MAMnorm
+                << " r-MAMsqnorm=" << rMAMr
                 << " r-Msqnorm="   << ( r * ( M * r ) ) 
                 << std::endl;
         }
@@ -101,7 +101,7 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
             break;
             
         /* Perform iteration step */
-        iterationStep( x, r, p, Mr, Mp, AMr, AMp, r_MAMnorm, MAMp, AMAMp );
+        iterationStep( x, r, p, Mr, Mp, AMr, AMp, rMAMr, MAMp, AMAMp );
         
         /* Increase iteration counter */
         recent_iteration_count++;
@@ -109,13 +109,13 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
         
 
     /* HOW DID WE FINISH ? */
-    if( r_MAMnorm > tolerance ) {
+    if( rMAMr > tolerance ) {
       std::cout << "PCRM process has failed.\n";
     } else { 
       std::cout << "PCRM process has succeeded.\n";
     }
 
-    recent_deviation = r_MAMnorm;
+    recent_deviation = rMAMr;
     
 }
   
@@ -124,7 +124,7 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
 void PreconditionedConjugateResidualMethod::iterationStart( 
     const FloatVector& x, const FloatVector& b, 
     FloatVector& r, FloatVector& p, FloatVector& Mr, FloatVector& Mp, FloatVector& AMr, FloatVector& AMp,
-    Float& r_MAMnorm
+    Float& rMAMr
 ) const {
     
     /* x = initial guess */
@@ -146,7 +146,7 @@ void PreconditionedConjugateResidualMethod::iterationStart(
     AMp = A * Mp;
 
     /* rho is Mr.A.Mr */
-    r_MAMnorm = Mr * AMr;
+    rMAMr = Mr * AMr;
       
 }
 
@@ -154,14 +154,14 @@ void PreconditionedConjugateResidualMethod::iterationStart(
 void PreconditionedConjugateResidualMethod::iterationStep( 
     FloatVector& x, 
     FloatVector& r, FloatVector& p, FloatVector& Mr, FloatVector& Mp, FloatVector& AMr, FloatVector& AMp,
-    Float& r_MAMnorm,
+    Float& rMAMr,
     FloatVector& MAMp, FloatVector& AMAMp
 ) const {
     
     MAMp  = M *  AMp;
     AMAMp = A * MAMp;
 
-    Float alpha = r_MAMnorm / ( AMp * MAMp );
+    Float alpha = rMAMr / ( AMp * MAMp );
 
     x += alpha * Mp;
 
@@ -169,19 +169,18 @@ void PreconditionedConjugateResidualMethod::iterationStep(
      Mr -= alpha *  MAMp;
     AMr -= alpha * AMAMp;
 
-    Float newr_MAMnorm = Mr * AMr;
+    Float newrMAMr = Mr * AMr;
 
-    Float beta = newr_MAMnorm / r_MAMnorm;
+    Float beta = newrMAMr / rMAMr;
 
       p =   r + beta *   p; // as such, completely useless
      Mp =  Mr + beta *  Mp;
     AMp = AMr + beta * AMp;
 
-    r_MAMnorm = newr_MAMnorm;
+    rMAMr = newrMAMr;
 
 }
 
-  
   
   
   

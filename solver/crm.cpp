@@ -45,7 +45,7 @@ void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) cons
 
     /* Build up data */
     
-    Float r_Anorm = notanumber;
+    Float rAr = notanumber;
 
     FloatVector  r( dimension, 0. );
     FloatVector  d( dimension, 0. );
@@ -66,7 +66,7 @@ void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) cons
         
             std::cout << "Begin Conjugate Residual iteration" << std::endl;
         
-            iterationStart( x, b, r, d, Ar, Ad, r_Anorm );
+            iterationStart( x, b, r, d, Ar, Ad, rAr );
         
             std::cout << "starting with"
                       << " r-Asqnorm="   << r * Ar  
@@ -82,7 +82,7 @@ void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) cons
         if( recent_iteration_count % print_modulo == 0 or not continue_condition ) {
             std::cout 
                 << "#" << recent_iteration_count << "/" << max_iteration_count
-                << " r-Asqnorm=" << r_Anorm 
+                << " r-Asqnorm=" << rAr 
                 << " r-sqnorm="  << r * r 
                 << std::endl;
         }
@@ -92,20 +92,20 @@ void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) cons
             break;
             
         /* Perform iteration step */
-        iterationStep( x, r, d, Ar, Ad, r_Anorm, AAd );
+        iterationStep( x, r, d, Ar, Ad, rAr, AAd );
         
         /* Increase iteration counter */
         recent_iteration_count++;
     }
     
     /* HOW DID WE FINISH ? */
-    if( r_Anorm > tolerance ) {
+    if( rAr > tolerance ) {
         std::cout << "CRM process has failed.\n";
     } else { 
         std::cout << "CRM process has succeeded.\n";
     }
 
-    recent_deviation = r_Anorm;
+    recent_deviation = rAr;
     
 }
   
@@ -114,7 +114,7 @@ void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) cons
 void ConjugateResidualMethod::iterationStart( 
     const FloatVector& x, const FloatVector& b, 
     FloatVector& r, FloatVector& d, FloatVector& Ar, FloatVector& Ad,
-    Float& r_Anorm
+    Float& rAr
 ) const {
     
     /* r = b - A x */
@@ -130,8 +130,8 @@ void ConjugateResidualMethod::iterationStart(
     Ad = A * d; // A.apply( Ad, (const FloatVector&) d );
 
     /* rho is r.A.r */
-    r_Anorm = r * Ar;
-    assert( r_Anorm >= 0. );
+    rAr = r * Ar;
+    assert( rAr >= 0. );
     
 }
 
@@ -141,50 +141,123 @@ void ConjugateResidualMethod::iterationStart(
 void ConjugateResidualMethod::iterationStep( 
     FloatVector& x, 
     FloatVector& r, FloatVector& d, FloatVector& Ar, FloatVector& Ad,
-    Float& r_Anorm,
+    Float& rAr,
     FloatVector& AAd
 ) const {
 
-    assert( r_Anorm >= 0. );
+    assert( rAr >= 0. );
     
-    /*  AAd = A * Ad */
-    // A.apply( AAd, Ad, 1. );
     AAd = A * Ad;
 
     /*  alpha = r.A.r / d.AAd */
-    Float norm_sq_Ad = Ad * Ad;
-    Float alpha = r_Anorm / norm_sq_Ad;
+    Float Ad_Ad = Ad * Ad;
+    Float alpha = rAr / Ad_Ad;
 
-    assert( r_Anorm >= 0. ); assert( norm_sq_Ad >= 0. );
-    if( norm_sq_Ad < tolerance ) return;
+    assert( rAr >= 0. ); assert( Ad_Ad >= 0. );
+    if( Ad_Ad < tolerance ) return;
 
-    /*  x += alpha d */
     x += alpha * d;
 
-    /*  r -= alpha Ad */
     r -= alpha * Ad; //= b - A * x;
 
-    /*  Ar -= alpha AAd */
     Ar -= alpha * AAd;
 
-    // std::cout << "deviation: " << ( Ar - A * r ).norm() << "\t";
-
-    /*  beta = r.Ar / rho */
-    Float tau = r_Anorm;
-    r_Anorm = r * Ar; //r * ( A * r ); //r * Ar;
-    Float beta = r_Anorm / tau;
-    assert( r_Anorm >= 0. );
+    Float tau = rAr;
+    rAr = r * ( A * r ); //r * ( A * r ); //r * Ar;
+    Float beta = rAr / tau;
+    assert( rAr >= 0. );
     
-    /*  d = r + beta d */
     d = r + beta * d;
 
-    /*  Ad = Ar + beta Ad */
     Ad = Ar + beta * Ad;
       
 }
 
   
+
   
+void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b ) const
+{
+    check();
+    x.check();
+    b.check();
+    
+    assert( x.getdimension() == b.getdimension() );
+    assert( A.getdimin()  == x.getdimension() );
+    assert( A.getdimout() == b.getdimension() );
+    
+    const int dimension = A.getdimin();
+
+    /* Build up data */
+    
+    FloatVector  r( dimension, 0. );
+    FloatVector  d( dimension, 0. );
+    
+    // avoid repeated allocation of these temporary vectors 
+    FloatVector Ad( dimension, 0. );
+    
+    recent_iteration_count = 0;
+    
+    while(true)
+    {
+        
+        /* Start / Restart CRM process */
+        if( recent_iteration_count % x.getdimension() == 0 ) {
+        
+            std::cout << "Begin Conjugate Residual iteration" << std::endl;
+        
+            r = b - A * x;
+            d = A * r;
+            
+            std::cout << "starting with"
+                      << " r-sqnorm="    << r * r 
+                      << std::endl;
+            std::cout << "tolerance: " << tolerance << std::endl;
+
+        }
+
+        bool continue_condition = recent_iteration_count < max_iteration_count && r * r > tolerance && d * d > tolerance;
+        
+        /* Print information if it is time too */
+        if( recent_iteration_count % print_modulo == 0 or not continue_condition ) {
+            std::cout 
+                << "#" << recent_iteration_count << "/" << max_iteration_count
+                << " r-sqnorm="  << r * r 
+                << std::endl;
+        }
+
+        /* If exit condition met, exit */
+        if( not continue_condition ) 
+            break;
+            
+        /* Perform iteration step */
+        {
+            Ad = A * d;
+            Float Ad_Ad = Ad * Ad; assert( Ad_Ad >= 0 ); if( Ad_Ad < tolerance ) break;
+            Float Ad_r  = Ad * r;
+            Float alpha = Ad_r / Ad_Ad;
+            x = x + alpha * d;
+            r = r - alpha * Ad;
+            Float Ad_Ar = Ad * ( A * r );
+            Float beta = Ad_Ar / Ad_Ad;
+            d = r - beta * d;
+        }
+        
+        /* Increase iteration counter */
+        recent_iteration_count++;
+    }
+    
+    /* HOW DID WE FINISH ? */
+    if( r * r > tolerance ) {
+        std::cout << "CRM process has failed.\n";
+    } else { 
+        std::cout << "CRM process has succeeded.\n";
+    }
+
+    recent_deviation = r * r;
+    
+}
+
   
   
 /* 
