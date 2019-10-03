@@ -322,22 +322,31 @@ DenseMatrix CofactorMatrix( const DenseMatrix& A )
 
 
 
-DenseMatrix Inverse( const DenseMatrix& A )
+DenseMatrix Inverse( DenseMatrix A )
 {
-    return Inverse_gauss( A );
+    Inverse_gauss_InSitu( A );
+    return A;
+}
+
+
+void Inverse_InSitu( DenseMatrix& A )
+{
+    Inverse_gauss_InSitu( A );
 }
 
 
 
-DenseMatrix Inverse_CramersRule( const DenseMatrix& A )
+
+
+void Inverse_CramersRule_InSitu( DenseMatrix& A )
 {
     assert( A.issquare() ); 
-    return CofactorMatrix( A ) / Determinant( A );
+    A = CofactorMatrix( A ) / Determinant( A );
 }
 
 
  
-DenseMatrix Inverse_gauss( DenseMatrix mat, bool pivoting )
+void Inverse_gauss_InSitu( DenseMatrix& mat, bool pivoting )
 {
     
     assert( mat.issquare() );
@@ -408,7 +417,6 @@ DenseMatrix Inverse_gauss( DenseMatrix mat, bool pivoting )
     
     if( pivoting ) delete[] pivots;
     
-    return mat;
 }
 
 
