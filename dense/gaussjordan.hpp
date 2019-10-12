@@ -73,8 +73,8 @@ inline DenseMatrix GaussJordan( DenseMatrix mat )
     
     // finished!
     
-    std::cout << mat;
-    std::cout << ret;
+    LOG << mat;
+    LOG << ret;
     
     return ret;
 }
@@ -147,7 +147,7 @@ inline DenseMatrix GaussJordanInplace( DenseMatrix mat, bool pivoting = true )
         for( int i = n-1; i >= 0; i-- )
 //         for( int i = 0; i < n; i++ ) 
         {
-//             std::cout << "swap " << i << space << pivots[i] << nl;
+//             LOG << "swap " << i << space << pivots[i] << nl;
             mat.swaprow( i, pivots[i] );
         }
     }

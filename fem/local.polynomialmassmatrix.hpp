@@ -46,7 +46,7 @@ inline DenseMatrix polynomialmassmatrix( int n, int r )
         ret( i, j ) = factorial_integer(n) * (Float)alpha.factorial() / (Float) factorial_integer( (int64_t)n + 2*r ); 
 
         if( ret( i, j ) <= 0. ) {
-            std::cout << multis[i] << multis[j] << ret (i, j );
+            LOG << multis[i] << multis[j] << ret (i, j );
             unreachable();
         }
         
@@ -60,10 +60,10 @@ inline DenseMatrix polynomialmassmatrix( int n, int r )
     
     assert( ret.isfinite() );
     
-    //std::cout << ret << std::endl;
+    //LOG << ret << std::endl;
 
     if( not ret.ispositive() )
-        std::cout << ret;
+        LOG << ret;
     
     assert( ret.isnonnegative() );
     assert( ret.ispositive() );

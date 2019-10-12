@@ -7,10 +7,6 @@
 #include "prefixbuffer.hpp"
 
 
-
-
-
-
 // returns a temporary logger to write stuff to, and line breaks on destruction 
 // Example usage:
 //     LOG << "This is a short message with a number: " << 5;      
@@ -18,8 +14,6 @@
 
 #define LOG     Logger( std::cout, "", "\n" )
 #define ERR     Logger( std::cerr, "", "\n" )
-
-
 
 
 // treat the following macros as PRINT 'str' commands
@@ -38,8 +32,6 @@
 #define ERROR   Logger( std::cerr, "", "\n" ) <<
 
 
-
-
 // emit the current file and line number into the log stream 
 // Example usage:
 //     PING;
@@ -48,8 +40,7 @@
 
 
 
-
-
+// LEGACY DEFINITIONS:
 
 // inline void ping() { std::clog << "ping" << std::endl; }
 // inline void pong() { std::clog << "pong" << std::endl; }
@@ -64,15 +55,5 @@
 // static std::ostream* logwarn   = &std::cerr;
 // static std::ostream* logalert  = &std::cerr;
 // static std::ostream* logerr    = &std::cerr;
-
-
-
-
-
-
-
-
-
-
 
 #endif

@@ -72,19 +72,19 @@ MatrixCSR::MatrixCSR( const MatrixCSR& mat )
   C( mat.C ),
   V( mat.V )
 {
-    std::cout << "*************************************************\n";
-    std::cout << "*********** WARNING: DEEP COPY ******************\n";
-    std::cout << "***********  OF CSR MATRIX     ******************\n";
-    std::cout << "*************************************************\n";
+    LOG << "*************************************************\n";
+    LOG << "*********** WARNING: DEEP COPY ******************\n";
+    LOG << "***********  OF CSR MATRIX     ******************\n";
+    LOG << "*************************************************\n";
     MatrixCSR::check();
 }
 
 MatrixCSR& MatrixCSR::operator=( const MatrixCSR& mat )
 {
-    std::cout << "*************************************************\n";
-    std::cout << "********** WARNING: DEEP ASSIGN *****************\n";
-    std::cout << "**********    OF CSR MATRIX     *****************\n";
-    std::cout << "*************************************************\n";
+    LOG << "*************************************************\n";
+    LOG << "********** WARNING: DEEP ASSIGN *****************\n";
+    LOG << "**********    OF CSR MATRIX     *****************\n";
+    LOG << "*************************************************\n";
     assert( getdimin() == mat.getdimin() );
     assert( getdimout() == mat.getdimout() );
     this->A = mat.A;

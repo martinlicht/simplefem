@@ -102,7 +102,7 @@ class AlternatingForm
                 
                 FloatVector ret( dim_dst );
                 
-//                 std::cout << dim_src << space << dim_dst << space << pattern.size() << std::endl;
+//                 LOG << dim_src << space << dim_dst << space << pattern.size() << std::endl;
                 
                 assert( point.getdimension() == d );
                 assert( pattern.size() == d );

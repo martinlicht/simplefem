@@ -32,7 +32,7 @@ public LinearOperator
         }
         
         virtual void check() const override { LinearOperator::check(); };
-        virtual void print( std::ostream& ) const override { std::cout << "Print Identity Operator" << std::endl; };
+        virtual void print( std::ostream& ) const override { LOG << "Print Identity Operator" << std::endl; };
 
         virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override { dest = scaling * src; };
     

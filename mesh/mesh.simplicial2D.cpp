@@ -2769,7 +2769,7 @@ void MeshSimplicial2D::midpoint_refinement_global()
     int N = counter_triangles;
     
     for( int t = 0; t < N; t++ ) {
-      std::cout << t << std::endl;
+      LOG << t << std::endl;
       midpoint_refinement( t );
       
     }

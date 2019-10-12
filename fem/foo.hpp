@@ -269,7 +269,7 @@ inline FloatVector Interpolation(
         
         const auto lps = coords * lpsbc;
         
-//         std::cout << lps << space << lpsbc << coords << nl;
+//         LOG << lps << space << lpsbc << coords << nl;
         
         assert( lps.isfinite() );
         
@@ -290,18 +290,18 @@ inline FloatVector Interpolation(
         assert( Evaluations.isfinite()      );
         assert( EvaluationVector.isfinite() );
         
-//         std::cout << InterpolationMatrix.getdimin() << space << EvaluationVector.getdimension() << nl;
+//         LOG << InterpolationMatrix.getdimin() << space << EvaluationVector.getdimension() << nl;
         
         const auto localResult = InterpolationMatrix * EvaluationVector;
 
         assert( localResult.isfinite()    );
-        // std::cout << EvaluationVector << std::endl;
+        // LOG << EvaluationVector << std::endl;
 
         if( k == 0 ) {
             if( !( EM * localResult - EvaluationVector ).issmall() ) {
-                std::cout << EM * localResult << space << EvaluationVector << nl;
-                std::cout << EM * localResult - EvaluationVector << nl;
-                std::cout << ( EM * localResult - EvaluationVector ).norm() << nl;
+                LOG << EM * localResult << space << EvaluationVector << nl;
+                LOG << EM * localResult - EvaluationVector << nl;
+                LOG << ( EM * localResult - EvaluationVector ).norm() << nl;
             }
             assert( ( EM * localResult - EvaluationVector ).issmall() );
             assert( ( InterpolationMatrix - EMinv ).issmall() );

@@ -88,19 +88,19 @@ SparseMatrix::SparseMatrix( const SparseMatrix& mat )
 : LinearOperator( mat.getdimout(), mat.getdimin() ),
   entries( mat.entries )
 {
-    std::cout << "*************************************************\n";
-    std::cout << "*********** WARNING: DEEP COPY ******************\n";
-    std::cout << "***********  OF SPARSE MATRIX  ******************\n";
-    std::cout << "*************************************************\n";
+    LOG << "*************************************************\n";
+    LOG << "*********** WARNING: DEEP COPY ******************\n";
+    LOG << "***********  OF SPARSE MATRIX  ******************\n";
+    LOG << "*************************************************\n";
     SparseMatrix::check();
 }
 
 SparseMatrix& SparseMatrix::operator=( const SparseMatrix& mat )
 {
-    std::cout << "*************************************************\n";
-    std::cout << "********** WARNING: DEEP ASSIGN *****************\n";
-    std::cout << "***********  OF SPARSE MATRIX  ******************\n";
-    std::cout << "*************************************************\n";
+    LOG << "*************************************************\n";
+    LOG << "********** WARNING: DEEP ASSIGN *****************\n";
+    LOG << "***********  OF SPARSE MATRIX  ******************\n";
+    LOG << "*************************************************\n";
     assert( getdimin() == mat.getdimin() );
     assert( getdimout() == mat.getdimout() );
     this->entries = mat.entries;
@@ -379,13 +379,13 @@ SparseMatrix SparseMatrix::getTranspose() const
 SparseMatrix operator&( const SparseMatrix& left, const SparseMatrix& right )
 {
 
-    std::cout << "--- SparseMatrix Product" << std::endl;
-    std::cout << "--- Sort and compress" << std::endl;
+    LOG << "--- SparseMatrix Product" << std::endl;
+    LOG << "--- Sort and compress" << std::endl;
     
     left.sortandcompressentries( SparseMatrix::MatrixEntrySorting::columnwise );
     right.sortandcompressentries( SparseMatrix::MatrixEntrySorting::rowwise );
 
-    std::cout << "--- Counting" << std::endl;
+    LOG << "--- Counting" << std::endl;
     
     int counter = 0;
     
@@ -410,7 +410,7 @@ SparseMatrix operator&( const SparseMatrix& left, const SparseMatrix& right )
 
     }
 
-    std::cout << "--- Assemble" << std::endl;
+    LOG << "--- Assemble" << std::endl;
     
     std::vector<SparseMatrix::MatrixEntry> new_entries;
     new_entries.reserve( counter );
@@ -444,10 +444,10 @@ SparseMatrix operator&( const SparseMatrix& left, const SparseMatrix& right )
 
     assert( new_entries.size() == counter );
 
-    std::cout << "--- Construct" << std::endl;
+    LOG << "--- Construct" << std::endl;
     SparseMatrix ret( left.getdimout(), right.getdimin(), new_entries );
         
-    // std::cout << "--- Sort and compress again" << std::endl;
+    // LOG << "--- Sort and compress again" << std::endl;
     // ret.sortandcompressentries();
     
     return ret;
@@ -463,13 +463,13 @@ SparseMatrix operator&( const SparseMatrix& left, const SparseMatrix& right )
 SparseMatrix SparseMatrixMultiplication( const SparseMatrix& left, const SparseMatrix& right )
 {
 
-    std::cout << "--- SparseMatrix Product" << std::endl;
-    std::cout << "--- Sort and compress" << std::endl;
+    LOG << "--- SparseMatrix Product" << std::endl;
+    LOG << "--- Sort and compress" << std::endl;
     
     left.sortandcompressentries( SparseMatrix::MatrixEntrySorting::columnwise );
     right.sortandcompressentries( SparseMatrix::MatrixEntrySorting::rowwise );
 
-    std::cout << "--- Counting" << std::endl;
+    LOG << "--- Counting" << std::endl;
     
     int counter = 0;
     for( SparseMatrix::MatrixEntry l : left.getentries()  )
@@ -477,7 +477,7 @@ SparseMatrix SparseMatrixMultiplication( const SparseMatrix& left, const SparseM
         if( l.column == r.row ) 
             counter++;
 
-    std::cout << "--- Assemble" << std::endl;
+    LOG << "--- Assemble" << std::endl;
     
     std::vector<SparseMatrix::MatrixEntry> new_entries;
     new_entries.reserve( counter );
@@ -488,10 +488,10 @@ SparseMatrix SparseMatrixMultiplication( const SparseMatrix& left, const SparseM
     
     assert( new_entries.size() == counter );
 
-    std::cout << "--- Construct" << std::endl;
+    LOG << "--- Construct" << std::endl;
     SparseMatrix ret( left.getdimout(), right.getdimin(), new_entries );
         
-    // std::cout << "--- Sort and compress again" << std::endl;
+    // LOG << "--- Sort and compress again" << std::endl;
     // ret.sortandcompressentries();
     
     return ret;

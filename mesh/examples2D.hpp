@@ -303,7 +303,7 @@ inline MeshSimplicial2D UnitDisk( int L = 1 )
         }
     }
     
-    std::cout << coords.size() / 2 << space << num_vertices << nl;
+    LOG << coords.size() / 2 << space << num_vertices << nl;
     assert( coords.size() == 2 * num_vertices );
     
     std::vector<std::array<int,3>> tris;
@@ -341,17 +341,17 @@ inline MeshSimplicial2D UnitDisk( int L = 1 )
         }
     }
     
-    std::cout << coords.size() / 2 << space << num_vertices << nl;
-    std::cout << tris.size() << space << num_triangles << nl;
+    LOG << coords.size() / 2 << space << num_vertices << nl;
+    LOG << tris.size() << space << num_triangles << nl;
     assert( tris.size() == num_triangles );
     
 //     for( auto t : tris ){ for( auto v : t ) 
-//         std::cout << v << space; std::cout << nl; }
+//         LOG << v << space; LOG << nl; }
     
     for( auto& t : tris ) std::sort( t.begin(), t.end() );
     
 //     for( auto t : tris ){ for( auto v : t ) 
-//         std::cout << v << space; std::cout << nl; }
+//         LOG << v << space; LOG << nl; }
     
     return MeshSimplicial2D(
       2,
@@ -413,7 +413,7 @@ inline MeshSimplicial2D Annulus( int Linner, int Louter = 1 )
         }
     }
     
-    std::cout << coords.size() / 2 << space << num_vertices << nl;
+    LOG << coords.size() / 2 << space << num_vertices << nl;
     assert( coords.size() == 2 * num_vertices );
     
     std::vector<std::array<int,3>> tris;
@@ -449,17 +449,17 @@ inline MeshSimplicial2D Annulus( int Linner, int Louter = 1 )
         }
     }
     
-    std::cout << coords.size() / 2 << space << num_vertices << nl;
-    std::cout << tris.size() << space << num_triangles << nl;
+    LOG << coords.size() / 2 << space << num_vertices << nl;
+    LOG << tris.size() << space << num_triangles << nl;
     assert( tris.size() == num_triangles );
     
 //     for( auto t : tris ){ for( auto v : t ) 
-//         std::cout << v << space; std::cout << nl; }
+//         LOG << v << space; LOG << nl; }
     
     for( auto& t : tris ) std::sort( t.begin(), t.end() );
     
 //     for( auto t : tris ){ for( auto v : t ) 
-//         std::cout << v << space; std::cout << nl; }
+//         LOG << v << space; LOG << nl; }
     
     return MeshSimplicial2D(
       2,

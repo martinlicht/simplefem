@@ -134,12 +134,4 @@ inline Logger& Logger::write( const std::string& str )
     
     
 
-
-
-
-
-
-
-
-
 #endif

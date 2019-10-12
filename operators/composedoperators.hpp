@@ -23,11 +23,11 @@ public LinearOperator /* every scaling operation is a linear operator */
 
         explicit ProxyOperator( const LinearOperator& op )
         : LinearOperator( op.getdimout(), op.getdimin() ), op( op ) { 
-            std::cout << "Proxy created" << nl; 
+            LOG << "Proxy created" << ""; 
         };
         
         virtual ~ProxyOperator() { 
-            std::cout << "Proxy destroyed" << nl;
+            LOG << "Proxy destroyed" << "";
         };
 
         virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
@@ -89,7 +89,7 @@ public LinearOperator
             left  = std::make_unique<ProxyOperator>(L); 
             right = std::make_unique<ProxyOperator>(R);
             ComposedOperator::check();
-            std::cout << "Composed Operator created LL" << nl; 
+            LOG << "Composed Operator created LL" << ""; 
         };
         
         explicit ComposedOperator( int dimout, int dimin, const LinearOperator& L, LinearOperator&& R )
@@ -99,7 +99,7 @@ public LinearOperator
             left  = std::make_unique<ProxyOperator>(L); 
             right = std::move(R).get_unique_pointer_to_heir();
             ComposedOperator::check();
-            std::cout << "Composed Operator created LR" << nl; 
+            LOG << "Composed Operator created LR" << ""; 
         };
         
         explicit ComposedOperator( int dimout, int dimin, LinearOperator&& L, const LinearOperator& R )
@@ -109,7 +109,7 @@ public LinearOperator
             left  = std::move(L).get_unique_pointer_to_heir();
             right = std::make_unique<ProxyOperator>(R);
             ComposedOperator::check();
-            std::cout << "Composed Operator created RL" << nl; 
+            LOG << "Composed Operator created RL" << ""; 
         };
         
         explicit ComposedOperator( int dimout, int dimin, LinearOperator&& L, LinearOperator&& R )
@@ -119,12 +119,12 @@ public LinearOperator
             left  = std::move(L).get_unique_pointer_to_heir();
             right = std::move(R).get_unique_pointer_to_heir();
             ComposedOperator::check();
-            std::cout << "Composed Operator created RR" << nl; 
+            LOG << "Composed Operator created RR" << ""; 
         };
         
         virtual ~ComposedOperator() { 
             //ComposedOperator::check(); // explicitly disabled, might be in moved-from state 
-            std::cout << "Composed Operator destroyed" << nl;
+            LOG << "Composed Operator destroyed" << "";
         };
 
         virtual void check() const override { 
@@ -204,14 +204,14 @@ public ComposedOperator
             std::shared_ptr<ProduktOperator> clone = std::make_shared<ProduktOperator>( getdimout(), getdimin(), std::move(lp), std::move(rp) );
             clone->check();
             return clone;
-            std::cout << "Composed Operator created (clone)" << nl; 
+            LOG << "Composed Operator created (clone)" << ""; 
         };
         
         virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {
             check();
             std::unique_ptr<ProduktOperator> heir = std::make_unique<ProduktOperator>( getdimout(), getdimin(), std::move(left), std::move(right) );
             heir->check();
-            std::cout << "Composed Operator created (heir)" << nl; 
+            LOG << "Composed Operator created (heir)" << ""; 
             return heir;
         };
         
@@ -303,14 +303,14 @@ public ComposedOperator
             std::shared_ptr<SummOperator> clone = std::make_shared<SummOperator>( getdimout(), getdimin(), std::move(lp), std::move(rp) );
             clone->check();
             return clone;
-            std::cout << "Composed Operator created (clone)" << nl; 
+            LOG << "Composed Operator created (clone)" << ""; 
         };
         
         virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {
             check();
             std::unique_ptr<SummOperator> heir = std::make_unique<SummOperator>( getdimout(), getdimin(), std::move(left), std::move(right) );
             heir->check();
-            std::cout << "Composed Operator created (heir)" << nl; 
+            LOG << "Composed Operator created (heir)" << ""; 
             return heir;
         };
         
@@ -406,14 +406,14 @@ public ComposedOperator
             std::shared_ptr<DiffOperator> clone = std::make_shared<DiffOperator>( getdimout(), getdimin(), std::move(lp), std::move(rp) );
             clone->check();
             return clone;
-            std::cout << "Composed Operator created (clone)" << nl; 
+            LOG << "Composed Operator created (clone)" << ""; 
         };
         
         virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {
             check();
             std::unique_ptr<DiffOperator> heir = std::make_unique<DiffOperator>( getdimout(), getdimin(), std::move(left), std::move(right) );
             heir->check();
-            std::cout << "Composed Operator created (heir)" << nl; 
+            LOG << "Composed Operator created (heir)" << ""; 
             return heir;
         };
         

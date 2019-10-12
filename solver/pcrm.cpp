@@ -61,7 +61,7 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
     FloatVector  MAMp( dimension, 0. );    
     FloatVector AMAMp( dimension, 0. );
         
-    std::cout << "Begin Preconditioned Conjugate Residual iteration" << std::endl;
+    LOG << "Begin Preconditioned Conjugate Residual iteration" << std::endl;
     
     recent_iteration_count = 0;
     
@@ -71,17 +71,17 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
         /* Start / Restart PCRM process */
         if( recent_iteration_count % x.getdimension() == 0 ) {
         
-            std::cout << "Begin Preconditioned Conjugate Residual iteration" << std::endl;
+            LOG << "Begin Preconditioned Conjugate Residual iteration" << std::endl;
         
             iterationStart( x, b, r, p, Mr, Mp, AMr, AMp, rMAMr );
 
-            std::cout << "starting with"
+            LOG << "starting with"
                       << " r-MAMsqnorm=" << rMAMr
                       << " r-Msqnorm="   << Mr * Mr  
                       << " r-sqnorm="    << r * r
                       << std::endl;
 
-            std::cout << "tolerance: " << tolerance << std::endl;
+            LOG << "tolerance: " << tolerance << std::endl;
 
         }
 
@@ -89,7 +89,7 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
         
         /* Print information if it is time too */
         if( recent_iteration_count % print_modulo == 0 or not continue_condition ) {
-            std::cout 
+            LOG 
                 << "#" << recent_iteration_count << "/" << max_iteration_count
                 << " r-MAMsqnorm=" << rMAMr
                 << " r-Msqnorm="   << ( r * ( M * r ) ) 
@@ -110,9 +110,9 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
 
     /* HOW DID WE FINISH ? */
     if( rMAMr > tolerance ) {
-      std::cout << "PCRM process has failed.\n";
+      LOG << "PCRM process has failed.\n";
     } else { 
-      std::cout << "PCRM process has succeeded.\n";
+      LOG << "PCRM process has succeeded.\n";
     }
 
     recent_deviation = rMAMr;

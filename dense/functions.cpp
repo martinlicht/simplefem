@@ -408,7 +408,7 @@ void Inverse_gauss_InSitu( DenseMatrix& mat, bool pivoting )
         for( int i = n-1; i >= 0; i-- )
 //         for( int i = 0; i < n; i++ ) 
         {
-//             std::cout << "swap " << i << space << pivots[i] << nl;
+//             LOG << "swap " << i << space << pivots[i] << nl;
             mat.swaprow( i, pivots[i] );
         }
     }

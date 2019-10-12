@@ -52,7 +52,7 @@ inline SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r 
 
     assert( polyMM.issquare() and polyMM.getdimin() == binomial_integer( n+r, n ) );
     
-//     std::cout << polyMM << std::endl;
+//     LOG << polyMM << std::endl;
         
     #if defined(_OPENMP)
     #pragma omp parallel for
@@ -75,11 +75,11 @@ inline SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r 
             assert( ( fullMM - polyMM * measure ).issmall() );
         }
         
-        // std::cout << measure << std::endl;
+        // LOG << measure << std::endl;
         
-        // std::cout << formMM << std::endl;
+        // LOG << formMM << std::endl;
         
-        // std::cout << fullMM << std::endl;
+        // LOG << fullMM << std::endl;
         
         for( int i = 0; i < localdim; i++ )
         for( int j = 0; j < localdim; j++ )
@@ -134,15 +134,15 @@ inline SparseMatrix FEECBrokenMassMatrixRightFactor( const Mesh& mesh, int n, in
 
     {
 
-        // std::cout << polyMM << std::endl;        
-        // std::cout << ( Transpose(polyMM_right) * polyMM_right ) << std::endl;        
-        // std::cout << polyMM_right.getdimin() << std::endl;        
-        // std::cout << polyMM.getdimin() << space << ( Transpose(polyMM_right) * polyMM_right - polyMM ).norm() << std::endl;        
+        // LOG << polyMM << std::endl;        
+        // LOG << ( Transpose(polyMM_right) * polyMM_right ) << std::endl;        
+        // LOG << polyMM_right.getdimin() << std::endl;        
+        // LOG << polyMM.getdimin() << space << ( Transpose(polyMM_right) * polyMM_right - polyMM ).norm() << std::endl;        
         assert( ( Transpose(polyMM_right) * polyMM_right - polyMM ).issmall() ); 
 
     }
             
-//     std::cout << polyMM << std::endl;
+//     LOG << polyMM << std::endl;
         
     #if defined(_OPENMP)
     #pragma omp parallel for

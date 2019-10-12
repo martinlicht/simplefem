@@ -30,25 +30,22 @@ class prefixbuffer : public std::streambuf
 //             pbuf->sputn( welcome.c_str(), welcome.length() );
         }
 
-        std::streambuf* getbuffer()
-        {
+        std::streambuf* getbuffer() {
             return pbuf;
         }
         
-        const std::string& getprefix()
-        {
+        const std::string& getprefix() {
             return lineprefix;
         }
         
-        const std::string& setprefix( const std::string& str )
-        {
+        const std::string& setprefix( const std::string& str ) {
             return lineprefix = str;
         }
     
-        virtual int sync()
-        {
+        virtual int sync() {
             return pbuf->pubsync();
         }
+        
         
     protected:
         
@@ -68,11 +65,8 @@ class prefixbuffer : public std::streambuf
                 if( c == '\n' )
                     newline = true;
             
-                //c = std::toupper(static_cast<char>(c),getloc());
-
                 if ( pbuf->sputc(c) == std::char_traits<char>::eof() )
                     return std::char_traits<char>::eof();
-                
                 
             }
             
@@ -89,6 +83,8 @@ inline void openContext( const std::string& prefix = "=>" )
 {
     prefixbuffer* pb_log = new prefixbuffer( std::clog.rdbuf(), prefix );
     prefixbuffer* pb_err = new prefixbuffer( std::cerr.rdbuf(), prefix );
+    assert( pb_log != nullptr );
+    assert( pb_err != nullptr );
     std::clog.rdbuf( pb_log );
     std::cerr.rdbuf( pb_err );
 }
@@ -97,6 +93,8 @@ inline void closeContext()
 {
     prefixbuffer* pb_log = dynamic_cast<prefixbuffer*>(std::clog.rdbuf());
     prefixbuffer* pb_err = dynamic_cast<prefixbuffer*>(std::cerr.rdbuf());
+    assert( pb_log != nullptr );
+    assert( pb_err != nullptr );
     std::streambuf* old_log = pb_log->getbuffer();
     std::streambuf* old_err = pb_err->getbuffer();
     std::clog.rdbuf( old_log );

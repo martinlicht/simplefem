@@ -58,7 +58,7 @@ void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
         /* Start / Restart CRM process */
         if( recent_iteration_count % x.getdimension() == 0 ) {
         
-            std::cout << "Begin Residual iteration" << std::endl;
+            LOG << "Begin Residual iteration" << std::endl;
                 
             r = b - A * x;
 
@@ -66,7 +66,7 @@ void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
             
             assert( r_sqnorm >= 0. );
             
-            std::cout << "tolerance: " << tolerance << std::endl;
+            LOG << "tolerance: " << tolerance << std::endl;
 
         }
 
@@ -74,7 +74,7 @@ void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
         
         /* Print information if it is time too */
         if( recent_iteration_count % print_modulo == 0 or not continue_condition ) {
-            std::cout 
+            LOG 
                 << "#" << recent_iteration_count << "/" << max_iteration_count
                 << " r-sqnorm=" << r_sqnorm 
                 << std::endl;
@@ -108,9 +108,9 @@ void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
     
     /* HOW DID WE FINISH ? */
     if( r_sqnorm > tolerance ) {
-        std::cout << "CRM process has failed.\n";
+        LOG << "CRM process has failed.\n";
     } else { 
-        std::cout << "CRM process has succeeded.\n";
+        LOG << "CRM process has succeeded.\n";
     }
 
     recent_deviation = r_sqnorm;
