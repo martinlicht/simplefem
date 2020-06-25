@@ -29,6 +29,13 @@ int main()
         cout << L << ":\t" << M.getShapemeasure() << endl;
         
         {
+            fstream fs( string("./rounddisk.tex"), std::fstream::out );
+            M.outputTikZ( fs );
+            fs.close();
+        }
+        
+        if(false)
+        {
             
             // M.uniformrefinement();
             // M.uniformrefinement();

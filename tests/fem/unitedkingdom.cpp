@@ -203,32 +203,35 @@ int main()
                         sol.zero();
                         FloatVector eins( sol.getdimension(), 1. );
                         
+                        sol.random();
+                        rhs.zero();
+                        
                         if(false)
                         for( int t = 0; t < 4; t++ )
                         {
                             timestamp start = gettimestamp();
                             PreconditionedConjugateResidualMethod CRM( stiffness, stiffness  );
                             CRM.print_modulo = 1;//+sol.getdimension()/1000;
-                            CRM.tolerance = 1e-15;
+                            //CRM.tolerance = 1e-15;
                             CRM.solve( sol, rhs );
+                            timestamp end = gettimestamp();
+                            std::cout << "\t\t\t " << end - start << std::endl;
+                            sol = sol - ( interpol_one * ( scalar_massmatrix * incmatrix * sol ) ) / domain_area * eins;
+                        }
+
+                        for( int t = 0; t < 4; t++ )
+                        {
+                            timestamp start = gettimestamp();
+                            ConjugateResidualMethod CRM( stiffness );
+                            CRM.print_modulo = 1;//+sol.getdimension()/1000;
+                            CRM.tolerance = 1e-40;
+                            CRM.solve_robust( sol, rhs );
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t " << end - start << std::endl;
                             sol = sol - ( interpol_one * ( scalar_massmatrix * incmatrix * sol ) ) / domain_area * eins;
                         }
 
                         if(false)
-                        for( int t = 0; t < 4; t++ )
-                        {
-                            timestamp start = gettimestamp();
-                            ConjugateResidualMethod CRM( stiffness );
-                            CRM.print_modulo = 1;//+sol.getdimension()/1000;
-                            CRM.tolerance = 1e-15;
-                            CRM.solve( sol, rhs );
-                            timestamp end = gettimestamp();
-                            std::cout << "\t\t\t " << end - start << std::endl;
-                            sol = sol - ( interpol_one * ( scalar_massmatrix * incmatrix * sol ) ) / domain_area * eins;
-                        }
-
                         for( int t = 0; t < 10; t++ )
                         {
                             timestamp start = gettimestamp();

@@ -206,8 +206,8 @@ int main()
                             timestamp start = gettimestamp();
                             ConjugateResidualMethod CRM( stiffness_csr );
                             CRM.print_modulo = 1+sol.getdimension()/1000;
-                            CRM.tolerance = 1e-10;
-                            CRM.solve( sol, rhs );
+                            CRM.tolerance = 1e-50;
+                            CRM.solve_robust( sol, rhs );
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t " << end - start << std::endl;
                         }
