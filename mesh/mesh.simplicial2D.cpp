@@ -42,7 +42,12 @@ MeshSimplicial2D::MeshSimplicial2D( int outerdim )
     
     data_edge_vertices(0),
     data_vertex_firstparent_edge(0),
-    data_edge_nextparents_of_vertices(0)
+    data_edge_nextparents_of_vertices(0),
+    
+    flags_triangles( 0, SimplexFlagNull ),
+    flags_edges    ( 0, SimplexFlagNull ),
+    flags_vertices ( 0, SimplexFlagNull )
+    
 {
     MeshSimplicial2D::check();
 }
@@ -71,7 +76,13 @@ MeshSimplicial2D::MeshSimplicial2D(
     
     data_edge_vertices( 0 ),
     data_vertex_firstparent_edge( 0 ),
-    data_edge_nextparents_of_vertices( 0 )
+    data_edge_nextparents_of_vertices( 0 ),
+    
+    flags_triangles( counter_triangles, SimplexFlagNull ),
+    flags_edges    ( 0, SimplexFlagNull ),
+    flags_vertices ( 0, SimplexFlagNull )
+    
+
 {
     
     getcoordinates() = coords;
@@ -229,6 +240,13 @@ MeshSimplicial2D::MeshSimplicial2D(
     }
     
     
+    /* Coda: set the flags to the Null flag */
+    flags_edges.resize   ( counter_edges,    SimplexFlagInvalid );
+    flags_vertices.resize( counter_vertices, SimplexFlagInvalid );
+    
+    for( int t =  0; t  <  counter_triangles; t++  ) flags_triangles.at( t ) = SimplexFlagNull;
+    for( int e =  0; e  <  counter_edges;     e++  ) flags_edges.at( e )     = SimplexFlagNull;
+    for( int v =  0; v  <  counter_vertices;  v++  ) flags_vertices.at( v )  = SimplexFlagNull;
     
     
     MeshSimplicial2D::check();
@@ -265,11 +283,24 @@ MeshSimplicial2D::MeshSimplicial2D(
     
     data_edge_vertices( edge_vertices ),
     data_vertex_firstparent_edge( vertex_firstparent_edge ),
-    data_edge_nextparents_of_vertices( edge_nextparents_of_vertices )
+    data_edge_nextparents_of_vertices( edge_nextparents_of_vertices ),
+    
+    flags_triangles( counter_triangles, SimplexFlagNull ),
+    flags_edges    ( counter_edges,     SimplexFlagNull ),
+    flags_vertices ( counter_vertices,  SimplexFlagNull )
+
 {
     
     getcoordinates() = coords;
     
+    /* set the flags to the Null flag */
+    flags_edges.resize   ( counter_edges    );
+    flags_vertices.resize( counter_vertices );
+    
+    for( int t =  0; t  <  counter_triangles; t++  ) flags_triangles.at( t ) = SimplexFlagNull;
+    for( int e =  0; e  <  counter_edges;     e++  ) flags_edges.at( e )     = SimplexFlagNull;
+    for( int v =  0; v  <  counter_vertices;  v++  ) flags_vertices.at( v )  = SimplexFlagNull;
+
     MeshSimplicial2D::check();
 }
 
@@ -312,6 +343,12 @@ bool MeshSimplicial2D::compare( const MeshSimplicial2D& mesh ) const
          &&
          getcoordinates() == mesh.getcoordinates()
          &&
+         flags_triangles == mesh.flags_triangles
+         &&
+         flags_edges == mesh.flags_edges
+         &&
+         flags_vertices == mesh.flags_vertices
+         &&
          true;
 }
 
@@ -323,7 +360,7 @@ void MeshSimplicial2D::check() const
 {
     
     #if defined(DO_NOT_CHECK_MESHES)
-    #warning Check for 2D Simplicial Mesh disabled
+    #warning Disabled check for 2D Simplicial Mesh 
     return;
     #endif
     
@@ -346,6 +383,11 @@ void MeshSimplicial2D::check() const
     assert( counter_vertices == data_vertex_firstparent_triangle.size() );
     
     assert( count_vertices() == getcoordinates().getnumber() );
+    
+    assert( counter_triangles == flags_triangles.size() );
+    assert( counter_edges     == flags_edges.size()     );
+    assert( counter_vertices  == flags_vertices.size()  );
+
     
     
     /********************************************************************************/
@@ -659,6 +701,24 @@ void MeshSimplicial2D::check() const
     }
     
     
+    
+    /*
+     * check that all the flags are valid
+     */
+    
+    for( int t  = 0; t  <  counter_triangles; t++ )
+        assert( flags_triangles[t] != SimplexFlagInvalid );
+
+    for( int e  = 0; e  <  counter_edges; e++ )
+        assert( flags_edges[e] != SimplexFlagInvalid );
+
+    for( int v  = 0; v  <  counter_vertices; v++ )
+        assert( flags_vertices[v] != SimplexFlagInvalid );
+    
+    
+    
+
+    
     /*************************************/
     /* CHECK FROM BASE CLASS PERSPECTIVE */
     /*************************************/
@@ -856,6 +916,42 @@ const std::vector<int> MeshSimplicial2D::getsupersimplices( int sup, int sub, in
   }
   
 }
+
+
+
+
+SimplexFlag MeshSimplicial2D::get_flag( int dim, int cell ) const
+{
+    assert( 0 <= dim && dim <= getinnerdimension() );
+    if( dim == 0 ) {
+        assert( 0 <= cell && cell < count_vertices() );
+        return flags_vertices[cell];
+    } else if( dim == 1 ) {
+        assert( 0 <= cell && cell < count_edges() );
+        return flags_edges[cell];
+    } else if( dim == 2 ) {
+        assert( 0 <= cell && cell < count_triangles() );
+        return flags_triangles[cell];
+    } else
+        unreachable();
+}
+        
+void MeshSimplicial2D::set_flag( int dim, int cell, SimplexFlag flag )
+{
+    assert( 0 <= dim && dim <= getinnerdimension() );
+    if( dim == 0 ) {
+        assert( 0 <= cell && cell < count_vertices() );
+        flags_vertices[cell] = flag;
+    } else if( dim == 1 ) {
+        assert( 0 <= cell && cell < count_edges() );
+        flags_edges[cell] = flag;
+    } else if( dim == 2 ) {
+        assert( 0 <= cell && cell < count_triangles() );
+        flags_triangles[cell] = flag;
+    } else
+        unreachable();
+}
+
 
 
 
@@ -1283,6 +1379,8 @@ void MeshSimplicial2D::bisect_edge( int e )
     FloatVector midcoordinate = get_edge_midpoint( e );
     
     
+    SimplexFlag e_flag = flags_edges[e];
+    
     
     /*
      * ALLOCATE MEMORY FOR THE DATA  
@@ -1301,6 +1399,11 @@ void MeshSimplicial2D::bisect_edge( int e )
     data_vertex_firstparent_edge.resize     ( counter_vertices + 1,                                       nullindex );
     
     
+    flags_triangles.resize( counter_triangles + old_triangles.size(),     SimplexFlagInvalid );
+    flags_edges.resize    ( counter_edges     + old_triangles.size() + 1, SimplexFlagInvalid );
+    flags_vertices.resize ( counter_vertices  + 1,                        SimplexFlagInvalid );
+    
+
     
     
     /*
@@ -1347,6 +1450,17 @@ void MeshSimplicial2D::bisect_edge( int e )
     data_edge_firstparent_triangle[ counter_edges ] = nullindex;
     
     
+    /*
+     * flags of the bisected edge, its immediate children, and the new vertex 
+     */
+    SimplexFlag flag_oldedge = flags_edges[e];
+    
+    flags_edges[ e             ] = flag_oldedge;
+    flags_edges[ counter_edges ] = flag_oldedge;
+    
+    flags_vertices[ counter_vertices ] = flag_oldedge;
+    
+    
     
     for( int ot = 0; ot < old_triangles.size(); ot++ ) {
       
@@ -1371,6 +1485,18 @@ void MeshSimplicial2D::bisect_edge( int e )
       
       localindex_of_refinementedge[ ot ] = ( t_e0 == e ) ? 0 : ( ( t_e1 == e ) ? 1 : 2 );
       assert( data_triangle_edges[ t_old ][ localindex_of_refinementedge[ ot ] ] == e );
+      
+      
+      /*
+       * flags of old triangle
+       */
+      
+      SimplexFlag flag_ot = flags_triangles[ old_triangles[ ot ] ];
+      flags_triangles[ t_old ] = flag_ot;
+      flags_triangles[ t_new ] = flag_ot;
+      
+      flags_edges[ counter_edges + 1 + ot ] = flag_ot;
+      
       
       
       
@@ -2069,6 +2195,37 @@ void MeshSimplicial2D::uniformrefinement()
     getcoordinates().addcoordinates( counter_edges );
     
     
+    /*
+     * update the flags of the 
+     */
+    
+    flags_triangles.resize ( 4 * counter_triangles                    , SimplexFlagInvalid );
+    flags_edges.resize     ( 2 * counter_edges + 3 * counter_triangles, SimplexFlagInvalid );
+    flags_vertices.resize  ( counter_vertices + counter_edges         , SimplexFlagInvalid );
+    
+    // flags of newly created vertices
+    for( int e = 0; e < counter_edges; e++ ) flags_vertices[ counter_vertices + e ] = flags_edges[e];
+    
+    // flags of bisected edges 
+    for( int e = 0; e < counter_edges; e++ ) flags_edges[ counter_edges + e ] = flags_edges[e];
+    
+    // flags of ex nihilio new edges 
+    for( int t = 0; t < counter_triangles; t++ ) {
+        flags_edges[ 2 * counter_edges + 0 * counter_triangles + t ] = flags_triangles[t];
+        flags_edges[ 2 * counter_edges + 1 * counter_triangles + t ] = flags_triangles[t];
+        flags_edges[ 2 * counter_edges + 2 * counter_triangles + t ] = flags_triangles[t];
+    }
+    
+    // flags of ex nihilio new edges 
+    for( int t = 0; t < counter_triangles; t++ ) {
+        flags_triangles[ 1 * counter_triangles + t ] = flags_triangles[t];
+        flags_triangles[ 2 * counter_triangles + t ] = flags_triangles[t];
+        flags_triangles[ 3 * counter_triangles + t ] = flags_triangles[t];
+    }
+    
+    
+    
+    
     
     /* create the new coordinates and fill them up */
     
@@ -2748,6 +2905,28 @@ void MeshSimplicial2D::midpoint_refinement( int t )
     /* vertex vn: link */
     data_vertex_firstparent_triangle[ counter_vertices ] = t0;
     data_vertex_firstparent_edge[ counter_vertices ] = e0;
+    
+    
+    
+    /*
+     * update the flags of the 
+     */
+    
+    flags_triangles.resize ( counter_triangles + 2, SimplexFlagInvalid );
+    flags_edges.resize     ( counter_edges + 3    , SimplexFlagInvalid );
+    flags_vertices.resize  ( counter_vertices + 1 , SimplexFlagInvalid );
+    
+    flags_vertices[ counter_vertices ] = flags_triangles[t];
+    
+    flags_edges[ counter_edges + 0 ] = flags_triangles[t];
+    flags_edges[ counter_edges + 1 ] = flags_triangles[t];
+    flags_edges[ counter_edges + 2 ] = flags_triangles[t];
+
+    flags_triangles[ counter_triangles + 0 ] = flags_triangles[t];
+    flags_triangles[ counter_triangles + 1 ] = flags_triangles[t];
+    
+        
+    
     
     
     /* Counters */

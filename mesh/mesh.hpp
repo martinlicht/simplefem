@@ -19,6 +19,23 @@
 #include "coordinates.hpp"
 
 
+
+/*******************
+****
+****    Datatype for the Simplex Flags 
+****    
+****    To be used to indicate properties such as Dirichlet boundary conditions
+****    
+****
+*******************/
+
+
+typedef unsigned int SimplexFlag;
+
+const SimplexFlag SimplexFlagNull    = 0x1B1B1B1B;
+const SimplexFlag SimplexFlagInvalid = 0x77777777;
+
+
 /*******************
 ****  
 ****  
@@ -138,6 +155,18 @@ class Mesh
         // TODO: Iterator interface
         // ContainerInterface -- container.hpp 
         // derive from that class 
+        
+        
+        
+        /* 
+         * 
+         * Setting and getting flags 
+         * 
+         */
+        
+        virtual SimplexFlag get_flag( int dim, int index ) const = 0;
+        
+        virtual void set_flag( int dim, int index, SimplexFlag flag ) = 0;
         
         
         /* 

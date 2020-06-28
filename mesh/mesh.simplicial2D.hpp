@@ -82,6 +82,12 @@ class MeshSimplicial2D
         virtual const std::vector<int> getsupersimplices( int sup, int sub, int cell ) const override;
         
         
+        virtual SimplexFlag get_flag( int dim, int index ) const override;
+        
+        virtual void set_flag( int dim, int index, SimplexFlag flag ) override;
+        
+        
+        
         /* General management */
         
         
@@ -230,6 +236,12 @@ class MeshSimplicial2D
         std::vector< std::array<int,2> > data_edge_vertices;
         std::vector< int               > data_vertex_firstparent_edge;
         std::vector< std::array<int,2> > data_edge_nextparents_of_vertices;
+        
+        
+        std::vector<SimplexFlag> flags_triangles;
+        std::vector<SimplexFlag> flags_edges;
+        std::vector<SimplexFlag> flags_vertices;
+
 
 };
 

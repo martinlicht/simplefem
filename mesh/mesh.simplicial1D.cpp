@@ -30,7 +30,11 @@ MeshSimplicial1D::MeshSimplicial1D( int outerdim )
     
     data_edge_vertices(0),
     data_vertex_firstparent_edge(0),
-    data_edge_nextparents_of_vertices(0)
+    data_edge_nextparents_of_vertices(0),
+    
+    flags_edges   ( 0, SimplexFlagNull ),
+    flags_vertices( 0, SimplexFlagNull )
+    
 {
     MeshSimplicial1D::check();
 }
@@ -49,7 +53,11 @@ MeshSimplicial1D::MeshSimplicial1D(
     
     data_edge_vertices( edge_vertices ),
     data_vertex_firstparent_edge( 0 ),
-    data_edge_nextparents_of_vertices( counter_edges, { nullindex, nullindex } )
+    data_edge_nextparents_of_vertices( counter_edges, { nullindex, nullindex } ),
+
+    flags_edges   ( counter_edges, SimplexFlagNull ),
+    flags_vertices( 0, SimplexFlagNull )
+    
 {
     
     getcoordinates() = coords;
@@ -99,6 +107,14 @@ MeshSimplicial1D::MeshSimplicial1D(
       
     }
     
+    
+    /* Coda: set the flags to the Null flag */
+    flags_vertices.resize( counter_vertices, SimplexFlagInvalid );
+    
+    for( int e =  0; e  <  counter_edges;    e++  ) flags_edges.at( e )    = SimplexFlagNull;
+    for( int v =  0; v  <  counter_vertices; v++  ) flags_vertices.at( v ) = SimplexFlagNull;
+    
+    
     MeshSimplicial1D::check();
 }
 
@@ -118,11 +134,19 @@ MeshSimplicial1D::MeshSimplicial1D(
     
     data_edge_vertices( edge_vertices ),
     data_vertex_firstparent_edge( vertex_firstparent_edge ),
-    data_edge_nextparents_of_vertices( edge_nextparent_of_vertices )
+    data_edge_nextparents_of_vertices( edge_nextparent_of_vertices ),
+
+    flags_edges   ( counter_edges,    SimplexFlagInvalid ),
+    flags_vertices( counter_vertices, SimplexFlagInvalid )
+    
 {
     
     getcoordinates() = coords;
     
+    /* set the flags to the Null flag */    
+    for( int e =  0; e  <  counter_edges;    e++  ) flags_edges.at( e )    = SimplexFlagNull;
+    for( int v =  0; v  <  counter_vertices; v++  ) flags_vertices.at( v ) = SimplexFlagNull;
+
     MeshSimplicial1D::check();
 }
 
@@ -152,6 +176,10 @@ bool MeshSimplicial1D::compare( const MeshSimplicial1D& mesh ) const
          &&
          getcoordinates() == mesh.getcoordinates()
          &&
+         flags_edges == mesh.flags_edges
+         &&
+         flags_vertices == mesh.flags_vertices
+         &&
          true;
 }
 
@@ -170,6 +198,9 @@ void MeshSimplicial1D::check() const
     assert( counter_vertices == data_vertex_firstparent_edge.size() );
     
     assert( count_vertices() == getcoordinates().getnumber() );
+    
+    assert( counter_edges    == flags_edges.size()    );
+    assert( counter_vertices == flags_vertices.size() );
     
     
     /* 
@@ -254,6 +285,17 @@ void MeshSimplicial1D::check() const
       assert( p == e );
       
     }
+    
+    
+    /*
+     * check that all the flags are valid
+     */
+    
+    for( int e  = 0; e  <  counter_edges; e++ )
+        assert( flags_edges[e] != SimplexFlagInvalid );
+
+    for( int v  = 0; v  <  counter_vertices; v++ )
+        assert( flags_vertices[v] != SimplexFlagInvalid );
     
     Mesh::check();
     
@@ -368,6 +410,31 @@ const std::vector<int> MeshSimplicial1D::getsupersimplices( int sup, int sub, in
 
 
 
+SimplexFlag MeshSimplicial1D::get_flag( int dim, int cell ) const
+{
+    assert( 0 <= dim && dim <= getinnerdimension() );
+    if( dim == 0 ) {
+        assert( 0 <= cell && cell < count_vertices() );
+        return flags_vertices[cell];
+    } else if( dim == 1 ) {
+        assert( 0 <= cell && cell < count_edges() );
+        return flags_edges[cell];
+    } else
+        unreachable();
+}
+        
+void MeshSimplicial1D::set_flag( int dim, int cell, SimplexFlag flag )
+{
+    assert( 0 <= dim && dim <= getinnerdimension() );
+    if( dim == 0 ) {
+        assert( 0 <= cell && cell < count_vertices() );
+        flags_vertices[cell] = flag;
+    } else if( dim == 1 ) {
+        assert( 0 <= cell && cell < count_edges() );
+        flags_edges[cell] = flag;
+    } else
+        unreachable();
+}
 
 
 
@@ -549,6 +616,9 @@ void MeshSimplicial1D::bisect_edge( int e )
     data_edge_vertices.resize               ( counter_edges    + 1 );
     data_vertex_firstparent_edge.resize     ( counter_vertices + 1 );
     
+    flags_edges.resize   ( counter_edges    + 1, SimplexFlagInvalid );
+    flags_vertices.resize( counter_vertices + 1, SimplexFlagInvalid );
+    
     /* Write in the data */
     
     data_edge_vertices[e ][0] = back_backvertex;
@@ -588,7 +658,12 @@ void MeshSimplicial1D::bisect_edge( int e )
     }    
     
     getcoordinates().append( midcoordinate );
-        
+
+    
+    flags_edges   [ne] = flags_edges[e];
+    flags_vertices[nv] = flags_edges[e];
+    
+    
     /* Update counter */
     counter_edges++;
     counter_vertices++;
@@ -634,6 +709,8 @@ void MeshSimplicial1D::improved_uniformrefinement()
     
     getcoordinates().addcoordinates         ( counter_edges                    );
     
+    flags_edges.resize   ( counter_edges    * 2,             SimplexFlagInvalid );
+    flags_vertices.resize( counter_vertices + counter_edges, SimplexFlagInvalid );
     
     /* create the new coordinates and fill them up */
     
@@ -712,6 +789,16 @@ void MeshSimplicial1D::improved_uniformrefinement()
       data_edge_vertices[e                ][1] = counter_vertices + e;
       data_edge_vertices[e + counter_edges][0] = counter_vertices + e;
       data_edge_vertices[e + counter_edges][1] = vertex_front;
+    }
+    
+    
+    
+    /* set the flags of the newly created simplices */
+    
+    for( int e = 0; e < counter_edges; e++ )
+    {
+        flags_edges   [ counter_edges    + e ] = flags_edges[e];
+        flags_vertices[ counter_vertices + e ] = flags_edges[e];
     }
     
     

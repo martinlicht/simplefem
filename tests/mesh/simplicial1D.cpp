@@ -15,14 +15,14 @@ using namespace std;
 
 int main()
 {
-	cout << "Unit Test for one-dimensional simplicial mesh" << endl;
-	
+        cout << "Unit Test for one-dimensional simplicial mesh" << endl;
+
         MeshSimplicial1D M = UnitSquare1D();
         
         cout << "Check" << endl;
         
         M.check();
-	
+        
         cout << M << endl;
         
         cout << "Start refinement" << endl;
@@ -36,9 +36,7 @@ int main()
           M.check();
         }
         
-//         cout << M << endl;
-          
         cout << "Finished Unit Test" << endl;
 
-	return 0;
+        return 0;
 }
