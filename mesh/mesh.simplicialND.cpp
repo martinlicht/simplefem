@@ -28,7 +28,9 @@ MeshSimplicialND::MeshSimplicialND( int innerdim, int outerdim )
     counter_simplices( innerdim+1, 0 ),
     data_subsimplices( (innerdim+2) * (innerdim+1) / 2, std::vector<int>() ),
     data_firstparents( (innerdim+2) * (innerdim+1) / 2, std::vector<int>() ),
-    data_nextparents ( (innerdim+2) * (innerdim+1) / 2, std::vector<int>() )   
+    data_nextparents ( (innerdim+2) * (innerdim+1) / 2, std::vector<int>() ),
+    
+    flags_simplices( innerdim+1, std::vector<SimplexFlag>() )
 {
     rebuild();
     MeshSimplicialND::check();
@@ -42,7 +44,9 @@ MeshSimplicialND::MeshSimplicialND( const Mesh& mesh )
     counter_simplices( mesh.getinnerdimension()+1 ),
     data_subsimplices( (mesh.getinnerdimension()+2) * (mesh.getinnerdimension()+1) / 2, std::vector<int>() ),
     data_firstparents( (mesh.getinnerdimension()+2) * (mesh.getinnerdimension()+1) / 2, std::vector<int>() ),
-    data_nextparents ( (mesh.getinnerdimension()+2) * (mesh.getinnerdimension()+1) / 2, std::vector<int>() )   
+    data_nextparents ( (mesh.getinnerdimension()+2) * (mesh.getinnerdimension()+1) / 2, std::vector<int>() ),
+    
+    flags_simplices( mesh.getinnerdimension()+1, std::vector<SimplexFlag>() )
 {
     
     /* load coordinates */
@@ -188,6 +192,14 @@ bool MeshSimplicialND::compare ( const MeshSimplicialND& mesh ) const
         )
           return false;
   
+  /* comparison of flags */
+  
+  for( int d = 0; d <= getinnerdimension(); d++ )
+      for( int s = 0; s < count_simplices(d); s++ )
+        if( flags_simplices[d][s] != mesh.flags_simplices[d][s] )
+            return false;
+          
+          
   return true;
   
 }
@@ -206,6 +218,8 @@ void MeshSimplicialND::check() const
     assert( data_firstparents.size() == (getinnerdimension()+2) * (getinnerdimension()+1) / 2 );
     assert( data_nextparents.size()  == (getinnerdimension()+2) * (getinnerdimension()+1) / 2 );
     
+    assert( flags_simplices.size() == getinnerdimension() + 1 );
+    
     /* check that the dimensions of the arrays make sense */
     
     assert( counter_simplices.size() == getinnerdimension() + 1 );
@@ -218,6 +232,10 @@ void MeshSimplicialND::check() const
       assert( data_firstparents[index_from_pair(sup,sub)].size() == counter_simplices[sub]                               );
     }
     
+    for( int d = 0; d <= getinnerdimension(); d++ )
+      assert( flags_simplices[d].size() == counter_simplices[d] );
+
+
     /* check the simplex counter function */
     
     for( int dim = 0; dim <= getinnerdimension(); dim++ )
@@ -488,6 +506,22 @@ const std::vector<int> MeshSimplicialND::getsupersimplices( int sup, int sub, in
 
 
 
+SimplexFlag MeshSimplicialND::get_flag( int dim, int cell ) const
+{
+    assert( 0 <= dim && dim <= getinnerdimension() );
+    assert( 0 <= cell && cell < count_simplices( dim ) );
+    return flags_simplices[dim][cell];
+}
+
+void MeshSimplicialND::set_flag( int dim, int cell, SimplexFlag flag ) 
+{
+    assert( 0 <= dim && dim <= getinnerdimension() );
+    assert( 0 <= cell && cell < count_simplices( dim ) );
+    flags_simplices[dim][cell] = flag;
+}
+
+
+
 
 
 void MeshSimplicialND::rebuild()
@@ -654,6 +688,8 @@ void MeshSimplicialND::rebuild()
       }
       
     }
+    
+    // TODO: set flags!
     
 }
 

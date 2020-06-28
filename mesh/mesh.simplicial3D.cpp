@@ -53,7 +53,13 @@ MeshSimplicial3D::MeshSimplicial3D( int outerdim )
     
     data_edge_vertices(0),
     data_vertex_firstparent_edge(0),
-    data_edge_nextparents_of_vertices(0)
+    data_edge_nextparents_of_vertices(0),
+    
+    flags_tetrahedra( 0, SimplexFlagNull ),
+    flags_faces     ( 0, SimplexFlagNull ),
+    flags_edges     ( 0, SimplexFlagNull ),
+    flags_vertices  ( 0, SimplexFlagNull ) 
+    
 {
     MeshSimplicial3D::check();
 }
@@ -94,7 +100,13 @@ MeshSimplicial3D::MeshSimplicial3D(
     
     data_edge_vertices( 0 ),
     data_vertex_firstparent_edge( 0 ),
-    data_edge_nextparents_of_vertices( 0 )
+    data_edge_nextparents_of_vertices( 0 ),
+    
+    flags_tetrahedra( counter_tetrahedra, SimplexFlagNull ),
+    flags_faces     ( 0, SimplexFlagNull ),
+    flags_edges     ( 0, SimplexFlagNull ),
+    flags_vertices  ( 0, SimplexFlagNull )
+
 {
     
     getcoordinates() = coords;
@@ -431,6 +443,17 @@ MeshSimplicial3D::MeshSimplicial3D(
     
     
     
+    /* Coda: set the flags to the Null flag */
+    
+    flags_faces.resize   ( counter_faces,    SimplexFlagInvalid );
+    flags_edges.resize   ( counter_edges,    SimplexFlagInvalid );
+    flags_vertices.resize( counter_vertices, SimplexFlagInvalid );
+    
+    for( int t =  0; t  <  counter_tetrahedra; t++  ) flags_tetrahedra.at( t ) = SimplexFlagNull;
+    for( int f =  0; f  <  counter_faces;      f++  ) flags_faces.at( f )      = SimplexFlagNull;
+    for( int e =  0; e  <  counter_edges;      e++  ) flags_edges.at( e )      = SimplexFlagNull;
+    for( int v =  0; v  <  counter_vertices;   v++  ) flags_vertices.at( v )   = SimplexFlagNull;
+
     
     MeshSimplicial3D::check();
 }
@@ -494,11 +517,23 @@ MeshSimplicial3D::MeshSimplicial3D(
     
     data_edge_vertices( edge_vertices ),
     data_vertex_firstparent_edge( vertex_firstparent_edge ),
-    data_edge_nextparents_of_vertices( edge_nextparents_of_vertices )
+    data_edge_nextparents_of_vertices( edge_nextparents_of_vertices ),
+    
+    flags_tetrahedra( counter_tetrahedra, SimplexFlagNull ),
+    flags_faces     ( counter_faces,      SimplexFlagNull ),
+    flags_edges     ( counter_edges,      SimplexFlagNull ),
+    flags_vertices  ( counter_vertices,   SimplexFlagNull )
+
 {
     
     getcoordinates() = coords;
     
+    /* set the flags to the Null flag */
+    for( int t =  0; t  <  counter_tetrahedra; t++  ) flags_tetrahedra.at( t ) = SimplexFlagNull;
+    for( int f =  0; f  <  counter_faces;      f++  ) flags_faces.at( f )      = SimplexFlagNull;
+    for( int e =  0; e  <  counter_edges;      e++  ) flags_edges.at( e )      = SimplexFlagNull;
+    for( int v =  0; v  <  counter_vertices;   v++  ) flags_vertices.at( v )   = SimplexFlagNull;
+
     MeshSimplicial3D::check();
 }
 
@@ -560,6 +595,14 @@ bool MeshSimplicial3D::compare( const MeshSimplicial3D& mesh ) const
          &&
          getcoordinates() == mesh.getcoordinates()
          &&
+         flags_tetrahedra == mesh.flags_tetrahedra
+         &&
+         flags_faces == mesh.flags_faces
+         &&
+         flags_edges == mesh.flags_edges
+         &&
+         flags_vertices == mesh.flags_vertices
+         &&
          true;
 }
 
@@ -585,7 +628,7 @@ void MeshSimplicial3D::check() const
 {
     
     #if defined(DO_NOT_CHECK_MESHES)
-    #warning Check for 3D Simplicial Mesh disabled
+    #warning disabled check for 3D Simplicial Mesh 
     return;
     #endif
     
@@ -624,6 +667,11 @@ void MeshSimplicial3D::check() const
     assert( count_vertices() == getcoordinates().getnumber() );
     
     
+    assert( counter_tetrahedra == flags_tetrahedra.size() );
+    assert( counter_faces      == flags_faces.size()      );
+    assert( counter_edges      == flags_edges.size()      );
+    assert( counter_vertices   == flags_vertices.size()   );
+
     
     
     /********************************************************************************/
@@ -1384,6 +1432,23 @@ void MeshSimplicial3D::check() const
     }
     
     
+    /*
+     * check that all the flags are valid
+     */
+    
+    for( int t  = 0; t  <  counter_tetrahedra; t++ )
+        assert( flags_tetrahedra[t] != SimplexFlagInvalid );
+
+    for( int f  = 0; f  <  counter_faces; f++ )
+        assert( flags_faces[f] != SimplexFlagInvalid );
+
+    for( int e  = 0; e  <  counter_edges; e++ )
+        assert( flags_edges[e] != SimplexFlagInvalid );
+
+    for( int v  = 0; v  <  counter_vertices; v++ )
+        assert( flags_vertices[v] != SimplexFlagInvalid );
+
+    
     
     /*************************************/
     /* CHECK FROM BASE CLASS PERSPECTIVE */
@@ -1715,6 +1780,48 @@ const std::vector<int> MeshSimplicial3D::getsupersimplices( int sup, int sub, in
 }
 
 
+
+
+
+
+
+SimplexFlag MeshSimplicial3D::get_flag( int dim, int cell ) const
+{
+    assert( 0 <= dim && dim <= getinnerdimension() );
+    if( dim == 0 ) {
+        assert( 0 <= cell && cell < count_vertices() );
+        return flags_vertices[cell];
+    } else if( dim == 1 ) {
+        assert( 0 <= cell && cell < count_edges() );
+        return flags_edges[cell];
+    } else if( dim == 2 ) {
+        assert( 0 <= cell && cell < count_faces() );
+        return flags_faces[cell];
+    } else if( dim == 3 ) {
+        assert( 0 <= cell && cell < count_tetrahedra() );
+        return flags_tetrahedra[cell];
+    } else
+        unreachable();
+}
+        
+void MeshSimplicial3D::set_flag( int dim, int cell, SimplexFlag flag )
+{
+    assert( 0 <= dim && dim <= getinnerdimension() );
+    if( dim == 0 ) {
+        assert( 0 <= cell && cell < count_vertices() );
+        flags_vertices[cell] = flag;
+    } else if( dim == 1 ) {
+        assert( 0 <= cell && cell < count_edges() );
+        flags_edges[cell] = flag;
+    } else if( dim == 2 ) {
+        assert( 0 <= cell && cell < count_faces() );
+        flags_faces[cell] = flag;
+    } else if( dim == 3 ) {
+        assert( 0 <= cell && cell < count_tetrahedra() );
+        flags_tetrahedra[cell] = flag;
+    } else
+        unreachable();
+}
 
 
 

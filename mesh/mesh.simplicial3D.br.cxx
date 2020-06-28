@@ -178,9 +178,29 @@ void MeshSimplicial3D::bisect_edge( int e )
     
     
     
-    
-    
-    
+    /* flags */
+    {
+        flags_tetrahedra.resize( counter_tetrahedra + old_tetrahedra.size(),               SimplexFlagInvalid );
+        flags_faces.resize     ( counter_faces + old_faces.size() + old_tetrahedra.size(), SimplexFlagInvalid );
+        flags_edges.resize     ( counter_edges + 1 + old_faces.size(),                     SimplexFlagInvalid );
+        flags_vertices.resize  ( counter_vertices + 1,                                     SimplexFlagInvalid );
+        
+        SimplexFlag flag_e = flags_edges[e];
+        flags_vertices[ counter_vertices ] = flag_e;
+        flags_edges   [ counter_edges    ] = flag_e;
+        
+        for( int of = 0; of < old_faces.size(); of++ ){
+            SimplexFlag flag_of = flags_faces[ old_faces[of] ];
+            flags_faces[ counter_faces + of     ] = flag_of;
+            flags_edges[ counter_edges + 1 + of ] = flag_of;
+        }
+        
+        for( int ot = 0; ot < old_tetrahedra.size(); ot++ ){
+            SimplexFlag flag_ot = flags_tetrahedra[ old_tetrahedra[ot] ];
+            flags_tetrahedra[ counter_tetrahedra + ot               ] = flag_ot;
+            flags_faces     [ counter_faces + old_faces.size() + ot ] = flag_ot;
+        }
+    }
     
     
     

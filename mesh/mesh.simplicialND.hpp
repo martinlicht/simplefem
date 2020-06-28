@@ -70,6 +70,11 @@ class MeshSimplicialND
         virtual const std::vector<int> getsupersimplices( int sup, int sub, int cell ) const override;
         
         
+        virtual SimplexFlag get_flag( int dim, int index ) const override;
+        
+        virtual void set_flag( int dim, int index, SimplexFlag flag ) override;
+        
+        
         /* refinement */
         
         void bisect_edge( int e );
@@ -98,6 +103,7 @@ class MeshSimplicialND
         std::vector<std::vector<int>> data_firstparents;
         std::vector<std::vector<int>> data_nextparents;
     
+        std::vector<std::vector<SimplexFlag>> flags_simplices;
     
 };
 
