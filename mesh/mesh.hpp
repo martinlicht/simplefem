@@ -35,6 +35,8 @@ typedef unsigned int SimplexFlag;
 const SimplexFlag SimplexFlagNull    = 0x1B1B1B1B;
 const SimplexFlag SimplexFlagInvalid = 0x77777777;
 
+const SimplexFlag SimplexFlagDirichlet = 0x77777777;
+
 
 /*******************
 ****  
@@ -167,6 +169,16 @@ class Mesh
         virtual SimplexFlag get_flag( int dim, int index ) const = 0;
         
         virtual void set_flag( int dim, int index, SimplexFlag flag ) = 0;
+        
+        void set_flags( int dim, SimplexFlag flag );
+        
+        const std::vector<SimplexFlag>& get_flags( int dim ) const;
+        
+        void set_flags( int dim, std::vector<SimplexFlag> flags );
+        
+        void automatic_dirichlet_flags();
+        
+        void check_dirichlet_flags();
         
         
         /* 

@@ -243,6 +243,107 @@ int Mesh::get_supersimplex_by_index( int sup, int sub, int cellsub, int parentin
 
 
 
+
+
+
+
+
+
+
+void Mesh::set_flags( int dim, SimplexFlag flag )
+{
+    assert( 0 <= dim && dim <= getinnerdimension() );
+    assert( dimension_counted( dim ) );
+    for( int s = 0; s < count_simplices(dim); s++ )
+        set_flag( dim, s, flag );
+}
+
+const std::vector<SimplexFlag>& Mesh::get_flags( int dim ) const
+{
+    assert( 0 <= dim && dim <= getinnerdimension() );
+    assert( dimension_counted( dim ) );
+    std::vector<SimplexFlag> flags( count_simplices(dim), SimplexFlagInvalid );
+    for( int s = 0; s < count_simplices(dim); s++ )
+        flags[s] = get_flag( dim, s );
+}
+
+void Mesh::set_flags( int dim, std::vector<SimplexFlag> flags )
+{
+    assert( 0 <= dim && dim <= getinnerdimension() );
+    assert( dimension_counted( dim ) );
+    assert( flags.size() == count_simplices( dim ) );
+    for( int s = 0; s < count_simplices(dim); s++ )
+        set_flag( dim, s, flags[s] );
+}
+
+void Mesh::automatic_dirichlet_flags()
+{
+    const int full = getinnerdimension();
+    
+    assert( simplices_counted(full-1) );
+    assert( supersimplices_listed(full,full-1) );
+    
+    for( int d = 0; d <= getinnerdimension(); d++ )
+        set_flags( d, SimplexFlagNull );
+    
+    for( int s = 0; s < count_simplices(full-1); s++ )
+        if( get_firstparent_of_subsimplex( full, full-1, s ) == nullindex || get_nextparent_of_subsimplex( full, full-1, get_firstparent_of_subsimplex( full, full-1, s ), s ) == nullindex )
+            set_flag( full-1, s, SimplexFlagDirichlet );
+        
+    for( int s = 0; s < count_simplices(full-1); s++ )
+        if( get_flag( full-1, s ) == SimplexFlagDirichlet )
+            for( int d = 0; d < full-1; d++ )
+                for( int subindex = 0; subindex < count_subsimplices( full-1, d ); subindex++ ) 
+                    set_flag( d, get_subsimplex( full-1, d, s, subindex ), SimplexFlagDirichlet );
+
+}
+
+
+void Mesh::check_dirichlet_flags()
+{
+    const int full = getinnerdimension();
+    
+    assert( simplices_counted(full-1) );
+    assert( supersimplices_listed(full,full-1) );
+    
+    for( int s = 0; s < count_simplices(full-1); s++ )
+        if( get_firstparent_of_subsimplex( full, full-1, s ) == nullindex || get_nextparent_of_subsimplex( full, full-1, get_firstparent_of_subsimplex( full, full-1, s ), s ) == nullindex )
+            assert( get_flag( full-1, s, SimplexFlagDirichlet ) == SimplexFlagDirichlet );
+        else 
+            assert( get_flag( full-1, s, SimplexFlagDirichlet ) == SimplexFlagNull );
+    
+    for( int d = 0; d < full-1; d++ )
+        for( int sub = 0; sub < count_simplices(d); sub++ )
+            if( get_flag( d, sub ) == SimplexFlagDirichlet ) {
+                bool found = false;
+                for( int sup = get_firstparent_of_subsimplex( full-1, d, sub ); sup != nullindex; sup = get_nextparent_of_subsimplex( full-1, d, sup, sub ) )
+                    found = found || ( get_flag(full-1,sup) == SimplexFlagDirichlet );
+                assert( found );
+            }
+            
+    for( int s = 0; s < count_simplices(full-1); s++ )
+        if( get_flag( full-1, s ) == SimplexFlagDirichlet )
+            for( int d = 0; d < full-1; d++ )
+                for( int subindex = 0; subindex < count_subsimplices( full-1, d ); subindex++ ) 
+                    assert( get_flag( d, get_subsimplex( full-1, d, s, subindex ) ) == SimplexFlagDirichlet );
+    
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Float Mesh::getDiameter( int dim, int index ) const 
 {
     assert( 0 <= dim && dim <= getinnerdimension() );
