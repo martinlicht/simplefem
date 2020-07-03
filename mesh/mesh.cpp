@@ -280,7 +280,7 @@ void Mesh::automatic_dirichlet_flags()
 {
     const int full = getinnerdimension();
     
-    assert( simplices_counted(full-1) );
+    assert( dimension_counted(full-1) );
     assert( supersimplices_listed(full,full-1) );
     
     for( int d = 0; d <= getinnerdimension(); d++ )
@@ -303,14 +303,14 @@ void Mesh::check_dirichlet_flags()
 {
     const int full = getinnerdimension();
     
-    assert( simplices_counted(full-1) );
+    assert( dimension_counted(full-1) );
     assert( supersimplices_listed(full,full-1) );
     
     for( int s = 0; s < count_simplices(full-1); s++ )
         if( get_firstparent_of_subsimplex( full, full-1, s ) == nullindex || get_nextparent_of_subsimplex( full, full-1, get_firstparent_of_subsimplex( full, full-1, s ), s ) == nullindex )
-            assert( get_flag( full-1, s, SimplexFlagDirichlet ) == SimplexFlagDirichlet );
+            assert( get_flag( full-1, s ) == SimplexFlagDirichlet );
         else 
-            assert( get_flag( full-1, s, SimplexFlagDirichlet ) == SimplexFlagNull );
+            assert( get_flag( full-1, s ) == SimplexFlagNull      );
     
     for( int d = 0; d < full-1; d++ )
         for( int sub = 0; sub < count_simplices(d); sub++ )

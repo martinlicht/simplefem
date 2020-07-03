@@ -14,9 +14,15 @@ OPENMP_FLAG := -fopenmp
 # Comment out the following line to retain meaningful check routines for meshes
 # FLAG_DO_NOT_CHECK_MESHES := -DDO_NOT_CHECK_MESHES
 
+
+
 # Do you want to ENABLE the debugging flags 
 # Comment out the following line to disable the general debugging flags 
-FLAG_DO_DEBUGMODE := -DNDEBUG -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC
+FLAG_DO_COMPILEDEBUGMODE := -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC
+
+# Do you want to ENABLE the general assert macro?
+# Comment out the following line to enable the general assert macro
+# FLAG_DNDEBUG := -DNDEBUG
 
 # Do you want to use the Clang sanitizer?
 # Comment out the following line to disable compilation with the Clang sanitizer
@@ -66,7 +72,7 @@ CXXFLAGS := ${CXXFLAGS_LANG} ${CXXFLAGS_WARNINGS} ${CXXFLAGS_OPTIMIZE} ${CXXFLAG
 
 ### Preprocessor flags 
 
-CPPFLAGS := $(FLAG_DO_NOT_CHECK_MESHES) $(FLAG_DO_DEBUGMODE)
+CPPFLAGS := $(FLAG_DO_NOT_CHECK_MESHES) $(FLAG_DNDEBUG) $(FLAG_DO_COMPILEDEBUGMODE)
 
 
 

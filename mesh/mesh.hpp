@@ -35,7 +35,7 @@ typedef unsigned int SimplexFlag;
 const SimplexFlag SimplexFlagNull    = 0x1B1B1B1B;
 const SimplexFlag SimplexFlagInvalid = 0x77777777;
 
-const SimplexFlag SimplexFlagDirichlet = 0x77777777;
+const SimplexFlag SimplexFlagDirichlet = 0xF1F1F1F1;
 
 
 /*******************

@@ -76,6 +76,9 @@ inline SparseMatrix FEECWhitneyInclusionMatrix( Mesh& mesh, int n, int k, int r 
         entry.column = colindex;
         entry.value  = signpower(p);
         
+        if( mesh.get_flag( k, mesh.get_subsimplex( n, k, s, fi ) ) == SimplexFlagDirichlet )
+            entry.value = 0.;
+        
         ret.setentry( index_of_entry, entry );
         
     }

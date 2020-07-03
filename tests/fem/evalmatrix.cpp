@@ -15,7 +15,7 @@
 #include "../../mesh/examples3D.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
-#include "../../fem/foo.hpp"
+#include "../../fem/utilities.hpp"
 
 
 using namespace std;

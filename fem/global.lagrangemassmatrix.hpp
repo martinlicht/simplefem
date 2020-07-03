@@ -56,10 +56,11 @@ inline SparseMatrix LagrangeMassMatrix( Mesh& mesh, int r )
         
         int index_of_entry = t * (n+1)*(n+1) + v1 * (n+1) + v2;
         
+        int vertex1 = mesh.get_subsimplex( n, 0, t, v1 );
+        int vertex2 = mesh.get_subsimplex( n, 0, t, v2 );
+        
         entry.row    = mesh.get_subsimplex( n, 0, t, v1 );
-        
         entry.column = mesh.get_subsimplex( n, 0, t, v2 );
-        
         entry.value  = 0.;
         
 //         DenseMatrix Jac = mesh.getTransformationJacobian( n, t );
@@ -69,7 +70,10 @@ inline SparseMatrix LagrangeMassMatrix( Mesh& mesh, int r )
             entry.value = 2. * factorial_numerical(n) * measure / factorial_numerical( 2 + n );
         else
             entry.value =      factorial_numerical(n) * measure / factorial_numerical( 2 + n );
-        
+                
+        if( mesh.get_flag( 0, vertex1 ) == SimplexFlagDirichlet or mesh.get_flag( 0, vertex2 ) == SimplexFlagDirichlet )
+            entry.value = 0.;
+
         ret.setentry( index_of_entry, entry );
         
     }

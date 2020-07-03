@@ -35,7 +35,7 @@ int main()
         
         M.check();
         
-        M.check_dirichlet_flags();
+//         M.check_dirichlet_flags();
             
         cout << M << endl;
         

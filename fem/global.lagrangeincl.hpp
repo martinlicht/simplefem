@@ -42,6 +42,8 @@ inline SparseMatrix FEECLagrangeInclusionMatrix( Mesh& mesh, int n, int r )
     
     const int num_entries = num_simplices * (n+1);
     
+    
+
     SparseMatrix ret( dim_out, dim_in, num_entries );
     
     #if defined(_OPENMP)
@@ -52,12 +54,17 @@ inline SparseMatrix FEECLagrangeInclusionMatrix( Mesh& mesh, int n, int r )
     {
         
         int index_of_entry = s * (n+1) + vi; 
-            
+        
+        int vertex = mesh.get_subsimplex( n, 0, s, vi );
+        
         SparseMatrix::MatrixEntry entry;
         
         entry.row    = s * (n+1) + vi;
         entry.column = mesh.get_subsimplex( n, 0, s, vi );
         entry.value  = 1.0;
+        
+        if( mesh.get_flag( 0, vertex ) == SimplexFlagDirichlet )
+            entry.value = 0.0;
         
         ret.setentry( index_of_entry, entry );
         

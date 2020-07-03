@@ -37,7 +37,7 @@ int main()
             int cell_count_initial = M.count_triangles();
             int cell_marked_count  = 0;
             
-            int c_max = 10;
+            int c_max = 7;
             
             for( int c = 0; c < c_max; c++ ) {
             
@@ -83,7 +83,7 @@ int main()
             int cell_count_initial = M.count_triangles();
             int cell_marked_count  = 0;
             
-            int c_max = 10;
+            int c_max = 7;
             
             for( int c = 0; c < c_max; c++ ) {
             
