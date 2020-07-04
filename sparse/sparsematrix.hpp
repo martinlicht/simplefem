@@ -125,11 +125,14 @@ inline static DiagonalOperator InverseDiagonalPreconditioner( const SparseMatrix
         if( entry.row == entry.column ) 
             diag.at( entry.row ) += absolute( entry.value );
 
-    for( int i = 0; i < diag.getdimension(); i++ )
-        assert( diag.at( i ) > 0. );
+//     for( int i = 0; i < diag.getdimension(); i++ )
+//         assert( diag.at( i ) > 0. );
     
     for( int i = 0; i < diag.getdimension(); i++ )
-        diag.at( i ) = 1. / diag.at( i );
+        if( diag.at( i ) != 0. )
+            diag.at( i ) = 1. / diag.at( i );
+        else
+            diag.at( i ) = 0.;
     
     return DiagonalOperator( mat.getdimin(), diag );
 
