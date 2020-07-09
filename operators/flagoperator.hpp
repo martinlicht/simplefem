@@ -22,9 +22,15 @@ public LinearOperator
 
     public:
 
+        explicit FlagOperator() = delete;
+        explicit FlagOperator( const FlagOperator& ) = default;
+        explicit FlagOperator( FlagOperator&& ) = default;
+        FlagOperator& operator=( const FlagOperator& vec ) = delete;
+        FlagOperator& operator=( FlagOperator&& vec ) = delete;
+        virtual ~FlagOperator();
+        
         explicit FlagOperator( const LinearOperator& op, const std::vector<bool> destflag, const std::vector<bool> srcflag );
         explicit FlagOperator( const LinearOperator& op, const std::vector<bool> flag );
-        virtual ~FlagOperator();
         // TODO: Instantiate move semantics 
 
         virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {

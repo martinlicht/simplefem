@@ -28,6 +28,10 @@ class MultiIndex
                 MultiIndex( const IndexRange& ir, const std::vector<int>& );
                 MultiIndex( const IndexRange&, const std::function<int(int)>& );
                 MultiIndex( const IndexRange&, const std::initializer_list<int>& );
+                MultiIndex( const MultiIndex& )             = default;
+                MultiIndex& operator =( const MultiIndex& ) = default;
+                MultiIndex( MultiIndex&& )                  = default;
+                MultiIndex& operator =( MultiIndex&& )      = default;
                 virtual ~MultiIndex() = default;
                 
                 void check() const;

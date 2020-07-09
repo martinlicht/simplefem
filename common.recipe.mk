@@ -8,7 +8,7 @@
 
 # Do you want to use openMP?
 # Comment out the following line to disable compilation with openMP
-OPENMP_FLAG := -fopenmp
+# OPENMP_FLAG := -fopenmp
 
 # Do you want to DISABLE checking of meshes?
 # Comment out the following line to retain meaningful check routines for meshes

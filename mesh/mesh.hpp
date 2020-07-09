@@ -57,6 +57,11 @@ class Mesh
     
     public:
         
+        Mesh( const Mesh& ) = default;
+        Mesh& operator=( const Mesh& ) = default;
+        Mesh( Mesh&& ) = default;
+        Mesh& operator=( Mesh&& ) = default;
+        
         
         Mesh( int inner, int outer );
         virtual ~Mesh();

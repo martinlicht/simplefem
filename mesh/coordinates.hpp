@@ -34,6 +34,13 @@ class Coordinates
 
     public:
 
+        Coordinates( const Coordinates& ) = default;
+        Coordinates& operator=( const Coordinates& ) = default;
+        Coordinates( Coordinates&& ) = default;
+        Coordinates& operator=( Coordinates&& ) = default;
+
+        
+        
         Coordinates( int dimension, int number );
         Coordinates( int dimension, int number, const std::vector<Float>& );
         ~Coordinates();

@@ -9,18 +9,25 @@
 
 /************************
 ****
-****  Class for Scalings 
+****  Classes for Composition of Operators TODO
 ****  - instantiates LinearOperator
 ****  
 ************************/
 
 
 class ProxyOperator:
-public LinearOperator /* every scaling operation is a linear operator */
+public LinearOperator 
 {
 
     public:
 
+        explicit ProxyOperator() = delete;
+        explicit ProxyOperator( const ProxyOperator& ) = delete;
+        explicit ProxyOperator( ProxyOperator&& ) = delete;
+        ProxyOperator& operator=( const ProxyOperator& vec ) = delete;
+        ProxyOperator& operator=( ProxyOperator&& vec ) = delete; 
+
+        
         explicit ProxyOperator( const LinearOperator& op )
         : LinearOperator( op.getdimout(), op.getdimin() ), op( op ) { 
             LOG << "Proxy created" << ""; 
@@ -74,6 +81,13 @@ public LinearOperator
 
     public:
     
+        explicit ComposedOperator() = delete;
+        explicit ComposedOperator( const ComposedOperator& ) = delete;
+        explicit ComposedOperator( ComposedOperator&& ) = delete;
+        ComposedOperator& operator=( const ComposedOperator& vec ) = delete;
+        ComposedOperator& operator=( ComposedOperator&& vec ) = delete; 
+
+        
         explicit ComposedOperator( int dimout, int dimin, std::unique_ptr<LinearOperator>&& pl, std::unique_ptr<LinearOperator>&& pr )
         : LinearOperator( dimout, dimin ), left( std::move(pl) ), right( std::move(pr) ) 
         {
@@ -160,6 +174,12 @@ public ComposedOperator
 
     public:
     
+        explicit ProduktOperator() = delete;
+        explicit ProduktOperator( const ProduktOperator& ) = delete;
+        explicit ProduktOperator( ProduktOperator&& ) = delete;
+        ProduktOperator& operator=( const ProduktOperator& vec ) = delete;
+        ProduktOperator& operator=( ProduktOperator&& vec ) = delete;
+
         explicit ProduktOperator( int dimout, int dimin, std::unique_ptr<LinearOperator>&& pl, std::unique_ptr<LinearOperator>&& pr )
         : ComposedOperator( dimout, dimin, std::move(pl), std::move(pr) ) 
         {
@@ -259,6 +279,12 @@ public ComposedOperator
 
     public:
     
+        explicit SummOperator() = delete;
+        explicit SummOperator( const SummOperator& ) = delete;
+        explicit SummOperator( SummOperator&& ) = delete;
+        SummOperator& operator=( const SummOperator& vec ) = delete;
+        SummOperator& operator=( SummOperator&& vec ) = delete; 
+
         explicit SummOperator( int dimout, int dimin, std::unique_ptr<LinearOperator>&& pl, std::unique_ptr<LinearOperator>&& pr )
         : ComposedOperator( dimout, dimin, std::move(pl), std::move(pr) ) 
         {
@@ -362,6 +388,12 @@ public ComposedOperator
 
     public:
     
+        explicit DiffOperator() = delete;
+        explicit DiffOperator( const DiffOperator& ) = delete;
+        explicit DiffOperator( DiffOperator&& ) = delete;
+        DiffOperator& operator=( const DiffOperator& vec ) = delete;
+        DiffOperator& operator=( DiffOperator&& vec ) = delete; 
+
         explicit DiffOperator( int dimout, int dimin, std::unique_ptr<LinearOperator>&& pl, std::unique_ptr<LinearOperator>&& pr )
         : ComposedOperator( dimout, dimin, std::move(pl), std::move(pr) ) 
         {

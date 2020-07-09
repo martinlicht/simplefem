@@ -36,6 +36,12 @@ class MeshSimplicial2D
 
     public:
     
+        MeshSimplicial2D( const MeshSimplicial2D& ) = default;
+        MeshSimplicial2D& operator=( const MeshSimplicial2D& ) = default;
+        MeshSimplicial2D( MeshSimplicial2D&& ) = default;
+        MeshSimplicial2D& operator=( MeshSimplicial2D&& ) = default;
+
+        
         explicit MeshSimplicial2D( int outerdim = 2 );
         
         MeshSimplicial2D( 

@@ -42,6 +42,12 @@ class MeshSimplicial1D
 
     public:
     
+        MeshSimplicial1D( const MeshSimplicial1D& ) = default;
+        MeshSimplicial1D& operator=( const MeshSimplicial1D& ) = default;
+        MeshSimplicial1D( MeshSimplicial1D&& ) = default;
+        MeshSimplicial1D& operator=( MeshSimplicial1D&& ) = default;
+
+        
         explicit MeshSimplicial1D( int outerdim = 1 );
         
         MeshSimplicial1D( 

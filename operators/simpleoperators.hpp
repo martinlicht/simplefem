@@ -18,6 +18,12 @@ public LinearOperator
 
     public:
 
+        explicit IdentityOperator() = delete;
+        explicit IdentityOperator( const IdentityOperator& ) = default;
+        explicit IdentityOperator( IdentityOperator&& ) = default;
+        IdentityOperator& operator=( const IdentityOperator& vec ) = default;
+        IdentityOperator& operator=( IdentityOperator&& vec ) = default; 
+        
         explicit IdentityOperator( int n ) : LinearOperator(n,n) { IdentityOperator::check(); };
         virtual ~IdentityOperator() { IdentityOperator::check(); };
 
@@ -66,6 +72,12 @@ public LinearOperator /* every scaling operation is a linear operator */
 
     public:
 
+        explicit ScalingOperator() = delete;
+        explicit ScalingOperator( const ScalingOperator& ) = default;
+        explicit ScalingOperator( ScalingOperator&& ) = default;
+        ScalingOperator& operator=( const ScalingOperator& vec ) = default;
+        ScalingOperator& operator=( ScalingOperator&& vec ) = default; 
+        
         explicit ScalingOperator( int, Float s );
         virtual ~ScalingOperator();
 
@@ -122,12 +134,17 @@ public LinearOperator
 
     public:
 
+        explicit DiagonalOperator() = delete;
+        explicit DiagonalOperator( const DiagonalOperator& ) = default;
+        explicit DiagonalOperator( DiagonalOperator&& ) = default;
+        DiagonalOperator& operator=( const DiagonalOperator& vec ) = default;
+        DiagonalOperator& operator=( DiagonalOperator&& vec ) = default; 
+
         explicit DiagonalOperator( int, Float s );
         explicit DiagonalOperator( int, const FloatVector& dia );
         explicit DiagonalOperator( int, const ScalingOperator& scaling );
         virtual ~DiagonalOperator();
-        // TODO: Instantiate move semantics 
-
+        
         virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
             std::shared_ptr<DiagonalOperator> clone = std::make_shared<DiagonalOperator>( *this );
             return clone;

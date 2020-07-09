@@ -36,6 +36,12 @@ class MeshSimplicial3D
 
     public:
     
+        MeshSimplicial3D( const MeshSimplicial3D& ) = default;
+        MeshSimplicial3D& operator=( const MeshSimplicial3D& ) = default;
+        MeshSimplicial3D( MeshSimplicial3D&& ) = default;
+        MeshSimplicial3D& operator=( MeshSimplicial3D&& ) = default;
+
+        
         explicit MeshSimplicial3D( int outerdim = 3 );
         
         MeshSimplicial3D( 
