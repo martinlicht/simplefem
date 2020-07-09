@@ -246,7 +246,7 @@ int main()
 
                         {
                     
-                            fstream fs( "./poissondirichlet.vtk", std::fstream::out );
+                            fstream fs( adaptfilename("./poissondirichlet.vtk"), std::fstream::out );
                 
                             VTK_MeshWriter_Mesh2D vtk( M, fs );
                             vtk.writePreamble( "Poisson-Dirichlet problem" );

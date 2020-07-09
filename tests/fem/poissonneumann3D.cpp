@@ -249,7 +249,7 @@ int main()
 
                         {
                     
-                            fstream fs( "./poissonneumann3D.vtk", std::fstream::out );
+                            fstream fs( adaptfilename("./poissonneumann3D.vtk"), std::fstream::out );
                 
                             VTK_MeshWriter_Mesh3D vtk( M, fs );
                             vtk.writePreamble( "Poisson-Neumann problem" );
