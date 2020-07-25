@@ -128,7 +128,7 @@ Float NormLp( const DenseMatrix& src, Float p )
     for( int r = 0; r < src.getdimout(); r++ )
     for( int c = 0; c < src.getdimin(); c++ )
         ret += pow( absolute( src(r,c) ), p );
-    ret = pow( ret, 1. / p );
+    ret = pow( ret, ((Float)1.) / p );
     return ret;
 }
 
@@ -143,7 +143,7 @@ Float NormRowCol( const DenseMatrix& src, Float p, Float q )
             zeile += pow( absolute( src(r,c) ), q );
         ret += pow( zeile, p/q );
     }
-    ret = pow( ret, 1. / p );
+    ret = pow( ret, ((Float)1.) / p );
     return ret;
 }
 
@@ -158,7 +158,7 @@ Float NormColRow( const DenseMatrix& src, Float p, Float q )
             spalte += pow( absolute( src(r,c) ), q );
         ret += pow( spalte, p/q );
     }
-    ret = pow( ret, 1. / p );
+    ret = pow( ret, ((Float)1.) / p );
     return ret;
 }
 
