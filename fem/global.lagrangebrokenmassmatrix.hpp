@@ -18,6 +18,15 @@
 
 
 
+//////////////////////////////////////////////////////
+//                                                  //
+//  Matrix for the broken Lagrange mass pairing     //
+//  with poly degree r                              //
+//                                                  //
+//////////////////////////////////////////////////////
+
+
+
 
 
 inline SparseMatrix LagrangeBrokenMassMatrix( Mesh& mesh, int r )

@@ -19,6 +19,13 @@
 
 
 
+///////////////////////////////////////////////////////
+//                                                   //
+//  Matrix for the continuous Lagrange mass pairing  //
+//  with poly degree r                               //
+//                                                   //
+///////////////////////////////////////////////////////
+
 
 inline SparseMatrix LagrangeMassMatrix( Mesh& mesh, int r )
 {

@@ -17,6 +17,12 @@
 #include "../mesh/mesh.hpp"
 
 
+//////////////////////////////////////////////////////////
+//                                                      //
+//  Matrix for the broken Lagrange stiffness pairing    //
+//  with poly degree r                                  //
+//                                                      //
+//////////////////////////////////////////////////////////
 
 
 

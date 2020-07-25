@@ -23,10 +23,18 @@
 
 
 
+////////////////////////////////////////////////
+//                                            //
+//  Matrix for the inclusion of               //
+//  continuous Lagrange elements              //
+//  into the broken space                     //
+//  with poly degree r                        //
+//                                            //
+////////////////////////////////////////////////
 
 
 
-inline SparseMatrix FEECLagrangeInclusionMatrix( Mesh& mesh, int n, int r )
+inline SparseMatrix LagrangeInclusionMatrix( Mesh& mesh, int n, int r )
 {
     
     // check whether the parameters are right 

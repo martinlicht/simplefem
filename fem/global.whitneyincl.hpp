@@ -22,6 +22,17 @@
 
 
 
+//////////////////////////////////////////////////////
+//                                                  //
+//  Matrix for inclusion of                         //
+//  continuous whitney forms                        //
+//  on broken spaces of P_r \Lambda^k               //
+//                                                  //
+//  Works on any n dimensional mesh                 //
+//  with any form degree k and poly degree r        //
+//  and lifts up rplus degrees                      //
+//                                                  //
+//////////////////////////////////////////////////////
 
 
 

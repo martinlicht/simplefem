@@ -20,6 +20,13 @@
 
 
 
+//////////////////////////////////////////////////////////////
+//                                                          //
+//  Matrix for the continuous Lagrange stiffness pairing    //
+//  with poly degree r                                      //
+//                                                          //
+//////////////////////////////////////////////////////////////
+
 inline SparseMatrix LagrangeStiffnessMatrix( Mesh& mesh, int r )
 {
     
