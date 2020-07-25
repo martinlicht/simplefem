@@ -449,4 +449,20 @@ inline void sort_and_unique( T& t )
 
 
 
+
+inline std::vector<int> range( int to )
+{
+    assert( to >= 0 );
+    std::vector<int> ret(to+1);
+    for( int i = 0; i <= to; i++ ) ret.at(i) = i;
+    assert( ret.size() == to+1 );
+    return ret;
+}
+
+
+
+
+
+
+
 #endif
