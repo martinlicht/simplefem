@@ -65,10 +65,12 @@ inline SparseMatrix FEECSullivanInclusionMatrix( Mesh& mesh, int n, int k, int r
     
     const int dim_out = num_volumes * binomial_integer( n+1, k ) * binomial_integer( n+1+r, r );
     
+    // const int dim_in = sum_int( n, [ num_faces&, lists_of_sullivan_indices& ](int d) -> int{ return num_faces[d] * lists_of_sullivan_indices[d].size(); } )
     int dim_in  = 0;
     for( auto d : IndexRange(0,n) )
         dim_in += num_faces[d] * lists_of_sullivan_indices[d].size();
     
+    // const int num_entries = num_volumes * sum_int( n, [ num_faces&, lists_of_sullivan_indices&, n ](int d) -> int{ return binomial_integer(n+1,d+1) * lists_of_sullivan_indices[d].size(); } )
     int num_entries = 0;
     for( auto d : IndexRange(0,n) )
         num_entries += num_volumes * binomial_integer(n+1,d+1) * lists_of_sullivan_indices[d].size();
@@ -85,10 +87,10 @@ inline SparseMatrix FEECSullivanInclusionMatrix( Mesh& mesh, int n, int k, int r
     for( auto d : IndexRange(0,n) )
         subsimplex_inclusions[d] = generateSigmas( IndexRange(0,d), IndexRange(0,n) );
     
-    for( int d  = 0; d  <= n;                          d++ )           // go over all the subsimplex dimensions
-    for( int fi = 0; fi  < binomial_integer(n+1,d+1); fi++ )           // go over all the d dimensional subsimplices 
+    for( int d  = 0; d  <= n;                          d++ )       // go over all the subsimplex dimensions
+    for( int fi = 0; fi  < binomial_integer(n+1,d+1); fi++ )       // go over all the d dimensional subsimplices 
     for( const auto& alphasigma : lists_of_sullivan_indices[d] )   // go over the corresponding alpha/sigma pairs
-    for( int s  = 0; s   < num_volumes;                s++ )           // go over all the volumes 
+    for( int s  = 0; s   < num_volumes;                s++ )       // go over all the volumes 
     {
         
         // Find indices of things and prepare auxiliary variables 
@@ -107,12 +109,20 @@ inline SparseMatrix FEECSullivanInclusionMatrix( Mesh& mesh, int n, int k, int r
         const int index_fi = mesh.get_subsimplex( n, d, s, fi );
         assert( 0 <= index_fi && index_fi < mesh.count_simplices(d) );
         
+        
         // get inclusion index map
+                
+        IndexMap volume_vertices = mesh.getsubsimplices( n, 0, s        );
+        IndexMap face_vertices   = mesh.getsubsimplices( d, 0, index_fi );
+        int inclusion_index = 0;
+        for( ; inclusion_index < subsimplex_inclusions[d].size(); inclusion_index++ )
+            if( face_vertices == volume_vertices * subsimplex_inclusions[d][inclusion_index] )
+                break;
+        assert( inclusion_index < subsimplex_inclusions[d].size() );
+        assert( face_vertices == volume_vertices * subsimplex_inclusions[d][inclusion_index] );
+        const IndexMap inclusion = subsimplex_inclusions[d][inclusion_index];
         
-        const IndexMap inclusion = subsimplex_inclusions[d][fi];
-        // FIXME: check that the inclusion map is actually the one corresponding to the subsimplex
         
-
         // create actual multiindices 
         
         const MultiIndex alpha_vol = MultiIndex( IndexRange(0,n), [&alpha,&inclusion]( int p ) -> int {
@@ -161,10 +171,10 @@ inline SparseMatrix FEECSullivanInclusionMatrix( Mesh& mesh, int n, int k, int r
                              +
                              s; 
                              
-        assert( rowindex >= 0 && colindex >= 0 && index_of_entry >= 0 );
-        assert( rowindex < dim_out );
-        assert( colindex < dim_in  );
+        assert( rowindex       < dim_out );
+        assert( colindex       < dim_in  );
         assert( index_of_entry < num_entries );
+        assert( rowindex >= 0 && colindex >= 0 && index_of_entry >= 0 );
             
         // set up the actual entry
         
@@ -174,7 +184,7 @@ inline SparseMatrix FEECSullivanInclusionMatrix( Mesh& mesh, int n, int k, int r
         entry.column = colindex;
         entry.value  = value;
         
-        if( mesh.get_flag( d, mesh.get_subsimplex( n, d, s, fi ) ) == SimplexFlagDirichlet )
+        if( mesh.get_flag( d, index_fi ) == SimplexFlagDirichlet )
             entry.value = 0.;
         
         ret.setentry( index_of_entry, entry );
