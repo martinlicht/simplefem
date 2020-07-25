@@ -274,10 +274,18 @@ static inline int signpower( int exponent )
     return exponent % 2 == 0 ? 1. : -1;
 }
 
+
+
+
+
 static inline int getbit( unsigned int value, unsigned int bitnumber )
 {
     return ( value >> bitnumber ) % 2;
 }
+
+
+
+
 
 
 static inline bool issmall( Float value, Float threshold = 0.00001 )
@@ -289,6 +297,30 @@ static inline bool isabout( Float value1, Float value2, Float threshold = 0.0000
 {
     return issmall( value1 - value2, threshold );
 }
+
+
+
+
+
+
+static inline int sum_int( int from, int to, const std::function<int(int)>& calc )
+{
+    assert( from <= to );
+    int ret = 0;
+    for( int i = from; i <= to; i++ )
+        ret += calc( i );
+    return ret;
+}
+
+static inline int sum_int( int to, const std::function<int(int)>& calc )
+{
+    assert( 0 <= to );
+    return sum_int( 0, to, calc );
+}
+
+
+
+
 
 
 
