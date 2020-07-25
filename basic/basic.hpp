@@ -205,14 +205,18 @@ static inline Float factorial_numerical( int64_t n )
 static inline int64_t binomial_integer( int64_t n, int64_t k )
 {
     assert( 0 <= n );
-    assert( 0 <= k && k <= n );
+//     assert( 0 <= k && k <= n );
+    if( k < 0 or n < k )
+        return 0;
     return factorial_integer(n) / ( factorial_integer(k) * factorial_integer(n-k) );
 }
 
 static inline Float binomial_numerical( int64_t n, int64_t k )
 {
     assert( 0 <= n );
-    assert( 0 <= k && k <= n );
+//     assert( 0 <= k && k <= n );
+    if( k < 0 or n < k )
+        return 0.;
     return factorial_numerical(n) / ( factorial_numerical(k) * factorial_numerical(n-k) );
 }
 
@@ -305,7 +309,8 @@ static inline bool isabout( Float value1, Float value2, Float threshold = 0.0000
 
 static inline int sum_int( int from, int to, const std::function<int(int)>& calc )
 {
-    assert( from <= to );
+    if( from > to )
+        return 0;
     int ret = 0;
     for( int i = from; i <= to; i++ )
         ret += calc( i );
@@ -314,7 +319,6 @@ static inline int sum_int( int from, int to, const std::function<int(int)>& calc
 
 static inline int sum_int( int to, const std::function<int(int)>& calc )
 {
-    assert( 0 <= to );
     return sum_int( 0, to, calc );
 }
 

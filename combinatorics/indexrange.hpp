@@ -83,6 +83,11 @@ class IndexRange
                     return value != irit.value;
                 }
                     
+                inline bool operator==( const ConstIterator& irit ) const 
+                { 
+                    return value == irit.value;
+                }
+                    
         };
         
         inline ConstIterator begin() const

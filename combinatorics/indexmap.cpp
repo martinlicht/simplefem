@@ -111,14 +111,15 @@ void IndexMap::check() const
 void IndexMap::print( std::ostream& os, bool embellish ) const 
 {
     if( embellish ) {
-        os << "From" << std::endl << getSourceRange();
-        os << "To"   << std::endl << getDestRange();
+        os << "From" << std::endl << getSourceRange() << nl;
+        os << "To"   << std::endl << getDestRange() << nl;
         for( int i : getSourceRange() )
             os << i << " -> " << at( i ) << std::endl;
     } else {
-        os << getSourceRange() << " " << getDestRange();
+        os << getSourceRange() << "\n" << getDestRange() << nl;
         for( int i : getSourceRange() )
             os << " " << at( i );
+        os << nl;
     }
 }
 

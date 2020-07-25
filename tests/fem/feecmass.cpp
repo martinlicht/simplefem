@@ -15,6 +15,7 @@
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.elevation.hpp"
 #include "../../fem/global.lagrangeincl.hpp"
+#include "../../fem/global.sullivanincl.hpp"
 
 
 using namespace std;
@@ -53,6 +54,10 @@ int main()
             SparseMatrix inclmatrix = LagrangeInclusionMatrix( M, M.getinnerdimension(), r );
             
             SparseMatrix elevmatrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 2, 4, 3 );
+            
+            if( r > 0 )
+                SparseMatrix SullivanInclMatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), k, r );
+            
         }
         
         cout << "Finished Unit Test" << endl;

@@ -25,14 +25,14 @@ MultiIndex::MultiIndex( const IndexRange& ir, const std::vector<int>& vals )
 
 
 MultiIndex::MultiIndex( const IndexRange& ir, const std::function<int(int)>& generator )
-: IndexMap( ir, generator )
+: IndexMap( ir, NonNegativeIntegers, generator )
 {
     MultiIndex::check();
 }
 
 
 MultiIndex::MultiIndex( const IndexRange& ir, const std::initializer_list<int>& il )
-: IndexMap( ir, il )
+: IndexMap( ir, NonNegativeIntegers, il )
 {
     MultiIndex::check();
 }
