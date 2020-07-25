@@ -129,6 +129,42 @@ int64_t MultiIndex::factorial() const
     return ret;
 }
 
+int MultiIndex::min() const
+{
+    check();
+    
+    int ret = getIndexRange().max();
+    
+    for( int p : getIndexRange()  )
+        if( at(p) > 0 && p <= ret) 
+            ret = p;
+    
+    assert( getIndexRange().contains(ret) );
+    assert( at(ret) > 0 );
+    for( int p : getIndexRange()  )
+        assert( at(p) == 0 || p >= ret );
+    
+    return ret;
+}
+
+int MultiIndex::max() const
+{
+    check();
+    
+    int ret = getIndexRange().min();
+    
+    for( int p : getIndexRange()  )
+        if( at(p) > 0 && p >= ret) 
+            ret = p;
+    
+    assert( getIndexRange().contains(ret) );
+    assert( at(ret) > 0 );
+    for( int p : getIndexRange()  )
+        assert( at(p) == 0 || p <= ret );
+    
+    return ret;
+}
+
 
 
 

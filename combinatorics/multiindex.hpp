@@ -56,6 +56,10 @@ class MultiIndex
 
                 int64_t factorial() const;
                 
+                int min() const;
+
+                int max() const;
+                
 
                 void add( int );
 
