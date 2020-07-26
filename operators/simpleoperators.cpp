@@ -88,6 +88,14 @@ DiagonalOperator::DiagonalOperator( int dimension, const ScalingOperator& scalin
     DiagonalOperator::check();
 }
 
+DiagonalOperator::DiagonalOperator( int dimension, const std::function<Float(int)>& generator )
+: LinearOperator(dimension,dimension), 
+  diagonal( FloatVector( dimension, generator ) )
+{
+    DiagonalOperator::check();
+}
+        
+
 DiagonalOperator::~DiagonalOperator()
 {
         /* Nothing */ 
@@ -133,3 +141,12 @@ void DiagonalOperator::apply( FloatVector& dest, const FloatVector& src, Float s
     }
     
 }
+
+const DiagonalOperator DiagonalOperator::sqrt() const
+{
+    return DiagonalOperator( getdimin(), [this](int i) -> Float {
+        assert( this->diagonal[i] >= 0 ); 
+        return std::sqrt( diagonal[i] );
+    } );
+}
+

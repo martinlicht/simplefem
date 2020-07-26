@@ -143,6 +143,7 @@ public LinearOperator
         explicit DiagonalOperator( int, Float s );
         explicit DiagonalOperator( int, const FloatVector& dia );
         explicit DiagonalOperator( int, const ScalingOperator& scaling );
+        explicit DiagonalOperator( int, const std::function<Float(int)>& );
         virtual ~DiagonalOperator();
         
         virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
@@ -163,6 +164,8 @@ public LinearOperator
         const FloatVector& getdiagonal() const;
         
         virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override;
+        
+        const DiagonalOperator sqrt() const;
 
     private:
 
