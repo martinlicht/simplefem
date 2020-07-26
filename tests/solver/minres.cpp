@@ -1,0 +1,129 @@
+
+
+/**/
+
+#include <iostream>
+#include "../../basic.hpp"
+#include "../../operators/floatvector.hpp"
+#include "../../operators/simpleoperators.hpp"
+#include "../../sparse/sparsematrix.hpp"
+#include "../../solver/minres.hpp"
+
+
+using namespace std;
+
+int main()
+{
+    cout << "Unit Test for Minimal Residual Method" << endl;
+
+    {
+        
+        cout << "First Something Simple with the MINRES" << endl;
+        
+        ScalingOperator A( 10, 3.141 );
+        MinimumResidualMethod MINRES(A);
+
+        FloatVector rhs(10), x(10);
+        x.random(); rhs.zero();
+        
+        cout << x << endl;
+        MINRES.solve( x, rhs );
+        // cout << x << endl;
+
+    }
+
+
+
+    
+    if(true){
+        
+        cout << "Now something more complicated:\n Tridiagonal with very weak diagonal dominance." << endl;
+        
+        int dimension = 100;
+        
+        FloatVector x( dimension );
+        for( int p = 0; p < dimension; p++ )
+            x.setentry( p, 3. + p * 5. );
+        
+        SparseMatrix A( dimension, dimension );
+        A.reserve( 3 * dimension );
+        
+        for( int i = 0; i < dimension; i++ ){
+            if( i-1 >= 0         ) A.addentry( i, i-1, 1.25 );
+            if( i+1 <  dimension ) A.addentry( i, i+1, 1.25 );
+            A.addentry( i, i, 2.51 );
+        }
+        
+        cout << "Compute stuff." << endl;
+        
+        FloatVector b = A * x;
+        
+        {
+            FloatVector y( dimension );
+            srand(0);
+            y.random();
+            
+            MinimumResidualMethod MINRES(A);
+            MINRES.max_iteration_count = dimension;
+            MINRES.tolerance = 1e-20;
+            
+            timestamp start, end;
+            start = gettimestamp();
+            MINRES.solve(y,b);
+            end = gettimestamp();
+            cout << end - start << endl;
+        }
+        
+        
+    }
+    
+    
+    if(true){
+        
+        cout << "For MINRES: diagonal indefinite matrix ." << endl;
+        
+        int dimension = 100;
+        
+        FloatVector x( dimension );
+        for( int p = 0; p < dimension; p++ )
+            x.setentry( p, 3. + p * 5. );
+        
+        SparseMatrix A( dimension, dimension );
+        A.reserve( dimension );
+        
+//         for( int i = 0; i < dimension; i++ ){
+//             A.addentry( i, i, signpower(i) * 2.51 );
+//         }
+        
+        for( int i = 0; i < dimension/2; i++ ){
+            A.addentry(               i,               i,  3+i );
+            A.addentry( dimension/2 + i, dimension/2 + i, -3-i );
+        }
+        
+        cout << "Compute stuff." << endl;
+        
+        FloatVector b = A * x;
+        
+        {
+            FloatVector y( dimension );
+            srand(0);
+            y.random();
+            
+            MinimumResidualMethod MINRES(A);
+            MINRES.max_iteration_count = dimension;
+            MINRES.tolerance = 1;
+            
+            timestamp start, end;
+            start = gettimestamp();
+            MINRES.solve(y,b);
+            end = gettimestamp();
+            cout << end - start << endl;
+        }
+        
+        
+    }
+
+    cout << "Finished Unit Test" << endl;
+
+    return 0;
+}
