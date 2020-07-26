@@ -7,7 +7,6 @@
 #include <iomanip>
 
 #include "../../basic.hpp"
-// #include "../../operators/composedoperators.hpp"
 #include "../../operators/composedoperators.hpp"
 // #include "../../operators/composed.hpp"
 #include "../../dense/densematrix.hpp"
@@ -18,10 +17,9 @@
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples2D.hpp"
 #include "../../mesh/examples3D.hpp"
-#include "../../vtk/vtkwriter.mesh2D.hpp"
+#include "../../vtk/vtkwriter.mesh3D.hpp"
 #include "../../solver/crm.hpp"
 #include "../../solver/pcrm.hpp"
-#include "../../solver/resdes.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
@@ -40,11 +38,11 @@ int main()
 
         if(true){
 
-            cout << "Case 2D" << endl;
+            cout << "Case 3D" << endl;
             
             cout << "Initial mesh..." << endl;
             
-            MeshSimplicial2D M = UnitedKingdom(); //
+            MeshSimplicial3D M = UnitCube3D();
             
             M.check();
             
@@ -53,7 +51,7 @@ int main()
 
             std::function<FloatVector(const FloatVector&)> constant_one
                 = [](const FloatVector& vec) -> FloatVector{
-                        assert( vec.getdimension() == 2 );
+                        assert( vec.getdimension() == 3 );
                         return FloatVector({ 1. });
                     };
             
@@ -61,50 +59,65 @@ int main()
             std::vector<std::function<FloatVector(const FloatVector&)>> experiments_grad;
             std::vector<std::function<FloatVector(const FloatVector&)>> experiments_sol;
 
+
             
             // std::function<FloatVector(const FloatVector&) scalarfield = 
             
+            Float xfeq = 1.;
+            Float yfeq = 1.;
+            Float zfeq = 1.;
+            
+
             experiments_sol.push_back( 
-                [](const FloatVector& vec) -> FloatVector{
-                    assert( vec.getdimension() == 2 );
+                [xfeq,yfeq,zfeq](const FloatVector& vec) -> FloatVector{
+                    assert( vec.getdimension() == 3 );
                     // return FloatVector({ 1. });
                     return FloatVector({ 
-                        0.0001 * vec[0] * vec[0] * vec[1] * vec[1]
-                        });
+                           std::cos( xfeq * Constants::pi * vec[0] )
+                         * std::cos( yfeq * Constants::pi * vec[1] )
+                         * std::cos( zfeq * Constants::pi * vec[2] )
+                         });
                 }
             );
 
             experiments_grad.push_back( 
-                [](const FloatVector& vec) -> FloatVector{
-                    assert( vec.getdimension() == 2 );
+                [xfeq,yfeq,zfeq](const FloatVector& vec) -> FloatVector{
+                    assert( vec.getdimension() == 3 );
                     // return FloatVector({ 1. });
-                    return FloatVector( { 
-                            0.0001 * 2. * vec[0] * vec[1] * vec[1],
-                            0.0001 * 2. * vec[1] * vec[0] * vec[0], 
+                    return FloatVector({ 
+                            -xfeq * Constants::pi * std::sin( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] ) * std::cos( zfeq * Constants::pi * vec[2] ),
+                            -yfeq * Constants::pi * std::cos( xfeq * Constants::pi * vec[0] ) * std::sin( yfeq * Constants::pi * vec[1] ) * std::cos( zfeq * Constants::pi * vec[2] ),
+                            -zfeq * Constants::pi * std::cos( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] ) * std::sin( zfeq * Constants::pi * vec[2] )
                         });
                 }
             );
 
             experiments_rhs.push_back( 
-                [](const FloatVector& vec) -> FloatVector{
-                    assert( vec.getdimension() == 2 );
+                [xfeq,yfeq,zfeq](const FloatVector& vec) -> FloatVector{
+                    assert( vec.getdimension() == 3 );
                     return FloatVector({ 
-                        0.0001 * ( 2. * vec[0] * vec[0] + 2. * vec[1] * vec[1] )
+                        xfeq*xfeq * Constants::pisquare * std::cos( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] ) * std::cos( zfeq * Constants::pi * vec[2] )
+                        +
+                        yfeq*yfeq * Constants::pisquare * std::cos( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] ) * std::cos( zfeq * Constants::pi * vec[2] )
+                        +
+                        zfeq*zfeq * Constants::pisquare * std::cos( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] ) * std::cos( zfeq * Constants::pi * vec[2] )
                      });
                 }
             );
 
             
 
-            cout << "Solving Poisson Problem with Neumann boundary conditions over the United Kingdom" << endl;
+            assert( experiments_sol.size() == experiments_rhs.size() );
 
-            int max_l = 2;
+            cout << "Solving Poisson Problem with Neumann boundary conditions" << endl;
+            
+            int max_l = 8;
             int max_r = 1;
             
             for( int l = 0; l <= max_l; l++ ){
                 
                 cout << "Level: " << l << std::endl;
-                cout << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
+                cout << "# T/F/E/V: " << M.count_tetrahedra() << "/" << M.count_faces() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
                 for( int r = 1; r <= max_r; r++ ) 
                 {
@@ -115,13 +128,12 @@ int main()
                     
                     SparseMatrix scalar_massmatrix_fac = FEECBrokenMassMatrixRightFactor( M, M.getinnerdimension(), 0, r );
                     
-                    cout << "...assemble vector mass matrix" << endl;
+                    cout << "...assemble vector mass matrices" << endl;
             
                     SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
                     
                     SparseMatrix vector_massmatrix_fac = FEECBrokenMassMatrixRightFactor( M, M.getinnerdimension(), 1, r-1 );
                     
-                    SparseMatrix vector_massmatrix_fac_t = vector_massmatrix_fac.getTranspose();
                     cout << "...assemble differential matrix and transpose" << endl;
 
                     SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r );
@@ -130,45 +142,42 @@ int main()
 
                     cout << "...assemble inclusion matrix and transpose" << endl;
             
-                    SparseMatrix incmatrix = FEECLagrangeInclusionMatrix( M, M.getinnerdimension(), r );
+                    SparseMatrix incmatrix = LagrangeInclusionMatrix( M, M.getinnerdimension(), r );
 
                     SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
                     cout << "...assemble stiffness matrix" << endl;
             
                     // ProductOperator 
-                    auto stiffness = ( incmatrix_t * diffmatrix_t ) * vector_massmatrix * ( diffmatrix * incmatrix );
-                    // auto op1_t = incmatrix_t * diffmatrix_t;
-                    // auto op2_t = op1_t * vector_massmatrix_fac_t;
-                    // auto op1   = diffmatrix * incmatrix;
-                    // auto op2   = vector_massmatrix_fac * op1;
-                    // auto stiffness = op2_t * op2;
+                    // DONT USE THIS auto stiffness = incmatrix_t * diffmatrix_t * vector_massmatrix * diffmatrix * incmatrix;
+                    auto op1 = incmatrix_t * diffmatrix_t;
+                    auto op2 = op1 * vector_massmatrix;
+                    auto op3 = op2 * diffmatrix;
+                    auto stiffness = op3 * incmatrix;
 
-                    // auto opr1 = diffmatrix & incmatrix;
-                    // auto opr  = vector_massmatrix_fac & opr1;
-                    // auto opl  = opr.getTranspose(); 
-                    // auto stiffness = opl & opr;
-                    
-                    // stiffness.sortentries();
-                    // auto stiffness_csr = MatrixCSR( stiffness );
+//                     auto opr1 = diffmatrix & incmatrix;
+//                     auto opr  = vector_massmatrix_fac & opr1;
+//                     auto opl  = opr.getTranspose(); 
+//                     auto stiffness_prelim = opl & opr;
+//                     stiffness_prelim.sortentries();
+//                     auto stiffness = MatrixCSR( stiffness_prelim );
                     
                     auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. );
-                    // auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
-                    // std::cout << "Average value of diagonal preconditioner: " << stiffness_invprecon.getdiagonal().average() << std::endl;
+                    //auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
+                    
+                    std::cout << "Average value of diagonal preconditioner: " << stiffness_invprecon.getdiagonal().average() << std::endl;
 
-                    for( int i = 0; i < experiments_rhs.size(); i++){
+                    for( int i = 0; i < experiments_sol.size(); i++){
 
                         const auto& function_sol = experiments_sol[i];
                         const auto& function_grad= experiments_grad[i];
                         const auto& function_rhs = experiments_rhs[i];
                         
-                        cout << "...interpolate rhs" << endl;
+                        cout << "...interpolate explicit solution, grad, and rhs" << endl;
             
                         FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 0, r,   function_sol  );
                         FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r-1, function_grad );
                         FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r,   function_rhs  );
-                        
-                        FloatVector interpol_rhs_cells  = Interpolation( M, M.getinnerdimension(), 0, 0,   function_rhs  );
                         
                         FloatVector interpol_one  = Interpolation( M, M.getinnerdimension(), 0, r, constant_one );
                         
@@ -176,79 +185,56 @@ int main()
             
                         Float average_sol = interpol_one * ( scalar_massmatrix * interpol_sol );
                         Float average_rhs = interpol_one * ( scalar_massmatrix * interpol_rhs );
-                        Float domain_area = interpol_one * ( scalar_massmatrix * interpol_one );
-
-                        cout << average_rhs << endl;
-
-                        interpol_rhs = interpol_rhs - ( average_rhs / domain_area ) * interpol_one;
-
-                        cout << interpol_one * ( scalar_massmatrix * interpol_rhs ) << endl;
+                        
+                        cout << average_sol << space << average_rhs << endl;
 
                         cout << "...measure interpolation commutativity" << endl;
             
+                        Float commutatorerror = ( vector_massmatrix_fac * ( interpol_grad - diffmatrix * interpol_sol ) ).norm();
+                        cout << "commutator error: " << commutatorerror << endl;
+                        
                         cout << "...compute norms of solution and right-hand side:" << endl;
             
+                        Float sol_norm = ( scalar_massmatrix_fac * interpol_sol ).norm();
                         Float rhs_norm = ( scalar_massmatrix_fac * interpol_rhs ).norm();
                         
+                        cout << "solution norm: " << sol_norm << endl;
                         cout << "rhs norm:      " << rhs_norm << endl;
 
                         cout << "...create RHS vector" << endl;
-
+            
                         FloatVector rhs = incmatrix_t * ( scalar_massmatrix * interpol_rhs );
 
                         FloatVector sol( M.count_simplices(0), 0. );
-                        
+
                         cout << "...iterative solver" << endl;
                         
-                        sol.zero();
-                        FloatVector eins( sol.getdimension(), 1. );
-                        
-                        sol.random();
-                        rhs.zero();
-                        
-                        if(false)
-                        for( int t = 0; t < 4; t++ )
                         {
+                            sol.zero();
                             timestamp start = gettimestamp();
-                            PreconditionedConjugateResidualMethod CRM( stiffness, stiffness  );
-                            CRM.print_modulo = 1;//+sol.getdimension()/1000;
-                            //CRM.tolerance = 1e-15;
+                            ConjugateResidualMethod CRM( stiffness );
+                            CRM.print_modulo = 1+sol.getdimension()/1000;
+                            CRM.tolerance = 1e-10;
                             CRM.solve( sol, rhs );
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t " << end - start << std::endl;
-                            sol = sol - ( interpol_one * ( scalar_massmatrix * incmatrix * sol ) ) / domain_area * eins;
                         }
-
-                        for( int t = 0; t < 4; t++ )
-                        {
+                        
+                        if(false){
+                            sol.zero();
                             timestamp start = gettimestamp();
-                            ConjugateResidualMethod CRM( stiffness );
-                            CRM.print_modulo = 1;//+sol.getdimension()/1000;
-                            CRM.tolerance = 1e-40;
-                            CRM.solve_robust( sol, rhs );
+                            PreconditionedConjugateResidualMethod PCRM( stiffness, stiffness_invprecon );
+                            PCRM.print_modulo = 1+sol.getdimension()/1000;
+                            PCRM.tolerance = 1e-10;
+                            PCRM.solve( sol, rhs );
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t " << end - start << std::endl;
-                            sol = sol - ( interpol_one * ( scalar_massmatrix * incmatrix * sol ) ) / domain_area * eins;
                         }
-
-                        if(false)
-                        for( int t = 0; t < 10; t++ )
-                        {
-                            timestamp start = gettimestamp();
-                            ResidualDescentMethod RDM( stiffness );
-                            RDM.print_modulo = 1;//+sol.getdimension()/1000;
-                            RDM.tolerance = 1e-15;
-                            RDM.solve( sol, rhs );
-                            timestamp end = gettimestamp();
-                            std::cout << "\t\t\t " << end - start << std::endl;
-                            sol = sol - ( interpol_one * ( scalar_massmatrix * incmatrix * sol ) ) / domain_area * eins;
-                        }
-
 
                         cout << "...compute error and residual:" << endl;
             
-                        // Float errornorm     = ( scalar_massmatrix_fac * ( interpol_sol  - incmatrix * sol ) ).norm();
-                        // Float graderrornorm = ( vector_massmatrix_fac * ( interpol_grad - diffmatrix * incmatrix * sol ) ).norm();
+                        Float errornorm     = ( scalar_massmatrix_fac * ( interpol_sol  - incmatrix * sol ) ).norm();
+                        Float graderrornorm = ( vector_massmatrix_fac * ( interpol_grad - diffmatrix * incmatrix * sol ) ).norm();
                         Float residualnorm  = ( rhs - stiffness * sol ).norm();
                         
                         // FloatVector gradfoo = diffmatrix * ( interpol_sol - incmatrix * sol );
@@ -256,21 +242,22 @@ int main()
                         // Float errornorm1 = interpol_sol * ( scalar_massmatrix * interpol_sol );
                         // Float errornorm2 = power( ( scalar_massmatrix_fac * interpol_sol ).norm(), 2. );
 
-                        // cout << "error:     " << errornorm     << endl;
-                        // cout << "graderror: " << graderrornorm << endl;
+                        cout << "error:     " << errornorm     << endl;
+                        cout << "graderror: " << graderrornorm << endl;
                         cout << "residual:  " << residualnorm  << endl;
+
 
                         {
                     
-                            fstream fs( adaptfilename("./poissonneumann.uk.vtk"), std::fstream::out );
+                            fstream fs( adaptfilename("./poissonneumann3D.vtk"), std::fstream::out );
                 
-                            VTK_MeshWriter_Mesh2D vtk( M, fs );
+                            VTK_MeshWriter_Mesh3D vtk( M, fs );
                             vtk.writePreamble( "Poisson-Neumann problem" );
                             vtk.writeCoordinateBlock();
                             vtk.writeTopDimensionalCells();
                             
                             vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
-                            vtk.writeCellScalarData( interpol_rhs_cells, "rhs_interpolation" , 0.1 );
+                            // vtk.writeCellVectorData( interpol_grad, "gradient_interpolation" , 0.1 );
                             
                             fs.close();
                     

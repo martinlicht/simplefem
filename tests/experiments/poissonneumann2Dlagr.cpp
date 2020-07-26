@@ -32,7 +32,7 @@ using namespace std;
 int main()
 {
         
-        cout << "Unit Test for Solution of Dirichlet Problem" << endl;
+        cout << "Unit Test for Solution of Neumann Problem" << endl;
         
         cout << std::setprecision(10);
 
@@ -45,10 +45,6 @@ int main()
             MeshSimplicial2D M = UnitSquare2D();
             
             M.check();
-            
-            M.automatic_dirichlet_flags();
-            
-            M.check_dirichlet_flags();
             
             cout << "Prepare scalar fields for testing..." << endl;
             
@@ -94,10 +90,9 @@ int main()
                 [xfeq,yfeq](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
                     return FloatVector({ 
-                        1.0
-//                         xfeq*xfeq * Constants::pisquare * std::cos( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] )
-//                         +
-//                         yfeq*yfeq * Constants::pisquare * std::cos( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] )
+                        xfeq*xfeq * Constants::pisquare * std::cos( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] )
+                        +
+                        yfeq*yfeq * Constants::pisquare * std::cos( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] )
                      });
                 }
             );
@@ -106,7 +101,7 @@ int main()
 
             assert( experiments_sol.size() == experiments_rhs.size() );
 
-            cout << "Solving Poisson Problem with Dirichlet boundary conditions" << endl;
+            cout << "Solving Poisson Problem with Neumann boundary conditions" << endl;
 
             int max_l = 5;
             int max_r = 1;
@@ -139,7 +134,7 @@ int main()
 
                     cout << "...assemble inclusion matrix and transpose" << endl;
             
-                    SparseMatrix incmatrix = FEECLagrangeInclusionMatrix( M, M.getinnerdimension(), r );
+                    SparseMatrix incmatrix = LagrangeInclusionMatrix( M, M.getinnerdimension(), r );
 
                     SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
@@ -160,8 +155,8 @@ int main()
                     stiffness.sortentries();
                     auto stiffness_csr = MatrixCSR( stiffness );
                     
-                    auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. );
-                    //auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
+                    //auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. );
+                    auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
                     std::cout << "Average value of diagonal preconditioner: " << stiffness_invprecon.getdiagonal().average() << std::endl;
 
                     for( int i = 0; i < experiments_sol.size(); i++){
@@ -246,10 +241,10 @@ int main()
 
                         {
                     
-                            fstream fs( adaptfilename("./poissondirichlet.vtk"), std::fstream::out );
+                            fstream fs( adaptfilename("./poissonneumann.vtk"), std::fstream::out );
                 
                             VTK_MeshWriter_Mesh2D vtk( M, fs );
-                            vtk.writePreamble( "Poisson-Dirichlet problem" );
+                            vtk.writePreamble( "Poisson-Neumann problem" );
                             vtk.writeCoordinateBlock( 0.3 * sol );
                             vtk.writeTopDimensionalCells();
                             

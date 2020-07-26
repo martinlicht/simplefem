@@ -134,7 +134,7 @@ int main()
 
                 cout << "...assemble inclusion matrix and transpose" << endl;
         
-                SparseMatrix incmatrix = FEECLagrangeInclusionMatrix( M, M.getinnerdimension(), r );
+                SparseMatrix incmatrix = LagrangeInclusionMatrix( M, M.getinnerdimension(), r );
 
                 SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
