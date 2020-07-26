@@ -63,8 +63,8 @@ inline SparseMatrix FEECSullivanInclusionMatrix( Mesh& mesh, int n, int k, int r
     
     // dimensions of the matrix 
     
-    const int dim_out = num_volumes * binomial_integer( n+1, k ) * binomial_integer( n+1+r, r );
-    
+    const int dim_out = num_volumes * binomial_integer( n+1, k ) * binomial_integer( n+r, r );
+    // 2+1+1 choose 1
     // const int dim_in = sum_int( n, [ num_faces&, lists_of_sullivan_indices& ](int d) -> int{ return num_faces[d] * lists_of_sullivan_indices[d].size(); } )
     int dim_in  = 0;
     for( auto d : IndexRange(0,n) )
@@ -148,7 +148,11 @@ inline SparseMatrix FEECSullivanInclusionMatrix( Mesh& mesh, int n, int k, int r
 
         // enter the values of the data structure 
 
-        int rowindex = s * binomial_integer(n+1+r,r) * binomial_integer(n+1,k) + index_alpha_vol * binomial_integer(n+1,k) + index_sigma_vol;
+        int rowindex = s * binomial_integer(n+r,r) * binomial_integer(n+1,k) 
+                       +
+                       index_alpha_vol * binomial_integer(n+1,k)
+                       + 
+                       index_sigma_vol;
 
         int colindex = sum_int( d-1, 
                         [&mesh,&lists_of_sullivan_indices](int i) -> int { return mesh.count_simplices(i) * lists_of_sullivan_indices[i].size(); } 

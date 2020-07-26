@@ -13,6 +13,8 @@ affix.mesh := mesh dense sparse operators combinatorics
 affix.vtk := vtk $(affix.mesh)
 affix.matrixmarket = matrixmarket
 affix.fem := vtk mesh solver dense sparse operators combinatorics
+affix.experiments := vtk mesh solver dense sparse operators combinatorics 
+affix.afem := vtk mesh solver dense sparse operators combinatorics 
 
 
 ./*/*.out: makefile ../common.recipe.mk
@@ -341,6 +343,80 @@ fem.tests: $(fem.outs)
 
 
 
+
+experiments.sources := $(wildcard experiments/*.cpp)
+
+experiments.outs := $(patsubst %.cpp,%.out,$(experiments.sources))
+
+experiments.depdir := experiments/$(depdir)
+
+experiments.dependencies := $(patsubst experiments/%.cpp,experiments/.deps/%.d,$(experiments.sources))
+
+experiments.include := $(patsubst %,-L../%,$(affix.experiments))
+linkerprefix:=-Wl,
+experiments.rpath_t := $(patsubst %,-rpath=$(shell pwd)/../%,$(affix.experiments)) 
+experiments.rpath := $(patsubst %,$(linkerprefix)%,$(experiments.rpath_t)) 
+experiments.link := $(patsubst %,-l%,$(affix.experiments))
+
+$(experiments.depdir): ; @mkdir -p $@
+
+$(experiments.outs): experiments/%.out: experiments/%.cpp | $(experiments.depdir)
+	@ #echo $(experiments.include)
+	@ #echo $(experiments.rpath)
+	@ #echo $(experiments.link)
+	@g++ -MM experiments/$*.cpp -MT $@ -MF experiments/.deps/$*.d
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(experiments.include) $(experiments.rpath) $(experiments.link) -o $@ $(LDLIBS)
+
+-include $(experiments.dependencies)
+
+experiments.tests: $(experiments.outs)
+
+
+
+
+
+
+
+
+
+
+afem.sources := $(wildcard afem/*.cpp)
+
+afem.outs := $(patsubst %.cpp,%.out,$(afem.sources))
+
+afem.depdir := afem/$(depdir)
+
+afem.dependencies := $(patsubst afem/%.cpp,afem/.deps/%.d,$(afem.sources))
+
+afem.include := $(patsubst %,-L../%,$(affix.afem))
+linkerprefix:=-Wl,
+afem.rpath_t := $(patsubst %,-rpath=$(shell pwd)/../%,$(affix.afem)) 
+afem.rpath := $(patsubst %,$(linkerprefix)%,$(afem.rpath_t)) 
+afem.link := $(patsubst %,-l%,$(affix.afem))
+
+$(afem.depdir): ; @mkdir -p $@
+
+$(afem.outs): afem/%.out: afem/%.cpp | $(afem.depdir)
+	@ #echo $(afem.include)
+	@ #echo $(afem.rpath)
+	@ #echo $(afem.link)
+	@g++ -MM afem/$*.cpp -MT $@ -MF afem/.deps/$*.d
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(afem.include) $(afem.rpath) $(afem.link) -o $@ $(LDLIBS)
+
+-include $(afem.dependencies)
+
+afem.tests: $(afem.outs)
+
+
+
+
+
+
+
+
+
+
+
 all: basic.tests 
 all: combinatorics.tests
 all: operators.tests
@@ -351,6 +427,8 @@ all: mesh.tests
 all: vtk.tests
 all: matrixmarket.tests
 all: fem.tests
+all: experiments.tests
+all: afem.tests
 
 
 
