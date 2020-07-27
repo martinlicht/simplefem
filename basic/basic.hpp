@@ -75,6 +75,14 @@ T minimum( const T& a, const T& b )
 
 
 
+template<typename T>
+T square( const T& x )
+{
+    return x * x;
+}
+
+
+
 
 
 static inline int64_t factorial_integer_table_old( int64_t n )

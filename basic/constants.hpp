@@ -1,44 +1,46 @@
 #ifndef INCLUDEGUARD_CONSTANTS_HPP
 #define INCLUDEGUARD_CONSTANTS_HPP
 
+#define CONSTANT_FLOATINGPOINT_DATATYPE long double
+
 namespace Constants
 {
   
-  const long double pi
+  const CONSTANT_FLOATINGPOINT_DATATYPE pi
     = 3.141592653589793238462643383279502884197;
   
-  const long double twopi
+  const CONSTANT_FLOATINGPOINT_DATATYPE twopi
     = 2*pi;
 
-  const long double pisquare
+  const CONSTANT_FLOATINGPOINT_DATATYPE pisquare
     = pi*pi;
 
-  const long double fourpisquare
+  const CONSTANT_FLOATINGPOINT_DATATYPE fourpisquare
     = 4*pi*pi;
 
-  const long double euler
+  const CONSTANT_FLOATINGPOINT_DATATYPE euler
     = 2.718281828459045235360287471352662497757;
   
   /* feigenbaum bifurcation velocity */
-  const long double feigenbaum_first
+  const CONSTANT_FLOATINGPOINT_DATATYPE feigenbaum_first
     = 4.669201609102990671853203820466201617258;
   
-  const long double feigenbaum_second
+  const CONSTANT_FLOATINGPOINT_DATATYPE feigenbaum_second
     = 2.502907875095892822283902873218215786381;
     
-  const long double goldenratio
+  const CONSTANT_FLOATINGPOINT_DATATYPE goldenratio
     = 1.618033988749894848204586834365638117720;
   
-  const long double gelfond
+  const CONSTANT_FLOATINGPOINT_DATATYPE gelfond
     = 23.14069263277926900572908636794854738026;
   
-  const long double reci_fibonacci
+  const CONSTANT_FLOATINGPOINT_DATATYPE reci_fibonacci
     = 3.359885666243177553172011302918927179688;
   
-  const long double levi
+  const CONSTANT_FLOATINGPOINT_DATATYPE levi
     = 3.275822918721811159787681882;
     
-  const long double sirpinski
+  const CONSTANT_FLOATINGPOINT_DATATYPE sirpinski
     = 2.584981759579253217065893587383;
     
     
