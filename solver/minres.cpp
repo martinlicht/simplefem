@@ -67,14 +67,14 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
         /* Start / Restart MinimumResidualMethod process */
         if( recent_iteration_count % x.getdimension() == 0 ) {
         
-            LOG << "Begin Minimal Residual iteration" << std::endl;
+            LOG << "Begin Minimal Residual iteration";// << std::endl;
         
             iterationStart( x, b, r, p0, s0, p1, s1, rr );
         
             LOG << "starting with"
                       << " r-sqnorm="    << rr 
-                      << std::endl;
-            LOG << "tolerance: " << tolerance << std::endl;
+                      ;//<< std::endl;
+            LOG << "tolerance: " << tolerance;// << std::endl;
 
         }
 
@@ -85,7 +85,7 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
             LOG 
                 << "#" << recent_iteration_count << "/" << max_iteration_count
                 << " r-sqnorm="  << rr 
-                << std::endl;
+                ;//<< std::endl;
         }
 
         /* If exit condition met, exit */

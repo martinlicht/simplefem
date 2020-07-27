@@ -61,7 +61,7 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
     FloatVector  MAMp( dimension, 0. );    
     FloatVector AMAMp( dimension, 0. );
         
-    LOG << "Begin Preconditioned Conjugate Residual iteration" << std::endl;
+    LOG << "Begin Preconditioned Conjugate Residual iteration";// << std::endl;
     
     recent_iteration_count = 0;
     
@@ -71,7 +71,7 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
         /* Start / Restart PCRM process */
         if( recent_iteration_count % x.getdimension() == 0 ) {
         
-            LOG << "Begin Preconditioned Conjugate Residual iteration" << std::endl;
+            LOG << "Begin Preconditioned Conjugate Residual iteration";// << std::endl;
         
             iterationStart( x, b, r, p, Mr, Mp, AMr, AMp, rMAMr );
 
@@ -79,9 +79,9 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
                       << " r-MAMsqnorm=" << rMAMr
                       << " r-Msqnorm="   << Mr * Mr  
                       << " r-sqnorm="    << r * r
-                      << std::endl;
+                      ;//<< std::endl;
 
-            LOG << "tolerance: " << tolerance << std::endl;
+            LOG << "tolerance: " << tolerance;// << std::endl;
 
         }
 
@@ -93,7 +93,7 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
                 << "#" << recent_iteration_count << "/" << max_iteration_count
                 << " r-MAMsqnorm=" << rMAMr
                 << " r-Msqnorm="   << ( r * ( M * r ) ) 
-                << std::endl;
+                ;//<< std::endl;
         }
 
         /* If exit condition met, exit */

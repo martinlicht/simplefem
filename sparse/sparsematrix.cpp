@@ -379,13 +379,13 @@ SparseMatrix SparseMatrix::getTranspose() const
 SparseMatrix operator&( const SparseMatrix& left, const SparseMatrix& right )
 {
 
-    LOG << "--- SparseMatrix Product" << std::endl;
-    LOG << "--- Sort and compress" << std::endl;
+//     LOG << "--- SparseMatrix Product" << std::endl;
+//     LOG << "--- Sort and compress" << std::endl;
     
     left.sortandcompressentries( SparseMatrix::MatrixEntrySorting::columnwise );
     right.sortandcompressentries( SparseMatrix::MatrixEntrySorting::rowwise );
 
-    LOG << "--- Counting" << std::endl;
+//     LOG << "--- Counting" << std::endl;
     
     int counter = 0;
     
@@ -410,7 +410,7 @@ SparseMatrix operator&( const SparseMatrix& left, const SparseMatrix& right )
 
     }
 
-    LOG << "--- Assemble" << std::endl;
+//     LOG << "--- Assemble" << std::endl;
     
     std::vector<SparseMatrix::MatrixEntry> new_entries;
     new_entries.reserve( counter );
@@ -444,7 +444,7 @@ SparseMatrix operator&( const SparseMatrix& left, const SparseMatrix& right )
 
     assert( new_entries.size() == counter );
 
-    LOG << "--- Construct" << std::endl;
+//     LOG << "--- Construct" << std::endl;
     SparseMatrix ret( left.getdimout(), right.getdimin(), new_entries );
         
     // LOG << "--- Sort and compress again" << std::endl;
@@ -463,13 +463,13 @@ SparseMatrix operator&( const SparseMatrix& left, const SparseMatrix& right )
 SparseMatrix SparseMatrixMultiplication( const SparseMatrix& left, const SparseMatrix& right )
 {
 
-    LOG << "--- SparseMatrix Product" << std::endl;
-    LOG << "--- Sort and compress" << std::endl;
+//     LOG << "--- SparseMatrix Product" << std::endl;
+//     LOG << "--- Sort and compress" << std::endl;
     
     left.sortandcompressentries( SparseMatrix::MatrixEntrySorting::columnwise );
     right.sortandcompressentries( SparseMatrix::MatrixEntrySorting::rowwise );
 
-    LOG << "--- Counting" << std::endl;
+//     LOG << "--- Counting" << std::endl;
     
     int counter = 0;
     for( SparseMatrix::MatrixEntry l : left.getentries()  )
@@ -477,7 +477,7 @@ SparseMatrix SparseMatrixMultiplication( const SparseMatrix& left, const SparseM
         if( l.column == r.row ) 
             counter++;
 
-    LOG << "--- Assemble" << std::endl;
+//     LOG << "--- Assemble" << std::endl;
     
     std::vector<SparseMatrix::MatrixEntry> new_entries;
     new_entries.reserve( counter );
@@ -488,7 +488,7 @@ SparseMatrix SparseMatrixMultiplication( const SparseMatrix& left, const SparseM
     
     assert( new_entries.size() == counter );
 
-    LOG << "--- Construct" << std::endl;
+//     LOG << "--- Construct" << std::endl;
     SparseMatrix ret( left.getdimout(), right.getdimin(), new_entries );
         
     // LOG << "--- Sort and compress again" << std::endl;
