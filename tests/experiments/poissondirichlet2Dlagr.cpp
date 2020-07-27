@@ -74,18 +74,16 @@ int main()
             experiments_sol.push_back( 
                 [xfeq,yfeq](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
-                    // return FloatVector({ 1. });
-                    return FloatVector({ std::cos( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] ) });
+                    return FloatVector({ std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] ) });
                 }
             );
 
             experiments_grad.push_back( 
                 [xfeq,yfeq](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
-                    // return FloatVector({ 1. });
                     return FloatVector( { 
-                            -xfeq * Constants::pi * std::sin( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] ),
-                            -yfeq * Constants::pi * std::cos( xfeq * Constants::pi * vec[0] ) * std::sin( yfeq * Constants::pi * vec[1] ), 
+                            xfeq * Constants::twopi * std::cos( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] ),
+                            yfeq * Constants::twopi * std::sin( xfeq * Constants::twopi * vec[0] ) * std::cos( yfeq * Constants::twopi * vec[1] ), 
                         });
                 }
             );
@@ -94,10 +92,10 @@ int main()
                 [xfeq,yfeq](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
                     return FloatVector({ 
-                        1.0
-//                         xfeq*xfeq * Constants::pisquare * std::cos( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] )
-//                         +
-//                         yfeq*yfeq * Constants::pisquare * std::cos( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] )
+                        
+                        xfeq*xfeq * Constants::fourpisquare * std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] )
+                        +
+                        yfeq*yfeq * Constants::fourpisquare * std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] )
                      });
                 }
             );
@@ -176,15 +174,6 @@ int main()
                         FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r-1, function_grad );
                         FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r,   function_rhs  );
                         
-                        FloatVector interpol_one  = Interpolation( M, M.getinnerdimension(), 0, r, constant_one );
-                        
-                        cout << "...measure kernel component: " << std::flush;
-            
-                        Float average_sol = interpol_one * ( scalar_massmatrix * interpol_sol );
-                        Float average_rhs = interpol_one * ( scalar_massmatrix * interpol_rhs );
-                        
-                        cout << average_sol << space << average_rhs << endl;
-
                         cout << "...measure interpolation commutativity" << endl;
             
                         Float commutatorerror = ( vector_massmatrix_fac * ( interpol_grad - diffmatrix * interpol_sol ) ).norm();
@@ -210,7 +199,7 @@ int main()
                             sol.zero();
                             timestamp start = gettimestamp();
                             ConjugateResidualMethod CRM( stiffness_csr );
-                            CRM.print_modulo = 1+sol.getdimension()/1000;
+                            CRM.print_modulo = 1+sol.getdimension();
                             CRM.tolerance = 1e-50;
                             CRM.solve_robust( sol, rhs );
                             timestamp end = gettimestamp();
@@ -221,7 +210,7 @@ int main()
                             sol.zero();
                             timestamp start = gettimestamp();
                             PreconditionedConjugateResidualMethod PCRM( stiffness_csr, stiffness_invprecon );
-                            PCRM.print_modulo = 1+sol.getdimension()/1000;
+                            PCRM.print_modulo = 1+sol.getdimension();
                             PCRM.tolerance = 1e-10;
                             PCRM.solve( sol, rhs );
                             timestamp end = gettimestamp();

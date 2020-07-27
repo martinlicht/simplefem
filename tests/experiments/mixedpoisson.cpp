@@ -18,14 +18,11 @@
 #include "../../mesh/examples2D.hpp"
 #include "../../mesh/examples3D.hpp"
 #include "../../vtk/vtkwriter.mesh2D.hpp"
-#include "../../solver/crm.hpp"
-#include "../../solver/pcrm.hpp"
 #include "../../solver/minres.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
-// #include "../../fem/global.lagrangeincl.hpp"
-#include "../../fem/global.sullivanincl.hpp"
+#include "../../fem/global.lagrangeincl.hpp"
 #include "../../fem/utilities.hpp"
 
 
@@ -105,15 +102,15 @@ int main()
 
             cout << "Solving Poisson Problem with Neumann boundary conditions" << endl;
 
-            int max_l = 8;
-            int max_r = 3;
+            int max_l = 5;
+            int max_r = 1;
             
             for( int l = 0; l <= max_l; l++ ){
                 
                 cout << "Level: " << l << std::endl;
                 cout << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
-                for( int r = 3; r <= max_r; r++ ) 
+                for( int r = 1; r <= max_r; r++ ) 
                 {
                     
                     cout << "...assemble scalar mass matrices" << endl;
@@ -136,13 +133,7 @@ int main()
 
                     cout << "...assemble inclusion matrix and transpose" << endl;
             
-//                     SparseMatrix L_incmatrix = LagrangeInclusionMatrix( M, M.getinnerdimension(), r );
-
-                    SparseMatrix incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r );
-                    
-//                     std::cout << incmatrix.getdimin() <<space<< L_incmatrix.getdimin() <<space<< incmatrix.getdimout() <<space<< L_incmatrix.getdimout() << nl;
-//                     assert( incmatrix.getdimin()  == L_incmatrix.getdimin() );
-//                     assert( incmatrix.getdimout() == L_incmatrix.getdimout() );
+                    SparseMatrix incmatrix = LagrangeInclusionMatrix( M, M.getinnerdimension(), r );
 
                     SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
@@ -205,37 +196,24 @@ int main()
 
                         FloatVector rhs = incmatrix_t * ( scalar_massmatrix * interpol_rhs );
 
-                        FloatVector sol( incmatrix.getdimin(), 0. );
+                        FloatVector sol( M.count_simplices(0), 0. );
                         
                         cout << "...iterative solver" << endl;
                         
-                        if(false){
+                        {
                             sol.zero();
                             timestamp start = gettimestamp();
                             MinimumResidualMethod MINRES( stiffness_csr );
-                            MINRES.print_modulo = 1+sol.getdimension();
-                            MINRES.tolerance = 1e-20;
-//                             MINRES.solve_robust( sol, rhs );
+                            MINRES.print_modulo = 1+sol.getdimension()/1000;
+                            MINRES.tolerance = 1e-30;
                             MINRES.solve( sol, rhs );
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t " << end - start << std::endl;
                         }
                         
-                        {
-                            sol.zero();
-                            timestamp start = gettimestamp();
-                            PreconditionedConjugateResidualMethod PCRM( stiffness_csr, stiffness_invprecon );
-                            PCRM.print_modulo = 1+sol.getdimension();
-                            PCRM.tolerance = 1e-10;
-                            PCRM.solve( sol, rhs );
-                            timestamp end = gettimestamp();
-                            std::cout << "\t\t\t " << end - start << std::endl;
-                        }
-
+                        
                         cout << "...compute error and residual:" << endl;
             
-                        assert( incmatrix.getdimin() == sol.getdimension() );
-                        interpol_sol  - incmatrix * sol;
                         Float errornorm     = ( scalar_massmatrix_fac * ( interpol_sol  - incmatrix * sol ) ).norm();
                         Float graderrornorm = ( vector_massmatrix_fac * ( interpol_grad - diffmatrix * incmatrix * sol ) ).norm();
                         Float residualnorm  = ( rhs - stiffness * sol ).norm();
@@ -250,7 +228,7 @@ int main()
                         cout << "residual:  " << residualnorm  << endl;
 
 
-                        if( r == 1 ){
+                        {
                     
                             fstream fs( adaptfilename("./poissonneumann.vtk"), std::fstream::out );
                 
