@@ -109,7 +109,7 @@ int main()
             cout << "Solving Poisson Problem with Neumann boundary conditions" << endl;
 
             int max_l = 8;
-            int max_r = 1;
+            int max_r = 4;
             
             for( int l = 0; l <= max_l; l++ ){
                 
@@ -117,7 +117,7 @@ int main()
                 cout << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
                 if( l != 0 )
-                for( int r = 1; r <= max_r; r++ ) 
+                for( int r = 4; r <= max_r; r++ ) 
                 {
                     
                     cout << "...assemble scalar mass matrices" << endl;

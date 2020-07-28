@@ -13,11 +13,9 @@
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
 #include "../../mesh/coordinates.hpp"
-#include "../../mesh/mesh.simplicial2D.hpp"
-#include "../../mesh/mesh.simplicial3D.hpp"
-#include "../../mesh/examples2D.hpp"
-#include "../../mesh/examples3D.hpp"
-#include "../../vtk/vtkwriter.mesh2D.hpp"
+#include "../../mesh/mesh.simplicial1D.hpp"
+#include "../../mesh/examples1D.hpp"
+#include "../../vtk/vtkwriter.mesh1D.hpp"
 #include "../../solver/crm.hpp"
 #include "../../solver/pcrm.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
@@ -38,20 +36,22 @@ int main()
 
         if(true){
 
-            cout << "Case 2D" << endl;
+            cout << "Case 1D" << endl;
             
             cout << "Initial mesh..." << endl;
             
-            MeshSimplicial2D M = UnitSquare2D();
+            MeshSimplicial1D M = StandardSquare1D();
             
             M.check();
+            
+            M.set_flag( 0, 0, SimplexFlagDirichlet );
             
             cout << "Prepare scalar fields for testing..." << endl;
             
 
             std::function<FloatVector(const FloatVector&)> constant_one
                 = [](const FloatVector& vec) -> FloatVector{
-                        assert( vec.getdimension() == 2 );
+                        assert( vec.getdimension() == 1 );
                         return FloatVector({ 1. });
                     };
             
@@ -64,35 +64,30 @@ int main()
             // std::function<FloatVector(const FloatVector&) scalarfield = 
             
             Float xfeq = 1.;
-            Float yfeq = 1.;
             
-
             experiments_sol.push_back( 
-                [xfeq,yfeq](const FloatVector& vec) -> FloatVector{
-                    assert( vec.getdimension() == 2 );
-                    // return FloatVector({ 1. });
-                    return FloatVector({ std::cos( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] ) });
+                [xfeq](const FloatVector& vec) -> FloatVector{
+                    assert( vec.getdimension() == 1 );
+                    return FloatVector({ 
+                        std::exp( vec[0] ) - 1. - Constants::euler * vec[0]
+                    });
                 }
             );
 
             experiments_grad.push_back( 
-                [xfeq,yfeq](const FloatVector& vec) -> FloatVector{
-                    assert( vec.getdimension() == 2 );
-                    // return FloatVector({ 1. });
+                [xfeq](const FloatVector& vec) -> FloatVector{
+                    assert( vec.getdimension() == 1 );
                     return FloatVector( { 
-                            -xfeq * Constants::pi * std::sin( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] ),
-                            -yfeq * Constants::pi * std::cos( xfeq * Constants::pi * vec[0] ) * std::sin( yfeq * Constants::pi * vec[1] ), 
-                        });
+                        std::exp( vec[0] )      - Constants::euler 
+                    });
                 }
             );
 
             experiments_rhs.push_back( 
-                [xfeq,yfeq](const FloatVector& vec) -> FloatVector{
-                    assert( vec.getdimension() == 2 );
+                [xfeq](const FloatVector& vec) -> FloatVector{
+                    assert( vec.getdimension() == 1 );
                     return FloatVector({ 
-                        xfeq*xfeq * Constants::pisquare * std::cos( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] )
-                        +
-                        yfeq*yfeq * Constants::pisquare * std::cos( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] )
+                        - std::exp( vec[0] ) 
                      });
                 }
             );
@@ -104,15 +99,15 @@ int main()
 
             assert( experiments_sol.size() == experiments_rhs.size() );
 
-            cout << "Solving Poisson Problem with Neumann boundary conditions" << endl;
+            cout << "Solving Poisson Problem with Dirichlet boundary conditions" << endl;
 
-            int max_l = 8;
+            int max_l = 15;
             int max_r = 1;
             
             for( int l = 0; l <= max_l; l++ ){
                 
                 cout << "Level: " << l << std::endl;
-                cout << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
+                cout << "# E/V: " << M.count_edges() << "/" << M.count_vertices() << nl;
                 
                 for( int r = 1; r <= max_r; r++ ) 
                 {
@@ -158,8 +153,8 @@ int main()
                     stiffness.sortentries();
                     auto stiffness_csr = MatrixCSR( stiffness );
                     
-                    //auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. );
-                    auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
+                    auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. );
+                    //auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
                     std::cout << "Average value of diagonal preconditioner: " << stiffness_invprecon.getdiagonal().average() << std::endl;
 
                     for( int i = 0; i < experiments_sol.size(); i++){
@@ -174,15 +169,6 @@ int main()
                         FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r-1, function_grad );
                         FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r,   function_rhs  );
                         
-                        FloatVector interpol_one  = Interpolation( M, M.getinnerdimension(), 0, r, constant_one );
-                        
-                        cout << "...measure kernel component: " << std::flush;
-            
-                        Float average_sol = interpol_one * ( scalar_massmatrix * interpol_sol );
-                        Float average_rhs = interpol_one * ( scalar_massmatrix * interpol_rhs );
-                        
-                        cout << average_sol << space << average_rhs << endl;
-
                         cout << "...measure interpolation commutativity" << endl;
             
                         Float commutatorerror = ( vector_massmatrix_fac * ( interpol_grad - diffmatrix * interpol_sol ) ).norm();
@@ -240,28 +226,30 @@ int main()
                         cout << "error:     " << errornorm     << endl;
                         cout << "graderror: " << graderrornorm << endl;
                         cout << "residual:  " << residualnorm  << endl;
-
-
+                        
+                        
+                        
                         contable << errornorm << graderrornorm << nl;
                         
                         contable.print( std::cout );
                         
                         
-                        {
-                    
-                            fstream fs( adaptfilename("./poissonneumann.vtk"), std::fstream::out );
-                
-                            VTK_MeshWriter_Mesh2D vtk( M, fs );
-                            vtk.writePreamble( "Poisson-Neumann problem" );
-                            vtk.writeCoordinateBlock( 0.3 * sol );
-                            vtk.writeTopDimensionalCells();
-                            
-                            vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
-                            // vtk.writeCellVectorData( interpol_grad, "gradient_interpolation" , 0.1 );
-                            
-                            fs.close();
-                    
-                        }
+                        
+//                         {
+//                     
+//                             fstream fs( adaptfilename("./poissondirichlet.vtk"), std::fstream::out );
+//                 
+//                             VTK_MeshWriter_Mesh1D vtk( M, fs );
+//                             vtk.writePreamble( "Poisson-Dirichlet problem" );
+//                             vtk.writeCoordinateBlock( 0.3 * sol );
+//                             vtk.writeTopDimensionalCells();
+//                             
+//                             vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
+//                             // vtk.writeCellVectorData( interpol_grad, "gradient_interpolation" , 0.1 );
+//                             
+//                             fs.close();
+//                     
+//                         }
 
 
                     }

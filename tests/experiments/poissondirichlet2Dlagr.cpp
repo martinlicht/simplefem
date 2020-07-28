@@ -101,12 +101,15 @@ int main()
             );
 
             
+            
+            ConvergenceTable contable;
+            
 
             assert( experiments_sol.size() == experiments_rhs.size() );
 
             cout << "Solving Poisson Problem with Dirichlet boundary conditions" << endl;
 
-            int max_l = 5;
+            int max_l = 8;
             int max_r = 1;
             
             for( int l = 0; l <= max_l; l++ ){
@@ -232,6 +235,10 @@ int main()
                         cout << "graderror: " << graderrornorm << endl;
                         cout << "residual:  " << residualnorm  << endl;
 
+                        
+                        contable << errornorm << graderrornorm << nl;
+                        
+                        contable.print( std::cout );
 
                         {
                     

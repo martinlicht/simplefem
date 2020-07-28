@@ -113,7 +113,7 @@ int main()
             cout << "Solving Poisson Problem with Neumann boundary conditions" << endl;
 
             int max_l = 8;
-            int max_r = 1;
+            int max_r = 4;
             
             for( int l = 0; l <= max_l; l++ ){
                 
@@ -121,7 +121,7 @@ int main()
                 cout << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
                 if( l != 0 )
-                for( int r = 1; r <= max_r; r++ ) 
+                for( int r = 4; r <= max_r; r++ ) 
                 {
                     
                     cout << "...assemble scalar mass matrices" << endl;
@@ -247,9 +247,9 @@ int main()
 
 
                         if( r == 1 ){
-                    
+                        
                             fstream fs( adaptfilename("./poissonneumann.vtk"), std::fstream::out );
-                
+                        
                             VTK_MeshWriter_Mesh2D vtk( M, fs );
                             vtk.writePreamble( "Poisson-Neumann problem" );
                             vtk.writeCoordinateBlock( 0.3 * sol );
