@@ -256,6 +256,10 @@ inline FloatVector Interpolation(
         
     const auto EMinv = Inverse( EM );
     
+    assert( lpsbc.getdimin()  == SullivanSpanSize(dim,0,r) );
+    assert( lpsbc.getdimout() == dim+1 );
+    assert( EM.getdimout()    == SullivanSpanSize(dim,0,r) );
+    assert( EM.getdimin()     == SullivanSpanSize(dim,0,r) );
     assert( EM.isfinite()    );
     assert( EMinv.isfinite() );
     

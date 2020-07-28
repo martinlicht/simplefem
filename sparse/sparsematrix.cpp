@@ -250,7 +250,7 @@ int SparseMatrix::getnumberofentries() const
 {
     return entries.size();
 }
-	
+
 void SparseMatrix::clearentries()
 {
     check();
@@ -262,9 +262,9 @@ const std::vector<SparseMatrix::MatrixEntry>& SparseMatrix::getentries() const &
 {
     return entries;
 }
-		
 
-		
+
+
 bool SparseMatrix::is_sorted( SparseMatrix::MatrixEntrySorting manner ) const
 {
     for( int i = 1; i < entries.size(); i++ ) {

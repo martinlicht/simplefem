@@ -52,8 +52,8 @@ inline DenseMatrix polynomialmassmatrix( int n, int r )
         
 
         //// TODO unclear whether this factor makes any sense.
-	// it needs to be fixed how this matrix is scaled.
-	// if it is scaled as mass matrix of unit simplex, then we later only multiple a determinant
+        // it needs to be fixed how this matrix is scaled.
+        // if it is scaled as mass matrix of unit simplex, then we later only multiple a determinant
         // if it is scaled so that the volume term is missing, then we multiply by the measure later.
         
     }

@@ -42,7 +42,7 @@ void Coordinates::check() const
 void Coordinates::print( std::ostream& os ) const
 {
     os << "dimension: " << dimension << " - #vertices: " << number << std::endl;
-	for( int n = 0; n < number; n++ ) {
+    for( int n = 0; n < number; n++ ) {
         for( int d = 0; d < dimension; d++ )
             os << getdata( n, d ) << " ";
         os << std::endl;
@@ -61,7 +61,7 @@ void Coordinates::read( std::istream& is )
         }
     }
 }
-		
+
 
 
 
