@@ -6,7 +6,7 @@ VTK_MeshWriter_Mesh1D::VTK_MeshWriter_Mesh1D( Mesh& m1D, std::ostream& os )
 : mesh(m1D), os(os)
 {
     m1D.check();
-    assert( m1D.getouterdimension() == 2 || m1D.getouterdimension() == 3 );
+    assert( m1D.getouterdimension() == 1 || m1D.getouterdimension() == 2 || m1D.getouterdimension() == 3 );
     assert( m1D.getinnerdimension() == 1 );
     assert( m1D.dimension_counted(1) );
     assert( m1D.dimension_counted(0) );
@@ -14,6 +14,11 @@ VTK_MeshWriter_Mesh1D::VTK_MeshWriter_Mesh1D( Mesh& m1D, std::ostream& os )
        
 }
 
+
+void VTK_MeshWriter_Mesh1D::writePreamble( const std::string& str )
+{
+    writePreamble( str.c_str() );
+}
 
 void VTK_MeshWriter_Mesh1D::writePreamble( const char* name )
 {
@@ -30,7 +35,14 @@ void VTK_MeshWriter_Mesh1D::writeCoordinateBlock()
     // std::ostream& os = std::clog;
     os << "POINTS " << mesh.count_simplices(0) << " double" << nl;
     for( int v = 0; v < mesh.count_simplices(0); v++ )
-      if( mesh.getouterdimension() == 2 ) {
+      if( mesh.getouterdimension() == 1 ) {
+          os << mesh.getcoordinates().getdata(v,0)
+              << space
+              << 0.0 
+              << space 
+              << 0.0
+              << nl;
+      } else if( mesh.getouterdimension() == 2 ) {
           os << mesh.getcoordinates().getdata(v,0)
               << space
               << mesh.getcoordinates().getdata(v,1) 

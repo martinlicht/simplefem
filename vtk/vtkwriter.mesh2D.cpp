@@ -14,6 +14,11 @@ VTK_MeshWriter_Mesh2D::VTK_MeshWriter_Mesh2D( Mesh& m2D, std::ostream& os )
 }
 
 
+void VTK_MeshWriter_Mesh2D::writePreamble( const std::string& str )
+{
+    writePreamble( str.c_str() );
+}
+
 void VTK_MeshWriter_Mesh2D::writePreamble( const char* name )
 {
     // std::ostream& os = std::clog;

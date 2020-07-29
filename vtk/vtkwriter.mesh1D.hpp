@@ -22,6 +22,7 @@ class VTK_MeshWriter_Mesh1D
         
         VTK_MeshWriter_Mesh1D( Mesh& m1D, std::ostream& os );
         
+        void writePreamble( const std::string& name );
         void writePreamble( const char* name );
         
         void writeCoordinateBlock();

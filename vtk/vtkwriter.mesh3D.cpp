@@ -14,6 +14,11 @@ VTK_MeshWriter_Mesh3D::VTK_MeshWriter_Mesh3D( Mesh& m3D, std::ostream& os )
 }
 
 
+void VTK_MeshWriter_Mesh3D::writePreamble( const std::string& str )
+{
+    writePreamble( str.c_str() );
+}
+
 void VTK_MeshWriter_Mesh3D::writePreamble( const char* name )
 {
     // std::ostream& os = std::clog;
