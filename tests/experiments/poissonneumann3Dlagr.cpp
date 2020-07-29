@@ -38,8 +38,6 @@ int main()
 
         if(true){
 
-            cout << "Case 3D" << endl;
-            
             cout << "Initial mesh..." << endl;
             
             MeshSimplicial3D M = UnitCube3D();
@@ -55,20 +53,20 @@ int main()
                         return FloatVector({ 1. });
                     };
             
-            std::vector<std::function<FloatVector(const FloatVector&)>> experiments_rhs;
-            std::vector<std::function<FloatVector(const FloatVector&)>> experiments_grad;
-            std::vector<std::function<FloatVector(const FloatVector&)>> experiments_sol;
+            
+            
+            
 
 
             
-            // std::function<FloatVector(const FloatVector&) scalarfield = 
+            // std::function<FloatVector(const std::function<FloatVector(const FloatVector&) ) >scalarfield = 
             
             Float xfeq = 1.;
             Float yfeq = 1.;
             Float zfeq = 1.;
             
 
-            experiments_sol.push_back( 
+            std::function<FloatVector(const FloatVector&)> experiment_sol = 
                 [xfeq,yfeq,zfeq](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 3 );
                     // return FloatVector({ 1. });
@@ -77,10 +75,10 @@ int main()
                          * std::cos( yfeq * Constants::pi * vec[1] )
                          * std::cos( zfeq * Constants::pi * vec[2] )
                          });
-                }
-            );
+                };
+            
 
-            experiments_grad.push_back( 
+            std::function<FloatVector(const FloatVector&)> experiment_grad = 
                 [xfeq,yfeq,zfeq](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 3 );
                     // return FloatVector({ 1. });
@@ -89,10 +87,10 @@ int main()
                             -yfeq * Constants::pi * std::cos( xfeq * Constants::pi * vec[0] ) * std::sin( yfeq * Constants::pi * vec[1] ) * std::cos( zfeq * Constants::pi * vec[2] ),
                             -zfeq * Constants::pi * std::cos( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] ) * std::sin( zfeq * Constants::pi * vec[2] )
                         });
-                }
-            );
+                };
+            
 
-            experiments_rhs.push_back( 
+            std::function<FloatVector(const FloatVector&)> experiment_rhs = 
                 [xfeq,yfeq,zfeq](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 3 );
                     return FloatVector({ 
@@ -102,20 +100,20 @@ int main()
                         +
                         zfeq*zfeq * Constants::pisquare * std::cos( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] ) * std::cos( zfeq * Constants::pi * vec[2] )
                      });
-                }
-            );
+                };
+            
 
             
 
-            ConvergenceTable contable;
             
-
-            assert( experiments_sol.size() == experiments_rhs.size() && experiments_sol.size() == experiments_grad.size() );
 
             cout << "Solving Poisson Problem with Neumann boundary conditions" << endl;
             
             int max_l = 8;
             
+            ConvergenceTable contable;
+            
+
             for( int l = 0; l <= max_l; l++ ){
                 
                 cout << "Level: " << l << std::endl;
@@ -170,11 +168,11 @@ int main()
                     
                     std::cout << "Average value of diagonal preconditioner: " << stiffness_invprecon.getdiagonal().average() << std::endl;
 
-                    for( int i = 0; i < experiments_sol.size(); i++){
+                    {
 
-                        const auto& function_sol = experiments_sol[i];
-                        const auto& function_grad= experiments_grad[i];
-                        const auto& function_rhs = experiments_rhs[i];
+                        const auto& function_sol  = experiment_sol;
+                        const auto& function_grad = experiment_grad;
+                        const auto& function_rhs  = experiment_rhs;
                         
                         cout << "...interpolate explicit solution, grad, and rhs" << endl;
             

@@ -38,8 +38,6 @@ int main()
 
         if(true){
 
-            cout << "Case 2D" << endl;
-            
             cout << "Initial mesh..." << endl;
             
             MeshSimplicial2D M = LShapedDomain2D();
@@ -61,27 +59,27 @@ int main()
                         return FloatVector({ 1. });
                     };
             
-            std::vector<std::function<FloatVector(const FloatVector&)>> experiments_rhs;
-            std::vector<std::function<FloatVector(const FloatVector&)>> experiments_grad;
-            std::vector<std::function<FloatVector(const FloatVector&)>> experiments_sol;
+            
+            
+            
 
 
             
-            // std::function<FloatVector(const FloatVector&) scalarfield = 
+            // std::function<FloatVector(const std::function<FloatVector(const FloatVector&) ) >scalarfield = 
             
             Float xfeq = 1.;
             Float yfeq = 1.;
             
 
-            experiments_sol.push_back( 
+            std::function<FloatVector(const FloatVector&)> experiment_sol = 
                 [xfeq,yfeq](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
                     // return FloatVector({ 1. });
                     return FloatVector({ std::cos( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] ) });
-                }
-            );
+                };
+            
 
-            experiments_grad.push_back( 
+            std::function<FloatVector(const FloatVector&)> experiment_grad = 
                 [xfeq,yfeq](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
                     // return FloatVector({ 1. });
@@ -89,10 +87,10 @@ int main()
                             -xfeq * Constants::pi * std::sin( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] ),
                             -yfeq * Constants::pi * std::cos( xfeq * Constants::pi * vec[0] ) * std::sin( yfeq * Constants::pi * vec[1] ), 
                         });
-                }
-            );
+                };
+            
 
-            experiments_rhs.push_back( 
+            std::function<FloatVector(const FloatVector&)> experiment_rhs = 
                 [xfeq,yfeq](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
                     return FloatVector({
@@ -101,20 +99,20 @@ int main()
 //                         +
 //                         yfeq*yfeq * Constants::pisquare * std::cos( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] )
                      });
-                }
-            );
+                };
+            
 
             
 
-            ConvergenceTable contable;
             
-
-            assert( experiments_sol.size() == experiments_rhs.size() && experiments_sol.size() == experiments_grad.size() );
 
             cout << "Solving Poisson Problem with Dirichlet boundary conditions" << endl;
 
             int max_l = 5;
             
+            ConvergenceTable contable;
+            
+
             for( int l = 0; l <= max_l; l++ ){
                 
                 cout << "Level: " << l << std::endl;
@@ -168,9 +166,9 @@ int main()
                 //auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
                 std::cout << "Average value of diagonal preconditioner: " << stiffness_invprecon.getdiagonal().average() << std::endl;
 
-                const auto& function_sol = experiments_sol[0];
-                const auto& function_grad= experiments_grad[0];
-                const auto& function_rhs = experiments_rhs[0];
+                const auto& function_sol  = experiment_sol;
+                const auto& function_grad = experiment_grad;
+                const auto& function_rhs  = experiment_rhs;
                 
                 cout << "...interpolate explicit solution and rhs" << endl;
     

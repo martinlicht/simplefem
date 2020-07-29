@@ -40,8 +40,6 @@ int main()
 
         if(true){
 
-            cout << "Case 2D" << endl;
-            
             cout << "Initial mesh..." << endl;
             
             MeshSimplicial2D M = UnitSquare2D();
@@ -64,24 +62,24 @@ int main()
                         return FloatVector({ 1. });
                     };
             
-            std::vector<std::function<FloatVector(const FloatVector&)>> experiments_rhs;
-            std::vector<std::function<FloatVector(const FloatVector&)>> experiments_grad;
-            std::vector<std::function<FloatVector(const FloatVector&)>> experiments_sol;
+            
+            
+            
 
 
             
-            // std::function<FloatVector(const FloatVector&) scalarfield = 
+            // std::function<FloatVector(const std::function<FloatVector(const FloatVector&) ) >scalarfield = 
             
-            experiments_sol.push_back( 
+            std::function<FloatVector(const FloatVector&)> experiment_sol = 
                 [](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
                     Float x = vec[0]; Float y = vec[1];
                     Float k = 2*Constants::pi;
                     return FloatVector({ square( sin(k*x) * sin(k*y) ) });
-                }
-            );
+                };
+            
 
-            experiments_grad.push_back( 
+            std::function<FloatVector(const FloatVector&)> experiment_grad = 
                 [](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
                     Float x = vec[0]; Float y = vec[1];
@@ -90,10 +88,10 @@ int main()
                         k * sin( 2*k*x ) * sin(k*y) * sin(k*y),
                         k * sin( 2*k*y ) * sin(k*x) * sin(k*x),
                     });
-                }
-            );
+                };
+            
 
-            experiments_rhs.push_back( 
+            std::function<FloatVector(const FloatVector&)> experiment_rhs = 
                 [](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
                     Float x  =  vec[0]; Float y  =  vec[1];
@@ -103,15 +101,12 @@ int main()
                     return FloatVector({ 
                         - k*k * ( cos(2*k*x) - cos( 2*k*(x - y) ) + cos(2*k*y) - cos( 2*k*(x + y) ) ) 
                      });
-                }
-            );
+                };
+            
 
             
 
-            ConvergenceTable contable;
             
-
-            assert( experiments_sol.size() == experiments_rhs.size() && experiments_sol.size() == experiments_grad.size() );
 
             cout << "Solving Poisson Problem with Neumann boundary conditions" << endl;
 
@@ -120,6 +115,9 @@ int main()
             int min_r = 3;
             int max_r = 3;
             
+            ConvergenceTable contable;
+            
+
             for( int l = 0; l <= max_l; l++ ){
                 
                 cout << "Level: " << l << std::endl;
@@ -174,11 +172,11 @@ int main()
 //                     auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
                     std::cout << "Average value of diagonal preconditioner: " << stiffness_invprecon.getdiagonal().average() << std::endl;
 
-                    for( int i = 0; i < experiments_sol.size(); i++){
+                    {
 
-                        const auto& function_sol = experiments_sol[i];
-                        const auto& function_grad= experiments_grad[i];
-                        const auto& function_rhs = experiments_rhs[i];
+                        const auto& function_sol  = experiment_sol;
+                        const auto& function_grad = experiment_grad;
+                        const auto& function_rhs  = experiment_rhs;
                         
                         cout << "...interpolate explicit solution and rhs" << endl;
             
