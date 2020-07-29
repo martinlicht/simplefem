@@ -105,8 +105,8 @@ int main()
 
             int max_l = 8;
             
-            int min_r = 2;
-            int max_r = 2;
+            int min_r = 1;
+            int max_r = 1;
             
             ConvergenceTable contable;
             
@@ -122,14 +122,10 @@ int main()
                     cout << "...assemble scalar mass matrices" << endl;
             
                     SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
-                    
-                    SparseMatrix scalar_massmatrix_fac = FEECBrokenMassMatrixRightFactor( M, M.getinnerdimension(), 0, r );
-                    
+
                     cout << "...assemble vector mass matrix" << endl;
             
                     SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
-                    
-                    SparseMatrix vector_massmatrix_fac = FEECBrokenMassMatrixRightFactor( M, M.getinnerdimension(), 1, r-1 );
                     
                     cout << "...assemble differential matrix and transpose" << endl;
 
@@ -139,8 +135,6 @@ int main()
 
                     cout << "...assemble inclusion matrix and transpose" << endl;
             
-//                     SparseMatrix L_incmatrix = LagrangeInclusionMatrix( M, M.getinnerdimension(), r );
-
                     SparseMatrix incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r );
                     
 //                     std::cout << incmatrix.getdimin() <<space<< L_incmatrix.getdimin() <<space<< incmatrix.getdimout() <<space<< L_incmatrix.getdimout() << nl;
@@ -152,22 +146,22 @@ int main()
                     cout << "...assemble stiffness matrix" << endl;
             
                     // ProductOperator 
-                    // auto stiffness = incmatrix_t * diffmatrix_t * vector_massmatrix * diffmatrix * incmatrix;
-                    // auto op1 = incmatrix_t * diffmatrix_t;
-                    // auto op2 = op1 * vector_massmatrix;
-                    // auto op3 = op2 * diffmatrix;
-                    // auto stiffness = op3 * incmatrix;
+//                     auto stiffness = incmatrix_t * diffmatrix_t * vector_massmatrix * diffmatrix * incmatrix;
+                    auto op1 = incmatrix_t * diffmatrix_t;
+                    auto op2 = op1 * vector_massmatrix;
+                    auto op3 = op2 * diffmatrix;
+                    auto stiffness = op3 * incmatrix;
+                    auto& stiffness_csr = stiffness;
 
-                    auto opr1 = diffmatrix & incmatrix;
-                    auto opr  = vector_massmatrix_fac & opr1;
-                    auto opl  = opr.getTranspose(); 
-                    auto stiffness = opl & opr;
+//                     auto opr = diffmatrix & incmatrix;
+//                     auto opl = opr.getTranspose(); 
+//                     auto stiffness = opl & ( vector_massmatrix & opr );
                     
-                    stiffness.sortentries();
-                    auto stiffness_csr = MatrixCSR( stiffness );
+//                     stiffness.sortentries();
+//                     auto stiffness_csr = MatrixCSR( stiffness );
                     
-                    //auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. );
-                    auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
+                    auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. );
+//                     auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
                     std::cout << "Average value of diagonal preconditioner: " << stiffness_invprecon.getdiagonal().average() << std::endl;
 
                     {
@@ -193,13 +187,14 @@ int main()
 
                         cout << "...measure interpolation commutativity" << endl;
             
-                        Float commutatorerror = ( vector_massmatrix_fac * ( interpol_grad - diffmatrix * interpol_sol ) ).norm();
+                        auto commutatorerror_aux = interpol_grad - diffmatrix * interpol_sol;
+                        Float commutatorerror = commutatorerror_aux * ( vector_massmatrix * commutatorerror_aux );
                         cout << "commutator error: " << commutatorerror << endl;
                         
                         cout << "...compute norms of solution and right-hand side:" << endl;
             
-                        Float sol_norm = ( scalar_massmatrix_fac * interpol_sol ).norm();
-                        Float rhs_norm = ( scalar_massmatrix_fac * interpol_rhs ).norm();
+                        Float sol_norm = interpol_sol * ( scalar_massmatrix * interpol_sol );
+                        Float rhs_norm = interpol_sol * ( scalar_massmatrix * interpol_rhs );
                         
                         cout << "solution norm: " << sol_norm << endl;
                         cout << "rhs norm:      " << rhs_norm << endl;
@@ -220,11 +215,8 @@ int main()
                             MINRES.tolerance = 1e-20;
 //                             MINRES.solve_robust( sol, rhs );
                             MINRES.solve( sol, rhs );
-                            MINRES.solve( sol, rhs );
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t Time: " << end - start << std::endl;
-                            
-                            
                         }
                         
                         if(false){
@@ -232,7 +224,7 @@ int main()
                             timestamp start = gettimestamp();
                             PreconditionedConjugateResidualMethod PCRM( stiffness_csr, stiffness_invprecon );
                             PCRM.print_modulo = 1+sol.getdimension();
-                            PCRM.tolerance = 1e-15;
+                            PCRM.tolerance = 1e-10;
                             PCRM.solve( sol, rhs );
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t Time: " << end - start << std::endl;
@@ -240,10 +232,12 @@ int main()
 
                         cout << "...compute error and residual:" << endl;
             
-                        assert( incmatrix.getdimin() == sol.getdimension() );
-                        interpol_sol  - incmatrix * sol;
-                        Float errornorm     = ( scalar_massmatrix_fac * ( interpol_sol  - incmatrix * sol - (interpol_one * ( scalar_massmatrix * incmatrix * sol )) * interpol_one ) ).norm();
-                        Float graderrornorm = ( vector_massmatrix_fac * ( interpol_grad - diffmatrix * incmatrix * sol ) ).norm();
+                        
+                        auto errornorm_aux = interpol_sol  - incmatrix * sol;
+                        auto graderror_aux = interpol_grad - diffmatrix * incmatrix * sol;
+                        
+                        Float errornorm     = sqrt( errornorm_aux * ( scalar_massmatrix * errornorm_aux ) );
+                        Float graderrornorm = sqrt( graderror_aux * ( vector_massmatrix * graderror_aux ) );
                         Float residualnorm  = ( rhs - stiffness * sol ).norm();
                         
                         cout << "error:     " << errornorm     << endl;
@@ -252,7 +246,7 @@ int main()
                         
                         
                         
-                        contable << errornorm << graderrornorm << ( interpol_one * ( scalar_massmatrix * incmatrix * sol ) ) << nl;
+                        contable << errornorm << graderrornorm << nl;
                         
                         contable.print( std::cout );
 
