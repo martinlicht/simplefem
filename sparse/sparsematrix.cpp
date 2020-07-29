@@ -379,6 +379,8 @@ SparseMatrix SparseMatrix::getTranspose() const
 SparseMatrix operator&( const SparseMatrix& left, const SparseMatrix& right )
 {
 
+    assert( left.getdimin() == right.getdimout() );
+    
 //     LOG << "--- SparseMatrix Product" << std::endl;
 //     LOG << "--- Sort and compress" << std::endl;
     
