@@ -228,11 +228,6 @@ int main()
                         Float graderrornorm = ( vector_massmatrix_fac * ( interpol_grad - diffmatrix * incmatrix * sol ) ).norm();
                         Float residualnorm  = ( rhs - stiffness * sol ).norm();
                         
-                        // FloatVector gradfoo = diffmatrix * ( interpol_sol - incmatrix * sol );
-                        // Float graderrornorm = gradfoo.scalarproductwith( vector_massmatrix * gradfoo );
-                        // Float errornorm1 = interpol_sol * ( scalar_massmatrix * interpol_sol );
-                        // Float errornorm2 = power( ( scalar_massmatrix_fac * interpol_sol ).norm(), 2. );
-
                         cout << "error:     " << errornorm     << endl;
                         cout << "graderror: " << graderrornorm << endl;
                         cout << "residual:  " << residualnorm  << endl;
@@ -245,21 +240,21 @@ int main()
                         
                         
                         
-//                         {
-//                     
-//                             fstream fs( adaptfilename("./poissondirichlet.vtk"), std::fstream::out );
-//                 
-//                             VTK_MeshWriter_Mesh1D vtk( M, fs );
-//                             vtk.writePreamble( "Poisson-Dirichlet problem" );
-//                             vtk.writeCoordinateBlock( 0.3 * sol );
-//                             vtk.writeTopDimensionalCells();
-//                             
-//                             vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
-//                             // vtk.writeCellVectorData( interpol_grad, "gradient_interpolation" , 0.1 );
-//                             
-//                             fs.close();
-//                     
-//                         }
+                        if( r == 1 ){
+                    
+                            fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
+                
+                            VTK_MeshWriter_Mesh1D vtk( M, fs );
+                            vtk.writePreamble( getbasename(__FILE__) );
+                            vtk.writeCoordinateBlock();
+                            vtk.writeTopDimensionalCells();
+                            
+                            vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
+                            // vtk.writeCellVectorData( interpol_grad, "gradient_interpolation" , 0.1 );
+                            
+                            fs.close();
+                    
+                        }
 
 
                     }

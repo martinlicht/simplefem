@@ -232,11 +232,6 @@ int main()
                 Float graderrornorm = ( vector_massmatrix_fac * ( interpol_grad - diffmatrix * incmatrix * sol ) ).norm();
                 Float residualnorm  = ( rhs - stiffness * sol ).norm();
                 
-                // FloatVector gradfoo = diffmatrix * ( interpol_sol - incmatrix * sol );
-                // Float graderrornorm = gradfoo.scalarproductwith( vector_massmatrix * gradfoo );
-                // Float errornorm1 = interpol_sol * ( scalar_massmatrix * interpol_sol );
-                // Float errornorm2 = power( ( scalar_massmatrix_fac * interpol_sol ).norm(), 2. );
-
                 cout << "error:     " << errornorm     << endl;
                 cout << "graderror: " << graderrornorm << endl;
                 cout << "residual:  " << residualnorm  << endl;
@@ -248,12 +243,12 @@ int main()
                 contable.print( std::cout );
 
 
-                {
+                if( r == 1 ){
             
-                    fstream fs( adaptfilename("./afempoissonneumannL.vtk"), std::fstream::out );
+                    fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
         
                     VTK_MeshWriter_Mesh2D vtk( M, fs );
-                    vtk.writePreamble( "Poisson-Neumann problem" );
+                    vtk.writePreamble( getbasename(__FILE__) );
                     vtk.writeCoordinateBlock();
                     vtk.writeTopDimensionalCells();
                     
