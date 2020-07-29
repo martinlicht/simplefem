@@ -96,17 +96,20 @@ int main()
 
             
 
+            ConvergenceTable contable;
+            
+
             cout << "Solving Poisson Problem with Neumann boundary conditions over the United Kingdom" << endl;
 
             int max_l = 2;
-            int max_r = 1;
             
             for( int l = 0; l <= max_l; l++ ){
                 
                 cout << "Level: " << l << std::endl;
                 cout << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
-                for( int r = 1; r <= max_r; r++ ) 
+                const int r = 1;
+                
                 {
                     
                     cout << "...assemble scalar mass matrices" << endl;
@@ -215,7 +218,7 @@ int main()
                             //CRM.tolerance = 1e-15;
                             CRM.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t " << end - start << std::endl;
+                            std::cout << "\t\t\t Time: " << end - start << std::endl;
                             sol = sol - ( interpol_one * ( scalar_massmatrix * incmatrix * sol ) ) / domain_area * eins;
                         }
 
@@ -227,7 +230,7 @@ int main()
                             CRM.tolerance = 1e-40;
                             CRM.solve_robust( sol, rhs );
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t " << end - start << std::endl;
+                            std::cout << "\t\t\t Time: " << end - start << std::endl;
                             sol = sol - ( interpol_one * ( scalar_massmatrix * incmatrix * sol ) ) / domain_area * eins;
                         }
 
@@ -240,7 +243,7 @@ int main()
                             RDM.tolerance = 1e-15;
                             RDM.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t " << end - start << std::endl;
+                            std::cout << "\t\t\t Time: " << end - start << std::endl;
                             sol = sol - ( interpol_one * ( scalar_massmatrix * incmatrix * sol ) ) / domain_area * eins;
                         }
 
@@ -259,6 +262,12 @@ int main()
                         // cout << "error:     " << errornorm     << endl;
                         // cout << "graderror: " << graderrornorm << endl;
                         cout << "residual:  " << residualnorm  << endl;
+                        
+                        
+                        
+//                         contable << errornorm << graderrornorm << nl;
+//                         
+//                         contable.print( std::cout );
 
                         {
                     

@@ -98,19 +98,24 @@ int main()
 
             
 
-            assert( experiments_sol.size() == experiments_rhs.size() );
+            ConvergenceTable contable;
+            
+
+            assert( experiments_sol.size() == experiments_rhs.size() && experiments_sol.size() == experiments_grad.size() );
 
             cout << "Solving Poisson Problem with Neumann boundary conditions" << endl;
 
             int max_l = 5;
-            int max_r = 1;
+            
+            int min_r = 3;
+            int max_r = 3;
             
             for( int l = 0; l <= max_l; l++ ){
                 
                 cout << "Level: " << l << std::endl;
                 cout << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
-                for( int r = 1; r <= max_r; r++ ) 
+                for( int r = min_r; r <= max_r; r++ ) 
                 {
                     
                     cout << "...assemble scalar mass matrices" << endl;
@@ -208,7 +213,7 @@ int main()
                             MINRES.tolerance = 1e-30;
                             MINRES.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t " << end - start << std::endl;
+                            std::cout << "\t\t\t Time: " << end - start << std::endl;
                         }
                         
                         
@@ -226,6 +231,12 @@ int main()
                         cout << "error:     " << errornorm     << endl;
                         cout << "graderror: " << graderrornorm << endl;
                         cout << "residual:  " << residualnorm  << endl;
+                        
+                        
+                        
+                        contable << errornorm << graderrornorm << nl;
+                        
+                        contable.print( std::cout );
 
 
                         {

@@ -101,19 +101,24 @@ int main()
 
             
 
-            assert( experiments_sol.size() == experiments_rhs.size() );
+            ConvergenceTable contable;
+            
+
+            assert( experiments_sol.size() == experiments_rhs.size() && experiments_sol.size() == experiments_grad.size() );
 
             cout << "Solving Poisson Problem with Neumann boundary conditions" << endl;
 
             int max_l = 8;
-            int max_r = 3;
+            
+            int min_r = 2;
+            int max_r = 2;
             
             for( int l = 0; l <= max_l; l++ ){
                 
                 cout << "Level: " << l << std::endl;
                 cout << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
-                for( int r = 3; r <= max_r; r++ ) 
+                for( int r = min_r; r <= max_r; r++ ) 
                 {
                     
                     cout << "...assemble scalar mass matrices" << endl;
@@ -209,7 +214,7 @@ int main()
                         
                         cout << "...iterative solver" << endl;
                         
-                        if(false){
+                        {
                             sol.zero();
                             timestamp start = gettimestamp();
                             MinimumResidualMethod MINRES( stiffness_csr );
@@ -217,26 +222,29 @@ int main()
                             MINRES.tolerance = 1e-20;
 //                             MINRES.solve_robust( sol, rhs );
                             MINRES.solve( sol, rhs );
+                            MINRES.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t " << end - start << std::endl;
+                            std::cout << "\t\t\t Time: " << end - start << std::endl;
+                            
+                            
                         }
                         
-                        {
+                        if(false){
                             sol.zero();
                             timestamp start = gettimestamp();
                             PreconditionedConjugateResidualMethod PCRM( stiffness_csr, stiffness_invprecon );
                             PCRM.print_modulo = 1+sol.getdimension();
-                            PCRM.tolerance = 1e-10;
+                            PCRM.tolerance = 1e-15;
                             PCRM.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t " << end - start << std::endl;
+                            std::cout << "\t\t\t Time: " << end - start << std::endl;
                         }
 
                         cout << "...compute error and residual:" << endl;
             
                         assert( incmatrix.getdimin() == sol.getdimension() );
                         interpol_sol  - incmatrix * sol;
-                        Float errornorm     = ( scalar_massmatrix_fac * ( interpol_sol  - incmatrix * sol ) ).norm();
+                        Float errornorm     = ( scalar_massmatrix_fac * ( interpol_sol  - incmatrix * sol - (interpol_one * ( scalar_massmatrix * incmatrix * sol )) * interpol_one ) ).norm();
                         Float graderrornorm = ( vector_massmatrix_fac * ( interpol_grad - diffmatrix * incmatrix * sol ) ).norm();
                         Float residualnorm  = ( rhs - stiffness * sol ).norm();
                         
@@ -248,6 +256,12 @@ int main()
                         cout << "error:     " << errornorm     << endl;
                         cout << "graderror: " << graderrornorm << endl;
                         cout << "residual:  " << residualnorm  << endl;
+                        
+                        
+                        
+                        contable << errornorm << graderrornorm << ( interpol_one * ( scalar_massmatrix * incmatrix * sol ) ) << nl;
+                        
+                        contable.print( std::cout );
 
 
                         if( r == 1 ){

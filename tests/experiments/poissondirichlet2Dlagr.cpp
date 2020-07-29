@@ -105,19 +105,19 @@ int main()
             ConvergenceTable contable;
             
 
-            assert( experiments_sol.size() == experiments_rhs.size() );
+            assert( experiments_sol.size() == experiments_rhs.size() && experiments_sol.size() == experiments_grad.size() );
 
             cout << "Solving Poisson Problem with Dirichlet boundary conditions" << endl;
 
             int max_l = 8;
-            int max_r = 1;
             
             for( int l = 0; l <= max_l; l++ ){
                 
                 cout << "Level: " << l << std::endl;
                 cout << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
-                for( int r = 1; r <= max_r; r++ ) 
+                const int r = 1;
+                
                 {
                     
                     cout << "...assemble scalar mass matrices" << endl;
@@ -205,8 +205,10 @@ int main()
                             CRM.print_modulo = 1+sol.getdimension();
                             CRM.tolerance = 1e-50;
                             CRM.solve_robust( sol, rhs );
+                            CRM.solve_robust( sol, rhs );
+                            CRM.solve_robust( sol, rhs );
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t " << end - start << std::endl;
+                            std::cout << "\t\t\t Time: " << end - start << std::endl;
                         }
                         
                         if(false){
@@ -217,7 +219,7 @@ int main()
                             PCRM.tolerance = 1e-10;
                             PCRM.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t " << end - start << std::endl;
+                            std::cout << "\t\t\t Time: " << end - start << std::endl;
                         }
 
                         cout << "...compute error and residual:" << endl;

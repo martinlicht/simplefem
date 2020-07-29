@@ -101,19 +101,24 @@ int main()
 
             
 
-            assert( experiments_sol.size() == experiments_rhs.size() );
+            ConvergenceTable contable;
+            
+
+            assert( experiments_sol.size() == experiments_rhs.size() && experiments_sol.size() == experiments_grad.size() );
 
             cout << "Solving Poisson Problem with Neumann boundary conditions" << endl;
 
             int max_l = 8;
-            int max_r = 5;
+            
+            int min_r = 1;
+            int max_r = 1;
             
             for( int l = 0; l <= max_l; l++ ){
                 
                 cout << "Level: " << l << std::endl;
                 cout << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
-                for( int r = 5; r <= max_r; r++ ) 
+                for( int r = min_r; r <= max_r; r++ ) 
                 {
                     
                     cout << "...assemble scalar mass matrices" << endl;
@@ -213,7 +218,7 @@ int main()
 //                             MINRES.solve_robust( sol, rhs );
                             MINRES.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t " << end - start << std::endl;
+                            std::cout << "\t\t\t Time: " << end - start << std::endl;
                         }
                         
                         if(false){
@@ -224,7 +229,7 @@ int main()
                             PCRM.tolerance = 1e-10;
                             PCRM.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t " << end - start << std::endl;
+                            std::cout << "\t\t\t Time: " << end - start << std::endl;
                         }
 
                         cout << "...compute error and residual:" << endl;
@@ -245,6 +250,12 @@ int main()
                         cout << "error:     " << errornorm     << endl;
                         cout << "graderror: " << graderrornorm << endl;
                         cout << "residual:  " << residualnorm  << endl;
+                        
+                        
+                        
+                        contable << errornorm << graderrornorm << nl;
+                        
+                        contable.print( std::cout );
 
 
                         if( r == 1 ){
