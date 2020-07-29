@@ -209,7 +209,7 @@ int main()
                             timestamp start = gettimestamp();
                             MinimumResidualMethod MINRES( stiffness_csr );
                             MINRES.print_modulo = 1+sol.getdimension();
-                            MINRES.tolerance = 1e-20;
+                            MINRES.tolerance = 1e-19;
 //                             MINRES.solve_robust( sol, rhs );
                             MINRES.solve( sol, rhs );
                             timestamp end = gettimestamp();
@@ -221,7 +221,7 @@ int main()
                             timestamp start = gettimestamp();
                             PreconditionedConjugateResidualMethod PCRM( stiffness_csr, stiffness_invprecon );
                             PCRM.print_modulo = 1+sol.getdimension();
-                            PCRM.tolerance = 1e-10;
+                            PCRM.tolerance = 1e-19;
                             PCRM.solve( sol, rhs );
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t Time: " << end - start << std::endl;

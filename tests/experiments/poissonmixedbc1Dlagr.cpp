@@ -62,10 +62,8 @@ int main()
             
             // std::function<FloatVector(const std::function<FloatVector(const FloatVector&) ) >scalarfield = 
             
-            Float xfeq = 1.;
-            
             std::function<FloatVector(const FloatVector&)> experiment_sol = 
-                [xfeq](const FloatVector& vec) -> FloatVector{
+                [](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 1 );
                     return FloatVector({ 
                         std::exp( vec[0] ) - 1. - Constants::euler * vec[0]
@@ -74,7 +72,7 @@ int main()
             
 
             std::function<FloatVector(const FloatVector&)> experiment_grad = 
-                [xfeq](const FloatVector& vec) -> FloatVector{
+                [](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 1 );
                     return FloatVector( { 
                         std::exp( vec[0] )      - Constants::euler 
@@ -83,7 +81,7 @@ int main()
             
 
             std::function<FloatVector(const FloatVector&)> experiment_rhs = 
-                [xfeq](const FloatVector& vec) -> FloatVector{
+                [](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 1 );
                     return FloatVector({ 
                         - std::exp( vec[0] ) 
@@ -195,7 +193,7 @@ int main()
                             timestamp start = gettimestamp();
                             ConjugateResidualMethod CRM( stiffness_csr );
                             CRM.print_modulo = 1+sol.getdimension();
-                            CRM.tolerance = 1e-50;
+                            CRM.tolerance = 1e-19;
                             CRM.solve_robust( sol, rhs );
                             CRM.solve_robust( sol, rhs );
                             CRM.solve_robust( sol, rhs );
@@ -203,7 +201,7 @@ int main()
                             CRM.solve_robust( sol, rhs );
 //                             MinimumResidualMethod MINRES( stiffness_csr );
 //                             MINRES.print_modulo = 1+sol.getdimension();
-//                             MINRES.tolerance = 1e-50;
+//                             MINRES.tolerance = 1e-19;
 //                             MINRES.solve( sol, rhs );
 //                             MINRES.solve( sol, rhs );
                             timestamp end = gettimestamp();
@@ -215,7 +213,7 @@ int main()
                             timestamp start = gettimestamp();
                             PreconditionedConjugateResidualMethod PCRM( stiffness_csr, stiffness_invprecon );
                             PCRM.print_modulo = 1+sol.getdimension();
-                            PCRM.tolerance = 1e-10;
+                            PCRM.tolerance = 1e-19;
                             PCRM.solve( sol, rhs );
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t Time: " << end - start << std::endl;

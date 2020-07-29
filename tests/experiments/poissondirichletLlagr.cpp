@@ -212,7 +212,7 @@ int main()
                     timestamp start = gettimestamp();
                     ConjugateResidualMethod CRM( stiffness_csr );
                     CRM.print_modulo = 1+sol.getdimension()/1000;
-                    CRM.tolerance = 1e-10;
+                    CRM.tolerance = 1e-19;
                     CRM.solve( sol, rhs );
                     timestamp end = gettimestamp();
                     std::cout << "\t\t\t Time: " << end - start << std::endl;
@@ -224,7 +224,7 @@ int main()
                     timestamp start = gettimestamp();
                     PreconditionedConjugateResidualMethod PCRM( stiffness_csr, stiffness_invprecon );
                     PCRM.print_modulo = 1+sol.getdimension()/10;
-                    PCRM.tolerance = 1e-10;
+                    PCRM.tolerance = 1e-19;
                     PCRM.solve( sol, rhs );
                     timestamp end = gettimestamp();
                     std::cout << "\t\t\t Time: " << end - start << std::endl;

@@ -61,8 +61,6 @@ int main()
 
 
             
-            // std::function<FloatVector(const std::function<FloatVector(const FloatVector&) ) >scalarfield = 
-            
             Float xfeq = 1.;
             
             std::function<FloatVector(const FloatVector&)> experiment_sol = 
@@ -133,7 +131,8 @@ int main()
                     cout << "...assemble stiffness matrix" << endl;
             
                     // ProductOperator 
-                    // auto stiffness = incmatrix_t * diffmatrix_t * vector_massmatrix * diffmatrix * incmatrix;
+//                     auto stiffness = incmatrix_t * diffmatrix_t * vector_massmatrix * diffmatrix * incmatrix;
+//                     auto& stiffness_csr = stiffness;
                     // auto op1 = incmatrix_t * diffmatrix_t;
                     // auto op2 = op1 * vector_massmatrix;
                     // auto op3 = op2 * diffmatrix;
@@ -144,10 +143,11 @@ int main()
 //                     auto opl  = opr.getTranspose(); 
 //                     auto stiffness = opl & opr;
 
-                    auto opl  = diffmatrix & incmatrix;
-                    auto opr  = opl.getTranspose(); 
+                    auto opr  = diffmatrix & incmatrix;
+                    auto opl  = opr.getTranspose(); 
                     auto stiffness = opl & ( vector_massmatrix & opr );
-                    
+//                     assert( stiffness2.getdimin() == stiffness.getdimin() );
+//                     assert( stiffness2.getdimout() == stiffness.getdimout() );
                     stiffness.sortentries();
                     auto stiffness_csr = MatrixCSR( stiffness );
                     
@@ -194,11 +194,12 @@ int main()
                             timestamp start = gettimestamp();
                             ConjugateResidualMethod CRM( stiffness_csr );
                             CRM.print_modulo = 1+sol.getdimension();
-                            CRM.tolerance = 1e-50;
+                            CRM.tolerance = 1e-18;
                             CRM.solve_robust( sol, rhs );
                             CRM.solve_robust( sol, rhs );
                             CRM.solve_robust( sol, rhs );
-                            CRM.solve_robust( sol, rhs );CRM.solve_robust( sol, rhs );
+                            CRM.solve_robust( sol, rhs );
+                            CRM.solve_robust( sol, rhs );
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t Time: " << end - start << std::endl;
                         }
@@ -208,7 +209,7 @@ int main()
                             timestamp start = gettimestamp();
                             PreconditionedConjugateResidualMethod PCRM( stiffness_csr, stiffness_invprecon );
                             PCRM.print_modulo = 1+sol.getdimension();
-                            PCRM.tolerance = 1e-10;
+                            PCRM.tolerance = 1e-19;
                             PCRM.solve( sol, rhs );
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t Time: " << end - start << std::endl;
