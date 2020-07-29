@@ -41,7 +41,27 @@ inline std::string adaptfilename( std::string filename )
     return filename;
 }
 
-  
+
+inline std::string experimentfile( const std::string& basename )
+{
+    std::string ret;
+    for( int i = 0; fileexists( ret = basename + std::string(".") + std::to_string(i) + std::string(".vtk") ); i++ );
+    return ret;
+}
+
+inline std::string getbasename( const std::string& path )
+{
+      std::size_t begin = path.find_last_of("/");
+      std::size_t   end = path.find_last_of(".");
+      assert( begin != std::string::npos );
+      assert( end   != std::string::npos );
+      assert( end > begin+1 );
+      if( begin == std::string::npos ) begin = 0;
+      if( end   == std::string::npos ) end   = path.length();
+      
+      return path.substr(begin+1,end-begin-1);
+}
+
 
 
 #endif
