@@ -127,13 +127,9 @@ int main()
             
                     SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
                     
-                    SparseMatrix scalar_massmatrix_fac = FEECBrokenMassMatrixRightFactor( M, M.getinnerdimension(), 0, r );
-                    
                     cout << "...assemble vector mass matrices" << endl;
             
                     SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
-                    
-                    SparseMatrix vector_massmatrix_fac = FEECBrokenMassMatrixRightFactor( M, M.getinnerdimension(), 1, r-1 );
                     
                     cout << "...assemble differential matrix and transpose" << endl;
 
@@ -191,14 +187,15 @@ int main()
 
                         cout << "...measure interpolation commutativity" << endl;
             
-                        Float commutatorerror = ( vector_massmatrix_fac * ( interpol_grad - diffmatrix * interpol_sol ) ).norm();
+                        FloatVector commutator = interpol_grad - diffmatrix * interpol_sol;
+                        Float commutatorerror = std::sqrt( commutator * ( vector_massmatrix * commutator ) );
                         cout << "commutator error: " << commutatorerror << endl;
                         
                         cout << "...compute norms of solution and right-hand side:" << endl;
             
-                        Float sol_norm = ( scalar_massmatrix_fac * interpol_sol ).norm();
-                        Float rhs_norm = ( scalar_massmatrix_fac * interpol_rhs ).norm();
-                        
+                        Float sol_norm = std::sqrt( interpol_sol * ( scalar_massmatrix * interpol_sol ) );
+                        Float rhs_norm = std::sqrt( interpol_rhs * ( scalar_massmatrix * interpol_rhs ) );
+
                         cout << "solution norm: " << sol_norm << endl;
                         cout << "rhs norm:      " << rhs_norm << endl;
 
@@ -234,9 +231,11 @@ int main()
 
                         cout << "...compute error and residual:" << endl;
             
-                        Float errornorm     = ( scalar_massmatrix_fac * ( interpol_sol  - incmatrix * sol ) ).norm();
-                        Float graderrornorm = ( vector_massmatrix_fac * ( interpol_grad - diffmatrix * incmatrix * sol ) ).norm();
-                        Float residualnorm  = ( rhs - stiffness * sol ).norm();
+                        FloatVector error     = interpol_sol  - incmatrix * sol;
+                        FloatVector graderror = interpol_grad - diffmatrix * incmatrix * sol;
+                        Float errornorm       = std::sqrt( error * ( scalar_massmatrix * error ) );
+                        Float graderrornorm   = std::sqrt( graderror * ( vector_massmatrix * graderror ) );
+                        Float residualnorm    = ( rhs - stiffness * sol ).norm();
                         
                         cout << "error:     " << errornorm     << endl;
                         cout << "graderror: " << graderrornorm << endl;

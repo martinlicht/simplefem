@@ -111,15 +111,10 @@ int main()
             
                     SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
                     
-                    SparseMatrix scalar_massmatrix_fac = FEECBrokenMassMatrixRightFactor( M, M.getinnerdimension(), 0, r );
-                    
                     cout << "...assemble vector mass matrix" << endl;
             
                     SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
                     
-                    SparseMatrix vector_massmatrix_fac = FEECBrokenMassMatrixRightFactor( M, M.getinnerdimension(), 1, r-1 );
-                    
-                    SparseMatrix vector_massmatrix_fac_t = vector_massmatrix_fac.getTranspose();
                     cout << "...assemble differential matrix and transpose" << endl;
 
                     SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r );
@@ -186,8 +181,8 @@ int main()
             
                         cout << "...compute norms of solution and right-hand side:" << endl;
             
-                        Float rhs_norm = ( scalar_massmatrix_fac * interpol_rhs ).norm();
-                        
+                        Float rhs_norm = std::sqrt( interpol_rhs * ( scalar_massmatrix * interpol_rhs ) );
+
                         cout << "rhs norm:      " << rhs_norm << endl;
 
                         cout << "...create RHS vector" << endl;
