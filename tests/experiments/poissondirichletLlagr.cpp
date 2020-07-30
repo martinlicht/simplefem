@@ -64,9 +64,9 @@ int main()
             
 
 
-            
-            // std::function<FloatVector(const std::function<FloatVector(const FloatVector&) ) >scalarfield = 
-            
+            // The solution of Laplacian problems over L-shaped domainswith a singular function boundary integral method
+            // https://onlinelibrary.wiley.com/doi/pdf/10.1002/cnm.489?casa_token=KTbdSboKSK8AAAAA:ISbMXTrwR6i-CocYB6hgQdxdbGgjQxo1QMxRA-L97XFrW_BuEiyUxnXZSVM_SF3DTLmHyGe0ZNdLZtR3
+                    
             Float xfeq = 1.;
             Float yfeq = 1.;
             
@@ -212,7 +212,7 @@ int main()
                     timestamp start = gettimestamp();
                     ConjugateResidualMethod CRM( stiffness_csr );
                     CRM.print_modulo = 1+sol.getdimension()/1000;
-                    CRM.tolerance = 1e-19;
+                    // CRM.tolerance = 1e-19;
                     CRM.solve( sol, rhs );
                     timestamp end = gettimestamp();
                     std::cout << "\t\t\t Time: " << end - start << std::endl;
@@ -224,7 +224,7 @@ int main()
                     timestamp start = gettimestamp();
                     PreconditionedConjugateResidualMethod PCRM( stiffness_csr, stiffness_invprecon );
                     PCRM.print_modulo = 1+sol.getdimension()/10;
-                    PCRM.tolerance = 1e-19;
+                    // PCRM.tolerance = 1e-19;
                     PCRM.solve( sol, rhs );
                     timestamp end = gettimestamp();
                     std::cout << "\t\t\t Time: " << end - start << std::endl;

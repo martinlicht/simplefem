@@ -2,6 +2,7 @@
 #define INCLUDEGUARD_OPERATOR_COMPOSEDOPERATORS
 
 #include <memory>
+#include <utility>
 
 #include "../basic.hpp"
 #include "linearoperator.hpp"
@@ -31,15 +32,15 @@ public LinearOperator
         explicit ProxyOperator( const LinearOperator& op )
         : LinearOperator( op.getdimout(), op.getdimin() ), op( op ) { 
 //             LOG << "Proxy created" << ""; 
-        };
+        }
         
         virtual ~ProxyOperator() { 
 //             LOG << "Proxy destroyed" << "";
-        };
+        }
 
         virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
-            std::shared_ptr<ProxyOperator> clone = std::make_shared<ProxyOperator>( op );
-            return clone;
+            std::shared_ptr<ProxyOperator> cloned = std::make_shared<ProxyOperator>( op );
+            return cloned;
         }
         
         virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {
@@ -92,7 +93,7 @@ public LinearOperator
         : LinearOperator( dimout, dimin ), left( std::move(pl) ), right( std::move(pr) ) 
         {
             ComposedOperator::check();
-        }; 
+        } 
         
     public:
 
@@ -104,7 +105,7 @@ public LinearOperator
             right = std::make_unique<ProxyOperator>(R);
             ComposedOperator::check();
 //             LOG << "Composed Operator created LL" << ""; 
-        };
+        }
         
         explicit ComposedOperator( int dimout, int dimin, const LinearOperator& L, LinearOperator&& R )
         : LinearOperator( dimout, dimin ), left( nullptr ), right( nullptr ) 
@@ -114,7 +115,7 @@ public LinearOperator
             right = std::move(R).get_unique_pointer_to_heir();
             ComposedOperator::check();
 //             LOG << "Composed Operator created LR" << ""; 
-        };
+        }
         
         explicit ComposedOperator( int dimout, int dimin, LinearOperator&& L, const LinearOperator& R )
         : LinearOperator( dimout, dimin ), left( nullptr ), right( nullptr ) 
@@ -124,7 +125,7 @@ public LinearOperator
             right = std::make_unique<ProxyOperator>(R);
             ComposedOperator::check();
 //             LOG << "Composed Operator created RL" << ""; 
-        };
+        }
         
         explicit ComposedOperator( int dimout, int dimin, LinearOperator&& L, LinearOperator&& R )
         : LinearOperator( dimout, dimin ), left( nullptr ), right( nullptr ) 
@@ -134,12 +135,12 @@ public LinearOperator
             right = std::move(R).get_unique_pointer_to_heir();
             ComposedOperator::check();
 //             LOG << "Composed Operator created RR" << ""; 
-        };
+        }
         
         virtual ~ComposedOperator() { 
             //ComposedOperator::check(); // explicitly disabled, might be in moved-from state 
 //             LOG << "Composed Operator destroyed" << "";
-        };
+        }
 
         virtual void check() const override { 
             LinearOperator::check(); 

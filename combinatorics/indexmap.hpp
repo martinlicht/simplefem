@@ -2,9 +2,10 @@
 #define INCLUDEGUARD_COMBINATORICS_INDEXMAP
 
 
-#include <vector>
-#include <limits>
+#include <algorithm>
 #include <iostream>
+#include <limits>
+#include <vector>
 
 #include "../basic.hpp"
 

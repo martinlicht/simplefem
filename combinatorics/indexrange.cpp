@@ -1,6 +1,7 @@
 
 #include "indexrange.hpp"
 
+#include <algorithm>
 #include <iostream>
 
 

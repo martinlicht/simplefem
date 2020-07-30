@@ -1,15 +1,15 @@
 
 .PHONY: tidy
 tidy:
-	clang-tidy ./*.?pp -checks=llvm*,bugprone-*,clang-analyzer-*,misc-*,-llvm-header-guard,-llvm-include-order -- -std=c++17
+	clang-tidy ./*.?pp -checks=llvm*,bugprone-*,clang-analyzer-*,misc-*,-llvm-header-guard,-llvm-include-order -- -std=c++20
 
 .PHONY: check
 check:
-	cppcheck --enable=warning,style,performance,portability --std=c++14 -q .
+	cppcheck --enable=warning,style,performance,portability --suppress=duplicateCondition --suppress=assertWithSideEffect --suppress=useStlAlgorithm --std=c++20 -q . ./*/*pp
 
 .PHONY: cpplint
 cpplint:
-	( ./../cpplint.py --recursive --filter=-whitespace,-legal --quiet . ) | sort | uniq -c > TESTFOO
+	( ./../cpplint.py --exclude=private/ --exclude=legacy/ --recursive --filter=-whitespace,-legal --quiet . ) | sort | uniq -c > TESTFOO
 
 .PHONY: vtkclean
 vtkclean:

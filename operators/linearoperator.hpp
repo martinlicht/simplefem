@@ -4,8 +4,8 @@
 
 
 
-#include <ostream>
 #include <memory>
+#include <ostream>
 
 #include "../basic.hpp"
 #include "floatvector.hpp"

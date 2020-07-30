@@ -1,15 +1,18 @@
 
-#include "generateindexmaps.hpp"
+
+#include "generatemultiindices.hpp"
 
 #include <algorithm>
-#include <vector>
 #include <iterator>
+#include <vector>
 
 #include "../basic.hpp"
 
 #include "indexrange.hpp"
 #include "indexmap.hpp"
 #include "multiindex.hpp"
+#include "generateindexmaps.hpp"
+
 
 
 std::vector<MultiIndex> generateMultiIndices( const IndexRange& ir, int degree )

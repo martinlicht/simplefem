@@ -1,15 +1,23 @@
 #ifndef INCLUDEGUARD_BASIC_HPP
 #define INCLUDEGUARD_BASIC_HPP
 
-#include <cstdint>     
-#include <cmath>     
-#include <ctime>     
-#include <cstdlib>     
 #include <cassert>     /* assert macro */
-#include <list>
-#include <iterator>
+#include <cmath>     
+#include <cstdint>     
+#include <cstdlib>     
+#include <ctime>     
+
+#include <algorithm>
+#include <array>
 #include <functional>
 #include <iostream>
+#include <iterator>
+#include <limits>
+#include <list>
+#include <ostream>
+#include <type_traits>
+#include <utility>
+#include <vector>
 
 #define unreachable abort 
 // __builtin_unreachable
@@ -35,8 +43,17 @@ static const char tab = '\t';
 
 
 
+
+/////////////////////////////////////////////////
+//                                             //
+//    SIMPLE AUXILIARY ARITHMETICS             //
+//                                             //
+/////////////////////////////////////////////////
+
+
+
 template<typename T>
-inline int kronecker( T i, T j )
+inline int kronecker( const T& i, const T& j )
 {
     if( i == j )
         return 1;
@@ -73,12 +90,93 @@ T minimum( const T& a, const T& b )
 }
 
 
-
-
 template<typename T>
 T square( const T& x )
 {
     return x * x;
+}
+
+
+
+
+
+
+
+
+
+
+/////////////////////////////////////////////////
+//                                             //
+//               POWER FUNCTIONS               //
+//                                             //
+/////////////////////////////////////////////////
+
+
+static inline Float power( Float base, Float exponent )
+{
+    return std::pow( base, exponent );
+}
+
+template<typename T>
+static inline T power( const T& base, const T& exponent )
+{
+    static_assert( not std::is_floating_point<T>::value );
+    assert( base != 0 );
+    assert( exponent >= 0 );
+    if( exponent == 0 ) return 1;
+    return base * power( base, exponent - 1 );
+}
+
+
+
+static inline int integerpower( int base, int exponent )
+{
+    assert( base != 0 );
+    assert( exponent >= 0 );
+    if( exponent == 0 ) return 1;
+    return base * integerpower( base, exponent - 1 );
+}
+
+static inline int poweroftwo( int exponent )
+{
+    return integerpower( 2, exponent );
+}
+
+static inline int signpower( int exponent )
+{
+    return exponent % 2 == 0 ? 1. : -1;
+}
+
+
+
+
+
+
+
+
+/////////////////////////////////////////////////
+//                                             //
+//        INTEGRAL FACTORIAL, BINOMIALS        //
+//               AND AUXILIARIES               //
+//                                             //
+/////////////////////////////////////////////////
+
+
+template<typename T>
+inline constexpr intmax_t largest_factorial_base_AUX( T n, intmax_t k )
+{
+    if( k > n )
+        return k-1;
+    else
+        return largest_factorial_base_AUX<T>( n/k, k+1 );
+}
+
+template<typename T>
+inline constexpr intmax_t largest_factorial_base()
+{
+    static_assert( std::is_integral<T>::value );
+    const int64_t n = std::numeric_limits<T>::max();
+    return largest_factorial_base_AUX<T>( n, 2 );
 }
 
 
@@ -168,6 +266,10 @@ static inline int64_t factorial_integer_loop( int64_t n )
 
 static inline int64_t factorial_integer( int64_t n )
 {
+    assert( n >= 0 );
+    assert( n <= 20 );
+    assert( n <= largest_factorial_base<decltype(n)>() );
+    
     #ifdef NDEBUG 
     return factorial_integer_loop( n );
     #else
@@ -178,8 +280,36 @@ static inline int64_t factorial_integer( int64_t n )
 
 
 
+static inline int64_t binomial_integer( int64_t n, int64_t k )
+{
+    assert( 0 <= n );
+    if( k < 0 or n < k )
+        return 0;
+    return factorial_integer(n) / ( factorial_integer(k) * factorial_integer(n-k) );
+}
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/////////////////////////////////////////////////
+//                                             //
+//       NUMERICAL FACTORIAL, BINOMIALS        //
+//               AND AUXILIARIES               //
+//                                             //
+/////////////////////////////////////////////////
 
 static inline Float factorial_numerical_naive( int64_t n )
 {
@@ -205,24 +335,9 @@ static inline Float factorial_numerical( int64_t n )
 }
 
 
-
-
-
-
-
-static inline int64_t binomial_integer( int64_t n, int64_t k )
-{
-    assert( 0 <= n );
-//     assert( 0 <= k && k <= n );
-    if( k < 0 or n < k )
-        return 0;
-    return factorial_integer(n) / ( factorial_integer(k) * factorial_integer(n-k) );
-}
-
 static inline Float binomial_numerical( int64_t n, int64_t k )
 {
     assert( 0 <= n );
-//     assert( 0 <= k && k <= n );
     if( k < 0 or n < k )
         return 0.;
     return factorial_numerical(n) / ( factorial_numerical(k) * factorial_numerical(n-k) );
@@ -230,82 +345,45 @@ static inline Float binomial_numerical( int64_t n, int64_t k )
 
 
 
-// todo: deprecate these two templated functions
 
-// template<typename T>
-// T factorial( const T& n )
+
+
+
+
+
+
+
+
+
+
+/////////////////////////////////////////////////
+//                                             //
+//              UNSORTED FUNCTIONS             //
+//                                             //
+/////////////////////////////////////////////////
+
+
+
+
+
+
+
+// static inline unsigned int getbit( unsigned int value, unsigned int bitnumber )
 // {
-//     if( n == 0 )
-//         return 1;
-//     else if( n < 0 )
-//         { unreachable(); }
-//     else
-//         return n * factorial<T>(n-1);
+//     return ( ( value >> bitnumber ) & 1 );
 // }
 
-// template<typename T>
-// T binomial( const T& n, const T& k )
-// {
-//     assert( 0 <= n );
-//     assert( 0 <= k && k <= n );
-//     return factorial(n) / ( factorial(k) * factorial(n-k) );
-// }
-
-
-static inline Float power( Float base, Float exponent )
-{
-    return std::pow( base, exponent );
-}
-
-template<typename T>
-static inline T power( T base, T exponent )
-{
-    assert( base != 0 );
-    assert( exponent >= 0 );
-    if( exponent == 0 ) return 1;
-    return base * power( base, exponent - 1 );
-}
-
-
-
-static inline int integerpower( int base, int exponent )
-{
-    assert( base != 0 );
-    assert( exponent >= 0 );
-    if( exponent == 0 ) return 1;
-    return base * integerpower( base, exponent - 1 );
-}
-
-static inline int poweroftwo( int exponent )
-{
-    return integerpower( 2, exponent );
-}
-
-static inline int signpower( int exponent )
-{
-    return exponent % 2 == 0 ? 1. : -1;
-}
 
 
 
 
 
-static inline int getbit( unsigned int value, unsigned int bitnumber )
-{
-    return ( value >> bitnumber ) % 2;
-}
-
-
-
-
-
-
-static inline bool issmall( Float value, Float threshold = 0.00001 )
+static inline bool issmall( Float value, Float threshold = 100 * std::numeric_limits<Float>::epsilon )
 {
     return absolute(value) < threshold;
 }
 
-static inline bool isabout( Float value1, Float value2, Float threshold = 0.00001 )
+static inline bool isabout( Float value1, Float value2, Float threshold = 100 * std::numeric_limits<Float>::epsilon )
 {
     return issmall( value1 - value2, threshold );
 }
@@ -347,8 +425,8 @@ inline timestamp gettimestamp()
 template<typename T>
 void mergeelementsinsortedlist
 ( std::list<T>& L, 
-  std::function<T( const T&, const T& )> merge,
-  std::function<bool( const T&, const T& )> compare
+  const std::function<T( const T&, const T& )>& merge,
+  const std::function<bool( const T&, const T& )>& compare
 ) {
     typename std::list<T>::iterator it = L.begin();
     while( it != L.end() ){
@@ -370,8 +448,8 @@ void mergeelementsinsortedlist
 
 
 
-#include <vector>
-#include <algorithm>
+
+
 
 template<typename T>
 int find_index( const std::vector<T>& vec, const T& t )
@@ -385,8 +463,6 @@ int find_index( const std::vector<T>& vec, const T& t )
 }
 
 
-#include <ostream>
-#include <array>
 
 
 template <typename T, size_t N>

@@ -128,8 +128,8 @@ void MinimumResidualMethod::iterationStart(
 
     // .... first iteration 
   
-    FloatVector p2 = p1;
-    FloatVector s2 = s1;
+//     FloatVector p2 = p1;
+//     FloatVector s2 = s1;
     p1 = p0;
     s1 = s0;
     

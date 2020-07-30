@@ -2,9 +2,9 @@
 #define INCLUDEGUARD_FEM_FEECBROKENMASSMATRIX
 
 
-#include <vector>
-#include <iostream>
 // #include <cassert>
+#include <iostream>
+#include <vector>
 
 #include "../basic.hpp"
 #include "../combinatorics/indexrange.hpp"
@@ -174,12 +174,12 @@ inline SparseMatrix FEECBrokenMassMatrixRightFactor( const Mesh& mesh, int n, in
             
             /* TEST WHETHER THE ARITHMETICS WORK OUT */
             
-            DenseMatrix polyMM = polynomialmassmatrix( n, r );
-            DenseMatrix formMM = SubdeterminantMatrix( mesh.getGradientProductMatrix( n, s ), k );
-            DenseMatrix fullMM = MatrixTensorProduct( polyMM, formMM ) * measure;
+            DenseMatrix polyMM_0 = polynomialmassmatrix( n, r );
+            DenseMatrix formMM_0 = SubdeterminantMatrix( mesh.getGradientProductMatrix( n, s ), k );
+            DenseMatrix fullMM_0 = MatrixTensorProduct( polyMM_0, formMM_0 ) * measure;
             
-            assert( ( Transpose(formMM_right) * formMM_right - formMM ).issmall() ); 
-            assert( ( Transpose(fullMM_right) * fullMM_right - fullMM ).issmall() ); 
+            assert( ( Transpose(formMM_right) * formMM_right - formMM_0 ).issmall() ); 
+            assert( ( Transpose(fullMM_right) * fullMM_right - fullMM_0 ).issmall() ); 
             
         }
         

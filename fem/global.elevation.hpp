@@ -2,9 +2,9 @@
 #define INCLUDEGUARD_FEM_FEECBROKENELEVATIONMATRIX
 
 
-#include <vector>
-#include <iostream>
 // #include <cassert>
+#include <iostream>
+#include <vector>
 
 #include "../basic.hpp"
 #include "../combinatorics/indexrange.hpp"
@@ -36,7 +36,7 @@
 
 
 
-inline SparseMatrix FEECBrokenElevationMatrix( Mesh& mesh, int n, int k, int r, int rplus = 1 )
+inline SparseMatrix FEECBrokenElevationMatrix( const Mesh& mesh, int n, int k, int r, int rplus = 1 )
 {
     
     // check whether the parameters are right 

@@ -1,6 +1,8 @@
 #ifndef INCLUDEGUARD_DENSE_MATRIX
 #define INCLUDEGUARD_DENSE_MATRIX
 
+#include <memory>
+#include <utility>
 #include <vector>
 
 class DenseMatrix;
@@ -35,7 +37,7 @@ public LinearOperator /* every matrix is a linear operator */
         DenseMatrix& operator=( const DenseMatrix& );
         DenseMatrix& operator=( DenseMatrix&& );
         
-        DenseMatrix( int dim, Float initialvalue = notanumber );
+        explicit DenseMatrix( int dim, Float initialvalue = notanumber );
         DenseMatrix( int dim, const std::function<Float(int,int)>& generator );
         DenseMatrix( int dim, const std::vector<FloatVector>& coldata );
         
@@ -51,8 +53,8 @@ public LinearOperator /* every matrix is a linear operator */
         virtual ~DenseMatrix();
         
         virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
-            std::shared_ptr<DenseMatrix> clone = std::make_shared<DenseMatrix>( *this );
-            return clone;
+            std::shared_ptr<DenseMatrix> cloned = std::make_shared<DenseMatrix>( *this );
+            return cloned;
         }
         
         virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {
@@ -315,7 +317,7 @@ inline DenseMatrix operator/( const DenseMatrix& left, Float right )
 }
 
 
-inline DenseMatrix weightedproduct( const DenseMatrix& W, FloatVector left, FloatVector right )
+inline Float weightedproduct( const DenseMatrix& W, FloatVector left, FloatVector right )
 {
     assert( W.getdimin() == right.getdimension() );
     assert( W.getdimout() == left.getdimension() );

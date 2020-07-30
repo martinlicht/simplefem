@@ -2,12 +2,12 @@
 #define INCLUDEGUARD_MESH_ABSTRACTMESH
 
 
-#include <string>
-#include <vector>
-#include <map>
-#include <utility>
 #include <iostream>
 #include <fstream>
+#include <map>
+#include <string>
+#include <utility>
+#include <vector>
 
 
 #include "../basic.hpp"
@@ -221,7 +221,7 @@ class Mesh
         
     public: 
         
-        const auto& getauxdata() { return auxdata; };
+        const auto& getauxdata() { return auxdata; }
         
 };
 

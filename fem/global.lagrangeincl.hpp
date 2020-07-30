@@ -2,9 +2,9 @@
 #define INCLUDEGUARD_FEM_FEECLAGRANGEINCLUSIONMATRIX
 
 
-#include <vector>
-#include <iostream>
 // #include <cassert>
+#include <iostream>
+#include <vector>
 
 #include "../basic.hpp"
 #include "../combinatorics/indexrange.hpp"
@@ -34,7 +34,7 @@
 
 
 
-inline SparseMatrix LagrangeInclusionMatrix( Mesh& mesh, int n, int r )
+inline SparseMatrix LagrangeInclusionMatrix( const Mesh& mesh, int n, int r )
 {
     
     // check whether the parameters are right 

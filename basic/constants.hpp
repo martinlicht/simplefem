@@ -1,7 +1,7 @@
 #ifndef INCLUDEGUARD_CONSTANTS_HPP
 #define INCLUDEGUARD_CONSTANTS_HPP
 
-#define CONSTANT_FLOATINGPOINT_DATATYPE long double
+#define CONSTANT_FLOATINGPOINT_DATATYPE double
 
 namespace Constants
 {
@@ -45,6 +45,6 @@ namespace Constants
     
     
     
-}
+} // namespace Constants
 
 #endif

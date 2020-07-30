@@ -2,9 +2,9 @@
 #define INCLUDEGUARD_COMBINATORICS_INDEXRANGE
 
 
-#include <vector>
-#include <limits>
 #include <iostream>
+#include <limits>
+#include <vector>
 
 #include "../basic.hpp"
 

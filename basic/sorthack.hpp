@@ -1,8 +1,9 @@
 #ifndef INCLUDEGUARD_SORTHACK_HPP
 #define INCLUDEGUARD_SORTHACK_HPP
 
-#include <vector>
 #include <cassert>
+#include <utility>
+#include <vector>
 
 template<typename A>
 void sorthack( std::vector<A>& vec )

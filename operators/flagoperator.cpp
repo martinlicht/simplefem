@@ -13,7 +13,7 @@
 
 
 
-FlagOperator::FlagOperator( const LinearOperator& op, const std::vector<bool> destflag, const std::vector<bool> srcflag )
+FlagOperator::FlagOperator( const LinearOperator& op, const std::vector<bool>& destflag, const std::vector<bool>& srcflag )
 : LinearOperator( op.getdimout() , op.getdimin() ), 
   op( op ),
   destflag( destflag ),
@@ -22,7 +22,7 @@ FlagOperator::FlagOperator( const LinearOperator& op, const std::vector<bool> de
     FlagOperator::check();
 }
 
-FlagOperator::FlagOperator( const LinearOperator& op, const std::vector<bool> flag )
+FlagOperator::FlagOperator( const LinearOperator& op, const std::vector<bool>& flag )
 : FlagOperator( op, flag, flag )
 {
     FlagOperator::check();

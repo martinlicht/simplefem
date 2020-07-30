@@ -2,9 +2,9 @@
 #define INCLUDEGUARD_OPERATOR_IO_FLOATVECTOR
 
 
-#include <string>
 #include <istream>
 #include <ostream>
+#include <string>
 
 
 #include "../basic.hpp"

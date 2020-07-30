@@ -2,9 +2,9 @@
 #define INCLUDEGUARD_FEM_FEECBROKENDIFFMATRIX
 
 
-#include <vector>
-#include <iostream>
 // #include <cassert>
+#include <iostream>
+#include <vector>
 
 #include "../basic.hpp"
 #include "../combinatorics/indexrange.hpp"
@@ -34,7 +34,7 @@
 
 
 
-inline SparseMatrix FEECBrokenDiffMatrix( Mesh& mesh, int n, int k, int r )
+inline SparseMatrix FEECBrokenDiffMatrix( const Mesh& mesh, int n, int k, int r )
 {
     
     // check whether the parameters are right 

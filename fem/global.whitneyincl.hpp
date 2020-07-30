@@ -2,9 +2,9 @@
 #define INCLUDEGUARD_FEM_FEECWHITNEYINCLUSIONMATRIX
 
 
-#include <vector>
-#include <iostream>
 // #include <cassert>
+#include <iostream>
+#include <vector>
 
 #include "../basic.hpp"
 #include "../combinatorics/indexrange.hpp"
@@ -37,7 +37,7 @@
 
 
 
-inline SparseMatrix FEECWhitneyInclusionMatrix( Mesh& mesh, int n, int k, int r )
+inline SparseMatrix FEECWhitneyInclusionMatrix( const Mesh& mesh, int n, int k, int r )
 {
     
     // check whether the parameters are right 

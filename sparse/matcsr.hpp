@@ -1,9 +1,11 @@
 #ifndef INCLUDEGUARD_MATCSR
 #define INCLUDEGUARD_MATCSR
 
-#include <vector>
-#include <algorithm>
 #include <cmath>
+#include <algorithm>
+#include <memory>
+#include <utility>
+#include <vector>
 
 #include "../basic.hpp"
 #include "sparsematrix.hpp"
@@ -34,8 +36,8 @@ public LinearOperator /* every matrix is a linear operator */
         MatrixCSR& operator=( MatrixCSR&& );
 
         virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
-            std::shared_ptr<MatrixCSR> clone = std::make_shared<MatrixCSR>( *this );
-            return clone;
+            std::shared_ptr<MatrixCSR> cloned = std::make_shared<MatrixCSR>( *this );
+            return cloned;
         }
         
         virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {

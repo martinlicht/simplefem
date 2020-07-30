@@ -1,9 +1,10 @@
 
 
 // #include <cassert>
+#include <algorithm>
 #include <iostream>
-#include <vector>
 #include <iterator>
+#include <vector>
 
 #include "coordinates.hpp"
 

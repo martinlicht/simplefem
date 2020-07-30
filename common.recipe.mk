@@ -53,7 +53,7 @@ endif
 
 CXXFLAGS_LANG := -std=c++2a -pedantic 
 
-CXXFLAGS_WARNINGS := -Wall -Wextra -Wodr -Wno-unused-variable -Wno-sign-compare -Wno-missing-braces -Wmissing-field-initializers -Werror=implicit
+CXXFLAGS_WARNINGS := -Wall -Wextra -Wodr -Wno-unused-variable -Wno-sign-compare -Wno-missing-braces -Wmissing-field-initializers -Wfloat-equal -Werror=implicit
 
 CXXFLAGS_OPTIMIZE := -Ofast -march=native $(OPENMP_FLAG) -mllvm -inline-threshold=1200
 # -fopenmp 

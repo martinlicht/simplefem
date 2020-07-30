@@ -5,9 +5,10 @@
 
 // #include <cassert>
 
+#include <algorithm>
+#include <functional>
 #include <ostream>
 #include <vector>
-#include <functional>
 
 #include "../basic.hpp"
 

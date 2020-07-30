@@ -2,12 +2,12 @@
 #define INCLUDEGUARD_EXAMPLES_3D
 
 
-#include <string>
-#include <vector>
-#include <map>
-#include <utility>
-#include <iostream>
 #include <fstream>
+#include <iostream>
+#include <map>
+#include <string>
+#include <utility>
+#include <vector>
 
 
 #include "mesh.hpp"

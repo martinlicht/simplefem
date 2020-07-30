@@ -1,8 +1,8 @@
 
 #include "multiindex.hpp"
 
-#include <vector>
 #include <iostream>
+#include <vector>
 
 #include "../basic.hpp"
 

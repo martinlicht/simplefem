@@ -1,12 +1,12 @@
 
 #include "qr.factorization.hpp"
 
-#include <iostream>
-#include <algorithm>
-#include <iterator>
-#include <list>
 #include <cctype>
 #include <cmath>
+#include <algorithm>
+#include <iostream>
+#include <iterator>
+#include <list>
 
 #include "../combinatorics/generateindexmaps.hpp"
 #include "densematrix.hpp"

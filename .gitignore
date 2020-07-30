@@ -3,6 +3,9 @@ Dox
 private/
 callgrind.out.*
 cachegrind.out.*
+*OUTPUT_CPPLINT.txt
+./OUTPUT_CPPLINT.txt
+./*/OUTPUT_CPPLINT.txt
 *.exe
 *.stackdump
 *.opensdf

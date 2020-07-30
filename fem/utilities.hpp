@@ -1,8 +1,8 @@
 #ifndef INCLUDEGUARD_FOO
 #define INCLUDEGUARD_FOO
 
-#include <vector>
 #include <algorithm>
+#include <vector>
 
 #include "../basic.hpp"
 #include "../combinatorics/generatemultiindices.hpp"
@@ -85,7 +85,7 @@ inline DenseMatrix EvaluationMatrix( int dim, int r, const DenseMatrix& lpsbc )
     DenseMatrix ret( N, N );
     
     for( int c = 0; c < N; c++ ) // c -> barycentric poly 
-    for( int r = 0; r < N; r++ ) // r -> interpolation point
+    for( int r = 0; r < N; r++ ) // r -> interpolation point // FIXME: shadowed variable 
     {
         ret(r,c) = 1.;
         for( int d = 0; d <= dim; d++ )

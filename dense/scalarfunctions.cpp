@@ -1,12 +1,12 @@
 
 #include "scalarfunctions.hpp"
 
-#include <iostream>
-#include <algorithm>
-#include <iterator>
-#include <list>
 #include <cctype>
 #include <cmath>
+#include <algorithm>
+#include <iostream>
+#include <iterator>
+#include <list>
 
 #include "../combinatorics/generateindexmaps.hpp"
 
@@ -127,8 +127,8 @@ Float NormLp( const DenseMatrix& src, Float p )
     Float ret = 0.;
     for( int r = 0; r < src.getdimout(); r++ )
     for( int c = 0; c < src.getdimin(); c++ )
-        ret += pow( absolute( src(r,c) ), p );
-    ret = pow( ret, ((Float)1.) / p );
+        ret += power( absolute( src(r,c) ), p );
+    ret = power( ret, 1. / p );
     return ret;
 }
 
@@ -140,10 +140,10 @@ Float NormRowCol( const DenseMatrix& src, Float p, Float q )
     for( int r = 0; r < src.getdimout(); r++ ) {
         Float zeile = 0.;
         for( int c = 0; c < src.getdimin(); c++ )
-            zeile += pow( absolute( src(r,c) ), q );
-        ret += pow( zeile, p/q );
+            zeile += power( absolute( src(r,c) ), q );
+        ret += power( zeile, p/q );
     }
-    ret = pow( ret, ((Float)1.) / p );
+    ret = power( ret, 1. / p );
     return ret;
 }
 
@@ -155,10 +155,10 @@ Float NormColRow( const DenseMatrix& src, Float p, Float q )
     for( int c = 0; c < src.getdimin(); c++ ) {
         Float spalte = 0.;
         for( int r = 0; r < src.getdimout(); r++ )
-            spalte += pow( absolute( src(r,c) ), q );
-        ret += pow( spalte, p/q );
+            spalte += power( absolute( src(r,c) ), q );
+        ret += power( spalte, p/q );
     }
-    ret = pow( ret, ((Float)1.) / p );
+    ret = power( ret, 1. / p );
     return ret;
 }
 

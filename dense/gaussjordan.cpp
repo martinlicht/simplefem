@@ -1,11 +1,11 @@
 
 #include "gaussjordan.hpp"
 
-#include <iostream>
+#include <cctype>
 #include <algorithm>
+#include <iostream>
 #include <iterator>
 #include <list>
-#include <cctype>
 
 #include "../combinatorics/generateindexmaps.hpp"
 #include "densematrix.hpp"

@@ -48,9 +48,10 @@ void VTK_MeshWriter_Mesh2D::writeCoordinateBlock()
               << space 
               << mesh.getcoordinates().getdata(v,2) 
               << nl;
-      } else
+      } else {
           unreachable();
-    
+      }
+          
     os << nl;
 }
         

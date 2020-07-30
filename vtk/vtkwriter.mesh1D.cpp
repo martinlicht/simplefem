@@ -56,8 +56,9 @@ void VTK_MeshWriter_Mesh1D::writeCoordinateBlock()
               << space 
               << mesh.getcoordinates().getdata(v,2) 
               << nl;
-      } else
+      } else {
           unreachable();
+      }
         
     
     os << nl;
@@ -85,8 +86,9 @@ void VTK_MeshWriter_Mesh1D::writeCoordinateBlock( const FloatVector& z )
               << space 
               << z.at(v)
               << nl;
-      } else 
+      } else {
           unreachable();
+      }
         
     
     os << nl;

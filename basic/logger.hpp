@@ -1,10 +1,10 @@
 #ifndef INCLUDEGUARD_LOGGER_HPP
 #define INCLUDEGUARD_LOGGER_HPP
 
+#include <cassert>
+#include <functional>
 #include <iostream>
 #include <string>
-#include <functional>
-#include <cassert>
 
 
 
@@ -52,7 +52,7 @@ public:
     }
 
     
-    Logger& operator<<(std::ostream& (*f)(std::ostream&))
+    Logger& operator<<( std::ostream& (*const f)(std::ostream&) )
     {
         f( getstream() );
         return *this;

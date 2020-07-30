@@ -2,12 +2,12 @@
 #ifndef INCLUDEGUARD_PREFIXBUFFER_HPP
 #define INCLUDEGUARD_PREFIXBUFFER_HPP
 
+#include <cassert>
+#include <cstdio>
 #include <iostream>
+#include <locale>
 #include <streambuf>
 #include <string>
-#include <locale>
-#include <cstdio>
-#include <cassert>
 
 
 
@@ -22,7 +22,7 @@ class prefixbuffer : public std::streambuf
         
     public:
         
-        prefixbuffer( std::streambuf* pbuf, const std::string& prefix = "=>" )
+        explicit prefixbuffer( std::streambuf* pbuf, const std::string& prefix = "=>" )
         : pbuf( pbuf ), newline( true ), lineprefix( prefix )
         {
             assert( pbuf != nullptr );

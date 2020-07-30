@@ -2,9 +2,9 @@
 #define INCLUDEGUARD_FEM_LAGRANGEBROKENSTIFFNESSMATRIX
 
 
-#include <vector>
-#include <iostream>
 // #include <cassert>
+#include <iostream>
+#include <vector>
 
 #include "../basic.hpp"
 #include "../combinatorics/indexrange.hpp"
@@ -26,7 +26,7 @@
 
 
 
-inline SparseMatrix LagrangeBrokenStiffnessMatrix( Mesh& mesh, int r )
+inline SparseMatrix LagrangeBrokenStiffnessMatrix( const Mesh& mesh, int r )
 {
     
     // check whether the parameters are right 

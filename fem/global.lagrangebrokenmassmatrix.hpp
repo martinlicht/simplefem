@@ -2,9 +2,9 @@
 #define INCLUDEGUARD_FEM_LAGRANGEBROKENMASSMATRIX
 
 
-#include <vector>
-#include <iostream>
 // #include <cassert>
+#include <iostream>
+#include <vector>
 
 #include "../basic.hpp"
 #include "../combinatorics/indexrange.hpp"
@@ -29,7 +29,7 @@
 
 
 
-inline SparseMatrix LagrangeBrokenMassMatrix( Mesh& mesh, int r )
+inline SparseMatrix LagrangeBrokenMassMatrix( const Mesh& mesh, int r )
 {
     
     // check whether the parameters are right 

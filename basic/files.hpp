@@ -2,7 +2,10 @@
 #define INCLUDEGUARD_FILES_HPP
 
 
+#include <cassert>
+
 #include <fstream>
+#include <string>
 
 
 

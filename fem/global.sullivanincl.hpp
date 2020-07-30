@@ -2,8 +2,9 @@
 #define INCLUDEGUARD_FEM_FEECSULLIVANINCLUSIONMATRIX
 
 
-#include <vector>
 #include <iostream>
+#include <utility>
+#include <vector>
 
 #include "../basic.hpp"
 #include "../combinatorics/indexrange.hpp"
@@ -34,7 +35,7 @@
 
 
 
-inline SparseMatrix FEECSullivanInclusionMatrix( Mesh& mesh, int n, int k, int r )
+inline SparseMatrix FEECSullivanInclusionMatrix( const Mesh& mesh, int n, int k, int r )
 {
     
     // check whether the parameters are right 

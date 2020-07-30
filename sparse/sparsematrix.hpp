@@ -1,6 +1,8 @@
 #ifndef INCLUDEGUARD_SPARSE_MATRIX
 #define INCLUDEGUARD_SPARSE_MATRIX
 
+#include <memory>
+#include <utility>
 #include <vector>
 
 // class SparseMatrix;
@@ -65,8 +67,8 @@ public LinearOperator /* every matrix is a linear operator */
         SparseMatrix& operator=( SparseMatrix&& );
 
         virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
-            std::shared_ptr<SparseMatrix> clone = std::make_shared<SparseMatrix>( *this );
-            return clone;
+            std::shared_ptr<SparseMatrix> cloned = std::make_shared<SparseMatrix>( *this );
+            return cloned;
         }
         
         virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {

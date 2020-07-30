@@ -79,7 +79,7 @@ check:
 	cd ./vtk && $(MAKE) check
 	cd ./matrixmarket && $(MAKE) check
 	cd ./fem && $(MAKE) check
-	cd ./tests && $(MAKE) check
+# 	cd ./tests && $(MAKE) check
 	$(MAKE) -f makefile.check check
 	@echo "finished checking." 
 
@@ -115,7 +115,7 @@ CHECK_FILES= basic.hpp basic/*.?pp combinatorics/*.?pp operators/*.?pp
 # 	cppcheck $(CHECK_OPTION) */*.?pp
 
 cpplint:
-	( ./cpplint.py --recursive --filter=-whitespace,-legal --quiet . --exclude=tests/* --exclude=tests/*/* --exclude=legacy/* --exclude=playground/* ) | sort | uniq -c > TESTFOO
+	( ./cpplint.py --exclude=tests/* --exclude=tests/*/* --exclude=legacy/* --exclude=private/* --exclude=playground/* --recursive --filter=-whitespace,-legal --quiet . ) | sort | uniq -c > OUTPUT_CPPLINT.txt
 
 
 

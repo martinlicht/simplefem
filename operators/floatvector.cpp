@@ -1,10 +1,10 @@
 
-#include <cstdlib>
 #include <cmath>
+#include <cstdlib>
 #include <cstring>
 
-#include <ostream>
 #include <iostream>
+#include <ostream>
 
 #include "../basic.hpp"
 #include "floatvector.hpp"
@@ -482,8 +482,8 @@ Float FloatVector::lpnorm( Float p ) const
     
     Float ret = 0.;
     for( int d = 0; d < getdimension(); d++ )
-        ret += pow( absolute( pointer[d] ), p );
-    return pow( ret, 1./p );
+        ret += power( absolute( pointer[d] ), p );
+    return power( ret, 1./p );
 }
 
 

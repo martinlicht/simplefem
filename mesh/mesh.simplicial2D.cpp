@@ -1,14 +1,14 @@
 
 #include <cmath>
-#include <string>
-#include <stack> 
-#include <list>
-#include <vector>
-#include <map>
-#include <utility>
 #include <algorithm>
-#include <iostream>
 #include <fstream>
+#include <iostream>
+#include <list>
+#include <map>
+#include <stack> 
+#include <string>
+#include <utility>
+#include <vector>
 
 
 #include "../basic.hpp"
@@ -2999,7 +2999,7 @@ Float MeshSimplicial2D::get_edge_length( int e ) const
     assert( 0 <= e && e < counter_edges );
     Float length = 0.;
     for( int d = 0; d < getouterdimension(); d++ )
-      length += pow( getcoordinates().getdata( get_edge_vertices(e)[0], d ) - getcoordinates().getdata( get_edge_vertices(e)[1], d ), 2. );
+      length += power( getcoordinates().getdata( get_edge_vertices(e)[0], d ) - getcoordinates().getdata( get_edge_vertices(e)[1], d ), 2. );
     return sqrt( length );
 }
         

@@ -2,8 +2,8 @@
 #include "generateindexmaps.hpp"
 
 #include <algorithm>
-#include <vector>
 #include <iterator>
+#include <vector>
 
 #include "../basic.hpp"
 #include "indexrange.hpp"

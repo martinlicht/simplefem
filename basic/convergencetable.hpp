@@ -1,9 +1,9 @@
 #ifndef INCLUDEGUARD_BASIC_CONVERGENCETABLE
 #define INCLUDEGUARD_BASIC_CONVERGENCETABLE
 
-#include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <iostream>
 #include <vector>
 
 #include "../basic.hpp"
@@ -14,7 +14,7 @@ class ConvergenceTable
     
     public:
         
-        ConvergenceTable( unsigned int prec = 7 )
+        explicit ConvergenceTable( unsigned int prec = 7 )
         : myprecision(prec)
         {
             
@@ -55,7 +55,7 @@ class ConvergenceTable
                     if( i == 0 )
                         out << "--";
                     else 
-                        out << log2( entries[i-1][j] / entries[i][j] );
+                        out << std::log2( entries[i-1][j] / entries[i][j] );
                     out << tab;
                 }        
                 

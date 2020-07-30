@@ -1,6 +1,9 @@
 #ifndef INCLUDEGUARD_OPERATOR_FLAGOPERATOR
 #define INCLUDEGUARD_OPERATOR_FLAGOPERATOR
 
+#include <memory>
+#include <vector>
+
 #include "../basic.hpp"
 #include "linearoperator.hpp"
 
@@ -29,13 +32,13 @@ public LinearOperator
         FlagOperator& operator=( FlagOperator&& vec ) = delete;
         virtual ~FlagOperator();
         
-        explicit FlagOperator( const LinearOperator& op, const std::vector<bool> destflag, const std::vector<bool> srcflag );
-        explicit FlagOperator( const LinearOperator& op, const std::vector<bool> flag );
+        explicit FlagOperator( const LinearOperator& op, const std::vector<bool>& destflag, const std::vector<bool>& srcflag );
+        explicit FlagOperator( const LinearOperator& op, const std::vector<bool>& flag );
         // TODO: Instantiate move semantics 
 
         virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
-            std::shared_ptr<FlagOperator> clone = std::make_shared<FlagOperator>( *this );
-            return clone;
+            std::shared_ptr<FlagOperator> cloned = std::make_shared<FlagOperator>( *this );
+            return cloned;
         }
         
         virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {

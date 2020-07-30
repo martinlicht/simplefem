@@ -2,9 +2,9 @@
 #define INCLUDEGUARD_MESH_IO_COORDINATES
 
 
-#include <string>
 #include <istream>
 #include <ostream>
+#include <string>
 
 
 #include "../basic.hpp"

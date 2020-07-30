@@ -1,10 +1,12 @@
 #ifndef INCLUDEGUARD_FIXEDARRAY_HPP
 #define INCLUDEGUARD_FIXEDARRAY_HPP
 
-#include <functional>
-#include <vector>
+#include <cassert>
+
 #include <array>
-#include <assert.h>
+#include <functional>
+#include <utility>
+#include <vector>
 
 
 template<typename T>
@@ -146,6 +148,9 @@ FixedArray<T>::FixedArray( const FixedArray<T>& other )
 template<typename T>
 FixedArray<T>& FixedArray<T>::operator=( const FixedArray<T>& other )
 {    
+    if(this == &other)
+      return *this;
+    
     assert( length() == other.length() );
     
     if( length() == 0 ) 

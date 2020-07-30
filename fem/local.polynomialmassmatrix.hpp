@@ -2,9 +2,9 @@
 #define INCLUDEGUARD_FEM_POLYNOMIALMASSMATRIX
 
 
-#include <vector>
-#include <iostream>
 // #include <cassert>
+#include <iostream>
+#include <vector>
 
 #include "../basic.hpp"
 #include "../combinatorics/indexrange.hpp"

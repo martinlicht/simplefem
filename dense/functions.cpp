@@ -1,11 +1,11 @@
 
 #include "functions.hpp"
 
-#include <iostream>
+#include <cctype>
 #include <algorithm>
+#include <iostream>
 #include <iterator>
 #include <list>
-#include <cctype>
 
 #include "../combinatorics/generateindexmaps.hpp"
 #include "../combinatorics/heappermgen.hpp"
@@ -48,6 +48,7 @@ void TransposeInSitu( DenseMatrix& src )
   const int numrows = src.getdimout();
   const int numcols = src.getdimin();
   
+  // TODO remove 'unsigned' here 
   for( unsigned int start = 0; start < numcols * numrows; ++start )
   {
     
