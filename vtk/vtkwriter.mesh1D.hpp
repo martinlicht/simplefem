@@ -26,6 +26,7 @@ class VTK_MeshWriter_Mesh1D
         void writePreamble( const char* name );
         
         void writeCoordinateBlock();
+        void writeCoordinateBlock( const FloatVector& );
         
         void writeTopDimensionalCells();
         

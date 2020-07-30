@@ -64,6 +64,35 @@ void VTK_MeshWriter_Mesh1D::writeCoordinateBlock()
 }
         
         
+void VTK_MeshWriter_Mesh1D::writeCoordinateBlock( const FloatVector& z )
+{
+    // std::ostream& os = std::clog;
+    os << "POINTS " << mesh.count_simplices(0) << " double" << nl;
+    assert( z.getdimension() == mesh.count_simplices(0) );
+    
+    for( int v = 0; v < mesh.count_simplices(0); v++ )
+      if( mesh.getouterdimension() == 1 ) {
+          os << mesh.getcoordinates().getdata(v,0)
+              << space
+              << 0.0 
+              << space 
+              << z.at(v)
+              << nl;
+      } else if( mesh.getouterdimension() == 2 ) {
+          os << mesh.getcoordinates().getdata(v,0)
+              << space
+              << mesh.getcoordinates().getdata(v,1) 
+              << space 
+              << z.at(v)
+              << nl;
+      } else 
+          unreachable();
+        
+    
+    os << nl;
+}
+        
+        
 void VTK_MeshWriter_Mesh1D::writeTopDimensionalCells()
 {
     // std::ostream& os = std::clog;

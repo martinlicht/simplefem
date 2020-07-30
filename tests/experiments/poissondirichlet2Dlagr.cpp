@@ -152,8 +152,8 @@ int main()
 //                     auto opl  = opr.getTranspose(); 
 //                     auto stiffness = opl & opr;
 
-                    auto opl  = diffmatrix & incmatrix;
-                    auto opr  = opl.getTranspose(); 
+                    auto opr  = diffmatrix & incmatrix;
+                    auto opl  = opr.getTranspose(); 
                     auto stiffness = opl & ( vector_massmatrix & opr );
                     
                     stiffness.sortentries();

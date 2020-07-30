@@ -14,6 +14,12 @@ class ConvergenceTable
     
     public:
         
+        ConvergenceTable( unsigned int prec = 7 )
+        : myprecision(prec)
+        {
+            
+        }
+        
         ConvergenceTable& operator<<( Float entry )
         {
             
@@ -38,7 +44,7 @@ class ConvergenceTable
         {
             
             auto temp = out.precision();
-            out.precision(3);
+            out.precision(myprecision);
             
             for( int i = 0; i < entries.size(); i++ )
             {
@@ -65,6 +71,7 @@ class ConvergenceTable
         
         std::vector<std::vector<Float>> entries;
         
+        unsigned int myprecision;
     
 };
 

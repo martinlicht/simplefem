@@ -153,8 +153,8 @@ int main()
                     auto stiffness = op3 * incmatrix;
                     auto& stiffness_csr = stiffness;
 
-//                     auto opr = diffmatrix & incmatrix;
-//                     auto opl = opr.getTranspose(); 
+//                     auto opr  = diffmatrix & incmatrix;
+//                     auto opl  = opr.getTranspose(); 
 //                     auto stiffness = opl & ( vector_massmatrix & opr );
                     
 //                     stiffness.sortentries();
@@ -233,12 +233,13 @@ int main()
                         cout << "...compute error and residual:" << endl;
             
                         
-                        auto errornorm_aux = interpol_sol  - incmatrix * sol;
-                        auto graderror_aux = interpol_grad - diffmatrix * incmatrix * sol;
+                        FloatVector dirterror = interpol_sol  - incmatrix * sol;
+                        FloatVector     error = dirterror - ( ( interpol_one * ( scalar_massmatrix * dirterror ) ) / ( interpol_one * ( scalar_massmatrix * interpol_one ) ) ) * interpol_one;
+                        FloatVector graderror = interpol_grad - diffmatrix * incmatrix * sol;
                         
-                        Float errornorm     = sqrt( errornorm_aux * ( scalar_massmatrix * errornorm_aux ) );
-                        Float graderrornorm = sqrt( graderror_aux * ( vector_massmatrix * graderror_aux ) );
-                        Float residualnorm  = ( rhs - stiffness * sol ).norm();
+                        Float errornorm       = std::sqrt( error * ( scalar_massmatrix * error ) );
+                        Float graderrornorm   = std::sqrt( graderror * ( vector_massmatrix * graderror ) );
+                        Float residualnorm    = ( rhs - stiffness * sol ).norm();
                         
                         cout << "error:     " << errornorm     << endl;
                         cout << "graderror: " << graderrornorm << endl;

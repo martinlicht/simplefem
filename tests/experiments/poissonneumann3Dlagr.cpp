@@ -231,8 +231,10 @@ int main()
 
                         cout << "...compute error and residual:" << endl;
             
-                        FloatVector error     = interpol_sol  - incmatrix * sol;
+                        FloatVector dirterror = interpol_sol  - incmatrix * sol;
+                        FloatVector     error = dirterror - ( ( interpol_one * ( scalar_massmatrix * dirterror ) ) / ( interpol_one * ( scalar_massmatrix * interpol_one ) ) ) * interpol_one;
                         FloatVector graderror = interpol_grad - diffmatrix * incmatrix * sol;
+                        
                         Float errornorm       = std::sqrt( error * ( scalar_massmatrix * error ) );
                         Float graderrornorm   = std::sqrt( graderror * ( vector_massmatrix * graderror ) );
                         Float residualnorm    = ( rhs - stiffness * sol ).norm();
