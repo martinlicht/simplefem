@@ -379,7 +379,7 @@ Float Mesh::getShapemeasure( int dim, int index ) const
     assert( 0 <= dim && dim <= getinnerdimension() );
     assert( 0 <= index && index < count_simplices(dim) );
     
-    return power( getDiameter( dim, index ), (Float)dim ) / getMeasure( dim, index );
+    return power_numerical( getDiameter( dim, index ), (Float)dim ) / getMeasure( dim, index );
 }
 
 Float Mesh::getShapemeasure( int dim ) const 
@@ -388,7 +388,7 @@ Float Mesh::getShapemeasure( int dim ) const
     
     Float shapemeas = 0.;
     for( int s = 0; s < count_simplices(dim); s++ )
-        shapemeas = std::max( shapemeas, power( getDiameter( dim, s ), (Float)dim ) / getMeasure( dim, s ) );
+        shapemeas = std::max( shapemeas, power_numerical( getDiameter( dim, s ), (Float)dim ) / getMeasure( dim, s ) );
     return shapemeas;
 }
 

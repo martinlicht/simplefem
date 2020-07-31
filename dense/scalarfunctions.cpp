@@ -127,8 +127,8 @@ Float NormLp( const DenseMatrix& src, Float p )
     Float ret = 0.;
     for( int r = 0; r < src.getdimout(); r++ )
     for( int c = 0; c < src.getdimin(); c++ )
-        ret += power( absolute( src(r,c) ), p );
-    ret = power( ret, 1. / p );
+        ret += power_numerical( absolute( src(r,c) ), p );
+    ret = power_numerical( ret, 1. / p );
     return ret;
 }
 
@@ -140,10 +140,10 @@ Float NormRowCol( const DenseMatrix& src, Float p, Float q )
     for( int r = 0; r < src.getdimout(); r++ ) {
         Float zeile = 0.;
         for( int c = 0; c < src.getdimin(); c++ )
-            zeile += power( absolute( src(r,c) ), q );
-        ret += power( zeile, p/q );
+            zeile += power_numerical( absolute( src(r,c) ), q );
+        ret += power_numerical( zeile, p/q );
     }
-    ret = power( ret, 1. / p );
+    ret = power_numerical( ret, 1. / p );
     return ret;
 }
 
@@ -155,10 +155,10 @@ Float NormColRow( const DenseMatrix& src, Float p, Float q )
     for( int c = 0; c < src.getdimin(); c++ ) {
         Float spalte = 0.;
         for( int r = 0; r < src.getdimout(); r++ )
-            spalte += power( absolute( src(r,c) ), q );
-        ret += power( spalte, p/q );
+            spalte += power_numerical( absolute( src(r,c) ), q );
+        ret += power_numerical( spalte, p/q );
     }
-    ret = power( ret, 1. / p );
+    ret = power_numerical( ret, 1. / p );
     return ret;
 }
 

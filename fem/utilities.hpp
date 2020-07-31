@@ -90,7 +90,7 @@ inline DenseMatrix EvaluationMatrix( int dim, int r, const DenseMatrix& lpsbc )
         ret(row,col) = 1.;
         for( int d = 0; d <= dim; d++ )
             if( mis[col][d] != 0 )
-                ret(row,col) *= power( lpsbc(d,row), (Float) mis[col][d] );
+                ret(row,col) *= power_numerical( lpsbc(d,row), (Float) mis[col][d] );
     }
     
     return ret;
@@ -125,7 +125,7 @@ inline DenseMatrix EvaluationMatrix( std::vector<MultiIndex> mis, const DenseMat
         ret(r,c) = 1.;
         for( int d = 0; d <= dim; d++ )
             if( mis[c][d] != 0 )
-                ret(r,c) *= power( lpsbc(d,r), (Float) mis[c][d] );
+                ret(r,c) *= power_numerical( lpsbc(d,r), (Float) mis[c][d] );
     }
     
     return ret;

@@ -49,7 +49,7 @@ generateIndexMaps( const IndexRange& from, const IndexRange& to )
         assert( from.cardinality() > 0 );
         assert( to.cardinality() > 0 );
         
-        const int num = integerpower( to.cardinality(), from.cardinality() );
+        const int num = power_integer( to.cardinality(), from.cardinality() );
         std::vector<IndexMap> ret;
         ret.reserve( num );
         

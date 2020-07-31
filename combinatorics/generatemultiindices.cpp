@@ -33,7 +33,7 @@ std::vector<MultiIndex> generateMultiIndices( const IndexRange& ir, int degree )
     
     ret.reserve( binomial_integer( ir.cardinality()-1 + degree, ir.cardinality()-1 ) );
     
-    int max_candidate = integerpower( degree+1, ir.cardinality() );
+    int max_candidate = power_integer( degree+1, ir.cardinality() );
     int min_index = ir.min();
     int max_index = ir.max();
     

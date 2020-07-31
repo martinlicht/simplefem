@@ -112,11 +112,6 @@ T square( const T& x )
 /////////////////////////////////////////////////
 
 
-static inline Float power( Float base, Float exponent )
-{
-    return std::pow( base, exponent );
-}
-
 template<typename T>
 static inline T power( const T& base, const T& exponent )
 {
@@ -127,19 +122,22 @@ static inline T power( const T& base, const T& exponent )
     return base * power( base, exponent - 1 );
 }
 
+static inline Float power_numerical( Float base, Float exponent )
+{
+    return std::pow( base, exponent );
+}
 
-
-static inline int integerpower( int base, int exponent )
+static inline int power_integer( int base, int exponent )
 {
     assert( base != 0 );
     assert( exponent >= 0 );
     if( exponent == 0 ) return 1;
-    return base * integerpower( base, exponent - 1 );
+    return base * power_integer( base, exponent - 1 );
 }
 
 static inline int poweroftwo( int exponent )
 {
-    return integerpower( 2, exponent );
+    return power_integer( 2, exponent );
 }
 
 static inline int signpower( int exponent )
@@ -511,7 +509,7 @@ inline Float gaussrand_1()
     return x;
 }
 
-Float gaussrand_2()
+inline Float gaussrand_2()
 {
     static bool phase = false;
     static Float U, V;
@@ -530,9 +528,6 @@ Float gaussrand_2()
 
     return Z;
 }
-
-
-
 
 
 inline Float gaussrand()

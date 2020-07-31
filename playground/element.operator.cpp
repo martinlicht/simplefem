@@ -106,7 +106,7 @@ DenseMatrix calculateElementDiffMatrix(
               sigma_tar = sigma_test;
           }
         
-        int signum = integerpower( -1, sigma_tar.preimageof(c) );
+        int signum = power_integer( -1, sigma_tar.preimageof(c) );
         
         /* find positions */
         int poly_tar_i = find( multis_tar.begin(), multis_tar.end(), poly_tar ) - multis_tar.begin();

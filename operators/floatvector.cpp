@@ -482,8 +482,8 @@ Float FloatVector::lpnorm( Float p ) const
     
     Float ret = 0.;
     for( int d = 0; d < getdimension(); d++ )
-        ret += power( absolute( pointer[d] ), p );
-    return power( ret, 1./p );
+        ret += power_numerical( absolute( pointer[d] ), p );
+    return power_numerical( ret, 1./p );
 }
 
 

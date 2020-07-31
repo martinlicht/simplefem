@@ -34,9 +34,9 @@ SimplicialMesh UnitCubeTriangulation( int innerdim, int outerdim )
     
     assert( innerdim <= outerdim );
     
-    Coordinates coords( outerdim, integerpower(2,innerdim) );
+    Coordinates coords( outerdim, power_integer(2,innerdim) );
     assert( coords.getdimension() == outerdim );
-    assert( coords.getnumber() == integerpower(2,innerdim) );
+    assert( coords.getnumber() == power_integer(2,innerdim) );
     clog << "############" << coords.getnumber() << std::endl;
     for( int v = 0; v < coords.getnumber(); v++ ) {
         for( int p = 0; p < innerdim; p++ ) {
@@ -64,7 +64,7 @@ SimplicialMesh UnitCubeTriangulation( int innerdim, int outerdim )
         newsimplex[0] = index;
 
         for( int p = 1; p <= innerdim; p++ ) {
-            index += integerpower( 2, (*pi)[p]-1 );
+            index += power_integer( 2, (*pi)[p]-1 );
             newsimplex[p] = index;
             assert( index <= coords.getnumber()-1 );
         }

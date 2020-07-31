@@ -290,7 +290,7 @@ DenseMatrix CofactorMatrix( const DenseMatrix& A )
     for( int c = 0; c < A.getdimin(); c++ )
     {
       
-      int sign_entry = integerpower( -1, r+c );
+      int sign_entry = signpower( r+c );
       
       assert( sign_perm * sign_entry == 1 or sign_perm * sign_entry == -1 );
       Float summand = sign_perm * sign_entry;

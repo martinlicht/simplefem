@@ -798,8 +798,8 @@ Float DenseMatrix::lpnorm( Float p ) const
     Float ret = 0.;
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin();  c++ )
-        ret += power( absolute( get(r,c) ), p );
-    return power( ret, 1. / p );
+        ret += power_numerical( absolute( get(r,c) ), p );
+    return power_numerical( ret, 1. / p );
 }
 
 

@@ -2574,7 +2574,7 @@ Float MeshSimplicial3D::get_edge_length( int e ) const
     assert( 0 <= e && e < counter_edges );
     Float length = 0.;
     for( int d = 0; d < getouterdimension(); d++ )
-      length += power( getcoordinates().getdata( get_edge_vertices(e)[0], d ) - getcoordinates().getdata( get_edge_vertices(e)[1], d ), 2. );
+      length += power_numerical( getcoordinates().getdata( get_edge_vertices(e)[0], d ) - getcoordinates().getdata( get_edge_vertices(e)[1], d ), 2. );
     return std::sqrt( length );
 }
 

@@ -112,7 +112,7 @@ int main()
                         FloatVector interpol = Interpolation( M, M.getinnerdimension(), 2, r, scalarfield );
 
                         Float mass1 = interpol.scalarproductwith( massmatrix * interpol );
-                        Float mass2 = power( ( massmatrix_rhs * interpol ).norm(), 2. );
+                        Float mass2 = power_numerical( ( massmatrix_rhs * interpol ).norm(), 2. );
 
                         cout << "[ i, l, r ] = [" << i << ", "  << l << ", " << r << "]\t";
                         
@@ -193,7 +193,7 @@ int main()
                         FloatVector interpol = Interpolation( M, M.getinnerdimension(), 3, r, scalarfield );
 
                         Float mass1 = interpol.scalarproductwith( massmatrix * interpol );
-                        Float mass2 = power( ( massmatrix_rhs * interpol ).norm(), 2. );
+                        Float mass2 = power_numerical( ( massmatrix_rhs * interpol ).norm(), 2. );
 
                         cout << "[ i, l, r ] = [" << i << ", "  << l << ", " << r << "]\t";
                         

@@ -231,7 +231,7 @@ int main()
                 // FloatVector gradfoo = diffmatrix * ( interpol_sol - incmatrix * sol );
                 // Float graderrornorm = gradfoo.scalarproductwith( vector_massmatrix * gradfoo );
                 // Float errornorm1 = interpol_sol * ( scalar_massmatrix * interpol_sol );
-                // Float errornorm2 = power( ( scalar_massmatrix_fac * interpol_sol ).norm(), 2. );
+                // Float errornorm2 = power_numerical( ( scalar_massmatrix_fac * interpol_sol ).norm(), 2. );
 
                 cout << "error:     " << errornorm     << endl;
                 cout << "graderror: " << graderrornorm << endl;
