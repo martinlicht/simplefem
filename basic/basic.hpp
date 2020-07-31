@@ -517,7 +517,7 @@ inline Float gaussrand_2()
     Float Z;
 
     if( phase ) {
-        Z = std::sqrt( -2 * std::log(U) ) * cos( 2 * PI * V );
+        Z = std::sqrt( -2 * std::log(U) ) * std::cos( 2 * PI * V );
     } else {
         U = ( rand() + 1. ) / ( RAND_MAX + 2. );
         V = rand() / ( RAND_MAX + 1. );
