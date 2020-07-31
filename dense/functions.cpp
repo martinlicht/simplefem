@@ -62,7 +62,7 @@ void TransposeInSitu( DenseMatrix& src )
 
     if ( next >= start && i != 1 )
     {
-      const double tmp = src( start / numcols, start % numcols );
+      const Float tmp = src( start / numcols, start % numcols );
       next = start;
       do {
         i = (next % numrows) * numcols + next / numrows;
@@ -292,8 +292,8 @@ DenseMatrix CofactorMatrix( const DenseMatrix& A )
       
       int sign_entry = integerpower( -1, r+c );
       
+      assert( sign_perm * sign_entry == 1 or sign_perm * sign_entry == -1 );
       Float summand = sign_perm * sign_entry;
-      assert( summand == 1. || summand == -1. );
       
       for( int j = 0; j < A.getdimin() - 1; j++ )
         summand *= A( j < c ? j : j+1, perm[j] < r ? perm[j] : perm[j]+1 );

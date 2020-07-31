@@ -106,7 +106,7 @@ Float NormFrobenius( const DenseMatrix& src )
         Float av = absolute( src(r,c) );
         ret += av * av;
     }
-    ret = sqrt( ret );
+    ret = std::sqrt( ret );
     return ret;
 }
 

@@ -685,7 +685,7 @@ bool DenseMatrix::issymmetric() const
     
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c <= r; c++ )
-        if( get(r,c) != get(c,r) ) 
+        if( not isabout( get(r,c), get(c,r) ) ) 
             return false;
     
     return true;
@@ -697,7 +697,7 @@ bool DenseMatrix::isantisymmetric() const
     
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c <= r; c++ )
-        if( get(r,c) != -get(c,r) ) 
+        if( not isabout( get(r,c), -get(c,r) ) ) 
             return false;
     
     return true;
@@ -771,7 +771,7 @@ Float DenseMatrix::norm() const
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin();  c++ )
         ret += get(r,c) * get(r,c);
-    return sqrt( ret );
+    return std::sqrt( ret );
 }
 
 Float DenseMatrix::maxnorm() const

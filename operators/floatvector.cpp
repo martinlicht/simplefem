@@ -230,7 +230,7 @@ void FloatVector::random()
 {
     check();
     for( int p = 0; p < getdimension(); p++ )
-//         setentry( p, sqrt( rand() ) ); 
+//         setentry( p, std::sqrt( rand() ) ); 
         setentry( p, gaussrand() ); 
 }
 

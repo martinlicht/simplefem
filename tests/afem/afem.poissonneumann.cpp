@@ -106,7 +106,7 @@ int main()
             cout << "Solving Poisson Problem with Neumann boundary conditions" << endl;
 
             int max_l = 5;
-            Float r = 1;
+            int r = 1;
 
             for( int l = 0; l <= max_l; l++ ){
                 

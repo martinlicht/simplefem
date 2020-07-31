@@ -48,7 +48,9 @@ class ConvergenceTable
             
             for( int i = 0; i < entries.size(); i++ )
             {
-            
+                
+                out << i << ":" << tab;
+                
                 for( int j = 0; j < entries[i].size(); j++ )
                 {
                     out << entries[i][j] << tab;

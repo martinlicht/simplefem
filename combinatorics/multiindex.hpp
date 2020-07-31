@@ -54,7 +54,7 @@ class MultiIndex
 
                 int absolute() const;
 
-                int64_t factorial() const;
+                int factorial() const;
                 
                 int min() const;
 

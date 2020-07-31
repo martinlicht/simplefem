@@ -84,13 +84,13 @@ inline DenseMatrix EvaluationMatrix( int dim, int r, const DenseMatrix& lpsbc )
     
     DenseMatrix ret( N, N );
     
-    for( int c = 0; c < N; c++ ) // c -> barycentric poly 
-    for( int r = 0; r < N; r++ ) // r -> interpolation point // FIXME: shadowed variable 
+    for( int col = 0; col < N; col++ ) // col -> barycentric poly 
+    for( int row = 0; row < N; row++ ) // row -> interpolation point // FIXME: shadowed variable 
     {
-        ret(r,c) = 1.;
+        ret(row,col) = 1.;
         for( int d = 0; d <= dim; d++ )
-            if( mis[c][d] != 0 )
-                ret(r,c) *= power( lpsbc(d,r), (Float) mis[c][d] );
+            if( mis[col][d] != 0 )
+                ret(row,col) *= power( lpsbc(d,row), (Float) mis[col][d] );
     }
     
     return ret;

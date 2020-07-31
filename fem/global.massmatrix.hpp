@@ -165,7 +165,7 @@ inline SparseMatrix FEECBrokenMassMatrixRightFactor( const Mesh& mesh, int n, in
             
         DenseMatrix formMM_right = SubdeterminantMatrix( GPM_right, k );
     
-        DenseMatrix fullMM_right = MatrixTensorProduct( polyMM_right, formMM_right ) * sqrt(measure);
+        DenseMatrix fullMM_right = MatrixTensorProduct( polyMM_right, formMM_right ) * std::sqrt(measure);
 
         assert( fullMM_right.getdimin()  == formMM_right.getdimin()  * polyMM_right.getdimin()  );
         assert( fullMM_right.getdimout() == formMM_right.getdimout() * polyMM_right.getdimout() );

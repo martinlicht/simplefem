@@ -3000,7 +3000,7 @@ Float MeshSimplicial2D::get_edge_length( int e ) const
     Float length = 0.;
     for( int d = 0; d < getouterdimension(); d++ )
       length += power( getcoordinates().getdata( get_edge_vertices(e)[0], d ) - getcoordinates().getdata( get_edge_vertices(e)[1], d ), 2. );
-    return sqrt( length );
+    return std::sqrt( length );
 }
         
 

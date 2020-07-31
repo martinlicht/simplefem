@@ -65,7 +65,7 @@ class prefixbuffer : public std::streambuf
                 if( c == '\n' )
                     newline = true;
             
-                if ( pbuf->sputc(c) == std::char_traits<char>::eof() )
+                if ( pbuf->sputc(char(c)) == std::char_traits<char>::eof() )
                     return std::char_traits<char>::eof();
                 
             }

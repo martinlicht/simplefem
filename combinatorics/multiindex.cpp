@@ -119,11 +119,11 @@ int MultiIndex::absolute() const
     return ret;
 }
 
-int64_t MultiIndex::factorial() const
+int MultiIndex::factorial() const
 {
     check();
     assert( absolute() <= 20 );
-    int64_t ret = 1;
+    int ret = 1;
     for( int p : getIndexRange()  )
         ret *= factorial_integer( at( p ) );
     return ret;

@@ -207,7 +207,7 @@ int main()
                         
                         cout << "...iterative solver" << endl;
                         
-                        {
+                        if(false){
                             sol.zero();
                             timestamp start = gettimestamp();
                             MinimumResidualMethod MINRES( stiffness_csr );
@@ -219,7 +219,7 @@ int main()
                             std::cout << "\t\t\t Time: " << end - start << std::endl;
                         }
                         
-                        if(false){
+                        {
                             sol.zero();
                             timestamp start = gettimestamp();
                             PreconditionedConjugateResidualMethod PCRM( stiffness_csr, stiffness_invprecon );

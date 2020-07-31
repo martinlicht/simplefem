@@ -34,7 +34,7 @@ void QRFactorization( const DenseMatrix& A, DenseMatrix& Q, DenseMatrix& R )
                 R(j,c) = u * Q.getcolumn(j);
                 u -= R(j,c) * Q.getcolumn(j);
         }
-        R(c,c) = sqrt( u*u );
+        R(c,c) = std::sqrt( u*u );
         Q.setcolumn( c, u / R(c,c) );
     }
     
@@ -63,7 +63,7 @@ void LQFactorization( const DenseMatrix& A, DenseMatrix& L, DenseMatrix& Q )
                 L(r,i) = v * Q.getrow(i);
                 v -= L(r,i) * Q.getrow(i);
         }
-        L(r,r) = sqrt( v*v );
+        L(r,r) = std::sqrt( v*v );
         Q.setrow( r, v / L(r,r) );
     }
     

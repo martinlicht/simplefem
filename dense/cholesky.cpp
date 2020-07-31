@@ -45,7 +45,7 @@ DenseMatrix CholeskyDecompositionBanachchiewicz( const DenseMatrix& A )
     L(r,r) = A(r,r);
     for( int k = 0; k < r; k++ )
       L(r,r) -= L(r,k) * L(r,k);
-    L(r,r) = sqrt( L(r,r) );
+    L(r,r) = std::sqrt( L(r,r) );
     
   }
   

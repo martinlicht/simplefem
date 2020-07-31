@@ -163,19 +163,19 @@ static inline int signpower( int exponent )
 
 
 template<typename T>
-inline constexpr intmax_t largest_factorial_base_AUX( T n, intmax_t k )
+inline constexpr uintmax_t largest_factorial_base_AUX( T n, uintmax_t k )
 {
     if( k > n )
         return k-1;
     else
-        return largest_factorial_base_AUX<T>( n/k, k+1 );
+        return largest_factorial_base_AUX<T>( n / T(k), k+1 );
 }
 
 template<typename T>
-inline constexpr intmax_t largest_factorial_base()
+inline constexpr uintmax_t largest_factorial_base()
 {
     static_assert( std::is_integral<T>::value );
-    const int64_t n = std::numeric_limits<T>::max();
+    const uintmax_t n = std::numeric_limits<T>::max();
     return largest_factorial_base_AUX<T>( n, 2 );
 }
 
@@ -183,7 +183,7 @@ inline constexpr intmax_t largest_factorial_base()
 
 
 
-static inline int64_t factorial_integer_table_old( int64_t n )
+static inline uintmax_t factorial_integer_table_old( uintmax_t n )
 {
     switch(n){
         case 0: return 1;
@@ -216,9 +216,9 @@ static inline int64_t factorial_integer_table_old( int64_t n )
     }
 }
 
-static inline int64_t factorial_integer_table( int64_t n )
+static inline uintmax_t factorial_integer_table( uintmax_t n )
 {
-    static const int64_t facs[21] = {
+    static const uintmax_t facs[21] = {
         1,
         1,
         2,
@@ -242,13 +242,13 @@ static inline int64_t factorial_integer_table( int64_t n )
         2432902008176640000ll,
     };
 
-    assert( 0 <= n and n <= 21 );
+    assert( 0 <= n and n <= 20 );
     return facs[n];
 }
 
-static inline int64_t factorial_integer_naive( int64_t n )
+static inline uintmax_t factorial_integer_naive( uintmax_t n )
 {
-    assert( 0 <= n and n <= 21 );
+    assert( 0 <= n and n <= 20 );
     if( n == 0 ) { 
         return 1;
     } else {
@@ -256,36 +256,43 @@ static inline int64_t factorial_integer_naive( int64_t n )
     }
 }
 
-static inline int64_t factorial_integer_loop( int64_t n )
+static inline uintmax_t factorial_integer_loop( uintmax_t n )
 {
-    assert( 0 <= n and n <= 21 );
-    int64_t ret = 1;
+    assert( 0 <= n and n <= 20 );
+    uintmax_t ret = 1;
     while( n > 0 ) ret *= n--;
     return ret;
 }
 
-static inline int64_t factorial_integer( int64_t n )
+
+
+
+
+
+static inline int factorial_integer( int n )
 {
     assert( n >= 0 );
     assert( n <= 20 );
     assert( n <= largest_factorial_base<decltype(n)>() );
     
     #ifdef NDEBUG 
-    return factorial_integer_loop( n );
+    uintmax_t result = factorial_integer_loop( n );
     #else
-    return factorial_integer_table( n );
+    uintmax_t result = factorial_integer_table( n );
     #endif
+    
+    assert( result <= std::numeric_limits<int>::max() );
+    return (int)result;
 }
 
-
-
-
-static inline int64_t binomial_integer( int64_t n, int64_t k )
+static inline int binomial_integer( int n, int k )
 {
     assert( 0 <= n );
     if( k < 0 or n < k )
         return 0;
-    return factorial_integer(n) / ( factorial_integer(k) * factorial_integer(n-k) );
+    uintmax_t result = factorial_integer(n) / ( factorial_integer(k) * factorial_integer(n-k) );
+    assert( result <= std::numeric_limits<int>::max() );
+    return (int)result;
 }
 
 
@@ -378,12 +385,12 @@ static inline Float binomial_numerical( int64_t n, int64_t k )
 
 
 
-static inline bool issmall( Float value, Float threshold = 100 * std::numeric_limits<Float>::epsilon )
+static inline bool issmall( Float value, Float threshold = 100. * std::numeric_limits<Float>::epsilon() )
 {
     return absolute(value) < threshold;
 }
 
-static inline bool isabout( Float value1, Float value2, Float threshold = 100 * std::numeric_limits<Float>::epsilon )
+static inline bool isabout( Float value1, Float value2, Float threshold = 100. * std::numeric_limits<Float>::epsilon() )
 {
     return issmall( value1 - value2, threshold );
 }
@@ -418,7 +425,7 @@ typedef clock_t timestamp;
 
 inline timestamp gettimestamp()
 {
-    return CLOCKS_PER_SEC * static_cast<double>(clock()); 
+    return clock(); 
 }
 
 
@@ -477,7 +484,20 @@ std::ostream& operator<<( std::ostream& stream, const std::array<T, N>& v)
 
 
 
-inline Float gaussrand()
+
+
+/////////////////////////////////////////////////
+//                                             //
+//            GAUSSIAN VARIABLES               //
+//                                             //
+/////////////////////////////////////////////////
+
+
+
+// Based on the implementations in the C-FAQ:
+// http://c-faq.com/lib/gaussian.html
+
+inline Float gaussrand_1()
 {
     const int NSUM = 25;
     
@@ -486,10 +506,55 @@ inline Float gaussrand()
     for( int i = 0; i < NSUM; i++) x += rand() / (Float)RAND_MAX;
     
     x -= NSUM / 2.0;
-    x /= sqrt( NSUM / 12.0 );
+    x /= std::sqrt( NSUM / 12.0 );
     
     return x;
 }
+
+Float gaussrand_2()
+{
+    static bool phase = false;
+    static Float U, V;
+    const Float PI = 3.141592654;
+    Float Z;
+
+    if( phase ) {
+        Z = std::sqrt( -2 * std::log(U) ) * cos( 2 * PI * V );
+    } else {
+        U = ( rand() + 1. ) / ( RAND_MAX + 2. );
+        V = rand() / ( RAND_MAX + 1. );
+        Z = std::sqrt( -2 * std::log(U) ) * std::sin( 2 * PI * V );
+    }
+        
+    phase = not phase;
+
+    return Z;
+}
+
+
+
+
+
+inline Float gaussrand()
+{
+    return gaussrand_1();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
