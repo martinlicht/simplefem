@@ -432,7 +432,7 @@ DenseMatrix Mesh::getTransformationJacobian( int dim, int index ) const
 }
 
 
-DenseMatrix Mesh::getGradientProductMatrix( int dim, int index ) const 
+DenseMatrix Mesh::getGradientProductMatrix( int dim, int index ) const // TODO: is this the vector mass matrix?
 {
     assert( 0 <= dim   && dim   <= getinnerdimension() );
     assert( 0 <= index && index <  count_simplices(dim) );

@@ -126,10 +126,10 @@ inline SparseMatrix FEECBrokenMassMatrixRightFactor( const Mesh& mesh, int n, in
     
     // Auxiliary calculations and preparations
     
-    const int64_t num_simplices = mesh.count_simplices( n );
+    const int num_simplices = mesh.count_simplices( n );
         
-    const int64_t localdim_in  = binomial_integer( n+r, n ) * binomial_integer( n+1, k );
-    const int64_t localdim_out = binomial_integer( n+r, n ) * binomial_integer( n  , k );
+    const int localdim_in  = binomial_integer( n+r, n ) * binomial_integer( n+1, k );
+    const int localdim_out = binomial_integer( n+r, n ) * binomial_integer( n  , k );
 
     const int dim_in      = num_simplices * localdim_in;
     const int dim_out     = num_simplices * localdim_out;
@@ -172,7 +172,7 @@ inline SparseMatrix FEECBrokenMassMatrixRightFactor( const Mesh& mesh, int n, in
         
         {
             
-            /* TEST WHETHER THE ARITHMETICS WORK OUT */
+            /* CHECK WHETHER THE ARITHMETICS WORK OUT */
             
             DenseMatrix polyMM_0 = polynomialmassmatrix( n, r );
             DenseMatrix formMM_0 = SubdeterminantMatrix( mesh.getGradientProductMatrix( n, s ), k );

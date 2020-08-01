@@ -25,7 +25,7 @@ int main()
         
             auto scalar = []( const FloatVector& point ) -> FloatVector { 
                 return FloatVector({ 
-                        2 * power_numerical(point[0],3.0) + 5 * power_numerical(point[1],2.0) + 4.
+                        2. * power_numerical(point[0],3.0) + 5. * power_numerical(point[1],2.0) + 4.
                         //std::sin( 5. * point[0] ) 
                        });
             };
@@ -57,7 +57,7 @@ int main()
         
             auto scalarfield = []( const FloatVector& point ) -> FloatVector { 
                 return FloatVector({ 
-                        2 * power_numerical(point[0],3.0) + 5 * power_numerical(point[1],2.0) + point[2]
+                        2. * power_numerical(point[0],3.0) + 5. * power_numerical(point[1],2.0) + point[2]
                         //std::sin( 5. * point[0] ) 
                        });
             };
@@ -97,7 +97,7 @@ int main()
         
             auto scalarfield = []( const FloatVector& point ) -> FloatVector { 
                 return FloatVector({ 
-                        2 * power_numerical(point[0],3.0) + 5 * power_numerical(point[1],2.0) + point[2]
+                        2. * power_numerical(point[0],3.0) + 5. * power_numerical(point[1],2.0) + point[2]
                         //std::sin( 5. * point[0] ) 
                        });
             };

@@ -52,14 +52,14 @@ static const char tab = '\t';
 
 
 
-template<typename T>
-inline int kronecker( const T& i, const T& j )
-{
-    if( i == j )
-        return 1;
-    else
-        return 0;
-}
+// template<typename T>
+// inline int kronecker( const T& i, const T& j )
+// {
+//     if( i == j )
+//         return 1;
+//     else
+//         return 0;
+// }
 
 
 template<typename T>
@@ -112,15 +112,15 @@ T square( const T& x )
 /////////////////////////////////////////////////
 
 
-template<typename T>
-static inline T power( const T& base, const T& exponent )
-{
-    static_assert( not std::is_floating_point<T>::value );
-    assert( base != 0 );
-    assert( exponent >= 0 );
-    if( exponent == 0 ) return 1;
-    return base * power( base, exponent - 1 );
-}
+// template<typename T>
+// static inline T power( const T& base, const T& exponent )
+// {
+//     static_assert( not std::is_floating_point<T>::value );
+//     assert( base != 0 );
+//     assert( exponent >= 0 );
+//     if( exponent == 0 ) return 1;
+//     return base * power( base, exponent - 1 );
+// }
 
 static inline Float power_numerical( Float base, Float exponent )
 {
@@ -163,6 +163,9 @@ static inline int signpower( int exponent )
 template<typename T>
 inline constexpr uintmax_t largest_factorial_base_AUX( T n, uintmax_t k )
 {
+    static_assert( std::is_fundamental<T>::value );
+    static_assert( std::is_integral<T>::value    );
+    
     if( k > n )
         return k-1;
     else
@@ -172,7 +175,9 @@ inline constexpr uintmax_t largest_factorial_base_AUX( T n, uintmax_t k )
 template<typename T>
 inline constexpr uintmax_t largest_factorial_base()
 {
-    static_assert( std::is_integral<T>::value );
+    static_assert( std::is_fundamental<T>::value );
+    static_assert( std::is_integral<T>::value    );
+    
     const uintmax_t n = std::numeric_limits<T>::max();
     return largest_factorial_base_AUX<T>( n, 2 );
 }
@@ -280,7 +285,7 @@ static inline int factorial_integer( int n )
     #endif
     
     assert( result <= std::numeric_limits<int>::max() );
-    return (int)result;
+    return static_cast<int>(result);
 }
 
 static inline int binomial_integer( int n, int k )
@@ -290,7 +295,7 @@ static inline int binomial_integer( int n, int k )
         return 0;
     uintmax_t result = factorial_integer(n) / ( factorial_integer(k) * factorial_integer(n-k) );
     assert( result <= std::numeric_limits<int>::max() );
-    return (int)result;
+    return static_cast<int>(result);
 }
 
 
@@ -373,14 +378,6 @@ static inline Float binomial_numerical( int64_t n, int64_t k )
 
 
 
-// static inline unsigned int getbit( unsigned int value, unsigned int bitnumber )
-// {
-//     return ( ( value >> bitnumber ) & 1 );
-// }
-
-
-
-
 
 
 static inline bool issmall( Float value, Float threshold = 100. * std::numeric_limits<Float>::epsilon() )
@@ -413,6 +410,52 @@ static inline int sum_int( int to, const std::function<int(int)>& calc )
     return sum_int( 0, to, calc );
 }
 
+inline std::vector<int> range( int to )
+{
+    assert( to >= 0 );
+    std::vector<int> ret(to+1);
+    for( int i = 0; i <= to; i++ ) ret.at(i) = i;
+    assert( ret.size() == to+1 );
+    return ret;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+inline void cartesian_to_polar_coordinates2D( const Float& x, const Float& y, Float& radius, Float& angle )
+{
+    radius = std::sqrt( x*x + y*y );
+    angle  = std::atan2( x, y );
+}
+
+inline void polar_to_cartesian_coordinates2D( const Float& radius, const Float& angle, Float& x, Float& y )
+{
+    x = radius * std::cos( angle );
+    y = radius * std::sin( angle );
+}
+
+
+
 
 
 
@@ -427,57 +470,9 @@ inline timestamp gettimestamp()
 }
 
 
-template<typename T>
-void mergeelementsinsortedlist
-( std::list<T>& L, 
-  const std::function<T( const T&, const T& )>& merge,
-  const std::function<bool( const T&, const T& )>& compare
-) {
-    typename std::list<T>::iterator it = L.begin();
-    while( it != L.end() ){
-
-        typename std::list<T>::iterator now = it; 
-        typename std::list<T>::iterator next = ++it;
-
-        if( next == L.end() ) return;
-
-        if( compare( *it, *next ) )
-        {
-            *now = merge( *now, *next );
-            L.erase( next );
-            it = now;
-        } 
-
-    }
-}
 
 
 
-
-
-
-template<typename T>
-int find_index( const std::vector<T>& vec, const T& t )
-{
-   const auto& it = std::find( vec.begin(), vec.end(), t );
-   assert( it != vec.end() );
-   int ret = std::distance( vec.begin(), it );
-   assert( ret >= 0 );
-   assert( ret < vec.size() );
-   return ret;
-}
-
-
-
-
-template <typename T, size_t N>
-std::ostream& operator<<( std::ostream& stream, const std::array<T, N>& v)
-{
-    for( const auto& item : v )
-        stream << item << space;
-    stream << nl;
-    return stream;
-}
 
 
 
@@ -553,18 +548,6 @@ inline Float gaussrand()
 
 
 
-inline void cartesian_to_polar_coordinates2D( const Float& x, const Float& y, Float& radius, Float& angle )
-{
-    radius = std::sqrt( x*x + y*y );
-    angle  = std::atan2( x, y );
-}
-
-inline void polar_to_cartesian_coordinates2D( const Float& radius, const Float& angle, Float& x, Float& y )
-{
-    x = radius * std::cos( angle );
-    y = radius * std::sin( angle );
-}
-
 
 
 
@@ -590,18 +573,58 @@ inline void sort_and_unique( T& t )
 }
 
 
-
-
-
-
-inline std::vector<int> range( int to )
+template<typename T>
+int find_index( const std::vector<T>& vec, const T& t )
 {
-    assert( to >= 0 );
-    std::vector<int> ret(to+1);
-    for( int i = 0; i <= to; i++ ) ret.at(i) = i;
-    assert( ret.size() == to+1 );
-    return ret;
+   const auto& it = std::find( vec.begin(), vec.end(), t );
+   assert( it != vec.end() );
+   int ret = std::distance( vec.begin(), it );
+   assert( ret >= 0 );
+   assert( ret < vec.size() );
+   return ret;
 }
+
+template<typename T>
+void mergeelementsinsortedlist
+( std::list<T>& L, 
+  const std::function<T( const T&, const T& )>& merge,
+  const std::function<bool( const T&, const T& )>& compare
+) {
+    typename std::list<T>::iterator it = L.begin();
+    while( it != L.end() ){
+
+        typename std::list<T>::iterator now = it; 
+        typename std::list<T>::iterator next = ++it;
+
+        if( next == L.end() ) return;
+
+        if( compare( *it, *next ) )
+        {
+            *now = merge( *now, *next );
+            L.erase( next );
+            it = now;
+        } 
+
+    }
+}
+
+
+
+
+
+template <typename T, size_t N>
+std::ostream& operator<<( std::ostream& stream, const std::array<T, N>& v)
+{
+    for( const auto& item : v )
+        stream << item << space;
+    stream << nl;
+    return stream;
+}
+
+
+
+
+
 
 
 

@@ -2,11 +2,17 @@
 # Global definition of compiler and its flags 
 
 
-# Do you want to use tcmalloc?
+
+# Do you want to use GCC or Clang?
+# Comment out the appropriate definition below
+FLAG_CXX := CLANG
+# FLAG_CXX := GCC
+
+# Do you want to ENABLE the use of tcmalloc?
 # Comment out the following line to disable tcmalloc
 # FLAG_USE_TCMALLOC=yes
 
-# Do you want to use openMP?
+# Do you want to ENABLE the use of openMP?
 # Comment out the following line to disable compilation with openMP
 # OPENMP_FLAG := -fopenmp
 
@@ -20,19 +26,57 @@
 # Comment out the following line to disable the general debugging flags 
 FLAG_DO_COMPILEDEBUGMODE := -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC
 
-# Do you want to ENABLE the general assert macro?
-# Comment out the following line to enable the general assert macro
+# Do you want to DISABLE the general assert macro?
+# Comment out the following line to disable the general assert macro
 # FLAG_DNDEBUG := -DNDEBUG
 
-# Do you want to use the Clang sanitizer?
+# Do you want to ENABLE the Clang sanitizer?
 # Comment out the following line to disable compilation with the Clang sanitizer
 # FLAG_DO_USE_SANITIZER=yes
 
 
+
+
+
 ### Compiler 
 
-CXX = clang++-10
-# CXX = g++
+ifeq ($(FLAG_CXX),GCC)
+
+  CXX := g++
+  
+  CXXFLAGS_WARNINGS_COMPILER := -Wlogical-op -Wreturn-local-addr -Wunsafe-loop-optimizations -Wvector-operation-performance -Wno-type-limits
+
+else ifeq ($(FLAG_CXX),CLANG)
+
+  CXX := clang++
+
+  CXXFLAGS_WARNINGS_COMPILER := -Werror-implicit -Wabsolute-value
+
+else
+
+  $(error No compiler recognized)
+
+endif
+
+
+
+
+### Language Specification 
+
+CXXFLAGS_LANG := -std=c++17 -pedantic 
+
+
+
+
+
+### Optimization flags 
+
+CXXFLAGS_OPTIMIZE := -Ofast -march=native $(OPENMP_FLAG) 
+#-mllvm -inline-threshold=1200
+# -fopenmp 
+# -O3 -Ofast -march=native -flto -frename-registers -frename-registers
+
+
 
 
 ### Compilation parameters 
@@ -51,13 +95,10 @@ else
 endif
 
 
-CXXFLAGS_LANG := -std=c++2a -pedantic 
+CXXFLAGS_WARNINGS_EXTRA := -Wundef -Wcast-align -Wwrite-strings -Wmissing-declarations -Wredundant-decls -Woverloaded-virtual -Wformat -Wformat-nonliteral -Wformat-security -Wformat-y2k -Wmisleading-indentation -Wunused -Wpedantic -Wpointer-arith -Wconversion -Wparentheses -Wdisabled-optimization -Wno-sign-conversion -Wno-shorten-64-to-32 -Wno-shadow
 
-CXXFLAGS_WARNINGS := -Wall -Wextra -Wodr -Wno-unused-variable -Wno-sign-compare -Wno-missing-braces -Wmissing-field-initializers -Wfloat-equal -Werror=implicit
+CXXFLAGS_WARNINGS := -Wall -Wextra -Wodr -Wno-unused-variable -Wno-sign-compare -Wno-missing-braces -Wmissing-field-initializers -Wfloat-equal $(CXXFLAGS_WARNINGS_EXTRA) $(CXXFLAGS_WARNINGS_COMPILER)
 
-CXXFLAGS_OPTIMIZE := -Ofast -march=native $(OPENMP_FLAG) -mllvm -inline-threshold=1200
-# -fopenmp 
-# -O3 -Ofast -march=native -flto -frename-registers -frename-registers
 
 ifeq ($(FLAG_USE_TCMALLOC),yes)
 	CXXFLAGS_MALLOC=-fno-builtin-malloc -fno-builtin-calloc -fno-builtin-realloc -fno-builtin-free

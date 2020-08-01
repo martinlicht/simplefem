@@ -70,7 +70,7 @@ inline SparseMatrix FEECWhitneyInclusionMatrix( const Mesh& mesh, int n, int k, 
         int sigma_src_index = -1; // TODO find the sigma corresponding to fi
         IndexMap sigma_src = sigmas_src[ sigma_src_index ];
 
-        IndexMap sigma_dst = sigma_src - sigma_src[p]; // TODO: pop the p-th element 
+//         IndexMap sigma_dst = sigma_src - sigma_src[p]; // TODO: pop the p-th element 
         int sigma_dst_index = find_index( sigmas_dst, sigma_dst ); // TODO the new sigma in the 
         
         int rowindex = p * binomial_integer( n+1, k ) + sigma_dst_index;

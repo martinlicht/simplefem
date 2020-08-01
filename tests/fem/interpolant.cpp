@@ -29,7 +29,7 @@ int main()
         
         auto scalarfield = [](const FloatVector& vec) -> FloatVector{
             assert( vec.getdimension() == 2 );
-            return FloatVector({ sqrt( vec[0]*vec[0] + vec[1]*vec[1] ) });
+            return FloatVector({ std::sqrt( vec[0]*vec[0] + vec[1]*vec[1] ) });
             return FloatVector({ 1 + vec[0] + vec[1] * vec[1] });
         };
         

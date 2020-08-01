@@ -4,6 +4,8 @@ default: all
 
 include ../common.recipe.mk 
 
+include ../common.upkeep.mk
+
 affix.combinatorics = combinatorics
 affix.operators := operators combinatorics
 affix.dense := dense sparse operators combinatorics
