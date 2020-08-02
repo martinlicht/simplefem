@@ -14,12 +14,11 @@
 #include "../../sparse/matcsr.hpp"
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
-#include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples2D.hpp"
-#include "../../mesh/examples3D.hpp"
 #include "../../vtk/vtkwriter.mesh2D.hpp"
 #include "../../solver/crm.hpp"
-#include "../../solver/pcrm.hpp"
+// #include "../../solver/pcrm.hpp"
+#include "../../solver/minres.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
@@ -32,7 +31,7 @@ using namespace std;
 int main()
 {
         
-        cout << "Unit Test for Solution of Dirichlet Problem" << endl;
+        cout << "Unit Test: Compare numerical solvers CRM vs MINRES\n           for Solution of Dirichlet Problem" << endl;
         
         cout << std::setprecision(10);
 
@@ -57,18 +56,9 @@ int main()
                         return FloatVector({ 1. });
                     };
             
-            
-            
-            
-
-
-            
-            // std::function<FloatVector(const std::function<FloatVector(const FloatVector&) ) >scalarfield = 
-            
             Float xfeq = 1.;
             Float yfeq = 1.;
             
-
             std::function<FloatVector(const FloatVector&)> experiment_sol = 
                 [xfeq,yfeq](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
@@ -104,11 +94,10 @@ int main()
 
             cout << "Solving Poisson Problem with Dirichlet boundary conditions" << endl;
 
-            int min_l = 3; 
-            int max_l = 8;
-            
             ConvergenceTable contable;
             
+
+            int min_l = 1; int max_l = 10;
 
             for( int l = 0; l < min_l; l++ )
                 M.uniformrefinement();
@@ -122,7 +111,7 @@ int main()
                 
                 {
                     
-                    cout << "...assemble scalar mass matrices" << endl;
+                    cout << "...assemble matrices" << endl;
             
                     SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
                     
@@ -145,11 +134,12 @@ int main()
                     cout << "...assemble stiffness matrix" << endl;
             
                     // ProductOperator 
-                    // auto stiffness = incmatrix_t * diffmatrix_t * vector_massmatrix * diffmatrix * incmatrix;
-                    // auto op1 = incmatrix_t * diffmatrix_t;
-                    // auto op2 = op1 * vector_massmatrix;
-                    // auto op3 = op2 * diffmatrix;
-                    // auto stiffness = op3 * incmatrix;
+//                     auto stiffness = incmatrix_t * diffmatrix_t * vector_massmatrix * diffmatrix * incmatrix;
+                       
+//                     auto op1 = incmatrix_t * diffmatrix_t;
+//                     auto op2 = op1 * vector_massmatrix;
+//                     auto op3 = op2 * diffmatrix;
+//                     auto stiffness = op3 * incmatrix;
 
 //                     auto opr1 = diffmatrix & incmatrix;
 //                     auto opr  = vector_massmatrix_fac & opr1;
@@ -158,96 +148,52 @@ int main()
 
                     auto opr  = diffmatrix & incmatrix;
                     auto opl  = opr.getTranspose(); 
-                    auto stiffness = opl & ( vector_massmatrix & opr );
+                    auto stiffness_prelim = opl & ( vector_massmatrix & opr );
+                    stiffness_prelim.sortentries();
+                    auto stiffness = MatrixCSR( stiffness_prelim );
                     
-                    stiffness.sortentries();
-                    auto stiffness_csr = MatrixCSR( stiffness );
-                    
-                    auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. );
-                    //auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
-                    std::cout << "Average value of diagonal preconditioner: " << stiffness_invprecon.getdiagonal().average() << std::endl;
-
                     {
-
-                        const auto& function_sol  = experiment_sol;
-                        const auto& function_grad = experiment_grad;
-                        const auto& function_rhs  = experiment_rhs;
-                        
-                        cout << "...interpolate explicit solution and rhs" << endl;
-            
-                        FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 0, r,   function_sol  );
-                        FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r-1, function_grad );
-                        FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r,   function_rhs  );
-                        
-                        cout << "...measure interpolation commutativity" << endl;
-            
-                        FloatVector commutator = interpol_grad - diffmatrix * interpol_sol;
-                        Float commutatorerror = std::sqrt( commutator * ( vector_massmatrix * commutator ) );
-                        cout << "commutator error: " << commutatorerror << endl;
-                        
-                        cout << "...compute norms of solution and right-hand side:" << endl;
-            
-                        Float sol_norm = std::sqrt( interpol_sol * ( scalar_massmatrix * interpol_sol ) );
-                        Float rhs_norm = std::sqrt( interpol_rhs * ( scalar_massmatrix * interpol_rhs ) );
-                        
-                        cout << "solution norm: " << sol_norm << endl;
-                        cout << "rhs norm:      " << rhs_norm << endl;
-
-                        cout << "...create RHS vector" << endl;
-
-                        FloatVector rhs = incmatrix_t * ( scalar_massmatrix * interpol_rhs );
 
                         FloatVector sol( M.count_simplices(0), 0. );
                         
-                        cout << "...iterative solver" << endl;
-                        
+                        const auto& function_rhs  = experiment_rhs;
+                        FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r,   function_rhs  );
+                        FloatVector rhs = incmatrix_t * ( scalar_massmatrix * interpol_rhs );
+
                         {
+                            cout << "CRM" << endl;
+                        
                             sol.zero();
-                            ConjugateResidualMethod Solver( stiffness_csr );
-//                             PreconditionedConjugateResidualMethod Solver( stiffness_csr, stiffness_invprecon );
-                            Solver.print_modulo        = 1+sol.getdimension();
-                            Solver.max_iteration_count = 4 * sol.getdimension();
+                            ConjugateResidualMethod Solver( stiffness );
+                            Solver.print_modulo        = 1 + 4 * sol.getdimension();
+                            Solver.max_iteration_count =     4 * sol.getdimension();
                             timestamp start = gettimestamp();
                             Solver.solve_robust( sol, rhs );
 //                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+                            
+                            contable << Float(end - start) << Float(Solver.recent_iteration_count);
                         }
 
+                        {
+                            cout << "MINRES" << endl;
                         
-                        cout << "...compute error and residual:" << endl;
-            
-                        FloatVector error     = interpol_sol  - incmatrix * sol;
-                        FloatVector graderror = interpol_grad - diffmatrix * incmatrix * sol;
-                        Float errornorm       = std::sqrt( error * ( scalar_massmatrix * error ) );
-                        Float graderrornorm   = std::sqrt( graderror * ( vector_massmatrix * graderror ) );
-                        Float residualnorm    = ( rhs - stiffness * sol ).norm();
-                        
-                        cout << "error:     " << errornorm     << endl;
-                        cout << "graderror: " << graderrornorm << endl;
-                        cout << "residual:  " << residualnorm  << endl;
+                            sol.zero();
+                            MinimumResidualMethod Solver( stiffness );
+                            Solver.print_modulo        = 1 + 4 * sol.getdimension();
+                            Solver.max_iteration_count =     4 * sol.getdimension();
+                            timestamp start = gettimestamp();
+                            Solver.solve( sol, rhs );
+                            timestamp end = gettimestamp();
+                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
 
+                            contable << Float(end - start) << Float(Solver.recent_iteration_count);
+                        }
                         
-                        contable << errornorm << graderrornorm << nl;
+                        contable << nl;
                         
                         contable.print( std::cout );
-
-                        if( r == 1 ){
-                    
-                            fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
-                
-                            VTK_MeshWriter_Mesh2D vtk( M, fs );
-                            vtk.writePreamble( getbasename(__FILE__) );
-                            vtk.writeCoordinateBlock( 0.3 * sol );
-                            vtk.writeTopDimensionalCells();
-                            
-                            vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
-                            // vtk.writeCellVectorData( interpol_grad, "gradient_interpolation" , 0.1 );
-                            
-                            fs.close();
-                    
-                        }
-
 
                     }
                     
@@ -256,9 +202,8 @@ int main()
                 cout << "Refinement..." << endl;
             
                 if( l != max_l ) M.uniformrefinement();
-                
-                
 
+                
             } 
         
         }

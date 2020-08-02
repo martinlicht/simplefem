@@ -99,7 +99,7 @@ int main()
             start = gettimestamp();
             CRM.solve(y,b);
             end = gettimestamp();
-            cout << end - start << endl;
+            cout << timestamp2string( end - start ) << endl;
         }
         
         {
@@ -115,7 +115,7 @@ int main()
             start = gettimestamp();
             PCRM.solve(y,b);
             end = gettimestamp();
-            cout << end - start << endl;
+            cout << timestamp2string( end - start ) << endl;
         }
         
 		

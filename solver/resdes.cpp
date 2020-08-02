@@ -108,9 +108,10 @@ void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
     
     /* HOW DID WE FINISH ? */
     if( r_sqnorm > tolerance ) {
-        LOG << "CRM process has failed.\n";
+        LOG << "Residual descent process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
     } else { 
-        LOG << "CRM process has succeeded.\n";
+        LOG << "Residual descent process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
+
     }
 
     recent_deviation = r_sqnorm;

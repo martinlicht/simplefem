@@ -26,7 +26,10 @@ runtests.vtk:
 	for i in ./vtk/*.out; do (./$$i > ${OUTPUT}) || break; done
 
 runtests.fem: 
-	for i in ./vtk/*.out; do (./$$i > ${OUTPUT}) || break; done
+	for i in ./fem/*.out; do (./$$i > ${OUTPUT}) || break; done
+
+runtests.experiments: 
+	for i in ./experiments/*.out; do (./$$i > ${OUTPUT}) || break; done
 
 
 runtests:

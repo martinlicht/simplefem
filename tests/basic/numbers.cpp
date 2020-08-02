@@ -27,8 +27,8 @@ int main()
         std::cout << "    case unsigned long     : " << largest_factorial_base<     unsigned long>() << std::endl;
         std::cout << "    case unsigned long long: " << largest_factorial_base<unsigned long long>() << std::endl;
         
-        for( int k = 0; k < 100; k++ )
-            std::cout << k << " " << largest_factorial_base_AUX( k, 2 ) << std::endl;
+        for( int n = 0; n < 100; n++ )
+            std::cout << n << " " << largest_factorial_base_AUX( n, 2 ) << std::endl;
         
         return 0;
 }

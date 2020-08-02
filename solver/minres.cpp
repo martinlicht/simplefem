@@ -101,11 +101,10 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
     
     /* HOW DID WE FINISH ? */
     if( rr > tolerance ) {
-        LOG << "MinimumResidualMethod process has failed.\n";
+        LOG << "Minimum Residual process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
     } else { 
-        LOG << "MinimumResidualMethod process has succeeded.\n";
+        LOG << "Minimum Residual process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
     }
-
     recent_deviation = rr;
     
 }
@@ -128,12 +127,12 @@ void MinimumResidualMethod::iterationStart(
 
     // .... first iteration 
   
-//     FloatVector p2 = p1;
-//     FloatVector s2 = s1;
-    p1 = p0;
-    s1 = s0;
+    Float s1_s1 = s1 * s1;
     
-    Float alpha = ( r * s1 ) / ( s1 * s1);
+    if( issmall( s1_s1 ) )
+        return;
+    
+    Float alpha = ( r * s1 ) / ( s1_s1);
     x += alpha * p1;
     r -= alpha * s1;
     
@@ -142,7 +141,7 @@ void MinimumResidualMethod::iterationStart(
     p0 = s1;
     s0 = A * s1;
     
-    Float beta1 = ( s0 * s1 ) / ( s1 * s1 );
+    Float beta1 = ( s0 * s1 ) / ( s1_s1 );
     p0 -= beta1 * p1;
     s0 -= beta1 * s1;
 
@@ -160,12 +159,15 @@ void MinimumResidualMethod::iterationStep(
     Float& rr
 ) const {
     
-    p2 = p1;
-    s2 = s1;
-    p1 = p0;
-    s1 = s0;
+    p2 = p1; p1 = p0;
+    s2 = s1; s1 = s0;
     
-    Float alpha = ( r * s1 ) / ( s1 * s1);
+    Float s1_s1 = s1 * s1;
+    
+    if( issmall( s1_s1 ) )
+        return;
+
+    Float alpha = ( r * s1 ) / ( s1_s1 );
     x += alpha * p1;
     r -= alpha * s1;
     
@@ -178,7 +180,12 @@ void MinimumResidualMethod::iterationStep(
     p0 -= beta1 * p1;
     s0 -= beta1 * s1;
     
-    Float beta2 = ( s0 * s2 ) / ( s2 * s2 );
+    Float s2_s2 = s2 * s2;
+    
+    if( issmall( s2_s2 ) )
+        return;
+
+    Float beta2 = ( s0 * s2 ) / ( s2_s2 );
     p0 -= beta2 * p2;
     s0 -= beta2 * s2;
     

@@ -17,7 +17,7 @@ int main()
         
         cout << std::setprecision(10);
 
-        for( int i = 0; i <= 20; i++ ) {
+        for( int i = 0; i <= 12; i++ ) {
             int64_t f1 = factorial_integer( i );
             int64_t f2 = factorial_integer_naive( i );
             int64_t f3 = factorial_integer_table( i );
@@ -29,7 +29,7 @@ int main()
 
         srand(0);
         auto start_naive = std::chrono::system_clock::now();
-        for( int i = 0; i < N; i++ ) factorial_integer_naive( rand() % 21 );
+        for( int i = 0; i < N; i++ ) factorial_integer_naive( rand() % 13 );
         auto end_naive   = std::chrono::system_clock::now();
 
         std::chrono::duration<double> elapsed_seconds_naive = end_naive - start_naive;
@@ -37,7 +37,7 @@ int main()
         
         srand(0);
         auto start_loop = std::chrono::system_clock::now();
-        for( int i = 0; i < N; i++ ) factorial_integer_loop( rand() % 21  );
+        for( int i = 0; i < N; i++ ) factorial_integer_loop( rand() % 13  );
         auto end_loop   = std::chrono::system_clock::now();
     
         std::chrono::duration<double> elapsed_seconds_loop  = end_loop  - start_loop;
@@ -45,7 +45,7 @@ int main()
         
         srand(0);
         auto start_table = std::chrono::system_clock::now();
-        for( int i = 0; i < N; i++ ) factorial_integer_table( rand() % 21  );
+        for( int i = 0; i < N; i++ ) factorial_integer_table( rand() % 13  );
         auto end_table   = std::chrono::system_clock::now();
 
         std::chrono::duration<double> elapsed_seconds_table = end_table - start_table;
@@ -53,7 +53,7 @@ int main()
         
         srand(0);
         auto start_n_naive = std::chrono::system_clock::now();
-        for( int i = 0; i < N; i++ ) factorial_numerical_naive( rand() % 40 );
+        for( int i = 0; i < N; i++ ) factorial_numerical_naive( rand() % 10 );
         auto end_n_naive   = std::chrono::system_clock::now();
 
         std::chrono::duration<double> elapsed_seconds_n_naive = end_n_naive - start_n_naive;
@@ -61,7 +61,7 @@ int main()
         
         srand(0);
         auto start_n_loop = std::chrono::system_clock::now();
-        for( int i = 0; i < N; i++ ) factorial_numerical_loop( rand() % 40  );
+        for( int i = 0; i < N; i++ ) factorial_numerical_loop( rand() % 10  );
         auto end_n_loop   = std::chrono::system_clock::now();
     
         std::chrono::duration<double> elapsed_seconds_n_loop  = end_n_loop  - start_n_loop;

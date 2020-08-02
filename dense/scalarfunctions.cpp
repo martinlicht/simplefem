@@ -116,7 +116,7 @@ Float NormMax( const DenseMatrix& src )
     Float ret = 0.;
     for( int r = 0; r < src.getdimout(); r++ )
     for( int c = 0; c < src.getdimin(); c++ )
-        ret = maximum( ret, absolute( src(r,c) ) );
+        ret = std::max( ret, absolute( src(r,c) ) );
     return ret;
 }
 
@@ -170,7 +170,7 @@ Float NormOperatorL1( const DenseMatrix& src )
         Float spalte = 0.;
         for( int r = 0; r < src.getdimout(); r++ )
             spalte += absolute( src(r,c) );
-        ret = maximum( ret, spalte );
+        ret = std::max( ret, spalte );
     }
     return ret;
 }
@@ -183,7 +183,7 @@ Float NormOperatorMax( const DenseMatrix& src )
         Float zeile = 0.;
         for( int c = 0; c < src.getdimin(); c++ )
             zeile += absolute( src(r,c) );
-        ret = maximum( ret, zeile );
+        ret = std::max( ret, zeile );
     }
     return ret;
 }

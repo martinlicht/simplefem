@@ -15,7 +15,7 @@ class ConvergenceTable
     public:
         
         explicit ConvergenceTable( unsigned int prec = 7 )
-        : myprecision(prec)
+        : make_new_row(true), myprecision(prec)
         {
             
         }
@@ -23,8 +23,10 @@ class ConvergenceTable
         ConvergenceTable& operator<<( Float entry )
         {
             
-            if( entries.size() == 0 )
+            if( make_new_row ) {
                 entries.push_back( std::vector<Float>(0) );
+                make_new_row = false;
+            }
             
             entries.back().push_back( entry );
             
@@ -35,7 +37,7 @@ class ConvergenceTable
         {
             
             if( code == nl )
-                entries.push_back( std::vector<Float>(0) );
+                make_new_row = true; //entries.push_back( std::vector<Float>(0) );
             
             return *this; 
         }
@@ -69,9 +71,11 @@ class ConvergenceTable
             
         }
 
-    private:
+    public:
         
         std::vector<std::vector<Float>> entries;
+        
+        bool make_new_row;
         
         unsigned int myprecision;
     

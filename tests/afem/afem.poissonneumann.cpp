@@ -207,7 +207,7 @@ int main()
                     CRM.tolerance = 1e-10;
                     CRM.solve( sol, rhs );
                     timestamp end = gettimestamp();
-                    std::cout << "\t\t\t " << end - start << std::endl;
+                    std::cout << "\t\t\t " << timestamp2string( end - start ) << std::endl;
                 }
                         
                 if(false)
@@ -219,7 +219,7 @@ int main()
                     PCRM.tolerance = 1e-10;
                     PCRM.solve( sol, rhs );
                     timestamp end = gettimestamp();
-                    std::cout << "\t\t\t " << end - start << std::endl;
+                    std::cout << "\t\t\t " << timestamp2string( end - start ) << std::endl;
                 }
 
                 cout << "...compute error and residual:" << endl;

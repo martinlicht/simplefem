@@ -52,14 +52,14 @@ static const char tab = '\t';
 
 
 
-// template<typename T>
-// inline int kronecker( const T& i, const T& j )
-// {
-//     if( i == j )
-//         return 1;
-//     else
-//         return 0;
-// }
+template<typename T>
+inline int kronecker( const T& i, const T& j )
+{
+    if( i == j )
+        return 1;
+    else
+        return 0;
+}
 
 
 template<typename T>
@@ -156,6 +156,14 @@ static inline int signpower( int exponent )
 //                                             //
 //        INTEGRAL FACTORIAL, BINOMIALS        //
 //               AND AUXILIARIES               //
+//                                             //
+//   NOTE:                                     //
+//   For small inputs, the naive method seems  //
+//   to perform best, the table method is only //
+//   slightly slower, and the loop method is   //
+//   consistently slowest. The differences     //
+//   are in the range of 5%, so fairly small   //
+//   practically.                              //
 //                                             //
 /////////////////////////////////////////////////
 
@@ -319,6 +327,11 @@ static inline int binomial_integer( int n, int k )
 //       NUMERICAL FACTORIAL, BINOMIALS        //
 //               AND AUXILIARIES               //
 //                                             //
+//   NOTE:                                     //
+//   For small inputs, the loop method seems   //
+//   to be fastest, whereas the recursive form //
+//   of the faculty performs 10% slower.       //
+//                                             //
 /////////////////////////////////////////////////
 
 static inline Float factorial_numerical_naive( int64_t n )
@@ -469,7 +482,10 @@ inline timestamp gettimestamp()
     return clock(); 
 }
 
-
+inline std::string timestamp2string( timestamp t )
+{
+    return std::to_string( ((double)t)/CLOCKS_PER_SEC ) + "s";
+}
 
 
 

@@ -100,9 +100,9 @@ void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) cons
     
     /* HOW DID WE FINISH ? */
     if( rAr > tolerance ) {
-        LOG << "CRM process has failed.\n";
+        LOG << "CRM process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
     } else { 
-        LOG << "CRM process has succeeded.\n";
+        LOG << "CRM process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
     }
 
     recent_deviation = rAr;
@@ -249,9 +249,9 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
     
     /* HOW DID WE FINISH ? */
     if( r * r > tolerance ) {
-        LOG << "CRM process has failed.\n";
+        LOG << "CRM process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
     } else { 
-        LOG << "CRM process has succeeded.\n";
+        LOG << "CRM process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
     }
 
     recent_deviation = r * r;

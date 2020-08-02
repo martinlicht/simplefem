@@ -109,12 +109,16 @@ int main()
 
             cout << "Solving Poisson Problem with Neumann boundary conditions" << endl;
             
+            int min_l = 3; 
             int max_l = 8;
             
             ConvergenceTable contable;
             
 
-            for( int l = 0; l <= max_l; l++ ){
+            for( int l = 0; l < min_l; l++ )
+                M.uniformrefinement();
+
+            for( int l = min_l; l <= max_l; l++ ){
                 
                 cout << "Level: " << l << std::endl;
                 cout << "# T/F/E/V: " << M.count_tetrahedra() << "/" << M.count_faces() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
@@ -151,6 +155,7 @@ int main()
                     auto op2 = op1 * vector_massmatrix;
                     auto op3 = op2 * diffmatrix;
                     auto stiffness = op3 * incmatrix;
+                    auto& stiffness_csr = stiffness;
 
 //                     auto opr1 = diffmatrix & incmatrix;
 //                     auto opr  = vector_massmatrix_fac & opr1;
@@ -209,24 +214,15 @@ int main()
                         
                         {
                             sol.zero();
+                            ConjugateResidualMethod Solver( stiffness_csr );
+//                             PreconditionedConjugateResidualMethod Solver( stiffness_csr, stiffness_invprecon );
+                            Solver.print_modulo        = 1+sol.getdimension();
+                            Solver.max_iteration_count = 4 * sol.getdimension();
                             timestamp start = gettimestamp();
-                            ConjugateResidualMethod CRM( stiffness );
-                            CRM.print_modulo = 1+sol.getdimension()/1000;
-                            // CRM.tolerance = 1e-19;
-                            CRM.solve( sol, rhs );
+                            Solver.solve_robust( sol, rhs );
+//                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << end - start << std::endl;
-                        }
-                        
-                        if(false){
-                            sol.zero();
-                            timestamp start = gettimestamp();
-                            PreconditionedConjugateResidualMethod PCRM( stiffness, stiffness_invprecon );
-                            PCRM.print_modulo = 1+sol.getdimension()/1000;
-                            // PCRM.tolerance = 1e-19;
-                            PCRM.solve( sol, rhs );
-                            timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << end - start << std::endl;
+                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
                         }
 
                         cout << "...compute error and residual:" << endl;

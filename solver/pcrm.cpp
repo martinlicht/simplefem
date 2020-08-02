@@ -110,9 +110,10 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
 
     /* HOW DID WE FINISH ? */
     if( rMAMr > tolerance ) {
-      LOG << "PCRM process has failed.\n";
+        LOG << "PCRM process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
     } else { 
-      LOG << "PCRM process has succeeded.\n";
+        LOG << "PCRM process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
+
     }
 
     recent_deviation = rMAMr;
