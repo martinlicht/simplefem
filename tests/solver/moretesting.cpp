@@ -66,10 +66,10 @@ int main()
 	        CRM.max_iteration_count = 100;
 		CRM.tolerance = 1e-16;
                 
-                clock_t start = clock();
+                timestamp start = gettimestamp();
                 CRM.solve(y,b);
-                clock_t end = clock();
-                cout << "time elapsed: " << ( (double)end - (double)start ) / CLOCKS_PER_SEC << endl;
+                timestamp end   = gettimestamp();
+                cout << "time elapsed: " << timestamp2string( end - start ) << endl;
                 
 	}
 	
