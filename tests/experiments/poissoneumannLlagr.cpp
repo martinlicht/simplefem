@@ -19,7 +19,7 @@
 #include "../../mesh/examples3D.hpp"
 #include "../../vtk/vtkwriter.mesh2D.hpp"
 #include "../../solver/crm.hpp"
-#include "../../solver/pcrm.hpp"
+#include "../../solver/minres.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
@@ -208,12 +208,12 @@ int main()
                 
                 {
                     sol.zero();
-                    ConjugateResidualMethod Solver( stiffness_csr );
+                    MinimumResidualMethod Solver( stiffness_csr );
 //                             PreconditionedConjugateResidualMethod Solver( stiffness_csr, stiffness_invprecon );
                     Solver.print_modulo        = 1+sol.getdimension();
                     Solver.max_iteration_count = 4 * sol.getdimension();
                     timestamp start = gettimestamp();
-                    Solver.solve_robust( sol, rhs );
+                    Solver.solve( sol, rhs );
 //                             Solver.solve( sol, rhs );
                     timestamp end = gettimestamp();
                     std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
