@@ -73,7 +73,30 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
         
             LOG << "Begin Preconditioned Conjugate Residual iteration";// << std::endl;
         
-            iterationStart( x, b, r, p, Mr, Mp, AMr, AMp, rMAMr );
+            {
+                
+                /* x = initial guess */
+                
+                /* r = b - A x */
+                /* p = r */
+                
+                r = b - A * x;
+                p = M * ( A * r );
+                
+                /* Mr = M r */
+                /* Mp = M p */
+                Mr = M * r;
+                Mp = M * p;
+
+                /* Ar = A r */
+                /* Ap = A p */
+                AMr = A * Mr;
+                AMp = A * Mp;
+
+                /* rho is Mr.A.Mr */
+                rMAMr = Mr * AMr;
+                
+            }
 
             LOG << "starting with"
                       << " r-MAMsqnorm=" << rMAMr
@@ -101,7 +124,30 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
             break;
             
         /* Perform iteration step */
-        iterationStep( x, r, p, Mr, Mp, AMr, AMp, rMAMr, MAMp, AMAMp );
+        {
+            
+            MAMp  = M *  AMp;
+            AMAMp = A * MAMp;
+
+            Float alpha = rMAMr / ( AMp * MAMp );
+
+            x += alpha * Mp;
+
+            r  -= alpha *   AMp; // not necessary, see also below
+            Mr -= alpha *  MAMp;
+            AMr -= alpha * AMAMp;
+
+            Float newrMAMr = Mr * AMr;
+
+            Float beta = newrMAMr / rMAMr;
+
+            p =   r + beta *   p; // as such, completely useless
+            Mp =  Mr + beta *  Mp;
+            AMp = AMr + beta * AMp;
+
+            rMAMr = newrMAMr;
+
+        }
         
         /* Increase iteration counter */
         recent_iteration_count++;
@@ -121,69 +167,3 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
 }
   
   
-  
-void PreconditionedConjugateResidualMethod::iterationStart( 
-    const FloatVector& x, const FloatVector& b, 
-    FloatVector& r, FloatVector& p, FloatVector& Mr, FloatVector& Mp, FloatVector& AMr, FloatVector& AMp,
-    Float& rMAMr
-) const {
-    
-    /* x = initial guess */
-    
-    /* r = b - A x */
-    /* p = r */
-    
-    r = b - A * x;
-    p = M * ( A * r );
-    
-    /* Mr = M r */
-    /* Mp = M p */
-    Mr = M * r;
-    Mp = M * p;
-
-    /* Ar = A r */
-    /* Ap = A p */
-    AMr = A * Mr;
-    AMp = A * Mp;
-
-    /* rho is Mr.A.Mr */
-    rMAMr = Mr * AMr;
-      
-}
-
-
-void PreconditionedConjugateResidualMethod::iterationStep( 
-    FloatVector& x, 
-    FloatVector& r, FloatVector& p, FloatVector& Mr, FloatVector& Mp, FloatVector& AMr, FloatVector& AMp,
-    Float& rMAMr,
-    FloatVector& MAMp, FloatVector& AMAMp
-) const {
-    
-    MAMp  = M *  AMp;
-    AMAMp = A * MAMp;
-
-    Float alpha = rMAMr / ( AMp * MAMp );
-
-    x += alpha * Mp;
-
-     r  -= alpha *   AMp; // not necessary, see also below
-     Mr -= alpha *  MAMp;
-    AMr -= alpha * AMAMp;
-
-    Float newrMAMr = Mr * AMr;
-
-    Float beta = newrMAMr / rMAMr;
-
-      p =   r + beta *   p; // as such, completely useless
-     Mp =  Mr + beta *  Mp;
-    AMp = AMr + beta * AMp;
-
-    rMAMr = newrMAMr;
-
-}
-
-  
-  
-  
-  
-

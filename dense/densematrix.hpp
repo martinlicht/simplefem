@@ -26,8 +26,8 @@ class SparseMatrix;
 ****  
 ************************/
 
-class DenseMatrix:
-public LinearOperator /* every matrix is a linear operator */
+class DenseMatrix final
+: public LinearOperator /* every matrix is a linear operator */
 {
 
     public:
@@ -70,7 +70,7 @@ public LinearOperator /* every matrix is a linear operator */
         DenseMatrix clone() const;
         
         
-        
+        using LinearOperator::apply;
         virtual void apply( FloatVector& dest, const FloatVector& add, Float scaling ) const override;
         
         /* matrix level point of view */
@@ -227,7 +227,7 @@ inline DenseMatrix MatrixMult( const DenseMatrix& left, const DenseMatrix& right
 }
 
 
-Float Determinant( const DenseMatrix& );
+extern Float Determinant( const DenseMatrix& );
 
 inline Float determinant( const DenseMatrix& mat ) 
 {

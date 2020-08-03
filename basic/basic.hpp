@@ -484,7 +484,7 @@ inline timestamp gettimestamp()
 
 inline std::string timestamp2string( timestamp t )
 {
-    return std::to_string( ((double)t)/CLOCKS_PER_SEC ) + "s";
+    return std::to_string( static_cast<double>(t) / CLOCKS_PER_SEC ) + "s";
 }
 
 
@@ -512,7 +512,7 @@ inline Float gaussrand_1()
     
     Float x = 0;
     
-    for( int i = 0; i < NSUM; i++) x += rand() / (Float)RAND_MAX;
+    for( int i = 0; i < NSUM; i++) x += rand() / static_cast<Float>(RAND_MAX);
     
     x -= NSUM / 2.0;
     x /= std::sqrt( NSUM / 12.0 );

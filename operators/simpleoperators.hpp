@@ -14,8 +14,8 @@
 ************************/
 
 
-class IdentityOperator:
-public LinearOperator
+class IdentityOperator final
+: public LinearOperator
 {
 
     public:
@@ -42,6 +42,7 @@ public LinearOperator
         virtual void check() const override { LinearOperator::check(); }
         virtual void print( std::ostream& ) const override { LOG << "Print Identity Operator" << std::endl; }
 
+        using LinearOperator::apply;
         virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override { dest = scaling * src; }
     
 };
@@ -68,8 +69,8 @@ inline IdentityOperator operator*( const IdentityOperator& left, const IdentityO
 ************************/
 
 
-class ScalingOperator:
-public LinearOperator /* every scaling operation is a linear operator */
+class ScalingOperator final
+: public LinearOperator /* every scaling operation is a linear operator */
 {
 
     public:
@@ -100,6 +101,7 @@ public LinearOperator /* every scaling operation is a linear operator */
         Float getscaling() const;
         void setscaling( Float s );
 
+        using LinearOperator::apply;
         virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override;
 
     private:
@@ -130,8 +132,8 @@ inline ScalingOperator operator*( const ScalingOperator& left, const ScalingOper
 ****  
 ************************/
 
-class DiagonalOperator:
-public LinearOperator 
+class DiagonalOperator final
+: public LinearOperator 
 {
 
     public:
@@ -165,6 +167,7 @@ public LinearOperator
         FloatVector& getdiagonal();
         const FloatVector& getdiagonal() const;
         
+        using LinearOperator::apply;
         virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override;
         
         const DiagonalOperator sqrt() const;

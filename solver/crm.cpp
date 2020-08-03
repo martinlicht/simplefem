@@ -66,7 +66,25 @@ void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) cons
         
             LOG << "Begin Conjugate Residual iteration";// << std::endl;
         
-            iterationStart( x, b, r, d, Ar, Ad, rAr );
+            {
+    
+                /* r = b - A x */
+                r = b - A * x;
+
+                /* d = r */
+                d = A * r; //d.copydatafrom( r );
+
+                /* Ar = A r */
+                Ar = A * r; // A.apply( Ar, (const FloatVector&) r );
+
+                /* Ad = A d */
+                Ad = A * d; // A.apply( Ad, (const FloatVector&) d );
+
+                /* rho is r.A.r */
+                rAr = r * Ar;
+                assert( rAr >= 0. );
+                
+            }
         
             LOG << "starting with"
                       << " r-Asqnorm="   << r * Ar  
@@ -92,7 +110,35 @@ void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) cons
             break;
             
         /* Perform iteration step */
-        iterationStep( x, r, d, Ar, Ad, rAr, AAd );
+        {
+
+            assert( rAr >= 0. );
+            
+            AAd = A * Ad;
+
+            /*  alpha = r.A.r / d.AAd */
+            Float Ad_Ad = Ad * Ad;
+            Float alpha = rAr / Ad_Ad;
+
+            assert( rAr >= 0. ); assert( Ad_Ad >= 0. );
+            if( Ad_Ad < tolerance ) return;
+
+            x += alpha * d;
+
+            r -= alpha * Ad; //= b - A * x;
+
+            Ar -= alpha * AAd;
+
+            Float tau = rAr;
+            rAr = r * ( A * r ); //r * ( A * r ); //r * Ar;
+            Float beta = rAr / tau;
+            assert( rAr >= 0. );
+            
+            d = r + beta * d;
+
+            Ad = Ar + beta * Ad;
+            
+        }
         
         /* Increase iteration counter */
         recent_iteration_count++;
@@ -109,69 +155,6 @@ void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) cons
     
 }
   
-  
-  
-void ConjugateResidualMethod::iterationStart( 
-    const FloatVector& x, const FloatVector& b, 
-    FloatVector& r, FloatVector& d, FloatVector& Ar, FloatVector& Ad,
-    Float& rAr
-) const {
-    
-    /* r = b - A x */
-    r = b - A * x;
-
-    /* d = r */
-    d = A * r; //d.copydatafrom( r );
-
-    /* Ar = A r */
-    Ar = A * r; // A.apply( Ar, (const FloatVector&) r );
-
-    /* Ad = A d */
-    Ad = A * d; // A.apply( Ad, (const FloatVector&) d );
-
-    /* rho is r.A.r */
-    rAr = r * Ar;
-    assert( rAr >= 0. );
-    
-}
-
-
-
-
-void ConjugateResidualMethod::iterationStep( 
-    FloatVector& x, 
-    FloatVector& r, FloatVector& d, FloatVector& Ar, FloatVector& Ad,
-    Float& rAr,
-    FloatVector& AAd
-) const {
-
-    assert( rAr >= 0. );
-    
-    AAd = A * Ad;
-
-    /*  alpha = r.A.r / d.AAd */
-    Float Ad_Ad = Ad * Ad;
-    Float alpha = rAr / Ad_Ad;
-
-    assert( rAr >= 0. ); assert( Ad_Ad >= 0. );
-    if( Ad_Ad < tolerance ) return;
-
-    x += alpha * d;
-
-    r -= alpha * Ad; //= b - A * x;
-
-    Ar -= alpha * AAd;
-
-    Float tau = rAr;
-    rAr = r * ( A * r ); //r * ( A * r ); //r * Ar;
-    Float beta = rAr / tau;
-    assert( rAr >= 0. );
-    
-    d = r + beta * d;
-
-    Ad = Ar + beta * Ad;
-      
-}
 
   
 
@@ -240,7 +223,7 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
             r = r - alpha * Ad;
             Float Ad_Ar = Ad * ( A * r );
             Float beta = Ad_Ar / Ad_Ad;
-            d = r - beta * d;
+            d = r + beta * d;
         }
         
         /* Increase iteration counter */

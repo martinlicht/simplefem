@@ -259,13 +259,14 @@ void Mesh::set_flags( int dim, SimplexFlag flag )
         set_flag( dim, s, flag );
 }
 
-const std::vector<SimplexFlag>& Mesh::get_flags( int dim ) const
+const std::vector<SimplexFlag> Mesh::get_flags( int dim ) const
 {
     assert( 0 <= dim && dim <= getinnerdimension() );
     assert( dimension_counted( dim ) );
     std::vector<SimplexFlag> flags( count_simplices(dim), SimplexFlagInvalid );
     for( int s = 0; s < count_simplices(dim); s++ )
         flags[s] = get_flag( dim, s );
+    return flags;
 }
 
 void Mesh::set_flags( int dim, std::vector<SimplexFlag> flags )
@@ -371,7 +372,7 @@ Float Mesh::getMeasure( int dim, int index ) const
     
     DenseMatrix temp = Transpose( Jac ) * Jac;
     
-    return std::sqrt(absolute(Determinant(temp))) / (Float)factorial_numerical( getinnerdimension() );
+    return std::sqrt(absolute(Determinant(temp))) / factorial_numerical( getinnerdimension() );
 }
 
 Float Mesh::getShapemeasure( int dim, int index ) const 
@@ -379,7 +380,7 @@ Float Mesh::getShapemeasure( int dim, int index ) const
     assert( 0 <= dim && dim <= getinnerdimension() );
     assert( 0 <= index && index < count_simplices(dim) );
     
-    return power_numerical( getDiameter( dim, index ), (Float)dim ) / getMeasure( dim, index );
+    return power_numerical( getDiameter( dim, index ), dim ) / getMeasure( dim, index );
 }
 
 Float Mesh::getShapemeasure( int dim ) const 
@@ -388,7 +389,7 @@ Float Mesh::getShapemeasure( int dim ) const
     
     Float shapemeas = 0.;
     for( int s = 0; s < count_simplices(dim); s++ )
-        shapemeas = std::max( shapemeas, power_numerical( getDiameter( dim, s ), (Float)dim ) / getMeasure( dim, s ) );
+        shapemeas = std::max( shapemeas, power_numerical( getDiameter( dim, s ), dim ) / getMeasure( dim, s ) );
     return shapemeas;
 }
 

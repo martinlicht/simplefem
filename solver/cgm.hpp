@@ -1,5 +1,5 @@
-#ifndef INCLUDEGUARD_SOLVER_MinimumResidualMethod_METHOD
-#define INCLUDEGUARD_SOLVER_MinimumResidualMethod_METHOD
+#ifndef INCLUDEGUARD_SOLVER_CONJUGATEGRADIENT_METHOD
+#define INCLUDEGUARD_SOLVER_CONJUGATEGRADIENT_METHOD
 
 
 #include <iostream>
@@ -13,7 +13,7 @@
 
 /************************
 ****
-****  Class for Conjugate Residual Method
+****  Class for Conjugate Gradient Method
 ****  - instantiates IterativeSolver
 ****  - features iteration start and iteration step,
 ****    which can be called as such, or from solve().
@@ -23,14 +23,14 @@
 
 
 
-class MinimumResidualMethod
+class ConjugateGradientMethod
 : public IterativeSolver
 {
 
         public:
         
-                explicit MinimumResidualMethod( const LinearOperator& op );
-                virtual ~MinimumResidualMethod();
+                explicit ConjugateGradientMethod( const LinearOperator& op );
+                virtual ~ConjugateGradientMethod();
 
                 virtual void check() const override;
                 virtual void print( std::ostream& ) const override;
@@ -46,5 +46,7 @@ class MinimumResidualMethod
   
   
 #endif
+  
+  
   
   

@@ -177,7 +177,7 @@ class Mesh
         
         void set_flags( int dim, SimplexFlag flag );
         
-        const std::vector<SimplexFlag>& get_flags( int dim ) const;
+        const std::vector<SimplexFlag> get_flags( int dim ) const;
         
         void set_flags( int dim, std::vector<SimplexFlag> flags );
         

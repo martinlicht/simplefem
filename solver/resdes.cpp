@@ -89,8 +89,8 @@ void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
 
             Ar = A * r;
         
-            Float r_Asqnorm = r * Ar;
-            Float Ar_sqnorm = Ar * Ar;
+            Float  r_Asqnorm = r * Ar;
+            Float Ar_sqnorm  = Ar * Ar;
             assert( r_Asqnorm >= 0. && Ar_sqnorm >= 0. );
             Float alpha = r_Asqnorm / Ar_sqnorm;
 

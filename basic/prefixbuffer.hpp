@@ -42,14 +42,14 @@ class prefixbuffer : public std::streambuf
             return lineprefix = str;
         }
     
-        virtual int sync() {
+        virtual int sync() override {
             return pbuf->pubsync();
         }
         
         
     protected:
         
-        virtual int_type overflow (int_type c) {
+        virtual int_type overflow (int_type c) override {
         
             if ( c != std::char_traits<char>::eof() ) {
                 

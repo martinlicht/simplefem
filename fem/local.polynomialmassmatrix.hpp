@@ -43,12 +43,12 @@ inline DenseMatrix polynomialmassmatrix( int n, int r )
         //  alpha! / (n+|alpha|)!
         assert( absolute( alpha ) == 2*r );
         
-        ret( i, j ) = factorial_integer(n) * (Float)alpha.factorial() / (Float) factorial_integer( n + 2*r ); 
+        ret( i, j ) = factorial_integer(n) * alpha.factorial() / factorial_numerical( n + 2*r ); 
         
-        {
-            Float test = factorial_numerical(n) * alpha.factorial() / factorial_numerical( n + 2*r ); 
-            assert( isabout( ret(i,j), test ) );
-        }
+//         {
+//             Float test = factorial_numerical(n) * alpha.factorial() / static_cast<Float>(factorial_integer( n + 2*r )); 
+//             assert( isabout( ret(i,j), test ) );
+//         }
 
         if( ret( i, j ) <= 0. ) {
             LOG << multis[i] << multis[j] << ret (i, j );

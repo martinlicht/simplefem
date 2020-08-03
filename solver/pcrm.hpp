@@ -39,19 +39,6 @@ class PreconditionedConjugateResidualMethod
         
     private:
 
-        void iterationStart( 
-            const FloatVector& x, const FloatVector& b, 
-            FloatVector& r, FloatVector& p, FloatVector& Mr, FloatVector& Mp, FloatVector& AMr, FloatVector& AMp,
-            Float& r_MAMnorm
-            ) const;
-
-        void iterationStep( 
-            FloatVector& x, 
-            FloatVector& r, FloatVector& p, FloatVector& Mr, FloatVector& Mp, FloatVector& AMr, FloatVector& AMp,
-            Float& r_MAMnorm,
-            FloatVector& MAMp, FloatVector& AMAMp
-        ) const;
-
         const LinearOperator& A;   
         const LinearOperator& M;
 

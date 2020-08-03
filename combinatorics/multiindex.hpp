@@ -18,7 +18,7 @@
 **** 
 ********************/
 
-class MultiIndex
+class MultiIndex final
 : public IndexMap
 {
 

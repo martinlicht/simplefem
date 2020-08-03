@@ -69,7 +69,35 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
         
             LOG << "Begin Minimal Residual iteration";// << std::endl;
         
-            iterationStart( x, b, r, p0, s0, p1, s1, rr );
+            {
+                
+                r = b - A * x;
+                p0 = r;
+                s0 = A * p0;
+                p1 = p0;
+                s1 = s0;
+
+                // .... first iteration 
+            
+                Float s1_s1 = s1 * s1;
+                
+                if( issmall( s1_s1 ) )
+                    return;
+                
+                Float alpha = ( r * s1 ) / ( s1_s1);
+                x += alpha * p1;
+                r -= alpha * s1;
+                
+                rr = r * r;
+                
+                p0 = s1;
+                s0 = A * s1;
+                
+                Float beta1 = ( s0 * s1 ) / ( s1_s1 );
+                p0 -= beta1 * p1;
+                s0 -= beta1 * s1;
+
+            }
         
             LOG << "starting with"
                       << " r-sqnorm="    << rr 
@@ -93,7 +121,39 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
             break;
             
         /* Perform iteration step */
-        iterationStep( x, r, p0, s0, p1, s1, p2, s2, rr );
+        {
+            
+            p2 = p1; p1 = p0;
+            s2 = s1; s1 = s0;
+            
+            Float s1_s1 = s1 * s1;
+            
+            if( issmall( s1_s1 ) )
+                return;
+
+            Float alpha = ( r * s1 ) / ( s1_s1 );
+            x += alpha * p1;
+            r -= alpha * s1;
+            
+            rr = r * r;
+            
+            p0 = s1;
+            s0 = A * s1;
+            
+            Float beta1 = ( s0 * s1 ) / ( s1 * s1 );
+            p0 -= beta1 * p1;
+            s0 -= beta1 * s1;
+            
+            Float s2_s2 = s2 * s2;
+            
+            if( issmall( s2_s2 ) )
+                return;
+
+            Float beta2 = ( s0 * s2 ) / ( s2_s2 );
+            p0 -= beta2 * p2;
+            s0 -= beta2 * s2;
+            
+        }
         
         /* Increase iteration counter */
         recent_iteration_count++;
@@ -108,95 +168,17 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
     recent_deviation = rr;
     
 }
-  
-  
-  
-void MinimumResidualMethod::iterationStart( 
-    FloatVector& x, const FloatVector& b, 
-    FloatVector& r,  
-    FloatVector& p0, FloatVector& s0, 
-    FloatVector& p1, FloatVector& s1,
-    Float& rr
-) const {
-    
-    r = b - A * x;
-    p0 = r;
-    s0 = A * p0;
-    p1 = p0;
-    s1 = s0;
-
-    // .... first iteration 
-  
-    Float s1_s1 = s1 * s1;
-    
-    if( issmall( s1_s1 ) )
-        return;
-    
-    Float alpha = ( r * s1 ) / ( s1_s1);
-    x += alpha * p1;
-    r -= alpha * s1;
-    
-    rr = r * r;
-    
-    p0 = s1;
-    s0 = A * s1;
-    
-    Float beta1 = ( s0 * s1 ) / ( s1_s1 );
-    p0 -= beta1 * p1;
-    s0 -= beta1 * s1;
-
-}
 
 
 
 
-void MinimumResidualMethod::iterationStep( 
-    FloatVector& x, 
-    FloatVector& r,
-    FloatVector& p0, FloatVector& s0, 
-    FloatVector& p1, FloatVector& s1,
-    FloatVector& p2, FloatVector& s2,
-    Float& rr
-) const {
-    
-    p2 = p1; p1 = p0;
-    s2 = s1; s1 = s0;
-    
-    Float s1_s1 = s1 * s1;
-    
-    if( issmall( s1_s1 ) )
-        return;
-
-    Float alpha = ( r * s1 ) / ( s1_s1 );
-    x += alpha * p1;
-    r -= alpha * s1;
-    
-    rr = r * r;
-    
-    p0 = s1;
-    s0 = A * s1;
-    
-    Float beta1 = ( s0 * s1 ) / ( s1 * s1 );
-    p0 -= beta1 * p1;
-    s0 -= beta1 * s1;
-    
-    Float s2_s2 = s2 * s2;
-    
-    if( issmall( s2_s2 ) )
-        return;
-
-    Float beta2 = ( s0 * s2 ) / ( s2_s2 );
-    p0 -= beta2 * p2;
-    s0 -= beta2 * s2;
-    
-}
-
-  
-
-  
 
 
-  
+
+
+
+
+
 /*  
 function [x,r] = minres(A,b,x0,maxit,tol)
   x = x0;

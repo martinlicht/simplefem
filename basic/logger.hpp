@@ -10,6 +10,7 @@
 
 class NilLogger
 {
+public:
     
     template<class T>
     NilLogger& operator<<( const T& )

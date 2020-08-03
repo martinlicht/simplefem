@@ -16,8 +16,8 @@
 ************************/
 
 
-class ProxyOperator:
-public LinearOperator 
+class ProxyOperator final
+: public LinearOperator 
 {
 
     public:
@@ -56,6 +56,7 @@ public LinearOperator
             os << "Print Proxy Operator" << std::endl;
         }
         
+        using LinearOperator::apply;
         virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override {
             check();
             src.check();
@@ -76,8 +77,8 @@ public LinearOperator
 
 
 
-class ComposedOperator:
-public LinearOperator 
+class ComposedOperator
+: public LinearOperator 
 {
 
     public:
@@ -169,8 +170,8 @@ public LinearOperator
 
 
 
-class ProduktOperator:
-public ComposedOperator 
+class ProduktOperator final
+: public ComposedOperator 
 {
 
     public:
@@ -248,6 +249,7 @@ public ComposedOperator
             ComposedOperator::print( os );
         };
         
+        using LinearOperator::apply;
         void apply( FloatVector& dest, const FloatVector& add, Float scaling ) const override {
             dest = scaling * left->apply( right->apply(add) );
         };
@@ -274,8 +276,8 @@ inline ProduktOperator operator*( LinearOperator&& left, LinearOperator&& right 
 
 
 
-class SummOperator:
-public ComposedOperator 
+class SummOperator final
+: public ComposedOperator 
 {
 
     public:
@@ -358,6 +360,7 @@ public ComposedOperator
             ComposedOperator::print( os );
         };
         
+        using LinearOperator::apply;
         void apply( FloatVector& dest, const FloatVector& add, Float scaling ) const override
         {
             dest = scaling * left->apply( add ) + scaling * right->apply( add );
@@ -383,8 +386,8 @@ inline SummOperator operator+( LinearOperator&& left, LinearOperator&& right )
 
 
 
-class DiffOperator:
-public ComposedOperator 
+class DiffOperator final
+: public ComposedOperator 
 {
 
     public:
@@ -467,6 +470,7 @@ public ComposedOperator
             ComposedOperator::print( os );
         };
         
+        using LinearOperator::apply;
         void apply( FloatVector& dest, const FloatVector& add, Float scaling ) const override
         {
             dest = scaling * left->apply( add ) - scaling * right->apply( add );

@@ -19,8 +19,8 @@
 ****  
 ************************/
 
-class FlagOperator:
-public LinearOperator 
+class FlagOperator final
+: public LinearOperator 
 {
 
     public:
@@ -56,6 +56,7 @@ public LinearOperator
         std::vector<bool>& getdestflag();
         const std::vector<bool>& getdestflag() const;
         
+        using LinearOperator::apply;
         virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override;
 
     private:

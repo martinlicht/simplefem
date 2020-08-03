@@ -39,21 +39,6 @@ class ConjugateResidualMethod
 
                 virtual void solve_robust( FloatVector&, const FloatVector& ) const;
 
-        private:
-
-                void iterationStart( 
-                        const FloatVector& x, const FloatVector& b, 
-                        FloatVector& r, FloatVector& d, FloatVector& Ar, FloatVector& Ad,
-                        Float& r_Anorm
-                        ) const;
-
-                void iterationStep( 
-                        FloatVector& x, 
-                        FloatVector& r, FloatVector& d, FloatVector& Ar, FloatVector& Ad,
-                        Float& r_Anorm,
-                        FloatVector& AAd
-                        ) const;
-
         private: 
 
                 const LinearOperator& A;   

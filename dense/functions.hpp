@@ -39,6 +39,8 @@ void Inverse_InSitu( DenseMatrix& );
 
 // void InverseAndDeterminant( const DenseMatrix&, DenseMatrix&, Float& );
 
+DenseMatrix SubdeterminantMatrixSquare( const DenseMatrix& A, int k );
+
 DenseMatrix SubdeterminantMatrix( const DenseMatrix& A, int k );
 
 

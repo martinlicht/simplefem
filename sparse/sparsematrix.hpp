@@ -99,6 +99,7 @@ public LinearOperator /* every matrix is a linear operator */
 
         SparseMatrix getTranspose() const;
         
+        using LinearOperator::apply;
         virtual void apply( FloatVector& dest, const FloatVector& add, Float scaling ) const override;
 
     private:
@@ -111,6 +112,7 @@ public LinearOperator /* every matrix is a linear operator */
 
 SparseMatrix operator&( const SparseMatrix& left, const SparseMatrix& right );
 
+SparseMatrix SparseMatrixMultiplication( const SparseMatrix& left, const SparseMatrix& right );
 
 
 
