@@ -59,7 +59,10 @@ public:
         return *this;
     }
     
-    static const std::function<void(Logger&)> affix_do_nothing(){ return [](Logger&){ return; }; };
+    static const std::function<void(Logger&)> affix_do_nothing()
+    { 
+        return [](Logger&){ return; };
+    }
 
     static const std::function<void(Logger&)> affix_write( const std::string& str )
     {

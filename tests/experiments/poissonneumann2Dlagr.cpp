@@ -66,7 +66,7 @@ int main()
             
 
             std::function<FloatVector(const FloatVector&)> experiment_sol = 
-                [xfeq,yfeq](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
                     // return FloatVector({ 1. });
                     return FloatVector({ std::cos( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] ) });
@@ -74,7 +74,7 @@ int main()
             
 
             std::function<FloatVector(const FloatVector&)> experiment_grad = 
-                [xfeq,yfeq](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
                     // return FloatVector({ 1. });
                     return FloatVector( { 
@@ -85,7 +85,7 @@ int main()
             
 
             std::function<FloatVector(const FloatVector&)> experiment_rhs = 
-                [xfeq,yfeq](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
                     return FloatVector({ 
                         xfeq*xfeq * Constants::pisquare * std::cos( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] )

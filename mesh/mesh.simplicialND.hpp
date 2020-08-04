@@ -46,6 +46,8 @@ class MeshSimplicialND
         
         explicit MeshSimplicialND( const Mesh& mesh );
         
+        MeshSimplicialND( const MeshSimplicialND& mesh ) = default;
+        
         virtual ~MeshSimplicialND();
         
         bool compare( const MeshSimplicialND& ) const;

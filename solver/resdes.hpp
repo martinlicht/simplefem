@@ -41,11 +41,5 @@ class ResidualDescentMethod
 };
 
 
-  
-  
-  
 #endif
-  
-  
-  
-  
+

@@ -30,7 +30,7 @@ FLAG_DO_NOT_CHECK_MESHES := -DDO_NOT_CHECK_MESHES
 
 # Do you want to ENABLE the standard library debugging flags 
 # Comment out the following line to disable the standard library debugging flags 
-FLAG_DO_COMPILEDEBUGMODE := -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC
+# FLAG_DO_COMPILEDEBUGMODE := -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC
 
 # Do you want to DISABLE the general assert macro?
 # Comment out the following line to disable the general assert macro
@@ -105,15 +105,14 @@ endif
 
 CXXFLAGS_WARNINGS := 
 CXXFLAGS_WARNINGS += 
-CXXFLAGS_WARNINGS += -Wall -Wextra -Wpedantic -Wno-vla 
-CXXFLAGS_WARNINGS += -Wno-conversion -Wno-sign-compare -Wno-unused-variable -Wno-unused-parameter
+CXXFLAGS_WARNINGS += -Wall -Wextra -Wpedantic
 
 ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 
 CXXFLAGS_WARNINGS += -Wodr -Wmissing-field-initializers -Wctor-dtor-privacy -Wsign-promo -Woverloaded-virtual -Wno-missing-braces
 
 CXXFLAGS_WARNINGS += -Wundef 
-CXXFLAGS_WARNINGS += -Wcast-align -Wmissing-declarations -Wredundant-decls -Wno-redundant-decls
+CXXFLAGS_WARNINGS += -Wcast-align -Wcast-qual -Wmissing-declarations -Wredundant-decls -Wno-redundant-decls
 CXXFLAGS_WARNINGS += -Wformat=2 -Wformat-nonliteral -Wformat-security -Wformat-y2k -Wmisleading-indentation
 # CXXFLAGS_WARNINGS += -Wold-style-cast
 
@@ -122,7 +121,6 @@ ifeq ($(FLAG_CXX),GCC)
   CXXFLAGS_WARNINGS +=  -Wmultiple-inheritance -Wvirtual-inheritance
   CXXFLAGS_WARNINGS += -Wpointer-arith
   CXXFLAGS_WARNINGS += -Wreturn-local-addr
-  CXXFLAGS_WARNINGS += -Wcast-qual -Wcast-align
   CXXFLAGS_WARNINGS += -Wfloat-equal -Wdouble-promotion -Wfloat-conversion -Wno-type-limits
   CXXFLAGS_WARNINGS += -Wno-sign-compare
 #   CXXFLAGS_WARNINGS += -Wconversion 
@@ -148,12 +146,96 @@ ifeq ($(FLAG_CXX),GCC)
 
 else ifeq ($(FLAG_CXX),CLANG)
 
-  CXXFLAGS_WARNINGS += -Wno-vla-extension -Werror-implicit -Wabsolute-value -Wno-shorten-64-to-32 -Walloca -Wanon-enum-enum-conversion
+  CXXFLAGS_WARNINGS += -Wabstract-vbase-init
+  CXXFLAGS_WARNINGS += -Walloca
+  CXXFLAGS_WARNINGS += -Wno-vla-extension -Werror-implicit -Wabsolute-value -Wno-shorten-64-to-32
+  CXXFLAGS_WARNINGS += -Wanon-enum-enum-conversion -Wassign-enum
+  CXXFLAGS_WARNINGS += -Warray-bounds-pointer-arithmetic
+  CXXFLAGS_WARNINGS += -Wbad-function-cast
+  CXXFLAGS_WARNINGS += -Wc++11-narrowing
+  CXXFLAGS_WARNINGS += -Wchar-subscripts
+  CXXFLAGS_WARNINGS += -Wclass-varargs
+  CXXFLAGS_WARNINGS += -Wcomma
+  CXXFLAGS_WARNINGS += -Wcomment
+  CXXFLAGS_WARNINGS += -Wconsumed
+  CXXFLAGS_WARNINGS += -Wconversion -Wno-sign-conversion
+  CXXFLAGS_WARNINGS += -Wctad-maybe-unsupported
+  CXXFLAGS_WARNINGS += -Wdate-time
+  CXXFLAGS_WARNINGS += -Wdelete-non-abstract-non-virtual-dtor
+  CXXFLAGS_WARNINGS += -Wdeprecated
+  #CXXFLAGS_WARNINGS += -Wdouble-promotion
+  #CXXFLAGS_WARNINGS += -Wdtor-name  TODO: Is this one actually defined???
+  CXXFLAGS_WARNINGS += -Wduplicate-decl-specifier -Wduplicate-enum -Wduplicate-method-arg -Wduplicate-method-match 
+  CXXFLAGS_WARNINGS += -Wembedded-directive
+  CXXFLAGS_WARNINGS += -Wempty-init-stmt
+  CXXFLAGS_WARNINGS += -Wenum-compare-conditional
+  CXXFLAGS_WARNINGS += -Wexceptions
+  CXXFLAGS_WARNINGS += -Wextra-semi
+  CXXFLAGS_WARNINGS += -Wfloat-conversion -Wfloat-equal
+  CXXFLAGS_WARNINGS += -Wformat
+  CXXFLAGS_WARNINGS += -Wheader-hygiene
+  CXXFLAGS_WARNINGS += -Widiomatic-parentheses
+  CXXFLAGS_WARNINGS += -Wimplicit-float-conversion
+  CXXFLAGS_WARNINGS += -Wimplicit-function-declaration
+  CXXFLAGS_WARNINGS += -Winfinite-recursion
+  CXXFLAGS_WARNINGS += -Wint-conversion
+  CXXFLAGS_WARNINGS += -Wkeyword-macro
+  #CXXFLAGS_WARNINGS += -Wmain
+  CXXFLAGS_WARNINGS += -Wmisleading-indentation
+  CXXFLAGS_WARNINGS += -Wmissing-braces
+  CXXFLAGS_WARNINGS += -Wmissing-field-initializers
+  CXXFLAGS_WARNINGS += -Wmissing-prototypes
+  CXXFLAGS_WARNINGS += -Wmissing-variable-declarations
+  CXXFLAGS_WARNINGS += -Wmost -Wmove 
+  CXXFLAGS_WARNINGS += -Wnewline-eof
+  CXXFLAGS_WARNINGS += -Wnon-virtual-dtor
+  CXXFLAGS_WARNINGS += -Wnonportable-system-include-path
+  CXXFLAGS_WARNINGS += -Wnull-pointer-arithmetic 
+  CXXFLAGS_WARNINGS += -Woverlength-strings
+  CXXFLAGS_WARNINGS += -Woverloaded-virtual
+  CXXFLAGS_WARNINGS += -Winitializer-overrides
+  CXXFLAGS_WARNINGS += -Woverriding-method-mismatch
+  CXXFLAGS_WARNINGS += -Wparentheses
+  CXXFLAGS_WARNINGS += -Wpessimizing-move
+  CXXFLAGS_WARNINGS += -Wrange-loop-analysis
+  CXXFLAGS_WARNINGS += -Wredundant-move
+  CXXFLAGS_WARNINGS += -Wredundant-parens
+#   CXXFLAGS_WARNINGS += -Wredundant-parentheses
+  CXXFLAGS_WARNINGS += -Wreserved-id-macro
+  CXXFLAGS_WARNINGS += -Wreserved-user-defined-literal
+  CXXFLAGS_WARNINGS += -Wreturn-std-move
+  CXXFLAGS_WARNINGS += -Wself-assign -Wself-move
+  CXXFLAGS_WARNINGS += -Wsemicolon-before-method-body
+  CXXFLAGS_WARNINGS += -Wsometimes-uninitialized
+  CXXFLAGS_WARNINGS += -Wstrict-prototypes
+  CXXFLAGS_WARNINGS += -Wstring-conversion
+#   CXXFLAGS_WARNINGS += -Wsuggest-destructor-override
+  CXXFLAGS_WARNINGS += -Wtautological-compare
+  CXXFLAGS_WARNINGS += -Wtautological-type-limit-compare
+#   CXXFLAGS_WARNINGS += -Wuninitialized-const-reference
+  CXXFLAGS_WARNINGS += -Wunreachable-code
+  CXXFLAGS_WARNINGS += -Wunused
+  CXXFLAGS_WARNINGS += -Wzero-as-null-pointer-constant
+  CXXFLAGS_WARNINGS += 
+  CXXFLAGS_WARNINGS += 
+  CXXFLAGS_WARNINGS += 
+  CXXFLAGS_WARNINGS += 
+  CXXFLAGS_WARNINGS += 
+  CXXFLAGS_WARNINGS += 
+  CXXFLAGS_WARNINGS += 
+
+  #CXXFLAGS_WARNINGS += -Wno-unused-variable
+
+
+	#Some of the .... suchen auf der CLANG seite 
+
+	# TODO: Die unused lambda captures will ersetzen durch generelle camptures 
 
 endif
  
 endif
  
+CXXFLAGS_WARNINGS += -Wno-conversion -Wno-sign-compare -Wno-unused-variable -Wno-unused-parameter -Wno-vla
 
 
 
@@ -200,24 +282,42 @@ CXXFLAGS_DEBUG := -g
 
 ### Sanitizer instrumentation 
 
-SANITIZER_FLAG := -pg -fno-omit-frame-pointer
+SANITIZER_FLAG := -pg -fno-omit-frame-pointer -ftrapv
 
 ifeq ($(FLAG_DO_USE_SANITIZER),yes)
 
-	SANITIZER_UNDEFINED_FLAG:=undefined,float-divide-by-zero,unsigned-integer-overflow,implicit-conversion,nullability-arg,nullability-assign,nullability-return
+	SANITIZERS :=
 
-	# SANITIZER_SAFESTACK_FLAG:=safe-stack
+	ifeq ($(FLAG_CXX),GCC)
 
-	SANITIZER_ADDRESSLEAK_FLAG:=address,leak
+		SANITIZERS :=$(SANITIZERS)pointer-compare,pointer-subtract,
+		SANITIZERS :=$(SANITIZERS)undefined,
 
-	# SANITIZER_CFI_FLAG:=cfi
+	else ifeq ($(FLAG_CXX),CLANG)
 
-	# -fvisibility=hidden
+		SANITIZERS :=$(SANITIZERS)pointer-compare,pointer-subtract,
+		SANITIZERS :=$(SANITIZERS)undefined,
 
-	# Comment out the following line to disable ALL built-in sanitizers 
-	SANITIZER_FLAG += -fsanitize=$(SANITIZER_UNDEFINED_FLAG),$(SANITIZER_ADDRESSLEAK_FLAG),$(SANITIZER_SAFESTACK_FLAG) -pg -fno-omit-frame-pointer
+		SANITIZERS :=$(SANITIZERS)float-divide-by-zero,
+		SANITIZERS :=$(SANITIZERS)unsigned-integer-overflow,
+		SANITIZERS :=$(SANITIZERS)implicit-conversion,
+		SANITIZERS :=$(SANITIZERS)nullability-arg,
+		SANITIZERS :=$(SANITIZERS)nullability-assign,
+		SANITIZERS :=$(SANITIZERS)nullability-return,
+
+		#SANITIZERS :=$(SANITIZERS)memory,
+
+	endif
+
+	SANITIZERS :=$(SANITIZERS)address,leak,
+	# SANITIZERS :=$(SANITIZERS)thread 
+
+	# thread cannot be combined with address and leak 
+
 	
-	SANITIZER_FLAG += -ftrapv
+	# Comment out the following line to disable ALL built-in sanitizers 
+	SANITIZER_FLAG += -fsanitize=$(SANITIZERS) 
+
 endif
 
 ifeq ($(FLAG_USE_TCMALLOC),yes)

@@ -13,7 +13,7 @@
         
         std::cout << "size=" << size << " L=" << L << std::endl;
         {
-            srand( 1 + time(0) );
+            srand( 1 + std::time(nullptr) );
             double data[size]; // technically, non-compliant with C++ standard.
             double result = 0.;
             std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
@@ -28,7 +28,7 @@
         }
 
         {
-            srand( 2 + time(0) );
+            srand( 2 + std::time(nullptr) );
             std::vector<double> data( size );
             double result = 0.;
             std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
@@ -43,7 +43,7 @@
         }
 
         {
-            srand( time(0) );
+            srand( std::time(nullptr) );
             double * data = new double[size];
             double result = 0.;
             std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();

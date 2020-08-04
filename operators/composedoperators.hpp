@@ -186,7 +186,7 @@ class ProduktOperator final
         : ComposedOperator( dimout, dimin, std::move(pl), std::move(pr) ) 
         {
             ProduktOperator::check();
-        }; 
+        } 
         
     public:
 
@@ -194,30 +194,30 @@ class ProduktOperator final
         : ComposedOperator( L.getdimout(), R.getdimin(), L, R ) 
         {
             ProduktOperator::check();
-        };
+        }
         
         explicit ProduktOperator( const LinearOperator& L, LinearOperator&& R )
         : ComposedOperator( L.getdimout(), R.getdimin(), L, std::move(R) ) 
         {
             ProduktOperator::check();
-        };
+        }
         
         explicit ProduktOperator( LinearOperator&& L, const LinearOperator& R )
         : ComposedOperator( L.getdimout(), R.getdimin(), std::move(L), R ) 
         {
             ProduktOperator::check();
-        };
+        }
         
         explicit ProduktOperator( LinearOperator&& L, LinearOperator&& R )
         : ComposedOperator( L.getdimout(), R.getdimin(), std::move(L), std::move(R) ) 
         {
             ProduktOperator::check();
-        };
+        }
         
         virtual ~ProduktOperator()
         {
 //             ProduktOperator::check();
-        };
+        }
 
         virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
             check();
@@ -227,7 +227,7 @@ class ProduktOperator final
             clone->check();
             return clone;
 //             LOG << "Composed Operator created (clone)" << ""; 
-        };
+        }
         
         virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {
             check();
@@ -235,24 +235,24 @@ class ProduktOperator final
             heir->check();
 //             LOG << "Composed Operator created (heir)" << ""; 
             return heir;
-        };
+        }
         
         virtual void check() const override { 
             ComposedOperator::check();
             assert( getdimout() == left->getdimout() );
             assert( getdimin()  == right->getdimin()  );
             assert( left->getdimin() == right->getdimout() );
-        };
+        }
         
         virtual void print( std::ostream& os ) const override { 
             os << "Print Produkt Operator" << nl;
             ComposedOperator::print( os );
-        };
+        }
         
         using LinearOperator::apply;
         void apply( FloatVector& dest, const FloatVector& add, Float scaling ) const override {
             dest = scaling * left->apply( right->apply(add) );
-        };
+        }
 
 };
 
@@ -292,7 +292,7 @@ class SummOperator final
         : ComposedOperator( dimout, dimin, std::move(pl), std::move(pr) ) 
         {
             SummOperator::check();
-        }; 
+        } 
         
     public:
 
@@ -300,30 +300,30 @@ class SummOperator final
         : ComposedOperator( L.getdimout(), R.getdimin(), L, R ) 
         {
             SummOperator::check();
-        };
+        }
         
         explicit SummOperator( const LinearOperator& L, LinearOperator&& R )
         : ComposedOperator( L.getdimout(), R.getdimin(), L, std::move(R) ) 
         {
             SummOperator::check();
-        };
+        }
         
         explicit SummOperator( LinearOperator&& L, const LinearOperator& R )
         : ComposedOperator( L.getdimout(), R.getdimin(), std::move(L), R ) 
         {
             SummOperator::check();
-        };
+        }
         
         explicit SummOperator( LinearOperator&& L, LinearOperator&& R )
         : ComposedOperator( L.getdimout(), R.getdimin(), std::move(L), std::move(R) ) 
         {
             SummOperator::check();
-        };
+        }
         
         virtual ~SummOperator()
         {
 //             SummOperator::check();
-        };
+        }
         
         virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
             check();
@@ -333,7 +333,7 @@ class SummOperator final
             clone->check();
             return clone;
 //             LOG << "Composed Operator created (clone)" << ""; 
-        };
+        }
         
         virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {
             check();
@@ -341,7 +341,7 @@ class SummOperator final
             heir->check();
 //             LOG << "Composed Operator created (heir)" << ""; 
             return heir;
-        };
+        }
         
         virtual void check() const override
         { 
@@ -352,19 +352,19 @@ class SummOperator final
             assert( getdimin()  == right->getdimin()  );
             assert( left->getdimout() == right->getdimout() );
             assert( left->getdimin()  == right->getdimin()  );
-        };
+        }
         
         virtual void print( std::ostream& os ) const override
         { 
             os << "Print Summ Operator" << nl;
             ComposedOperator::print( os );
-        };
+        }
         
         using LinearOperator::apply;
         void apply( FloatVector& dest, const FloatVector& add, Float scaling ) const override
         {
             dest = scaling * left->apply( add ) + scaling * right->apply( add );
-        };
+        }
 
 };
 
@@ -402,7 +402,7 @@ class DiffOperator final
         : ComposedOperator( dimout, dimin, std::move(pl), std::move(pr) ) 
         {
             DiffOperator::check();
-        }; 
+        } 
         
     public:
 
@@ -410,30 +410,30 @@ class DiffOperator final
         : ComposedOperator( L.getdimout(), R.getdimin(), L, R ) 
         {
             DiffOperator::check();
-        };
+        }
         
         explicit DiffOperator( const LinearOperator& L, LinearOperator&& R )
         : ComposedOperator( L.getdimout(), R.getdimin(), L, std::move(R) ) 
         {
             DiffOperator::check();
-        };
+        }
         
         explicit DiffOperator( LinearOperator&& L, const LinearOperator& R )
         : ComposedOperator( L.getdimout(), R.getdimin(), std::move(L), R ) 
         {
             DiffOperator::check();
-        };
+        }
         
         explicit DiffOperator( LinearOperator&& L, LinearOperator&& R )
         : ComposedOperator( L.getdimout(), R.getdimin(), std::move(L), std::move(R) ) 
         {
             DiffOperator::check();
-        };
+        }
         
         virtual ~DiffOperator()
         {
 //             DiffOperator::check();
-        };
+        }
         
         virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
             check();
@@ -443,7 +443,7 @@ class DiffOperator final
             clone->check();
             return clone;
 //             LOG << "Composed Operator created (clone)" << ""; 
-        };
+        }
         
         virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {
             check();
@@ -451,7 +451,7 @@ class DiffOperator final
             heir->check();
 //             LOG << "Composed Operator created (heir)" << ""; 
             return heir;
-        };
+        }
         
         virtual void check() const override
         { 
@@ -462,19 +462,19 @@ class DiffOperator final
             assert( getdimin()  == right->getdimin()  );
             assert( left->getdimout() == right->getdimout() );
             assert( left->getdimin()  == right->getdimin()  );
-        };
+        }
         
         virtual void print( std::ostream& os ) const override
         { 
             os << "Print Diff Operator" << nl;
             ComposedOperator::print( os );
-        };
+        }
         
         using LinearOperator::apply;
         void apply( FloatVector& dest, const FloatVector& add, Float scaling ) const override
         {
             dest = scaling * left->apply( add ) - scaling * right->apply( add );
-        };
+        }
 
 };
 

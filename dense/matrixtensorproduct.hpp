@@ -8,17 +8,6 @@
 #include "densematrix.hpp"
 
  
-
 DenseMatrix MatrixTensorProduct( const DenseMatrix& left, const DenseMatrix& right );
-
-
-
-
-
-
-
-
-
-
 
 #endif
