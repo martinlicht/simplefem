@@ -71,14 +71,14 @@ int main()
             Float xfeq = 1.;
 
             experiments_func.push_back( 
-                [xfeq](const FloatVector& vec) -> FloatVector{
+                [&](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
                     return FloatVector({ ( vec[0] > 0 and vec[1] > 0 ) ? xfeq * vec[0] : 0. });
                 }
             );
 
             experiments_grad.push_back( 
-                [xfeq](const FloatVector& vec) -> FloatVector{
+                [&](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
                     return FloatVector( { 
                             ( vec[0] > 0 and vec[1] > 0 ) ? 1. : 0. ,

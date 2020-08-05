@@ -95,9 +95,9 @@ inline DenseMatrix EvaluationMatrix( int dim, int r, const DenseMatrix& lpsbc )
     
     const auto mis = generateMultiIndices( IndexRange(0,dim), r );
     
-    assert( dim+1                == lpsbc.getdimout()          );
-    assert( mis.size()           == lpsbc.getdimin()           );
-    assert( multi_indices.size() == binomial_integer( n+r, r ) );
+    assert( dim+1      == lpsbc.getdimout()            );
+    assert( mis.size() == lpsbc.getdimin()             );
+    assert( mis.size() == binomial_integer( dim+r, r ) );
     const int N = mis.size();
     
     DenseMatrix ret( N, N );

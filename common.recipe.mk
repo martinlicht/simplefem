@@ -30,11 +30,11 @@ FLAG_DO_NOT_CHECK_MESHES := -DDO_NOT_CHECK_MESHES
 
 # Do you want to ENABLE the standard library debugging flags 
 # Comment out the following line to disable the standard library debugging flags 
-# FLAG_DO_COMPILEDEBUGMODE := -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC
+FLAG_DO_COMPILEDEBUGMODE := -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC
 
 # Do you want to DISABLE the general assert macro?
 # Comment out the following line to disable the general assert macro
-FLAG_DNDEBUG := -DNDEBUG
+# FLAG_DONTASSERT := -DNDEBUG
 
 # Do you want to ENABLE the Clang sanitizer?
 # Comment out the following line to disable compilation with the Clang sanitizer
@@ -379,7 +379,7 @@ CXXFLAGS := ${CXXFLAGS_LANG} ${CXXFLAGS_DIAGFORMAT} ${CXXFLAGS_WARNINGS} ${CXXFL
 #                                             #
 ###############################################
 
-CPPFLAGS := $(FLAG_DO_NOT_CHECK_MESHES) $(FLAG_DNDEBUG) $(FLAG_DO_COMPILEDEBUGMODE)
+CPPFLAGS := $(FLAG_DO_NOT_CHECK_MESHES) $(FLAG_DONTASSERT) $(FLAG_DO_COMPILEDEBUGMODE)
 
 
 
