@@ -6,6 +6,7 @@ include ../common.recipe.mk
 
 include ../common.upkeep.mk
 
+affix.utility = utility
 affix.combinatorics = combinatorics
 affix.operators := operators combinatorics
 affix.dense := dense sparse operators combinatorics
@@ -50,6 +51,49 @@ basic.tests: $(basic.outs)
 
 
 
+
+
+
+
+
+
+
+utility.sources := $(wildcard utility/*.cpp)
+
+utility.outs := $(patsubst %.cpp,%.out,$(utility.sources))
+
+utility.depdir := utility/$(depdir)
+
+utility.dependencies := $(patsubst utility/%.cpp,utility/.deps/%.d,$(utility.sources))
+
+utility.include := $(patsubst %,-L../%,$(affix.utility))
+linkerprefix=-Wl,
+utility.rpath_t := $(patsubst %,-rpath=$(shell pwd)/../%,$(affix.utility)) 
+utility.rpath := $(patsubst %,$(linkerprefix)%,$(utility.rpath_t)) 
+utility.link := $(patsubst %,-l%,$(affix.utility))
+
+$(utility.depdir): ; @mkdir -p $@
+
+$(utility.outs): utility/%.out: utility/%.cpp | $(utility.depdir)
+	@ #echo $(utility.include)
+	@ #echo $(utility.rpath)
+	@ #echo $(utility.link)
+	@g++ -MM utility/$*.cpp -MT $@ -MF utility/.deps/$*.d
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(utility.include) $(utility.rpath) $(utility.link) -o $@ $(LDLIBS)
+
+-include $(utility.dependencies)
+
+utility.tests: $(utility.outs)
+
+
+
+
+
+
+
+
+
+
 combinatorics.sources := $(wildcard combinatorics/*.cpp)
 
 combinatorics.outs := $(patsubst %.cpp,%.out,$(combinatorics.sources))
@@ -81,7 +125,9 @@ combinatorics.tests: $(combinatorics.outs)
 
 
 
-    
+
+
+
 
 
 
@@ -114,10 +160,11 @@ operators.tests: $(operators.outs)
 
 
 
-    
-    
-    
-    
+
+
+
+
+
 dense.sources := $(wildcard dense/*.cpp)
 
 dense.outs := $(patsubst %.cpp,%.out,$(dense.sources))
@@ -420,6 +467,7 @@ afem.tests: $(afem.outs)
 
 
 all: basic.tests 
+all: utility.tests
 all: combinatorics.tests
 all: operators.tests
 all: dense.tests

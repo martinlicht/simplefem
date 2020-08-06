@@ -5,6 +5,7 @@ default: all
 all: lib test 
 
 lib:
+	cd ./utility && $(MAKE) 
 	cd ./combinatorics && $(MAKE) 
 	cd ./operators && $(MAKE) 
 	cd ./dense && $(MAKE) 
@@ -28,6 +29,7 @@ vtkclean:
 	-rm -f ./*/*/*.vtk
 
 clean: 
+	cd ./utility && $(MAKE) clean
 	cd ./combinatorics && $(MAKE) clean
 	cd ./operators && $(MAKE) clean
 	cd ./dense && $(MAKE) clean
@@ -42,6 +44,7 @@ clean:
 	@echo "finished cleaning." 
 
 dclean: 
+	cd ./utility && $(MAKE) dclean
 	cd ./combinatorics && $(MAKE) dclean
 	cd ./operators && $(MAKE) dclean
 	cd ./dense && $(MAKE) dclean
@@ -56,6 +59,7 @@ dclean:
 	@echo "finished cleaning dependencies." 
 
 tidy: 
+	cd ./utility && $(MAKE) tidy
 	cd ./combinatorics && $(MAKE) tidy
 	cd ./operators && $(MAKE) tidy
 	cd ./dense && $(MAKE) tidy
@@ -70,6 +74,7 @@ tidy:
 	@echo "finished tidying." 
 
 check: 
+	cd ./utility && $(MAKE) check
 	cd ./combinatorics && $(MAKE) check
 	cd ./operators && $(MAKE) check
 	cd ./dense && $(MAKE) check
