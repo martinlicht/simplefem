@@ -60,6 +60,10 @@ public LinearOperator /* every matrix is a linear operator */
         
         using LinearOperator::apply;
         virtual void apply( FloatVector& dest, const FloatVector& add, Float scaling ) const override;
+        
+        inline const int*   getA() const { return A.data(); }
+        inline const int*   getC() const { return C.data(); }
+        inline const Float* getV() const { return V.data(); }
 
     private:
 

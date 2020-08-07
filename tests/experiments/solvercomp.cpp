@@ -17,6 +17,7 @@
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
 #include "../../vtk/vtkwriter.mesh2D.hpp"
+#include "../../solver/sparsesolver.hpp"
 #include "../../solver/cgm.hpp"
 #include "../../solver/crm.hpp"
 // #include "../../solver/pcrm.hpp"
@@ -163,19 +164,28 @@ int main()
                         FloatVector rhs = incmatrix_t * ( scalar_massmatrix * interpol_rhs );
 
                         {
-                            cout << "CRM" << endl;
+                            cout << "CGM - Classic" << endl;
                         
                             sol.zero();
-                            ConjugateResidualMethod Solver( stiffness );
-                            Solver.print_modulo        = 1 + 4 * sol.getdimension();
-                            Solver.max_iteration_count =     4 * sol.getdimension();
+                            
                             timestamp start = gettimestamp();
-                            Solver.solve_robust( sol, rhs );
-//                             Solver.solve( sol, rhs );
+
+                            FloatVector residual( rhs );
+                            
+//                             ConjugateGradientSolverCSR( 
+                            ConjugateResidualSolverCSR( 
+                                sol.getdimension(), 
+                                sol.raw(), 
+                                rhs.raw(), 
+                                stiffness.getA(), stiffness.getC(), stiffness.getV(),
+                                residual.raw(),
+                                1e-16
+                            );
+
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
                             
-                            contable << Float(end - start) << Float(Solver.recent_iteration_count);
+                            contable << Float(end - start) << Float(1.);
                         }
 
                         {
