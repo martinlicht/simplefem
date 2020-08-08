@@ -22,7 +22,8 @@ void ConjugateGradientSolverCSR(
     const Float* b, 
     const int* csrrows, const int* csrcolumns, const Float* csrvalues, 
     Float* residual,
-    Float allowed_error
+    Float allowed_error,
+    unsigned int restart_modulo
 );
 
 
@@ -34,7 +35,8 @@ void ConjugateResidualSolverCSR(
     const Float* b, 
     const int* csrrows, const int* csrcolumns, const Float* csrvalues, 
     Float* residual,
-    Float allowed_error
+    Float allowed_error,
+    unsigned int restart_modulo
 );
 
 
