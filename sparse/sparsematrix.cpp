@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "sparsematrix.hpp"
+#include "../utility/utility.hpp"
 
 
 
@@ -287,18 +288,59 @@ bool SparseMatrix::is_sorted( SparseMatrix::MatrixEntrySorting manner ) const
     
 }
 
+
+static int internal_compare_rowfirst( const void* _a, const void* _b )
+{
+    const SparseMatrix::MatrixEntry* a = static_cast<const SparseMatrix::MatrixEntry*>(_a);
+    const SparseMatrix::MatrixEntry* b = static_cast<const SparseMatrix::MatrixEntry*>(_b);
+    
+    if( a->row < b->row ) {
+        return -1;
+    } else if( a->row > b->row ) {
+        return 1;
+    } else if( a->column < b->column ) {
+        return -1;
+    } else if( a->column > b->column ) {
+        return 1;
+    } else 
+        return 0;
+}
+    
+static int internal_compare_colfirst( const void* _a, const void* _b )
+{
+    const SparseMatrix::MatrixEntry* a = static_cast<const SparseMatrix::MatrixEntry*>(_a);
+    const SparseMatrix::MatrixEntry* b = static_cast<const SparseMatrix::MatrixEntry*>(_b);
+    
+    if( a->column < b->column ) {
+        return -1;
+    } else if( a->column > b->column ) {
+        return 1;
+    } else if( a->row < b->row ) {
+        return -1;
+    } else if( a->row > b->row ) {
+        return 1;
+    } else 
+        return 0;
+}
+
+
 void SparseMatrix::sortentries( SparseMatrix::MatrixEntrySorting manner ) const
 {
     check();
 
     if( manner == MatrixEntrySorting::rowwise )
-        std::sort( entries.begin(), entries.end(), []( MatrixEntry a, MatrixEntry b) {
-            return a.row < b.row || ( a.row == b.row && a.column < b.column );   
-        });
+        std::qsort( entries.data(), entries.size(), sizeof(MatrixEntry), &internal_compare_rowfirst );
     else 
-        std::sort( entries.begin(), entries.end(), []( MatrixEntry a, MatrixEntry b) {
-            return a.column < b.column || ( a.column == b.column && a.row < b.row );   
-        });
+        std::qsort( entries.data(), entries.size(), sizeof(MatrixEntry), &internal_compare_colfirst );
+
+//     if( manner == MatrixEntrySorting::rowwise )
+//         std::sort( entries.begin(), entries.end(), []( const MatrixEntry& a, const MatrixEntry& b) {
+//             return a.row < b.row || ( a.row == b.row && a.column < b.column );   
+//         });
+//     else 
+//         std::sort( entries.begin(), entries.end(), []( const MatrixEntry& a, const MatrixEntry& b) {
+//             return a.column < b.column || ( a.column == b.column && a.row < b.row );   
+//         });
     
     
 //     const int N = getnumberofentries();
@@ -384,10 +426,13 @@ SparseMatrix operator&( const SparseMatrix& left, const SparseMatrix& right )
     
 //     LOG << "--- SparseMatrix Product" << std::endl;
 //     LOG << "--- Sort and compress" << std::endl;
+
+    TimeBeacon beacon;
     
     left.sortandcompressentries( SparseMatrix::MatrixEntrySorting::columnwise );
     right.sortandcompressentries( SparseMatrix::MatrixEntrySorting::rowwise );
 
+    beacon.ping("Sorted");
 //     LOG << "--- Counting" << std::endl;
     
     const int lnum = left.getnumberofentries();
@@ -420,6 +465,8 @@ SparseMatrix operator&( const SparseMatrix& left, const SparseMatrix& right )
 
 //     LOG << "--- Assemble" << std::endl;
     
+    beacon.ping("Counted");
+
     std::vector<SparseMatrix::MatrixEntry> new_entries;
     new_entries.reserve( counter );
     
@@ -450,6 +497,8 @@ SparseMatrix operator&( const SparseMatrix& left, const SparseMatrix& right )
         }
 
     }
+
+    beacon.ping("Assembled");
 
     assert( new_entries.size() == counter );
 
