@@ -128,8 +128,8 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
             
             Float s1_s1 = s1 * s1;
             
-            if( issmall( s1_s1 ) )
-                return;
+//             if( issmall( s1_s1 ) )
+//                 break;
 
             Float alpha = ( r * s1 ) / ( s1_s1 );
             x += alpha * p1;
@@ -146,8 +146,8 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
             
             Float s2_s2 = s2 * s2;
             
-            if( issmall( s2_s2 ) )
-                return;
+//             if( issmall( s2_s2 ) )
+//                 break;
 
             Float beta2 = ( s0 * s2 ) / ( s2_s2 );
             p0 -= beta2 * p2;
