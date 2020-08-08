@@ -93,14 +93,6 @@ void ConjugateGradientSolverCSR(
             }
             
             
-        } else {
-            
-            r_r = 0.;
-            
-            #pragma omp parallel for reduction(+:r_r)
-            for( int c = 0; c < N; c++ )
-                r_r += residual[c] * residual[c];
-                
         }
         
         /* Check whether residual is small */
@@ -132,26 +124,28 @@ void ConjugateGradientSolverCSR(
         Float alpha = d_r / d_Ad;
         
         Float r_r_new = 0.;
-        Float r_r_old = 0.;
         
-        #pragma omp parallel for reduction(+:r_r_old,r_r_new)
+        #pragma omp parallel for reduction(+:,r_r_new) //r_r_old
         for( int c = 0; c < N; c++ )
         {
             
             x[c] += alpha * direction[c];
-            
-            r_r_old += residual[c] * residual[c];
             
             residual[c] -= alpha * auxiliary[c];
             
             r_r_new += residual[c] * residual[c];
         }
         
-        Float beta = r_r_new / r_r_old;
+        Float beta = r_r_new / r_r;
+        
+        r_r = r_r_new;
         
         #pragma omp parallel for
         for( int c = 0; c < N; c++ )
             auxiliary[c] = residual[c] + beta * direction[c];
+        
+        
+        // main part of iteration done. Swap buffers and give output
         
         {
             Float* swappi = auxiliary;
@@ -159,10 +153,11 @@ void ConjugateGradientSolverCSR(
             direction = swappi;
         }
         
-//         if( K % 100 == 0 ) 
-            printf("At Iteration %d we have %.9Le --- [%.9Le,%.9Le,%.9Le,%.9Le]\n", K,
-                     (long double)sqrt(r_r), (long double)alpha, (long double)beta,
-                     (long double)d_Ad, (long double)r_r_old );
+        //if( K % 100 == 0 ) 
+        printf("At Iteration %d we have %.9Le --- [%.9Le,%.9Le,%.9Le,%.9Le]\n",
+            K,
+            (long double)sqrt(r_r), (long double)alpha, (long double)beta,
+            (long double)d_Ad, (long double)r_r_new );
         
         K++;
         
@@ -175,7 +170,7 @@ void ConjugateGradientSolverCSR(
         residual[c] = b[c];
         for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
             residual[c] += -1. * csrvalues[ d ] * x[ csrcolumns[d] ];
-        residualnorm += residual[c]*residual[c];
+        residualnorm += residual[c] * residual[c];
     }
     printf("Residual after %d of max. %d iterations: %.9Le\n", K, N, (long double)sqrt(residualnorm) );
 
