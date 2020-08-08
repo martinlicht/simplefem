@@ -161,8 +161,8 @@ int main()
                     stiffness.sortentries();
                     auto stiffness_csr = MatrixCSR( stiffness );
                     
-                    //auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. );
-                    auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
+                    auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. );
+//                     auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
                     std::cout << "Average value of diagonal preconditioner: " << stiffness_invprecon.getdiagonal().average() << std::endl;
 
                     {
@@ -208,11 +208,12 @@ int main()
                         
                         cout << "...iterative solver" << endl;
                         
-                        if(false){
+                        {
                             sol.zero();
-                            MinimumResidualMethod Solver( stiffness_csr );
+//                             MinimumResidualMethod Solver( stiffness_csr );
 //                             PreconditionedConjugateResidualMethod Solver( stiffness_csr, stiffness_invprecon );
-                            Solver.print_modulo        = 1+sol.getdimension();
+                            ConjugateResidualMethod Solver( stiffness_csr );
+                            Solver.print_modulo        = 1;
                             Solver.max_iteration_count = 4 * sol.getdimension();
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );

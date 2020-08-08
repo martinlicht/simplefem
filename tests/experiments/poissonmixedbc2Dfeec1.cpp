@@ -19,8 +19,9 @@
 #include "../../mesh/examples2D.hpp"
 #include "../../mesh/examples3D.hpp"
 #include "../../vtk/vtkwriter.mesh2D.hpp"
+#include "../../solver/sparsesolver.hpp"
 #include "../../solver/crm.hpp"
-#include "../../solver/minres.hpp"
+#include "../../solver/pcrm.hpp"
 #include "../../solver/minres.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
@@ -107,7 +108,7 @@ int main()
 
             cout << "Solving Poisson Problem with Neumann boundary conditions" << endl;
 
-            int min_l = 3; 
+            int min_l = 2; 
             int max_l = 8;
             
             int min_r = 4;
@@ -207,6 +208,32 @@ int main()
                         
                         cout << "...iterative solver" << endl;
                         
+
+                        if(false){
+                            cout << "CGM - Classic" << endl;
+                        
+                            sol.zero();
+                            
+                            timestamp start = gettimestamp();
+
+                            FloatVector residual( rhs );
+                            
+                            ConjugateGradientSolverCSR( 
+//                             ConjugateResidualSolverCSR( 
+                                sol.getdimension(), 
+                                sol.raw(), 
+                                rhs.raw(), 
+                                stiffness_csr.getA(), stiffness_csr.getC(), stiffness_csr.getV(),
+                                residual.raw(),
+                                1e-16,
+                                1
+                            );
+
+                            timestamp end = gettimestamp();
+                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+                            
+//                             contable << Float(end - start) << Float(1.);
+                        }
 
                         {
                             sol.zero();

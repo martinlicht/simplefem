@@ -172,14 +172,15 @@ int main()
 
                             FloatVector residual( rhs );
                             
-//                             ConjugateGradientSolverCSR( 
-                            ConjugateResidualSolverCSR( 
+                            ConjugateGradientSolverCSR( 
+//                             ConjugateResidualSolverCSR( 
                                 sol.getdimension(), 
                                 sol.raw(), 
                                 rhs.raw(), 
                                 stiffness.getA(), stiffness.getC(), stiffness.getV(),
                                 residual.raw(),
-                                1e-16
+                                1e-16,
+                                1
                             );
 
                             timestamp end = gettimestamp();
@@ -188,7 +189,7 @@ int main()
                             contable << Float(end - start) << Float(1.);
                         }
 
-                        {
+                        if(false){
                             cout << "CGM" << endl;
                         
                             sol.zero();
@@ -204,12 +205,12 @@ int main()
                             contable << Float(end - start) << Float(Solver.recent_iteration_count);
                         }
 
-                        {
+                        if(false){
                             cout << "MINRES" << endl;
                         
                             sol.zero();
                             MinimumResidualMethod Solver( stiffness );
-                            Solver.print_modulo        = 1 + 4 * sol.getdimension();
+                            Solver.print_modulo        = 1; + 4 * sol.getdimension();
                             Solver.max_iteration_count =     4 * sol.getdimension();
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
