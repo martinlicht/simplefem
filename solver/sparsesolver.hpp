@@ -27,6 +27,19 @@ void ConjugateGradientSolverCSR(
 );
 
 
+void ConjugateGradientSolverCSR_sstep( 
+    const int N, 
+    Float* x, 
+    const Float* b, 
+    const int* csrrows, const int* csrcolumns, const Float* csrvalues, 
+    Float* residual,
+    Float allowed_error,
+    unsigned int restart_modulo
+);
+
+
+
+
 // Solves the sparse matrix system with conjugate residuals
 
 void ConjugateResidualSolverCSR( 

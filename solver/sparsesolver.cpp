@@ -34,6 +34,7 @@ void ConjugateGradientSolverCSR(
     assert( csrvalues );
     assert( residual );
     assert( allowed_error > 0 );
+    assert( restart_modulo > 0 );
     
     Float* direction = (Float*)malloc( sizeof(Float) * N );
     Float* auxiliary = (Float*)malloc( sizeof(Float) * N );
@@ -71,9 +72,9 @@ void ConjugateGradientSolverCSR(
     while( K < N ){
         
         
-        bool restart_condition = K % 1000 == 0;
+        bool restart_condition = K == 0 or K % 1000 == 0;
         
-        bool residual_seems_small = sqrt(r_r) < allowed_error;
+        bool residual_seems_small = std::sqrt(r_r) < allowed_error;
         
         if( restart_condition or residual_seems_small ) {
             
@@ -87,7 +88,7 @@ void ConjugateGradientSolverCSR(
                 for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
                     residual[c] -= csrvalues[ d ] * x[ csrcolumns[d] ];
                 
-                //direction[c] = residual[c]; // this line seems to slow down performance ....
+                direction[c] = residual[c]; // this line seems to slow down performance ....
                 
                 r_r += residual[c] * residual[c];
             }
@@ -97,7 +98,7 @@ void ConjugateGradientSolverCSR(
         
         /* Check whether residual is small */
         
-        bool residual_is_small = sqrt(r_r) < allowed_error;
+        bool residual_is_small = std::sqrt(r_r) < allowed_error;
         
         if( residual_is_small )
             break;
@@ -105,13 +106,16 @@ void ConjugateGradientSolverCSR(
 
         /* now the main work of the entire algorithm */
         
-        Float d_r = 0.;
+        // NOTE The calculation of d_r is reduced to r_r, which is already known.
+        
+        Float d_r = r_r;
+//         Float d_r = 0.;
         Float d_Ad = 0.;
         
-        #pragma omp parallel for reduction(+:d_r,d_Ad)
+        #pragma omp parallel for reduction(+:d_Ad) //d_r,
         for( int c = 0; c < N; c++ )
         {
-            d_r += direction[c] * residual[c];
+            //d_r += direction[c] * residual[c];
             
             auxiliary[c] = 0.;
             
@@ -125,7 +129,7 @@ void ConjugateGradientSolverCSR(
         
         Float r_r_new = 0.;
         
-        #pragma omp parallel for reduction(+:,r_r_new) //r_r_old
+        #pragma omp parallel for reduction(+:r_r_new) //r_r_old
         for( int c = 0; c < N; c++ )
         {
             
@@ -142,41 +146,231 @@ void ConjugateGradientSolverCSR(
         
         #pragma omp parallel for
         for( int c = 0; c < N; c++ )
-            auxiliary[c] = residual[c] + beta * direction[c];
+            direction[c] = residual[c] + beta * direction[c];
+//             auxiliary[c] = residual[c] + beta * direction[c]; // NOTE: Disabled swapping below, simply forget auxiliary buffer
         
         
         // main part of iteration done. Swap buffers and give output
         
-        {
-            Float* swappi = auxiliary;
-            auxiliary = direction;
-            direction = swappi;
-        }
+//         {
+//             Float* swappi = auxiliary;
+//             auxiliary = direction;
+//             direction = swappi;
+//         }
         
-        //if( K % 100 == 0 ) 
-        printf("At Iteration %d we have %.9Le --- [%.9Le,%.9Le,%.9Le,%.9Le]\n",
-            K,
-            (long double)sqrt(r_r), (long double)alpha, (long double)beta,
-            (long double)d_Ad, (long double)r_r_new );
+//         if( K % 100 == 0 ) 
+//         printf("At Iteration %d we have %.9Le --- [%.9Le,%.9Le,%.9Le,%.9Le]\n",
+//             K,
+//             (long double)std::sqrt(r_r), (long double)alpha, (long double)beta,
+//             (long double)d_Ad, (long double)r_r_new );
         
         K++;
         
         
     };
     
-    Float residualnorm = 0.;
-    for( int c = 0; c < N; c++ ) {
-        
-        residual[c] = b[c];
-        for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
-            residual[c] += -1. * csrvalues[ d ] * x[ csrcolumns[d] ];
-        residualnorm += residual[c] * residual[c];
-    }
-    printf("Residual after %d of max. %d iterations: %.9Le\n", K, N, (long double)sqrt(residualnorm) );
+    printf("Residual after %d of max. %d iterations: %.9Le\n", K, N, (long double)std::sqrt(r_r) );
 
     
     free( direction ); 
     free( auxiliary );
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// http://uu.diva-portal.org/smash/get/diva2:117104/FULLTEXT01.pdf
+
+void ConjugateGradientSolverCSR_sstep( 
+    const int N, 
+    Float* x, 
+    const Float* b, 
+    const int* csrrows, const int* csrcolumns, const Float* csrvalues, 
+    Float* r,
+    const Float allowed_error,
+    unsigned int restart_modulo
+) {
+    
+    assert( N > 0 );
+    assert( x );
+    assert( b );
+    assert( csrrows );
+    assert( csrcolumns );
+    assert( csrvalues );
+    assert( r );
+    assert( allowed_error > 0 );
+    assert( restart_modulo > 0 );
+    
+    Float*  d = (Float*)malloc( sizeof(Float) * N );
+    Float* Ad = (Float*)malloc( sizeof(Float) * N );
+    Float* Ar = (Float*)malloc( sizeof(Float) * N );
+    assert(  d );
+    assert( Ad );
+    assert( Ar );
+    
+    Float alpha;
+    Float  beta;
+    Float   r_r;
+
+    
+    // Initialize : compute the residual, the direction, and r * r
+    
+    int K = 0;
+
+    while( K < N ){
+        
+        
+        bool restart_condition = (K == 0); // or (K % 2000 == 1);
+        
+        bool residual_seems_small = (std::sqrt(r_r) < allowed_error);
+        
+        if( restart_condition or residual_seems_small ) {
+            
+            r_r = 0.;
+
+            #pragma omp parallel for reduction(+:r_r)
+            for( int c = 0; c < N; c++ ) {
+                
+                r[c] = b[c];
+                
+                for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                    r[c] -= csrvalues[ d ] * x[ csrcolumns[d] ];
+                
+                d[c] = r[c]; 
+                
+                r_r += r[c] * r[c];
+                
+            }
+            
+            Float d_r = r_r;
+
+            Float Ad_d = 0.;
+            
+            #pragma omp parallel for reduction(+:Ar_r)
+            for( int c = 0; c < N; c++ ) {
+                
+                Ar[c] = 0.;
+                
+                for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                    Ar[c] += csrvalues[ d ] * r[ csrcolumns[d] ];
+                
+                Ad[c] = Ar[c];
+                
+                Ad_d += Ad[c] * d[c];
+                
+            }
+            
+            alpha = d_r / Ad_d;
+            
+            beta = 0.;
+            
+        }
+        
+        /* Check whether residual is small */
+        
+        bool residual_is_small = std::sqrt(r_r) < allowed_error;
+        
+        if( residual_is_small )
+            break;
+
+
+        /* now the main work of the entire algorithm */
+        
+        
+        Float r_r_new = 0.;
+        
+        Float Ad_d = 0.;
+        Float d_r = 0.;
+        
+        #pragma omp parallel for reduction(+:r_r_new)
+        for( int c = 0; c < N; c++ )
+        {
+            
+            // compute the step
+            
+            d[c] = r[c] + beta * d[c];
+            
+            Ad[c] = Ar[c] + beta * Ad[c];
+            
+            // go along that step 
+            
+            x[c] = x[c] + alpha * d[c];
+            
+            r[c] = r[c] - alpha * Ad[c];
+            
+            r_r_new += r[c] * r[c];
+            
+            Ad_d += Ad[c] * d[c];
+            
+            d_r += d[c] * r[c];
+        }
+        
+        #pragma omp parallel for reduction(+:Ar_r) //r_r_old
+        for( int c = 0; c < N; c++ )
+        {
+            
+            Ar[c] = 0.;
+                
+            for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                Ar[c] += csrvalues[ d ] * r[ csrcolumns[d] ];
+            
+        }
+        
+        assert( r_r > 0 );
+        assert( Ad_d > 0 );
+        
+        
+        beta = r_r_new / r_r;
+        
+        alpha = d_r / Ad_d; // r_r_new / ( Ar_r - r_r_new / alpha );
+        
+        r_r = r_r_new;
+                
+        
+//         if( K % 100 == 0 ) 
+        printf("At Iteration %d we have %.9Le --- [%.9Le,%.9Le,%.9Le,%.9Le]\n",
+            K,
+            (long double)std::sqrt(r_r), (long double)alpha, (long double)beta,
+            (long double)Ad_d, (long double)d_r );
+        
+        K++;
+        
+        
+    };
+    
+    printf("Residual after %d of max. %d iterations: %.9Le\n", K, N, (long double)std::sqrt(r_r) );
+
+    
+    free(  d ); 
+    free( Ad );
+    free( Ar );
 
 }
 
