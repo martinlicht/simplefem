@@ -390,23 +390,28 @@ SparseMatrix operator&( const SparseMatrix& left, const SparseMatrix& right )
 
 //     LOG << "--- Counting" << std::endl;
     
+    const int lnum = left.getnumberofentries();
+    const int rnum = right.getnumberofentries();
+    const SparseMatrix::MatrixEntry* const ldata =  left.getentries().data();
+    const SparseMatrix::MatrixEntry* const rdata = right.getentries().data();
     int counter = 0;
     
     {
 
         int lbase = 0; int rbase = 0;
-        while( lbase < left.getnumberofentries() and rbase < right.getnumberofentries() ){
-            assert( lbase < left.getnumberofentries() and rbase < right.getnumberofentries() );
-            while( lbase < left.getnumberofentries() and left.getentry(lbase).column < right.getentry(rbase).row ) lbase++;
-            if( lbase == left.getnumberofentries() ) break;
-            while( rbase < right.getnumberofentries() and right.getentry(rbase).row < left.getentry(lbase).column ) rbase++;
-            if( rbase == right.getnumberofentries() ) break;
-            assert( lbase < left.getnumberofentries() and rbase < right.getnumberofentries() );
-            assert( left.getentry(lbase).column == right.getentry(rbase).row );
-            int index = left.getentry(lbase).column;
+        
+        while( lbase < lnum and rbase < rnum ){
+            assert( lbase < lnum and rbase < rnum );
+            while( lbase < lnum and ldata[lbase].column < rdata[rbase].row ) lbase++;
+            if( lbase == lnum ) break;
+            while( rbase < rnum and rdata[rbase].row < ldata[lbase].column ) rbase++;
+            if( rbase == rnum ) break;
+            assert( lbase < lnum and rbase < rnum );
+            assert( ldata[lbase].column == rdata[rbase].row );
+            int index = ldata[lbase].column;
             int lnext = lbase; int rnext = rbase;
-            while( lnext < left.getnumberofentries() and left.getentry(lnext).column == index ) lnext++;
-            while( rnext < right.getnumberofentries() and right.getentry(rnext).row == index  ) rnext++;
+            while( lnext < lnum and ldata[lnext].column == index ) lnext++;
+            while( rnext < rnum and rdata[rnext].row == index  ) rnext++;
             counter = counter + ( lnext - lbase ) * ( rnext - rbase );
             lbase = lnext; rbase = rnext;
         }
@@ -421,24 +426,25 @@ SparseMatrix operator&( const SparseMatrix& left, const SparseMatrix& right )
     {
         
         int lbase = 0; int rbase = 0;
-        while( lbase < left.getnumberofentries() and rbase < right.getnumberofentries() ){
-            assert( lbase < left.getnumberofentries() and rbase < right.getnumberofentries() );
-            while( lbase < left.getnumberofentries() and left.getentry(lbase).column < right.getentry(rbase).row ) lbase++;
-            if( lbase == left.getnumberofentries() ) break;
-            while( rbase < right.getnumberofentries() and right.getentry(rbase).row < left.getentry(lbase).column ) rbase++;
-            if( rbase == right.getnumberofentries() ) break;
-            assert( lbase < left.getnumberofentries() and rbase < right.getnumberofentries() );
-            assert( left.getentry(lbase).column == right.getentry(rbase).row );
-            int index = left.getentry(lbase).column;
+        
+        while( lbase < lnum and rbase < rnum ){
+            assert( lbase < lnum and rbase < rnum );
+            while( lbase < lnum and ldata[lbase].column < rdata[rbase].row ) lbase++;
+            if( lbase == lnum ) break;
+            while( rbase < rnum and rdata[rbase].row < ldata[lbase].column ) rbase++;
+            if( rbase == rnum ) break;
+            assert( lbase < lnum and rbase < rnum );
+            assert( ldata[lbase].column == rdata[rbase].row );
+            int index = ldata[lbase].column;
             int lnext = lbase; int rnext = rbase;
-            while( lnext < left.getnumberofentries() and left.getentry(lnext).column == index ) lnext++;
-            while( rnext < right.getnumberofentries() and right.getentry(rnext).row == index  ) rnext++;
+            while( lnext < lnum and ldata[lnext].column == index ) lnext++;
+            while( rnext < rnum and rdata[rnext].row == index  ) rnext++;
             for( int lcurr = lbase; lcurr < lnext; lcurr++ )
             for( int rcurr = rbase; rcurr < rnext; rcurr++ )
                 new_entries.push_back( { 
-                                        left.getentry(lcurr).row, 
-                                        right.getentry(rcurr).column, 
-                                        left.getentry(lcurr).value * right.getentry(rcurr).value
+                                        ldata[lcurr].row, 
+                                        rdata[rcurr].column, 
+                                        ldata[lcurr].value * rdata[rcurr].value
                                        } );
             lbase = lnext; rbase = rnext;
         }
