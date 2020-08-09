@@ -20,8 +20,8 @@ $(library): $(objects)
 	$(CXX) $(CXXFLAGS) -shared -o $@ $^ $(LDLIBS)
 
 
-.PHONY: depender
-depender:
+.PHONY: make_dependencies
+make_dependencies:
 	for item in $(sources); do g++ -MM $$item -MF .deps/$*.d; done
 
 $(objects): %.o: %.cpp | $(depdir)
