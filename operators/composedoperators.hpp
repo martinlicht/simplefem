@@ -6,6 +6,7 @@
 
 #include "../basic.hpp"
 #include "linearoperator.hpp"
+#include "simpleoperators.hpp"
 
 
 /************************
@@ -493,6 +494,63 @@ inline DiffOperator operator-( LinearOperator&& left, LinearOperator&& right )
 
  
 
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+auto operator-( LinearOperator&& op )
+{
+    return ProduktOperator( ScalingOperator( op.getdimout(), -1. ), std::move(op) );
+}
+
+auto operator-( LinearOperator& op )
+{
+    return ProduktOperator( ScalingOperator( op.getdimout(), -1. ), op );
+}
+
+auto operator+( LinearOperator&& op )
+{
+    return ProduktOperator( IdentityOperator( op.getdimout() ), std::move(op) );
+}
+
+auto operator+( LinearOperator& op )
+{
+    return ProduktOperator( IdentityOperator( op.getdimout() ), op );
+}
+
+auto operator*( Float s, LinearOperator&& op )
+{
+    return ProduktOperator( ScalingOperator( op.getdimout(), s ), std::move(op) );
+}
+
+auto operator*( Float s, LinearOperator& op )
+{
+    return ProduktOperator( ScalingOperator( op.getdimout(), s ), op );
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #endif
