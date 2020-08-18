@@ -74,7 +74,7 @@ void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) cons
 
         }
 
-        bool continue_condition = recent_iteration_count < max_iteration_count && r * r > tolerance && d * d > tolerance;
+        bool continue_condition = recent_iteration_count < max_iteration_count && r * r > tolerance;
         
         /* Print information if it is time too */
         if( recent_iteration_count % print_modulo == 0 or not continue_condition ) {

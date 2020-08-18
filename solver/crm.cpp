@@ -94,7 +94,7 @@ void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) cons
 
         }
 
-        bool continue_condition = recent_iteration_count < max_iteration_count && r * r > tolerance;
+        bool continue_condition = recent_iteration_count < max_iteration_count && r * r > tolerance && rAr > tolerance;
         
         /* Print information if it is time too */
         if( recent_iteration_count % print_modulo == 0 or not continue_condition ) {
@@ -121,8 +121,11 @@ void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) cons
             Float alpha = rAr / Ad_Ad;
 
             assert( rAr >= 0. ); assert( Ad_Ad >= 0. );
-            if( Ad_Ad < tolerance ) return;
-
+            if( Ad_Ad < tolerance ) {
+                LOG << "premature termination" << nl;
+                return;
+            }
+            
             x += alpha * d;
 
             r -= alpha * Ad; //= b - A * x;
@@ -145,7 +148,7 @@ void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) cons
     }
     
     /* HOW DID WE FINISH ? */
-    if( rAr > tolerance ) {
+    if( r * r > tolerance && rAr > tolerance ) {
         LOG << "CRM process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
     } else { 
         LOG << "CRM process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
@@ -199,7 +202,7 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
 
         }
 
-        bool continue_condition = recent_iteration_count < max_iteration_count && r * r > tolerance && d * d > tolerance;
+        bool continue_condition = recent_iteration_count < max_iteration_count && r * r > tolerance; //&& d * d > tolerance;
         
         /* Print information if it is time too */
         if( recent_iteration_count % print_modulo == 0 or not continue_condition ) {
@@ -216,7 +219,14 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
         /* Perform iteration step */
         {
             Ad = A * d;
-            Float Ad_Ad = Ad * Ad; assert( Ad_Ad >= 0 ); if( Ad_Ad < tolerance ) break;
+            Float Ad_Ad = Ad * Ad; assert( Ad_Ad >= 0 ); 
+            
+//             if( Ad_Ad < tolerance ) {
+//                 LOG << "premature termination" << nl;
+//                 return;
+//             }
+            
+            
             Float Ad_r  = Ad * r;
             Float alpha = Ad_r / Ad_Ad;
             x = x + alpha * d;

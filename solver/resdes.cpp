@@ -29,6 +29,11 @@ void ResidualDescentMethod::print( std::ostream& os ) const
 
 
 
+// NOTE
+// This method solves a possibly non-symmetric least squares system 
+// by shifting the solution vector x within the span of the residual.
+
+
 void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
 {
     check();
