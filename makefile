@@ -4,6 +4,32 @@ default: all
 
 all: lib test 
 
+buildobjects:
+	cd ./utility && $(MAKE) buildobjects
+	cd ./combinatorics && $(MAKE) buildobjects 
+	cd ./operators && $(MAKE) buildobjects
+	cd ./dense && $(MAKE) buildobjects
+	cd ./sparse && $(MAKE) buildobjects
+	cd ./solver && $(MAKE) buildobjects
+	cd ./mesh && $(MAKE) buildobjects
+	cd ./vtk && $(MAKE) buildobjects
+	cd ./matrixmarket && $(MAKE) buildobjects
+	# cd ./fem && $(MAKE)
+	echo "finished building objects" 
+
+buildso:
+	cd ./utility && $(MAKE) buildso
+	cd ./combinatorics && $(MAKE) buildso
+	cd ./operators && $(MAKE) buildso
+	cd ./dense && $(MAKE) buildso
+	cd ./sparse && $(MAKE) buildso
+	cd ./solver && $(MAKE) buildso
+	cd ./mesh && $(MAKE) buildso
+	cd ./vtk && $(MAKE) buildso
+	cd ./matrixmarket && $(MAKE) buildso
+	# cd ./fem && $(MAKE)
+	echo "finished building shared libraries." 
+
 lib:
 	cd ./utility && $(MAKE) 
 	cd ./combinatorics && $(MAKE) 
@@ -15,7 +41,7 @@ lib:
 	cd ./vtk && $(MAKE)
 	cd ./matrixmarket && $(MAKE)
 	# cd ./fem && $(MAKE)
-	echo "finished building libs." 
+	echo "finished building objects and shared libraries." 
 
 test:
 	cd ./tests && $(MAKE)

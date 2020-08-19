@@ -12,11 +12,15 @@ sources := $(wildcard *.cpp)
 objects := $(patsubst %.cpp,%.o,$(sources))
 dependencies := $(patsubst %.cpp,.deps/%.d,$(sources))
 
-library := lib$(dirname).so
+sharedlibrary := lib$(dirname).so
 
-all: $(objects) $(library)
+buildobjects: $(objects)
+buildso: $(sharedlibrary)
 
-$(library): $(objects)
+# all: $(objects) $(sharedlibrary)
+all: buildobjects buildso
+
+$(sharedlibrary): $(objects)
 	$(CXX) $(CXXFLAGS) -shared -o $@ $^ $(LDLIBS)
 
 
@@ -32,7 +36,7 @@ $(objects): %.o: %.cpp | $(depdir)
 .SILENT: list_of_objects
 list_of_objects: 
 		@echo $(dirname);
-		@echo $(library);
+		@echo $(sharedlibrary);
 		@echo $(objects);
 		@echo $(dependencies);
 
