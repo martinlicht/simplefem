@@ -190,27 +190,27 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
         /* Start / Restart CRM process */
         if( recent_iteration_count % x.getdimension() == 0 ) {
         
-            LOG << "Begin Conjugate Residual iteration";// << std::endl;
+//             LOG << "Begin Conjugate Residual iteration";// << std::endl;
         
             r = b - A * x;
             d = A * r;
             
-            LOG << "starting with"
-                      << " r-sqnorm="    << r * r 
-                      ;//<< std::endl;
-            LOG << "tolerance: " << tolerance;// << std::endl;
+//             LOG << "starting with"
+//                       << " r-sqnorm="    << r * r 
+//                       ;//<< std::endl;
+//             LOG << "tolerance: " << tolerance;// << std::endl;
 
         }
 
         bool continue_condition = recent_iteration_count < max_iteration_count && r * r > tolerance; //&& d * d > tolerance;
         
         /* Print information if it is time too */
-        if( recent_iteration_count % print_modulo == 0 or not continue_condition ) {
-            LOG 
-                << "#" << recent_iteration_count << "/" << max_iteration_count
-                << " r-sqnorm="  << r * r 
-                ;//<< std::endl;
-        }
+//         if( recent_iteration_count % print_modulo == 0 or not continue_condition ) {
+//             LOG 
+//                 << "#" << recent_iteration_count << "/" << max_iteration_count
+//                 << " r-sqnorm="  << r * r 
+//                 ;//<< std::endl;
+//         }
 
         /* If exit condition met, exit */
         if( not continue_condition ) 
@@ -241,10 +241,11 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
     }
     
     /* HOW DID WE FINISH ? */
-    if( r * r > tolerance ) {
-        LOG << "CRM process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
+    Float rr = r * r;
+    if( rr > tolerance ) {
+        LOG << "CRM process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << rr << "\n";
     } else { 
-        LOG << "CRM process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
+        LOG << "CRM process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << rr << "\n";
     }
 
     recent_deviation = r * r;

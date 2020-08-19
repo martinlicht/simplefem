@@ -298,6 +298,7 @@ static inline int factorial_integer( int n )
 
 static inline int binomial_integer( int n, int k )
 {
+    if( 0 > n ) std::cout << n << std::endl;
     assert( 0 <= n );
     if( k < 0 or n < k )
         return 0;

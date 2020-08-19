@@ -31,6 +31,8 @@ struct IterativeSolver
             IterativeSolver::check();
         }
         
+        virtual ~IterativeSolver() = default;
+
         virtual void check() const
         {
             assert( std::isfinite( tolerance ) && tolerance >= 0. );

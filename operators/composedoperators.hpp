@@ -66,7 +66,10 @@ class ProxyOperator final
             assert( getdimin() == src.getdimension() );
             assert( getdimout() == dest.getdimension() );
             
+//             LOG << "call";
+//             op.print( std::cout );
             op.apply( dest, src, scaling );    
+//             LOG << "done";
         }
 
     private:
@@ -509,32 +512,32 @@ inline DiffOperator operator-( LinearOperator&& left, LinearOperator&& right )
 
 
 
-auto operator-( LinearOperator&& op )
+ProduktOperator operator-( LinearOperator&& op )
 {
     return ProduktOperator( ScalingOperator( op.getdimout(), -1. ), std::move(op) );
 }
 
-auto operator-( LinearOperator& op )
+ProduktOperator operator-( LinearOperator& op )
 {
     return ProduktOperator( ScalingOperator( op.getdimout(), -1. ), op );
 }
 
-auto operator+( LinearOperator&& op )
+ProduktOperator operator+( LinearOperator&& op )
 {
     return ProduktOperator( IdentityOperator( op.getdimout() ), std::move(op) );
 }
 
-auto operator+( LinearOperator& op )
+ProduktOperator operator+( LinearOperator& op )
 {
     return ProduktOperator( IdentityOperator( op.getdimout() ), op );
 }
 
-auto operator*( Float s, LinearOperator&& op )
+ProduktOperator operator*( Float s, LinearOperator&& op )
 {
     return ProduktOperator( ScalingOperator( op.getdimout(), s ), std::move(op) );
 }
 
-auto operator*( Float s, LinearOperator& op )
+ProduktOperator operator*( Float s, LinearOperator& op )
 {
     return ProduktOperator( ScalingOperator( op.getdimout(), s ), op );
 }

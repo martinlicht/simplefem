@@ -151,10 +151,11 @@ void SparseMatrix::check() const
 
 void SparseMatrix::print( std::ostream& os ) const
 {
-    os << "SparseMatrix Entries:" << std::endl;
-    for( const MatrixEntry& entry : entries )
-        os << entry.row << " " << entry.column << " : " << entry.value << std::endl; 
-    os << std::endl;
+    os << "print SparseMatrix" << std::endl;
+//     os << "Entries:" << std::endl;
+//     for( const MatrixEntry& entry : entries )
+//         os << entry.row << " " << entry.column << " : " << entry.value << std::endl; 
+//     os << std::endl;
 }
 
 void SparseMatrix::printplain( std::ostream& os ) const
