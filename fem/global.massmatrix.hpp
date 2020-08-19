@@ -245,6 +245,70 @@ inline FloatVector FEECBrokenMassMatrix_cellwisemass( const Mesh& mesh, int n, i
 
 
 
+inline SparseMatrix FEECBrokenMassMatrix_cellwiseinverse( const Mesh& mesh, int n, int k, int r )
+{
+    
+    assert( r >= 0 );
+    assert( n >= 0 && n <= mesh.getinnerdimension() );
+    assert( k >= 0 && k <= n );
+    assert( binomial_integer( n+r, n ) == binomial_integer( n+r, r ) );
+    
+    const int num_simplices = mesh.count_simplices( n );
+        
+    const int localdim = binomial_integer( n+r, n ) * binomial_integer( n+1, k );
+    
+    const int dim_in      = num_simplices * localdim;
+    const int dim_out     = num_simplices * localdim;
+    const int num_entries = num_simplices * localdim * localdim;
+    
+    SparseMatrix ret( dim_out, dim_in, num_entries );
+    
+    DenseMatrix polyMM = polynomialmassmatrix( n, r );
+    
+    DenseMatrix polyMMinv = Inverse( polyMM ); 
+    
+    #if defined(_OPENMP)
+    #pragma omp parallel for
+    #endif
+    for( int s = 0; s < num_simplices; s++ )
+    {
+        
+        Float measure      = mesh.getMeasure( n, s );
+
+        DenseMatrix GPM    = mesh.getGradientProductMatrix( n, s );
+        
+        auto aux1   = GPM + DenseMatrix( n+1, n+1, 1. );
+        auto aux2   = Inverse( aux1 );
+        auto GPMinv = aux2 - DenseMatrix( n+1, n+1, 1. );
+            
+        DenseMatrix formMMinv = SubdeterminantMatrix( GPMinv, k );
+    
+        DenseMatrix fullMMinv = MatrixTensorProduct( polyMMinv, formMMinv ) / measure;
+
+        for( int i = 0; i < localdim; i++ )
+        for( int j = 0; j < localdim; j++ )
+        {
+            int index_of_entry = s * localdim * localdim + i * localdim + j;
+            
+            SparseMatrix::MatrixEntry entry;
+            entry.row    = s * localdim + i;
+            entry.column = s * localdim + j;
+            entry.value  = fullMMinv( i, j );
+            
+            ret.setentry( index_of_entry, entry );
+        }
+        
+    }
+    
+    return ret;
+}
+
+
+
+
+
+
+
 
 // inline DenseMatrix elementmassmatrix( int n, int ambientdim, int r, int k, DenseMatrix Jacobian )
 // {
