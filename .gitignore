@@ -7,6 +7,8 @@ cachegrind.out.*
 ./OUTPUT_CPPLINT.txt
 ./*/OUTPUT_CPPLINT.txt
 *.exe
+*.fls
+*.fdb_latexmk
 *.stackdump
 *.opensdf
 *.sdf
