@@ -272,8 +272,6 @@ void ConjugateResidualMethod::solve_robustfast( FloatVector& x, const FloatVecto
     
     const int dimension = A.getdimin();
 
-    /* Build up data */
-    
     FloatVector  r( dimension, 0. );
     FloatVector  d( dimension, 0. );
     FloatVector Ar( dimension, 0. );
@@ -282,11 +280,14 @@ void ConjugateResidualMethod::solve_robustfast( FloatVector& x, const FloatVecto
     
     recent_iteration_count = 0;
     
-    while(true)
+    while( recent_iteration_count < max_iteration_count )
     {
         
-        /* Start / Restart CRM process */
-        if( recent_iteration_count % x.getdimension() == 0 ) {
+        bool restart_condition = ( recent_iteration_count == 0 ) or ( recent_iteration_count % x.getdimension() == 0 );
+        
+        bool residual_seems_small = std::sqrt( r * r ) < tolerance;
+        
+        if( restart_condition ) {
         
             if( verbosity >= VerbosityLevel::verbose ) LOG << "Begin Conjugate Residual iteration";// << std::endl;
         
@@ -296,34 +297,33 @@ void ConjugateResidualMethod::solve_robustfast( FloatVector& x, const FloatVecto
             Ad = A * d;
             Ar = Ad;
             
-            if( verbosity >= VerbosityLevel::verbose ) 
-                LOG << "starting with"
-                    << " r-sqnorm="    << r * r 
-                    ;//<< std::endl;
-            if( verbosity >= VerbosityLevel::verbose ) 
-                LOG << "tolerance: " << tolerance;// << std::endl;
+//             if( verbosity >= VerbosityLevel::verbose ) 
+//                 LOG << "starting with"
+//                     << " r-sqnorm="    << r * r 
+//                     ;//<< std::endl;
+//             if( verbosity >= VerbosityLevel::verbose ) 
+//                 LOG << "tolerance: " << tolerance;// << std::endl;
 
         }
 
-        bool continue_condition = recent_iteration_count < max_iteration_count && r * r > tolerance; //&& d * d > tolerance;
+        bool residual_is_small = r * r < tolerance; 
         
-        /* Print information if it is time too */
-        if( verbosity >= VerbosityLevel::verbose ) 
-        if( recent_iteration_count % print_modulo == 0 or not continue_condition ) {
-            LOG 
-                << "#" << recent_iteration_count << "/" << max_iteration_count
-                << " r-sqnorm="  << r * r 
-                ;//<< std::endl;
-        }
+//         /* Print information if it is time too */
+//         if( verbosity >= VerbosityLevel::verbose ) 
+//         if( recent_iteration_count % print_modulo == 0 or residual_is_small ) {
+//             LOG 
+//                 << "#" << recent_iteration_count << "/" << max_iteration_count
+//                 << " r-sqnorm="  << r * r 
+//                 ;//<< std::endl;
+//         }
 
-        /* If exit condition met, exit */
-        if( not continue_condition ) 
+        
+        if( residual_is_small ) 
             break;
             
-        /* Perform iteration step */
         {
             p = A * Ad;
-            Float Ad_Ad = d * p; assert( Ad_Ad >= 0 ); 
+            Float Ad_Ad = Ad * Ad; assert( Ad_Ad >= 0 ); 
             
             Float Ad_r  = Ad * r;
             Float alpha = Ad_r / Ad_Ad;
@@ -340,21 +340,19 @@ void ConjugateResidualMethod::solve_robustfast( FloatVector& x, const FloatVecto
             
         }
         
-        /* Increase iteration counter */
         recent_iteration_count++;
     }
     
-    /* HOW DID WE FINISH ? */
-    Float rr = r * r;
+    
+    recent_deviation = r * r;
+
     if( verbosity >= VerbosityLevel::resultonly ) {
-        if( rr > tolerance ) {
-            LOG << "CRM process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << rr;
+        if( recent_deviation > tolerance ) {
+            LOG << "CRM process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << recent_deviation;
         } else { 
-            LOG << "CRM process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << rr;
+            LOG << "CRM process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << recent_deviation;
         }
     }
-
-    recent_deviation = r * r;
     
 }
 
@@ -441,3 +439,13 @@ void ConjugateResidualMethod::solve_robustfast( FloatVector& x, const FloatVecto
  *   alpha = rho / Ad . Ad
  * 
  */  
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
