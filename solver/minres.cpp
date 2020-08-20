@@ -67,6 +67,7 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
         /* Start / Restart MinimumResidualMethod process */
         if( recent_iteration_count % x.getdimension() == 0 ) {
         
+            if( verbosity >= VerbosityLevel::verbose ) 
             LOG << "Begin Minimal Residual iteration";// << std::endl;
         
             {
@@ -99,9 +100,11 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
 
             }
         
+            if( verbosity >= VerbosityLevel::verbose ) 
             LOG << "starting with"
                       << " r-sqnorm="    << rr 
                       ;//<< std::endl;
+            if( verbosity >= VerbosityLevel::verbose ) 
             LOG << "tolerance: " << tolerance;// << std::endl;
 
         }
@@ -109,6 +112,7 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
         bool continue_condition = recent_iteration_count < max_iteration_count && rr > tolerance;
         
         /* Print information if it is time too */
+        if( verbosity >= VerbosityLevel::verbose ) 
         if( recent_iteration_count % print_modulo == 0 or not continue_condition ) {
             LOG 
                 << "#" << recent_iteration_count << "/" << max_iteration_count
@@ -160,10 +164,12 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
     }
     
     /* HOW DID WE FINISH ? */
-    if( rr > tolerance ) {
-        LOG << "Minimum Residual process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
-    } else { 
-        LOG << "Minimum Residual process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
+    if( verbosity >= VerbosityLevel::resultonly ) {
+        if( rr > tolerance ) {
+            LOG << "Minimum Residual process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
+        } else { 
+            LOG << "Minimum Residual process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
+        }
     }
     recent_deviation = rr;
     
