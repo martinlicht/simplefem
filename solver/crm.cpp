@@ -174,104 +174,6 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
     
     const int dimension = A.getdimin();
 
-    /* Build up data */
-    
-    FloatVector  r( dimension, 0. );
-    FloatVector  d( dimension, 0. );
-    
-    // avoid repeated allocation of these temporary vectors 
-    FloatVector Ad( dimension, 0. );
-    
-    recent_iteration_count = 0;
-    
-    while(true)
-    {
-        
-        /* Start / Restart CRM process */
-        if( recent_iteration_count % x.getdimension() == 0 ) {
-        
-            if( verbosity >= VerbosityLevel::verbose ) LOG << "Begin Conjugate Residual iteration";// << std::endl;
-        
-            r = b - A * x;
-            d = A * r;
-            
-            if( verbosity >= VerbosityLevel::verbose ) 
-                LOG << "starting with"
-                    << " r-sqnorm="    << r * r 
-                    ;//<< std::endl;
-            if( verbosity >= VerbosityLevel::verbose ) 
-                LOG << "tolerance: " << tolerance;// << std::endl;
-
-        }
-
-        bool continue_condition = recent_iteration_count < max_iteration_count && r * r > tolerance; //&& d * d > tolerance;
-        
-        /* Print information if it is time too */
-        if( verbosity >= VerbosityLevel::verbose ) 
-        if( recent_iteration_count % print_modulo == 0 or not continue_condition ) {
-            LOG 
-                << "#" << recent_iteration_count << "/" << max_iteration_count
-                << " r-sqnorm="  << r * r 
-                ;//<< std::endl;
-        }
-
-        /* If exit condition met, exit */
-        if( not continue_condition ) 
-            break;
-            
-        /* Perform iteration step */
-        {
-            Ad = A * d;
-            Float Ad_Ad = Ad * Ad; assert( Ad_Ad >= 0 ); 
-            
-            Float Ad_r  = Ad * r;
-            Float alpha = Ad_r / Ad_Ad;
-            x = x + alpha * d;
-            r = r - alpha * Ad;
-            Float Ad_Ar = Ad * ( A * r );
-            Float beta = Ad_Ar / Ad_Ad;
-            d = r + beta * d;
-        }
-        
-        /* Increase iteration counter */
-        recent_iteration_count++;
-    }
-    
-    /* HOW DID WE FINISH ? */
-    Float rr = r * r;
-    if( verbosity >= VerbosityLevel::resultonly ) {
-        if( rr > tolerance ) {
-            LOG << "CRM process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << rr;
-        } else { 
-            LOG << "CRM process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << rr;
-        }
-    }
-
-    recent_deviation = r * r;
-    
-}
-
-
-
-
-
-
-
-
-
-
-void ConjugateResidualMethod::solve_robustfast( FloatVector& x, const FloatVector& b ) const
-{
-    check();
-    x.check();
-    b.check();
-    
-    assert( x.getdimension() == b.getdimension() );
-    assert( A.getdimin()  == x.getdimension() );
-    assert( A.getdimout() == b.getdimension() );
-    
-    const int dimension = A.getdimin();
-
     FloatVector  r( dimension, 0. );
     FloatVector  d( dimension, 0. );
     FloatVector Ar( dimension, 0. );
@@ -337,6 +239,116 @@ void ConjugateResidualMethod::solve_robustfast( FloatVector& x, const FloatVecto
             
             d  =  r + beta *  d;
             Ad = Ar + beta * Ad;
+            
+        }
+        
+        recent_iteration_count++;
+    }
+    
+    
+    recent_deviation = r * r;
+
+    if( verbosity >= VerbosityLevel::resultonly ) {
+        if( recent_deviation > tolerance ) {
+            LOG << "CRM process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << recent_deviation;
+        } else { 
+            LOG << "CRM process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << recent_deviation;
+        }
+    }
+    
+}
+
+
+
+
+
+
+
+
+
+
+void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b ) const
+{
+    check();
+    x.check();
+    b.check();
+    
+    assert( x.getdimension() == b.getdimension() );
+    assert( A.getdimin()  == x.getdimension() );
+    assert( A.getdimout() == b.getdimension() );
+    
+    const int dimension = A.getdimin();
+
+    FloatVector  r( dimension, 0. );
+    FloatVector  d( dimension, 0. );
+    FloatVector Ar( dimension, 0. );
+    FloatVector Ad( dimension, 0. );
+    FloatVector  p( dimension, 0. );
+    
+    recent_iteration_count = 0;
+    
+    Float Ar_r;
+    
+    while( recent_iteration_count < max_iteration_count )
+    {
+        
+        bool restart_condition = ( recent_iteration_count == 0 ) or ( recent_iteration_count % x.getdimension() == 0 );
+        
+        bool residual_seems_small = std::sqrt( r * r ) < tolerance;
+        
+        if( restart_condition ) {
+        
+            if( verbosity >= VerbosityLevel::verbose ) LOG << "Begin Conjugate Residual iteration";// << std::endl;
+        
+            r  = b - A * x;
+            d  = r;
+            
+            Ad = A * d;
+            Ar = Ad;
+            
+            Ar_r = Ar * r;
+//             if( verbosity >= VerbosityLevel::verbose ) 
+//                 LOG << "starting with"
+//                     << " r-sqnorm="    << r * r 
+//                     ;//<< std::endl;
+//             if( verbosity >= VerbosityLevel::verbose ) 
+//                 LOG << "tolerance: " << tolerance;// << std::endl;
+
+        }
+
+        bool residual_is_small = r * r < tolerance; 
+        
+//         /* Print information if it is time too */
+//         if( verbosity >= VerbosityLevel::verbose ) 
+//         if( recent_iteration_count % print_modulo == 0 or residual_is_small ) {
+//             LOG 
+//                 << "#" << recent_iteration_count << "/" << max_iteration_count
+//                 << " r-sqnorm="  << r * r 
+//                 ;//<< std::endl;
+//         }
+
+        
+        if( residual_is_small ) 
+            break;
+            
+        {
+            
+            p = A * Ad;
+            Float Ad_Ad = Ad * Ad; assert( Ad_Ad >= 0 ); 
+            
+            Float alpha = Ar_r / Ad_Ad;
+            
+            x  =  x + alpha * d;
+            r  =  r - alpha * Ad;
+            Ar = Ar - alpha * p;
+            
+            Float Ar_r_new = Ar * r;
+            Float beta = Ar_r_new / Ar_r;
+            
+            d  =  r + beta *  d;
+            Ad = Ar + beta * Ad;
+            
+            Ar_r = Ar_r_new;
             
         }
         

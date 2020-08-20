@@ -39,7 +39,7 @@ class ConjugateResidualMethod
 
                 virtual void solve_robust( FloatVector&, const FloatVector& ) const;
 
-                virtual void solve_robustfast( FloatVector&, const FloatVector& ) const;
+                virtual void solve_fast( FloatVector&, const FloatVector& ) const;
 
         private: 
 

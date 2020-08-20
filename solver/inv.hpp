@@ -83,7 +83,7 @@ class InverseOperator final
                     src.raw(), 
                     opcsr->getA(), opcsr->getC(), opcsr->getV(), 
                     res.raw(),
-                    1e-10,
+                    1e-6,
                     src.getdimension()
                 );
                 
@@ -99,7 +99,7 @@ class InverseOperator final
                 Solver.print_modulo = Solver.max_iteration_count;
                 Solver.verbosity = ConjugateResidualMethod::VerbosityLevel::resultonly;
                 
-                Solver.solve_robustfast( dest, src );
+                Solver.solve_robust( dest, src );
                 
                 dest *= scaling;
             }

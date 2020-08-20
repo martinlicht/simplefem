@@ -75,6 +75,8 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
             gamma = v1.norm();
             v1 /= gamma;
             
+            assert( gamma > 0. );
+            
             s0 = s1 = 0;
             c0 = c1 = 1;
             
@@ -87,33 +89,42 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
         if( residual_is_small )
             break;
 
-//         Float temp = (b-A*x).norm();
-//         LOG << recent_iteration_count << space << temp << space << eta << space << temp/eta;
+            Float temp;
+            temp = (b-A*x).norm();
+//             temp = gamma;
+            LOG << recent_iteration_count << space << temp << space << eta << space << temp/eta;
             
         {
             
 
-            p = A * v1;
+            FloatVector p = A * v1;
  
             Float delta = p * v1;
  
-            vn = p - delta * v1 - gamma * v0;
+            FloatVector vn = p - delta * v1 - gamma * v0;
  
             Float gamma_n = vn.norm();
             vn /= gamma_n;
+            assert( gamma_n > 0. );
  
             Float alpha_0 = c1 * delta - c0 * s1 * gamma;
             Float alpha_1 = std::sqrt( alpha_0 * alpha_0 + gamma_n * gamma_n );
             Float alpha_2 = s1 * delta + c0 * c1 * gamma;
             Float alpha_3 = s0 * gamma;
  
+            assert( alpha_1 > 0. );
+
             Float cn = alpha_0 / alpha_1;
             Float sn = gamma_n / alpha_1;
             
-            wn = ( v1 - alpha_2 * w1 - alpha_3 * w0 ) / alpha_1;
+            FloatVector wn = ( v1 - alpha_2 * w1 - alpha_3 * w0 ) / alpha_1;
             x = x + cn * eta * wn;
  
             eta = - sn * eta;
+            
+            LOG << "\t" << alpha_0 << space << alpha_1 << space << alpha_2 << space << alpha_3;
+            LOG << "\t" << cn << space << sn << space << eta;
+            LOG << "\t" << p.norm() << space << wn.norm();
             
             
             v0 = v1;
