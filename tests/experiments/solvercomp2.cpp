@@ -159,76 +159,97 @@ int main()
                         FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r,   function_rhs  );
                         FloatVector rhs = incmatrix_t * ( scalar_massmatrix * interpol_rhs );
 
+//                         {
+//                             cout << "CGM - CSR Classic" << endl;
+//                         
+//                             sol.zero();
+//                             timestamp start = gettimestamp();
+//                             FloatVector residual( rhs );
+//                             ConjugateGradientSolverCSR( 
+//                                 sol.getdimension(), 
+//                                 sol.raw(), 
+//                                 rhs.raw(), 
+//                                 stiffness.getA(), stiffness.getC(), stiffness.getV(),
+//                                 residual.raw(),
+//                                 1e-16,
+//                                 1
+//                             );
+// 
+//                             timestamp end = gettimestamp();
+//                             std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+//                             contable << Float(end - start) << Float(1.);
+//                         }
+
+//                         {
+//                             cout << "CGM - CSR Variant" << endl;
+//                         
+//                             sol.zero();
+//                             timestamp start = gettimestamp();
+//                             FloatVector residual( rhs );
+//                             ConjugateGradientSolverCSR_variant( 
+//                                 sol.getdimension(), 
+//                                 sol.raw(), 
+//                                 rhs.raw(), 
+//                                 stiffness.getA(), stiffness.getC(), stiffness.getV(),
+//                                 residual.raw(),
+//                                 1e-16,
+//                                 1
+//                             );
+// 
+//                             timestamp end = gettimestamp();
+//                             std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+//                             contable << Float(end - start) << Float(1.);
+//                         }
+// 
+//                         {
+//                             cout << "CGM - CSR SStep" << endl;
+//                         
+//                             sol.zero();
+//                             timestamp start = gettimestamp();
+//                             FloatVector residual( rhs );
+//                             ConjugateGradientSolverCSR_sstep( 
+//                                 sol.getdimension(), 
+//                                 sol.raw(), 
+//                                 rhs.raw(), 
+//                                 stiffness.getA(), stiffness.getC(), stiffness.getV(),
+//                                 residual.raw(),
+//                                 1e-16,
+//                                 1
+//                             );
+// 
+//                             timestamp end = gettimestamp();
+//                             std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+//                             contable << Float(end - start) << Float(1.);
+//                         }
+
+//                         {
+//                             cout << "CRM - CSR Old" << endl;
+//                         
+//                             sol.zero();
+//                             timestamp start = gettimestamp();
+//                             FloatVector residual( rhs );
+//                             ConjugateResidualSolverCSR_old( 
+//                                 sol.getdimension(), 
+//                                 sol.raw(), 
+//                                 rhs.raw(), 
+//                                 stiffness.getA(), stiffness.getC(), stiffness.getV(),
+//                                 residual.raw(),
+//                                 1e-16,
+//                                 1
+//                             );
+// 
+//                             timestamp end = gettimestamp();
+//                             std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+//                             contable << Float(end - start) << Float(1.);
+//                         }
+
                         {
-                            cout << "CGM - CSR Classic" << endl;
+                            cout << "CRM - CSR Variant" << endl;
                         
                             sol.zero();
                             timestamp start = gettimestamp();
                             FloatVector residual( rhs );
-                            ConjugateGradientSolverCSR( 
-                                sol.getdimension(), 
-                                sol.raw(), 
-                                rhs.raw(), 
-                                stiffness.getA(), stiffness.getC(), stiffness.getV(),
-                                residual.raw(),
-                                1e-16,
-                                1
-                            );
-
-                            timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
-                            contable << Float(end - start) << Float(1.);
-                        }
-
-                        {
-                            cout << "CGM - CSR Variant" << endl;
-                        
-                            sol.zero();
-                            timestamp start = gettimestamp();
-                            FloatVector residual( rhs );
-                            ConjugateGradientSolverCSR_variant( 
-                                sol.getdimension(), 
-                                sol.raw(), 
-                                rhs.raw(), 
-                                stiffness.getA(), stiffness.getC(), stiffness.getV(),
-                                residual.raw(),
-                                1e-16,
-                                1
-                            );
-
-                            timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
-                            contable << Float(end - start) << Float(1.);
-                        }
-
-                        {
-                            cout << "CGM - CSR SStep" << endl;
-                        
-                            sol.zero();
-                            timestamp start = gettimestamp();
-                            FloatVector residual( rhs );
-                            ConjugateGradientSolverCSR_sstep( 
-                                sol.getdimension(), 
-                                sol.raw(), 
-                                rhs.raw(), 
-                                stiffness.getA(), stiffness.getC(), stiffness.getV(),
-                                residual.raw(),
-                                1e-16,
-                                1
-                            );
-
-                            timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
-                            contable << Float(end - start) << Float(1.);
-                        }
-
-                        {
-                            cout << "CRM - CSR Old" << endl;
-                        
-                            sol.zero();
-                            timestamp start = gettimestamp();
-                            FloatVector residual( rhs );
-                            ConjugateResidualSolverCSR_old( 
+                            ConjugateResidualSolverCSR_variant( 
                                 sol.getdimension(), 
                                 sol.raw(), 
                                 rhs.raw(), 
