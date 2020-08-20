@@ -14,6 +14,7 @@
 
 #include "crm.hpp"
 #include "cgm.hpp"
+#include "sparsesolver.hpp"
 
 
 
@@ -68,15 +69,37 @@ class InverseOperator final
             assert( getdimin() == src.getdimension() );
             assert( getdimout() == dest.getdimension() );
             
-            {
+            if( dynamic_cast<const MatrixCSR*>(&op) != nullptr ){
+                
+                dest.zero();
+                
+                FloatVector res( dest );
+                
+                auto opcsr = dynamic_cast<const MatrixCSR*>(&op);
+                
+                ConjugateResidualSolverCSR( 
+                    src.getdimension(),
+                    dest.raw(), 
+                    src.raw(), 
+                    opcsr->getA(), opcsr->getC(), opcsr->getV(), 
+                    res.raw(),
+                    1e-10,
+                    src.getdimension()
+                );
+                
+                dest *= scaling;
+            
+            } else {
+            
                 dest.zero();
                 
                 ConjugateResidualMethod Solver( op );
                 
-                Solver.max_iteration_count *= 4;
+//                 Solver.max_iteration_count *= 4;
                 Solver.print_modulo = Solver.max_iteration_count;
+                Solver.verbosity = ConjugateResidualMethod::VerbosityLevel::resultonly;
                 
-                Solver.solve_robust( dest, src );
+                Solver.solve_robustfast( dest, src );
                 
                 dest *= scaling;
             }
