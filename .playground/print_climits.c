@@ -123,6 +123,8 @@ int main()
     printf("    sizeof char    : %ju\n", (UInteger)sizeof(char)    );
     printf("    sizeof wchar_t : %ju\n", (UInteger)sizeof(wchar_t) );
     printf("    sizeof wint_t  : %ju\n", (UInteger)sizeof(wint_t)  );
+    
+    printf("    \nClassical and wide character-related constants\n");
     printf("    CHAR_BIT   : %+jd\n", (SInteger)CHAR_BIT   ); 
     printf("    CHAR_MIN   : %+jd\n", (SInteger)CHAR_MIN   ); 
     printf("    CHAR_MAX   : %+jd\n", (SInteger)CHAR_MAX   ); 

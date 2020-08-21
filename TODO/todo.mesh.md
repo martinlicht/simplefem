@@ -1,5 +1,12 @@
   
   
+
+# Phantom coordinate in 2D mesh output
+
+add a phantom coordinate coordinate to the output of 2D meshes
+to plot functions
+
+
 # Mesh module
 
 The mesh module provides an abstract base class for the management of meshes

@@ -1,4 +1,8 @@
 
+# TODO short term
+
+- correct the file names in the VTK output of the different mesh and fem test programs 
+- if the file exists, add a suffix number to identify it
 
 
 # TODO long term and comprehensively
