@@ -1,7 +1,9 @@
 #ifndef INCLUDEGUARD_OPERATOR_COMPOSEDOPERATORS
 #define INCLUDEGUARD_OPERATOR_COMPOSEDOPERATORS
 
+#include <cassert>
 #include <memory>
+#include <ostream>
 #include <utility>
 
 #include "../basic.hpp"
@@ -553,6 +555,421 @@ ProduktOperator operator*( Float s, LinearOperator& op )
 
 
 
+
+class Block2x2Operator
+: public LinearOperator 
+{
+
+    public:
+    
+        explicit Block2x2Operator() = delete;
+        explicit Block2x2Operator( const Block2x2Operator& ) = delete;
+        explicit Block2x2Operator( Block2x2Operator&& ) = delete;
+        Block2x2Operator& operator=( const Block2x2Operator& vec ) = delete;
+        Block2x2Operator& operator=( Block2x2Operator&& vec ) = delete; 
+
+        
+        explicit Block2x2Operator( int dimout, int dimin,
+                                   std::unique_ptr<LinearOperator>&& pul, std::unique_ptr<LinearOperator>&& pur, 
+                                   std::unique_ptr<LinearOperator>&& pll, std::unique_ptr<LinearOperator>&& plr 
+                                 )
+        : LinearOperator( dimout, dimin ), 
+        upperleft( std::move(pul) ), upperright( std::move(pur) ),
+        lowerleft( std::move(pll) ), lowerright( std::move(plr) ) 
+        {
+            Block2x2Operator::check();
+        } 
+        
+    public:
+
+//         left  = std::make_unique<ProxyOperator>(L); 
+//         right = std::move(R).get_unique_pointer_to_heir();
+        
+        explicit Block2x2Operator( int dimout, int dimin, 
+                                   const LinearOperator&  UL, const LinearOperator&  UR, 
+                                   const LinearOperator&  LL, const LinearOperator&  LR 
+                                 )
+        : LinearOperator( UL.getdimout() + LL.getdimout(), UL.getdimin() + UR.getdimin() ), 
+        upperleft( nullptr ), upperright( nullptr ),
+        lowerleft( nullptr ), lowerright( nullptr ) 
+        {
+            assert( UL.getdimin()  == LL.getdimin()  );
+            assert( UR.getdimin()  == LR.getdimin()  );
+            assert( UL.getdimout() == UR.getdimout() );
+            assert( LL.getdimout() == LR.getdimout() );
+            upperleft  = std::make_unique<ProxyOperator>(UL); 
+            upperright = std::make_unique<ProxyOperator>(UR);
+            lowerleft  = std::make_unique<ProxyOperator>(LL); 
+            lowerright = std::make_unique<ProxyOperator>(LR);
+            Block2x2Operator::check();
+        }
+        
+        explicit Block2x2Operator( int dimout, int dimin, 
+                                   const LinearOperator&  UL, const LinearOperator&  UR, 
+                                   const LinearOperator&  LL,       LinearOperator&& LR 
+                                 )
+        : LinearOperator( UL.getdimout() + LL.getdimout(), UL.getdimin() + UR.getdimin() ), 
+        upperleft( nullptr ), upperright( nullptr ),
+        lowerleft( nullptr ), lowerright( nullptr ) 
+        {
+            assert( UL.getdimin()  == LL.getdimin()  );
+            assert( UR.getdimin()  == LR.getdimin()  );
+            assert( UL.getdimout() == UR.getdimout() );
+            assert( LL.getdimout() == LR.getdimout() );
+            upperleft  = std::make_unique<ProxyOperator>(UL); 
+            upperright = std::make_unique<ProxyOperator>(UR);
+            lowerleft  = std::make_unique<ProxyOperator>(LL); 
+            lowerright = std::move(LR).get_unique_pointer_to_heir();
+            Block2x2Operator::check();
+        }
+        
+        explicit Block2x2Operator( int dimout, int dimin, 
+                                   const LinearOperator&  UL, const LinearOperator&  UR, 
+                                         LinearOperator&& LL, const LinearOperator&  LR 
+                                 )
+        : LinearOperator( UL.getdimout() + LL.getdimout(), UL.getdimin() + UR.getdimin() ), 
+        upperleft( nullptr ), upperright( nullptr ),
+        lowerleft( nullptr ), lowerright( nullptr ) 
+        {
+            assert( UL.getdimin()  == LL.getdimin()  );
+            assert( UR.getdimin()  == LR.getdimin()  );
+            assert( UL.getdimout() == UR.getdimout() );
+            assert( LL.getdimout() == LR.getdimout() );
+            upperleft  = std::make_unique<ProxyOperator>(UL); 
+            upperright = std::make_unique<ProxyOperator>(UR);
+            lowerleft  = std::move(LL).get_unique_pointer_to_heir();
+            lowerright = std::make_unique<ProxyOperator>(LR);
+            Block2x2Operator::check();
+        }
+        
+        explicit Block2x2Operator( int dimout, int dimin, 
+                                   const LinearOperator&  UL, const LinearOperator&  UR, 
+                                         LinearOperator&& LL,       LinearOperator&& LR 
+                                 )
+        : LinearOperator( UL.getdimout() + LL.getdimout(), UL.getdimin() + UR.getdimin() ), 
+        upperleft( nullptr ), upperright( nullptr ),
+        lowerleft( nullptr ), lowerright( nullptr ) 
+        {
+            assert( UL.getdimin()  == LL.getdimin()  );
+            assert( UR.getdimin()  == LR.getdimin()  );
+            assert( UL.getdimout() == UR.getdimout() );
+            assert( LL.getdimout() == LR.getdimout() );
+            upperleft  = std::make_unique<ProxyOperator>(UL); 
+            upperright = std::make_unique<ProxyOperator>(UR);
+            lowerleft  = std::move(LL).get_unique_pointer_to_heir();
+            lowerright = std::move(LR).get_unique_pointer_to_heir();
+            Block2x2Operator::check();
+        }
+        
+        explicit Block2x2Operator( int dimout, int dimin, 
+                                         LinearOperator&& UL, const LinearOperator&  UR, 
+                                   const LinearOperator&  LL, const LinearOperator&  LR 
+                                 )
+        : LinearOperator( UL.getdimout() + LL.getdimout(), UL.getdimin() + UR.getdimin() ), 
+        upperleft( nullptr ), upperright( nullptr ),
+        lowerleft( nullptr ), lowerright( nullptr ) 
+        {
+            assert( UL.getdimin()  == LL.getdimin()  );
+            assert( UR.getdimin()  == LR.getdimin()  );
+            assert( UL.getdimout() == UR.getdimout() );
+            assert( LL.getdimout() == LR.getdimout() );
+            upperleft  = std::move(UL).get_unique_pointer_to_heir();
+            upperright = std::make_unique<ProxyOperator>(UR);
+            lowerleft  = std::make_unique<ProxyOperator>(LL); 
+            lowerright = std::make_unique<ProxyOperator>(LR);
+            Block2x2Operator::check();
+        }
+        
+        explicit Block2x2Operator( int dimout, int dimin, 
+                                         LinearOperator&& UL, const LinearOperator&  UR, 
+                                   const LinearOperator&  LL,       LinearOperator&& LR 
+                                 )
+        : LinearOperator( UL.getdimout() + LL.getdimout(), UL.getdimin() + UR.getdimin() ), 
+        upperleft( nullptr ), upperright( nullptr ),
+        lowerleft( nullptr ), lowerright( nullptr ) 
+        {
+            assert( UL.getdimin()  == LL.getdimin()  );
+            assert( UR.getdimin()  == LR.getdimin()  );
+            assert( UL.getdimout() == UR.getdimout() );
+            assert( LL.getdimout() == LR.getdimout() );
+            upperleft  = std::move(UL).get_unique_pointer_to_heir();
+            upperright = std::make_unique<ProxyOperator>(UR);
+            lowerleft  = std::make_unique<ProxyOperator>(LL); 
+            lowerright = std::move(LR).get_unique_pointer_to_heir();
+            Block2x2Operator::check();
+        }
+        
+        explicit Block2x2Operator( int dimout, int dimin, 
+                                         LinearOperator&& UL, const LinearOperator&  UR, 
+                                         LinearOperator&& LL, const LinearOperator&  LR 
+                                 )
+        : LinearOperator( UL.getdimout() + LL.getdimout(), UL.getdimin() + UR.getdimin() ), 
+        upperleft( nullptr ), upperright( nullptr ),
+        lowerleft( nullptr ), lowerright( nullptr ) 
+        {
+            assert( UL.getdimin()  == LL.getdimin()  );
+            assert( UR.getdimin()  == LR.getdimin()  );
+            assert( UL.getdimout() == UR.getdimout() );
+            assert( LL.getdimout() == LR.getdimout() );
+            upperleft  = std::move(UL).get_unique_pointer_to_heir();
+            upperright = std::make_unique<ProxyOperator>(UR);
+            lowerleft  = std::move(LL).get_unique_pointer_to_heir();
+            lowerright = std::make_unique<ProxyOperator>(LR);
+            Block2x2Operator::check();
+        }
+        
+        explicit Block2x2Operator( int dimout, int dimin, 
+                                         LinearOperator&& UL, const LinearOperator&  UR, 
+                                         LinearOperator&& LL,       LinearOperator&& LR 
+                                 )
+        : LinearOperator( UL.getdimout() + LL.getdimout(), UL.getdimin() + UR.getdimin() ), 
+        upperleft( nullptr ), upperright( nullptr ),
+        lowerleft( nullptr ), lowerright( nullptr ) 
+        {
+            assert( UL.getdimin()  == LL.getdimin()  );
+            assert( UR.getdimin()  == LR.getdimin()  );
+            assert( UL.getdimout() == UR.getdimout() );
+            assert( LL.getdimout() == LR.getdimout() );
+            upperleft  = std::move(UL).get_unique_pointer_to_heir();
+            upperright = std::make_unique<ProxyOperator>(UR);
+            lowerleft  = std::move(LL).get_unique_pointer_to_heir();
+            lowerright = std::move(LR).get_unique_pointer_to_heir();
+            Block2x2Operator::check();
+        }
+        
+        explicit Block2x2Operator( int dimout, int dimin, 
+                                   const LinearOperator&  UL,       LinearOperator&& UR, 
+                                   const LinearOperator&  LL, const LinearOperator&  LR 
+                                 )
+        : LinearOperator( UL.getdimout() + LL.getdimout(), UL.getdimin() + UR.getdimin() ), 
+        upperleft( nullptr ), upperright( nullptr ),
+        lowerleft( nullptr ), lowerright( nullptr ) 
+        {
+            assert( UL.getdimin()  == LL.getdimin()  );
+            assert( UR.getdimin()  == LR.getdimin()  );
+            assert( UL.getdimout() == UR.getdimout() );
+            assert( LL.getdimout() == LR.getdimout() );
+            upperleft  = std::make_unique<ProxyOperator>(UL); 
+            upperright = std::move(UR).get_unique_pointer_to_heir();
+            lowerleft  = std::make_unique<ProxyOperator>(LL); 
+            lowerright = std::make_unique<ProxyOperator>(LR);
+            Block2x2Operator::check();
+        }
+        
+        explicit Block2x2Operator( int dimout, int dimin, 
+                                   const LinearOperator&  UL,       LinearOperator&& UR, 
+                                   const LinearOperator&  LL,       LinearOperator&& LR 
+                                 )
+        : LinearOperator( UL.getdimout() + LL.getdimout(), UL.getdimin() + UR.getdimin() ), 
+        upperleft( nullptr ), upperright( nullptr ),
+        lowerleft( nullptr ), lowerright( nullptr ) 
+        {
+            assert( UL.getdimin()  == LL.getdimin()  );
+            assert( UR.getdimin()  == LR.getdimin()  );
+            assert( UL.getdimout() == UR.getdimout() );
+            assert( LL.getdimout() == LR.getdimout() );
+            upperleft  = std::make_unique<ProxyOperator>(UL); 
+            upperright = std::move(UR).get_unique_pointer_to_heir();
+            lowerleft  = std::make_unique<ProxyOperator>(LL); 
+            lowerright = std::move(LR).get_unique_pointer_to_heir();
+            Block2x2Operator::check();
+        }
+        
+        explicit Block2x2Operator( int dimout, int dimin, 
+                                   const LinearOperator&  UL,       LinearOperator&& UR, 
+                                         LinearOperator&& LL, const LinearOperator&  LR 
+                                 )
+        : LinearOperator( UL.getdimout() + LL.getdimout(), UL.getdimin() + UR.getdimin() ), 
+        upperleft( nullptr ), upperright( nullptr ),
+        lowerleft( nullptr ), lowerright( nullptr ) 
+        {
+            assert( UL.getdimin()  == LL.getdimin()  );
+            assert( UR.getdimin()  == LR.getdimin()  );
+            assert( UL.getdimout() == UR.getdimout() );
+            assert( LL.getdimout() == LR.getdimout() );
+            upperleft  = std::make_unique<ProxyOperator>(UL); 
+            upperright = std::move(UR).get_unique_pointer_to_heir();
+            lowerleft  = std::move(LL).get_unique_pointer_to_heir();
+            lowerright = std::make_unique<ProxyOperator>(LR);
+            Block2x2Operator::check();
+        }
+        
+        explicit Block2x2Operator( int dimout, int dimin, 
+                                   const LinearOperator&  UL,       LinearOperator&& UR, 
+                                         LinearOperator&& LL,       LinearOperator&& LR 
+                                 )
+        : LinearOperator( UL.getdimout() + LL.getdimout(), UL.getdimin() + UR.getdimin() ), 
+        upperleft( nullptr ), upperright( nullptr ),
+        lowerleft( nullptr ), lowerright( nullptr ) 
+        {
+            assert( UL.getdimin()  == LL.getdimin()  );
+            assert( UR.getdimin()  == LR.getdimin()  );
+            assert( UL.getdimout() == UR.getdimout() );
+            assert( LL.getdimout() == LR.getdimout() );
+            upperleft  = std::make_unique<ProxyOperator>(UL); 
+            upperright = std::move(UR).get_unique_pointer_to_heir();
+            lowerleft  = std::move(LL).get_unique_pointer_to_heir();
+            lowerright = std::move(LR).get_unique_pointer_to_heir();
+            Block2x2Operator::check();
+        }
+        
+        explicit Block2x2Operator( int dimout, int dimin, 
+                                         LinearOperator&& UL,       LinearOperator&& UR, 
+                                   const LinearOperator&  LL, const LinearOperator&  LR 
+                                 )
+        : LinearOperator( UL.getdimout() + LL.getdimout(), UL.getdimin() + UR.getdimin() ), 
+        upperleft( nullptr ), upperright( nullptr ),
+        lowerleft( nullptr ), lowerright( nullptr ) 
+        {
+            assert( UL.getdimin()  == LL.getdimin()  );
+            assert( UR.getdimin()  == LR.getdimin()  );
+            assert( UL.getdimout() == UR.getdimout() );
+            assert( LL.getdimout() == LR.getdimout() );
+            upperleft  = std::move(UL).get_unique_pointer_to_heir();
+            upperright = std::move(UR).get_unique_pointer_to_heir();
+            lowerleft  = std::make_unique<ProxyOperator>(LL); 
+            lowerright = std::make_unique<ProxyOperator>(LR);
+            Block2x2Operator::check();
+        }
+        
+        explicit Block2x2Operator( int dimout, int dimin, 
+                                         LinearOperator&& UL,       LinearOperator&& UR, 
+                                   const LinearOperator&  LL,       LinearOperator&& LR 
+                                 )
+        : LinearOperator( UL.getdimout() + LL.getdimout(), UL.getdimin() + UR.getdimin() ), 
+        upperleft( nullptr ), upperright( nullptr ),
+        lowerleft( nullptr ), lowerright( nullptr ) 
+        {
+            assert( UL.getdimin()  == LL.getdimin()  );
+            assert( UR.getdimin()  == LR.getdimin()  );
+            assert( UL.getdimout() == UR.getdimout() );
+            assert( LL.getdimout() == LR.getdimout() );
+            upperleft  = std::move(UL).get_unique_pointer_to_heir();
+            upperright = std::move(UR).get_unique_pointer_to_heir();
+            lowerleft  = std::make_unique<ProxyOperator>(LL); 
+            lowerright = std::move(LR).get_unique_pointer_to_heir();
+            Block2x2Operator::check();
+        }
+        
+        explicit Block2x2Operator( int dimout, int dimin, 
+                                         LinearOperator&& UL,       LinearOperator&& UR, 
+                                         LinearOperator&& LL, const LinearOperator&  LR 
+                                 )
+        : LinearOperator( UL.getdimout() + LL.getdimout(), UL.getdimin() + UR.getdimin() ), 
+        upperleft( nullptr ), upperright( nullptr ),
+        lowerleft( nullptr ), lowerright( nullptr ) 
+        {
+            assert( UL.getdimin()  == LL.getdimin()  );
+            assert( UR.getdimin()  == LR.getdimin()  );
+            assert( UL.getdimout() == UR.getdimout() );
+            assert( LL.getdimout() == LR.getdimout() );
+            upperleft  = std::move(UL).get_unique_pointer_to_heir();
+            upperright = std::move(UR).get_unique_pointer_to_heir();
+            lowerleft  = std::move(LL).get_unique_pointer_to_heir();
+            lowerright = std::make_unique<ProxyOperator>(LR);
+            Block2x2Operator::check();
+        }
+        
+        explicit Block2x2Operator( int dimout, int dimin, 
+                                         LinearOperator&& UL,       LinearOperator&& UR, 
+                                         LinearOperator&& LL,       LinearOperator&& LR 
+                                 )
+        : LinearOperator( UL.getdimout() + LL.getdimout(), UL.getdimin() + UR.getdimin() ), 
+        upperleft( nullptr ), upperright( nullptr ),
+        lowerleft( nullptr ), lowerright( nullptr ) 
+        {
+            assert( UL.getdimin()  == LL.getdimin()  );
+            assert( UR.getdimin()  == LR.getdimin()  );
+            assert( UL.getdimout() == UR.getdimout() );
+            assert( LL.getdimout() == LR.getdimout() );
+            upperleft  = std::move(UL).get_unique_pointer_to_heir();
+            upperright = std::move(UR).get_unique_pointer_to_heir();
+            lowerleft  = std::move(LL).get_unique_pointer_to_heir();
+            lowerright = std::move(LR).get_unique_pointer_to_heir();
+            Block2x2Operator::check();
+        }
+        
+        
+        
+        
+        
+        virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
+            check();
+            auto ulp = std::move( *(upperleft ->get_shared_pointer_to_clone())).get_unique_pointer_to_heir();
+            auto urp = std::move( *(upperright->get_shared_pointer_to_clone())).get_unique_pointer_to_heir();
+            auto llp = std::move( *(lowerleft ->get_shared_pointer_to_clone())).get_unique_pointer_to_heir();
+            auto lrp = std::move( *(lowerright->get_shared_pointer_to_clone())).get_unique_pointer_to_heir();
+            std::shared_ptr<Block2x2Operator> clone = std::make_shared<Block2x2Operator>( getdimout(), getdimin(), std::move(ulp), std::move(urp), std::move(llp), std::move(lrp) );
+            clone->check();
+            return clone;
+//             LOG << "Composed Operator created (clone)" << ""; 
+        }
+        
+        virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {
+            check();
+            std::unique_ptr<Block2x2Operator> heir = std::make_unique<Block2x2Operator>( getdimout(), getdimin(), std::move(upperleft), std::move(upperright), std::move(lowerleft), std::move(lowerright) );
+            heir->check();
+//             LOG << "Composed Operator created (heir)" << ""; 
+            return heir;
+        }
+
+        
+        
+        
+        using LinearOperator::apply;
+        void apply( FloatVector& dest, const FloatVector& add, Float scaling ) const override {
+            
+            assert( dest.getdimension() == upperleft->getdimout()  + lowerleft->getdimout()  );
+            assert( dest.getdimension() == upperright->getdimout() + lowerright->getdimout() );
+            assert(  add.getdimension() == upperleft->getdimin()   + upperright->getdimin()  );
+            assert(  add.getdimension() == lowerleft->getdimin()   + lowerright->getdimin()  );
+            
+            
+            auto left  = add.getslice( 0,                     upperleft ->getdimin() );
+            auto right = add.getslice( upperleft->getdimin(), upperright->getdimin() );
+            
+            auto upper = (*upperleft) * left + (*upperright) * right;
+            auto lower = (*lowerleft) * left + (*lowerright) * right;
+            
+            dest.setslice( 0,                    upper );
+            dest.setslice( upper.getdimension(), lower );
+            
+            dest.scale( scaling );
+        }
+
+        
+        
+        
+        virtual ~Block2x2Operator() {}
+
+        virtual void check() const override { 
+            LinearOperator::check(); 
+            assert( upperleft  != nullptr );
+            assert( upperright != nullptr );
+            assert( lowerleft  != nullptr );
+            assert( lowerright != nullptr );
+            upperleft->check();
+            upperright->check(); 
+            lowerleft->check();
+            lowerright->check(); 
+        }
+        
+        virtual void print( std::ostream& os ) const override { 
+            os << "Print Composed Operator" << nl;
+            upperleft->print(os); 
+            upperright->print(os); 
+            lowerleft->print(os); 
+            lowerright->print(os); 
+        }
+        
+    private:
+
+        std::unique_ptr<LinearOperator> upperleft;
+        std::unique_ptr<LinearOperator> upperright;
+        std::unique_ptr<LinearOperator> lowerleft;
+        std::unique_ptr<LinearOperator> lowerright;
+        
+};
 
 
 
