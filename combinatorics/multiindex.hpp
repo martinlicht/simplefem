@@ -2,8 +2,10 @@
 #define INCLUDEGUARD_COMBINATORICS_MULTIINDEX
 
 
-#include <vector>
+#include <functional>
+#include <initializer_list>
 #include <iostream>
+#include <vector>
 
 #include "../basic.hpp"
 

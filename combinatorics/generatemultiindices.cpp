@@ -2,14 +2,12 @@
 
 #include "generatemultiindices.hpp"
 
-#include <algorithm>
-#include <iterator>
+#include <cassert>
 #include <vector>
 
 #include "../basic.hpp"
 
 #include "indexrange.hpp"
-#include "indexmap.hpp"
 #include "multiindex.hpp"
 #include "generateindexmaps.hpp"
 

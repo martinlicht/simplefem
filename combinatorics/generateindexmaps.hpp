@@ -2,15 +2,12 @@
 #define INCLUDEGUARD_COMBINATORICS_GENERATEINDEXMAPS
 
 
-#include <algorithm>
-#include <iterator>
 #include <vector>
 
 #include "../basic.hpp"
 
 #include "indexrange.hpp"
 #include "indexmap.hpp"
-
 
 /***************
 *** 

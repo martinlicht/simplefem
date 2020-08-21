@@ -1,6 +1,7 @@
 
 #include "multiindex.hpp"
 
+#include <cassert>
 #include <iostream>
 #include <vector>
 

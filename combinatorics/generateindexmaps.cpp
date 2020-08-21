@@ -1,8 +1,8 @@
 
 #include "generateindexmaps.hpp"
 
+#include <cassert>
 #include <algorithm>
-#include <iterator>
 #include <vector>
 
 #include "../basic.hpp"

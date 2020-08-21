@@ -1,8 +1,7 @@
 
 #include "heappermgen.hpp"
 
-#include <algorithm>
-#include <iterator>
+#include <cassert>
 #include <utility>
 #include <vector>
 
