@@ -4,40 +4,40 @@
 
 
 # Do you want to use GCC or Clang?
-# Comment out the appropriate definition below
+# Uncomment the appropriate definition below
 FLAG_CXX := CLANG
 # FLAG_CXX := GCC
 
 # Do you want to ENABLE the use of tcmalloc?
-# Comment out the following line to disable tcmalloc
+# Uncomment the following line to enable tcmalloc
 # FLAG_USE_TCMALLOC=yes
 
 # Do you want to ENABLE excessive warning options?
-# Comment out the following line to disable excessive warning options
+# Uncomment the following line to enable excessive warning options
 # FLAG_EXCESSIVE_WARNINGS=yes
 
 # Do you want to ENABLE the use of openMP?
-# Comment out the following line to disable compilation with openMP
+# Uncomment the following line to enable compilation with openMP
 # OPENMP_FLAG := -fopenmp
 
 # Do you want to DISABLE checking of meshes?
-# Comment out the following line to retain meaningful check routines for meshes
+# Uncomment the following line to disable extensive check routines for meshes
 FLAG_DO_NOT_CHECK_MESHES := -DDO_NOT_CHECK_MESHES
 
 # Do you want to enable static analysis during the compilation process
-# Comment out the following line to disable static analysis
+# Uncomment the following line to enable static analysis
 # FLAG_DO_STATICANALYSIS=yes
 
 # Do you want to ENABLE the standard library debugging flags 
-# Comment out the following line to disable the standard library debugging flags 
+# Uncomment the following line to enable the standard library debugging flags 
 FLAG_DO_COMPILEDEBUGMODE := -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC
 
 # Do you want to DISABLE the general assert macro?
-# Comment out the following line to disable the general assert macro
+# Uncomment the following line to disable the general assert macro
 # FLAG_DONTASSERT := -DNDEBUG
 
 # Do you want to ENABLE the Clang sanitizer?
-# Comment out the following line to disable compilation with the Clang sanitizer
+# Uncomment the following line to enable compilation with the Clang sanitizer
 # FLAG_DO_USE_SANITIZER=yes
 
 
