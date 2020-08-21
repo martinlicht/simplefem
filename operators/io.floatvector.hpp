@@ -4,8 +4,6 @@
 
 #include <istream>
 #include <ostream>
-#include <string>
-
 
 #include "../basic.hpp"
 #include "floatvector.hpp"

@@ -1,19 +1,15 @@
 
 
-#include <algorithm>
 #include <fstream>
 #include <istream>
 #include <ostream>
-#include <map>
-#include <string>
-#include <utility>
-#include <vector>
 
 
 
 #include "../basic.hpp"
-#include "../operators/floatvector.hpp"
-#include "../operators/io.floatvector.hpp"
+#include "floatvector.hpp"
+    
+#include "io.floatvector.hpp"
 
 
 
