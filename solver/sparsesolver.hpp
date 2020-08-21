@@ -57,6 +57,18 @@ void MINRESCSR(
 
 
 
+void WHATEVER( 
+    const int N, 
+    Float* __restrict__ x, 
+    const Float* __restrict__ b, 
+    const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
+    Float* __restrict__ res,
+    const Float allowed_error,
+    unsigned int restart_modulo
+);
+
+
+
 
 // // Solves the Uzawa-system
 // 

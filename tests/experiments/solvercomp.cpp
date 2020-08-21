@@ -100,7 +100,7 @@ int main()
             ConvergenceTable contable;
             
 
-            int min_l = 2; int max_l = 7;
+            int min_l = 2; int max_l = 9;
 
             for( int l = 0; l < min_l; l++ )
                 M.uniformrefinement();
@@ -181,7 +181,7 @@ int main()
 
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
-                            contable << Float(end - start) << Float(1.);
+                            contable << Float(end - start);
                         }
 
                         {
@@ -202,16 +202,16 @@ int main()
 
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
-                            contable << Float(end - start) << Float(1.);
+                            contable << Float(end - start);
                         }
 
                         {
-                            cout << "MINRES CSR" << endl;
+                            cout << "WHATEVER CSR" << endl;
                         
                             sol.zero();
                             timestamp start = gettimestamp();
                             FloatVector residual( rhs );
-                            MINRESCSR( 
+                            WHATEVER( 
                                 sol.getdimension(), 
                                 sol.raw(), 
                                 rhs.raw(), 
@@ -223,7 +223,7 @@ int main()
 
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
-                            contable << Float(end - start) << Float(1.);
+                            contable << Float(end - start);
                         }
 
 
@@ -240,7 +240,7 @@ int main()
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
                             
-                            contable << Float(end - start) << Float(Solver.recent_iteration_count);
+                            contable << Float(end - start);
                         }
 
                         if(false){
@@ -255,7 +255,7 @@ int main()
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
 
-                            contable << Float(end - start) << Float(Solver.recent_iteration_count);
+                            contable << Float(end - start);
                         }
                         
                         contable << nl;
