@@ -2,6 +2,7 @@
 #define INCLUDEGUARD_DENSE_READWRITE
 
 #include <iostream>
+#include <functional>
 
 #include "../basic.hpp"
 

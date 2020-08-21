@@ -1,14 +1,23 @@
 
-#include <cctype>
+#include <cassert>
 #include <cmath>
+#include <cstdlib>
 #include <algorithm>
+#include <functional>
 #include <iostream>
-#include <iterator>
-#include <list>
 #include <limits>
+#include <memory>
 #include <utility>
+#include <vector>
 
 #include "densematrix.hpp"
+
+#include "../combinatorics/indexrange.hpp"
+#include "../combinatorics/indexmap.hpp"
+#include "../combinatorics/indexmap.hpp"
+#include "../operators/floatvector.hpp"
+#include "../operators/simpleoperators.hpp"
+#include "../sparse/sparsematrix.hpp"
 
 
 DenseMatrix::DenseMatrix( const DenseMatrix& mat )

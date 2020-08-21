@@ -1,8 +1,6 @@
 #ifndef INCLUDEGUARD_DENSE_ITERATIVEINVERSE
 #define INCLUDEGUARD_DENSE_ITERATIVEINVERSE
 
-#include <vector>
-
 #include "../basic.hpp"
 
 #include "densematrix.hpp"

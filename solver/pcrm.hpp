@@ -2,7 +2,7 @@
 #define INCLUDEGUARD_SOLVER_PRECON_CONJUGATERESIDUAL_METHOD
 
 
-#include <iostream>
+#include <ostream>
 
 #include "../basic.hpp"
 #include "../operators/simpleoperators.hpp"

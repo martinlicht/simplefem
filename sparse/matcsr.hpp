@@ -1,13 +1,13 @@
 #ifndef INCLUDEGUARD_MATCSR
 #define INCLUDEGUARD_MATCSR
 
-#include <cmath>
-#include <algorithm>
 #include <memory>
 #include <utility>
 #include <vector>
 
 #include "../basic.hpp"
+#include "../operators/floatvector.hpp"
+#include "../operators/linearoperator.hpp"
 #include "sparsematrix.hpp"
 
 

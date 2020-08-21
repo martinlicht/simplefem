@@ -1,18 +1,9 @@
 
 #include "simplesolver.hpp"
 
-#include <cctype>
-#include <algorithm>
-#include <iostream>
-#include <iterator>
-#include <list>
-
-#include "../combinatorics/generateindexmaps.hpp"
+#include <cassert>
 
 #include "../operators/floatvector.hpp"
-
-#include "../solver/crm.hpp"
-
 #include "densematrix.hpp"
 
 

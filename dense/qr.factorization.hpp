@@ -1,8 +1,6 @@
 #ifndef INCLUDEGUARD_DENSE_QR_FACTORIZATION
 #define INCLUDEGUARD_DENSE_QR_FACTORIZATION
 
-#include <vector>
-
 #include "../basic.hpp"
 
 #include "densematrix.hpp"

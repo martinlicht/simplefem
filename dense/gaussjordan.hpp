@@ -1,7 +1,7 @@
 #ifndef INCLUDEGUARD_DENSE_LU_FACTORIZATION
 #define INCLUDEGUARD_DENSE_LU_FACTORIZATION
 
-#include <vector>
+#include <cassert>
 
 #include "../basic.hpp"
 
@@ -73,8 +73,8 @@ inline DenseMatrix GaussJordan( DenseMatrix mat )
     
     // finished!
     
-    LOG << mat;
-    LOG << ret;
+    // LOG << mat;
+    // LOG << ret;
     
     return ret;
 }

@@ -2,10 +2,10 @@
 #define INCLUDEGUARD_SOLVER_HERZOGSOODHALTER_METHOD
 
 
-#include <iostream>
+#include <ostream>
 
 #include "../basic.hpp"
-#include "../operators/simpleoperators.hpp"
+#include "../operators/linearoperator.hpp"
 #include "iterativesolver.hpp"
 
 

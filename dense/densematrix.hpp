@@ -3,7 +3,6 @@
 
 #include <memory>
 #include <utility>
-#include <vector>
 
 class DenseMatrix;
 class SparseMatrix;
@@ -11,6 +10,7 @@ class SparseMatrix;
 
 #include "../basic.hpp"
 #include "../combinatorics/indexmap.hpp"
+#include "../operators/floatvector.hpp"
 #include "../operators/linearoperator.hpp"
 #include "../operators/simpleoperators.hpp"
 #include "../sparse/sparsematrix.hpp"

@@ -2,14 +2,6 @@
 #define INCLUDEGUARD_SOLVER_CLASSICALSOLVERS
 
 
-#include <math.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <memory.h>
-#include <assert.h>
-#include <stdlib.h>
-#include <time.h>
-
 #include "../basic.hpp"
 
 

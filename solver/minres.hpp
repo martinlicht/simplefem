@@ -2,7 +2,7 @@
 #define INCLUDEGUARD_SOLVER_MinimumResidualMethod_METHOD
 
 
-#include <iostream>
+#include <ostream>
 
 #include "../basic.hpp"
 #include "../operators/simpleoperators.hpp"

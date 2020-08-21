@@ -2,19 +2,20 @@
 #define INCLUDEGUARD_SOLVER_INVERSEOPERATOR
 
 
-#include <math.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <memory.h>
-#include <assert.h>
-#include <stdlib.h>
-#include <time.h>
+#include <cassert>
+#include <memory>
+#include <ostream>
+
 
 #include "../basic.hpp"
 
+#include "../operators/floatvector.hpp"
+#include "../operators/linearoperator.hpp"
 #include "crm.hpp"
 #include "cgm.hpp"
 #include "sparsesolver.hpp"
+
+#include "../sparse/matcsr.hpp"
 
 
 

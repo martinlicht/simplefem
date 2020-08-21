@@ -1,6 +1,10 @@
 
 #include "iterativeinverse.hpp"
 
+#include <cassert>
+
+#include "../basic.hpp"
+#include "densematrix.hpp"
 #include "scalarfunctions.hpp"
 
 void newtoniteration( DenseMatrix& X, const DenseMatrix& A, int n )

@@ -1,14 +1,12 @@
 
 
 
+#include <cmath>
+#include <cstdio>
+#include <cassert>
+#include <cstdlib>
 #include <omp.h>
-#include <math.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <memory.h>
-#include <assert.h>
-#include <stdlib.h>
-#include <time.h>
+#include <utility>
 
 
 

@@ -2,7 +2,7 @@
 #define INCLUDEGUARD_SOLVER_RESIDUAL_DESCENT_METHOD
 
 
-#include <iostream>
+#include <ostream>
 
 #include "../basic.hpp"
 #include "iterativesolver.hpp"

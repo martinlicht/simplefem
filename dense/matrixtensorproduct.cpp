@@ -1,12 +1,7 @@
 
 #include "matrixtensorproduct.hpp"
 
-#include <cctype>
-#include <algorithm>
-#include <iostream>
-#include <iterator>
-#include <list>
-
+#include <cassert>
 
 
 

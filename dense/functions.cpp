@@ -1,19 +1,16 @@
 
 #include "functions.hpp"
 
-#include <cctype>
-#include <algorithm>
-#include <iostream>
-#include <iterator>
-#include <list>
+#include <cassert>
+#include <vector>
 
+
+#include "../combinatorics/indexrange.hpp"
+#include "../combinatorics/indexmap.hpp"
 #include "../combinatorics/generateindexmaps.hpp"
 #include "../combinatorics/heappermgen.hpp"
 #include "densematrix.hpp"
-#include "qr.factorization.hpp"
-#include "gaussjordan.hpp"
-#include "../operators/floatvector.hpp"
-#include "../solver/crm.hpp"
+
 
 
 

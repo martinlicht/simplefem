@@ -1,8 +1,6 @@
 #ifndef INCLUDEGUARD_DENSE_FUNCTIONS
 #define INCLUDEGUARD_DENSE_FUNCTIONS
 
-#include <vector>
-
 #include "../basic.hpp"
 
 #include "densematrix.hpp"

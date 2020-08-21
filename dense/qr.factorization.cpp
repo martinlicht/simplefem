@@ -1,17 +1,11 @@
 
 #include "qr.factorization.hpp"
 
-#include <cctype>
-#include <cmath>
-#include <algorithm>
-#include <iostream>
-#include <iterator>
-#include <list>
+#include <cassert>
 
-#include "../combinatorics/generateindexmaps.hpp"
-#include "densematrix.hpp"
 #include "../operators/floatvector.hpp"
-#include "../solver/crm.hpp"
+#include "densematrix.hpp"
+
 
 
 

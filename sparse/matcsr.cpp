@@ -1,9 +1,7 @@
 
-#include <cctype>
-#include <algorithm>
-#include <iostream>
-#include <iterator>
-#include <list>
+#include <cassert>
+#include <cmath>
+#include <ostream>
 #include <utility>
 #include <vector>
 
