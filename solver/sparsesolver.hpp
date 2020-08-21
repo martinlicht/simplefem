@@ -42,25 +42,19 @@ void ConjugateResidualSolverCSR(
     unsigned int restart_modulo
 );
 
-void ConjugateResidualSolverCSR_variant( 
+
+
+
+void MINRESCSR( 
     const int N, 
-    Float* x, 
-    const Float* b, 
-    const int* csrrows, const int* csrcolumns, const Float* csrvalues, 
-    Float* residual,
-    Float allowed_error,
+    Float* __restrict__ x, 
+    const Float* __restrict__ b, 
+    const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
+    Float* __restrict__ res,
+    const Float allowed_error,
     unsigned int restart_modulo
 );
 
-void ConjugateResidualSolverCSR_old( 
-    const int N, 
-    Float* x, 
-    const Float* b, 
-    const int* csrrows, const int* csrcolumns, const Float* csrvalues, 
-    Float* residual,
-    Float allowed_error,
-    unsigned int restart_modulo
-);
 
 
 

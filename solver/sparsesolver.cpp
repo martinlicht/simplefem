@@ -289,6 +289,7 @@ void ConjugateResidualSolverCSR(
         
         Float beta = new_Ar_r / Ad_r;
         
+        Ad_Ad = 0.;
         #pragma omp parallel for reduction(+:Ad_Ad)
         for( int c = 0; c < N; c++ )
         {
@@ -344,7 +345,226 @@ void ConjugateResidualSolverCSR(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                       
+
+
+
+
+void MINRESCSR( 
+    const int N, 
+    Float* __restrict__ x, 
+    const Float* __restrict__ b, 
+    const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
+    Float* __restrict__ res,
+    const Float allowed_error,
+    unsigned int restart_modulo
+) {
+    
+    assert( N > 0 );
+    assert( x );
+    assert( b );
+    assert( csrrows );
+    assert( csrcolumns );
+    assert( csrvalues );
+    assert( res );
+    assert( allowed_error > 0 );
+    assert( restart_modulo > 0 );
+    
+    Float* __restrict__ v0 = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__ v1 = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__ w0 = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__ w1 = (Float*)malloc( sizeof(Float) * N );
+    
+    assert( v0 );
+    assert( v1 );
+    assert( w0 );
+    assert( w1 );
+    
+    Float* __restrict__ vn = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__ wn = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__  p = (Float*)malloc( sizeof(Float) * N );
+    
+    assert( vn );
+    assert( wn );
+    assert(  p );
+    
+    Float gamma;
+    Float eta;
+    Float s0, s1, c0, c1;
+
+    int K = 0;
+
+    while( K < N ){
+        
+        
+        bool restart_condition = (K == 0);
+        
+        bool residual_seems_small = (eta < allowed_error);
+        
+        if( restart_condition or residual_seems_small ) {
+            
+            Float gamma_sq = 0.;
+            
+            #pragma omp parallel for reduction(+:gamma_sq)
+            for( int c = 0; c < N; c++ ) {
+                
+                v0[c] = 0.;
+                w0[c] = 0.;
+                v1[c] = b[c];
+                w1[c] = 0.;
+                
+                for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                    v1[c] -= csrvalues[ d ] * x[ csrcolumns[d] ];
+                
+                gamma_sq += v1[c] * v1[c];
+                
+            }
+            
+            assert( gamma_sq > 0. );
+            
+            gamma = std::sqrt(gamma_sq);
+            
+            #pragma omp parallel for 
+            for( int c = 0; c < N; c++ ) 
+                v1[c] /= gamma;
+            
+            s0 = s1 = 0.;
+            c0 = c1 = 1.;
+            
+            eta = gamma;
+            
+        }
+        
+        bool residual_is_small = (eta < allowed_error);
+        
+        if( residual_is_small )
+            break;
+
+        Float temp = gamma;
+        if( K % 100 == 0 )
+        LOG << K << space << temp << space << eta << space << temp/eta;
+            
+        {
+            
+            
+            Float delta = 0.;
+            
+            #pragma omp parallel for reduction(+:delta)
+            for( int c = 0; c < N; c++ ) {
+                
+                p[c] = 0.;
+                for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                    p[c] += csrvalues[ d ] * v1[ csrcolumns[d] ];
+                
+                delta += p[c] * v1[c];
+                
+            }
+            
+            assert( delta > 0. );
+            
+            Float gamma_n_sq = 0.;
+            #pragma omp parallel for reduction(+:gamma_n_sq)
+            for( int c = 0; c < N; c++ ) {
+                
+                vn[c] = p[c] - delta * v1[c] - gamma * v0[c];
+                
+                gamma_n_sq += vn[c] * vn[c];
+                
+            }
+            
+            assert( gamma_n_sq > 0. );
+ 
+            Float gamma_n = std::sqrt(gamma_n_sq);
+            
+            #pragma omp parallel for 
+            for( int c = 0; c < N; c++ )
+                vn[c] /= gamma_n;
+            
+            Float alpha_0 = c1 * delta - c0 * s1 * gamma;
+            Float alpha_1 = std::sqrt( alpha_0 * alpha_0 + gamma_n * gamma_n );
+            Float alpha_2 = s1 * delta + c0 * c1 * gamma;
+            Float alpha_3 = s0 * gamma;
+ 
+            assert( alpha_1 > 0. );
+
+            Float cn = alpha_0 / alpha_1;
+            Float sn = gamma_n / alpha_1;
+            
+            #pragma omp parallel for
+            for( int c = 0; c < N; c++ ) {
+                wn[c] = ( v1[c] - alpha_2 * w1[c] - alpha_3 * w0[c] ) / alpha_1;
+                x[c] = x[c] + cn * eta * wn[c];
+            }
+            
+            eta = - sn * eta;
+            
+//             LOG << "\t" << alpha_0 << space << alpha_1 << space << alpha_2 << space << alpha_3;
+//             LOG << "\t" << cn << space << sn << space << eta;
+            
+            
+            std::swap( v0, v1 );
+            std::swap( w0, w1 );
+            std::swap( v1, vn );
+            std::swap( w1, wn );
+//             v0 = v1;
+//             w0 = w1;
+//             v1 = vn;
+//             w1 = wn;
+            
+            gamma = gamma_n;
+            
+            c0 = c1;
+            s0 = s1;
+            c1 = cn;
+            s1 = sn;
+
+        }
+
+        
+        
+        
+        K++;
+        
+    };
+    
+    printf("Residual after %d of max. %d iterations: %.9Le\n", K, N, (long double)eta );
+
+    
+    free( v0 );
+    free( v1 );
+    free( w0 );
+    free( w1 );
+    
+    free( vn );
+    free( wn );
+    free(  p );
+    
+}
+
+
+
+
+
+
+
 
 
 
@@ -770,6 +990,35 @@ void ConjugateResidualSolverCSR(
 //     
 //     
 // }                            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
