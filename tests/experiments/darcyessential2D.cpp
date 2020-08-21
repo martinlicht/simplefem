@@ -21,7 +21,7 @@
 #include "../../vtk/vtkwriter.mesh2D.hpp"
 #include "../../solver/crm.hpp"
 #include "../../solver/minres.hpp"
-#include "../../solver/minres.hpp"
+#include "../../solver/herzogsoodhalter.hpp"
 #include "../../solver/inv.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
@@ -114,7 +114,7 @@ int main()
             cout << "Solving Poisson Problem with Neumann boundary conditions" << endl;
 
             int min_l = 1; 
-            int max_l = 1;
+            int max_l = 7;
             
             int min_r = 2;
             int max_r = 2;
@@ -151,10 +151,20 @@ int main()
                     SparseMatrix volume_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 2, r-1 );
                     SparseMatrix volume_incmatrix_t = volume_incmatrix.getTranspose();
 
-                    auto A  = vector_incmatrix_t * vector_massmatrix * vector_incmatrix;
-                    auto B  = vector_incmatrix_t * diffmatrix_t * volume_massmatrix * volume_incmatrix; // upper right
-                    auto Bt = volume_incmatrix_t * volume_massmatrix * diffmatrix * vector_incmatrix; // lower bottom
-
+                    auto mat_A  = vector_incmatrix_t & vector_massmatrix & vector_incmatrix;
+                    mat_A.sortandcompressentries();
+                    
+                    auto mat_B  = vector_incmatrix_t & diffmatrix_t & volume_massmatrix & volume_incmatrix; // upper right
+                    mat_B.sortandcompressentries();
+                    
+                    auto mat_Bt = mat_B.getTranspose(); //volume_incmatrix_t & volume_massmatrix & diffmatrix & vector_incmatrix; // lower bottom
+                    mat_Bt.sortandcompressentries();
+                    
+                    auto A  = MatrixCSR( mat_A  );
+                    auto B  = MatrixCSR( mat_B  );
+                    auto Bt = MatrixCSR( mat_Bt );
+                    
+                    
                     auto Schur = Bt * inv(A) * B;
                     
                     {
@@ -185,58 +195,90 @@ int main()
                         
 
 
-                        cout << "...compute norms of solution and right-hand side:" << endl;
-            
-                        Float sol_norm = interpol_sol * ( volume_massmatrix * interpol_sol );
-                        Float rhs_norm = interpol_sol * ( volume_massmatrix * interpol_rhs );
                         
-                        cout << "solution norm: " << sol_norm << endl;
-                        cout << "rhs norm:      " << rhs_norm << endl;
 
 
-                        FloatVector rhs = volume_incmatrix_t * ( volume_massmatrix * interpol_rhs );
-
-                        FloatVector sol( volume_incmatrix.getdimin(), 0. );
-                        
-                        cout << "...iterative solver" << endl;
-                        
                         {
+                            
+                            FloatVector rhs = volume_incmatrix_t * ( volume_massmatrix * interpol_rhs );
+
+                            FloatVector sol( volume_incmatrix.getdimin(), 0. );
+                            
+                            cout << "...iterative solver" << endl;
+                            
+                            
                             sol.zero();
                             
-                            auto y = FloatVector( B.getdimin(), 0. );
                             auto X = Bt * inv(A) * B;
-                            auto f = X * y;
+//                             auto y = FloatVector( B.getdimin(), 0. );
+//                             auto f = X * y;
                             
                             ConjugateResidualMethod Solver( X );
-                            Solver.print_modulo        = 1+sol.getdimension();
+//                             HerzogSoodhalterMethod Solver( X );
+                            Solver.tolerance           = 1e-10;
+                            Solver.print_modulo        = 1;
                             Solver.max_iteration_count = 4 * sol.getdimension();
                             timestamp start = gettimestamp();
-                            Solver.solve_robust( sol, rhs );
+                            Solver.solve_fast( sol, rhs );
+//                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+
+                            cout << "...compute error and residual:" << endl;
+
+                            auto errornorm_aux = interpol_sol  - volume_incmatrix * sol;
+
+                            Float errornorm     = sqrt( errornorm_aux * ( volume_massmatrix * errornorm_aux ) );
+                            Float residualnorm  = ( rhs - Schur * sol ).norm();
+
+                            cout << "error:     " << errornorm     << endl;
+
+                            contable << errornorm;
+                            contable << nl;
+
+                            contable.print( std::cout );
+                            
                         }
 
-                        cout << "...compute error and residual:" << endl;
-//             
-//                         
-                        auto errornorm_aux = interpol_sol  - volume_incmatrix * sol;
-//                         auto graderror_aux = interpol_grad - diffmatrix * incmatrix * sol;
-//                         
-                        Float errornorm     = sqrt( errornorm_aux * ( volume_massmatrix * errornorm_aux ) );
-//                         Float graderrornorm = sqrt( graderror_aux * ( vector_massmatrix * graderror_aux ) );
-//                         Float residualnorm  = ( rhs - Schur * sol ).norm();
-//                         
-                        cout << "error:     " << errornorm     << endl;
-//                         cout << "graderror: " << graderrornorm << endl;
-//                         cout << "residual:  " << residualnorm  << endl;
-                        
-                        
-                        
-                        contable << errornorm;
-//                         contable << graderrornorm;
-                        contable << nl;
-//                         
-                        contable.print( std::cout );
+                        if(false){
+                            
+                            auto O = ScalingOperator( B.getdimin(), 10. );
+                            auto X = Block2x2Operator( A.getdimout() + Bt.getdimout(), A.getdimin() + B.getdimin(), A, B, Bt, O );
+
+                            FloatVector sol( A.getdimin()  +  B.getdimin(),  0. );
+                            FloatVector rhs( A.getdimout() + Bt.getdimout(), 0. );
+                            
+                            sol.random();
+                            rhs = X * sol;
+                            sol.zero();
+//                             rhs.setslice( A.getdimin(), volume_incmatrix_t * ( volume_massmatrix * interpol_rhs ) );
+                            
+                            HerzogSoodhalterMethod Solver( X );
+                            Solver.tolerance           = 1e-10;
+                            Solver.print_modulo        = 1;
+                            Solver.max_iteration_count = 10 * sol.getdimension();
+                            timestamp start = gettimestamp();
+                            Solver.solve( sol, rhs );
+                            timestamp end = gettimestamp();
+                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+
+                            cout << "...compute error and residual:" << endl;
+
+                            auto errornorm_aux = interpol_sol - volume_incmatrix * sol.getslice( A.getdimin(), B.getdimin() );
+
+                            Float errornorm     = sqrt( errornorm_aux * ( volume_massmatrix * errornorm_aux ) );
+                            Float residualnorm  = ( rhs - X * sol ).norm();
+
+                            cout << "error:     " << errornorm     << endl;
+
+                            contable << errornorm;
+                            contable << nl;
+
+                            contable.print( std::cout );
+                            
+                            
+                        }
+
 
                     }
                     
