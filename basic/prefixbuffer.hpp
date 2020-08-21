@@ -3,11 +3,10 @@
 #define INCLUDEGUARD_PREFIXBUFFER_HPP
 
 #include <cassert>
-#include <cstdio>
 #include <iostream>
-#include <locale>
 #include <streambuf>
 #include <string>
+
 
 
 

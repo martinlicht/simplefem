@@ -3,7 +3,7 @@
 
 #include <cassert>
 #include <functional>
-#include <iostream>
+#include <ostream>
 #include <string>
 
 

@@ -14,7 +14,7 @@
 #include <iterator>
 #include <limits>
 #include <list>
-#include <ostream>
+#include <string>
 #include <type_traits>
 #include <utility>
 #include <vector>

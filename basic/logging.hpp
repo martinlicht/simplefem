@@ -18,10 +18,10 @@
 
 // treat the following macros as PRINT 'str' commands
 // Example usage:
-//     NOTE "This is a short information"
-//     WARN "This is a short information"
-//     ALERT "This is a short information"
-//     ERROR "This is a short information"
+//     NOTE "This is a note"
+//     WARN "This is a warning"
+//     ALERT "This is an alert"
+//     ERROR "This is an error"
 
 #define NOTE    Logger( std::cout, "", "\n" ) <<
 #define NOTICE  Logger( std::cout, "", "\n" ) <<
