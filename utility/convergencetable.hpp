@@ -1,8 +1,6 @@
 #ifndef INCLUDEGUARD_BASIC_CONVERGENCETABLE
 #define INCLUDEGUARD_BASIC_CONVERGENCETABLE
 
-#include <fstream>
-#include <iomanip>
 #include <iostream>
 #include <vector>
 
