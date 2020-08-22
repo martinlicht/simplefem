@@ -332,6 +332,159 @@ void ConjugateResidualSolverCSR(
 
 
 
+void ConjugateResidualSolverCSR_textbook( 
+    const int N, 
+    Float* __restrict__ x, 
+    const Float* __restrict__ b, 
+    const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
+    Float* __restrict__ res,
+    const Float allowed_error,
+    unsigned int restart_modulo
+) {
+    
+    assert( N > 0 );
+    assert( x );
+    assert( b );
+    assert( csrrows );
+    assert( csrcolumns );
+    assert( csrvalues );
+    assert( res );
+    assert( allowed_error > 0 );
+    assert( restart_modulo > 0 );
+    
+    Float* __restrict__  dir = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__ Adir = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__ Ares = (Float*)malloc( sizeof(Float) * N );
+    assert(  dir );
+    assert( Adir );
+    assert( Ares );
+    
+    Float* __restrict__  vil = (Float*)malloc( sizeof(Float) * N );
+    assert( vil );
+    
+    
+    Float Ar_r;
+    Float Ad_Ad;
+
+    int K = 0;
+    
+    while( K < N ){
+        
+        bool restart_condition = ( K == 0 ); // or K % 1000 == 0;
+        
+        bool r_seems_small = std::sqrt(Ar_r) < allowed_error;
+
+        if( restart_condition or r_seems_small ) {
+            
+            #pragma omp parallel for
+            for( int c = 0; c < N; c++ ) {
+                
+                res[c] = b[c];
+                
+                for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                    res[c] -= csrvalues[ d ] * x[ csrcolumns[d] ];
+                
+                dir[c] = res[c]; // this line seems to slow down performance ....
+                
+            }
+            
+            Ar_r  = 0.;
+            Ad_Ad = 0.;
+            
+            #pragma omp parallel for reduction(+:Ar_r,Ad_Ad)
+            for( int c = 0; c < N; c++ ) {
+                
+                Adir[c] = 0.;
+                
+                for( int e = csrrows[c]; e < csrrows[c+1]; e++ )
+                    Adir[c] += csrvalues[ e ] * dir[ csrcolumns[e] ];
+                
+                Ares[c] = Adir[c];
+                
+                Ar_r  += Ares[c] *  res[c];
+                Ad_Ad += Adir[c] * Adir[c];
+                
+            }
+            
+            
+        }
+        
+        /* Check whether res is small */
+                
+        bool r_is_small = std::sqrt(Ar_r) < allowed_error;
+        
+        if( r_is_small )
+            break;
+
+
+        /* now the main work of the entire algorithm */
+        
+        Float alpha = Ar_r / Ad_Ad;
+        
+        Float new_Ar_r = 0.;
+        
+        #pragma omp parallel for reduction(+:new_Ar_r)
+        for( int c = 0; c < N; c++ )
+        {
+            vil[c] = 0.;
+            
+            for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                vil[c] += csrvalues[ d ] * Adir[ csrcolumns[d] ];
+                    
+            x[c] = x[c] + alpha * dir[c];
+            
+            res[c] = res[c] - alpha * Adir[c];
+            
+            Ares[c] = Ares[c] - alpha * vil[c];
+            
+            new_Ar_r += Ares[c] * res[c];
+            
+        }
+        
+        Float beta = new_Ar_r / Ar_r;
+        
+        Ad_Ad = 0.;
+        #pragma omp parallel for reduction(+:Ad_Ad)
+        for( int c = 0; c < N; c++ )
+        {
+            
+            dir[c]  =  res[c] + beta *  dir[c];
+            
+            Adir[c] = Ares[c] + beta * Adir[c];
+            
+            Ad_Ad += Adir[c] * Adir[c];
+        }
+        
+        Ar_r = new_Ar_r;
+                
+        
+//         if( K % 100 == 0 ) 
+//         printf("At Iteration %d we have %.9Le --- [%.9Le,%.9Le,%.9Le,%.9Le]\n",
+//             K,
+//             (long double)std::sqrt(r_r), (long double)alpha, (long double)beta,
+//             (long double)d_Ad, (long double)r_r_new );
+        
+        K++;
+        
+    };
+    
+    printf("Residual after %d of max. %d iterations: %.9Le\n", K, N, (long double)std::sqrt(Ar_r) );
+
+    
+    free(  dir );
+    free( Adir );
+    free( Ares );
+
+    free( vil );
+
+}
+
+
+
+
+
+
+
 
 
 

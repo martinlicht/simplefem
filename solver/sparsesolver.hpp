@@ -34,6 +34,16 @@ void ConjugateResidualSolverCSR(
     unsigned int restart_modulo
 );
 
+void ConjugateResidualSolverCSR_textbook( 
+    const int N, 
+    Float* x, 
+    const Float* b, 
+    const int* csrrows, const int* csrcolumns, const Float* csrvalues, 
+    Float* residual,
+    Float allowed_error,
+    unsigned int restart_modulo
+);
+
 
 
 
