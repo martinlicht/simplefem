@@ -43,6 +43,8 @@ lib:
 	# cd ./fem && $(MAKE)
 	echo "finished building objects and shared libraries." 
 
+
+.PHONY: test 
 test:
 	cd ./tests && $(MAKE)
 	echo "finished building tests."
@@ -54,6 +56,8 @@ vtkclean:
 	-rm -f ./*/*.vtk
 	-rm -f ./*/*/*.vtk
 
+
+.PHONY: clean
 clean: 
 	cd ./utility && $(MAKE) clean
 	cd ./combinatorics && $(MAKE) clean
@@ -69,21 +73,25 @@ clean:
 	$(MAKE) -f common.upkeep.mk clean
 	@echo "finished cleaning." 
 
-dclean: 
-	cd ./utility && $(MAKE) dclean
-	cd ./combinatorics && $(MAKE) dclean
-	cd ./operators && $(MAKE) dclean
-	cd ./dense && $(MAKE) dclean
-	cd ./sparse && $(MAKE) dclean
-	cd ./solver && $(MAKE) dclean
-	cd ./mesh && $(MAKE) dclean
-	cd ./vtk && $(MAKE) dclean
-	cd ./matrixmarket && $(MAKE) dclean
-	cd ./fem && $(MAKE) dclean
-	cd ./tests && $(MAKE) dclean
-	$(MAKE) -f common.upkeep.mk dclean
+
+.PHONY: dependclean
+dependclean: 
+	cd ./utility && $(MAKE) dependclean
+	cd ./combinatorics && $(MAKE) dependclean
+	cd ./operators && $(MAKE) dependclean
+	cd ./dense && $(MAKE) dependclean
+	cd ./sparse && $(MAKE) dependclean
+	cd ./solver && $(MAKE) dependclean
+	cd ./mesh && $(MAKE) dependclean
+	cd ./vtk && $(MAKE) dependclean
+	cd ./matrixmarket && $(MAKE) dependclean
+	cd ./fem && $(MAKE) dependclean
+	cd ./tests && $(MAKE) dependclean
+	$(MAKE) -f common.upkeep.mk dependclean
 	@echo "finished cleaning dependencies." 
 
+
+.PHONY: tidy
 tidy: 
 	cd ./utility && $(MAKE) tidy
 	cd ./combinatorics && $(MAKE) tidy
@@ -99,6 +107,8 @@ tidy:
 	$(MAKE) -f makefile.tidy tidy
 	@echo "finished tidying." 
 
+
+.PHONY: check
 check: 
 	cd ./utility && $(MAKE) check
 	cd ./combinatorics && $(MAKE) check
@@ -113,6 +123,7 @@ check:
 # 	cd ./tests && $(MAKE) check
 	$(MAKE) -f makefile.check check
 	@echo "finished checking." 
+
 
 # shared: default
 # 	mkdir build
@@ -133,6 +144,8 @@ check:
 CHECK_OPTION= --enable=warning,style,performance,portability --std=c++11 -q
 CHECK_FILES= basic.hpp basic/*.?pp combinatorics/*.?pp operators/*.?pp
 
+
+# .PHONY: check
 # check:
 # 	cppcheck $(CHECK_OPTION) . -ilegacy/ -iplayground/
 # 	cppcheck $(CHECK_OPTION) basic.hpp
@@ -145,8 +158,26 @@ CHECK_FILES= basic.hpp basic/*.?pp combinatorics/*.?pp operators/*.?pp
 # 	cppcheck $(CHECK_OPTION) mesh/*.?pp
 # 	cppcheck $(CHECK_OPTION) */*.?pp
 
+
+
+# 	cd ./utility && $(MAKE) cpplint
+# 	cd ./combinatorics && $(MAKE) cpplint
+# 	cd ./operators && $(MAKE) cpplint
+# 	cd ./dense && $(MAKE) cpplint
+# 	cd ./sparse && $(MAKE) cpplint
+# 	cd ./solver && $(MAKE) cpplint
+# 	cd ./mesh && $(MAKE) cpplint
+# 	cd ./vtk && $(MAKE) cpplint
+# 	cd ./matrixmarket && $(MAKE) cpplint
+# 	cd ./fem && $(MAKE) cpplint
+# # 	cd ./tests && $(MAKE) cpplint
+# 	$(MAKE) -f makefile.cpplint cpplint
+# 	@echo "finished cpplinting." 
+
+
+.PHONY: cpplint
 cpplint:
-	( ./cpplint.py --exclude=tests/* --exclude=tests/*/* --exclude=legacy/* --exclude=private/* --exclude=playground/* --recursive --filter=-whitespace,-legal --quiet . ) | sort | uniq -c > OUTPUT_CPPLINT.txt
+	( ./cpplint.py --exclude=tests/* --exclude=tests/*/* --exclude=.legacy/* --exclude=.private/* --exclude=.playground/* --recursive --filter=-whitespace,-legal --quiet . ) | sort | uniq -c > OUTPUT_CPPLINT.txt
 
 
 
