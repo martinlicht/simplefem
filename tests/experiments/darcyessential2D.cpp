@@ -165,7 +165,7 @@ int main()
                     auto B  = MatrixCSR( mat_B  );
                     
                     
-                    auto Schur = B * inv(A) * Bt;
+                    auto Schur = B * inv(A,1e-10) * Bt;
                     
                     {
 
@@ -198,7 +198,7 @@ int main()
                         
 
 
-                        if(false){
+                        {
                             
                             FloatVector rhs = volume_incmatrix_t * ( volume_massmatrix * interpol_rhs );
 
@@ -209,7 +209,7 @@ int main()
                             
                             sol.zero();
                             
-                            auto X = B * inv(A) * Bt;
+                            auto X = B * inv(A,1e-06) * Bt;
 //                             auto y = FloatVector( Bt.getdimin(), 0. );
 //                             auto f = X * y;
                             
@@ -241,7 +241,7 @@ int main()
                             
                         }
 
-                        {
+                        if(false){
                             
                             auto O = ScalingOperator( Bt.getdimin(), 10. );
                             auto X = Block2x2Operator( A.getdimout() + B.getdimout(), A.getdimin() + Bt.getdimin(), A, Bt, B, O );

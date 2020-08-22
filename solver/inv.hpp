@@ -33,8 +33,8 @@ class InverseOperator final
         InverseOperator& operator=( InverseOperator&& vec ) = delete; 
 
         
-        explicit InverseOperator( const LinearOperator& op )
-        : LinearOperator( op.getdimout(), op.getdimin() ), op( op ) { 
+        explicit InverseOperator( const LinearOperator& op, Float tolerance )
+        : LinearOperator( op.getdimout(), op.getdimin() ), op( op ), tolerance(tolerance) { 
             assert( op.getdimin() == op.getdimout() );
             LOG << "Inverse created" << ""; 
         }
@@ -44,12 +44,12 @@ class InverseOperator final
         }
 
         virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
-            std::shared_ptr<InverseOperator> cloned = std::make_shared<InverseOperator>( op );
+            std::shared_ptr<InverseOperator> cloned = std::make_shared<InverseOperator>( op, tolerance );
             return cloned;
         }
         
         virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {
-            std::unique_ptr<InverseOperator> heir = std::make_unique<InverseOperator>( op );
+            std::unique_ptr<InverseOperator> heir = std::make_unique<InverseOperator>( op, tolerance );
             return heir;
         }
 
@@ -84,7 +84,7 @@ class InverseOperator final
                     src.raw(), 
                     opcsr->getA(), opcsr->getC(), opcsr->getV(), 
                     res.raw(),
-                    1e-6,
+                    tolerance,
                     src.getdimension()
                 );
                 
@@ -96,9 +96,9 @@ class InverseOperator final
                 
                 ConjugateResidualMethod Solver( op );
                 
-//                 Solver.max_iteration_count *= 4;
-                Solver.print_modulo = Solver.max_iteration_count;
-                Solver.verbosity = ConjugateResidualMethod::VerbosityLevel::resultonly;
+                Solver.max_iteration_count = op.getdimin();
+                Solver.print_modulo        = Solver.max_iteration_count;
+                Solver.verbosity           = ConjugateResidualMethod::VerbosityLevel::resultonly;
                 
                 Solver.solve_robust( dest, src );
                 
@@ -114,15 +114,16 @@ class InverseOperator final
     private:
 
         const LinearOperator& op;
+        Float tolerance;
     
 };
   
   
-inline InverseOperator inv( const LinearOperator& op )
+inline InverseOperator inv( const LinearOperator& op, Float tolerance )
 {
     op.check();
     
-    return InverseOperator( op );
+    return InverseOperator( op, tolerance );
 }  
 
 

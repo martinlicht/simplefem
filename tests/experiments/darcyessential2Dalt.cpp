@@ -111,7 +111,7 @@ int main()
 
             cout << "Solving Poisson Problem with Neumann boundary conditions" << endl;
 
-            int min_l = 1; 
+            int min_l = 5; 
             int max_l = 7;
             
             int min_r = 2;
@@ -206,7 +206,8 @@ int main()
 
                             timestamp start = gettimestamp();
 
-                            HodgeConjugateResidualSolverCSR( 
+//                             HodgeConjugateResidualSolverCSR( // TODO
+                            HodgeConjugateResidualSolverCSR_textbook( 
                                 B.getdimout(), 
                                 A.getdimout(), 
                                 sol.raw(), 
@@ -227,7 +228,7 @@ int main()
                             auto errornorm_aux = interpol_sol  - volume_incmatrix * sol;
 
                             Float errornorm     = sqrt( errornorm_aux * ( volume_massmatrix * errornorm_aux ) );
-                            Float residualnorm  = ( rhs - B * inv(A) * Bt * sol ).norm();
+                            Float residualnorm  = ( rhs - B * inv(A,1e-10) * Bt * sol ).norm();
 
                             cout << "error:     " << errornorm     << endl;
                             cout << "residual:  " << residualnorm  << endl;
