@@ -671,7 +671,7 @@ void WHATEVER(
         Float s0_s1 = 0.;
         Float s1_s1 = 0.;
         
-        #pragma omp parallel for reduction(+:s0_s1,s0_s1)
+        #pragma omp parallel for reduction(+:s0_s1,s1_s1)
         for( int c = 0; c < N; c++ ) {
             
             p0[c] = s1[c];
