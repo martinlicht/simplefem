@@ -154,18 +154,18 @@ int main()
                     auto mat_A  = vector_incmatrix_t & vector_massmatrix & vector_incmatrix;
                     mat_A.sortandcompressentries();
                     
-                    auto mat_B  = vector_incmatrix_t & diffmatrix_t & volume_massmatrix & volume_incmatrix; // upper right
-                    mat_B.sortandcompressentries();
-                    
-                    auto mat_Bt = mat_B.getTranspose(); //volume_incmatrix_t & volume_massmatrix & diffmatrix & vector_incmatrix; // lower bottom
+                    auto mat_Bt = vector_incmatrix_t & diffmatrix_t & volume_massmatrix & volume_incmatrix; // upper right
                     mat_Bt.sortandcompressentries();
                     
+                    auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & volume_massmatrix & diffmatrix & vector_incmatrix; // lower bottom
+                    mat_B.sortandcompressentries();
+                    
                     auto A  = MatrixCSR( mat_A  );
-                    auto B  = MatrixCSR( mat_B  );
                     auto Bt = MatrixCSR( mat_Bt );
+                    auto B  = MatrixCSR( mat_B  );
                     
                     
-                    auto Schur = Bt * inv(A) * B;
+                    auto Schur = B * inv(A) * Bt;
                     
                     {
 
@@ -198,7 +198,7 @@ int main()
                         
 
 
-                        {
+                        if(false){
                             
                             FloatVector rhs = volume_incmatrix_t * ( volume_massmatrix * interpol_rhs );
 
@@ -209,8 +209,8 @@ int main()
                             
                             sol.zero();
                             
-                            auto X = Bt * inv(A) * B;
-//                             auto y = FloatVector( B.getdimin(), 0. );
+                            auto X = B * inv(A) * Bt;
+//                             auto y = FloatVector( Bt.getdimin(), 0. );
 //                             auto f = X * y;
                             
                             ConjugateResidualMethod Solver( X );
@@ -232,6 +232,7 @@ int main()
                             Float residualnorm  = ( rhs - Schur * sol ).norm();
 
                             cout << "error:     " << errornorm     << endl;
+                            cout << "residual:  " << residualnorm  << endl;
 
                             contable << errornorm;
                             contable << nl;
@@ -240,13 +241,13 @@ int main()
                             
                         }
 
-                        if(false){
+                        {
                             
-                            auto O = ScalingOperator( B.getdimin(), 10. );
-                            auto X = Block2x2Operator( A.getdimout() + Bt.getdimout(), A.getdimin() + B.getdimin(), A, B, Bt, O );
+                            auto O = ScalingOperator( Bt.getdimin(), 10. );
+                            auto X = Block2x2Operator( A.getdimout() + B.getdimout(), A.getdimin() + Bt.getdimin(), A, Bt, B, O );
 
-                            FloatVector sol( A.getdimin()  +  B.getdimin(),  0. );
-                            FloatVector rhs( A.getdimout() + Bt.getdimout(), 0. );
+                            FloatVector sol( A.getdimin()  + Bt.getdimin(),  0. );
+                            FloatVector rhs( A.getdimout() +  B.getdimout(), 0. );
                             
                             sol.random();
                             rhs = X * sol;
@@ -264,12 +265,13 @@ int main()
 
                             cout << "...compute error and residual:" << endl;
 
-                            auto errornorm_aux = interpol_sol - volume_incmatrix * sol.getslice( A.getdimin(), B.getdimin() );
+                            auto errornorm_aux = interpol_sol - volume_incmatrix * sol.getslice( A.getdimin(), Bt.getdimin() );
 
                             Float errornorm     = sqrt( errornorm_aux * ( volume_massmatrix * errornorm_aux ) );
                             Float residualnorm  = ( rhs - X * sol ).norm();
 
                             cout << "error:     " << errornorm     << endl;
+                            cout << "residual:  " << residualnorm  << endl;
 
                             contable << errornorm;
                             contable << nl;
