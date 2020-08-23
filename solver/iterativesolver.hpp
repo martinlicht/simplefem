@@ -27,7 +27,7 @@ struct IterativeSolver
             verbose = 2
         };
         
-        explicit IterativeSolver( Float tolerance = 1000*std::numeric_limits<Float>::epsilon(), int max_iteration_count = 10, int print_modulo = 1 )
+        explicit IterativeSolver( Float tolerance = 1000*std::numeric_limits<Float>::epsilon(), int max_iteration_count = 0, int print_modulo = 1 )
         : tolerance( tolerance ), 
           recent_deviation( 0. ), 
           max_iteration_count( max_iteration_count ),
