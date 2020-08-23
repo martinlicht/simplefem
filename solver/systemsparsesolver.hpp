@@ -88,6 +88,8 @@ void HodgeConjugateResidualSolverCSR(
     
     Float* __restrict__  vil = (Float*)malloc( sizeof(Float) * N );
     
+    Float* __restrict__  precon = (Float*)malloc( sizeof(Float) * L );
+    
     assert(  dir );
     assert( Mdir );
     assert( Mres );
@@ -97,6 +99,26 @@ void HodgeConjugateResidualSolverCSR(
     assert( auxR );
     
     assert( vil );
+    
+    assert( precon );
+    
+    
+    #pragma omp parallel for
+    for( int c = 0; c < L; c++ ) {
+        
+        precon[c] = 0.;
+        
+        for( int d = Arows[c]; d < Arows[c+1]; d++ )
+            if( Acolumns[d] == c ) 
+                precon[c] += Avalues[ d ];
+            
+        precon[c] = 1./precon[c];
+//         precon[c] = 1.;
+        
+        assert( precon[c] > 0. );
+        
+    }
+    
     
     
     Float Md_r;
@@ -159,14 +181,15 @@ void HodgeConjugateResidualSolverCSR(
             }
             
             for( int c = 0; c < L; c++ ) aux2[c] = 0.;
-            ConjugateGradientSolverCSR( 
+            ConjugateGradientSolverCSR_DiagonalPreconditioner( 
                 L, 
                 aux2, 
                 (const Float *)aux1, 
                 Arows, Acolumns, Avalues, 
                 auxR,
                 allowed_error,
-                restart_modulo
+                restart_modulo,
+                precon
             );
             
             #pragma omp parallel for reduction(+:Md_r,Md_Md)
@@ -263,7 +286,7 @@ void HodgeConjugateResidualSolverCSR(
         
         Md_r = new_Mr_r;
         
-        printf("Hodge Residual after %d of max. %d iterations: %.9Le\n", k, N, (long double)std::sqrt(Md_r) );
+        printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", k, N, (long double)std::sqrt(Md_r), allowed_error );
         
 //         if( k % 100 == 0 ) 
 //         printf("At Iteration %d we have %.9Le --- [%.9Le,%.9Le,%.9Le,%.9Le]\n",
@@ -275,7 +298,7 @@ void HodgeConjugateResidualSolverCSR(
         
     };
     
-    printf("Hodge Residual after %d of max. %d iterations: %.9Le\n", k, N, (long double)std::sqrt(Md_r) );
+    printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", k, N, (long double)std::sqrt(Md_r), allowed_error );
 
     
     free(  dir );
@@ -537,7 +560,7 @@ void HodgeConjugateResidualSolverCSR_textbook(
         
         Mr_r = new_Mr_r;
         
-        printf("Hodge Residual after %d of max. %d iterations: %.9Le\n", k, N, (long double)std::sqrt(Mr_r) );
+        printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", k, N, (long double)std::sqrt(Mr_r), allowed_error );
         
 //         if( k % 100 == 0 ) 
 //         printf("At Iteration %d we have %.9Le --- [%.9Le,%.9Le,%.9Le,%.9Le]\n",
@@ -549,7 +572,7 @@ void HodgeConjugateResidualSolverCSR_textbook(
         
     };
     
-    printf("Hodge Residual after %d of max. %d iterations: %.9Le\n", k, N, (long double)std::sqrt(Mr_r) );
+    printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", k, N, (long double)std::sqrt(Mr_r), allowed_error );
 
     
     free(  dir );

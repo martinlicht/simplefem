@@ -18,8 +18,16 @@ void ConjugateGradientSolverCSR(
     unsigned int restart_modulo
 );
 
-
-
+void ConjugateGradientSolverCSR_DiagonalPreconditioner( 
+    const int N, 
+    Float* x, 
+    const Float* b, 
+    const int* csrrows, const int* csrcolumns, const Float* csrvalues, 
+    Float* residual,
+    Float allowed_error,
+    unsigned int restart_modulo,
+    const Float* precon 
+);
 
 
 // Solves the sparse matrix system with conjugate residuals
