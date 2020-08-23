@@ -164,14 +164,14 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
     }
     
     /* HOW DID WE FINISH ? */
+    recent_deviation = rr;
     if( verbosity >= VerbosityLevel::resultonly ) {
-        if( rr > tolerance ) {
-            LOG << "Minimum Residual process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
+        if( recent_deviation > tolerance ) {
+            LOG << "Minimum Residual process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << recent_deviation << "/" << tolerance;
         } else { 
-            LOG << "Minimum Residual process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
+            LOG << "Minimum Residual process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << recent_deviation << "/" << tolerance;
         }
     }
-    recent_deviation = rr;
     
 }
 

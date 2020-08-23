@@ -154,14 +154,14 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
     /* HOW DID WE FINISH ? */
     
     Float resnorm = ( b - A * x ).norm();
+    recent_deviation = resnorm;
     
-    if( resnorm > tolerance ) {
-        LOG << "MINRES process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << resnorm << "\n";
+    if( recent_deviation > tolerance ) {
+        LOG << "MINRES process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << recent_deviation << "/" << tolerance;
     } else { 
-        LOG << "MINRES process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << resnorm << "\n";
+        LOG << "MINRES process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << recent_deviation << "/" << tolerance;
     }
 
-    recent_deviation = resnorm;
     
 }
   

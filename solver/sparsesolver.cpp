@@ -130,7 +130,7 @@ void ConjugateGradientSolverCSR(
         
     };
     
-    printf("Residual after %d of max. %d iterations: %.9Le\n", K, N, (long double)std::sqrt(r_r) );
+    printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), allowed_error );
 
     
     free( direction ); 
@@ -149,6 +149,141 @@ void ConjugateGradientSolverCSR(
 
 
 
+
+
+
+
+
+
+
+void ConjugateGradientSolverCSR_DiagonalPreconditioner( 
+    const int N, 
+    Float* __restrict__ x, 
+    const Float* __restrict__ b, 
+    const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
+    Float* __restrict__ residual,
+    const Float allowed_error,
+    unsigned int restart_modulo,
+    const Float* __restrict__ precon
+) {
+    
+    assert( N > 0 );
+    assert( x );
+    assert( b );
+    assert( csrrows );
+    assert( csrcolumns );
+    assert( csrvalues );
+    assert( residual );
+    assert( allowed_error > 0 );
+    assert( restart_modulo > 0 );
+    assert( precon );
+    
+    Float* __restrict__ direction = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__ zirconium = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__ auxiliary = (Float*)malloc( sizeof(Float) * N );
+    assert( direction );
+    assert( zirconium );
+    assert( auxiliary );
+    
+    Float z_r;
+
+    z_r = 0.;
+    
+    int K = 0;
+    
+    while( K < N ){
+        
+        bool restart_condition = ( K == 0 ); // or K % 1000 == 0;
+        
+        bool residual_seems_small = std::sqrt(z_r) < allowed_error;
+
+        if( restart_condition or residual_seems_small ) {
+            
+            z_r = 0.;
+        
+            #pragma omp parallel for reduction(+:z_r)
+            for( int c = 0; c < N; c++ ) {
+                
+                residual[c] = b[c];
+                
+                for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                    residual[c] -= csrvalues[ d ] * x[ csrcolumns[d] ];
+                
+                zirconium[c] = precon[c] * residual[c];
+                
+                direction[c] = zirconium[c];
+                
+                z_r += zirconium[c] * residual[c];
+            }
+        
+        }
+        
+        /* Check whether residual is small */
+                
+        bool residual_is_small = std::sqrt(z_r) < allowed_error;
+        
+        if( residual_is_small )
+            break;
+
+
+        /* now the main work of the entire algorithm */
+        
+        // NOTE The calculation of d_r is reduced to r_r, which is already known.
+        
+        Float d_Ad = 0.;
+        
+        #pragma omp parallel for reduction(+:d_Ad) //d_r,
+        for( int c = 0; c < N; c++ )
+        {
+            auxiliary[c] = 0.;
+            
+            for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                auxiliary[c] += csrvalues[ d ] * direction[ csrcolumns[d] ];
+                    
+            d_Ad += direction[c] * auxiliary[c];
+        }
+        
+        Float alpha = z_r / d_Ad;
+    
+        Float z_r_new = 0.;
+        
+        #pragma omp parallel for reduction(+:z_r_new) //r_r_old
+        for( int c = 0; c < N; c++ )
+        {
+            
+            x[c] += alpha * direction[c];
+            
+            residual[c] -= alpha * auxiliary[c];
+            
+            z_r_new += zirconium[c] * residual[c];
+        }
+        
+        Float beta = z_r_new / z_r;
+        
+        z_r = z_r_new;
+        
+        #pragma omp parallel 
+        for( int c = 0; c < N; c++ )
+            direction[c] = zirconium[c] + beta * direction[c];
+        
+        
+//         if( K % 100 == 0 ) 
+//         printf("At Iteration %d we have %.9Le --- [%.9Le,%.9Le,%.9Le,%.9Le]\n",
+//             K,
+//             (long double)std::sqrt(r_r), (long double)alpha, (long double)beta,
+//             (long double)d_Ad, (long double)r_r_new );
+        
+        K++;
+        
+    };
+    
+    printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(z_r), allowed_error );
+
+    
+    free( direction ); 
+    free( auxiliary );
+
+}
 
 
 
@@ -312,7 +447,7 @@ void ConjugateResidualSolverCSR(
         
     };
     
-    printf("Residual after %d of max. %d iterations: %.9Le\n", K, N, (long double)std::sqrt(Ad_r) );
+    printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(Ad_r), allowed_error );
 
     
     free(  dir );
@@ -468,7 +603,7 @@ void ConjugateResidualSolverCSR_textbook(
         
     };
     
-    printf("Residual after %d of max. %d iterations: %.9Le\n", K, N, (long double)std::sqrt(Ar_r) );
+    printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(Ar_r), allowed_error );
 
     
     free(  dir );
@@ -696,7 +831,7 @@ void MINRESCSR(
         
     };
     
-    printf("Residual after %d of max. %d iterations: %.9Le\n", K, N, (long double)eta );
+    printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)eta, allowed_error );
 
     
     free( v0 );
@@ -876,7 +1011,7 @@ void WHATEVER(
         
     };
     
-    printf("Residual after %d of max. %d iterations: %.9Le\n", K, N, (long double)std::sqrt(r_r) );
+    printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), allowed_error );
 
     
     free(  r );

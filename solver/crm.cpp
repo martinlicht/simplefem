@@ -149,9 +149,9 @@ void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) cons
     
     /* HOW DID WE FINISH ? */
     if( r * r > tolerance && rAr > tolerance ) {
-        LOG << "CRM process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
-    } else { 
-        LOG << "CRM process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
+            LOG << "CRM process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << recent_deviation << "/" << tolerance;
+        } else { 
+            LOG << "CRM process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << recent_deviation << "/" << tolerance;
     }
 
     recent_deviation = rAr;
@@ -250,9 +250,9 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
 
     if( verbosity >= VerbosityLevel::resultonly ) {
         if( recent_deviation > tolerance ) {
-            LOG << "CRM process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << recent_deviation;
+            LOG << "CRM process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << recent_deviation << "/" << tolerance;
         } else { 
-            LOG << "CRM process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << recent_deviation;
+            LOG << "CRM process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << recent_deviation << "/" << tolerance;
         }
     }
     
@@ -360,9 +360,9 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
 
     if( verbosity >= VerbosityLevel::resultonly ) {
         if( recent_deviation > tolerance ) {
-            LOG << "CRM process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << recent_deviation;
+            LOG << "CRM process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << recent_deviation << "/" << tolerance;
         } else { 
-            LOG << "CRM process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << recent_deviation;
+            LOG << "CRM process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << recent_deviation << "/" << tolerance;
         }
     }
     

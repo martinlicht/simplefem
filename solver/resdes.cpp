@@ -112,14 +112,14 @@ void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
     }
     
     /* HOW DID WE FINISH ? */
-    if( r_sqnorm > tolerance ) {
-        LOG << "Residual descent process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
+    recent_deviation = r_sqnorm;
+    if( recent_deviation > tolerance ) {
+        LOG << "Residual descent process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << recent_deviation << "/" << tolerance;
     } else { 
-        LOG << "Residual descent process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
+        LOG << "Residual descent process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << recent_deviation << "/" << tolerance;
 
     }
 
-    recent_deviation = r_sqnorm;
     
 }
   

@@ -110,13 +110,13 @@ void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) cons
     }
     
     /* HOW DID WE FINISH ? */
-    if( r * r > tolerance ) {
-        LOG << "CRM process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
-    } else { 
-        LOG << "CRM process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
+    recent_deviation = r * r;
+    if( recent_deviation > tolerance ) {
+            LOG << "CGM process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << recent_deviation << "/" << tolerance;
+        } else { 
+            LOG << "CGM process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << recent_deviation << "/" << tolerance;
     }
 
-    recent_deviation = r * r;
     
 }
 
