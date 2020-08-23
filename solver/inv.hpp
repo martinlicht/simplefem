@@ -76,7 +76,7 @@ class InverseOperator final
                 
                 FloatVector res( dest );
                 
-                auto opcsr = dynamic_cast<const MatrixCSR*>(&op);
+                const auto* opcsr = dynamic_cast<const MatrixCSR*>(&op);
                 
                 ConjugateGradientSolverCSR( 
                     src.getdimension(),

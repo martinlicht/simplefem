@@ -169,9 +169,9 @@ inline DenseMatrix EvaluationMatrix( std::vector<MultiIndex> mis, const DenseMat
     
 //     // We implement J^+ = inv( J^t J ) J^t
     
-//     auto Jt = Transpose(J);
+//     const auto Jt = Transpose(J);
     
-//     auto F = Inverse( Jt * J ) * Jt; // n x d
+//     const auto F = Inverse( Jt * J ) * Jt; // n x d
     
 //     DenseMatrix ret( J.getdimin()+1, J.getdimout(), 0.0 );
     
@@ -215,7 +215,7 @@ inline DenseMatrix BarycentricProjectionMatrix( const DenseMatrix& J )
 {
     assert( J.getdimout() >= J.getdimin() );
     
-    auto F = Transpose(J);
+    const auto F = Transpose(J);
     
     DenseMatrix ret( J.getdimin()+1, J.getdimout(), 0.0 );
     
@@ -261,9 +261,9 @@ inline DenseMatrix EvaluateField(
     
     for( int p = 0; p < lps.getdimin(); p++ )
     {
-        auto point = lps.getcolumn(p);
+        const auto point = lps.getcolumn(p);
         
-        auto value = field( point );
+        const auto value = field( point );
         
         assert( value.getdimension() == binomial_integer( dim, k ) );
         

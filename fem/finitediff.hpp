@@ -93,9 +93,9 @@ class AlternatingForm
             
             int d = this->d;
             int k = this->k;
-            auto formula = this->formula;
+            const auto formula = this->formula;
             
-            auto newformula = [k,d,pattern,formula,stepsize]( const FloatVector& point ) -> FloatVector {
+            const auto newformula = [k,d,pattern,formula,stepsize]( const FloatVector& point ) -> FloatVector {
                 
                 int dim_src = binomial_integer(d,k  );
                 int dim_dst = binomial_integer(d,k+1);
@@ -135,9 +135,9 @@ class AlternatingForm
             
             int d = this->d;
             int k = this->k;
-            auto formula = this->formula;
+            const auto formula = this->formula;
             
-            auto newformula = [d,k,formula,stepsize]( const FloatVector& point ) -> FloatVector {
+            const auto newformula = [d,k,formula,stepsize]( const FloatVector& point ) -> FloatVector {
                 
                 int fielddim = binomial_integer(d,k);
                 

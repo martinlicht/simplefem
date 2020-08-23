@@ -121,7 +121,7 @@ ifeq ($(FLAG_CXX),GCC)
   CXXFLAGS_WARNINGS +=  -Wmultiple-inheritance -Wvirtual-inheritance
   CXXFLAGS_WARNINGS += -Wpointer-arith
   CXXFLAGS_WARNINGS += -Wreturn-local-addr
-  CXXFLAGS_WARNINGS += -Wfloat-equal -Wdouble-promotion -Wfloat-conversion -Wno-type-limits
+  CXXFLAGS_WARNINGS += -Wfloat-equal -Wdouble-promotion -Wfloat-conversion
   CXXFLAGS_WARNINGS += -Wno-sign-compare
 #   CXXFLAGS_WARNINGS += -Wconversion 
   CXXFLAGS_WARNINGS += -Wno-sign-conversion
@@ -235,7 +235,7 @@ endif
  
 endif
  
-CXXFLAGS_WARNINGS += -Wno-conversion -Wno-sign-compare -Wno-unused-variable -Wno-unused-parameter -Wno-vla
+CXXFLAGS_WARNINGS += -Wno-conversion -Wno-sign-compare -Wno-unused-variable -Wno-unused-parameter -Wno-vla -Wno-type-limits 
 
 
 

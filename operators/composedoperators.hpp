@@ -925,11 +925,11 @@ class Block2x2Operator
             assert(  add.getdimension() == lowerleft->getdimin()   + lowerright->getdimin()  );
             
             
-            auto left  = add.getslice( 0,                     upperleft ->getdimin() );
-            auto right = add.getslice( upperleft->getdimin(), upperright->getdimin() );
+            const auto left  = add.getslice( 0,                     upperleft ->getdimin() );
+            const auto right = add.getslice( upperleft->getdimin(), upperright->getdimin() );
             
-            auto upper = (*upperleft) * left + (*upperright) * right;
-            auto lower = (*lowerleft) * left + (*lowerright) * right;
+            const auto upper = (*upperleft) * left + (*upperright) * right;
+            const auto lower = (*lowerleft) * left + (*lowerright) * right;
             
             dest.setslice( 0,                    upper );
             dest.setslice( upper.getdimension(), lower );
