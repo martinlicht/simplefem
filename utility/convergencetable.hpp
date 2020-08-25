@@ -1,6 +1,7 @@
 #ifndef INCLUDEGUARD_BASIC_CONVERGENCETABLE
 #define INCLUDEGUARD_BASIC_CONVERGENCETABLE
 
+#include <cstdio>
 #include <iostream>
 #include <vector>
 
@@ -40,33 +41,57 @@ class ConvergenceTable
             return *this; 
         }
         
-        void print( std::ostream& out ) const 
+//         void print( std::ostream& out ) const 
+//         {
+//             
+//             auto temp = out.precision(); // TODO include fmt as soon as available 
+//             out.precision(myprecision);
+//             
+//             for( int i = 0; i < entries.size(); i++ )
+//             {
+//                 
+//                 out << i << ":" << tab;
+//                 
+//                 for( int j = 0; j < entries[i].size(); j++ )
+//                 {
+//                     out << entries[i][j] << tab;
+//                     if( i == 0 )
+//                         out << "--";
+//                     else 
+//                         out << std::log2( entries[i-1][j] / entries[i][j] );
+//                     out << tab;
+//                 }        
+//                 
+//                 out << nl;
+//                 
+//             }
+//             
+//             out.precision(temp);
+//             
+//         }
+        
+        void print( std::ostream& ) const // TODO introduced temporarily until format library is available
         {
-            
-            auto temp = out.precision(); // TODO include fmt as soon as available 
-            out.precision(myprecision);
             
             for( int i = 0; i < entries.size(); i++ )
             {
                 
-                out << i << ":" << tab;
+                std::printf("%3d:\t",i);
                 
                 for( int j = 0; j < entries[i].size(); j++ )
                 {
-                    out << entries[i][j] << tab;
+                    std::printf("%.6Le\t", entries[i][j] ); 
                     if( i == 0 )
-                        out << "--";
+                        std::printf("        --");
                     else 
-                        out << std::log2( entries[i-1][j] / entries[i][j] );
-                    out << tab;
+                        std::printf("%10.3Le", std::log2( entries[i-1][j] / entries[i][j] ) );
+                    std::printf("\t");
                 }        
                 
-                out << nl;
+                std::printf("\n");
                 
             }
-            
-            out.precision(temp);
-            
+                        
         }
 
     public:

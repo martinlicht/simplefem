@@ -296,7 +296,7 @@ void HodgeConjugateResidualSolverCSR(
         
         k++;
         
-    };
+    }
     
     printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", k, N, (long double)std::sqrt(Md_r), allowed_error );
 
@@ -570,7 +570,7 @@ void HodgeConjugateResidualSolverCSR_textbook(
         
         k++;
         
-    };
+    }
     
     printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", k, N, (long double)std::sqrt(Mr_r), allowed_error );
 

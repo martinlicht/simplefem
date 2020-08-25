@@ -45,7 +45,7 @@ namespace MatrixMarket
         const std::string str_skew       = "skew-symmetric";
         const std::string str_hermitian  = "hermitian";
         
-    }
+    } // namespace Consts 
 
 
     enum class objecttype    { undefined, matrix };
@@ -66,7 +66,7 @@ namespace MatrixMarket
     
     void WriteSparse( std::ostream& output, const int& rows, const int& columns, const std::vector<MatrixMarketEntry>& entries, const std::string& comment = "" );
     
-}
+} // namespace MatrixMarket
   
   
 #endif

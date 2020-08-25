@@ -514,32 +514,32 @@ inline DiffOperator operator-( LinearOperator&& left, LinearOperator&& right )
 
 
 
-ProduktOperator operator-( LinearOperator&& op )
+inline ProduktOperator operator-( LinearOperator&& op )
 {
     return ProduktOperator( ScalingOperator( op.getdimout(), -1. ), std::move(op) );
 }
 
-ProduktOperator operator-( LinearOperator& op )
+inline ProduktOperator operator-( LinearOperator& op )
 {
     return ProduktOperator( ScalingOperator( op.getdimout(), -1. ), op );
 }
 
-ProduktOperator operator+( LinearOperator&& op )
+inline ProduktOperator operator+( LinearOperator&& op )
 {
     return ProduktOperator( IdentityOperator( op.getdimout() ), std::move(op) );
 }
 
-ProduktOperator operator+( LinearOperator& op )
+inline ProduktOperator operator+( LinearOperator& op )
 {
     return ProduktOperator( IdentityOperator( op.getdimout() ), op );
 }
 
-ProduktOperator operator*( Float s, LinearOperator&& op )
+inline ProduktOperator operator*( Float s, LinearOperator&& op )
 {
     return ProduktOperator( ScalingOperator( op.getdimout(), s ), std::move(op) );
 }
 
-ProduktOperator operator*( Float s, LinearOperator& op )
+inline ProduktOperator operator*( Float s, LinearOperator& op )
 {
     return ProduktOperator( ScalingOperator( op.getdimout(), s ), op );
 }

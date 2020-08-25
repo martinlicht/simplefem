@@ -14,7 +14,6 @@
 
 #include "../combinatorics/indexrange.hpp"
 #include "../combinatorics/indexmap.hpp"
-#include "../combinatorics/indexmap.hpp"
 #include "../operators/floatvector.hpp"
 #include "../operators/simpleoperators.hpp"
 #include "../sparse/sparsematrix.hpp"

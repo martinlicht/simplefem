@@ -149,7 +149,7 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
         
         recent_iteration_count++;
         
-    };
+    }
     
     /* HOW DID WE FINISH ? */
     
