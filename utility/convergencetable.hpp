@@ -70,7 +70,7 @@ class ConvergenceTable
 //             
 //         }
         
-        void print( std::ostream& ) const // TODO introduced temporarily until format library is available
+        void print( std::ostream&, bool show_rates = true ) const // TODO introduced temporarily until format library is available
         {
             
             for( int i = 0; i < entries.size(); i++ )
@@ -80,12 +80,17 @@ class ConvergenceTable
                 
                 for( int j = 0; j < entries[i].size(); j++ )
                 {
+                    
                     std::printf("%.6Le\t", entries[i][j] ); 
-                    if( i == 0 )
-                        std::printf("        --");
-                    else 
-                        std::printf("%10.3Le", std::log2( entries[i-1][j] / entries[i][j] ) );
-                    std::printf("\t");
+                    
+                    if( show_rates ){
+                        if( i == 0 )
+                            std::printf("        --");
+                        else 
+                            std::printf("%10.3Le", std::log2( entries[i-1][j] / entries[i][j] ) );
+                        std::printf("\t");
+                    }
+                    
                 }        
                 
                 std::printf("\n");
