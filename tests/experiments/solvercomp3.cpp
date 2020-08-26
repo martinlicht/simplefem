@@ -18,6 +18,7 @@
 #include "../../mesh/examples2D.hpp"
 #include "../../vtk/vtkwriter.mesh2D.hpp"
 #include "../../solver/sparsesolver.hpp"
+// #include "../../solver/chebyshev.hpp"
 #include "../../solver/cgm.hpp"
 #include "../../solver/crm.hpp"
 // #include "../../solver/pcrm.hpp"
@@ -45,10 +46,6 @@ int main()
             MeshSimplicial2D M = UnitSquare2D();
             
             M.check();
-            
-            M.automatic_dirichlet_flags();
-            
-            M.check_dirichlet_flags();
             
             cout << "Prepare scalar fields for testing..." << endl;
             
@@ -100,7 +97,7 @@ int main()
             ConvergenceTable contable;
             
 
-            int min_l = 2; int max_l = 5;
+            int min_l = 2; int max_l = 2;
 
             for( int l = 0; l < min_l; l++ )
                 M.uniformrefinement();
@@ -118,42 +115,16 @@ int main()
             
                     SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
                     
-                    cout << "...assemble vector mass matrix" << endl;
-            
-                    SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
-                    
-                    cout << "...assemble differential matrix and transpose" << endl;
-
-                    SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r );
-
-                    SparseMatrix diffmatrix_t = diffmatrix.getTranspose();
-
-                    cout << "...assemble inclusion matrix and transpose" << endl;
-            
                     SparseMatrix incmatrix = LagrangeInclusionMatrix( M, M.getinnerdimension(), r );
 
                     SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
-                    cout << "...assemble stiffness matrix" << endl;
+                    cout << "...assemble global mass matrix" << endl;
             
-                    // ProductOperator 
-//                     auto stiffness = incmatrix_t * diffmatrix_t * vector_massmatrix * diffmatrix * incmatrix;
-                       
-//                     auto op1 = incmatrix_t * diffmatrix_t;
-//                     auto op2 = op1 * vector_massmatrix;
-//                     auto op3 = op2 * diffmatrix;
-//                     auto stiffness = op3 * incmatrix;
 
-//                     auto opr1 = diffmatrix & incmatrix;
-//                     auto opr  = vector_massmatrix_fac & opr1;
-//                     auto opl  = opr.getTranspose(); 
-//                     auto stiffness = opl & opr;
-
-                    auto opr  = diffmatrix & incmatrix;
-                    auto opl  = opr.getTranspose(); 
-                    auto stiffness_prelim = opl & ( vector_massmatrix & opr );
-                    stiffness_prelim.sortentries();
-                    auto stiffness = MatrixCSR( stiffness_prelim );
+                    auto mass_prelim = incmatrix_t & ( scalar_massmatrix & incmatrix );
+                    mass_prelim.sortentries();
+                    auto mass = MatrixCSR( mass_prelim );
                     
                     {
 
@@ -173,7 +144,7 @@ int main()
                                 sol.getdimension(), 
                                 sol.raw(), 
                                 rhs.raw(), 
-                                stiffness.getA(), stiffness.getC(), stiffness.getV(),
+                                mass.getA(), mass.getC(), mass.getV(),
                                 residual.raw(),
                                 1e-16,
                                 1
@@ -181,7 +152,7 @@ int main()
 
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
-                            contable << Float(end - start) << Float( ( stiffness * sol - rhs ).norm() );;
+                            contable << Float(end - start) << Float( ( mass * sol - rhs ).norm() );;
                         }
 
                         {
@@ -194,7 +165,7 @@ int main()
                                 sol.getdimension(), 
                                 sol.raw(), 
                                 rhs.raw(), 
-                                stiffness.getA(), stiffness.getC(), stiffness.getV(),
+                                mass.getA(), mass.getC(), mass.getV(),
                                 residual.raw(),
                                 1e-16,
                                 1
@@ -202,7 +173,7 @@ int main()
 
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
-                            contable << Float(end - start) << Float( ( stiffness * sol - rhs ).norm() );;
+                            contable << Float(end - start) << Float( ( mass * sol - rhs ).norm() );;
                         }
 
                         {
@@ -215,7 +186,7 @@ int main()
                                 sol.getdimension(), 
                                 sol.raw(), 
                                 rhs.raw(), 
-                                stiffness.getA(), stiffness.getC(), stiffness.getV(),
+                                mass.getA(), mass.getC(), mass.getV(),
                                 residual.raw(),
                                 1e-16,
                                 1
@@ -223,7 +194,7 @@ int main()
 
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
-                            contable << Float(end - start) << Float( ( stiffness * sol - rhs ).norm() );;
+                            contable << Float(end - start) << Float( ( mass * sol - rhs ).norm() );;
                         }
 
                         {
@@ -236,7 +207,7 @@ int main()
                                 sol.getdimension(), 
                                 sol.raw(), 
                                 rhs.raw(), 
-                                stiffness.getA(), stiffness.getC(), stiffness.getV(),
+                                mass.getA(), mass.getC(), mass.getV(),
                                 residual.raw(),
                                 1e-16,
                                 1
@@ -244,7 +215,7 @@ int main()
 
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
-                            contable << Float(end - start) << Float( ( stiffness * sol - rhs ).norm() );;
+                            contable << Float(end - start) << Float( ( mass * sol - rhs ).norm() );;
                         }
 
 
@@ -258,7 +229,7 @@ int main()
                                 sol.getdimension(), 
                                 sol.raw(), 
                                 rhs.raw(), 
-                                stiffness.getA(), stiffness.getC(), stiffness.getV(),
+                                mass.getA(), mass.getC(), mass.getV(),
                                 residual.raw(),
                                 1e-16,
                                 1
@@ -266,9 +237,65 @@ int main()
 
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
-                            contable << Float(end - start) << Float( ( stiffness * sol - rhs ).norm() );;
+                            contable << Float(end - start) << Float( ( mass * sol - rhs ).norm() );;
                         }
 
+
+                        {
+                            cout << "CGM diagonal preconditioner CSR" << endl;
+                        
+                            FloatVector invprecon = mass_prelim.InverseDiagonalPreconditioner();
+                            invprecon.setentries( 1. );
+                            assert( invprecon.isfinite() );
+                            assert( invprecon.ispositive() );
+                            
+                            sol.zero();
+                            timestamp start = gettimestamp();
+                            FloatVector residual( rhs );
+                            ConjugateGradientSolverCSR_DiagonalPreconditioner( 
+                                sol.getdimension(), 
+                                sol.raw(), 
+                                rhs.raw(), 
+                                mass.getA(), mass.getC(), mass.getV(),
+                                residual.raw(),
+                                1e-16,
+                                1,
+                                invprecon.raw()
+                            );
+
+                            timestamp end = gettimestamp();
+                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+                            contable << Float(end - start) << Float( ( mass * sol - rhs ).norm() );;
+                        }
+                        
+                        
+//                         if(false){
+//                             cout << "CHEBYSHEV CSR" << endl;
+//                         
+//                             FloatVector invprecon = mass_prelim.InverseDiagonalPreconditioner();
+//                             assert( invprecon.isfinite() );
+//                             assert( invprecon.ispositive() );
+//                             
+//                             sol.zero();
+//                             timestamp start = gettimestamp();
+//                             FloatVector residual( rhs );
+//                             CheybyshevIteration_DiagonalPreconditioner( 
+//                                 sol.getdimension(), 
+//                                 sol.raw(), 
+//                                 rhs.raw(), 
+//                                 mass.getA(), mass.getC(), mass.getV(),
+//                                 residual.raw(),
+//                                 1e-16,
+//                                 1,
+//                                 invprecon.raw(),
+//                                 0.,
+//                                 invprecon.maxnorm()
+//                             );
+// 
+//                             timestamp end = gettimestamp();
+//                             std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+//                             contable << Float(end - start);
+//                         }
                         
                         
                         contable << nl;

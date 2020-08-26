@@ -227,7 +227,7 @@ int main()
                         
                         contable << nl;
                         
-                        contable.print( std::cout );
+                        contable.print( std::cout, false );
 
                     }
                     
