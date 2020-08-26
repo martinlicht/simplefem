@@ -183,7 +183,7 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
     assert( zirconium );
     assert( auxiliary );
     
-    Float z_r = notanumber;
+    Float z_r; // = notanumber;
 
     int K = 0;
     
@@ -207,11 +207,14 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
                 
                 zirconium[c] = precon[c] * residual[c];
                 
+                assert( precon[c] == 1. );
+                
                 direction[c] = zirconium[c];
                 
                 z_r += zirconium[c] * residual[c];
+            
             }
-        
+            
         }
         
         /* Check whether residual is small */
@@ -251,6 +254,8 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
             
             residual[c] -= alpha * auxiliary[c];
             
+            zirconium[c] = precon[c] * residual[c];
+            
             z_r_new += zirconium[c] * residual[c];
         }
         
@@ -263,11 +268,12 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
             direction[c] = zirconium[c] + beta * direction[c];
         
         
+//         printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(z_r), allowed_error );
 //         if( K % 100 == 0 ) 
 //         printf("At Iteration %d we have %.9Le --- [%.9Le,%.9Le,%.9Le,%.9Le]\n",
 //             K,
-//             (long double)std::sqrt(r_r), (long double)alpha, (long double)beta,
-//             (long double)d_Ad, (long double)r_r_new );
+//             (long double)std::sqrt(z_r), (long double)alpha, (long double)beta,
+//             (long double)d_Ad, (long double)z_r_new );
         
         K++;
         
@@ -1023,6 +1029,31 @@ void WHATEVER(
     free( s2 );
     
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

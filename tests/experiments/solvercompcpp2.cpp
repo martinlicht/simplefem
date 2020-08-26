@@ -18,9 +18,9 @@
 #include "../../mesh/examples2D.hpp"
 #include "../../vtk/vtkwriter.mesh2D.hpp"
 #include "../../solver/sparsesolver.hpp"
-// #include "../../solver/chebyshev.hpp"
 #include "../../solver/cgm.hpp"
 #include "../../solver/crm.hpp"
+#include "../../solver/herzogsoodhalter.hpp"
 // #include "../../solver/pcrm.hpp"
 #include "../../solver/minres.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
@@ -97,7 +97,7 @@ int main()
             ConvergenceTable contable;
             
 
-            int min_l = 2; int max_l = 10;
+            int min_l = 2; int max_l = 7;
 
             for( int l = 0; l < min_l; l++ )
                 M.uniformrefinement();
@@ -135,167 +135,64 @@ int main()
                         FloatVector rhs = incmatrix_t * ( scalar_massmatrix * interpol_rhs );
 
                         {
-                            cout << "CGM - CSR Classic" << endl;
+                            cout << "CGM C++" << endl;
                         
                             sol.zero();
+                            ConjugateGradientMethod Solver( mass );
+                            Solver.print_modulo        = 1 + 4 * sol.getdimension();
+                            Solver.max_iteration_count =     4 * sol.getdimension();
                             timestamp start = gettimestamp();
-                            FloatVector residual( rhs );
-                            ConjugateGradientSolverCSR( 
-                                sol.getdimension(), 
-                                sol.raw(), 
-                                rhs.raw(), 
-                                mass.getA(), mass.getC(), mass.getV(),
-                                residual.raw(),
-                                1e-16,
-                                1
-                            );
-
+                            Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
-                            contable << Float(end - start) << Float( ( mass * sol - rhs ).norm() );;
-                        }
-
-                        {
-                            cout << "CRM - CSR Classic" << endl;
-                        
-                            sol.zero();
-                            timestamp start = gettimestamp();
-                            FloatVector residual( rhs );
-                            ConjugateResidualSolverCSR( 
-                                sol.getdimension(), 
-                                sol.raw(), 
-                                rhs.raw(), 
-                                mass.getA(), mass.getC(), mass.getV(),
-                                residual.raw(),
-                                1e-16,
-                                1
-                            );
-
-                            timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
-                            contable << Float(end - start) << Float( ( mass * sol - rhs ).norm() );;
-                        }
-
-                        {
-                            cout << "CRM - CSR Textbook" << endl;
-                        
-                            sol.zero();
-                            timestamp start = gettimestamp();
-                            FloatVector residual( rhs );
-                            ConjugateResidualSolverCSR_textbook( 
-                                sol.getdimension(), 
-                                sol.raw(), 
-                                rhs.raw(), 
-                                mass.getA(), mass.getC(), mass.getV(),
-                                residual.raw(),
-                                1e-16,
-                                1
-                            );
-
-                            timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
-                            contable << Float(end - start) << Float( ( mass * sol - rhs ).norm() );;
-                        }
-
-                        {
-                            cout << "MINRES CSR" << endl;
-                        
-                            sol.zero();
-                            timestamp start = gettimestamp();
-                            FloatVector residual( rhs );
-                            MINRESCSR( 
-                                sol.getdimension(), 
-                                sol.raw(), 
-                                rhs.raw(), 
-                                mass.getA(), mass.getC(), mass.getV(),
-                                residual.raw(),
-                                1e-16,
-                                1
-                            );
-
-                            timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
-                            contable << Float(end - start) << Float( ( mass * sol - rhs ).norm() );;
-                        }
-
-
-                        {
-                            cout << "WHATEVER CSR" << endl;
-                        
-                            sol.zero();
-                            timestamp start = gettimestamp();
-                            FloatVector residual( rhs );
-                            WHATEVER( 
-                                sol.getdimension(), 
-                                sol.raw(), 
-                                rhs.raw(), 
-                                mass.getA(), mass.getC(), mass.getV(),
-                                residual.raw(),
-                                1e-16,
-                                1
-                            );
-
-                            timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
-                            contable << Float(end - start) << Float( ( mass * sol - rhs ).norm() );;
-                        }
-
-
-                        {
-                            cout << "CGM diagonal preconditioner CSR" << endl;
-                        
-                            FloatVector invprecon = mass_prelim.InverseDiagonalPreconditioner();
-                            invprecon.setentries( 1. );
-                            assert( invprecon.isfinite() );
-                            assert( invprecon.ispositive() );
                             
-                            sol.zero();
-                            timestamp start = gettimestamp();
-                            FloatVector residual( rhs );
-                            ConjugateGradientSolverCSR_DiagonalPreconditioner( 
-                                sol.getdimension(), 
-                                sol.raw(), 
-                                rhs.raw(), 
-                                mass.getA(), mass.getC(), mass.getV(),
-                                residual.raw(),
-                                1e-16,
-                                1,
-                                invprecon.raw()
-                            );
+                            contable << Float(end - start) << Float( ( mass * sol - rhs ).norm() );
+                        }
 
+                        {
+                            cout << "CRM C++" << endl;
+                        
+                            sol.zero();
+                            ConjugateResidualMethod Solver( mass );
+                            Solver.print_modulo        = 1 + 4 * sol.getdimension();
+                            Solver.max_iteration_count =     4 * sol.getdimension();
+                            timestamp start = gettimestamp();
+                            Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
-                            contable << Float(end - start) << Float( ( mass * sol - rhs ).norm() );;
+                            
+                            contable << Float(end - start) << Float( ( mass * sol - rhs ).norm() );
                         }
+
+                        {
+                            cout << "MINRES C++" << endl;
                         
+                            sol.zero();
+                            MinimumResidualMethod Solver( mass );
+                            Solver.print_modulo        = 1; + 4 * sol.getdimension();
+                            Solver.max_iteration_count =     4 * sol.getdimension();
+                            timestamp start = gettimestamp();
+                            Solver.solve( sol, rhs );
+                            timestamp end = gettimestamp();
+                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+
+                            contable << Float(end - start) << Float( ( mass * sol - rhs ).norm() );
+                        }
+
+                        {
+                            cout << "HERZOG SOODHALTER C++" << endl;
                         
-//                         if(false){
-//                             cout << "CHEBYSHEV CSR" << endl;
-//                         
-//                             FloatVector invprecon = mass_prelim.InverseDiagonalPreconditioner();
-//                             assert( invprecon.isfinite() );
-//                             assert( invprecon.ispositive() );
-//                             
-//                             sol.zero();
-//                             timestamp start = gettimestamp();
-//                             FloatVector residual( rhs );
-//                             CheybyshevIteration_DiagonalPreconditioner( 
-//                                 sol.getdimension(), 
-//                                 sol.raw(), 
-//                                 rhs.raw(), 
-//                                 mass.getA(), mass.getC(), mass.getV(),
-//                                 residual.raw(),
-//                                 1e-16,
-//                                 1,
-//                                 invprecon.raw(),
-//                                 0.,
-//                                 invprecon.maxnorm()
-//                             );
-// 
-//                             timestamp end = gettimestamp();
-//                             std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
-//                             contable << Float(end - start);
-//                         }
+                            sol.zero();
+                            HerzogSoodhalterMethod Solver( mass );
+                            Solver.print_modulo        = 1; + 4 * sol.getdimension();
+                            Solver.max_iteration_count =     4 * sol.getdimension();
+                            timestamp start = gettimestamp();
+                            Solver.solve( sol, rhs );
+                            timestamp end = gettimestamp();
+                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+
+                            contable << Float(end - start) << Float( ( mass * sol - rhs ).norm() );
+                        }
                         
                         
                         contable << nl;
