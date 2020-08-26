@@ -147,7 +147,7 @@ int main()
                                 mass.getA(), mass.getC(), mass.getV(),
                                 residual.raw(),
                                 1e-16,
-                                1
+                                0
                             );
 
                             timestamp end = gettimestamp();
@@ -168,7 +168,7 @@ int main()
                                 mass.getA(), mass.getC(), mass.getV(),
                                 residual.raw(),
                                 1e-16,
-                                1
+                                0
                             );
 
                             timestamp end = gettimestamp();
@@ -189,7 +189,7 @@ int main()
                                 mass.getA(), mass.getC(), mass.getV(),
                                 residual.raw(),
                                 1e-16,
-                                1
+                                0
                             );
 
                             timestamp end = gettimestamp();
@@ -210,7 +210,7 @@ int main()
                                 mass.getA(), mass.getC(), mass.getV(),
                                 residual.raw(),
                                 1e-16,
-                                1
+                                0
                             );
 
                             timestamp end = gettimestamp();
@@ -232,7 +232,7 @@ int main()
                                 mass.getA(), mass.getC(), mass.getV(),
                                 residual.raw(),
                                 1e-16,
-                                1
+                                0
                             );
 
                             timestamp end = gettimestamp();
@@ -259,7 +259,7 @@ int main()
                                 mass.getA(), mass.getC(), mass.getV(),
                                 residual.raw(),
                                 1e-16,
-                                1,
+                                0,
                                 invprecon.raw()
                             );
 

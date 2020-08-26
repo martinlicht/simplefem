@@ -14,7 +14,7 @@ void HodgeConjugateResidualSolverCSR(
     const int* Btrows, const int* Btcolumns, const Float* Btvalues, 
     Float* residual,
     Float allowed_error,
-    unsigned int restart_modulo
+    unsigned int print_modulo
 );
 
 void HodgeConjugateResidualSolverCSR_textbook( 
@@ -27,7 +27,7 @@ void HodgeConjugateResidualSolverCSR_textbook(
     const int* Btrows, const int* Btcolumns, const Float* Btvalues, 
     Float* residual,
     Float allowed_error,
-    unsigned int restart_modulo
+    unsigned int print_modulo
 );
 
 
@@ -58,7 +58,7 @@ void HodgeConjugateResidualSolverCSR(
     const int* __restrict__ Btrows, const int* __restrict__ Btcolumns, const Float* __restrict__ Btvalues, 
     Float* res,
     Float allowed_error,
-    unsigned int restart_modulo
+    unsigned int print_modulo
 ) {
     
     assert( N > 0 );
@@ -76,7 +76,7 @@ void HodgeConjugateResidualSolverCSR(
     assert( Btvalues );
     assert( res );
     assert( allowed_error > 0 );
-    assert( restart_modulo > 0 );
+    assert( print_modulo >= 0 );
     
     Float* __restrict__  dir = (Float*)malloc( sizeof(Float) * N );
     Float* __restrict__ Mdir = (Float*)malloc( sizeof(Float) * N );
@@ -152,7 +152,7 @@ void HodgeConjugateResidualSolverCSR(
                 Arows, Acolumns, Avalues, 
                 auxR,
                 allowed_error,
-                restart_modulo
+                print_modulo
             );
             
             #pragma omp parallel for
@@ -188,7 +188,7 @@ void HodgeConjugateResidualSolverCSR(
                 Arows, Acolumns, Avalues, 
                 auxR,
                 allowed_error,
-                restart_modulo,
+                print_modulo,
                 precon
             );
             
@@ -242,7 +242,7 @@ void HodgeConjugateResidualSolverCSR(
             Arows, Acolumns, Avalues, 
             auxR,
             allowed_error,
-            restart_modulo
+            print_modulo
         );
         
         #pragma omp parallel for reduction(+:new_Mr_r)
@@ -286,7 +286,8 @@ void HodgeConjugateResidualSolverCSR(
         
         Md_r = new_Mr_r;
         
-        printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", k, N, (long double)std::sqrt(Md_r), allowed_error );
+        if( print_modulo > 0 and k % print_modulo == 0 ) 
+            printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", k, N, (long double)std::sqrt(Md_r), allowed_error );
         
 //         if( k % 100 == 0 ) 
 //         printf("At Iteration %d we have %.9Le --- [%.9Le,%.9Le,%.9Le,%.9Le]\n",
@@ -357,7 +358,7 @@ void HodgeConjugateResidualSolverCSR_textbook(
     const int* __restrict__ Btrows, const int* __restrict__ Btcolumns, const Float* __restrict__ Btvalues, 
     Float* res,
     Float allowed_error,
-    unsigned int restart_modulo
+    unsigned int print_modulo
 ) {
     
     assert( N > 0 );
@@ -375,7 +376,7 @@ void HodgeConjugateResidualSolverCSR_textbook(
     assert( Btvalues );
     assert( res );
     assert( allowed_error > 0 );
-    assert( restart_modulo > 0 );
+    assert( print_modulo >= 0 );
     
     Float* __restrict__  dir = (Float*)malloc( sizeof(Float) * N );
     Float* __restrict__ Mdir = (Float*)malloc( sizeof(Float) * N );
@@ -429,7 +430,7 @@ void HodgeConjugateResidualSolverCSR_textbook(
                 Arows, Acolumns, Avalues, 
                 auxR,
                 allowed_error,
-                restart_modulo
+                print_modulo
             );
             
             #pragma omp parallel for
@@ -465,7 +466,7 @@ void HodgeConjugateResidualSolverCSR_textbook(
                 Arows, Acolumns, Avalues, 
                 auxR,
                 allowed_error,
-                restart_modulo
+                print_modulo
             );
             
             #pragma omp parallel for reduction(+:Mr_r,Md_Md)
@@ -518,7 +519,7 @@ void HodgeConjugateResidualSolverCSR_textbook(
             Arows, Acolumns, Avalues, 
             auxR,
             allowed_error,
-            restart_modulo
+            print_modulo
         );
         
         #pragma omp parallel for reduction(+:new_Mr_r)
@@ -562,7 +563,8 @@ void HodgeConjugateResidualSolverCSR_textbook(
         
         Mr_r = new_Mr_r;
         
-        printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", k, N, (long double)std::sqrt(Mr_r), allowed_error );
+        if( print_modulo > 0 and k % print_modulo == 0 ) 
+            printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", k, N, (long double)std::sqrt(Mr_r), allowed_error );
         
 //         if( k % 100 == 0 ) 
 //         printf("At Iteration %d we have %.9Le --- [%.9Le,%.9Le,%.9Le,%.9Le]\n",

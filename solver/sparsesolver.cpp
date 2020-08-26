@@ -22,7 +22,7 @@ void ConjugateGradientSolverCSR(
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ residual,
     const Float allowed_error,
-    unsigned int restart_modulo
+    unsigned int print_modulo
 ) {
     
     assert( N > 0 );
@@ -33,7 +33,7 @@ void ConjugateGradientSolverCSR(
     assert( csrvalues );
     assert( residual );
     assert( allowed_error > 0 );
-    assert( restart_modulo > 0 );
+    assert( print_modulo >= 0 );
     
     Float* __restrict__ direction = (Float*)malloc( sizeof(Float) * N );
     Float* __restrict__ auxiliary = (Float*)malloc( sizeof(Float) * N );
@@ -118,11 +118,8 @@ void ConjugateGradientSolverCSR(
             direction[c] = residual[c] + beta * direction[c];
         
         
-//         if( K % 100 == 0 ) 
-//         printf("At Iteration %d we have %.9Le --- [%.9Le,%.9Le,%.9Le,%.9Le]\n",
-//             K,
-//             (long double)std::sqrt(r_r), (long double)alpha, (long double)beta,
-//             (long double)d_Ad, (long double)r_r_new );
+        if( print_modulo > 0 and K % print_modulo == 0 ) 
+            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), allowed_error );
         
         K++;
         
@@ -161,7 +158,7 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ residual,
     const Float allowed_error,
-    unsigned int restart_modulo,
+    unsigned int print_modulo,
     const Float* __restrict__ precon
 ) {
     
@@ -173,7 +170,7 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
     assert( csrvalues );
     assert( residual );
     assert( allowed_error > 0 );
-    assert( restart_modulo > 0 );
+    assert( print_modulo >= 0 );
     assert( precon );
     
     Float* __restrict__ direction = (Float*)malloc( sizeof(Float) * N );
@@ -267,13 +264,8 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
         for( int c = 0; c < N; c++ )
             direction[c] = zirconium[c] + beta * direction[c];
         
-        
-//         printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(z_r), allowed_error );
-//         if( K % 100 == 0 ) 
-//         printf("At Iteration %d we have %.9Le --- [%.9Le,%.9Le,%.9Le,%.9Le]\n",
-//             K,
-//             (long double)std::sqrt(z_r), (long double)alpha, (long double)beta,
-//             (long double)d_Ad, (long double)z_r_new );
+        if( print_modulo > 0 and K % print_modulo == 0 ) 
+            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(z_r), allowed_error );
         
         K++;
         
@@ -320,7 +312,7 @@ void ConjugateResidualSolverCSR(
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ res,
     const Float allowed_error,
-    unsigned int restart_modulo
+    unsigned int print_modulo
 ) {
     
     assert( N > 0 );
@@ -331,7 +323,7 @@ void ConjugateResidualSolverCSR(
     assert( csrvalues );
     assert( res );
     assert( allowed_error > 0 );
-    assert( restart_modulo > 0 );
+    assert( print_modulo >= 0 );
     
     Float* __restrict__  dir = (Float*)malloc( sizeof(Float) * N );
     Float* __restrict__ Adir = (Float*)malloc( sizeof(Float) * N );
@@ -438,12 +430,9 @@ void ConjugateResidualSolverCSR(
         
         Ad_r = new_Ar_r;
                 
-        
-//         if( K % 100 == 0 ) 
-//         printf("At Iteration %d we have %.9Le --- [%.9Le,%.9Le,%.9Le,%.9Le]\n",
-//             K,
-//             (long double)std::sqrt(r_r), (long double)alpha, (long double)beta,
-//             (long double)d_Ad, (long double)r_r_new );
+        if( print_modulo > 0 and K % print_modulo == 0 ) 
+            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(Ad_r), allowed_error );
+
         
         K++;
         
@@ -476,7 +465,7 @@ void ConjugateResidualSolverCSR_textbook(
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ res,
     const Float allowed_error,
-    unsigned int restart_modulo
+    unsigned int print_modulo
 ) {
     
     assert( N > 0 );
@@ -487,7 +476,7 @@ void ConjugateResidualSolverCSR_textbook(
     assert( csrvalues );
     assert( res );
     assert( allowed_error > 0 );
-    assert( restart_modulo > 0 );
+    assert( print_modulo >= 0 );
     
     Float* __restrict__  dir = (Float*)malloc( sizeof(Float) * N );
     Float* __restrict__ Adir = (Float*)malloc( sizeof(Float) * N );
@@ -594,12 +583,8 @@ void ConjugateResidualSolverCSR_textbook(
         
         Ar_r = new_Ar_r;
                 
-        
-//         if( K % 100 == 0 ) 
-//         printf("At Iteration %d we have %.9Le --- [%.9Le,%.9Le,%.9Le,%.9Le]\n",
-//             K,
-//             (long double)std::sqrt(r_r), (long double)alpha, (long double)beta,
-//             (long double)d_Ad, (long double)r_r_new );
+        if( print_modulo > 0 and K % print_modulo == 0 )
+            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(Ar_r), allowed_error );
         
         K++;
         
@@ -663,7 +648,7 @@ void MINRESCSR(
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ res,
     const Float allowed_error,
-    unsigned int restart_modulo
+    unsigned int print_modulo
 ) {
     
     assert( N > 0 );
@@ -674,7 +659,7 @@ void MINRESCSR(
     assert( csrvalues );
     assert( res );
     assert( allowed_error > 0 );
-    assert( restart_modulo > 0 );
+    assert( print_modulo >= 0 );
     
     Float* __restrict__ v0 = (Float*)malloc( sizeof(Float) * N );
     Float* __restrict__ v1 = (Float*)malloc( sizeof(Float) * N );
@@ -831,7 +816,8 @@ void MINRESCSR(
         }
 
         
-        
+        if( print_modulo > 0 and K % print_modulo == 0 )
+            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)eta, allowed_error );
         
         K++;
         
@@ -867,7 +853,7 @@ void WHATEVER(
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ res,
     const Float allowed_error,
-    unsigned int restart_modulo
+    unsigned int print_modulo
 ) {
     
     assert( N > 0 );
@@ -878,7 +864,7 @@ void WHATEVER(
     assert( csrvalues );
     assert( res );
     assert( allowed_error > 0 );
-    assert( restart_modulo > 0 );
+    assert( print_modulo >= 0 );
     
     Float* __restrict__  r = (Float*)malloc( sizeof(Float) * N );
     Float* __restrict__ p0 = (Float*)malloc( sizeof(Float) * N );
@@ -1011,7 +997,8 @@ void WHATEVER(
             
             
         
-        
+        if( print_modulo > 0 and K % print_modulo == 0 ) 
+            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), allowed_error );
         
         K++;
         
