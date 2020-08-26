@@ -204,7 +204,7 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
                 
                 zirconium[c] = precon[c] * residual[c];
                 
-                assert( precon[c] == 1. );
+//                 assert( precon[c] == 1. );
                 
                 direction[c] = zirconium[c];
                 

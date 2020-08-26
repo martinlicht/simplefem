@@ -245,7 +245,7 @@ int main()
                             cout << "CGM diagonal preconditioner CSR" << endl;
                         
                             FloatVector invprecon = mass_prelim.InverseDiagonalPreconditioner();
-                            invprecon.setentries( 1. );
+//                             invprecon.setentries( 1. );
                             assert( invprecon.isfinite() );
                             assert( invprecon.ispositive() );
                             
