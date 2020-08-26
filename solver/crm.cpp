@@ -58,11 +58,15 @@ void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) cons
     
     recent_iteration_count = 0;
     
-    while(true)
+    while( recent_iteration_count < max_iteration_count )
     {
         
         /* Start / Restart CRM process */
-        if( recent_iteration_count % x.getdimension() == 0 ) {
+        bool restart_condition = ( recent_iteration_count == 0 ) or ( recent_iteration_count % x.getdimension() == 0 );
+        
+        bool residual_seems_small = std::sqrt( r * r ) < tolerance or std::sqrt( rAr ) < tolerance;
+        
+        if( restart_condition or residual_seems_small ) {
         
             LOG << "Begin Conjugate Residual iteration";// << std::endl;
         
@@ -72,7 +76,7 @@ void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) cons
                 r = b - A * x;
 
                 /* d = r */
-                d = A * r; //d.copydatafrom( r );
+                d = r; //d.copydatafrom( r );
 
                 /* Ar = A r */
                 Ar = A * r; // A.apply( Ar, (const FloatVector&) r );
@@ -87,26 +91,23 @@ void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) cons
             }
         
             LOG << "starting with"
-                      << " r-Asqnorm="   << r * Ar  
-                      << " r-sqnorm="    << r * r 
-                      ;//<< std::endl;
-            LOG << "tolerance: " << tolerance;// << std::endl;
+                << " r-Anorm: "   << std::sqrt( r * Ar )   
+                << " r-snorm: "    << std::sqrt( r *  r ) 
+                << " tolerance: " << tolerance;// << std::endl;
 
         }
 
-        bool continue_condition = recent_iteration_count < max_iteration_count && r * r > tolerance && rAr > tolerance;
+        bool residual_is_small = std::sqrt( r * r ) < tolerance or std::sqrt( rAr ) < tolerance; 
         
         /* Print information if it is time too */
-        if( recent_iteration_count % print_modulo == 0 or not continue_condition ) {
-            LOG 
-                << "#" << recent_iteration_count << "/" << max_iteration_count
-                << " r-Asqnorm=" << rAr 
-                << " r-sqnorm="  << r * r 
-                ;//<< std::endl;
+        if( recent_iteration_count % print_modulo == 0 or residual_is_small ) {
+            LOG << "#" << recent_iteration_count << "/" << max_iteration_count
+                << " r-Anorm: " << std::sqrt( rAr )   
+                << " r-snorm: " << std::sqrt( r *  r );
         }
 
         /* If exit condition met, exit */
-        if( not continue_condition ) 
+        if( residual_is_small ) 
             break;
             
         /* Perform iteration step */
@@ -121,7 +122,7 @@ void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) cons
             Float alpha = rAr / Ad_Ad;
 
             assert( rAr >= 0. ); assert( Ad_Ad >= 0. );
-            if( Ad_Ad < tolerance ) {
+            if( std::sqrt(Ad_Ad) < tolerance ) {
                 LOG << "premature termination" << nl;
                 return;
             }
@@ -148,13 +149,13 @@ void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) cons
     }
     
     /* HOW DID WE FINISH ? */
-    if( r * r > tolerance && rAr > tolerance ) {
+    recent_deviation = std::sqrt( rAr );
+    if( std::sqrt( r * r ) > tolerance and std::sqrt( rAr ) > tolerance ) {
             LOG << "CRM process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << recent_deviation << "/" << tolerance;
         } else { 
             LOG << "CRM process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << recent_deviation << "/" << tolerance;
     }
 
-    recent_deviation = rAr;
     
 }
   
@@ -208,7 +209,7 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
 
         }
 
-        bool residual_is_small = r * r < tolerance; 
+        bool residual_is_small = std::sqrt( r * r ) < tolerance; 
         
 //         /* Print information if it is time too */
 //         if( verbosity >= VerbosityLevel::verbose ) 
@@ -246,7 +247,7 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
     }
     
     
-    recent_deviation = r * r;
+    recent_deviation = std::sqrt( r * r );
 
     if( verbosity >= VerbosityLevel::resultonly ) {
         if( recent_deviation > tolerance ) {
@@ -287,7 +288,7 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
     
     recent_iteration_count = 0;
     
-    Float Ar_r;
+    Float Ar_r = notanumber;
     
     while( recent_iteration_count < max_iteration_count )
     {
@@ -316,7 +317,7 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
 
         }
 
-        bool residual_is_small = r * r < tolerance; 
+        bool residual_is_small = std::sqrt( r * r ) < tolerance; 
         
 //         /* Print information if it is time too */
 //         if( verbosity >= VerbosityLevel::verbose ) 
@@ -356,7 +357,7 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
     }
     
     
-    recent_deviation = r * r;
+    recent_deviation = std::sqrt( r * r );
 
     if( verbosity >= VerbosityLevel::resultonly ) {
         if( recent_deviation > tolerance ) {

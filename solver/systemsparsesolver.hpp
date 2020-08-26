@@ -121,8 +121,8 @@ void HodgeConjugateResidualSolverCSR(
     
     
     
-    Float Md_r;
-    Float Md_Md;
+    Float Md_r  = notanumber;
+    Float Md_Md = notanumber;
     
     int k = 0;
     
@@ -310,6 +310,8 @@ void HodgeConjugateResidualSolverCSR(
     free( auxR );
     
     free( vil );
+    
+    free( precon );
 
 }
  
@@ -396,8 +398,8 @@ void HodgeConjugateResidualSolverCSR_textbook(
     assert( vil );
     
     
-    Float Mr_r;
-    Float Md_Md;
+    Float Mr_r  = notanumber;
+    Float Md_Md = notanumber;
     
     int k = 0;
     

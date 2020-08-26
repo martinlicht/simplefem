@@ -61,11 +61,15 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
     
     recent_iteration_count = 0;
     
-    while(true)
+    while( recent_iteration_count < max_iteration_count )
     {
         
+        bool restart_condition = ( recent_iteration_count == 0 ) or ( recent_iteration_count % x.getdimension() == 0 );
+        
+        bool residual_seems_small = std::sqrt( rr ) < tolerance;
+        
         /* Start / Restart MinimumResidualMethod process */
-        if( recent_iteration_count % x.getdimension() == 0 ) {
+        if( restart_condition or residual_seems_small ) {
         
             if( verbosity >= VerbosityLevel::verbose ) 
             LOG << "Begin Minimal Residual iteration";// << std::endl;
@@ -109,11 +113,11 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
 
         }
 
-        bool continue_condition = recent_iteration_count < max_iteration_count && rr > tolerance;
+        bool residual_is_small = std::sqrt( rr ) < tolerance; 
         
         /* Print information if it is time too */
         if( verbosity >= VerbosityLevel::verbose ) 
-        if( recent_iteration_count % print_modulo == 0 or not continue_condition ) {
+        if( recent_iteration_count % print_modulo == 0 or residual_is_small ) {
             LOG 
                 << "#" << recent_iteration_count << "/" << max_iteration_count
                 << " r-sqnorm="  << rr 
@@ -121,8 +125,9 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
         }
 
         /* If exit condition met, exit */
-        if( not continue_condition ) 
+        if( residual_is_small ) 
             break;
+            
             
         /* Perform iteration step */
         {
@@ -164,7 +169,7 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
     }
     
     /* HOW DID WE FINISH ? */
-    recent_deviation = rr;
+    recent_deviation = std::sqrt(rr);
     if( verbosity >= VerbosityLevel::resultonly ) {
         if( recent_deviation > tolerance ) {
             LOG << "Minimum Residual process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << recent_deviation << "/" << tolerance;

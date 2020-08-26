@@ -56,36 +56,38 @@ void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) cons
     
     recent_iteration_count = 0;
     
-    while(true)
+    while( recent_iteration_count < max_iteration_count )
     {
         
-        /* Start / Restart CRM process */
-        if( recent_iteration_count % x.getdimension() == 0 ) {
+        bool restart_condition = ( recent_iteration_count % x.getdimension() == 0 );
         
-            LOG << "Begin Conjugate Gradient iteration";// << std::endl;
+        bool residual_seems_small = std::sqrt( r * r ) < tolerance;
+        
+        /* Start / Restart CRM process */
+        if( restart_condition or residual_seems_small ) {
+        
+            LOG << "Begin Conjugate Gradient iteration";
         
             r = b - A * x;
-            d = A * r;
+            d = r;
             
             LOG << "starting with"
-                      << " r-sqnorm="    << r * r 
-                      ;//<< std::endl;
-            LOG << "tolerance: " << tolerance;// << std::endl;
+                << " r-norm: "    << std::sqrt( r * r ) 
+                << " tolerance: " << tolerance;
 
         }
 
-        bool continue_condition = recent_iteration_count < max_iteration_count && r * r > tolerance;
+        bool residual_is_small = std::sqrt( r * r ) < tolerance;
         
         /* Print information if it is time too */
-        if( recent_iteration_count % print_modulo == 0 or not continue_condition ) {
-            LOG 
-                << "#" << recent_iteration_count << "/" << max_iteration_count
-                << " r-sqnorm="  << r * r 
-                ;//<< std::endl;
+        if( recent_iteration_count % print_modulo == 0 or residual_seems_small or true ) {
+            LOG << "#"          << recent_iteration_count << "/" << max_iteration_count
+                << " r-norm: "  << std::sqrt( r * r );
+                
         }
 
         /* If exit condition met, exit */
-        if( not continue_condition ) 
+        if( residual_is_small ) 
             break;
             
         /* Perform iteration step */
@@ -93,7 +95,7 @@ void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) cons
             
             Ad = A * d;
             
-            Float rr_old = r * r; assert( rr_old >= 0 ); if( rr_old < tolerance ) break;
+            Float rr_old = r * r; assert( rr_old >= 0 ); if( std::sqrt(rr_old) < tolerance ) break;
             Float Ad_d  = Ad * d;
             Float alpha = rr_old / Ad_d;
             
@@ -110,7 +112,7 @@ void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) cons
     }
     
     /* HOW DID WE FINISH ? */
-    recent_deviation = r * r;
+    recent_deviation = std::sqrt(r * r);
     if( recent_deviation > tolerance ) {
             LOG << "CGM process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << recent_deviation << "/" << tolerance;
         } else { 

@@ -116,8 +116,8 @@ int main()
             int min_l = 1; 
             int max_l = 7;
             
-            int min_r = 2;
-            int max_r = 2;
+            int min_r = 3;
+            int max_r = 3;
             
             ConvergenceTable contable;
             
@@ -209,7 +209,7 @@ int main()
                             
                             sol.zero();
                             
-                            auto X = B * inv(A,1e-06) * Bt;
+                            auto X = B * inv(A,1e-08) * Bt;
 //                             auto y = FloatVector( Bt.getdimin(), 0. );
 //                             auto f = X * y;
                             

@@ -40,10 +40,8 @@ void ConjugateGradientSolverCSR(
     assert( direction );
     assert( auxiliary );
     
-    Float r_r;
+    Float r_r = notanumber;
 
-    r_r = 0.;
-    
     int K = 0;
     
     while( K < N ){
@@ -185,10 +183,8 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
     assert( zirconium );
     assert( auxiliary );
     
-    Float z_r;
+    Float z_r = notanumber;
 
-    z_r = 0.;
-    
     int K = 0;
     
     while( K < N ){
@@ -342,8 +338,8 @@ void ConjugateResidualSolverCSR(
     assert( vil );
     
     
-    Float Ad_r;
-    Float Ad_Ad;
+    Float Ad_r  = notanumber;
+    Float Ad_Ad = notanumber;
 
     int K = 0;
     
@@ -498,8 +494,8 @@ void ConjugateResidualSolverCSR_textbook(
     assert( vil );
     
     
-    Float Ar_r;
-    Float Ad_Ad;
+    Float Ar_r  = notanumber;
+    Float Ad_Ad = notanumber;
 
     int K = 0;
     
@@ -692,9 +688,13 @@ void MINRESCSR(
     assert( wn );
     assert(  p );
     
-    Float gamma;
-    Float eta;
-    Float s0, s1, c0, c1;
+    Float gamma = notanumber;
+    Float eta   = notanumber;
+    
+    Float s0 = notanumber;
+    Float s1 = notanumber;
+    Float c0 = notanumber;
+    Float c1 = notanumber;
 
     int K = 0;
 
@@ -745,8 +745,8 @@ void MINRESCSR(
             break;
 
         Float temp = gamma;
-        if( K % 100 == 0 )
-        LOG << K << space << temp << space << eta << space << temp/eta;
+//         if( K % 100 == 0 )
+//         LOG << K << space << temp << space << eta << space << temp/eta;
             
         {
             
@@ -852,7 +852,7 @@ void MINRESCSR(
 
 
 
-
+// This one is taken from Wikipedia, I don't know what it is.
 
 void WHATEVER( 
     const int N, 

@@ -88,6 +88,8 @@ class FloatVector
         
         void zero();
         
+        void setentries( Float );
+        
         void random();
         
         void clear();

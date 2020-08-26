@@ -52,9 +52,13 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
     FloatVector wn( dimension, 0. );
     FloatVector  p( dimension, 0. );
     
-    Float gamma = 0.;
-    Float eta;
-    Float s0, s1, c0, c1;
+    Float gamma = notanumber;
+    Float eta = notanumber;
+    
+    Float s0 = notanumber;
+    Float s1 = notanumber;
+    Float c0 = notanumber;
+    Float c1 = notanumber;
     
     recent_iteration_count = 0;
 
@@ -89,10 +93,10 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
         if( residual_is_small )
             break;
 
-            Float temp;
-            temp = (b-A*x).norm();
+        Float temp;
+        temp = (b-A*x).norm();
 //             temp = gamma;
-            LOG << recent_iteration_count << space << temp << space << eta << space << temp/eta;
+        LOG << recent_iteration_count << space << temp << space << eta << space << temp/eta;
             
         {
             

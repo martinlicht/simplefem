@@ -224,6 +224,13 @@ void FloatVector::zero()
         setentry( p, 0. ); 
 }
 
+void FloatVector::setentries( Float value ) 
+{
+    check();
+    for( int p = 0; p < getdimension(); p++ )
+        setentry( p, value ); 
+}
+
 void FloatVector::random() 
 {
     check();
