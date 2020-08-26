@@ -58,6 +58,8 @@ public LinearOperator /* every matrix is a linear operator */
         int getnumberofentries() const;
         void sortentries() const;
         
+        FloatVector InverseDiagonalPreconditioner() const;
+
         using LinearOperator::apply;
         virtual void apply( FloatVector& dest, const FloatVector& add, Float scaling ) const override;
         

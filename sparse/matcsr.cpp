@@ -230,6 +230,56 @@ void MatrixCSR::sortentries() const
 
 
 
+FloatVector MatrixCSR::InverseDiagonalPreconditioner() const
+{ 
+    check();
+    assert( getdimin() == getdimout() );
+    auto ret = FloatVector( getdimin(), 0. );
+
+    #pragma omp parallel for
+    for( int r = 0; r < getdimin(); r++ ) {
+        
+        ret[r] = 0.;
+        
+        for( int c = A[r]; c < A[r+1]; c++ )
+            if( C[ c ] == r )
+                ret[r] += V[ c ];
+    
+        assert( ret[r] >= 0. );
+        
+        if( ret[r] > 0. ) ret[r] = 1. / ret[r];
+        
+    }
+    
+    
+        
+    return ret;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

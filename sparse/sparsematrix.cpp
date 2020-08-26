@@ -414,7 +414,24 @@ SparseMatrix SparseMatrix::getTranspose() const
     
     // return ret;
 }
-        
+
+
+FloatVector SparseMatrix::InverseDiagonalPreconditioner() const
+{ 
+    check();
+    assert( getdimin() == getdimout() );
+    auto ret = FloatVector( getdimin(), 0. );
+    for( auto& entry : entries )
+        if( entry.row == entry.column )
+            ret[ entry.row ] += entry.value;
+    for( int r = 0; r < getdimout(); r++ ) {
+        assert( ret[r] >= 0. );
+        if( ret[r] > 0. ) ret[r] = 1. / ret[r];
+    }
+    return ret;
+}
+
+
 
 
 

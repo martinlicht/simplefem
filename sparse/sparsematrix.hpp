@@ -99,6 +99,8 @@ public LinearOperator /* every matrix is a linear operator */
 
         SparseMatrix getTranspose() const;
         
+        FloatVector InverseDiagonalPreconditioner() const;
+        
         using LinearOperator::apply;
         virtual void apply( FloatVector& dest, const FloatVector& add, Float scaling ) const override;
 
