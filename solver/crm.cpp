@@ -30,6 +30,27 @@ void ConjugateResidualMethod::print( std::ostream& os ) const
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
 void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
 {
@@ -100,10 +121,11 @@ void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) cons
         bool residual_is_small = std::sqrt( r * r ) < tolerance or std::sqrt( rAr ) < tolerance; 
         
         /* Print information if it is time too */
-        if( recent_iteration_count % print_modulo == 0 or residual_is_small ) {
-            LOG << "#" << recent_iteration_count << "/" << max_iteration_count
-                << " r-Anorm: " << std::sqrt( rAr )   
-                << " r-snorm: " << std::sqrt( r *  r );
+        bool do_print = ( print_modulo > 0 and recent_iteration_count % print_modulo == 0 ) or residual_is_small;
+        if( do_print and verbosity >= VerbosityLevel::verbose ) {
+            LOG << " # "  << recent_iteration_count << "/" << max_iteration_count
+                << " $ "  << std::sqrt( r * r ) << "/" << tolerance
+                << " $ "  << std::sqrt( rAr ) << "/" << tolerance;
         }
 
         /* If exit condition met, exit */
@@ -122,10 +144,10 @@ void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) cons
             Float alpha = rAr / Ad_Ad;
 
             assert( rAr >= 0. ); assert( Ad_Ad >= 0. );
-            if( std::sqrt(Ad_Ad) < tolerance ) {
-                LOG << "premature termination" << nl;
-                return;
-            }
+//             if( std::sqrt(Ad_Ad) < tolerance ) {
+//                 LOG << "premature termination" << nl;
+//                 return;
+//             }
             
             x += alpha * d;
 
@@ -162,6 +184,25 @@ void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) cons
 
   
 
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
 void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b ) const
 {
@@ -211,14 +252,11 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
 
         bool residual_is_small = std::sqrt( r * r ) < tolerance; 
         
-//         /* Print information if it is time too */
-//         if( verbosity >= VerbosityLevel::verbose ) 
-//         if( recent_iteration_count % print_modulo == 0 or residual_is_small ) {
-//             LOG 
-//                 << "#" << recent_iteration_count << "/" << max_iteration_count
-//                 << " r-sqnorm="  << r * r 
-//                 ;//<< std::endl;
-//         }
+        bool do_print = ( print_modulo > 0 and recent_iteration_count % print_modulo == 0 ) or residual_is_small;
+        if( do_print and verbosity >= VerbosityLevel::verbose ) {
+            LOG << " # "  << recent_iteration_count << "/" << max_iteration_count
+                << " $ "  << std::sqrt( r * r ) << "/" << tolerance;
+        }
 
         
         if( residual_is_small ) 
@@ -258,6 +296,18 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
     }
     
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -319,14 +369,11 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
 
         bool residual_is_small = std::sqrt( r * r ) < tolerance; 
         
-//         /* Print information if it is time too */
-//         if( verbosity >= VerbosityLevel::verbose ) 
-//         if( recent_iteration_count % print_modulo == 0 or residual_is_small ) {
-//             LOG 
-//                 << "#" << recent_iteration_count << "/" << max_iteration_count
-//                 << " r-sqnorm="  << r * r 
-//                 ;//<< std::endl;
-//         }
+        bool do_print = ( print_modulo > 0 and recent_iteration_count % print_modulo == 0 ) or residual_is_small;
+        if( do_print and verbosity >= VerbosityLevel::verbose ) {
+            LOG << " # "  << recent_iteration_count << "/" << max_iteration_count
+                << " $ "  << std::sqrt( r * r ) << "/" << tolerance;
+        }
 
         
         if( residual_is_small ) 

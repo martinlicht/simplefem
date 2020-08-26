@@ -93,10 +93,6 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
         if( residual_is_small )
             break;
 
-        Float temp;
-        temp = (b-A*x).norm();
-//             temp = gamma;
-        LOG << recent_iteration_count << space << temp << space << eta << space << temp/eta;
             
         {
             
@@ -126,10 +122,6 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
  
             eta = - sn * eta;
             
-            LOG << "\t" << alpha_0 << space << alpha_1 << space << alpha_2 << space << alpha_3;
-            LOG << "\t" << cn << space << sn << space << eta;
-            LOG << "\t" << p.norm() << space << wn.norm();
-            
             
             v0 = v1;
             w0 = w1;
@@ -148,7 +140,11 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
         
         
         
-        
+        bool do_print = ( print_modulo > 0 and recent_iteration_count % print_modulo == 0 );
+        if( do_print and verbosity >= VerbosityLevel::verbose ) {
+            LOG << " # "  << recent_iteration_count << "/" << max_iteration_count
+                << " $ "  << ( b - A * x ).norm() << "/" << tolerance;
+        }
         
         
         recent_iteration_count++;

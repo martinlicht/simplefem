@@ -169,7 +169,7 @@ int main()
                         
                             sol.zero();
                             ConjugateGradientMethod Solver( stiffness );
-                            Solver.print_modulo        = 1 + 4 * sol.getdimension();
+                            Solver.print_modulo        = 0;
                             Solver.max_iteration_count =     4 * sol.getdimension();
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
@@ -184,7 +184,7 @@ int main()
                         
                             sol.zero();
                             ConjugateResidualMethod Solver( stiffness );
-                            Solver.print_modulo        = 1 + 4 * sol.getdimension();
+                            Solver.print_modulo        = 0;
                             Solver.max_iteration_count =     4 * sol.getdimension();
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
@@ -199,7 +199,7 @@ int main()
                         
                             sol.zero();
                             MinimumResidualMethod Solver( stiffness );
-                            Solver.print_modulo        = 1; + 4 * sol.getdimension();
+                            Solver.print_modulo        = 0;
                             Solver.max_iteration_count =     4 * sol.getdimension();
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
@@ -209,12 +209,12 @@ int main()
                             contable << Float(end - start) << Float( ( stiffness * sol - rhs ).norm() );
                         }
 
-                        {
+                        if(false){
                             cout << "HERZOG SOODHALTER C++" << endl;
                         
                             sol.zero();
                             HerzogSoodhalterMethod Solver( stiffness );
-                            Solver.print_modulo        = 1; + 4 * sol.getdimension();
+                            Solver.print_modulo        = 0;
                             Solver.max_iteration_count =     4 * sol.getdimension();
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );

@@ -139,7 +139,7 @@ int main()
                         
                             sol.zero();
                             ConjugateGradientMethod Solver( mass );
-                            Solver.print_modulo        = 1 + 4 * sol.getdimension();
+                            Solver.print_modulo        = 0;
                             Solver.max_iteration_count =     4 * sol.getdimension();
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
@@ -154,7 +154,7 @@ int main()
                         
                             sol.zero();
                             ConjugateResidualMethod Solver( mass );
-                            Solver.print_modulo        = 1 + 4 * sol.getdimension();
+                            Solver.print_modulo        = 0;
                             Solver.max_iteration_count =     4 * sol.getdimension();
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
@@ -169,7 +169,7 @@ int main()
                         
                             sol.zero();
                             MinimumResidualMethod Solver( mass );
-                            Solver.print_modulo        = 1; + 4 * sol.getdimension();
+                            Solver.print_modulo        = 0;
                             Solver.max_iteration_count =     4 * sol.getdimension();
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
@@ -184,7 +184,7 @@ int main()
                         
                             sol.zero();
                             HerzogSoodhalterMethod Solver( mass );
-                            Solver.print_modulo        = 1; + 4 * sol.getdimension();
+                            Solver.print_modulo        = 0;
                             Solver.max_iteration_count =     4 * sol.getdimension();
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );

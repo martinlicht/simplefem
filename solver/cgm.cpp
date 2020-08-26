@@ -80,10 +80,10 @@ void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) cons
         bool residual_is_small = std::sqrt( r * r ) < tolerance;
         
         /* Print information if it is time too */
-        if( recent_iteration_count % print_modulo == 0 or residual_seems_small or true ) {
-            LOG << "#"          << recent_iteration_count << "/" << max_iteration_count
-                << " r-norm: "  << std::sqrt( r * r );
-                
+        bool do_print = ( print_modulo > 0 and recent_iteration_count % print_modulo == 0 ) or residual_is_small;
+        if( do_print and verbosity >= VerbosityLevel::verbose ) {
+            LOG << " # "  << recent_iteration_count << "/" << max_iteration_count
+                << " $ "  << std::sqrt( r * r ) << "/" << tolerance;
         }
 
         /* If exit condition met, exit */

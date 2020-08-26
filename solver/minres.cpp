@@ -104,22 +104,20 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
 
             }
         
-            if( verbosity >= VerbosityLevel::verbose ) 
-            LOG << "starting with"
-                      << " r-sqnorm="    << rr 
-                      ;//<< std::endl;
-            if( verbosity >= VerbosityLevel::verbose ) 
-            LOG << "tolerance: " << tolerance;// << std::endl;
+            if( verbosity >= VerbosityLevel::verbose ) {
+                LOG << " # "  << recent_iteration_count << "/" << max_iteration_count
+                    << " $ "  << std::sqrt( r * r ) << "/" << tolerance;
+            }
 
         }
 
         bool residual_is_small = std::sqrt( rr ) < tolerance; 
         
         /* Print information if it is time too */
-        if( verbosity >= VerbosityLevel::verbose ) 
-        if( recent_iteration_count % print_modulo == 0 or residual_is_small ) {
-            LOG 
-                << "#" << recent_iteration_count << "/" << max_iteration_count
+        bool do_print = ( print_modulo > 0 and recent_iteration_count % print_modulo == 0 );
+        if( do_print and verbosity >= VerbosityLevel::verbose ) 
+        if( do_print or residual_is_small ) {
+            LOG << "#" << recent_iteration_count << "/" << max_iteration_count
                 << " r-sqnorm="  << rr 
                 ;//<< std::endl;
         }
