@@ -18,7 +18,7 @@
 #include "../../mesh/examples2D.hpp"
 #include "../../vtk/vtkwriter.mesh2D.hpp"
 #include "../../solver/sparsesolver.hpp"
-// #include "../../solver/chebyshev.hpp"
+#include "../../solver/chebyshev.hpp"
 #include "../../solver/cgm.hpp"
 #include "../../solver/crm.hpp"
 // #include "../../solver/pcrm.hpp"
@@ -269,33 +269,33 @@ int main()
                         }
                         
                         
-//                         if(false){
-//                             cout << "CHEBYSHEV CSR" << endl;
-//                         
-//                             FloatVector invprecon = mass_prelim.InverseDiagonalPreconditioner();
-//                             assert( invprecon.isfinite() );
-//                             assert( invprecon.ispositive() );
-//                             
-//                             sol.zero();
-//                             timestamp start = gettimestamp();
-//                             FloatVector residual( rhs );
-//                             CheybyshevIteration_DiagonalPreconditioner( 
-//                                 sol.getdimension(), 
-//                                 sol.raw(), 
-//                                 rhs.raw(), 
-//                                 mass.getA(), mass.getC(), mass.getV(),
-//                                 residual.raw(),
-//                                 1e-16,
-//                                 1,
-//                                 invprecon.raw(),
-//                                 0.,
-//                                 invprecon.maxnorm()
-//                             );
-// 
-//                             timestamp end = gettimestamp();
-//                             std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
-//                             contable << Float(end - start);
-//                         }
+                        if(false){
+                            cout << "CHEBYSHEV CSR" << endl;
+                        
+                            FloatVector invprecon = mass_prelim.InverseDiagonalPreconditioner();
+                            assert( invprecon.isfinite() );
+                            assert( invprecon.ispositive() );
+                            
+                            sol.zero();
+                            timestamp start = gettimestamp();
+                            FloatVector residual( rhs );
+                            CheybyshevIteration_DiagonalPreconditioner( 
+                                sol.getdimension(), 
+                                sol.raw(), 
+                                rhs.raw(), 
+                                mass.getA(), mass.getC(), mass.getV(),
+                                residual.raw(),
+                                1e-16,
+                                1,
+                                invprecon.raw(),
+                                0.,
+                                200 * invprecon.maxnorm()
+                            );
+
+                            timestamp end = gettimestamp();
+                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+                            contable << Float(end - start);
+                        }
                         
                         
                         contable << nl;
