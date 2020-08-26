@@ -259,6 +259,33 @@ FloatVector MatrixCSR::InverseDiagonalPreconditioner() const
 
 
 
+FloatVector MatrixCSR::diagonal() const
+{ 
+    check();
+    assert( getdimin() == getdimout() );
+    auto ret = FloatVector( getdimin(), 0. );
+
+    #pragma omp parallel for
+    for( int r = 0; r < getdimout(); r++ ) {
+        
+        ret[r] = 0.;
+        
+        for( int i = A[r]; i < A[r+1]; i++ )
+            if( C[ i ] == r )
+                ret[r] += V[ i ];
+        
+    }
+    
+    
+        
+    return ret;
+}
+
+
+
+
+
+
 
 
 

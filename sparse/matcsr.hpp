@@ -59,6 +59,7 @@ public LinearOperator /* every matrix is a linear operator */
         void sortentries() const;
         
         FloatVector InverseDiagonalPreconditioner() const;
+        FloatVector diagonal() const;
 
         using LinearOperator::apply;
         virtual void apply( FloatVector& dest, const FloatVector& add, Float scaling ) const override;
