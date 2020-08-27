@@ -123,7 +123,7 @@ void ConjugateGradientSolverCSR(
         
         K++;
         
-    };
+    }
     
     printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), allowed_error );
 
@@ -180,7 +180,7 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
     assert( zirconium );
     assert( auxiliary );
     
-    Float z_r; // = notanumber;
+    Float z_r = notanumber;
 
     int K = 0;
     
@@ -269,15 +269,257 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
         
         K++;
         
-    };
+    }
     
     printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(z_r), allowed_error );
 
     
     free( direction ); 
+    free( zirconium ); 
     free( auxiliary );
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void ConjugateGradientSolverCSR_SSOR( 
+    const int N, 
+    Float* __restrict__ x, 
+    const Float* __restrict__ b, 
+    const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
+    Float* __restrict__ residual,
+    const Float allowed_error,
+    unsigned int print_modulo,
+    const Float* __restrict__ diagonal,
+    Float omega
+) {
+    
+    assert( N > 0 );
+    assert( x );
+    assert( b );
+    assert( csrrows );
+    assert( csrcolumns );
+    assert( csrvalues );
+    assert( residual );
+    assert( allowed_error > 0 );
+    assert( print_modulo >= 0 );
+    assert( diagonal );
+    
+    Float* __restrict__ direction = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__ zirconium = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__ auxiliary = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__ mittlerer = (Float*)malloc( sizeof(Float) * N );
+    assert( direction );
+    assert( zirconium );
+    assert( mittlerer );
+    assert( auxiliary );
+    
+    Float z_r = notanumber;
+
+    int K = 0;
+    
+    while( K < N ){
+        
+        bool restart_condition = ( K == 0 ); // or K % 1000 == 0;
+        
+        bool residual_seems_small = false and std::sqrt(z_r) < allowed_error;
+
+        if( restart_condition or residual_seems_small ) {
+            
+            for( int c = 0; c < N; c++ ) {
+                
+                residual[c] = b[c];
+                
+                for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                    residual[c] -= csrvalues[ d ] * x[ csrcolumns[d] ];
+                
+            }
+            
+            // inv( L^t + D/omega ) * D * inv( L + D/omega )
+            
+            for( int c = 0; c < N; c++ ) {
+                
+                Float aux = residual[c];
+                
+                for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                    if( csrcolumns[d] < c )
+                        aux -= csrvalues[ d ] * mittlerer[ csrcolumns[d] ];
+                
+                mittlerer[c] = aux * omega /  diagonal[c];
+                
+            }
+        
+            for( int c = 0; c < N; c++ ) {
+            
+                mittlerer[c] *= diagonal[c];
+                
+                mittlerer[c] *= ( 2. - omega ) / omega;
+            }
+            
+            for( int c = N-1; c >= 0; c-- ) {
+                
+                Float aux = mittlerer[c];
+                
+                for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                    if( csrcolumns[d] > c )
+                        aux -= csrvalues[ d ] * zirconium[ csrcolumns[d] ];
+                
+                zirconium[c] = aux * omega /  diagonal[c];
+            
+            }
+            
+            z_r = 0.;
+        
+            for( int c = 0; c < N; c++ ) {
+                            
+                direction[c] = zirconium[c];
+                       
+                z_r += zirconium[c] * residual[c];
+            
+            }
+            
+        }
+        
+        /* Check whether residual is small */
+                
+        bool residual_is_small = std::sqrt(z_r) < allowed_error;
+//         printf("\t\t\t\t %.9Le (%.9Le)\n", (long double)std::sqrt(z_r), allowed_error );
+        
+        if( residual_is_small )
+            break;
+
+
+        /* now the main work of the entire algorithm */
+        
+        // NOTE The calculation of d_r is reduced to r_r, which is already known.
+        
+        Float d_Ad = 0.;
+        
+        for( int c = 0; c < N; c++ )
+        {
+            auxiliary[c] = 0.;
+            
+            for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                auxiliary[c] += csrvalues[ d ] * direction[ csrcolumns[d] ];
+                    
+            d_Ad += direction[c] * auxiliary[c];
+        }
+        
+        Float alpha = z_r / d_Ad;
+    
+        for( int c = 0; c < N; c++ )
+        {
+            
+            x[c] += alpha * direction[c];
+            
+            residual[c] -= alpha * auxiliary[c];
+            
+        }
+            
+        for( int c = 0; c < N; c++ ) {
+            
+            Float aux = residual[c];
+            
+            for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                if( csrcolumns[d] < c )
+                    aux -= csrvalues[ d ] * mittlerer[ csrcolumns[d] ];
+            
+            mittlerer[c] = aux * omega / diagonal[c];
+        
+        }
+        
+        for( int c = 0; c < N; c++ ) {
+        
+            mittlerer[c] *= diagonal[c];
+            
+            mittlerer[c] *= ( 2. - omega ) / omega;
+        }
+        
+        for( int c = N-1; c >= 0; c-- ) {
+            
+            Float aux = mittlerer[c];
+            
+            for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                if( csrcolumns[d] > c )
+                    aux -= csrvalues[ d ] * zirconium[ csrcolumns[d] ];
+            
+            zirconium[c] = aux * omega / diagonal[c];
+            
+        }
+            
+            
+        Float z_r_new = 0.;
+        
+        for( int c = 0; c < N; c++ )
+        {
+            
+            z_r_new += zirconium[c] * residual[c];
+            
+        }
+        
+        Float beta = z_r_new / z_r;
+        
+        z_r = z_r_new;
+        
+        for( int c = 0; c < N; c++ )
+            direction[c] = zirconium[c] + beta * direction[c];
+        
+        if( print_modulo > 0 and K % print_modulo == 0 ) 
+            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(z_r), allowed_error );
+        
+        K++;
+        
+    }
+    
+    printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(z_r), allowed_error );
+
+    
+    free( direction ); 
+    free( zirconium ); 
+    free( mittlerer ); 
+    free( auxiliary );
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -436,7 +678,7 @@ void ConjugateResidualSolverCSR(
         
         K++;
         
-    };
+    }
     
     printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(Ad_r), allowed_error );
 
@@ -588,7 +830,7 @@ void ConjugateResidualSolverCSR_textbook(
         
         K++;
         
-    };
+    }
     
     printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(Ar_r), allowed_error );
 
@@ -821,7 +1063,7 @@ void MINRESCSR(
         
         K++;
         
-    };
+    }
     
     printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)eta, allowed_error );
 
@@ -1002,7 +1244,7 @@ void WHATEVER(
         
         K++;
         
-    };
+    }
     
     printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), allowed_error );
 

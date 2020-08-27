@@ -1,6 +1,13 @@
 #ifndef INCLUDEGUARD_SOLVER_SYSTEMSOLVER
 #define INCLUDEGUARD_SOLVER_SYSTEMSOLVER
 
+#include <cmath>
+#include <cstdio>
+#include <cassert>
+#include <cstdlib>
+#include <omp.h>
+#include <utility>
+
 #include "../basic.hpp"
 #include "sparsesolver.hpp"
 
@@ -36,12 +43,6 @@ void HodgeConjugateResidualSolverCSR_textbook(
 
 
 
-#include <cmath>
-#include <cstdio>
-#include <cassert>
-#include <cstdlib>
-#include <omp.h>
-#include <utility>
 
 
 
@@ -145,7 +146,7 @@ void HodgeConjugateResidualSolverCSR(
             }
             
             for( int c = 0; c < L; c++ ) aux2[c] = 0.;
-            ConjugateGradientSolverCSR( 
+            ConjugateGradientSolverCSR_DiagonalPreconditioner( 
                 L, 
                 aux2, 
                 (const Float *)aux1, 
@@ -153,6 +154,7 @@ void HodgeConjugateResidualSolverCSR(
                 auxR,
                 allowed_error,
                 print_modulo
+                , precon
             );
             
             #pragma omp parallel for
@@ -187,8 +189,8 @@ void HodgeConjugateResidualSolverCSR(
                 (const Float *)aux1, 
                 Arows, Acolumns, Avalues, 
                 auxR,
-                allowed_error,
-                print_modulo,
+                1e-16,
+                0,
                 precon
             );
             
@@ -235,14 +237,15 @@ void HodgeConjugateResidualSolverCSR(
         }
         
         // for( int c = 0; c < L; c++ ) aux2[c] = 0.;
-        ConjugateGradientSolverCSR( 
+        ConjugateGradientSolverCSR_DiagonalPreconditioner( 
             L, 
             aux2, 
             (const Float *)aux1, 
             Arows, Acolumns, Avalues, 
             auxR,
-            allowed_error,
-            print_modulo
+            1e-16,
+            0
+            , precon
         );
         
         #pragma omp parallel for reduction(+:new_Mr_r)
