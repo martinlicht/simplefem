@@ -81,13 +81,13 @@ class ConvergenceTable
                 for( int j = 0; j < entries[i].size(); j++ )
                 {
                     
-                    std::printf("%.6Le\t", entries[i][j] ); 
+                    std::printf("%.6Le\t", (long double) entries[i][j] ); 
                     
                     if( show_rates ){
                         if( i == 0 )
                             std::printf("        --");
                         else 
-                            std::printf("%10.3Le", std::log2( entries[i-1][j] / entries[i][j] ) );
+                            std::printf("%10.3Le", (long double) std::log2( entries[i-1][j] / entries[i][j] ) );
                         std::printf("\t");
                     }
                     
