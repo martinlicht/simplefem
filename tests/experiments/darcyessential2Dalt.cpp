@@ -111,7 +111,7 @@ int main()
 
             cout << "Solving Poisson Problem with Neumann boundary conditions" << endl;
 
-            int min_l = 5; 
+            int min_l = 2; 
             int max_l = 7;
             
             int min_r = 2;
@@ -206,8 +206,8 @@ int main()
 
                             timestamp start = gettimestamp();
 
-//                             HodgeConjugateResidualSolverCSR( // TODO
-                            HodgeConjugateResidualSolverCSR_textbook( 
+                            HodgeConjugateResidualSolverCSR_SSOR( // TODO
+//                             HodgeConjugateResidualSolverCSR_textbook( 
                                 B.getdimout(), 
                                 A.getdimout(), 
                                 sol.raw(), 
@@ -216,7 +216,7 @@ int main()
                                 B.getA(),   B.getC(),  B.getV(), 
                                 Bt.getA(), Bt.getC(), Bt.getV(), 
                                 res.raw(),
-                                10e-10,
+                                1e-10,
                                 1
                             );
 

@@ -179,7 +179,7 @@ class FloatVector
         bool isnonpositive() const;
         
         
-        bool issmall( Float eps = 1e-5 ) const;
+        bool issmall( Float eps = desired_precision ) const;
         
 
 

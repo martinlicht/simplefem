@@ -24,9 +24,12 @@
 
 // // #include "assertion.hpp"
 
-typedef long double Float;
+//typedef long double Float;
+typedef double Float;
 
 static const Float notanumber = std::numeric_limits<Float>::quiet_NaN();
+
+static const Float desired_precision = 1000 * std::numeric_limits<Float>::epsilon();
 
 
 

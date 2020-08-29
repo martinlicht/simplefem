@@ -187,7 +187,7 @@ int main()
                             Solver.print_modulo        = 0;
                             Solver.max_iteration_count =     4 * sol.getdimension();
                             timestamp start = gettimestamp();
-                            Solver.solve( sol, rhs );
+                            Solver.solve_robust( sol, rhs );
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
                             

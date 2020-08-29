@@ -167,15 +167,15 @@ int main()
                             cout << "CGM - CSR Classic" << endl;
                         
                             sol.zero();
-                            timestamp start = gettimestamp();
                             FloatVector residual( rhs );
+                            timestamp start = gettimestamp();
                             ConjugateGradientSolverCSR( 
                                 sol.getdimension(), 
                                 sol.raw(), 
                                 rhs.raw(), 
                                 stiffness.getA(), stiffness.getC(), stiffness.getV(),
                                 residual.raw(),
-                                1e-16,
+                                desired_precision,
                                 0
                             );
 
@@ -188,15 +188,15 @@ int main()
                             cout << "CRM - CSR Classic" << endl;
                         
                             sol.zero();
-                            timestamp start = gettimestamp();
                             FloatVector residual( rhs );
+                            timestamp start = gettimestamp();
                             ConjugateResidualSolverCSR( 
                                 sol.getdimension(), 
                                 sol.raw(), 
                                 rhs.raw(), 
                                 stiffness.getA(), stiffness.getC(), stiffness.getV(),
                                 residual.raw(),
-                                1e-16,
+                                desired_precision,
                                 0
                             );
 
@@ -209,15 +209,15 @@ int main()
                             cout << "CRM - CSR Textbook" << endl;
                         
                             sol.zero();
-                            timestamp start = gettimestamp();
                             FloatVector residual( rhs );
+                            timestamp start = gettimestamp();
                             ConjugateResidualSolverCSR_textbook( 
                                 sol.getdimension(), 
                                 sol.raw(), 
                                 rhs.raw(), 
                                 stiffness.getA(), stiffness.getC(), stiffness.getV(),
                                 residual.raw(),
-                                1e-16,
+                                desired_precision,
                                 0
                             );
 
@@ -230,15 +230,15 @@ int main()
                             cout << "MINRES CSR" << endl;
                         
                             sol.zero();
-                            timestamp start = gettimestamp();
                             FloatVector residual( rhs );
+                            timestamp start = gettimestamp();
                             MINRESCSR( 
                                 sol.getdimension(), 
                                 sol.raw(), 
                                 rhs.raw(), 
                                 stiffness.getA(), stiffness.getC(), stiffness.getV(),
                                 residual.raw(),
-                                1e-16,
+                                desired_precision,
                                 0
                             );
 
@@ -252,15 +252,15 @@ int main()
                             cout << "WHATEVER CSR" << endl;
                         
                             sol.zero();
-                            timestamp start = gettimestamp();
                             FloatVector residual( rhs );
+                            timestamp start = gettimestamp();
                             WHATEVER( 
                                 sol.getdimension(), 
                                 sol.raw(), 
                                 rhs.raw(), 
                                 stiffness.getA(), stiffness.getC(), stiffness.getV(),
                                 residual.raw(),
-                                1e-16,
+                                desired_precision,
                                 0
                             );
 
