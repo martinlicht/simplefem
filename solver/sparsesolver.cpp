@@ -119,13 +119,13 @@ void ConjugateGradientSolverCSR(
         
         
         if( print_modulo > 0 and K % print_modulo == 0 ) 
-            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), allowed_error );
+            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), (long double) allowed_error );
         
         K++;
         
     }
     
-    printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), allowed_error );
+    printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), (long double) allowed_error );
 
     
     free( direction ); 
@@ -197,6 +197,8 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
             #pragma omp parallel for reduction(+:z_r)
             for( int c = 0; c < N; c++ ) {
                 
+                if( precon[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+            
                 residual[c] = b[c];
                 
                 for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
@@ -231,6 +233,8 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
         #pragma omp parallel for reduction(+:d_Ad) //d_r,
         for( int c = 0; c < N; c++ )
         {
+            if( precon[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+            
             auxiliary[c] = 0.;
             
             for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
@@ -247,6 +251,8 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
         for( int c = 0; c < N; c++ )
         {
             
+            if( precon[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+            
             x[c] += alpha * direction[c];
             
             residual[c] -= alpha * auxiliary[c];
@@ -261,17 +267,22 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
         z_r = z_r_new;
         
         #pragma omp parallel 
-        for( int c = 0; c < N; c++ )
+        for( int c = 0; c < N; c++ ) {
+            
+            if( precon[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+            
             direction[c] = zirconium[c] + beta * direction[c];
+            
+        }
         
         if( print_modulo > 0 and K % print_modulo == 0 ) 
-            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(z_r), allowed_error );
+            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(z_r), (long double) allowed_error );
         
         K++;
         
     }
     
-    printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(z_r), allowed_error );
+    printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(z_r), (long double) allowed_error );
 
     
     free( direction ); 
@@ -354,6 +365,8 @@ void ConjugateGradientSolverCSR_SSOR(
             
             for( int c = 0; c < N; c++ ) {
                 
+                if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+            
                 residual[c] = b[c];
                 
                 for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
@@ -365,6 +378,8 @@ void ConjugateGradientSolverCSR_SSOR(
             
             for( int c = 0; c < N; c++ ) {
                 
+                if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+            
                 Float aux = residual[c];
                 
                 for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
@@ -377,6 +392,8 @@ void ConjugateGradientSolverCSR_SSOR(
         
             for( int c = 0; c < N; c++ ) {
             
+                if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+            
                 mittlerer[c] *= diagonal[c];
                 
                 mittlerer[c] *= ( 2. - omega ) / omega;
@@ -384,6 +401,8 @@ void ConjugateGradientSolverCSR_SSOR(
             
             for( int c = N-1; c >= 0; c-- ) {
                 
+                if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+            
                 Float aux = mittlerer[c];
                 
                 for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
@@ -398,6 +417,8 @@ void ConjugateGradientSolverCSR_SSOR(
         
             for( int c = 0; c < N; c++ ) {
                             
+                if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+            
                 direction[c] = zirconium[c];
                        
                 z_r += zirconium[c] * residual[c];
@@ -409,7 +430,7 @@ void ConjugateGradientSolverCSR_SSOR(
         /* Check whether residual is small */
                 
         bool residual_is_small = std::sqrt(z_r) < allowed_error;
-//         printf("\t\t\t\t %.9Le (%.9Le)\n", (long double)std::sqrt(z_r), allowed_error );
+//         printf("\t\t\t\t %.9Le (%.9Le)\n", (long double)std::sqrt(z_r), (long double) allowed_error );
         
         if( residual_is_small )
             break;
@@ -425,6 +446,8 @@ void ConjugateGradientSolverCSR_SSOR(
         {
             auxiliary[c] = 0.;
             
+            if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+            
             for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
                 auxiliary[c] += csrvalues[ d ] * direction[ csrcolumns[d] ];
                     
@@ -436,13 +459,11 @@ void ConjugateGradientSolverCSR_SSOR(
         for( int c = 0; c < N; c++ )
         {
             
+            if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+            
             x[c] += alpha * direction[c];
             
             residual[c] -= alpha * auxiliary[c];
-            
-        }
-            
-        for( int c = 0; c < N; c++ ) {
             
             Float aux = residual[c];
             
@@ -454,15 +475,20 @@ void ConjugateGradientSolverCSR_SSOR(
         
         }
         
-        for( int c = 0; c < N; c++ ) {
+        Float z_r_new = 0.;
         
-            mittlerer[c] *= diagonal[c];
-            
-            mittlerer[c] *= ( 2. - omega ) / omega;
-        }
+//         for( int c = 0; c < N; c++ ) {
+//         
+//         }
         
         for( int c = N-1; c >= 0; c-- ) {
             
+            if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+            
+            mittlerer[c] *= diagonal[c];
+            
+            mittlerer[c] *= ( 2. - omega ) / omega;
+        
             Float aux = mittlerer[c];
             
             for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
@@ -470,14 +496,6 @@ void ConjugateGradientSolverCSR_SSOR(
                     aux -= csrvalues[ d ] * zirconium[ csrcolumns[d] ];
             
             zirconium[c] = aux * omega / diagonal[c];
-            
-        }
-            
-            
-        Float z_r_new = 0.;
-        
-        for( int c = 0; c < N; c++ )
-        {
             
             z_r_new += zirconium[c] * residual[c];
             
@@ -487,17 +505,22 @@ void ConjugateGradientSolverCSR_SSOR(
         
         z_r = z_r_new;
         
-        for( int c = 0; c < N; c++ )
+        for( int c = 0; c < N; c++ ) {
+            
+            if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+            
             direction[c] = zirconium[c] + beta * direction[c];
+            
+        }
         
         if( print_modulo > 0 and K % print_modulo == 0 ) 
-            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(z_r), allowed_error );
+            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(z_r), (long double) allowed_error );
         
         K++;
         
     }
     
-    printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(z_r), allowed_error );
+    printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(z_r), (long double) allowed_error );
 
     
     free( direction ); 
@@ -673,14 +696,14 @@ void ConjugateResidualSolverCSR(
         Ad_r = new_Ar_r;
                 
         if( print_modulo > 0 and K % print_modulo == 0 ) 
-            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(Ad_r), allowed_error );
+            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(Ad_r), (long double) allowed_error );
 
         
         K++;
         
     }
     
-    printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(Ad_r), allowed_error );
+    printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(Ad_r), (long double) allowed_error );
 
     
     free(  dir );
@@ -826,13 +849,13 @@ void ConjugateResidualSolverCSR_textbook(
         Ar_r = new_Ar_r;
                 
         if( print_modulo > 0 and K % print_modulo == 0 )
-            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(Ar_r), allowed_error );
+            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(Ar_r), (long double) allowed_error );
         
         K++;
         
     }
     
-    printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(Ar_r), allowed_error );
+    printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(Ar_r), (long double) allowed_error );
 
     
     free(  dir );
@@ -1059,13 +1082,13 @@ void MINRESCSR(
 
         
         if( print_modulo > 0 and K % print_modulo == 0 )
-            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)eta, allowed_error );
+            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)eta, (long double) allowed_error );
         
         K++;
         
     }
     
-    printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)eta, allowed_error );
+    printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)eta, (long double) allowed_error );
 
     
     free( v0 );
@@ -1240,13 +1263,13 @@ void WHATEVER(
             
         
         if( print_modulo > 0 and K % print_modulo == 0 ) 
-            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), allowed_error );
+            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), (long double) allowed_error );
         
         K++;
         
     }
     
-    printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), allowed_error );
+    printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), (long double) allowed_error );
 
     
     free(  r );
