@@ -37,8 +37,8 @@ class ConjugateResidualMethod
                 
                 virtual void solve( FloatVector&, const FloatVector& ) const override;
 
+                virtual void solve_explicit( FloatVector&, const FloatVector& ) const;
                 virtual void solve_robust( FloatVector&, const FloatVector& ) const;
-
                 virtual void solve_fast( FloatVector&, const FloatVector& ) const;
 
         private: 

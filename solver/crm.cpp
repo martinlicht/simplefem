@@ -46,13 +46,16 @@ void ConjugateResidualMethod::print( std::ostream& os ) const
 
 
 
-
+void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
+{
+    solve_robust( x, b );
+}
 
 
 
 
   
-void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
+void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector& b ) const
 {
     check();
     x.check();
