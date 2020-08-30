@@ -490,7 +490,7 @@ inline timestamp gettimestamp()
 
 inline std::string timestamp2string( timestamp t )
 {
-    return std::to_string( static_cast<double>(t) / CLOCKS_PER_SEC ) + "s";
+    return std::to_string( static_cast<long double>(t) / CLOCKS_PER_SEC ) + "s";
 }
 
 

@@ -152,14 +152,14 @@ inline static DiagonalOperator InverseDiagonalPreconditioner( const SparseMatrix
 
 
 
-SparseMatrix operator*( const SparseMatrix& mat, Float s )
+inline SparseMatrix operator*( const SparseMatrix& mat, Float s )
 {
     auto foo = mat;
     foo.scale(s);
     return foo;
 }
 
-SparseMatrix operator*( Float s, const SparseMatrix& mat )
+inline SparseMatrix operator*( Float s, const SparseMatrix& mat )
 {
     auto foo = mat;
     foo.scale(s);

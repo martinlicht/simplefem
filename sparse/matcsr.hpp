@@ -85,14 +85,14 @@ public LinearOperator /* every matrix is a linear operator */
 
 
 
-MatrixCSR operator*( const MatrixCSR& mat, Float s )
+inline MatrixCSR operator*( const MatrixCSR& mat, Float s )
 {
     auto foo = mat;
     foo.scale(s);
     return foo;
 }
 
-MatrixCSR operator*( Float s, const MatrixCSR& mat )
+inline MatrixCSR operator*( Float s, const MatrixCSR& mat )
 {
     auto foo = mat;
     foo.scale(s);

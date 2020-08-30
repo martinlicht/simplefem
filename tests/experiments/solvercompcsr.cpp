@@ -100,7 +100,7 @@ int main()
             ConvergenceTable contable;
             
 
-            int min_l = 2; int max_l = 5;
+            int min_l = 7; int max_l = 7;
 
             for( int l = 0; l < min_l; l++ )
                 M.uniformrefinement();
@@ -136,19 +136,6 @@ int main()
 
                     cout << "...assemble stiffness matrix" << endl;
             
-                    // ProductOperator 
-//                     auto stiffness = incmatrix_t * diffmatrix_t * vector_massmatrix * diffmatrix * incmatrix;
-                       
-//                     auto op1 = incmatrix_t * diffmatrix_t;
-//                     auto op2 = op1 * vector_massmatrix;
-//                     auto op3 = op2 * diffmatrix;
-//                     auto stiffness = op3 * incmatrix;
-
-//                     auto opr1 = diffmatrix & incmatrix;
-//                     auto opr  = vector_massmatrix_fac & opr1;
-//                     auto opl  = opr.getTranspose(); 
-//                     auto stiffness = opl & opr;
-
                     auto opr  = diffmatrix & incmatrix;
                     auto opl  = opr.getTranspose(); 
                     auto stiffness_prelim = opl & ( vector_massmatrix & opr );
@@ -163,6 +150,7 @@ int main()
                         FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r,   function_rhs  );
                         FloatVector rhs = incmatrix_t * ( scalar_massmatrix * interpol_rhs );
 
+                        if(false)
                         {
                             cout << "CGM - CSR Classic" << endl;
                         
@@ -184,6 +172,59 @@ int main()
                             contable << Float(end - start) << Float( ( stiffness * sol - rhs ).norm() );;
                         }
 
+                        if(false)
+                        {
+                            cout << "CGM - CSR Classic with diagonal preconditioning" << endl;
+                            
+                            auto precon = stiffness.InverseDiagonalPreconditioner();
+
+                            
+                            sol.zero();
+                            FloatVector residual( rhs );
+                            timestamp start = gettimestamp();
+                            ConjugateGradientSolverCSR_DiagonalPreconditioner( 
+                                sol.getdimension(), 
+                                sol.raw(), 
+                                rhs.raw(), 
+                                stiffness.getA(), stiffness.getC(), stiffness.getV(),
+                                residual.raw(),
+                                desired_precision,
+                                0,
+                                precon.raw()
+                            );
+
+                            timestamp end = gettimestamp();
+                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+                            contable << Float(end - start) << Float( ( stiffness * sol - rhs ).norm() );;
+                        }
+
+                        {
+                            cout << "CGM - CSR Classic with SSOR" << endl;
+                            
+                            auto diagonal = stiffness.diagonal();
+
+                            
+                            sol.zero();
+                            FloatVector residual( rhs );
+                            timestamp start = gettimestamp();
+                            ConjugateGradientSolverCSR_SSOR( 
+                                sol.getdimension(), 
+                                sol.raw(), 
+                                rhs.raw(), 
+                                stiffness.getA(), stiffness.getC(), stiffness.getV(),
+                                residual.raw(),
+                                desired_precision,
+                                0,
+                                diagonal.raw(),
+                                1.0
+                            );
+
+                            timestamp end = gettimestamp();
+                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+                            contable << Float(end - start) << Float( ( stiffness * sol - rhs ).norm() );;
+                        }
+
+                        if(false)
                         {
                             cout << "CRM - CSR Classic" << endl;
                         
@@ -205,6 +246,7 @@ int main()
                             contable << Float(end - start) << Float( ( stiffness * sol - rhs ).norm() );;
                         }
 
+                        if(false)
                         {
                             cout << "CRM - CSR Textbook" << endl;
                         
@@ -226,6 +268,7 @@ int main()
                             contable << Float(end - start) << Float( ( stiffness * sol - rhs ).norm() );;
                         }
 
+                        if(false)
                         {
                             cout << "MINRES CSR" << endl;
                         
@@ -248,6 +291,7 @@ int main()
                         }
 
 
+                        if(false)
                         {
                             cout << "WHATEVER CSR" << endl;
                         
