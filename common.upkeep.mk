@@ -18,7 +18,7 @@ vtkclean:
 	-rm -f ./*/*/*.vtk
 
 .PHONY: clean
-clean: 
+clean: vtkclean
 	-if [ -d .deps/ ]; then rm -f .deps/*.d; fi 
 	-if [ -d .deps/ ]; then rmdir .deps/; fi 
 	-rm -f *.o *.d *.so *.gch
