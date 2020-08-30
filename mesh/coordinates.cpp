@@ -183,6 +183,7 @@ void Coordinates::append( const Coordinates& co )
 {
     assert( dimension == co.getdimension() );
     data.insert( this->data.end(), co.data.begin(), co.data.end() );
+    number += co.number;
 }
                 
 void Coordinates::append( const FloatVector& v )

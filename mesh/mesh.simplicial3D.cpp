@@ -2610,11 +2610,312 @@ int MeshSimplicial3D::get_oldest_edge( int t ) const
 
 
 
-void MeshSimplicial3D::merge( const MeshSimplicial3D& )
+void MeshSimplicial3D::merge( const MeshSimplicial3D& mesh )
 {
+    check();
+    mesh.check();
     
+    // Edges -> vertices 
+    
+    {
+        auto& mine         =      data_edge_vertices;
+        const auto& theirs = mesh.data_edge_vertices;
+        auto old_size = mine.size();
+        
+        mine.resize( mine.size() + theirs.size() );
+        for( int i = 0; i < theirs.size(); i++ ) {
+            mine[ old_size + i ][0] = theirs[i][0] + counter_vertices;
+            mine[ old_size + i ][1] = theirs[i][1] + counter_vertices;
+        }
+    }
+    
+    {
+        auto& mine         =      data_vertex_firstparent_edge;
+        const auto& theirs = mesh.data_vertex_firstparent_edge;
+        auto old_size = mine.size();
+        
+        mine.resize( mine.size() + theirs.size() );
+        for( int i = 0; i < theirs.size(); i++ ) {
+            mine[ old_size + i ] = theirs[i] + counter_edges;
+        }
+    }
+    
+    {
+        auto& mine         =      data_edge_nextparents_of_vertices;
+        const auto& theirs = mesh.data_edge_nextparents_of_vertices;
+        auto old_size = mine.size();
+        
+        mine.resize( mine.size() + theirs.size() );
+        for( int i = 0; i < theirs.size(); i++ ) {
+            mine[ old_size + i ][0] = ( theirs[i][0] == nullindex ) ? ( nullindex ) : theirs[i][0] + counter_edges;
+            mine[ old_size + i ][1] = ( theirs[i][1] == nullindex ) ? ( nullindex ) : theirs[i][1] + counter_edges;
+        }
+    }
+    
+    
+    
+    // Faces -> vertices 
+    
+    {
+        auto& mine         =      data_face_vertices;
+        const auto& theirs = mesh.data_face_vertices;
+        auto old_size = mine.size();
+        
+        mine.resize( mine.size() + theirs.size() );
+        for( int i = 0; i < theirs.size(); i++ ) {
+            mine[ old_size + i ][0] = theirs[i][0] + counter_vertices;
+            mine[ old_size + i ][1] = theirs[i][1] + counter_vertices;
+            mine[ old_size + i ][2] = theirs[i][2] + counter_vertices;
+        }
+    }
+    
+    {
+        auto& mine         =      data_vertex_firstparent_face;
+        const auto& theirs = mesh.data_vertex_firstparent_face;
+        auto old_size = mine.size();
+        
+        mine.resize( mine.size() + theirs.size() );
+        for( int i = 0; i < theirs.size(); i++ ) {
+            mine[ old_size + i ] = theirs[i] + counter_faces;
+        }
+    }
+    
+    {
+        auto& mine         =      data_face_nextparents_of_vertices;
+        const auto& theirs = mesh.data_face_nextparents_of_vertices;
+        auto old_size = mine.size();
+        
+        mine.resize( mine.size() + theirs.size() );
+        for( int i = 0; i < theirs.size(); i++ ) {
+            mine[ old_size + i ][0] = ( theirs[i][0] == nullindex ) ? ( nullindex ) : theirs[i][0] + counter_faces;
+            mine[ old_size + i ][1] = ( theirs[i][1] == nullindex ) ? ( nullindex ) : theirs[i][1] + counter_faces;
+            mine[ old_size + i ][2] = ( theirs[i][2] == nullindex ) ? ( nullindex ) : theirs[i][2] + counter_faces;
+        }
+    }
+    
+    
+    
+    // Faces -> edges 
+    
+    {
+        auto& mine         =      data_face_edges;
+        const auto& theirs = mesh.data_face_edges;
+        auto old_size = mine.size();
+        
+        mine.resize( mine.size() + theirs.size() );
+        for( int i = 0; i < theirs.size(); i++ ) {
+            mine[ old_size + i ][0] = theirs[i][0] + counter_edges;
+            mine[ old_size + i ][1] = theirs[i][1] + counter_edges;
+            mine[ old_size + i ][2] = theirs[i][2] + counter_edges;
+        }
+    }
+    
+    {
+        auto& mine         =      data_edge_firstparent_face;
+        const auto& theirs = mesh.data_edge_firstparent_face;
+        auto old_size = mine.size();
+        
+        mine.resize( mine.size() + theirs.size() );
+        for( int i = 0; i < theirs.size(); i++ ) {
+            mine[ old_size + i ] = theirs[i] + counter_faces;
+        }
+    }
+    
+    {
+        auto& mine         =      data_face_nextparents_of_edges;
+        const auto& theirs = mesh.data_face_nextparents_of_edges;
+        auto old_size = mine.size();
+        
+        mine.resize( mine.size() + theirs.size() );
+        for( int i = 0; i < theirs.size(); i++ ) {
+            mine[ old_size + i ][0] = ( theirs[i][0] == nullindex ) ? ( nullindex ) : theirs[i][0] + counter_faces;
+            mine[ old_size + i ][1] = ( theirs[i][1] == nullindex ) ? ( nullindex ) : theirs[i][1] + counter_faces;
+            mine[ old_size + i ][2] = ( theirs[i][2] == nullindex ) ? ( nullindex ) : theirs[i][2] + counter_faces;
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    // Tetrahedra -> vertices 
+    
+    {
+        auto& mine         =      data_tetrahedron_vertices;
+        const auto& theirs = mesh.data_tetrahedron_vertices;
+        auto old_size = mine.size();
+        
+        mine.resize( mine.size() + theirs.size() );
+        for( int i = 0; i < theirs.size(); i++ ) {
+            mine[ old_size + i ][0] = theirs[i][0] + counter_vertices;
+            mine[ old_size + i ][1] = theirs[i][1] + counter_vertices;
+            mine[ old_size + i ][2] = theirs[i][2] + counter_vertices;
+            mine[ old_size + i ][3] = theirs[i][3] + counter_vertices;
+        }
+    }
+    
+    {
+        auto& mine         =      data_vertex_firstparent_tetrahedron;
+        const auto& theirs = mesh.data_vertex_firstparent_tetrahedron;
+        auto old_size = mine.size();
+        
+        mine.resize( mine.size() + theirs.size() );
+        for( int i = 0; i < theirs.size(); i++ ) {
+            mine[ old_size + i ] = theirs[i] + counter_tetrahedra;
+        }
+    }
+    
+    {
+        auto& mine         =      data_tetrahedron_nextparents_of_vertices;
+        const auto& theirs = mesh.data_tetrahedron_nextparents_of_vertices;
+        auto old_size = mine.size();
+        
+        mine.resize( mine.size() + theirs.size() );
+        for( int i = 0; i < theirs.size(); i++ ) {
+            mine[ old_size + i ][0] = ( theirs[i][0] == nullindex ) ? ( nullindex ) : theirs[i][0] + counter_tetrahedra;
+            mine[ old_size + i ][1] = ( theirs[i][1] == nullindex ) ? ( nullindex ) : theirs[i][1] + counter_tetrahedra;
+            mine[ old_size + i ][2] = ( theirs[i][2] == nullindex ) ? ( nullindex ) : theirs[i][2] + counter_tetrahedra;
+        }
+    }
+    
+    // Tetrahedra -> edges 
+    
+    {
+        auto& mine         =      data_tetrahedron_edges;
+        const auto& theirs = mesh.data_tetrahedron_edges;
+        auto old_size = mine.size();
+        
+        mine.resize( mine.size() + theirs.size() );
+        for( int i = 0; i < theirs.size(); i++ ) {
+            mine[ old_size + i ][0] = theirs[i][0] + counter_edges;
+            mine[ old_size + i ][1] = theirs[i][1] + counter_edges;
+            mine[ old_size + i ][2] = theirs[i][2] + counter_edges;
+            mine[ old_size + i ][3] = theirs[i][3] + counter_edges;
+            mine[ old_size + i ][4] = theirs[i][4] + counter_edges;
+            mine[ old_size + i ][5] = theirs[i][5] + counter_edges;
+        }
+    }
+    
+    {
+        auto& mine         =      data_edge_firstparent_tetrahedron;
+        const auto& theirs = mesh.data_edge_firstparent_tetrahedron;
+        auto old_size = mine.size();
+        
+        mine.resize( mine.size() + theirs.size() );
+        for( int i = 0; i < theirs.size(); i++ ) {
+            mine[ old_size + i ] = theirs[i] + counter_tetrahedra;
+        }
+    }
+    
+    {
+        auto& mine         =      data_tetrahedron_nextparents_of_edges;
+        const auto& theirs = mesh.data_tetrahedron_nextparents_of_edges;
+        auto old_size = mine.size();
+        
+        mine.resize( mine.size() + theirs.size() );
+        for( int i = 0; i < theirs.size(); i++ ) {
+            mine[ old_size + i ][0] = ( theirs[i][0] == nullindex ) ? ( nullindex ) : theirs[i][0] + counter_tetrahedra;
+            mine[ old_size + i ][1] = ( theirs[i][1] == nullindex ) ? ( nullindex ) : theirs[i][1] + counter_tetrahedra;
+            mine[ old_size + i ][2] = ( theirs[i][2] == nullindex ) ? ( nullindex ) : theirs[i][2] + counter_tetrahedra;
+            mine[ old_size + i ][3] = ( theirs[i][3] == nullindex ) ? ( nullindex ) : theirs[i][3] + counter_tetrahedra;
+            mine[ old_size + i ][4] = ( theirs[i][4] == nullindex ) ? ( nullindex ) : theirs[i][4] + counter_tetrahedra;
+            mine[ old_size + i ][5] = ( theirs[i][5] == nullindex ) ? ( nullindex ) : theirs[i][5] + counter_tetrahedra;
+        }
+    }
+    
+    // Tetrahedra -> faces 
+    
+    {
+        auto& mine         =      data_tetrahedron_faces;
+        const auto& theirs = mesh.data_tetrahedron_faces;
+        auto old_size = mine.size();
+        
+        mine.resize( mine.size() + theirs.size() );
+        for( int i = 0; i < theirs.size(); i++ ) {
+            mine[ old_size + i ][0] = theirs[i][0] + counter_faces;
+            mine[ old_size + i ][1] = theirs[i][1] + counter_faces;
+            mine[ old_size + i ][2] = theirs[i][2] + counter_faces;
+            mine[ old_size + i ][3] = theirs[i][3] + counter_faces;
+        }
+    }
+    
+    {
+        auto& mine         =      data_face_firstparent_tetrahedron;
+        const auto& theirs = mesh.data_face_firstparent_tetrahedron;
+        auto old_size = mine.size();
+        
+        mine.resize( mine.size() + theirs.size() );
+        for( int i = 0; i < theirs.size(); i++ ) {
+            mine[ old_size + i ] = theirs[i] + counter_tetrahedra;
+        }
+    }
+    
+    {
+        auto& mine         =      data_tetrahedron_nextparents_of_faces;
+        const auto& theirs = mesh.data_tetrahedron_nextparents_of_faces;
+        auto old_size = mine.size();
+        
+        mine.resize( mine.size() + theirs.size() );
+        for( int i = 0; i < theirs.size(); i++ ) {
+            mine[ old_size + i ][0] = ( theirs[i][0] == nullindex ) ? ( nullindex ) : theirs[i][0] + counter_faces;
+            mine[ old_size + i ][1] = ( theirs[i][1] == nullindex ) ? ( nullindex ) : theirs[i][1] + counter_faces;
+            mine[ old_size + i ][2] = ( theirs[i][2] == nullindex ) ? ( nullindex ) : theirs[i][2] + counter_faces;
+            mine[ old_size + i ][3] = ( theirs[i][3] == nullindex ) ? ( nullindex ) : theirs[i][3] + counter_faces;
+        }
+    }
+    
+    
+    
+    // Simplex flags 
+    
+    {
+        auto& mine         =      flags_vertices;
+        const auto& theirs = mesh.flags_vertices;
+        mine.insert( mine.end(), theirs.begin(), theirs.end() );
+    }
+    
+    {
+        auto& mine         =      flags_edges;
+        const auto& theirs = mesh.flags_edges;
+        mine.insert( mine.end(), theirs.begin(), theirs.end() );
+    }
+    
+    {
+        auto& mine         =      flags_faces;
+        const auto& theirs = mesh.flags_faces;
+        mine.insert( mine.end(), theirs.begin(), theirs.end() );
+    }
+    
+    {
+        auto& mine         =      flags_tetrahedra;
+        const auto& theirs = mesh.flags_tetrahedra;
+        mine.insert( mine.end(), theirs.begin(), theirs.end() );
+    }
+    
+    
+    // counters 
+    
+    counter_vertices   += mesh.counter_vertices;
+    counter_edges      += mesh.counter_edges;
+    counter_faces      += mesh.counter_faces;
+    counter_tetrahedra += mesh.counter_tetrahedra;
+    
+    getcoordinates().append( mesh.getcoordinates() );
+    
+    check();
 }
-
 
 
 

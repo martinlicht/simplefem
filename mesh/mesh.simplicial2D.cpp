@@ -3025,11 +3025,165 @@ int MeshSimplicial2D::get_oldest_edge( int t ) const
 
 
 
-void MeshSimplicial2D::merge( const MeshSimplicial2D& )
+void MeshSimplicial2D::merge( const MeshSimplicial2D& mesh )
 {
+    check();
+    mesh.check();
     
-}
+    // Edges -> vertices 
+    
+    {
+        auto& mine         =      data_edge_vertices;
+        const auto& theirs = mesh.data_edge_vertices;
+        auto old_size = mine.size();
         
+        mine.resize( mine.size() + theirs.size() );
+        for( int i = 0; i < theirs.size(); i++ ) {
+            mine[ old_size + i ][0] = theirs[i][0] + counter_vertices;
+            mine[ old_size + i ][1] = theirs[i][1] + counter_vertices;
+        }
+    }
+    
+    {
+        auto& mine         =      data_vertex_firstparent_edge;
+        const auto& theirs = mesh.data_vertex_firstparent_edge;
+        auto old_size = mine.size();
+        
+        mine.resize( mine.size() + theirs.size() );
+        for( int i = 0; i < theirs.size(); i++ ) {
+            mine[ old_size + i ] = ( theirs[i] == nullindex ) ? ( nullindex ) : theirs[i] + counter_edges;
+        }
+    }
+    
+    {
+        auto& mine         =      data_edge_nextparents_of_vertices;
+        const auto& theirs = mesh.data_edge_nextparents_of_vertices;
+        auto old_size = mine.size();
+        
+        mine.resize( mine.size() + theirs.size() );
+        for( int i = 0; i < theirs.size(); i++ ) {
+            mine[ old_size + i ][0] = ( theirs[i][0] == nullindex ) ? ( nullindex ) : theirs[i][0] + counter_edges;
+            mine[ old_size + i ][1] = ( theirs[i][1] == nullindex ) ? ( nullindex ) : theirs[i][1] + counter_edges;
+        }
+    }
+    
+    
+    
+    // Triangles -> vertices 
+    
+    {
+        auto& mine         =      data_triangle_vertices;
+        const auto& theirs = mesh.data_triangle_vertices;
+        auto old_size = mine.size();
+        
+        mine.resize( mine.size() + theirs.size() );
+        for( int i = 0; i < theirs.size(); i++ ) {
+            mine[ old_size + i ][0] = theirs[i][0] + counter_vertices;
+            mine[ old_size + i ][1] = theirs[i][1] + counter_vertices;
+            mine[ old_size + i ][2] = theirs[i][2] + counter_vertices;
+        }
+    }
+    
+    {
+        auto& mine         =      data_vertex_firstparent_triangle;
+        const auto& theirs = mesh.data_vertex_firstparent_triangle;
+        auto old_size = mine.size();
+        
+        mine.resize( mine.size() + theirs.size() );
+        for( int i = 0; i < theirs.size(); i++ ) {
+            mine[ old_size + i ] = theirs[i] + counter_triangles;
+        }
+    }
+    
+    {
+        auto& mine         =      data_triangle_nextparents_of_vertices;
+        const auto& theirs = mesh.data_triangle_nextparents_of_vertices;
+        auto old_size = mine.size();
+        
+        mine.resize( mine.size() + theirs.size() );
+        for( int i = 0; i < theirs.size(); i++ ) {
+            mine[ old_size + i ][0] = ( theirs[i][0] == nullindex ) ? ( nullindex ) : theirs[i][0] + counter_triangles;
+            mine[ old_size + i ][1] = ( theirs[i][1] == nullindex ) ? ( nullindex ) : theirs[i][1] + counter_triangles;
+            mine[ old_size + i ][2] = ( theirs[i][2] == nullindex ) ? ( nullindex ) : theirs[i][2] + counter_triangles;
+        }
+    }
+    
+    
+    
+    // Triangles -> edges 
+    
+    {
+        auto& mine         =      data_triangle_edges;
+        const auto& theirs = mesh.data_triangle_edges;
+        auto old_size = mine.size();
+        
+        mine.resize( mine.size() + theirs.size() );
+        for( int i = 0; i < theirs.size(); i++ ) {
+            mine[ old_size + i ][0] = theirs[i][0] + counter_edges;
+            mine[ old_size + i ][1] = theirs[i][1] + counter_edges;
+            mine[ old_size + i ][2] = theirs[i][2] + counter_edges;
+        }
+    }
+    
+    {
+        auto& mine         =      data_edge_firstparent_triangle;
+        const auto& theirs = mesh.data_edge_firstparent_triangle;
+        auto old_size = mine.size();
+        
+        mine.resize( mine.size() + theirs.size() );
+        for( int i = 0; i < theirs.size(); i++ ) {
+            mine[ old_size + i ] = theirs[i] + counter_triangles;
+        }
+    }
+    
+    {
+        auto& mine         =      data_triangle_nextparents_of_edges;
+        const auto& theirs = mesh.data_triangle_nextparents_of_edges;
+        auto old_size = mine.size();
+        
+        mine.resize( mine.size() + theirs.size() );
+        for( int i = 0; i < theirs.size(); i++ ) {
+            mine[ old_size + i ][0] = ( theirs[i][0] == nullindex ) ? ( nullindex ) : theirs[i][0] + counter_triangles;
+            mine[ old_size + i ][1] = ( theirs[i][1] == nullindex ) ? ( nullindex ) : theirs[i][1] + counter_triangles;
+            mine[ old_size + i ][2] = ( theirs[i][2] == nullindex ) ? ( nullindex ) : theirs[i][2] + counter_triangles;
+        }
+    }
+    
+    
+    
+    // Simplex flags 
+    
+    {
+        auto& mine         =      flags_vertices;
+        const auto& theirs = mesh.flags_vertices;
+        mine.insert( mine.end(), theirs.begin(), theirs.end() );
+    }
+    
+    {
+        auto& mine         =      flags_edges;
+        const auto& theirs = mesh.flags_edges;
+        mine.insert( mine.end(), theirs.begin(), theirs.end() );
+    }
+    
+    {
+        auto& mine         =      flags_triangles;
+        const auto& theirs = mesh.flags_triangles;
+        mine.insert( mine.end(), theirs.begin(), theirs.end() );
+    }
+    
+    
+    // counters 
+    
+    counter_vertices  += mesh.counter_vertices;
+    counter_edges     += mesh.counter_edges;
+    counter_triangles += mesh.counter_triangles;
+    
+    getcoordinates().append( mesh.getcoordinates() );
+    
+    check();
+}
+
+
 
 
 
