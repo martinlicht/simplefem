@@ -3020,6 +3020,34 @@ int MeshSimplicial2D::get_oldest_edge( int t ) const
 
 
 
+
+
+
+
+
+void MeshSimplicial2D::merge( const MeshSimplicial2D& )
+{
+    
+}
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 void MeshSimplicial2D::outputTikZ( std::ostream& os ) const
 {
     const auto& coords = getcoordinates();

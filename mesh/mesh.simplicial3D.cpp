@@ -2600,6 +2600,26 @@ int MeshSimplicial3D::get_oldest_edge( int t ) const
 
 
 
+
+
+
+
+
+
+
+
+
+
+void MeshSimplicial3D::merge( const MeshSimplicial3D& )
+{
+    
+}
+
+
+
+
+
+
 #include "mesh.simplicial3D.br.cxx"
 
 #include "mesh.simplicial3D.ur.cxx"

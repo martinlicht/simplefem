@@ -147,6 +147,7 @@ class MeshSimplicial1D
         
         FloatVector get_edge_midpoint( int e ) const;
         
+        void merge( const MeshSimplicial1D& );
         
     private:
 
@@ -184,10 +185,6 @@ inline bool operator!=( const MeshSimplicial1D& m1, const MeshSimplicial1D& m2 )
 {
     return !( m1 == m2 );
 }
-
-
-
-
 
 
 

@@ -218,6 +218,8 @@ class MeshSimplicial2D
         
         int get_oldest_edge( int t ) const;
                 
+        void merge( const MeshSimplicial2D& );
+        
         
         /* TikZ */
         

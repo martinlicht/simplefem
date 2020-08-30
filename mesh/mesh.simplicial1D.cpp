@@ -850,6 +850,29 @@ FloatVector MeshSimplicial1D::get_edge_midpoint    ( int e ) const
 }
 
 
+
+
+
+void MeshSimplicial1D::merge( const MeshSimplicial1D& )
+{
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         
 
 
