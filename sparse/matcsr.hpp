@@ -67,6 +67,12 @@ public LinearOperator /* every matrix is a linear operator */
         inline const int*   getA() const { return A.data(); }
         inline const int*   getC() const { return C.data(); }
         inline const Float* getV() const { return V.data(); }
+        
+        
+        void scale ( Float s )
+        {
+            for( auto& v : this->V ) v *= s;
+        }
 
     private:
 
@@ -76,6 +82,22 @@ public LinearOperator /* every matrix is a linear operator */
     
 };
 
+
+
+
+MatrixCSR operator*( const MatrixCSR& mat, Float s )
+{
+    auto foo = mat;
+    foo.scale(s);
+    return foo;
+}
+
+MatrixCSR operator*( Float s, const MatrixCSR& mat )
+{
+    auto foo = mat;
+    foo.scale(s);
+    return foo;
+}
 
 
 

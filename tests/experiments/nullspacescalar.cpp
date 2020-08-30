@@ -25,7 +25,7 @@
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
-#include "../../fem/global.lagrangeincl.hpp"
+#include "../../fem/global.sullivanincl.hpp"
 #include "../../fem/utilities.hpp"
 
 
@@ -96,7 +96,7 @@ int main()
             ConvergenceTable contable;
             
 
-            int min_l = 2; int max_l = 7;
+            int min_l = 4; int max_l = 4;
 
             for( int l = 0; l < min_l; l++ )
                 M.uniformrefinement();
@@ -126,7 +126,7 @@ int main()
 
                     cout << "...assemble inclusion matrix and transpose" << endl;
             
-                    SparseMatrix incmatrix = LagrangeInclusionMatrix( M, M.getinnerdimension(), r );
+                    SparseMatrix incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r );
 
                     SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
@@ -134,9 +134,16 @@ int main()
             
                     auto opr  = diffmatrix & incmatrix;
                     auto opl  = opr.getTranspose(); 
+                    
                     auto stiffness_prelim = opl & ( vector_massmatrix & opr );
                     stiffness_prelim.sortentries();
                     auto stiffness = MatrixCSR( stiffness_prelim );
+                    
+                    auto idea_prelim = opl & opr;
+                    idea_prelim.sortentries();
+                    auto idea = MatrixCSR( idea_prelim );
+                    
+                    const auto& mat = stiffness;
                     
                     {
 
@@ -144,42 +151,96 @@ int main()
                         FloatVector rhs_original( opr.getdimin(), 0. );
                         
                         sol_original.random(); sol_original.normalize();
-                        
-                        rhs_original.zero();
+                        rhs_original.random(); rhs_original.normalize();
                         
                         {
-                            cout << "CRM - CSR Textbook" << endl;
+                            cout << "Filter out from x (CGM)" << endl;
                         
-                            auto sol = sol_original;
-                            const auto& rhs = rhs_original;
+                            FloatVector sol( sol_original );
+                            FloatVector rhs( rhs_original.getdimension(), 0. );
                             FloatVector residual( rhs );
                             
-                            for( int i = 0; i < 10; i++ ) 
-                            {
-                            
-                                ConjugateResidualSolverCSR_textbook( 
-                                    sol.getdimension(), 
-                                    sol.raw(), 
-                                    rhs.raw(), 
-                                    stiffness.getA(), stiffness.getC(), stiffness.getV(),
-                                    residual.raw(),
-                                    desired_precision,
-                                    0
-                                );
-                                sol.normalize();
-                            }
+                            ConjugateGradientSolverCSR( 
+                                sol.getdimension(), 
+                                sol.raw(), 
+                                rhs.raw(), 
+                                mat.getA(), mat.getC(), mat.getV(),
+                                residual.raw(),
+                                machine_epsilon,
+                                0
+                            );
+                            sol.normalize();
                             
                             std::cout << "\t\t\t x_0:       " << sol_original.norm() << std::endl;
-                            std::cout << "\t\t\t Ax_0:      " << ( stiffness * sol_original ).norm() << std::endl;
-                            std::cout << "\t\t\t b - Ax_0:  " << ( stiffness * sol_original - rhs ).norm() << std::endl;
+                            std::cout << "\t\t\t Ax_0:      " << ( mat * sol_original ).norm() << std::endl;
+                            std::cout << "\t\t\t b - Ax_0:  " << ( mat * sol_original - rhs ).norm() << std::endl;
                             
                             std::cout << "\t\t\t x:         " << sol.norm() << std::endl;
-                            std::cout << "\t\t\t Ax:        " << ( stiffness * sol ).norm() << std::endl;
-                            std::cout << "\t\t\t b - Ax:    " << ( stiffness * sol - rhs ).norm() << std::endl;
+                            std::cout << "\t\t\t Ax:        " << ( mat * sol ).norm() << std::endl;
+                            std::cout << "\t\t\t b - Ax:    " << ( mat * sol - rhs ).norm() << std::endl;
                             
-                            contable << sol.norm() << ( stiffness * sol ).norm();
+                            contable << sol.norm() << ( mat * sol ).norm();
                         }
 
+                        {
+                            cout << "Filter out from x (CRM)" << endl;
+                        
+                            FloatVector sol( sol_original );
+                            FloatVector rhs( rhs_original.getdimension(), 0. );
+                            FloatVector residual( rhs );
+                            
+                            ConjugateResidualSolverCSR( 
+                                sol.getdimension(), 
+                                sol.raw(), 
+                                rhs.raw(), 
+                                mat.getA(), mat.getC(), mat.getV(),
+                                residual.raw(),
+                                machine_epsilon,
+                                0
+                            );
+                            sol.normalize();
+                            
+                            std::cout << "\t\t\t x_0:       " << sol_original.norm() << std::endl;
+                            std::cout << "\t\t\t Ax_0:      " << ( mat * sol_original ).norm() << std::endl;
+                            std::cout << "\t\t\t b - Ax_0:  " << ( mat * sol_original - rhs ).norm() << std::endl;
+                            
+                            std::cout << "\t\t\t x:         " << sol.norm() << std::endl;
+                            std::cout << "\t\t\t Ax:        " << ( mat * sol ).norm() << std::endl;
+                            std::cout << "\t\t\t b - Ax:    " << ( mat * sol - rhs ).norm() << std::endl;
+                            
+                            contable << sol.norm() << ( mat * sol ).norm();
+                        }
+
+                        {
+                            cout << "Filter out from b" << endl;
+                        
+                            FloatVector sol( sol_original.getdimension(), 0. );
+                            FloatVector rhs( rhs_original );
+                            FloatVector residual( rhs );
+                            
+                            ConjugateResidualSolverCSR_textbook( 
+                                sol.getdimension(), 
+                                sol.raw(), 
+                                rhs.raw(), 
+                                mat.getA(), mat.getC(), mat.getV(),
+                                residual.raw(),
+                                desired_precision,
+                                0
+                            );
+                            residual.normalize();
+                            
+                            std::cout << "\t\t\t b:       " << rhs_original.norm() << std::endl;
+                            std::cout << "\t\t\t Ab:      " << ( mat * rhs ).norm() << std::endl;
+                            
+                            std::cout << "\t\t\t r:       " << residual.norm() << std::endl;
+                            std::cout << "\t\t\t Ar:      " << ( mat * residual ).norm() << std::endl;
+                            
+                            std::cout << "\t\t\t Ar:      " << ( mat * ( rhs - mat * sol ) ).norm() << std::endl;
+                            
+                            contable << sol.norm() << ( mat * sol ).norm();
+                        }
+
+                        
 
                         
                         

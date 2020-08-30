@@ -29,7 +29,9 @@ typedef double Float;
 
 static const Float notanumber = std::numeric_limits<Float>::quiet_NaN();
 
-static const Float desired_precision = 1000 * std::numeric_limits<Float>::epsilon();
+static const Float machine_epsilon = std::numeric_limits<Float>::epsilon();
+
+static const Float desired_precision = 100 * machine_epsilon;
 
 
 
