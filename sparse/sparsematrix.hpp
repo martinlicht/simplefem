@@ -97,6 +97,11 @@ public LinearOperator /* every matrix is a linear operator */
         void sortentries( MatrixEntrySorting manner = MatrixEntrySorting::rowwise ) const;
         void sortandcompressentries( MatrixEntrySorting manner = MatrixEntrySorting::rowwise ) const;
 
+        void scale ( Float s )
+        {
+            for( auto& e : this->entries ) e.value *= s;
+        }
+
         SparseMatrix getTranspose() const;
         
         FloatVector InverseDiagonalPreconditioner() const;
@@ -143,6 +148,24 @@ inline static DiagonalOperator InverseDiagonalPreconditioner( const SparseMatrix
     return DiagonalOperator( mat.getdimin(), diag );
 
 }
+
+
+
+
+SparseMatrix operator*( const SparseMatrix& mat, Float s )
+{
+    auto foo = mat;
+    foo.scale(s);
+    return foo;
+}
+
+SparseMatrix operator*( Float s, const SparseMatrix& mat )
+{
+    auto foo = mat;
+    foo.scale(s);
+    return foo;
+}
+
 
 
   
