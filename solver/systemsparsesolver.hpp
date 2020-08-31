@@ -1,9 +1,9 @@
 #ifndef INCLUDEGUARD_SOLVER_SYSTEMSOLVER
 #define INCLUDEGUARD_SOLVER_SYSTEMSOLVER
 
+#include <cassert>
 #include <cmath>
 #include <cstdio>
-#include <cassert>
 #include <cstdlib>
 #include <omp.h>
 #include <utility>

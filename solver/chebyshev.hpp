@@ -2,16 +2,15 @@
 #define INCLUDEGUARD_SOLVER_CHEBYSHEV
 
 
-#include "../basic.hpp"
-
-
-
+#include <cassert>
 #include <cmath>
 #include <cstdio>
-#include <cassert>
 #include <cstdlib>
 #include <omp.h>
 #include <utility>
+
+#include "../basic.hpp"
+
 
 
 
@@ -147,7 +146,7 @@ void CheybyshevIteration_DiagonalPreconditioner(
         
         K++;
         
-    };
+    }
     
     printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), (long double) allowed_error );
 

@@ -305,8 +305,9 @@ static int internal_compare_rowfirst( const void* _a, const void* _b )
         return -1;
     } else if( a->column > b->column ) {
         return 1;
-    } else 
+    } else {
         return 0;
+    }
 }
     
 static int internal_compare_colfirst( const void* _a, const void* _b )
@@ -322,8 +323,9 @@ static int internal_compare_colfirst( const void* _a, const void* _b )
         return -1;
     } else if( a->row > b->row ) {
         return 1;
-    } else 
+    } else {
         return 0;
+    }
 }
 
 

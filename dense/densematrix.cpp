@@ -545,9 +545,12 @@ void DenseMatrix::swapcolumn( int c1, int c2 )
     check();
     assert( 0 <= c1 && c1 < getdimin() );
     assert( 0 <= c2 && c2 < getdimin() );
+
     if( c1 == c2 ) return;
-        for( int r = 0; r < getdimout(); r++ )
-            std::swap( (*this)(r,c1), (*this)(r,c2) );
+
+    for( int r = 0; r < getdimout(); r++ )
+        std::swap( (*this)(r,c1), (*this)(r,c2) );
+
     check();
 }
 

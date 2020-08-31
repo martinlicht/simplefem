@@ -1,47 +1,110 @@
-Doxyfile
-Dox
-private/
-callgrind.out.*
-cachegrind.out.*
+
+
+.private/
+
+# output of cpplint.py
 *OUTPUT_CPPLINT.txt
 ./OUTPUT_CPPLINT.txt
 ./*/OUTPUT_CPPLINT.txt
-*.exe
-*.fls
-*.fdb_latexmk
-*.stackdump
-*.opensdf
-*.sdf
-*.sln
-*.vcxproj
-*.vcxproj.filters
-*.mvs
-.vs/*
-*.future
-*.gch
-*.desktop
+
+# Doxygen
+Doxyfile
+Dox
+
+
+
+# Prerequisites
+*.d
+
+# Object files
+*.o
+*.ko
+*.obj
 *.elf
-*.mesh2d
-*.gz
-*.bak
-*.backup
-*.pyc
-*.ini
+
+# Linker output
+*.ilk
+*.map
+*.exp
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+
+# Latex Files
 *.aux
 *.bbl
 *.blg
-*.d
+*.fdb_latexmk
+*.fls
 *.idx
 *.ilg
 *.ind
 *.log
-*.o
-*.so
-*.out
-elf.*
 *.pdf
 *.toc
-*~
+
+# Python
+*.pyc
+
+# file system related files 
+*.desktop
+*.gz
+*.ini
+
+# VSCode project files 
+*.mvs
+*.opensdf
+*.sdf
+*.sln
+.vscode/*
+*.vcxproj
+*.vcxproj.filters
+
+# Editor files and backups
+*.bak
+*.backup
 *.kate-swp
-*.temp
+*~
+
+# callgrind and cachegrind output, stackdump
+callgrind.out.*
+cachegrind.out.*
+*.stackdump
+
+# Mesh2D File Format
+*.mesh2d
+
+# VTK output
 *.vtk
+
+# Temporary file
+*.temp
+

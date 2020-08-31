@@ -95,7 +95,7 @@ void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) cons
             
             Ad = A * d;
             
-            Float rr_old = r * r; assert( rr_old >= 0 ); if( std::sqrt(rr_old) < tolerance ) break;
+            Float rr_old = r * r;           assert( rr_old >= 0 ); if( std::sqrt(rr_old) < tolerance ){ break; }
             Float Ad_d  = Ad * d;
             Float alpha = rr_old / Ad_d;
             
