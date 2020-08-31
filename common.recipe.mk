@@ -40,6 +40,10 @@ FLAG_DO_COMPILEDEBUGMODE := -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC
 # Uncomment the following line to enable compilation with the Clang sanitizer
 # FLAG_DO_USE_SANITIZER=yes
 
+# Do you want to ENABLE extended precision?
+# Uncomment the following line to switch from double precision to extended precision
+# FLAG_DO_USE_EXTENDED_PRECISION :== -DEXTENDED_PRECISION
+
 
 
 
@@ -379,7 +383,7 @@ CXXFLAGS := ${CXXFLAGS_LANG} ${CXXFLAGS_DIAGFORMAT} ${CXXFLAGS_WARNINGS} ${CXXFL
 #                                             #
 ###############################################
 
-CPPFLAGS := $(FLAG_DO_NOT_CHECK_MESHES) $(FLAG_DONTASSERT) $(FLAG_DO_COMPILEDEBUGMODE)
+CPPFLAGS := $(FLAG_DO_NOT_CHECK_MESHES) $(FLAG_DONTASSERT) $(FLAG_DO_COMPILEDEBUGMODE) $(FLAG_DO_USE_EXTENDED_PRECISION)
 
 
 

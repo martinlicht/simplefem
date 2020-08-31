@@ -1,5 +1,5 @@
-#ifndef INCLUDEGUARD_MATCSR
-#define INCLUDEGUARD_MATCSR
+#ifndef INCLUDEGUARD_SPARSE_MATCSR
+#define INCLUDEGUARD_SPARSE_MATCSR
 
 #include <memory>
 #include <utility>

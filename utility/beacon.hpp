@@ -36,7 +36,7 @@ class TimeBeacon
             
         }
         
-        ~TimeBeacon() {
+        virtual ~TimeBeacon() {
             show();
         }
 

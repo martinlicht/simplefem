@@ -24,8 +24,11 @@
 
 // // #include "assertion.hpp"
 
-//typedef long double Float;
+#ifndef EXTENDED_PRECISION
 typedef double Float;
+#else 
+typedef long double Float;
+#endif
 
 static const Float notanumber = std::numeric_limits<Float>::quiet_NaN();
 
