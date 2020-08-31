@@ -6,6 +6,7 @@
 
 #include "../basic.hpp"
 #include "floatvector.hpp"
+#include "linearoperator.hpp"
 
 FloatVector::FloatVector( int dim, Float initialvalue )
 : dimension(dim), pointer( new Float[dim] )
@@ -276,6 +277,21 @@ FloatVector& FloatVector::normalize()
     return *this;
 }
 
+FloatVector& FloatVector::normalize( const LinearOperator& op ) 
+{
+    check();
+    op.check();
+    
+    Float value = *this * ( op * (*this) );
+    
+    assert( std::isfinite(value) );
+    assert( value >= 0 );
+    
+    this->scaleinverse( value );
+    
+    return *this;
+}
+
 FloatVector& FloatVector::scale( Float alpha ) 
 {
     check();
@@ -455,6 +471,21 @@ Float FloatVector::norm_sq() const
     Float ret = 0.;
     for( int d = 0; d < getdimension(); d++ )
         ret += absolute( pointer[d] ) * absolute( pointer[d] );
+    return ret;
+}
+
+Float FloatVector::norm( const LinearOperator& op ) const 
+{
+    return std::sqrt( norm_sq( op ) );
+}
+
+Float FloatVector::norm_sq( const LinearOperator& op) const 
+{
+    check();
+    op.check();
+    Float ret = (*this) * ( op * (*this) );
+    assert( std::isfinite(ret) );
+    assert( ret >= 0 );
     return ret;
 }
 

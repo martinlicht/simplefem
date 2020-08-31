@@ -96,7 +96,7 @@ int main()
             int min_l = 3; 
             int max_l = 15;
             
-            ConvergenceTable contable(10);
+            ConvergenceTable contable;
             
 
             for( int l = 0; l < min_l; l++ )

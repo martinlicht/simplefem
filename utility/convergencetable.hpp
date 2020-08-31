@@ -13,8 +13,8 @@ class ConvergenceTable
     
     public:
         
-        explicit ConvergenceTable( unsigned int prec = 7 )
-        : make_new_row(true), myprecision(prec)
+        explicit ConvergenceTable()
+        : make_new_row(true)
         {
             
         }
@@ -99,13 +99,11 @@ class ConvergenceTable
                         
         }
 
-    public:
+    private:
         
         std::vector<std::vector<Float>> entries;
         
         bool make_new_row;
-        
-        unsigned int myprecision;
     
 };
 

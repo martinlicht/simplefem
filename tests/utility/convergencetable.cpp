@@ -10,7 +10,7 @@ int main()
         cout << "Hello World!" << endl;
         
         
-        ConvergenceTable Contable( 2 );
+        ConvergenceTable Contable;
         
         Contable.print( std::cout );
         

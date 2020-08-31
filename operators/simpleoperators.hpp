@@ -149,7 +149,7 @@ class DiagonalOperator final
         DiagonalOperator& operator=( DiagonalOperator&& vec ) = default; 
 
         explicit DiagonalOperator( int, Float s );
-        explicit DiagonalOperator( int, const FloatVector& dia );
+        explicit DiagonalOperator( const FloatVector& dia );
         explicit DiagonalOperator( int, const ScalingOperator& scaling );
         explicit DiagonalOperator( int, const std::function<Float(int)>& );
         virtual ~DiagonalOperator();
@@ -198,8 +198,7 @@ inline DiagonalOperator operator*( const DiagonalOperator& left, const DiagonalO
     
     assert( leftdia.getdimension() == rightdia.getdimension() );
     
-    return DiagonalOperator( left.getdimout(), 
-                             FloatVector( leftdia.getdimension(), 
+    return DiagonalOperator( FloatVector( leftdia.getdimension(), 
                                           [&](int d) -> Float { 
                                             assert( 0 <= d && d < dimension ); 
                                             return leftdia[d] * rightdia[d];

@@ -45,6 +45,12 @@ int main()
             MeshSimplicial2D M = UnitSquare2D();
             
             M.check();
+            
+//             {
+//                 auto M2 = M;
+//                 M2.getcoordinates().shift( { 3.0, 0.0 } );
+//                 M.merge( M2 );
+//             }
                         
             cout << "Prepare scalar fields for testing..." << endl;
             
@@ -55,48 +61,13 @@ int main()
                         return FloatVector({ 1. });
                     };
             
-            Float xfeq = 1.;
-            Float yfeq = 1.;
-            
-            std::function<FloatVector(const FloatVector&)> experiment_sol = 
-                [=](const FloatVector& vec) -> FloatVector{
-                    assert( vec.getdimension() == 2 );
-                    return FloatVector({ std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] ) });
-                };
-            
 
-            std::function<FloatVector(const FloatVector&)> experiment_grad = 
-                [=](const FloatVector& vec) -> FloatVector{
-                    assert( vec.getdimension() == 2 );
-                    return FloatVector( { 
-                            xfeq * Constants::twopi * std::cos( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] ),
-                            yfeq * Constants::twopi * std::sin( xfeq * Constants::twopi * vec[0] ) * std::cos( yfeq * Constants::twopi * vec[1] ), 
-                        });
-                };
-            
-
-            std::function<FloatVector(const FloatVector&)> experiment_rhs = 
-                [=](const FloatVector& vec) -> FloatVector{
-                    assert( vec.getdimension() == 2 );
-                    return FloatVector({ 
-                        
-                        xfeq*xfeq * Constants::fourpisquare * std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] )
-                        +
-                        yfeq*yfeq * Constants::fourpisquare * std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] )
-                     });
-                };
-            
-
-            
-            
-            
-
-            cout << "Solving Poisson Problem with Dirichlet boundary conditions" << endl;
+            cout << "Nullspace computation" << endl;
 
             ConvergenceTable contable;
             
 
-            int min_l = 4; int max_l = 4;
+            int min_l = 0; int max_l = 0;
 
             for( int l = 0; l < min_l; l++ )
                 M.uniformrefinement();
@@ -135,23 +106,42 @@ int main()
                     auto opr  = diffmatrix & incmatrix;
                     auto opl  = opr.getTranspose(); 
                     
-                    auto stiffness_prelim = opl & ( vector_massmatrix & opr );
-                    stiffness_prelim.sortentries();
-                    auto stiffness = MatrixCSR( stiffness_prelim );
+//                     auto stiffness_prelim = opl & ( vector_massmatrix & opr );
+//                     stiffness_prelim.sortentries();
+                    auto stiffness = MatrixCSR( opl & ( vector_massmatrix & opr ) ); // MatrixCSR( stiffness_prelim );
+                    
+                    auto mass = MatrixCSR( incmatrix_t & ( scalar_massmatrix & incmatrix ) );
+                    
+                    auto stiffness_diagonal = SparseMatrix( DiagonalOperator( vector_massmatrix.diagonal() ) );
+                    assert( stiffness_diagonal.issquare() );
+                    assert( stiffness_diagonal.getdimin() == opr.getdimout() );
+                    auto simplified_stiffness = MatrixCSR( opl & ( stiffness_diagonal & opr ) );
                     
                     auto idea_prelim = opl & opr;
                     idea_prelim.sortentries();
                     auto idea = MatrixCSR( idea_prelim );
                     
                     const auto& mat = stiffness;
+//                     const auto& mat = simplified_stiffness;
+                    
+                    if(false)
+                    {
+                        cout << "average on the diagonal at level " << l << " is " << mat.diagonal().average() << nl;
+                        contable << mat.diagonal().average() << nl;
+                        contable.print( std::cout );
+                    }
+                    
+                    assert( mat.diagonal().isfinite() );
+                    
+                    std::cout << mat << endl;
                     
                     {
 
                         FloatVector sol_original( opr.getdimin(), 0. );
                         FloatVector rhs_original( opr.getdimin(), 0. );
                         
-                        sol_original.random(); sol_original.normalize();
-                        rhs_original.random(); rhs_original.normalize();
+                        sol_original.random(); sol_original.normalize( mass );
+                        rhs_original.random(); rhs_original.normalize( mass );
                         
                         {
                             cout << "Filter out from x (CGM)" << endl;
@@ -160,6 +150,9 @@ int main()
                             FloatVector rhs( rhs_original.getdimension(), 0. );
                             FloatVector residual( rhs );
                             
+                            assert( sol.isfinite() );
+                            
+                            
                             ConjugateGradientSolverCSR( 
                                 sol.getdimension(), 
                                 sol.raw(), 
@@ -167,21 +160,64 @@ int main()
                                 mat.getA(), mat.getC(), mat.getV(),
                                 residual.raw(),
                                 machine_epsilon,
-                                0
+                                1
                             );
-                            sol.normalize();
+                            sol.normalize( mass );
                             
-                            std::cout << "\t\t\t x_0:       " << sol_original.norm() << std::endl;
-                            std::cout << "\t\t\t Ax_0:      " << ( mat * sol_original ).norm() << std::endl;
-                            std::cout << "\t\t\t b - Ax_0:  " << ( mat * sol_original - rhs ).norm() << std::endl;
+                            assert( sol.isfinite() );
                             
-                            std::cout << "\t\t\t x:         " << sol.norm() << std::endl;
-                            std::cout << "\t\t\t Ax:        " << ( mat * sol ).norm() << std::endl;
-                            std::cout << "\t\t\t b - Ax:    " << ( mat * sol - rhs ).norm() << std::endl;
+                            std::cout << "\t\t\t x_0:       " << sol_original.norm( mass ) << std::endl;
+                            std::cout << "\t\t\t Ax_0:      " << ( mat * sol_original ).norm( mass ) << std::endl;
+                            std::cout << "\t\t\t b - Ax_0:  " << ( mat * sol_original - rhs ).norm( mass ) << std::endl;
                             
-                            contable << sol.norm() << ( mat * sol ).norm();
+                            std::cout << "\t\t\t x:         " << sol.norm( mass ) << std::endl;
+                            std::cout << "\t\t\t Ax:        " << ( mat * sol ).norm( mass ) << std::endl;
+                            std::cout << "\t\t\t b - Ax:    " << ( mat * sol - rhs ).norm( mass ) << std::endl;
+                            
+                            contable << sol.norm( mass ) << ( mat * sol ).norm( mass );
+                            
+                            
+                            FloatVector sol2( sol_original );
+                            sol2.random();
+                            FloatVector rhs2( rhs_original.getdimension(), 0. );
+                            FloatVector residual2( rhs );
+                            
+                            ConjugateGradientSolverCSR( 
+                                sol2.getdimension(), 
+                                sol2.raw(), 
+                                rhs2.raw(), 
+                                mat.getA(), mat.getC(), mat.getV(),
+                                residual2.raw(),
+                                machine_epsilon,
+                                1
+                            );
+                            sol2.normalize( mass );
+                            
+                            
+                            
+                            
+                            if( r == 1 ) {
+                        
+                                fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
+                    
+                                VTK_MeshWriter_Mesh2D vtk( M, fs );
+                                vtk.writePreamble( getbasename(__FILE__) );
+                                vtk.writeCoordinateBlock();
+                                vtk.writeTopDimensionalCells();
+                                
+                                vtk.writeVertexScalarData( sol,  "data1" , 1.0 );
+                                vtk.writeVertexScalarData( sol2, "data2" , 1.0 );
+                                // vtk.writeCellVectorData( interpol_grad, "gradient_interpolation" , 0.1 );
+                                
+                                fs.close();
+                        
+                            }
+
+                            
+                            
                         }
 
+                        if(false)
                         {
                             cout << "Filter out from x (CRM)" << endl;
                         
@@ -198,19 +234,20 @@ int main()
                                 machine_epsilon,
                                 0
                             );
-                            sol.normalize();
+                            sol.normalize( mass );
                             
-                            std::cout << "\t\t\t x_0:       " << sol_original.norm() << std::endl;
-                            std::cout << "\t\t\t Ax_0:      " << ( mat * sol_original ).norm() << std::endl;
-                            std::cout << "\t\t\t b - Ax_0:  " << ( mat * sol_original - rhs ).norm() << std::endl;
+                            std::cout << "\t\t\t x_0:       " << sol_original.norm( mass ) << std::endl;
+                            std::cout << "\t\t\t Ax_0:      " << ( mat * sol_original ).norm( mass ) << std::endl;
+                            std::cout << "\t\t\t b - Ax_0:  " << ( mat * sol_original - rhs ).norm( mass ) << std::endl;
                             
-                            std::cout << "\t\t\t x:         " << sol.norm() << std::endl;
-                            std::cout << "\t\t\t Ax:        " << ( mat * sol ).norm() << std::endl;
-                            std::cout << "\t\t\t b - Ax:    " << ( mat * sol - rhs ).norm() << std::endl;
+                            std::cout << "\t\t\t x:         " << sol.norm( mass ) << std::endl;
+                            std::cout << "\t\t\t Ax:        " << ( mat * sol ).norm( mass ) << std::endl;
+                            std::cout << "\t\t\t b - Ax:    " << ( mat * sol - rhs ).norm( mass ) << std::endl;
                             
-                            contable << sol.norm() << ( mat * sol ).norm();
+                            contable << sol.norm( mass ) << ( mat * sol ).norm( mass );
                         }
 
+                        if(false)
                         {
                             cout << "Filter out from b" << endl;
                         
@@ -227,17 +264,17 @@ int main()
                                 desired_precision,
                                 0
                             );
-                            residual.normalize();
+                            residual.normalize( mass );
                             
-                            std::cout << "\t\t\t b:       " << rhs_original.norm() << std::endl;
-                            std::cout << "\t\t\t Ab:      " << ( mat * rhs ).norm() << std::endl;
+                            std::cout << "\t\t\t b:       " << rhs_original.norm( mass ) << std::endl;
+                            std::cout << "\t\t\t Ab:      " << ( mat * rhs ).norm( mass ) << std::endl;
                             
-                            std::cout << "\t\t\t r:       " << residual.norm() << std::endl;
-                            std::cout << "\t\t\t Ar:      " << ( mat * residual ).norm() << std::endl;
+                            std::cout << "\t\t\t r:       " << residual.norm( mass ) << std::endl;
+                            std::cout << "\t\t\t Ar:      " << ( mat * residual ).norm( mass ) << std::endl;
                             
-                            std::cout << "\t\t\t Ar:      " << ( mat * ( rhs - mat * sol ) ).norm() << std::endl;
+                            std::cout << "\t\t\t Ar:      " << ( mat * ( rhs - mat * sol ) ).norm( mass ) << std::endl;
                             
-                            contable << sol.norm() << ( mat * sol ).norm();
+                            contable << sol.norm( mass ) << ( mat * sol ).norm( mass );
                         }
 
                         

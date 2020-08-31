@@ -327,7 +327,7 @@ static int internal_compare_colfirst( const void* _a, const void* _b )
 }
 
 
-void SparseMatrix::sortentries( SparseMatrix::MatrixEntrySorting manner ) const
+const SparseMatrix& SparseMatrix::sortentries( SparseMatrix::MatrixEntrySorting manner ) const
 {
     check();
 
@@ -362,9 +362,11 @@ void SparseMatrix::sortentries( SparseMatrix::MatrixEntrySorting manner ) const
     assert( is_sorted( manner ) );
 
     check();
+    
+    return *this;
 }
 
-void SparseMatrix::sortandcompressentries( SparseMatrix::MatrixEntrySorting manner ) const
+const SparseMatrix& SparseMatrix::sortandcompressentries( SparseMatrix::MatrixEntrySorting manner ) const
 {
     check();
     
@@ -389,8 +391,27 @@ void SparseMatrix::sortandcompressentries( SparseMatrix::MatrixEntrySorting mann
     
     entries.resize( dest+1 );
     
-    check();  
+    check(); 
+    
+    return *this;
 }
+
+
+
+
+void SparseMatrix::scale ( Float s )
+{
+    for( auto& e : this->entries ) e.value *= s;
+}
+
+
+
+
+
+
+
+
+
 
 
 
@@ -430,6 +451,20 @@ FloatVector SparseMatrix::InverseDiagonalPreconditioner() const
     }
     return ret;
 }
+
+FloatVector SparseMatrix::diagonal() const
+{ 
+    check();
+    assert( getdimin() == getdimout() );
+    auto ret = FloatVector( getdimin(), 0. );
+
+    for( const auto& entry : entries )
+        if( entry.row == entry.column )
+            ret[ entry.row ] += entry.value;
+    
+    return ret;
+}
+
 
 
 

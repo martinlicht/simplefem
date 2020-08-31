@@ -13,6 +13,7 @@
 
 #include "../basic.hpp"
 
+class LinearOperator;
 
 /**********************
 ***
@@ -103,6 +104,8 @@ class FloatVector
         
         FloatVector& normalize();
         
+        FloatVector& normalize( const LinearOperator& );
+        
         FloatVector& scale( Float );
         
         FloatVector& scaleinverse( Float );
@@ -154,6 +157,10 @@ class FloatVector
         Float norm() const;
         
         Float norm_sq() const;
+        
+        Float norm( const LinearOperator& ) const;
+        
+        Float norm_sq( const LinearOperator& ) const;
         
         Float maxnorm() const;
         

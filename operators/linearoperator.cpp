@@ -42,6 +42,12 @@
       os << "Linear operator" << std::endl;
     }
     
+    bool LinearOperator::issquare() const
+    {
+      check();
+      return getdimin() == getdimout();
+    }
+    
     /* x := A y */
     FloatVector LinearOperator::apply( const FloatVector& src, Float scaling ) const
     {

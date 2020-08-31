@@ -77,8 +77,8 @@ DiagonalOperator::DiagonalOperator( int dimension, Float scale )
     DiagonalOperator::check();
 }
 
-DiagonalOperator::DiagonalOperator( int dimension, const FloatVector& dia )
-: LinearOperator(dimension,dimension), diagonal(dia)
+DiagonalOperator::DiagonalOperator( const FloatVector& dia )
+: LinearOperator(dia.getdimension(),dia.getdimension()), diagonal(dia)
 {
     DiagonalOperator::check();
 }

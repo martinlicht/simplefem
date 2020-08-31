@@ -94,17 +94,15 @@ public LinearOperator /* every matrix is a linear operator */
         int getnumberofentries() const;
         
         bool is_sorted( MatrixEntrySorting manner = MatrixEntrySorting::rowwise ) const;
-        void sortentries( MatrixEntrySorting manner = MatrixEntrySorting::rowwise ) const;
-        void sortandcompressentries( MatrixEntrySorting manner = MatrixEntrySorting::rowwise ) const;
+        const SparseMatrix& sortentries( MatrixEntrySorting manner = MatrixEntrySorting::rowwise ) const;
+        const SparseMatrix& sortandcompressentries( MatrixEntrySorting manner = MatrixEntrySorting::rowwise ) const;
 
-        void scale ( Float s )
-        {
-            for( auto& e : this->entries ) e.value *= s;
-        }
+        void scale ( Float s );
 
         SparseMatrix getTranspose() const;
         
         FloatVector InverseDiagonalPreconditioner() const;
+        FloatVector diagonal() const;
         
         using LinearOperator::apply;
         virtual void apply( FloatVector& dest, const FloatVector& add, Float scaling ) const override;
@@ -145,7 +143,7 @@ inline static DiagonalOperator InverseDiagonalPreconditioner( const SparseMatrix
         else
             diag.at( i ) = 0.;
     
-    return DiagonalOperator( mat.getdimin(), diag );
+    return DiagonalOperator( diag );
 
 }
 

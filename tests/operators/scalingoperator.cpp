@@ -59,7 +59,7 @@ int main()
                 for( int i = 0; i < dim; i++ )
                         dia.setentry( i, i * i );
                 
-                DiagonalOperator D( dim, dia );
+                DiagonalOperator D( dia );
                 
                 cout << "We start with these entries:" << endl;
                 cout << dia << endl;

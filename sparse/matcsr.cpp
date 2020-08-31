@@ -27,7 +27,11 @@ MatrixCSR::MatrixCSR(
 ): LinearOperator( matrix.getdimout(), matrix.getdimin() ),
    A(0), C(0), V(0) 
 {
-    assert( matrix.is_sorted() );
+    matrix.check();
+    
+    if( not matrix.is_sorted() ) {
+        matrix.sortandcompressentries();
+    }
     
     int rows       = matrix.getdimout();
     int columns    = matrix.getdimin();
@@ -279,6 +283,21 @@ FloatVector MatrixCSR::diagonal() const
     
         
     return ret;
+}
+
+
+
+
+
+
+
+
+
+
+
+void MatrixCSR::scale ( Float s )
+{
+    for( auto& v : this->V ) v *= s;
 }
 
 

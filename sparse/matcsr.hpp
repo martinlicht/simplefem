@@ -69,10 +69,7 @@ public LinearOperator /* every matrix is a linear operator */
         inline const Float* getV() const { return V.data(); }
         
         
-        void scale ( Float s )
-        {
-            for( auto& v : this->V ) v *= s;
-        }
+        void scale ( Float s ); 
 
     private:
 

@@ -50,6 +50,8 @@ class LinearOperator
         virtual void check() const;
 
         virtual void print( std::ostream& os ) const;
+
+        bool issquare() const;
         
         /* Apply the operator */
         
