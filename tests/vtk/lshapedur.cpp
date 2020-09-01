@@ -31,8 +31,7 @@ int main()
         
         fstream fs( string("./lshaped") + std::to_string(l) + string(".vtk"), std::fstream::out );
 
-        VTK_MeshWriter_Mesh2D vtk( M, fs );
-        vtk.writePreamble( "Mein erster Test" );
+        VTK_MeshWriter_Mesh2D vtk( M, fs, "Mein erster Test" );
         vtk.writeCoordinateBlock();
         vtk.writeTopDimensionalCells();
 

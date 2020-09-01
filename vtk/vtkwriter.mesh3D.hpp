@@ -20,30 +20,32 @@ class VTK_MeshWriter_Mesh3D
     
     public:
         
-        VTK_MeshWriter_Mesh3D( Mesh& m3D, std::ostream& os );
+        VTK_MeshWriter_Mesh3D( Mesh& m3D, std::ostream& os, const std::string& name );
         
-        void writePreamble( const std::string& name );
-        void writePreamble( const char* name );
+        VTK_MeshWriter_Mesh3D writeCoordinateBlock();
         
-        void writeCoordinateBlock();
+        VTK_MeshWriter_Mesh3D writeTopDimensionalCells();
         
-        void writeTopDimensionalCells();
+        VTK_MeshWriter_Mesh3D writeVertexScalarData(
+          const FloatVector&, 
+          const char* name, Float scaling = 1.
+        );
         
-        void writeVertexScalarData
-        ( const FloatVector&, 
-          const char* name, Float scaling = 1. );
+        VTK_MeshWriter_Mesh3D writeCellScalarData(
+            const FloatVector&, 
+            const char* name, Float scaling = 1. 
+        );
         
-        void writeCellScalarData
-        ( const FloatVector&, 
-          const char* name, Float scaling = 1. );
-        
-        void writeCellVectorData
-        ( const FloatVector& x, 
-          const FloatVector& y, 
-          const FloatVector& z, 
-          const char* name, Float scaling = 1. );
+        VTK_MeshWriter_Mesh3D writeCellVectorData(
+            const FloatVector& x, 
+            const FloatVector& y, 
+            const FloatVector& z, 
+            const char* name, Float scaling = 1. 
+        );
         
     private:
+        
+        VTK_MeshWriter_Mesh3D writePreamble( const std::string& name );
     
         const Mesh& mesh;
         std::ostream& os;

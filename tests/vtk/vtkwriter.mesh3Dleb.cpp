@@ -57,8 +57,7 @@ int main()
         
         {
             
-            VTK_MeshWriter_Mesh3D vtk( M, fs );
-            vtk.writePreamble( "Mein erster Test" );
+            VTK_MeshWriter_Mesh3D vtk( M, fs, "Mein erster Test" );
             vtk.writeCoordinateBlock();
             vtk.writeTopDimensionalCells();
             

@@ -30,8 +30,7 @@ int main()
         
             fstream fs( "./sphere.vtk", std::fstream::out );
         
-            VTK_MeshWriter_Mesh2D vtk( M, fs );
-            vtk.writePreamble( "Attempt at a " );
+            VTK_MeshWriter_Mesh2D vtk( M, fs, "Attempt at a spherical surface" );
             vtk.writeCoordinateBlock();
             vtk.writeTopDimensionalCells();
                 

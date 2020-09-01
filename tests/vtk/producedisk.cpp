@@ -44,8 +44,7 @@ int main()
         
             fstream fs( string("./rounddisk") + std::to_string(L) + string(".vtk"), std::fstream::out );
         
-            VTK_MeshWriter_Mesh2D vtk( M, fs );
-            vtk.writePreamble( "Attempt at a round disk" );
+            VTK_MeshWriter_Mesh2D vtk( M, fs, "Attempt at a round disk" );
             vtk.writeCoordinateBlock();
             vtk.writeTopDimensionalCells();
                 

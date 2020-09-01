@@ -243,8 +243,7 @@ int main()
             
                     fstream fs( adaptfilename("./afempoissonneumann.vtk"), std::fstream::out );
         
-                    VTK_MeshWriter_Mesh2D vtk( M, fs );
-                    vtk.writePreamble( "AFEM for Poisson-Neumann problem over Unit Square" );
+                    VTK_MeshWriter_Mesh2D vtk( M, fs, "AFEM for Poisson-Neumann problem over Unit Square" );
                     vtk.writeCoordinateBlock();
                     vtk.writeTopDimensionalCells();
 

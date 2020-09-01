@@ -200,8 +200,7 @@ int main()
             
                     fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
         
-                    VTK_MeshWriter_Mesh2D vtk( M, fs );
-                    vtk.writePreamble( getbasename(__FILE__) );
+                    VTK_MeshWriter_Mesh2D vtk( M, fs, getbasename(__FILE__) );
                     vtk.writeCoordinateBlock();
                     vtk.writeTopDimensionalCells();
                     

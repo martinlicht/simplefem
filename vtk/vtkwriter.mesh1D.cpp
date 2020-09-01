@@ -2,7 +2,7 @@
 #include "vtkwriter.mesh1D.hpp"
 
 
-VTK_MeshWriter_Mesh1D::VTK_MeshWriter_Mesh1D( Mesh& m1D, std::ostream& os )
+VTK_MeshWriter_Mesh1D::VTK_MeshWriter_Mesh1D( Mesh& m1D, std::ostream& os, const std::string& name )
 : mesh(m1D), os(os)
 {
     m1D.check();
@@ -11,26 +11,25 @@ VTK_MeshWriter_Mesh1D::VTK_MeshWriter_Mesh1D( Mesh& m1D, std::ostream& os )
     assert( m1D.dimension_counted(1) );
     assert( m1D.dimension_counted(0) );
     assert( m1D.subsimplices_listed( 1, 0 ) );
-       
+    
+    writePreamble( name );
 }
 
 
-void VTK_MeshWriter_Mesh1D::writePreamble( const std::string& str )
-{
-    writePreamble( str.c_str() );
-}
-
-void VTK_MeshWriter_Mesh1D::writePreamble( const char* name )
+VTK_MeshWriter_Mesh1D VTK_MeshWriter_Mesh1D::writePreamble( const std::string& name )
 {
     // std::ostream& os = std::clog;
     os << "# vtk DataFile Version 3.0" << nl;
     os << name << nl;
     os << "ASCII" << nl;
     os << "DATASET UNSTRUCTURED_GRID" << nl;
+    
+    return *this;
 }
 
 
-void VTK_MeshWriter_Mesh1D::writeCoordinateBlock()
+
+VTK_MeshWriter_Mesh1D VTK_MeshWriter_Mesh1D::writeCoordinateBlock()
 {
     // std::ostream& os = std::clog;
     os << "POINTS " << mesh.count_simplices(0) << " double" << nl;
@@ -62,10 +61,12 @@ void VTK_MeshWriter_Mesh1D::writeCoordinateBlock()
         
     
     os << nl;
+
+    return *this;
 }
         
         
-void VTK_MeshWriter_Mesh1D::writeCoordinateBlock( const FloatVector& z )
+VTK_MeshWriter_Mesh1D VTK_MeshWriter_Mesh1D::writeCoordinateBlock( const FloatVector& z )
 {
     // std::ostream& os = std::clog;
     os << "POINTS " << mesh.count_simplices(0) << " double" << nl;
@@ -92,10 +93,12 @@ void VTK_MeshWriter_Mesh1D::writeCoordinateBlock( const FloatVector& z )
         
     
     os << nl;
+
+    return *this;
 }
         
         
-void VTK_MeshWriter_Mesh1D::writeTopDimensionalCells()
+VTK_MeshWriter_Mesh1D VTK_MeshWriter_Mesh1D::writeTopDimensionalCells()
 {
     // std::ostream& os = std::clog;
     
@@ -121,11 +124,13 @@ void VTK_MeshWriter_Mesh1D::writeTopDimensionalCells()
         os << 3 << nl;
     
     os << nl;
+
+    return *this;
 }
 
 
 
-void VTK_MeshWriter_Mesh1D::writeVertexScalarData( const FloatVector& data, const char* name, Float scaling )
+VTK_MeshWriter_Mesh1D VTK_MeshWriter_Mesh1D::writeVertexScalarData( const FloatVector& data, const char* name, Float scaling )
 {
     
     assert( name != nullptr );
@@ -140,11 +145,12 @@ void VTK_MeshWriter_Mesh1D::writeVertexScalarData( const FloatVector& data, cons
         os << scaling * data.at(v) << nl;
     
     os << std::endl;
-    
+
+    return *this;
 }
 
 
-void VTK_MeshWriter_Mesh1D::writeCellScalarData( const FloatVector& data, const char* name, Float scaling )
+VTK_MeshWriter_Mesh1D VTK_MeshWriter_Mesh1D::writeCellScalarData( const FloatVector& data, const char* name, Float scaling )
 {
     
     assert( name != nullptr );
@@ -159,11 +165,12 @@ void VTK_MeshWriter_Mesh1D::writeCellScalarData( const FloatVector& data, const 
         os << scaling * data.at(c) << nl;
     
     os << std::endl;
-    
+
+    return *this;
 }
 
 
-void VTK_MeshWriter_Mesh1D::writeCellVectorData( 
+VTK_MeshWriter_Mesh1D VTK_MeshWriter_Mesh1D::writeCellVectorData( 
     const FloatVector& datax,
     const FloatVector& datay,
     const FloatVector& dataz,
@@ -187,7 +194,8 @@ void VTK_MeshWriter_Mesh1D::writeCellVectorData(
          << nl;
     
     os << std::endl;
-    
+
+    return *this;
 }
 
 

@@ -241,8 +241,7 @@ int main()
             
                     fstream fs( adaptfilename("./afempoissonneumannUK.vtk"), std::fstream::out );
         
-                    VTK_MeshWriter_Mesh2D vtk( M, fs );
-                    vtk.writePreamble( "Poisson-Neumann problem" );
+                    VTK_MeshWriter_Mesh2D vtk( M, fs, "Poisson-Neumann problem" );
                     vtk.writeCoordinateBlock();
                     vtk.writeTopDimensionalCells();
 

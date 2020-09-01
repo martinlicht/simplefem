@@ -30,8 +30,7 @@ int main()
     
         fstream fs( "./halo.vtk", std::fstream::out );
     
-        VTK_MeshWriter_Mesh2D vtk( M, fs );
-        vtk.writePreamble( "Attempt at a " );
+        VTK_MeshWriter_Mesh2D vtk( M, fs, "Attempt at a " );
         vtk.writeCoordinateBlock();
         vtk.writeTopDimensionalCells();
 
