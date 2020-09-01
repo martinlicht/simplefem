@@ -9,7 +9,7 @@
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.hpp"
 // #include "../../mesh/mesh.simplicialND.hpp"
-#include "../../vtk/vtkwriter.mesh3D.hpp"
+#include "../../vtk/vtkwriter.hpp"
 #include "../../mesh/examples3D.hpp"
 
 
@@ -32,7 +32,7 @@ int main()
                 
                 {
                     
-                    VTK_MeshWriter_Mesh3D vtk( M, fs, "Mein erster Test" );
+                    VTKWriter vtk( M, fs, "Mein erster Test" );
                     vtk.writeCoordinateBlock();
                     vtk.writeTopDimensionalCells();
                     

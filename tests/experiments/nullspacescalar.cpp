@@ -16,7 +16,7 @@
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
-#include "../../vtk/vtkwriter.mesh2D.hpp"
+#include "../../vtk/vtkwriter.hpp"
 #include "../../solver/sparsesolver.hpp"
 #include "../../solver/cgm.hpp"
 #include "../../solver/crm.hpp"
@@ -200,7 +200,7 @@ int main()
                         
                                 fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                     
-                                VTK_MeshWriter_Mesh2D vtk( M, fs, getbasename(__FILE__) );
+                                VTKWriter vtk( M, fs, getbasename(__FILE__) );
                                 vtk.writeCoordinateBlock();
                                 vtk.writeTopDimensionalCells();
                                 

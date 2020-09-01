@@ -9,7 +9,7 @@
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
-#include "../../vtk/vtkwriter.mesh2D.hpp"
+#include "../../vtk/vtkwriter.hpp"
 #include "../../mesh/examples2D.hpp"
 
 
@@ -28,7 +28,7 @@ int main()
 
     fstream fs( "./annulus.vtk", std::fstream::out );
 
-    VTK_MeshWriter_Mesh2D vtk( M, fs, "Attempt at a " );
+    VTKWriter vtk( M, fs, "Attempt at a " );
     vtk.writeCoordinateBlock();
     vtk.writeTopDimensionalCells();
     

@@ -18,7 +18,7 @@
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples2D.hpp"
 #include "../../mesh/examples3D.hpp"
-#include "../../vtk/vtkwriter.mesh2D.hpp"
+#include "../../vtk/vtkwriter.hpp"
 #include "../../solver/crm.hpp"
 #include "../../solver/pcrm.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
@@ -243,7 +243,7 @@ int main()
             
                     fstream fs( adaptfilename("./afempoissonneumann.vtk"), std::fstream::out );
         
-                    VTK_MeshWriter_Mesh2D vtk( M, fs, "AFEM for Poisson-Neumann problem over Unit Square" );
+                    VTKWriter vtk( M, fs, "AFEM for Poisson-Neumann problem over Unit Square" );
                     vtk.writeCoordinateBlock();
                     vtk.writeTopDimensionalCells();
 

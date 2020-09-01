@@ -16,7 +16,7 @@
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial1D.hpp"
 #include "../../mesh/examples1D.hpp"
-#include "../../vtk/vtkwriter.mesh1D.hpp"
+#include "../../vtk/vtkwriter.hpp"
 #include "../../solver/crm.hpp"
 #include "../../solver/minres.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
@@ -232,7 +232,7 @@ int main()
                     
                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                 
-                            VTK_MeshWriter_Mesh1D vtk( M, fs, getbasename(__FILE__) );
+                            VTKWriter vtk( M, fs, getbasename(__FILE__) );
                             vtk.writeCoordinateBlock();
                             vtk.writeTopDimensionalCells();
                             

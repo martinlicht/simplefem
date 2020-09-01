@@ -9,7 +9,7 @@
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
-#include "../../vtk/vtkwriter.mesh2D.hpp"
+#include "../../vtk/vtkwriter.hpp"
 #include "../../mesh/examples2D.hpp"
 
 
@@ -31,7 +31,7 @@ int main()
         
         fstream fs( string("./locallshaped") + std::to_string(l) + string(".vtk"), std::fstream::out );
 
-        VTK_MeshWriter_Mesh2D vtk( M, fs, "Mein erster Test" );
+        VTKWriter vtk( M, fs, "Mein erster Test" );
         vtk.writeCoordinateBlock();
         vtk.writeTopDimensionalCells();
 
