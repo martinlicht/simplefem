@@ -5,8 +5,8 @@
 
 # Do you want to use GCC or Clang?
 # Uncomment the appropriate definition below
-FLAG_CXX := CLANG
-# FLAG_CXX := GCC
+# FLAG_CXX := CLANG
+FLAG_CXX := GCC
 
 # Do you want to ENABLE the use of tcmalloc?
 # Uncomment the following line to enable tcmalloc
@@ -42,9 +42,11 @@ FLAG_DO_COMPILEDEBUGMODE := -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC
 
 # Do you want to ENABLE extended precision?
 # Uncomment the following line to switch from double precision to extended precision
-# FLAG_DO_USE_EXTENDED_PRECISION :== -DEXTENDED_PRECISION
+# FLAG_DO_USE_EXTENDED_PRECISION := -DEXTENDED_PRECISION
 
-
+# Do you want to strip unused symbols from the executables?
+# Uncomment the following line to accomplish this
+FLAG_DO_STRIP=yes
 
 
 
@@ -344,8 +346,11 @@ CXXFLAGS_OPTIMIZE += -march=native $(OPENMP_FLAG)
 # CXXFLAGS_OPTIMIZE := -inline-threshold=1200
 CXXFLAGS_OPTIMIZE += -flto
 
-
-
+ifeq ($(FLAG_CXX),GCC)
+ifeq ($(FLAG_DO_STRIP),yes)
+	CXXFLAGS_OPTIMIZE += -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--strip-all 
+endif
+endif
 
 
 

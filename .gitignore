@@ -4,8 +4,6 @@
 
 # output of cpplint.py
 *OUTPUT_CPPLINT.txt
-./OUTPUT_CPPLINT.txt
-./*/OUTPUT_CPPLINT.txt
 
 # Doxygen
 Doxyfile
@@ -44,6 +42,7 @@ Dox
 *.dylib
 
 # Executables
+*.elf
 *.exe
 *.out
 *.app
@@ -69,17 +68,18 @@ Dox
 *.ind
 *.log
 *.pdf
+*.tex
 *.toc
 
-# Python
+# Python precompiled
 *.pyc
 
-# file system related files 
+# general work files  
 *.desktop
 *.gz
 *.ini
 
-# VSCode project files 
+# VSCode and Visual Studio project files 
 *.mvs
 *.opensdf
 *.sdf
@@ -104,6 +104,17 @@ cachegrind.out.*
 
 # VTK output
 *.vtk
+*.vti
+*.vtp
+*.vtr
+*.vts
+*.vtu
+*.pvti
+*.pvtp
+*.pvtr
+*.pvts
+*.pvtu
+
 
 # Temporary file
 *.temp
