@@ -1,4 +1,10 @@
 
+
+# This file contains makefile rules for object creation
+# that can be applied in every single source directory
+# They create the dependency auxiliary files, 
+# the object files, and the shared libraries. 
+
 SHELL = /bin/sh
 
 default: all

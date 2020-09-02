@@ -1,5 +1,7 @@
 
-# Global definition of compiler and its flags 
+# This file contains definitions of variables 
+# to be used in the compilation process 
+# for objects and shared libraries 
 
 
 
