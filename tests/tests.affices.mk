@@ -1,0 +1,12 @@
+affix.utility       := utility
+affix.combinatorics := combinatorics
+affix.operators     := operators combinatorics
+affix.dense         := dense sparse operators combinatorics
+affix.sparse        := sparse dense operators combinatorics
+affix.solver        := solver sparse dense operators combinatorics
+affix.mesh          := mesh dense sparse operators combinatorics
+affix.vtk           := vtk $(affix.mesh)
+affix.matrixmarket  := matrixmarket
+affix.fem           := vtk mesh solver dense sparse operators combinatorics
+affix.experiments   := vtk mesh solver dense sparse operators combinatorics 
+affix.afem          := vtk mesh solver dense sparse operators combinatorics 
