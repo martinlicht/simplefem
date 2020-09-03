@@ -1,5 +1,5 @@
-#ifndef INCLUDEGUARD_VTKWRITER
-#define INCLUDEGUARD_VTKWRITER
+#ifndef INCLUDEGUARD_VTK_VTKWRITER
+#define INCLUDEGUARD_VTK_VTKWRITER
 
 #include <iostream>
 #include <string>

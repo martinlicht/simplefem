@@ -1,5 +1,5 @@
-#ifndef INCLUDEGUARD_DENSE_SIMPLESOLVER
-#define INCLUDEGUARD_DENSE_SIMPLESOLVER
+#ifndef INCLUDEGUARD_DENSE_SIMPLESOLVER_HPP
+#define INCLUDEGUARD_DENSE_SIMPLESOLVER_HPP
 
 #include "../basic.hpp"
 #include "../operators/floatvector.hpp"

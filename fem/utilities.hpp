@@ -1,5 +1,5 @@
-#ifndef INCLUDEGUARD_FOO
-#define INCLUDEGUARD_FOO
+#ifndef INCLUDEGUARD_FEM_UTILITIES_HPP
+#define INCLUDEGUARD_FEM_UTILITIES_HPP
 
 #include <algorithm>
 #include <vector>
