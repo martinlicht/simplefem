@@ -31,7 +31,7 @@ $(sharedlibrary): $(objects)
 
 
 .PHONY: make_dependencies
-make_dependencies:
+make_dependencies: $(depdir)
 	for item in $(sources); do g++ -MM $$item -MF .deps/$*.d; done
 
 $(objects): %.o: %.cpp | $(depdir)

@@ -6,18 +6,7 @@ include ../common.recipe.mk
 
 include ../common.upkeep.mk
 
-affix.utility = utility
-affix.combinatorics = combinatorics
-affix.operators := operators combinatorics
-affix.dense := dense sparse operators combinatorics
-affix.sparse := sparse dense operators combinatorics
-affix.solver := solver sparse dense operators combinatorics
-affix.mesh := mesh dense sparse operators combinatorics
-affix.vtk := vtk $(affix.mesh)
-affix.matrixmarket = matrixmarket
-affix.fem := vtk mesh solver dense sparse operators combinatorics
-affix.experiments := vtk mesh solver dense sparse operators combinatorics 
-affix.afem := vtk mesh solver dense sparse operators combinatorics 
+include tests.affices.mk
 
 
 ./*/*.out: makefile ../common.recipe.mk
@@ -25,441 +14,62 @@ affix.afem := vtk mesh solver dense sparse operators combinatorics
 
 depdir := .deps
 
+projectdir:=../
+pathvar:=$(shell pwd)/../
 
 
 
+contextdir:=./basic
+context:=basic
+include testrule.mk
 
-basic.sources := $(wildcard basic/*.cpp)
+contextdir:=./utility
+context:=utility
+include testrule.mk
 
-basic.outs := $(patsubst %.cpp,%.out,$(basic.sources))
+contextdir:=./combinatorics
+context:=combinatorics
+include testrule.mk
 
-basic.depdir := basic/$(depdir)
+contextdir:=./operators
+context:=operators
+include testrule.mk
 
-basic.dependencies := $(patsubst basic/%.cpp,basic/.deps/%.d,$(basic.sources))
+contextdir:=./dense
+context:=dense
+include testrule.mk
 
-$(basic.depdir): ; @mkdir -p $@
+contextdir:=./sparse
+context:=sparse
+include testrule.mk
 
-$(basic.outs): basic/%.out: basic/%.cpp | $(basic.depdir)
-	g++ -MM basic/$*.cpp -MT $@ -MF basic/.deps/$*.d
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(Links.basic) -o $@ $(LDLIBS)
+contextdir:=./solver
+context:=solver
+include testrule.mk
 
--include $(basic.dependencies)
+contextdir:=./mesh
+context:=mesh
+include testrule.mk
 
-basic.tests: $(basic.outs)
+contextdir:=./vtk
+context:=vtk
+include testrule.mk
 
+contextdir:=./matrixmarket
+context:=matrixmarket
+include testrule.mk
 
+contextdir:=./fem
+context:=fem
+include testrule.mk
 
+contextdir:=./experiments
+context:=experiments
+include testrule.mk
 
-
-
-
-
-
-
-
-
-utility.sources := $(wildcard utility/*.cpp)
-
-utility.outs := $(patsubst %.cpp,%.out,$(utility.sources))
-
-utility.depdir := utility/$(depdir)
-
-utility.dependencies := $(patsubst utility/%.cpp,utility/.deps/%.d,$(utility.sources))
-
-utility.include := $(patsubst %,-L../%,$(affix.utility))
-linkerprefix=-Wl,
-utility.rpath_t := $(patsubst %,-rpath=$(shell pwd)/../%,$(affix.utility)) 
-utility.rpath := $(patsubst %,$(linkerprefix)%,$(utility.rpath_t)) 
-utility.link := $(patsubst %,-l%,$(affix.utility))
-
-$(utility.depdir): ; @mkdir -p $@
-
-$(utility.outs): utility/%.out: utility/%.cpp | $(utility.depdir)
-	@ #echo $(utility.include)
-	@ #echo $(utility.rpath)
-	@ #echo $(utility.link)
-	@g++ -MM utility/$*.cpp -MT $@ -MF utility/.deps/$*.d
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(utility.include) $(utility.rpath) $(utility.link) -o $@ $(LDLIBS)
-
--include $(utility.dependencies)
-
-utility.tests: $(utility.outs)
-
-
-
-
-
-
-
-
-
-
-combinatorics.sources := $(wildcard combinatorics/*.cpp)
-
-combinatorics.outs := $(patsubst %.cpp,%.out,$(combinatorics.sources))
-
-combinatorics.depdir := combinatorics/$(depdir)
-
-combinatorics.dependencies := $(patsubst combinatorics/%.cpp,combinatorics/.deps/%.d,$(combinatorics.sources))
-
-combinatorics.include := $(patsubst %,-L../%,$(affix.combinatorics))
-linkerprefix=-Wl,
-combinatorics.rpath_t := $(patsubst %,-rpath=$(shell pwd)/../%,$(affix.combinatorics)) 
-combinatorics.rpath := $(patsubst %,$(linkerprefix)%,$(combinatorics.rpath_t)) 
-combinatorics.link := $(patsubst %,-l%,$(affix.combinatorics))
-
-$(combinatorics.depdir): ; @mkdir -p $@
-
-$(combinatorics.outs): combinatorics/%.out: combinatorics/%.cpp | $(combinatorics.depdir)
-	@ #echo $(combinatorics.include)
-	@ #echo $(combinatorics.rpath)
-	@ #echo $(combinatorics.link)
-	@g++ -MM combinatorics/$*.cpp -MT $@ -MF combinatorics/.deps/$*.d
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(combinatorics.include) $(combinatorics.rpath) $(combinatorics.link) -o $@ $(LDLIBS)
-
--include $(combinatorics.dependencies)
-
-combinatorics.tests: $(combinatorics.outs)
-
-
-
-
-
-
-
-
-
-
-
-operators.sources := $(wildcard operators/*.cpp)
-
-operators.outs := $(patsubst %.cpp,%.out,$(operators.sources))
-
-operators.depdir := operators/$(depdir)
-
-operators.dependencies := $(patsubst operators/%.cpp,operators/.deps/%.d,$(operators.sources))
-
-operators.include := $(patsubst %,-L../%,$(affix.operators))
-linkerprefix=-Wl,
-operators.rpath_t := $(patsubst %,-rpath=$(shell pwd)/../%,$(affix.operators)) 
-operators.rpath := $(patsubst %,$(linkerprefix)%,$(operators.rpath_t)) 
-operators.link := $(patsubst %,-l%,$(affix.operators))
-
-$(operators.depdir): ; @mkdir -p $@
-
-$(operators.outs): operators/%.out: operators/%.cpp | $(operators.depdir)
-	@ #echo $(operators.include)
-	@ #echo $(operators.rpath)
-	@ #echo $(operators.link)
-	@g++ -MM operators/$*.cpp -MT $@ -MF operators/.deps/$*.d
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(operators.include) $(operators.rpath) $(operators.link) -o $@ $(LDLIBS)
-
--include $(operators.dependencies)
-
-operators.tests: $(operators.outs)
-
-
-
-
-
-
-
-
-dense.sources := $(wildcard dense/*.cpp)
-
-dense.outs := $(patsubst %.cpp,%.out,$(dense.sources))
-
-dense.depdir := dense/$(depdir)
-
-dense.dependencies := $(patsubst dense/%.cpp,dense/.deps/%.d,$(dense.sources))
-
-dense.include := $(patsubst %,-L../%,$(affix.dense))
-linkerprefix=-Wl,
-dense.rpath_t := $(patsubst %,-rpath=$(shell pwd)/../%,$(affix.dense)) 
-dense.rpath := $(patsubst %,$(linkerprefix)%,$(dense.rpath_t)) 
-dense.link := $(patsubst %,-l%,$(affix.dense))
-
-$(dense.depdir): ; @mkdir -p $@
-
-$(dense.outs): dense/%.out: dense/%.cpp | $(dense.depdir)
-	@ #echo $(dense.include)
-	@ #echo $(dense.rpath)
-	@ #echo $(dense.link)
-	@g++ -MM dense/$*.cpp -MT $@ -MF dense/.deps/$*.d
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(dense.include) $(dense.rpath) $(dense.link) -o $@ $(LDLIBS)
-
--include $(dense.dependencies)
-
-dense.tests: $(dense.outs)
-
-
-
-
-
-
-
-
-sparse.sources := $(wildcard sparse/*.cpp)
-
-sparse.outs := $(patsubst %.cpp,%.out,$(sparse.sources))
-
-sparse.depdir := sparse/$(depdir)
-
-sparse.dependencies := $(patsubst sparse/%.cpp,sparse/.deps/%.d,$(sparse.sources))
-
-sparse.include := $(patsubst %,-L../%,$(affix.sparse))
-linkerprefix=-Wl,
-sparse.rpath_t := $(patsubst %,-rpath=$(shell pwd)/../%,$(affix.sparse)) 
-sparse.rpath := $(patsubst %,$(linkerprefix)%,$(sparse.rpath_t)) 
-sparse.link := $(patsubst %,-l%,$(affix.sparse))
-
-$(sparse.depdir): ; @mkdir -p $@
-
-$(sparse.outs): sparse/%.out: sparse/%.cpp | $(sparse.depdir)
-	@ #echo $(sparse.include)
-	@ #echo $(sparse.rpath)
-	@ #echo $(sparse.link)
-	@g++ -MM sparse/$*.cpp -MT $@ -MF sparse/.deps/$*.d
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(sparse.include) $(sparse.rpath) $(sparse.link) -o $@ $(LDLIBS)
-
--include $(sparse.dependencies)
-
-sparse.tests: $(sparse.outs)
-
-
-
-
-
-
-solver.sources := $(wildcard solver/*.cpp)
-
-solver.outs := $(patsubst %.cpp,%.out,$(solver.sources))
-
-solver.depdir := solver/$(depdir)
-
-solver.dependencies := $(patsubst solver/%.cpp,solver/.deps/%.d,$(solver.sources))
-
-solver.include := $(patsubst %,-L../%,$(affix.solver))
-linkerprefix=-Wl,
-solver.rpath_t := $(patsubst %,-rpath=$(shell pwd)/../%,$(affix.solver)) 
-solver.rpath := $(patsubst %,$(linkerprefix)%,$(solver.rpath_t)) 
-solver.link := $(patsubst %,-l%,$(affix.solver))
-
-$(solver.depdir): ; @mkdir -p $@
-
-$(solver.outs): solver/%.out: solver/%.cpp | $(solver.depdir)
-	@ #echo $(solver.include)
-	@ #echo $(solver.rpath)
-	@ #echo $(solver.link)
-	@g++ -MM solver/$*.cpp -MT $@ -MF solver/.deps/$*.d
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(solver.include) $(solver.rpath) $(solver.link) -o $@ $(LDLIBS)
-
--include $(solver.dependencies)
-
-solver.tests: $(solver.outs)
-
-
-
-
-
-
-mesh.sources := $(wildcard mesh/*.cpp)
-
-mesh.outs := $(patsubst %.cpp,%.out,$(mesh.sources))
-
-mesh.depdir := mesh/$(depdir)
-
-mesh.dependencies := $(patsubst mesh/%.cpp,mesh/.deps/%.d,$(mesh.sources))
-
-mesh.include := $(patsubst %,-L../%,$(affix.mesh))
-linkerprefix=-Wl,
-mesh.rpath_t := $(patsubst %,-rpath=$(shell pwd)/../%,$(affix.mesh)) 
-mesh.rpath := $(patsubst %,$(linkerprefix)%,$(mesh.rpath_t)) 
-mesh.link := $(patsubst %,-l%,$(affix.mesh))
-
-$(mesh.depdir): ; @mkdir -p $@
-
-$(mesh.outs): mesh/%.out: mesh/%.cpp | $(mesh.depdir)
-	@ #echo $(mesh.include)
-	@ #echo $(mesh.rpath)
-	@ #echo $(mesh.link)
-	@g++ -MM mesh/$*.cpp -MT $@ -MF mesh/.deps/$*.d
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(mesh.include) $(mesh.rpath) $(mesh.link) -o $@ $(LDLIBS)
-
--include $(mesh.dependencies)
-
-mesh.tests: $(mesh.outs)
-
-
-
-
-
-
-vtk.sources := $(wildcard vtk/*.cpp)
-
-vtk.outs := $(patsubst %.cpp,%.out,$(vtk.sources))
-
-vtk.depdir := vtk/$(depdir)
-
-vtk.dependencies := $(patsubst vtk/%.cpp,vtk/.deps/%.d,$(vtk.sources))
-
-vtk.include := $(patsubst %,-L../%,$(affix.vtk))
-linkerprefix=-Wl,
-vtk.rpath_t := $(patsubst %,-rpath=$(shell pwd)/../%,$(affix.vtk)) 
-vtk.rpath := $(patsubst %,$(linkerprefix)%,$(vtk.rpath_t)) 
-vtk.link := $(patsubst %,-l%,$(affix.vtk))
-
-$(vtk.depdir): ; @mkdir -p $@
-
-$(vtk.outs): vtk/%.out: vtk/%.cpp | $(vtk.depdir)
-	@ #echo $(vtk.include)
-	@ #echo $(vtk.rpath)
-	@ #echo $(vtk.link)
-	@g++ -MM vtk/$*.cpp -MT $@ -MF vtk/.deps/$*.d
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(vtk.include) $(vtk.rpath) $(vtk.link) -o $@ $(LDLIBS)
-
--include $(vtk.dependencies)
-
-vtk.tests: $(vtk.outs)
-
-
-
-
-
-
-matrixmarket.sources := $(wildcard matrixmarket/*.cpp)
-
-matrixmarket.outs := $(patsubst %.cpp,%.out,$(matrixmarket.sources))
-
-matrixmarket.depdir := matrixmarket/$(depdir)
-
-matrixmarket.dependencies := $(patsubst matrixmarket/%.cpp,matrixmarket/.deps/%.d,$(matrixmarket.sources))
-
-matrixmarket.include := $(patsubst %,-L../%,$(affix.matrixmarket))
-linkerprefix=-Wl,
-matrixmarket.rpath_t := $(patsubst %,-rpath=$(shell pwd)/../%,$(affix.matrixmarket)) 
-matrixmarket.rpath := $(patsubst %,$(linkerprefix)%,$(matrixmarket.rpath_t)) 
-matrixmarket.link := $(patsubst %,-l%,$(affix.matrixmarket))
-
-$(matrixmarket.depdir): ; @mkdir -p $@
-
-$(matrixmarket.outs): matrixmarket/%.out: matrixmarket/%.cpp | $(matrixmarket.depdir)
-	@ #echo $(matrixmarket.include)
-	@ #echo $(matrixmarket.rpath)
-	@ #echo $(matrixmarket.link)
-	@g++ -MM matrixmarket/$*.cpp -MT $@ -MF matrixmarket/.deps/$*.d
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(matrixmarket.include) $(matrixmarket.rpath) $(matrixmarket.link) -o $@ $(LDLIBS)
-
--include $(matrixmarket.dependencies)
-
-matrixmarket.tests: $(matrixmarket.outs)
-
-
-
-
-
-fem.sources := $(wildcard fem/*.cpp)
-
-fem.outs := $(patsubst %.cpp,%.out,$(fem.sources))
-
-fem.depdir := fem/$(depdir)
-
-fem.dependencies := $(patsubst fem/%.cpp,fem/.deps/%.d,$(fem.sources))
-
-fem.include := $(patsubst %,-L../%,$(affix.fem))
-linkerprefix:=-Wl,
-fem.rpath_t := $(patsubst %,-rpath=$(shell pwd)/../%,$(affix.fem)) 
-fem.rpath := $(patsubst %,$(linkerprefix)%,$(fem.rpath_t)) 
-fem.link := $(patsubst %,-l%,$(affix.fem))
-
-$(fem.depdir): ; @mkdir -p $@
-
-$(fem.outs): fem/%.out: fem/%.cpp | $(fem.depdir)
-	@ #echo $(fem.include)
-	@ #echo $(fem.rpath)
-	@ #echo $(fem.link)
-	@g++ -MM fem/$*.cpp -MT $@ -MF fem/.deps/$*.d
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(fem.include) $(fem.rpath) $(fem.link) -o $@ $(LDLIBS)
-
--include $(fem.dependencies)
-
-fem.tests: $(fem.outs)
-
-
-
-
-
-
-
-
-
-experiments.sources := $(wildcard experiments/*.cpp)
-
-experiments.outs := $(patsubst %.cpp,%.out,$(experiments.sources))
-
-experiments.depdir := experiments/$(depdir)
-
-experiments.dependencies := $(patsubst experiments/%.cpp,experiments/.deps/%.d,$(experiments.sources))
-
-experiments.include := $(patsubst %,-L../%,$(affix.experiments))
-linkerprefix:=-Wl,
-experiments.rpath_t := $(patsubst %,-rpath=$(shell pwd)/../%,$(affix.experiments)) 
-experiments.rpath := $(patsubst %,$(linkerprefix)%,$(experiments.rpath_t)) 
-experiments.link := $(patsubst %,-l%,$(affix.experiments))
-
-$(experiments.depdir): ; @mkdir -p $@
-
-$(experiments.outs): experiments/%.out: experiments/%.cpp | $(experiments.depdir)
-	@ #echo $(experiments.include)
-	@ #echo $(experiments.rpath)
-	@ #echo $(experiments.link)
-	@g++ -MM experiments/$*.cpp -MT $@ -MF experiments/.deps/$*.d
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(experiments.include) $(experiments.rpath) $(experiments.link) -o $@ $(LDLIBS)
-
--include $(experiments.dependencies)
-
-experiments.tests: $(experiments.outs)
-
-
-
-
-
-
-
-
-
-
-afem.sources := $(wildcard afem/*.cpp)
-
-afem.outs := $(patsubst %.cpp,%.out,$(afem.sources))
-
-afem.depdir := afem/$(depdir)
-
-afem.dependencies := $(patsubst afem/%.cpp,afem/.deps/%.d,$(afem.sources))
-
-afem.include := $(patsubst %,-L../%,$(affix.afem))
-linkerprefix:=-Wl,
-afem.rpath_t := $(patsubst %,-rpath=$(shell pwd)/../%,$(affix.afem)) 
-afem.rpath := $(patsubst %,$(linkerprefix)%,$(afem.rpath_t)) 
-afem.link := $(patsubst %,-l%,$(affix.afem))
-
-$(afem.depdir): ; @mkdir -p $@
-
-$(afem.outs): afem/%.out: afem/%.cpp | $(afem.depdir)
-	@ #echo $(afem.include)
-	@ #echo $(afem.rpath)
-	@ #echo $(afem.link)
-	@g++ -MM afem/$*.cpp -MT $@ -MF afem/.deps/$*.d
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(afem.include) $(afem.rpath) $(afem.link) -o $@ $(LDLIBS)
-
--include $(afem.dependencies)
-
-afem.tests: $(afem.outs)
-
-
-
-
-
+contextdir:=./afem
+context:=afem
+include testrule.mk
 
 
 
