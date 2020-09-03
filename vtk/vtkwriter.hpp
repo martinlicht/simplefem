@@ -29,19 +29,19 @@ class VTKWriter
         
         VTKWriter writeVertexScalarData(
             const FloatVector&, 
-            const char* name, Float scaling = 1. 
+            const std::string name, Float scaling = 1. 
         );
         
         VTKWriter writeCellScalarData(
             const FloatVector&, 
-            const char* name, Float scaling = 1. 
+            const std::string name, Float scaling = 1. 
         );
         
         VTKWriter writeCellVectorData(
             const FloatVector& x, 
             const FloatVector& y, 
             const FloatVector& z, 
-            const char* name, Float scaling = 1. 
+            const std::string name, Float scaling = 1. 
         );
         
     private:
@@ -50,6 +50,18 @@ class VTKWriter
     
         const Mesh& mesh;
         std::ostream& os;
+
+        enum class Stage {
+            nothing      = -1,
+            preamble     = 0,
+            coordinate   = 1,
+            cells        = 2,
+            vertexdata   = 3,
+            celldata     = 4 
+        };
+        
+        Stage current_stage;
+        
         
 };
 

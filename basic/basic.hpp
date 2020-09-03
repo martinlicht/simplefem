@@ -454,6 +454,38 @@ inline std::vector<int> range( int to )
 
 
 
+/////////////////////////////////////////////////
+//                                             //
+//              STRING OPERATIONS              //
+//                                             //
+/////////////////////////////////////////////////
+
+inline int count_white_space( const std::string& str ) 
+{ 
+    int ret = 0;
+    
+    for( int c = 0; c < str.size(); c++ ) 
+        if( isspace( str[c] ) ) 
+            ret++; 
+    
+    return ret;
+} 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
