@@ -29,19 +29,19 @@ class VTKWriter
         
         VTKWriter writeVertexScalarData(
             const FloatVector&, 
-            const char* name, Float scaling = 1. 
+            const std::string name, Float scaling = 1. 
         );
         
         VTKWriter writeCellScalarData(
             const FloatVector&, 
-            const char* name, Float scaling = 1. 
+            const std::string name, Float scaling = 1. 
         );
         
         VTKWriter writeCellVectorData(
             const FloatVector& x, 
             const FloatVector& y, 
             const FloatVector& z, 
-            const char* name, Float scaling = 1. 
+            const std::string name, Float scaling = 1. 
         );
         
     private:

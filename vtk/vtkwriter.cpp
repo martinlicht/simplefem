@@ -25,6 +25,11 @@ VTKWriter VTKWriter::writePreamble( const std::string& name )
     assert( current_stage == Stage::nothing );
     current_stage = Stage::preamble;
     
+    assert( 0 < name.size() and name.size() <= 256 );
+    assert( name.find('\n') == std::string::npos );
+    // assert( count_white_space( name ) == 0 );
+    
+    
     // std::ostream& os = std::clog;
     os << "# vtk DataFile Version 3.0" << nl;
     os << name << nl;
@@ -149,12 +154,15 @@ VTKWriter VTKWriter::writeTopDimensionalCells()
 
 
 
-VTKWriter VTKWriter::writeVertexScalarData( const FloatVector& data, const char* name, Float scaling )
+VTKWriter VTKWriter::writeVertexScalarData( const FloatVector& data, const std::string name, Float scaling )
 {
     assert( current_stage >= Stage::cells );
     assert( current_stage <= Stage::vertexdata );
     
-    assert( name != nullptr );
+    assert( 0 < name.size() and name.size() <= 256 );
+    assert( name.find('\n') == std::string::npos );
+    assert( count_white_space( name ) == 0 );
+    
     assert( data.getdimension() == mesh.count_simplices(0) );
     
     if( current_stage != Stage::vertexdata ){
@@ -175,14 +183,17 @@ VTKWriter VTKWriter::writeVertexScalarData( const FloatVector& data, const char*
 }
 
 
-VTKWriter VTKWriter::writeCellScalarData( const FloatVector& data, const char* name, Float scaling )
+VTKWriter VTKWriter::writeCellScalarData( const FloatVector& data, const std::string name, Float scaling )
 {
     assert( current_stage >= Stage::cells );
     assert( current_stage <= Stage::celldata );
     
     const int topdim = mesh.getinnerdimension();
     
-    assert( name != nullptr );
+    assert( 0 < name.size() and name.size() <= 256 );
+    assert( name.find('\n') == std::string::npos );
+    assert( count_white_space( name ) == 0 );
+    
     assert( data.getdimension() == mesh.count_simplices(topdim) );
     
     if( current_stage != Stage::celldata ){
@@ -207,7 +218,7 @@ VTKWriter VTKWriter::writeCellVectorData(
     const FloatVector& datax,
     const FloatVector& datay,
     const FloatVector& dataz,
-    const char* name, 
+    const std::string name, 
     Float scaling )
 {
     assert( current_stage >= Stage::cells );
@@ -215,7 +226,10 @@ VTKWriter VTKWriter::writeCellVectorData(
     
     const int topdim = mesh.getinnerdimension();
     
-    assert( name != nullptr );
+    assert( 0 < name.size() and name.size() <= 256 );
+    assert( name.find('\n') == std::string::npos );
+    assert( count_white_space( name ) == 0 );
+    
     assert( datax.getdimension() == datay.getdimension() );
     assert( datax.getdimension() == dataz.getdimension() );
     assert( datax.getdimension() == mesh.count_simplices(topdim) );
