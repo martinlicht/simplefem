@@ -46,6 +46,16 @@ int main()
                         vtk.writeVertexScalarData(V,"testing_scalar_data",1.0);
                     }
                     
+                    vtk.writeCellScalarData( FloatVector(M.count_simplices(2), 2.5 ), "cell_scalar_data" );
+                    
+                    vtk.writeCellVectorData( 
+                        FloatVector(M.count_simplices(2),  1.5 ),
+                        FloatVector(M.count_simplices(2),  2.5 ),
+                        FloatVector(M.count_simplices(2), -3.5 ),
+                        "cell_vector_data"
+                    );
+            
+                    
                 }
                 
                 fs.close();

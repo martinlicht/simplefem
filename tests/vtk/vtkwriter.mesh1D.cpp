@@ -6,6 +6,7 @@
 #include <fstream>
 
 #include "../../basic.hpp"
+#include "../../operators/floatvector.hpp"
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.hpp"
 #include "../../mesh/mesh.simplicial1D.hpp"
@@ -32,9 +33,20 @@ int main()
         
         {
             
-            VTKWriter vtk( M, fs, "Mein erster Test" );
+            VTKWriter vtk( M, fs, "One-dimensional Test Mesh" );
             vtk.writeCoordinateBlock();
             vtk.writeTopDimensionalCells();
+            
+            vtk.writeVertexScalarData( FloatVector(M.count_simplices(0), 1.5 ), "vertex_scalar_data" );
+            vtk.writeCellScalarData( FloatVector(M.count_simplices(1), 2.5 ), "cell_scalar_data" );
+            vtk.writeCellVectorData( 
+                FloatVector(M.count_simplices(1),  1.5 ),
+                FloatVector(M.count_simplices(1),  2.5 ),
+                FloatVector(M.count_simplices(1), -3.5 ),
+                "cell_vector_data"
+            );
+            
+            
             
         }
         

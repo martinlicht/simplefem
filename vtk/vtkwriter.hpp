@@ -50,6 +50,18 @@ class VTKWriter
     
         const Mesh& mesh;
         std::ostream& os;
+
+        enum class Stage {
+            nothing      = -1,
+            preamble     = 0,
+            coordinate   = 1,
+            cells        = 2,
+            vertexdata   = 3,
+            celldata     = 4 
+        };
+        
+        Stage current_stage;
+        
         
 };
 

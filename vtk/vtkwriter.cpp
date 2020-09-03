@@ -3,7 +3,7 @@
 
 
 VTKWriter::VTKWriter( Mesh& mesh, std::ostream& os, const std::string& name )
-: mesh(mesh), os(os)
+: mesh(mesh), os(os), current_stage(Stage::nothing)
 {
     mesh.check();
     
@@ -15,11 +15,16 @@ VTKWriter::VTKWriter( Mesh& mesh, std::ostream& os, const std::string& name )
     assert( mesh.subsimplices_listed( mesh.getinnerdimension(), 0 ) );
     
     writePreamble( name );
+    
+    assert( current_stage == Stage::preamble );
 }
 
 
 VTKWriter VTKWriter::writePreamble( const std::string& name )
 {
+    assert( current_stage == Stage::nothing );
+    current_stage = Stage::preamble;
+    
     // std::ostream& os = std::clog;
     os << "# vtk DataFile Version 3.0" << nl;
     os << name << nl;
@@ -33,6 +38,9 @@ VTKWriter VTKWriter::writePreamble( const std::string& name )
 
 VTKWriter VTKWriter::writeCoordinateBlock()
 {
+    assert( current_stage == Stage::preamble );
+    current_stage = Stage::coordinate;
+    
     // std::ostream& os = std::clog;
     os << "POINTS " << mesh.count_simplices(0) << " double" << nl;
     for( int v = 0; v < mesh.count_simplices(0); v++ )
@@ -70,6 +78,9 @@ VTKWriter VTKWriter::writeCoordinateBlock()
         
 VTKWriter VTKWriter::writeCoordinateBlock( const FloatVector& z )
 {
+    assert( current_stage == Stage::preamble );
+    current_stage = Stage::coordinate;
+    
     // std::ostream& os = std::clog;
     os << "POINTS " << mesh.count_simplices(0) << " double" << nl;
     assert( z.getdimension() == mesh.count_simplices(0) );
@@ -102,6 +113,9 @@ VTKWriter VTKWriter::writeCoordinateBlock( const FloatVector& z )
         
 VTKWriter VTKWriter::writeTopDimensionalCells()
 {
+    assert( current_stage == Stage::coordinate);
+    current_stage = Stage::cells;
+    
     // std::ostream& os = std::clog;
     
     int topdim = mesh.getinnerdimension();
@@ -137,11 +151,17 @@ VTKWriter VTKWriter::writeTopDimensionalCells()
 
 VTKWriter VTKWriter::writeVertexScalarData( const FloatVector& data, const char* name, Float scaling )
 {
+    assert( current_stage >= Stage::cells );
+    assert( current_stage <= Stage::vertexdata );
     
     assert( name != nullptr );
     assert( data.getdimension() == mesh.count_simplices(0) );
     
-    os << "POINT_DATA " << mesh.count_simplices(0) << nl;
+    if( current_stage != Stage::vertexdata ){
+        os << "POINT_DATA " << mesh.count_simplices(0) << nl << nl;
+        current_stage = Stage::vertexdata;
+    }
+    
     os << "SCALARS " << name << " double 1" << nl;
     // SCALARS (name_of_data) Datentyp(=float) AnzahlKomponenten(=1)
     os << "LOOKUP_TABLE default" << nl;
@@ -157,13 +177,19 @@ VTKWriter VTKWriter::writeVertexScalarData( const FloatVector& data, const char*
 
 VTKWriter VTKWriter::writeCellScalarData( const FloatVector& data, const char* name, Float scaling )
 {
+    assert( current_stage >= Stage::cells );
+    assert( current_stage <= Stage::celldata );
     
-    int topdim = mesh.getinnerdimension();
+    const int topdim = mesh.getinnerdimension();
     
     assert( name != nullptr );
     assert( data.getdimension() == mesh.count_simplices(topdim) );
     
-    os << "CELL_DATA " << mesh.count_simplices(topdim) << nl;
+    if( current_stage != Stage::celldata ){
+        os << "CELL_DATA " << mesh.count_simplices(topdim) << nl << nl;
+        current_stage = Stage::celldata;
+    }
+    
     os << "SCALARS " << name << " double 1" << nl;
     // VECTORS (name_of_data) Datentyp(=float) AnzahlKomponenten(=1) 
     os << "LOOKUP_TABLE default" << nl;
@@ -184,15 +210,21 @@ VTKWriter VTKWriter::writeCellVectorData(
     const char* name, 
     Float scaling )
 {
+    assert( current_stage >= Stage::cells );
+    assert( current_stage <= Stage::celldata );
     
-    int topdim = mesh.getinnerdimension();
+    const int topdim = mesh.getinnerdimension();
     
     assert( name != nullptr );
     assert( datax.getdimension() == datay.getdimension() );
     assert( datax.getdimension() == dataz.getdimension() );
     assert( datax.getdimension() == mesh.count_simplices(topdim) );
     
-    os << "CELL_DATA " << mesh.count_simplices(topdim) << nl;
+    if( current_stage != Stage::celldata ){
+        os << "CELL_DATA " << mesh.count_simplices(topdim) << nl << nl;
+        current_stage = Stage::celldata;
+    }
+    
     os << "VECTORS " << name << " double" << nl;
     // VECTORS (name_of_data) Datentyp(=float) 
     
