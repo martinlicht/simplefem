@@ -40,7 +40,7 @@ class IndexRange
         
         bool contains( const IndexRange& subir ) const;
         
-        bool compare( const IndexRange& ir ) const;
+        bool isequal( const IndexRange& ir ) const;
         
         int element2position( int element ) const;
         
@@ -142,7 +142,7 @@ static const IndexRange  PositiveIntegers = IndexRange( 1, std::numeric_limits<i
 
 inline bool operator== ( const IndexRange& ir1, const IndexRange& ir2 )
 {
-    return ir1.compare( ir2 );
+    return ir1.isequal( ir2 );
 }
 
 inline bool operator!= ( const IndexRange& ir1, const IndexRange& ir2 )

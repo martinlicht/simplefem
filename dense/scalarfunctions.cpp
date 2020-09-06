@@ -182,8 +182,8 @@ Float NormOperatorMax( const DenseMatrix& src )
 
 Float EigenvalueEstimate( const DenseMatrix& A )
 {
-  assert( A.issquare() );
-  return NormMax( A ) * A.getdimout();
+    assert( A.issquare() );
+    return NormMax( A ) * A.getdimout();
 }
 
 

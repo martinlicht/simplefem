@@ -339,6 +339,8 @@ void Inverse_InSitu( DenseMatrix& A )
 void Inverse_CramersRule_InSitu( DenseMatrix& A )
 {
     assert( A.issquare() ); 
+    Float det = Determinant( A );
+    assert( det > machine_epsilon );
     A = CofactorMatrix( A ) / Determinant( A );
 }
 

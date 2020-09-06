@@ -31,9 +31,9 @@ void IndexRange::print( std::ostream& os, bool embellish ) const
 {
     check();
     if( embellish )
-        os << "[" << minimum << ":" << maximum << "]" << std::endl;
+        os << '[' << minimum << ':' << maximum << ']' << std::endl;
     else
-        os << minimum << " " << maximum;
+        os << minimum << ' ' << maximum;
 }
 
 int IndexRange::min() const
@@ -76,13 +76,13 @@ bool IndexRange::contains( const IndexRange& subir ) const
     
     if( subir.isempty() )
         return true;
-    else if( isempty() ) // so subir is not empty 
+    else if( isempty() ) // since we know that subir is not empty 
         return false;
     else
         return minimum <= subir.minimum && subir.maximum <= maximum;
 }
 
-bool IndexRange::compare( const IndexRange& other ) const
+bool IndexRange::isequal( const IndexRange& other ) const
 {
     check();
     other.check();
