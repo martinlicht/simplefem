@@ -38,6 +38,10 @@ FLAG_DO_COMPILEDEBUGMODE := -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC
 # Uncomment the following line to disable the general assert macro
 # FLAG_DONTASSERT := -DNDEBUG
 
+# Do you want to ENABLE profile generation? 
+# Uncomment the following line to enable profile generation at every run.
+# FLAG_DO_PROFILE:= yes
+
 # Do you want to ENABLE the Clang sanitizer?
 # Uncomment the following line to enable compilation with the Clang sanitizer
 # FLAG_DO_USE_SANITIZER=yes
@@ -287,14 +291,22 @@ CXXFLAGS_DEBUG := -g
 
 
 
+### Profiling instrumentation 
+
+ifeq ($(FLAG_DO_PROFILE),yes)
+
+	PROFILING_FLAGS:= -pg -fno-omit-frame-pointer 
+
+endif
+
+
+
 
 ### Sanitizer instrumentation 
 
-SANITIZER_FLAG := -pg -fno-omit-frame-pointer -ftrapv
-
 ifeq ($(FLAG_DO_USE_SANITIZER),yes)
 
-	SANITIZERS :=
+	SANITIZERS := -ftrapv 
 
 	ifeq ($(FLAG_CXX),GCC)
 
@@ -378,7 +390,7 @@ CXXFLAGS_CODEGEN += -fno-exceptions -fvisibility=default
 #                                             #
 ###############################################
 
-CXXFLAGS := ${CXXFLAGS_LANG} ${CXXFLAGS_DIAGFORMAT} ${CXXFLAGS_WARNINGS} ${CXXFLAGS_STATICANALYSER} ${CXXFLAGS_DEBUG} $(SANITIZER_FLAG) ${CXXFLAGS_MALLOC} ${CXXFLAGS_OPTIMIZE} ${CXXFLAGS_CODEGEN}
+CXXFLAGS := ${CXXFLAGS_LANG} ${CXXFLAGS_DIAGFORMAT} ${CXXFLAGS_WARNINGS} ${CXXFLAGS_STATICANALYSER} ${CXXFLAGS_DEBUG} $(PROFILING_FLAG) $(SANITIZER_FLAG) ${CXXFLAGS_MALLOC} ${CXXFLAGS_OPTIMIZE} ${CXXFLAGS_CODEGEN}
 
 
 
