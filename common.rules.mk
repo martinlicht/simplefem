@@ -16,7 +16,9 @@ objects      := $(patsubst %.cpp,%.o,$(sources))
 dependencies := $(patsubst %.cpp,.deps/%.d,$(sources))
 
 sharedlibrarybasename := lib$(dirname)
+libraryobject         := lib$(dirname).o
 sharedlibrary         := lib$(dirname).so
+staticlibrary         := lib$(dirname).a
 
 
 $(depdir): ; @mkdir -p $@
@@ -29,16 +31,20 @@ $(objects): %.o: %.cpp | $(depdir)
 	@g++ -MM $*.cpp -MF .deps/$*.d
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< -c -o $@ 
 
+
 # NOTE: Original recipe for the shared library, now there is just one object
 # $(sharedlibrary): $(objects)
 # 	$(CXX) $(CXXFLAGS) -shared -o $@ $^ $(LDLIBS)
 
-$(sharedlibrarybasename).o: $(sources) .all.cpp | $(depdir)
+$(libraryobject): $(sources) .all.cpp | $(depdir)
 	@g++ -MM .all.cpp -MF .deps/.all.d
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) .all.cpp -c -o $@ 
 
-$(sharedlibrary): $(sharedlibrarybasename).o
+$(sharedlibrary): $(libraryobject)
 	$(CXX) $(CXXFLAGS) -shared -o $@ $^ $(LDLIBS)
+
+$(staticlibrary): $(libraryobject)
+	ar rcs $(staticlibrary) $(libraryobject)
 
 
 
@@ -51,9 +57,10 @@ $(sharedlibrary): $(sharedlibrarybasename).o
 
 
 buildobjects: $(objects)
-buildso: $(sharedlibrary)
+buildso:      $(sharedlibrary)
+builda:       $(staticlibrary)
 
-all: buildso
+all: $(sharedlibrary)
 #buildobjects # NOTE: the .o files were required for our .so files originally
 
 

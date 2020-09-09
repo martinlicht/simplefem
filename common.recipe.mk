@@ -40,7 +40,7 @@ FLAG_DO_COMPILEDEBUGMODE := -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC
 
 # Do you want to ENABLE profile generation? 
 # Uncomment the following line to enable profile generation at every run.
-# FLAG_DO_PROFILE:= yes
+# FLAG_DO_PROFILE=yes
 
 # Do you want to ENABLE the Clang sanitizer?
 # Uncomment the following line to enable compilation with the Clang sanitizer
@@ -52,7 +52,7 @@ FLAG_DO_COMPILEDEBUGMODE := -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC
 
 # Do you want to strip unused symbols from the executables?
 # Uncomment the following line to accomplish this
-FLAG_DO_STRIP=yes
+# FLAG_DO_STRIP=yes
 
 
 
@@ -295,7 +295,7 @@ CXXFLAGS_DEBUG := -g
 
 ifeq ($(FLAG_DO_PROFILE),yes)
 
-	PROFILING_FLAGS:= -pg -fno-omit-frame-pointer 
+	CXXFLAGS_PROF:= -pg -fno-omit-frame-pointer 
 
 endif
 
@@ -336,7 +336,7 @@ ifeq ($(FLAG_DO_USE_SANITIZER),yes)
 
 	
 	# Comment out the following line to disable ALL built-in sanitizers 
-	SANITIZER_FLAG += -fsanitize=$(SANITIZERS) 
+	CXXFLAGS_SANI += -fsanitize=$(SANITIZERS) 
 
 endif
 
@@ -390,7 +390,7 @@ CXXFLAGS_CODEGEN += -fno-exceptions -fvisibility=default
 #                                             #
 ###############################################
 
-CXXFLAGS := ${CXXFLAGS_LANG} ${CXXFLAGS_DIAGFORMAT} ${CXXFLAGS_WARNINGS} ${CXXFLAGS_STATICANALYSER} ${CXXFLAGS_DEBUG} $(PROFILING_FLAG) $(SANITIZER_FLAG) ${CXXFLAGS_MALLOC} ${CXXFLAGS_OPTIMIZE} ${CXXFLAGS_CODEGEN}
+CXXFLAGS := ${CXXFLAGS_LANG} ${CXXFLAGS_DIAGFORMAT} ${CXXFLAGS_WARNINGS} ${CXXFLAGS_STATICANALYSER} ${CXXFLAGS_DEBUG} $(CXXFLAGS_PROF) $(CXXFLAGS_SANI) ${CXXFLAGS_MALLOC} ${CXXFLAGS_OPTIMIZE} ${CXXFLAGS_CODEGEN}
 
 
 
