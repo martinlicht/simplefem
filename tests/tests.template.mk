@@ -20,5 +20,6 @@ context:=$(shell basename $$(pwd))
 
 builddefault: $(context).tests
 
-include ../testrule.mk
+include ../tests.rules.mk
+include ../tests.run.mk
 

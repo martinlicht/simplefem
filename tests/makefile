@@ -9,7 +9,7 @@ include ../common.upkeep.mk
 include tests.affices.mk
 
 
-./*/*.out: makefile ../common.recipe.mk
+%.out: makefile ../common.recipe.mk
 
 
 depdir := .deps
@@ -21,78 +21,91 @@ pathvar:=$(shell pwd)/../
 
 contextdir:=./basic
 context:=basic
-include testrule.mk
+include tests.rules.mk
+include tests.run.mk
+all: basic.tests 
 
 contextdir:=./utility
 context:=utility
-include testrule.mk
+include tests.rules.mk
+include tests.run.mk
+all: utility.tests
 
 contextdir:=./combinatorics
 context:=combinatorics
-include testrule.mk
+include tests.rules.mk
+include tests.run.mk
+all: combinatorics.tests
 
 contextdir:=./operators
 context:=operators
-include testrule.mk
+include tests.rules.mk
+include tests.run.mk
+all: operators.tests
 
 contextdir:=./dense
 context:=dense
-include testrule.mk
+include tests.rules.mk
+include tests.run.mk
+all: dense.tests
 
 contextdir:=./sparse
 context:=sparse
-include testrule.mk
+include tests.rules.mk
+include tests.run.mk
+all: sparse.tests
 
 contextdir:=./solver
 context:=solver
-include testrule.mk
+include tests.rules.mk
+include tests.run.mk
+all: solver.tests
 
 contextdir:=./mesh
 context:=mesh
-include testrule.mk
+include tests.rules.mk
+include tests.run.mk
+all: mesh.tests
 
 contextdir:=./vtk
 context:=vtk
-include testrule.mk
+include tests.rules.mk
+include tests.run.mk
+all: vtk.tests
 
 contextdir:=./matrixmarket
 context:=matrixmarket
-include testrule.mk
+include tests.rules.mk
+include tests.run.mk
+all: matrixmarket.tests
 
 contextdir:=./fem
 context:=fem
-include testrule.mk
+include tests.rules.mk
+include tests.run.mk
+all: fem.tests
 
 contextdir:=./experiments
 context:=experiments
-include testrule.mk
+include tests.rules.mk
+include tests.run.mk
+all: experiments.tests
 
 contextdir:=./afem
 context:=afem
-include testrule.mk
-
-
-
-
-
-
-all: basic.tests 
-all: utility.tests
-all: combinatorics.tests
-all: operators.tests
-all: dense.tests
-all: sparse.tests
-all: solver.tests
-all: mesh.tests
-all: vtk.tests
-all: matrixmarket.tests
-all: fem.tests
-all: experiments.tests
+include tests.rules.mk
+include tests.run.mk
 all: afem.tests
 
 
 
-include makefile.runtests
+
+
+
+
+
+
+# include makefile.runtests
 
 
 clean: 

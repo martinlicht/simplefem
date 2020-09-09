@@ -1,1 +1,1 @@
-include ../teststemplate.mk
+include ../tests.template.mk
