@@ -17,7 +17,7 @@ int main()
 {
         cout << "Unit Test for one-dimensional simplicial mesh" << endl;
 
-        MeshSimplicial1D M = UnitSquare1D();
+        MeshSimplicial1D M = StandardInterval1D();
         
         cout << "Check" << endl;
         

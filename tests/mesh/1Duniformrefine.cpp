@@ -17,7 +17,7 @@ int main()
 {
 	cout << "Unit Test for Manifold 1D Module" << endl;
 	
-        MeshSimplicial1D M = UnitSquare1D();
+        MeshSimplicial1D M = StandardInterval1D();
         
         cout << "Check" << endl;
         

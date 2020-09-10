@@ -22,7 +22,7 @@ int main()
     {
         
         // MeshSimplicial2D M = UnitCubeTriangulation(3,3);
-        MeshSimplicial2D M = UnitSquare2D();
+        MeshSimplicial2D M = StandardSquare2D();
         
         cout << M << endl;
 

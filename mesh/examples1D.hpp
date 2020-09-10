@@ -19,7 +19,7 @@
 
 
 
-inline MeshSimplicial1D UnitSquare1D()
+inline MeshSimplicial1D StandardInterval1D()
 {
     return MeshSimplicial1D(
       2,
@@ -33,7 +33,7 @@ inline MeshSimplicial1D UnitSquare1D()
     );
 }
 
-inline MeshSimplicial1D StandardSquare1D()
+inline MeshSimplicial1D UnitInterval1D()
 {
     return MeshSimplicial1D(
       1,

@@ -43,7 +43,7 @@ int main()
 
             cout << "Initial mesh..." << endl;
             
-            MeshSimplicial2D M = UnitSquare2D();
+            MeshSimplicial2D M = StandardSquare2D();
             
             M.check();
             

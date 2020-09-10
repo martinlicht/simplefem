@@ -39,7 +39,7 @@ int main()
 
             cout << "Initial mesh..." << endl;
             
-            MeshSimplicial1D M = StandardSquare1D();
+            MeshSimplicial1D M = UnitInterval1D();
             
             M.check();
             

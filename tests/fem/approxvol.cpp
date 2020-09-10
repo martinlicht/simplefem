@@ -33,7 +33,7 @@ int main()
             
             cout << "Initial mesh..." << endl;
             
-            MeshSimplicial2D M = UnitSquare2D();
+            MeshSimplicial2D M = StandardSquare2D();
             
             M.check();
             
@@ -132,7 +132,7 @@ int main()
             
             cout << "Initial mesh..." << endl;
             
-            MeshSimplicial3D M = StandardCube3D();
+            MeshSimplicial3D M = UnitCube3D();
             
             M.check();
             

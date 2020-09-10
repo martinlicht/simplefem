@@ -24,7 +24,7 @@ int main()
     {
         
         // MeshSimplicial3D M = UnitCubeTriangulation(3,3);
-        MeshSimplicial3D M = StandardCube3D();
+        MeshSimplicial3D M = UnitCube3D();
 
         clog << "Conduct refinements" << nl;
         

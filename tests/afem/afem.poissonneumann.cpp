@@ -43,7 +43,7 @@ int main()
             
             cout << "Initial mesh..." << endl;
             
-            MeshSimplicial2D M = UnitSquare2D();
+            MeshSimplicial2D M = StandardSquare2D();
 
             for( int t = 0; t < 3; t++ ) M.uniformrefinement();
             

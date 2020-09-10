@@ -23,7 +23,7 @@ int main()
     {
         
         // MeshSimplicial1D M = UnitCubeTriangulation(3,3);
-        MeshSimplicial1D M = UnitSquare1D();
+        MeshSimplicial1D M = StandardInterval1D();
         
         cout << M << endl;
         

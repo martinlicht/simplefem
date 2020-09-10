@@ -21,7 +21,7 @@ int main()
         
         {
                 
-                MeshSimplicial3D M = StandardCube3D();
+                MeshSimplicial3D M = UnitCube3D();
                 // TODO: This should be a 3D mesh class
                 
                 cout << M << endl;

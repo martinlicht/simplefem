@@ -24,7 +24,7 @@ int main()
 {
         cout << "Unit Test for FEEC Mass Matrix" << endl;
         
-        MeshSimplicial2D M = UnitSquare2D();
+        MeshSimplicial2D M = StandardSquare2D();
         
         M.check();
         

@@ -16,7 +16,7 @@ int main()
 {
         cout << "Unit Test for Simplicial 2D Module" << endl;
         
-        MeshSimplicial2D M = UnitSquare2D();
+        MeshSimplicial2D M = StandardSquare2D();
         
         M.check();
         
