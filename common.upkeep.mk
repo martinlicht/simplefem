@@ -31,6 +31,7 @@ dependclean:
 
 .PHONY: clean
 clean: vtkclean dependclean
+	-rm -f callgrind.out.*
 	-rm -f *.o *.d *.so *.gch
 	-rm -f *.exe *.exe.stackdump
 	-rm -f *.out *.out.stackdump 
