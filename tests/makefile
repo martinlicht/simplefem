@@ -100,21 +100,13 @@ all: afem.tests
 
 
 
-
-
-
-
-
-# include makefile.runtests
-
-
-clean: 
-	-rm -f *.o *.gch
-	-rm -f *.exe *.exe.stackdump
-	-rm -f *.out *.out.stackdump 
-	-rm -f */.deps/*.d
-	-rm -f */*.o */*.gch
-	-rm -f */*.exe */*.exe.stackdump
-	-rm -f */*.out */*.out.stackdump 
+# clean: 
+# 	-rm -f *.o *.gch
+# 	-rm -f *.exe *.exe.stackdump
+# 	-rm -f *.out *.out.stackdump 
+# 	-rm -f */.deps/*.d
+# 	-rm -f */*.o */*.gch
+# 	-rm -f */*.exe */*.exe.stackdump
+# 	-rm -f */*.out */*.out.stackdump 
 
 

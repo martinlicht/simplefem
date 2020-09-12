@@ -188,6 +188,11 @@ int main()
                 
                 SparseMatrix massmatrix_volume = FEECBrokenMassMatrix( M, M.getinnerdimension(), 3, r );
                 
+                assert( massmatrix_scalar.isfinite() );
+                assert( massmatrix_vector.isfinite() );
+                assert( massmatrix_pseudo.isfinite() );
+                assert( massmatrix_volume.isfinite() );
+                
                 for( int i = 0; i < experiments_scalar_field.size(); i++){
 
                     const auto& scalarfield = experiments_scalar_field[i];
@@ -195,9 +200,11 @@ int main()
 
                     FloatVector interpol = Interpolation( M, M.getinnerdimension(), 0, r, scalarfield );
 
-                    Float mass = interpol.scalarproductwith( massmatrix_scalar * interpol );
+                    assert( interpol.isfinite() );
+
+                    Float mass = interpol * ( massmatrix_scalar * interpol );
                     
-                    errors_scalar[i][l-l_min][r-r_min] = mass - should_be;
+                    errors_scalar[i][l-l_min][r-r_min] = std::sqrt( std::abs( mass - should_be ) );
                     
                     cout << "mass: " << mass << ' ' << should_be << endl; 
 
@@ -210,9 +217,11 @@ int main()
 
                     FloatVector interpol = Interpolation( M, M.getinnerdimension(), 1, r, vectorfield );
 
-                    Float mass = interpol.scalarproductwith( massmatrix_vector * interpol );
+                    assert( interpol.isfinite() );
+
+                    Float mass = interpol * ( massmatrix_vector * interpol );
                     
-                    errors_vector[i][l][r] = mass - should_be;
+                    errors_vector[i][l][r] = std::sqrt( std::abs( mass - should_be ) );
                     
                     cout << "mass: " << mass << ' ' << should_be << endl; 
 
@@ -225,9 +234,11 @@ int main()
 
                     FloatVector interpol = Interpolation( M, M.getinnerdimension(), 2, r, vectorfield );
 
-                    Float mass = interpol.scalarproductwith( massmatrix_pseudo * interpol );
+                    assert( interpol.isfinite() );
+
+                    Float mass = interpol * ( massmatrix_pseudo * interpol );
                     
-                    errors_pseudo[i][l][r] = mass - should_be;
+                    errors_pseudo[i][l][r] = std::sqrt( std::abs( mass - should_be ) );
                     
                     cout << "mass: " << mass << ' ' << should_be << endl; 
 
@@ -240,9 +251,11 @@ int main()
 
                     FloatVector interpol = Interpolation( M, M.getinnerdimension(), 3, r, volumefield );
 
-                    Float mass = interpol.scalarproductwith( massmatrix_volume * interpol );
+                    assert( interpol.isfinite() );
+
+                    Float mass = interpol * ( massmatrix_volume * interpol );
                     
-                    errors_volume[i][l][r] = mass - should_be;
+                    errors_volume[i][l][r] = std::sqrt( std::abs( mass - should_be ) );
                     
                     cout << "mass: " << mass << ' ' << should_be << endl; 
 

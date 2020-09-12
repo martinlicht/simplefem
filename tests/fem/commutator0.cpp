@@ -154,21 +154,7 @@ int main()
                         
                         
                         
-                        // {
-                    
-                        //     fstream fs( "./poissonneumann.vtk", std::fstream::out );
-                
-                        //     VTKWriter vtk( M, fs );
-                        //     vtk.writePreamble( "Poisson-Neumann problem" );
-                        //     vtk.writeCoordinateBlock();
-                        //     vtk.writeTopDimensionalCells();
-                            
-                        //     vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
-                        //     vtk.writeCellVectorData( interpol_grad, "gradient_interpolation" , 0.1 );
-                            
-                        //     fs.close();
-                    
-                        // }
+                        
 
 
                     }
