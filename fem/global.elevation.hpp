@@ -36,7 +36,7 @@
 
 
 
-inline SparseMatrix FEECBrokenElevationMatrix( const Mesh& mesh, int n, int k, int r, int rplus = 1 )
+inline SparseMatrix FEECBrokenElevationMatrix( const Mesh& mesh, int n, int k, int r, int r_plus )
 {
     
     // check whether the parameters are right 
@@ -44,17 +44,15 @@ inline SparseMatrix FEECBrokenElevationMatrix( const Mesh& mesh, int n, int k, i
     assert( r >= 0 );
     assert( n >= 0 && n <= mesh.getinnerdimension() );
     assert( k >= 0 && k <= n );
-    assert( rplus >= 1 );
+    assert( r_plus >= 0 );
     
+    const std::vector<MultiIndex> multis_add  = generateMultiIndices( IndexRange( 0, n ), r_plus     );
+    const std::vector<MultiIndex> multis_low  = generateMultiIndices( IndexRange( 0, n ), r          );
+    const std::vector<MultiIndex> multis_high = generateMultiIndices( IndexRange( 0, n ), r + r_plus );
     
-    
-    const std::vector<MultiIndex> multis_adds = generateMultiIndices( IndexRange( 0, n ), rplus     );
-    const std::vector<MultiIndex> multis_low  = generateMultiIndices( IndexRange( 0, n ), r         );
-    const std::vector<MultiIndex> multis_high = generateMultiIndices( IndexRange( 0, n ), r + rplus );
-    
-    assert( multis_adds.size() == binomial_integer( n + rplus    , n ) );
-    assert( multis_low.size()  == binomial_integer( n + r,         n ) );
-    assert( multis_high.size() == binomial_integer( n + r + rplus, n ) );
+    assert( multis_add.size()  == binomial_integer( n + r_plus    , n ) );
+    assert( multis_low.size()  == binomial_integer( n + r,          n ) );
+    assert( multis_high.size() == binomial_integer( n + r + r_plus, n ) );
     
     const std::vector<IndexMap> sigmas = generateSigmas( IndexRange( 1, k ), IndexRange( 0, n ) );
     
@@ -67,8 +65,11 @@ inline SparseMatrix FEECBrokenElevationMatrix( const Mesh& mesh, int n, int k, i
     
     for( int low_poly_index = 0; low_poly_index < multis_low.size(); low_poly_index++ )
     for( int     form_index = 0;     form_index <     sigmas.size();     form_index++ )
-    for( const MultiIndex& addendum : multis_adds )
+    for( int add_poly_index = 0; add_poly_index < multis_add.size(); add_poly_index++ )
+//     for( const MultiIndex& addendum : multis_add )
     {
+        
+        const MultiIndex& addendum = multis_add[add_poly_index];
         
         const MultiIndex& low_poly = multis_low[low_poly_index];
         
@@ -76,19 +77,30 @@ inline SparseMatrix FEECBrokenElevationMatrix( const Mesh& mesh, int n, int k, i
         
         int high_poly_index = find_index( multis_high, high_poly );
         
+        assert( 0 <= high_poly_index and high_poly_index < multis_high.size() );
+        
         SparseMatrix::MatrixEntry entry;
         
         entry.row    = high_poly_index * sigmas.size() + form_index;
-        entry.column = low_poly_index * sigmas.size() + form_index;
-        entry.value  = 1.0;
+        entry.column = low_poly_index  * sigmas.size() + form_index;
         
-        assert( entry.row >= 0 && entry.row < localdim_out );
-        assert( entry.column >= 0 && entry.column < localdim_in );
+        entry.value  = factorial_numerical( r_plus ) / addendum.factorial_numerical();
+        
+        assert( entry.row    >= 0 && entry.row    < localdim_out );
+        assert( entry.column >= 0 && entry.column < localdim_in  );
         
         localmatrixentries.push_back( entry );
         
     }
     
+// //     if( k==0 and r==0 and r_plus == 3 ){
+// //         
+// //         for( const auto& lme : localmatrixentries )
+// //             std::cout << lme.row << space << lme.column << space << lme.value << nl;
+// //         
+// //         exit(0);
+// //     }
+        
     // Auxiliary calculations and preparations
     
     // Finished generating local matrix

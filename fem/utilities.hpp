@@ -22,6 +22,17 @@
 ************************/
 
 
+
+
+
+
+
+
+
+
+
+
+
 inline int SullivanSpanSize( int n, int k, int r )  __attribute__ ((const));
 
 inline int SullivanSpanSize( int n, int k, int r )
@@ -30,6 +41,18 @@ inline int SullivanSpanSize( int n, int k, int r )
     assert( k <= n );
     return binomial_integer( n + r, r ) * binomial_integer( n+1, k );
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -55,24 +78,41 @@ inline DenseMatrix InterpolationPointsBarycentricCoordinates( int n, int r )
     const auto multi_indices = generateMultiIndices( IndexRange(0,n), r );
     
     assert( multi_indices.size() == binomial_integer( n+r, r ) );
+    for( int i = 0; i < multi_indices.size(); i++ ) assert( multi_indices[i].absolute() == r );
     
-    const Float delta = +0.10000000;
+    const Float delta = 0.1;
     
-    DenseMatrix ret( n+1, multi_indices.size(), 0. );
+    DenseMatrix ret( n+1, static_cast<int>( multi_indices.size() ) );
     
     assert( delta > 0 );
     
     for( int i = 0; i < multi_indices.size(); i++ )
         ret.setcolumn( i, FloatVector( multi_indices[i].getvalues() ).shift( delta ).scaleinverse( r + (n+1) * delta ) );
 
-    if( r != 0 )
+    //if( r != 0 )
     for( int i = 0; i < multi_indices.size(); i++ ) {
         assert( ret.getcolumn(i).isnonnegative() );
         assert( ret.getcolumn(i).sumnorm() > 0.9999 && ret.getcolumn(i).sumnorm() < 1.0001 );
     }
     
+    assert( ret.isfinite() );
+    
     return ret;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -89,27 +129,33 @@ inline DenseMatrix InterpolationPointsBarycentricCoordinates( int n, int r )
 // Size of returned matrix:
 // [ n+r choose r ] x [ n+r choose r ]
 
-inline DenseMatrix EvaluationMatrix( int dim, int r, const DenseMatrix& lpsbc )
+inline DenseMatrix EvaluationMatrix( int r, const DenseMatrix& bcs )
 {
-    assert( 0 <= dim and 0 <= r );
+    assert( 0 <= r );
+    assert( 0 < bcs.getdimout() );
+    
+    const int dim = bcs.getdimout()-1;
     
     const auto mis = generateMultiIndices( IndexRange(0,dim), r );
     
-    assert( dim+1      == lpsbc.getdimout()            );
-    assert( mis.size() == lpsbc.getdimin()             );
+    const int number_of_evaluation_points = bcs.getdimin();
+    
+    const int number_of_polynomials = mis.size();
+    
     assert( mis.size() == binomial_integer( dim+r, r ) );
-    const int N = mis.size();
     
-    DenseMatrix ret( N, N );
+    DenseMatrix ret( number_of_polynomials, number_of_evaluation_points );
     
-    for( int col = 0; col < N; col++ ) // col -> barycentric poly 
-    for( int row = 0; row < N; row++ ) // row -> interpolation point 
+    for( int row = 0; row < number_of_evaluation_points; row++ ) // row -> interpolation point 
+    for( int col = 0; col < number_of_polynomials;       col++ ) // col -> barycentric poly 
     {
         ret(row,col) = 1.;
         for( int d = 0; d <= dim; d++ )
             if( mis[col][d] != 0 )
-                ret(row,col) *= power_numerical( lpsbc(d,row), mis[col][d] );
+                ret(row,col) *= power_numerical( bcs(d,row), mis[col][d] );
     }
+    
+    assert( ret.isfinite() );
     
     return ret;
     
@@ -117,70 +163,19 @@ inline DenseMatrix EvaluationMatrix( int dim, int r, const DenseMatrix& lpsbc )
 
 
 
-// 
-// Suppose that the columns of lpsbc are the interpolation points
-// (in barycentric coordinates) to interpolate degree r polynomials 
-// over a d simplex exactly.
-// 
-// Suppose that mis cointains a collection of multiindices
-// over a d simplex 
-// 
-// The output matrix is as follows:
-// - columns correspond to the interpolation points 
-// - rows correspond to the multiindices (Lagrange basis)
-// - the entries are value of the corresponding polynomial at the corresponding point
-// 
-// TODO Reread and compare with previous version 
-
-inline DenseMatrix EvaluationMatrix( std::vector<MultiIndex> mis, const DenseMatrix& lpsbc )
-{
-    
-    const int num_points = lpsbc.getdimin();
-    const int num_mis    = mis.size();    
-    const int dim        = lpsbc.getdimout() - 1;
-        
-    DenseMatrix ret( num_points, num_mis );
-    
-    for( int c = 0; c < num_mis;    c++ ) // c -> barycentric poly 
-    for( int r = 0; r < num_points; r++ ) // r -> interpolation point
-    {
-        assert( mis[c].getSourceRange().max() == dim+1 );
-        assert( mis[c].getSourceRange().min() == 0     );
-
-        ret(r,c) = 1.;
-        for( int d = 0; d <= dim; d++ )
-            if( mis[c][d] != 0 )
-                ret(r,c) *= power_numerical( lpsbc(d,r), mis[c][d] );
-    }
-    
-    return ret;
-    
-}
 
 
 
-// Given the Jacobian of the coordinate transformation, 
-// this produces a matrix that transform from Euclidean coordinates 
-// to barycentric coordinates 
 
-// inline DenseMatrix BarycentricProjectionMatrixALTERVERSUCH( const DenseMatrix& J )
-// {
-//     assert( J.getdimout() >= J.getdimin() );
-    
-//     // We implement J^+ = inv( J^t J ) J^t
-    
-//     const auto Jt = Transpose(J);
-    
-//     const auto F = Inverse( Jt * J ) * Jt; // n x d
-    
-//     DenseMatrix ret( J.getdimin()+1, J.getdimout(), 0.0 );
-    
-//     for( int r = 0; r < J.getdimin();  r++ )
-//     for( int c = 0; c < J.getdimout(); c++ )
-//         ret( r+1, c ) = F(r,c);
-    
-//     return ret;
-// }
+
+
+
+
+
+
+
+
+
 
 
 
@@ -231,13 +226,33 @@ inline DenseMatrix BarycentricProjectionMatrix( const DenseMatrix& J )
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // 
 // evaluate a field at given physical points 
 // and collect its values 
 // 
-// Given a k-differential formin dim dimensional ambient space 
+// Given a k-differential form in dim dimensional ambient space 
 // and lps being a matrix of size [outerdimension] x [var1]
 // we let the output be as follows.
+// 
+// Here, [var1] is the number of interpolation points.
 // 
 // The output is a matrix of size [dim choose k] x [var1]
 // whose column are the evaluations of the field 
@@ -245,27 +260,29 @@ inline DenseMatrix BarycentricProjectionMatrix( const DenseMatrix& J )
 // 
 
 inline DenseMatrix EvaluateField( 
-            int dim, int k,  
+            int outerdim, int k,  
             const DenseMatrix& lps, 
             std::function< FloatVector( const FloatVector& ) > field
             )
 {
     
-    assert( 0 <= dim );
-    assert( 0 <= k && k <= dim );
-    assert( lps.getdimout() == dim );
+    assert( 0 <= outerdim );
+    assert( 0 <= k && k <= outerdim );
+    assert( lps.getdimout() == outerdim );
     
-    const auto fielddim = binomial_integer(dim,k);
+    const auto fielddim = binomial_integer(outerdim,k);
     
-    DenseMatrix ret( fielddim, lps.getdimin() );
+    const auto number_of_evaluation_points = lps.getdimin();
     
-    for( int p = 0; p < lps.getdimin(); p++ )
+    DenseMatrix ret( fielddim, number_of_evaluation_points );
+    
+    for( int p = 0; p < number_of_evaluation_points; p++ )
     {
-        const auto point = lps.getcolumn(p);
+        const auto evaluation_point = lps.getcolumn(p);
         
-        const auto value = field( point );
+        const auto value = field( evaluation_point );
         
-        assert( value.getdimension() == binomial_integer( dim, k ) );
+        assert( value.getdimension() == binomial_integer( outerdim, k ) );
         
         ret.setcolumn( p, value );
     }
@@ -273,6 +290,11 @@ inline DenseMatrix EvaluateField(
     return ret;
     
 }
+
+
+
+
+
 
 
 
@@ -314,12 +336,13 @@ inline FloatVector Interpolation(
     
     FloatVector ret( m.count_simplices(dim) * SullivanSpanSize(dim,k,r) );
     
+    const int outerdim = m.getouterdimension();
     
     // lpsbc are the barycentric coordinates to interpolate 
     // degree r polynomials over a dim simplex 
     // [dim+1] x [number of lagrange points] 
     // 
-    // EM is the values of the Lagrange polynomials at those points 
+    // EM is the function values of the Lagrange polynomials at those points 
     // [n+r choose r] x [number of lagrange points] (actually, square)
     // 
     // EMinv is the inverse of EM.
@@ -327,7 +350,7 @@ inline FloatVector Interpolation(
     
     const auto lpsbc = InterpolationPointsBarycentricCoordinates( dim, r );
     
-    const auto EM = EvaluationMatrix( dim, r, lpsbc );
+    const auto EM = EvaluationMatrix( r, lpsbc );
         
     const auto EMinv = Inverse( EM );
     
@@ -384,7 +407,7 @@ inline FloatVector Interpolation(
         
         const auto InterpolationMatrix = MatrixTensorProduct( EMinv, P );
         
-        const auto Evaluations      = EvaluateField( dim, k, lps, field );
+        const auto Evaluations      = EvaluateField( outerdim, k, lps, field );
         const auto EvaluationVector = Evaluations.flattencolumns();
         
         const auto localResult = InterpolationMatrix * EvaluationVector;
@@ -403,6 +426,10 @@ inline FloatVector Interpolation(
         assert( localResult.isfinite()    );
 
         if( k == 0 ) {
+            
+            assert( ( P - DenseMatrix( 1, 1, 1. ) ).iszero() );
+            assert( ( InterpolationMatrix - EMinv ).iszero() );
+            
             if( !( EM * localResult - EvaluationVector ).issmall() ) {
                 LOG << EM * localResult << space << EvaluationVector << nl;
                 LOG << EM * localResult - EvaluationVector << nl;

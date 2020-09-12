@@ -32,7 +32,7 @@ int main()
             
             const auto lpsbc = InterpolationPointsBarycentricCoordinates( n, r );
             
-            const auto EM = EvaluationMatrix( n, r, lpsbc );
+            const auto EM = EvaluationMatrix( r, lpsbc );
         
             const auto EMinv = Inverse( EM );
         
