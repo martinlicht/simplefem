@@ -58,6 +58,8 @@ class MultiIndex final
 
                 int factorial() const;
                 
+                Float factorial_numerical() const;
+                
                 int min() const;
 
                 int max() const;

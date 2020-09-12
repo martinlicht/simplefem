@@ -123,10 +123,23 @@ int MultiIndex::absolute() const
 int MultiIndex::factorial() const
 {
     check();
+    
+    assert( absolute() <= largest_factorial_base<int>() );
     assert( absolute() <= 20 );
+
     int ret = 1;
     for( int p : getIndexRange()  )
         ret *= factorial_integer( at( p ) );
+    return ret;
+}
+
+Float MultiIndex::factorial_numerical() const
+{
+    check();
+    
+    Float ret = 1;
+    for( int p : getIndexRange()  )
+        ret *= ::factorial_numerical( at( p ) );
     return ret;
 }
 
