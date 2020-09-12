@@ -77,6 +77,8 @@ class ConvergenceTable
             {
                 
                 std::printf("%3d:\t",i);
+
+                assert( entries[i].size() == entries.front().size() );
                 
                 for( int j = 0; j < entries[i].size(); j++ )
                 {
@@ -84,10 +86,20 @@ class ConvergenceTable
                     std::printf("%.6Le\t", (long double) entries[i][j] ); 
                     
                     if( show_rates ){
-                        if( i == 0 )
+                        
+                        if( i == 0 ) {
+                            
                             std::printf("        --");
-                        else 
-                            std::printf("%10.3Le", (long double) std::log2( entries[i-1][j] / entries[i][j] ) );
+                        
+                        } else {
+                        
+                            if( entries[i][j] > 0. and entries[i-1][j] > 0. ) 
+                                std::printf("%10.3Le", (long double) std::log2( entries[i-1][j] / entries[i][j] ) );
+                            else
+                                std::printf("        $$");
+                        
+                        }
+                        
                         std::printf("\t");
                     }
                     
