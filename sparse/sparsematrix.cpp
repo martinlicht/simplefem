@@ -189,6 +189,17 @@ void SparseMatrix::apply( FloatVector& dest, const FloatVector& add, Float scali
 
 
 
+bool SparseMatrix::isfinite() const
+{
+    for( const MatrixEntry& rcv : entries )
+        if( not std::isfinite( rcv.value ) )
+            return false;
+    return true;
+}
+        
+        
+
+
 void SparseMatrix::reserve( int n ) const
 {
     entries.reserve( n );

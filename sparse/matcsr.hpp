@@ -55,6 +55,8 @@ public LinearOperator /* every matrix is a linear operator */
         virtual void print( std::ostream& ) const override;
         virtual void printplain( std::ostream& ) const;
 
+        bool isfinite() const;
+        
         int getnumberofentries() const;
         void sortentries() const;
         

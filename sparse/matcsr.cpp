@@ -198,6 +198,17 @@ void MatrixCSR::apply( FloatVector& dest, const FloatVector& add, Float scaling 
 
 
 
+bool MatrixCSR::isfinite() const 
+{
+    for( const Float& value : V )
+        if( not std::isfinite(value) ) 
+            return false;
+    return true;
+}
+
+
+
+
 
 int MatrixCSR::getnumberofentries() const 
 {

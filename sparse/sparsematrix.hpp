@@ -80,6 +80,8 @@ public LinearOperator /* every matrix is a linear operator */
         virtual void print( std::ostream& ) const override;
         virtual void printplain( std::ostream& ) const;
 
+        bool isfinite() const;
+        
         void reserve( int ) const;
         
         const MatrixEntry& getentry( int ) const;
