@@ -12,6 +12,7 @@ dirname := $(notdir $(shell pwd))
 depdir  := .deps
 
 sources      := $(wildcard *.cpp)
+headers      := $(wildcard *.hpp)
 objects      := $(patsubst %.cpp,%.o,$(sources))
 dependencies := $(patsubst %.cpp,.deps/%.d,$(sources))
 
@@ -31,14 +32,22 @@ $(objects): %.o: %.cpp | $(depdir)
 	@g++ -MM $*.cpp -MF .deps/$*.d
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< -c -o $@ 
 
+# .PHONY: $(headers)
+# $(headers): %.hpp : 
+# 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $@ -c -o /dev/null 
+
 
 # NOTE: Original recipe for the shared library, now there is just one object
 # $(sharedlibrary): $(objects)
 # 	$(CXX) $(CXXFLAGS) -shared -o $@ $^ $(LDLIBS)
 
-$(libraryobject): $(sources) .all.cpp | $(depdir)
+.all.o: $(sources) .all.cpp | $(depdir)
 	@g++ -MM .all.cpp -MF .deps/.all.d
+	@echo $(libraryobject)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) .all.cpp -c -o $@ 
+
+$(libraryobject): .all.o
+	cp .all.o $(libraryobject)
 
 $(sharedlibrary): $(libraryobject)
 	$(CXX) $(CXXFLAGS) -shared -o $@ $^ $(LDLIBS)
@@ -51,6 +60,7 @@ $(staticlibrary): $(libraryobject)
 
 
 
+-include $(depdir)/.all.d
 -include $(dependencies)
 
 *.o: ../common.recipe.mk ../common.rules.mk ../common.upkeep.mk ./makefile
