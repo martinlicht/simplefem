@@ -22,6 +22,7 @@
 std::vector<IndexMap> generateEmptyMap( const IndexRange& from, const IndexRange& to );
 
 
+std::vector<IndexMap> generateIndexMaps( const IndexRange& from );
 std::vector<IndexMap> generateIndexMaps( const IndexRange& from, const IndexRange& to );
 
 

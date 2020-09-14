@@ -32,6 +32,11 @@ std::vector<IndexMap> generateEmptyMap( const IndexRange& from, const IndexRange
 
 
 
+std::vector<IndexMap> generateIndexMaps( const IndexRange& range )
+{
+    return generateIndexMaps( range, range );
+}
+
 std::vector<IndexMap> generateIndexMaps( const IndexRange& from, const IndexRange& to )
 {
     
@@ -116,11 +121,22 @@ int signPermutation( const IndexMap& im )
     
     bool is_even = true;
     
-    for( int s = ir.min(); s <= ir.max(); s++ )
-    for( int t = s+1;      t <= ir.max(); t++ )
+//     for( int s = ir.min(); s <= ir.max(); s++ )
+//     for( int t = s+1;      t <= ir.max(); t++ )
+//     {
+//         assert( s < t );
+//         assert( im[s] != im[t] );
+//         if( im[s] > im[t] ) is_even = not is_even; 
+//     }
+
+    for( const int s : ir )
+    for( const int t : ir )
     {
+        if( s >= t ) continue;
         assert( s < t );
-        if( im[s] > im[t] ) is_even = not is_even; 
+        assert( im[s] != im[t] );
+        if( im[s] > im[t] )
+            is_even = not is_even; 
     }
     
     int ret = is_even ? 1 : -1;

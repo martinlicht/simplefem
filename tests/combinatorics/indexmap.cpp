@@ -14,57 +14,63 @@ int main()
 {
     cout << "Unit Test for Index Mapping" << endl;
 
-    const IndexRange irA( 2, 5 );
-    const IndexRange irB( 3, 5 );
+    const IndexRange irA(  2, 5 );
+    const IndexRange irB(  3, 5 );
     const IndexRange irC( -2, 2 );
-    const IndexRange irD( 0, 7 );
+    const IndexRange irD(  0, 7 );
+    const IndexRange irE(  0,-1 );
 
-    {
+    if(true){
       
-      cout << "Test Identity of usual interval" << endl;
+        cout << "Test Identity of usual interval" << endl;
         
-      const IndexMap id  = identityIndexMap( irA );
-      cout << id << endl;
-      
-      assert( id == identityIndexMap( irA.min(), irA.max() ) );
-      
-      for( int a : irA ) {
-        assert( id.rangecontains( a ) );
-        assert( id.preimageof( a ) == a );
-      }
-      
-      assert( id.isbijective()  );
-      assert( id.isinjective()  );
-      assert( id.issurjective() );
-      assert( id.isstrictlyascending() );
-      
-      assert( id.comparablewith( id ) );
-      assert( id.equals( id ) );
-      assert( ! id.less( id ) );
+        const IndexMap id  = identityIndexMap( irA );
+        cout << id << endl;
+        
+        id.check();
+        
+        assert( id == identityIndexMap( irA.min(), irA.max() ) );
+        
+        for( int a : irA ) {
+            assert( id.rangecontains( a ) );
+            assert( id.preimageof( a ) == a );
+            assert( id[ a ] == a );
+        }
+        
+        assert( id.isbijective()  );
+        assert( id.isinjective()  );
+        assert( id.issurjective() );
+        assert( id.isstrictlyascending() );
+        
+        assert( id.comparablewith( id ) );
+        assert( id.equals( id ) );
+        assert( not id.less( id ) );
       
     }
     
-    {
+    if(true){
       
-      cout << "Test Empty Index Map" << endl;
+        cout << "Test Empty Index Map" << endl;
         
-      const IndexMap leer  = identityIndexMap( IndexRange( 1, 0 ) );
-      cout << leer << endl;
-      
-      assert( leer == identityIndexMap( 1, 0 ) );
-      
-      assert( leer.isbijective()  );
-      assert( leer.isinjective()  );
-      assert( leer.issurjective() );
-      assert( leer.isstrictlyascending() );
-      
-      assert(   leer.comparablewith( leer ) );
-      assert(   leer.equals( leer ) );
-      assert( ! leer.less( leer ) );
+        const IndexMap leer  = identityIndexMap( irE );
+        cout << leer << endl;
+        
+        leer.check();
+        
+        assert( leer == identityIndexMap( IndexRange( 0,-1 ) ) );
+        
+        assert( leer.isbijective()  );
+        assert( leer.isinjective()  );
+        assert( leer.issurjective() );
+        assert( leer.isstrictlyascending() );
+        
+        assert( leer.comparablewith( leer ) );
+        assert( leer.equals( leer ) );
+        assert( not leer.less( leer ) );
       
     }
     
-    {
+    if(true){
 
         cout << "Test Injection and Surjection" << endl;
         
@@ -74,6 +80,7 @@ int main()
         inj[3] = 2; inj[4] = 3; inj[5] = 4;
         
         inj.check();
+        
         assert( inj.isinjective() );
         assert( !inj.issurjective() );
         assert( inj.getSourceRange() == irB );
@@ -88,6 +95,7 @@ int main()
         sur[4] = 3; sur[5] = 5; sur[6] = 4; sur[7] = 3;
 
         sur.check();
+        
         assert( !sur.isinjective() );
         assert( sur.issurjective() );
         assert( sur.getSourceRange() == irD );
@@ -97,9 +105,13 @@ int main()
         const IndexMap prod = inj * sur;
         cout << inj << sur << prod << endl;
         
+        prod.check();
+        
         IndexMap test( irD, irA, {3,2,4,3,2,4,3,2} );
         test[0] = 3; test[1] = 2; test[2] = 4; test[3] = 3;
         test[4] = 2; test[5] = 4; test[6] = 3; test[7] = 2;
+        
+        test.check();
         
         assert( prod.comparablewith( test ) );
         assert( prod == test );
@@ -108,7 +120,7 @@ int main()
         assert( test.preimageof( 3 ) == 0 );
         assert( test.rangecontains( 2 ) );
         assert( test.preimageof( 2 ) == 1 );
-        assert( ! test.rangecontains( 5 ) );
+        assert( not test.rangecontains( 5 ) );
         
     }
 

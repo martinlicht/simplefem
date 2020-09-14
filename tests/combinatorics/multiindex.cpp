@@ -22,22 +22,41 @@ int main()
         IndexRange irA( 2, 5 );
         MultiIndex miA( irA );
         
-        cout << "Before adding" << endl;
-        cout << miA << endl;
-        miA += 4;
-        miA += 4;
-        miA += 2;
-        miA += 2;
-        miA += 2;
-        cout << "After adding" << endl;
-        cout << miA << endl;
-        cout << "Absolute and factorial" << endl;
-        cout << miA.absolute() << space << miA.factorial() << endl;
-        cout << endl;
+        assert( miA.absolute() == 0 );
+        assert( miA.factorial() == 1 );
         
-        cout << "Assignment" << endl;
-        miA[3] = 7;
-        cout << miA << endl;
+        miA += 4;
+
+        assert( miA.absolute() == 1 );
+        assert( miA.factorial() == 1 );
+        
+        miA += 4;
+        
+        assert( miA.absolute() == 2 );
+        assert( miA.factorial() == 2 );
+        
+        miA += 2;
+
+        assert( miA.absolute() == 3 );
+        assert( miA.factorial() == 2 );
+        
+        miA += 2;
+        
+        assert( miA.absolute() == 4 );
+        assert( miA.factorial() == 4 );
+        
+        miA += 2;
+
+        assert( miA[2] == 3 and miA[3] == 0 and miA[4] == 2 and miA[5] == 0 );
+        assert( miA.absolute() == 5 );
+        assert( miA.factorial() == 2 * 6 );
+        
+        miA[3] = 5;
+        
+        assert( miA[2] == 3 and miA[3] == 5 and miA[4] == 2 and miA[5] == 0 );
+        assert( miA.absolute() == 10 );
+        assert( miA.factorial() == 2 * 6 * 5*4*3*2*1 );
+        
     }
     
     {
@@ -45,14 +64,15 @@ int main()
         
         IndexRange irA( 2, 5 );
         IndexRange irB( 1, 4 );
+        
         MultiIndex miA1( irA );
         MultiIndex miA2( irA );
         MultiIndex miB ( irB );
         
         assert( miA1.comparablewith( miA2 ) );
         assert( miA2.comparablewith( miA1 ) );
-        assert( ! miA1.comparablewith( miB ) );
-        assert( ! miB.comparablewith( miA1 ) );
+        assert( not miA1.comparablewith( miB ) );
+        assert( not miB.comparablewith( miA1 ) );
         
         miA1 += 4;
         miA1 += 4;

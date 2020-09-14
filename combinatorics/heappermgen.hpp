@@ -11,17 +11,35 @@
 *** 
 ***  Generate Permutations using Heaps algorithm
 ***  
-***  Init - initiliazes the auxiliary data: i and c
+***  The variables `seed` and `memo` are just auxiliary data,
+***  whereas `perm` contains the proper data.
+***  
+***  Init - initiliazes the auxiliary data: `seed` and `memo`
 ***  
 ***  Step - Returns true if a has experienced a transposition
 ***         Returns false if a has not been changed.
 ***         Supposed to be used in a do-while loop.
 ***  
+***  
+***  
+***  Typicall usage:
+***  
+***  HeapsAlgorithmInit( seed, memo, perm );
+***  
+***  do { 
+***  
+***     do_stuff_with( perm );
+***  
+***  } while( HeapsAlgorithmInit( seed, memo, perm ) );
+***  
+***  
+***  
+***  
 ***************/
 
-void HeapsAlgorithmInit( int& i, std::vector<int>& c, const std::vector<int>& a );
+void HeapsAlgorithmInit( int& seed, std::vector<int>& memo, const std::vector<int>& perm );
 
-bool HeapsAlgorithmStep( int& i, std::vector<int>& c, std::vector<int>& a );
+bool HeapsAlgorithmStep( int& seed, std::vector<int>& memo,       std::vector<int>& perm );
 
 
 #endif

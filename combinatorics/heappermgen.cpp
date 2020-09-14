@@ -9,37 +9,37 @@
 
 
 
-void HeapsAlgorithmInit( int& i, std::vector<int>& c, const std::vector<int>& a )
+void HeapsAlgorithmInit( int& i, std::vector<int>& memo, const std::vector<int>& perm )
 {
     i = 0;
-    assert( c.size() == a.size() );
-    for( int j = 0; j < c.size(); j++ ) c[i] = 0;
+    assert( memo.size() == perm.size() );
+    for( int j = 0; j < memo.size(); j++ ) memo[i] = 0;
 }
 
 
-bool HeapsAlgorithmStep( int& i, std::vector<int>& c, std::vector<int>& a )
+bool HeapsAlgorithmStep( int& i, std::vector<int>& memo, std::vector<int>& perm )
 {
-    const int n = c.size();
-    assert( c.size() == a.size() );
+    const int n = memo.size();
+    assert( memo.size() == perm.size() );
     assert( 0 <= i && i <= n );
 
     while( i < n ) {
         
-        if( c[i] < i ) {
+        if( memo[i] < i ) {
             
             if( i % 2 == 0 ) {
-                std::swap( a[  0 ], a[i] );
+                std::swap( perm[     0 ], perm[i] );
             } else {
-                std::swap( a[c[i]], a[i] );
+                std::swap( perm[memo[i]], perm[i] );
             }
             
-            c[i]++;
+            memo[i]++;
             i = 0;
             return true;
             
         } else {
             
-            c[i] = 0;
+            memo[i] = 0;
             i++;
             
         }
