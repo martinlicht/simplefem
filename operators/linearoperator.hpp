@@ -26,21 +26,28 @@ class LinearOperator
     public:
         
         explicit LinearOperator() = delete;
-        explicit LinearOperator( const LinearOperator& ) = default;
-        explicit LinearOperator( LinearOperator&& ) = default;
-        LinearOperator& operator=( const LinearOperator& vec ) = default;
-        LinearOperator& operator=( LinearOperator&& vec ) = default;
-        virtual ~LinearOperator();
-
+        
         explicit LinearOperator( int, int );
 
-        virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& {
+        
+        explicit LinearOperator( const LinearOperator& )       = default;
+        explicit LinearOperator( LinearOperator&& )            = default;
+        LinearOperator& operator=( const LinearOperator& vec ) = default;
+        LinearOperator& operator=( LinearOperator&& vec )      = default;
+        
+        virtual ~LinearOperator();
+
+        virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const&
+        {
             unreachable();
         }
         
-        virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && {
+        virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() &&
+        {
             unreachable();
         }
+        
+        
         
         int getdimin() const;
 

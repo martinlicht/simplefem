@@ -30,12 +30,10 @@ class IndexMap
     
     public:
         
-//         explicit IndexMap( const IndexRange& );
         IndexMap( const IndexRange&, const std::vector<int>& );
         IndexMap( const IndexRange&, const std::function<int(int)>& );
         IndexMap( const IndexRange&, const std::initializer_list<int>& );
         
-//         IndexMap( const IndexRange&, const IndexRange& );
         IndexMap( const IndexRange&, const IndexRange&, const std::vector<int>& );
         IndexMap( const IndexRange&, const IndexRange&, const std::function<int(int)>& );
         IndexMap( const IndexRange&, const IndexRange&, const std::initializer_list<int>& );
@@ -45,6 +43,7 @@ class IndexMap
         IndexMap& operator =( const IndexMap& ) = default;
         IndexMap( IndexMap&& )                  = default;
         IndexMap& operator =( IndexMap&& )      = default;
+        
         virtual ~IndexMap()                     = default; // dtor virtualization is a bit shady here
         
         void check() const;

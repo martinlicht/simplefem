@@ -46,6 +46,7 @@ std::vector<MultiIndex> generateMultiIndices( const IndexRange& ir, int degree )
         }
         
         mi_candidate.check();
+        
         if( mi_candidate.absolute() == degree )
             ret.push_back( mi_candidate );
         

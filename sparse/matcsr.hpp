@@ -35,21 +35,20 @@ public LinearOperator /* every matrix is a linear operator */
         MatrixCSR( MatrixCSR&& );
         MatrixCSR& operator=( MatrixCSR&& );
 
-        virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
+        virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override
+        {
             std::shared_ptr<MatrixCSR> cloned = std::make_shared<MatrixCSR>( *this );
             return cloned;
         }
         
-        virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {
+        virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override
+        {
             std::unique_ptr<MatrixCSR> heir = std::make_unique<MatrixCSR>( std::move(*this) );
             return heir;
         }
         
         
-
-//         explicit MatrixCSR( const ScalingOperator& matrix );
-//         explicit MatrixCSR( const DiagonalOperator& matrix );
-//         explicit MatrixCSR( const DenseMatrix& );
+        
         
         virtual void check() const override;
         virtual void print( std::ostream& ) const override;

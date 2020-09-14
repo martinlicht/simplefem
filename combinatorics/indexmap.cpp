@@ -64,13 +64,13 @@ IndexMap::IndexMap( const IndexRange& from, const IndexRange& to, const std::fun
 IndexMap::IndexMap( const IndexRange& range, const std::initializer_list<int>& values )
 : IndexMap( range, std::vector<int>(values) )
 {
-  IndexMap::check();
+    IndexMap::check();
 }
 
 IndexMap::IndexMap( const IndexRange& from, const IndexRange& to, const std::initializer_list<int>& values )
 : IndexMap( from, to, std::vector<int>(values) )
 {
-  IndexMap::check();
+    IndexMap::check();
 }
 
 

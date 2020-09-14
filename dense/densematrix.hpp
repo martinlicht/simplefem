@@ -15,7 +15,6 @@ class SparseMatrix;
 #include "../operators/linearoperator.hpp"
 #include "../operators/simpleoperators.hpp"
 #include "../sparse/sparsematrix.hpp"
-// #include "matrixalgorithm.hpp"
 
 
 
@@ -53,12 +52,14 @@ class DenseMatrix final
         
         virtual ~DenseMatrix();
         
-        virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
+        virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override 
+        {
             std::shared_ptr<DenseMatrix> cloned = std::make_shared<DenseMatrix>( *this );
             return cloned;
         }
         
-        virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {
+        virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override 
+        {
             std::unique_ptr<DenseMatrix> heir = std::make_unique<DenseMatrix>( std::move(*this) );
             return heir;
         }
@@ -204,36 +205,29 @@ inline DenseMatrix IdentityMatrix( int dim )
 
 inline DenseMatrix MatrixMult( const DenseMatrix& left, const DenseMatrix& right )
 {
-  left.check();
-  right.check();
-  
-  const int lin = left.getdimin();
-  const int lout = left.getdimout();
-  const int rin = right.getdimin();
-  const int rout = right.getdimout();
-  
-  assert( lin == rout );
-  
-  DenseMatrix ret( lout, rin );
-  ret.zeromatrix();
-  
-  for( int lo = 0; lo < lout; lo++ )
-  for( int ri = 0; ri < rin; ri++ )
-  for( int m = 0; m < rout; m++ )
-  ret( lo, ri ) += left( lo, m ) * right( m, ri );
-  
-  ret.check();
-  return ret;
-  
+    left.check();
+    right.check();
+
+    const int lin = left.getdimin();
+    const int lout = left.getdimout();
+    const int rin = right.getdimin();
+    const int rout = right.getdimout();
+
+    assert( lin == rout );
+
+    DenseMatrix ret( lout, rin );
+    ret.zeromatrix();
+
+    for( int lo = 0; lo < lout; lo++ )
+    for( int ri = 0; ri < rin; ri++ )
+    for( int m = 0; m < rout; m++ )
+    ret( lo, ri ) += left( lo, m ) * right( m, ri );
+
+    ret.check();
+    return ret;
 }
 
 
-extern Float Determinant( const DenseMatrix& );
-
-inline Float determinant( const DenseMatrix& mat ) 
-{
-  return Determinant(mat);
-}
 
 
 

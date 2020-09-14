@@ -470,7 +470,7 @@ DenseMatrix SubdeterminantMatrixSquare( const DenseMatrix& A, int k )
     for( int rim = 0; rim < sigmas.size(); rim++ )
     for( int cim = 0; cim < sigmas.size(); cim++ )
     {
-        ret(rim,cim) = determinant( A.submatrix( sigmas.at(rim), sigmas.at(cim) ) );
+        ret(rim,cim) = Determinant( A.submatrix( sigmas.at(rim), sigmas.at(cim) ) );
     }
     
     ret.check();
@@ -497,7 +497,7 @@ DenseMatrix SubdeterminantMatrix( const DenseMatrix& A, int k )
     for( int rim = 0; rim < sigmas_rows.size(); rim++ )
     for( int cim = 0; cim < sigmas_cols.size(); cim++ )
     {
-        ret(rim,cim) = determinant( A.submatrix( sigmas_rows.at(rim), sigmas_cols.at(cim) ) );
+        ret(rim,cim) = Determinant( A.submatrix( sigmas_rows.at(rim), sigmas_cols.at(cim) ) );
     }
     
     ret.check();

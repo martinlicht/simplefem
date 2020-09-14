@@ -5,14 +5,11 @@
 #include <utility>
 #include <vector>
 
-// class SparseMatrix;
-// class MatrixEntry;
-
 #include "../basic.hpp"
 #include "../operators/linearoperator.hpp"
 #include "../operators/simpleoperators.hpp"
-#include "../dense/densematrix.hpp"
 
+class DenseMatrix;
 
 
 /************************
@@ -66,7 +63,8 @@ public LinearOperator /* every matrix is a linear operator */
         SparseMatrix( SparseMatrix&& );
         SparseMatrix& operator=( SparseMatrix&& );
 
-        virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
+        virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override
+        {
             std::shared_ptr<SparseMatrix> cloned = std::make_shared<SparseMatrix>( *this );
             return cloned;
         }
@@ -121,37 +119,6 @@ SparseMatrix operator&( const SparseMatrix& left, const SparseMatrix& right );
 
 SparseMatrix SparseMatrixMultiplication( const SparseMatrix& left, const SparseMatrix& right );
 
-
-
-inline static DiagonalOperator InverseDiagonalPreconditioner( const SparseMatrix& mat )
-{
-
-    assert( mat.getdimin() == mat.getdimout() );
-
-    FloatVector diag( mat.getdimin(), 0. );
-
-    const std::vector<SparseMatrix::MatrixEntry>& entries = mat.getentries();
-
-    for( const auto& entry : entries )
-        if( entry.row == entry.column ) 
-            diag.at( entry.row ) += absolute( entry.value );
-
-//     for( int i = 0; i < diag.getdimension(); i++ )
-//         assert( diag.at( i ) > 0. );
-    
-    for( int i = 0; i < diag.getdimension(); i++ )
-        if( not issmall( diag.at( i ) ) )
-            diag.at( i ) = 1. / diag.at( i );
-        else
-            diag.at( i ) = 0.;
-    
-    return DiagonalOperator( diag );
-
-}
-
-
-
-
 inline SparseMatrix operator*( const SparseMatrix& mat, Float s )
 {
     auto foo = mat;
@@ -165,6 +132,17 @@ inline SparseMatrix operator*( Float s, const SparseMatrix& mat )
     foo.scale(s);
     return foo;
 }
+
+
+
+
+
+
+
+DiagonalOperator InverseDiagonalPreconditioner( const SparseMatrix& mat );
+
+
+
 
 
 

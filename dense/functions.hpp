@@ -10,8 +10,11 @@
  // Tranpose, in-place
 
 DenseMatrix Transpose( const DenseMatrix& ); 
+
 void TransposeInSitu( DenseMatrix& );
+
 DenseMatrix TransposeSquare( const DenseMatrix& ); 
+
 void TransposeSquareInSitu( DenseMatrix& ); 
 
 

@@ -21,13 +21,14 @@
 
 std::vector<IndexMap> generateEmptyMap( const IndexRange& from, const IndexRange& to );
 
+
 std::vector<IndexMap> generateIndexMaps( const IndexRange& from, const IndexRange& to );
+
 
 std::vector<IndexMap> generatePermutations( const IndexRange& ir );
 
-// std::vector<IndexMap> generateTransposition( const IndexRange& ir, int uno, int duo );
-
 int signPermutation( const IndexMap& im );
+
 
 std::vector<IndexMap> generateSigmas( const IndexRange& from, const IndexRange& to );
 

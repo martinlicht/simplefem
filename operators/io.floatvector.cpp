@@ -37,7 +37,7 @@ void writeFloatVector( std::ostream& out, const FloatVector& vec )
 {
     out << vec.getdimension() << std::endl;
     for( int p = 0; p < vec.getdimension(); p++ )
-      out << vec.at(p) << std::endl;
+        out << vec.at(p) << std::endl;
 }
 
 FloatVector readFloatVector( std::istream& in )
@@ -46,7 +46,7 @@ FloatVector readFloatVector( std::istream& in )
     in >> dim;
     FloatVector vec( dim );
     for( int p = 0; p < vec.getdimension(); p++ )
-      in >> vec.at(p);
+        in >> vec.at(p);
     return vec;
 }
 
