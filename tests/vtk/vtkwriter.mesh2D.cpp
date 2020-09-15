@@ -60,11 +60,10 @@ inline void print( const MeshSimplicial2D& M, std::string meshname )
 
 int main()
 {
-    cout << "Unit Test for VTK output of Simplicial Mesh" << endl;
+    cout << "Unit Test for VTK output of Simplicial Mesh (2D)" << endl;
     
     {
         
-        // MeshSimplicial2D M = UnitSquare();
         const MeshSimplicial2D Mx = StandardSquare2D_strange14();  std::string meshname = "Standard Square 2D";
 //         const MeshSimplicial2D Mx = UnitedKingdom();               std::string meshname = "United Kingdom"; 
         

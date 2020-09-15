@@ -59,11 +59,10 @@ inline void print( const MeshSimplicial3D& M, std::string meshname )
 
 int main()
 {
-    cout << "Unit Test for VTK output of Simplicial Mesh" << endl;
+    cout << "Unit Test for VTK output of Simplicial Mesh (3D)" << endl;
     
     {
         
-        // MeshSimplicial2D M = UnitSquare();
         const MeshSimplicial3D Mx = StandardCube3D();  std::string meshname = "Standard Cube 3D";
         
         print( Mx, meshname );

@@ -61,11 +61,10 @@ inline void print( const MeshSimplicial1D& M, std::string meshname )
 
 int main()
 {
-    cout << "Unit Test for VTK output of Simplicial Mesh" << endl;
+    cout << "Unit Test for VTK output of Simplicial Mesh (1D)" << endl;
     
     {
         
-        // MeshSimplicial2D M = UnitSquare();
         MeshSimplicial1D Mx = StandardInterval1D(); string meshname = string("One-dimensional Test Mesh: ") + getbasename(__FILE__);
         
         print( Mx, meshname );
