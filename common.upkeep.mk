@@ -26,13 +26,14 @@ vtkclean:
 
 .PHONY: dependclean
 dependclean:
-	-if [ -d .deps/ ]; then rm -f .deps/*.d; fi 
+	-if [ -d .deps/ ]; then rm -f .deps/*.d .deps/.all.d; fi 
 	-if [ -d .deps/ ]; then rmdir .deps/; fi 
 
 .PHONY: clean
 clean: vtkclean dependclean
+	-rm -f OUTPUT_CPPLINT.txt
 	-rm -f callgrind.out.*
-	-rm -f *.o *.d *.so *.gch
+	-rm -f .all.o *.o *.d *.so *.gch
 	-rm -f *.exe *.exe.stackdump
 	-rm -f *.out *.out.stackdump 
 

@@ -355,10 +355,10 @@ endif
 
 # Optimization 
 
-CXXFLAGS_OPTIMIZE := -Ofast
-CXXFLAGS_OPTIMIZE += -march=native $(OPENMP_FLAG)
+CXXFLAGS_OPTIMIZE := -O1
+#CXXFLAGS_OPTIMIZE += -march=native $(OPENMP_FLAG)
 # CXXFLAGS_OPTIMIZE := -inline-threshold=1200
-CXXFLAGS_OPTIMIZE += -flto
+#CXXFLAGS_OPTIMIZE += -flto
 
 ifeq ($(FLAG_CXX),GCC)
 ifeq ($(FLAG_DO_STRIP),yes)

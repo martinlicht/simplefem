@@ -10,7 +10,7 @@ $(context).runs        := $(patsubst %.cpp,%.run,$($(context).sources))
 # .PHONY: %.run
 
 $($(context).runs): %.run : %.out
-	@./$< > /dev/null
+	./$< > /dev/null
 
 $(context).run: $($(context).runs)
 
