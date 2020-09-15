@@ -22,9 +22,9 @@ int main()
     {
         
         // MeshSimplicial2D M = UnitCubeTriangulation(3,3);
-        MeshSimplicial2D M = StandardSquare2D();
+        MeshSimplicial2D M = StandardSquare2D_strange14();
         
-        cout << M << endl;
+//         cout << M << endl;
 
                 cout << "Print VTK-type file" << endl;
                 

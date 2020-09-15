@@ -302,7 +302,7 @@ bool IndexMap::less( const IndexMap& im ) const
 IndexMap expand_zero( const IndexMap& im, int p )
 {
     const auto& src_range = im.getSourceRange();
-    const auto& dst_range = im.getDestRange();
+    const auto& dst_range = im.getTargetRange();
     
     assert( not dst_range.isempty() );
     assert( dst_range.min() == 0    );
@@ -328,7 +328,7 @@ IndexMap expand_zero( const IndexMap& im, int p )
 IndexMap expand_one( const IndexMap& im, int p )
 {
     const auto& src_range = im.getSourceRange();
-    const auto& dst_range = im.getDestRange();
+    const auto& dst_range = im.getTargetRange();
     
     assert( not dst_range.isempty() );
     assert( dst_range.min() == 0    );

@@ -41,7 +41,8 @@ inline MeshSimplicial2D StandardSquare2D()
     );
 }
 
-inline MeshSimplicial2D StandardSquare2D_Alternative()
+
+inline MeshSimplicial2D StandardSquare2D_alternative()
 {
     return MeshSimplicial2D(
       2,
@@ -54,6 +55,50 @@ inline MeshSimplicial2D StandardSquare2D_Alternative()
       {
         { 0, 1, 2 },
         { 0, 1, 3 }
+      }
+    );
+}
+
+
+inline MeshSimplicial2D StandardSquare2D_strange14()
+{
+    return MeshSimplicial2D(
+      2,
+      Coordinates( 2, 12, {
+        -1.0, -1.0, // 0
+        -1.0,  1.0, // 1
+         1.0, -1.0, // 2
+         1.0,  1.0, // 3
+         //
+        -1.0, 0.1, // 4
+        -0.2,-1.0, // 5
+         0.3, 1.0,  // 6
+         1.0,-0.2,  // 7
+         //
+        -0.3, -0.5, // 8
+        -0.4,  0.4, // 9
+         0.4, -0.5, // A
+         0.5,  0.3, // B
+         //
+        
+      } ),
+      {
+        {  0,  4,  8 },
+        {  0,  5,  8 },
+        {  5,  8, 10 },
+        {  2,  5, 10 },
+        {  2,  7, 10 },
+        
+        {  4,  8,  9 },
+        {  8,  9, 11 },
+        {  8, 10, 11 },
+        {  7, 10, 11 },
+        
+        {  1,  4,  9 },
+        {  1,  6,  9 },
+        {  6,  9, 11 },
+        {  3,  6, 11 },
+        {  3,  7, 11 } 
       }
     );
 }
@@ -90,7 +135,45 @@ inline MeshSimplicial2D StandardSquare2D_centered()
 
 
 
+inline MeshSimplicial2D UnitSquare2D()
+{
+    auto M = StandardSquare2D();
+    
+    M.getcoordinates().shift( {1.,1.} );
+    M.getcoordinates().scale( 0.5 );
+    
+    return M;
+}
 
+inline MeshSimplicial2D UnitSquare2D_alternative()
+{
+    auto M = StandardSquare2D_alternative();
+    
+    M.getcoordinates().shift( {1.,1.} );
+    M.getcoordinates().scale( 0.5 );
+    
+    return M;
+}
+
+inline MeshSimplicial2D UnitSquare2D_centered()
+{
+    auto M = StandardSquare2D_centered();
+    
+    M.getcoordinates().shift( {1.,1.} );
+    M.getcoordinates().scale( 0.5 );
+    
+    return M;
+}
+
+inline MeshSimplicial2D UnitSquare2D_strange14()
+{
+    auto M = StandardSquare2D_strange14();
+    
+    M.getcoordinates().shift( {1.,1.} );
+    M.getcoordinates().scale( 0.5 );
+    
+    return M;
+}
 
 
 
