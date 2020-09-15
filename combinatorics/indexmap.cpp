@@ -293,6 +293,77 @@ bool IndexMap::less( const IndexMap& im ) const
 
 
 
+
+
+
+
+
+
+IndexMap expand_zero( const IndexMap& im, int p )
+{
+    const auto& src_range = im.getSourceRange();
+    const auto& dst_range = im.getDestRange();
+    
+    assert( not dst_range.isempty() );
+    assert( dst_range.min() == 0    );
+    
+    if( src_range.isempty() ) {
+        
+        return IndexMap( IndexRange(0,0), dst_range, {p} );
+        
+    } else {
+        
+        assert( src_range.min() == 0 );
+        auto new_values = im.getvalues();
+        new_values.push_back( p );
+        std::sort( new_values.begin(), new_values.end() );
+        const auto ret = IndexMap( IndexRange(0,src_range.max()+1), dst_range, new_values );
+        assert( ret.isstrictlyascending() );
+        return ret;
+        
+    }
+}
+
+
+IndexMap expand_one( const IndexMap& im, int p )
+{
+    const auto& src_range = im.getSourceRange();
+    const auto& dst_range = im.getDestRange();
+    
+    assert( not dst_range.isempty() );
+    assert( dst_range.min() == 0    );
+    
+    if( src_range.isempty() ) {
+        
+        return IndexMap( IndexRange(1,1), dst_range, {p} );
+        
+    } else {
+        
+        assert( src_range.min() == 1 );
+        auto new_values = im.getvalues();
+        new_values.push_back( p );
+        std::sort( new_values.begin(), new_values.end() );
+        const auto ret = IndexMap( IndexRange(1,src_range.max()+1), dst_range, new_values );
+        assert( ret.isstrictlyascending() );
+        return ret;
+        
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // IndexMap IndexMap::skip( int i ) const 
 // {
 //     check();
