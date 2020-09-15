@@ -6,6 +6,7 @@
 #include <fstream>
 
 #include "../../basic.hpp"
+#include "../../utility/utility.hpp"
 #include "../../operators/floatvector.hpp"
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.hpp"
@@ -16,42 +17,84 @@
 
 using namespace std;
 
+
+
+
+
+
+inline void print( const MeshSimplicial1D& M, std::string meshname )
+{
+    
+    fstream fs( experimentfile( getbasename(__FILE__)), std::fstream::out );
+    
+    VTKWriter vtk( M, fs, meshname );
+    vtk.writeCoordinateBlock();
+    vtk.writeTopDimensionalCells();
+    
+    {
+        FloatVector V( M.count_simplices(0), 
+                        [&M](int i)->Float{
+                        FloatVector point = M.getcoordinates().getvectorclone(i);
+                        return std::sin( 10 * 2 * 3.14159 * point[1] );
+                    });
+        
+        vtk.writeVertexScalarData( V, "testing_scalar_data", 1.0 );
+    }
+    
+    vtk.writeCellScalarData( FloatVector(M.count_simplices(1), 2.5 ), "cell_scalar_data" );
+    
+    vtk.writeCellVectorData( 
+        FloatVector( M.count_simplices(1),  1.5 ),
+        FloatVector( M.count_simplices(1),  2.5 ),
+        FloatVector( M.count_simplices(1), -3.5 ),
+        "cell_vector_data"
+    );
+
+    fs.close();
+}
+
+
+
+
+
+
+
 int main()
 {
     cout << "Unit Test for VTK output of Simplicial Mesh" << endl;
     
     {
         
-        // MeshSimplicial1D M = UnitCubeTriangulation(3,3);
-        MeshSimplicial1D M = StandardInterval1D();
+        // MeshSimplicial2D M = UnitSquare();
+        MeshSimplicial1D Mx = StandardInterval1D(); string meshname = string("One-dimensional Test Mesh: ") + getbasename(__FILE__);
         
-        cout << M << endl;
+        print( Mx, meshname );
         
-        cout << "Print VTK-type file" << endl;
         
-        fstream fs( "./gitter.vtk", std::fstream::out );
         
+        
+        if(true)
         {
             
-            VTKWriter vtk( M, fs, "One-dimensional Test Mesh" );
-            vtk.writeCoordinateBlock();
-            vtk.writeTopDimensionalCells();
+            auto M = Mx;
             
-            vtk.writeVertexScalarData( FloatVector(M.count_simplices(0), 1.5 ), "vertex_scalar_data" );
-            vtk.writeCellScalarData( FloatVector(M.count_simplices(1), 2.5 ), "cell_scalar_data" );
-            vtk.writeCellVectorData( 
-                FloatVector(M.count_simplices(1),  1.5 ),
-                FloatVector(M.count_simplices(1),  2.5 ),
-                FloatVector(M.count_simplices(1), -3.5 ),
-                "cell_vector_data"
-            );
+            for( int c = 0; c < 6; c++ ) {
             
+                M.uniformrefinement();
+                
+                print( M, meshname );
             
+            }
             
-        }
+        }    
         
-        fs.close();
         
+        
+        
+        
+        
+        
+
     }
     
     cout << "Finished Unit Test" << endl;

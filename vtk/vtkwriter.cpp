@@ -2,7 +2,7 @@
 #include "vtkwriter.hpp"
 
 
-VTKWriter::VTKWriter( Mesh& mesh, std::ostream& os, const std::string& name )
+VTKWriter::VTKWriter( const Mesh& mesh, std::ostream& os, const std::string& name )
 : mesh(mesh), os(os), current_stage(Stage::nothing)
 {
     mesh.check();

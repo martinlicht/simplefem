@@ -54,15 +54,15 @@ inline std::string experimentfile( const std::string& basename )
 
 inline std::string getbasename( const std::string& path )
 {
-      std::size_t begin = path.find_last_of("/");
-      std::size_t   end = path.find_last_of(".");
-      assert( begin != std::string::npos );
-      assert( end   != std::string::npos );
-      assert( end > begin+1 );
-      if( begin == std::string::npos ) begin = 0;
-      if( end   == std::string::npos ) end   = path.length();
+      std::size_t last_slash = path.find_last_of("/");
+      std::size_t last_dot   = path.find_last_of(".");
       
-      return path.substr(begin+1,end-begin-1);
+      assert( last_dot != std::string::npos );
+      
+      int begin = ( last_slash != std::string::npos ) ? ( last_slash+1 ) : 0;
+      int end   = last_dot;
+      
+      return path.substr(begin,end-begin);
 }
 
 

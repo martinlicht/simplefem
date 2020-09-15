@@ -78,7 +78,7 @@ int main()
         const int l_max = 4;
         
         
-        const int r_plus = 2;
+        const int r_plus = 4;
         
         
         for( int l = 0; l < l_min; l++ )

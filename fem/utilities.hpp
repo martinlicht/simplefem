@@ -78,19 +78,21 @@ inline DenseMatrix InterpolationPointsBarycentricCoordinates( int n, int r )
     const auto multi_indices = generateMultiIndices( IndexRange(0,n), r );
     
     assert( multi_indices.size() == binomial_integer( n+r, r ) );
-    for( int i = 0; i < multi_indices.size(); i++ ) assert( multi_indices[i].absolute() == r );
+    for( const auto& mi : multi_indices ) assert( mi.absolute() == r );
     
     const Float delta = 0.1;
     
     DenseMatrix ret( n+1, static_cast<int>( multi_indices.size() ) );
+    
+    assert( ret.getdimout() == n+1 );
+    assert( ret.getdimin() == multi_indices.size() );
     
     assert( delta > 0 );
     
     for( int i = 0; i < multi_indices.size(); i++ )
         ret.setcolumn( i, FloatVector( multi_indices[i].getvalues() ).shift( delta ).scaleinverse( r + (n+1) * delta ) );
 
-    //if( r != 0 )
-    for( int i = 0; i < multi_indices.size(); i++ ) {
+    for( int i = 0; i < ret.getdimout(); i++ ) {
         assert( ret.getcolumn(i).isnonnegative() );
         assert( ret.getcolumn(i).sumnorm() > 0.9999 && ret.getcolumn(i).sumnorm() < 1.0001 );
     }
@@ -117,17 +119,16 @@ inline DenseMatrix InterpolationPointsBarycentricCoordinates( int n, int r )
 
 
 // 
-// Suppose that the columns of lpsbc are the interpolation points
-// (in barycentric coordinates) to interpolate degree r polynomials 
-// over a d simplex exactly.
+// Suppose that the columns of bcs are evaluation points
+// (in barycentric coordinates) over a d simplex.
 // 
 // The output matrix is as follows:
-// - rows correspond to the interpolation points 
-// - columns correspond to the multiindices (Lagrange basis)
+// - rows correspond to the evaluation points 
+// - columns correspond to the multiindices (standard Lagrange basis of degree r)
 // - the entries are value of the corresponding polynomial at the corresponding point
 // 
 // Size of returned matrix:
-// [ n+r choose r ] x [ n+r choose r ]
+// [ n+r choose r ] x [ number of evaluation points ]
 
 inline DenseMatrix EvaluationMatrix( int r, const DenseMatrix& bcs )
 {
@@ -218,9 +219,10 @@ inline DenseMatrix BarycentricProjectionMatrix( const DenseMatrix& J )
     for( int c = 0; c < J.getdimout(); c++ )
         ret( r+1, c ) = F(r,c);
     
+    assert( ret.isfinite() );
+    
     return ret;
 }
-
 
 
 
@@ -252,11 +254,11 @@ inline DenseMatrix BarycentricProjectionMatrix( const DenseMatrix& J )
 // and lps being a matrix of size [outerdimension] x [var1]
 // we let the output be as follows.
 // 
-// Here, [var1] is the number of interpolation points.
+// Here, [var1] is the number of evaluation points.
 // 
 // The output is a matrix of size [dim choose k] x [var1]
 // whose column are the evaluations of the field 
-// at each of the interpolation points.
+// at each of the evaluation points.
 // 
 
 inline DenseMatrix EvaluateField( 
@@ -416,21 +418,21 @@ inline FloatVector Interpolation(
 
         assert( lps.isfinite() );
         
-        assert( P.isfinite()    );
+        assert( P.isfinite() );
         
-        assert( InterpolationMatrix.isfinite()    );
+        assert( InterpolationMatrix.isfinite() );
 
         assert( Evaluations.isfinite()      );
         assert( EvaluationVector.isfinite() );
         
-        assert( localResult.isfinite()    );
+        assert( localResult.isfinite() );
 
         if( k == 0 ) {
             
             assert( ( P - DenseMatrix( 1, 1, 1. ) ).iszero() );
             assert( ( InterpolationMatrix - EMinv ).iszero() );
             
-            if( !( EM * localResult - EvaluationVector ).issmall() ) {
+            if( not ( EM * localResult - EvaluationVector ).issmall() ) {
                 LOG << EM * localResult << space << EvaluationVector << nl;
                 LOG << EM * localResult - EvaluationVector << nl;
                 LOG << ( EM * localResult - EvaluationVector ).norm() << nl;

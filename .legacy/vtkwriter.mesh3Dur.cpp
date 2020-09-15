@@ -32,9 +32,8 @@ int main()
         
         }
         
-//         Coordinates& C = M.getcoordinates();
-//         for( int c = 0; c < C.getnumber(); c++ )
-//             C.setdata( c, 2, 2. * C.getdata(c,0) + 3. * C.getdata(c,1) );
+
+        
 
         
         clog << "Print VTK-type file" << endl;

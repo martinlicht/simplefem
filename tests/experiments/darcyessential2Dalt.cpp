@@ -114,8 +114,8 @@ int main()
             int min_l = 2; 
             int max_l = 7;
             
-            int min_r = 2;
-            int max_r = 2;
+            int min_r = 3;
+            int max_r = 3;
             
             ConvergenceTable contable;
             

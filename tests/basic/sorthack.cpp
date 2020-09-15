@@ -17,8 +17,8 @@ int main()
     
     sorthack( foo );
     
-    for( int i = 0; i < N; i++ ) 
-        std::clog << foo[i] << std::endl;
+    for( int i = 1; i < N; i++ ) 
+        assert( foo[i] >= foo[i-1] ); //std::cout << foo[i] << std::endl;
     
     return 0;
 }
