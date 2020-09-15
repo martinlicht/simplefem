@@ -127,7 +127,7 @@ inline SparseMatrix FEECSullivanInclusionMatrix( const Mesh& mesh, int n, int k,
         // create actual multiindices 
         
         const MultiIndex alpha_vol = MultiIndex( IndexRange(0,n), [&alpha,&inclusion]( int p ) -> int {
-                                            assert( inclusion.getDestRange().contains(p) ); 
+                                            assert( inclusion.getTargetRange().contains(p) ); 
                                             if( inclusion.rangecontains(p) )
                                                 return alpha.at( inclusion.preimageof(p) );
                                             else

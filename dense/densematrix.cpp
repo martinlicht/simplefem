@@ -342,12 +342,12 @@ DenseMatrix DenseMatrix::submatrix( const IndexMap& rows, const IndexMap& column
 //     
 //     assert( rows.getSourceRange().min() == 0 );
 //     assert( rows.getSourceRange().max() <= getdimout() - 1 );
-//     assert( rows.getDestRange().min() == 0 );
-//     assert( rows.getDestRange().max() == getdimout() - 1 );
+//     assert( rows.getTargetRange().min() == 0 );
+//     assert( rows.getTargetRange().max() == getdimout() - 1 );
 //     assert( columns.getSourceRange().min() == 0 );
 //     assert( columns.getSourceRange().max() <= getdimin() - 1 );
-//     assert( columns.getDestRange().min() == 0 );
-//     assert( columns.getDestRange().max() == getdimin() - 1 );
+//     assert( columns.getTargetRange().min() == 0 );
+//     assert( columns.getTargetRange().max() == getdimin() - 1 );
 //     assert( rows.isstrictlyascending() );
 //     assert( columns.isstrictlyascending() );
 //     
@@ -606,8 +606,8 @@ void DenseMatrix::indexmapping( const IndexMap& im )
         return;
     assert( im.getSourceRange().min() == 0 );
     assert( im.getSourceRange().max() == getdimin() - 1 );
-    assert( im.getDestRange().min() == 0 );
-    assert( im.getDestRange().max() == getdimout() - 1 );
+    assert( im.getTargetRange().min() == 0 );
+    assert( im.getTargetRange().max() == getdimout() - 1 );
     zeromatrix();
     for( int c = 0; c < im.getSourceRange().max() - 1; c++ )
         (*this)( im[c], c ) = 1.;

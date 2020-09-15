@@ -84,7 +84,7 @@ int main()
         assert( inj.isinjective() );
         assert( !inj.issurjective() );
         assert( inj.getSourceRange() == irB );
-        assert( inj.getDestRange() == irA );
+        assert( inj.getTargetRange() == irA );
         assert( inj.rangecontains( 4 ) );
         assert( !inj.rangecontains( 5 ) );
         
@@ -99,7 +99,7 @@ int main()
         assert( !sur.isinjective() );
         assert( sur.issurjective() );
         assert( sur.getSourceRange() == irD );
-        assert( sur.getDestRange() == irB );
+        assert( sur.getTargetRange() == irB );
         
         cout << "Test composition of injection with surjection" << endl;
         const IndexMap prod = inj * sur;

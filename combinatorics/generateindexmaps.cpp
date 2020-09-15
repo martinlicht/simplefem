@@ -115,7 +115,7 @@ int signPermutation( const IndexMap& im )
     
     im.check();
     assert( im.isbijective() );
-    assert( im.getSourceRange() == im.getDestRange() );
+    assert( im.getSourceRange() == im.getTargetRange() );
     
     const IndexRange& ir = im.getSourceRange();
     

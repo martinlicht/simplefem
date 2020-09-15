@@ -96,7 +96,7 @@ void IndexMap::check() const
         
         assert( std::max( src.max() - src.min() + 1, 0 ) == values.size() );
     
-        assert( ! getDestRange().isempty() );
+        assert( ! getTargetRange().isempty() );
         
         for( int a = src.min(); a <= src.max(); a++ )
             assert( dest.contains( values.at( a - src.min() ) ) );
@@ -113,11 +113,11 @@ void IndexMap::print( std::ostream& os, bool embellish ) const
 {
     if( embellish ) {
         os << "From" << std::endl << getSourceRange() << nl;
-        os << "To"   << std::endl << getDestRange() << nl;
+        os << "To"   << std::endl << getTargetRange() << nl;
         for( int i : getSourceRange() )
             os << i << " -> " << at( i ) << std::endl;
     } else {
-        os << getSourceRange() << "\n" << getDestRange() << nl;
+        os << getSourceRange() << "\n" << getTargetRange() << nl;
         for( int i : getSourceRange() )
             os << " " << at( i );
         os << nl;
@@ -129,7 +129,7 @@ const IndexRange& IndexMap::getSourceRange() const
     return src;
 }
 
-const IndexRange& IndexMap::getDestRange() const 
+const IndexRange& IndexMap::getTargetRange() const 
 {
     return dest;
 }
@@ -252,7 +252,7 @@ bool IndexMap::isstrictlyascending() const
 bool IndexMap::rangecontains( int p ) const
 {
     check();
-    assert( getDestRange().contains(p) );
+    assert( getTargetRange().contains(p) );
     for( int i : src )
         if( at(i) == p )
             return true;
@@ -262,7 +262,7 @@ bool IndexMap::rangecontains( int p ) const
 int IndexMap::preimageof( int p ) const
 {
     check();
-    assert( getDestRange().contains(p) );
+    assert( getTargetRange().contains(p) );
     for( int i : src )
         if( at(i) == p )
             return i;
@@ -272,7 +272,7 @@ int IndexMap::preimageof( int p ) const
 bool IndexMap::comparablewith( const IndexMap& im ) const
 {
     check();
-    return getSourceRange() == im.getSourceRange() && getDestRange() == im.getDestRange();
+    return getSourceRange() == im.getSourceRange() && getTargetRange() == im.getTargetRange();
 } 
 
 bool IndexMap::equals( const IndexMap& im ) const

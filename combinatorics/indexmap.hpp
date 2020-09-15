@@ -52,7 +52,7 @@ class IndexMap
         
         const IndexRange& getSourceRange() const;
         
-        const IndexRange& getDestRange() const;
+        const IndexRange& getTargetRange() const;
         
         
         bool isempty() const;
@@ -114,9 +114,9 @@ inline IndexMap operator*( const IndexMap& leave, const IndexMap& enter )
     leave.check();
     enter.check();
     IndexRange src  = enter.getSourceRange();
-    IndexRange dest = leave.getDestRange();
+    IndexRange dest = leave.getTargetRange();
 
-    assert( enter.getDestRange() == leave.getSourceRange() );
+    assert( enter.getTargetRange() == leave.getSourceRange() );
 
     IndexMap ret( src, dest, [ &leave, &enter ]( int i ) -> int { return leave[ enter[i] ]; } );
 
@@ -186,7 +186,7 @@ inline IndexMap identityIndexMap( int low, int high )
 inline IndexMap expand_zero( const IndexMap& im, int p )
 {
     const auto& src_range = im.getSourceRange();
-    const auto& dst_range = im.getDestRange();
+    const auto& dst_range = im.getTargetRange();
     
     assert( not dst_range.isempty() );
     assert( dst_range.min() == 0    );
@@ -212,7 +212,7 @@ inline IndexMap expand_zero( const IndexMap& im, int p )
 inline IndexMap expand_one( const IndexMap& im, int p )
 {
     const auto& src_range = im.getSourceRange();
-    const auto& dst_range = im.getDestRange();
+    const auto& dst_range = im.getTargetRange();
     
     assert( not dst_range.isempty() );
     assert( dst_range.min() == 0    );

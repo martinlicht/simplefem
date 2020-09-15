@@ -162,7 +162,7 @@ int main()
                     int number_of_even_permutations = 0;
                     
                     for( const IndexMap& im : all ) {
-                        assert( im.getSourceRange() == im.getDestRange() );
+                        assert( im.getSourceRange() == im.getTargetRange() );
                         for( const int& i : bereich ) {
                             assert( bereich.min() <= im[i] and im[i] <= bereich.max() );
                             for( const int& j : bereich  )
@@ -213,7 +213,7 @@ int main()
                     
                     for( const IndexMap& sigma : all ) {
                         assert( sigma.getSourceRange() == source );
-                        assert( sigma.getDestRange() == target );
+                        assert( sigma.getTargetRange() == target );
                         for( const int& i : source ) {
                             assert( target.min() <= sigma[i] and sigma[i] <= target.max() );
                             if( i != source.max() )
