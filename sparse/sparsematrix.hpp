@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "../basic.hpp"
+#include "../operators/floatvector.hpp"
 #include "../operators/linearoperator.hpp"
 #include "../operators/simpleoperators.hpp"
 
@@ -18,6 +19,7 @@ class DenseMatrix;
 ****  - instantiates LinearOperator
 ****  
 ************************/
+
 
 
 
@@ -39,16 +41,6 @@ public LinearOperator /* every matrix is a linear operator */
             columnwise
         };
 
-        // static bool compareMatrixEntry(const MatrixEntry& first, const MatrixEntry& second) 
-        // {
-        //     if( first.row < second.row )
-        //         return true;
-        //     else if( first.row == second.row && first.column < second.column )
-        //         return true;
-        //     else 
-        //         return false;
-        // }
-
         explicit SparseMatrix( int dimout, int dimin, int numentries = 0, 
                                std::function<MatrixEntry(int)> generator = [](int i __attribute__((unused)) )->MatrixEntry{ return {0,0,notanumber}; } ); 
         explicit SparseMatrix( int dimout, int dimin, const std::vector<MatrixEntry>& );
@@ -69,7 +61,8 @@ public LinearOperator /* every matrix is a linear operator */
             return cloned;
         }
         
-        virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {
+        virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override
+        {
             std::unique_ptr<SparseMatrix> heir = std::make_unique<SparseMatrix>( std::move(*this) );
             return heir;
         }
@@ -78,35 +71,56 @@ public LinearOperator /* every matrix is a linear operator */
         virtual void print( std::ostream& ) const override;
         virtual void printplain( std::ostream& ) const;
 
+        using LinearOperator::apply;
+        virtual void apply( FloatVector& dest, const FloatVector& add, Float scaling ) const override;
+
+        
+        /* manipulation and information */
+        
+        void scale ( Float s );
+
         bool isfinite() const;
         
-        void reserve( int ) const;
+        FloatVector diagonal() const;
         
-        const MatrixEntry& getentry( int ) const;
-        MatrixEntry& getentry( int );
-        void setentry( int, int, int, Float );
-        void setentry( int, MatrixEntry );
-        void addentry( int, int, Float );
-        void addentry( MatrixEntry );
-        const std::vector<MatrixEntry>& getentries() const &;
-        void clearentries();
-
+        
+        /* access and information to internal data */
+        
+        const std::vector<MatrixEntry>& getentries() const;
+        
+        std::vector<MatrixEntry>& getentries();
+        
         int getnumberofentries() const;
+        
+        
+        /* sorting entries */
         
         bool is_sorted( MatrixEntrySorting manner = MatrixEntrySorting::rowwise ) const;
         const SparseMatrix& sortentries( MatrixEntrySorting manner = MatrixEntrySorting::rowwise ) const;
         const SparseMatrix& sortandcompressentries( MatrixEntrySorting manner = MatrixEntrySorting::rowwise ) const;
 
-        void scale ( Float s );
+        /* specific entry manipulations */
+        
+        void reserve( int ) const;
+                
+        const MatrixEntry& getentry( int ) const;
+        
+        MatrixEntry& getentry( int );
+        
+        void setentry( int, int, int, Float );
+        
+        void setentry( int, MatrixEntry );
+        
+        void addentry( int, int, Float );
+        
+        void addentry( MatrixEntry );
+        
+        void clearentries();
+        
+        /* obtain a transpose */
 
         SparseMatrix getTranspose() const;
         
-        FloatVector InverseDiagonalPreconditioner() const;
-        FloatVector diagonal() const;
-        
-        using LinearOperator::apply;
-        virtual void apply( FloatVector& dest, const FloatVector& add, Float scaling ) const override;
-
     private:
 
         mutable std::vector<MatrixEntry> entries; 
@@ -115,9 +129,18 @@ public LinearOperator /* every matrix is a linear operator */
 
 
 
-SparseMatrix operator&( const SparseMatrix& left, const SparseMatrix& right );
-
 SparseMatrix SparseMatrixMultiplication( const SparseMatrix& left, const SparseMatrix& right );
+
+// FloatVector InverseDiagonalPreconditioner( const SparseMatrix& mat );
+
+DiagonalOperator InverseDiagonalPreconditioner( const SparseMatrix& mat );
+
+
+
+inline SparseMatrix operator&( const SparseMatrix& left, const SparseMatrix& right )
+{
+    return SparseMatrixMultiplication( left, right );
+}
 
 inline SparseMatrix operator*( const SparseMatrix& mat, Float s )
 {
@@ -136,10 +159,6 @@ inline SparseMatrix operator*( Float s, const SparseMatrix& mat )
 
 
 
-
-
-
-DiagonalOperator InverseDiagonalPreconditioner( const SparseMatrix& mat );
 
 
 

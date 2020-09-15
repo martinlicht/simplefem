@@ -215,13 +215,12 @@ inline DenseMatrix MatrixMult( const DenseMatrix& left, const DenseMatrix& right
 
     assert( lin == rout );
 
-    DenseMatrix ret( lout, rin );
-    ret.zeromatrix();
-
+    DenseMatrix ret( lout, rin, 0. );
+    
     for( int lo = 0; lo < lout; lo++ )
     for( int ri = 0; ri < rin; ri++ )
     for( int m = 0; m < rout; m++ )
-    ret( lo, ri ) += left( lo, m ) * right( m, ri );
+        ret( lo, ri ) += left( lo, m ) * right( m, ri );
 
     ret.check();
     return ret;
@@ -312,26 +311,26 @@ inline DenseMatrix operator/( const DenseMatrix& left, Float right )
 }
 
 
-inline Float weightedproduct( const DenseMatrix& W, FloatVector left, FloatVector right )
-{
-    assert( W.getdimin() == right.getdimension() );
-    assert( W.getdimout() == left.getdimension() );
-    std::vector<Float> vec( W.getdimin() * W.getdimout() );
-    for( int r = 0; r < W.getdimout(); r++ )
-    for( int c = 0; c < W.getdimin();  c++ )
-        vec[ r * W.getdimin() + c ] = left[r] * right[c] * W(r,c);
-
-    for( int i = 0; i < vec.size(); i++ )
-    for( int j = 0; j < vec.size(); j++ )
-        if( absolute(vec[i]) > absolute(vec[j]) )
-            std::swap( vec[i], vec[j] );
-
-    Float ret = 0.;
-    for( int i = 0; i < vec.size(); i++ )
-        ret = ret + vec[i];
-
-    return ret;
-}
+// inline Float weightedproduct( const DenseMatrix& W, FloatVector left, FloatVector right )
+// {
+//     assert( W.getdimin() == right.getdimension() );
+//     assert( W.getdimout() == left.getdimension() );
+//     std::vector<Float> vec( W.getdimin() * W.getdimout() );
+//     for( int r = 0; r < W.getdimout(); r++ )
+//     for( int c = 0; c < W.getdimin();  c++ )
+//         vec[ r * W.getdimin() + c ] = left[r] * right[c] * W(r,c);
+// 
+//     for( int i = 0; i < vec.size(); i++ )
+//     for( int j = 0; j < vec.size(); j++ )
+//         if( absolute(vec[i]) > absolute(vec[j]) )
+//             std::swap( vec[i], vec[j] );
+// 
+//     Float ret = 0.;
+//     for( int i = 0; i < vec.size(); i++ )
+//         ret = ret + vec[i];
+// 
+//     return ret;
+// }
 
 
 

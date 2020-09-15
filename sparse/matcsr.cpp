@@ -198,6 +198,13 @@ void MatrixCSR::apply( FloatVector& dest, const FloatVector& add, Float scaling 
 
 
 
+
+
+void MatrixCSR::scale ( Float s )
+{
+    for( auto& v : this->V ) v *= s;
+}
+
 bool MatrixCSR::isfinite() const 
 {
     for( const Float& value : V )
@@ -205,74 +212,6 @@ bool MatrixCSR::isfinite() const
             return false;
     return true;
 }
-
-
-
-
-
-int MatrixCSR::getnumberofentries() const 
-{
-    return V.size();
-}
-
-
-void MatrixCSR::sortentries() const
-{
-    check();
-
-    // for each row, perform a quick sort of the columns
-    // the following uses an inefficient version of selection sort
-    for( int r = 0; r < A.size()-1; r++ )
-        for( int c1 = A[r]; c1 < A[r+1]; c1++ )
-        for( int c2 = c1+1; c2 < A[r+1]; c2++ )
-            if( C[c1] < C[c2] ) {
-                std::swap( C[c1], C[c2] );
-                std::swap( V[c1], V[c2] );
-            }
-    check();
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-FloatVector MatrixCSR::InverseDiagonalPreconditioner() const
-{ 
-    check();
-    assert( getdimin() == getdimout() );
-    auto ret = FloatVector( getdimin(), 0. );
-
-    #pragma omp parallel for
-    for( int r = 0; r < getdimin(); r++ ) {
-        
-        ret[r] = 0.;
-        
-        for( int c = A[r]; c < A[r+1]; c++ )
-            if( C[ c ] == r )
-                ret[r] += V[ c ];
-    
-        assert( ret[r] >= 0. );
-        
-        if( ret[r] > 0. ) ret[r] = 1. / ret[r];
-        
-    }
-    
-    
-        
-    return ret;
-}
-
-
-
 
 FloatVector MatrixCSR::diagonal() const
 { 
@@ -302,14 +241,95 @@ FloatVector MatrixCSR::diagonal() const
 
 
 
-
-
-
-
-void MatrixCSR::scale ( Float s )
-{
-    for( auto& v : this->V ) v *= s;
+const int*   MatrixCSR::getA() const 
+{ 
+    return A.data();
 }
+
+const int*   MatrixCSR::getC() const 
+{ 
+    return C.data();
+}
+
+const Float* MatrixCSR::getV() const
+{ 
+    return V.data();
+}
+
+        
+int MatrixCSR::getnumberofentries() const 
+{
+    return V.size();
+}
+
+
+// void MatrixCSR::sortentries() const
+// {
+//     check();
+// 
+//     // for each row, perform a quick sort of the columns
+//     // the following uses an inefficient version of selection sort
+//     for( int r = 0; r < A.size()-1; r++ )
+//         for( int c1 = A[r]; c1 < A[r+1]; c1++ )
+//         for( int c2 = c1+1; c2 < A[r+1]; c2++ )
+//             if( C[c1] < C[c2] ) {
+//                 std::swap( C[c1], C[c2] );
+//                 std::swap( V[c1], V[c2] );
+//             }
+//     check();
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DiagonalOperator InverseDiagonalPreconditioner( const MatrixCSR& mat )
+{ 
+    mat.check();
+    assert( mat.getdimin() == mat.getdimout() );
+
+    auto diag = mat.diagonal();
+    
+    for( int r = 0; r < mat.getdimin(); r++ )
+    {
+        assert( diag[r] >= 0. );
+        
+        if( diag[r] > 0. ) diag[r] = 1. / diag[r];
+    }
+    
+    return DiagonalOperator( diag );
+    
+//     auto ret = FloatVector( mat.getdimin(), 0. );
+// 
+//     #pragma omp parallel for
+//     for( int r = 0; r < mat.getdimin(); r++ ) {
+//         
+//         ret[r] = 0.;
+//         
+//         for( int c = mat.A[r]; c < mat.A[r+1]; c++ )
+//             if( mat.C[ c ] == r )
+//                 ret[r] += mat.V[ c ];
+//     
+//         assert( ret[r] >= 0. );
+//         
+//         if( ret[r] > 0. ) ret[r] = 1. / ret[r];
+//         
+//     }
+//      
+}
+
+
+
+
 
 
 

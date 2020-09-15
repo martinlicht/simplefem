@@ -11,7 +11,8 @@
 
 
 ScalingOperator::ScalingOperator( int dimension, Float s )
-: LinearOperator(dimension,dimension), scaling(s)
+: LinearOperator( dimension ), 
+  scaling(s)
 {
     ScalingOperator::check();
 }
@@ -71,27 +72,35 @@ void ScalingOperator::apply( FloatVector& dest, const FloatVector& src, Float s 
 
 
 DiagonalOperator::DiagonalOperator( int dimension, Float scale )
-: LinearOperator(dimension,dimension), 
+: LinearOperator( dimension ), 
   diagonal( FloatVector( dimension, scale ) )
 {
     DiagonalOperator::check();
 }
 
 DiagonalOperator::DiagonalOperator( const FloatVector& dia )
-: LinearOperator(dia.getdimension(),dia.getdimension()), diagonal(dia)
+: LinearOperator( dia.getdimension() ), 
+  diagonal( dia )
+{
+    DiagonalOperator::check();
+}
+
+DiagonalOperator::DiagonalOperator( FloatVector&& dia )
+: LinearOperator( dia.getdimension() ), 
+  diagonal( std::move(dia) )
 {
     DiagonalOperator::check();
 }
 
 DiagonalOperator::DiagonalOperator( int dimension, const ScalingOperator& scaling )
-: LinearOperator(dimension,dimension), 
+: LinearOperator( dimension ), 
   diagonal( FloatVector( dimension, scaling.getscaling() ) )
 {
     DiagonalOperator::check();
 }
 
 DiagonalOperator::DiagonalOperator( int dimension, const std::function<Float(int)>& generator )
-: LinearOperator(dimension,dimension), 
+: LinearOperator( dimension ), 
   diagonal( FloatVector( dimension, generator ) )
 {
     DiagonalOperator::check();

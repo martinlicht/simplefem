@@ -25,10 +25,11 @@ class IdentityOperator final
     public:
 
         explicit IdentityOperator() = delete;
-        explicit IdentityOperator( const IdentityOperator& ) = default;
-        explicit IdentityOperator( IdentityOperator&& ) = default;
+        
+        explicit IdentityOperator( const IdentityOperator& )       = default;
+        explicit IdentityOperator( IdentityOperator&& )            = default;
         IdentityOperator& operator=( const IdentityOperator& vec ) = default;
-        IdentityOperator& operator=( IdentityOperator&& vec ) = default; 
+        IdentityOperator& operator=( IdentityOperator&& vec )      = default; 
         
         explicit IdentityOperator( int n ) : LinearOperator(n,n) { IdentityOperator::check(); }
         virtual ~IdentityOperator() { IdentityOperator::check(); }
@@ -80,10 +81,11 @@ class ScalingOperator final
     public:
 
         explicit ScalingOperator() = delete;
-        explicit ScalingOperator( const ScalingOperator& ) = default;
-        explicit ScalingOperator( ScalingOperator&& ) = default;
+        
+        explicit ScalingOperator( const ScalingOperator& )       = default;
+        explicit ScalingOperator( ScalingOperator&& )            = default;
         ScalingOperator& operator=( const ScalingOperator& vec ) = default;
-        ScalingOperator& operator=( ScalingOperator&& vec ) = default; 
+        ScalingOperator& operator=( ScalingOperator&& vec )      = default; 
         
         explicit ScalingOperator( int, Float s );
         virtual ~ScalingOperator();
@@ -98,7 +100,6 @@ class ScalingOperator final
             return heir;
         }
         
-
         virtual void check() const override;
         virtual void print( std::ostream& ) const override;
 
@@ -143,13 +144,15 @@ class DiagonalOperator final
     public:
 
         explicit DiagonalOperator() = delete;
-        explicit DiagonalOperator( const DiagonalOperator& ) = default;
-        explicit DiagonalOperator( DiagonalOperator&& ) = default;
+        
+        explicit DiagonalOperator( const DiagonalOperator& )       = default;
+        explicit DiagonalOperator( DiagonalOperator&& )            = default;
         DiagonalOperator& operator=( const DiagonalOperator& vec ) = default;
-        DiagonalOperator& operator=( DiagonalOperator&& vec ) = default; 
+        DiagonalOperator& operator=( DiagonalOperator&& vec )      = default; 
 
         explicit DiagonalOperator( int, Float s );
         explicit DiagonalOperator( const FloatVector& dia );
+        explicit DiagonalOperator( FloatVector&& dia );
         explicit DiagonalOperator( int, const ScalingOperator& scaling );
         explicit DiagonalOperator( int, const std::function<Float(int)>& );
         virtual ~DiagonalOperator();

@@ -190,6 +190,15 @@ void SparseMatrix::apply( FloatVector& dest, const FloatVector& add, Float scali
 
 
 
+
+
+
+
+void SparseMatrix::scale ( Float s )
+{
+    for( auto& e : this->entries ) e.value *= s;
+}
+
 bool SparseMatrix::isfinite() const
 {
     for( const MatrixEntry& rcv : entries )
@@ -197,88 +206,49 @@ bool SparseMatrix::isfinite() const
             return false;
     return true;
 }
-        
-        
 
+FloatVector SparseMatrix::diagonal() const
+{ 
+    check();
+    assert( getdimin() == getdimout() );
+    auto ret = FloatVector( getdimin(), 0. );
 
-void SparseMatrix::reserve( int n ) const
-{
-    entries.reserve( n );
+    for( const auto& entry : entries )
+        if( entry.row == entry.column )
+            ret[ entry.row ] += entry.value;
+    
+    return ret;
 }
         
         
 
 
-const SparseMatrix::MatrixEntry& SparseMatrix::getentry( int i ) const
+
+
+
+
+
+const std::vector<SparseMatrix::MatrixEntry>& SparseMatrix::getentries() const
 {
-    assert( 0 <= i && i < getnumberofentries() );
-    return entries[i];
+    return getentries();
 }
 
-SparseMatrix::MatrixEntry& SparseMatrix::getentry( int i )
+std::vector<SparseMatrix::MatrixEntry>& SparseMatrix::getentries()
 {
-    assert( 0 <= i && i < getnumberofentries() );
-    return entries[i];
+    return getentries();
 }
         
-void SparseMatrix::setentry( int i, int r , int c, Float v )
-{
-//     check();
-    SparseMatrix::MatrixEntry temp;
-    temp.row = r;
-    temp.column = c;
-    temp.value = v;
-    setentry( i, temp );
-//     check();
-}
-
-void SparseMatrix::setentry( int i, MatrixEntry entry )
-{
-//     check();
-    assert( 0 <= entry.row && entry.row <= getdimout() );
-    assert( 0 <= entry.column && entry.column <= getdimin() );
-    assert( 0 <= i && i < entries.size() );
-    entries.at(i) = entry;
-//     check();
-}
-        
-        
-void SparseMatrix::addentry( int r, int c, Float v )
-{
-//     check();
-    SparseMatrix::MatrixEntry temp;
-    temp.row = r;
-    temp.column = c;
-    temp.value = v;
-    addentry( temp );
-//     check();
-}
-
-void SparseMatrix::addentry( SparseMatrix::MatrixEntry entry )
-{
-//     check();
-    assert( 0 <= entry.row && entry.row <= getdimout() );
-    assert( 0 <= entry.column && entry.column <= getdimin() );
-    entries.push_back( entry );
-//     check();
-}
-
 int SparseMatrix::getnumberofentries() const 
 {
     return entries.size();
 }
 
-void SparseMatrix::clearentries()
-{
-    check();
-    entries.clear();
-    check();
-}
 
-const std::vector<SparseMatrix::MatrixEntry>& SparseMatrix::getentries() const & 
-{
-    return entries;
-}
+
+
+
+
+
 
 
 
@@ -413,15 +383,80 @@ const SparseMatrix& SparseMatrix::sortandcompressentries( SparseMatrix::MatrixEn
 
 
 
-void SparseMatrix::scale ( Float s )
+
+
+        
+        
+        
+        
+void SparseMatrix::reserve( int n ) const
 {
-    for( auto& e : this->entries ) e.value *= s;
+    entries.reserve( n );
+}
+        
+        
+
+
+const SparseMatrix::MatrixEntry& SparseMatrix::getentry( int i ) const
+{
+    assert( 0 <= i && i < getnumberofentries() );
+    return entries[i];
 }
 
+SparseMatrix::MatrixEntry& SparseMatrix::getentry( int i )
+{
+    assert( 0 <= i && i < getnumberofentries() );
+    return entries[i];
+}
+        
+void SparseMatrix::setentry( int i, int r , int c, Float v )
+{
+//     check();
+    SparseMatrix::MatrixEntry temp;
+    temp.row = r;
+    temp.column = c;
+    temp.value = v;
+    setentry( i, temp );
+//     check();
+}
 
+void SparseMatrix::setentry( int i, MatrixEntry entry )
+{
+//     check();
+    assert( 0 <= entry.row && entry.row <= getdimout() );
+    assert( 0 <= entry.column && entry.column <= getdimin() );
+    assert( 0 <= i && i < entries.size() );
+    entries.at(i) = entry;
+//     check();
+}
+        
+        
+void SparseMatrix::addentry( int r, int c, Float v )
+{
+//     check();
+    SparseMatrix::MatrixEntry temp;
+    temp.row = r;
+    temp.column = c;
+    temp.value = v;
+    addentry( temp );
+//     check();
+}
 
+void SparseMatrix::addentry( SparseMatrix::MatrixEntry entry )
+{
+//     check();
+    assert( 0 <= entry.row && entry.row <= getdimout() );
+    assert( 0 <= entry.column && entry.column <= getdimin() );
+    entries.push_back( entry );
+//     check();
+}
 
-
+void SparseMatrix::clearentries()
+{
+    check();
+    entries.clear();
+    check();
+}
 
 
 
@@ -451,33 +486,26 @@ SparseMatrix SparseMatrix::getTranspose() const
 }
 
 
-FloatVector SparseMatrix::InverseDiagonalPreconditioner() const
-{ 
-    check();
-    assert( getdimin() == getdimout() );
-    auto ret = FloatVector( getdimin(), 0. );
-    for( auto& entry : entries )
-        if( entry.row == entry.column )
-            ret[ entry.row ] += entry.value;
-    for( int r = 0; r < getdimout(); r++ ) {
-        assert( ret[r] >= 0. );
-        if( ret[r] > 0. ) ret[r] = 1. / ret[r];
-    }
-    return ret;
-}
 
-FloatVector SparseMatrix::diagonal() const
-{ 
-    check();
-    assert( getdimin() == getdimout() );
-    auto ret = FloatVector( getdimin(), 0. );
+// FloatVector InverseDiagonalPreconditioner( const SparseMatrix& mat ) const
+// { 
+//     check();
+//     assert( mat.getdimin() == mat.getdimout() );
+//     auto ret = FloatVector( mat.getdimin(), 0. );
+//     for( auto& entry : mat.entries )
+//         if( entry.row == entry.column )
+//             ret[ entry.row ] += entry.value;
+//     for( int r = 0; r < mat.getdimout(); r++ ) {
+//         assert( ret[r] >= 0. );
+//         if( ret[r] > 0. ) ret[r] = 1. / ret[r];
+//     }
+//     return ret;
+// }
 
-    for( const auto& entry : entries )
-        if( entry.row == entry.column )
-            ret[ entry.row ] += entry.value;
-    
-    return ret;
-}
+
+
+
+
 
 
 
@@ -487,8 +515,18 @@ FloatVector SparseMatrix::diagonal() const
 
 
 // TODO: Figure out the difference between & and the multiplication function below. 
+// Then merge both methods into one 
 
-SparseMatrix operator&( const SparseMatrix& left, const SparseMatrix& right )
+// SparseMatrix operator&( const SparseMatrix& left, const SparseMatrix& right )
+
+
+
+
+
+
+
+
+SparseMatrix SparseMatrixMultiplication( const SparseMatrix& left, const SparseMatrix& right )
 {
 
     assert( left.getdimin() == right.getdimout() );
@@ -581,49 +619,42 @@ SparseMatrix operator&( const SparseMatrix& left, const SparseMatrix& right )
     
 }
 
-
-
-
-
-
-
-SparseMatrix SparseMatrixMultiplication( const SparseMatrix& left, const SparseMatrix& right )
-{
-
+// {
+// 
 //     LOG << "--- SparseMatrix Product" << std::endl;
 //     LOG << "--- Sort and compress" << std::endl;
-    
-    left.sortandcompressentries( SparseMatrix::MatrixEntrySorting::columnwise );
-    right.sortandcompressentries( SparseMatrix::MatrixEntrySorting::rowwise );
-
+//     
+//     left.sortandcompressentries( SparseMatrix::MatrixEntrySorting::columnwise );
+//     right.sortandcompressentries( SparseMatrix::MatrixEntrySorting::rowwise );
+// 
 //     LOG << "--- Counting" << std::endl;
-    
-    int counter = 0;
-    for( SparseMatrix::MatrixEntry l : left.getentries()  )
-    for( SparseMatrix::MatrixEntry r : right.getentries() )
-        if( l.column == r.row ) 
-            counter++;
-
+//     
+//     int counter = 0;
+//     for( SparseMatrix::MatrixEntry l : left.getentries()  )
+//     for( SparseMatrix::MatrixEntry r : right.getentries() )
+//         if( l.column == r.row ) 
+//             counter++;
+// 
 //     LOG << "--- Assemble" << std::endl;
-    
-    std::vector<SparseMatrix::MatrixEntry> new_entries;
-    new_entries.reserve( counter );
-    for( SparseMatrix::MatrixEntry l : left.getentries()  )
-    for( SparseMatrix::MatrixEntry r : right.getentries() )
-        if( l.column == r.row ) 
-            new_entries.push_back( { l.row, r.column, l.value * r.value } );
-    
-    assert( new_entries.size() == counter );
-
+//     
+//     std::vector<SparseMatrix::MatrixEntry> new_entries;
+//     new_entries.reserve( counter );
+//     for( SparseMatrix::MatrixEntry l : left.getentries()  )
+//     for( SparseMatrix::MatrixEntry r : right.getentries() )
+//         if( l.column == r.row ) 
+//             new_entries.push_back( { l.row, r.column, l.value * r.value } );
+//     
+//     assert( new_entries.size() == counter );
+// 
 //     LOG << "--- Construct" << std::endl;
-    SparseMatrix ret( left.getdimout(), right.getdimin(), new_entries );
-        
-    // LOG << "--- Sort and compress again" << std::endl;
-    // ret.sortandcompressentries();
-    
-    return ret;
-    
-}
+//     SparseMatrix ret( left.getdimout(), right.getdimin(), new_entries );
+//         
+//     LOG << "--- Sort and compress again" << std::endl;
+//     ret.sortandcompressentries();
+//     
+//     return ret;
+//     
+// }
 
 
 

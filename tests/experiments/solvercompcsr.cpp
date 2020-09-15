@@ -176,7 +176,7 @@ int main()
                         {
                             cout << "CGM - CSR Classic with diagonal preconditioning" << endl;
                             
-                            auto precon = stiffness.InverseDiagonalPreconditioner();
+                            auto precon = InverseDiagonalPreconditioner( stiffness );
 
                             
                             sol.zero();
@@ -190,7 +190,7 @@ int main()
                                 residual.raw(),
                                 desired_precision,
                                 0,
-                                precon.raw()
+                                precon.getdiagonal().raw()
                             );
 
                             timestamp end = gettimestamp();

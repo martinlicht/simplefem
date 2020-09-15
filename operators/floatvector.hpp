@@ -24,30 +24,35 @@ class FloatVector
     
     public:
         
-        explicit FloatVector( int dim, Float initivalue = notanumber );
+        FloatVector() = delete;
         
         FloatVector( const FloatVector& );
         
-        explicit FloatVector( const FloatVector&, Float scaling );
-        
         explicit FloatVector( FloatVector&& );
+        
+        FloatVector& operator=( const FloatVector& vec );
+        
+        FloatVector& operator=( FloatVector&& vec );
+
+        virtual ~FloatVector();
+        
+        
+        explicit FloatVector( int dim, Float initivalue = notanumber );
+        
+        explicit FloatVector( const FloatVector&, Float scaling );
         
         explicit FloatVector( FloatVector&&, Float scaling );
         
         explicit FloatVector( const std::vector<Float>&, Float scaling = 1. );
         
         explicit FloatVector( const std::vector<int>&, Float scaling = 1. );
+
+                 FloatVector( const std::initializer_list<Float>& l );
         
         explicit FloatVector( int dimension, const std::function<Float(int)>& generator, Float scaling = 1. );
 
-        FloatVector( const std::initializer_list<Float>& l );
-
-        virtual ~FloatVector();
         
-        FloatVector& operator=( const FloatVector& vec );
         
-        FloatVector& operator=( FloatVector&& vec );
-
 
         void check() const;
         
@@ -83,11 +88,11 @@ class FloatVector
         
         /* load values */
         
-        void zero();
-        
         void setentries( Float );
         
         void random();
+        
+        void zero();
         
         void clear();
         
@@ -162,6 +167,8 @@ class FloatVector
         
         Float sumnorm() const;
         
+        Float l2norm() const;
+        
         Float lpnorm( Float ) const;
         
         
@@ -186,14 +193,12 @@ class FloatVector
         
 
 
-        /* Clearing */
-        
-        void clear( const std::vector<bool>& mask, bool clearif = true );
         
         
         /* Raw access */
         
         Float* raw();
+        
         const Float* raw() const;
         
         
@@ -308,6 +313,15 @@ class FloatVector
         Float* pointer;
 
 };
+
+
+
+
+
+
+
+
+
 
 
 

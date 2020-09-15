@@ -13,6 +13,14 @@
 
 
 
+/************************
+****
+****  Class for Sparse Matrices in CSR format
+****  - instantiates LinearOperator
+****  
+************************/
+
+
 
 
 class MatrixCSR:
@@ -47,38 +55,51 @@ public LinearOperator /* every matrix is a linear operator */
             return heir;
         }
         
-        
-        
-        
         virtual void check() const override;
         virtual void print( std::ostream& ) const override;
         virtual void printplain( std::ostream& ) const;
 
-        bool isfinite() const;
-        
-        int getnumberofentries() const;
-        void sortentries() const;
-        
-        FloatVector InverseDiagonalPreconditioner() const;
-        FloatVector diagonal() const;
-
         using LinearOperator::apply;
         virtual void apply( FloatVector& dest, const FloatVector& add, Float scaling ) const override;
         
-        inline const int*   getA() const { return A.data(); }
-        inline const int*   getC() const { return C.data(); }
-        inline const Float* getV() const { return V.data(); }
         
+        /* manipulation and information */
         
         void scale ( Float s ); 
 
+        bool isfinite() const;
+        
+        FloatVector diagonal() const;
+
+        
+        /* access and information to internal data */
+        
+        const int*   getA() const;
+        
+        const int*   getC() const;
+        
+        const Float* getV() const;
+
+        int getnumberofentries() const;
+
+//         void sortentries() const;
+        
+        
+        
     private:
 
-        mutable std::vector<int> A;
-        mutable std::vector<int> C;   // column index of each term 
-        mutable std::vector<Float> V; // numerical value of each term
+        std::vector<int>   A;
+        std::vector<int>   C; // column index of each term 
+        std::vector<Float> V; // numerical value of each term
     
 };
+
+
+
+
+
+DiagonalOperator InverseDiagonalPreconditioner( const MatrixCSR& mat );
+
 
 
 

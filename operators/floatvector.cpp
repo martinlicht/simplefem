@@ -8,13 +8,10 @@
 #include "floatvector.hpp"
 #include "linearoperator.hpp"
 
-FloatVector::FloatVector( int dim, Float initialvalue )
-: dimension(dim), pointer( new Float[dim] )
-{
-    assert( dimension >= 0 and pointer != nullptr );
-    for( int p = 0; p < dimension; p++ ) pointer[p] = initialvalue;
-    FloatVector::check();
-}
+
+
+
+
 
 FloatVector::FloatVector( const FloatVector& src )
 : dimension( src.getdimension() ), pointer( new Float[ src.getdimension() ] )
@@ -24,19 +21,77 @@ FloatVector::FloatVector( const FloatVector& src )
     FloatVector::check();
 }
 
-FloatVector::FloatVector( const FloatVector& src, Float alpha )
-: dimension( src.getdimension() ), pointer( new Float[ src.getdimension() ] )
-{
-    assert( dimension >= 0 and pointer != nullptr );
-    for( int p = 0; p < dimension; p++ ) pointer[p] = alpha * src.pointer[p];
-    FloatVector::check();
-}
-
 FloatVector::FloatVector( FloatVector&& src )
 : dimension( src.getdimension() ), pointer( src.pointer )
 {
     assert( dimension >= 0 and pointer != nullptr and pointer == src.pointer and dimension == src.dimension );
     src.pointer = nullptr;
+    FloatVector::check();
+}
+
+FloatVector& FloatVector::operator=( const FloatVector& vec )
+{
+    assert( pointer     != nullptr );
+    assert( vec.pointer != nullptr );
+    assert( getdimension() == vec.getdimension() );
+    
+    if( this != &vec ) {
+        for( int p = 0; p < dimension; p++ ) pointer[p] = vec.pointer[p];
+    }
+    
+    check();
+    return *this;
+}
+
+FloatVector& FloatVector::operator=( FloatVector&& vec )
+{
+    assert( pointer     != nullptr );
+    assert( vec.pointer != nullptr );
+    assert( getdimension() == vec.getdimension() );
+    
+    if( this != &vec ) {
+        delete[] this->pointer;
+        this->pointer = vec.pointer;
+        vec.pointer = nullptr;
+    }
+    
+    check();
+    return *this;
+}
+
+FloatVector::~FloatVector()
+{
+    FloatVector::check();
+    if( pointer != nullptr ){
+        delete[] pointer;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+FloatVector::FloatVector( int dim, Float initialvalue )
+: dimension(dim), pointer( new Float[dim] )
+{
+    assert( dimension >= 0 and pointer != nullptr );
+    for( int p = 0; p < dimension; p++ ) pointer[p] = initialvalue;
+    FloatVector::check();
+}
+
+FloatVector::FloatVector( const FloatVector& src, Float alpha )
+: dimension( src.getdimension() ), pointer( new Float[ src.getdimension() ] )
+{
+    assert( dimension >= 0 and pointer != nullptr );
+    for( int p = 0; p < dimension; p++ ) pointer[p] = alpha * src.pointer[p];
     FloatVector::check();
 }
 
@@ -78,44 +133,23 @@ FloatVector::FloatVector( int dimension, const std::function<Float(int)>& genera
     FloatVector::check();
 }
 
-FloatVector::~FloatVector()
-{
-    FloatVector::check();
-    if( pointer != nullptr ){
-        delete[] pointer;
-    }
-}
 
 
-FloatVector& FloatVector::operator=( const FloatVector& vec )
-{
-    assert( pointer     != nullptr );
-    assert( vec.pointer != nullptr );
-    assert( getdimension() == vec.getdimension() );
-    
-    if( this != &vec ) {
-        for( int p = 0; p < dimension; p++ ) pointer[p] = vec.pointer[p];
-    }
-    
-    check();
-    return *this;
-}
 
-FloatVector& FloatVector::operator=( FloatVector&& vec )
-{
-    assert( pointer     != nullptr );
-    assert( vec.pointer != nullptr );
-    assert( getdimension() == vec.getdimension() );
-    
-    if( this != &vec ) {
-        delete[] this->pointer;
-        this->pointer = vec.pointer;
-        vec.pointer = nullptr;
-    }
-    
-    check();
-    return *this;
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 void FloatVector::check() const 
@@ -145,10 +179,23 @@ void FloatVector::printplain( std::ostream& output ) const
 
 
 
+
+
+
+
+
+
 FloatVector FloatVector::clone() const 
 {
     return FloatVector( *this );
 }
+
+
+
+
+
+
+
 
 
 
@@ -173,6 +220,16 @@ Float FloatVector::getentry( int p ) const
     assert( 0 <= p && p < getdimension() );
     return pointer[p];
 }
+
+
+
+
+
+
+
+
+
+
 
 
 Float& FloatVector::at( int p ) &
@@ -218,12 +275,12 @@ const std::vector<Float> FloatVector::getdata() const
 
 
 
-void FloatVector::zero() 
-{
-    check();
-    for( int p = 0; p < getdimension(); p++ )
-        setentry( p, 0. ); 
-}
+
+
+
+
+
+
 
 void FloatVector::setentries( Float value ) 
 {
@@ -238,6 +295,13 @@ void FloatVector::random()
     for( int p = 0; p < getdimension(); p++ )
 //         setentry( p, std::sqrt( rand() ) ); 
         setentry( p, gaussrand() ); 
+}
+
+void FloatVector::zero() 
+{
+    check();
+    for( int p = 0; p < getdimension(); p++ )
+        setentry( p, 0. ); 
 }
 
 void FloatVector::clear() 
@@ -264,6 +328,12 @@ void FloatVector::clear_unless( const std::vector<bool>& mask )
         if( not mask[p] )
             setentry( p, 0. ); 
 }
+
+
+
+
+
+
 
 
 
@@ -507,6 +577,11 @@ Float FloatVector::sumnorm() const
     for( int d = 0; d < getdimension(); d++ )
         ret = ret + absolute( pointer[d] );
     return ret;
+}
+
+Float FloatVector::l2norm() const 
+{
+    return norm();
 }
 
 Float FloatVector::lpnorm( Float p ) const

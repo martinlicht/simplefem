@@ -254,10 +254,10 @@ int main()
                         {
                             cout << "CGM diagonal preconditioner CSR" << endl;
                         
-                            FloatVector invprecon = mass_prelim.InverseDiagonalPreconditioner();
+                            DiagonalOperator invprecon = InverseDiagonalPreconditioner( mass_prelim );
 //                             invprecon.setentries( 1. );
-                            assert( invprecon.isfinite() );
-                            assert( invprecon.isnonnegative() );
+                            assert( invprecon.getdiagonal().isfinite() );
+                            assert( invprecon.getdiagonal().isnonnegative() );
                             
                             sol.zero();
                             FloatVector residual( rhs );
@@ -270,7 +270,7 @@ int main()
                                 residual.raw(),
                                 desired_precision,
                                 0,
-                                invprecon.raw()
+                                invprecon.getdiagonal().raw()
                             );
 
                             timestamp end = gettimestamp();
@@ -312,9 +312,9 @@ int main()
                         {
                             cout << "CHEBYSHEV CSR" << endl;
                         
-                            FloatVector invprecon = mass_prelim.InverseDiagonalPreconditioner();
-                            assert( invprecon.isfinite() );
-                            assert( invprecon.ispositive() );
+                            DiagonalOperator invprecon = InverseDiagonalPreconditioner( mass_prelim );
+                            assert( invprecon.getdiagonal().isfinite() );
+                            assert( invprecon.getdiagonal().ispositive() );
                             
                             sol.zero();
                             FloatVector residual( rhs );
@@ -327,9 +327,9 @@ int main()
                                 residual.raw(),
                                 desired_precision,
                                 10,
-                                invprecon.raw(),
+                                invprecon.getdiagonal().raw(),
                                 0.,
-                                100 * invprecon.maxnorm()
+                                100 * invprecon.getdiagonal().maxnorm()
                             );
 
                             timestamp end = gettimestamp();

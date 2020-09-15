@@ -12,6 +12,12 @@ LinearOperator::LinearOperator( int out, int in )
     LinearOperator::check();
 }
 
+LinearOperator::LinearOperator( int dim )
+: dimout( dim ), dimin( dim )
+{
+    LinearOperator::check();
+}
+
 LinearOperator::~LinearOperator()
 {
     LinearOperator::check();

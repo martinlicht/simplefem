@@ -27,6 +27,7 @@ class LinearOperator
         
         explicit LinearOperator() = delete;
         
+        explicit LinearOperator( int );
         explicit LinearOperator( int, int );
 
         
