@@ -227,6 +227,29 @@ inline DenseMatrix MatrixMult( const DenseMatrix& left, const DenseMatrix& right
 }
 
 
+inline DenseMatrix HilbertMatrix( int n )
+{
+    std::function<Float(int,int)> hilbertmatrix_generator = [](int r, int c) { return 1. / (r+c+1); };
+
+    return DenseMatrix( n, hilbertmatrix_generator );
+}
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
