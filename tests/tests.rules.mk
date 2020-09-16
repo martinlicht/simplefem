@@ -46,8 +46,13 @@ $($(context).outs): $(contextdir)/%.out: $(contextdir)/%.cpp | $($(context).depd
 # 	@ echo $($(mycontext).rpath)
 # 	@ echo $($(mycontext).link)
 	@g++ -MM $(mycontextdir)/$*.cpp -MT $@ -MF $($(mycontext).depdir)/$*.d
+ifeq ($(OS),Windows_NT)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $($(mycontext).include) $($(mycontext).rpath) $($(mycontext).link) -o $@ $(LDLIBS)
+else
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $($(mycontext).include) $($(mycontext).rpath) $($(mycontext).link) -o $@ $(LDLIBS)
+endif
 
+	
 -include $($(context).dependencies)
 
 $($(context).outs): $(contextdir)/%.out: $(contextdir)/makefile 

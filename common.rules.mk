@@ -66,11 +66,18 @@ $(staticlibrary): $(libraryobject)
 *.o: ../common.recipe.mk ../common.rules.mk ../common.upkeep.mk ./makefile
 
 
+.PHONY: buildobjects buildso builda
 buildobjects: $(objects)
 buildso:      $(sharedlibrary)
 builda:       $(staticlibrary)
 
-all: $(sharedlibrary)
+.PHONY: all
+ifeq ($(OS),Windows_NT)
+all: builda
+else
+all: buildso 
+endif
+
 #buildobjects # NOTE: the .o files were required for our .so files originally
 
 
