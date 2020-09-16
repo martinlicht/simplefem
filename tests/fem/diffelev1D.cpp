@@ -28,7 +28,7 @@ using namespace std;
 int main()
 {
         
-        cout << "Unit Test for Commutativity of Exterior Derivative" << endl;
+        cout << "Unit Test: (1D) degree elevation commutes with exterior derivative" << endl;
         
         cout << std::setprecision(10);
 
@@ -41,9 +41,6 @@ int main()
         
         M.check();
         
-//         assert( M.getouterdimension() == 1 );
-        
-        cout << "Prepare scalar fields for testing..." << endl;
         
         
         std::vector<std::function<FloatVector(const FloatVector&)>> fields;
@@ -69,7 +66,7 @@ int main()
         const int l_max = 4;
         
         
-        const int r_plus = 2;
+        const int r_plus_max = 3;
         
         
         for( int l = 0; l < l_min; l++ )
@@ -77,16 +74,17 @@ int main()
 
             
         
-        Float errors[ M.getinnerdimension() ][ l_max - l_min + 1 ][ r_max - r_min + 1 ];
+        Float errors[ M.getinnerdimension() ][ l_max - l_min + 1 ][ r_max - r_min + 1 ][ r_plus_max + 1 ];
         
             
         for( int l = l_min; l <= l_max; l++ ){
             
-            for( int k =     0; k <  M.getinnerdimension(); k++ ) 
-            for( int r = r_min; r <= r_max;                 r++ ) 
+            for( int k      =     0; k      <  M.getinnerdimension(); k++      ) 
+            for( int r      = r_min; r      <=                 r_max; r++      ) 
+            for( int r_plus =     0; r_plus <=            r_plus_max; r_plus++ ) 
             {
                 
-                cout << "...assemble matrices: l=" << l << " k=" << k << " r=" << r << endl;
+                cout << "...assemble matrices: l=" << l << " k=" << k << " r=" << r << " rplus=" << r_plus << endl;
         
                 SparseMatrix lower_diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), k, r          );
 
@@ -112,7 +110,7 @@ int main()
 
                 assert( std::isfinite( commutator_error_mass ) );
                 
-                errors[k][l-l_min][r-r_min] = std::sqrt( std::fabs( commutator_error_mass ) );
+                errors[k][l-l_min][r-r_min][r_plus] = std::sqrt( std::fabs( commutator_error_mass ) );
             
                 
                 
@@ -129,7 +127,7 @@ int main()
         
         cout << "Convergence tables" << nl;
     
-        ConvergenceTable contables[ M.getinnerdimension() ];
+        ConvergenceTable contable[ M.getinnerdimension() ];
         
         for( int l = l_min; l <= l_max; l++ ) 
         {
@@ -137,26 +135,37 @@ int main()
             for( int r = r_min; r <= r_max; r++ ) 
             {
                 
-                for( int k = 0; k < M.getinnerdimension(); k++ ) {
-//                     assert( 7.1 != errors[k][l-l_min][r-r_min] ); 
-//                     std::cout << k << space << l << space << r;
-                    contables[k] << errors[k][l-l_min][r-r_min];
-                }
+                for( int i = 0; i < M.getinnerdimension(); i++ ) 
+                    contable[i] << errors[i][l-l_min][r-r_min][r_plus_max];
                         
             }
             
-            for( int k = 0; k < M.getinnerdimension(); k++ ) 
-                contables[k] << nl; 
+            for( int i = 0; i < M.getinnerdimension(); i++ ) contable[i] << nl; 
             
         }
-            
-        for( int k = 0; k < M.getinnerdimension(); k++ ) {
-            contables[k].print( cout );
+        
+        
+        
+        for( int i = 0; i < M.getinnerdimension(); i++ ) 
+        {
+            contable[i].print( cout ); 
             cout << "-------------------" << nl;
         }
-
+                
         
         
+        
+        
+        cout << "Check that differences are small" << nl;
+        
+        for( int l      = l_min; l      <=           l_max; l++      ) 
+        for( int r      = r_min; r      <=           r_max; r++      ) 
+        for( int r_plus =     0; r_plus <=      r_plus_max; r_plus++ ) 
+        for( int i      =     0; i < M.getinnerdimension(); i++      ) 
+        {
+            assert( errors[i][l-l_min][r-r_min][r_plus] < 10e-14 );
+        }
+            
         
         cout << "Finished Unit Test" << endl;
         

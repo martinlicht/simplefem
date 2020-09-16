@@ -92,7 +92,7 @@ inline DenseMatrix InterpolationPointsBarycentricCoordinates( int n, int r )
     for( int i = 0; i < multi_indices.size(); i++ )
         ret.setcolumn( i, FloatVector( multi_indices[i].getvalues() ).shift( delta ).scaleinverse( r + (n+1) * delta ) );
 
-    for( int i = 0; i < ret.getdimout(); i++ ) {
+    for( int i = 0; i < ret.getdimin(); i++ ) {
         assert( ret.getcolumn(i).isnonnegative() );
         assert( ret.getcolumn(i).sumnorm() > 0.9999 && ret.getcolumn(i).sumnorm() < 1.0001 );
     }

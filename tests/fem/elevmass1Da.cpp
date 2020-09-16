@@ -23,7 +23,7 @@ using namespace std;
 int main()
 {
         
-        cout << "Unit Test for Approximating L2 norms of fields" << endl;
+        cout << "Unit Test: (1D) degree elevation of interpolation has the mass of higher order interpolation" << endl;
         
         cout << std::setprecision(10);
 
@@ -34,34 +34,33 @@ int main()
         
         cout << "Initial mesh..." << endl;
         
-        MeshSimplicial1D M = UnitInterval1D();
+        MeshSimplicial1D M = StandardInterval1D();
         
         M.check();
-        
-        cout << "Prepare scalar fields for testing..." << endl;
-        
-
-        
         
         
         std::vector<std::function<FloatVector(const FloatVector&)>> experiments_scalar_field;
         
         experiments_scalar_field.push_back( 
             [](const FloatVector& vec) -> FloatVector{
-                assert( vec.getdimension() == 1 );
+                assert( vec.getdimension() == 2 );
                 return FloatVector({ std::exp( vec[0] ) });
             }
         );
 
         
-
-        
-        
         std::vector<std::function<FloatVector(const FloatVector&)>> experiments_volume_field;
         
-        experiments_volume_field = experiments_scalar_field;
-        
+        experiments_volume_field.push_back( 
+            [](const FloatVector& vec) -> FloatVector{
+                assert( vec.getdimension() == 2 );
+                return FloatVector({ std::exp( vec[0] ), 0. });
+            }
+        );
 
+        
+        
+        
 
 
         
@@ -75,7 +74,7 @@ int main()
         const int l_max = 4;
         
         
-        const int r_plus = 5;
+        const int r_plus_max = 3;
         
         
         for( int l = 0; l < l_min; l++ )
@@ -83,8 +82,8 @@ int main()
 
         
         
-        Float errors_scalar[ experiments_scalar_field.size() ][ l_max - l_min + 1 ][ r_max - r_min + 1 ];
-        Float errors_volume[ experiments_volume_field.size() ][ l_max - l_min + 1 ][ r_max - r_min + 1 ];
+        Float errors_scalar[ experiments_scalar_field.size() ][ l_max - l_min + 1 ][ r_max - r_min + 1 ][ r_plus_max + 1 ];
+        Float errors_volume[ experiments_volume_field.size() ][ l_max - l_min + 1 ][ r_max - r_min + 1 ][ r_plus_max + 1 ];
         
         
         
@@ -93,14 +92,12 @@ int main()
         
         for( int l = l_min; l <= l_max; l++ ){
             
-            cout << "Refinement..." << endl;
-        
-            M.uniformrefinement();
+            cout << "Numerical calculations..." << endl;
             
-            for( int r = r_min; r <= r_max; r++ ) 
+            for( int r      = r_min; r      <=      r_max; r++      ) 
+            for( int r_plus =     0; r_plus <= r_plus_max; r_plus++ ) 
             {
-                cout << "...assemble matrices" << endl;
-        
+                
                 SparseMatrix massmatrix_scalar = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
                 
                 SparseMatrix massmatrix_volume = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r );
@@ -128,7 +125,7 @@ int main()
 
                     Float error_mass = mass - mass_elev;
                     
-                    errors_scalar[i][l-l_min][r-r_min] = error_mass;
+                    errors_scalar[i][l-l_min][r-r_min][r_plus] = error_mass;
                     
                 }
                 
@@ -146,11 +143,16 @@ int main()
 
                     Float error_mass = mass - mass_elev;
                     
-                    errors_volume[i][l-l_min][r-r_min] = error_mass;
+                    errors_volume[i][l-l_min][r-r_min][r_plus] = error_mass;
                     
                 }
                 
             }
+            
+            cout << "Refinement..." << endl;
+        
+            M.uniformrefinement();
+            
         } 
     
         cout << "Convergence tables" << nl;
@@ -165,10 +167,10 @@ int main()
             {
                 
                 for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
-                    contable_scalar[i] << errors_scalar[i][l-l_min][r-r_min];
+                    contable_scalar[i] << errors_scalar[i][l-l_min][r-r_min][r_plus_max];
             
                 for( int i = 0; i < experiments_volume_field.size(); i++ ) 
-                    contable_volume[i] << errors_volume[i][l-l_min][r-r_min];
+                    contable_volume[i] << errors_volume[i][l-l_min][r-r_min][r_plus_max];
             
             }
             
@@ -177,10 +179,39 @@ int main()
             
         }
         
-        for( int i = 0; i < experiments_scalar_field.size(); i++ ) contable_scalar[i].print( cout ); 
-        cout << "-------------------" << nl;
-        for( int i = 0; i < experiments_volume_field.size(); i++ ) contable_volume[i].print( cout ); 
         
+        
+        cout << "Convergence tables: scalars" << nl;
+        for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
+        {
+            contable_scalar[i].print( cout ); 
+            cout << "-------------------" << nl;
+        }
+        
+        cout << "Convergence tables: volumes" << nl;
+        for( int i = 0; i < experiments_volume_field.size(); i++ )
+        {
+            contable_volume[i].print( cout ); 
+            cout << "-------------------" << nl;
+        }
+        
+        
+        
+        
+        
+        cout << "Check that differences are small" << nl;
+        
+        for( int l      = l_min; l      <=      l_max; l++      ) 
+        for( int r      = r_min; r      <=      r_max; r++      ) 
+        for( int r_plus =     0; r_plus <= r_plus_max; r_plus++ ) 
+        {
+            for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
+                assert( errors_scalar[i][l-l_min][r-r_min][r_plus] < 10e-14 );
+            
+            for( int i = 0; i < experiments_volume_field.size(); i++ )
+                assert( errors_volume[i][l-l_min][r-r_min][r_plus] < 10e-14 );
+        }
+            
         
         cout << "Finished Unit Test" << endl;
         

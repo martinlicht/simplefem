@@ -13,6 +13,7 @@
 #include "../../mesh/examples1D.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
+#include "../../fem/global.elevation.hpp"
 #include "../../fem/utilities.hpp"
 #include "../../utility/convergencetable.hpp"
 
@@ -44,7 +45,6 @@ int main()
         
         
         std::vector<std::function<FloatVector(const FloatVector&)>> experiments_scalar_field;
-        std::vector<Float>                                          experiments_scalar_value;
         
         experiments_scalar_field.push_back( 
             [](const FloatVector& vec) -> FloatVector{
@@ -53,18 +53,14 @@ int main()
             }
         );
 
-        experiments_scalar_value.push_back( 3.194528049465325113615213730287503906590 );
-
         
 
         
         
         std::vector<std::function<FloatVector(const FloatVector&)>> experiments_volume_field;
-        std::vector<Float>                                          experiments_volume_value;
-
+        
         experiments_volume_field = experiments_scalar_field;
-        experiments_volume_value = experiments_scalar_value;
-
+        
 
 
 
@@ -76,7 +72,10 @@ int main()
         
         const int l_min = 0;
         
-        const int l_max = 4;
+        const int l_max = 10;
+        
+        
+        const int R = 5;
         
         
         for( int l = 0; l < l_min; l++ )
@@ -94,44 +93,53 @@ int main()
         
         for( int l = l_min; l <= l_max; l++ ){
             
-            cout << "Refinement..." << endl;
+            cout << "Refinement... l = " << l << endl;
         
             M.uniformrefinement();
             
+            cout << "Numerical calculations..." << endl;
+            
             for( int r = r_min; r <= r_max; r++ ) 
             {
-                cout << "...assemble matrices" << endl;
-        
-                SparseMatrix massmatrix_scalar = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
                 
-                SparseMatrix massmatrix_volume = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r );
+                SparseMatrix massmatrix_scalar_plus = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, R );
                 
-                assert( massmatrix_scalar.isfinite() );
-                assert( massmatrix_volume.isfinite() );
+                SparseMatrix massmatrix_volume_plus = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, R );
+                
+                SparseMatrix elevation_scalar = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 0, r, R - r );
+
+                SparseMatrix elevation_volume = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 1, r, R - r  );
+
                 
                 for( int i = 0; i < experiments_scalar_field.size(); i++){
 
                     const auto& scalarfield = experiments_scalar_field[i];
-                    const auto& should_be   = experiments_scalar_value[i];
-
+        
                     FloatVector interpol = Interpolation( M, M.getinnerdimension(), 0, r, scalarfield );
 
-                    Float mass = interpol * ( massmatrix_scalar * interpol );
+                    FloatVector interpol_plus = Interpolation( M, M.getinnerdimension(), 0, R, scalarfield );
                     
-                    errors_scalar[i][l-l_min][r-r_min] = std::sqrt( std::abs( mass - should_be ) );
+                    FloatVector error = interpol_plus - elevation_scalar * interpol;
+
+                    Float error_mass = error * ( massmatrix_scalar_plus * error );
+                    
+                    errors_scalar[i][l-l_min][r-r_min] = std::sqrt( error_mass );
                     
                 }
                 
                 for( int i = 0; i < experiments_volume_field.size(); i++){
 
                     const auto& volumefield = experiments_volume_field[i];
-                    const auto& should_be   = experiments_volume_value[i];
-
+        
                     FloatVector interpol = Interpolation( M, M.getinnerdimension(), 1, r, volumefield );
 
-                    Float mass = interpol * ( massmatrix_volume * interpol );
+                    FloatVector interpol_plus = Interpolation( M, M.getinnerdimension(), 1, R, volumefield );
                     
-                    errors_volume[i][l][r] = std::sqrt( std::abs( mass - should_be ) );
+                    FloatVector error = interpol_plus - elevation_volume * interpol;
+
+                    Float error_mass = error * ( massmatrix_volume_plus * error );
+                    
+                    errors_volume[i][l-l_min][r-r_min] = std::sqrt( error_mass );
                     
                 }
                 
@@ -166,6 +174,17 @@ int main()
         cout << "-------------------" << nl;
         for( int i = 0; i < experiments_volume_field.size(); i++ ) contable_volume[i].print( cout ); 
         
+        
+        cout << "Check that differences are small" << nl;
+        
+        for( int l      = l_min; l      <=      l_max; l++      ) 
+        for( int r      = r_min; r      <=      r_max; r++      ) 
+        for( int r_plus =     0; r_plus <= r_max_plus; r_plus++ ) 
+        {
+            assert( errors_scalar[i][l-l_min][r-r_min][r_plus] < 10e-14 );
+            assert( errors_volume[i][l-l_min][r-r_min][r_plus] < 10e-14 );
+        }
+            
         
         cout << "Finished Unit Test" << endl;
         
