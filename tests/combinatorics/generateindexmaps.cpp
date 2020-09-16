@@ -101,22 +101,32 @@ int main()
         }
         
         if(true)
-        { // TODO: rewrite source file and itemize over different ranges
+        {
                 
                 cout << "Test generator for general index mappings" << endl;
                 
-                const std::vector<int> Ns = { /*-1, 0,*/ 1, 2, 3, 4 };
+                const std::vector<int> Ns = { -1, 0, 1, 2, 3, 4 };
+                const std::vector<int> Ks = { -1, 0, 1, 2, 3, 4 };
                 
                 
-                for( const int& N : Ns ) {
+                for( const int& N : Ns ) 
+                for( const int& K : Ks ) 
+                {
                 
-                    const IndexRange bereich( 1, N );
-                
-                    const std::vector<IndexMap> all = generateIndexMaps( bereich, bereich );
+                    const IndexRange source( 1, N );
+                    const IndexRange target( 1, K );
                     
-                    assert( all == generateIndexMaps( bereich ) );
+                    const std::vector<IndexMap> all = generateIndexMaps( source, target );
+                    
+                    if( source == target )
+                        assert( all == generateIndexMaps( source) );
 
-                    assert( all.size() == power_integer( bereich.cardinality(), bereich.cardinality() ) );
+                    if( source.cardinality() == 0 )
+                        assert( all.size() == 1 );
+                    else if( target.cardinality() == 0 )
+                        assert( all.size() == 0 );
+                    else
+                        assert( all.size() == power_integer( target.cardinality(), source.cardinality() ) );
                     
                     for( int i = 0; i < all.size(); i++ )
                     for( int j = 0; j < all.size(); j++ )
@@ -125,7 +135,6 @@ int main()
                     
                     for( const IndexMap& im : all )
                         cout << im << endl;
-                    
                     
                 }
                 
@@ -138,7 +147,7 @@ int main()
                 
                 cout << "Test generator for permutations of [1,3]" << endl;
                 
-                const std::vector<int> Ns = { /*-1, 0,*/ 1, 2, 3, 5 };
+                const std::vector<int> Ns = { -1, 0, 1, 2, 3, 5 };
                 
                 
                 for( const int& N : Ns ) {
