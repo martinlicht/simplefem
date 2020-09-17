@@ -376,8 +376,12 @@ IndexMap MeshSimplicial1D::getsubsimplices( int sup, int sub, int cell ) const
     assert( 0 <= cell && cell < count_edges() );
     return IndexMap( IndexRange(0,0), IndexRange(0,count_edges()-1), { cell } );
     
-  } else
+  } else {
+      
     unreachable(); 
+    
+  }
+  
 }
 
 bool MeshSimplicial1D::supersimplices_listed( int sup, int sub ) const
@@ -404,8 +408,12 @@ const std::vector<int> MeshSimplicial1D::getsupersimplices( int sup, int sub, in
     assert( 0 <= cell && cell < count_edges() );
     return { cell };
     
-  } else
+  } else {
+    
     unreachable(); 
+    
+  }
+  
 }
 
 
@@ -419,8 +427,9 @@ SimplexFlag MeshSimplicial1D::get_flag( int dim, int cell ) const
     } else if( dim == 1 ) {
         assert( 0 <= cell && cell < count_edges() );
         return flags_edges[cell];
-    } else
+    } else {
         unreachable();
+    }
 }
         
 void MeshSimplicial1D::set_flag( int dim, int cell, SimplexFlag flag )
@@ -432,8 +441,9 @@ void MeshSimplicial1D::set_flag( int dim, int cell, SimplexFlag flag )
     } else if( dim == 1 ) {
         assert( 0 <= cell && cell < count_edges() );
         flags_edges[cell] = flag;
-    } else
+    } else {
         unreachable();
+    }
 }
 
 

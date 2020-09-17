@@ -230,12 +230,12 @@ FloatVector SparseMatrix::diagonal() const
 
 const std::vector<SparseMatrix::MatrixEntry>& SparseMatrix::getentries() const
 {
-    return getentries();
+    return entries;
 }
 
 std::vector<SparseMatrix::MatrixEntry>& SparseMatrix::getentries()
 {
-    return getentries();
+    return entries;
 }
         
 int SparseMatrix::getnumberofentries() const 

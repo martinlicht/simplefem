@@ -1800,8 +1800,9 @@ SimplexFlag MeshSimplicial3D::get_flag( int dim, int cell ) const
     } else if( dim == 3 ) {
         assert( 0 <= cell && cell < count_tetrahedra() );
         return flags_tetrahedra[cell];
-    } else
+    } else {
         unreachable();
+    }
 }
         
 void MeshSimplicial3D::set_flag( int dim, int cell, SimplexFlag flag )
@@ -1819,8 +1820,9 @@ void MeshSimplicial3D::set_flag( int dim, int cell, SimplexFlag flag )
     } else if( dim == 3 ) {
         assert( 0 <= cell && cell < count_tetrahedra() );
         flags_tetrahedra[cell] = flag;
-    } else
+    } else {
         unreachable();
+    }
 }
 
 
@@ -2183,7 +2185,7 @@ int MeshSimplicial3D::get_edge_nextparent_tetrahedron( int e, int t ) const
   assert( 0 <= e && e < counter_edges );
   assert( 0 <= t && t < counter_tetrahedra );
   
-       if( data_tetrahedron_edges[t][0] == e )
+  if(      data_tetrahedron_edges[t][0] == e )
     return data_tetrahedron_nextparents_of_edges[t][0];
   else if( data_tetrahedron_edges[t][1] == e )
     return data_tetrahedron_nextparents_of_edges[t][1];

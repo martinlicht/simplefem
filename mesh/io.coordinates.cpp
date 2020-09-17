@@ -43,7 +43,7 @@ void writeCoordinates( std::ostream& out, const Coordinates& coords, bool sugar 
 {
     /* Preamble */
     if( sugar ) out << "Writing coordinates" << std::endl;
-    if( sugar ) out << "Dimension: "         << std::endl;;
+    if( sugar ) out << "Dimension: "         << std::endl;
     out << coords.getdimension() << std::endl;
     if( sugar ) out << "Number of points: "  << std::endl;
     out << coords.getnumber() << std::endl;

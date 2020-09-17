@@ -932,8 +932,9 @@ SimplexFlag MeshSimplicial2D::get_flag( int dim, int cell ) const
     } else if( dim == 2 ) {
         assert( 0 <= cell && cell < count_triangles() );
         return flags_triangles[cell];
-    } else
+    } else {
         unreachable();
+    }
 }
         
 void MeshSimplicial2D::set_flag( int dim, int cell, SimplexFlag flag )
@@ -948,8 +949,9 @@ void MeshSimplicial2D::set_flag( int dim, int cell, SimplexFlag flag )
     } else if( dim == 2 ) {
         assert( 0 <= cell && cell < count_triangles() );
         flags_triangles[cell] = flag;
-    } else
+    } else {
         unreachable();
+    }
 }
 
 
@@ -1552,9 +1554,9 @@ void MeshSimplicial2D::bisect_edge( int e )
         data_edge_firstparent_triangle[ counter_edges + 1 + ot ] = t_old;
         
         /* run over the front outer edge parent triangle list and replace 't_old' by 't_new' */
-        if( data_edge_firstparent_triangle[ t_e2 ] == t_old ) 
+        if( data_edge_firstparent_triangle[ t_e2 ] == t_old ) {
           data_edge_firstparent_triangle[ t_e2 ] = t_new;
-        else {
+        } else {
           int current_triangle = data_edge_firstparent_triangle[ t_e2 ];
           while( data_triangle_nextparents_of_edges[ current_triangle ][ indexof_triangle_edge( current_triangle, t_e2 ) ] != t_old 
                  &&
@@ -1629,9 +1631,9 @@ void MeshSimplicial2D::bisect_edge( int e )
         data_edge_firstparent_triangle[ counter_edges + 1 + ot ] = t_old;
         
         /* run over the front outer edge parent triangle list and replace 't_old' by 't_new' */
-        if( data_edge_firstparent_triangle[ t_e2 ] == t_old ) 
+        if( data_edge_firstparent_triangle[ t_e2 ] == t_old ) {
           data_edge_firstparent_triangle[ t_e2 ] = t_new;
-        else {
+        } else {
           int current_triangle = data_edge_firstparent_triangle[ t_e2 ];
           while( data_triangle_nextparents_of_edges[ current_triangle ][ indexof_triangle_edge( current_triangle, t_e2 ) ] != t_old 
                  &&
@@ -1705,9 +1707,9 @@ void MeshSimplicial2D::bisect_edge( int e )
         data_edge_firstparent_triangle[ counter_edges + 1 + ot ] = t_old;
         
         /* run over the front outer edge parent triangle list and replace 't_old' by 't_new' */
-        if( data_edge_firstparent_triangle[ t_e1 ] == t_old ) 
+        if( data_edge_firstparent_triangle[ t_e1 ] == t_old ) {
           data_edge_firstparent_triangle[ t_e1 ] = t_new;
-        else {
+        } else {
           int current_triangle = data_edge_firstparent_triangle[ t_e1 ];
           while( data_triangle_nextparents_of_edges[ current_triangle ][ indexof_triangle_edge( current_triangle, t_e1 ) ] != t_old 
                  &&
@@ -2325,8 +2327,9 @@ void MeshSimplicial2D::uniformrefinement()
           ei = 1; e_1 = 0; e_2 = 2; vi_1 = 1; vi_2 = 0; 
         } else if( data_triangle_edges[t][2] == e ) {
           ei = 2; e_1 = 1; e_2 = 2; vi_1 = 1; vi_2 = 1; 
-        } else
+        } else {
           unreachable();
+        }
         
         assert( ei  != nullindex && e_1 != nullindex && e_2 != nullindex );
         
@@ -2449,8 +2452,9 @@ void MeshSimplicial2D::uniformrefinement()
         } else if( data_triangle_edges[t][2] == e ) {
           ei = 2; 
           t_1 = 1; t_2 = 3; t_3 = 2; vi_1 = 2; vi_2 = 2; vi_3 = 1; 
-        } else
+        } else {
           unreachable();
+        }
         
         int old_first_parent = data_vertex_firstparent_triangle[ counter_vertices + e ];
         
@@ -2532,8 +2536,9 @@ void MeshSimplicial2D::uniformrefinement()
         ei = 1; nfp_back = 0; nfp_front = 2;
       } else if( data_triangle_edges[p][2] == e ) {
         ei = 2; nfp_back = 1; nfp_front = 2;
-      } else 
+      } else {
         unreachable();
+      }
       
       assert( ei != nullindex );
       assert( data_triangle_edges[p][0] == e || data_triangle_edges[p][1] == e || data_triangle_edges[p][2] == e );
@@ -2566,8 +2571,9 @@ void MeshSimplicial2D::uniformrefinement()
         t_back = 0; t_front = 2; e_back = 1; e_front = 1; 
       } else if( ei == 2 ) {
         t_back = 1; t_front = 2; e_back = 2; e_front = 2; 
-      } else 
+      } else {
         unreachable();
+      }
       
       
       int q = data_triangle_nextparents_of_edges[t][ei];
@@ -2589,8 +2595,9 @@ void MeshSimplicial2D::uniformrefinement()
           q_ei = 1; q_nfp_back = 0; q_nfp_front = 2;
         } else if( data_triangle_edges[q][2] == e ) {
           q_ei = 2; q_nfp_back = 1; q_nfp_front = 2;
-        } else 
+        } else {
           unreachable();
+        }
         
         assert( q_ei != nullindex );
         assert( data_triangle_edges[q][0] == e || data_triangle_edges[q][1] == e || data_triangle_edges[q][2] == e );
@@ -2848,9 +2855,9 @@ void MeshSimplicial2D::midpoint_refinement( int t )
     /* edge t_e0: nothing needs to change */
     
     /* edge t_e1: relink */
-    if( data_edge_firstparent_triangle[ t_e1 ] == t ) 
+    if( data_edge_firstparent_triangle[ t_e1 ] == t ) {
       data_edge_firstparent_triangle[ t_e1 ] = t1;
-    else {
+    } else {
       int current_triangle = data_edge_firstparent_triangle[ t_e1 ];
       while( data_triangle_nextparents_of_edges[ current_triangle ][ indexof_triangle_edge( current_triangle, t_e1 ) ] != t 
              &&
@@ -2862,9 +2869,9 @@ void MeshSimplicial2D::midpoint_refinement( int t )
     }
         
     /* edge t_e2: relink */
-    if( data_edge_firstparent_triangle[ t_e2 ] == t ) 
+    if( data_edge_firstparent_triangle[ t_e2 ] == t ) {
       data_edge_firstparent_triangle[ t_e2 ] = t2;
-    else {
+    } else {
       int current_triangle = data_edge_firstparent_triangle[ t_e2 ];
       while( data_triangle_nextparents_of_edges[ current_triangle ][ indexof_triangle_edge( current_triangle, t_e2 ) ] != t 
              &&
@@ -2880,9 +2887,9 @@ void MeshSimplicial2D::midpoint_refinement( int t )
     /* vertex t_v1: nothing needs to change */
     
     /* vertex t_v2: relink */ 
-    if( data_vertex_firstparent_triangle[ t_v2 ] == t ) 
+    if( data_vertex_firstparent_triangle[ t_v2 ] == t ) {
       data_vertex_firstparent_triangle[ t_v2 ] = t1;
-    else {
+    } else {
       int current_triangle = data_vertex_firstparent_triangle[ t_v2 ];
       while( data_triangle_nextparents_of_vertices[ current_triangle ][ indexof_triangle_vertex( current_triangle, t_v2 ) ] != t 
              &&
