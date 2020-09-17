@@ -111,7 +111,7 @@ int main()
 
             cout << "Solving Poisson Problem with Neumann boundary conditions" << endl;
 
-            int min_l = 2; 
+            int min_l = 0; 
             int max_l = 7;
             
             int min_r = 3;
@@ -119,7 +119,7 @@ int main()
             
             ConvergenceTable contable;
             
-
+            
             for( int l = 0; l < min_l; l++ )
                 M.uniformrefinement();
 
@@ -222,18 +222,25 @@ int main()
 
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+                            
+                            
+                            auto grad = inv(A,1e-14) * Bt * sol;
 
                             cout << "...compute error and residual:" << endl;
 
-                            auto errornorm_aux = interpol_sol  - volume_incmatrix * sol;
+                            auto errornorm_aux_sol  = interpol_sol  - volume_incmatrix *  sol;
+                            auto errornorm_aux_grad = interpol_grad - vector_incmatrix * grad;
 
-                            Float errornorm     = sqrt( errornorm_aux * ( volume_massmatrix * errornorm_aux ) );
-                            Float residualnorm  = ( rhs - B * inv(A,1e-10) * Bt * sol ).norm();
+                            Float errornorm_sol  = sqrt( errornorm_aux_sol  * ( volume_massmatrix *  errornorm_aux_sol ) );
+                            Float errornorm_grad = sqrt( errornorm_aux_grad * ( vector_massmatrix * errornorm_aux_grad ) );
+                            Float residualnorm   = ( rhs - B * inv(A,1e-10) * Bt * sol ).norm();
 
-                            cout << "error:     " << errornorm     << endl;
+                            cout << "error:     " << errornorm_sol  << endl;
+                            cout << "aux error: " << errornorm_grad << endl;
                             cout << "residual:  " << residualnorm  << endl;
 
-                            contable << errornorm;
+                            contable << errornorm_sol;
+                            contable << errornorm_grad;
                             contable << nl;
 
                             contable.print( std::cout );
