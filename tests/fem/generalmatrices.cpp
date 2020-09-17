@@ -16,6 +16,12 @@
 #include "../../fem/global.lagrangeincl.hpp"
 #include "../../fem/global.sullivanincl.hpp"
 
+#include "../../fem/global.lagrangebrokenmassmatrix.hpp"
+#include "../../fem/global.lagrangebrokenstiffnessmatrix.hpp"
+#include "../../fem/global.lagrangemassmatrix.hpp"
+#include "../../fem/global.lagrangestiffnessmatrix.hpp"
+
+
 
 using namespace std;
 

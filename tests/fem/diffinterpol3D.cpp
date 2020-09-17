@@ -73,7 +73,9 @@ int main()
             [](const FloatVector& vec) -> FloatVector{
                 assert( vec.getdimension() == 3 );
                 return FloatVector( { 
-                        0, vec[0], 1.
+                        0, 
+                        vec[0], 
+                        1.
                     });
             }
         );

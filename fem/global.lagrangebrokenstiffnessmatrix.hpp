@@ -64,7 +64,7 @@ inline SparseMatrix LagrangeBrokenStiffnessMatrix( const Mesh& mesh, int r )
         
         entry.column = t * (n+1) + v2;
         
-        entry.value  = 0.;
+//         entry.value  = 0.;
         
         DenseMatrix Jac = mesh.getTransformationJacobian( n, t );
         

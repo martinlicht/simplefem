@@ -68,7 +68,6 @@ inline SparseMatrix LagrangeStiffnessMatrix( const Mesh& mesh, int r )
 
         entry.row    = mesh.get_subsimplex( n, 0, t, v1 );
         entry.column = mesh.get_subsimplex( n, 0, t, v2 );
-        entry.value  = 0.;
         
         DenseMatrix Jac = mesh.getTransformationJacobian( n, t );
         
