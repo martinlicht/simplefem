@@ -11,8 +11,8 @@
 // #include "../../operators/composed.hpp"
 #include "../../dense/densematrix.hpp"
 #include "../../mesh/coordinates.hpp"
-#include "../../mesh/mesh.simplicial1D.hpp"
-#include "../../mesh/examples1D.hpp"
+#include "../../mesh/mesh.simplicial3D.hpp"
+#include "../../mesh/examples3D.hpp"
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/crm.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
@@ -34,7 +34,7 @@ int main()
 
         cout << "Initial mesh..." << endl;
         
-        auto M = UnitInterval1D();
+        auto M = UnitCube3D();
         
         M.check();
         
@@ -42,11 +42,11 @@ int main()
 
         const int r_min = 0;
         
-        const int r_max = 5;
+        const int r_max = 3;
         
         const int l_min = 0;
         
-        const int l_max = 4;
+        const int l_max = 2;
         
         const int number_of_samples = 3;
         

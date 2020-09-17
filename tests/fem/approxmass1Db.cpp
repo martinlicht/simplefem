@@ -23,23 +23,15 @@ using namespace std;
 int main()
 {
         
-        cout << "Unit Test: (1D) masses are correctly approximated" << endl;
+        cout << "Unit Test: (1D) masses are correctly approximated: mass of reference interpolation" << endl;
         
         cout << std::setprecision(10);
 
-        
-        
-        
-        
-        
         cout << "Initial mesh..." << endl;
         
         MeshSimplicial1D M = UnitInterval1D();
         
         M.check();
-        
-        
-
         
         
         
@@ -69,10 +61,6 @@ int main()
         experiments_volume_field = experiments_scalar_field;
         
         
-
-
-
-        
         
         const int r_min = 0;
         
@@ -82,23 +70,16 @@ int main()
         
         const int l_max = 4;
         
-        
         const int r_ref = 9;
-        
-        
-        for( int l = 0; l < l_min; l++ )
-            M.uniformrefinement();
-
-        
         
         Float errors_scalar[ experiments_scalar_field.size() ][ l_max - l_min + 1 ][ r_max - r_min + 1 ];
         Float errors_volume[ experiments_volume_field.size() ][ l_max - l_min + 1 ][ r_max - r_min + 1 ];
         
         
         
-        
-        cout << "Calculate L2 products" << endl;
-        
+        for( int l = 0; l < l_min; l++ )
+            M.uniformrefinement();
+
         for( int l = l_min; l <= l_max; l++ ){
             
             cout << "Refinement..." << endl;
@@ -123,7 +104,7 @@ int main()
                 assert( elevation_scalar.isfinite() );
                 assert( elevation_volume.isfinite() );
                 
-                for( int i = 0; i < experiments_scalar_field.size(); i++){
+                for( int i = 0; i < experiments_scalar_field.size(); i++ ){
 
                     const auto& scalarfield = experiments_scalar_field[i];
                     
@@ -139,7 +120,7 @@ int main()
                     
                 }
                 
-                for( int i = 0; i < experiments_volume_field.size(); i++){
+                for( int i = 0; i < experiments_volume_field.size(); i++ ){
 
                     const auto& volumefield = experiments_volume_field[i];
                     

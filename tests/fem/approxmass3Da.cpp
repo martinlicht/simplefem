@@ -9,9 +9,7 @@
 #include "../../basic.hpp"
 #include "../../dense/densematrix.hpp"
 #include "../../mesh/coordinates.hpp"
-#include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
-#include "../../mesh/examples2D.hpp"
 #include "../../mesh/examples3D.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
@@ -24,24 +22,15 @@ using namespace std;
 int main()
 {
         
-        cout << "Unit Test for Approximating L2 norms of fields" << endl;
+        cout << "Unit Test: (3D) masses are correctly approximated: precomputed mass" << endl;
         
         cout << std::setprecision(10);
 
-        
-        
-        
-        
-        
         cout << "Initial mesh..." << endl;
         
         MeshSimplicial3D M = UnitCube3D();
         
         M.check();
-        
-        cout << "Prepare scalar fields for testing..." << endl;
-        
-
         
         
         
@@ -150,16 +139,11 @@ int main()
         
         const int r_min = 0;
         
-        const int r_max = 2;
+        const int r_max = 3;
         
         const int l_min = 0;
         
         const int l_max = 2;
-        
-        
-        for( int l = 0; l < l_min; l++ )
-            M.uniformrefinement();
-
         
         Float errors_scalar[ experiments_scalar_field.size() ][ l_max - l_min + 1 ][ r_max - r_min + 1 ];
         Float errors_vector[ experiments_vector_field.size() ][ l_max - l_min + 1 ][ r_max - r_min + 1 ];
@@ -168,18 +152,16 @@ int main()
         
         
         
-        cout << "Calculate L2 products" << endl;
-        
+        for( int l = 0; l < l_min; l++ )
+            M.uniformrefinement();
+
         for( int l = l_min; l <= l_max; l++ ){
             
-            cout << "Refinement..." << endl;
+            cout << "Numerical calculations..." << endl;
         
-            M.uniformrefinement();
-            
             for( int r = r_min; r <= r_max; r++ ) 
             {
-                cout << "...assemble matrices" << endl;
-        
+                
                 SparseMatrix massmatrix_scalar = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
                 
                 SparseMatrix massmatrix_vector = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r );
@@ -193,77 +175,65 @@ int main()
                 assert( massmatrix_pseudo.isfinite() );
                 assert( massmatrix_volume.isfinite() );
                 
-                for( int i = 0; i < experiments_scalar_field.size(); i++){
+                for( int i = 0; i < experiments_scalar_field.size(); i++ ){
 
                     const auto& scalarfield = experiments_scalar_field[i];
                     const auto& should_be   = experiments_scalar_value[i];
 
                     FloatVector interpol = Interpolation( M, M.getinnerdimension(), 0, r, scalarfield );
 
-                    assert( interpol.isfinite() );
-
                     Float mass = interpol * ( massmatrix_scalar * interpol );
                     
                     errors_scalar[i][l-l_min][r-r_min] = std::sqrt( std::abs( mass - should_be ) );
                     
-                    cout << "mass: " << mass << ' ' << should_be << endl; 
-
                 }
                 
-                for( int i = 0; i < experiments_vector_field.size(); i++){
+                for( int i = 0; i < experiments_vector_field.size(); i++ ){
 
                     const auto& vectorfield = experiments_vector_field[i];
                     const auto& should_be   = experiments_vector_value[i];
 
                     FloatVector interpol = Interpolation( M, M.getinnerdimension(), 1, r, vectorfield );
 
-                    assert( interpol.isfinite() );
-
-                    Float mass = interpol * ( massmatrix_vector * interpol );
+                    Float mass = interpol * ( massmatrix_volume * interpol );
                     
-                    errors_vector[i][l][r] = std::sqrt( std::abs( mass - should_be ) );
+                    errors_volume[i][l][r] = std::sqrt( std::abs( mass - should_be ) );
                     
-                    cout << "mass: " << mass << ' ' << should_be << endl; 
-
                 }
                 
-                for( int i = 0; i < experiments_vector_field.size(); i++){
+                for( int i = 0; i < experiments_pseudo_field.size(); i++ ){
 
-                    const auto& vectorfield = experiments_vector_field[i];
-                    const auto& should_be   = experiments_vector_value[i];
+                    const auto& pseudofield = experiments_pseudo_field[i];
+                    const auto& should_be   = experiments_pseudo_value[i];
 
-                    FloatVector interpol = Interpolation( M, M.getinnerdimension(), 2, r, vectorfield );
-
-                    assert( interpol.isfinite() );
+                    FloatVector interpol = Interpolation( M, M.getinnerdimension(), 2, r, pseudofield );
 
                     Float mass = interpol * ( massmatrix_pseudo * interpol );
                     
                     errors_pseudo[i][l][r] = std::sqrt( std::abs( mass - should_be ) );
                     
-                    cout << "mass: " << mass << ' ' << should_be << endl; 
-
                 }
                 
-                for( int i = 0; i < experiments_volume_field.size(); i++){
+                for( int i = 0; i < experiments_volume_field.size(); i++ ){
 
                     const auto& volumefield = experiments_volume_field[i];
                     const auto& should_be   = experiments_volume_value[i];
 
                     FloatVector interpol = Interpolation( M, M.getinnerdimension(), 3, r, volumefield );
 
-                    assert( interpol.isfinite() );
-
                     Float mass = interpol * ( massmatrix_volume * interpol );
                     
                     errors_volume[i][l][r] = std::sqrt( std::abs( mass - should_be ) );
                     
-                    cout << "mass: " << mass << ' ' << should_be << endl; 
-
                 }
                 
             }
+            
+            cout << "Refinement..." << endl;
+        
+            M.uniformrefinement();
+            
         } 
-    
     
         cout << "Convergence tables" << nl;
     
@@ -306,6 +276,31 @@ int main()
         for( int i = 0; i < experiments_pseudo_field.size(); i++ ) contable_pseudo[i].print( cout ); 
         cout << "-------------------" << nl;
         for( int i = 0; i < experiments_volume_field.size(); i++ ) contable_volume[i].print( cout ); 
+        
+        
+        
+        
+        
+        cout << "Check that differences are small" << nl;
+        
+        for( int l      = l_min; l      <=      l_max; l++      ) 
+        for( int r      = r_min; r      <=      r_max; r++      ) 
+        {
+            if( r < r_max or l < 3 ) 
+                continue;
+            
+            for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
+                assert( errors_scalar[i][l-l_min][r-r_min] < 10e-6 );
+            
+            for( int i = 0; i < experiments_vector_field.size(); i++ ) 
+                assert( errors_vector[i][l-l_min][r-r_min] < 10e-6 );
+            
+            for( int i = 0; i < experiments_pseudo_field.size(); i++ ) 
+                assert( errors_pseudo[i][l-l_min][r-r_min] < 10e-6 );
+            
+            for( int i = 0; i < experiments_volume_field.size(); i++ )
+                assert( errors_volume[i][l-l_min][r-r_min] < 10e-6 );
+        }
         
         
         cout << "Finished Unit Test" << endl;

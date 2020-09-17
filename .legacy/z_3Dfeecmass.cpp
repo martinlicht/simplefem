@@ -1,13 +1,12 @@
-
-
-/**/
-
 #include <iostream>
 #include <fstream>
 
 #include "../../basic.hpp"
 #include "../../mesh/coordinates.hpp"
+#include "../../mesh/mesh.simplicial1D.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
+#include "../../mesh/mesh.simplicial3D.hpp"
+#include "../../mesh/examples1D.hpp"
 #include "../../mesh/examples2D.hpp"
 #include "../../mesh/examples3D.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
@@ -24,22 +23,23 @@ int main()
 {
         cout << "Unit Test for FEEC Mass Matrix" << endl;
         
-        MeshSimplicial2D M = StandardSquare2D();
+        MeshSimplicial3D M = UnitSimplex3D();
         
         M.check();
         
         cout << "Refinement..." << endl;
         
-        int number_of_refinements = 3;
-        for( int i = 0; i < number_of_refinements; i++ )
+        int number_of_refinements = 1;
+        
+        for( int i = 0; i <= number_of_refinements; i++ ) 
             M.uniformrefinement();
         
         cout << "...done" << endl;
         
         cout << "...assemble matrices" << endl;
         
-        for( int r = 0; r <= 5; r++ ) 
-        for( int k = 0; k <= 2; k++ ) 
+        for( int r = 0; r <= 4; r++ ) 
+        for( int k = 0; k <= 3; k++ ) 
         {
             cout << "[ k, r ] = [" << k << ", " << r << "]\n";
             
@@ -57,7 +57,7 @@ int main()
             
             if( r > 0 )
                 SparseMatrix SullivanInclMatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), k, r );
-            
+
         }
         
         cout << "Finished Unit Test" << endl;

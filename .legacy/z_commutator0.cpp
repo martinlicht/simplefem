@@ -8,7 +8,6 @@
 
 #include "../../basic.hpp"
 #include "../../operators/composedoperators.hpp"
-// #include "../../operators/composed.hpp"
 #include "../../dense/densematrix.hpp"
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
@@ -136,7 +135,7 @@ int main()
 
                     // SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
-                    for( int i = 0; i < experiments_func.size(); i++){
+                    for( int i = 0; i < experiments_func.size(); i++ ){
 
                         const auto& function_func = experiments_func[i];
                         const auto& function_grad = experiments_grad[i];

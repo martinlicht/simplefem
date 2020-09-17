@@ -32,9 +32,6 @@ int main()
         
         cout << std::setprecision(10);
 
-        
-        cout << "Case 1D" << endl;
-        
         cout << "Initial mesh..." << endl;
         
         MeshSimplicial1D M = StandardInterval1D();
@@ -51,9 +48,6 @@ int main()
                 return FloatVector({ std::exp( vec[0] ) });
             }
         );
-
-
-
         
         
 
@@ -65,18 +59,15 @@ int main()
         
         const int l_max = 4;
         
-        
         const int r_plus_max = 3;
+         
+        Float errors[ M.getinnerdimension() ][ l_max - l_min + 1 ][ r_max - r_min + 1 ][ r_plus_max + 1 ];
         
         
+            
         for( int l = 0; l < l_min; l++ )
             M.uniformrefinement();
 
-            
-        
-        Float errors[ M.getinnerdimension() ][ l_max - l_min + 1 ][ r_max - r_min + 1 ][ r_plus_max + 1 ];
-        
-            
         for( int l = l_min; l <= l_max; l++ ){
             
             for( int k      =     0; k      <  M.getinnerdimension(); k++      ) 
@@ -140,7 +131,8 @@ int main()
                         
             }
             
-            for( int i = 0; i < M.getinnerdimension(); i++ ) contable[i] << nl; 
+            for( int i = 0; i < M.getinnerdimension(); i++ ) 
+                contable[i] << nl; 
             
         }
         

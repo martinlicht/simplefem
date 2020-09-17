@@ -27,18 +27,11 @@ int main()
         
         cout << std::setprecision(10);
 
-        
-        
-        
-        
-        
         cout << "Initial mesh..." << endl;
         
         MeshSimplicial1D M = StandardInterval1D();
         
         M.check();
-        
-        
         
         
         
@@ -51,6 +44,16 @@ int main()
             }
         );
 
+        experiments_scalar_field.push_back( 
+            [](const FloatVector& vec) -> FloatVector{
+                assert( vec.getdimension() == 2 );
+                auto x = vec[0];
+                return FloatVector({ 
+                    ( x*x - 1. ) / ( x*x + 1. ) 
+                });
+            }
+        );
+
         
         std::vector<std::function<FloatVector(const FloatVector&)>> experiments_volume_field;
         
@@ -60,11 +63,19 @@ int main()
                 return FloatVector({ std::exp( vec[0] ), 0. });
             }
         );
+        
+        experiments_volume_field.push_back( 
+            [](const FloatVector& vec) -> FloatVector{
+                assert( vec.getdimension() == 2 );
+                auto x = vec[0];
+                return FloatVector({ 
+                    ( x*x - 1. ) / ( x*x + 1. ) ,
+                    0.
+                });
+            }
+        );
 
         
-
-
-
         
         
         const int r_min = 0;
@@ -75,24 +86,16 @@ int main()
         
         const int l_max = 4;
         
-        
         const int r_plus_max = 3;
-        
-
-
-
-
-        for( int l = 0; l < l_min; l++ )
-            M.uniformrefinement();
-
-        
         
         Float errors_scalar[ experiments_scalar_field.size() ][ l_max - l_min + 1 ][ r_max - r_min + 1 ][ r_plus_max + 1 ];
         Float errors_volume[ experiments_volume_field.size() ][ l_max - l_min + 1 ][ r_max - r_min + 1 ][ r_plus_max + 1 ];
         
         
         
-        
+        for( int l = 0; l < l_min; l++ )
+            M.uniformrefinement();
+
         for( int l = l_min; l <= l_max; l++ ){
             
             cout << "Numerical calculations..." << endl;
@@ -110,7 +113,7 @@ int main()
                 SparseMatrix elevation_volume = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 1, r, r_plus );
 
                 
-                for( int i = 0; i < experiments_scalar_field.size(); i++){
+                for( int i = 0; i < experiments_scalar_field.size(); i++ ){
 
                     const auto& scalarfield = experiments_scalar_field[i];
         
@@ -126,7 +129,7 @@ int main()
                     
                 }
                 
-                for( int i = 0; i < experiments_volume_field.size(); i++){
+                for( int i = 0; i < experiments_volume_field.size(); i++ ){
 
                     const auto& volumefield = experiments_volume_field[i];
         

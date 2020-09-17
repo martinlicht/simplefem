@@ -10,8 +10,8 @@
 #include "../../operators/composedoperators.hpp"
 #include "../../dense/densematrix.hpp"
 #include "../../mesh/coordinates.hpp"
-#include "../../mesh/mesh.simplicial2D.hpp"
-#include "../../mesh/examples2D.hpp"
+#include "../../mesh/mesh.simplicial3D.hpp"
+#include "../../mesh/examples3D.hpp"
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/crm.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
@@ -28,13 +28,13 @@ using namespace std;
 int main()
 {
         
-        cout << "Unit Test: (2D) degree elevation commutes with exterior derivative" << endl;
+        cout << "Unit Test: (3D) degree elevation commutes with exterior derivative" << endl;
         
         cout << std::setprecision(10);
 
         cout << "Initial mesh..." << endl;
         
-        MeshSimplicial2D M = StandardSquare2D();
+        MeshSimplicial3D M = StandardCube3D();
         
         M.check();
         
@@ -44,16 +44,34 @@ int main()
         
         fields.push_back( 
             [](const FloatVector& vec) -> FloatVector{
-                assert( vec.getdimension() == 2 );
-                return FloatVector({ std::exp( vec[0] + vec[1] ) });
+                assert( vec.getdimension() == 3 );
+                return FloatVector({ std::exp( vec[0] + vec[1] - vec[2] ) });
             }
         );
 
         fields.push_back( 
             [](const FloatVector& vec) -> FloatVector{
-                assert( vec.getdimension() == 2 );
-                auto ret = FloatVector({ std::exp( vec[0] + vec[1] ), std::exp( - 2. * vec[0] - 3. * vec[1] ) });
-                assert( ret.getdimension() == 2 );
+                assert( vec.getdimension() == 3 );
+                auto ret = FloatVector({ 
+                                std::exp( vec[0] + vec[2] ), 
+                                std::sin( -5.*vec[0] -vec[1] ),
+                                std::atan( vec[1] * vec[2] )
+                });
+                assert( ret.getdimension() == 3 );
+                return ret;
+            }
+        );
+
+        fields.push_back( 
+            [](const FloatVector& vec) -> FloatVector{
+                assert( vec.getdimension() == 3 );
+                auto ret = FloatVector({ 
+                                std::cos( -5.*vec[0]*vec[0] ), 
+                               -std::exp( 5.*vec[2] / ( 1. + vec[0] * vec[0] ) ), 
+                                std::cos( 2.*vec[1]-vec[0] ) 
+                                
+                });
+                assert( ret.getdimension() == 3 );
                 return ret;
             }
         );
@@ -66,7 +84,7 @@ int main()
         
         const int l_min = 0;
         
-        const int l_max = 4;
+        const int l_max = 2;
         
         const int r_plus_max = 3;
          

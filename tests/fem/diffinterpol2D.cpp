@@ -1,22 +1,13 @@
-
-
-/**/
-
 #include <iostream>
 #include <fstream>
 #include <iomanip>
 
 #include "../../basic.hpp"
 #include "../../operators/composedoperators.hpp"
-// #include "../../operators/composed.hpp"
 #include "../../dense/densematrix.hpp"
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
-#include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples2D.hpp"
-#include "../../mesh/examples3D.hpp"
-#include "../../vtk/vtkwriter.hpp"
-#include "../../solver/crm.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
@@ -30,12 +21,10 @@ using namespace std;
 int main()
 {
         
-        cout << "Unit Test for Commutativity of Exterior Derivative" << endl;
+        cout << "Unit Test: (2D) exterior derivative and interpolation" << endl;
         
         cout << std::setprecision(10);
 
-        
-        cout << "Case 2D" << endl;
         
         cout << "Initial mesh..." << endl;
         
@@ -43,9 +32,7 @@ int main()
         
         M.check();
         
-        cout << "Prepare scalar fields for testing..." << endl;
         
-
         std::vector<std::function<FloatVector(const FloatVector&)>> experiments_scalar_function;
         std::vector<std::function<FloatVector(const FloatVector&)>> experiments_scalar_exterior;
         
@@ -93,8 +80,8 @@ int main()
             [](const FloatVector& vec) -> FloatVector{
                 assert( vec.getdimension() == 2 );
                 return FloatVector( { 
-                        std::exp( 2. * vec[0] ),
-                        std::exp( 3. * vec[1] ), 
+                        vec[1]*vec[1],
+                        vec[0]*vec[0]*vec[0], 
                     });
             }
         );
@@ -103,7 +90,7 @@ int main()
             [](const FloatVector& vec) -> FloatVector{
                 assert( vec.getdimension() == 2 );
                 return FloatVector( { 
-                        2. * std::exp( 2. * vec[0] ) - 3. * std::exp( 3. * vec[1] )
+                        -2. * vec[1] + 3. * vec[0]*vec[0]
                     });
             }
         );
@@ -116,7 +103,7 @@ int main()
         
         const int l_min = 0;
         
-        const int l_max = 6;
+        const int l_max = 2;
         
         
         for( int l = 0; l < l_min; l++ )
@@ -144,7 +131,7 @@ int main()
                 SparseMatrix vector_diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r );
 
                 
-                for( int i = 0; i < experiments_scalar_function.size(); i++){
+                for( int i = 0; i < experiments_scalar_function.size(); i++ ){
 
                     const auto& original_function = experiments_scalar_function[i];
                     const auto& original_exterior = experiments_scalar_exterior[i];
@@ -164,7 +151,7 @@ int main()
             
                 }
                 
-                for( int i = 0; i < experiments_vector_function.size(); i++){
+                for( int i = 0; i < experiments_vector_function.size(); i++ ){
 
                     const auto& original_function = experiments_vector_function[i];
                     const auto& original_exterior = experiments_vector_exterior[i];
@@ -222,8 +209,22 @@ int main()
         for( int i = 0; i < experiments_scalar_function.size(); i++ ) contable_scalar[i].print( cout ); 
         cout << "-------------------" << nl;
         for( int i = 0; i < experiments_vector_function.size(); i++ ) contable_vector[i].print( cout ); 
-
         
+        
+        
+        
+        
+        cout << "Check that differences are small" << nl;
+        
+        for( int l = l_min; l <= l_max; l++ ) 
+        for( int r = r_min; r <= r_max; r++ ) 
+        {
+            for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
+                assert( errors_scalar[i][l-l_min][r-r_min] < 10e-6 );
+            
+            for( int i = 0; i < experiments_vector_function.size(); i++ ) 
+                assert( errors_vector[i][l-l_min][r-r_min] < 10e-6 );
+        }
         
         
         cout << "Finished Unit Test" << endl;

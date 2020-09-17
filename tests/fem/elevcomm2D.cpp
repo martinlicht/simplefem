@@ -11,8 +11,8 @@
 // #include "../../operators/composed.hpp"
 #include "../../dense/densematrix.hpp"
 #include "../../mesh/coordinates.hpp"
-#include "../../mesh/mesh.simplicial1D.hpp"
-#include "../../mesh/examples1D.hpp"
+#include "../../mesh/mesh.simplicial2D.hpp"
+#include "../../mesh/examples2D.hpp"
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/crm.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
@@ -34,7 +34,7 @@ int main()
 
         cout << "Initial mesh..." << endl;
         
-        auto M = UnitInterval1D();
+        auto M = UnitSquare2D();
         
         M.check();
         

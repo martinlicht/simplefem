@@ -73,6 +73,7 @@ inline int kronecker( const T& i, const T& j )
 template<typename T>
 T absolute( const T& n )
 {
+    assert( n >= 0 or n <= 0 );
     if( n >= 0 )
         return n;
     else
@@ -82,6 +83,7 @@ T absolute( const T& n )
 template<typename T>
 T maximum( const T& a, const T& b )
 {
+    assert( a >= b or a <= b );
     if( a >= b )
         return a;
     else
@@ -91,6 +93,7 @@ T maximum( const T& a, const T& b )
 template<typename T>
 T minimum( const T& a, const T& b )
 {
+    assert( a >= b or a <= b );
     if( a <= b )
         return a;
     else
@@ -137,7 +140,7 @@ static inline Float power_numerical( Float base, Float exponent )
 
 static inline int power_integer( int base, int exponent )
 {
-    assert( base != 0 );
+    assert( base != 0 or exponent != 0 );
     assert( exponent >= 0 );
     if( exponent == 0 ) return 1;
     return base * power_integer( base, exponent - 1 );
@@ -398,7 +401,13 @@ static inline Float binomial_numerical( int64_t n, int64_t k )
 
 
 
-
+template<typename T>
+static inline void setmemory( T* pointer, size_t number, const T& value )
+{
+    assert( pointer != nullptr );
+    assert( number >= 0 );
+    for( int i = 0; i < number; i++ ) pointer[i] = value;
+}
 
 
 
@@ -411,6 +420,18 @@ static inline bool isabout( Float value1, Float value2, Float threshold = 100. *
 {
     return issmall( value1 - value2, threshold );
 }
+
+
+
+
+
+
+static inline int cast_size_to_int( unsigned long long size )
+{
+    assert( size < std::numeric_limits<int>::max() );
+    return static_cast<int>( size );
+}
+
 
 
 
