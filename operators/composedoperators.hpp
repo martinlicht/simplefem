@@ -53,6 +53,8 @@ class ProxyOperator final
 
         virtual void check() const override { 
             op.check();
+            assert( getdimout() == op.getdimout() );
+            assert( getdimin()  == op.getdimin()  );
         }
         
         virtual void print( std::ostream& os ) const override { 
@@ -107,7 +109,7 @@ class ComposedOperator
         explicit ComposedOperator( int dimout, int dimin, const LinearOperator& L, const LinearOperator& R )
         : LinearOperator( dimout, dimin ), left( nullptr ), right( nullptr ) 
         {
-            assert( L.getdimin() == R.getdimout() );
+//             assert( L.getdimin() == R.getdimout() );
             left  = std::make_unique<ProxyOperator>(L); 
             right = std::make_unique<ProxyOperator>(R);
             ComposedOperator::check();
@@ -117,7 +119,7 @@ class ComposedOperator
         explicit ComposedOperator( int dimout, int dimin, const LinearOperator& L, LinearOperator&& R )
         : LinearOperator( dimout, dimin ), left( nullptr ), right( nullptr ) 
         {
-            assert( L.getdimin() == R.getdimout() );
+//             assert( L.getdimin() == R.getdimout() );
             left  = std::make_unique<ProxyOperator>(L); 
             right = std::move(R).get_unique_pointer_to_heir();
             ComposedOperator::check();
@@ -127,7 +129,7 @@ class ComposedOperator
         explicit ComposedOperator( int dimout, int dimin, LinearOperator&& L, const LinearOperator& R )
         : LinearOperator( dimout, dimin ), left( nullptr ), right( nullptr ) 
         {
-            assert( L.getdimin() == R.getdimout() );
+//             assert( L.getdimin() == R.getdimout() );
             left  = std::move(L).get_unique_pointer_to_heir();
             right = std::make_unique<ProxyOperator>(R);
             ComposedOperator::check();
@@ -137,7 +139,7 @@ class ComposedOperator
         explicit ComposedOperator( int dimout, int dimin, LinearOperator&& L, LinearOperator&& R )
         : LinearOperator( dimout, dimin ), left( nullptr ), right( nullptr ) 
         {
-            assert( L.getdimin() == R.getdimout() );
+//             assert( L.getdimin() == R.getdimout() );
             left  = std::move(L).get_unique_pointer_to_heir();
             right = std::move(R).get_unique_pointer_to_heir();
             ComposedOperator::check();

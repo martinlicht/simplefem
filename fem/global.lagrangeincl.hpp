@@ -68,7 +68,7 @@ inline SparseMatrix LagrangeInclusionMatrix( const Mesh& mesh, int n, int r )
         SparseMatrix::MatrixEntry entry;
         
         entry.row    = s * (n+1) + vi;
-        entry.column = mesh.get_subsimplex( n, 0, s, vi );
+        entry.column = vertex;
         entry.value  = 1.0;
         
         if( mesh.get_flag( 0, vertex ) == SimplexFlagDirichlet )

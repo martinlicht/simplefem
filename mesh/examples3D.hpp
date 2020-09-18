@@ -118,6 +118,22 @@ inline MeshSimplicial3D UnitSimplex3D()
     );
 }
 
+inline MeshSimplicial3D SomeSimplex3D()
+{
+    return MeshSimplicial3D(
+      3,  
+      Coordinates( 3, 4, {
+         0.2, 0.0,-0.1, // 0
+         0.0, 0.3, 0.9, // 1
+         0.1, 1.2, 0.1, // 2
+         1.5,-0.1,-0.2  // 3
+      } ),
+      {
+        { 0, 1, 2, 3 }
+      }
+    );
+}
+
 
 
 

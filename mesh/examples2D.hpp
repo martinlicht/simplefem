@@ -24,7 +24,7 @@
 
 
 
-inline MeshSimplicial2D StandardSquare2D()
+inline MeshSimplicial2D StandardSquare2D_simple()
 {
     return MeshSimplicial2D(
       2,
@@ -131,6 +131,14 @@ inline MeshSimplicial2D StandardSquare2D_centered()
       }
     );
 }
+
+
+inline MeshSimplicial2D StandardSquare2D()
+{
+    return StandardSquare2D_strange14();
+}
+
+
 
 
 
