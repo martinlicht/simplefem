@@ -2,6 +2,27 @@ SHELL = /bin/sh
 
 default: all
 
+
+
+.PHONY: help 
+help:
+	@echo Use one of the following targets:
+	@echo ""
+	@echo " help:      Print this help."
+	@echo " build:     Build all FEECpp libraries, compile tests and benchmarks."
+	@echo " tests:     Run all tests for all components."
+	@echo " benchmark: Perform the benchmarks." 
+	@echo " all:       build, test, & benchmark"
+	@echo " check:     Run a static code analysis tool."
+	@echo " clean:     Clean all output from previous builds, tests, and benchmarks,"
+	@echo "            including all VTK output"
+	@echo ""
+	@echo " build, tests, and benchmark require only a C++17 compiler and GNU Make."
+
+
+
+
+
 all: lib test 
 
 buildobjects:

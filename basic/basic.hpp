@@ -182,8 +182,7 @@ static inline int signpower( int exponent )
 template<typename T>
 inline constexpr uintmax_t largest_factorial_base_AUX( T n, uintmax_t k )
 {
-    static_assert( std::is_fundamental<T>::value );
-    static_assert( std::is_integral<T>::value    );
+    static_assert( std::is_fundamental<T>::value and std::is_integral<T>::value, "T must be a fundamental integral value." );
     
     if( k > n )
         return k-1;
@@ -194,8 +193,7 @@ inline constexpr uintmax_t largest_factorial_base_AUX( T n, uintmax_t k )
 template<typename T>
 inline constexpr uintmax_t largest_factorial_base()
 {
-    static_assert( std::is_fundamental<T>::value );
-    static_assert( std::is_integral<T>::value    );
+    static_assert( std::is_fundamental<T>::value and std::is_integral<T>::value, "T must be a fundamental integral value." );
     
     const uintmax_t n = std::numeric_limits<T>::max();
     return largest_factorial_base_AUX<T>( n, 2 );

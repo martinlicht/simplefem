@@ -9,15 +9,10 @@
 #include "../../basic.hpp"
 #include "../../utility/utility.hpp"
 #include "../../operators/composedoperators.hpp"
-// #include "../../operators/composed.hpp"
-#include "../../dense/densematrix.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
-#include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
-#include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples2D.hpp"
-#include "../../mesh/examples3D.hpp"
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/systemsparsesolver.hpp"
 #include "../../solver/inv.hpp"
@@ -163,6 +158,8 @@ int main()
                     auto B  = MatrixCSR( mat_B  );
                     
                     
+                    auto Schur = B * inv(A,1e-10) * Bt;
+                    
                     {
 
                         const auto& function_sol  = experiment_sol;
@@ -183,11 +180,12 @@ int main()
                             cout << "algebraic commutator error 1: " << commutatorerror << endl;// << space << commutatorerror2
                         }
                         
-
+//                         {
+//                             auto commutatorerror_aux = interpol_grad - vector_massmatrix_inv * diffmatrix_t * volume_massmatrix * interpol_rhs;
+//                             Float commutatorerror  = commutatorerror_aux * ( commutatorerror_aux );
+//                             cout << "algebraic commutator error 2: " << commutatorerror << endl;// << space << commutatorerror2
+//                         }
                         
-
-                        
-
 
                         {
                             

@@ -9,20 +9,16 @@
 #include "../../basic.hpp"
 #include "../../utility/utility.hpp"
 #include "../../operators/composedoperators.hpp"
-// #include "../../operators/composed.hpp"
-#include "../../dense/densematrix.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
-#include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
-#include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples2D.hpp"
-#include "../../mesh/examples3D.hpp"
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/crm.hpp"
 #include "../../solver/minres.hpp"
 #include "../../solver/herzogsoodhalter.hpp"
 #include "../../solver/inv.hpp"
+#include "../../solver/systemsparsesolver.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
@@ -194,10 +190,65 @@ int main()
 //                         }
                         
 
+                                                {
+                            
+                            FloatVector rhs = volume_incmatrix_t * ( volume_massmatrix * interpol_rhs );
 
-                        
+                            FloatVector sol( volume_incmatrix.getdimin(), 0. );
+                            
+                            cout << "...iterative solver" << endl;
+                            
+                            
+                            sol.zero();
+                            
+                            FloatVector res = sol;
+                            
 
 
+                            timestamp start = gettimestamp();
+
+                            HodgeConjugateResidualSolverCSR_SSOR( // TODO
+//                             HodgeConjugateResidualSolverCSR_textbook( 
+                                B.getdimout(), 
+                                A.getdimout(), 
+                                sol.raw(), 
+                                rhs.raw(), 
+                                A.getA(),   A.getC(),  A.getV(), 
+                                B.getA(),   B.getC(),  B.getV(), 
+                                Bt.getA(), Bt.getC(), Bt.getV(), 
+                                res.raw(),
+                                1e-10,
+                                1
+                            );
+
+                            timestamp end = gettimestamp();
+                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+                            
+                            
+                            auto grad = inv(A,1e-14) * Bt * sol;
+
+                            cout << "...compute error and residual:" << endl;
+
+                            auto errornorm_aux_sol  = interpol_sol  - volume_incmatrix *  sol;
+                            auto errornorm_aux_grad = interpol_grad - vector_incmatrix * grad;
+
+                            Float errornorm_sol  = sqrt( errornorm_aux_sol  * ( volume_massmatrix *  errornorm_aux_sol ) );
+                            Float errornorm_grad = sqrt( errornorm_aux_grad * ( vector_massmatrix * errornorm_aux_grad ) );
+                            Float residualnorm   = ( rhs - B * inv(A,1e-10) * Bt * sol ).norm();
+
+                            cout << "error:     " << errornorm_sol  << endl;
+                            cout << "aux error: " << errornorm_grad << endl;
+                            cout << "residual:  " << residualnorm  << endl;
+
+                            contable << errornorm_sol;
+                            contable << errornorm_grad;
+                            contable << nl;
+
+                            contable.print( std::cout );
+                            
+                        }
+
+                        if(false)
                         {
                             
                             FloatVector rhs = volume_incmatrix_t * ( volume_massmatrix * interpol_rhs );
@@ -241,7 +292,8 @@ int main()
                             
                         }
 
-                        if(false){
+                        if(false)
+                        {
                             
                             auto O = ScalingOperator( Bt.getdimin(), 10. );
                             auto X = Block2x2Operator( A.getdimout() + B.getdimout(), A.getdimin() + Bt.getdimin(), A, Bt, B, O );

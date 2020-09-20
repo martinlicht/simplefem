@@ -23,7 +23,7 @@ using namespace std;
 int main()
 {
         
-        cout << "Unit Test: (2D) degree elevation of interpolation has the mass of higher order interpolation" << endl;
+        cout << "Unit Test: (2D) degree elevation of interpolation preserves mass" << endl;
         
         cout << std::setprecision(10);
 
