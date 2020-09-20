@@ -70,7 +70,9 @@ inline SparseMatrix LagrangeBrokenStiffnessMatrix( const Mesh& mesh, int r )
         
         DenseMatrix GradProds = mesh.getGradientProductMatrix( n, t );
         
-        entry.value = GradProds( v1, v2 ) * absolute( Determinant( Jac ) ) / factorial_numerical( n );
+        Float measure = mesh.getMeasure( n, t );
+        
+        entry.value = GradProds( v1, v2 ) * measure / factorial_numerical( n );
         
         ret.setentry( index_of_entry, entry );
         

@@ -66,14 +66,16 @@ inline SparseMatrix LagrangeStiffnessMatrix( const Mesh& mesh, int r )
         int vertex1 = mesh.get_subsimplex( n, 0, t, v1 );
         int vertex2 = mesh.get_subsimplex( n, 0, t, v2 );
 
-        entry.row    = vertex1; //mesh.get_subsimplex( n, 0, t, v1 );
-        entry.column = vertex2; //mesh.get_subsimplex( n, 0, t, v2 );
+        entry.row    = vertex1; 
+        entry.column = vertex2;
         
         DenseMatrix Jac = mesh.getTransformationJacobian( n, t );
         
         DenseMatrix GradProds = mesh.getGradientProductMatrix( n, t );
         
-        entry.value = GradProds( v1, v2 ) * absolute( Determinant( Jac ) ) / factorial_numerical( n );
+        Float measure = mesh.getMeasure( n, t );
+        
+        entry.value = GradProds( v1, v2 ) * measure / factorial_numerical( n );
         
         if( mesh.get_flag( 0, vertex1 ) == SimplexFlagDirichlet or mesh.get_flag( 0, vertex2 ) == SimplexFlagDirichlet )
             entry.value = 0.;

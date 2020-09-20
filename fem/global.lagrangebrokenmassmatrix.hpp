@@ -67,8 +67,6 @@ inline SparseMatrix LagrangeBrokenMassMatrix( const Mesh& mesh, int r )
         
         entry.column = t * (n+1) + v2;
         
-//         entry.value  = 0.;
-        
         Float measure = mesh.getMeasure( n, t );
         
         if( v1 == v2 )
