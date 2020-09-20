@@ -7,8 +7,8 @@
 
 # Do you want to use GCC or Clang?
 # Uncomment the appropriate definition below
-# FLAG_CXX := CLANG
-FLAG_CXX := GCC
+FLAG_CXX := CLANG
+# FLAG_CXX := GCC
 
 # Do you want to ENABLE the use of tcmalloc?
 # Uncomment the following line to enable tcmalloc
@@ -117,7 +117,7 @@ endif
 
 CXXFLAGS_WARNINGS := 
 CXXFLAGS_WARNINGS += 
-CXXFLAGS_WARNINGS += -Wall -Wextra -Wpedantic
+CXXFLAGS_WARNINGS += -Wall -Wextra -Wpedantic 
 
 ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 
@@ -358,7 +358,7 @@ endif
 CXXFLAGS_OPTIMIZE := -O1
 #CXXFLAGS_OPTIMIZE += -march=native $(OPENMP_FLAG)
 # CXXFLAGS_OPTIMIZE := -inline-threshold=1200
-#CXXFLAGS_OPTIMIZE += -flto
+#CXXFLAGS_OPTIMIZE += -flto -fwhole-program
 
 ifeq ($(FLAG_CXX),GCC)
 ifeq ($(FLAG_DO_STRIP),yes)

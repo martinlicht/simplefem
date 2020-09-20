@@ -1,10 +1,6 @@
-# TODO: This makefile still needs to be written properly
+#!/usr/bin/make
 
-SHELL = /bin/sh
-
-default: all
-
-# include ../common.recipe.mk 
-# include ../common.rules.mk 
-
+include ../common.recipe.mk 
+include ../common.rules.mk 
 include ../common.upkeep.mk
+
