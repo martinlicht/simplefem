@@ -3,6 +3,7 @@
 
 #include <cstdio>
 #include <iostream>
+#include <iomanip>
 #include <vector>
 
 #include "../basic.hpp"
@@ -13,8 +14,9 @@ class ConvergenceTable
     
     public:
         
-        explicit ConvergenceTable()
-        : make_new_row(true)
+        explicit ConvergenceTable( bool display_convergence_rates = true )
+        : make_new_row(true), 
+          display_convergence_rates( display_convergence_rates )
         {
             
         }
@@ -41,36 +43,12 @@ class ConvergenceTable
             return *this; 
         }
         
-//         void print( std::ostream& out ) const 
-//         {
-//             
-//             auto temp = out.precision(); // TODO include fmt as soon as available 
-//             out.precision(myprecision);
-//             
-//             for( int i = 0; i < entries.size(); i++ )
-//             {
-//                 
-//                 out << i << ":" << tab;
-//                 
-//                 for( int j = 0; j < entries[i].size(); j++ )
-//                 {
-//                     out << entries[i][j] << tab;
-//                     if( i == 0 )
-//                         out << "--";
-//                     else 
-//                         out << std::log2( entries[i-1][j] / entries[i][j] );
-//                     out << tab;
-//                 }        
-//                 
-//                 out << nl;
-//                 
-//             }
-//             
-//             out.precision(temp);
-//             
-//         }
+        void print( std::ostream& os )
+        {
+            print( os, display_convergence_rates );
+        }
         
-        void print( std::ostream&, bool show_rates = true ) const // TODO introduced temporarily until format library is available
+        void print( std::ostream&, bool display_convergence_rates ) const // TODO introduced temporarily until format library is available
         {
             
             for( int i = 0; i < entries.size(); i++ )
@@ -85,18 +63,18 @@ class ConvergenceTable
                     
                     std::printf("%.6Le\t", (long double) entries[i][j] ); 
                     
-                    if( show_rates ){
+                    if( display_convergence_rates ){
                         
                         if( i == 0 ) {
                             
-                            std::printf("        --");
+                            std::printf("----------");
                         
                         } else {
                         
                             if( entries[i][j] > 0. and entries[i-1][j] > 0. ) 
                                 std::printf("%10.3Le", (long double) std::log2( entries[i-1][j] / entries[i][j] ) );
                             else
-                                std::printf("        $$");
+                                std::printf("$$$$$$$$$$");
                         
                         }
                         
@@ -111,11 +89,59 @@ class ConvergenceTable
                         
         }
 
+
+        void print_iostream( std::ostream& os, bool display_convergence_rates ) const 
+        {
+             // TODO use {fmt} library as soon as available 
+            std::stringstream str;
+            
+            for( int i = 0; i < entries.size(); i++ )
+            {
+                
+                os << std::setw(3) << i << ":\t";
+
+                assert( entries[i].size() == entries.front().size() );
+                
+                for( int j = 0; j < entries[i].size(); j++ )
+                {
+                    
+                    os << std::setprecision(6) << std::scientific << (long double) entries[i][j];
+                    
+                    if( display_convergence_rates ){
+                        
+                        if( i == 0 ) {
+                            
+                            os << "----------";
+                        
+                        } else {
+                        
+                            if( entries[i][j] > 0. and entries[i-1][j] > 0. ) 
+                                os << std::setw(10) << std::setprecision(3) << std::scientific << (long double) std::log2( entries[i-1][j] / entries[i][j] );
+                            else
+                                os << "$$$$$$$$$$";
+                        
+                        }
+                        
+                        os << '\t';
+                    }
+                    
+                }        
+                
+                os << '\n';
+                
+            }
+            
+            os << str.str();
+            
+        }
+
+
     private:
         
         std::vector<std::vector<Float>> entries;
         
         bool make_new_row;
+        bool display_convergence_rates;
     
 };
 

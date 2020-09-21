@@ -357,6 +357,8 @@ FloatVector& FloatVector::normalize( const LinearOperator& op )
     assert( std::isfinite(value) );
     assert( value >= 0 );
     
+    value = sqrt(value);
+    
     this->scaleinverse( value );
     
     return *this;

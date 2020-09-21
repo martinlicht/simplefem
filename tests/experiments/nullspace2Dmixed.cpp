@@ -18,6 +18,8 @@
 #include "../../mesh/examples2D.hpp"
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/sparsesolver.hpp"
+#include "../../solver/inv.hpp"
+#include "../../solver/systemsparsesolver.hpp"
 #include "../../solver/cgm.hpp"
 #include "../../solver/crm.hpp"
 // #include "../../solver/pcrm.hpp"
@@ -46,8 +48,9 @@ int main()
             
             Mx.check();
             
-//             Mx.automatic_dirichlet_flags();
+            Mx.automatic_dirichlet_flags();
 
+            
             
             MeshSimplicial2D M;
             
@@ -73,11 +76,11 @@ int main()
 
             int min_l = 0; 
             
-            int max_l = 6;
+            int max_l = 2;
             
-            int min_r = 3; 
+            int min_r = 2; 
             
-            int max_r = 3;
+            int max_r = 2;
             
             int max_number_of_candidates = 6;
 
@@ -99,86 +102,86 @@ int main()
                     
                     cout << "...assemble matrices" << endl;
             
-                    SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
-                    
-                    cout << "...assemble vector mass matrix" << endl;
+                    cout << "... assemble matrices" << endl;
             
-                    SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
+                    SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   );
                     
-                    cout << "...assemble differential matrix and transpose" << endl;
+                    SparseMatrix vector_massmatrix_inv = FEECBrokenMassMatrix_cellwiseinverse( M, M.getinnerdimension(), 1, r   );
+                    
+                    SparseMatrix volume_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r-1 );
 
-                    SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r );
-
+                    SparseMatrix diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r );
                     SparseMatrix diffmatrix_t = diffmatrix.getTranspose();
 
-                    cout << "...assemble inclusion matrix and transpose" << endl;
-            
-                    SparseMatrix incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r );
+                    SparseMatrix vector_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 1, r   );
+                    SparseMatrix vector_incmatrix_t = vector_incmatrix.getTranspose();
 
-                    SparseMatrix incmatrix_t = incmatrix.getTranspose();
+                    SparseMatrix volume_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 2, r-1 );
+                    SparseMatrix volume_incmatrix_t = volume_incmatrix.getTranspose();
+                    
+                    auto mass = volume_incmatrix_t * volume_massmatrix * volume_incmatrix;
 
-                    cout << "...assemble stiffness matrix" << endl;
-            
-                    auto opr  = diffmatrix & incmatrix;
-                    auto opl  = opr.getTranspose(); 
+                    auto mat_A  = vector_incmatrix_t & vector_massmatrix & vector_incmatrix;
+                    mat_A.sortandcompressentries();
                     
-//                     auto stiffness_prelim = opl & ( vector_massmatrix & opr );
-//                     stiffness_prelim.sortentries();
-                    auto stiffness = MatrixCSR( opl & ( vector_massmatrix & opr ) ); // MatrixCSR( stiffness_prelim );
+                    auto mat_Bt = vector_incmatrix_t & diffmatrix_t & volume_massmatrix & volume_incmatrix; // upper right
+                    mat_Bt.sortandcompressentries();
                     
-                    auto mass = MatrixCSR( incmatrix_t & ( scalar_massmatrix & incmatrix ) );
+                    auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & volume_massmatrix & diffmatrix & vector_incmatrix; // lower bottom
+                    mat_B.sortandcompressentries();
                     
-                    auto stiffness_diagonal = SparseMatrix( DiagonalOperator( vector_massmatrix.diagonal() ) );
-                    assert( stiffness_diagonal.issquare() );
-                    assert( stiffness_diagonal.getdimin() == opr.getdimout() );
-                    auto simplified_stiffness = MatrixCSR( opl & ( stiffness_diagonal & opr ) );
-                    
-                    auto idea_prelim = opl & opr;
-                    idea_prelim.sortentries();
-                    auto idea = MatrixCSR( idea_prelim );
-                    
-                    const auto& mat = stiffness;
-//                     const auto& mat = simplified_stiffness;
+                    auto A  = MatrixCSR( mat_A  );
+                    auto Bt = MatrixCSR( mat_Bt );
+                    auto B  = MatrixCSR( mat_B  );
                     
                     
-                    assert( mat.diagonal().isfinite() );
+                    auto Schur = B * inv(A,1e-10) * Bt;
                     
-//                     std::cout << mat << endl;
+                    
+                    
+                    
+                    
+                    
                     
                     std::vector<FloatVector> nullvectorgallery;
                     
                     
                     for( int no_candidate = 0; no_candidate < max_number_of_candidates; no_candidate++ )
                     {
-                        FloatVector candidate( opr.getdimin(), 0. ); 
+                        FloatVector candidate( Bt.getdimin(), 0. ); 
                         candidate.random(); 
                         candidate.normalize(mass);
                         
                         /* reduce the candidate to its nullspace component */
                         {
-                            FloatVector rhs( opr.getdimin(), 0. );
+                            FloatVector rhs( Bt.getdimin(), 0. );
                         
                             FloatVector residual( rhs );
                             
                             for( int t = 0; t < max_number_of_purifications; t++ )
                             {
                                 
-                                ConjugateResidualSolverCSR( 
-                                    candidate.getdimension(), 
+                                
+                                HodgeConjugateResidualSolverCSR_SSOR(
+                                    B.getdimout(), 
+                                    A.getdimout(), 
                                     candidate.raw(), 
                                     rhs.raw(), 
-                                    mat.getA(), mat.getC(), mat.getV(),
+                                    A.getA(),   A.getC(),  A.getV(), 
+                                    B.getA(),   B.getC(),  B.getV(), 
+                                    Bt.getA(), Bt.getC(), Bt.getV(), 
                                     residual.raw(),
                                     1000 * machine_epsilon,
-                                    0
+                                    1
                                 );
+                                
                                 candidate.normalize( mass );
                                 
                                 assert( candidate.isfinite() );
                                 
                                 std::cout << "\t\t\t x:         " << candidate.norm( mass ) << std::endl;
-                                std::cout << "\t\t\t Ax:        " << ( mat * candidate ).norm( mass ) << std::endl;
-                                std::cout << "\t\t\t b - Ax:    " << ( mat * candidate - rhs ).norm( mass ) << std::endl;
+                                std::cout << "\t\t\t Ax:        " << ( Schur * candidate ).norm( mass ) << std::endl;
+                                std::cout << "\t\t\t b - Ax:    " << ( Schur * candidate - rhs ).norm( mass ) << std::endl;
                                 
                             }
                         }
@@ -196,7 +199,7 @@ int main()
                         
                         candidate.normalize(mass);
                         
-                        if( ( mat * candidate ).norm(mass) > 1e-10 )
+                        if( ( Schur * candidate ).norm(mass) > 1e-10 )
                             break;
                         
                         assert( candidate.isfinite() );
@@ -209,7 +212,7 @@ int main()
                     
                     std::cout << "How much nullspace are our vectors?" << nl;
                     for( const auto& nullvector : nullvectorgallery ) {
-                        std::cout << std::scientific << std::setprecision(5) << std::setw(10) << ( mat * nullvector ).norm(mass) << tab;
+                        std::cout << std::scientific << std::setprecision(5) << std::setw(10) << ( Schur * nullvector ).norm(mass) << tab;
                     }
                     std::cout << nl;
                     

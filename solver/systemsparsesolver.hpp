@@ -427,7 +427,7 @@ void HodgeConjugateResidualSolverCSR_SSOR(
             if( Acolumns[d] == c ) 
                 diagonal[c] += Avalues[ d ];
             
-        assert( diagonal[c] > 0. );
+        assert( diagonal[c] >= 0. );
         
     }
     
