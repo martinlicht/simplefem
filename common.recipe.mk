@@ -372,8 +372,10 @@ endif
 
 # Code generation options
 
-CXXFLAGS_CODEGEN := -fpic 
-CXXFLAGS_CODEGEN += -fno-exceptions -fvisibility=default
+CXXFLAGS_CODEGEN := -fno-exceptions -fvisibility=default
+ifneq ($(OS),Windows_NT)
+CXXFLAGS_CODEGEN += -fpic 
+endif
 
 
 

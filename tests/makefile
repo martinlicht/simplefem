@@ -1,6 +1,6 @@
 SHELL = /bin/sh
 
-default: all
+default: build
 
 include ../common.recipe.mk 
 
@@ -9,7 +9,7 @@ include ../common.upkeep.mk
 include tests.affices.mk
 
 
-%.out: makefile ../common.recipe.mk
+%.out: ./makefile ../common.recipe.mk
 
 
 depdir := .deps
@@ -23,79 +23,79 @@ contextdir:=./basic
 context:=basic
 include tests.rules.mk
 include tests.run.mk
-all: basic.tests 
+build: basic.tests 
 
 contextdir:=./utility
 context:=utility
 include tests.rules.mk
 include tests.run.mk
-all: utility.tests
+build: utility.tests
 
 contextdir:=./combinatorics
 context:=combinatorics
 include tests.rules.mk
 include tests.run.mk
-all: combinatorics.tests
+build: combinatorics.tests
 
 contextdir:=./operators
 context:=operators
 include tests.rules.mk
 include tests.run.mk
-all: operators.tests
+build: operators.tests
 
 contextdir:=./dense
 context:=dense
 include tests.rules.mk
 include tests.run.mk
-all: dense.tests
+build: dense.tests
 
 contextdir:=./sparse
 context:=sparse
 include tests.rules.mk
 include tests.run.mk
-all: sparse.tests
+build: sparse.tests
 
 contextdir:=./solver
 context:=solver
 include tests.rules.mk
 include tests.run.mk
-all: solver.tests
+build: solver.tests
 
 contextdir:=./mesh
 context:=mesh
 include tests.rules.mk
 include tests.run.mk
-all: mesh.tests
+build: mesh.tests
 
 contextdir:=./vtk
 context:=vtk
 include tests.rules.mk
 include tests.run.mk
-all: vtk.tests
+build: vtk.tests
 
 contextdir:=./matrixmarket
 context:=matrixmarket
 include tests.rules.mk
 include tests.run.mk
-all: matrixmarket.tests
+build: matrixmarket.tests
 
 contextdir:=./fem
 context:=fem
 include tests.rules.mk
 include tests.run.mk
-all: fem.tests
+build: fem.tests
 
 contextdir:=./experiments
 context:=experiments
 include tests.rules.mk
 include tests.run.mk
-all: experiments.tests
+build: experiments.tests
 
 contextdir:=./afem
 context:=afem
 include tests.rules.mk
 include tests.run.mk
-all: afem.tests
+build: afem.tests
 
 
 
