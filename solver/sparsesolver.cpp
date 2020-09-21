@@ -9,8 +9,11 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
-#include <omp.h>
 #include <utility>
+
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 
 

@@ -6,7 +6,7 @@ SHELL = /bin/bash
 # the object files, and the shared libraries. 
 
 
-default: all
+default: build
 
 dirname := $(notdir $(shell pwd))
 depdir  := .deps
@@ -63,7 +63,7 @@ $(staticlibrary): $(libraryobject)
 -include $(depdir)/.all.d
 -include $(dependencies)
 
-*.o .all.o: ../common.recipe.mk ../common.rules.mk ../common.upkeep.mk ./makefile
+*.o .all.o: ./makefile ../makefile ../common.recipe.mk ../common.rules.mk ../common.upkeep.mk
 
 
 .PHONY: buildobjects buildso builda
@@ -71,11 +71,11 @@ buildobjects: $(objects)
 buildso:      $(sharedlibrary)
 builda:       $(staticlibrary)
 
-.PHONY: all
+.PHONY: build
 ifeq ($(OS),Windows_NT)
-all: builda
+build: builda
 else
-all: buildso 
+build: buildso 
 endif
 
 #buildobjects # NOTE: the .o files were required for our .so files originally

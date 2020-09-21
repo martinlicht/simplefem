@@ -61,13 +61,13 @@ build.components.so:=$(patsubst %,.build.%.so,$(components) )
 build: $(build.components) .build.tests .build.benchmarks
 
 $(build.components): .build.%: 
-	cd ./$* && $(MAKE) 
+	cd ./$* && $(MAKE) build
 
 .build.tests:
-	cd ./tests/ && $(MAKE) 
+	cd ./tests/ && $(MAKE) build
 
 .build.benchmarks:
-# 	cd ./benchmarks/ && $(MAKE) 
+# 	cd ./benchmarks/ && $(MAKE) build
 
 .PHONY: .build.a .build.so $(build.components.a) $(build.components.so) 
 .build.a:  $(build.components.a)

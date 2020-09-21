@@ -1,5 +1,5 @@
 
-default: builddefault
+default: build
 
 include ../../common.recipe.mk 
 
@@ -18,7 +18,7 @@ contextdir:=.
 context:=$(shell basename $$(pwd))
 
 
-builddefault: $(context).tests
+build: $(context).tests
 
 include ../tests.rules.mk
 include ../tests.run.mk
