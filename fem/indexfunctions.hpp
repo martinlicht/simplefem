@@ -47,9 +47,11 @@ inline std::vector< std::pair<MultiIndex,IndexMap> > ListOfSullivanIndices( int 
     // Auxiliary calculations and preparations
     
 //     const IndexRange N( 0, n );
-    const std::vector<int> N = [&n]()->auto{ std::vector<int> ret(n+1); 
-                                           for( int i = 0; i <= n; i++ ) ret[i] = i;
-                                           return ret; }();
+    const std::vector<int> N = [&n]()->std::vector<int>{ 
+        std::vector<int> ret(n+1); 
+        for( int i = 0; i <= n; i++ ) ret[i] = i;
+        return ret;
+    }();
     
     const std::vector<MultiIndex> alphas = generateMultiIndices( IndexRange( 0, n ), r );
     const std::vector<IndexMap>   sigmas = generateSigmas( IndexRange( 1, k ), IndexRange( 0, n ) );

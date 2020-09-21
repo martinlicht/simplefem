@@ -19,6 +19,12 @@
 #include <utility>
 #include <vector>
 
+
+#if __cplusplus < 201103L
+#error Compilation of this software requires at least C++11. C++14 is recommended.
+#endif
+
+
 #define unreachable abort 
 // __builtin_unreachable
 
@@ -183,11 +189,15 @@ template<typename T>
 inline constexpr uintmax_t largest_factorial_base_AUX( T n, uintmax_t k )
 {
     static_assert( std::is_fundamental<T>::value and std::is_integral<T>::value, "T must be a fundamental integral value." );
-    
+
+#if __cplusplus >= 201402L
     if( k > n )
         return k-1;
     else
         return largest_factorial_base_AUX<T>( n / T(k), k+1 );
+#else
+    return (k > n) ? (k-1) : (largest_factorial_base_AUX<T>( n / T(k), k+1 ));
+#endif
 }
 
 template<typename T>
@@ -195,8 +205,12 @@ inline constexpr uintmax_t largest_factorial_base()
 {
     static_assert( std::is_fundamental<T>::value and std::is_integral<T>::value, "T must be a fundamental integral value." );
     
+#if __cplusplus >= 201402L
     const uintmax_t n = std::numeric_limits<T>::max();
     return largest_factorial_base_AUX<T>( n, 2 );
+#else
+    return largest_factorial_base_AUX<T>( std::numeric_limits<T>::max(), 2 );
+#endif
 }
 
 
@@ -700,9 +714,31 @@ std::ostream& operator<<( std::ostream& stream, const std::array<T, N>& v)
 
 
 
+#if __cplusplus < 201402L
 
+/****
+ * 
+ * A very imperfect solution for make_unique in C++11
+ * We are undefined behavior territory here
+ * 
+ ****/
+#warning This code extends the std namespace so that `make_unique` \
+is available throughout the code. This was triggered by a C++ version \
+below C++14. While this may be a practical workaround, it is officially \
+considered undefined behavior in the C++ standard. Please try to compile \
+with C++14 or higher.
+#include <memory>
 
+namespace std
+{
+template <typename T, typename ...Args> 
+std::unique_ptr<T> make_unique(Args && ...args)
+{
+  return std::unique_ptr<T>( new T(std::forward<Args>(args)...) );
+}
+}
 
+#endif
 
 
 

@@ -25,11 +25,11 @@ class ProxyOperator final
 
     public:
 
-        explicit ProxyOperator() = delete;
-        explicit ProxyOperator( const ProxyOperator& ) = delete;
-        explicit ProxyOperator( ProxyOperator&& ) = delete;
+        ProxyOperator()                                      = delete;
+        ProxyOperator( const ProxyOperator& )                = delete;
+        ProxyOperator( ProxyOperator&& )                     = delete;
         ProxyOperator& operator=( const ProxyOperator& vec ) = delete;
-        ProxyOperator& operator=( ProxyOperator&& vec ) = delete; 
+        ProxyOperator& operator=( ProxyOperator&& vec )      = delete; 
 
         
         explicit ProxyOperator( const LinearOperator& op )
@@ -91,11 +91,11 @@ class ComposedOperator
 
     public:
     
-        explicit ComposedOperator() = delete;
-        explicit ComposedOperator( const ComposedOperator& ) = delete;
-        explicit ComposedOperator( ComposedOperator&& ) = delete;
+        ComposedOperator()                                         = delete;
+        ComposedOperator( const ComposedOperator& )                = delete;
+        ComposedOperator( ComposedOperator&& )                     = default;
         ComposedOperator& operator=( const ComposedOperator& vec ) = delete;
-        ComposedOperator& operator=( ComposedOperator&& vec ) = delete; 
+        ComposedOperator& operator=( ComposedOperator&& vec )      = default; 
 
         
         explicit ComposedOperator( int dimout, int dimin, std::unique_ptr<LinearOperator>&& pl, std::unique_ptr<LinearOperator>&& pr )
@@ -184,11 +184,11 @@ class ProduktOperator final
 
     public:
     
-        explicit ProduktOperator() = delete;
-        explicit ProduktOperator( const ProduktOperator& ) = delete;
-        explicit ProduktOperator( ProduktOperator&& ) = delete;
+        ProduktOperator()                                        = delete;
+        ProduktOperator( const ProduktOperator& )                = delete;
+        ProduktOperator( ProduktOperator&& )                     = default;
         ProduktOperator& operator=( const ProduktOperator& vec ) = delete;
-        ProduktOperator& operator=( ProduktOperator&& vec ) = delete;
+        ProduktOperator& operator=( ProduktOperator&& vec )      = default;
 
         explicit ProduktOperator( int dimout, int dimin, std::unique_ptr<LinearOperator>&& pl, std::unique_ptr<LinearOperator>&& pr )
         : ComposedOperator( dimout, dimin, std::move(pl), std::move(pr) ) 
@@ -290,11 +290,11 @@ class SummOperator final
 
     public:
     
-        explicit SummOperator() = delete;
-        explicit SummOperator( const SummOperator& ) = delete;
-        explicit SummOperator( SummOperator&& ) = delete;
+        SummOperator()                                     = delete;
+        SummOperator( const SummOperator& )                = delete;
+        SummOperator( SummOperator&& )                     = default;
         SummOperator& operator=( const SummOperator& vec ) = delete;
-        SummOperator& operator=( SummOperator&& vec ) = delete; 
+        SummOperator& operator=( SummOperator&& vec )      = default; 
 
         explicit SummOperator( int dimout, int dimin, std::unique_ptr<LinearOperator>&& pl, std::unique_ptr<LinearOperator>&& pr )
         : ComposedOperator( dimout, dimin, std::move(pl), std::move(pr) ) 
@@ -400,11 +400,11 @@ class DiffOperator final
 
     public:
     
-        explicit DiffOperator() = delete;
-        explicit DiffOperator( const DiffOperator& ) = delete;
-        explicit DiffOperator( DiffOperator&& ) = delete;
+        DiffOperator()                                     = delete;
+        DiffOperator( const DiffOperator& )                = delete;
+        DiffOperator( DiffOperator&& )                     = default;
         DiffOperator& operator=( const DiffOperator& vec ) = delete;
-        DiffOperator& operator=( DiffOperator&& vec ) = delete; 
+        DiffOperator& operator=( DiffOperator&& vec )      = default; 
 
         explicit DiffOperator( int dimout, int dimin, std::unique_ptr<LinearOperator>&& pl, std::unique_ptr<LinearOperator>&& pr )
         : ComposedOperator( dimout, dimin, std::move(pl), std::move(pr) ) 
@@ -564,11 +564,11 @@ class Block2x2Operator
 
     public:
     
-        explicit Block2x2Operator() = delete;
-        explicit Block2x2Operator( const Block2x2Operator& ) = delete;
-        explicit Block2x2Operator( Block2x2Operator&& ) = delete;
+        Block2x2Operator()                                         = delete;
+        Block2x2Operator( const Block2x2Operator& )                = delete;
+        Block2x2Operator( Block2x2Operator&& )                     = default;
         Block2x2Operator& operator=( const Block2x2Operator& vec ) = delete;
-        Block2x2Operator& operator=( Block2x2Operator&& vec ) = delete; 
+        Block2x2Operator& operator=( Block2x2Operator&& vec )      = default; 
 
         
         explicit Block2x2Operator( int dimout, int dimin,

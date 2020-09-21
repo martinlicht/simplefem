@@ -5,6 +5,7 @@
 #include <functional>
 #include <memory>
 #include <ostream>
+#include <utility>
 
 #include "../basic.hpp"
 #include "floatvector.hpp"
@@ -24,10 +25,9 @@ class IdentityOperator final
 
     public:
 
-        explicit IdentityOperator() = delete;
-        
-        explicit IdentityOperator( const IdentityOperator& )       = default;
-        explicit IdentityOperator( IdentityOperator&& )            = default;
+        IdentityOperator()                                         = delete;
+        IdentityOperator( const IdentityOperator& )                = default;
+        IdentityOperator( IdentityOperator&& )                     = default;
         IdentityOperator& operator=( const IdentityOperator& vec ) = default;
         IdentityOperator& operator=( IdentityOperator&& vec )      = default; 
         
@@ -80,10 +80,9 @@ class ScalingOperator final
 
     public:
 
-        explicit ScalingOperator() = delete;
-        
-        explicit ScalingOperator( const ScalingOperator& )       = default;
-        explicit ScalingOperator( ScalingOperator&& )            = default;
+        ScalingOperator()                                        = delete;
+        ScalingOperator( const ScalingOperator& )                = default;
+        ScalingOperator( ScalingOperator&& )                     = default;
         ScalingOperator& operator=( const ScalingOperator& vec ) = default;
         ScalingOperator& operator=( ScalingOperator&& vec )      = default; 
         
@@ -143,10 +142,9 @@ class DiagonalOperator final
 
     public:
 
-        explicit DiagonalOperator() = delete;
-        
-        explicit DiagonalOperator( const DiagonalOperator& )       = default;
-        explicit DiagonalOperator( DiagonalOperator&& )            = default;
+        DiagonalOperator()                                         = delete;
+        DiagonalOperator( const DiagonalOperator& )                = default;
+        DiagonalOperator( DiagonalOperator&& )                     = default;
         DiagonalOperator& operator=( const DiagonalOperator& vec ) = default;
         DiagonalOperator& operator=( DiagonalOperator&& vec )      = default; 
 

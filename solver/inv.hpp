@@ -26,11 +26,11 @@ class InverseOperator final
 
     public:
 
-        explicit InverseOperator() = delete;
-        explicit InverseOperator( const InverseOperator& ) = delete;
-        explicit InverseOperator( InverseOperator&& ) = delete;
+        InverseOperator()                                        = delete;
+        InverseOperator( const InverseOperator& )                = default;
+        InverseOperator( InverseOperator&& )                     = default;
         InverseOperator& operator=( const InverseOperator& vec ) = delete;
-        InverseOperator& operator=( InverseOperator&& vec ) = delete; 
+        InverseOperator& operator=( InverseOperator&& vec )      = delete; 
 
         
         explicit InverseOperator( const LinearOperator& op, Float tolerance )

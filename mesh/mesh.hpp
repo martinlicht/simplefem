@@ -221,7 +221,11 @@ class Mesh
         
     public: 
         
+#if __cplusplus >= 201402L
         const auto& getauxdata() { return auxdata; }
+#else
+        const decltype(auxdata)& getauxdata() { return auxdata; }
+#endif
         
 };
 
