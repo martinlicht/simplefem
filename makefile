@@ -99,6 +99,7 @@ benchmarks:
 
 
 
+check: tidy
 
 
 
@@ -168,15 +169,15 @@ tidy: $(tidy.components)
 
 
 
-check.components :=$(patsubst %,.check.%,$(components) )
+cppcheck.components :=$(patsubst %,.cppcheck.%,$(components) )
 
-.PHONY: $(check.components)
-$(check.components): .check.%: 
-	cd ./$* && $(MAKE) check
+.PHONY: $(cppcheck.components)
+$(cppcheck.components): .cppcheck.%: 
+	cd ./$* && $(MAKE) cppcheck
 
-.PHONY: check
-check: $(check.components)
-	$(MAKE) -f common.upkeep.mk check
+.PHONY: cppcheck
+cppcheck: $(cppcheck.components)
+	$(MAKE) -f common.upkeep.mk cppcheck
 
 
 

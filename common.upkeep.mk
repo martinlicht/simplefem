@@ -33,8 +33,8 @@ tidy:
 # CHECK_OPTION= --enable=warning,style,performance,portability --std=c++11 -q
 # CHECK_FILES= basic.hpp basic/*.?pp combinatorics/*.?pp operators/*.?pp
 
-.PHONY: check
-check:
+.PHONY: cppcheck
+cppcheck:
 	cppcheck --enable=warning,style,performance,portability --suppress=duplicateCondition --suppress=assertWithSideEffect --suppress=useStlAlgorithm --std=c++17 -q . ./*pp
 
 .PHONY: cpplint
