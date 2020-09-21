@@ -67,7 +67,7 @@ $(build.components): .build.%:
 	cd ./tests/ && $(MAKE) build
 
 .build.benchmarks:
-# 	cd ./benchmarks/ && $(MAKE) build
+	cd ./benchmarks/ && $(MAKE) build
 
 .PHONY: .build.a .build.so $(build.components.a) $(build.components.so) 
 .build.a:  $(build.components.a)
