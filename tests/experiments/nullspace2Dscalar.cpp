@@ -18,8 +18,6 @@
 #include "../../mesh/examples2D.hpp"
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/sparsesolver.hpp"
-#include "../../solver/inv.hpp"
-#include "../../solver/systemsparsesolver.hpp"
 #include "../../solver/cgm.hpp"
 #include "../../solver/crm.hpp"
 // #include "../../solver/pcrm.hpp"
@@ -48,9 +46,8 @@ int main()
             
             Mx.check();
             
-            Mx.automatic_dirichlet_flags();
+//             Mx.automatic_dirichlet_flags();
 
-            
             
             MeshSimplicial2D M;
             
@@ -76,15 +73,15 @@ int main()
 
             int min_l = 0; 
             
-            int max_l = 4;
+            int max_l = 6;
             
-            int min_r = 2; 
+            int min_r = 1; 
             
-            int max_r = 2;
+            int max_r = 1;
             
             int max_number_of_candidates = 6;
 
-            int max_number_of_purifications = 1;
+            int max_number_of_purifications = 2;
 
             for( int l = 0; l < min_l; l++ )
                 M.uniformrefinement();
@@ -102,55 +99,61 @@ int main()
                     
                     cout << "...assemble matrices" << endl;
             
-                    cout << "... assemble matrices" << endl;
+                    SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
+                    
+                    cout << "...assemble vector mass matrix" << endl;
             
-                    SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   );
+                    SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
                     
-                    SparseMatrix vector_massmatrix_inv = FEECBrokenMassMatrix_cellwiseinverse( M, M.getinnerdimension(), 1, r   );
-                    
-                    SparseMatrix volume_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r-1 );
+                    cout << "...assemble differential matrix and transpose" << endl;
 
-                    SparseMatrix diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r );
+                    SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r );
+
                     SparseMatrix diffmatrix_t = diffmatrix.getTranspose();
 
-                    SparseMatrix vector_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 1, r   );
-                    SparseMatrix vector_incmatrix_t = vector_incmatrix.getTranspose();
+                    cout << "...assemble inclusion matrix and transpose" << endl;
+            
+                    SparseMatrix incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r );
 
-                    SparseMatrix volume_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 2, r-1 );
-                    SparseMatrix volume_incmatrix_t = volume_incmatrix.getTranspose();
-                    
-                    auto physical_mass = volume_incmatrix_t * volume_massmatrix * volume_incmatrix;
+                    SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
-                    auto mat_A  = vector_incmatrix_t & vector_massmatrix & vector_incmatrix;
-                    mat_A.sortandcompressentries();
+                    cout << "...assemble stiffness matrix" << endl;
+            
+                    auto opr  = diffmatrix & incmatrix;
+                    auto opl  = opr.getTranspose(); 
                     
-                    auto mat_Bt = vector_incmatrix_t & diffmatrix_t & volume_massmatrix & volume_incmatrix; // upper right
-                    mat_Bt.sortandcompressentries();
+//                     auto stiffness_prelim = opl & ( vector_massmatrix & opr );
+//                     stiffness_prelim.sortentries();
+                    auto stiffness = MatrixCSR( opl & ( vector_massmatrix & opr ) ); // MatrixCSR( stiffness_prelim );
                     
-                    auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & volume_massmatrix & diffmatrix & vector_incmatrix; // lower bottom
-                    mat_B.sortandcompressentries();
+                    auto physical_mass = MatrixCSR( incmatrix_t & ( scalar_massmatrix & incmatrix ) );
                     
-                    auto A  = MatrixCSR( mat_A  );
-                    auto Bt = MatrixCSR( mat_Bt );
-                    auto B  = MatrixCSR( mat_B  );
+                    auto stiffness_diagonal = SparseMatrix( DiagonalOperator( vector_massmatrix.diagonal() ) );
+                    assert( stiffness_diagonal.issquare() );
+                    assert( stiffness_diagonal.getdimin() == opr.getdimout() );
+                    auto simplified_stiffness = MatrixCSR( opl & ( stiffness_diagonal & opr ) );
                     
+                    auto idea_prelim = opl & opr;
+                    idea_prelim.sortentries();
+                    auto idea = MatrixCSR( idea_prelim );
                     
-//                     auto SystemMatrix = B * inv( A, 1e-10, 0 ) * Bt;
-                    const auto SystemMatrix = B * inv( A, 1000*machine_epsilon, -1 ) * Bt;
-                    
-                    const auto& mass = physical_mass;
-                    
-                    
-                    
+                    const auto& SystemMatrix = stiffness;
+//                     const auto& SystemMatrix = simplified_stiffness;
                     
                     
+                    assert( SystemMatrix.diagonal().isfinite() );
+                    
+//                     std::cout << SystemMatrix << endl;
                     
                     std::vector<FloatVector> nullvectorgallery;
                     
+                    const auto& mass = physical_mass;
+//                     const auto& mass = IdentityMatrix(physical_mass.getdimin());
                     
                     for( int no_candidate = 0; no_candidate < max_number_of_candidates; no_candidate++ )
                     {
-                        FloatVector candidate( Bt.getdimin(), 0. ); 
+                        
+                        FloatVector candidate( opr.getdimin(), 0. ); 
                         candidate.random(); 
                         candidate.normalize(mass);
                         
@@ -171,35 +174,43 @@ int main()
                             }
                         }
                         
+                        
                         /* reduce the candidate to its nullspace component */
                         {
-                            FloatVector rhs( Bt.getdimin(), 0. );
+                            FloatVector rhs( opr.getdimin(), 0. );
                         
                             FloatVector residual( rhs );
                             
                             for( int t = 0; t < max_number_of_purifications; t++ )
                             {
                                 
-                                HodgeConjugateResidualSolverCSR_SSOR(
-                                    B.getdimout(), 
-                                    A.getdimout(), 
+                                ConjugateResidualSolverCSR( 
+                                    candidate.getdimension(), 
                                     candidate.raw(), 
                                     rhs.raw(), 
-                                    A.getA(),   A.getC(),  A.getV(), 
-                                    B.getA(),   B.getC(),  B.getV(), 
-                                    Bt.getA(), Bt.getC(), Bt.getV(), 
+                                    SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
                                     residual.raw(),
-                                    100 * machine_epsilon,
-                                    -1,
-                                    desired_precision,
-                                    -1
+                                    1000 * machine_epsilon,
+                                    0
                                 );
-                                
-                                std::cout << "\t\t\t x:         " << candidate.norm( mass ) << std::endl;
-                                std::cout << "\t\t\t Ax:        " << ( SystemMatrix * candidate ).norm( mass ) << std::endl;
-                                std::cout << "\t\t\t b - Ax:    " << ( SystemMatrix * candidate - rhs ).norm( mass ) << std::endl;
-                                
                                 candidate.normalize( mass );
+                                
+                                
+//                                 FloatVector zero( candidate.getdimension(), 0. );
+//                                 FloatVector residual( candidate.getdimension(), 0. );
+//                                 
+//                                 ConjugateResidualSolverCSR( 
+//                                     zero.getdimension(), 
+//                                     zero.raw(), 
+//                                     candidate.raw(), 
+//                                     SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
+//                                     residual.raw(),
+//                                     1000 * machine_epsilon,
+//                                     0
+//                                 );
+//                                 candidate = residual;
+//                                 candidate.normalize( mass );
+                                
                                 
                                 assert( candidate.isfinite() );
                                 
@@ -233,7 +244,7 @@ int main()
                         
                         std::cout << "\t\t\t Numerical residual: " << residual_mass << std::endl;
                         
-                        if( false and residual_mass > 1e-6 ) {
+                        if( residual_mass > 1e-6 ) {
                             std::cout << "!!!!!!!!!!!!!Discard vector because not nullspace enough!" << std::endl;
                             continue;
                         }
@@ -263,7 +274,6 @@ int main()
                     }
                     
                     
-                    
                     contable << static_cast<Float>(nullvectorgallery.size());   
                     
                     
@@ -284,7 +294,7 @@ int main()
 //                                 sol.getdimension(), 
 //                                 sol.raw(), 
 //                                 rhs.raw(), 
-//                                 mat.getA(), mat.getC(), mat.getV(),
+//                                 SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
 //                                 residual.raw(),
 //                                 100 * machine_epsilon,
 //                                 1
@@ -294,14 +304,14 @@ int main()
 //                             assert( sol.isfinite() );
 //                             
 //                             std::cout << "\t\t\t x:         " << sol.norm( mass ) << std::endl;
-//                             std::cout << "\t\t\t Ax:        " << ( mat * sol ).norm( mass ) << std::endl;
-//                             std::cout << "\t\t\t b - Ax:    " << ( mat * sol - rhs ).norm( mass ) << std::endl;
+//                             std::cout << "\t\t\t Ax:        " << ( SystemMatrix * sol ).norm( mass ) << std::endl;
+//                             std::cout << "\t\t\t b - Ax:    " << ( SystemMatrix * sol - rhs ).norm( mass ) << std::endl;
 //                         
 //                         }
 //                         
 //                         
 //                         
-//                         contable << sol.norm( mass ) << ( mat * sol ).norm( mass );
+//                         contable << sol.norm( mass ) << ( SystemMatrix * sol ).norm( mass );
 //                         
 //                         
 //                         if( r == 1 ) {
@@ -378,7 +388,7 @@ int main()
 //                                 sol.getdimension(), 
 //                                 sol.raw(), 
 //                                 rhs.raw(), 
-//                                 mat.getA(), mat.getC(), mat.getV(),
+//                                 SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
 //                                 residual.raw(),
 //                                 machine_epsilon,
 //                                 1
@@ -388,14 +398,14 @@ int main()
 //                             assert( sol.isfinite() );
 //                             
 //                             std::cout << "\t\t\t x_0:       " << sol_original.norm( mass ) << std::endl;
-//                             std::cout << "\t\t\t Ax_0:      " << ( mat * sol_original ).norm( mass ) << std::endl;
-//                             std::cout << "\t\t\t b - Ax_0:  " << ( mat * sol_original - rhs ).norm( mass ) << std::endl;
+//                             std::cout << "\t\t\t Ax_0:      " << ( SystemMatrix * sol_original ).norm( mass ) << std::endl;
+//                             std::cout << "\t\t\t b - Ax_0:  " << ( SystemMatrix * sol_original - rhs ).norm( mass ) << std::endl;
 //                             
 //                             std::cout << "\t\t\t x:         " << sol.norm( mass ) << std::endl;
-//                             std::cout << "\t\t\t Ax:        " << ( mat * sol ).norm( mass ) << std::endl;
-//                             std::cout << "\t\t\t b - Ax:    " << ( mat * sol - rhs ).norm( mass ) << std::endl;
+//                             std::cout << "\t\t\t Ax:        " << ( SystemMatrix * sol ).norm( mass ) << std::endl;
+//                             std::cout << "\t\t\t b - Ax:    " << ( SystemMatrix * sol - rhs ).norm( mass ) << std::endl;
 //                             
-//                             contable << sol.norm( mass ) << ( mat * sol ).norm( mass );
+//                             contable << sol.norm( mass ) << ( SystemMatrix * sol ).norm( mass );
 //                             
 //                             
 //                             FloatVector sol2( sol_original );
@@ -407,7 +417,7 @@ int main()
 //                                 sol2.getdimension(), 
 //                                 sol2.raw(), 
 //                                 rhs2.raw(), 
-//                                 mat.getA(), mat.getC(), mat.getV(),
+//                                 SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
 //                                 residual2.raw(),
 //                                 machine_epsilon,
 //                                 1
@@ -449,7 +459,7 @@ int main()
 //                                 sol.getdimension(), 
 //                                 sol.raw(), 
 //                                 rhs.raw(), 
-//                                 mat.getA(), mat.getC(), mat.getV(),
+//                                 SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
 //                                 residual.raw(),
 //                                 machine_epsilon,
 //                                 0
@@ -457,14 +467,14 @@ int main()
 //                             sol.normalize( mass );
 //                             
 //                             std::cout << "\t\t\t x_0:       " << sol_original.norm( mass ) << std::endl;
-//                             std::cout << "\t\t\t Ax_0:      " << ( mat * sol_original ).norm( mass ) << std::endl;
-//                             std::cout << "\t\t\t b - Ax_0:  " << ( mat * sol_original - rhs ).norm( mass ) << std::endl;
+//                             std::cout << "\t\t\t Ax_0:      " << ( SystemMatrix * sol_original ).norm( mass ) << std::endl;
+//                             std::cout << "\t\t\t b - Ax_0:  " << ( SystemMatrix * sol_original - rhs ).norm( mass ) << std::endl;
 //                             
 //                             std::cout << "\t\t\t x:         " << sol.norm( mass ) << std::endl;
-//                             std::cout << "\t\t\t Ax:        " << ( mat * sol ).norm( mass ) << std::endl;
-//                             std::cout << "\t\t\t b - Ax:    " << ( mat * sol - rhs ).norm( mass ) << std::endl;
+//                             std::cout << "\t\t\t Ax:        " << ( SystemMatrix * sol ).norm( mass ) << std::endl;
+//                             std::cout << "\t\t\t b - Ax:    " << ( SystemMatrix * sol - rhs ).norm( mass ) << std::endl;
 //                             
-//                             contable << sol.norm( mass ) << ( mat * sol ).norm( mass );
+//                             contable << sol.norm( mass ) << ( SystemMatrix * sol ).norm( mass );
 //                         }
 // 
 //                         if(false)
@@ -479,7 +489,7 @@ int main()
 //                                 sol.getdimension(), 
 //                                 sol.raw(), 
 //                                 rhs.raw(), 
-//                                 mat.getA(), mat.getC(), mat.getV(),
+//                                 SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
 //                                 residual.raw(),
 //                                 desired_precision,
 //                                 0
@@ -487,14 +497,14 @@ int main()
 //                             residual.normalize( mass );
 //                             
 //                             std::cout << "\t\t\t b:       " << rhs_original.norm( mass ) << std::endl;
-//                             std::cout << "\t\t\t Ab:      " << ( mat * rhs ).norm( mass ) << std::endl;
+//                             std::cout << "\t\t\t Ab:      " << ( SystemMatrix * rhs ).norm( mass ) << std::endl;
 //                             
 //                             std::cout << "\t\t\t r:       " << residual.norm( mass ) << std::endl;
-//                             std::cout << "\t\t\t Ar:      " << ( mat * residual ).norm( mass ) << std::endl;
+//                             std::cout << "\t\t\t Ar:      " << ( SystemMatrix * residual ).norm( mass ) << std::endl;
 //                             
-//                             std::cout << "\t\t\t Ar:      " << ( mat * ( rhs - mat * sol ) ).norm( mass ) << std::endl;
+//                             std::cout << "\t\t\t Ar:      " << ( SystemMatrix * ( rhs - SystemMatrix * sol ) ).norm( mass ) << std::endl;
 //                             
-//                             contable << sol.norm( mass ) << ( mat * sol ).norm( mass );
+//                             contable << sol.norm( mass ) << ( SystemMatrix * sol ).norm( mass );
 //                         }
 // 
 //                         

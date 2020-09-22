@@ -190,7 +190,7 @@ int main()
 //                         }
                         
 
-                                                {
+                        {
                             
                             FloatVector rhs = volume_incmatrix_t * ( volume_massmatrix * interpol_rhs );
 
@@ -218,7 +218,9 @@ int main()
                                 Bt.getA(), Bt.getC(), Bt.getV(), 
                                 res.raw(),
                                 1e-10,
-                                1
+                                1,
+                                desired_precision,
+                                0
                             );
 
                             timestamp end = gettimestamp();

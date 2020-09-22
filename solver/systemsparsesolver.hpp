@@ -21,7 +21,9 @@ void HodgeConjugateResidualSolverCSR(
     const int* Btrows, const int* Btcolumns, const Float* Btvalues, 
     Float* residual,
     Float allowed_error,
-    unsigned int print_modulo
+    int print_modulo,
+    Float inneriteration_allowed_error,
+    int inneriteration_print_modulo
 );
 
 void HodgeConjugateResidualSolverCSR_textbook( 
@@ -34,7 +36,9 @@ void HodgeConjugateResidualSolverCSR_textbook(
     const int* Btrows, const int* Btcolumns, const Float* Btvalues, 
     Float* residual,
     Float allowed_error,
-    unsigned int print_modulo
+    int print_modulo,
+    Float inneriteration_allowed_error,
+    int inneriteration_print_modulo
 );
 
 void HodgeConjugateResidualSolverCSR_SSOR( 
@@ -47,7 +51,9 @@ void HodgeConjugateResidualSolverCSR_SSOR(
     const int* Btrows, const int* Btcolumns, const Float* Btvalues, 
     Float* residual,
     Float allowed_error,
-    unsigned int print_modulo
+    int print_modulo,
+    Float inneriteration_allowed_error,
+    int inneriteration_print_modulo
 );
 
 
@@ -72,7 +78,9 @@ void HodgeConjugateResidualSolverCSR(
     const int* __restrict__ Btrows, const int* __restrict__ Btcolumns, const Float* __restrict__ Btvalues, 
     Float* res,
     Float allowed_error,
-    unsigned int print_modulo
+    int print_modulo,
+    Float inneriteration_allowed_error,
+    int inneriteration_print_modulo
 ) {
     
     assert( N > 0 );
@@ -90,7 +98,7 @@ void HodgeConjugateResidualSolverCSR(
     assert( Btvalues );
     assert( res );
     assert( allowed_error > 0 );
-    assert( print_modulo >= 0 );
+//     assert( print_modulo >= 0 );
     
     Float* __restrict__  dir = (Float*)malloc( sizeof(Float) * N );
     Float* __restrict__ Mdir = (Float*)malloc( sizeof(Float) * N );
@@ -165,8 +173,8 @@ void HodgeConjugateResidualSolverCSR(
                 (const Float *)aux1, 
                 Arows, Acolumns, Avalues, 
                 auxR,
-                desired_precision, 
-                print_modulo
+                inneriteration_allowed_error, 
+                inneriteration_print_modulo
                 , precon
             );
             
@@ -202,8 +210,8 @@ void HodgeConjugateResidualSolverCSR(
                 (const Float *)aux1, 
                 Arows, Acolumns, Avalues, 
                 auxR,
-                desired_precision,
-                0,
+                inneriteration_allowed_error,
+                inneriteration_print_modulo,
                 precon
             );
             
@@ -256,8 +264,8 @@ void HodgeConjugateResidualSolverCSR(
             (const Float *)aux1, 
             Arows, Acolumns, Avalues, 
             auxR,
-            desired_precision,
-            0
+            inneriteration_allowed_error,
+            inneriteration_print_modulo
             , precon
         );
         
@@ -315,7 +323,8 @@ void HodgeConjugateResidualSolverCSR(
         
     }
     
-    printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", k, N, (long double)std::sqrt(Md_r), (long double) allowed_error );
+    if( print_modulo >= 0 ) 
+        printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", k, N, (long double)std::sqrt(Md_r), (long double) allowed_error );
 
     
     free(  dir );
@@ -373,7 +382,9 @@ void HodgeConjugateResidualSolverCSR_SSOR(
     const int* __restrict__ Btrows, const int* __restrict__ Btcolumns, const Float* __restrict__ Btvalues, 
     Float* res,
     Float allowed_error,
-    unsigned int print_modulo
+    int print_modulo,
+    Float inneriteration_allowed_error,
+    int inneriteration_print_modulo
 ) {
     
     assert( N > 0 );
@@ -391,7 +402,7 @@ void HodgeConjugateResidualSolverCSR_SSOR(
     assert( Btvalues );
     assert( res );
     assert( allowed_error > 0 );
-    assert( print_modulo >= 0 );
+//     assert( print_modulo >= 0 );
     
     Float* __restrict__  dir = (Float*)malloc( sizeof(Float) * N );
     Float* __restrict__ Mdir = (Float*)malloc( sizeof(Float) * N );
@@ -463,8 +474,8 @@ void HodgeConjugateResidualSolverCSR_SSOR(
                 (const Float *)aux1, 
                 Arows, Acolumns, Avalues, 
                 auxR,
-                desired_precision,
-                print_modulo
+                inneriteration_allowed_error,
+                inneriteration_print_modulo
                 , diagonal, 1.
             );
             
@@ -500,8 +511,8 @@ void HodgeConjugateResidualSolverCSR_SSOR(
                 (const Float *)aux1, 
                 Arows, Acolumns, Avalues, 
                 auxR,
-                desired_precision,
-                0,
+                inneriteration_allowed_error,
+                inneriteration_print_modulo,
                 diagonal, 1.
             );
             
@@ -554,8 +565,8 @@ void HodgeConjugateResidualSolverCSR_SSOR(
             (const Float *)aux1, 
             Arows, Acolumns, Avalues, 
             auxR,
-            desired_precision,
-            0
+            inneriteration_allowed_error,
+            inneriteration_print_modulo
             , diagonal, 1.0
         );
         
@@ -613,7 +624,8 @@ void HodgeConjugateResidualSolverCSR_SSOR(
         
     }
     
-    printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", k, N, (long double)std::sqrt(Md_r), (long double) allowed_error );
+    if( print_modulo >= 0 ) 
+        printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", k, N, (long double)std::sqrt(Md_r), (long double) allowed_error );
 
     
     free(  dir );
@@ -672,7 +684,9 @@ void HodgeConjugateResidualSolverCSR_textbook(
     const int* __restrict__ Btrows, const int* __restrict__ Btcolumns, const Float* __restrict__ Btvalues, 
     Float* res,
     Float allowed_error,
-    unsigned int print_modulo
+    int print_modulo,
+    Float inneriteration_allowed_error,
+    int inneriteration_print_modulo
 ) {
     
     assert( N > 0 );
@@ -743,8 +757,8 @@ void HodgeConjugateResidualSolverCSR_textbook(
                 (const Float *)aux1, 
                 Arows, Acolumns, Avalues, 
                 auxR,
-                allowed_error,
-                print_modulo
+                inneriteration_allowed_error,
+                inneriteration_print_modulo
             );
             
             #pragma omp parallel for
@@ -779,8 +793,8 @@ void HodgeConjugateResidualSolverCSR_textbook(
                 (const Float *)aux1, 
                 Arows, Acolumns, Avalues, 
                 auxR,
-                allowed_error,
-                print_modulo
+                inneriteration_allowed_error,
+                inneriteration_print_modulo
             );
             
             #pragma omp parallel for reduction(+:Mr_r,Md_Md)
@@ -832,8 +846,8 @@ void HodgeConjugateResidualSolverCSR_textbook(
             (const Float *)aux1, 
             Arows, Acolumns, Avalues, 
             auxR,
-            allowed_error,
-            print_modulo
+            inneriteration_allowed_error,
+            inneriteration_print_modulo
         );
         
         #pragma omp parallel for reduction(+:new_Mr_r)
@@ -890,7 +904,8 @@ void HodgeConjugateResidualSolverCSR_textbook(
         
     }
     
-    printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", k, N, (long double)std::sqrt(Mr_r), (long double) allowed_error );
+    if( print_modulo >= 0 ) 
+        printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", k, N, (long double)std::sqrt(Mr_r), (long double) allowed_error );
 
     
     free(  dir );

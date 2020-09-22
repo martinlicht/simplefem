@@ -33,9 +33,11 @@ class InverseOperator final
         InverseOperator& operator=( InverseOperator&& vec )      = delete; 
 
         
-        explicit InverseOperator( const LinearOperator& op, Float tolerance )
-        : LinearOperator( op.getdimout(), op.getdimin() ), op( op ), tolerance(tolerance) { 
+        explicit InverseOperator( const LinearOperator& op, Float tolerance, int print_modulo = 0 )
+        : LinearOperator( op.getdimout(), op.getdimin() ), op( op ), tolerance(tolerance), print_modulo( print_modulo )
+        { 
             assert( op.getdimin() == op.getdimout() );
+            
             LOG << "Inverse created" << ""; 
         }
         
@@ -44,12 +46,12 @@ class InverseOperator final
         }
 
         virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
-            std::shared_ptr<InverseOperator> cloned = std::make_shared<InverseOperator>( op, tolerance );
+            std::shared_ptr<InverseOperator> cloned = std::make_shared<InverseOperator>( op, tolerance, print_modulo );
             return cloned;
         }
         
         virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {
-            std::unique_ptr<InverseOperator> heir = std::make_unique<InverseOperator>( op, tolerance );
+            std::unique_ptr<InverseOperator> heir = std::make_unique<InverseOperator>( op, tolerance, print_modulo );
             return heir;
         }
 
@@ -85,20 +87,22 @@ class InverseOperator final
                     opcsr->getA(), opcsr->getC(), opcsr->getV(), 
                     res.raw(),
                     tolerance,
-                    src.getdimension()
+                    print_modulo
                 );
                 
                 dest *= scaling;
             
             } else {
             
+                abort();
+                
                 dest.zero();
                 
                 ConjugateResidualMethod Solver( op );
                 
                 Solver.max_iteration_count = op.getdimin();
-                Solver.print_modulo        = Solver.max_iteration_count;
-                Solver.verbosity           = ConjugateResidualMethod::VerbosityLevel::resultonly;
+                Solver.print_modulo        = print_modulo;
+                Solver.verbosity           = ConjugateResidualMethod::VerbosityLevel::silent;
                 
                 Solver.solve_robust( dest, src );
                 
@@ -115,15 +119,16 @@ class InverseOperator final
 
         const LinearOperator& op;
         Float tolerance;
+        int print_modulo;
     
 };
   
   
-inline InverseOperator inv( const LinearOperator& op, Float tolerance )
+inline InverseOperator inv( const LinearOperator& op, Float tolerance, int print_modulo = 0 )
 {
     op.check();
     
-    return InverseOperator( op, tolerance );
+    return InverseOperator( op, tolerance, print_modulo );
 }  
 
 
