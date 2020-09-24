@@ -20,9 +20,9 @@ void HodgeConjugateResidualSolverCSR(
     const int*  Brows, const int*  Bcolumns, const Float*  Bvalues, 
     const int* Btrows, const int* Btcolumns, const Float* Btvalues, 
     Float* residual,
-    Float allowed_error,
+    Float threshold,
     int print_modulo,
-    Float inneriteration_allowed_error,
+    Float inneriteration_threshold,
     int inneriteration_print_modulo
 );
 
@@ -35,9 +35,9 @@ void HodgeConjugateResidualSolverCSR_textbook(
     const int*  Brows, const int*  Bcolumns, const Float*  Bvalues, 
     const int* Btrows, const int* Btcolumns, const Float* Btvalues, 
     Float* residual,
-    Float allowed_error,
+    Float threshold,
     int print_modulo,
-    Float inneriteration_allowed_error,
+    Float inneriteration_threshold,
     int inneriteration_print_modulo
 );
 
@@ -50,9 +50,9 @@ void HodgeConjugateResidualSolverCSR_SSOR(
     const int*  Brows, const int*  Bcolumns, const Float*  Bvalues, 
     const int* Btrows, const int* Btcolumns, const Float* Btvalues, 
     Float* residual,
-    Float allowed_error,
+    Float threshold,
     int print_modulo,
-    Float inneriteration_allowed_error,
+    Float inneriteration_threshold,
     int inneriteration_print_modulo
 );
 
@@ -77,9 +77,9 @@ void HodgeConjugateResidualSolverCSR(
     const int* __restrict__  Brows, const int* __restrict__  Bcolumns, const Float* __restrict__  Bvalues, 
     const int* __restrict__ Btrows, const int* __restrict__ Btcolumns, const Float* __restrict__ Btvalues, 
     Float* res,
-    Float allowed_error,
+    Float threshold,
     int print_modulo,
-    Float inneriteration_allowed_error,
+    Float inneriteration_threshold,
     int inneriteration_print_modulo
 ) {
     
@@ -97,7 +97,7 @@ void HodgeConjugateResidualSolverCSR(
     assert( Btcolumns );
     assert( Btvalues );
     assert( res );
-    assert( allowed_error > 0 );
+    assert( threshold > 0 );
 //     assert( print_modulo >= 0 );
     
     Float* __restrict__  dir = (Float*)malloc( sizeof(Float) * N );
@@ -152,7 +152,7 @@ void HodgeConjugateResidualSolverCSR(
         
         bool restart_condition = ( k == 0 ); // or k % 1000 == 0;
         
-        bool r_seems_small = false;//std::sqrt(Md_r) < allowed_error;
+        bool r_seems_small = false;//absolute(Md_r) < threshold*threshold;
 
         if( restart_condition or r_seems_small ) {
             
@@ -173,7 +173,7 @@ void HodgeConjugateResidualSolverCSR(
                 (const Float *)aux1, 
                 Arows, Acolumns, Avalues, 
                 auxR,
-                inneriteration_allowed_error, 
+                inneriteration_threshold, 
                 inneriteration_print_modulo
                 , precon
             );
@@ -210,7 +210,7 @@ void HodgeConjugateResidualSolverCSR(
                 (const Float *)aux1, 
                 Arows, Acolumns, Avalues, 
                 auxR,
-                inneriteration_allowed_error,
+                inneriteration_threshold,
                 inneriteration_print_modulo,
                 precon
             );
@@ -235,7 +235,7 @@ void HodgeConjugateResidualSolverCSR(
         
         /* Check whether res is small */
                 
-        bool r_is_small = std::sqrt(Md_r) < allowed_error;
+        bool r_is_small = absolute(Md_r) < threshold*threshold;
         
         if( r_is_small )
             break;
@@ -264,7 +264,7 @@ void HodgeConjugateResidualSolverCSR(
             (const Float *)aux1, 
             Arows, Acolumns, Avalues, 
             auxR,
-            inneriteration_allowed_error,
+            inneriteration_threshold,
             inneriteration_print_modulo
             , precon
         );
@@ -311,20 +311,16 @@ void HodgeConjugateResidualSolverCSR(
         Md_r = new_Mr_r;
         
         if( print_modulo > 0 and k % print_modulo == 0 ) 
-            printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", k, N, (long double)std::sqrt(Md_r), (long double) allowed_error );
-        
-//         if( k % 100 == 0 ) 
-//         printf("At Iteration %d we have %.9Le --- [%.9Le,%.9Le,%.9Le,%.9Le]\n",
-//             k,
-//             (long double)std::sqrt(r_r), (long double)alpha, (long double)beta,
-//             (long double)d_Ad, (long double)r_r_new );
+            printf( "Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+                    k, N, (long double)(Md_r), (long double) threshold*threshold );
         
         k++;
         
     }
     
     if( print_modulo >= 0 ) 
-        printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", k, N, (long double)std::sqrt(Md_r), (long double) allowed_error );
+        printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+               k, N, (long double)(Md_r), (long double) threshold*threshold );
 
     
     free(  dir );
@@ -381,9 +377,9 @@ void HodgeConjugateResidualSolverCSR_SSOR(
     const int* __restrict__  Brows, const int* __restrict__  Bcolumns, const Float* __restrict__  Bvalues, 
     const int* __restrict__ Btrows, const int* __restrict__ Btcolumns, const Float* __restrict__ Btvalues, 
     Float* res,
-    Float allowed_error,
+    Float threshold,
     int print_modulo,
-    Float inneriteration_allowed_error,
+    Float inneriteration_threshold,
     int inneriteration_print_modulo
 ) {
     
@@ -401,7 +397,7 @@ void HodgeConjugateResidualSolverCSR_SSOR(
     assert( Btcolumns );
     assert( Btvalues );
     assert( res );
-    assert( allowed_error > 0 );
+    assert( threshold > 0 );
 //     assert( print_modulo >= 0 );
     
     Float* __restrict__  dir = (Float*)malloc( sizeof(Float) * N );
@@ -453,7 +449,7 @@ void HodgeConjugateResidualSolverCSR_SSOR(
         
         bool restart_condition = ( k == 0 ); // or k % 1000 == 0;
         
-        bool r_seems_small = false;//std::sqrt(Md_r) < allowed_error;
+        bool r_seems_small = false;//absolute(Md_r) < threshold*threshold;
 
         if( restart_condition or r_seems_small ) {
             
@@ -474,7 +470,7 @@ void HodgeConjugateResidualSolverCSR_SSOR(
                 (const Float *)aux1, 
                 Arows, Acolumns, Avalues, 
                 auxR,
-                inneriteration_allowed_error,
+                inneriteration_threshold,
                 inneriteration_print_modulo
                 , diagonal, 1.
             );
@@ -511,7 +507,7 @@ void HodgeConjugateResidualSolverCSR_SSOR(
                 (const Float *)aux1, 
                 Arows, Acolumns, Avalues, 
                 auxR,
-                inneriteration_allowed_error,
+                inneriteration_threshold,
                 inneriteration_print_modulo,
                 diagonal, 1.
             );
@@ -536,7 +532,7 @@ void HodgeConjugateResidualSolverCSR_SSOR(
         
         /* Check whether res is small */
                 
-        bool r_is_small = std::sqrt(Md_r) < allowed_error;
+        bool r_is_small = absolute(Md_r) < threshold*threshold;
         
         if( r_is_small )
             break;
@@ -565,7 +561,7 @@ void HodgeConjugateResidualSolverCSR_SSOR(
             (const Float *)aux1, 
             Arows, Acolumns, Avalues, 
             auxR,
-            inneriteration_allowed_error,
+            inneriteration_threshold,
             inneriteration_print_modulo
             , diagonal, 1.0
         );
@@ -612,12 +608,13 @@ void HodgeConjugateResidualSolverCSR_SSOR(
         Md_r = new_Mr_r;
         
         if( print_modulo > 0 and k % print_modulo == 0 ) 
-            printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", k, N, (long double)std::sqrt(Md_r), (long double) allowed_error );
+            printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+                   k, N, (long double)(Md_r), (long double) threshold*threshold );
         
 //         if( k % 100 == 0 ) 
 //         printf("At Iteration %d we have %.9Le --- [%.9Le,%.9Le,%.9Le,%.9Le]\n",
 //             k,
-//             (long double)std::sqrt(r_r), (long double)alpha, (long double)beta,
+//             (long double)(r_r), (long double)alpha, (long double)beta,
 //             (long double)d_Ad, (long double)r_r_new );
         
         k++;
@@ -625,7 +622,8 @@ void HodgeConjugateResidualSolverCSR_SSOR(
     }
     
     if( print_modulo >= 0 ) 
-        printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", k, N, (long double)std::sqrt(Md_r), (long double) allowed_error );
+        printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+               k, N, (long double)(Md_r), (long double) threshold*threshold );
 
     
     free(  dir );
@@ -683,9 +681,9 @@ void HodgeConjugateResidualSolverCSR_textbook(
     const int* __restrict__  Brows, const int* __restrict__  Bcolumns, const Float* __restrict__  Bvalues, 
     const int* __restrict__ Btrows, const int* __restrict__ Btcolumns, const Float* __restrict__ Btvalues, 
     Float* res,
-    Float allowed_error,
+    Float threshold,
     int print_modulo,
-    Float inneriteration_allowed_error,
+    Float inneriteration_threshold,
     int inneriteration_print_modulo
 ) {
     
@@ -703,7 +701,7 @@ void HodgeConjugateResidualSolverCSR_textbook(
     assert( Btcolumns );
     assert( Btvalues );
     assert( res );
-    assert( allowed_error > 0 );
+    assert( threshold > 0 );
     assert( print_modulo >= 0 );
     
     Float* __restrict__  dir = (Float*)malloc( sizeof(Float) * N );
@@ -736,7 +734,7 @@ void HodgeConjugateResidualSolverCSR_textbook(
         
         bool restart_condition = ( k == 0 ); // or k % 1000 == 0;
         
-        bool r_seems_small = false;//std::sqrt(Mr_r) < allowed_error;
+        bool r_seems_small = false;//absolute(Mr_r) < threshold*threshold;
 
         if( restart_condition or r_seems_small ) {
             
@@ -757,7 +755,7 @@ void HodgeConjugateResidualSolverCSR_textbook(
                 (const Float *)aux1, 
                 Arows, Acolumns, Avalues, 
                 auxR,
-                inneriteration_allowed_error,
+                inneriteration_threshold,
                 inneriteration_print_modulo
             );
             
@@ -793,7 +791,7 @@ void HodgeConjugateResidualSolverCSR_textbook(
                 (const Float *)aux1, 
                 Arows, Acolumns, Avalues, 
                 auxR,
-                inneriteration_allowed_error,
+                inneriteration_threshold,
                 inneriteration_print_modulo
             );
             
@@ -817,7 +815,7 @@ void HodgeConjugateResidualSolverCSR_textbook(
         
         /* Check whether res is small */
                 
-        bool r_is_small = std::sqrt(Mr_r) < allowed_error;
+        bool r_is_small = absolute(Mr_r) < threshold*threshold;
         
         if( r_is_small )
             break;
@@ -846,7 +844,7 @@ void HodgeConjugateResidualSolverCSR_textbook(
             (const Float *)aux1, 
             Arows, Acolumns, Avalues, 
             auxR,
-            inneriteration_allowed_error,
+            inneriteration_threshold,
             inneriteration_print_modulo
         );
         
@@ -892,12 +890,13 @@ void HodgeConjugateResidualSolverCSR_textbook(
         Mr_r = new_Mr_r;
         
         if( print_modulo > 0 and k % print_modulo == 0 ) 
-            printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", k, N, (long double)std::sqrt(Mr_r), (long double) allowed_error );
+            printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+                   k, N, (long double)(Mr_r), (long double) threshold*threshold );
         
 //         if( k % 100 == 0 ) 
 //         printf("At Iteration %d we have %.9Le --- [%.9Le,%.9Le,%.9Le,%.9Le]\n",
 //             k,
-//             (long double)std::sqrt(r_r), (long double)alpha, (long double)beta,
+//             (long double)(r_r), (long double)alpha, (long double)beta,
 //             (long double)d_Ad, (long double)r_r_new );
         
         k++;
@@ -905,7 +904,8 @@ void HodgeConjugateResidualSolverCSR_textbook(
     }
     
     if( print_modulo >= 0 ) 
-        printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", k, N, (long double)std::sqrt(Mr_r), (long double) allowed_error );
+        printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+               k, N, (long double)(Mr_r), (long double) threshold*threshold );
 
     
     free(  dir );

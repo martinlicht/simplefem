@@ -14,7 +14,7 @@ void ConjugateGradientSolverCSR(
     const Float* b, 
     const int* csrrows, const int* csrcolumns, const Float* csrvalues, 
     Float* residual,
-    Float allowed_error,
+    Float threshold,
     int print_modulo
 );
 
@@ -24,7 +24,7 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
     const Float* b, 
     const int* csrrows, const int* csrcolumns, const Float* csrvalues, 
     Float* residual,
-    Float allowed_error,
+    Float threshold,
     int print_modulo,
     const Float* precon 
 );
@@ -36,7 +36,7 @@ void ConjugateGradientSolverCSR_SSOR(
     const Float* b, 
     const int* csrrows, const int* csrcolumns, const Float* csrvalues, 
     Float* residual,
-    Float allowed_error,
+    Float threshold,
     int print_modulo,
     const Float* precon,
     Float omega
@@ -51,7 +51,7 @@ void ConjugateResidualSolverCSR(
     const Float* b, 
     const int* csrrows, const int* csrcolumns, const Float* csrvalues, 
     Float* residual,
-    Float allowed_error,
+    Float threshold,
     int print_modulo
 );
 
@@ -61,7 +61,7 @@ void ConjugateResidualSolverCSR_textbook(
     const Float* b, 
     const int* csrrows, const int* csrcolumns, const Float* csrvalues, 
     Float* residual,
-    Float allowed_error,
+    Float threshold,
     int print_modulo
 );
 
@@ -74,7 +74,7 @@ void MINRESCSR(
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ res,
-    const Float allowed_error,
+    const Float threshold,
     int print_modulo
 );
 
@@ -86,7 +86,7 @@ void WHATEVER(
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ res,
-    const Float allowed_error,
+    const Float threshold,
     int print_modulo
 );
 

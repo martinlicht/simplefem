@@ -26,8 +26,8 @@ void ConjugateGradientSolverCSR(
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ residual,
-    const Float allowed_error,
-    unsigned int print_modulo
+    const Float threshold,
+    int print_modulo
 ) {
     
     assert( N > 0 );
@@ -37,8 +37,8 @@ void ConjugateGradientSolverCSR(
     assert( csrcolumns );
     assert( csrvalues );
     assert( residual );
-    assert( allowed_error > 0 );
-    assert( print_modulo >= 0 );
+    assert( threshold > 0 );
+    assert( print_modulo >= -1 );
     
     Float* __restrict__ direction = (Float*)malloc( sizeof(Float) * N );
     Float* __restrict__ auxiliary = (Float*)malloc( sizeof(Float) * N );
@@ -53,7 +53,7 @@ void ConjugateGradientSolverCSR(
         
         bool restart_condition = ( K == 0 ); // or K % 1000 == 0;
         
-        bool residual_seems_small = std::sqrt(r_r) < allowed_error;
+        bool residual_seems_small = ( K != 0 ) and absolute(r_r) < threshold*threshold;
 
         if( restart_condition or residual_seems_small ) {
             
@@ -76,7 +76,7 @@ void ConjugateGradientSolverCSR(
         
         /* Check whether residual is small */
                 
-        bool residual_is_small = std::sqrt(r_r) < allowed_error;
+        bool residual_is_small = absolute(r_r) < threshold*threshold;
         
         if( residual_is_small )
             break;
@@ -124,13 +124,17 @@ void ConjugateGradientSolverCSR(
         
         
         if( print_modulo > 0 and K % print_modulo == 0 ) 
-            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), (long double) allowed_error );
+            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+                   K, N, (long double)(r_r), (long double) threshold*threshold );
         
         K++;
         
     }
     
-    printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), (long double) allowed_error );
+    assert( print_modulo < 0 );
+    if( print_modulo >= 0 ) 
+        printf( "Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+                K, N, (long double)(r_r), (long double) threshold*threshold );
 
     
     free( direction ); 
@@ -162,8 +166,8 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ residual,
-    const Float allowed_error,
-    unsigned int print_modulo,
+    const Float threshold,
+    int print_modulo,
     const Float* __restrict__ precon
 ) {
     
@@ -174,8 +178,8 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
     assert( csrcolumns );
     assert( csrvalues );
     assert( residual );
-    assert( allowed_error > 0 );
-    assert( print_modulo >= 0 );
+    assert( threshold > 0 );
+    assert( print_modulo >= -1 );
     assert( precon );
     
     Float* __restrict__ direction = (Float*)malloc( sizeof(Float) * N );
@@ -193,7 +197,7 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
         
         bool restart_condition = ( K == 0 ); // or K % 1000 == 0;
         
-        bool residual_seems_small = std::sqrt(z_r) < allowed_error;
+        bool residual_seems_small = ( K != 0 ) and absolute(z_r) < threshold*threshold;
 
         if( restart_condition or residual_seems_small ) {
             
@@ -223,7 +227,7 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
         
         /* Check whether residual is small */
                 
-        bool residual_is_small = std::sqrt(z_r) < allowed_error;
+        bool residual_is_small = absolute(z_r) < threshold*threshold;
         
         if( residual_is_small )
             break;
@@ -281,13 +285,17 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
         }
         
         if( print_modulo > 0 and K % print_modulo == 0 ) 
-            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(z_r), (long double) allowed_error );
+            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n",
+                   K, N, (long double)(z_r), (long double) threshold*threshold );
         
         K++;
         
     }
     
-    printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(z_r), (long double) allowed_error );
+    assert( print_modulo < 0 );
+    if( print_modulo >= 0 ) 
+        printf( "Residual after %d of max. %d iterations: %.9Le (%.9Le)\n",
+                K, N, (long double)(z_r), (long double) threshold*threshold );
 
     
     free( direction ); 
@@ -330,8 +338,8 @@ void ConjugateGradientSolverCSR_SSOR(
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ residual,
-    const Float allowed_error,
-    unsigned int print_modulo,
+    const Float threshold,
+    int print_modulo,
     const Float* __restrict__ diagonal,
     Float omega
 ) {
@@ -343,8 +351,8 @@ void ConjugateGradientSolverCSR_SSOR(
     assert( csrcolumns );
     assert( csrvalues );
     assert( residual );
-    assert( allowed_error > 0 );
-    assert( print_modulo >= 0 );
+    assert( threshold > 0 );
+    assert( print_modulo >= -1 );
     assert( diagonal );
     
     Float* __restrict__ direction = (Float*)malloc( sizeof(Float) * N );
@@ -356,6 +364,9 @@ void ConjugateGradientSolverCSR_SSOR(
     assert( mittlerer );
     assert( auxiliary );
     
+    for( int i = 0; i < N; i++ )
+        direction[i] = zirconium[i] = auxiliary[i] = mittlerer[i] = 0.;
+    
     Float z_r = notanumber;
 
     int K = 0;
@@ -364,7 +375,7 @@ void ConjugateGradientSolverCSR_SSOR(
         
         bool restart_condition = ( K == 0 ); // or K % 1000 == 0;
         
-        bool residual_seems_small = false and std::sqrt(z_r) < allowed_error;
+        bool residual_seems_small = false and absolute(z_r) < threshold*threshold;
 
         if( restart_condition or residual_seems_small ) {
             
@@ -384,7 +395,7 @@ void ConjugateGradientSolverCSR_SSOR(
             for( int c = 0; c < N; c++ ) {
                 
                 if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
-            
+                
                 Float aux = residual[c];
                 
                 for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
@@ -398,7 +409,7 @@ void ConjugateGradientSolverCSR_SSOR(
             for( int c = 0; c < N; c++ ) {
             
                 if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
-            
+                
                 mittlerer[c] *= diagonal[c];
                 
                 mittlerer[c] *= ( 2. - omega ) / omega;
@@ -434,8 +445,8 @@ void ConjugateGradientSolverCSR_SSOR(
         
         /* Check whether residual is small */
                 
-        bool residual_is_small = std::sqrt(z_r) < allowed_error;
-//         printf("\t\t\t\t %.9Le (%.9Le)\n", (long double)std::sqrt(z_r), (long double) allowed_error );
+        bool residual_is_small = absolute(z_r) < threshold*threshold;
+//         printf("\t\t\t\t %.9Le (%.9Le)\n", (long double)std::sqrt(z_r), (long double) threshold );
         
         if( residual_is_small )
             break;
@@ -519,13 +530,16 @@ void ConjugateGradientSolverCSR_SSOR(
         }
         
         if( print_modulo > 0 and K % print_modulo == 0 ) 
-            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(z_r), (long double) allowed_error );
+            printf( "Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+                    K, N, (long double)(z_r), (long double) threshold*threshold );
         
         K++;
         
     }
     
-    printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(z_r), (long double) allowed_error );
+    if( print_modulo >= 0 ) 
+        printf( "Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+                K, N, (long double)(z_r), (long double) threshold*threshold );
 
     
     free( direction ); 
@@ -581,8 +595,8 @@ void ConjugateResidualSolverCSR(
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ res,
-    const Float allowed_error,
-    unsigned int print_modulo
+    const Float threshold,
+    int print_modulo
 ) {
     
     assert( N > 0 );
@@ -592,8 +606,8 @@ void ConjugateResidualSolverCSR(
     assert( csrcolumns );
     assert( csrvalues );
     assert( res );
-    assert( allowed_error > 0 );
-    assert( print_modulo >= 0 );
+    assert( threshold > 0 );
+    assert( print_modulo >= -1 );
     
     Float* __restrict__  dir = (Float*)malloc( sizeof(Float) * N );
     Float* __restrict__ Adir = (Float*)malloc( sizeof(Float) * N );
@@ -608,14 +622,14 @@ void ConjugateResidualSolverCSR(
     
     Float Ad_r  = notanumber;
     Float Ad_Ad = notanumber;
-
+    
     int K = 0;
     
     while( K < N ){
         
         bool restart_condition = ( K == 0 ); // or K % 1000 == 0;
         
-        bool r_seems_small = std::sqrt(Ad_r) < allowed_error;
+        bool r_seems_small = ( K != 0 ) and absolute(Ad_r) < threshold*threshold;
 
         if( restart_condition or r_seems_small ) {
             
@@ -654,7 +668,7 @@ void ConjugateResidualSolverCSR(
         
         /* Check whether res is small */
                 
-        bool r_is_small = std::sqrt(Ad_r) < allowed_error;
+        bool r_is_small = absolute(Ad_r) < threshold*threshold;
         
         if( r_is_small )
             break;
@@ -701,14 +715,17 @@ void ConjugateResidualSolverCSR(
         Ad_r = new_Ar_r;
                 
         if( print_modulo > 0 and K % print_modulo == 0 ) 
-            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(Ad_r), (long double) allowed_error );
+            printf( "Square Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+                    K, N, (long double)(Ad_r), (long double) threshold*threshold );
 
         
         K++;
         
     }
     
-    printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(Ad_r), (long double) allowed_error );
+    if( print_modulo >= 0 ) 
+        printf( "Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+                K, N, (long double)(Ad_r), (long double) threshold*threshold );
 
     
     free(  dir );
@@ -728,14 +745,32 @@ void ConjugateResidualSolverCSR(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 void ConjugateResidualSolverCSR_textbook( 
     const int N, 
     Float* __restrict__ x, 
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ res,
-    const Float allowed_error,
-    unsigned int print_modulo
+    const Float threshold,
+    int print_modulo
 ) {
     
     assert( N > 0 );
@@ -745,8 +780,8 @@ void ConjugateResidualSolverCSR_textbook(
     assert( csrcolumns );
     assert( csrvalues );
     assert( res );
-    assert( allowed_error > 0 );
-    assert( print_modulo >= 0 );
+    assert( threshold > 0 );
+    assert( print_modulo >= -1 );
     
     Float* __restrict__  dir = (Float*)malloc( sizeof(Float) * N );
     Float* __restrict__ Adir = (Float*)malloc( sizeof(Float) * N );
@@ -768,7 +803,7 @@ void ConjugateResidualSolverCSR_textbook(
         
         bool restart_condition = ( K == 0 ); // or K % 1000 == 0;
         
-        bool r_seems_small = std::sqrt(Ar_r) < allowed_error;
+        bool r_seems_small = ( K != 0 ) and absolute(Ar_r) < threshold*threshold;
 
         if( restart_condition or r_seems_small ) {
             
@@ -807,7 +842,7 @@ void ConjugateResidualSolverCSR_textbook(
         
         /* Check whether res is small */
                 
-        bool r_is_small = std::sqrt(Ar_r) < allowed_error;
+        bool r_is_small = absolute(Ar_r) < threshold*threshold;
         
         if( r_is_small )
             break;
@@ -854,13 +889,16 @@ void ConjugateResidualSolverCSR_textbook(
         Ar_r = new_Ar_r;
                 
         if( print_modulo > 0 and K % print_modulo == 0 )
-            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(Ar_r), (long double) allowed_error );
+            printf( "Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+                    K, N, (long double)(Ar_r), (long double) threshold*threshold );
         
         K++;
         
     }
     
-    printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(Ar_r), (long double) allowed_error );
+    if( print_modulo >= 0 ) 
+        printf( "Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+                K, N, (long double)(Ar_r), (long double) threshold*threshold );
 
     
     free(  dir );
@@ -917,8 +955,8 @@ void MINRESCSR(
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ res,
-    const Float allowed_error,
-    unsigned int print_modulo
+    const Float threshold,
+    int print_modulo
 ) {
     
     assert( N > 0 );
@@ -928,8 +966,8 @@ void MINRESCSR(
     assert( csrcolumns );
     assert( csrvalues );
     assert( res );
-    assert( allowed_error > 0 );
-    assert( print_modulo >= 0 );
+    assert( threshold > 0 );
+    assert( print_modulo >= -1 );
     
     Float* __restrict__ v0 = (Float*)malloc( sizeof(Float) * N );
     Float* __restrict__ v1 = (Float*)malloc( sizeof(Float) * N );
@@ -964,7 +1002,7 @@ void MINRESCSR(
         
         bool restart_condition = (K == 0);
         
-        bool residual_seems_small = (eta < allowed_error);
+        bool residual_seems_small = ( K != 0 ) and (eta < threshold);
         
         if( restart_condition or residual_seems_small ) {
             
@@ -1000,7 +1038,7 @@ void MINRESCSR(
             
         }
         
-        bool residual_is_small = (eta < allowed_error);
+        bool residual_is_small = (eta < threshold);
         
         if( residual_is_small )
             break;
@@ -1087,13 +1125,14 @@ void MINRESCSR(
 
         
         if( print_modulo > 0 and K % print_modulo == 0 )
-            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)eta, (long double) allowed_error );
+            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)eta, (long double) threshold );
         
         K++;
         
     }
     
-    printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)eta, (long double) allowed_error );
+    if( print_modulo >= 0 ) 
+        printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)eta, (long double) threshold );
 
     
     free( v0 );
@@ -1122,8 +1161,8 @@ void WHATEVER(
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ res,
-    const Float allowed_error,
-    unsigned int print_modulo
+    const Float threshold,
+    int print_modulo
 ) {
     
     assert( N > 0 );
@@ -1133,8 +1172,8 @@ void WHATEVER(
     assert( csrcolumns );
     assert( csrvalues );
     assert( res );
-    assert( allowed_error > 0 );
-    assert( print_modulo >= 0 );
+    assert( threshold > 0 );
+    assert( print_modulo >= -1 );
     
     Float* __restrict__  r = (Float*)malloc( sizeof(Float) * N );
     Float* __restrict__ p0 = (Float*)malloc( sizeof(Float) * N );
@@ -1215,7 +1254,7 @@ void WHATEVER(
             r_r += r[c] * r[c];
         }
         
-        if( std::sqrt(r_r) < allowed_error )
+        if( std::sqrt(r_r) < threshold )
             break;
         
         Float s0_s1 = 0.;
@@ -1268,13 +1307,14 @@ void WHATEVER(
             
         
         if( print_modulo > 0 and K % print_modulo == 0 ) 
-            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), (long double) allowed_error );
+            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), (long double) threshold );
         
         K++;
         
     }
     
-    printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), (long double) allowed_error );
+    if( print_modulo >= 0 ) 
+        printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), (long double) threshold );
 
     
     free(  r );
@@ -1424,7 +1464,7 @@ void WHATEVER(
 //     int maxiter = 10 * (M + pdim);
 //     int iter = 0;
 //     
-//     const Float allowed_error = allowed_error;
+//     const Float threshold = threshold;
 //     
 //     /*************/
 //     /* MAIN LOOP */
@@ -1505,7 +1545,7 @@ void WHATEVER(
 // 
 //         printf( "@@@@@@@@@@ Residual norm: %f\n", residualnorm );
 //         
-//         if( residualnorm < allowed_error ) {
+//         if( residualnorm < threshold ) {
 //             printf("@@@@@@@@@@ Threshold deceeded.\n");
 //             break;
 //         }
@@ -1896,7 +1936,7 @@ void WHATEVER(
 //     int maxiter = 10 * (M + pdim);
 //     int iter = 0;
 //     
-//     const Float allowed_error = allowed_error;
+//     const Float threshold = threshold;
 //     
 //     /*************/
 //     /* MAIN LOOP */
@@ -1956,7 +1996,7 @@ void WHATEVER(
 // 
 //         printf( "@@@@@@@@@@ Residual norm: %f\n", residualnorm );
 //         
-//         if( residualnorm < allowed_error ) {
+//         if( residualnorm < threshold ) {
 //             printf("@@@@@@@@@@ Threshold deceeded.\n");
 //             break;
 //         }
