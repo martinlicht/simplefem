@@ -14,7 +14,7 @@
 #include "../../mesh/mesh.simplicial1D.hpp"
 #include "../../mesh/examples1D.hpp"
 #include "../../vtk/vtkwriter.hpp"
-#include "../../solver/crm.hpp"
+#include "../../solver/iterativesolver.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.elevation.hpp"

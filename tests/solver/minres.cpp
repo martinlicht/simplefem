@@ -6,8 +6,9 @@
 #include "../../basic.hpp"
 #include "../../operators/floatvector.hpp"
 #include "../../operators/simpleoperators.hpp"
+#include "../../solver/iterativesolver.hpp"
 #include "../../sparse/sparsematrix.hpp"
-#include "../../solver/minres.hpp"
+// #include "../../solver/minres.hpp"
 
 
 using namespace std;
