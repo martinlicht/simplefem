@@ -64,7 +64,7 @@ int main()
 		
 		ConjugateResidualMethod CRM(M);
 	        CRM.max_iteration_count = 100;
-		CRM.tolerance = 1e-16;
+		CRM.threshold = 1e-16;
                 
                 timestamp start = gettimestamp();
                 CRM.solve(y,b);

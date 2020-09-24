@@ -18,6 +18,7 @@
 #include "../../mesh/examples2D.hpp"
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/sparsesolver.hpp"
+#include "../../solver/chebyshev.hpp"
 #include "../../solver/iterativesolver.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"

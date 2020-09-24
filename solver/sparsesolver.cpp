@@ -74,6 +74,12 @@ void ConjugateGradientSolverCSR(
         
         }
         
+        /* printing information */
+
+        if( print_modulo > 0 and K % print_modulo == 0 ) 
+            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+                   K, N, (long double)(r_r), (long double) threshold*threshold );
+
         /* Check whether residual is small */
                 
         bool residual_is_small = absolute(r_r) < threshold*threshold;
@@ -99,6 +105,22 @@ void ConjugateGradientSolverCSR(
             d_Ad += direction[c] * auxiliary[c];
         }
         
+        
+        bool denominator_is_unreasonable = not std::isfinite(d_Ad) or d_Ad < 0.;
+        bool denominator_is_small    = sqrt(absolute(d_Ad)) < machine_epsilon;
+        
+        if( denominator_is_unreasonable ) {
+            printf( "Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
+            break;
+        }
+        
+        if( denominator_is_small ) {
+            printf( "Gradient energy is small with %.9Le while residual is %.9Le vs %.9Le\n", 
+                    (long double)d_Ad, (long double)r_r, (long double)threshold*threshold );
+            break;
+        }
+        
+        
         Float alpha = r_r / d_Ad;
     
         Float r_r_new = 0.;
@@ -123,15 +145,12 @@ void ConjugateGradientSolverCSR(
             direction[c] = residual[c] + beta * direction[c];
         
         
-        if( print_modulo > 0 and K % print_modulo == 0 ) 
-            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
-                   K, N, (long double)(r_r), (long double) threshold*threshold );
         
         K++;
         
     }
     
-    assert( print_modulo < 0 );
+    
     if( print_modulo >= 0 ) 
         printf( "Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
                 K, N, (long double)(r_r), (long double) threshold*threshold );
@@ -197,9 +216,9 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
         
         bool restart_condition = ( K == 0 ); // or K % 1000 == 0;
         
-        bool residual_seems_small = ( K != 0 ) and absolute(z_r) < threshold*threshold;
+        bool preconresidual_seems_small = ( K != 0 ) and absolute(z_r) < threshold*threshold;
 
-        if( restart_condition or residual_seems_small ) {
+        if( restart_condition or preconresidual_seems_small ) {
             
             z_r = 0.;
         
@@ -225,11 +244,17 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
             
         }
         
+        /* printing information */
+
+        if( print_modulo > 0 and K % print_modulo == 0 ) 
+            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n",
+                   K, N, (long double)(z_r), (long double) threshold*threshold );
+        
         /* Check whether residual is small */
                 
-        bool residual_is_small = absolute(z_r) < threshold*threshold;
+        bool preconresidual_is_small = absolute(z_r) < threshold*threshold;
         
-        if( residual_is_small )
+        if( preconresidual_is_small )
             break;
 
 
@@ -251,6 +276,22 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
                     
             d_Ad += direction[c] * auxiliary[c];
         }
+        
+        
+        bool denominator_is_unreasonable = not std::isfinite(d_Ad) or d_Ad < 0.;
+        bool denominator_is_small    = sqrt(absolute(d_Ad)) < machine_epsilon;
+        
+        if( denominator_is_unreasonable ) {
+            printf( "Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
+            break;
+        }
+        
+        if( denominator_is_small ) {
+            printf( "Gradient energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
+                    (long double)d_Ad, (long double)z_r, (long double)threshold*threshold );
+            break;
+        }
+        
         
         Float alpha = z_r / d_Ad;
     
@@ -284,15 +325,11 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
             
         }
         
-        if( print_modulo > 0 and K % print_modulo == 0 ) 
-            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n",
-                   K, N, (long double)(z_r), (long double) threshold*threshold );
-        
         K++;
         
     }
     
-    assert( print_modulo < 0 );
+    
     if( print_modulo >= 0 ) 
         printf( "Residual after %d of max. %d iterations: %.9Le (%.9Le)\n",
                 K, N, (long double)(z_r), (long double) threshold*threshold );
@@ -375,9 +412,9 @@ void ConjugateGradientSolverCSR_SSOR(
         
         bool restart_condition = ( K == 0 ); // or K % 1000 == 0;
         
-        bool residual_seems_small = false and absolute(z_r) < threshold*threshold;
+        bool preconresidual_seems_small = false and absolute(z_r) < threshold*threshold;
 
-        if( restart_condition or residual_seems_small ) {
+        if( restart_condition or preconresidual_seems_small ) {
             
             for( int c = 0; c < N; c++ ) {
                 
@@ -443,12 +480,17 @@ void ConjugateGradientSolverCSR_SSOR(
             
         }
         
+        /* printing information */
+
+        if( print_modulo > 0 and K % print_modulo == 0 ) 
+            printf( "Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+                    K, N, (long double)(z_r), (long double) threshold*threshold );
+        
         /* Check whether residual is small */
                 
-        bool residual_is_small = absolute(z_r) < threshold*threshold;
-//         printf("\t\t\t\t %.9Le (%.9Le)\n", (long double)std::sqrt(z_r), (long double) threshold );
+        bool preconresidual_is_small = absolute(z_r) < threshold*threshold;
         
-        if( residual_is_small )
+        if( preconresidual_is_small )
             break;
 
 
@@ -469,6 +511,22 @@ void ConjugateGradientSolverCSR_SSOR(
                     
             d_Ad += direction[c] * auxiliary[c];
         }
+        
+        
+        bool denominator_is_unreasonable = not std::isfinite(d_Ad) or d_Ad < 0.;
+        bool denominator_is_small    = sqrt(absolute(d_Ad)) < machine_epsilon;
+        
+        if( denominator_is_unreasonable ) {
+            printf( "Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
+            break;
+        }
+        
+        if( denominator_is_small ) {
+            printf( "Gradient energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
+                    (long double)d_Ad, (long double)z_r, (long double)threshold*threshold );
+            break;
+        }
+        
         
         Float alpha = z_r / d_Ad;
     
@@ -528,10 +586,6 @@ void ConjugateGradientSolverCSR_SSOR(
             direction[c] = zirconium[c] + beta * direction[c];
             
         }
-        
-        if( print_modulo > 0 and K % print_modulo == 0 ) 
-            printf( "Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
-                    K, N, (long double)(z_r), (long double) threshold*threshold );
         
         K++;
         
@@ -629,9 +683,9 @@ void ConjugateResidualSolverCSR(
         
         bool restart_condition = ( K == 0 ); // or K % 1000 == 0;
         
-        bool r_seems_small = ( K != 0 ) and absolute(Ad_r) < threshold*threshold;
+        bool residualenergy_seems_small = ( K != 0 ) and absolute(Ad_r) < threshold*threshold;
 
-        if( restart_condition or r_seems_small ) {
+        if( restart_condition or residualenergy_seems_small ) {
             
             #pragma omp parallel for
             for( int c = 0; c < N; c++ ) {
@@ -666,13 +720,38 @@ void ConjugateResidualSolverCSR(
             
         }
         
+        /* printing information */
+
+        if( print_modulo > 0 and K % print_modulo == 0 ) 
+            printf( "Square Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+                    K, N, (long double)(Ad_r), (long double) threshold*threshold );
+
+        
         /* Check whether res is small */
                 
-        bool r_is_small = absolute(Ad_r) < threshold*threshold;
+        bool residualenergy_is_small = absolute(Ad_r) < threshold*threshold;
         
-        if( r_is_small )
+        if( residualenergy_is_small )
             break;
-
+        
+        
+        
+        bool denominator_is_unreasonable = not std::isfinite(Ad_Ad) or Ad_Ad < 0.;
+        bool denominator_is_small    = sqrt(absolute(Ad_Ad)) < machine_epsilon;
+        
+        if( denominator_is_unreasonable ) {
+            printf( "Gradient double energy is unreasonable with %.9Le\n", (long double)Ad_Ad );
+            break;
+        }
+        
+        if( denominator_is_small ) {
+            printf( "Gradient double energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
+                    (long double)Ad_Ad, (long double)Ad_r, (long double)threshold*threshold );
+            break;
+        }
+        
+        
+        
 
         /* now the main work of the entire algorithm */
         
@@ -714,11 +793,6 @@ void ConjugateResidualSolverCSR(
         
         Ad_r = new_Ar_r;
                 
-        if( print_modulo > 0 and K % print_modulo == 0 ) 
-            printf( "Square Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
-                    K, N, (long double)(Ad_r), (long double) threshold*threshold );
-
-        
         K++;
         
     }
@@ -803,9 +877,9 @@ void ConjugateResidualSolverCSR_textbook(
         
         bool restart_condition = ( K == 0 ); // or K % 1000 == 0;
         
-        bool r_seems_small = ( K != 0 ) and absolute(Ar_r) < threshold*threshold;
+        bool residualenergy_seems_small = ( K != 0 ) and absolute(Ar_r) < threshold*threshold;
 
-        if( restart_condition or r_seems_small ) {
+        if( restart_condition or residualenergy_seems_small ) {
             
             #pragma omp parallel for
             for( int c = 0; c < N; c++ ) {
@@ -840,14 +914,35 @@ void ConjugateResidualSolverCSR_textbook(
             
         }
         
+        /* printing information */
+
+        if( print_modulo > 0 and K % print_modulo == 0 )
+            printf( "Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+                    K, N, (long double)(Ar_r), (long double) threshold*threshold );
+        
         /* Check whether res is small */
                 
-        bool r_is_small = absolute(Ar_r) < threshold*threshold;
+        bool residualenergy_is_small = absolute(Ar_r) < threshold*threshold;
         
-        if( r_is_small )
+        if( residualenergy_is_small )
             break;
 
 
+        bool denominator_is_unreasonable = not std::isfinite(Ad_Ad) or Ad_Ad < 0.;
+        bool denominator_is_small    = sqrt(absolute(Ad_Ad)) < machine_epsilon;
+        
+        if( denominator_is_unreasonable ) {
+            printf( "Gradient energy is unreasonable with %.9Le\n", (long double)Ar_r );
+            break;
+        }
+        
+        if( denominator_is_small ) {
+            printf( "Gradient energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
+                    (long double)Ad_Ad, (long double)Ar_r, (long double)threshold*threshold );
+            break;
+        }
+        
+        
         /* now the main work of the entire algorithm */
         
         Float alpha = Ar_r / Ad_Ad;
@@ -888,10 +983,6 @@ void ConjugateResidualSolverCSR_textbook(
         
         Ar_r = new_Ar_r;
                 
-        if( print_modulo > 0 and K % print_modulo == 0 )
-            printf( "Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
-                    K, N, (long double)(Ar_r), (long double) threshold*threshold );
-        
         K++;
         
     }

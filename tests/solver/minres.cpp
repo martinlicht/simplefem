@@ -66,7 +66,7 @@ int main()
             
             MinimumResidualMethod MINRES(A);
             MINRES.max_iteration_count = dimension;
-            MINRES.tolerance = 1e-20;
+            MINRES.threshold = 1e-20;
             
             timestamp start, end;
             start = gettimestamp();
@@ -112,7 +112,7 @@ int main()
             
             MinimumResidualMethod MINRES(A);
             MINRES.max_iteration_count = dimension;
-            MINRES.tolerance = 1;
+            MINRES.threshold = 1;
             
             timestamp start, end;
             start = gettimestamp();

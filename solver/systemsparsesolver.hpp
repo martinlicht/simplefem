@@ -152,9 +152,9 @@ void HodgeConjugateResidualSolverCSR(
         
         bool restart_condition = ( k == 0 ); // or k % 1000 == 0;
         
-        bool r_seems_small = false;//absolute(Md_r) < threshold*threshold;
+        bool residualenergy_seems_small = false;//absolute(Md_r) < threshold*threshold;
 
-        if( restart_condition or r_seems_small ) {
+        if( restart_condition or residualenergy_seems_small ) {
             
             #pragma omp parallel for
             for( int c = 0; c < L; c++ ) {
@@ -233,12 +233,34 @@ void HodgeConjugateResidualSolverCSR(
             
         }
         
+        /* Print information */
+        
+        if( print_modulo > 0 and k % print_modulo == 0 ) 
+            printf( "Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+                    k, N, (long double)(Md_r), (long double) threshold*threshold );
+        
         /* Check whether res is small */
                 
-        bool r_is_small = absolute(Md_r) < threshold*threshold;
+        bool residualenergy_is_small = absolute(Md_r) < threshold*threshold;
         
-        if( r_is_small )
+        if( residualenergy_is_small )
             break;
+        
+        
+        
+        bool denominator_is_unreasonable = not std::isfinite(Md_Md) or Md_Md < 0.;
+        bool denominator_is_small    = sqrt(absolute(Md_Md)) < machine_epsilon;
+        
+        if( denominator_is_unreasonable ) {
+            printf( "Gradient double energy is unreasonable with %.9Le\n", (long double)Md_Md );
+            break;
+        }
+        
+        if( denominator_is_small ) {
+            printf( "Gradient double energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
+                    (long double)Md_Md, (long double)Md_r, (long double)threshold*threshold );
+            break;
+        }
 
 
         /* now the main work of the entire algorithm */
@@ -309,10 +331,6 @@ void HodgeConjugateResidualSolverCSR(
         }
         
         Md_r = new_Mr_r;
-        
-        if( print_modulo > 0 and k % print_modulo == 0 ) 
-            printf( "Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
-                    k, N, (long double)(Md_r), (long double) threshold*threshold );
         
         k++;
         
@@ -449,9 +467,9 @@ void HodgeConjugateResidualSolverCSR_SSOR(
         
         bool restart_condition = ( k == 0 ); // or k % 1000 == 0;
         
-        bool r_seems_small = false;//absolute(Md_r) < threshold*threshold;
+        bool residualenergy_seems_small = false;//absolute(Md_r) < threshold*threshold;
 
-        if( restart_condition or r_seems_small ) {
+        if( restart_condition or residualenergy_seems_small ) {
             
             #pragma omp parallel for
             for( int c = 0; c < L; c++ ) {
@@ -530,12 +548,34 @@ void HodgeConjugateResidualSolverCSR_SSOR(
             
         }
         
+        /* Print information */
+        
+        if( print_modulo > 0 and k % print_modulo == 0 ) 
+            printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+                   k, N, (long double)(Md_r), (long double) threshold*threshold );
+        
         /* Check whether res is small */
                 
-        bool r_is_small = absolute(Md_r) < threshold*threshold;
+        bool residualenergy_is_small = absolute(Md_r) < threshold*threshold;
         
-        if( r_is_small )
+        if( residualenergy_is_small )
             break;
+        
+        
+        
+        bool denominator_is_unreasonable = not std::isfinite(Md_Md) or Md_Md < 0.;
+        bool denominator_is_small    = sqrt(absolute(Md_Md)) < machine_epsilon;
+        
+        if( denominator_is_unreasonable ) {
+            printf( "Gradient double energy is unreasonable with %.9Le\n", (long double)Md_Md );
+            break;
+        }
+        
+        if( denominator_is_small ) {
+            printf( "Gradient double energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
+                    (long double)Md_Md, (long double)Md_r, (long double)threshold*threshold );
+            break;
+        }
 
 
         /* now the main work of the entire algorithm */
@@ -607,15 +647,6 @@ void HodgeConjugateResidualSolverCSR_SSOR(
         
         Md_r = new_Mr_r;
         
-        if( print_modulo > 0 and k % print_modulo == 0 ) 
-            printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
-                   k, N, (long double)(Md_r), (long double) threshold*threshold );
-        
-//         if( k % 100 == 0 ) 
-//         printf("At Iteration %d we have %.9Le --- [%.9Le,%.9Le,%.9Le,%.9Le]\n",
-//             k,
-//             (long double)(r_r), (long double)alpha, (long double)beta,
-//             (long double)d_Ad, (long double)r_r_new );
         
         k++;
         
@@ -734,9 +765,9 @@ void HodgeConjugateResidualSolverCSR_textbook(
         
         bool restart_condition = ( k == 0 ); // or k % 1000 == 0;
         
-        bool r_seems_small = false;//absolute(Mr_r) < threshold*threshold;
+        bool residualenergy_seems_small = false;//absolute(Mr_r) < threshold*threshold;
 
-        if( restart_condition or r_seems_small ) {
+        if( restart_condition or residualenergy_seems_small ) {
             
             #pragma omp parallel for
             for( int c = 0; c < L; c++ ) {
@@ -813,12 +844,34 @@ void HodgeConjugateResidualSolverCSR_textbook(
             
         }
         
+        /* Print information */
+        
+        if( print_modulo > 0 and k % print_modulo == 0 ) 
+            printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+                   k, N, (long double)(Mr_r), (long double) threshold*threshold );
+        
         /* Check whether res is small */
                 
-        bool r_is_small = absolute(Mr_r) < threshold*threshold;
+        bool residualenergy_is_small = absolute(Mr_r) < threshold*threshold;
         
-        if( r_is_small )
+        if( residualenergy_is_small )
             break;
+        
+        
+        
+        bool denominator_is_unreasonable = not std::isfinite(Md_Md) or Md_Md < 0.;
+        bool denominator_is_small    = sqrt(absolute(Md_Md)) < machine_epsilon;
+        
+        if( denominator_is_unreasonable ) {
+            printf( "Gradient double energy is unreasonable with %.9Le\n", (long double)Md_Md );
+            break;
+        }
+        
+        if( denominator_is_small ) {
+            printf( "Gradient double energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
+                    (long double)Md_Md, (long double)Mr_r, (long double)threshold*threshold );
+            break;
+        }
 
 
         /* now the main work of the entire algorithm */
@@ -889,15 +942,6 @@ void HodgeConjugateResidualSolverCSR_textbook(
         
         Mr_r = new_Mr_r;
         
-        if( print_modulo > 0 and k % print_modulo == 0 ) 
-            printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
-                   k, N, (long double)(Mr_r), (long double) threshold*threshold );
-        
-//         if( k % 100 == 0 ) 
-//         printf("At Iteration %d we have %.9Le --- [%.9Le,%.9Le,%.9Le,%.9Le]\n",
-//             k,
-//             (long double)(r_r), (long double)alpha, (long double)beta,
-//             (long double)d_Ad, (long double)r_r_new );
         
         k++;
         

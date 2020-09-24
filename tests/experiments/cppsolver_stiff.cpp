@@ -48,6 +48,10 @@ int main()
             
             M.check();
             
+            M.automatic_dirichlet_flags();
+            
+            M.check_dirichlet_flags();
+            
             cout << "Prepare scalar fields for testing..." << endl;
             
 
@@ -98,7 +102,7 @@ int main()
             ConvergenceTable contable;
             
 
-            int min_l = 2; int max_l = 7;
+            int min_l = 2; int max_l = 9;
 
             for( int l = 0; l < min_l; l++ )
                 M.uniformrefinement();
@@ -116,16 +120,42 @@ int main()
             
                     SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
                     
+                    cout << "...assemble vector mass matrix" << endl;
+            
+                    SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
+                    
+                    cout << "...assemble differential matrix and transpose" << endl;
+
+                    SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r );
+
+                    SparseMatrix diffmatrix_t = diffmatrix.getTranspose();
+
+                    cout << "...assemble inclusion matrix and transpose" << endl;
+            
                     SparseMatrix incmatrix = LagrangeInclusionMatrix( M, M.getinnerdimension(), r );
 
                     SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
-                    cout << "...assemble global mass matrix" << endl;
+                    cout << "...assemble stiffness matrix" << endl;
             
+                    // ProductOperator 
+//                     auto stiffness = incmatrix_t * diffmatrix_t * vector_massmatrix * diffmatrix * incmatrix;
+                       
+//                     auto op1 = incmatrix_t * diffmatrix_t;
+//                     auto op2 = op1 * vector_massmatrix;
+//                     auto op3 = op2 * diffmatrix;
+//                     auto stiffness = op3 * incmatrix;
 
-                    auto mass_prelim = incmatrix_t & ( scalar_massmatrix & incmatrix );
-                    mass_prelim.sortentries();
-                    auto mass = MatrixCSR( mass_prelim );
+//                     auto opr1 = diffmatrix & incmatrix;
+//                     auto opr  = vector_massmatrix_fac & opr1;
+//                     auto opl  = opr.getTranspose(); 
+//                     auto stiffness = opl & opr;
+
+                    auto opr  = diffmatrix & incmatrix;
+                    auto opl  = opr.getTranspose(); 
+                    auto stiffness_prelim = opl & ( vector_massmatrix & opr );
+                    stiffness_prelim.sortentries();
+                    auto stiffness = MatrixCSR( stiffness_prelim );
                     
                     {
 
@@ -139,7 +169,7 @@ int main()
                             cout << "CGM C++" << endl;
                         
                             sol.zero();
-                            ConjugateGradientMethod Solver( mass );
+                            ConjugateGradientMethod Solver( stiffness );
                             Solver.print_modulo        = 0;
                             Solver.max_iteration_count =     4 * sol.getdimension();
                             timestamp start = gettimestamp();
@@ -147,44 +177,46 @@ int main()
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
                             
-                            contable << Float(end - start) << Float( ( mass * sol - rhs ).norm() );
+                            contable << Float(end - start) << Float( ( stiffness * sol - rhs ).norm() );
                         }
 
                         {
                             cout << "CRM C++" << endl;
                         
                             sol.zero();
-                            ConjugateResidualMethod Solver( mass );
+                            ConjugateResidualMethod Solver( stiffness );
                             Solver.print_modulo        = 0;
                             Solver.max_iteration_count =     4 * sol.getdimension();
                             timestamp start = gettimestamp();
-                            Solver.solve( sol, rhs );
+                            Solver.solve_robust( sol, rhs );
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
                             
-                            contable << Float(end - start) << Float( ( mass * sol - rhs ).norm() );
+                            contable << Float(end - start) << Float( ( stiffness * sol - rhs ).norm() );
                         }
 
+                        if(false)
                         {
                             cout << "MINRES C++" << endl;
                         
                             sol.zero();
-                            MinimumResidualMethod Solver( mass );
-                            Solver.print_modulo        = 0;
+                            MinimumResidualMethod Solver( stiffness );
+                            Solver.print_modulo        = 1;
+                            Solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
                             Solver.max_iteration_count =     4 * sol.getdimension();
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
 
-                            contable << Float(end - start) << Float( ( mass * sol - rhs ).norm() );
+                            contable << Float(end - start) << Float( ( stiffness * sol - rhs ).norm() );
                         }
 
                         {
                             cout << "HERZOG SOODHALTER C++" << endl;
                         
                             sol.zero();
-                            HerzogSoodhalterMethod Solver( mass );
+                            HerzogSoodhalterMethod Solver( stiffness );
                             Solver.print_modulo        = 0;
                             Solver.max_iteration_count =     4 * sol.getdimension();
                             timestamp start = gettimestamp();
@@ -192,7 +224,7 @@ int main()
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
 
-                            contable << Float(end - start) << Float( ( mass * sol - rhs ).norm() );
+                            contable << Float(end - start) << Float( ( stiffness * sol - rhs ).norm() );
                         }
                         
                         

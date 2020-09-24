@@ -79,31 +79,38 @@ inline int kronecker( const T& i, const T& j )
 template<typename T>
 T absolute( const T& n )
 {
-    assert( n >= 0 or n <= 0 );
-    if( n >= 0 )
-        return n;
-    else
-        return -n;
+    if( n >= 0 ) return  n;
+    if( n <= 0 ) return -n;
+    assert( not std::isfinite(n) );
+    return n;
 }
 
 template<typename T>
 T maximum( const T& a, const T& b )
 {
-    assert( a >= b or a <= b );
-    if( a >= b )
-        return a;
-    else
-        return b;
+    if( a >= b ) return a;
+    if( a <= b ) return b;
+    assert( ( not std::isfinite(a) ) or ( not std::isfinite(b) ) );
+    return a;
+//     assert( a >= b or a <= b );
+//     if( a >= b )
+//         return a;
+//     else
+//         return b;
 }
 
 template<typename T>
 T minimum( const T& a, const T& b )
 {
-    assert( a >= b or a <= b );
-    if( a <= b )
-        return a;
-    else
-        return b;
+    if( a <= b ) return a;
+    if( a >= b ) return b;
+    assert( ( not std::isfinite(a) ) or ( not std::isfinite(b) ) );
+    return a;
+//     assert( a >= b or a <= b );
+//     if( a >= b )
+//         return a;
+//     else
+//         return b;
 }
 
 

@@ -94,7 +94,7 @@ int main()
             
             ConjugateResidualMethod CRM(A);
             CRM.max_iteration_count = dimension;
-            CRM.tolerance = 1e-20;
+            CRM.threshold = 1e-20;
             
             timestamp start, end;
             start = gettimestamp();
@@ -110,7 +110,7 @@ int main()
             
             PreconditionedConjugateResidualMethod PCRM(A,M);
             PCRM.max_iteration_count = dimension;
-            PCRM.tolerance = 1e-20;
+            PCRM.threshold = 1e-20;
             
             timestamp start, end;
             start = gettimestamp();

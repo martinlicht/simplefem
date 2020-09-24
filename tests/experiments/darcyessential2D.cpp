@@ -269,7 +269,7 @@ int main()
                             
                             ConjugateResidualMethod Solver( X );
 //                             HerzogSoodhalterMethod Solver( X );
-                            Solver.tolerance           = 1e-10;
+                            Solver.threshold           = 1e-10;
                             Solver.print_modulo        = 1;
                             Solver.max_iteration_count = 4 * sol.getdimension();
                             timestamp start = gettimestamp();
@@ -310,7 +310,7 @@ int main()
 //                             rhs.setslice( A.getdimin(), volume_incmatrix_t * ( volume_massmatrix * interpol_rhs ) );
                             
                             HerzogSoodhalterMethod Solver( X );
-                            Solver.tolerance           = 1e-10;
+                            Solver.threshold           = 1e-10;
                             Solver.print_modulo        = 1;
                             Solver.max_iteration_count = 10 * sol.getdimension();
                             timestamp start = gettimestamp();
