@@ -23,7 +23,7 @@
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
-#include "../../fem/global.lagrangeincl.hpp"
+#include "../../fem/global.lagrangematrices.hpp"
 #include "../../fem/utilities.hpp"
 
 
