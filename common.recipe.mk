@@ -7,8 +7,9 @@
 
 # Do you want to use GCC or Clang?
 # Uncomment the appropriate definition below
-FLAG_CXX := CLANG
-# FLAG_CXX := GCC
+# FLAG_CXX := CLANG
+FLAG_CXX := GCC
+# FLAG_CXX := ICC
 
 # Do you want to ENABLE the use of tcmalloc?
 # Uncomment the following line to enable tcmalloc
@@ -84,6 +85,10 @@ ifeq ($(FLAG_CXX),GCC)
 else ifeq ($(FLAG_CXX),CLANG)
 
   CXX := clang++
+
+else ifeq ($(FLAG_CXX),ICC)
+
+  CXX := icc
 
 else
 
