@@ -20,11 +20,15 @@ FLAG_CXX := CLANG
 
 # Do you want to ENABLE the use of openMP?
 # Uncomment the following line to enable compilation with openMP
-# OPENMP_FLAG := -fopenmp
+# FLAG_ENABLE_OPENMP=yes
+
+# Do you want to DISABLE embedding of Debug information?
+# Uncomment the following line to have no debug information included
+# FLAG_NO_DEBUGINFO=yes
 
 # Do you want to DISABLE checking of meshes?
 # Uncomment the following line to disable extensive check routines for meshes
-FLAG_DO_NOT_CHECK_MESHES := -DDO_NOT_CHECK_MESHES
+FLAG_DISABLE_CHECK_MESHES=yes
 
 # Do you want to enable static analysis during the compilation process
 # Uncomment the following line to enable static analysis
@@ -32,11 +36,11 @@ FLAG_DO_NOT_CHECK_MESHES := -DDO_NOT_CHECK_MESHES
 
 # Do you want to ENABLE the standard library debugging flags 
 # Uncomment the following line to enable the standard library debugging flags 
-FLAG_DO_COMPILEDEBUGMODE := -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC
+# FLAG_DISABLE_STDLIBDEBUG=yes
 
 # Do you want to DISABLE the general assert macro?
 # Uncomment the following line to disable the general assert macro
-# FLAG_DONTASSERT := -DNDEBUG
+# FLAG_DISABLE_ASSERTIONS=yes
 
 # Do you want to ENABLE profile generation? 
 # Uncomment the following line to enable profile generation at every run.
@@ -53,6 +57,21 @@ FLAG_DO_COMPILEDEBUGMODE := -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC
 # Do you want to strip unused symbols from the executables?
 # Uncomment the following line to accomplish this
 # FLAG_DO_STRIP=yes
+
+# Do you want to compile with all optimization flags enabled?
+# Uncomment the following line to have this done so
+# FLAG_DO_OPTIMIZE=yes
+
+
+
+ifdef $(RELEASE_MODE)
+FLAG_DISABLE_CHECK_MESHES=yes
+FLAG_DISABLE_STDLIBDEBUG=yes
+FLAG_DISABLE_ASSERTIONS=yes
+FLAG_DO_OPTIMIZE=yes
+endif
+
+
 
 
 
@@ -130,12 +149,12 @@ CXXFLAGS_WARNINGS += -Wformat=2 -Wformat-nonliteral -Wformat-security -Wformat-y
 
 ifeq ($(FLAG_CXX),GCC)
 
-  CXXFLAGS_WARNINGS +=  -Wmultiple-inheritance -Wvirtual-inheritance
+  CXXFLAGS_WARNINGS += -Wmultiple-inheritance -Wvirtual-inheritance
   CXXFLAGS_WARNINGS += -Wpointer-arith
   CXXFLAGS_WARNINGS += -Wreturn-local-addr
   CXXFLAGS_WARNINGS += -Wfloat-equal -Wdouble-promotion -Wfloat-conversion
   CXXFLAGS_WARNINGS += -Wno-sign-compare
-#   CXXFLAGS_WARNINGS += -Wconversion 
+  CXXFLAGS_WARNINGS += -Wconversion 
   CXXFLAGS_WARNINGS += -Wno-sign-conversion
   CXXFLAGS_WARNINGS += -Wlogical-op -Wreturn-local-addr
   #check which options there are ... 
@@ -152,7 +171,10 @@ ifeq ($(FLAG_CXX),GCC)
   CXXFLAGS_WARNINGS += 
   CXXFLAGS_WARNINGS += -Wdangling-else -Wparentheses
   CXXFLAGS_WARNINGS += -Wwrite-strings
-  CXXFLAGS_WARNINGS += -Wunsafe-loop-optimizations -Winline -Wvector-operation-performance -Wdisabled-optimization
+  CXXFLAGS_WARNINGS += -Wunsafe-loop-optimizations 
+#   CXXFLAGS_WARNINGS += -Winline 
+  CXXFLAGS_WARNINGS += -Wvector-operation-performance
+  CXXFLAGS_WARNINGS += -Wdisabled-optimization
 	#TODO What is stack smashing???? HSA????
 	#TODO Read the format warnings 
 
@@ -175,7 +197,7 @@ else ifeq ($(FLAG_CXX),CLANG)
   CXXFLAGS_WARNINGS += -Wdate-time
   CXXFLAGS_WARNINGS += -Wdelete-non-abstract-non-virtual-dtor
   CXXFLAGS_WARNINGS += -Wdeprecated
-  #CXXFLAGS_WARNINGS += -Wdouble-promotion
+#   CXXFLAGS_WARNINGS += -Wdouble-promotion #disabled
   #CXXFLAGS_WARNINGS += -Wdtor-name  TODO: Is this one actually defined???
   CXXFLAGS_WARNINGS += -Wduplicate-decl-specifier -Wduplicate-enum -Wduplicate-method-arg -Wduplicate-method-match 
   CXXFLAGS_WARNINGS += -Wembedded-directive
@@ -212,7 +234,6 @@ else ifeq ($(FLAG_CXX),CLANG)
   CXXFLAGS_WARNINGS += -Wrange-loop-analysis
   CXXFLAGS_WARNINGS += -Wredundant-move
   CXXFLAGS_WARNINGS += -Wredundant-parens
-#   CXXFLAGS_WARNINGS += -Wredundant-parentheses
   CXXFLAGS_WARNINGS += -Wreserved-id-macro
   CXXFLAGS_WARNINGS += -Wreserved-user-defined-literal
   CXXFLAGS_WARNINGS += -Wreturn-std-move
@@ -221,10 +242,10 @@ else ifeq ($(FLAG_CXX),CLANG)
   CXXFLAGS_WARNINGS += -Wsometimes-uninitialized
   CXXFLAGS_WARNINGS += -Wstrict-prototypes
   CXXFLAGS_WARNINGS += -Wstring-conversion
-#   CXXFLAGS_WARNINGS += -Wsuggest-destructor-override
+#   CXXFLAGS_WARNINGS += -Wsuggest-destructor-override #unknown
   CXXFLAGS_WARNINGS += -Wtautological-compare
   CXXFLAGS_WARNINGS += -Wtautological-type-limit-compare
-#   CXXFLAGS_WARNINGS += -Wuninitialized-const-reference
+#   CXXFLAGS_WARNINGS += -Wuninitialized-const-reference #unknown
   CXXFLAGS_WARNINGS += -Wunreachable-code
   CXXFLAGS_WARNINGS += -Wunused
   CXXFLAGS_WARNINGS += -Wzero-as-null-pointer-constant
@@ -247,7 +268,12 @@ endif
  
 endif
  
-CXXFLAGS_WARNINGS += -Wno-conversion -Wno-sign-compare -Wno-unused-variable -Wno-unused-parameter -Wno-vla -Wno-type-limits 
+CXXFLAGS_WARNINGS += -Wno-conversion 
+CXXFLAGS_WARNINGS += -Wno-sign-compare 
+CXXFLAGS_WARNINGS += -Wno-unused-variable
+CXXFLAGS_WARNINGS += -Wno-unused-parameter
+CXXFLAGS_WARNINGS += -Wno-vla
+CXXFLAGS_WARNINGS += -Wno-type-limits 
 
 
 
@@ -282,8 +308,11 @@ endif
 
 
 ### Debugging 
-
-CXXFLAGS_DEBUG := -g
+CXXFLAGS_DEBUG :=
+ifeq ($(FLAG_NO_DEBUGINFO),yes)
+else
+CXXFLAGS_DEBUG += -g
+endif
 
 
 
@@ -340,6 +369,9 @@ ifeq ($(FLAG_DO_USE_SANITIZER),yes)
 
 endif
 
+
+
+
 ifeq ($(FLAG_USE_TCMALLOC),yes)
 	CXXFLAGS_MALLOC=-fno-builtin-malloc -fno-builtin-calloc -fno-builtin-realloc -fno-builtin-free
 else
@@ -354,11 +386,23 @@ endif
 
 
 # Optimization 
+CXXFLAGS_OPTIMIZE:=
 
-CXXFLAGS_OPTIMIZE := -O1
-#CXXFLAGS_OPTIMIZE += -march=native $(OPENMP_FLAG)
-# CXXFLAGS_OPTIMIZE := -inline-threshold=1200
-#CXXFLAGS_OPTIMIZE += -flto -fwhole-program
+ifeq ($(FLAG_DO_OPTIMIZE),yes)
+	CXXFLAGS_OPTIMIZE += -O3
+	CXXFLAGS_OPTIMIZE += -march=native 
+	ifeq ($(FLAG_CXX),CLANG)
+		CXXFLAGS_OPTIMIZE := -inline-threshold=1200
+	endif
+	CXXFLAGS_OPTIMIZE += -flto -fwhole-program
+else
+	CXXFLAGS_OPTIMIZE += -O1
+endif
+
+ifeq ($(FLAG_ENABLE_OPENMP),yes)
+	CXXFLAGS_OPTIMIZE += -fopenmp
+endif
+
 
 ifeq ($(FLAG_CXX),GCC)
 ifeq ($(FLAG_DO_STRIP),yes)
@@ -392,7 +436,19 @@ endif
 #                                             #
 ###############################################
 
-CXXFLAGS := ${CXXFLAGS_LANG} ${CXXFLAGS_DIAGFORMAT} ${CXXFLAGS_WARNINGS} ${CXXFLAGS_STATICANALYSER} ${CXXFLAGS_DEBUG} $(CXXFLAGS_PROF) $(CXXFLAGS_SANI) ${CXXFLAGS_MALLOC} ${CXXFLAGS_OPTIMIZE} ${CXXFLAGS_CODEGEN}
+CXXFLAGS := 
+CXXFLAGS += ${CXXFLAGS_LANG}
+CXXFLAGS += ${CXXFLAGS_DIAGFORMAT}
+CXXFLAGS += ${CXXFLAGS_WARNINGS}
+CXXFLAGS += ${CXXFLAGS_STATICANALYSER}
+CXXFLAGS += ${CXXFLAGS_DEBUG}
+CXXFLAGS += $(CXXFLAGS_PROF)
+CXXFLAGS += $(CXXFLAGS_SANI)
+CXXFLAGS += ${CXXFLAGS_MALLOC}
+CXXFLAGS += ${CXXFLAGS_OPTIMIZE}
+CXXFLAGS += ${CXXFLAGS_CODEGEN}
+
+CXXFLAGS := $(strip $(CXXFLAGS))
 
 
 
@@ -404,7 +460,24 @@ CXXFLAGS := ${CXXFLAGS_LANG} ${CXXFLAGS_DIAGFORMAT} ${CXXFLAGS_WARNINGS} ${CXXFL
 #                                             #
 ###############################################
 
-CPPFLAGS := $(FLAG_DO_NOT_CHECK_MESHES) $(FLAG_DONTASSERT) $(FLAG_DO_COMPILEDEBUGMODE) $(FLAG_DO_USE_EXTENDED_PRECISION)
+CPPFLAGS := 
+
+ifeq ($(FLAG_DISABLE_CHECK_MESHES),yes)
+CPPFLAGS += -DDO_NOT_CHECK_MESHES
+endif
+
+ifeq ($(FLAG_DISABLE_ASSERTIONS),yes)
+CPPFLAGS += -DNDEBUG
+endif
+
+ifeq ($(FLAG_DISABLE_STDLIBDEBUG),yes)
+else 
+CPPFLAGS += -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_GLIBCXX_ASSERTIONS -D_GLIBCXX_SANITIZE_VECTOR
+endif
+
+CPPFLAGS += $(FLAG_DO_USE_EXTENDED_PRECISION)
+
+CPPFLAGS := $(strip $(CPPFLAGS))
 
 
 
@@ -420,6 +493,7 @@ else
 	LDLIBS :=
 endif
 
+LDLIBS := $(strip $(LDLIBS))
 
 
 
