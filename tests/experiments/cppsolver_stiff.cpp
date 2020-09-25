@@ -22,7 +22,7 @@
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
-#include "../../fem/global.lagrangeincl.hpp"
+#include "../../fem/global.sullivanincl.hpp"
 #include "../../fem/utilities.hpp"
 
 
@@ -43,38 +43,15 @@ int main()
             
             M.check();
             
-//             M.automatic_dirichlet_flags();
+            M.automatic_dirichlet_flags();
             
-//             M.check_dirichlet_flags();
+            M.check_dirichlet_flags();
             
             cout << "Prepare scalar fields for testing..." << endl;
             
-
-            std::function<FloatVector(const FloatVector&)> constant_one
-                = [](const FloatVector& vec) -> FloatVector{
-                        assert( vec.getdimension() == 2 );
-                        return FloatVector({ 1. });
-                    };
             
-            Float xfeq = 1.;
-            Float yfeq = 1.;
-            
-            std::function<FloatVector(const FloatVector&)> experiment_sol = 
-                [=](const FloatVector& vec) -> FloatVector{
-                    assert( vec.getdimension() == 2 );
-                    return FloatVector({ std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] ) });
-                };
-            
-
-            std::function<FloatVector(const FloatVector&)> experiment_grad = 
-                [=](const FloatVector& vec) -> FloatVector{
-                    assert( vec.getdimension() == 2 );
-                    return FloatVector( { 
-                            xfeq * Constants::twopi * std::cos( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] ),
-                            yfeq * Constants::twopi * std::sin( xfeq * Constants::twopi * vec[0] ) * std::cos( yfeq * Constants::twopi * vec[1] ), 
-                        });
-                };
-            
+            const Float xfeq = 1.;
+            const Float yfeq = 1.;
 
             std::function<FloatVector(const FloatVector&)> experiment_rhs = 
                 [=](const FloatVector& vec) -> FloatVector{
@@ -127,24 +104,15 @@ int main()
 
                     cout << "...assemble inclusion matrix and transpose" << endl;
             
-                    SparseMatrix incmatrix = LagrangeInclusionMatrix( M, M.getinnerdimension(), r );
+                    SparseMatrix incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r );
 
                     SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
                     cout << "...assemble stiffness matrix" << endl;
             
-                    // ProductOperator 
-//                     auto stiffness = incmatrix_t * diffmatrix_t * vector_massmatrix * diffmatrix * incmatrix;
-                       
-//                     auto op1 = incmatrix_t * diffmatrix_t;
-//                     auto op2 = op1 * vector_massmatrix;
-//                     auto op3 = op2 * diffmatrix;
-//                     auto stiffness = op3 * incmatrix;
+                    auto composed_stiffness = incmatrix_t * diffmatrix_t * vector_massmatrix * diffmatrix * incmatrix;
+                    auto composed_mass      = incmatrix_t * scalar_massmatrix * incmatrix;
 
-//                     auto opr1 = diffmatrix & incmatrix;
-//                     auto opr  = vector_massmatrix_fac & opr1;
-//                     auto opl  = opr.getTranspose(); 
-//                     auto stiffness = opl & opr;
 
                     auto opr  = diffmatrix & incmatrix;
                     auto opl  = opr.getTranspose(); 
@@ -154,16 +122,21 @@ int main()
                     
                     {
 
-                        FloatVector sol( M.count_simplices(0), 0. );
+                        FloatVector sol_original( M.count_simplices(0), 0. );
+                        sol_original.random();
+                        sol_original.normalize( composed_mass );
                         
                         const auto& function_rhs  = experiment_rhs;
                         FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r,   function_rhs  );
-                        FloatVector rhs = incmatrix_t * ( scalar_massmatrix * interpol_rhs );
-
+                        FloatVector rhs_original = incmatrix_t * ( scalar_massmatrix * interpol_rhs );
+                        rhs_original.zero();
+                        
+                        if(false)
                         {
                             cout << "CGM C++" << endl;
                         
-                            sol.zero();
+                            FloatVector sol = sol_original;
+                            FloatVector rhs = rhs_original;
                             ConjugateGradientMethod Solver( stiffness );
                             Solver.print_modulo        = 0;
                             Solver.max_iteration_count =     4 * sol.getdimension();
@@ -172,44 +145,54 @@ int main()
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
                             
+                            LOG << sol.norm( composed_mass );
                             contable << Float(end - start) << Float( ( stiffness * sol - rhs ).norm() );
                         }
 
+                        if(false)
                         {
                             cout << "CRM C++" << endl;
                         
-                            sol.zero();
+                            FloatVector sol = sol_original;
+                            FloatVector rhs = rhs_original;
                             ConjugateResidualMethod Solver( stiffness );
-                            Solver.print_modulo        = 0;
+                            Solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
+                            Solver.print_modulo        = 1;
+                            Solver.threshold        = 10000 * machine_epsilon;
                             Solver.max_iteration_count =     4 * sol.getdimension();
                             timestamp start = gettimestamp();
                             Solver.solve_robust( sol, rhs );
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
                             
+                            LOG << sol.norm( composed_mass );
                             contable << Float(end - start) << Float( ( stiffness * sol - rhs ).norm() );
                         }
 
                         {
                             cout << "MINRES C++" << endl;
                         
-                            sol.zero();
+                            FloatVector sol = sol_original;
+                            FloatVector rhs = rhs_original;
                             MinimumResidualMethod Solver( stiffness );
-//                             Solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
-                            Solver.print_modulo        = 0;
+                            Solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
+                            Solver.print_modulo        = 1;
                             Solver.max_iteration_count =     4 * sol.getdimension();
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
 
+                            LOG << sol.norm( composed_mass );
                             contable << Float(end - start) << Float( ( stiffness * sol - rhs ).norm() );
                         }
 
+                        if(false)
                         {
                             cout << "HERZOG SOODHALTER C++" << endl;
                         
-                            sol.zero();
+                            FloatVector sol = sol_original;
+                            FloatVector rhs = rhs_original;
                             HerzogSoodhalterMethod Solver( stiffness );
                             Solver.print_modulo        = 0;
                             Solver.max_iteration_count =     4 * sol.getdimension();
@@ -218,6 +201,7 @@ int main()
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
 
+                            LOG << sol.norm( composed_mass );
                             contable << Float(end - start) << Float( ( stiffness * sol - rhs ).norm() );
                         }
                         

@@ -18,11 +18,7 @@
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.sullivanincl.hpp"
-#include "../../fem/global.lagrangemassmatrix.hpp"
-#include "../../fem/global.lagrangestiffnessmatrix.hpp"
-#include "../../fem/global.lagrangebrokenmassmatrix.hpp"
-#include "../../fem/global.lagrangebrokenstiffnessmatrix.hpp"
-#include "../../fem/global.lagrangeincl.hpp"
+#include "../../fem/lagrangematrices.hpp"
 #include "../../utility/convergencetable.hpp"
 
 

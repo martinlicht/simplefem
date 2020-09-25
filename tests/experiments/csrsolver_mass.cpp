@@ -23,7 +23,7 @@
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
-#include "../../fem/global.lagrangeincl.hpp"
+#include "../../fem/global.sullivanincl.hpp"
 #include "../../fem/utilities.hpp"
 
 
@@ -116,7 +116,7 @@ int main()
             
                     SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
                     
-                    SparseMatrix incmatrix = LagrangeInclusionMatrix( M, M.getinnerdimension(), r );
+                    SparseMatrix incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r );
 
                     SparseMatrix incmatrix_t = incmatrix.getTranspose();
 

@@ -21,9 +21,9 @@
 #include "../../solver/chebyshev.hpp"
 #include "../../solver/iterativesolver.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
+#include "../../fem/global.sullivanincl.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
-#include "../../fem/global.lagrangeincl.hpp"
 #include "../../fem/utilities.hpp"
 
 
@@ -128,7 +128,7 @@ int main()
 
                     cout << "...assemble inclusion matrix and transpose" << endl;
             
-                    SparseMatrix incmatrix = LagrangeInclusionMatrix( M, M.getinnerdimension(), r );
+                    SparseMatrix incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r );
 
                     SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
