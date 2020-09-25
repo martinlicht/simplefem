@@ -1055,38 +1055,66 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
         /* Start / Restart MinimumResidualMethod process */
         if( restart_condition or residual_seems_small ) {
         
+            LOG << "Restart **************************";
+            
             r = b - A * x;
-            p0 = r;
-            s0 = A * p0;
-            p1 = p0;
-            s1 = s0;
-
-            // .... first iteration 
-        
-            Float s1_s1 = s1 * s1;
             
-            if( s1_s1 < machine_epsilon or std::isnan(s1_s1) ) {
-                LOG << "s1 has small norm with " << s1_s1;
-                break;
-            }
-            
-            Float alpha = ( r * s1 ) / ( s1_s1);
-            x += alpha * p1;
-            r -= alpha * s1;
-            
-            assert( std::isfinite(alpha) );
-
             rr = r * r;
             
-            p0 = s1;
-            s0 = A * s1;
+            assert( std::isfinite(rr) );
+            if( rr < threshold*threshold )
+                break;
             
-            Float beta1 = ( s0 * s1 ) / ( s1_s1 );
-            p0 -= beta1 * p1;
-            s0 -= beta1 * s1;
+            p0 = r;
+            s0 = A * r;
             
-            assert( std::isfinite(beta1) );
-
+            
+            Float s0_s0 = s0 * s0;
+            
+            assert( std::isfinite(s0_s0) );
+            if( s0_s0 < threshold*threshold )
+                break;
+            
+            
+            p0 /= std::sqrt(s0_s0);
+            s0 /= std::sqrt(s0_s0);
+            
+            Float alpha0 = r * s0;
+            
+            x = x + alpha0 * p0;
+            r = r - alpha0 * s0;
+            
+            rr = r * r;
+            
+            assert( std::isfinite(rr) );
+            if( rr < threshold*threshold )
+                break;
+            
+            
+            p1 = r;
+            s1 = A * r;
+            
+            Float beta0 = s0 * s1;
+            
+            p1 = p1 - beta0 * p0;
+            s1 = s1 - beta0 * s0;
+            
+            Float s1_s1 = s1 * s1;
+            
+            assert( std::isfinite(s1_s1) );
+            if( s1_s1 < threshold*threshold )
+                break;
+            
+            p1 /= std::sqrt(s1_s1);
+            s1 /= std::sqrt(s1_s1);
+            
+            Float alpha1 = r * s1;
+            
+            x = x + alpha1 * p1;
+            r = r - alpha1 * s1;
+            
+            rr = r * r;
+            
         }
 
         bool residual_is_small = absolute( rr ) < threshold*threshold; 
@@ -1107,55 +1135,53 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
             
         /* Perform iteration step */
         {
-            
-            p2 = p1; p1 = p0;
-            s2 = s1; s1 = s0;
-            
-            Float s1_s1 = s1 * s1;
-            
-            if( s1_s1 < machine_epsilon or not std::isfinite(s1_s1) ) {
-                LOG << "s1 has small norm with " << s1_s1;
-                break;
-            }
 
-            Float alpha = ( r * s1 ) / ( s1_s1 );
-            x += alpha * p1;
-            r -= alpha * s1;
+            p2 = r;
+            s2 = A * r;
             
-            assert( std::isfinite(alpha) );
-
-            rr = r * r;
             
-            p0 = s1;
-            s0 = A * s1;
+            Float beta0 = s0 * s2;
             
-            assert( r.isfinite() );
-            assert( p0.isfinite() and p1.isfinite() and p2.isfinite() );
-            assert( s0.isfinite() and s1.isfinite() and s2.isfinite() );
-
-            Float beta1 = ( s0 * s1 ) / ( s1_s1 );
-            p0 -= beta1 * p1;
-            s0 -= beta1 * s1;
+            p2 = p2 - beta0 * p0;
+            s2 = s2 - beta0 * s0;
             
-            assert( std::isfinite(beta1) );
-
+            
+            Float beta1 = s1 * s2;
+            
+            p2 = p2 - beta1 * p1;
+            s2 = s2 - beta1 * s1;
+            
+            
             Float s2_s2 = s2 * s2;
             
-            assert( std::isfinite(s2_s2) and s2_s2 >= 0. );
-            if( s2_s2 < machine_epsilon) {
-                LOG << "s2 has small norm with " << s2_s2;
+            assert( std::isfinite(s2_s2) );
+            if( s2_s2 < threshold*threshold )
                 break;
-            }
-
-            Float beta2 = ( s0 * s2 ) / ( s2_s2 );
-            p0 -= beta2 * p2;
-            s0 -= beta2 * s2;
             
-            assert( std::isfinite(beta2) );
+            Float mysqrt = std::sqrt(s2_s2);
+            p2 /= mysqrt;
+            s2 /= mysqrt;
             
-            assert( r.isfinite() );
-            assert( p0.isfinite() and p1.isfinite() and p2.isfinite() );
-            assert( s0.isfinite() and s1.isfinite() and s2.isfinite() );
+            Float alpha2 = r * s2;
+            
+            x = x + alpha2 * p2;
+            r = r - alpha2 * s2;
+            
+//             r = b - A * x;
+            
+            rr = r * r;
+            
+            assert( std::isfinite(rr) );
+            if( rr < threshold*threshold )
+                break;
+            
+            
+            if( verbosity >= VerbosityLevel::resultonly and print_modulo >= 0 ) 
+                LOG << "Result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
+                    << rr << "(" << threshold*threshold << ")"; 
+            
+            p0 = p1; p1 = p2;
+            s0 = s1; s1 = s2;
             
         }
         

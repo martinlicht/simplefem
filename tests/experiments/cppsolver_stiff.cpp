@@ -19,11 +19,6 @@
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/sparsesolver.hpp"
 #include "../../solver/iterativesolver.hpp"
-// #include "../../solver/cgm.hpp"
-// #include "../../solver/crm.hpp"
-// #include "../../solver/herzogsoodhalter.hpp"
-// #include "../../solver/pcrm.hpp"
-// #include "../../solver/minres.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
@@ -48,9 +43,9 @@ int main()
             
             M.check();
             
-            M.automatic_dirichlet_flags();
+//             M.automatic_dirichlet_flags();
             
-            M.check_dirichlet_flags();
+//             M.check_dirichlet_flags();
             
             cout << "Prepare scalar fields for testing..." << endl;
             
@@ -195,14 +190,13 @@ int main()
                             contable << Float(end - start) << Float( ( stiffness * sol - rhs ).norm() );
                         }
 
-                        if(false)
                         {
                             cout << "MINRES C++" << endl;
                         
                             sol.zero();
                             MinimumResidualMethod Solver( stiffness );
-                            Solver.print_modulo        = 1;
-                            Solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
+//                             Solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
+                            Solver.print_modulo        = 0;
                             Solver.max_iteration_count =     4 * sol.getdimension();
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
