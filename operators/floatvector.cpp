@@ -105,19 +105,19 @@ FloatVector::FloatVector( FloatVector&& src, Float alpha )
 }
 
 FloatVector::FloatVector( const std::vector<Float>& vals, Float alpha )
-: FloatVector( vals.size(), [&vals](int i) -> Float{ return vals.at(i); }, alpha )
+: FloatVector( SIZECAST( vals.size() ), [&vals](int i) -> Float{ return vals.at(i); }, alpha )
 {
     FloatVector::check();
 }
 
 FloatVector::FloatVector( const std::vector<int>& vals, Float alpha )
-: FloatVector( vals.size(), [&vals](int i) -> Float{ return vals.at(i); }, alpha )
+: FloatVector( SIZECAST( vals.size() ), [&vals](int i) -> Float{ return vals.at(i); }, alpha )
 {
     FloatVector::check();
 }
 
 FloatVector::FloatVector( const std::initializer_list<Float>& l )
-: dimension( l.size() ), pointer( new Float[l.size()] )
+: dimension( SIZECAST( l.size() ) ), pointer( new Float[l.size()] )
 {
     assert( dimension >= 0 and pointer != nullptr );
     int i = 0;

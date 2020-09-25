@@ -466,7 +466,7 @@ DenseMatrix SubdeterminantMatrixSquare( const DenseMatrix& A, int k )
     IndexRange torange = IndexRange( 0, n-1 );
     std::vector<IndexMap> sigmas = generateSigmas( fromrange, torange );
     
-    DenseMatrix ret( sigmas.size() );
+    DenseMatrix ret( SIZECAST( sigmas.size() ) );
     for( int rim = 0; rim < sigmas.size(); rim++ )
     for( int cim = 0; cim < sigmas.size(); cim++ )
     {
@@ -493,7 +493,7 @@ DenseMatrix SubdeterminantMatrix( const DenseMatrix& A, int k )
     std::vector<IndexMap> sigmas_rows = generateSigmas( range_from, range_rows );
     std::vector<IndexMap> sigmas_cols = generateSigmas( range_from, range_cols );
     
-    DenseMatrix ret( sigmas_rows.size(), sigmas_cols.size(), 0. );
+    DenseMatrix ret( SIZECAST( sigmas_rows.size() ), SIZECAST( sigmas_cols.size() ), 0. );
     for( int rim = 0; rim < sigmas_rows.size(); rim++ )
     for( int cim = 0; cim < sigmas_cols.size(); cim++ )
     {

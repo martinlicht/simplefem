@@ -240,7 +240,7 @@ std::vector<SparseMatrix::MatrixEntry>& SparseMatrix::getentries()
         
 int SparseMatrix::getnumberofentries() const 
 {
-    return entries.size();
+    return SIZECAST( entries.size() );
 }
 
 

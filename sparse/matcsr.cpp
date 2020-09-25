@@ -259,7 +259,7 @@ const Float* MatrixCSR::getV() const
         
 int MatrixCSR::getnumberofentries() const 
 {
-    return V.size();
+    return SIZECAST( V.size() );
 }
 
 

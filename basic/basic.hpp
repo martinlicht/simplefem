@@ -371,7 +371,7 @@ static inline Float factorial_numerical_naive( int64_t n )
     if( n == 0 ) { 
         return 1.;
     } else {
-        return n * factorial_numerical_naive( n-1 );
+        return static_cast<Float>(n) * factorial_numerical_naive( n-1 );
     }
 }
 
@@ -379,7 +379,7 @@ static inline Float factorial_numerical_loop( int64_t n )
 {
     assert( 0 <= n );
     Float ret = 1.;
-    while( n > 0 ) ret *= n--;
+    while( n > 0 ) ret *= static_cast<Float>(n--);
     return ret;
 }
 
@@ -445,7 +445,7 @@ static inline bool isabout( Float value1, Float value2, Float threshold = 100. *
 
 
 
-static inline int cast_size_to_int( unsigned long long size )
+static inline int SIZECAST( std::uintmax_t size )
 {
     assert( size < std::numeric_limits<int>::max() );
     return static_cast<int>( size );
@@ -673,12 +673,12 @@ inline void sort_and_unique( T& t )
 template<typename T>
 int find_index( const std::vector<T>& vec, const T& t )
 {
-   const auto& it = std::find( vec.begin(), vec.end(), t );
+   const auto it = std::find( vec.begin(), vec.end(), t );
    assert( it != vec.end() );
-   int ret = std::distance( vec.begin(), it );
+   const auto ret = std::distance( vec.begin(), it );
    assert( ret >= 0 );
    assert( ret < vec.size() );
-   return ret;
+   return SIZECAST( ret );
 }
 
 template<typename T>
