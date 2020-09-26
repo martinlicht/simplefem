@@ -11,6 +11,7 @@
 #include <array>
 #include <functional>
 #include <iostream>
+#include <iomanip>
 #include <iterator>
 #include <limits>
 #include <list>
@@ -556,18 +557,51 @@ inline void polar_to_cartesian_coordinates2D( const Float& radius, const Float& 
 
 
 
+/////////////////////////////////////////////////
+//                                             //
+//              TIME UTILITIES                 //
+//                                             //
+/////////////////////////////////////////////////
+
+
 typedef clock_t timestamp;
+
+const std::clock_t c_start = std::clock();
+
 
 inline timestamp gettimestamp()
 {
     return clock(); 
 }
 
-inline std::string timestamp2string( timestamp t )
+
+inline std::string timestamp2string( const timestamp& t )
 {
     return std::to_string( static_cast<long double>(t) / CLOCKS_PER_SEC ) + "s";
 }
 
+
+inline std::string timestamp2digitalcode( const timestamp& t )
+{
+    std::stringstream ss;
+    ss << std::setw(14) << t;
+    return ss.str();
+}
+
+
+inline std::string digitalcodenow()
+{
+    std::stringstream ss;
+    ss << std::setw(14) << gettimestamp();
+    return ss.str();
+}
+
+inline std::string timesealnow()
+{
+    static const std::string foo = std::string("[");
+    static const std::string bar = std::string("] ");
+    return foo + digitalcodenow() + bar;
+}
 
 
 

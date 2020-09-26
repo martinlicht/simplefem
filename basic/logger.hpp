@@ -31,53 +31,90 @@ public:
 
 class Logger
 {
-public:
-    
-    explicit Logger( std::ostream&, const std::string& prefix = "", const std::string& postfix = "" );
-    explicit Logger( Logger& parent, const std::string& prefix = "", const std::string& postfix = "" );
-    
-    explicit Logger( std::ostream&, const std::function<void(Logger&)>& prefix = Logger::affix_do_nothing(), const std::function<void(Logger&)>& postfix = Logger::affix_do_nothing() );
-    explicit Logger( Logger& parent, const std::function<void(Logger&)>& prefix = Logger::affix_do_nothing(), const std::function<void(Logger&)>& postfix = Logger::affix_do_nothing() );
-    
-    ~Logger();
-    
-    std::ostream& getstream();
-    
-    Logger& write( const std::string& str );
-    
-    template<class T>
-    Logger& operator<<( const T& t )
-    {
-        getstream() << t;
-        return *this;
-    }
+    public:
+        
+        explicit inline Logger( Logger& parent, const std::string& prefix_str = "", const std::string& postfix_str = "" )
+        : Logger( parent, Logger::affix_write( prefix_str ), Logger::affix_write( postfix_str ) )
+        {
+            
+        }
 
-    
-    Logger& operator<<( std::ostream& (*const f)(std::ostream&) )
-    {
-        f( getstream() );
-        return *this;
-    }
-    
-    static const std::function<void(Logger&)> affix_do_nothing()
-    { 
-        return [](Logger&){ return; };
-    }
+        explicit inline Logger( std::ostream& os, const std::string& prefix_str = "", const std::string& postfix_str = "" )
+        : Logger( os, Logger::affix_write( prefix_str ), Logger::affix_write( postfix_str ) )
+        {
+            
+        }
 
-    static const std::function<void(Logger&)> affix_write( const std::string& str )
-    {
-        return [str](Logger& logger ){ logger.write( str ); };
-    }
-    
+        explicit inline Logger( Logger& parent, const std::function<void(Logger&)>& prefix = Logger::affix_do_nothing(), const std::function<void(Logger&)>& postfix = Logger::affix_do_nothing() )
+        : internalstream( parent.getstream() ), prefix( prefix ), postfix( postfix )
+        {
+            
+        }
 
-    
-private:
-    
-    std::ostream& internalstream;
-    std::function<void(Logger&)> prefix;
-    std::function<void(Logger&)> postfix;
+        explicit inline Logger( std::ostream& os, const std::function<void(Logger&)>& prefix = Logger::affix_do_nothing(), const std::function<void(Logger&)>& postfix = Logger::affix_do_nothing() )
+        : internalstream( os ), prefix( prefix ), postfix( postfix )
+        {
+            prefix( *this );
+        }
 
-    
+
+
+
+        inline ~Logger()
+        {
+            postfix( *this );
+            internalstream.flush();
+        }
+
+        inline std::ostream& getstream()
+        {
+            return internalstream;
+        }
+        
+        
+        
+        inline Logger& write( const std::string& str )
+        {
+            internalstream << str;
+            return *this;
+        }
+        
+        
+        template<class T>
+        Logger& operator<<( const T& t )
+        {
+            getstream() << t;
+            return *this;
+        }
+
+        
+        Logger& operator<<( std::ostream& (*const f)(std::ostream&) )
+        {
+            f( getstream() );
+            return *this;
+        }
+        
+        
+        
+        static const std::function<void(Logger&)> affix_do_nothing()
+        { 
+            return [](Logger&){ return; };
+        }
+
+        static const std::function<void(Logger&)> affix_write( const std::string& str )
+        {
+            return [=](Logger& logger ){ logger.write( str ); };
+        }
+        
+
+        
+    private:
+        
+        std::ostream& internalstream;
+        std::function<void(Logger&)> prefix;
+        std::function<void(Logger&)> postfix;
+
+        
 };
 
 
@@ -87,54 +124,6 @@ private:
 
 
 
-inline Logger::Logger( std::ostream& os, const std::string& prefix, const std::string& postfix )
-: Logger( os, Logger::affix_write( prefix ), Logger::affix_write( postfix ) )
-{
-    
-}
-
-
-inline Logger::Logger( Logger& parent, const std::string& prefix, const std::string& postfix )
-: Logger( parent, Logger::affix_write( prefix ), Logger::affix_write( postfix ) )
-{
-    
-}
-
-
-
-inline Logger::Logger( std::ostream& os, const std::function<void(Logger&)>& prefix, const std::function<void(Logger&)>& postfix )
-: internalstream( os ), prefix( prefix ), postfix( postfix )
-{
-    
-}
-
-
-inline Logger::Logger( Logger& parent, const std::function<void(Logger&)>& prefix, const std::function<void(Logger&)>& postfix )
-: internalstream( parent.getstream() ), prefix( prefix ), postfix( postfix )
-{
-    prefix( *this );
-}
-
-
-
-inline Logger::~Logger()
-{
-    postfix( *this );
-    internalstream.flush();
-}
-
-
-
-inline std::ostream& Logger::getstream()
-{
-    return internalstream;
-}
-
-inline Logger& Logger::write( const std::string& str )
-{
-    internalstream << str;
-    return *this;
-}
     
     
 
