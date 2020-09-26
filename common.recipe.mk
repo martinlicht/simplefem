@@ -394,12 +394,23 @@ endif
 CXXFLAGS_OPTIMIZE:=
 
 ifeq ($(FLAG_DO_OPTIMIZE),yes)
-	CXXFLAGS_OPTIMIZE += -O3
-	CXXFLAGS_OPTIMIZE += -march=native 
-	ifeq ($(FLAG_CXX),CLANG)
-		CXXFLAGS_OPTIMIZE := -inline-threshold=1200
+
+	ifeq ($(FLAG_CXX),ICC)
+		CXXFLAGS_OPTIMIZE += -fast
+		CXXFLAGS_OPTIMIZE += -march=core-avx2
+		CXXFLAGS_OPTIMIZE += -intel-optimized-headers 
+		CXXFLAGS_OPTIMIZE += 
+		CXXFLAGS_OPTIMIZE += 
+		CXXFLAGS_OPTIMIZE += 
+		CXXFLAGS_OPTIMIZE += 
+	else 
+		CXXFLAGS_OPTIMIZE += -Ofast 
+		CXXFLAGS_OPTIMIZE += -march=native 
+		ifeq ($(FLAG_CXX),CLANG)
+			CXXFLAGS_OPTIMIZE := -inline-threshold=1200
+		endif
+		CXXFLAGS_OPTIMIZE += -flto -fwhole-program
 	endif
-	CXXFLAGS_OPTIMIZE += -flto -fwhole-program
 else
 	CXXFLAGS_OPTIMIZE += -O1
 endif
