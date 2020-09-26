@@ -56,7 +56,7 @@ DenseMatrix& DenseMatrix::operator=( const DenseMatrix& mat )
         
 DenseMatrix& DenseMatrix::operator=( DenseMatrix&& mat ) 
 {
-    assert( entries     != nullptr );
+//     assert( entries     != nullptr );
     assert( mat.entries != nullptr );
     assert( getdimin()  == mat.getdimin()  );
     assert( getdimout() == mat.getdimout() );
@@ -188,7 +188,7 @@ void DenseMatrix::check() const
     #endif
     
     LinearOperator::check();
-    assert( entries != nullptr );
+//     assert( entries != nullptr );
 }
 
 void DenseMatrix::print( std::ostream& os ) const

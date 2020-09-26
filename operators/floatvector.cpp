@@ -45,7 +45,7 @@ FloatVector& FloatVector::operator=( const FloatVector& vec )
 
 FloatVector& FloatVector::operator=( FloatVector&& vec )
 {
-    assert( pointer     != nullptr );
+//     assert( pointer     != nullptr );
     assert( vec.pointer != nullptr );
     assert( getdimension() == vec.getdimension() );
     
