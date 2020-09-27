@@ -130,17 +130,74 @@ CXXFLAGS_LANG := -std=c++17 -pedantic
 
 
 
+
+
+
+
 ###############################################
 #                                             #
-#        Format of diagnostic settings        #
+#               Optimization                  #
 #                                             #
 ###############################################
 
-ifeq ($(FLAG_CXX),CLANG)
+CXXFLAGS_OPTIMIZE:=
 
-  CXXFLAGS_DIAGFORMAT := -fdiagnostics-show-template-tree
+ifeq ($(FLAG_DO_OPTIMIZE),yes)
 
+	ifeq ($(FLAG_CXX),ICC)
+		CXXFLAGS_OPTIMIZE += -march=core-avx2
+		CXXFLAGS_OPTIMIZE += -intel-optimized-headers 
+		CXXFLAGS_OPTIMIZE += -Ofast -xHOST -O3 -ipo -no-prec-div -fp-model fast=2
+		CXXFLAGS_OPTIMIZE += 
+		CXXFLAGS_OPTIMIZE += 
+		CXXFLAGS_OPTIMIZE += 
+	else 
+		CXXFLAGS_OPTIMIZE += -Ofast 
+		CXXFLAGS_OPTIMIZE += -march=native 
+		ifeq ($(FLAG_CXX),CLANG)
+			CXXFLAGS_OPTIMIZE := -inline-threshold=1200
+		endif
+		CXXFLAGS_OPTIMIZE += -flto
+	endif
+else
+	CXXFLAGS_OPTIMIZE += -O1
 endif
+
+ifeq ($(FLAG_ENABLE_OPENMP),yes)
+	CXXFLAGS_OPTIMIZE += -fopenmp
+endif
+
+
+ifeq ($(FLAG_CXX),GCC) 
+ifeq ($(FLAG_DO_STRIP),yes)
+	CXXFLAGS_OPTIMIZE += -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--strip-all 
+endif
+endif
+
+
+###############################################
+#                                             #
+#        Misc Code generation options         #
+#                                             #
+###############################################
+
+CXXFLAGS_CODEGEN := -fno-exceptions -fvisibility=default
+ifneq ($(OS),Windows_NT)
+CXXFLAGS_CODEGEN += -fpic 
+endif
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -299,29 +356,6 @@ CXXFLAGS_WARNINGS += -Wno-type-limits
  
  
  
- 
- 
-###############################################
-#                                             #
-#          Static analysis                    #
-#                                             #
-###############################################
-
-ifeq ($(FLAG_DO_STATICANALYSIS),yes)
-
-	ifeq ($(FLAG_CXX),GCC)
-
-		CXXFLAGS_STATICANALYSER := -fanalyzer -Wanalyzer-too-complex
-
-	else ifeq ($(FLAG_CXX),CLANG)
-
-		CXXFLAGS_STATICANALYSER := 
-
-	endif
-
-endif
-
-
 
 
 
@@ -342,11 +376,6 @@ CXXFLAGS_DEBUG += -g
 endif
 
 
-
-
-
-
-
 ###############################################
 #                                             #
 #          Profiling instrumentation          #
@@ -358,8 +387,6 @@ ifeq ($(FLAG_DO_PROFILE),yes)
 	CXXFLAGS_PROF:= -pg -fno-omit-frame-pointer 
 
 endif
-
-
 
 
 ###############################################
@@ -405,8 +432,6 @@ ifeq ($(FLAG_DO_USE_SANITIZER),yes)
 endif
 
 
-
-
 ###############################################
 #                                             #
 #    Use TCMalloc instead of std allocators   #
@@ -426,56 +451,47 @@ endif
 
 
 
+ 
+ 
 ###############################################
 #                                             #
-#               Optimization                  #
+#          Static analysis                    #
 #                                             #
 ###############################################
 
-CXXFLAGS_OPTIMIZE:=
+ifeq ($(FLAG_DO_STATICANALYSIS),yes)
 
-ifeq ($(FLAG_DO_OPTIMIZE),yes)
+	ifeq ($(FLAG_CXX),GCC)
 
-	ifeq ($(FLAG_CXX),ICC)
-		CXXFLAGS_OPTIMIZE += -march=core-avx2
-		CXXFLAGS_OPTIMIZE += -intel-optimized-headers 
-		CXXFLAGS_OPTIMIZE += -Ofast -xHOST -O3 -ipo -no-prec-div -fp-model fast=2
-		CXXFLAGS_OPTIMIZE += 
-		CXXFLAGS_OPTIMIZE += 
-		CXXFLAGS_OPTIMIZE += 
-	else 
-		CXXFLAGS_OPTIMIZE += -Ofast 
-		CXXFLAGS_OPTIMIZE += -march=native 
-		ifeq ($(FLAG_CXX),CLANG)
-			CXXFLAGS_OPTIMIZE := -inline-threshold=1200
-		endif
-		CXXFLAGS_OPTIMIZE += -flto
+		CXXFLAGS_STATICANALYSER := -fanalyzer -Wanalyzer-too-complex
+
+	else ifeq ($(FLAG_CXX),CLANG)
+
+		CXXFLAGS_STATICANALYSER := 
+
 	endif
-else
-	CXXFLAGS_OPTIMIZE += -O1
-endif
 
-ifeq ($(FLAG_ENABLE_OPENMP),yes)
-	CXXFLAGS_OPTIMIZE += -fopenmp
 endif
 
 
-ifeq ($(FLAG_CXX),GCC)
-ifeq ($(FLAG_DO_STRIP),yes)
-	CXXFLAGS_OPTIMIZE += -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--strip-all 
+###############################################
+#                                             #
+#        Format of diagnostic settings        #
+#                                             #
+###############################################
+
+ifeq ($(FLAG_CXX),CLANG)
+
+  CXXFLAGS_DIAGFORMAT := -fdiagnostics-show-template-tree
+
 endif
-endif
 
 
 
 
 
-# Code generation options
 
-CXXFLAGS_CODEGEN := -fno-exceptions -fvisibility=default
-ifneq ($(OS),Windows_NT)
-CXXFLAGS_CODEGEN += -fpic 
-endif
+
 
 
 
@@ -507,7 +523,8 @@ CXXFLAGS += ${CXXFLAGS_CODEGEN}
 CXXFLAGS := $(strip $(CXXFLAGS))
 
 
-
+CXXFLAGS_EXECUTABLE:=
+CXXFLAGS_EXECUTABLE+=$(CXXFLAGS) -fwhole-program
 
 
 ###############################################
@@ -534,7 +551,6 @@ endif
 CPPFLAGS += $(FLAG_DO_USE_EXTENDED_PRECISION)
 
 CPPFLAGS := $(strip $(CPPFLAGS))
-
 
 
 ###############################################

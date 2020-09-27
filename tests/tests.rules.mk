@@ -27,10 +27,19 @@ $(context).include := $(patsubst %,-L$(projectdir)/%,$(affix.$(context)))
 linkerprefix       :=-Wl,
 $(context).rpath_t := $(patsubst %,-rpath=$(pathvar)/%,$(affix.$(context))) 
 $(context).rpath   := $(patsubst %,$(linkerprefix)%,$($(context).rpath_t)) 
-$(context).link    := $(patsubst %,-l%,$(affix.$(context)))
+$(context).lib    := $(patsubst %,-l%,$(affix.$(context)))
 
 $($(context).depdir):
 	@mkdir -p $@
+
+
+ifeq ($(OS),Windows_NT)
+else
+endif
+
+
+
+
 
 $($(context).outs): mycontext    := $(context)
 $($(context).outs): mycontextdir := $(contextdir)
@@ -44,15 +53,11 @@ $($(context).outs): $(contextdir)/%.out: $(contextdir)/%.cpp | $($(context).depd
 # 	@ echo depdir $($(mycontext).depdir)
 # 	@ echo $($(mycontext).include)
 # 	@ echo $($(mycontext).rpath)
-# 	@ echo $($(mycontext).link)
+# 	@ echo $($(mycontext).lib)
 	@g++ -MM $(mycontextdir)/$*.cpp -MT $@ -MF $($(mycontext).depdir)/$*.d
-ifeq ($(OS),Windows_NT)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $($(mycontext).include) $($(mycontext).rpath) $($(mycontext).link) -o $@ $(LDLIBS)
-else
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $($(mycontext).include) $($(mycontext).rpath) $($(mycontext).link) -o $@ $(LDLIBS)
-endif
+	$(CXX) $(CXXFLAGS_EXECUTABLE) $(CPPFLAGS) $< $($(mycontext).include) $($(mycontext).rpath) $($(mycontext).lib) -o $@ $(LDLIBS)
 
-	
+
 -include $($(context).dependencies)
 
 $($(context).outs): $(contextdir)/%.out: $(contextdir)/makefile 
