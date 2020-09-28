@@ -29,7 +29,16 @@
 #define unreachable abort 
 // __builtin_unreachable
 
-// // #include "assertion.hpp"
+
+
+
+
+
+/////////////////////////////////////////////////
+//                                             //
+//          FLOATING POINT DEFINITIONS         //
+//                                             //
+/////////////////////////////////////////////////
 
 #ifndef EXTENDED_PRECISION
 typedef double Float;
@@ -37,22 +46,13 @@ typedef double Float;
 typedef long double Float;
 #endif
 
-static const Float notanumber = std::numeric_limits<Float>::quiet_NaN();
+inline const constexpr Float notanumber = std::numeric_limits<Float>::quiet_NaN();
 
-static const Float machine_epsilon = std::numeric_limits<Float>::epsilon();
+inline const constexpr Float machine_epsilon = std::numeric_limits<Float>::epsilon();
 
-static const Float desired_precision = 100 * machine_epsilon;
-
-
+inline const constexpr Float desired_precision = 100. * machine_epsilon;
 
 
-static const char space = ' ';
-
-static const char* emptystring = "";
-
-static const char nl = '\n';
-
-static const char tab = '\t';
 
 
 
@@ -61,14 +61,35 @@ static const char tab = '\t';
 
 /////////////////////////////////////////////////
 //                                             //
-//    SIMPLE AUXILIARY ARITHMETICS             //
+//        CHAR AND STRING CONSTANTS            //
+//                                             //
+/////////////////////////////////////////////////
+
+inline const constexpr char space = ' ';
+
+inline const constexpr char* emptystring = "";
+
+inline const constexpr char nl = '\n';
+
+inline const constexpr char tab = '\t';
+
+
+
+
+
+
+
+
+/////////////////////////////////////////////////
+//                                             //
+//        SIMPLE AUXILIARY ARITHMETICS         //
 //                                             //
 /////////////////////////////////////////////////
 
 
 
 template<typename T>
-inline int kronecker( const T& i, const T& j )
+inline constexpr int kronecker( const T& i, const T& j )
 {
     if( i == j )
         return 1;
@@ -78,7 +99,7 @@ inline int kronecker( const T& i, const T& j )
 
 
 template<typename T>
-T absolute( const T& n )
+inline constexpr T absolute( const T& n )
 {
     if( n >= 0 ) return  n;
     if( n <= 0 ) return -n;
@@ -87,7 +108,7 @@ T absolute( const T& n )
 }
 
 template<typename T>
-T maximum( const T& a, const T& b )
+inline constexpr T maximum( const T& a, const T& b )
 {
     if( a >= b ) return a;
     if( a <= b ) return b;
@@ -101,7 +122,7 @@ T maximum( const T& a, const T& b )
 }
 
 template<typename T>
-T minimum( const T& a, const T& b )
+inline constexpr T minimum( const T& a, const T& b )
 {
     if( a <= b ) return a;
     if( a >= b ) return b;
@@ -116,12 +137,22 @@ T minimum( const T& a, const T& b )
 
 
 template<typename T>
-T square( const T& x )
+inline constexpr T square( const T& x )
 {
     return x * x;
 }
 
 
+
+inline constexpr bool issmall( Float value, Float threshold = 100. * std::numeric_limits<Float>::epsilon() )
+{
+    return absolute(value) < threshold;
+}
+
+inline constexpr bool isabout( Float value1, Float value2, Float threshold = 100. * std::numeric_limits<Float>::epsilon() )
+{
+    return issmall( value1 - value2, threshold );
+}
 
 
 
@@ -138,7 +169,7 @@ T square( const T& x )
 
 
 // template<typename T>
-// static inline T power( const T& base, const T& exponent )
+// inline constexpr T power( const T& base, const T& exponent )
 // {
 //     static_assert( not std::is_floating_point<T>::value );
 //     assert( base != 0 );
@@ -147,12 +178,12 @@ T square( const T& x )
 //     return base * power( base, exponent - 1 );
 // }
 
-static inline Float power_numerical( Float base, Float exponent )
+inline /*constexpr*/ Float power_numerical( Float base, Float exponent )
 {
     return std::pow( base, exponent );
 }
 
-static inline int power_integer( int base, int exponent )
+inline constexpr int power_integer( int base, int exponent )
 {
     assert( base != 0 or exponent != 0 );
     assert( exponent >= 0 );
@@ -160,18 +191,15 @@ static inline int power_integer( int base, int exponent )
     return base * power_integer( base, exponent - 1 );
 }
 
-static inline int poweroftwo( int exponent )
+inline constexpr int poweroftwo( int exponent )
 {
     return power_integer( 2, exponent );
 }
 
-static inline int signpower( int exponent )
+inline constexpr int signpower( int exponent )
 {
     return exponent % 2 == 0 ? 1. : -1;
 }
-
-
-
 
 
 
@@ -225,7 +253,7 @@ inline constexpr uintmax_t largest_factorial_base()
 
 
 
-static inline uintmax_t factorial_integer_table_old( uintmax_t n )
+inline constexpr uintmax_t factorial_integer_table_old( uintmax_t n )
 {
     switch(n){
         case 0: return 1;
@@ -258,9 +286,9 @@ static inline uintmax_t factorial_integer_table_old( uintmax_t n )
     }
 }
 
-static inline uintmax_t factorial_integer_table( uintmax_t n )
+inline constexpr uintmax_t factorial_integer_table( uintmax_t n )
 {
-    static const uintmax_t facs[21] = {
+    const uintmax_t facs[21] = {
         1,
         1,
         2,
@@ -288,7 +316,7 @@ static inline uintmax_t factorial_integer_table( uintmax_t n )
     return facs[n];
 }
 
-static inline uintmax_t factorial_integer_naive( uintmax_t n )
+inline constexpr uintmax_t factorial_integer_naive( uintmax_t n )
 {
     assert( 0 <= n and n <= 20 );
     if( n == 0 ) { 
@@ -298,7 +326,7 @@ static inline uintmax_t factorial_integer_naive( uintmax_t n )
     }
 }
 
-static inline uintmax_t factorial_integer_loop( uintmax_t n )
+inline constexpr uintmax_t factorial_integer_loop( uintmax_t n )
 {
     assert( 0 <= n and n <= 20 );
     uintmax_t ret = 1;
@@ -311,7 +339,7 @@ static inline uintmax_t factorial_integer_loop( uintmax_t n )
 
 
 
-static inline int factorial_integer( int n )
+inline constexpr int factorial_integer( int n )
 {
     assert( n >= 0 );
     assert( n <= 20 );
@@ -327,7 +355,7 @@ static inline int factorial_integer( int n )
     return static_cast<int>(result);
 }
 
-static inline int binomial_integer( int n, int k )
+inline constexpr int binomial_integer( int n, int k )
 {
     if( 0 > n ) std::cout << n << std::endl;
     assert( 0 <= n );
@@ -337,15 +365,6 @@ static inline int binomial_integer( int n, int k )
     assert( result <= std::numeric_limits<int>::max() );
     return static_cast<int>(result);
 }
-
-
-
-
-
-
-
-
-
 
 
 
@@ -366,7 +385,7 @@ static inline int binomial_integer( int n, int k )
 //                                             //
 /////////////////////////////////////////////////
 
-static inline Float factorial_numerical_naive( int64_t n )
+inline constexpr Float factorial_numerical_naive( int64_t n )
 {
     assert( 0 <= n );
     if( n == 0 ) { 
@@ -376,7 +395,7 @@ static inline Float factorial_numerical_naive( int64_t n )
     }
 }
 
-static inline Float factorial_numerical_loop( int64_t n )
+inline constexpr Float factorial_numerical_loop( int64_t n )
 {
     assert( 0 <= n );
     Float ret = 1.;
@@ -384,13 +403,13 @@ static inline Float factorial_numerical_loop( int64_t n )
     return ret;
 }
 
-static inline Float factorial_numerical( int64_t n )
+inline constexpr Float factorial_numerical( int64_t n )
 {
     return factorial_numerical_loop( n );
 }
 
 
-static inline Float binomial_numerical( int64_t n, int64_t k )
+inline constexpr Float binomial_numerical( int64_t n, int64_t k )
 {
     assert( 0 <= n );
     if( k < 0 or n < k )
@@ -407,49 +426,124 @@ static inline Float binomial_numerical( int64_t n, int64_t k )
 
 
 
+/////////////////////////////////////////////////
+//                                             //
+//            GAUSSIAN VARIABLES               //
+//                                             //
+/////////////////////////////////////////////////
+
+
+
+// Based on the implementations in the C-FAQ:
+// http://c-faq.com/lib/gaussian.html
+
+inline Float gaussrand_1()
+{
+    const int NSUM = 25;
+    
+    Float x = 0;
+    
+    for( int i = 0; i < NSUM; i++) 
+        x += rand() / static_cast<Float>(RAND_MAX);
+    
+    x -= NSUM / 2.0;
+    x /= std::sqrt( NSUM / 12.0 );
+    
+    return x;
+}
+
+inline Float gaussrand_2()
+{
+    static bool phase = false;
+    static Float U, V;
+    const Float PI = 3.141592654;
+    Float Z;
+
+    if( phase ) {
+        Z = std::sqrt( -2 * std::log(U) ) * std::cos( 2 * PI * V );
+    } else {
+        U = ( rand() + 1. ) / ( RAND_MAX + 2. );
+        V = rand() / ( RAND_MAX + 1. );
+        Z = std::sqrt( -2 * std::log(U) ) * std::sin( 2 * PI * V );
+    }
+        
+    phase = not phase;
+
+    return Z;
+}
+
+
+// http://c-faq.com/lib/gaussrand.luben.html
+inline Float gaussrand_3( Float mean = 0., Float std_dev = 1. )
+{
+    assert( std_dev > machine_epsilon );
+
+    Float x = rand() / (RAND_MAX + 1.0);   /* 0.0 <= y < 1.0 */
+    
+    unsigned low = (x < 0.5) ? 0 : 1;
+    
+    Float y = std::abs(x - 1.0);                        /* 0.0 < y <= 1.0 */
+    Float z = std_dev * std::sqrt( -2.0 * std::log(y) );
+
+    return low ? (mean + z) : (mean - z);
+}
+
+
+inline Float gaussrand()
+{
+    return gaussrand_1();
+}
+
+
 
 
 
 
 /////////////////////////////////////////////////
 //                                             //
-//              UNSORTED FUNCTIONS             //
+//              TIME UTILITIES                 //
 //                                             //
 /////////////////////////////////////////////////
 
 
+typedef clock_t timestamp;
+
+const std::clock_t c_start = std::clock();
 
 
-
-template<typename T>
-static inline void setmemory( T* pointer, size_t number, const T& value )
+inline timestamp gettimestamp()
 {
-    assert( pointer != nullptr );
-    assert( number >= 0 );
-    for( int i = 0; i < number; i++ ) pointer[i] = value;
+    return clock(); 
 }
 
 
-
-static inline bool issmall( Float value, Float threshold = 100. * std::numeric_limits<Float>::epsilon() )
+inline std::string timestamp2string( const timestamp& t )
 {
-    return absolute(value) < threshold;
-}
-
-static inline bool isabout( Float value1, Float value2, Float threshold = 100. * std::numeric_limits<Float>::epsilon() )
-{
-    return issmall( value1 - value2, threshold );
+    return std::to_string( static_cast<long double>(t) / CLOCKS_PER_SEC ) + "s";
 }
 
 
 
 
-
-
-static inline int SIZECAST( std::uintmax_t size )
+inline std::string timestamp2digitalcode( const timestamp& t )
 {
-    assert( size < std::numeric_limits<int>::max() );
-    return static_cast<int>( size );
+    std::ostringstream ss;
+//     ss.reserve(12);
+//     ss << std::setw(14) << t;
+    ss << std::hex << std::setfill('_') << std::setw(12) << t;
+    return ss.str();
+}
+
+inline std::string digitalcodenow()
+{
+    return timestamp2digitalcode( gettimestamp() );
+}
+
+inline std::string timesealnow()
+{
+    static const std::string foo = std::string("[");
+    static const std::string bar = std::string("]\t");
+    return foo + digitalcodenow() + bar;
 }
 
 
@@ -458,7 +552,23 @@ static inline int SIZECAST( std::uintmax_t size )
 
 
 
-static inline int sum_int( int from, int to, const std::function<int(int)>& calc )
+
+
+
+
+
+
+
+
+
+
+/////////////////////////////////////////////////
+//                                             //
+//       SUM INTEGERS PRODUCED BY LAMBDA       //
+//                                             //
+/////////////////////////////////////////////////
+
+inline int sum_int( int from, int to, const std::function<int(int)>& calc )
 {
     if( from > to )
         return 0;
@@ -468,19 +578,11 @@ static inline int sum_int( int from, int to, const std::function<int(int)>& calc
     return ret;
 }
 
-static inline int sum_int( int to, const std::function<int(int)>& calc )
+inline int sum_int( int to, const std::function<int(int)>& calc )
 {
     return sum_int( 0, to, calc );
 }
 
-inline std::vector<int> range( int to )
-{
-    assert( to >= 0 );
-    std::vector<int> ret(to+1);
-    for( int i = 0; i <= to; i++ ) ret.at(i) = i;
-    assert( ret.size() == to+1 );
-    return ret;
-}
 
 
 
@@ -495,22 +597,11 @@ inline std::vector<int> range( int to )
 
 
 
-/////////////////////////////////////////////////
-//                                             //
-//              STRING OPERATIONS              //
-//                                             //
-/////////////////////////////////////////////////
 
-inline int count_white_space( const std::string& str ) 
-{ 
-    int ret = 0;
-    
-    for( int c = 0; c < str.size(); c++ ) 
-        if( isspace( str[c] ) ) 
-            ret++; 
-    
-    return ret;
-} 
+
+
+
+
 
 
 
@@ -557,51 +648,35 @@ inline void polar_to_cartesian_coordinates2D( const Float& radius, const Float& 
 
 
 
-/////////////////////////////////////////////////
-//                                             //
-//              TIME UTILITIES                 //
-//                                             //
-/////////////////////////////////////////////////
 
 
-typedef clock_t timestamp;
-
-const std::clock_t c_start = std::clock();
 
 
-inline timestamp gettimestamp()
-{
-    return clock(); 
-}
 
 
-inline std::string timestamp2string( const timestamp& t )
-{
-    return std::to_string( static_cast<long double>(t) / CLOCKS_PER_SEC ) + "s";
-}
 
 
-inline std::string timestamp2digitalcode( const timestamp& t )
-{
-    std::stringstream ss;
-    ss << std::setw(14) << t;
-    return ss.str();
-}
 
 
-inline std::string digitalcodenow()
-{
-    std::stringstream ss;
-    ss << std::setw(14) << gettimestamp();
-    return ss.str();
-}
 
-inline std::string timesealnow()
-{
-    static const std::string foo = std::string("[");
-    static const std::string bar = std::string("] ");
-    return foo + digitalcodenow() + bar;
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -612,88 +687,56 @@ inline std::string timesealnow()
 
 /////////////////////////////////////////////////
 //                                             //
-//            GAUSSIAN VARIABLES               //
+//          MISC LIBRARY HACKS                 //
 //                                             //
 /////////////////////////////////////////////////
 
 
 
-// Based on the implementations in the C-FAQ:
-// http://c-faq.com/lib/gaussian.html
+/******************************************************/
+/*    use this to safely cast size_types to C++ int   */
+/******************************************************/
 
-inline Float gaussrand_1()
+inline int SIZECAST( std::uintmax_t size )
 {
-    const int NSUM = 25;
-    
-    Float x = 0;
-    
-    for( int i = 0; i < NSUM; i++) x += rand() / static_cast<Float>(RAND_MAX);
-    
-    x -= NSUM / 2.0;
-    x /= std::sqrt( NSUM / 12.0 );
-    
-    return x;
-}
-
-inline Float gaussrand_2()
-{
-    static bool phase = false;
-    static Float U, V;
-    const Float PI = 3.141592654;
-    Float Z;
-
-    if( phase ) {
-        Z = std::sqrt( -2 * std::log(U) ) * std::cos( 2 * PI * V );
-    } else {
-        U = ( rand() + 1. ) / ( RAND_MAX + 2. );
-        V = rand() / ( RAND_MAX + 1. );
-        Z = std::sqrt( -2 * std::log(U) ) * std::sin( 2 * PI * V );
-    }
-        
-    phase = not phase;
-
-    return Z;
+    assert( size < std::numeric_limits<int>::max() );
+    return static_cast<int>( size );
 }
 
 
-inline Float gaussrand()
+/******************************************************/
+/*      count the white space within STL string       */
+/******************************************************/
+
+inline int count_white_space( const std::string& str ) 
+{ 
+    int ret = 0;
+    
+    for( int c = 0; c < str.size(); c++ ) 
+        if( isspace( str[c] ) ) 
+            ret++; 
+    
+    return ret;
+} 
+
+
+/******************************************************/
+/*        write zero-based range into vector          */
+/******************************************************/
+
+inline std::vector<int> range( int to )
 {
-    return gaussrand_1();
+    assert( to >= 0 );
+    std::vector<int> ret(to+1);
+    for( int i = 0; i <= to; i++ ) ret.at(i) = i;
+    assert( ret.size() == to+1 );
+    return ret;
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-inline void sort_integers( int* start, int length )
-{
-    assert( start != nullptr && length >= 0 );
-    for( int i = 1; i < length; i++ )
-    for( int j = 1; j < length; j++ )
-        if( start[j-1] > start[j] ) 
-            std::swap( start[j-1], start[j] );
-}
-
-
+/******************************************************/
+/*   remove duplicates from random access container   */
+/******************************************************/
 
 template< typename T >
 inline void sort_and_unique( T& t )
@@ -703,6 +746,10 @@ inline void sort_and_unique( T& t )
     t.erase( last, t.end() );
 }
 
+
+/******************************************************/
+/*      find index of element with STL vector         */
+/******************************************************/
 
 template<typename T>
 int find_index( const std::vector<T>& vec, const T& t )
@@ -714,6 +761,11 @@ int find_index( const std::vector<T>& vec, const T& t )
    assert( ret < vec.size() );
    return SIZECAST( ret );
 }
+
+
+/******************************************************/
+/*            merge two sorted STL lists              */
+/******************************************************/
 
 template<typename T>
 void mergeelementsinsortedlist
@@ -742,6 +794,9 @@ void mergeelementsinsortedlist
 
 
 
+/***********************************************/
+/*   GENERIC STREAM TEMPLATE FOR std::array    */ 
+/***********************************************/
 
 template <typename T, size_t N>
 std::ostream& operator<<( std::ostream& stream, const std::array<T, N>& v)
@@ -755,6 +810,10 @@ std::ostream& operator<<( std::ostream& stream, const std::array<T, N>& v)
 
 
 
+/***********************************************/
+/*         make_unique HACK                    */ 
+/***********************************************/
+
 #if __cplusplus < 201402L
 
 /****
@@ -763,11 +822,13 @@ std::ostream& operator<<( std::ostream& stream, const std::array<T, N>& v)
  * We are undefined behavior territory here
  * 
  ****/
-#warning This code extends the std namespace so that `make_unique` \
+#warning \
+This code extends the std namespace so that `make_unique` \
 is available throughout the code. This was triggered by a C++ version \
 below C++14. While this may be a practical workaround, it is officially \
 considered undefined behavior in the C++ standard. Please try to compile \
 with C++14 or higher.
+
 #include <memory>
 
 namespace std
@@ -780,6 +841,37 @@ std::unique_ptr<T> make_unique(Args && ...args)
 }
 
 #endif
+
+
+
+
+
+
+
+
+
+// template<typename T>
+// inline void setmemory( T* pointer, size_t number, const T& value )
+// {
+//     assert( pointer != nullptr );
+//     assert( number >= 0 );
+//     for( int i = 0; i < number; i++ ) pointer[i] = value;
+// }
+
+
+
+// inline void sort_integers( int* start, int length )
+// {
+//     assert( start != nullptr && length >= 0 );
+//     for( int i = 1; i < length; i++ )
+//     for( int j = 1; j < length; j++ )
+//         if( start[j-1] > start[j] ) 
+//             std::swap( start[j-1], start[j] );
+// }
+
+
+
+
 
 
 
