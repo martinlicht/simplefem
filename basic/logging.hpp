@@ -12,8 +12,8 @@
 //     LOG << "This is a short message with a number: " << 5;      
 //     ERR << "This is an error message.";      
 
-#define LOG     Logger( std::cout, "", "\n" )
-#define ERR     Logger( std::cerr, "", "\n" )
+#define LOG     Logger( std::cout, protocolprefixnow(), "\n" )
+#define ERR     Logger( std::cerr, protocolprefixnow(), "\n" )
 
 
 // treat the following macros as PRINT 'str' commands
@@ -23,13 +23,13 @@
 //     ALERT "This is an alert"
 //     ERROR "This is an error"
 
-#define NOTE    Logger( std::cout, "", "\n" ) <<
-#define NOTICE  Logger( std::cout, "", "\n" ) <<
+#define NOTE    Logger( std::cout, protocolprefixnow(), "\n" ) <<
+#define NOTICE  Logger( std::cout, protocolprefixnow(), "\n" ) <<
 
-#define WARN    Logger( std::cerr, "", "\n" ) <<
-#define WARNING Logger( std::cerr, "", "\n" ) <<
-#define ALERT   Logger( std::cerr, "", "\n" ) <<
-#define ERROR   Logger( std::cerr, "", "\n" ) <<
+#define WARN    Logger( std::cerr, protocolprefixnow(), "\n" ) <<
+#define WARNING Logger( std::cerr, protocolprefixnow(), "\n" ) <<
+#define ALERT   Logger( std::cerr, protocolprefixnow(), "\n" ) <<
+#define ERROR   Logger( std::cerr, protocolprefixnow(), "\n" ) <<
 
 
 // emit the current file and line number into the log stream 

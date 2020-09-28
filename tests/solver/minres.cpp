@@ -72,7 +72,7 @@ int main()
             start = gettimestamp();
             MINRES.solve(y,b);
             end = gettimestamp();
-            cout << timestamp2string( end - start ) << endl;
+            cout << timestamp2measurement( end - start ) << endl;
         }
         
         
@@ -118,7 +118,7 @@ int main()
             start = gettimestamp();
             MINRES.solve(y,b);
             end = gettimestamp();
-            cout << timestamp2string( end - start ) << endl;
+            cout << timestamp2measurement( end - start ) << endl;
         }
         
         

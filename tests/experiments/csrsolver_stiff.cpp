@@ -166,8 +166,8 @@ int main()
                             );
 
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
-                            contable << Float(end - start) << Float( ( stiffness * sol - rhs ).norm() );;
+                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
                         }
 
                         if(false)
@@ -192,8 +192,8 @@ int main()
                             );
 
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
-                            contable << Float(end - start) << Float( ( stiffness * sol - rhs ).norm() );;
+                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
                         }
 
                         {
@@ -218,8 +218,8 @@ int main()
                             );
 
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
-                            contable << Float(end - start) << Float( ( stiffness * sol - rhs ).norm() );;
+                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
                         }
 
                         if(false)
@@ -240,8 +240,8 @@ int main()
                             );
 
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
-                            contable << Float(end - start) << Float( ( stiffness * sol - rhs ).norm() );;
+                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
                         }
 
                         if(false)
@@ -262,8 +262,8 @@ int main()
                             );
 
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
-                            contable << Float(end - start) << Float( ( stiffness * sol - rhs ).norm() );;
+                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
                         }
 
                         if(false)
@@ -284,8 +284,8 @@ int main()
                             );
 
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
-                            contable << Float(end - start) << Float( ( stiffness * sol - rhs ).norm() );;
+                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
                         }
 
 
@@ -307,8 +307,8 @@ int main()
                             );
 
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
-                            contable << Float(end - start) << Float( ( stiffness * sol - rhs ).norm() );;
+                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
                         }
 
                         

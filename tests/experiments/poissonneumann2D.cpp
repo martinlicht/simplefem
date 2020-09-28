@@ -220,7 +220,7 @@ int main()
                             Solver.solve( sol, rhs );
 //                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                         }
 
                         cout << "...compute error and residual:" << endl;

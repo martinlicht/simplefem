@@ -224,7 +224,7 @@ int main()
                             );
 
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             
                             
                             auto grad = inv(A,1e-14) * Bt * sol;
@@ -275,7 +275,7 @@ int main()
                             Solver.solve_fast( sol, rhs );
 //                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
                             cout << "...compute error and residual:" << endl;
 
@@ -315,7 +315,7 @@ int main()
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
                             cout << "...compute error and residual:" << endl;
 

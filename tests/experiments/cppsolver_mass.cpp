@@ -151,9 +151,9 @@ int main()
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             
-                            contable << Float(end - start) << Float( ( mass * sol - rhs ).norm() );
+                            contable << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
                         }
 
                         {
@@ -166,9 +166,9 @@ int main()
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             
-                            contable << Float(end - start) << Float( ( mass * sol - rhs ).norm() );
+                            contable << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
                         }
 
                         if(false)
@@ -183,9 +183,9 @@ int main()
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
-                            contable << Float(end - start) << Float( ( mass * sol - rhs ).norm() );
+                            contable << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
                         }
 
                         {
@@ -199,9 +199,9 @@ int main()
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
-                            contable << Float(end - start) << Float( ( mass * sol - rhs ).norm() );
+                            contable << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
                         }
                         
                         

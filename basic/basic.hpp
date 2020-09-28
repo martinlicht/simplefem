@@ -9,6 +9,7 @@
 
 #include <algorithm>
 #include <array>
+#include <chrono>
 #include <functional>
 #include <iostream>
 #include <iomanip>
@@ -456,15 +457,15 @@ inline Float gaussrand_2()
 {
     static bool phase = false;
     static Float U, V;
-    const Float PI = 3.141592654;
+    const Float PI = 3.14159265358979323846;
     Float Z;
 
     if( phase ) {
-        Z = std::sqrt( -2 * std::log(U) ) * std::cos( 2 * PI * V );
+        Z = std::sqrt( -2. * std::log(U) ) * std::cos( 2. * PI * V );
     } else {
         U = ( rand() + 1. ) / ( RAND_MAX + 2. );
         V = rand() / ( RAND_MAX + 1. );
-        Z = std::sqrt( -2 * std::log(U) ) * std::sin( 2 * PI * V );
+        Z = std::sqrt( -2. * std::log(U) ) * std::sin( 2. * PI * V );
     }
         
     phase = not phase;
@@ -496,6 +497,53 @@ inline Float gaussrand()
 
 
 
+/*
+inline void random_unit_vector( Float* values, const int N )
+{
+    assert( N >= 0 );
+    assert( values != nullptr );
+    
+    const Float PI = 3.14159265358979323846;
+    int k = 0;
+    
+    Float norm_sq = 0;
+    
+    for( ; k < N/2; k++ ) {
+        
+        int k1 = 2*k;
+        int k2 = k1+1;
+        
+        Float U = ( rand() + 1. ) / ( RAND_MAX + 2. );
+        Float V = rand() / ( RAND_MAX + 1. );
+        
+        Float radius_sq = -2. * std::log(U);
+        Float radius = std::sqrt( radius_sq )
+        
+        values[k1] = radius * std::sin( 2. * PI * V );
+        values[k2] = radius * std::cos( 2. * PI * V );
+        
+        norm_sq += radius_sq;
+    }
+    
+    if( N % 1 != 0 ) {
+        values[N-1] = gaussrand();
+        norm_sq += values[N-1] * values[N-1];
+    }
+    
+    
+}*/
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -506,22 +554,32 @@ inline Float gaussrand()
 /////////////////////////////////////////////////
 
 
-typedef clock_t timestamp;
+typedef uintmax_t timestamp;
 
-const std::clock_t c_start = std::clock();
+inline timestamp start_timestamp = std::chrono::time_point_cast<std::chrono::milliseconds>( std::chrono::steady_clock::now() ).time_since_epoch().count();
 
 
 inline timestamp gettimestamp()
 {
-    return clock(); 
+    
+    timestamp now = std::chrono::time_point_cast<std::chrono::milliseconds>( std::chrono::steady_clock::now() ).time_since_epoch().count();
+    
+    assert( now >= start_timestamp );
+    
+    return now - start_timestamp;
 }
 
 
-inline std::string timestamp2string( const timestamp& t )
+
+inline std::string timestamp2measurement( const timestamp& t )
 {
-    return std::to_string( static_cast<long double>(t) / CLOCKS_PER_SEC ) + "s";
+    return std::to_string( static_cast<long double>(t) ) + "ms";
 }
 
+inline std::string measurementnow( const timestamp& t )
+{
+    return timestamp2measurement( gettimestamp() );
+}
 
 
 
@@ -539,7 +597,9 @@ inline std::string digitalcodenow()
     return timestamp2digitalcode( gettimestamp() );
 }
 
-inline std::string timesealnow()
+
+
+inline std::string protocolprefixnow()
 {
     static const std::string foo = std::string("[");
     static const std::string bar = std::string("]\t");
