@@ -569,3 +569,30 @@ LDLIBS := $(strip $(LDLIBS))
 
 
 
+
+
+
+###############################################
+#                                             #
+#         Choose the type of linking          #
+#         - static                            #
+#         - dynamic                           #
+#         - unspecified                       #
+#                                             #
+###############################################
+
+
+LINKINGTYPE:=unspecified
+
+ifeq ($(OS),Windows_NT)
+LINKINGTYPE:=static
+else ifeq ($(FLAG_DO_OPTIMIZE=yes),yes)
+LINKINGTYPE:=static
+else
+LINKINGTYPE:=dynamic
+endif
+
+
+
+
+
