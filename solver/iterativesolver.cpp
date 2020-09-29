@@ -1043,6 +1043,8 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
     
     recent_iteration_count = 0;
     
+//     Float recent_alpha = notanumber;
+    
     if( verbosity >= VerbosityLevel::verbose ) LOG << "Begin Minimal Residual iteration";
         
     while( recent_iteration_count < max_iteration_count )
@@ -1074,7 +1076,6 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
             assert( std::isfinite(s0_s0) );
             if( s0_s0 < threshold*threshold )
                 break;
-            
             
             p0 /= std::sqrt(s0_s0);
             s0 /= std::sqrt(s0_s0);
@@ -1115,6 +1116,8 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
             
             rr = r * r;
             
+//             recent_alpha = alpha1;
+            
         }
 
         bool residual_is_small = absolute( rr ) < threshold*threshold; 
@@ -1125,7 +1128,7 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
         
         if( verbosity >= VerbosityLevel::verbose and print_condition )
             LOG << "Result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
-                << absolute(rr) << "(" << threshold*threshold << ")"; 
+                << absolute(rr) << "(" << threshold*threshold; // << "). Last alpha = " << recent_alpha; 
         
         /* If exit condition met, exit */
         
@@ -1139,24 +1142,31 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
             p2 = r;
             s2 = A * r;
             
-            
-            Float beta0 = s0 * s2;
-            
-            p2 = p2 - beta0 * p0;
-            s2 = s2 - beta0 * s0;
-            
-            
-            Float beta1 = s1 * s2;
-            
-            p2 = p2 - beta1 * p1;
-            s2 = s2 - beta1 * s1;
+            for( int i = 0; i < 2; i++ ){
+                
+                Float beta0 = s0 * s2;
+                
+                p2 = p2 - beta0 * p0;
+                s2 = s2 - beta0 * s0;
+                
+                LOG << beta0 / ( A * r ).norm_sq();
+                
+                
+                Float beta1 = s1 * s2;
+                
+                p2 = p2 - beta1 * p1;
+                s2 = s2 - beta1 * s1;
+                
+            }
             
             
             Float s2_s2 = s2 * s2;
             
-            assert( std::isfinite(s2_s2) );
-            if( s2_s2 < threshold*threshold )
+            assert( std::isfinite(s2_s2) ); 
+            if( s2_s2 < threshold*threshold ) {
+                LOG << "Norm of search direction below threshold: " << s2_s2 << " (" << threshold*threshold << ")";
                 break;
+            }
             
             Float mysqrt = std::sqrt(s2_s2);
             p2 /= mysqrt;
@@ -1171,17 +1181,17 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
             
             rr = r * r;
             
+//             recent_alpha = alpha2;
+            
             assert( std::isfinite(rr) );
             if( rr < threshold*threshold )
                 break;
             
             
-            if( verbosity >= VerbosityLevel::resultonly and print_modulo >= 0 ) 
-                LOG << "Result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
-                    << rr << "(" << threshold*threshold << ")"; 
-            
-            p0 = p1; p1 = p2;
-            s0 = s1; s1 = s2;
+            std::swap( p0, p1 ); std::swap( p1, p2 );
+            std::swap( s0, s1 ); std::swap( s1, s2 );
+//             p0 = p1; p1 = p2;
+//             s0 = s1; s1 = s2;
             
         }
         
