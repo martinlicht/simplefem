@@ -101,7 +101,7 @@ int main()
                 for( int k = 0; k < 3 + M.count_edges() / 10; k++ )
                     refinementedges.push_back( rand() % M.count_edges() );
                 
-                sort_and_unique( refinementedges );
+                sort_and_remove_duplicates( refinementedges );
                 
                 M.longest_edge_bisection_recursive( refinementedges );
 
@@ -125,7 +125,7 @@ int main()
                 for( int k = 0; k < 3 + M.count_edges() / 10; k++ )
                     refinementedges.push_back( rand() % M.count_edges() );
                 
-                sort_and_unique( refinementedges );
+                sort_and_remove_duplicates( refinementedges );
                 
                 M.newest_vertex_bisection_recursive( refinementedges );
                 

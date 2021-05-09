@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <limits>
+#include <string>
 
 #include "../basic.hpp"
 
@@ -24,6 +25,8 @@ class IndexRange
         IndexRange( int from, int to );
         
         void check() const;
+        
+        std::string text( bool embellish = false ) const;
         
         void print( std::ostream&, bool embellish = false ) const;
         

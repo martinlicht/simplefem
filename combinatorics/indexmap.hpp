@@ -8,6 +8,7 @@
 #include <functional>
 #include <initializer_list>
 #include <iostream>
+#include <string>
 #include <vector>
 
 #include "../basic.hpp"
@@ -47,6 +48,8 @@ class IndexMap
         virtual ~IndexMap()                     = default; // dtor virtualization is a bit shady here
         
         void check() const;
+        
+        std::string text( bool embellish = true ) const;
         
         void print( std::ostream&, bool embellish = true ) const;
         

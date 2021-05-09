@@ -51,7 +51,7 @@ int main()
                 
                 std::vector<int> markededges;
                 for( int t : markedcells ) markededges.push_back( M.get_oldest_edge( t ) );
-                sort_and_unique( markededges );
+                sort_and_remove_duplicates( markededges );
                 
                 std::cout << c << "/" << c_max << " Refine " << markedcells.size() << "/" << M.count_triangles() << " ... ";
                 M.longest_edge_bisection_recursive( markededges );
@@ -97,7 +97,7 @@ int main()
                 
                 std::vector<int> markededges;
                 for( int t : markedcells ) markededges.push_back( M.get_oldest_edge( t ) );
-                sort_and_unique( markededges );
+                sort_and_remove_duplicates( markededges );
                 
                 std::cout << c << "/" << c_max << " Refine " << markedcells.size() << "/" << M.count_triangles() << " ... ";
                 M.longest_edge_bisection_recursive( markededges );

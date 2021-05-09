@@ -109,19 +109,28 @@ void IndexMap::check() const
         
 }
 
+std::string IndexMap::text( bool embellish ) const 
+{
+    std::ostringstream ss;
+    
+    if( embellish ) {
+        ss << "From" << nl << getSourceRange() << nl;
+        ss << "To"   << nl << getTargetRange() << nl;
+        for( int i : getSourceRange() )
+            ss << i << " -> " << at( i ) << nl;
+    } else {
+        ss << getSourceRange() << "\n" << getTargetRange() << nl;
+        for( int i : getSourceRange() )
+            ss << " " << at( i );
+        ss << nl;
+    }
+    
+    return ss.str();
+}
+
 void IndexMap::print( std::ostream& os, bool embellish ) const 
 {
-    if( embellish ) {
-        os << "From" << std::endl << getSourceRange() << nl;
-        os << "To"   << std::endl << getTargetRange() << nl;
-        for( int i : getSourceRange() )
-            os << i << " -> " << at( i ) << std::endl;
-    } else {
-        os << getSourceRange() << "\n" << getTargetRange() << nl;
-        for( int i : getSourceRange() )
-            os << " " << at( i );
-        os << nl;
-    }
+    os << text( embellish );
 }
 
 const IndexRange& IndexMap::getSourceRange() const 

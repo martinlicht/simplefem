@@ -3,6 +3,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <string>
 #include <vector>
 
 #include "../basic.hpp"
@@ -50,6 +51,19 @@ void MultiIndex::check() const
     #endif
     
     IndexMap::check();
+}
+
+std::string MultiIndex::text( bool embellish ) const
+{
+    std::ostringstream ss;
+    
+    check();
+    for( int p : getIndexRange() )
+        ss << at( p ) << "\t";
+    if( embellish ) 
+        ss << std::endl;
+    
+    return ss.str();
 }
 
 void MultiIndex::print( std::ostream& os, bool embellish ) const

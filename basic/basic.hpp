@@ -257,7 +257,7 @@ inline constexpr uintmax_t largest_factorial_base()
 inline constexpr uintmax_t factorial_integer_table_old( uintmax_t n )
 {
     switch(n){
-        case 0: return 1;
+        case 0: 
         case 1: return 1;
         case 2: return 2;
         case 3: return 6;
@@ -504,11 +504,10 @@ inline void random_unit_vector( Float* values, const int N )
     assert( values != nullptr );
     
     const Float PI = 3.14159265358979323846;
-    int k = 0;
     
     Float norm_sq = 0;
     
-    for( ; k < N/2; k++ ) {
+    for( int k = 0; k < N/2; k++ ) {
         
         int k1 = 2*k;
         int k2 = k1+1;
@@ -516,8 +515,8 @@ inline void random_unit_vector( Float* values, const int N )
         Float U = ( rand() + 1. ) / ( RAND_MAX + 2. );
         Float V = rand() / ( RAND_MAX + 1. );
         
-        Float radius_sq = -2. * std::log(U);
-        Float radius = std::sqrt( radius_sq )
+        Float radius_sq = -2. * std::log( U );
+        Float radius = std::sqrt( radius_sq );
         
         values[k1] = radius * std::sin( 2. * PI * V );
         values[k2] = radius * std::cos( 2. * PI * V );
@@ -525,13 +524,14 @@ inline void random_unit_vector( Float* values, const int N )
         norm_sq += radius_sq;
     }
     
-    if( N % 1 != 0 ) {
+    if( N % 2 == 1 ) {
         values[N-1] = gaussrand();
         norm_sq += values[N-1] * values[N-1];
     }
     
     
-}*/
+}
+*/
 
 
 
@@ -554,13 +554,15 @@ inline void random_unit_vector( Float* values, const int N )
 /////////////////////////////////////////////////
 
 
+static_assert( std::is_integral< decltype( std::chrono::time_point_cast<std::chrono::milliseconds>( std::chrono::steady_clock::now() ).time_since_epoch().count() ) >::value , "Time measurement must be integral" );
+
+
 typedef uintmax_t timestamp;
-
-inline timestamp start_timestamp = std::chrono::time_point_cast<std::chrono::milliseconds>( std::chrono::steady_clock::now() ).time_since_epoch().count();
-
 
 inline timestamp gettimestamp()
 {
+    
+    static timestamp start_timestamp = std::chrono::time_point_cast<std::chrono::milliseconds>( std::chrono::steady_clock::now() ).time_since_epoch().count();
     
     timestamp now = std::chrono::time_point_cast<std::chrono::milliseconds>( std::chrono::steady_clock::now() ).time_since_epoch().count();
     
@@ -576,7 +578,8 @@ inline std::string timestamp2measurement( const timestamp& t )
     return std::to_string( static_cast<long double>(t) ) + "ms";
 }
 
-inline std::string measurementnow( const timestamp& t )
+// inline std::string measurementnow( const timestamp& t ) // TODO Remove this line 
+inline std::string measurementnow()
 {
     return timestamp2measurement( gettimestamp() );
 }
@@ -588,7 +591,7 @@ inline std::string timestamp2digitalcode( const timestamp& t )
     std::ostringstream ss;
 //     ss.reserve(12);
 //     ss << std::setw(14) << t;
-    ss << std::hex << std::setfill('_') << std::setw(12) << t;
+    ss << std::hex << std::setfill('_') << std::setw(8) << t;
     return ss.str();
 }
 
@@ -799,7 +802,7 @@ inline std::vector<int> range( int to )
 /******************************************************/
 
 template< typename T >
-inline void sort_and_unique( T& t )
+inline void sort_and_remove_duplicates( T& t )
 {
     std::sort( t.begin(), t.end() );
     auto last = std::unique( t.begin(), t.end() );

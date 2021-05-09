@@ -5,6 +5,8 @@
 
 #include <algorithm>
 #include <iostream>
+#include <sstream>
+#include <string>
 
 
 IndexRange::IndexRange( int from, int to )
@@ -26,6 +28,18 @@ void IndexRange::check() const
     assert( maximum < std::numeric_limits<decltype(maximum)>::max() );
 }
 
+
+std::string IndexRange::text( bool embellish ) const
+{
+    std::ostringstream ss;
+    
+    if( embellish )
+        ss << '[' << minimum << ':' << maximum << ']' << std::endl;
+    else
+        ss << minimum << ' ' << maximum;
+    
+    return ss.str();
+}
 
 void IndexRange::print( std::ostream& os, bool embellish ) const
 {

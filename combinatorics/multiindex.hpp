@@ -5,6 +5,7 @@
 #include <functional>
 #include <initializer_list>
 #include <iostream>
+#include <string>
 #include <vector>
 
 #include "../basic.hpp"
@@ -40,6 +41,8 @@ class MultiIndex final
         
         void check() const;
 
+        std::string text( bool embellish = false ) const;
+        
         void print( std::ostream&, bool embellish = false ) const;
         
         IndexRange getIndexRange() const;

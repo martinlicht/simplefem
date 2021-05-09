@@ -595,6 +595,9 @@ class Block2x2Operator
         upperleft( nullptr ), upperright( nullptr ),
         lowerleft( nullptr ), lowerright( nullptr ) 
         {
+            assert( dimout >= 0 and dimin >= 0 );
+            assert( dimout == UL.getdimout() + LL.getdimout() );
+            assert( dimin  == UL.getdimin()  + UR.getdimin()  );
             assert( UL.getdimin()  == LL.getdimin()  );
             assert( UR.getdimin()  == LR.getdimin()  );
             assert( UL.getdimout() == UR.getdimout() );
@@ -614,6 +617,9 @@ class Block2x2Operator
         upperleft( nullptr ), upperright( nullptr ),
         lowerleft( nullptr ), lowerright( nullptr ) 
         {
+            assert( dimout >= 0 and dimin >= 0 );
+            assert( dimout == UL.getdimout() + LL.getdimout() );
+            assert( dimin  == UL.getdimin()  + UR.getdimin()  );
             assert( UL.getdimin()  == LL.getdimin()  );
             assert( UR.getdimin()  == LR.getdimin()  );
             assert( UL.getdimout() == UR.getdimout() );
@@ -633,6 +639,9 @@ class Block2x2Operator
         upperleft( nullptr ), upperright( nullptr ),
         lowerleft( nullptr ), lowerright( nullptr ) 
         {
+            assert( dimout >= 0 and dimin >= 0 );
+            assert( dimout == UL.getdimout() + LL.getdimout() );
+            assert( dimin  == UL.getdimin()  + UR.getdimin()  );
             assert( UL.getdimin()  == LL.getdimin()  );
             assert( UR.getdimin()  == LR.getdimin()  );
             assert( UL.getdimout() == UR.getdimout() );
@@ -652,6 +661,9 @@ class Block2x2Operator
         upperleft( nullptr ), upperright( nullptr ),
         lowerleft( nullptr ), lowerright( nullptr ) 
         {
+            assert( dimout >= 0 and dimin >= 0 );
+            assert( dimout == UL.getdimout() + LL.getdimout() );
+            assert( dimin  == UL.getdimin()  + UR.getdimin()  );
             assert( UL.getdimin()  == LL.getdimin()  );
             assert( UR.getdimin()  == LR.getdimin()  );
             assert( UL.getdimout() == UR.getdimout() );
@@ -671,6 +683,9 @@ class Block2x2Operator
         upperleft( nullptr ), upperright( nullptr ),
         lowerleft( nullptr ), lowerright( nullptr ) 
         {
+            assert( dimout >= 0 and dimin >= 0 );
+            assert( dimout == UL.getdimout() + LL.getdimout() );
+            assert( dimin  == UL.getdimin()  + UR.getdimin()  );
             assert( UL.getdimin()  == LL.getdimin()  );
             assert( UR.getdimin()  == LR.getdimin()  );
             assert( UL.getdimout() == UR.getdimout() );
@@ -690,6 +705,9 @@ class Block2x2Operator
         upperleft( nullptr ), upperright( nullptr ),
         lowerleft( nullptr ), lowerright( nullptr ) 
         {
+            assert( dimout >= 0 and dimin >= 0 );
+            assert( dimout == UL.getdimout() + LL.getdimout() );
+            assert( dimin  == UL.getdimin()  + UR.getdimin()  );
             assert( UL.getdimin()  == LL.getdimin()  );
             assert( UR.getdimin()  == LR.getdimin()  );
             assert( UL.getdimout() == UR.getdimout() );
@@ -709,6 +727,9 @@ class Block2x2Operator
         upperleft( nullptr ), upperright( nullptr ),
         lowerleft( nullptr ), lowerright( nullptr ) 
         {
+            assert( dimout >= 0 and dimin >= 0 );
+            assert( dimout == UL.getdimout() + LL.getdimout() );
+            assert( dimin  == UL.getdimin()  + UR.getdimin()  );
             assert( UL.getdimin()  == LL.getdimin()  );
             assert( UR.getdimin()  == LR.getdimin()  );
             assert( UL.getdimout() == UR.getdimout() );
@@ -728,6 +749,9 @@ class Block2x2Operator
         upperleft( nullptr ), upperright( nullptr ),
         lowerleft( nullptr ), lowerright( nullptr ) 
         {
+            assert( dimout >= 0 and dimin >= 0 );
+            assert( dimout == UL.getdimout() + LL.getdimout() );
+            assert( dimin  == UL.getdimin()  + UR.getdimin()  );
             assert( UL.getdimin()  == LL.getdimin()  );
             assert( UR.getdimin()  == LR.getdimin()  );
             assert( UL.getdimout() == UR.getdimout() );
@@ -747,6 +771,9 @@ class Block2x2Operator
         upperleft( nullptr ), upperright( nullptr ),
         lowerleft( nullptr ), lowerright( nullptr ) 
         {
+            assert( dimout >= 0 and dimin >= 0 );
+            assert( dimout == UL.getdimout() + LL.getdimout() );
+            assert( dimin  == UL.getdimin()  + UR.getdimin()  );
             assert( UL.getdimin()  == LL.getdimin()  );
             assert( UR.getdimin()  == LR.getdimin()  );
             assert( UL.getdimout() == UR.getdimout() );
@@ -766,6 +793,9 @@ class Block2x2Operator
         upperleft( nullptr ), upperright( nullptr ),
         lowerleft( nullptr ), lowerright( nullptr ) 
         {
+            assert( dimout >= 0 and dimin >= 0 );
+            assert( dimout == UL.getdimout() + LL.getdimout() );
+            assert( dimin  == UL.getdimin()  + UR.getdimin()  );
             assert( UL.getdimin()  == LL.getdimin()  );
             assert( UR.getdimin()  == LR.getdimin()  );
             assert( UL.getdimout() == UR.getdimout() );
@@ -785,6 +815,9 @@ class Block2x2Operator
         upperleft( nullptr ), upperright( nullptr ),
         lowerleft( nullptr ), lowerright( nullptr ) 
         {
+            assert( dimout >= 0 and dimin >= 0 );
+            assert( dimout == UL.getdimout() + LL.getdimout() );
+            assert( dimin  == UL.getdimin()  + UR.getdimin()  );
             assert( UL.getdimin()  == LL.getdimin()  );
             assert( UR.getdimin()  == LR.getdimin()  );
             assert( UL.getdimout() == UR.getdimout() );
@@ -804,6 +837,9 @@ class Block2x2Operator
         upperleft( nullptr ), upperright( nullptr ),
         lowerleft( nullptr ), lowerright( nullptr ) 
         {
+            assert( dimout >= 0 and dimin >= 0 );
+            assert( dimout == UL.getdimout() + LL.getdimout() );
+            assert( dimin  == UL.getdimin()  + UR.getdimin()  );
             assert( UL.getdimin()  == LL.getdimin()  );
             assert( UR.getdimin()  == LR.getdimin()  );
             assert( UL.getdimout() == UR.getdimout() );
@@ -823,6 +859,9 @@ class Block2x2Operator
         upperleft( nullptr ), upperright( nullptr ),
         lowerleft( nullptr ), lowerright( nullptr ) 
         {
+            assert( dimout >= 0 and dimin >= 0 );
+            assert( dimout == UL.getdimout() + LL.getdimout() );
+            assert( dimin  == UL.getdimin()  + UR.getdimin()  );
             assert( UL.getdimin()  == LL.getdimin()  );
             assert( UR.getdimin()  == LR.getdimin()  );
             assert( UL.getdimout() == UR.getdimout() );
@@ -842,6 +881,9 @@ class Block2x2Operator
         upperleft( nullptr ), upperright( nullptr ),
         lowerleft( nullptr ), lowerright( nullptr ) 
         {
+            assert( dimout >= 0 and dimin >= 0 );
+            assert( dimout == UL.getdimout() + LL.getdimout() );
+            assert( dimin  == UL.getdimin()  + UR.getdimin()  );
             assert( UL.getdimin()  == LL.getdimin()  );
             assert( UR.getdimin()  == LR.getdimin()  );
             assert( UL.getdimout() == UR.getdimout() );
@@ -861,6 +903,9 @@ class Block2x2Operator
         upperleft( nullptr ), upperright( nullptr ),
         lowerleft( nullptr ), lowerright( nullptr ) 
         {
+            assert( dimout >= 0 and dimin >= 0 );
+            assert( dimout == UL.getdimout() + LL.getdimout() );
+            assert( dimin  == UL.getdimin()  + UR.getdimin()  );
             assert( UL.getdimin()  == LL.getdimin()  );
             assert( UR.getdimin()  == LR.getdimin()  );
             assert( UL.getdimout() == UR.getdimout() );
@@ -880,6 +925,9 @@ class Block2x2Operator
         upperleft( nullptr ), upperright( nullptr ),
         lowerleft( nullptr ), lowerright( nullptr ) 
         {
+            assert( dimout >= 0 and dimin >= 0 );
+            assert( dimout == UL.getdimout() + LL.getdimout() );
+            assert( dimin  == UL.getdimin()  + UR.getdimin()  );
             assert( UL.getdimin()  == LL.getdimin()  );
             assert( UR.getdimin()  == LR.getdimin()  );
             assert( UL.getdimout() == UR.getdimout() );
