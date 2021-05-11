@@ -197,7 +197,7 @@ int main()
                         cout << "...compute norms of solution and right-hand side:" << endl;
             
                         Float sol_norm = interpol_sol * ( scalar_massmatrix * interpol_sol );
-                        Float rhs_norm = interpol_sol * ( scalar_massmatrix * interpol_rhs );
+                        Float rhs_norm = interpol_rhs * ( scalar_massmatrix * interpol_rhs );
                         
                         cout << "solution norm: " << sol_norm << endl;
                         cout << "rhs norm:      " << rhs_norm << endl;
