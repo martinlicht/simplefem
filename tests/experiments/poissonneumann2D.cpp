@@ -110,6 +110,8 @@ int main()
             
             ConvergenceTable contable;
             
+            contable << "u_error" << "du_error" << nl;
+            
 
             for( int l = 0; l < min_l; l++ )
                 M.uniformrefinement();

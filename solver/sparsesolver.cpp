@@ -110,13 +110,13 @@ void ConjugateGradientSolverCSR(
         bool denominator_is_small    = sqrt(absolute(d_Ad)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) {
-            printf( "Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
+            if( print_modulo >= 0 ) printf( "Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
             break;
         }
         
         if( denominator_is_small ) {
-            printf( "Gradient energy is small with %.9Le while residual is %.9Le vs %.9Le\n", 
-                    (long double)d_Ad, (long double)r_r, (long double)threshold*threshold );
+            if( print_modulo >= 0 ) printf( "Gradient energy is small with %.9Le while residual is %.9Le vs %.9Le\n", 
+                                            (long double)d_Ad, (long double)r_r, (long double)threshold*threshold );
             break;
         }
         
@@ -282,13 +282,13 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
         bool denominator_is_small    = sqrt(absolute(d_Ad)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) {
-            printf( "Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
+            if( print_modulo >= 0 ) printf( "Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
             break;
         }
         
         if( denominator_is_small ) {
-            printf( "Gradient energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
-                    (long double)d_Ad, (long double)z_r, (long double)threshold*threshold );
+            if( print_modulo >= 0 ) printf( "Gradient energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
+                                            (long double)d_Ad, (long double)z_r, (long double)threshold*threshold );
             break;
         }
         
@@ -517,13 +517,13 @@ void ConjugateGradientSolverCSR_SSOR(
         bool denominator_is_small    = sqrt(absolute(d_Ad)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) {
-            printf( "Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
+            if( print_modulo >= 0 ) printf( "Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
             break;
         }
         
         if( denominator_is_small ) {
-            printf( "Gradient energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
-                    (long double)d_Ad, (long double)z_r, (long double)threshold*threshold );
+            if( print_modulo >= 0 ) printf( "Gradient energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
+                                            (long double)d_Ad, (long double)z_r, (long double)threshold*threshold );
             break;
         }
         
@@ -740,13 +740,13 @@ void ConjugateResidualSolverCSR(
         bool denominator_is_small    = sqrt(absolute(Ad_Ad)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) {
-            printf( "Gradient double energy is unreasonable with %.9Le\n", (long double)Ad_Ad );
+            if( print_modulo >= 0 ) printf( "Gradient double energy is unreasonable with %.9Le\n", (long double)Ad_Ad );
             break;
         }
         
         if( denominator_is_small ) {
-            printf( "Gradient double energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
-                    (long double)Ad_Ad, (long double)Ad_r, (long double)threshold*threshold );
+            if( print_modulo >= 0 ) printf( "Gradient double energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
+                                    (long double)Ad_Ad, (long double)Ad_r, (long double)threshold*threshold );
             break;
         }
         
@@ -932,13 +932,13 @@ void ConjugateResidualSolverCSR_textbook(
         bool denominator_is_small    = sqrt(absolute(Ad_Ad)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) {
-            printf( "Gradient energy is unreasonable with %.9Le\n", (long double)Ar_r );
+            if( print_modulo >= 0 ) printf( "Gradient energy is unreasonable with %.9Le\n", (long double)Ar_r );
             break;
         }
         
         if( denominator_is_small ) {
-            printf( "Gradient energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
-                    (long double)Ad_Ad, (long double)Ar_r, (long double)threshold*threshold );
+            if( print_modulo >= 0 ) printf( "Gradient energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
+                                            (long double)Ad_Ad, (long double)Ar_r, (long double)threshold*threshold );
             break;
         }
         

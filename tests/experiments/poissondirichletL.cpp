@@ -90,9 +90,13 @@ int main()
             cout << "Solving Poisson Problem with Dirichlet boundary conditions" << endl;
 
             int min_l = 2; 
-            int max_l = 5;
+            int max_l = 3;
             
+
             ConvergenceTable contable;
+            
+            contable << "u_error" << "du_error" << nl;
+
             
             const int r = 1;
             

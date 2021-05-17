@@ -20,6 +20,7 @@
 #include "../../solver/iterativesolver.hpp"
 // #include "../../solver/crm.hpp"
 // #include "../../solver/minres.hpp"
+#include "../../fem/finitediff.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
@@ -45,73 +46,81 @@ int main()
             
             M.check();
             
-            M.set_flag( 1, 0, SimplexFlagDirichlet );
-            M.set_flag( 1, 1, SimplexFlagDirichlet );
-            M.set_flag( 0, 0, SimplexFlagDirichlet );
-            M.set_flag( 0, 1, SimplexFlagDirichlet );
-            M.set_flag( 0, 2, SimplexFlagDirichlet );
+            M.automatic_dirichlet_flags();
+           
+            M.check_dirichlet_flags();
 
+            M.getcoordinates().scale(1.1);
             
             cout << "Prepare scalar fields for testing..." << endl;
             
 
-            std::function<FloatVector(const FloatVector&)> constant_one
-                = [](const FloatVector& vec) -> FloatVector{
-                        assert( vec.getdimension() == 2 );
-                        return FloatVector({ 1. });
-                    };
-            
-            
-            
-            
 
-
-            
-            // std::function<FloatVector(const std::function<FloatVector(const FloatVector&) ) >scalarfield = 
-            
             std::function<FloatVector(const FloatVector&)> experiment_sol = 
-                [](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
-                    Float x = vec[0]; Float y = vec[1];
-                    Float k = 2*Constants::pi;
-                    return FloatVector({ square( sin(k*x) * sin(k*y) ) });
+                    // return FloatVector({ 1. });
+                    return FloatVector({ 
+                        bumpfunction(vec[0]) * bumpfunction(vec[1])
+                    });
                 };
             
-
             std::function<FloatVector(const FloatVector&)> experiment_grad = 
-                [](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
-                    Float x = vec[0]; Float y = vec[1];
-                    Float k = 2*Constants::pi;
+                    // return FloatVector({ 1. });
                     return FloatVector( { 
-                        k * sin( 2*k*x ) * sin(k*y) * sin(k*y),
-                        k * sin( 2*k*y ) * sin(k*x) * sin(k*x),
+                            bumpfunction_dev(vec[0]) *     bumpfunction(vec[1]),
+                            bumpfunction(vec[0])     * bumpfunction_dev(vec[1]), 
                     });
                 };
             
 
             std::function<FloatVector(const FloatVector&)> experiment_rhs = 
-                [](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
-                    Float x  =  vec[0]; Float y  =  vec[1];
-                    Float k = 2*Constants::pi;
                     return FloatVector({ 
-                        - k*k * ( cos(2*k*x) - cos( 2*k*(x - y) ) + cos(2*k*y) - cos( 2*k*(x + y) ) ) 
-                     });
+                        -
+                        bumpfunction_devdev(vec[0]) *        bumpfunction(vec[1])
+                        -
+                        bumpfunction(vec[0])        * bumpfunction_devdev(vec[1])
+                    });
+                    
+
+//                     const Float stepsize = 1e-07;
+//                     
+//                     FloatVector ret(1);
+//                     
+//                     auto point = vec;
+//                     
+//                     FloatVector mid    = experiment_sol( point                              );
+//                     FloatVector left   = experiment_sol( point - stepsize * unitvector(2,0) );
+//                     FloatVector right  = experiment_sol( point + stepsize * unitvector(2,0) );
+//                     FloatVector up     = experiment_sol( point - stepsize * unitvector(2,1) );
+//                     FloatVector down   = experiment_sol( point + stepsize * unitvector(2,1) );
+//                     
+//                     ret = - ( up + down + left + right - 4 * mid );
+//                     
+//                     ret /= ( stepsize * stepsize );
+//                     
+//                     assert( ret.getdimension() == 1 );
+//                     
+//                     return ret;
+                                    
                 };
             
-
+            
             
 
             
 
-            cout << "Solving Poisson Problem with Neumann boundary conditions" << endl;
+            cout << "Solving Poisson Problem with Dirichlet boundary conditions" << endl;
 
-            int min_l = 3; 
-            int max_l = 8;
+            int min_l = 1; 
+            int max_l = 5;
             
-            int min_r = 3;
-            int max_r = 3;
+            int min_r = 1;
+            int max_r = 1;
             
             ConvergenceTable contable;
             
@@ -164,8 +173,8 @@ int main()
 //                     auto stiffness = op3 * incmatrix;
 //                     auto& stiffness_csr = stiffness;
 
-                    auto opr = diffmatrix & incmatrix;
-                    auto opl = opr.getTranspose(); 
+                    auto opr  = diffmatrix & incmatrix;
+                    auto opl  = opr.getTranspose(); 
                     auto stiffness = opl & ( vector_massmatrix & opr );
                     
                     stiffness.sortentries();
@@ -222,7 +231,6 @@ int main()
                             std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                         }
 
-
                         cout << "...compute error and residual:" << endl;
             
                         
@@ -245,14 +253,28 @@ int main()
 
 
                         if( r == 1 ){
-                        
+                    
+                            
+                            auto outputdata1 = sol;
+                            auto outputdata2 = sol;
+                            
+                            
+                            for( int c = 0; c < M.count_simplices(0); c++ ) { 
+                                auto x = M.getcoordinates().getdata(c,0);
+                                auto y = M.getcoordinates().getdata(c,1);
+                                auto value = experiment_rhs( { x, y } )[0];
+                                outputdata2[c] = value;
+                            }
+                            
+                            
                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
-                        
+                
                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
-                            vtk.writeCoordinateBlock( 0.3 * sol );
+                            vtk.writeCoordinateBlock( outputdata1 );
                             vtk.writeTopDimensionalCells();
                             
-                            vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
+                            vtk.writeVertexScalarData( -outputdata1, "iterativesolution_scalar_data" , 1.0 );
+                            vtk.writeVertexScalarData(  outputdata2, "reference_scalar_data" , 1.0 );
                             // vtk.writeCellVectorData( interpol_grad, "gradient_interpolation" , 0.1 );
                             
                             fs.close();

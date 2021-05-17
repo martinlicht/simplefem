@@ -5,6 +5,8 @@
 # which can be executed in each single source directory
 
 
+# clean out executables, debug output, and intermediate files
+
 .PHONY: clean
 clean: vtkclean dependclean
 	-rm -f OUTPUT_CPPLINT.txt
@@ -13,10 +15,16 @@ clean: vtkclean dependclean
 	-rm -f *.exe *.exe.stackdump
 	-rm -f *.out *.out.stackdump 
 
+
+# clean out and remove the dependency directories 
+
 .PHONY: dependclean
 dependclean:
 	-if [ -d .deps/ ]; then rm -f .deps/*.d .deps/.all.d; fi 
 	-if [ -d .deps/ ]; then rmdir .deps/; fi 
+
+
+# clean out all VTK files
 
 .PHONY: vtkclean
 vtkclean:
@@ -25,17 +33,21 @@ vtkclean:
 	-rm -f ./*/*/*.vtk
 
 
+# apply clang-tidy to all cpp and hpp files in the directory
+
 .PHONY: tidy
 tidy:
 	clang-tidy ./*.?pp -checks=llvm*,bugprone-*,clang-analyzer-*,misc-*,-llvm-header-guard,-llvm-include-order -- -std=c++17
 
 
-# CHECK_OPTION= --enable=warning,style,performance,portability --std=c++11 -q
-# CHECK_FILES= basic.hpp basic/*.?pp combinatorics/*.?pp operators/*.?pp
+# apply cppcheck to all cpp and hpp files in the directory 
 
 .PHONY: cppcheck
 cppcheck:
 	cppcheck --enable=warning,style,performance,portability --suppress=duplicateCondition --suppress=assertWithSideEffect --suppress=useStlAlgorithm --std=c++17 -q . ./*pp
+
+
+# apply cpplint to all cpp and hpp files in the directory 
 
 .PHONY: cpplint
 cpplint:

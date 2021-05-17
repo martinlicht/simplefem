@@ -34,7 +34,7 @@ class InverseOperator final
         InverseOperator& operator=( InverseOperator&& vec )      = delete; 
 
         
-        explicit InverseOperator( const LinearOperator& op, Float tolerance, int print_modulo = 0 )
+        explicit InverseOperator( const LinearOperator& op, Float tolerance, int print_modulo = -1 )
         : LinearOperator( op.getdimout(), op.getdimin() ), op( op ), tolerance(tolerance), print_modulo( print_modulo )
         { 
             assert( op.getdimin() == op.getdimout() );
@@ -95,8 +95,6 @@ class InverseOperator final
             
             } else {
             
-                abort();
-                
                 dest.zero();
                 
                 ConjugateResidualMethod Solver( op );
@@ -125,7 +123,7 @@ class InverseOperator final
 };
   
   
-inline InverseOperator inv( const LinearOperator& op, Float tolerance, int print_modulo = 0 )
+inline InverseOperator inv( const LinearOperator& op, Float tolerance, int print_modulo = -1 )
 {
     op.check();
     

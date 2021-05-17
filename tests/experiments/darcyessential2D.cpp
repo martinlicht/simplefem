@@ -110,12 +110,15 @@ int main()
             cout << "Solving Poisson Problem with Neumann boundary conditions" << endl;
 
             int min_l = 1; 
-            int max_l = 7;
+            int max_l = 5;
             
-            int min_r = 3;
-            int max_r = 3;
+            int min_r = 1;
+            int max_r = 1;
+            
             
             ConvergenceTable contable;
+            
+            contable << "sigma_error" << "u_error";
             
 
             for( int l = 0; l < min_l; l++ )

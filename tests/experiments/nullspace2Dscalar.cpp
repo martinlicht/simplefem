@@ -69,8 +69,11 @@ int main()
 
             cout << "Nullspace computation" << endl;
 
+            
             ConvergenceTable contable;
             
+            contable << "#nullvec";
+                        
 
             int min_l = 0; 
             

@@ -236,6 +236,24 @@ FloatVector MatrixCSR::diagonal() const
 }
 
 
+int MatrixCSR::getnumberofzeroentries() const
+{ 
+    check();
+    
+    int ret = 0;
+    
+    for( const auto& value : V )
+        if( value == 0. )
+            ret++;
+    
+    return ret;
+
+}
+
+
+
+
+
 
 
 

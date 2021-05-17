@@ -85,6 +85,14 @@ class MultiIndex final
 
 
 
+MultiIndex ZeroMultiIndex( const IndexRange& ir )
+{
+    return MultiIndex( ir, std::vector<int>( ir.cardinality(), 0 ) );
+}
+        
+
+
+
 
 inline std::ostream& operator<<( std::ostream& os, const MultiIndex& mi )
 {

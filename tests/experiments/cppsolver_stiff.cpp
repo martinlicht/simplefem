@@ -122,7 +122,8 @@ int main()
                     auto stiffness_prelim = opl & ( vector_massmatrix & opr );
                     stiffness_prelim.sortentries();
                     */
-                    const auto& stiffness = composed_stiffness; //auto stiffness = MatrixCSR( stiffness_prelim );
+                    //auto stiffness = MatrixCSR( stiffness_prelim );
+                    const auto& stiffness = composed_stiffness; 
                     
                     {
 

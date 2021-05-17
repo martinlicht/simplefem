@@ -219,6 +219,25 @@ FloatVector SparseMatrix::diagonal() const
     
     return ret;
 }
+
+
+int SparseMatrix::getnumberofzeroentries() const
+{
+    check();
+    
+    int ret = 0;
+    
+    for( const auto& entry : entries )
+        if( entry.value == 0. )
+            ret++;
+    
+    return ret;
+    
+}
+
+
+
+
         
         
 

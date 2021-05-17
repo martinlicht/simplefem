@@ -412,6 +412,16 @@ FloatVector FloatVector::getslice( int base, int len ) const
     return ret;
 }
 
+void FloatVector::setslice( int base, int len, Float value ) 
+{
+    check();
+    assert( 0 <= base && base < getdimension() );
+    assert( 0 <= len && len <= getdimension() );
+    assert( 0 <= base+len && base+len <= getdimension() );
+    
+    for( int p = 0; p < len; p++ ) pointer[ base + p ] = value;
+}
+
 void FloatVector::setslice( int base, const FloatVector& slice )
 {
     check();

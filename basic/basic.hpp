@@ -676,6 +676,77 @@ inline int sum_int( int to, const std::function<int(int)>& calc )
 
 
 
+inline Float bumpfunction( Float x )
+{
+    Float delta = x*x - 1.;
+
+    if( absolute(x) < 0.99999999 ) {
+
+        return std::exp( 1. / delta );
+
+    } else {
+
+        return 0;
+        
+    }
+}
+
+inline Float bumpfunction_dev( Float x )
+{
+    
+    Float delta = x*x - 1.;
+    Float delta_sq = delta*delta;
+
+    if( absolute(x) < 0.99999999 ) {
+        
+        return -2. * x * std::exp( 1. / delta ) / delta_sq;
+        
+    } else {
+        
+        return 0;
+        
+    }
+}
+
+inline Float bumpfunction_devdev( Float x )
+{
+    
+    
+//     Float t1 = std::exp( -1. / ( 1. - x*x ) );
+//     Float t2 = std::exp( 1 - x*x );
+// 
+//     if( x*x < 1 )
+//         return
+//             t1 * ( 4*x*x*pow(t2,-4.) - 2*pow(t2,-2.) - 8*x*x*pow(t2,-3.) );
+//     else
+//         return
+//             0.;
+                            
+
+    
+    
+    Float delta = x*x - 1.;
+    
+    Float delta_sq = delta    * delta;
+    Float delta_p4 = delta_sq * delta_sq;
+
+    if( absolute(x) < 0.99999999 ) {
+        
+        return std::exp( 1. / delta ) * (  6.*x*x*x*x - 2. ) / delta_p4;
+        
+    } else {
+        
+        return 0.;
+        
+    }
+}
+
+
+
+
+
+
+
 
 
 

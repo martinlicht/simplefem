@@ -65,6 +65,10 @@ FLAG_DISABLE_CHECK_MESHES=yes
 
 
 
+
+
+# If we are in RELEASE_MODE then set the following flags 
+
 ifdef $(RELEASE_MODE)
 FLAG_DISABLE_CHECK_MESHES=yes
 FLAG_DISABLE_STDLIBDEBUG=yes
@@ -140,6 +144,9 @@ CXXFLAGS_LANG := -std=c++17 -pedantic
 #                                             #
 ###############################################
 
+# If optimization is enabled, then set a number of flags 
+# In the absence of optimization, we set O1
+
 CXXFLAGS_OPTIMIZE:=
 
 ifeq ($(FLAG_DO_OPTIMIZE),yes)
@@ -163,16 +170,23 @@ else
 	CXXFLAGS_OPTIMIZE += -O1
 endif
 
+
+# Do we apply OpenMP?
+
 ifeq ($(FLAG_ENABLE_OPENMP),yes)
 	CXXFLAGS_OPTIMIZE += -fopenmp
 endif
 
+
+# Do we strip debug information?
 
 ifeq ($(FLAG_CXX),GCC) 
 ifeq ($(FLAG_DO_STRIP),yes)
 	CXXFLAGS_OPTIMIZE += -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--strip-all 
 endif
 endif
+
+
 
 
 ###############################################
@@ -342,7 +356,10 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 	endif
  
 endif
- 
+
+
+# In any case, remove the following warnings 
+
 CXXFLAGS_WARNINGS += -Wno-conversion 
 CXXFLAGS_WARNINGS += -Wno-sign-compare 
 CXXFLAGS_WARNINGS += -Wno-unused-variable
@@ -353,9 +370,10 @@ CXXFLAGS_WARNINGS += -Wno-type-limits
 
 
 
- 
- 
- 
+
+
+
+
 
 
 
@@ -394,6 +412,10 @@ endif
 #          Sanitizer instrumentation          #
 #                                             #
 ###############################################
+
+# There are several incompatibilities between sanitizers 
+# thread cannot be combined with address and leak
+# Warning: memory causes considerable slowdown
 
 ifeq ($(FLAG_DO_USE_SANITIZER),yes)
 
