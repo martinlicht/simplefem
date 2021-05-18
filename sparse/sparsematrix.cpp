@@ -375,26 +375,59 @@ const SparseMatrix& SparseMatrix::sortandcompressentries( SparseMatrix::MatrixEn
     
     sortentries( manner );
     
-    int dest = 0;
+    assert( is_sorted(manner) );
     
-    for( int src = 1; src < getnumberofentries(); src++ )
     {
-        assert( dest < src );
-    
-        if( entries[src].row == entries[dest].row and entries[src].column == entries[dest].column ) {
-            entries[dest].value += entries[src].value;
-        } else {
-            dest++;
-            entries[dest] = entries[src];
-        }
         
-        assert( dest <= src );
+        int dest = 0;
+        
+        for( int src = 1; src < getnumberofentries(); src++ )
+        {
+            assert( dest < src );
+        
+            if( entries[src].row == entries[dest].row and entries[src].column == entries[dest].column ) {
+            
+                entries[dest].value += entries[src].value;
+            
+            } else {
+            
+                dest++;
+                entries[dest] = entries[src];
+            
+            }
+            
+            assert( dest <= src );
+        }
+    
+        entries.resize( dest+1 );
+    
+        check(); 
+        
     }
     
+    assert( is_sorted(manner) );
     
-    entries.resize( dest+1 );
+    {
+        
+//         for( int c = 0; c < entries.size(); c++ ){
+//             if( entries[c].value == 0 ) {
+//                 entries.erase( entries.begin()+c );
+//                 c--;
+//             }
+//         }
+        
+        
+        entries.erase(
+            std::remove_if(entries.begin(), entries.end(), []( const SparseMatrix::MatrixEntry e ){ return e.value == 0.; } ),
+            entries.end()
+        );
+        
+        for( int c = 0; c < entries.size(); c++ ) assert( entries[c].value != 0. );
+        
+        
+    }
     
-    check(); 
+    assert( is_sorted(manner) );
     
     return *this;
 }

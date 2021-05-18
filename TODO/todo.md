@@ -20,7 +20,8 @@ Then introduce the logging framework throughout the entire code	uniformly
 # Solver printing data structure 
 
 report_startup
-report_finish
+report_finish_success
+report_finish_fail
 report_restart
 report_alert
 report_breakdown
