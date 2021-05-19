@@ -31,6 +31,10 @@ FLAG_CXX := GCC
 # Uncomment the following line to disable extensive check routines for meshes
 FLAG_DISABLE_CHECK_MESHES=yes
 
+# Do you want to DISABLE excpetion handling?
+# Uncomment the following line to disable exception handling
+FLAG_NO_EXCEPTIONS=yes
+
 # Do you want to enable static analysis during the compilation process
 # Uncomment the following line to enable static analysis
 # FLAG_DO_STATICANALYSIS=yes
@@ -195,9 +199,16 @@ endif
 #                                             #
 ###############################################
 
-CXXFLAGS_CODEGEN := -fno-exceptions -fvisibility=default
+CXXFLAGS_CODEGEN := 
+
+ifneq ($(FLAG_NO_EXCEPTIONS),yes)
+	CXXFLAGS_CODEGEN += -fno-exceptions
+endif
+
+CXXFLAGS_CODEGEN += -fvisibility=default
+
 ifneq ($(OS),Windows_NT)
-CXXFLAGS_CODEGEN += -fpic 
+	CXXFLAGS_CODEGEN += -fpic 
 endif
 
 
@@ -365,6 +376,7 @@ CXXFLAGS_WARNINGS += -Wno-sign-compare
 CXXFLAGS_WARNINGS += -Wno-unused-variable
 CXXFLAGS_WARNINGS += -Wno-unused-parameter
 CXXFLAGS_WARNINGS += -Wno-vla
+CXXFLAGS_WARNINGS += -Wno-unknown-pragmas
 CXXFLAGS_WARNINGS += -Wno-type-limits 
 
 
