@@ -100,17 +100,17 @@ void HodgeConjugateResidualSolverCSR(
     assert( threshold > 0 );
 //     assert( print_modulo >= 0 );
     
-    Float* __restrict__  dir = (Float*)malloc( sizeof(Float) * N );
-    Float* __restrict__ Mdir = (Float*)malloc( sizeof(Float) * N );
-    Float* __restrict__ Mres = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__  dir = new Float[N];
+    Float* __restrict__ Mdir = new Float[N];
+    Float* __restrict__ Mres = new Float[N];
     
-    Float* __restrict__ aux1 = (Float*)malloc( sizeof(Float) * L );
-    Float* __restrict__ aux2 = (Float*)malloc( sizeof(Float) * L );
-    Float* __restrict__ auxR = (Float*)malloc( sizeof(Float) * L );
+    Float* __restrict__ aux1 = new Float[L];
+    Float* __restrict__ aux2 = new Float[L];
+    Float* __restrict__ auxR = new Float[L];
     
-    Float* __restrict__  vil = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__  vil = new Float[N];
     
-    Float* __restrict__  precon = (Float*)malloc( sizeof(Float) * L );
+    Float* __restrict__  precon = new Float[L];
     
     assert(  dir );
     assert( Mdir );
@@ -341,17 +341,17 @@ void HodgeConjugateResidualSolverCSR(
                k, N, (long double)(Md_r), (long double) threshold*threshold );
 
     
-    free(  dir );
-    free( Mdir );
-    free( Mres );
+    delete[] (  dir );
+    delete[] ( Mdir );
+    delete[] ( Mres );
 
-    free( aux1 );
-    free( aux2 );
-    free( auxR );
+    delete[] ( aux1 );
+    delete[] ( aux2 );
+    delete[] ( auxR );
     
-    free( vil );
+    delete[] ( vil );
     
-    free( precon );
+    delete[] ( precon );
 
 }
  
@@ -418,17 +418,17 @@ void HodgeConjugateResidualSolverCSR_SSOR(
     assert( threshold > 0 );
 //     assert( print_modulo >= 0 );
     
-    Float* __restrict__  dir = (Float*)malloc( sizeof(Float) * N );
-    Float* __restrict__ Mdir = (Float*)malloc( sizeof(Float) * N );
-    Float* __restrict__ Mres = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__  dir = new Float[N];
+    Float* __restrict__ Mdir = new Float[N];
+    Float* __restrict__ Mres = new Float[N];
     
-    Float* __restrict__ aux1 = (Float*)malloc( sizeof(Float) * L );
-    Float* __restrict__ aux2 = (Float*)malloc( sizeof(Float) * L );
-    Float* __restrict__ auxR = (Float*)malloc( sizeof(Float) * L );
+    Float* __restrict__ aux1 = new Float[L];
+    Float* __restrict__ aux2 = new Float[L];
+    Float* __restrict__ auxR = new Float[L];
     
-    Float* __restrict__  vil = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__  vil = new Float[N];
     
-    Float* __restrict__  diagonal = (Float*)malloc( sizeof(Float) * L );
+    Float* __restrict__  diagonal = new Float[L];
     
     assert(  dir );
     assert( Mdir );
@@ -657,17 +657,17 @@ void HodgeConjugateResidualSolverCSR_SSOR(
                k, N, (long double)(Md_r), (long double) threshold*threshold );
 
     
-    free(  dir );
-    free( Mdir );
-    free( Mres );
+    delete[] (  dir );
+    delete[] ( Mdir );
+    delete[] ( Mres );
 
-    free( aux1 );
-    free( aux2 );
-    free( auxR );
+    delete[] ( aux1 );
+    delete[] ( aux2 );
+    delete[] ( auxR );
     
-    free( vil );
+    delete[] ( vil );
     
-    free( diagonal );
+    delete[] ( diagonal );
 
 }
  
@@ -735,15 +735,15 @@ void HodgeConjugateResidualSolverCSR_textbook(
     assert( threshold > 0 );
 //     assert( print_modulo >= 0 );
     
-    Float* __restrict__  dir = (Float*)malloc( sizeof(Float) * N );
-    Float* __restrict__ Mdir = (Float*)malloc( sizeof(Float) * N );
-    Float* __restrict__ Mres = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__  dir = new Float[N];
+    Float* __restrict__ Mdir = new Float[N];
+    Float* __restrict__ Mres = new Float[N];
     
-    Float* __restrict__ aux1 = (Float*)malloc( sizeof(Float) * L );
-    Float* __restrict__ aux2 = (Float*)malloc( sizeof(Float) * L );
-    Float* __restrict__ auxR = (Float*)malloc( sizeof(Float) * L );
+    Float* __restrict__ aux1 = new Float[L];
+    Float* __restrict__ aux2 = new Float[L];
+    Float* __restrict__ auxR = new Float[L];
     
-    Float* __restrict__  vil = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__  vil = new Float[N];
     
     assert(  dir );
     assert( Mdir );
@@ -952,15 +952,15 @@ void HodgeConjugateResidualSolverCSR_textbook(
                k, N, (long double)(Mr_r), (long double) threshold*threshold );
 
     
-    free(  dir );
-    free( Mdir );
-    free( Mres );
+    delete[] (  dir );
+    delete[] ( Mdir );
+    delete[] ( Mres );
 
-    free( aux1 );
-    free( aux2 );
-    free( auxR );
+    delete[] ( aux1 );
+    delete[] ( aux2 );
+    delete[] ( auxR );
     
-    free( vil );
+    delete[] ( vil );
 
 }
 

@@ -2,11 +2,11 @@
 #define INCLUDEGUARD_SOLVER_CHEBYSHEV
 
 
+#include <omp.h>
 #include <cassert>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
-#include <omp.h>
 #include <utility>
 
 #include "../basic.hpp"
@@ -43,12 +43,12 @@ void CheybyshevIteration_DiagonalPreconditioner(
     assert( print_modulo >= 0 );
     assert( precon );
     
-    Float* __restrict__ zaratite = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__ zaratite = new Float[N];
     assert( zaratite );
     
-    Float* x_prev = (Float*)malloc( sizeof(Float) * N );
-    Float* x_curr = (Float*)malloc( sizeof(Float) * N );
-    Float* x_next = (Float*)malloc( sizeof(Float) * N );
+    Float* x_prev = new Float[N];
+    Float* x_curr = new Float[N];
+    Float* x_next = new Float[N];
     assert( x_prev );
     assert( x_curr );
     assert( x_next );
@@ -151,11 +151,11 @@ void CheybyshevIteration_DiagonalPreconditioner(
     printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), (long double) allowed_error );
 
     
-    free( x_prev );
-    free( x_curr );
-    free( x_next );
+    delete[] ( x_prev );
+    delete[] ( x_curr );
+    delete[] ( x_next );
 
-    free( zaratite );
+    delete[] ( zaratite );
 
 }
 
