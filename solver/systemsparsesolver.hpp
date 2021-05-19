@@ -452,7 +452,7 @@ void HodgeConjugateResidualSolverCSR_SSOR(
             if( Acolumns[d] == c ) 
                 diagonal[c] += Avalues[ d ];
             
-        assert( diagonal[c] >= 0. );
+//         assert( diagonal[c] >= 0. );
         
     }
     
@@ -733,7 +733,7 @@ void HodgeConjugateResidualSolverCSR_textbook(
     assert( Btvalues );
     assert( res );
     assert( threshold > 0 );
-    assert( print_modulo >= 0 );
+//     assert( print_modulo >= 0 );
     
     Float* __restrict__  dir = (Float*)malloc( sizeof(Float) * N );
     Float* __restrict__ Mdir = (Float*)malloc( sizeof(Float) * N );
@@ -863,13 +863,13 @@ void HodgeConjugateResidualSolverCSR_textbook(
         bool denominator_is_small    = sqrt(absolute(Md_Md)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) {
-            printf( "Gradient double energy is unreasonable with %.9Le\n", (long double)Md_Md );
+            if( print_modulo >= 0 ) printf( "Gradient double energy is unreasonable with %.9Le\n", (long double)Md_Md );
             break;
         }
         
         if( denominator_is_small ) {
-            printf( "Gradient double energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
-                    (long double)Md_Md, (long double)Mr_r, (long double)threshold*threshold );
+            if( print_modulo >= 0 ) printf( "Gradient double energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
+                                    (long double)Md_Md, (long double)Mr_r, (long double)threshold*threshold );
             break;
         }
 
