@@ -9,6 +9,7 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
+#include <new>
 #include <utility>
 
 #ifdef _OPENMP
@@ -40,8 +41,8 @@ void ConjugateGradientSolverCSR(
     assert( threshold > 0 );
     assert( print_modulo >= -1 );
     
-    Float* __restrict__ direction = new Float[N];
-    Float* __restrict__ auxiliary = new Float[N];
+    Float* __restrict__ direction = new (std::nothrow) Float[N];
+    Float* __restrict__ auxiliary = new (std::nothrow) Float[N];
     assert( direction );
     assert( auxiliary );
     
@@ -201,9 +202,9 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
     assert( print_modulo >= -1 );
     assert( precon );
     
-    Float* __restrict__ direction = new Float[N];
-    Float* __restrict__ zirconium = new Float[N];
-    Float* __restrict__ auxiliary = new Float[N];
+    Float* __restrict__ direction = new (std::nothrow) Float[N];
+    Float* __restrict__ zirconium = new (std::nothrow) Float[N];
+    Float* __restrict__ auxiliary = new (std::nothrow) Float[N];
     assert( direction );
     assert( zirconium );
     assert( auxiliary );
@@ -392,10 +393,10 @@ void ConjugateGradientSolverCSR_SSOR(
     assert( print_modulo >= -1 );
     assert( diagonal );
     
-    Float* __restrict__ direction = new Float[N];
-    Float* __restrict__ zirconium = new Float[N];
-    Float* __restrict__ auxiliary = new Float[N];
-    Float* __restrict__ mittlerer = new Float[N];
+    Float* __restrict__ direction = new (std::nothrow) Float[N];
+    Float* __restrict__ zirconium = new (std::nothrow) Float[N];
+    Float* __restrict__ auxiliary = new (std::nothrow) Float[N];
+    Float* __restrict__ mittlerer = new (std::nothrow) Float[N];
     assert( direction );
     assert( zirconium );
     assert( mittlerer );
@@ -663,14 +664,14 @@ void ConjugateResidualSolverCSR(
     assert( threshold > 0 );
     assert( print_modulo >= -1 );
     
-    Float* __restrict__  dir = new Float[N];
-    Float* __restrict__ Adir = new Float[N];
-    Float* __restrict__ Ares = new Float[N];
+    Float* __restrict__  dir = new (std::nothrow) Float[N];
+    Float* __restrict__ Adir = new (std::nothrow) Float[N];
+    Float* __restrict__ Ares = new (std::nothrow) Float[N];
     assert(  dir );
     assert( Adir );
     assert( Ares );
     
-    Float* __restrict__  vil = new Float[N];
+    Float* __restrict__  vil = new (std::nothrow) Float[N];
     assert( vil );
     
     
@@ -857,14 +858,14 @@ void ConjugateResidualSolverCSR_textbook(
     assert( threshold > 0 );
     assert( print_modulo >= -1 );
     
-    Float* __restrict__  dir = new Float[N];
-    Float* __restrict__ Adir = new Float[N];
-    Float* __restrict__ Ares = new Float[N];
+    Float* __restrict__  dir = new (std::nothrow) Float[N];
+    Float* __restrict__ Adir = new (std::nothrow) Float[N];
+    Float* __restrict__ Ares = new (std::nothrow) Float[N];
     assert(  dir );
     assert( Adir );
     assert( Ares );
     
-    Float* __restrict__  vil = new Float[N];
+    Float* __restrict__  vil = new (std::nothrow) Float[N];
     assert( vil );
     
     
@@ -1060,19 +1061,19 @@ void MINRESCSR(
     assert( threshold > 0 );
     assert( print_modulo >= -1 );
     
-    Float* __restrict__ v0 = new Float[N];
-    Float* __restrict__ v1 = new Float[N];
-    Float* __restrict__ w0 = new Float[N];
-    Float* __restrict__ w1 = new Float[N];
+    Float* __restrict__ v0 = new (std::nothrow) Float[N];
+    Float* __restrict__ v1 = new (std::nothrow) Float[N];
+    Float* __restrict__ w0 = new (std::nothrow) Float[N];
+    Float* __restrict__ w1 = new (std::nothrow) Float[N];
     
     assert( v0 );
     assert( v1 );
     assert( w0 );
     assert( w1 );
     
-    Float* __restrict__ vn = new Float[N];
-    Float* __restrict__ wn = new Float[N];
-    Float* __restrict__  p = new Float[N];
+    Float* __restrict__ vn = new (std::nothrow) Float[N];
+    Float* __restrict__ wn = new (std::nothrow) Float[N];
+    Float* __restrict__  p = new (std::nothrow) Float[N];
     
     assert( vn );
     assert( wn );
@@ -1266,13 +1267,13 @@ void WHATEVER(
     assert( threshold > 0 );
     assert( print_modulo >= -1 );
     
-    Float* __restrict__  r = new Float[N];
-    Float* __restrict__ p0 = new Float[N];
-    Float* __restrict__ p1 = new Float[N];
-    Float* __restrict__ p2 = new Float[N];
-    Float* __restrict__ s0 = new Float[N];
-    Float* __restrict__ s1 = new Float[N];
-    Float* __restrict__ s2 = new Float[N];
+    Float* __restrict__  r = new (std::nothrow) Float[N];
+    Float* __restrict__ p0 = new (std::nothrow) Float[N];
+    Float* __restrict__ p1 = new (std::nothrow) Float[N];
+    Float* __restrict__ p2 = new (std::nothrow) Float[N];
+    Float* __restrict__ s0 = new (std::nothrow) Float[N];
+    Float* __restrict__ s1 = new (std::nothrow) Float[N];
+    Float* __restrict__ s2 = new (std::nothrow) Float[N];
     
     assert(  r );
     assert( p0 );

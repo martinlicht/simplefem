@@ -7,6 +7,7 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
+#include <new>
 #include <utility>
 
 #include "../basic.hpp"
@@ -43,12 +44,12 @@ void CheybyshevIteration_DiagonalPreconditioner(
     assert( print_modulo >= 0 );
     assert( precon );
     
-    Float* __restrict__ zaratite = new Float[N];
+    Float* __restrict__ zaratite = new (std::nothrow) Float[N];
     assert( zaratite );
     
-    Float* x_prev = new Float[N];
-    Float* x_curr = new Float[N];
-    Float* x_next = new Float[N];
+    Float* x_prev = new (std::nothrow) Float[N];
+    Float* x_curr = new (std::nothrow) Float[N];
+    Float* x_next = new (std::nothrow) Float[N];
     assert( x_prev );
     assert( x_curr );
     assert( x_next );

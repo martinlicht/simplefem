@@ -2,6 +2,7 @@
 #include <cassert>
 #include <cmath>
 #include <algorithm>
+#include <new>
 #include <ostream>
 
 #include "../basic.hpp"
@@ -14,7 +15,7 @@
 
 
 FloatVector::FloatVector( const FloatVector& src )
-: dimension( src.getdimension() ), pointer( new Float[ src.getdimension() ] )
+: dimension( src.getdimension() ), pointer( new (std::nothrow) Float[ src.getdimension() ] )
 {
     assert( dimension >= 0 and pointer != nullptr );
     for( int p = 0; p < dimension; p++ ) pointer[p] = src.pointer[p];
@@ -80,7 +81,7 @@ FloatVector::~FloatVector()
 
 
 FloatVector::FloatVector( int dim, Float initialvalue )
-: dimension(dim), pointer( new Float[dim] )
+: dimension(dim), pointer( new (std::nothrow) Float[dim] )
 {
     assert( dimension >= 0 and pointer != nullptr );
     for( int p = 0; p < dimension; p++ ) pointer[p] = initialvalue;
@@ -88,7 +89,7 @@ FloatVector::FloatVector( int dim, Float initialvalue )
 }
 
 FloatVector::FloatVector( const FloatVector& src, Float alpha )
-: dimension( src.getdimension() ), pointer( new Float[ src.getdimension() ] )
+: dimension( src.getdimension() ), pointer( new (std::nothrow) Float[ src.getdimension() ] )
 {
     assert( dimension >= 0 and pointer != nullptr );
     for( int p = 0; p < dimension; p++ ) pointer[p] = alpha * src.pointer[p];
@@ -117,7 +118,7 @@ FloatVector::FloatVector( const std::vector<int>& vals, Float alpha )
 }
 
 FloatVector::FloatVector( const std::initializer_list<Float>& l )
-: dimension( SIZECAST( l.size() ) ), pointer( new Float[l.size()] )
+: dimension( SIZECAST( l.size() ) ), pointer( new (std::nothrow) Float[l.size()] )
 {
     assert( dimension >= 0 and pointer != nullptr );
     int i = 0;
@@ -126,7 +127,7 @@ FloatVector::FloatVector( const std::initializer_list<Float>& l )
 }
 
 FloatVector::FloatVector( int dimension, const std::function<Float(int)>& generator, Float alpha )
-: dimension( dimension ), pointer( new Float[dimension] )
+: dimension( dimension ), pointer( new (std::nothrow) Float[dimension] )
 {
     assert( dimension >= 0 and pointer != nullptr );
     generatedatafrom( alpha, generator );

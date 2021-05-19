@@ -6,6 +6,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <omp.h>
+#include <new>
 #include <utility>
 
 #include "../basic.hpp"
@@ -100,17 +101,17 @@ void HodgeConjugateResidualSolverCSR(
     assert( threshold > 0 );
 //     assert( print_modulo >= 0 );
     
-    Float* __restrict__  dir = new Float[N];
-    Float* __restrict__ Mdir = new Float[N];
-    Float* __restrict__ Mres = new Float[N];
+    Float* __restrict__  dir = new (std::nothrow) Float[N];
+    Float* __restrict__ Mdir = new (std::nothrow) Float[N];
+    Float* __restrict__ Mres = new (std::nothrow) Float[N];
     
-    Float* __restrict__ aux1 = new Float[L];
-    Float* __restrict__ aux2 = new Float[L];
-    Float* __restrict__ auxR = new Float[L];
+    Float* __restrict__ aux1 = new (std::nothrow) Float[L];
+    Float* __restrict__ aux2 = new (std::nothrow) Float[L];
+    Float* __restrict__ auxR = new (std::nothrow) Float[L];
     
-    Float* __restrict__  vil = new Float[N];
+    Float* __restrict__  vil = new (std::nothrow) Float[N];
     
-    Float* __restrict__  precon = new Float[L];
+    Float* __restrict__  precon = new (std::nothrow) Float[L];
     
     assert(  dir );
     assert( Mdir );
@@ -418,17 +419,17 @@ void HodgeConjugateResidualSolverCSR_SSOR(
     assert( threshold > 0 );
 //     assert( print_modulo >= 0 );
     
-    Float* __restrict__  dir = new Float[N];
-    Float* __restrict__ Mdir = new Float[N];
-    Float* __restrict__ Mres = new Float[N];
+    Float* __restrict__  dir = new (std::nothrow) Float[N];
+    Float* __restrict__ Mdir = new (std::nothrow) Float[N];
+    Float* __restrict__ Mres = new (std::nothrow) Float[N];
     
-    Float* __restrict__ aux1 = new Float[L];
-    Float* __restrict__ aux2 = new Float[L];
-    Float* __restrict__ auxR = new Float[L];
+    Float* __restrict__ aux1 = new (std::nothrow) Float[L];
+    Float* __restrict__ aux2 = new (std::nothrow) Float[L];
+    Float* __restrict__ auxR = new (std::nothrow) Float[L];
     
-    Float* __restrict__  vil = new Float[N];
+    Float* __restrict__  vil = new (std::nothrow) Float[N];
     
-    Float* __restrict__  diagonal = new Float[L];
+    Float* __restrict__  diagonal = new (std::nothrow) Float[L];
     
     assert(  dir );
     assert( Mdir );
@@ -735,15 +736,15 @@ void HodgeConjugateResidualSolverCSR_textbook(
     assert( threshold > 0 );
 //     assert( print_modulo >= 0 );
     
-    Float* __restrict__  dir = new Float[N];
-    Float* __restrict__ Mdir = new Float[N];
-    Float* __restrict__ Mres = new Float[N];
+    Float* __restrict__  dir = new (std::nothrow) Float[N];
+    Float* __restrict__ Mdir = new (std::nothrow) Float[N];
+    Float* __restrict__ Mres = new (std::nothrow) Float[N];
     
-    Float* __restrict__ aux1 = new Float[L];
-    Float* __restrict__ aux2 = new Float[L];
-    Float* __restrict__ auxR = new Float[L];
+    Float* __restrict__ aux1 = new (std::nothrow) Float[L];
+    Float* __restrict__ aux2 = new (std::nothrow) Float[L];
+    Float* __restrict__ auxR = new (std::nothrow) Float[L];
     
-    Float* __restrict__  vil = new Float[N];
+    Float* __restrict__  vil = new (std::nothrow) Float[N];
     
     assert(  dir );
     assert( Mdir );
