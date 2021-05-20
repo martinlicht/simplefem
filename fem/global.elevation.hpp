@@ -96,7 +96,7 @@ inline SparseMatrix FEECBrokenElevationMatrix( const Mesh& mesh, int n, int k, i
 // //     if( k==0 and r==0 and r_plus == 3 ){
 // //         
 // //         for( const auto& lme : localmatrixentries )
-// //             std::cout << lme.row << space << lme.column << space << lme.value << nl;
+// //             LOG << lme.row << space << lme.column << space << lme.value;// << nl;
 // //         
 // //         exit(0);
 // //     }

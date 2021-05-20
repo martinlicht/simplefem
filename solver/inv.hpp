@@ -109,7 +109,7 @@ class InverseOperator final
             }
             
 //             LOG << "call inverse";
-//             op.print( std::cout );
+//             LOG << op.text();   //op.print( std::cout );
 //             op.apply( dest, src, scaling );    
 //             LOG << "done inverse";
         }

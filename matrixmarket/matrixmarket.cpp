@@ -27,7 +27,7 @@ void MatrixMarket::Read( std::istream& input, int& rows, int& columns, std::vect
     
     input >> str_magicstring;
     
-    std::cout << str_magicstring << nl;
+    LOG << str_magicstring;// << std::endl;
   
 //     std::transform( str_magicstring.begin(),   str_magicstring.end(),   str_magicstring.begin(),   ::tolower );
   
@@ -109,24 +109,24 @@ void MatrixMarket::Read( std::istream& input, int& rows, int& columns, std::vect
     }
   
   
-    std::cout << "READ:" << std::endl;
-    std::cout << str_magicstring   << space
+    LOG << "READ:";// << std::endl;
+    LOG << str_magicstring   << space
                 << str_objecttype    << space
                 << str_matrixformat  << space
                 << str_entrytype     << space
                 << str_matrixfeature << space
-                << std::endl;
+                ;//<< std::endl;
     
     
-    std::cout << "TRANFORMED:" << std::endl;
-    std::cout << str_magicstring   << space
+    LOG << "TRANFORMED:";// << std::endl;
+    LOG << str_magicstring   << space
                 << str_objecttype    << space
                 << str_matrixformat  << space
                 << str_entrytype     << space
                 << str_matrixfeature << space
-                << std::endl;
+                ;//<< std::endl;
                 
-    std::cout << "COMMENTS: " << std::endl << my_comment << std::endl;
+    LOG << "COMMENTS: " << nl << my_comment;// << std::endl;
   
     
     
@@ -244,7 +244,7 @@ void MatrixMarket::WriteSparse( std::ostream& output, const int& rows, const int
            << Consts::str_real        << space
            << Consts::str_general     << std::endl;
            
-    std::cout << '%' << comment << std::endl;
+    LOG << '%' << comment;// << std::endl;
     
     output << rows << space
             << columns << space 
