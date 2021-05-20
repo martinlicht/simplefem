@@ -85,7 +85,7 @@ class MultiIndex final
 
 
 
-MultiIndex ZeroMultiIndex( const IndexRange& ir )
+inline MultiIndex ZeroMultiIndex( const IndexRange& ir )
 {
     return MultiIndex( ir, std::vector<int>( ir.cardinality(), 0 ) );
 }

@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <iostream>
 #include <iomanip>
+#include <string>
 #include <vector>
 
 #include "../basic.hpp"

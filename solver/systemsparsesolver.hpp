@@ -12,7 +12,7 @@
 #include "../basic.hpp"
 #include "sparsesolver.hpp"
 
-void HodgeConjugateResidualSolverCSR( 
+inline void HodgeConjugateResidualSolverCSR( 
     const int N, 
     const int L, 
     Float* x, 
@@ -27,7 +27,7 @@ void HodgeConjugateResidualSolverCSR(
     int inneriteration_print_modulo
 );
 
-void HodgeConjugateResidualSolverCSR_textbook( 
+inline void HodgeConjugateResidualSolverCSR_textbook( 
     const int N, 
     const int L, 
     Float* x, 
@@ -42,7 +42,7 @@ void HodgeConjugateResidualSolverCSR_textbook(
     int inneriteration_print_modulo
 );
 
-void HodgeConjugateResidualSolverCSR_SSOR( 
+inline void HodgeConjugateResidualSolverCSR_SSOR( 
     const int N, 
     const int L, 
     Float* x, 

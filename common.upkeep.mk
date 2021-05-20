@@ -51,5 +51,5 @@ cppcheck:
 
 .PHONY: cpplint
 cpplint:
-	( ./../cpplint.py --exclude=.private/ --exclude=.legacy/ --exclude=.playground/ --recursive --filter=-whitespace,-legal,-build/namespace --quiet . ) | sort | uniq -c > OUTPUT_CPPLINT.txt
+	( ./../Tools/cpplint.py --exclude=.private/ --exclude=.legacy/ --exclude=.playground/ --recursive --filter=-whitespace,-legal,-build/namespace --quiet . ) | sort | uniq -c > OUTPUT_CPPLINT.txt
 
