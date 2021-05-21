@@ -1,0 +1,19 @@
+name: Unit tests
+
+on:
+  workflow_dispatch:
+#  schedule:
+#    - cron: '0 * * * *'
+  
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: checkout repository...
+      uses: actions/checkout@v2
+    - name: build project...
+      run: make
+    - name: run tests...
+      run: make test
