@@ -41,7 +41,7 @@ inline SparseMatrix FEECSullivanInclusionMatrix( const Mesh& mesh, int n, int k,
     // check whether the parameters are right 
     assert( n >= 0 && n <= mesh.getinnerdimension() );
     assert( k >= 0 && k <= n );
-    assert( r >= 1 );
+    assert( r >= 1 or k == n ); // TODO
 
     // generate the list of sigmas and multiindices 
     

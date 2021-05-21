@@ -7,8 +7,9 @@
 
 # Do you want to use GCC or Clang?
 # Uncomment the appropriate definition below
-FLAG_CXX := CLANG
-# FLAG_CXX := GCC
+# FLAG_CXX := CLANG
+FLAG_CXX := GCC
+# FLAG_CXX := ICC
 
 # Do you want to ENABLE the use of tcmalloc?
 # Uncomment the following line to enable tcmalloc
@@ -29,6 +30,10 @@ FLAG_CXX := CLANG
 # Do you want to DISABLE checking of meshes?
 # Uncomment the following line to disable extensive check routines for meshes
 FLAG_DISABLE_CHECK_MESHES=yes
+
+# Do you want to DISABLE excpetion handling?
+# Uncomment the following line to disable exception handling
+FLAG_NO_EXCEPTIONS=yes
 
 # Do you want to enable static analysis during the compilation process
 # Uncomment the following line to enable static analysis
@@ -64,6 +69,10 @@ FLAG_DISABLE_CHECK_MESHES=yes
 
 
 
+
+
+# If we are in RELEASE_MODE then set the following flags 
+
 ifdef $(RELEASE_MODE)
 FLAG_DISABLE_CHECK_MESHES=yes
 FLAG_DISABLE_STDLIBDEBUG=yes
@@ -75,7 +84,19 @@ endif
 
 
 
-### Compiler 
+
+
+
+
+
+
+
+
+###############################################
+#                                             #
+#         Set the compiler command            #
+#                                             #
+###############################################
 
 ifeq ($(FLAG_CXX),GCC)
 
@@ -84,6 +105,10 @@ ifeq ($(FLAG_CXX),GCC)
 else ifeq ($(FLAG_CXX),CLANG)
 
   CXX := clang++
+
+else ifeq ($(FLAG_CXX),ICC)
+
+  CXX := icc
 
 else
 
@@ -98,7 +123,11 @@ endif
 
 
 
-### Language and dialects 
+###############################################
+#                                             #
+#           Language std settings             #
+#                                             #
+###############################################
 
 CXXFLAGS_LANG := -std=c++17 -pedantic 
 
@@ -109,195 +138,250 @@ CXXFLAGS_LANG := -std=c++17 -pedantic
 
 
 
-### Format for diagnostic messages 
 
-ifeq ($(FLAG_CXX),CLANG)
 
-  CXXFLAGS_DIAGFORMAT := -fdiagnostics-show-template-tree
 
+
+###############################################
+#                                             #
+#               Optimization                  #
+#                                             #
+###############################################
+
+# If optimization is enabled, then set a number of flags 
+# In the absence of optimization, we set O1
+
+CXXFLAGS_OPTIMIZE:=
+
+ifeq ($(FLAG_DO_OPTIMIZE),yes)
+
+	ifeq ($(FLAG_CXX),ICC)
+		CXXFLAGS_OPTIMIZE += -march=core-avx2
+		CXXFLAGS_OPTIMIZE += -intel-optimized-headers 
+		CXXFLAGS_OPTIMIZE += -Ofast -xHOST -O3 -ipo -no-prec-div -fp-model fast=2
+		CXXFLAGS_OPTIMIZE += 
+		CXXFLAGS_OPTIMIZE += 
+		CXXFLAGS_OPTIMIZE += 
+	else 
+		CXXFLAGS_OPTIMIZE += -Ofast 
+		CXXFLAGS_OPTIMIZE += -march=native 
+		ifeq ($(FLAG_CXX),CLANG)
+			CXXFLAGS_OPTIMIZE := -inline-threshold=1200
+		endif
+		CXXFLAGS_OPTIMIZE += -flto
+	endif
+else
+	CXXFLAGS_OPTIMIZE += -O1
+endif
+
+
+# Do we apply OpenMP?
+
+ifeq ($(FLAG_ENABLE_OPENMP),yes)
+	CXXFLAGS_OPTIMIZE += -fopenmp
+endif
+
+
+# Do we strip debug information?
+
+ifeq ($(FLAG_CXX),GCC) 
+ifeq ($(FLAG_DO_STRIP),yes)
+	CXXFLAGS_OPTIMIZE += -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--strip-all 
+endif
 endif
 
 
 
 
-### 
-### TODO:
-### Enable Wall extra pedantic 
-### but filter out annoying warnings for gcc / clang 
-### 
-### Than add shared options and compiler specific options 
-### 
-### That can be found in the GCC man pages 
-### 
-### 
+###############################################
+#                                             #
+#        Misc Code generation options         #
+#                                             #
+###############################################
+
+CXXFLAGS_CODEGEN := 
+
+ifneq ($(FLAG_NO_EXCEPTIONS),yes)
+	CXXFLAGS_CODEGEN += -fno-exceptions
+endif
+
+CXXFLAGS_CODEGEN += -fvisibility=default
+
+ifneq ($(OS),Windows_NT)
+	CXXFLAGS_CODEGEN += -fpic 
+endif
 
 
-### Warnings 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+###############################################
+#                                             #
+#        Compiler warning settings            #
+#                                             #
+###############################################
 
 CXXFLAGS_WARNINGS := 
-CXXFLAGS_WARNINGS += 
 CXXFLAGS_WARNINGS += -Wall -Wextra -Wpedantic 
 
 ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 
-CXXFLAGS_WARNINGS += -Wodr -Wmissing-field-initializers -Wctor-dtor-privacy -Wsign-promo -Woverloaded-virtual -Wno-missing-braces
+	CXXFLAGS_WARNINGS += -Wodr -Wmissing-field-initializers -Wctor-dtor-privacy -Wsign-promo -Woverloaded-virtual -Wno-missing-braces
 
-CXXFLAGS_WARNINGS += -Wundef 
-CXXFLAGS_WARNINGS += -Wcast-align -Wcast-qual -Wmissing-declarations -Wredundant-decls -Wno-redundant-decls
-CXXFLAGS_WARNINGS += -Wformat=2 -Wformat-nonliteral -Wformat-security -Wformat-y2k -Wmisleading-indentation
-# CXXFLAGS_WARNINGS += -Wold-style-cast
+	CXXFLAGS_WARNINGS += -Wundef 
+	CXXFLAGS_WARNINGS += -Wcast-align -Wcast-qual -Wmissing-declarations -Wredundant-decls -Wno-redundant-decls
+	CXXFLAGS_WARNINGS += -Wformat=2 -Wformat-nonliteral -Wformat-security -Wformat-y2k -Wmisleading-indentation
+	# CXXFLAGS_WARNINGS += -Wold-style-cast
 
-ifeq ($(FLAG_CXX),GCC)
+	ifeq ($(FLAG_CXX),GCC)
 
-  CXXFLAGS_WARNINGS += -Wmultiple-inheritance -Wvirtual-inheritance
-  CXXFLAGS_WARNINGS += -Wpointer-arith
-  CXXFLAGS_WARNINGS += -Wreturn-local-addr
-  CXXFLAGS_WARNINGS += -Wfloat-equal -Wdouble-promotion -Wfloat-conversion
-  CXXFLAGS_WARNINGS += -Wno-sign-compare
-  CXXFLAGS_WARNINGS += -Wconversion 
-  CXXFLAGS_WARNINGS += -Wno-sign-conversion
-  CXXFLAGS_WARNINGS += -Wlogical-op -Wreturn-local-addr
-  #check which options there are ... 
-  CXXFLAGS_WARNINGS += -Wnull-dereference
-  CXXFLAGS_WARNINGS += -Wswitch-default -Wswitch-enum
-  CXXFLAGS_WARNINGS += -Wunused -Wno-unused-variable
-  CXXFLAGS_WARNINGS += -Wuninitialized
-  CXXFLAGS_WARNINGS += -Wsuggest-final-types -Wsuggest-final-methods -Wsuggest-override
-  CXXFLAGS_WARNINGS += -Walloca
-  CXXFLAGS_WARNINGS += -Warray-bounds=2
-  CXXFLAGS_WARNINGS += -Wduplicated-branches -Wduplicated-cond
-  #CXXFLAGS_WARNINGS += -Wshadow=global
-  CXXFLAGS_WARNINGS += -Wno-shadow
-  CXXFLAGS_WARNINGS += 
-  CXXFLAGS_WARNINGS += -Wdangling-else -Wparentheses
-  CXXFLAGS_WARNINGS += -Wwrite-strings
-  CXXFLAGS_WARNINGS += -Wunsafe-loop-optimizations 
-#   CXXFLAGS_WARNINGS += -Winline 
-  CXXFLAGS_WARNINGS += -Wvector-operation-performance
-  CXXFLAGS_WARNINGS += -Wdisabled-optimization
-	#TODO What is stack smashing???? HSA????
-	#TODO Read the format warnings 
+		CXXFLAGS_WARNINGS += -Wmultiple-inheritance -Wvirtual-inheritance
+		CXXFLAGS_WARNINGS += -Wpointer-arith
+		CXXFLAGS_WARNINGS += -Wreturn-local-addr
+		CXXFLAGS_WARNINGS += -Wfloat-equal -Wdouble-promotion -Wfloat-conversion
+		CXXFLAGS_WARNINGS += -Wno-sign-compare
+		CXXFLAGS_WARNINGS += -Wconversion 
+		CXXFLAGS_WARNINGS += -Wno-sign-conversion
+		CXXFLAGS_WARNINGS += -Wlogical-op -Wreturn-local-addr
+		#check which options there are ... 
+		CXXFLAGS_WARNINGS += -Wnull-dereference
+		CXXFLAGS_WARNINGS += -Wswitch-default -Wswitch-enum
+		CXXFLAGS_WARNINGS += -Wunused -Wno-unused-variable
+		CXXFLAGS_WARNINGS += -Wuninitialized
+		CXXFLAGS_WARNINGS += -Wsuggest-final-types -Wsuggest-final-methods -Wsuggest-override
+		CXXFLAGS_WARNINGS += -Walloca
+		CXXFLAGS_WARNINGS += -Warray-bounds=2
+		CXXFLAGS_WARNINGS += -Wduplicated-branches -Wduplicated-cond
+		#CXXFLAGS_WARNINGS += -Wshadow=global
+		CXXFLAGS_WARNINGS += -Wno-shadow
+		CXXFLAGS_WARNINGS += 
+		CXXFLAGS_WARNINGS += -Wdangling-else -Wparentheses
+		CXXFLAGS_WARNINGS += -Wwrite-strings
+		CXXFLAGS_WARNINGS += -Wunsafe-loop-optimizations 
+		#   CXXFLAGS_WARNINGS += -Winline 
+		CXXFLAGS_WARNINGS += -Wvector-operation-performance
+		CXXFLAGS_WARNINGS += -Wdisabled-optimization
+			#TODO What is stack smashing???? HSA????
+			#TODO Read the format warnings 
 
-else ifeq ($(FLAG_CXX),CLANG)
+	else ifeq ($(FLAG_CXX),CLANG)
 
-  CXXFLAGS_WARNINGS += -Wabstract-vbase-init
-  CXXFLAGS_WARNINGS += -Walloca
-  CXXFLAGS_WARNINGS += -Wno-vla-extension -Werror-implicit -Wabsolute-value -Wno-shorten-64-to-32
-  CXXFLAGS_WARNINGS += -Wanon-enum-enum-conversion -Wassign-enum
-  CXXFLAGS_WARNINGS += -Warray-bounds-pointer-arithmetic
-  CXXFLAGS_WARNINGS += -Wbad-function-cast
-  CXXFLAGS_WARNINGS += -Wc++11-narrowing
-  CXXFLAGS_WARNINGS += -Wchar-subscripts
-  CXXFLAGS_WARNINGS += -Wclass-varargs
-  CXXFLAGS_WARNINGS += -Wcomma
-  CXXFLAGS_WARNINGS += -Wcomment
-  CXXFLAGS_WARNINGS += -Wconsumed
-  CXXFLAGS_WARNINGS += -Wconversion -Wno-sign-conversion
-  CXXFLAGS_WARNINGS += -Wctad-maybe-unsupported
-  CXXFLAGS_WARNINGS += -Wdate-time
-  CXXFLAGS_WARNINGS += -Wdelete-non-abstract-non-virtual-dtor
-  CXXFLAGS_WARNINGS += -Wdeprecated
-#   CXXFLAGS_WARNINGS += -Wdouble-promotion #disabled
-  #CXXFLAGS_WARNINGS += -Wdtor-name  TODO: Is this one actually defined???
-  CXXFLAGS_WARNINGS += -Wduplicate-decl-specifier -Wduplicate-enum -Wduplicate-method-arg -Wduplicate-method-match 
-  CXXFLAGS_WARNINGS += -Wembedded-directive
-  CXXFLAGS_WARNINGS += -Wempty-init-stmt
-  CXXFLAGS_WARNINGS += -Wenum-compare-conditional
-  CXXFLAGS_WARNINGS += -Wexceptions
-  CXXFLAGS_WARNINGS += -Wextra-semi
-  CXXFLAGS_WARNINGS += -Wfloat-conversion -Wfloat-equal
-  CXXFLAGS_WARNINGS += -Wformat
-  CXXFLAGS_WARNINGS += -Wheader-hygiene
-  CXXFLAGS_WARNINGS += -Widiomatic-parentheses
-  CXXFLAGS_WARNINGS += -Wimplicit-float-conversion
-  CXXFLAGS_WARNINGS += -Wimplicit-function-declaration
-  CXXFLAGS_WARNINGS += -Winfinite-recursion
-  CXXFLAGS_WARNINGS += -Wint-conversion
-  CXXFLAGS_WARNINGS += -Wkeyword-macro
-  #CXXFLAGS_WARNINGS += -Wmain
-  CXXFLAGS_WARNINGS += -Wmisleading-indentation
-  CXXFLAGS_WARNINGS += -Wmissing-braces
-  CXXFLAGS_WARNINGS += -Wmissing-field-initializers
-  CXXFLAGS_WARNINGS += -Wmissing-prototypes
-  CXXFLAGS_WARNINGS += -Wmissing-variable-declarations
-  CXXFLAGS_WARNINGS += -Wmost -Wmove 
-  CXXFLAGS_WARNINGS += -Wnewline-eof
-  CXXFLAGS_WARNINGS += -Wnon-virtual-dtor
-  CXXFLAGS_WARNINGS += -Wnonportable-system-include-path
-  CXXFLAGS_WARNINGS += -Wnull-pointer-arithmetic 
-  CXXFLAGS_WARNINGS += -Woverlength-strings
-  CXXFLAGS_WARNINGS += -Woverloaded-virtual
-  CXXFLAGS_WARNINGS += -Winitializer-overrides
-  CXXFLAGS_WARNINGS += -Woverriding-method-mismatch
-  CXXFLAGS_WARNINGS += -Wparentheses
-  CXXFLAGS_WARNINGS += -Wpessimizing-move
-  CXXFLAGS_WARNINGS += -Wrange-loop-analysis
-  CXXFLAGS_WARNINGS += -Wredundant-move
-  CXXFLAGS_WARNINGS += -Wredundant-parens
-  CXXFLAGS_WARNINGS += -Wreserved-id-macro
-  CXXFLAGS_WARNINGS += -Wreserved-user-defined-literal
-  CXXFLAGS_WARNINGS += -Wreturn-std-move
-  CXXFLAGS_WARNINGS += -Wself-assign -Wself-move
-  CXXFLAGS_WARNINGS += -Wsemicolon-before-method-body
-  CXXFLAGS_WARNINGS += -Wsometimes-uninitialized
-  CXXFLAGS_WARNINGS += -Wstrict-prototypes
-  CXXFLAGS_WARNINGS += -Wstring-conversion
-#   CXXFLAGS_WARNINGS += -Wsuggest-destructor-override #unknown
-  CXXFLAGS_WARNINGS += -Wtautological-compare
-  CXXFLAGS_WARNINGS += -Wtautological-type-limit-compare
-#   CXXFLAGS_WARNINGS += -Wuninitialized-const-reference #unknown
-  CXXFLAGS_WARNINGS += -Wunreachable-code
-  CXXFLAGS_WARNINGS += -Wunused
-  CXXFLAGS_WARNINGS += -Wzero-as-null-pointer-constant
-  CXXFLAGS_WARNINGS += 
-  CXXFLAGS_WARNINGS += 
-  CXXFLAGS_WARNINGS += 
-  CXXFLAGS_WARNINGS += 
-  CXXFLAGS_WARNINGS += 
-  CXXFLAGS_WARNINGS += 
-  CXXFLAGS_WARNINGS += 
+		CXXFLAGS_WARNINGS += -Wabstract-vbase-init
+		CXXFLAGS_WARNINGS += -Walloca
+		CXXFLAGS_WARNINGS += -Wno-vla-extension -Werror-implicit -Wabsolute-value -Wno-shorten-64-to-32
+		CXXFLAGS_WARNINGS += -Wanon-enum-enum-conversion -Wassign-enum
+		CXXFLAGS_WARNINGS += -Warray-bounds-pointer-arithmetic
+		CXXFLAGS_WARNINGS += -Wbad-function-cast
+		CXXFLAGS_WARNINGS += -Wc++11-narrowing
+		CXXFLAGS_WARNINGS += -Wchar-subscripts
+		CXXFLAGS_WARNINGS += -Wclass-varargs
+		CXXFLAGS_WARNINGS += -Wcomma
+		CXXFLAGS_WARNINGS += -Wcomment
+		CXXFLAGS_WARNINGS += -Wconsumed
+		CXXFLAGS_WARNINGS += -Wconversion -Wno-sign-conversion
+		CXXFLAGS_WARNINGS += -Wctad-maybe-unsupported
+		CXXFLAGS_WARNINGS += -Wdate-time
+		CXXFLAGS_WARNINGS += -Wdelete-non-abstract-non-virtual-dtor
+		CXXFLAGS_WARNINGS += -Wdeprecated
+		#   CXXFLAGS_WARNINGS += -Wdouble-promotion #disabled
+		#CXXFLAGS_WARNINGS += -Wdtor-name  TODO: Is this one actually defined???
+		CXXFLAGS_WARNINGS += -Wduplicate-decl-specifier -Wduplicate-enum -Wduplicate-method-arg -Wduplicate-method-match 
+		CXXFLAGS_WARNINGS += -Wembedded-directive
+		CXXFLAGS_WARNINGS += -Wempty-init-stmt
+		CXXFLAGS_WARNINGS += -Wenum-compare-conditional
+		CXXFLAGS_WARNINGS += -Wexceptions
+		CXXFLAGS_WARNINGS += -Wextra-semi
+		CXXFLAGS_WARNINGS += -Wfloat-conversion -Wfloat-equal
+		CXXFLAGS_WARNINGS += -Wformat
+		CXXFLAGS_WARNINGS += -Wheader-hygiene
+		CXXFLAGS_WARNINGS += -Widiomatic-parentheses
+		CXXFLAGS_WARNINGS += -Wimplicit-float-conversion
+		CXXFLAGS_WARNINGS += -Wimplicit-function-declaration
+		CXXFLAGS_WARNINGS += -Winfinite-recursion
+		CXXFLAGS_WARNINGS += -Wint-conversion
+		CXXFLAGS_WARNINGS += -Wkeyword-macro
+		#CXXFLAGS_WARNINGS += -Wmain
+		CXXFLAGS_WARNINGS += -Wmisleading-indentation
+		CXXFLAGS_WARNINGS += -Wmissing-braces
+		CXXFLAGS_WARNINGS += -Wmissing-field-initializers
+		CXXFLAGS_WARNINGS += -Wmissing-prototypes
+		CXXFLAGS_WARNINGS += -Wmissing-variable-declarations
+		CXXFLAGS_WARNINGS += -Wmost -Wmove 
+		CXXFLAGS_WARNINGS += -Wnewline-eof
+		CXXFLAGS_WARNINGS += -Wnon-virtual-dtor
+		CXXFLAGS_WARNINGS += -Wnonportable-system-include-path
+		CXXFLAGS_WARNINGS += -Wnull-pointer-arithmetic 
+		CXXFLAGS_WARNINGS += -Woverlength-strings
+		CXXFLAGS_WARNINGS += -Woverloaded-virtual
+		CXXFLAGS_WARNINGS += -Winitializer-overrides
+		CXXFLAGS_WARNINGS += -Woverriding-method-mismatch
+		CXXFLAGS_WARNINGS += -Wparentheses
+		CXXFLAGS_WARNINGS += -Wpessimizing-move
+		CXXFLAGS_WARNINGS += -Wrange-loop-analysis
+		CXXFLAGS_WARNINGS += -Wredundant-move
+		CXXFLAGS_WARNINGS += -Wredundant-parens
+		CXXFLAGS_WARNINGS += -Wreserved-id-macro
+		CXXFLAGS_WARNINGS += -Wreserved-user-defined-literal
+		CXXFLAGS_WARNINGS += -Wreturn-std-move
+		CXXFLAGS_WARNINGS += -Wself-assign -Wself-move
+		CXXFLAGS_WARNINGS += -Wsemicolon-before-method-body
+		CXXFLAGS_WARNINGS += -Wsometimes-uninitialized
+		CXXFLAGS_WARNINGS += -Wstrict-prototypes
+		CXXFLAGS_WARNINGS += -Wstring-conversion
+		#   CXXFLAGS_WARNINGS += -Wsuggest-destructor-override #unknown
+		CXXFLAGS_WARNINGS += -Wtautological-compare
+		CXXFLAGS_WARNINGS += -Wtautological-type-limit-compare
+		#   CXXFLAGS_WARNINGS += -Wuninitialized-const-reference #unknown
+		CXXFLAGS_WARNINGS += -Wunreachable-code
+		CXXFLAGS_WARNINGS += -Wunused
+		CXXFLAGS_WARNINGS += -Wzero-as-null-pointer-constant
+		CXXFLAGS_WARNINGS += 
+		CXXFLAGS_WARNINGS += 
+		CXXFLAGS_WARNINGS += 
+		CXXFLAGS_WARNINGS += 
+		CXXFLAGS_WARNINGS += 
+		CXXFLAGS_WARNINGS += 
+		CXXFLAGS_WARNINGS += 
 
-  #CXXFLAGS_WARNINGS += -Wno-unused-variable
+		#CXXFLAGS_WARNINGS += -Wno-unused-variable
 
 
-	#Some of the .... suchen auf der CLANG seite 
+			#Some of the .... suchen auf der CLANG seite 
 
-	# TODO: Die unused lambda captures will ersetzen durch generelle camptures 
+			# TODO: Die unused lambda captures will ersetzen durch generelle camptures 
 
-endif
+	endif
  
 endif
- 
+
+
+# In any case, remove the following warnings 
+
 CXXFLAGS_WARNINGS += -Wno-conversion 
 CXXFLAGS_WARNINGS += -Wno-sign-compare 
 CXXFLAGS_WARNINGS += -Wno-unused-variable
 CXXFLAGS_WARNINGS += -Wno-unused-parameter
 CXXFLAGS_WARNINGS += -Wno-vla
+CXXFLAGS_WARNINGS += -Wno-unknown-pragmas
 CXXFLAGS_WARNINGS += -Wno-type-limits 
 
 
 
 
- 
- 
- 
- 
- 
- ### Static analyzer 
-
-ifeq ($(FLAG_DO_STATICANALYSIS),yes)
-
-ifeq ($(FLAG_CXX),GCC)
-
-CXXFLAGS_STATICANALYSER := -fanalyzer -Wanalyzer-too-complex
-
-else ifeq ($(FLAG_CXX),CLANG)
-
-CXXFLAGS_STATICANALYSER := 
-
-endif
-
-endif
 
 
 
@@ -307,7 +391,14 @@ endif
 
 
 
-### Debugging 
+
+
+###############################################
+#                                             #
+#          Debugging information              #
+#                                             #
+###############################################
+
 CXXFLAGS_DEBUG :=
 ifeq ($(FLAG_NO_DEBUGINFO),yes)
 else
@@ -315,12 +406,11 @@ CXXFLAGS_DEBUG += -g
 endif
 
 
-
-
-
-
-
-### Profiling instrumentation 
+###############################################
+#                                             #
+#          Profiling instrumentation          #
+#                                             #
+###############################################
 
 ifeq ($(FLAG_DO_PROFILE),yes)
 
@@ -329,9 +419,15 @@ ifeq ($(FLAG_DO_PROFILE),yes)
 endif
 
 
+###############################################
+#                                             #
+#          Sanitizer instrumentation          #
+#                                             #
+###############################################
 
-
-### Sanitizer instrumentation 
+# There are several incompatibilities between sanitizers 
+# thread cannot be combined with address and leak
+# Warning: memory causes considerable slowdown
 
 ifeq ($(FLAG_DO_USE_SANITIZER),yes)
 
@@ -370,7 +466,11 @@ ifeq ($(FLAG_DO_USE_SANITIZER),yes)
 endif
 
 
-
+###############################################
+#                                             #
+#    Use TCMalloc instead of std allocators   #
+#                                             #
+###############################################
 
 ifeq ($(FLAG_USE_TCMALLOC),yes)
 	CXXFLAGS_MALLOC=-fno-builtin-malloc -fno-builtin-calloc -fno-builtin-realloc -fno-builtin-free
@@ -385,41 +485,47 @@ endif
 
 
 
-# Optimization 
-CXXFLAGS_OPTIMIZE:=
+ 
+ 
+###############################################
+#                                             #
+#          Static analysis                    #
+#                                             #
+###############################################
 
-ifeq ($(FLAG_DO_OPTIMIZE),yes)
-	CXXFLAGS_OPTIMIZE += -O3
-	CXXFLAGS_OPTIMIZE += -march=native 
-	ifeq ($(FLAG_CXX),CLANG)
-		CXXFLAGS_OPTIMIZE := -inline-threshold=1200
+ifeq ($(FLAG_DO_STATICANALYSIS),yes)
+
+	ifeq ($(FLAG_CXX),GCC)
+
+		CXXFLAGS_STATICANALYSER := -fanalyzer -Wanalyzer-too-complex
+
+	else ifeq ($(FLAG_CXX),CLANG)
+
+		CXXFLAGS_STATICANALYSER := 
+
 	endif
-	CXXFLAGS_OPTIMIZE += -flto -fwhole-program
-else
-	CXXFLAGS_OPTIMIZE += -O1
-endif
 
-ifeq ($(FLAG_ENABLE_OPENMP),yes)
-	CXXFLAGS_OPTIMIZE += -fopenmp
 endif
 
 
-ifeq ($(FLAG_CXX),GCC)
-ifeq ($(FLAG_DO_STRIP),yes)
-	CXXFLAGS_OPTIMIZE += -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--strip-all 
+###############################################
+#                                             #
+#        Format of diagnostic settings        #
+#                                             #
+###############################################
+
+ifeq ($(FLAG_CXX),CLANG)
+
+  CXXFLAGS_DIAGFORMAT := -fdiagnostics-show-template-tree
+
 endif
-endif
 
 
 
 
 
-# Code generation options
 
-CXXFLAGS_CODEGEN := -fno-exceptions -fvisibility=default
-ifneq ($(OS),Windows_NT)
-CXXFLAGS_CODEGEN += -fpic 
-endif
+
 
 
 
@@ -432,7 +538,7 @@ endif
 
 ###############################################
 #                                             #
-#     CXXFLAGS - gather compiler flags        #
+#   CXXFLAGS - gather C++ compiler flags      #
 #                                             #
 ###############################################
 
@@ -451,12 +557,13 @@ CXXFLAGS += ${CXXFLAGS_CODEGEN}
 CXXFLAGS := $(strip $(CXXFLAGS))
 
 
-
+CXXFLAGS_EXECUTABLE:=
+CXXFLAGS_EXECUTABLE+=$(CXXFLAGS) -fwhole-program
 
 
 ###############################################
 #                                             #
-#            preprocessor flags               #
+#   CPPFLAGS - gather preprocessor flags      #
 #                                             #
 ###############################################
 
@@ -480,10 +587,9 @@ CPPFLAGS += $(FLAG_DO_USE_EXTENDED_PRECISION)
 CPPFLAGS := $(strip $(CPPFLAGS))
 
 
-
 ###############################################
 #                                             #
-#               linker flags                  #
+#         LDLIBS - gather linker flags        #
 #                                             #
 ###############################################
 
@@ -494,6 +600,33 @@ else
 endif
 
 LDLIBS := $(strip $(LDLIBS))
+
+
+
+
+
+
+###############################################
+#                                             #
+#         Choose the type of linking          #
+#         - static                            #
+#         - dynamic                           #
+#         - unspecified                       #
+#                                             #
+###############################################
+
+
+LINKINGTYPE:=unspecified
+
+ifeq ($(OS),Windows_NT)
+LINKINGTYPE:=static
+else ifeq ($(FLAG_DO_OPTIMIZE=yes),yes)
+LINKINGTYPE:=static
+else
+LINKINGTYPE:=dynamic
+endif
+
+
 
 
 

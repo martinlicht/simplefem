@@ -74,6 +74,8 @@ int main()
 
             ConvergenceTable contable;
             
+            contable << "#nullvec";
+            
 
             int min_l = 0; 
             

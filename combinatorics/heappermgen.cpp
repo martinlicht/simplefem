@@ -19,7 +19,7 @@ void HeapsAlgorithmInit( int& i, std::vector<int>& memo, const std::vector<int>&
 
 bool HeapsAlgorithmStep( int& i, std::vector<int>& memo, std::vector<int>& perm )
 {
-    const int n = memo.size();
+    const std::vector<int>::size_type n = memo.size();
     assert( memo.size() == perm.size() );
     assert( 0 <= i && i <= n );
 

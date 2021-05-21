@@ -47,7 +47,7 @@ int main()
             
             std::vector<int> markededges;
             for( int t : markedcells ) markededges.push_back( M.get_oldest_edge( t ) );
-            sort_and_unique( markededges );
+            sort_and_remove_duplicates( markededges );
             
             std::cout << c << "/" << c_max << " Refine " << markedcells.size() << "/" << M.count_triangles() << " ... ";
             M.newest_vertex_bisection_recursive( markededges );
@@ -88,7 +88,7 @@ int main()
             
             std::vector<int> markededges;
             for( int t : markedcells ) markededges.push_back( M.get_oldest_edge( t ) );
-            sort_and_unique( markededges );
+            sort_and_remove_duplicates( markededges );
             
             std::cout << c << "/" << c_max << "Refine " << markedcells.size() << "/" << M.count_triangles() << " ... ";
             M.newest_vertex_bisection_recursive( markededges );
@@ -129,7 +129,7 @@ int main()
             
             std::vector<int> markededges;
             for( int t : markedcells ) markededges.push_back( M.get_oldest_edge( t ) );
-            sort_and_unique( markededges );
+            sort_and_remove_duplicates( markededges );
             
             std::cout << c << "/" << c_max << "Refine " << markedcells.size() << "/" << M.count_triangles() << " ... ";
             M.newest_vertex_bisection_recursive( markededges );
@@ -163,7 +163,7 @@ int main()
             std::vector<int> markededges;
 //             for( int t : markedcells ) markededges.push_back( M.get_oldest_edge( t ) );
             markededges.push_back( rand() % M.count_edges() );
-            sort_and_unique( markededges );
+            sort_and_remove_duplicates( markededges );
             
 //             std::cout << i << "/" << iter_max << " Refine " << markedcells.size() << "/" << M.count_triangles() << " ... ";
             M.newest_vertex_bisection_recursive( markededges );
@@ -197,7 +197,7 @@ int main()
             std::vector<int> markededges;
 //             for( int t : markedcells ) markededges.push_back( M.get_oldest_edge( t ) );
             markededges.push_back( 0 );
-            sort_and_unique( markededges );
+            sort_and_remove_duplicates( markededges );
             
             std::cout << M.get_edge_vertex( 0, 0 ) << space << M.get_edge_vertex( 0, 1 ) << nl;
             

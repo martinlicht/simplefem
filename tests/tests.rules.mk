@@ -27,10 +27,27 @@ $(context).include := $(patsubst %,-L$(projectdir)/%,$(affix.$(context)))
 linkerprefix       :=-Wl,
 $(context).rpath_t := $(patsubst %,-rpath=$(pathvar)/%,$(affix.$(context))) 
 $(context).rpath   := $(patsubst %,$(linkerprefix)%,$($(context).rpath_t)) 
-$(context).link    := $(patsubst %,-l%,$(affix.$(context)))
+$(context).lib     := $(patsubst %,-l%,$(affix.$(context)))
+$(context).alib    := $(patsubst %,-l:lib%.a,$(affix.$(context)))
+$(context).solib   := $(patsubst %,-l:lib%.so,$(affix.$(context)))
+
+ifeq ($(LINKINGTYPE),static)
+$(context).mylib := $($(context).alib)
+else ifeq ($(LINKINGTYPE),dynamic)
+$(context).mylib := $($(context).solib)
+else ifeq ($(LINKINGTYPE),unspecified)
+$(context).mylib := $($(context).lib)
+else
+$(error No linking mode recognized: $(LINKINGTYPE)) 
+endif
 
 $($(context).depdir):
 	@mkdir -p $@
+
+
+
+
+
 
 $($(context).outs): mycontext    := $(context)
 $($(context).outs): mycontextdir := $(contextdir)
@@ -44,15 +61,11 @@ $($(context).outs): $(contextdir)/%.out: $(contextdir)/%.cpp | $($(context).depd
 # 	@ echo depdir $($(mycontext).depdir)
 # 	@ echo $($(mycontext).include)
 # 	@ echo $($(mycontext).rpath)
-# 	@ echo $($(mycontext).link)
+# 	@ echo $($(mycontext).lib)
 	@g++ -MM $(mycontextdir)/$*.cpp -MT $@ -MF $($(mycontext).depdir)/$*.d
-ifeq ($(OS),Windows_NT)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $($(mycontext).include) $($(mycontext).rpath) $($(mycontext).link) -o $@ $(LDLIBS)
-else
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $($(mycontext).include) $($(mycontext).rpath) $($(mycontext).link) -o $@ $(LDLIBS)
-endif
+	$(CXX) $(CXXFLAGS_EXECUTABLE) $(CPPFLAGS) $< $($(mycontext).include) $($(mycontext).rpath) $($(mycontext).mylib) -o $@ $(LDLIBS)
 
-	
+
 -include $($(context).dependencies)
 
 $($(context).outs): $(contextdir)/%.out: $(contextdir)/makefile 

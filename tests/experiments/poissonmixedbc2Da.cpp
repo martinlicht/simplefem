@@ -115,6 +115,8 @@ int main()
             
             ConvergenceTable contable;
             
+            contable << "u_error" << "du_error" << nl;
+            
 
             for( int l = 0; l < min_l; l++ )
                 M.uniformrefinement();
@@ -194,7 +196,7 @@ int main()
                         cout << "...compute norms of solution and right-hand side:" << endl;
             
                         Float sol_norm = interpol_sol * ( scalar_massmatrix * interpol_sol );
-                        Float rhs_norm = interpol_sol * ( scalar_massmatrix * interpol_rhs );
+                        Float rhs_norm = interpol_rhs * ( scalar_massmatrix * interpol_rhs );
                         
                         cout << "solution norm: " << sol_norm << endl;
                         cout << "rhs norm:      " << rhs_norm << endl;
@@ -229,9 +231,9 @@ int main()
                             );
 
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             
-//                             contable << Float(end - start) << Float(1.);
+//                             contable << static_cast<Float>( end - start ) << Float(1.);
                         }
 
                         {
@@ -244,7 +246,7 @@ int main()
                             Solver.solve( sol, rhs );
 //                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                         }
 
 

@@ -2,6 +2,7 @@
 #include "functions.hpp"
 
 #include <cassert>
+#include <new>
 #include <vector>
 
 
@@ -41,34 +42,33 @@ DenseMatrix TransposeSquare( const DenseMatrix& src )
 
 void TransposeInSitu( DenseMatrix& src )
 {
-  src.check();
-  const int numrows = src.getdimout();
-  const int numcols = src.getdimin();
-  
-  // TODO remove 'unsigned' here 
-  for( unsigned int start = 0; start < numcols * numrows; ++start )
-  {
-    
-    unsigned int next = start;
-    unsigned int i = 0;
-    
-    do {
-      ++i;
-      next = (next % numrows) * numcols + next / numrows;
-    } while (next > start);
+    src.check();
+    const int numrows = src.getdimout();
+    const int numcols = src.getdimin();
 
-    if ( next >= start && i != 1 )
+    for( int start = 0; start < numcols * numrows; ++start )
     {
-      const Float tmp = src( start / numcols, start % numcols );
-      next = start;
-      do {
-        i = (next % numrows) * numcols + next / numrows;
-        src( next / numcols, next % numcols ) = ( i == start ) ? tmp : src( i / numcols, i % numcols );
-        next = i;
-      } while (next > start);
+
+        int next = start;
+        int i = 0;
+
+        do {
+            ++i;
+            next = (next % numrows) * numcols + next / numrows;
+        } while (next > start);
+
+        if ( next >= start && i != 1 )
+        {
+            const Float tmp = src( start / numcols, start % numcols );
+            next = start;
+            do {
+                i = (next % numrows) * numcols + next / numrows;
+                src( next / numcols, next % numcols ) = ( i == start ) ? tmp : src( i / numcols, i % numcols );
+                next = i;
+            } while (next > start);
+        }
+
     }
-  
-  }
   
 }
 
@@ -354,7 +354,7 @@ void Inverse_gauss_InSitu( DenseMatrix& mat, bool pivoting )
     const int n = mat.getdimout();
     
     int* pivots = nullptr;
-    if(pivoting) pivots = new int[n];
+    if(pivoting) pivots = new (std::nothrow) int[n];
     
     for( int i = 0; i < n; i++ ) {
         

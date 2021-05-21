@@ -110,12 +110,15 @@ int main()
             cout << "Solving Poisson Problem with Neumann boundary conditions" << endl;
 
             int min_l = 1; 
-            int max_l = 7;
+            int max_l = 5;
             
-            int min_r = 3;
-            int max_r = 3;
+            int min_r = 1;
+            int max_r = 1;
+            
             
             ConvergenceTable contable;
+            
+            contable << "sigma_error" << "u_error";
             
 
             for( int l = 0; l < min_l; l++ )
@@ -224,7 +227,7 @@ int main()
                             );
 
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             
                             
                             auto grad = inv(A,1e-14) * Bt * sol;
@@ -275,7 +278,7 @@ int main()
                             Solver.solve_fast( sol, rhs );
 //                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
                             cout << "...compute error and residual:" << endl;
 
@@ -315,7 +318,7 @@ int main()
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
                             cout << "...compute error and residual:" << endl;
 

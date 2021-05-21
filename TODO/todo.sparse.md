@@ -1,5 +1,11 @@
 
 
+# TODO 
+
+Print mode in Hodge system solvers 
+
+
+
 # Sparse Matrix module 
 
 The sparse matrix module implements the linear operator class 

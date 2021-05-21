@@ -23,7 +23,7 @@
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
-#include "../../fem/global.lagrangeincl.hpp"
+#include "../../fem/lagrangematrices.hpp"
 #include "../../fem/utilities.hpp"
 
 
@@ -205,7 +205,7 @@ int main()
                     CRM.threshold = 1e-10;
                     CRM.solve( sol, rhs );
                     timestamp end = gettimestamp();
-                    std::cout << "\t\t\t " << timestamp2string( end - start ) << std::endl;
+                    std::cout << "\t\t\t " << timestamp2measurement( end - start ) << std::endl;
                 }
                         
                 if(false)
@@ -217,7 +217,7 @@ int main()
                     PCRM.threshold = 1e-10;
                     PCRM.solve( sol, rhs );
                     timestamp end = gettimestamp();
-                    std::cout << "\t\t\t " << timestamp2string( end - start ) << std::endl;
+                    std::cout << "\t\t\t " << timestamp2measurement( end - start ) << std::endl;
                 }
 
                 cout << "...compute error and residual:" << endl;

@@ -7,6 +7,7 @@
 #include <iostream>
 #include <limits>
 #include <memory>
+#include <new>
 #include <utility>
 #include <vector>
 
@@ -20,7 +21,7 @@
 
 
 DenseMatrix::DenseMatrix( const DenseMatrix& mat )
-: LinearOperator( mat.getdimout(), mat.getdimin() ), entries( new Float[ mat.getdimout() * mat.getdimin() ] ) // wierd
+: LinearOperator( mat.getdimout(), mat.getdimin() ), entries( new (std::nothrow) Float[ mat.getdimout() * mat.getdimin() ] ) // wierd
 {
     assert( entries != nullptr );
     for( int r = 0; r < getdimout(); r++ )
@@ -56,7 +57,7 @@ DenseMatrix& DenseMatrix::operator=( const DenseMatrix& mat )
         
 DenseMatrix& DenseMatrix::operator=( DenseMatrix&& mat ) 
 {
-    assert( entries     != nullptr );
+//     assert( entries     != nullptr );
     assert( mat.entries != nullptr );
     assert( getdimin()  == mat.getdimin()  );
     assert( getdimout() == mat.getdimout() );
@@ -92,7 +93,7 @@ DenseMatrix::DenseMatrix( int dim, const std::vector<FloatVector>& coldata )
 }
 
 DenseMatrix::DenseMatrix( int rows, int columns, Float value )
-: LinearOperator( rows, columns ), entries( new Float[ rows * columns ] )
+: LinearOperator( rows, columns ), entries( new (std::nothrow) Float[ rows * columns ] )
 {
     assert( entries != nullptr );
     for( int r = 0; r < getdimout(); r++ )
@@ -102,7 +103,7 @@ DenseMatrix::DenseMatrix( int rows, int columns, Float value )
 }
 
 DenseMatrix::DenseMatrix( int rows, int columns, const std::function<Float(int,int)>& generator )
-: LinearOperator( rows, columns ), entries( new Float[ rows * columns ] )
+: LinearOperator( rows, columns ), entries( new (std::nothrow) Float[ rows * columns ] )
 {
     assert( entries != nullptr );
     for( int r = 0; r < getdimout(); r++ )
@@ -112,7 +113,7 @@ DenseMatrix::DenseMatrix( int rows, int columns, const std::function<Float(int,i
 }
 
 DenseMatrix::DenseMatrix( int rows, int columns, const std::vector<FloatVector>& coldata )
-: LinearOperator( rows, columns ), entries( new Float[ rows * columns ] )
+: LinearOperator( rows, columns ), entries( new (std::nothrow) Float[ rows * columns ] )
 {
     assert( entries != nullptr );
     for( int r = 0; r < getdimout(); r++ )
@@ -124,7 +125,7 @@ DenseMatrix::DenseMatrix( int rows, int columns, const std::vector<FloatVector>&
 
 DenseMatrix::DenseMatrix( const ScalingOperator& scaling )
 : LinearOperator( scaling.getdimout(), scaling.getdimin() ), 
-  entries( new Float[ scaling.getdimout() * scaling.getdimin() ] )
+  entries( new (std::nothrow) Float[ scaling.getdimout() * scaling.getdimin() ] )
 {
     assert( entries != nullptr );
     for( int r = 0; r < getdimout(); r++ )
@@ -135,7 +136,7 @@ DenseMatrix::DenseMatrix( const ScalingOperator& scaling )
         
 DenseMatrix::DenseMatrix( const DiagonalOperator& dia )
 : LinearOperator( dia.getdimout(), dia.getdimin() ), 
-  entries( new Float[ dia.getdimout() * dia.getdimin() ] )
+  entries( new (std::nothrow) Float[ dia.getdimout() * dia.getdimin() ] )
 {
     assert( entries != nullptr );
     for( int r = 0; r < getdimout(); r++ )
@@ -146,7 +147,7 @@ DenseMatrix::DenseMatrix( const DiagonalOperator& dia )
         
 DenseMatrix::DenseMatrix( const SparseMatrix& matrix )
 : LinearOperator( matrix.getdimout(), matrix.getdimin() ), 
-  entries( new Float[ matrix.getdimout() * matrix.getdimin() ] )
+  entries( new (std::nothrow) Float[ matrix.getdimout() * matrix.getdimin() ] )
 {
     assert( entries != nullptr );
     for( const SparseMatrix::MatrixEntry& entry : matrix.getentries() )
@@ -158,7 +159,7 @@ DenseMatrix::DenseMatrix( const SparseMatrix& matrix )
         
 DenseMatrix::DenseMatrix( const FloatVector& myvector )
 : LinearOperator( myvector.getdimension(), 1 ), 
-  entries( new Float[ myvector.getdimension() ] )
+  entries( new (std::nothrow) Float[ myvector.getdimension() ] )
 {
     assert( entries != nullptr );
     for( int r = 0; r < myvector.getdimension(); r++ )
@@ -188,7 +189,7 @@ void DenseMatrix::check() const
     #endif
     
     LinearOperator::check();
-    assert( entries != nullptr );
+//     assert( entries != nullptr );
 }
 
 void DenseMatrix::print( std::ostream& os ) const

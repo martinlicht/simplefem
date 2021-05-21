@@ -37,7 +37,7 @@ using namespace std;
 int main()
 {
         
-        cout << "Unit Test: Compare numerical solvers CRM vs MINRES\n           for Solution of Dirichlet Problem" << endl;
+        cout << "Unit Test: Compute a nullspace " << endl;
         
         cout << std::setprecision(10);
 
@@ -73,6 +73,8 @@ int main()
             cout << "Nullspace computation" << endl;
 
             ConvergenceTable contable;
+            
+            contable << "#nullvec";
             
 
             int min_l = 0; 

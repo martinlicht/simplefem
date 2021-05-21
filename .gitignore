@@ -2,6 +2,11 @@
 
 .private/
 
+# Eclipse project settings
+*cproject
+*project
+*settings/
+
 # output of cpplint.py
 *OUTPUT_CPPLINT.txt
 
@@ -119,3 +124,4 @@ cachegrind.out.*
 # Temporary file
 *.temp
 
+/Default/

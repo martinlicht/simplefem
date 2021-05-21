@@ -1,4 +1,35 @@
 
+
+
+# TODO general
+
+Introduce a check script which reports common errors in your cpp file.
+For example,
+	Replace assert(false) by a project-specific macro
+
+# Introduce a LOG switch
+
+Make the logging framework optional by introducing a macro switch 
+that enables/disables the logging framework
+
+Then introduce the logging framework throughout the entire code	uniformly
+
+
+
+
+# Solver printing data structure 
+
+report_startup
+report_finish_success
+report_finish_fail
+report_restart
+report_alert
+report_breakdown
+
+iteration_is_printable
+
+
+
 # TODO short term
 
 - correct the file names in the VTK output of the different mesh and fem test programs 

@@ -370,9 +370,12 @@ Float Mesh::getMeasure( int dim, int index ) const
     
     DenseMatrix Jac = getTransformationJacobian( dim, index );
     
-    DenseMatrix temp = Transpose( Jac ) * Jac;
+//     DenseMatrix temp = Transpose( Jac ) * Jac;
     
-    return std::sqrt(absolute(Determinant(temp))) / factorial_numerical( getinnerdimension() );
+    if( Jac.issquare() )
+        return absolute( Determinant( Jac ) ) / factorial_numerical( getinnerdimension() );
+    else
+        return std::sqrt( absolute( Determinant( Transpose(Jac) * Jac ) ) ) / factorial_numerical( getinnerdimension() );
 }
 
 Float Mesh::getShapemeasure( int dim, int index ) const 

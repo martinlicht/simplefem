@@ -75,7 +75,7 @@ builda:       $(staticlibrary)
 ifeq ($(OS),Windows_NT)
 build: builda
 else
-build: buildso 
+build: buildso builda
 endif
 
 #buildobjects # NOTE: the .o files were required for our .so files originally

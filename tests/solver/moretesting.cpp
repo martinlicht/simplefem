@@ -69,7 +69,7 @@ int main()
                 timestamp start = gettimestamp();
                 CRM.solve(y,b);
                 timestamp end   = gettimestamp();
-                cout << "time elapsed: " << timestamp2string( end - start ) << endl;
+                cout << "time elapsed: " << timestamp2measurement( end - start ) << endl;
                 
 	}
 	

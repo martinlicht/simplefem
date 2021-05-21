@@ -20,6 +20,8 @@
 //                                                  //
 //  List of Sullivan Indices                        //
 //                                                  //
+//  Constructs the basis for the Sullivan space     //
+//                                                  //
 //  alpha is a multiindex                           //
 //  sigma 1:k -> 0:n                                //
 //  min[alpha] notin [sigma]                        //
@@ -36,17 +38,29 @@ inline std::vector< std::pair<MultiIndex,IndexMap> > ListOfSullivanIndices( int 
     
     // check whether the parameters are right 
     
-    assert( r >= 1 );
     assert( n >= 0 );
     assert( k >= 0 );
+    assert( r >= 0 );
+    assert( r >= 1 or k >= n );
     assert( binomial_integer( n+r, n ) == binomial_integer( n+r, r ) );
     
+    // if k > n, then there is nothing to show 
     if( k > n ) 
         return std::vector< std::pair<MultiIndex,IndexMap> >();
     
+    // if the polynomial degree is zero, check we do volume forms 
+    if( r == 0 ) {
+        assert( k >= n );
+        MultiIndex foo = ZeroMultiIndex( IndexRange(0,n) );
+        IndexMap   bar = IndexMap( IndexRange(1,n), IndexRange(0,n), [n](int i) -> int {return i;} );
+        std::vector< std::pair<MultiIndex,IndexMap> > ret { std::pair( foo, bar ) };
+        return ret;
+    }
+    
+    
     // Auxiliary calculations and preparations
     
-//     const IndexRange N( 0, n );
+    // List of the numbers 0..n
     const std::vector<int> N = [&n]()->std::vector<int>{ 
         std::vector<int> ret(n+1); 
         for( int i = 0; i <= n; i++ ) ret[i] = i;
@@ -54,6 +68,7 @@ inline std::vector< std::pair<MultiIndex,IndexMap> > ListOfSullivanIndices( int 
     }();
     
     const std::vector<MultiIndex> alphas = generateMultiIndices( IndexRange( 0, n ), r );
+    
     const std::vector<IndexMap>   sigmas = generateSigmas( IndexRange( 1, k ), IndexRange( 0, n ) );
     
     std::vector< std::pair<MultiIndex,IndexMap> > ret;
@@ -61,6 +76,8 @@ inline std::vector< std::pair<MultiIndex,IndexMap> > ListOfSullivanIndices( int 
     //  [ size of set taken from Acta paper ]
     int computed_length = binomial_integer( r-1, n-k ) * binomial_integer( r+k, k );
     
+    
+    // filter out the basis forms 
     for( const MultiIndex& alpha : alphas )
     for( const IndexMap&   sigma : sigmas )
     {

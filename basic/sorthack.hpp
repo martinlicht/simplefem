@@ -19,6 +19,7 @@ void sorthack( std::vector<A>& vec )
 //         }
 //     }
     
+    /* insertion sort */
     for( int s = 0; s < vec.size(); s++ )
     for( int t = s; t > 0 && vec.at(t-1) > vec.at(t); t-- )
         std::swap( vec[t-1], vec[t] );

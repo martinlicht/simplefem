@@ -91,10 +91,12 @@ int main()
                     cout << "...assemble matrices" << endl;
             
                     SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
+                    scalar_massmatrix.sortandcompressentries();
                     
                     cout << "...assemble vector mass matrix" << endl;
             
                     SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
+                    vector_massmatrix.sortandcompressentries();
                     
                     cout << "...assemble differential matrix and transpose" << endl;
 
@@ -114,11 +116,14 @@ int main()
                     auto composed_mass      = incmatrix_t * scalar_massmatrix * incmatrix;
 
 
+                    /*
                     auto opr  = diffmatrix & incmatrix;
                     auto opl  = opr.getTranspose(); 
                     auto stiffness_prelim = opl & ( vector_massmatrix & opr );
                     stiffness_prelim.sortentries();
-                    auto stiffness = MatrixCSR( stiffness_prelim );
+                    */
+                    //auto stiffness = MatrixCSR( stiffness_prelim );
+                    const auto& stiffness = composed_stiffness; 
                     
                     {
 
@@ -143,10 +148,10 @@ int main()
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             
                             LOG << sol.norm( composed_mass );
-                            contable << Float(end - start) << Float( ( stiffness * sol - rhs ).norm() );
+                            contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );
                         }
 
                         if(false)
@@ -163,10 +168,10 @@ int main()
                             timestamp start = gettimestamp();
                             Solver.solve_robust( sol, rhs );
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             
                             LOG << sol.norm( composed_mass );
-                            contable << Float(end - start) << Float( ( stiffness * sol - rhs ).norm() );
+                            contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );
                         }
 
                         {
@@ -181,10 +186,10 @@ int main()
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
                             LOG << sol.norm( composed_mass );
-                            contable << Float(end - start) << Float( ( stiffness * sol - rhs ).norm() );
+                            contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );
                         }
 
                         if(false)
@@ -199,10 +204,10 @@ int main()
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
                             LOG << sol.norm( composed_mass );
-                            contable << Float(end - start) << Float( ( stiffness * sol - rhs ).norm() );
+                            contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );
                         }
                         
                         

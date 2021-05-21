@@ -90,9 +90,13 @@ int main()
             cout << "Solving Poisson Problem with Dirichlet boundary conditions" << endl;
 
             int min_l = 2; 
-            int max_l = 5;
+            int max_l = 3;
             
+
             ConvergenceTable contable;
+            
+            contable << "u_error" << "du_error" << nl;
+
             
             const int r = 1;
             
@@ -161,7 +165,7 @@ int main()
                     timestamp start = gettimestamp();
                     Solver.solve( sol, rhs );
                     timestamp end = gettimestamp();
-                    std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+                    std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                 }
 
                 cout << "...iterative solver 2" << endl;
@@ -174,7 +178,7 @@ int main()
                     timestamp start = gettimestamp();
                     Solver.solve( aug_sol, aug_rhs );
                     timestamp end = gettimestamp();
-                    std::cout << "\t\t\t Time: " << timestamp2string( end - start ) << std::endl;
+                    std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                 }
 
                 cout << "...compute error and residual:" << endl;
