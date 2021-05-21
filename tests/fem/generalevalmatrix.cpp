@@ -22,9 +22,9 @@ using namespace std;
 
 int main()
 {
-        cout << "Unit Test: Evaluation Matrix and its Invertibility" << endl;
+        LOG << "Unit Test: Evaluation Matrix and its Invertibility";// << endl;
         
-        cout << std::setprecision(10);
+        LOG << std::setprecision(10);
 
         for( int n = 1; n <= 3; n++ )
         for( int r = 1; r <  7; r++ )
@@ -43,7 +43,7 @@ int main()
             Float diff_inv_1 = ( EM * EMinv - IdentityMatrix(N) ).norm();
             Float diff_inv_2 = ( EMinv * EM - IdentityMatrix(N) ).norm();
             
-            std::cout << "\tn=" << n
+            LOG << "\tn=" << n
                       << "\tr=" << r
                       << "\tN=" << N
                       << "\tdiff1=" << diff_inv_1
@@ -52,7 +52,7 @@ int main()
 
         }
         
-        cout << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test";// << endl;
         
         
         return 0;

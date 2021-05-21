@@ -36,13 +36,13 @@ using namespace std;
 int main()
 {
         
-        cout << "Unit Test: Compare numerical solvers CRM vs MINRES\n           for Solution of Dirichlet Problem" << endl;
+        LOG << "Unit Test: Compare numerical solvers CRM vs MINRES\n           for Solution of Dirichlet Problem";// << endl;
         
-        cout << std::setprecision(10);
+        LOG << std::setprecision(10);
 
         if(true){
 
-            cout << "Initial mesh..." << endl;
+            LOG << "Initial mesh...";// << endl;
             
             MeshSimplicial2D M = StandardSquare2D();
             
@@ -54,7 +54,7 @@ int main()
             
             
             
-            cout << "Prepare scalar fields for testing..." << endl;
+            LOG << "Prepare scalar fields for testing...";// << endl;
             
 
             std::function<FloatVector(const FloatVector&)> constant_one
@@ -99,7 +99,7 @@ int main()
             
             
 
-            cout << "Solving Poisson Problem with Dirichlet boundary conditions" << endl;
+            LOG << "Solving Poisson Problem with Dirichlet boundary conditions";// << endl;
 
             ConvergenceTable contable;
             
@@ -111,14 +111,14 @@ int main()
 
             for( int l = min_l; l <= max_l; l++ ){
                 
-                cout << "Level: " << l << std::endl;
-                cout << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
+                LOG << "Level: " << l;// << std::endl;
+                LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
                 const int r = 1;
                 
                 {
                     
-                    cout << "...assemble matrices" << endl;
+                    LOG << "...assemble matrices";// << endl;
             
                     SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
                     
@@ -126,7 +126,7 @@ int main()
 
                     SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
-                    cout << "...assemble global mass matrix" << endl;
+                    LOG << "...assemble global mass matrix";// << endl;
             
 
                     auto mass_prelim = incmatrix_t & ( scalar_massmatrix & incmatrix );
@@ -142,7 +142,7 @@ int main()
                         FloatVector rhs = incmatrix_t * ( scalar_massmatrix * interpol_rhs );
 
                         {
-                            cout << "CGM C++" << endl;
+                            LOG << "CGM C++";// << endl;
                         
                             sol.zero();
                             ConjugateGradientMethod Solver( mass );
@@ -151,13 +151,13 @@ int main()
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
                             
                             contable << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
                         }
 
                         {
-                            cout << "CRM C++" << endl;
+                            LOG << "CRM C++";// << endl;
                         
                             sol.zero();
                             ConjugateResidualMethod Solver( mass );
@@ -166,14 +166,14 @@ int main()
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
                             
                             contable << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
                         }
 
                         if(false)
                         {
-                            cout << "MINRES C++" << endl;
+                            LOG << "MINRES C++";// << endl;
                         
                             sol.zero();
                             MinimumResidualMethod Solver( mass );
@@ -183,13 +183,13 @@ int main()
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
 
                             contable << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
                         }
 
                         {
-                            cout << "HERZOG SOODHALTER C++" << endl;
+                            LOG << "HERZOG SOODHALTER C++";// << endl;
                         
                             sol.zero();
                             HerzogSoodhalterMethod Solver( mass );
@@ -199,7 +199,7 @@ int main()
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
 
                             contable << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
                         }
@@ -207,13 +207,13 @@ int main()
                         
                         contable << nl;
                         
-                        contable.print( std::cout, false );
+                        contable.lg( false );
 
                     }
                     
                 }
 
-                cout << "Refinement..." << endl;
+                LOG << "Refinement...";// << endl;
             
                 if( l != max_l ) M.uniformrefinement();
 
@@ -225,7 +225,7 @@ int main()
         
         
         
-        cout << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test";// << endl;
         
         return 0;
 }

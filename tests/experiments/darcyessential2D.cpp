@@ -32,13 +32,13 @@ using namespace std;
 int main()
 {
         
-        cout << "Unit Test for Solution of Darcy Problem" << endl;
+        LOG << "Unit Test for Solution of Darcy Problem";// << endl;
         
-        cout << std::setprecision(10);
+        LOG << std::setprecision(10);
 
         if(true){
 
-            cout << "Initial mesh..." << endl;
+            LOG << "Initial mesh...";// << endl;
             
             MeshSimplicial2D M = StandardSquare2D();
             
@@ -48,7 +48,7 @@ int main()
 //             M.check_dirichlet_flags();
 
             
-            cout << "Prepare scalar fields for testing..." << endl;
+            LOG << "Prepare scalar fields for testing...";// << endl;
             
 
             std::function<FloatVector(const FloatVector&)> constant_one
@@ -107,7 +107,7 @@ int main()
 
             
 
-            cout << "Solving Poisson Problem with Neumann boundary conditions" << endl;
+            LOG << "Solving Poisson Problem with Neumann boundary conditions";// << endl;
 
             int min_l = 1; 
             int max_l = 5;
@@ -126,14 +126,14 @@ int main()
 
             for( int l = min_l; l <= max_l; l++ ){
                 
-                cout << "Level: " << l << std::endl;
-                cout << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
+                LOG << "Level: " << l;// << std::endl;
+                LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
                 if( l != 0 )
                 for( int r = min_r; r <= max_r; r++ ) 
                 {
                     
-                    cout << "... assemble matrices" << endl;
+                    LOG << "... assemble matrices";// << endl;
             
                     SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   );
                     
@@ -172,24 +172,24 @@ int main()
                         const auto& function_grad = experiment_grad;
                         const auto& function_rhs  = experiment_rhs;
                         
-                        cout << "...interpolate explicit solution and rhs" << endl;
+                        LOG << "...interpolate explicit solution and rhs";// << endl;
                         
                         FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r,   function_grad );
                         FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 2, r-1, function_sol  );
                         FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 2, r-1, function_rhs  );
                         
-                        cout << "...measure interpolation commutativity" << endl;
+                        LOG << "...measure interpolation commutativity";// << endl;
             
                         {
                             auto commutatorerror_aux = interpol_rhs - diffmatrix * interpol_grad;
                             Float commutatorerror  = commutatorerror_aux * ( volume_massmatrix * commutatorerror_aux );
-                            cout << "algebraic commutator error 1: " << commutatorerror << endl;// << space << commutatorerror2
+                            LOG << "algebraic commutator error 1: " << commutatorerror;// << endl;// << space << commutatorerror2
                         }
                         
 //                         {
 //                             auto commutatorerror_aux = interpol_grad - vector_massmatrix_inv * diffmatrix_t * volume_massmatrix * interpol_rhs;
 //                             Float commutatorerror  = commutatorerror_aux * ( commutatorerror_aux );
-//                             cout << "algebraic commutator error 2: " << commutatorerror << endl;// << space << commutatorerror2
+//                             LOG << "algebraic commutator error 2: " << commutatorerror;// << endl;// << space << commutatorerror2
 //                         }
                         
 
@@ -199,7 +199,7 @@ int main()
 
                             FloatVector sol( volume_incmatrix.getdimin(), 0. );
                             
-                            cout << "...iterative solver" << endl;
+                            LOG << "...iterative solver";// << endl;
                             
                             
                             sol.zero();
@@ -227,12 +227,12 @@ int main()
                             );
 
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
                             
                             
                             auto grad = inv(A,1e-14) * Bt * sol;
 
-                            cout << "...compute error and residual:" << endl;
+                            LOG << "...compute error and residual:";// << endl;
 
                             auto errornorm_aux_sol  = interpol_sol  - volume_incmatrix *  sol;
                             auto errornorm_aux_grad = interpol_grad - vector_incmatrix * grad;
@@ -241,15 +241,15 @@ int main()
                             Float errornorm_grad = sqrt( errornorm_aux_grad * ( vector_massmatrix * errornorm_aux_grad ) );
                             Float residualnorm   = ( rhs - B * inv(A,1e-10) * Bt * sol ).norm();
 
-                            cout << "error:     " << errornorm_sol  << endl;
-                            cout << "aux error: " << errornorm_grad << endl;
-                            cout << "residual:  " << residualnorm  << endl;
+                            LOG << "error:     " << errornorm_sol;//;// << endl;
+                            LOG << "aux error: " << errornorm_grad;// << endl;
+                            LOG << "residual:  " << residualnorm;//;// << endl;
 
                             contable << errornorm_sol;
                             contable << errornorm_grad;
                             contable << nl;
 
-                            contable.print( std::cout );
+                            contable.lg();
                             
                         }
 
@@ -260,7 +260,7 @@ int main()
 
                             FloatVector sol( volume_incmatrix.getdimin(), 0. );
                             
-                            cout << "...iterative solver" << endl;
+                            LOG << "...iterative solver";// << endl;
                             
                             
                             sol.zero();
@@ -278,22 +278,22 @@ int main()
                             Solver.solve_fast( sol, rhs );
 //                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
 
-                            cout << "...compute error and residual:" << endl;
+                            LOG << "...compute error and residual:";// << endl;
 
                             auto errornorm_aux = interpol_sol  - volume_incmatrix * sol;
 
                             Float errornorm     = sqrt( errornorm_aux * ( volume_massmatrix * errornorm_aux ) );
                             Float residualnorm  = ( rhs - Schur * sol ).norm();
 
-                            cout << "error:     " << errornorm     << endl;
-                            cout << "residual:  " << residualnorm  << endl;
+                            LOG << "error:     " << errornorm   ;//;// << endl;
+                            LOG << "residual:  " << residualnorm;//;// << endl;
 
                             contable << errornorm;
                             contable << nl;
 
-                            contable.print( std::cout );
+                            contable.lg();
                             
                         }
 
@@ -318,22 +318,22 @@ int main()
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
 
-                            cout << "...compute error and residual:" << endl;
+                            LOG << "...compute error and residual:";// << endl;
 
                             auto errornorm_aux = interpol_sol - volume_incmatrix * sol.getslice( A.getdimin(), Bt.getdimin() );
 
                             Float errornorm     = sqrt( errornorm_aux * ( volume_massmatrix * errornorm_aux ) );
                             Float residualnorm  = ( rhs - X * sol ).norm();
 
-                            cout << "error:     " << errornorm     << endl;
-                            cout << "residual:  " << residualnorm  << endl;
+                            LOG << "error:     " << errornorm   ;//;// << endl;
+                            LOG << "residual:  " << residualnorm;//;// << endl;
 
                             contable << errornorm;
                             contable << nl;
 
-                            contable.print( std::cout );
+                            contable.lg();
                             
                             
                         }
@@ -343,7 +343,7 @@ int main()
                     
                 }
 
-                cout << "Refinement..." << endl;
+                LOG << "Refinement...";// << endl;
             
                 if( l != max_l ) M.uniformrefinement();
                 
@@ -356,7 +356,7 @@ int main()
         
         
         
-        cout << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test";// << endl;
         
         return 0;
 }

@@ -22,7 +22,7 @@ using namespace std;
 
 
 
-inline void print( const MeshSimplicial1D& M, std::string meshname )
+inline void internal_print( const MeshSimplicial1D& M, std::string meshname )
 {
     
     fstream fs( experimentfile( getbasename(__FILE__)), std::fstream::out );
@@ -61,18 +61,18 @@ inline void print( const MeshSimplicial1D& M, std::string meshname )
 
 int main()
 {
-    cout << "Unit Test for VTK output of Simplicial Mesh (1D)" << endl;
+    LOG << "Unit Test for VTK output of Simplicial Mesh (1D)";// << endl;
     
     {
         
         MeshSimplicial1D Mx = StandardInterval1D(); string meshname = string("One-dimensional Test Mesh: ") + getbasename(__FILE__);
         
-        print( Mx, meshname );
+        internal_print( Mx, meshname );
         
         
         
         
-        if(true)
+        //if(false)
         {
             
             auto M = Mx;
@@ -81,7 +81,7 @@ int main()
             
                 M.uniformrefinement();
                 
-                print( M, meshname );
+                internal_print( M, meshname );
             
             }
             
@@ -96,7 +96,7 @@ int main()
 
     }
     
-    cout << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test";// << endl;
     
     return 0;
 }

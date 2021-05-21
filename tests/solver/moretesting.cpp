@@ -17,10 +17,10 @@ using namespace std;
 
 int main()
 {
-	cout << "Unit Test for Conjugate Residual Method" << endl;
+	LOG << "Unit Test for Conjugate Residual Method";// << endl;
 	
 	{
-		cout << "First Something Simple" << endl;
+		LOG << "First Something Simple";// << endl;
 		
 		ScalingOperator S( 10, 3.141 );
 		ConjugateResidualMethod CRM(S);
@@ -28,13 +28,13 @@ int main()
 		FloatVector rhs(10), x(10);
 		x.random(); rhs.zero();
 		
-		cout << x << endl;
+		LOG << x;// << endl;
 		CRM.solve( x, rhs );
 	}
 	
 
 	{
-		cout << "Now something more complicated." << endl;
+		LOG << "Now something more complicated.";// << endl;
 		
 		int dimension = 100;
 		
@@ -60,7 +60,7 @@ int main()
 		FloatVector y( dimension );
 		y.random();
 		
-		// cout << M << endl;
+		// LOG << M;// << endl;
 		
 		ConjugateResidualMethod CRM(M);
 	        CRM.max_iteration_count = 100;
@@ -69,11 +69,11 @@ int main()
                 timestamp start = gettimestamp();
                 CRM.solve(y,b);
                 timestamp end   = gettimestamp();
-                cout << "time elapsed: " << timestamp2measurement( end - start ) << endl;
+                LOG << "time elapsed: " << timestamp2measurement( end - start );// << endl;
                 
 	}
 	
-	cout << "Finished Unit Test" << endl;
+	LOG << "Finished Unit Test";// << endl;
 
 	return 0;
 }

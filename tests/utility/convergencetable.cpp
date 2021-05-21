@@ -7,12 +7,9 @@ using namespace std;
 
 int main()
 {
-        cout << "Hello World!" << endl;
-        
-        
         ConvergenceTable Contable;
         
-        Contable.print( std::cout );
+        Contable.lg();
         
         for( int i = 0; i < 5; i++ ) {
             for( int j = 0; j < 5; j++ )
@@ -20,7 +17,7 @@ int main()
             Contable << nl;
         }
         
-        Contable.print( std::cout );
+        Contable.lg();
         
         return 0;
 }

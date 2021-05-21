@@ -22,11 +22,11 @@ using namespace std;
 int main()
 {
         
-        cout << "Unit Test: (1D) masses are correctly approximated: precomputed mass" << endl;
+        LOG << "Unit Test: (1D) masses are correctly approximated: precomputed mass";// << endl;
         
-        cout << std::setprecision(10);
+        LOG << std::setprecision(10);
 
-        cout << "Initial mesh..." << endl;
+        LOG << "Initial mesh...";// << endl;
         
         MeshSimplicial1D M = UnitInterval1D();
         
@@ -91,13 +91,13 @@ int main()
 
         for( int l = l_min; l <= l_max; l++ ){
             
-            cout << "Refinement..." << endl;
+            LOG << "Refinement...";// << endl;
         
             M.uniformrefinement();
             
             for( int r = r_min; r <= r_max; r++ ) 
             {
-                cout << "...assemble matrices" << endl;
+                LOG << "...assemble matrices";// << endl;
         
                 SparseMatrix massmatrix_scalar = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
                 
@@ -135,7 +135,7 @@ int main()
             }
         } 
     
-        cout << "Convergence tables" << nl;
+        LOG << "Convergence tables" << nl;
     
         ConvergenceTable contable_scalar[ experiments_scalar_field.size() ];
         ConvergenceTable contable_volume[ experiments_volume_field.size() ];
@@ -159,15 +159,15 @@ int main()
             
         }
             
-        for( int i = 0; i < experiments_scalar_field.size(); i++ ) contable_scalar[i].print( cout ); 
-        cout << "-------------------" << nl;
-        for( int i = 0; i < experiments_volume_field.size(); i++ ) contable_volume[i].print( cout ); 
+        for( int i = 0; i < experiments_scalar_field.size(); i++ ) contable_scalar[i].lg(); 
+        LOG << "-------------------" << nl;
+        for( int i = 0; i < experiments_volume_field.size(); i++ ) contable_volume[i].lg(); 
         
         
         
         
         
-        cout << "Check that differences are small" << nl;
+        LOG << "Check that differences are small" << nl;
         
         for( int l      = l_min; l      <=      l_max; l++      ) 
         for( int r      = r_min; r      <=      r_max; r++      ) 
@@ -183,7 +183,7 @@ int main()
         }
         
         
-        cout << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test";// << endl;
         
         return 0;
 }

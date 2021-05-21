@@ -23,11 +23,11 @@ using namespace std;
 int main()
 {
         
-        cout << "Unit Test: (2D) masses are correctly approximated: mass of reference interpolation" << endl;
+        LOG << "Unit Test: (2D) masses are correctly approximated: mass of reference interpolation";// << endl;
         
-        cout << std::setprecision(10);
+        LOG << std::setprecision(10);
 
-        cout << "Initial mesh..." << endl;
+        LOG << "Initial mesh...";// << endl;
         
         MeshSimplicial2D M = StandardSquare2D();
         
@@ -195,7 +195,7 @@ int main()
 
         for( int l = l_min; l <= l_max; l++ ){
             
-            cout << "Refinement..." << endl;
+            LOG << "Refinement...";// << endl;
         
             M.uniformrefinement();
             
@@ -211,7 +211,7 @@ int main()
                 
             for( int r = r_min; r <= r_max; r++ ) 
             {
-                cout << "...assemble matrices" << endl;
+                LOG << "...assemble matrices";// << endl;
         
                 SparseMatrix elevation_scalar = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 0, r, r_ref - r );
                 
@@ -273,7 +273,7 @@ int main()
             }
         } 
     
-        cout << "Convergence tables" << nl;
+        LOG << "Convergence tables" << nl;
     
         ConvergenceTable contable_scalar[ experiments_scalar_field.size() ];
         ConvergenceTable contable_vector[ experiments_vector_field.size() ];
@@ -302,17 +302,17 @@ int main()
             
         }
             
-        for( int i = 0; i < experiments_scalar_field.size(); i++ ) contable_scalar[i].print( cout ); 
-        cout << "-------------------" << nl;
-        for( int i = 0; i < experiments_vector_field.size(); i++ ) contable_vector[i].print( cout ); 
-        cout << "-------------------" << nl;
-        for( int i = 0; i < experiments_volume_field.size(); i++ ) contable_volume[i].print( cout ); 
+        for( int i = 0; i < experiments_scalar_field.size(); i++ ) contable_scalar[i].lg(); 
+        LOG << "-------------------" << nl;
+        for( int i = 0; i < experiments_vector_field.size(); i++ ) contable_vector[i].lg(); 
+        LOG << "-------------------" << nl;
+        for( int i = 0; i < experiments_volume_field.size(); i++ ) contable_volume[i].lg(); 
         
         
         
         
         
-        cout << "Check that differences are small" << nl;
+        LOG << "Check that differences are small" << nl;
         
         for( int l      = l_min; l      <=      l_max; l++      ) 
         for( int r      = r_min; r      <=      r_max; r++      ) 
@@ -331,7 +331,7 @@ int main()
         }
         
         
-        cout << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test";// << endl;
         
         return 0;
 }

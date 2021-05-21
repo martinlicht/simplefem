@@ -17,15 +17,15 @@ using namespace std;
 
 int main()
 {
-        cout << "Unit Test for Interpolation in FEEC" << endl;
+        LOG << "Unit Test for Interpolation in FEEC";// << endl;
         
-        cout << "2D Calculations" << endl;
+        LOG << "2D Calculations";// << endl;
         
         {
 
             MeshSimplicial2D M = UnitDisk(3);
             
-            cout << "... mesh done" << endl;
+            LOG << "... mesh done";// << endl;
         
             auto scalarfield = [](const FloatVector& vec) -> FloatVector{
                 assert( vec.getdimension() == 2 );
@@ -38,31 +38,31 @@ int main()
                 return FloatVector({ 1 + vec[0], vec[1] * vec[1] });
             };
             
-            cout << "\n... k=0" << endl;
+            LOG << "\n... k=0";// << endl;
             for( int r = 0; r <  3; r++ )
                 Interpolation( M, M.getinnerdimension(), 0, r, scalarfield ),
-                cout << " r=" << r;
+                LOG << " r=" << r;
             
-            cout << "\n... k=1" << endl;
+            LOG << "\n... k=1";// << endl;
             for( int r = 0; r <  3; r++ )
                 Interpolation( M, M.getinnerdimension(), 1, r, vectorfield ),
-                cout << " r=" << r;
+                LOG << " r=" << r;
             
-            cout << "\n... k=2" << endl;
+            LOG << "\n... k=2";// << endl;
             for( int r = 0; r <  3; r++ )
                 Interpolation( M, M.getinnerdimension(), 2, r, scalarfield ),
-                cout << " r=" << r;
+                LOG << " r=" << r;
 
         }
         
-        cout << "\n3D Calculations" << endl;
+        LOG << "\n3D Calculations";// << endl;
         
         {
 
             MeshSimplicial3D M = UnitSimplex3D();
 //             M.uniformrefinement();
             
-            cout << "... mesh done" << endl;
+            LOG << "... mesh done";// << endl;
             
             auto scalarfield = [](const FloatVector& vec) -> FloatVector{
                 assert( vec.getdimension() == 3 );
@@ -76,29 +76,29 @@ int main()
             
             int Rmax = 2;
             
-            cout << "... k=0" << endl;
+            LOG << "... k=0";// << endl;
         
             for( int r = 0; r <= Rmax; r++ )
                 FloatVector results = Interpolation( M, M.getinnerdimension(), 0, r, scalarfield );
             
-            cout << "... k=1" << endl;
+            LOG << "... k=1";// << endl;
         
             for( int r = 0; r <= Rmax; r++ )
                 FloatVector results = Interpolation( M, M.getinnerdimension(), 1, r, vectorfield );
             
-            cout << "... k=2" << endl;
+            LOG << "... k=2";// << endl;
         
             for( int r = 0; r <= Rmax; r++ )
                 FloatVector results = Interpolation( M, M.getinnerdimension(), 2, r, vectorfield );
 
-            cout << "... k=3" << endl;
+            LOG << "... k=3";// << endl;
         
             for( int r = 0; r <= Rmax; r++ )
                 FloatVector results = Interpolation( M, M.getinnerdimension(), 3, r, scalarfield );
 
         }
         
-        cout << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test";// << endl;
         
         return 0;
 }

@@ -216,17 +216,18 @@ int main()
                     auto mat_C  = vector_incmatrix_t & vector_diffmatrix_t & volume_massmatrix & vector_diffmatrix & vector_incmatrix;
                     mat_C.sortandcompressentries();
                     
-                    std::cout << "#nonzero A = " << mat_A.getnumberofzeroentries() << nl;
-                    std::cout << "#nonzero B = " << mat_B.getnumberofzeroentries() << nl;
-                    std::cout << "#nonzero C = " << mat_C.getnumberofzeroentries() << nl;
+                    std::cout << "share zero A = " << mat_A.getnumberofzeroentries() << "/" << (Float) mat_A.getnumberofentries() << nl;
+                    std::cout << "share zero B = " << mat_B.getnumberofzeroentries() << "/" << (Float) mat_B.getnumberofentries() << nl;
+                    std::cout << "share zero C = " << mat_C.getnumberofzeroentries() << "/" << (Float) mat_C.getnumberofentries() << nl;
                     
                     auto A  = MatrixCSR( mat_A  );
                     auto Bt = MatrixCSR( mat_Bt );
                     auto B  = MatrixCSR( mat_B  );
                     auto C  = MatrixCSR( mat_C  );
 
-                    auto negA = A;
-                    negA.scale(-1);
+                    auto negA  = A;  negA.scale(-1);
+                    auto negB  = B;  negB.scale(-1);
+                    auto negBt = Bt; negBt.scale(-1);
                     
                     auto SystemMatrix = C - B * inv(A,1000 * machine_epsilon) * Bt;
                     
@@ -262,7 +263,7 @@ int main()
                             
 
 
-//                         if(false)
+                        if(false)
                         {
                         
                             cout << "...measure interpolation commutativity" << endl;
@@ -271,7 +272,7 @@ int main()
                             auto  commutatorerror_1_aux
                             = 
                             interpol_rhs
-                            - scalar_diffmatrix   * inv(scalar_massmatrix,1e-14) * scalar_diffmatrix_t * interpol_sol
+                            - scalar_diffmatrix   * inv(scalar_massmatrix,1e-14) * scalar_diffmatrix_t * vector_massmatrix * interpol_sol
                             - vector_diffmatrix_t * volume_massmatrix * vector_diffmatrix   * interpol_sol;
                             Float commutatorerror_1     = commutatorerror_1_aux * ( vector_massmatrix * commutatorerror_1_aux );
                             cout << "algebraic commutator error 1: " << commutatorerror_1 << endl;
@@ -287,9 +288,14 @@ int main()
                         }
                         
                         
+//                         if(false)
                         {
                             
                             sol.zero();
+                            
+//                             rhs = vector_incmatrix_t * vector_diffmatrix_t * volume_massmatrix * vector_diffmatrix * interpol_sol;
+//                             rhs = B * inv(A,10e-14) * scalar_incmatrix_t * scalar_diffmatrix_t * vector_massmatrix * interpol_sol;
+//                             rhs = B * scalar_incmatrix_t * scalar_massmatrix * interpol_ndiv;
                         
                             FloatVector res = rhs;
 
@@ -298,34 +304,43 @@ int main()
                             timestamp start = gettimestamp();
 
                             cout << "- mixed system solver" << endl;
-//                             HodgeConjugateResidualSolverCSR_SSOR(
-                            HodgeConjugateResidualSolverCSR_textbook( 
-                                B.getdimout(), 
+//                             if(false)
+                            HodgeConjugateResidualSolverCSR_SSOR(
+                            //HodgeConjugateResidualSolverCSR_textbook( 
+                                negB.getdimout(), 
                                 A.getdimout(), 
                                 sol.raw(), 
                                 rhs.raw(), 
-                                A.getA(), A.getC(), A.getV(), 
-                                B.getA(),    B.getC(),    B.getV(), 
-                                Bt.getA(),   Bt.getC(),   Bt.getV(), 
+                                A.getA(),    A.getC(),    A.getV(), 
+                                negB.getA(),    negB.getC(),    negB.getV(), 
+                                negBt.getA(),   negBt.getC(),   negBt.getV(), 
                                 res.raw(),
                                 1e-10,
-                                -1,
-                                desired_precision,
+                                100,
+                                1e-14, //desired_precision,
                                 -1
                             );
                             
-                            sol *= -1.;
+                            sol *= -1;
                             
-                            cout << "- elliptic system solver" << endl;
-                            ConjugateResidualSolverCSR( 
-                                sol.getdimension(), 
-                                sol.raw(), 
-                                rhs.raw(), 
-                                C.getA(), C.getC(), C.getV(),
-                                res.raw(),
-                                1000 * machine_epsilon,
-                                0
-                            );
+//                             cout << "- elliptic system solver" << endl;
+//                             ConjugateResidualSolverCSR( 
+//                                 sol.getdimension(), 
+//                                 sol.raw(), 
+//                                 rhs.raw(), 
+//                                 C.getA(), C.getC(), C.getV(),
+//                                 res.raw(),
+//                                 1000 * machine_epsilon,
+//                                 1000
+//                             );
+                            
+//                             HerzogSoodhalterMethod Solver( C );
+//                             Solver.threshold           = 1e-10;
+//                             Solver.print_modulo        = 500;
+//                             Solver.max_iteration_count = sol.getdimension();
+// 
+//                             Solver.solve( sol, rhs );
+                            
 
                             timestamp end = gettimestamp();
                             std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
@@ -372,7 +387,7 @@ int main()
                             
                             HerzogSoodhalterMethod Solver( X );
                             Solver.threshold           = 1e-10;
-                            Solver.print_modulo        = 1;
+                            Solver.print_modulo        = 500;
                             Solver.max_iteration_count = 10 * sol_whole.getdimension();
 
                             timestamp start = gettimestamp();
@@ -425,7 +440,7 @@ int main()
                         contable << residualnorm;
                         contable << nl;
 
-                        contable.print( std::cout );
+                        contable.lg();
                         
 
 
@@ -439,11 +454,11 @@ int main()
 
                 contable << nl;
                 
-                contable.print( std::cout );
+                contable.lg();
         
             } 
             
-            contable.print( std::cout );
+            contable.lg();
         
         }
         

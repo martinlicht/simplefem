@@ -27,11 +27,11 @@ using namespace std;
 int main()
 {
         
-        cout << "Unit Test: (?D) Lagrange matrices agree with FEEC analogues" << endl;
+        LOG << "Unit Test: (?D) Lagrange matrices agree with FEEC analogues";// << endl;
         
-        cout << std::setprecision(10);
+        LOG << std::setprecision(10);
 
-        cout << "Initial mesh..." << endl;
+        LOG << "Initial mesh...";// << endl;
         
         MeshSimplicial1D M1 = UnitInterval1D();
         MeshSimplicial2D M2 = UnitTriangle2D(); //StandardSquare2D_simple();
@@ -79,9 +79,9 @@ int main()
                 Mesh& M = *(Ms[d]);
                 
                 
-                cout << "DIMENSION " << d+1 << " AT LEVEL " << l << endl;
+                LOG << "DIMENSION " << d+1 << " AT LEVEL " << l;// << endl;
         
-                cout << "...basic FEEC matrices" << endl;
+                LOG << "...basic FEEC matrices";// << endl;
         
                 auto feec_broken_mass = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, 1 );
 
@@ -102,7 +102,7 @@ int main()
                 assert( feec_inc.isfinite() );
                 assert( feec_inc_t.isfinite() );
                     
-                cout << "...composed FEEC matrices" << endl;
+                LOG << "...composed FEEC matrices";// << endl;
                 
                 auto feec_broken_stiffness = feec_diff_t & feec_vectormass       & feec_diff;
                 auto feec_stiffness        = feec_inc_t  & feec_broken_stiffness & feec_inc;
@@ -112,7 +112,7 @@ int main()
                 assert( feec_mass.isfinite()             );
                 assert( feec_broken_stiffness.isfinite() );
                 
-                cout << "...basic Lagrange matrices" << endl;
+                LOG << "...basic Lagrange matrices";// << endl;
                 
                 auto lagr_broken_mass      = LagrangeBrokenMassMatrix( M, 1 );
                 auto lagr_broken_stiffness = LagrangeBrokenStiffnessMatrix( M, 1 );
@@ -123,12 +123,12 @@ int main()
                 auto lagr_inc   = LagrangeInclusionMatrix( M, M.getinnerdimension(), 1 );
                 auto lagr_inc_t = lagr_inc.getTranspose();
                 
-                cout << "...composed Lagrange matrices" << endl;
+                LOG << "...composed Lagrange matrices";// << endl;
                 
                 auto lagr_composed_mass      = lagr_inc_t & lagr_broken_mass & lagr_inc;
                 auto lagr_composed_stiffness = lagr_inc_t & lagr_broken_stiffness & lagr_inc;
                 
-                cout << "...COMPARISONS" << nl;
+                LOG << "...COMPARISONS" << nl;
                     
                 for( int n = 0; n < number_of_samples; n++ ){
                     auto vec = lagr_inc.createinputvector();
@@ -200,10 +200,10 @@ int main()
                 
                 
 //                 if( d==2 and l==0 ){
-//                     lagr_inc.print( std::cout );
-//                     lagr_stiffness.print( std::cout );
-//                     lagr_broken_stiffness.print( std::cout );
-//                     feec_stiffness.print( std::cout );
+//                     lagr_inc.lg();
+//                     lagr_stiffness.lg();
+//                     lagr_broken_stiffness.lg();
+//                     feec_stiffness.lg();
 //                     exit(0);
 //                 }
                 
@@ -213,7 +213,7 @@ int main()
     
                 
                 
-            cout << "Convergence tables" << nl;
+            LOG << "Convergence tables" << nl;
 
             ConvergenceTable contable[3];
             
@@ -231,13 +231,13 @@ int main()
             }
                 
             for( int d = 0; d < 3; d++ ) {
-                contable[d].print( cout );
-                std::cout << "----------------------------------" << std::endl;
+                contable[d].lg();
+                LOG << "----------------------------------";// << std::endl;
             }
                 
                 
                 
-            cout << "Refinement..." << endl;
+            LOG << "Refinement...";// << endl;
         
             M1.uniformrefinement();
             M2.uniformrefinement();
@@ -249,7 +249,7 @@ int main()
         
         {
             
-            cout << "Convergence tables, final results" << nl;
+            LOG << "Convergence tables, final results" << nl;
 
             ConvergenceTable contable[3];
             
@@ -267,14 +267,14 @@ int main()
             }
                 
             for( int d = 0; d < 3; d++ ) {
-                contable[d].print( cout );
-                std::cout << "----------------------------------" << std::endl;
+                contable[d].lg();
+                LOG << "----------------------------------";// << std::endl;
             }
             
         }
             
             
-        cout << "Check that differences are small" << nl;
+        LOG << "Check that differences are small" << nl;
         
         for( int l = l_min; l <= l_max; l++ ) 
         for( int d = 0; d < 3; d++ )
@@ -284,7 +284,7 @@ int main()
         }
         
         
-        cout << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test";// << endl;
         
         return 0;
 }

@@ -20,12 +20,12 @@ using namespace std;
 int main()
 {
         
-        cout << "Unit Test: (3D) exterior derivative and interpolation" << endl;
+        LOG << "Unit Test: (3D) exterior derivative and interpolation";// << endl;
         
-        cout << std::setprecision(10);
+        LOG << std::setprecision(10);
 
         
-        cout << "Initial mesh..." << endl;
+        LOG << "Initial mesh...";// << endl;
         
         MeshSimplicial3D M = StandardCube3D();
         
@@ -129,7 +129,7 @@ int main()
             for( int r = r_min; r <= r_max; r++ ) 
             {
                 
-                cout << "...assemble matrices: l=" << l << " r=" << r << endl;
+                LOG << "...assemble matrices: l=" << l << " r=" << r;// << endl;
         
                 SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
                 
@@ -206,7 +206,7 @@ int main()
                 
             }
 
-            cout << "Refinement..." << endl;
+            LOG << "Refinement...";// << endl;
         
             M.uniformrefinement();
             
@@ -215,7 +215,7 @@ int main()
         } 
         
         
-        cout << "Convergence tables" << nl;
+        LOG << "Convergence tables" << nl;
     
         ConvergenceTable contable_scalar[ experiments_scalar_function.size() ];
         ConvergenceTable contable_vector[ experiments_vector_function.size() ];
@@ -244,17 +244,17 @@ int main()
             
         }
             
-        for( int i = 0; i < experiments_scalar_function.size(); i++ ) contable_scalar[i].print( cout ); 
-        cout << "-------------------" << nl;
-        for( int i = 0; i < experiments_vector_function.size(); i++ ) contable_vector[i].print( cout ); 
-        cout << "-------------------" << nl;
-        for( int i = 0; i < experiments_pseudo_function.size(); i++ ) contable_pseudo[i].print( cout ); 
+        for( int i = 0; i < experiments_scalar_function.size(); i++ ) contable_scalar[i].lg(); 
+        LOG << "-------------------" << nl;
+        for( int i = 0; i < experiments_vector_function.size(); i++ ) contable_vector[i].lg(); 
+        LOG << "-------------------" << nl;
+        for( int i = 0; i < experiments_pseudo_function.size(); i++ ) contable_pseudo[i].lg(); 
         
         
         
         
         
-        cout << "Check that differences are small" << nl;
+        LOG << "Check that differences are small" << nl;
         
         for( int l = l_min; l <= l_max; l++ ) 
         for( int r = r_min; r <= r_max; r++ ) 
@@ -270,7 +270,7 @@ int main()
         }
         
         
-        cout << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test";// << endl;
         
         return 0;
 }

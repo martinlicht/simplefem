@@ -17,7 +17,7 @@
 using namespace std;
 
 
-inline void print( const MeshSimplicial2D& M, std::string meshname, const char* filename = nullptr )
+inline void internal_print( const MeshSimplicial2D& M, std::string meshname, const char* filename = nullptr )
 {
     
     std::string basename = ( filename == nullptr ) ? getbasename(__FILE__) : filename;
@@ -57,55 +57,55 @@ inline void print( const MeshSimplicial2D& M, std::string meshname, const char* 
 
 int main()
 {
-    cout << "Output of a few important meshes" << endl;
+    LOG << "Output of a few important meshes";// << endl;
     
     
-    if(true)
+    //if(false)
     {
         
         const int L = 5;
     
         MeshSimplicial2D M = SphericalSurface2D(L);
             
-        cout << L << ":\t" << M.getShapemeasure() << endl;
+        LOG << L << ":\t" << M.getShapemeasure();// << endl;
         
-        print( M, "spherical surface 2D", "sphere" );
+        internal_print( M, "spherical surface 2D", "sphere" );
         
     }
     
     
     
-    if(true)
+    //if(false)
     {
         
         const int L = 5;
     
         MeshSimplicial2D M = LShapedDomain2D();
             
-        cout << L << ":\t" << M.getShapemeasure() << endl;
+        LOG << L << ":\t" << M.getShapemeasure();// << endl;
         
-        print( M, "L shaped domain 2D", "lshaped" );
+        internal_print( M, "L shaped domain 2D", "lshaped" );
         
     }
     
     
     
-    if(true)
+    //if(false)
     {
-        cout << "Unit Test for VTK output of Simplicial Mesh" << endl;
+        LOG << "Unit Test for VTK output of Simplicial Mesh";// << endl;
         
         const int K = 4;
         const int L = 12;
         
         MeshSimplicial2D M = Halo(K,L);
             
-        print( M, "halo 2D", "halo" );
+        internal_print( M, "halo 2D", "halo" );
 
     }
     
     
     
-    if(true)
+    //if(false)
     {
         const int Lmin = 3;
         const int Lmax = 9;
@@ -115,7 +115,7 @@ int main()
             
             MeshSimplicial2D M = UnitDisk(L);
             
-            cout << L << ":\t" << M.getShapemeasure() << endl;
+            LOG << L << ":\t" << M.getShapemeasure();// << endl;
             
             {
                 fstream fs( string("./rounddisk.tex"), std::fstream::out );
@@ -123,7 +123,7 @@ int main()
                 fs.close();
             }
             
-            print( M, "round disk 2D", "rounddisk" );
+            internal_print( M, "round disk 2D", "rounddisk" );
 
         }
         
@@ -131,7 +131,7 @@ int main()
     
     
     
-    if(true)
+    //if(false)
     {
         
         const int Lmin = 3;
@@ -139,12 +139,12 @@ int main()
         
         MeshSimplicial2D M = Annulus( Lmin, Lmax );
         
-        print( M, "annulus 2D", "annulus" );
+        internal_print( M, "annulus 2D", "annulus" );
         
     }
         
     
-    cout << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test";// << endl;
 
     return 0;
 }
