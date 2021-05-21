@@ -31,6 +31,10 @@ FLAG_CXX := GCC
 # Uncomment the following line to disable extensive check routines for meshes
 FLAG_DISABLE_CHECK_MESHES=yes
 
+# Do you want to DISABLE excpetion handling?
+# Uncomment the following line to disable exception handling
+FLAG_NO_EXCEPTIONS=yes
+
 # Do you want to enable static analysis during the compilation process
 # Uncomment the following line to enable static analysis
 # FLAG_DO_STATICANALYSIS=yes
@@ -64,6 +68,10 @@ FLAG_DISABLE_CHECK_MESHES=yes
 # FLAG_DO_OPTIMIZE=yes
 
 
+
+
+
+# If we are in RELEASE_MODE then set the following flags 
 
 ifdef $(RELEASE_MODE)
 FLAG_DISABLE_CHECK_MESHES=yes
@@ -140,6 +148,9 @@ CXXFLAGS_LANG := -std=c++17 -pedantic
 #                                             #
 ###############################################
 
+# If optimization is enabled, then set a number of flags 
+# In the absence of optimization, we set O1
+
 CXXFLAGS_OPTIMIZE:=
 
 ifeq ($(FLAG_DO_OPTIMIZE),yes)
@@ -163,10 +174,15 @@ else
 	CXXFLAGS_OPTIMIZE += -O1
 endif
 
+
+# Do we apply OpenMP?
+
 ifeq ($(FLAG_ENABLE_OPENMP),yes)
 	CXXFLAGS_OPTIMIZE += -fopenmp
 endif
 
+
+# Do we strip debug information?
 
 ifeq ($(FLAG_CXX),GCC) 
 ifeq ($(FLAG_DO_STRIP),yes)
@@ -175,15 +191,24 @@ endif
 endif
 
 
+
+
 ###############################################
 #                                             #
 #        Misc Code generation options         #
 #                                             #
 ###############################################
 
-CXXFLAGS_CODEGEN := -fno-exceptions -fvisibility=default
+CXXFLAGS_CODEGEN := 
+
+ifneq ($(FLAG_NO_EXCEPTIONS),yes)
+	CXXFLAGS_CODEGEN += -fno-exceptions
+endif
+
+CXXFLAGS_CODEGEN += -fvisibility=default
+
 ifneq ($(OS),Windows_NT)
-CXXFLAGS_CODEGEN += -fpic 
+	CXXFLAGS_CODEGEN += -fpic 
 endif
 
 
@@ -342,20 +367,25 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 	endif
  
 endif
- 
+
+
+# In any case, remove the following warnings 
+
 CXXFLAGS_WARNINGS += -Wno-conversion 
 CXXFLAGS_WARNINGS += -Wno-sign-compare 
 CXXFLAGS_WARNINGS += -Wno-unused-variable
 CXXFLAGS_WARNINGS += -Wno-unused-parameter
 CXXFLAGS_WARNINGS += -Wno-vla
+CXXFLAGS_WARNINGS += -Wno-unknown-pragmas
 CXXFLAGS_WARNINGS += -Wno-type-limits 
 
 
 
 
- 
- 
- 
+
+
+
+
 
 
 
@@ -394,6 +424,10 @@ endif
 #          Sanitizer instrumentation          #
 #                                             #
 ###############################################
+
+# There are several incompatibilities between sanitizers 
+# thread cannot be combined with address and leak
+# Warning: memory causes considerable slowdown
 
 ifeq ($(FLAG_DO_USE_SANITIZER),yes)
 

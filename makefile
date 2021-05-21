@@ -193,7 +193,7 @@ cppcheck: $(cppcheck.components)
 
 .PHONY: cpplint
 cpplint:
-	( ./cpplint.py --exclude=tests/* --exclude=tests/*/* --exclude=.legacy/* --exclude=.private/* --exclude=.playground/* --recursive --filter=-whitespace,-legal --quiet . ) | sort | uniq -c > OUTPUT_CPPLINT.txt
+	( ./Tools/cpplint.py --exclude=tests/* --exclude=tests/*/* --exclude=.legacy/* --exclude=.private/* --exclude=.playground/* --recursive --filter=-whitespace,-legal --quiet . ) | sort | uniq -c > OUTPUT_CPPLINT.txt
 
 
 

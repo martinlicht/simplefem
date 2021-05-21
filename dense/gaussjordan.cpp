@@ -1,6 +1,7 @@
 
 #include "gaussjordan.hpp"
 
+#include <new>
 
  // LR factorization, column pivot, 
  
@@ -86,7 +87,7 @@ DenseMatrix GaussJordanInplace( DenseMatrix mat, bool pivoting )
     const int n = mat.getdimout();
     
     int* pivots = nullptr;
-    if(pivoting) pivots = new int[n];
+    if(pivoting) pivots = new (std::nothrow) int[n];
     
     for( int i = 0; i < n; i++ ) {
         

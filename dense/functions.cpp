@@ -2,6 +2,7 @@
 #include "functions.hpp"
 
 #include <cassert>
+#include <new>
 #include <vector>
 
 
@@ -353,7 +354,7 @@ void Inverse_gauss_InSitu( DenseMatrix& mat, bool pivoting )
     const int n = mat.getdimout();
     
     int* pivots = nullptr;
-    if(pivoting) pivots = new int[n];
+    if(pivoting) pivots = new (std::nothrow) int[n];
     
     for( int i = 0; i < n; i++ ) {
         

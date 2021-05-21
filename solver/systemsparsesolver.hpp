@@ -6,12 +6,13 @@
 #include <cstdio>
 #include <cstdlib>
 #include <omp.h>
+#include <new>
 #include <utility>
 
 #include "../basic.hpp"
 #include "sparsesolver.hpp"
 
-void HodgeConjugateResidualSolverCSR( 
+inline void HodgeConjugateResidualSolverCSR( 
     const int N, 
     const int L, 
     Float* x, 
@@ -26,7 +27,7 @@ void HodgeConjugateResidualSolverCSR(
     int inneriteration_print_modulo
 );
 
-void HodgeConjugateResidualSolverCSR_textbook( 
+inline void HodgeConjugateResidualSolverCSR_textbook( 
     const int N, 
     const int L, 
     Float* x, 
@@ -41,7 +42,7 @@ void HodgeConjugateResidualSolverCSR_textbook(
     int inneriteration_print_modulo
 );
 
-void HodgeConjugateResidualSolverCSR_SSOR( 
+inline void HodgeConjugateResidualSolverCSR_SSOR( 
     const int N, 
     const int L, 
     Float* x, 
@@ -100,17 +101,17 @@ void HodgeConjugateResidualSolverCSR(
     assert( threshold > 0 );
 //     assert( print_modulo >= 0 );
     
-    Float* __restrict__  dir = (Float*)malloc( sizeof(Float) * N );
-    Float* __restrict__ Mdir = (Float*)malloc( sizeof(Float) * N );
-    Float* __restrict__ Mres = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__  dir = new (std::nothrow) Float[N];
+    Float* __restrict__ Mdir = new (std::nothrow) Float[N];
+    Float* __restrict__ Mres = new (std::nothrow) Float[N];
     
-    Float* __restrict__ aux1 = (Float*)malloc( sizeof(Float) * L );
-    Float* __restrict__ aux2 = (Float*)malloc( sizeof(Float) * L );
-    Float* __restrict__ auxR = (Float*)malloc( sizeof(Float) * L );
+    Float* __restrict__ aux1 = new (std::nothrow) Float[L];
+    Float* __restrict__ aux2 = new (std::nothrow) Float[L];
+    Float* __restrict__ auxR = new (std::nothrow) Float[L];
     
-    Float* __restrict__  vil = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__  vil = new (std::nothrow) Float[N];
     
-    Float* __restrict__  precon = (Float*)malloc( sizeof(Float) * L );
+    Float* __restrict__  precon = new (std::nothrow) Float[L];
     
     assert(  dir );
     assert( Mdir );
@@ -341,17 +342,17 @@ void HodgeConjugateResidualSolverCSR(
                k, N, (long double)(Md_r), (long double) threshold*threshold );
 
     
-    free(  dir );
-    free( Mdir );
-    free( Mres );
+    delete[] (  dir );
+    delete[] ( Mdir );
+    delete[] ( Mres );
 
-    free( aux1 );
-    free( aux2 );
-    free( auxR );
+    delete[] ( aux1 );
+    delete[] ( aux2 );
+    delete[] ( auxR );
     
-    free( vil );
+    delete[] ( vil );
     
-    free( precon );
+    delete[] ( precon );
 
 }
  
@@ -418,17 +419,17 @@ void HodgeConjugateResidualSolverCSR_SSOR(
     assert( threshold > 0 );
 //     assert( print_modulo >= 0 );
     
-    Float* __restrict__  dir = (Float*)malloc( sizeof(Float) * N );
-    Float* __restrict__ Mdir = (Float*)malloc( sizeof(Float) * N );
-    Float* __restrict__ Mres = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__  dir = new (std::nothrow) Float[N];
+    Float* __restrict__ Mdir = new (std::nothrow) Float[N];
+    Float* __restrict__ Mres = new (std::nothrow) Float[N];
     
-    Float* __restrict__ aux1 = (Float*)malloc( sizeof(Float) * L );
-    Float* __restrict__ aux2 = (Float*)malloc( sizeof(Float) * L );
-    Float* __restrict__ auxR = (Float*)malloc( sizeof(Float) * L );
+    Float* __restrict__ aux1 = new (std::nothrow) Float[L];
+    Float* __restrict__ aux2 = new (std::nothrow) Float[L];
+    Float* __restrict__ auxR = new (std::nothrow) Float[L];
     
-    Float* __restrict__  vil = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__  vil = new (std::nothrow) Float[N];
     
-    Float* __restrict__  diagonal = (Float*)malloc( sizeof(Float) * L );
+    Float* __restrict__  diagonal = new (std::nothrow) Float[L];
     
     assert(  dir );
     assert( Mdir );
@@ -452,7 +453,7 @@ void HodgeConjugateResidualSolverCSR_SSOR(
             if( Acolumns[d] == c ) 
                 diagonal[c] += Avalues[ d ];
             
-        assert( diagonal[c] >= 0. );
+//         assert( diagonal[c] >= 0. );
         
     }
     
@@ -657,17 +658,17 @@ void HodgeConjugateResidualSolverCSR_SSOR(
                k, N, (long double)(Md_r), (long double) threshold*threshold );
 
     
-    free(  dir );
-    free( Mdir );
-    free( Mres );
+    delete[] (  dir );
+    delete[] ( Mdir );
+    delete[] ( Mres );
 
-    free( aux1 );
-    free( aux2 );
-    free( auxR );
+    delete[] ( aux1 );
+    delete[] ( aux2 );
+    delete[] ( auxR );
     
-    free( vil );
+    delete[] ( vil );
     
-    free( diagonal );
+    delete[] ( diagonal );
 
 }
  
@@ -733,17 +734,17 @@ void HodgeConjugateResidualSolverCSR_textbook(
     assert( Btvalues );
     assert( res );
     assert( threshold > 0 );
-    assert( print_modulo >= 0 );
+//     assert( print_modulo >= 0 );
     
-    Float* __restrict__  dir = (Float*)malloc( sizeof(Float) * N );
-    Float* __restrict__ Mdir = (Float*)malloc( sizeof(Float) * N );
-    Float* __restrict__ Mres = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__  dir = new (std::nothrow) Float[N];
+    Float* __restrict__ Mdir = new (std::nothrow) Float[N];
+    Float* __restrict__ Mres = new (std::nothrow) Float[N];
     
-    Float* __restrict__ aux1 = (Float*)malloc( sizeof(Float) * L );
-    Float* __restrict__ aux2 = (Float*)malloc( sizeof(Float) * L );
-    Float* __restrict__ auxR = (Float*)malloc( sizeof(Float) * L );
+    Float* __restrict__ aux1 = new (std::nothrow) Float[L];
+    Float* __restrict__ aux2 = new (std::nothrow) Float[L];
+    Float* __restrict__ auxR = new (std::nothrow) Float[L];
     
-    Float* __restrict__  vil = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__  vil = new (std::nothrow) Float[N];
     
     assert(  dir );
     assert( Mdir );
@@ -863,13 +864,13 @@ void HodgeConjugateResidualSolverCSR_textbook(
         bool denominator_is_small    = sqrt(absolute(Md_Md)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) {
-            printf( "Gradient double energy is unreasonable with %.9Le\n", (long double)Md_Md );
+            if( print_modulo >= 0 ) printf( "Gradient double energy is unreasonable with %.9Le\n", (long double)Md_Md );
             break;
         }
         
         if( denominator_is_small ) {
-            printf( "Gradient double energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
-                    (long double)Md_Md, (long double)Mr_r, (long double)threshold*threshold );
+            if( print_modulo >= 0 ) printf( "Gradient double energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
+                                    (long double)Md_Md, (long double)Mr_r, (long double)threshold*threshold );
             break;
         }
 
@@ -952,15 +953,15 @@ void HodgeConjugateResidualSolverCSR_textbook(
                k, N, (long double)(Mr_r), (long double) threshold*threshold );
 
     
-    free(  dir );
-    free( Mdir );
-    free( Mres );
+    delete[] (  dir );
+    delete[] ( Mdir );
+    delete[] ( Mres );
 
-    free( aux1 );
-    free( aux2 );
-    free( auxR );
+    delete[] ( aux1 );
+    delete[] ( aux2 );
+    delete[] ( auxR );
     
-    free( vil );
+    delete[] ( vil );
 
 }
 

@@ -120,6 +120,8 @@ class FloatVector
         
         FloatVector getslice( int, int ) const;
         
+        void setslice( int, int, Float );
+        
         void setslice( int, const FloatVector& );
         
         void addslice( int, const FloatVector&, Float );

@@ -83,6 +83,8 @@ public LinearOperator /* every matrix is a linear operator */
         
         FloatVector diagonal() const;
         
+        int getnumberofzeroentries() const;
+        
         
         /* access and information to internal data */
         

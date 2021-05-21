@@ -9,6 +9,7 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
+#include <new>
 #include <utility>
 
 #ifdef _OPENMP
@@ -40,8 +41,8 @@ void ConjugateGradientSolverCSR(
     assert( threshold > 0 );
     assert( print_modulo >= -1 );
     
-    Float* __restrict__ direction = (Float*)malloc( sizeof(Float) * N );
-    Float* __restrict__ auxiliary = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__ direction = new (std::nothrow) Float[N];
+    Float* __restrict__ auxiliary = new (std::nothrow) Float[N];
     assert( direction );
     assert( auxiliary );
     
@@ -110,13 +111,13 @@ void ConjugateGradientSolverCSR(
         bool denominator_is_small    = sqrt(absolute(d_Ad)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) {
-            printf( "Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
+            if( print_modulo >= 0 ) printf( "Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
             break;
         }
         
         if( denominator_is_small ) {
-            printf( "Gradient energy is small with %.9Le while residual is %.9Le vs %.9Le\n", 
-                    (long double)d_Ad, (long double)r_r, (long double)threshold*threshold );
+            if( print_modulo >= 0 ) printf( "Gradient energy is small with %.9Le while residual is %.9Le vs %.9Le\n", 
+                                            (long double)d_Ad, (long double)r_r, (long double)threshold*threshold );
             break;
         }
         
@@ -156,8 +157,8 @@ void ConjugateGradientSolverCSR(
                 K, N, (long double)(r_r), (long double) threshold*threshold );
 
     
-    free( direction ); 
-    free( auxiliary );
+    delete[] ( direction ); 
+    delete[] ( auxiliary );
 
 }
 
@@ -201,9 +202,9 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
     assert( print_modulo >= -1 );
     assert( precon );
     
-    Float* __restrict__ direction = (Float*)malloc( sizeof(Float) * N );
-    Float* __restrict__ zirconium = (Float*)malloc( sizeof(Float) * N );
-    Float* __restrict__ auxiliary = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__ direction = new (std::nothrow) Float[N];
+    Float* __restrict__ zirconium = new (std::nothrow) Float[N];
+    Float* __restrict__ auxiliary = new (std::nothrow) Float[N];
     assert( direction );
     assert( zirconium );
     assert( auxiliary );
@@ -282,13 +283,13 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
         bool denominator_is_small    = sqrt(absolute(d_Ad)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) {
-            printf( "Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
+            if( print_modulo >= 0 ) printf( "Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
             break;
         }
         
         if( denominator_is_small ) {
-            printf( "Gradient energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
-                    (long double)d_Ad, (long double)z_r, (long double)threshold*threshold );
+            if( print_modulo >= 0 ) printf( "Gradient energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
+                                            (long double)d_Ad, (long double)z_r, (long double)threshold*threshold );
             break;
         }
         
@@ -335,9 +336,9 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
                 K, N, (long double)(z_r), (long double) threshold*threshold );
 
     
-    free( direction ); 
-    free( zirconium ); 
-    free( auxiliary );
+    delete[] ( direction ); 
+    delete[] ( zirconium ); 
+    delete[] ( auxiliary );
 
 }
 
@@ -392,10 +393,10 @@ void ConjugateGradientSolverCSR_SSOR(
     assert( print_modulo >= -1 );
     assert( diagonal );
     
-    Float* __restrict__ direction = (Float*)malloc( sizeof(Float) * N );
-    Float* __restrict__ zirconium = (Float*)malloc( sizeof(Float) * N );
-    Float* __restrict__ auxiliary = (Float*)malloc( sizeof(Float) * N );
-    Float* __restrict__ mittlerer = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__ direction = new (std::nothrow) Float[N];
+    Float* __restrict__ zirconium = new (std::nothrow) Float[N];
+    Float* __restrict__ auxiliary = new (std::nothrow) Float[N];
+    Float* __restrict__ mittlerer = new (std::nothrow) Float[N];
     assert( direction );
     assert( zirconium );
     assert( mittlerer );
@@ -517,13 +518,13 @@ void ConjugateGradientSolverCSR_SSOR(
         bool denominator_is_small    = sqrt(absolute(d_Ad)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) {
-            printf( "Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
+            if( print_modulo >= 0 ) printf( "Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
             break;
         }
         
         if( denominator_is_small ) {
-            printf( "Gradient energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
-                    (long double)d_Ad, (long double)z_r, (long double)threshold*threshold );
+            if( print_modulo >= 0 ) printf( "Gradient energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
+                                            (long double)d_Ad, (long double)z_r, (long double)threshold*threshold );
             break;
         }
         
@@ -596,10 +597,10 @@ void ConjugateGradientSolverCSR_SSOR(
                 K, N, (long double)(z_r), (long double) threshold*threshold );
 
     
-    free( direction ); 
-    free( zirconium ); 
-    free( mittlerer ); 
-    free( auxiliary );
+    delete[] ( direction ); 
+    delete[] ( zirconium ); 
+    delete[] ( mittlerer ); 
+    delete[] ( auxiliary );
 
 }
 
@@ -663,14 +664,14 @@ void ConjugateResidualSolverCSR(
     assert( threshold > 0 );
     assert( print_modulo >= -1 );
     
-    Float* __restrict__  dir = (Float*)malloc( sizeof(Float) * N );
-    Float* __restrict__ Adir = (Float*)malloc( sizeof(Float) * N );
-    Float* __restrict__ Ares = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__  dir = new (std::nothrow) Float[N];
+    Float* __restrict__ Adir = new (std::nothrow) Float[N];
+    Float* __restrict__ Ares = new (std::nothrow) Float[N];
     assert(  dir );
     assert( Adir );
     assert( Ares );
     
-    Float* __restrict__  vil = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__  vil = new (std::nothrow) Float[N];
     assert( vil );
     
     
@@ -740,13 +741,13 @@ void ConjugateResidualSolverCSR(
         bool denominator_is_small    = sqrt(absolute(Ad_Ad)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) {
-            printf( "Gradient double energy is unreasonable with %.9Le\n", (long double)Ad_Ad );
+            if( print_modulo >= 0 ) printf( "Gradient double energy is unreasonable with %.9Le\n", (long double)Ad_Ad );
             break;
         }
         
         if( denominator_is_small ) {
-            printf( "Gradient double energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
-                    (long double)Ad_Ad, (long double)Ad_r, (long double)threshold*threshold );
+            if( print_modulo >= 0 ) printf( "Gradient double energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
+                                    (long double)Ad_Ad, (long double)Ad_r, (long double)threshold*threshold );
             break;
         }
         
@@ -802,11 +803,11 @@ void ConjugateResidualSolverCSR(
                 K, N, (long double)(Ad_r), (long double) threshold*threshold );
 
     
-    free(  dir );
-    free( Adir );
-    free( Ares );
+    delete[] (  dir );
+    delete[] ( Adir );
+    delete[] ( Ares );
 
-    free( vil );
+    delete[] ( vil );
 
 }
 
@@ -857,14 +858,14 @@ void ConjugateResidualSolverCSR_textbook(
     assert( threshold > 0 );
     assert( print_modulo >= -1 );
     
-    Float* __restrict__  dir = (Float*)malloc( sizeof(Float) * N );
-    Float* __restrict__ Adir = (Float*)malloc( sizeof(Float) * N );
-    Float* __restrict__ Ares = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__  dir = new (std::nothrow) Float[N];
+    Float* __restrict__ Adir = new (std::nothrow) Float[N];
+    Float* __restrict__ Ares = new (std::nothrow) Float[N];
     assert(  dir );
     assert( Adir );
     assert( Ares );
     
-    Float* __restrict__  vil = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__  vil = new (std::nothrow) Float[N];
     assert( vil );
     
     
@@ -932,13 +933,13 @@ void ConjugateResidualSolverCSR_textbook(
         bool denominator_is_small    = sqrt(absolute(Ad_Ad)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) {
-            printf( "Gradient energy is unreasonable with %.9Le\n", (long double)Ar_r );
+            if( print_modulo >= 0 ) printf( "Gradient energy is unreasonable with %.9Le\n", (long double)Ar_r );
             break;
         }
         
         if( denominator_is_small ) {
-            printf( "Gradient energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
-                    (long double)Ad_Ad, (long double)Ar_r, (long double)threshold*threshold );
+            if( print_modulo >= 0 ) printf( "Gradient energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
+                                            (long double)Ad_Ad, (long double)Ar_r, (long double)threshold*threshold );
             break;
         }
         
@@ -992,11 +993,11 @@ void ConjugateResidualSolverCSR_textbook(
                 K, N, (long double)(Ar_r), (long double) threshold*threshold );
 
     
-    free(  dir );
-    free( Adir );
-    free( Ares );
+    delete[] (  dir );
+    delete[] ( Adir );
+    delete[] ( Ares );
 
-    free( vil );
+    delete[] ( vil );
 
 }
 
@@ -1060,19 +1061,19 @@ void MINRESCSR(
     assert( threshold > 0 );
     assert( print_modulo >= -1 );
     
-    Float* __restrict__ v0 = (Float*)malloc( sizeof(Float) * N );
-    Float* __restrict__ v1 = (Float*)malloc( sizeof(Float) * N );
-    Float* __restrict__ w0 = (Float*)malloc( sizeof(Float) * N );
-    Float* __restrict__ w1 = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__ v0 = new (std::nothrow) Float[N];
+    Float* __restrict__ v1 = new (std::nothrow) Float[N];
+    Float* __restrict__ w0 = new (std::nothrow) Float[N];
+    Float* __restrict__ w1 = new (std::nothrow) Float[N];
     
     assert( v0 );
     assert( v1 );
     assert( w0 );
     assert( w1 );
     
-    Float* __restrict__ vn = (Float*)malloc( sizeof(Float) * N );
-    Float* __restrict__ wn = (Float*)malloc( sizeof(Float) * N );
-    Float* __restrict__  p = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__ vn = new (std::nothrow) Float[N];
+    Float* __restrict__ wn = new (std::nothrow) Float[N];
+    Float* __restrict__  p = new (std::nothrow) Float[N];
     
     assert( vn );
     assert( wn );
@@ -1226,14 +1227,14 @@ void MINRESCSR(
         printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)eta, (long double) threshold );
 
     
-    free( v0 );
-    free( v1 );
-    free( w0 );
-    free( w1 );
+    delete[] ( v0 );
+    delete[] ( v1 );
+    delete[] ( w0 );
+    delete[] ( w1 );
     
-    free( vn );
-    free( wn );
-    free(  p );
+    delete[] ( vn );
+    delete[] ( wn );
+    delete[] (  p );
     
 }
 
@@ -1266,13 +1267,13 @@ void WHATEVER(
     assert( threshold > 0 );
     assert( print_modulo >= -1 );
     
-    Float* __restrict__  r = (Float*)malloc( sizeof(Float) * N );
-    Float* __restrict__ p0 = (Float*)malloc( sizeof(Float) * N );
-    Float* __restrict__ p1 = (Float*)malloc( sizeof(Float) * N );
-    Float* __restrict__ p2 = (Float*)malloc( sizeof(Float) * N );
-    Float* __restrict__ s0 = (Float*)malloc( sizeof(Float) * N );
-    Float* __restrict__ s1 = (Float*)malloc( sizeof(Float) * N );
-    Float* __restrict__ s2 = (Float*)malloc( sizeof(Float) * N );
+    Float* __restrict__  r = new (std::nothrow) Float[N];
+    Float* __restrict__ p0 = new (std::nothrow) Float[N];
+    Float* __restrict__ p1 = new (std::nothrow) Float[N];
+    Float* __restrict__ p2 = new (std::nothrow) Float[N];
+    Float* __restrict__ s0 = new (std::nothrow) Float[N];
+    Float* __restrict__ s1 = new (std::nothrow) Float[N];
+    Float* __restrict__ s2 = new (std::nothrow) Float[N];
     
     assert(  r );
     assert( p0 );
@@ -1408,13 +1409,13 @@ void WHATEVER(
         printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), (long double) threshold );
 
     
-    free(  r );
-    free( p0 );
-    free( p1 );
-    free( p2 );
-    free( s0 );
-    free( s1 );
-    free( s2 );
+    delete[] (  r );
+    delete[] ( p0 );
+    delete[] ( p1 );
+    delete[] ( p2 );
+    delete[] ( s0 );
+    delete[] ( s1 );
+    delete[] ( s2 );
     
 }
 
@@ -1868,23 +1869,23 @@ void WHATEVER(
 //     
 //     printline( "@@@@@@@@@@ Algorithm finished" );
 //     
-//     free( r       );
-//     free( C_r     ); 
-//     free( AiBt_r  );
-//     free( BAiBt_r );
-//     free( d       );
-//     free( C_d     );
-//     free( AiBt_d  );
-//     free( BAiBt_d );
-//     free( p       );
-//     free( C_p     );
-//     free( AiBt_p  );
-//     free( BAiBt_p );
-//     free( tempM );
-//     free( tempN );
-//     free( entriesBt );
-//     free( csrrowsBt );
-//     free( csrcolumnsBt );
+//     delete[] ( r       );
+//     delete[] ( C_r     ); 
+//     delete[] ( AiBt_r  );
+//     delete[] ( BAiBt_r );
+//     delete[] ( d       );
+//     delete[] ( C_d     );
+//     delete[] ( AiBt_d  );
+//     delete[] ( BAiBt_d );
+//     delete[] ( p       );
+//     delete[] ( C_p     );
+//     delete[] ( AiBt_p  );
+//     delete[] ( BAiBt_p );
+//     delete[] ( tempM );
+//     delete[] ( tempN );
+//     delete[] ( entriesBt );
+//     delete[] ( csrrowsBt );
+//     delete[] ( csrcolumnsBt );
 //     
 //     printf( "@@@@@@@@@@ Exit: %f %f\n", vectornorm( M, ressigma ), vectornorm( pdim, resu  ) );
 //     
@@ -2307,23 +2308,23 @@ void WHATEVER(
 //     
 //     printline( "@@@@@@@@@@ Algorithm finished" );
 //     
-//     free( r       );
-//     free( C_r     ); 
-//     free( AiBt_r  );
-//     free( BAiBt_r );
-//     free( d       );
-//     free( C_d     );
-//     free( AiBt_d  );
-//     free( BAiBt_d );
-//     free( p       );
-//     free( C_p     );
-//     free( AiBt_p  );
-//     free( BAiBt_p );
-//     free( tempM );
-//     free( tempN );
-//     free( entriesBt );
-//     free( csrrowsBt );
-//     free( csrcolumnsBt );
+//     delete[] ( r       );
+//     delete[] ( C_r     ); 
+//     delete[] ( AiBt_r  );
+//     delete[] ( BAiBt_r );
+//     delete[] ( d       );
+//     delete[] ( C_d     );
+//     delete[] ( AiBt_d  );
+//     delete[] ( BAiBt_d );
+//     delete[] ( p       );
+//     delete[] ( C_p     );
+//     delete[] ( AiBt_p  );
+//     delete[] ( BAiBt_p );
+//     delete[] ( tempM );
+//     delete[] ( tempN );
+//     delete[] ( entriesBt );
+//     delete[] ( csrrowsBt );
+//     delete[] ( csrcolumnsBt );
 //     
 //     printf( "@@@@@@@@@@ Exit: %f %f\n", vectornorm( M, ressigma ), vectornorm( pdim, resu  ) );
 //     

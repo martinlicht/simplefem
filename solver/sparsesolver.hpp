@@ -2,6 +2,8 @@
 #define INCLUDEGUARD_SOLVER_CLASSICALSOLVERS
 
 
+#include <new>
+
 #include "../basic.hpp"
 
 

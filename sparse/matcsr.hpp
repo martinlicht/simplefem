@@ -82,6 +82,8 @@ public LinearOperator /* every matrix is a linear operator */
 
         int getnumberofentries() const;
 
+        int getnumberofzeroentries() const;
+
 //         void sortentries() const;
         
         
