@@ -6,6 +6,7 @@ all: build tests benchmarks
 
 
 
+# Prints the help message: a list of possible makefile targets
 
 .PHONY: help 
 help:
@@ -16,6 +17,7 @@ help:
 	@echo " tests:      Run all tests for all components."
 	@echo " benchmarks: Perform the benchmarks." 
 	@echo " all:        build, test, and benchmark"
+	@echo " parameters: Display the build parameters."
 	@echo " check:      Run a static code analysis tool. The particular tool is not specified."
 	@echo " clean:      Clean all output from previous builds, tests, and benchmarks,"
 	@echo "             including all VTK output"
@@ -83,12 +85,16 @@ $(build.components.so): .build.%.so:
 
 
 
+# The target 'test' runs all the tests in the test directory 
+
 .PHONY: test
 test:
 	cd ./tests && $(MAKE) run
 
 
 
+
+# The target 'benchmark' runs all the benchmarks in the benchmark directory
 
 .PHONY: benchmarks
 benchmarks:
@@ -98,12 +104,15 @@ benchmarks:
 
 
 
+# Target 'check' is a generic test. Currently, it defaults to 'tidy'
 
 check: tidy
 
 
 
 
+
+# 'Clean' target
 
 clean.components :=$(patsubst %,.clean.%,$(components) )
 
@@ -118,11 +127,7 @@ clean: $(clean.components)
 
 
 
-
-
-
-
-
+# Clean all dependency files with this target 
 
 dependclean.components :=$(patsubst %,.dependclean.%,$(components) )
 
@@ -141,7 +146,7 @@ dependclean: $(dependclean.components)
 
 
 
-
+# Clean all VTK files
 
 vtkclean.components :=$(patsubst %,.vtkclean.%,$(components) )
 
@@ -157,6 +162,8 @@ vtkclean: $(vtkclean.components)
 
 
 
+# Target 'tidy' to call clang-tidy
+
 tidy.components :=$(patsubst %,.tidy.%,$(components) )
 
 .PHONY: $(tidy.components)
@@ -169,6 +176,7 @@ tidy: $(tidy.components)
 
 
 
+# Call 'cppcheck'
 cppcheck.components :=$(patsubst %,.cppcheck.%,$(components) )
 
 .PHONY: $(cppcheck.components)
@@ -182,11 +190,23 @@ cppcheck: $(cppcheck.components)
 
 
 
-
+# Call 'cpplint' 
 
 .PHONY: cpplint
 cpplint:
 	( ./Tools/cpplint.py --exclude=tests/* --exclude=tests/*/* --exclude=.legacy/* --exclude=.private/* --exclude=.playground/* --recursive --filter=-whitespace,-legal --quiet . ) | sort | uniq -c > OUTPUT_CPPLINT.txt
+
+
+# print the build parameters
+.PHONY: parameters 
+parameters:
+	@make --no-print-directory -f common.recipe.mk parameters
+	@true
+
+
+
+
+
 
 
 

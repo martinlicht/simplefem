@@ -8,7 +8,7 @@
 
     int main(){
 
-        int size = 1000000; // reduce this number in case your program crashes
+        int size = 1000; // reduce this number in case your program crashes
         int L = 200;
         
         std::cout << "size=" << size << " L=" << L << std::endl;
