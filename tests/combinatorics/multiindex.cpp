@@ -16,6 +16,7 @@ int main()
     
     cout << "Unit Test for Multi-Indices" << endl;
         
+    if( true )
     {
         cout << "Basic functionality" << endl;
         
@@ -59,6 +60,7 @@ int main()
         
     }
     
+    if( true )
     {
         cout << "Comparison and arithmetics" << endl;
         

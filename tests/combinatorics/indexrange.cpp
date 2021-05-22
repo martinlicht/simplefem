@@ -14,7 +14,8 @@ int main()
 {
     cout << "Unit Test for Index Ranges" << std::endl;
     
-    if( true ) {
+    if( true ) 
+    {
         
         cout << "Test empty index ranges" << std::endl;
         
@@ -40,7 +41,8 @@ int main()
         
     } 
         
-    if( true ) {
+    if( true ) 
+    {
         
         cout << "Test non-empty index ranges" << std::endl;
         
@@ -91,7 +93,8 @@ int main()
         
     }
     
-    if( true ) {
+    if( true )
+    {
         
         cout << "Test Index Range iterators" << std::endl;
         
@@ -102,28 +105,32 @@ int main()
         cout << "For each loop " << std::endl;
         
         for( int i : irC )
-            cout << "Output :" << i << endl;
-        
+            cout << i << space;
+        cout << nl;
+
         cout << "Classical For loop " << std::endl;
         
         for( IndexRange::ConstIterator iri = irC.begin(); iri != irC.end(); iri++ )
-            cout << "Output :" << *iri << endl;
+            cout << *iri << space;
+        cout << nl;
         
         cout << "While Loop " << std::endl;
         
         IndexRange::ConstIterator iri = irC.begin();
         while( iri != irC.end() )
-            cout << "Output :" << *(iri++) << endl;
+            cout << *(iri++) << space;
+        cout << nl;
         
     }
         
-    if( false ) {
+    if( false )
+    {
     
         cout << "Test invalid index ranges" << std::endl;
     
         IndexRange dummy( 0, std::numeric_limits<int>::max() );
         cout << dummy << " " << std::numeric_limits<int>::max();
-        cout << "FAIL: Invalid range created" << std::endl;
+        cout << "FAIL: Invalid range created" << nl;
     
     }
         

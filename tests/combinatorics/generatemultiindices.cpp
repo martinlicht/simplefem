@@ -13,7 +13,8 @@ int main()
 {
     cout << "Unit Test for Multiindex Generators" << endl;
     
-    if(true){
+    if(true)
+    {
         
         cout << "First bulk" << endl;
     
@@ -26,7 +27,8 @@ int main()
         
     }
     
-    if(true){
+    if(true)
+    {
         
         cout << "Second bulk" << endl;
     
@@ -39,7 +41,8 @@ int main()
     
     }
     
-    if(true){
+    if(true)
+    {
         
         cout << "Third bulk" << endl;
     
@@ -52,7 +55,8 @@ int main()
         
     }
     
-    if(true){
+    if(true)
+    {
       
         cout << "Zero degree" << endl;
     
@@ -65,7 +69,8 @@ int main()
       
     }
     
-    if(true){
+    if(true)
+    {
       
         cout << "First degree" << endl;
     
@@ -78,7 +83,8 @@ int main()
       
     }
     
-    if(true){
+    if(true)
+    {
       
         cout << "Degree 7 in one variable" << endl;
     
@@ -91,7 +97,8 @@ int main()
       
     }
     
-    if(true){
+    if(true)
+    {
 
         cout << "MultiIndex over empty range " << endl;
     
