@@ -2,8 +2,8 @@ name: Unit tests
 
 on:
   workflow_dispatch:
-#  schedule:
-#    - cron: '0 * * * *'
+  schedule:
+    - cron: '0 11 * * SUN'
   
 jobs:
   build:
@@ -29,10 +29,10 @@ jobs:
       run: cd tests/ && make sparse.run && cd .. 
     - name: run tests (solver)...
       run: cd tests/ && make solver.run && cd .. 
-#    - name: run tests (mesh)...
-#      run: cd tests/ && make mesh.run && cd .. 
-#    - name: run tests (vtk)...
-#      run: cd tests/ && make vtk.run && cd .. 
+    - name: run tests (mesh)...
+      run: cd tests/ && make mesh.run && cd .. 
+    - name: run tests (vtk)...
+      run: cd tests/ && make vtk.run && cd .. 
 #    - name: run tests (fem)...
 #      run: cd tests/ && make fem.run && cd .. 
 #    - name: run tests (experiments)...
