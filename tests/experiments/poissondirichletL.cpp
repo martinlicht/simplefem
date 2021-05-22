@@ -33,13 +33,13 @@ using namespace std;
 int main()
 {
         
-        cout << "Unit Test for Solution of Dirichlet Problem" << endl;
+        LOG << "Unit Test for Solution of Dirichlet Problem";// << endl;
         
-        cout << std::setprecision(10);
+        LOG << std::setprecision(10);
 
         if(true){
 
-            cout << "Initial mesh..." << endl;
+            LOG << "Initial mesh...";// << endl;
             
             MeshSimplicial2D M = LShapedDomain2D();
 
@@ -49,7 +49,7 @@ int main()
             
             M.check_dirichlet_flags();
             
-            cout << "Prepare scalar fields for testing..." << endl;
+            LOG << "Prepare scalar fields for testing...";// << endl;
             
 
             std::function<FloatVector(const FloatVector&)> constant_one
@@ -87,7 +87,7 @@ int main()
 
             
 
-            cout << "Solving Poisson Problem with Dirichlet boundary conditions" << endl;
+            LOG << "Solving Poisson Problem with Dirichlet boundary conditions";// << endl;
 
             int min_l = 2; 
             int max_l = 3;
@@ -105,10 +105,10 @@ int main()
 
             for( int l = min_l; l <= max_l; l++ ){
                 
-                cout << "Level: " << l << std::endl;
-                cout << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
+                LOG << "Level: " << l;// << std::endl;
+                LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
-                cout << "...assemble matrices" << endl;
+                LOG << "...assemble matrices";// << endl;
         
                 SparseMatrix     scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r+0 );
                 SparseMatrix aug_scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r+1 );
@@ -155,7 +155,7 @@ int main()
                 FloatVector     sol(     incmatrix.getdimin(), 0. );
                 FloatVector aug_sol( aug_incmatrix.getdimin(), 0. );
                 
-                cout << "...iterative solver 1" << endl;
+                LOG << "...iterative solver 1";// << endl;
                 
                 {
                     sol.zero();
@@ -165,10 +165,10 @@ int main()
                     timestamp start = gettimestamp();
                     Solver.solve( sol, rhs );
                     timestamp end = gettimestamp();
-                    std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                    LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
                 }
 
-                cout << "...iterative solver 2" << endl;
+                LOG << "...iterative solver 2";// << endl;
                 
                 {
                     aug_sol.zero();
@@ -178,25 +178,25 @@ int main()
                     timestamp start = gettimestamp();
                     Solver.solve( aug_sol, aug_rhs );
                     timestamp end = gettimestamp();
-                    std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                    LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
                 }
 
-                cout << "...compute error and residual:" << endl;
+                LOG << "...compute error and residual:";// << endl;
 
                 FloatVector error     = aug_incmatrix * aug_sol - elevation_matrix * incmatrix * sol;
                 FloatVector graderror = aug_diffmatrix * ( aug_incmatrix * aug_sol - elevation_matrix * incmatrix * sol );
                 Float errornorm       = std::sqrt( error * ( aug_scalar_massmatrix * error ) );
                 Float graderrornorm   = std::sqrt( graderror * ( aug_vector_massmatrix * graderror ) );
                 
-                cout << "error:     " << errornorm     << endl;
-                cout << "graderror: " << graderrornorm << endl;
+                LOG << "error:     " << errornorm   ;//;// << endl;
+                LOG << "graderror: " << graderrornorm;// << endl;
                 
                 
                         
                         
                 contable << errornorm << graderrornorm << nl;
                 
-                contable.print( std::cout );
+                contable.lg();
 
 
                 if( r == 1 ){
@@ -214,7 +214,7 @@ int main()
             
                 }
                 
-                cout << "Refinement..." << endl;
+                LOG << "Refinement...";// << endl;
                 
                 M.uniformrefinement();
                 
@@ -226,7 +226,7 @@ int main()
         
         
         
-        cout << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test";// << endl;
         
         return 0;
 }

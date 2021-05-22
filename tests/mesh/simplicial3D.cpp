@@ -15,23 +15,23 @@ using namespace std;
 
 int main()
 {
-        cout << "Unit Test for Simplicial 3D Module" << endl;
+        LOG << "Unit Test for Simplicial 3D Module";// << endl;
         
         MeshSimplicial3D M = UnitSimplex3D();
         
         M.check();
         
-        cout << "Refinement..." << endl;
+        LOG << "Refinement...";// << endl;
         
         M.uniformrefinement();
         
-        cout << "...done" << endl;
+        LOG << "...done";// << endl;
         
         M.check();
         
-        cout << M << endl;
+        LOG << M;// << endl;
         
-        cout << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test";// << endl;
         
         return 0;
 }

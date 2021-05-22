@@ -20,7 +20,7 @@ using namespace std;
 
 
 
-inline void print( const MeshSimplicial3D& M, std::string meshname )
+inline void internal_print( const MeshSimplicial3D& M, std::string meshname )
 {
     
     fstream fs( experimentfile( getbasename(__FILE__)), std::fstream::out );
@@ -59,18 +59,18 @@ inline void print( const MeshSimplicial3D& M, std::string meshname )
 
 int main()
 {
-    cout << "Unit Test for VTK output of Simplicial Mesh (3D)" << endl;
+    LOG << "Unit Test for VTK output of Simplicial Mesh (3D)";// << endl;
     
     {
         
         const MeshSimplicial3D Mx = StandardCube3D();  std::string meshname = "Standard Cube 3D";
         
-        print( Mx, meshname );
+        internal_print( Mx, meshname );
         
         
         
         
-        if(true)
+        //if(false)
         {
             
             auto M = Mx;
@@ -79,7 +79,7 @@ int main()
             
                 M.uniformrefinement();
                 
-                print( M, meshname );
+                internal_print( M, meshname );
             
             }
             
@@ -87,7 +87,7 @@ int main()
         
         
         
-        if(true)
+        //if(false)
         {
             
             auto M = Mx;
@@ -103,7 +103,7 @@ int main()
                 
                 M.longest_edge_bisection_recursive( refinementedges );
 
-                print( M, meshname );
+                internal_print( M, meshname );
             
             }
             
@@ -114,7 +114,7 @@ int main()
     
         
     
-    cout << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test";// << endl;
 
     return 0;
 }

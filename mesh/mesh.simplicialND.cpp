@@ -111,7 +111,9 @@ MeshSimplicialND::MeshSimplicialND(
     counter_simplices( innerdim+1, 0 ),
     data_subsimplices( (innerdim+2) * (innerdim+1) / 2, std::vector<int>() ),
     data_firstparents( (innerdim+2) * (innerdim+1) / 2, std::vector<int>() ),
-    data_nextparents ( (innerdim+2) * (innerdim+1) / 2, std::vector<int>() )   
+    data_nextparents ( (innerdim+2) * (innerdim+1) / 2, std::vector<int>() ),
+    
+    flags_simplices( innerdim+1, std::vector<SimplexFlag>() )   
 {
     
     /* load coordinates */

@@ -12,7 +12,7 @@ using namespace std;
 
 int main()
 {
-    cout << "Unit Test for Index Mapping" << endl;
+    LOG << "Unit Test for Index Mapping";// << endl;
 
     const IndexRange irA(  2, 5 );
     const IndexRange irB(  3, 5 );
@@ -23,10 +23,10 @@ int main()
     if(true)
     {
       
-        cout << "Test Identity of usual interval" << endl;
+        LOG << "Test Identity of usual interval";// << endl;
         
         const IndexMap id  = identityIndexMap( irA );
-        cout << id << endl;
+        LOG << id;// << endl;
         
         id.check();
         
@@ -53,10 +53,10 @@ int main()
     if(true)
     {
       
-        cout << "Test Empty Index Map" << endl;
+        LOG << "Test Empty Index Map";// << endl;
         
         const IndexMap leer  = identityIndexMap( irE );
-        cout << leer << endl;
+        LOG << leer;// << endl;
         
         leer.check();
         
@@ -76,9 +76,9 @@ int main()
     if(true)
     {
 
-        cout << "Test Injection and Surjection" << endl;
+        LOG << "Test Injection and Surjection";// << endl;
         
-        cout << "Injection" << endl;
+        LOG << "Injection";// << endl;
         
         IndexMap inj( irB, irA, {2,3,4} );
         inj[3] = 2; inj[4] = 3; inj[5] = 4;
@@ -92,7 +92,7 @@ int main()
         assert( inj.rangecontains( 4 ) );
         assert( !inj.rangecontains( 5 ) );
         
-        cout << "Surjection" << endl;
+        LOG << "Surjection";// << endl;
         
         IndexMap sur( irD, irB, {4,3,5,4,3,5,4,3} );
         sur[0] = 4; sur[1] = 3; sur[2] = 5; sur[3] = 4;
@@ -105,9 +105,9 @@ int main()
         assert( sur.getSourceRange() == irD );
         assert( sur.getTargetRange() == irB );
         
-        cout << "Test composition of injection with surjection" << endl;
+        LOG << "Test composition of injection with surjection";// << endl;
         const IndexMap prod = inj * sur;
-        cout << inj << sur << prod << endl;
+        LOG << inj << sur << prod;// << endl;
         
         prod.check();
         
@@ -128,7 +128,7 @@ int main()
         
     }
 
-    cout << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test";// << endl;
 
     return 0;
 }

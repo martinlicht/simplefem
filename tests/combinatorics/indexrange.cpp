@@ -12,12 +12,12 @@ using namespace std;
 
 int main()
 {
-    cout << "Unit Test for Index Ranges" << std::endl;
+    LOG << "Unit Test for Index Ranges";// << std::endl;
     
     if( true ) 
     {
         
-        cout << "Test empty index ranges" << std::endl;
+        LOG << "Test empty index ranges";// << std::endl;
         
         IndexRange irE1(  3,  2 );
         IndexRange irE2(  5,  1 );
@@ -44,7 +44,7 @@ int main()
     if( true ) 
     {
         
-        cout << "Test non-empty index ranges" << std::endl;
+        LOG << "Test non-empty index ranges";// << std::endl;
         
         IndexRange irA( 3, 7 );
         IndexRange irB( 5, 5 );
@@ -80,7 +80,7 @@ int main()
         assert( !irB.contains(4) );
         assert( !irB.contains(6) );
         
-        cout << "Test indexing in non-empty index ranges" << std::endl;
+        LOG << "Test indexing in non-empty index ranges";// << std::endl;
         
         assert( irB.element2position(5) == 0 );
         assert( irB.position2element(0) == 5 );
@@ -96,45 +96,42 @@ int main()
     if( true )
     {
         
-        cout << "Test Index Range iterators" << std::endl;
+        LOG << "Test Index Range iterators";// << std::endl;
         
         IndexRange irC( 2, 5 );
         
         assert( not irC.isempty() );
         
-        cout << "For each loop " << std::endl;
-        
+        LOG << "For each loop ";// << std::endl;
         for( int i : irC )
-            cout << i << space;
-        cout << nl;
+            LOG << i << space;
+        LOG << nl;
 
-        cout << "Classical For loop " << std::endl;
-        
+        LOG << "Classical For loop ";// << std::endl;
         for( IndexRange::ConstIterator iri = irC.begin(); iri != irC.end(); iri++ )
-            cout << *iri << space;
-        cout << nl;
+            LOG << *iri << space;
+        LOG << nl;
         
-        cout << "While Loop " << std::endl;
-        
+        LOG << "While Loop ";// << std::endl;
         IndexRange::ConstIterator iri = irC.begin();
         while( iri != irC.end() )
-            cout << *(iri++) << space;
-        cout << nl;
+            LOG << *(iri++) << space;// << endl;
+        LOG << nl;
         
     }
         
     if( false )
     {
     
-        cout << "Test invalid index ranges" << std::endl;
+        LOG << "Test invalid index ranges";// << std::endl;
     
         IndexRange dummy( 0, std::numeric_limits<int>::max() );
-        cout << dummy << " " << std::numeric_limits<int>::max();
-        cout << "FAIL: Invalid range created" << nl;
+        LOG << dummy << " " << std::numeric_limits<int>::max();
+        LOG << "FAIL: Invalid range created";// << std::endl;
     
     }
         
-    cout << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test";// << endl;
     
     return 0;
 }

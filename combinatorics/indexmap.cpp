@@ -114,10 +114,9 @@ std::string IndexMap::text( bool embellish ) const
     std::ostringstream ss;
     
     if( embellish ) {
-        ss << "From" << nl << getSourceRange() << nl;
-        ss << "To"   << nl << getTargetRange() << nl;
+        ss << ' ' << getSourceRange().text() << " => " << getTargetRange().text() << nl;
         for( int i : getSourceRange() )
-            ss << i << " -> " << at( i ) << nl;
+            ss << '\t' << i << " -> " << at( i ) << nl;
     } else {
         ss << getSourceRange() << "\n" << getTargetRange() << nl;
         for( int i : getSourceRange() )

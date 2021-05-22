@@ -15,19 +15,23 @@ using namespace std;
 
 int main()
 {
-	cout << "Unit Test for N-dimensional simplicial mesh" << endl;
+	LOG << "Unit Test for N-dimensional simplicial mesh";// << endl;
 	
-        MeshSimplicialND M = HypertetrahedralSurface4D();
+    WARNING "NOTHING IMPLEMENTED YET";
+    
+    return 0; // TODO: complete the class for N-dimensional meshes in the first place
+
+    MeshSimplicialND M = HypertetrahedralSurface4D();
         
-        cout << "Check" << endl;
+        LOG << "Check";// << endl;
         
         M.check();
 	
-        cout << "Check done" << endl;
+        LOG << "Check done";// << endl;
         
-        cout << M << endl;
+        LOG << M;// << endl;
         
-        cout << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test";// << endl;
 
 	return 0;
 }

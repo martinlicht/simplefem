@@ -60,6 +60,10 @@ class FloatVector
         
         void printplain( std::ostream& ) const;
         
+        void lg() const;
+        
+        void lgplain() const;
+        
         
         /* Cloning */
 

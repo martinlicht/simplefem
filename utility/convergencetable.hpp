@@ -55,6 +55,28 @@ class ConvergenceTable
             return *this; 
         }
         
+        std::string text() const
+        {
+            return text( display_convergence_rates );
+        }
+        
+        std::string text( bool display_convergence_rates ) const
+        {
+            std::ostringstream ss;
+            print( ss, display_convergence_rates );
+            return ss.str();
+        }
+        
+        void lg() const
+        {
+            lg( display_convergence_rates );
+        }
+        
+        void lg( bool display_convergence_rates ) const
+        {
+            LOG << text( display_convergence_rates );
+        }
+        
         void print( std::ostream& os )
         {
             print( os, display_convergence_rates );
@@ -149,7 +171,7 @@ class ConvergenceTable
 
 
 
-//         void print_iostream( std::ostream& os, bool display_convergence_rates ) const 
+//         void print_stream( std::ostream& os, bool display_convergence_rates ) const 
 //         {
 //              TODO use {fmt} library as soon as available 
 //             std::ostringstream str;

@@ -15,11 +15,11 @@ using namespace std;
 
 int main()
 {
-    cout << "Unit Test for Minimal Residual Method" << endl;
+    LOG << "Unit Test for Minimal Residual Method";// << endl;
 
     {
         
-        cout << "First Something Simple with the MINRES" << endl;
+        LOG << "First Something Simple with the MINRES";// << endl;
         
         ScalingOperator A( 10, 3.141 );
         MinimumResidualMethod MINRES(A);
@@ -27,9 +27,9 @@ int main()
         FloatVector rhs(10), x(10);
         x.random(); rhs.zero();
         
-        cout << x << endl;
+        LOG << x;// << endl;
         MINRES.solve( x, rhs );
-        // cout << x << endl;
+        // LOG << x;// << endl;
 
     }
 
@@ -38,7 +38,7 @@ int main()
     
     if(true){
         
-        cout << "Now something more complicated:\n Tridiagonal with very weak diagonal dominance." << endl;
+        LOG << "Now something more complicated:\n Tridiagonal with very weak diagonal dominance.";// << endl;
         
         int dimension = 100;
         
@@ -55,7 +55,7 @@ int main()
             A.addentry( i, i, 2.51 );
         }
         
-        cout << "Compute stuff." << endl;
+        LOG << "Compute stuff.";// << endl;
         
         FloatVector b = A * x;
         
@@ -72,7 +72,7 @@ int main()
             start = gettimestamp();
             MINRES.solve(y,b);
             end = gettimestamp();
-            cout << timestamp2measurement( end - start ) << endl;
+            LOG << timestamp2measurement( end - start );// << endl;
         }
         
         
@@ -81,7 +81,7 @@ int main()
     
     if(true){
         
-        cout << "For MINRES: diagonal indefinite matrix ." << endl;
+        LOG << "For MINRES: diagonal indefinite matrix .";// << endl;
         
         int dimension = 100;
         
@@ -101,7 +101,7 @@ int main()
             A.addentry( dimension/2 + i, dimension/2 + i, -3-i );
         }
         
-        cout << "Compute stuff." << endl;
+        LOG << "Compute stuff.";// << endl;
         
         FloatVector b = A * x;
         
@@ -118,13 +118,13 @@ int main()
             start = gettimestamp();
             MINRES.solve(y,b);
             end = gettimestamp();
-            cout << timestamp2measurement( end - start ) << endl;
+            LOG << timestamp2measurement( end - start );// << endl;
         }
         
         
     }
 
-    cout << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test";// << endl;
 
     return 0;
 }

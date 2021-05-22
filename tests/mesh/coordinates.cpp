@@ -13,7 +13,7 @@ using namespace std;
 
 int main()
 {
-    cout << "Unit Test for Coordinates" << endl;
+    LOG << "Unit Test for Coordinates";// << endl;
     
     {
         
@@ -34,7 +34,7 @@ int main()
         assert( coords == coords2 );
     }
     
-    cout << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test";// << endl;
     
     return 0;
 }

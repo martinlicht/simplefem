@@ -23,28 +23,28 @@ using namespace std;
 
 int main()
 {
-    cout << "Unit Test: assemble some common matrices" << endl;
+    LOG << "Unit Test: assemble some common matrices";// << endl;
         
     {
-        cout << "Case 1D" << endl;
+        LOG << "Case 1D";// << endl;
         
         MeshSimplicial2D M = StandardSquare2D();
         
         M.check();
         
-        cout << "Refinement..." << endl;
+        LOG << "Refinement...";// << endl;
         
         int number_of_refinements = 3;
         
         for( int i = 0; i < number_of_refinements; i++ )
             M.uniformrefinement();
         
-        cout << "...assemble matrices" << endl;
+        LOG << "...assemble matrices";// << endl;
         
-        for( int r = 0; r <= 5; r++ ) 
+        for( int r = 0; r <= 4; r++ ) 
         for( int k = 0; k <= 1; k++ ) 
         {
-            cout << "[ k, r ] = [" << k << ", " << r << "]\n";
+            LOG << "[ k, r ] = [" << k << ", " << r << "]\n";
             
             SparseMatrix massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), k, r );
             
@@ -72,25 +72,25 @@ int main()
     }
 
     {
-        cout << "Case 2D" << endl;
+        LOG << "Case 2D";// << endl;
         
         MeshSimplicial2D M = StandardSquare2D();
         
         M.check();
         
-        cout << "Refinement..." << endl;
+        LOG << "Refinement...";// << endl;
         
         int number_of_refinements = 3;
         
         for( int i = 0; i < number_of_refinements; i++ )
             M.uniformrefinement();
         
-        cout << "...assemble matrices" << endl;
+        LOG << "...assemble matrices";// << endl;
         
-        for( int r = 0; r <= 5; r++ ) 
+        for( int r = 0; r <= 3; r++ ) 
         for( int k = 0; k <= 2; k++ ) 
         {
-            cout << "[ k, r ] = [" << k << ", " << r << "]\n";
+            LOG << "[ k, r ] = [" << k << ", " << r << "]\n";
             
             SparseMatrix massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), k, r );
             
@@ -118,25 +118,25 @@ int main()
     }
 
     {
-        cout << "Case 3D" << endl;
+        LOG << "Case 3D";// << endl;
         
         MeshSimplicial3D M = UnitSimplex3D();
         
         M.check();
         
-        cout << "Refinement..." << endl;
+        LOG << "Refinement...";// << endl;
         
         int number_of_refinements = 1;
         
         for( int i = 0; i <= number_of_refinements; i++ ) 
             M.uniformrefinement();
         
-        cout << "...assemble matrices" << endl;
+        LOG << "...assemble matrices";// << endl;
         
-        for( int r = 0; r <= 4; r++ ) 
+        for( int r = 0; r <= 3; r++ ) 
         for( int k = 0; k <= 3; k++ ) 
         {
-            cout << "[ k, r ] = [" << k << ", " << r << "]\n";
+            LOG << "[ k, r ] = [" << k << ", " << r << "]\n";
             
             SparseMatrix massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), k, r );
             
@@ -163,7 +163,7 @@ int main()
         }
     }
         
-    cout << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test";// << endl;
     
     return 0;
 }

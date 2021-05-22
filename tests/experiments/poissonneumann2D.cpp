@@ -33,19 +33,19 @@ using namespace std;
 int main()
 {
         
-        cout << "Unit Test for Solution of Neumann Problem" << endl;
+        LOG << "Unit Test for Solution of Neumann Problem";// << endl;
         
-        cout << std::setprecision(10);
+        LOG << std::setprecision(10);
 
         if(true){
 
-            cout << "Initial mesh..." << endl;
+            LOG << "Initial mesh...";// << endl;
             
             MeshSimplicial2D M = StandardSquare2D();
             
             M.check();
             
-            cout << "Prepare scalar fields for testing..." << endl;
+            LOG << "Prepare scalar fields for testing...";// << endl;
             
 
             std::function<FloatVector(const FloatVector&)> constant_one
@@ -100,7 +100,7 @@ int main()
 
             
 
-            cout << "Solving Poisson Problem with Neumann boundary conditions" << endl;
+            LOG << "Solving Poisson Problem with Neumann boundary conditions";// << endl;
 
             int min_l = 3; 
             int max_l = 8;
@@ -118,37 +118,37 @@ int main()
 
             for( int l = min_l; l <= max_l; l++ ){
                 
-                cout << "Level: " << l << std::endl;
-                cout << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
+                LOG << "Level: " << l;// << std::endl;
+                LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
                 for( int r = min_r; r <= max_r; r++ ) 
                 {
                     
-                    cout << "...assemble scalar mass matrices" << endl;
+                    LOG << "...assemble scalar mass matrices";// << endl;
             
                     SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
 
-                    cout << "...assemble vector mass matrix" << endl;
+                    LOG << "...assemble vector mass matrix";// << endl;
             
                     SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
                     
-                    cout << "...assemble differential matrix and transpose" << endl;
+                    LOG << "...assemble differential matrix and transpose";// << endl;
 
                     SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r );
 
                     SparseMatrix diffmatrix_t = diffmatrix.getTranspose();
 
-                    cout << "...assemble inclusion matrix and transpose" << endl;
+                    LOG << "...assemble inclusion matrix and transpose";// << endl;
             
                     SparseMatrix incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r );
                     
-//                     std::cout << incmatrix.getdimin() <<space<< L_incmatrix.getdimin() <<space<< incmatrix.getdimout() <<space<< L_incmatrix.getdimout() << nl;
+//                     LOG << incmatrix.getdimin() <<space<< L_incmatrix.getdimin() <<space<< incmatrix.getdimout() <<space<< L_incmatrix.getdimout() << nl;
 //                     assert( incmatrix.getdimin()  == L_incmatrix.getdimin() );
 //                     assert( incmatrix.getdimout() == L_incmatrix.getdimout() );
 
                     SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
-                    cout << "...assemble stiffness matrix" << endl;
+                    LOG << "...assemble stiffness matrix";// << endl;
             
                     // ProductOperator 
 //                     auto stiffness = incmatrix_t * diffmatrix_t * vector_massmatrix * diffmatrix * incmatrix;
@@ -167,7 +167,7 @@ int main()
                     
                     auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. );
 //                     auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
-                    std::cout << "Average value of diagonal preconditioner: " << stiffness_invprecon.getdiagonal().average() << std::endl;
+                    LOG << "Average value of diagonal preconditioner: " << stiffness_invprecon.getdiagonal().average();// << std::endl;
 
                     {
 
@@ -175,7 +175,7 @@ int main()
                         const auto& function_grad = experiment_grad;
                         const auto& function_rhs  = experiment_rhs;
                         
-                        cout << "...interpolate explicit solution and rhs" << endl;
+                        LOG << "...interpolate explicit solution and rhs";// << endl;
             
                         FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 0, r,   function_sol  );
                         FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r-1, function_grad );
@@ -183,34 +183,34 @@ int main()
                         
                         FloatVector interpol_one  = Interpolation( M, M.getinnerdimension(), 0, r, constant_one );
                         
-                        cout << "...measure kernel component: " << std::flush;
+                        LOG << "...measure kernel component: " << std::flush;
             
                         Float average_sol = interpol_one * ( scalar_massmatrix * interpol_sol );
                         Float average_rhs = interpol_one * ( scalar_massmatrix * interpol_rhs );
                         
-                        cout << average_sol << space << average_rhs << endl;
+                        LOG << average_sol << space << average_rhs;// << endl;
 
-                        cout << "...measure interpolation commutativity" << endl;
+                        LOG << "...measure interpolation commutativity";// << endl;
             
                         auto commutatorerror_aux = interpol_grad - diffmatrix * interpol_sol;
                         Float commutatorerror = commutatorerror_aux * ( vector_massmatrix * commutatorerror_aux );
-                        cout << "commutator error: " << commutatorerror << endl;
+                        LOG << "commutator error: " << commutatorerror;// << endl;
                         
-                        cout << "...compute norms of solution and right-hand side:" << endl;
+                        LOG << "...compute norms of solution and right-hand side:";// << endl;
             
                         Float sol_norm = interpol_sol * ( scalar_massmatrix * interpol_sol );
                         Float rhs_norm = interpol_rhs * ( scalar_massmatrix * interpol_rhs );
                         
-                        cout << "solution norm: " << sol_norm << endl;
-                        cout << "rhs norm:      " << rhs_norm << endl;
+                        LOG << "solution norm: " << sol_norm;// << endl;
+                        LOG << "rhs norm:      " << rhs_norm;// << endl;
 
-                        cout << "...create RHS vector" << endl;
+                        LOG << "...create RHS vector";// << endl;
 
                         FloatVector rhs = incmatrix_t * ( scalar_massmatrix * interpol_rhs );
 
                         FloatVector sol( incmatrix.getdimin(), 0. );
                         
-                        cout << "...iterative solver" << endl;
+                        LOG << "...iterative solver";// << endl;
                         
                         {
                             sol.zero();
@@ -222,10 +222,10 @@ int main()
                             Solver.solve( sol, rhs );
 //                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
                         }
 
-                        cout << "...compute error and residual:" << endl;
+                        LOG << "...compute error and residual:";// << endl;
             
                         
                         FloatVector dirterror = interpol_sol  - incmatrix * sol;
@@ -236,15 +236,15 @@ int main()
                         Float graderrornorm   = std::sqrt( graderror * ( vector_massmatrix * graderror ) );
                         Float residualnorm    = ( rhs - stiffness * sol ).norm();
                         
-                        cout << "error:     " << errornorm     << endl;
-                        cout << "graderror: " << graderrornorm << endl;
-                        cout << "residual:  " << residualnorm  << endl;
+                        LOG << "error:     " << errornorm   ;//;// << endl;
+                        LOG << "graderror: " << graderrornorm;// << endl;
+                        LOG << "residual:  " << residualnorm;//;// << endl;
                         
                         
                         
                         contable << errornorm << graderrornorm << nl;
                         
-                        contable.print( std::cout );
+                        contable.lg();
 
 
                         if( r == 1 ){
@@ -267,7 +267,7 @@ int main()
                     
                 }
 
-                cout << "Refinement..." << endl;
+                LOG << "Refinement...";// << endl;
             
                 if( l != max_l ) M.uniformrefinement();
                 
@@ -280,7 +280,7 @@ int main()
         
         
         
-        cout << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test";// << endl;
         
         return 0;
 }

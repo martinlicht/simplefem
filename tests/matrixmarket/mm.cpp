@@ -12,7 +12,7 @@ using namespace std;
 
 int main()
 {
-    cout << "Unit Test for Matrix Market Reading" << endl;
+    LOG << "Unit Test for Matrix Market Reading";// << endl;
     
     {
         
@@ -25,18 +25,18 @@ int main()
         
         MatrixMarket::Read( fs, rows, columns, entries );
         
-        std::cout << rows << ' ' << columns << ' ' << std::endl;
+        LOG << rows << ' ' << columns << ' ';// << std::endl;
         for( MatrixMarket::MatrixMarketEntry mme : entries )
-            std::cout << mme.row << ' ' << mme.column << ' ' << mme.value << std::endl;
+            LOG << mme.row << ' ' << mme.column << ' ' << mme.value;// << std::endl;
         
         fs.close();
         
 //         // MeshSimplicial1D M = UnitCubeTriangulation(3,3);
 //         MeshSimplicial1D M = StandardInterval1D();
 //         
-//         cout << M << endl;
+//         LOG << M;// << endl;
 //         
-//         cout << "Print VTK-type file" << endl;
+//         LOG << "Print VTK-type file";// << endl;
 //         
 //         
 //         {
@@ -51,7 +51,7 @@ int main()
 //      
     }
     
-    cout << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test";// << endl;
     
     return 0;
 }

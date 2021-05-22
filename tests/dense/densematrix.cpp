@@ -11,33 +11,33 @@ using namespace std;
 
 int main()
 {
-	cout << "Unit Test for Dense Matrix class" << endl;
+	LOG << "Unit Test for Dense Matrix class";// << endl;
 	
 	DenseMatrix A( 3, 4 );
 	A.randommatrix();
 	
-	cout << A << endl;
-	cout << 3 * A << endl;
+	LOG << A;// << endl;
+	LOG << 3 * A;// << endl;
 	
 	DenseMatrix B( 3, 4 );
 	B.randommatrix();
 	
-	cout << B << endl;
-	cout << A + B << endl;
+	LOG << B;// << endl;
+	LOG << A + B;// << endl;
 	
 	DenseMatrix I3(3,3);
 	I3.unitmatrix();
 	DenseMatrix I4(4,4);
 	I4.unitmatrix();
-	cout << I3 << I4 << endl;
-	cout << I3 * A << endl;
-	cout << A * I4 << endl;
+	LOG << I3 << I4;// << endl;
+	LOG << I3 * A;// << endl;
+	LOG << A * I4;// << endl;
 	auto S5 = 5. * I3;
-	cout << S5 << endl;
-	cout << S5 * A << endl;
+	LOG << S5;// << endl;
+	LOG << S5 * A;// << endl;
 	
 	
-	cout << "Finished Unit Test" << endl;
+	LOG << "Finished Unit Test";// << endl;
 
 	return 0;
 }

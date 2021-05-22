@@ -17,11 +17,11 @@ using namespace std;
 
 int main()
 {
-        cout << "Unit Test for Fields and Finite Differences" << endl;
+        LOG << "Unit Test for Fields and Finite Differences";// << endl;
         
         {
             
-            cout << "Two-dimensional setting" << endl;
+            LOG << "Two-dimensional setting";// << endl;
         
             auto scalar = []( const FloatVector& point ) -> FloatVector { 
                 return FloatVector({ 
@@ -41,19 +41,19 @@ int main()
             
             FloatVector point = {1.*3.14159/2,0.};
 
-//             std::cout << h/2.0 << space << ( foo( {0.+h,0.} ) - foo( {0.,0.} ) )[0] / h << std::endl << std::endl;
-//             std::cout << h/2.0 << space << ( 2 * foo( {0.,0.} ) - foo( {0.+h,0.} ) - foo( {0.-h,0.} ) )[0] / (h*h) << std::endl;
+//             LOG << h/2.0 << space << ( foo( {0.+h,0.} ) - foo( {0.,0.} ) )[0] / h << std::endl;// << std::endl;
+//             LOG << h/2.0 << space << ( 2 * foo( {0.,0.} ) - foo( {0.+h,0.} ) - foo( {0.-h,0.} ) )[0] / (h*h);// << std::endl;
 
-            std::cout << foo( point ) << space << foo.exteriorderivative(h)(point) << space << bar( point ) << std::endl;
+            LOG << foo( point ) << space << foo.exteriorderivative(h)(point) << space << bar( point );// << std::endl;
 
-            std::cout << foo.exteriorderivative(h).exteriorderivative(h)( {2., 3.} ) << std::endl;
+            LOG << foo.exteriorderivative(h).exteriorderivative(h)( {2., 3.} );// << std::endl;
         
         }
         
         
         {
             
-            cout << "Three-dimensional setting" << endl;
+            LOG << "Three-dimensional setting";// << endl;
         
             auto scalarfield = []( const FloatVector& point ) -> FloatVector { 
                 return FloatVector({ 
@@ -84,7 +84,7 @@ int main()
             for( int k = 0; k < 5; k++ ){
                 FloatVector v(3); 
                 v.random();
-                cout << d_form1(v) << endl;
+                LOG << d_form1(v);// << endl;
             }
             
             
@@ -93,7 +93,7 @@ int main()
 
         {
             
-            cout << "Six-dimensional setting" << endl;
+            LOG << "Six-dimensional setting";// << endl;
         
             auto scalarfield = []( const FloatVector& point ) -> FloatVector { 
                 return FloatVector({ 
@@ -113,7 +113,7 @@ int main()
             for( int k = 0; k < 5; k++ ){
                 FloatVector v(6); 
                 v.random();
-                cout << dd_form0(v) << endl;
+                LOG << dd_form0(v);// << endl;
             }
             
             

@@ -17,11 +17,11 @@ using namespace std;
 
 int main()
 {
-        cout << "Unit Test for Simplicial 3D Module" << endl;
+        LOG << "Unit Test for Simplicial 3D Module";// << endl;
         
         {
             
-            cout << "Second Experiment" << endl;
+            LOG << "First Experiment";// << endl;
             
             MeshSimplicial3D M = UnitSimplex3D();
             
@@ -29,12 +29,19 @@ int main()
             
             M.automatic_dirichlet_flags();
 
-            for( int k = 0; k < 2; k++ ) M.uniformrefinement();
+            M.check_dirichlet_flags();
+
+            for( int k = 0; k < 2; k++ )
+                M.uniformrefinement();
             
             int cell_count_initial = M.count_tetrahedra();
             int cell_marked_count  = 0;
             
             int c_max = 3;
+            
+            M.check_dirichlet_flags();
+
+            LOG << "Start iterations";// << endl;
             
             for( int c = 0; c < c_max; c++ ) {
             
@@ -50,11 +57,17 @@ int main()
                 for( int t : markedcells ) markededges.push_back( M.get_oldest_edge( t ) );
                 sort_and_remove_duplicates( markededges );
                 
-                std::cout << c << "/" << c_max << " Refine " << markedcells.size() << "/" << M.count_tetrahedra() << " ... ";
+                LOG << c << "/" << c_max << " Refine " << markedcells.size() << "/" << M.count_tetrahedra() << " ... ";
                 M.longest_edge_bisection_recursive( markededges );
-                std::cout << "Ratio=" << ( M.count_tetrahedra() - cell_count_initial )/(Float)( cell_marked_count ) << nl;
+                LOG << "Ratio=" << ( M.count_tetrahedra() - cell_count_initial )/(Float)( cell_marked_count );// << nl;
+                
+                M.check_dirichlet_flags();
+
+            
             
             }
+            
+            LOG << "check";
             
             M.check();
             
@@ -62,7 +75,7 @@ int main()
             
         }
         
-        cout << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test";// << endl;
         
         return 0;
 }

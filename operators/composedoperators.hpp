@@ -71,7 +71,7 @@ class ProxyOperator final
             assert( getdimout() == dest.getdimension() );
             
 //             LOG << "call";
-//             op.print( std::cout );
+//          LOG << op.text();   //op.print( std::cout );
             op.apply( dest, src, scaling );    
 //             LOG << "done";
         }

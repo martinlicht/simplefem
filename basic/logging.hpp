@@ -12,8 +12,8 @@
 //     LOG << "This is a short message with a number: " << 5;      
 //     ERR << "This is an error message.";      
 
-#define LOG     Logger( std::cout, protocolprefixnow(), "\n" )
-#define ERR     Logger( std::cerr, protocolprefixnow(), "\n" )
+#define LOG     Logger( std::cout, protocolprefixnow(), "\n", __FILE__, __LINE__ )
+#define ERR     Logger( std::cerr, protocolprefixnow(), "\n", __FILE__, __LINE__ )
 
 
 // treat the following macros as PRINT 'str' commands
@@ -23,13 +23,13 @@
 //     ALERT "This is an alert"
 //     ERROR "This is an error"
 
-#define NOTE    Logger( std::cout, protocolprefixnow(), "\n" ) <<
-#define NOTICE  Logger( std::cout, protocolprefixnow(), "\n" ) <<
+#define NOTE    Logger( std::cout, protocolprefixnow(), "\n", __FILE__, __LINE__ ) <<
+#define NOTICE  Logger( std::cout, protocolprefixnow(), "\n", __FILE__, __LINE__ ) <<
 
-#define WARN    Logger( std::cerr, protocolprefixnow(), "\n" ) <<
-#define WARNING Logger( std::cerr, protocolprefixnow(), "\n" ) <<
-#define ALERT   Logger( std::cerr, protocolprefixnow(), "\n" ) <<
-#define ERROR   Logger( std::cerr, protocolprefixnow(), "\n" ) <<
+#define WARN    Logger( std::cerr, protocolprefixnow(), "\n", __FILE__, __LINE__ ) <<
+#define WARNING Logger( std::cerr, protocolprefixnow(), "\n", __FILE__, __LINE__ ) <<
+#define ALERT   Logger( std::cerr, protocolprefixnow(), "\n", __FILE__, __LINE__ ) <<
+#define ERROR   Logger( std::cerr, protocolprefixnow(), "\n", __FILE__, __LINE__ ) <<
 
 
 // emit the current file and line number into the log stream 
@@ -37,6 +37,28 @@
 //     PING;
 
 #define PING LOG << "PING: " << __FILE__ << ":" << __LINE__;
+
+
+
+
+
+
+
+////////////////////////////////////////////
+// 
+//      logging via variadic templates
+// 
+////////////////////////////////////////////
+
+void lg(){}
+
+template<typename T, typename... Ts>
+void lg( T arg, Ts... args )
+{
+    LOG << arg;
+    lg( args... );
+}
+
 
 
 

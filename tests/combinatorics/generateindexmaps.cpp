@@ -13,12 +13,12 @@ using namespace std;
 
 int main()
 {
-        cout << "Unit Test for Index Map Generators" << endl;
+        LOG << "Unit Test for Index Map Generators";// << endl;
         
         if(true)
         {
                 
-                cout << "Teste generator for empty index map" << endl;
+                LOG << "Teste generator for empty index map";// << endl;
                 
                 IndexRange from( 1,-3 );
                 IndexRange targ( 2,5 );
@@ -26,55 +26,55 @@ int main()
                 std::vector<IndexMap>  all = generateEmptyMap( from, targ );
                 
                 for( const IndexMap& im : all )
-                        cout << im << endl;
+                        LOG << im;// << endl;
                 
-                cout << "Tested" << endl;
+                LOG << "Tested";// << endl;
                 
         }
         
         if(true)
         {
                 
-                cout << "Teste generator for all: [1,3] -> [1,3]" << endl;
+                LOG << "Teste generator for all: [1,3] -> [1,3]";// << endl;
                 
                 IndexRange bereich( 1,3 );
                 std::vector<IndexMap> all = generateIndexMaps( bereich, bereich );
 
                 for( const IndexMap& im : all )
-                        cout << im << endl;
+                        LOG << im;// << endl;
                 
-                cout << "Tested" << endl;
+                LOG << "Tested";// << endl;
                 
         }
         
         if(true)
         {
                 
-                cout << "Teste generator for permutations of [1,3]" << endl;
+                LOG << "Teste generator for permutations of [1,3]";// << endl;
                 
                 IndexRange bereich( 1,3 );
                 std::vector<IndexMap>  all = generatePermutations( bereich );
 
                 for( const IndexMap& im : all )
-                        cout << im << endl << "signum: " << signPermutation( im ) << endl;
+                        LOG << im << endl << "signum: " << signPermutation( im );// << endl;
                 
-                cout << "Tested" << endl;
+                LOG << "Tested";// << endl;
                 
         }
         
         if(true)
         {
                 
-                cout << "Teste generator for sigmas [1,3] -> [2,5]" << endl;
+                LOG << "Teste generator for sigmas [1,3] -> [2,5]";// << endl;
                 
                 IndexRange from( 1,3 );
                 IndexRange targ( 2,5 );
                 std::vector<IndexMap>  all = generateSigmas( from, targ );
 
                 for( const IndexMap& im : all )
-                        cout << im << endl;
+                        LOG << im;// << endl;
                 
-                cout << "Tested" << endl;
+                LOG << "Tested";// << endl;
                 
         }
         
@@ -84,7 +84,7 @@ int main()
         if(true)
         {
                 
-                cout << "Test generator for empty index map" << endl;
+                LOG << "Test generator for empty index map";// << endl;
                 
                 const IndexRange from( 1,-3 );
                 const IndexRange targ( 2,5 );
@@ -94,16 +94,16 @@ int main()
                 assert( all.size() == 1 );
                 
                 for( const IndexMap& im : all )
-                    cout << im << endl;
+                    LOG << im;// << endl;
                 
-                cout << "Tested" << endl;
+                LOG << "Tested";// << endl;
                 
         }
         
         if(true)
         {
                 
-                cout << "Test generator for general index mappings" << endl;
+                LOG << "Test generator for general index mappings";// << endl;
                 
                 const std::vector<int> Ns = { -1, 0, 1, 2, 3, 4 };
                 const std::vector<int> Ks = { -1, 0, 1, 2, 3, 4 };
@@ -134,18 +134,18 @@ int main()
                             assert( all[i] != all[j] );
                     
                     for( const IndexMap& im : all )
-                        cout << im << endl;
+                        LOG << im;// << endl;
                     
                 }
                 
-                cout << "Tested" << endl;
+                LOG << "Tested";// << endl;
                 
         }
         
         if(true)
         {
                 
-                cout << "Test generator for permutations of [1,3]" << endl;
+                LOG << "Test generator for permutations of [1,3]";// << endl;
                 
                 const std::vector<int> Ns = { -1, 0, 1, 2, 3, 5 };
                 
@@ -166,7 +166,7 @@ int main()
                             assert( all[i] != all[j] );
                     
                     for( const IndexMap& im : all )
-                            cout << im << endl << "signum: " << signPermutation( im ) << endl;
+                            LOG << im << endl << "signum: " << signPermutation( im );// << endl;
                     
                     int number_of_even_permutations = 0;
                     
@@ -193,14 +193,14 @@ int main()
                     
                 }
                 
-                cout << "Tested" << endl;
+                LOG << "Tested";// << endl;
                 
         }
         
         if(true)
         {
                 
-                cout << "Test generator for sigmas [1,3] -> [2,5]" << endl;
+                LOG << "Test generator for sigmas [1,3] -> [2,5]";// << endl;
                 
                 const std::vector<int> Ns = { -1, 0, 1, 2, 3, 5 };
                 const std::vector<int> Ls = {  1, 2, 3, 4, 5, 7, 9 };
@@ -233,15 +233,15 @@ int main()
                     }
                     
                     for( const IndexMap& sigma : all )
-                        cout << sigma << endl;
+                        LOG << sigma;// << endl;
                     
                 }
                 
-                cout << "Tested" << endl;
+                LOG << "Tested";// << endl;
                 
         }
         
-        cout << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test";// << endl;
         
         return 0;
 }

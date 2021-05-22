@@ -33,7 +33,7 @@ FLAG_DISABLE_CHECK_MESHES=yes
 
 # Do you want to DISABLE excpetion handling?
 # Uncomment the following line to disable exception handling
-FLAG_NO_EXCEPTIONS=yes
+# FLAG_NO_EXCEPTIONS=yes
 
 # Do you want to enable static analysis during the compilation process
 # Uncomment the following line to enable static analysis
