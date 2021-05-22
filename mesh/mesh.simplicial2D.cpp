@@ -2218,7 +2218,7 @@ void MeshSimplicial2D::uniformrefinement()
         flags_edges[ 2 * counter_edges + 2 * counter_triangles + t ] = flags_triangles[t];
     }
     
-    // flags of ex nihilio new edges 
+    // flags of ex nihilio new triangles 
     for( int t = 0; t < counter_triangles; t++ ) {
         flags_triangles[ 1 * counter_triangles + t ] = flags_triangles[t];
         flags_triangles[ 2 * counter_triangles + t ] = flags_triangles[t];

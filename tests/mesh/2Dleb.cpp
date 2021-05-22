@@ -33,9 +33,9 @@ int main()
             int cell_count_initial = M.count_triangles();
             int cell_marked_count  = 0;
             
-            int c_max = 8;
+            int c_max = 6;
             
-            for( int c = 0; c < c_max; c++ ) {
+            for( int c = 0; c <= c_max; c++ ) {
             
                 std::vector<int> markedcells;
                 
@@ -75,9 +75,9 @@ int main()
             int cell_count_initial = M.count_triangles();
             int cell_marked_count  = 0;
             
-            int c_max = 8;
+            int c_max = 6;
             
-            for( int c = 0; c < c_max; c++ ) {
+            for( int c = 0; c <= c_max; c++ ) {
             
                 std::vector<int> markedcells;
                 

@@ -79,7 +79,7 @@ int main()
         
         const int l_min = 0;
         
-        const int l_max = 7;
+        const int l_max = 5;
         
         Float errors_scalar[ experiments_scalar_field.size() ][ l_max - l_min + 1 ][ r_max - r_min + 1 ];
         Float errors_volume[ experiments_volume_field.size() ][ l_max - l_min + 1 ][ r_max - r_min + 1 ];

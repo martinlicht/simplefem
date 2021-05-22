@@ -32,9 +32,9 @@ int main()
             int cell_count_initial = M.count_tetrahedra();
             int cell_marked_count  = 0;
             
-            int c_max = 5;
+            int c_max = 4;
             
-            for( int c = 0; c < c_max; c++ ) {
+            for( int c = 0; c <= c_max; c++ ) {
             
                 std::vector<int> markedcells;
                 

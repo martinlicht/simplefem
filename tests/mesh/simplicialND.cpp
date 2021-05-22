@@ -17,7 +17,11 @@ int main()
 {
 	LOG << "Unit Test for N-dimensional simplicial mesh";// << endl;
 	
-        MeshSimplicialND M = HypertetrahedralSurface4D();
+    WARNING "NOTHING IMPLEMENTED YET";
+    
+    return 0; // TODO: complete the class for N-dimensional meshes in the first place
+
+    MeshSimplicialND M = HypertetrahedralSurface4D();
         
         LOG << "Check";// << endl;
         
