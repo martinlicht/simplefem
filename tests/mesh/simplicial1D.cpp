@@ -15,28 +15,28 @@ using namespace std;
 
 int main()
 {
-        cout << "Unit Test for one-dimensional simplicial mesh" << endl;
+        LOG << "Unit Test for one-dimensional simplicial mesh";// << endl;
 
         MeshSimplicial1D M = StandardInterval1D();
         
-        cout << "Check" << endl;
+        LOG << "Check";// << endl;
         
         M.check();
         
-        cout << M << endl;
+        LOG << M;// << endl;
         
-        cout << "Start refinement" << endl;
+        LOG << "Start refinement";// << endl;
         
         for( int c = 0; c < 100; c++ ) 
         {
           int e = c % M.count_edges();
-          cout << "Bisect edge: " << e << nl;
+          LOG << "Bisect edge: " << e;// << nl;
           M.bisect_edge( e );
           
           M.check();
         }
         
-        cout << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test";// << endl;
 
         return 0;
 }

@@ -126,20 +126,28 @@ class Logger
 {
     public:
         
-        explicit inline Logger( Logger& parent, const std::string& prefix_str = "", const std::string& postfix_str = "" )
-        : Logger( parent, Logger::affix_write( prefix_str ), Logger::affix_write( postfix_str ) )
+        explicit inline Logger( 
+            Logger& parent, const std::string& prefix_str = "", const std::string& postfix_str = ""
+            , const char* filename = "UNKNOWN", const int linenumber = -1 )
+        : Logger( parent, Logger::affix_write( prefix_str ), Logger::affix_write( postfix_str ), filename, linenumber )
         {}
         
-        explicit inline Logger( std::ostream& os, const std::string& prefix_str = "", const std::string& postfix_str = "" )
-        : Logger( os, Logger::affix_write( prefix_str ), Logger::affix_write( postfix_str ) )
+        explicit inline Logger( 
+            std::ostream& os, const std::string& prefix_str = "", const std::string& postfix_str = ""
+            , const char* filename = "UNKNOWN", const int linenumber = -1 )
+        : Logger( os, Logger::affix_write( prefix_str ), Logger::affix_write( postfix_str ), filename, linenumber )
         {}
         
-        explicit inline Logger( Logger& parent, const std::function<void(std::ostream&)>& prefix = Logger::affix_do_nothing(), const std::function<void(std::ostream&)>& postfix = Logger::affix_do_nothing() )
-        : Logger( parent.getstream(), prefix, postfix )
+        explicit inline Logger( 
+            Logger& parent, const std::function<void(std::ostream&)>& prefix = Logger::affix_do_nothing(), const std::function<void(std::ostream&)>& postfix = Logger::affix_do_nothing()
+            , const char* filename = "UNKNOWN", const int linenumber = -1 )
+        : Logger( parent.getstream(), prefix, postfix, filename, linenumber )
         {}
         
-        explicit inline Logger( std::ostream& os, const std::function<void(std::ostream&)>& prefix = Logger::affix_do_nothing(), const std::function<void(std::ostream&)>& postfix = Logger::affix_do_nothing() )
-        : internalstream( os ), prefix( prefix ), postfix( postfix )
+        explicit inline Logger( 
+            std::ostream& os, const std::function<void(std::ostream&)>& prefix = Logger::affix_do_nothing(), const std::function<void(std::ostream&)>& postfix = Logger::affix_do_nothing()
+            , const char* filename = "UNKNOWN", const int linenumber = -1 )
+        : internalstream( os ), prefix( prefix ), postfix( postfix ), filename(filename), linenumber(linenumber)
         {
 //             internalbuffer.reserve(256);
         }
@@ -167,12 +175,19 @@ class Logger
 //                 next = curr;
 //             }
             
+            
             prefix( internalstream );
             internalstream << internalbuffer.str();
             postfix( internalstream );
             #ifndef NDEBUG
             internalstream.flush();
             #endif
+            
+            if( print_file_and_line ) {
+                prefix( internalstream );
+                internalstream << filename << ':' << linenumber << '\n';
+                postfix( internalstream );
+            }
         }
 
         inline std::ostream& getstream()
@@ -186,6 +201,17 @@ class Logger
         {
             internalbuffer << str;
             return *this;
+        }
+        
+        template<class T>
+        Logger& operator,( const T& t )
+        {
+            return ( *this << t );
+        }
+        
+        Logger& operator,( std::ostream& (*const f)(std::ostream&) )
+        {
+            return ( *this << f );
         }
         
         template<class T>
@@ -219,6 +245,10 @@ class Logger
         std::ostream& internalstream;
         std::function<void(std::ostream&)> prefix;
         std::function<void(std::ostream&)> postfix;
+        
+        bool print_file_and_line = false;
+        const std::string filename;
+        const int linenumber;
         
 };
 

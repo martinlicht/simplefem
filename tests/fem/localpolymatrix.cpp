@@ -23,9 +23,9 @@ using namespace std;
 
 int main()
 {
-        cout << "Unit Test for Inverse of Poly Matrix" << endl;
+        LOG << "Unit Test for Inverse of Poly Matrix";// << endl;
         
-        cout << std::setprecision(10);
+        LOG << std::setprecision(10);
 
         for( int n = 1; n <= 3; n++ )
         for( int r = 1; r <  10; r++ )
@@ -46,7 +46,7 @@ int main()
             Float diff_chol = ( MMchol * Transpose(MMchol) - MM ).norm();
             Float diff_qr   = ( MMqr_q * MMqr_r - MM ).norm();
 
-            std::cout << "\tn=" << n
+            LOG << "\tn=" << n
                       << "\tr=" << r
                       << "\tN=" << N
                       << "\ta=" << diff_inv
@@ -55,11 +55,11 @@ int main()
                       << nl;
                       
             // if( n==2 and r==2 )
-                // std::cout << MM / factorial_integer(2) << nl;;
+                // LOG << MM / factorial_integer(2) << nl;;
 
         }
         
-        cout << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test";// << endl;
         
         
         

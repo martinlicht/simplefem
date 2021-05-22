@@ -33,7 +33,7 @@ FLAG_DISABLE_CHECK_MESHES=yes
 
 # Do you want to DISABLE excpetion handling?
 # Uncomment the following line to disable exception handling
-FLAG_NO_EXCEPTIONS=yes
+# FLAG_NO_EXCEPTIONS=yes
 
 # Do you want to enable static analysis during the compilation process
 # Uncomment the following line to enable static analysis
@@ -82,6 +82,26 @@ endif
 
 
 
+
+# print all the compilation flags set manually or automatically
+.PHONY: parameters
+parameters:
+	$(info FLAG_CXX                       = $(FLAG_CXX) )
+	$(info FLAG_USE_TCMALLOC              = $(FLAG_USE_TCMALLOC) ) 
+	$(info FLAG_EXCESSIVE_WARNINGS        = $(FLAG_EXCESSIVE_WARNINGS) ) 
+	$(info FLAG_ENABLE_OPENMP             = $(FLAG_ENABLE_OPENMP) ) 
+	$(info FLAG_NO_DEBUGINFO              = $(FLAG_NO_DEBUGINFO) ) 
+	$(info FLAG_DISABLE_CHECK_MESHES      = $(FLAG_DISABLE_CHECK_MESHES) ) 
+	$(info FLAG_NO_EXCEPTIONS             = $(FLAG_NO_EXCEPTIONS) ) 
+	$(info FLAG_DO_STATICANALYSIS         = $(FLAG_DO_STATICANALYSIS) ) 
+	$(info FLAG_DISABLE_STDLIBDEBUG       = $(FLAG_DISABLE_STDLIBDEBUG) ) 
+	$(info FLAG_DISABLE_ASSERTIONS        = $(FLAG_DISABLE_ASSERTIONS) ) 
+	$(info FLAG_DO_PROFILE                = $(FLAG_DO_PROFILE) ) 
+	$(info FLAG_DO_USE_SANITIZER          = $(FLAG_DO_USE_SANITIZER) ) 
+	$(info FLAG_DO_USE_EXTENDED_PRECISION = $(FLAG_DO_USE_EXTENDED_PRECISION) ) 
+	$(info FLAG_DO_STRIP                  = $(FLAG_DO_STRIP) ) 
+	$(info FLAG_DO_OPTIMIZE               = $(FLAG_DO_OPTIMIZE) ) 
+	@true
 
 
 
@@ -625,7 +645,6 @@ LINKINGTYPE:=static
 else
 LINKINGTYPE:=dynamic
 endif
-
 
 
 

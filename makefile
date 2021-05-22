@@ -17,6 +17,7 @@ help:
 	@echo " tests:      Run all tests for all components."
 	@echo " benchmarks: Perform the benchmarks." 
 	@echo " all:        build, test, and benchmark"
+	@echo " parameters: Display the build parameters."
 	@echo " check:      Run a static code analysis tool. The particular tool is not specified."
 	@echo " clean:      Clean all output from previous builds, tests, and benchmarks,"
 	@echo "             including all VTK output"
@@ -194,6 +195,18 @@ cppcheck: $(cppcheck.components)
 .PHONY: cpplint
 cpplint:
 	( ./Tools/cpplint.py --exclude=tests/* --exclude=tests/*/* --exclude=.legacy/* --exclude=.private/* --exclude=.playground/* --recursive --filter=-whitespace,-legal --quiet . ) | sort | uniq -c > OUTPUT_CPPLINT.txt
+
+
+# print the build parameters
+.PHONY: parameters 
+parameters:
+	@make --no-print-directory -f common.recipe.mk parameters
+	@true
+
+
+
+
+
 
 
 

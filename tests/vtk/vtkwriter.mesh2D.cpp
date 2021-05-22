@@ -21,7 +21,7 @@ using namespace std;
 
 
 
-inline void print( const MeshSimplicial2D& M, std::string meshname )
+inline void internal_print( const MeshSimplicial2D& M, std::string meshname )
 {
     
     fstream fs( experimentfile( getbasename(__FILE__)), std::fstream::out );
@@ -60,19 +60,19 @@ inline void print( const MeshSimplicial2D& M, std::string meshname )
 
 int main()
 {
-    cout << "Unit Test for VTK output of Simplicial Mesh (2D)" << endl;
+    LOG << "Unit Test for VTK output of Simplicial Mesh (2D)";// << endl;
     
     {
         
         const MeshSimplicial2D Mx = StandardSquare2D_strange14();  std::string meshname = "Standard Square 2D";
 //         const MeshSimplicial2D Mx = UnitedKingdom();               std::string meshname = "United Kingdom"; 
         
-        print( Mx, meshname );
+        internal_print( Mx, meshname );
         
         
         
         
-        if(true)
+        //if(false)
         {
             
             auto M = Mx;
@@ -81,7 +81,7 @@ int main()
             
                 M.uniformrefinement();
                 
-                print( M, meshname );
+                internal_print( M, meshname );
             
             }
             
@@ -89,7 +89,7 @@ int main()
         
         
         
-        if(true)
+        //if(false)
         {
             
             auto M = Mx;
@@ -105,7 +105,7 @@ int main()
                 
                 M.longest_edge_bisection_recursive( refinementedges );
 
-                print( M, meshname );
+                internal_print( M, meshname );
             
             }
             
@@ -113,7 +113,7 @@ int main()
         
         
         
-        if(true)
+        //if(false)
         {
             
             auto M = Mx;
@@ -129,7 +129,7 @@ int main()
                 
                 M.newest_vertex_bisection_recursive( refinementedges );
                 
-                print( M, meshname );
+                internal_print( M, meshname );
             
             }
         
@@ -142,7 +142,7 @@ int main()
     
         
     
-    cout << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test";// << endl;
 
     return 0;
 }

@@ -32,13 +32,13 @@ using namespace std;
 int main()
 {
         
-        cout << "Unit Test: Compare numerical solvers CRM vs MINRES\n           for Solution of Dirichlet Problem" << endl;
+        LOG << "Unit Test: Compare numerical solvers CRM vs MINRES\n           for Solution of Dirichlet Problem";// << endl;
         
-        cout << std::setprecision(10);
+        LOG << std::setprecision(10);
 
         if(true){
 
-            cout << "Initial mesh..." << endl;
+            LOG << "Initial mesh...";// << endl;
             
             MeshSimplicial2D M = StandardSquare2D();
             
@@ -48,7 +48,7 @@ int main()
            
             M.check_dirichlet_flags();
             
-            cout << "Prepare scalar fields for testing..." << endl;
+            LOG << "Prepare scalar fields for testing...";// << endl;
             
 
             std::function<FloatVector(const FloatVector&)> constant_one
@@ -93,7 +93,7 @@ int main()
             
             
 
-            cout << "Solving Poisson Problem with Dirichlet boundary conditions" << endl;
+            LOG << "Solving Poisson Problem with Dirichlet boundary conditions";// << endl;
 
             ConvergenceTable contable;
             
@@ -105,14 +105,14 @@ int main()
 
             for( int l = min_l; l <= max_l; l++ ){
                 
-                cout << "Level: " << l << std::endl;
-                cout << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
+                LOG << "Level: " << l;// << std::endl;
+                LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
                 const int r = 1;
                 
                 {
                     
-                    cout << "...assemble matrices" << endl;
+                    LOG << "...assemble matrices";// << endl;
             
                     SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
                     
@@ -120,7 +120,7 @@ int main()
 
                     SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
-                    cout << "...assemble global mass matrix" << endl;
+                    LOG << "...assemble global mass matrix";// << endl;
             
 
                     auto mass_prelim = incmatrix_t & ( scalar_massmatrix & incmatrix );
@@ -137,7 +137,7 @@ int main()
 
 //                         if(false) 
                         {
-                            cout << "CGM - CSR Classic" << endl;
+                            LOG << "CGM - CSR Classic";// << endl;
                         
                             sol.zero();
                             FloatVector residual( rhs );
@@ -153,13 +153,13 @@ int main()
                             );
 
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
                             contable << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
                         }
 
                         if(false)
                         {
-                            cout << "CRM - CSR Classic" << endl;
+                            LOG << "CRM - CSR Classic";// << endl;
                         
                             sol.zero();
                             FloatVector residual( rhs );
@@ -175,13 +175,13 @@ int main()
                             );
 
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
                             contable << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
                         }
 
                         if(false)
                         {
-                            cout << "CRM - CSR Textbook" << endl;
+                            LOG << "CRM - CSR Textbook";// << endl;
                         
                             sol.zero();
                             FloatVector residual( rhs );
@@ -197,13 +197,13 @@ int main()
                             );
 
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
                             contable << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
                         }
 
                         if(false)
                         {
-                            cout << "MINRES CSR" << endl;
+                            LOG << "MINRES CSR";// << endl;
                         
                             sol.zero();
                             FloatVector residual( rhs );
@@ -219,14 +219,14 @@ int main()
                             );
 
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
                             contable << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
                         }
 
 
                         if(false)
                         {
-                            cout << "WHATEVER CSR" << endl;
+                            LOG << "WHATEVER CSR";// << endl;
                         
                             sol.zero();
                             FloatVector residual( rhs );
@@ -242,14 +242,14 @@ int main()
                             );
 
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
                             contable << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
                         }
 
 
 //                         if(false)
                         {
-                            cout << "CGM diagonal preconditioner CSR" << endl;
+                            LOG << "CGM diagonal preconditioner CSR";// << endl;
                         
                             DiagonalOperator invprecon = InverseDiagonalPreconditioner( mass_prelim );
 //                             invprecon.setentries( 1. );
@@ -271,14 +271,14 @@ int main()
                             );
 
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
                             contable << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
                         }
                         
                         
 //                         if(false)
                         {
-                            cout << "CGM SSOR preconditioner CSR" << endl;
+                            LOG << "CGM SSOR preconditioner CSR";// << endl;
                         
                             FloatVector diagonal = mass.diagonal();
                             assert( diagonal.isfinite() );
@@ -300,14 +300,14 @@ int main()
                             );
 
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
                             contable << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
                         }
                         
                         
                         if(false)
                         {
-                            cout << "CHEBYSHEV CSR" << endl;
+                            LOG << "CHEBYSHEV CSR";// << endl;
                         
                             DiagonalOperator invprecon = InverseDiagonalPreconditioner( mass_prelim );
                             assert( invprecon.getdiagonal().isfinite() );
@@ -330,20 +330,20 @@ int main()
                             );
 
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
                             contable << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
                         }
                         
                         
                         contable << nl;
                         
-                        contable.print( std::cout, false );
+                        contable.lg( false );
 
                     }
                     
                 }
 
-                cout << "Refinement..." << endl;
+                LOG << "Refinement...";// << endl;
             
                 if( l != max_l ) M.uniformrefinement();
 
@@ -355,7 +355,7 @@ int main()
         
         
         
-        cout << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test";// << endl;
         
         return 0;
 }

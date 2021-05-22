@@ -34,7 +34,7 @@ std::string IndexRange::text( bool embellish ) const
     std::ostringstream ss;
     
     if( embellish )
-        ss << '[' << minimum << ':' << maximum << ']' << std::endl;
+        ss << '[' << minimum << " .. " << maximum << ']';
     else
         ss << minimum << ' ' << maximum;
     
@@ -44,10 +44,7 @@ std::string IndexRange::text( bool embellish ) const
 void IndexRange::print( std::ostream& os, bool embellish ) const
 {
     check();
-    if( embellish )
-        os << '[' << minimum << ':' << maximum << ']' << std::endl;
-    else
-        os << minimum << ' ' << maximum;
+    os << text( embellish ) << std::endl;
 }
 
 int IndexRange::min() const

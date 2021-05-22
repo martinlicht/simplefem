@@ -27,11 +27,11 @@ using namespace std;
 int main()
 {
         
-        cout << "Unit Test: (3D) degree elevation commutes with exterior derivative" << endl;
+        LOG << "Unit Test: (3D) degree elevation commutes with exterior derivative";// << endl;
         
-        cout << std::setprecision(10);
+        LOG << std::setprecision(10);
 
-        cout << "Initial mesh..." << endl;
+        LOG << "Initial mesh...";// << endl;
         
         MeshSimplicial3D M = StandardCube3D();
         
@@ -101,7 +101,7 @@ int main()
             for( int r_plus =     0; r_plus <=            r_plus_max; r_plus++ ) 
             {
                 
-                cout << "...assemble matrices: l=" << l << " k=" << k << " r=" << r << " rplus=" << r_plus << endl;
+                LOG << "...assemble matrices: l=" << l << " k=" << k << " r=" << r << " rplus=" << r_plus;// << endl;
         
                 SparseMatrix lower_diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), k, r          );
 
@@ -133,7 +133,7 @@ int main()
                 
             }
 
-            cout << "Refinement..." << endl;
+            LOG << "Refinement...";// << endl;
         
             M.uniformrefinement();
             
@@ -142,7 +142,7 @@ int main()
         } 
         
         
-        cout << "Convergence tables" << nl;
+        LOG << "Convergence tables" << nl;
     
         ConvergenceTable contable[ M.getinnerdimension() ];
         
@@ -166,15 +166,15 @@ int main()
         
         for( int i = 0; i < M.getinnerdimension(); i++ ) 
         {
-            contable[i].print( cout ); 
-            cout << "-------------------" << nl;
+            contable[i].lg(); 
+            LOG << "-------------------" << nl;
         }
                 
         
         
         
         
-        cout << "Check that differences are small" << nl;
+        LOG << "Check that differences are small" << nl;
         
         for( int l      = l_min; l      <=           l_max; l++      ) 
         for( int r      = r_min; r      <=           r_max; r++      ) 
@@ -185,7 +185,7 @@ int main()
         }
             
         
-        cout << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test";// << endl;
         
         return 0;
 }
