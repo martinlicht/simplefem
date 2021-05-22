@@ -41,7 +41,7 @@ int main()
         
         LOG << "...assemble matrices";// << endl;
         
-        for( int r = 0; r <= 5; r++ ) 
+        for( int r = 0; r <= 4; r++ ) 
         for( int k = 0; k <= 1; k++ ) 
         {
             LOG << "[ k, r ] = [" << k << ", " << r << "]\n";
@@ -87,7 +87,7 @@ int main()
         
         LOG << "...assemble matrices";// << endl;
         
-        for( int r = 0; r <= 5; r++ ) 
+        for( int r = 0; r <= 3; r++ ) 
         for( int k = 0; k <= 2; k++ ) 
         {
             LOG << "[ k, r ] = [" << k << ", " << r << "]\n";
@@ -133,7 +133,7 @@ int main()
         
         LOG << "...assemble matrices";// << endl;
         
-        for( int r = 0; r <= 4; r++ ) 
+        for( int r = 0; r <= 3; r++ ) 
         for( int k = 0; k <= 3; k++ ) 
         {
             LOG << "[ k, r ] = [" << k << ", " << r << "]\n";
