@@ -51,7 +51,7 @@ int main()
         
         const int l_min = 0;
         
-        const int l_max = 1;
+        const int l_max = 3;
         
         Float errors[l_max-l_min+1][3][number_of_comparisons];
         
@@ -74,7 +74,7 @@ int main()
                 int m = l - l_min;
                 
                 for( int t = 0; t < number_of_comparisons; t++ )
-                    errors[m][d][t] = 0.;
+                    errors[m][d][t] = -10.;
                 
                 Mesh& M = *(Ms[d]);
                 
@@ -165,7 +165,7 @@ int main()
                         errors[m][d][3] = maximum( vec_error, errors[m][d][3] );
                     }
                     
-                    /*stiffness matrices*/
+                    /*stiffness matrices */
                     {
                         auto vec_error = ( ( lagr_stiffness - lagr_composed_stiffness ) * vec ).norm();
                     
@@ -188,7 +188,7 @@ int main()
                         errors[m][d][5] = maximum( vec_error, errors[m][d][5] );
                     }
                     
-                    /*broken stiffness*/
+                    /*broken stiffness yyyyyyyyyyyyyyyyyyyyyyyyy*/
                     {
                         auto vec_error = ( ( lagr_broken_stiffness - feec_broken_stiffness ) * vec ).norm();
                     

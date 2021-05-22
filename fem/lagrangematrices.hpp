@@ -28,32 +28,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //////////////////////////////////////////////////////
 //                                                  //
 //  Matrix for the broken Lagrange mass pairing     //
@@ -252,7 +226,7 @@ inline SparseMatrix LagrangeBrokenStiffnessMatrix( const Mesh& mesh, int r )
         
         Float measure = mesh.getMeasure( n, t );
         
-        entry.value = GradProds( v1, v2 ) * measure / factorial_numerical( n );
+        entry.value = GradProds( v1, v2 ) * measure; // /factorial_numerical( n );
         
         ret.setentry( index_of_entry, entry );
         
@@ -319,13 +293,13 @@ inline SparseMatrix LagrangeStiffnessMatrix( const Mesh& mesh, int r )
         entry.row    = vertex1; 
         entry.column = vertex2;
         
-        DenseMatrix Jac = mesh.getTransformationJacobian( n, t );
+        //DenseMatrix Jac = mesh.getTransformationJacobian( n, t );
         
         DenseMatrix GradProds = mesh.getGradientProductMatrix( n, t );
         
         Float measure = mesh.getMeasure( n, t );
         
-        entry.value = GradProds( v1, v2 ) * measure / factorial_numerical( n );
+        entry.value = GradProds( v1, v2 ) * measure; // / factorial_numerical( n );
         
         if( mesh.get_flag( 0, vertex1 ) == SimplexFlagDirichlet or mesh.get_flag( 0, vertex2 ) == SimplexFlagDirichlet )
             entry.value = 0.;
