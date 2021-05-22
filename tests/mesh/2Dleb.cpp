@@ -27,12 +27,13 @@ int main()
             
             M.check();
             
-            for( int k = 0; k < 2; k++ ) M.uniformrefinement();
+            for( int k = 0; k < 2; k++ ) 
+                M.uniformrefinement();
             
             int cell_count_initial = M.count_triangles();
             int cell_marked_count  = 0;
             
-            int c_max = 30;
+            int c_max = 8;
             
             for( int c = 0; c < c_max; c++ ) {
             
@@ -45,7 +46,8 @@ int main()
                 cell_marked_count += markedcells.size();
                 
                 std::vector<int> markededges;
-                for( int t : markedcells ) markededges.push_back( M.get_oldest_edge( t ) );
+                for( int t : markedcells ) 
+                    markededges.push_back( M.get_oldest_edge( t ) );
                 sort_and_remove_duplicates( markededges );
                 
                 LOG << c << "/" << c_max << " Refine " << markedcells.size() << "/" << M.count_triangles() << " ... ";
@@ -67,12 +69,13 @@ int main()
             
             M.check();
             
-            for( int k = 0; k < 2; k++ ) M.uniformrefinement();
+            for( int k = 0; k < 2; k++ ) 
+                M.uniformrefinement();
             
             int cell_count_initial = M.count_triangles();
             int cell_marked_count  = 0;
             
-            int c_max = 30;
+            int c_max = 8;
             
             for( int c = 0; c < c_max; c++ ) {
             

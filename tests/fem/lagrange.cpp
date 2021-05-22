@@ -51,7 +51,7 @@ int main()
         
         const int l_min = 0;
         
-        const int l_max = 4;
+        const int l_max = 1;
         
         Float errors[l_max-l_min+1][3][number_of_comparisons];
         
@@ -74,7 +74,7 @@ int main()
                 int m = l - l_min;
                 
                 for( int t = 0; t < number_of_comparisons; t++ )
-                    errors[l][d][t] = 0.;
+                    errors[m][d][t] = 0.;
                 
                 Mesh& M = *(Ms[d]);
                 
@@ -125,7 +125,7 @@ int main()
                 
                 LOG << "...composed Lagrange matrices";// << endl;
                 
-                auto lagr_composed_mass      = lagr_inc_t & lagr_broken_mass & lagr_inc;
+                auto lagr_composed_mass      = lagr_inc_t & lagr_broken_mass      & lagr_inc;
                 auto lagr_composed_stiffness = lagr_inc_t & lagr_broken_stiffness & lagr_inc;
                 
                 LOG << "...COMPARISONS" << nl;
@@ -135,7 +135,7 @@ int main()
                     vec.zero();
                     vec.random();
                     vec.normalize();
-                    vec.isfinite();
+                    assert( vec.isfinite() );
                     
                     // inclusion matrices
                     {
@@ -160,14 +160,14 @@ int main()
                     
                     /*stiffness matrices*/
                     {
-                        auto vec_error = ( ( lagr_stiffness - lagr_composed_stiffness ) * vec ).norm();
+                        auto vec_error = ( ( lagr_composed_stiffness - feec_stiffness ) * vec ).norm();
                     
                         errors[m][d][3] = maximum( vec_error, errors[m][d][3] );
                     }
                     
                     /*stiffness matrices*/
                     {
-                        auto vec_error = ( ( lagr_composed_stiffness - feec_stiffness ) * vec ).norm();
+                        auto vec_error = ( ( lagr_stiffness - lagr_composed_stiffness ) * vec ).norm();
                     
                         errors[m][d][4] = maximum( vec_error, errors[m][d][4] );
                     }
@@ -179,7 +179,7 @@ int main()
                     vec.zero();
                     vec.random();
                     vec.normalize();
-                    vec.isfinite();
+                    assert( vec.isfinite() );
                     
                     /*broken mass*/
                     {
@@ -253,24 +253,39 @@ int main()
 
             ConvergenceTable contable[3];
             
+            
+            
             for( int d = 0; d <            3; d++ )
-            for( int m = 0; m <= l_max-l_min; m++ ) 
             {
                 
-                for( int t = 0; t < number_of_comparisons; t++ )
+                contable[d] << "inc";
+                contable[d] << "mass";
+                contable[d] << "mass comp";
+                contable[d] << "stiff";
+                contable[d] << "stiff comp";
+                contable[d] << "br mass";
+                contable[d] << "br stiff";
+                
+                
+                for( int m = 0; m <= l_max-l_min; m++ ) 
                 {
-                    contable[d] << errors[m][d][t];
-                }
-                
-                contable[d] << nl; 
-                
+                    
+                    for( int t = 0; t < number_of_comparisons; t++ )
+                    {
+                        contable[d] << errors[m][d][t];
+                    }
+                    
+                    contable[d] << nl; 
+                    
+                }    
             }
-                
+
             for( int d = 0; d < 3; d++ ) {
+                LOG << "Dimension: " << d+1 << '\n';
                 contable[d].lg();
                 LOG << "----------------------------------";// << std::endl;
             }
-            
+
         }
             
             
@@ -280,7 +295,9 @@ int main()
         for( int d = 0; d < 3; d++ )
         for( int t = 0; t < number_of_comparisons; t++ )
         {
-            assert( errors[l][d][t] < 10e-10 );
+            if( not ( errors[l-l_min][d][t] < 10e-10 ) )
+                LOG << l << space << d << space << t << space << errors[l-l_min][d][t] << endl;
+            assert( errors[l-l_min][d][t] < 10e-10 );
         }
         
         

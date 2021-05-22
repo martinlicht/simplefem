@@ -37,13 +37,13 @@ using namespace std;
 int main()
 {
         
-        cout << "Unit Test: 2D Maxwell System" << endl;
+        LOG << "Unit Test: 2D Maxwell System";// << endl;
         
-        cout << std::setprecision(10);
+        LOG << std::setprecision(10);
 
         if(true){
 
-            cout << "Initial mesh..." << endl;
+            LOG << "Initial mesh...";// << endl;
             
             MeshSimplicial2D M = StandardSquare2D();
             
@@ -172,15 +172,15 @@ int main()
             for( int l = min_l; l <= max_l; l++ )
             {
                 
-                cout << "Level: " << l << std::endl;
-                cout << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
+                LOG << "Level: " << l;// << std::endl;
+                LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
                 for( int r = min_r; r <= max_r; r++ )
                 {
                     
-                    cout << "Polynomial degree: " << r << std::endl;
+                    LOG << "Polynomial degree: " << r;// << std::endl;
                     
-                    cout << "... assemble matrices" << endl;
+                    LOG << "... assemble matrices";// << endl;
             
                     
                     SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r+1 );
@@ -216,9 +216,9 @@ int main()
                     auto mat_C  = vector_incmatrix_t & vector_diffmatrix_t & volume_massmatrix & vector_diffmatrix & vector_incmatrix;
                     mat_C.sortandcompressentries();
                     
-                    std::cout << "share zero A = " << mat_A.getnumberofzeroentries() << "/" << (Float) mat_A.getnumberofentries() << nl;
-                    std::cout << "share zero B = " << mat_B.getnumberofzeroentries() << "/" << (Float) mat_B.getnumberofentries() << nl;
-                    std::cout << "share zero C = " << mat_C.getnumberofzeroentries() << "/" << (Float) mat_C.getnumberofentries() << nl;
+                    LOG << "share zero A = " << mat_A.getnumberofzeroentries() << "/" << (Float) mat_A.getnumberofentries() << nl;
+                    LOG << "share zero B = " << mat_B.getnumberofzeroentries() << "/" << (Float) mat_B.getnumberofentries() << nl;
+                    LOG << "share zero C = " << mat_C.getnumberofzeroentries() << "/" << (Float) mat_C.getnumberofentries() << nl;
                     
                     auto A  = MatrixCSR( mat_A  );
                     auto Bt = MatrixCSR( mat_Bt );
@@ -244,7 +244,7 @@ int main()
                         const auto& function_curl = experiment_curl;
                         const auto& function_rhs  = experiment_rhs;
                         
-                        cout << "...interpolate explicit solution and rhs" << endl;
+                        LOG << "...interpolate explicit solution and rhs";// << endl;
                         
                         FloatVector interpol_ndiv = Interpolation( M, M.getinnerdimension(), 0, r+1, function_ndiv  );
                         FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 1, r,   function_sol  );
@@ -266,7 +266,7 @@ int main()
                         if(false)
                         {
                         
-                            cout << "...measure interpolation commutativity" << endl;
+                            LOG << "...measure interpolation commutativity";// << endl;
                             
 //                             auto  commutatorerror_1_aux = interpol_rhs - scalar_diffmatrix * interpol_ndiv - vector_diffmatrix_t * volume_massmatrix * interpol_curl;
                             auto  commutatorerror_1_aux
@@ -275,15 +275,15 @@ int main()
                             - scalar_diffmatrix   * inv(scalar_massmatrix,1e-14) * scalar_diffmatrix_t * vector_massmatrix * interpol_sol
                             - vector_diffmatrix_t * volume_massmatrix * vector_diffmatrix   * interpol_sol;
                             Float commutatorerror_1     = commutatorerror_1_aux * ( vector_massmatrix * commutatorerror_1_aux );
-                            cout << "algebraic commutator error 1: " << commutatorerror_1 << endl;
+                            LOG << "algebraic commutator error 1: " << commutatorerror_1;// << endl;
                             
                             auto  commutatorerror_2_aux = interpol_curl - vector_diffmatrix * interpol_sol;
                             Float commutatorerror_2     = commutatorerror_2_aux * ( volume_massmatrix * commutatorerror_2_aux );
-                            cout << "algebraic commutator error 2: " << commutatorerror_2 << endl;
+                            LOG << "algebraic commutator error 2: " << commutatorerror_2;// << endl;
                             
                             auto  commutatorerror_3_aux = scalar_massmatrix * interpol_ndiv - scalar_diffmatrix_t * interpol_sol;
                             Float commutatorerror_3     = commutatorerror_3_aux * ( scalar_massmatrix * commutatorerror_3_aux );
-                            cout << "algebraic commutator error 3: " << commutatorerror_3 << endl;
+                            LOG << "algebraic commutator error 3: " << commutatorerror_3;// << endl;
                             
                         }
                         
@@ -299,11 +299,11 @@ int main()
                         
                             FloatVector res = rhs;
 
-                            cout << "...iterative solver" << endl;
+                            LOG << "...iterative solver";// << endl;
                             
                             timestamp start = gettimestamp();
 
-                            cout << "- mixed system solver" << endl;
+                            LOG << "- mixed system solver";// << endl;
 //                             if(false)
                             HodgeConjugateResidualSolverCSR_SSOR(
                             //HodgeConjugateResidualSolverCSR_textbook( 
@@ -323,7 +323,7 @@ int main()
                             
                             sol *= -1;
                             
-//                             cout << "- elliptic system solver" << endl;
+//                             LOG << "- elliptic system solver";// << endl;
 //                             ConjugateResidualSolverCSR( 
 //                                 sol.getdimension(), 
 //                                 sol.raw(), 
@@ -343,7 +343,7 @@ int main()
                             
 
                             timestamp end = gettimestamp();
-                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
 
                             
                         }
@@ -351,7 +351,7 @@ int main()
                         if(false)
                         {
                             
-                            cout << "...iterative solver" << endl;
+                            LOG << "...iterative solver";// << endl;
                             
                             sol.zero();
                             
@@ -367,9 +367,9 @@ int main()
                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
 
-                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
 
-                            cout << "...compute error and residual:" << endl;
+                            LOG << "...compute error and residual:";// << endl;
 
                         }
 
@@ -394,13 +394,13 @@ int main()
                             Solver.solve( sol_whole, rhs_whole );
                             timestamp end = gettimestamp();
 
-                            std::cout << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
 
-                            cout << "...compute error and residual:" << endl;
+                            LOG << "...compute error and residual:";// << endl;
 
                             Float residualnorm  = ( rhs_whole - X * sol_whole ).norm();
 
-                            cout << "combined system residual:  " << residualnorm  << endl;
+                            LOG << "combined system residual:  " << residualnorm;//;// << endl;
 
                             sol = sol_whole.getslice( A.getdimout(), B.getdimout() );
                         }
@@ -409,7 +409,7 @@ int main()
                         
                         auto curl = vector_diffmatrix * vector_incmatrix * sol;
                         
-                        cout << "...compute error and residual:" << endl;
+                        LOG << "...compute error and residual:";// << endl;
 
                         auto errornorm_aux_ndiv = interpol_ndiv - scalar_incmatrix * ndiv;
                         auto errornorm_aux_sol  = interpol_sol  - vector_incmatrix *  sol;
@@ -424,15 +424,15 @@ int main()
                         Float errornorm_sol  = sqrt( errornorm_sol_sq  );
                         Float errornorm_curl = sqrt( errornorm_curl_sq );
                         
-                        cout << "div  error sq: " << errornorm_ndiv_sq << endl;
-                        cout << "sol  error sq: " << errornorm_sol_sq  << endl;
-                        cout << "curl error sq: " << errornorm_curl_sq << endl;
+                        LOG << "div  error sq: " << errornorm_ndiv_sq;// << endl;
+                        LOG << "sol  error sq: " << errornorm_sol_sq;//;// << endl;
+                        LOG << "curl error sq: " << errornorm_curl_sq;// << endl;
                         
-                        cout << "div  error: " << errornorm_ndiv << endl;
-                        cout << "sol  error: " << errornorm_sol  << endl;
-                        cout << "curl error: " << errornorm_curl << endl;
+                        LOG << "div  error: " << errornorm_ndiv;// << endl;
+                        LOG << "sol  error: " << errornorm_sol;//;// << endl;
+                        LOG << "curl error: " << errornorm_curl;// << endl;
                         
-                        cout << "residual:   " << residualnorm   << endl;
+                        LOG << "residual:   " << residualnorm ;//;// << endl;
 
                         contable << errornorm_ndiv;
                         contable << errornorm_sol;
@@ -448,7 +448,7 @@ int main()
                     
                 }
 
-                cout << "Refinement..." << endl;
+                LOG << "Refinement...";// << endl;
             
                 if( l != max_l ) M.uniformrefinement();
 
@@ -465,7 +465,7 @@ int main()
         
         
         
-        cout << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test";// << endl;
         
         return 0;
 }

@@ -24,7 +24,7 @@ int main()
         
         for( int c = 0; c < 5; c++ ) {
 
-          M.midpoint_refinement_global();
+            M.midpoint_refinement_global();
           
         }
           

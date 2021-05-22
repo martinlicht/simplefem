@@ -53,6 +53,9 @@ int main()
                 for( int t : markedcells ) markededges.push_back( M.get_oldest_edge( t ) );
                 sort_and_remove_duplicates( markededges );
                 
+                for( int i = 1; i < markedcells.size(); i++ )
+                    assert( markedcells[i] != markedcells[i-1] );
+                
                 LOG << c << "/" << c_max << " Refine " << markedcells.size() << "/" << M.count_triangles() << " ... ";
                 M.longest_edge_bisection_recursive( markededges );
                 LOG << "Ratio=" << ( M.count_triangles() - cell_count_initial )/(Float)( cell_marked_count );// << nl;
@@ -99,6 +102,9 @@ int main()
                 for( int t : markedcells ) markededges.push_back( M.get_oldest_edge( t ) );
                 sort_and_remove_duplicates( markededges );
                 
+                for( int i = 1; i < markedcells.size(); i++ )
+                    assert( markedcells[i] != markedcells[i-1] );
+
                 LOG << c << "/" << c_max << " Refine " << markedcells.size() << "/" << M.count_triangles() << " ... ";
                 M.longest_edge_bisection_recursive( markededges );
                 LOG << "Ratio=" << ( M.count_triangles() - cell_count_initial )/(Float)( cell_marked_count );// << nl;

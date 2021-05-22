@@ -351,7 +351,7 @@ void Mesh::check_dirichlet_flags()
     // for all lower dimensional simplices 
     // if they are Dirichlet, check that they are contained in a Dirichlet face 
     // if they are not, then check that they are not contained in a Dirichlet face 
-    for( int d = 1; d < full-1; d++ )
+    for( int d = 0; d < full-1; d++ )
         for( int sub = 0; sub < count_simplices(d); sub++ )
             if( get_flag( d, sub ) == SimplexFlagDirichlet ) {
                 bool found = false;

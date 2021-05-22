@@ -128,25 +128,25 @@ class Logger
         
         explicit inline Logger( 
             Logger& parent, const std::string& prefix_str = "", const std::string& postfix_str = ""
-            , const char* filename = "UNKNOWN", const int linenumber = 0 )
+            , const char* filename = "UNKNOWN", const int linenumber = -1 )
         : Logger( parent, Logger::affix_write( prefix_str ), Logger::affix_write( postfix_str ), filename, linenumber )
         {}
         
         explicit inline Logger( 
             std::ostream& os, const std::string& prefix_str = "", const std::string& postfix_str = ""
-            , const char* filename = "UNKNOWN", const int linenumber = 0 )
+            , const char* filename = "UNKNOWN", const int linenumber = -1 )
         : Logger( os, Logger::affix_write( prefix_str ), Logger::affix_write( postfix_str ), filename, linenumber )
         {}
         
         explicit inline Logger( 
             Logger& parent, const std::function<void(std::ostream&)>& prefix = Logger::affix_do_nothing(), const std::function<void(std::ostream&)>& postfix = Logger::affix_do_nothing()
-            , const char* filename = "UNKNOWN", const int linenumber = 0 )
+            , const char* filename = "UNKNOWN", const int linenumber = -1 )
         : Logger( parent.getstream(), prefix, postfix, filename, linenumber )
         {}
         
         explicit inline Logger( 
             std::ostream& os, const std::function<void(std::ostream&)>& prefix = Logger::affix_do_nothing(), const std::function<void(std::ostream&)>& postfix = Logger::affix_do_nothing()
-            , const char* filename = "UNKNOWN", const int linenumber = 0 )
+            , const char* filename = "UNKNOWN", const int linenumber = -1 )
         : internalstream( os ), prefix( prefix ), postfix( postfix ), filename(filename), linenumber(linenumber)
         {
 //             internalbuffer.reserve(256);
@@ -175,6 +175,7 @@ class Logger
 //                 next = curr;
 //             }
             
+            
             prefix( internalstream );
             internalstream << internalbuffer.str();
             postfix( internalstream );
@@ -182,8 +183,11 @@ class Logger
             internalstream.flush();
             #endif
             
-            //if(false)
-            internalstream << filename << ':' << linenumber << '\n';
+            if( print_file_and_line ) {
+                prefix( internalstream );
+                internalstream << filename << ':' << linenumber << '\n';
+                postfix( internalstream );
+            }
         }
 
         inline std::ostream& getstream()
@@ -242,6 +246,7 @@ class Logger
         std::function<void(std::ostream&)> prefix;
         std::function<void(std::ostream&)> postfix;
         
+        bool print_file_and_line = false;
         const std::string filename;
         const int linenumber;
         
