@@ -16,6 +16,9 @@ int main()
 {
     LOG << "Unit Test for Simplicial ND Mesh IO";// << endl;
     
+    WARNING "NOTHING IMPLEMENTED YET";
+    
+    if(false)
     {
         
         MeshSimplicialND mesh = UnitSquareND();

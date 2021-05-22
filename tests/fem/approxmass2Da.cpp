@@ -181,7 +181,7 @@ int main()
         
         const int l_min = 0;
         
-        const int l_max = 4;
+        const int l_max = 2;
         
         Float errors_scalar[ experiments_scalar_field.size() ][ l_max - l_min + 1 ][ r_max - r_min + 1 ];
         Float errors_vector[ experiments_vector_field.size() ][ l_max - l_min + 1 ][ r_max - r_min + 1 ];
