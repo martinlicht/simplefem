@@ -941,38 +941,51 @@ void MeshSimplicial3D::uniformrefinement()
     
     // flags of vertices/edges created from edges vertices
     for( int e = 0; e < counter_edges; e++ ) { 
-        flags_edges[ counter_edges + e ] = flags_edges[e];
-        flags_vertices[ counter_vertices + e ] = flags_edges[e];
+        
+        auto flag_of_edge = flags_edges[ e ];
+        
+        flags_edges[ counter_edges + e ] = flag_of_edge;
+        
+        flags_vertices[ counter_vertices + e ] = flag_of_edge;
     }
     
     // flags of edges/faces created from faces 
     for( int f = 0; f < counter_faces; f++ ) {
-        flags_faces[ 1 * counter_faces + f ] = flags_faces[ f ];
-        flags_faces[ 2 * counter_faces + f ] = flags_faces[ f ];
-        flags_faces[ 3 * counter_faces + f ] = flags_faces[ f ];
-        flags_edges[ 2 * counter_edges + 0 * counter_faces + f ] = flags_edges[ f ];
-        flags_edges[ 2 * counter_edges + 1 * counter_faces + f ] = flags_edges[ f ];
-        flags_edges[ 2 * counter_edges + 2 * counter_faces + f ] = flags_edges[ f ];
+        
+        auto flag_of_face = flags_faces[ f ];
+        
+        flags_faces[ 1 * counter_faces + f ] = flag_of_face;
+        flags_faces[ 2 * counter_faces + f ] = flag_of_face;
+        flags_faces[ 3 * counter_faces + f ] = flag_of_face;
+        
+        flags_edges[ 2 * counter_edges + 0 * counter_faces + f ] = flag_of_face;
+        flags_edges[ 2 * counter_edges + 1 * counter_faces + f ] = flag_of_face;
+        flags_edges[ 2 * counter_edges + 2 * counter_faces + f ] = flag_of_face;
     }
 
     // flags of edges/faces/tetrahedra created from tetrahedra
     for( int t = 0; t < counter_tetrahedra; t++ ) {
-        flags_tetrahedra[ 1 * counter_tetrahedra + t ] = flags_tetrahedra[ t ];
-        flags_tetrahedra[ 2 * counter_tetrahedra + t ] = flags_tetrahedra[ t ];
-        flags_tetrahedra[ 3 * counter_tetrahedra + t ] = flags_tetrahedra[ t ];
-        flags_tetrahedra[ 4 * counter_tetrahedra + t ] = flags_tetrahedra[ t ];
-        flags_tetrahedra[ 5 * counter_tetrahedra + t ] = flags_tetrahedra[ t ];
-        flags_tetrahedra[ 6 * counter_tetrahedra + t ] = flags_tetrahedra[ t ];
-        flags_tetrahedra[ 7 * counter_tetrahedra + t ] = flags_tetrahedra[ t ];
-        flags_faces[ 4 * counter_faces + 0 * counter_tetrahedra + t ] = flags_tetrahedra[ t ];
-        flags_faces[ 4 * counter_faces + 1 * counter_tetrahedra + t ] = flags_tetrahedra[ t ];
-        flags_faces[ 4 * counter_faces + 2 * counter_tetrahedra + t ] = flags_tetrahedra[ t ];
-        flags_faces[ 4 * counter_faces + 3 * counter_tetrahedra + t ] = flags_tetrahedra[ t ];
-        flags_faces[ 4 * counter_faces + 4 * counter_tetrahedra + t ] = flags_tetrahedra[ t ];
-        flags_faces[ 4 * counter_faces + 5 * counter_tetrahedra + t ] = flags_tetrahedra[ t ];
-        flags_faces[ 4 * counter_faces + 6 * counter_tetrahedra + t ] = flags_tetrahedra[ t ];
-        flags_faces[ 4 * counter_faces + 7 * counter_tetrahedra + t ] = flags_tetrahedra[ t ];
-        flags_edges[ 2 * counter_edges + 3 * counter_faces + t ] = flags_tetrahedra[ t ];
+        
+        auto flag_of_tet = flags_tetrahedra[ t ];
+        
+        flags_tetrahedra[ 1 * counter_tetrahedra + t ] = flag_of_tet;
+        flags_tetrahedra[ 2 * counter_tetrahedra + t ] = flag_of_tet;
+        flags_tetrahedra[ 3 * counter_tetrahedra + t ] = flag_of_tet;
+        flags_tetrahedra[ 4 * counter_tetrahedra + t ] = flag_of_tet;
+        flags_tetrahedra[ 5 * counter_tetrahedra + t ] = flag_of_tet;
+        flags_tetrahedra[ 6 * counter_tetrahedra + t ] = flag_of_tet;
+        flags_tetrahedra[ 7 * counter_tetrahedra + t ] = flag_of_tet;
+        
+        flags_faces[ 4 * counter_faces + 0 * counter_tetrahedra + t ] = flag_of_tet;
+        flags_faces[ 4 * counter_faces + 1 * counter_tetrahedra + t ] = flag_of_tet;
+        flags_faces[ 4 * counter_faces + 2 * counter_tetrahedra + t ] = flag_of_tet;
+        flags_faces[ 4 * counter_faces + 3 * counter_tetrahedra + t ] = flag_of_tet;
+        flags_faces[ 4 * counter_faces + 4 * counter_tetrahedra + t ] = flag_of_tet;
+        flags_faces[ 4 * counter_faces + 5 * counter_tetrahedra + t ] = flag_of_tet;
+        flags_faces[ 4 * counter_faces + 6 * counter_tetrahedra + t ] = flag_of_tet;
+        flags_faces[ 4 * counter_faces + 7 * counter_tetrahedra + t ] = flag_of_tet;
+        
+        flags_edges[ 2 * counter_edges + 3 * counter_faces + t ] = flag_of_tet;
     }
 
     

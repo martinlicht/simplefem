@@ -289,8 +289,13 @@ void Mesh::automatic_dirichlet_flags()
         set_flags( d, SimplexFlagNull );
     
     for( int s = 0; s < count_simplices(full-1); s++ )
-        if( get_firstparent_of_subsimplex( full, full-1, s ) == nullindex || get_nextparent_of_subsimplex( full, full-1, get_firstparent_of_subsimplex( full, full-1, s ), s ) == nullindex )
+        if( 
+            get_firstparent_of_subsimplex( full, full-1, s ) == nullindex 
+            || 
+            get_nextparent_of_subsimplex( full, full-1, get_firstparent_of_subsimplex( full, full-1, s ), s ) == nullindex
+        ) {
             set_flag( full-1, s, SimplexFlagDirichlet );
+        }
         
     for( int s = 0; s < count_simplices(full-1); s++ )
         if( get_flag( full-1, s ) == SimplexFlagDirichlet )
@@ -308,27 +313,68 @@ void Mesh::check_dirichlet_flags()
     assert( dimension_counted(full-1) );
     assert( supersimplices_listed(full,full-1) );
     
+    // check that no flags are invalid
     for( int s = 0; s < count_simplices(full-1); s++ )
-        if( get_firstparent_of_subsimplex( full, full-1, s ) == nullindex || get_nextparent_of_subsimplex( full, full-1, get_firstparent_of_subsimplex( full, full-1, s ), s ) == nullindex )
-            assert( get_flag( full-1, s ) == SimplexFlagDirichlet );
-        else 
-            assert( get_flag( full-1, s ) == SimplexFlagNull      );
+        assert( get_flag( full-1, s ) != SimplexFlagInvalid );
     
-    for( int d = 0; d < full-1; d++ )
-        for( int sub = 0; sub < count_simplices(d); sub++ )
-            if( get_flag( d, sub ) == SimplexFlagDirichlet ) {
-                bool found = false;
-                for( int sup = get_firstparent_of_subsimplex( full-1, d, sub ); sup != nullindex; sup = get_nextparent_of_subsimplex( full-1, d, sup, sub ) )
-                    found = found || ( get_flag(full-1,sup) == SimplexFlagDirichlet );
-                assert( found );
-            }
-            
+    for( int s = 0; s < count_simplices(full); s++ )
+        assert( get_flag( full, s ) == SimplexFlagNull );
+    
+    // for each face, check that those faces with less than two parents have the Dirichlet flag 
+    for( int s = 0; s < count_simplices(full-1); s++ )
+        if( get_firstparent_of_subsimplex( full, full-1, s ) == nullindex 
+            || 
+            get_nextparent_of_subsimplex( full, full-1, get_firstparent_of_subsimplex( full, full-1, s ), s ) == nullindex ) {
+            assert( get_flag( full-1, s ) == SimplexFlagDirichlet );
+        } else {
+            assert( get_flag( full-1, s ) == SimplexFlagNull      );
+        }
+ 
+    // for each face, check that those faces with at least two parents have no Dirichlet flag 
+    for( int s = 0; s < count_simplices(full-1); s++ )
+        if( get_firstparent_of_subsimplex( full, full-1, s ) != nullindex 
+            && 
+            get_nextparent_of_subsimplex( full, full-1, get_firstparent_of_subsimplex( full, full-1, s ), s ) != nullindex
+        ) {
+            assert( get_flag( full-1, s ) == SimplexFlagNull      );
+        } else {
+            assert( get_flag( full-1, s ) == SimplexFlagDirichlet );
+        }
+ 
+    // for all Dirichlet faces, check that the subsimplices are Dirichlet too 
     for( int s = 0; s < count_simplices(full-1); s++ )
         if( get_flag( full-1, s ) == SimplexFlagDirichlet )
             for( int d = 0; d < full-1; d++ )
                 for( int subindex = 0; subindex < count_subsimplices( full-1, d ); subindex++ ) 
                     assert( get_flag( d, get_subsimplex( full-1, d, s, subindex ) ) == SimplexFlagDirichlet );
     
+    // for all lower dimensional simplices 
+    // if they are Dirichlet, check that they are contained in a Dirichlet face 
+    // if they are not, then check that they are not contained in a Dirichlet face 
+    for( int d = 1; d < full-1; d++ )
+        for( int sub = 0; sub < count_simplices(d); sub++ )
+            if( get_flag( d, sub ) == SimplexFlagDirichlet ) {
+                bool found = false;
+                assert( get_firstparent_of_subsimplex( full-1, d, sub ) != nullindex );
+                for( 
+                    int sup = get_firstparent_of_subsimplex( full-1, d, sub ); 
+                    sup != nullindex; 
+                    sup = get_nextparent_of_subsimplex( full-1, d, sup, sub ) 
+                ){
+                    found = found || ( get_flag(full-1,sup) == SimplexFlagDirichlet );
+                }
+                if( not found ) LOG << d << space << sub;
+                assert( found );
+            } else {
+                assert( get_flag( d, sub ) == SimplexFlagNull );
+                for( 
+                    int sup = get_firstparent_of_subsimplex( full-1, d, sub ); 
+                    sup != nullindex; 
+                    sup = get_nextparent_of_subsimplex( full-1, d, sup, sub ) 
+                ){
+                    assert( get_flag(full-1,sup) != SimplexFlagDirichlet ); // turn into equality check
+                }
+            }
     
 }
 
