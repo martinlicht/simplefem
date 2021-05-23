@@ -20,7 +20,8 @@ int main()
     const IndexRange irD(  0, 7 );
     const IndexRange irE(  0,-1 );
 
-    if(true){
+    if(true)
+    {
       
         LOG << "Test Identity of usual interval";// << endl;
         
@@ -31,7 +32,8 @@ int main()
         
         assert( id == identityIndexMap( irA.min(), irA.max() ) );
         
-        for( int a : irA ) {
+        for( int a : irA ) 
+        {
             assert( id.rangecontains( a ) );
             assert( id.preimageof( a ) == a );
             assert( id[ a ] == a );
@@ -48,7 +50,8 @@ int main()
       
     }
     
-    if(true){
+    if(true)
+    {
       
         LOG << "Test Empty Index Map";// << endl;
         
@@ -70,7 +73,8 @@ int main()
       
     }
     
-    if(true){
+    if(true)
+    {
 
         LOG << "Test Injection and Surjection";// << endl;
         

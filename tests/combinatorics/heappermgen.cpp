@@ -16,7 +16,8 @@ int main()
     LOG << "Unit Test for producting permutations via Heap's algorithm";// << endl;
     
     
-    if(true){
+    if(true)
+    {
         
         const int N = 5;
         
