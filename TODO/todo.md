@@ -1,11 +1,42 @@
 
 
-
 # TODO general
+
+The complexity of the project is at a point
+where reorganization has become the natural
+and also necessary next step.
+
+This requires a rewriting of the unit tests module by
+module to ensure that all functionality is being tested
+without relying on the visual inspection of the output. 
+This is true for the lower levels of the library.
+The higher level parts require more quality time to 
+ensure that the tests are meaningful. What's more,
+neither benchmarking nor production are relevant for 
+testing functionality, and thus should be separated.
+
+In the wake of this, the framework of the library
+should be progressively extended and polished according
+to demands of the unit tests. That touches join error
+handling, logging, output colors, assertions...
+
+Finally, on a larger scale, the file structure of the
+library as well as the makefile setup should be fixed.
+The makefile structure is too complicated and at times
+difficult to understand and maintain. It would be better
+to improve the structure.
+
+None of the above can be done in a day, so it most likely
+requires regular grinding in order to get it done.
+
+
+
+# TODO code script
 
 Introduce a check script which reports common errors in your cpp file.
 For example,
 	Replace assert(false) by a project-specific macro
+
 
 # Introduce a LOG switch
 
@@ -316,7 +347,7 @@ Test every single functionality for its accuracy.
       - unittest 
     - liste der methodenpakete und standard punkte 
       - unittest 
-    - Feature liste welche erwünscht ist: near/far future 
+    - Feature liste welche erwÃ¼nscht ist: near/far future 
     
   unit test layout:
     logstream that is reference to std::cout 
