@@ -40,12 +40,14 @@ For example,
   - Replace assert(false) by a project-specific macro
   - Magic floating point constant in code 
 
+    ```
     grep --line-number --recursively --color 'assert(' ./*pp
     grep --line-number --recursively --color 'cout' ./*pp
     grep --line-number --recursively --color '.*[0-9]' ./*pp
     grep --line-number --recursively --color '[0-9]e' ./*pp
+    ```
 
-# (HIGH) Rename basic to 'base' or 'general'
+# (HIGH) Rename basic to 'base' or 'general' or 'common'
 
 Basic has the wrong connotation, 
 it makes more sense to call it 'base' or 'general'.
@@ -66,11 +68,13 @@ to a function invocation. No further frills.
 Use the custom assert macro throughout the project.
 
 
-# (HIGH) OpenMP conditional compilation
+# (DONE) OpenMP pragmas conditional compilation
 
 Every occurence of 'pragma omp' should be included with a conditional compilation.
 This ensures that no compiler warnings about 'unknown pragmas' are issued when you
 compile the code with openMP disabled.
+
+# (HIGH) Conditional compilation when openMP
 
 Furthermore, if openMP is enabled, 
 then you should compile with an inclusion of thread-safe random number generation. 
@@ -155,15 +159,16 @@ This object can be constructed in various ways.
 Whatever the implementation, it provides semantics for telling 
 what is supposed to be reported.
 
-report_startup
-report_finish_success
-report_finish_fail
-report_restart
-report_alert
-report_breakdown
+```
+bool report_startup();
+bool report_finish_success();
+bool report_finish_fail();
+bool report_restart();
+bool report_alert();
+bool report_breakdown();
 
-iteration_is_printable
-
+bool iteration_is_printable();
+```
 
 # (MEDIUM) guarded element access 
 
@@ -174,8 +179,8 @@ The difference is that the at-methods
 always perform bound checks,
 which may not the case for the bracket access methods.
 
-    - Enforce the effective behavior
-    - Enforce the bound check policy.
+- Enforce the effective behavior
+- Enforce the bound check policy.
 
 
 # (MEDIUM) Unit test descriptions
@@ -210,10 +215,14 @@ In a second step, more functionality may be added.
 
 The logging classes that I have seen use macros to emulate 
 different log streams, their usage looks like 
-    LOG << "here is a message";
+
+    ```LOG << "here is a message";```
+
 alternatively, I would like to skip the shift operator alltogether 
 and perhaps replace by a macro to read 
-    LOG "Here is a message";
+
+    ```LOG "Here is a message";```
+
 The nice thing is that the log messages get accummulated in the data structure 
 and only on destruction of the temporary object the message gets actually written
 in the actual logging object. Thus one can impose various 
@@ -355,8 +364,10 @@ This applies in particular to the linear algebra classes.
     
 ## (UNCLEAR) implement minimalist file stream wrapper 
 
+    ```
     openinputfile( std::string );
     openoutputfile( std::string );
+    ```
     
 ## (UNCLEAR) Matrix Market
 
@@ -392,6 +403,7 @@ The projects can be used as example for this:
 - fetk
 - ngsolve 
 - ????!!
+- LifeV
 - vtk
 
 A uniform licence structure should be agreed upon 

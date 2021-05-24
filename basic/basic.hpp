@@ -497,6 +497,28 @@ inline Float gaussrand()
 
 
 
+
+
+inline void seed_random_integer()
+{
+    srand(0);
+}
+
+inline int random_integer()
+{
+    int ret = rand() / RAND_MAX; 
+    assert( 0 <= ret and ret < RAND_MAX );
+    return ret;
+}
+
+inline Float random_uniform()
+{
+    Float ret = rand() / static_cast<Float>( RAND_MAX );
+    assert( 0. <= ret and ret < RAND_MAX );
+    return ret;
+}
+
+
 /*
 inline void random_unit_vector( Float* values, const int N )
 {

@@ -306,8 +306,8 @@ void HodgeConjugateResidualSolverCSR(
         
         #if defined(_OPENMP)
         #pragma omp parallel for reduction(+:new_Mr_r)
-        #endif
         // #pragma omp parallel for 
+        #endif
         for( int c = 0; c < N; c++ ) {
             
             vil[c] = 0.;
@@ -639,8 +639,8 @@ void HodgeConjugateResidualSolverCSR_SSOR(
         
         #if defined(_OPENMP)
         #pragma omp parallel for reduction(+:new_Mr_r)
-        #endif 
         // #pragma omp parallel for 
+        #endif 
         for( int c = 0; c < N; c++ ) {
             
             vil[c] = 0.;
@@ -950,8 +950,8 @@ void HodgeConjugateResidualSolverCSR_textbook(
         
         #if defined(_OPENMP)
         #pragma omp parallel for reduction(+:new_Mr_r)
-        #endif 
         // #pragma omp parallel for 
+        #endif 
         for( int c = 0; c < N; c++ ) {
             
             vil[c] = 0.;

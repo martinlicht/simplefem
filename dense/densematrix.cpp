@@ -432,7 +432,7 @@ void DenseMatrix::randommatrix()
     check();
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin(); c++ )
-        (*this)(r,c) = gaussrand(); // sqrt( rand() );
+        (*this)(r,c) = gaussrand();
 }
 
 void DenseMatrix::randomintegermatrix( int min, int max )
@@ -441,7 +441,7 @@ void DenseMatrix::randomintegermatrix( int min, int max )
     assert( min+2 <= max );
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin(); c++ )
-        (*this)(r,c) = min + rand() % (max-min);
+        (*this)(r,c) = min + random_integer() % (max-min);
 }
 
 void DenseMatrix::scale( Float s )
