@@ -219,7 +219,9 @@ FloatVector MatrixCSR::diagonal() const
     assert( getdimin() == getdimout() );
     auto ret = FloatVector( getdimin(), 0. );
 
+    #if defined(_OPENMP)
     #pragma omp parallel for
+    #endif
     for( int r = 0; r < getdimout(); r++ ) {
         
         ret[r] = 0.;
@@ -328,8 +330,10 @@ DiagonalOperator InverseDiagonalPreconditioner( const MatrixCSR& mat )
     
 //     auto ret = FloatVector( mat.getdimin(), 0. );
 // 
-//     #pragma omp parallel for
-//     for( int r = 0; r < mat.getdimin(); r++ ) {
+//    #if defined(_OPENMP)
+//    #pragma omp parallel for
+//    #endif
+//    for( int r = 0; r < mat.getdimin(); r++ ) {
 //         
 //         ret[r] = 0.;
 //         

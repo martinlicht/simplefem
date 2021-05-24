@@ -126,7 +126,9 @@ void HodgeConjugateResidualSolverCSR(
     assert( precon );
     
     
+    #if defined(_OPENMP)
     #pragma omp parallel for
+    #endif 
     for( int c = 0; c < L; c++ ) {
         
         precon[c] = 0.;
@@ -157,7 +159,9 @@ void HodgeConjugateResidualSolverCSR(
 
         if( restart_condition or residualenergy_seems_small ) {
             
+            #if defined(_OPENMP)
             #pragma omp parallel for
+            #endif 
             for( int c = 0; c < L; c++ ) {
                 
                 aux1[c] = 0.;
@@ -179,7 +183,9 @@ void HodgeConjugateResidualSolverCSR(
                 , precon
             );
             
+            #if defined(_OPENMP)
             #pragma omp parallel for
+            #endif
             for( int c = 0; c < N; c++ ) {
                 
                 res[c] = b[c];
@@ -194,7 +200,9 @@ void HodgeConjugateResidualSolverCSR(
             Md_r  = 0.;
             Md_Md = 0.;
             
+            #if defined(_OPENMP)
             #pragma omp parallel for
+            #endif 
             for( int c = 0; c < L; c++ ) {
                 
                 aux1[c] = 0;
@@ -216,7 +224,9 @@ void HodgeConjugateResidualSolverCSR(
                 precon
             );
             
+            #if defined(_OPENMP)
             #pragma omp parallel for reduction(+:Md_r,Md_Md)
+            #endif 
             for( int c = 0; c < N; c++ ) {
                 
                 Mdir[c] = 0.;
@@ -270,7 +280,9 @@ void HodgeConjugateResidualSolverCSR(
         
         Float new_Mr_r = 0.;
         
+        #if defined(_OPENMP)
         #pragma omp parallel for
+        #endif 
         for( int c = 0; c < L; c++ ) {
             
             aux1[c] = 0;
@@ -292,7 +304,9 @@ void HodgeConjugateResidualSolverCSR(
             , precon
         );
         
+        #if defined(_OPENMP)
         #pragma omp parallel for reduction(+:new_Mr_r)
+        #endif
         // #pragma omp parallel for 
         for( int c = 0; c < N; c++ ) {
             
@@ -303,7 +317,9 @@ void HodgeConjugateResidualSolverCSR(
             
         // }
                     
+        // #if defined(_OPENMP)
         // #pragma omp parallel for reduction(+:new_Ar_r)
+        // #endif 
         // for( int c = 0; c < N; c++ )
         // {
         
@@ -320,7 +336,9 @@ void HodgeConjugateResidualSolverCSR(
         Float beta = new_Mr_r / Md_r;
         
         Md_Md = 0.;
+        #if defined(_OPENMP)
         #pragma omp parallel for reduction(+:Md_Md)
+        #endif 
         for( int c = 0; c < N; c++ )
         {
             
@@ -444,7 +462,9 @@ void HodgeConjugateResidualSolverCSR_SSOR(
     assert( diagonal );
     
     
+    #if defined(_OPENMP)
     #pragma omp parallel for
+    #endif 
     for( int c = 0; c < L; c++ ) {
         
         diagonal[c] = 0.;
@@ -472,7 +492,9 @@ void HodgeConjugateResidualSolverCSR_SSOR(
 
         if( restart_condition or residualenergy_seems_small ) {
             
+            #if defined(_OPENMP)
             #pragma omp parallel for
+            #endif 
             for( int c = 0; c < L; c++ ) {
                 
                 aux1[c] = 0.;
@@ -494,7 +516,9 @@ void HodgeConjugateResidualSolverCSR_SSOR(
                 , diagonal, 1.
             );
             
+            #if defined(_OPENMP)
             #pragma omp parallel for
+            #endif 
             for( int c = 0; c < N; c++ ) {
                 
                 res[c] = b[c];
@@ -509,7 +533,9 @@ void HodgeConjugateResidualSolverCSR_SSOR(
             Md_r  = 0.;
             Md_Md = 0.;
             
+            #if defined(_OPENMP)
             #pragma omp parallel for
+            #endif
             for( int c = 0; c < L; c++ ) {
                 
                 aux1[c] = 0;
@@ -531,7 +557,9 @@ void HodgeConjugateResidualSolverCSR_SSOR(
                 diagonal, 1.
             );
             
+            #if defined(_OPENMP)
             #pragma omp parallel for reduction(+:Md_r,Md_Md)
+            #endif 
             for( int c = 0; c < N; c++ ) {
                 
                 Mdir[c] = 0.;
@@ -585,7 +613,9 @@ void HodgeConjugateResidualSolverCSR_SSOR(
         
         Float new_Mr_r = 0.;
         
+        #if defined(_OPENMP)
         #pragma omp parallel for
+        #endif 
         for( int c = 0; c < L; c++ ) {
             
             aux1[c] = 0;
@@ -607,7 +637,9 @@ void HodgeConjugateResidualSolverCSR_SSOR(
             , diagonal, 1.0
         );
         
+        #if defined(_OPENMP)
         #pragma omp parallel for reduction(+:new_Mr_r)
+        #endif 
         // #pragma omp parallel for 
         for( int c = 0; c < N; c++ ) {
             
@@ -618,7 +650,9 @@ void HodgeConjugateResidualSolverCSR_SSOR(
             
         // }
                     
+        // #if defined(_OPENMP)
         // #pragma omp parallel for reduction(+:new_Ar_r)
+        // #endif 
         // for( int c = 0; c < N; c++ )
         // {
         
@@ -635,7 +669,9 @@ void HodgeConjugateResidualSolverCSR_SSOR(
         Float beta = new_Mr_r / Md_r;
         
         Md_Md = 0.;
+        #if defined(_OPENMP)
         #pragma omp parallel for reduction(+:Md_Md)
+        #endif 
         for( int c = 0; c < N; c++ )
         {
             
@@ -770,7 +806,9 @@ void HodgeConjugateResidualSolverCSR_textbook(
 
         if( restart_condition or residualenergy_seems_small ) {
             
+            #if defined(_OPENMP)
             #pragma omp parallel for
+            #endif 
             for( int c = 0; c < L; c++ ) {
                 
                 aux1[c] = 0.;
@@ -791,7 +829,9 @@ void HodgeConjugateResidualSolverCSR_textbook(
                 inneriteration_print_modulo
             );
             
+            #if defined(_OPENMP)
             #pragma omp parallel for
+            #endif 
             for( int c = 0; c < N; c++ ) {
                 
                 res[c] = b[c];
@@ -806,7 +846,9 @@ void HodgeConjugateResidualSolverCSR_textbook(
             Mr_r  = 0.;
             Md_Md = 0.;
             
+            #if defined(_OPENMP)
             #pragma omp parallel for
+            #endif 
             for( int c = 0; c < L; c++ ) {
                 
                 aux1[c] = 0;
@@ -827,7 +869,9 @@ void HodgeConjugateResidualSolverCSR_textbook(
                 inneriteration_print_modulo
             );
             
+            #if defined(_OPENMP)
             #pragma omp parallel for reduction(+:Mr_r,Md_Md)
+            #endif 
             for( int c = 0; c < N; c++ ) {
                 
                 Mdir[c] = 0.;
@@ -881,7 +925,9 @@ void HodgeConjugateResidualSolverCSR_textbook(
         
         Float new_Mr_r = 0.;
         
+        #if defined(_OPENMP)
         #pragma omp parallel for
+        #endif 
         for( int c = 0; c < L; c++ ) {
             
             aux1[c] = 0;
@@ -902,7 +948,9 @@ void HodgeConjugateResidualSolverCSR_textbook(
             inneriteration_print_modulo
         );
         
+        #if defined(_OPENMP)
         #pragma omp parallel for reduction(+:new_Mr_r)
+        #endif 
         // #pragma omp parallel for 
         for( int c = 0; c < N; c++ ) {
             
@@ -913,7 +961,9 @@ void HodgeConjugateResidualSolverCSR_textbook(
             
         // }
                     
+        #if defined(_OPENMP)
         // #pragma omp parallel for reduction(+:new_Ar_r)
+        #endif 
         // for( int c = 0; c < N; c++ )
         // {
         
@@ -930,7 +980,9 @@ void HodgeConjugateResidualSolverCSR_textbook(
         Float beta = new_Mr_r / Mr_r;
         
         Md_Md = 0.;
+        #if defined(_OPENMP)
         #pragma omp parallel for reduction(+:Md_Md)
+        #endif 
         for( int c = 0; c < N; c++ )
         {
             
