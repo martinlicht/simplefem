@@ -81,6 +81,16 @@ Rationale: this improves readability.
 
 
 
+# Precisions for solvers 
+
+The linear algebra solvers may work with any type of precision, such as float or double. Replace the 'magic numbers' in the library by multiples of the machine epsilon. Generally speaking, try to find a good stopping criterion.
+
+# Rewrite the unit tests for combinatorics
+Generally speaking, the combinatorics unit tests should be more excessive. Don't shy away from testing basically everything you could possibly think of as relevant. Then move on with the same spirit to 'operators' and the other objects.
+
+
+
+
 
 
 # (MEDIUM) Style checker and configuration
