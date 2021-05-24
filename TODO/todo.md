@@ -36,20 +36,22 @@ requires regular grinding in order to get it done.
 Introduce a check script which reports common 'errors' in your cpp file,
 that is, stuff you consider important for the design of your code.
 For example,
-	- Replace assert(false) by a project-specific macro
+
+  - Replace assert(false) by a project-specific macro
   - Magic floating point constant in code 
 
-grep --line-number --recursively --color 'assert(' ./*pp
-grep --line-number --recursively --color 'cout' ./*pp
-grep --line-number --recursively --color '.*[0-9]' ./*pp
-grep --line-number --recursively --color '[0-9]e' ./*pp
+    grep --line-number --recursively --color 'assert(' ./*pp
+    grep --line-number --recursively --color 'cout' ./*pp
+    grep --line-number --recursively --color '.*[0-9]' ./*pp
+    grep --line-number --recursively --color '[0-9]e' ./*pp
 
 # (HIGH) Rename basic to 'base' or 'general'
 
 Basic has the wrong connotation, 
 it makes more sense to call it 'base' or 'general'.
 
-Make a sruvey of a few important projects to get a sense of what name you should use for this one. 
+Make a survey of a few important projects to get a sense
+of what name you should use for this one. 
 That will give you a sense of what you should do.
 
 Notes: ---
@@ -114,10 +116,19 @@ Rationale: this improves readability.
 
 # Precisions for solvers 
 
-The linear algebra solvers may work with any type of precision, such as float or double. Replace the 'magic numbers' in the library by multiples of the machine epsilon. Generally speaking, try to find a good stopping criterion.
+The linear algebra solvers may work with any type of precision, 
+such as float or double. Replace the 'magic numbers' in the library
+by multiples of the machine epsilon. Generally speaking, 
+try to find a good stopping criterion.
 
 # Rewrite the unit tests for combinatorics
-Generally speaking, the combinatorics unit tests should be more excessive. Don't shy away from testing basically everything you could possibly think of as relevant. Then move on with the same spirit to 'operators' and the other objects.
+
+Generally speaking, the combinatorics unit tests 
+should be more excessive. 
+Don't shy away from testing basically everything 
+you could possibly think of as relevant. 
+Then move on with the same spirit to 'operators' 
+and the other objects.
 
 
 
