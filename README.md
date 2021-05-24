@@ -1,3 +1,6 @@
+[![C/C++ CI](https://github.com/martinlicht/simplefem/actions/workflows/c-cpp.yml/badge.svg)](https://github.com/martinlicht/simplefem/actions/workflows/c-cpp.yml)
+[![Unit tests](https://github.com/martinlicht/simplefem/actions/workflows/unittests.yml/badge.svg)](https://github.com/martinlicht/simplefem/actions/workflows/unittests.yml)
+
                 [ a short description of what you are doing here]
 
                     [                                    ]
