@@ -21,6 +21,27 @@ int main()
     LOG << std::fixed << std::ios::floatfield; //setf( std::ios::fixed, std::ios::floatfield ); // FIXME does this work?
     LOG << std::showpos;
     
+    for( int dim = 0; dim < 6; dim++ ) 
+    {
+      
+        LOG << "Unit test for matrix determinant, inverse, cofactor matrix" << endl;
+
+        DenseMatrix A = HilbertMatrix( dim );
+        
+        LOG << A << endl;
+        
+        LOG << "Determinant (default): " << Determinant(A);// << endl;
+        LOG << "Determinant (laplace): " << Determinant_laplaceexpansion(A);// << endl;
+        LOG << "Determinant (gauss):   " << Determinant_gauss(A);// << endl;
+        LOG << CofactorMatrix( A );// << endl;
+        LOG << Inverse( A );// << endl;
+        LOG << A * Inverse( A );// << endl;
+        LOG << Inverse( A ) * A;// << endl;
+        LOG << 1. / Determinant(A) - Determinant( Inverse(A) );// << endl;
+        LOG << A - Inverse( Inverse(A) );// << endl;
+            
+    }
+    
     {
         
         LOG << "Unit Test for Cholesky decomposition" << endl;
@@ -63,27 +84,6 @@ int main()
         
     }
     
-    for( int dim = 0; dim < 6; dim++ ) 
-    {
-      
-        LOG << "Unit test for matrix determinant, inverse, cofactor matrix" << endl;
-
-        DenseMatrix A = HilbertMatrix( dim );
-        
-        LOG << A << endl;
-        
-        LOG << "Determinant (default): " << Determinant(A);// << endl;
-        LOG << "Determinant (laplace): " << Determinant_laplaceexpansion(A);// << endl;
-        LOG << "Determinant (gauss):   " << Determinant_gauss(A);// << endl;
-        LOG << CofactorMatrix( A );// << endl;
-        LOG << Inverse( A );// << endl;
-        LOG << A * Inverse( A );// << endl;
-        LOG << Inverse( A ) * A;// << endl;
-        LOG << 1. / Determinant(A) - Determinant( Inverse(A) );// << endl;
-        LOG << A - Inverse( Inverse(A) );// << endl;
-            
-    }
-    
     {
       
         LOG << "Unit test for matrix determinant, inverse, cofactor matrix" << endl;
@@ -109,13 +109,16 @@ int main()
     {
         
         DenseMatrix A(t);
-        A.randomintegermatrix(-5,5);
+        A.randomintegermatrix(10,80);
         
-        LOG << "Determinant " << t << " (default/gauss/laplace): "
+        LOG << A << Determinant_laplaceexpansion(A);
+        
+        LOG << "Determinant D=" << t << " (default/gauss/laplace): "
              << Determinant(A) << space 
              << Determinant_gauss(A) << space 
              << Determinant_laplaceexpansion(A) << space 
-             << 1. / Determinant(A) - Determinant( Inverse(A) ) << space
+             ;
+        LOG << " --- " << 1. / Determinant(A) - Determinant( Inverse(A) ) << space
              ;//<< endl;
             
         if( absolute( Determinant_gauss(A) - Determinant_laplaceexpansion(A) ) > 0.000001

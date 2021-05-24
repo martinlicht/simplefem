@@ -118,6 +118,11 @@ Float Determinant( const DenseMatrix& A )
         
     } else if( A.getdimin() == 3 ) {
         
+//          TODO: use this one after all unit tests are in place.
+//         return + A(0,0) * ( A(1,1)*A(2,2) - A(2,1)*A(1,2) )
+//                - A(1,0) * ( A(0,1)*A(2,2) - A(2,1)*A(0,2) )
+//                + A(2,0) * ( A(0,1)*A(1,2) - A(1,1)*A(0,2) );
+        
         return + A(0,0) * A(1,1) * A(2,2) // 1 2 3 + 
                - A(0,0) * A(1,2) * A(2,1) // 1 3 2 - 
                - A(0,1) * A(1,0) * A(2,2) // 2 1 3 - 
@@ -322,7 +327,8 @@ DenseMatrix CofactorMatrix( const DenseMatrix& A )
 
 DenseMatrix Inverse( DenseMatrix A )
 {
-    Inverse_gauss_InSitu( A );
+//     Inverse_gauss_InSitu( A );
+    Inverse_CramersRule_InSitu( A );
     return A;
 }
 
@@ -339,8 +345,8 @@ void Inverse_InSitu( DenseMatrix& A )
 void Inverse_CramersRule_InSitu( DenseMatrix& A )
 {
     assert( A.issquare() ); 
-    Float det = Determinant( A );
-    assert( det > machine_epsilon );
+    Float det = Determinant_laplaceexpansion( A );
+    assert( absolute( det ) > machine_epsilon );
     A = CofactorMatrix( A ) / Determinant( A );
 }
 

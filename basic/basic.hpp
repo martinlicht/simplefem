@@ -435,6 +435,27 @@ inline constexpr Float binomial_numerical( int64_t n, int64_t k )
 
 
 
+
+inline void seed_random_integer()
+{
+    srand(0);
+}
+
+inline int random_integer()
+{
+    int ret = rand();
+    assert( 0 <= ret and ret < RAND_MAX );
+    return ret;
+}
+
+inline Float random_uniform()
+{
+    Float ret = rand() / static_cast<Float>( RAND_MAX );
+    assert( 0. <= ret and ret < RAND_MAX );
+    return ret;
+}
+
+
 // Based on the implementations in the C-FAQ:
 // http://c-faq.com/lib/gaussian.html
 
@@ -497,26 +518,6 @@ inline Float gaussrand()
 
 
 
-
-
-inline void seed_random_integer()
-{
-    srand(0);
-}
-
-inline int random_integer()
-{
-    int ret = rand() / RAND_MAX; 
-    assert( 0 <= ret and ret < RAND_MAX );
-    return ret;
-}
-
-inline Float random_uniform()
-{
-    Float ret = rand() / static_cast<Float>( RAND_MAX );
-    assert( 0. <= ret and ret < RAND_MAX );
-    return ret;
-}
 
 
 /*
