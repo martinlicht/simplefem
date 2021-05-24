@@ -137,15 +137,15 @@ int main()
         
         
         
-//         TODO : check for convergence        
-//         LOG << "Check that differences are small" << nl;
-//         
-//         for( int l = l_min; l <= l_max; l++ ) 
-//         for( int r = r_min; r <= r_max; r++ ) 
-//         {
-//             for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
-//                 assert( errors_scalar[i][l-l_min][r-r_min] < 10e-6 );            
-//         }
+        
+        LOG << "Check that differences are small" << nl;
+        
+        for( int l = l_min; l <= l_max; l++ ) 
+        for( int r = r_min; r <= r_max; r++ ) 
+        {
+            for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
+                assert( errors_scalar[i][l-l_min][r-r_min] < 10e-6 );            
+        }
         
         
         LOG << "Finished Unit Test";// << endl;

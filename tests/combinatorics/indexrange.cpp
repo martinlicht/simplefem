@@ -14,8 +14,7 @@ int main()
 {
     LOG << "Unit Test for Index Ranges";// << std::endl;
     
-    if( true ) 
-    {
+    if( true ) {
         
         LOG << "Test empty index ranges";// << std::endl;
         
@@ -41,8 +40,7 @@ int main()
         
     } 
         
-    if( true ) 
-    {
+    if( true ) {
         
         LOG << "Test non-empty index ranges";// << std::endl;
         
@@ -93,8 +91,7 @@ int main()
         
     }
     
-    if( true )
-    {
+    if( true ) {
         
         LOG << "Test Index Range iterators";// << std::endl;
         
@@ -103,25 +100,24 @@ int main()
         assert( not irC.isempty() );
         
         LOG << "For each loop ";// << std::endl;
+        
         for( int i : irC )
-            LOG << i << space;
-        LOG << nl;
-
+            LOG << "Output :" << i;// << endl;
+        
         LOG << "Classical For loop ";// << std::endl;
+        
         for( IndexRange::ConstIterator iri = irC.begin(); iri != irC.end(); iri++ )
-            LOG << *iri << space;
-        LOG << nl;
+            LOG << "Output :" << *iri;// << endl;
         
         LOG << "While Loop ";// << std::endl;
+        
         IndexRange::ConstIterator iri = irC.begin();
         while( iri != irC.end() )
-            LOG << *(iri++) << space;// << endl;
-        LOG << nl;
+            LOG << "Output :" << *(iri++);// << endl;
         
     }
         
-    if( false )
-    {
+    if( false ) {
     
         LOG << "Test invalid index ranges";// << std::endl;
     

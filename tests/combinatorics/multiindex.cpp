@@ -16,7 +16,6 @@ int main()
     
     LOG << "Unit Test for Multi-Indices";// << endl;
         
-    if( true )
     {
         LOG << "Basic functionality";// << endl;
         
@@ -60,7 +59,6 @@ int main()
         
     }
     
-    if( true )
     {
         LOG << "Comparison and arithmetics";// << endl;
         

@@ -13,8 +13,7 @@ int main()
 {
     LOG << "Unit Test for Multiindex Generators";// << endl;
     
-    if(true)
-    {
+    if(true){
         
         LOG << "First bulk";// << endl;
     
@@ -27,8 +26,7 @@ int main()
         
     }
     
-    if(true)
-    {
+    if(true){
         
         LOG << "Second bulk";// << endl;
     
@@ -41,8 +39,7 @@ int main()
     
     }
     
-    if(true)
-    {
+    if(true){
         
         LOG << "Third bulk";// << endl;
     
@@ -55,8 +52,7 @@ int main()
         
     }
     
-    if(true)
-    {
+    if(true){
       
         LOG << "Zero degree";// << endl;
     
@@ -69,8 +65,7 @@ int main()
       
     }
     
-    if(true)
-    {
+    if(true){
       
         LOG << "First degree";// << endl;
     
@@ -83,8 +78,7 @@ int main()
       
     }
     
-    if(true)
-    {
+    if(true){
       
         LOG << "Degree 7 in one variable";// << endl;
     
@@ -97,8 +91,7 @@ int main()
       
     }
     
-    if(true)
-    {
+    if(true){
 
         LOG << "MultiIndex over empty range ";// << endl;
     
