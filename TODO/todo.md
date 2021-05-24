@@ -31,19 +31,84 @@ requires regular grinding in order to get it done.
 
 
 
-# TODO code script
+# (HIGH) Introduce a custom check script
 
-Introduce a check script which reports common errors in your cpp file.
+Introduce a check script which reports common 'errors' in your cpp file,
+that is, stuff you consider important for the design of your code.
 For example,
-	Replace assert(false) by a project-specific macro
+	- Replace assert(false) by a project-specific macro
+  - Magic floating point constant in code 
+
+grep --line-number --recursively --color 'assert(' ./*pp
+grep --line-number --recursively --color 'cout' ./*pp
+grep --line-number --recursively --color '.*[0-9]' ./*pp
+grep --line-number --recursively --color '[0-9]e' ./*pp
+
+# (HIGH) Rename basic to 'base' or 'general'
+
+Basic has the wrong connotation, 
+it makes more sense to call it 'base' or 'general'.
+
+Make a sruvey of a few important projects to get a sense of what name you should use for this one. 
+That will give you a sense of what you should do.
+
+Notes: ---
 
 
-# Introduce a LOG switch
+# (HIGH) Define and adopt a custom assert macro
+    
+There is a function that performs the assert, 
+and a macro that delivers the line number and file name
+to a function invocation. No further frills.
+
+Use the custom assert macro throughout the project.
+
+
+# (HIGH) OpenMP conditional compilation
+
+Every occurence of 'pragma omp' should be included with a conditional compilation.
+This ensures that no compiler warnings about 'unknown pragmas' are issued when you
+compile the code with openMP disabled.
+
+Furthermore, if openMP is enabled, 
+then you should compile with an inclusion of thread-safe random number generation. 
+
+Generally speaking, you should replace explicit instances of 'rand' and 'srand' 
+by wrapper functions. This makes it easier to switch to different implementations 
+throughout whenever that becomes necessary.
+
+For example:
+- random_integer();
+- seed_random_integer();
+
+
+# (HIGH) Introduce a LOG switch 
 
 Make the logging framework optional by introducing a macro switch 
 that enables/disables the logging framework
 
-Then introduce the logging framework throughout the entire code	uniformly
+Then introduce the logging framework throughout the entire code	uniformly.
+
+This requires that the logging interface should be used in the same way
+as the entire script for the logging stuff.
+
+# (HIGH) Argument names in all header files 
+    
+The function/method declarations in the header files should provide argument names. 
+The names should coincide with the ones in the code but that's not necessary. 
+
+Rationale: this improves readability.
+
+
+# (HIGH) Question: what are best practices to keep the unit tests up to date with the code?
+
+
+
+
+
+
+
+
 
 
 
@@ -58,7 +123,26 @@ Generally speaking, the combinatorics unit tests should be more excessive. Don't
 
 
 
-# Solver printing data structure 
+
+# (MEDIUM) Style checker and configuration
+
+Include a style checker such as KWstyle 
+and add the necessary configuration files 
+
+# (MEDIUM) Copy assignment operator for mesh classes
+
+Since the copy constructor is defined,
+there should also be an assignment operator
+for the different mesh classes,
+or it should be deleted explicitly.
+
+# (MEDIUM) Solver printing data structure 
+
+The iterative solvers should be provided a printing data structure 
+that describes the desired level of printing.
+This object can be constructed in various ways. 
+Whatever the implementation, it provides semantics for telling 
+what is supposed to be reported.
 
 report_startup
 report_finish_success
@@ -70,6 +154,145 @@ report_breakdown
 iteration_is_printable
 
 
+# (MEDIUM) guarded element access 
+
+All objects that feature element access via brackets,
+either blocky brackets or round brackets,
+also feature an additional at-method with the same effective behavior. 
+The difference is that the at-methods 
+always perform bound checks,
+which may not the case for the bracket access methods.
+
+    - Enforce the effective behavior
+    - Enforce the bound check policy.
+
+
+# (MEDIUM) Unit test descriptions
+
+Update the unit test **descriptions** in every module. They seem to be off in many regards.
+
+
+# (MEDIUM) Logging class 
+
+Even though advanced logging control would be desirable, 
+for the time being it is sufficient if the logging capabilities 
+are merely present.
+
+- First layer: semantic wrappers for the cpp streams 
+- Second layer: advanced logging classes for the alias streams
+- Third layer: primitive MACROS that wrap
+
+In the long run, it would be nice to use a logging class 
+that allows for prefixes, git version, date, time, etc.
+
+Setting this up will require some careful thinking 
+and refactoring of the entire code. 
+A reasonable approach would be a replacement
+of cout and cerr throughout the entire code 
+by new derivations of the stream class
+which facilitate more behavior.
+
+In a first step, this is just two streams 
+with the some functionality as cout and cerr.
+
+In a second step, more functionality may be added.
+
+The logging classes that I have seen use macros to emulate 
+different log streams, their usage looks like 
+    LOG << "here is a message";
+alternatively, I would like to skip the shift operator alltogether 
+and perhaps replace by a macro to read 
+    LOG "Here is a message";
+The nice thing is that the log messages get accummulated in the data structure 
+and only on destruction of the temporary object the message gets actually written
+in the actual logging object. Thus one can impose various 
+prefixes and postfixes. 
+
+Encapsulate cout, cerr, and clog within wrapper objects 
+that delegate the input to those streams. 
+You can then extend the stream wrappers at a later stage 
+
+
+# (MEDIUM) Unit test framework
+
+Agree to a common style for the unit tests 
+
+The existing unit tests should be streamlined and polished. 
+Generally speaking, they should be reduced to tests only:
+benchmarks should be put into a folder of their own;
+examples should be a folder of their own as well.
+Do not shy away from bringing a few tests out of retirement. 
+
+As tests get more complicated, it will pay off to introduce parameters 
+more abundantly throughtou the code. There shouldn't be any magic numbers 
+and no 
+
+## (LOW) Basic unit tests 
+Not much is to be done here but everything should look fine and reasonable.
+
+## (LOW) Utility unit tests 
+Not much is to be done here but everything should look fine and reasonable.
+
+## (LOW) Combinatorics unit tests
+Go through all the methods and features in the combinatorics module and write tests for that.
+Find ways to test everything independent of the screen output.
+
+
+## (LOW) Operators unit tests 
+Go through all the methods of the Float vectors and write tests for that
+Find ways to test the composition operators efficiently.
+
+## (LOW) Dense unit tests 
+Go through all the methods of the dense matrix class and write tests for that
+For each algorithm, write unit tests. You can test the bottom down version of each algorithm first and then the convenient wrappers for each algorithm.
+
+## (LOW) Sparse unit tests 
+Go through all the methods of the sparse matrix class and write tests for that.
+Go over the composition operators and check that they do not change the outcome of the computations.
+
+## (LOW) Solver unit tests 
+Go through all the solvers and write useful convergence tests for each of those.
+You can group them by matrix-type.
+
+
+## (LOW) Mesh unit tests 
+The unit tests are okay but should be rewritten to make everything seamless and consistent.
+
+## (LOW) VTK unit tests 
+There is not much to be written here.
+
+# (LOW) interesting meshes
+
+Use the US states map from Randy's source code 
+and implement it here. Try to find other triangulations 
+too and integrate them as examples. 
+
+# (LOW) Reduce dense matrix module to core functionality 
+
+It suffices to have the core functions for dense linear algebra 
+present in this module. Perhaps the matrix I/O should be externalized?
+Definitely the dense linear algebra IO should be solely string-based
+and not assume specifics about the module.
+
+# (LOW) Operators as non-member functions
+
+Check the classes for member operator functions.
+Except for some particular special cases, 
+= () [] ->
+we can and should turn them into non-member operators.
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # TODO short term
 
@@ -77,15 +300,59 @@ iteration_is_printable
 - if the file exists, add a suffix number to identify it
 
 
-# TODO long term and comprehensively
 
 
-## Matrix Market
+
+
+
+
+
+
+
+
+
+
+
+
+# TODO UNCLEAR UTILITY
+
+
+## (UNCLEAR) warning command 
+
+add a warning function to the core functionality 
+so that you can emit warnings whenever the need arises
+instead of calling std::cout.
+
+## (UNCLEAR) Command line 
+
+The handling of command line arguments will be facilitated 
+by a set of functions/classes written precisely for that purpose.
+
+This should be a mere extractor class
+and be written in the C-conforming subset of C++.
+
+## (UNCLEAR) Fixed-size dynamic array and adoption
+
+Define a template class for a dynamically allocated array
+whose size cannot be changed after allocation. 
+Copy the std::vector interface but do not provide 
+resizing and capacity information.
+
+Use that fixed-size array throughout your code whenever appropiate,
+replacing the old std::vector variables with the new ones.
+This applies in particular to the linear algebra classes.
+    
+## (UNCLEAR) implement minimalist file stream wrapper 
+
+    openinputfile( std::string );
+    openoutputfile( std::string );
+    
+## (UNCLEAR) Matrix Market
 
 Make Matrix market subdirectory fly.
 Add unit tests, then use a solver for a unit test. 
 
-## Global Index Type
+## (UNCLEAR) Global Index Type
 
 Replace any occurence of 'int' by a user-defined type 'Index'.
 That type should be large enough for your purposes 
@@ -93,83 +360,18 @@ and compatible with the STL standard library.
 For example,
     typedef std::size_t Index;
 
-## add complete constructor interfaces 
+## (UNCLEAR) add complete constructor interfaces 
 
 Apply the rule of six and declare all constructors explicitly
 even if merely setting them to default. 
 
-## Add Header files 
+## (UNCLEAR) Add Header files 
 
 All targets should depend on the corresponding header files as well.
 
-## LICENSE File
+## (UNCLEAR) LICENSE File and Copyright notice 
 
 Include a license file into your software.
-
-## README File
-
-Include a readme file into your software.
-
-## Separate build and tests targets 
-
-Introduce two different targets, one for building 
-the object files and libraries, and the other for 
-building the test files 
-
-all: build tests
-
-## Redesign source code organization: library files 
-
-The compilation should place no temporary or output files 
-in the source directories. Instead, all output should be 
-put into a designated 'build' directory.
-
-The different source directories should specify
-the various makefile rules but otherwise not specify anything.
-In particular, no cleaning is necessary in those directories.
-
-The makefile in each source directory
-puts its output into the common build directory.
-
-There is only one cleaning command for the entire build directory.
-
-## Redesign source code organization: test files 
-
-The test codes are maintained in the source directory
-but the programs are put into the same directory.
-
-## Makefile with implicit rules 
-
-The makefile has implicit rules for cpp files
-which can greatly simplify the entire make process.
-So we may replace the handwritten rules 
-by the implicitly defined rules in many cases. 
-We merely need to specify the compiler flags.
-
-
-
-
-## Clean out cout references throughout code 
-
-grep 'cout' ./*/*.?pp 
-Conduct a clean out of all direct references 
-to the standard preinstalled streams throughout
-the entire project so that the above call
-should only return very few instances in the main code
-and otherwise only stuff in test files.
-
-Moreover, consider replacing all the other stuff
-by references to clog instead of cout.
-
-
-## warning command 
-
-add a warning function to the core functionality 
-so that you can emit warnings whenever the need arises
-instead of calling std::cout.
-
-
-## Copyright information in the header 
 
 Include necessary copyright information in the header 
 of each file for the entire project.
@@ -191,97 +393,79 @@ So for the unit tests, it's more important
 that we have a common structure of the test modules 
 ready to go. 
 
-## Logging abstraction 
+## (UNCLEAR) Separate build and tests targets 
 
-Encapsulate cout, cerr, and clog within wrapper objects 
-that delegate the input to those streams. 
-You can then extend the stream wrappers at a later stage 
+Introduce two different targets, one for building 
+the object files and libraries, and the other for 
+building the test files 
 
-## Unit test framework
+all: build tests
 
-Agree to a common style for the unit tests 
+## (UNCLEAR) Redesign source code organization: library files 
 
-## Container template 
+The compilation should place no temporary or output files 
+in the source directories. Instead, all output should be 
+put into a designated 'build' directory.
+
+The different source directories should specify
+the various makefile rules but otherwise not specify anything.
+In particular, no cleaning is necessary in those directories.
+
+The makefile in each source directory
+puts its output into the common build directory.
+
+There is only one cleaning command for the entire build directory.
+
+## (UNCLEAR) Redesign source code organization: test files 
+
+The test codes are maintained in the source directory
+but the programs are put into the same directory.
+
+## (UNCLEAR) Makefile with implicit rules 
+
+The makefile has implicit rules for cpp files
+which can greatly simplify the entire make process.
+So we may replace the handwritten rules 
+by the implicitly defined rules in many cases. 
+We merely need to specify the compiler flags.
+
+# (UNCLEAR) Container template 
 
 Flesh out the container template and maybe put it out on code review.
 
-## Unit test file organization 
 
-Restructure the unit test directory such that 
-each topic receives its own directory.
-This should closely mimic the structure 
-of the source code 
+## (UNCLEAR) namespaces for the project
 
-## MatrixMarket testing 
-
-Use some suits to utilize the matrix market classes 
-
-## Style checker and configuration
-
-Include a style checker such as KWstyle 
-and add the necessary configuration files 
-
-## Logging improvement 
-
-Once the logging abstraction has been completed 
-enhance the logger with different functionality.
+package everything into a namespace.
 
 
-## Reduce dense matrix module to core functionality 
-
-It suffices to have the core functions for dense linear algebra 
-present in this module. Perhaps the matrix I/O should be externalized?
-Definitely the dense linear algebra IO should be solely string-based
-and not assume specifics about the module.
-
-
-## DONE
-
-### Operators as non-member functions
-
-Check the classes for member operator functions.
-Except for some particular special cases, 
-= () [] ->
-we can and should turn them into non-member operators.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## Speculative issues 
-
-
-### Rename basic to base 
-
-Basic has the wrong connotation, it makes more sense 
-to call it base.
-
-
-### Smart Pointers
+## (UNCLEAR) Smart Pointers
 
 Should smart pointers be employed throughout the library
 to make it more robust against user malpractice?
 
 
-### namespaces for the project
-
-package everything into a namespace.
+# DONE!
 
 
-### extend unit tests 
+## (DONE) Clean out 'cout' references throughout code 
 
-Make the unit tests for extensive for each class.
-Test every single functionality for its accuracy.
-  
+grep 'cout' ./*/*.?pp 
+Conduct a clean out of all direct references 
+to the standard preinstalled streams throughout
+the entire project so that the above call
+should only return very few instances in the main code
+and otherwise only stuff in test files.
+
+Moreover, consider replacing all the other stuff
+by references to clog instead of cout.
+
+
+
+
+
+
+
   
 
   **** TODO ***
@@ -307,20 +491,7 @@ Test every single functionality for its accuracy.
   - hash-tabelle 
   
   
-  Zwischenziele: 
-  - zweidimensionales mesh ausgeben und visualisieren 
-  - scalar mass matrix aufstellen 
-  - funktion interpolieren 
-  - interpolante ausgeben 
-  --->  
-  
-  - solve poisson problem with natural boundary conditions 
-  - output of solution data, error measurement  
-    - interpolation of functions to P\Lambda: punkte aussuchen, polynome auswerten  
-  - randbedingungen
-  - 
-  
-  
+
   
   
   
@@ -347,7 +518,7 @@ Test every single functionality for its accuracy.
       - unittest 
     - liste der methodenpakete und standard punkte 
       - unittest 
-    - Feature liste welche erwünscht ist: near/far future 
+    - Feature liste welche erwuenscht ist: near/far future 
     
   unit test layout:
     logstream that is reference to std::cout 
@@ -358,19 +529,3 @@ Test every single functionality for its accuracy.
     TEST_ANNOUNCE();
     
     
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

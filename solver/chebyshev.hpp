@@ -79,11 +79,15 @@ inline void CheybyshevIteration_DiagonalPreconditioner(
             
             r_r = 0.;
             
+            #if defined(_OPENMP)
             #pragma omp parallel for 
+            #endif
             for( int c = 0; c < N; c++ )
                 x_prev[c] = x[c];
             
+            #if defined(_OPENMP)
             #pragma omp parallel for reduction(+:r_r)
+            #endif
             for( int c = 0; c < N; c++ ) {
                 
                 residual[c] = b[c];
@@ -119,7 +123,9 @@ inline void CheybyshevIteration_DiagonalPreconditioner(
         
         r_r = 0.;
             
+        #if defined(_OPENMP)
         #pragma omp parallel for reduction(+:r_r) 
+        #endif 
         for( int c = 0; c < N; c++ )
         {
             

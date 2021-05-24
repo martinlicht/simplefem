@@ -60,7 +60,9 @@ void ConjugateGradientSolverCSR(
             
             r_r = 0.;
         
+            #if defined(_OPENMP)
             #pragma omp parallel for reduction(+:r_r)
+            #endif 
             for( int c = 0; c < N; c++ ) {
                 
                 residual[c] = b[c];
@@ -95,7 +97,9 @@ void ConjugateGradientSolverCSR(
         
         Float d_Ad = 0.;
         
+        #if defined(_OPENMP)
         #pragma omp parallel for reduction(+:d_Ad) //d_r,
+        #endif 
         for( int c = 0; c < N; c++ )
         {
             auxiliary[c] = 0.;
@@ -126,7 +130,9 @@ void ConjugateGradientSolverCSR(
     
         Float r_r_new = 0.;
         
+        #if defined(_OPENMP)    
         #pragma omp parallel for reduction(+:r_r_new) //r_r_old
+        #endif 
         for( int c = 0; c < N; c++ )
         {
             
@@ -141,7 +147,9 @@ void ConjugateGradientSolverCSR(
         
         r_r = r_r_new;
         
+        #if defined(_OPENMP)
         #pragma omp parallel 
+        #endif 
         for( int c = 0; c < N; c++ )
             direction[c] = residual[c] + beta * direction[c];
         
@@ -223,7 +231,9 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
             
             z_r = 0.;
         
+            #if defined(_OPENMP)
             #pragma omp parallel for reduction(+:z_r)
+            #endif 
             for( int c = 0; c < N; c++ ) {
                 
                 if( precon[c] == 0. ) continue; // NOTE: guard against shadowed variables 
@@ -265,7 +275,9 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
         
         Float d_Ad = 0.;
         
+        #if defined(_OPENMP)
         #pragma omp parallel for reduction(+:d_Ad) //d_r,
+        #endif 
         for( int c = 0; c < N; c++ )
         {
             if( precon[c] == 0. ) continue; // NOTE: guard against shadowed variables 
@@ -298,7 +310,9 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
     
         Float z_r_new = 0.;
         
+        #if defined(_OPENMP)
         #pragma omp parallel for reduction(+:z_r_new) //r_r_old
+        #endif 
         for( int c = 0; c < N; c++ )
         {
             
@@ -317,7 +331,9 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
         
         z_r = z_r_new;
         
+        #if defined(_OPENMP)
         #pragma omp parallel 
+        #endif
         for( int c = 0; c < N; c++ ) {
             
             if( precon[c] == 0. ) continue; // NOTE: guard against shadowed variables 
@@ -688,7 +704,9 @@ void ConjugateResidualSolverCSR(
 
         if( restart_condition or residualenergy_seems_small ) {
             
+            #if defined(_OPENMP)
             #pragma omp parallel for
+            #endif 
             for( int c = 0; c < N; c++ ) {
                 
                 res[c] = b[c];
@@ -703,7 +721,9 @@ void ConjugateResidualSolverCSR(
             Ad_r  = 0.;
             Ad_Ad = 0.;
             
+            #if defined(_OPENMP)
             #pragma omp parallel for reduction(+:Ad_r,Ad_Ad)
+            #endif 
             for( int c = 0; c < N; c++ ) {
                 
                 Adir[c] = 0.;
@@ -760,7 +780,9 @@ void ConjugateResidualSolverCSR(
         
         Float new_Ar_r = 0.;
         
+        #if defined(_OPENMP)
         #pragma omp parallel for reduction(+:new_Ar_r)
+        #endif 
         for( int c = 0; c < N; c++ )
         {
             vil[c] = 0.;
@@ -781,7 +803,9 @@ void ConjugateResidualSolverCSR(
         Float beta = new_Ar_r / Ad_r;
         
         Ad_Ad = 0.;
+        #if defined(_OPENMP)
         #pragma omp parallel for reduction(+:Ad_Ad)
+        #endif
         for( int c = 0; c < N; c++ )
         {
             
@@ -882,7 +906,9 @@ void ConjugateResidualSolverCSR_textbook(
 
         if( restart_condition or residualenergy_seems_small ) {
             
+            #if defined(_OPENMP)
             #pragma omp parallel for
+            #endif 
             for( int c = 0; c < N; c++ ) {
                 
                 res[c] = b[c];
@@ -897,7 +923,9 @@ void ConjugateResidualSolverCSR_textbook(
             Ar_r  = 0.;
             Ad_Ad = 0.;
             
+            #if defined(_OPENMP)
             #pragma omp parallel for reduction(+:Ar_r,Ad_Ad)
+            #endif 
             for( int c = 0; c < N; c++ ) {
                 
                 Adir[c] = 0.;
@@ -950,7 +978,9 @@ void ConjugateResidualSolverCSR_textbook(
         
         Float new_Ar_r = 0.;
         
+        #if defined(_OPENMP)
         #pragma omp parallel for reduction(+:new_Ar_r)
+        #endif 
         for( int c = 0; c < N; c++ )
         {
             vil[c] = 0.;
@@ -971,7 +1001,9 @@ void ConjugateResidualSolverCSR_textbook(
         Float beta = new_Ar_r / Ar_r;
         
         Ad_Ad = 0.;
+        #if defined(_OPENMP)
         #pragma omp parallel for reduction(+:Ad_Ad)
+        #endif 
         for( int c = 0; c < N; c++ )
         {
             
@@ -1100,7 +1132,9 @@ void MINRESCSR(
             
             Float gamma_sq = 0.;
             
+            #if defined(_OPENMP)
             #pragma omp parallel for reduction(+:gamma_sq)
+            #endif 
             for( int c = 0; c < N; c++ ) {
                 
                 v0[c] = 0.;
@@ -1119,7 +1153,9 @@ void MINRESCSR(
             
             gamma = std::sqrt(gamma_sq);
             
+            #if defined(_OPENMP)
             #pragma omp parallel for 
+            #endif 
             for( int c = 0; c < N; c++ ) 
                 v1[c] /= gamma;
             
@@ -1144,7 +1180,9 @@ void MINRESCSR(
             
             Float delta = 0.;
             
+            #if defined(_OPENMP)
             #pragma omp parallel for reduction(+:delta)
+            #endif 
             for( int c = 0; c < N; c++ ) {
                 
                 p[c] = 0.;
@@ -1158,7 +1196,9 @@ void MINRESCSR(
             assert( delta > 0. );
             
             Float gamma_n_sq = 0.;
+            #if defined(_OPENMP)
             #pragma omp parallel for reduction(+:gamma_n_sq)
+            #endif 
             for( int c = 0; c < N; c++ ) {
                 
                 vn[c] = p[c] - delta * v1[c] - gamma * v0[c];
@@ -1171,7 +1211,9 @@ void MINRESCSR(
  
             Float gamma_n = std::sqrt(gamma_n_sq);
             
+            #if defined(_OPENMP)
             #pragma omp parallel for 
+            #endif 
             for( int c = 0; c < N; c++ )
                 vn[c] /= gamma_n;
             
@@ -1185,7 +1227,9 @@ void MINRESCSR(
             Float cn = alpha_0 / alpha_1;
             Float sn = gamma_n / alpha_1;
             
+            #if defined(_OPENMP)
             #pragma omp parallel for
+            #endif 
             for( int c = 0; c < N; c++ ) {
                 wn[c] = ( v1[c] - alpha_2 * w1[c] - alpha_3 * w0[c] ) / alpha_1;
                 x[c] = x[c] + cn * eta * wn[c];
@@ -1285,7 +1329,9 @@ void WHATEVER(
 
     Float r_r = 0.;
     
+    #if defined(_OPENMP)
     #pragma omp parallel for reduction(+:r_r)
+    #endif 
     for( int c = 0; c < N; c++ ) {
         
         r[c] = b[c];
@@ -1300,7 +1346,9 @@ void WHATEVER(
                 
     }
     
+    #if defined(_OPENMP)
     #pragma omp parallel for
+    #endif 
     for( int c = 0; c < N; c++ ) {
         
         s0[c] = 0.;
@@ -1319,7 +1367,9 @@ void WHATEVER(
         Float  r_s1 = 0.;
         Float s0_s0 = 0.;
         
+        #if defined(_OPENMP)
         #pragma omp parallel for reduction(+:r_s1,s0_s0)
+        #endif 
         for( int c = 0; c < N; c++ ) {
             
             p2[c] = p1[c];
@@ -1337,7 +1387,9 @@ void WHATEVER(
     
         r_r = 0.;
         
+        #if defined(_OPENMP)
         #pragma omp parallel for reduction(+:r_r)
+        #endif 
         for( int c = 0; c < N; c++ ) {
             
             x[c] += alpha * p1[c];
@@ -1352,7 +1404,9 @@ void WHATEVER(
         Float s0_s1 = 0.;
         Float s1_s1 = 0.;
         
+        #if defined(_OPENMP)
         #pragma omp parallel for reduction(+:s0_s1,s1_s1)
+        #endif 
         for( int c = 0; c < N; c++ ) {
             
             p0[c] = s1[c];
@@ -1371,7 +1425,9 @@ void WHATEVER(
         Float s0_s2 = 0.;
         Float s2_s2 = 0.;
         
+        #if defined(_OPENMP)
         #pragma omp parallel for reduction(+:s0_s2,s2_s2)
+        #endif 
         for( int c = 0; c < N; c++ ) {
             
             p0[c] -= beta * p1[c];
@@ -1386,7 +1442,9 @@ void WHATEVER(
             
             Float gamma = s0_s2 / s2_s2;
             
+            #if defined(_OPENMP)
             #pragma omp parallel for 
+            #endif 
             for( int c = 0; c < N; c++ ) {
                 
                 p0[c] -= gamma * p2[c];
