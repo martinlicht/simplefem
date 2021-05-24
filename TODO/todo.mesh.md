@@ -1,10 +1,16 @@
-  
-  
 
 # Phantom coordinate in 2D mesh output
 
-add a phantom coordinate coordinate to the output of 2D meshes
-to plot functions
+Add a phantom coordinate coordinate to the output of 2D meshes to plot functions
+
+
+# (LOW) Bisection method return value 
+
+The bisection methods should return the number of triangles that have been bisected. 
+That should not depend on the order of the edges being listed for marking,
+that can essentially just be a set.
+Generally speaking, it should be a transversable container. 
+
 
 
 # Mesh module
@@ -47,7 +53,7 @@ and several implementations
   
   
   
-  o rename Mesh class to MeshInterface or something similar
+# rename Mesh class to MeshInterface or something similar
     
     The general mesh class will serve as a general interface 
     for all finite element methods. The details of implementation 

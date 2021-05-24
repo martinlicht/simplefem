@@ -1,6 +1,4 @@
 
-
-
 # TODO-List for Unit tests
 
 There are several issues in the management of unit tests
@@ -77,47 +75,6 @@ Typically, the test itself should eject little to no output
 depending on the global test format (see below)
 
 It would be nice to have a command line switch to increase verbosity (such as -v).
-
-
-
-## Command line 
-
-The handling of command line arguments will be facilitated 
-by a set of functions/classes written precisely for that purpose.
-
-This should be a mere extractor class
-and be written in the C-conforming subset of C++.
-
-
-
-## Logging 
-
-In the long run, it would be nice to use a logging class 
-that allows for prefixes, git version, date, time, etc.
-
-Setting this up will require some careful thinking 
-and refactoring of the entire code. 
-A reasonable approach would be a replacement
-of cout and cerr throughout the entire code 
-by new derivations of the stream class
-which facilitate more behavior.
-
-In a first step, this is just two streams 
-with the some functionality as cout and cerr.
-
-In a second step, more functionality may be added.
-
-The logging classes that I have seen use macros to emulate 
-different log streams, their usage looks like 
-    LOG << "here is a message";
-alternatively, I would like to skip the shift operator alltogether 
-and perhaps replace by a macro to read 
-    LOG "Here is a message";
-The nice thing is that the log messages get accummulated in the data structure 
-and only on destruction of the temporary object the message gets actually written
-in the actual logging object. Thus one can impose various 
-prefixes and postfixes. 
-
 
 
 

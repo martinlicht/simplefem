@@ -1,8 +1,3 @@
-	
-	 
-
-
-
 --- PRODUCT NAME:
 
   Coffeec.org
