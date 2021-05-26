@@ -15,7 +15,7 @@
 
 
 
-$(context).sources := $(wildcard $(contextdir)/*.cpp)
+$(context).sources := $(sort $(wildcard $(contextdir)/*.cpp))
 
 $(context).outs    := $(patsubst %.cpp,%.out,$($(context).sources))
 

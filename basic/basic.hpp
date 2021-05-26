@@ -4,6 +4,7 @@
 #include <cassert>     /* assert macro */
 #include <cmath>     
 #include <cstdint>     
+#include <cstdio>     
 #include <cstdlib>     
 #include <ctime>     
 
@@ -27,9 +28,16 @@
 #endif
 
 
-#define unreachable abort 
-// __builtin_unreachable
+// #define unreachable 
+//     []() -> void{  
+//         fprintf( stderr, "Unreachable code reached: %s:%d\n", __FILE__, __LINE__ );  
+//         abort();  
+//         }
+// // __builtin_unreachable
 
+#define unreachable() \
+        fprintf( stderr, "Unreachable code reached:\n\t%s:%d\n", __FILE__, __LINE__ ), \
+        abort()
 
 
 
@@ -289,7 +297,7 @@ inline constexpr uintmax_t factorial_integer_table_old( uintmax_t n )
 
 inline constexpr uintmax_t factorial_integer_table( uintmax_t n )
 {
-    const uintmax_t facs[21] = {
+    constexpr uintmax_t facs[21] = {
         1,
         1,
         2,
@@ -404,9 +412,39 @@ inline constexpr Float factorial_numerical_loop( int64_t n )
     return ret;
 }
 
+inline constexpr Float factorial_numerical_table( int64_t n )
+{
+    constexpr Float facs[21] = {
+        1.,
+        1.,
+        2.,
+        6.,
+        24.,
+        120.,
+        720.,
+        5040.,
+        40320.,
+        362880.,
+        3628800,
+        39916800.,
+        479001600.,
+        6227020800.,
+        87178291200.,
+        1307674368000.,
+        20922789888000.,
+        355687428096000.,
+        6402373705728000.,
+        121645100408832000.,
+        2432902008176640000.,
+    };
+
+    assert( 0 <= n and n <= 20 );
+    return facs[n];
+}
+
 inline constexpr Float factorial_numerical( int64_t n )
 {
-    return factorial_numerical_loop( n );
+    return factorial_numerical_table( n );
 }
 
 
@@ -627,6 +665,8 @@ inline std::string digitalcodenow()
 
 inline std::string protocolprefixnow()
 {
+    // static const std::string foo = std::string("\e[36m[");
+    // static const std::string bar = std::string("]\e[39m\t");
     static const std::string foo = std::string("[");
     static const std::string bar = std::string("]\t");
     return foo + digitalcodenow() + bar;

@@ -234,6 +234,20 @@ inline DenseMatrix HilbertMatrix( int n )
     return DenseMatrix( n, hilbertmatrix_generator );
 }
 
+inline DenseMatrix InvHilbertMatrix( int n )
+{
+    std::function<Float(int,int)> invhilbertmatrix_generator = [=](int r, int c) { 
+        // https://mathoverflow.net/questions/47561/deriving-inverse-of-hilbert-matrix
+        const int i = r+1;
+        const int j = c+1;
+        return signpower(i+j) * (i+j-1)
+               * binomial_integer( n+i-1, n-j )
+               * binomial_integer( n+j-1, n-i )
+               * square( binomial_integer(i+j-2,i-1) );
+    };
+
+    return DenseMatrix( n, invhilbertmatrix_generator );
+}
     
 
 
