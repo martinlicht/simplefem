@@ -31,6 +31,43 @@ requires regular grinding in order to get it done.
 
 
 
+
+# (HIGH) Define and adopt a custom assert macro
+    
+There is a function that performs the assert, 
+and a macro that delivers the line number and file name
+to a function invocation. No further frills.
+
+Use the custom assert macro throughout the project.
+
+
+
+
+
+
+# (HIGH) Revise logging output 
+
+The logging procedure needs to be reworked.
+
+In particular, switch to an encapsulated approach: all classes should have the ability
+to produce logs of themselves. That way, you can isolate the problem 
+in just a few methods throughout the code.
+
+Basically, implement the following methods:
+
+    - text:        produces a string presentation (no nl)
+    - print:       outputs the text() into a given stream (with nl)
+    - << operator: outputs the text() into a given stream (no nl)
+    - lg:          outputs the text into the log (with nl).
+                   This function may take a preamble argument
+
+Revert the current design of logging output: there shouldn't be
+any automatic newlines. Instead, re-introduce the newlines in the tests
+and deactive the automatic newline in the logging object.
+
+
+
+
 # (HIGH) Introduce a custom check script
 
 Introduce a check script which reports common 'errors' in your cpp file,
@@ -47,6 +84,9 @@ For example,
     grep --line-number --recursively --color '[0-9]e' ./*pp
     ```
 
+    
+    
+    
 # (HIGH) Rename basic to 'base' or 'general' or 'common'
 
 Basic has the wrong connotation, 
@@ -59,13 +99,7 @@ That will give you a sense of what you should do.
 Notes: ---
 
 
-# (HIGH) Define and adopt a custom assert macro
-    
-There is a function that performs the assert, 
-and a macro that delivers the line number and file name
-to a function invocation. No further frills.
 
-Use the custom assert macro throughout the project.
 
 
 # (DONE) OpenMP pragmas conditional compilation
@@ -73,6 +107,9 @@ Use the custom assert macro throughout the project.
 Every occurence of 'pragma omp' should be included with a conditional compilation.
 This ensures that no compiler warnings about 'unknown pragmas' are issued when you
 compile the code with openMP disabled.
+
+
+
 
 # (HIGH) Conditional compilation when openMP
 
@@ -88,6 +125,8 @@ For example:
 - seed_random_integer();
 
 
+
+
 # (HIGH) Introduce a LOG switch 
 
 Make the logging framework optional by introducing a macro switch 
@@ -98,12 +137,23 @@ Then introduce the logging framework throughout the entire code	uniformly.
 This requires that the logging interface should be used in the same way
 as the entire script for the logging stuff.
 
+
+
+
 # (HIGH) Argument names in all header files 
     
 The function/method declarations in the header files should provide argument names. 
 The names should coincide with the ones in the code but that's not necessary. 
 
 Rationale: this improves readability.
+
+
+
+
+# (HIGH) TODO short term
+
+???Correct the file names in the VTK output of the different mesh and fem test programs ???
+
 
 
 # (HIGH) Question: what are best practices to keep the unit tests up to date with the code?
@@ -118,14 +168,16 @@ Rationale: this improves readability.
 
 
 
-# Precisions for solvers 
+# (HIGH) Precisions for solvers 
 
 The linear algebra solvers may work with any type of precision, 
 such as float or double. Replace the 'magic numbers' in the library
 by multiples of the machine epsilon. Generally speaking, 
 try to find a good stopping criterion.
 
-# Rewrite the unit tests for combinatorics
+
+
+# (LOW) Rewrite the unit tests for combinatorics
 
 Generally speaking, the combinatorics unit tests 
 should be more excessive. 
@@ -311,13 +363,6 @@ we can and should turn them into non-member operators.
 
 
 
-
-
-
-# TODO short term
-
-- correct the file names in the VTK output of the different mesh and fem test programs 
-- if the file exists, add a suffix number to identify it
 
 
 

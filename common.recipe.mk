@@ -21,7 +21,11 @@ FLAG_CXX := GCC
 
 # Do you want to ENABLE the use of openMP?
 # Uncomment the following line to enable compilation with openMP
-# FLAG_ENABLE_OPENMP=yes
+FLAG_ENABLE_OPENMP=yes
+
+# Do you want to ENABLE the use of openMP?
+# Uncomment the following line to enable compilation with openMP
+# FLAG_USE_BACKTRACER=yes
 
 # Do you want to DISABLE embedding of Debug information?
 # Uncomment the following line to have no debug information included
@@ -90,6 +94,7 @@ parameters:
 	$(info FLAG_USE_TCMALLOC              = $(FLAG_USE_TCMALLOC) ) 
 	$(info FLAG_EXCESSIVE_WARNINGS        = $(FLAG_EXCESSIVE_WARNINGS) ) 
 	$(info FLAG_ENABLE_OPENMP             = $(FLAG_ENABLE_OPENMP) ) 
+	$(info FLAG_USE_BACKTRACER            = $(FLAG_USE_BACKTRACER) ) 
 	$(info FLAG_NO_DEBUGINFO              = $(FLAG_NO_DEBUGINFO) ) 
 	$(info FLAG_DISABLE_CHECK_MESHES      = $(FLAG_DISABLE_CHECK_MESHES) ) 
 	$(info FLAG_NO_EXCEPTIONS             = $(FLAG_NO_EXCEPTIONS) ) 
@@ -591,6 +596,10 @@ CPPFLAGS :=
 
 ifeq ($(FLAG_DISABLE_CHECK_MESHES),yes)
 CPPFLAGS += -DDO_NOT_CHECK_MESHES
+endif
+
+ifeq ($(FLAG_USE_BACKTRACER),yes)
+CPPFLAGS += -DUSE_BACKTRACER
 endif
 
 ifeq ($(FLAG_DISABLE_ASSERTIONS),yes)

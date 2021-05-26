@@ -444,14 +444,14 @@ inline void seed_random_integer()
 inline int random_integer()
 {
     int ret = rand();
-    assert( 0 <= ret and ret < RAND_MAX );
+    assert( 0 <= ret and ret <= RAND_MAX );
     return ret;
 }
 
 inline Float random_uniform()
 {
     Float ret = rand() / static_cast<Float>( RAND_MAX );
-    assert( 0. <= ret and ret < RAND_MAX );
+    assert( 0. <= ret and ret <= RAND_MAX );
     return ret;
 }
 

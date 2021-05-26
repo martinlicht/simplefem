@@ -32,9 +32,9 @@ $(objects): %.o: %.cpp | $(depdir)
 	@g++ -MM $*.cpp -MF .deps/$*.d
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< -c -o $@ 
 
-# .PHONY: $(headers)
-# $(headers): %.hpp : 
-# 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $@ -c -o /dev/null 
+# .PHONY: $(patsubst %.hpp,check-%.hpp,$(headers))
+# $(headers): check-%.hpp : 
+# 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $@ -c -fsyntax-only
 
 
 # NOTE: Original recipe for the shared library, now there is just one object
