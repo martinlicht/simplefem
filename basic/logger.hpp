@@ -185,7 +185,8 @@ class Logger
             
             if( print_file_and_line ) {
                 prefix( internalstream );
-                internalstream << filename << ':' << linenumber << '\n';
+                // internalstream << "\e[91m" << filename << ':' << linenumber << "\e[39m" << '\n';
+                internalstream << "" << filename << ':' << linenumber << '\n';
                 postfix( internalstream );
             }
         }

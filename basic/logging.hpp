@@ -12,7 +12,7 @@
 //     LOG << "This is a short message with a number: " << 5;      
 //     ERR << "This is an error message.";      
 
-#define LOG     Logger( std::cout, protocolprefixnow(), "\n", __FILE__, __LINE__ )
+#define LOG     Logger( std::cerr, protocolprefixnow(), "\n", __FILE__, __LINE__ )
 #define ERR     Logger( std::cerr, protocolprefixnow(), "\n", __FILE__, __LINE__ )
 
 
@@ -50,10 +50,16 @@
 // 
 ////////////////////////////////////////////
 
-void lg(){}
+inline void lg(){}
+
+template<typename T>
+inline void lg( T arg )
+{
+    LOG << arg;
+}
 
 template<typename T, typename... Ts>
-void lg( T arg, Ts... args )
+inline void lg( T arg, Ts... args )
 {
     LOG << arg;
     lg( args... );

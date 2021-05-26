@@ -82,6 +82,20 @@ class ConvergenceTable
             print( os, display_convergence_rates );
         }
         
+
+
+        Float get_convergence_rate( int row, int column )
+        {
+            assert( 0 <= row );
+            assert( row < entries.size() );
+            assert( 1 <= row );
+            assert( 0 <= column );
+            assert( column < entries[row].size() );
+            assert( column < entries[row-1].size() );
+            Float ret = std::log2( entries[row-1][column] / entries[row][column] );
+            return ret;
+        }
+
         
         
         

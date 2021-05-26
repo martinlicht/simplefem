@@ -211,18 +211,18 @@ parameters:
 # Display the value of a variable
 print-%:
 	$(info [ variable name]: $*)
-	$(info [        origin]: $(origin $*))
 	$(info [         value]: $(value $*))
 	$(info [expanded value]: $($*))
+	$(info [        origin]: $(origin $*))
 	$(info )
 	@true
 
-# Display the value of all makefile variables.
+# Display the value of all variables.
 .PHONY: printall
-#printall: $(subst :,\:,$(foreach variable,$(.VARIABLES),print-$(variable)))
-printall: 
-	$(info $(foreach variable,$(.VARIABLES),print-$(variable)) )
-	@true
+printall: $(subst :,\:,$(foreach variable,$(.VARIABLES),print-$(variable)))
+#printall: 
+#	$(info $(foreach variable,$(.VARIABLES),print-$(variable)) )
+#	@true
 
 
 

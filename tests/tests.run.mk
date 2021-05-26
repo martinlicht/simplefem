@@ -1,6 +1,6 @@
 
 
-$(context).sources     := $(wildcard $(contextdir)/*cpp)
+$(context).sources     := $(sort $(wildcard $(contextdir)/*cpp))
 $(context).executables := $(patsubst %.cpp,%.out,$($(context).sources))
 $(context).runs        := $(patsubst %.cpp,%.run,$($(context).sources))
 
