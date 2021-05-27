@@ -7,8 +7,8 @@
 
 # Do you want to use GCC or Clang?
 # Uncomment the appropriate definition below
-# FLAG_CXX := CLANG
-FLAG_CXX := GCC
+FLAG_CXX := CLANG
+# FLAG_CXX := GCC
 # FLAG_CXX := ICC
 
 # Do you want to ENABLE the use of tcmalloc?
@@ -125,15 +125,15 @@ parameters:
 
 ifeq ($(FLAG_CXX),GCC)
 
-  CXX := g++
+  CXX := g++ -std=c++17
   
 else ifeq ($(FLAG_CXX),CLANG)
 
-  CXX := clang++
+  CXX := clang++ -std=c++17
 
 else ifeq ($(FLAG_CXX),ICC)
 
-  CXX := icc
+  CXX := icc -std=c++17
 
 else
 

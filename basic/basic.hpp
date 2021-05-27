@@ -1,6 +1,12 @@
 #ifndef INCLUDEGUARD_BASIC_HPP
 #define INCLUDEGUARD_BASIC_HPP
 
+
+#if __cplusplus < 201703L
+#error Compilation of this software requires at least C++14. C++17 is recommended.
+#endif
+
+
 #include <cassert>     /* assert macro */
 #include <cmath>     
 #include <cstdint>     
@@ -23,23 +29,10 @@
 #include <vector>
 
 
-#if __cplusplus < 201103L
-#error Compilation of this software requires at least C++11. C++14 is recommended.
-#endif
 
 
-// #define unreachable 
-//     []() -> void{  
-//         fprintf( stderr, "Unreachable code reached: %s:%d\n", __FILE__, __LINE__ );  
-//         abort();  
-//         }
-// // __builtin_unreachable
 
-#define unreachable() \
-        fprintf( stderr, "Unreachable code reached:\n\t%s:%d\n", __FILE__, __LINE__ ), \
-        abort()
-
-
+#include "debug.hpp"
 
 
 

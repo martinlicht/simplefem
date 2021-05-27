@@ -25,11 +25,11 @@ link     := $(patsubst %,-l%,$(affices))
 $(depdir): ; @mkdir -p $@
 
 $(outs): ./%.out: ./%.cpp | $(depdir)
-	@g++ -MM ./$*.cpp -MT $@ -MF $(depdir)/$*.d
+	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -MM ./$*.cpp -MT $@ -MF $(depdir)/$*.d
 ifeq ($(OS),Windows_NT)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(includes) $(rpath) $(link) -o $@ $(LDLIBS)
+	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(includes) $(rpath) $(link) -o $@ $(LDLIBS)
 else
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(includes) $(rpath) $(link) -o $@ $(LDLIBS)
+	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(includes) $(rpath) $(link) -o $@ $(LDLIBS)
 endif
 	
 -include $(dependencies)

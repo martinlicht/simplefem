@@ -62,8 +62,8 @@ $($(context).outs): $(contextdir)/%.out: $(contextdir)/%.cpp | $($(context).depd
 # 	@ echo $($(mycontext).include)
 # 	@ echo $($(mycontext).rpath)
 # 	@ echo $($(mycontext).lib)
-	@g++ -MM $(mycontextdir)/$*.cpp -MT $@ -MF $($(mycontext).depdir)/$*.d
-	$(CXX) $(CXXFLAGS_EXECUTABLE) $(CPPFLAGS) $< $($(mycontext).include) $($(mycontext).rpath) $($(mycontext).mylib) -o $@ $(LDLIBS)
+	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -std=c++17 -MM $(mycontextdir)/$*.cpp -MT $@ -MF $($(mycontext).depdir)/$*.d
+	@$(CXX) $(CXXFLAGS_EXECUTABLE) $(CPPFLAGS) $< $($(mycontext).include) $($(mycontext).rpath) $($(mycontext).mylib) -o $@ $(LDLIBS)
 
 
 -include $($(context).dependencies)

@@ -32,6 +32,13 @@ requires regular grinding in order to get it done.
 
 
 
+# Change the include orders 
+
+Go from the most general down to the most specific.
+This ensures any overwriting of macros stays local.
+
+Within each grouping, sort alphabetically.
+
 # (HIGH) Define and adopt a custom assert macro
     
 There is a function that performs the assert, 

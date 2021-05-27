@@ -26,11 +26,11 @@ $(depdir): ; @mkdir -p $@
 
 .PHONY: make_dependencies
 make_dependencies: $(depdir)
-	for item in $(sources); do g++ -MM $$item -MF .deps/$*.d; done
+	for item in $(sources); do $(CXX) $(CXXFLAGS) $(CPPFLAGS) -MM $$item -MF .deps/$*.d; done
 
 $(objects): %.o: %.cpp | $(depdir)
-	@g++ -MM $*.cpp -MF .deps/$*.d
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< -c -o $@ 
+	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -MM $*.cpp -MF .deps/$*.d
+	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< -c -o $@ 
 
 
 
@@ -39,7 +39,7 @@ headerchecks := $(patsubst %.hpp,check-%.hpp,$(headers))
 .PHONY: $(headerchecks)
 $(headerchecks): check-%.hpp : 
 	$(info $*)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $*.hpp -fsyntax-only
+	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $*.hpp -fsyntax-only
 
 
 # NOTE: Original recipe for the shared library, now there is just one object
@@ -47,9 +47,9 @@ $(headerchecks): check-%.hpp :
 # 	$(CXX) $(CXXFLAGS) -shared -o $@ $^ $(LDLIBS)
 
 .all.o: $(sources) .all.cpp | $(depdir)
-	@g++ -MM .all.cpp -MF .deps/.all.d
-	@echo $(libraryobject)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) .all.cpp -c -o $@ 
+	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -MM .all.cpp -MF .deps/.all.d
+	@echo Compiling $(libraryobject) ...
+	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) .all.cpp -c -o $@ 
 
 $(libraryobject): .all.o
 	cp .all.o $(libraryobject)
