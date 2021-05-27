@@ -30,15 +30,15 @@ int main()
         
         LOG << A << endl;
         
-        LOG << "Determinant (default): " << Determinant(A);// << endl;
-        LOG << "Determinant (laplace): " << Determinant_laplaceexpansion(A);// << endl;
-        LOG << "Determinant (gauss):   " << Determinant_gauss(A);// << endl;
-        LOG << CofactorMatrix( A );// << endl;
-        LOG << Inverse( A );// << endl;
-        LOG << A * Inverse( A );// << endl;
-        LOG << Inverse( A ) * A;// << endl;
-        LOG << 1. / Determinant(A) - Determinant( Inverse(A) );// << endl;
-        LOG << A - Inverse( Inverse(A) );// << endl;
+        LOG << "Determinant (default): " << Determinant(A) << endl;
+        LOG << "Determinant (laplace): " << Determinant_laplaceexpansion(A) << endl;
+        LOG << "Determinant (gauss):   " << Determinant_gauss(A) << endl;
+        LOG << CofactorMatrix( A ) << endl;
+        LOG << Inverse( A ) << endl;
+        LOG << A * Inverse( A ) << endl;
+        LOG << Inverse( A ) * A << endl;
+        LOG << 1. / Determinant(A) - Determinant( Inverse(A) ) << endl;
+        LOG << A - Inverse( Inverse(A) ) << endl;
             
     }
     
@@ -54,11 +54,11 @@ int main()
         
         DenseMatrix L = CholeskyDecomposition( A );
         
-        LOG << "Original matrix:" << A;// << endl;
+        LOG << "Original matrix:" << A << endl;
         
-        LOG << "Factor matrix:" << L;// << endl;
+        LOG << "Factor matrix:" << L << endl;
         
-        LOG << "Product matrix:" << L * Transpose(L);// << endl;
+        LOG << "Product matrix:" << L * Transpose(L) << endl;
         
     }
       
@@ -76,11 +76,11 @@ int main()
         
         DenseMatrix L = CholeskyDecomposition( A );
         
-        LOG << "Original matrix:" << A;// << endl;
+        LOG << "Original matrix:" << A << endl;
         
-        LOG << "Factor matrix:" << L;// << endl;
+        LOG << "Factor matrix:" << L << endl;
         
-        LOG << "Product matrix:" << L * Transpose(L);// << endl;
+        LOG << "Product matrix:" << L * Transpose(L) << endl;
         
     }
     
@@ -93,13 +93,13 @@ int main()
         A(1,0) = -1; A(1,1) =  1; A(1,2) =  3; 
         A(2,0) =  2; A(2,1) =  0; A(2,2) = -1; 
 
-        LOG << "Determinant (default): " << Determinant(A);// << endl;
-        LOG << "Determinant (laplace): " << Determinant_laplaceexpansion(A);// << endl;
-        LOG << "Determinant (gauss):   " << Determinant_gauss(A);// << endl;
-        LOG << CofactorMatrix( A );// << endl;
-        LOG << Inverse( A );// << endl;
-        LOG << A * Inverse( A );// << endl;
-        LOG << Inverse( A ) * A;// << endl;
+        LOG << "Determinant (default): " << Determinant(A) << endl;
+        LOG << "Determinant (laplace): " << Determinant_laplaceexpansion(A) << endl;
+        LOG << "Determinant (gauss):   " << Determinant_gauss(A) << endl;
+        LOG << CofactorMatrix( A ) << endl;
+        LOG << Inverse( A ) << endl;
+        LOG << A * Inverse( A ) << endl;
+        LOG << Inverse( A ) * A << endl;
       
     }
     
@@ -119,7 +119,7 @@ int main()
              << Determinant_laplaceexpansion(A) << space 
              ;
         LOG << " --- " << 1. / Determinant(A) - Determinant( Inverse(A) ) << space
-             ;//<< endl;
+             << endl;
             
         if( absolute( Determinant_gauss(A) - Determinant_laplaceexpansion(A) ) > 0.000001
             or
@@ -141,36 +141,36 @@ int main()
         A(2,0) = 3; A(2,1) = 3; A(2,2) = 1; A(2,3) = 2; 
         A(3,0) = 2; A(3,1) = 1; A(3,2) = 0; A(3,3) = 1; 
         
-        LOG << "Determinant (default): " << Determinant(A);// << endl;
-        LOG << "Determinant (laplace): " << Determinant_laplaceexpansion(A);// << endl;
-        LOG << "Determinant (gauss):   " << Determinant_gauss(A);// << endl;
+        LOG << "Determinant (default): " << Determinant(A) << endl;
+        LOG << "Determinant (laplace): " << Determinant_laplaceexpansion(A) << endl;
+        LOG << "Determinant (gauss):   " << Determinant_gauss(A) << endl;
       
         
 //         A(0,0) = 4; A(0,1) = 1; A(0,2) = 0; 
 //         A(1,0) = 0; A(1,1) = 1; A(1,2) = 0; 
 //         A(2,0) = 1; A(2,1) = 0; A(2,2) = 1; 
         
-        LOG << "Original matrix:" << A;// << endl;
+        LOG << "Original matrix:" << A << endl;
         
         DenseMatrix M = GaussJordanInplace( A );
 //         DenseMatrix M = GaussJordanInplace( A );
         
-        LOG << "Proposed Inverse:" << M;// << endl;
+        LOG << "Proposed Inverse:" << M << endl;
         
-        LOG << "Product of both:" << M * A;// << endl;
+        LOG << "Product of both:" << M * A << endl;
         
     }
       
     for( int i = 0; i < 6; i++ )
     {
-        LOG << "Unit Test for Gauss Jordan algorithm";// << endl;
+        LOG << "Unit Test for Gauss Jordan algorithm" << endl;
     
         DenseMatrix A(8);
         A.randomintegermatrix(-2,2);
       
-        LOG << "Determinant (default): " << Determinant(A);// << endl;
-        LOG << "Determinant (laplace): " << Determinant_laplaceexpansion(A);// << endl;
-        LOG << "Determinant (gauss):   " << Determinant_gauss(A);// << endl;
+        LOG << "Determinant (default): " << Determinant(A) << endl;
+        LOG << "Determinant (laplace): " << Determinant_laplaceexpansion(A) << endl;
+        LOG << "Determinant (gauss):   " << Determinant_gauss(A) << endl;
       
         
         LOG << GaussJordanInplace(A) * A << nl;
@@ -179,7 +179,7 @@ int main()
     
     {
         
-        LOG << "Unit Test for Gauss Jordan algorithm";// << endl;
+        LOG << "Unit Test for Gauss Jordan algorithm" << endl;
     
         int N = 14;
         DenseMatrix C(N);
@@ -205,7 +205,7 @@ int main()
     
     {
         
-        LOG << "Unit Test for QR Factorization";// << endl;
+        LOG << "Unit Test for QR Factorization" << endl;
     
         const int dim = 4;
         DenseMatrix A(dim,dim);
@@ -243,7 +243,7 @@ int main()
     
     
     {
-        LOG << "Unit test for scalar functions of matrices";// << endl;
+        LOG << "Unit test for scalar functions of matrices" << endl;
        
         DenseMatrix S( 4, 4 );
         S(0,0) =  3; S(0,1) =  0; S(0,2) = 6; S(0,3) =  0; 
@@ -252,65 +252,63 @@ int main()
         S(3,0) =  2; S(3,1) = -4; S(3,2) = 4; S(3,3) =  0; 
         
         
-        LOG << S;// << endl;
-        LOG << "Matrix trace:   " << MatrixTrace( S );// << endl;
-        LOG << "Norm L1:        " << NormL1( S );// << endl;
-        LOG << "Norm Frobenius: " << NormFrobenius( S );// << endl;
-        LOG << "Norm Max:       " << NormMax( S );// << endl;
+        LOG << S << endl;
+        LOG << "Matrix trace:   " << MatrixTrace( S ) << endl;
+        LOG << "Norm L1:        " << NormL1( S ) << endl;
+        LOG << "Norm Frobenius: " << NormFrobenius( S ) << endl;
+        LOG << "Norm Max:       " << NormMax( S ) << endl;
         
         Float p = 1.01;
-        LOG << nl << "Norm Lp with p=" << p << ": " << NormLp( S, p ) << nl;// << endl;
+        LOG << nl << "Norm Lp with p=" << p << ": " << NormLp( S, p ) << nl << endl;
         
         Float p1 = 100.0001;
         Float p2 = 1.00001;
         LOG << nl << "Row " << p1 << space
                      << "Col " << p2 << space
-                     << NormRowCol( S, p1, p2 );// << endl;
+                     << NormRowCol( S, p1, p2 ) << endl;
         LOG << nl << "Col " << p1 << space
                      << "Row " << p2 << space 
-                     << NormColRow( S, p1, p2 );// << endl;
-        LOG;//; << endl;
+                     << NormColRow( S, p1, p2 ) << endl;
         
         LOG << nl << "Row " << 1. << space
                      << "Col " << 1. << space
-                     << NormRowCol( S, 1., 1. );// << endl;
+                     << NormRowCol( S, 1., 1. ) << endl;
         LOG << nl << "Col " << 1. << space
                      << "Row " << 1. << space 
-                     << NormColRow( S, 1., 1. );// << endl;
-        LOG << endl;
+                     << NormColRow( S, 1., 1. ) << endl;
         
         LOG << nl << "Row " << 2. << space
                      << "Col " << 2. << space
-                     << NormRowCol( S, 2., 2. );// << endl;
+                     << NormRowCol( S, 2., 2. ) << endl;
         LOG << nl << "Col " << 2. << space
                      << "Row " << 2. << space 
-                     << NormColRow( S, 2., 2. );// << endl;
-        LOG;// << endl;
+                     << NormColRow( S, 2., 2. ) << endl;
+        LOG << endl;
         
         LOG << nl << "Row " << 20. << space
                      << "Col " << 20. << space
-                     << NormRowCol( S, 20., 20. );// << endl;
+                     << NormRowCol( S, 20., 20. ) << endl;
         LOG << nl << "Col " << 20. << space
                      << "Row " << 20. << space 
-                     << NormColRow( S, 20., 20. );// << endl;
+                     << NormColRow( S, 20., 20. ) << endl;
         LOG << endl;
         
         
         
-        LOG << "Norm Operator L1:  " << NormOperatorL1( S );// << endl;
-        LOG << "Norm Operator Max: " << NormOperatorMax( S );// << endl;
+        LOG << "Norm Operator L1:  " << NormOperatorL1( S ) << endl;
+        LOG << "Norm Operator Max: " << NormOperatorMax( S ) << endl;
         LOG << endl;
         
-        LOG << "GerschgorinRow:    " << GerschgorinRow( S );// << endl;
-        LOG << "GerschgorinColumn: " << GerschgorinColumn( S );// << endl;
+        LOG << "GerschgorinRow:    " << GerschgorinRow( S ) << endl;
+        LOG << "GerschgorinColumn: " << GerschgorinColumn( S ) << endl;
         
     }
     
     
     {
-        LOG << "Unit test for transpoing dense matrices";// << endl;
+        LOG << "Unit test for transpoing dense matrices" << endl;
         
-        LOG << "Transpose of square matrices";// << endl;
+        LOG << "Transpose of square matrices" << endl;
         
         for( int dim = 0; dim < 4; dim++ ) 
         {
@@ -321,14 +319,14 @@ int main()
             DenseMatrix A(dim, testmatrix);
             DenseMatrix B = A;
             
-            LOG << A << Transpose( A ) << TransposeSquare( A );// << endl;
+            LOG << A << Transpose( A ) << TransposeSquare( A ) << endl;
             TransposeInSitu( A );
             TransposeSquareInSitu( B );
-            LOG << A << B;// << endl;
+            LOG << A << B << endl;
             
         }
         
-        LOG << "Transpose of non-square matrices";// << endl;
+        LOG << "Transpose of non-square matrices" << endl;
         
         for( int dimr = 0; dimr < 4; dimr++ ) 
         for( int dimc = 0; dimc < 4; dimc++ ) 
@@ -339,9 +337,9 @@ int main()
             
             DenseMatrix A( dimr, dimc, testmatrix );
             
-            LOG << A << Transpose(A);// << endl;
+            LOG << A << Transpose(A) << endl;
             TransposeInSitu( A );
-            LOG << A;// << endl;
+            LOG << A << endl;
             
         }
         
@@ -352,7 +350,7 @@ int main()
 
     
     
-    LOG << "Finished Unit Test";// << endl;
+    LOG << "Finished Unit Test" << endl;
 
     return 0;
     

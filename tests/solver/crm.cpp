@@ -16,11 +16,11 @@ using namespace std;
 
 int main()
 {
-	LOG << "Unit Test for Conjugate Residual Method";// << endl;
+	LOG << "Unit Test for Conjugate Residual Method" << endl;
 	
 	{
 		
-		LOG << "First Something Simple with the CRM";// << endl;
+		LOG << "First Something Simple with the CRM" << endl;
 		
 		ScalingOperator A( 10, 3.141 );
 		ConjugateResidualMethod CRM(A);
@@ -28,16 +28,16 @@ int main()
 		FloatVector rhs(10), x(10);
 		x.random(); rhs.zero();
 		
-		LOG << x;// << endl;
+		LOG << x << endl;
 		CRM.solve( x, rhs );
-		// LOG << x;// << endl;
+		// LOG << x << endl;
 	
 	}
 	
 
 	{
 		
-		LOG << "First Something Simple with the Precon-CRM";// << endl;
+		LOG << "First Something Simple with the Precon-CRM" << endl;
 		
 		ScalingOperator A( 10, Constants::pi );
 		ScalingOperator M( 10, Constants::euler );
@@ -46,16 +46,16 @@ int main()
 		FloatVector rhs(10), x(10);
 		x.random(); rhs.zero();
 		
-		LOG << x;// << endl;
+		LOG << x << endl;
 		CRM.solve( x, rhs );
-		// LOG << x;// << endl;
+		// LOG << x << endl;
 	
 	}
 	
 
 	if(true){
 		
-		LOG << "Now something more complicated.";// << endl;
+		LOG << "Now something more complicated." << endl;
 		
 		int dimension = 100;
         
@@ -83,7 +83,7 @@ int main()
 		}
 		// A.sortentries();
 		
-        LOG << "Compute stuff.";// << endl;
+        LOG << "Compute stuff." << endl;
 		
 		FloatVector b = A * x;
 		
@@ -100,7 +100,7 @@ int main()
             start = gettimestamp();
             CRM.solve(y,b);
             end = gettimestamp();
-            LOG << timestamp2measurement( end - start );// << endl;
+            LOG << timestamp2measurement( end - start ) << endl;
         }
         
         {
@@ -116,13 +116,13 @@ int main()
             start = gettimestamp();
             PCRM.solve(y,b);
             end = gettimestamp();
-            LOG << timestamp2measurement( end - start );// << endl;
+            LOG << timestamp2measurement( end - start ) << endl;
         }
         
 		
 	}
 	
-	LOG << "Finished Unit Test";// << endl;
+	LOG << "Finished Unit Test" << endl;
 
 	return 0;
 }

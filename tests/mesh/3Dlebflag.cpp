@@ -17,11 +17,11 @@ using namespace std;
 
 int main()
 {
-        LOG << "Unit Test for Simplicial 3D Module";// << endl;
+        LOG << "Unit Test for Simplicial 3D Module" << endl;
         
         {
             
-            LOG << "First Experiment";// << endl;
+            LOG << "First Experiment" << endl;
             
             MeshSimplicial3D M = UnitSimplex3D();
             
@@ -41,7 +41,7 @@ int main()
             
             M.check_dirichlet_flags();
 
-            LOG << "Start iterations";// << endl;
+            LOG << "Start iterations" << endl;
             
             for( int c = 0; c < c_max; c++ ) {
             
@@ -59,7 +59,7 @@ int main()
                 
                 LOG << c << "/" << c_max << " Refine " << markedcells.size() << "/" << M.count_tetrahedra() << " ... ";
                 M.longest_edge_bisection_recursive( markededges );
-                LOG << "Ratio=" << ( M.count_tetrahedra() - cell_count_initial )/(Float)( cell_marked_count );// << nl;
+                LOG << "Ratio=" << ( M.count_tetrahedra() - cell_count_initial )/(Float)( cell_marked_count ) << nl;
                 
                 M.check_dirichlet_flags();
 
@@ -75,7 +75,7 @@ int main()
             
         }
         
-        LOG << "Finished Unit Test";// << endl;
+        LOG << "Finished Unit Test" << endl;
         
         return 0;
 }

@@ -23,11 +23,11 @@ using namespace std;
 int main()
 {
         
-        LOG << "Unit Test: (3D) degree elevation of interpolation preserves mass";// << endl;
+        LOG << "Unit Test: (3D) degree elevation of interpolation preserves mass" << endl;
         
         LOG << std::setprecision(10);
 
-        LOG << "Initial mesh...";// << endl;
+        LOG << "Initial mesh..." << endl;
         
         MeshSimplicial3D M = StandardCube3D();
         
@@ -157,7 +157,7 @@ int main()
 
         for( int l = l_min; l <= l_max; l++ ){
             
-            LOG << "Numerical calculations...";// << endl;
+            LOG << "Numerical calculations..." << endl;
             
             for( int r      = r_min; r      <=      r_max; r++      ) 
             for( int r_plus =     0; r_plus <= r_plus_max; r_plus++ ) 
@@ -262,7 +262,7 @@ int main()
                 
             }
             
-            LOG << "Refinement...";// << endl;
+            LOG << "Refinement..." << endl;
         
             M.uniformrefinement();
             
@@ -356,7 +356,7 @@ int main()
         }
             
         
-        LOG << "Finished Unit Test";// << endl;
+        LOG << "Finished Unit Test" << endl;
         
         return 0;
 }

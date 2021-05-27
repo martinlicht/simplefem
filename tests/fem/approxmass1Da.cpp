@@ -22,11 +22,11 @@ using namespace std;
 int main()
 {
         
-        LOG << "Unit Test: (1D) masses are correctly approximated: precomputed mass";// << endl;
+        LOG << "Unit Test: (1D) masses are correctly approximated: precomputed mass" << endl;
         
         LOG << std::setprecision(10);
 
-        LOG << "Initial mesh...";// << endl;
+        LOG << "Initial mesh..." << endl;
         
         MeshSimplicial1D M = UnitInterval1D();
         
@@ -91,13 +91,13 @@ int main()
 
         for( int l = l_min; l <= l_max; l++ ){
             
-            LOG << "Refinement...";// << endl;
+            LOG << "Refinement..." << endl;
         
             M.uniformrefinement();
             
             for( int r = r_min; r <= r_max; r++ ) 
             {
-                LOG << "...assemble matrices";// << endl;
+                LOG << "...assemble matrices" << endl;
         
                 SparseMatrix massmatrix_scalar = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
                 
@@ -183,7 +183,7 @@ int main()
         }
         
         
-        LOG << "Finished Unit Test";// << endl;
+        LOG << "Finished Unit Test" << endl;
         
         return 0;
 }

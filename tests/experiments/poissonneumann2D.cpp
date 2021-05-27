@@ -33,19 +33,19 @@ using namespace std;
 int main()
 {
         
-        LOG << "Unit Test for Solution of Neumann Problem";// << endl;
+        LOG << "Unit Test for Solution of Neumann Problem" << endl;
         
         LOG << std::setprecision(10);
 
         if(true){
 
-            LOG << "Initial mesh...";// << endl;
+            LOG << "Initial mesh..." << endl;
             
             MeshSimplicial2D M = StandardSquare2D();
             
             M.check();
             
-            LOG << "Prepare scalar fields for testing...";// << endl;
+            LOG << "Prepare scalar fields for testing..." << endl;
             
 
             std::function<FloatVector(const FloatVector&)> constant_one
@@ -100,7 +100,7 @@ int main()
 
             
 
-            LOG << "Solving Poisson Problem with Neumann boundary conditions";// << endl;
+            LOG << "Solving Poisson Problem with Neumann boundary conditions" << endl;
 
             int min_l = 3; 
             int max_l = 8;
@@ -118,27 +118,27 @@ int main()
 
             for( int l = min_l; l <= max_l; l++ ){
                 
-                LOG << "Level: " << l;// << std::endl;
+                LOG << "Level: " << l << std::endl;
                 LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
                 for( int r = min_r; r <= max_r; r++ ) 
                 {
                     
-                    LOG << "...assemble scalar mass matrices";// << endl;
+                    LOG << "...assemble scalar mass matrices" << endl;
             
                     SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
 
-                    LOG << "...assemble vector mass matrix";// << endl;
+                    LOG << "...assemble vector mass matrix" << endl;
             
                     SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
                     
-                    LOG << "...assemble differential matrix and transpose";// << endl;
+                    LOG << "...assemble differential matrix and transpose" << endl;
 
                     SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r );
 
                     SparseMatrix diffmatrix_t = diffmatrix.getTranspose();
 
-                    LOG << "...assemble inclusion matrix and transpose";// << endl;
+                    LOG << "...assemble inclusion matrix and transpose" << endl;
             
                     SparseMatrix incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r );
                     
@@ -148,7 +148,7 @@ int main()
 
                     SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
-                    LOG << "...assemble stiffness matrix";// << endl;
+                    LOG << "...assemble stiffness matrix" << endl;
             
                     // ProductOperator 
 //                     auto stiffness = incmatrix_t * diffmatrix_t * vector_massmatrix * diffmatrix * incmatrix;
@@ -167,7 +167,7 @@ int main()
                     
                     auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. );
 //                     auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
-                    LOG << "Average value of diagonal preconditioner: " << stiffness_invprecon.getdiagonal().average();// << std::endl;
+                    LOG << "Average value of diagonal preconditioner: " << stiffness_invprecon.getdiagonal().average() << std::endl;
 
                     {
 
@@ -175,7 +175,7 @@ int main()
                         const auto& function_grad = experiment_grad;
                         const auto& function_rhs  = experiment_rhs;
                         
-                        LOG << "...interpolate explicit solution and rhs";// << endl;
+                        LOG << "...interpolate explicit solution and rhs" << endl;
             
                         FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 0, r,   function_sol  );
                         FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r-1, function_grad );
@@ -188,29 +188,29 @@ int main()
                         Float average_sol = interpol_one * ( scalar_massmatrix * interpol_sol );
                         Float average_rhs = interpol_one * ( scalar_massmatrix * interpol_rhs );
                         
-                        LOG << average_sol << space << average_rhs;// << endl;
+                        LOG << average_sol << space << average_rhs << endl;
 
-                        LOG << "...measure interpolation commutativity";// << endl;
+                        LOG << "...measure interpolation commutativity" << endl;
             
                         auto commutatorerror_aux = interpol_grad - diffmatrix * interpol_sol;
                         Float commutatorerror = commutatorerror_aux * ( vector_massmatrix * commutatorerror_aux );
-                        LOG << "commutator error: " << commutatorerror;// << endl;
+                        LOG << "commutator error: " << commutatorerror << endl;
                         
-                        LOG << "...compute norms of solution and right-hand side:";// << endl;
+                        LOG << "...compute norms of solution and right-hand side:" << endl;
             
                         Float sol_norm = interpol_sol * ( scalar_massmatrix * interpol_sol );
                         Float rhs_norm = interpol_rhs * ( scalar_massmatrix * interpol_rhs );
                         
-                        LOG << "solution norm: " << sol_norm;// << endl;
-                        LOG << "rhs norm:      " << rhs_norm;// << endl;
+                        LOG << "solution norm: " << sol_norm << endl;
+                        LOG << "rhs norm:      " << rhs_norm << endl;
 
-                        LOG << "...create RHS vector";// << endl;
+                        LOG << "...create RHS vector" << endl;
 
                         FloatVector rhs = incmatrix_t * ( scalar_massmatrix * interpol_rhs );
 
                         FloatVector sol( incmatrix.getdimin(), 0. );
                         
-                        LOG << "...iterative solver";// << endl;
+                        LOG << "...iterative solver" << endl;
                         
                         {
                             sol.zero();
@@ -222,10 +222,10 @@ int main()
                             Solver.solve( sol, rhs );
 //                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                         }
 
-                        LOG << "...compute error and residual:";// << endl;
+                        LOG << "...compute error and residual:" << endl;
             
                         
                         FloatVector dirterror = interpol_sol  - incmatrix * sol;
@@ -236,9 +236,9 @@ int main()
                         Float graderrornorm   = std::sqrt( graderror * ( vector_massmatrix * graderror ) );
                         Float residualnorm    = ( rhs - stiffness * sol ).norm();
                         
-                        LOG << "error:     " << errornorm   ;//;// << endl;
-                        LOG << "graderror: " << graderrornorm;// << endl;
-                        LOG << "residual:  " << residualnorm;//;// << endl;
+                        LOG << "error:     " << errornorm    << endl;
+                        LOG << "graderror: " << graderrornorm << endl;
+                        LOG << "residual:  " << residualnorm << endl;
                         
                         
                         
@@ -267,7 +267,7 @@ int main()
                     
                 }
 
-                LOG << "Refinement...";// << endl;
+                LOG << "Refinement..." << endl;
             
                 if( l != max_l ) M.uniformrefinement();
                 
@@ -280,7 +280,7 @@ int main()
         
         
         
-        LOG << "Finished Unit Test";// << endl;
+        LOG << "Finished Unit Test" << endl;
         
         return 0;
 }

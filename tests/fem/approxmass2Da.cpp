@@ -22,11 +22,11 @@ using namespace std;
 int main()
 {
         
-        LOG << "Unit Test: (2D) masses are correctly approximated: precomputed mass";// << endl;
+        LOG << "Unit Test: (2D) masses are correctly approximated: precomputed mass" << endl;
         
         LOG << std::setprecision(10);
 
-        LOG << "Initial mesh...";// << endl;
+        LOG << "Initial mesh..." << endl;
         
         MeshSimplicial2D M = StandardSquare2D();
         
@@ -39,7 +39,7 @@ int main()
         
 //         experiments_scalar_field.push_back( 
 //             [](const FloatVector& vec) -> FloatVector{
-//                 assert( vec.getdimension() == 2 );
+//                 Assert( vec.getdimension() == 2 );
 //                 return FloatVector({ ( vec[0] > 0 and vec[1] > 0 ) ? 1. : 0. });
 //             }
 //         );
@@ -49,7 +49,7 @@ int main()
 //         
 //         experiments_scalar_field.push_back( 
 //             [](const FloatVector& vec) -> FloatVector{
-//                 assert( vec.getdimension() == 2 );
+//                 Assert( vec.getdimension() == 2 );
 //                 return FloatVector({ 1. });
 //             }
 //         );
@@ -59,7 +59,7 @@ int main()
 //         
 //         experiments_scalar_field.push_back( 
 //             [](const FloatVector& vec) -> FloatVector{
-//                 assert( vec.getdimension() == 2 );
+//                 Assert( vec.getdimension() == 2 );
 //                 return FloatVector({ ( vec[0] * vec[1] > 0 ) ? 1. : 0. });
 //             }
 //         );
@@ -69,7 +69,7 @@ int main()
         
         experiments_scalar_field.push_back( 
             [](const FloatVector& vec) -> FloatVector{
-                assert( vec.getdimension() == 2 );
+                Assert( vec.getdimension() == 2 );
                 return FloatVector({ std::exp( vec[0] + vec[1] ) });
             }
         );
@@ -78,7 +78,7 @@ int main()
 
         experiments_scalar_field.push_back( 
             [](const FloatVector& vec) -> FloatVector{
-                assert( vec.getdimension() == 2 );
+                Assert( vec.getdimension() == 2 );
                 return FloatVector({ ( vec[0] > 0 and vec[1] > 0 ) ? std::exp( vec[0] ) : 0. });
             }
         );
@@ -88,7 +88,7 @@ int main()
         
         experiments_scalar_field.push_back( 
             [](const FloatVector& vec) -> FloatVector{
-                assert( vec.getdimension() == 2 );
+                Assert( vec.getdimension() == 2 );
                 return FloatVector({ ( vec[0] * vec[1] > 0 ) ? std::exp( vec[0] ) : 0. });
             }
         );
@@ -105,7 +105,7 @@ int main()
         
 //         experiments_vector_field.push_back( 
 //             [](const FloatVector& vec) -> FloatVector{
-//                 assert( vec.getdimension() == 2 );
+//                 Assert( vec.getdimension() == 2 );
 //                 // return FloatVector({ ( vec[0]*vec[1] > 0 ) ? 1. : 0., ( vec[0]*vec[1] > 0 ) ? 10. : 0. });
 //                 return FloatVector({ 1., 0. });
 //             }
@@ -116,7 +116,7 @@ int main()
         
         experiments_vector_field.push_back( 
             [](const FloatVector& vec) -> FloatVector{
-                assert( vec.getdimension() == 2 );
+                Assert( vec.getdimension() == 2 );
                 Float x = vec[0]; Float y = vec[1];
                 return FloatVector({ std::exp(x-y), std::exp(x-y) });
             }
@@ -133,7 +133,7 @@ int main()
 
 //         experiments_volume_field.push_back( 
 //             [](const FloatVector& vec) -> FloatVector{
-//                 assert( vec.getdimension() == 2 );
+//                 Assert( vec.getdimension() == 2 );
 //                 return FloatVector({ ( vec[0] > 0 and vec[1] > 0 ) ? 1. : 0. });
 //             }
 //         );
@@ -143,7 +143,7 @@ int main()
 //         
 //         experiments_volume_field.push_back( 
 //             [](const FloatVector& vec) -> FloatVector{
-//                 assert( vec.getdimension() == 2 );
+//                 Assert( vec.getdimension() == 2 );
 //                 return FloatVector({ ( vec[0] * vec[1] > 0 ) ? 1. : 0. });
 //             }
 //         );
@@ -153,7 +153,7 @@ int main()
         
         experiments_volume_field.push_back( 
             [](const FloatVector& vec) -> FloatVector{
-                assert( vec.getdimension() == 2 );
+                Assert( vec.getdimension() == 2 );
                 return FloatVector({ ( vec[0] > 0 and vec[1] > 0 ) ? std::exp( vec[0] ) : 0. });
             }
         );
@@ -163,7 +163,7 @@ int main()
         
         experiments_volume_field.push_back( 
             [](const FloatVector& vec) -> FloatVector{
-                assert( vec.getdimension() == 2 );
+                Assert( vec.getdimension() == 2 );
                 return FloatVector({ ( vec[0] * vec[1] > 0 ) ? std::exp( vec[0] ) : 0. });
             }
         );
@@ -194,13 +194,13 @@ int main()
 
         for( int l = l_min; l <= l_max; l++ ){
             
-            LOG << "Refinement...";// << endl;
+            LOG << "Refinement..." << endl;
         
             M.uniformrefinement();
             
             for( int r = r_min; r <= r_max; r++ ) 
             {
-                LOG << "...assemble matrices";// << endl;
+                LOG << "...assemble matrices" << endl;
         
                 SparseMatrix massmatrix_scalar = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
                 
@@ -208,9 +208,9 @@ int main()
                 
                 SparseMatrix massmatrix_volume = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r );
                 
-                assert( massmatrix_scalar.isfinite() );
-                assert( massmatrix_vector.isfinite() );
-                assert( massmatrix_volume.isfinite() );
+                Assert( massmatrix_scalar.isfinite() );
+                Assert( massmatrix_vector.isfinite() );
+                Assert( massmatrix_volume.isfinite() );
                 
                 for( int i = 0; i < experiments_scalar_field.size(); i++ ){
 
@@ -302,17 +302,17 @@ int main()
                 continue;
             
             for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
-                assert( errors_scalar[i][l-l_min][r-r_min] < 10e-6 );
+                Assert( errors_scalar[i][l-l_min][r-r_min] < 10e-6 );
             
             for( int i = 0; i < experiments_vector_field.size(); i++ ) 
-                assert( errors_vector[i][l-l_min][r-r_min] < 10e-6 );
+                Assert( errors_vector[i][l-l_min][r-r_min] < 10e-6 );
             
             for( int i = 0; i < experiments_volume_field.size(); i++ )
-                assert( errors_volume[i][l-l_min][r-r_min] < 10e-6 );
+                Assert( errors_volume[i][l-l_min][r-r_min] < 10e-6 );
         }
         
         
-        LOG << "Finished Unit Test";// << endl;
+        LOG << "Finished Unit Test" << endl;
         
         return 0;
 }

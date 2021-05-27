@@ -23,11 +23,11 @@ using namespace std;
 int main()
 {
         
-        LOG << "Unit Test: (3D) masses are correctly approximated: mass of reference interpolation";// << endl;
+        LOG << "Unit Test: (3D) masses are correctly approximated: mass of reference interpolation" << endl;
         
         LOG << std::setprecision(10);
 
-        LOG << "Initial mesh...";// << endl;
+        LOG << "Initial mesh..." << endl;
         
         MeshSimplicial3D M = UnitCube3D();
         
@@ -158,7 +158,7 @@ int main()
 
         for( int l = l_min; l <= l_max; l++ ){
             
-            LOG << "Numerical calculations...";// << endl;
+            LOG << "Numerical calculations..." << endl;
         
             SparseMatrix massmatrix_scalar = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r_ref );
             
@@ -255,7 +255,7 @@ int main()
                 
             }
             
-            LOG << "Refinement...";// << endl;
+            LOG << "Refinement..." << endl;
         
             M.uniformrefinement();
             
@@ -329,7 +329,7 @@ int main()
         }
         
         
-        LOG << "Finished Unit Test";// << endl;
+        LOG << "Finished Unit Test" << endl;
         
         return 0;
 }

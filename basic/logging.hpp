@@ -12,8 +12,8 @@
 //     LOG << "This is a short message with a number: " << 5;      
 //     ERR << "This is an error message.";      
 
-#define LOG     Logger( std::cerr, protocolprefixnow(), "\n", __FILE__, __LINE__ )
-#define ERR     Logger( std::cerr, protocolprefixnow(), "\n", __FILE__, __LINE__ )
+#define LOG     Logger( std::cerr, protocolprefixnow(), "", __FILE__, __LINE__ )
+#define ERR     Logger( std::cerr, protocolprefixnow(), "", __FILE__, __LINE__ )
 
 
 // treat the following macros as PRINT 'str' commands

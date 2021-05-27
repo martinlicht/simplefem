@@ -10,6 +10,7 @@
 #include "../combinatorics/indexmap.hpp"
 #include "../combinatorics/generateindexmaps.hpp"
 #include "../combinatorics/heappermgen.hpp"
+
 #include "densematrix.hpp"
 
 
@@ -28,7 +29,7 @@ DenseMatrix Transpose( const DenseMatrix& src )
     src.check();
     DenseMatrix ret( src.getdimin(), src.getdimout() );
     for( int r = 0; r < src.getdimout(); r++ )
-    for( int c = 0; c < src.getdimin(); c++ )
+    for( int c = 0; c < src.getdimin();  c++ )
         ret(c,r) = src(r,c);
     ret.check();
     return ret;
@@ -55,7 +56,7 @@ void TransposeInSitu( DenseMatrix& src )
         do {
             ++i;
             next = (next % numrows) * numcols + next / numrows;
-        } while (next > start);
+        } while ( next > start );
 
         if ( next >= start && i != 1 )
         {

@@ -17,11 +17,11 @@ using namespace std;
 
 int main()
 {
-    LOG << "Unit Test for Simplicial 2D Module";// << endl;
+    LOG << "Unit Test for Simplicial 2D Module" << endl;
     
     {
         
-        LOG << "First Experiment";// << endl;
+        LOG << "First Experiment" << endl;
         
         MeshSimplicial2D M = UnitTriangle2D();
         
@@ -51,7 +51,7 @@ int main()
             
             LOG << c << "/" << c_max << " Refine " << markedcells.size() << "/" << M.count_triangles() << " ... ";
             M.newest_vertex_bisection_recursive( markededges );
-            LOG << "Ratio=" << ( M.count_triangles() - cell_count_initial )/(Float)( cell_marked_count );// << nl;
+            LOG << "Ratio=" << ( M.count_triangles() - cell_count_initial )/(Float)( cell_marked_count ) << nl;
         
         }
         
@@ -62,7 +62,7 @@ int main()
     
     {
         
-        LOG << "Second Experiment";// << endl;
+        LOG << "Second Experiment" << endl;
         
         MeshSimplicial2D M = TetrahedralSurface2D(); //StandardSquare2D();
         
@@ -92,7 +92,7 @@ int main()
             
             LOG << c << "/" << c_max << " Refine " << markedcells.size() << "/" << M.count_triangles() << " ... ";
             M.newest_vertex_bisection_recursive( markededges );
-            LOG << "Ratio=" << ( M.count_triangles() - cell_count_initial )/(Float)( cell_marked_count );// << nl;
+            LOG << "Ratio=" << ( M.count_triangles() - cell_count_initial )/(Float)( cell_marked_count ) << nl;
         
         }
         
@@ -103,7 +103,7 @@ int main()
     
     {
         
-        LOG << "Third Experiment";// << endl;
+        LOG << "Third Experiment" << endl;
         
         MeshSimplicial2D M = TetrahedralSurface2D();
         
@@ -133,7 +133,7 @@ int main()
             
             LOG << c << "/" << c_max << " Refine " << markedcells.size() << "/" << M.count_triangles() << " ... ";
             M.newest_vertex_bisection_recursive( markededges );
-            LOG << "Ratio=" << ( M.count_triangles() - cell_count_initial )/(Float)( cell_marked_count );// << nl;
+            LOG << "Ratio=" << ( M.count_triangles() - cell_count_initial )/(Float)( cell_marked_count ) << nl;
         
         }
         
@@ -144,7 +144,7 @@ int main()
         
     {
         
-        LOG << "Fourth Experiment: uniform distribution";// << endl;
+        LOG << "Fourth Experiment: uniform distribution" << endl;
         
         MeshSimplicial2D M = UnitTriangle2D(); M.check();
         
@@ -167,7 +167,7 @@ int main()
             
 //             LOG << i << "/" << iter_max << " Refine " << markedcells.size() << "/" << M.count_triangles() << " ... ";
             M.newest_vertex_bisection_recursive( markededges );
-            LOG << "Ratio=" << ( M.count_triangles() - cell_count_initial )/(Float)( cell_marked_count );// << nl;
+            LOG << "Ratio=" << ( M.count_triangles() - cell_count_initial )/(Float)( cell_marked_count ) << nl;
         
         }
         
@@ -178,7 +178,7 @@ int main()
     
     {
         
-        LOG << "Fifth Experiment: repeated bisection of a fixed triangle";// << endl;
+        LOG << "Fifth Experiment: repeated bisection of a fixed triangle" << endl;
         
         MeshSimplicial2D M = UnitTriangle2D(); M.check();
         
@@ -199,11 +199,11 @@ int main()
             markededges.push_back( 0 );
             sort_and_remove_duplicates( markededges );
             
-            LOG << M.get_edge_vertex( 0, 0 ) << space << M.get_edge_vertex( 0, 1 );// << nl;
+            LOG << M.get_edge_vertex( 0, 0 ) << space << M.get_edge_vertex( 0, 1 ) << nl;
             
 //             LOG << i << "/" << iter_max << " Refine " << markedcells.size() << "/" << M.count_triangles() << " ... ";
             M.newest_vertex_bisection_recursive( markededges );
-            LOG << "Ratio=" << ( M.count_triangles() - cell_count_initial )/(Float)( cell_marked_count );// << nl;
+            LOG << "Ratio=" << ( M.count_triangles() - cell_count_initial )/(Float)( cell_marked_count ) << nl;
         
         }
         
@@ -212,7 +212,7 @@ int main()
     }
 
 
-        LOG << "Finished Unit Test";// << endl;
+        LOG << "Finished Unit Test" << endl;
         
         return 0;
 }

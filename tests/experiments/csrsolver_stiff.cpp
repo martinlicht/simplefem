@@ -32,13 +32,13 @@ using namespace std;
 int main()
 {
         
-        LOG << "Unit Test: Compare numerical solvers CRM vs MINRES\n           for Solution of Dirichlet Problem";// << endl;
+        LOG << "Unit Test: Compare numerical solvers CRM vs MINRES\n           for Solution of Dirichlet Problem" << endl;
         
         LOG << std::setprecision(10);
 
         if(true){
 
-            LOG << "Initial mesh...";// << endl;
+            LOG << "Initial mesh..." << endl;
             
             MeshSimplicial2D M = StandardSquare2D();
             
@@ -48,7 +48,7 @@ int main()
             
             M.check_dirichlet_flags();
             
-            LOG << "Prepare scalar fields for testing...";// << endl;
+            LOG << "Prepare scalar fields for testing..." << endl;
             
 
             std::function<FloatVector(const FloatVector&)> constant_one
@@ -93,7 +93,7 @@ int main()
             
             
 
-            LOG << "Solving Poisson Problem with Dirichlet boundary conditions";// << endl;
+            LOG << "Solving Poisson Problem with Dirichlet boundary conditions" << endl;
 
             ConvergenceTable contable;
             
@@ -105,34 +105,34 @@ int main()
 
             for( int l = min_l; l <= max_l; l++ ){
                 
-                LOG << "Level: " << l;// << std::endl;
+                LOG << "Level: " << l << std::endl;
                 LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
                 const int r = 1;
                 
                 {
                     
-                    LOG << "...assemble matrices";// << endl;
+                    LOG << "...assemble matrices" << endl;
             
                     SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
                     
-                    LOG << "...assemble vector mass matrix";// << endl;
+                    LOG << "...assemble vector mass matrix" << endl;
             
                     SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
                     
-                    LOG << "...assemble differential matrix and transpose";// << endl;
+                    LOG << "...assemble differential matrix and transpose" << endl;
 
                     SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r );
 
                     SparseMatrix diffmatrix_t = diffmatrix.getTranspose();
 
-                    LOG << "...assemble inclusion matrix and transpose";// << endl;
+                    LOG << "...assemble inclusion matrix and transpose" << endl;
             
                     SparseMatrix incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r );
 
                     SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
-                    LOG << "...assemble stiffness matrix";// << endl;
+                    LOG << "...assemble stiffness matrix" << endl;
             
                     auto opr  = diffmatrix & incmatrix;
                     auto opl  = opr.getTranspose(); 
@@ -150,7 +150,7 @@ int main()
 
                         if(false)
                         {
-                            LOG << "CGM - CSR Classic";// << endl;
+                            LOG << "CGM - CSR Classic" << endl;
                         
                             sol.zero();
                             FloatVector residual( rhs );
@@ -166,13 +166,13 @@ int main()
                             );
 
                             timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
                         }
 
                         if(false)
                         {
-                            LOG << "CGM - CSR Classic with diagonal preconditioning";// << endl;
+                            LOG << "CGM - CSR Classic with diagonal preconditioning" << endl;
                             
                             auto precon = InverseDiagonalPreconditioner( stiffness );
 
@@ -192,12 +192,12 @@ int main()
                             );
 
                             timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
                         }
 
                         {
-                            LOG << "CGM - CSR Classic with SSOR";// << endl;
+                            LOG << "CGM - CSR Classic with SSOR" << endl;
                             
                             auto diagonal = stiffness.diagonal();
 
@@ -218,13 +218,13 @@ int main()
                             );
 
                             timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
                         }
 
                         if(false)
                         {
-                            LOG << "CRM - CSR Classic";// << endl;
+                            LOG << "CRM - CSR Classic" << endl;
                         
                             sol.zero();
                             FloatVector residual( rhs );
@@ -240,13 +240,13 @@ int main()
                             );
 
                             timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
                         }
 
                         if(false)
                         {
-                            LOG << "CRM - CSR Textbook";// << endl;
+                            LOG << "CRM - CSR Textbook" << endl;
                         
                             sol.zero();
                             FloatVector residual( rhs );
@@ -262,13 +262,13 @@ int main()
                             );
 
                             timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
                         }
 
                         if(false)
                         {
-                            LOG << "MINRES CSR";// << endl;
+                            LOG << "MINRES CSR" << endl;
                         
                             sol.zero();
                             FloatVector residual( rhs );
@@ -284,14 +284,14 @@ int main()
                             );
 
                             timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
                         }
 
 
                         if(false)
                         {
-                            LOG << "WHATEVER CSR";// << endl;
+                            LOG << "WHATEVER CSR" << endl;
                         
                             sol.zero();
                             FloatVector residual( rhs );
@@ -307,7 +307,7 @@ int main()
                             );
 
                             timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
                         }
 
@@ -321,7 +321,7 @@ int main()
                     
                 }
 
-                LOG << "Refinement...";// << endl;
+                LOG << "Refinement..." << endl;
             
                 if( l != max_l ) M.uniformrefinement();
 
@@ -333,7 +333,7 @@ int main()
         
         
         
-        LOG << "Finished Unit Test";// << endl;
+        LOG << "Finished Unit Test" << endl;
         
         return 0;
 }

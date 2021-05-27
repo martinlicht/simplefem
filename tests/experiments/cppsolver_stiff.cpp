@@ -31,13 +31,13 @@ using namespace std;
 int main()
 {
         
-        LOG << "Unit Test: Compare numerical solvers CRM vs MINRES\n           for Solution of Dirichlet Problem";// << endl;
+        LOG << "Unit Test: Compare numerical solvers CRM vs MINRES\n           for Solution of Dirichlet Problem" << endl;
         
         LOG << std::setprecision(10);
 
         if(true){
 
-            LOG << "Initial mesh...";// << endl;
+            LOG << "Initial mesh..." << endl;
             
             MeshSimplicial2D M = StandardSquare2D();
             
@@ -47,7 +47,7 @@ int main()
             
             M.check_dirichlet_flags();
             
-            LOG << "Prepare scalar fields for testing...";// << endl;
+            LOG << "Prepare scalar fields for testing..." << endl;
             
             
             const Float xfeq = 1.;
@@ -69,7 +69,7 @@ int main()
             
             
 
-            LOG << "Solving Poisson Problem with Dirichlet boundary conditions";// << endl;
+            LOG << "Solving Poisson Problem with Dirichlet boundary conditions" << endl;
 
             ConvergenceTable contable;
             
@@ -81,36 +81,36 @@ int main()
 
             for( int l = min_l; l <= max_l; l++ ){
                 
-                LOG << "Level: " << l;// << std::endl;
+                LOG << "Level: " << l << std::endl;
                 LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
                 const int r = 1;
                 
                 {
                     
-                    LOG << "...assemble matrices";// << endl;
+                    LOG << "...assemble matrices" << endl;
             
                     SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
                     scalar_massmatrix.sortandcompressentries();
                     
-                    LOG << "...assemble vector mass matrix";// << endl;
+                    LOG << "...assemble vector mass matrix" << endl;
             
                     SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
                     vector_massmatrix.sortandcompressentries();
                     
-                    LOG << "...assemble differential matrix and transpose";// << endl;
+                    LOG << "...assemble differential matrix and transpose" << endl;
 
                     SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r );
 
                     SparseMatrix diffmatrix_t = diffmatrix.getTranspose();
 
-                    LOG << "...assemble inclusion matrix and transpose";// << endl;
+                    LOG << "...assemble inclusion matrix and transpose" << endl;
             
                     SparseMatrix incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r );
 
                     SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
-                    LOG << "...assemble stiffness matrix";// << endl;
+                    LOG << "...assemble stiffness matrix" << endl;
             
                     auto composed_stiffness = incmatrix_t * diffmatrix_t * vector_massmatrix * diffmatrix * incmatrix;
                     auto composed_mass      = incmatrix_t * scalar_massmatrix * incmatrix;
@@ -138,7 +138,7 @@ int main()
                         
                         if(false)
                         {
-                            LOG << "CGM C++";// << endl;
+                            LOG << "CGM C++" << endl;
                         
                             FloatVector sol = sol_original;
                             FloatVector rhs = rhs_original;
@@ -148,7 +148,7 @@ int main()
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             
                             LOG << sol.norm( composed_mass );
                             contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );
@@ -156,7 +156,7 @@ int main()
 
                         if(false)
                         {
-                            LOG << "CRM C++";// << endl;
+                            LOG << "CRM C++" << endl;
                         
                             FloatVector sol = sol_original;
                             FloatVector rhs = rhs_original;
@@ -168,14 +168,14 @@ int main()
                             timestamp start = gettimestamp();
                             Solver.solve_robust( sol, rhs );
                             timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             
                             LOG << sol.norm( composed_mass );
                             contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );
                         }
 
                         {
-                            LOG << "MINRES C++";// << endl;
+                            LOG << "MINRES C++" << endl;
                         
                             FloatVector sol = sol_original;
                             FloatVector rhs = rhs_original;
@@ -186,7 +186,7 @@ int main()
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
                             LOG << sol.norm( composed_mass );
                             contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );
@@ -194,7 +194,7 @@ int main()
 
                         if(false)
                         {
-                            LOG << "HERZOG SOODHALTER C++";// << endl;
+                            LOG << "HERZOG SOODHALTER C++" << endl;
                         
                             FloatVector sol = sol_original;
                             FloatVector rhs = rhs_original;
@@ -204,7 +204,7 @@ int main()
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
                             LOG << sol.norm( composed_mass );
                             contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );
@@ -219,7 +219,7 @@ int main()
                     
                 }
 
-                LOG << "Refinement...";// << endl;
+                LOG << "Refinement..." << endl;
             
                 if( l != max_l ) M.uniformrefinement();
 
@@ -231,7 +231,7 @@ int main()
         
         
         
-        LOG << "Finished Unit Test";// << endl;
+        LOG << "Finished Unit Test" << endl;
         
         return 0;
 }

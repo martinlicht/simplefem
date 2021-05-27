@@ -37,13 +37,13 @@ using namespace std;
 int main()
 {
         
-        LOG << "Unit Test: 2D Maxwell System";// << endl;
+        LOG << "Unit Test: 2D Maxwell System" << endl;
         
         LOG << std::setprecision(10);
 
         if(true){
 
-            LOG << "Initial mesh...";// << endl;
+            LOG << "Initial mesh..." << endl;
             
             MeshSimplicial2D M = StandardSquare2D();
             
@@ -60,7 +60,7 @@ int main()
             
             std::function<FloatVector(const FloatVector&)> experiment_sol = 
                 [=](const FloatVector& vec) -> FloatVector{
-                    assert( vec.getdimension() == 2 );
+                    Assert( vec.getdimension() == 2 );
                     // return FloatVector({ 1. });
                     return FloatVector({ 
                         bumpfunction(vec[0])*bumpfunction(vec[1]) //std::sin( xfeq * Constants::pi * vec[0] ) * std::sin( yfeq * Constants::pi * vec[1] )
@@ -72,7 +72,7 @@ int main()
 
             std::function<FloatVector(const FloatVector&)> experiment_ndiv = 
                 [=](const FloatVector& vec) -> FloatVector{
-                    assert( vec.getdimension() == 2 );
+                    Assert( vec.getdimension() == 2 );
                     // return FloatVector({ 1. });
                     return FloatVector( { 
                         - bumpfunction_dev(vec[0]) * bumpfunction(vec[1]) - bumpfunction(vec[0]) * bumpfunction_dev(vec[1])
@@ -85,7 +85,7 @@ int main()
 
             std::function<FloatVector(const FloatVector&)> experiment_curl = 
                 [=](const FloatVector& vec) -> FloatVector{
-                    assert( vec.getdimension() == 2 );
+                    Assert( vec.getdimension() == 2 );
                     // return FloatVector({ 1. });
                     return FloatVector( { // - partial_y + partial_x
                         - bumpfunction(vec[0]) * bumpfunction_dev(vec[1]) + bumpfunction_dev(vec[0]) * bumpfunction(vec[1])
@@ -101,7 +101,7 @@ int main()
 
             std::function<FloatVector(const FloatVector&)> experiment_rhs = 
                 [=](const FloatVector& vec) -> FloatVector{
-                    assert( vec.getdimension() == 2 );
+                    Assert( vec.getdimension() == 2 );
                     
                     
 //                     const Float stepsize = 1e-07;
@@ -118,7 +118,7 @@ int main()
 //                     
 //                     ret /= ( stepsize * stepsize );
 //                     
-//                     assert( ret.getdimension() == 2 );
+//                     Assert( ret.getdimension() == 2 );
 //                     
 //                     return ret;
 
@@ -172,15 +172,15 @@ int main()
             for( int l = min_l; l <= max_l; l++ )
             {
                 
-                LOG << "Level: " << l;// << std::endl;
+                LOG << "Level: " << l << std::endl;
                 LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
                 for( int r = min_r; r <= max_r; r++ )
                 {
                     
-                    LOG << "Polynomial degree: " << r;// << std::endl;
+                    LOG << "Polynomial degree: " << r << std::endl;
                     
-                    LOG << "... assemble matrices";// << endl;
+                    LOG << "... assemble matrices" << endl;
             
                     
                     SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r+1 );
@@ -244,7 +244,7 @@ int main()
                         const auto& function_curl = experiment_curl;
                         const auto& function_rhs  = experiment_rhs;
                         
-                        LOG << "...interpolate explicit solution and rhs";// << endl;
+                        LOG << "...interpolate explicit solution and rhs" << endl;
                         
                         FloatVector interpol_ndiv = Interpolation( M, M.getinnerdimension(), 0, r+1, function_ndiv  );
                         FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 1, r,   function_sol  );
@@ -266,7 +266,7 @@ int main()
                         if(false)
                         {
                         
-                            LOG << "...measure interpolation commutativity";// << endl;
+                            LOG << "...measure interpolation commutativity" << endl;
                             
 //                             auto  commutatorerror_1_aux = interpol_rhs - scalar_diffmatrix * interpol_ndiv - vector_diffmatrix_t * volume_massmatrix * interpol_curl;
                             auto  commutatorerror_1_aux
@@ -275,15 +275,15 @@ int main()
                             - scalar_diffmatrix   * inv(scalar_massmatrix,1e-14) * scalar_diffmatrix_t * vector_massmatrix * interpol_sol
                             - vector_diffmatrix_t * volume_massmatrix * vector_diffmatrix   * interpol_sol;
                             Float commutatorerror_1     = commutatorerror_1_aux * ( vector_massmatrix * commutatorerror_1_aux );
-                            LOG << "algebraic commutator error 1: " << commutatorerror_1;// << endl;
+                            LOG << "algebraic commutator error 1: " << commutatorerror_1 << endl;
                             
                             auto  commutatorerror_2_aux = interpol_curl - vector_diffmatrix * interpol_sol;
                             Float commutatorerror_2     = commutatorerror_2_aux * ( volume_massmatrix * commutatorerror_2_aux );
-                            LOG << "algebraic commutator error 2: " << commutatorerror_2;// << endl;
+                            LOG << "algebraic commutator error 2: " << commutatorerror_2 << endl;
                             
                             auto  commutatorerror_3_aux = scalar_massmatrix * interpol_ndiv - scalar_diffmatrix_t * interpol_sol;
                             Float commutatorerror_3     = commutatorerror_3_aux * ( scalar_massmatrix * commutatorerror_3_aux );
-                            LOG << "algebraic commutator error 3: " << commutatorerror_3;// << endl;
+                            LOG << "algebraic commutator error 3: " << commutatorerror_3 << endl;
                             
                         }
                         
@@ -299,11 +299,11 @@ int main()
                         
                             FloatVector res = rhs;
 
-                            LOG << "...iterative solver";// << endl;
+                            LOG << "...iterative solver" << endl;
                             
                             timestamp start = gettimestamp();
 
-                            LOG << "- mixed system solver";// << endl;
+                            LOG << "- mixed system solver" << endl;
 //                             if(false)
                             HodgeConjugateResidualSolverCSR_SSOR(
                             //HodgeConjugateResidualSolverCSR_textbook( 
@@ -323,7 +323,7 @@ int main()
                             
                             sol *= -1;
                             
-//                             LOG << "- elliptic system solver";// << endl;
+//                             LOG << "- elliptic system solver" << endl;
 //                             ConjugateResidualSolverCSR( 
 //                                 sol.getdimension(), 
 //                                 sol.raw(), 
@@ -343,7 +343,7 @@ int main()
                             
 
                             timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
                             
                         }
@@ -351,7 +351,7 @@ int main()
                         if(false)
                         {
                             
-                            LOG << "...iterative solver";// << endl;
+                            LOG << "...iterative solver" << endl;
                             
                             sol.zero();
                             
@@ -367,9 +367,9 @@ int main()
                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
 
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
-                            LOG << "...compute error and residual:";// << endl;
+                            LOG << "...compute error and residual:" << endl;
 
                         }
 
@@ -394,13 +394,13 @@ int main()
                             Solver.solve( sol_whole, rhs_whole );
                             timestamp end = gettimestamp();
 
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
-                            LOG << "...compute error and residual:";// << endl;
+                            LOG << "...compute error and residual:" << endl;
 
                             Float residualnorm  = ( rhs_whole - X * sol_whole ).norm();
 
-                            LOG << "combined system residual:  " << residualnorm;//;// << endl;
+                            LOG << "combined system residual:  " << residualnorm << endl;
 
                             sol = sol_whole.getslice( A.getdimout(), B.getdimout() );
                         }
@@ -409,7 +409,7 @@ int main()
                         
                         auto curl = vector_diffmatrix * vector_incmatrix * sol;
                         
-                        LOG << "...compute error and residual:";// << endl;
+                        LOG << "...compute error and residual:" << endl;
 
                         auto errornorm_aux_ndiv = interpol_ndiv - scalar_incmatrix * ndiv;
                         auto errornorm_aux_sol  = interpol_sol  - vector_incmatrix *  sol;
@@ -424,15 +424,15 @@ int main()
                         Float errornorm_sol  = sqrt( errornorm_sol_sq  );
                         Float errornorm_curl = sqrt( errornorm_curl_sq );
                         
-                        LOG << "div  error sq: " << errornorm_ndiv_sq;// << endl;
-                        LOG << "sol  error sq: " << errornorm_sol_sq;//;// << endl;
-                        LOG << "curl error sq: " << errornorm_curl_sq;// << endl;
+                        LOG << "div  error sq: " << errornorm_ndiv_sq << endl;
+                        LOG << "sol  error sq: " << errornorm_sol_sq << endl;
+                        LOG << "curl error sq: " << errornorm_curl_sq << endl;
                         
-                        LOG << "div  error: " << errornorm_ndiv;// << endl;
-                        LOG << "sol  error: " << errornorm_sol;//;// << endl;
-                        LOG << "curl error: " << errornorm_curl;// << endl;
+                        LOG << "div  error: " << errornorm_ndiv << endl;
+                        LOG << "sol  error: " << errornorm_sol << endl;
+                        LOG << "curl error: " << errornorm_curl << endl;
                         
-                        LOG << "residual:   " << residualnorm ;//;// << endl;
+                        LOG << "residual:   " << residualnorm  << endl;
 
                         contable << errornorm_ndiv;
                         contable << errornorm_sol;
@@ -448,7 +448,7 @@ int main()
                     
                 }
 
-                LOG << "Refinement...";// << endl;
+                LOG << "Refinement..." << endl;
             
                 if( l != max_l ) M.uniformrefinement();
 
@@ -465,7 +465,7 @@ int main()
         
         
         
-        LOG << "Finished Unit Test";// << endl;
+        LOG << "Finished Unit Test" << endl;
         
         return 0;
 }

@@ -23,23 +23,23 @@ using namespace std;
 
 int main()
 {
-    LOG << "Unit Test: assemble some common matrices";// << endl;
+    LOG << "Unit Test: assemble some common matrices" << endl;
         
     {
-        LOG << "Case 1D";// << endl;
+        LOG << "Case 1D" << endl;
         
         MeshSimplicial2D M = StandardSquare2D();
         
         M.check();
         
-        LOG << "Refinement...";// << endl;
+        LOG << "Refinement..." << endl;
         
         int number_of_refinements = 3;
         
         for( int i = 0; i < number_of_refinements; i++ )
             M.uniformrefinement();
         
-        LOG << "...assemble matrices";// << endl;
+        LOG << "...assemble matrices" << endl;
         
         for( int r = 0; r <= 4; r++ ) 
         for( int k = 0; k <= 1; k++ ) 
@@ -72,20 +72,20 @@ int main()
     }
 
     {
-        LOG << "Case 2D";// << endl;
+        LOG << "Case 2D" << endl;
         
         MeshSimplicial2D M = StandardSquare2D();
         
         M.check();
         
-        LOG << "Refinement...";// << endl;
+        LOG << "Refinement..." << endl;
         
         int number_of_refinements = 3;
         
         for( int i = 0; i < number_of_refinements; i++ )
             M.uniformrefinement();
         
-        LOG << "...assemble matrices";// << endl;
+        LOG << "...assemble matrices" << endl;
         
         for( int r = 0; r <= 3; r++ ) 
         for( int k = 0; k <= 2; k++ ) 
@@ -118,20 +118,20 @@ int main()
     }
 
     {
-        LOG << "Case 3D";// << endl;
+        LOG << "Case 3D" << endl;
         
         MeshSimplicial3D M = UnitSimplex3D();
         
         M.check();
         
-        LOG << "Refinement...";// << endl;
+        LOG << "Refinement..." << endl;
         
         int number_of_refinements = 1;
         
         for( int i = 0; i <= number_of_refinements; i++ ) 
             M.uniformrefinement();
         
-        LOG << "...assemble matrices";// << endl;
+        LOG << "...assemble matrices" << endl;
         
         for( int r = 0; r <= 3; r++ ) 
         for( int k = 0; k <= 3; k++ ) 
@@ -163,7 +163,7 @@ int main()
         }
     }
         
-    LOG << "Finished Unit Test";// << endl;
+    LOG << "Finished Unit Test" << endl;
     
     return 0;
 }

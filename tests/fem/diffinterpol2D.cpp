@@ -20,12 +20,12 @@ using namespace std;
 int main()
 {
         
-        LOG << "Unit Test: (2D) exterior derivative and interpolation";// << endl;
+        LOG << "Unit Test: (2D) exterior derivative and interpolation" << endl;
         
         LOG << std::setprecision(10);
 
         
-        LOG << "Initial mesh...";// << endl;
+        LOG << "Initial mesh..." << endl;
         
         MeshSimplicial2D M = StandardSquare2D();
         
@@ -119,7 +119,7 @@ int main()
             for( int r = r_min; r <= r_max; r++ ) 
             {
                 
-                LOG << "...assemble matrices: l=" << l << " r=" << r;// << endl;
+                LOG << "...assemble matrices: l=" << l << " r=" << r << endl;
         
                 SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
                 
@@ -172,7 +172,7 @@ int main()
                 
             }
 
-            LOG << "Refinement...";// << endl;
+            LOG << "Refinement..." << endl;
         
             M.uniformrefinement();
             
@@ -227,7 +227,7 @@ int main()
 //         }
         
         
-        LOG << "Finished Unit Test";// << endl;
+        LOG << "Finished Unit Test" << endl;
         
         return 0;
 }

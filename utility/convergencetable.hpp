@@ -222,7 +222,7 @@ class ConvergenceTable
 //                     
 //                 }        
 //                 
-//                 os << '\n';
+//                 os << nl;
 //                 
 //             }
 //             

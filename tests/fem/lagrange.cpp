@@ -27,11 +27,11 @@ using namespace std;
 int main()
 {
         
-        LOG << "Unit Test: (?D) Lagrange matrices agree with FEEC analogues";// << endl;
+        LOG << "Unit Test: (?D) Lagrange matrices agree with FEEC analogues" << endl;
         
         LOG << std::setprecision(10);
 
-        LOG << "Initial mesh...";// << endl;
+        LOG << "Initial mesh..." << endl;
         
         MeshSimplicial1D M1 = UnitInterval1D();
         MeshSimplicial2D M2 = UnitTriangle2D(); //StandardSquare2D_simple();
@@ -79,9 +79,9 @@ int main()
                 Mesh& M = *(Ms[d]);
                 
                 
-                LOG << "DIMENSION " << d+1 << " AT LEVEL " << l;// << endl;
+                LOG << "DIMENSION " << d+1 << " AT LEVEL " << l << endl;
         
-                LOG << "...basic FEEC matrices";// << endl;
+                LOG << "...basic FEEC matrices" << endl;
         
                 auto feec_broken_mass = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, 1 );
 
@@ -102,7 +102,7 @@ int main()
                 assert( feec_inc.isfinite() );
                 assert( feec_inc_t.isfinite() );
                     
-                LOG << "...composed FEEC matrices";// << endl;
+                LOG << "...composed FEEC matrices" << endl;
                 
                 auto feec_broken_stiffness = feec_diff_t & feec_vectormass       & feec_diff;
                 auto feec_stiffness        = feec_inc_t  & feec_broken_stiffness & feec_inc;
@@ -112,7 +112,7 @@ int main()
                 assert( feec_mass.isfinite()             );
                 assert( feec_broken_stiffness.isfinite() );
                 
-                LOG << "...basic Lagrange matrices";// << endl;
+                LOG << "...basic Lagrange matrices" << endl;
                 
                 auto lagr_broken_mass      = LagrangeBrokenMassMatrix( M, 1 );
                 auto lagr_broken_stiffness = LagrangeBrokenStiffnessMatrix( M, 1 );
@@ -123,7 +123,7 @@ int main()
                 auto lagr_inc   = LagrangeInclusionMatrix( M, M.getinnerdimension(), 1 );
                 auto lagr_inc_t = lagr_inc.getTranspose();
                 
-                LOG << "...composed Lagrange matrices";// << endl;
+                LOG << "...composed Lagrange matrices" << endl;
                 
                 auto lagr_composed_mass      = lagr_inc_t & lagr_broken_mass      & lagr_inc;
                 auto lagr_composed_stiffness = lagr_inc_t & lagr_broken_stiffness & lagr_inc;
@@ -232,12 +232,12 @@ int main()
                 
             for( int d = 0; d < 3; d++ ) {
                 contable[d].lg();
-                LOG << "----------------------------------";// << std::endl;
+                LOG << "----------------------------------" << std::endl;
             }
                 
                 
                 
-            LOG << "Refinement...";// << endl;
+            LOG << "Refinement..." << endl;
         
             M1.uniformrefinement();
             M2.uniformrefinement();
@@ -283,7 +283,7 @@ int main()
             for( int d = 0; d < 3; d++ ) {
                 LOG << "Dimension: " << d+1 << '\n';
                 contable[d].lg();
-                LOG << "----------------------------------";// << std::endl;
+                LOG << "----------------------------------" << std::endl;
             }
 
         }
@@ -301,7 +301,7 @@ int main()
         }
         
         
-        LOG << "Finished Unit Test";// << endl;
+        LOG << "Finished Unit Test" << endl;
         
         return 0;
 }

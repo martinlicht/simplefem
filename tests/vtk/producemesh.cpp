@@ -57,7 +57,7 @@ inline void internal_print( const MeshSimplicial2D& M, std::string meshname, con
 
 int main()
 {
-    LOG << "Output of a few important meshes";// << endl;
+    LOG << "Output of a few important meshes" << endl;
     
     
     //if(false)
@@ -67,7 +67,7 @@ int main()
     
         MeshSimplicial2D M = SphericalSurface2D(L);
             
-        LOG << L << ":\t" << M.getShapemeasure();// << endl;
+        LOG << L << ":\t" << M.getShapemeasure() << endl;
         
         internal_print( M, "spherical surface 2D", "sphere" );
         
@@ -82,7 +82,7 @@ int main()
     
         MeshSimplicial2D M = LShapedDomain2D();
             
-        LOG << L << ":\t" << M.getShapemeasure();// << endl;
+        LOG << L << ":\t" << M.getShapemeasure() << endl;
         
         internal_print( M, "L shaped domain 2D", "lshaped" );
         
@@ -92,7 +92,7 @@ int main()
     
     //if(false)
     {
-        LOG << "Unit Test for VTK output of Simplicial Mesh";// << endl;
+        LOG << "Unit Test for VTK output of Simplicial Mesh" << endl;
         
         const int K = 4;
         const int L = 12;
@@ -115,7 +115,7 @@ int main()
             
             MeshSimplicial2D M = UnitDisk(L);
             
-            LOG << L << ":\t" << M.getShapemeasure();// << endl;
+            LOG << L << ":\t" << M.getShapemeasure() << endl;
             
             {
                 fstream fs( string("./rounddisk.tex"), std::fstream::out );
@@ -144,7 +144,7 @@ int main()
     }
         
     
-    LOG << "Finished Unit Test";// << endl;
+    LOG << "Finished Unit Test" << endl;
 
     return 0;
 }

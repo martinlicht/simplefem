@@ -181,7 +181,7 @@ void FloatVector::printplain( std::ostream& output ) const
 void FloatVector::lg() const 
 {
     check();
-    LOG << "float vector of dimension: " << getdimension();// << std::endl;
+    LOG << "float vector of dimension: " << getdimension() << std::endl;
     for( int p = 0; p < getdimension(); p++ )
         LOG << p << ": " << getentry(p) << std::endl;
 }
@@ -189,7 +189,7 @@ void FloatVector::lg() const
 void FloatVector::lgplain() const 
 {
     check();
-    LOG << getdimension();// << nl;
+    LOG << getdimension() << std::endl;
     for( int p = 0; p < getdimension(); p++ )
         LOG << getentry(p) << nl;
 }
