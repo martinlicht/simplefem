@@ -77,7 +77,11 @@ inline void myAssert( const char* expression, const char* filename, const int li
 // // __builtin_unreachable
 
 #define unreachable() \
-        fprintf( stderr, "Unreachable code reached:\n\t%s:%d\n", __FILE__, __LINE__ ), \
+        fprintf( stderr, "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ), \
+        fprintf( stderr, "!!!!\n" ), \
+        fprintf( stderr, "!!!!\tUnreachable code reached:\n!!!!\t%s:%d\n", __FILE__, __LINE__ ), \
+        fprintf( stderr, "!!!!\n" ), \
+        fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ), \
         abort()
 
 #endif //INCLUDEGUARD_DEBUG_HPP
