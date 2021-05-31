@@ -27,11 +27,11 @@ using namespace std;
 int main()
 {
         
-        LOG << "Unit Test: (1D) degree elevations commute";// << endl;
+        LOG << "Unit Test: (1D) degree elevations commute" << endl;
         
         LOG << std::setprecision(10);
 
-        LOG << "Initial mesh...";// << endl;
+        LOG << "Initial mesh..." << endl;
         
         auto M = UnitCube3D();
         
@@ -64,7 +64,7 @@ int main()
             for( int r = r_min; r <= r_max; r++ ) 
             {
                 
-                LOG << "...assemble matrices: l=" << l << " r=" << r;// << endl;
+                LOG << "...assemble matrices: l=" << l << " r=" << r << endl;
         
                 SparseMatrix elevation_r_1 = FEECBrokenElevationMatrix( M, M.getinnerdimension(), k, r  , 1 );
                 SparseMatrix elevation_r_2 = FEECBrokenElevationMatrix( M, M.getinnerdimension(), k, r+1, 1 );
@@ -93,7 +93,7 @@ int main()
                 
             }
 
-            LOG << "Refinement...";// << endl;
+            LOG << "Refinement..." << endl;
         
             M.uniformrefinement();
             
@@ -137,7 +137,7 @@ int main()
         
         
         
-        LOG << "Finished Unit Test";// << endl;
+        LOG << "Finished Unit Test" << endl;
         
         return 0;
 }

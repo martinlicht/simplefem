@@ -62,6 +62,7 @@ $($(context).outs): $(contextdir)/%.out: $(contextdir)/%.cpp | $($(context).depd
 # 	@ echo $($(mycontext).include)
 # 	@ echo $($(mycontext).rpath)
 # 	@ echo $($(mycontext).lib)
+	@echo Compiling $@ ...
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -std=c++17 -MM $(mycontextdir)/$*.cpp -MT $@ -MF $($(mycontext).depdir)/$*.d
 	@$(CXX) $(CXXFLAGS_EXECUTABLE) $(CPPFLAGS) $< $($(mycontext).include) $($(mycontext).rpath) $($(mycontext).mylib) -o $@ $(LDLIBS)
 
@@ -73,3 +74,30 @@ $($(context).outs): $(contextdir)/%.out: $(projectdir)/makefile
 $($(context).outs): $(contextdir)/%.out: $(projectdir)/*.mk $(projectdir)/tests/*.mk
 
 $(context).tests: $($(context).outs)
+
+
+
+
+
+
+
+
+
+
+
+$(context).sources     := $(sort $(wildcard $(contextdir)/*cpp))
+$(context).executables := $(patsubst %.cpp,%.out,$($(context).sources))
+$(context).runs        := $(patsubst %.cpp,%.run,$($(context).sources))
+
+# $(context).runs        := $(patsubst %.out,%.run,$($(context).executables))
+
+
+# .PHONY: %.run
+
+$($(context).runs): %.run : %.out
+#	./$< > /dev/null
+	./$< 
+
+$(context).run: $($(context).runs)
+
+run: $(context).run

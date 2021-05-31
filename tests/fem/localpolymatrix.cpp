@@ -23,45 +23,45 @@ using namespace std;
 
 int main()
 {
-        LOG << "Unit Test for Inverse of Poly Matrix";// << endl;
-        
-        LOG << std::setprecision(10);
+    LOG << "Unit Test for Inverse of Poly Matrix" << endl;
+    
+    LOG << std::setprecision(10);
 
-        for( int n = 1; n <= 3; n++ )
-        for( int r = 1; r <  10; r++ )
-        {
-            
-            DenseMatrix MM = polynomialmassmatrix( n, r );
+    for( int n = 1; n <= 3; n++ )
+    for( int r = 1; r <  10; r++ )
+    {
         
-            DenseMatrix MMinv = Inverse(MM);
+        DenseMatrix MM = polynomialmassmatrix( n, r );
+    
+        DenseMatrix MMinv = Inverse(MM);
 
-            DenseMatrix MMchol = CholeskyDecomposition(MM);
-            
-            DenseMatrix MMqr_q(MM), MMqr_r(MM);
-            QRFactorization(MM,MMqr_q,MMqr_r);
-            
-            int N = MM.getdimin();
+        DenseMatrix MMchol = CholeskyDecomposition(MM);
+        
+        DenseMatrix MMqr_q(MM), MMqr_r(MM);
+        QRFactorization(MM,MMqr_q,MMqr_r);
+        
+        int N = MM.getdimin();
 
-            Float diff_inv  = ( MM * MMinv - IdentityMatrix(N) ).norm();//
-            Float diff_chol = ( MMchol * Transpose(MMchol) - MM ).norm();
-            Float diff_qr   = ( MMqr_q * MMqr_r - MM ).norm();
+        Float diff_inv  = ( MM * MMinv - IdentityMatrix(N) ).norm();
+        Float diff_chol = ( MMchol * Transpose(MMchol) - MM ).norm();
+        Float diff_qr   = ( MMqr_q * MMqr_r - MM ).norm();
 
-            LOG << "\tn=" << n
-                      << "\tr=" << r
-                      << "\tN=" << N
-                      << "\ta=" << diff_inv
-                      << "\tb=" << diff_chol
-                      << "\tc=" << diff_qr
-                      << nl;
-                      
-            // if( n==2 and r==2 )
-                // LOG << MM / factorial_integer(2) << nl;;
+        LOG << "\tn=" << n
+                    << "\tr=" << r
+                    << "\tN=" << N
+                    << "\ta=" << diff_inv
+                    << "\tb=" << diff_chol
+                    << "\tc=" << diff_qr
+                    << nl;
+                    
+        // if( n==2 and r==2 )
+            // LOG << MM / factorial_integer(2) << nl;;
 
-        }
-        
-        LOG << "Finished Unit Test";// << endl;
-        
-        
-        
-        return 0;
+    }
+    
+    LOG << "Finished Unit Test" << endl;
+    
+    
+    
+    return 0;
 }

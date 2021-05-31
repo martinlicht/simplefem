@@ -22,7 +22,7 @@ using namespace std;
 
 int main()
 {
-        LOG << "Unit Test: Evaluation Matrix and its Invertibility";// << endl;
+        LOG << "Unit Test: Evaluation Matrix and its Invertibility" << endl;
         
         LOG << std::setprecision(10);
 
@@ -52,7 +52,7 @@ int main()
 
         }
         
-        LOG << "Finished Unit Test";// << endl;
+        LOG << "Finished Unit Test" << endl;
         
         
         return 0;

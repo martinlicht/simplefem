@@ -37,13 +37,13 @@ using namespace std;
 int main()
 {
         
-        LOG << "Unit Test: Compare numerical solvers CRM vs MINRES\n           for Solution of Dirichlet Problem";// << endl;
+        LOG << "Unit Test: Compare numerical solvers CRM vs MINRES\n           for Solution of Dirichlet Problem" << endl;
         
         LOG << std::setprecision(10);
 
         if(true){
 
-            LOG << "Initial mesh...";// << endl;
+            LOG << "Initial mesh..." << endl;
             
             MeshSimplicial2D Mx = StandardSquare2D();
             
@@ -70,7 +70,7 @@ int main()
                     };
             
 
-            LOG << "Nullspace computation";// << endl;
+            LOG << "Nullspace computation" << endl;
 
             ConvergenceTable contable;
             
@@ -95,17 +95,17 @@ int main()
             for( int l = min_l; l <= max_l; l++ )
             {
                 
-                LOG << "Level: " << l;// << std::endl;
+                LOG << "Level: " << l << std::endl;
                 LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
                 for( int r = min_r; r <= max_r; r++ )
                 {
                     
-                    LOG << "Polynomial degree: " << r;// << std::endl;
+                    LOG << "Polynomial degree: " << r << std::endl;
                     
-                    LOG << "...assemble matrices";// << endl;
+                    LOG << "...assemble matrices" << endl;
             
-                    LOG << "... assemble matrices";// << endl;
+                    LOG << "... assemble matrices" << endl;
             
                     
                     SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r+1 );
@@ -208,9 +208,9 @@ int main()
                                 
                                 assert( candidate.isfinite() );
                                 
-                                LOG << "\t\t\t x:         " << candidate.norm( mass );// << std::endl;
-                                LOG << "\t\t\t Ax:        " << ( SystemMatrix * candidate ).norm( mass );// << std::endl;
-                                LOG << "\t\t\t b - Ax:    " << ( SystemMatrix * candidate - rhs ).norm( mass );// << std::endl;
+                                LOG << "\t\t\t x:         " << candidate.norm( mass ) << std::endl;
+                                LOG << "\t\t\t Ax:        " << ( SystemMatrix * candidate ).norm( mass ) << std::endl;
+                                LOG << "\t\t\t b - Ax:    " << ( SystemMatrix * candidate - rhs ).norm( mass ) << std::endl;
                                 
                             }
                         }
@@ -225,10 +225,10 @@ int main()
                         }
                         
                         Float reduced_mass = candidate.norm(mass);
-                        LOG << "\t\t\t Reduced mass: " << reduced_mass;// << std::endl;
+                        LOG << "\t\t\t Reduced mass: " << reduced_mass << std::endl;
                         
                         if( reduced_mass < 1e-6 ) {
-                            LOG << "!!!!!!!!!!!!!Discard vector because mass is too small!";// << std::endl;
+                            LOG << "!!!!!!!!!!!!!Discard vector because mass is too small!" << std::endl;
                             continue;
                         }
                         
@@ -236,16 +236,16 @@ int main()
                         
                         Float residual_mass = ( SystemMatrix * candidate ).norm(mass);
                         
-                        LOG << "\t\t\t Numerical residual: " << residual_mass;// << std::endl;
+                        LOG << "\t\t\t Numerical residual: " << residual_mass << std::endl;
                         
                         if( false and residual_mass > 1e-6 ) {
-                            LOG << "!!!!!!!!!!!!!Discard vector because not nullspace enough!";// << std::endl;
+                            LOG << "!!!!!!!!!!!!!Discard vector because not nullspace enough!" << std::endl;
                             continue;
                         }
                         
                         assert( candidate.isfinite() );
                         
-                        LOG << "Accept vector: " << nullvectorgallery.size() + 1;// << std::endl;
+                        LOG << "Accept vector: " << nullvectorgallery.size() + 1 << std::endl;
                     
                         
                         nullvectorgallery.push_back( candidate );
@@ -298,9 +298,9 @@ int main()
 //                             
 //                             assert( sol.isfinite() );
 //                             
-//                             LOG << "\t\t\t x:         " << sol.norm( mass );// << std::endl;
-//                             LOG << "\t\t\t Ax:        " << ( mat * sol ).norm( mass );// << std::endl;
-//                             LOG << "\t\t\t b - Ax:    " << ( mat * sol - rhs ).norm( mass );// << std::endl;
+//                             LOG << "\t\t\t x:         " << sol.norm( mass ) << std::endl;
+//                             LOG << "\t\t\t Ax:        " << ( mat * sol ).norm( mass ) << std::endl;
+//                             LOG << "\t\t\t b - Ax:    " << ( mat * sol - rhs ).norm( mass ) << std::endl;
 //                         
 //                         }
 //                         
@@ -335,7 +335,7 @@ int main()
                     
                 }
 
-                LOG << "Refinement...";// << endl;
+                LOG << "Refinement..." << endl;
             
                 if( l != max_l ) M.uniformrefinement();
 
@@ -352,7 +352,7 @@ int main()
         
         
         
-        LOG << "Finished Unit Test";// << endl;
+        LOG << "Finished Unit Test" << endl;
         
         return 0;
 }
@@ -370,7 +370,7 @@ int main()
 //                         
 //                         if(false)
 //                         {
-//                             LOG << "Filter out from x (CGM)";// << endl;
+//                             LOG << "Filter out from x (CGM)" << endl;
 //                         
 //                             FloatVector sol( sol_original );
 //                             FloatVector rhs( rhs_original.getdimension(), 0. );
@@ -392,13 +392,13 @@ int main()
 //                             
 //                             assert( sol.isfinite() );
 //                             
-//                             LOG << "\t\t\t x_0:       " << sol_original.norm( mass );// << std::endl;
-//                             LOG << "\t\t\t Ax_0:      " << ( mat * sol_original ).norm( mass );// << std::endl;
-//                             LOG << "\t\t\t b - Ax_0:  " << ( mat * sol_original - rhs ).norm( mass );// << std::endl;
+//                             LOG << "\t\t\t x_0:       " << sol_original.norm( mass ) << std::endl;
+//                             LOG << "\t\t\t Ax_0:      " << ( mat * sol_original ).norm( mass ) << std::endl;
+//                             LOG << "\t\t\t b - Ax_0:  " << ( mat * sol_original - rhs ).norm( mass ) << std::endl;
 //                             
-//                             LOG << "\t\t\t x:         " << sol.norm( mass );// << std::endl;
-//                             LOG << "\t\t\t Ax:        " << ( mat * sol ).norm( mass );// << std::endl;
-//                             LOG << "\t\t\t b - Ax:    " << ( mat * sol - rhs ).norm( mass );// << std::endl;
+//                             LOG << "\t\t\t x:         " << sol.norm( mass ) << std::endl;
+//                             LOG << "\t\t\t Ax:        " << ( mat * sol ).norm( mass ) << std::endl;
+//                             LOG << "\t\t\t b - Ax:    " << ( mat * sol - rhs ).norm( mass ) << std::endl;
 //                             
 //                             contable << sol.norm( mass ) << ( mat * sol ).norm( mass );
 //                             
@@ -444,7 +444,7 @@ int main()
 // 
 //                         if(false)
 //                         {
-//                             LOG << "Filter out from x (CRM)";// << endl;
+//                             LOG << "Filter out from x (CRM)" << endl;
 //                         
 //                             FloatVector sol( sol_original );
 //                             FloatVector rhs( rhs_original.getdimension(), 0. );
@@ -461,20 +461,20 @@ int main()
 //                             );
 //                             sol.normalize( mass );
 //                             
-//                             LOG << "\t\t\t x_0:       " << sol_original.norm( mass );// << std::endl;
-//                             LOG << "\t\t\t Ax_0:      " << ( mat * sol_original ).norm( mass );// << std::endl;
-//                             LOG << "\t\t\t b - Ax_0:  " << ( mat * sol_original - rhs ).norm( mass );// << std::endl;
+//                             LOG << "\t\t\t x_0:       " << sol_original.norm( mass ) << std::endl;
+//                             LOG << "\t\t\t Ax_0:      " << ( mat * sol_original ).norm( mass ) << std::endl;
+//                             LOG << "\t\t\t b - Ax_0:  " << ( mat * sol_original - rhs ).norm( mass ) << std::endl;
 //                             
-//                             LOG << "\t\t\t x:         " << sol.norm( mass );// << std::endl;
-//                             LOG << "\t\t\t Ax:        " << ( mat * sol ).norm( mass );// << std::endl;
-//                             LOG << "\t\t\t b - Ax:    " << ( mat * sol - rhs ).norm( mass );// << std::endl;
+//                             LOG << "\t\t\t x:         " << sol.norm( mass ) << std::endl;
+//                             LOG << "\t\t\t Ax:        " << ( mat * sol ).norm( mass ) << std::endl;
+//                             LOG << "\t\t\t b - Ax:    " << ( mat * sol - rhs ).norm( mass ) << std::endl;
 //                             
 //                             contable << sol.norm( mass ) << ( mat * sol ).norm( mass );
 //                         }
 // 
 //                         if(false)
 //                         {
-//                             LOG << "Filter out from b";// << endl;
+//                             LOG << "Filter out from b" << endl;
 //                         
 //                             FloatVector sol( sol_original.getdimension(), 0. );
 //                             FloatVector rhs( rhs_original );
@@ -491,13 +491,13 @@ int main()
 //                             );
 //                             residual.normalize( mass );
 //                             
-//                             LOG << "\t\t\t b:       " << rhs_original.norm( mass );// << std::endl;
-//                             LOG << "\t\t\t Ab:      " << ( mat * rhs ).norm( mass );// << std::endl;
+//                             LOG << "\t\t\t b:       " << rhs_original.norm( mass ) << std::endl;
+//                             LOG << "\t\t\t Ab:      " << ( mat * rhs ).norm( mass ) << std::endl;
 //                             
-//                             LOG << "\t\t\t r:       " << residual.norm( mass );// << std::endl;
-//                             LOG << "\t\t\t Ar:      " << ( mat * residual ).norm( mass );// << std::endl;
+//                             LOG << "\t\t\t r:       " << residual.norm( mass ) << std::endl;
+//                             LOG << "\t\t\t Ar:      " << ( mat * residual ).norm( mass ) << std::endl;
 //                             
-//                             LOG << "\t\t\t Ar:      " << ( mat * ( rhs - mat * sol ) ).norm( mass );// << std::endl;
+//                             LOG << "\t\t\t Ar:      " << ( mat * ( rhs - mat * sol ) ).norm( mass ) << std::endl;
 //                             
 //                             contable << sol.norm( mass ) << ( mat * sol ).norm( mass );
 //                         }

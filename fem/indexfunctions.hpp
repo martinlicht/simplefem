@@ -52,7 +52,7 @@ inline std::vector< std::pair<MultiIndex,IndexMap> > ListOfSullivanIndices( int 
     if( r == 0 ) {
         assert( k >= n );
         MultiIndex foo = ZeroMultiIndex( IndexRange(0,n) );
-        IndexMap   bar = IndexMap( IndexRange(1,n), IndexRange(0,n), [n](int i) -> int {return i;} );
+        IndexMap   bar = IndexMap( IndexRange(1,n), IndexRange(0,n), [n](int i) -> int { assert( 1 <= i and i <= n ); return i; } );
         std::vector< std::pair<MultiIndex,IndexMap> > ret { std::pair( foo, bar ) };
         return ret;
     }

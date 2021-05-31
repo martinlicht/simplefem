@@ -15,7 +15,7 @@ using namespace std;
 
 int main()
 {
-        LOG << "Unit Test for Simplicial 3D Module";// << endl;
+        LOG << "Unit Test for Simplicial 3D Module" << endl;
         
         for( int ei = 0; ei < 6; ei++ )
         {
@@ -59,7 +59,7 @@ int main()
         
         
         
-        LOG << "Finished Unit Test";// << endl;
+        LOG << "Finished Unit Test" << endl;
         
         return 0;
 }

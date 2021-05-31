@@ -14,11 +14,11 @@ using namespace std;
 int main()
 {
     
-    LOG << "Unit Test for Multi-Indices";// << endl;
+    LOG << "Unit Test for Multi-Indices" << endl;
         
     if( true )
     {
-        LOG << "Basic functionality";// << endl;
+        LOG << "Basic functionality" << endl;
         
         IndexRange irA( 2, 5 );
         MultiIndex miA( irA );
@@ -62,7 +62,7 @@ int main()
     
     if( true )
     {
-        LOG << "Comparison and arithmetics";// << endl;
+        LOG << "Comparison and arithmetics" << endl;
         
         IndexRange irA( 2, 5 );
         IndexRange irB( 1, 4 );
@@ -123,10 +123,10 @@ int main()
         assert( ( miA1-miA2 ).at(4) == 0 );
         assert( ( miA1-miA2 ).at(5) == 0 );
         
-        LOG << "Comparison and arithmetics done";// << endl;
+        LOG << "Comparison and arithmetics done" << endl;
     }
     
-    LOG << "Finished Unit Test";// << endl;
+    LOG << "Finished Unit Test" << endl;
     
     return 0;
 }

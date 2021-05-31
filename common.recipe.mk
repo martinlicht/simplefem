@@ -1,7 +1,17 @@
 
+# 
 # This file contains definitions of variables 
 # to be used in the compilation process 
 # for objects and shared libraries 
+# 
+# This file produces the variables 
+# 	- CXX
+# 	- CXXFLAGS
+# 	- CPPFLAGS
+# 	- LDLIBS
+# 
+# 
+
 
 
 
@@ -583,7 +593,19 @@ CXXFLAGS := $(strip $(CXXFLAGS))
 
 
 CXXFLAGS_EXECUTABLE:=
-CXXFLAGS_EXECUTABLE+=$(CXXFLAGS) -fwhole-program
+CXXFLAGS_EXECUTABLE+=$(CXXFLAGS)
+
+ifeq ($(FLAG_DO_OPTIMIZE),yes)
+	ifeq ($(FLAG_CXX),ICC)
+		CXXFLAGS_EXECUTABLE+=-fwhole-program
+	else 
+		ifeq ($(FLAG_CXX),GCC)
+			CXXFLAGS_EXECUTABLE+=-fwhole-program
+		endif
+	endif
+else
+endif
+
 
 
 ###############################################

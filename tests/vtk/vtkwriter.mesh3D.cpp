@@ -59,7 +59,7 @@ inline void internal_print( const MeshSimplicial3D& M, std::string meshname )
 
 int main()
 {
-    LOG << "Unit Test for VTK output of Simplicial Mesh (3D)";// << endl;
+    LOG << "Unit Test for VTK output of Simplicial Mesh (3D)" << endl;
     
     {
         
@@ -114,7 +114,7 @@ int main()
     
         
     
-    LOG << "Finished Unit Test";// << endl;
+    LOG << "Finished Unit Test" << endl;
 
     return 0;
 }

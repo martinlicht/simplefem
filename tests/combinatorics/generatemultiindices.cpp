@@ -11,103 +11,103 @@ using namespace std;
 
 int main()
 {
-    LOG << "Unit Test for Multiindex Generators";// << endl;
+    LOG << "Unit Test for Multiindex Generators" << endl;
     
     if(true)
     {
         
-        LOG << "First bulk";// << endl;
+        LOG << "First bulk" << endl;
     
         IndexRange ir( 1, 4 );
         std::vector<MultiIndex> vmi = generateMultiIndices( ir, 2);
         
         for( const auto& mi : vmi )
             LOG << mi;
-        LOG;// << endl;
+        LOG << endl;
         
     }
     
     if(true)
     {
         
-        LOG << "Second bulk";// << endl;
+        LOG << "Second bulk" << endl;
     
         IndexRange ir( 0, 2 );
         std::vector<MultiIndex> vmi = generateMultiIndices( ir, 2);
         
         for( const auto& mi : vmi )
             LOG << mi;
-        LOG;// << endl;
+        LOG << endl;
     
     }
     
     if(true)
     {
         
-        LOG << "Third bulk";// << endl;
+        LOG << "Third bulk" << endl;
     
         IndexRange ir( 0, 2 );
         std::vector<MultiIndex> vmi = generateMultiIndices( ir, 3);
 
         for( const auto& mi : vmi )
             LOG << mi;
-        LOG;// << endl;
+        LOG << endl;
         
     }
     
     if(true)
     {
       
-        LOG << "Zero degree";// << endl;
+        LOG << "Zero degree" << endl;
     
         IndexRange ir( 0, 2 );
         std::vector<MultiIndex> vmi = generateMultiIndices( ir, 0);
 
         for( const auto& mi : vmi )
             LOG << mi;
-        LOG;// << endl;
+        LOG << endl;
       
     }
     
     if(true)
     {
       
-        LOG << "First degree";// << endl;
+        LOG << "First degree" << endl;
     
         IndexRange ir( 0, 2 );
         std::vector<MultiIndex> vmi = generateMultiIndices( ir, 1);
 
         for( const auto& mi : vmi )
             LOG << mi;
-        LOG;// << endl;
+        LOG << endl;
       
     }
     
     if(true)
     {
       
-        LOG << "Degree 7 in one variable";// << endl;
+        LOG << "Degree 7 in one variable" << endl;
     
         IndexRange ir( 2, 2 );
         std::vector<MultiIndex> vmi = generateMultiIndices( ir, 7);
 
         for( const auto& mi : vmi )
             LOG << mi;
-        LOG;// << endl;
+        LOG << endl;
       
     }
     
     if(true)
     {
 
-        LOG << "MultiIndex over empty range ";// << endl;
+        LOG << "MultiIndex over empty range " << endl;
     
         IndexRange ir( 2, -3 );
         std::vector<MultiIndex> vmi = generateMultiIndices( ir, 3);
 
         for( const auto& mi : vmi )
             LOG << mi;
-        LOG;// << endl;
+        LOG << endl;
     
     }
     
@@ -116,7 +116,7 @@ int main()
     if(true)
     {
             
-        LOG << "Test generator for general multiindices";// << endl;
+        LOG << "Test generator for general multiindices" << endl;
         
         const std::vector<int> Ns = { /*-1, 0,*/ 1, 2, 3, 4 };
         const std::vector<int> Rs = { 0, 1, 2, 3, 4, 5, 6 };
@@ -126,7 +126,7 @@ int main()
         for( const int& R : Rs ) 
         {
         
-            LOG << N << space << R << '$';// << nl;
+            LOG << N << space << R << '$' << nl;
             
             const IndexRange bereich( 1, N );
         
@@ -144,16 +144,16 @@ int main()
             }
                 
             for( const MultiIndex& mi : all )
-                LOG << mi;// << endl;
+                LOG << mi << endl;
             
             
         }
         
-        LOG << "Tested";// << endl;
+        LOG << "Tested" << endl;
             
     }
     
-    LOG << "Finished Unit Test";// << endl;
+    LOG << "Finished Unit Test" << endl;
     
     return 0;
 }

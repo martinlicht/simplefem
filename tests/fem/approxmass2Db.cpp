@@ -23,11 +23,11 @@ using namespace std;
 int main()
 {
         
-        LOG << "Unit Test: (2D) masses are correctly approximated: mass of reference interpolation";// << endl;
+        LOG << "Unit Test: (2D) masses are correctly approximated: mass of reference interpolation" << endl;
         
         LOG << std::setprecision(10);
 
-        LOG << "Initial mesh...";// << endl;
+        LOG << "Initial mesh..." << endl;
         
         MeshSimplicial2D M = StandardSquare2D();
         
@@ -195,7 +195,7 @@ int main()
 
         for( int l = l_min; l <= l_max; l++ ){
             
-            LOG << "Refinement...";// << endl;
+            LOG << "Refinement..." << endl;
         
             M.uniformrefinement();
             
@@ -211,7 +211,7 @@ int main()
                 
             for( int r = r_min; r <= r_max; r++ ) 
             {
-                LOG << "...assemble matrices";// << endl;
+                LOG << "...assemble matrices" << endl;
         
                 SparseMatrix elevation_scalar = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 0, r, r_ref - r );
                 
@@ -331,7 +331,7 @@ int main()
         }
         
         
-        LOG << "Finished Unit Test";// << endl;
+        LOG << "Finished Unit Test" << endl;
         
         return 0;
 }

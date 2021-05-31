@@ -36,13 +36,13 @@ using namespace std;
 int main()
 {
         
-        LOG << "Unit Test: Compare numerical solvers CRM vs MINRES\n           for Solution of Dirichlet Problem";// << endl;
+        LOG << "Unit Test: Compare numerical solvers CRM vs MINRES\n           for Solution of Dirichlet Problem" << endl;
         
         LOG << std::setprecision(10);
 
         if(true){
 
-            LOG << "Initial mesh...";// << endl;
+            LOG << "Initial mesh..." << endl;
             
             MeshSimplicial2D M = StandardSquare2D();
             
@@ -54,7 +54,7 @@ int main()
             
             
             
-            LOG << "Prepare scalar fields for testing...";// << endl;
+            LOG << "Prepare scalar fields for testing..." << endl;
             
 
             std::function<FloatVector(const FloatVector&)> constant_one
@@ -99,7 +99,7 @@ int main()
             
             
 
-            LOG << "Solving Poisson Problem with Dirichlet boundary conditions";// << endl;
+            LOG << "Solving Poisson Problem with Dirichlet boundary conditions" << endl;
 
             ConvergenceTable contable;
             
@@ -111,14 +111,14 @@ int main()
 
             for( int l = min_l; l <= max_l; l++ ){
                 
-                LOG << "Level: " << l;// << std::endl;
+                LOG << "Level: " << l << std::endl;
                 LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
                 const int r = 1;
                 
                 {
                     
-                    LOG << "...assemble matrices";// << endl;
+                    LOG << "...assemble matrices" << endl;
             
                     SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
                     
@@ -126,7 +126,7 @@ int main()
 
                     SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
-                    LOG << "...assemble global mass matrix";// << endl;
+                    LOG << "...assemble global mass matrix" << endl;
             
 
                     auto mass_prelim = incmatrix_t & ( scalar_massmatrix & incmatrix );
@@ -142,7 +142,7 @@ int main()
                         FloatVector rhs = incmatrix_t * ( scalar_massmatrix * interpol_rhs );
 
                         {
-                            LOG << "CGM C++";// << endl;
+                            LOG << "CGM C++" << endl;
                         
                             sol.zero();
                             ConjugateGradientMethod Solver( mass );
@@ -151,13 +151,13 @@ int main()
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             
                             contable << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
                         }
 
                         {
-                            LOG << "CRM C++";// << endl;
+                            LOG << "CRM C++" << endl;
                         
                             sol.zero();
                             ConjugateResidualMethod Solver( mass );
@@ -166,14 +166,14 @@ int main()
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             
                             contable << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
                         }
 
                         if(false)
                         {
-                            LOG << "MINRES C++";// << endl;
+                            LOG << "MINRES C++" << endl;
                         
                             sol.zero();
                             MinimumResidualMethod Solver( mass );
@@ -183,13 +183,13 @@ int main()
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
                             contable << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
                         }
 
                         {
-                            LOG << "HERZOG SOODHALTER C++";// << endl;
+                            LOG << "HERZOG SOODHALTER C++" << endl;
                         
                             sol.zero();
                             HerzogSoodhalterMethod Solver( mass );
@@ -199,7 +199,7 @@ int main()
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start );// << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
                             contable << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
                         }
@@ -213,7 +213,7 @@ int main()
                     
                 }
 
-                LOG << "Refinement...";// << endl;
+                LOG << "Refinement..." << endl;
             
                 if( l != max_l ) M.uniformrefinement();
 
@@ -225,7 +225,7 @@ int main()
         
         
         
-        LOG << "Finished Unit Test";// << endl;
+        LOG << "Finished Unit Test" << endl;
         
         return 0;
 }

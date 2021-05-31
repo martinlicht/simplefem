@@ -17,7 +17,7 @@ using namespace std;
 
 int main()
 {
-    LOG << "Unit Test for VTK output of Simplicial Mesh";// << endl;
+    LOG << "Unit Test for VTK output of Simplicial Mesh" << endl;
     
     // MeshSimplicial2D M = UnitCubeTriangulation(3,3);
     MeshSimplicial2D M = LShapedDomain2D();
@@ -26,8 +26,8 @@ int main()
 
     for( int l = 0; l < 7; l++ )
     {
-        LOG << "Print VTK-type file";// << endl;
-        LOG << "T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices();// << nl;
+        LOG << "Print VTK-type file" << endl;
+        LOG << "T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
         
         fstream fs( string("./locallshaped") + std::to_string(l) + string(".vtk"), std::fstream::out );
 
@@ -37,7 +37,7 @@ int main()
 
         fs.close();
 
-        LOG << "Refine";// << endl;
+        LOG << "Refine" << endl;
 
         if( l != l_max ) {
             
@@ -66,7 +66,7 @@ int main()
             auto temp = std::unique( marked_edges.begin(), marked_edges.end() );
             marked_edges.erase( temp, marked_edges.end() );
             
-            LOG << "marked edges: " << marked_edges.size() << "/" << M.count_edges();// << nl;
+            LOG << "marked edges: " << marked_edges.size() << "/" << M.count_edges() << nl;
 
             // for( int e = 0; e < M.count_edges(); e++ )
             //     if( e % 10 == 0)
@@ -81,7 +81,7 @@ int main()
         
         
     
-    LOG << "Finished Unit Test";// << endl;
+    LOG << "Finished Unit Test" << endl;
 
     return 0;
 }

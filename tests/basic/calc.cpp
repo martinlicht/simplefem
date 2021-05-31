@@ -13,7 +13,7 @@ using namespace std;
 
 int main()
 {
-        cout << "Unit Test for Factorials and Binomials";// << endl;
+        cout << "Unit Test for Factorials and Binomials" << endl;
         
         cout << std::setprecision(10);
 
@@ -69,7 +69,7 @@ int main()
         
 
         
-        cout << "Finished Unit Test";// << endl;
+        cout << "Finished Unit Test" << endl;
         
         return 0;
 }

@@ -157,6 +157,28 @@ class Logger
 
         inline ~Logger()
         {
+               
+            if(true)
+            {
+                prefix(internalstream);
+                for( int c = 0; c < internalbuffer.str().size(); c++ )
+                {
+                    auto character = internalbuffer.str().at(c);
+                    
+                    internalstream << character;
+
+                    if( character == '\n' ) { 
+                        prefix( internalstream );
+                        internalstream.flush();
+                    }
+                }
+            } else {
+                
+                prefix( internalstream );
+                internalstream << internalbuffer.str();
+                postfix( internalstream );
+                
+            }
                     
 //             str::size_t curr = 0;
 //             prefix( internalstream );
@@ -176,19 +198,17 @@ class Logger
 //             }
             
             
-            prefix( internalstream );
-            internalstream << internalbuffer.str();
-            postfix( internalstream );
-            #ifndef NDEBUG
-            internalstream.flush();
-            #endif
-            
             if( print_file_and_line ) {
                 prefix( internalstream );
                 // internalstream << "\e[91m" << filename << ':' << linenumber << "\e[39m" << '\n';
                 internalstream << "" << filename << ':' << linenumber << '\n';
                 postfix( internalstream );
             }
+
+            #ifndef NDEBUG
+            internalstream.flush();
+            #endif
+            
         }
 
         inline std::ostream& getstream()

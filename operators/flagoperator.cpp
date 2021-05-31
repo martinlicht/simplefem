@@ -44,7 +44,7 @@ void FlagOperator::print( std::ostream& os ) const
 {
     os << "Print Flag Operator" << std::endl;
 //     os << "Print Flag Operator with flag entries: " 
-//         << srcflag << '\n' << destflag << std::endl;
+//         << srcflag << nl << destflag << std::endl;
 }
 
 

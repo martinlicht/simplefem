@@ -2,9 +2,13 @@
 #define INCLUDEGUARD_LOGGING_HPP
 
 #include <ostream>
+#include <string>
 
 #include "logger.hpp"
 #include "prefixbuffer.hpp"
+
+/* forward declarations */
+std::string protocolprefixnow();
 
 
 // returns a temporary logger to write stuff to, and line breaks on destruction 
@@ -12,8 +16,8 @@
 //     LOG << "This is a short message with a number: " << 5;      
 //     ERR << "This is an error message.";      
 
-#define LOG     Logger( std::cerr, protocolprefixnow(), "\n", __FILE__, __LINE__ )
-#define ERR     Logger( std::cerr, protocolprefixnow(), "\n", __FILE__, __LINE__ )
+#define LOG     Logger( std::cerr, protocolprefixnow(), "", __FILE__, __LINE__ )
+#define ERR     Logger( std::cerr, protocolprefixnow(), "", __FILE__, __LINE__ )
 
 
 // treat the following macros as PRINT 'str' commands
