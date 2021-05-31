@@ -1,5 +1,5 @@
 
-#include "error.hpp"
+#include "debug.hpp"
 
 /* A dummy function to make the backtrace more interesting. */
 void

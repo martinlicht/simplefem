@@ -2,9 +2,13 @@
 #define INCLUDEGUARD_LOGGING_HPP
 
 #include <ostream>
+#include <string>
 
 #include "logger.hpp"
 #include "prefixbuffer.hpp"
+
+/* forward declarations */
+std::string protocolprefixnow();
 
 
 // returns a temporary logger to write stuff to, and line breaks on destruction 

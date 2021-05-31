@@ -6,7 +6,6 @@ SHELL = /bin/bash
 # the object files, and the shared libraries. 
 
 
-default: build
 
 dirname := $(notdir $(shell pwd))
 depdir  := .deps
@@ -26,11 +25,15 @@ $(depdir): ; @mkdir -p $@
 
 .PHONY: make_dependencies
 make_dependencies: $(depdir)
-	for item in $(sources); do $(CXX) $(CXXFLAGS) $(CPPFLAGS) -MM $$item -MF .deps/$*.d; done
+	@for item in $(sources); do $(CXX) $(CXXFLAGS) $(CPPFLAGS) -MM $$item -MF .deps/$$item.d; done
 
 $(objects): %.o: %.cpp | $(depdir)
+	@echo Compile object and generate dependencies: $@ 
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -MM $*.cpp -MF .deps/$*.d
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< -c -o $@ 
+
+
+
 
 
 
@@ -38,8 +41,13 @@ headerchecks := $(patsubst %.hpp,check-%.hpp,$(headers))
 
 .PHONY: $(headerchecks)
 $(headerchecks): check-%.hpp : 
-	$(info $*)
+	$(info Check header: $*.hpp)
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $*.hpp -fsyntax-only
+
+.PHONY: checkheaders
+checkheaders: $(headerchecks)
+
+
 
 
 # NOTE: Original recipe for the shared library, now there is just one object
@@ -47,18 +55,21 @@ $(headerchecks): check-%.hpp :
 # 	$(CXX) $(CXXFLAGS) -shared -o $@ $^ $(LDLIBS)
 
 .all.o: $(sources) .all.cpp | $(depdir)
+	@echo Compiling and setting dependencies: $(libraryobject)
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -MM .all.cpp -MF .deps/.all.d
-	@echo Compiling $(libraryobject) ...
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) .all.cpp -c -o $@ 
 
 $(libraryobject): .all.o
-	cp .all.o $(libraryobject)
+	@echo Create library object: $*
+	@cp .all.o $(libraryobject)
 
 $(sharedlibrary): $(libraryobject)
-	$(CXX) $(CXXFLAGS) -shared -o $@ $^ $(LDLIBS)
+	@echo Shared library: $@
+	@$(CXX) $(CXXFLAGS) -shared -o $@ $^ $(LDLIBS)
 
 $(staticlibrary): $(libraryobject)
-	ar rcs $(staticlibrary) $(libraryobject)
+	@echo Static library: $*
+	@ar rcs $(staticlibrary) $(libraryobject)
 
 
 
