@@ -1,0 +1,28 @@
+name: C/C++ CI
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * *'
+  
+#  push:
+#    branches: [ develop ]
+#  pull_request:
+#    branches: [ develop ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest 
+    
+    timeout-minutes: 10
+
+    steps:
+    - name: checkout repository
+      uses: actions/checkout@v2
+    - name: check header files
+      run: make checkheaders
+    - name: build project
+      run: make all
+#    - name: make cpplint
+#      run: make cpplint
