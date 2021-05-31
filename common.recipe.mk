@@ -7,8 +7,8 @@
 
 # Do you want to use GCC or Clang?
 # Uncomment the appropriate definition below
-FLAG_CXX := CLANG
-# FLAG_CXX := GCC
+# FLAG_CXX := CLANG
+FLAG_CXX := GCC
 # FLAG_CXX := ICC
 
 # Do you want to ENABLE the use of tcmalloc?
@@ -21,7 +21,7 @@ FLAG_CXX := CLANG
 
 # Do you want to ENABLE the use of openMP?
 # Uncomment the following line to enable compilation with openMP
-FLAG_ENABLE_OPENMP=yes
+# FLAG_ENABLE_OPENMP=yes
 
 # Do you want to ENABLE the use of openMP?
 # Uncomment the following line to enable compilation with openMP
