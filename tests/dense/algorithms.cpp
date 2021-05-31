@@ -48,7 +48,6 @@ int main()
         LOG << nl << "Col " << p1 << space
                      << "Row " << p2 << space 
                      << NormColRow( S, p1, p2 ) << endl;
-        LOG; << endl;
         
         LOG << nl << "Row " << 1. << space
                      << "Col " << 1. << space
