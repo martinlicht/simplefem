@@ -31,7 +31,7 @@ FLAG_CXX := GCC
 
 # Do you want to ENABLE the use of openMP?
 # Uncomment the following line to enable compilation with openMP
-FLAG_ENABLE_OPENMP=yes
+# FLAG_ENABLE_OPENMP=yes
 
 # Do you want to ENABLE the use of openMP?
 # Uncomment the following line to enable compilation with openMP
