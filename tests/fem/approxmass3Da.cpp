@@ -157,10 +157,14 @@ int main()
 
         for( int l = l_min; l <= l_max; l++ ){
             
-            LOG << "Numerical calculations..." << endl;
-        
+            LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << endl;
+            
             for( int r = r_min; r <= r_max; r++ ) 
             {
+                
+                LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << endl;
+
+                LOG << "assemble mass matrices..." << endl;
                 
                 SparseMatrix massmatrix_scalar = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
                 
@@ -174,6 +178,8 @@ int main()
                 assert( massmatrix_vector.isfinite() );
                 assert( massmatrix_pseudo.isfinite() );
                 assert( massmatrix_volume.isfinite() );
+                
+                LOG << "experiments..." << endl;
                 
                 for( int i = 0; i < experiments_scalar_field.size(); i++ ){
 
@@ -229,9 +235,12 @@ int main()
                 
             }
             
-            LOG << "Refinement..." << endl;
-        
-            M.uniformrefinement();
+            if( l != l_max )
+            {
+                LOG << "Refinement..." << endl;
+            
+                M.uniformrefinement();
+            }
             
         } 
     
