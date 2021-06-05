@@ -124,12 +124,17 @@ int main()
 
         for( int l = l_min; l <= l_max; l++ ){
             
-            LOG << "Numerical calculations..." << endl;
+            LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << endl;
             
             for( int r      = r_min; r      <=      r_max; r++      ) 
             for( int r_plus =     0; r_plus <= r_plus_max; r_plus++ ) 
             {
                 
+                LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << endl;
+                LOG << "Adding: 0 <= " << r_plus << " <= " << r_plus_max << endl;
+
+                LOG << "assemble mass matrices..." << endl;
+
                 SparseMatrix massmatrix_scalar      = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
                 
                 SparseMatrix massmatrix_vector      = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r );
@@ -142,6 +147,8 @@ int main()
                 
                 SparseMatrix massmatrix_volume_plus = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r + r_plus );
                 
+                LOG << "assemble degree elevation matrices..." << endl;
+
                 SparseMatrix elevation_scalar       = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 0, r, r_plus );
 
                 SparseMatrix elevation_vector       = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 1, r, r_plus );
@@ -205,9 +212,12 @@ int main()
                 
             }
             
-            LOG << "Refinement..." << endl;
-        
-            M.uniformrefinement();
+            if( l != l_max )
+            {
+                LOG << "Refinement..." << endl;
+            
+                M.uniformrefinement();
+            }
             
         } 
     
