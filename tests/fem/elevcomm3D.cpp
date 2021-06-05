@@ -13,8 +13,8 @@
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples3D.hpp"
-#include "../../vtk/vtkwriter.hpp"
-#include "../../solver/iterativesolver.hpp"
+// #include "../../vtk/vtkwriter.hpp"
+// #include "../../solver/iterativesolver.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.elevation.hpp"
@@ -60,11 +60,13 @@ int main()
 
         for( int l = l_min; l <= l_max; l++ ){
             
+            LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << endl;
+            
             for( int k = 0; k <= M.getinnerdimension(); k++ ) 
             for( int r = r_min; r <= r_max; r++ ) 
             {
                 
-                LOG << "...assemble matrices: l=" << l << " r=" << r << endl;
+                LOG << "...assemble matrices: l=" << l << " k=" << k << " r=" << r << endl;
         
                 SparseMatrix elevation_r_1 = FEECBrokenElevationMatrix( M, M.getinnerdimension(), k, r  , 1 );
                 SparseMatrix elevation_r_2 = FEECBrokenElevationMatrix( M, M.getinnerdimension(), k, r+1, 1 );
@@ -93,9 +95,12 @@ int main()
                 
             }
 
-            LOG << "Refinement..." << endl;
-        
-            M.uniformrefinement();
+            if( l != l_max )
+            {
+                LOG << "Refinement..." << endl;
+            
+                M.uniformrefinement();
+            }
             
         } 
         
