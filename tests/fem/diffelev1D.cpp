@@ -76,6 +76,10 @@ int main()
             for( int r_plus =     0; r_plus <=            r_plus_max; r_plus++ ) 
             {
                 
+                LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << endl;
+                LOG << "Adding: 0 <= " << r_plus << " <= " << r_plus_max << endl;
+                LOG << "Form degree: " << k << endl;
+                
                 LOG << "...assemble matrices: l=" << l << " k=" << k << " r=" << r << " rplus=" << r_plus << endl;
         
                 SparseMatrix lower_diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), k, r          );

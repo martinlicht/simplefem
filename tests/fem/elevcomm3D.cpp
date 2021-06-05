@@ -66,7 +66,11 @@ int main()
             for( int r = r_min; r <= r_max; r++ ) 
             {
                 
-                LOG << "...assemble matrices: l=" << l << " k=" << k << " r=" << r << endl;
+                LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << endl;
+
+                LOG << "Form degree: " << space << k << endl;
+
+                LOG << "assemble matrices..." << endl;
         
                 SparseMatrix elevation_r_1 = FEECBrokenElevationMatrix( M, M.getinnerdimension(), k, r  , 1 );
                 SparseMatrix elevation_r_2 = FEECBrokenElevationMatrix( M, M.getinnerdimension(), k, r+1, 1 );

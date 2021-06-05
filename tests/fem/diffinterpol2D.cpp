@@ -121,7 +121,9 @@ int main()
             for( int r = r_min; r <= r_max; r++ ) 
             {
                 
-                LOG << "...assemble matrices: l=" << l << " r=" << r << endl;
+                LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << endl;
+
+                LOG << "assemble matrices..." << endl;
         
                 SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
                 
