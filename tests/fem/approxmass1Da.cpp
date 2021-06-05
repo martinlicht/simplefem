@@ -91,20 +91,22 @@ int main()
 
         for( int l = l_min; l <= l_max; l++ ){
             
-            LOG << "Refinement..." << endl;
+            LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << endl;
         
-            M.uniformrefinement();
-            
             for( int r = r_min; r <= r_max; r++ ) 
             {
-                LOG << "...assemble matrices" << endl;
-        
+                LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << endl;
+
+                LOG << "assemble mass matrices..." << endl;
+                
                 SparseMatrix massmatrix_scalar = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
                 
                 SparseMatrix massmatrix_volume = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r );
                 
                 assert( massmatrix_scalar.isfinite() );
                 assert( massmatrix_volume.isfinite() );
+                
+                LOG << "experiments..." << endl;
                 
                 for( int i = 0; i < experiments_scalar_field.size(); i++ ){
 
@@ -133,6 +135,15 @@ int main()
                 }
                 
             }
+            
+            if( l != l_max )
+            {
+                LOG << "Refinement..." << endl;
+            
+                M.uniformrefinement();
+            }
+            
+
         } 
     
         LOG << "Convergence tables" << nl;
