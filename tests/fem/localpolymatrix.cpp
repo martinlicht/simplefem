@@ -48,10 +48,13 @@ int main()
         LOG << "Matrix dimension: " << N << nl;
         LOG << "Determinant: " << Determinant(MM) << nl;
 
+        LOG << "Inverse..." << nl;
         DenseMatrix MMinv = Inverse(MM);
 
+        LOG << "Cholesky decomposition..." << nl;
         DenseMatrix MMchol = CholeskyDecomposition(MM);
         
+        LOG << "QR decomposition..." << nl;
         DenseMatrix MMqr_q(MM), MMqr_r(MM);
         QRFactorization(MM,MMqr_q,MMqr_r);
         
@@ -64,9 +67,6 @@ int main()
             << "\tc=" << diff_qr
             << nl;
                     
-        // if( n==2 and r==2 )
-            // LOG << MM / factorial_integer(2) << nl;;
-
     }
     
     LOG << "Finished Unit Test" << endl;
