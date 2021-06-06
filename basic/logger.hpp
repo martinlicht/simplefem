@@ -157,25 +157,33 @@ class Logger
 
         inline ~Logger()
         {
-               
+            
+            const auto str = internalbuffer.str();
+            
             if(true)
             {
-                prefix(internalstream);
-                for( int c = 0; c < internalbuffer.str().size(); c++ )
+                
+                for( int c = 0; c < str.size(); c++ )
                 {
-                    auto character = internalbuffer.str().at(c);
+
+                    // if( c == 0 ) prefix(internalstream);
+                    
+                    auto character = str.at(c);
                     
                     internalstream << character;
 
-                    if( character == '\n' ) { 
+                    if( character == '\n' and c < str.size() ) 
+                    { 
                         prefix( internalstream );
                         internalstream.flush();
                     }
+                    
                 }
+                
             } else {
                 
                 prefix( internalstream );
-                internalstream << internalbuffer.str();
+                internalstream << str;
                 postfix( internalstream );
                 
             }

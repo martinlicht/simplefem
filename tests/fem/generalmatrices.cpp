@@ -51,10 +51,10 @@ int main()
             SparseMatrix massmatrix_rhs = FEECBrokenMassMatrixRightFactor( M, M.getinnerdimension(), k, r );
             
             if( r >= 1 && k < M.getinnerdimension() )
-            SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), k, r );
+                SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), k, r );
             
             if( r == 1 && k == 0 )
-            SparseMatrix inclmatrix = LagrangeInclusionMatrix( M, M.getinnerdimension(), r );
+                SparseMatrix inclmatrix = LagrangeInclusionMatrix( M, M.getinnerdimension(), r );
             
             for( int r_plus = 0; r_plus < 5; r_plus++ )
                 SparseMatrix elevmatrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), k, r, r_plus );
@@ -97,10 +97,10 @@ int main()
             SparseMatrix massmatrix_rhs = FEECBrokenMassMatrixRightFactor( M, M.getinnerdimension(), k, r );
             
             if( r >= 1 && k < M.getinnerdimension() )
-            SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), k, r );
+                SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), k, r );
             
             if( r == 1 && k == 0 )
-            SparseMatrix inclmatrix = LagrangeInclusionMatrix( M, M.getinnerdimension(), r );
+                SparseMatrix inclmatrix = LagrangeInclusionMatrix( M, M.getinnerdimension(), r );
             
             for( int r_plus = 0; r_plus < 5; r_plus++ )
                 SparseMatrix elevmatrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), k, r, r_plus );
@@ -143,10 +143,10 @@ int main()
             SparseMatrix massmatrix_rhs = FEECBrokenMassMatrixRightFactor( M, M.getinnerdimension(), k, r );
             
             if( r >= 1 && k < M.getinnerdimension() )
-            SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), k, r );
+                SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), k, r );
             
             if( r == 1 && k == 0 )
-            SparseMatrix inclmatrix = LagrangeInclusionMatrix( M, M.getinnerdimension(), r );
+                SparseMatrix inclmatrix = LagrangeInclusionMatrix( M, M.getinnerdimension(), r );
             
             for( int r_plus = 0; r_plus < 5; r_plus++ )
                 SparseMatrix elevmatrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), k, r, r_plus );

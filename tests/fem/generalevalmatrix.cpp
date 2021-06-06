@@ -25,10 +25,17 @@ int main()
         LOG << "Unit Test: Evaluation Matrix and its Invertibility" << endl;
         
         LOG << std::setprecision(10);
+        
+        const int n_min = 1;
+        const int n_max = 3;
+        const int r_min = 1;
+        const int r_max = 6;
 
-        for( int n = 1; n <= 3; n++ )
-        for( int r = 1; r <  7; r++ )
+        for( int n = n_min; n <= n_max; n++ )
+        for( int r = r_min; r <= r_max; r++ )
         {
+            LOG << "Dimension: " << space << n_min << " <= " << n << " <= " << n_max << endl;
+            LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << endl;
             
             const auto lpsbc = InterpolationPointsBarycentricCoordinates( n, r );
             
@@ -43,13 +50,11 @@ int main()
             Float diff_inv_1 = ( EM * EMinv - IdentityMatrix(N) ).norm();
             Float diff_inv_2 = ( EMinv * EM - IdentityMatrix(N) ).norm();
             
-            LOG << "\tn=" << n
-                      << "\tr=" << r
-                      << "\tN=" << N
-                      << "\tdiff1=" << diff_inv_1
-                      << "\tdiff2=" << diff_inv_2
-                      << nl;
-
+            LOG << "dim(A)=" << N << "\tdiff1=" << diff_inv_1 << "\tdiff2=" << diff_inv_2 << space << machine_epsilon << nl;
+            
+            assert( diff_inv_1 < std::sqrt( machine_epsilon ) );
+            assert( diff_inv_2 < std::sqrt( machine_epsilon ) );
+            
         }
         
         LOG << "Finished Unit Test" << endl;

@@ -328,8 +328,13 @@ DenseMatrix CofactorMatrix( const DenseMatrix& A )
 
 DenseMatrix Inverse( DenseMatrix A )
 {
-//     Inverse_gauss_InSitu( A );
-    Inverse_CramersRule_InSitu( A );
+    
+    assert( A.issquare() );
+    if( A.getdimin() <= 6 ) {
+        Inverse_CramersRule_InSitu( A );
+    } else {
+        Inverse_gauss_InSitu( A );
+    }
     return A;
 }
 

@@ -19,6 +19,8 @@ int main()
 {
         LOG << "Unit Test for Fields and Finite Differences" << endl;
         
+        //TODO: Brush up these tests
+        
         {
             
             LOG << "Two-dimensional setting" << endl;
