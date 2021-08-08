@@ -31,8 +31,8 @@ class IdentityOperator final
         IdentityOperator& operator=( const IdentityOperator& vec ) = default;
         IdentityOperator& operator=( IdentityOperator&& vec )      = default; 
         
-        explicit IdentityOperator( int n ) : LinearOperator(n,n) { IdentityOperator::check(); }
-        virtual ~IdentityOperator() { IdentityOperator::check(); }
+        explicit IdentityOperator( int n );
+        virtual ~IdentityOperator();
 
         virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
             std::shared_ptr<IdentityOperator> cloned = std::make_shared<IdentityOperator>( *this );
@@ -44,11 +44,11 @@ class IdentityOperator final
             return heir;
         }
         
-        virtual void check() const override { LinearOperator::check(); }
-        virtual void print( std::ostream& ) const override { LOG << "Print Identity Operator" << std::endl; }
+        virtual void check() const override;
+        virtual void print( std::ostream& ) const override;
 
         using LinearOperator::apply;
-        virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override { dest = scaling * src; }
+        virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override;
     
 };
   
