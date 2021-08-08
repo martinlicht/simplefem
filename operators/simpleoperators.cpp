@@ -10,6 +10,55 @@
 #include "linearoperator.hpp"
 
 
+IdentityOperator::IdentityOperator( int dimension )
+: LinearOperator( dimension )
+{
+    IdentityOperator::check();
+}
+
+IdentityOperator::~IdentityOperator()
+{
+    IdentityOperator::check();
+}
+
+void IdentityOperator::check() const  
+{
+    LinearOperator::check();
+}
+
+void IdentityOperator::print( std::ostream& os ) const  
+{
+    os << "Print Identity Operator" << std::endl;
+}
+
+void IdentityOperator::apply( FloatVector& dest, const FloatVector& src, Float s ) const 
+{
+    check();
+    src.check();
+    dest.check();
+    
+    assert( getdimin() == getdimout() );
+    assert( getdimin() == src.getdimension() );
+    assert( getdimout() == dest.getdimension() );
+    
+    for( int p = 0; p < getdimin(); p++ )
+        dest.setentry( p, s * src.getentry( p ) );
+        
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ScalingOperator::ScalingOperator( int dimension, Float s )
 : LinearOperator( dimension ), 
   scaling(s)
