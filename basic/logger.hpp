@@ -160,23 +160,30 @@ class Logger
             
             const auto str = internalbuffer.str();
             
+            bool use_prefix_next  = true;
+            
             if(true)
             {
                 
                 for( int c = 0; c < str.size(); c++ )
                 {
 
-                    // if( c == 0 ) prefix(internalstream);
+                    if( use_prefix_next ) { 
+                        use_prefix_next = false;
+                        prefix( internalstream );
+                    }
                     
                     auto character = str.at(c);
                     
                     internalstream << character;
 
-                    if( character == '\n' and c < str.size() ) 
+                    if( character == '\n' ) 
                     { 
-                        prefix( internalstream );
                         internalstream.flush();
+                        use_prefix_next = true;
                     }
+                    
+                    postfix( internalstream );
                     
                 }
                 
