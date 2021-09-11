@@ -39,11 +39,11 @@ class InverseOperator final
         { 
             assert( op.getdimin() == op.getdimout() );
             
-            LOG << "Inverse created" << ""; 
+            LOG << "Inverse created" << "" << nl; 
         }
         
         virtual ~InverseOperator() { 
-            LOG << "Inverse destroyed" << "";
+            LOG << "Inverse destroyed" << "" << nl;
         }
 
         virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
@@ -108,10 +108,10 @@ class InverseOperator final
                 dest *= scaling;
             }
             
-//             LOG << "call inverse";
-//             LOG << op.text();   //op.print( std::cout );
+//             LOG << "call inverse" << nl;
+//             LOG << op.text() << nl;   //op.print( std::cout );
 //             op.apply( dest, src, scaling );    
-//             LOG << "done inverse";
+//             LOG << "done inverse" << nl;
         }
 
     private:
