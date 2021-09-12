@@ -5,8 +5,15 @@
 
 using namespace std;
 
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "Convergence Table" );
+
 int main()
 {
+        LOG << "Unit Test: " << TestName << endl;
+    
         ConvergenceTable Contable;
         
         Contable.lg();
@@ -19,5 +26,7 @@ int main()
         
         Contable.lg();
         
+        LOG << "Finished Unit Test: " << TestName << endl;
+    
         return 0;
 }
