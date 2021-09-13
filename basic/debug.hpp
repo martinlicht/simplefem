@@ -6,11 +6,11 @@ void abort();
 #ifdef FLAG_USE_ORIGINAL_ASSERT_MACRO
 #include <cassert>
 #define Assert(x) assert(x)
-#else 
+#else // FLAG_USE_ORIGINAL_ASSERT_MACRO
 
 #ifdef NDEBUG
 #define Assert(x) (static_cast<void>0)
-#else
+#else // NDEBUG
 #define Assert(x) (static_cast<bool>(x)?(void(0)):myAssert(#x,__FILE__,__LINE__))
 
 #include <cstdio>
@@ -57,26 +57,16 @@ inline void myAssert( const char* expression, const char* filename, const int li
     
 #ifdef __cpp_exceptions
     throw(0);
-#else
+#else // __cpp_exceptions
     abort();
-#endif
+#endif // __cpp_exceptions
     
 }
 
 #endif //NDEBUG
 
-
 #endif //FLAG_USE_ORIGINAL_ASSERT_MACRO
 
-
-
-
-// #define unreachable 
-//     []() -> void{  
-//         fprintf( stderr, "Unreachable code reached: %s:%d\n", __FILE__, __LINE__ );  
-//         abort();  
-//         }
-// // __builtin_unreachable
 
 #define unreachable() \
         fprintf( stderr, "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ), \
