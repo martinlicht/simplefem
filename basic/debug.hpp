@@ -71,6 +71,38 @@ inline void myAssert( const char* expression, const char* filename, const int li
 
 
 
+
+
+// This comes in several phases:
+// - begin output and print preamble 
+// - print message 
+// - print arguments ....
+// - close up and terminate
+
+
+inline void Check(){}
+
+template<typename T>
+inline void Check( const char* expression, const char* filename, const int linenumber )
+{
+    LOG << arg;
+}
+
+template<typename T, typename... Ts>
+inline void Check( T arg, Ts... args )
+{
+    LOG << arg;
+    lg( args... );
+}
+
+
+
+
+
+
+
+
+
 // #define unreachable 
 //     []() -> void{  
 //         fprintf( stderr, "Unreachable code reached: %s:%d\n", __FILE__, __LINE__ );  
