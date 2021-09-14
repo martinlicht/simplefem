@@ -17,13 +17,39 @@ int main()
         
         cout << std::setprecision(10);
 
-        for( int i = 0; i <= 12; i++ ) {
+        assert( desired_precision < 1e-10 );
+
+        for( int i = 0; i <= largest_factorial_base<int>(); i++ ) {
+
             int64_t f1 = factorial_integer( i );
             int64_t f2 = factorial_integer_naive( i );
             int64_t f3 = factorial_integer_table( i );
             int64_t f4 = factorial_integer_loop( i );
+
             assert( f1 == f2 and f2 == f3 and f2 == f4 );
+
         }
+
+        for( int i = 0; i < 20; i++ ) {
+
+            Float f1 = factorial_numerical( i );
+            Float f2 = factorial_numerical_naive( i );
+            Float f3 = factorial_numerical_table( i );
+            Float f4 = factorial_numerical_loop( i );
+
+            assert( isaboutequal( f1/f2, 1. ) );
+            assert( isaboutequal( f1/f3, 1. ) );
+            assert( isaboutequal( f1/f4, 1. ) );
+
+            assert( isaboutequal( f1, f2 ) );
+            assert( isaboutequal( f1, f3 ) );
+            assert( isaboutequal( f1, f4 ) );
+
+        }
+
+
+
+
 
         auto N = 100000000;
 
