@@ -697,7 +697,7 @@ bool DenseMatrix::issymmetric() const
     
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c <= r; c++ )
-        if( not isabout( get(r,c), get(c,r) ) ) 
+        if( not isaboutequal( get(r,c), get(c,r) ) ) 
             return false;
     
     return true;
@@ -709,7 +709,7 @@ bool DenseMatrix::isantisymmetric() const
     
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c <= r; c++ )
-        if( not isabout( get(r,c), -get(c,r) ) ) 
+        if( not isaboutequal( get(r,c), -get(c,r) ) ) 
             return false;
     
     return true;
