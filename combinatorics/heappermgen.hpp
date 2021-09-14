@@ -42,4 +42,25 @@ void HeapsAlgorithmInit( int& seed, std::vector<int>& memo, const std::vector<in
 bool HeapsAlgorithmStep( int& seed, std::vector<int>& memo,       std::vector<int>& perm );
 
 
+struct HeapAlgorithmState
+{
+    int seed;
+    std::vector<int> memo;
+    std::vector<int> perm;
+};
+
+void HeapsAlgorithmInit( HeapAlgorithmState& state )
+{
+    HeapsAlgorithmInit( state.seed, state.memo, state.perm );
+}
+
+bool HeapsAlgorithmStep( HeapAlgorithmState& state )
+{
+    return HeapsAlgorithmStep( state.seed, state.memo, state.perm );
+}
+
+
+
+
+
 #endif
