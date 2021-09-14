@@ -79,20 +79,20 @@ inline void myAssert( const char* expression, const char* filename, const int li
 // - close up and terminate
 
 
-inline void Check(){}
+// inline void Check(){}
 
-template<typename T>
-inline void Check( const char* expression, const char* filename, const int linenumber )
-{
-    LOG << arg;
-}
+// template<typename T>
+// inline void Check( const char* expression, const char* filename, const int linenumber )
+// {
+//     LOG << arg;
+// }
 
-template<typename T, typename... Ts>
-inline void Check( T arg, Ts... args )
-{
-    LOG << arg;
-    lg( args... );
-}
+// template<typename T, typename... Ts>
+// inline void Check( T arg, Ts... args )
+// {
+//     LOG << arg;
+//     lg( args... );
+// }
 
 
 
