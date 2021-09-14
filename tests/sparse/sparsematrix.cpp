@@ -10,9 +10,14 @@
 
 using namespace std;
 
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "Sparse Matrix class" );
+
 int main()
 {
-	LOG << "Unit Test for SparseMatrix" << endl;
+	LOG << "Unit Test: " << TestName << endl;
 	
 	SparseMatrix M( 2, 3 );
 	
@@ -50,7 +55,7 @@ int main()
 	LOG << "Matrix-Vector Product:" << endl;
 	LOG << M * vec << endl;
 	
-	LOG << "Finished Unit Test" << endl;
+	LOG << "Finished Unit Test: " << TestName << endl;
 
 	return 0;
 }

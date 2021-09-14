@@ -10,9 +10,14 @@
 
 using namespace std;
 
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "Simple operators" );
+
 int main()
 {
-        LOG << "Unit Test for Simple operator" << endl;
+        LOG << "Unit Test: " << TestName << endl;
         
         {
         
@@ -84,7 +89,7 @@ int main()
         
         }
         
-        LOG << "Finished Unit Test" << endl;
+        std::clog << "Finished Unit Test: " << TestName << endl;
 
         return 0;
 }

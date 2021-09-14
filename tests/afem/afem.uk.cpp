@@ -29,10 +29,14 @@
 
 using namespace std;
 
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "Solve Neumann problem over UK map, gradient-driven refinement" );
+
 int main()
 {
-        
-        LOG << "Unit Test for Solution of Neumann Problem" << endl;
+        LOG << "Unit Test: " << TestName << endl;
         
         LOG << std::setprecision(10);
 
@@ -101,14 +105,12 @@ int main()
 
             assert( experiments_sol.size() == experiments_rhs.size() );
 
-            LOG << "Solving Poisson Problem with Neumann boundary conditions" << endl;
-
             int max_l = 5;
             int r = 1;
 
             for( int l = 0; l <= max_l; l++ ){
                 
-                LOG << "Level: " << l << std::endl;
+                LOG << "Level: " << l << "/" << max_l << std::endl;
                 LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
                 
@@ -301,7 +303,7 @@ int main()
         
         
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test: " << TestName << endl;
         
         return 0;
 }

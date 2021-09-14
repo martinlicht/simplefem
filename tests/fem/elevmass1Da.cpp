@@ -20,10 +20,14 @@
 
 using namespace std;
 
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "(1D) degree elevation of interpolation preserves mass" );
+
 int main()
 {
-        
-        LOG << "Unit Test: (1D) degree elevation of interpolation preserves mass" << endl;
+        LOG << "Unit Test: " << TestName << endl;
         
         LOG << std::setprecision(10);
 
@@ -231,7 +235,7 @@ int main()
         }
             
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test: " << TestName << endl;
         
         return 0;
 }

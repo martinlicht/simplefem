@@ -10,9 +10,14 @@
 
 using namespace std;
 
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "Index Mapping" );
+
 int main()
 {
-    LOG << "Unit Test for Index Mapping" << endl;
+    LOG << "Unit Test: " << TestName << endl;
 
     const IndexRange irA(  2, 5 );
     const IndexRange irB(  3, 5 );
@@ -128,7 +133,7 @@ int main()
         
     }
 
-    LOG << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test: " << TestName << endl;
 
     return 0;
 }

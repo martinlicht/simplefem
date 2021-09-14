@@ -20,9 +20,14 @@
 
 using namespace std;
 
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "Evaluation Matrix and its Invertibility" );
+
 int main()
 {
-        LOG << "Unit Test: Evaluation Matrix and its Invertibility" << endl;
+        LOG << "Unit Test: " << TestName << endl;
         
         LOG << std::setprecision(10);
         
@@ -57,7 +62,7 @@ int main()
             
         }
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test: " << TestName << endl;
         
         
         return 0;

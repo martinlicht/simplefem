@@ -13,9 +13,15 @@
 
 using namespace std;
 
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "one-dimensional simplicial mesh" );
+
 int main()
 {
-        LOG << "Unit Test for one-dimensional simplicial mesh" << endl;
+        LOG << "Unit Test: " << TestName << endl;
+        // LOG << "Unit Test for one-dimensional simplicial mesh" << endl;
 
         MeshSimplicial1D M = StandardInterval1D();
         
@@ -36,7 +42,7 @@ int main()
           M.check();
         }
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test: " << TestName << endl;
 
         return 0;
 }

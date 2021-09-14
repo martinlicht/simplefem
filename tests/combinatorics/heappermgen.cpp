@@ -11,9 +11,14 @@
 
 using namespace std;
 
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "producing permutations via Heap's algorithm" );
+
 int main()
 {
-    LOG << "Unit Test for producting permutations via Heap's algorithm" << endl;
+    LOG << "Unit Test: " << TestName << endl;
     
     
     if(true)
@@ -109,7 +114,7 @@ int main()
     
     }
 
-    LOG << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test: " << TestName << endl;
     
     return 0;
 }

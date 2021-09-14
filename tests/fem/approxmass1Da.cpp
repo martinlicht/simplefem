@@ -19,10 +19,14 @@
 
 using namespace std;
 
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "(1D) masses are correctly approximated: precomputed mass" );
+
 int main()
 {
-        
-        LOG << "Unit Test: (1D) masses are correctly approximated: precomputed mass" << nl;
+        LOG << "Unit Test: " << TestName << endl;
         
         LOG << std::setprecision(10);
 

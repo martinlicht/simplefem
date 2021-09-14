@@ -28,10 +28,14 @@
 
 using namespace std;
 
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "Compare numerical solvers CRM vs MINRES for Solution of Dirichlet Problem" );
+
 int main()
 {
-        
-        LOG << "Unit Test: Compare numerical solvers CRM vs MINRES\n           for Solution of Dirichlet Problem" << endl;
+        LOG << "Unit Test: " << TestName << endl;
         
         LOG << std::setprecision(10);
 
@@ -74,14 +78,14 @@ int main()
             ConvergenceTable contable;
             
 
-            int min_l = 2; int max_l = 9;
+            int min_l = 2; int max_l = 7;
 
             for( int l = 0; l < min_l; l++ )
                 M.uniformrefinement();
 
             for( int l = min_l; l <= max_l; l++ ){
                 
-                LOG << "Level: " << l << std::endl;
+                LOG << "Level: " << l << "/" << max_l << std::endl;
                 LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
                 const int r = 1;
@@ -136,7 +140,7 @@ int main()
                         FloatVector rhs_original = incmatrix_t * ( scalar_massmatrix * interpol_rhs );
                         rhs_original.zero();
                         
-                        if(false)
+                        //if(false)
                         {
                             LOG << "CGM C++" << endl;
                         
@@ -154,7 +158,7 @@ int main()
                             contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );
                         }
 
-                        if(false)
+                        //if(false)
                         {
                             LOG << "CRM C++" << endl;
                         
@@ -163,7 +167,7 @@ int main()
                             ConjugateResidualMethod Solver( stiffness );
                             Solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
                             Solver.print_modulo        = 1;
-                            Solver.threshold        = 10000 * machine_epsilon;
+                            Solver.threshold        = 10000000 * machine_epsilon; // FIXME 
                             Solver.max_iteration_count =     4 * sol.getdimension();
                             timestamp start = gettimestamp();
                             Solver.solve_robust( sol, rhs );
@@ -192,7 +196,7 @@ int main()
                             contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );
                         }
 
-                        if(false)
+                        //if(false)
                         {
                             LOG << "HERZOG SOODHALTER C++" << endl;
                         
@@ -231,7 +235,7 @@ int main()
         
         
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test: " << TestName << endl;
         
         return 0;
 }

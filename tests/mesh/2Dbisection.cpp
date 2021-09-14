@@ -13,9 +13,15 @@
 
 using namespace std;
 
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "Simplicial 2D Module" );
+
 int main()
 {
-        LOG << "Unit Test for Simplicial 2D Module" << endl;
+        LOG << "Unit Test: " << TestName << endl;
+        // LOG << "Unit Test for Simplicial 2D Module" << endl;
         
         for( int ei = 0; ei < 3; ei++ )
         {
@@ -47,7 +53,7 @@ int main()
             
         }
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test: " << TestName << endl;
         
         return 0;
 }

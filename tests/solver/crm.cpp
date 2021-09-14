@@ -14,9 +14,14 @@
 
 using namespace std;
 
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "Conjugate Residual Method" );
+
 int main()
 {
-	LOG << "Unit Test for Conjugate Residual Method" << endl;
+	LOG << "Unit Test: " << TestName << endl;
 	
 	{
 		
@@ -122,7 +127,7 @@ int main()
 		
 	}
 	
-	LOG << "Finished Unit Test" << endl;
+	LOG << "Finished Unit Test: " << TestName << endl;
 
 	return 0;
 }

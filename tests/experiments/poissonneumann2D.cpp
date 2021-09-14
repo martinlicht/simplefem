@@ -30,10 +30,14 @@
 
 using namespace std;
 
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "Solve 2D Dirichlet problem over a square, trigonometric function" );
+
 int main()
 {
-        
-        LOG << "Unit Test for Solution of Neumann Problem" << endl;
+        LOG << "Unit Test: " << TestName << endl;
         
         LOG << std::setprecision(10);
 
@@ -100,8 +104,6 @@ int main()
 
             
 
-            LOG << "Solving Poisson Problem with Neumann boundary conditions" << endl;
-
             int min_l = 3; 
             int max_l = 8;
             
@@ -113,12 +115,14 @@ int main()
             contable << "u_error" << "du_error" << nl;
             
 
+            LOG << "Refine initial mesh..." << endl;
+
             for( int l = 0; l < min_l; l++ )
                 M.uniformrefinement();
 
             for( int l = min_l; l <= max_l; l++ ){
                 
-                LOG << "Level: " << l << std::endl;
+                LOG << "Level: " << l << "/" << max_l << std::endl;
                 LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
                 for( int r = min_r; r <= max_r; r++ ) 
@@ -280,7 +284,7 @@ int main()
         
         
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test: " << TestName << endl;
         
         return 0;
 }

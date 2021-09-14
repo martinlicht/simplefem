@@ -15,9 +15,14 @@
 
 using namespace std;
 
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "VTK output of Simplicial Mesh" );
+
 int main()
 {
-    LOG << "Unit Test for VTK output of Simplicial Mesh" << endl;
+    LOG << "Unit Test: " << TestName << endl;
     
     // MeshSimplicial2D M = UnitCubeTriangulation(3,3);
     MeshSimplicial2D M = LShapedDomain2D();
@@ -81,7 +86,7 @@ int main()
         
         
     
-    LOG << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test: " << TestName << endl;
 
     return 0;
 }

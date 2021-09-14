@@ -16,8 +16,14 @@
 
 using namespace std;
 
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "Interpolation in FEEC" );
+
 int main()
 {
+        LOG << "Unit Test: " << TestName << endl;
         LOG << "Unit Test for Interpolation in FEEC" << endl;
         
         MeshSimplicial2D M = UnitDisk(6);
@@ -34,7 +40,7 @@ int main()
         
         LOG << results << endl;
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test: " << TestName << endl;
         
         return 0;
 }

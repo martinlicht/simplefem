@@ -13,9 +13,14 @@
 
 using namespace std;
 
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "Dense matrix algorithms" );
+
 int main()
 {
-    LOG << "Unit Tests for Matrix Algorithms" << endl;
+    LOG << "Unit Test: " << TestName << endl;
     
     LOG << std::setprecision(5);
     LOG << std::fixed << std::ios::floatfield; //setf( std::ios::fixed, std::ios::floatfield ); // FIXME does this work?
@@ -338,7 +343,7 @@ int main()
 
    
     
-    LOG << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test: " << TestName << endl;
 
     return 0;
     

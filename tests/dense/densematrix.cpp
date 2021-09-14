@@ -9,9 +9,14 @@
 
 using namespace std;
 
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "Dense Matrix class" );
+
 int main()
 {
-	LOG << "Unit Test for Dense Matrix class" << endl;
+	LOG << "Unit Test: " << TestName << endl;
 	
 	DenseMatrix A( 3, 4 );
 	A.randommatrix();
@@ -37,7 +42,7 @@ int main()
 	LOG << S5 * A << endl;
 	
 	
-	LOG << "Finished Unit Test" << endl;
+	LOG << "Finished Unit Test: " << TestName << endl;
 
 	return 0;
 }

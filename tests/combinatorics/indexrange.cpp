@@ -10,9 +10,14 @@
 
 using namespace std;
 
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "Index Ranges" );
+
 int main()
 {
-    LOG << "Unit Test for Index Ranges" << std::endl;
+    LOG << "Unit Test: " << TestName << endl;
     
     if( true ) 
     {
@@ -131,7 +136,7 @@ int main()
     
     }
         
-    LOG << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test: " << TestName << endl;
     
     return 0;
 }

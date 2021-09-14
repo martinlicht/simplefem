@@ -59,9 +59,14 @@ inline void internal_print( const MeshSimplicial1D& M, std::string meshname )
 
 
 
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "VTK output of Simplicial Mesh (1D)" );
+
 int main()
 {
-    LOG << "Unit Test for VTK output of Simplicial Mesh (1D)" << endl;
+    LOG << "Unit Test: " << TestName << endl;
     
     {
         
@@ -96,7 +101,7 @@ int main()
 
     }
     
-    LOG << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test: " << TestName << endl;
     
     return 0;
 }

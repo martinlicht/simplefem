@@ -21,9 +21,14 @@
 
 using namespace std;
 
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "assemble some common matrices" );
+
 int main()
 {
-    LOG << "Unit Test: assemble some common matrices" << endl;
+    LOG << "Unit Test: " << TestName << endl;
         
     {
         LOG << "Case 1D" << endl;
@@ -163,7 +168,7 @@ int main()
         }
     }
         
-    LOG << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test: " << TestName << endl;
     
     return 0;
 }

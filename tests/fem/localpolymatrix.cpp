@@ -21,57 +21,60 @@
 
 using namespace std;
 
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "Inverse of Poly Matrix" );
+
 int main()
 {
-    LOG << "Unit Test for Inverse of Poly Matrix" << endl;
-    
-    LOG << std::setprecision(10);
-
-    const int r_min = 1;
-    const int r_max = 9;
-
-    const int n_min = 1;
-    const int n_max = 3;
-
-    for( int n = n_min; n <= n_max; n++ )
-    for( int r = r_min; r <  r_max; r++ )
-    {
+        LOG << "Unit Test: " << TestName << endl;
         
-        DenseMatrix MM = polynomialmassmatrix( n, r );
-    
-        int N = MM.getdimin();
+        LOG << std::setprecision(10);
 
-        LOG << "Dimension: " << space << n_min << " <= " << n << " <= " << n_max << endl;
-        LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << endl;
+        const int r_min = 1;
+        const int r_max = 9;
 
-                
-        LOG << "Matrix dimension: " << N << nl;
-        LOG << "Determinant: " << Determinant(MM) << nl;
+        const int n_min = 1;
+        const int n_max = 3;
 
-        LOG << "Inverse..." << nl;
-        DenseMatrix MMinv = Inverse(MM);
-
-        LOG << "Cholesky decomposition..." << nl;
-        DenseMatrix MMchol = CholeskyDecomposition(MM);
+        for( int n = n_min; n <= n_max; n++ )
+        for( int r = r_min; r <  r_max; r++ )
+        {
+            
+            DenseMatrix MM = polynomialmassmatrix( n, r );
         
-        LOG << "QR decomposition..." << nl;
-        DenseMatrix MMqr_q(MM), MMqr_r(MM);
-        QRFactorization(MM,MMqr_q,MMqr_r);
-        
-        Float diff_inv  = ( MM * MMinv - IdentityMatrix(N) ).norm();
-        Float diff_chol = ( MMchol * Transpose(MMchol) - MM ).norm();
-        Float diff_qr   = ( MMqr_q * MMqr_r - MM ).norm();
+            int N = MM.getdimin();
 
-        LOG << "\ta=" << diff_inv
-            << "\tb=" << diff_chol
-            << "\tc=" << diff_qr
-            << nl;
+            LOG << "Dimension: " << space << n_min << " <= " << n << " <= " << n_max << endl;
+            LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << endl;
+
                     
-    }
-    
-    LOG << "Finished Unit Test" << endl;
-    
-    
-    
-    return 0;
+            LOG << "Matrix dimension: " << N << nl;
+            LOG << "Determinant: " << Determinant(MM) << nl;
+
+            LOG << "Inverse..." << nl;
+            DenseMatrix MMinv = Inverse(MM);
+
+            LOG << "Cholesky decomposition..." << nl;
+            DenseMatrix MMchol = CholeskyDecomposition(MM);
+            
+            LOG << "QR decomposition..." << nl;
+            DenseMatrix MMqr_q(MM), MMqr_r(MM);
+            QRFactorization(MM,MMqr_q,MMqr_r);
+            
+            Float diff_inv  = ( MM * MMinv - IdentityMatrix(N) ).norm();
+            Float diff_chol = ( MMchol * Transpose(MMchol) - MM ).norm();
+            Float diff_qr   = ( MMqr_q * MMqr_r - MM ).norm();
+
+            LOG << "\ta=" << diff_inv
+                << "\tb=" << diff_chol
+                << "\tc=" << diff_qr
+                << nl;
+                        
+        }
+        
+        LOG << "Finished Unit Test: " << TestName << endl;
+        
+        return 0;
 }

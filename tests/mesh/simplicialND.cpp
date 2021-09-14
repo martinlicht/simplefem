@@ -13,15 +13,20 @@
 
 using namespace std;
 
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "N-dimensional simplicial mesh" );
+
 int main()
 {
-	LOG << "Unit Test for N-dimensional simplicial mesh" << endl;
-	
+	LOG << "Unit Test: " << TestName << endl;
+    
     WARNING "NOTHING IMPLEMENTED YET";
     
-    return 0; // TODO: complete the class for N-dimensional meshes in the first place
-
-    MeshSimplicialND M = HypertetrahedralSurface4D();
+    if(false)
+    {
+        MeshSimplicialND M = HypertetrahedralSurface4D();
         
         LOG << "Check" << endl;
         
@@ -31,7 +36,9 @@ int main()
         
         LOG << M << endl;
         
-        LOG << "Finished Unit Test" << endl;
+    }
 
-	return 0;
+	LOG << "Finished Unit Test: " << TestName << endl;
+        
+    return 0;
 }

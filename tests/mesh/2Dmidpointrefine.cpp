@@ -12,9 +12,15 @@
 
 using namespace std;
 
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "Simplicial 2D Module" );
+
 int main()
 {
-        LOG << "Unit Test for Simplicial 2D Module" << endl;
+        LOG << "Unit Test: " << TestName << endl;
+        // LOG << "Unit Test for Simplicial 2D Module" << endl;
         
         MeshSimplicial2D M = StandardSquare2D();
         
@@ -31,7 +37,7 @@ int main()
         
         M.check();
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test: " << TestName << endl;
         
         return 0;
 }

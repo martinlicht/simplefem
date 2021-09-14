@@ -9,9 +9,14 @@
 
 using namespace std;
 
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "" );
+
 int main()
 {
-    LOG << "Unit Test for Multiindex Generators" << endl;
+    LOG << "Unit Test: " << TestName << endl;
     
     if(true)
     {
@@ -153,7 +158,7 @@ int main()
             
     }
     
-    LOG << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test: " << TestName << endl;
     
     return 0;
 }

@@ -11,9 +11,15 @@
 
 using namespace std;
 
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "Coordinates" );
+
 int main()
 {
-    LOG << "Unit Test for Coordinates" << endl;
+	LOG << "Unit Test: " << TestName << endl;
+    // LOG << "Unit Test for Coordinates" << endl;
     
     {
         
@@ -34,7 +40,7 @@ int main()
         assert( coords == coords2 );
     }
     
-    LOG << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test: " << TestName << endl;
     
     return 0;
 }

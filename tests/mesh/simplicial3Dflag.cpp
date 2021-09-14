@@ -13,9 +13,14 @@
 
 using namespace std;
 
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "Simplicial 3D Module" );
+
 int main()
 {
-        LOG << "Unit Test for Simplicial 3D Module" << endl;
+	LOG << "Unit Test: " << TestName << endl;
         
         MeshSimplicial3D M = UnitSimplex3D();
         
@@ -37,7 +42,7 @@ int main()
         
         LOG << M << endl;
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test: " << TestName << endl;
         
         return 0;
 }

@@ -55,10 +55,14 @@ inline void internal_print( const MeshSimplicial2D& M, std::string meshname, con
 
 
 
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "Few important meshes" );
+
 int main()
 {
-    LOG << "Output of a few important meshes" << endl;
-    
+    LOG << "Unit Test: " << TestName << endl;
     
     //if(false)
     {
@@ -144,7 +148,7 @@ int main()
     }
         
     
-    LOG << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test: " << TestName << endl;
 
     return 0;
 }

@@ -24,10 +24,14 @@
 
 using namespace std;
 
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "(?D) Lagrange matrices agree with FEEC analogues" );
+
 int main()
 {
-        
-        LOG << "Unit Test: (?D) Lagrange matrices agree with FEEC analogues" << endl;
+        LOG << "Unit Test: " << TestName << endl;
         
         LOG << std::setprecision(10);
 
@@ -301,7 +305,7 @@ int main()
         }
         
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test: " << TestName << endl;
         
         return 0;
 }

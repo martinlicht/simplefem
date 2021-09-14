@@ -13,9 +13,15 @@
 
 using namespace std;
 
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "Manifold 1D Module" );
+
 int main()
 {
-    LOG << "Unit Test for Manifold 1D Module" << endl;
+	LOG << "Unit Test: " << TestName << endl;
+    // LOG << "Unit Test for Manifold 1D Module" << endl;
 
     MeshSimplicial1D M = StandardInterval1D();
     
@@ -30,7 +36,7 @@ int main()
     for( int c = 0; c < 10; c++ )
         M.improved_uniformrefinement();
     
-    LOG << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test: " << TestName << endl;
 
     return 0;
 }

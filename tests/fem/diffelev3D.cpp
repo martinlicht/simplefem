@@ -24,10 +24,14 @@
 
 using namespace std;
 
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "(3D) degree elevation commutes with exterior derivative" );
+
 int main()
 {
-        
-        LOG << "Unit Test: (3D) degree elevation commutes with exterior derivative" << endl;
+        LOG << "Unit Test: " << TestName << endl;
         
         LOG << std::setprecision(10);
 
@@ -190,7 +194,7 @@ int main()
         }
             
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test: " << TestName << endl;
         
         return 0;
 }

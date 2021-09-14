@@ -32,10 +32,14 @@
 
 using namespace std;
 
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "Solve 2D Poisson problem over a square, mixed BC along one edge, bubble function" );
+
 int main()
 {
-        
-        LOG << "Unit Test for Solution of Neumann Problem" << endl;
+        LOG << "Unit Test: " << TestName << endl;
         
         LOG << std::setprecision(10);
 
@@ -50,7 +54,6 @@ int main()
             M.set_flag( 1, 0, SimplexFlagDirichlet );
             M.set_flag( 0, M.get_subsimplex( 1, 0, 0, 0 ), SimplexFlagDirichlet );
             M.set_flag( 0, M.get_subsimplex( 1, 0, 0, 1 ), SimplexFlagDirichlet );
-//             M.check_dirichlet_flags();
 
             
             LOG << "Prepare scalar fields for testing..." << endl;
@@ -105,8 +108,6 @@ int main()
 
             
 
-            LOG << "Solving Poisson Problem with Neumann boundary conditions" << endl;
-
             int min_l = 2; 
             int max_l = 8;
             
@@ -118,12 +119,14 @@ int main()
             contable << "u_error" << "du_error" << nl;
             
 
+            LOG << "Refine initial mesh..." << endl;
+
             for( int l = 0; l < min_l; l++ )
                 M.uniformrefinement();
 
             for( int l = min_l; l <= max_l; l++ ){
                 
-                LOG << "Level: " << l << std::endl;
+                LOG << "Level: " << l << "/" << max_l << std::endl;
                 LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
                 if( l != 0 )
@@ -304,7 +307,7 @@ int main()
         
         
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test: " << TestName << endl;
         
         return 0;
 }

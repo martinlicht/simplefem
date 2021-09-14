@@ -11,10 +11,15 @@
 
 using namespace std;
 
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "Multi-Indices" );
+
 int main()
 {
     
-    LOG << "Unit Test for Multi-Indices" << endl;
+    LOG << "Unit Test: " << TestName << endl;
         
     if( true )
     {
@@ -126,7 +131,7 @@ int main()
         LOG << "Comparison and arithmetics done" << endl;
     }
     
-    LOG << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test: " << TestName << endl;
     
     return 0;
 }

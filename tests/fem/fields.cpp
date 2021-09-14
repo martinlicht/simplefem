@@ -15,9 +15,14 @@
 
 using namespace std;
 
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "Fields and Finite Differences" );
+
 int main()
 {
-        LOG << "Unit Test for Fields and Finite Differences" << endl;
+        LOG << "Unit Test: " << TestName << endl;
         
         //TODO: Brush up these tests
         
