@@ -26,7 +26,7 @@ int main()
         
         LOG << std::setprecision(10);
 
-        LOG << "Initial mesh...";// << endl;
+        LOG << "Initial mesh..." << endl;
         
         MeshSimplicial1D M = StandardInterval1D();
         
@@ -97,7 +97,7 @@ int main()
 
         for( int l = l_min; l <= l_max; l++ ){
             
-            LOG << "Numerical calculations...";// << endl;
+            LOG << "Numerical calculations..." << endl;
             
             for( int r      = r_min; r      <=      r_max; r++      ) 
             for( int r_plus =     0; r_plus <= r_plus_max; r_plus++ ) 
@@ -146,13 +146,13 @@ int main()
                 
             }
             
-            LOG << "Refinement...";// << endl;
+            LOG << "Refinement..." << endl;
         
             M.uniformrefinement();
             
         } 
     
-        LOG << "Convergence tables for the case of largest degree jump";// << nl;
+        LOG << "Convergence tables for the case of largest degree jump" << nl;
     
         ConvergenceTable contable_scalar[ experiments_scalar_field.size() ];
         ConvergenceTable contable_volume[ experiments_volume_field.size() ];
@@ -178,18 +178,18 @@ int main()
         
         
         
-        LOG << "Convergence tables: scalars";// << nl;
+        LOG << "Convergence tables: scalars" << nl;
         for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
         {
             LOG << contable_scalar[i].text(); 
-            LOG << "-------------------";// << nl;
+            LOG << "-------------------" << nl;
         }
         
         LOG << "Convergence tables: volumes" << nl;
         for( int i = 0; i < experiments_volume_field.size(); i++ )
         {
             LOG << contable_volume[i].text(); 
-            LOG << "-------------------";// << nl;
+            LOG << "-------------------" << nl;
         }
         
         
@@ -197,7 +197,7 @@ int main()
         
         
         
-//         LOG << "Check that differences are small";// << nl;
+//         LOG << "Check that differences are small" << nl;
 //         
 //         for( int l      = l_min; l      <=      l_max; l++      ) 
 //         for( int r      = r_min; r      <=      r_max; r++      ) 
@@ -212,7 +212,7 @@ int main()
 //         }
             
         
-        LOG << "Finished Unit Test";// << endl;
+        LOG << "Finished Unit Test" << endl;
         
         return 0;
 }
