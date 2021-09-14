@@ -1173,7 +1173,7 @@ void MINRESCSR(
 
         Float temp = gamma;
 //         if( K % 100 == 0 )
-//         LOG << K << space << temp << space << eta << space << temp/eta;
+//         LOG << K << space << temp << space << eta << space << temp/eta << nl;
             
         {
             
@@ -1237,8 +1237,8 @@ void MINRESCSR(
             
             eta = - sn * eta;
             
-//             LOG << "\t" << alpha_0 << space << alpha_1 << space << alpha_2 << space << alpha_3;
-//             LOG << "\t" << cn << space << sn << space << eta;
+//             LOG << "\t" << alpha_0 << space << alpha_1 << space << alpha_2 << space << alpha_3 << nl;
+//             LOG << "\t" << cn << space << sn << space << eta << nl;
             
             
             std::swap( v0, v1 );
