@@ -55,8 +55,8 @@ int main()
 
             
             
-            Float xfeq = 2.;
-            Float yfeq = 2.;
+            const Float xfeq = 2.;
+            const Float yfeq = 2.;
             
             std::function<FloatVector(const FloatVector&)> experiment_sol = 
                 [=](const FloatVector& vec) -> FloatVector{
@@ -156,15 +156,18 @@ int main()
             
             
 
-            int min_l = 1; 
+            const int min_l = 1; 
             
-            int max_l = 3;
+            const int max_l = 6;
             
-            int min_r = 2; 
+            const int min_r = 1; 
             
-            int max_r = 2;
+            const int max_r = 1;
             
 
+            
+            assert( 0 <= min_l and min_l <= max_l );
+            assert( 0 <= min_r and min_r <= max_r );
             
             for( int l = 0; l < min_l; l++ )
                 M.uniformrefinement();
@@ -288,7 +291,33 @@ int main()
                         }
                         
                         
-//                         if(false)
+                        {
+                            
+                            LOG << "...iterative solver" << endl;
+                            
+                            sol.zero();
+                            
+                            auto X = B * inv(A,1e-14) * Bt + C;
+
+                            ConjugateResidualMethod Solver( X );
+                            Solver.threshold           = 1e-10;
+                            Solver.print_modulo        = 100;
+                            Solver.max_iteration_count = 4 * sol.getdimension();
+
+                            timestamp start = gettimestamp();
+//                             Solver.solve_fast( sol, rhs );
+                            Solver.solve( sol, rhs );
+                            timestamp end = gettimestamp();
+
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+
+                            LOG << "...compute error and residual:" << endl;
+
+                        }
+
+                        
+                        
+                        if(false)
                         {
                             
                             sol.zero();
@@ -346,31 +375,6 @@ int main()
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
                             
-                        }
-
-                        if(false)
-                        {
-                            
-                            LOG << "...iterative solver" << endl;
-                            
-                            sol.zero();
-                            
-                            auto X = B * inv(A,1e-14) * Bt + C;
-
-                            ConjugateResidualMethod Solver( X );
-                            Solver.threshold           = 1e-10;
-                            Solver.print_modulo        = 100;
-                            Solver.max_iteration_count = 4 * sol.getdimension();
-
-                            timestamp start = gettimestamp();
-//                             Solver.solve_fast( sol, rhs );
-                            Solver.solve( sol, rhs );
-                            timestamp end = gettimestamp();
-
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
-
-                            LOG << "...compute error and residual:" << endl;
-
                         }
 
                         if(false)

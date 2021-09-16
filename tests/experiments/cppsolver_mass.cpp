@@ -63,8 +63,8 @@ int main()
                         return FloatVector({ 1. });
                     };
             
-            Float xfeq = 1.;
-            Float yfeq = 1.;
+            const Float xfeq = 1.;
+            const Float yfeq = 1.;
             
             std::function<FloatVector(const FloatVector&)> experiment_sol = 
                 [=](const FloatVector& vec) -> FloatVector{
@@ -104,11 +104,15 @@ int main()
             ConvergenceTable contable;
             
 
-            int min_l = 2; int max_l = 7;
+            const int min_l = 2;
+            
+            const int max_l = 7;
 
             for( int l = 0; l < min_l; l++ )
                 M.uniformrefinement();
 
+            assert( 0 <= min_l and min_l <= max_l );
+            
             for( int l = min_l; l <= max_l; l++ ){
                 
                 LOG << "Level: " << l << std::endl;
