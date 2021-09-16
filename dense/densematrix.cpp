@@ -192,6 +192,11 @@ void DenseMatrix::check() const
 //     assert( entries != nullptr );
 }
 
+std::string DenseMatrix::text() const
+{
+    return "TODO";
+}
+
 void DenseMatrix::print( std::ostream& os ) const
 {
     check();

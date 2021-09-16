@@ -162,6 +162,15 @@ void FloatVector::check() const
 //     if( dimension > 0 ) assert( pointer != nullptr );
 }
 
+std::string FloatVector::text() const 
+{
+    check();
+    std::string ret = "float vector of dimension: " + std::to_string( getdimension() );
+    for( int p = 0; p < getdimension(); p++ )
+        ret = ret + "\n" + std::to_string(p) + ": " + std::to_string(getentry(p));
+    return ret;
+}
+
 void FloatVector::print( std::ostream& output ) const 
 {
     check();
@@ -176,14 +185,6 @@ void FloatVector::printplain( std::ostream& output ) const
     output << getdimension() << nl;
     for( int p = 0; p < getdimension(); p++ )
         output << getentry(p) << nl;
-}
-
-void FloatVector::lg() const 
-{
-    check();
-    LOG << "float vector of dimension: " << getdimension() << std::endl;
-    for( int p = 0; p < getdimension(); p++ )
-        LOG << p << ": " << getentry(p) << std::endl;
 }
 
 void FloatVector::lgplain() const 

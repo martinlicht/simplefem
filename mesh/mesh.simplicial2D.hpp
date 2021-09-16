@@ -70,6 +70,7 @@ class MeshSimplicial2D
         virtual void check() const;
         
         virtual void print( std::ostream& out ) const override;
+
         
         bool compare( const MeshSimplicial2D& mesh ) const;
         

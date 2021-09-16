@@ -57,6 +57,8 @@ struct IterativeSolver
         os << "Print Iterative Solver." << std::endl;
     }
 
+    void lg() { LOG << *this << std::endl; };
+
     virtual void solve( FloatVector& unknown, const FloatVector& rhs ) const = 0;
 
     mutable Float threshold;
@@ -72,6 +74,15 @@ struct IterativeSolver
 
 };
 
+
+
+inline std::ostream& operator<<( std::ostream& os, const IterativeSolver& solver )
+{
+    solver.check();
+    solver.print( os );
+    solver.check();
+    return os;
+}
 
 
 
@@ -359,7 +370,3 @@ class HerzogSoodhalterMethod
   
   
 #endif
-  
-  
-  
-  

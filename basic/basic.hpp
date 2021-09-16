@@ -910,6 +910,21 @@ inline int SIZECAST( std::uintmax_t size )
 
 
 /******************************************************/
+/*      insert tabs before each line       */
+/******************************************************/
+
+inline std::string tab_each_line( std::string str ) 
+{ 
+    str.insert( 0, 1, '\t' );
+    for( int c = str.size(); c > 0; c-- ) {
+        if( str[c-1] == '\n' )
+            str.insert(c, 1, '\t');
+    }
+    return str;
+} 
+
+
+/******************************************************/
 /*      count the white space within STL string       */
 /******************************************************/
 

@@ -56,11 +56,13 @@ class FloatVector
 
         void check() const;
         
+        std::string text() const; 
+
         void print( std::ostream& ) const;
         
         void printplain( std::ostream& ) const;
         
-        void lg() const;
+        void lg() const { LOG << *this << std::endl; };
         
         void lgplain() const;
         

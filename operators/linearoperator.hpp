@@ -38,6 +38,15 @@ class LinearOperator
         
         virtual ~LinearOperator();
 
+        virtual void check() const;
+
+        virtual std::string text() const = 0;
+        
+        virtual void print( std::ostream& os ) const;
+
+        void lg() const { LOG << *this << nl; };
+
+        
         virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const&
         {
             unreachable();
@@ -54,11 +63,6 @@ class LinearOperator
 
         int getdimout() const;
         
-
-        virtual void check() const;
-
-        virtual void print( std::ostream& os ) const;
-
         bool issquare() const;
         
         /* Apply the operator */

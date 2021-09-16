@@ -40,11 +40,14 @@ void FlagOperator::check() const
     assert( getdimout() == destflag.size() );
 }
 
+std::string FlagOperator::text() const  
+{
+    return "Flag Operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin());
+}
+
 void FlagOperator::print( std::ostream& os ) const  
 {
-    os << "Print Flag Operator" << std::endl;
-//     os << "Print Flag Operator with flag entries: " 
-//         << srcflag << nl << destflag << std::endl;
+    os << text() << std::endl;
 }
 
 
