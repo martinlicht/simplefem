@@ -81,18 +81,21 @@ int main()
             contable << "#nullvec";
             
 
-            int min_l = 0; 
+            const int min_l = 0; 
             
-            int max_l = 4;
+            const int max_l = 4;
             
-            int min_r = 2; 
+            const int min_r = 2; 
             
-            int max_r = 2;
+            const int max_r = 2;
             
-            int max_number_of_candidates = 6;
+            const int max_number_of_candidates = 6;
 
-            int max_number_of_purifications = 1;
+            const int max_number_of_purifications = 1;
 
+            assert( 0 <= min_l and min_l <= max_l );
+            assert( 0 <= min_r and min_r <= max_r );
+            
             for( int l = 0; l < min_l; l++ )
                 M.uniformrefinement();
 

@@ -70,8 +70,8 @@ int main()
             // The solution of Laplacian problems over L-shaped domainswith a singular function boundary integral method
             // https://onlinelibrary.wiley.com/doi/pdf/10.1002/cnm.489?casa_token=KTbdSboKSK8AAAAA:ISbMXTrwR6i-CocYB6hgQdxdbGgjQxo1QMxRA-L97XFrW_BuEiyUxnXZSVM_SF3DTLmHyGe0ZNdLZtR3
                     
-            Float xfeq = 1.;
-            Float yfeq = 1.;
+            const Float xfeq = 1.;
+            const Float yfeq = 1.;
             
 
 
@@ -91,8 +91,8 @@ int main()
 
             
 
-            int min_l = 2; 
-            int max_l = 3;
+            const int min_l = 2; 
+            const int max_l = 3;
             
 
             ConvergenceTable contable;
@@ -101,6 +101,8 @@ int main()
 
             
             const int r = 1;
+            
+            assert( 0 <= min_l and min_l <= max_l );
             
             LOG << "Refine initial mesh..." << endl;
 

@@ -109,17 +109,20 @@ int main()
 
             
 
-            int min_l = 3; 
-            int max_l = 8;
-            
-            int min_r = 3;
-            int max_r = 3;
+            const int min_l = 3; 
+            const int max_l = 8;
+
+            const int min_r = 3;
+            const int max_r = 3;
             
             ConvergenceTable contable;
             
             contable << "u_error" << "du_error" << nl;
             
 
+            assert( 0 <= min_l and min_l <= max_l );
+            assert( 0 <= min_r and min_r <= max_r );
+            
             LOG << "Refine initial mesh..." << endl;
 
             for( int l = 0; l < min_l; l++ )
