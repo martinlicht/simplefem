@@ -474,7 +474,7 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
         
         bool restart_condition = ( recent_iteration_count == 0 ) or ( recent_iteration_count % x.getdimension() == 0 );
         
-        bool residual_seems_small = absolute( r * r ) < threshold*threshold;
+        bool residual_seems_small = absolute( r * Ar ) < threshold*threshold;
         
         if( restart_condition ) {
         
@@ -486,7 +486,7 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
 
         }
 
-        bool residual_is_small = absolute( r * r ) < threshold*threshold; 
+        bool residual_is_small = absolute( r * Ar ) < threshold*threshold; 
         
         /* Print information */
         
@@ -538,7 +538,7 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
     }
     
     
-    recent_deviation = absolute( r * r );
+    recent_deviation = absolute( r * Ar );
     
     if( verbosity >= VerbosityLevel::resultonly and print_modulo >= 0 ) 
         LOG << "Result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
@@ -596,7 +596,7 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
         
         bool restart_condition = ( recent_iteration_count == 0 ) or ( recent_iteration_count % x.getdimension() == 0 );
         
-        bool residual_seems_small = absolute( r * r ) < threshold*threshold;
+        bool residual_seems_small = absolute( r * Ar ) < threshold*threshold;
         
         if( restart_condition ) {
         
@@ -610,7 +610,7 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
 
         }
 
-        bool residual_is_small = absolute( r * r ) < threshold*threshold; 
+        bool residual_is_small = absolute( r * Ar ) < threshold*threshold; 
         
         /* Print information */
         
@@ -664,7 +664,7 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
     }
     
     
-    recent_deviation = absolute( r * r );
+    recent_deviation = absolute( r * Ar );
     
     if( verbosity >= VerbosityLevel::resultonly and print_modulo >= 0 ) 
         LOG << "Result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
@@ -1151,7 +1151,7 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
                 p2 = p2 - beta0 * p0;
                 s2 = s2 - beta0 * s0;
                 
-                LOG << beta0 / ( A * r ).norm_sq() << nl;
+//                 LOG << beta0 / ( A * r ).norm_sq() << nl;
                 
                 
                 Float beta1 = s1 * s2;
