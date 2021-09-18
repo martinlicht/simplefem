@@ -291,6 +291,7 @@ int main()
                         }
                         
                         
+                        if(false)
                         {
                             
                             LOG << "...iterative solver" << endl;
@@ -299,6 +300,7 @@ int main()
                             
                             auto X = B * inv(A,1e-14) * Bt + C;
 
+//                             HerzogSoodhalterMethod Solver( C );
                             ConjugateResidualMethod Solver( X );
                             Solver.threshold           = 1e-10;
                             Solver.print_modulo        = 100;
@@ -317,7 +319,6 @@ int main()
 
                         
                         
-                        if(false)
                         {
                             
                             sol.zero();
@@ -334,43 +335,25 @@ int main()
 
                             LOG << "- mixed system solver" << endl;
 //                             if(false)
+                            //HodgeConjugateResidualSolverCSR(
                             HodgeConjugateResidualSolverCSR_SSOR(
                             //HodgeConjugateResidualSolverCSR_textbook( 
                                 negB.getdimout(), 
                                 A.getdimout(), 
                                 sol.raw(), 
                                 rhs.raw(), 
-                                A.getA(),    A.getC(),    A.getV(), 
-                                negB.getA(),    negB.getC(),    negB.getV(), 
-                                negBt.getA(),   negBt.getC(),   negBt.getV(), 
+                                   A.getA(),    A.getC(),    A.getV(), 
+                                   B.getA(),    B.getC(),    B.getV(), 
+                                  Bt.getA(),   Bt.getC(),   Bt.getV(), 
+                                   C.getA(),    C.getC(),    C.getV(),
                                 res.raw(),
                                 1e-10,
                                 100,
                                 1e-14, //desired_precision,
                                 -1
                             );
-                            
-                            sol *= -1;
-                            
-//                             LOG << "- elliptic system solver" << endl;
-//                             ConjugateResidualSolverCSR( 
-//                                 sol.getdimension(), 
-//                                 sol.raw(), 
-//                                 rhs.raw(), 
-//                                 C.getA(), C.getC(), C.getV(),
-//                                 res.raw(),
-//                                 1000 * machine_epsilon,
-//                                 1000
-//                             );
-                            
-//                             HerzogSoodhalterMethod Solver( C );
-//                             Solver.threshold           = 1e-10;
-//                             Solver.print_modulo        = 500;
-//                             Solver.max_iteration_count = sol.getdimension();
-// 
-//                             Solver.solve( sol, rhs );
-                            
 
+                            
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
@@ -409,6 +392,9 @@ int main()
                             sol = sol_whole.getslice( A.getdimout(), B.getdimout() );
                         }
 
+
+                        assert( sol.isfinite() );
+
                         auto ndiv = inv(A,1e-14) * Bt * sol;
                         
                         auto curl = vector_diffmatrix * vector_incmatrix * sol;
@@ -423,6 +409,12 @@ int main()
                         Float errornorm_sol_sq  = ( errornorm_aux_sol  * ( vector_massmatrix * errornorm_aux_sol  ) );
                         Float errornorm_curl_sq = ( errornorm_aux_curl * ( volume_massmatrix * errornorm_aux_curl ) );
                         Float residualnorm      = ( rhs - B * inv(A,1e-14) * Bt * sol - C * sol ).norm();
+
+                        LOG << errornorm_ndiv_sq << space << errornorm_sol_sq << space << errornorm_curl_sq << endl;
+
+                        assert( errornorm_ndiv_sq >= 0 );
+                        assert( errornorm_sol_sq  >= 0 );
+                        assert( errornorm_curl_sq >= 0 );
 
                         Float errornorm_ndiv = sqrt( errornorm_ndiv_sq );
                         Float errornorm_sol  = sqrt( errornorm_sol_sq  );

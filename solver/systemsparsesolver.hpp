@@ -12,6 +12,8 @@
 #include "../basic.hpp"
 #include "sparsesolver.hpp"
 
+const Float expected_sign_of_A =  1.;
+
 inline void HodgeConjugateResidualSolverCSR( 
     const int N, 
     const int L, 
@@ -20,6 +22,7 @@ inline void HodgeConjugateResidualSolverCSR(
     const int*  Arows, const int*  Acolumns, const Float*  Avalues, 
     const int*  Brows, const int*  Bcolumns, const Float*  Bvalues, 
     const int* Btrows, const int* Btcolumns, const Float* Btvalues, 
+    const int*  Crows, const int*  Ccolumns, const Float*  Cvalues, 
     Float* residual,
     Float threshold,
     int print_modulo,
@@ -35,6 +38,7 @@ inline void HodgeConjugateResidualSolverCSR_textbook(
     const int*  Arows, const int*  Acolumns, const Float*  Avalues, 
     const int*  Brows, const int*  Bcolumns, const Float*  Bvalues, 
     const int* Btrows, const int* Btcolumns, const Float* Btvalues, 
+    const int*  Crows, const int*  Ccolumns, const Float*  Cvalues, 
     Float* residual,
     Float threshold,
     int print_modulo,
@@ -50,6 +54,7 @@ inline void HodgeConjugateResidualSolverCSR_SSOR(
     const int*  Arows, const int*  Acolumns, const Float*  Avalues, 
     const int*  Brows, const int*  Bcolumns, const Float*  Bvalues, 
     const int* Btrows, const int* Btcolumns, const Float* Btvalues, 
+    const int*  Crows, const int*  Ccolumns, const Float*  Cvalues, 
     Float* residual,
     Float threshold,
     int print_modulo,
@@ -77,6 +82,7 @@ void HodgeConjugateResidualSolverCSR(
     const int* __restrict__  Arows, const int* __restrict__  Acolumns, const Float* __restrict__  Avalues, 
     const int* __restrict__  Brows, const int* __restrict__  Bcolumns, const Float* __restrict__  Bvalues, 
     const int* __restrict__ Btrows, const int* __restrict__ Btcolumns, const Float* __restrict__ Btvalues, 
+    const int* __restrict__  Crows, const int* __restrict__  Ccolumns, const Float* __restrict__  Cvalues, 
     Float* res,
     Float threshold,
     int print_modulo,
@@ -191,7 +197,10 @@ void HodgeConjugateResidualSolverCSR(
                 res[c] = b[c];
                 
                 for( int d = Brows[c]; d < Brows[c+1]; d++ )
-                    res[c] -= Bvalues[ d ] * aux2[ Bcolumns[d] ];
+                    res[c] -= expected_sign_of_A * Bvalues[ d ] * aux2[ Bcolumns[d] ];
+                
+                for( int d = Crows[c]; d < Crows[c+1]; d++ )
+                    res[c] -= Cvalues[ d ] *    x[ Ccolumns[d] ];
                 
                 dir[c] = res[c]; 
             
@@ -232,7 +241,10 @@ void HodgeConjugateResidualSolverCSR(
                 Mdir[c] = 0.;
                 
                 for( int d = Brows[c]; d < Brows[c+1]; d++ )
-                    Mdir[c] += Bvalues[ d ] * aux2[ Bcolumns[d] ];
+                    Mdir[c] += expected_sign_of_A * Bvalues[ d ] * aux2[ Bcolumns[d] ];
+                
+                for( int d = Crows[c]; d < Crows[c+1]; d++ )
+                    Mdir[c] += Cvalues[ d ] *  dir[ Ccolumns[d] ];
                 
                 Mres[c] = Mdir[c];
                 
@@ -313,7 +325,10 @@ void HodgeConjugateResidualSolverCSR(
             vil[c] = 0.;
             
             for( int d = Brows[c]; d < Brows[c+1]; d++ )
-                vil[c] += Bvalues[ d ] * aux2[ Bcolumns[d] ];
+                vil[c] += expected_sign_of_A * Bvalues[ d ] * aux2[ Bcolumns[d] ];
+            
+            for( int d = Crows[c]; d < Crows[c+1]; d++ )
+                vil[c] += Cvalues[ d ] * Mdir[ Ccolumns[d] ];
             
         // }
                     
@@ -356,7 +371,7 @@ void HodgeConjugateResidualSolverCSR(
     }
     
     if( print_modulo >= 0 ) 
-        printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+        printf("Final Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
                k, N, (long double)(Md_r), (long double) threshold*threshold );
 
     
@@ -413,6 +428,7 @@ void HodgeConjugateResidualSolverCSR_SSOR(
     const int* __restrict__  Arows, const int* __restrict__  Acolumns, const Float* __restrict__  Avalues, 
     const int* __restrict__  Brows, const int* __restrict__  Bcolumns, const Float* __restrict__  Bvalues, 
     const int* __restrict__ Btrows, const int* __restrict__ Btcolumns, const Float* __restrict__ Btvalues, 
+    const int* __restrict__  Crows, const int* __restrict__  Ccolumns, const Float* __restrict__  Cvalues, 
     Float* res,
     Float threshold,
     int print_modulo,
@@ -524,7 +540,10 @@ void HodgeConjugateResidualSolverCSR_SSOR(
                 res[c] = b[c];
                 
                 for( int d = Brows[c]; d < Brows[c+1]; d++ )
-                    res[c] -= Bvalues[ d ] * aux2[ Bcolumns[d] ];
+                    res[c] -= expected_sign_of_A * Bvalues[ d ] * aux2[ Bcolumns[d] ];
+                
+                for( int d = Crows[c]; d < Crows[c+1]; d++ )
+                    res[c] -= Cvalues[ d ] *   x[ Ccolumns[d] ];
                 
                 dir[c] = res[c]; 
             
@@ -565,7 +584,10 @@ void HodgeConjugateResidualSolverCSR_SSOR(
                 Mdir[c] = 0.;
                 
                 for( int d = Brows[c]; d < Brows[c+1]; d++ )
-                    Mdir[c] += Bvalues[ d ] * aux2[ Bcolumns[d] ];
+                    Mdir[c] += expected_sign_of_A * Bvalues[ d ] * aux2[ Bcolumns[d] ];
+                
+                for( int d = Crows[c]; d < Crows[c+1]; d++ )
+                    Mdir[c] += Cvalues[ d ] *  dir[ Ccolumns[d] ];
                 
                 Mres[c] = Mdir[c];
                 
@@ -646,7 +668,10 @@ void HodgeConjugateResidualSolverCSR_SSOR(
             vil[c] = 0.;
             
             for( int d = Brows[c]; d < Brows[c+1]; d++ )
-                vil[c] += Bvalues[ d ] * aux2[ Bcolumns[d] ];
+                vil[c] += expected_sign_of_A * Bvalues[ d ] * aux2[ Bcolumns[d] ];
+            
+            for( int d = Crows[c]; d < Crows[c+1]; d++ )
+                vil[c] += Cvalues[ d ] * Mdir[ Ccolumns[d] ];
             
         // }
                     
@@ -690,7 +715,7 @@ void HodgeConjugateResidualSolverCSR_SSOR(
     }
     
     if( print_modulo >= 0 ) 
-        printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+        printf("Final Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
                k, N, (long double)(Md_r), (long double) threshold*threshold );
 
     
@@ -748,6 +773,7 @@ void HodgeConjugateResidualSolverCSR_textbook(
     const int* __restrict__  Arows, const int* __restrict__  Acolumns, const Float* __restrict__  Avalues, 
     const int* __restrict__  Brows, const int* __restrict__  Bcolumns, const Float* __restrict__  Bvalues, 
     const int* __restrict__ Btrows, const int* __restrict__ Btcolumns, const Float* __restrict__ Btvalues, 
+    const int* __restrict__  Crows, const int* __restrict__  Ccolumns, const Float* __restrict__  Cvalues, 
     Float* res,
     Float threshold,
     int print_modulo,
@@ -836,8 +862,11 @@ void HodgeConjugateResidualSolverCSR_textbook(
                 
                 res[c] = b[c];
                 
-                for( int d = Brows[c]; d < Brows[c+1]; d++ )
-                    res[c] -= Bvalues[ d ] * aux2[ Bcolumns[d] ];
+                for( int d = Brows[c]; d < Brows[c+1]; d++ ) 
+                    res[c] -= expected_sign_of_A * Bvalues[ d ] * aux2[ Bcolumns[d] ];
+                
+                for( int d = Crows[c]; d < Crows[c+1]; d++ ) 
+                    res[c] -= Cvalues[ d ] *    x[ Ccolumns[d] ];
                 
                 dir[c] = res[c]; 
             
@@ -877,7 +906,10 @@ void HodgeConjugateResidualSolverCSR_textbook(
                 Mdir[c] = 0.;
                 
                 for( int d = Brows[c]; d < Brows[c+1]; d++ )
-                    Mdir[c] += Bvalues[ d ] * aux2[ Bcolumns[d] ];
+                    Mdir[c] += expected_sign_of_A * Bvalues[ d ] * aux2[ Bcolumns[d] ];
+                
+                for( int d = Crows[c]; d < Crows[c+1]; d++ )
+                    Mdir[c] += Cvalues[ d ] *  dir[ Ccolumns[d] ];
                 
                 Mres[c] = Mdir[c];
                 
@@ -957,7 +989,10 @@ void HodgeConjugateResidualSolverCSR_textbook(
             vil[c] = 0.;
             
             for( int d = Brows[c]; d < Brows[c+1]; d++ )
-                vil[c] += Bvalues[ d ] * aux2[ Bcolumns[d] ];
+                vil[c] += expected_sign_of_A * Bvalues[ d ] * aux2[ Bcolumns[d] ];
+            
+            for( int d = Crows[c]; d < Crows[c+1]; d++ )
+                vil[c] += Cvalues[ d ] * Mdir[ Ccolumns[d] ];
             
         // }
                     
@@ -1001,7 +1036,7 @@ void HodgeConjugateResidualSolverCSR_textbook(
     }
     
     if( print_modulo >= 0 ) 
-        printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+        printf("Final Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
                k, N, (long double)(Mr_r), (long double) threshold*threshold );
 
     

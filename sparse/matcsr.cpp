@@ -59,6 +59,14 @@ MatrixCSR::MatrixCSR(
 
 }
 
+MatrixCSR::MatrixCSR( int rows, int columns )
+: MatrixCSR( SparseMatrix( rows, columns ) )
+{
+    MatrixCSR::check();
+}
+
+
+
 
 MatrixCSR::~MatrixCSR()
 {

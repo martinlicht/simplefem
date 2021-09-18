@@ -35,6 +35,12 @@ SparseMatrix::SparseMatrix( int dimout, int dimin, int numentries, std::function
     SparseMatrix::check();    
 }
 
+// SparseMatrix::SparseMatrix( int dimout, int dimin )
+// : SparseMatrix( dimout, dimin, std::vector<MatrixEntry>(0) )
+// {
+//     SparseMatrix::check();
+// }
+
 SparseMatrix::SparseMatrix( int dimout, int dimin, const std::vector<MatrixEntry>& entries )
 : LinearOperator( dimout, dimin ), entries(entries)
 {

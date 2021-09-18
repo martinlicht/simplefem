@@ -149,6 +149,7 @@ int main()
                     auto B  = MatrixCSR( mat_B  );
                     auto C  = MatrixCSR( mat_C  );
                     
+                    auto Z  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
                     
                     auto SystemMatrix = C - B * inv(A,1000 * machine_epsilon) * Bt;
                     
@@ -186,11 +187,12 @@ int main()
                                     A.getA(),   A.getC(),  A.getV(), 
                                     B.getA(),   B.getC(),  B.getV(), 
                                     Bt.getA(), Bt.getC(), Bt.getV(), 
+                                    Z.getA(),   Z.getC(),  Z.getV(), 
                                     residual.raw(),
                                     1000 * machine_epsilon,
-                                    1,
+                                    0,
                                     desired_precision,
-                                    1
+                                    -1
                                 );
                                 
                                 assert( candidate.isfinite() );
