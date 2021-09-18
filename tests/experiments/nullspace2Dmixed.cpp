@@ -140,6 +140,9 @@ int main()
                     auto Bt = MatrixCSR( mat_Bt );
                     auto B  = MatrixCSR( mat_B  );
                     
+                    auto Z  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
+                    
+                    
                     
 //                     auto SystemMatrix = B * inv( A, 1e-10, 0 ) * Bt;
                     const auto SystemMatrix = B * inv( A, 1000*machine_epsilon, -1 ) * Bt;
@@ -194,6 +197,7 @@ int main()
                                     A.getA(),   A.getC(),  A.getV(), 
                                     B.getA(),   B.getC(),  B.getV(), 
                                     Bt.getA(), Bt.getC(), Bt.getV(), 
+                                    Z.getA(),   Z.getC(),  Z.getV(), 
                                     residual.raw(),
                                     100 * machine_epsilon,
                                     -1,

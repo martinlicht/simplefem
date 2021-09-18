@@ -217,6 +217,7 @@ int main()
                             contable << stat_sol << stat_res;
                         }
 
+                        // if(false)
                         {
                             LOG << "CRM - CSR Classic" << endl;
                         
@@ -241,6 +242,7 @@ int main()
                             contable << stat_sol << stat_res;
                         }
 
+                        // if(false)
                         {
                             LOG << "CRM - CSR Textbook" << endl;
                         
