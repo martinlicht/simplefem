@@ -170,6 +170,7 @@ int main()
                 auto Bt = MatrixCSR( mat_Bt );
                 auto B  = MatrixCSR( mat_B  );
                 
+                auto C  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
                 
                 auto Schur = B * inv(A,1e-10) * Bt;
                 
@@ -226,6 +227,7 @@ int main()
                             A.getA(),   A.getC(),  A.getV(), 
                             B.getA(),   B.getC(),  B.getV(), 
                             Bt.getA(), Bt.getC(), Bt.getV(), 
+                            C.getA(),   C.getC(),  C.getV(), 
                             res.raw(),
                             1e-10,
                             1,
