@@ -66,7 +66,7 @@ int main()
 
                     LOG << "...create solutions and right-hand sides" << endl;
 
-                    const int T = 10;
+                    const int T = 5;
 
                     std::vector<FloatVector> sols;
                     std::vector<FloatVector> rhss;
@@ -193,7 +193,7 @@ int main()
                             contable << c1 << c2;
                         }
 
-                        if(false)
+                        // if(false)
                         {
                             LOG << "CRM - CSR Classic" << endl;
                         
@@ -217,7 +217,7 @@ int main()
                             contable << c1 << c2;
                         }
 
-                        if(false)
+                        // if(false)
                         {
                             LOG << "CRM - CSR Textbook" << endl;
                         

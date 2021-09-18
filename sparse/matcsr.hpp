@@ -36,6 +36,8 @@ public LinearOperator /* every matrix is a linear operator */
 
         explicit MatrixCSR( const SparseMatrix& mat );
 
+        explicit MatrixCSR( int rows, int columns );
+
         virtual ~MatrixCSR( );
 
         MatrixCSR( const MatrixCSR& );
