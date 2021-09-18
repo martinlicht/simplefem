@@ -366,6 +366,9 @@ void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector&
                 << rAr << "(" << threshold*threshold << ")" << nl; 
         
         /* If exit condition met, exit */
+        if( residual_is_small ) 
+            break;
+            
         
         /* Perform iteration step */
         {
@@ -402,6 +405,13 @@ void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector&
             Float tau = rAr;
             rAr = r * ( A * r ); //r * ( A * r ); //r * Ar;
             Float beta = rAr / tau;
+            
+            if( rAr < 0. ) {
+                LOG << "Negative residual energy norm of residual with " << rAr << nl;
+                rAr = 0.; // TODO to avoid useless bug 
+                break;
+            }
+
             assert( rAr >= 0. );
             
             d = r + beta * d;
@@ -416,6 +426,7 @@ void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector&
     
     /* HOW DID WE FINISH ? */
     recent_deviation = rAr;
+    LOG << rAr;
     
     if( verbosity >= VerbosityLevel::resultonly and print_modulo >= 0 ) 
         LOG << "Result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 

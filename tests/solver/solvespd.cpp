@@ -31,13 +31,30 @@ int main()
 
             ConvergenceTable contable;
             
-            contable << "Index"
-                     << "CGM++"         << "time"
-                     << "CRM++(expl)"   << "time"
-                     << "CRM++(robt)"   << "time"
-                     << "CRM++(fast)"   << "time"
-                     << "MINRES"        << "time"
-                     << "HERZOG"        << "time"
+            bool do_cgmpp      = false;
+            bool do_crmpp_expl = false;
+            bool do_crmpp_robt = false;
+            bool do_crmpp_fast = false;
+            bool do_minres     = false;
+            bool do_herzog     = false;
+            
+            do_cgmpp      = true;
+            do_crmpp_expl = true;
+            do_crmpp_robt = true;
+            do_crmpp_fast = true;
+            do_minres     = true;
+            do_herzog     = true;
+            
+            
+            
+            
+            contable << "Index";
+            if( do_cgmpp      ) contable << "CGM++"         << "time";
+            if( do_crmpp_expl ) contable << "CRM++(expl)"   << "time";
+            if( do_crmpp_robt ) contable << "CRM++(robt)"   << "time";
+            if( do_crmpp_fast ) contable << "CRM++(fast)"   << "time";
+            if( do_minres     ) contable << "MINRES"        << "time";
+            if( do_herzog     ) contable << "HERZOG"        << "time";
                      ;
             
             const std::vector<int> Ns = { 16, 32 };
@@ -97,6 +114,7 @@ int main()
                         
                         contable << static_cast<Float>(N);
 
+                        if( do_cgmpp )
                         {
                             LOG << "CGM C++" << endl;
                         
@@ -116,6 +134,7 @@ int main()
                             contable << stat_sol << stat_num;
                         }
 
+                        if( do_crmpp_expl )
                         {
                             LOG << "CRM C++ (explicit)" << endl;
                         
@@ -135,6 +154,7 @@ int main()
                             contable << stat_sol << stat_num;
                         }
 
+                        if( do_crmpp_robt )
                         {
                             LOG << "CRM C++ (robust)" << endl;
                         
@@ -154,6 +174,7 @@ int main()
                             contable << stat_sol << stat_num;
                         }
 
+                        if( do_crmpp_fast )
                         {
                             LOG << "CRM C++ (fast)" << endl;
                         
@@ -173,6 +194,7 @@ int main()
                             contable << stat_sol << stat_num;
                         }
 
+                        if( do_minres )
                         {
                             LOG << "MINRES C++" << endl;
                         
@@ -193,6 +215,7 @@ int main()
                             contable << stat_sol << stat_num;
                         }
 
+                        if( do_herzog )
                         {
                             LOG << "HERZOG SOODHALTER C++" << endl;
                         
