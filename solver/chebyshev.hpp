@@ -171,6 +171,153 @@ inline void CheybyshevIteration_DiagonalPreconditioner(
 
 
 
+inline void Chebyshev( 
+    const LinearOperator& A, 
+    const FloatVector& b, 
+    FloatVector& x, 
+    FloatVector& r, 
+    int iterNum, 
+    Float lMin, 
+    Float lMax 
+){
+  
+  assert( 0. <= lMin and lMin <= lMax );
+
+  const Float delta = (lMax + lMin) / 2.;
+  const Float gamma = (lMax - lMin) / 2.;
+
+  r = b - A * x;
+
+  assert( x.isfinite() );
+  assert( r.isfinite() );
+      
+  FloatVector p( x.getdimension() );
+  FloatVector z( x.getdimension() );
+  Float alpha, beta;
+  
+  int i;
+  for( i = 0; i < iterNum; i++ )
+  {
+      
+      z = r;
+
+      if (i == 0) {
+
+          p = z;
+          alpha = 2. / delta;
+
+      } else {
+          
+          beta = gamma * alpha / 2;
+          beta = beta * beta;
+          assert( absolute( delta - beta ) > machine_epsilon );
+          alpha = 1./( delta - beta );
+          p = z + beta * p;
+
+      }
+
+      assert( x.isfinite() );
+      assert( r.isfinite() );
+      assert( p.isfinite() );
+      assert( z.isfinite() );
+      
+
+      x = x + alpha * p;
+      r = b - A * x; 
+      if ( r*r < 1e-15) break; 
+
+      assert( r.isfinite() );
+
+      printf("Cheybyshev Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", i, iterNum, (long double)std::sqrt(r*r), (long double) 1e-15 );
+
+  }
+
+  printf("Cheybyshev Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", i, iterNum, (long double)std::sqrt(r*r), (long double) 1e-15 );
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+//*****************************************************************
+// Iterative template routine -- CHEBY
+//
+// CHEBY solves the symmetric positive definite linear
+// system Ax = b using the Preconditioned Chebyshev Method
+//
+// CHEBY follows the algorithm described on p. 30 of the 
+// SIAM Templates book.
+//
+// The return value indicates convergence within max_iter (input)
+// iterations (0), or no convergence within max_iter iterations (1).
+//
+// Upon successful return, output arguments have the following values:
+//  
+//        x  --  approximate solution to Ax = b
+// max_iter  --  the number of iterations performed before the
+//               tolerance was reached
+//      tol  --  the residual after the final iteration
+//  
+//*****************************************************************
+
+
+void 
+CHEBY(const LinearOperator &A, FloatVector &x, const FloatVector &b,
+      const LinearOperator& M, const int max_iter, const Float tol,
+      Float eigmin, Float eigmax)
+{
+  Float resid;
+  Float alpha, beta, c, d;
+  FloatVector p(x), q(x), z(x);
+
+  Float normb = b.norm();
+  FloatVector r = b - A * x;
+
+  if (normb == 0.0)
+    normb = 1;
+  
+  if ((resid = r.norm() / normb) <= tol) {
+    return;
+  }
+
+  c = (eigmax - eigmin) / 2.0;
+  d = (eigmax + eigmin) / 2.0;
+
+  int i;
+  for ( i = 0; i < max_iter; i++) {
+    z = r;                 // apply preconditioner
+
+    if (i == 0) {
+      p = z;
+      alpha = 2.0 / d;
+    } else {
+      beta = c * alpha / 2.0;       // calculate new beta
+      beta = beta * beta;
+      alpha = 1.0 / (d - beta);     // calculate new alpha
+      p = z + beta * p;             // update search direction
+    }
+
+    q = A * p;
+    x += alpha * p;                 // update approximation vector
+    r -= alpha * q;                 // compute residual
+
+    if ((resid = r.norm() / normb) <= tol) {
+      break;                     // convergence
+    }
+  }
+
+  printf("Cheybyshev Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", i, max_iter, (long double)std::sqrt(r*r), (long double) tol );
+}
+
 
 
 #endif

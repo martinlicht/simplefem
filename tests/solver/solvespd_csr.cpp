@@ -44,18 +44,21 @@ int main()
 
                     std::vector< SparseMatrix::MatrixEntry > entries;
 
+                    const Float h = 1./N;
+                    const Float h2 = h * h;
+
                     for( int e = 0; e < N*N; e++ )
                     {
                         int x = e / N;
                         int y = e % N;
                         assert( e == x * N + y );
 
-                        entries.push_back({ x * N + y, x * N + y, 4. / N });
+                        entries.push_back({ x * N + y, x * N + y, 4. / h2 });
 
-                        if( x != 0   ) entries.push_back({ x * N + y, (x-1) * N + y,   -1. / N });
-                        if( x != N-1 ) entries.push_back({ x * N + y, (x+1) * N + y,   -1. / N });
-                        if( y != 0   ) entries.push_back({ x * N + y, (x  ) * N + y-1, -1. / N });
-                        if( y != N-1 ) entries.push_back({ x * N + y, (x  ) * N + y+1, -1. / N });
+                        if( x != 0   ) entries.push_back({ x * N + y, (x-1) * N + y,   -1. / h2 });
+                        if( x != N-1 ) entries.push_back({ x * N + y, (x+1) * N + y,   -1. / h2 });
+                        if( y != 0   ) entries.push_back({ x * N + y, (x  ) * N + y-1, -1. / h2 });
+                        if( y != N-1 ) entries.push_back({ x * N + y, (x  ) * N + y+1, -1. / h2 });
                         
                     }
 
@@ -90,6 +93,7 @@ int main()
                         
                         contable << static_cast<Float>(N);
 
+                        if(false)
                         {
                             LOG << "CGM C++" << endl;
                         
@@ -108,6 +112,7 @@ int main()
                             contable << c1 << c2;
                         }
 
+                        if(false)
                         {
                             LOG << "CRM C++" << endl;
                         
@@ -126,13 +131,14 @@ int main()
                             contable << c1 << c2;
                         }
 
+                        if(false)
                         {
                             LOG << "MINRES C++" << endl;
                         
                             FloatVector mysol( N*N );
                             mysol.zero();
                             MinimumResidualMethod Solver( system );
-                            Solver.print_modulo        = 1;
+                            Solver.print_modulo        = 0;
                             Solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
                             Solver.max_iteration_count =     4 * mysol.getdimension();
                             timestamp start = gettimestamp();
@@ -145,13 +151,14 @@ int main()
                             contable << c1 << c2;
                         }
 
+                        if(false)
                         {
                             LOG << "HERZOG SOODHALTER C++" << endl;
                         
                             FloatVector mysol( N*N );
                             mysol.zero();
                             HerzogSoodhalterMethod Solver( system );
-                            Solver.print_modulo        = 1;
+                            Solver.print_modulo        = 0;
                             Solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
                             Solver.max_iteration_count =     4 * mysol.getdimension();
                             timestamp start = gettimestamp();
@@ -170,6 +177,7 @@ int main()
 
 
 
+                        if(false)
                         {
                             LOG << "CGM - CSR Classic" << endl;
                         
@@ -193,7 +201,7 @@ int main()
                             contable << c1 << c2;
                         }
 
-                        // if(false)
+                        if(false)
                         {
                             LOG << "CRM - CSR Classic" << endl;
                         
@@ -217,7 +225,7 @@ int main()
                             contable << c1 << c2;
                         }
 
-                        // if(false)
+                        if(false)
                         {
                             LOG << "CRM - CSR Textbook" << endl;
                         
@@ -291,7 +299,7 @@ int main()
                         }
 
 
-//                         if(false)
+                        if(false)
                         {
                             LOG << "CGM diagonal preconditioner CSR" << endl;
                         
@@ -322,7 +330,7 @@ int main()
                         }
                         
                         
-//                         if(false)
+                        if(false)
                         {
                             LOG << "CGM SSOR preconditioner CSR" << endl;
                         
@@ -377,6 +385,54 @@ int main()
                                 0.,
                                 100 * invprecon.getdiagonal().maxnorm()
                             );
+
+                            timestamp end = gettimestamp();
+                            auto c1 = static_cast<Float>( end - start );
+                            auto c2 = Float( ( system * mysol - rhs ).norm() );
+                            contable << c1 << c2;
+                        }
+                        
+
+                        //if(false)
+                        {
+                            LOG << "CHEBYSHEV CSR" << endl;
+                        
+                            DiagonalOperator invprecon = InverseDiagonalPreconditioner( system_prelim );
+//                             invprecon.setentries( 1. );
+                            assert( invprecon.getdiagonal().isfinite() );
+                            assert( invprecon.getdiagonal().isnonnegative() );
+                            
+                            FloatVector mysol( N*N );
+                            mysol.zero();
+                            FloatVector residual( rhs );
+                            timestamp start = gettimestamp();
+                            
+                            CHEBY( system, mysol, rhs,
+                                IdentityOperator(N*N),
+                                10 * mysol.getdimension(), 10-10,
+                                0.000000, 8.000001 / h2 );
+      
+                            // Chebyshev( 
+                            //     system, 
+                            //     rhs, 
+                            //     mysol, 
+                            //     residual, 
+                            //     10 * mysol.getdimension(), 
+                            //     0.00001, 
+                            //     18.000001 / h2
+                            // );
+                            // CheybyshevIteration_DiagonalPreconditioner( 
+                            //     mysol.getdimension(), 
+                            //     mysol.raw(), 
+                            //     rhs.raw(), 
+                            //     system.getA(), system.getC(), system.getV(),
+                            //     residual.raw(),
+                            //     desired_precision,
+                            //     10,
+                            //     invprecon.getdiagonal().raw(),
+                            //     0.,
+                            //     18.000001 / h2
+                            // );
 
                             timestamp end = gettimestamp();
                             auto c1 = static_cast<Float>( end - start );
