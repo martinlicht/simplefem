@@ -1,0 +1,237 @@
+
+
+/**/
+
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+
+#include "../../basic.hpp"
+#include "../../utility/utility.hpp"
+#include "../../sparse/sparsematrix.hpp"
+#include "../../sparse/matcsr.hpp"
+#include "../../solver/chebyshev.hpp"
+#include "../../solver/sparsesolver.hpp"
+#include "../../solver/iterativesolver.hpp"
+
+
+using namespace std;
+
+extern const char* TestName;
+#define TESTNAME( cstr ) const char* TestName = cstr
+
+TESTNAME( "Solve SPD system: CGM, CRM, MINRES, HerzoogSoodhalter, CSR Solvers" );
+
+int main()
+{
+        LOG << "Unit Test: " << TestName << endl;
+        
+        LOG << std::setprecision(5);
+
+        if(true){
+
+            ConvergenceTable contable;
+            
+            const std::vector<int> Ns = { 4, 8, 16, 32 };
+
+            for( const int N : Ns ){
+                
+                LOG << "Level: " << N << std::endl;
+
+                const int L = N + 2;
+                
+                {
+                    
+                    LOG << "...assemble matrix" << endl;
+
+                    /* lower right */
+
+                    std::vector< SparseMatrix::MatrixEntry > entries_lowerright;
+
+                    for( int e = 0; e < N*N; e++ )
+                    {
+                        int x = e / N;
+                        int y = e % N;
+                        assert( e == x * N + y );
+
+                        entries_lowerright.push_back({ x * N + y, x * N + y, 4. / N });
+
+                        if( x != 0   ) entries.push_back({ x * N + y, (x-1) * N + y,   -1. / N });
+                        if( x != N-1 ) entries.push_back({ x * N + y, (x+1) * N + y,   -1. / N });
+                        if( y != 0   ) entries.push_back({ x * N + y, (x  ) * N + y-1, -1. / N });
+                        if( y != N-1 ) entries.push_back({ x * N + y, (x  ) * N + y+1, -1. / N });
+                        
+                    }
+
+                    auto system_lowerright_prelim = SparseMatrix( N*N, N*N, entries_lowerright );
+                    system_lowerright_prelim.sortentries();
+                    auto system_lowerright = MatrixCSR( system_lowerright_prelim );
+
+                    /* upper left */
+
+                    std::vector< SparseMatrix::MatrixEntry > entries_upperleft;
+
+                    for( int e = 0; e < L*L; e++ )
+                    {
+                        int x = e / L;
+                        int y = e % L;
+                        assert( e == x * N + y );
+
+                        entries_upperleft.push_back({ x * L + y, x * L + y, -2. });
+                        
+                    }
+
+                    auto system_upperleft_prelim = SparseMatrix( L*L, L*L, entries_upperleft );
+                    system_upperleft_prelim.sortentries();
+                    auto system_upperleft = MatrixCSR( system_upperleft_prelim );
+
+
+                    /* empty off-diagonal blocks */
+
+                    auto system_lowerleft  = MatrixCSR( N*N, L*L, {0}, {}, {} );
+                    auto system_upperright = MatrixCSR( L*L, N*N, {0}, {}, {} );
+
+
+                    /* TODO
+                     * - create pairs of solutions 
+                     * - from the previous solvers, use MINRES or HerzogSoodhalter 
+                     * - TODO TODO das ergibt alles keinen Sinn 
+                     */
+
+                    LOG << "...create solutions and right-hand sides" << endl;
+
+                    const int T = 10;
+
+                    std::vector<FloatVector> sols_fst;
+                    std::vector<FloatVector> sols_snd;
+                    std::vector<FloatVector> rhss_fst;
+                    std::vector<FloatVector> rhss_snd;
+
+                    for( int t = 0; t < T; t++ )
+                    {
+                        FloatVector sol_fst( L * L );
+                        sol_fst.random();
+                        sol_fst.normalize();
+                        FloatVector rhs_fst = system_lowerleft * sol_fst;
+                        sols_fst.push_back( sol_fst );
+                        rhss_fst.push_back( rhs_fst );
+
+                        FloatVector sol_snd( N * N );
+                        sol_snd.random();
+                        sol_snd.normalize();
+                        FloatVector rhs_snd = system_upperright * sol_snd;
+                        sols_snd.push_back( sol_snd );
+                        rhss_snd.push_back( rhs_snd );
+                    }
+
+
+
+                    for( int t = 0; t < T; t++ )
+                    {
+
+                        const auto& rhs = rhss[t];
+                        
+                        contable << static_cast<Float>(N);
+
+                        
+
+
+
+
+
+
+
+
+                        {
+                            
+                            FloatVector mysol_left( N*N );
+                            mysol_left.zero();
+                            FloatVector mysol_right( N*N );
+                            mysol_right.zero();
+                            
+                            
+                            FloatVector res = rhs;
+
+                            LOG << "...iterative solver" << endl;
+                            
+                            timestamp start = gettimestamp();
+
+                            LOG << "- mixed system solver" << endl;
+//                             if(false)
+                            HodgeConjugateResidualSolverCSR_SSOR(
+                            //HodgeConjugateResidualSolverCSR_textbook( 
+                                negB.getdimout(), 
+                                A.getdimout(), 
+                                sol.raw(), 
+                                rhs.raw(), 
+                                A.getA(),    A.getC(),    A.getV(), 
+                                negB.getA(),    negB.getC(),    negB.getV(), 
+                                negBt.getA(),   negBt.getC(),   negBt.getV(), 
+                                res.raw(),
+                                1e-10,
+                                100,
+                                1e-14, //desired_precision,
+                                -1
+                            );
+                            
+                            sol *= -1;
+                            
+//                             LOG << "- elliptic system solver" << endl;
+//                             ConjugateResidualSolverCSR( 
+//                                 sol.getdimension(), 
+//                                 sol.raw(), 
+//                                 rhs.raw(), 
+//                                 C.getA(), C.getC(), C.getV(),
+//                                 res.raw(),
+//                                 1000 * machine_epsilon,
+//                                 1000
+//                             );
+                            
+//                             HerzogSoodhalterMethod Solver( C );
+//                             Solver.threshold           = 1e-10;
+//                             Solver.print_modulo        = 500;
+//                             Solver.max_iteration_count = sol.getdimension();
+// 
+//                             Solver.solve( sol, rhs );
+                            
+
+                            timestamp end = gettimestamp();
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+
+                            
+                        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        
+                        contable << nl;
+                        
+                    }
+                    
+                    contable.lg( false );
+
+                    }
+
+                
+                
+            } 
+        
+        }
+        
+        
+        
+        
+        LOG << "Finished Unit Test: " << TestName << endl;
+        
+        return 0;
+}

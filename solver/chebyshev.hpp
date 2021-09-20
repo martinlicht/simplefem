@@ -272,50 +272,74 @@ inline void Chebyshev(
 
 void 
 CHEBY(const LinearOperator &A, FloatVector &x, const FloatVector &b,
-      const LinearOperator& M, const int max_iter, const Float tol,
+      const LinearOperator& invprecon, 
+      const int max_iteration_count, const Float threshold,
       Float eigmin, Float eigmax)
 {
-  Float resid;
-  Float alpha, beta, c, d;
-  FloatVector p(x), q(x), z(x);
 
-  Float normb = b.norm();
-  FloatVector r = b - A * x;
+    assert( 0. <= eigmin and eigmin <= eigmax );
+    assert( x.getdimension() == b.getdimension() );
+    assert( A.getdimin()  == x.getdimension() );
+    assert( A.getdimout() == b.getdimension() );
+    assert( invprecon.getdimin()  == x.getdimension() );
+    assert( invprecon.getdimout() == b.getdimension() );
+    
+    const int dimension = A.getdimin();
 
-  if (normb == 0.0)
-    normb = 1;
-  
-  if ((resid = r.norm() / normb) <= tol) {
-    return;
-  }
+    
+    Float alpha, beta;
+    const Float gamma = (eigmax - eigmin) / 2.0;
+    const Float delta = (eigmax + eigmin) / 2.0;
+    
+    FloatVector p( dimension );
+    FloatVector q( dimension );
+    FloatVector z( dimension );
+    
+    FloatVector r = b - A * x;
 
-  c = (eigmax - eigmin) / 2.0;
-  d = (eigmax + eigmin) / 2.0;
+    Float normb = b.norm();
+    if( normb == 0.0 )
+        normb = 1;
 
-  int i;
-  for ( i = 0; i < max_iter; i++) {
-    z = r;                 // apply preconditioner
+    Float r_r = r.norm() / normb;
 
-    if (i == 0) {
-      p = z;
-      alpha = 2.0 / d;
-    } else {
-      beta = c * alpha / 2.0;       // calculate new beta
-      beta = beta * beta;
-      alpha = 1.0 / (d - beta);     // calculate new alpha
-      p = z + beta * p;             // update search direction
+    if ( r_r < threshold*threshold )
+        return;
+
+    int recent_iteration_count = 0;
+    while( recent_iteration_count < max_iteration_count ) 
+    {
+        if( r_r < threshold*threshold )
+            break;                     // convergence
+        
+        z = invprecon * r;                 // apply preconditioner
+
+        if( recent_iteration_count == 0 ) {
+        
+            p = z;
+            alpha = 2.0 / delta;
+        
+        } else {
+        
+            Float beta = square( gamma * alpha / 2.0 );       // calculate new beta
+            alpha = 1.0 / ( delta - beta );     // calculate new alpha
+            p = z + beta * p;             // update search direction
+        
+        }
+
+        q = A * p;
+        x += alpha * p;                 // update approximation vector
+        r -= alpha * q;                 // compute residual
+
+        r_r = r.norm() / normb;
+
+        
+
+        recent_iteration_count++;
     }
 
-    q = A * p;
-    x += alpha * p;                 // update approximation vector
-    r -= alpha * q;                 // compute residual
-
-    if ((resid = r.norm() / normb) <= tol) {
-      break;                     // convergence
-    }
-  }
-
-  printf("Cheybyshev Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", i, max_iter, (long double)std::sqrt(r*r), (long double) tol );
+    LOG << "Final result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
+            << r_r << "(" << threshold*threshold << ")" << nl;
 }
 
 
