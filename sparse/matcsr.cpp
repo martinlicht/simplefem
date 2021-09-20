@@ -179,6 +179,7 @@ void MatrixCSR::apply( FloatVector& dest, const FloatVector& add, Float scaling 
     
     assert( getdimin() == add.getdimension() );
     assert( getdimout() == dest.getdimension() );
+    assert( &dest != &add );
 
     dest.zero();
     
@@ -190,6 +191,9 @@ void MatrixCSR::apply( FloatVector& dest, const FloatVector& add, Float scaling 
             dest[i] += scaling * V[j] * add[ C[j] ];
         }
     }
+
+    // TODO: introduce inline assembler for the code above
+    // -- uses outer loop assembler, inner loop assembler
     
 }
 
