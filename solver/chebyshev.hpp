@@ -53,6 +53,8 @@ inline void CheybyshevIteration_DiagonalPreconditioner(
     assert( x_prev );
     assert( x_curr );
     assert( x_next );
+
+    LOG << lower << space << upper << nl;
     
     const Float alpha = 2. / ( upper + lower );
     const Float mu    = ( upper + lower ) / ( upper - lower );
@@ -155,7 +157,7 @@ inline void CheybyshevIteration_DiagonalPreconditioner(
         
     }
     
-    printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), (long double) allowed_error );
+    printf("Final residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), (long double) allowed_error );
 
     
     delete[] ( x_prev );
