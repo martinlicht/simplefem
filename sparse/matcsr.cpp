@@ -307,6 +307,18 @@ int MatrixCSR::getnumberofentries() const
 //     check();
 // }
 
+Float MatrixCSR::eigenvalueupperbound() const 
+{
+    Float ret = 0.;
+    for( int r = 0; r < A.size()-1; r++ ) {
+        Float candidate_ret = 0.;
+        for( int c = A[r]; c < A[r+1]; c++ )
+            candidate_ret += absolute( V[c] );
+        ret = std::max( ret, candidate_ret );
+    }
+    return ret;
+}
+
 
 
 
