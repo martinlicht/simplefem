@@ -74,8 +74,11 @@ int main()
             ConvergenceTable contable;
             
 
-            int min_l = 2; int max_l = 9;
+            const int min_l = 2; 
+            const int max_l = 9;
 
+            assert( 0 <= min_l and min_l <= max_l );
+            
             for( int l = 0; l < min_l; l++ )
                 M.uniformrefinement();
 

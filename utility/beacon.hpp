@@ -30,9 +30,12 @@ class TimeBeacon
         
         void show() const {
             
-            LOG << " ----> " << timestamp2measurement( times.at(0) ) << " @ " << texts.at(0);
+            std::string text;
             for( int i = 1; i < times.size(); i++ )
-                LOG << " ----> " << timestamp2measurement( times.at(i) - times.at(i-1) ) << " @ " << texts.at(i);
+                text += texts.at(i) + " -> " + timestamp2measurement( times.at(i) - times.at(i-1) ) +  "\t";
+            LOG << text << nl;
+            // for( int i = 1; i < times.size(); i++ )
+                // LOG << " ----> " << timestamp2measurement( times.at(i) - times.at(i-1) ) << " @ " << texts.at(i) << nl;
             
         }
         

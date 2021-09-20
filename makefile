@@ -40,7 +40,7 @@ components+=sparse
 components+=solver
 components+=mesh
 components+=vtk
-components+=matrixmarket
+#components+=matrixmarket
 components+=fem
 
 
@@ -144,7 +144,7 @@ cppcheck: $(cppcheck.components)
 
 .PHONY: cpplint
 cpplint:
-	@( ./Tools/cpplint.py --exclude=tests/* --exclude=tests/*/* --exclude=.legacy/* --exclude=.private/* --exclude=.playground/* --recursive --filter=-whitespace,-legal --quiet . ) | sort | uniq -c > OUTPUT_CPPLINT.txt
+	@( ./Tools/cpplint.py --exclude=tests/* --exclude=tests/*/* --exclude=.legacy/* --exclude=.private/* --exclude=.playground/* --recursive --filter=-whitespace,-legal --quiet . ) | sort | uniq -c 2> OUTPUT_CPPLINT.txt
 
 # print the build parameters
 

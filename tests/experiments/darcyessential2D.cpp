@@ -65,8 +65,8 @@ int main()
         
         // std::function<FloatVector(const std::function<FloatVector(const FloatVector&) ) >scalarfield = 
         
-        Float xfeq = 1.;
-        Float yfeq = 1.;
+        const Float xfeq = 1.;
+        const Float yfeq = 1.;
         
         
         // u dx + v dy -> u_y dydx + v_x dxdy = ( v_x - u_y ) dxdy
@@ -109,11 +109,11 @@ int main()
 
         LOG << "Solving Poisson Problem with Neumann boundary conditions" << endl;
 
-        int min_l = 1; 
-        int max_l = 5;
+        const int min_l = 1; 
+        const int max_l = 5;
         
-        int min_r = 1;
-        int max_r = 1;
+        const int min_r = 1;
+        const int max_r = 1;
         
         
         ConvergenceTable contable;
@@ -121,6 +121,9 @@ int main()
         contable << "sigma_error" << "u_error";
         
 
+        assert( 0 <= min_l and min_l <= max_l );
+        assert( 0 <= min_r and min_r <= max_r );
+            
         for( int l = 0; l < min_l; l++ )
             M.uniformrefinement();
 
@@ -163,6 +166,7 @@ int main()
                 auto Bt = MatrixCSR( mat_Bt );
                 auto B  = MatrixCSR( mat_B  );
                 
+                auto C  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
                 
                 auto Schur = B * inv(A,1e-10) * Bt;
                 
@@ -219,6 +223,7 @@ int main()
                             A.getA(),   A.getC(),  A.getV(), 
                             B.getA(),   B.getC(),  B.getV(), 
                             Bt.getA(), Bt.getC(), Bt.getV(), 
+                            C.getA(),   C.getC(),  C.getV(), 
                             res.raw(),
                             1e-10,
                             1,

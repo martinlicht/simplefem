@@ -146,12 +146,12 @@ inline constexpr T square( const T& x )
 
 
 
-inline constexpr bool issmall( Float value, Float threshold = 100. * std::numeric_limits<Float>::epsilon() )
+inline constexpr bool issmall( Float value, Float threshold = 100. * machine_epsilon )
 {
     return absolute(value) < threshold;
 }
 
-inline constexpr bool isabout( Float value1, Float value2, Float threshold = 100. * std::numeric_limits<Float>::epsilon() )
+inline constexpr bool isaboutequal( Float value1, Float value2, Float threshold = 100. * machine_epsilon )
 {
     return issmall( value1 - value2, threshold );
 }
@@ -190,7 +190,10 @@ inline constexpr int power_integer( int base, int exponent )
     assert( base != 0 or exponent != 0 );
     assert( exponent >= 0 );
     if( exponent == 0 ) return 1;
-    return base * power_integer( base, exponent - 1 );
+    int rec = power_integer( base, exponent - 1 );
+    int ret = base * rec;
+    assert( ret / base == rec );
+    return ret;
 }
 
 inline constexpr int poweroftwo( int exponent )
@@ -222,6 +225,11 @@ inline constexpr int signpower( int exponent )
 //                                             //
 /////////////////////////////////////////////////
 
+/*
+ * Recursively divide the integer n by larger and larger numbers 1, 2, 3, ... without remainder
+ * until the divisor is larger than n. That divisor is the largest numbers 
+ * whose factorial is at most n.
+ */
 
 template<typename T>
 inline constexpr uintmax_t largest_factorial_base_AUX( T n, uintmax_t k )
@@ -482,7 +490,7 @@ inline int random_integer()
 inline Float random_uniform()
 {
     Float ret = rand() / static_cast<Float>( RAND_MAX );
-    assert( 0. <= ret and ret <= RAND_MAX );
+    assert( 0. <= ret and ret <= 1. );
     return ret;
 }
 
@@ -525,7 +533,6 @@ inline Float gaussrand_2()
     return Z;
 }
 
-
 // http://c-faq.com/lib/gaussrand.luben.html
 inline Float gaussrand_3( Float mean = 0., Float std_dev = 1. )
 {
@@ -541,10 +548,9 @@ inline Float gaussrand_3( Float mean = 0., Float std_dev = 1. )
     return low ? (mean + z) : (mean - z);
 }
 
-
 inline Float gaussrand()
 {
-    return gaussrand_1();
+    return gaussrand_3();
 }
 
 
@@ -726,6 +732,11 @@ inline int sum_int( int to, const std::function<int(int)>& calc )
 
 
 
+/////////////////////////////////////////////////
+//                                             //
+//              BUMP FUNCTIONS                 //
+//                                             //
+/////////////////////////////////////////////////
 
 
 
@@ -817,6 +828,11 @@ inline Float bumpfunction_devdev( Float x )
 
 
 
+/////////////////////////////////////////////////
+//                                             //
+//       CARTESIAN AND POLAR COORDINATES       //
+//                                             //
+/////////////////////////////////////////////////
 
 inline void cartesian_to_polar_coordinates2D( const Float& x, const Float& y, Float& radius, Float& angle )
 {
@@ -1009,7 +1025,7 @@ std::ostream& operator<<( std::ostream& stream, const std::array<T, N>& v)
 /****
  * 
  * A very imperfect solution for make_unique in C++11
- * We are undefined behavior territory here
+ * We enter undefined behavior territory here
  * 
  ****/
 #warning \

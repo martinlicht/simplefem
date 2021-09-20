@@ -161,7 +161,7 @@ void ConjugateGradientSolverCSR(
     
     
     if( print_modulo >= 0 ) 
-        printf( "Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+        printf( "Final residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
                 K, N, (long double)(r_r), (long double) threshold*threshold );
 
     
@@ -348,7 +348,7 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
     
     
     if( print_modulo >= 0 ) 
-        printf( "Residual after %d of max. %d iterations: %.9Le (%.9Le)\n",
+        printf( "Final residual after %d of max. %d iterations: %.9Le (%.9Le)\n",
                 K, N, (long double)(z_r), (long double) threshold*threshold );
 
     
@@ -609,7 +609,7 @@ void ConjugateGradientSolverCSR_SSOR(
     }
     
     if( print_modulo >= 0 ) 
-        printf( "Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+        printf( "Final residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
                 K, N, (long double)(z_r), (long double) threshold*threshold );
 
     
@@ -823,7 +823,7 @@ void ConjugateResidualSolverCSR(
     }
     
     if( print_modulo >= 0 ) 
-        printf( "Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+        printf( "Final residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
                 K, N, (long double)(Ad_r), (long double) threshold*threshold );
 
     
@@ -1021,7 +1021,7 @@ void ConjugateResidualSolverCSR_textbook(
     }
     
     if( print_modulo >= 0 ) 
-        printf( "Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+        printf( "Final residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
                 K, N, (long double)(Ar_r), (long double) threshold*threshold );
 
     
@@ -1173,7 +1173,7 @@ void MINRESCSR(
 
         Float temp = gamma;
 //         if( K % 100 == 0 )
-//         LOG << K << space << temp << space << eta << space << temp/eta;
+//         LOG << K << space << temp << space << eta << space << temp/eta << nl;
             
         {
             
@@ -1237,8 +1237,8 @@ void MINRESCSR(
             
             eta = - sn * eta;
             
-//             LOG << "\t" << alpha_0 << space << alpha_1 << space << alpha_2 << space << alpha_3;
-//             LOG << "\t" << cn << space << sn << space << eta;
+//             LOG << "\t" << alpha_0 << space << alpha_1 << space << alpha_2 << space << alpha_3 << nl;
+//             LOG << "\t" << cn << space << sn << space << eta << nl;
             
             
             std::swap( v0, v1 );
@@ -1268,7 +1268,7 @@ void MINRESCSR(
     }
     
     if( print_modulo >= 0 ) 
-        printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)eta, (long double) threshold );
+        printf("Final residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)eta, (long double) threshold );
 
     
     delete[] ( v0 );
@@ -1464,7 +1464,7 @@ void WHATEVER(
     }
     
     if( print_modulo >= 0 ) 
-        printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), (long double) threshold );
+        printf("Final residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), (long double) threshold );
 
     
     delete[] (  r );
