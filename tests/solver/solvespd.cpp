@@ -41,6 +41,7 @@ int main()
             bool do_crmpp_fast = false;
             bool do_minres     = false;
             bool do_herzog     = false;
+            bool do_chebyshev  = false;
             
             do_cgmpp      = true;
             do_crmpp_expl = true;
@@ -48,6 +49,7 @@ int main()
             do_crmpp_fast = true;
             do_minres     = true;
             // do_herzog     = true;
+            do_chebyshev  = true;
             
             
             
@@ -59,6 +61,7 @@ int main()
             if( do_crmpp_fast ) contable_sol << "CRM++(fast)";
             if( do_minres     ) contable_sol << "MINRES"     ;
             if( do_herzog     ) contable_sol << "HERZOG"     ;
+            if( do_chebyshev  ) contable_sol << "CHEBYSHEV"  ;
 
             contable_res << "Index";
             if( do_cgmpp      ) contable_res << "CGM++"      ;
@@ -67,6 +70,7 @@ int main()
             if( do_crmpp_fast ) contable_res << "CRM++(fast)";
             if( do_minres     ) contable_res << "MINRES"     ;
             if( do_herzog     ) contable_res << "HERZOG"     ;
+            if( do_chebyshev  ) contable_res << "CHEBYSHEV"  ;
 
             contable_num << "Index";
             if( do_cgmpp      ) contable_num << "CGM++"      ;
@@ -75,6 +79,7 @@ int main()
             if( do_crmpp_fast ) contable_num << "CRM++(fast)";
             if( do_minres     ) contable_num << "MINRES"     ;
             if( do_herzog     ) contable_num << "HERZOG"     ;
+            if( do_chebyshev  ) contable_num << "CHEBYSHEV"  ;
 
             
             const std::vector<int> Ns = { 16, 32 };
@@ -256,7 +261,7 @@ int main()
                             contable_res << stat_res;
                             contable_num << stat_num;
                         }
-
+                        
                         if( do_herzog )
                         {
                             LOG << "HERZOG SOODHALTER C++" << endl;
@@ -280,10 +285,7 @@ int main()
                             contable_num << stat_num;
                         }
 
-
-
-
-
+                        if( do_chebyshev )
                         {
                             LOG << "CHEBYSHEV CSR" << endl;
                             FloatVector mysol( N*N );
