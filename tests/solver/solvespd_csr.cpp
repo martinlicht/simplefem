@@ -20,7 +20,7 @@ using namespace std;
 extern const char* TestName;
 #define TESTNAME( cstr ) const char* TestName = cstr
 
-TESTNAME( "Solve SPD system: CGM, CRM, MINRES, HerzoogSoodhalter, CSR Solvers" );
+TESTNAME( "Solve SPD system: CSR Solvers" );
 
 int main()
 {
@@ -31,6 +31,21 @@ int main()
         if(true){
 
             ConvergenceTable contable;
+            
+            contable << "Index"
+//                      << "CGM++"         << "time"
+//                      << "CRM++"         << "time"
+//                      << "MINRES"        << "time"
+//                      << "HERZOG"        << "time"
+                     << "CGM"           << "time"
+                     << "CRM"           << "time"
+                     << "CRM (textbook)"<< "time"
+                     << "MINRES"        << "time"
+                     << "CGM (diag)"    << "time"
+                     << "CGM (ssor)"    << "time"
+                     << "Chebyshev"     << "time"
+                     ;
+
             
             const std::vector<int> Ns = { 4, 8, 16, 32 };
 
@@ -44,18 +59,21 @@ int main()
 
                     std::vector< SparseMatrix::MatrixEntry > entries;
 
+                    const Float h = 1. / (N+1);
+                    const Float h2 = h * h;
+
                     for( int e = 0; e < N*N; e++ )
                     {
                         int x = e / N;
                         int y = e % N;
                         assert( e == x * N + y );
 
-                        entries.push_back({ x * N + y, x * N + y, 4. / N });
+                        entries.push_back({ x * N + y, x * N + y, 4. / h2 });
 
-                        if( x != 0   ) entries.push_back({ x * N + y, (x-1) * N + y,   -1. / N });
-                        if( x != N-1 ) entries.push_back({ x * N + y, (x+1) * N + y,   -1. / N });
-                        if( y != 0   ) entries.push_back({ x * N + y, (x  ) * N + y-1, -1. / N });
-                        if( y != N-1 ) entries.push_back({ x * N + y, (x  ) * N + y+1, -1. / N });
+                        if( x != 0   ) entries.push_back({ x * N + y, (x-1) * N + y,   -1. / h2 });
+                        if( x != N-1 ) entries.push_back({ x * N + y, (x+1) * N + y,   -1. / h2 });
+                        if( y != 0   ) entries.push_back({ x * N + y, (x  ) * N + y-1, -1. / h2 });
+                        if( y != N-1 ) entries.push_back({ x * N + y, (x  ) * N + y+1, -1. / h2 });
                         
                     }
 
@@ -86,53 +104,59 @@ int main()
                     for( int t = 0; t < T; t++ )
                     {
 
+                        const auto& sol = sols[t];
                         const auto& rhs = rhss[t];
                         
                         contable << static_cast<Float>(N);
 
+                        if(false)
                         {
                             LOG << "CGM C++" << endl;
                         
                             FloatVector mysol( N*N );
                             mysol.zero();
                             ConjugateGradientMethod Solver( system );
-                            Solver.print_modulo        = 0;
+                            Solver.print_modulo        = 4 * mysol.getdimension() / 20;
                             Solver.max_iteration_count =     4 * mysol.getdimension();
                             timestamp start = gettimestamp();
                             Solver.solve( mysol, rhs );
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             
-                            auto c1 = static_cast<Float>( end - start );
-                            auto c2 = Float( ( system * mysol - rhs ).norm() );
-                            contable << c1 << c2;
+                            auto stat_sol = Float( ( sol - mysol ).norm() );
+                            auto stat_res = Float( ( system * mysol - rhs ).norm() );
+                            auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                            contable << stat_sol << stat_res;
                         }
 
+                        if(false)
                         {
                             LOG << "CRM C++" << endl;
                         
                             FloatVector mysol( N*N );
                             mysol.zero();
                             ConjugateResidualMethod Solver( system );
-                            Solver.print_modulo        = 0;
+                            Solver.print_modulo        = 4 * mysol.getdimension() / 20;
                             Solver.max_iteration_count =     4 * mysol.getdimension();
                             timestamp start = gettimestamp();
                             Solver.solve( mysol, rhs );
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             
-                            auto c1 = static_cast<Float>( end - start );
-                            auto c2 = Float( ( system * mysol - rhs ).norm() );
-                            contable << c1 << c2;
+                            auto stat_sol = Float( ( sol - mysol ).norm() );
+                            auto stat_res = Float( ( system * mysol - rhs ).norm() );
+                            auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                            contable << stat_sol << stat_res;
                         }
 
+                        if(false)
                         {
                             LOG << "MINRES C++" << endl;
                         
                             FloatVector mysol( N*N );
                             mysol.zero();
                             MinimumResidualMethod Solver( system );
-                            Solver.print_modulo        = 1;
+                            Solver.print_modulo        = 4 * mysol.getdimension() / 20;
                             Solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
                             Solver.max_iteration_count =     4 * mysol.getdimension();
                             timestamp start = gettimestamp();
@@ -140,18 +164,20 @@ int main()
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
-                            auto c1 = static_cast<Float>( end - start );
-                            auto c2 = Float( ( system * mysol - rhs ).norm() );
-                            contable << c1 << c2;
+                            auto stat_sol = Float( ( sol - mysol ).norm() );
+                            auto stat_res = Float( ( system * mysol - rhs ).norm() );
+                            auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                            contable << stat_sol << stat_res;
                         }
 
+                        if(false)
                         {
                             LOG << "HERZOG SOODHALTER C++" << endl;
                         
                             FloatVector mysol( N*N );
                             mysol.zero();
                             HerzogSoodhalterMethod Solver( system );
-                            Solver.print_modulo        = 1;
+                            Solver.print_modulo        = 4 * mysol.getdimension() / 20;
                             Solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
                             Solver.max_iteration_count =     4 * mysol.getdimension();
                             timestamp start = gettimestamp();
@@ -159,9 +185,10 @@ int main()
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
-                            auto c1 = static_cast<Float>( end - start );
-                            auto c2 = Float( ( system * mysol - rhs ).norm() );
-                            contable << c1 << c2;
+                            auto stat_sol = Float( ( sol - mysol ).norm() );
+                            auto stat_res = Float( ( system * mysol - rhs ).norm() );
+                            auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                            contable << stat_sol << stat_res;
                         }
                         
 
@@ -176,6 +203,7 @@ int main()
                             FloatVector mysol( N*N );
                             mysol.zero();
                             FloatVector residual( rhs );
+
                             timestamp start = gettimestamp();
                             ConjugateGradientSolverCSR( 
                                 mysol.getdimension(), 
@@ -186,11 +214,11 @@ int main()
                                 desired_precision,
                                 0
                             );
-
                             timestamp end = gettimestamp();
-                            auto c1 = static_cast<Float>( end - start );
-                            auto c2 = Float( ( system * mysol - rhs ).norm() );
-                            contable << c1 << c2;
+
+                            auto stat_sol = Float( ( sol - mysol ).norm() );
+                            auto stat_res = Float( ( system * mysol - rhs ).norm() );
+                            contable << stat_sol << stat_res;
                         }
 
                         // if(false)
@@ -200,6 +228,7 @@ int main()
                             FloatVector mysol( N*N );
                             mysol.zero();
                             FloatVector residual( rhs );
+
                             timestamp start = gettimestamp();
                             ConjugateResidualSolverCSR( 
                                 mysol.getdimension(), 
@@ -210,11 +239,11 @@ int main()
                                 desired_precision,
                                 0
                             );
-
                             timestamp end = gettimestamp();
-                            auto c1 = static_cast<Float>( end - start );
-                            auto c2 = Float( ( system * mysol - rhs ).norm() );
-                            contable << c1 << c2;
+
+                            auto stat_sol = Float( ( sol - mysol ).norm() );
+                            auto stat_res = Float( ( system * mysol - rhs ).norm() );
+                            contable << stat_sol << stat_res;
                         }
 
                         // if(false)
@@ -224,6 +253,7 @@ int main()
                             FloatVector mysol( N*N );
                             mysol.zero();
                             FloatVector residual( rhs );
+
                             timestamp start = gettimestamp();
                             ConjugateResidualSolverCSR_textbook( 
                                 mysol.getdimension(), 
@@ -234,20 +264,21 @@ int main()
                                 desired_precision,
                                 0
                             );
-
                             timestamp end = gettimestamp();
-                            auto c1 = static_cast<Float>( end - start );
-                            auto c2 = Float( ( system * mysol - rhs ).norm() );
-                            contable << c1 << c2;
+
+                            auto stat_sol = Float( ( sol - mysol ).norm() );
+                            auto stat_res = Float( ( system * mysol - rhs ).norm() );
+                            contable << stat_sol << stat_res;
                         }
 
-                        if(false)
+//                         if(false)
                         {
                             LOG << "MINRES CSR" << endl;
                         
                             FloatVector mysol( N*N );
                             mysol.zero();
                             FloatVector residual( rhs );
+
                             timestamp start = gettimestamp();
                             MINRESCSR( 
                                 mysol.getdimension(), 
@@ -258,11 +289,11 @@ int main()
                                 desired_precision,
                                 0
                             );
-
                             timestamp end = gettimestamp();
-                            auto c1 = static_cast<Float>( end - start );
-                            auto c2 = Float( ( system * mysol - rhs ).norm() );
-                            contable << c1 << c2;
+
+                            auto stat_sol = Float( ( sol - mysol ).norm() );
+                            auto stat_res = Float( ( system * mysol - rhs ).norm() );
+                            contable << stat_sol << stat_res;
                         }
 
 
@@ -273,6 +304,7 @@ int main()
                             FloatVector mysol( N*N );
                             mysol.zero();
                             FloatVector residual( rhs );
+
                             timestamp start = gettimestamp();
                             WHATEVER( 
                                 mysol.getdimension(), 
@@ -283,11 +315,11 @@ int main()
                                 desired_precision,
                                 0
                             );
-
                             timestamp end = gettimestamp();
-                            auto c1 = static_cast<Float>( end - start );
-                            auto c2 = Float( ( system * mysol - rhs ).norm() );
-                            contable << c1 << c2;
+
+                            auto stat_sol = Float( ( sol - mysol ).norm() );
+                            auto stat_res = Float( ( system * mysol - rhs ).norm() );
+                            contable << stat_sol << stat_res;
                         }
 
 
@@ -303,6 +335,7 @@ int main()
                             FloatVector mysol( N*N );
                             mysol.zero();
                             FloatVector residual( rhs );
+
                             timestamp start = gettimestamp();
                             ConjugateGradientSolverCSR_DiagonalPreconditioner( 
                                 mysol.getdimension(), 
@@ -314,11 +347,11 @@ int main()
                                 0,
                                 invprecon.getdiagonal().raw()
                             );
-
                             timestamp end = gettimestamp();
-                            auto c1 = static_cast<Float>( end - start );
-                            auto c2 = Float( ( system * mysol - rhs ).norm() );
-                            contable << c1 << c2;
+
+                            auto stat_sol = Float( ( sol - mysol ).norm() );
+                            auto stat_res = Float( ( system * mysol - rhs ).norm() );
+                            contable << stat_sol << stat_res;
                         }
                         
                         
@@ -333,6 +366,7 @@ int main()
                             FloatVector mysol( N*N );
                             mysol.zero();
                             FloatVector residual( rhs );
+
                             timestamp start = gettimestamp();
                             ConjugateGradientSolverCSR_SSOR( 
                                 mysol.getdimension(), 
@@ -345,11 +379,11 @@ int main()
                                 diagonal.raw(),
                                 0.9123456789
                             );
-
                             timestamp end = gettimestamp();
-                            auto c1 = static_cast<Float>( end - start );
-                            auto c2 = Float( ( system * mysol - rhs ).norm() );
-                            contable << c1 << c2;
+
+                            auto stat_sol = Float( ( sol - mysol ).norm() );
+                            auto stat_res = Float( ( system * mysol - rhs ).norm() );
+                            contable << stat_sol << stat_res;
                         }
                         
                         
@@ -364,6 +398,7 @@ int main()
                             FloatVector mysol( N*N );
                             mysol.zero();
                             FloatVector residual( rhs );
+
                             timestamp start = gettimestamp();
                             CheybyshevIteration_DiagonalPreconditioner( 
                                 mysol.getdimension(), 
@@ -372,31 +407,17 @@ int main()
                                 system.getA(), system.getC(), system.getV(),
                                 residual.raw(),
                                 desired_precision,
-                                10,
+                                1,
                                 invprecon.getdiagonal().raw(),
                                 0.,
-                                100 * invprecon.getdiagonal().maxnorm()
+                                system.eigenvalueupperbound()
                             );
-
                             timestamp end = gettimestamp();
-                            auto c1 = static_cast<Float>( end - start );
-                            auto c2 = Float( ( system * mysol - rhs ).norm() );
-                            contable << c1 << c2;
+
+                            auto stat_sol = Float( ( sol - mysol ).norm() );
+                            auto stat_res = Float( ( system * mysol - rhs ).norm() );
+                            contable << stat_sol << stat_res;
                         }
-                        
-
-
-
-
-
-
-
-
-
-
-
-
-
                         
                         contable << nl;
                         

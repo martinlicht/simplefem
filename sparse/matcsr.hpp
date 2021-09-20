@@ -86,6 +86,8 @@ public LinearOperator /* every matrix is a linear operator */
 
         int getnumberofzeroentries() const;
 
+        Float eigenvalueupperbound() const;
+
 //         void sortentries() const;
         
         
