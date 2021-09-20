@@ -30,6 +30,22 @@ inline void HodgeConjugateResidualSolverCSR(
     int inneriteration_print_modulo
 );
 
+inline void HodgeConjugateResidualSolverCSR_diagonal( 
+    const int N, 
+    const int L, 
+    Float* x, 
+    const Float* b, 
+    const int*  Arows, const int*  Acolumns, const Float*  Avalues, 
+    const int*  Brows, const int*  Bcolumns, const Float*  Bvalues, 
+    const int* Btrows, const int* Btcolumns, const Float* Btvalues, 
+    const int*  Crows, const int*  Ccolumns, const Float*  Cvalues, 
+    Float* residual,
+    Float threshold,
+    int print_modulo,
+    Float inneriteration_threshold,
+    int inneriteration_print_modulo
+);
+
 inline void HodgeConjugateResidualSolverCSR_textbook( 
     const int N, 
     const int L, 
@@ -71,10 +87,40 @@ inline void HodgeConjugateResidualSolverCSR_SSOR(
 
 
 
-
+void HodgeConjugateResidualSolverCSR( 
+    const int N, 
+    const int L, 
+    Float* __restrict__ x, 
+    const Float* __restrict__ b, 
+    const int* __restrict__  Arows, const int* __restrict__  Acolumns, const Float* __restrict__  Avalues, 
+    const int* __restrict__  Brows, const int* __restrict__  Bcolumns, const Float* __restrict__  Bvalues, 
+    const int* __restrict__ Btrows, const int* __restrict__ Btcolumns, const Float* __restrict__ Btvalues, 
+    const int* __restrict__  Crows, const int* __restrict__  Ccolumns, const Float* __restrict__  Cvalues, 
+    Float* res,
+    Float threshold,
+    int print_modulo,
+    Float inneriteration_threshold,
+    int inneriteration_print_modulo
+) {
+    HodgeConjugateResidualSolverCSR_SSOR( 
+        N, 
+        L, 
+        x, 
+        b, 
+        Arows,   Acolumns,  Avalues, 
+        Brows,   Bcolumns,  Bvalues, 
+        Btrows, Btcolumns, Btvalues, 
+        Crows,   Ccolumns,  Cvalues, 
+        res,
+        threshold,
+        print_modulo,
+        inneriteration_threshold,
+        inneriteration_print_modulo
+    );
+}
  
 
-void HodgeConjugateResidualSolverCSR( 
+void HodgeConjugateResidualSolverCSR_diagonal( 
     const int N, 
     const int L, 
     Float* __restrict__ x, 

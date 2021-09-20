@@ -43,6 +43,7 @@ int main()
                      << "MINRES"        << "time"
                      << "CGM (diag)"    << "time"
                      << "CGM (ssor)"    << "time"
+                     << "Chebyshev"     << "time"
                      ;
 
             
@@ -58,18 +59,21 @@ int main()
 
                     std::vector< SparseMatrix::MatrixEntry > entries;
 
+                    const Float h = 1. / (N+1);
+                    const Float h2 = h * h;
+
                     for( int e = 0; e < N*N; e++ )
                     {
                         int x = e / N;
                         int y = e % N;
                         assert( e == x * N + y );
 
-                        entries.push_back({ x * N + y, x * N + y, 4. / N });
+                        entries.push_back({ x * N + y, x * N + y, 4. / h2 });
 
-                        if( x != 0   ) entries.push_back({ x * N + y, (x-1) * N + y,   -1. / N });
-                        if( x != N-1 ) entries.push_back({ x * N + y, (x+1) * N + y,   -1. / N });
-                        if( y != 0   ) entries.push_back({ x * N + y, (x  ) * N + y-1, -1. / N });
-                        if( y != N-1 ) entries.push_back({ x * N + y, (x  ) * N + y+1, -1. / N });
+                        if( x != 0   ) entries.push_back({ x * N + y, (x-1) * N + y,   -1. / h2 });
+                        if( x != N-1 ) entries.push_back({ x * N + y, (x+1) * N + y,   -1. / h2 });
+                        if( y != 0   ) entries.push_back({ x * N + y, (x  ) * N + y-1, -1. / h2 });
+                        if( y != N-1 ) entries.push_back({ x * N + y, (x  ) * N + y+1, -1. / h2 });
                         
                     }
 
@@ -403,10 +407,10 @@ int main()
                                 system.getA(), system.getC(), system.getV(),
                                 residual.raw(),
                                 desired_precision,
-                                10,
+                                1,
                                 invprecon.getdiagonal().raw(),
                                 0.,
-                                100 * invprecon.getdiagonal().maxnorm()
+                                system.eigenvalueupperbound()
                             );
                             timestamp end = gettimestamp();
 
