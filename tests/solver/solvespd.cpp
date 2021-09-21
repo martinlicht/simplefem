@@ -291,13 +291,13 @@ int main()
                             FloatVector mysol( N*N );
                             mysol.zero();
                             
-                            const int max_iteration_count = 10 * mysol.getdimension();
+                            const int max_iteration_count = mysol.getdimension();
                             
                             timestamp start = gettimestamp();
                             CHEBY( system, mysol, rhs,
                                 IdentityOperator(N*N),
                                 max_iteration_count, 10-10,
-                                0.000001, 8.000001 / h2 );
+                                0.000000, 8.000001 / h2 );
                             timestamp end = gettimestamp();
       
                             auto stat_sol = Float( ( sol - mysol ).norm() );

@@ -51,21 +51,21 @@ int main()
             bool do_cgm_ssor_csr           = false;
             bool do_chebyshev_diagonal_csr = false;
 
-            do_cgmpp      = true;
-            do_crmpp_expl = true;
-            do_crmpp_robt = true;
-            do_crmpp_fast = true;
-            do_minres     = true;
+            // do_cgmpp      = true;
+            // do_crmpp_expl = true;
+            // do_crmpp_robt = true;
+            // do_crmpp_fast = true;
+            // do_minres     = true;
             // do_herzog     = true;
             do_chebyshev  = true;
             //
-            do_cgm_csr                = true;
-            do_crm_csr                = true;
-            do_cgm_csrtextbook        = true;
-            do_minres_csr             = true;
-            do_whatever_csr           = true;
-            do_cgm_diagonal_csr       = true;
-            do_cgm_ssor_csr           = true;
+            // do_cgm_csr                = true;
+            // do_crm_csr                = true;
+            // do_cgm_csrtextbook        = true;
+            // do_minres_csr             = true;
+            // do_whatever_csr           = true;
+            // do_cgm_diagonal_csr       = true;
+            // do_cgm_ssor_csr           = true;
             do_chebyshev_diagonal_csr = true;
             
             
@@ -126,7 +126,7 @@ int main()
             if( do_chebyshev_diagonal_csr ) contable_num << "Chebyshev_csr";
             
 
-            const std::vector<int> Ns = { 4, 8, 16, 32 };
+            const std::vector<int> Ns = { 16 };
 
             for( const int N : Ns ){
                 
@@ -137,6 +137,7 @@ int main()
                     LOG << "...assemble matrix" << endl;
 
                     std::vector< SparseMatrix::MatrixEntry > entries;
+                    entries.reserve( 5 * N );
 
                     const Float h = 1. / (N+1);
                     const Float h2 = h * h;
@@ -342,7 +343,9 @@ int main()
                             CHEBY( system, mysol, rhs,
                                 IdentityOperator(N*N),
                                 max_iteration_count, 10-10,
-                                0.000001, 8.000001 / h2 );
+                                0.00000, 
+                                system.eigenvalueupperbound() 
+                            );
                             timestamp end = gettimestamp();
       
                             auto stat_sol = Float( ( sol - mysol ).norm() );
@@ -579,6 +582,9 @@ int main()
                             assert( invprecon.getdiagonal().isfinite() );
                             assert( invprecon.getdiagonal().ispositive() );
                             
+                            for( int i = 0; i < invprecon.getdiagonal().getdimension(); i++ )
+                                invprecon.getdiagonal()[i] = 1.;
+
                             FloatVector mysol( N*N );
                             mysol.zero();
                             FloatVector residual( rhs );
@@ -591,10 +597,10 @@ int main()
                                 system.getA(), system.getC(), system.getV(),
                                 residual.raw(),
                                 desired_precision,
-                                1,
+                                0,
                                 invprecon.getdiagonal().raw(),
-                                0.,
-                                system.eigenvalueupperbound()
+                                0.000000,
+                                system.eigenvalueupperbound() * invprecon.getdiagonal().maxnorm()
                             );
                             timestamp end = gettimestamp();
 

@@ -44,30 +44,28 @@ inline void CheybyshevIteration_DiagonalPreconditioner(
     assert( print_modulo >= 0 );
     assert( precon );
     
-    Float* __restrict__ zaratite = new (std::nothrow) Float[N];
-    assert( zaratite );
+    Float* residual_old = residual;
+    Float* residual_new = new (std::nothrow) Float[N];
     
-    Float* x_prev = new (std::nothrow) Float[N];
-    Float* x_curr = new (std::nothrow) Float[N];
-    Float* x_next = new (std::nothrow) Float[N];
-    assert( x_prev );
-    assert( x_curr );
-    assert( x_next );
+    Float* daimonic_old = new (std::nothrow) Float[N];
+    Float* daimonic_new = new (std::nothrow) Float[N];
+    
+    assert( residual_new );
+    assert( daimonic_old );
+    assert( daimonic_new );
+    
+    assert( 0. <= lower and lower <= upper );
 
-    LOG << lower << space << upper << nl;
+    const Float gamma = (upper - lower) / 2.0;
+    const Float delta = (upper + lower) / 2.0;
+    Float alpha = 2. / delta;
+    Float beta  = 0.;
     
-    const Float alpha = 2. / ( upper + lower );
-    const Float mu    = ( upper + lower ) / ( upper - lower );
-    
-    Float gamma_prev = notanumber;
-    Float gamma_curr = notanumber;
-    Float gamma_next = notanumber;
-    
-    Float r_r = notanumber;
+    Float r_r = 0.;
     
     int K = 0;
     
-    while( K < N ){
+    while( K < 10 * N ){
         
         bool restart_condition = ( K == 0 ); // or K % 1000 == 0;
         
@@ -75,37 +73,24 @@ inline void CheybyshevIteration_DiagonalPreconditioner(
 
         if( restart_condition or residual_seems_small ) {
             
-            gamma_prev = 1.;
-            
-            gamma_curr = mu;
-            
             r_r = 0.;
             
-            #if defined(_OPENMP)
-            #pragma omp parallel for 
-            #endif
-            for( int c = 0; c < N; c++ )
-                x_prev[c] = x[c];
-            
-            #if defined(_OPENMP)
-            #pragma omp parallel for reduction(+:r_r)
-            #endif
             for( int c = 0; c < N; c++ ) {
                 
-                residual[c] = b[c];
+                residual_old[c] = b[c];
                 
                 for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
-                    residual[c] -= csrvalues[ d ] * x_prev[ csrcolumns[d] ];
+                    residual_old[c] -= csrvalues[ d ] * x[ csrcolumns[d] ];
                 
-                zaratite[c] = precon[c] * residual[c];
+                daimonic_old[c] = 0.;
                 
-                x_curr[c] = x_prev[c] + alpha * zaratite[c];
-                
-                assert( std::isfinite( x_curr[c] ) );
-                
-                r_r += residual[c] * residual[c];
+                r_r += residual_old[c] * residual_old[c];
                 
             }
+
+            alpha = 2. / delta;
+
+            beta = 0.;
         
         }
         
@@ -119,35 +104,32 @@ inline void CheybyshevIteration_DiagonalPreconditioner(
 
         /* now the main work of the entire algorithm */
         
-        Float gamma_next = 2. * mu * gamma_curr - gamma_prev; 
-        
-        Float omega = 2. * mu * gamma_curr / gamma_next; 
-        
         r_r = 0.;
-            
-        #if defined(_OPENMP)
-        #pragma omp parallel for reduction(+:r_r) 
-        #endif 
+
         for( int c = 0; c < N; c++ )
         {
             
-            residual[c] = b[c];
-            
+            daimonic_new[c] = precon[c] * residual_old[c] + beta * daimonic_old[c];
+
+            x[c] = x[c] + alpha * daimonic_new[c];
+
+            residual_new[c] = residual_old[c];
             for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
-                residual[c] -= csrvalues[ d ] * x_curr[ csrcolumns[d] ];
+                residual_new[c] -= alpha * csrvalues[ d ] * (
+                                               precon[csrcolumns[d]] * residual_old[csrcolumns[d]] + beta * daimonic_old[csrcolumns[d]]
+                                           );
             
-            zaratite[c] = precon[c] * residual[c];
-            
-            x_next[c] = x_prev[c] + omega * ( alpha * zaratite[c] + x_curr[c] - x_prev[c] );
-            
-            r_r += residual[c] * residual[c];
+            r_r += residual_new[c] * residual_new[c];
             
         }
+
+        beta = square( gamma * alpha ) / 4.;
+        alpha = 1. / ( delta - beta );
         
-        std::swap( gamma_curr, gamma_prev );
-        std::swap( gamma_next, gamma_curr );
-        std::swap( x_curr, x_prev );
-        std::swap( x_next, x_curr );
+        std::swap( residual_new, residual_old );
+        std::swap( daimonic_new, daimonic_old );
+
+        LOG << K << space << alpha << space << beta << nl;
         
         
         if( print_modulo > 0 and K % print_modulo == 0 ) 
@@ -160,11 +142,15 @@ inline void CheybyshevIteration_DiagonalPreconditioner(
     printf("Final residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), (long double) allowed_error );
 
     
-    delete[] ( x_prev );
-    delete[] ( x_curr );
-    delete[] ( x_next );
+    if( residual == residual_old ) {
+        delete[] residual_new;
+    } else { 
+        delete[] residual_old;
+    }
+    delete[] ( daimonic_old );
+    delete[] ( daimonic_new );
 
-    delete[] ( zaratite );
+    
 
 }
 
@@ -303,23 +289,23 @@ CHEBY(const LinearOperator &A, FloatVector &x, const FloatVector &b,
     if( normb == 0.0 )
         normb = 1;
 
-    Float r_r = r.norm() / normb;
+    Float r_size = r.norm() / normb;
 
-    if ( r_r < threshold*threshold )
+    if ( r_size < threshold )
         return;
 
     int recent_iteration_count = 0;
     while( recent_iteration_count < max_iteration_count ) 
     {
-        if( r_r < threshold*threshold )
+        if( r_size < threshold )
             break;                     // convergence
         
         z = invprecon * r;                 // apply preconditioner
 
         if( recent_iteration_count == 0 ) {
         
-            p = z;
             alpha = 2.0 / delta;
+            p = z;
         
         } else {
         
@@ -327,13 +313,15 @@ CHEBY(const LinearOperator &A, FloatVector &x, const FloatVector &b,
             alpha = 1.0 / ( delta - beta );     // calculate new alpha
             p = z + beta * p;             // update search direction
         
+            LOG << recent_iteration_count << space << alpha << space << beta << nl;
+
         }
 
         q = A * p;
         x += alpha * p;                 // update approximation vector
         r -= alpha * q;                 // compute residual
 
-        r_r = r.norm() / normb;
+        r_size = r.norm() / normb;
 
         
 
@@ -341,7 +329,7 @@ CHEBY(const LinearOperator &A, FloatVector &x, const FloatVector &b,
     }
 
     LOG << "Final result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
-            << r_r << "(" << threshold*threshold << ")" << nl;
+            << r_size << "(" << threshold << ")" << nl;
 }
 
 
