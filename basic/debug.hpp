@@ -4,23 +4,28 @@
 void abort();
 
 #ifdef FLAG_USE_ORIGINAL_ASSERT_MACRO
+
 #include <cassert>
 #define Assert(x) assert(x)
+
 #else // FLAG_USE_ORIGINAL_ASSERT_MACRO
 
 #ifdef NDEBUG
 #define Assert(x) (static_cast<void>0)
 #else // NDEBUG
 #define Assert(x) (static_cast<bool>(x)?(void(0)):myAssert(#x,__FILE__,__LINE__))
+#endif //NDEBUG
+
+#endif //FLAG_USE_ORIGINAL_ASSERT_MACRO
+
+
 
 #include <cstdio>
-
 
 # ifdef USE_BACKTRACER
 #include <stdlib.h>
 #include <execinfo.h>
 #endif // USE_BACKTRACER
-
 
 
 inline void myAssert( const char* expression, const char* filename, const int linenumber )
@@ -36,18 +41,17 @@ inline void myAssert( const char* expression, const char* filename, const int li
     fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" );
     fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" );
 
-# ifdef USE_BACKTRACER
+#ifdef USE_BACKTRACER
     {
         const int limit = 10;
-        void*  array[limit];
+        void* array[limit];
         
-        int size = backtrace (array, limit );
-        
+        int size = backtrace( array, limit );
         char** strings = backtrace_symbols( array, size );
 
         if( strings != NULL )
         {
-            printf ("Obtained %d stack frames.\n", size);
+            printf( "Obtained %d stack frames.\n", size );
             for ( int i = 0; i < size; i++ ) printf( "%s\n", strings[i] );
         }
 
@@ -63,20 +67,18 @@ inline void myAssert( const char* expression, const char* filename, const int li
     
 }
 
-#endif //NDEBUG
-
-#endif //FLAG_USE_ORIGINAL_ASSERT_MACRO
 
 
+#define unreachable() \
+        fprintf( stderr, "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ), \
+        fprintf( stderr, "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ), \
+        fprintf( stderr, "!!\n" ), \
+        fprintf( stderr, "!!\tUnreachable code reached:\n!!!!\t%s:%d\n", __FILE__, __LINE__ ), \
+        fprintf( stderr, "!!\n" ), \
+        fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ), \
+        fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ), \
+        abort()
 
-
-
-
-// This comes in several phases:
-// - begin output and print preamble 
-// - print message 
-// - print arguments ....
-// - close up and terminate
 
 
 // inline void Check(){}
@@ -94,14 +96,6 @@ inline void myAssert( const char* expression, const char* filename, const int li
 //     lg( args... );
 // }
 
-
-
-
-
-
-
-
-
 // #define unreachable 
 //     []() -> void{  
 //         fprintf( stderr, "Unreachable code reached: %s:%d\n", __FILE__, __LINE__ );  
@@ -109,14 +103,5 @@ inline void myAssert( const char* expression, const char* filename, const int li
 //         }
 // // __builtin_unreachable
 
-#define unreachable() \
-        fprintf( stderr, "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ), \
-        fprintf( stderr, "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ), \
-        fprintf( stderr, "!!\n" ), \
-        fprintf( stderr, "!!\tUnreachable code reached:\n!!!!\t%s:%d\n", __FILE__, __LINE__ ), \
-        fprintf( stderr, "!!\n" ), \
-        fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ), \
-        fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ), \
-        abort()
 
 #endif //INCLUDEGUARD_DEBUG_HPP

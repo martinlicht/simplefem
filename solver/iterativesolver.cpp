@@ -93,7 +93,7 @@ void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) cons
         bool print_condition = ( print_modulo > 0 and recent_iteration_count % print_modulo == 0 );
         
         if( verbosity >= VerbosityLevel::verbose and print_condition )
-            LOG << "Result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
+            LOG << "Residual after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
                 << absolute(r * r) << "(" << threshold*threshold << ")" << nl; 
         
         /* If exit condition met, exit */
@@ -109,7 +109,9 @@ void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) cons
             Float rr_old = r * r;
             Float Ad_d  = Ad * d;
             Float alpha = rr_old / Ad_d;
-            
+
+            assert( Ad_d >= 0 );
+
             bool denominator_is_unreasonable = not std::isfinite(Ad_d) or Ad_d < 0.;
             bool denominator_is_small    = sqrt(absolute(Ad_d)) < machine_epsilon;
             
@@ -140,7 +142,7 @@ void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) cons
     recent_deviation = absolute(r * r);
     
     if( verbosity >= VerbosityLevel::resultonly and print_modulo >= 0 ) 
-        LOG << "Final result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
+        LOG << "Final residual after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
             << recent_deviation << "(" << threshold*threshold << ")" << nl; 
 
 
@@ -350,7 +352,8 @@ void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector&
             Ad = A * d; // A.apply( Ad, (const FloatVector&) d );
 
             /* rho is r.A.r */
-            rAr = r * Ar;
+            rAr = Ar * r;
+            if( rAr < 0. ) LOG << rAr << nl;
             assert( rAr >= 0. );
             
         }
@@ -362,14 +365,18 @@ void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector&
         bool print_condition = ( print_modulo > 0 and recent_iteration_count % print_modulo == 0 );
         
         if( verbosity >= VerbosityLevel::verbose and print_condition )
-            LOG << "Result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
+            LOG << "Residual after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
                 << rAr << "(" << threshold*threshold << ")" << nl; 
         
         /* If exit condition met, exit */
+        if( residual_is_small ) 
+            break;
+            
         
         /* Perform iteration step */
         {
 
+            if( rAr < 0. ) LOG << rAr << nl;
             assert( rAr >= 0. );
             
             AAd = A * Ad;
@@ -400,8 +407,15 @@ void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector&
             Ar -= alpha * AAd;
 
             Float tau = rAr;
-            rAr = r * ( A * r ); //r * ( A * r ); //r * Ar;
+            rAr = r * Ar; //r * ( A * r ); //r * Ar;
             Float beta = rAr / tau;
+            
+            if( rAr < 0. ) {
+                LOG << "Negative energy norm of residual with " << rAr << nl;
+                rAr = 0.; // TODO to avoid useless bug 
+                break;
+            }
+
             assert( rAr >= 0. );
             
             d = r + beta * d;
@@ -418,7 +432,7 @@ void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector&
     recent_deviation = rAr;
     
     if( verbosity >= VerbosityLevel::resultonly and print_modulo >= 0 ) 
-        LOG << "Final result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
+        LOG << "Final residual after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
             << recent_deviation << "(" << threshold*threshold << ")" << nl; 
 
     
@@ -493,7 +507,7 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
         bool print_condition = ( print_modulo > 0 and recent_iteration_count % print_modulo == 0 );
         
         if( verbosity >= VerbosityLevel::verbose and print_condition )
-            LOG << "Result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
+            LOG << "Residual after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
                 << absolute( r * Ar ) << "(" << threshold*threshold << ")" << nl; 
         
         /* If exit condition met, exit */
@@ -529,6 +543,8 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
             Float Ar_r_new = Ar * r;
             Float beta = Ar_r_new / Ad_r;
             
+            // assert( Ar_r_new >= 0. );
+
             d  =  r + beta *  d;
             Ad = Ar + beta * Ad;
             
@@ -541,7 +557,7 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
     recent_deviation = absolute( r * Ar );
     
     if( verbosity >= VerbosityLevel::resultonly and print_modulo >= 0 ) 
-        LOG << "Final result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
+        LOG << "Final residual after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
             << recent_deviation << "(" << threshold*threshold << ")" << nl; 
     
 }
@@ -617,7 +633,7 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
         bool print_condition = ( print_modulo > 0 and recent_iteration_count % print_modulo == 0 );
         
         if( verbosity >= VerbosityLevel::verbose and print_condition )
-            LOG << "Result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
+            LOG << "Residual after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
                 << absolute( Ar * r ) << "(" << threshold*threshold << ")" << nl; 
         
         /* If exit condition met, exit */
@@ -653,6 +669,8 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
             Float Ar_r_new = Ar * r;
             Float beta = Ar_r_new / Ar_r;
             
+            // assert( Ar_r_new >= 0. );
+
             d  =  r + beta *  d;
             Ad = Ar + beta * Ad;
             
@@ -667,7 +685,7 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
     recent_deviation = absolute( Ar * r );
     
     if( verbosity >= VerbosityLevel::resultonly and print_modulo >= 0 ) 
-        LOG << "Final result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
+        LOG << "Final residual after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
             << recent_deviation << "(" << threshold*threshold << ")" << nl; 
     
 }
@@ -883,7 +901,7 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
         /* Print information */
         
         if( print_modulo > 0 and recent_iteration_count % print_modulo == 0 ) 
-            LOG << "Result after" << recent_iteration_count << " of max. " << max_iteration_count << "iterations: "
+            LOG << "Residual after" << recent_iteration_count << " of max. " << max_iteration_count << "iterations: "
                 << rMAMr << "/" << threshold*threshold << nl;
 
         /* If exit condition met, exit */
@@ -942,7 +960,7 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
     recent_deviation = rMAMr;
     
     if( verbosity >= VerbosityLevel::resultonly and print_modulo >= 0 ) 
-        LOG << "Final result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
+        LOG << "Final residual after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
             << recent_deviation << "(" << threshold*threshold << ")" << nl; 
 
     
@@ -1129,7 +1147,7 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
         bool print_condition = ( print_modulo > 0 and recent_iteration_count % print_modulo == 0 );
         
         if( verbosity >= VerbosityLevel::verbose and print_condition )
-            LOG << "Result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
+            LOG << "Residual after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
                 << absolute(rr) << "(" << threshold*threshold << ")" << nl; // << " Last alpha = " << recent_alpha; 
         
         /* If exit condition met, exit */
@@ -1151,7 +1169,7 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
                 p2 = p2 - beta0 * p0;
                 s2 = s2 - beta0 * s0;
                 
-                LOG << beta0 / ( A * r ).norm_sq() << nl;
+//                 LOG << beta0 / ( A * r ).norm_sq() << nl;
                 
                 
                 Float beta1 = s1 * s2;
@@ -1205,7 +1223,7 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
     recent_deviation = absolute(rr);
     
     if( verbosity >= VerbosityLevel::resultonly and print_modulo >= 0 ) 
-        LOG << "Final result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
+        LOG << "Final residual after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
             << recent_deviation << "(" << threshold*threshold << ")" << nl; 
     
 }
@@ -1393,7 +1411,7 @@ void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
         bool print_condition = ( print_modulo > 0 and recent_iteration_count % print_modulo == 0 );
         
         if( verbosity >= VerbosityLevel::verbose and print_condition )
-            LOG << "Result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
+            LOG << "Residual after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
                 << r_r << "(" << threshold*threshold << ")" << nl; 
         
         /* If exit condition met, exit */
@@ -1427,7 +1445,7 @@ void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
     recent_deviation = r_r;
     
     if( verbosity >= VerbosityLevel::resultonly and print_modulo >= 0 ) 
-        LOG << "Final result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
+        LOG << "Final residual after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
             << recent_deviation << "(" << threshold*threshold << ")" << nl; 
 
     
@@ -1632,7 +1650,7 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
         recent_deviation = ( b - A * x ).norm_sq();
         
         if( verbosity >= VerbosityLevel::verbose and print_condition )
-            LOG << "Result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
+            LOG << "Residual after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
                 << recent_deviation << "(" << threshold*threshold << ")" << nl; 
         
         
@@ -1646,7 +1664,7 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
     recent_deviation = ( b - A * x ).norm_sq();
     
     if( verbosity >= VerbosityLevel::resultonly and print_modulo >= 0 ) 
-        LOG << "Final result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
+        LOG << "Final residual after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
             << recent_deviation << "(" << threshold*threshold << ")" << nl; 
 
     

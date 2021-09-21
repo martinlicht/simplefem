@@ -49,12 +49,12 @@ struct HeapAlgorithmState
     std::vector<int> perm;
 };
 
-void HeapsAlgorithmInit( HeapAlgorithmState& state )
+inline void HeapsAlgorithmInit( HeapAlgorithmState& state )
 {
     HeapsAlgorithmInit( state.seed, state.memo, state.perm );
 }
 
-bool HeapsAlgorithmStep( HeapAlgorithmState& state )
+inline bool HeapsAlgorithmStep( HeapAlgorithmState& state )
 {
     return HeapsAlgorithmStep( state.seed, state.memo, state.perm );
 }

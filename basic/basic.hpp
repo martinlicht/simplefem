@@ -190,7 +190,10 @@ inline constexpr int power_integer( int base, int exponent )
     assert( base != 0 or exponent != 0 );
     assert( exponent >= 0 );
     if( exponent == 0 ) return 1;
-    return base * power_integer( base, exponent - 1 );
+    int rec = power_integer( base, exponent - 1 );
+    int ret = base * rec;
+    assert( ret / base == rec );
+    return ret;
 }
 
 inline constexpr int poweroftwo( int exponent )
@@ -530,7 +533,6 @@ inline Float gaussrand_2()
     return Z;
 }
 
-
 // http://c-faq.com/lib/gaussrand.luben.html
 inline Float gaussrand_3( Float mean = 0., Float std_dev = 1. )
 {
@@ -546,10 +548,9 @@ inline Float gaussrand_3( Float mean = 0., Float std_dev = 1. )
     return low ? (mean + z) : (mean - z);
 }
 
-
 inline Float gaussrand()
 {
-    return gaussrand_1();
+    return gaussrand_3();
 }
 
 
