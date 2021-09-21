@@ -187,6 +187,7 @@ void MatrixCSR::apply( FloatVector& dest, const FloatVector& add, Float scaling 
     
     assert( getdimin() == add.getdimension() );
     assert( getdimout() == dest.getdimension() );
+    assert( &dest != &add );
 
     dest.zero();
     
@@ -198,6 +199,9 @@ void MatrixCSR::apply( FloatVector& dest, const FloatVector& add, Float scaling 
             dest[i] += scaling * V[j] * add[ C[j] ];
         }
     }
+
+    // TODO: introduce inline assembler for the code above
+    // -- uses outer loop assembler, inner loop assembler
     
 }
 
@@ -306,6 +310,18 @@ int MatrixCSR::getnumberofentries() const
 //             }
 //     check();
 // }
+
+Float MatrixCSR::eigenvalueupperbound() const 
+{
+    Float ret = 0.;
+    for( int r = 0; r < A.size()-1; r++ ) {
+        Float candidate_ret = 0.;
+        for( int c = A[r]; c < A[r+1]; c++ )
+            candidate_ret += absolute( V[c] );
+        ret = std::max( ret, candidate_ret );
+    }
+    return ret;
+}
 
 
 

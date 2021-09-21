@@ -18,7 +18,7 @@ components+=sparse
 components+=solver
 components+=mesh
 components+=vtk
-components+=matrixmarket
+#components+=matrixmarket
 components+=fem
 
 
@@ -85,11 +85,11 @@ include tests.rules.mk
 #include tests.run.mk
 build: vtk.tests
 
-contextdir:=./matrixmarket
-context:=matrixmarket
-include tests.rules.mk
-#include tests.run.mk
-build: matrixmarket.tests
+# contextdir:=./matrixmarket
+# context:=matrixmarket
+# include tests.rules.mk
+# #include tests.run.mk
+# build: matrixmarket.tests
 
 contextdir:=./fem
 context:=fem
