@@ -61,6 +61,15 @@ FLAG_DISABLE_CHECK_MESHES=yes
 # Uncomment the following line to disable the general assert macro
 # FLAG_DISABLE_ASSERTIONS=yes
 
+# Do you want the standard library assert macro instead of the custom one?
+# Uncomment the following line to use the standard library assert macro 
+# FLAG_USE_ORIGINAL_ASSERT_MACRO=yes
+
+# Do you want to DISABLE the custom logging framework
+# in favor of standard library routines?
+# Uncomment the following line for that
+# FLAG_USE_PRIMITIVE_LOGGING=yes
+
 # Do you want to ENABLE profile generation? 
 # Uncomment the following line to enable profile generation at every run.
 # FLAG_DO_PROFILE=yes
