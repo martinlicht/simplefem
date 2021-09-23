@@ -60,8 +60,13 @@ class InverseOperator final
             op.check();
         }
         
+        virtual std::string text() const override { 
+            return "Inverse Operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) + "\n" 
+                    + tab_each_line( op.text() );
+        }
+        
         virtual void print( std::ostream& os ) const override { 
-            os << "Print Inverse Operator" << std::endl;
+            os << text() << std::endl;
         }
         
         using LinearOperator::apply;

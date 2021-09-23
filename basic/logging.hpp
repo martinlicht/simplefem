@@ -11,6 +11,8 @@
 std::string protocolprefixnow();
 
 
+
+#ifndef FLAG_USE_PRIMITIVE_LOGGING
 // returns a temporary logger to write stuff to, and line breaks on destruction 
 // Example usage:
 //     LOG << "This is a short message with a number: " << 5;      
@@ -18,6 +20,15 @@ std::string protocolprefixnow();
 
 #define LOG     Logger( std::cerr, protocolprefixnow(), "", __FILE__, __LINE__ )
 #define ERR     Logger( std::cerr, protocolprefixnow(), "", __FILE__, __LINE__ )
+
+#else 
+
+#define LOG     std::cerr
+#define LOG     std::cerr
+
+#endif 
+
+
 
 
 // treat the following macros as PRINT 'str' commands

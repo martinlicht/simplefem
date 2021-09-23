@@ -45,6 +45,9 @@ class IdentityOperator final
         }
         
         virtual void check() const override;
+        
+        virtual std::string text() const override;
+        
         virtual void print( std::ostream& ) const override;
 
         using LinearOperator::apply;
@@ -100,6 +103,9 @@ class ScalingOperator final
         }
         
         virtual void check() const override;
+        
+        virtual std::string text() const override;
+        
         virtual void print( std::ostream& ) const override;
 
         Float getscaling() const;
@@ -167,6 +173,11 @@ class DiagonalOperator final
         
 
         virtual void check() const override;
+        
+        virtual std::string text() const override;
+        
+        virtual std::string text( const bool embellish ) const;
+        
         virtual void print( std::ostream& ) const override;
 
         FloatVector& getdiagonal();

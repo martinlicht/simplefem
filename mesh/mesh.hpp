@@ -70,6 +70,8 @@ class Mesh
         
         virtual void print( std::ostream& out ) const = 0;
         
+        void lg() { LOG << *this << std::endl; };
+        
         static const int nullindex; 
         
         static int is_not_nullindex( int i ){ return i != nullindex; }
