@@ -60,11 +60,7 @@ class FloatVector
 
         void print( std::ostream& ) const;
         
-        void printplain( std::ostream& ) const;
-        
         void lg() const { LOG << *this << std::endl; };
-        
-        void lgplain() const;
         
         
         /* Cloning */
