@@ -70,7 +70,6 @@ public LinearOperator /* every matrix is a linear operator */
         
         virtual void check() const override;
         virtual std::string text() const override;
-        virtual void print( std::ostream& ) const override;
         virtual void printplain( std::ostream& ) const;
 
         using LinearOperator::apply;

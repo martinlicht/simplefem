@@ -194,21 +194,15 @@ void DenseMatrix::check() const
 
 std::string DenseMatrix::text() const
 {
-    return "TODO";
-}
-
-void DenseMatrix::print( std::ostream& os ) const
-{
     check();
-    os << "Print Matrix " << getdimout() << "x" << getdimin() << nl;
+    std::string ret = "Print Matrix " + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) + nl;
     for( int r = 0; r < getdimout(); r++ ) {
         for( int c = 0; c < getdimin(); c++ )
-            os << (*this)(r,c) << "\t";
-        os << nl;
+            ret += std::to_string( (*this)(r,c) ) + "\t";
+        ret += nl;
     }
-    os << std::endl;
+    return ret;
 }
-
 
 DenseMatrix DenseMatrix::clone() const
 {

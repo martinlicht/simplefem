@@ -63,10 +63,6 @@ class ProxyOperator final
                      + tab_each_line( op.text() );
         }
         
-        virtual void print( std::ostream& os ) const override { 
-            os << text() << std::endl;
-        }
-        
         using LinearOperator::apply;
         virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override {
             check();
@@ -174,10 +170,6 @@ class ComposedOperator
                      + tab_each_line( left->text() + '\n' + right->text() );
         }
         
-        virtual void print( std::ostream& os ) const override { 
-            os << text() << std::endl;
-        }
-        
     protected:
 
         std::unique_ptr<LinearOperator> left;
@@ -270,10 +262,6 @@ class ProduktOperator final
         {
             return "Produkt Operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) + "\n"
                      + tab_each_line( left->text() + '\n' + right->text() );
-        }
-        
-        virtual void print( std::ostream& os ) const override { 
-            os << text() << std::endl;
         }
         
         using LinearOperator::apply;
@@ -387,10 +375,6 @@ class SummOperator final
                      + tab_each_line( left->text() + '\n' + right->text() );
         }
         
-        virtual void print( std::ostream& os ) const override { 
-            os << text() << std::endl;
-        }
-        
         
         using LinearOperator::apply;
         void apply( FloatVector& dest, const FloatVector& add, Float scaling ) const override
@@ -500,10 +484,6 @@ class DiffOperator final
         {
             return "Diff Operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) + "\n"
                      + tab_each_line( left->text() + '\n' + right->text() );
-        }
-        
-        virtual void print( std::ostream& os ) const override { 
-            os << text() << std::endl;
         }
         
         
@@ -1042,10 +1022,6 @@ class Block2x2Operator
                     );
         }
         
-        virtual void print( std::ostream& os ) const override { 
-            os << text() << std::endl;
-        }
-        
     private:
 
         std::unique_ptr<LinearOperator> upperleft;
@@ -1147,10 +1123,6 @@ class RepeatedDiagonalBlockOperator final
         {
             return "Repeated Diagonal Block Operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) + "\n"
                      + tab_each_line( internal->text() );
-        }
-                
-        virtual void print( std::ostream& os ) const override { 
-            os << text() << std::endl;
         }
         
         using LinearOperator::apply;

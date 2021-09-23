@@ -66,7 +66,6 @@ class DenseMatrix final
         
         virtual void check() const override;
         virtual std::string text() const override;
-        virtual void print( std::ostream& ) const override;
         
         
         DenseMatrix clone() const;

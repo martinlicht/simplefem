@@ -50,8 +50,6 @@ class FlagOperator final
         virtual void check() const override;
         
         std::string text() const override;
-        
-        virtual void print( std::ostream& ) const override;
 
         
         std::vector<bool>& getsrcflag();
