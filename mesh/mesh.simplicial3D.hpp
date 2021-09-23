@@ -79,6 +79,7 @@ class MeshSimplicial3D
         virtual void check() const;
         
         virtual void print( std::ostream& out ) const override;
+
         
         bool compare( const MeshSimplicial3D& mesh ) const;
         

@@ -48,6 +48,9 @@ class Coordinates
         void check() const;
         void print( std::ostream& ) const;
 
+        void lg() { LOG << *this << std::endl; };
+        
+
         void read( std::istream& ) ;
 
         int getdimension() const;

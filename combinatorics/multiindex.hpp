@@ -44,6 +44,8 @@ class MultiIndex final
         std::string text( bool embellish = false ) const;
         
         void print( std::ostream&, bool embellish = false ) const;
+
+        void lg() const { LOG << *this << std::endl; }
         
         IndexRange getIndexRange() const;
 

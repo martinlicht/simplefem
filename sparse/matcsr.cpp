@@ -157,6 +157,20 @@ void MatrixCSR::check() const
     for( int i = 0; i < C.size(); i++ ) assert( 0 <= C[i] && C[i] < getdimin() && std::isfinite( V[i] ) );
 }
 
+std::string MatrixCSR::text() const
+{
+    std::string str_A, str_C, str_V; 
+
+    for( int i = 0; i < A.size(); i++ ) str_A += ( std::to_string(A[i]) + " " );
+    for( int i = 0; i < C.size(); i++ ) str_C += ( std::to_string(C[i]) + " " );
+    for( int i = 0; i < V.size(); i++ ) str_V += ( std::to_string(V[i]) + " " );
+    
+    return std::string("CSRMatrix ") + std::to_string(getdimout()) + "x" + std::to_string(getdimin());
+                        + "\n" + str_A
+                        + "\n" + str_C
+                        + "\n" + str_V;
+}
+
 void MatrixCSR::print( std::ostream& os ) const
 {
     check();

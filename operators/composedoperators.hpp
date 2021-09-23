@@ -57,8 +57,14 @@ class ProxyOperator final
             assert( getdimin()  == op.getdimin()  );
         }
         
+        virtual std::string text() const override
+        {
+            return "Proxy " + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) + "\n"
+                     + tab_each_line( op.text() );
+        }
+        
         virtual void print( std::ostream& os ) const override { 
-            os << "Print Proxy Operator" << std::endl;
+            os << text() << std::endl;
         }
         
         using LinearOperator::apply;
@@ -162,10 +168,14 @@ class ComposedOperator
             left->check(); right->check(); 
         }
         
+        virtual std::string text() const override
+        {
+            return "Composed Operator" + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) + "\n"
+                     + tab_each_line( left->text() + '\n' + right->text() );
+        }
+        
         virtual void print( std::ostream& os ) const override { 
-            os << "Print Composed Operator" << nl;
-            left->print(os); 
-            right->print(os); 
+            os << text() << std::endl;
         }
         
     protected:
@@ -256,9 +266,14 @@ class ProduktOperator final
             assert( left->getdimin() == right->getdimout() );
         }
         
+        virtual std::string text() const override
+        {
+            return "Produkt Operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) + "\n"
+                     + tab_each_line( left->text() + '\n' + right->text() );
+        }
+        
         virtual void print( std::ostream& os ) const override { 
-            os << "Print Produkt Operator" << nl;
-            ComposedOperator::print( os );
+            os << text() << std::endl;
         }
         
         using LinearOperator::apply;
@@ -366,11 +381,16 @@ class SummOperator final
             assert( left->getdimin()  == right->getdimin()  );
         }
         
-        virtual void print( std::ostream& os ) const override
-        { 
-            os << "Print Summ Operator" << nl;
-            ComposedOperator::print( os );
+        virtual std::string text() const override
+        {
+            return "Summ Operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) + "\n"
+                     + tab_each_line( left->text() + '\n' + right->text() );
         }
+        
+        virtual void print( std::ostream& os ) const override { 
+            os << text() << std::endl;
+        }
+        
         
         using LinearOperator::apply;
         void apply( FloatVector& dest, const FloatVector& add, Float scaling ) const override
@@ -476,11 +496,16 @@ class DiffOperator final
             assert( left->getdimin()  == right->getdimin()  );
         }
         
-        virtual void print( std::ostream& os ) const override
-        { 
-            os << "Print Diff Operator" << nl;
-            ComposedOperator::print( os );
+        virtual std::string text() const override
+        {
+            return "Diff Operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) + "\n"
+                     + tab_each_line( left->text() + '\n' + right->text() );
         }
+        
+        virtual void print( std::ostream& os ) const override { 
+            os << text() << std::endl;
+        }
+        
         
         using LinearOperator::apply;
         void apply( FloatVector& dest, const FloatVector& add, Float scaling ) const override
@@ -1008,12 +1033,17 @@ class Block2x2Operator
             lowerright->check(); 
         }
         
+        virtual std::string text() const override
+        {
+            return "Block Operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) + "\n"
+                    + 
+                    tab_each_line( 
+                        upperleft->text() + '\n' + upperright->text() + '\n' + lowerleft->text() + '\n' + lowerright->text()
+                    );
+        }
+        
         virtual void print( std::ostream& os ) const override { 
-            os << "Print Composed Operator" << nl;
-            upperleft->print(os); 
-            upperright->print(os); 
-            lowerleft->print(os); 
-            lowerright->print(os); 
+            os << text() << std::endl;
         }
         
     private:
@@ -1113,8 +1143,14 @@ class RepeatedDiagonalBlockOperator final
             assert( getdimin()  == repetition * internal->getdimin()  );
         }
         
+        virtual std::string text() const override
+        {
+            return "Repeated Diagonal Block Operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) + "\n"
+                     + tab_each_line( internal->text() );
+        }
+                
         virtual void print( std::ostream& os ) const override { 
-            os << "Print Repeated Diagonal Block Operator" << std::endl;
+            os << text() << std::endl;
         }
         
         using LinearOperator::apply;

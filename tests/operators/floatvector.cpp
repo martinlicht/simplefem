@@ -29,9 +29,6 @@ int main()
             a.zero();
             LOG << a << endl;
             
-            LOG << "Print plain:" << endl;
-            a.lgplain();
-            
             for( int i = 0; i < 5; i++ )
                     a.setentry( i, i+1 );
             LOG << "Should be ascending numbers:" << endl;
