@@ -26,9 +26,11 @@ class IndexRange
         
         void check() const;
         
-        std::string text( bool embellish = true ) const;
+        std::string text( bool embellish = false ) const;
         
         void print( std::ostream&, bool embellish = true ) const;
+
+        void lg() { LOG << *this << std::endl; };
         
         
         int min() const;

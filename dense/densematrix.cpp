@@ -192,22 +192,15 @@ void DenseMatrix::check() const
 //     assert( entries != nullptr );
 }
 
+std::string DenseMatrix::text() const
+{
+    return "TODO";
+}
+
 void DenseMatrix::print( std::ostream& os ) const
 {
     check();
     os << "Print Matrix " << getdimout() << "x" << getdimin() << nl;
-    for( int r = 0; r < getdimout(); r++ ) {
-        for( int c = 0; c < getdimin(); c++ )
-            os << (*this)(r,c) << "\t";
-        os << nl;
-    }
-    os << std::endl;
-}
-
-void DenseMatrix::printplain( std::ostream& os ) const
-{
-    check();
-    os << getdimout() << space << getdimin() << nl;
     for( int r = 0; r < getdimout(); r++ ) {
         for( int c = 0; c < getdimin(); c++ )
             os << (*this)(r,c) << "\t";

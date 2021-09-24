@@ -52,11 +52,13 @@ class IndexMap
         std::string text( bool embellish = true ) const;
         
         void print( std::ostream&, bool embellish = true ) const;
+
+        void lg() { LOG << *this << nl; };
+
         
         const IndexRange& getSourceRange() const;
         
         const IndexRange& getTargetRange() const;
-        
         
         bool isempty() const;
         

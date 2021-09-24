@@ -145,7 +145,7 @@ class ConvergenceTable
                 for( int j = 0; j < entries[i].size(); j++ )
                 {
                     
-                    std::printf("%.6Le\t", (long double) entries[i][j] ); 
+                    std::printf("%12.6Le\t", (long double) entries[i][j] ); 
                     
                     if( display_convergence_rates ){
                         

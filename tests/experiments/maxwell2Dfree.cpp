@@ -158,7 +158,7 @@ int main()
 
             const int min_l = 1; 
             
-            const int max_l = 6;
+            const int max_l = 4;
             
             const int min_r = 1; 
             
@@ -236,7 +236,7 @@ int main()
                     
                     
                     
-                    
+                    const auto& foo = inv;
                     
                     
                     
@@ -319,6 +319,48 @@ int main()
 
                         
                         
+                        {
+                            
+                            LOG << "...iterative solver [DECOMPOSED]" << endl;
+                            
+                            timestamp start = gettimestamp();
+
+                            FloatVector sol_1( vector_incmatrix.getdimin(), 0. );
+                            FloatVector sol_2( vector_incmatrix.getdimin(), 0. );
+                            
+                            sol_1.zero();                            
+                            FloatVector residual( rhs );
+                            ConjugateResidualSolverCSR_textbook( 
+                                sol_1.getdimension(), 
+                                sol_1.raw(), 
+                                rhs.raw(), 
+                                C.getA(), C.getC(), C.getV(),
+                                residual.raw(),
+                                desired_precision,
+                                0
+                            );
+
+                            auto X = B * inv(A,1e-14) * Bt;
+                            sol_2.zero();
+                            ConjugateResidualMethod Solver_2( X );
+                            Solver_2.threshold           = 1e-10;
+                            Solver_2.print_modulo        = 100;
+                            Solver_2.max_iteration_count = 4 * sol.getdimension();
+                            Solver_2.solve( sol_2, rhs );
+
+                            timestamp end = gettimestamp();
+
+                            sol = sol_1 + sol_2;
+
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+
+                            LOG << "...compute error and residual:" << endl;
+
+                        }
+
+                        
+                        
+                        if(false)
                         {
                             
                             sol.zero();
