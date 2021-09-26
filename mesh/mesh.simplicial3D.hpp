@@ -36,6 +36,11 @@ class MeshSimplicial3D
 
     public:
     
+        /* Constructors */
+        /* standard methods for operators */
+        /* standard interface */
+        /* OTHER METHODS */
+        
         MeshSimplicial3D( const MeshSimplicial3D& ) = default;
         MeshSimplicial3D& operator=( const MeshSimplicial3D& ) = default;
         MeshSimplicial3D( MeshSimplicial3D&& ) = default;

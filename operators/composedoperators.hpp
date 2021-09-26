@@ -25,6 +25,11 @@ class ProxyOperator final
 
     public:
 
+        /* Constructors */
+        /* standard methods for operators */
+        /* standard interface */
+        /* OTHER METHODS */
+        
         ProxyOperator()                                      = delete;
         ProxyOperator( const ProxyOperator& )                = delete;
         ProxyOperator( ProxyOperator&& )                     = delete;
@@ -97,6 +102,11 @@ class ComposedOperator
 
     public:
     
+        /* Constructors */
+        /* standard methods for operators */
+        /* standard interface */
+        /* OTHER METHODS */
+        
         ComposedOperator()                                         = delete;
         ComposedOperator( const ComposedOperator& )                = delete;
         ComposedOperator( ComposedOperator&& )                     = default;
@@ -190,6 +200,11 @@ class ProduktOperator final
 
     public:
     
+        /* Constructors */
+        /* standard methods for operators */
+        /* standard interface */
+        /* OTHER METHODS */
+        
         ProduktOperator()                                        = delete;
         ProduktOperator( const ProduktOperator& )                = delete;
         ProduktOperator( ProduktOperator&& )                     = default;
@@ -297,6 +312,11 @@ class SummOperator final
 
     public:
     
+        /* Constructors */
+        /* standard methods for operators */
+        /* standard interface */
+        /* OTHER METHODS */
+        
         SummOperator()                                     = delete;
         SummOperator( const SummOperator& )                = delete;
         SummOperator( SummOperator&& )                     = default;
@@ -408,6 +428,11 @@ class DiffOperator final
 
     public:
     
+        /* Constructors */
+        /* standard methods for operators */
+        /* standard interface */
+        /* OTHER METHODS */
+        
         DiffOperator()                                     = delete;
         DiffOperator( const DiffOperator& )                = delete;
         DiffOperator( DiffOperator&& )                     = default;
@@ -573,6 +598,11 @@ class Block2x2Operator
 
     public:
     
+        /* Constructors */
+        /* standard methods for operators */
+        /* standard interface */
+        /* OTHER METHODS */
+        
         Block2x2Operator()                                         = delete;
         Block2x2Operator( const Block2x2Operator& )                = delete;
         Block2x2Operator( Block2x2Operator&& )                     = default;
@@ -1044,6 +1074,11 @@ class RepeatedDiagonalBlockOperator final
 
     public:
 
+        /* Constructors */
+        /* standard methods for operators */
+        /* standard interface */
+        /* OTHER METHODS */
+        
         RepeatedDiagonalBlockOperator()                                                      = delete;
         RepeatedDiagonalBlockOperator( const RepeatedDiagonalBlockOperator& )                = delete;
         RepeatedDiagonalBlockOperator( RepeatedDiagonalBlockOperator&& )                     = delete;

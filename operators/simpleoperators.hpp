@@ -25,15 +25,27 @@ class IdentityOperator final
 
     public:
 
+        /* Constructors */
+        
+        explicit IdentityOperator( int n );
+        
+        /* standard interface */
+        
         IdentityOperator()                                         = delete;
         IdentityOperator( const IdentityOperator& )                = default;
         IdentityOperator( IdentityOperator&& )                     = default;
         IdentityOperator& operator=( const IdentityOperator& vec ) = default;
         IdentityOperator& operator=( IdentityOperator&& vec )      = default; 
-        
-        explicit IdentityOperator( int n );
         virtual ~IdentityOperator();
 
+        /* standard methods for operators */
+        
+        virtual void check() const override;
+        
+        virtual std::string text() const override;
+
+        /* OTHER METHODS */
+        
         virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
             std::shared_ptr<IdentityOperator> cloned = std::make_shared<IdentityOperator>( *this );
             return cloned;
@@ -44,10 +56,6 @@ class IdentityOperator final
             return heir;
         }
         
-        virtual void check() const override;
-        
-        virtual std::string text() const override;
-
         using LinearOperator::apply;
         virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override;
     
@@ -81,15 +89,26 @@ class ScalingOperator final
 
     public:
 
+        /* Constructors */
+        
+        explicit ScalingOperator( int, Float s );
+        virtual ~ScalingOperator();
+
+        /* standard methods for operators */
         ScalingOperator()                                        = delete;
         ScalingOperator( const ScalingOperator& )                = default;
         ScalingOperator( ScalingOperator&& )                     = default;
         ScalingOperator& operator=( const ScalingOperator& vec ) = default;
         ScalingOperator& operator=( ScalingOperator&& vec )      = default; 
         
-        explicit ScalingOperator( int, Float s );
-        virtual ~ScalingOperator();
+        /* standard interface */
+        
+        virtual void check() const override;
+        
+        virtual std::string text() const override;
 
+        /* OTHER METHODS */
+        
         virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
             std::shared_ptr<ScalingOperator> clone = std::make_shared<ScalingOperator>( *this );
             return clone;
@@ -100,10 +119,6 @@ class ScalingOperator final
             return heir;
         }
         
-        virtual void check() const override;
-        
-        virtual std::string text() const override;
-
         Float getscaling() const;
         void setscaling( Float s );
 
@@ -144,18 +159,33 @@ class DiagonalOperator final
 
     public:
 
+        /* Constructors */
+        
+        explicit DiagonalOperator( int, Float s );
+        explicit DiagonalOperator( const FloatVector& dia );
+        explicit DiagonalOperator( FloatVector&& dia );
+        explicit DiagonalOperator( int, const ScalingOperator& scaling );
+        explicit DiagonalOperator( int, const std::function<Float(int)>& );
+        
+        /* standard methods for operators */
+        
         DiagonalOperator()                                         = delete;
         DiagonalOperator( const DiagonalOperator& )                = default;
         DiagonalOperator( DiagonalOperator&& )                     = default;
         DiagonalOperator& operator=( const DiagonalOperator& vec ) = default;
         DiagonalOperator& operator=( DiagonalOperator&& vec )      = default; 
 
-        explicit DiagonalOperator( int, Float s );
-        explicit DiagonalOperator( const FloatVector& dia );
-        explicit DiagonalOperator( FloatVector&& dia );
-        explicit DiagonalOperator( int, const ScalingOperator& scaling );
-        explicit DiagonalOperator( int, const std::function<Float(int)>& );
         virtual ~DiagonalOperator();
+        
+        /* standard interface */
+        
+        virtual void check() const override;
+        
+        virtual std::string text() const override;
+        
+        virtual std::string text( const bool embellish ) const;
+
+        /* OTHER METHODS */
         
         virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
             std::shared_ptr<DiagonalOperator> clone = std::make_shared<DiagonalOperator>( *this );
@@ -167,12 +197,6 @@ class DiagonalOperator final
             return heir;
         }
         
-
-        virtual void check() const override;
-        
-        virtual std::string text() const override;
-        
-        virtual std::string text( const bool embellish ) const;
 
         FloatVector& getdiagonal();
         const FloatVector& getdiagonal() const;

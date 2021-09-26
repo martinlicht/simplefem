@@ -36,6 +36,11 @@ class MeshSimplicial2D
 
     public:
     
+        /* Constructors */
+        /* standard methods for operators */
+        /* standard interface */
+        /* OTHER METHODS */
+        
         MeshSimplicial2D( const MeshSimplicial2D& ) = default;
         MeshSimplicial2D& operator=( const MeshSimplicial2D& ) = default;
         MeshSimplicial2D( MeshSimplicial2D&& ) = default;
