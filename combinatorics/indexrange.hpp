@@ -22,8 +22,12 @@ class IndexRange
     
     public:
         
+        /* Constructors */
+        
         IndexRange( int from, int to );
         
+        /* standard methods */
+
         void check() const;
         
         std::string text( bool embellish = false ) const;
@@ -32,7 +36,8 @@ class IndexRange
 
         void lg() { LOG << *this << std::endl; };
         
-        
+        /* OTHER METHODS */
+
         int min() const;
         
         int max() const;

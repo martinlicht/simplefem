@@ -25,19 +25,22 @@ class LinearOperator
 
     public:
         
-        explicit LinearOperator() = delete;
+        /* Constructors */
         
         explicit LinearOperator( int );
         explicit LinearOperator( int, int );
 
+        /* standard methods for operators */
         
+        explicit LinearOperator() = delete;
         explicit LinearOperator( const LinearOperator& )       = default;
         explicit LinearOperator( LinearOperator&& )            = default;
         LinearOperator& operator=( const LinearOperator& vec ) = default;
         LinearOperator& operator=( LinearOperator&& vec )      = default;
-        
         virtual ~LinearOperator();
 
+        /* standard interface */
+        
         virtual void check() const;
 
         virtual std::string text() const = 0;
@@ -45,7 +48,8 @@ class LinearOperator
         virtual void print( std::ostream& os ) const;
 
         void lg() const { LOG << *this << nl; };
-
+        
+        /* OTHER METHODS */
         
         virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const&
         {

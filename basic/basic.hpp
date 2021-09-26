@@ -356,7 +356,7 @@ inline constexpr int factorial_integer( int n )
     assert( n <= largest_factorial_base<decltype(n)>() );
     
     #ifdef NDEBUG 
-    uintmax_t result = factorial_integer_loop( n );
+    uintmax_t result = factorial_integer_table( n );
     #else
     uintmax_t result = factorial_integer_table( n );
     #endif
