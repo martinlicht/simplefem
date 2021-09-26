@@ -31,6 +31,8 @@ class IndexMap
     
     public:
         
+        /* Constructors */
+        
         IndexMap( const IndexRange&, const std::vector<int>& );
         IndexMap( const IndexRange&, const std::function<int(int)>& );
         IndexMap( const IndexRange&, const std::initializer_list<int>& );
@@ -39,13 +41,16 @@ class IndexMap
         IndexMap( const IndexRange&, const IndexRange&, const std::function<int(int)>& );
         IndexMap( const IndexRange&, const IndexRange&, const std::initializer_list<int>& );
         
+        /* standard interface */ 
+        
         IndexMap()                              = delete;
         IndexMap( const IndexMap& )             = default;
         IndexMap& operator =( const IndexMap& ) = default;
         IndexMap( IndexMap&& )                  = default;
         IndexMap& operator =( IndexMap&& )      = default;
-        
         virtual ~IndexMap()                     = default; // dtor virtualization is a bit shady here
+        
+        /* standard methods */
         
         void check() const;
         
@@ -55,6 +60,8 @@ class IndexMap
 
         void lg() { LOG << *this << nl; };
 
+        
+        /* OTHER METHODS */
         
         const IndexRange& getSourceRange() const;
         
