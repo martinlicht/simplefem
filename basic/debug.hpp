@@ -14,7 +14,8 @@
 #define Assert(x,...) (static_cast<void>0)
 #else // NDEBUG
 //#define Assert(x) (static_cast<bool>(x)?(void(0)):myActualAssert(#x,__FILE__,__LINE__))
-#define Assert(x,...) (static_cast<bool>(x)?(void(0)):myTemplatedAssert( #x, __FILE__, __LINE__ __VA_OPT__(,) __VA_ARGS__) )
+//#define Assert(x,...) (static_cast<bool>(x)?(void(0)):myTemplatedAssert( #x, __FILE__, __LINE__ __VA_OPT__(,) __VA_ARGS__) )
+#define Assert(x,...) (static_cast<bool>(x)?(void(0)):myActualAssert( #x, __FILE__, __LINE__, Concat2String(__VA_ARGS__) ) )
 #endif //NDEBUG
 
 #endif //FLAG_USE_ORIGINAL_ASSERT_MACRO

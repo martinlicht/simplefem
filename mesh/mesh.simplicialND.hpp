@@ -35,6 +35,11 @@ class MeshSimplicialND
 
     public:
     
+        /* Constructors */
+        /* standard methods for operators */
+        /* standard interface */
+        /* OTHER METHODS */
+        
         MeshSimplicialND( int innerdim, int outerdim );
         
         MeshSimplicialND( 

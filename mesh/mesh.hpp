@@ -57,6 +57,11 @@ class Mesh
     
     public:
         
+        /* Constructors */
+        /* standard methods for operators */
+        /* standard interface */
+        /* OTHER METHODS */
+        
         Mesh( const Mesh& ) = default;
         Mesh& operator=( const Mesh& ) = default;
         Mesh( Mesh&& ) = default;
