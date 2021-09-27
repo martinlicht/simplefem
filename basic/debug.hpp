@@ -29,7 +29,6 @@
 
 
 
-#include <string>
 #include <cstdio>
 
 # ifdef USE_BACKTRACER
