@@ -43,15 +43,6 @@ class MeshSimplicial1D
     public:
     
         /* Constructors */
-        /* standard methods for operators */
-        /* standard interface */
-        /* OTHER METHODS */
-        
-        MeshSimplicial1D( const MeshSimplicial1D& ) = default;
-        MeshSimplicial1D& operator=( const MeshSimplicial1D& ) = default;
-        MeshSimplicial1D( MeshSimplicial1D&& ) = default;
-        MeshSimplicial1D& operator=( MeshSimplicial1D&& ) = default;
-
         
         explicit MeshSimplicial1D( int outerdim = 1 );
         
@@ -69,14 +60,24 @@ class MeshSimplicial1D
             const std::vector<int              >& vertex_firstparent_edge
         );
         
+        /* standard methods for operators */
         
+        MeshSimplicial1D( const MeshSimplicial1D& ) = default;
+        MeshSimplicial1D& operator=( const MeshSimplicial1D& ) = default;
+        MeshSimplicial1D( MeshSimplicial1D&& ) = default;
+        MeshSimplicial1D& operator=( MeshSimplicial1D&& ) = default;
         virtual ~MeshSimplicial1D();
         
-        bool compare( const MeshSimplicial1D& ) const;
+        /* standard interface */
         
         virtual void check() const;
         
         virtual void print( std::ostream& out ) const override;
+        
+        
+        /* OTHER METHODS */
+        
+        bool compare( const MeshSimplicial1D& ) const;
         
         
         /* inherited methods */
