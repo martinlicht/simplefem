@@ -29,7 +29,6 @@
 
 
 
-#include <string>
 #include <cstdio>
 
 # ifdef USE_BACKTRACER
@@ -37,6 +36,7 @@
 #include <execinfo.h>
 #endif // USE_BACKTRACER
 
+#include <string>
 
 inline void myActualAssert( const char* expression, const char* filename, const int linenumber, const std::string message = "" )
 {
@@ -100,14 +100,14 @@ inline void myActualAssert( const char* expression, const char* filename, const 
 #include <sstream>
 
 // nothing to concat: empty string
-std::string Concat2String()
+inline std::string Concat2String()
 {
     return "";
 }
 
 // one argument to stringify, base of induction 
 template< typename T >
-std::string Concat2String( const T& t )
+inline std::string Concat2String( const T& t )
 {
     std::stringstream ss;
     ss << t;
@@ -117,7 +117,7 @@ std::string Concat2String( const T& t )
 // recursively build a string by stringifying arguments,
 // with separators in between. Base case has only one argument.
 template< typename T, typename... Params >
-std::string Concat2String( const T& t, const Params&... params )
+inline std::string Concat2String( const T& t, const Params&... params )
 {
     std::stringstream ss;
     ss << t << '\t' << Concat2String( params... );
