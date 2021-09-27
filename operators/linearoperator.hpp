@@ -45,7 +45,7 @@ class LinearOperator
 
         virtual std::string text() const = 0;
         
-        virtual void print( std::ostream& os ) const;
+        void print( std::ostream& os ) const;
 
         void lg() const { LOG << *this << nl; };
         
