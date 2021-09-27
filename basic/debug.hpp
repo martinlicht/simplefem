@@ -37,6 +37,7 @@
 #include <execinfo.h>
 #endif // USE_BACKTRACER
 
+#include <string>
 
 inline void myActualAssert( const char* expression, const char* filename, const int linenumber, const std::string message = "" )
 {
