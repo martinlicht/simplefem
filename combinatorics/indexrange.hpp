@@ -17,7 +17,7 @@
 ******/
 
 
-class IndexRange
+class IndexRange final
 {
     
     public:
@@ -25,6 +25,12 @@ class IndexRange
         /* Constructors */
         
         IndexRange( int from, int to );
+        
+        IndexRange( const IndexRange& )             = default;
+        IndexRange& operator =( const IndexRange& ) = default;
+        IndexRange( IndexRange&& )                  = default;
+        IndexRange& operator =( IndexRange&& )      = default;
+        ~IndexRange()                               = default;
         
         /* standard methods */
 
@@ -130,26 +136,6 @@ inline std::ostream& operator<<( std::ostream& os, const IndexRange& ir )
     return os;
 }
 
-static const IndexRange  NonNegativeIntegers = IndexRange( 0, std::numeric_limits<int>::max()-10 );
-
-static const IndexRange  PositiveIntegers = IndexRange( 1, std::numeric_limits<int>::max()-10 );
-// 
-// inline IndexRange operator|( const IndexRange& left, const IndexRange& right )
-// {
-//     return IndexRange( 
-//         std::min( left.min(), right.min() ),
-//         std::max( left.max(), right.max() )
-//         );
-// }
-// 
-// inline IndexRange operator&( const IndexRange& left, const IndexRange& right )
-// {
-//     return IndexRange( 
-//         std::max( left.min(), right.min() ), 
-//         std::min( left.max(), right.max() ) 
-//         );
-// }
-
 inline bool operator== ( const IndexRange& ir1, const IndexRange& ir2 )
 {
     return ir1.isequal( ir2 );
@@ -159,6 +145,13 @@ inline bool operator!= ( const IndexRange& ir1, const IndexRange& ir2 )
 {
     return !( ir1 == ir2 );
 }
+
+
+static const IndexRange  NonNegativeIntegers = IndexRange( 0, std::numeric_limits<int>::max()-10 );
+
+static const IndexRange  PositiveIntegers    = IndexRange( 1, std::numeric_limits<int>::max()-10 );
+
+
 
 
 
