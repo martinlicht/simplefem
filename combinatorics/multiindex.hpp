@@ -27,10 +27,14 @@ class MultiIndex final
 
     public:
 
+        /* Constructors */
+        
         explicit MultiIndex( const IndexRange& ir );
         MultiIndex( const IndexRange& ir, const std::vector<int>& );
         MultiIndex( const IndexRange&, const std::function<int(int)>& );
         MultiIndex( const IndexRange&, const std::initializer_list<int>& );
+        
+        /* standard interface */ 
         
         MultiIndex( const MultiIndex& )             = default;
         MultiIndex& operator =( const MultiIndex& ) = default;
@@ -39,6 +43,8 @@ class MultiIndex final
         
         virtual ~MultiIndex() = default;
         
+        /* standard methods */
+        
         void check() const;
 
         std::string text( bool embellish = false ) const;
@@ -46,6 +52,10 @@ class MultiIndex final
         void print( std::ostream&, bool embellish = false ) const;
 
         void lg() const { LOG << *this << std::endl; }
+        
+        
+        
+        /* OTHER METHODS */
         
         IndexRange getIndexRange() const;
 
@@ -79,10 +89,10 @@ class MultiIndex final
 
         bool comparablewith( const MultiIndex& ) const;
 
-        bool less( const MultiIndex& ) const;
-
         bool equals( const MultiIndex& ) const;
                 
+        bool less( const MultiIndex& ) const;
+
 };
 
 
