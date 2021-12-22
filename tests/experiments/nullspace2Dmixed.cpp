@@ -205,7 +205,7 @@ int main()
                                     -1
                                 );
                                 
-                               LOG << "\t\t\t (eucl) delta:     " << ( residual - rhs + SystemMatrix * candidate ).norm() << std::endl;
+                                LOG << "\t\t\t (eucl) delta:     " << ( residual - rhs + SystemMatrix * candidate ).norm() << std::endl;
                                 LOG << "\t\t\t (mass) delta:     " << ( residual - rhs + SystemMatrix * candidate ).norm( mass ) << std::endl;
                                 LOG << "\t\t\t (eucl) res:       " << residual.norm() << std::endl;
                                 LOG << "\t\t\t (mass) res:       " << residual.norm( mass ) << std::endl;
