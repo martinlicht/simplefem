@@ -21,5 +21,4 @@ SparseMatrix FEECSullivanInclusionMatrix( const Mesh& mesh, int n, int k, int r 
 
 
 
-
 #endif
