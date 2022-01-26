@@ -3,19 +3,17 @@
 #include <vector>
 
 #include "../basic.hpp"
-#include "../combinatorics/indexrange.hpp"
-#include "../combinatorics/indexmap.hpp"
-#include "../combinatorics/multiindex.hpp"
 #include "../operators/floatvector.hpp"
 #include "../dense/cholesky.hpp"
+#include "../dense/functions.hpp"
 #include "../dense/densematrix.hpp"
 #include "../dense/matrixtensorproduct.hpp"
-#include "../operators/linearoperator.hpp"
+#include "../sparse/sparsematrix.hpp"
 #include "../mesh/mesh.hpp"
 
 #include "../fem/local.polynomialmassmatrix.hpp"
 
-#include "../fem/global.massmatrix.hpp"
+// #include "../fem/global.massmatrix.hpp"
 
 
 

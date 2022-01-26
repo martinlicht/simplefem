@@ -7,14 +7,8 @@
 #include "../combinatorics/multiindex.hpp"
 #include "../combinatorics/generateindexmaps.hpp"
 #include "../combinatorics/generatemultiindices.hpp"
-#include "../operators/floatvector.hpp"
-#include "../dense/densematrix.hpp"
-#include "../dense/matrixtensorproduct.hpp"
-#include "../operators/linearoperator.hpp"
+#include "../sparse/sparsematrix.hpp"
 #include "../mesh/mesh.hpp"
-
-#include "../fem/global.diffmatrix.hpp"
-
 
 SparseMatrix FEECBrokenDiffMatrix( const Mesh& mesh, int n, int k, int r )
 {
@@ -25,7 +19,6 @@ SparseMatrix FEECBrokenDiffMatrix( const Mesh& mesh, int n, int k, int r )
     assert( r >= 1 );
     assert( n >= 0 && n <= mesh.getinnerdimension() );
     assert( k >= 0 && k <  n );
-    
     
     
     // generate an empty local sample matrix

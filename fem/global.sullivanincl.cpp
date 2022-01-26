@@ -9,9 +9,6 @@
 #include "../combinatorics/multiindex.hpp"
 #include "../combinatorics/generateindexmaps.hpp"
 #include "../combinatorics/generatemultiindices.hpp"
-#include "../operators/floatvector.hpp"
-#include "../dense/densematrix.hpp"
-#include "../dense/matrixtensorproduct.hpp"
 #include "../operators/linearoperator.hpp"
 #include "../mesh/mesh.hpp"
 

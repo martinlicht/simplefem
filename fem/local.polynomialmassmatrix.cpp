@@ -4,14 +4,11 @@
 
 #include "../basic.hpp"
 #include "../combinatorics/indexrange.hpp"
-#include "../combinatorics/indexmap.hpp"
 #include "../combinatorics/multiindex.hpp"
 #include "../combinatorics/generatemultiindices.hpp"
-#include "../operators/floatvector.hpp"
 #include "../dense/densematrix.hpp"
-#include "../operators/linearoperator.hpp"
 
-#include "../fem/local.polynomialmassmatrix.hpp"
+// #include "../fem/local.polynomialmassmatrix.hpp"
 
 
 
