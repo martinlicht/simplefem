@@ -35,19 +35,28 @@
 
 
 
+/* 
+TODO:
+- The major difficulty here is whether the subsimplex indices of the vertices are ordered or not.
+- The lack of a general ordering principle forecloses an efficient implmentation
+where the loop is completely streamed.
+- 
+*/
+
+
 inline SparseMatrix FEECSullivanInclusionMatrix( const Mesh& mesh, int n, int k, int r )
 {
     
     // check whether the parameters are right 
     assert( n >= 0 && n <= mesh.getinnerdimension() );
     assert( k >= 0 && k <= n );
-    assert( r >= 1 or k == n ); // TODO
+    assert( r >= 1 or k == n ); // TODO: wir erlauben r==0 im falle von volumenformen 
 
     // generate the list of sigmas and multiindices 
     
     std::vector< std::vector< std::pair<MultiIndex,IndexMap> > > lists_of_sullivan_indices( n+1 );
-    for( auto d : IndexRange(0,n) )
-        lists_of_sullivan_indices[d] = ListOfSullivanIndices( d, k, r );
+    for( auto dimension : IndexRange(0,n) )
+        lists_of_sullivan_indices[dimension] = ListOfSullivanIndices( dimension, k, r );
 
     const auto multis_dst = generateMultiIndices( IndexRange(0,n), r );
     const auto sigmas_dst = generateSigmas( IndexRange(1,k), IndexRange(0,n) );
@@ -58,15 +67,18 @@ inline SparseMatrix FEECSullivanInclusionMatrix( const Mesh& mesh, int n, int k,
     const int num_volumes = mesh.count_simplices( n );
     
     std::vector< int > num_faces( n+1 );
-    for( auto d : IndexRange(0,n) )
-        num_faces[d] = mesh.count_simplices( d );
+    for( auto dimension : IndexRange(0,n) )
+        num_faces[dimension] = mesh.count_simplices( dimension );
 
     
-    // dimensions of the matrix 
+    // dimensions of each global matrix 
     
     const int dim_out = num_volumes * binomial_integer( n+1, k ) * binomial_integer( n+r, r );
+    
     // 2+1+1 choose 1
-    // const int dim_in = sum_int( n, [ num_faces&, lists_of_sullivan_indices& ](int d) -> int{ return num_faces[d] * lists_of_sullivan_indices[d].size(); } )
+    // const int dim_in = sum_int( n, [ num_faces&, lists_of_sullivan_indices& ](int d) 
+    //                      -> int{ return num_faces[d] * lists_of_sullivan_indices[d].size(); } )
+    
     int dim_in  = 0;
     for( auto d : IndexRange(0,n) )
         dim_in += num_faces[d] * lists_of_sullivan_indices[d].size();
@@ -76,7 +88,7 @@ inline SparseMatrix FEECSullivanInclusionMatrix( const Mesh& mesh, int n, int k,
     for( auto d : IndexRange(0,n) )
         num_entries += num_volumes * binomial_integer(n+1,d+1) * lists_of_sullivan_indices[d].size();
     
-    // create that matrix 
+    // create that sparse matrix 
     
     SparseMatrix ret( dim_out, dim_in, num_entries );
     
@@ -88,10 +100,16 @@ inline SparseMatrix FEECSullivanInclusionMatrix( const Mesh& mesh, int n, int k,
     for( auto d : IndexRange(0,n) )
         subsimplex_inclusions[d] = generateSigmas( IndexRange(0,d), IndexRange(0,n) );
     
-    for( int d  = 0; d  <= n;                          d++ )       // go over all the subsimplex dimensions
-    for( int fi = 0; fi  < binomial_integer(n+1,d+1); fi++ )       // go over all the d dimensional subsimplices 
-    for( const auto& alphasigma : lists_of_sullivan_indices[d] )   // go over the corresponding alpha/sigma pairs
-    for( int s  = 0; s   < num_volumes;                s++ )       // go over all the volumes 
+    // go over all the subsimplex dimensions
+    // go over all the d dimensional reference subsimplices 
+    // go over the corresponding alpha/sigma pairs
+    // go over all the volumes 
+
+    for( int d  = 0; d  <= n;                          d++ )       
+    for( int fi = 0; fi  < binomial_integer(n+1,d+1); fi++ )       
+    // for( int index_alphasigma = 0; index_alphasigma < lists_of_sullivan_indices[d]; index_alphasigma++ )
+    for( const auto& alphasigma : lists_of_sullivan_indices[d] )   
+    for( int s  = 0; s   < num_volumes;                s++ )       
     {
         
         // Find indices of things and prepare auxiliary variables 
@@ -99,7 +117,10 @@ inline SparseMatrix FEECSullivanInclusionMatrix( const Mesh& mesh, int n, int k,
         const MultiIndex& alpha = alphasigma.first;
         
         const IndexMap&   sigma = alphasigma.second;
-        
+
+        // TODO: This search can be replaced by just changing the loop above for f's sake 
+        // use the commented out for loop above 
+
         const int index_alphasigma = 
             std::find( lists_of_sullivan_indices[d].begin(), lists_of_sullivan_indices[d].end(), alphasigma )
             - 
