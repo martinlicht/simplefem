@@ -5,7 +5,7 @@ default: build
 include ../common.recipe.mk 
 include ../common.upkeep.mk
 
-affices:= vtk mesh solver dense sparse operators combinatorics basic
+affices:= fem vtk mesh solver dense sparse operators combinatorics basic
 
 depdir := .deps
 
