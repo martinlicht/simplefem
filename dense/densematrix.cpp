@@ -31,7 +31,7 @@ DenseMatrix::DenseMatrix( const DenseMatrix& mat )
 }
         
 DenseMatrix::DenseMatrix( DenseMatrix&& mat )
-: LinearOperator( mat.getdimout(), mat.getdimin() ), entries( mat.entries )
+: LinearOperator( mat.getdimout(), mat.getdimin() ), entries( std::move(mat.entries) )
 {
     assert( entries != nullptr );
     mat.entries = nullptr;
