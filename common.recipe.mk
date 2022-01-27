@@ -61,6 +61,15 @@ FLAG_DISABLE_CHECK_MESHES=yes
 # Uncomment the following line to disable the general assert macro
 # FLAG_DISABLE_ASSERTIONS=yes
 
+# Do you want the standard library assert macro instead of the custom one?
+# Uncomment the following line to use the standard library assert macro 
+# FLAG_USE_ORIGINAL_ASSERT_MACRO=yes
+
+# Do you want to DISABLE the custom logging framework
+# in favor of standard library routines?
+# Uncomment the following line for that
+# FLAG_USE_PRIMITIVE_LOGGING=yes
+
 # Do you want to ENABLE profile generation? 
 # Uncomment the following line to enable profile generation at every run.
 # FLAG_DO_PROFILE=yes
@@ -111,6 +120,8 @@ parameters:
 	$(info FLAG_DO_STATICANALYSIS         = $(FLAG_DO_STATICANALYSIS) ) 
 	$(info FLAG_DISABLE_STDLIBDEBUG       = $(FLAG_DISABLE_STDLIBDEBUG) ) 
 	$(info FLAG_DISABLE_ASSERTIONS        = $(FLAG_DISABLE_ASSERTIONS) ) 
+	$(info FLAG_USE_ORIGINAL_ASSERT_MACRO = $(FLAG_USE_ORIGINAL_ASSERT_MACRO) )
+	$(info FLAG_USE_PRIMITIVE_LOGGING     = $(FLAG_USE_PRIMITIVE_LOGGING) )
 	$(info FLAG_DO_PROFILE                = $(FLAG_DO_PROFILE) ) 
 	$(info FLAG_DO_USE_SANITIZER          = $(FLAG_DO_USE_SANITIZER) ) 
 	$(info FLAG_DO_USE_EXTENDED_PRECISION = $(FLAG_DO_USE_EXTENDED_PRECISION) ) 
@@ -135,15 +146,15 @@ parameters:
 
 ifeq ($(FLAG_CXX),GCC)
 
-  CXX := g++ -std=c++17
+  CXX := g++ -std=c++2a
   
 else ifeq ($(FLAG_CXX),CLANG)
 
-  CXX := clang++ -std=c++17
+  CXX := clang++ -std=c++2a
 
 else ifeq ($(FLAG_CXX),ICC)
 
-  CXX := icc -std=c++17
+  CXX := icc -std=c++2a
 
 else
 
@@ -164,7 +175,7 @@ endif
 #                                             #
 ###############################################
 
-CXXFLAGS_LANG := -std=c++17 -pedantic 
+CXXFLAGS_LANG := -std=c++2a -pedantic 
 
 
 

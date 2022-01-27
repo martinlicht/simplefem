@@ -31,6 +31,8 @@ class IndexMap
     
     public:
         
+        /* Constructors */
+        
         IndexMap( const IndexRange&, const std::vector<int>& );
         IndexMap( const IndexRange&, const std::function<int(int)>& );
         IndexMap( const IndexRange&, const std::initializer_list<int>& );
@@ -39,24 +41,31 @@ class IndexMap
         IndexMap( const IndexRange&, const IndexRange&, const std::function<int(int)>& );
         IndexMap( const IndexRange&, const IndexRange&, const std::initializer_list<int>& );
         
+        /* standard interface */ 
+        
         IndexMap()                              = delete;
         IndexMap( const IndexMap& )             = default;
         IndexMap& operator =( const IndexMap& ) = default;
         IndexMap( IndexMap&& )                  = default;
         IndexMap& operator =( IndexMap&& )      = default;
-        
         virtual ~IndexMap()                     = default; // dtor virtualization is a bit shady here
+        
+        /* standard methods */
         
         void check() const;
         
         std::string text( bool embellish = true ) const;
         
         void print( std::ostream&, bool embellish = true ) const;
+
+        void lg() { LOG << *this << nl; };
+
+        
+        /* OTHER METHODS */
         
         const IndexRange& getSourceRange() const;
         
         const IndexRange& getTargetRange() const;
-        
         
         bool isempty() const;
         
@@ -73,7 +82,7 @@ class IndexMap
         // This interface looks like a std::vector 
         // but it should really be a mapping.
         // What's more, the return of references 
-        // breaks the binding.
+        // may break the codomain, so to speak.
         
         // As a solution, the element access should only be const 
         // so it does not break the encapsulation of the class
@@ -122,9 +131,6 @@ inline IndexMap operator*( const IndexMap& leave, const IndexMap& enter )
     assert( enter.getTargetRange() == leave.getSourceRange() );
 
     IndexMap ret( src, dest, [ &leave, &enter ]( int i ) -> int { return leave[ enter[i] ]; } );
-
-//     for( int i = src.min(); i <= src.max(); i++ )
-//         ret[i] = leave[ enter[i] ];
 
     ret.check();
     return ret;

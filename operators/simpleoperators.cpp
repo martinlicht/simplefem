@@ -26,9 +26,9 @@ void IdentityOperator::check() const
     LinearOperator::check();
 }
 
-void IdentityOperator::print( std::ostream& os ) const  
+std::string IdentityOperator::text() const 
 {
-    os << "Print Identity Operator" << std::endl;
+    return "Identity Operator";
 }
 
 void IdentityOperator::apply( FloatVector& dest, const FloatVector& src, Float s ) const 
@@ -76,9 +76,9 @@ void ScalingOperator::check() const
     LinearOperator::check();
 }
 
-void ScalingOperator::print( std::ostream& os ) const  
+std::string ScalingOperator::text() const 
 {
-    os << "Print Scaling Operator with scaling: " << scaling << std::endl;
+    return "Scaling Operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) + ": s = " + std::to_string( scaling );
 }
 
 
@@ -169,10 +169,15 @@ void DiagonalOperator::check() const
     assert( getdimin() == diagonal.getdimension() );
 }
 
-void DiagonalOperator::print( std::ostream& os ) const  
+std::string DiagonalOperator::text() const 
 {
-    os << "Print Diagonal Operator with diagonal: " 
-        << diagonal << std::endl;
+    return text( false ); // TODO use embellish...
+}
+
+std::string DiagonalOperator::text( const bool embellish ) const 
+{
+    return "Diagonal operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) 
+            + ( embellish ? "\n" + tab_each_line( diagonal.text() ) : "" );
 }
 
 

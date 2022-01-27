@@ -158,13 +158,12 @@ void SparseMatrix::check() const
     }
 }
 
-void SparseMatrix::print( std::ostream& os ) const
+std::string SparseMatrix::text() const
 {
-    os << "print SparseMatrix" << std::endl;
-    os << "Entries:" << std::endl;
+    std::string ret = "SparseMatrix " + std::to_string(getdimout()) + "x" + std::to_string(getdimin());
     for( const MatrixEntry& entry : entries )
-        os << entry.row << " " << entry.column << " : " << entry.value << std::endl; 
-    os << std::endl;
+        ret += ( "\n" + std::to_string(entry.row) + " " + std::to_string(entry.column) + " : " + std::to_string(entry.value) );
+    return ret;
 }
 
 void SparseMatrix::printplain( std::ostream& os ) const

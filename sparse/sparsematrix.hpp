@@ -41,6 +41,8 @@ public LinearOperator /* every matrix is a linear operator */
             columnwise
         };
 
+        /* Constructors */
+        
         explicit SparseMatrix( int dimout, int dimin, int numentries = 0, 
                                std::function<MatrixEntry(int)> generator = [](int i __attribute__((unused)) )->MatrixEntry{ return {0,0,notanumber}; } ); 
         // explicit SparseMatrix( int dimout, int dimin );
@@ -49,13 +51,25 @@ public LinearOperator /* every matrix is a linear operator */
         explicit SparseMatrix( const ScalingOperator& matrix );
         explicit SparseMatrix( const DiagonalOperator& matrix );
         explicit SparseMatrix( const DenseMatrix& );
-        virtual ~SparseMatrix();
-
+        
+        /* standard interface */ 
+        
+        SparseMatrix() = delete;
         SparseMatrix( const SparseMatrix& );
         SparseMatrix& operator=( const SparseMatrix& );
         SparseMatrix( SparseMatrix&& );
         SparseMatrix& operator=( SparseMatrix&& );
+        virtual ~SparseMatrix();
 
+        /* standard methods for operators */
+        
+        virtual void check() const override;
+        virtual std::string text() const override;
+        virtual void printplain( std::ostream& ) const;
+
+
+        /* OTHER METHODS */
+        
         virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override
         {
             std::shared_ptr<SparseMatrix> cloned = std::make_shared<SparseMatrix>( *this );
@@ -68,10 +82,7 @@ public LinearOperator /* every matrix is a linear operator */
             return heir;
         }
         
-        virtual void check() const override;
-        virtual void print( std::ostream& ) const override;
-        virtual void printplain( std::ostream& ) const;
-
+        
         using LinearOperator::apply;
         virtual void apply( FloatVector& dest, const FloatVector& add, Float scaling ) const override;
 

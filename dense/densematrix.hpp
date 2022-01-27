@@ -32,10 +32,7 @@ class DenseMatrix final
 
     public:
         
-        DenseMatrix( const DenseMatrix& );
-        DenseMatrix( DenseMatrix&& );
-        DenseMatrix& operator=( const DenseMatrix& );
-        DenseMatrix& operator=( DenseMatrix&& );
+        /* Constructors */
         
         explicit DenseMatrix( int dim, Float initialvalue = notanumber );
         DenseMatrix( int dim, const std::function<Float(int,int)>& generator );
@@ -44,14 +41,32 @@ class DenseMatrix final
         DenseMatrix( int rows, int columns, Float initialvalue = notanumber );
         DenseMatrix( int rows, int columns, const std::function<Float(int,int)>& generator );
         DenseMatrix( int rows, int columns, const std::vector<FloatVector>& coldata );
-        
+
         explicit DenseMatrix( const ScalingOperator& );
         explicit DenseMatrix( const DiagonalOperator& );
         explicit DenseMatrix( const SparseMatrix& );
         explicit DenseMatrix( const FloatVector& );
+                
+        explicit DenseMatrix( const DenseMatrix&, Float scaling );
+        explicit DenseMatrix( DenseMatrix&&, Float scaling );
+
         
+        /* standard interface */ 
+        
+        DenseMatrix() = delete;
+        DenseMatrix( const DenseMatrix& );
+        DenseMatrix( DenseMatrix&& );
+        DenseMatrix& operator=( const DenseMatrix& );
+        DenseMatrix& operator=( DenseMatrix&& );
         virtual ~DenseMatrix();
         
+        /* standard methods for operators */
+
+        virtual void check() const override;
+        virtual std::string text() const override;
+        
+        /* OTHER METHODS */
+
         virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override 
         {
             std::shared_ptr<DenseMatrix> cloned = std::make_shared<DenseMatrix>( *this );
@@ -64,9 +79,6 @@ class DenseMatrix final
             return heir;
         }
         
-        virtual void check() const override;
-        virtual void print( std::ostream& ) const override;
-        virtual void printplain( std::ostream& ) const;
         
         
         DenseMatrix clone() const;
@@ -268,6 +280,17 @@ inline DenseMatrix InvHilbertMatrix( int n )
 
 
 
+
+inline DenseMatrix operator+( const DenseMatrix& mat )
+{
+    return mat;
+}
+
+inline DenseMatrix operator-( const DenseMatrix& mat )
+{
+    DenseMatrix ret( mat, -1. ); 
+    return mat;
+}
 
 inline DenseMatrix& operator+=( DenseMatrix& left, const DenseMatrix& right )
 {

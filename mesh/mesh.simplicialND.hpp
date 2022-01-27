@@ -35,6 +35,8 @@ class MeshSimplicialND
 
     public:
     
+        /* Constructors */
+        
         MeshSimplicialND( int innerdim, int outerdim );
         
         MeshSimplicialND( 
@@ -46,15 +48,21 @@ class MeshSimplicialND
         
         explicit MeshSimplicialND( const Mesh& mesh );
         
+        /* standard interface */
+        
         MeshSimplicialND( const MeshSimplicialND& mesh ) = default;
         
         virtual ~MeshSimplicialND();
         
-        bool compare( const MeshSimplicialND& ) const;
+        /* standard methods for operators */
         
         virtual void check() const;
         
         virtual void print( std::ostream& out ) const override;
+        
+        /* OTHER METHODS */
+        
+        bool compare( const MeshSimplicialND& ) const;
         
         
         /* inherited methods */

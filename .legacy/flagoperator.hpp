@@ -25,17 +25,29 @@ class FlagOperator final
 
     public:
 
+        /* Constructors */
+        
+        explicit FlagOperator( const LinearOperator& op, const std::vector<bool>& destflag, const std::vector<bool>& srcflag );
+        explicit FlagOperator( const LinearOperator& op, const std::vector<bool>& flag );
+        
+        /* standard interface */
+        
         explicit FlagOperator() = delete;
         explicit FlagOperator( const FlagOperator& ) = default;
         explicit FlagOperator( FlagOperator&& ) = default;
         FlagOperator& operator=( const FlagOperator& vec ) = delete;
         FlagOperator& operator=( FlagOperator&& vec ) = delete;
         virtual ~FlagOperator();
-        
-        explicit FlagOperator( const LinearOperator& op, const std::vector<bool>& destflag, const std::vector<bool>& srcflag );
-        explicit FlagOperator( const LinearOperator& op, const std::vector<bool>& flag );
         // TODO: Instantiate move semantics 
 
+        /* standard methods for operators */
+        
+        virtual void check() const override;
+        
+        std::string text() const override;
+
+        /* OTHER METHODS */
+        
         virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
             std::shared_ptr<FlagOperator> cloned = std::make_shared<FlagOperator>( *this );
             return cloned;
@@ -47,9 +59,7 @@ class FlagOperator final
         }
         
 
-        virtual void check() const override;
-        virtual void print( std::ostream& ) const override;
-
+        
         std::vector<bool>& getsrcflag();
         const std::vector<bool>& getsrcflag() const;
         

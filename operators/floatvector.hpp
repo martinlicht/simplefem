@@ -24,47 +24,46 @@ class FloatVector
     
     public:
         
-        FloatVector() = delete;
-        
-        FloatVector( const FloatVector& );
-        
-        explicit FloatVector( FloatVector&& );
-        
-        FloatVector& operator=( const FloatVector& vec );
-        
-        FloatVector& operator=( FloatVector&& vec );
-
-        virtual ~FloatVector();
-        
+        /* Constructors */
         
         explicit FloatVector( int dim, Float initivalue = notanumber );
         
         explicit FloatVector( const FloatVector&, Float scaling );
-        
         explicit FloatVector( FloatVector&&, Float scaling );
         
         explicit FloatVector( const std::vector<Float>&, Float scaling = 1. );
-        
         explicit FloatVector( const std::vector<int>&, Float scaling = 1. );
 
                  FloatVector( const std::initializer_list<Float>& l );
         
         explicit FloatVector( int dimension, const std::function<Float(int)>& generator, Float scaling = 1. );
 
+
+        /* standard interface */ 
+        
+        FloatVector() = delete;
+        FloatVector( const FloatVector& );
+        FloatVector( FloatVector&& );
+        FloatVector& operator=( const FloatVector& vec );
+        FloatVector& operator=( FloatVector&& vec );
+
+        virtual ~FloatVector();
         
         
+        
+        /* standard methods */
 
         void check() const;
         
+        std::string text() const; 
+
         void print( std::ostream& ) const;
         
-        void printplain( std::ostream& ) const;
-        
-        void lg() const;
-        
-        void lgplain() const;
+        void lg() const { LOG << *this << std::endl; };
         
         
+        /* OTHER METHODS */
+
         /* Cloning */
 
         FloatVector clone() const;

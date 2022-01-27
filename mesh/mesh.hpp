@@ -57,18 +57,29 @@ class Mesh
     
     public:
         
+        /* Constructors */
+        
+        Mesh( int inner, int outer );
+        
+        /* standard interface */
+        
         Mesh( const Mesh& ) = default;
         Mesh& operator=( const Mesh& ) = default;
         Mesh( Mesh&& ) = default;
         Mesh& operator=( Mesh&& ) = default;
-        
-        
-        Mesh( int inner, int outer );
         virtual ~Mesh();
+        
+        
+        /* standard methods for operators */
         
         void check() const;
         
         virtual void print( std::ostream& out ) const = 0;
+        
+        void lg() { LOG << *this << std::endl; };
+        
+        
+        /* OTHER METHODS */
         
         static const int nullindex; 
         

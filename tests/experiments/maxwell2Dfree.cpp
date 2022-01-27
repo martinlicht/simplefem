@@ -158,7 +158,7 @@ int main()
 
             const int min_l = 1; 
             
-            const int max_l = 6;
+            const int max_l = 4;
             
             const int min_r = 1; 
             
@@ -232,11 +232,11 @@ int main()
                     auto negB  = B;  negB.scale(-1);
                     auto negBt = Bt; negBt.scale(-1);
                     
-                    auto SystemMatrix = C - B * inv(A,1000 * machine_epsilon) * Bt;
+                    auto SystemMatrix = C + B * inv(A,1000 * machine_epsilon) * Bt;
                     
                     
                     
-                    
+                    const auto& foo = inv;
                     
                     
                     
@@ -317,6 +317,7 @@ int main()
 
                         }
 
+
                         
                         
                         {
@@ -372,7 +373,7 @@ int main()
                             rhs_whole.setslice( 0, A.getdimout(), 0. );
                             rhs_whole.setslice( A.getdimout(), rhs );
                             
-                            HerzogSoodhalterMethod Solver( X );
+                            MinimumResidualMethod Solver( X );
                             Solver.threshold           = 1e-10;
                             Solver.print_modulo        = 500;
                             Solver.max_iteration_count = 10 * sol_whole.getdimension();

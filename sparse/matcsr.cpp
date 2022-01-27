@@ -157,21 +157,18 @@ void MatrixCSR::check() const
     for( int i = 0; i < C.size(); i++ ) assert( 0 <= C[i] && C[i] < getdimin() && std::isfinite( V[i] ) );
 }
 
-void MatrixCSR::print( std::ostream& os ) const
+std::string MatrixCSR::text() const
 {
-    check();
-    
-    os << getdimout() << ' ' << getdimin() << ' ' << V.size() << std::endl;
+    std::string str_A, str_C, str_V; 
 
-    for( int i = 0; i < A.size(); i++ ) os << A[i] << " ";
-    os << std::endl;
+    for( int i = 0; i < A.size(); i++ ) str_A += ( std::to_string(A[i]) + " " );
+    for( int i = 0; i < C.size(); i++ ) str_C += ( std::to_string(C[i]) + " " );
+    for( int i = 0; i < V.size(); i++ ) str_V += ( std::to_string(V[i]) + " " );
     
-    for( int i = 0; i < C.size(); i++ ) os << C[i] << " ";
-    os << std::endl;
-    
-    for( int i = 0; i < V.size(); i++ ) os << V[i] << " ";
-    os << std::endl;
-    
+    return std::string("CSRMatrix ") + std::to_string(getdimout()) + "x" + std::to_string(getdimin());
+                        + "\n" + str_A
+                        + "\n" + str_C
+                        + "\n" + str_V;
 }
 
 void MatrixCSR::printplain( std::ostream& os ) const

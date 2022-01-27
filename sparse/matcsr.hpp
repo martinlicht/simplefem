@@ -29,6 +29,8 @@ public LinearOperator /* every matrix is a linear operator */
 
     public:
 
+        /* Constructors */
+        
         explicit MatrixCSR( int rows, int columns, 
                             const std::vector<int>& A, 
                             const std::vector<int>& C, 
@@ -38,13 +40,25 @@ public LinearOperator /* every matrix is a linear operator */
 
         explicit MatrixCSR( int rows, int columns );
 
-        virtual ~MatrixCSR( );
-
+        /* standard interface */ 
+        
+        MatrixCSR() = delete;
         MatrixCSR( const MatrixCSR& );
         MatrixCSR& operator=( const MatrixCSR& );
         MatrixCSR( MatrixCSR&& );
         MatrixCSR& operator=( MatrixCSR&& );
+        virtual ~MatrixCSR( );
 
+        
+        /* standard methods for operators */
+        
+        virtual void check() const override;
+        virtual std::string text() const override;
+        virtual void printplain( std::ostream& ) const;
+
+
+        /* OTHER METHODS */
+        
         virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override
         {
             std::shared_ptr<MatrixCSR> cloned = std::make_shared<MatrixCSR>( *this );
@@ -57,10 +71,7 @@ public LinearOperator /* every matrix is a linear operator */
             return heir;
         }
         
-        virtual void check() const override;
-        virtual void print( std::ostream& ) const override;
-        virtual void printplain( std::ostream& ) const;
-
+        
         using LinearOperator::apply;
         virtual void apply( FloatVector& dest, const FloatVector& add, Float scaling ) const override;
         

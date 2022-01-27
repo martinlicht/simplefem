@@ -31,7 +31,7 @@ DenseMatrix::DenseMatrix( const DenseMatrix& mat )
 }
         
 DenseMatrix::DenseMatrix( DenseMatrix&& mat )
-: LinearOperator( mat.getdimout(), mat.getdimin() ), entries( mat.entries )
+: LinearOperator( mat.getdimout(), mat.getdimin() ), entries( std::move(mat.entries) )
 {
     assert( entries != nullptr );
     mat.entries = nullptr;
@@ -192,30 +192,17 @@ void DenseMatrix::check() const
 //     assert( entries != nullptr );
 }
 
-void DenseMatrix::print( std::ostream& os ) const
+std::string DenseMatrix::text() const
 {
     check();
-    os << "Print Matrix " << getdimout() << "x" << getdimin() << nl;
+    std::string ret = "Print Matrix " + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) + nl;
     for( int r = 0; r < getdimout(); r++ ) {
         for( int c = 0; c < getdimin(); c++ )
-            os << (*this)(r,c) << "\t";
-        os << nl;
+            ret += std::to_string( (*this)(r,c) ) + "\t";
+        ret += nl;
     }
-    os << std::endl;
+    return ret;
 }
-
-void DenseMatrix::printplain( std::ostream& os ) const
-{
-    check();
-    os << getdimout() << space << getdimin() << nl;
-    for( int r = 0; r < getdimout(); r++ ) {
-        for( int c = 0; c < getdimin(); c++ )
-            os << (*this)(r,c) << "\t";
-        os << nl;
-    }
-    os << std::endl;
-}
-
 
 DenseMatrix DenseMatrix::clone() const
 {

@@ -36,11 +36,7 @@ class MeshSimplicial3D
 
     public:
     
-        MeshSimplicial3D( const MeshSimplicial3D& ) = default;
-        MeshSimplicial3D& operator=( const MeshSimplicial3D& ) = default;
-        MeshSimplicial3D( MeshSimplicial3D&& ) = default;
-        MeshSimplicial3D& operator=( MeshSimplicial3D&& ) = default;
-
+        /* Constructors */
         
         explicit MeshSimplicial3D( int outerdim = 3 );
         
@@ -72,13 +68,23 @@ class MeshSimplicial3D
             const std::vector<int              >& vertex_firstparent_edge,
             const std::vector<std::array<int,2>>& edge_nextparents_of_vertices
         );
+
+        /* standard interface */
         
-        
+        MeshSimplicial3D( const MeshSimplicial3D& ) = default;
+        MeshSimplicial3D& operator=( const MeshSimplicial3D& ) = default;
+        MeshSimplicial3D( MeshSimplicial3D&& ) = default;
+        MeshSimplicial3D& operator=( MeshSimplicial3D&& ) = default;
         virtual ~MeshSimplicial3D();
+        
+        /* standard methods for operators */
         
         virtual void check() const;
         
         virtual void print( std::ostream& out ) const override;
+
+
+        /* OTHER METHODS */
         
         bool compare( const MeshSimplicial3D& mesh ) const;
         
