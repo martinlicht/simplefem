@@ -47,12 +47,12 @@ class ProxyOperator final
         }
 
         virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
-            std::shared_ptr<ProxyOperator> cloned = std::make_shared<ProxyOperator>( op );
+            std::shared_ptr<LinearOperator> cloned = std::make_shared<ProxyOperator>( op );
             return cloned;
         }
         
         virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {
-            std::unique_ptr<ProxyOperator> heir = std::make_unique<ProxyOperator>( op );
+            std::unique_ptr<LinearOperator> heir = std::make_unique<ProxyOperator>( op );
             return heir;
         }
 
@@ -88,6 +88,160 @@ class ProxyOperator final
         const LinearOperator& op;
     
 };
+
+
+
+
+
+
+class RepeatedDiagonalBlockOperator final
+: public LinearOperator 
+{
+
+    public:
+
+        /* Constructors */
+        /* standard methods for operators */
+        /* standard interface */
+        /* OTHER METHODS */
+        
+        RepeatedDiagonalBlockOperator()                                                      = delete;
+        RepeatedDiagonalBlockOperator( const RepeatedDiagonalBlockOperator& )                = delete;
+        RepeatedDiagonalBlockOperator( RepeatedDiagonalBlockOperator&& )                     = delete;
+        RepeatedDiagonalBlockOperator& operator=( const RepeatedDiagonalBlockOperator& vec ) = delete;
+        RepeatedDiagonalBlockOperator& operator=( RepeatedDiagonalBlockOperator&& vec )      = delete; 
+
+        explicit RepeatedDiagonalBlockOperator( std::unique_ptr<LinearOperator>&& op, int repetition )
+        : LinearOperator( op->getdimout() * repetition, op->getdimin() * repetition ), 
+        internal( std::move(op) ), repetition( repetition )
+        {
+            RepeatedDiagonalBlockOperator::check();
+        } 
+
+    public:
+        
+        explicit RepeatedDiagonalBlockOperator( const LinearOperator& oper, int repetition )
+        : LinearOperator( repetition * oper.getdimout(), repetition * oper.getdimin() ), 
+        internal( nullptr ), repetition( repetition )
+        {
+            internal = std::make_unique<ProxyOperator>(oper);
+            RepeatedDiagonalBlockOperator::check();
+        }
+        
+        explicit RepeatedDiagonalBlockOperator( LinearOperator&& oper, int repetition )
+        : LinearOperator( repetition * oper.getdimout(), repetition * oper.getdimin() ), 
+        internal( nullptr ), repetition( repetition )
+        {
+            internal = std::move(oper).get_unique_pointer_to_heir();
+            RepeatedDiagonalBlockOperator::check();
+        }
+
+//         explicit RepeatedDiagonalBlockOperator( const LinearOperator& op, int repetition )
+//         : LinearOperator( repetition * op.getdimout(), repetition * op.getdimin() ), op( op ), repetition( repetition ) { 
+//             assert( repetition >= 0 );
+// //             LOG << "Repeated Diagonal Block created" << nl; 
+//         }
+        
+        virtual ~RepeatedDiagonalBlockOperator() {}
+
+
+
+
+        virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
+            check();
+            auto foo = std::move( *(internal->get_shared_pointer_to_clone())).get_unique_pointer_to_heir();
+            std::shared_ptr<RepeatedDiagonalBlockOperator> clone = std::make_shared<RepeatedDiagonalBlockOperator>( std::move(foo), repetition );
+            clone->check();
+            return clone;
+        }
+        
+        virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {
+            check();
+            std::unique_ptr<RepeatedDiagonalBlockOperator> heir = std::make_unique<RepeatedDiagonalBlockOperator>( std::move(internal), repetition );
+            heir->check();
+            return heir;
+        }
+
+
+//         virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
+//             std::shared_ptr<RepeatedDiagonalBlockOperator> cloned = std::make_shared<RepeatedDiagonalBlockOperator>( internal, repetition );
+//             return cloned;
+//         }
+//         
+//         virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {
+//             std::unique_ptr<RepeatedDiagonalBlockOperator> heir = std::make_unique<RepeatedDiagonalBlockOperator>( internal, repetition );
+//             return heir;
+//         }
+
+        virtual void check() const override { 
+            internal->check();
+            assert( repetition >= 0 );
+            assert( getdimout() == repetition * internal->getdimout() );
+            assert( getdimin()  == repetition * internal->getdimin()  );
+        }
+        
+        virtual std::string text() const override
+        {
+            return "Repeated Diagonal Block Operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) + "\n"
+                     + tab_each_line( internal->text() );
+        }
+        
+        using LinearOperator::apply;
+        virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override {
+            check();
+            src.check();
+            dest.check();
+            
+            assert( getdimin() == src.getdimension() );
+            assert( getdimout() == dest.getdimension() );
+            assert( src.getdimension()  % repetition == 0 );
+            assert( dest.getdimension() % repetition == 0 );
+            
+            const int internal_dimout = internal->getdimout();
+            const int internal_dimin  = internal->getdimin();
+            
+            for( int r = 0; r < repetition; r++ ) {
+                auto src_slice = src.getslice( r * internal_dimin, internal_dimin );
+                auto new_slice = internal->apply( src_slice, scaling );
+                dest.setslice( r * internal_dimout, new_slice );
+            }
+
+        }
+
+    private:
+
+        std::unique_ptr<LinearOperator> internal;
+        const int repetition;
+    
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1062,132 +1216,6 @@ class Block2x2Operator
 };
 
 
-
-
-
-
-
-
-class RepeatedDiagonalBlockOperator final
-: public LinearOperator 
-{
-
-    public:
-
-        /* Constructors */
-        /* standard methods for operators */
-        /* standard interface */
-        /* OTHER METHODS */
-        
-        RepeatedDiagonalBlockOperator()                                                      = delete;
-        RepeatedDiagonalBlockOperator( const RepeatedDiagonalBlockOperator& )                = delete;
-        RepeatedDiagonalBlockOperator( RepeatedDiagonalBlockOperator&& )                     = delete;
-        RepeatedDiagonalBlockOperator& operator=( const RepeatedDiagonalBlockOperator& vec ) = delete;
-        RepeatedDiagonalBlockOperator& operator=( RepeatedDiagonalBlockOperator&& vec )      = delete; 
-
-        explicit RepeatedDiagonalBlockOperator( std::unique_ptr<LinearOperator>&& op, int repetition )
-        : LinearOperator( op->getdimout() * repetition, op->getdimin() * repetition ), 
-        internal( std::move(op) ), repetition( repetition )
-        {
-            RepeatedDiagonalBlockOperator::check();
-        } 
-
-    public:
-        
-        explicit RepeatedDiagonalBlockOperator( const LinearOperator& oper, int repetition )
-        : LinearOperator( repetition * oper.getdimout(), repetition * oper.getdimin() ), 
-        internal( nullptr ), repetition( repetition )
-        {
-            internal = std::make_unique<ProxyOperator>(oper);
-            RepeatedDiagonalBlockOperator::check();
-        }
-        
-        explicit RepeatedDiagonalBlockOperator( LinearOperator&& oper, int repetition )
-        : LinearOperator( repetition * oper.getdimout(), repetition * oper.getdimin() ), 
-        internal( nullptr ), repetition( repetition )
-        {
-            internal = std::move(oper).get_unique_pointer_to_heir();
-            RepeatedDiagonalBlockOperator::check();
-        }
-
-//         explicit RepeatedDiagonalBlockOperator( const LinearOperator& op, int repetition )
-//         : LinearOperator( repetition * op.getdimout(), repetition * op.getdimin() ), op( op ), repetition( repetition ) { 
-//             assert( repetition >= 0 );
-// //             LOG << "Repeated Diagonal Block created" << nl; 
-//         }
-        
-        virtual ~RepeatedDiagonalBlockOperator() {}
-
-
-
-
-        virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
-            check();
-            auto foo = std::move( *(internal->get_shared_pointer_to_clone())).get_unique_pointer_to_heir();
-            std::shared_ptr<RepeatedDiagonalBlockOperator> clone = std::make_shared<RepeatedDiagonalBlockOperator>( std::move(foo), repetition );
-            clone->check();
-            return clone;
-        }
-        
-        virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {
-            check();
-            std::unique_ptr<RepeatedDiagonalBlockOperator> heir = std::make_unique<RepeatedDiagonalBlockOperator>( std::move(internal), repetition );
-            heir->check();
-            return heir;
-        }
-
-
-//         virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
-//             std::shared_ptr<RepeatedDiagonalBlockOperator> cloned = std::make_shared<RepeatedDiagonalBlockOperator>( internal, repetition );
-//             return cloned;
-//         }
-//         
-//         virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {
-//             std::unique_ptr<RepeatedDiagonalBlockOperator> heir = std::make_unique<RepeatedDiagonalBlockOperator>( internal, repetition );
-//             return heir;
-//         }
-
-        virtual void check() const override { 
-            internal->check();
-            assert( repetition >= 0 );
-            assert( getdimout() == repetition * internal->getdimout() );
-            assert( getdimin()  == repetition * internal->getdimin()  );
-        }
-        
-        virtual std::string text() const override
-        {
-            return "Repeated Diagonal Block Operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) + "\n"
-                     + tab_each_line( internal->text() );
-        }
-        
-        using LinearOperator::apply;
-        virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override {
-            check();
-            src.check();
-            dest.check();
-            
-            assert( getdimin() == src.getdimension() );
-            assert( getdimout() == dest.getdimension() );
-            assert( src.getdimension()  % repetition == 0 );
-            assert( dest.getdimension() % repetition == 0 );
-            
-            const int internal_dimout = internal->getdimout();
-            const int internal_dimin  = internal->getdimin();
-            
-            for( int r = 0; r < repetition; r++ ) {
-                auto src_slice = src.getslice( r * internal_dimin, internal_dimin );
-                auto new_slice = internal->apply( src_slice, scaling );
-                dest.setslice( r * internal_dimout, new_slice );
-            }
-
-        }
-
-    private:
-
-        std::unique_ptr<LinearOperator> internal;
-        const int repetition;
-    
-};
 
 
 
