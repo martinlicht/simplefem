@@ -25,6 +25,7 @@ link     := $(patsubst %,-l%,$(affices))
 $(depdir): ; @mkdir -p $@
 
 $(outs): ./%.out: ./%.cpp | $(depdir)
+	@echo Compiling $@ ...
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -MM ./$*.cpp -MT $@ -MF $(depdir)/$*.d
 ifeq ($(OS),Windows_NT)
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(includes) $(rpath) $(link) -o $@ $(LDLIBS)
