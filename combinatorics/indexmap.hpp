@@ -82,7 +82,7 @@ class IndexMap
         // This interface looks like a std::vector 
         // but it should really be a mapping.
         // What's more, the return of references 
-        // breaks the binding.
+        // may break the codomain, so to speak.
         
         // As a solution, the element access should only be const 
         // so it does not break the encapsulation of the class
@@ -131,9 +131,6 @@ inline IndexMap operator*( const IndexMap& leave, const IndexMap& enter )
     assert( enter.getTargetRange() == leave.getSourceRange() );
 
     IndexMap ret( src, dest, [ &leave, &enter ]( int i ) -> int { return leave[ enter[i] ]; } );
-
-//     for( int i = src.min(); i <= src.max(); i++ )
-//         ret[i] = leave[ enter[i] ];
 
     ret.check();
     return ret;

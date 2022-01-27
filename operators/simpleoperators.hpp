@@ -43,8 +43,6 @@ class IdentityOperator final
         virtual void check() const override;
         
         virtual std::string text() const override;
-        
-        virtual void print( std::ostream& ) const override;
 
         /* OTHER METHODS */
         
@@ -108,8 +106,6 @@ class ScalingOperator final
         virtual void check() const override;
         
         virtual std::string text() const override;
-        
-        virtual void print( std::ostream& ) const override;
 
         /* OTHER METHODS */
         
@@ -188,8 +184,6 @@ class DiagonalOperator final
         virtual std::string text() const override;
         
         virtual std::string text( const bool embellish ) const;
-        
-        virtual void print( std::ostream& ) const override;
 
         /* OTHER METHODS */
         

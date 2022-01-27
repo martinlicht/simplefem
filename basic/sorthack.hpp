@@ -6,7 +6,7 @@
 #include <vector>
 
 template<typename A>
-void sorthack( std::vector<A>& vec )
+inline void sorthack( std::vector<A>& vec )
 {
 //     for( int s = 0; s < vec.size(); s++ )
 //     for( int t = 0; t < vec.size(); t++ )

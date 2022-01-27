@@ -358,20 +358,6 @@ IndexMap expand_one( const IndexMap& im, int p )
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // IndexMap IndexMap::skip( int i ) const 
 // {
 //     check();
