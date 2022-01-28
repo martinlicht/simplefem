@@ -4,5 +4,6 @@
 #include "local.polynomialmassmatrix.cpp"
 #include "global.elevation.cpp"
 #include "global.sullivanincl.cpp"
+#include "global.whitneyincl.cpp"
 #include "lagrangematrices.cpp"
 #include "utilities.cpp"

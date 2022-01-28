@@ -1,5 +1,5 @@
-#ifndef INCLUDEGUARD_FEM_FEECSULLIVANINCLUSIONMATRIX
-#define INCLUDEGUARD_FEM_FEECSULLIVANINCLUSIONMATRIX
+#ifndef INCLUDEGUARD_FEM_FEECWHITNEYINCLUSIONMATRIX
+#define INCLUDEGUARD_FEM_FEECWHITNEYINCLUSIONMATRIX
 
 #include "../sparse/sparsematrix.hpp"
 #include "../mesh/mesh.hpp"
@@ -8,15 +8,16 @@
 //////////////////////////////////////////////////////
 //                                                  //
 //  Matrix for inclusion of                         //
-//  continuous Sullivan forms                       //
+//  continuous Whitney forms                        //
 //  on broken spaces of P_r \Lambda^k               //
 //                                                  //
 //  Works on any n dimensional mesh                 //
-//  with any form degree k and poly degree r        //
+//  with any form degree k and poly degree r        //  
 //                                                  //
 //////////////////////////////////////////////////////
 
-SparseMatrix FEECSullivanInclusionMatrix( const Mesh& mesh, int n, int k, int r );
+SparseMatrix FEECWhitneyInclusionMatrix( const Mesh& mesh, int n, int k, int r );
+
 
 
 

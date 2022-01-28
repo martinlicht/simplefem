@@ -41,12 +41,15 @@ class DenseMatrix final
         DenseMatrix( int rows, int columns, Float initialvalue = notanumber );
         DenseMatrix( int rows, int columns, const std::function<Float(int,int)>& generator );
         DenseMatrix( int rows, int columns, const std::vector<FloatVector>& coldata );
-        
+
         explicit DenseMatrix( const ScalingOperator& );
         explicit DenseMatrix( const DiagonalOperator& );
         explicit DenseMatrix( const SparseMatrix& );
         explicit DenseMatrix( const FloatVector& );
-        
+                
+        explicit DenseMatrix( const DenseMatrix&, Float scaling );
+        explicit DenseMatrix( DenseMatrix&&, Float scaling );
+
         
         /* standard interface */ 
         
@@ -277,6 +280,17 @@ inline DenseMatrix InvHilbertMatrix( int n )
 
 
 
+
+inline DenseMatrix operator+( const DenseMatrix& mat )
+{
+    return mat;
+}
+
+inline DenseMatrix operator-( const DenseMatrix& mat )
+{
+    DenseMatrix ret( mat, -1. ); 
+    return mat;
+}
 
 inline DenseMatrix& operator+=( DenseMatrix& left, const DenseMatrix& right )
 {

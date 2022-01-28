@@ -28,7 +28,8 @@
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
-#include "../../fem/global.sullivanincl.hpp"
+#include "../../fem/global.whitneyincl.hpp"
+#include "../../fem/global.elevation.hpp"
 #include "../../fem/utilities.hpp"
 
 
@@ -110,30 +111,33 @@ int main()
             
                     LOG << "... assemble matrices" << endl;
             
-                    SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   );
+                    SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r );
                     
-                    SparseMatrix vector_massmatrix_inv = FEECBrokenMassMatrix_cellwiseinverse( M, M.getinnerdimension(), 1, r   );
+                    // SparseMatrix vector_massmatrix_inv = FEECBrokenMassMatrix_cellwiseinverse( M, M.getinnerdimension(), 1, r   );
                     
-                    SparseMatrix volume_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r-1 );
+                    SparseMatrix volume_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r );
 
                     SparseMatrix diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r );
                     SparseMatrix diffmatrix_t = diffmatrix.getTranspose();
 
-                    SparseMatrix vector_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 1, r   );
+                    SparseMatrix vector_incmatrix   = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 1, r   );
                     SparseMatrix vector_incmatrix_t = vector_incmatrix.getTranspose();
 
-                    SparseMatrix volume_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 2, r-1 );
+                    SparseMatrix volume_incmatrix   = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 2, r );
                     SparseMatrix volume_incmatrix_t = volume_incmatrix.getTranspose();
                     
+                    SparseMatrix volume_elevationmatrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 2, r-1, 1 );
+                    SparseMatrix volume_elevationmatrix_t = volume_elevationmatrix.getTranspose();
+
                     auto physical_mass = volume_incmatrix_t * volume_massmatrix * volume_incmatrix;
 
                     auto mat_A  = vector_incmatrix_t & vector_massmatrix & vector_incmatrix;
                     mat_A.sortandcompressentries();
                     
-                    auto mat_Bt = vector_incmatrix_t & diffmatrix_t & volume_massmatrix & volume_incmatrix; // upper right
+                    auto mat_Bt = vector_incmatrix_t & diffmatrix_t & volume_elevationmatrix_t & volume_massmatrix & volume_incmatrix; // upper right
                     mat_Bt.sortandcompressentries();
                     
-                    auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & volume_massmatrix & diffmatrix & vector_incmatrix; // lower bottom
+                    auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & volume_massmatrix & diffmatrix & volume_elevationmatrix & vector_incmatrix; // lower bottom
                     mat_B.sortandcompressentries();
                     
                     auto A  = MatrixCSR( mat_A  );
