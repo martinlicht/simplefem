@@ -136,21 +136,21 @@ int main()
             for( int r = min_r; r <= max_r; r++ ) 
             {
                 
-                LOG << "... assemble matrices" << endl;
+                LOG << "... assemble matrices" << endl; // TODO: correct the degrees, perhaps via degree elevation
         
-                SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   );
+                SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r );
                 
-                SparseMatrix vector_massmatrix_inv = FEECBrokenMassMatrix_cellwiseinverse( M, M.getinnerdimension(), 1, r   );
+//                 SparseMatrix vector_massmatrix_inv = FEECBrokenMassMatrix_cellwiseinverse( M, M.getinnerdimension(), 1, r );
                 
                 SparseMatrix volume_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r-1 );
 
                 SparseMatrix diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r );
                 SparseMatrix diffmatrix_t = diffmatrix.getTranspose();
 
-                SparseMatrix vector_incmatrix   = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 1, r   );
+                SparseMatrix vector_incmatrix   = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 1, r );
                 SparseMatrix vector_incmatrix_t = vector_incmatrix.getTranspose();
 
-                SparseMatrix volume_incmatrix   = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 2, r-1 );
+                SparseMatrix volume_incmatrix   = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 2, r );
                 SparseMatrix volume_incmatrix_t = volume_incmatrix.getTranspose();
 
                 auto mat_A  = vector_incmatrix_t & vector_massmatrix & vector_incmatrix;
@@ -178,9 +178,9 @@ int main()
                     
                     LOG << "...interpolate explicit solution and rhs" << endl;
                     
-                    FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r,   function_grad );
-                    FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 2, r-1, function_sol  );
-                    FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 2, r-1, function_rhs  );
+                    FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r, function_grad );
+                    FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 2, r, function_sol  );
+                    FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 2, r, function_rhs  );
                     
                     LOG << "...measure interpolation commutativity" << endl;
         
