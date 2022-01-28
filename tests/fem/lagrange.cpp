@@ -18,6 +18,7 @@
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.sullivanincl.hpp"
+#include "../../fem/global.whitneyincl.hpp"
 #include "../../fem/lagrangematrices.hpp"
 #include "../../utility/convergencetable.hpp"
 
@@ -47,7 +48,7 @@ int main()
         
         const int number_of_samples = 50;
         
-        const int number_of_comparisons = 7;
+        const int number_of_comparisons = 9;
         
         const int l_min = 0;
         
@@ -95,12 +96,18 @@ int main()
                 
                 auto feec_inc_t = feec_inc.getTranspose();
             
+                auto feec_whitney_inc = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 0, 1 );
+                
+                auto feec_whitney_inc_t = feec_whitney_inc.getTranspose();
+            
                 assert( feec_broken_mass.isfinite() );
                 assert( feec_vectormass.isfinite() );
                 assert( feec_diff.isfinite() );
                 assert( feec_diff_t.isfinite() );
                 assert( feec_inc.isfinite() );
                 assert( feec_inc_t.isfinite() );
+                assert( feec_whitney_inc.isfinite() );
+                assert( feec_whitney_inc_t.isfinite() );
                     
                 LOG << "...composed FEEC matrices" << endl;
                 
@@ -108,9 +115,16 @@ int main()
                 auto feec_stiffness        = feec_inc_t  & feec_broken_stiffness & feec_inc;
                 auto feec_mass             = feec_inc_t  & feec_broken_mass      & feec_inc;
                 
+                auto feec_whitney_stiffness        = feec_whitney_inc_t  & feec_broken_stiffness & feec_whitney_inc;
+                auto feec_whitney_mass             = feec_whitney_inc_t  & feec_broken_mass      & feec_whitney_inc;
+                
+                assert( feec_broken_stiffness.isfinite() );
+                
                 assert( feec_stiffness.isfinite()        );
                 assert( feec_mass.isfinite()             );
-                assert( feec_broken_stiffness.isfinite() );
+                
+                assert( feec_whitney_stiffness.isfinite() );
+                assert( feec_whitney_mass.isfinite()      );
                 
                 LOG << "...basic Lagrange matrices" << endl;
                 
@@ -144,32 +158,46 @@ int main()
                         errors[m][d][0] = maximum( vec_error, errors[m][d][0] );
                     }
                     
-                    /*mass matrices*/
+                    /*mass matrices (Sullivan) */
                     {
                         auto vec_error = ( ( lagr_mass - feec_mass ) * vec ).norm();
                     
                         errors[m][d][1] = maximum( vec_error, errors[m][d][1] );
                     }
                     
+                    /*mass matrices (Whitney) */
+                    {
+                        auto vec_error = ( ( lagr_mass - feec_whitney_mass ) * vec ).norm();
+                    
+                        errors[m][d][2] = maximum( vec_error, errors[m][d][1] );
+                    }
+                    
                     /*mass matrices*/
                     {
                         auto vec_error = ( ( lagr_mass - lagr_composed_mass ) * vec ).norm();
                     
-                        errors[m][d][2] = maximum( vec_error, errors[m][d][2] );
+                        errors[m][d][3] = maximum( vec_error, errors[m][d][2] );
                     }
                     
-                    /*stiffness matrices*/
+                    /*stiffness matrices (Sullivan)*/
                     {
                         auto vec_error = ( ( lagr_composed_stiffness - feec_stiffness ) * vec ).norm();
                     
-                        errors[m][d][3] = maximum( vec_error, errors[m][d][3] );
+                        errors[m][d][4] = maximum( vec_error, errors[m][d][3] );
+                    }
+                    
+                    /*stiffness matrices (Whitney) */
+                    {
+                        auto vec_error = ( ( lagr_composed_stiffness - feec_whitney_stiffness ) * vec ).norm();
+                    
+                        errors[m][d][5] = maximum( vec_error, errors[m][d][3] );
                     }
                     
                     /*stiffness matrices */
                     {
                         auto vec_error = ( ( lagr_stiffness - lagr_composed_stiffness ) * vec ).norm();
                     
-                        errors[m][d][4] = maximum( vec_error, errors[m][d][4] );
+                        errors[m][d][6] = maximum( vec_error, errors[m][d][4] );
                     }
                     
                 }
@@ -185,14 +213,14 @@ int main()
                     {
                         auto vec_error = ( ( lagr_broken_mass - feec_broken_mass ) * vec ).norm();
                     
-                        errors[m][d][5] = maximum( vec_error, errors[m][d][5] );
+                        errors[m][d][7] = maximum( vec_error, errors[m][d][5] );
                     }
                     
-                    /*broken stiffness yyyyyyyyyyyyyyyyyyyyyyyyy*/
+                    /*broken stiffness */
                     {
                         auto vec_error = ( ( lagr_broken_stiffness - feec_broken_stiffness ) * vec ).norm();
                     
-                        errors[m][d][6] = maximum( vec_error, errors[m][d][6] );
+                        errors[m][d][8] = maximum( vec_error, errors[m][d][6] );
                     }
                     
                 }
@@ -258,13 +286,15 @@ int main()
             for( int d = 0; d <            3; d++ )
             {
                 
-                contable[d] << "inc";
-                contable[d] << "mass";
-                contable[d] << "mass comp";
-                contable[d] << "stiff";
-                contable[d] << "stiff comp";
-                contable[d] << "br mass";
-                contable[d] << "br stiff";
+                contable[d] << "inc";           // 0
+                contable[d] << "mass S";        // 1
+                contable[d] << "mass W";        // 2 
+                contable[d] << "mass comp";     // 3
+                contable[d] << "stiff S";       // 4
+                contable[d] << "stiff W";       // 5
+                contable[d] << "stiff comp";    // 6
+                contable[d] << "br mass";       // 7
+                contable[d] << "br stiff";      // 8
                 
                 
                 for( int m = 0; m <= l_max-l_min; m++ ) 
