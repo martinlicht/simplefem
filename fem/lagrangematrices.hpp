@@ -1,27 +1,8 @@
 #ifndef INCLUDEGUARD_FEM_LAGRANGE_MATRICES
 #define INCLUDEGUARD_FEM_LAGRANGE_MATRICES
 
-
-
-// #include <cassert>
-#include <iostream>
-#include <vector>
-
-#include "../basic.hpp"
-#include "../combinatorics/indexrange.hpp"
-#include "../combinatorics/indexmap.hpp"
-#include "../combinatorics/multiindex.hpp"
-#include "../combinatorics/generateindexmaps.hpp"
-#include "../combinatorics/generatemultiindices.hpp"
-#include "../operators/floatvector.hpp"
-#include "../operators/linearoperator.hpp"
-#include "../dense/densematrix.hpp"
-#include "../dense/functions.hpp"
-#include "../dense/matrixtensorproduct.hpp"
+#include "../sparse/sparsematrix.hpp"
 #include "../mesh/mesh.hpp"
-
-#include "../fem/local.polynomialmassmatrix.hpp"
-
 
 
 

@@ -2,17 +2,11 @@
 #define INCLUDEGUARD_FEM_INDEXFUNCTIONS_HPP
 
 
-#include <iostream>
 #include <utility>
 #include <vector>
 
-#include "../basic.hpp"
-#include "../combinatorics/indexrange.hpp"
 #include "../combinatorics/indexmap.hpp"
 #include "../combinatorics/multiindex.hpp"
-#include "../combinatorics/generateindexmaps.hpp"
-#include "../combinatorics/generatemultiindices.hpp"
-
 
 
 
@@ -30,15 +24,23 @@
 //                                                  //
 //////////////////////////////////////////////////////
 
-
-
-
 std::vector< std::pair<MultiIndex,IndexMap> > ListOfSullivanIndices( int n, int k, int r );
 
+//////////////////////////////////////////////////////
+//                                                  //
+//  List of Sullivan Indices                        //
+//                                                  //
+//  Constructs the basis for the Whitney space      //
+//                                                  //
+//  alpha is a multiindex                           //
+//  rho   0:k -> 0:n                                //
+//  0 in [rho]                                      //
+//  [alpha] u [rho] = [0..n]                        //
+//                                                  //
+//                                                  //
+//////////////////////////////////////////////////////
 
-
-
-
+std::vector< std::pair<MultiIndex,IndexMap> > ListOfWhitneyIndices( int n, int k, int r );
 
 
 

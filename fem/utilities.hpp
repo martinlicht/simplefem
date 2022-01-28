@@ -5,14 +5,8 @@
 #include <vector>
 
 #include "../basic.hpp"
-#include "../combinatorics/generatemultiindices.hpp"
-#include "../operators/linearoperator.hpp"
-#include "../operators/simpleoperators.hpp"
 #include "../dense/densematrix.hpp"
-#include "../dense/matrixtensorproduct.hpp"
-#include "../dense/functions.hpp"
 #include "../mesh/mesh.hpp"
-
 
 /************************
 ****

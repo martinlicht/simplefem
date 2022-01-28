@@ -103,6 +103,12 @@ include tests.rules.mk
 #include tests.run.mk
 build: experiments.tests
 
+contextdir:=./whitney
+context:=whitney
+include tests.rules.mk
+#include tests.run.mk
+build: whitney.tests
+
 contextdir:=./afem
 context:=afem
 include tests.rules.mk

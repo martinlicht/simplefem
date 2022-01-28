@@ -64,7 +64,7 @@ $(build.components): .build.%:
 	@cd ./tests/ && $(MAKE) --no-print-directory build
 
 .build.benchmarks:
-	@echo Benchmarks
+	@echo Build Benchmarks
 	@cd ./benchmarks/ && $(MAKE) --no-print-directory build
 
 .PHONY: .build.a .build.so $(build.components.a) $(build.components.so) 

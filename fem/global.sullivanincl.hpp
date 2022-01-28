@@ -1,24 +1,9 @@
 #ifndef INCLUDEGUARD_FEM_FEECSULLIVANINCLUSIONMATRIX
 #define INCLUDEGUARD_FEM_FEECSULLIVANINCLUSIONMATRIX
 
-
-#include <iostream>
-#include <utility>
-#include <vector>
-
-#include "../basic.hpp"
-#include "../combinatorics/indexrange.hpp"
-#include "../combinatorics/indexmap.hpp"
-#include "../combinatorics/multiindex.hpp"
-#include "../combinatorics/generateindexmaps.hpp"
-#include "../combinatorics/generatemultiindices.hpp"
-#include "../operators/floatvector.hpp"
-#include "../dense/densematrix.hpp"
-#include "../dense/matrixtensorproduct.hpp"
-#include "../operators/linearoperator.hpp"
+#include "../sparse/sparsematrix.hpp"
 #include "../mesh/mesh.hpp"
 
-#include "indexfunctions.hpp"
 
 
 
@@ -30,7 +15,6 @@
 //                                                  //
 //  Works on any n dimensional mesh                 //
 //  with any form degree k and poly degree r        //
-//  and lifts up rplus degrees                      //
 //                                                  //
 //////////////////////////////////////////////////////
 

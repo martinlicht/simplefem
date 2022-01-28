@@ -9,9 +9,6 @@
 #include "../combinatorics/multiindex.hpp"
 #include "../combinatorics/generateindexmaps.hpp"
 #include "../combinatorics/generatemultiindices.hpp"
-#include "../operators/floatvector.hpp"
-#include "../dense/densematrix.hpp"
-#include "../dense/matrixtensorproduct.hpp"
 #include "../operators/linearoperator.hpp"
 #include "../mesh/mesh.hpp"
 
@@ -28,7 +25,7 @@ SparseMatrix FEECSullivanInclusionMatrix( const Mesh& mesh, int n, int k, int r 
     assert( k >= 0 && k <= n );
     assert( r >= 1 or k == n ); // TODO
 
-    // generate the list of sigmas and multiindices 
+    // generate the list of sigmas and multiindices for each dimension 
     
     std::vector< std::vector< std::pair<MultiIndex,IndexMap> > > lists_of_sullivan_indices( n+1 );
     for( auto d : IndexRange(0,n) )

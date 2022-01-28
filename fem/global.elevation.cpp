@@ -10,11 +10,10 @@
 #include "../combinatorics/generatemultiindices.hpp"
 #include "../operators/floatvector.hpp"
 #include "../dense/densematrix.hpp"
-#include "../dense/matrixtensorproduct.hpp"
-#include "../operators/linearoperator.hpp"
+#include "../sparse/sparsematrix.hpp"
 #include "../mesh/mesh.hpp"
 
-#include "../fem/global.elevation.hpp"
+// #include "../fem/global.elevation.hpp"
 
 
 SparseMatrix FEECBrokenElevationMatrix( const Mesh& mesh, int n, int k, int r, int r_plus )
