@@ -10,6 +10,7 @@
 #include "../../dense/densematrix.hpp"
 #include "../../dense/cholesky.hpp"
 #include "../../dense/qr.factorization.hpp"
+#include "../../dense/cholesky.hpp"
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
