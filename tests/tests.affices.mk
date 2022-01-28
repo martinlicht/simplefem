@@ -8,6 +8,7 @@ affix.mesh          := mesh dense sparse operators combinatorics
 affix.vtk           := vtk $(affix.mesh)
 #affix.matrixmarket  := matrixmarket
 affix.fem           := fem vtk mesh solver dense sparse operators combinatorics
+affix.solverfem     := fem vtk mesh solver dense sparse operators combinatorics 
 affix.experiments   := fem vtk mesh solver dense sparse operators combinatorics 
 affix.whitney       := fem vtk mesh solver dense sparse operators combinatorics 
 affix.afem          := fem vtk mesh solver dense sparse operators combinatorics 

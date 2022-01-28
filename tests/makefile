@@ -97,6 +97,12 @@ include tests.rules.mk
 #include tests.run.mk
 build: fem.tests
 
+contextdir:=./solverfem
+context:=solverfem
+include tests.rules.mk
+#include tests.run.mk
+build: solverfem.tests
+
 contextdir:=./experiments
 context:=experiments
 include tests.rules.mk
