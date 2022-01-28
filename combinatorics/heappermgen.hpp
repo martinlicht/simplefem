@@ -33,8 +33,6 @@
 ***  } while( HeapsAlgorithmInit( seed, memo, perm ) );
 ***  
 ***  
-***  
-***  
 ***************/
 
 void HeapsAlgorithmInit( int& seed, std::vector<int>& memo, const std::vector<int>& perm );

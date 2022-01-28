@@ -358,20 +358,6 @@ IndexMap expand_one( const IndexMap& im, int p )
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // IndexMap IndexMap::skip( int i ) const 
 // {
 //     check();
@@ -382,7 +368,16 @@ IndexMap expand_one( const IndexMap& im, int p )
 //     ret.check();
 //     return ret;
 // }
-// 
+
+// IndexMap IndexMap::shiftup() const 
+// {
+//     check();
+//     IndexMap ret( *this );
+//     ret.src = IndexRange( src.min()+1, src.max()+1 );
+//     ret.check();
+//     return ret;
+// }
+
 // IndexMap IndexMap::attachbefore( int to ) const 
 // {
 //     check();

@@ -973,7 +973,7 @@ inline void sort_and_remove_duplicates( T& t )
 /******************************************************/
 
 template<typename T>
-int find_index( const std::vector<T>& vec, const T& t )
+inline int find_index( const std::vector<T>& vec, const T& t )
 {
    const auto it = std::find( vec.begin(), vec.end(), t );
    assert( it != vec.end() );
@@ -989,7 +989,7 @@ int find_index( const std::vector<T>& vec, const T& t )
 /******************************************************/
 
 template<typename T>
-void mergeelementsinsortedlist
+inline void mergeelementsinsortedlist
 ( std::list<T>& L, 
   const std::function<T( const T&, const T& )>& merge,
   const std::function<bool( const T&, const T& )>& compare
@@ -1020,7 +1020,7 @@ void mergeelementsinsortedlist
 /***********************************************/
 
 template <typename T, size_t N>
-std::ostream& operator<<( std::ostream& stream, const std::array<T, N>& v)
+inline std::ostream& operator<<( std::ostream& stream, const std::array<T, N>& v)
 {
     for( const auto& item : v )
         stream << item << space;
@@ -1055,7 +1055,7 @@ with C++14 or higher.
 namespace std
 {
 template <typename T, typename ...Args> 
-std::unique_ptr<T> make_unique(Args && ...args)
+inline std::unique_ptr<T> make_unique(Args && ...args)
 {
   return std::unique_ptr<T>( new T(std::forward<Args>(args)...) );
 }
