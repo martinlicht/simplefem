@@ -20,6 +20,10 @@
 ***
 ******************/
 
+
+
+
+
 class LinearOperator
 {
 
@@ -45,22 +49,15 @@ class LinearOperator
 
         virtual std::string text() const = 0;
         
-        virtual void print( std::ostream& os ) const;
+        void print( std::ostream& os ) const;
 
         void lg() const { LOG << *this << nl; };
         
         /* OTHER METHODS */
         
-        virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const&
-        {
-            unreachable();
-        }
+        virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& = 0;
         
-        virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() &&
-        {
-            unreachable();
-        }
-        
+        virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && = 0;        
         
         
         int getdimin() const;
@@ -107,7 +104,7 @@ inline std::ostream& operator<<( std::ostream& os, const LinearOperator& op )
 }
   
 
-  
+
   
   
   

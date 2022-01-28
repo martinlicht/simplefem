@@ -59,7 +59,7 @@ int main()
             
             MeshSimplicial2D M;
             
-            for( int i = 0; i < 4; i++ )
+            for( int i = 0; i < 1; i++ )
             {
                 auto M2 = Mx;
                 M2.getcoordinates().shift( { i * 3.0, 0.0 } );
@@ -81,17 +81,17 @@ int main()
             contable << "#nullvec";
             
 
-            const int min_l = 0; 
+            const int min_l = 3; 
             
-            const int max_l = 0;
+            const int max_l = 3;
             
             const int min_r = 2; 
             
             const int max_r = 2;
             
-            const int max_number_of_candidates = 1;
+            const int max_number_of_candidates = 4;
 
-            const int max_number_of_purifications = 2;
+            const int max_number_of_purifications = 1;
 
             assert( 0 <= min_l and min_l <= max_l );
             assert( 0 <= min_r and min_r <= max_r );
@@ -155,7 +155,7 @@ int main()
                     
                     auto Z  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
                     
-                    auto SystemMatrix = C - B * inv(A,1000 * machine_epsilon) * Bt;
+                    auto SystemMatrix = C + B * inv(A,1000 * machine_epsilon) * Bt;
                     
                     
                     
@@ -182,7 +182,8 @@ int main()
                             for( int t = 0; t < max_number_of_purifications; t++ )
                             {
                                 
-                                
+                                auto X = B * inv(A,desired_precision) * Bt + C;
+
                                 HodgeConjugateResidualSolverCSR_SSOR(
                                     B.getdimout(), 
                                     A.getdimout(), 
@@ -191,7 +192,7 @@ int main()
                                     A.getA(),   A.getC(),  A.getV(), 
                                     B.getA(),   B.getC(),  B.getV(), 
                                     Bt.getA(), Bt.getC(), Bt.getV(), 
-                                    Z.getA(),   Z.getC(),  Z.getV(), 
+                                    C.getA(),   C.getC(),  C.getV(), 
                                     residual.raw(),
                                     1000 * machine_epsilon,
                                     0,
@@ -199,27 +200,45 @@ int main()
                                     -1
                                 );
                                 
+                                // ConjugateResidualSolverCSR( 
+                                //     candidate.getdimension(), 
+                                //     candidate.raw(), 
+                                //     rhs.raw(), 
+                                //     C.getA(), C.getC(), C.getV(),
+                                //     residual.raw(),
+                                //     1000 * machine_epsilon,
+                                //     0
+                                // );
+                                
+                                // ConjugateResidualMethod Solver( X );
+                                // Solver.threshold           = 1e-10;
+                                // Solver.print_modulo        = 100;
+                                // Solver.max_iteration_count = 4 * candidate.getdimension();
+                                // Solver.solve( candidate, rhs );
+                            
                                 assert( candidate.isfinite() );
                                 
-                                ConjugateResidualSolverCSR( 
-                                    candidate.getdimension(), 
-                                    candidate.raw(), 
-                                    rhs.raw(), 
-                                    C.getA(), C.getC(), C.getV(),
-                                    residual.raw(),
-                                    1000 * machine_epsilon,
-                                    0
-                                );
-                                
-                                assert( candidate.isfinite() );
+                                LOG << "\t\t\t (eucl) delta:     " << ( residual - rhs + X * candidate ).norm() << std::endl;
+                                LOG << "\t\t\t (mass) delta:     " << ( residual - rhs + X * candidate ).norm( mass ) << std::endl;
+                                LOG << "\t\t\t (eucl) res:       " << residual.norm() << std::endl;
+                                LOG << "\t\t\t (mass) res:       " << residual.norm( mass ) << std::endl;
+                                LOG << "\t\t\t (eucl) x:         " << candidate.norm() << std::endl;
+                                LOG << "\t\t\t (mass) x:         " << candidate.norm( mass ) << std::endl;
+                                LOG << "\t\t\t (eucl) Ax:        " << ( X * candidate ).norm() << std::endl;
+                                LOG << "\t\t\t (mass) Ax:        " << ( X * candidate ).norm( mass ) << std::endl;
+                                LOG << "\t\t\t (eucl) b - Ax:    " << ( X * candidate - rhs ).norm() << std::endl;
+                                LOG << "\t\t\t (mass) b - Ax:    " << ( X * candidate - rhs ).norm( mass ) << std::endl;
                                 
                                 candidate.normalize( mass );
                                 
                                 assert( candidate.isfinite() );
                                 
-                                LOG << "\t\t\t x:         " << candidate.norm( mass ) << std::endl;
-                                LOG << "\t\t\t Ax:        " << ( SystemMatrix * candidate ).norm( mass ) << std::endl;
-                                LOG << "\t\t\t b - Ax:    " << ( SystemMatrix * candidate - rhs ).norm( mass ) << std::endl;
+                                LOG << "\t\t\t (norm eucl) x:         " << candidate.norm() << std::endl;
+                                LOG << "\t\t\t (norm mass) x:         " << candidate.norm( mass ) << std::endl;
+                                LOG << "\t\t\t (norm eucl) Ax:        " << ( X * candidate ).norm() << std::endl;
+                                LOG << "\t\t\t (norm mass) Ax:        " << ( X * candidate ).norm( mass ) << std::endl;
+                                
+                                
                                 
                             }
                         }
@@ -247,14 +266,14 @@ int main()
                         
                         LOG << "\t\t\t Numerical residual: " << residual_mass << std::endl;
                         
-                        if( false and residual_mass > 1e-6 ) {
+                        if( residual_mass > 1e-6 ) {
                             LOG << "!!!!!!!!!!!!!Discard vector because not nullspace enough!" << std::endl;
                             continue;
                         }
                         
                         assert( candidate.isfinite() );
                         
-                        LOG << "Accept vector: " << nullvectorgallery.size() + 1 << std::endl;
+                        LOG << "Accept vector #" << nullvectorgallery.size() + 1 << std::endl;
                     
                         
                         nullvectorgallery.push_back( candidate );

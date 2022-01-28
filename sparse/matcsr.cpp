@@ -171,23 +171,6 @@ std::string MatrixCSR::text() const
                         + "\n" + str_V;
 }
 
-void MatrixCSR::print( std::ostream& os ) const
-{
-    check();
-    
-    os << getdimout() << ' ' << getdimin() << ' ' << V.size() << std::endl;
-
-    for( int i = 0; i < A.size(); i++ ) os << A[i] << " ";
-    os << std::endl;
-    
-    for( int i = 0; i < C.size(); i++ ) os << C[i] << " ";
-    os << std::endl;
-    
-    for( int i = 0; i < V.size(); i++ ) os << V[i] << " ";
-    os << std::endl;
-    
-}
-
 void MatrixCSR::printplain( std::ostream& os ) const
 {
     print( os );

@@ -14,6 +14,7 @@
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.elevation.hpp"
 #include "../../fem/global.sullivanincl.hpp"
+#include "../../fem/global.whitneyincl.hpp"
 
 #include "../../fem/lagrangematrices.hpp"
 
@@ -39,7 +40,7 @@ int main()
         
         LOG << "Refinement..." << endl;
         
-        int number_of_refinements = 3;
+        int number_of_refinements = 2;
         
         for( int i = 0; i < number_of_refinements; i++ )
             M.uniformrefinement();
@@ -66,6 +67,9 @@ int main()
             
             if( r > 0 )
                 SparseMatrix SullivanInclMatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), k, r );
+            
+            if( r > 0 )
+                SparseMatrix WhitneyInclMatrix = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), k, r );
             
             SparseMatrix lagrange_massmatrix      = LagrangeMassMatrix( M, 1 );
             SparseMatrix lagrange_stiffnessmatrix = LagrangeStiffnessMatrix( M, 1 );
@@ -113,6 +117,9 @@ int main()
             if( r > 0 )
                 SparseMatrix SullivanInclMatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), k, r );
             
+            if( r > 0 )
+                SparseMatrix WhitneyInclMatrix = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), k, r );
+
             SparseMatrix lagrange_massmatrix      = LagrangeMassMatrix( M, 1 );
             SparseMatrix lagrange_stiffnessmatrix = LagrangeStiffnessMatrix( M, 1 );
             
@@ -158,6 +165,9 @@ int main()
             
             if( r > 0 )
                 SparseMatrix SullivanInclMatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), k, r );
+
+            if( r > 0 )
+                SparseMatrix WhitneyInclMatrix = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), k, r );
 
             SparseMatrix lagrange_massmatrix      = LagrangeMassMatrix( M, 1 );
             SparseMatrix lagrange_stiffnessmatrix = LagrangeStiffnessMatrix( M, 1 );

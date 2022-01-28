@@ -209,17 +209,25 @@ int main()
                                     -1
                                 );
                                 
-                                LOG << "\t\t\t x:         " << candidate.norm( mass ) << std::endl;
-                                LOG << "\t\t\t Ax:        " << ( SystemMatrix * candidate ).norm( mass ) << std::endl;
-                                LOG << "\t\t\t b - Ax:    " << ( SystemMatrix * candidate - rhs ).norm( mass ) << std::endl;
+                                LOG << "\t\t\t (eucl) delta:     " << ( residual - rhs + SystemMatrix * candidate ).norm() << std::endl;
+                                LOG << "\t\t\t (mass) delta:     " << ( residual - rhs + SystemMatrix * candidate ).norm( mass ) << std::endl;
+                                LOG << "\t\t\t (eucl) res:       " << residual.norm() << std::endl;
+                                LOG << "\t\t\t (mass) res:       " << residual.norm( mass ) << std::endl;
+                                LOG << "\t\t\t (eucl) x:         " << candidate.norm() << std::endl;
+                                LOG << "\t\t\t (mass) x:         " << candidate.norm( mass ) << std::endl;
+                                LOG << "\t\t\t (eucl) Ax:        " << ( SystemMatrix * candidate ).norm() << std::endl;
+                                LOG << "\t\t\t (mass) Ax:        " << ( SystemMatrix * candidate ).norm( mass ) << std::endl;
+                                LOG << "\t\t\t (eucl) b - Ax:    " << ( SystemMatrix * candidate - rhs ).norm() << std::endl;
+                                LOG << "\t\t\t (mass) b - Ax:    " << ( SystemMatrix * candidate - rhs ).norm( mass ) << std::endl;
                                 
                                 candidate.normalize( mass );
                                 
                                 assert( candidate.isfinite() );
                                 
-                                LOG << "\t\t\t x:         " << candidate.norm( mass ) << std::endl;
-                                LOG << "\t\t\t Ax:        " << ( SystemMatrix * candidate ).norm( mass ) << std::endl;
-                                LOG << "\t\t\t b - Ax:    " << ( SystemMatrix * candidate - rhs ).norm( mass ) << std::endl;
+                                LOG << "\t\t\t (norm eucl) x:         " << candidate.norm() << std::endl;
+                                LOG << "\t\t\t (norm mass) x:         " << candidate.norm( mass ) << std::endl;
+                                LOG << "\t\t\t (norm eucl) Ax:        " << ( SystemMatrix* candidate ).norm() << std::endl;
+                                LOG << "\t\t\t (norm mass) Ax:        " << ( SystemMatrix * candidate ).norm( mass ) << std::endl;
                                 
                             }
                         }

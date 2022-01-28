@@ -19,6 +19,7 @@ IndexRange::IndexRange( int from, int to )
   IndexRange::check();
 }
 
+
 void IndexRange::check() const
 {
     assert( std::numeric_limits<decltype(minimum)>::min() < minimum );
@@ -27,7 +28,6 @@ void IndexRange::check() const
     assert( std::numeric_limits<decltype(maximum)>::min() < maximum );
     assert( maximum < std::numeric_limits<decltype(maximum)>::max() );
 }
-
 
 std::string IndexRange::text( bool embellish ) const
 {
@@ -46,6 +46,7 @@ void IndexRange::print( std::ostream& os, bool embellish ) const
     check();
     os << text( embellish ) << std::endl;
 }
+
 
 int IndexRange::min() const
 {

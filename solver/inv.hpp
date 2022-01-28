@@ -65,10 +65,6 @@ class InverseOperator final
                     + tab_each_line( op.text() );
         }
         
-        virtual void print( std::ostream& os ) const override { 
-            os << text() << std::endl;
-        }
-        
         using LinearOperator::apply;
         virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override {
             check();
