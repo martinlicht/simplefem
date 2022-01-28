@@ -29,6 +29,7 @@
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.whitneyincl.hpp"
+#include "../../fem/global.elevation.hpp"
 #include "../../fem/utilities.hpp"
 
 
@@ -204,21 +205,29 @@ int main()
                     SparseMatrix vector_incmatrix   = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 1, r );
                     SparseMatrix vector_incmatrix_t = vector_incmatrix.getTranspose();
 
+                    SparseMatrix vector_elevationmatrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 1, r-1, 1 );
+                    SparseMatrix vector_elevationmatrix_t = vector_elevationmatrix.getTranspose();
+
                     SparseMatrix volume_incmatrix   = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 2, r );
                     SparseMatrix volume_incmatrix_t = volume_incmatrix.getTranspose();
                     
+                    SparseMatrix volume_elevationmatrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 2, r-1, 1 );
+                    SparseMatrix volume_elevationmatrix_t = volume_elevationmatrix.getTranspose();
+
+                
+
                     auto mass = vector_incmatrix_t * vector_massmatrix * vector_incmatrix;
 
                     auto mat_A  = scalar_incmatrix_t & scalar_massmatrix & scalar_incmatrix;
                     mat_A.sortandcompressentries();
                     
-                    auto mat_Bt = scalar_incmatrix_t & scalar_diffmatrix_t & vector_massmatrix & vector_incmatrix; // upper right
+                    auto mat_Bt = scalar_incmatrix_t & scalar_diffmatrix_t & vector_elevationmatrix_t & vector_massmatrix & vector_incmatrix; // upper right
                     mat_Bt.sortandcompressentries();
                     
-                    auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & volume_massmatrix & diffmatrix & vector_incmatrix; // lower bottom
+                    auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & volume_massmatrix & vector_elevationmatrix & diffmatrix & vector_incmatrix; // lower bottom
                     mat_B.sortandcompressentries();
                     
-                    auto mat_C  = vector_incmatrix_t & vector_diffmatrix_t & volume_massmatrix & vector_diffmatrix & vector_incmatrix;
+                    auto mat_C  = vector_incmatrix_t & vector_diffmatrix_t & volume_elevationmatrix_t & volume_massmatrix & volume_elevationmatrix & vector_diffmatrix & vector_incmatrix;
                     mat_C.sortandcompressentries();
                     
                     LOG << "share zero A = " << mat_A.getnumberofzeroentries() << "/" << (Float) mat_A.getnumberofentries() << nl;
@@ -251,11 +260,11 @@ int main()
                         
                         LOG << "...interpolate explicit solution and rhs" << endl;
                         
-                        FloatVector interpol_ndiv = Interpolation( M, M.getinnerdimension(), 0, r, function_ndiv  );
-                        FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 1, r,   function_sol  );
+                        FloatVector interpol_ndiv = Interpolation( M, M.getinnerdimension(), 0, r, function_ndiv );
+                        FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 1, r, function_sol  );
                         FloatVector interpol_curl = Interpolation( M, M.getinnerdimension(), 2, r, function_curl );
                         
-                        FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 1, r,   function_rhs  );
+                        FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 1, r, function_rhs  );
                         
                         FloatVector rhs = vector_incmatrix_t * ( vector_massmatrix * interpol_rhs );
 
@@ -278,15 +287,15 @@ int main()
                             = 
                             interpol_rhs
                             - scalar_diffmatrix   * inv(scalar_massmatrix,1e-14) * scalar_diffmatrix_t * vector_massmatrix * interpol_sol
-                            - vector_diffmatrix_t * volume_massmatrix * vector_diffmatrix   * interpol_sol;
+                            - vector_diffmatrix_t * volume_elevationmatrix_t * volume_massmatrix * volume_elevationmatrix * vector_diffmatrix   * interpol_sol;
                             Float commutatorerror_1     = commutatorerror_1_aux * ( vector_massmatrix * commutatorerror_1_aux );
                             LOG << "algebraic commutator error 1: " << commutatorerror_1 << endl;
                             
-                            auto  commutatorerror_2_aux = interpol_curl - vector_diffmatrix * interpol_sol;
+                            auto  commutatorerror_2_aux = interpol_curl - volume_elevationmatrix * vector_diffmatrix * interpol_sol;
                             Float commutatorerror_2     = commutatorerror_2_aux * ( volume_massmatrix * commutatorerror_2_aux );
                             LOG << "algebraic commutator error 2: " << commutatorerror_2 << endl;
                             
-                            auto  commutatorerror_3_aux = scalar_massmatrix * interpol_ndiv - scalar_diffmatrix_t * interpol_sol;
+                            auto  commutatorerror_3_aux = scalar_massmatrix * interpol_ndiv - scalar_diffmatrix_t * vector_elevationmatrix_t * interpol_sol;
                             Float commutatorerror_3     = commutatorerror_3_aux * ( scalar_massmatrix * commutatorerror_3_aux );
                             LOG << "algebraic commutator error 3: " << commutatorerror_3 << endl;
                             
@@ -400,7 +409,7 @@ int main()
 
                         auto ndiv = inv(A,1e-14) * Bt * sol;
                         
-                        auto curl = vector_diffmatrix * vector_incmatrix * sol;
+                        auto curl = volume_elevationmatrix * vector_diffmatrix * vector_incmatrix * sol;
                         
                         LOG << "...compute error and residual:" << endl;
 

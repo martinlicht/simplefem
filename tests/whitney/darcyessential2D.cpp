@@ -23,6 +23,7 @@
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
+#include "../../fem/global.elevation.hpp"
 #include "../../fem/global.whitneyincl.hpp"
 #include "../../fem/utilities.hpp"
 
@@ -142,7 +143,10 @@ int main()
                 
 //                 SparseMatrix vector_massmatrix_inv = FEECBrokenMassMatrix_cellwiseinverse( M, M.getinnerdimension(), 1, r );
                 
-                SparseMatrix volume_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r-1 );
+                SparseMatrix volume_elevationmatrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 2, r-1, 1 );
+                SparseMatrix volume_elevationmatrix_t = volume_elevationmatrix.getTranspose();
+
+                SparseMatrix volume_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r );
 
                 SparseMatrix diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r );
                 SparseMatrix diffmatrix_t = diffmatrix.getTranspose();
@@ -156,7 +160,7 @@ int main()
                 auto mat_A  = vector_incmatrix_t & vector_massmatrix & vector_incmatrix;
                 mat_A.sortandcompressentries();
                 
-                auto mat_Bt = vector_incmatrix_t & diffmatrix_t & volume_massmatrix & volume_incmatrix; // upper right
+                auto mat_Bt = vector_incmatrix_t & diffmatrix_t & volume_elevationmatrix_t & volume_massmatrix & volume_incmatrix; // upper right
                 mat_Bt.sortandcompressentries();
                 
                 auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & volume_massmatrix & diffmatrix & vector_incmatrix; // lower bottom
@@ -179,13 +183,13 @@ int main()
                     LOG << "...interpolate explicit solution and rhs" << endl;
                     
                     FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r, function_grad );
-                    FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 2, r, function_sol  );
-                    FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 2, r, function_rhs  );
+                    FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 2, r-1, function_sol  );
+                    FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 2, r-1, function_rhs  );
                     
                     LOG << "...measure interpolation commutativity" << endl;
         
                     {
-                        auto commutatorerror_aux = interpol_rhs - diffmatrix * interpol_grad;
+                        auto commutatorerror_aux = volume_elevationmatrix * ( interpol_rhs - diffmatrix * interpol_grad );
                         Float commutatorerror  = commutatorerror_aux * ( volume_massmatrix * commutatorerror_aux );
                         LOG << "algebraic commutator error 1: " << commutatorerror << endl;
                     }
@@ -199,7 +203,7 @@ int main()
 
                     {
                         
-                        FloatVector rhs = volume_incmatrix_t * ( volume_massmatrix * interpol_rhs );
+                        FloatVector rhs = volume_incmatrix_t * ( volume_massmatrix * volume_elevationmatrix * interpol_rhs );
 
                         FloatVector sol( volume_incmatrix.getdimin(), 0. );
                         
@@ -239,7 +243,7 @@ int main()
 
                         LOG << "...compute error and residual:" << endl;
 
-                        auto errornorm_aux_sol  = interpol_sol  - volume_incmatrix *  sol;
+                        auto errornorm_aux_sol  = volume_elevationmatrix * interpol_sol  - volume_incmatrix * sol;
                         auto errornorm_aux_grad = interpol_grad - vector_incmatrix * grad;
 
                         Float errornorm_sol  = sqrt( errornorm_aux_sol  * ( volume_massmatrix *  errornorm_aux_sol ) );
