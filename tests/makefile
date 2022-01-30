@@ -121,6 +121,12 @@ include tests.rules.mk
 #include tests.run.mk
 build: whitney2D.tests
 
+contextdir:=./whitney3D
+context:=whitney3D
+include tests.rules.mk
+#include tests.run.mk
+build: whitney3D.tests
+
 contextdir:=./afem
 context:=afem
 include tests.rules.mk
