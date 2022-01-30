@@ -103,17 +103,23 @@ include tests.rules.mk
 #include tests.run.mk
 build: solverfem.tests
 
-contextdir:=./experiments
-context:=experiments
+contextdir:=./sullivan2D
+context:=sullivan2D
 include tests.rules.mk
 #include tests.run.mk
-build: experiments.tests
+build: sullivan2D.tests
 
-contextdir:=./whitney
-context:=whitney
+contextdir:=./sullivan3D
+context:=sullivan3D
 include tests.rules.mk
 #include tests.run.mk
-build: whitney.tests
+build: sullivan3D.tests
+
+contextdir:=./whitney2D
+context:=whitney2D
+include tests.rules.mk
+#include tests.run.mk
+build: whitney2D.tests
 
 contextdir:=./afem
 context:=afem
