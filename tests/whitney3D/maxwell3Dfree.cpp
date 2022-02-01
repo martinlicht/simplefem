@@ -82,22 +82,26 @@ int main()
                 };
             
 
+            // + a_y dyx + a_z dzx + b_x dxy + b_z dzy + c_x dxz + c_y dyz
+            // - a_y dxy - a_z dxz + b_x dxy - b_z dyz + c_x dxz + c_y dyz
+            // - a_y dxy + b_x dxy - a_z dxz + c_x dxz - b_z dyz + c_y dyz
+            // 
+
             std::function<FloatVector(const FloatVector&)> experiment_curl = 
                 [=](const FloatVector& vec) -> FloatVector{
                     Assert( vec.getdimension() == 3 );
                     // return FloatVector({ 1. });
                     return FloatVector( { // - partial_y + partial_x
-                        + bumpfunction(vec[0]) * bumpfunction_dev(vec[1]) * bumpfunction(vec[2])
-                        - bumpfunction_dev(vec[0]) * bumpfunction(vec[1]) * bumpfunction(vec[2]) // xy
+                        - bumpfunction(vec[0]) * bumpfunction_dev(vec[1]) * bumpfunction(vec[2]) // xy
+                        + bumpfunction_dev(vec[0]) * bumpfunction(vec[1]) * bumpfunction(vec[2])
                         ,
-                        - bumpfunction(vec[0]) * bumpfunction(vec[1]) * bumpfunction_dev(vec[2])
-                        + bumpfunction_dev(vec[0]) * bumpfunction(vec[1]) * bumpfunction(vec[2]) // xz
+                        - bumpfunction(vec[0]) * bumpfunction(vec[1]) * bumpfunction_dev(vec[2]) // xz
+                        + bumpfunction_dev(vec[0]) * bumpfunction(vec[1]) * bumpfunction(vec[2])
                         ,
-                        + bumpfunction(vec[0]) * bumpfunction_dev(vec[1]) * bumpfunction(vec[2])
                         - bumpfunction(vec[0]) * bumpfunction(vec[1]) * bumpfunction_dev(vec[2]) // yz
+                        + bumpfunction(vec[0]) * bumpfunction_dev(vec[1]) * bumpfunction(vec[2])
                     });
-                };
-            
+                };            
 
             std::function<FloatVector(const FloatVector&)> experiment_rhs = 
                 [=](const FloatVector& vec) -> FloatVector{
