@@ -205,7 +205,7 @@ int main()
 
                     FloatVector interpol = Interpolation( M, M.getinnerdimension(), 1, r, vectorfield );
 
-                    Float mass = interpol * ( massmatrix_volume * interpol );
+                    Float mass = interpol * ( massmatrix_vector * interpol );
                     
                     errors_volume[i][l][r] = std::sqrt( std::abs( mass - should_be ) );
                     
@@ -252,7 +252,7 @@ int main()
     
         ConvergenceTable contable_scalar[ experiments_scalar_field.size() ];
         ConvergenceTable contable_vector[ experiments_vector_field.size() ];
-        ConvergenceTable contable_pseudo[ experiments_vector_field.size() ];
+        ConvergenceTable contable_pseudo[ experiments_pseudo_field.size() ];
         ConvergenceTable contable_volume[ experiments_volume_field.size() ];
         
         for( int l = l_min; l <= l_max; l++ ) 

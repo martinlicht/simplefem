@@ -239,9 +239,9 @@ int main()
 
                     FloatVector interpol = Interpolation( M, M.getinnerdimension(), 1, r, vectorfield );
 
-                    Float mass = interpol * ( massmatrix_volume * interpol );
+                    Float mass = interpol * ( massmatrix_vector * interpol );
                     
-                    errors_volume[i][l][r] = std::sqrt( std::abs( mass - should_be ) );
+                    errors_vector[i][l][r] = std::sqrt( std::abs( mass - should_be ) );
                     
                 }
                 
