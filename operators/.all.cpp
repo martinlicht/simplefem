@@ -2,4 +2,4 @@
 #include "io.floatvector.cpp"
 #include "linearoperator.cpp"
 #include "simpleoperators.cpp"
-#include "flagoperator.cpp"
+//#include "flagoperator.cpp"

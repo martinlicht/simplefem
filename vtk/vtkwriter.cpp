@@ -71,6 +71,7 @@ VTKWriter VTKWriter::writeCoordinateBlock()
               << mesh.getcoordinates().getdata(v,2) 
               << nl;
       } else {
+          std::cout << "outer dimension is: " << mesh.getouterdimension() << nl;
           unreachable();
       }
         
@@ -104,6 +105,13 @@ VTKWriter VTKWriter::writeCoordinateBlock( const FloatVector& z )
               << mesh.getcoordinates().getdata(v,1) 
               << space 
               << z.at(v)
+              << nl;
+      } else if( mesh.getouterdimension() == 3 ) {
+          os << mesh.getcoordinates().getdata(v,0)
+              << space
+              << mesh.getcoordinates().getdata(v,1) 
+              << space 
+              << mesh.getcoordinates().getdata(v,2) 
               << nl;
       } else {
           unreachable();

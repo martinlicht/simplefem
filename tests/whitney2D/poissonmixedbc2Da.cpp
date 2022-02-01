@@ -26,7 +26,7 @@
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 // #include "../../fem/global.lagrangeincl.hpp"
-#include "../../fem/global.sullivanincl.hpp"
+#include "../../fem/global.whitneyincl.hpp"
 #include "../../fem/utilities.hpp"
 
 
@@ -107,7 +107,7 @@ int main()
 
             LOG << "Solving Poisson Problem with Neumann boundary conditions" << endl;
 
-            const int min_l = 2; 
+            const int min_l = 0; 
             const int max_l = 8;
             
             const int min_r = 4;
@@ -149,7 +149,7 @@ int main()
 
                     LOG << "...assemble inclusion matrix and transpose" << endl;
             
-                    SparseMatrix incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r );
+                    SparseMatrix incmatrix = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 0, r );
                     
 //                     LOG << incmatrix.getdimin() <<space<< L_incmatrix.getdimin() <<space<< incmatrix.getdimout() <<space<< L_incmatrix.getdimout() << nl;
 //                     assert( incmatrix.getdimin()  == L_incmatrix.getdimin() );

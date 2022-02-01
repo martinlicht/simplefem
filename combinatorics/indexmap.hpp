@@ -104,6 +104,11 @@ class IndexMap
         
         
         
+        // IndexMap skip( int i ) const;
+        // IndexMap shiftup() const;
+
+
+
         bool comparablewith( const IndexMap& ) const;
         
         bool equals( const IndexMap& ) const;
@@ -192,11 +197,35 @@ inline IndexMap identityIndexMap( int low, int high )
 
 
 
+// inline IndexMap toss_entry( const IndexMap& original, int p )
+// {
+    
+//     assert( not original.getSourceRange().isempty() );
+//     assert( original.getSourceRange().contains(p) );
+    
+//     IndexRange new_source_range = IndexRange( original.getSourceRange().min()+1, original.getSourceRange().max() );
+
+//     IndexMap im( new_source_range, original.getTargetRange(), [p,original]( int i ) -> int { 
+//         if( i <= p ) 
+//             return original.at(p-1);
+//         else 
+//             return original.at(p);
+//     } );
+
+//     // IndexMap im( new_source_range, original.getTargetRange(), 0 );
+//     // for( int j = 1; j <= p; j++ ) im[j] = original[j-1];
+//     // for( int j = p+1; j < original.getSourceRange().max(); j++ ) im[j] = original[j];
+    
+//     return im;
+// }
+
+
+
+
 
 IndexMap expand_zero( const IndexMap& im, int p );
 
 IndexMap expand_one( const IndexMap& im, int p );
-
 
 
 
