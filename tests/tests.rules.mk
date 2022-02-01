@@ -88,16 +88,27 @@ $(context).tests: $($(context).outs)
 $(context).sources     := $(sort $(wildcard $(contextdir)/*cpp))
 $(context).executables := $(patsubst %.cpp,%.out,$($(context).sources))
 $(context).runs        := $(patsubst %.cpp,%.run,$($(context).sources))
+$(context).silent_runs := $(patsubst %.cpp,%.silent_run,$($(context).sources))
 
-# $(context).runs        := $(patsubst %.out,%.run,$($(context).executables))
-
-
-# .PHONY: %.run
 
 $($(context).runs): %.run : %.out
-#	./$< > /dev/null
 	./$< 
 
 $(context).run: $($(context).runs)
 
 run: $(context).run
+
+
+$($(context).silent_runs): %.silent_run : %.out
+	./$< > /dev/null 2> /dev/null
+
+$(context).silent_run: $($(context).silent_runs)
+
+silent_run: $(context).silent_run
+
+
+
+
+# $(context).runs        := $(patsubst %.out,%.run,$($(context).executables))
+
+# .PHONY: %.run
