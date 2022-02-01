@@ -98,7 +98,7 @@ int main()
             ConvergenceTable contable;
             
 
-            const int min_l = 7;
+            const int min_l = 0;
             
             const int max_l = 7;
 

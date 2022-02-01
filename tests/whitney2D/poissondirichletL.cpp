@@ -89,7 +89,7 @@ int main()
 
             LOG << "Solving Poisson Problem with Dirichlet boundary conditions" << endl;
 
-            const int min_l = 2; 
+            const int min_l = 0; 
             const int max_l = 3;
             
 
