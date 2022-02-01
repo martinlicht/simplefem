@@ -100,7 +100,7 @@ int main()
 
             const int min_l = 2;
             
-            const int max_l = 9;
+            const int max_l = 7;
 
             assert( 0 <= min_l and min_l <= max_l );
             

@@ -1,42 +1,44 @@
 #ifndef INCLUDEGUARD_DEBUG_HPP
 #define INCLUDEGUARD_DEBUG_HPP
 
-// void abort();
-#include <cstdlib>
 
-#ifdef FLAG_USE_ORIGINAL_ASSERT_MACRO
+/* Definitions for assert macros 
+ * 
+ * The general structure of this framework is as follows.
+ * We define the macros 
+ * 
+ *  - unreachable()
+ *  - unimplemented()
+ *  - Assert(x)
+ *  - Assert(x,...)
+ * 
+ * Those definitions are filled up in different ways.
+ * 
+ * 1)
+ * If FLAG_USE_ORIGINAL_ASSERT_MACRO is set, then we use 
+ * the capabilities of the C library, in particular the
+ * original `assert` macro.
+ * 
+ * Otherwise, we define them by ourselves.
+ * 
+ * 2)
+ * There is another case distinction depending on whether 
+ * we have set NDEBUG or not. If NDEBUG is set, then we 
+ * fix the terms as empty. Otherwise non-trivial definitions
+ * follow.
+ * 
+ * 
+ */
 
-#include <cassert>
-
-#else // FLAG_USE_ORIGINAL_ASSERT_MACRO
-
-#ifdef NDEBUG
-#define Assert(x,...) (static_cast<void>0)
-#else // NDEBUG
-//#define Assert(x) (static_cast<bool>(x)?(void(0)):myActualAssert(#x,__FILE__,__LINE__))
-//#define Assert(x,...) (static_cast<bool>(x)?(void(0)):myTemplatedAssert( #x, __FILE__, __LINE__ __VA_OPT__(,) __VA_ARGS__) )
-#define Assert(x,...) (static_cast<bool>(x)?(void(0)):myActualAssert( #x, __FILE__, __LINE__, Concat2String(__VA_ARGS__) ) )
-#endif //NDEBUG
-
-#endif //FLAG_USE_ORIGINAL_ASSERT_MACRO
 
 
 
 
 
 
-
-
-
-
-
+#include <string>
 #include <cstdio>
-
-# ifdef USE_BACKTRACER
-#include <stdlib.h>
-#include <execinfo.h>
-#endif // USE_BACKTRACER
-
+#include <cstdlib>
 
 inline void myActualAssert( const char* expression, const char* filename, const int linenumber, const std::string message = "" )
 {
@@ -53,33 +55,49 @@ inline void myActualAssert( const char* expression, const char* filename, const 
     }
     fprintf( stderr, "!!\n" );
     fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" );
-    fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" );
-
-#ifdef USE_BACKTRACER
-    {
-        const int limit = 10;
-        void* array[limit];
-        
-        int size = backtrace( array, limit );
-        char** strings = backtrace_symbols( array, size );
-
-        if( strings != NULL )
-        {
-            printf( "Obtained %d stack frames.\n", size );
-            for ( int i = 0; i < size; i++ ) printf( "%s\n", strings[i] );
-        }
-
-        free (strings);
-    }
-#endif // USE_BACKTRACER
-    
+    fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" );    
 #ifdef __cpp_exceptions
     throw(0);
 #else // __cpp_exceptions
     abort();
-#endif // __cpp_exceptions
-    
+#endif // __cpp_exceptions    
 }
+
+inline void myActualUnreachable [[noreturn]] ( const char* filename, const int linenumber )
+{
+    fprintf( stderr, "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ), 
+    fprintf( stderr, "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ), 
+    fprintf( stderr, "!!\n" ), 
+    fprintf( stderr, "!!\tUnreachable code reached:\n!!!!\t%s:%d\n", __FILE__, __LINE__ ), 
+    fprintf( stderr, "!!\n" ), 
+    fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ), 
+    fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ), 
+#ifdef __cpp_exceptions
+    throw(0);
+#else // __cpp_exceptions
+    abort();
+#endif // __cpp_exceptions    
+}
+
+inline void myActualUnimplemented [[noreturn]] ( const char* filename, const int linenumber )
+{
+    fprintf( stderr, "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ), 
+    fprintf( stderr, "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ), 
+    fprintf( stderr, "!!\n" ), 
+    fprintf( stderr, "!!\tUnimplemented execution path reached:\n!!!!\t%s:%d\n", __FILE__, __LINE__ ), 
+    fprintf( stderr, "!!\n" ), 
+    fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ), 
+    fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ), 
+#ifdef __cpp_exceptions
+    throw(0);
+#else // __cpp_exceptions
+    abort();
+#endif // __cpp_exceptions    
+}
+
+
+
+
 
 
 
@@ -100,14 +118,14 @@ inline void myActualAssert( const char* expression, const char* filename, const 
 #include <sstream>
 
 // nothing to concat: empty string
-std::string Concat2String()
+inline std::string Concat2String()
 {
     return "";
 }
 
 // one argument to stringify, base of induction 
 template< typename T >
-std::string Concat2String( const T& t )
+inline std::string Concat2String( const T& t )
 {
     std::stringstream ss;
     ss << t;
@@ -117,7 +135,7 @@ std::string Concat2String( const T& t )
 // recursively build a string by stringifying arguments,
 // with separators in between. Base case has only one argument.
 template< typename T, typename... Params >
-std::string Concat2String( const T& t, const Params&... params )
+inline std::string Concat2String( const T& t, const Params&... params )
 {
     std::stringstream ss;
     ss << t << '\t' << Concat2String( params... );
@@ -132,22 +150,35 @@ inline void myTemplatedAssert( const char* expression, const char* filename, con
 
 
 
-#define unreachable() \
-        fprintf( stderr, "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ), \
-        fprintf( stderr, "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ), \
-        fprintf( stderr, "!!\n" ), \
-        fprintf( stderr, "!!\tUnreachable code reached:\n!!!!\t%s:%d\n", __FILE__, __LINE__ ), \
-        fprintf( stderr, "!!\n" ), \
-        fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ), \
-        fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ), \
-        abort()
 
-// #define unreachable 
-//     []() -> void{  
-//         fprintf( stderr, "Unreachable code reached: %s:%d\n", __FILE__, __LINE__ );  
-//         abort();  
-//         }
-// // __builtin_unreachable
+
+
+
+
+#ifdef NDEBUG
+
+#define Assert(x,...)   (static_cast<void>0)
+#define unreachable()   (static_cast<void>0)
+#define unimplemented() (static_cast<void>0)
+
+#else // NDEBUG
+
+#ifdef FLAG_USE_ORIGINAL_ASSERT_MACRO
+
+#include <cassert>
+#define Assert(x,...)   assert(x)
+#define unreachable()   assert(false)
+#define unimplemented() assert(false)
+
+#else // FLAG_USE_ORIGINAL_ASSERT_MACRO
+
+#define Assert(x,...) (static_cast<bool>(x)?(void(0)):myActualAssert( #x, __FILE__, __LINE__, Concat2String(__VA_ARGS__) ) )
+#define unreachable()   myActualUnreachable(__FILE__, __LINE__), abort()
+#define unimplemented() myActualUnimplemented(__FILE__, __LINE__), abort()
+
+#endif //FLAG_USE_ORIGINAL_ASSERT_MACRO
+
+#endif //NDEBUG
 
 
 #endif //INCLUDEGUARD_DEBUG_HPP

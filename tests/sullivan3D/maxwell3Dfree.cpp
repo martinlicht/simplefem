@@ -14,8 +14,8 @@
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
 #include "../../mesh/coordinates.hpp"
-#include "../../mesh/mesh.simplicial2D.hpp"
-#include "../../mesh/examples2D.hpp"
+#include "../../mesh/mesh.simplicial3D.hpp"
+#include "../../mesh/examples3D.hpp"
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/sparsesolver.hpp"
 #include "../../solver/iterativesolver.hpp"
@@ -37,7 +37,7 @@ using namespace std;
 int main()
 {
         
-        LOG << "Unit Test: 2D Maxwell System" << endl;
+        LOG << "Unit Test: 3D Maxwell System" << endl;
         
         LOG << std::setprecision(10);
 
@@ -45,7 +45,7 @@ int main()
 
             LOG << "Initial mesh..." << endl;
             
-            MeshSimplicial2D M = StandardSquare2D();
+            MeshSimplicial3D M = StandardCube3D();
             
             M.getcoordinates().scale( 1.1 );
             
@@ -55,93 +55,75 @@ int main()
 
             
             
-            const Float xfeq = 2.;
-            const Float yfeq = 2.;
             
             std::function<FloatVector(const FloatVector&)> experiment_sol = 
                 [=](const FloatVector& vec) -> FloatVector{
-                    Assert( vec.getdimension() == 2 );
+                    Assert( vec.getdimension() == 3 );
                     // return FloatVector({ 1. });
                     return FloatVector({ 
-                        bumpfunction(vec[0])*bumpfunction(vec[1]) //std::sin( xfeq * Constants::pi * vec[0] ) * std::sin( yfeq * Constants::pi * vec[1] )
+                        bumpfunction(vec[0])*bumpfunction(vec[1])*bumpfunction(vec[2])
                         ,
-                        bumpfunction(vec[0])*bumpfunction(vec[1]) //std::sin( xfeq * Constants::pi * vec[0] ) * std::sin( yfeq * Constants::pi * vec[1] )
+                        bumpfunction(vec[0])*bumpfunction(vec[1])*bumpfunction(vec[2])
+                        ,
+                        bumpfunction(vec[0])*bumpfunction(vec[1])*bumpfunction(vec[2])
                     });
                 };
             
 
             std::function<FloatVector(const FloatVector&)> experiment_ndiv = 
                 [=](const FloatVector& vec) -> FloatVector{
-                    Assert( vec.getdimension() == 2 );
+                    Assert( vec.getdimension() == 3 );
                     // return FloatVector({ 1. });
                     return FloatVector( { 
-                        - bumpfunction_dev(vec[0]) * bumpfunction(vec[1]) - bumpfunction(vec[0]) * bumpfunction_dev(vec[1])
-//                             -xfeq * Constants::pi * std::cos( xfeq * Constants::pi * vec[0] ) * std::sin( yfeq * Constants::pi * vec[1] )
-//                             +
-//                             -yfeq * Constants::pi * std::sin( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] )
+                        - bumpfunction_dev(vec[0]) * bumpfunction(vec[1]) * bumpfunction(vec[2])
+                        - bumpfunction(vec[0]) * bumpfunction_dev(vec[1]) * bumpfunction(vec[2])
+                        - bumpfunction(vec[0]) * bumpfunction(vec[1]) * bumpfunction_dev(vec[2])
                     });
                 };
             
 
             std::function<FloatVector(const FloatVector&)> experiment_curl = 
                 [=](const FloatVector& vec) -> FloatVector{
-                    Assert( vec.getdimension() == 2 );
+                    Assert( vec.getdimension() == 3 );
                     // return FloatVector({ 1. });
                     return FloatVector( { // - partial_y + partial_x
-                        - bumpfunction(vec[0]) * bumpfunction_dev(vec[1]) + bumpfunction_dev(vec[0]) * bumpfunction(vec[1])
-//                             -
-//                             yfeq * Constants::pi * 
-//                             std::sin( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] )
-//                             +
-//                             xfeq * Constants::pi * 
-//                             std::cos( xfeq * Constants::pi * vec[0] ) * std::sin( yfeq * Constants::pi * vec[1] )
+                        + bumpfunction(vec[0]) * bumpfunction_dev(vec[1]) * bumpfunction(vec[2])
+                        - bumpfunction_dev(vec[0]) * bumpfunction(vec[1]) * bumpfunction(vec[2]) // xy
+                        ,
+                        - bumpfunction(vec[0]) * bumpfunction(vec[1]) * bumpfunction_dev(vec[2])
+                        + bumpfunction_dev(vec[0]) * bumpfunction(vec[1]) * bumpfunction(vec[2]) // xz
+                        ,
+                        + bumpfunction(vec[0]) * bumpfunction_dev(vec[1]) * bumpfunction(vec[2])
+                        - bumpfunction(vec[0]) * bumpfunction(vec[1]) * bumpfunction_dev(vec[2]) // yz
                     });
                 };
             
 
             std::function<FloatVector(const FloatVector&)> experiment_rhs = 
                 [=](const FloatVector& vec) -> FloatVector{
-                    Assert( vec.getdimension() == 2 );
-                    
-                    
-//                     const Float stepsize = 1e-07;
-//                     FloatVector ret(2);
-//                     auto point = vec;
-//                     
-//                     FloatVector mid    = experiment_sol( point                              );
-//                     FloatVector left   = experiment_sol( point - stepsize * unitvector(2,0) );
-//                     FloatVector right  = experiment_sol( point + stepsize * unitvector(2,0) );
-//                     FloatVector up     = experiment_sol( point - stepsize * unitvector(2,1) );
-//                     FloatVector down   = experiment_sol( point + stepsize * unitvector(2,1) );
-//                     
-//                     ret = - ( up + down + left + right - 4 * mid );
-//                     
-//                     ret /= ( stepsize * stepsize );
-//                     
-//                     Assert( ret.getdimension() == 2 );
-//                     
-//                     return ret;
-
-                    
+                    Assert( vec.getdimension() == 3 );
                     
                     return FloatVector({
                         -
-                        bumpfunction_devdev(vec[0]) *        bumpfunction(vec[1])
+                        bumpfunction_devdev(vec[0]) *        bumpfunction(vec[1]) *        bumpfunction(vec[2])
                         -
-                        bumpfunction(vec[0])        * bumpfunction_devdev(vec[1])
+                        bumpfunction(vec[0])        * bumpfunction_devdev(vec[1]) *        bumpfunction(vec[2])
+                        -
+                        bumpfunction(vec[0])        * bumpfunction(vec[1]) *        bumpfunction_devdev(vec[2])
                         ,
                         -
-                        bumpfunction_devdev(vec[0]) *        bumpfunction(vec[1])
+                        bumpfunction_devdev(vec[0]) *        bumpfunction(vec[1]) *        bumpfunction(vec[2])
                         -
-                        bumpfunction(vec[0])        * bumpfunction_devdev(vec[1])
-                        
-//                         ( xfeq*xfeq + yfeq*yfeq ) * Constants::pisquare 
-//                         * 
-//                         std::sin( xfeq * Constants::pi * vec[0] ) * std::sin( yfeq * Constants::pi * vec[1] )
-//                         ,
-//                         ( xfeq*xfeq + yfeq*yfeq ) * Constants::pisquare 
-//                         * 
-//                         std::sin( xfeq * Constants::pi * vec[0] ) * std::sin( yfeq * Constants::pi * vec[1] )
+                        bumpfunction(vec[0])        * bumpfunction_devdev(vec[1]) *        bumpfunction(vec[2])
+                        -
+                        bumpfunction(vec[0])        * bumpfunction(vec[1]) *        bumpfunction_devdev(vec[2])
+                        ,
+                        -
+                        bumpfunction_devdev(vec[0]) *        bumpfunction(vec[1]) *        bumpfunction(vec[2])
+                        -
+                        bumpfunction(vec[0])        * bumpfunction_devdev(vec[1]) *        bumpfunction(vec[2])
+                        -
+                        bumpfunction(vec[0])        * bumpfunction(vec[1]) *        bumpfunction_devdev(vec[2])
                      });
                 };
 
@@ -156,13 +138,13 @@ int main()
             
             
 
-            const int min_l = 1; 
+            const int min_l = 0; 
             
             const int max_l = 4;
             
-            const int min_r = 1; 
+            const int min_r = 2; 
             
-            const int max_r = 1;
+            const int max_r = 2;
             
 
             
@@ -176,7 +158,7 @@ int main()
             {
                 
                 LOG << "Level: " << l << std::endl;
-                LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
+                LOG << "# T/F/E/V: " << M.count_tetrahedra() << "/" << M.count_faces() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
                 for( int r = min_r; r <= max_r; r++ )
                 {
@@ -188,7 +170,7 @@ int main()
                     
                     SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r+1 );
                     SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   );
-                    SparseMatrix volume_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r-1 );
+                    SparseMatrix pseudo_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r-1 );
 
                     SparseMatrix scalar_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r+1 );
                     SparseMatrix scalar_diffmatrix_t = scalar_diffmatrix.getTranspose();
@@ -202,8 +184,8 @@ int main()
                     SparseMatrix vector_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 1, r   );
                     SparseMatrix vector_incmatrix_t = vector_incmatrix.getTranspose();
 
-                    SparseMatrix volume_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 2, r-1 );
-                    SparseMatrix volume_incmatrix_t = volume_incmatrix.getTranspose();
+                    SparseMatrix pseudo_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 2, r-1 );
+                    SparseMatrix pseudo_incmatrix_t = pseudo_incmatrix.getTranspose();
                     
                     auto mass = vector_incmatrix_t * vector_massmatrix * vector_incmatrix;
 
@@ -213,10 +195,10 @@ int main()
                     auto mat_Bt = scalar_incmatrix_t & scalar_diffmatrix_t & vector_massmatrix & vector_incmatrix; // upper right
                     mat_Bt.sortandcompressentries();
                     
-                    auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & volume_massmatrix & diffmatrix & vector_incmatrix; // lower bottom
+                    auto mat_B = mat_Bt.getTranspose(); //pseudo_incmatrix_t & pseudo_massmatrix & diffmatrix & vector_incmatrix; // lower bottom
                     mat_B.sortandcompressentries();
                     
-                    auto mat_C  = vector_incmatrix_t & vector_diffmatrix_t & volume_massmatrix & vector_diffmatrix & vector_incmatrix;
+                    auto mat_C  = vector_incmatrix_t & vector_diffmatrix_t & pseudo_massmatrix & vector_diffmatrix & vector_incmatrix;
                     mat_C.sortandcompressentries();
                     
                     LOG << "share zero A = " << mat_A.getnumberofzeroentries() << "/" << (Float) mat_A.getnumberofentries() << nl;
@@ -232,7 +214,7 @@ int main()
                     auto negB  = B;  negB.scale(-1);
                     auto negBt = Bt; negBt.scale(-1);
                     
-                    auto SystemMatrix = C - B * inv(A,1000 * machine_epsilon) * Bt;
+                    auto SystemMatrix = C + B * inv(A,1000 * machine_epsilon) * Bt;
                     
                     
                     
@@ -271,17 +253,17 @@ int main()
                         
                             LOG << "...measure interpolation commutativity" << endl;
                             
-//                             auto  commutatorerror_1_aux = interpol_rhs - scalar_diffmatrix * interpol_ndiv - vector_diffmatrix_t * volume_massmatrix * interpol_curl;
+//                             auto  commutatorerror_1_aux = interpol_rhs - scalar_diffmatrix * interpol_ndiv - vector_diffmatrix_t * pseudo_massmatrix * interpol_curl;
                             auto  commutatorerror_1_aux
                             = 
                             interpol_rhs
                             - scalar_diffmatrix   * inv(scalar_massmatrix,1e-14) * scalar_diffmatrix_t * vector_massmatrix * interpol_sol
-                            - vector_diffmatrix_t * volume_massmatrix * vector_diffmatrix   * interpol_sol;
+                            - vector_diffmatrix_t * pseudo_massmatrix * vector_diffmatrix   * interpol_sol;
                             Float commutatorerror_1     = commutatorerror_1_aux * ( vector_massmatrix * commutatorerror_1_aux );
                             LOG << "algebraic commutator error 1: " << commutatorerror_1 << endl;
                             
                             auto  commutatorerror_2_aux = interpol_curl - vector_diffmatrix * interpol_sol;
-                            Float commutatorerror_2     = commutatorerror_2_aux * ( volume_massmatrix * commutatorerror_2_aux );
+                            Float commutatorerror_2     = commutatorerror_2_aux * ( pseudo_massmatrix * commutatorerror_2_aux );
                             LOG << "algebraic commutator error 2: " << commutatorerror_2 << endl;
                             
                             auto  commutatorerror_3_aux = scalar_massmatrix * interpol_ndiv - scalar_diffmatrix_t * interpol_sol;
@@ -317,55 +299,14 @@ int main()
 
                         }
 
-                        
-                        
-                        {
-                            
-                            LOG << "...iterative solver [DECOMPOSED]" << endl;
-                            
-                            timestamp start = gettimestamp();
-
-                            FloatVector sol_1( vector_incmatrix.getdimin(), 0. );
-                            FloatVector sol_2( vector_incmatrix.getdimin(), 0. );
-                            
-                            sol_1.zero();                            
-                            FloatVector residual( rhs );
-                            ConjugateResidualSolverCSR_textbook( 
-                                sol_1.getdimension(), 
-                                sol_1.raw(), 
-                                rhs.raw(), 
-                                C.getA(), C.getC(), C.getV(),
-                                residual.raw(),
-                                desired_precision,
-                                0
-                            );
-
-                            auto X = B * inv(A,1e-14) * Bt;
-                            sol_2.zero();
-                            ConjugateResidualMethod Solver_2( X );
-                            Solver_2.threshold           = 1e-10;
-                            Solver_2.print_modulo        = 100;
-                            Solver_2.max_iteration_count = 4 * sol.getdimension();
-                            Solver_2.solve( sol_2, rhs );
-
-                            timestamp end = gettimestamp();
-
-                            sol = sol_1 + sol_2;
-
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
-
-                            LOG << "...compute error and residual:" << endl;
-
-                        }
 
                         
                         
-                        if(false)
                         {
                             
                             sol.zero();
                             
-//                             rhs = vector_incmatrix_t * vector_diffmatrix_t * volume_massmatrix * vector_diffmatrix * interpol_sol;
+//                             rhs = vector_incmatrix_t * vector_diffmatrix_t * pseudo_massmatrix * vector_diffmatrix * interpol_sol;
 //                             rhs = B * inv(A,10e-14) * scalar_incmatrix_t * scalar_diffmatrix_t * vector_massmatrix * interpol_sol;
 //                             rhs = B * scalar_incmatrix_t * scalar_massmatrix * interpol_ndiv;
                         
@@ -414,7 +355,7 @@ int main()
                             rhs_whole.setslice( 0, A.getdimout(), 0. );
                             rhs_whole.setslice( A.getdimout(), rhs );
                             
-                            HerzogSoodhalterMethod Solver( X );
+                            MinimumResidualMethod Solver( X );
                             Solver.threshold           = 1e-10;
                             Solver.print_modulo        = 500;
                             Solver.max_iteration_count = 10 * sol_whole.getdimension();
@@ -449,7 +390,7 @@ int main()
 
                         Float errornorm_ndiv_sq = ( errornorm_aux_ndiv * ( scalar_massmatrix * errornorm_aux_ndiv ) );
                         Float errornorm_sol_sq  = ( errornorm_aux_sol  * ( vector_massmatrix * errornorm_aux_sol  ) );
-                        Float errornorm_curl_sq = ( errornorm_aux_curl * ( volume_massmatrix * errornorm_aux_curl ) );
+                        Float errornorm_curl_sq = ( errornorm_aux_curl * ( pseudo_massmatrix * errornorm_aux_curl ) );
                         Float residualnorm      = ( rhs - B * inv(A,1e-14) * Bt * sol - C * sol ).norm();
 
                         LOG << errornorm_ndiv_sq << space << errornorm_sol_sq << space << errornorm_curl_sq << endl;

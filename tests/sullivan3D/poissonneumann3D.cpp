@@ -14,8 +14,8 @@
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
 #include "../../mesh/coordinates.hpp"
-#include "../../mesh/mesh.simplicial2D.hpp"
-#include "../../mesh/examples2D.hpp"
+#include "../../mesh/mesh.simplicial3D.hpp"
+#include "../../mesh/examples3D.hpp"
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/iterativesolver.hpp"
 // #include "../../solver/crm.hpp"
@@ -41,21 +41,16 @@ int main()
 
             LOG << "Initial mesh..." << endl;
             
-            MeshSimplicial2D M = StandardSquare2D();
+            MeshSimplicial3D M = StandardCube3D();
             
             M.check();
-            
-            M.automatic_dirichlet_flags();
-           
-            M.check_dirichlet_flags();
-
             
             LOG << "Prepare scalar fields for testing..." << endl;
             
 
             std::function<FloatVector(const FloatVector&)> constant_one
                 = [](const FloatVector& vec) -> FloatVector{
-                        assert( vec.getdimension() == 2 );
+                        assert( vec.getdimension() == 3 );
                         return FloatVector({ 1. });
                     };
             
@@ -69,49 +64,57 @@ int main()
             
             const Float xfeq = 1.;
             const Float yfeq = 1.;
+            const Float zfeq = 1.;
             
 
             std::function<FloatVector(const FloatVector&)> experiment_sol = 
                 [=](const FloatVector& vec) -> FloatVector{
-                    assert( vec.getdimension() == 2 );
+                    assert( vec.getdimension() == 3 );
                     // return FloatVector({ 1. });
-                    return FloatVector({ std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] ) });
+                    return FloatVector({ 
+                           std::cos( xfeq * Constants::pi * vec[0] )
+                         * std::cos( yfeq * Constants::pi * vec[1] )
+                         * std::cos( zfeq * Constants::pi * vec[2] ) 
+                         });
                 };
             
 
             std::function<FloatVector(const FloatVector&)> experiment_grad = 
                 [=](const FloatVector& vec) -> FloatVector{
-                    assert( vec.getdimension() == 2 );
+                    assert( vec.getdimension() == 3 );
                     // return FloatVector({ 1. });
                     return FloatVector( { 
-                            xfeq * Constants::twopi * std::cos( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] ),
-                            yfeq * Constants::twopi * std::sin( xfeq * Constants::twopi * vec[0] ) * std::cos( yfeq * Constants::twopi * vec[1] ), 
+                            -xfeq * Constants::pi * std::sin( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] ) * std::cos( zfeq * Constants::pi * vec[2] ),
+                            -yfeq * Constants::pi * std::cos( xfeq * Constants::pi * vec[0] ) * std::sin( yfeq * Constants::pi * vec[1] ) * std::cos( zfeq * Constants::pi * vec[2] ), 
+                            -zfeq * Constants::pi * std::cos( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] ) * std::sin( zfeq * Constants::pi * vec[2] ), 
                         });
                 };
             
 
             std::function<FloatVector(const FloatVector&)> experiment_rhs = 
                 [=](const FloatVector& vec) -> FloatVector{
-                    assert( vec.getdimension() == 2 );
+                    assert( vec.getdimension() == 3 );
                     return FloatVector({ 
-                        xfeq*xfeq * Constants::fourpisquare * std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] )
+                        xfeq*xfeq * Constants::pisquare * std::cos( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] ) * std::cos( yfeq * Constants::pi * vec[2] )
                         +
-                        yfeq*yfeq * Constants::fourpisquare * std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] )
+                        yfeq*yfeq * Constants::pisquare * std::cos( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] ) * std::cos( yfeq * Constants::pi * vec[2] )
+                        +
+                        zfeq*zfeq * Constants::pisquare * std::cos( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] ) * std::cos( yfeq * Constants::pi * vec[2] )
                      });
                 };
             
-            
+
             
 
             
 
             LOG << "Solving Poisson Problem with Neumann boundary conditions" << endl;
 
-            const int min_l = 1; 
-            const int max_l = 8;
+            const int min_l = 0; 
+            const int max_l = 5;
             
-            const int min_r = 3;
-            const int max_r = 3;
+            const int min_r = 1;
+            const int max_r = 1;
             
             ConvergenceTable contable;
             
@@ -127,9 +130,8 @@ int main()
             for( int l = min_l; l <= max_l; l++ ){
                 
                 LOG << "Level: " << l << std::endl;
-                LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
+                LOG << "# T/F/E/V: " << M.count_tetrahedra() << "/" << M.count_faces() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
-                if( l != 0 )
                 for( int r = min_r; r <= max_r; r++ ) 
                 {
                     
@@ -161,18 +163,18 @@ int main()
             
                     // ProductOperator 
 //                     auto stiffness = incmatrix_t * diffmatrix_t * vector_massmatrix * diffmatrix * incmatrix;
-//                     auto op1 = incmatrix_t * diffmatrix_t;
-//                     auto op2 = op1 * vector_massmatrix;
-//                     auto op3 = op2 * diffmatrix;
-//                     auto stiffness = op3 * incmatrix;
-//                     auto& stiffness_csr = stiffness;
+                    auto op1 = incmatrix_t * diffmatrix_t;
+                    auto op2 = op1 * vector_massmatrix;
+                    auto op3 = op2 * diffmatrix;
+                    auto stiffness = op3 * incmatrix;
+                    auto& stiffness_csr = stiffness;
 
-                    auto opr  = diffmatrix & incmatrix;
-                    auto opl  = opr.getTranspose(); 
-                    auto stiffness = opl & ( vector_massmatrix & opr );
+//                     auto opr  = diffmatrix & incmatrix;
+//                     auto opl  = opr.getTranspose(); 
+//                     auto stiffness = opl & ( vector_massmatrix & opr );
                     
-                    stiffness.sortentries();
-                    auto stiffness_csr = MatrixCSR( stiffness );
+//                     stiffness.sortentries();
+//                     auto stiffness_csr = MatrixCSR( stiffness );
                     
                     auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. );
 //                     auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
@@ -190,6 +192,15 @@ int main()
                         FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r-1, function_grad );
                         FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r,   function_rhs  );
                         
+                        FloatVector interpol_one  = Interpolation( M, M.getinnerdimension(), 0, r, constant_one );
+                        
+                        LOG << "...measure kernel component: " << std::flush;
+            
+                        Float average_sol = interpol_one * ( scalar_massmatrix * interpol_sol );
+                        Float average_rhs = interpol_one * ( scalar_massmatrix * interpol_rhs );
+                        
+                        LOG << average_sol << space << average_rhs << endl;
+
                         LOG << "...measure interpolation commutativity" << endl;
             
                         auto commutatorerror_aux = interpol_grad - diffmatrix * interpol_sol;
@@ -215,7 +226,7 @@ int main()
                         {
                             sol.zero();
                             MinimumResidualMethod Solver( stiffness_csr );
-//                             PreconditionedConjugateResidualMethod Solver( stiffness_csr, stiffness_invprecon );
+                            // PreconditionedConjugateResidualMethod Solver( stiffness_csr, stiffness_invprecon );
                             Solver.print_modulo        = 1+sol.getdimension();
                             Solver.max_iteration_count = 4 * sol.getdimension();
                             timestamp start = gettimestamp();
@@ -228,12 +239,13 @@ int main()
                         LOG << "...compute error and residual:" << endl;
             
                         
-                        auto errornorm_aux = interpol_sol  - incmatrix * sol;
-                        auto graderror_aux = interpol_grad - diffmatrix * incmatrix * sol;
+                        FloatVector dirterror = interpol_sol  - incmatrix * sol;
+                        FloatVector     error = dirterror - ( ( interpol_one * ( scalar_massmatrix * dirterror ) ) / ( interpol_one * ( scalar_massmatrix * interpol_one ) ) ) * interpol_one;
+                        FloatVector graderror = interpol_grad - diffmatrix * incmatrix * sol;
                         
-                        Float errornorm     = sqrt( errornorm_aux * ( scalar_massmatrix * errornorm_aux ) );
-                        Float graderrornorm = sqrt( graderror_aux * ( vector_massmatrix * graderror_aux ) );
-                        Float residualnorm  = ( rhs - stiffness * sol ).norm();
+                        Float errornorm       = std::sqrt( error * ( scalar_massmatrix * error ) );
+                        Float graderrornorm   = std::sqrt( graderror * ( vector_massmatrix * graderror ) );
+                        Float residualnorm    = ( rhs - stiffness * sol ).norm();
                         
                         LOG << "error:     " << errornorm    << endl;
                         LOG << "graderror: " << graderrornorm << endl;

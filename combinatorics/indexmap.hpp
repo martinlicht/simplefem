@@ -82,7 +82,7 @@ class IndexMap
         // This interface looks like a std::vector 
         // but it should really be a mapping.
         // What's more, the return of references 
-        // breaks the binding.
+        // may break the codomain, so to speak.
         
         // As a solution, the element access should only be const 
         // so it does not break the encapsulation of the class
@@ -104,6 +104,11 @@ class IndexMap
         
         
         
+        // IndexMap skip( int i ) const;
+        // IndexMap shiftup() const;
+
+
+
         bool comparablewith( const IndexMap& ) const;
         
         bool equals( const IndexMap& ) const;
@@ -131,9 +136,6 @@ inline IndexMap operator*( const IndexMap& leave, const IndexMap& enter )
     assert( enter.getTargetRange() == leave.getSourceRange() );
 
     IndexMap ret( src, dest, [ &leave, &enter ]( int i ) -> int { return leave[ enter[i] ]; } );
-
-//     for( int i = src.min(); i <= src.max(); i++ )
-//         ret[i] = leave[ enter[i] ];
 
     ret.check();
     return ret;
@@ -195,11 +197,35 @@ inline IndexMap identityIndexMap( int low, int high )
 
 
 
+// inline IndexMap toss_entry( const IndexMap& original, int p )
+// {
+    
+//     assert( not original.getSourceRange().isempty() );
+//     assert( original.getSourceRange().contains(p) );
+    
+//     IndexRange new_source_range = IndexRange( original.getSourceRange().min()+1, original.getSourceRange().max() );
+
+//     IndexMap im( new_source_range, original.getTargetRange(), [p,original]( int i ) -> int { 
+//         if( i <= p ) 
+//             return original.at(p-1);
+//         else 
+//             return original.at(p);
+//     } );
+
+//     // IndexMap im( new_source_range, original.getTargetRange(), 0 );
+//     // for( int j = 1; j <= p; j++ ) im[j] = original[j-1];
+//     // for( int j = p+1; j < original.getSourceRange().max(); j++ ) im[j] = original[j];
+    
+//     return im;
+// }
+
+
+
+
 
 IndexMap expand_zero( const IndexMap& im, int p );
 
 IndexMap expand_one( const IndexMap& im, int p );
-
 
 
 

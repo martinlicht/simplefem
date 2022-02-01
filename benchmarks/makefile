@@ -5,7 +5,7 @@ default: build
 include ../common.recipe.mk 
 include ../common.upkeep.mk
 
-affices:= vtk mesh solver dense sparse operators combinatorics basic
+affices:= fem vtk mesh solver dense sparse operators combinatorics basic
 
 depdir := .deps
 
@@ -25,6 +25,7 @@ link     := $(patsubst %,-l%,$(affices))
 $(depdir): ; @mkdir -p $@
 
 $(outs): ./%.out: ./%.cpp | $(depdir)
+	@echo Compiling $@ ...
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -MM ./$*.cpp -MT $@ -MF $(depdir)/$*.d
 ifeq ($(OS),Windows_NT)
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(includes) $(rpath) $(link) -o $@ $(LDLIBS)
