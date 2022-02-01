@@ -138,7 +138,7 @@ int main()
             
             
 
-            const int min_l = 1; 
+            const int min_l = 0; 
             
             const int max_l = 4;
             

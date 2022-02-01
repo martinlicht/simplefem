@@ -77,7 +77,7 @@ int main()
             contable << "#nullvec";
             
 
-            const int min_l = 3; 
+            const int min_l = 0; 
             
             const int max_l = 3;
             
