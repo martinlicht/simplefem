@@ -14,21 +14,6 @@
 #include "../mesh/mesh.hpp"
 
 
-/************************
-****
-****  Class for Sparse Matrices  
-****  - instantiates LinearOperator
-****  
-************************/
-
-
-
-
-
-
-
-
-
 
 
 
@@ -41,16 +26,6 @@ inline int SullivanSpanSize( int n, int k, int r )
     assert( k <= n );
     return binomial_integer( n + r, r ) * binomial_integer( n+1, k );
 }
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -101,16 +76,6 @@ inline DenseMatrix InterpolationPointsBarycentricCoordinates( int n, int r )
     
     return ret;
 }
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -172,24 +137,6 @@ inline DenseMatrix EvaluationMatrix( int r, const DenseMatrix& bcs )
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // 
 // The input matrix J is a Jacobian of the transformation which transforms 
 // the [dimin] reference simplex onto a simplex 
@@ -223,19 +170,6 @@ inline DenseMatrix BarycentricProjectionMatrix( const DenseMatrix& J )
     
     return ret;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -292,17 +226,6 @@ inline DenseMatrix EvaluateField(
     return ret;
     
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 
