@@ -2,7 +2,7 @@ SHELL = /bin/sh
 
 default: build
 
-include ../common.recipe.mk 
+include ../common.compile.mk 
 include ../common.upkeep.mk
 
 affices:= fem vtk mesh solver dense sparse operators combinatorics basic
@@ -35,7 +35,7 @@ endif
 	
 -include $(dependencies)
 
-%.out: ./makefile ../makefile ../common.recipe.mk ../common.upkeep.mk
+%.out: ./makefile ../makefile ../common.compile.mk ../common.upkeep.mk
 
 build: $(outs)
 

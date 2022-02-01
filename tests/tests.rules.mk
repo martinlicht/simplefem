@@ -1,7 +1,7 @@
 # # Example usage:
 # # 
 # # 
-# # include ../../common.recipe.mk 
+# # include ../../common.compile.mk 
 # # 
 # # include ../../common.upkeep.mk
 # # 
@@ -100,7 +100,9 @@ run: $(context).run
 
 
 $($(context).silent_runs): %.silent_run : %.out
-	./$< > /dev/null 2> /dev/null
+	./$< > /dev/null 
+
+# 2> /dev/null
 
 $(context).silent_run: $($(context).silent_runs)
 
