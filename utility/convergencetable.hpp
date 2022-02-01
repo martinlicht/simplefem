@@ -14,7 +14,7 @@ class ConvergenceTable
 {
     
     public:
-        
+
         explicit ConvergenceTable( bool display_convergence_rates = true )
         : make_new_row(true), 
           display_convergence_rates( display_convergence_rates )
@@ -98,6 +98,15 @@ class ConvergenceTable
 
         
         
+        const int tablecell_width = 12;
+
+        const int tablecell_precision = 6;
+
+        const int convergence_rate_width = 10;
+
+        const int convergence_rate_precision = 3;
+
+        const int initial_tab = 3;
         
         // TODO 
         // Introduced temporarily until format library is available
@@ -110,22 +119,22 @@ class ConvergenceTable
             if( not columnheaders.empty() )
             {
                 
-                std::printf("   \t");
+                std::printf( "%s\t", std::string( 3, ' ' ).c_str() ); // std::printf("   \t");
                     
                 for( int j = 0; j < columnheaders.size(); j++ )
                 {
                     
-                    std::string str = columnheaders[j];
+                    std::string columnheader = columnheaders[j];
                     
-                    if( str.size() > 12 ) {
-                        str.resize(12);
-                        str[12] = '~';
+                    if( columnheader.size() > 12 ) {
+                        columnheader.resize(12);
+                        columnheader[12] = '~';
                     }
                     
-                    std::printf( "%12s\t", str.c_str() );
+                    std::printf( "%*s\t", 12, columnheader.c_str() );
                     
                     if( display_convergence_rates ) 
-                        std::printf("          \t");
+                        std::printf( "%s\t", std::string(10,' ').c_str() ); // std::printf("          \t");
                     
                 }
                 
@@ -137,7 +146,7 @@ class ConvergenceTable
             for( int i = 0; i < entries.size(); i++ )
             {
                 
-                std::printf("%3d:\t",i);
+                std::printf( "%*d:\t", 3, i );
 
                 assert( entries[i].size() == entries.front().size() );
                 
@@ -145,20 +154,20 @@ class ConvergenceTable
                 for( int j = 0; j < entries[i].size(); j++ )
                 {
                     
-                    std::printf("%12.6Le\t", (long double) entries[i][j] ); 
+                    std::printf("%*.*Le\t", 12, 6, (long double) entries[i][j] ); 
                     
                     if( display_convergence_rates ){
                         
                         if( i == 0 ) {
                             
-                            std::printf("----------");
+                            std::printf( "%s", std::string( 10, '-' ).c_str() ); //std::printf("----------");
                         
                         } else {
                         
                             if( entries[i][j] > 0. and entries[i-1][j] > 0. ) 
-                                std::printf("%10.3Le", (long double) std::log2( entries[i-1][j] / entries[i][j] ) );
+                                std::printf("%*.*Le", 10, 3, (long double) std::log2( entries[i-1][j] / entries[i][j] ) );
                             else
-                                std::printf("$$$$$$$$$$");
+                                std::printf( "%s", std::string( 10, '$' ).c_str() ); //std::printf( "%s", "$$$$$$$$$$" );
                         
                         }
                         
