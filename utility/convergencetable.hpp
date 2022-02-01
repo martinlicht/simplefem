@@ -98,29 +98,34 @@ class ConvergenceTable
 
         
         
-        const char* column_separator = "   ";
-
-        const bool rates_are_float = false;
-        
-        const int nc_indent_width = 3;
-        
-        const int nc_cell_precision = 3;
-
-        const int nc_rate_precision = 2;
-
-        const int nc_cell_width = 6 + nc_cell_precision + 0;
-        // 12; sign + digit + . + e + sign + two digits = 6 chars 
-
-        const int nc_rate_width = ( rates_are_float ? ( 7 + nc_rate_precision ) : 3 + nc_rate_precision ) + 0;
-        // if float: 10; sign + digit + . + e + sign + two digits = 7 chars 
-        // if fixed:  6; sign + digit + . = 3 chars 
-
         // TODO 
         // Introduced temporarily until format library is available
         // C++ streams are currently not supported, 
         // instead use printf from the C library
         void print( std::ostream&, bool display_convergence_rates ) const
         {
+            
+            
+            // introduce several constants that drive the output format 
+            
+            const char* column_separator = "   ";
+
+            const bool rates_are_float = false;
+            
+            const int nc_indent_width = 3;
+            
+            const int nc_cell_precision = 3;
+
+            const int nc_rate_precision = 2;
+
+            const int nc_cell_width = 6 + nc_cell_precision + 0;
+            // 12; sign + digit + . + e + sign + two digits = 6 chars 
+
+            const int nc_rate_width = ( rates_are_float ? ( 7 + nc_rate_precision ) : 3 + nc_rate_precision ) + 0;
+            // if float: 10; sign + digit + . + e + sign + two digits = 7 chars 
+            // if fixed:  6; sign + digit + . = 3 chars 
+
+        
             
             // if necessary, print column headers 
             if( not columnheaders.empty() )

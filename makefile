@@ -151,7 +151,7 @@ cpplint:
 
 .PHONY: parameters 
 parameters:
-	@make --no-print-directory -f common.recipe.mk parameters
+	@make --no-print-directory -f common.compile.mk parameters
 	@true
 
 

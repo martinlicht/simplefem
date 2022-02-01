@@ -31,7 +31,7 @@ int main()
         
         LOG << "Initial mesh..." << endl;
         
-        MeshSimplicial2D M = StandardSquare2D();
+        MeshSimplicial2D M = StandardSquare2D_centered();
         
         M.check();
         
@@ -106,7 +106,7 @@ int main()
         
         const int l_min = 0;
         
-        const int l_max = 2;
+        const int l_max = 3;
         
         
         for( int l = 0; l < l_min; l++ )

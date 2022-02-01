@@ -65,9 +65,9 @@ int main()
             [](const FloatVector& vec) -> FloatVector{
                 assert( vec.getdimension() == 3 );
                 return FloatVector( { 
-                        -vec[1],
-                        vec[0]*vec[1],
-                        vec[2] 
+                        std::exp( 2. * vec[1] ),
+                        std::exp( -3. * vec[0] ),
+                        0.
                     });
             }
         );
@@ -76,9 +76,9 @@ int main()
             [](const FloatVector& vec) -> FloatVector{
                 assert( vec.getdimension() == 3 );
                 return FloatVector( { 
-                        0, 
-                        vec[0], 
-                        1.
+                        -2. * std::exp( 2. * vec[1] ) + -3. * std::exp( -3. * vec[0] ), 
+                        0., 
+                        0.
                     });
             }
         );
@@ -91,9 +91,9 @@ int main()
             [](const FloatVector& vec) -> FloatVector{
                 assert( vec.getdimension() == 3 );
                 return FloatVector( { 
-                        vec[0],
+                        vec[2]*vec[2]*vec[2], 
                         vec[1]*vec[1],
-                        vec[2]*vec[2]*vec[2] 
+                        vec[0],
                     });
             }
         );
@@ -102,7 +102,7 @@ int main()
             [](const FloatVector& vec) -> FloatVector{
                 assert( vec.getdimension() == 3 );
                 return FloatVector( { 
-                        1. - 2. * vec[1] + 3. * vec[2]*vec[2]
+                        3. * vec[2]*vec[2] - 2. * vec[1] + 1.
                     });
             }
         );
@@ -115,7 +115,7 @@ int main()
         
         const int l_min = 0;
         
-        const int l_max = 2;
+        const int l_max = 3;
         
         
         for( int l = 0; l < l_min; l++ )
@@ -247,7 +247,7 @@ int main()
                     contable_vector[i] << errors_vector[i][l-l_min][r-r_min]; // assert( errors_vector[i][l-l_min][r-r_min] >= 0. ); //
             
                 for( int i = 0; i < experiments_pseudo_function.size(); i++ ) 
-                    contable_pseudo[i] << errors_pseudo[i][l-l_min][r-r_min]; // assert( errors_vector[i][l-l_min][r-r_min] >= 0. ); //
+                    contable_pseudo[i] << errors_pseudo[i][l-l_min][r-r_min]; // assert( errors_pseudo[i][l-l_min][r-r_min] >= 0. ); //
             
             }
             

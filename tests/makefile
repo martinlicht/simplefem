@@ -2,7 +2,7 @@ SHELL = /bin/sh
 
 default: build
 
-include ../common.recipe.mk 
+include ../common.compile.mk 
 
 include tests.affices.mk
 
@@ -23,7 +23,7 @@ components+=fem
 
 
 
-%.out: ./makefile tests.rules.mk ../common.recipe.mk
+%.out: ./makefile tests.rules.mk ../common.compile.mk
 
 
 depdir := .deps
