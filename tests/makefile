@@ -2,7 +2,7 @@ SHELL = /bin/sh
 
 default: build
 
-include ../common.recipe.mk 
+include ../common.compile.mk 
 
 include tests.affices.mk
 
@@ -23,7 +23,7 @@ components+=fem
 
 
 
-%.out: ./makefile tests.rules.mk ../common.recipe.mk
+%.out: ./makefile tests.rules.mk ../common.compile.mk
 
 
 depdir := .deps
@@ -97,17 +97,35 @@ include tests.rules.mk
 #include tests.run.mk
 build: fem.tests
 
-contextdir:=./experiments
-context:=experiments
+contextdir:=./solverfem
+context:=solverfem
 include tests.rules.mk
 #include tests.run.mk
-build: experiments.tests
+build: solverfem.tests
 
-contextdir:=./whitney
-context:=whitney
+contextdir:=./sullivan2D
+context:=sullivan2D
 include tests.rules.mk
 #include tests.run.mk
-build: whitney.tests
+build: sullivan2D.tests
+
+contextdir:=./sullivan3D
+context:=sullivan3D
+include tests.rules.mk
+#include tests.run.mk
+build: sullivan3D.tests
+
+contextdir:=./whitney2D
+context:=whitney2D
+include tests.rules.mk
+#include tests.run.mk
+build: whitney2D.tests
+
+contextdir:=./whitney3D
+context:=whitney3D
+include tests.rules.mk
+#include tests.run.mk
+build: whitney3D.tests
 
 contextdir:=./afem
 context:=afem

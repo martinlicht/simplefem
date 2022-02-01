@@ -18,12 +18,12 @@ std::string protocolprefixnow();
 //     LOG << "This is a short message with a number: " << 5;      
 //     ERR << "This is an error message.";      
 
-#define LOG     Logger( std::cerr, protocolprefixnow(), "", __FILE__, __LINE__ )
+#define LOG     Logger( std::cout, protocolprefixnow(), "", __FILE__, __LINE__ )
 #define ERR     Logger( std::cerr, protocolprefixnow(), "", __FILE__, __LINE__ )
 
 #else 
 
-#define LOG     std::cerr
+#define LOG     std::cout
 #define LOG     std::cerr
 
 #endif 
