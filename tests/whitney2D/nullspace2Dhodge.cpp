@@ -28,7 +28,7 @@
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
-#include "../../fem/global.sullivanincl.hpp"
+#include "../../fem/global.whitneyincl.hpp"
 #include "../../fem/utilities.hpp"
 
 
@@ -77,7 +77,7 @@ int main()
             contable << "#nullvec";
             
 
-            const int min_l = 3; 
+            const int min_l = 0; 
             
             const int max_l = 3;
             
@@ -121,13 +121,13 @@ int main()
                     SparseMatrix vector_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r );
                     SparseMatrix vector_diffmatrix_t = vector_diffmatrix.getTranspose();
 
-                    SparseMatrix scalar_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r+1 );
+                    SparseMatrix scalar_incmatrix   = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 0, r+1 );
                     SparseMatrix scalar_incmatrix_t = scalar_incmatrix.getTranspose();
 
-                    SparseMatrix vector_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 1, r   );
+                    SparseMatrix vector_incmatrix   = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 1, r   );
                     SparseMatrix vector_incmatrix_t = vector_incmatrix.getTranspose();
 
-                    SparseMatrix volume_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 2, r-1 );
+                    SparseMatrix volume_incmatrix   = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 2, r-1 );
                     SparseMatrix volume_incmatrix_t = volume_incmatrix.getTranspose();
                     
                     auto mass = vector_incmatrix_t * vector_massmatrix * vector_incmatrix;

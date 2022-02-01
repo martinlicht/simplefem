@@ -17,15 +17,16 @@
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
 #include "../../vtk/vtkwriter.hpp"
+#include "../../solver/sparsesolver.hpp"
 #include "../../solver/iterativesolver.hpp"
 // #include "../../solver/crm.hpp"
+// #include "../../solver/pcrm.hpp"
 // #include "../../solver/minres.hpp"
-#include "../../fem/finitediff.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 // #include "../../fem/global.lagrangeincl.hpp"
-#include "../../fem/global.sullivanincl.hpp"
+#include "../../fem/global.whitneyincl.hpp"
 #include "../../fem/utilities.hpp"
 
 
@@ -46,81 +47,71 @@ int main()
             
             M.check();
             
-            M.automatic_dirichlet_flags();
-           
-            M.check_dirichlet_flags();
+            M.set_flag( 1, 0, SimplexFlagDirichlet );
+            M.set_flag( 0, M.get_subsimplex( 1, 0, 0, 0 ), SimplexFlagDirichlet );
+            M.set_flag( 0, M.get_subsimplex( 1, 0, 0, 1 ), SimplexFlagDirichlet );
+//             M.check_dirichlet_flags();
 
-            M.getcoordinates().scale(1.1);
             
             LOG << "Prepare scalar fields for testing..." << endl;
             
 
+            std::function<FloatVector(const FloatVector&)> constant_one
+                = [](const FloatVector& vec) -> FloatVector{
+                        assert( vec.getdimension() == 2 );
+                        return FloatVector({ 1. });
+                    };
+            
+            
+            
+            
 
+
+            
+            // std::function<FloatVector(const std::function<FloatVector(const FloatVector&) ) >scalarfield = 
+            
             std::function<FloatVector(const FloatVector&)> experiment_sol = 
-                [=](const FloatVector& vec) -> FloatVector{
+                [](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
-                    // return FloatVector({ 1. });
-                    return FloatVector({ 
-                        bumpfunction(vec[0]) * bumpfunction(vec[1])
-                    });
+                    Float x = vec[0]; Float y = vec[1];
+                    return FloatVector({ square((square(x)-1)*(square(y)-1)) });
                 };
             
+
             std::function<FloatVector(const FloatVector&)> experiment_grad = 
-                [=](const FloatVector& vec) -> FloatVector{
+                [](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
-                    // return FloatVector({ 1. });
+                    Float x = vec[0]; Float y = vec[1];
                     return FloatVector( { 
-                            bumpfunction_dev(vec[0]) *     bumpfunction(vec[1]),
-                            bumpfunction(vec[0])     * bumpfunction_dev(vec[1]), 
+                        4 * x * ( x*x - 1 ) * square( y*y - 1 ),
+                        4 * y * square( x*x - 1 ) * ( y*y - 1 )  
                     });
                 };
             
 
             std::function<FloatVector(const FloatVector&)> experiment_rhs = 
-                [=](const FloatVector& vec) -> FloatVector{
+                [](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
+                    Float x  =  vec[0]; Float y  =  vec[1];
+                    Float x2 =     x*x; Float y2 =     y*y;
+                    Float x4 = x*x*x*x; Float y4 = y*y*y*y;
                     return FloatVector({ 
-                        -
-                        bumpfunction_devdev(vec[0]) *        bumpfunction(vec[1])
-                        -
-                        bumpfunction(vec[0])        * bumpfunction_devdev(vec[1])
-                    });
-                    
-
-//                     const Float stepsize = 1e-07;
-//                     
-//                     FloatVector ret(1);
-//                     
-//                     auto point = vec;
-//                     
-//                     FloatVector mid    = experiment_sol( point                              );
-//                     FloatVector left   = experiment_sol( point - stepsize * unitvector(2,0) );
-//                     FloatVector right  = experiment_sol( point + stepsize * unitvector(2,0) );
-//                     FloatVector up     = experiment_sol( point - stepsize * unitvector(2,1) );
-//                     FloatVector down   = experiment_sol( point + stepsize * unitvector(2,1) );
-//                     
-//                     ret = - ( up + down + left + right - 4 * mid );
-//                     
-//                     ret /= ( stepsize * stepsize );
-//                     
-//                     assert( ret.getdimension() == 1 );
-//                     
-//                     return ret;
-                                    
+                        - 4 * ( x4 * ( 3 * y2 - 1 ) + x2 * ( 3 * y4 - 12 * y2 + 5 ) - y4 + 5 * y2 - 2)  
+                     });
                 };
             
-            
-            
 
             
 
-            LOG << "Solving Poisson Problem with Dirichlet boundary conditions" << endl;
-
-            const int min_l = 1; 
-            const int max_l = 5;
             
-            const int min_r = 1;
-            const int max_r = 1;
+
+            LOG << "Solving Poisson Problem with Neumann boundary conditions" << endl;
+
+            const int min_l = 0; 
+            const int max_l = 8;
+            
+            const int min_r = 4;
+            const int max_r = 4;
             
             ConvergenceTable contable;
             
@@ -158,7 +149,7 @@ int main()
 
                     LOG << "...assemble inclusion matrix and transpose" << endl;
             
-                    SparseMatrix incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r );
+                    SparseMatrix incmatrix = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 0, r );
                     
 //                     LOG << incmatrix.getdimin() <<space<< L_incmatrix.getdimin() <<space<< incmatrix.getdimout() <<space<< L_incmatrix.getdimout() << nl;
 //                     assert( incmatrix.getdimin()  == L_incmatrix.getdimin() );
@@ -176,8 +167,8 @@ int main()
 //                     auto stiffness = op3 * incmatrix;
 //                     auto& stiffness_csr = stiffness;
 
-                    auto opr  = diffmatrix & incmatrix;
-                    auto opl  = opr.getTranspose(); 
+                    auto opr = diffmatrix & incmatrix;
+                    auto opl = opr.getTranspose(); 
                     auto stiffness = opl & ( vector_massmatrix & opr );
                     
                     stiffness.sortentries();
@@ -221,6 +212,33 @@ int main()
                         
                         LOG << "...iterative solver" << endl;
                         
+
+                        if(false){
+                            LOG << "CGM - Classic" << endl;
+                        
+                            sol.zero();
+                            
+                            timestamp start = gettimestamp();
+
+                            FloatVector residual( rhs );
+                            
+                            ConjugateGradientSolverCSR( 
+//                             ConjugateResidualSolverCSR( 
+                                sol.getdimension(), 
+                                sol.raw(), 
+                                rhs.raw(), 
+                                stiffness_csr.getA(), stiffness_csr.getC(), stiffness_csr.getV(),
+                                residual.raw(),
+                                1e-16,
+                                1
+                            );
+
+                            timestamp end = gettimestamp();
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            
+//                             contable << static_cast<Float>( end - start ) << Float(1.);
+                        }
+
                         {
                             sol.zero();
                             MinimumResidualMethod Solver( stiffness_csr );
@@ -233,6 +251,7 @@ int main()
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                         }
+
 
                         LOG << "...compute error and residual:" << endl;
             
@@ -257,27 +276,13 @@ int main()
 
                         if( r == 1 ){
                     
-                            
-                            auto outputdata1 = sol;
-                            auto outputdata2 = sol;
-                            
-                            
-                            for( int c = 0; c < M.count_simplices(0); c++ ) { 
-                                auto x = M.getcoordinates().getdata(c,0);
-                                auto y = M.getcoordinates().getdata(c,1);
-                                auto value = experiment_rhs( { x, y } )[0];
-                                outputdata2[c] = value;
-                            }
-                            
-                            
                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                 
                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
-                            vtk.writeCoordinateBlock( outputdata1 );
+                            vtk.writeCoordinateBlock( 0.3 * sol );
                             vtk.writeTopDimensionalCells();
                             
-                            vtk.writeVertexScalarData( -outputdata1, "iterativesolution_scalar_data" , 1.0 );
-                            vtk.writeVertexScalarData(  outputdata2, "reference_scalar_data" , 1.0 );
+                            vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
                             // vtk.writeCellVectorData( interpol_grad, "gradient_interpolation" , 0.1 );
                             
                             fs.close();

@@ -11,8 +11,8 @@
 #include "../../operators/composedoperators.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
-#include "../../mesh/mesh.simplicial2D.hpp"
-#include "../../mesh/examples2D.hpp"
+#include "../../mesh/mesh.simplicial3D.hpp"
+#include "../../mesh/examples3D.hpp"
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/iterativesolver.hpp"
 // #include "../../solver/crm.hpp"
@@ -23,7 +23,8 @@
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
-#include "../../fem/global.sullivanincl.hpp"
+#include "../../fem/global.elevation.hpp"
+#include "../../fem/global.whitneyincl.hpp"
 #include "../../fem/utilities.hpp"
 
 
@@ -40,7 +41,7 @@ int main()
 
         LOG << "Initial mesh..." << endl;
         
-        MeshSimplicial2D M = StandardSquare2D();
+        MeshSimplicial3D M = StandardCube3D();
         
         M.check();
         
@@ -53,7 +54,7 @@ int main()
 
         std::function<FloatVector(const FloatVector&)> constant_one
             = [](const FloatVector& vec) -> FloatVector{
-                    assert( vec.getdimension() == 2 );
+                    assert( vec.getdimension() == 3 );
                     return FloatVector({ 1. });
                 };
         
@@ -67,6 +68,7 @@ int main()
         
         const Float xfeq = 1.;
         const Float yfeq = 1.;
+        const Float zfeq = 1.;
         
         
         // u dx + v dy -> u_y dydx + v_x dxdy = ( v_x - u_y ) dxdy
@@ -75,30 +77,37 @@ int main()
         
         std::function<FloatVector(const FloatVector&)> experiment_sol = 
             [=](const FloatVector& vec) -> FloatVector{
-                assert( vec.getdimension() == 2 );
+                assert( vec.getdimension() == 3 );
                 // return FloatVector({ 1. });
-                return FloatVector({ std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] ) });
+                return FloatVector({ 
+                       std::sin( xfeq * Constants::twopi * vec[0] )
+                     * std::sin( yfeq * Constants::twopi * vec[1] )
+                     * std::sin( zfeq * Constants::twopi * vec[2] )
+                     });
             };
         
         
         std::function<FloatVector(const FloatVector&)> experiment_grad = 
             [=](const FloatVector& vec) -> FloatVector{
-                assert( vec.getdimension() == 2 );
+                assert( vec.getdimension() == 3 );
                 // return FloatVector({ 1. });
                 return FloatVector( { 
-                            yfeq * Constants::twopi * std::sin( xfeq * Constants::twopi * vec[0] ) * std::cos( yfeq * Constants::twopi * vec[1] ), 
-                        -xfeq * Constants::twopi * std::cos( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] ),
+                        -xfeq * Constants::twopi * std::cos( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] ) * std::sin( yfeq * Constants::twopi * vec[2] ), 
+                        -yfeq * Constants::twopi * std::sin( xfeq * Constants::twopi * vec[0] ) * std::cos( yfeq * Constants::twopi * vec[1] ) * std::sin( yfeq * Constants::twopi * vec[2] ),
+                        -zfeq * Constants::twopi * std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] ) * std::cos( yfeq * Constants::twopi * vec[2] ),
                     });
             };
         
         
         std::function<FloatVector(const FloatVector&)> experiment_rhs = 
             [=](const FloatVector& vec) -> FloatVector{
-                assert( vec.getdimension() == 2 );
+                assert( vec.getdimension() == 3 );
                 return FloatVector({ 
-                    xfeq*xfeq * Constants::fourpisquare * std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] )
+                    xfeq*xfeq * Constants::fourpisquare * std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] ) * std::sin( zfeq * Constants::twopi * vec[2] )
                     +
-                    yfeq*yfeq * Constants::fourpisquare * std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] )
+                    yfeq*yfeq * Constants::fourpisquare * std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] ) * std::sin( zfeq * Constants::twopi * vec[2] )
+                    +
+                    zfeq*zfeq * Constants::fourpisquare * std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] ) * std::sin( zfeq * Constants::twopi * vec[2] )
                     });
             };
         
@@ -107,10 +116,8 @@ int main()
 
         
 
-        LOG << "Solving Poisson Problem with Neumann boundary conditions" << endl;
-
-        const int min_l = 1; 
-        const int max_l = 5;
+        const int min_l = 0; 
+        const int max_l = 4;
         
         const int min_r = 1;
         const int max_r = 1;
@@ -130,33 +137,34 @@ int main()
         for( int l = min_l; l <= max_l; l++ ){
             
             LOG << "Level: " << l << std::endl;
-            LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
+            LOG << "# T/F/E/V: " << M.count_tetrahedra() << "/" << M.count_faces() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
             
             if( l != 0 )
             for( int r = min_r; r <= max_r; r++ ) 
             {
                 
-                LOG << "... assemble matrices" << endl;
+                LOG << "... assemble matrices" << endl; // TODO: correct the degrees, perhaps via degree elevation
         
-                SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   );
-                
-                SparseMatrix vector_massmatrix_inv = FEECBrokenMassMatrix_cellwiseinverse( M, M.getinnerdimension(), 1, r   );
-                
-                SparseMatrix volume_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r-1 );
+                SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r );
+                                
+                SparseMatrix volume_elevationmatrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 3, r-1, 1 );
+                SparseMatrix volume_elevationmatrix_t = volume_elevationmatrix.getTranspose();
 
-                SparseMatrix diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r );
+                SparseMatrix volume_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 3, r );
+
+                SparseMatrix diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 2, r );
                 SparseMatrix diffmatrix_t = diffmatrix.getTranspose();
 
-                SparseMatrix vector_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 1, r   );
+                SparseMatrix vector_incmatrix   = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 2, r );
                 SparseMatrix vector_incmatrix_t = vector_incmatrix.getTranspose();
 
-                SparseMatrix volume_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 2, r-1 );
+                SparseMatrix volume_incmatrix   = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 3, r );
                 SparseMatrix volume_incmatrix_t = volume_incmatrix.getTranspose();
 
                 auto mat_A  = vector_incmatrix_t & vector_massmatrix & vector_incmatrix;
                 mat_A.sortandcompressentries();
                 
-                auto mat_Bt = vector_incmatrix_t & diffmatrix_t & volume_massmatrix & volume_incmatrix; // upper right
+                auto mat_Bt = vector_incmatrix_t & diffmatrix_t & volume_elevationmatrix_t & volume_massmatrix & volume_incmatrix; // upper right
                 mat_Bt.sortandcompressentries();
                 
                 auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & volume_massmatrix & diffmatrix & vector_incmatrix; // lower bottom
@@ -178,14 +186,14 @@ int main()
                     
                     LOG << "...interpolate explicit solution and rhs" << endl;
                     
-                    FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r,   function_grad );
-                    FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 2, r-1, function_sol  );
-                    FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 2, r-1, function_rhs  );
+                    FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 2, r,   function_grad );
+                    FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 3, r-1, function_sol  );
+                    FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 3, r-1, function_rhs  );
                     
                     LOG << "...measure interpolation commutativity" << endl;
         
                     {
-                        auto commutatorerror_aux = interpol_rhs - diffmatrix * interpol_grad;
+                        auto commutatorerror_aux = volume_elevationmatrix * ( interpol_rhs - diffmatrix * interpol_grad );
                         Float commutatorerror  = commutatorerror_aux * ( volume_massmatrix * commutatorerror_aux );
                         LOG << "algebraic commutator error 1: " << commutatorerror << endl;
                     }
@@ -199,7 +207,7 @@ int main()
 
                     {
                         
-                        FloatVector rhs = volume_incmatrix_t * ( volume_massmatrix * interpol_rhs );
+                        FloatVector rhs = volume_incmatrix_t * ( volume_massmatrix * volume_elevationmatrix * interpol_rhs );
 
                         FloatVector sol( volume_incmatrix.getdimin(), 0. );
                         
@@ -239,7 +247,7 @@ int main()
 
                         LOG << "...compute error and residual:" << endl;
 
-                        auto errornorm_aux_sol  = interpol_sol  - volume_incmatrix *  sol;
+                        auto errornorm_aux_sol  = volume_elevationmatrix * interpol_sol  - volume_incmatrix * sol;
                         auto errornorm_aux_grad = interpol_grad - vector_incmatrix * grad;
 
                         Float errornorm_sol  = sqrt( errornorm_aux_sol  * ( volume_massmatrix *  errornorm_aux_sol ) );
