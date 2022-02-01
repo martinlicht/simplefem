@@ -98,15 +98,17 @@ class ConvergenceTable
 
         
         
-        const int tablecell_width = 12;
+        const char* tabulator = "\t";
+        
+        const int nc_cell_precision = 3;
 
-        const int tablecell_precision = 6;
+        const int nc_rate_precision = 2;
 
-        const int convergence_rate_width = 10;
+        const int nc_cell_width = 6 + nc_cell_precision + 0; // 12; sign + digit + . + e + sign + two digits = 6 chars 
 
-        const int convergence_rate_precision = 3;
+        const int nc_rate_width = 7 + nc_rate_precision + 0; // 10; sign + digit + . + e + sign + two digits = 7 chars 
 
-        const int initial_tab = 3;
+        const int nc_tab_width = 3;
         
         // TODO 
         // Introduced temporarily until format library is available
@@ -119,23 +121,24 @@ class ConvergenceTable
             if( not columnheaders.empty() )
             {
                 
-                std::printf( "%s\t", std::string( 3, ' ' ).c_str() ); // std::printf("   \t");
+                std::printf( "%s%s", std::string( nc_tab_width, ' ' ).c_str(), tabulator ); // std::printf("   \t");
                     
                 for( int j = 0; j < columnheaders.size(); j++ )
                 {
                     
                     std::string columnheader = columnheaders[j];
                     
-                    if( columnheader.size() > 12 ) {
-                        columnheader.resize(12);
-                        columnheader[12] = '~';
+                    if( columnheader.size() > nc_cell_width ) {
+                        columnheader.resize( nc_cell_width );
+                        columnheader[ nc_cell_width-1 ] = '~';
                     }
                     
-                    std::printf( "%*s\t", 12, columnheader.c_str() );
+                    std::printf( "%*s%s", nc_cell_width, columnheader.c_str(), tabulator );
                     
-                    if( display_convergence_rates ) 
-                        std::printf( "%s\t", std::string(10,' ').c_str() ); // std::printf("          \t");
-                    
+                    if( display_convergence_rates ) {
+                        std::printf( "%s%s", std::string( nc_rate_width, ' ' ).c_str(), tabulator ); // std::printf("          \t");
+                    }
+
                 }
                 
                 std::printf("\n");
@@ -146,7 +149,7 @@ class ConvergenceTable
             for( int i = 0; i < entries.size(); i++ )
             {
                 
-                std::printf( "%*d:\t", 3, i );
+                std::printf( "%*d:%s", nc_tab_width, i, tabulator );
 
                 assert( entries[i].size() == entries.front().size() );
                 
@@ -154,24 +157,24 @@ class ConvergenceTable
                 for( int j = 0; j < entries[i].size(); j++ )
                 {
                     
-                    std::printf("%*.*Le\t", 12, 6, (long double) entries[i][j] ); 
+                    std::printf("%*.*Le%s", nc_cell_width, nc_cell_precision, (long double) entries[i][j], tabulator ); 
                     
                     if( display_convergence_rates ){
                         
                         if( i == 0 ) {
                             
-                            std::printf( "%s", std::string( 10, '-' ).c_str() ); //std::printf("----------");
+                            std::printf( "%s", std::string( nc_rate_width, '-' ).c_str() ); //std::printf("----------");
                         
                         } else {
                         
                             if( entries[i][j] > 0. and entries[i-1][j] > 0. ) 
-                                std::printf("%*.*Le", 10, 3, (long double) std::log2( entries[i-1][j] / entries[i][j] ) );
+                                std::printf("%*.*Le", nc_rate_width, nc_rate_precision, (long double) std::log2( entries[i-1][j] / entries[i][j] ) );
                             else
-                                std::printf( "%s", std::string( 10, '$' ).c_str() ); //std::printf( "%s", "$$$$$$$$$$" );
+                                std::printf( "%s", std::string( nc_rate_width, '$' ).c_str() ); //std::printf( "%s", "$$$$$$$$$$" );
                         
                         }
                         
-                        std::printf("\t");
+                        std::printf( "%s", tabulator );
                     }
                     
                 }        
