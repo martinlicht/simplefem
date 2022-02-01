@@ -6,3 +6,4 @@
 // #include "herzogsoodhalter.cpp"
 // #include "resdes.cpp"
 #include "sparsesolver.cpp"
+#include "systemsparsesolver.cpp"

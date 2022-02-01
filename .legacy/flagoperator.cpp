@@ -45,11 +45,6 @@ std::string FlagOperator::text() const
     return "Flag Operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin());
 }
 
-void FlagOperator::print( std::ostream& os ) const  
-{
-    os << text() << std::endl;
-}
-
 
 
 std::vector<bool>& FlagOperator::getsrcflag()

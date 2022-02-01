@@ -33,7 +33,7 @@ using namespace std;
 extern const char* TestName;
 #define TESTNAME( cstr ) const char* TestName = cstr
 
-TESTNAME( "Solve 2D Poisson problem over a square, mixed BC along one corner, bubble function" );
+TESTNAME( "Solve 2D Dirichlet problem over a square, trigonometric function" );
 
 int main()
 {
@@ -49,11 +49,9 @@ int main()
             
             M.check();
             
-            M.set_flag( 1, 0, SimplexFlagDirichlet );
-            M.set_flag( 1, 1, SimplexFlagDirichlet );
-            M.set_flag( 0, 0, SimplexFlagDirichlet );
-            M.set_flag( 0, 1, SimplexFlagDirichlet );
-            M.set_flag( 0, 2, SimplexFlagDirichlet );
+            M.automatic_dirichlet_flags();
+           
+            M.check_dirichlet_flags();
 
             
             LOG << "Prepare scalar fields for testing..." << endl;
@@ -73,45 +71,47 @@ int main()
             
             // std::function<FloatVector(const std::function<FloatVector(const FloatVector&) ) >scalarfield = 
             
+            const Float xfeq = 1.;
+            const Float yfeq = 1.;
+            
+
             std::function<FloatVector(const FloatVector&)> experiment_sol = 
-                [](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
-                    Float x = vec[0]; Float y = vec[1];
-                    Float k = 2*Constants::pi;
-                    return FloatVector({ square( sin(k*x) * sin(k*y) ) });
+                    // return FloatVector({ 1. });
+                    return FloatVector({ std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] ) });
                 };
             
 
             std::function<FloatVector(const FloatVector&)> experiment_grad = 
-                [](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
-                    Float x = vec[0]; Float y = vec[1];
-                    Float k = 2*Constants::pi;
+                    // return FloatVector({ 1. });
                     return FloatVector( { 
-                        k * sin( 2*k*x ) * sin(k*y) * sin(k*y),
-                        k * sin( 2*k*y ) * sin(k*x) * sin(k*x),
-                    });
+                            xfeq * Constants::twopi * std::cos( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] ),
+                            yfeq * Constants::twopi * std::sin( xfeq * Constants::twopi * vec[0] ) * std::cos( yfeq * Constants::twopi * vec[1] ), 
+                        });
                 };
             
 
             std::function<FloatVector(const FloatVector&)> experiment_rhs = 
-                [](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
-                    Float x  =  vec[0]; Float y  =  vec[1];
-                    Float k = 2*Constants::pi;
                     return FloatVector({ 
-                        - k*k * ( cos(2*k*x) - cos( 2*k*(x - y) ) + cos(2*k*y) - cos( 2*k*(x + y) ) ) 
+                        xfeq*xfeq * Constants::fourpisquare * std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] )
+                        +
+                        yfeq*yfeq * Constants::fourpisquare * std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] )
                      });
                 };
             
-
+            
             
 
             
 
-            const int min_l = 3; 
+            const int min_l = 0; 
             const int max_l = 8;
-
+            
             const int min_r = 3;
             const int max_r = 3;
             
@@ -171,8 +171,8 @@ int main()
 //                     auto stiffness = op3 * incmatrix;
 //                     auto& stiffness_csr = stiffness;
 
-                    auto opr = diffmatrix & incmatrix;
-                    auto opl = opr.getTranspose(); 
+                    auto opr  = diffmatrix & incmatrix;
+                    auto opl  = opr.getTranspose(); 
                     auto stiffness = opl & ( vector_massmatrix & opr );
                     
                     stiffness.sortentries();
@@ -229,7 +229,6 @@ int main()
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                         }
 
-
                         LOG << "...compute error and residual:" << endl;
             
                         
@@ -252,9 +251,9 @@ int main()
 
 
                         if( r == 1 ){
-                        
+                    
                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
-                        
+                
                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
                             vtk.writeCoordinateBlock( 0.3 * sol );
                             vtk.writeTopDimensionalCells();

@@ -8,6 +8,7 @@
 
 #include "../../basic.hpp"
 #include "../../dense/densematrix.hpp"
+#include "../../dense/cholesky.hpp"
 #include "../../dense/qr.factorization.hpp"
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"

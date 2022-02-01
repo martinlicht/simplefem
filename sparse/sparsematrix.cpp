@@ -166,11 +166,6 @@ std::string SparseMatrix::text() const
     return ret;
 }
 
-void SparseMatrix::print( std::ostream& os ) const
-{
-    os << text() << std::endl;
-}
-
 void SparseMatrix::printplain( std::ostream& os ) const
 {
     for( const MatrixEntry& entry : entries )

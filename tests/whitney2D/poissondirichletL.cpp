@@ -24,20 +24,16 @@
 #include "../../fem/global.elevation.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
-#include "../../fem/global.sullivanincl.hpp"
+#include "../../fem/global.whitneyincl.hpp"
 #include "../../fem/utilities.hpp"
 
 
 using namespace std;
 
-extern const char* TestName;
-#define TESTNAME( cstr ) const char* TestName = cstr
-
-TESTNAME( "Solve 2D Dirichlet problem over L-shape domain, constant RHS" );
-
 int main()
 {
-        LOG << "Unit Test: " << TestName << endl;
+        
+        LOG << "Unit Test for Solution of Dirichlet Problem" << endl;
         
         LOG << std::setprecision(10);
 
@@ -91,7 +87,9 @@ int main()
 
             
 
-            const int min_l = 2; 
+            LOG << "Solving Poisson Problem with Dirichlet boundary conditions" << endl;
+
+            const int min_l = 0; 
             const int max_l = 3;
             
 
@@ -104,14 +102,12 @@ int main()
             
             assert( 0 <= min_l and min_l <= max_l );
             
-            LOG << "Refine initial mesh..." << endl;
-
             for( int l = 0; l < min_l; l++ )
                 M.uniformrefinement();
 
             for( int l = min_l; l <= max_l; l++ ){
                 
-                LOG << "Level: " << l << "/" << max_l << std::endl;
+                LOG << "Level: " << l << std::endl;
                 LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
                 LOG << "...assemble matrices" << endl;
@@ -128,8 +124,8 @@ int main()
                 SparseMatrix     diffmatrix_t =     diffmatrix.getTranspose();
                 SparseMatrix aug_diffmatrix_t = aug_diffmatrix.getTranspose();
 
-                SparseMatrix     incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r+0 );
-                SparseMatrix aug_incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r+1 );
+                SparseMatrix     incmatrix = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 0, r+0 );
+                SparseMatrix aug_incmatrix = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 0, r+1 );
 
                 SparseMatrix     incmatrix_t =     incmatrix.getTranspose();
                 SparseMatrix aug_incmatrix_t = aug_incmatrix.getTranspose();
@@ -232,7 +228,7 @@ int main()
         
         
         
-        LOG << "Finished Unit Test: " << TestName << endl;
+        LOG << "Finished Unit Test" << endl;
         
         return 0;
 }

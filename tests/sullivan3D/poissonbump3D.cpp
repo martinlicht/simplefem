@@ -14,8 +14,8 @@
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
 #include "../../mesh/coordinates.hpp"
-#include "../../mesh/mesh.simplicial2D.hpp"
-#include "../../mesh/examples2D.hpp"
+#include "../../mesh/mesh.simplicial3D.hpp"
+#include "../../mesh/examples3D.hpp"
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/iterativesolver.hpp"
 // #include "../../solver/crm.hpp"
@@ -31,14 +31,10 @@
 
 using namespace std;
 
-extern const char* TestName;
-#define TESTNAME( cstr ) const char* TestName = cstr
-
-TESTNAME( "Solve 2D Dirichlet problem over a square, bump function" );
-
 int main()
 {
-        LOG << "Unit Test: " << TestName << endl;
+        
+        LOG << "Unit Test for Solution of Neumann Problem" << endl;
         
         LOG << std::setprecision(10);
 
@@ -46,7 +42,7 @@ int main()
 
             LOG << "Initial mesh..." << endl;
             
-            MeshSimplicial2D M = StandardSquare2D();
+            MeshSimplicial3D M = StandardCube3D();
             
             M.check();
             
@@ -62,55 +58,37 @@ int main()
 
             std::function<FloatVector(const FloatVector&)> experiment_sol = 
                 [=](const FloatVector& vec) -> FloatVector{
-                    assert( vec.getdimension() == 2 );
+                    assert( vec.getdimension() == 3 );
                     // return FloatVector({ 1. });
                     return FloatVector({ 
-                        bumpfunction(vec[0]) * bumpfunction(vec[1])
+                        bumpfunction(vec[0]) * bumpfunction(vec[1]) * bumpfunction(vec[2])
                     });
                 };
             
             std::function<FloatVector(const FloatVector&)> experiment_grad = 
                 [=](const FloatVector& vec) -> FloatVector{
-                    assert( vec.getdimension() == 2 );
+                    assert( vec.getdimension() == 3 );
                     // return FloatVector({ 1. });
                     return FloatVector( { 
-                            bumpfunction_dev(vec[0]) *     bumpfunction(vec[1]),
-                            bumpfunction(vec[0])     * bumpfunction_dev(vec[1]), 
+                            bumpfunction_dev(vec[0]) *     bumpfunction(vec[1]) *     bumpfunction(vec[2]),
+                                bumpfunction(vec[0]) * bumpfunction_dev(vec[1]) *     bumpfunction(vec[2]), 
+                                bumpfunction(vec[0]) *     bumpfunction(vec[1]) * bumpfunction_dev(vec[2]), 
                     });
                 };
             
 
             std::function<FloatVector(const FloatVector&)> experiment_rhs = 
                 [=](const FloatVector& vec) -> FloatVector{
-                    assert( vec.getdimension() == 2 );
+                    assert( vec.getdimension() == 3 );
                     return FloatVector({ 
                         -
-                        bumpfunction_devdev(vec[0]) *        bumpfunction(vec[1])
+                        bumpfunction_devdev(vec[0]) *        bumpfunction(vec[1]) *        bumpfunction(vec[2])
                         -
-                        bumpfunction(vec[0])        * bumpfunction_devdev(vec[1])
+                        bumpfunction(vec[0])        * bumpfunction_devdev(vec[1]) *        bumpfunction(vec[2])
+                        -
+                        bumpfunction(vec[0])        *        bumpfunction(vec[1]) * bumpfunction_devdev(vec[2])
                     });
-                    
-
-//                     const Float stepsize = 1e-07;
-//                     
-//                     FloatVector ret(1);
-//                     
-//                     auto point = vec;
-//                     
-//                     FloatVector mid    = experiment_sol( point                              );
-//                     FloatVector left   = experiment_sol( point - stepsize * unitvector(2,0) );
-//                     FloatVector right  = experiment_sol( point + stepsize * unitvector(2,0) );
-//                     FloatVector up     = experiment_sol( point - stepsize * unitvector(2,1) );
-//                     FloatVector down   = experiment_sol( point + stepsize * unitvector(2,1) );
-//                     
-//                     ret = - ( up + down + left + right - 4 * mid );
-//                     
-//                     ret /= ( stepsize * stepsize );
-//                     
-//                     assert( ret.getdimension() == 1 );
-//                     
-//                     return ret;
-                                    
+                
                 };
             
             
@@ -118,7 +96,9 @@ int main()
 
             
 
-            const int min_l = 1; 
+            LOG << "Solving Poisson Problem with Dirichlet boundary conditions" << endl;
+
+            const int min_l = 0; 
             const int max_l = 5;
             
             const int min_r = 1;
@@ -132,15 +112,13 @@ int main()
             assert( 0 <= min_l and min_l <= max_l );
             assert( 0 <= min_r and min_r <= max_r );
             
-            LOG << "Refine initial mesh..." << endl;
-
             for( int l = 0; l < min_l; l++ )
                 M.uniformrefinement();
 
             for( int l = min_l; l <= max_l; l++ ){
                 
-                LOG << "Level: " << l << "/" << max_l << std::endl;
-                LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
+                LOG << "Level: " << l << std::endl;
+                LOG << "# T/F/E/V: " << M.count_tetrahedra() << "/" << M.count_faces() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
                 if( l != 0 )
                 for( int r = min_r; r <= max_r; r++ ) 
@@ -269,7 +247,8 @@ int main()
                             for( int c = 0; c < M.count_simplices(0); c++ ) { 
                                 auto x = M.getcoordinates().getdata(c,0);
                                 auto y = M.getcoordinates().getdata(c,1);
-                                auto value = experiment_rhs( { x, y } )[0];
+                                auto z = M.getcoordinates().getdata(c,2);
+                                auto value = experiment_rhs( { x, y, z } )[0];
                                 outputdata2[c] = value;
                             }
                             
@@ -306,7 +285,7 @@ int main()
         
         
         
-        LOG << "Finished Unit Test: " << TestName << endl;
+        LOG << "Finished Unit Test" << endl;
         
         return 0;
 }

@@ -16,7 +16,7 @@
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
-#include "../../mesh/examples2D.hpp"
+#include "../../mesh/examplesUK.hpp"
 #include "../../mesh/examples3D.hpp"
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/iterativesolver.hpp"

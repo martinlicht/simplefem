@@ -29,14 +29,10 @@
 
 using namespace std;
 
-extern const char* TestName;
-#define TESTNAME( cstr ) const char* TestName = cstr
-
-TESTNAME( "Solution of Darcy Problem" );
-
 int main()
 {
-    LOG << "Unit Test: " << TestName << endl;
+    
+    LOG << "Unit Test for Solution of Darcy Problem" << endl;
     
     LOG << std::setprecision(10);
 
@@ -111,7 +107,9 @@ int main()
 
         
 
-        const int min_l = 1; 
+        LOG << "Solving Poisson Problem with Neumann boundary conditions" << endl;
+
+        const int min_l = 0; 
         const int max_l = 5;
         
         const int min_r = 1;
@@ -126,14 +124,12 @@ int main()
         assert( 0 <= min_l and min_l <= max_l );
         assert( 0 <= min_r and min_r <= max_r );
             
-        LOG << "Refine initial mesh..." << endl;
-
         for( int l = 0; l < min_l; l++ )
             M.uniformrefinement();
 
         for( int l = min_l; l <= max_l; l++ ){
             
-            LOG << "Level: " << l << "/" << max_l << std::endl;
+            LOG << "Level: " << l << std::endl;
             LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
             
             if( l != 0 )
@@ -365,7 +361,7 @@ int main()
     
     
     
-    LOG << "Finished Unit Test: " << TestName << endl;
+    LOG << "Finished Unit Test" << endl;
     
     return 0;
 }

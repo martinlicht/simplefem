@@ -37,15 +37,6 @@ class MeshSimplicial2D
     public:
     
         /* Constructors */
-        /* standard methods for operators */
-        /* standard interface */
-        /* OTHER METHODS */
-        
-        MeshSimplicial2D( const MeshSimplicial2D& ) = default;
-        MeshSimplicial2D& operator=( const MeshSimplicial2D& ) = default;
-        MeshSimplicial2D( MeshSimplicial2D&& ) = default;
-        MeshSimplicial2D& operator=( MeshSimplicial2D&& ) = default;
-
         
         explicit MeshSimplicial2D( int outerdim = 2 );
         
@@ -70,12 +61,22 @@ class MeshSimplicial2D
         );
         
         
+        /* standard methods for operators */
+        
+        MeshSimplicial2D( const MeshSimplicial2D& ) = default;
+        MeshSimplicial2D& operator=( const MeshSimplicial2D& ) = default;
+        MeshSimplicial2D( MeshSimplicial2D&& ) = default;
+        MeshSimplicial2D& operator=( MeshSimplicial2D&& ) = default;
         virtual ~MeshSimplicial2D();
+        
+        /* standard interface */
         
         virtual void check() const;
         
         virtual void print( std::ostream& out ) const override;
 
+        /* OTHER METHODS */
+        
         
         bool compare( const MeshSimplicial2D& mesh ) const;
         

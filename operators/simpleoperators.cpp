@@ -31,11 +31,6 @@ std::string IdentityOperator::text() const
     return "Identity Operator";
 }
 
-void IdentityOperator::print( std::ostream& os ) const  
-{
-    os << text() << std::endl;
-}
-
 void IdentityOperator::apply( FloatVector& dest, const FloatVector& src, Float s ) const 
 {
     check();
@@ -84,11 +79,6 @@ void ScalingOperator::check() const
 std::string ScalingOperator::text() const 
 {
     return "Scaling Operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) + ": s = " + std::to_string( scaling );
-}
-
-void ScalingOperator::print( std::ostream& os ) const  
-{
-    os << text() << std::endl;
 }
 
 
@@ -188,11 +178,6 @@ std::string DiagonalOperator::text( const bool embellish ) const
 {
     return "Diagonal operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) 
             + ( embellish ? "\n" + tab_each_line( diagonal.text() ) : "" );
-}
-
-void DiagonalOperator::print( std::ostream& os ) const  
-{
-    os << text(true) << std::endl;
 }
 
 

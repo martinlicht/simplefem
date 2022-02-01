@@ -21,22 +21,18 @@
 #include "../../solver/chebyshev.hpp"
 #include "../../solver/iterativesolver.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
+#include "../../fem/global.whitneyincl.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
-#include "../../fem/global.sullivanincl.hpp"
 #include "../../fem/utilities.hpp"
 
 
 using namespace std;
 
-extern const char* TestName;
-#define TESTNAME( cstr ) const char* TestName = cstr
-
-TESTNAME( "Compare numerical solvers CRM vs MINRES for Solution of Dirichlet Problem" );
-
 int main()
 {
-        LOG << "Unit Test: " << TestName << endl;
+        
+        LOG << "Unit Test: Compare numerical solvers CRM vs MINRES\n           for Solution of Dirichlet Problem" << endl;
         
         LOG << std::setprecision(10);
 
@@ -49,7 +45,7 @@ int main()
             M.check();
             
             M.automatic_dirichlet_flags();
-           
+            
             M.check_dirichlet_flags();
             
             LOG << "Prepare scalar fields for testing..." << endl;
@@ -102,9 +98,9 @@ int main()
             ConvergenceTable contable;
             
 
-            const int min_l = 2;
+            const int min_l = 0;
             
-            const int max_l = 9;
+            const int max_l = 7;
 
             assert( 0 <= min_l and min_l <= max_l );
             
@@ -113,7 +109,7 @@ int main()
 
             for( int l = min_l; l <= max_l; l++ ){
                 
-                LOG << "Level: " << l << "/" << max_l << std::endl;
+                LOG << "Level: " << l << std::endl;
                 LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
                 const int r = 1;
@@ -124,16 +120,29 @@ int main()
             
                     SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
                     
-                    SparseMatrix incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r );
+                    LOG << "...assemble vector mass matrix" << endl;
+            
+                    SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
+                    
+                    LOG << "...assemble differential matrix and transpose" << endl;
+
+                    SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r );
+
+                    SparseMatrix diffmatrix_t = diffmatrix.getTranspose();
+
+                    LOG << "...assemble inclusion matrix and transpose" << endl;
+            
+                    SparseMatrix incmatrix = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 0, r );
 
                     SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
-                    LOG << "...assemble global mass matrix" << endl;
+                    LOG << "...assemble stiffness matrix" << endl;
             
-
-                    auto mass_prelim = incmatrix_t & ( scalar_massmatrix & incmatrix );
-                    mass_prelim.sortentries();
-                    auto mass = MatrixCSR( mass_prelim );
+                    auto opr  = diffmatrix & incmatrix;
+                    auto opl  = opr.getTranspose(); 
+                    auto stiffness_prelim = opl & ( vector_massmatrix & opr );
+                    stiffness_prelim.sortentries();
+                    auto stiffness = MatrixCSR( stiffness_prelim );
                     
                     {
 
@@ -143,7 +152,7 @@ int main()
                         FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r,   function_rhs  );
                         FloatVector rhs = incmatrix_t * ( scalar_massmatrix * interpol_rhs );
 
-//                         if(false) 
+                        if(false)
                         {
                             LOG << "CGM - CSR Classic" << endl;
                         
@@ -154,7 +163,7 @@ int main()
                                 sol.getdimension(), 
                                 sol.raw(), 
                                 rhs.raw(), 
-                                mass.getA(), mass.getC(), mass.getV(),
+                                stiffness.getA(), stiffness.getC(), stiffness.getV(),
                                 residual.raw(),
                                 desired_precision,
                                 0
@@ -162,7 +171,59 @@ int main()
 
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
-                            contable << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
+                            contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
+                        }
+
+                        if(false)
+                        {
+                            LOG << "CGM - CSR Classic with diagonal preconditioning" << endl;
+                            
+                            auto precon = InverseDiagonalPreconditioner( stiffness );
+
+                            
+                            sol.zero();
+                            FloatVector residual( rhs );
+                            timestamp start = gettimestamp();
+                            ConjugateGradientSolverCSR_DiagonalPreconditioner( 
+                                sol.getdimension(), 
+                                sol.raw(), 
+                                rhs.raw(), 
+                                stiffness.getA(), stiffness.getC(), stiffness.getV(),
+                                residual.raw(),
+                                desired_precision,
+                                0,
+                                precon.getdiagonal().raw()
+                            );
+
+                            timestamp end = gettimestamp();
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
+                        }
+
+                        {
+                            LOG << "CGM - CSR Classic with SSOR" << endl;
+                            
+                            auto diagonal = stiffness.diagonal();
+
+                            
+                            sol.zero();
+                            FloatVector residual( rhs );
+                            timestamp start = gettimestamp();
+                            ConjugateGradientSolverCSR_SSOR( 
+                                sol.getdimension(), 
+                                sol.raw(), 
+                                rhs.raw(), 
+                                stiffness.getA(), stiffness.getC(), stiffness.getV(),
+                                residual.raw(),
+                                desired_precision,
+                                0,
+                                diagonal.raw(),
+                                1.0
+                            );
+
+                            timestamp end = gettimestamp();
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
                         }
 
                         if(false)
@@ -176,7 +237,7 @@ int main()
                                 sol.getdimension(), 
                                 sol.raw(), 
                                 rhs.raw(), 
-                                mass.getA(), mass.getC(), mass.getV(),
+                                stiffness.getA(), stiffness.getC(), stiffness.getV(),
                                 residual.raw(),
                                 desired_precision,
                                 0
@@ -184,7 +245,7 @@ int main()
 
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
-                            contable << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
+                            contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
                         }
 
                         if(false)
@@ -198,7 +259,7 @@ int main()
                                 sol.getdimension(), 
                                 sol.raw(), 
                                 rhs.raw(), 
-                                mass.getA(), mass.getC(), mass.getV(),
+                                stiffness.getA(), stiffness.getC(), stiffness.getV(),
                                 residual.raw(),
                                 desired_precision,
                                 0
@@ -206,7 +267,7 @@ int main()
 
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
-                            contable << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
+                            contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
                         }
 
                         if(false)
@@ -220,7 +281,7 @@ int main()
                                 sol.getdimension(), 
                                 sol.raw(), 
                                 rhs.raw(), 
-                                mass.getA(), mass.getC(), mass.getV(),
+                                stiffness.getA(), stiffness.getC(), stiffness.getV(),
                                 residual.raw(),
                                 desired_precision,
                                 0
@@ -228,7 +289,7 @@ int main()
 
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
-                            contable << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
+                            contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
                         }
 
 
@@ -243,7 +304,7 @@ int main()
                                 sol.getdimension(), 
                                 sol.raw(), 
                                 rhs.raw(), 
-                                mass.getA(), mass.getC(), mass.getV(),
+                                stiffness.getA(), stiffness.getC(), stiffness.getV(),
                                 residual.raw(),
                                 desired_precision,
                                 0
@@ -251,96 +312,9 @@ int main()
 
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
-                            contable << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
+                            contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
                         }
 
-
-//                         if(false)
-                        {
-                            LOG << "CGM diagonal preconditioner CSR" << endl;
-                        
-                            DiagonalOperator invprecon = InverseDiagonalPreconditioner( mass_prelim );
-//                             invprecon.setentries( 1. );
-                            assert( invprecon.getdiagonal().isfinite() );
-                            assert( invprecon.getdiagonal().isnonnegative() );
-                            
-                            sol.zero();
-                            FloatVector residual( rhs );
-                            timestamp start = gettimestamp();
-                            ConjugateGradientSolverCSR_DiagonalPreconditioner( 
-                                sol.getdimension(), 
-                                sol.raw(), 
-                                rhs.raw(), 
-                                mass.getA(), mass.getC(), mass.getV(),
-                                residual.raw(),
-                                desired_precision,
-                                0,
-                                invprecon.getdiagonal().raw()
-                            );
-
-                            timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
-                            contable << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
-                        }
-                        
-                        
-//                         if(false)
-                        {
-                            LOG << "CGM SSOR preconditioner CSR" << endl;
-                        
-                            FloatVector diagonal = mass.diagonal();
-                            assert( diagonal.isfinite() );
-                            assert( diagonal.isnonnegative() );
-                            
-                            sol.zero();
-                            FloatVector residual( rhs );
-                            timestamp start = gettimestamp();
-                            ConjugateGradientSolverCSR_SSOR( 
-                                sol.getdimension(), 
-                                sol.raw(), 
-                                rhs.raw(), 
-                                mass.getA(), mass.getC(), mass.getV(),
-                                residual.raw(),
-                                desired_precision,
-                                0,
-                                diagonal.raw(),
-                                0.9123456789
-                            );
-
-                            timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
-                            contable << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
-                        }
-                        
-                        
-                        if(false)
-                        {
-                            LOG << "CHEBYSHEV CSR" << endl;
-                        
-                            DiagonalOperator invprecon = InverseDiagonalPreconditioner( mass_prelim );
-                            assert( invprecon.getdiagonal().isfinite() );
-                            assert( invprecon.getdiagonal().ispositive() );
-                            
-                            sol.zero();
-                            FloatVector residual( rhs );
-                            timestamp start = gettimestamp();
-                            CheybyshevIteration_DiagonalPreconditioner( 
-                                sol.getdimension(), 
-                                sol.raw(), 
-                                rhs.raw(), 
-                                mass.getA(), mass.getC(), mass.getV(),
-                                residual.raw(),
-                                desired_precision,
-                                10,
-                                invprecon.getdiagonal().raw(),
-                                0.,
-                                100 * invprecon.getdiagonal().maxnorm()
-                            );
-
-                            timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
-                            contable << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
-                        }
                         
                         
                         contable << nl;
@@ -363,7 +337,7 @@ int main()
         
         
         
-        LOG << "Finished Unit Test: " << TestName << endl;
+        LOG << "Finished Unit Test" << endl;
         
         return 0;
 }

@@ -24,20 +24,16 @@
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 // #include "../../fem/global.lagrangeincl.hpp"
-#include "../../fem/global.sullivanincl.hpp"
+#include "../../fem/global.whitneyincl.hpp"
 #include "../../fem/utilities.hpp"
 
 
 using namespace std;
 
-extern const char* TestName;
-#define TESTNAME( cstr ) const char* TestName = cstr
-
-TESTNAME( "Solve 2D Dirichlet problem over a square, trigonometric function" );
-
 int main()
 {
-        LOG << "Unit Test: " << TestName << endl;
+        
+        LOG << "Unit Test for Solution of Neumann Problem" << endl;
         
         LOG << std::setprecision(10);
 
@@ -104,7 +100,9 @@ int main()
 
             
 
-            const int min_l = 3; 
+            LOG << "Solving Poisson Problem with Neumann boundary conditions" << endl;
+
+            const int min_l = 0; 
             const int max_l = 8;
             
             const int min_r = 1;
@@ -118,14 +116,12 @@ int main()
             assert( 0 <= min_l and min_l <= max_l );
             assert( 0 <= min_r and min_r <= max_r );
             
-            LOG << "Refine initial mesh..." << endl;
-
             for( int l = 0; l < min_l; l++ )
                 M.uniformrefinement();
 
             for( int l = min_l; l <= max_l; l++ ){
                 
-                LOG << "Level: " << l << "/" << max_l << std::endl;
+                LOG << "Level: " << l << std::endl;
                 LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
                 for( int r = min_r; r <= max_r; r++ ) 
@@ -147,7 +143,7 @@ int main()
 
                     LOG << "...assemble inclusion matrix and transpose" << endl;
             
-                    SparseMatrix incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r );
+                    SparseMatrix incmatrix = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 0, r );
                     
 //                     LOG << incmatrix.getdimin() <<space<< L_incmatrix.getdimin() <<space<< incmatrix.getdimout() <<space<< L_incmatrix.getdimout() << nl;
 //                     assert( incmatrix.getdimin()  == L_incmatrix.getdimin() );
@@ -287,7 +283,7 @@ int main()
         
         
         
-        LOG << "Finished Unit Test: " << TestName << endl;
+        LOG << "Finished Unit Test" << endl;
         
         return 0;
 }
