@@ -107,10 +107,8 @@ int main()
 
         
 
-        LOG << "Solving Poisson Problem with Neumann boundary conditions" << endl;
-
         const int min_l = 0; 
-        const int max_l = 5;
+        const int max_l = 4;
         
         const int min_r = 1;
         const int max_r = 1;
