@@ -171,6 +171,9 @@ int main()
 
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            
+                            // auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                            
                             contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
                         }
 
@@ -197,6 +200,9 @@ int main()
 
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            
+                            // auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                            
                             contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
                         }
 
@@ -223,6 +229,9 @@ int main()
 
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            
+                            // auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                            
                             contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
                         }
 
@@ -245,6 +254,9 @@ int main()
 
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            
+                            // auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                            
                             contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
                         }
 
@@ -267,6 +279,9 @@ int main()
 
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            
+                            // auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                            
                             contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
                         }
 
@@ -289,6 +304,9 @@ int main()
 
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            
+                            // auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                            
                             contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
                         }
 
@@ -312,6 +330,9 @@ int main()
 
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            
+                            // auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                            
                             contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
                         }
 
