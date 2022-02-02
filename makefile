@@ -25,7 +25,7 @@ help:
 	@echo ""
 	@echo " The default target is [build]"
 	@echo ""
-	@echo " build, tests, and benchmark require only a C++17 compiler and GNU Make."
+	@echo " build, tests, and benchmark require only a C++20 compiler and GNU Make."
 
 
 # Describe the different components of the software
