@@ -20,8 +20,9 @@ libraryobject         := lib$(dirname).o
 sharedlibrary         := lib$(dirname).so
 staticlibrary         := lib$(dirname).a
 
+$(depdir):
+	@mkdir -p $@
 
-$(depdir): ; @mkdir -p $@
 
 .PHONY: make_dependencies
 make_dependencies: $(depdir)
