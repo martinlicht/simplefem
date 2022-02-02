@@ -96,15 +96,13 @@ int main()
 
             
 
-            LOG << "Solving Poisson Problem with Dirichlet boundary conditions" << endl;
-
             const int min_l = 0; 
-            const int max_l = 5;
+            const int max_l = 4;
             
             const int min_r = 1;
             const int max_r = 1;
             
-            ConvergenceTable contable;
+            ConvergenceTable contable("Mass error");
             
             contable << "u_error" << "du_error" << nl;
             

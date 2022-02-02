@@ -40,7 +40,7 @@
 #include <cstdio>
 #include <cstdlib>
 
-inline void myActualAssert( const char* expression, const char* filename, const int linenumber, const std::string message = "" )
+inline void myActualAssert( const char* filename, const int linenumber, const char* expression, const std::string message = "" )
 {
     fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" );
     fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" );
@@ -142,11 +142,11 @@ inline std::string Concat2String( const T& t, const Params&... params )
     return ss.str();
 }
 
-template< typename... Params >
-inline void myTemplatedAssert( const char* expression, const char* filename, const int linenumber, const Params&... params )
-{
-    myActualAssert( expression, filename, linenumber, Concat2String( params... ) );
-}
+// template< typename... Params >
+// inline void myTemplatedAssert( const char* filename, const int linenumber, const char* expression, const Params&... params )
+// {
+//     myActualAssert( filename, linenumber, expression, Concat2String( params... ) );
+// }
 
 
 
@@ -157,9 +157,9 @@ inline void myTemplatedAssert( const char* expression, const char* filename, con
 
 #ifdef NDEBUG
 
-#define Assert(x,...)   (static_cast<void>0)
-#define unreachable()   (static_cast<void>0)
-#define unimplemented() (static_cast<void>0)
+#define Assert(x,...)   (static_cast<void>(0))
+#define unreachable()   (static_cast<void>(0))
+#define unimplemented() (static_cast<void>(0))
 
 #else // NDEBUG
 
@@ -172,9 +172,9 @@ inline void myTemplatedAssert( const char* expression, const char* filename, con
 
 #else // FLAG_USE_ORIGINAL_ASSERT_MACRO
 
-#define Assert(x,...) (static_cast<bool>(x)?(void(0)):myActualAssert( #x, __FILE__, __LINE__, Concat2String(__VA_ARGS__) ) )
-#define unreachable()   myActualUnreachable(__FILE__, __LINE__), abort()
-#define unimplemented() myActualUnimplemented(__FILE__, __LINE__), abort()
+#define Assert(x,...) (static_cast<bool>(x)?(void(0)):myActualAssert( __FILE__, __LINE__, #x, Concat2String(__VA_ARGS__) ) )
+#define unreachable()   { myActualUnreachable(__FILE__, __LINE__), abort(); }
+#define unimplemented() { myActualUnimplemented(__FILE__, __LINE__), abort(); }
 
 #endif //FLAG_USE_ORIGINAL_ASSERT_MACRO
 

@@ -6,7 +6,7 @@
 
 default: build
 
-include ../../common.recipe.mk 
+include ../../common.compile.mk 
 
 include ../../common.upkeep.mk
 

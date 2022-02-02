@@ -7,7 +7,7 @@ using namespace std;
 
 int main()
 {
-        ConvergenceTable Contable;
+        ConvergenceTable Contable("Test Table");
         
         Contable.lg();
         
