@@ -128,7 +128,7 @@ class ConvergenceTable
 
         
             // First line is the name of the table 
-            std::printf( "%s\n", table_name.c_str() );
+            std::printf( "\n%s\n", table_name.c_str() );
 
             // if necessary, print column headers 
             if( not columnheaders.empty() )
