@@ -80,7 +80,7 @@ $(staticlibrary): $(libraryobject)
 -include $(depdir)/.all.d
 -include $(dependencies)
 
-*.o .all.o: ./makefile ../makefile ../common.recipe.mk ../common.rules.mk ../common.upkeep.mk
+*.o .all.o: ./makefile ../makefile ../common.recipe.mk ../common.module.mk ../common.upkeep.mk
 
 
 .PHONY: buildobjects buildso builda

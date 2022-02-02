@@ -3,6 +3,6 @@
 default: build
 
 include ../common.recipe.mk 
-include ../common.rules.mk 
+include ../common.module.mk 
 include ../common.upkeep.mk
 
