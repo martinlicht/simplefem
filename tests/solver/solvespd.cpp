@@ -30,9 +30,9 @@ int main()
         if(true)
         {
 
-            ConvergenceTable contable_sol;
-            ConvergenceTable contable_res;
-            ConvergenceTable contable_num;
+            ConvergenceTable contable_sol("L2 Error");
+            ConvergenceTable contable_res("L2 Residual");
+            ConvergenceTable contable_num("Iteration percentage");
             
             bool do_cgmpp      = false;
             bool do_crmpp_expl = false;

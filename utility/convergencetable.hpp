@@ -15,8 +15,9 @@ class ConvergenceTable
     
     public:
 
-        explicit ConvergenceTable( bool display_convergence_rates = true )
-        : make_new_row(true), 
+        explicit ConvergenceTable( std::string table_name = "---------- Default Table Name ----------", bool display_convergence_rates = true )
+        : table_name(table_name), 
+          make_new_row(true), 
           display_convergence_rates( display_convergence_rates )
         {
             
@@ -126,7 +127,9 @@ class ConvergenceTable
             // if fixed:  6; sign + digit + . = 3 chars 
 
         
-            
+            // First line is the name of the table 
+            std::printf( "%s\n", table_name.c_str() );
+
             // if necessary, print column headers 
             if( not columnheaders.empty() )
             {
@@ -211,6 +214,7 @@ class ConvergenceTable
         std::vector<std::vector<Float>> entries;
         std::vector<std::string> columnheaders;
         
+        std::string table_name;
         bool make_new_row;
         bool display_convergence_rates;
     
