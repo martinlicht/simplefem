@@ -4,52 +4,34 @@
 #include "iterativesolver.hpp"
 
 #include "../operators/floatvector.hpp"
+#include "../operators/linearoperator.hpp"
 
 
 
 
 
 
+enum class VerbosityLevel {
+        silent = 0,
+        resultonly = 1,
+        verbose = 2
+};
 
-
-
-
-
-
-
-
-ConjugateGradientMethod::ConjugateGradientMethod( const LinearOperator& op )
-: IterativeSolver(), A( op )
-{
-    this->max_iteration_count = op.getdimin();
-    ConjugateGradientMethod::check();
-}
-
-ConjugateGradientMethod::~ConjugateGradientMethod()
-{
-    ConjugateGradientMethod::check();
-}
-
-void ConjugateGradientMethod::check() const
-{
-    IterativeSolver::check();
-    assert( A.getdimin() == A.getdimout() );
-}
-
-void ConjugateGradientMethod::print( std::ostream& os ) const
-{
-    os << "Print Conjugate Gradient Method." << std::endl;
-}
-
-
+inline const Float threshold = 10000 * machine_epsilon;
+inline const VerbosityLevel verbosity = VerbosityLevel::silent;
+inline const int print_modulo = -1;
 
 
   
 
   
-void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) const
-{
-    check();
+void ConjugateGradientMethod(
+        const LinearOperator& A,
+        FloatVector& x,
+        const FloatVector& b
+) {
+    
+    A.check();
     x.check();
     b.check();
     
@@ -67,7 +49,9 @@ void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) cons
     // avoid repeated allocation of these temporary vectors 
     FloatVector Ad( dimension, 0. );
     
-    recent_iteration_count = 0;
+    Float recent_deviation = 0.;
+    const int max_iteration_count = x.getdimension();
+    int recent_iteration_count = 0;
     
     if( verbosity >= VerbosityLevel::verbose ) LOG << "Begin Conjugate Gradient iteration" << nl;
         
@@ -144,12 +128,19 @@ void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) cons
     if( verbosity >= VerbosityLevel::resultonly and print_modulo >= 0 ) 
         LOG << "Final residual after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
             << recent_deviation << "(" << threshold*threshold << ")" << nl; 
-
-
     
 }
 
   
+
+
+
+
+
+
+
+
+
   
 /* 
  * 
@@ -251,28 +242,6 @@ void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) cons
 
 
 
-ConjugateResidualMethod::ConjugateResidualMethod( const LinearOperator& op )
-: IterativeSolver(), A( op )
-{
-    this->max_iteration_count = op.getdimin();
-    ConjugateResidualMethod::check();
-}
-
-ConjugateResidualMethod::~ConjugateResidualMethod()
-{
-    ConjugateResidualMethod::check();
-}
-
-void ConjugateResidualMethod::check() const
-{
-    IterativeSolver::check();
-    assert( A.getdimin() == A.getdimout() );
-}
-
-void ConjugateResidualMethod::print( std::ostream& os ) const
-{
-    os << "Print Conjugate Residual Method." << std::endl;
-}
 
 
 
@@ -280,30 +249,18 @@ void ConjugateResidualMethod::print( std::ostream& os ) const
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-void ConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
-{
-    solve_robust( x, b );
-}
 
 
 
 
   
-void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector& b ) const
-{
-    check();
+void ConjugateResidualMethod_explicit(
+        const LinearOperator& A,
+        FloatVector& x,
+        const FloatVector& b
+) {
+    
+    A.check();
     x.check();
     b.check();
     
@@ -325,7 +282,9 @@ void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector&
     
     FloatVector AAd( dimension, 0. );
     
-    recent_iteration_count = 0;
+    Float recent_deviation = 0.;
+    const int max_iteration_count = x.getdimension();
+    int recent_iteration_count = 0;
     
     if( verbosity >= VerbosityLevel::verbose ) LOG << "Begin Conjugate Residual iteration" << nl;
         
@@ -461,9 +420,13 @@ void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector&
   
   
   
-void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b ) const
-{
-    check();
+void ConjugateResidualMethod_robust(
+        const LinearOperator& A,
+        FloatVector& x,
+        const FloatVector& b
+) {
+    
+    A.check();
     x.check();
     b.check();
     
@@ -479,7 +442,9 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
     FloatVector Ad( dimension, 0. );
     FloatVector  p( dimension, 0. );
     
-    recent_iteration_count = 0;
+    Float recent_deviation = 0.;
+    const int max_iteration_count = x.getdimension();
+    int recent_iteration_count = 0;
     
     if( verbosity >= VerbosityLevel::verbose ) LOG << "Begin Conjugate Residual iteration" << nl;
         
@@ -583,9 +548,13 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
 
 
 
-void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b ) const
-{
-    check();
+void ConjugateResidualMethod_fast(
+        const LinearOperator& A,
+        FloatVector& x,
+        const FloatVector& b
+) {
+    
+    A.check();
     x.check();
     b.check();
     
@@ -601,7 +570,9 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
     FloatVector Ad( dimension, 0. );
     FloatVector  p( dimension, 0. );
     
-    recent_iteration_count = 0;
+    Float recent_deviation = 0.;
+    const int max_iteration_count = x.getdimension();
+    int recent_iteration_count = 0;
     
     Float Ar_r = notanumber;
     
@@ -691,7 +662,29 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
 }
 
 
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void ConjugateResidualMethod(
+        const LinearOperator& A,
+        FloatVector& x,
+        const FloatVector& b
+) {
+    ConjugateResidualMethod_robust( A, x, b );
+}
+
 /* 
  * 
  * Input: A, b, x
@@ -801,39 +794,16 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
 
 
 
-  
-PreconditionedConjugateResidualMethod::PreconditionedConjugateResidualMethod( const LinearOperator& op, const LinearOperator& M )
-: IterativeSolver(), A( op ), M( M )
-{
-    this->max_iteration_count = op.getdimin();
-    PreconditionedConjugateResidualMethod::check();
-}
 
-PreconditionedConjugateResidualMethod::~PreconditionedConjugateResidualMethod()
-{
-    PreconditionedConjugateResidualMethod::check();
-}
-  
-void PreconditionedConjugateResidualMethod::check() const
-{
-    IterativeSolver::check();
-    assert( A.getdimin() == A.getdimout() );
-    assert( M.getdimin() == M.getdimout() );
-    assert( A.getdimin() == M.getdimout() );
-}
-
-void PreconditionedConjugateResidualMethod::print( std::ostream& os ) const
-{
-    os << "Print Preconditioned Conjugate Residual Methop." << std::endl;
-}
-
-
-
-
-
-void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
-{
-    check();
+void PreconditionedConjugateResidualMethod(
+        const LinearOperator& A,
+        FloatVector& x,
+        const FloatVector& b,
+        const LinearOperator& M
+) {
+    
+    A.check();
+    M.check();
     x.check();
     b.check();
     
@@ -859,7 +829,9 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
     FloatVector  MAMp( dimension, 0. );    
     FloatVector AMAMp( dimension, 0. );
         
-    recent_iteration_count = 0;
+    Float recent_deviation = 0.;
+    const int max_iteration_count = x.getdimension();
+    int recent_iteration_count = 0;
     
     if( verbosity >= VerbosityLevel::verbose ) LOG << "Begin Preconditioned Conjugate Residual iteration" << nl;
         
@@ -1006,35 +978,14 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
 
 
 
-MinimumResidualMethod::MinimumResidualMethod( const LinearOperator& op )
-: IterativeSolver(), A( op )
-{
-    this->max_iteration_count = op.getdimin();
-    MinimumResidualMethod::check();
-}
-
-MinimumResidualMethod::~MinimumResidualMethod()
-{
-    MinimumResidualMethod::check();
-}
-
-void MinimumResidualMethod::check() const
-{
-    IterativeSolver::check();
-    assert( A.getdimin() == A.getdimout() );
-}
-
-void MinimumResidualMethod::print( std::ostream& os ) const
-{
-    os << "Print MinimumResidualMethod." << std::endl;
-}
-
-
-
   
-void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
-{
-    check();
+void MinimumResidualMethod(
+        const LinearOperator& A,
+        FloatVector& x,
+        const FloatVector& b
+) {
+    
+    A.check();
     x.check();
     b.check();
     
@@ -1061,7 +1012,9 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
     
     /* Begin iteration */
     
-    recent_iteration_count = 0;
+    Float recent_deviation = 0.;
+    const int max_iteration_count = x.getdimension();
+    int recent_iteration_count = 0;
     
 //     Float recent_alpha = notanumber;
     
@@ -1331,41 +1284,18 @@ end*/
 
 
 
-
-
-ResidualDescentMethod::ResidualDescentMethod( const LinearOperator& op )
-: IterativeSolver(), A( op )
-{
-    this->max_iteration_count = op.getdimin();
-    ResidualDescentMethod::check();
-}
-
-ResidualDescentMethod::~ResidualDescentMethod()
-{
-    ResidualDescentMethod::check();
-}
-
-void ResidualDescentMethod::check() const
-{
-    IterativeSolver::check();
-    assert( A.getdimin() == A.getdimout() );
-}
-
-void ResidualDescentMethod::print( std::ostream& os ) const
-{
-    os << "Print Residual Descent Method." << std::endl;
-}
-
-
-
 // NOTE
 // This method solves a possibly non-symmetric least squares system 
 // by shifting the solution vector x within the span of the residual.
 
 
-void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
-{
-    check();
+void ResidualDescentMethod(
+        const LinearOperator& A,
+        FloatVector& x,
+        const FloatVector& b
+) {
+    
+    A.check();
     x.check();
     b.check();
     
@@ -1384,7 +1314,9 @@ void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
     // avoid repeated allocation of this temporary vector 
     FloatVector Ar( dimension, 0. );
     
-    recent_iteration_count = 0;
+    Float recent_deviation = 0.;
+    const int max_iteration_count = x.getdimension();
+    int recent_iteration_count = 0;
     
     if( verbosity >= VerbosityLevel::verbose ) LOG << "Begin Residual iteration" << nl;
                 
@@ -1506,37 +1438,14 @@ void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
 
 
 
-
-
-HerzogSoodhalterMethod::HerzogSoodhalterMethod( const LinearOperator& op )
-: IterativeSolver(), A( op )
-{
-    this->max_iteration_count = op.getdimin();
-    HerzogSoodhalterMethod::check();
-}
-
-HerzogSoodhalterMethod::~HerzogSoodhalterMethod()
-{
-    HerzogSoodhalterMethod::check();
-}
-
-void HerzogSoodhalterMethod::check() const
-{
-    IterativeSolver::check();
-    assert( A.getdimin() == A.getdimout() );
-}
-
-void HerzogSoodhalterMethod::print( std::ostream& os ) const
-{
-    os << "Print Herzog-Soodhalter Method." << std::endl;
-}
-
-
-
   
-void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
-{
-    check();
+void HerzogSoodhalterMethod(
+        const LinearOperator& A,
+        FloatVector& x,
+        const FloatVector& b
+) {
+    
+    A.check();
     x.check();
     b.check();
     
@@ -1563,8 +1472,10 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
     Float c0 = notanumber;
     Float c1 = notanumber;
     
-    recent_iteration_count = 0;
-
+    Float recent_deviation = 0.;
+    const int max_iteration_count = x.getdimension();
+    int recent_iteration_count = 0;
+    
     while( recent_iteration_count < max_iteration_count ){
         
         
