@@ -35,18 +35,23 @@ inline void internal_print( const MeshSimplicial1D& M, std::string meshname )
         FloatVector V( M.count_simplices(0), 
                         [&M](int i)->Float{
                         FloatVector point = M.getcoordinates().getvectorclone(i);
-                        return std::sin( 10 * 2 * 3.14159 * point[1] );
+                        Float x = point[0];
+                        Float y = ( ( point.getdimension() >= 2 ) ? point[1] : 1. );
+                        Float z = ( ( point.getdimension() >= 3 ) ? point[2] : 1. );
+                        return std::sin( 10 * 2 * 3.14159 * x ) * y + z;
                     });
         
         vtk.writeVertexScalarData( V, "testing_scalar_data", 1.0 );
     }
+
+    int inner_dim = M.getinnerdimension();
     
-    vtk.writeCellScalarData( FloatVector(M.count_simplices(1), 2.5 ), "cell_scalar_data" );
+    vtk.writeCellScalarData( FloatVector(M.count_simplices(inner_dim), 2.5 ), "cell_scalar_data" );
     
     vtk.writeCellVectorData( 
-        FloatVector( M.count_simplices(1),  1.5 ),
-        FloatVector( M.count_simplices(1),  2.5 ),
-        FloatVector( M.count_simplices(1), -3.5 ),
+        FloatVector( M.count_simplices(inner_dim),  1.5 ),
+        FloatVector( M.count_simplices(inner_dim),  2.5 ),
+        FloatVector( M.count_simplices(inner_dim), -3.5 ),
         "cell_vector_data"
     );
 
