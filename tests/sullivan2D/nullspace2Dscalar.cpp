@@ -74,7 +74,7 @@ int main()
             LOG << "Nullspace computation" << endl;
 
             
-            ConvergenceTable contable;
+            ConvergenceTable contable("Mass error");
             
             contable << "#nullvec";
                         

@@ -14,7 +14,7 @@ int main()
 {
         LOG << "Unit Test: " << TestName << endl;
     
-        ConvergenceTable Contable;
+        ConvergenceTable Contable("Test Table");
         
         Contable.lg();
         

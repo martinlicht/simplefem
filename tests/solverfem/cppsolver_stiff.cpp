@@ -75,7 +75,7 @@ int main()
 
             LOG << "Solving Poisson Problem with Dirichlet boundary conditions" << endl;
 
-            ConvergenceTable contable;
+            ConvergenceTable contable("Runtimes and L2 error");
             
 
             const int min_l = 2; 

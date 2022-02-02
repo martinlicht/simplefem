@@ -8,12 +8,6 @@
 #include "../dense/densematrix.hpp"
 #include "../mesh/mesh.hpp"
 
-/************************
-****
-****  Class for Sparse Matrices  
-****  - instantiates LinearOperator
-****  
-************************/
 
 
 
@@ -26,6 +20,10 @@ inline int SullivanSpanSize( int n, int k, int r )
     assert( k <= n );
     return binomial_integer( n + r, r ) * binomial_integer( n+1, k );
 }
+
+
+
+
 
 
 
