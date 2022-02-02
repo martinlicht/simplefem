@@ -489,18 +489,22 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
         bool restart_condition = ( recent_iteration_count == 0 ) or ( recent_iteration_count % x.getdimension() == 0 );
         
         bool residual_seems_small = absolute( r * r ) < threshold*threshold or absolute( r * Ar ) < threshold*threshold;
-        
+        // first criterion is not in fast 
+
         if( restart_condition ) {
         
             r  = b - A * x;
             d  = r;
             
-            Ad = A * d;
-            Ar = Ad;
+            Ar = A * r;
+            Ad = Ar;
+
+            // fast and explicit: Ar_r = Ar * r;
 
         }
 
         bool residual_is_small = absolute( r * r ) < threshold*threshold or absolute( r * Ar ) < threshold*threshold; 
+        // first criterion is in explicit but not in fast (for speed reasons)
         
         /* Print information */
         
@@ -508,7 +512,7 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
         
         if( verbosity >= VerbosityLevel::verbose and print_condition )
             LOG << "Residual after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
-                << absolute( r * Ar ) << "(" << threshold*threshold << ")" << nl; 
+                << absolute( Ar * r ) << "(" << threshold*threshold << ")" << nl; 
         
         /* If exit condition met, exit */
         
@@ -519,7 +523,7 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
             p = A * Ad;
             Float Ad_Ad = Ad * Ad; assert( Ad_Ad >= 0 ); 
             
-            Float Ad_r  = Ad * r;
+            Float Ad_r  = Ad * r; // fast/explicit uses and maintains Ar_r
             Float alpha = Ad_r / Ad_Ad;
             
             bool denominator_is_unreasonable = not std::isfinite(Ad_Ad) or Ad_Ad < 0.;
@@ -541,7 +545,7 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
             Ar = Ar - alpha * p;
             
             Float Ar_r_new = Ar * r;
-            Float beta = Ar_r_new / Ad_r;
+            Float beta = Ar_r_new / Ad_r; // fast uses and maintains Ar_r // TODO: abort if Ad_r is negative?
             
             // assert( Ar_r_new >= 0. );
 
@@ -619,8 +623,8 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
             r  = b - A * x;
             d  = r;
             
-            Ad = A * d;
-            Ar = Ad;
+            Ar = A * r;
+            Ad = Ar;
             
             Ar_r = Ar * r;
 
