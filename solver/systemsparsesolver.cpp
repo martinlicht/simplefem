@@ -228,7 +228,7 @@ void HodgeConjugateResidualSolverCSR_diagonal(
         /* Print information */
         
         if( print_modulo > 0 and k % print_modulo == 0 ) 
-            printf( "Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+            std::printf( "Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
                     k, N, (long double)(Md_r), (long double) threshold*threshold );
         
         /* Check whether res is small */
@@ -244,12 +244,12 @@ void HodgeConjugateResidualSolverCSR_diagonal(
         bool denominator_is_small    = sqrt(absolute(Md_Md)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) {
-            printf( "Gradient double energy is unreasonable with %.9Le\n", (long double)Md_Md );
+            std::printf( "Gradient double energy is unreasonable with %.9Le\n", (long double)Md_Md );
             break;
         }
         
         if( denominator_is_small ) {
-            printf( "Gradient double energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
+            std::printf( "Gradient double energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
                     (long double)Md_Md, (long double)Md_r, (long double)threshold*threshold );
             break;
         }
@@ -340,7 +340,7 @@ void HodgeConjugateResidualSolverCSR_diagonal(
     }
     
     if( print_modulo >= 0 ) 
-        printf("Final Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+        std::printf("Final Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
                k, N, (long double)(Md_r), (long double) threshold*threshold );
 
     
@@ -572,7 +572,7 @@ void HodgeConjugateResidualSolverCSR_SSOR(
         /* Print information */
         
         if( print_modulo > 0 and k % print_modulo == 0 ) 
-            printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+            std::printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
                    k, N, (long double)(Md_r), (long double) threshold*threshold );
         
         /* Check whether res is small */
@@ -588,12 +588,12 @@ void HodgeConjugateResidualSolverCSR_SSOR(
         bool denominator_is_small    = sqrt(absolute(Md_Md)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) {
-            printf( "Gradient double energy is unreasonable with %.9Le\n", (long double)Md_Md );
+            std::printf( "Gradient double energy is unreasonable with %.9Le\n", (long double)Md_Md );
             break;
         }
         
         if( denominator_is_small ) {
-            printf( "Gradient double energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
+            std::printf( "Gradient double energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
                     (long double)Md_Md, (long double)Md_r, (long double)threshold*threshold );
             break;
         }
@@ -685,7 +685,7 @@ void HodgeConjugateResidualSolverCSR_SSOR(
     }
     
     if( print_modulo >= 0 ) 
-        printf("Final Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+        std::printf("Final Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
                k, N, (long double)(Md_r), (long double) threshold*threshold );
 
     
@@ -894,7 +894,7 @@ void HodgeConjugateResidualSolverCSR_textbook(
         /* Print information */
         
         if( print_modulo > 0 and k % print_modulo == 0 ) 
-            printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+            std::printf("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
                    k, N, (long double)(Mr_r), (long double) threshold*threshold );
         
         /* Check whether res is small */
@@ -910,12 +910,12 @@ void HodgeConjugateResidualSolverCSR_textbook(
         bool denominator_is_small    = sqrt(absolute(Md_Md)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) {
-            if( print_modulo >= 0 ) printf( "Gradient double energy is unreasonable with %.9Le\n", (long double)Md_Md );
+            if( print_modulo >= 0 ) std::printf( "Gradient double energy is unreasonable with %.9Le\n", (long double)Md_Md );
             break;
         }
         
         if( denominator_is_small ) {
-            if( print_modulo >= 0 ) printf( "Gradient double energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
+            if( print_modulo >= 0 ) std::printf( "Gradient double energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
                                     (long double)Md_Md, (long double)Mr_r, (long double)threshold*threshold );
             break;
         }
@@ -1006,7 +1006,7 @@ void HodgeConjugateResidualSolverCSR_textbook(
     }
     
     if( print_modulo >= 0 ) 
-        printf("Final Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+        std::printf("Final Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
                k, N, (long double)(Mr_r), (long double) threshold*threshold );
 
     
