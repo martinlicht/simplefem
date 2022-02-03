@@ -30,6 +30,13 @@ std::string protocolprefixnow();
 
 
 
+// utilize the printf template for stream-like objects 
+
+#define LOGPRINTF( formatstring, ...) printf_into_logger( LOG, formatstring __VA_OPT__(,) __VA_ARGS__ );
+#define ERRPRINTF( formatstring, ...) printf_into_logger( ERR, formatstring __VA_OPT__(,) __VA_ARGS__ );
+
+
+
 
 // treat the following macros as PRINT 'str' commands
 // Example usage:
@@ -47,11 +54,12 @@ std::string protocolprefixnow();
 #define ERROR   Logger( std::cerr, protocolprefixnow(), "\n", __FILE__, __LINE__ ) <<
 
 
+
 // emit the current file and line number into the log stream 
 // Example usage:
 //     PING;
 
-#define PING LOG << "PING: " << __FILE__ << ":" << __LINE__;
+#define PING LOG << "PING: " << __FILE__ << ":" << __LINE__ << nl;
 
 
 
