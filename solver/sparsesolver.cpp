@@ -751,7 +751,13 @@ void ConjugateResidualSolverCSR(
         /* Check whether res is small */
                 
         bool residualenergy_is_small = absolute(Ad_r) < threshold*threshold;
+        bool residualenergy_is_unreasonable = not std::isfinite(Ad_r) or Ad_r < 0.;
         
+        if( residualenergy_is_unreasonable ) {
+            if( print_modulo >= 0 ) printf( "Residual energy is unreasonable with %.9Le\n", (long double)Ad_r );
+            break;
+        }
+
         if( residualenergy_is_small )
             break;
         
@@ -951,8 +957,14 @@ void ConjugateResidualSolverCSR_textbook(
         
         /* Check whether res is small */
                 
+        bool residualenergy_is_unreasonable = not std::isfinite(Ar_r) or Ar_r < 0.;
         bool residualenergy_is_small = absolute(Ar_r) < threshold*threshold;
         
+        if( residualenergy_is_unreasonable ) {
+            if( print_modulo >= 0 ) printf( "Residual energy is unreasonable with %.9Le\n", (long double)Ar_r );
+            break;
+        }
+  
         if( residualenergy_is_small )
             break;
 
