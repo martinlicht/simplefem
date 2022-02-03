@@ -1,7 +1,9 @@
 SHELL = /bin/sh
 
+.PHONY:
 default: build
 
+.PHONY:
 all: build tests benchmarks 
 	@echo "Finished all"
 
@@ -55,7 +57,7 @@ build.components.so:=$(patsubst %,.build.%.so,$(components) )
 
 build: $(build.components) .build.tests .build.benchmarks
 
-$(build.components): .build.%: 
+$(build.components): .build.%: %
 	@echo Build: $*
 	@cd ./$* && $(MAKE) --no-print-directory build
 
@@ -99,6 +101,7 @@ benchmarks:
 
 # Target 'check' is a generic test. Currently, it defaults to 'tidy'
 
+.PHONY:
 check: tidy
 
 
