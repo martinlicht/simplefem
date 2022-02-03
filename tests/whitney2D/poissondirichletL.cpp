@@ -93,7 +93,7 @@ int main()
             const int max_l = 3;
             
 
-            ConvergenceTable contable;
+            ConvergenceTable contable("Mass error");
             
             contable << "u_error" << "du_error" << nl;
 

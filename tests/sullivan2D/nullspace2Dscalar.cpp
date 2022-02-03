@@ -70,7 +70,7 @@ int main()
             LOG << "Nullspace computation" << endl;
 
             
-            ConvergenceTable contable;
+            ConvergenceTable contable("Mass error");
             
             contable << "#nullvec";
                         
@@ -197,7 +197,7 @@ int main()
                                     rhs.raw(), 
                                     SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
                                     residual.raw(),
-                                    1000 * machine_epsilon,
+                                    std::sqrt(machine_epsilon),
                                     0
                                 );
                                 

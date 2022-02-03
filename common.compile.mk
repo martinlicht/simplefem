@@ -80,7 +80,8 @@ FLAG_DISABLE_CHECK_MESHES=yes
 
 # Do you want to ENABLE extended precision?
 # Uncomment the following line to switch from double precision to extended precision
-# FLAG_DO_USE_EXTENDED_PRECISION := -DEXTENDED_PRECISION
+# FLAG_DO_USE_EXTENDED_PRECISION=yes 
+# := -DEXTENDED_PRECISION
 
 # Do you want to strip unused symbols from the executables?
 # Uncomment the following line to accomplish this
@@ -644,7 +645,9 @@ else
 CPPFLAGS += -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_GLIBCXX_ASSERTIONS -D_GLIBCXX_SANITIZE_VECTOR
 endif
 
-CPPFLAGS += $(FLAG_DO_USE_EXTENDED_PRECISION)
+ifeq ($(FLAG_DO_USE_EXTENDED_PRECISION),yes)
+CPPFLAGS += -DEXTENDED_PRECISION
+endif
 
 CPPFLAGS := $(strip $(CPPFLAGS))
 

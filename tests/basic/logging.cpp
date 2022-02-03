@@ -12,15 +12,18 @@
 int main()
 {
     
+    LOG << "This is a line" << nl;
+    NOTE "This is a note";
     PING;
     PING;
     PING;
-    LOG << "Dies ist ein test!" << 5;
+    LOG << "Dies ist ein test!" << 5 << nl;
+    LOGPRINTF( "%i%c%d\n", 1, '-', 3 );
     PING;
-    openContext();
-    WARNING "Hallo Welt!";
+    // openContext();
+    NOTE "Notice";
+    WARNING "Warning";
     PING;
-    NOTE "Hallo Welt!";
-    closeContext();
+    // closeContext();
     return 0;
 }

@@ -101,7 +101,7 @@ int main()
 
             LOG << "Solving Poisson Problem with Dirichlet boundary conditions" << endl;
 
-            ConvergenceTable contable;
+            ConvergenceTable contable("Runtimes and L2 error");
             
 
             const int min_l = 2;
@@ -157,7 +157,9 @@ int main()
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             
-                            contable << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
+                            auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+
+                            contable << stat_num << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
                         }
 
                         {
@@ -172,7 +174,9 @@ int main()
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             
-                            contable << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
+                            auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                            
+                            contable << stat_num << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
                         }
 
                         if(false)
@@ -189,7 +193,9 @@ int main()
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
-                            contable << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
+                            auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                            
+                            contable << stat_num << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
                         }
 
                         {
@@ -205,7 +211,9 @@ int main()
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
-                            contable << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
+                            auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                            
+                            contable << stat_num << static_cast<Float>( end - start ) << Float( ( mass * sol - rhs ).norm() );
                         }
                         
                         

@@ -72,7 +72,7 @@ int main()
 
             LOG << "Nullspace computation" << endl;
 
-            ConvergenceTable contable;
+            ConvergenceTable contable("Mass error");
             
             contable << "#nullvec";
             
@@ -151,7 +151,7 @@ int main()
                     
                     auto Z  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
                     
-                    auto SystemMatrix = C + B * inv(A,1000 * machine_epsilon) * Bt;
+                    auto SystemMatrix = C + B * inv(A,std::sqrt(machine_epsilon), 1) * Bt;
                     
                     
                     
@@ -190,7 +190,7 @@ int main()
                                     Bt.getA(), Bt.getC(), Bt.getV(), 
                                     C.getA(),   C.getC(),  C.getV(), 
                                     residual.raw(),
-                                    1000 * machine_epsilon,
+                                    std::sqrt(machine_epsilon),
                                     0,
                                     desired_precision,
                                     -1

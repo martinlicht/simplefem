@@ -151,13 +151,13 @@ inline void CheybyshevIteration_DiagonalPreconditioner(
         
         
         if( print_modulo > 0 and K % print_modulo == 0 ) 
-            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), (long double) allowed_error );
+            std::printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), (long double) allowed_error );
         
         K++;
         
     }
     
-    printf("Final residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), (long double) allowed_error );
+    std::printf("Final residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), (long double) allowed_error );
 
     
     delete[] ( x_prev );
