@@ -155,15 +155,15 @@ parameters:
 
 ifeq ($(FLAG_CXX),GCC)
 
-  CXX := g++ -std=c++17
+  CXX := g++ -std=c++2a
   
 else ifeq ($(FLAG_CXX),CLANG)
 
-  CXX := clang++ -std=c++17
+  CXX := clang++ -std=c++2a
 
 else ifeq ($(FLAG_CXX),ICC)
 
-  CXX := icc -std=c++17
+  CXX := icc -std=c++2a
 
 else
 
@@ -184,7 +184,7 @@ endif
 #                                             #
 ###############################################
 
-CXXFLAGS_LANG := -std=c++17 -pedantic 
+CXXFLAGS_LANG := -std=c++2a -pedantic 
 
 
 
