@@ -82,7 +82,7 @@ class InverseOperator final
                 
                 const auto* opcsr = dynamic_cast<const MatrixCSR*>(&op);
                 
-                ConjugateGradientSolverCSR( 
+                ConjugateResidualSolverCSR( 
                     src.getdimension(),
                     dest.raw(), 
                     src.raw(), 

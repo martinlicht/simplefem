@@ -145,7 +145,7 @@ int main()
                     
                     
 //                     auto SystemMatrix = B * inv( A, 1e-10, 0 ) * Bt;
-                    const auto SystemMatrix = B * inv( A, 1000*machine_epsilon, -1 ) * Bt;
+                    const auto SystemMatrix = B * inv( A, std::sqrt(machine_epsilon), 1 ) * Bt;
                     
                     const auto& mass = physical_mass;
                     
@@ -199,8 +199,8 @@ int main()
                                     Bt.getA(), Bt.getC(), Bt.getV(), 
                                     Z.getA(),   Z.getC(),  Z.getV(), 
                                     residual.raw(),
-                                    100 * machine_epsilon,
-                                    -1,
+                                    std::sqrt(machine_epsilon),
+                                    1,
                                     desired_precision,
                                     -1
                                 );

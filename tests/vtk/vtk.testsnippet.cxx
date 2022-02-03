@@ -3,10 +3,15 @@
 #include "../../operators/floatvector.hpp"
 #include "../../mesh/coordinates.hpp"
 
-inline void internal_print( const Mesh& M, std::string meshname )
+
+    
+    
+inline void internal_print( const Mesh& M, std::string meshname, std::string filename = "" )
 {
     
-    fstream fs( experimentfile( getbasename(__FILE__)), std::fstream::out );
+    std::string basename = ( filename == "" ) ? getbasename(__FILE__) : filename;
+    
+    fstream fs( experimentfile( basename ), std::fstream::out );
     
     VTKWriter vtk( M, fs, meshname );
     vtk.writeCoordinateBlock();
@@ -20,7 +25,7 @@ inline void internal_print( const Mesh& M, std::string meshname )
                         Float x = point[0];
                         Float y = ( ( point.getdimension() >= 2 ) ? point[1] : 1. );
                         Float z = ( ( point.getdimension() >= 3 ) ? point[2] : 1. );
-                        return std::sin( 10 * 2 * 3.14159 * x ) * y + z;
+                        return std::sin( 3.14159 * x ) * y + z;
                     });
         
         vtk.writeVertexScalarData( V, "testing_scalar_data", 1.0 );

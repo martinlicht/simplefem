@@ -80,7 +80,7 @@ void ConjugateGradientSolverCSR(
         /* printing information */
 
         if( print_modulo > 0 and K % print_modulo == 0 ) 
-            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+            std::printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
                    K, N, (long double)(r_r), (long double) threshold*threshold );
 
         /* Check whether residual is small */
@@ -115,12 +115,12 @@ void ConjugateGradientSolverCSR(
         bool denominator_is_small    = sqrt(absolute(d_Ad)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) {
-            if( print_modulo >= 0 ) printf( "Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
+            if( print_modulo >= 0 ) std::printf( "Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
             break;
         }
         
         if( denominator_is_small ) {
-            if( print_modulo >= 0 ) printf( "Gradient energy is small with %.9Le while residual is %.9Le vs %.9Le\n", 
+            if( print_modulo >= 0 ) std::printf( "Gradient energy is small with %.9Le while residual is %.9Le vs %.9Le\n", 
                                             (long double)d_Ad, (long double)r_r, (long double)threshold*threshold );
             break;
         }
@@ -161,7 +161,7 @@ void ConjugateGradientSolverCSR(
     
     
     if( print_modulo >= 0 ) 
-        printf( "Final residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+        std::printf( "Final residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
                 K, N, (long double)(r_r), (long double) threshold*threshold );
 
     
@@ -258,7 +258,7 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
         /* printing information */
 
         if( print_modulo > 0 and K % print_modulo == 0 ) 
-            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n",
+            std::printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n",
                    K, N, (long double)(z_r), (long double) threshold*threshold );
         
         /* Check whether residual is small */
@@ -295,12 +295,12 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
         bool denominator_is_small    = sqrt(absolute(d_Ad)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) {
-            if( print_modulo >= 0 ) printf( "Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
+            if( print_modulo >= 0 ) std::printf( "Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
             break;
         }
         
         if( denominator_is_small ) {
-            if( print_modulo >= 0 ) printf( "Gradient energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
+            if( print_modulo >= 0 ) std::printf( "Gradient energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
                                             (long double)d_Ad, (long double)z_r, (long double)threshold*threshold );
             break;
         }
@@ -348,7 +348,7 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
     
     
     if( print_modulo >= 0 ) 
-        printf( "Final residual after %d of max. %d iterations: %.9Le (%.9Le)\n",
+        std::printf( "Final residual after %d of max. %d iterations: %.9Le (%.9Le)\n",
                 K, N, (long double)(z_r), (long double) threshold*threshold );
 
     
@@ -500,7 +500,7 @@ void ConjugateGradientSolverCSR_SSOR(
         /* printing information */
 
         if( print_modulo > 0 and K % print_modulo == 0 ) 
-            printf( "Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+            std::printf( "Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
                     K, N, (long double)(z_r), (long double) threshold*threshold );
         
         /* Check whether residual is small */
@@ -534,12 +534,12 @@ void ConjugateGradientSolverCSR_SSOR(
         bool denominator_is_small    = sqrt(absolute(d_Ad)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) {
-            if( print_modulo >= 0 ) printf( "Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
+            if( print_modulo >= 0 ) std::printf( "Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
             break;
         }
         
         if( denominator_is_small ) {
-            if( print_modulo >= 0 ) printf( "Gradient energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
+            if( print_modulo >= 0 ) std::printf( "Gradient energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
                                             (long double)d_Ad, (long double)z_r, (long double)threshold*threshold );
             break;
         }
@@ -609,7 +609,7 @@ void ConjugateGradientSolverCSR_SSOR(
     }
     
     if( print_modulo >= 0 ) 
-        printf( "Final residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+        std::printf( "Final residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
                 K, N, (long double)(z_r), (long double) threshold*threshold );
 
     
@@ -744,7 +744,7 @@ void ConjugateResidualSolverCSR(
         /* printing information */
 
         if( print_modulo > 0 and K % print_modulo == 0 ) 
-            printf( "Square Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+            std::printf( "Square Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
                     K, N, (long double)(Ad_r), (long double) threshold*threshold );
 
         
@@ -767,12 +767,12 @@ void ConjugateResidualSolverCSR(
         bool denominator_is_small    = sqrt(absolute(Ad_Ad)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) {
-            if( print_modulo >= 0 ) printf( "Gradient double energy is unreasonable with %.9Le\n", (long double)Ad_Ad );
+            if( print_modulo >= 0 ) std::printf( "Gradient double energy is unreasonable with %.9Le\n", (long double)Ad_Ad );
             break;
         }
         
         if( denominator_is_small ) {
-            if( print_modulo >= 0 ) printf( "Gradient double energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
+            if( print_modulo >= 0 ) std::printf( "Gradient double energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
                                     (long double)Ad_Ad, (long double)Ad_r, (long double)threshold*threshold );
             break;
         }
@@ -829,7 +829,7 @@ void ConjugateResidualSolverCSR(
     }
     
     if( print_modulo >= 0 ) 
-        printf( "Final residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+        std::printf( "Final residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
                 K, N, (long double)(Ad_r), (long double) threshold*threshold );
 
     
@@ -952,7 +952,7 @@ void ConjugateResidualSolverCSR_textbook(
         /* printing information */
 
         if( print_modulo > 0 and K % print_modulo == 0 )
-            printf( "Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+            std::printf( "Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
                     K, N, (long double)(Ar_r), (long double) threshold*threshold );
         
         /* Check whether res is small */
@@ -973,12 +973,12 @@ void ConjugateResidualSolverCSR_textbook(
         bool denominator_is_small    = sqrt(absolute(Ad_Ad)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) {
-            if( print_modulo >= 0 ) printf( "Gradient energy is unreasonable with %.9Le\n", (long double)Ar_r );
+            if( print_modulo >= 0 ) std::printf( "Gradient energy is unreasonable with %.9Le\n", (long double)Ar_r );
             break;
         }
         
         if( denominator_is_small ) {
-            if( print_modulo >= 0 ) printf( "Gradient energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
+            if( print_modulo >= 0 ) std::printf( "Gradient energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
                                             (long double)Ad_Ad, (long double)Ar_r, (long double)threshold*threshold );
             break;
         }
@@ -1033,7 +1033,7 @@ void ConjugateResidualSolverCSR_textbook(
     }
     
     if( print_modulo >= 0 ) 
-        printf( "Final residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
+        std::printf( "Final residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
                 K, N, (long double)(Ar_r), (long double) threshold*threshold );
 
     
@@ -1273,14 +1273,14 @@ void MINRESCSR(
 
         
         if( print_modulo > 0 and K % print_modulo == 0 )
-            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)eta, (long double) threshold );
+            std::printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)eta, (long double) threshold );
         
         K++;
         
     }
     
     if( print_modulo >= 0 ) 
-        printf("Final residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)eta, (long double) threshold );
+        std::printf("Final residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)eta, (long double) threshold );
 
     
     delete[] ( v0 );
@@ -1469,14 +1469,14 @@ void WHATEVER(
             
         
         if( print_modulo > 0 and K % print_modulo == 0 ) 
-            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), (long double) threshold );
+            std::printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), (long double) threshold );
         
         K++;
         
     }
     
     if( print_modulo >= 0 ) 
-        printf("Final residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), (long double) threshold );
+        std::printf("Final residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), (long double) threshold );
 
     
     delete[] (  r );
@@ -1634,7 +1634,7 @@ void WHATEVER(
 //     
 //     while( iter < maxiter ) {
 //         
-//         printf("@@@@@@@@@@ Uzawa-CRM Iteration %d / %d: unorm is %f\n", iter, maxiter, vectornorm(pdim,u) );
+//         std::printf("@@@@@@@@@@ Uzawa-CRM Iteration %d / %d: unorm is %f\n", iter, maxiter, vectornorm(pdim,u) );
 //         
 //         /* Start or Restart condition check */
 //         if( iter == 0 or ( false && iter % 1000 == 0 ) ) {
@@ -1705,10 +1705,10 @@ void WHATEVER(
 // 
 //         Float residualnorm = vectornorm( pdim, r );
 // 
-//         printf( "@@@@@@@@@@ Residual norm: %f\n", residualnorm );
+//         std::printf( "@@@@@@@@@@ Residual norm: %f\n", residualnorm );
 //         
 //         if( residualnorm < threshold ) {
-//             printf("@@@@@@@@@@ Threshold deceeded.\n");
+//             std::printf("@@@@@@@@@@ Threshold deceeded.\n");
 //             break;
 //         }
 //         
@@ -1879,8 +1879,8 @@ void WHATEVER(
 //         
 //     }
 //     
-// //     printf( "@@@@@@@@@@ Residual sigma %f \n", vectornorm( M, ressigma ) );
-// //     printf( "@@@@@@@@@@ Residual u     %f \n", vectornorm( pdim, resu  ) );
+// //     std::printf( "@@@@@@@@@@ Residual sigma %f \n", vectornorm( M, ressigma ) );
+// //     std::printf( "@@@@@@@@@@ Residual u     %f \n", vectornorm( pdim, resu  ) );
 //     
 //     if(true){
 //     
@@ -1905,8 +1905,8 @@ void WHATEVER(
 //         addscaled( r, (const Float*)tempN, pdim, -1. );
 //         FREEZE( r, nShadowedU, shadowU );
 //         
-// //         printf( "@@@@@@@@@@ Other residual sigma %f \n", vectornorm( M, ressigma ) );
-// //         printf( "@@@@@@@@@@ Other residual u     %f \n", vectornorm( pdim, resu  ) );
+// //         std::printf( "@@@@@@@@@@ Other residual sigma %f \n", vectornorm( M, ressigma ) );
+// //         std::printf( "@@@@@@@@@@ Other residual u     %f \n", vectornorm( pdim, resu  ) );
 //     
 //     }
 //     
@@ -1924,8 +1924,8 @@ void WHATEVER(
 //                                     
 //         sub( ressigma, (const Float*)tempM, M );
 //         
-//         printf( "@@@@@@@@@@ One more Residual sigma %f \n", vectornorm( M, ressigma ) );
-//         printf( "@@@@@@@@@@ One more Residual u     %f \n", vectornorm( pdim, resu  ) );
+//         std::printf( "@@@@@@@@@@ One more Residual sigma %f \n", vectornorm( M, ressigma ) );
+//         std::printf( "@@@@@@@@@@ One more Residual u     %f \n", vectornorm( pdim, resu  ) );
 //     
 //     }
 //     
@@ -1957,7 +1957,7 @@ void WHATEVER(
 //     delete[] ( csrrowsBt );
 //     delete[] ( csrcolumnsBt );
 //     
-//     printf( "@@@@@@@@@@ Exit: %f %f\n", vectornorm( M, ressigma ), vectornorm( pdim, resu  ) );
+//     std::printf( "@@@@@@@@@@ Exit: %f %f\n", vectornorm( M, ressigma ), vectornorm( pdim, resu  ) );
 //     
 //     
 // }                            
@@ -2106,7 +2106,7 @@ void WHATEVER(
 //     
 //     while( iter < maxiter ) {
 //         
-//         printf("@@@@@@@@@@ Uzawa-CRM Iteration %d / %d: unorm is %f\n", iter, maxiter, vectornorm(pdim,u) );
+//         std::printf("@@@@@@@@@@ Uzawa-CRM Iteration %d / %d: unorm is %f\n", iter, maxiter, vectornorm(pdim,u) );
 //         
 //         /* Start or Restart condition check */
 //         if( iter == 0 or ( iter % 1000 == 0 ) )
@@ -2156,10 +2156,10 @@ void WHATEVER(
 // 
 //         Float residualnorm = vectornorm( pdim, r );
 // 
-//         printf( "@@@@@@@@@@ Residual norm: %f\n", residualnorm );
+//         std::printf( "@@@@@@@@@@ Residual norm: %f\n", residualnorm );
 //         
 //         if( residualnorm < threshold ) {
-//             printf("@@@@@@@@@@ Threshold deceeded.\n");
+//             std::printf("@@@@@@@@@@ Threshold deceeded.\n");
 //             break;
 //         }
 //         
@@ -2318,8 +2318,8 @@ void WHATEVER(
 //         
 //     }
 //     
-// //     printf( "@@@@@@@@@@ Residual sigma %f \n", vectornorm( M, ressigma ) );
-// //     printf( "@@@@@@@@@@ Residual u     %f \n", vectornorm( pdim, resu  ) );
+// //     std::printf( "@@@@@@@@@@ Residual sigma %f \n", vectornorm( M, ressigma ) );
+// //     std::printf( "@@@@@@@@@@ Residual u     %f \n", vectornorm( pdim, resu  ) );
 //     
 //     if(true){
 //     
@@ -2344,8 +2344,8 @@ void WHATEVER(
 //         addscaled( r, (const Float*)tempN, pdim, -1. );
 //         FREEZE( r, nShadowedU, shadowU );
 //         
-// //         printf( "@@@@@@@@@@ Other residual sigma %f \n", vectornorm( M, ressigma ) );
-// //         printf( "@@@@@@@@@@ Other residual u     %f \n", vectornorm( pdim, resu  ) );
+// //         std::printf( "@@@@@@@@@@ Other residual sigma %f \n", vectornorm( M, ressigma ) );
+// //         std::printf( "@@@@@@@@@@ Other residual u     %f \n", vectornorm( pdim, resu  ) );
 //     
 //     }
 //     
@@ -2363,8 +2363,8 @@ void WHATEVER(
 //                                     
 //         sub( ressigma, (const Float*)tempM, M );
 //         
-//         printf( "@@@@@@@@@@ One more Residual sigma %f \n", vectornorm( M, ressigma ) );
-//         printf( "@@@@@@@@@@ One more Residual u     %f \n", vectornorm( pdim, resu  ) );
+//         std::printf( "@@@@@@@@@@ One more Residual sigma %f \n", vectornorm( M, ressigma ) );
+//         std::printf( "@@@@@@@@@@ One more Residual u     %f \n", vectornorm( pdim, resu  ) );
 //     
 //     }
 //     
@@ -2396,7 +2396,7 @@ void WHATEVER(
 //     delete[] ( csrrowsBt );
 //     delete[] ( csrcolumnsBt );
 //     
-//     printf( "@@@@@@@@@@ Exit: %f %f\n", vectornorm( M, ressigma ), vectornorm( pdim, resu  ) );
+//     std::printf( "@@@@@@@@@@ Exit: %f %f\n", vectornorm( M, ressigma ), vectornorm( pdim, resu  ) );
 //     
 //     
 // }         
