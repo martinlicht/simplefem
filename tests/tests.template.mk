@@ -26,5 +26,4 @@ context:=$(shell basename $$(pwd))
 build: $(context).tests
 
 include ../tests.rules.mk
-# include ../tests.run.mk
 

@@ -41,6 +41,8 @@ else
 $(error No linking mode recognized: $(LINKINGTYPE)) 
 endif
 
+
+.PHONY: $($(context).depdir)
 $($(context).depdir):
 	@mkdir -p $@
 
@@ -66,7 +68,6 @@ $($(context).outs): $(contextdir)/%.out: $(contextdir)/%.cpp | $($(context).depd
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -std=c++17 -MM $(mycontextdir)/$*.cpp -MT $@ -MF $($(mycontext).depdir)/$*.d
 	@$(CXX) $(CXXFLAGS_EXECUTABLE) $(CPPFLAGS) $< $($(mycontext).include) $($(mycontext).rpath) $($(mycontext).mylib) -o $@ $(LDLIBS)
 
-
 -include $($(context).dependencies)
 
 $($(context).outs): $(contextdir)/%.out: $(contextdir)/makefile 
@@ -91,26 +92,20 @@ $(context).runs        := $(patsubst %.cpp,%.run,$($(context).sources))
 $(context).silent_runs := $(patsubst %.cpp,%.silent_run,$($(context).sources))
 
 
-$($(context).runs): %.run : %.out
-	./$< 
+run: $(context).run
 
 $(context).run: $($(context).runs)
 
-run: $(context).run
+$($(context).runs): %.run : %.out
+	./$< 
 
+
+silent_run: $(context).silent_run
+
+$(context).silent_run: $($(context).silent_runs)
 
 $($(context).silent_runs): %.silent_run : %.out
 	./$< > /dev/null 
 
 # 2> /dev/null
 
-$(context).silent_run: $($(context).silent_runs)
-
-silent_run: $(context).silent_run
-
-
-
-
-# $(context).runs        := $(patsubst %.out,%.run,$($(context).executables))
-
-# .PHONY: %.run
