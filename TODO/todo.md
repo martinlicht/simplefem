@@ -1,5 +1,4 @@
 
-
 # TODO general
 
 The complexity of the project is at a point
@@ -48,6 +47,9 @@ to a function invocation. No further frills.
 Use the custom assert macro throughout the project.
 
 
+# (HIGH) TODO file names 
+
+???Correct the file names in the VTK output of the different mesh and fem test programs ???
 
 
 
@@ -157,9 +159,6 @@ Rationale: this improves readability.
 
 
 
-# (HIGH) TODO short term
-
-???Correct the file names in the VTK output of the different mesh and fem test programs ???
 
 
 
@@ -361,6 +360,33 @@ Except for some particular special cases,
 we can and should turn them into non-member operators.
 
 
+
+# (LOW) Gerschgorin circles for Dense and Sparse Matrices
+  
+  implement the gerschgorin row/column circles and the corresponding maximal estimates 
+
+
+
+
+# (LOW) Different elementary solvers 
+  
+  Implement solution algorithms for special matrix types:
+  - diagonal solve 
+  - left/right triagonal solve 
+  - unit left/right/ triagonal solve 
+  - averages between left and right solves 
+  
+# (LOW) Check diagonal and triangular
+
+# (LOW) Implement LU decomposition with different strategies 
+  
+  The LU decomposition needs to be implemented 
+  with different pivoting strategies:
+  row, column, or full pivot. 
+
+  
+  
+  
 
 
 
