@@ -4,11 +4,121 @@
 #include <ostream>
 #include <string>
 
-#include "logger.hpp"
-#include "prefixbuffer.hpp"
+// #include "logger.hpp"
+// #include "prefixbuffer.hpp"
 
 /* forward declarations */
 std::string protocolprefixnow();
+
+
+class Logger
+{
+    private:
+        std::ostream& internalstream;
+        std::string prefix;
+        bool pad_newline_if_there_is_none;
+        std::string filename;
+        int linenumber;
+    
+        bool print_file_and_line = false;
+        std::stringstream internalbuffer;
+        
+    public:
+    
+        explicit inline Logger( 
+            std::ostream& os,
+            const std::string& prefix = "",
+            const bool do_newline = false,
+            const char* filename = "UNKNOWN",
+            const int linenumber = -1
+        )
+        : internalstream( os ), prefix( prefix ), pad_newline_if_there_is_none( do_newline )
+        {}
+
+        inline ~Logger()
+        {
+            
+            const auto str = internalbuffer.str();
+            
+            bool use_prefix_next  = true;
+            
+            if(true)
+            {
+                
+                if( str.empty() )
+                    internalstream << prefix;
+                
+                for( int c = 0; c < str.size(); c++ )
+                {
+
+                    if( use_prefix_next ) { 
+                        use_prefix_next = false;
+                        internalstream << prefix;
+                    }
+                    
+                    auto character = str.at(c);
+                    
+                    internalstream << character;
+
+                    if( character == '\n' ) 
+                    { 
+                        internalstream.flush();
+                        use_prefix_next = true;
+                    }
+                    
+                }
+                
+                if( pad_newline_if_there_is_none && ( str.empty() || str.back() != '\n' ) )
+                    internalstream << nl;
+
+                if( print_file_and_line ) {
+                    internalstream << prefix;
+                    // internalstream << "\e[91m" << filename << ':' << linenumber << "\e[39m" << '\n';
+                    internalstream << "" << filename << ':' << linenumber << '\n';
+                }
+
+                #ifndef NDEBUG
+                internalstream.flush();
+                #endif
+
+            }
+            
+        }
+
+        template<class T>
+        Logger& operator<<( const T& t )
+        {
+            internalbuffer << t;
+            return *this;
+        }
+        
+        Logger& operator<<( std::ostream& (*const f)(std::ostream&) )
+        {
+            f( internalbuffer );
+            return *this;
+        }
+        
+};
+
+
+
+
+
+template< typename L, typename... Params >
+void printf_into_logger( L logger, const char* formatstring, Params... args )
+{
+    std::size_t length = std::snprintf(nullptr, 0, formatstring, args... ) + 1;
+    char* str = new char[length];
+    std::snprintf( str, length, formatstring, args... );
+    
+    logger << str;
+
+    delete[] str;
+}
+
+
+
+
 
 
 
@@ -18,8 +128,8 @@ std::string protocolprefixnow();
 //     LOG << "This is a short message with a number: " << 5;      
 //     ERR << "This is an error message.";      
 
-#define LOG     Logger( std::cout, protocolprefixnow(), "", __FILE__, __LINE__ )
-#define ERR     Logger( std::cerr, protocolprefixnow(), "", __FILE__, __LINE__ )
+#define LOG     Logger( std::cout, protocolprefixnow(), false, __FILE__, __LINE__ )
+#define ERR     Logger( std::cerr, protocolprefixnow(), false, __FILE__, __LINE__ )
 
 #else 
 
@@ -45,13 +155,12 @@ std::string protocolprefixnow();
 //     ALERT "This is an alert"
 //     ERROR "This is an error"
 
-#define NOTE    Logger( std::cout, protocolprefixnow(), "\n", __FILE__, __LINE__ ) <<
-#define NOTICE  Logger( std::cout, protocolprefixnow(), "\n", __FILE__, __LINE__ ) <<
+#define NOTE    Logger( std::cout, protocolprefixnow(), true, __FILE__, __LINE__ ) <<
+#define NOTICE  Logger( std::cout, protocolprefixnow(), true, __FILE__, __LINE__ ) <<
 
-#define WARN    Logger( std::cerr, protocolprefixnow(), "\n", __FILE__, __LINE__ ) <<
-#define WARNING Logger( std::cerr, protocolprefixnow(), "\n", __FILE__, __LINE__ ) <<
-#define ALERT   Logger( std::cerr, protocolprefixnow(), "\n", __FILE__, __LINE__ ) <<
-#define ERROR   Logger( std::cerr, protocolprefixnow(), "\n", __FILE__, __LINE__ ) <<
+#define WARNING Logger( std::cerr, protocolprefixnow(), true, __FILE__, __LINE__ ) <<
+#define ALERT   Logger( std::cerr, protocolprefixnow(), true, __FILE__, __LINE__ ) <<
+#define ERROR   Logger( std::cerr, protocolprefixnow(), true, __FILE__, __LINE__ ) <<
 
 
 
