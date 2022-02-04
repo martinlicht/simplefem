@@ -23,7 +23,7 @@ components+=fem
 
 
 
-%.out: ./makefile tests.rules.mk ../common.compile.mk
+%.out: ./makefile tests.rules.mk tests.affices.mk ../common.compile.mk
 
 
 depdir := .deps
