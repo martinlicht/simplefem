@@ -10,7 +10,7 @@
 
 // Solves the sparse matrix system with conjugate gradients
 
-void ConjugateGradientSolverCSR( 
+int ConjugateGradientSolverCSR( 
     const int N, 
     Float* x, 
     const Float* b, 
@@ -20,7 +20,7 @@ void ConjugateGradientSolverCSR(
     int print_modulo
 );
 
-void ConjugateGradientSolverCSR_DiagonalPreconditioner( 
+int ConjugateGradientSolverCSR_DiagonalPreconditioner( 
     const int N, 
     Float* x, 
     const Float* b, 
@@ -32,7 +32,7 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
 );
 
 
-void ConjugateGradientSolverCSR_SSOR( 
+int ConjugateGradientSolverCSR_SSOR( 
     const int N, 
     Float* x, 
     const Float* b, 
@@ -47,7 +47,7 @@ void ConjugateGradientSolverCSR_SSOR(
 
 // Solves the sparse matrix system with conjugate residuals
 
-void ConjugateResidualSolverCSR( 
+int ConjugateResidualSolverCSR( 
     const int N, 
     Float* x, 
     const Float* b, 
@@ -57,7 +57,7 @@ void ConjugateResidualSolverCSR(
     int print_modulo
 );
 
-void ConjugateResidualSolverCSR_textbook( 
+int ConjugateResidualSolverCSR_textbook( 
     const int N, 
     Float* x, 
     const Float* b, 
@@ -70,7 +70,7 @@ void ConjugateResidualSolverCSR_textbook(
 
 
 
-void MINRESCSR( 
+int MINRESCSR( 
     const int N, 
     Float* __restrict__ x, 
     const Float* __restrict__ b, 
@@ -82,7 +82,7 @@ void MINRESCSR(
 
 
 
-void WHATEVER( 
+int WHATEVER( 
     const int N, 
     Float* __restrict__ x, 
     const Float* __restrict__ b, 
