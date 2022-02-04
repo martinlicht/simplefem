@@ -21,6 +21,7 @@ int main()
     LOGPRINTF( "%i%c%d\n", 1, '-', 3 );
     PING;
     // openContext();
+    NOTE "";
     NOTE "Notice";
     WARNING "Warning";
     PING;

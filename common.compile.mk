@@ -10,7 +10,14 @@
 # 	- CPPFLAGS
 # 	- LDLIBS
 # 
+# Note that these include several preprocessor variables
+# Furthermore, it sets:
 # 
+#   - LINKINGTYPE
+# 
+#  
+
+
 
 
 
@@ -21,41 +28,6 @@
 FLAG_CXX := GCC
 # FLAG_CXX := ICC
 
-# Do you want to ENABLE the use of tcmalloc?
-# Uncomment the following line to enable tcmalloc
-# FLAG_USE_TCMALLOC=yes
-
-# Do you want to ENABLE excessive warning options?
-# Uncomment the following line to enable excessive warning options
-# FLAG_EXCESSIVE_WARNINGS=yes
-
-# Do you want to ENABLE the use of openMP?
-# Uncomment the following line to enable compilation with openMP
-# FLAG_ENABLE_OPENMP=yes
-
-# Do you want to ENABLE the use of openMP?
-# Uncomment the following line to enable compilation with openMP
-# FLAG_USE_BACKTRACER=yes
-
-# Do you want to DISABLE embedding of Debug information?
-# Uncomment the following line to have no debug information included
-# FLAG_NO_DEBUGINFO=yes
-
-# Do you want to DISABLE checking of meshes?
-# Uncomment the following line to disable extensive check routines for meshes
-FLAG_DISABLE_CHECK_MESHES=yes
-
-# Do you want to DISABLE excpetion handling?
-# Uncomment the following line to disable exception handling
-# FLAG_NO_EXCEPTIONS=yes
-
-# Do you want to enable static analysis during the compilation process
-# Uncomment the following line to enable static analysis
-# FLAG_DO_STATICANALYSIS=yes
-
-# Do you want to ENABLE the standard library debugging flags 
-# Uncomment the following line to enable the standard library debugging flags 
-# FLAG_DISABLE_STDLIBDEBUG=yes
 
 # Do you want to DISABLE the general assert macro?
 # Uncomment the following line to disable the general assert macro
@@ -65,31 +37,67 @@ FLAG_DISABLE_CHECK_MESHES=yes
 # Uncomment the following line to use the standard library assert macro 
 # FLAG_USE_ORIGINAL_ASSERT_MACRO=yes
 
+# Do you want to DISABLE checking of meshes?
+# Uncomment the following line to disable extensive check routines for meshes
+FLAG_DISABLE_CHECK_MESHES=yes
+
 # Do you want to DISABLE the custom logging framework
 # in favor of standard library routines?
 # Uncomment the following line for that
 # FLAG_USE_PRIMITIVE_LOGGING=yes
 
-# Do you want to ENABLE profile generation? 
-# Uncomment the following line to enable profile generation at every run.
-# FLAG_DO_PROFILE=yes
+# Do you want to ENABLE the standard library debugging flags 
+# Uncomment the following line to enable the standard library debugging flags 
+# FLAG_DISABLE_STDLIBDEBUG=yes
 
-# Do you want to ENABLE the Clang sanitizer?
-# Uncomment the following line to enable compilation with the Clang sanitizer
-# FLAG_DO_USE_SANITIZER=yes
+# Do you want to DISABLE excpetion handling?
+# Uncomment the following line to disable exception handling
+# FLAG_NO_EXCEPTIONS=yes
 
 # Do you want to ENABLE extended precision?
 # Uncomment the following line to switch from double precision to extended precision
 # FLAG_DO_USE_EXTENDED_PRECISION=yes 
 # := -DEXTENDED_PRECISION
 
-# Do you want to strip unused symbols from the executables?
-# Uncomment the following line to accomplish this
-# FLAG_DO_STRIP=yes
+# Do you want to ENABLE excessive warning options?
+# Uncomment the following line to enable excessive warning options
+# FLAG_EXCESSIVE_WARNINGS=yes
+
+# Do you want to ENABLE the Clang sanitizer?
+# Uncomment the following line to enable compilation with the Clang sanitizer
+# FLAG_DO_USE_SANITIZER=yes
+
+# Do you want to enable static analysis during the compilation process
+# Uncomment the following line to enable static analysis
+# FLAG_DO_STATICANALYSIS=yes
 
 # Do you want to compile with all optimization flags enabled?
 # Uncomment the following line to have this done so
 # FLAG_DO_OPTIMIZE=yes
+
+# Do you want to ENABLE the use of openMP?
+# Uncomment the following line to enable compilation with openMP
+# FLAG_ENABLE_OPENMP=yes
+
+# Do you want to ENABLE the use of tcmalloc?
+# Uncomment the following line to enable tcmalloc
+# FLAG_USE_TCMALLOC=yes
+
+# Do you want to DISABLE embedding of Debug information?
+# Uncomment the following line to have no debug information included
+# FLAG_NO_DEBUGINFO=yes
+
+# Do you want to ENABLE the backtracer for debugging?
+# Uncomment the following line to enable backtracing
+# FLAG_USE_BACKTRACER=yes
+
+# Do you want to strip unused symbols from the executables?
+# Uncomment the following line to accomplish this
+# FLAG_DO_STRIP=yes
+
+# Do you want to ENABLE profile generation? 
+# Uncomment the following line to enable profile generation at every run.
+# FLAG_DO_PROFILE=yes
 
 
 
@@ -111,23 +119,23 @@ endif
 .PHONY: parameters
 parameters:
 	$(info FLAG_CXX                       = $(FLAG_CXX) )
-	$(info FLAG_USE_TCMALLOC              = $(FLAG_USE_TCMALLOC) ) 
-	$(info FLAG_EXCESSIVE_WARNINGS        = $(FLAG_EXCESSIVE_WARNINGS) ) 
-	$(info FLAG_ENABLE_OPENMP             = $(FLAG_ENABLE_OPENMP) ) 
-	$(info FLAG_USE_BACKTRACER            = $(FLAG_USE_BACKTRACER) ) 
-	$(info FLAG_NO_DEBUGINFO              = $(FLAG_NO_DEBUGINFO) ) 
-	$(info FLAG_DISABLE_CHECK_MESHES      = $(FLAG_DISABLE_CHECK_MESHES) ) 
-	$(info FLAG_NO_EXCEPTIONS             = $(FLAG_NO_EXCEPTIONS) ) 
-	$(info FLAG_DO_STATICANALYSIS         = $(FLAG_DO_STATICANALYSIS) ) 
-	$(info FLAG_DISABLE_STDLIBDEBUG       = $(FLAG_DISABLE_STDLIBDEBUG) ) 
 	$(info FLAG_DISABLE_ASSERTIONS        = $(FLAG_DISABLE_ASSERTIONS) ) 
 	$(info FLAG_USE_ORIGINAL_ASSERT_MACRO = $(FLAG_USE_ORIGINAL_ASSERT_MACRO) )
+	$(info FLAG_DISABLE_CHECK_MESHES      = $(FLAG_DISABLE_CHECK_MESHES) ) 
 	$(info FLAG_USE_PRIMITIVE_LOGGING     = $(FLAG_USE_PRIMITIVE_LOGGING) )
-	$(info FLAG_DO_PROFILE                = $(FLAG_DO_PROFILE) ) 
-	$(info FLAG_DO_USE_SANITIZER          = $(FLAG_DO_USE_SANITIZER) ) 
+	$(info FLAG_DISABLE_STDLIBDEBUG       = $(FLAG_DISABLE_STDLIBDEBUG) ) 
+	$(info FLAG_NO_EXCEPTIONS             = $(FLAG_NO_EXCEPTIONS) ) 
 	$(info FLAG_DO_USE_EXTENDED_PRECISION = $(FLAG_DO_USE_EXTENDED_PRECISION) ) 
-	$(info FLAG_DO_STRIP                  = $(FLAG_DO_STRIP) ) 
+	$(info FLAG_EXCESSIVE_WARNINGS        = $(FLAG_EXCESSIVE_WARNINGS) ) 
+	$(info FLAG_DO_USE_SANITIZER          = $(FLAG_DO_USE_SANITIZER) ) 
+	$(info FLAG_DO_STATICANALYSIS         = $(FLAG_DO_STATICANALYSIS) ) 
 	$(info FLAG_DO_OPTIMIZE               = $(FLAG_DO_OPTIMIZE) ) 
+	$(info FLAG_ENABLE_OPENMP             = $(FLAG_ENABLE_OPENMP) ) 
+	$(info FLAG_USE_TCMALLOC              = $(FLAG_USE_TCMALLOC) ) 
+	$(info FLAG_NO_DEBUGINFO              = $(FLAG_NO_DEBUGINFO) ) 
+	$(info FLAG_USE_BACKTRACER            = $(FLAG_USE_BACKTRACER) ) 
+	$(info FLAG_DO_STRIP                  = $(FLAG_DO_STRIP) ) 
+	$(info FLAG_DO_PROFILE                = $(FLAG_DO_PROFILE) ) 
 	@true
 
 
@@ -563,7 +571,7 @@ endif
 
 ifeq ($(FLAG_CXX),CLANG)
 
-  CXXFLAGS_DIAGFORMAT := -fdiagnostics-show-template-tree
+  CXXFLAGS_DIAGNOSISFORMAT := -fdiagnostics-show-template-tree
 
 endif
 
@@ -591,7 +599,7 @@ endif
 
 CXXFLAGS := 
 CXXFLAGS += ${CXXFLAGS_LANG}
-CXXFLAGS += ${CXXFLAGS_DIAGFORMAT}
+CXXFLAGS += ${CXXFLAGS_DIAGNOSISFORMAT}
 CXXFLAGS += ${CXXFLAGS_WARNINGS}
 CXXFLAGS += ${CXXFLAGS_STATICANALYSER}
 CXXFLAGS += ${CXXFLAGS_DEBUG}
