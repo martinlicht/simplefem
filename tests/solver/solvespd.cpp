@@ -33,6 +33,10 @@ int main()
             ConvergenceTable contable_sol("L2 Error");
             ConvergenceTable contable_res("L2 Residual");
             ConvergenceTable contable_num("Iteration percentage");
+
+            contable_sol.print_transpose_instead_of_standard = true;
+            contable_res.print_transpose_instead_of_standard = true;
+            contable_num.print_transpose_instead_of_standard = true;
             
             bool do_cgmpp      = false;
             bool do_crmpp_expl = false;

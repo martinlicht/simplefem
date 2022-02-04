@@ -1,8 +1,13 @@
 #ifndef INCLUDEGUARD_LOGGING_HPP
 #define INCLUDEGUARD_LOGGING_HPP
 
-#include <ostream>
+#include <iostream>
 #include <string>
+#include <sstream>
+
+#include "basic.hpp"
+
+
 
 // #include "logger.hpp"
 // #include "prefixbuffer.hpp"
@@ -42,46 +47,44 @@ class Logger
             
             bool use_prefix_next  = true;
             
-            if(true)
-            {
-                
-                if( str.empty() )
-                    internalstream << prefix;
-                
-                for( int c = 0; c < str.size(); c++ )
-                {
-
-                    if( use_prefix_next ) { 
-                        use_prefix_next = false;
-                        internalstream << prefix;
-                    }
-                    
-                    auto character = str.at(c);
-                    
-                    internalstream << character;
-
-                    if( character == '\n' ) 
-                    { 
-                        internalstream.flush();
-                        use_prefix_next = true;
-                    }
-                    
-                }
-                
-                if( pad_newline_if_there_is_none && ( str.empty() || str.back() != '\n' ) )
-                    internalstream << nl;
-
-                if( print_file_and_line ) {
-                    internalstream << prefix;
-                    // internalstream << "\e[91m" << filename << ':' << linenumber << "\e[39m" << '\n';
-                    internalstream << "" << filename << ':' << linenumber << '\n';
-                }
-
-                #ifndef NDEBUG
-                internalstream.flush();
-                #endif
-
+            if( str.empty() ) {
+                internalstream << prefix;
+                std::cout << "\nEMPTY\n";
+                return;
             }
+            
+            for( int c = 0; c < str.size(); c++ )
+            {
+
+                if( use_prefix_next ) { 
+                    use_prefix_next = false;
+                    internalstream << prefix;
+                }
+                
+                auto character = str.at(c);
+                
+                internalstream << character;
+
+                if( character == '\n' ) 
+                { 
+                    internalstream.flush();
+                    use_prefix_next = true;
+                }
+                
+            }
+            
+            if( pad_newline_if_there_is_none && ( str.empty() || str.back() != '\n' ) )
+                internalstream << nl;
+
+            if( print_file_and_line ) {
+                internalstream << prefix;
+                // internalstream << "\e[91m" << filename << ':' << linenumber << "\e[39m" << '\n';
+                internalstream << "" << filename << ':' << linenumber << '\n';
+            }
+
+            #ifndef NDEBUG
+            internalstream.flush();
+            #endif
             
         }
 
