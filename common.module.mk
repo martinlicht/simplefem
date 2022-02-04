@@ -20,8 +20,9 @@ libraryobject         := lib$(dirname).o
 sharedlibrary         := lib$(dirname).so
 staticlibrary         := lib$(dirname).a
 
+$(depdir):
+	@mkdir -p $@
 
-$(depdir): ; @mkdir -p $@
 
 .PHONY: make_dependencies
 make_dependencies: $(depdir)
@@ -79,7 +80,7 @@ $(staticlibrary): $(libraryobject)
 -include $(depdir)/.all.d
 -include $(dependencies)
 
-*.o .all.o: ./makefile ../makefile ../common.compile.mk ../common.rules.mk ../common.upkeep.mk
+*.o .all.o: ./makefile ../makefile ../common.compile.mk ../common.module.mk ../common.upkeep.mk
 
 
 .PHONY: buildobjects buildso builda

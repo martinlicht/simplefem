@@ -232,9 +232,15 @@ void HodgeConjugateResidualSolverCSR_diagonal(
                     k, N, (long double)(Md_r), (long double) threshold*threshold );
         
         /* Check whether res is small */
-                
+        
+        bool residualenergy_is_unreasonable = not std::isfinite(Md_r) or Md_r < 0.;
         bool residualenergy_is_small = absolute(Md_r) < threshold*threshold;
         
+        if( residualenergy_is_unreasonable ) {
+            if( print_modulo >= 0 ) printf( "BREAKDOWN: Residual energy is unreasonable with %.9Le\n", (long double)Md_r );
+            break;
+        }
+
         if( residualenergy_is_small )
             break;
         
@@ -244,7 +250,7 @@ void HodgeConjugateResidualSolverCSR_diagonal(
         bool denominator_is_small    = sqrt(absolute(Md_Md)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) {
-            std::printf( "Gradient double energy is unreasonable with %.9Le\n", (long double)Md_Md );
+            if( print_modulo >= 0 ) std::printf( "BREAKDOWN: Gradient double energy is unreasonable with %.9Le\n", (long double)Md_Md );
             break;
         }
         
@@ -577,6 +583,13 @@ void HodgeConjugateResidualSolverCSR_SSOR(
         
         /* Check whether res is small */
                 
+        bool residualenergy_is_unreasonable = not std::isfinite(Md_r) or Md_r < 0.;
+
+        if( residualenergy_is_unreasonable ) {
+            if( print_modulo >= 0 ) printf( "BREAKDOWN: Residual energy is unreasonable with %.9Le\n", (long double)Md_r );
+            break;
+        }
+
         bool residualenergy_is_small = absolute(Md_r) < threshold*threshold;
         
         if( residualenergy_is_small )
@@ -588,7 +601,7 @@ void HodgeConjugateResidualSolverCSR_SSOR(
         bool denominator_is_small    = sqrt(absolute(Md_Md)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) {
-            std::printf( "Gradient double energy is unreasonable with %.9Le\n", (long double)Md_Md );
+            std::printf( "BREAKDOWN: Gradient double energy is unreasonable with %.9Le\n", (long double)Md_Md );
             break;
         }
         
@@ -899,6 +912,12 @@ void HodgeConjugateResidualSolverCSR_textbook(
         
         /* Check whether res is small */
                 
+        bool residualenergy_is_unreasonable = not std::isfinite(Mr_r) or Mr_r < 0.;
+        
+        if( residualenergy_is_unreasonable ) {
+            if( print_modulo >= 0 ) printf( "BREAKDOWN: Residual energy is unreasonable with %.9Le\n", (long double)Mr_r );
+            break;
+        }
         bool residualenergy_is_small = absolute(Mr_r) < threshold*threshold;
         
         if( residualenergy_is_small )
@@ -910,7 +929,7 @@ void HodgeConjugateResidualSolverCSR_textbook(
         bool denominator_is_small    = sqrt(absolute(Md_Md)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) {
-            if( print_modulo >= 0 ) std::printf( "Gradient double energy is unreasonable with %.9Le\n", (long double)Md_Md );
+            if( print_modulo >= 0 ) std::printf( "BREAKDOWN: Gradient double energy is unreasonable with %.9Le\n", (long double)Md_Md );
             break;
         }
         

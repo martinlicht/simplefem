@@ -10,7 +10,7 @@ int main()
         ConvergenceTable Contable("Test Table");
         
         Contable.lg();
-        
+
         Contable << "a" << "b" << "c" << "d" << "qwertyuiopasdfghjkl";
 
         for( int i = 0; i < 7; i++ ) {
@@ -29,6 +29,10 @@ int main()
             Contable << nl;
         }
 
+        Contable.lg();
+        
+        Contable.print_transpose_instead_of_standard = true;
+        
         Contable.lg();
         
         return 0;
