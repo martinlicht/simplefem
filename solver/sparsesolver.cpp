@@ -21,7 +21,7 @@
 
 
 
-void ConjugateGradientSolverCSR( 
+int ConjugateGradientSolverCSR( 
     const int N, 
     Float* __restrict__ x, 
     const Float* __restrict__ b, 
@@ -168,6 +168,8 @@ void ConjugateGradientSolverCSR(
     delete[] ( direction ); 
     delete[] ( auxiliary );
 
+    return K;
+
 }
 
 
@@ -188,7 +190,7 @@ void ConjugateGradientSolverCSR(
 
 
 
-void ConjugateGradientSolverCSR_DiagonalPreconditioner( 
+int ConjugateGradientSolverCSR_DiagonalPreconditioner( 
     const int N, 
     Float* __restrict__ x, 
     const Float* __restrict__ b, 
@@ -356,6 +358,8 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
     delete[] ( zirconium ); 
     delete[] ( auxiliary );
 
+    return K;
+
 }
 
 
@@ -386,7 +390,7 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
 
 
 
-void ConjugateGradientSolverCSR_SSOR( 
+int ConjugateGradientSolverCSR_SSOR( 
     const int N, 
     Float* __restrict__ x, 
     const Float* __restrict__ b, 
@@ -618,6 +622,8 @@ void ConjugateGradientSolverCSR_SSOR(
     delete[] ( mittlerer ); 
     delete[] ( auxiliary );
 
+    return K;
+
 }
 
 
@@ -660,7 +666,7 @@ void ConjugateGradientSolverCSR_SSOR(
 
 
 
-void ConjugateResidualSolverCSR( 
+int ConjugateResidualSolverCSR( 
     const int N, 
     Float* __restrict__ x, 
     const Float* __restrict__ b, 
@@ -839,6 +845,8 @@ void ConjugateResidualSolverCSR(
 
     delete[] ( vil );
 
+    return K;
+
 }
 
 
@@ -868,7 +876,7 @@ void ConjugateResidualSolverCSR(
 
 
 
-void ConjugateResidualSolverCSR_textbook( 
+int ConjugateResidualSolverCSR_textbook( 
     const int N, 
     Float* __restrict__ x, 
     const Float* __restrict__ b, 
@@ -1043,6 +1051,8 @@ void ConjugateResidualSolverCSR_textbook(
 
     delete[] ( vil );
 
+    return K;
+
 }
 
 
@@ -1085,7 +1095,7 @@ void ConjugateResidualSolverCSR_textbook(
 
 
 
-void MINRESCSR( 
+int MINRESCSR( 
     const int N, 
     Float* __restrict__ x, 
     const Float* __restrict__ b, 
@@ -1291,6 +1301,8 @@ void MINRESCSR(
     delete[] ( vn );
     delete[] ( wn );
     delete[] (  p );
+
+    return K;
     
 }
 
@@ -1303,7 +1315,7 @@ void MINRESCSR(
 
 // This one is taken from Wikipedia, I don't know what it is.
 
-void WHATEVER( 
+int WHATEVER( 
     const int N, 
     Float* __restrict__ x, 
     const Float* __restrict__ b, 
@@ -1486,6 +1498,8 @@ void WHATEVER(
     delete[] ( s0 );
     delete[] ( s1 );
     delete[] ( s2 );
+
+    return K;
     
 }
 

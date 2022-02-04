@@ -59,6 +59,7 @@ int main()
             do_crmpp_robt = true;
             do_crmpp_fast = true;
             do_minres     = true;
+            do_herzog     = true;
             //
             do_cgm_csr                = true;
             do_crm_csr                = true;
@@ -343,6 +344,7 @@ int main()
                             FloatVector residual( rhs );
 
                             timestamp start = gettimestamp();
+                            int recent_iteration_count =
                             ConjugateGradientSolverCSR( 
                                 mysol.getdimension(), 
                                 mysol.raw(), 
@@ -356,7 +358,7 @@ int main()
 
                             auto stat_sol = Float( ( sol - mysol ).norm() );
                             auto stat_res = Float( ( system * mysol - rhs ).norm() );
-                            auto stat_num = 0.; //Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                            auto stat_num = Float( recent_iteration_count )/ (N*N); 
                             contable_sol << stat_sol;
                             contable_res << stat_res;
                             contable_num << stat_num;
@@ -371,6 +373,7 @@ int main()
                             FloatVector residual( rhs );
 
                             timestamp start = gettimestamp();
+                            int recent_iteration_count =
                             ConjugateResidualSolverCSR( 
                                 mysol.getdimension(), 
                                 mysol.raw(), 
@@ -384,7 +387,7 @@ int main()
 
                             auto stat_sol = Float( ( sol - mysol ).norm() );
                             auto stat_res = Float( ( system * mysol - rhs ).norm() );
-                            auto stat_num = 0.; //Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                            auto stat_num = Float( recent_iteration_count )/ (N*N); 
                             contable_sol << stat_sol;
                             contable_res << stat_res;
                             contable_num << stat_num;
@@ -399,6 +402,7 @@ int main()
                             FloatVector residual( rhs );
 
                             timestamp start = gettimestamp();
+                            int recent_iteration_count =
                             ConjugateResidualSolverCSR_textbook( 
                                 mysol.getdimension(), 
                                 mysol.raw(), 
@@ -412,7 +416,7 @@ int main()
 
                             auto stat_sol = Float( ( sol - mysol ).norm() );
                             auto stat_res = Float( ( system * mysol - rhs ).norm() );
-                            auto stat_num = 0.; //Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;v
+                            auto stat_num = Float( recent_iteration_count )/ (N*N); 
                             contable_sol << stat_sol;
                             contable_res << stat_res;
                             contable_num << stat_num;
@@ -427,6 +431,7 @@ int main()
                             FloatVector residual( rhs );
 
                             timestamp start = gettimestamp();
+                            int recent_iteration_count =
                             MINRESCSR( 
                                 mysol.getdimension(), 
                                 mysol.raw(), 
@@ -440,7 +445,7 @@ int main()
 
                             auto stat_sol = Float( ( sol - mysol ).norm() );
                             auto stat_res = Float( ( system * mysol - rhs ).norm() );
-                            auto stat_num = 0.; //Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                            auto stat_num = Float( recent_iteration_count )/ (N*N); 
                             contable_sol << stat_sol;
                             contable_res << stat_res;
                             contable_num << stat_num;
@@ -456,6 +461,7 @@ int main()
                             FloatVector residual( rhs );
 
                             timestamp start = gettimestamp();
+                            int recent_iteration_count =
                             WHATEVER( 
                                 mysol.getdimension(), 
                                 mysol.raw(), 
@@ -469,7 +475,7 @@ int main()
 
                             auto stat_sol = Float( ( sol - mysol ).norm() );
                             auto stat_res = Float( ( system * mysol - rhs ).norm() );
-                            auto stat_num = 0.; //Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                            auto stat_num = Float( recent_iteration_count )/ (N*N); 
                             contable_sol << stat_sol;
                             contable_res << stat_res;
                             contable_num << stat_num;
@@ -490,6 +496,7 @@ int main()
                             FloatVector residual( rhs );
 
                             timestamp start = gettimestamp();
+                            int recent_iteration_count =
                             ConjugateGradientSolverCSR_DiagonalPreconditioner( 
                                 mysol.getdimension(), 
                                 mysol.raw(), 
@@ -504,7 +511,7 @@ int main()
 
                             auto stat_sol = Float( ( sol - mysol ).norm() );
                             auto stat_res = Float( ( system * mysol - rhs ).norm() );
-                            auto stat_num = 0.; //Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                            auto stat_num = Float( recent_iteration_count )/ (N*N); 
                             contable_sol << stat_sol;
                             contable_res << stat_res;
                             contable_num << stat_num;
@@ -524,6 +531,7 @@ int main()
                             FloatVector residual( rhs );
 
                             timestamp start = gettimestamp();
+                            int recent_iteration_count =
                             ConjugateGradientSolverCSR_SSOR( 
                                 mysol.getdimension(), 
                                 mysol.raw(), 
@@ -539,7 +547,7 @@ int main()
 
                             auto stat_sol = Float( ( sol - mysol ).norm() );
                             auto stat_res = Float( ( system * mysol - rhs ).norm() );
-                            auto stat_num = 0.; //Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                            auto stat_num = Float( recent_iteration_count )/ (N*N); 
                             contable_sol << stat_sol;
                             contable_res << stat_res;
                             contable_num << stat_num;
@@ -559,6 +567,7 @@ int main()
                             FloatVector residual( rhs );
 
                             timestamp start = gettimestamp();
+                            int recent_iteration_count =
                             CheybyshevIteration_DiagonalPreconditioner( 
                                 mysol.getdimension(), 
                                 mysol.raw(), 
@@ -575,7 +584,7 @@ int main()
 
                             auto stat_sol = Float( ( sol - mysol ).norm() );
                             auto stat_res = Float( ( system * mysol - rhs ).norm() );
-                            auto stat_num = 0.; //Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                            auto stat_num = Float( recent_iteration_count )/ (N*N); 
                             contable_sol << stat_sol;
                             contable_res << stat_res;
                             contable_num << stat_num;

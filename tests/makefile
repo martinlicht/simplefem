@@ -20,6 +20,12 @@ components+=mesh
 components+=vtk
 #components+=matrixmarket
 components+=fem
+components+=afem
+components+=sullivan2D
+components+=sullivan3D
+components+=whitney2D
+components+=whitney3D
+components+=solverfem
 
 
 

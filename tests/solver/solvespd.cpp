@@ -50,7 +50,7 @@ int main()
             do_crmpp_robt = true;
             do_crmpp_fast = true;
             do_minres     = true;
-            // do_herzog     = true;
+            do_herzog     = true;
             
             
             
