@@ -10,12 +10,28 @@ int main()
         ConvergenceTable Contable("Test Table");
         
         Contable.lg();
-        
-        for( int i = 0; i < 5; i++ ) {
+
+        Contable << "a" << "b" << "c" << "d" << "qwertyuiopasdfghjkl";
+
+        for( int i = 0; i < 7; i++ ) {
             for( int j = 0; j < 5; j++ )
-                Contable << (Float)10. * i + j + 1;
+                Contable << ( (Float)10. * i + j + 1 );
             Contable << nl;
         }
+
+        for( int i = 0; i < 5; i++ )
+            Contable << -1.999 - i;
+        Contable << nl;
+            
+        for( int i = 0; i < 7; i++ ) {
+            for( int j = 0; j < 5; j++ )
+                Contable << std::exp(-i*j);
+            Contable << nl;
+        }
+
+        Contable.lg();
+        
+        Contable.print_transpose_instead_of_standard = true;
         
         Contable.lg();
         

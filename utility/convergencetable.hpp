@@ -16,9 +16,10 @@ class ConvergenceTable
     public:
 
         explicit ConvergenceTable( std::string table_name = "---------- Default Table Name ----------", bool display_convergence_rates = true )
-        : table_name(table_name), 
-          make_new_row(true), 
-          display_convergence_rates( display_convergence_rates )
+        : make_new_row(true), 
+          table_name(table_name), 
+          display_convergence_rates( display_convergence_rates ),
+          print_transpose_instead_of_standard(false)
         {
             
         }
@@ -97,13 +98,24 @@ class ConvergenceTable
             return ret;
         }
 
+
+
+        void print( std::ostream& os, bool display_convergence_rates ) const
+        {
+            
+            if( print_transpose_instead_of_standard )
+                print_transpose( os, display_convergence_rates );
+            else
+                print_standard( os, display_convergence_rates );
+        }
+        
         
         
         // TODO 
         // Introduced temporarily until format library is available
         // C++ streams are currently not supported, 
         // instead use printf from the C library
-        void print( std::ostream&, bool display_convergence_rates ) const
+        void print_standard( std::ostream&, bool display_convergence_rates ) const
         {
             
             
@@ -119,7 +131,7 @@ class ConvergenceTable
 
             const int nc_rate_precision = 2;
 
-            const int nc_cell_width = 6 + nc_cell_precision + 0;
+            const int nc_cell_width = 7 + nc_cell_precision + 0;
             // 12; sign + digit + . + e + sign + two digits = 6 chars 
 
             const int nc_rate_width = ( rates_are_float ? ( 7 + nc_rate_precision ) : 3 + nc_rate_precision ) + 0;
@@ -130,11 +142,16 @@ class ConvergenceTable
             // First line is the name of the table 
             std::printf( "\n%s\n", table_name.c_str() );
 
+            if( entries.empty() ) {
+                std::printf( "----------- Table is empty!\n" );
+                return;
+            }
+            
             // if necessary, print column headers 
             if( not columnheaders.empty() )
             {
                 
-                std::printf( "%s%s", std::string( nc_indent_width, ' ' ).c_str(), column_separator ); // std::printf("   \t");
+                std::printf( "%s %s", std::string( nc_indent_width, ' ' ).c_str(), column_separator ); // std::printf("   \t");
                     
                 for( int j = 0; j < columnheaders.size(); j++ )
                 {
@@ -170,7 +187,7 @@ class ConvergenceTable
                 for( int j = 0; j < entries[i].size(); j++ )
                 {
                     
-                    std::printf("%*.*Le%s", nc_cell_width, nc_cell_precision, (long double) entries[i][j], column_separator ); 
+                    std::printf("% *.*Le%s", nc_cell_width, nc_cell_precision, (long double) entries[i][j], column_separator ); 
                     
                     if( display_convergence_rates ){
                         
@@ -185,9 +202,9 @@ class ConvergenceTable
                                 long double computed_rate = std::log2( entries[i-1][j] / entries[i][j] );
                                 
                                 if( rates_are_float ) { 
-                                    std::printf("% *.*Le", nc_rate_width, nc_rate_precision, computed_rate  );
+                                    std::printf("%*.*Le", nc_rate_width, nc_rate_precision, computed_rate  );
                                 } else {
-                                    std::printf("% *.*Lf", nc_rate_width, nc_rate_precision, computed_rate  );
+                                    std::printf("%*.*Lf", nc_rate_width, nc_rate_precision, computed_rate  );
                                 }
 
                             } else {
@@ -209,14 +226,127 @@ class ConvergenceTable
                         
         }
 
+
+        // TODO 
+        // Introduced temporarily until format library is available
+        // C++ streams are currently not supported, 
+        // instead use printf from the C library
+        void print_transpose( std::ostream&, bool display_convergence_rates ) const
+        {
+            
+            // introduce several constants that drive the output format 
+            
+            const char* cell_separator = "   ";
+
+            const bool rates_are_float = false;
+            
+            const int nc_header_width = 10;
+            
+            const int nc_cell_precision = 3;
+
+            const int nc_rate_precision = 2;
+
+            const int nc_cell_width = 6 + nc_cell_precision + 2;
+            // 12; sign + digit + . + e + sign + two digits = 6 chars 
+
+            const int nc_rate_width = std::max( nc_cell_width, ( rates_are_float ? ( 7 + nc_rate_precision ) : 3 + nc_rate_precision ) + 0 );
+            // see above ....
+        
+            // First line is the name of the table 
+            std::printf( "\n%s\n", table_name.c_str() );
+
+            const int num_entries_per_series = entries.size(); 
+            
+            if( entries.empty() ) {
+                std::printf( "----------- Table is empty!\n" );
+                return;
+            }
+            
+            const int num_series = entries[0].size();
+
+            for( int j = 0; j < num_series; j++ )
+            {
+                // print the name of series first 
+                if( not columnheaders.empty() )
+                {
+                
+                    assert( columnheaders.size() == num_series );
+
+                    std::string columnheader = columnheaders[j];
+
+                    if( columnheader.size() > nc_header_width ) {
+                        columnheader.resize( nc_header_width );
+                        columnheader[ nc_header_width-1 ] = '~';
+                    }
+
+                    std::printf( "%*s%s", nc_header_width, columnheader.c_str(), cell_separator );
+
+                }
+
+                for( int i = 0; i < num_entries_per_series; i++ ) {
+
+                    assert( entries[i].size() == num_series );
+                    
+                    std::printf("% *.*Le%s", nc_cell_width, nc_cell_precision, (long double) entries[i][j], cell_separator );
+                    
+                }
+
+                std::printf("\n");
+                
+                if( display_convergence_rates )
+                {
+                    
+                    if( not columnheaders.empty() )
+                        std::printf( "%s%s", std::string( nc_header_width, ' ' ).c_str(), cell_separator );
+
+                    for( int i = 0; i < num_entries_per_series; i++ )
+                    {
+
+                        if( i == 0 ) {
+                                
+                            std::printf( "%s%s", std::string( nc_rate_width, '-' ).c_str(), cell_separator ); //std::printf("----------");
+                            
+                        } else {
+                        
+                            if( entries[i][j] > 0. and entries[i-1][j] > 0. ) {
+
+                                long double computed_rate = std::log2( entries[i-1][j] / entries[i][j] );
+                                
+                                if( rates_are_float ) { 
+                                    std::printf("% *.*Le%s", nc_rate_width, nc_rate_precision, computed_rate, cell_separator );
+                                } else {
+                                    std::printf("% *.*Lf%s", nc_rate_width, nc_rate_precision, computed_rate, cell_separator );
+                                }
+
+                            } else {
+                                
+                                std::printf( "%s%s", std::string( nc_rate_width, '$' ).c_str(), cell_separator ); //std::printf( "%s", "$$$$$$$$$$" );
+
+                            }
+                        
+                        }
+
+                    }
+
+                    std::printf("\n");
+
+                }
+
+            }
+                    
+        }
+
     private:
         
         std::vector<std::vector<Float>> entries;
         std::vector<std::string> columnheaders;
+        bool make_new_row;
+        
+    public:
         
         std::string table_name;
-        bool make_new_row;
         bool display_convergence_rates;
+        bool print_transpose_instead_of_standard;
     
 };
 
