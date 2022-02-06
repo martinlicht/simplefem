@@ -110,13 +110,15 @@ class Logger
 template< typename L, typename... Params >
 void printf_into_logger( L logger, const char* formatstring, Params... args )
 {
-    std::size_t length = std::snprintf(nullptr, 0, formatstring, args... ) + 1;
-    char* str = new char[length];
-    std::snprintf( str, length, formatstring, args... );
+    logger << printf_into_string( formatstring, args... );
     
-    logger << str;
+    // std::size_t length = std::snprintf(nullptr, 0, formatstring, args... ) + 1;
+    // char* str = new char[length];
+    // std::snprintf( str, length, formatstring, args... );
+    
+    // logger << str;
 
-    delete[] str;
+    // delete[] str;
 }
 
 
