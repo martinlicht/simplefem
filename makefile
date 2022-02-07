@@ -197,6 +197,8 @@ $(clean.components): .clean.%:
 	@cd ./$* && $(MAKE) --no-print-directory clean
 
 clean: $(clean.components)
+	@cd ./tests && $(MAKE) --no-print-directory clean
+	@cd ./benchmarks && $(MAKE) --no-print-directory clean
 	@$(MAKE) --no-print-directory -f common.upkeep.mk clean
 	@echo "finished cleaning files." 
 
@@ -211,6 +213,8 @@ $(dependclean.components): .dependclean.%:
 	@cd ./$* && $(MAKE) --no-print-directory dependclean
 
 dependclean: $(dependclean.components)
+	@cd ./tests && $(MAKE) --no-print-directory dependclean
+	@cd ./benchmarks && $(MAKE) --no-print-directory dependclean
 	@$(MAKE) --no-print-directory -f common.upkeep.mk dependclean
 	@echo "finished cleaning dependency information files." 
 
@@ -225,6 +229,8 @@ $(vtkclean.components): .vtkclean.%:
 	@cd ./$* && $(MAKE) --no-print-directory vtkclean
 
 vtkclean: $(vtkclean.components)
+	@cd ./tests && $(MAKE) --no-print-directory vtkclean
+	@cd ./benchmarks && $(MAKE) --no-print-directory vtkclean
 	@$(MAKE) --no-print-directory -f common.upkeep.mk vtkclean
 	@echo "finished cleaning .vtk files." 
 

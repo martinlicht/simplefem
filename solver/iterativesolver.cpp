@@ -6,7 +6,7 @@
 #include "../operators/floatvector.hpp"
 
 
-
+const bool restart_on_full_dimension = false;
 
 
 
@@ -74,7 +74,7 @@ void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) cons
     while( recent_iteration_count < max_iteration_count )
     {
         
-        bool restart_condition = ( recent_iteration_count % x.getdimension() == 0 );
+        bool restart_condition = ( recent_iteration_count == 0 ) or ( restart_on_full_dimension and recent_iteration_count % x.getdimension() == 0 );
         
         bool residual_seems_small = absolute( r * r ) < threshold*threshold;
         
@@ -333,7 +333,7 @@ void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector&
     {
         
         /* Start / Restart CRM process */
-        bool restart_condition = ( recent_iteration_count == 0 ) or ( recent_iteration_count % x.getdimension() == 0 );
+        bool restart_condition = ( recent_iteration_count == 0 ) or ( restart_on_full_dimension and recent_iteration_count % x.getdimension() == 0 );
         
         bool residual_seems_small = absolute( r * r ) < threshold*threshold or absolute( rAr ) < threshold*threshold;
         
@@ -486,7 +486,7 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
     while( recent_iteration_count < max_iteration_count )
     {
         
-        bool restart_condition = ( recent_iteration_count == 0 ) or ( recent_iteration_count % x.getdimension() == 0 );
+        bool restart_condition = ( recent_iteration_count == 0 ) or ( restart_on_full_dimension and recent_iteration_count % x.getdimension() == 0 );
         
         bool residual_seems_small = absolute( r * r ) < threshold*threshold or absolute( r * Ar ) < threshold*threshold;
         // first criterion is not in fast 
@@ -614,7 +614,7 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
     while( recent_iteration_count < max_iteration_count )
     {
         
-        bool restart_condition = ( recent_iteration_count == 0 ) or ( recent_iteration_count % x.getdimension() == 0 );
+        bool restart_condition = ( recent_iteration_count == 0 ) or ( restart_on_full_dimension and recent_iteration_count % x.getdimension() == 0 );
         
         bool residual_seems_small = absolute( Ar * r ) < threshold*threshold;
         
@@ -1074,7 +1074,7 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
     while( recent_iteration_count < max_iteration_count )
     {
         
-        bool restart_condition = ( recent_iteration_count == 0 ) or ( recent_iteration_count % x.getdimension() == 0 );
+        bool restart_condition = ( recent_iteration_count == 0 ) or ( restart_on_full_dimension and recent_iteration_count % x.getdimension() == 0 );
         
         bool residual_seems_small = absolute( rr ) < threshold*threshold;
         
@@ -1572,7 +1572,7 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
     while( recent_iteration_count < max_iteration_count ){
         
         
-        bool restart_condition = (recent_iteration_count == 0);
+        bool restart_condition = (recent_iteration_count == 0) or ( restart_on_full_dimension and recent_iteration_count % x.getdimension() == 0 );;
         
         bool residual_seems_small = (eta < threshold);
         

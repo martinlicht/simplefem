@@ -86,23 +86,22 @@ int main()
             contable_res.print_transpose_instead_of_standard = true;
             contable_num.print_transpose_instead_of_standard = true;
             
-            // bool do_cgmpp      = true;
-            // bool do_crmpp_expl = true;
-            // bool do_crmpp_robt = true;
-            // bool do_crmpp_fast = true;
-            // bool do_minres     = true;
-            // bool do_herzog     = true;
+            bool do_cgmpp      = true;
+            bool do_crmpp_expl = true;
+            bool do_crmpp_robt = true;
+            bool do_crmpp_fast = true;
+            bool do_minres     = true;
+            bool do_herzog     = true;
             //
             bool do_cgm_csr                = true;
             bool do_crm_csr                = true;
-            bool do_cgm_csrtextbook        = false;
+            bool do_crm_csrtextbook        = true;
             bool do_minres_csr             = true;
             bool do_whatever_csr           = true;
             bool do_cgm_diagonal_csr       = true;
             bool do_cgm_ssor_csr           = true;
             bool do_chebyshev_diagonal_csr = false;
 
-            // contable_sol << "Index";
             // if( do_cgmpp      ) contable_sol << "CGM++"      ;
             // if( do_crmpp_expl ) contable_sol << "CRM++(expl)";
             // if( do_crmpp_robt ) contable_sol << "CRM++(robt)";
@@ -112,39 +111,39 @@ int main()
             // //
             // if( do_cgm_csr )                contable_sol << "CGMcsr"       ;
             // if( do_crm_csr )                contable_sol << "CRMcsr"       ;
-            // if( do_cgm_csrtextbook )        contable_sol << "CRMcsr_tb"    ;
+            // if( do_crm_csrtextbook )        contable_sol << "CRMcsr_tb"    ;
             // if( do_minres_csr )             contable_sol << "MINREScsr"    ;
             // if( do_whatever_csr )           contable_sol << "WHATEVER"     ;
             // if( do_cgm_diagonal_csr )       contable_sol << "CGMcsr_diag"  ;
             // if( do_cgm_ssor_csr )           contable_sol << "CGMcsr_ssor"  ;
             // if( do_chebyshev_diagonal_csr ) contable_sol << "Chebyshev_csr";
             
-            // if( do_cgmpp      ) contable_res << "CGM++"      ;
-            // if( do_crmpp_expl ) contable_res << "CRM++(expl)";
-            // if( do_crmpp_robt ) contable_res << "CRM++(robt)";
-            // if( do_crmpp_fast ) contable_res << "CRM++(fast)";
-            // if( do_minres     ) contable_res << "MINRES"     ;
-            // if( do_herzog     ) contable_res << "HERZOG"     ;
+            if( do_cgmpp      ) contable_res << "CGM++"      ;
+            if( do_crmpp_expl ) contable_res << "CRM++(expl)";
+            if( do_crmpp_robt ) contable_res << "CRM++(robt)";
+            if( do_crmpp_fast ) contable_res << "CRM++(fast)";
+            if( do_minres     ) contable_res << "MINRES"     ;
+            if( do_herzog     ) contable_res << "HERZOG"     ;
             //
             if( do_cgm_csr )                contable_res << "CGMcsr"       ;
             if( do_crm_csr )                contable_res << "CRMcsr"       ;
-            if( do_cgm_csrtextbook )        contable_res << "CRMcsr_tb"    ;
+            if( do_crm_csrtextbook )        contable_res << "CRMcsr_tb"    ;
             if( do_minres_csr )             contable_res << "MINREScsr"    ;
             if( do_whatever_csr )           contable_res << "WHATEVER"     ;
             if( do_cgm_diagonal_csr )       contable_res << "CGMcsr_diag"  ;
             if( do_cgm_ssor_csr )           contable_res << "CGMcsr_ssor"  ;
             if( do_chebyshev_diagonal_csr ) contable_res << "Chebyshev_csr";
 
-            // if( do_cgmpp      ) contable_num << "CGM++"      ;
-            // if( do_crmpp_expl ) contable_num << "CRM++(expl)";
-            // if( do_crmpp_robt ) contable_num << "CRM++(robt)";
-            // if( do_crmpp_fast ) contable_num << "CRM++(fast)";
-            // if( do_minres     ) contable_num << "MINRES"     ;
-            // if( do_herzog     ) contable_num << "HERZOG"     ;
+            if( do_cgmpp      ) contable_num << "CGM++"      ;
+            if( do_crmpp_expl ) contable_num << "CRM++(expl)";
+            if( do_crmpp_robt ) contable_num << "CRM++(robt)";
+            if( do_crmpp_fast ) contable_num << "CRM++(fast)";
+            if( do_minres     ) contable_num << "MINRES"     ;
+            if( do_herzog     ) contable_num << "HERZOG"     ;
             //
             if( do_cgm_csr )                contable_num << "CGMcsr"       ;
             if( do_crm_csr )                contable_num << "CRMcsr"       ;
-            if( do_cgm_csrtextbook )        contable_num << "CRMcsr_tb"    ;
+            if( do_crm_csrtextbook )        contable_num << "CRMcsr_tb"    ;
             if( do_minres_csr )             contable_num << "MINREScsr"    ;
             if( do_whatever_csr )           contable_num << "WHATEVER"     ;
             if( do_cgm_diagonal_csr )       contable_num << "CGMcsr_diag"  ;
@@ -154,7 +153,7 @@ int main()
 
             const int min_l = 2;
             
-            const int max_l = 6;
+            const int max_l = 8;
 
             assert( 0 <= min_l and min_l <= max_l );
             
@@ -190,17 +189,187 @@ int main()
                     
                     {
 
-                        FloatVector sol( M.count_simplices(0), 0. );
+                        FloatVector sol_original( M.count_simplices(0), 0. );
+                        sol_original.random();
+                        sol_original.normalize( mass );
                         
                         const auto& function_rhs  = experiment_rhs;
                         FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r,   function_rhs  );
-                        FloatVector rhs = incmatrix_t * ( scalar_massmatrix * interpol_rhs );
+                        FloatVector rhs_original = incmatrix_t * ( scalar_massmatrix * interpol_rhs );
 
+                        // rhs_original.zero();
+                        
+                        const Float desired_precision = sqrt( machine_epsilon );
+
+                        if( do_cgmpp )
+                        {
+                            LOG << "CGM C++" << endl;
+                        
+                            FloatVector sol = sol_original;
+                            const FloatVector rhs = rhs_original;
+                            ConjugateGradientMethod Solver( mass );
+                            Solver.print_modulo        = 0;
+                            Solver.threshold        = desired_precision;
+                            Solver.max_iteration_count =     1 * sol.getdimension();
+                            timestamp start = gettimestamp();
+                            Solver.solve( sol, rhs );
+                            timestamp end = gettimestamp();
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            
+                             LOG << sol.norm( mass ) << nl;
+
+                            auto runtime  = static_cast<Float>( end - start );
+                            // auto stat_sol = Float( ( sol - ... ).norm() );
+                            auto stat_res = Float( ( mass * sol - rhs ).norm() );
+                            auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                            
+                            //contable_sol << stat_sol;
+                            contable_res << stat_res;
+                            contable_num << stat_num;
+                        }
+
+                        if( do_crmpp_expl )
+                        {
+                            LOG << "CRM C++" << endl;
+                        
+                            FloatVector sol = sol_original;
+                            const FloatVector rhs = rhs_original;
+                            ConjugateResidualMethod Solver( mass );
+                            Solver.print_modulo        = 0;
+                            Solver.threshold        = desired_precision;
+                            Solver.max_iteration_count =     1 * sol.getdimension();
+                            timestamp start = gettimestamp();
+                            Solver.solve_explicit( sol, rhs );
+                            timestamp end = gettimestamp();
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            
+                             LOG << sol.norm( mass ) << nl;
+
+                            auto runtime  = static_cast<Float>( end - start );
+                            // auto stat_sol = Float( ( sol - ... ).norm() );
+                            auto stat_res = Float( ( mass * sol - rhs ).norm() );
+                            auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                            
+                            //contable_sol << stat_sol;
+                            contable_res << stat_res;
+                            contable_num << stat_num;
+                        }
+
+                        if( do_crmpp_robt )
+                        {
+                            LOG << "CRM C++" << endl;
+                        
+                            FloatVector sol = sol_original;
+                            const FloatVector rhs = rhs_original;
+                            ConjugateResidualMethod Solver( mass );
+                            Solver.print_modulo        = 0;
+                            Solver.threshold        = desired_precision;
+                            Solver.max_iteration_count =     1 * sol.getdimension();
+                            timestamp start = gettimestamp();
+                            Solver.solve_robust( sol, rhs );
+                            timestamp end = gettimestamp();
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            
+                             LOG << sol.norm( mass ) << nl;
+
+                            auto runtime  = static_cast<Float>( end - start );
+                            // auto stat_sol = Float( ( sol - ... ).norm() );
+                            auto stat_res = Float( ( mass * sol - rhs ).norm() );
+                            auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                            
+                            //contable_sol << stat_sol;
+                            contable_res << stat_res;
+                            contable_num << stat_num;
+                        }
+
+                        if( do_crmpp_fast )
+                        {
+                            LOG << "CRM C++" << endl;
+                        
+                            FloatVector sol = sol_original;
+                            const FloatVector rhs = rhs_original;
+                            ConjugateResidualMethod Solver( mass );
+                            Solver.print_modulo        = 0;
+                            Solver.threshold        = desired_precision;
+                            Solver.max_iteration_count =     1 * sol.getdimension();
+                            timestamp start = gettimestamp();
+                            Solver.solve_fast( sol, rhs );
+                            timestamp end = gettimestamp();
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            
+                             LOG << sol.norm( mass ) << nl;
+
+                            auto runtime  = static_cast<Float>( end - start );
+                            // auto stat_sol = Float( ( sol - ... ).norm() );
+                            auto stat_res = Float( ( mass * sol - rhs ).norm() );
+                            auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                            
+                            //contable_sol << stat_sol;
+                            contable_res << stat_res;
+                            contable_num << stat_num;
+                        }
+
+                        if( do_minres )
+                        {
+                            LOG << "MINRES C++" << endl;
+                        
+                            FloatVector sol = sol_original;
+                            const FloatVector rhs = rhs_original;
+                            MinimumResidualMethod Solver( mass );
+                            Solver.print_modulo        = 0;
+                            Solver.threshold        = desired_precision;
+                            Solver.max_iteration_count =     1 * sol.getdimension();
+                            timestamp start = gettimestamp();
+                            Solver.solve( sol, rhs );
+                            timestamp end = gettimestamp();
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+
+                             LOG << sol.norm( mass ) << nl;
+
+                            auto runtime  = static_cast<Float>( end - start );
+                            // auto stat_sol = Float( ( sol - ... ).norm() );
+                            auto stat_res = Float( ( mass * sol - rhs ).norm() );
+                            auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                            
+                            //contable_sol << stat_sol;
+                            contable_res << stat_res;
+                            contable_num << stat_num;
+                        }
+
+                        if( do_herzog )
+                        {
+                            LOG << "HERZOG SOODHALTER C++" << endl;
+                        
+                            FloatVector sol = sol_original;
+                            const FloatVector rhs = rhs_original;
+                            HerzogSoodhalterMethod Solver( mass );
+                            Solver.print_modulo        = 0;
+                            Solver.threshold        = desired_precision;
+                            Solver.max_iteration_count =     1 * sol.getdimension();
+                            timestamp start = gettimestamp();
+                            Solver.solve( sol, rhs );
+                            timestamp end = gettimestamp();
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+
+                             LOG << sol.norm( mass ) << nl;
+
+                            auto runtime  = static_cast<Float>( end - start );
+                            // auto stat_sol = Float( ( sol - ... ).norm() );
+                            auto stat_res = Float( ( mass * sol - rhs ).norm() );
+                            auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                            
+                            //contable_sol << stat_sol;
+                            contable_res << stat_res;
+                            contable_num << stat_num;
+                        }
+                        
+                        
                         if( do_cgm_csr ) 
                         {
                             LOG << "CGM - CSR Classic" << endl;
                         
-                            sol.zero();
+                            FloatVector sol = sol_original;
+                            const FloatVector rhs = rhs_original;
                             FloatVector residual( rhs );
                             auto max_iteration_count = sol.getdimension();
                             timestamp start = gettimestamp();
@@ -234,7 +403,8 @@ int main()
                         {
                             LOG << "CRM - CSR Classic" << endl;
                         
-                            sol.zero();
+                            FloatVector sol = sol_original;
+                            const FloatVector rhs = rhs_original;
                             FloatVector residual( rhs );
                             auto max_iteration_count = sol.getdimension();
                             timestamp start = gettimestamp();
@@ -264,11 +434,12 @@ int main()
                             contable_num << stat_num;
                         }
 
-                        if(false)
+                        if( do_crm_csrtextbook )
                         {
                             LOG << "CRM - CSR Textbook" << endl;
                         
-                            sol.zero();
+                            FloatVector sol = sol_original;
+                            const FloatVector rhs = rhs_original;
                             FloatVector residual( rhs );
                             auto max_iteration_count = sol.getdimension();
                             timestamp start = gettimestamp();
@@ -302,7 +473,8 @@ int main()
                         {
                             LOG << "MINRES CSR" << endl;
                         
-                            sol.zero();
+                            FloatVector sol = sol_original;
+                            const FloatVector rhs = rhs_original;
                             FloatVector residual( rhs );
                             auto max_iteration_count = sol.getdimension();
                             timestamp start = gettimestamp();
@@ -337,7 +509,8 @@ int main()
                         {
                             LOG << "WHATEVER CSR" << endl;
                         
-                            sol.zero();
+                            FloatVector sol = sol_original;
+                            const FloatVector rhs = rhs_original;
                             FloatVector residual( rhs );
                             auto max_iteration_count = sol.getdimension();
                             timestamp start = gettimestamp();
@@ -377,7 +550,8 @@ int main()
                             assert( invprecon.getdiagonal().isfinite() );
                             assert( invprecon.getdiagonal().isnonnegative() );
                             
-                            sol.zero();
+                            FloatVector sol = sol_original;
+                            const FloatVector rhs = rhs_original;
                             FloatVector residual( rhs );
                             auto max_iteration_count = sol.getdimension();
                             timestamp start = gettimestamp();
@@ -417,7 +591,8 @@ int main()
                             assert( diagonal.isfinite() );
                             assert( diagonal.isnonnegative() );
                             
-                            sol.zero();
+                            FloatVector sol = sol_original;
+                            const FloatVector rhs = rhs_original;
                             FloatVector residual( rhs );
                             auto max_iteration_count = sol.getdimension();
                             timestamp start = gettimestamp();
@@ -458,7 +633,8 @@ int main()
                             assert( invprecon.getdiagonal().isfinite() );
                             assert( invprecon.getdiagonal().ispositive() );
                             
-                            sol.zero();
+                            FloatVector sol = sol_original;
+                            const FloatVector rhs = rhs_original;
                             FloatVector residual( rhs );
                             auto max_iteration_count = sol.getdimension();
                             timestamp start = gettimestamp();
