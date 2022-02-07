@@ -925,8 +925,14 @@ inline std::string printf_into_string( const char* formatstring, Params... args 
     return ret;
 }
 
+// template< typename L, typename... Params >
+// inline void printf_into_stream( L& stream, const char* formatstring, Params... args )
+// {
+//     stream << printf_into_string( formatstring, args... );
+// }
+
 template< typename L, typename... Params >
-inline void printf_into_stream( L stream, const char* formatstring, Params... args )
+inline void printf_into_stream( L&& stream, const char* formatstring, Params... args )
 {
     stream << printf_into_string( formatstring, args... );
 }
