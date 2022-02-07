@@ -1,5 +1,4 @@
 
-
 # TODO general
 
 The complexity of the project is at a point
@@ -48,6 +47,9 @@ to a function invocation. No further frills.
 Use the custom assert macro throughout the project.
 
 
+# (HIGH) TODO file names 
+
+???Correct the file names in the VTK output of the different mesh and fem test programs ???
 
 
 
@@ -157,9 +159,6 @@ Rationale: this improves readability.
 
 
 
-# (HIGH) TODO short term
-
-???Correct the file names in the VTK output of the different mesh and fem test programs ???
 
 
 
@@ -362,9 +361,63 @@ we can and should turn them into non-member operators.
 
 
 
+# (LOW) Gerschgorin circles for Dense and Sparse Matrices
+  
+  implement the gerschgorin row/column circles and the corresponding maximal estimates 
 
 
 
+
+# (LOW) Different elementary solvers 
+  
+  Implement solution algorithms for special matrix types:
+  - diagonal solve 
+  - left/right triagonal solve 
+  - unit left/right/ triagonal solve 
+  - averages between left and right solves 
+  
+# (LOW) Check diagonal and triangular
+
+# (LOW) Implement LU decomposition with different strategies 
+  
+  The LU decomposition needs to be implemented 
+  with different pivoting strategies:
+  row, column, or full pivot. 
+
+  
+  
+  
+
+
+
+
+
+
+
+# (LOW) Command line interface
+
+The project comes with unit tests whose behavior can be controlled via commandline.
+Generally, there should only be a few commands to describe what is happening.
+
+    --help
+    Display a few helpful lines 
+    
+    --verbose
+    output as much as possible 
+    
+    --quiet 
+    Only output warnings or errors 
+    
+    --logfile
+    specify the file were the logging should be directed to
+    
+    --errfile
+    specify the file were the logging should be directed to
+    
+    --outfile
+    specify the file were the output should be directed to
+    
+    
 
 
 
@@ -522,7 +575,6 @@ to make it more robust against user malpractice?
 
 # DONE!
 
-
 ## (DONE) Clean out 'cout' references throughout code 
 
 grep 'cout' ./*/*.?pp 
@@ -536,9 +588,18 @@ Moreover, consider replacing all the other stuff
 by references to clog instead of cout.
 
 
+#  VTK OUTPUT 
 
+The general philosophy of the VTK module 
+is to treat VTK as an output format alone. 
+  
+- Perhaps conversion between data set classes
+- Conversion between non-VTK related formats
+- Direct IO with mesh and algebra classes via specialized routines 
 
-
+Simple legacy format:
+http://www.vtk.org/wp-content/uploads/2015/04/file-formats.pdf
+Reading only ASCII
 
 
   

@@ -9,6 +9,22 @@
 
 
 
+#include <cstdio>
+
+template< typename L, typename... Params >
+void printf_into_logger( L logger, const char* formatstring, Params... args )
+{
+    std::size_t length = std::snprintf(nullptr, 0, formatstring, args... ) + 1;
+    char* str = new char[length];
+    std::snprintf( str, length, formatstring, args... );
+    
+    logger << str;
+
+    delete[] str;
+}
+
+
+
 class NilLogger
 {
 public:
@@ -183,10 +199,10 @@ class Logger
                         use_prefix_next = true;
                     }
                     
-                    postfix( internalstream );
-                    
                 }
                 
+                postfix( internalstream );
+
             } else {
                 
                 prefix( internalstream );
