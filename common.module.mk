@@ -40,13 +40,13 @@ $(objects): %.o: %.cpp | $(depdir)
 
 headerchecks := $(patsubst %.hpp,check-%.hpp,$(headers))
 
-.PHONY: $(headerchecks)
 $(headerchecks): check-%.hpp : 
 	$(info Check header: $*.hpp)
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $*.hpp -fsyntax-only
 
-.PHONY: checkheaders
 checkheaders: $(headerchecks)
+
+.PHONY: $(headerchecks) checkheaders
 
 
 
@@ -83,17 +83,18 @@ $(staticlibrary): $(libraryobject)
 *.o .all.o: ./makefile ../makefile ../common.compile.mk ../common.module.mk ../common.upkeep.mk
 
 
-.PHONY: buildobjects buildso builda
 buildobjects: $(objects)
 buildso:      $(sharedlibrary)
 builda:       $(staticlibrary)
 
-.PHONY: build
 ifeq ($(OS),Windows_NT)
 build: builda
 else
 build: buildso builda
 endif
+
+.PHONY: build buildobjects buildso builda
+
 
 #buildobjects # NOTE: the .o files were required for our .so files originally
 

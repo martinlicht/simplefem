@@ -65,7 +65,7 @@ $($(context).outs): $(contextdir)/%.out: $(contextdir)/%.cpp | $($(context).depd
 # 	@ echo $($(mycontext).rpath)
 # 	@ echo $($(mycontext).lib)
 	@echo Compiling $@ ...
-	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -std=c++17 -MM $(mycontextdir)/$*.cpp -MT $@ -MF $($(mycontext).depdir)/$*.d
+	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -std=c++2a -MM $(mycontextdir)/$*.cpp -MT $@ -MF $($(mycontext).depdir)/$*.d
 	@$(CXX) $(CXXFLAGS_EXECUTABLE) $(CPPFLAGS) $< $($(mycontext).include) $($(mycontext).rpath) $($(mycontext).mylib) -o $@ $(LDLIBS)
 
 -include $($(context).dependencies)
@@ -99,7 +99,6 @@ $(context).run: $($(context).runs)
 $($(context).runs): %.run : %.out
 	./$< 
 
-
 silent_run: $(context).silent_run
 
 $(context).silent_run: $($(context).silent_runs)
@@ -109,3 +108,4 @@ $($(context).silent_runs): %.silent_run : %.out
 
 # 2> /dev/null
 
+PHONY: $($(context).runs) $($(context).silent_runs)
