@@ -596,9 +596,9 @@ int main()
                         
                     }
                     
+                    contable_sol.lg( false );
                     contable_res.lg( false );
                     contable_num.lg( false );
-                    contable_sol.lg( false );
 
                     }
 

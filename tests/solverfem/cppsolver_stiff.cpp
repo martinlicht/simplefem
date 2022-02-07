@@ -71,7 +71,14 @@ int main()
 
             LOG << "Solving Poisson Problem with Dirichlet boundary conditions" << endl;
 
-            ConvergenceTable contable("Runtimes and L2 error");
+            // ConvergenceTable contable_sol("L2 Error");
+            ConvergenceTable contable_res("L2 Residual");
+            ConvergenceTable contable_num("Iteration percentage");
+
+            // contable_sol.print_transpose_instead_of_standard = true;
+            contable_res.print_transpose_instead_of_standard = true;
+            contable_num.print_transpose_instead_of_standard = true;
+            
             
 
             const int min_l = 2; 
@@ -139,7 +146,7 @@ int main()
                         FloatVector rhs_original = incmatrix_t * ( scalar_massmatrix * interpol_rhs );
                         rhs_original.zero();
                         
-                        if(false)
+                        // if(false)
                         {
                             LOG << "CGM C++" << endl;
                         
@@ -153,13 +160,19 @@ int main()
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             
+                            LOG << sol.norm( composed_mass );
+
+                            auto runtime  = static_cast<Float>( end - start );
+                            // auto stat_sol = Float( ( sol - ... ).norm() );
+                            auto stat_res = Float( ( stiffness * sol - rhs ).norm() );
                             auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
                             
-                            LOG << sol.norm( composed_mass );
-                            contable << stat_num << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );
+                            //contable_sol << stat_sol;
+                            contable_res << stat_res;
+                            contable_num << stat_num;
                         }
 
-                        if(false)
+                        // if(false)
                         {
                             LOG << "CRM C++" << endl;
                         
@@ -175,10 +188,16 @@ int main()
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             
+                            LOG << sol.norm( composed_mass );
+
+                            auto runtime  = static_cast<Float>( end - start );
+                            // auto stat_sol = Float( ( sol - ... ).norm() );
+                            auto stat_res = Float( ( stiffness * sol - rhs ).norm() );
                             auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
                             
-                            LOG << sol.norm( composed_mass );
-                            contable << stat_num << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );
+                            //contable_sol << stat_sol;
+                            contable_res << stat_res;
+                            contable_num << stat_num;
                         }
 
                         {
@@ -195,13 +214,19 @@ int main()
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
+                            LOG << sol.norm( composed_mass );
+
+                            auto runtime  = static_cast<Float>( end - start );
+                            // auto stat_sol = Float( ( sol - ... ).norm() );
+                            auto stat_res = Float( ( stiffness * sol - rhs ).norm() );
                             auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
                             
-                            LOG << sol.norm( composed_mass );
-                            contable << stat_num << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );
+                            //contable_sol << stat_sol;
+                            contable_res << stat_res;
+                            contable_num << stat_num;
                         }
 
-                        if(false)
+                        // if(false)
                         {
                             LOG << "HERZOG SOODHALTER C++" << endl;
                         
@@ -215,24 +240,35 @@ int main()
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
+                            LOG << sol.norm( composed_mass );
+
+                            auto runtime  = static_cast<Float>( end - start );
+                            // auto stat_sol = Float( ( sol - ... ).norm() );
+                            auto stat_res = Float( ( stiffness * sol - rhs ).norm() );
                             auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
                             
-                            LOG << sol.norm( composed_mass );
-                            contable << stat_num << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );
+                            //contable_sol << stat_sol;
+                            contable_res << stat_res;
+                            contable_num << stat_num;
                         }
                         
                         
-                        contable << nl;
-                        
-                        contable.lg( false );
-
+                        // contable_sol << nl;
+                        contable_res << nl;
+                        contable_num << nl;
                     }
+                        
+                    // contable_sol.lg( false );
+                    contable_res.lg( false );
+                    contable_num.lg( false );
                     
                 }
 
-                LOG << "Refinement..." << endl;
-            
-                if( l != max_l ) M.uniformrefinement();
+                
+                if( l != max_l ){ 
+                    LOG << "Refinement..." << endl;
+                    M.uniformrefinement();
+                }
 
                 
             } 
