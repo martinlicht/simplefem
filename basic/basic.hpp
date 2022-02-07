@@ -914,7 +914,7 @@ inline int SIZECAST( std::uintmax_t size )
 /*    use this to safely cast size_types to C++ int   */
 /******************************************************/
 
-template< typename L, typename... Params >
+template< typename... Params >
 inline std::string printf_into_string( const char* formatstring, Params... args )
 {
     std::size_t length = std::snprintf(nullptr, 0, formatstring, args... ) + 1;
