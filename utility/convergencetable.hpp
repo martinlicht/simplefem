@@ -103,10 +103,14 @@ class ConvergenceTable
         void print( std::ostream& os, bool display_convergence_rates ) const
         {
             
+            os << std::string( 80, '-' ) << nl;
             if( print_transpose_instead_of_standard )
                 print_transpose( os, display_convergence_rates );
             else
                 print_standard( os, display_convergence_rates );
+            os << nl;
+            os << std::string( 80, '-' ) << nl;
+
         }
         
         
@@ -115,9 +119,8 @@ class ConvergenceTable
         // Introduced temporarily until format library is available
         // C++ streams are currently not supported, 
         // instead use printf from the C library
-        void print_standard( std::ostream&, bool display_convergence_rates ) const
+        void print_standard( std::ostream& os, bool display_convergence_rates ) const
         {
-            
             
             // introduce several constants that drive the output format 
             
@@ -140,10 +143,10 @@ class ConvergenceTable
 
         
             // First line is the name of the table 
-            std::printf( "\n%s\n", table_name.c_str() );
+            printf_into_stream( os,  "\n%s\n", table_name.c_str() );
 
             if( entries.empty() ) {
-                std::printf( "----------- Table is empty!\n" );
+                printf_into_stream( os,  "----------- Table is empty!\n" );
                 return;
             }
             
@@ -151,7 +154,7 @@ class ConvergenceTable
             if( not columnheaders.empty() )
             {
                 
-                std::printf( "%s %s", std::string( nc_indent_width, ' ' ).c_str(), column_separator ); // std::printf("   \t");
+                printf_into_stream( os,  "%s %s", std::string( nc_indent_width, ' ' ).c_str(), column_separator ); // printf_into_stream( os, "   \t");
                     
                 for( int j = 0; j < columnheaders.size(); j++ )
                 {
@@ -163,15 +166,15 @@ class ConvergenceTable
                         columnheader[ nc_cell_width-1 ] = '~';
                     }
                     
-                    std::printf( "%*s%s", nc_cell_width, columnheader.c_str(), column_separator );
+                    printf_into_stream( os,  "%*s%s", nc_cell_width, columnheader.c_str(), column_separator );
                     
                     if( display_convergence_rates ) {
-                        std::printf( "%s%s", std::string( nc_rate_width, ' ' ).c_str(), column_separator ); // std::printf("          \t");
+                        printf_into_stream( os,  "%s%s", std::string( nc_rate_width, ' ' ).c_str(), column_separator ); // printf_into_stream( os, "          \t");
                     }
 
                 }
                 
-                std::printf("\n");
+                printf_into_stream( os, "\n");
                 
             }
             
@@ -179,7 +182,7 @@ class ConvergenceTable
             for( int i = 0; i < entries.size(); i++ )
             {
                 
-                std::printf( "%*d:%s", nc_indent_width, i, column_separator );
+                printf_into_stream( os,  "%*d:%s", nc_indent_width, i, column_separator );
 
                 assert( entries[i].size() == entries.front().size() );
                 
@@ -187,13 +190,13 @@ class ConvergenceTable
                 for( int j = 0; j < entries[i].size(); j++ )
                 {
                     
-                    std::printf("% *.*Le%s", nc_cell_width, nc_cell_precision, (long double) entries[i][j], column_separator ); 
+                    printf_into_stream( os, "% *.*Le%s", nc_cell_width, nc_cell_precision, (long double) entries[i][j], column_separator ); 
                     
                     if( display_convergence_rates ){
                         
                         if( i == 0 ) {
                             
-                            std::printf( "%s", std::string( nc_rate_width, '-' ).c_str() ); //std::printf("----------");
+                            printf_into_stream( os,  "%s", std::string( nc_rate_width, '-' ).c_str() ); //printf_into_stream( os, "----------");
                         
                         } else {
                         
@@ -202,25 +205,25 @@ class ConvergenceTable
                                 long double computed_rate = std::log2( entries[i-1][j] / entries[i][j] );
                                 
                                 if( rates_are_float ) { 
-                                    std::printf("%*.*Le", nc_rate_width, nc_rate_precision, computed_rate  );
+                                    printf_into_stream( os, "%*.*Le", nc_rate_width, nc_rate_precision, computed_rate  );
                                 } else {
-                                    std::printf("%*.*Lf", nc_rate_width, nc_rate_precision, computed_rate  );
+                                    printf_into_stream( os, "%*.*Lf", nc_rate_width, nc_rate_precision, computed_rate  );
                                 }
 
                             } else {
                                 
-                                std::printf( "%s", std::string( nc_rate_width, '$' ).c_str() ); //std::printf( "%s", "$$$$$$$$$$" );
+                                printf_into_stream( os,  "%s", std::string( nc_rate_width, '$' ).c_str() ); //printf_into_stream( os,  "%s", "$$$$$$$$$$" );
 
                             }
                         
                         }
                         
-                        std::printf( "%s", column_separator );
+                        printf_into_stream( os,  "%s", column_separator );
                     }
                     
                 }        
                 
-                std::printf("\n");
+                printf_into_stream( os, "\n");
                 
             }
                         
@@ -231,7 +234,7 @@ class ConvergenceTable
         // Introduced temporarily until format library is available
         // C++ streams are currently not supported, 
         // instead use printf from the C library
-        void print_transpose( std::ostream&, bool display_convergence_rates ) const
+        void print_transpose( std::ostream& os, bool display_convergence_rates ) const
         {
             
             // introduce several constants that drive the output format 
@@ -253,12 +256,12 @@ class ConvergenceTable
             // see above ....
         
             // First line is the name of the table 
-            std::printf( "\n%s\n", table_name.c_str() );
+            printf_into_stream( os,  "\n%s\n", table_name.c_str() );
 
             const int num_entries_per_series = entries.size(); 
             
             if( entries.empty() ) {
-                std::printf( "----------- Table is empty!\n" );
+                printf_into_stream( os,  "----------- Table is empty!\n" );
                 return;
             }
             
@@ -279,7 +282,7 @@ class ConvergenceTable
                         columnheader[ nc_header_width-1 ] = '~';
                     }
 
-                    std::printf( "%*s%s", nc_header_width, columnheader.c_str(), cell_separator );
+                    printf_into_stream( os,  "%*s%s", nc_header_width, columnheader.c_str(), cell_separator );
 
                 }
 
@@ -287,24 +290,24 @@ class ConvergenceTable
 
                     assert( entries[i].size() == num_series );
                     
-                    std::printf("% *.*Le%s", nc_cell_width, nc_cell_precision, (long double) entries[i][j], cell_separator );
+                    printf_into_stream( os, "% *.*Le%s", nc_cell_width, nc_cell_precision, (long double) entries[i][j], cell_separator );
                     
                 }
 
-                std::printf("\n");
+                printf_into_stream( os, "\n");
                 
                 if( display_convergence_rates )
                 {
                     
                     if( not columnheaders.empty() )
-                        std::printf( "%s%s", std::string( nc_header_width, ' ' ).c_str(), cell_separator );
+                        printf_into_stream( os,  "%s%s", std::string( nc_header_width, ' ' ).c_str(), cell_separator );
 
                     for( int i = 0; i < num_entries_per_series; i++ )
                     {
 
                         if( i == 0 ) {
                                 
-                            std::printf( "%s%s", std::string( nc_rate_width, '-' ).c_str(), cell_separator ); //std::printf("----------");
+                            printf_into_stream( os,  "%s%s", std::string( nc_rate_width, '-' ).c_str(), cell_separator ); //printf_into_stream( os, "----------");
                             
                         } else {
                         
@@ -313,14 +316,14 @@ class ConvergenceTable
                                 long double computed_rate = std::log2( entries[i-1][j] / entries[i][j] );
                                 
                                 if( rates_are_float ) { 
-                                    std::printf("% *.*Le%s", nc_rate_width, nc_rate_precision, computed_rate, cell_separator );
+                                    printf_into_stream( os, "% *.*Le%s", nc_rate_width, nc_rate_precision, computed_rate, cell_separator );
                                 } else {
-                                    std::printf("% *.*Lf%s", nc_rate_width, nc_rate_precision, computed_rate, cell_separator );
+                                    printf_into_stream( os, "% *.*Lf%s", nc_rate_width, nc_rate_precision, computed_rate, cell_separator );
                                 }
 
                             } else {
                                 
-                                std::printf( "%s%s", std::string( nc_rate_width, '$' ).c_str(), cell_separator ); //std::printf( "%s", "$$$$$$$$$$" );
+                                printf_into_stream( os,  "%s%s", std::string( nc_rate_width, '$' ).c_str(), cell_separator ); //printf_into_stream( os,  "%s", "$$$$$$$$$$" );
 
                             }
                         
@@ -328,7 +331,7 @@ class ConvergenceTable
 
                     }
 
-                    std::printf("\n");
+                    printf_into_stream( os, "\n");
 
                 }
 

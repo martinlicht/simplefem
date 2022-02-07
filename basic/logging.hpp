@@ -107,17 +107,19 @@ class Logger
 
 
 
-template< typename L, typename... Params >
-void printf_into_logger( L logger, const char* formatstring, Params... args )
-{
-    std::size_t length = std::snprintf(nullptr, 0, formatstring, args... ) + 1;
-    char* str = new char[length];
-    std::snprintf( str, length, formatstring, args... );
+// template< typename L, typename... Params >
+// void printf_into_logger( L logger, const char* formatstring, Params... args )
+// {
+//     logger << printf_into_string( formatstring, args... );
     
-    logger << str;
+//     // std::size_t length = std::snprintf(nullptr, 0, formatstring, args... ) + 1;
+//     // char* str = new char[length];
+//     // std::snprintf( str, length, formatstring, args... );
+    
+//     // logger << str;
 
-    delete[] str;
-}
+//     // delete[] str;
+// }
 
 
 
@@ -145,8 +147,8 @@ void printf_into_logger( L logger, const char* formatstring, Params... args )
 
 // utilize the printf template for stream-like objects 
 
-#define LOGPRINTF( formatstring, ...) printf_into_logger( LOG, formatstring __VA_OPT__(,) __VA_ARGS__ );
-#define ERRPRINTF( formatstring, ...) printf_into_logger( ERR, formatstring __VA_OPT__(,) __VA_ARGS__ );
+#define LOGPRINTF( formatstring, ...) printf_into_stream( LOG, formatstring __VA_OPT__(,) __VA_ARGS__ );
+#define ERRPRINTF( formatstring, ...) printf_into_stream( ERR, formatstring __VA_OPT__(,) __VA_ARGS__ );
 
 
 

@@ -911,6 +911,34 @@ inline int SIZECAST( std::uintmax_t size )
 
 
 /******************************************************/
+/*       printf into C++ strings and streams          */
+/******************************************************/
+
+template< typename... Params >
+inline std::string printf_into_string( const char* formatstring, Params... args )
+{
+    std::size_t length = std::snprintf(nullptr, 0, formatstring, args... ) + 1;
+    char* c_str = new char[length];
+    std::snprintf( c_str, length, formatstring, args... );
+    std::string ret( c_str );
+    delete[] c_str;
+    return ret;
+}
+
+// template< typename L, typename... Params >
+// inline void printf_into_stream( L& stream, const char* formatstring, Params... args )
+// {
+//     stream << printf_into_string( formatstring, args... );
+// }
+
+template< typename L, typename... Params >
+inline void printf_into_stream( L&& stream, const char* formatstring, Params... args )
+{
+    stream << printf_into_string( formatstring, args... );
+}
+
+
+/******************************************************/
 /*      insert tabs before each line       */
 /******************************************************/
 

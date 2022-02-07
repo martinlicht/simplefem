@@ -51,32 +51,15 @@ int main()
             LOG << "Prepare scalar fields for testing..." << endl;
             
 
-            std::function<FloatVector(const FloatVector&)> constant_one
-                = [](const FloatVector& vec) -> FloatVector{
-                        assert( vec.getdimension() == 2 );
-                        return FloatVector({ 1. });
-                    };
+            // std::function<FloatVector(const FloatVector&)> constant_one
+            //     = [](const FloatVector& vec) -> FloatVector{
+            //             assert( vec.getdimension() == 2 );
+            //             return FloatVector({ 1. });
+            //         };
             
             const Float xfeq = 1.;
             const Float yfeq = 1.;
             
-            std::function<FloatVector(const FloatVector&)> experiment_sol = 
-                [=](const FloatVector& vec) -> FloatVector{
-                    assert( vec.getdimension() == 2 );
-                    return FloatVector({ std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] ) });
-                };
-            
-
-            std::function<FloatVector(const FloatVector&)> experiment_grad = 
-                [=](const FloatVector& vec) -> FloatVector{
-                    assert( vec.getdimension() == 2 );
-                    return FloatVector( { 
-                            xfeq * Constants::twopi * std::cos( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] ),
-                            yfeq * Constants::twopi * std::sin( xfeq * Constants::twopi * vec[0] ) * std::cos( yfeq * Constants::twopi * vec[1] ), 
-                        });
-                };
-            
-
             std::function<FloatVector(const FloatVector&)> experiment_rhs = 
                 [=](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
@@ -95,12 +78,83 @@ int main()
 
             LOG << "Solving Poisson Problem with Dirichlet boundary conditions" << endl;
 
-            ConvergenceTable contable("Runtimes and L2 error");
+            // ConvergenceTable contable_sol("L2 Error");
+            ConvergenceTable contable_res("L2 Residual");
+            ConvergenceTable contable_num("Iteration percentage");
+
+            // contable_sol.print_transpose_instead_of_standard = true;
+            contable_res.print_transpose_instead_of_standard = true;
+            contable_num.print_transpose_instead_of_standard = true;
+            
+            // bool do_cgmpp      = true;
+            // bool do_crmpp_expl = true;
+            // bool do_crmpp_robt = true;
+            // bool do_crmpp_fast = true;
+            // bool do_minres     = true;
+            // bool do_herzog     = true;
+            //
+            bool do_cgm_csr                = true;
+            bool do_crm_csr                = true;
+            bool do_cgm_csrtextbook        = false;
+            bool do_minres_csr             = true;
+            bool do_whatever_csr           = true;
+            bool do_cgm_diagonal_csr       = true;
+            bool do_cgm_ssor_csr           = true;
+            bool do_chebyshev_diagonal_csr = false;
+
+            // contable_sol << "Index";
+            // if( do_cgmpp      ) contable_sol << "CGM++"      ;
+            // if( do_crmpp_expl ) contable_sol << "CRM++(expl)";
+            // if( do_crmpp_robt ) contable_sol << "CRM++(robt)";
+            // if( do_crmpp_fast ) contable_sol << "CRM++(fast)";
+            // if( do_minres     ) contable_sol << "MINRES"     ;
+            // if( do_herzog     ) contable_sol << "HERZOG"     ;
+            // //
+            // if( do_cgm_csr )                contable_sol << "CGMcsr"       ;
+            // if( do_crm_csr )                contable_sol << "CRMcsr"       ;
+            // if( do_cgm_csrtextbook )        contable_sol << "CRMcsr_tb"    ;
+            // if( do_minres_csr )             contable_sol << "MINREScsr"    ;
+            // if( do_whatever_csr )           contable_sol << "WHATEVER"     ;
+            // if( do_cgm_diagonal_csr )       contable_sol << "CGMcsr_diag"  ;
+            // if( do_cgm_ssor_csr )           contable_sol << "CGMcsr_ssor"  ;
+            // if( do_chebyshev_diagonal_csr ) contable_sol << "Chebyshev_csr";
+            
+            // if( do_cgmpp      ) contable_res << "CGM++"      ;
+            // if( do_crmpp_expl ) contable_res << "CRM++(expl)";
+            // if( do_crmpp_robt ) contable_res << "CRM++(robt)";
+            // if( do_crmpp_fast ) contable_res << "CRM++(fast)";
+            // if( do_minres     ) contable_res << "MINRES"     ;
+            // if( do_herzog     ) contable_res << "HERZOG"     ;
+            //
+            if( do_cgm_csr )                contable_res << "CGMcsr"       ;
+            if( do_crm_csr )                contable_res << "CRMcsr"       ;
+            if( do_cgm_csrtextbook )        contable_res << "CRMcsr_tb"    ;
+            if( do_minres_csr )             contable_res << "MINREScsr"    ;
+            if( do_whatever_csr )           contable_res << "WHATEVER"     ;
+            if( do_cgm_diagonal_csr )       contable_res << "CGMcsr_diag"  ;
+            if( do_cgm_ssor_csr )           contable_res << "CGMcsr_ssor"  ;
+            if( do_chebyshev_diagonal_csr ) contable_res << "Chebyshev_csr";
+
+            // if( do_cgmpp      ) contable_num << "CGM++"      ;
+            // if( do_crmpp_expl ) contable_num << "CRM++(expl)";
+            // if( do_crmpp_robt ) contable_num << "CRM++(robt)";
+            // if( do_crmpp_fast ) contable_num << "CRM++(fast)";
+            // if( do_minres     ) contable_num << "MINRES"     ;
+            // if( do_herzog     ) contable_num << "HERZOG"     ;
+            //
+            if( do_cgm_csr )                contable_num << "CGMcsr"       ;
+            if( do_crm_csr )                contable_num << "CRMcsr"       ;
+            if( do_cgm_csrtextbook )        contable_num << "CRMcsr_tb"    ;
+            if( do_minres_csr )             contable_num << "MINREScsr"    ;
+            if( do_whatever_csr )           contable_num << "WHATEVER"     ;
+            if( do_cgm_diagonal_csr )       contable_num << "CGMcsr_diag"  ;
+            if( do_cgm_ssor_csr )           contable_num << "CGMcsr_ssor"  ;
+            if( do_chebyshev_diagonal_csr ) contable_num << "Chebyshev_csr";
             
 
-            const int min_l = 7;
+            const int min_l = 3;
             
-            const int max_l = 7;
+            const int max_l = 3;
 
             assert( 0 <= min_l and min_l <= max_l );
             
@@ -136,13 +190,19 @@ int main()
 
                     SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
-                    LOG << "...assemble stiffness matrix" << endl;
+                    LOG << "...assemble stiffness and mass matrices" << endl;
             
+                    const auto composed_stiffness = incmatrix_t * diffmatrix_t * vector_massmatrix * diffmatrix * incmatrix;
+                    const auto composed_mass      = incmatrix_t * scalar_massmatrix * incmatrix;
+
                     auto opr  = diffmatrix & incmatrix;
                     auto opl  = opr.getTranspose(); 
-                    auto stiffness_prelim = opl & ( vector_massmatrix & opr );
-                    stiffness_prelim.sortentries();
-                    auto stiffness = MatrixCSR( stiffness_prelim );
+                    auto stiffness_csr_prelim = opl & ( vector_massmatrix & opr );
+                    stiffness_csr_prelim.sortentries();
+                    auto stiffness_csr = MatrixCSR( stiffness_csr_prelim );
+
+                    const auto& stiffness = stiffness_csr;
+                    const auto& mass      = composed_mass;
                     
                     {
 
@@ -152,13 +212,15 @@ int main()
                         FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r,   function_rhs  );
                         FloatVector rhs = incmatrix_t * ( scalar_massmatrix * interpol_rhs );
 
-                        if(false)
+                        if( do_cgm_csr )
                         {
                             LOG << "CGM - CSR Classic" << endl;
                         
                             sol.zero();
                             FloatVector residual( rhs );
+                            auto max_iteration_count = sol.getdimension();
                             timestamp start = gettimestamp();
+                            auto recent_iteration_count = 
                             ConjugateGradientSolverCSR( 
                                 sol.getdimension(), 
                                 sol.raw(), 
@@ -172,12 +234,156 @@ int main()
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             
-                            // auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                             LOG << sol.norm( mass ) << nl;
+
+                            auto runtime  = static_cast<Float>( end - start );
+                            // auto stat_sol = Float( ( sol - ... ).norm() );
+                            auto stat_res = Float( ( stiffness * sol - rhs ).norm() );
+                            auto stat_num = Float( recent_iteration_count ) / max_iteration_count;
                             
-                            contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
+                            //contable_sol << stat_sol;
+                            contable_res << stat_res;
+                            contable_num << stat_num;
                         }
 
-                        if(false)
+                        if( do_crm_csr )
+                        {
+                            LOG << "CRM - CSR Classic" << endl;
+                        
+                            sol.zero();
+                            FloatVector residual( rhs );
+                            auto max_iteration_count = sol.getdimension();
+                            timestamp start = gettimestamp();
+                            auto recent_iteration_count = 
+                            ConjugateResidualSolverCSR( 
+                                sol.getdimension(), 
+                                sol.raw(), 
+                                rhs.raw(), 
+                                stiffness.getA(), stiffness.getC(), stiffness.getV(),
+                                residual.raw(),
+                                desired_precision,
+                                0
+                            );
+
+                            timestamp end = gettimestamp();
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            
+                             LOG << sol.norm( mass ) << nl;
+
+                            auto runtime  = static_cast<Float>( end - start );
+                            // auto stat_sol = Float( ( sol - ... ).norm() );
+                            auto stat_res = Float( ( stiffness * sol - rhs ).norm() );
+                            auto stat_num = Float( recent_iteration_count ) / max_iteration_count;
+                            
+                            //contable_sol << stat_sol;
+                            contable_res << stat_res;
+                            contable_num << stat_num;
+                        }
+
+                        if( false )
+                        {
+                            LOG << "CRM - CSR Textbook" << endl;
+                        
+                            sol.zero();
+                            FloatVector residual( rhs );
+                            auto max_iteration_count = sol.getdimension();
+                            timestamp start = gettimestamp();
+                            auto recent_iteration_count = 
+                            ConjugateResidualSolverCSR_textbook( 
+                                sol.getdimension(), 
+                                sol.raw(), 
+                                rhs.raw(), 
+                                stiffness.getA(), stiffness.getC(), stiffness.getV(),
+                                residual.raw(),
+                                desired_precision,
+                                0
+                            );
+
+                            timestamp end = gettimestamp();
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            
+                             LOG << sol.norm( mass ) << nl;
+
+                            auto runtime  = static_cast<Float>( end - start );
+                            // auto stat_sol = Float( ( sol - ... ).norm() );
+                            auto stat_res = Float( ( stiffness * sol - rhs ).norm() );
+                            auto stat_num = Float( recent_iteration_count ) / max_iteration_count;
+                            
+                            //contable_sol << stat_sol;
+                            contable_res << stat_res;
+                            contable_num << stat_num;
+                        }
+
+                        if( do_minres_csr )
+                        {
+                            LOG << "MINRES CSR" << endl;
+                        
+                            sol.zero();
+                            FloatVector residual( rhs );
+                            auto max_iteration_count = sol.getdimension();
+                            timestamp start = gettimestamp();
+                            auto recent_iteration_count = 
+                            MINRESCSR( 
+                                sol.getdimension(), 
+                                sol.raw(), 
+                                rhs.raw(), 
+                                stiffness.getA(), stiffness.getC(), stiffness.getV(),
+                                residual.raw(),
+                                desired_precision,
+                                0
+                            );
+
+                            timestamp end = gettimestamp();
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            
+                             LOG << sol.norm( mass ) << nl;
+
+                            auto runtime  = static_cast<Float>( end - start );
+                            // auto stat_sol = Float( ( sol - ... ).norm() );
+                            auto stat_res = Float( ( stiffness * sol - rhs ).norm() );
+                            auto stat_num = Float( recent_iteration_count ) / max_iteration_count;
+                            
+                            //contable_sol << stat_sol;
+                            contable_res << stat_res;
+                            contable_num << stat_num;
+                        }
+
+
+                        if( do_whatever_csr )
+                        {
+                            LOG << "WHATEVER CSR" << endl;
+                        
+                            sol.zero();
+                            FloatVector residual( rhs );
+                            auto max_iteration_count = sol.getdimension();
+                            timestamp start = gettimestamp();
+                            auto recent_iteration_count = 
+                            WHATEVER( 
+                                sol.getdimension(), 
+                                sol.raw(), 
+                                rhs.raw(), 
+                                stiffness.getA(), stiffness.getC(), stiffness.getV(),
+                                residual.raw(),
+                                desired_precision,
+                                0
+                            );
+
+                            timestamp end = gettimestamp();
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            
+                             LOG << sol.norm( mass ) << nl;
+
+                            auto runtime  = static_cast<Float>( end - start );
+                            // auto stat_sol = Float( ( sol - ... ).norm() );
+                            auto stat_res = Float( ( stiffness * sol - rhs ).norm() );
+                            auto stat_num = Float( recent_iteration_count ) / max_iteration_count;
+                            
+                            //contable_sol << stat_sol;
+                            contable_res << stat_res;
+                            contable_num << stat_num;
+                        }
+
+                        if( do_cgm_diagonal_csr )
                         {
                             LOG << "CGM - CSR Classic with diagonal preconditioning" << endl;
                             
@@ -186,7 +392,9 @@ int main()
                             
                             sol.zero();
                             FloatVector residual( rhs );
+                            auto max_iteration_count = sol.getdimension();
                             timestamp start = gettimestamp();
+                            auto recent_iteration_count = 
                             ConjugateGradientSolverCSR_DiagonalPreconditioner( 
                                 sol.getdimension(), 
                                 sol.raw(), 
@@ -201,11 +409,19 @@ int main()
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             
-                            // auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                             LOG << sol.norm( mass ) << nl;
+
+                            auto runtime  = static_cast<Float>( end - start );
+                            // auto stat_sol = Float( ( sol - ... ).norm() );
+                            auto stat_res = Float( ( stiffness * sol - rhs ).norm() );
+                            auto stat_num = Float( recent_iteration_count ) / max_iteration_count;
                             
-                            contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
+                            //contable_sol << stat_sol;
+                            contable_res << stat_res;
+                            contable_num << stat_num;
                         }
 
+                        if( do_cgm_ssor_csr )
                         {
                             LOG << "CGM - CSR Classic with SSOR" << endl;
                             
@@ -214,7 +430,9 @@ int main()
                             
                             sol.zero();
                             FloatVector residual( rhs );
+                            auto max_iteration_count = sol.getdimension();
                             timestamp start = gettimestamp();
+                            auto recent_iteration_count = 
                             ConjugateGradientSolverCSR_SSOR( 
                                 sol.getdimension(), 
                                 sol.raw(), 
@@ -230,125 +448,38 @@ int main()
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             
-                            // auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
-                            
-                            contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
-                        }
+                             LOG << sol.norm( mass ) << nl;
 
-                        if(false)
-                        {
-                            LOG << "CRM - CSR Classic" << endl;
-                        
-                            sol.zero();
-                            FloatVector residual( rhs );
-                            timestamp start = gettimestamp();
-                            ConjugateResidualSolverCSR( 
-                                sol.getdimension(), 
-                                sol.raw(), 
-                                rhs.raw(), 
-                                stiffness.getA(), stiffness.getC(), stiffness.getV(),
-                                residual.raw(),
-                                desired_precision,
-                                0
-                            );
-
-                            timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            auto runtime  = static_cast<Float>( end - start );
+                            // auto stat_sol = Float( ( sol - ... ).norm() );
+                            auto stat_res = Float( ( stiffness * sol - rhs ).norm() );
+                            auto stat_num = Float( recent_iteration_count ) / max_iteration_count;
                             
-                            // auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
-                            
-                            contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
-                        }
-
-                        if(false)
-                        {
-                            LOG << "CRM - CSR Textbook" << endl;
-                        
-                            sol.zero();
-                            FloatVector residual( rhs );
-                            timestamp start = gettimestamp();
-                            ConjugateResidualSolverCSR_textbook( 
-                                sol.getdimension(), 
-                                sol.raw(), 
-                                rhs.raw(), 
-                                stiffness.getA(), stiffness.getC(), stiffness.getV(),
-                                residual.raw(),
-                                desired_precision,
-                                0
-                            );
-
-                            timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
-                            
-                            // auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
-                            
-                            contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
-                        }
-
-                        if(false)
-                        {
-                            LOG << "MINRES CSR" << endl;
-                        
-                            sol.zero();
-                            FloatVector residual( rhs );
-                            timestamp start = gettimestamp();
-                            MINRESCSR( 
-                                sol.getdimension(), 
-                                sol.raw(), 
-                                rhs.raw(), 
-                                stiffness.getA(), stiffness.getC(), stiffness.getV(),
-                                residual.raw(),
-                                desired_precision,
-                                0
-                            );
-
-                            timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
-                            
-                            // auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
-                            
-                            contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
-                        }
-
-
-                        if(false)
-                        {
-                            LOG << "WHATEVER CSR" << endl;
-                        
-                            sol.zero();
-                            FloatVector residual( rhs );
-                            timestamp start = gettimestamp();
-                            WHATEVER( 
-                                sol.getdimension(), 
-                                sol.raw(), 
-                                rhs.raw(), 
-                                stiffness.getA(), stiffness.getC(), stiffness.getV(),
-                                residual.raw(),
-                                desired_precision,
-                                0
-                            );
-
-                            timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
-                            
-                            // auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
-                            
-                            contable << static_cast<Float>( end - start ) << Float( ( stiffness * sol - rhs ).norm() );;
+                            //contable_sol << stat_sol;
+                            contable_res << stat_res;
+                            contable_num << stat_num;
                         }
 
                         
+
                         
-                        contable << nl;
                         
-                        contable.lg( false );
+                        // contable_sol << nl;
+                        contable_res << nl;
+                        contable_num << nl;
+                    
+                        // contable_sol.lg( false );
+                        contable_res.lg( false );
+                        contable_num.lg( false );
 
                     }
                     
                 }
 
-                LOG << "Refinement..." << endl;
-            
-                if( l != max_l ) M.uniformrefinement();
+                if( l != max_l ){ 
+                    LOG << "Refinement..." << endl;
+                    M.uniformrefinement();
+                }
 
                 
             } 
