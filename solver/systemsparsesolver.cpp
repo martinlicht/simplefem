@@ -237,7 +237,7 @@ void HodgeConjugateResidualSolverCSR_diagonal(
         bool residualenergy_is_small = absolute(Md_r) < threshold*threshold;
         
         if( residualenergy_is_unreasonable ) {
-            if( print_modulo >= 0 ) printf( "BREAKDOWN: Residual energy is unreasonable with %.9Le\n", (long double)Md_r );
+            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Residual energy is unreasonable with %.9Le\n", (long double)Md_r );
             break;
         }
 
@@ -586,7 +586,7 @@ void HodgeConjugateResidualSolverCSR_SSOR(
         bool residualenergy_is_unreasonable = not std::isfinite(Md_r) or Md_r < 0.;
 
         if( residualenergy_is_unreasonable ) {
-            if( print_modulo >= 0 ) printf( "BREAKDOWN: Residual energy is unreasonable with %.9Le\n", (long double)Md_r );
+            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Residual energy is unreasonable with %.9Le\n", (long double)Md_r );
             break;
         }
 
@@ -915,7 +915,7 @@ void HodgeConjugateResidualSolverCSR_textbook(
         bool residualenergy_is_unreasonable = not std::isfinite(Mr_r) or Mr_r < 0.;
         
         if( residualenergy_is_unreasonable ) {
-            if( print_modulo >= 0 ) printf( "BREAKDOWN: Residual energy is unreasonable with %.9Le\n", (long double)Mr_r );
+            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Residual energy is unreasonable with %.9Le\n", (long double)Mr_r );
             break;
         }
         bool residualenergy_is_small = absolute(Mr_r) < threshold*threshold;

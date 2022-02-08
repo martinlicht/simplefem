@@ -103,6 +103,11 @@ FLAG_DISABLE_CHECK_MESHES=yes
 
 
 
+# Use this file to overwrite the default settings above on a local machine
+-include OVERWRITE.COMPILE.mk
+
+
+
 # If we are in RELEASE_MODE then set the following flags 
 
 ifdef $(RELEASE_MODE)
@@ -116,6 +121,7 @@ FLAG_NO_EXCEPTIONS=yes
 FLAG_DO_STRIP=yes
 FLAG_USE_PRIMITIVE_LOGGING=yes
 endif
+
 
 
 

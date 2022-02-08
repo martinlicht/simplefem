@@ -911,7 +911,7 @@ inline int SIZECAST( std::uintmax_t size )
 
 
 /******************************************************/
-/*    use this to safely cast size_types to C++ int   */
+/*       printf into C++ strings and streams          */
 /******************************************************/
 
 template< typename... Params >
@@ -923,6 +923,18 @@ inline std::string printf_into_string( const char* formatstring, Params... args 
     std::string ret( c_str );
     delete[] c_str;
     return ret;
+}
+
+// template< typename L, typename... Params >
+// inline void printf_into_stream( L& stream, const char* formatstring, Params... args )
+// {
+//     stream << printf_into_string( formatstring, args... );
+// }
+
+template< typename L, typename... Params >
+inline void printf_into_stream( L&& stream, const char* formatstring, Params... args )
+{
+    stream << printf_into_string( formatstring, args... );
 }
 
 

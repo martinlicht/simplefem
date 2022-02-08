@@ -151,7 +151,7 @@ int main()
                     
                     auto Z  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
                     
-                    auto SystemMatrix = C + B * inv(A,std::sqrt(machine_epsilon), 1) * Bt;
+                    auto SystemMatrix = C + B * inv(A,desired_precision, 1) * Bt;
                     
                     
                     
@@ -190,7 +190,7 @@ int main()
                                     Bt.getA(), Bt.getC(), Bt.getV(), 
                                     C.getA(),   C.getC(),  C.getV(), 
                                     residual.raw(),
-                                    std::sqrt(machine_epsilon),
+                                    desired_precision,
                                     0,
                                     desired_precision,
                                     -1
@@ -202,7 +202,7 @@ int main()
                                 //     rhs.raw(), 
                                 //     C.getA(), C.getC(), C.getV(),
                                 //     residual.raw(),
-                                //     1000 * machine_epsilon,
+                                //     desired_precision,
                                 //     0
                                 // );
                                 
@@ -315,7 +315,7 @@ int main()
 //                                 rhs.raw(), 
 //                                 mat.getA(), mat.getC(), mat.getV(),
 //                                 residual.raw(),
-//                                 100 * machine_epsilon,
+//                                 desired_precision,
 //                                 1
 //                             );
 //                             sol.normalize( mass );
@@ -384,154 +384,3 @@ int main()
 
 
 
-//                      {
-// 
-//                         FloatVector sol_original( opr.getdimin(), 0. );
-//                         FloatVector rhs_original( opr.getdimin(), 0. );
-//                         
-//                         sol_original.random(); sol_original.normalize( mass );
-//                         rhs_original.random(); rhs_original.normalize( mass );
-//                         
-//                         if(false)
-//                         {
-//                             LOG << "Filter out from x (CGM)" << endl;
-//                         
-//                             FloatVector sol( sol_original );
-//                             FloatVector rhs( rhs_original.getdimension(), 0. );
-//                             FloatVector residual( rhs );
-//                             
-//                             assert( sol.isfinite() );
-//                             
-//                             
-//                             ConjugateGradientSolverCSR( 
-//                                 sol.getdimension(), 
-//                                 sol.raw(), 
-//                                 rhs.raw(), 
-//                                 mat.getA(), mat.getC(), mat.getV(),
-//                                 residual.raw(),
-//                                 machine_epsilon,
-//                                 1
-//                             );
-//                             sol.normalize( mass );
-//                             
-//                             assert( sol.isfinite() );
-//                             
-//                             LOG << "\t\t\t x_0:       " << sol_original.norm( mass ) << std::endl;
-//                             LOG << "\t\t\t Ax_0:      " << ( mat * sol_original ).norm( mass ) << std::endl;
-//                             LOG << "\t\t\t b - Ax_0:  " << ( mat * sol_original - rhs ).norm( mass ) << std::endl;
-//                             
-//                             LOG << "\t\t\t x:         " << sol.norm( mass ) << std::endl;
-//                             LOG << "\t\t\t Ax:        " << ( mat * sol ).norm( mass ) << std::endl;
-//                             LOG << "\t\t\t b - Ax:    " << ( mat * sol - rhs ).norm( mass ) << std::endl;
-//                             
-//                             contable << sol.norm( mass ) << ( mat * sol ).norm( mass );
-//                             
-//                             
-//                             FloatVector sol2( sol_original );
-//                             sol2.random();
-//                             FloatVector rhs2( rhs_original.getdimension(), 0. );
-//                             FloatVector residual2( rhs );
-//                             
-//                             ConjugateGradientSolverCSR( 
-//                                 sol2.getdimension(), 
-//                                 sol2.raw(), 
-//                                 rhs2.raw(), 
-//                                 mat.getA(), mat.getC(), mat.getV(),
-//                                 residual2.raw(),
-//                                 machine_epsilon,
-//                                 1
-//                             );
-//                             sol2.normalize( mass );
-//                             
-//                             
-//                             
-//                             
-//                             if( r == 1 ) {
-//                         
-//                                 fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
-//                     
-//                                 VTKWriter vtk( M, fs, getbasename(__FILE__) );
-//                                 vtk.writeCoordinateBlock();
-//                                 vtk.writeTopDimensionalCells();
-//                                 
-//                                 vtk.writeVertexScalarData( sol,  "data1" , 1.0 );
-//                                 vtk.writeVertexScalarData( sol2, "data2" , 1.0 );
-//                                 // vtk.writeCellVectorData( interpol_grad, "gradient_interpolation" , 0.1 );
-//                                 
-//                                 fs.close();
-//                         
-//                             }
-// 
-//                             
-//                             
-//                         }
-// 
-//                         if(false)
-//                         {
-//                             LOG << "Filter out from x (CRM)" << endl;
-//                         
-//                             FloatVector sol( sol_original );
-//                             FloatVector rhs( rhs_original.getdimension(), 0. );
-//                             FloatVector residual( rhs );
-//                             
-//                             ConjugateResidualSolverCSR( 
-//                                 sol.getdimension(), 
-//                                 sol.raw(), 
-//                                 rhs.raw(), 
-//                                 mat.getA(), mat.getC(), mat.getV(),
-//                                 residual.raw(),
-//                                 machine_epsilon,
-//                                 0
-//                             );
-//                             sol.normalize( mass );
-//                             
-//                             LOG << "\t\t\t x_0:       " << sol_original.norm( mass ) << std::endl;
-//                             LOG << "\t\t\t Ax_0:      " << ( mat * sol_original ).norm( mass ) << std::endl;
-//                             LOG << "\t\t\t b - Ax_0:  " << ( mat * sol_original - rhs ).norm( mass ) << std::endl;
-//                             
-//                             LOG << "\t\t\t x:         " << sol.norm( mass ) << std::endl;
-//                             LOG << "\t\t\t Ax:        " << ( mat * sol ).norm( mass ) << std::endl;
-//                             LOG << "\t\t\t b - Ax:    " << ( mat * sol - rhs ).norm( mass ) << std::endl;
-//                             
-//                             contable << sol.norm( mass ) << ( mat * sol ).norm( mass );
-//                         }
-// 
-//                         if(false)
-//                         {
-//                             LOG << "Filter out from b" << endl;
-//                         
-//                             FloatVector sol( sol_original.getdimension(), 0. );
-//                             FloatVector rhs( rhs_original );
-//                             FloatVector residual( rhs );
-//                             
-//                             ConjugateResidualSolverCSR_textbook( 
-//                                 sol.getdimension(), 
-//                                 sol.raw(), 
-//                                 rhs.raw(), 
-//                                 mat.getA(), mat.getC(), mat.getV(),
-//                                 residual.raw(),
-//                                 desired_precision,
-//                                 0
-//                             );
-//                             residual.normalize( mass );
-//                             
-//                             LOG << "\t\t\t b:       " << rhs_original.norm( mass ) << std::endl;
-//                             LOG << "\t\t\t Ab:      " << ( mat * rhs ).norm( mass ) << std::endl;
-//                             
-//                             LOG << "\t\t\t r:       " << residual.norm( mass ) << std::endl;
-//                             LOG << "\t\t\t Ar:      " << ( mat * residual ).norm( mass ) << std::endl;
-//                             
-//                             LOG << "\t\t\t Ar:      " << ( mat * ( rhs - mat * sol ) ).norm( mass ) << std::endl;
-//                             
-//                             contable << sol.norm( mass ) << ( mat * sol ).norm( mass );
-//                         }
-// 
-//                         
-// 
-//                         
-//                         
-//                         contable << nl;
-//                         
-//                         contable.lg( false );
-// 
-//                     }

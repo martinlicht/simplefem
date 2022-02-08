@@ -236,7 +236,7 @@ int main()
                     auto negB  = B;  negB.scale(-1);
                     auto negBt = Bt; negBt.scale(-1);
                     
-                    auto SystemMatrix = C + B * inv(A,1000 * machine_epsilon) * Bt;
+                    auto SystemMatrix = C + B * inv(A,desired_precision) * Bt;
                     
                     
                     
