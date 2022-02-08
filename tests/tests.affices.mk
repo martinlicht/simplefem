@@ -13,4 +13,5 @@ affix.sullivan2D    := fem vtk mesh solver dense sparse operators combinatorics
 affix.sullivan3D    := fem vtk mesh solver dense sparse operators combinatorics 
 affix.whitney2D     := fem vtk mesh solver dense sparse operators combinatorics 
 affix.whitney3D     := fem vtk mesh solver dense sparse operators combinatorics 
+affix.nullspace     := fem vtk mesh solver dense sparse operators combinatorics 
 affix.afem          := fem vtk mesh solver dense sparse operators combinatorics 
