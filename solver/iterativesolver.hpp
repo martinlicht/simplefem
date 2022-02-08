@@ -27,7 +27,7 @@ struct IterativeSolver
         verbose = 2
     };
     
-    explicit IterativeSolver( Float threshold = 10000 * machine_epsilon, int max_iteration_count = 0, int print_modulo = -1 )
+    explicit IterativeSolver( Float threshold = desired_precision, int max_iteration_count = 0, int print_modulo = -1 )
     : threshold( threshold ), 
         recent_deviation( 0. ), 
         max_iteration_count( max_iteration_count ),
@@ -57,7 +57,7 @@ struct IterativeSolver
         os << "Print Iterative Solver." << std::endl;
     }
 
-    void lg() { LOG << *this << std::endl; };
+//     void lg() { LOG << *this << std::endl; };
 
     virtual void solve( FloatVector& unknown, const FloatVector& rhs ) const = 0;
 
