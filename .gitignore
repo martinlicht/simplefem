@@ -25,6 +25,9 @@ Dox
 *.obj
 *.elf
 
+# Output from compiler tracer
+*.json 
+
 # Linker output
 *.ilk
 *.map

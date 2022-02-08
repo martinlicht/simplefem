@@ -24,8 +24,8 @@
 
 # Do you want to use GCC or Clang?
 # Uncomment the appropriate definition below
-# FLAG_CXX := CLANG
-FLAG_CXX := GCC
+FLAG_CXX := CLANG
+# FLAG_CXX := GCC
 # FLAG_CXX := ICC
 
 
@@ -103,6 +103,11 @@ FLAG_DISABLE_CHECK_MESHES=yes
 
 
 
+# Use this file to overwrite the default settings above on a local machine
+-include OVERWRITE.COMPILE.mk
+
+
+
 # If we are in RELEASE_MODE then set the following flags 
 
 ifdef $(RELEASE_MODE)
@@ -116,6 +121,7 @@ FLAG_NO_EXCEPTIONS=yes
 FLAG_DO_STRIP=yes
 FLAG_USE_PRIMITIVE_LOGGING=yes
 endif
+
 
 
 
@@ -160,11 +166,11 @@ parameters:
 
 ifeq ($(FLAG_CXX),GCC)
 
-  CXX := g++ -std=c++2a
+  CXX := g++ -std=c++2a -ftime-report
   
 else ifeq ($(FLAG_CXX),CLANG)
 
-  CXX := clang++ -std=c++2a
+  CXX := clang++ -std=c++2a -ftime-trace
 
 else ifeq ($(FLAG_CXX),ICC)
 

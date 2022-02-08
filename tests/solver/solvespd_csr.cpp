@@ -10,7 +10,7 @@
 #include "../../utility/utility.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
-#include "../../solver/chebyshev.hpp"
+// #include "../../solver/chebyshev.hpp"
 #include "../../solver/sparsesolver.hpp"
 #include "../../solver/iterativesolver.hpp"
 
