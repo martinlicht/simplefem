@@ -45,7 +45,7 @@ int main()
 
             LOG << "Initial mesh..." << endl;
             
-            MeshSimplicial2D Mx = StandardSquare2D();
+            MeshSimplicial2D Mx = StandardSquare2D_tiles3x3();
             
             Mx.check();
             
