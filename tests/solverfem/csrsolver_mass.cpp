@@ -199,7 +199,7 @@ int main()
 
                         // rhs_original.zero();
                         
-                        const Float desired_precision = sqrt( machine_epsilon );
+                        // const Float desired_precision = sqrt( machine_epsilon );
 
                         if( do_cgmpp )
                         {
