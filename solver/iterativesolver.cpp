@@ -68,6 +68,8 @@ void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) cons
     FloatVector Ad( dimension, 0. );
     
     recent_iteration_count = 0;
+
+    Float sigma_min_sq = b * ( A * b ) / (b*b);
     
     if( verbosity >= VerbosityLevel::verbose ) LOG << "Begin Conjugate Gradient iteration" << nl;
         
@@ -112,11 +114,14 @@ void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) cons
 
             assert( Ad_d >= 0 );
 
+            // sigma_min_sq = std::min( sigma_min_sq, Ad_d / (d*d) );
+            // LOG << "@" << recent_iteration_count << " : " << std::sqrt( rr_old / ( sigma_min_sq * (x*x) ) ) << " with eigenvalue bound " << std::sqrt(sigma_min_sq) << nl;
+
             bool denominator_is_unreasonable = not std::isfinite(Ad_d) or Ad_d < 0.;
             bool denominator_is_small    = sqrt(absolute(Ad_d)) < machine_epsilon;
             
             if( denominator_is_unreasonable ) {
-                LOG << "Gradient energy is unreasonable with "  << Ad_d << nl;
+                LOG << "BREAKDOWN: Gradient energy is unreasonable with "  << Ad_d << nl;
                 break;
             }
             
@@ -389,7 +394,7 @@ void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector&
             bool denominator_is_small    = sqrt(absolute(Ad_Ad)) < machine_epsilon;
             
             if( denominator_is_unreasonable ) {
-                LOG << "Gradient double energy is unreasonable with "  << Ad_Ad << nl;
+                LOG << "BREAKDOWN: Gradient double energy is unreasonable with "  << Ad_Ad << nl;
                 break;
             }
             
@@ -530,7 +535,7 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
             bool denominator_is_small        = sqrt(absolute(Ad_Ad)) < machine_epsilon;
             
             if( denominator_is_unreasonable ) {
-                LOG << "Gradient double energy is unreasonable with "  << Ad_Ad << nl;
+                LOG << "BREAKDOWN: Gradient double energy is unreasonable with "  << Ad_Ad << nl;
                 break;
             }
             
@@ -656,7 +661,7 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
             bool denominator_is_small    = sqrt(absolute(Ad_Ad)) < machine_epsilon;
             
             if( denominator_is_unreasonable ) {
-                LOG << "Gradient double energy is unreasonable with "  << Ad_Ad << nl;
+                LOG << "BREAKDOWN: Gradient double energy is unreasonable with "  << Ad_Ad << nl;
                 break;
             }
             
@@ -926,7 +931,7 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
             bool denominator_is_small    = sqrt(absolute(AMp_MAMp)) < machine_epsilon;
             
             if( denominator_is_unreasonable ) {
-                LOG << "Gradient double energy is unreasonable with "  << AMp_MAMp << nl;
+                LOG << "BREAKDOWN: Gradient double energy is unreasonable with "  << AMp_MAMp << nl;
                 break;
             }
             
