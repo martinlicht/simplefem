@@ -24,8 +24,8 @@
 
 # Do you want to use GCC or Clang?
 # Uncomment the appropriate definition below
-# FLAG_CXX := CLANG
-FLAG_CXX := GCC
+FLAG_CXX := CLANG
+# FLAG_CXX := GCC
 # FLAG_CXX := ICC
 
 
@@ -166,11 +166,11 @@ parameters:
 
 ifeq ($(FLAG_CXX),GCC)
 
-  CXX := g++ -std=c++2a
+  CXX := g++ -std=c++2a -ftime-report
   
 else ifeq ($(FLAG_CXX),CLANG)
 
-  CXX := clang++ -std=c++2a
+  CXX := clang++ -std=c++2a -ftime-trace
 
 else ifeq ($(FLAG_CXX),ICC)
 

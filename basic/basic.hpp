@@ -936,6 +936,7 @@ inline void printf_into_stream( L&& stream, const char* formatstring, Params... 
 {
     stream << printf_into_string( formatstring, args... );
 }
+//#define printf_into_stream( stream, formatstring, ... ) { stream << printf_into_string( formatstring, __VA_ARGS__ ); }
 
 
 /******************************************************/
