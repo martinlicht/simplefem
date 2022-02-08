@@ -16,7 +16,11 @@
 std::string protocolprefixnow();
 
 
-class Logger
+// This variable has an instance in every translation unit 
+// It is not global for the entire program 
+bool log_has_a_fresh_line = true;
+
+class Logger : public std::ostringstream
 {
     private:
         std::ostream& internalstream;
@@ -26,7 +30,6 @@ class Logger
         int linenumber;
     
         bool print_file_and_line = false;
-        std::stringstream internalbuffer;
         
     public:
     
@@ -37,19 +40,24 @@ class Logger
             const char* filename = "UNKNOWN",
             const int linenumber = -1
         )
-        : internalstream( os ), prefix( prefix ), pad_newline_if_there_is_none( do_newline )
+        : 
+        internalstream( os ),
+        prefix( prefix ),
+        pad_newline_if_there_is_none( do_newline ),
+        filename( filename ),
+        linenumber( linenumber )
         {}
 
-        inline ~Logger()
+        ~Logger()
         {
             
-            const auto str = internalbuffer.str();
+            const auto str = this->str();
             
-            bool use_prefix_next  = true;
+            bool use_prefix_next  = log_has_a_fresh_line;
             
             if( str.empty() ) {
-                internalstream << prefix;
-                std::cout << "\nEMPTY\n";
+                // internalstream << prefix;
+                // std::cout << "\nEMPTY\n";
                 return;
             }
             
@@ -73,10 +81,20 @@ class Logger
                 
             }
             
-            if( pad_newline_if_there_is_none && ( str.empty() || str.back() != '\n' ) )
-                internalstream << nl;
+            log_has_a_fresh_line = false;
+            
+            if( not str.empty() && str.back() == '\n' ) {
+                log_has_a_fresh_line = true;
+            }
+            
+            if( not str.empty() && str.back() != '\n' && pad_newline_if_there_is_none ) {
+                log_has_a_fresh_line = true;
+                internalstream << nl;                
+            }
+            
+            
 
-            if( print_file_and_line ) {
+            if( print_file_and_line and log_has_a_fresh_line ) {
                 internalstream << prefix;
                 // internalstream << "\e[91m" << filename << ':' << linenumber << "\e[39m" << '\n';
                 internalstream << "" << filename << ':' << linenumber << '\n';
@@ -88,20 +106,59 @@ class Logger
             
         }
 
-        template<class T>
-        Logger& operator<<( const T& t )
-        {
-            internalbuffer << t;
-            return *this;
-        }
-        
-        Logger& operator<<( std::ostream& (*const f)(std::ostream&) )
-        {
-            f( internalbuffer );
-            return *this;
-        }
-        
 };
+
+
+
+
+
+
+// class Logger2
+// {
+//     private:
+//         std::ostream& internalstream;
+//         std::string prefix;
+//         bool pad_newline_if_there_is_none;
+//         std::string filename;
+//         int linenumber;
+    
+//         bool print_file_and_line = false;
+//         std::ostringstream internalbuffer;
+        
+//     public:
+    
+//         explicit inline Logger2( 
+//             std::ostream& os,
+//             const std::string& prefix = "",
+//             const bool do_newline = false,
+//             const char* filename = "UNKNOWN",
+//             const int linenumber = -1
+//         )
+//         : internalstream( os ), prefix( prefix ), pad_newline_if_there_is_none( do_newline )
+//         {}
+
+//         inline ~Logger2()
+//         {
+            
+//             const auto str = internalbuffer.str();
+//             ................. internalstream << str;
+            
+//         }
+
+//         template<class T>
+//         Logger& operator<<( const T& t )
+//         {
+//             internalbuffer << t;
+//             return *this;
+//         }
+        
+//         Logger& operator<<( std::ostream& (*const f)(std::ostream&) )
+//         {
+//             f( internalbuffer );
+//             return *this;
+//         }
+        
+// };
 
 
 
