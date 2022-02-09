@@ -56,7 +56,8 @@ inline const constexpr Float desired_precision = 100. * machine_epsilon;
 
 
 
-
+extern template class std::vector<int>;
+extern template class std::vector<Float>;
 
 
 
@@ -914,29 +915,28 @@ inline int SIZECAST( std::uintmax_t size )
 /*       printf into C++ strings and streams          */
 /******************************************************/
 
-template< typename... Params >
-inline std::string printf_into_string( const char* formatstring, Params... args )
-{
-    std::size_t length = std::snprintf(nullptr, 0, formatstring, args... ) + 1;
-    char* c_str = new char[length];
-    std::snprintf( c_str, length, formatstring, args... );
-    std::string ret( c_str );
-    delete[] c_str;
-    return ret;
-}
+// template< typename... Params >
+// inline std::string printf_into_string( const char* formatstring, Params... args )
+// {
+//     std::size_t length = std::snprintf(nullptr, 0, formatstring, args... ) + 1;
+//     char* c_str = new char[length];
+//     std::snprintf( c_str, length, formatstring, args... );
+//     std::string ret( c_str );
+//     delete[] c_str;
+//     return ret;
+// }
+
+std::string printf_into_string( const char* formatstring, ... );
+
+
 
 // template< typename L, typename... Params >
 // inline void printf_into_stream( L& stream, const char* formatstring, Params... args )
 // {
 //     stream << printf_into_string( formatstring, args... );
 // }
-
-template< typename L, typename... Params >
-inline void printf_into_stream( L&& stream, const char* formatstring, Params... args )
-{
-    stream << printf_into_string( formatstring, args... );
-}
-//#define printf_into_stream( stream, formatstring, ... ) { stream << printf_into_string( formatstring, __VA_ARGS__ ); }
+#define printf_into_stream( stream, formatstring, ... ) \
+ { stream << printf_into_string( formatstring __VA_OPT__(,) __VA_ARGS__ ); }
 
 
 /******************************************************/

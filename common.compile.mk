@@ -24,8 +24,8 @@
 
 # Do you want to use GCC or Clang?
 # Uncomment the appropriate definition below
-FLAG_CXX := CLANG
-# FLAG_CXX := GCC
+# FLAG_CXX := CLANG
+FLAG_CXX := GCC
 # FLAG_CXX := ICC
 
 
@@ -44,7 +44,7 @@ FLAG_DISABLE_CHECK_MESHES=yes
 # Do you want to DISABLE the custom logging framework
 # in favor of standard library routines?
 # Uncomment the following line for that
-# FLAG_USE_PRIMITIVE_LOGGING=yes
+FLAG_USE_PRIMITIVE_LOGGING=yes
 
 # Do you want to ENABLE the standard library debugging flags 
 # Uncomment the following line to enable the standard library debugging flags 
@@ -110,7 +110,7 @@ FLAG_DISABLE_CHECK_MESHES=yes
 
 # If we are in RELEASE_MODE then set the following flags 
 
-ifdef $(RELEASE_MODE)
+ifdef RELEASE_MODE
 FLAG_DISABLE_CHECK_MESHES=yes
 FLAG_DISABLE_STDLIBDEBUG=yes
 FLAG_DISABLE_ASSERTIONS=yes
@@ -166,11 +166,13 @@ parameters:
 
 ifeq ($(FLAG_CXX),GCC)
 
-  CXX := g++ -std=c++2a -ftime-report
+  CXX := g++ -std=c++2a
+  #-ftime-report
   
 else ifeq ($(FLAG_CXX),CLANG)
 
-  CXX := clang++ -std=c++2a -ftime-trace
+  CXX := clang++ -std=c++2a
+  #-ftime-trace
 
 else ifeq ($(FLAG_CXX),ICC)
 
@@ -657,6 +659,10 @@ endif
 
 ifeq ($(FLAG_DISABLE_ASSERTIONS),yes)
 CPPFLAGS += -DNDEBUG
+endif
+
+ifeq ($(FLAG_USE_PRIMITIVE_LOGGING),yes)
+CPPFLAGS += -DUSE_PRIMITIVE_LOGGING
 endif
 
 ifeq ($(FLAG_DISABLE_STDLIBDEBUG),yes)

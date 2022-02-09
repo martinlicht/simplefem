@@ -9,6 +9,7 @@
 
 
 
+#ifndef USE_PRIMITIVE_LOGGING
 // #include "logger.hpp"
 // #include "prefixbuffer.hpp"
 
@@ -177,14 +178,14 @@ class Logger : public std::ostringstream
 
 //     // delete[] str;
 // }
+#endif 
 
 
 
 
 
 
-
-#ifndef FLAG_USE_PRIMITIVE_LOGGING
+#ifndef USE_PRIMITIVE_LOGGING
 // returns a temporary logger to write stuff to, and line breaks on destruction 
 // Example usage:
 //     LOG << "This is a short message with a number: " << 5;      
@@ -196,7 +197,7 @@ class Logger : public std::ostringstream
 #else 
 
 #define LOG     std::cout
-#define LOG     std::cerr
+#define ERR     std::cerr
 
 #endif 
 
@@ -217,6 +218,8 @@ class Logger : public std::ostringstream
 //     ALERT "This is an alert"
 //     ERROR "This is an error"
 
+#ifndef USE_PRIMITIVE_LOGGING
+
 #define NOTE    Logger( std::cout, protocolprefixnow(), true, __FILE__, __LINE__ ) <<
 #define NOTICE  Logger( std::cout, protocolprefixnow(), true, __FILE__, __LINE__ ) <<
 
@@ -224,6 +227,16 @@ class Logger : public std::ostringstream
 #define ALERT   Logger( std::cerr, protocolprefixnow(), true, __FILE__, __LINE__ ) <<
 #define ERROR   Logger( std::cerr, protocolprefixnow(), true, __FILE__, __LINE__ ) <<
 
+#else 
+
+#define NOTE    std::cout <<
+#define NOTICE  std::cout <<
+
+#define WARNING std::cerr <<
+#define ALERT   std::cerr <<
+#define ERROR   std::cerr <<
+
+#endif 
 
 
 // emit the current file and line number into the log stream 
