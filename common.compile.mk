@@ -24,8 +24,8 @@
 
 # Do you want to use GCC or Clang?
 # Uncomment the appropriate definition below
-# FLAG_CXX := CLANG
-FLAG_CXX := GCC
+FLAG_CXX := CLANG
+# FLAG_CXX := GCC
 # FLAG_CXX := ICC
 
 
@@ -44,7 +44,7 @@ FLAG_DISABLE_CHECK_MESHES=yes
 # Do you want to DISABLE the custom logging framework
 # in favor of standard library routines?
 # Uncomment the following line for that
-FLAG_USE_PRIMITIVE_LOGGING=yes
+# FLAG_USE_PRIMITIVE_LOGGING=yes
 
 # Do you want to ENABLE the standard library debugging flags 
 # Uncomment the following line to enable the standard library debugging flags 
@@ -168,6 +168,7 @@ ifeq ($(FLAG_CXX),GCC)
 
   CXX := g++ -std=c++2a
   #-ftime-report
+  #-fuse-ld=lld
   
 else ifeq ($(FLAG_CXX),CLANG)
 
@@ -426,6 +427,8 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 		CXXFLAGS_WARNINGS += 
 
 		#CXXFLAGS_WARNINGS += -Wno-unused-variable
+		#CXXFLAGS_WARNINGS += -Wno-gnu-zero-variadic-macro-arguments
+		#CXXFLAGS_WARNINGS += -Wno-vla-extension
 
 
 			#Some of the .... suchen auf der CLANG seite 
@@ -446,7 +449,12 @@ CXXFLAGS_WARNINGS += -Wno-unused-parameter
 CXXFLAGS_WARNINGS += -Wno-vla
 CXXFLAGS_WARNINGS += -Wno-unknown-pragmas
 CXXFLAGS_WARNINGS += -Wno-type-limits 
-
+# for Clang...
+ifeq ($(FLAG_CXX),GCC)
+else ifeq ($(FLAG_CXX),CLANG)
+CXXFLAGS_WARNINGS += -Wno-vla-extension
+CXXFLAGS_WARNINGS += -Wno-gnu-zero-variadic-macro-arguments
+endif
 
 
 

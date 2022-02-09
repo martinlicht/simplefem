@@ -926,7 +926,8 @@ inline int SIZECAST( std::uintmax_t size )
 //     return ret;
 // }
 
-std::string printf_into_string( const char* formatstring, ... );
+std::string printf_into_string( const char* formatstring, ... ) 
+__attribute__ (( format (printf,1,2) ));
 
 
 
