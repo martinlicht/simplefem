@@ -2,21 +2,8 @@
 #define INCLUDEGUARD_EXAMPLES_1D_HPP
 
 
-#include <fstream>
-#include <iostream>
-#include <map>
-#include <string>
-#include <utility>
-#include <vector>
-
-
 #include "mesh.hpp"
 #include "mesh.simplicial1D.hpp"
-
-
-
-
-
 
 
 inline MeshSimplicial1D StandardInterval1D()
@@ -46,14 +33,6 @@ inline MeshSimplicial1D UnitInterval1D()
       }
     );
 }
-
-
-
-
-
-
-
-
 
 
 
