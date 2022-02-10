@@ -40,7 +40,7 @@ class IndexRange final
         
         void print( std::ostream&, bool embellish = true ) const;
 
-        void lg() const { LOG << text() << std::endl; };
+        // void lg() const { LOG << text() << std::endl; };
         
         /* OTHER METHODS */
 

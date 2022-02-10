@@ -266,7 +266,7 @@ inline void lg(){}
 // }
 
 template<typename T, typename... Ts>
-inline void lg( T arg, Ts... args )
+inline void lg( const T arg, const Ts... args )
 {
     LOG << arg << nl;
     lg( args... );

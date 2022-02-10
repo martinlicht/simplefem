@@ -75,7 +75,7 @@ class Mesh
         
         virtual void print( std::ostream& out ) const = 0;
         
-        // void lg() { LOG << *this << std::endl; };
+        // // void lg() const { LOG << *this << std::endl; };
         
         
         /* OTHER METHODS */

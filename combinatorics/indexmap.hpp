@@ -58,7 +58,7 @@ class IndexMap
         
         void print( std::ostream&, bool embellish = true ) const;
 
-        void lg() { LOG << text() << nl; };
+        // void lg() const { LOG << text() << nl; };
 
         
         /* OTHER METHODS */
