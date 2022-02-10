@@ -259,16 +259,16 @@ class Logger : public std::ostringstream
 
 inline void lg(){}
 
-template<typename T>
-inline void lg( T arg )
-{
-    LOG << arg;
-}
+// template<typename T>
+// inline void lg( T arg )
+// {
+//     LOG << arg << nl;
+// }
 
 template<typename T, typename... Ts>
 inline void lg( T arg, Ts... args )
 {
-    LOG << arg;
+    LOG << arg << nl;
     lg( args... );
 }
 

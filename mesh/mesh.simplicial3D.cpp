@@ -634,7 +634,7 @@ void MeshSimplicial3D::check() const
     
     #ifdef NDEBUG
     return;
-    #endif
+    #else
     
     /****************************/
     /* 1. Check the array sizes */ // OK
@@ -1456,7 +1456,7 @@ void MeshSimplicial3D::check() const
     
     
     Mesh::check();
-    
+    #endif
 }
 
 

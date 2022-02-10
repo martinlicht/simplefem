@@ -366,7 +366,7 @@ void MeshSimplicial2D::check() const
     
     #ifdef NDEBUG
     return;
-    #endif
+    #else
     
     /****************************/
     /* 1. Check the array sizes */
@@ -724,7 +724,7 @@ void MeshSimplicial2D::check() const
     /*************************************/
     
     Mesh::check();
-    
+    #endif
 }
 
 

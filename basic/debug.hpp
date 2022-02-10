@@ -100,7 +100,7 @@ inline void myActualUnimplemented [[noreturn]] ( const char* filename, const int
 
 
 
-#if !defined DISCARD_ASSERT_MESSAGES && !defined USE_ORIGINAL_ASSERT_MACRO 
+#if !defined NDEBUG && !defined DISCARD_ASSERT_MESSAGES && !defined USE_ORIGINAL_ASSERT_MACRO 
 
 // The following contains the framework to enable a varyadic assert macro
 // The internal function is templated; after the first few standard arguments
