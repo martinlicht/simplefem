@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include <fstream>
-#include <iomanip>
+// #include <iomanip>
 
 #include "../../basic.hpp"
 #include "../../dense/densematrix.hpp"
@@ -24,7 +24,7 @@ int main()
         
         LOG << "Unit Test: (1D) masses are correctly approximated: precomputed mass" << nl;
         
-        LOG << std::setprecision(10);
+        // LOG << std::setprecision(10);
 
         LOG << "Initial mesh..." << nl;
         

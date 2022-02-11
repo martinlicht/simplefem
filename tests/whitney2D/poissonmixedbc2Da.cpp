@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include <fstream>
-#include <iomanip>
+// #include <iomanip>
 
 #include "../../basic.hpp"
 #include "../../utility/utility.hpp"
@@ -37,7 +37,7 @@ int main()
         
         LOG << "Unit Test for Solution of Neumann Problem" << endl;
         
-        LOG << std::setprecision(10);
+        // LOG << std::setprecision(10);
 
         if(true){
 

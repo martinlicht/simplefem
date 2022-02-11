@@ -18,9 +18,9 @@ int main()
 {
     LOG << "Unit Tests for Matrix Algorithms" << endl;
     
-    LOG << std::setprecision(5);
-    LOG << std::fixed << std::ios::floatfield; //setf( std::ios::fixed, std::ios::floatfield ); // FIXME does this work?
-    LOG << std::showpos;
+    // LOG << std::setprecision(5);
+    // LOG << std::fixed << std::ios::floatfield; //setf( std::ios::fixed, std::ios::floatfield ); 
+    // LOG << std::showpos;
     
     {
         LOG << "A. Unit test for scalar functions of matrices" << endl;

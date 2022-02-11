@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include <fstream>
-#include <iomanip>
+// #include <iomanip>
 
 #include "../../basic.hpp"
 #include "../../operators/composedoperators.hpp"
@@ -30,7 +30,7 @@ int main()
         
         LOG << "Unit Test: (?D) Lagrange matrices agree with FEEC analogues" << endl;
         
-        LOG << std::setprecision(10);
+        // LOG << std::setprecision(10);
 
         LOG << "Initial mesh..." << endl;
         

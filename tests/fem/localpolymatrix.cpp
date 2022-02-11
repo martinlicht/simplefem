@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include <fstream>
-#include <iomanip>
+// #include <iomanip>
 
 #include "../../basic.hpp"
 #include "../../dense/densematrix.hpp"
@@ -26,7 +26,7 @@ int main()
 {
     LOG << "Unit Test for Inverse of Poly Matrix" << endl;
     
-    LOG << std::setprecision(10);
+    // LOG << std::setprecision(10);
 
     const int r_min = 1;
     const int r_max = 9;

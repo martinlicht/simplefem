@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include <fstream>
-#include <iomanip>
+// #include <iomanip>
 
 #include "../../basic.hpp"
 #include "../../utility/utility.hpp"
@@ -40,7 +40,7 @@ int main()
         
         LOG << "Unit Test: Compute a nullspace " << endl;
         
-        LOG << std::setprecision(10);
+        // LOG << std::setprecision(10);
 
         if(true){
 
@@ -272,14 +272,14 @@ int main()
                     
                     LOG << "How much nullspace are our vectors?" << nl;
                     for( const auto& nullvector : nullvectorgallery ) {
-                        LOG << std::showpos << std::scientific << std::setprecision(5) << std::setw(10) << ( SystemMatrix * nullvector ).norm(mass) << tab;
+                        // LOG << std::showpos << std::scientific << std::setprecision(5) << std::setw(10) << ( SystemMatrix * nullvector ).norm(mass) << tab;
                     }
                     LOG << nl;
                     
                     LOG << "How orthonormal are our vectors?" << nl;
                     for( const auto& nullvector1 : nullvectorgallery ) {
                         for( const auto& nullvector2 : nullvectorgallery ) {
-                            LOG << std::showpos << std::scientific << std::setprecision(5) << std::setw(10) << mass * nullvector1 * nullvector2 << tab;
+                            // LOG << std::showpos << std::scientific << std::setprecision(5) << std::setw(10) << mass * nullvector1 * nullvector2 << tab;
                         }
                         LOG << nl;
                     }
