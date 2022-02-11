@@ -2,7 +2,7 @@
 #define INCLUDEGUARD_SOLVER_ITERATIVESOLVER
 
 
-#include <iostream>
+#include <ostream>
 #include <limits>
 
 #include "../basic.hpp"

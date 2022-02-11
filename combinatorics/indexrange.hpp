@@ -2,7 +2,7 @@
 #define INCLUDEGUARD_COMBINATORICS_INDEXRANGE_HPP
 
 
-#include <iostream>
+#include <ostream>
 #include <limits>
 #include <string>
 

@@ -4,7 +4,7 @@
 
 // #include <cassert>
 #include <functional>
-#include <iostream>
+#include <ostream>
 #include <vector>
 
 #include "../basic.hpp"

@@ -1,7 +1,7 @@
 #ifndef INCLUDEGUARD_UTILITY_TIMEBEACON_HPP
 #define INCLUDEGUARD_UTILITY_TIMEBEACON_HPP
 
-#include <iostream>
+#include <ostream>
 #include <string>
 #include <vector>
 
