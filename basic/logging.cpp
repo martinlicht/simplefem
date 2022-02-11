@@ -3,6 +3,25 @@
 #ifndef USE_PRIMITIVE_LOGGING
 bool log_has_a_fresh_line = true;
 
+#include <iomanip>
+
+Logger::Logger( 
+            std::ostream& os,
+            const bool do_newline,
+            const char* filename,
+            const int linenumber
+        )
+        : 
+        internalstream( os ),
+        pad_newline_if_there_is_none( do_newline ),
+        filename( filename ),
+        linenumber( linenumber )
+        {
+            *this << std::setprecision(10);
+        }
+
+        
+
 Logger::~Logger()
 {
     

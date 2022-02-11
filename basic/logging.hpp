@@ -33,18 +33,21 @@ class Logger : public std::ostringstream
         
     public:
     
-        explicit inline Logger( 
+        explicit 
+        // inline
+        Logger( 
             std::ostream& os,
             const bool do_newline = false,
             const char* filename = "UNKNOWN",
             const int linenumber = -1
         )
-        : 
-        internalstream( os ),
-        pad_newline_if_there_is_none( do_newline ),
-        filename( filename ),
-        linenumber( linenumber )
-        {}
+        ;
+        // : 
+        // internalstream( os ),
+        // pad_newline_if_there_is_none( do_newline ),
+        // filename( filename ),
+        // linenumber( linenumber )
+        // {}
 
         ~Logger();
 
