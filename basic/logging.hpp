@@ -1,15 +1,16 @@
 #ifndef INCLUDEGUARD_LOGGING_HPP
 #define INCLUDEGUARD_LOGGING_HPP
 
-#include <iostream>
-#include <string>
-#include <sstream>
-
 #include "basic.hpp"
 
 
 
 #ifndef USE_PRIMITIVE_LOGGING
+
+#include <ostream>
+#include <string>
+#include <sstream>
+
 // #include "logger.hpp"
 // #include "prefixbuffer.hpp"
 
@@ -36,7 +37,7 @@ class Logger : public std::ostringstream
         explicit 
         // inline
         Logger( 
-            std::ostream& os,
+            bool use_cerr, //std::ostream& os,
             const bool do_newline = false,
             const char* filename = "UNKNOWN",
             const int linenumber = -1
@@ -135,10 +136,12 @@ class Logger : public std::ostringstream
 //     LOG << "This is a short message with a number: " << 5;      
 //     ERR << "This is an error message.";      
 
-#define LOG     Logger( std::cout, false, __FILE__, __LINE__ )
-#define ERR     Logger( std::cerr, false, __FILE__, __LINE__ )
+#define LOG     Logger( false, false, __FILE__, __LINE__ )
+#define ERR     Logger( true, false, __FILE__, __LINE__ )
 
 #else 
+
+#include <iostream>
 
 #define LOG     std::cout
 #define ERR     std::cerr
@@ -164,12 +167,12 @@ class Logger : public std::ostringstream
 
 #ifndef USE_PRIMITIVE_LOGGING
 
-#define NOTE    Logger( std::cout, true, __FILE__, __LINE__ ) <<
-#define NOTICE  Logger( std::cout, true, __FILE__, __LINE__ ) <<
+#define NOTE    Logger( false, true, __FILE__, __LINE__ ) <<
+#define NOTICE  Logger( false, true, __FILE__, __LINE__ ) <<
 
-#define WARNING Logger( std::cerr, true, __FILE__, __LINE__ ) <<
-#define ALERT   Logger( std::cerr, true, __FILE__, __LINE__ ) <<
-#define ERROR   Logger( std::cerr, true, __FILE__, __LINE__ ) <<
+#define WARNING Logger( true, true, __FILE__, __LINE__ ) <<
+#define ALERT   Logger( true, true, __FILE__, __LINE__ ) <<
+#define ERROR   Logger( true, true, __FILE__, __LINE__ ) <<
 
 #else 
 
