@@ -36,7 +36,6 @@
 
 #ifndef FLAG_USE_ORIGINAL_ASSERT_MACRO
 
-
 #include <cstdio>
 #include <cstdlib>
 
@@ -95,6 +94,11 @@ inline void myActualUnimplemented [[noreturn]] ( const char* filename, const int
 #endif // __cpp_exceptions    
 }
 
+#endif // FLAG_USE_ORIGINAL_ASSERT_MACRO
+
+
+
+
 
 
 
@@ -149,7 +153,7 @@ inline std::string Concat2String( const T& t, const Params&... params )
 // }
 
 
-#endif // not FLAG_USE_ORIGINAL_ASSERT_MACRO
+#endif // !defined NDEBUG && !defined DISCARD_ASSERT_MESSAGES && !defined USE_ORIGINAL_ASSERT_MACRO 
 
 
 
