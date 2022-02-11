@@ -34,6 +34,7 @@
 
 
 
+#ifndef FLAG_USE_ORIGINAL_ASSERT_MACRO
 
 
 #include <cstdio>
@@ -147,8 +148,8 @@ inline std::string Concat2String( const T& t, const Params&... params )
 //     myActualAssert( filename, linenumber, expression, Concat2String( params... ) );
 // }
 
-#endif
 
+#endif // not FLAG_USE_ORIGINAL_ASSERT_MACRO
 
 
 

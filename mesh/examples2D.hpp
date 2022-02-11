@@ -4,11 +4,6 @@
 
 #include <cmath>
 #include <algorithm>
-#include <fstream>
-#include <iostream>
-#include <map>
-#include <string>
-#include <utility>
 #include <vector>
 
 #include "mesh.hpp"
