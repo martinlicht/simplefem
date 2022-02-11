@@ -19,7 +19,7 @@
 #include <chrono>
 #include <functional>
 #include <iostream>
-#include <iomanip>
+// #include <iomanip>
 #include <iterator>
 #include <limits>
 #include <list>
@@ -652,7 +652,7 @@ inline std::string timestamp2digitalcode( const timestamp& t )
     std::ostringstream ss;
 //     ss.reserve(12);
 //     ss << std::setw(14) << t;
-    ss << std::hex << std::setfill('_') << std::setw(8) << t;
+    ss << t; //<< std::hex << std::setfill('_') << std::setw(8) << t;
     return ss.str();
 }
 

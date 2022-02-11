@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include <fstream>
-#include <iomanip>
+// #include <iomanip>
 
 #include "../../basic.hpp"
 #include "../../operators/composedoperators.hpp"
@@ -29,7 +29,7 @@ int main()
         
         LOG << "Unit Test: (1D) degree elevation commutes with exterior derivative" << endl;
         
-        LOG << std::setprecision(10);
+        // LOG << std::setprecision(10);
 
         LOG << "Initial mesh..." << endl;
         

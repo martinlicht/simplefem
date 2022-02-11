@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include <fstream>
-#include <iomanip>
+// #include <iomanip>
 
 #include "../../basic.hpp"
 #include "../../dense/densematrix.hpp"
@@ -24,7 +24,7 @@ int main()
 {
         LOG << "Unit Test: Evaluation Matrix and its Invertibility" << endl;
         
-        LOG << std::setprecision(10);
+        // LOG << std::setprecision(10);
         
         const int n_min = 1;
         const int n_max = 3;
