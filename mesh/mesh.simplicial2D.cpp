@@ -2,7 +2,7 @@
 #include <cmath>
 #include <algorithm>
 // #include <fstream>
-#include <iostream>
+#include <ostream>
 #include <list>
 #include <map>
 #include <stack> 

@@ -2,7 +2,7 @@
 
 /**/
 
-#include <iostream>
+#include <ostream>
 #include <sstream>
 #include "../../basic.hpp"
 #include "../../mesh/coordinates.hpp"

@@ -10,7 +10,7 @@ void f()
     volatile double d = 0;
     for(int n=0; n<10000; ++n)
        for(int m=0; m<10000; ++m)
-           d += d*n*m;
+           d = d + d*n*m;
 }
  
 int main()

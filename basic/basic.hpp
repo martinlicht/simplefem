@@ -18,7 +18,7 @@
 #include <array>
 #include <chrono>
 #include <functional>
-#include <iostream>
+#include <ostream>
 #include <iterator>
 #include <limits>
 #include <list>
