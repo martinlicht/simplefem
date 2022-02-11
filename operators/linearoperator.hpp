@@ -51,7 +51,7 @@ class LinearOperator
         
         void print( std::ostream& os ) const;
 
-        void lg() const { LOG << *this << nl; };
+        // void lg() const { LOG << text() << nl; };
         
         /* OTHER METHODS */
         

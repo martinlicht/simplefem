@@ -4,11 +4,6 @@
 
 #include <cmath>
 #include <algorithm>
-#include <fstream>
-#include <iostream>
-#include <map>
-#include <string>
-#include <utility>
 #include <vector>
 
 #include "mesh.hpp"
@@ -55,6 +50,61 @@ inline MeshSimplicial2D StandardSquare2D_alternative()
       {
         { 0, 1, 2 },
         { 0, 1, 3 }
+      }
+    );
+}
+
+
+inline MeshSimplicial2D StandardSquare2D_tiles3x3()
+{
+    return MeshSimplicial2D(
+      2,
+      Coordinates( 2, 16, {
+         0.,  0., // 0
+         0.,  1., // 1
+         0.,  2., // 2
+         0.,  3., // 3
+         1.,  0., // 4
+         1.,  1., // 5
+         1.,  2., // 6
+         1.,  3., // 7
+         2.,  0., // 8
+         2.,  1., // 9
+         2.,  2., // 10
+         2.,  3., // 11
+         3.,  0., // 12
+         3.,  1., // 13
+         3.,  2., // 14
+         3.,  3., // 15
+      } ),
+      {
+        // Ecken
+        { 0, 1, 4 },
+        { 1, 4, 5 },
+
+        { 2, 3, 7 },
+        { 2, 6, 7 },
+        
+        { 8, 9,12 },
+        { 9,12,13 },
+        
+        {10,11,14 },
+        {11,14,15 },
+        // Horizontal, vertikal
+        { 1, 2, 5 },
+        { 2, 5, 6 },
+        
+        { 6, 7,10 },
+        { 7,10,11 },
+
+        { 4, 5, 8 },
+        { 5, 8, 9 },
+
+        { 9,10,13 },
+        {10,13,14 },
+        // mitte 
+        { 5, 6, 9 },
+        { 6, 9,10 }
       }
     );
 }

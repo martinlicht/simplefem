@@ -94,6 +94,23 @@ int WHATEVER(
 
 
 
+// The Convergence of Inexact Chebyshev and Richardson Iterative Methods for Solving Linear Systems
+
+
+int CheybyshevIteration_DiagonalPreconditioner( 
+    const int N, 
+    Float* __restrict__ x, 
+    const Float* __restrict__ b, 
+    const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
+    Float* __restrict__ residual,
+    const Float allowed_error,
+    unsigned int print_modulo,
+    const Float* __restrict__ precon,
+    const Float lower,
+    const Float upper
+);
+
+
 
 // // Solves the Uzawa-system
 // 

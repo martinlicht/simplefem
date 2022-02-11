@@ -2,14 +2,6 @@
 #define INCLUDEGUARD_EXAMPLES_3D_HPP
 
 
-#include <fstream>
-#include <iostream>
-#include <map>
-#include <string>
-#include <utility>
-#include <vector>
-
-
 #include "mesh.hpp"
 #include "mesh.simplicial3D.hpp"
 

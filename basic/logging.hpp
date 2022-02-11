@@ -9,6 +9,7 @@
 
 
 
+#ifndef USE_PRIMITIVE_LOGGING
 // #include "logger.hpp"
 // #include "prefixbuffer.hpp"
 
@@ -16,92 +17,90 @@
 std::string protocolprefixnow();
 
 
-class Logger
+// This variable has an instance in every translation unit 
+// It is not global for the entire program 
+extern bool log_has_a_fresh_line;
+
+class Logger : public std::ostringstream
 {
     private:
         std::ostream& internalstream;
-        std::string prefix;
         bool pad_newline_if_there_is_none;
         std::string filename;
         int linenumber;
     
         bool print_file_and_line = false;
-        std::stringstream internalbuffer;
         
     public:
     
         explicit inline Logger( 
             std::ostream& os,
-            const std::string& prefix = "",
             const bool do_newline = false,
             const char* filename = "UNKNOWN",
             const int linenumber = -1
         )
-        : internalstream( os ), prefix( prefix ), pad_newline_if_there_is_none( do_newline )
+        : 
+        internalstream( os ),
+        pad_newline_if_there_is_none( do_newline ),
+        filename( filename ),
+        linenumber( linenumber )
         {}
 
-        inline ~Logger()
-        {
-            
-            const auto str = internalbuffer.str();
-            
-            bool use_prefix_next  = true;
-            
-            if( str.empty() ) {
-                internalstream << prefix;
-                std::cout << "\nEMPTY\n";
-                return;
-            }
-            
-            for( int c = 0; c < str.size(); c++ )
-            {
+        ~Logger();
 
-                if( use_prefix_next ) { 
-                    use_prefix_next = false;
-                    internalstream << prefix;
-                }
-                
-                auto character = str.at(c);
-                
-                internalstream << character;
-
-                if( character == '\n' ) 
-                { 
-                    internalstream.flush();
-                    use_prefix_next = true;
-                }
-                
-            }
-            
-            if( pad_newline_if_there_is_none && ( str.empty() || str.back() != '\n' ) )
-                internalstream << nl;
-
-            if( print_file_and_line ) {
-                internalstream << prefix;
-                // internalstream << "\e[91m" << filename << ':' << linenumber << "\e[39m" << '\n';
-                internalstream << "" << filename << ':' << linenumber << '\n';
-            }
-
-            #ifndef NDEBUG
-            internalstream.flush();
-            #endif
-            
-        }
-
-        template<class T>
-        Logger& operator<<( const T& t )
-        {
-            internalbuffer << t;
-            return *this;
-        }
-        
-        Logger& operator<<( std::ostream& (*const f)(std::ostream&) )
-        {
-            f( internalbuffer );
-            return *this;
-        }
-        
 };
+
+
+
+
+
+
+// class Logger2
+// {
+//     private:
+//         std::ostream& internalstream;
+//         std::string prefix;
+//         bool pad_newline_if_there_is_none;
+//         std::string filename;
+//         int linenumber;
+    
+//         bool print_file_and_line = false;
+//         std::ostringstream internalbuffer;
+        
+//     public:
+    
+//         explicit inline Logger2( 
+//             std::ostream& os,
+//             const std::string& prefix = "",
+//             const bool do_newline = false,
+//             const char* filename = "UNKNOWN",
+//             const int linenumber = -1
+//         )
+//         : internalstream( os ), prefix( prefix ), pad_newline_if_there_is_none( do_newline )
+//         {}
+
+//         inline ~Logger2()
+//         {
+            
+//             const auto str = internalbuffer.str();
+//             ................. internalstream << str;
+            
+//         }
+
+//         template<class T>
+//         Logger& operator<<( const T& t )
+//         {
+//             internalbuffer << t;
+//             return *this;
+//         }
+        
+//         Logger& operator<<( std::ostream& (*const f)(std::ostream&) )
+//         {
+//             f( internalbuffer );
+//             return *this;
+//         }
+        
+// };
 
 
 
@@ -120,26 +119,26 @@ class Logger
 
 //     // delete[] str;
 // }
+#endif 
 
 
 
 
 
 
-
-#ifndef FLAG_USE_PRIMITIVE_LOGGING
+#ifndef USE_PRIMITIVE_LOGGING
 // returns a temporary logger to write stuff to, and line breaks on destruction 
 // Example usage:
 //     LOG << "This is a short message with a number: " << 5;      
 //     ERR << "This is an error message.";      
 
-#define LOG     Logger( std::cout, protocolprefixnow(), false, __FILE__, __LINE__ )
-#define ERR     Logger( std::cerr, protocolprefixnow(), false, __FILE__, __LINE__ )
+#define LOG     Logger( std::cout, false, __FILE__, __LINE__ )
+#define ERR     Logger( std::cerr, false, __FILE__, __LINE__ )
 
 #else 
 
 #define LOG     std::cout
-#define LOG     std::cerr
+#define ERR     std::cerr
 
 #endif 
 
@@ -160,13 +159,25 @@ class Logger
 //     ALERT "This is an alert"
 //     ERROR "This is an error"
 
-#define NOTE    Logger( std::cout, protocolprefixnow(), true, __FILE__, __LINE__ ) <<
-#define NOTICE  Logger( std::cout, protocolprefixnow(), true, __FILE__, __LINE__ ) <<
+#ifndef USE_PRIMITIVE_LOGGING
 
-#define WARNING Logger( std::cerr, protocolprefixnow(), true, __FILE__, __LINE__ ) <<
-#define ALERT   Logger( std::cerr, protocolprefixnow(), true, __FILE__, __LINE__ ) <<
-#define ERROR   Logger( std::cerr, protocolprefixnow(), true, __FILE__, __LINE__ ) <<
+#define NOTE    Logger( std::cout, true, __FILE__, __LINE__ ) <<
+#define NOTICE  Logger( std::cout, true, __FILE__, __LINE__ ) <<
 
+#define WARNING Logger( std::cerr, true, __FILE__, __LINE__ ) <<
+#define ALERT   Logger( std::cerr, true, __FILE__, __LINE__ ) <<
+#define ERROR   Logger( std::cerr, true, __FILE__, __LINE__ ) <<
+
+#else 
+
+#define NOTE    std::cout <<
+#define NOTICE  std::cout <<
+
+#define WARNING std::cerr <<
+#define ALERT   std::cerr <<
+#define ERROR   std::cerr <<
+
+#endif 
 
 
 // emit the current file and line number into the log stream 

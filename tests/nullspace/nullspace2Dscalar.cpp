@@ -197,7 +197,7 @@ int main()
                                     rhs.raw(), 
                                     SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
                                     residual.raw(),
-                                    std::sqrt(machine_epsilon),
+                                    desired_precision,
                                     0
                                 );
                                 
@@ -232,7 +232,7 @@ int main()
 //                                     candidate.raw(), 
 //                                     SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
 //                                     residual.raw(),
-//                                     1000 * machine_epsilon,
+//                                     desired_precision,
 //                                     0
 //                                 );
 //                                 candidate = residual;
@@ -319,7 +319,7 @@ int main()
 //                                 rhs.raw(), 
 //                                 SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
 //                                 residual.raw(),
-//                                 100 * machine_epsilon,
+//                                 desired_precision,
 //                                 1
 //                             );
 //                             sol.normalize( mass );

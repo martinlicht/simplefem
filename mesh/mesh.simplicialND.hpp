@@ -2,7 +2,6 @@
 #define INCLUDEGUARD_MESH_SIMPLICIAL_ND_HPP
 
 
-#include <fstream>
 #include <iostream>
 #include <map>
 #include <string>

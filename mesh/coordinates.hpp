@@ -48,7 +48,7 @@ class Coordinates
         void check() const;
         void print( std::ostream& ) const;
 
-        void lg() { LOG << *this << std::endl; };
+        // void lg() { LOG << *this << std::endl; };
         
 
         void read( std::istream& ) ;
@@ -106,9 +106,9 @@ class Coordinates
 
 bool compare( const Coordinates& coords_left, const Coordinates& coords_right, Float tolerance = 0.00001 );
 
-inline std::ostream& operator<<( std::ostream& os, const Coordinates& ir )
+inline std::ostream& operator<<( std::ostream& os, const Coordinates& co )
 {
-    ir.print( os );
+    co.print( os );
     return os;
 }
 

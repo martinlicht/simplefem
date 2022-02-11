@@ -10,7 +10,7 @@
 #include "../../utility/utility.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
-#include "../../solver/chebyshev.hpp"
+// #include "../../solver/chebyshev.hpp"
 #include "../../solver/sparsesolver.hpp"
 #include "../../solver/iterativesolver.hpp"
 
@@ -47,7 +47,7 @@ int main()
             //
             bool do_cgm_csr                = false;
             bool do_crm_csr                = false;
-            bool do_cgm_csrtextbook        = false;
+            bool do_crm_csrtextbook        = false;
             bool do_minres_csr             = false;
             bool do_whatever_csr           = false;
             bool do_cgm_diagonal_csr       = false;
@@ -63,7 +63,7 @@ int main()
             //
             do_cgm_csr                = true;
             do_crm_csr                = true;
-            do_cgm_csrtextbook        = true;
+            do_crm_csrtextbook        = true;
             do_minres_csr             = true;
             do_whatever_csr           = true;
             do_cgm_diagonal_csr       = true;
@@ -83,7 +83,7 @@ int main()
             //
             if( do_cgm_csr )                contable_sol << "CGMcsr"       ;
             if( do_crm_csr )                contable_sol << "CRMcsr"       ;
-            if( do_cgm_csrtextbook )        contable_sol << "CRMcsr_tb"    ;
+            if( do_crm_csrtextbook )        contable_sol << "CRMcsr_tb"    ;
             if( do_minres_csr )             contable_sol << "MINREScsr"    ;
             if( do_whatever_csr )           contable_sol << "WHATEVER"     ;
             if( do_cgm_diagonal_csr )       contable_sol << "CGMcsr_diag"  ;
@@ -100,7 +100,7 @@ int main()
             //
             if( do_cgm_csr )                contable_res << "CGMcsr"       ;
             if( do_crm_csr )                contable_res << "CRMcsr"       ;
-            if( do_cgm_csrtextbook )        contable_res << "CRMcsr_tb"    ;
+            if( do_crm_csrtextbook )        contable_res << "CRMcsr_tb"    ;
             if( do_minres_csr )             contable_res << "MINREScsr"    ;
             if( do_whatever_csr )           contable_res << "WHATEVER"     ;
             if( do_cgm_diagonal_csr )       contable_res << "CGMcsr_diag"  ;
@@ -117,7 +117,7 @@ int main()
             //
             if( do_cgm_csr )                contable_num << "CGMcsr"       ;
             if( do_crm_csr )                contable_num << "CRMcsr"       ;
-            if( do_cgm_csrtextbook )        contable_num << "CRMcsr_tb"    ;
+            if( do_crm_csrtextbook )        contable_num << "CRMcsr_tb"    ;
             if( do_minres_csr )             contable_num << "MINREScsr"    ;
             if( do_whatever_csr )           contable_num << "WHATEVER"     ;
             if( do_cgm_diagonal_csr )       contable_num << "CGMcsr_diag"  ;
@@ -393,7 +393,7 @@ int main()
                             contable_num << stat_num;
                         }
 
-                        if( do_cgm_csrtextbook )
+                        if( do_crm_csrtextbook )
                         {
                             LOG << "CRM - CSR Textbook" << endl;
                         

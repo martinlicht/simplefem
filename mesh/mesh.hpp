@@ -3,7 +3,6 @@
 
 
 #include <iostream>
-#include <fstream>
 #include <map>
 #include <string>
 #include <utility>
@@ -51,7 +50,6 @@ const SimplexFlag SimplexFlagDirichlet = 0xF1F1F1F1;
 ****  
 *******************/
 
-
 class Mesh
 {
     
@@ -76,7 +74,7 @@ class Mesh
         
         virtual void print( std::ostream& out ) const = 0;
         
-        void lg() { LOG << *this << std::endl; };
+        // void lg() { LOG << *this << std::endl; };
         
         
         /* OTHER METHODS */
