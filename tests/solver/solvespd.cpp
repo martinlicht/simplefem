@@ -150,7 +150,7 @@ int main()
                             mysol.zero();
                             ConjugateGradientMethod Solver( system );
                             Solver.print_modulo        = mysol.getdimension() / 20;
-                            Solver.max_iteration_count =     4 * mysol.getdimension();
+                            Solver.max_iteration_count =     mysol.getdimension();
                             timestamp start = gettimestamp();
                             Solver.solve( mysol, rhs );
                             timestamp end = gettimestamp();
@@ -172,7 +172,7 @@ int main()
                             mysol.zero();
                             ConjugateResidualMethod Solver( system );
                             Solver.print_modulo        = mysol.getdimension() / 20;
-                            Solver.max_iteration_count = 4 * mysol.getdimension();
+                            Solver.max_iteration_count = mysol.getdimension();
                             
                             timestamp start = gettimestamp();
                             Solver.solve_explicit( mysol, rhs );
@@ -196,7 +196,7 @@ int main()
                             mysol.zero();
                             ConjugateResidualMethod Solver( system );
                             Solver.print_modulo        = mysol.getdimension() / 20;
-                            Solver.max_iteration_count = 4 * mysol.getdimension();
+                            Solver.max_iteration_count = mysol.getdimension();
                             
                             timestamp start = gettimestamp();
                             Solver.solve_robust( mysol, rhs );
@@ -220,7 +220,7 @@ int main()
                             mysol.zero();
                             ConjugateResidualMethod Solver( system );
                             Solver.print_modulo        = mysol.getdimension() / 20;
-                            Solver.max_iteration_count = 4 * mysol.getdimension();
+                            Solver.max_iteration_count = mysol.getdimension();
                             
                             timestamp start = gettimestamp();
                             Solver.solve_fast( mysol, rhs );
@@ -243,9 +243,9 @@ int main()
                             FloatVector mysol( N*N );
                             mysol.zero();
                             MinimumResidualMethod Solver( system );
-                            Solver.print_modulo        = 4 * mysol.getdimension();
+                            Solver.print_modulo        = mysol.getdimension() / 20;
                             Solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
-                            Solver.max_iteration_count =     4 * mysol.getdimension();
+                            Solver.max_iteration_count =     mysol.getdimension();
                             timestamp start = gettimestamp();
                             Solver.solve( mysol, rhs );
                             timestamp end = gettimestamp();
@@ -266,9 +266,9 @@ int main()
                             FloatVector mysol( N*N );
                             mysol.zero();
                             HerzogSoodhalterMethod Solver( system );
-                            Solver.print_modulo        = 4 * mysol.getdimension();
+                            Solver.print_modulo        = mysol.getdimension() / 20;
                             Solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
-                            Solver.max_iteration_count =     4 * mysol.getdimension();
+                            Solver.max_iteration_count =     mysol.getdimension();
                             timestamp start = gettimestamp();
                             Solver.solve( mysol, rhs );
                             timestamp end = gettimestamp();
