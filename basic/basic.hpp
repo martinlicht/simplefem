@@ -51,7 +51,7 @@ inline const constexpr Float notanumber = std::numeric_limits<Float>::quiet_NaN(
 
 inline const constexpr Float machine_epsilon = std::numeric_limits<Float>::epsilon();
 
-inline const constexpr Float desired_precision = 100. * machine_epsilon;
+inline const /*constexpr*/ Float desired_precision = std::sqrt( machine_epsilon );
 
 
 
@@ -638,7 +638,7 @@ inline timestamp gettimestamp()
 
 inline std::string timestamp2measurement( const timestamp& t )
 {
-    return std::to_string( static_cast<long double>(t) ) + "ms";
+    return std::to_string( static_cast<long long int>(t) ) + "ms";
 }
 
 // inline std::string measurementnow( const timestamp& t ) // TODO Remove this line 
