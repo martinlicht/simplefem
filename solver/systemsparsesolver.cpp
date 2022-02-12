@@ -228,8 +228,7 @@ void HodgeConjugateResidualSolverCSR_diagonal(
         /* Print information */
         
         if( print_modulo > 0 and k % print_modulo == 0 ) 
-            LOGPRINTF( "Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
-                    k, N, (long double)(Md_r), (long double) threshold*threshold );
+            LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
         
         /* Check whether res is small */
         
@@ -255,8 +254,8 @@ void HodgeConjugateResidualSolverCSR_diagonal(
         }
         
         if( denominator_is_small ) {
-            LOGPRINTF( "Gradient double energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
-                    (long double)Md_Md, (long double)Md_r, (long double)threshold*threshold );
+            LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
+            LOGPRINTF( "WARNING: Gradient double energy is small with %.9Le\n", (long double)Md_Md );
             break;
         }
 
@@ -346,8 +345,7 @@ void HodgeConjugateResidualSolverCSR_diagonal(
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF("Final Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
-               k, N, (long double)(Md_r), (long double) threshold*threshold );
+        LOGPRINTF( "FINISHED (%d/%d) Residual: %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
 
     
     delete[] (  dir );
@@ -578,8 +576,7 @@ void HodgeConjugateResidualSolverCSR_SSOR(
         /* Print information */
         
         if( print_modulo > 0 and k % print_modulo == 0 ) 
-            LOGPRINTF("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
-                   k, N, (long double)(Md_r), (long double) threshold*threshold );
+            LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
         
         /* Check whether res is small */
                 
@@ -606,8 +603,8 @@ void HodgeConjugateResidualSolverCSR_SSOR(
         }
         
         if( denominator_is_small ) {
-            LOGPRINTF( "Gradient double energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
-                    (long double)Md_Md, (long double)Md_r, (long double)threshold*threshold );
+            LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
+            LOGPRINTF( "WARNING: Gradient double energy is small with %.9Le\n", (long double)Md_Md );
             break;
         }
 
@@ -698,8 +695,7 @@ void HodgeConjugateResidualSolverCSR_SSOR(
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF("Final Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
-               k, N, (long double)(Md_r), (long double) threshold*threshold );
+        LOGPRINTF( "FINISHED (%d/%d) Residual: %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
 
     
     delete[] (  dir );
@@ -907,8 +903,7 @@ void HodgeConjugateResidualSolverCSR_textbook(
         /* Print information */
         
         if( print_modulo > 0 and k % print_modulo == 0 ) 
-            LOGPRINTF("Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
-                   k, N, (long double)(Mr_r), (long double) threshold*threshold );
+            LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", k, N, (long double) sqrt(Mr_r), (long double) threshold );
         
         /* Check whether res is small */
                 
@@ -934,8 +929,8 @@ void HodgeConjugateResidualSolverCSR_textbook(
         }
         
         if( denominator_is_small ) {
-            if( print_modulo >= 0 ) LOGPRINTF( "Gradient double energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
-                                    (long double)Md_Md, (long double)Mr_r, (long double)threshold*threshold );
+            if( print_modulo >= 0 ) LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", k, N, (long double) sqrt(Mr_r), (long double) threshold );
+            if( print_modulo >= 0 ) LOGPRINTF( "WARNING: Gradient double energy is small with %.9Le\n", (long double)Md_Md );
             break;
         }
 
@@ -1025,8 +1020,7 @@ void HodgeConjugateResidualSolverCSR_textbook(
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF("Final Hodge Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
-               k, N, (long double)(Mr_r), (long double) threshold*threshold );
+        LOGPRINTF( "FINISHED (%d/%d) Residual: %.9Le < %.9Le\n", k, N, (long double) sqrt(Mr_r), (long double) threshold );
 
     
     delete[] (  dir );
