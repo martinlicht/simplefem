@@ -2,9 +2,9 @@
 
 /**/
 
-#include <iostream>
-#include <fstream>
-#include <iomanip>
+#include <ostream>
+// #include <fstream>
+// #include <iomanip>
 
 #include "../../basic.hpp"
 #include "../../dense/densematrix.hpp"
@@ -25,7 +25,7 @@ int main()
         
         LOG << "Unit Test: (1D) masses are correctly approximated: mass of reference interpolation" << endl;
         
-        LOG << std::setprecision(10);
+        // LOG << std::setprecision(10);
 
         LOG << "Initial mesh..." << endl;
         

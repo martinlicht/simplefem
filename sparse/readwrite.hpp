@@ -1,7 +1,8 @@
 #ifndef INCLUDEGUARD_SPARSE_READWRITE_HPP
 #define INCLUDEGUARD_SPARSE_READWRITE_HPP
 
-#include <iostream>
+#include <istream>
+#include <ostream>
 
 #include "../basic.hpp"
 

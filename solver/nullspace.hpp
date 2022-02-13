@@ -1,7 +1,7 @@
 
-#include <iostream>
+#include <ostream>
 #include <fstream>
-#include <iomanip>
+// #include <iomanip> // TODO: remove io manipulators 
 
 #include "../basic.hpp"
 #include "../operators/floatvector.hpp"
@@ -37,10 +37,10 @@ std::vector<FloatVector> computeNullspace(
             }
             
             Float reduced_mass = candidate.norm(mass);
-            LOG << "\t\t\t Preprocessed mass: " << reduced_mass << std::endl;
+            LOG << "\t\t\t Preprocessed mass: " << reduced_mass << nl;
             
             if( reduced_mass < zero_vector_threshold ) {
-                LOG << "**** The candidate already has very small mass" << std::endl;
+                LOG << "**** The candidate already has very small mass" << nl;
 //                                 continue;
             }
         }
@@ -65,26 +65,26 @@ std::vector<FloatVector> computeNullspace(
                 
                 residual = rhs - SystemMatrix * candidate;
                 
-                LOG << "\t\t\t (eucl) delta:     " << ( residual - rhs + SystemMatrix * candidate ).norm() << std::endl;
-                LOG << "\t\t\t (mass) delta:     " << ( residual - rhs + SystemMatrix * candidate ).norm( mass ) << std::endl;
-                LOG << "\t\t\t (eucl) res:       " << residual.norm() << std::endl;
-                LOG << "\t\t\t (mass) res:       " << residual.norm( mass ) << std::endl;
-                LOG << "\t\t\t (eucl) x:         " << candidate.norm() << std::endl;
-                LOG << "\t\t\t (mass) x:         " << candidate.norm( mass ) << std::endl;
-                LOG << "\t\t\t (eucl) Ax:        " << ( SystemMatrix * candidate ).norm() << std::endl;
-                LOG << "\t\t\t (mass) Ax:        " << ( SystemMatrix * candidate ).norm( mass ) << std::endl;
-                LOG << "\t\t\t (eucl) b - Ax:    " << ( SystemMatrix * candidate - rhs ).norm() << std::endl;
-                LOG << "\t\t\t (mass) b - Ax:    " << ( SystemMatrix * candidate - rhs ).norm( mass ) << std::endl;
+                LOG << "\t\t\t (eucl) delta:     " << ( residual - rhs + SystemMatrix * candidate ).norm() << nl;
+                LOG << "\t\t\t (mass) delta:     " << ( residual - rhs + SystemMatrix * candidate ).norm( mass ) << nl;
+                LOG << "\t\t\t (eucl) res:       " << residual.norm() << nl;
+                LOG << "\t\t\t (mass) res:       " << residual.norm( mass ) << nl;
+                LOG << "\t\t\t (eucl) x:         " << candidate.norm() << nl;
+                LOG << "\t\t\t (mass) x:         " << candidate.norm( mass ) << nl;
+                LOG << "\t\t\t (eucl) Ax:        " << ( SystemMatrix * candidate ).norm() << nl;
+                LOG << "\t\t\t (mass) Ax:        " << ( SystemMatrix * candidate ).norm( mass ) << nl;
+                LOG << "\t\t\t (eucl) b - Ax:    " << ( SystemMatrix * candidate - rhs ).norm() << nl;
+                LOG << "\t\t\t (mass) b - Ax:    " << ( SystemMatrix * candidate - rhs ).norm( mass ) << nl;
                 
                 
                 candidate.normalize( mass );
 
                 assert( candidate.isfinite() );
                 
-                LOG << "\t\t\t (norm eucl) x:         " << candidate.norm() << std::endl;
-                LOG << "\t\t\t (norm mass) x:         " << candidate.norm( mass ) << std::endl;
-                LOG << "\t\t\t (norm eucl) Ax:        " << ( SystemMatrix* candidate ).norm() << std::endl;
-                LOG << "\t\t\t (norm mass) Ax:        " << ( SystemMatrix * candidate ).norm( mass ) << std::endl;
+                LOG << "\t\t\t (norm eucl) x:         " << candidate.norm() << nl;
+                LOG << "\t\t\t (norm mass) x:         " << candidate.norm( mass ) << nl;
+                LOG << "\t\t\t (norm eucl) Ax:        " << ( SystemMatrix* candidate ).norm() << nl;
+                LOG << "\t\t\t (norm mass) Ax:        " << ( SystemMatrix * candidate ).norm( mass ) << nl;
                 
                 
 //                                 FloatVector zero( candidate.getdimension(), 0. );
@@ -118,10 +118,10 @@ std::vector<FloatVector> computeNullspace(
         }
         
         Float reduced_mass = candidate.norm(mass);
-        LOG << "\t\t\t Reduced mass: " << reduced_mass << std::endl;
+        LOG << "\t\t\t Reduced mass: " << reduced_mass << nl;
         
         if( reduced_mass < zero_vector_threshold ) {
-            LOG << "!!!!!!!!!!!!!Discard vector because mass is too small!" << std::endl;
+            LOG << "!!!!!!!!!!!!!Discard vector because mass is too small!" << nl;
             continue;
         }
         
@@ -129,16 +129,16 @@ std::vector<FloatVector> computeNullspace(
         
         Float residual_mass = ( SystemMatrix * candidate ).norm(mass);
         
-        LOG << "\t\t\t Numerical residual: " << residual_mass << std::endl;
+        LOG << "\t\t\t Numerical residual: " << residual_mass << nl;
         
         if( residual_mass > 1e-6 ) {
-            LOG << "!!!!!!!!!!!!!Discard vector because not nullspace enough!" << std::endl;
+            LOG << "!!!!!!!!!!!!!Discard vector because not nullspace enough!" << nl;
             continue;
         }
         
         assert( candidate.isfinite() );
         
-        LOG << "Accept vector: " << nullvectorgallery.size() + 1 << std::endl;
+        LOG << "Accept vector: " << nullvectorgallery.size() + 1 << nl;
     
         
         nullvectorgallery.push_back( candidate );
@@ -148,16 +148,16 @@ std::vector<FloatVector> computeNullspace(
     
     LOG << "How much nullspace are our vectors?" << nl;
     for( const auto& nullvector : nullvectorgallery ) {
-        LOG << std::showpos << std::scientific << std::setprecision(5) << std::setw(10) <<
-        ( SystemMatrix * nullvector ).norm(mass) << tab;
+        LOGPRINTF( "% 10.5e\t", ( SystemMatrix * nullvector ).norm(mass) );
+        // LOG << std::showpos << std::scientific << std::setprecision(5) << std::setw(10) << ( SystemMatrix * nullvector ).norm(mass) << tab;
     }
     LOG << nl;
     
     LOG << "How orthonormal are our vectors?" << nl;
     for( const auto& nullvector1 : nullvectorgallery ) {
         for( const auto& nullvector2 : nullvectorgallery ) {
-            LOG << std::showpos << std::scientific << std::setprecision(5) << std::setw(10) <<
-            mass * nullvector1 * nullvector2 << tab;
+            LOGPRINTF( "% 10.5e\t", mass * nullvector1 * nullvector2 );
+            // LOG << std::showpos << std::scientific << std::setprecision(5) << std::setw(10) << mass * nullvector1 * nullvector2 << tab;
         }
         LOG << nl;
     }

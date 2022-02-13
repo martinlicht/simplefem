@@ -1,7 +1,7 @@
 #ifndef INCLUDEGUARD_VTK_VTKWRITER
 #define INCLUDEGUARD_VTK_VTKWRITER
 
-#include <iostream>
+#include <ostream>
 #include <string>
 
 #include "../basic.hpp"

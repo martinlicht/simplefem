@@ -2,8 +2,8 @@
 #define INCLUDEGUARD_UTILITY_CONVERGENCETABLE_HPP
 
 #include <cstdio>
-#include <iostream>
-#include <iomanip>
+#include <ostream>
+// #include <iomanip>
 #include <string>
 #include <vector>
 

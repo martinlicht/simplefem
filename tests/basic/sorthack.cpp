@@ -3,7 +3,6 @@
 #include <vector>
 #include <cstdlib>
 #include <cassert>
-#include <iostream>
 #include <algorithm>
 #include "../../basic/sorthack.hpp"
 
