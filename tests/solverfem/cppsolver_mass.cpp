@@ -97,7 +97,7 @@ int main()
             bool do_crmpp_robt = true;
             bool do_crmpp_fast = true;
             bool do_minres     = true;
-            bool do_herzog     = false;
+            bool do_herzog     = true;
             //
             bool do_cgm_csr                = true;
             bool do_crm_csr                = true;

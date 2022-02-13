@@ -807,7 +807,7 @@ void HodgeConjugateResidualSolverCSR_textbook(
         
         bool restart_condition = ( k == 0 ); // or k % 1000 == 0;
         
-        bool residualenergy_seems_small = false;//absolute(Mr_r) < threshold*threshold;
+        bool residualenergy_seems_small = absolute(Mr_r) < threshold*threshold;
 
         if( restart_condition or residualenergy_seems_small ) {
             

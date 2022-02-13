@@ -1138,7 +1138,7 @@ int MINRESCSR(
         
         bool restart_condition = (K == 0);
         
-        bool residual_seems_small = ( K != 0 ) and (eta < threshold);
+        bool residual_seems_small = ( K != 0 ) and ( absolute(eta) < threshold);
         
         if( restart_condition or residual_seems_small ) {
             
@@ -1178,7 +1178,7 @@ int MINRESCSR(
             
         }
         
-        bool residual_is_small = (eta < threshold);
+        bool residual_is_small = ( absolute(eta) < threshold);
         
         if( residual_is_small )
             break;
