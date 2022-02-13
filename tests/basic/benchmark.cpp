@@ -2,7 +2,7 @@
     #include <chrono>
     #include <cmath>
     #include <ctime>
-    #include <iostream>
+    #include <cstdio>
     #include <vector>
 
 
@@ -11,7 +11,7 @@
         int size = 1000; // reduce this number in case your program crashes
         int L = 200;
         
-        std::cout << "size=" << size << " L=" << L << std::endl;
+        printf( "size = %d L = %d\n", size, L );
         {
             srand( 1 + std::time(nullptr) );
             double data[size]; // technically, non-compliant with C++ standard.
@@ -23,8 +23,9 @@
             }
             std::chrono::steady_clock::time_point end   = std::chrono::steady_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-            std::cout << "Calculation result is " << sqrt(result) << "\n";
-            std::cout << "Duration of C99 style stack array: " << duration << "ms\n";
+            printf( "Calculation result: %e\n", result );
+            const char * name = "C99 style stack array";
+            printf( "Duration of %s: %ld\n", name, duration );
         }
 
         {
@@ -38,8 +39,9 @@
             }
             std::chrono::steady_clock::time_point end   = std::chrono::steady_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-            std::cout << "Calculation result is " << sqrt(result) << "\n";
-            std::cout << "Duration of std::vector array:     " << duration << "ms\n";
+            printf( "Calculation result: %e\n", result );
+            const char * name = "std::vector array";
+            printf( "Duration of %s: %ld\n", name, duration );
         }
 
         {
@@ -53,8 +55,9 @@
             }
             std::chrono::steady_clock::time_point end   = std::chrono::steady_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-            std::cout << "Calculation result is " << sqrt(result) << "\n";
-            std::cout << "Duration of C style heap array:    " << duration << "ms\n";
+            printf( "Calculation result: %e\n", result );
+            const char * name = "C style heap array";
+            printf( "Duration of %s: %ld\n", name, duration );
             delete[] data;
         }
 

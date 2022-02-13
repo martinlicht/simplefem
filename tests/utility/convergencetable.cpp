@@ -1,7 +1,7 @@
 
 #include "../../basic.hpp"
 #include "../../utility/utility.hpp"
-#include <iostream>
+#include <ostream>
 
 using namespace std;
 

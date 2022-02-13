@@ -2,8 +2,6 @@
 #include <cmath>
 
 #include <iostream>
-#include <fstream>
-#include <iomanip>
 #include <chrono>
 
 #include "../../basic.hpp"
@@ -15,7 +13,7 @@ int main()
 {
         cout << "Unit Test for Factorials and Binomials" << endl;
         
-        cout << std::setprecision(10);
+        // cout << std::setprecision(10);
 
         assert( desired_precision < 1e-10 );
 

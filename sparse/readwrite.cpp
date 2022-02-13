@@ -2,7 +2,8 @@
 #include "readwrite.hpp"
 
 #include <cassert>
-#include <iostream>
+#include <istream>
+#include <ostream>
 
 
 

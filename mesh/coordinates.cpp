@@ -2,7 +2,8 @@
 
 // #include <cassert>
 #include <algorithm>
-#include <iostream>
+#include <istream>
+#include <ostream>
 #include <iterator>
 #include <vector>
 

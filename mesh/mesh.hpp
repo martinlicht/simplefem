@@ -2,9 +2,7 @@
 #define INCLUDEGUARD_MESH_MESH_HPP
 
 
-#include <iostream>
-#include <map>
-#include <string>
+#include <ostream>
 #include <utility>
 #include <vector>
 
@@ -74,7 +72,7 @@ class Mesh
         
         virtual void print( std::ostream& out ) const = 0;
         
-        // void lg() { LOG << *this << std::endl; };
+        // // void lg() const { LOG << *this << std::endl; };
         
         
         /* OTHER METHODS */

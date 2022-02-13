@@ -2,7 +2,7 @@
 
 /**/
 
-#include <iostream>
+#include <ostream>
 #include "../../basic.hpp"
 #include "../../dense/densematrix.hpp"
 

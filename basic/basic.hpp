@@ -18,8 +18,7 @@
 #include <array>
 #include <chrono>
 #include <functional>
-#include <iostream>
-#include <iomanip>
+#include <ostream>
 #include <iterator>
 #include <limits>
 #include <list>
@@ -52,7 +51,7 @@ inline const constexpr Float notanumber = std::numeric_limits<Float>::quiet_NaN(
 
 inline const constexpr Float machine_epsilon = std::numeric_limits<Float>::epsilon();
 
-inline const constexpr Float desired_precision = 100. * machine_epsilon;
+inline const /*constexpr*/ Float desired_precision = std::sqrt( machine_epsilon );
 
 
 
@@ -615,6 +614,7 @@ inline void random_unit_vector( Float* values, const int N )
 /////////////////////////////////////////////////
 
 
+// TODO: Move time to cpp
 static_assert( std::is_integral< decltype( std::chrono::time_point_cast<std::chrono::milliseconds>( std::chrono::steady_clock::now() ).time_since_epoch().count() ) >::value , "Time measurement must be integral" );
 
 
@@ -634,9 +634,11 @@ inline timestamp gettimestamp()
 
 
 
+// TODO: move to utility 
+
 inline std::string timestamp2measurement( const timestamp& t )
 {
-    return std::to_string( static_cast<long double>(t) ) + "ms";
+    return std::to_string( static_cast<long long int>(t) ) + "ms";
 }
 
 // inline std::string measurementnow( const timestamp& t ) // TODO Remove this line 
@@ -649,11 +651,12 @@ inline std::string measurementnow()
 
 inline std::string timestamp2digitalcode( const timestamp& t )
 {
-    std::ostringstream ss;
-//     ss.reserve(12);
-//     ss << std::setw(14) << t;
-    ss << std::hex << std::setfill('_') << std::setw(8) << t;
-    return ss.str();
+    const int numdigits = 8;
+    const int fulllength = numdigits+1;
+    char digits[fulllength];
+    snprintf( digits, fulllength, "%*lx", numdigits, t );
+    for( int i = 0; i < numdigits; i++ ) if( digits[i] == ' ' ) digits[i] = '_';
+    return std::string(digits);
 }
 
 inline std::string digitalcodenow()
@@ -739,7 +742,7 @@ inline int sum_int( int to, const std::function<int(int)>& calc )
 //                                             //
 /////////////////////////////////////////////////
 
-
+// TODO: Move to utilities 
 
 
 
@@ -944,7 +947,7 @@ __attribute__ (( format (printf,1,2) ));
 /*      insert tabs before each line       */
 /******************************************************/
 
-inline std::string tab_each_line( std::string str ) 
+inline std::string tab_each_line( std::string str ) // TODO: Move to utilities 
 { 
     str.insert( 0, 1, '\t' );
     for( int c = str.size(); c > 0; c-- ) {
@@ -959,7 +962,7 @@ inline std::string tab_each_line( std::string str )
 /*      count the white space within STL string       */
 /******************************************************/
 
-inline int count_white_space( const std::string& str ) 
+inline int count_white_space( const std::string& str ) // TODO: Move to utilities 
 { 
     int ret = 0;
     
@@ -1018,6 +1021,7 @@ inline int find_index( const std::vector<T>& vec, const T& t )
 /*            merge two sorted STL lists              */
 /******************************************************/
 
+// TODO: Move into separate include file 
 template<typename T>
 inline void mergeelementsinsortedlist
 ( std::list<T>& L, 
@@ -1049,6 +1053,7 @@ inline void mergeelementsinsortedlist
 /*   GENERIC STREAM TEMPLATE FOR std::array    */ 
 /***********************************************/
 
+// TODO: Move into separate include file 
 template <typename T, size_t N>
 inline std::ostream& operator<<( std::ostream& stream, const std::array<T, N>& v)
 {

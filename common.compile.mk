@@ -37,6 +37,10 @@ FLAG_CXX := CLANG
 # Uncomment the following line to use the standard library assert macro 
 # FLAG_USE_ORIGINAL_ASSERT_MACRO=yes
 
+# Do you want assert messages to be discarded?
+# Uncomment the following line to simplify the debugging macros 
+# FLAG_DISCARD_ASSERT_MESSAGES=yes
+
 # Do you want to DISABLE checking of meshes?
 # Uncomment the following line to disable extensive check routines for meshes
 FLAG_DISABLE_CHECK_MESHES=yes
@@ -52,7 +56,7 @@ FLAG_DISABLE_CHECK_MESHES=yes
 
 # Do you want to DISABLE excpetion handling?
 # Uncomment the following line to disable exception handling
-# FLAG_NO_EXCEPTIONS=yes
+FLAG_NO_EXCEPTIONS=yes
 
 # Do you want to ENABLE extended precision?
 # Uncomment the following line to switch from double precision to extended precision
@@ -270,7 +274,7 @@ endif
 
 CXXFLAGS_CODEGEN := 
 
-ifneq ($(FLAG_NO_EXCEPTIONS),yes)
+ifeq ($(FLAG_NO_EXCEPTIONS),yes)
 	CXXFLAGS_CODEGEN += -fno-exceptions
 endif
 
@@ -668,6 +672,11 @@ endif
 ifeq ($(FLAG_DISABLE_ASSERTIONS),yes)
 CPPFLAGS += -DNDEBUG
 endif
+
+ifeq ($(FLAG_DISCARD_ASSERT_MESSAGES),yes)
+CPPFLAGS += -DDISCARD_ASSERT_MESSAGES
+endif
+
 
 ifeq ($(FLAG_USE_PRIMITIVE_LOGGING),yes)
 CPPFLAGS += -DUSE_PRIMITIVE_LOGGING

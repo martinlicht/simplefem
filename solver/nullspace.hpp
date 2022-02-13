@@ -1,5 +1,5 @@
 
-#include <iostream>
+#include <ostream>
 #include <fstream>
 // #include <iomanip> // TODO: remove io manipulators 
 

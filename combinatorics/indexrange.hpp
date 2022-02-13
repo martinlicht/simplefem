@@ -2,7 +2,7 @@
 #define INCLUDEGUARD_COMBINATORICS_INDEXRANGE_HPP
 
 
-#include <iostream>
+#include <ostream>
 #include <limits>
 #include <string>
 
@@ -40,7 +40,7 @@ class IndexRange final
         
         void print( std::ostream&, bool embellish = true ) const;
 
-        void lg() const { LOG << text() << std::endl; };
+        // void lg() const { LOG << text() << std::endl; };
         
         /* OTHER METHODS */
 

@@ -2,9 +2,9 @@
 
 /**/
 
-#include <iostream>
-#include <fstream>
-#include <iomanip>
+#include <ostream>
+// #include <fstream>
+// #include <iomanip>
 
 #include "../../basic.hpp"
 #include "../../utility/utility.hpp"
@@ -38,7 +38,7 @@ int main()
         
         LOG << "Unit Test: Compare numerical solvers CRM vs MINRES\n           for Solution of Dirichlet Problem" << endl;
         
-        LOG << std::setprecision(10);
+        // LOG << std::setprecision(10);
 
         if(true){
 

@@ -2,7 +2,7 @@
 #define INCLUDEGUARD_SOLVER_ITERATIVESOLVER
 
 
-#include <iostream>
+#include <ostream>
 #include <limits>
 
 #include "../basic.hpp"
@@ -57,7 +57,7 @@ struct IterativeSolver
         os << "Print Iterative Solver." << std::endl;
     }
 
-//     void lg() { LOG << *this << std::endl; };
+//     // void lg() const { LOG << *this << std::endl; };
 
     virtual void solve( FloatVector& unknown, const FloatVector& rhs ) const = 0;
 
