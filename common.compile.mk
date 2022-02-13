@@ -52,7 +52,7 @@ FLAG_DISABLE_CHECK_MESHES=yes
 
 # Do you want to ENABLE the standard library debugging flags 
 # Uncomment the following line to enable the standard library debugging flags 
-# FLAG_DISABLE_STDLIBDEBUG=yes
+FLAG_DISABLE_STDLIBDEBUG=yes
 
 # Do you want to DISABLE excpetion handling?
 # Uncomment the following line to disable exception handling
@@ -165,36 +165,29 @@ parameters:
 ###############################################
 #                                             #
 #         Set the compiler command            #
-#                                             #
+#       (see also language std below)         #
 ###############################################
 
 ifeq ($(FLAG_CXX),GCC)
 
-  CXX := g++ -std=c++2a
+  CXX := g++ 
   #-ftime-report
   #-fuse-ld=lld
   
 else ifeq ($(FLAG_CXX),CLANG)
 
-  CXX := clang++ -std=c++2a
+  CXX := clang++
   #-ftime-trace
 
 else ifeq ($(FLAG_CXX),ICC)
 
-  CXX := icc -std=c++2a
+  CXX := icc 
 
 else
 
   $(error No compiler recognized)
 
 endif
-
-
-
-
-
-
-
 
 ###############################################
 #                                             #

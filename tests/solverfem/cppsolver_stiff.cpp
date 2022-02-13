@@ -228,7 +228,7 @@ int main()
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             
-                             LOG << sol.norm( mass ) << nl;
+                            LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
 
                             auto runtime  = static_cast<Float>( end - start );
                             // auto stat_sol = Float( ( sol - ... ).norm() );
@@ -257,7 +257,7 @@ int main()
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             
-                             LOG << sol.norm( mass ) << nl;
+                            LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
 
                             auto runtime  = static_cast<Float>( end - start );
                             // auto stat_sol = Float( ( sol - ... ).norm() );
@@ -286,7 +286,7 @@ int main()
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             
-                             LOG << sol.norm( mass ) << nl;
+                            LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
 
                             auto runtime  = static_cast<Float>( end - start );
                             // auto stat_sol = Float( ( sol - ... ).norm() );
@@ -315,7 +315,7 @@ int main()
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             
-                             LOG << sol.norm( mass ) << nl;
+                            LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
 
                             auto runtime  = static_cast<Float>( end - start );
                             // auto stat_sol = Float( ( sol - ... ).norm() );
@@ -344,7 +344,7 @@ int main()
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
-                             LOG << sol.norm( mass ) << nl;
+                            LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
 
                             auto runtime  = static_cast<Float>( end - start );
                             // auto stat_sol = Float( ( sol - ... ).norm() );
@@ -373,7 +373,7 @@ int main()
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
-                             LOG << sol.norm( mass ) << nl;
+                            LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
 
                             auto runtime  = static_cast<Float>( end - start );
                             // auto stat_sol = Float( ( sol - ... ).norm() );
