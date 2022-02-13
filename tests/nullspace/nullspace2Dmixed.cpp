@@ -2,7 +2,7 @@
 
 /**/
 
-#include <iostream>
+// #include <iostream>
 #include <fstream>
 #include <iomanip>
 
@@ -284,7 +284,21 @@ int main()
                     
                     contable << static_cast<Float>(nullvectorgallery.size());   
                     
-                    
+                    if( r == 1 )
+                    for( const auto& nullvector : nullvectorgallery )
+                    {
+                
+                        fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
+            
+                        VTKWriter vtk( M, fs, getbasename(__FILE__) );
+                        vtk.writeCoordinateBlock();
+                        vtk.writeTopDimensionalCells();
+                        
+                        vtk.writeCellVectorData( nullvector, "nullvector H(div)" , 0.1 );
+                        
+                        fs.close();
+                
+                    }
                     
 //                     {
 // 

@@ -2,7 +2,7 @@
 
 /**/
 
-#include <iostream>
+// #include <iostream>
 #include <fstream>
 #include <iomanip>
 
@@ -298,6 +298,22 @@ int main()
                     
                     
                     contable << static_cast<Float>(nullvectorgallery.size());   
+
+                    if( r == 1 )
+                    for( const auto& nullvector : nullvectorgallery )
+                    {
+                
+                        fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
+            
+                        VTKWriter vtk( M, fs, getbasename(__FILE__) );
+                        vtk.writeCoordinateBlock();
+                        vtk.writeTopDimensionalCells();
+                        
+                        vtk.writeVertexScalarData( nullvector,  "nullvector" , 1.0 );
+                        
+                        fs.close();
+                
+                    }
                     
                     
                     
@@ -337,21 +353,6 @@ int main()
 //                         contable << sol.norm( mass ) << ( SystemMatrix * sol ).norm( mass );
 //                         
 //                         
-//                         if( r == 1 ) {
-//                     
-//                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
-//                 
-//                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
-//                             vtk.writeCoordinateBlock();
-//                             vtk.writeTopDimensionalCells();
-//                             
-//                             vtk.writeVertexScalarData( sol,  "data1" , 1.0 );
-// //                             vtk.writeVertexScalarData( sol2, "data2" , 1.0 );
-//                             // vtk.writeCellVectorData( interpol_grad, "gradient_interpolation" , 0.1 );
-//                             
-//                             fs.close();
-//                     
-//                         }
 // 
 //                             
 //                             
