@@ -91,12 +91,12 @@ int main()
             bool do_crmpp_robt = true;
             bool do_crmpp_fast = true;
             bool do_minres     = true;
-            bool do_herzog     = false;
+            bool do_herzog     = true;
             //
             bool do_cgm_csr                = true;
             bool do_crm_csr                = true;
             bool do_crm_csrtextbook        = true;
-            bool do_minres_csr             = false;
+            bool do_minres_csr             = true;
             bool do_whatever_csr           = false;
             bool do_cgm_diagonal_csr       = true;
             bool do_cgm_ssor_csr           = true;

@@ -71,7 +71,7 @@ void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) cons
 
     Float sigma_min_sq = b * ( A * b ) / (b*b);
     
-    if( verbosity >= VerbosityLevel::verbose ) LOG << "Begin Conjugate Gradient iteration" << nl;
+    if( verbosity >= VerbosityLevel::verbose ) LOG << "START Conjugate Gradient iteration" << nl;
         
     while( recent_iteration_count < max_iteration_count )
     {
@@ -329,7 +329,7 @@ void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector&
     
     recent_iteration_count = 0;
     
-    if( verbosity >= VerbosityLevel::verbose ) LOG << "Begin Conjugate Residual iteration" << nl;
+    if( verbosity >= VerbosityLevel::verbose ) LOG << "START Conjugate Residual iteration" << nl;
         
     while( recent_iteration_count < max_iteration_count )
     {
@@ -481,7 +481,7 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
     
     recent_iteration_count = 0;
     
-    if( verbosity >= VerbosityLevel::verbose ) LOG << "Begin Conjugate Residual iteration" << nl;
+    if( verbosity >= VerbosityLevel::verbose ) LOG << "START Conjugate Residual iteration" << nl;
         
     while( recent_iteration_count < max_iteration_count )
     {
@@ -491,7 +491,7 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
         bool residual_seems_small = absolute( r * r ) < threshold*threshold or absolute( r * Ar ) < threshold*threshold;
         // first criterion is not in fast 
 
-        if( restart_condition ) {
+        if( restart_condition or residual_seems_small ) {
         
             r  = b - A * x;
             d  = r;
@@ -607,7 +607,7 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
     
     Float Ar_r = notanumber;
     
-    if( verbosity >= VerbosityLevel::verbose ) LOG << "Begin Conjugate Residual iteration" << nl;
+    if( verbosity >= VerbosityLevel::verbose ) LOG << "START Conjugate Residual iteration" << nl;
         
     while( recent_iteration_count < max_iteration_count )
     {
@@ -616,7 +616,7 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
         
         bool residual_seems_small = absolute( Ar * r ) < threshold*threshold;
         
-        if( restart_condition ) {
+        if( restart_condition or residual_seems_small ) {
         
             r  = b - A * x;
             d  = r;
@@ -861,13 +861,17 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
         
     recent_iteration_count = 0;
     
-    if( verbosity >= VerbosityLevel::verbose ) LOG << "Begin Preconditioned Conjugate Residual iteration" << nl;
+    if( verbosity >= VerbosityLevel::verbose ) LOG << "START Preconditioned Conjugate Residual iteration" << nl;
         
     while( recent_iteration_count < max_iteration_count )
     {
         
+        bool restart_condition = ( recent_iteration_count == 0 ) or ( restart_on_full_dimension and recent_iteration_count % x.getdimension() == 0 );
+        
+        bool residual_seems_small = absolute( rMAMr ) < threshold*threshold;
+        
         /* Start / Restart PCRM process */
-        if( recent_iteration_count % x.getdimension() == 0 ) {
+        if( restart_condition or residual_seems_small ) {
         
             {
                 
@@ -896,18 +900,18 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
 
         }
 
-        bool continue_condition = rMAMr > threshold;
+        /* If exit condition met, exit */
+
+        bool residual_is_small = absolute( rMAMr ) < threshold*threshold;
         
+        if( residual_is_small ) 
+            break;
+            
         /* Print information */
         
         if( print_modulo > 0 and recent_iteration_count % print_modulo == 0 ) 
             LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) sqrt(rMAMr), (long double)threshold );
 
-        /* If exit condition met, exit */
-
-        if( not continue_condition ) 
-            break;
-            
         /* Perform iteration step */
         {
             
@@ -1063,7 +1067,7 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
     
 //     Float recent_alpha = notanumber;
     
-    if( verbosity >= VerbosityLevel::verbose ) LOG << "Begin Minimal Residual iteration" << nl;
+    if( verbosity >= VerbosityLevel::verbose ) LOG << "START Minimal Residual iteration" << nl;
         
     while( recent_iteration_count < max_iteration_count )
     {
@@ -1384,7 +1388,7 @@ void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
     
     recent_iteration_count = 0;
     
-    if( verbosity >= VerbosityLevel::verbose ) LOG << "Begin Residual iteration" << nl;
+    if( verbosity >= VerbosityLevel::verbose ) LOG << "START Residual iteration" << nl;
                 
     while( recent_iteration_count < max_iteration_count )
     {
@@ -1565,7 +1569,7 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
         
         bool restart_condition = (recent_iteration_count == 0) or ( restart_on_full_dimension and recent_iteration_count % x.getdimension() == 0 );;
         
-        bool residual_seems_small = ( absolute(eta) < threshold);
+        bool residual_seems_small = ( absolute(eta) < threshold );
         
         if( false ) {
             LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) eta, (long double)threshold );
