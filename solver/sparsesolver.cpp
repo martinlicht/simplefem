@@ -18,6 +18,7 @@
 
 
 inline const bool csr_restart_on_full_dimension = false;
+inline const bool csr_restart_before_finish     = true;
 
 
 
@@ -56,7 +57,7 @@ int ConjugateGradientSolverCSR(
         
         bool residual_seems_small = ( K != 0 ) and absolute(r_r) < threshold*threshold;
 
-        if( restart_condition or residual_seems_small ) {
+        if( restart_condition or ( csr_restart_before_finish and residual_seems_small ) ) {
             
             r_r = 0.;
         
@@ -232,7 +233,7 @@ int ConjugateGradientSolverCSR_DiagonalPreconditioner(
         
         bool preconresidual_seems_small = ( K != 0 ) and absolute(z_r) < threshold*threshold;
 
-        if( restart_condition or preconresidual_seems_small ) {
+        if( restart_condition or ( csr_restart_before_finish and preconresidual_seems_small ) ) {
             
             z_r = 0.;
         
@@ -440,7 +441,7 @@ int ConjugateGradientSolverCSR_SSOR(
         
         bool preconresidual_seems_small = false and absolute(z_r) < threshold*threshold;
 
-        if( restart_condition or preconresidual_seems_small ) {
+        if( restart_condition or ( csr_restart_before_finish and preconresidual_seems_small ) ) {
             
             for( int c = 0; c < N; c++ ) {
                 
@@ -715,7 +716,7 @@ int ConjugateResidualSolverCSR(
         
         bool residualenergy_seems_small = ( K != 0 ) and absolute(Ad_r) < threshold*threshold;
 
-        if( restart_condition or residualenergy_seems_small ) {
+        if( restart_condition or ( csr_restart_before_finish and residualenergy_seems_small ) ) {
             
             #if defined(_OPENMP)
             #pragma omp parallel for
@@ -925,7 +926,7 @@ int ConjugateResidualSolverCSR_textbook(
         
         bool residualenergy_seems_small = ( K != 0 ) and absolute(Ar_r) < threshold*threshold;
 
-        if( restart_condition or residualenergy_seems_small ) {
+        if( restart_condition or ( csr_restart_before_finish and residualenergy_seems_small ) ) {
             
             #if defined(_OPENMP)
             #pragma omp parallel for
@@ -1157,7 +1158,7 @@ int MINRESCSR(
         
         bool residual_seems_small = ( K != 0 ) and ( absolute(eta) < threshold);
         
-        if( restart_condition or residual_seems_small ) {
+        if( restart_condition or ( csr_restart_before_finish and residual_seems_small ) ) {
             
             Float gamma_sq = 0.;
             
@@ -1584,7 +1585,7 @@ int CheybyshevIteration_DiagonalPreconditioner(
 
         bool residual_seems_small = std::sqrt(r_r) < threshold;
 
-        if( restart_condition or residual_seems_small ) {
+        if( restart_condition or ( csr_restart_before_finish and residual_seems_small ) ) {
             
             gamma_prev = 1.;
             

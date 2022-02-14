@@ -7,7 +7,7 @@
 
 
 inline const bool cpp_restart_on_full_dimension = false;
-
+inline const bool cpp_restart_before_finish     = true;
 
 
 
@@ -81,7 +81,7 @@ void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) cons
         bool residual_seems_small = absolute( r * r ) < threshold*threshold;
         
         /* Start / Restart CRM process */
-        if( restart_condition or residual_seems_small ) {
+        if( restart_condition or ( cpp_restart_before_finish and residual_seems_small ) ) {
         
             r = b - A * x;
             d = r;
@@ -342,7 +342,7 @@ void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector&
         
         bool residual_seems_small = absolute( r * r ) < threshold*threshold or absolute( rAr ) < threshold*threshold;
         
-        if( restart_condition or residual_seems_small ) {
+        if( restart_condition or ( cpp_restart_before_finish and residual_seems_small ) ) {
         
             /* r = b - A x */
             r = b - A * x;
@@ -499,7 +499,7 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
         bool residual_seems_small = absolute( r * r ) < threshold*threshold or absolute( r * Ar ) < threshold*threshold;
         // first criterion is not in fast 
 
-        if( restart_condition or residual_seems_small ) {
+        if( restart_condition or ( cpp_restart_before_finish and residual_seems_small ) ) {
         
             r  = b - A * x;
             d  = r;
@@ -627,7 +627,7 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
         
         bool residual_seems_small = absolute( Ar * r ) < threshold*threshold;
         
-        if( restart_condition or residual_seems_small ) {
+        if( restart_condition or ( cpp_restart_before_finish and residual_seems_small ) ) {
         
             r  = b - A * x;
             d  = r;
@@ -885,7 +885,7 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
         bool residual_seems_small = absolute( rMAMr ) < threshold*threshold;
         
         /* Start / Restart PCRM process */
-        if( restart_condition or residual_seems_small ) {
+        if( restart_condition or ( cpp_restart_before_finish and residual_seems_small ) ) {
         
             {
                 
@@ -1094,7 +1094,7 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
         bool residual_seems_small = absolute( rr ) < threshold*threshold;
         
         /* Start / Restart MinimumResidualMethod process */
-        if( restart_condition or residual_seems_small ) {
+        if( restart_condition or ( cpp_restart_before_finish and residual_seems_small ) ) {
         
             r = b - A * x;
             
@@ -1591,7 +1591,7 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
         
         bool residual_seems_small = ( absolute(eta) < threshold );
         
-        if( restart_condition or residual_seems_small ) {
+        if( restart_condition or ( cpp_restart_before_finish and residual_seems_small ) ) {
             
             v0.zero();
             w0.zero();
