@@ -73,7 +73,12 @@ int ConjugateGradientSolverCSR(
                 direction[c] = residual[c]; // this line seems to slow down performance ....
                 
                 r_r += residual[c] * residual[c];
+
             }
+
+            if( print_modulo >= 0 ) 
+                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(r_r), (long double) threshold );
+
         
         }
         
@@ -252,6 +257,10 @@ int ConjugateGradientSolverCSR_DiagonalPreconditioner(
                 z_r += zirconium[c] * residual[c];
             
             }
+
+            if( print_modulo >= 0 ) 
+                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+
             
         }
         
@@ -494,6 +503,10 @@ int ConjugateGradientSolverCSR_SSOR(
                 z_r += zirconium[c] * residual[c];
             
             }
+
+            if( print_modulo >= 0 ) 
+                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+
             
         }
         
@@ -738,6 +751,8 @@ int ConjugateResidualSolverCSR(
                 
             }
             
+            if( print_modulo >= 0 ) 
+                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(Ad_r), (long double) threshold );
             
         }
         
@@ -945,7 +960,9 @@ int ConjugateResidualSolverCSR_textbook(
                 Ad_Ad += Adir[c] * Adir[c];
                 
             }
-            
+
+            if( print_modulo >= 0 ) 
+                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(Ar_r), (long double) threshold );
             
         }
         
@@ -1175,6 +1192,10 @@ int MINRESCSR(
             c0 = c1 = 1.;
             
             eta = gamma;
+
+            if( print_modulo >= 0 ) 
+                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) absolute(eta), (long double) threshold );
+
             
         }
         

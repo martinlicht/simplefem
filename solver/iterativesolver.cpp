@@ -86,6 +86,9 @@ void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) cons
             r = b - A * x;
             d = r;
 
+            if( verbosity >= VerbosityLevel::verbose )
+                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) sqrt(r*r), (long double)threshold );
+            
         }
 
         bool residual_is_small = absolute( r * r ) < threshold*threshold;
@@ -357,6 +360,11 @@ void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector&
             rAr = Ar * r;
             if( rAr < 0. ) LOG << rAr << nl;
             assert( rAr >= 0. );
+
+            if( verbosity >= VerbosityLevel::verbose )
+                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) sqrt(rAr), (long double)threshold );
+            
+
             
         }
 
@@ -501,6 +509,9 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
 
             // fast and explicit: Ar_r = Ar * r;
 
+            if( verbosity >= VerbosityLevel::verbose )
+                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) sqrt( r * Ar ), (long double)threshold );
+
         }
 
         bool residual_is_small = absolute( r * r ) < threshold*threshold or absolute( r * Ar ) < threshold*threshold; 
@@ -625,6 +636,9 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
             Ad = Ar;
             
             Ar_r = Ar * r;
+
+            if( verbosity >= VerbosityLevel::verbose )
+                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) sqrt(Ar_r), (long double)threshold );
 
         }
 
@@ -896,6 +910,9 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
                 /* rho is Mr.A.Mr */
                 rMAMr = Mr * AMr;
                 
+                if( verbosity >= VerbosityLevel::verbose )
+                    LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) sqrt(rMAMr), (long double)threshold );
+
             }
 
         }
@@ -1079,8 +1096,6 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
         /* Start / Restart MinimumResidualMethod process */
         if( restart_condition or residual_seems_small ) {
         
-            LOG << "Restart **************************" << nl;
-            
             r = b - A * x;
             
             rr = r * r;
@@ -1139,6 +1154,10 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
             rr = r * r;
             
 //             recent_alpha = alpha1;
+
+            if( verbosity >= VerbosityLevel::verbose )
+                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) sqrt(rr), (long double)threshold );
+
             
         }
 
@@ -1402,7 +1421,8 @@ void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
             
             assert( r_r >= 0. );
             
-            LOG << "threshold: " << threshold << nl;//;
+            if( verbosity >= VerbosityLevel::verbose )
+                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) sqrt(r_r), (long double)threshold );
 
         }
 
@@ -1571,11 +1591,6 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
         
         bool residual_seems_small = ( absolute(eta) < threshold );
         
-        if( false ) {
-            LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) eta, (long double)threshold );
-            LOGPRINTF( "INTERIM Gamma: %.9Le Res: %.9Le\n", (long double)gamma, (long double)(b - A * x).norm() );
-        }
-
         if( restart_condition or residual_seems_small ) {
             
             v0.zero();
@@ -1593,8 +1608,10 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
             
             eta = gamma;
             
-            LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) eta, (long double)threshold );
-            LOGPRINTF( "INTERIM Gamma: %.9Le Res: %.9Le\n", (long double)gamma, (long double)(b - A * x).norm() );
+            if( verbosity >= VerbosityLevel::verbose ) {
+                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) eta, (long double)threshold );
+                LOGPRINTF( "NOTE Gamma: %.9Le Res: %.9Le\n", (long double)gamma, (long double)(b - A * x).norm() );
+            }
 
         }
         

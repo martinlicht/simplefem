@@ -222,7 +222,9 @@ void HodgeConjugateResidualSolverCSR_diagonal(
                 
             }
             
-            
+            if( print_modulo >= 0 ) 
+                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
+
         }
         
         /* Print information */
@@ -477,8 +479,8 @@ void HodgeConjugateResidualSolverCSR_SSOR(
         
         bool restart_condition = ( k == 0 ); // or k % 1000 == 0;
         
-        bool residualenergy_seems_small = absolute(Md_r) < threshold*threshold;
-        // bool residualenergy_seems_small = false;
+        // bool residualenergy_seems_small = absolute(Md_r) < threshold*threshold;
+        bool residualenergy_seems_small = false;
 
         if( restart_condition or residualenergy_seems_small ) {
             
@@ -570,7 +572,9 @@ void HodgeConjugateResidualSolverCSR_SSOR(
                 
             }
             
-            
+            if( print_modulo >= 0 ) 
+                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
+
         }
         
         /* Print information */
@@ -896,7 +900,9 @@ void HodgeConjugateResidualSolverCSR_textbook(
                 Md_Md += Mdir[c] * Mdir[c];
                 
             }
-            
+
+            if( print_modulo >= 0 ) 
+                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", k, N, (long double) sqrt(Mr_r), (long double) threshold );
             
         }
         
@@ -913,6 +919,7 @@ void HodgeConjugateResidualSolverCSR_textbook(
             if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Residual energy is unreasonable with %.9Le\n", (long double)Mr_r );
             break;
         }
+        
         bool residualenergy_is_small = absolute(Mr_r) < threshold*threshold;
         
         if( residualenergy_is_small )
