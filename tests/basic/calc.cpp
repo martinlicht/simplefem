@@ -11,11 +11,9 @@ using namespace std;
 
 int main()
 {
-        cout << "Unit Test for Factorials and Binomials" << endl;
+        cout << "Unit Test and Benchmark for Factorials and Binomials" << endl;
         
-        // cout << std::setprecision(10);
-
-        assert( desired_precision < 1e-10 );
+        assert( machine_epsilon < 1e-10 );
 
         for( int i = 0; i <= largest_factorial_base<int>(); i++ ) {
 
@@ -57,7 +55,7 @@ int main()
         auto end_naive   = std::chrono::system_clock::now();
 
         std::chrono::duration<double> elapsed_seconds_naive = end_naive - start_naive;
-        std::cout << "Naive method, elapsed time:    " << elapsed_seconds_naive.count()   << "s\n";
+        std::cout << "Integer, Naive method, elapsed time:    " << elapsed_seconds_naive.count()   << "s\n";
         
         srand(0);
         auto start_loop = std::chrono::system_clock::now();
@@ -65,7 +63,7 @@ int main()
         auto end_loop   = std::chrono::system_clock::now();
     
         std::chrono::duration<double> elapsed_seconds_loop  = end_loop  - start_loop;
-        std::cout << "Loop method, elapsed time:     " << elapsed_seconds_loop.count()    << "s\n";
+        std::cout << "Integer, Loop method, elapsed time:     " << elapsed_seconds_loop.count()    << "s\n";
         
         srand(0);
         auto start_table = std::chrono::system_clock::now();
@@ -73,7 +71,7 @@ int main()
         auto end_table   = std::chrono::system_clock::now();
 
         std::chrono::duration<double> elapsed_seconds_table = end_table - start_table;
-        std::cout << "Table method, elapsed time:    " << elapsed_seconds_table.count()   << "s\n";
+        std::cout << "Integer, Table method, elapsed time:    " << elapsed_seconds_table.count()   << "s\n";
         
         srand(0);
         auto start_n_naive = std::chrono::system_clock::now();
