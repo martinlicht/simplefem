@@ -17,7 +17,7 @@
 #endif
 
 
-
+inline const bool csr_restart_on_full_dimension = false;
 
 
 
@@ -52,7 +52,7 @@ int ConjugateGradientSolverCSR(
     
     while( K < N ){
         
-        bool restart_condition = ( K == 0 ); // or K % 1000 == 0;
+        bool restart_condition = ( K == 0 ) or ( csr_restart_on_full_dimension and K % N == 0 );
         
         bool residual_seems_small = ( K != 0 ) and absolute(r_r) < threshold*threshold;
 
@@ -228,7 +228,7 @@ int ConjugateGradientSolverCSR_DiagonalPreconditioner(
     
     while( K < N ){
         
-        bool restart_condition = ( K == 0 ); // or K % 1000 == 0;
+        bool restart_condition = ( K == 0 ) or ( csr_restart_on_full_dimension and K % N == 0 );
         
         bool preconresidual_seems_small = ( K != 0 ) and absolute(z_r) < threshold*threshold;
 
@@ -436,7 +436,7 @@ int ConjugateGradientSolverCSR_SSOR(
     
     while( K < N ){
         
-        bool restart_condition = ( K == 0 ); // or K % 1000 == 0;
+        bool restart_condition = ( K == 0 ) or ( csr_restart_on_full_dimension and K % N == 0 );
         
         bool preconresidual_seems_small = false and absolute(z_r) < threshold*threshold;
 
@@ -711,7 +711,7 @@ int ConjugateResidualSolverCSR(
     
     while( K < N ){
         
-        bool restart_condition = ( K == 0 ); // or K % 1000 == 0;
+        bool restart_condition = ( K == 0 ) or ( csr_restart_on_full_dimension and K % N == 0 );
         
         bool residualenergy_seems_small = ( K != 0 ) and absolute(Ad_r) < threshold*threshold;
 
@@ -921,7 +921,7 @@ int ConjugateResidualSolverCSR_textbook(
     
     while( K < N ){
         
-        bool restart_condition = ( K == 0 ); // or K % 1000 == 0;
+        bool restart_condition = ( K == 0 ) or ( csr_restart_on_full_dimension and K % N == 0 );
         
         bool residualenergy_seems_small = ( K != 0 ) and absolute(Ar_r) < threshold*threshold;
 
@@ -1153,7 +1153,7 @@ int MINRESCSR(
     while( K < N ){
         
         
-        bool restart_condition = (K == 0);
+        bool restart_condition = (K == 0) or ( csr_restart_on_full_dimension and K % N == 0 );
         
         bool residual_seems_small = ( K != 0 ) and ( absolute(eta) < threshold);
         
@@ -1580,8 +1580,8 @@ int CheybyshevIteration_DiagonalPreconditioner(
     
     while( K < N ){
         
-        bool restart_condition = ( K == 0 ); // or K % 1000 == 0;
-        
+        bool restart_condition = ( K == 0 ) or ( csr_restart_on_full_dimension and K % N == 0 );
+
         bool residual_seems_small = std::sqrt(r_r) < threshold;
 
         if( restart_condition or residual_seems_small ) {

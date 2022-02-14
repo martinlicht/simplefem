@@ -3,7 +3,7 @@
 
 
 
-
+inline const bool csrsys_restart_on_full_dimension = false;
 
 
 
@@ -127,7 +127,7 @@ void HodgeConjugateResidualSolverCSR_diagonal(
     
     while( k < N ){
         
-        bool restart_condition = ( k == 0 ); // or k % 1000 == 0;
+        bool restart_condition = ( k == 0 ) or ( csrsys_restart_on_full_dimension and k % N == 0 );
         
         bool residualenergy_seems_small = absolute(Md_r) < threshold*threshold;
         // bool residualenergy_seems_small = false;
@@ -477,7 +477,7 @@ void HodgeConjugateResidualSolverCSR_SSOR(
     
     while( k < N ){
         
-        bool restart_condition = ( k == 0 ); // or k % 1000 == 0;
+        bool restart_condition = ( k == 0 ) or ( csrsys_restart_on_full_dimension and k % N == 0 );
         
         // bool residualenergy_seems_small = absolute(Md_r) < threshold*threshold;
         bool residualenergy_seems_small = false;
@@ -809,7 +809,7 @@ void HodgeConjugateResidualSolverCSR_textbook(
     
     while( k < N ){
         
-        bool restart_condition = ( k == 0 ); // or k % 1000 == 0;
+        bool restart_condition = ( k == 0 ) or ( csrsys_restart_on_full_dimension and k % N == 0 );
         
         bool residualenergy_seems_small = absolute(Mr_r) < threshold*threshold;
 
@@ -919,7 +919,7 @@ void HodgeConjugateResidualSolverCSR_textbook(
             if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Residual energy is unreasonable with %.9Le\n", (long double)Mr_r );
             break;
         }
-        
+
         bool residualenergy_is_small = absolute(Mr_r) < threshold*threshold;
         
         if( residualenergy_is_small )
