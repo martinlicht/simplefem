@@ -445,7 +445,7 @@ inline constexpr Float factorial_numerical_table( int64_t n )
 
 inline constexpr Float factorial_numerical( int64_t n )
 {
-    return factorial_numerical_table( n );
+    return factorial_numerical_naive( n );
 }
 
 

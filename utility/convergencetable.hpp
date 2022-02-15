@@ -13,13 +13,25 @@
 class ConvergenceTable
 {
     
+    private:
+        
+        std::vector<std::vector<Float>> entries;
+        std::vector<std::string> seriesheaders;
+        bool make_new_row;
+        
+    public:
+        
+        std::string table_name;
+        bool display_convergence_rates;
+        bool print_rowwise_instead_of_columnwise;
+    
     public:
 
         explicit ConvergenceTable( std::string table_name = "---------- Default Table Name ----------", bool display_convergence_rates = true )
         : make_new_row(true), 
           table_name(table_name), 
           display_convergence_rates( display_convergence_rates ),
-          print_transpose_instead_of_standard(false)
+          print_rowwise_instead_of_columnwise(false)
         {
             
         }
@@ -37,10 +49,10 @@ class ConvergenceTable
             return *this;
         }
         
-        ConvergenceTable& operator<<( const std::string& columnheader )
+        ConvergenceTable& operator<<( const std::string& seriesheader )
         {
             
-            columnheaders.push_back( columnheader );
+            seriesheaders.push_back( seriesheader );
             
             return *this;
         }
@@ -86,17 +98,17 @@ class ConvergenceTable
         
 
 
-        Float get_convergence_rate( int row, int column )
-        {
-            assert( 0 <= row );
-            assert( row < entries.size() );
-            assert( 1 <= row );
-            assert( 0 <= column );
-            assert( column < entries[row].size() );
-            assert( column < entries[row-1].size() );
-            Float ret = std::log2( entries[row-1][column] / entries[row][column] );
-            return ret;
-        }
+        // Float get_convergence_rate( int row, int column )
+        // {
+        //     assert( 0 <= row );
+        //     assert( row < entries.size() );
+        //     assert( 1 <= row );
+        //     assert( 0 <= column );
+        //     assert( column < entries[row].size() );
+        //     assert( column < entries[row-1].size() );
+        //     Float ret = std::log2( entries[row-1][column] / entries[row][column] );
+        //     return ret;
+        // }
 
 
 
@@ -104,7 +116,7 @@ class ConvergenceTable
         {
             
             os << std::string( 80, '-' ) << nl;
-            if( print_transpose_instead_of_standard )
+            if( print_rowwise_instead_of_columnwise )
                 print_transpose( os, display_convergence_rates );
             else
                 print_standard( os, display_convergence_rates );
@@ -115,10 +127,6 @@ class ConvergenceTable
         
         
         
-        // TODO 
-        // Introduced temporarily until format library is available
-        // C++ streams are currently not supported, 
-        // instead use printf from the C library
         void print_standard( std::ostream& os, bool display_convergence_rates ) const
         {
             
@@ -151,22 +159,22 @@ class ConvergenceTable
             }
             
             // if necessary, print column headers 
-            if( not columnheaders.empty() )
+            if( not seriesheaders.empty() )
             {
                 
                 printf_into_stream( os,  "%s %s", std::string( nc_indent_width, ' ' ).c_str(), column_separator ); // printf_into_stream( os, "   \t");
                     
-                for( int j = 0; j < columnheaders.size(); j++ )
+                for( int j = 0; j < seriesheaders.size(); j++ )
                 {
                     
-                    std::string columnheader = columnheaders[j];
+                    std::string seriesheader = seriesheaders[j];
                     
-                    if( columnheader.size() > nc_cell_width ) {
-                        columnheader.resize( nc_cell_width );
-                        columnheader[ nc_cell_width-1 ] = '~';
+                    if( seriesheader.size() > nc_cell_width ) {
+                        seriesheader.resize( nc_cell_width );
+                        seriesheader[ nc_cell_width-1 ] = '~';
                     }
                     
-                    printf_into_stream( os,  "%*s%s", nc_cell_width, columnheader.c_str(), column_separator );
+                    printf_into_stream( os,  "%*s%s", nc_cell_width, seriesheader.c_str(), column_separator );
                     
                     if( display_convergence_rates ) {
                         printf_into_stream( os,  "%s%s", std::string( nc_rate_width, ' ' ).c_str(), column_separator ); // printf_into_stream( os, "          \t");
@@ -270,19 +278,19 @@ class ConvergenceTable
             for( int j = 0; j < num_series; j++ )
             {
                 // print the name of series first 
-                if( not columnheaders.empty() )
+                if( not seriesheaders.empty() )
                 {
                 
-                    assert( columnheaders.size() == num_series );
+                    assert( seriesheaders.size() == num_series );
 
-                    std::string columnheader = columnheaders[j];
+                    std::string seriesheader = seriesheaders[j];
 
-                    if( columnheader.size() > nc_header_width ) {
-                        columnheader.resize( nc_header_width );
-                        columnheader[ nc_header_width-1 ] = '~';
+                    if( seriesheader.size() > nc_header_width ) {
+                        seriesheader.resize( nc_header_width );
+                        seriesheader[ nc_header_width-1 ] = '~';
                     }
 
-                    printf_into_stream( os,  "%*s%s", nc_header_width, columnheader.c_str(), cell_separator );
+                    printf_into_stream( os,  "%*s%s", nc_header_width, seriesheader.c_str(), cell_separator );
 
                 }
 
@@ -299,7 +307,7 @@ class ConvergenceTable
                 if( display_convergence_rates )
                 {
                     
-                    if( not columnheaders.empty() )
+                    if( not seriesheaders.empty() )
                         printf_into_stream( os,  "%s%s", std::string( nc_header_width, ' ' ).c_str(), cell_separator );
 
                     for( int i = 0; i < num_entries_per_series; i++ )
@@ -339,18 +347,6 @@ class ConvergenceTable
                     
         }
 
-    private:
-        
-        std::vector<std::vector<Float>> entries;
-        std::vector<std::string> columnheaders;
-        bool make_new_row;
-        
-    public:
-        
-        std::string table_name;
-        bool display_convergence_rates;
-        bool print_transpose_instead_of_standard;
-    
 };
 
 

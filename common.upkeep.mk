@@ -40,19 +40,20 @@ vtkclean:
 
 .PHONY: tidy
 tidy:
-	clang-tidy ./*.?pp -checks=llvm*,bugprone-*,clang-analyzer-*,misc-*,-llvm-header-guard,-llvm-include-order -- -std=c++17
+	clang-tidy ./*.?pp -checks=llvm*,bugprone-*,clang-analyzer-*,misc-*,-llvm-header-guard,-llvm-include-order -- -std=c++2a
 
 
 # apply cppcheck to all cpp and hpp files in the directory 
 
 .PHONY: cppcheck
 cppcheck:
-	cppcheck --enable=warning,style,performance,portability --suppress=duplicateCondition --suppress=assertWithSideEffect --suppress=useStlAlgorithm --std=c++17 -q . ./*pp
+	cppcheck -i ./.playground/ -i ./.legacy --enable=warning,style,performance,portability --suppress=duplicateCondition --suppress=assertWithSideEffect --suppress=useStlAlgorithm --std=c++17 -q . ./*pp
 
 
 # apply cpplint to all cpp and hpp files in the directory 
 
 .PHONY: cpplint
 cpplint:
+	$(error This command is not implemented.)
 	( ./../Tools/cpplint.py --exclude=.private/ --exclude=.legacy/ --exclude=.playground/ --recursive --filter=-whitespace,-legal,-build/namespace,readability/alt_tokens,readability/todo,readability/inheritance --quiet . ) | sort | uniq -c 2> OUTPUT_CPPLINT.txt
 

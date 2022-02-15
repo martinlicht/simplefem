@@ -10,6 +10,8 @@
 #include "../sparse/sparsematrix.hpp"
 #include "../mesh/mesh.hpp"
 
+#include "global.diffmatrix.hpp"
+
 SparseMatrix FEECBrokenDiffMatrix( const Mesh& mesh, int n, int k, int r )
 {
     

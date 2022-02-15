@@ -669,8 +669,9 @@ SparseMatrix SparseMatrixMultiplication( const SparseMatrix& left, const SparseM
 //     LOG << "--- Construct" << std::endl;
     SparseMatrix ret( left.getdimout(), right.getdimin(), new_entries );
         
+    beacon.ping("Re-sort");
     // LOG << "--- Sort and compress again" << std::endl;
-    // ret.sortandcompressentries();
+    ret.sortandcompressentries();
     
     return ret;
     
