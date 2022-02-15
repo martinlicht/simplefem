@@ -31,7 +31,7 @@ int main()
 
         Contable.lg();
         
-        Contable.print_transpose_instead_of_standard = true;
+        Contable.print_rowwise_instead_of_columnwise = true;
         
         Contable.lg();
         

@@ -27,13 +27,12 @@ class ConvergenceTable
     
     public:
 
-        explicit ConvergenceTable( std::string table_name = "---------- Default Table Name ----------", bool display_convergence_rates = true )
-        : make_new_row(true), 
-          table_name(table_name), 
-          display_convergence_rates( display_convergence_rates ),
+        explicit ConvergenceTable( std::string table_name = "---------- Default Table Name ----------" )
+        : table_name(table_name), 
+          display_convergence_rates( true ),
           print_rowwise_instead_of_columnwise(false)
         {
-            
+            make_new_row = true;
         }
         
         ConvergenceTable& operator<<( Float entry )
