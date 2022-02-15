@@ -25,7 +25,7 @@ extern bool log_has_a_fresh_line;
 class Logger : public std::ostringstream
 {
     private:
-        std::ostream& internalstream;
+        bool use_cerr; //std::ostream& internalstream;
         bool pad_newline_if_there_is_none;
         std::string filename;
         int linenumber;

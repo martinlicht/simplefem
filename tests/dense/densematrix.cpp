@@ -11,33 +11,32 @@ using namespace std;
 
 int main()
 {
-	LOG << "Unit Test for Dense Matrix class" << endl;
-	
-	DenseMatrix A( 3, 4 );
-	A.randommatrix();
-	
-	LOG << A << endl;
-	LOG << 3 * A << endl;
-	
-	DenseMatrix B( 3, 4 );
-	B.randommatrix();
-	
-	LOG << B << endl;
-	LOG << A + B << endl;
-	
-	DenseMatrix I3(3,3);
-	I3.unitmatrix();
-	DenseMatrix I4(4,4);
-	I4.unitmatrix();
-	LOG << I3 << I4 << endl;
-	LOG << I3 * A << endl;
-	LOG << A * I4 << endl;
-	auto S5 = 5. * I3;
-	LOG << S5 << endl;
-	LOG << S5 * A << endl;
-	
-	
-	LOG << "Finished Unit Test" << endl;
+    LOG << "Unit Test for Dense Matrix class" << endl;
 
-	return 0;
+    DenseMatrix A( 3, 4 );
+    A.randommatrix();
+
+    LOG << A << endl;
+    LOG << 3 * A << endl;
+
+    DenseMatrix B( 3, 4 );
+    B.randommatrix();
+
+    LOG << B << endl;
+    LOG << A + B << endl;
+
+    DenseMatrix I3(3,3);
+    I3.unitmatrix();
+    DenseMatrix I4(4,4);
+    I4.unitmatrix();
+    LOG << I3 << I4 << endl;
+    LOG << I3 * A << endl;
+    LOG << A * I4 << endl;
+    auto S5 = 5. * I3;
+    LOG << S5 << endl;
+    LOG << S5 * A << endl;
+
+    LOG << "Finished Unit Test" << endl;
+
+    return 0;
 }

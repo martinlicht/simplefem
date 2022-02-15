@@ -4,6 +4,7 @@
 
 
 inline const bool csrsys_restart_on_full_dimension = false;
+inline const bool csrsys_restart_before_finish     = true;
 
 
 
@@ -132,7 +133,7 @@ void HodgeConjugateResidualSolverCSR_diagonal(
         bool residualenergy_seems_small = absolute(Md_r) < threshold*threshold;
         // bool residualenergy_seems_small = false;
 
-        if( restart_condition or residualenergy_seems_small ) {
+        if( restart_condition or ( csrsys_restart_before_finish and residualenergy_seems_small ) ) {
             
             #if defined(_OPENMP)
             #pragma omp parallel for
@@ -482,7 +483,7 @@ void HodgeConjugateResidualSolverCSR_SSOR(
         // bool residualenergy_seems_small = absolute(Md_r) < threshold*threshold;
         bool residualenergy_seems_small = false;
 
-        if( restart_condition or residualenergy_seems_small ) {
+        if( restart_condition or ( csrsys_restart_before_finish and residualenergy_seems_small ) ) {
             
             #if defined(_OPENMP)
             #pragma omp parallel for
@@ -813,7 +814,7 @@ void HodgeConjugateResidualSolverCSR_textbook(
         
         bool residualenergy_seems_small = absolute(Mr_r) < threshold*threshold;
 
-        if( restart_condition or residualenergy_seems_small ) {
+        if( restart_condition or ( csrsys_restart_before_finish and residualenergy_seems_small ) ) {
             
             #if defined(_OPENMP)
             #pragma omp parallel for
