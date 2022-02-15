@@ -47,6 +47,12 @@ typedef double Float;
 typedef long double Float;
 #endif
 
+// Since all literals throughout are double unless marked otherwise 
+// we enforce that `Float` is at least enough to store double.
+// Any of those should do:
+static_assert( Float(1.1) == 1.1 );
+static_assert( sizeof(Float) >= sizeof(1.0) );
+
 inline const constexpr Float notanumber = std::numeric_limits<Float>::quiet_NaN();
 
 inline const constexpr Float machine_epsilon = std::numeric_limits<Float>::epsilon();
