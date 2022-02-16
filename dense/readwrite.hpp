@@ -26,17 +26,17 @@ void readDenseMatrix( DenseMatrix& mat, std::istream& input );
 void readDenseMatrixHeader( DenseMatrix& mat, std::istream& input );
 void readDenseMatrixData  ( DenseMatrix& mat, std::istream& input );
 
-inline std::ostream& operator<<( std::ostream& output, const DenseMatrix& mat )
-{
-  writeDenseMatrix( mat, output );
-  return output;
-}
+// inline std::ostream& operator<<( std::ostream& output, const DenseMatrix& mat )
+// {
+//   writeDenseMatrix( mat, output );
+//   return output;
+// }
 
-inline std::istream& operator>>( std::istream&  input,       DenseMatrix& mat )
-{
-  readDenseMatrix( mat, input );
-  return input;
-}
+// inline std::istream& operator>>( std::istream&  input,       DenseMatrix& mat )
+// {
+//   readDenseMatrix( mat, input );
+//   return input;
+// }
 
 
 
