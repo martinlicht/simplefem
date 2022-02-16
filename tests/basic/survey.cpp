@@ -8,7 +8,9 @@ using namespace std;
 
 int main()
 {
-    cout << "Survey of machine data" << endl;
+    cout << "Survey of machine data (floating-point)" << endl;
+
+    assert( machine_epsilon < 1e-10 );
 
     /* output floating-point parameters */
 
@@ -51,37 +53,6 @@ int main()
     printf("Float has quiet NaN:     %d\n",  (int) std::numeric_limits<Float>::has_quiet_NaN         );
     printf("Float has signaling NaN: %d\n",  (int) std::numeric_limits<Float>::has_signaling_NaN     );
     // TODO: Show the same properties in the same order as above 
-
-    assert( machine_epsilon < 1e-10 );
-
-
-
-    /* survey factorials */
-
-    std::cout << "\nLargest number whose factorial fits into data type (signed)" << std::endl;
-    std::cout << "    case signed char       : " << largest_factorial_base<       signed char>() << std::endl;
-    std::cout << "    case signed short      : " << largest_factorial_base<      signed short>() << std::endl;
-    std::cout << "    case signed int        : " << largest_factorial_base<        signed int>() << std::endl;
-    std::cout << "    case signed long       : " << largest_factorial_base<       signed long>() << std::endl;
-    std::cout << "    case signed long long  : " << largest_factorial_base<  signed long long>() << std::endl;
-
-    std::cout << "\nLargest number whose factorial fits into data type (unsigned)" << std::endl;
-    std::cout << "    case unsigned char     : " << largest_factorial_base<     unsigned char>() << std::endl;
-    std::cout << "    case unsigned short    : " << largest_factorial_base<    unsigned short>() << std::endl;
-    std::cout << "    case unsigned int      : " << largest_factorial_base<      unsigned int>() << std::endl;
-    std::cout << "    case unsigned long     : " << largest_factorial_base<     unsigned long>() << std::endl;
-    std::cout << "    case unsigned long long: " << largest_factorial_base<unsigned long long>() << std::endl;
-
-    for( int n = 0; n < 50; n++ ) {
-        auto x = largest_factorial_base_AUX( n, 2 );
-        //printf( "Largest k such that k! <= %d : %lld\n", n, (long long int)x );
-        if(  0 <= x && x <=   1 ) Assert( x == 1 );
-        if(  2 <= x && x <=   4 ) Assert( x == 2 );
-        if(  5 <= x && x <=  23 ) Assert( x == 3 );
-        if( 24 <= x && x <= 124 ) Assert( x == 4 );
-    }
-
-    /* TODO: check factorials, binomials, */
 
     return 0;
 }
