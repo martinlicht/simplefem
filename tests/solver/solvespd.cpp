@@ -2,9 +2,9 @@
 
 /**/
 
-#include <iostream>
-#include <fstream>
-#include <iomanip>
+#include <ostream>
+// #include <fstream>
+// #include <iomanip>
 
 #include "../../basic.hpp"
 #include "../../utility/utility.hpp"
@@ -25,7 +25,7 @@ int main()
 {
         LOG << "Unit Test: " << TestName << endl;
         
-        LOG << std::setprecision(5);
+        // LOG << std::setprecision(5);
 
         if(true)
         {
@@ -34,9 +34,9 @@ int main()
             ConvergenceTable contable_res("L2 Residual");
             ConvergenceTable contable_num("Iteration percentage");
 
-            contable_sol.print_transpose_instead_of_standard = true;
-            contable_res.print_transpose_instead_of_standard = true;
-            contable_num.print_transpose_instead_of_standard = true;
+            contable_sol.print_rowwise_instead_of_columnwise = true;
+            contable_res.print_rowwise_instead_of_columnwise = true;
+            contable_num.print_rowwise_instead_of_columnwise = true;
             
             bool do_cgmpp      = false;
             bool do_crmpp_expl = false;
@@ -150,7 +150,7 @@ int main()
                             mysol.zero();
                             ConjugateGradientMethod Solver( system );
                             Solver.print_modulo        = mysol.getdimension() / 20;
-                            Solver.max_iteration_count =     4 * mysol.getdimension();
+                            Solver.max_iteration_count =     mysol.getdimension();
                             timestamp start = gettimestamp();
                             Solver.solve( mysol, rhs );
                             timestamp end = gettimestamp();
@@ -172,7 +172,7 @@ int main()
                             mysol.zero();
                             ConjugateResidualMethod Solver( system );
                             Solver.print_modulo        = mysol.getdimension() / 20;
-                            Solver.max_iteration_count = 4 * mysol.getdimension();
+                            Solver.max_iteration_count = mysol.getdimension();
                             
                             timestamp start = gettimestamp();
                             Solver.solve_explicit( mysol, rhs );
@@ -196,7 +196,7 @@ int main()
                             mysol.zero();
                             ConjugateResidualMethod Solver( system );
                             Solver.print_modulo        = mysol.getdimension() / 20;
-                            Solver.max_iteration_count = 4 * mysol.getdimension();
+                            Solver.max_iteration_count = mysol.getdimension();
                             
                             timestamp start = gettimestamp();
                             Solver.solve_robust( mysol, rhs );
@@ -220,7 +220,7 @@ int main()
                             mysol.zero();
                             ConjugateResidualMethod Solver( system );
                             Solver.print_modulo        = mysol.getdimension() / 20;
-                            Solver.max_iteration_count = 4 * mysol.getdimension();
+                            Solver.max_iteration_count = mysol.getdimension();
                             
                             timestamp start = gettimestamp();
                             Solver.solve_fast( mysol, rhs );
@@ -243,9 +243,9 @@ int main()
                             FloatVector mysol( N*N );
                             mysol.zero();
                             MinimumResidualMethod Solver( system );
-                            Solver.print_modulo        = 4 * mysol.getdimension();
+                            Solver.print_modulo        = mysol.getdimension() / 20;
                             Solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
-                            Solver.max_iteration_count =     4 * mysol.getdimension();
+                            Solver.max_iteration_count =     mysol.getdimension();
                             timestamp start = gettimestamp();
                             Solver.solve( mysol, rhs );
                             timestamp end = gettimestamp();
@@ -266,9 +266,9 @@ int main()
                             FloatVector mysol( N*N );
                             mysol.zero();
                             HerzogSoodhalterMethod Solver( system );
-                            Solver.print_modulo        = 4 * mysol.getdimension();
+                            Solver.print_modulo        = mysol.getdimension() / 20;
                             Solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
-                            Solver.max_iteration_count =     4 * mysol.getdimension();
+                            Solver.max_iteration_count =     mysol.getdimension();
                             timestamp start = gettimestamp();
                             Solver.solve( mysol, rhs );
                             timestamp end = gettimestamp();

@@ -56,11 +56,9 @@ build.components   :=$(patsubst %,.build.%,   $(components) )
 build.components.a :=$(patsubst %,.build.%.a, $(components) )
 build.components.so:=$(patsubst %,.build.%.so,$(components) )
 
-build: $(build.components) .build.tests .build.benchmarks
+build: .build.modules .build.tests .build.benchmarks
 
-$(build.components): .build.%: %
-	@echo Build: $*
-	@cd ./$* && $(MAKE) --no-print-directory build
+.build.modules: $(build.components)
 
 .build.tests:
 	@echo Build tests
@@ -73,6 +71,10 @@ $(build.components): .build.%: %
 .build.a:  $(build.components.a)
 
 .build.so: $(build.components.so)
+
+$(build.components): .build.%: %
+	@echo Build: $*
+	@cd ./$* && $(MAKE) --no-print-directory build
 
 $(build.components.a): .build.%.a:
 	@echo Build A: $*
@@ -152,7 +154,7 @@ cppcheck: $(cppcheck.components)
 # Call 'cpplint' 
 
 cpplint:
-	@( ./Tools/cpplint.py --exclude=tests/* --exclude=tests/*/* --exclude=.legacy/* --exclude=.private/* --exclude=.playground/* --recursive --filter=-whitespace,-legal --quiet . ) | sort | uniq -c 2> OUTPUT_CPPLINT.txt
+	@ ./Tools/cpplint.py --exclude=tests/* --exclude=tests/*/* --exclude=.legacy/* --exclude=.private/* --exclude=.playground/* --recursive --filter=-whitespace,-legal --quiet . 2>&1 | sort | uniq -c > OUTPUT_CPPLINT.txt ; cat OUTPUT_CPPLINT.txt
 
 .PHONY: cpplint
 

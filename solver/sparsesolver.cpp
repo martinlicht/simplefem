@@ -17,7 +17,8 @@
 #endif
 
 
-
+inline const bool csr_restart_on_full_dimension = false;
+inline const bool csr_restart_before_finish     = true;
 
 
 
@@ -52,11 +53,11 @@ int ConjugateGradientSolverCSR(
     
     while( K < N ){
         
-        bool restart_condition = ( K == 0 ); // or K % 1000 == 0;
+        bool restart_condition = ( K == 0 ) or ( csr_restart_on_full_dimension and K % N == 0 );
         
         bool residual_seems_small = ( K != 0 ) and absolute(r_r) < threshold*threshold;
 
-        if( restart_condition or residual_seems_small ) {
+        if( restart_condition or ( csr_restart_before_finish and residual_seems_small ) ) {
             
             r_r = 0.;
         
@@ -73,15 +74,19 @@ int ConjugateGradientSolverCSR(
                 direction[c] = residual[c]; // this line seems to slow down performance ....
                 
                 r_r += residual[c] * residual[c];
+
             }
+
+            if( print_modulo >= 0 ) 
+                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(r_r), (long double) threshold );
+
         
         }
         
         /* printing information */
 
         if( print_modulo > 0 and K % print_modulo == 0 ) 
-            LOGPRINTF("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
-                   K, N, (long double)(r_r), (long double) threshold*threshold );
+            LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(r_r), (long double) threshold );
 
         /* Check whether residual is small */
                 
@@ -120,8 +125,8 @@ int ConjugateGradientSolverCSR(
         }
         
         if( denominator_is_small ) {
-            if( print_modulo >= 0 ) LOGPRINTF( "Gradient energy is small with %.9Le while residual is %.9Le vs %.9Le\n", 
-                                            (long double)d_Ad, (long double)r_r, (long double)threshold*threshold );
+            if( print_modulo >= 0 ) LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(r_r), (long double) threshold );
+            if( print_modulo >= 0 ) LOGPRINTF( "WARNING: Gradient energy is small with %.9Le\n", (long double)d_Ad );
             break;
         }
         
@@ -161,8 +166,7 @@ int ConjugateGradientSolverCSR(
     
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "Final residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
-                K, N, (long double)(r_r), (long double) threshold*threshold );
+        LOGPRINTF( "FINISHED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(r_r), (long double) threshold );
 
     
     delete[] ( direction ); 
@@ -225,11 +229,11 @@ int ConjugateGradientSolverCSR_DiagonalPreconditioner(
     
     while( K < N ){
         
-        bool restart_condition = ( K == 0 ); // or K % 1000 == 0;
+        bool restart_condition = ( K == 0 ) or ( csr_restart_on_full_dimension and K % N == 0 );
         
         bool preconresidual_seems_small = ( K != 0 ) and absolute(z_r) < threshold*threshold;
 
-        if( restart_condition or preconresidual_seems_small ) {
+        if( restart_condition or ( csr_restart_before_finish and preconresidual_seems_small ) ) {
             
             z_r = 0.;
         
@@ -254,14 +258,17 @@ int ConjugateGradientSolverCSR_DiagonalPreconditioner(
                 z_r += zirconium[c] * residual[c];
             
             }
+
+            if( print_modulo >= 0 ) 
+                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+
             
         }
         
         /* printing information */
 
         if( print_modulo > 0 and K % print_modulo == 0 ) 
-            LOGPRINTF("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n",
-                   K, N, (long double)(z_r), (long double) threshold*threshold );
+            LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
         
         /* Check whether residual is small */
                 
@@ -302,8 +309,8 @@ int ConjugateGradientSolverCSR_DiagonalPreconditioner(
         }
         
         if( denominator_is_small ) {
-            if( print_modulo >= 0 ) LOGPRINTF( "Gradient energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
-                                            (long double)d_Ad, (long double)z_r, (long double)threshold*threshold );
+            if( print_modulo >= 0 ) LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+            if( print_modulo >= 0 ) LOGPRINTF( "WARNING: Gradient energy is small with %.9Le\n", (long double)d_Ad );
             break;
         }
         
@@ -350,8 +357,7 @@ int ConjugateGradientSolverCSR_DiagonalPreconditioner(
     
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "Final residual after %d of max. %d iterations: %.9Le (%.9Le)\n",
-                K, N, (long double)(z_r), (long double) threshold*threshold );
+        LOGPRINTF( "FINISHED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
 
     
     delete[] ( direction ); 
@@ -431,11 +437,11 @@ int ConjugateGradientSolverCSR_SSOR(
     
     while( K < N ){
         
-        bool restart_condition = ( K == 0 ); // or K % 1000 == 0;
+        bool restart_condition = ( K == 0 ) or ( csr_restart_on_full_dimension and K % N == 0 );
         
         bool preconresidual_seems_small = false and absolute(z_r) < threshold*threshold;
 
-        if( restart_condition or preconresidual_seems_small ) {
+        if( restart_condition or ( csr_restart_before_finish and preconresidual_seems_small ) ) {
             
             for( int c = 0; c < N; c++ ) {
                 
@@ -498,14 +504,17 @@ int ConjugateGradientSolverCSR_SSOR(
                 z_r += zirconium[c] * residual[c];
             
             }
+
+            if( print_modulo >= 0 ) 
+                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+
             
         }
         
         /* printing information */
 
         if( print_modulo > 0 and K % print_modulo == 0 ) 
-            LOGPRINTF( "Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
-                    K, N, (long double)(z_r), (long double) threshold*threshold );
+            LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
         
         /* Check whether residual is small */
                 
@@ -543,8 +552,8 @@ int ConjugateGradientSolverCSR_SSOR(
         }
         
         if( denominator_is_small ) {
-            if( print_modulo >= 0 ) LOGPRINTF( "Gradient energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
-                                            (long double)d_Ad, (long double)z_r, (long double)threshold*threshold );
+            if( print_modulo >= 0 ) LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+            if( print_modulo >= 0 ) LOGPRINTF( "WARNING: Gradient energy is small with %.9Le\n", (long double)d_Ad );
             break;
         }
         
@@ -613,8 +622,7 @@ int ConjugateGradientSolverCSR_SSOR(
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "Final residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
-                K, N, (long double)(z_r), (long double) threshold*threshold );
+        LOGPRINTF( "FINISHED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
 
     
     delete[] ( direction ); 
@@ -704,11 +712,11 @@ int ConjugateResidualSolverCSR(
     
     while( K < N ){
         
-        bool restart_condition = ( K == 0 ); // or K % 1000 == 0;
+        bool restart_condition = ( K == 0 ) or ( csr_restart_on_full_dimension and K % N == 0 );
         
         bool residualenergy_seems_small = ( K != 0 ) and absolute(Ad_r) < threshold*threshold;
 
-        if( restart_condition or residualenergy_seems_small ) {
+        if( restart_condition or ( csr_restart_before_finish and residualenergy_seems_small ) ) {
             
             #if defined(_OPENMP)
             #pragma omp parallel for
@@ -744,14 +752,15 @@ int ConjugateResidualSolverCSR(
                 
             }
             
+            if( print_modulo >= 0 ) 
+                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(Ad_r), (long double) threshold );
             
         }
         
         /* printing information */
 
         if( print_modulo > 0 and K % print_modulo == 0 ) 
-            LOGPRINTF( "Square Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
-                    K, N, (long double)(Ad_r), (long double) threshold*threshold );
+            LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(Ad_r), (long double) threshold );
 
         
         /* Check whether res is small */
@@ -773,13 +782,13 @@ int ConjugateResidualSolverCSR(
         bool denominator_is_small    = sqrt(absolute(Ad_Ad)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) {
-            if( print_modulo >= 0 ) LOGPRINTF( "Gradient double energy is unreasonable with %.9Le\n", (long double)Ad_Ad );
+            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Gradient double energy is unreasonable with %.9Le\n", (long double)Ad_Ad );
             break;
         }
         
         if( denominator_is_small ) {
-            if( print_modulo >= 0 ) LOGPRINTF( "Gradient double energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
-                                    (long double)Ad_Ad, (long double)Ad_r, (long double)threshold*threshold );
+            if( print_modulo >= 0 ) LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(Ad_r), (long double) threshold );
+            if( print_modulo >= 0 ) LOGPRINTF( "WARNING: Gradient double energy is small with %.9Le\n", (long double)Ad_Ad );
             break;
         }
         
@@ -835,8 +844,7 @@ int ConjugateResidualSolverCSR(
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "Final residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
-                K, N, (long double)(Ad_r), (long double) threshold*threshold );
+        LOGPRINTF( "FINISHED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(Ad_r), (long double) threshold );
 
     
     delete[] (  dir );
@@ -914,11 +922,11 @@ int ConjugateResidualSolverCSR_textbook(
     
     while( K < N ){
         
-        bool restart_condition = ( K == 0 ); // or K % 1000 == 0;
+        bool restart_condition = ( K == 0 ) or ( csr_restart_on_full_dimension and K % N == 0 );
         
         bool residualenergy_seems_small = ( K != 0 ) and absolute(Ar_r) < threshold*threshold;
 
-        if( restart_condition or residualenergy_seems_small ) {
+        if( restart_condition or ( csr_restart_before_finish and residualenergy_seems_small ) ) {
             
             #if defined(_OPENMP)
             #pragma omp parallel for
@@ -953,15 +961,16 @@ int ConjugateResidualSolverCSR_textbook(
                 Ad_Ad += Adir[c] * Adir[c];
                 
             }
-            
+
+            if( print_modulo >= 0 ) 
+                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(Ar_r), (long double) threshold );
             
         }
         
         /* printing information */
 
         if( print_modulo > 0 and K % print_modulo == 0 )
-            LOGPRINTF( "Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
-                    K, N, (long double)(Ar_r), (long double) threshold*threshold );
+            LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(Ar_r), (long double) threshold );
         
         /* Check whether res is small */
                 
@@ -981,13 +990,13 @@ int ConjugateResidualSolverCSR_textbook(
         bool denominator_is_small    = sqrt(absolute(Ad_Ad)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) {
-            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Gradient energy is unreasonable with %.9Le\n", (long double)Ar_r );
+            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Gradient double energy is unreasonable with %.9Le\n", (long double)Ad_Ad );
             break;
         }
         
         if( denominator_is_small ) {
-            if( print_modulo >= 0 ) LOGPRINTF( "Gradient energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
-                                            (long double)Ad_Ad, (long double)Ar_r, (long double)threshold*threshold );
+            if( print_modulo >= 0 ) LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(Ar_r), (long double) threshold );
+            if( print_modulo >= 0 ) LOGPRINTF( "WARNING: Gradient double energy is small with %.9Le\n", (long double)Ad_Ad );
             break;
         }
         
@@ -1041,8 +1050,7 @@ int ConjugateResidualSolverCSR_textbook(
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "Final residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
-                K, N, (long double)(Ar_r), (long double) threshold*threshold );
+        LOGPRINTF( "FINISHED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(Ar_r), (long double) threshold );
 
     
     delete[] (  dir );
@@ -1146,11 +1154,11 @@ int MINRESCSR(
     while( K < N ){
         
         
-        bool restart_condition = (K == 0);
+        bool restart_condition = (K == 0) or ( csr_restart_on_full_dimension and K % N == 0 );
         
-        bool residual_seems_small = ( K != 0 ) and (eta < threshold);
+        bool residual_seems_small = ( K != 0 ) and ( absolute(eta) < threshold);
         
-        if( restart_condition or residual_seems_small ) {
+        if( restart_condition or ( csr_restart_before_finish and residual_seems_small ) ) {
             
             Float gamma_sq = 0.;
             
@@ -1185,10 +1193,14 @@ int MINRESCSR(
             c0 = c1 = 1.;
             
             eta = gamma;
+
+            if( print_modulo >= 0 ) 
+                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) absolute(eta), (long double) threshold );
+
             
         }
         
-        bool residual_is_small = (eta < threshold);
+        bool residual_is_small = ( absolute(eta) < threshold);
         
         if( residual_is_small )
             break;
@@ -1283,14 +1295,14 @@ int MINRESCSR(
 
         
         if( print_modulo > 0 and K % print_modulo == 0 )
-            LOGPRINTF("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)eta, (long double) threshold );
+            LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double)eta, (long double) threshold );
         
         K++;
         
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF("Final residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)eta, (long double) threshold );
+        LOGPRINTF( "FINISHED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double)eta, (long double) threshold );
 
     
     delete[] ( v0 );
@@ -1481,14 +1493,14 @@ int WHATEVER(
             
         
         if( print_modulo > 0 and K % print_modulo == 0 ) 
-            LOGPRINTF("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), (long double) threshold );
+            LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double)std::sqrt(r_r), (long double) threshold );
         
         K++;
         
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF("Final residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), (long double) threshold );
+        LOGPRINTF( "FINISHED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double)std::sqrt(r_r), (long double) threshold );
 
     
     delete[] (  r );
@@ -1526,7 +1538,7 @@ int CheybyshevIteration_DiagonalPreconditioner(
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ residual,
-    const Float allowed_error,
+    const Float threshold,
     unsigned int print_modulo,
     const Float* __restrict__ precon,
     const Float lower,
@@ -1540,7 +1552,7 @@ int CheybyshevIteration_DiagonalPreconditioner(
     assert( csrcolumns );
     assert( csrvalues );
     assert( residual );
-    assert( allowed_error > 0 );
+    assert( threshold > 0 );
     assert( print_modulo >= 0 );
     assert( precon );
     
@@ -1569,11 +1581,11 @@ int CheybyshevIteration_DiagonalPreconditioner(
     
     while( K < N ){
         
-        bool restart_condition = ( K == 0 ); // or K % 1000 == 0;
-        
-        bool residual_seems_small = std::sqrt(r_r) < allowed_error;
+        bool restart_condition = ( K == 0 ) or ( csr_restart_on_full_dimension and K % N == 0 );
 
-        if( restart_condition or residual_seems_small ) {
+        bool residual_seems_small = std::sqrt(r_r) < threshold;
+
+        if( restart_condition or ( csr_restart_before_finish and residual_seems_small ) ) {
             
             gamma_prev = 1.;
             
@@ -1611,7 +1623,7 @@ int CheybyshevIteration_DiagonalPreconditioner(
         
         /* Check whether residual is small */
                 
-        bool residual_is_small = std::sqrt(r_r) < allowed_error;
+        bool residual_is_small = std::sqrt(r_r) < threshold;
         
         if( residual_is_small )
             break;
@@ -1651,13 +1663,13 @@ int CheybyshevIteration_DiagonalPreconditioner(
         
         
         if( print_modulo > 0 and K % print_modulo == 0 ) 
-            LOGPRINTF( "Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), (long double) allowed_error );
+            LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double)std::sqrt(r_r), (long double) threshold );
         
         K++;
         
     }
     
-    LOGPRINTF( "Final residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), (long double) allowed_error );
+    LOGPRINTF( "FINISHED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double)std::sqrt(r_r), (long double) threshold );
 
     
     delete[] ( x_prev );
@@ -1803,7 +1815,7 @@ int CheybyshevIteration_DiagonalPreconditioner(
 //     
 //     while( iter < maxiter ) {
 //         
-//         LOGPRINTF("@@@@@@@@@@ Uzawa-CRM Iteration %d / %d: unorm is %f\n", iter, maxiter, vectornorm(pdim,u) );
+//         LOGPRINTF( "@@@@@@@@@@ Uzawa-CRM Iteration %d / %d: unorm is %f\n", iter, maxiter, vectornorm(pdim,u) );
 //         
 //         /* Start or Restart condition check */
 //         if( iter == 0 or ( false && iter % 1000 == 0 ) ) {
@@ -1877,7 +1889,7 @@ int CheybyshevIteration_DiagonalPreconditioner(
 //         LOGPRINTF( "@@@@@@@@@@ Residual norm: %f\n", residualnorm );
 //         
 //         if( residualnorm < threshold ) {
-//             LOGPRINTF("@@@@@@@@@@ Threshold deceeded.\n");
+//             LOGPRINTF( "@@@@@@@@@@ Threshold deceeded.\n" );
 //             break;
 //         }
 //         
@@ -2275,7 +2287,7 @@ int CheybyshevIteration_DiagonalPreconditioner(
 //     
 //     while( iter < maxiter ) {
 //         
-//         LOGPRINTF("@@@@@@@@@@ Uzawa-CRM Iteration %d / %d: unorm is %f\n", iter, maxiter, vectornorm(pdim,u) );
+//         LOGPRINTF( "@@@@@@@@@@ Uzawa-CRM Iteration %d / %d: unorm is %f\n", iter, maxiter, vectornorm(pdim,u) );
 //         
 //         /* Start or Restart condition check */
 //         if( iter == 0 or ( iter % 1000 == 0 ) )
@@ -2328,7 +2340,7 @@ int CheybyshevIteration_DiagonalPreconditioner(
 //         LOGPRINTF( "@@@@@@@@@@ Residual norm: %f\n", residualnorm );
 //         
 //         if( residualnorm < threshold ) {
-//             LOGPRINTF("@@@@@@@@@@ Threshold deceeded.\n");
+//             LOGPRINTF( "@@@@@@@@@@ Threshold deceeded.\n" );
 //             break;
 //         }
 //         

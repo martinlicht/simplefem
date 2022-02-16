@@ -34,13 +34,12 @@
 
 
 
+#ifndef FLAG_USE_ORIGINAL_ASSERT_MACRO
 
-
-#include <string>
 #include <cstdio>
 #include <cstdlib>
 
-inline void myActualAssert( const char* filename, const int linenumber, const char* expression, const std::string message = "" )
+inline void myActualAssert [[noreturn]] ( const char* filename, const int linenumber, const char* expression, const char* message )
 {
     fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" );
     fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" );
@@ -49,9 +48,9 @@ inline void myActualAssert( const char* filename, const int linenumber, const ch
     fprintf( stderr, "!!\t%s,l.%d\n", filename, linenumber );
     fprintf( stderr, "!!\n" );
     fprintf( stderr, "!!\t\t%s\n", expression );
-    if( message != "" ){
+    if( message != nullptr ){
     fprintf( stderr, "!!\n" );
-    fprintf( stderr, "!!\t\t%s\n", message.c_str() );
+    fprintf( stderr, "!!\t\t%s\n", message );
     }
     fprintf( stderr, "!!\n" );
     fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" );
@@ -65,13 +64,13 @@ inline void myActualAssert( const char* filename, const int linenumber, const ch
 
 inline void myActualUnreachable [[noreturn]] ( const char* filename, const int linenumber )
 {
-    fprintf( stderr, "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ), 
-    fprintf( stderr, "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ), 
-    fprintf( stderr, "!!\n" ), 
-    fprintf( stderr, "!!\tUnreachable code reached:\n!!!!\t%s:%d\n", __FILE__, __LINE__ ), 
-    fprintf( stderr, "!!\n" ), 
-    fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ), 
-    fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ), 
+    fprintf( stderr, "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ); 
+    fprintf( stderr, "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ); 
+    fprintf( stderr, "!!\n" ); 
+    fprintf( stderr, "!!\tUnreachable code reached:\n!!!!\t%s:%d\n", filename, linenumber ); 
+    fprintf( stderr, "!!\n" ); 
+    fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ); 
+    fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ); 
 #ifdef __cpp_exceptions
     throw(0);
 #else // __cpp_exceptions
@@ -81,13 +80,13 @@ inline void myActualUnreachable [[noreturn]] ( const char* filename, const int l
 
 inline void myActualUnimplemented [[noreturn]] ( const char* filename, const int linenumber )
 {
-    fprintf( stderr, "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ), 
-    fprintf( stderr, "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ), 
-    fprintf( stderr, "!!\n" ), 
-    fprintf( stderr, "!!\tUnimplemented execution path reached:\n!!!!\t%s:%d\n", __FILE__, __LINE__ ), 
-    fprintf( stderr, "!!\n" ), 
-    fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ), 
-    fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ), 
+    fprintf( stderr, "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ); 
+    fprintf( stderr, "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ); 
+    fprintf( stderr, "!!\n" ); 
+    fprintf( stderr, "!!\tUnimplemented execution path reached:\n!!!!\t%s:%d\n", filename, linenumber ); 
+    fprintf( stderr, "!!\n" ); 
+    fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ); 
+    fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ); 
 #ifdef __cpp_exceptions
     throw(0);
 #else // __cpp_exceptions
@@ -95,6 +94,7 @@ inline void myActualUnimplemented [[noreturn]] ( const char* filename, const int
 #endif // __cpp_exceptions    
 }
 
+#endif // FLAG_USE_ORIGINAL_ASSERT_MACRO
 
 
 
@@ -102,6 +102,10 @@ inline void myActualUnimplemented [[noreturn]] ( const char* filename, const int
 
 
 
+
+
+
+#if !defined NDEBUG && !defined DISCARD_ASSERT_MESSAGES && !defined USE_ORIGINAL_ASSERT_MACRO 
 
 // The following contains the framework to enable a varyadic assert macro
 // The internal function is templated; after the first few standard arguments
@@ -149,7 +153,7 @@ inline std::string Concat2String( const T& t, const Params&... params )
 // }
 
 
-
+#endif // !defined NDEBUG && !defined DISCARD_ASSERT_MESSAGES && !defined USE_ORIGINAL_ASSERT_MACRO 
 
 
 
@@ -172,7 +176,13 @@ inline std::string Concat2String( const T& t, const Params&... params )
 
 #else // FLAG_USE_ORIGINAL_ASSERT_MACRO
 
-#define Assert(x,...) (static_cast<bool>(x)?(void(0)):myActualAssert( __FILE__, __LINE__, #x, Concat2String(__VA_ARGS__) ) )
+#ifndef DISCARD_ASSERT_MESSAGES
+#define Assert(x,...) (static_cast<bool>(x)?(void(0)):myActualAssert( __FILE__, __LINE__, #x, 0 __VA_OPT__(+1)?Concat2String(__VA_ARGS__).c_str():nullptr ) )
+#else
+#define Assert(x,...) (static_cast<bool>(x)?(void(0)):myActualAssert( __FILE__, __LINE__, #x, nullptr ) )
+#endif 
+
+
 #define unreachable()   { myActualUnreachable(__FILE__, __LINE__), abort(); }
 #define unimplemented() { myActualUnimplemented(__FILE__, __LINE__), abort(); }
 

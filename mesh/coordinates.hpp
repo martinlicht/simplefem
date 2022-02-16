@@ -3,7 +3,7 @@
 
 
 // #include <cassert>
-#include <iostream>
+#include <ostream>
 #include <vector>
 
 #include "../basic.hpp"
@@ -48,7 +48,7 @@ class Coordinates
         void check() const;
         void print( std::ostream& ) const;
 
-        // void lg() { LOG << *this << std::endl; };
+        // // void lg() const { LOG << *this << std::endl; };
         
 
         void read( std::istream& ) ;

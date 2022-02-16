@@ -1,7 +1,8 @@
 #ifndef INCLUDEGUARD_DENSE_READWRITE_HPP
 #define INCLUDEGUARD_DENSE_READWRITE_HPP
 
-#include <iostream>
+#include <istream>
+#include <ostream>
 #include <functional>
 
 #include "../basic.hpp"

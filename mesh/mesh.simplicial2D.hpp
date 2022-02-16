@@ -2,9 +2,7 @@
 #define INCLUDEGUARD_MESH_SIMPLICIAL_2D_HPP
 
 
-#include <iostream>
-#include <map>
-#include <string>
+#include <ostream>
 #include <utility>
 #include <vector>
 

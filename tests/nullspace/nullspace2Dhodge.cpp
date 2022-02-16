@@ -2,9 +2,9 @@
 
 /**/
 
-#include <iostream>
+#include <ostream>
 #include <fstream>
-#include <iomanip>
+// #include <iomanip>
 
 #include "../../basic.hpp"
 #include "../../utility/utility.hpp"
@@ -21,6 +21,7 @@
 #include "../../solver/iterativesolver.hpp"
 #include "../../solver/inv.hpp"
 #include "../../solver/systemsparsesolver.hpp"
+#include "../../solver/nullspace.hpp"
 // #include "../../solver/cgm.hpp"
 // #include "../../solver/crm.hpp"
 // #include "../../solver/pcrm.hpp"
@@ -39,7 +40,7 @@ int main()
         
         LOG << "Unit Test: Compare numerical solvers CRM vs MINRES\n           for Solution of Dirichlet Problem" << endl;
         
-        LOG << std::setprecision(10);
+        // LOG << std::setprecision(10);
 
         if(true){
 
@@ -47,10 +48,34 @@ int main()
             
             MeshSimplicial2D Mx = StandardSquare2D_tiles3x3();
             
-            Mx.check();
-            
             Mx.automatic_dirichlet_flags();
 
+            // LOG << Mx << nl;
+
+            // Seitenmitten: 2, 11, 19, 31
+            // Mx.set_flag( 1,  2, SimplexFlagNull );
+            // Mx.set_flag( 1, 11, SimplexFlagNull );
+            // Mx.set_flag( 1, 19, SimplexFlagNull );
+            // Mx.set_flag( 1, 31, SimplexFlagNull );
+
+            // Links: 1, 11, 21 Rechts: 9, 19, 29
+            Mx.set_flag( 1,  1, SimplexFlagNull );
+            Mx.set_flag( 1, 11, SimplexFlagNull );
+            Mx.set_flag( 1, 21, SimplexFlagNull );
+            Mx.set_flag( 1,  9, SimplexFlagNull );
+            Mx.set_flag( 1, 19, SimplexFlagNull );
+            Mx.set_flag( 1, 29, SimplexFlagNull );
+            
+            Mx.set_flag( 0, 4, SimplexFlagNull );
+            Mx.set_flag( 0, 8, SimplexFlagNull );
+            Mx.set_flag( 0, 7, SimplexFlagNull );
+            Mx.set_flag( 0,11, SimplexFlagNull );
+            
+
+
+
+            Mx.check();
+            
             
             
             MeshSimplicial2D M;
@@ -75,11 +100,13 @@ int main()
             ConvergenceTable contable("Mass error");
             
             contable << "#nullvec";
+
+            const Float desired_precision = 100 * machine_epsilon;
             
 
             const int min_l = 0; 
             
-            const int max_l = 3;
+            const int max_l = 4;
             
             const int min_r = 2; 
             
@@ -207,9 +234,9 @@ int main()
                                 // );
                                 
                                 // ConjugateResidualMethod Solver( X );
-                                // Solver.threshold           = 1e-10;
-                                // Solver.print_modulo        = 100;
-                                // Solver.max_iteration_count = 4 * candidate.getdimension();
+                                // Solver.threshold           = desired_precision;
+                                // Solver.print_modulo        = 0;
+                                // Solver.max_iteration_count = 1 * candidate.getdimension();
                                 // Solver.solve( candidate, rhs );
                             
                                 assert( candidate.isfinite() );
@@ -279,21 +306,39 @@ int main()
                     
                     LOG << "How much nullspace are our vectors?" << nl;
                     for( const auto& nullvector : nullvectorgallery ) {
-                        LOG << std::showpos << std::scientific << std::setprecision(5) << std::setw(10) << ( SystemMatrix * nullvector ).norm(mass) << tab;
+                        LOGPRINTF( "% 10.5e\t", ( SystemMatrix * nullvector ).norm(mass) );
+                        // LOG << std::showpos << std::scientific << std::setprecision(5) << std::setw(10) << ( SystemMatrix * nullvector ).norm(mass) << tab;
                     }
                     LOG << nl;
                     
                     LOG << "How orthonormal are our vectors?" << nl;
                     for( const auto& nullvector1 : nullvectorgallery ) {
                         for( const auto& nullvector2 : nullvectorgallery ) {
-                            LOG << std::showpos << std::scientific << std::setprecision(5) << std::setw(10) << mass * nullvector1 * nullvector2 << tab;
+                            LOGPRINTF( "% 10.5e\t", mass * nullvector1 * nullvector2 );
+                            // LOG << std::showpos << std::scientific << std::setprecision(5) << std::setw(10) << mass * nullvector1 * nullvector2 << tab;
                         }
                         LOG << nl;
                     }
                     
                     
                     
-                    contable << static_cast<Float>(nullvectorgallery.size());   
+                    contable << static_cast<Float>(nullvectorgallery.size());  
+
+                    if( r == 1 )
+                    for( const auto& nullvector : nullvectorgallery )
+                    {
+                
+                        fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
+            
+                        VTKWriter vtk( M, fs, getbasename(__FILE__) );
+                        vtk.writeCoordinateBlock();
+                        vtk.writeTopDimensionalCells();
+                        
+                        // vtk.writeCellVectorData( nullvector, "nullvector H(curl)" , 0.1 );
+                        
+                        fs.close();
+                
+                    } 
                     
                     
                     
