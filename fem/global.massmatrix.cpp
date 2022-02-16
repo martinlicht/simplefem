@@ -13,7 +13,7 @@
 
 #include "../fem/local.polynomialmassmatrix.hpp"
 
-// #include "../fem/global.massmatrix.hpp"
+#include "../fem/global.massmatrix.hpp"
 
 
 

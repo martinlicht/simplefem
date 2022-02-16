@@ -77,7 +77,7 @@ int main()
     auto end_n_naive   = std::chrono::system_clock::now();
 
     std::chrono::duration<double> elapsed_seconds_n_naive = end_n_naive - start_n_naive;
-    std::cout << "N, Naive method, elapsed time: " << elapsed_seconds_n_naive.count() << "s\n";
+    std::cout << "Numerical, Naive method, elapsed time: " << elapsed_seconds_n_naive.count() << "s\n";
     
     srand(0);
     auto start_n_loop = std::chrono::system_clock::now();
@@ -85,7 +85,7 @@ int main()
     auto end_n_loop   = std::chrono::system_clock::now();
 
     std::chrono::duration<double> elapsed_seconds_n_loop  = end_n_loop  - start_n_loop;
-    std::cout << "N, Loop method, elapsed time:  " << elapsed_seconds_n_loop.count()  << "s\n";
+    std::cout << "Numerical, Loop method, elapsed time:  " << elapsed_seconds_n_loop.count()  << "s\n";
     
 
     
