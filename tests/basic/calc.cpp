@@ -13,8 +13,6 @@ int main()
 {
     cout << "Unit Test and Benchmark for Factorials and Binomials" << endl;
     
-    assert( machine_epsilon < 1e-10 );
-
     for( int i = 0; i <= largest_factorial_base<int>(); i++ ) {
 
         int64_t f1 = factorial_integer( i );

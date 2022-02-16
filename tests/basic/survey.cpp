@@ -34,19 +34,27 @@ int main()
     printf("    FLT/DBL/LDBL_MAX      : %Le\t%Le\t%Le\n", (long double) FLT_MAX,      (long double) DBL_MAX,      (long double) LDBL_MAX      );
     printf("    FLT/DBL/LDBL_EPSILON  : %Le\t%Le\t%Le\n", (long double) FLT_EPSILON,  (long double) DBL_EPSILON,  (long double) LDBL_EPSILON  );
 
-    printf("\nProject-defined floating-point type");
-    printf("Float max exponent:     %ld\n",  (long int) std::numeric_limits<Float>::max_exponent     );
+    printf("\nProject-defined floating-point type\n");
+    printf("Float decimal digits:   %ld\n",  (long int) std::numeric_limits<Float>::digits10         );
+    printf("Float digits:           %ld\n",  (long int) std::numeric_limits<Float>::digits           );
     printf("Float min exponent:     %ld\n",  (long int) std::numeric_limits<Float>::min_exponent     );
-    printf("Float max exponent 10:  %ld\n",  (long int) std::numeric_limits<Float>::max_exponent10   );
+    printf("Float max exponent:     %ld\n",  (long int) std::numeric_limits<Float>::max_exponent     );
     printf("Float min exponent 10:  %ld\n",  (long int) std::numeric_limits<Float>::min_exponent10   );
+    printf("Float max exponent 10:  %ld\n",  (long int) std::numeric_limits<Float>::max_exponent10   );
+
     printf("Float denormalized min: %Le\n",  (long double) std::numeric_limits<Float>::denorm_min()  );
-    printf("Float rounding error:   %Lf\n",  (long double) std::numeric_limits<Float>::round_error() );
-    printf("Float machine epsilon:  %Le\n",  (long double) std::numeric_limits<Float>::epsilon()     );
     printf("Float minimum:          %Le\n",  (long double) std::numeric_limits<Float>::min()         );
     printf("Float maximum:          %Le\n",  (long double) std::numeric_limits<Float>::max()         );
+    printf("Float machine epsilon:  %Le\n",  (long double) std::numeric_limits<Float>::epsilon()     );
+
+    printf("Float rounding error:   %Lf\n",  (long double) std::numeric_limits<Float>::round_error() );
     printf("Float has quiet NaN:     %d\n",  (int) std::numeric_limits<Float>::has_quiet_NaN         );
     printf("Float has signaling NaN: %d\n",  (int) std::numeric_limits<Float>::has_signaling_NaN     );
     // TODO: Show the same properties in the same order as above 
+
+    assert( machine_epsilon < 1e-10 );
+
+
 
     /* survey factorials */
 
