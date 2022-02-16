@@ -13,7 +13,7 @@ int main()
     int N = 100;
     std::vector<int> foo( N );
     for( int i = 0; i < N; i++ ) foo[i] = rand() / 100000;
-    
+
     sorthack( foo );
     
     for( int i = 1; i < N; i++ ) 
