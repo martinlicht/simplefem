@@ -130,7 +130,7 @@ void HodgeConjugateResidualSolverCSR_diagonal(
         
         bool restart_condition = ( k == 0 ) or ( csrsys_restart_on_full_dimension and k % N == 0 );
         
-        bool residualenergy_seems_small = absolute(Md_r) < threshold*threshold;
+        bool residualenergy_seems_small = ( k != 0 ) and absolute(Md_r) < threshold*threshold;
         // bool residualenergy_seems_small = false;
 
         if( restart_condition or ( csrsys_restart_before_finish and residualenergy_seems_small ) ) {
@@ -480,8 +480,8 @@ void HodgeConjugateResidualSolverCSR_SSOR(
         
         bool restart_condition = ( k == 0 ) or ( csrsys_restart_on_full_dimension and k % N == 0 );
         
-        // bool residualenergy_seems_small = absolute(Md_r) < threshold*threshold;
-        bool residualenergy_seems_small = false;
+        bool residualenergy_seems_small = ( k != 0 ) and absolute(Md_r) < threshold*threshold;
+        // bool residualenergy_seems_small = false;
 
         if( restart_condition or ( csrsys_restart_before_finish and residualenergy_seems_small ) ) {
             
@@ -812,7 +812,7 @@ void HodgeConjugateResidualSolverCSR_textbook(
         
         bool restart_condition = ( k == 0 ) or ( csrsys_restart_on_full_dimension and k % N == 0 );
         
-        bool residualenergy_seems_small = absolute(Mr_r) < threshold*threshold;
+        bool residualenergy_seems_small = ( k != 0 ) and absolute(Mr_r) < threshold*threshold;
 
         if( restart_condition or ( csrsys_restart_before_finish and residualenergy_seems_small ) ) {
             

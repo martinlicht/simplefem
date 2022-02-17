@@ -439,7 +439,7 @@ int ConjugateGradientSolverCSR_SSOR(
         
         bool restart_condition = ( K == 0 ) or ( csr_restart_on_full_dimension and K % N == 0 );
         
-        bool preconresidual_seems_small = false and absolute(z_r) < threshold*threshold;
+        bool preconresidual_seems_small = ( K != 0 ) and absolute(z_r) < threshold*threshold;
 
         if( restart_condition or ( csr_restart_before_finish and preconresidual_seems_small ) ) {
             
@@ -1156,7 +1156,7 @@ int MINRESCSR(
         
         bool restart_condition = (K == 0) or ( csr_restart_on_full_dimension and K % N == 0 );
         
-        bool residual_seems_small = ( K != 0 ) and ( absolute(eta) < threshold);
+        bool residual_seems_small = ( K != 0 ) and ( absolute(eta) < threshold );
         
         if( restart_condition or ( csr_restart_before_finish and residual_seems_small ) ) {
             
@@ -1583,7 +1583,7 @@ int CheybyshevIteration_DiagonalPreconditioner(
         
         bool restart_condition = ( K == 0 ) or ( csr_restart_on_full_dimension and K % N == 0 );
 
-        bool residual_seems_small = std::sqrt(r_r) < threshold;
+        bool residual_seems_small = ( K != 0 ) and std::sqrt(r_r) < threshold;
 
         if( restart_condition or ( csr_restart_before_finish and residual_seems_small ) ) {
             

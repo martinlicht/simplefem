@@ -71,6 +71,8 @@ class MeshSimplicial1D
         
         virtual void print( std::ostream& out ) const override;
         
+        // virtual std::string text() const override;
+        
         
         /* OTHER METHODS */
         

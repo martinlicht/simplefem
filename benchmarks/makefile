@@ -22,16 +22,18 @@ rpath_t  := $(patsubst %,-rpath=../%,$(affices))
 rpath    := $(patsubst %,$(linkerprefix)%,$(rpath_t)) 
 link     := $(patsubst %,-l%,$(affices))
 
-$(depdir): ; @mkdir -p $@
+$(depdir):
+	@mkdir -p $@
 
 $(outs): ./%.out: ./%.cpp | $(depdir)
 	@echo Compiling $@ ...
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -MM ./$*.cpp -MT $@ -MF $(depdir)/$*.d
-ifeq ($(OS),Windows_NT)
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(includes) $(rpath) $(link) -o $@ $(LDLIBS)
-else
-	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(includes) $(rpath) $(link) -o $@ $(LDLIBS)
-endif
+# ifeq ($(OS),Windows_NT)
+# 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(includes) $(rpath) $(link) -o $@ $(LDLIBS)
+# else
+# 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(includes) $(rpath) $(link) -o $@ $(LDLIBS)
+# endif
 	
 -include $(dependencies)
 
