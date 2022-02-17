@@ -181,7 +181,7 @@ int main()
                     
                     auto Z  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
                     
-                    auto SystemMatrix = C + B * inv(A,desired_precision) * Bt;
+                    auto SystemMatrix = C + B * inv(A,100*machine_epsilon) * Bt;
                     
                     
                     
@@ -208,7 +208,7 @@ int main()
                             for( int t = 0; t < max_number_of_purifications; t++ )
                             {
                                 
-                                auto X = B * inv(A,desired_precision) * Bt + C;
+                                auto& X = SystemMatrix; //B * inv(A,desired_precision) * Bt + C;
 
                                 HodgeConjugateResidualSolverCSR_SSOR(
                                     B.getdimout(), 
@@ -222,7 +222,7 @@ int main()
                                     residual.raw(),
                                     desired_precision,
                                     0,
-                                    desired_precision,
+                                    100*machine_epsilon,
                                     -1
                                 );
                                 
@@ -270,6 +270,19 @@ int main()
                         }
                         
                         
+                        /* Is it nullspace at all? */
+                        
+                        candidate.normalize(mass);
+                        
+                        Float residual_mass = ( SystemMatrix * candidate ).norm(mass);
+                        
+                        LOG << "\t\t\t Numerical residual (after normalizing): " << residual_mass << std::endl;
+                        
+                        if( residual_mass > 1e-6 ) {
+                            LOG << "!!!!!!!!!!!!!Discard vector because not nullspace enough!" << std::endl;
+                            continue;
+                        }
+                        
                         /* Gram-Schmidt */
                         
                         for( int s = 0; s < 2; s++ )
@@ -280,6 +293,7 @@ int main()
                         
                         Float reduced_mass = candidate.norm(mass);
                         LOG << "\t\t\t Reduced mass: " << reduced_mass << std::endl;
+                        LOG << "\t\t\t Numerical residual (after Gram-Schmidt): " << ( SystemMatrix * candidate ).norm(mass) << std::endl;
                         
                         if( reduced_mass < 1e-6 ) {
                             LOG << "!!!!!!!!!!!!!Discard vector because mass is too small!" << std::endl;
@@ -287,16 +301,7 @@ int main()
                         }
                         
                         candidate.normalize(mass);
-                        
-                        Float residual_mass = ( SystemMatrix * candidate ).norm(mass);
-                        
-                        LOG << "\t\t\t Numerical residual: " << residual_mass << std::endl;
-                        
-                        if( residual_mass > 1e-6 ) {
-                            LOG << "!!!!!!!!!!!!!Discard vector because not nullspace enough!" << std::endl;
-                            continue;
-                        }
-                        
+
                         assert( candidate.isfinite() );
                         
                         LOG << "Accept vector #" << nullvectorgallery.size() + 1 << std::endl;
