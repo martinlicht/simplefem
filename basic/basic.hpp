@@ -3,7 +3,7 @@
 
 
 #if __cplusplus < 201703L
-#error Compilation of this software requires at least C++14. C++17 is recommended.
+#error Compilation of this software requires at least C++17.
 #endif
 
 
@@ -50,8 +50,9 @@ typedef long double Float;
 // Since all literals throughout are double unless marked otherwise 
 // we enforce that `Float` is at least enough to store double.
 // Any of those should do:
-static_assert( Float(1.1) == 1.1 );
-static_assert( sizeof(Float) >= sizeof(1.0) );
+static_assert( Float(std::numeric_limits<double>::max()) == std::numeric_limits<double>::max() );
+// static_assert( Float(1.1) == 1.1 );
+static_assert( sizeof(Float) >= sizeof(double) );
 
 inline const constexpr Float notanumber = std::numeric_limits<Float>::quiet_NaN();
 
@@ -60,7 +61,7 @@ inline const constexpr Float machine_epsilon = std::numeric_limits<Float>::epsil
 inline const /*constexpr*/ Float desired_precision = std::sqrt( machine_epsilon );
 
 
-
+// TODO: Put these somewhere where it makes sense 
 extern template class std::vector<int>;
 extern template class std::vector<Float>;
 
@@ -451,7 +452,7 @@ inline constexpr Float factorial_numerical_table( int64_t n )
 
 inline constexpr Float factorial_numerical( int64_t n )
 {
-    return factorial_numerical_table( n );
+    return factorial_numerical_naive( n );
 }
 
 

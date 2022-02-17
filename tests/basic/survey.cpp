@@ -43,15 +43,19 @@ int main()
     printf("Float max exponent:     %ld\n",  (long int) std::numeric_limits<Float>::max_exponent     );
     printf("Float min exponent 10:  %ld\n",  (long int) std::numeric_limits<Float>::min_exponent10   );
     printf("Float max exponent 10:  %ld\n",  (long int) std::numeric_limits<Float>::max_exponent10   );
+    printf("Float has denorm:       %ld\n",  (long int) std::numeric_limits<Float>::has_denorm       );
+    printf("Float has denorm loss:  %ld\n",  (long int) std::numeric_limits<Float>::has_denorm_loss  );
 
     printf("Float denormalized min: %Le\n",  (long double) std::numeric_limits<Float>::denorm_min()  );
     printf("Float minimum:          %Le\n",  (long double) std::numeric_limits<Float>::min()         );
     printf("Float maximum:          %Le\n",  (long double) std::numeric_limits<Float>::max()         );
     printf("Float machine epsilon:  %Le\n",  (long double) std::numeric_limits<Float>::epsilon()     );
 
-    printf("Float rounding error:   %Lf\n",  (long double) std::numeric_limits<Float>::round_error() );
+    printf("Float rounding error:    %Lf\n", (long double) std::numeric_limits<Float>::round_error() );
     printf("Float has quiet NaN:     %d\n",  (int) std::numeric_limits<Float>::has_quiet_NaN         );
     printf("Float has signaling NaN: %d\n",  (int) std::numeric_limits<Float>::has_signaling_NaN     );
+    printf("Float is IEC-559:        %d\n",  (int) std::numeric_limits<Float>::is_iec559             );
+    printf("Float detectes tinyness: %d\n",  (int) std::numeric_limits<Float>::tinyness_before       );
     // TODO: Show the same properties in the same order as above 
 
     return 0;

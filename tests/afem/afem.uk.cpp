@@ -253,10 +253,10 @@ int main()
             
                 }
                 
-                LOG << "Refinement..." << endl;
-            
                 if( l != max_l ) {
 
+                    LOG << "Refinement..." << endl;
+            
                     FloatVector vec = interpol_grad;
 
                     FloatVector cellwisemass = 
