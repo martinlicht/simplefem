@@ -72,6 +72,8 @@ class Mesh
         
         virtual void print( std::ostream& out ) const = 0;
         
+        // virtual std::string text() const = 0;
+        
         // // void lg() const { LOG << *this << std::endl; };
         
         

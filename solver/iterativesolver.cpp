@@ -36,9 +36,9 @@ void ConjugateGradientMethod::check() const
     assert( A.getdimin() == A.getdimout() );
 }
 
-void ConjugateGradientMethod::print( std::ostream& os ) const
+std::string ConjugateGradientMethod::text() const
 {
-    os << "Print Conjugate Gradient Method." << std::endl;
+    return "Solver: Conjugate Gradient Method";
 }
 
 
@@ -274,9 +274,9 @@ void ConjugateResidualMethod::check() const
     assert( A.getdimin() == A.getdimout() );
 }
 
-void ConjugateResidualMethod::print( std::ostream& os ) const
+std::string ConjugateResidualMethod::text() const
 {
-    os << "Print Conjugate Residual Method." << std::endl;
+    return "Solver: Conjugate Residual Method";
 }
 
 
@@ -836,9 +836,9 @@ void PreconditionedConjugateResidualMethod::check() const
     assert( A.getdimin() == M.getdimout() );
 }
 
-void PreconditionedConjugateResidualMethod::print( std::ostream& os ) const
+std::string PreconditionedConjugateResidualMethod::text() const
 {
-    os << "Print Preconditioned Conjugate Residual Methop." << std::endl;
+    return "Solver: Preconditioned Conjugate Residual Method.";
 }
 
 
@@ -1043,9 +1043,9 @@ void MinimumResidualMethod::check() const
     assert( A.getdimin() == A.getdimout() );
 }
 
-void MinimumResidualMethod::print( std::ostream& os ) const
+std::string MinimumResidualMethod::text() const
 {
-    os << "Print MinimumResidualMethod." << std::endl;
+    return "Solver: Minimum Residual Method";
 }
 
 
@@ -1372,9 +1372,9 @@ void ResidualDescentMethod::check() const
     assert( A.getdimin() == A.getdimout() );
 }
 
-void ResidualDescentMethod::print( std::ostream& os ) const
+std::string ResidualDescentMethod::text() const
 {
-    os << "Print Residual Descent Method." << std::endl;
+    return "Solver: Residual Descent Method";
 }
 
 
@@ -1546,9 +1546,9 @@ void HerzogSoodhalterMethod::check() const
     assert( A.getdimin() == A.getdimout() );
 }
 
-void HerzogSoodhalterMethod::print( std::ostream& os ) const
+std::string HerzogSoodhalterMethod::text() const
 {
-    os << "Print Herzog-Soodhalter Method." << std::endl;
+    return "Solver: Herzog-Soodhalter Method";
 }
 
 
