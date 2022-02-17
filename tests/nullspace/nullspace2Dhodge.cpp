@@ -412,9 +412,7 @@ int main()
                     
                 }
 
-                LOG << "Refinement..." << endl;
-            
-                if( l != max_l ) M.uniformrefinement();
+                if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
 
                 contable << nl;
                 

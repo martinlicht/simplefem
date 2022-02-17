@@ -216,9 +216,7 @@ int main()
             
                 }
                 
-                LOG << "Refinement..." << endl;
-                
-                M.uniformrefinement();
+                if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
                 
 
             } 
