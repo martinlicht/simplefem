@@ -591,13 +591,12 @@ SparseMatrix SparseMatrixMultiplication( const SparseMatrix& left, const SparseM
 //     LOG << "--- SparseMatrix Product" << std::endl;
 //     LOG << "--- Sort and compress" << std::endl;
 
-    TimeBeacon beacon;
+    // TimeBeacon beacon;
     
     left.sortandcompressentries( SparseMatrix::MatrixEntrySorting::columnwise );
     right.sortandcompressentries( SparseMatrix::MatrixEntrySorting::rowwise );
 
-    beacon.ping("Sorted");
-//     LOG << "--- Counting" << std::endl;
+    // beacon.ping("Sorted"); // LOG << "--- Counting" << std::endl;
     
     const int lnum = left.getnumberofentries();
     const int rnum = right.getnumberofentries();
@@ -638,10 +637,8 @@ SparseMatrix SparseMatrixMultiplication( const SparseMatrix& left, const SparseM
         }
 
     }
-
-//     LOG << "--- Assemble" << std::endl;
     
-    beacon.ping("Counted");
+    // beacon.ping("Counted"); // LOG << "--- Assemble" << std::endl;
 
     std::vector<SparseMatrix::MatrixEntry> new_entries;
     new_entries.reserve( counter );
@@ -688,15 +685,14 @@ SparseMatrix SparseMatrixMultiplication( const SparseMatrix& left, const SparseM
 
     }
 
-    beacon.ping("Assembled");
+    // beacon.ping("Assembled"); // LOG << "--- Construct" << std::endl;
 
     assert( new_entries.size() == counter );
 
-//     LOG << "--- Construct" << std::endl;
     SparseMatrix ret( left.getdimout(), right.getdimin(), new_entries );
         
-    beacon.ping("Re-sort");
-//     LOG << "--- Sort and compress again" << std::endl;
+    // beacon.ping("Re-sort"); // LOG << "--- Sort and compress again" << std::endl;
+    
     ret.sortandcompressentries();
     
     return ret;
