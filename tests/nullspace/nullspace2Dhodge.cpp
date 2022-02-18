@@ -341,6 +341,8 @@ int main()
                         VTKWriter vtk( M, fs, getbasename(__FILE__) );
                         vtk.writeCoordinateBlock();
                         vtk.writeTopDimensionalCells();
+
+                        // TODO: Create cell centered vector field from nullvector
                         
                         // vtk.writeCellVectorData( nullvector, "nullvector H(curl)" , 0.1 );
                         

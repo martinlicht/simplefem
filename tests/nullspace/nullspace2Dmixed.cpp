@@ -296,7 +296,7 @@ int main()
                         vtk.writeCoordinateBlock();
                         vtk.writeTopDimensionalCells();
                         
-                        vtk.writeCellVectorData( nullvector, "nullvector H(div)" , 0.1 );
+                        // vtk.writeCellVectorData( nullvector, "nullvector H(div)" , 0.1 );
                         
                         fs.close();
                 
