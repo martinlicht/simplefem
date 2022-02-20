@@ -591,13 +591,12 @@ SparseMatrix SparseMatrixMultiplication( const SparseMatrix& left, const SparseM
 //     LOG << "--- SparseMatrix Product" << std::endl;
 //     LOG << "--- Sort and compress" << std::endl;
 
-    TimeBeacon beacon;
+    // TimeBeacon beacon;
     
     left.sortandcompressentries( SparseMatrix::MatrixEntrySorting::columnwise );
     right.sortandcompressentries( SparseMatrix::MatrixEntrySorting::rowwise );
 
-    beacon.ping("Sorted");
-//     LOG << "--- Counting" << std::endl;
+    // beacon.ping("Sorted"); // LOG << "--- Counting" << std::endl;
     
     const int lnum = left.getnumberofentries();
     const int rnum = right.getnumberofentries();
@@ -610,67 +609,90 @@ SparseMatrix SparseMatrixMultiplication( const SparseMatrix& left, const SparseM
         int lbase = 0; int rbase = 0;
         
         while( lbase < lnum and rbase < rnum ){
-            assert( lbase < lnum and rbase < rnum );
-            while( lbase < lnum and ldata[lbase].column < rdata[rbase].row ) lbase++;
-            if( lbase == lnum ) break;
-            while( rbase < rnum and rdata[rbase].row < ldata[lbase].column ) rbase++;
-            if( rbase == rnum ) break;
-            assert( lbase < lnum and rbase < rnum );
-            assert( ldata[lbase].column == rdata[rbase].row );
-            int index = ldata[lbase].column;
-            int lnext = lbase; int rnext = rbase;
-            while( lnext < lnum and ldata[lnext].column == index ) lnext++;
-            while( rnext < rnum and rdata[rnext].row == index  ) rnext++;
-            counter = counter + ( lnext - lbase ) * ( rnext - rbase );
-            lbase = lnext; rbase = rnext;
+
+            if( ldata[lbase].column == rdata[rbase].row ) {
+                
+                int index = ldata[lbase].column;
+                assert( index == rdata[rbase].row );
+                int lnext = lbase;
+                int rnext = rbase;
+                while( lnext < lnum and ldata[lnext].column == index ) lnext++;
+                while( rnext < rnum and rdata[rnext].row    == index  ) rnext++;
+                counter = counter + ( lnext - lbase ) * ( rnext - rbase );
+                lbase = lnext;
+                rbase = rnext;
+                
+            } else if( ldata[lbase].column < rdata[rbase].row ) {
+                
+                lbase++;
+                
+            } else if( rdata[rbase].row < ldata[lbase].column ) {
+                
+                rbase++;
+                
+            } else {
+                unreachable();
+            }
+
         }
 
     }
-
-//     LOG << "--- Assemble" << std::endl;
     
-    beacon.ping("Counted");
+    // beacon.ping("Counted"); // LOG << "--- Assemble" << std::endl;
 
     std::vector<SparseMatrix::MatrixEntry> new_entries;
     new_entries.reserve( counter );
     
     {
-        
+
         int lbase = 0; int rbase = 0;
         
         while( lbase < lnum and rbase < rnum ){
-            assert( lbase < lnum and rbase < rnum );
-            while( lbase < lnum and ldata[lbase].column < rdata[rbase].row ) lbase++;
-            if( lbase == lnum ) break;
-            while( rbase < rnum and rdata[rbase].row < ldata[lbase].column ) rbase++;
-            if( rbase == rnum ) break;
-            assert( lbase < lnum and rbase < rnum );
-            assert( ldata[lbase].column == rdata[rbase].row );
-            int index = ldata[lbase].column;
-            int lnext = lbase; int rnext = rbase;
-            while( lnext < lnum and ldata[lnext].column == index ) lnext++;
-            while( rnext < rnum and rdata[rnext].row == index  ) rnext++;
-            for( int lcurr = lbase; lcurr < lnext; lcurr++ )
-            for( int rcurr = rbase; rcurr < rnext; rcurr++ )
-                new_entries.push_back( { 
-                                        ldata[lcurr].row, 
-                                        rdata[rcurr].column, 
-                                        ldata[lcurr].value * rdata[rcurr].value
-                                       } );
-            lbase = lnext; rbase = rnext;
+
+            if( ldata[lbase].column == rdata[rbase].row ) {
+                
+                int index = ldata[lbase].column;
+                assert( index == rdata[rbase].row );
+                int lnext = lbase;
+                int rnext = rbase;
+                while( lnext < lnum and ldata[lnext].column == index ) lnext++;
+                while( rnext < rnum and rdata[rnext].row    == index ) rnext++;
+                
+                for( int lcurr = lbase; lcurr < lnext; lcurr++ )
+                for( int rcurr = rbase; rcurr < rnext; rcurr++ )
+                    new_entries.push_back( { 
+                        ldata[lcurr].row, 
+                        rdata[rcurr].column, 
+                        ldata[lcurr].value * rdata[rcurr].value
+                    } );
+                
+                lbase = lnext;
+                rbase = rnext;
+                
+            } else if( ldata[lbase].column < rdata[rbase].row ) {
+                
+                lbase++;
+                
+            } else if( rdata[rbase].row < ldata[lbase].column ) {
+                
+                rbase++;
+                
+            } else {
+                unreachable();
+            }
+
         }
 
     }
 
-    beacon.ping("Assembled");
+    // beacon.ping("Assembled"); // LOG << "--- Construct" << std::endl;
 
     assert( new_entries.size() == counter );
 
-//     LOG << "--- Construct" << std::endl;
     SparseMatrix ret( left.getdimout(), right.getdimin(), new_entries );
         
-    beacon.ping("Re-sort");
-    // LOG << "--- Sort and compress again" << std::endl;
+    // beacon.ping("Re-sort"); // LOG << "--- Sort and compress again" << std::endl;
+    
     ret.sortandcompressentries();
     
     return ret;
