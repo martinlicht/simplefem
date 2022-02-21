@@ -222,6 +222,30 @@ inline void lg( const T arg, const Ts... args )
 
 
 
+
+
+
+////////////////////////////////////////////
+// 
+//      logging via variadic templates
+// 
+////////////////////////////////////////////
+
+struct OpenMP_Reporter
+{
+    OpenMP_Reporter();
+    ~OpenMP_Reporter();
+};
+
+extern OpenMP_Reporter  omp_reporter;
+
+
+
+
+
+
+
+
 // LEGACY DEFINITIONS:
 
 // inline void ping() { std::clog << "ping" << std::endl; }
