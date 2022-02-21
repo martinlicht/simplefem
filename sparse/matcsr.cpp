@@ -165,10 +165,11 @@ std::string MatrixCSR::text() const
     for( int i = 0; i < C.size(); i++ ) str_C += ( std::to_string(C[i]) + " " );
     for( int i = 0; i < V.size(); i++ ) str_V += ( std::to_string(V[i]) + " " );
     
-    return std::string("CSRMatrix ") + std::to_string(getdimout()) + "x" + std::to_string(getdimin());
-                        + "\n" + str_A
-                        + "\n" + str_C
-                        + "\n" + str_V;
+    return std::string("CSRMatrix ") + std::to_string(getdimout()) + "x" + std::to_string(getdimin())
+                        + "\nA: " + str_A
+                        + "\nC: " + str_C
+                        + "\nV: " + str_V;
+                        // + "\n";
 }
 
 void MatrixCSR::printplain( std::ostream& os ) const
@@ -326,6 +327,79 @@ Float MatrixCSR::eigenvalueupperbound() const
 
 
 
+MatrixCSR MatrixCSRMultiplication( const MatrixCSR& mat1, const MatrixCSR& mat2 )
+{
+    // gather relevant data
+    int mat1_rows = mat1.getdimout();
+    int mat1_cols = mat1.getdimin();
+    int mat2_rows = mat2.getdimout();
+    int mat2_cols = mat2.getdimin();
+    
+    const int* mat1A = mat1.getA();
+    const int* mat2A = mat2.getA();
+    
+    const int* mat1C = mat1.getC();
+    const int* mat2C = mat2.getC();
+
+    const Float* mat1V = mat1.getV();
+    const Float* mat2V = mat2.getV();
+
+    Assert( mat1_cols == mat2_rows );
+
+    int matn_rows = mat1_rows;
+    int matn_cols = mat2_cols;
+
+    // create index list A, allocate C and V 
+    
+    std::vector<int> A( mat1_rows + 1, 0 );
+
+    // LOG << mat1.text() << nl << mat2.text() << nl;
+
+    #if defined(_OPENMP)
+    #pragma omp parallel for
+    #endif
+    for( int r = 0; r < matn_rows; r++ )
+        for( int c1 = mat1A[r];           c1 < mat1A[r+1];           c1++ )
+        for( int c2 = mat2A[ mat1C[c1] ]; c2 < mat2A[ mat1C[c1]+1 ]; c2++ )
+            A[r+1]++;
+
+    // for( int r = 0; r <= matn_rows; r++ ) LOG << A[r] << space; LOG << nl;
+    
+    for( int r = 1; r <= matn_rows; r++ ) A[r] += A[r-1];
+
+    // for( int r = 0; r <= matn_rows; r++ ) LOG << A[r] << space; LOG << nl;
+    
+    // LOG << A[matn_rows] << nl;
+
+    std::vector<int>   C( A[matn_rows] );
+    std::vector<Float> V( A[matn_rows] );
+
+    // compute entries     
+
+    #if defined(_OPENMP)
+    #pragma omp parallel for
+    #endif
+    for( int r = 0; r < matn_rows; r++ ) {
+
+        int c_curr = A[r];
+        
+        for( int c1 = mat1A[r];           c1 < mat1A[r+1];           c1++ )
+        for( int c2 = mat2A[ mat1C[c1] ]; c2 < mat2A[ mat1C[c1]+1 ]; c2++ )
+        {
+            C[ c_curr ] = mat2C[ c2 ];
+            V[ c_curr ] = mat1V[ c1 ] * mat2V[ c2 ];
+            c_curr++;
+        }
+            
+        Assert( c_curr == A[r+1], r, c_curr, A[r+1] ); 
+
+    }
+        
+    // computations done, create matrix 
+
+    return MatrixCSR( matn_rows, matn_cols, A, C, V );
+
+}
 
 
 
