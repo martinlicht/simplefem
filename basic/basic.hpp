@@ -18,7 +18,7 @@
 #include <array>
 #include <chrono>
 #include <functional>
-#include <ostream>
+// #include <ostream>
 #include <iterator>
 #include <limits>
 #include <list>
@@ -1055,8 +1055,8 @@ inline void mergeelementsinsortedlist
 /***********************************************/
 
 // TODO: Move into separate include file 
-template <typename T, size_t N>
-inline std::ostream& operator<<( std::ostream& stream, const std::array<T, N>& v)
+template <typename S, typename T, size_t N>
+inline S& operator<<( S& stream, const std::array<T, N>& v)
 {
     for( const auto& item : v )
         stream << item << space;

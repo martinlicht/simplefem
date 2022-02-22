@@ -86,4 +86,37 @@ Logger::~Logger()
     
 }
 
+
+
+
+
+
+#if defined(_OPENMP)
+#include <omp.h>
+#endif
+
+OpenMP_Reporter::OpenMP_Reporter()
+{
+    
+    #if defined(_OPENMP)
+    LOG << "OpenMP Reporter: started\n";
+    LOG << "\tMaximum number of threads: " << omp_get_max_threads() << nl;
+    // LOG << "\tMaximum number of processors: " << p << " - > " << omp_get_place_num_procs() << nl;
+    LOG << "\tMaximum number of places: " << omp_get_num_places() << nl;
+    for( int p = 0; p < omp_get_num_places(); p++ ) {
+        LOG << "\t\tMaximum number of processors per place: " << p << " - > " << omp_get_place_num_procs(p) << nl;
+    }
+    #endif
+}
+
+OpenMP_Reporter::~OpenMP_Reporter()
+{
+    #if defined(_OPENMP)
+    LOG << "OpenMP Reporter: finished\n";
+    #endif
+}
+
+OpenMP_Reporter  omp_reporter;
+
+
 #endif
