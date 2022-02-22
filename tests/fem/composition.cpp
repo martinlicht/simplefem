@@ -46,7 +46,7 @@ int main()
         
         const int number_of_samples = 50;
         
-        const int number_of_comparisons = 9;
+        const int number_of_comparisons = 6;
         
         const int l_min = 0;
         
@@ -217,16 +217,16 @@ int main()
             
             for( int d = 0; d <            3; d++ )
             {
-                
-                contable[d] << "inc";           // 0
-                contable[d] << "mass S";        // 1
-                contable[d] << "mass W";        // 2 
-                contable[d] << "mass comp";     // 3
-                contable[d] << "stiff S";       // 4
-                contable[d] << "stiff W";       // 5
-                contable[d] << "stiff comp";    // 6
-                contable[d] << "br mass";       // 7
-                contable[d] << "br stiff";      // 8
+                contable[d].table_name = std::to_string(d+1) + "D: Composition vs ...";
+                contable[d] << "COO1";           // 0
+                contable[d] << "COO2";        // 1
+                contable[d] << "COO3";        // 2 
+                contable[d] << "CSR1";     // 3
+                contable[d] << "CSR2";       // 4
+                contable[d] << "CSR3";       // 5
+                // contable[d] << "stiff comp";    // 6
+                // contable[d] << "br mass";       // 7
+                // contable[d] << "br stiff";      // 8
                 
                 
                 for( int m = 0; m <= l_max-l_min; m++ ) 
