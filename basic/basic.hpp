@@ -47,12 +47,6 @@ typedef double Float;
 typedef long double Float;
 #endif
 
-// Since all literals throughout are double unless marked otherwise 
-// we enforce that `Float` is at least enough to store double.
-// Any of those should do:
-static_assert( Float(std::numeric_limits<double>::max()) == std::numeric_limits<double>::max() );
-// static_assert( Float(1.1) == 1.1 );
-static_assert( sizeof(Float) >= sizeof(double) );
 
 inline const constexpr Float notanumber = std::numeric_limits<Float>::quiet_NaN();
 
@@ -622,7 +616,7 @@ inline void random_unit_vector( Float* values, const int N )
 
 
 // TODO: Move time to cpp
-static_assert( std::is_integral< decltype( std::chrono::time_point_cast<std::chrono::milliseconds>( std::chrono::steady_clock::now() ).time_since_epoch().count() ) >::value , "Time measurement must be integral" );
+static_assert( std::is_integral< decltype( std::chrono::time_point_cast< std::chrono::milliseconds>( std::chrono::steady_clock::now() ).time_since_epoch().count() ) >::value , "Time measurement must be integral" );
 
 
 typedef uintmax_t timestamp;
@@ -658,10 +652,10 @@ inline std::string measurementnow()
 
 inline std::string timestamp2digitalcode( const timestamp& t )
 {
-    const int numdigits = 8;
+    const int numdigits = 10;
     const int fulllength = numdigits+1;
     char digits[fulllength];
-    snprintf( digits, fulllength, "%*lx", numdigits, t );
+    snprintf( digits, fulllength, "%*ld", numdigits, t );
     for( int i = 0; i < numdigits; i++ ) if( digits[i] == ' ' ) digits[i] = '_';
     return std::string(digits);
 }

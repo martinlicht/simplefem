@@ -25,7 +25,7 @@
 # Do you want to use GCC or Clang?
 # Uncomment the appropriate definition below
 FLAG_CXX := CLANG
-# FLAG_CXX := GCC
+FLAG_CXX := GCC
 # FLAG_CXX := ICC
 
 
@@ -65,7 +65,7 @@ FLAG_NO_EXCEPTIONS=yes
 
 # Do you want to ENABLE excessive warning options?
 # Uncomment the following line to enable excessive warning options
-# FLAG_EXCESSIVE_WARNINGS=yes
+FLAG_EXCESSIVE_WARNINGS=yes
 
 # Do you want to ENABLE the Clang sanitizer?
 # Uncomment the following line to enable compilation with the Clang sanitizer
@@ -668,6 +668,10 @@ endif
 
 ifeq ($(FLAG_DISCARD_ASSERT_MESSAGES),yes)
 CPPFLAGS += -DDISCARD_ASSERT_MESSAGES
+endif
+
+ifeq ($(FLAG_USE_ORIGINAL_ASSERT_MACRO),yes)
+CPPFLAGS += -DUSE_ORIGINAL_ASSERT_MACRO
 endif
 
 

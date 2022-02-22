@@ -15,7 +15,7 @@
  * Those definitions are filled up in different ways.
  * 
  * 1)
- * If FLAG_USE_ORIGINAL_ASSERT_MACRO is set, then we use 
+ * If USE_ORIGINAL_ASSERT_MACRO is set, then we use 
  * the capabilities of the C library, in particular the
  * original `assert` macro.
  * 
@@ -34,7 +34,7 @@
 
 
 
-#ifndef FLAG_USE_ORIGINAL_ASSERT_MACRO
+#ifndef USE_ORIGINAL_ASSERT_MACRO
 
 #include <cstdio>
 #include <cstdlib>
@@ -94,7 +94,7 @@ inline void myActualUnimplemented [[noreturn]] ( const char* filename, const int
 #endif // __cpp_exceptions    
 }
 
-#endif // FLAG_USE_ORIGINAL_ASSERT_MACRO
+#endif // USE_ORIGINAL_ASSERT_MACRO
 
 
 
@@ -167,14 +167,14 @@ inline std::string Concat2String( const T& t, const Params&... params )
 
 #else // NDEBUG
 
-#ifdef FLAG_USE_ORIGINAL_ASSERT_MACRO
+#ifdef USE_ORIGINAL_ASSERT_MACRO
 
 #include <cassert>
 #define Assert(x,...)   assert(x)
 #define unreachable()   assert(false)
 #define unimplemented() assert(false)
 
-#else // FLAG_USE_ORIGINAL_ASSERT_MACRO
+#else // USE_ORIGINAL_ASSERT_MACRO
 
 #ifndef DISCARD_ASSERT_MESSAGES
 #define Assert(x,...) (static_cast<bool>(x)?(void(0)):myActualAssert( __FILE__, __LINE__, #x, 0 __VA_OPT__(+1)?Concat2String(__VA_ARGS__).c_str():nullptr ) )
@@ -186,7 +186,7 @@ inline std::string Concat2String( const T& t, const Params&... params )
 #define unreachable()   { myActualUnreachable(__FILE__, __LINE__), abort(); }
 #define unimplemented() { myActualUnimplemented(__FILE__, __LINE__), abort(); }
 
-#endif //FLAG_USE_ORIGINAL_ASSERT_MACRO
+#endif //USE_ORIGINAL_ASSERT_MACRO
 
 #endif //NDEBUG
 

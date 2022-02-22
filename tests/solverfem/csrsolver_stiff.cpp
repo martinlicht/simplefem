@@ -169,14 +169,19 @@ int main()
                 
                 {
                     
-                    LOG << "...assemble matrices" << endl;
+                    LOG << "...assemble scalar mass matrix" << endl;
             
                     SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
                     
                     LOG << "...assemble vector mass matrix" << endl;
             
                     SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
-                    
+
+                    LOG << "...sort and compress mass matrices" << endl;
+            
+                    scalar_massmatrix.sortandcompressentries();
+                    vector_massmatrix.sortandcompressentries();
+
                     LOG << "...assemble differential matrix and transpose" << endl;
 
                     SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r );
@@ -189,7 +194,7 @@ int main()
 
                     SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
-                    LOG << "...assemble stiffness and mass matrices" << endl;
+                    LOG << "...compose stiffness and mass matrices" << endl;
             
                     const auto composed_stiffness = incmatrix_t * diffmatrix_t * vector_massmatrix * diffmatrix * incmatrix;
                     const auto composed_mass      = incmatrix_t * scalar_massmatrix * incmatrix;
@@ -197,12 +202,17 @@ int main()
                     auto opr  = diffmatrix & incmatrix;
                     auto opl  = opr.getTranspose(); 
                     auto stiffness_csr_prelim = opl & ( vector_massmatrix & opr );
+                    
+                    LOG << "...convert to CSR" << endl;
+            
                     stiffness_csr_prelim.sortentries();
                     auto stiffness_csr = MatrixCSR( stiffness_csr_prelim );
 
                     const auto& stiffness = stiffness_csr;
                     const auto& mass      = composed_mass;
                     
+                    LOG << "...matrices done" << endl;
+
                     {
 
                         FloatVector sol_original( M.count_simplices(0), 0. );
