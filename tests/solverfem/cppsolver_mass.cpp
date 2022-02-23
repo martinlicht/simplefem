@@ -175,24 +175,31 @@ int main()
                 
                 {
                     
-                    LOG << "...assemble matrices" << endl;
+                    LOG << "...assemble scalar mass matrix" << endl;
             
                     SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
                     
+                    LOG << "...assemble Sullivan inclusion matrix" << endl;
+            
                     SparseMatrix incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r );
 
                     SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
-                    LOG << "...assemble global mass matrix" << endl;
+                    LOG << "...compose mass matrix" << endl;
             
                     const auto composed_mass      = incmatrix_t * scalar_massmatrix * incmatrix;
 
                     auto mass_prelim_csr = incmatrix_t & ( scalar_massmatrix & incmatrix );
                     mass_prelim_csr.sortentries();
+                    
+                    LOG << "...convert to CSR" << endl;
+
                     auto mass_csr = MatrixCSR( mass_prelim_csr );
                     
                     const auto& mass      = composed_mass;
                     
+                    LOG << "...matrices done" << endl;
+
                     {
 
                         FloatVector sol_original( M.count_simplices(0), 0. );

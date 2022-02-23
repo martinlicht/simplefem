@@ -114,12 +114,16 @@ public LinearOperator /* every matrix is a linear operator */
 
 
 
+MatrixCSR MatrixCSRMultiplication( const MatrixCSR& mat1, const MatrixCSR& mat2 );
 
 DiagonalOperator InverseDiagonalPreconditioner( const MatrixCSR& mat );
 
 
 
-
+inline MatrixCSR operator&( const MatrixCSR& mat1, const MatrixCSR& mat2 )
+{
+    return MatrixCSRMultiplication( mat1, mat2 );
+}
 
 inline MatrixCSR operator*( const MatrixCSR& mat, Float s )
 {
