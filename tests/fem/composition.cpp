@@ -125,42 +125,42 @@ int main()
                     vec.normalize();
                     assert( vec.isfinite() );
                     
-                    // inclusion matrices
+                    // vs COO1
                     {
                         auto vec_error = ( ( stiffness_cpp - stiffness_coo1 ) * vec ).norm();
                     
                         errors[m][d][0] = maximum( vec_error, errors[m][d][0] );
                     }
                     
-                    /*mass matrices (Sullivan) */
+                    /* vs COO2 */
                     {
                         auto vec_error = ( ( stiffness_cpp - stiffness_coo2 ) * vec ).norm();
                     
                         errors[m][d][1] = maximum( vec_error, errors[m][d][1] );
                     }
                     
-                    /*mass matrices (Whitney) */
+                    /* vs COO3 */
                     {
                         auto vec_error = ( ( stiffness_cpp - stiffness_coo3 ) * vec ).norm();
                     
                         errors[m][d][2] = maximum( vec_error, errors[m][d][1] );
                     }
                     
-                    /*mass matrices*/
+                    /* vs CSR1 */
                     {
                         auto vec_error = ( ( stiffness_cpp - stiffness_csr1 ) * vec ).norm();
                     
                         errors[m][d][3] = maximum( vec_error, errors[m][d][2] );
                     }
                     
-                    /*stiffness matrices (Sullivan)*/
+                    /* vs CSR2 */
                     {
                         auto vec_error = ( ( stiffness_cpp - stiffness_csr2 ) * vec ).norm();
                     
                         errors[m][d][4] = maximum( vec_error, errors[m][d][3] );
                     }
                     
-                    /*stiffness matrices (Whitney) */
+                    /* vs CSR3 */
                     {
                         auto vec_error = ( ( stiffness_cpp - stiffness_csr3 ) * vec ).norm();
                     

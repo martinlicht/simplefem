@@ -70,7 +70,7 @@ int main()
             LOG << "Nullspace computation" << endl;
 
             
-            ConvergenceTable contable("Mass error");
+            ConvergenceTable contable("Nullvectors found");
             
             contable << "#nullvec";
                         
