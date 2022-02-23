@@ -105,9 +105,9 @@ int main()
             const Float desired_precision = 100 * machine_epsilon;
             
 
-            const int min_l = 0; 
+            const int min_l = 5; 
             
-            const int max_l = 4;
+            const int max_l = 5;
             
             const int min_r = 1; 
             
