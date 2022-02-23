@@ -150,7 +150,7 @@ int main()
                 
             
 
-            ConvergenceTable contable("Mass error");
+            ConvergenceTable contable("Mass error and solver residual");
             
             contable << "sigma_error" << "u_error" << "du_error" << "residual";
             
@@ -175,7 +175,7 @@ int main()
             for( int l = min_l; l <= max_l; l++ )
             {
                 
-                LOG << "Level: " << l << std::endl;
+                LOG << "Level: " << l << "/" << max_l << std::endl;
                 LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
                 for( int r = min_r; r <= max_r; r++ )

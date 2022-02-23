@@ -108,7 +108,7 @@ int main()
 
             for( int l = 0; l <= max_l; l++ ){
                 
-                LOG << "Level: " << l << std::endl;
+                LOG << "Level: " << l << "/" << max_l << std::endl;
                 LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
                 

@@ -34,7 +34,7 @@ class TimeBeacon
 //                 text += texts.at(i) + " -> " + timestamp2measurement( times.at(i) - times.at(i-1) ) +  "\t";
 //             LOG << text << nl;
             int max_text_len = texts.at(0).size();
-            for( int i = 1; i < times.size(); i++ ) max_text_len = maximum( max_text_len, (int)texts.at(i).size() );
+            for( int i = 1; i < times.size(); i++ ) max_text_len = maximum( max_text_len, SIZECAST( texts.at(i).size() ) );
             for( int i = 1; i < times.size(); i++ )
                 LOGPRINTF( "%*s: %12s\t",
                            max_text_len, texts[i].c_str(),
