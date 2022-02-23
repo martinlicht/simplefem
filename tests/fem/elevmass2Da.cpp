@@ -227,6 +227,24 @@ int main()
         ConvergenceTable contable_vector[ experiments_vector_field.size() ];
         ConvergenceTable contable_volume[ experiments_volume_field.size() ];
         
+        for( int r = r_min; r <= r_max; r++ ) 
+        {
+            for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
+                contable_scalar[i].table_name = "Rounding errors scalar E" + std::to_string(i);
+            for( int i = 0; i < experiments_vector_field.size(); i++ ) 
+                contable_vector[i].table_name = "Rounding errors vector E" + std::to_string(i);
+            for( int i = 0; i < experiments_volume_field.size(); i++ ) 
+                contable_volume[i].table_name = "Rounding errors volume E" + std::to_string(i);
+
+            for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
+                contable_scalar[i] << printf_into_string("R%d+%d", r-r_min, r_plus_max );
+            for( int i = 0; i < experiments_vector_field.size(); i++ ) 
+                contable_vector[i] << printf_into_string("R%d+%d", r-r_min, r_plus_max );
+            for( int i = 0; i < experiments_volume_field.size(); i++ ) 
+                contable_volume[i] << printf_into_string("R%d+%d", r-r_min, r_plus_max );
+        
+        }
+        
         for( int l = l_min; l <= l_max; l++ ) 
         {
             

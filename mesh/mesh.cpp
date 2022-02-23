@@ -76,6 +76,11 @@ const Coordinates& Mesh::getcoordinates() const
 void Mesh::check() const 
 {
   
+  #if defined(DO_NOT_CHECK_MESHES)
+  #warning Disabled check for Simplicial Mesh Base Class
+  return;
+  #endif
+
   #ifdef NDEBUG
   return;
   #endif
@@ -482,7 +487,7 @@ DenseMatrix Mesh::getTransformationJacobian( int dim, int index ) const
 }
 
 
-DenseMatrix Mesh::getGradientProductMatrix( int dim, int index ) const // TODO: is this the vector mass matrix?
+DenseMatrix Mesh::getGradientProductMatrix( int dim, int index ) const 
 {
     assert( 0 <= dim   && dim   <= getinnerdimension() );
     assert( 0 <= index && index <  count_simplices(dim) );
@@ -495,7 +500,7 @@ DenseMatrix Mesh::getGradientProductMatrix( int dim, int index ) const // TODO: 
     
     // D^-1 D^-t = ( D^t D )^-1
     DenseMatrix Jac    = getTransformationJacobian( dim, index );
-    DenseMatrix middle = Inverse( Transpose(Jac) * Jac );// Transpose(Jac) * Jac;//TODO: Understand
+    DenseMatrix middle = Inverse( Transpose(Jac) * Jac );
     
     return Transpose(multiplier) * middle * multiplier;
 }
