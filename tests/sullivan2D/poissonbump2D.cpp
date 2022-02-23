@@ -223,8 +223,8 @@ int main()
                         
                         {
                             sol.zero();
-                            MinimumResidualMethod Solver( stiffness_csr );
-//                             PreconditionedConjugateResidualMethod Solver( stiffness_csr, stiffness_invprecon );
+//                             MinimumResidualMethod Solver( stiffness_csr );
+                            PreconditionedConjugateResidualMethod Solver( stiffness_csr, stiffness_invprecon );
                             Solver.print_modulo        = 1+sol.getdimension();
                             Solver.max_iteration_count = 4 * sol.getdimension();
                             timestamp start = gettimestamp();
