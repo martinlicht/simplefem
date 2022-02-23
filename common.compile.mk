@@ -25,7 +25,7 @@
 # Do you want to use GCC or Clang?
 # Uncomment the appropriate definition below
 FLAG_CXX := CLANG
-FLAG_CXX := GCC
+# FLAG_CXX := GCC
 # FLAG_CXX := ICC
 
 
@@ -231,7 +231,7 @@ ifeq ($(FLAG_DO_OPTIMIZE),yes)
 	else 
 		CXXFLAGS_OPTIMIZE += -Ofast 
 		CXXFLAGS_OPTIMIZE += -march=native 
-		ifeq ($(FLAG_CXX),CLANG)
+		ifeq ($(FLAG_CXX),GCC)
 			CXXFLAGS_OPTIMIZE := -inline-threshold=1200
 		endif
 		CXXFLAGS_OPTIMIZE += -flto

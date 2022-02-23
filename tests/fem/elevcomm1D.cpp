@@ -115,6 +115,12 @@ int main()
         ConvergenceTable contable[ M.getinnerdimension()+1 ];
         
         for( int k = 0; k <= M.getinnerdimension(); k++ ) 
+            contable->table_name = "Rounding errors D1K" + std::to_string(k);
+        for( int k = 0; k <= M.getinnerdimension(); k++ ) 
+        for( int r = r_min; r <= r_max; r++ ) 
+            contable[k] << ( "R" + std::to_string(r-r_min) );
+
+        for( int k = 0; k <= M.getinnerdimension(); k++ ) 
         for( int l = l_min; l <= l_max; l++ ) 
         {
             

@@ -241,27 +241,7 @@ int main()
     
                 
                 
-            LOG << "Convergence tables" << nl;
-
-            ConvergenceTable contable[3];
             
-            for( int d = 0; d <        3; d++ )
-            for( int m = 0; m <= l-l_min; m++ ) 
-            {
-                
-                for( int t = 0; t < number_of_comparisons; t++ )
-                {
-                    contable[d] << errors[m][d][t];
-                }
-                
-                contable[d] << nl; 
-                
-            }
-                
-            for( int d = 0; d < 3; d++ ) {
-                contable[d].lg();
-                LOG << "----------------------------------" << std::endl;
-            }
                 
                 
                 
@@ -286,6 +266,7 @@ int main()
             for( int d = 0; d <            3; d++ )
             {
                 
+                contable[d].table_name = "Rounding errors, D" + std::to_string(d+1);
                 contable[d] << "inc";           // 0
                 contable[d] << "mass S";        // 1
                 contable[d] << "mass W";        // 2 

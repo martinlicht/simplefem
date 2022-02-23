@@ -125,42 +125,42 @@ int main()
                     vec.normalize();
                     assert( vec.isfinite() );
                     
-                    // inclusion matrices
+                    // vs COO1
                     {
                         auto vec_error = ( ( stiffness_cpp - stiffness_coo1 ) * vec ).norm();
                     
                         errors[m][d][0] = maximum( vec_error, errors[m][d][0] );
                     }
                     
-                    /*mass matrices (Sullivan) */
+                    /* vs COO2 */
                     {
                         auto vec_error = ( ( stiffness_cpp - stiffness_coo2 ) * vec ).norm();
                     
                         errors[m][d][1] = maximum( vec_error, errors[m][d][1] );
                     }
                     
-                    /*mass matrices (Whitney) */
+                    /* vs COO3 */
                     {
                         auto vec_error = ( ( stiffness_cpp - stiffness_coo3 ) * vec ).norm();
                     
                         errors[m][d][2] = maximum( vec_error, errors[m][d][1] );
                     }
                     
-                    /*mass matrices*/
+                    /* vs CSR1 */
                     {
                         auto vec_error = ( ( stiffness_cpp - stiffness_csr1 ) * vec ).norm();
                     
                         errors[m][d][3] = maximum( vec_error, errors[m][d][2] );
                     }
                     
-                    /*stiffness matrices (Sullivan)*/
+                    /* vs CSR2 */
                     {
                         auto vec_error = ( ( stiffness_cpp - stiffness_csr2 ) * vec ).norm();
                     
                         errors[m][d][4] = maximum( vec_error, errors[m][d][3] );
                     }
                     
-                    /*stiffness matrices (Whitney) */
+                    /* vs CSR3 */
                     {
                         auto vec_error = ( ( stiffness_cpp - stiffness_csr3 ) * vec ).norm();
                     
@@ -170,32 +170,7 @@ int main()
                 }
                 
             } // loop over d  
-    
-                
-                
-            LOG << "Convergence tables" << nl;
-
-            ConvergenceTable contable[3];
-            
-            for( int d = 0; d <        3; d++ )
-            for( int m = 0; m <= l-l_min; m++ ) 
-            {
-                
-                for( int t = 0; t < number_of_comparisons; t++ )
-                {
-                    contable[d] << errors[m][d][t];
-                }
-                
-                contable[d] << nl; 
-                
-            }
-                
-            for( int d = 0; d < 3; d++ ) {
-                contable[d].lg();
-                LOG << "----------------------------------" << std::endl;
-            }
-                
-                
+        
                 
             LOG << "Refinement..." << endl;
         
@@ -217,7 +192,7 @@ int main()
             
             for( int d = 0; d <            3; d++ )
             {
-                contable[d].table_name = std::to_string(d+1) + "D: Composition vs ...";
+                contable[d].table_name = "Rounding errors, D" + std::to_string(d+1);
                 contable[d] << "COO1";           // 0
                 contable[d] << "COO2";        // 1
                 contable[d] << "COO3";        // 2 

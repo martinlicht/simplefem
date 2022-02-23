@@ -237,10 +237,6 @@ class ConvergenceTable
         }
 
 
-        // TODO 
-        // Introduced temporarily until format library is available
-        // C++ streams are currently not supported, 
-        // instead use printf from the C library
         void print_transpose( std::ostream& os, bool display_convergence_rates ) const
         {
             
@@ -352,7 +348,6 @@ class ConvergenceTable
 
 //         void print_stream( std::ostream& os, bool display_convergence_rates ) const 
 //         {
-//              TODO use {fmt} library as soon as available 
 //             std::ostringstream str;
 //             
 //             for( int i = 0; i < entries.size(); i++ )

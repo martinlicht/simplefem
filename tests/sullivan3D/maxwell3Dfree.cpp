@@ -132,7 +132,7 @@ int main()
                 
             
 
-            ConvergenceTable contable("Mass error");
+            ConvergenceTable contable("Mass error and solver residual");
             
             contable << "sigma_error" << "u_error" << "du_error" << "residual";
             

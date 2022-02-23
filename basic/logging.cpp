@@ -80,9 +80,10 @@ Logger::~Logger()
         fprintf( f, "%s:%d\n", filename.c_str(), linenumber ); // internalstream << "" << filename << ':' << linenumber << '\n';
     }
 
-    #ifndef NDEBUG
+    //#ifndef NDEBUG
     // internalstream.flush();
-    #endif
+    fflush(f);
+    //#endif
     
 }
 
@@ -100,6 +101,7 @@ OpenMP_Reporter::OpenMP_Reporter()
     
     #if defined(_OPENMP)
     LOG << "OpenMP Reporter: started\n";
+    LOG << "\tOpenMP Value: " << _OPENMP << nl;
     LOG << "\tMaximum number of threads: " << omp_get_max_threads() << nl;
     // LOG << "\tMaximum number of processors: " << p << " - > " << omp_get_place_num_procs() << nl;
     LOG << "\tMaximum number of places: " << omp_get_num_places() << nl;
