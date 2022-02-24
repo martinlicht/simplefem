@@ -157,10 +157,14 @@ class ConvergenceTable
                 return;
             }
             
+            const int num_series = entries[0].size();
+
             // if necessary, print column headers 
             if( not seriesheaders.empty() )
             {
                 
+                Assert( seriesheaders.size() == num_series, seriesheaders.size(), num_series );
+
                 printf_into_stream( os,  "%s %s", std::string( nc_indent_width, ' ' ).c_str(), column_separator ); // printf_into_stream( os, "   \t");
                     
                 for( int j = 0; j < seriesheaders.size(); j++ )
@@ -191,7 +195,7 @@ class ConvergenceTable
                 
                 printf_into_stream( os,  "%*d:%s", nc_indent_width, i, column_separator );
 
-                assert( entries[i].size() == entries.front().size() );
+                assert( entries[i].size() == num_series );
                 
                 // in the current row, print the entries 
                 for( int j = 0; j < entries[i].size(); j++ )

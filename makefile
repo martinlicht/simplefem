@@ -155,8 +155,8 @@ cppcheck: $(cppcheck.components)
 # Call 'cpplint' 
 
 cpplint:
-	# @ ./Tools/cpplint.py --exclude=tests/* --exclude=tests/*/* --exclude=.legacy/* --exclude=.private/* --exclude=.playground/* --recursive --filter=-whitespace,-legal --quiet . 2>&1 | sort | uniq -c > OUTPUT_CPPLINT.txt ; cat OUTPUT_CPPLINT.txt
-	@ cpplint --exclude=tests/* --exclude=tests/*/* --exclude=.legacy/* --exclude=.private/* --exclude=.playground/* --exclude=tests/.legacy/ --recursive --filter=-build/header_guard,-readability/alt_tokens,-whitespace,-legal --quiet . 2>&1 | sort | uniq -c > OUTPUT_CPPLINT.txt ; cat OUTPUT_CPPLINT.txt
+	@ cpplint --exclude=tests/* --exclude=tests/*/* --exclude=.legacy/* --exclude=.private/* --exclude=.playground/* --exclude=tests/.legacy/ --recursive --filter=-readability/todo,-build/header_guard,-build/include,-readability/alt_tokens,-whitespace,-legal --quiet . 2>&1 | sort | uniq -c > OUTPUT_CPPLINT.txt ; cat OUTPUT_CPPLINT.txt
+# @ ./Tools/cpplint.py --exclude=tests/* --exclude=tests/*/* --exclude=.legacy/* --exclude=.private/* --exclude=.playground/* --recursive --filter=-whitespace,-legal --quiet . 2>&1 | sort | uniq -c > OUTPUT_CPPLINT.txt ; cat OUTPUT_CPPLINT.txt
 
 .PHONY: cpplint
 

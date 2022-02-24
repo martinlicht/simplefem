@@ -168,7 +168,7 @@ int main()
                 
                 auto C  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
                 
-                auto Schur = B * inv(A,1e-10) * Bt;
+                auto Schur = B * inv(A,desired_precision) * Bt;
                 
                 {
 
@@ -225,17 +225,17 @@ int main()
                             Bt.getA(), Bt.getC(), Bt.getV(), 
                             C.getA(),   C.getC(),  C.getV(), 
                             res.raw(),
-                            1e-10,
+                            desired_precision,
                             1,
                             desired_precision,
-                            0
+                            -1
                         );
 
                         timestamp end = gettimestamp();
                         LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                         
                         
-                        auto grad = inv(A,1e-14) * Bt * sol;
+                        auto grad = inv(A,desired_precision) * Bt * sol;
 
                         LOG << "...compute error and residual:" << endl;
 
@@ -244,7 +244,7 @@ int main()
 
                         Float errornorm_sol  = sqrt( errornorm_aux_sol  * ( volume_massmatrix *  errornorm_aux_sol ) );
                         Float errornorm_grad = sqrt( errornorm_aux_grad * ( vector_massmatrix * errornorm_aux_grad ) );
-                        Float residualnorm   = ( rhs - B * inv(A,1e-10) * Bt * sol ).norm();
+                        Float residualnorm   = ( rhs - B * inv(A,desired_precision) * Bt * sol ).norm();
 
                         LOG << "error:     " << errornorm_sol << endl;
                         LOG << "aux error: " << errornorm_grad << endl;
@@ -270,7 +270,7 @@ int main()
                         
                         sol.zero();
                         
-                        auto X = B * inv(A,1e-08) * Bt;
+                        auto X = B * inv(A,desired_precision) * Bt;
 //                             auto y = FloatVector( Bt.getdimin(), 0. );
 //                             auto f = X * y;
                         
