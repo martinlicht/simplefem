@@ -198,9 +198,6 @@ void MatrixCSR::apply( FloatVector& dest, const FloatVector& add, Float scaling 
         }
     }
 
-    // TODO: introduce inline assembler for the code above
-    // -- uses outer loop assembler, inner loop assembler
-    
 }
 
 

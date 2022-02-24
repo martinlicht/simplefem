@@ -117,11 +117,13 @@ inline constexpr T maximum( const T& a, const T& b )
     if( a <= b ) return b;
     Assert( ( not std::isfinite(a) ) or ( not std::isfinite(b) ) );
     return a;
-//     Assert( a >= b or a <= b );
-//     if( a >= b )
-//         return a;
-//     else
-//         return b;
+//     Assert( a >= b or a <= b ); if( a >= b ) return a; else return b;
+}
+
+template<typename T>
+inline constexpr T maxabs( const T& a, const T& b )
+{
+    return maximum( absolute(a), absolute(b) );
 }
 
 template<typename T>
@@ -131,12 +133,37 @@ inline constexpr T minimum( const T& a, const T& b )
     if( a >= b ) return b;
     Assert( ( not std::isfinite(a) ) or ( not std::isfinite(b) ) );
     return a;
-//     Assert( a >= b or a <= b );
-//     if( a >= b )
-//         return a;
-//     else
-//         return b;
+//     Assert( a >= b or a <= b ); if( a >= b ) return b; else return a;
 }
+
+
+template<typename T, typename... Args >
+inline constexpr T maximum( T t, Args... args )
+{
+    return maximum( t, maximum( args... ) );
+}
+
+template<typename T, typename... Args >
+inline constexpr T maxabs( T t, Args... args )
+{
+    return maxabs( t, maxabs( args... ) );
+}
+
+template<typename T, typename... Args >
+inline constexpr T minimum( T t, Args... args )
+{
+    return minimum( t, minimum( args... ) );
+}
+
+
+
+
+
+
+
+
+
+
 
 
 template<typename T>

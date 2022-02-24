@@ -228,14 +228,14 @@ int main()
                             desired_precision,
                             1,
                             desired_precision,
-                            0
+                            -1
                         );
 
                         timestamp end = gettimestamp();
                         LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                         
                         
-                        auto grad = inv(A,1e-14) * Bt * sol;
+                        auto grad = inv(A,desired_precision) * Bt * sol;
 
                         LOG << "...compute error and residual:" << endl;
 
