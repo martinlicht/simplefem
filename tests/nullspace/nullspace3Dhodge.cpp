@@ -106,11 +106,8 @@ int main()
                     
                     LOG << "Polynomial degree: " << r << std::endl;
                     
-                    LOG << "...assemble matrices" << endl;
+                    LOG << "...assemble partial matrices" << endl;
             
-                    LOG << "... assemble matrices" << endl;
-            
-                    
                     SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r+1 );
                     SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   );
                     SparseMatrix volume_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r-1 );
@@ -130,6 +127,8 @@ int main()
                     SparseMatrix volume_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 2, r-1 );
                     SparseMatrix volume_incmatrix_t = volume_incmatrix.getTranspose();
                     
+                    LOG << "... assemble full matrices" << endl;
+            
                     auto mass = vector_incmatrix_t * vector_massmatrix * vector_incmatrix;
 
                     auto mat_A  = scalar_incmatrix_t & scalar_massmatrix & scalar_incmatrix;
