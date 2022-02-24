@@ -105,9 +105,9 @@ int main()
             const Float desired_precision = 100 * machine_epsilon;
             
 
-            const int min_l = 0; 
+            const int min_l = 5; 
             
-            const int max_l = 4;
+            const int max_l = 5;
             
             const int min_r = 1; 
             
@@ -126,7 +126,7 @@ int main()
             for( int l = min_l; l <= max_l; l++ )
             {
                 
-                LOG << "Level: " << l << std::endl;
+                LOG << "Level: " << l << "/" << max_l << std::endl;
                 LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
                 for( int r = min_r; r <= max_r; r++ )

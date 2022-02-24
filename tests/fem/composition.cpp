@@ -172,11 +172,15 @@ int main()
             } // loop over d  
         
                 
-            LOG << "Refinement..." << endl;
+            if( l != l_max ) { 
+
+                LOG << "Refinement..." << endl;
         
-            M1.uniformrefinement();
-            M2.uniformrefinement();
-            M3.uniformrefinement();
+                M1.uniformrefinement();
+                M2.uniformrefinement();
+                M3.uniformrefinement();
+
+            }
         
         }
         

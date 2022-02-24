@@ -98,7 +98,7 @@ int main()
             for( int l = min_l; l <= max_l; l++ )
             {
                 
-                LOG << "Level: " << l << std::endl;
+                LOG << "Level: " << l << "/" << max_l << std::endl;
                 LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
                 for( int r = min_r; r <= max_r; r++ )
@@ -106,11 +106,8 @@ int main()
                     
                     LOG << "Polynomial degree: " << r << std::endl;
                     
-                    LOG << "...assemble matrices" << endl;
+                    LOG << "...assemble partial matrices" << endl;
             
-                    LOG << "... assemble matrices" << endl;
-            
-                    
                     SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r+1 );
                     SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   );
                     SparseMatrix volume_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r-1 );
@@ -130,6 +127,8 @@ int main()
                     SparseMatrix volume_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 2, r-1 );
                     SparseMatrix volume_incmatrix_t = volume_incmatrix.getTranspose();
                     
+                    LOG << "... assemble full matrices" << endl;
+            
                     auto mass = vector_incmatrix_t * vector_massmatrix * vector_incmatrix;
 
                     auto mat_A  = scalar_incmatrix_t & scalar_massmatrix & scalar_incmatrix;

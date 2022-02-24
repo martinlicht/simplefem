@@ -4,7 +4,7 @@
 
 
 inline const bool csrsys_restart_on_full_dimension = false;
-inline const bool csrsys_restart_before_finish     = true;
+inline const bool csrsys_restart_before_finish     = false;
 
 
 

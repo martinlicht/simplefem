@@ -158,7 +158,7 @@ int main()
 
             const int min_l = 0; 
             
-            const int max_l = 4;
+            const int max_l = 5;
             
             const int min_r = 1; 
             
@@ -175,7 +175,7 @@ int main()
             for( int l = min_l; l <= max_l; l++ )
             {
                 
-                LOG << "Level: " << l << std::endl;
+                LOG << "Level: " << l << "/" << max_l << std::endl;
                 LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
                 for( int r = min_r; r <= max_r; r++ )
@@ -298,11 +298,10 @@ int main()
                             
                             sol.zero();
                             
-                            auto X = B * inv(A,1e-14) * Bt + C;
+                            auto X = B * inv(A,desired_precision) * Bt + C;
 
 //                             HerzogSoodhalterMethod Solver( C );
                             ConjugateResidualMethod Solver( X );
-                            Solver.threshold           = 1e-10;
                             Solver.print_modulo        = 100;
                             Solver.max_iteration_count = 4 * sol.getdimension();
 
@@ -348,9 +347,9 @@ int main()
                                   Bt.getA(),   Bt.getC(),   Bt.getV(), 
                                    C.getA(),    C.getC(),    C.getV(),
                                 res.raw(),
-                                1e-10,
+                                desired_precision,
                                 100,
-                                1e-14, //desired_precision,
+                                desired_precision,
                                 -1
                             );
 
@@ -374,7 +373,6 @@ int main()
                             rhs_whole.setslice( A.getdimout(), rhs );
                             
                             MinimumResidualMethod Solver( X );
-                            Solver.threshold           = 1e-10;
                             Solver.print_modulo        = 500;
                             Solver.max_iteration_count = 10 * sol_whole.getdimension();
 
@@ -447,9 +445,6 @@ int main()
 
                 if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
 
-                contable << nl;
-                
-                contable.lg();
         
             } 
             

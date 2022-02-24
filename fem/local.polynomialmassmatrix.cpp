@@ -39,28 +39,15 @@ DenseMatrix polynomialmassmatrix( int n, int r )
         
         ret( i, j ) = factorial_numerical(n) * alpha.factorial_numerical() / factorial_numerical( n + 2*r ); 
         
-//         {
-//             Float test = factorial_numerical(n) * alpha.factorial_numerical() / static_cast<Float>(factorial_integer( n + 2*r )); 
-//             assert( isabout( ret(i,j), test ) );
-//         }
-
         if( ret( i, j ) <= 0. ) {
             LOG << multis[i] << multis[j] << ret (i, j );
             unreachable();
         }
-        
 
-        //// TODO unclear whether this factor makes any sense.
-        // it needs to be fixed how this matrix is scaled.
-        // if it is scaled as mass matrix of unit simplex, then we later only multiple a determinant
-        // if it is scaled so that the volume term is missing, then we multiply by the measure later.
-        
     }
     
     assert( ret.isfinite() );
     
-    //LOG << ret << std::endl;
-
     if( not ret.ispositive() )
         LOG << ret;
     

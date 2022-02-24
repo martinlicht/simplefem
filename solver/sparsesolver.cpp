@@ -18,7 +18,7 @@
 
 
 inline const bool csr_restart_on_full_dimension = false;
-inline const bool csr_restart_before_finish     = true;
+inline const bool csr_restart_before_finish     = false;
 
 
 
