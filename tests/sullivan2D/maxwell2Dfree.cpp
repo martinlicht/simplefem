@@ -21,10 +21,6 @@
 #include "../../solver/iterativesolver.hpp"
 #include "../../solver/inv.hpp"
 #include "../../solver/systemsparsesolver.hpp"
-// #include "../../solver/cgm.hpp"
-// #include "../../solver/crm.hpp"
-// #include "../../solver/pcrm.hpp"
-// #include "../../solver/minres.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
@@ -291,31 +287,6 @@ int main()
                         }
                         
                         
-                        if(false)
-                        {
-                            
-                            LOG << "...iterative solver" << endl;
-                            
-                            sol.zero();
-                            
-                            auto X = B * inv(A,desired_precision) * Bt + C;
-
-//                             HerzogSoodhalterMethod Solver( C );
-                            ConjugateResidualMethod Solver( X );
-                            Solver.print_modulo        = 100;
-                            Solver.max_iteration_count = 4 * sol.getdimension();
-
-                            timestamp start = gettimestamp();
-//                             Solver.solve_fast( sol, rhs );
-                            Solver.solve( sol, rhs );
-                            timestamp end = gettimestamp();
-
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
-
-                            LOG << "...compute error and residual:" << endl;
-
-                        }
-
 
                         
                         
@@ -334,10 +305,8 @@ int main()
                             timestamp start = gettimestamp();
 
                             LOG << "- mixed system solver" << endl;
-//                             if(false)
-                            //HodgeConjugateResidualSolverCSR(
+
                             HodgeConjugateResidualSolverCSR_SSOR(
-                            //HodgeConjugateResidualSolverCSR_textbook( 
                                 negB.getdimout(), 
                                 A.getdimout(), 
                                 sol.raw(), 
@@ -358,37 +327,6 @@ int main()
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
                             
-                        }
-
-                        if(false)
-                        {
-                            
-                            auto X = Block2x2Operator( A.getdimout() + B.getdimout(), A.getdimin() + Bt.getdimin(), -A, Bt, B, C );
-
-                            FloatVector sol_whole( A.getdimin()  + Bt.getdimin(),  0. );
-                            FloatVector rhs_whole( A.getdimout() +  B.getdimout(), 0. );
-                            
-                            sol_whole.zero();
-                            rhs_whole.setslice( 0, A.getdimout(), 0. );
-                            rhs_whole.setslice( A.getdimout(), rhs );
-                            
-                            MinimumResidualMethod Solver( X );
-                            Solver.print_modulo        = 500;
-                            Solver.max_iteration_count = 10 * sol_whole.getdimension();
-
-                            timestamp start = gettimestamp();
-                            Solver.solve( sol_whole, rhs_whole );
-                            timestamp end = gettimestamp();
-
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
-
-                            LOG << "...compute error and residual:" << endl;
-
-                            Float residualnorm  = ( rhs_whole - X * sol_whole ).norm();
-
-                            LOG << "combined system residual:  " << residualnorm << endl;
-
-                            sol = sol_whole.getslice( A.getdimout(), B.getdimout() );
                         }
 
 
