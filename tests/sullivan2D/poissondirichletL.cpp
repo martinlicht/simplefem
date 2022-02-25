@@ -18,8 +18,6 @@
 #include "../../mesh/examples2D.hpp"
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/iterativesolver.hpp"
-// #include "../../solver/crm.hpp"
-// #include "../../solver/minres.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.elevation.hpp"
 #include "../../fem/global.massmatrix.hpp"
@@ -161,9 +159,8 @@ int main()
                 
                 {
                     sol.zero();
-                    MinimumResidualMethod Solver( stiffness_csr );
-                    Solver.print_modulo        = 1+sol.getdimension();
-                    Solver.max_iteration_count = 4 * sol.getdimension();
+                    ConjugateGradientMethod Solver( stiffness_csr );
+                    Solver.max_iteration_count = 1 * sol.getdimension();
                     timestamp start = gettimestamp();
                     Solver.solve( sol, rhs );
                     timestamp end = gettimestamp();
@@ -174,8 +171,7 @@ int main()
                 
                 {
                     aug_sol.zero();
-                    MinimumResidualMethod Solver( aug_stiffness_csr );
-                    Solver.print_modulo        = 1+aug_sol.getdimension();
+                    ConjugateGradientMethod Solver( aug_stiffness_csr );
                     Solver.max_iteration_count = 4 * aug_sol.getdimension();
                     timestamp start = gettimestamp();
                     Solver.solve( aug_sol, aug_rhs );

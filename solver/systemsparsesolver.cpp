@@ -10,7 +10,7 @@ inline const bool csrsys_restart_before_finish     = false;
 
 
 
-void HodgeConjugateResidualSolverCSR( 
+int HodgeConjugateResidualSolverCSR( 
     const int N, 
     const int L, 
     Float* __restrict__ x, 
@@ -25,6 +25,7 @@ void HodgeConjugateResidualSolverCSR(
     Float inneriteration_threshold,
     int inneriteration_print_modulo
 ) {
+    return 
     HodgeConjugateResidualSolverCSR_SSOR( 
         N, 
         L, 
@@ -43,7 +44,7 @@ void HodgeConjugateResidualSolverCSR(
 }
  
 
-void HodgeConjugateResidualSolverCSR_diagonal( 
+int HodgeConjugateResidualSolverCSR_diagonal( 
     const int N, 
     const int L, 
     Float* __restrict__ x, 
@@ -363,6 +364,8 @@ void HodgeConjugateResidualSolverCSR_diagonal(
     
     delete[] ( precon );
 
+    return k;
+
 }
  
 
@@ -396,7 +399,7 @@ void HodgeConjugateResidualSolverCSR_diagonal(
 
 
 
-void HodgeConjugateResidualSolverCSR_SSOR( 
+int HodgeConjugateResidualSolverCSR_SSOR( 
     const int N, 
     const int L, 
     Float* __restrict__ x, 
@@ -715,6 +718,8 @@ void HodgeConjugateResidualSolverCSR_SSOR(
     
     delete[] ( diagonal );
 
+    return k;
+
 }
  
 
@@ -749,7 +754,7 @@ void HodgeConjugateResidualSolverCSR_SSOR(
 
 
 
-void HodgeConjugateResidualSolverCSR_textbook( 
+int HodgeConjugateResidualSolverCSR_textbook( 
     const int N, 
     const int L, 
     Float* __restrict__ x, 
@@ -1040,6 +1045,8 @@ void HodgeConjugateResidualSolverCSR_textbook(
     delete[] ( auxR );
     
     delete[] ( vil );
+
+    return k;
 
 }
 

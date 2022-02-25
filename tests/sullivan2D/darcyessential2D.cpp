@@ -15,9 +15,6 @@
 #include "../../mesh/examples2D.hpp"
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/iterativesolver.hpp"
-// #include "../../solver/crm.hpp"
-// #include "../../solver/minres.hpp"
-// #include "../../solver/herzogsoodhalter.hpp"
 #include "../../solver/inv.hpp"
 #include "../../solver/systemsparsesolver.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
@@ -43,10 +40,6 @@ int main()
         MeshSimplicial2D M = StandardSquare2D();
         
         M.check();
-        
-//             M.automatic_dirichlet_flags();
-//             M.check_dirichlet_flags();
-
         
         LOG << "Prepare scalar fields for testing..." << endl;
         
@@ -214,8 +207,7 @@ int main()
 
                         timestamp start = gettimestamp();
 
-                        HodgeConjugateResidualSolverCSR_SSOR( // TODO
-//                             HodgeConjugateResidualSolverCSR_textbook( 
+                        HodgeConjugateResidualSolverCSR_SSOR(
                             B.getdimout(), 
                             A.getdimout(), 
                             sol.raw(), 
@@ -256,85 +248,9 @@ int main()
 
                     }
 
-                    if(false)
-                    {
-                        
-                        FloatVector rhs = volume_incmatrix_t * ( volume_massmatrix * interpol_rhs );
 
-                        FloatVector sol( volume_incmatrix.getdimin(), 0. );
-                        
-                        LOG << "...iterative solver" << endl;
-                        
-                        
-                        sol.zero();
-                        
-                        auto X = B * inv(A,1e-14) * Bt;
-//                             auto y = FloatVector( Bt.getdimin(), 0. );
-//                             auto f = X * y;
-                        
-                        ConjugateResidualMethod Solver( X );
-//                             HerzogSoodhalterMethod Solver( X );
-                        Solver.threshold           = 1e-10;
-                        Solver.print_modulo        = 1;
-                        Solver.max_iteration_count = 4 * sol.getdimension();
-                        timestamp start = gettimestamp();
-                        Solver.solve_fast( sol, rhs );
-//                             Solver.solve( sol, rhs );
-                        timestamp end = gettimestamp();
-                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
-                        LOG << "...compute error and residual:" << endl;
 
-                        auto errornorm_aux = interpol_sol  - volume_incmatrix * sol;
-
-                        Float errornorm     = sqrt( errornorm_aux * ( volume_massmatrix * errornorm_aux ) );
-                        Float residualnorm  = ( rhs - Schur * sol ).norm();
-
-                        LOG << "error:     " << errornorm    << endl;
-                        LOG << "residual:  " << residualnorm << endl;
-
-                        contable << errornorm;
-                        contable << nl;
-
-                    }
-
-                    if(false)
-                    {
-                        
-                        auto O = ScalingOperator( Bt.getdimin(), 10. );
-                        auto X = Block2x2Operator( A.getdimout() + B.getdimout(), A.getdimin() + Bt.getdimin(), A, Bt, B, O );
-
-                        FloatVector sol( A.getdimin()  + Bt.getdimin(),  0. );
-                        FloatVector rhs( A.getdimout() +  B.getdimout(), 0. );
-                        
-                        sol.random();
-                        rhs = X * sol;
-                        sol.zero();
-//                             rhs.setslice( A.getdimin(), volume_incmatrix_t * ( volume_massmatrix * interpol_rhs ) );
-                        
-                        HerzogSoodhalterMethod Solver( X );
-                        Solver.threshold           = 1e-10;
-                        Solver.print_modulo        = 1;
-                        Solver.max_iteration_count = 10 * sol.getdimension();
-                        timestamp start = gettimestamp();
-                        Solver.solve( sol, rhs );
-                        timestamp end = gettimestamp();
-                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
-
-                        LOG << "...compute error and residual:" << endl;
-
-                        auto errornorm_aux = interpol_sol - volume_incmatrix * sol.getslice( A.getdimin(), Bt.getdimin() );
-
-                        Float errornorm     = sqrt( errornorm_aux * ( volume_massmatrix * errornorm_aux ) );
-                        Float residualnorm  = ( rhs - X * sol ).norm();
-
-                        LOG << "error:     " << errornorm    << endl;
-                        LOG << "residual:  " << residualnorm << endl;
-
-                        contable << errornorm;
-                        contable << nl;
-
-                    }
 
                     contable.lg();
     

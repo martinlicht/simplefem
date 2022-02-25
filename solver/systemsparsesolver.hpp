@@ -14,7 +14,7 @@
 
 const Float expected_sign_of_A =  1.;
 
-void HodgeConjugateResidualSolverCSR( 
+int HodgeConjugateResidualSolverCSR( 
     const int N, 
     const int L, 
     Float* x, 
@@ -30,7 +30,7 @@ void HodgeConjugateResidualSolverCSR(
     int inneriteration_print_modulo
 );
 
-void HodgeConjugateResidualSolverCSR_diagonal( 
+int HodgeConjugateResidualSolverCSR_diagonal( 
     const int N, 
     const int L, 
     Float* x, 
@@ -46,7 +46,7 @@ void HodgeConjugateResidualSolverCSR_diagonal(
     int inneriteration_print_modulo
 );
 
-void HodgeConjugateResidualSolverCSR_textbook( 
+int HodgeConjugateResidualSolverCSR_textbook( 
     const int N, 
     const int L, 
     Float* x, 
@@ -62,7 +62,7 @@ void HodgeConjugateResidualSolverCSR_textbook(
     int inneriteration_print_modulo
 );
 
-void HodgeConjugateResidualSolverCSR_SSOR( 
+int HodgeConjugateResidualSolverCSR_SSOR( 
     const int N, 
     const int L, 
     Float* x, 
