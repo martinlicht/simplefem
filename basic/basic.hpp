@@ -7,7 +7,6 @@
 #endif
 
 
-#include <cassert>     /* assert macro */
 #include <cmath>     
 #include <cstdint>     
 #include <cstdio>     
@@ -197,16 +196,6 @@ inline constexpr bool isaboutequal( Float value1, Float value2, Float threshold 
 //                                             //
 /////////////////////////////////////////////////
 
-
-// template<typename T>
-// inline constexpr T power( const T& base, const T& exponent )
-// {
-//     static_assert( not std::is_floating_point<T>::value );
-//     Assert( base != 0 );
-//     Assert( exponent >= 0 );
-//     if( exponent == 0 ) return 1;
-//     return base * power( base, exponent - 1 );
-// }
 
 inline /*constexpr*/ Float power_numerical( Float base, Float exponent )
 {
@@ -517,7 +506,7 @@ inline int random_integer()
 
 inline Float random_uniform()
 {
-    Float ret = rand() / static_cast<Float>( RAND_MAX );
+    Float ret = static_cast<Float>( rand() ) / static_cast<Float>( RAND_MAX );
     Assert( 0. <= ret and ret <= 1. );
     return ret;
 }
@@ -585,41 +574,6 @@ inline Float gaussrand()
 
 
 
-/*
-inline void random_unit_vector( Float* values, const int N )
-{
-    Assert( N >= 0 );
-    Assert( values != nullptr );
-    
-    const Float PI = 3.14159265358979323846;
-    
-    Float norm_sq = 0;
-    
-    for( int k = 0; k < N/2; k++ ) {
-        
-        int k1 = 2*k;
-        int k2 = k1+1;
-        
-        Float U = ( rand() + 1. ) / ( RAND_MAX + 2. );
-        Float V = rand() / ( RAND_MAX + 1. );
-        
-        Float radius_sq = -2. * std::log( U );
-        Float radius = std::sqrt( radius_sq );
-        
-        values[k1] = radius * std::sin( 2. * PI * V );
-        values[k2] = radius * std::cos( 2. * PI * V );
-        
-        norm_sq += radius_sq;
-    }
-    
-    if( N % 2 == 1 ) {
-        values[N-1] = gaussrand();
-        norm_sq += values[N-1] * values[N-1];
-    }
-    
-    
-}
-*/
 
 
 
@@ -666,7 +620,7 @@ inline timestamp gettimestamp()
 
 inline std::string timestamp2measurement( const timestamp& t )
 {
-    return std::to_string( static_cast<long long int>(t) ) + "ms";
+    return std::to_string( static_cast<uintmax_t>(t) ) + "ms";
 }
 
 // inline std::string measurementnow( const timestamp& t ) // TODO Remove this line 

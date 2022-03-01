@@ -20,7 +20,6 @@
 #include "../../solver/iterativesolver.hpp"
 // #include "../../solver/crm.hpp"
 // #include "../../solver/minres.hpp"
-#include "../../fem/finitediff.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
@@ -50,8 +49,6 @@ int main()
            
             M.check_dirichlet_flags();
 
-            M.getcoordinates().scale(1.1);
-            
             LOG << "Prepare scalar fields for testing..." << endl;
             
 
