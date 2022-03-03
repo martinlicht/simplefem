@@ -47,8 +47,6 @@ int main()
            
             M.check_dirichlet_flags();
 
-            M.getcoordinates().scale(1.1);
-            
             LOG << "Prepare scalar fields for testing..." << endl;
             
 
