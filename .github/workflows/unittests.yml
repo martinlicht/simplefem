@@ -13,8 +13,8 @@ jobs:
     timeout-minutes: 60
 
     steps:
-    - name: install valgrind here 
-      run: sudo apt install -y valgrind
+#    - name: install valgrind here 
+#      run: sudo apt install -y valgrind
     - name: checkout repository...
       uses: actions/checkout@v2
     - name: build project...
