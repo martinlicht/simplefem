@@ -12,11 +12,12 @@
 
 std::vector<FloatVector> computeNullspace(
     const LinearOperator& SystemMatrix,
-    const LinearOperator& mass, // TODO: MassMatrix
+    const LinearOperator& MassMatrix, // TODO: MassMatrix
     const int max_number_of_candidates,
     const int gram_schmidt_cycles,
     const int max_number_of_purifications,
     //
+    const Float threshold_purified
     const Float zero_vector_threshold
 ) {
 
@@ -25,122 +26,109 @@ std::vector<FloatVector> computeNullspace(
     for( int no_candidate = 0; no_candidate < max_number_of_candidates; no_candidate++ )
     {
         
+        /* 1. create a new candidate */
+        
+        LOG << "New candidate" << nl;
+
         FloatVector candidate( SystemMatrix.getdimin(), 0. ); 
         candidate.random(); 
-        candidate.normalize(mass);
+        candidate.normalize( MassMatrix );
         
+        /* 2. reduce the candidate to its nullspace component */
+        /*    and orthogonalize against previous nullvectors  */
+        
+        for( int t = 0; t < max_number_of_purifications; t++ )
         {
-            for( int s = 0; s < gram_schmidt_cycles; s++ )
-            for( const auto& nullvector : nullvectorgallery ) {
-                Float alpha = (mass*candidate*nullvector) / (mass*nullvector*nullvector);
-                candidate = candidate - alpha * nullvector;
-            }
             
-            Float reduced_mass = candidate.norm(mass);
-            LOG << "\t\t\t Preprocessed mass: " << reduced_mass << nl;
-            
-            if( reduced_mass < zero_vector_threshold ) {
-                LOG << "**** The candidate already has very small mass" << nl;
-//                                 continue;
-            }
-        }
-        
-        
-        /* reduce the candidate to its nullspace component */
-        {
             FloatVector rhs( SystemMatrix.getdimin(), 0. );
+            FloatVector res( SystemMatrix.getdimin(), 0. );
         
-            FloatVector residual( rhs );
+            ConjugateResidualMethod solver( SystemMatrix );
+            solver.print_modulo        = -1; //candidate.getdimension();
+            solver.max_iteration_count = candidate.getdimension();
+            solver.threshold           = threshold_residual;
+
+            solver.solve( candidate, rhs );
+                            
             
-            for( int t = 0; t < max_number_of_purifications; t++ )
-            {
-                
-                ConjugateResidualMethod solver( SystemMatrix );
-                solver.print_modulo        = candidate.getdimension() / 20;
-                solver.max_iteration_count = candidate.getdimension();
-                solver.threshold           = sqrt( machine_epsilon );
+            res = rhs - SystemMatrix * candidate;
+            
+            LOG << "\t\t\t (eucl) res:       " << res.norm() << nl;
+            LOG << "\t\t\t (mass) res:       " << res.norm( MassMatrix ) << nl;
+            LOG << "\t\t\t (eucl) x:         " << candidate.norm() << nl;
+            LOG << "\t\t\t (mass) x:         " << candidate.norm( MassMatrix ) << nl;
+            LOG << "\t\t\t (eucl) Ax:        " << ( SystemMatrix * candidate ).norm() << nl;
+            LOG << "\t\t\t (mass) Ax:        " << ( SystemMatrix * candidate ).norm( MassMatrix ) << nl;
+            LOG << "\t\t\t (eucl) b - Ax:    " << ( SystemMatrix * candidate - rhs ).norm() << nl;
+            LOG << "\t\t\t (mass) b - Ax:    " << ( SystemMatrix * candidate - rhs ).norm( MassMatrix ) << nl;
+            
+            /* check whether anything is left at all */
+            
+            Float purified_mass = candidate.norm( MassMatrix );
+            LOG << "\t\t\t Filtered mass: " << purified_mass << nl;
+            
+            if( purified_mass < threshold_purified )
+                break;
+            
+            
+            candidate.normalize( MassMatrix );
 
-                solver.solve( candidate, rhs );
-                               
-                
-                residual = rhs - SystemMatrix * candidate;
-                
-                LOG << "\t\t\t (eucl) delta:     " << ( residual - rhs + SystemMatrix * candidate ).norm() << nl;
-                LOG << "\t\t\t (mass) delta:     " << ( residual - rhs + SystemMatrix * candidate ).norm( mass ) << nl;
-                LOG << "\t\t\t (eucl) res:       " << residual.norm() << nl;
-                LOG << "\t\t\t (mass) res:       " << residual.norm( mass ) << nl;
-                LOG << "\t\t\t (eucl) x:         " << candidate.norm() << nl;
-                LOG << "\t\t\t (mass) x:         " << candidate.norm( mass ) << nl;
-                LOG << "\t\t\t (eucl) Ax:        " << ( SystemMatrix * candidate ).norm() << nl;
-                LOG << "\t\t\t (mass) Ax:        " << ( SystemMatrix * candidate ).norm( mass ) << nl;
-                LOG << "\t\t\t (eucl) b - Ax:    " << ( SystemMatrix * candidate - rhs ).norm() << nl;
-                LOG << "\t\t\t (mass) b - Ax:    " << ( SystemMatrix * candidate - rhs ).norm( mass ) << nl;
-                
-                
-                candidate.normalize( mass );
+            LOG << "\t\t\t (norm eucl) x:         " << candidate.norm() << nl;
+            LOG << "\t\t\t (norm mass) x:         " << candidate.norm( MassMatrix ) << nl;
+            LOG << "\t\t\t (norm eucl) Ax:        " << ( SystemMatrix* candidate ).norm() << nl;
+            LOG << "\t\t\t (norm mass) Ax:        " << ( SystemMatrix * candidate ).norm( MassMatrix ) << nl;
 
-                assert( candidate.isfinite() );
-                
-                LOG << "\t\t\t (norm eucl) x:         " << candidate.norm() << nl;
-                LOG << "\t\t\t (norm mass) x:         " << candidate.norm( mass ) << nl;
-                LOG << "\t\t\t (norm eucl) Ax:        " << ( SystemMatrix* candidate ).norm() << nl;
-                LOG << "\t\t\t (norm mass) Ax:        " << ( SystemMatrix * candidate ).norm( mass ) << nl;
-                
-                
-//                                 FloatVector zero( candidate.getdimension(), 0. );
-//                                 FloatVector residual( candidate.getdimension(), 0. );
-//                                 
-//                                 ConjugateResidualSolverCSR( 
-//                                     zero.getdimension(), 
-//                                     zero.raw(), 
-//                                     candidate.raw(), 
-//                                     SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
-//                                     residual.raw(),
-//                                     1000 * machine_epsilon,
-//                                     0
-//                                 );
-//                                 candidate = residual;
-//                                 candidate.normalize( mass );
-                
-                
-                
-                
-            }
         }
+
         
+        /* 3. check whether anything is left at all */
         
-        /* Gram-Schmidt */
+        Float purified_mass = candidate.norm( MassMatrix );
+        LOG << "\t\t\t Filtered mass: " << purified_mass << nl;
         
-        for( int s = 0; s < gram_schmidt_cycles; s++ )
-        for( const auto& nullvector : nullvectorgallery ) {
-            Float alpha = (mass*candidate*nullvector) / (mass*nullvector*nullvector);
-            candidate = candidate - alpha * nullvector;
-        }
-        
-        Float reduced_mass = candidate.norm(mass);
-        LOG << "\t\t\t Reduced mass: " << reduced_mass << nl;
-        
-        if( reduced_mass < zero_vector_threshold ) {
-            LOG << "!!!!!!!!!!!!!Discard vector because mass is too small!" << nl;
+        if( purified_mass < threshold_purified ) {
+            LOG << "\t\t\t Discard: purified mass too small!" << nl;
             continue;
         }
         
-        candidate.normalize(mass);
+
+
         
-        Float residual_mass = ( SystemMatrix * candidate ).norm(mass);
+        /* 4. Gram-Schmidt the candidate against the previous nullvectors */
         
-        LOG << "\t\t\t Numerical residual: " << residual_mass << nl;
+        for( int s = 0; s < gram_schmidt_cycles; s++ )
+        for( const auto& nullvector : nullvectorgallery ) {
+            Float alpha = ( MassMatrix * candidate * nullvector ) / ( MassMatrix * nullvector * nullvector );
+            candidate = candidate - alpha * nullvector;
+        }
         
-        if( residual_mass > 1e-6 ) {
-            LOG << "!!!!!!!!!!!!!Discard vector because not nullspace enough!" << nl;
+        Float reduced_mass = candidate.norm( MassMatrix );
+        LOG << "\t\t\t Reduced mass: " << reduced_mass << nl;
+        
+        if( reduced_mass < threshold_reduced ) {
+            LOG << "\t\t\t Discard: reduced mass too small" << nl;
+            continue;
+        }
+        
+        /* 5. Serious nullspace contender. Normalize and see whether that persists */
+        
+        candidate.normalize( MassMatrix );
+        
+        Float residual_mass = ( SystemMatrix * candidate ).norm( MassMatrix );
+        
+        LOG << "\t\t\t Mass normalized, Numerical residual: " << residual_mass << nl;
+        
+        if( residual_mass > threshold_residual ) {
+            LOG << "\t\t\t Discard: residual too large" << nl;
             continue;
         }
         
         assert( candidate.isfinite() );
         
-        LOG << "Accept vector: " << nullvectorgallery.size() + 1 << nl;
-    
+        /* 6. If we reach here, accept as nullvector */
         
+        LOG << "Accept vector: " << nullvectorgallery.size() + 1 << nl;
+
         nullvectorgallery.push_back( candidate );
     }
     
@@ -148,16 +136,16 @@ std::vector<FloatVector> computeNullspace(
     
     LOG << "How much nullspace are our vectors?" << nl;
     for( const auto& nullvector : nullvectorgallery ) {
-        LOGPRINTF( "% 10.5e\t", ( SystemMatrix * nullvector ).norm(mass) );
-        // LOG << std::showpos << std::scientific << std::setprecision(5) << std::setw(10) << ( SystemMatrix * nullvector ).norm(mass) << tab;
+        LOGPRINTF( "% 10.5e\t", ( SystemMatrix * nullvector ).norm( MassMatrix ) );
+        // LOG << std::showpos << std::scientific << std::setprecision(5) << std::setw(10) << ( SystemMatrix * nullvector ).norm( MassMatrix ) << tab;
     }
     LOG << nl;
     
     LOG << "How orthonormal are our vectors?" << nl;
     for( const auto& nullvector1 : nullvectorgallery ) {
         for( const auto& nullvector2 : nullvectorgallery ) {
-            LOGPRINTF( "% 10.5e\t", mass * nullvector1 * nullvector2 );
-            // LOG << std::showpos << std::scientific << std::setprecision(5) << std::setw(10) << mass * nullvector1 * nullvector2 << tab;
+            LOGPRINTF( "% 10.5e\t", MassMatrix * nullvector1 * nullvector2 );
+            // LOG << std::showpos << std::scientific << std::setprecision(5) << std::setw(10) << MassMatrix * nullvector1 * nullvector2 << tab;
         }
         LOG << nl;
     }
