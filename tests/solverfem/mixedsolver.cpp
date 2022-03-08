@@ -21,6 +21,7 @@
 #include "../../solver/iterativesolver.hpp"
 #include "../../solver/inv.hpp"
 #include "../../solver/systemsparsesolver.hpp"
+#include "../../solver/systemsolver.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
@@ -130,11 +131,13 @@ int main()
             bool do_crmcpp = true;
             bool do_blockherzog = true;
             bool do_blockminres = true;
+            bool do_systemherzog = true;
             
-            if( do_crmcsr )      { contable_sigma << "CRMcsr"; contable_u << "CRMcsr"; contable_du << "CRMcsr"; contable_iter << "CRMcsr"; contable_time << "CRMcsr"; contable_res << "CRMcsr"; } 
-            if( do_crmcpp )      { contable_sigma << "CRMcpp"; contable_u << "CRMcpp"; contable_du << "CRMcpp"; contable_iter << "CRMcpp"; contable_time << "CRMcpp"; contable_res << "CRMcpp"; } 
-            if( do_blockherzog ) { contable_sigma << "Herzog"; contable_u << "Herzog"; contable_du << "Herzog"; contable_iter << "Herzog"; contable_time << "Herzog"; contable_res << "Herzog"; } 
-            if( do_blockminres ) { contable_sigma << "Minres"; contable_u << "Minres"; contable_du << "Minres"; contable_iter << "Minres"; contable_time << "Minres"; contable_res << "Minres"; } 
+            if( do_crmcsr )       { contable_sigma << "CRMcsr"; contable_u << "CRMcsr"; contable_du << "CRMcsr"; contable_iter << "CRMcsr"; contable_time << "CRMcsr"; contable_res << "CRMcsr"; } 
+            if( do_crmcpp )       { contable_sigma << "CRMcpp"; contable_u << "CRMcpp"; contable_du << "CRMcpp"; contable_iter << "CRMcpp"; contable_time << "CRMcpp"; contable_res << "CRMcpp"; } 
+            if( do_blockherzog )  { contable_sigma << "Herzog"; contable_u << "Herzog"; contable_du << "Herzog"; contable_iter << "Herzog"; contable_time << "Herzog"; contable_res << "Herzog"; } 
+            if( do_blockminres )  { contable_sigma << "Minres"; contable_u << "Minres"; contable_du << "Minres"; contable_iter << "Minres"; contable_time << "Minres"; contable_res << "Minres"; } 
+            if( do_systemherzog ) { contable_sigma << "SysHerzog"; contable_u << "SysHerzog"; contable_du << "SysHerzog"; contable_iter << "SysHerzog"; contable_time << "SysHerzog"; contable_res << "SysHerzog"; } 
             
 
             const int min_l = 0; 
@@ -224,13 +227,14 @@ int main()
                         Float runtime;
                         int iteration_count;
 
-                        for( int k = 0; k <= 3; k++ )
+                        for( int k = 0; k <= 4; k++ )
                         {
 
                             if( k==0 and not do_crmcsr ) continue;
                             if( k==1 and not do_crmcpp ) continue;
                             if( k==2 and not do_blockherzog ) continue;
                             if( k==3 and not do_blockminres ) continue;
+                            if( k==4 and not do_systemherzog ) continue;
                             
 
                             if( k==0 and do_crmcsr )
@@ -337,6 +341,38 @@ int main()
                                 runtime  = static_cast<Float>( end - start );
 
                                 iteration_count = Solver.recent_iteration_count;
+                            }
+
+
+                            if( k==4 and do_systemherzog )
+                            {   
+                                sol.zero();
+                                
+                                const auto PAinv = IdentityOperator(A.getdimin());
+                                const auto PCinv = IdentityOperator(C.getdimin());
+
+                                FloatVector  x_A( A.getdimin(),  0. ); 
+                                FloatVector& x_C = sol;
+                                
+                                const FloatVector  b_A( A.getdimin(),  0. ); 
+                                const FloatVector& b_C = rhs; 
+                                
+                                timestamp start = gettimestamp();
+                                int iteration_count = 
+                                BlockHerzogSoodhalterMethod( 
+                                    x_A, 
+                                    x_C, 
+                                    b_A, 
+                                    b_C, 
+                                    A, Bt, B, C, 
+                                    desired_precision,
+                                    100,
+                                    PAinv, PCinv
+                                );
+                                timestamp end = gettimestamp();
+
+                                LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                                runtime  = static_cast<Float>( end - start );
                             }
 
 
