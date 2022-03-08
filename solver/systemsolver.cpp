@@ -113,14 +113,18 @@ int BlockHerzogSoodhalterMethod(
             v1_C = b_C - B * x_A - C  * x_C;
             z_C = PCinv * v1_C;
             
+            gamma = sqrt( v1_A * z_A + v1_C * z_C );
+            
+            v1_A /= gamma;
+            v1_C /= gamma;
+            z_A /= gamma;
+            z_C /= gamma;
+            
             Float psi_A = z_A * v1_A; 
             Float psi_C = z_C * v1_C;
             mu_A = psi_A; 
             mu_C = psi_C; 
-            gamma = sqrt( psi_A + psi_C );
             
-            v1_A /= gamma;
-            v1_C /= gamma;
             
             m_A = v1_A;
             m_C = v1_C;
@@ -135,7 +139,7 @@ int BlockHerzogSoodhalterMethod(
             c0 = c1 = 1;
             
             if( print_modulo >= 0 ) {
-                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) eta, (long double)threshold );
+                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) absolute(eta), (long double)threshold );
                 LOGPRINTF( "NOTE Gamma: %.9Le \n", (long double)gamma );
             }
 
@@ -161,10 +165,10 @@ int BlockHerzogSoodhalterMethod(
             zn_A = PAinv * vn_A;
             zn_C = PCinv * vn_C;
 
-            Float gamma_n = sqrt( zn_A * vn_A + zn_C * vn_C );
+            Float gamma_n = std::sqrt( zn_A * vn_A + zn_C * vn_C );
  
-            vn_A = vn_A / gamma_n; zn_A = zn_A / gamma_n;
-            vn_C = vn_C / gamma_n; zn_C = zn_C / gamma_n;
+            vn_A /= gamma_n; zn_A /= gamma_n;
+            vn_C /= gamma_n; zn_C /= gamma_n;
 
             Float alpha_0 = c1 * delta - c0 * s1 * gamma;
             assert( alpha_0 * alpha_0 + gamma_n * gamma_n > 0. );
@@ -214,7 +218,11 @@ int BlockHerzogSoodhalterMethod(
             c0 = c1; c1 = cn;
             s0 = s1; s1 = sn;
 
-            
+            FloatVector r_A = b_A - A * x_A - Bt * x_C;
+            FloatVector r_C = b_C - B * x_A - C  * x_C;
+            Float r = sqrt( r_A * r_A + r_C * r_C );
+            LOG << r << nl;
+
 
         }
 
@@ -227,7 +235,7 @@ int BlockHerzogSoodhalterMethod(
         
         if( print_modulo >= 0 and print_condition ) {
             LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) recent_deviation, (long double)threshold );
-            LOGPRINTF( "INTERIM Gamma: %.9Le \n", (long double)gamma );
+            LOGPRINTF( "INTERIM Gamma: %.9Le Eta: %.9Le\n", (long double)gamma, (long double)eta );
         }
         
         recent_iteration_count++;
@@ -236,10 +244,10 @@ int BlockHerzogSoodhalterMethod(
     
     /* HOW DID WE FINISH ? */
     
-    Float recent_deviation = eta;
+    Float recent_deviation = absolute( eta );
         
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "FINISHED (%d/%d) Residual: %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) sqrt(recent_deviation), (long double)threshold );
+        LOGPRINTF( "FINISHED (%d/%d) Residual: %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double)recent_deviation, (long double)threshold );
 
     return recent_iteration_count;
 }
