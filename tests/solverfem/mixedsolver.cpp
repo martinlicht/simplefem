@@ -398,13 +398,13 @@ int main()
                             Float errornorm_ndiv = sqrt( errornorm_aux_ndiv * ( scalar_massmatrix * errornorm_aux_ndiv ) );
                             Float errornorm_sol  = sqrt( errornorm_aux_sol  * ( vector_massmatrix * errornorm_aux_sol  ) );
                             Float errornorm_curl = sqrt( errornorm_aux_curl * ( volume_massmatrix * errornorm_aux_curl ) );
-                            Float residualnorm   = ( rhs - B * inv(A,1e-14) * Bt * sol - C * sol ).norm();
+                            Float residualnorm   = ( rhs - SystemMatrix * sol ).norm();
                             
                             contable_sigma << errornorm_ndiv;
                             contable_u     << errornorm_sol;
                             contable_du    << errornorm_curl;
                             contable_res   << residualnorm;
-                            contable_iter  << iteration_count / static_cast<Float>( C.getdimin() );
+                            contable_iter  << iteration_count / static_cast<Float>( SystemMatrix.getdimin() );
                             contable_time  << runtime;
                             
                         }
