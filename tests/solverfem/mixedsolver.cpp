@@ -210,6 +210,11 @@ int main()
                     auto B  = MatrixCSR( mat_B  );
                     auto C  = MatrixCSR( mat_C  );
                     
+                    auto PA = MatrixCSR( scalar_incmatrix_t & scalar_massmatrix & scalar_incmatrix )//IdentityOperator(A.getdimin())
+                              + MatrixCSR( scalar_incmatrix_t & scalar_diffmatrix_t & vector_elevationmatrix_t & vector_massmatrix & vector_elevationmatrix & scalar_diffmatrix & scalar_incmatrix );
+                    auto PC = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix )//IdentityOperator(C.getdimin())
+                              + C;
+                              
                     auto SystemMatrix = C + B * inv(A,100*machine_epsilon) * Bt;
                     
                     {
@@ -348,8 +353,10 @@ int main()
                             {   
                                 sol.zero();
                                 
-                                const auto PAinv = IdentityOperator(A.getdimin());
-                                const auto PCinv = IdentityOperator(C.getdimin());
+                                // const auto PAinv = IdentityOperator(A.getdimin());
+                                // const auto PCinv = IdentityOperator(C.getdimin());
+                                const auto PAinv = inv(PA,desired_precision,-1);
+                                const auto PCinv = inv(PC,desired_precision,-1);
 
                                 FloatVector  x_A( A.getdimin(),  0. ); 
                                 FloatVector& x_C = sol;
@@ -358,15 +365,15 @@ int main()
                                 const FloatVector& b_C = rhs; 
                                 
                                 timestamp start = gettimestamp();
-                                int iteration_count = 
+                                iteration_count = 
                                 BlockHerzogSoodhalterMethod( 
                                     x_A, 
                                     x_C, 
                                     b_A, 
                                     b_C, 
-                                    A, Bt, B, C, 
+                                    -A, Bt, B, C, 
                                     desired_precision,
-                                    100,
+                                    1,
                                     PAinv, PCinv
                                 );
                                 timestamp end = gettimestamp();
