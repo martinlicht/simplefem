@@ -18,6 +18,7 @@
 #include "../../solver/inv.hpp"
 #include "../../solver/systemsparsesolver.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
+#include "../../fem/global.elevation.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.sullivanincl.hpp"
@@ -37,7 +38,7 @@ int main()
 
         LOG << "Initial mesh..." << endl;
         
-        MeshSimplicial2D M = StandardSquare2D();
+        MeshSimplicial2D M = StandardSquare2D_simple();
         
         M.check();
         
@@ -105,13 +106,15 @@ int main()
         const int min_l = 0; 
         const int max_l = 5;
         
-        const int min_r = 1;
-        const int max_r = 1;
+        const int min_r = 5;
+        const int max_r = 5;
+
+        const int aug_r = 1;
         
         
         ConvergenceTable contable("Mass error");
         
-        contable << "sigma_error" << "u_error";
+        contable << "sigma_error" << "u_error" << "residual";
         
 
         assert( 0 <= min_l and min_l <= max_l );
@@ -177,17 +180,11 @@ int main()
                     
                     LOG << "...measure interpolation commutativity" << endl;
         
-                    {
+                    if(false){ // requires non-augmented interpolation
                         auto commutatorerror_aux = interpol_rhs - diffmatrix * interpol_grad;
                         Float commutatorerror  = commutatorerror_aux * ( volume_massmatrix * commutatorerror_aux );
                         LOG << "algebraic commutator error 1: " << commutatorerror << endl;
                     }
-                    
-//                         {
-//                             auto commutatorerror_aux = interpol_grad - vector_massmatrix_inv * diffmatrix_t * volume_massmatrix * interpol_rhs;
-//                             Float commutatorerror  = commutatorerror_aux * ( commutatorerror_aux );
-//                             LOG << "algebraic commutator error 2: " << commutatorerror << endl << space << commutatorerror2
-//                         }
                     
 
                     {
@@ -235,11 +232,21 @@ int main()
 
                         LOG << "...compute error and residual:" << endl;
 
-                        auto errornorm_aux_sol  = interpol_sol  - volume_incmatrix *  sol;
-                        auto errornorm_aux_grad = interpol_grad - vector_incmatrix * grad;
+                        
+                        FloatVector interpol_grad_aug = Interpolation( M, M.getinnerdimension(), 1, r + aug_r,     function_grad );
+                        FloatVector interpol_sol_aug  = Interpolation( M, M.getinnerdimension(), 2, r + aug_r - 1, function_sol  );
 
-                        Float errornorm_sol  = sqrt( errornorm_aux_sol  * ( volume_massmatrix *  errornorm_aux_sol ) );
-                        Float errornorm_grad = sqrt( errornorm_aux_grad * ( vector_massmatrix * errornorm_aux_grad ) );
+                        SparseMatrix vector_elevation_matrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 1, r,   aug_r );
+                        SparseMatrix volume_elevation_matrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 2, r-1, aug_r );
+
+                        SparseMatrix vector_massmatrix_aug = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r + aug_r     );
+                        SparseMatrix volume_massmatrix_aug = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r + aug_r - 1 );
+
+                        auto errornorm_aux_sol  = interpol_sol_aug  - volume_elevation_matrix * volume_incmatrix *  sol;
+                        auto errornorm_aux_grad = interpol_grad_aug - vector_elevation_matrix * vector_incmatrix * grad;
+
+                        Float errornorm_sol  = sqrt( errornorm_aux_sol  * ( volume_massmatrix_aug *  errornorm_aux_sol ) );
+                        Float errornorm_grad = sqrt( errornorm_aux_grad * ( vector_massmatrix_aug * errornorm_aux_grad ) );
                         Float residualnorm   = ( rhs - B * inv(A,1e-14) * Bt * sol ).norm();
 
                         LOG << "error:     " << errornorm_sol << endl;
@@ -248,6 +255,7 @@ int main()
 
                         contable << errornorm_sol;
                         contable << errornorm_grad;
+                        contable << residualnorm;
                         contable << nl;
 
                     }
