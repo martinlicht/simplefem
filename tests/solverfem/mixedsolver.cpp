@@ -127,10 +127,10 @@ int main()
             contable_time.display_convergence_rates  = false;
             contable_res.display_convergence_rates   = false;
             
-            bool do_crmcsr = true;
-            bool do_crmcpp = true;
-            bool do_blockherzog = true;
-            bool do_blockminres = true;
+            bool do_crmcsr = false;//true;
+            bool do_crmcpp = false;//true;
+            bool do_blockherzog = false;//true;
+            bool do_blockminres = false;//true;
             bool do_systemherzog = true;
             
             if( do_crmcsr )       { contable_sigma << "CRMcsr"; contable_u << "CRMcsr"; contable_du << "CRMcsr"; contable_iter << "CRMcsr"; contable_time << "CRMcsr"; contable_res << "CRMcsr"; } 
@@ -355,8 +355,8 @@ int main()
                                 
                                 // const auto PAinv = IdentityOperator(A.getdimin());
                                 // const auto PCinv = IdentityOperator(C.getdimin());
-                                const auto PAinv = inv(PA,desired_precision,-1);
-                                const auto PCinv = inv(PC,desired_precision,-1);
+                                const auto PAinv = inv(PA,desired_precision,0);
+                                const auto PCinv = inv(PC,desired_precision,0);
 
                                 FloatVector  x_A( A.getdimin(),  0. ); 
                                 FloatVector& x_C = sol;
