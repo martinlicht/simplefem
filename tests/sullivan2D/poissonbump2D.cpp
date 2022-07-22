@@ -119,7 +119,7 @@ int main()
             
             ConvergenceTable contable("Mass error");
             
-            contable << "u_error" << "du_error" << nl;
+            contable << "u_error" << "du_error" << "residual" << nl;
             
 
             assert( 0 <= min_l and min_l <= max_l );
@@ -242,7 +242,7 @@ int main()
                         
                         
                         
-                        contable << errornorm << graderrornorm << nl;
+                        contable << errornorm << graderrornorm << residualnorm << nl;
                         
                         contable.lg();
 

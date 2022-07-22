@@ -93,7 +93,7 @@ int main()
 
             ConvergenceTable contable("Mass error");
             
-            contable << "u_error" << "du_error" << nl;
+            contable << "u_error" << "du_error" << "residual" << nl;
 
             
             const int r = 1;
@@ -185,14 +185,13 @@ int main()
                 FloatVector graderror = aug_diffmatrix * ( aug_incmatrix * aug_sol - elevation_matrix * incmatrix * sol );
                 Float errornorm       = std::sqrt( error * ( aug_scalar_massmatrix * error ) );
                 Float graderrornorm   = std::sqrt( graderror * ( aug_vector_massmatrix * graderror ) );
-                
+                Float residualnorm  = ( rhs - stiffness * sol ).norm();
+
                 LOG << "error:     " << errornorm    << endl;
                 LOG << "graderror: " << graderrornorm << endl;
-                
-                
+                LOG << "residual:  " << residualnorm << endl;
                         
-                        
-                contable << errornorm << graderrornorm << nl;
+                contable << errornorm << graderrornorm << residualnorm << nl;
                 
                 contable.lg();
 
