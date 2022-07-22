@@ -93,7 +93,7 @@ int main()
 
             ConvergenceTable contable("Mass error");
             
-            contable << "u_error" << "du_error" << "residual" << nl;
+            contable << "u_error" << "du_error" << "residual" << "time" << nl;
 
             
             const int r = 1;
@@ -155,29 +155,33 @@ int main()
                 FloatVector     sol(     incmatrix.getdimin(), 0. );
                 FloatVector aug_sol( aug_incmatrix.getdimin(), 0. );
                 
-                LOG << "...iterative solver 1" << endl;
-                
+                timestamp start = gettimestamp();
+
                 {
+                    LOG << "...iterative solver 1" << endl;
+                
                     sol.zero();
                     ConjugateGradientMethod Solver( stiffness_csr );
                     Solver.max_iteration_count = 1 * sol.getdimension();
-                    timestamp start = gettimestamp();
                     Solver.solve( sol, rhs );
-                    timestamp end = gettimestamp();
-                    LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                 }
 
-                LOG << "...iterative solver 2" << endl;
-                
+                // timestamp end = gettimestamp();
+                // LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+
+                // timestamp start = gettimestamp();
+
                 {
+                    LOG << "...iterative solver 2" << endl;
+                
                     aug_sol.zero();
                     ConjugateGradientMethod Solver( aug_stiffness_csr );
                     Solver.max_iteration_count = 4 * aug_sol.getdimension();
-                    timestamp start = gettimestamp();
                     Solver.solve( aug_sol, aug_rhs );
-                    timestamp end = gettimestamp();
-                    LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                 }
+
+                timestamp end = gettimestamp();
+                LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
                 LOG << "...compute error and residual:" << endl;
 
@@ -191,7 +195,7 @@ int main()
                 LOG << "graderror: " << graderrornorm << endl;
                 LOG << "residual:  " << residualnorm << endl;
                         
-                contable << errornorm << graderrornorm << residualnorm << nl;
+                contable << errornorm << graderrornorm << residualnorm << Float( end - start ) << nl;
                 
                 contable.lg();
 

@@ -103,7 +103,7 @@ int main()
     
     ConvergenceTable contable("Mass error and numerical residuals");
     
-    contable << "u_error" << "sigma_error" << "u_res" << "sigma_res";
+    contable << "u_error" << "sigma_error" << "u_res" << "sigma_res" << "time";
     
 
     assert( 0 <= min_l and min_l <= max_l );
@@ -216,6 +216,8 @@ int main()
             
             contable << residual_sol;
             contable << residual_aux;
+
+            contable << Float( end - start );
             
             contable << nl;
 

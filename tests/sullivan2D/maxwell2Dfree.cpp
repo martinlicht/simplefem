@@ -148,7 +148,7 @@ int main()
 
             ConvergenceTable contable("Mass error and solver residual");
             
-            contable << "sigma_error" << "u_error" << "du_error" << "residual";
+            contable << "sigma_error" << "u_error" << "du_error" << "residual" << "time";
             
             
 
@@ -284,6 +284,8 @@ int main()
 
                         
                         
+                        timestamp start = gettimestamp();
+        
                         {
                             
                             sol.zero();
@@ -296,7 +298,6 @@ int main()
 
                             LOG << "...iterative solver" << endl;
                             
-                            timestamp start = gettimestamp();
 
                             LOG << "- mixed system solver" << endl;
 
@@ -316,14 +317,12 @@ int main()
                                 -1
                             );
 
-                            
-                            timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
-
-                            
                         }
 
-
+                        timestamp end = gettimestamp();
+        
+                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                        
                         assert( sol.isfinite() );
 
                         auto ndiv = inv(A,1e-14) * Bt * sol;
@@ -365,6 +364,7 @@ int main()
                         contable << errornorm_sol;
                         contable << errornorm_curl;
                         contable << residualnorm;
+                        contable << Float( end - start );
                         contable << nl;
 
                         contable.lg();
