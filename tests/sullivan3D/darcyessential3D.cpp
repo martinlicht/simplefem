@@ -116,7 +116,7 @@ int main()
         
         ConvergenceTable contable("Mass error");
         
-        contable << "sigma_error" << "u_error";
+        contable << "sigma_error" << "u_error" << "residual" << "time";
         
 
         assert( 0 <= min_l and min_l <= max_l );
@@ -250,6 +250,8 @@ int main()
 
                         contable << errornorm_sol;
                         contable << errornorm_grad;
+                        contable << residualnorm;
+                        contable << Float( end - start );
                         contable << nl;
 
                         contable.lg();
@@ -294,6 +296,8 @@ int main()
                         LOG << "residual:  " << residualnorm << endl;
 
                         contable << errornorm;
+                        contable << residualnorm;
+                        contable << Float( end - start );
                         contable << nl;
 
                         contable.lg();
@@ -334,6 +338,8 @@ int main()
                         LOG << "residual:  " << residualnorm << endl;
 
                         contable << errornorm;
+                        contable << residualnorm;
+                        contable << Float( end - start );
                         contable << nl;
 
                         contable.lg();

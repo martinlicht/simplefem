@@ -134,7 +134,7 @@ int main()
 
             ConvergenceTable contable("Mass error and solver residual");
             
-            contable << "sigma_error" << "u_error" << "du_error" << "residual";
+            contable << "sigma_error" << "u_error" << "du_error" << "residual" << "time";
             
             
 
@@ -273,9 +273,13 @@ int main()
                         }
                         
                         
+
+                        
+                        
+                        timestamp start = gettimestamp();
+
                         if(false)
-                        {
-                            
+                        {                            
                             LOG << "...iterative solver" << endl;
                             
                             sol.zero();
@@ -288,22 +292,11 @@ int main()
                             Solver.print_modulo        = 100;
                             Solver.max_iteration_count = 4 * sol.getdimension();
 
-                            timestamp start = gettimestamp();
 //                             Solver.solve_fast( sol, rhs );
                             Solver.solve( sol, rhs );
-                            timestamp end = gettimestamp();
-
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
-
-                            LOG << "...compute error and residual:" << endl;
-
                         }
 
-
-                        
-                        
                         {
-                            
                             sol.zero();
                             
 //                             rhs = vector_incmatrix_t * vector_diffmatrix_t * pseudo_massmatrix * vector_diffmatrix * interpol_sol;
@@ -314,8 +307,6 @@ int main()
 
                             LOG << "...iterative solver" << endl;
                             
-                            timestamp start = gettimestamp();
-
                             LOG << "- mixed system solver" << endl;
 //                             if(false)
                             //HodgeConjugateResidualSolverCSR(
@@ -335,17 +326,10 @@ int main()
                                 1e-14, //desired_precision,
                                 -1
                             );
-
-                            
-                            timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
-
-                            
                         }
 
                         if(false)
                         {
-                            
                             auto X = Block2x2Operator( A.getdimout() + B.getdimout(), A.getdimin() + Bt.getdimin(), -A, Bt, B, C );
 
                             FloatVector sol_whole( A.getdimin()  + Bt.getdimin(),  0. );
@@ -360,11 +344,7 @@ int main()
                             Solver.print_modulo        = 500;
                             Solver.max_iteration_count = 10 * sol_whole.getdimension();
 
-                            timestamp start = gettimestamp();
                             Solver.solve( sol_whole, rhs_whole );
-                            timestamp end = gettimestamp();
-
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
                             LOG << "...compute error and residual:" << endl;
 
@@ -375,7 +355,10 @@ int main()
                             sol = sol_whole.getslice( A.getdimout(), B.getdimout() );
                         }
 
+                        timestamp end = gettimestamp();
+                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
+                        
                         assert( sol.isfinite() );
 
                         auto ndiv = inv(A,1e-14) * Bt * sol;
@@ -417,6 +400,7 @@ int main()
                         contable << errornorm_sol;
                         contable << errornorm_curl;
                         contable << residualnorm;
+                        contable << Float( end - start );
                         contable << nl;
 
                         contable.lg();

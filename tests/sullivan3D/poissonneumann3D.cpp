@@ -116,7 +116,7 @@ int main()
             
             ConvergenceTable contable("Mass error");
             
-            contable << "u_error" << "du_error" << nl;
+            contable << "u_error" << "du_error" << "residual" << "time" << nl;
             
 
             assert( 0 <= min_l and min_l <= max_l );
@@ -221,19 +221,21 @@ int main()
                         
                         LOG << "...iterative solver" << endl;
                         
+                        timestamp start = gettimestamp();
+                        
                         {
                             sol.zero();
                             MinimumResidualMethod Solver( stiffness_csr );
                             // PreconditionedConjugateResidualMethod Solver( stiffness_csr, stiffness_invprecon );
                             Solver.print_modulo        = 1+sol.getdimension();
                             Solver.max_iteration_count = 4 * sol.getdimension();
-                            timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
 //                             Solver.solve( sol, rhs );
-                            timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                         }
 
+                        timestamp end = gettimestamp();
+                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                        
                         LOG << "...compute error and residual:" << endl;
             
                         
@@ -251,7 +253,7 @@ int main()
                         
                         
                         
-                        contable << errornorm << graderrornorm << nl;
+                        contable << errornorm << graderrornorm << residualnorm << Float( end - start ) << nl;
                         
                         contable.lg();
 
