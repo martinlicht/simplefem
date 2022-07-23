@@ -21,6 +21,7 @@
 #include "../../solver/iterativesolver.hpp"
 #include "../../solver/inv.hpp"
 #include "../../solver/systemsparsesolver.hpp"
+#include "../../solver/systemsolver.hpp"
 // #include "../../solver/cgm.hpp"
 // #include "../../solver/crm.hpp"
 // #include "../../solver/pcrm.hpp"
@@ -278,6 +279,41 @@ int main()
                         
                         timestamp start = gettimestamp();
 
+                        {
+
+                            LOG << "...iterative solver" << endl;
+                            
+                            auto PA = MatrixCSR( scalar_incmatrix_t & scalar_massmatrix & scalar_incmatrix )
+                                      + MatrixCSR( scalar_incmatrix_t & scalar_diffmatrix_t & vector_massmatrix & scalar_diffmatrix & scalar_incmatrix );
+                            auto PC = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix )
+                                      + MatrixCSR( vector_incmatrix_t & vector_diffmatrix_t & pseudo_massmatrix & vector_diffmatrix & vector_incmatrix );
+                            
+                            
+                            const auto PAinv = inv(PA,desired_precision,-1);
+                            const auto PCinv = inv(PC,desired_precision,-1);
+
+                            FloatVector  x_A( A.getdimin(),  0. ); 
+                            FloatVector& x_C = sol;
+                            
+                            const FloatVector  b_A( A.getdimin(),  0. ); 
+                            const FloatVector& b_C = rhs; 
+                            
+                            auto Z  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
+
+                            BlockHerzogSoodhalterMethod( 
+                                x_A, 
+                                x_C, 
+                                b_A, 
+                                b_C, 
+                                -A, Bt, B, C, 
+                                desired_precision,
+                                1,
+                                PAinv, PCinv
+                            );
+
+                        }
+
+                    
                         if(false)
                         {                            
                             LOG << "...iterative solver" << endl;
@@ -296,6 +332,7 @@ int main()
                             Solver.solve( sol, rhs );
                         }
 
+                        if(false)
                         {
                             sol.zero();
                             

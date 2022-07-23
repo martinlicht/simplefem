@@ -199,6 +199,7 @@ int main()
                     
                     timestamp start = gettimestamp();
 
+                    if(false) 
                     {
                         LOG << "...iterative solver" << endl;
                         
@@ -225,7 +226,6 @@ int main()
                     }
 
                     
-                    if(false) 
                     {
 
                         LOG << "...iterative solver" << endl;
