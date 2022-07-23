@@ -233,7 +233,7 @@ int main()
                     
                     {
 
-                        const auto& function_ndiv  = experiment_ndiv;
+                        const auto& function_ndiv = experiment_ndiv;
                         const auto& function_sol  = experiment_sol;
                         const auto& function_curl = experiment_curl;
                         const auto& function_rhs  = experiment_rhs;
