@@ -18,13 +18,10 @@
 #include "../../mesh/examples2D.hpp"
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/iterativesolver.hpp"
-// #include "../../solver/crm.hpp"
-// #include "../../solver/minres.hpp"
 #include "../../fem/finitediff.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
-// #include "../../fem/global.lagrangeincl.hpp"
 #include "../../fem/global.whitneyincl.hpp"
 #include "../../fem/utilities.hpp"
 

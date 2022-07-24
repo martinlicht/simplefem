@@ -18,12 +18,9 @@
 #include "../../mesh/examples2D.hpp"
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/iterativesolver.hpp"
-// #include "../../solver/crm.hpp"
-// #include "../../solver/minres.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
-// #include "../../fem/global.lagrangeincl.hpp"
 #include "../../fem/global.whitneyincl.hpp"
 #include "../../fem/utilities.hpp"
 
@@ -53,18 +50,6 @@ int main()
             LOG << "Prepare scalar fields for testing..." << endl;
             
 
-            std::function<FloatVector(const FloatVector&)> constant_one
-                = [](const FloatVector& vec) -> FloatVector{
-                        assert( vec.getdimension() == 2 );
-                        return FloatVector({ 1. });
-                    };
-            
-            
-            
-            
-
-
-            
             // std::function<FloatVector(const std::function<FloatVector(const FloatVector&) ) >scalarfield = 
             
             const Float xfeq = 1.;
@@ -219,9 +204,7 @@ int main()
                             MinimumResidualMethod Solver( stiffness_csr );
 //                             PreconditionedConjugateResidualMethod Solver( stiffness_csr, stiffness_invprecon );
                             Solver.print_modulo        = 1+sol.getdimension();
-                            Solver.max_iteration_count = 4 * sol.getdimension();
                             Solver.solve( sol, rhs );
-//                             Solver.solve( sol, rhs );
                         }
 
                         timestamp end = gettimestamp();
@@ -241,9 +224,7 @@ int main()
                         LOG << "graderror: " << graderrornorm << endl;
                         LOG << "residual:  " << residualnorm << endl;
                         LOG << "time:      " << Float( end - start ) << endl;
-                        
-                        
-                        
+
                         contable << errornorm << graderrornorm << residualnorm << Float( end - start ) << nl;
                         
                         contable.lg();

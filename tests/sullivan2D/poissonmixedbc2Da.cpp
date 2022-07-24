@@ -229,8 +229,6 @@ int main()
                                 1
                             );
 
-                            
-//                             contable << static_cast<Float>( end - start ) << Float(1.);
                         }
 
                         {

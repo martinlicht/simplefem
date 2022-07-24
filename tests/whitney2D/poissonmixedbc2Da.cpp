@@ -19,13 +19,9 @@
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/sparsesolver.hpp"
 #include "../../solver/iterativesolver.hpp"
-// #include "../../solver/crm.hpp"
-// #include "../../solver/pcrm.hpp"
-// #include "../../solver/minres.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
-// #include "../../fem/global.lagrangeincl.hpp"
 #include "../../fem/global.whitneyincl.hpp"
 #include "../../fem/utilities.hpp"
 
@@ -215,14 +211,15 @@ int main()
 
                         timestamp start = gettimestamp();
 
-                        if(false){
+                        if(false)
+                        {
                             LOG << "CGM - Classic" << endl;
                         
                             sol.zero();
+                            
                             FloatVector residual( rhs );
                             
                             ConjugateGradientSolverCSR( 
-//                             ConjugateResidualSolverCSR( 
                                 sol.getdimension(), 
                                 sol.raw(), 
                                 rhs.raw(), 
@@ -231,16 +228,16 @@ int main()
                                 1e-16,
                                 1
                             );
+
                         }
 
                         {
-                            sol.zero();
+                            sol.zero(); // TODO: abgleichen mit Sullivan case 
                             MinimumResidualMethod Solver( stiffness_csr );
 //                             PreconditionedConjugateResidualMethod Solver( stiffness_csr, stiffness_invprecon );
                             Solver.print_modulo        = 1+sol.getdimension();
                             Solver.max_iteration_count = 4 * sol.getdimension();
                             Solver.solve( sol, rhs );
-//                             Solver.solve( sol, rhs );
                         }
 
                         timestamp end = gettimestamp();

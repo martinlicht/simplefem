@@ -47,6 +47,8 @@ int main()
            
             M.check_dirichlet_flags();
 
+            M.getcoordinates().scale(1.1);
+            
             LOG << "Prepare scalar fields for testing..." << endl;
             
 
@@ -241,6 +243,7 @@ int main()
                         LOG << "error:     " << errornorm    << endl;
                         LOG << "graderror: " << graderrornorm << endl;
                         LOG << "residual:  " << residualnorm << endl;
+                        LOG << "time:      " << Float( end - start ) << endl;
                         
                         
                         

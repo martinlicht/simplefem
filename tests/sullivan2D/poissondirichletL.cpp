@@ -166,11 +166,6 @@ int main()
                     Solver.solve( sol, rhs );
                 }
 
-                // timestamp end = gettimestamp();
-                // LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
-
-                // timestamp start = gettimestamp();
-
                 {
                     LOG << "...iterative solver 2" << endl;
                 
@@ -194,6 +189,7 @@ int main()
                 LOG << "error:     " << errornorm    << endl;
                 LOG << "graderror: " << graderrornorm << endl;
                 LOG << "residual:  " << residualnorm << endl;
+                LOG << "time:      " << Float( end - start ) << endl;
                         
                 contable << errornorm << graderrornorm << residualnorm << Float( end - start ) << nl;
                 

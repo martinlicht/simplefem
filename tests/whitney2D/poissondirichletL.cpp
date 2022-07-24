@@ -18,8 +18,6 @@
 #include "../../mesh/examples2D.hpp"
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/iterativesolver.hpp"
-// #include "../../solver/crm.hpp"
-// #include "../../solver/minres.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.elevation.hpp"
 #include "../../fem/global.massmatrix.hpp"
@@ -158,8 +156,9 @@ int main()
                 FloatVector aug_sol( aug_incmatrix.getdimin(), 0. );
                 
                 timestamp start = gettimestamp();
+
                 {
-                    LOG << "...iterative solver 1" << endl;            
+                    LOG << "...iterative solver 1" << endl;            // TODO: compare with corresponding Sullivan 2D 
                     sol.zero();
                     MinimumResidualMethod Solver( stiffness_csr );
                     Solver.print_modulo        = 1+sol.getdimension();
@@ -191,9 +190,6 @@ int main()
                 LOG << "graderror: " << graderrornorm << endl;
                 LOG << "residual:  " << residualnorm << endl;
                 LOG << "time:      " << Float( end - start ) << endl;
-                
-                
-                        
                         
                 contable << errornorm << graderrornorm << residualnorm << Float( end - start ) << nl;
                 
