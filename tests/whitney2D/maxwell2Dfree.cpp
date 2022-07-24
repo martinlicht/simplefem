@@ -301,7 +301,6 @@ int main()
                         
                         timestamp start = gettimestamp();
                         
-                        if(false)
                         {
 
                             LOG << "...iterative solver" << endl;
@@ -310,7 +309,6 @@ int main()
                                       + MatrixCSR( scalar_incmatrix_t & scalar_diffmatrix_t & vector_elevationmatrix_t & vector_massmatrix & vector_elevationmatrix & scalar_diffmatrix & scalar_incmatrix );
                             auto PC = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix )
                                       + MatrixCSR( vector_incmatrix_t & vector_diffmatrix_t & vector_elevationmatrix_t & volume_massmatrix & vector_elevationmatrix & vector_diffmatrix & vector_incmatrix );
-                            
                             
                             const auto PAinv = inv(PA,desired_precision,-1);
                             const auto PCinv = inv(PC,desired_precision,-1);
@@ -336,40 +334,6 @@ int main()
 
                         }
                         
-                        // if(false)
-                        {
-                            
-                            sol.zero();
-                            
-//                             rhs = vector_incmatrix_t * vector_diffmatrix_t * volume_massmatrix * vector_diffmatrix * interpol_sol;
-//                             rhs = B * inv(A,10e-14) * scalar_incmatrix_t * scalar_diffmatrix_t * vector_massmatrix * interpol_sol;
-//                             rhs = B * scalar_incmatrix_t * scalar_massmatrix * interpol_ndiv;
-                        
-                            FloatVector res = rhs;
-
-                            LOG << "...iterative solver" << endl;
-                            
-
-                            LOG << "- mixed system solver" << endl;
-
-                            HodgeConjugateResidualSolverCSR_SSOR(
-                                negB.getdimout(), 
-                                A.getdimout(), 
-                                sol.raw(), 
-                                rhs.raw(), 
-                                   A.getA(),    A.getC(),    A.getV(), 
-                                   B.getA(),    B.getC(),    B.getV(), 
-                                  Bt.getA(),   Bt.getC(),   Bt.getV(), 
-                                   C.getA(),    C.getC(),    C.getV(),
-                                res.raw(),
-                                desired_precision,
-                                100,
-                                desired_precision,
-                                -1
-                            );
-
-                        }
-
                         timestamp end = gettimestamp();
         
                         LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
