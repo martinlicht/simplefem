@@ -111,7 +111,7 @@ int main()
             
             ConvergenceTable contable("Mass error");
             
-            contable << "u_error" << "du_error" << "residual" << nl;
+            contable << "u_error" << "du_error" << "residual" << "time" << nl;
             
 
             assert( 0 <= min_l and min_l <= max_l );
@@ -209,13 +209,14 @@ int main()
                         LOG << "...iterative solver" << endl;
                         
 
-                        if(false){
+                        timestamp start = gettimestamp();
+
+                        if(false)
+                        {
                             LOG << "CGM - Classic" << endl;
                         
                             sol.zero();
                             
-                            timestamp start = gettimestamp();
-
                             FloatVector residual( rhs );
                             
                             ConjugateGradientSolverCSR( 
@@ -228,23 +229,17 @@ int main()
                                 1
                             );
 
-                            timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
-                            
-//                             contable << static_cast<Float>( end - start ) << Float(1.);
                         }
 
                         {
                             sol.zero();
                             PreconditionedConjugateResidualMethod Solver( stiffness_csr, stiffness_invprecon );
                             Solver.max_iteration_count = 1 * sol.getdimension();
-                            timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
-//                             Solver.solve( sol, rhs );
-                            timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                         }
 
+                        timestamp end = gettimestamp();
+                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
                         LOG << "...compute error and residual:" << endl;
             
@@ -263,6 +258,7 @@ int main()
                         contable << errornorm;
                         contable << graderrornorm;
                         contable << residualnorm;
+                        contable << Float( end - start );
                         contable << nl;
                         
                         contable.lg();

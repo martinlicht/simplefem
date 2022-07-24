@@ -18,13 +18,10 @@
 #include "../../mesh/examples2D.hpp"
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/iterativesolver.hpp"
-// #include "../../solver/crm.hpp"
-// #include "../../solver/minres.hpp"
 #include "../../fem/finitediff.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
-// #include "../../fem/global.lagrangeincl.hpp"
 #include "../../fem/global.whitneyincl.hpp"
 #include "../../fem/utilities.hpp"
 
@@ -124,7 +121,7 @@ int main()
             
             ConvergenceTable contable("Mass error");
             
-            contable << "u_error" << "du_error" << nl;
+            contable << "u_error" << "du_error" << "residual" << "time" << nl;
             
 
             assert( 0 <= min_l and min_l <= max_l );
@@ -221,18 +218,20 @@ int main()
                         
                         LOG << "...iterative solver" << endl;
                         
+                        timestamp start = gettimestamp();
+
                         {
                             sol.zero();
                             MinimumResidualMethod Solver( stiffness_csr );
 //                             PreconditionedConjugateResidualMethod Solver( stiffness_csr, stiffness_invprecon );
                             Solver.print_modulo        = 1+sol.getdimension();
                             Solver.max_iteration_count = 4 * sol.getdimension();
-                            timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
 //                             Solver.solve( sol, rhs );
-                            timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                         }
+
+                        timestamp end = gettimestamp();
+                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
                         LOG << "...compute error and residual:" << endl;
             
@@ -247,10 +246,13 @@ int main()
                         LOG << "error:     " << errornorm    << endl;
                         LOG << "graderror: " << graderrornorm << endl;
                         LOG << "residual:  " << residualnorm << endl;
+                        LOG << "time:      " << Float( end - start ) << endl;
                         
-                        
-                        
-                        contable << errornorm << graderrornorm << nl;
+                        contable << errornorm;
+                        contable << graderrornorm;
+                        contable << residualnorm;
+                        contable << Float( end - start );
+                        contable << nl;
                         
                         contable.lg();
 

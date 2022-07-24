@@ -21,6 +21,7 @@
 #include "../../solver/iterativesolver.hpp"
 #include "../../solver/inv.hpp"
 #include "../../solver/systemsparsesolver.hpp"
+#include "../../solver/systemsolver.hpp"
 // #include "../../solver/cgm.hpp"
 // #include "../../solver/crm.hpp"
 // #include "../../solver/pcrm.hpp"
@@ -153,7 +154,7 @@ int main()
 
             ConvergenceTable contable("Mass error and solver residual");
             
-            contable << "sigma_error" << "u_error" << "du_error" << "residual";
+            contable << "sigma_error" << "u_error" << "du_error" << "residual" << "time";
             
             
 
@@ -247,7 +248,7 @@ int main()
                     
                     {
 
-                        const auto& function_ndiv  = experiment_ndiv;
+                        const auto& function_ndiv = experiment_ndiv;
                         const auto& function_sol  = experiment_sol;
                         const auto& function_curl = experiment_curl;
                         const auto& function_rhs  = experiment_rhs;
@@ -296,35 +297,46 @@ int main()
                         }
                         
                         
+                        
+                        
+                        timestamp start = gettimestamp();
+                        
                         if(false)
                         {
-                            
+
                             LOG << "...iterative solver" << endl;
                             
-                            sol.zero();
+                            auto PA = MatrixCSR( scalar_incmatrix_t & scalar_massmatrix & scalar_incmatrix )
+                                      + MatrixCSR( scalar_incmatrix_t & scalar_diffmatrix_t & vector_elevationmatrix_t & vector_massmatrix & vector_elevationmatrix & scalar_diffmatrix & scalar_incmatrix );
+                            auto PC = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix )
+                                      + MatrixCSR( vector_incmatrix_t & vector_diffmatrix_t & vector_elevationmatrix_t & volume_massmatrix & vector_elevationmatrix & vector_diffmatrix & vector_incmatrix );
                             
-                            auto X = B * inv(A,1e-14) * Bt + C;
+                            
+                            const auto PAinv = inv(PA,desired_precision,-1);
+                            const auto PCinv = inv(PC,desired_precision,-1);
 
-//                             HerzogSoodhalterMethod Solver( C );
-                            ConjugateResidualMethod Solver( X );
-                            Solver.threshold           = 1e-10;
-                            Solver.print_modulo        = 100;
-                            Solver.max_iteration_count = 4 * sol.getdimension();
+                            FloatVector  x_A( A.getdimin(),  0. ); 
+                            FloatVector& x_C = sol;
+                            
+                            const FloatVector  b_A( A.getdimin(),  0. ); 
+                            const FloatVector& b_C = rhs; 
+                            
+                            auto Z  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
 
-                            timestamp start = gettimestamp();
-//                             Solver.solve_fast( sol, rhs );
-                            Solver.solve( sol, rhs );
-                            timestamp end = gettimestamp();
-
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
-
-                            LOG << "...compute error and residual:" << endl;
+                            BlockHerzogSoodhalterMethod( 
+                                x_A, 
+                                x_C, 
+                                b_A, 
+                                b_C, 
+                                -A, Bt, B, C, 
+                                desired_precision,
+                                1,
+                                PAinv, PCinv
+                            );
 
                         }
-
-
                         
-                        
+                        // if(false)
                         {
                             
                             sol.zero();
@@ -337,13 +349,10 @@ int main()
 
                             LOG << "...iterative solver" << endl;
                             
-                            timestamp start = gettimestamp();
 
                             LOG << "- mixed system solver" << endl;
-//                             if(false)
-                            //HodgeConjugateResidualSolverCSR(
+
                             HodgeConjugateResidualSolverCSR_SSOR(
-                            //HodgeConjugateResidualSolverCSR_textbook( 
                                 negB.getdimout(), 
                                 A.getdimout(), 
                                 sol.raw(), 
@@ -353,52 +362,18 @@ int main()
                                   Bt.getA(),   Bt.getC(),   Bt.getV(), 
                                    C.getA(),    C.getC(),    C.getV(),
                                 res.raw(),
-                                1e-10,
+                                desired_precision,
                                 100,
-                                1e-14, //desired_precision,
+                                desired_precision,
                                 -1
                             );
 
-                            
-                            timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
-
-                            
                         }
 
-                        if(false)
-                        {
-                            
-                            auto X = Block2x2Operator( A.getdimout() + B.getdimout(), A.getdimin() + Bt.getdimin(), -A, Bt, B, C );
-
-                            FloatVector sol_whole( A.getdimin()  + Bt.getdimin(),  0. );
-                            FloatVector rhs_whole( A.getdimout() +  B.getdimout(), 0. );
-                            
-                            sol_whole.zero();
-                            rhs_whole.setslice( 0, A.getdimout(), 0. );
-                            rhs_whole.setslice( A.getdimout(), rhs );
-                            
-                            MinimumResidualMethod Solver( X );
-                            Solver.threshold           = 1e-10;
-                            Solver.print_modulo        = 500;
-                            Solver.max_iteration_count = 10 * sol_whole.getdimension();
-
-                            timestamp start = gettimestamp();
-                            Solver.solve( sol_whole, rhs_whole );
-                            timestamp end = gettimestamp();
-
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
-
-                            LOG << "...compute error and residual:" << endl;
-
-                            Float residualnorm  = ( rhs_whole - X * sol_whole ).norm();
-
-                            LOG << "combined system residual:  " << residualnorm << endl;
-
-                            sol = sol_whole.getslice( A.getdimout(), B.getdimout() );
-                        }
-
-
+                        timestamp end = gettimestamp();
+        
+                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                        
                         assert( sol.isfinite() );
 
                         auto ndiv = inv(A,1e-14) * Bt * sol;
@@ -440,6 +415,7 @@ int main()
                         contable << errornorm_sol;
                         contable << errornorm_curl;
                         contable << residualnorm;
+                        contable << Float( end - start );
                         contable << nl;
 
                         contable.lg();
