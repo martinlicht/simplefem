@@ -253,8 +253,8 @@ int main()
                             const FloatVector rhs = rhs_original;
                             ConjugateGradientMethod Solver( stiffness );
                             Solver.print_modulo        = 0;
-                            Solver.threshold        = desired_precision;
-                            Solver.max_iteration_count =     1 * sol.getdimension();
+                            Solver.threshold           = desired_precision;
+                            Solver.max_iteration_count = 1 * sol.getdimension();
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
@@ -283,8 +283,8 @@ int main()
                             // Solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
                             // Solver.print_modulo        = 1;
                             Solver.print_modulo        = 0;
-                            Solver.threshold        = desired_precision;
-                            Solver.max_iteration_count =     1 * sol.getdimension();
+                            Solver.threshold           = desired_precision;
+                            Solver.max_iteration_count = 1 * sol.getdimension();
                             timestamp start = gettimestamp();
                             Solver.solve_explicit( sol, rhs );
                             timestamp end = gettimestamp();
@@ -313,8 +313,8 @@ int main()
                             // Solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
                             // Solver.print_modulo        = 1;
                             Solver.print_modulo        = 0;
-                            Solver.threshold        = desired_precision;
-                            Solver.max_iteration_count =     1 * sol.getdimension();
+                            Solver.threshold           = desired_precision;
+                            Solver.max_iteration_count = 1 * sol.getdimension();
                             timestamp start = gettimestamp();
                             Solver.solve_robust( sol, rhs );
                             timestamp end = gettimestamp();
@@ -343,8 +343,8 @@ int main()
                             // Solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
                             // Solver.print_modulo        = 1;
                             Solver.print_modulo        = 0;
-                            Solver.threshold        = desired_precision;
-                            Solver.max_iteration_count =     1 * sol.getdimension();
+                            Solver.threshold           = desired_precision;
+                            Solver.max_iteration_count = 1 * sol.getdimension();
                             timestamp start = gettimestamp();
                             Solver.solve_fast( sol, rhs );
                             timestamp end = gettimestamp();
@@ -373,8 +373,8 @@ int main()
                             // Solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
                             // Solver.print_modulo        = 1;
                             Solver.print_modulo        = 0;
-                            Solver.threshold        = desired_precision;
-                            Solver.max_iteration_count =     1 * sol.getdimension();
+                            Solver.threshold           = desired_precision;
+                            Solver.max_iteration_count = 1 * sol.getdimension();
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
@@ -403,8 +403,8 @@ int main()
                             // Solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
                             // Solver.print_modulo        = 1;
                             Solver.print_modulo        = 0;
-                            Solver.threshold        = desired_precision;
-                            Solver.max_iteration_count =     1 * sol.getdimension();
+                            Solver.threshold           = desired_precision;
+                            Solver.max_iteration_count = 1 * sol.getdimension();
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();

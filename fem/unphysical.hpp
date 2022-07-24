@@ -86,7 +86,7 @@ inline FloatVector FEECRandomizeBroken( int n, int k, int r, const FloatVector& 
     int t = random_integer() % (n+1);
     
     // int alpha = random_uniform();
-    Float alpha = static_cast<Float>( rand() ) / static_cast<Float>( RAND_MAX );
+    Float alpha = random_uniform(); //static_cast<Float>( rand() ) / static_cast<Float>( RAND_MAX );
     Assert( 0. <= alpha and alpha <= 1. );
 
     DenseMatrix Aux1( n+1, n+1, 0. );

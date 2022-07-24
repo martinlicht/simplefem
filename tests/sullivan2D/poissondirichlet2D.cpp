@@ -50,18 +50,6 @@ int main()
             LOG << "Prepare scalar fields for testing..." << endl;
             
 
-            std::function<FloatVector(const FloatVector&)> constant_one
-                = [](const FloatVector& vec) -> FloatVector{
-                        assert( vec.getdimension() == 2 );
-                        return FloatVector({ 1. });
-                    };
-            
-            
-            
-            
-
-
-            
             // std::function<FloatVector(const std::function<FloatVector(const FloatVector&) ) >scalarfield = 
             
             const Float xfeq = 1.;
@@ -112,7 +100,7 @@ int main()
             
             ConvergenceTable contable("Mass error");
             
-            contable << "u_error" << "du_error" << nl;
+            contable << "u_error" << "du_error" << "residual" << "time" << nl;
             
 
             assert( 0 <= min_l and min_l <= max_l );
@@ -209,16 +197,17 @@ int main()
                         
                         LOG << "...iterative solver" << endl;
                         
+                        timestamp start = gettimestamp();
+                        
                         {
                             sol.zero();
-                            PreconditionedConjugateResidualMethod Solver( stiffness_csr, stiffness_invprecon );
-                            Solver.max_iteration_count = 1 * sol.getdimension();
-                            timestamp start = gettimestamp();
+                            MinimumResidualMethod Solver( stiffness_csr );
                             Solver.solve( sol, rhs );
-                            timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                         }
 
+                        timestamp end = gettimestamp();
+                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                    
                         LOG << "...compute error and residual:" << endl;
             
                         
@@ -232,10 +221,13 @@ int main()
                         LOG << "error:     " << errornorm    << endl;
                         LOG << "graderror: " << graderrornorm << endl;
                         LOG << "residual:  " << residualnorm << endl;
+                        LOG << "time:      " << Float( end - start ) << endl;
                         
-                        
-                        
-                        contable << errornorm << graderrornorm << nl;
+                        contable << errornorm;
+                        contable << graderrornorm;
+                        contable << residualnorm;
+                        contable << Float( end - start );
+                        contable << nl;
                         
                         contable.lg();
 

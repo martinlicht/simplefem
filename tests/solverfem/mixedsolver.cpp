@@ -21,10 +21,12 @@
 #include "../../solver/iterativesolver.hpp"
 #include "../../solver/inv.hpp"
 #include "../../solver/systemsparsesolver.hpp"
+#include "../../solver/systemsolver.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
-#include "../../fem/global.sullivanincl.hpp"
+#include "../../fem/global.elevation.hpp"
+#include "../../fem/global.whitneyincl.hpp"
 #include "../../fem/utilities.hpp"
 
 
@@ -125,20 +127,24 @@ int main()
             contable_time.display_convergence_rates  = false;
             contable_res.display_convergence_rates   = false;
             
-            bool do_crmcsr = true;
-            bool do_crmcpp = true;
-            bool do_blockherzog = true;
-            bool do_blockminres = true;
+            bool do_crmcsr = false; //true;
+            bool do_crmcpp = false; //true;
+            bool do_blockherzog = false; //true;
+            bool do_blockminres = false; //true;
+            bool do_systemherzog = true;
+            bool do_sparseherzog = false;
             
-            if( do_crmcsr )      { contable_sigma << "CRMcsr"; contable_u << "CRMcsr"; contable_du << "CRMcsr"; contable_iter << "CRMcsr"; contable_time << "CRMcsr"; contable_res << "CRMcsr"; } 
-            if( do_crmcpp )      { contable_sigma << "CRMcpp"; contable_u << "CRMcpp"; contable_du << "CRMcpp"; contable_iter << "CRMcpp"; contable_time << "CRMcpp"; contable_res << "CRMcpp"; } 
-            if( do_blockherzog ) { contable_sigma << "Herzog"; contable_u << "Herzog"; contable_du << "Herzog"; contable_iter << "Herzog"; contable_time << "Herzog"; contable_res << "Herzog"; } 
-            if( do_blockminres ) { contable_sigma << "Minres"; contable_u << "Minres"; contable_du << "Minres"; contable_iter << "Minres"; contable_time << "Minres"; contable_res << "Minres"; } 
+            if( do_crmcsr )       { contable_sigma << "CRMcsr"; contable_u << "CRMcsr"; contable_du << "CRMcsr"; contable_iter << "CRMcsr"; contable_time << "CRMcsr"; contable_res << "CRMcsr"; } 
+            if( do_crmcpp )       { contable_sigma << "CRMcpp"; contable_u << "CRMcpp"; contable_du << "CRMcpp"; contable_iter << "CRMcpp"; contable_time << "CRMcpp"; contable_res << "CRMcpp"; } 
+            if( do_blockherzog )  { contable_sigma << "Herzog"; contable_u << "Herzog"; contable_du << "Herzog"; contable_iter << "Herzog"; contable_time << "Herzog"; contable_res << "Herzog"; } 
+            if( do_blockminres )  { contable_sigma << "Minres"; contable_u << "Minres"; contable_du << "Minres"; contable_iter << "Minres"; contable_time << "Minres"; contable_res << "Minres"; } 
+            if( do_systemherzog ) { contable_sigma << "SysHerzog"; contable_u << "SysHerzog"; contable_du << "SysHerzog"; contable_iter << "SysHerzog"; contable_time << "SysHerzog"; contable_res << "SysHerzog"; } 
+            if( do_sparseherzog ) { contable_sigma << "SpaHerzog"; contable_u << "SpaHerzog"; contable_du << "SpaHerzog"; contable_iter << "SpaHerzog"; contable_time << "SpaHerzog"; contable_res << "SpaHerzog"; } 
             
 
-            const int min_l = 0; 
+            const int min_l = 5; 
             
-            const int max_l = 5;
+            const int max_l = 7;
             
             const int min_r = 1; 
             
@@ -159,36 +165,40 @@ int main()
                 for( int r = min_r; r <= max_r; r++ )
                 {
                     
-                    LOG << "Polynomial degree: " << r << std::endl;
+                    LOG << "Polynomial degree: " << r << "/" << max_r << std::endl;
                     
-                    LOG << "... assemble matrices" << endl;
+                    LOG << "...assemble partial matrices" << endl;
             
-                    
-                    SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r+1 );
+                    SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r   );
                     SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   );
                     SparseMatrix volume_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r-1 );
 
-                    SparseMatrix scalar_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r+1 );
+                    SparseMatrix vector_elevationmatrix   = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 1, r-1, 1);
+                    SparseMatrix vector_elevationmatrix_t = vector_elevationmatrix.getTranspose();
+
+                    SparseMatrix scalar_incmatrix   = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 0, r   );
+                    SparseMatrix scalar_incmatrix_t = scalar_incmatrix.getTranspose();
+
+                    SparseMatrix vector_incmatrix   = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 1, r   );
+                    SparseMatrix vector_incmatrix_t = vector_incmatrix.getTranspose();
+
+                    SparseMatrix scalar_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r );
                     SparseMatrix scalar_diffmatrix_t = scalar_diffmatrix.getTranspose();
 
                     SparseMatrix vector_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r );
                     SparseMatrix vector_diffmatrix_t = vector_diffmatrix.getTranspose();
 
-                    SparseMatrix scalar_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r+1 );
-                    SparseMatrix scalar_incmatrix_t = scalar_incmatrix.getTranspose();
 
-                    SparseMatrix vector_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 1, r   );
-                    SparseMatrix vector_incmatrix_t = vector_incmatrix.getTranspose();
-
-                    SparseMatrix volume_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 2, r-1 );
-                    SparseMatrix volume_incmatrix_t = volume_incmatrix.getTranspose();
-                    
+                    LOG << "... full matrices" << endl;
+            
                     auto mass = vector_incmatrix_t * vector_massmatrix * vector_incmatrix;
 
                     auto mat_A  = scalar_incmatrix_t & scalar_massmatrix & scalar_incmatrix;
                     mat_A.sortandcompressentries();
                     
-                    auto mat_Bt = scalar_incmatrix_t & scalar_diffmatrix_t & vector_massmatrix & vector_incmatrix; // upper right
+                    LOG << vector_elevationmatrix.getdimin() << space << vector_elevationmatrix.getdimout() << nl;
+
+                    auto mat_Bt = scalar_incmatrix_t & scalar_diffmatrix_t & vector_elevationmatrix_t & vector_massmatrix & vector_incmatrix; // upper right
                     mat_Bt.sortandcompressentries();
                     
                     auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & volume_massmatrix & diffmatrix & vector_incmatrix; // lower bottom
@@ -197,26 +207,23 @@ int main()
                     auto mat_C  = vector_incmatrix_t & vector_diffmatrix_t & volume_massmatrix & vector_diffmatrix & vector_incmatrix;
                     mat_C.sortandcompressentries();
                     
-                    LOG << "share zero A = " << mat_A.getnumberofzeroentries() << "/" << (Float) mat_A.getnumberofentries() << nl;
-                    LOG << "share zero B = " << mat_B.getnumberofzeroentries() << "/" << (Float) mat_B.getnumberofentries() << nl;
-                    LOG << "share zero C = " << mat_C.getnumberofzeroentries() << "/" << (Float) mat_C.getnumberofentries() << nl;
-                    
                     auto A  = MatrixCSR( mat_A  );
                     auto Bt = MatrixCSR( mat_Bt );
                     auto B  = MatrixCSR( mat_B  );
                     auto C  = MatrixCSR( mat_C  );
-
-                    // auto negA  = A;  negA.scale(-1);
-                    // auto negB  = B;  negB.scale(-1);
-                    // auto negBt = Bt; negBt.scale(-1);
                     
-                    auto SystemMatrix = C + B * inv(A,desired_precision) * Bt;
+                    auto PA = MatrixCSR( scalar_incmatrix_t & scalar_massmatrix & scalar_incmatrix )//IdentityOperator(A.getdimin())
+                              + MatrixCSR( scalar_incmatrix_t & scalar_diffmatrix_t & vector_elevationmatrix_t & vector_massmatrix & vector_elevationmatrix & scalar_diffmatrix & scalar_incmatrix );
+                    auto PC = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix )//IdentityOperator(C.getdimin())
+                              + C;
+                              
+                    auto SystemMatrix = C + B * inv(A,100*machine_epsilon) * Bt;
                     
                     {
 
                         LOG << "...interpolate explicit solution and rhs" << endl;
                         
-                        FloatVector interpol_ndiv = Interpolation( M, M.getinnerdimension(), 0, r+1, experiment_ndiv  );
+                        FloatVector interpol_ndiv = Interpolation( M, M.getinnerdimension(), 0, r, experiment_ndiv  );
                         FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 1, r,   experiment_sol  );
                         FloatVector interpol_curl = Interpolation( M, M.getinnerdimension(), 2, r-1, experiment_curl );
                         FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 1, r,   experiment_rhs  );
@@ -227,13 +234,15 @@ int main()
                         Float runtime;
                         int iteration_count;
 
-                        for( int k = 0; k <= 3; k++ )
+                        for( int k = 0; k <= 5; k++ )
                         {
 
                             if( k==0 and not do_crmcsr ) continue;
                             if( k==1 and not do_crmcpp ) continue;
                             if( k==2 and not do_blockherzog ) continue;
                             if( k==3 and not do_blockminres ) continue;
+                            if( k==4 and not do_systemherzog ) continue;
+                            if( k==5 and not do_sparseherzog ) continue;
                             
 
                             if( k==0 and do_crmcsr )
@@ -343,6 +352,77 @@ int main()
                             }
 
 
+                            if( k==4 and do_systemherzog )
+                            {   
+                                sol.zero();
+                                
+                                // const auto PAinv = IdentityOperator(A.getdimin());
+                                // const auto PCinv = IdentityOperator(C.getdimin());
+                                const auto PAinv = inv(PA,desired_precision,0);
+                                const auto PCinv = inv(PC,desired_precision,0);
+
+                                FloatVector  x_A( A.getdimin(),  0. ); 
+                                FloatVector& x_C = sol;
+                                
+                                const FloatVector  b_A( A.getdimin(),  0. ); 
+                                const FloatVector& b_C = rhs; 
+                                
+                                timestamp start = gettimestamp();
+                                iteration_count = 
+                                BlockHerzogSoodhalterMethod( 
+                                    x_A, 
+                                    x_C, 
+                                    b_A, 
+                                    b_C, 
+                                    -A, Bt, B, C, 
+                                    desired_precision,
+                                    1,
+                                    PAinv, PCinv
+                                );
+                                timestamp end = gettimestamp();
+
+                                LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                                runtime  = static_cast<Float>( end - start );
+                            }
+
+
+                            if( k==5 and do_sparseherzog )
+                            {   
+                                sol.zero();
+                                
+                                FloatVector  x_A( A.getdimin(),  0. ); 
+                                FloatVector& x_C = sol;
+                                
+                                const FloatVector  b_A( A.getdimin(),  0. ); 
+                                const FloatVector& b_C = rhs; 
+                                
+                                timestamp start = gettimestamp();
+                                iteration_count = 
+                                HodgeHerzogSoodhalterMethod( 
+                                    x_A.getdimension(), 
+                                    x_C.getdimension(), 
+                                    x_A.raw(), 
+                                    x_C.raw(), 
+                                    b_A.raw(),  
+                                    b_C.raw(), 
+                                    A.getA(),    A.getC(),    A.getV(), 
+                                    B.getA(),    B.getC(),    B.getV(), 
+                                    Bt.getA(),   Bt.getC(),   Bt.getV(), 
+                                    C.getA(),    C.getC(),    C.getV(),
+                                    desired_precision,
+                                    1,
+                                    nullptr, nullptr, nullptr,
+                                    nullptr, nullptr, nullptr,
+                                    desired_precision, 
+                                    1
+                                );
+                                
+                                timestamp end = gettimestamp();
+
+                                LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                                runtime  = static_cast<Float>( end - start );
+                            }
+
                             assert( sol.isfinite() );
 
                             auto ndiv = inv(A,1e-14) * Bt * sol;
@@ -358,13 +438,13 @@ int main()
                             Float errornorm_ndiv = sqrt( errornorm_aux_ndiv * ( scalar_massmatrix * errornorm_aux_ndiv ) );
                             Float errornorm_sol  = sqrt( errornorm_aux_sol  * ( vector_massmatrix * errornorm_aux_sol  ) );
                             Float errornorm_curl = sqrt( errornorm_aux_curl * ( volume_massmatrix * errornorm_aux_curl ) );
-                            Float residualnorm   = ( rhs - B * inv(A,1e-14) * Bt * sol - C * sol ).norm();
+                            Float residualnorm   = ( rhs - SystemMatrix * sol ).norm();
                             
                             contable_sigma << errornorm_ndiv;
                             contable_u     << errornorm_sol;
                             contable_du    << errornorm_curl;
                             contable_res   << residualnorm;
-                            contable_iter  << iteration_count / static_cast<Float>( C.getdimin() );
+                            contable_iter  << iteration_count / static_cast<Float>( SystemMatrix.getdimin() );
                             contable_time  << runtime;
                             
                         }

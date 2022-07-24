@@ -29,6 +29,17 @@ None of the above can be done in a day, so it most likely
 requires regular grinding in order to get it done.
 
 
+# (HIGH) Clean out legacy alternative tests in the FEM solver files
+
+Introduce a unit test in solverfem for the Darcy-system; the Maxwell is already there.
+First, clean out the non-block systems, then the block systems.
+Make sure that everything that is deleted has an analogue in the list of solvers.
+The following is recommend:
+- cpp Mass: CGM
+- csr mass: CGM SSOR
+- cpp stiff: 
+- csr stiff: minres csr or CGM SSOR
+- systems: Herzog-Soodhalter mit operator preconditioning
 
 
 # Change the include orders 

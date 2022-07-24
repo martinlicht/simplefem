@@ -1635,7 +1635,7 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
             assert( gamma_n > 0. );
  
             Float alpha_0 = c1 * delta - c0 * s1 * gamma;
-            assert( alpha_0 * alpha_0 + gamma_n * gamma_n );
+            assert( alpha_0 * alpha_0 + gamma_n * gamma_n > 0. );
             Float alpha_1 = std::sqrt( alpha_0 * alpha_0 + gamma_n * gamma_n );
             Float alpha_2 = s1 * delta + c0 * c1 * gamma;
             Float alpha_3 = s0 * gamma;
@@ -1665,6 +1665,7 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
 
         }
 
+        recent_deviation = eta;
         
         
         
@@ -1672,11 +1673,9 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
         
         bool print_condition = ( print_modulo > 0 and recent_iteration_count % print_modulo == 0 );
         
-        recent_deviation = eta; //( b - A * x ).norm_sq();
-        
         if( verbosity >= VerbosityLevel::verbose and print_condition ) {
             LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) recent_deviation, (long double)threshold );
-            LOGPRINTF( "INTERIM Gamma: %.9Le Res: %.9Le\n", (long double)gamma, (long double)(b - A * x).norm() );
+            LOGPRINTF( "INTERIM Gamma: %.9Le Eta: %.9Le\n", (long double)gamma, (long double)eta );
         }
         
         recent_iteration_count++;

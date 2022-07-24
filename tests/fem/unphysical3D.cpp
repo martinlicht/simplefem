@@ -15,7 +15,8 @@
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.elevation.hpp"
 #include "../../fem/utilities.hpp"
-#include "../../fem/unphysical.hpp"
+// #include "../../fem/unphysical.hpp"
+#include "../../fem/global.unphysical.hpp"
 #include "../../utility/convergencetable.hpp"
 
 
@@ -104,7 +105,7 @@ int main()
         
         const int r_min = 0;
         
-        const int r_max = 4;
+        const int r_max = 2;
         
         const int l_min = 0;
         
@@ -132,12 +133,19 @@ int main()
                 LOG << "assemble mass matrices..." << endl;
                 
                 SparseMatrix massmatrix_scalar = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
-                
                 SparseMatrix massmatrix_vector = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r );
-                
                 SparseMatrix massmatrix_pseudo = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r );
-                
                 SparseMatrix massmatrix_volume = FEECBrokenMassMatrix( M, M.getinnerdimension(), 3, r );
+
+                SparseMatrix canonical_scalar = FEECCanonicalizeBroken( M, M.getinnerdimension(), 0, r );
+                SparseMatrix canonical_vector = FEECCanonicalizeBroken( M, M.getinnerdimension(), 1, r );
+                SparseMatrix canonical_pseudo = FEECCanonicalizeBroken( M, M.getinnerdimension(), 2, r );
+                SparseMatrix canonical_volume = FEECCanonicalizeBroken( M, M.getinnerdimension(), 3, r );
+                
+                SparseMatrix randomize_scalar = FEECRandomizeBroken( M, M.getinnerdimension(), 0, r );
+                SparseMatrix randomize_vector = FEECRandomizeBroken( M, M.getinnerdimension(), 1, r );
+                SparseMatrix randomize_pseudo = FEECRandomizeBroken( M, M.getinnerdimension(), 2, r );
+                SparseMatrix randomize_volume = FEECRandomizeBroken( M, M.getinnerdimension(), 3, r );
                 
                 // LOG << massmatrix_scalar << nl;
                 // LOG << massmatrix_vector << nl;
@@ -150,9 +158,9 @@ int main()
         
                     FloatVector interpol       = Interpolation( M, M.getinnerdimension(), 0, r, scalarfield );
 
-                    FloatVector interpol_canon = FEECCanonicalizeBroken( 3, 0, r, interpol );
+                    FloatVector interpol_canon = canonical_scalar * interpol; // FEECCanonicalizeBroken( 3, 0, r, interpol );
 
-                    FloatVector interpol_randm = FEECRandomizeBroken( 3, 0, r, interpol );
+                    FloatVector interpol_randm = randomize_scalar * interpol; // FEECRandomizeBroken( 3, 0, r, interpol );
 
                     Float mass_ii = absolute( interpol * ( massmatrix_scalar * interpol ) );
 
@@ -176,9 +184,9 @@ int main()
         
                     FloatVector interpol       = Interpolation( M, M.getinnerdimension(), 1, r, vectorfield );
 
-                    FloatVector interpol_canon = FEECCanonicalizeBroken( 3, 1, r, interpol );
+                    FloatVector interpol_canon = canonical_vector * interpol; // FEECCanonicalizeBroken( 3, 1, r, interpol );
 
-                    FloatVector interpol_randm = FEECRandomizeBroken( 3, 1, r, interpol );
+                    FloatVector interpol_randm = randomize_vector * interpol; // FEECRandomizeBroken( 3, 1, r, interpol );
 
                     Float mass_ii = absolute( interpol * ( massmatrix_vector * interpol ) );
 
@@ -202,9 +210,9 @@ int main()
         
                     FloatVector interpol       = Interpolation( M, M.getinnerdimension(), 2, r, pseudofield );
 
-                    FloatVector interpol_canon = FEECCanonicalizeBroken( 3, 2, r, interpol );
+                    FloatVector interpol_canon = canonical_pseudo * interpol; // FEECCanonicalizeBroken( 3, 2, r, interpol );
 
-                    FloatVector interpol_randm = FEECRandomizeBroken( 3, 2, r, interpol );
+                    FloatVector interpol_randm = randomize_pseudo * interpol; // FEECRandomizeBroken( 3, 2, r, interpol );
 
                     Float mass_ii = absolute( interpol * ( massmatrix_pseudo * interpol ) );
 
@@ -228,9 +236,9 @@ int main()
         
                     FloatVector interpol       = Interpolation( M, M.getinnerdimension(), 3, r, volumefield );
 
-                    FloatVector interpol_canon = FEECCanonicalizeBroken( 3, 3, r, interpol );
+                    FloatVector interpol_canon = canonical_volume * interpol; // FEECCanonicalizeBroken( 3, 3, r, interpol );
 
-                    FloatVector interpol_randm = FEECRandomizeBroken( 3, 3, r, interpol );
+                    FloatVector interpol_randm = randomize_volume * interpol; // FEECRandomizeBroken( 3, 3, r, interpol );
 
                     Float mass_ii = absolute( interpol * ( massmatrix_volume * interpol ) );
 

@@ -119,7 +119,7 @@ int main()
         
         ConvergenceTable contable("Mass error");
         
-        contable << "sigma_error" << "u_error";
+        contable << "sigma_error" << "u_error" << "residual" << "time";
         
 
         assert( 0 <= min_l and min_l <= max_l );
@@ -201,23 +201,18 @@ int main()
 //                         }
                     
 
-                    {
-                        
-                        FloatVector rhs = volume_incmatrix_t * ( volume_massmatrix * volume_elevationmatrix * interpol_rhs );
+                    timestamp start = gettimestamp();
 
-                        FloatVector sol( volume_incmatrix.getdimin(), 0. );
-                        
+                    FloatVector sol( volume_incmatrix.getdimin(), 0. );
+                    sol.zero();
+
+                    FloatVector rhs = volume_incmatrix_t * ( volume_massmatrix * volume_elevationmatrix * interpol_rhs );
+
+                    {
                         LOG << "...iterative solver" << endl;
-                        
-                        
-                        sol.zero();
-                        
+
                         FloatVector res = sol;
                         
-
-
-                        timestamp start = gettimestamp();
-
                         HodgeConjugateResidualSolverCSR_SSOR( // TODO
 //                             HodgeConjugateResidualSolverCSR_textbook( 
                             B.getdimout(), 
@@ -234,43 +229,12 @@ int main()
                             desired_precision,
                             0
                         );
-
-                        timestamp end = gettimestamp();
-                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
-                        
-                        
-                        auto grad = inv(A,1e-14) * Bt * sol;
-
-                        LOG << "...compute error and residual:" << endl;
-
-                        auto errornorm_aux_sol  = volume_elevationmatrix * interpol_sol  - volume_incmatrix * sol;
-                        auto errornorm_aux_grad = interpol_grad - vector_incmatrix * grad;
-
-                        Float errornorm_sol  = sqrt( errornorm_aux_sol  * ( volume_massmatrix *  errornorm_aux_sol ) );
-                        Float errornorm_grad = sqrt( errornorm_aux_grad * ( vector_massmatrix * errornorm_aux_grad ) );
-                        Float residualnorm   = ( rhs - B * inv(A,1e-10) * Bt * sol ).norm();
-
-                        LOG << "error:     " << errornorm_sol << endl;
-                        LOG << "aux error: " << errornorm_grad << endl;
-                        LOG << "residual:  " << residualnorm << endl;
-
-                        contable << errornorm_sol;
-                        contable << errornorm_grad;
-                        contable << nl;
-
-                        contable.lg();
                         
                     }
 
                     if(false)
                     {
-                        
-                        FloatVector rhs = volume_incmatrix_t * ( volume_massmatrix * interpol_rhs );
-
-                        FloatVector sol( volume_incmatrix.getdimin(), 0. );
-                        
                         LOG << "...iterative solver" << endl;
-                        
                         
                         sol.zero();
                         
@@ -283,71 +247,55 @@ int main()
                         Solver.threshold           = 1e-10;
                         Solver.print_modulo        = 1;
                         Solver.max_iteration_count = 4 * sol.getdimension();
-                        timestamp start = gettimestamp();
                         Solver.solve_fast( sol, rhs );
 //                             Solver.solve( sol, rhs );
-                        timestamp end = gettimestamp();
-                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
-
-                        LOG << "...compute error and residual:" << endl;
-
-                        auto errornorm_aux = interpol_sol  - volume_incmatrix * sol;
-
-                        Float errornorm     = sqrt( errornorm_aux * ( volume_massmatrix * errornorm_aux ) );
-                        Float residualnorm  = ( rhs - Schur * sol ).norm();
-
-                        LOG << "error:     " << errornorm    << endl;
-                        LOG << "residual:  " << residualnorm << endl;
-
-                        contable << errornorm;
-                        contable << nl;
-
-                        contable.lg();
-                        
                     }
 
                     if(false)
                     {
-                        
                         auto O = ScalingOperator( Bt.getdimin(), 10. );
                         auto X = Block2x2Operator( A.getdimout() + B.getdimout(), A.getdimin() + Bt.getdimin(), A, Bt, B, O );
 
-                        FloatVector sol( A.getdimin()  + Bt.getdimin(),  0. );
-                        FloatVector rhs( A.getdimout() +  B.getdimout(), 0. );
-                        
-                        sol.random();
-                        rhs = X * sol;
-                        sol.zero();
-//                             rhs.setslice( A.getdimin(), volume_incmatrix_t * ( volume_massmatrix * interpol_rhs ) );
+                        FloatVector sol_full( A.getdimin()  + Bt.getdimin(),  0. );
+                        FloatVector rhs_full( A.getdimout() +  B.getdimout(), 0. );                        
+                        sol_full.setslice( A.getdimin(), sol );
+                        rhs_full.setslice( A.getdimin(), rhs );
                         
                         HerzogSoodhalterMethod Solver( X );
                         Solver.threshold           = 1e-10;
                         Solver.print_modulo        = 1;
                         Solver.max_iteration_count = 10 * sol.getdimension();
-                        timestamp start = gettimestamp();
-                        Solver.solve( sol, rhs );
-                        timestamp end = gettimestamp();
-                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                        Solver.solve( sol_full, rhs_full );
 
-                        LOG << "...compute error and residual:" << endl;
-
-                        auto errornorm_aux = interpol_sol - volume_incmatrix * sol.getslice( A.getdimin(), Bt.getdimin() );
-
-                        Float errornorm     = sqrt( errornorm_aux * ( volume_massmatrix * errornorm_aux ) );
-                        Float residualnorm  = ( rhs - X * sol ).norm();
-
-                        LOG << "error:     " << errornorm    << endl;
-                        LOG << "residual:  " << residualnorm << endl;
-
-                        contable << errornorm;
-                        contable << nl;
-
-                        contable.lg();
-                        
-                        
+                        sol = sol_full.getslice( A.getdimin(), sol.getdimension() );
                     }
 
+                    timestamp end = gettimestamp();
+                    LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
+                    LOG << "...compute error and residual:" << endl;
+
+                    auto grad = inv(A,1e-14) * Bt * sol;
+
+                    auto errornorm_aux_sol  = volume_elevationmatrix * interpol_sol  - volume_incmatrix * sol;
+                    auto errornorm_aux_grad = interpol_grad - vector_incmatrix * grad;
+
+                    Float errornorm_sol  = sqrt( errornorm_aux_sol  * ( volume_massmatrix *  errornorm_aux_sol ) );
+                    Float errornorm_grad = sqrt( errornorm_aux_grad * ( vector_massmatrix * errornorm_aux_grad ) );
+                    Float residualnorm   = ( rhs - B * inv(A,1e-10) * Bt * sol ).norm();
+
+                    LOG << "error:     " << errornorm_sol << endl;
+                    LOG << "aux error: " << errornorm_grad << endl;
+                    LOG << "residual:  " << residualnorm << endl;
+
+                    contable << errornorm_sol;
+                    contable << errornorm_grad;
+                    contable << residualnorm;
+                    contable << Float( end - start );
+                    contable << nl;
+
+                    contable.lg();
+                    
                 }
                 
             }

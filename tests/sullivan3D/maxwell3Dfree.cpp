@@ -21,6 +21,7 @@
 #include "../../solver/iterativesolver.hpp"
 #include "../../solver/inv.hpp"
 #include "../../solver/systemsparsesolver.hpp"
+#include "../../solver/systemsolver.hpp"
 // #include "../../solver/cgm.hpp"
 // #include "../../solver/crm.hpp"
 // #include "../../solver/pcrm.hpp"
@@ -134,7 +135,7 @@ int main()
 
             ConvergenceTable contable("Mass error and solver residual");
             
-            contable << "sigma_error" << "u_error" << "du_error" << "residual";
+            contable << "sigma_error" << "u_error" << "du_error" << "residual" << "time";
             
             
 
@@ -163,7 +164,7 @@ int main()
                 for( int r = min_r; r <= max_r; r++ )
                 {
                     
-                    LOG << "Polynomial degree: " << r << std::endl;
+                    LOG << "Polynomial degree: " << r << "/" << max_r << std::endl;
                     
                     LOG << "... assemble matrices" << endl;
             
@@ -216,15 +217,9 @@ int main()
                     
                     auto SystemMatrix = C + B * inv(A,desired_precision) * Bt;
                     
-                    
-                    
-                    const auto& foo = inv;
-                    
-                    
-                    
                     {
 
-                        const auto& function_ndiv  = experiment_ndiv;
+                        const auto& function_ndiv = experiment_ndiv;
                         const auto& function_sol  = experiment_sol;
                         const auto& function_curl = experiment_curl;
                         const auto& function_rhs  = experiment_rhs;
@@ -273,9 +268,48 @@ int main()
                         }
                         
                         
-                        if(false)
+
+                        
+                        
+                        timestamp start = gettimestamp();
+
                         {
+
+                            LOG << "...iterative solver" << endl;
                             
+                            auto PA = MatrixCSR( scalar_incmatrix_t & scalar_massmatrix & scalar_incmatrix )
+                                      + MatrixCSR( scalar_incmatrix_t & scalar_diffmatrix_t & vector_massmatrix & scalar_diffmatrix & scalar_incmatrix );
+                            auto PC = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix )
+                                      + MatrixCSR( vector_incmatrix_t & vector_diffmatrix_t & pseudo_massmatrix & vector_diffmatrix & vector_incmatrix );
+                            
+                            
+                            const auto PAinv = inv(PA,desired_precision,-1);
+                            const auto PCinv = inv(PC,desired_precision,-1);
+
+                            FloatVector  x_A( A.getdimin(),  0. ); 
+                            FloatVector& x_C = sol;
+                            
+                            const FloatVector  b_A( A.getdimin(),  0. ); 
+                            const FloatVector& b_C = rhs; 
+                            
+                            auto Z  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
+
+                            BlockHerzogSoodhalterMethod( 
+                                x_A, 
+                                x_C, 
+                                b_A, 
+                                b_C, 
+                                -A, Bt, B, C, 
+                                desired_precision,
+                                1,
+                                PAinv, PCinv
+                            );
+
+                        }
+
+                    
+                        if(false)
+                        {                            
                             LOG << "...iterative solver" << endl;
                             
                             sol.zero();
@@ -288,22 +322,12 @@ int main()
                             Solver.print_modulo        = 100;
                             Solver.max_iteration_count = 4 * sol.getdimension();
 
-                            timestamp start = gettimestamp();
 //                             Solver.solve_fast( sol, rhs );
                             Solver.solve( sol, rhs );
-                            timestamp end = gettimestamp();
-
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
-
-                            LOG << "...compute error and residual:" << endl;
-
                         }
 
-
-                        
-                        
+                        if(false)
                         {
-                            
                             sol.zero();
                             
 //                             rhs = vector_incmatrix_t * vector_diffmatrix_t * pseudo_massmatrix * vector_diffmatrix * interpol_sol;
@@ -314,8 +338,6 @@ int main()
 
                             LOG << "...iterative solver" << endl;
                             
-                            timestamp start = gettimestamp();
-
                             LOG << "- mixed system solver" << endl;
 //                             if(false)
                             //HodgeConjugateResidualSolverCSR(
@@ -335,17 +357,10 @@ int main()
                                 1e-14, //desired_precision,
                                 -1
                             );
-
-                            
-                            timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
-
-                            
                         }
 
                         if(false)
                         {
-                            
                             auto X = Block2x2Operator( A.getdimout() + B.getdimout(), A.getdimin() + Bt.getdimin(), -A, Bt, B, C );
 
                             FloatVector sol_whole( A.getdimin()  + Bt.getdimin(),  0. );
@@ -360,11 +375,7 @@ int main()
                             Solver.print_modulo        = 500;
                             Solver.max_iteration_count = 10 * sol_whole.getdimension();
 
-                            timestamp start = gettimestamp();
                             Solver.solve( sol_whole, rhs_whole );
-                            timestamp end = gettimestamp();
-
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
                             LOG << "...compute error and residual:" << endl;
 
@@ -375,7 +386,10 @@ int main()
                             sol = sol_whole.getslice( A.getdimout(), B.getdimout() );
                         }
 
+                        timestamp end = gettimestamp();
+                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
+                        
                         assert( sol.isfinite() );
 
                         auto ndiv = inv(A,1e-14) * Bt * sol;
@@ -417,6 +431,7 @@ int main()
                         contable << errornorm_sol;
                         contable << errornorm_curl;
                         contable << residualnorm;
+                        contable << Float( end - start );
                         contable << nl;
 
                         contable.lg();

@@ -20,6 +20,7 @@
 #include "../../solver/sparsesolver.hpp"
 #include "../../solver/inv.hpp"
 #include "../../solver/systemsparsesolver.hpp"
+#include "../../solver/systemsolver.hpp"
 #include "../../solver/iterativesolver.hpp"
 // #include "../../solver/cgm.hpp"
 // #include "../../solver/crm.hpp"
@@ -87,7 +88,7 @@ int main()
             
             const int max_number_of_candidates = 6;
 
-            const int max_number_of_purifications = 1;
+            const int max_number_of_purifications = 2;
 
             assert( 0 <= min_l and min_l <= max_l );
             assert( 0 <= min_r and min_r <= max_r );
@@ -104,7 +105,7 @@ int main()
                 for( int r = min_r; r <= max_r; r++ )
                 {
                     
-                    LOG << "Polynomial degree: " << r << std::endl;
+                    LOG << "Polynomial degree: " << r << "/" << max_r << std::endl;
                     
                     LOG << "...assemble partial matrices" << endl;
             
@@ -143,9 +144,14 @@ int main()
                     auto Z  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
                     
                     
+                    auto PA = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix )
+                              + MatrixCSR( vector_incmatrix_t & diffmatrix_t & volume_massmatrix & diffmatrix & vector_incmatrix );
+                    auto PC = MatrixCSR( volume_incmatrix_t & volume_massmatrix & volume_incmatrix );
+                              
+                    
                     
 //                     auto SystemMatrix = B * inv( A, 1e-10, 0 ) * Bt;
-                    const auto SystemMatrix = B * inv( A, desired_precision, 1 ) * Bt;
+                    const auto SystemMatrix = B * inv( A, desired_precision, -1 ) * Bt;
                     
                     const auto& mass = physical_mass;
                     
@@ -189,6 +195,31 @@ int main()
                             for( int t = 0; t < max_number_of_purifications; t++ )
                             {
                                 
+                                {
+
+                                    const auto PAinv = inv(PA,desired_precision,-1);
+                                    const auto PCinv = inv(PC,desired_precision,-1);
+
+                                    FloatVector  x_A( A.getdimin(),  0. ); 
+                                    FloatVector& x_C = candidate;
+                                    
+                                    const FloatVector  b_A( A.getdimin(),  0. ); 
+                                    const FloatVector& b_C = rhs; 
+                                    
+                                    BlockHerzogSoodhalterMethod( 
+                                        x_A, 
+                                        x_C, 
+                                        b_A, 
+                                        b_C, 
+                                        -A, Bt, B, Z, 
+                                        desired_precision,
+                                        -1,
+                                        PAinv, PCinv
+                                    );
+
+                                }
+                                
+                                if(false)
                                 HodgeConjugateResidualSolverCSR_SSOR(
                                     B.getdimout(), 
                                     A.getdimout(), 
@@ -200,7 +231,7 @@ int main()
                                     Z.getA(),   Z.getC(),  Z.getV(), 
                                     residual.raw(),
                                     desired_precision,
-                                    1,
+                                    -1,
                                     desired_precision,
                                     -1
                                 );

@@ -324,6 +324,64 @@ Float MatrixCSR::eigenvalueupperbound() const
 
 
 
+MatrixCSR MatrixCSRAddition( const MatrixCSR& mat1, const MatrixCSR& mat2, Float s1, Float s2 )
+{
+    // gather relevant data
+    int mat1_rows = mat1.getdimout();
+    int mat1_cols = mat1.getdimin();
+    int mat2_rows = mat2.getdimout();
+    int mat2_cols = mat2.getdimin();
+    
+    const int* mat1A = mat1.getA();
+    const int* mat2A = mat2.getA();
+    
+    const int* mat1C = mat1.getC();
+    const int* mat2C = mat2.getC();
+
+    const Float* mat1V = mat1.getV();
+    const Float* mat2V = mat2.getV();
+
+    Assert( mat1_cols == mat2_cols );
+    Assert( mat1_rows == mat2_rows );
+
+    int matn_rows = mat1_rows;
+    int matn_cols = mat1_cols;
+
+    int num_entries = mat1A[matn_rows] + mat2A[matn_rows];
+    
+    std::vector<int>   A( matn_rows + 1, 0 );
+    std::vector<int>   C( num_entries, 0  );
+    std::vector<Float> V( num_entries, 0. );
+    
+    A[0] = 0;
+    for( int r = 1; r <= matn_rows; r++ )
+        A[r] = A[r-1] + (mat1A[r]-mat1A[r-1]) + (mat2A[r]-mat2A[r-1]);
+    Assert( A[matn_rows] == num_entries );
+    
+    for( int r = 0; r < matn_rows; r++ ) {
+        
+        int i = 0;
+        for( int c1 = mat1A[r]; c1 < mat1A[r+1]; c1++ ) C[ A[r] + (i++) ] = mat1C[c1];
+        for( int c2 = mat2A[r]; c2 < mat2A[r+1]; c2++ ) C[ A[r] + (i++) ] = mat2C[c2];
+        Assert( A[r] + i == A[r+1], r, A[r], i, A[r+1] );
+
+    }
+    
+    for( int r = 0; r < matn_rows; r++ ) {
+        
+        int i = 0;
+        for( int v1 = mat1A[r]; v1 < mat1A[r+1]; v1++ ) V[ A[r] + (i++) ] = s1 * mat1V[v1];
+        for( int v2 = mat2A[r]; v2 < mat2A[r+1]; v2++ ) V[ A[r] + (i++) ] = s2 * mat2V[v2];
+        assert( A[r] + i == A[r+1] );
+
+    }
+    
+    // computations done, create matrix 
+
+    return MatrixCSR( matn_rows, matn_cols, A, C, V );
+
+}
+
 MatrixCSR MatrixCSRMultiplication( const MatrixCSR& mat1, const MatrixCSR& mat2 )
 {
     // gather relevant data
