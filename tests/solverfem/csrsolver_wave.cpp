@@ -114,19 +114,19 @@ int main()
     contable_res.display_convergence_rates   = false;
     
 
-    bool do_cgmpp      = false; //true;
-    bool do_crmpp_expl = false; //true;
-    bool do_crmpp_robt = false; //true;
-    bool do_crmpp_fast = false; //true;
-    bool do_minres     = false; //true;
-    bool do_herzog     = false; //true;
+    bool do_cgmpp      = true;
+    bool do_crmpp_expl = true;
+    bool do_crmpp_robt = true;
+    bool do_crmpp_fast = true;
+    bool do_minres     = true;
+    bool do_herzog     = true;
     //
-    bool do_cgm_csr                = false; //true;
-    bool do_crm_csr                = false; //true;
-    bool do_crm_csrtextbook        = false; //true;
-    bool do_minres_csr             = false; //true;
-    bool do_whatever_csr           = false; //false;
-    bool do_cgm_diagonal_csr       = false; //true;
+    bool do_cgm_csr                = true;
+    bool do_crm_csr                = true;
+    bool do_crm_csrtextbook        = true;
+    bool do_minres_csr             = true;
+    bool do_whatever_csr           = false;
+    bool do_cgm_diagonal_csr       = true;
     bool do_cgm_ssor_csr           = true;
     bool do_chebyshev_diagonal_csr = false;
 
@@ -212,11 +212,11 @@ int main()
 
     const int min_l = 0; 
     
-    const int max_l = 5;
+    const int max_l = 6;
     
-    const int min_r = 3; 
+    const int min_r = 1; 
     
-    const int max_r = 3;
+    const int max_r = 1;
 
     assert( 0 <= min_l and min_l <= max_l );
     assert( 0 <= min_r and min_r <= max_r );
