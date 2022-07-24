@@ -1,0 +1,33 @@
+name: Unit tests for finite elment methods
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 11 * * SUN'
+  
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    timeout-minutes: 60
+
+    steps:
+#    - name: install valgrind here 
+#      run: sudo apt install -y valgrind
+    - name: checkout repository...
+      uses: actions/checkout@v2
+    - name: build project...
+      run: make
+    - name: run tests (solverfem)...
+      run: cd tests/ && make solverfem.run && cd .. 
+#     - name: run tests (sullivan2D)...
+#       run: cd tests/ && make sullivan2D.run && cd .. 
+#     - name: run tests (sullivan3D)...
+#       run: cd tests/ && make sullivan3D.run && cd ..  
+#     - name: run tests (sullivan2D)...
+#       run: cd tests/ && make whitney2D.run && cd .. 
+#     - name: run tests (sullivan3D)...
+#       run: cd tests/ && make whitney3D.run && cd .. 
+#     - name: run tests (nullspace)...
+#       run: cd tests/ && make nullspace.run && cd .. 
