@@ -119,7 +119,7 @@ int main()
         
         ConvergenceTable contable("Mass error");
         
-        contable << "sigma_error" << "u_error";
+        contable << "sigma_error" << "u_error" << "residual" << "time";
         
 
         assert( 0 <= min_l and min_l <= max_l );

@@ -286,9 +286,6 @@ int main()
                         
                         
                         timestamp start = gettimestamp();
-        
-                        
-                        
                         
                         if(false)
                         {
@@ -324,9 +321,6 @@ int main()
                             );
 
                         }
-
-                        
-                        
                         
                         // if(false)
                         {
