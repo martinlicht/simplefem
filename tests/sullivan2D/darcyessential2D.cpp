@@ -210,22 +210,6 @@ int main()
 
                         timestamp start = gettimestamp();
 
-                        // HodgeConjugateResidualSolverCSR_SSOR(
-                        //     B.getdimout(), 
-                        //     A.getdimout(), 
-                        //     sol.raw(), 
-                        //     rhs.raw(), 
-                        //     A.getA(),   A.getC(),  A.getV(), 
-                        //     B.getA(),   B.getC(),  B.getV(), 
-                        //     Bt.getA(), Bt.getC(), Bt.getV(), 
-                        //     C.getA(),   C.getC(),  C.getV(), 
-                        //     res.raw(),
-                        //     desired_precision,
-                        //     1,
-                        //     desired_precision,
-                        //     -1
-                        // );
-
                         {
 
                             const auto PAinv = inv(PA,desired_precision,-1);
@@ -251,12 +235,6 @@ int main()
                             );
 
                         }
-                                
-                                
-
-                        
-
-            
 
                         timestamp end = gettimestamp();
                         LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;

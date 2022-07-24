@@ -212,34 +212,6 @@ int main()
                     
                     timestamp start = gettimestamp();
 
-                    if(false) 
-                    {
-                        LOG << "...iterative solver" << endl;
-                        
-                        sol.zero();    
-                        FloatVector res = rhs;
-                    
-                        HodgeConjugateResidualSolverCSR_SSOR( // TODO
-//                             HodgeConjugateResidualSolverCSR_textbook( 
-                            B.getdimout(), 
-                            A.getdimout(), 
-                            sol.raw(), 
-                            rhs.raw(), 
-                            A.getA(),   A.getC(),  A.getV(), 
-                            B.getA(),   B.getC(),  B.getV(), 
-                            Bt.getA(), Bt.getC(), Bt.getV(), 
-                            C.getA(),   C.getC(),  C.getV(), 
-                            res.raw(),
-                            desired_precision, //1e-10,
-                            1,
-                            desired_precision,
-                            0
-                        );
-
-                    }
-
-                    
-                    // if(false)
                     {
 
                         LOG << "...iterative solver" << endl;
@@ -271,49 +243,6 @@ int main()
                             PAinv, PCinv
                         );
 
-                    }
-
-                    
-                    if(false)
-                    {
-                        LOG << "...iterative solver" << endl;
-                        
-                        sol.zero();
-                        
-                        auto X = B * inv(A,1e-08) * Bt;
-//                             auto y = FloatVector( Bt.getdimin(), 0. );
-//                             auto f = X * y;
-                        
-                        ConjugateResidualMethod Solver( X );
-//                             HerzogSoodhalterMethod Solver( X );
-                        Solver.threshold           = 1e-10;
-                        Solver.print_modulo        = 1;
-                        Solver.max_iteration_count = 4 * sol.getdimension();
-                        timestamp start = gettimestamp();
-                        Solver.solve_fast( sol, rhs );
-//                             Solver.solve( sol, rhs );
-                        
-                    }
-
-                    if(false)
-                    {
-                        auto O = ScalingOperator( Bt.getdimin(), 10. );
-                        auto X = Block2x2Operator( A.getdimout() + B.getdimout(), A.getdimin() + Bt.getdimin(), A, Bt, B, O );
-
-                        FloatVector sol_full( A.getdimin()  + Bt.getdimin(),  0. );
-                        FloatVector rhs_full( A.getdimout() +  B.getdimout(), 0. );
-                        
-                        sol_full.random();
-                        rhs_full = X * sol;
-                        sol_full.zero();
-
-                        HerzogSoodhalterMethod Solver( X );
-                        Solver.threshold           = 1e-10;
-                        Solver.print_modulo        = 1;
-                        Solver.max_iteration_count = 10 * sol_full.getdimension();
-                        Solver.solve( sol_full, rhs_full );
-
-                        sol = sol.getslice( A.getdimin(), Bt.getdimin() );                        
                     }
                     
                     timestamp end = gettimestamp();
