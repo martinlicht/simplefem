@@ -162,7 +162,6 @@ int main()
                 
                     sol.zero();
                     ConjugateGradientMethod Solver( stiffness_csr );
-                    Solver.max_iteration_count = 1 * sol.getdimension();
                     Solver.solve( sol, rhs );
                 }
 
@@ -171,7 +170,6 @@ int main()
                 
                     aug_sol.zero();
                     ConjugateGradientMethod Solver( aug_stiffness_csr );
-                    Solver.max_iteration_count = 4 * aug_sol.getdimension();
                     Solver.solve( aug_sol, aug_rhs );
                 }
 

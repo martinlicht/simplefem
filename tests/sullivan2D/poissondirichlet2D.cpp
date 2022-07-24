@@ -202,8 +202,6 @@ int main()
                         {
                             sol.zero();
                             MinimumResidualMethod Solver( stiffness_csr );
-                            // PreconditionedConjugateResidualMethod Solver( stiffness_csr, stiffness_invprecon );
-                            Solver.max_iteration_count = 1 * sol.getdimension();
                             Solver.solve( sol, rhs );
                         }
 
@@ -225,8 +223,12 @@ int main()
                         LOG << "residual:  " << residualnorm << endl;
                         LOG << "time:      " << Float( end - start ) << endl;
                         
-                        contable << errornorm << graderrornorm << residualnorm << Float( end - start ) << nl;                        
-
+                        contable << errornorm;
+                        contable << graderrornorm;
+                        contable << residualnorm;
+                        contable << Float( end - start );
+                        contable << nl;
+                        
                         contable.lg();
 
 

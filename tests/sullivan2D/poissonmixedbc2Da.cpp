@@ -211,7 +211,7 @@ int main()
 
                         timestamp start = gettimestamp();
 
-                        if(false)
+                        // if(false)
                         {
                             LOG << "CGM - Classic" << endl;
                         
@@ -219,23 +219,22 @@ int main()
                             
                             FloatVector residual( rhs );
                             
-                            ConjugateGradientSolverCSR( 
+                            const FloatVector diagonal = stiffness_csr.diagonal();
+                            assert( diagonal.isfinite() );
+                            assert( diagonal.isnonnegative() );
+                            
+                            ConjugateGradientSolverCSR_SSOR( 
                                 sol.getdimension(), 
                                 sol.raw(), 
                                 rhs.raw(), 
                                 stiffness_csr.getA(), stiffness_csr.getC(), stiffness_csr.getV(),
                                 residual.raw(),
                                 1e-16,
-                                1
+                                1,
+                                diagonal.raw(),
+                                1.0
                             );
 
-                        }
-
-                        {
-                            sol.zero();
-                            PreconditionedConjugateResidualMethod Solver( stiffness_csr, stiffness_invprecon );
-                            Solver.max_iteration_count = 1 * sol.getdimension();
-                            Solver.solve( sol, rhs );
                         }
 
                         timestamp end = gettimestamp();

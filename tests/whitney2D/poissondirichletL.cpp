@@ -161,8 +161,6 @@ int main()
                     LOG << "...iterative solver 1" << endl;            // TODO: compare with corresponding Sullivan 2D 
                     sol.zero();
                     MinimumResidualMethod Solver( stiffness_csr );
-                    Solver.print_modulo        = 1+sol.getdimension();
-                    Solver.max_iteration_count = 4 * sol.getdimension();
                     Solver.solve( sol, rhs );
                 }
 
@@ -170,8 +168,6 @@ int main()
                     LOG << "...iterative solver 2" << endl;            
                     aug_sol.zero();
                     MinimumResidualMethod Solver( aug_stiffness_csr );
-                    Solver.print_modulo        = 1+aug_sol.getdimension();
-                    Solver.max_iteration_count = 4 * aug_sol.getdimension();
                     Solver.solve( aug_sol, aug_rhs );
                 }
 

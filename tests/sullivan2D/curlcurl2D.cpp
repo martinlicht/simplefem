@@ -167,30 +167,33 @@ int main()
             FloatVector rhs_sol = vector_incmatrix_t * vector_massmatrix * interpol_rhs;
             FloatVector rhs_aux = scalar_incmatrix_t * scalar_diffmatrix_t * vector_massmatrix * interpol_sol ;// FloatVector( B.getdimout(), 0. );
 
-            LOG << "...measure interpolation commutativity" << endl;
+            FloatVector sol( A.getdimout() );
+            FloatVector aux( B.getdimout() );
 
             // compute the solution ....
 
-            auto X = Block2x2Operator( A.getdimout() + B.getdimout(), A.getdimin() + Bt.getdimin(), A, Bt, B, C );
 
-            FloatVector sol_whole( A.getdimin()  + Bt.getdimin(),  0. );
-            FloatVector rhs_whole( A.getdimout() +  B.getdimout(), 0. );
-            
-            sol_whole.zero();
-            rhs_whole.setslice(             0, rhs_sol );
-            rhs_whole.setslice( A.getdimout(), rhs_aux );
-            
-            HerzogSoodhalterMethod Solver( X );
-            Solver.print_modulo        = 500;
-            Solver.max_iteration_count = 2 * sol_whole.getdimension();
 
             timestamp start = gettimestamp();
-            Solver.solve( sol_whole, rhs_whole );
+
+            { 
+                auto X = Block2x2Operator( A.getdimout() + B.getdimout(), A.getdimin() + Bt.getdimin(), A, Bt, B, C );
+
+                FloatVector sol_full( A.getdimin()  + Bt.getdimin(),  0. );
+                
+                FloatVector rhs_full( A.getdimout() +  B.getdimout(), 0. );
+                rhs_full.setslice(             0, rhs_sol );
+                rhs_full.setslice( A.getdimout(), rhs_aux );
+                
+                HerzogSoodhalterMethod Solver( X );
+                Solver.solve( sol_full, rhs_full );
+
+                FloatVector sol = sol_full.getslice(             0, A.getdimout() );
+                FloatVector aux = sol_full.getslice( A.getdimout(), B.getdimout() );
+            }
+
             timestamp end = gettimestamp();
 
-            FloatVector sol = sol_whole.getslice(             0, A.getdimout() );
-            FloatVector aux = sol_whole.getslice( A.getdimout(), B.getdimout() );
-            
             // ... computed the solution
 
             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;

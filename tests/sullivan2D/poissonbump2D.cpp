@@ -222,8 +222,7 @@ int main()
 
                         {
                             sol.zero();
-                            PreconditionedConjugateResidualMethod Solver( stiffness_csr, stiffness_invprecon );
-                            Solver.max_iteration_count = 1 * sol.getdimension();
+                            MinimumResidualMethod Solver( stiffness_csr );
                             Solver.solve( sol, rhs );
                         }
 
