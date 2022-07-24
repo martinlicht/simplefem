@@ -133,7 +133,7 @@ int BlockHerzogSoodhalterMethod(
             eta_A = gamma * sqrt( psi_A );
             eta_C = gamma * sqrt( psi_C );
             
-            assert( gamma > 0. );
+            assert( gamma >= 0. );
             
             s0 = s1 = 0;
             c0 = c1 = 1;

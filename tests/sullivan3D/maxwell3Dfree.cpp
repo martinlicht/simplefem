@@ -216,12 +216,6 @@ int main()
                     
                     auto SystemMatrix = C + B * inv(A,desired_precision) * Bt;
                     
-                    
-                    
-                    const auto& foo = inv;
-                    
-                    
-                    
                     {
 
                         const auto& function_ndiv  = experiment_ndiv;

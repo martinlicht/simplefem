@@ -260,7 +260,10 @@ int main()
                         LOG << "graderror: " << graderrornorm << endl;
                         LOG << "residual:  " << residualnorm << endl;
                         
-                        contable << errornorm << graderrornorm << residualnorm << nl;
+                        contable << errornorm;
+                        contable << graderrornorm;
+                        contable << residualnorm;
+                        contable << nl;
                         
                         contable.lg();
 

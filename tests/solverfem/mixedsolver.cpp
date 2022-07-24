@@ -127,22 +127,24 @@ int main()
             contable_time.display_convergence_rates  = false;
             contable_res.display_convergence_rates   = false;
             
-            bool do_crmcsr = true;
-            bool do_crmcpp = true;
-            bool do_blockherzog = true;
-            bool do_blockminres = true;
+            bool do_crmcsr = false; //true;
+            bool do_crmcpp = false; //true;
+            bool do_blockherzog = false; //true;
+            bool do_blockminres = false; //true;
             bool do_systemherzog = true;
+            bool do_sparseherzog = false;
             
             if( do_crmcsr )       { contable_sigma << "CRMcsr"; contable_u << "CRMcsr"; contable_du << "CRMcsr"; contable_iter << "CRMcsr"; contable_time << "CRMcsr"; contable_res << "CRMcsr"; } 
             if( do_crmcpp )       { contable_sigma << "CRMcpp"; contable_u << "CRMcpp"; contable_du << "CRMcpp"; contable_iter << "CRMcpp"; contable_time << "CRMcpp"; contable_res << "CRMcpp"; } 
             if( do_blockherzog )  { contable_sigma << "Herzog"; contable_u << "Herzog"; contable_du << "Herzog"; contable_iter << "Herzog"; contable_time << "Herzog"; contable_res << "Herzog"; } 
             if( do_blockminres )  { contable_sigma << "Minres"; contable_u << "Minres"; contable_du << "Minres"; contable_iter << "Minres"; contable_time << "Minres"; contable_res << "Minres"; } 
             if( do_systemherzog ) { contable_sigma << "SysHerzog"; contable_u << "SysHerzog"; contable_du << "SysHerzog"; contable_iter << "SysHerzog"; contable_time << "SysHerzog"; contable_res << "SysHerzog"; } 
+            if( do_sparseherzog ) { contable_sigma << "SpaHerzog"; contable_u << "SpaHerzog"; contable_du << "SpaHerzog"; contable_iter << "SpaHerzog"; contable_time << "SpaHerzog"; contable_res << "SpaHerzog"; } 
             
 
-            const int min_l = 0; 
+            const int min_l = 5; 
             
-            const int max_l = 5;
+            const int max_l = 7;
             
             const int min_r = 1; 
             
@@ -232,7 +234,7 @@ int main()
                         Float runtime;
                         int iteration_count;
 
-                        for( int k = 0; k <= 4; k++ )
+                        for( int k = 0; k <= 5; k++ )
                         {
 
                             if( k==0 and not do_crmcsr ) continue;
@@ -240,6 +242,7 @@ int main()
                             if( k==2 and not do_blockherzog ) continue;
                             if( k==3 and not do_blockminres ) continue;
                             if( k==4 and not do_systemherzog ) continue;
+                            if( k==5 and not do_sparseherzog ) continue;
                             
 
                             if( k==0 and do_crmcsr )
@@ -355,8 +358,8 @@ int main()
                                 
                                 // const auto PAinv = IdentityOperator(A.getdimin());
                                 // const auto PCinv = IdentityOperator(C.getdimin());
-                                const auto PAinv = inv(PA,desired_precision,-1);
-                                const auto PCinv = inv(PC,desired_precision,-1);
+                                const auto PAinv = inv(PA,desired_precision,0);
+                                const auto PCinv = inv(PC,desired_precision,0);
 
                                 FloatVector  x_A( A.getdimin(),  0. ); 
                                 FloatVector& x_C = sol;
@@ -382,6 +385,43 @@ int main()
                                 runtime  = static_cast<Float>( end - start );
                             }
 
+
+                            if( k==5 and do_sparseherzog )
+                            {   
+                                sol.zero();
+                                
+                                FloatVector  x_A( A.getdimin(),  0. ); 
+                                FloatVector& x_C = sol;
+                                
+                                const FloatVector  b_A( A.getdimin(),  0. ); 
+                                const FloatVector& b_C = rhs; 
+                                
+                                timestamp start = gettimestamp();
+                                iteration_count = 
+                                HodgeHerzogSoodhalterMethod( 
+                                    x_A.getdimension(), 
+                                    x_C.getdimension(), 
+                                    x_A.raw(), 
+                                    x_C.raw(), 
+                                    b_A.raw(),  
+                                    b_C.raw(), 
+                                    A.getA(),    A.getC(),    A.getV(), 
+                                    B.getA(),    B.getC(),    B.getV(), 
+                                    Bt.getA(),   Bt.getC(),   Bt.getV(), 
+                                    C.getA(),    C.getC(),    C.getV(),
+                                    desired_precision,
+                                    1,
+                                    nullptr, nullptr, nullptr,
+                                    nullptr, nullptr, nullptr,
+                                    desired_precision, 
+                                    1
+                                );
+                                
+                                timestamp end = gettimestamp();
+
+                                LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                                runtime  = static_cast<Float>( end - start );
+                            }
 
                             assert( sol.isfinite() );
 

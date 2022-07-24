@@ -230,7 +230,10 @@ int main()
                         
                         
                         
-                        contable << errornorm << graderrornorm << nl;
+                        contable << errornorm;
+                        contable << graderrornorm;
+                        contable << residualnorm;
+                        contable << nl;
                         
                         contable.lg();
 

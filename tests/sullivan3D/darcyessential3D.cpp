@@ -250,6 +250,7 @@ int main()
 
                         contable << errornorm_sol;
                         contable << errornorm_grad;
+                        contable << residual;
                         contable << nl;
 
                         contable.lg();
