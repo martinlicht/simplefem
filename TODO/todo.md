@@ -29,7 +29,7 @@ None of the above can be done in a day, so it most likely
 requires regular grinding in order to get it done.
 
 
-# (HIGH) Clean out legacy alternative tests in the FEM solver files
+# (DONE) Clean out legacy alternative tests in the FEM solver files
 
 Introduce a unit test in solverfem for the Darcy-system; the Maxwell is already there.
 First, clean out the non-block systems, then the block systems.

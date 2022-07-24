@@ -164,8 +164,8 @@ int main()
 
             
 
-            const int min_l =  9; 
-            const int max_l = 11;
+            const int min_l = 5; 
+            const int max_l = 8;
 
             assert( 0 <= min_l and min_l <= max_l );
             
