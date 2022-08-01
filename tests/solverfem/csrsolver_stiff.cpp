@@ -169,9 +169,9 @@ int main()
             if( do_chebyshev_diagonal_csr ) contable_sec << "Chebyshev_csr";
             
 
-            const int min_l = 3;
+            const int min_l = 0;
             
-            const int max_l = 7;
+            const int max_l = 6;
 
             assert( 0 <= min_l and min_l <= max_l );
             

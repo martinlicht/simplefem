@@ -12,7 +12,7 @@
 #include <new>
 #include <utility>
 
-#ifdef _OPENMP
+#if defined(_OPENMP)
 #include <omp.h>
 #endif
 
