@@ -176,11 +176,6 @@ int main()
                 
                 LOG << average_sol << space << average_rhs << endl;
 
-                LOG << "...measure interpolation commutativity" << endl;
-    
-                Float commutatorerror = ( vector_massmatrix_fac * ( interpol_grad - diffmatrix * interpol_sol ) ).norm();
-                LOG << "commutator error: " << commutatorerror << endl;
-                
                 LOG << "...compute norms of solution and right-hand side:" << endl;
     
                 Float sol_norm = ( scalar_massmatrix_fac * interpol_sol ).norm();

@@ -252,39 +252,6 @@ int main()
                         FloatVector sol( vector_incmatrix.getdimin(), 0. );
                         
                         
-                        
-                        
-                            
-
-
-                        if(false)
-                        {
-                        
-                            LOG << "...measure interpolation commutativity" << endl;
-                            
-//                             auto  commutatorerror_1_aux = interpol_rhs - scalar_diffmatrix * interpol_ndiv - vector_diffmatrix_t * volume_massmatrix * interpol_curl;
-                            auto  commutatorerror_1_aux
-                            = 
-                            interpol_rhs
-                            - scalar_diffmatrix   * inv(scalar_massmatrix,1e-14) * scalar_diffmatrix_t * vector_massmatrix * interpol_sol
-                            - vector_diffmatrix_t * volume_massmatrix * vector_diffmatrix   * interpol_sol;
-                            Float commutatorerror_1     = commutatorerror_1_aux * ( vector_massmatrix * commutatorerror_1_aux );
-                            LOG << "algebraic commutator error 1: " << commutatorerror_1 << endl;
-                            
-                            auto  commutatorerror_2_aux = interpol_curl - vector_diffmatrix * interpol_sol;
-                            Float commutatorerror_2     = commutatorerror_2_aux * ( volume_massmatrix * commutatorerror_2_aux );
-                            LOG << "algebraic commutator error 2: " << commutatorerror_2 << endl;
-                            
-                            auto  commutatorerror_3_aux = scalar_massmatrix * interpol_ndiv - scalar_diffmatrix_t * interpol_sol;
-                            Float commutatorerror_3     = commutatorerror_3_aux * ( scalar_massmatrix * commutatorerror_3_aux );
-                            LOG << "algebraic commutator error 3: " << commutatorerror_3 << endl;
-                            
-                        }
-                        
-                        
-
-                        
-                        
                         timestamp start = gettimestamp();
                         
                         {

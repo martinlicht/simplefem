@@ -231,11 +231,11 @@ int main()
                         
                         FloatVector sol( vector_incmatrix.getdimin(), 0. );
 
-                        Float runtime;
-                        int iteration_count;
-
                         for( int k = 0; k <= 5; k++ )
                         {
+
+                            Float runtime;
+                            int iteration_count;
 
                             if( k==0 and not do_crmcsr ) continue;
                             if( k==1 and not do_crmcpp ) continue;

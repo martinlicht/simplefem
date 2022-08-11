@@ -264,11 +264,11 @@ int main()
                 
                 FloatVector sol_orignal( SystemMatrix.getdimin(), 0. );
 
-                Float runtime;
-                int iteration_count;
-
                 for( int k = 0; k <= 12; k++ )
                 {
+
+                    Float runtime;
+                    int iteration_count;
 
                     if( k== 0 and not do_cgmpp      ) continue;
                     if( k== 1 and not do_crmpp_expl ) continue;

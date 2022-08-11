@@ -191,21 +191,6 @@ int main()
                     FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 3, r-1, function_sol  );
                     FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 3, r-1, function_rhs  );
                     
-                    LOG << "...measure interpolation commutativity" << endl;
-        
-                    {
-                        auto commutatorerror_aux = volume_elevationmatrix * ( interpol_rhs - diffmatrix * interpol_grad );
-                        Float commutatorerror  = commutatorerror_aux * ( volume_massmatrix * commutatorerror_aux );
-                        LOG << "algebraic commutator error 1: " << commutatorerror << endl;
-                    }
-                    
-//                         {
-//                             auto commutatorerror_aux = interpol_grad - vector_massmatrix_inv * diffmatrix_t * volume_massmatrix * interpol_rhs;
-//                             Float commutatorerror  = commutatorerror_aux * ( commutatorerror_aux );
-//                             LOG << "algebraic commutator error 2: " << commutatorerror << endl << space << commutatorerror2
-//                         }
-                    
-
                     FloatVector rhs = volume_incmatrix_t * ( volume_massmatrix * volume_elevationmatrix * interpol_rhs );
 
                     FloatVector sol( volume_incmatrix.getdimin(), 0. );

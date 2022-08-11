@@ -187,12 +187,6 @@ int main()
                         FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r-1, function_grad );
                         FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r,   function_rhs  );
                         
-                        LOG << "...measure interpolation commutativity" << endl;
-            
-                        auto commutatorerror_aux = interpol_grad - diffmatrix * interpol_sol;
-                        Float commutatorerror = commutatorerror_aux * ( vector_massmatrix * commutatorerror_aux );
-                        LOG << "commutator error: " << commutatorerror << endl;
-                        
                         LOG << "...compute norms of solution and right-hand side:" << endl;
             
                         Float sol_norm = interpol_sol * ( scalar_massmatrix * interpol_sol );
