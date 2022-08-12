@@ -72,6 +72,58 @@ inline IdentityOperator operator*( const IdentityOperator& left, const IdentityO
 
 /************************
 ****
+****  Class for Zero Operators 
+****  
+************************/
+
+
+class ZeroOperator final
+: public LinearOperator
+{
+
+    public:
+
+        /* Constructors */
+        
+        explicit ZeroOperator( int n );
+        
+        /* standard interface */
+        
+        ZeroOperator()                                    = delete;
+        ZeroOperator( const ZeroOperator& )               = default;
+        ZeroOperator( ZeroOperator&& )                    = default;
+        ZeroOperator& operator=( const ZeroOperator& op ) = default;
+        ZeroOperator& operator=( ZeroOperator&& op )      = default; 
+        virtual ~ZeroOperator();
+
+        /* standard methods for operators */
+        
+        virtual void check() const override;
+        
+        virtual std::string text() const override;
+
+        /* OTHER METHODS */
+        
+        virtual ZeroOperator* pointer_to_heir() && override
+        {
+            return new typename std::remove_reference<decltype(*this)>::type( std::move(*this) );
+        }
+        
+        using LinearOperator::apply;
+        virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override;
+    
+};
+  
+  
+
+
+
+
+
+
+
+/************************
+****
 ****  Class for Scalings 
 ****  - instantiates LinearOperator
 ****  
