@@ -142,9 +142,9 @@ int main()
             if( do_sparseherzog ) { contable_sigma << "SpaHerzog"; contable_u << "SpaHerzog"; contable_du << "SpaHerzog"; contable_iter << "SpaHerzog"; contable_time << "SpaHerzog"; contable_res << "SpaHerzog"; } 
             
 
-            const int min_l = 5; 
+            const int min_l = 0; 
             
-            const int max_l = 7;
+            const int max_l = 6;
             
             const int min_r = 1; 
             
@@ -231,11 +231,11 @@ int main()
                         
                         FloatVector sol( vector_incmatrix.getdimin(), 0. );
 
-                        Float runtime;
-                        int iteration_count;
-
                         for( int k = 0; k <= 5; k++ )
                         {
+
+                            Float runtime;
+                            int iteration_count;
 
                             if( k==0 and not do_crmcsr ) continue;
                             if( k==1 and not do_crmcpp ) continue;

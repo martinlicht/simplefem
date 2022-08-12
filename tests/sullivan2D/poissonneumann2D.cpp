@@ -190,12 +190,6 @@ int main()
                         
                         LOG << average_sol << space << average_rhs << endl;
 
-                        LOG << "...measure interpolation commutativity" << endl;
-            
-                        auto commutatorerror_aux = interpol_grad - diffmatrix * interpol_sol;
-                        Float commutatorerror = commutatorerror_aux * ( vector_massmatrix * commutatorerror_aux );
-                        LOG << "commutator error: " << commutatorerror << endl;
-                        
                         LOG << "...compute norms of solution and right-hand side:" << endl;
             
                         Float sol_norm = interpol_sol * ( scalar_massmatrix * interpol_sol );

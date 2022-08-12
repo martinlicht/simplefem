@@ -24,15 +24,16 @@ class InverseOperator final
 
     public:
 
-        InverseOperator()                                        = delete;
-        InverseOperator( const InverseOperator& )                = default;
-        InverseOperator( InverseOperator&& )                     = default;
-        InverseOperator& operator=( const InverseOperator& vec ) = delete;
-        InverseOperator& operator=( InverseOperator&& vec )      = delete; 
+        InverseOperator()                                          = delete;
+        InverseOperator( const InverseOperator& )                  = default;
+        InverseOperator& operator=( const InverseOperator& invop ) = default;
+        InverseOperator( InverseOperator&& )                       = default;
+        InverseOperator& operator=( InverseOperator&& invop )      = default; 
 
         
         explicit InverseOperator( const LinearOperator& op, Float tolerance, int print_modulo = -1 )
-        : LinearOperator( op.getdimout(), op.getdimin() ), op( op ), tolerance(tolerance), print_modulo( print_modulo ), previous_sol( op.getdimin(), 0. )
+        : LinearOperator( op.getdimout(), op.getdimin() ), 
+          op( op ), tolerance(tolerance), print_modulo( print_modulo ), previous_sol( op.getdimin(), 0. )
         { 
             assert( op.getdimin() == op.getdimout() );
             
@@ -43,14 +44,9 @@ class InverseOperator final
             LOG << "Inverse destroyed" << "" << nl;
         }
 
-        virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
-            std::shared_ptr<InverseOperator> cloned = std::make_shared<InverseOperator>( op, tolerance, print_modulo );
-            return cloned;
-        }
-        
-        virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {
-            std::unique_ptr<InverseOperator> heir = std::make_unique<InverseOperator>( op, tolerance, print_modulo );
-            return heir;
+        virtual InverseOperator* pointer_to_heir() && override
+        {
+            return new typename std::remove_reference<decltype(*this)>::type( std::move(*this) );
         }
 
         virtual void check() const override { 
@@ -139,7 +135,6 @@ class InverseOperator final
 inline InverseOperator inv( const LinearOperator& op, Float tolerance, int print_modulo = -1 )
 {
     op.check();
-    
     return InverseOperator( op, tolerance, print_modulo );
 }  
 

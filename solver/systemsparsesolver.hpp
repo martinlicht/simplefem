@@ -5,7 +5,9 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
+#if defined(_OPENMP)
 #include <omp.h>
+#endif
 #include <new>
 #include <utility>
 

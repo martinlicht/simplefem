@@ -31,11 +31,11 @@ class IdentityOperator final
         
         /* standard interface */
         
-        IdentityOperator()                                         = delete;
-        IdentityOperator( const IdentityOperator& )                = default;
-        IdentityOperator( IdentityOperator&& )                     = default;
-        IdentityOperator& operator=( const IdentityOperator& vec ) = default;
-        IdentityOperator& operator=( IdentityOperator&& vec )      = default; 
+        IdentityOperator()                                        = delete;
+        IdentityOperator( const IdentityOperator& )               = default;
+        IdentityOperator( IdentityOperator&& )                    = default;
+        IdentityOperator& operator=( const IdentityOperator& op ) = default;
+        IdentityOperator& operator=( IdentityOperator&& op )      = default; 
         virtual ~IdentityOperator();
 
         /* standard methods for operators */
@@ -46,14 +46,9 @@ class IdentityOperator final
 
         /* OTHER METHODS */
         
-        virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
-            std::shared_ptr<IdentityOperator> cloned = std::make_shared<IdentityOperator>( *this );
-            return cloned;
-        }
-        
-        virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {
-            std::unique_ptr<IdentityOperator> heir = std::make_unique<IdentityOperator>( *this );
-            return heir;
+        virtual IdentityOperator* pointer_to_heir() && override
+        {
+            return new typename std::remove_reference<decltype(*this)>::type( std::move(*this) );
         }
         
         using LinearOperator::apply;
@@ -71,6 +66,58 @@ inline IdentityOperator operator*( const IdentityOperator& left, const IdentityO
     
     return IdentityOperator( left.getdimin() );
 }  
+
+
+
+
+/************************
+****
+****  Class for Zero Operators 
+****  
+************************/
+
+
+class ZeroOperator final
+: public LinearOperator
+{
+
+    public:
+
+        /* Constructors */
+        
+        explicit ZeroOperator( int n );
+        
+        /* standard interface */
+        
+        ZeroOperator()                                    = delete;
+        ZeroOperator( const ZeroOperator& )               = default;
+        ZeroOperator( ZeroOperator&& )                    = default;
+        ZeroOperator& operator=( const ZeroOperator& op ) = default;
+        ZeroOperator& operator=( ZeroOperator&& op )      = default; 
+        virtual ~ZeroOperator();
+
+        /* standard methods for operators */
+        
+        virtual void check() const override;
+        
+        virtual std::string text() const override;
+
+        /* OTHER METHODS */
+        
+        virtual ZeroOperator* pointer_to_heir() && override
+        {
+            return new typename std::remove_reference<decltype(*this)>::type( std::move(*this) );
+        }
+        
+        using LinearOperator::apply;
+        virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override;
+    
+};
+  
+  
+
+
+
 
 
 
@@ -95,11 +142,11 @@ class ScalingOperator final
         virtual ~ScalingOperator();
 
         /* standard methods for operators */
-        ScalingOperator()                                        = delete;
-        ScalingOperator( const ScalingOperator& )                = default;
-        ScalingOperator( ScalingOperator&& )                     = default;
-        ScalingOperator& operator=( const ScalingOperator& vec ) = default;
-        ScalingOperator& operator=( ScalingOperator&& vec )      = default; 
+        ScalingOperator()                                       = delete;
+        ScalingOperator( const ScalingOperator& )               = default;
+        ScalingOperator( ScalingOperator&& )                    = default;
+        ScalingOperator& operator=( const ScalingOperator& op ) = default;
+        ScalingOperator& operator=( ScalingOperator&& op )      = default; 
         
         /* standard interface */
         
@@ -109,14 +156,9 @@ class ScalingOperator final
 
         /* OTHER METHODS */
         
-        virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
-            std::shared_ptr<ScalingOperator> clone = std::make_shared<ScalingOperator>( *this );
-            return clone;
-        }
-        
-        virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {
-            std::unique_ptr<ScalingOperator> heir = std::make_unique<ScalingOperator>( *this );
-            return heir;
+        virtual ScalingOperator* pointer_to_heir() && override
+        {
+            return new typename std::remove_reference<decltype(*this)>::type( std::move(*this) );
         }
         
         Float getscaling() const;
@@ -169,11 +211,11 @@ class DiagonalOperator final
         
         /* standard methods for operators */
         
-        DiagonalOperator()                                         = delete;
-        DiagonalOperator( const DiagonalOperator& )                = default;
-        DiagonalOperator( DiagonalOperator&& )                     = default;
-        DiagonalOperator& operator=( const DiagonalOperator& vec ) = default;
-        DiagonalOperator& operator=( DiagonalOperator&& vec )      = default; 
+        DiagonalOperator()                                        = delete;
+        DiagonalOperator( const DiagonalOperator& )               = default;
+        DiagonalOperator( DiagonalOperator&& )                    = default;
+        DiagonalOperator& operator=( const DiagonalOperator& op ) = default;
+        DiagonalOperator& operator=( DiagonalOperator&& op )      = default; 
 
         virtual ~DiagonalOperator();
         
@@ -187,14 +229,9 @@ class DiagonalOperator final
 
         /* OTHER METHODS */
         
-        virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
-            std::shared_ptr<DiagonalOperator> clone = std::make_shared<DiagonalOperator>( *this );
-            return clone;
-        }
-        
-        virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {
-            std::unique_ptr<DiagonalOperator> heir = std::make_unique<DiagonalOperator>( *this );
-            return heir;
+        virtual DiagonalOperator* pointer_to_heir() && override
+        {
+            return new typename std::remove_reference<decltype(*this)>::type( std::move(*this) );
         }
         
 

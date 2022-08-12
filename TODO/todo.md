@@ -29,6 +29,44 @@ None of the above can be done in a day, so it most likely
 requires regular grinding in order to get it done.
 
 
+
+
+# (HIGH) Retire the communtativity tests 
+
+The old test files contain commutativity tests. Those should be retired.
+
+# (HIGH) Retire unnecessary Whitney tests 
+
+Poisson solvers do not need to be tested for Whitney forms. 
+It suffices to keep a complicated example with miex boundary conditions.
+
+# (HIGH) Abgleichen der Gitterweiten bei solverfem 
+# (HIGH) Floating point exact comparisons ersetzen durch Funktion mit expliziter semantik
+
+# (HIGH) Augmented integration in all numerical tests 
+Once the numerical tests have been cleaned up, the right-hand side should always be computed
+with (optional) augmented integration. There should be a parameter 'r_plus' to control the added
+interpolation quality of the right-hand side. Notably, if 'r_plus == 0', then there should be 
+a fallback that avoid repeated computation of the mass matrix.
+Similarly, the errors should be computed with augmented integration.
+
+
+
+# (MEDIUM) Averaging for Sullivan and Whitney spaces
+
+For each element, you extract the coefficients of the local basis associated with a subsimplex using a Gram-Matrix. 
+This works for Sullivan and Whitney bases alike, no difference. 
+You can then average according to some scheme, such as:
+- pick arbitrary
+- weight uniformly
+- weight by volume 
+Thus you can always average from the larger into the smaller space.
+
+# (MEDIUM) preparing for multigrid
+
+
+
+
 # (DONE) Clean out legacy alternative tests in the FEM solver files
 
 Introduce a unit test in solverfem for the Darcy-system; the Maxwell is already there.
