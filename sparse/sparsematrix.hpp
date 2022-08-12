@@ -70,16 +70,9 @@ public LinearOperator /* every matrix is a linear operator */
 
         /* OTHER METHODS */
         
-        virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override
+        virtual SparseMatrix* pointer_to_heir() && override
         {
-            std::shared_ptr<SparseMatrix> cloned = std::make_shared<SparseMatrix>( *this );
-            return cloned;
-        }
-        
-        virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override
-        {
-            std::unique_ptr<SparseMatrix> heir = std::make_unique<SparseMatrix>( std::move(*this) );
-            return heir;
+            return new typename std::remove_reference<decltype(*this)>::type( std::move(*this) );
         }
         
         

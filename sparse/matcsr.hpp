@@ -59,16 +59,9 @@ public LinearOperator /* every matrix is a linear operator */
 
         /* OTHER METHODS */
         
-        virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override
+        virtual MatrixCSR* pointer_to_heir() && override
         {
-            std::shared_ptr<MatrixCSR> cloned = std::make_shared<MatrixCSR>( *this );
-            return cloned;
-        }
-        
-        virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override
-        {
-            std::unique_ptr<MatrixCSR> heir = std::make_unique<MatrixCSR>( std::move(*this) );
-            return heir;
+            return new typename std::remove_reference<decltype(*this)>::type( std::move(*this) );
         }
         
         
