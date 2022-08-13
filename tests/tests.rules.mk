@@ -54,19 +54,25 @@ $($(context).depdir):
 $($(context).outs): mycontext    := $(context)
 $($(context).outs): mycontextdir := $(contextdir)
 $($(context).outs): $(contextdir)/%.out: $(contextdir)/%.cpp | $($(context).depdir)
-# 	@ echo $(mycontext)
-# 	@ echo $(mycontextdir)
-# 	@ echo target $@
-# 	@ echo target $<
-# 	@ echo target $^
-# 	@ echo contextdir $(mycontextdir)
-# 	@ echo depdir $($(mycontext).depdir)
-# 	@ echo $($(mycontext).include)
-# 	@ echo $($(mycontext).rpath)
-# 	@ echo $($(mycontext).lib)
+#	@ echo link type:   $(LINKINGTYPE)
+#	@ echo context:     $(mycontext)
+#	@ echo context dir: $(mycontextdir)
+#	@ echo target:      $@
+#	@ echo target:      $<
+#	@ echo target:      $^
+#	@ echo contextdir:  $(mycontextdir)
+#	@ echo depdir:      $($(mycontext).depdir)
+#	@ echo include:     $($(mycontext).include)
+#	@ echo rpath:       $($(mycontext).rpath)
+#	@ echo lib:         $($(mycontext).lib)
 	@echo Compiling $@ ...
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -std=c++2a -MM $(mycontextdir)/$*.cpp -MT $@ -MF $($(mycontext).depdir)/$*.d
+ifeq ($(LINKINGTYPE),dynamic)
 	@$(CXX) $(CXXFLAGS_EXECUTABLE) $(CPPFLAGS) $< $($(mycontext).include) $($(mycontext).rpath) $($(mycontext).mylib) -o $@ $(LDLIBS)
+else
+	@$(CXX) $(CXXFLAGS_EXECUTABLE) $(CPPFLAGS) $< $($(mycontext).include)                       $($(mycontext).mylib) -o $@ $(LDLIBS)
+endif
+	cp $@ $(patsubst %.out,%.exe,$@)
 
 -include $($(context).dependencies)
 

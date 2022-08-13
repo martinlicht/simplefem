@@ -28,12 +28,11 @@ $(depdir):
 $(outs): ./%.out: ./%.cpp | $(depdir)
 	@echo Compiling $@ ...
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -MM ./$*.cpp -MT $@ -MF $(depdir)/$*.d
+ifeq ($(LINKINGTYPE),dynamic)
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(includes) $(rpath) $(link) -o $@ $(LDLIBS)
-# ifeq ($(OS),Windows_NT)
-# 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(includes) $(rpath) $(link) -o $@ $(LDLIBS)
-# else
-# 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(includes) $(rpath) $(link) -o $@ $(LDLIBS)
-# endif
+else
+	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(includes)          $(link) -o $@ $(LDLIBS)
+endif
 	
 -include $(dependencies)
 

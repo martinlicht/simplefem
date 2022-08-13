@@ -13,7 +13,7 @@ include ../../common.upkeep.mk
 include ../tests.affices.mk
 
 projectdir:=../../
-pathvar:=$(shell pwd)/../../
+pathvar:=$(CURDIR)/../../
 
 # should be a subdirectory of where the sources are
 depdir := .deps
