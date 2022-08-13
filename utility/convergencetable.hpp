@@ -199,7 +199,7 @@ class ConvergenceTable
                         
                             if( entries[i][j] > 0. and entries[i-1][j] > 0. ) {
 
-                                long double computed_rate = std::log2( entries[i-1][j] / entries[i][j] );
+                                long double computed_rate = (long double)std::log2( entries[i-1][j] / entries[i][j] );
                                 
                                 if( rates_are_float ) { 
                                     printf_into_stream( os, "%*.*Le", nc_rate_width, nc_rate_precision, computed_rate  );

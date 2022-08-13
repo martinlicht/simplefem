@@ -16,7 +16,7 @@
         } \
         std::chrono::steady_clock::time_point end   = std::chrono::steady_clock::now(); \
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count(); \
-        printf( "Sum: %26.20e\t%10ld Microseconds\t", result, duration ); \
+        printf( "Sum: %26.20e\t%10ju Microseconds\t", result, (uintmax_t)duration ); \
         printf( "%s\n", name )
 
         // printf( "Sum: %10.10e\t%10ld%lcs\t", result, duration, L'\u00b5' )

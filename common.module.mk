@@ -7,7 +7,7 @@ SHELL = /bin/bash
 
 
 
-dirname := $(notdir $(shell pwd))
+dirname := $(notdir $(CURDIR))
 depdir  := .deps
 
 sources      := $(wildcard *.cpp)
@@ -21,7 +21,8 @@ sharedlibrary         := lib$(dirname).so
 staticlibrary         := lib$(dirname).a
 
 $(depdir):
-	@mkdir -p $@
+	"mkdir" -p $@
+	@echo $(dirname)
 
 
 .PHONY: make_dependencies
@@ -103,9 +104,11 @@ endif
 .SILENT: list_of_objects
 list_of_objects: 
 	@echo $(dirname);
+	@echo $(staticlibrary);
 	@echo $(sharedlibrary);
 	@echo $(objects);
 	@echo $(dependencies);
+	@echo $(build);
 
 
 # $(sharedlibrary): #$(objects)
