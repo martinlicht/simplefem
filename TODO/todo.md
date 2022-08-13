@@ -31,14 +31,11 @@ requires regular grinding in order to get it done.
 
 
 
-# (HIGH) Retire the communtativity tests 
+# (HIGH) text output
 
-The old test files contain commutativity tests. Those should be retired.
-
-# (HIGH) Retire unnecessary Whitney tests 
-
-Poisson solvers do not need to be tested for Whitney forms. 
-It suffices to keep a complicated example with miex boundary conditions.
+Linear operators should only output the basic information but no raw data.
+This only affects operators with long data: diagonal, dense, sparse 
+All the small parameters should be expressed explicitly
 
 # (HIGH) Abgleichen der Gitterweiten bei solverfem 
 # (HIGH) Floating point exact comparisons ersetzen durch Funktion mit expliziter semantik
@@ -67,17 +64,6 @@ Thus you can always average from the larger into the smaller space.
 
 
 
-# (DONE) Clean out legacy alternative tests in the FEM solver files
-
-Introduce a unit test in solverfem for the Darcy-system; the Maxwell is already there.
-First, clean out the non-block systems, then the block systems.
-Make sure that everything that is deleted has an analogue in the list of solvers.
-The following is recommend:
-- cpp Mass: CGM
-- csr mass: CGM SSOR
-- cpp stiff: 
-- csr stiff: minres csr or CGM SSOR
-- systems: Herzog-Soodhalter mit operator preconditioning
 
 
 # Change the include orders 
@@ -126,25 +112,6 @@ and deactive the automatic newline in the logging object.
 
 
 
-# (HIGH) Introduce a custom check script
-
-Introduce a check script which reports common 'errors' in your cpp file,
-that is, stuff you consider important for the design of your code.
-For example,
-
-  - Replace assert(false) by a project-specific macro
-  - Magic floating point constant in code 
-
-    ```
-    grep --line-number --recursively --color 'assert(' ./*pp
-    grep --line-number --recursively --color 'cout' ./*pp
-    grep --line-number --recursively --color '.*[0-9]' ./*pp
-    grep --line-number --recursively --color '[0-9]e' ./*pp
-    ```
-
-    
-    
-    
 # (HIGH) Rename basic to 'base' or 'general' or 'common'
 
 Basic has the wrong connotation, 
@@ -156,15 +123,6 @@ That will give you a sense of what you should do.
 
 Notes: ---
 
-
-
-
-
-# (DONE) OpenMP pragmas conditional compilation
-
-Every occurence of 'pragma omp' should be included with a conditional compilation.
-This ensures that no compiler warnings about 'unknown pragmas' are issued when you
-compile the code with openMP disabled.
 
 
 
@@ -234,12 +192,9 @@ try to find a good stopping criterion.
 
 # (LOW) Rewrite the unit tests for combinatorics
 
-Generally speaking, the combinatorics unit tests 
-should be more excessive. 
-Don't shy away from testing basically everything 
-you could possibly think of as relevant. 
-Then move on with the same spirit to 'operators' 
-and the other objects.
+Generally speaking, the combinatorics unit tests should be more excessive. 
+Don't shy away from testing basically everything you could possibly think of as relevant. 
+Then move on with the same spirit to 'operators' and the other objects.
 
 
 
@@ -250,13 +205,6 @@ and the other objects.
 
 Include a style checker such as KWstyle 
 and add the necessary configuration files 
-
-# (MEDIUM) Copy assignment operator for mesh classes
-
-Since the copy constructor is defined,
-there should also be an assignment operator
-for the different mesh classes,
-or it should be deleted explicitly.
 
 # (MEDIUM) Solver printing data structure 
 
@@ -618,26 +566,10 @@ package everything into a namespace.
 
 ## (UNCLEAR) Smart Pointers
 
-Should smart pointers be employed throughout the library
-to make it more robust against user malpractice?
+Should smart pointers be employed throughout the library to make it more robust against user malpractice?
 
 
-# DONE!
-
-## (DONE) Clean out 'cout' references throughout code 
-
-grep 'cout' ./*/*.?pp 
-Conduct a clean out of all direct references 
-to the standard preinstalled streams throughout
-the entire project so that the above call
-should only return very few instances in the main code
-and otherwise only stuff in test files.
-
-Moreover, consider replacing all the other stuff
-by references to clog instead of cout.
-
-
-#  VTK OUTPUT 
+#  (UNCLEAR) VTK OUTPUT 
 
 The general philosophy of the VTK module 
 is to treat VTK as an output format alone. 
@@ -651,18 +583,89 @@ http://www.vtk.org/wp-content/uploads/2015/04/file-formats.pdf
 Reading only ASCII
 
 
+
+# DONE!
+
+# (DONE) Rewrite composed operators 
+
+Reduce the code complexity of the composed operators using pointers, flags,
+and templated constructors. This reduces code complexity. 
+Then basically retire the the clone and heir methods.
+
+# (DONE) enable complex coefficients 
+
+Enable complex coefficients in a minimalist fashion:
+compose complex operators from known (real) operators as composed operator
+This should be implemented as a composed operator.
+
+# (DONE) Retire the communtativity tests 
+
+The old test files contain commutativity tests. Those should be retired.
+
+# (DONE) Retire unnecessary Whitney tests 
+
+Poisson solvers do not need to be tested for Whitney forms. 
+It suffices to keep a complicated example with miex boundary conditions.
+
+# (DONE) Clean out legacy alternative tests in the FEM solver files
+
+Introduce a unit test in solverfem for the Darcy-system; the Maxwell is already there.
+First, clean out the non-block systems, then the block systems.
+Make sure that everything that is deleted has an analogue in the list of solvers.
+The following is recommend:
+- cpp Mass: CGM
+- csr mass: CGM SSOR
+- cpp stiff: 
+- csr stiff: minres csr or CGM SSOR
+- systems: Herzog-Soodhalter mit operator preconditioning
+
+# (DONE) Introduce a custom check script
+
+Introduce a check script which reports common 'errors' in your cpp file,
+that is, stuff you consider important for the design of your code.
+For example,
+
+  - Replace assert(false) by a project-specific macro
+  - Magic floating point constant in code 
+
+    ```
+    grep --line-number --recursively --color 'assert(' ./*pp
+    grep --line-number --recursively --color 'cout' ./*pp
+    grep --line-number --recursively --color '.*[0-9]' ./*pp
+    grep --line-number --recursively --color '[0-9]e' ./*pp
+    ```
+
+# (DONE) OpenMP pragmas conditional compilation
+
+Every occurence of 'pragma omp' should be included with a conditional compilation.
+This ensures that no compiler warnings about 'unknown pragmas' are issued when you
+compile the code with openMP disabled.
+
+# (DONE) Copy assignment operator for mesh classes
+
+Since the copy constructor is defined, there should also be an assignment operator
+for the different mesh classes, or it should be deleted explicitly.
+
+## (DONE) Clean out 'cout' references throughout code 
+
+grep 'cout' ./*/*.?pp 
+Conduct a clean out of all direct references 
+to the standard preinstalled streams throughout
+the entire project so that the above call
+should only return very few instances in the main code
+and otherwise only stuff in test files.
+
+Moreover, consider replacing all the other stuff
+by references to clog instead of cout.
+
   
 
-  **** TODO ***
+# TODO
   
   
   - zeige die ersten zeilen aller header dateien an
     for datei in ./*/*.hpp; do head -n 2 $datei; done
     include guards umbenennen 
-  
-  Namespaces
-    - introduce a namespace for FEECPP
-    - subnamespaces below that level 
   
   - class for one-dimensional meshes: graphs with no abandoned nodes
   
