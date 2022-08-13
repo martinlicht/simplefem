@@ -13,11 +13,15 @@
 # # projectdir=../../
 # # pathvar=$(shell pwd)/../../
 
-
+ifeq ($(OS),Windows_NT)
+ending := exe
+else
+ending := out
+endif
 
 $(context).sources := $(sort $(wildcard $(contextdir)/*.cpp))
 
-$(context).outs    := $(patsubst %.cpp,%.out,$($(context).sources))
+$(context).outs    := $(patsubst %.cpp,%.$(ending),$($(context).sources))
 
 $(context).depdir  := $(contextdir)/$(depdir)
 
@@ -44,7 +48,7 @@ endif
 
 .PHONY: $($(context).depdir)
 $($(context).depdir):
-	@mkdir -p $@
+	@-mkdir -p $@
 
 
 
@@ -53,7 +57,7 @@ $($(context).depdir):
 
 $($(context).outs): mycontext    := $(context)
 $($(context).outs): mycontextdir := $(contextdir)
-$($(context).outs): $(contextdir)/%.out: $(contextdir)/%.cpp | $($(context).depdir)
+$($(context).outs): $(contextdir)/%.$(ending): $(contextdir)/%.cpp | $($(context).depdir)
 #	@ echo link type:   $(LINKINGTYPE)
 #	@ echo context:     $(mycontext)
 #	@ echo context dir: $(mycontextdir)
@@ -72,13 +76,13 @@ ifeq ($(LINKINGTYPE),dynamic)
 else
 	@$(CXX) $(CXXFLAGS_EXECUTABLE) $(CPPFLAGS) $< $($(mycontext).include)                       $($(mycontext).mylib) -o $@ $(LDLIBS)
 endif
-	cp $@ $(patsubst %.out,%.exe,$@)
+#	cp $@ $(patsubst %.out,%.exe,$@)
 
 -include $($(context).dependencies)
 
-$($(context).outs): $(contextdir)/%.out: $(contextdir)/makefile 
-$($(context).outs): $(contextdir)/%.out: $(projectdir)/makefile 
-$($(context).outs): $(contextdir)/%.out: $(projectdir)/*.mk $(projectdir)/tests/*.mk
+$($(context).outs): $(contextdir)/%.$(ending): $(contextdir)/makefile 
+$($(context).outs): $(contextdir)/%.$(ending): $(projectdir)/makefile 
+$($(context).outs): $(contextdir)/%.$(ending): $(projectdir)/*.mk $(projectdir)/tests/*.mk
 
 $(context).tests: $($(context).outs)
 

@@ -20,7 +20,8 @@ depdir := .deps
 
 contextdir:=.
 
-context:=$(shell basename $$(pwd))
+# context:=$(shell basename $$(pwd))
+context:=$(shell basename $(CURDIR))
 
 
 build: $(context).tests
