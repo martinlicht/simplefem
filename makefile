@@ -241,5 +241,21 @@ vtkclean: $(vtkclean.components)
 .PHONY: $(vtkclean.components) vtkclean
 
 
+# Find some common issues
+
+grepissues.components :=$(patsubst %,.grepissues.%,$(components) )
+
+$(grepissues.components): .grepissues.%: 
+	@cd ./$* && $(MAKE) --no-print-directory grepissues
+
+grepissues: $(grepissues.components)
+	@cd ./tests && $(MAKE) --no-print-directory grepissues
+	@cd ./benchmarks && $(MAKE) --no-print-directory grepissues
+	@$(MAKE) --no-print-directory -f common.upkeep.mk grepissues
+	@echo "finished cleaning .vtk files." 
+
+.PHONY: $(grepissues.components) grepissues
+
+
 
 
