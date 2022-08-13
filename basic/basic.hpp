@@ -636,7 +636,7 @@ inline std::string timestamp2digitalcode( const timestamp& t )
     const int numdigits = 10;
     const int fulllength = numdigits+1;
     char digits[fulllength];
-    snprintf( digits, fulllength, "%*ld", numdigits, t );
+    snprintf( digits, fulllength, "%*ju", numdigits, (uintmax_t)t );
     for( int i = 0; i < numdigits; i++ ) if( digits[i] == ' ' ) digits[i] = '_';
     return std::string(digits);
 }
@@ -926,7 +926,8 @@ __attribute__ (( format (printf,1,2) ));
 
 
 /******************************************************/
-/*      insert tabs before each line       */
+/*      insert tabs before each line                  */
+/*      pad each line                                 */
 /******************************************************/
 
 inline std::string tab_each_line( std::string str ) // TODO: Move to utilities 
@@ -938,6 +939,22 @@ inline std::string tab_each_line( std::string str ) // TODO: Move to utilities
     }
     return str;
 } 
+
+inline std::string pad_each_line( std::string str, std::string pad )
+{
+    int c = 0;
+    for( int i = 0; i < str.length(); i++ ) if( str[i] == '\n' ) c++;
+    
+    std::string ret = pad;
+    ret.reserve( str.length() + c * pad.length() );
+    for( int i = 0; i < str.length(); i++ )
+    {
+        ret += str[i];
+        if( str[i] == '\n' ) ret += pad.length();
+    }
+    
+    return ret;
+}
 
 
 /******************************************************/

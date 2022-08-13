@@ -127,10 +127,10 @@ int main()
             contable_time.display_convergence_rates  = false;
             contable_res.display_convergence_rates   = false;
             
-            bool do_crmcsr = false; //true;
+            bool do_crmcsr = true;
             bool do_crmcpp = false; //true;
             bool do_blockherzog = false; //true;
-            bool do_blockminres = false; //true;
+            bool do_blockminres = true;
             bool do_systemherzog = true;
             bool do_sparseherzog = false;
             
