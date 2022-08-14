@@ -28,7 +28,7 @@ void IdentityOperator::check() const
 
 std::string IdentityOperator::text() const 
 {
-    return "Identity Operator";
+    return "Identity Operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin());
 }
 
 void IdentityOperator::apply( FloatVector& dest, const FloatVector& src, Float s ) const 
@@ -44,6 +44,53 @@ void IdentityOperator::apply( FloatVector& dest, const FloatVector& src, Float s
     for( int p = 0; p < getdimin(); p++ )
         dest.setentry( p, s * src.getentry( p ) );
         
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ZeroOperator::ZeroOperator( int dimension )
+: LinearOperator( dimension )
+{
+    ZeroOperator::check();
+}
+
+ZeroOperator::~ZeroOperator()
+{
+    ZeroOperator::check();
+}
+
+void ZeroOperator::check() const  
+{
+    LinearOperator::check();
+}
+
+std::string ZeroOperator::text() const 
+{
+    return "Zero Operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin());
+}
+
+void ZeroOperator::apply( FloatVector& dest, const FloatVector& src, Float s ) const 
+{
+    check();
+    src.check();
+    dest.check();
+    
+    assert( getdimin() == getdimout() );
+    assert( getdimin() == src.getdimension() );
+    assert( getdimout() == dest.getdimension() );
+    
+    dest.clear();
 }
 
 

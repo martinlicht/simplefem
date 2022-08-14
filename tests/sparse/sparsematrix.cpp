@@ -2,7 +2,7 @@
 
 /**/
 
-#include <iostream>
+#include <ostream>
 #include "../../basic.hpp"
 #include "../../operators/floatvector.hpp"
 #include "../../sparse/sparsematrix.hpp"
@@ -57,5 +57,5 @@ int main()
 	
 	LOG << "Finished Unit Test: " << TestName << endl;
 
-	return 0;
+    return 0;
 }

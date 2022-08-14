@@ -2,9 +2,9 @@
 
 /**/
 
-#include <iostream>
+#include <ostream>
 #include <fstream>
-#include <iomanip>
+// #include <iomanip>
 
 #include "../../basic.hpp"
 #include "../../utility/utility.hpp"
@@ -18,12 +18,9 @@
 #include "../../mesh/examples2D.hpp"
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/iterativesolver.hpp"
-// #include "../../solver/crm.hpp"
-// #include "../../solver/minres.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
-// #include "../../fem/global.lagrangeincl.hpp"
 #include "../../fem/global.whitneyincl.hpp"
 #include "../../fem/utilities.hpp"
 
@@ -35,7 +32,7 @@ int main()
         
         LOG << "Unit Test for Solution of Neumann Problem" << endl;
         
-        LOG << std::setprecision(10);
+        // LOG << std::setprecision(10);
 
         if(true){
 
@@ -45,21 +42,14 @@ int main()
             
             M.check();
             
+            M.automatic_dirichlet_flags();
+           
+            M.check_dirichlet_flags();
+
+            
             LOG << "Prepare scalar fields for testing..." << endl;
             
 
-            std::function<FloatVector(const FloatVector&)> constant_one
-                = [](const FloatVector& vec) -> FloatVector{
-                        assert( vec.getdimension() == 2 );
-                        return FloatVector({ 1. });
-                    };
-            
-            
-            
-            
-
-
-            
             // std::function<FloatVector(const std::function<FloatVector(const FloatVector&) ) >scalarfield = 
             
             const Float xfeq = 1.;
@@ -70,7 +60,7 @@ int main()
                 [=](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
                     // return FloatVector({ 1. });
-                    return FloatVector({ std::cos( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] ) });
+                    return FloatVector({ std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] ) });
                 };
             
 
@@ -79,8 +69,8 @@ int main()
                     assert( vec.getdimension() == 2 );
                     // return FloatVector({ 1. });
                     return FloatVector( { 
-                            -xfeq * Constants::pi * std::sin( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] ),
-                            -yfeq * Constants::pi * std::cos( xfeq * Constants::pi * vec[0] ) * std::sin( yfeq * Constants::pi * vec[1] ), 
+                            xfeq * Constants::twopi * std::cos( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] ),
+                            yfeq * Constants::twopi * std::sin( xfeq * Constants::twopi * vec[0] ) * std::cos( yfeq * Constants::twopi * vec[1] ), 
                         });
                 };
             
@@ -89,13 +79,13 @@ int main()
                 [=](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
                     return FloatVector({ 
-                        xfeq*xfeq * Constants::pisquare * std::cos( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] )
+                        xfeq*xfeq * Constants::fourpisquare * std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] )
                         +
-                        yfeq*yfeq * Constants::pisquare * std::cos( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] )
+                        yfeq*yfeq * Constants::fourpisquare * std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] )
                      });
                 };
             
-
+            
             
 
             
@@ -105,12 +95,12 @@ int main()
             const int min_l = 0; 
             const int max_l = 8;
             
-            const int min_r = 1;
-            const int max_r = 1;
+            const int min_r = 3;
+            const int max_r = 3;
             
             ConvergenceTable contable("Mass error");
             
-            contable << "u_error" << "du_error" << nl;
+            contable << "u_error" << "du_error" << "residual" << "time" << nl;
             
 
             assert( 0 <= min_l and min_l <= max_l );
@@ -121,9 +111,10 @@ int main()
 
             for( int l = min_l; l <= max_l; l++ ){
                 
-                LOG << "Level: " << l << std::endl;
+                LOG << "Level: " << l << "/" << max_l << std::endl;
                 LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
+                if( l != 0 )
                 for( int r = min_r; r <= max_r; r++ ) 
                 {
                     
@@ -155,18 +146,18 @@ int main()
             
                     // ProductOperator 
 //                     auto stiffness = incmatrix_t * diffmatrix_t * vector_massmatrix * diffmatrix * incmatrix;
-                    auto op1 = incmatrix_t * diffmatrix_t;
-                    auto op2 = op1 * vector_massmatrix;
-                    auto op3 = op2 * diffmatrix;
-                    auto stiffness = op3 * incmatrix;
-                    auto& stiffness_csr = stiffness;
+//                     auto op1 = incmatrix_t * diffmatrix_t;
+//                     auto op2 = op1 * vector_massmatrix;
+//                     auto op3 = op2 * diffmatrix;
+//                     auto stiffness = op3 * incmatrix;
+//                     auto& stiffness_csr = stiffness;
 
-//                     auto opr  = diffmatrix & incmatrix;
-//                     auto opl  = opr.getTranspose(); 
-//                     auto stiffness = opl & ( vector_massmatrix & opr );
+                    auto opr  = diffmatrix & incmatrix;
+                    auto opl  = opr.getTranspose(); 
+                    auto stiffness = opl & ( vector_massmatrix & opr );
                     
-//                     stiffness.sortentries();
-//                     auto stiffness_csr = MatrixCSR( stiffness );
+                    stiffness.sortentries();
+                    auto stiffness_csr = MatrixCSR( stiffness );
                     
                     auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. );
 //                     auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
@@ -184,21 +175,6 @@ int main()
                         FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r-1, function_grad );
                         FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r,   function_rhs  );
                         
-                        FloatVector interpol_one  = Interpolation( M, M.getinnerdimension(), 0, r, constant_one );
-                        
-                        LOG << "...measure kernel component: " << std::flush;
-            
-                        Float average_sol = interpol_one * ( scalar_massmatrix * interpol_sol );
-                        Float average_rhs = interpol_one * ( scalar_massmatrix * interpol_rhs );
-                        
-                        LOG << average_sol << space << average_rhs << endl;
-
-                        LOG << "...measure interpolation commutativity" << endl;
-            
-                        auto commutatorerror_aux = interpol_grad - diffmatrix * interpol_sol;
-                        Float commutatorerror = commutatorerror_aux * ( vector_massmatrix * commutatorerror_aux );
-                        LOG << "commutator error: " << commutatorerror << endl;
-                        
                         LOG << "...compute norms of solution and right-hand side:" << endl;
             
                         Float sol_norm = interpol_sol * ( scalar_massmatrix * interpol_sol );
@@ -215,37 +191,37 @@ int main()
                         
                         LOG << "...iterative solver" << endl;
                         
+                        timestamp start = gettimestamp();
+
                         {
                             sol.zero();
                             MinimumResidualMethod Solver( stiffness_csr );
-//                             PreconditionedConjugateResidualMethod Solver( stiffness_csr, stiffness_invprecon );
-                            Solver.print_modulo        = 1+sol.getdimension();
-                            Solver.max_iteration_count = 4 * sol.getdimension();
-                            timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
-//                             Solver.solve( sol, rhs );
-                            timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                         }
+
+                        timestamp end = gettimestamp();
+                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
                         LOG << "...compute error and residual:" << endl;
             
                         
-                        FloatVector dirterror = interpol_sol  - incmatrix * sol;
-                        FloatVector     error = dirterror - ( ( interpol_one * ( scalar_massmatrix * dirterror ) ) / ( interpol_one * ( scalar_massmatrix * interpol_one ) ) ) * interpol_one;
-                        FloatVector graderror = interpol_grad - diffmatrix * incmatrix * sol;
+                        auto errornorm_aux = interpol_sol  - incmatrix * sol;
+                        auto graderror_aux = interpol_grad - diffmatrix * incmatrix * sol;
                         
-                        Float errornorm       = std::sqrt( error * ( scalar_massmatrix * error ) );
-                        Float graderrornorm   = std::sqrt( graderror * ( vector_massmatrix * graderror ) );
-                        Float residualnorm    = ( rhs - stiffness * sol ).norm();
+                        Float errornorm     = sqrt( errornorm_aux * ( scalar_massmatrix * errornorm_aux ) );
+                        Float graderrornorm = sqrt( graderror_aux * ( vector_massmatrix * graderror_aux ) );
+                        Float residualnorm  = ( rhs - stiffness * sol ).norm();
                         
                         LOG << "error:     " << errornorm    << endl;
                         LOG << "graderror: " << graderrornorm << endl;
                         LOG << "residual:  " << residualnorm << endl;
-                        
-                        
-                        
-                        contable << errornorm << graderrornorm << nl;
+                        LOG << "time:      " << Float( end - start ) << endl;
+
+                        contable << errornorm;
+                        contable << graderrornorm;
+                        contable << residualnorm;
+                        contable << Float( end - start );
+                        contable << nl;
                         
                         contable.lg();
 
@@ -270,9 +246,7 @@ int main()
                     
                 }
 
-                LOG << "Refinement..." << endl;
-            
-                if( l != max_l ) M.uniformrefinement();
+                if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
                 
                 
 

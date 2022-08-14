@@ -59,16 +59,9 @@ public LinearOperator /* every matrix is a linear operator */
 
         /* OTHER METHODS */
         
-        virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override
+        virtual MatrixCSR* pointer_to_heir() && override
         {
-            std::shared_ptr<MatrixCSR> cloned = std::make_shared<MatrixCSR>( *this );
-            return cloned;
-        }
-        
-        virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override
-        {
-            std::unique_ptr<MatrixCSR> heir = std::make_unique<MatrixCSR>( std::move(*this) );
-            return heir;
+            return new typename std::remove_reference<decltype(*this)>::type( std::move(*this) );
         }
         
         
@@ -114,12 +107,29 @@ public LinearOperator /* every matrix is a linear operator */
 
 
 
+MatrixCSR MatrixCSRMultiplication( const MatrixCSR& mat1, const MatrixCSR& mat2 );
+
+MatrixCSR MatrixCSRAddition( const MatrixCSR& mat1, const MatrixCSR& mat2, Float s1, Float s2 );
 
 DiagonalOperator InverseDiagonalPreconditioner( const MatrixCSR& mat );
 
 
 
+inline MatrixCSR operator+( const MatrixCSR& mat1, const MatrixCSR& mat2 )
+{
+//     LOG << "ADD" << nl; 
+    return MatrixCSRAddition( mat1, mat2, 1., 1. );
+}
 
+inline MatrixCSR operator-( const MatrixCSR& mat1, const MatrixCSR& mat2 )
+{
+    return MatrixCSRAddition( mat1, mat2, 1., -1. );
+}
+
+inline MatrixCSR operator&( const MatrixCSR& mat1, const MatrixCSR& mat2 )
+{
+    return MatrixCSRMultiplication( mat1, mat2 );
+}
 
 inline MatrixCSR operator*( const MatrixCSR& mat, Float s )
 {

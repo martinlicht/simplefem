@@ -42,8 +42,7 @@ void LinearOperator::check() const
 
 void LinearOperator::print( std::ostream& os ) const
 {
-    check();
-    os << "Linear operator" << std::endl;
+    os << text();
 }
 
 bool LinearOperator::issquare() const

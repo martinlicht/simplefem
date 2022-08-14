@@ -2,9 +2,9 @@
 
 /**/
 
-#include <iostream>
-#include <fstream>
-#include <iomanip>
+#include <ostream>
+// #include <fstream>
+// #include <iomanip>
 
 #include "../../basic.hpp"
 #include "../../utility/utility.hpp"
@@ -26,7 +26,7 @@ int main()
 {
         LOG << "Unit Test: " << TestName << endl;
         
-        LOG << std::setprecision(5);
+        // LOG << std::setprecision(5);
 
         if(true){
 
@@ -34,9 +34,9 @@ int main()
             ConvergenceTable contable_res("L2 Residual");
             ConvergenceTable contable_num("Iteration percentage");
             
-            contable_sol.print_transpose_instead_of_standard = true;
-            contable_res.print_transpose_instead_of_standard = true;
-            contable_num.print_transpose_instead_of_standard = true;
+            contable_sol.print_rowwise_instead_of_columnwise = true;
+            contable_res.print_rowwise_instead_of_columnwise = true;
+            contable_num.print_rowwise_instead_of_columnwise = true;
             
             bool do_cgmpp      = false;
             bool do_crmpp_expl = false;

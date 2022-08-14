@@ -1,0 +1,15 @@
+#astyle --mode=c --options=none --project=path/to/astylerc --ascii --recursive "./*.cpp,*.hpp,*.cxx" --exclude=".playground" --exclude=".legacy"
+#--style=mozilla
+--attach-namespace 
+--indent=spaces=4
+--indent-classes
+--indent-preproc-cond
+--indent-col1-comments
+--break-blocks 
+--pad-oper 
+--pad-comma
+--unpad-paren
+--pad-paren-in 
+--align-pointer=type 
+--align-reference=type
+--attach-return-type

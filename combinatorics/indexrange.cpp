@@ -4,7 +4,7 @@
 #include <cassert>
 
 #include <algorithm>
-#include <iostream>
+#include <ostream>
 #include <sstream>
 #include <string>
 

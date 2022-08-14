@@ -1,6 +1,6 @@
-#include <iostream>
-#include <fstream>
-#include <iomanip>
+#include <ostream>
+// #include <fstream>
+// #include <iomanip>
 
 #include "../../basic.hpp"
 #include "../../operators/composedoperators.hpp"
@@ -26,7 +26,7 @@ int main()
 {
         LOG << "Unit Test: " << TestName << endl;
         
-        LOG << std::setprecision(10);
+        // LOG << std::setprecision(10);
 
         
         LOG << "Initial mesh..." << endl;
@@ -233,6 +233,24 @@ int main()
         ConvergenceTable contable_scalar[ experiments_scalar_function.size() ];
         ConvergenceTable contable_vector[ experiments_vector_function.size() ];
         ConvergenceTable contable_pseudo[ experiments_pseudo_function.size() ];
+        
+        for( int r = r_min; r <= r_max; r++ ) 
+        {
+            for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
+                contable_scalar[i].table_name = "Numerical errors scalar E" + std::to_string(i);
+            for( int i = 0; i < experiments_vector_function.size(); i++ ) 
+                contable_vector[i].table_name = "Numerical errors vector E" + std::to_string(i);
+            for( int i = 0; i < experiments_pseudo_function.size(); i++ ) 
+                contable_pseudo[i].table_name = "Numerical errors pseudo E" + std::to_string(i);
+        
+            for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
+                contable_scalar[i] << printf_into_string("R%d", r-r_min );
+            for( int i = 0; i < experiments_vector_function.size(); i++ ) 
+                contable_vector[i] << printf_into_string("R%d", r-r_min );
+            for( int i = 0; i < experiments_pseudo_function.size(); i++ ) 
+                contable_pseudo[i] << printf_into_string("R%d", r-r_min );
+        }
+        
         
         for( int l = l_min; l <= l_max; l++ ) 
         {

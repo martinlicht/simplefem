@@ -2,9 +2,9 @@
 
 /**/
 
-#include <iostream>
+#include <ostream>
 #include <fstream>
-#include <iomanip>
+// #include <iomanip>
 
 #include "../../basic.hpp"
 #include "../../utility/utility.hpp"
@@ -18,8 +18,6 @@
 #include "../../mesh/examples2D.hpp"
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/iterativesolver.hpp"
-// #include "../../solver/crm.hpp"
-// #include "../../solver/minres.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.elevation.hpp"
 #include "../../fem/global.massmatrix.hpp"
@@ -39,7 +37,7 @@ int main()
 {
         LOG << "Unit Test: " << TestName << endl;
         
-        LOG << std::setprecision(10);
+        // LOG << std::setprecision(10);
 
         if(true){
 
@@ -97,7 +95,7 @@ int main()
 
             ConvergenceTable contable("Mass error");
             
-            contable << "u_error" << "du_error" << nl;
+            contable << "u_error" << "du_error" << "residual" << "time" << nl;
 
             
             const int r = 1;
@@ -161,31 +159,26 @@ int main()
                 FloatVector     sol(     incmatrix.getdimin(), 0. );
                 FloatVector aug_sol( aug_incmatrix.getdimin(), 0. );
                 
-                LOG << "...iterative solver 1" << endl;
-                
+                timestamp start = gettimestamp();
+
                 {
+                    LOG << "...iterative solver 1" << endl;
+                
                     sol.zero();
-                    MinimumResidualMethod Solver( stiffness_csr );
-                    Solver.print_modulo        = 1+sol.getdimension();
-                    Solver.max_iteration_count = 4 * sol.getdimension();
-                    timestamp start = gettimestamp();
+                    ConjugateGradientMethod Solver( stiffness_csr );
                     Solver.solve( sol, rhs );
-                    timestamp end = gettimestamp();
-                    LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                 }
 
-                LOG << "...iterative solver 2" << endl;
-                
                 {
+                    LOG << "...iterative solver 2" << endl;
+                
                     aug_sol.zero();
-                    MinimumResidualMethod Solver( aug_stiffness_csr );
-                    Solver.print_modulo        = 1+aug_sol.getdimension();
-                    Solver.max_iteration_count = 4 * aug_sol.getdimension();
-                    timestamp start = gettimestamp();
+                    ConjugateGradientMethod Solver( aug_stiffness_csr );
                     Solver.solve( aug_sol, aug_rhs );
-                    timestamp end = gettimestamp();
-                    LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                 }
+
+                timestamp end = gettimestamp();
+                LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
                 LOG << "...compute error and residual:" << endl;
 
@@ -193,14 +186,18 @@ int main()
                 FloatVector graderror = aug_diffmatrix * ( aug_incmatrix * aug_sol - elevation_matrix * incmatrix * sol );
                 Float errornorm       = std::sqrt( error * ( aug_scalar_massmatrix * error ) );
                 Float graderrornorm   = std::sqrt( graderror * ( aug_vector_massmatrix * graderror ) );
-                
+                Float residualnorm  = ( rhs - stiffness * sol ).norm();
+
                 LOG << "error:     " << errornorm    << endl;
                 LOG << "graderror: " << graderrornorm << endl;
-                
-                
+                LOG << "residual:  " << residualnorm << endl;
+                LOG << "time:      " << Float( end - start ) << endl;
                         
-                        
-                contable << errornorm << graderrornorm << nl;
+                contable << errornorm;
+                contable << graderrornorm;
+                contable << residualnorm;
+                contable << Float( end - start );
+                contable << nl;
                 
                 contable.lg();
 
@@ -220,9 +217,7 @@ int main()
             
                 }
                 
-                LOG << "Refinement..." << endl;
-                
-                M.uniformrefinement();
+                if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
                 
 
             } 

@@ -67,16 +67,9 @@ class DenseMatrix final
         
         /* OTHER METHODS */
 
-        virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override 
+        virtual DenseMatrix* pointer_to_heir() && override
         {
-            std::shared_ptr<DenseMatrix> cloned = std::make_shared<DenseMatrix>( *this );
-            return cloned;
-        }
-        
-        virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override 
-        {
-            std::unique_ptr<DenseMatrix> heir = std::make_unique<DenseMatrix>( std::move(*this) );
-            return heir;
+            return new typename std::remove_reference<decltype(*this)>::type( std::move(*this) );
         }
         
         

@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <functional>
 #include <initializer_list>
-#include <iostream>
+#include <ostream>
 #include <string>
 #include <vector>
 
@@ -58,7 +58,7 @@ class IndexMap
         
         void print( std::ostream&, bool embellish = true ) const;
 
-        void lg() { LOG << *this << nl; };
+        // void lg() const { LOG << text() << nl; };
 
         
         /* OTHER METHODS */

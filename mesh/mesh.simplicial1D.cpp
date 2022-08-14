@@ -1,7 +1,7 @@
 
 #include <algorithm>
-#include <fstream>
-#include <iostream>
+// #include <fstream>
+#include <ostream>
 #include <map>
 #include <string>
 #include <utility>
@@ -189,7 +189,7 @@ void MeshSimplicial1D::check() const
     
     #ifdef NDEBUG
     return;
-    #endif
+    #else 
     
     /* 1. Check the array sizes */
     
@@ -299,6 +299,7 @@ void MeshSimplicial1D::check() const
     
     Mesh::check();
     
+    #endif
 }
 
 

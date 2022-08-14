@@ -2,15 +2,6 @@
 #define INCLUDEGUARD_EXAMPLES_UNITEDKINGDOM_HPP
 
 
-#include <cmath>
-#include <algorithm>
-#include <fstream>
-#include <iostream>
-#include <map>
-#include <string>
-#include <utility>
-#include <vector>
-
 #include "mesh.hpp"
 #include "mesh.simplicial2D.hpp"
 

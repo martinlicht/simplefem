@@ -2,9 +2,9 @@
 
 /**/
 
-#include <iostream>
-#include <fstream>
-#include <iomanip>
+#include <ostream>
+// #include <fstream>
+// #include <iomanip>
 
 #include "../basic.hpp"
 #include "../dense/densematrix.hpp"
@@ -24,7 +24,7 @@ int main()
 {
         LOG << "Unit Test: (3D) degree elevation of interpolation has the mass of higher order interpolation" << endl;
         
-        LOG << std::setprecision(10);
+        // LOG << std::setprecision(10);
 
         LOG << "Initial mesh..." << endl;
         

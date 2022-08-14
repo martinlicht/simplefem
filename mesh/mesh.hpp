@@ -2,10 +2,7 @@
 #define INCLUDEGUARD_MESH_MESH_HPP
 
 
-#include <iostream>
-#include <fstream>
-#include <map>
-#include <string>
+#include <ostream>
 #include <utility>
 #include <vector>
 
@@ -51,7 +48,6 @@ const SimplexFlag SimplexFlagDirichlet = 0xF1F1F1F1;
 ****  
 *******************/
 
-
 class Mesh
 {
     
@@ -76,7 +72,9 @@ class Mesh
         
         virtual void print( std::ostream& out ) const = 0;
         
-        void lg() { LOG << *this << std::endl; };
+        // virtual std::string text() const = 0;
+        
+        // // void lg() const { LOG << *this << std::endl; };
         
         
         /* OTHER METHODS */

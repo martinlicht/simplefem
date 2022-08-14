@@ -4,7 +4,7 @@
 
 #include <functional>
 #include <initializer_list>
-#include <iostream>
+#include <ostream>
 #include <string>
 #include <vector>
 
@@ -51,7 +51,7 @@ class MultiIndex final
         
         void print( std::ostream&, bool embellish = false ) const;
 
-        void lg() const { LOG << *this << std::endl; }
+        // void lg() const { LOG << text() << std::endl; }
         
         
         

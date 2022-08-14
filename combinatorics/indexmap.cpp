@@ -2,7 +2,7 @@
 #include "indexmap.hpp"
 
 #include <algorithm>
-#include <iostream>
+#include <ostream>
 
 #include "indexrange.hpp"
 

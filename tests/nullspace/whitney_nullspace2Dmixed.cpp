@@ -2,9 +2,9 @@
 
 /**/
 
-#include <iostream>
+#include <ostream>
 #include <fstream>
-#include <iomanip>
+// #include <iomanip>
 
 #include "../../basic.hpp"
 #include "../../utility/utility.hpp"
@@ -18,6 +18,8 @@
 #include "../../mesh/examples2D.hpp"
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/sparsesolver.hpp"
+#include "../../solver/inv.hpp"
+#include "../../solver/systemsparsesolver.hpp"
 #include "../../solver/iterativesolver.hpp"
 // #include "../../solver/cgm.hpp"
 // #include "../../solver/crm.hpp"
@@ -27,6 +29,7 @@
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.whitneyincl.hpp"
+#include "../../fem/global.elevation.hpp"
 #include "../../fem/utilities.hpp"
 
 
@@ -35,9 +38,9 @@ using namespace std;
 int main()
 {
         
-        LOG << "Unit Test: Compare numerical solvers CRM vs MINRES\n           for Solution of Dirichlet Problem" << endl;
+        LOG << "Unit Test: Compute a nullspace " << endl;
         
-        LOG << std::setprecision(10);
+        // LOG << std::setprecision(10);
 
         if(true){
 
@@ -47,8 +50,9 @@ int main()
             
             Mx.check();
             
-//             Mx.automatic_dirichlet_flags();
+            Mx.automatic_dirichlet_flags();
 
+            
             
             MeshSimplicial2D M;
             
@@ -69,23 +73,22 @@ int main()
 
             LOG << "Nullspace computation" << endl;
 
-            
-            ConvergenceTable contable("Mass error");
+            ConvergenceTable contable("Number of nullvectors");
             
             contable << "#nullvec";
-                        
+            
 
             const int min_l = 0; 
             
-            const int max_l = 6;
+            const int max_l = 4;
             
-            const int min_r = 1; 
+            const int min_r = 2; 
             
-            const int max_r = 1;
+            const int max_r = 2;
             
             const int max_number_of_candidates = 6;
 
-            const int max_number_of_purifications = 2;
+            const int max_number_of_purifications = 1;
 
             assert( 0 <= min_l and min_l <= max_l );
             assert( 0 <= min_r and min_r <= max_r );
@@ -96,71 +99,71 @@ int main()
             for( int l = min_l; l <= max_l; l++ )
             {
                 
-                LOG << "Level: " << l << std::endl;
+                LOG << "Level: " << l << "/" << max_l << std::endl;
                 LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
                 for( int r = min_r; r <= max_r; r++ )
                 {
                     
-                    LOG << "Polynomial degree: " << r << std::endl;
+                    LOG << "Polynomial degree: " << r << "/" << max_r << std::endl;
                     
                     LOG << "...assemble matrices" << endl;
             
-                    SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
-                    
-                    LOG << "...assemble vector mass matrix" << endl;
+                    LOG << "... assemble matrices" << endl;
             
-                    SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
+                    SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r );
                     
-                    LOG << "...assemble differential matrix and transpose" << endl;
+                    // SparseMatrix vector_massmatrix_inv = FEECBrokenMassMatrix_cellwiseinverse( M, M.getinnerdimension(), 1, r   );
+                    
+                    SparseMatrix volume_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r );
 
-                    SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r );
-
+                    SparseMatrix diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r );
                     SparseMatrix diffmatrix_t = diffmatrix.getTranspose();
 
-                    LOG << "...assemble inclusion matrix and transpose" << endl;
-            
-                    SparseMatrix incmatrix = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 0, r );
+                    SparseMatrix vector_incmatrix   = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 1, r   );
+                    SparseMatrix vector_incmatrix_t = vector_incmatrix.getTranspose();
 
-                    SparseMatrix incmatrix_t = incmatrix.getTranspose();
+                    SparseMatrix volume_incmatrix   = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 2, r );
+                    SparseMatrix volume_incmatrix_t = volume_incmatrix.getTranspose();
+                    
+                    SparseMatrix volume_elevationmatrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 2, r-1, 1 );
+                    SparseMatrix volume_elevationmatrix_t = volume_elevationmatrix.getTranspose();
 
-                    LOG << "...assemble stiffness matrix" << endl;
-            
-                    auto opr  = diffmatrix & incmatrix;
-                    auto opl  = opr.getTranspose(); 
+                    auto physical_mass = volume_incmatrix_t * volume_massmatrix * volume_incmatrix;
+
+                    auto mat_A  = vector_incmatrix_t & vector_massmatrix & vector_incmatrix;
+                    mat_A.sortandcompressentries();
                     
-//                     auto stiffness_prelim = opl & ( vector_massmatrix & opr );
-//                     stiffness_prelim.sortentries();
-                    auto stiffness = MatrixCSR( opl & ( vector_massmatrix & opr ) ); // MatrixCSR( stiffness_prelim );
+                    auto mat_Bt = vector_incmatrix_t & diffmatrix_t & volume_elevationmatrix_t & volume_massmatrix & volume_incmatrix; // upper right
+                    mat_Bt.sortandcompressentries();
                     
-                    auto physical_mass = MatrixCSR( incmatrix_t & ( scalar_massmatrix & incmatrix ) );
+                    auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & volume_massmatrix & diffmatrix & volume_elevationmatrix & vector_incmatrix; // lower bottom
+                    mat_B.sortandcompressentries();
                     
-                    auto stiffness_diagonal = SparseMatrix( DiagonalOperator( vector_massmatrix.diagonal() ) );
-                    assert( stiffness_diagonal.issquare() );
-                    assert( stiffness_diagonal.getdimin() == opr.getdimout() );
-                    auto simplified_stiffness = MatrixCSR( opl & ( stiffness_diagonal & opr ) );
+                    auto A  = MatrixCSR( mat_A  );
+                    auto Bt = MatrixCSR( mat_Bt );
+                    auto B  = MatrixCSR( mat_B  );
                     
-                    auto idea_prelim = opl & opr;
-                    idea_prelim.sortentries();
-                    auto idea = MatrixCSR( idea_prelim );
-                    
-                    const auto& SystemMatrix = stiffness;
-//                     const auto& SystemMatrix = simplified_stiffness;
+                    auto Z  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
                     
                     
-                    assert( SystemMatrix.diagonal().isfinite() );
                     
-//                     LOG << SystemMatrix << endl;
+//                     auto SystemMatrix = B * inv( A, 1e-10, 0 ) * Bt;
+                    const auto SystemMatrix = B * inv( A, desired_precision, 1 ) * Bt;
+                    
+                    const auto& mass = physical_mass;
+                    
+                    
+                    
+                    
+                    
                     
                     std::vector<FloatVector> nullvectorgallery;
                     
-                    const auto& mass = physical_mass;
-//                     const auto& mass = IdentityMatrix(physical_mass.getdimin());
                     
                     for( int no_candidate = 0; no_candidate < max_number_of_candidates; no_candidate++ )
                     {
-                        
-                        FloatVector candidate( opr.getdimin(), 0. ); 
+                        FloatVector candidate( Bt.getdimin(), 0. ); 
                         candidate.random(); 
                         candidate.normalize(mass);
                         
@@ -181,24 +184,29 @@ int main()
                             }
                         }
                         
-                        
                         /* reduce the candidate to its nullspace component */
                         {
-                            FloatVector rhs( opr.getdimin(), 0. );
+                            FloatVector rhs( Bt.getdimin(), 0. );
                         
                             FloatVector residual( rhs );
                             
                             for( int t = 0; t < max_number_of_purifications; t++ )
                             {
                                 
-                                ConjugateResidualSolverCSR( 
-                                    candidate.getdimension(), 
+                                HodgeConjugateResidualSolverCSR_SSOR(
+                                    B.getdimout(), 
+                                    A.getdimout(), 
                                     candidate.raw(), 
                                     rhs.raw(), 
-                                    SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
+                                    A.getA(),   A.getC(),  A.getV(), 
+                                    B.getA(),   B.getC(),  B.getV(), 
+                                    Bt.getA(), Bt.getC(), Bt.getV(), 
+                                    Z.getA(),   Z.getC(),  Z.getV(), 
                                     residual.raw(),
+                                    desired_precision, 
+                                    -1,
                                     desired_precision,
-                                    0
+                                    -1
                                 );
                                 
                                 LOG << "\t\t\t (eucl) delta:     " << ( residual - rhs + SystemMatrix * candidate ).norm() << std::endl;
@@ -212,34 +220,14 @@ int main()
                                 LOG << "\t\t\t (eucl) b - Ax:    " << ( SystemMatrix * candidate - rhs ).norm() << std::endl;
                                 LOG << "\t\t\t (mass) b - Ax:    " << ( SystemMatrix * candidate - rhs ).norm( mass ) << std::endl;
                                 
-                                
                                 candidate.normalize( mass );
-
+                                
                                 assert( candidate.isfinite() );
                                 
                                 LOG << "\t\t\t (norm eucl) x:         " << candidate.norm() << std::endl;
                                 LOG << "\t\t\t (norm mass) x:         " << candidate.norm( mass ) << std::endl;
                                 LOG << "\t\t\t (norm eucl) Ax:        " << ( SystemMatrix* candidate ).norm() << std::endl;
                                 LOG << "\t\t\t (norm mass) Ax:        " << ( SystemMatrix * candidate ).norm( mass ) << std::endl;
-                                
-                                
-//                                 FloatVector zero( candidate.getdimension(), 0. );
-//                                 FloatVector residual( candidate.getdimension(), 0. );
-//                                 
-//                                 ConjugateResidualSolverCSR( 
-//                                     zero.getdimension(), 
-//                                     zero.raw(), 
-//                                     candidate.raw(), 
-//                                     SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
-//                                     residual.raw(),
-//                                     desired_precision,
-//                                     0
-//                                 );
-//                                 candidate = residual;
-//                                 candidate.normalize( mass );
-                                
-                                
-                                
                                 
                             }
                         }
@@ -267,7 +255,7 @@ int main()
                         
                         LOG << "\t\t\t Numerical residual: " << residual_mass << std::endl;
                         
-                        if( residual_mass > 1e-6 ) {
+                        if( false and residual_mass > 1e-6 ) {
                             LOG << "!!!!!!!!!!!!!Discard vector because not nullspace enough!" << std::endl;
                             continue;
                         }
@@ -284,17 +272,18 @@ int main()
                     
                     LOG << "How much nullspace are our vectors?" << nl;
                     for( const auto& nullvector : nullvectorgallery ) {
-                        LOG << std::showpos << std::scientific << std::setprecision(5) << std::setw(10) << ( SystemMatrix * nullvector ).norm(mass) << tab;
+                        // LOG << std::showpos << std::scientific << std::setprecision(5) << std::setw(10) << ( SystemMatrix * nullvector ).norm(mass) << tab;
                     }
                     LOG << nl;
                     
                     LOG << "How orthonormal are our vectors?" << nl;
                     for( const auto& nullvector1 : nullvectorgallery ) {
                         for( const auto& nullvector2 : nullvectorgallery ) {
-                            LOG << std::showpos << std::scientific << std::setprecision(5) << std::setw(10) << mass * nullvector1 * nullvector2 << tab;
+                            // LOG << std::showpos << std::scientific << std::setprecision(5) << std::setw(10) << mass * nullvector1 * nullvector2 << tab;
                         }
                         LOG << nl;
                     }
+                    
                     
                     
                     contable << static_cast<Float>(nullvectorgallery.size());   
@@ -317,7 +306,7 @@ int main()
 //                                 sol.getdimension(), 
 //                                 sol.raw(), 
 //                                 rhs.raw(), 
-//                                 SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
+//                                 mat.getA(), mat.getC(), mat.getV(),
 //                                 residual.raw(),
 //                                 desired_precision,
 //                                 1
@@ -327,14 +316,14 @@ int main()
 //                             assert( sol.isfinite() );
 //                             
 //                             LOG << "\t\t\t x:         " << sol.norm( mass ) << std::endl;
-//                             LOG << "\t\t\t Ax:        " << ( SystemMatrix * sol ).norm( mass ) << std::endl;
-//                             LOG << "\t\t\t b - Ax:    " << ( SystemMatrix * sol - rhs ).norm( mass ) << std::endl;
+//                             LOG << "\t\t\t Ax:        " << ( mat * sol ).norm( mass ) << std::endl;
+//                             LOG << "\t\t\t b - Ax:    " << ( mat * sol - rhs ).norm( mass ) << std::endl;
 //                         
 //                         }
 //                         
 //                         
 //                         
-//                         contable << sol.norm( mass ) << ( SystemMatrix * sol ).norm( mass );
+//                         contable << sol.norm( mass ) << ( mat * sol ).norm( mass );
 //                         
 //                         
 //                         if( r == 1 ) {
@@ -363,9 +352,7 @@ int main()
                     
                 }
 
-                LOG << "Refinement..." << endl;
-            
-                if( l != max_l ) M.uniformrefinement();
+                if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
 
                 contable << nl;
                 
@@ -384,6 +371,7 @@ int main()
         
         return 0;
 }
+
 
 
 

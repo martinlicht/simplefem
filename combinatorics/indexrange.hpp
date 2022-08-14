@@ -2,7 +2,7 @@
 #define INCLUDEGUARD_COMBINATORICS_INDEXRANGE_HPP
 
 
-#include <iostream>
+#include <ostream>
 #include <limits>
 #include <string>
 
@@ -40,7 +40,7 @@ class IndexRange final
         
         void print( std::ostream&, bool embellish = true ) const;
 
-        void lg() { LOG << *this << std::endl; };
+        // void lg() const { LOG << text() << std::endl; };
         
         /* OTHER METHODS */
 
@@ -150,8 +150,6 @@ inline bool operator!= ( const IndexRange& ir1, const IndexRange& ir2 )
 static const IndexRange  NonNegativeIntegers = IndexRange( 0, std::numeric_limits<int>::max()-10 );
 
 static const IndexRange  PositiveIntegers    = IndexRange( 1, std::numeric_limits<int>::max()-10 );
-
-
 
 
 

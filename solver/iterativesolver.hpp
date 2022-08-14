@@ -2,7 +2,7 @@
 #define INCLUDEGUARD_SOLVER_ITERATIVESOLVER
 
 
-#include <iostream>
+#include <ostream>
 #include <limits>
 
 #include "../basic.hpp"
@@ -27,7 +27,7 @@ struct IterativeSolver
         verbose = 2
     };
     
-    explicit IterativeSolver( Float threshold = 10000 * machine_epsilon, int max_iteration_count = 0, int print_modulo = -1 )
+    explicit IterativeSolver( Float threshold = desired_precision, int max_iteration_count = 0, int print_modulo = -1 )
     : threshold( threshold ), 
         recent_deviation( 0. ), 
         max_iteration_count( max_iteration_count ),
@@ -52,12 +52,9 @@ struct IterativeSolver
 //         assert( print_modulo >= 0 );
     }
 
-    virtual void print( std::ostream& os ) const
-    {
-        os << "Print Iterative Solver." << std::endl;
-    }
+    virtual std::string text() const = 0;
 
-    void lg() { LOG << *this << std::endl; };
+//     // void lg() const { LOG << *this << std::endl; };
 
     virtual void solve( FloatVector& unknown, const FloatVector& rhs ) const = 0;
 
@@ -78,9 +75,7 @@ struct IterativeSolver
 
 inline std::ostream& operator<<( std::ostream& os, const IterativeSolver& solver )
 {
-    solver.check();
-    solver.print( os );
-    solver.check();
+    os << solver.text();
     return os;
 }
 
@@ -118,7 +113,7 @@ class ConjugateGradientMethod
                 virtual ~ConjugateGradientMethod();
 
                 virtual void check() const override;
-                virtual void print( std::ostream& ) const override;
+                virtual std::string text() const override;
                 
                 virtual void solve( FloatVector&, const FloatVector& ) const override;
 
@@ -164,7 +159,7 @@ class ConjugateResidualMethod
                 virtual ~ConjugateResidualMethod();
 
                 virtual void check() const override;
-                virtual void print( std::ostream& ) const override;
+                virtual std::string text() const override;
                 
                 virtual void solve( FloatVector&, const FloatVector& ) const override;
 
@@ -220,7 +215,7 @@ class PreconditionedConjugateResidualMethod
         virtual ~PreconditionedConjugateResidualMethod();
 
         virtual void check() const override;
-        virtual void print( std::ostream& ) const override;
+        virtual std::string text() const override;
         
         virtual void solve( FloatVector&, const FloatVector& ) const override;
         
@@ -263,7 +258,7 @@ class MinimumResidualMethod
                 virtual ~MinimumResidualMethod();
 
                 virtual void check() const override;
-                virtual void print( std::ostream& ) const override;
+                virtual std::string text() const override;
                 
                 virtual void solve( FloatVector&, const FloatVector& ) const override;
 
@@ -296,7 +291,7 @@ class ResidualDescentMethod
                 virtual ~ResidualDescentMethod();
 
                 virtual void check() const override;
-                virtual void print( std::ostream& ) const override;
+                virtual std::string text() const override;
                 
                 virtual void solve( FloatVector&, const FloatVector& ) const override;
 
@@ -337,7 +332,7 @@ class HerzogSoodhalterMethod
                 virtual ~HerzogSoodhalterMethod();
 
                 virtual void check() const override;
-                virtual void print( std::ostream& ) const override;
+                virtual std::string text() const override;
                 
                 virtual void solve( FloatVector&, const FloatVector& ) const override;
 

@@ -2,8 +2,8 @@
 
 /**/
 
-#include <iostream>
-#include <fstream>
+#include <ostream>
+// #include <fstream>
 
 #include "../../basic.hpp"
 #include "../../mesh/coordinates.hpp"
@@ -44,19 +44,22 @@ int main()
             };
             
             LOG << "\n... k=0" << endl;
-            for( int r = 0; r <  3; r++ )
-                Interpolation( M, M.getinnerdimension(), 0, r, scalarfield ),
+            for( int r = 0; r <  3; r++ ) {
+                Interpolation( M, M.getinnerdimension(), 0, r, scalarfield );
                 LOG << " r=" << r;
+            }
             
             LOG << "\n... k=1" << endl;
-            for( int r = 0; r <  3; r++ )
-                Interpolation( M, M.getinnerdimension(), 1, r, vectorfield ),
+            for( int r = 0; r <  3; r++ ) {
+                Interpolation( M, M.getinnerdimension(), 1, r, vectorfield );
                 LOG << " r=" << r;
+            }
             
             LOG << "\n... k=2" << endl;
-            for( int r = 0; r <  3; r++ )
-                Interpolation( M, M.getinnerdimension(), 2, r, scalarfield ),
+            for( int r = 0; r <  3; r++ ) {
+                Interpolation( M, M.getinnerdimension(), 2, r, scalarfield );
                 LOG << " r=" << r;
+            }
 
         }
         

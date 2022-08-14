@@ -1,4 +1,4 @@
-#include <iostream>
+#include <ostream>
 #include <utility>
 #include <vector>
 
@@ -10,7 +10,7 @@
 #include "../combinatorics/generatemultiindices.hpp"
 
 
-// #include "../fem/indexfunctions.hpp"
+#include "../fem/indexfunctions.hpp"
 
 std::vector< std::pair<MultiIndex,IndexMap> > ListOfSullivanIndices( int n, int k, int r )
 {

@@ -1,3 +1,4 @@
+
 SHELL = /bin/sh
 
 
@@ -56,11 +57,9 @@ build.components   :=$(patsubst %,.build.%,   $(components) )
 build.components.a :=$(patsubst %,.build.%.a, $(components) )
 build.components.so:=$(patsubst %,.build.%.so,$(components) )
 
-build: $(build.components) .build.tests .build.benchmarks
+build: .build.modules .build.tests .build.benchmarks
 
-$(build.components): .build.%: %
-	@echo Build: $*
-	@cd ./$* && $(MAKE) --no-print-directory build
+.build.modules: $(build.components)
 
 .build.tests:
 	@echo Build tests
@@ -73,6 +72,10 @@ $(build.components): .build.%: %
 .build.a:  $(build.components.a)
 
 .build.so: $(build.components.so)
+
+$(build.components): .build.%: %
+	@echo Build: $*
+	@cd ./$* && $(MAKE) --no-print-directory build
 
 $(build.components.a): .build.%.a:
 	@echo Build A: $*
@@ -152,7 +155,8 @@ cppcheck: $(cppcheck.components)
 # Call 'cpplint' 
 
 cpplint:
-	@( ./Tools/cpplint.py --exclude=tests/* --exclude=tests/*/* --exclude=.legacy/* --exclude=.private/* --exclude=.playground/* --recursive --filter=-whitespace,-legal --quiet . ) | sort | uniq -c 2> OUTPUT_CPPLINT.txt
+#	@ cpplint --exclude=tests/* --exclude=tests/*/* --exclude=.legacy/* --exclude=.private/* --exclude=.playground/* --exclude=tests/.legacy/ --recursive --filter=-readability/todo,-build/header_guard,-build/include,-readability/alt_tokens,-whitespace,-legal --quiet . 2>&1 | sort | uniq -c > OUTPUT_CPPLINT.txt ; cat OUTPUT_CPPLINT.txt
+	@ ./Tools/cpplint.py --exclude=tests/* --exclude=tests/*/* --exclude=.legacy/* --exclude=.private/* --exclude=.playground/* --exclude=tests/.legacy/ --recursive --filter=-readability/todo,-build/header_guard,-build/include,-readability/alt_tokens,-whitespace,-legal --quiet . 2>&1 | sort | uniq -c > OUTPUT_CPPLINT.txt ; cat OUTPUT_CPPLINT.txt
 
 .PHONY: cpplint
 
@@ -235,6 +239,22 @@ vtkclean: $(vtkclean.components)
 	@echo "finished cleaning .vtk files." 
 
 .PHONY: $(vtkclean.components) vtkclean
+
+
+# Find some common issues
+
+grepissues.components :=$(patsubst %,.grepissues.%,$(components) )
+
+$(grepissues.components): .grepissues.%: 
+	@cd ./$* && $(MAKE) --no-print-directory grepissues
+
+grepissues: $(grepissues.components)
+	@cd ./tests && $(MAKE) --no-print-directory grepissues
+	@cd ./benchmarks && $(MAKE) --no-print-directory grepissues
+	@$(MAKE) --no-print-directory -f common.upkeep.mk grepissues
+	@echo "finished cleaning .vtk files." 
+
+.PHONY: $(grepissues.components) grepissues
 
 
 

@@ -2,9 +2,9 @@
 
 /**/
 
-#include <iostream>
-#include <fstream>
-#include <iomanip>
+#include <ostream>
+// #include <fstream>
+// #include <iomanip>
 
 #include "../../basic.hpp"
 #include "../../operators/composedoperators.hpp"
@@ -33,7 +33,7 @@ int main()
 {
         LOG << "Unit Test: " << TestName << endl;
         
-        LOG << std::setprecision(10);
+        // LOG << std::setprecision(10);
 
         LOG << "Initial mesh..." << endl;
         
@@ -118,6 +118,12 @@ int main()
     
         ConvergenceTable contable[ M.getinnerdimension()+1 ];
         
+        for( int k = 0; k <= M.getinnerdimension(); k++ ) 
+            contable->table_name = "Rounding errors D1K" + std::to_string(k);
+        for( int k = 0; k <= M.getinnerdimension(); k++ ) 
+        for( int r = r_min; r <= r_max; r++ ) 
+            contable[k] << ( "R" + std::to_string(r-r_min) );
+
         for( int k = 0; k <= M.getinnerdimension(); k++ ) 
         for( int l = l_min; l <= l_max; l++ ) 
         {

@@ -1,5 +1,5 @@
 
-#include <iostream>
+#include <ostream>
 #include <vector>
 
 #include "../basic.hpp"
@@ -13,7 +13,7 @@
 
 #include "../fem/local.polynomialmassmatrix.hpp"
 
-// #include "../fem/global.massmatrix.hpp"
+#include "../fem/global.massmatrix.hpp"
 
 
 
