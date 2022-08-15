@@ -568,7 +568,7 @@ int main()
 
                             timestamp start = gettimestamp();
                             int recent_iteration_count =
-                            CheybyshevIteration_DiagonalPreconditioner( 
+                            ChebyshevIteration_DiagonalPreconditioner( 
                                 mysol.getdimension(), 
                                 mysol.raw(), 
                                 rhs.raw(), 

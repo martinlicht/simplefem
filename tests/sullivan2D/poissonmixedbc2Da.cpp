@@ -205,7 +205,6 @@ int main()
 
                         timestamp start = gettimestamp();
 
-                        // if(false)
                         {
                             LOG << "CGM - Classic" << endl;
                         

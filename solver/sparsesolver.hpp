@@ -97,7 +97,7 @@ int WHATEVER(
 // The Convergence of Inexact Chebyshev and Richardson Iterative Methods for Solving Linear Systems
 
 
-int CheybyshevIteration_DiagonalPreconditioner( 
+int ChebyshevIteration_DiagonalPreconditioner( 
     const int N, 
     Float* __restrict__ x, 
     const Float* __restrict__ b, 

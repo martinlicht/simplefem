@@ -21,8 +21,8 @@ sharedlibrary         := lib$(dirname).so
 staticlibrary         := lib$(dirname).a
 
 $(depdir):
-	"mkdir" -p $@
-	@echo $(dirname)
+	@"mkdir" -p $@
+#	@echo $(dirname)
 
 
 .PHONY: make_dependencies

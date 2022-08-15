@@ -16,8 +16,10 @@ int main()
     PING;
     PING;
     PING;
-    LOG << "Dies ist ein test!" << 5 << nl;
+    LOG << "This is a test! " << 5 << nl;
     LOGPRINTF( "%i%c%d\n", 1, '-', 3 );
+    LOGPRINTF( "0.123456789e-7: %e\n",   (double)     0.1234567890123456789e-7 );
+    LOGPRINTF( "0.123456789e-7: % Le\n", (long double)0.1234567890123456789e-7 );
     PING;
     // openContext();
     NOTE "";

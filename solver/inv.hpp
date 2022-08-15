@@ -37,12 +37,10 @@ class InverseOperator final
         { 
             assert( op.getdimin() == op.getdimout() );
             
-            LOG << "Inverse created" << "" << nl; 
+            LOG << "Inverse created" << nl; 
         }
         
-        virtual ~InverseOperator() { 
-            LOG << "Inverse destroyed" << "" << nl;
-        }
+        virtual ~InverseOperator() = default;
 
         virtual InverseOperator* pointer_to_heir() && override
         {

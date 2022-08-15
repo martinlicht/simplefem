@@ -207,7 +207,7 @@ int main()
 
                         {
                             sol.zero();
-                            MinimumResidualMethod Solver( stiffness_csr );
+                            ConjugateGradientMethod Solver( stiffness_csr );
                             Solver.solve( sol, rhs );
                         }
 

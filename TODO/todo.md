@@ -37,7 +37,22 @@ Linear operators should only output the basic information but no raw data.
 This only affects operators with long data: diagonal, dense, sparse 
 All the small parameters should be expressed explicitly
 
-# (HIGH) Abgleichen der Gitterweiten bei solverfem 
+The dense matrix and float vector classes should implement extra output methods 
+for the raw data. They parameters for the desired precision, whether indices should be printed,
+and for format (row/column and matrix/list).
+
+All operators show return the 'this' pointer in their print methods.
+
+# (HIGH) Implement Hodge star operation 
+
+# (HIGH) Traces, locally and globally 
+
+[ ] Determine the orientation of a facet induced by its supersimplex 
+[ ] Trace and extension: just the inclusion of the spanning set and its transpose 
+[ ] Global trace, incl. orientation and boundary behavior
+
+# (HIGH) AFW-Basis of Sullivan forms
+
 # (HIGH) Floating point exact comparisons ersetzen durch Funktion mit expliziter semantik
 
 # (HIGH) Augmented integration in all numerical tests 
@@ -47,7 +62,15 @@ interpolation quality of the right-hand side. Notably, if 'r_plus == 0', then th
 a fallback that avoid repeated computation of the mass matrix.
 Similarly, the errors should be computed with augmented integration.
 
+# (HIGH) Clean up unit tests for the numerical examples 
 
+[ ] Don't compute the norms of the solutions and the rhs unless necessary 
+[ ] Don't use MINRES unless necessary 
+[ ] Remove legacy comments, try to localize the structure.
+
+# (HIGH) Output of solver component 
+
+The solver component outputs should all contain the iteration number if possible.
 
 # (MEDIUM) Averaging for Sullivan and Whitney spaces
 
@@ -61,12 +84,28 @@ Thus you can always average from the larger into the smaller space.
 
 # (MEDIUM) preparing for multigrid
 
+# (MEDIUM) clean up DenseMatrix subsystem 
+
+The following modules look reasonable
+- simple solvers 
+- general solvers (Gauss-Jordan, QR, Cholesky -> inverse )
+- simple scalar functions
+- complicated operations (transpose,determinant,tensorproduct)
+- readwrite is never used: retire 
+
+
+# (MEDIUM) Inverse operators via templates 
+
+Use templates for the inverse operators to implement the 'composed operator' behavior.
+Determine the type of solver at compile time depending on the operator class.
+This requires a unified solver interface.
 
 
 
 
 
-# Change the include orders 
+
+# (HIGH) Change the include orders 
 
 Go from the most general down to the most specific.
 This ensures any overwriting of macros stays local.
@@ -114,14 +153,19 @@ and deactive the automatic newline in the logging object.
 
 # (HIGH) Rename basic to 'base' or 'general' or 'common'
 
-Basic has the wrong connotation, 
-it makes more sense to call it 'base' or 'general'.
+Basic has the wrong connotation, it makes more sense to call it 'base' or 'general'.
 
-Make a survey of a few important projects to get a sense
-of what name you should use for this one. 
+Make a survey of a few important projects to get a sense of what name you should use for this one. 
 That will give you a sense of what you should do.
 
-Notes: ---
+Examples: base, common, core, general, std
+MFEM: general 
+Feelpp: core
+Lifev: core 
+ngsolve std 
+Fenics: common
+
+
 
 
 
@@ -312,7 +356,6 @@ Not much is to be done here but everything should look fine and reasonable.
 Go through all the methods and features in the combinatorics module and write tests for that.
 Find ways to test everything independent of the screen output.
 
-
 ## (LOW) Operators unit tests 
 Go through all the methods of the Float vectors and write tests for that
 Find ways to test the composition operators efficiently.
@@ -329,12 +372,13 @@ Go over the composition operators and check that they do not change the outcome 
 Go through all the solvers and write useful convergence tests for each of those.
 You can group them by matrix-type.
 
-
 ## (LOW) Mesh unit tests 
 The unit tests are okay but should be rewritten to make everything seamless and consistent.
 
 ## (LOW) VTK unit tests 
 There is not much to be written here.
+
+
 
 # (LOW) interesting meshes
 
@@ -360,26 +404,10 @@ we can and should turn them into non-member operators.
 
 # (LOW) Gerschgorin circles for Dense and Sparse Matrices
   
-  implement the gerschgorin row/column circles and the corresponding maximal estimates 
+implement the gerschgorin row/column circles and the corresponding maximal estimates 
 
 
 
-
-# (LOW) Different elementary solvers 
-  
-  Implement solution algorithms for special matrix types:
-  - diagonal solve 
-  - left/right triagonal solve 
-  - unit left/right/ triagonal solve 
-  - averages between left and right solves 
-  
-# (LOW) Check diagonal and triangular
-
-# (LOW) Implement LU decomposition with different strategies 
-  
-  The LU decomposition needs to be implemented 
-  with different pivoting strategies:
-  row, column, or full pivot. 
 
   
   
@@ -439,6 +467,20 @@ Generally, there should only be a few commands to describe what is happening.
 # TODO UNCLEAR UTILITY
 
 
+# (UNCLEAR) Implement LU decomposition with different strategies 
+  
+  The LU decomposition needs to be implemented 
+  with different pivoting strategies:
+  row, column, or full pivot. 
+
+# (UNCLEAR) Different elementary solvers 
+  
+  Implement solution algorithms for special matrix types:
+  - diagonal solve 
+  - left/right triagonal solve 
+  - unit left/right/ triagonal solve 
+  - averages between left and right solves 
+  
 ## (UNCLEAR) warning command 
 
 add a warning function to the core functionality 
@@ -584,6 +626,76 @@ Reading only ASCII
 
 
 
+
+
+
+
+# TODO
+  
+  
+  - zeige die ersten zeilen aller header dateien an
+    for datei in ./*/*.hpp; do head -n 2 $datei; done
+    include guards umbenennen 
+  
+  - class for one-dimensional meshes: graphs with no abandoned nodes
+  
+  
+  
+  
+  
+  
+  
+  
+  - hash-tabelle 
+  
+  
+
+  
+  
+  
+  
+  https://scicomp.stackexchange.com/questions/23882/what-is-a-common-file-data-format-for-a-mesh-for-fem
+  Gmsh file format: http://gmsh.info/doc/texinfo/gmsh.html
+  Gambit:           http://web.stanford.edu/class/me469b/handouts/gambit_write.pdf
+  
+  Question:
+    - how to manage unit test for a software library?
+    - how to manage makefiles? what dependencies to make explicit?
+  
+  Documentation:
+    Sphinx seems viable 
+    http://www.sphinx-doc.org/en/stable/
+    Videos at 
+    https://en.wikipedia.org/wiki/Sphinx_(documentation_generator)
+    Could be used for personal websites 
+    
+  todo-listen in jedem modul:
+    - liste der klassen und standard punkte 
+      - fertig
+      - check
+      - unittest 
+    - liste der methodenpakete und standard punkte 
+      - unittest 
+    - Feature liste welche erwuenscht ist: near/far future 
+    
+  unit test layout:
+    logstream that is reference to std::cout 
+    TEST_DECL_MODULE( str );
+    TEST_DECL_CLASS ( str );
+    TEST_DECL_BASIC (     );
+    TEST_DECL_TOPIC ( str );
+    TEST_ANNOUNCE();
+    
+    
+
+
+
+
+
+
+
+
+
 # DONE!
 
 # (DONE) Rewrite composed operators 
@@ -659,61 +771,5 @@ Moreover, consider replacing all the other stuff
 by references to clog instead of cout.
 
   
+# (DONE) Abgleichen der Gitterweiten bei solverfem 
 
-# TODO
-  
-  
-  - zeige die ersten zeilen aller header dateien an
-    for datei in ./*/*.hpp; do head -n 2 $datei; done
-    include guards umbenennen 
-  
-  - class for one-dimensional meshes: graphs with no abandoned nodes
-  
-  
-  
-  
-  
-  
-  
-  
-  - hash-tabelle 
-  
-  
-
-  
-  
-  
-  
-  https://scicomp.stackexchange.com/questions/23882/what-is-a-common-file-data-format-for-a-mesh-for-fem
-  Gmsh file format: http://gmsh.info/doc/texinfo/gmsh.html
-  Gambit:           http://web.stanford.edu/class/me469b/handouts/gambit_write.pdf
-  
-  Question:
-    - how to manage unit test for a software library?
-    - how to manage makefiles? what dependencies to make explicit?
-  
-  Documentation:
-    Sphinx seems viable 
-    http://www.sphinx-doc.org/en/stable/
-    Videos at 
-    https://en.wikipedia.org/wiki/Sphinx_(documentation_generator)
-    Could be used for personal websites 
-    
-  todo-listen in jedem modul:
-    - liste der klassen und standard punkte 
-      - fertig
-      - check
-      - unittest 
-    - liste der methodenpakete und standard punkte 
-      - unittest 
-    - Feature liste welche erwuenscht ist: near/far future 
-    
-  unit test layout:
-    logstream that is reference to std::cout 
-    TEST_DECL_MODULE( str );
-    TEST_DECL_CLASS ( str );
-    TEST_DECL_BASIC (     );
-    TEST_DECL_TOPIC ( str );
-    TEST_ANNOUNCE();
-    
-    

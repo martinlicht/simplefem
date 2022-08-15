@@ -14,6 +14,11 @@ int main()
 
     /* output floating-point parameters */
 
+    printf("    \nsizes of floating-point types\n");
+    printf("    size of float       : %ju\n", (uintmax_t)sizeof(      float) );
+    printf("    size of double      : %ju\n", (uintmax_t)sizeof(     double) );
+    printf("    size of long double : %ju\n", (uintmax_t)sizeof(long double) );
+    
     printf("    \nFloating-point mode flags\n");
     printf("    FLT_ROUNDS      : %ld\n", (long) FLT_ROUNDS      );
     printf("    FLT_EVAL_METHOD : %ld\n", (long) FLT_EVAL_METHOD );
@@ -31,12 +36,14 @@ int main()
     printf("    FLT/DBL/LDBL_HAS_SUBNORM : %ld\t%ld\t%ld\n", (long) FLT_HAS_SUBNORM, (long) DBL_HAS_SUBNORM, (long) LDBL_HAS_SUBNORM );
 
     printf("    \nFloating-point Minima and Maxima\n");
-    printf("    FLT/DBL/LDBL_TRUE_MIN : %Le\t%Le\t%Le\n", (long double) FLT_TRUE_MIN, (long double) DBL_TRUE_MIN, (long double) LDBL_TRUE_MIN );
     printf("    FLT/DBL/LDBL_MIN      : %Le\t%Le\t%Le\n", (long double) FLT_MIN,      (long double) DBL_MIN,      (long double) LDBL_MIN      );
     printf("    FLT/DBL/LDBL_MAX      : %Le\t%Le\t%Le\n", (long double) FLT_MAX,      (long double) DBL_MAX,      (long double) LDBL_MAX      );
     printf("    FLT/DBL/LDBL_EPSILON  : %Le\t%Le\t%Le\n", (long double) FLT_EPSILON,  (long double) DBL_EPSILON,  (long double) LDBL_EPSILON  );
+    printf("    FLT/DBL/LDBL_TRUE_MIN : %Le\t%Le\t%Le\n", (long double) FLT_TRUE_MIN, (long double) DBL_TRUE_MIN, (long double) LDBL_TRUE_MIN );
 
     printf("\nProject-defined floating-point type\n");
+    printf("Float size:             %ju\n", (uintmax_t)sizeof(Float) );
+    
     printf("Float decimal digits:   %ld\n",  (long int) std::numeric_limits<Float>::digits10         );
     printf("Float digits:           %ld\n",  (long int) std::numeric_limits<Float>::digits           );
     printf("Float min exponent:     %ld\n",  (long int) std::numeric_limits<Float>::min_exponent     );

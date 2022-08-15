@@ -555,19 +555,27 @@ inline Float gaussrand_3( Float mean = 0., Float std_dev = 1. )
 {
     Assert( std_dev > machine_epsilon );
 
-    Float x = rand() / (RAND_MAX + 1.0);   /* 0.0 <= y < 1.0 */
+    Float x = rand() / (RAND_MAX + 1.0);   /* 0.0 <= x < 1.0 */
     
-    unsigned low = (x < 0.5) ? 0 : 1;
+    bool large = (x < 0.5) ? false : true;
     
     Float y = std::abs(x - 1.0);                        /* 0.0 < y <= 1.0 */
     Float z = std_dev * std::sqrt( -2.0 * std::log(y) );
 
-    return low ? (mean + z) : (mean - z);
+    return large ? (mean + z) : (mean - z);
+}
+
+inline Float gaussrand_4()
+{
+    const Float PI = 3.14159265358979323846;
+    Float U = ( rand() + 1. ) / ( RAND_MAX + 2. );
+    Float V = ( rand()      ) / ( RAND_MAX + 1. );
+    return std::sqrt( -2. * std::log(U) ) * std::sin( 2. * PI * V );
 }
 
 inline Float gaussrand()
 {
-    return gaussrand_3();
+    return gaussrand_4();
 }
 
 

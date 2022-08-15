@@ -52,13 +52,13 @@ DenseMatrix SubdeterminantMatrix( const DenseMatrix& A, int k );
  * 
  */
 
-Float Determinant_laplaceexpansion( const DenseMatrix& );
+inline Float Determinant_laplaceexpansion( const DenseMatrix& );
 
-Float Determinant_gauss( DenseMatrix );
+inline Float Determinant_gauss( DenseMatrix );
 
-void Inverse_CramersRule_InSitu( DenseMatrix& );
+inline void Inverse_CramersRule_InSitu( DenseMatrix& );
 
-void Inverse_gauss_InSitu( DenseMatrix&, bool pivoting = true );
+inline void Inverse_gauss_InSitu( DenseMatrix&, bool pivoting = true );
 
 
 

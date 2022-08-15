@@ -205,12 +205,8 @@ int main()
 
                         timestamp start = gettimestamp();
 
-                        if(false)
                         {
-                            LOG << "CGM - Classic" << endl;
-                        
                             sol.zero();
-                            
                             FloatVector residual( rhs );
                             
                             ConjugateGradientSolverCSR( 
@@ -223,12 +219,6 @@ int main()
                                 1
                             );
 
-                        }
-
-                        {
-                            sol.zero(); // TODO: abgleichen mit Sullivan case 
-                            MinimumResidualMethod Solver( stiffness_csr );
-                            Solver.solve( sol, rhs );
                         }
 
                         timestamp end = gettimestamp();

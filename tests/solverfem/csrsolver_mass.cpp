@@ -677,7 +677,7 @@ int main()
                             auto max_iteration_count = sol.getdimension();
                             timestamp start = gettimestamp();
                             auto recent_iteration_count = 
-                            CheybyshevIteration_DiagonalPreconditioner( 
+                            ChebyshevIteration_DiagonalPreconditioner( 
                                 sol.getdimension(), 
                                 sol.raw(), 
                                 rhs.raw(), 
