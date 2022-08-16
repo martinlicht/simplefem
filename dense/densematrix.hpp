@@ -65,6 +65,8 @@ class DenseMatrix final
         virtual void check() const override;
         virtual std::string text() const override;
         
+        std::string data_as_text( bool indexed, bool print_as_list = false ) const;
+        
         /* OTHER METHODS */
 
         virtual DenseMatrix* pointer_to_heir() && override

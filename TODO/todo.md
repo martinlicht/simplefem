@@ -43,6 +43,16 @@ and for format (row/column and matrix/list).
 
 All operators show return the 'this' pointer in their print methods.
 
+# (HIGH) Unit test for condition numbers of single element matrices 
+
+For dimensions 1, 2, and 3
+All form degrees and polynomial degrees up to 6
+Construct the single element meshes, build mass and stiffness matrices 
+compute their inverses (and check their products)
+perform QR algorithm to find the eigenvalues
+
+Requires: regular triangle and tetrahedra
+
 # (HIGH) Implement Hodge star operation 
 
 # (HIGH) Traces, locally and globally 

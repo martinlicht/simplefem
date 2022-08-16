@@ -28,47 +28,47 @@ int main()
             for( int i = 0; i < 5; i++ )
                     a.setentry( i, i+1 );
             LOG << "Should be ascending numbers:" << endl;
-            LOG << a << endl;
+            LOG << a.data_as_text() << endl;
             
             LOG << "Should be the middle entries:" << endl;
-            LOG << a.getslice(1,3) << endl;
+            LOG << a.getslice(1,3).data_as_text() << endl;
             
             FloatVector b(a);
             LOG << "Should be the same again:" << endl;
-            LOG << b << endl;
+            LOG << b.data_as_text() << endl;
             
             LOG << "Should be multiples of PI:" << endl;
-            LOG << 3.141 * a << endl;
+            LOG << (3.141 * a).data_as_text() << endl;
             
             LOG << "Should be negative of original vector:" << endl;
-            LOG << -a << endl;
+            LOG << (-a).data_as_text() << endl;
             
             FloatVector t(5);
             
             for( int i = 0; i < 5; i++ )
                     t.setentry( i, 3. * i+1 );
             LOG << "Should be other ascending numbers: 3*( i + 1) " << endl;
-            LOG << t << endl;
+            LOG << t.data_as_text() << endl;
             
             LOG << "Next the sum of two vectors:" << endl;
-            LOG << a+t << endl;
+            LOG << (a+t).data_as_text() << endl;
             LOG << "Then their difference:" << endl;
-            LOG << a-t << endl;
+            LOG << (a-t).data_as_text() << endl;
             
             LOG << "Now the scalar product with itself:" << endl;
             LOG << a*a << endl;
             
             LOG << "Copy the middle slice:" << endl;
             a.setslice( 1, t.getslice(1,3) );
-            LOG << a << endl;
+            LOG << a.data_as_text() << endl;
             
             LOG << "Add the middle slice:" << endl;
             a.addslice( 1, t.getslice(1,3), 1000. );
-            LOG << a << endl;
+            LOG << a.data_as_text() << endl;
             
             FloatVector e(0);
             LOG << "Should be the zero-dimensional vector:" << endl;
-            LOG << e << endl;
+            LOG << e.data_as_text() << endl;
             
         }
         
