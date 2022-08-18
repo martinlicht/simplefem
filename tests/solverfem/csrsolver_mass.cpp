@@ -8,7 +8,7 @@
 
 #include "../../basic.hpp"
 #include "../../utility/utility.hpp"
-#include "../../operators/composedoperators.hpp"
+// #include "../../operators/composedoperators.hpp"
 // #include "../../operators/composed.hpp"
 #include "../../dense/densematrix.hpp"
 #include "../../sparse/sparsematrix.hpp"
@@ -197,9 +197,8 @@ int main()
 
                     SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
-                    LOG << "...compose mass matrix" << endl;
-            
-                    const auto composed_mass      = incmatrix_t * scalar_massmatrix * incmatrix;
+                    // LOG << "...compose mass matrix" << endl;
+                    // const auto composed_mass      = incmatrix_t * scalar_massmatrix * incmatrix;
 
                     auto mass_prelim_csr = incmatrix_t & ( scalar_massmatrix & incmatrix );
                     mass_prelim_csr.sortentries();

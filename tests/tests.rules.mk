@@ -76,7 +76,8 @@ ifeq ($(LINKINGTYPE),dynamic)
 else
 	@$(CXX) $(CXXFLAGS_EXECUTABLE) $(CPPFLAGS) $< $($(mycontext).include)                       $($(mycontext).mylib) -o $@ $(LDLIBS)
 endif
-#	cp $@ $(patsubst %.out,%.exe,$@)
+	
+# cp $@ $(patsubst %.out,%.exe,$@)
 
 -include $($(context).dependencies)
 

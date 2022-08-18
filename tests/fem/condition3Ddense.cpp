@@ -112,6 +112,25 @@ FloatVector Eigenvalues( DenseMatrix A, int repetitions, Float shift = 0. )
 //     assert( A.issquare() );
 //     const int dim = A.getdimin();
 //     for( int p = 0; p < dim; p++) A(p,p) += shift;
+    
+//     for( int i = 0; i < dim; i++ )
+//     for( int r1 =    0; r1 < dim; r1++ )
+//     for( int r2 = r1+1; r2 < dim; r2++ )
+//     {
+//         Float alpha = - A(r2,r1) / A(r1,r1);
+//         for( int t = 0; t < dim; t++ ) A(r2,t) = A(r2,t) + alpha * A(r1,t); //A.addrow(c,r,alpha); A.addcolumn(c,r,alpha);
+//     }
+
+//     FloatVector ret(dim);
+//     for( int p = 0; p < dim; p++) ret[p] = A(p,p);
+//     return ret;        
+// }
+
+// FloatVector Eigenvalues( DenseMatrix A, int repetitions, Float shift = 0. )
+// {
+//     assert( A.issquare() );
+//     const int dim = A.getdimin();
+//     for( int p = 0; p < dim; p++) A(p,p) += shift;
 //     DenseMatrix X(dim,dim), Q(dim,dim), R(dim,dim);
 //     X.randommatrix();
 //     while ( repetitions --> 0 )
@@ -240,7 +259,7 @@ int main()
                 
                 LOG << "...diagonalize" << endl;
                 
-                const int repetitions = 4000;
+                const int repetitions = 200;
                 
                 const Float shift = 100 * machine_epsilon;
 
@@ -301,6 +320,8 @@ int main()
                 min_w_volume_mass[r-r_min] = w_diagonal_mass_volume.min();
 
                 const Float threshold = shift + 1e-8;
+
+                LOG << max_w_scalar_mass[r-r_min] << space << PowerMethod( w_mass_scalar, repetitions ) << nl;
 
                 max_s_scalar_stiff[r-r_min] = s_diagonal_stiff_scalar.maxnorm() - shift;
                 max_s_vector_stiff[r-r_min] = s_diagonal_stiff_vector.maxnorm() - shift;
