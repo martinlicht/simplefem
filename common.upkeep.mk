@@ -10,11 +10,17 @@
 .PHONY: clean
 clean: vtkclean dependclean
 # 	@echo clean content ...
-	@-rm -f OUTPUT_CPPLINT.txt
-	@-rm -f callgrind.out.*
-	@-rm -f .all.o *.a *.o *.d *.so *.gch
-	@-rm -f *.exe *.exe.stackdump
-	@-rm -f *.out *.out.stackdump 
+#	@-rm -f OUTPUT_CPPLINT.txt
+#	@-rm -f callgrind.out.*
+#	@-rm -f .all.o *.a *.o *.d *.so *.gch
+#	@-rm -f *.exe *.exe.stackdump
+#	@-rm -f *.out *.out.stackdump 
+	@-rm -f \
+	 .all.o *.a *.o *.d *.so *.gch \
+	 OUTPUT_CPPLINT.txt \
+	 callgrind.out.* \
+	 *.exe *.exe.stackdump \
+	 *.out *.out.stackdump 
 
 
 # clean out and remove the dependency directories 
@@ -22,8 +28,8 @@ clean: vtkclean dependclean
 .PHONY: dependclean
 dependclean:
 # 	@echo clean dependency files
-	@-if [ -d .deps/ ]; then rm -f .deps/*.d .deps/.all.d; fi 
-	@-if [ -d .deps/ ]; then rmdir .deps/; fi 
+	@-if [ -d .deps/ ]; then rm -f .deps/*.d .deps/.all.d; rmdir .deps/; fi 
+#	@-if [ -d .deps/ ]; then rmdir .deps/; fi 
 
 
 
@@ -31,9 +37,7 @@ dependclean:
 
 .PHONY: vtkclean
 vtkclean:
-	@-rm -f ./*.vtk
-	@-rm -f ./*/*.vtk
-	@-rm -f ./*/*/*.vtk
+	@-rm -f ./*.vtk ./*/*.vtk ./*/*/*.vtk
 
 
 # apply clang-tidy to all cpp and hpp files in the directory

@@ -94,7 +94,6 @@ Logger::~Logger()
 
 #if defined(_OPENMP)
 #include <omp.h>
-#endif
 
 OpenMP_Reporter::OpenMP_Reporter()
 {
@@ -119,6 +118,9 @@ OpenMP_Reporter::~OpenMP_Reporter()
 }
 
 OpenMP_Reporter  omp_reporter;
+
+#endif // #if defined(_OPENMP)
+
 
 
 #endif

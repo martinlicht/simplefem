@@ -204,21 +204,21 @@ class Logger : public std::ostringstream
 // 
 ////////////////////////////////////////////
 
-inline void lg(){}
-
-// template<typename T>
-// inline void lg( T arg )
+// inline void lg(){}
+// 
+// // template<typename T>
+// // inline void lg( T arg )
+// // {
+// //     LOG << arg << nl;
+// // }
+// 
+// template<typename T, typename... Ts>
+// inline void lg( const T arg, const Ts... args )
 // {
 //     LOG << arg << nl;
+//     lg( args... );
 // }
 
-template<typename T, typename... Ts>
-inline void lg( const T arg, const Ts... args )
-{
-    LOG << arg << nl;
-    lg( args... );
-}
-
 
 
 
@@ -227,9 +227,11 @@ inline void lg( const T arg, const Ts... args )
 
 ////////////////////////////////////////////
 // 
-//      logging via variadic templates
+//      OMP reporter
 // 
 ////////////////////////////////////////////
+
+#ifdef _OPENMP
 
 struct OpenMP_Reporter
 {
@@ -238,6 +240,8 @@ struct OpenMP_Reporter
 };
 
 extern OpenMP_Reporter  omp_reporter;
+
+#endif // _OPENMP
 
 
 

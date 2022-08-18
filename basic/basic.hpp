@@ -154,24 +154,11 @@ inline constexpr T minimum( T t, Args... args )
     return minimum( t, minimum( args... ) );
 }
 
-
-
-
-
-
-
-
-
-
-
-
 template<typename T>
 inline constexpr T square( const T& x )
 {
     return x * x;
 }
-
-
 
 inline constexpr bool issmall( Float value, Float threshold = 100. * machine_epsilon )
 {

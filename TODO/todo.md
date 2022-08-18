@@ -30,7 +30,6 @@ requires regular grinding in order to get it done.
 
 
 
-
 # (HIGH) text output
 
 Linear operators should only output the basic information but no raw data.
@@ -42,16 +41,6 @@ for the raw data. They parameters for the desired precision, whether indices sho
 and for format (row/column and matrix/list).
 
 All operators show return the 'this' pointer in their print methods.
-
-# (HIGH) Unit test for condition numbers of single element matrices 
-
-For dimensions 1, 2, and 3
-All form degrees and polynomial degrees up to 6
-Construct the single element meshes, build mass and stiffness matrices 
-compute their inverses (and check their products)
-perform QR algorithm to find the eigenvalues
-
-Requires: regular triangle and tetrahedra
 
 # (HIGH) Implement Hodge star operation 
 
@@ -138,25 +127,6 @@ Use the custom assert macro throughout the project.
 
 
 
-# (HIGH) Revise logging output 
-
-The logging procedure needs to be reworked.
-
-In particular, switch to an encapsulated approach: all classes should have the ability
-to produce logs of themselves. That way, you can isolate the problem 
-in just a few methods throughout the code.
-
-Basically, implement the following methods:
-
-    - text:        produces a string presentation (no nl)
-    - print:       outputs the text() into a given stream (with nl)
-    - << operator: outputs the text() into a given stream (no nl)
-    - lg:          outputs the text into the log (with nl).
-                   This function may take a preamble argument
-
-Revert the current design of logging output: there shouldn't be
-any automatic newlines. Instead, re-introduce the newlines in the tests
-and deactive the automatic newline in the logging object.
 
 
 
@@ -196,16 +166,6 @@ For example:
 
 
 
-
-# (HIGH) Introduce a LOG switch 
-
-Make the logging framework optional by introducing a macro switch 
-that enables/disables the logging framework
-
-Then introduce the logging framework throughout the entire code	uniformly.
-
-This requires that the logging interface should be used in the same way
-as the entire script for the logging stuff.
 
 
 
@@ -296,6 +256,36 @@ which may not the case for the bracket access methods.
 
 Update the unit test **descriptions** in every module. They seem to be off in many regards.
 
+
+# (MEDIUM) Revise logging output 
+
+The logging procedure needs to be reworked.
+
+In particular, switch to an encapsulated approach: all classes should have the ability
+to produce logs of themselves. That way, you can isolate the problem 
+in just a few methods throughout the code.
+
+Basically, implement the following methods:
+
+    - text:        produces a string presentation (no nl)
+    - print:       outputs the text() into a given stream (with nl)
+    - << operator: outputs the text() into a given stream (no nl)
+    - lg:          outputs the text into the log (with nl).
+                   This function may take a preamble argument
+
+Revert the current design of logging output: there shouldn't be
+any automatic newlines. Instead, re-introduce the newlines in the tests
+and deactive the automatic newline in the logging object.
+
+# (MEDIUM) Introduce a LOG switch 
+
+Make the logging framework optional by introducing a macro switch 
+that enables/disables the logging framework
+
+Then introduce the logging framework throughout the entire code	uniformly.
+
+This requires that the logging interface should be used in the same way
+as the entire script for the logging stuff.
 
 # (MEDIUM) Logging class 
 
@@ -782,4 +772,14 @@ by references to clog instead of cout.
 
   
 # (DONE) Abgleichen der Gitterweiten bei solverfem 
+
+# (DONE) Unit test for condition numbers of single element matrices 
+
+For dimensions 1, 2, and 3
+All form degrees and polynomial degrees up to 6
+Construct the single element meshes, build mass and stiffness matrices 
+compute their inverses (and check their products)
+perform QR algorithm to find the eigenvalues
+
+Requires: regular triangle and tetrahedra
 

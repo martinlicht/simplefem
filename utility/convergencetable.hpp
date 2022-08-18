@@ -5,6 +5,7 @@
 #include <ostream>
 // #include <iomanip>
 #include <string>
+#include <sstream>
 #include <vector>
 
 #include "../basic.hpp"
@@ -187,7 +188,7 @@ class ConvergenceTable
                 for( int j = 0; j < entries[i].size(); j++ )
                 {
                     
-                    printf_into_stream( os, "% *.*Le%s", nc_cell_width, nc_cell_precision, (long double) entries[i][j], column_separator ); 
+                    printf_into_stream( os, "% *.*e%s", nc_cell_width, nc_cell_precision, (double) entries[i][j], column_separator ); 
                     
                     if( display_convergence_rates ){
                         
@@ -199,12 +200,12 @@ class ConvergenceTable
                         
                             if( entries[i][j] > 0. and entries[i-1][j] > 0. ) {
 
-                                long double computed_rate = (long double)std::log2( entries[i-1][j] / entries[i][j] );
+                                double computed_rate = (double)std::log2( entries[i-1][j] / entries[i][j] );
                                 
                                 if( rates_are_float ) { 
-                                    printf_into_stream( os, "%*.*Le", nc_rate_width, nc_rate_precision, computed_rate  );
+                                    printf_into_stream( os, "%*.*e", nc_rate_width, nc_rate_precision, computed_rate  );
                                 } else {
-                                    printf_into_stream( os, "%*.*Lf", nc_rate_width, nc_rate_precision, computed_rate  );
+                                    printf_into_stream( os, "%*.*f", nc_rate_width, nc_rate_precision, computed_rate  );
                                 }
 
                             } else {
@@ -283,7 +284,7 @@ class ConvergenceTable
 
                     assert( entries[i].size() == num_series );
                     
-                    printf_into_stream( os, "% *.*Le%s", nc_cell_width, nc_cell_precision, (long double) entries[i][j], cell_separator );
+                    printf_into_stream( os, "% *.*e%s", nc_cell_width, nc_cell_precision, (double) entries[i][j], cell_separator );
                     
                 }
 
@@ -306,12 +307,12 @@ class ConvergenceTable
                         
                             if( entries[i][j] > 0. and entries[i-1][j] > 0. ) {
 
-                                long double computed_rate = std::log2( entries[i-1][j] / entries[i][j] );
+                                double computed_rate = std::log2( entries[i-1][j] / entries[i][j] );
                                 
                                 if( rates_are_float ) { 
-                                    printf_into_stream( os, "% *.*Le%s", nc_rate_width, nc_rate_precision, computed_rate, cell_separator );
+                                    printf_into_stream( os, "% *.*e%s", nc_rate_width, nc_rate_precision, computed_rate, cell_separator );
                                 } else {
-                                    printf_into_stream( os, "% *.*Lf%s", nc_rate_width, nc_rate_precision, computed_rate, cell_separator );
+                                    printf_into_stream( os, "% *.*f%s", nc_rate_width, nc_rate_precision, computed_rate, cell_separator );
                                 }
 
                             } else {
@@ -350,7 +351,7 @@ class ConvergenceTable
 //                 for( int j = 0; j < entries[i].size(); j++ )
 //                 {
 //                     
-//                     os << std::setprecision(6) << std::scientific << std::showpos << (long double) entries[i][j];
+//                     os << std::setprecision(6) << std::scientific << std::showpos << (double) entries[i][j];
 //                     
 //                     if( display_convergence_rates ){
 //                         
@@ -361,7 +362,7 @@ class ConvergenceTable
 //                         } else {
 //                         
 //                             if( entries[i][j] > 0. and entries[i-1][j] > 0. ) 
-//                                 os << std::setw(10) << std::setprecision(3) << std::scientific << std::showpos << (long double) std::log2( entries[i-1][j] / entries[i][j] );
+//                                 os << std::setw(10) << std::setprecision(3) << std::scientific << std::showpos << (double) std::log2( entries[i-1][j] / entries[i][j] );
 //                             else
 //                                 os << "$$$$$$$$$$";
 //                         

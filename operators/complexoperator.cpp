@@ -36,23 +36,17 @@ FloatVector ComplexFloatVector( const FloatVector& real, const FloatVector& imag
 
 
 
-ComplexOperator::ComplexOperator( const LinearOperator& real, const LinearOperator& imag )
-: LinearOperator( real.getdimout() + imag.getdimout(), real.getdimin() + imag.getdimin() ), 
-part_real( real ), part_imag( imag ) 
-{
-    ComplexOperator::check();
-}
-
 ComplexOperator::~ComplexOperator()
 {
-    /* Nothing */ 
+    if( part_real != nullptr && managing_real ) delete part_real;
+    if( part_imag != nullptr && managing_imag ) delete part_imag;
 }
 
 void ComplexOperator::check() const  
 {
     LinearOperator::check();    
-    assert( part_real.getdimin()  == part_imag.getdimin()  );
-    assert( part_real.getdimout() == part_imag.getdimout() );
+    assert( part_real->getdimin()  == part_imag->getdimin()  );
+    assert( part_real->getdimout() == part_imag->getdimout() );
 }
 
 std::string ComplexOperator::text() const 
@@ -63,17 +57,6 @@ std::string ComplexOperator::text() const
 std::string ComplexOperator::text( const bool embellish ) const 
 {
     return "Complex operator";
-}
-
-
-const LinearOperator& ComplexOperator::real() const 
-{
-    return part_real;
-}
-
-const LinearOperator& ComplexOperator::imaginary() const 
-{
-    return part_imag;
 }
 
 void ComplexOperator::apply( FloatVector& dest, const FloatVector& src, Float scaling ) const 
@@ -89,8 +72,8 @@ void ComplexOperator::apply( FloatVector& dest, const FloatVector& src, Float sc
     auto src_real = RealPart( src );
     auto src_imag = ImaginaryPart( src );
 
-    auto dest_real = scaling * ( part_real * src_real - part_imag * src_imag );
-    auto dest_imag = scaling * ( part_real * src_imag + part_imag * src_real );
+    auto dest_real = scaling * ( *part_real * src_real - *part_imag * src_imag );
+    auto dest_imag = scaling * ( *part_real * src_imag + *part_imag * src_real );
 
     dest = ComplexFloatVector( dest_real, dest_imag );
 }

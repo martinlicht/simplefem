@@ -171,8 +171,8 @@ inline std::string Concat2String( const T& t, const Params&... params )
 
 #include <cassert>
 #define Assert(x,...)   assert(x)
-#define unreachable()   assert(false)
-#define unimplemented() assert(false)
+#define unreachable()   fprintf( stderr, "Unreachable reached: %s:%d\n", __FILE__, __LINE__ ),abort()
+#define unimplemented() fprintf( stderr,  "Unimplemented path: %s:%d\n", __FILE__, __LINE__ ),abort()
 
 #else // USE_ORIGINAL_ASSERT_MACRO
 

@@ -240,7 +240,7 @@ int main()
                 
                 LOG << "...diagonalize" << endl;
                 
-                const int repetitions = 2000;
+                const int repetitions = 4000;
                 
                 const Float shift = 100 * machine_epsilon;
 
@@ -280,8 +280,6 @@ int main()
                 assert( w_diagonal_stiff_vector.isfinite() ); assert( w_diagonal_stiff_vector.isnonnegative() );
                 assert( w_diagonal_stiff_pseudo.isfinite() ); assert( w_diagonal_stiff_pseudo.isnonnegative() );
                 
-                LOG << w_diagonal_stiff_scalar << s_diagonal_stiff_vector  << s_diagonal_stiff_pseudo << nl;
-
                 max_s_scalar_mass[r-r_min] = s_diagonal_mass_scalar.maxnorm();
                 max_s_vector_mass[r-r_min] = s_diagonal_mass_vector.maxnorm();
                 max_s_pseudo_mass[r-r_min] = s_diagonal_mass_pseudo.maxnorm();
@@ -319,11 +317,6 @@ int main()
                 min_w_scalar_stiff[r-r_min] = lowest( w_diagonal_stiff_scalar, threshold ) - shift;
                 min_w_vector_stiff[r-r_min] = lowest( w_diagonal_stiff_vector, threshold ) - shift;
                 min_w_pseudo_stiff[r-r_min] = lowest( w_diagonal_stiff_pseudo, threshold ) - shift;
-
-                LOG << max_s_pseudo_mass[r-r_min] / PowerMethod(s_mass_pseudo,100) << nl;
-                LOG << min_s_pseudo_mass[r-r_min] / InversePowerMethod(s_mass_pseudo,100) << nl;
-
-                
                 
             }
             

@@ -35,7 +35,7 @@ FLAG_CXX := GCC
 
 # Do you want the standard library assert macro instead of the custom one?
 # Uncomment the following line to use the standard library assert macro 
-# FLAG_USE_ORIGINAL_ASSERT_MACRO=yes
+FLAG_USE_ORIGINAL_ASSERT_MACRO=yes
 
 # Do you want assert messages to be discarded?
 # Uncomment the following line to simplify the debugging macros 
@@ -48,7 +48,7 @@ FLAG_DISABLE_CHECK_MESHES=yes
 # Do you want to DISABLE the custom logging framework
 # in favor of standard library routines?
 # Uncomment the following line for that
-# FLAG_USE_PRIMITIVE_LOGGING=yes
+FLAG_USE_PRIMITIVE_LOGGING=yes
 
 # Do you want to ENABLE the standard library debugging flags 
 # Uncomment the following line to enable the standard library debugging flags 
@@ -65,7 +65,7 @@ FLAG_NO_EXCEPTIONS=yes
 
 # Do you want to ENABLE excessive warning options?
 # Uncomment the following line to enable excessive warning options
-FLAG_EXCESSIVE_WARNINGS=yes
+# FLAG_EXCESSIVE_WARNINGS=yes
 
 # Do you want to ENABLE the Clang sanitizer?
 # Uncomment the following line to enable compilation with the Clang sanitizer
@@ -170,7 +170,7 @@ parameters:
 
 ifeq ($(FLAG_CXX),GCC)
 
-  CXX := g++ 
+  CXX := g++ -D__USE_MINGW_ANSI_STDIO=1
   #-ftime-report
   #-fuse-ld=lld
   
@@ -237,7 +237,7 @@ ifeq ($(FLAG_DO_OPTIMIZE),yes)
 		CXXFLAGS_OPTIMIZE += -flto
 	endif
 else
-	CXXFLAGS_OPTIMIZE += -O1
+	CXXFLAGS_OPTIMIZE += -O0
 endif
 
 
