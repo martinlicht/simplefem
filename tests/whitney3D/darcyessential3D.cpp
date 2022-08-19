@@ -2,10 +2,6 @@
 
 /**/
 
-#include <ostream>
-#include <fstream>
-// #include <iomanip>
-
 #include "../../basic.hpp"
 #include "../../utility/utility.hpp"
 #include "../../operators/composedoperators.hpp"
@@ -13,7 +9,6 @@
 #include "../../sparse/matcsr.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples3D.hpp"
-#include "../../vtk/vtkwriter.hpp"
 #include "../../solver/iterativesolver.hpp"
 // #include "../../solver/crm.hpp"
 // #include "../../solver/minres.hpp"

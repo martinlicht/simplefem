@@ -2,17 +2,7 @@
 
 /**/
 
-#include <ostream>
-// #include <fstream>
-// #include <iomanip>
-
 #include "../../basic.hpp"
-#include "../../dense/densematrix.hpp"
-#include "../../mesh/coordinates.hpp"
-#include "../../mesh/mesh.simplicial2D.hpp"
-#include "../../mesh/mesh.simplicial3D.hpp"
-#include "../../mesh/examples2D.hpp"
-#include "../../mesh/examples3D.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/utilities.hpp"

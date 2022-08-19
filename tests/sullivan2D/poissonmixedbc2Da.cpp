@@ -2,15 +2,11 @@
 
 /**/
 
-#include <ostream>
 #include <fstream>
-// #include <iomanip>
 
 #include "../../basic.hpp"
 #include "../../utility/utility.hpp"
 #include "../../operators/composedoperators.hpp"
-// #include "../../operators/composed.hpp"
-#include "../../dense/densematrix.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
 #include "../../mesh/coordinates.hpp"

@@ -2,9 +2,7 @@
 
 /**/
 
-#include <ostream>
 #include <fstream>
-// #include <iomanip>
 
 #include "../../basic.hpp"
 #include "../../utility/utility.hpp"

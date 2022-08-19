@@ -2,23 +2,15 @@
 
 /**/
 
-#include <ostream>
-#include <fstream>
-// #include <iomanip>
-
 #include "../../basic.hpp"
 #include "../../utility/utility.hpp"
 #include "../../operators/composedoperators.hpp"
-// #include "../../operators/composed.hpp"
-#include "../../dense/densematrix.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
-#include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples3D.hpp"
-#include "../../vtk/vtkwriter.hpp"
-#include "../../solver/sparsesolver.hpp"
 #include "../../solver/iterativesolver.hpp"
+#include "../../solver/sparsesolver.hpp"
 #include "../../solver/inv.hpp"
 #include "../../solver/systemsparsesolver.hpp"
 #include "../../solver/systemsolver.hpp"
