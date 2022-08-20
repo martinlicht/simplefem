@@ -2,8 +2,8 @@
 #define INCLUDEGUARD_BASIC_HPP
 
 
-#if __cplusplus < 201703L
-#error Compilation of this software requires at least C++17.
+#if __cplusplus < 201402L
+#error Compilation of this software requires at least C++14.
 #endif
 
 
@@ -47,11 +47,11 @@ typedef long double Float;
 #endif
 
 
-inline const constexpr Float notanumber = std::numeric_limits<Float>::quiet_NaN();
+static const constexpr Float notanumber = std::numeric_limits<Float>::quiet_NaN();
 
-inline const constexpr Float machine_epsilon = std::numeric_limits<Float>::epsilon();
+static const constexpr Float machine_epsilon = std::numeric_limits<Float>::epsilon();
 
-inline const /*constexpr*/ Float desired_precision = std::sqrt( machine_epsilon );
+static const /*constexpr*/ Float desired_precision = std::sqrt( machine_epsilon );
 
 
 // TODO: Put these somewhere where it makes sense 
@@ -67,13 +67,13 @@ extern template class std::vector<Float>;
 //                                             //
 /////////////////////////////////////////////////
 
-inline const constexpr char space = ' ';
+static const constexpr char space = ' ';
 
-inline const constexpr char* emptystring = "";
+static const constexpr char* emptystring = "";
 
-inline const constexpr char nl = '\n';
+static const constexpr char nl = '\n';
 
-inline const constexpr char tab = '\t';
+static const constexpr char tab = '\t';
 
 
 
@@ -154,24 +154,11 @@ inline constexpr T minimum( T t, Args... args )
     return minimum( t, minimum( args... ) );
 }
 
-
-
-
-
-
-
-
-
-
-
-
 template<typename T>
 inline constexpr T square( const T& x )
 {
     return x * x;
 }
-
-
 
 inline constexpr bool issmall( Float value, Float threshold = 100. * machine_epsilon )
 {
@@ -183,7 +170,7 @@ inline constexpr bool isaboutequal( Float value1, Float value2, Float threshold 
     return issmall( value1 - value2, threshold );
 }
 
-
+// https://codingnest.com/the-little-things-comparing-floating-point-numbers/
 
 
 
@@ -480,95 +467,6 @@ inline constexpr Float binomial_numerical( int64_t n, int64_t k )
 
 
 
-
-
-
-/////////////////////////////////////////////////
-//                                             //
-//            GAUSSIAN VARIABLES               //
-//                                             //
-/////////////////////////////////////////////////
-
-
-
-
-inline void seed_random_integer()
-{
-    srand(0);
-}
-
-inline int random_integer()
-{
-    int ret = rand();
-    Assert( 0 <= ret and ret <= RAND_MAX );
-    return ret;
-}
-
-inline Float random_uniform()
-{
-    Float ret = static_cast<Float>( rand() ) / static_cast<Float>( RAND_MAX );
-    Assert( 0. <= ret and ret <= 1. );
-    return ret;
-}
-
-
-// Based on the implementations in the C-FAQ:
-// http://c-faq.com/lib/gaussian.html
-
-inline Float gaussrand_1()
-{
-    const int NSUM = 25;
-    
-    Float x = 0;
-    
-    for( int i = 0; i < NSUM; i++) 
-        x += rand() / static_cast<Float>(RAND_MAX);
-    
-    x -= NSUM / 2.0;
-    x /= std::sqrt( NSUM / 12.0 );
-    
-    return x;
-}
-
-inline Float gaussrand_2()
-{
-    static bool phase = false;
-    static Float U, V;
-    const Float PI = 3.14159265358979323846;
-    Float Z;
-
-    if( phase ) {
-        Z = std::sqrt( -2. * std::log(U) ) * std::cos( 2. * PI * V );
-    } else {
-        U = ( rand() + 1. ) / ( RAND_MAX + 2. );
-        V = rand() / ( RAND_MAX + 1. );
-        Z = std::sqrt( -2. * std::log(U) ) * std::sin( 2. * PI * V );
-    }
-        
-    phase = not phase;
-
-    return Z;
-}
-
-// http://c-faq.com/lib/gaussrand.luben.html
-inline Float gaussrand_3( Float mean = 0., Float std_dev = 1. )
-{
-    Assert( std_dev > machine_epsilon );
-
-    Float x = rand() / (RAND_MAX + 1.0);   /* 0.0 <= y < 1.0 */
-    
-    unsigned low = (x < 0.5) ? 0 : 1;
-    
-    Float y = std::abs(x - 1.0);                        /* 0.0 < y <= 1.0 */
-    Float z = std_dev * std::sqrt( -2.0 * std::log(y) );
-
-    return low ? (mean + z) : (mean - z);
-}
-
-inline Float gaussrand()
-{
-    return gaussrand_3();
-}
 
 
 
@@ -921,8 +819,11 @@ __attribute__ (( format (printf,1,2) ));
 // {
 //     stream << printf_into_string( formatstring, args... );
 // }
-#define printf_into_stream( stream, formatstring, ... ) \
- { stream << printf_into_string( formatstring __VA_OPT__(,) __VA_ARGS__ ); }
+#if __cplusplus < 202002L
+#define printf_into_stream( stream, ... ) { stream << printf_into_string( __VA_ARGS__ ); }
+#else
+#define printf_into_stream( stream, formatstring, ... ) { stream << printf_into_string( formatstring __VA_OPT__(,) __VA_ARGS__ ); }
+#endif
 
 
 /******************************************************/

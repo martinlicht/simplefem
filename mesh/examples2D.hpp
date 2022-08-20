@@ -267,6 +267,21 @@ inline MeshSimplicial2D UnitTriangle2D()
 
 
 
+inline MeshSimplicial2D RegularSimplex2D()
+{
+    return MeshSimplicial2D(
+      3,  
+      Coordinates( 3, 3, {
+         0., 0., 0., // 0
+         1., 1., 0., // 1
+         1., 0., 1., // 2
+      } ),
+      {
+        { 0, 1, 2 }
+      }
+    );
+}
+
 
 
 

@@ -161,7 +161,7 @@ inline std::string Concat2String( const T& t, const Params&... params )
 
 #ifdef NDEBUG
 
-#define Assert(x,...)   (static_cast<void>(0))
+#define Assert(...)   (static_cast<void>(0))
 #define unreachable()   (static_cast<void>(0))
 #define unimplemented() (static_cast<void>(0))
 
@@ -169,10 +169,19 @@ inline std::string Concat2String( const T& t, const Params&... params )
 
 #ifdef USE_ORIGINAL_ASSERT_MACRO
 
+constexpr bool Cond( bool b ) { return b; }
+template<typename... Params> constexpr bool Cond( bool b, const Params&... params ) { return b; }
+
 #include <cassert>
-#define Assert(x,...)   assert(x)
-#define unreachable()   assert(false)
-#define unimplemented() assert(false)
+
+#if __cplusplus < 202002L
+#define Assert(...)     assert(Cond(__VA_ARGS__))
+#else
+#define Assert(x,...)     assert(x)
+#endif
+
+#define unreachable()   fprintf( stderr, "Unreachable reached: %s:%d\n", __FILE__, __LINE__ ),abort()
+#define unimplemented() fprintf( stderr,  "Unimplemented path: %s:%d\n", __FILE__, __LINE__ ),abort()
 
 #else // USE_ORIGINAL_ASSERT_MACRO
 

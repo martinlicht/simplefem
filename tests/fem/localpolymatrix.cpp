@@ -2,10 +2,6 @@
 
 /**/
 
-#include <ostream>
-// #include <fstream>
-// #include <iomanip>
-
 #include "../../basic.hpp"
 #include "../../dense/densematrix.hpp"
 #include "../../dense/cholesky.hpp"

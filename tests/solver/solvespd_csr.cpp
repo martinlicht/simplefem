@@ -7,7 +7,7 @@
 // #include <iomanip>
 
 #include "../../basic.hpp"
-#include "../../utility/utility.hpp"
+#include "../../utility/convergencetable.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
 // #include "../../solver/chebyshev.hpp"
@@ -568,7 +568,7 @@ int main()
 
                             timestamp start = gettimestamp();
                             int recent_iteration_count =
-                            CheybyshevIteration_DiagonalPreconditioner( 
+                            ChebyshevIteration_DiagonalPreconditioner( 
                                 mysol.getdimension(), 
                                 mysol.raw(), 
                                 rhs.raw(), 

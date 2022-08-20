@@ -8,13 +8,13 @@
 
     
 template<typename T>
-T* allocate(T& t)
+inline T* allocate(T& t)
 {
     return std::move(t).pointer_to_heir();
 }
 
 template<typename T>
-T* allocate(const T& )
+inline T* allocate(const T& )
 {
     return nullptr;
 }

@@ -11,6 +11,7 @@
 #include "../combinatorics/generatemultiindices.hpp"
 #include "../operators/linearoperator.hpp"
 #include "../mesh/mesh.hpp"
+#include "../utility/random.hpp"
 
 #include "indexfunctions.hpp"
 

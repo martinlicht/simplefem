@@ -2,21 +2,13 @@
 
 /**/
 
-#include <ostream>
-#include <fstream>
-// #include <iomanip>
-
 #include "../../basic.hpp"
-#include "../../utility/utility.hpp"
+#include "../../utility/convergencetable.hpp"
 #include "../../operators/composedoperators.hpp"
-// #include "../../operators/composed.hpp"
-#include "../../dense/densematrix.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
-#include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
-#include "../../vtk/vtkwriter.hpp"
 #include "../../solver/sparsesolver.hpp"
 #include "../../solver/iterativesolver.hpp"
 #include "../../solver/inv.hpp"
@@ -130,7 +122,7 @@ int main()
             bool do_crmcsr = true;
             bool do_crmcpp = false; //true;
             bool do_blockherzog = false; //true;
-            bool do_blockminres = true;
+            bool do_blockminres = false; // does not work well
             bool do_systemherzog = true;
             bool do_sparseherzog = false;
             

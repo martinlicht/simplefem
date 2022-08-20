@@ -2,23 +2,19 @@
 
 /**/
 
-#include <ostream>
 #include <fstream>
-// #include <iomanip>
 
 #include "../../basic.hpp"
-#include "../../utility/utility.hpp"
+#include "../../utility/convergencetable.hpp"
+#include "../../utility/files.hpp"
 #include "../../operators/composedoperators.hpp"
-// #include "../../operators/composed.hpp"
-#include "../../dense/densematrix.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
-#include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
 #include "../../vtk/vtkwriter.hpp"
-#include "../../solver/sparsesolver.hpp"
 #include "../../solver/iterativesolver.hpp"
+#include "../../solver/sparsesolver.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
@@ -205,12 +201,8 @@ int main()
 
                         timestamp start = gettimestamp();
 
-                        if(false)
                         {
-                            LOG << "CGM - Classic" << endl;
-                        
                             sol.zero();
-                            
                             FloatVector residual( rhs );
                             
                             ConjugateGradientSolverCSR( 
@@ -223,12 +215,6 @@ int main()
                                 1
                             );
 
-                        }
-
-                        {
-                            sol.zero(); // TODO: abgleichen mit Sullivan case 
-                            MinimumResidualMethod Solver( stiffness_csr );
-                            Solver.solve( sol, rhs );
                         }
 
                         timestamp end = gettimestamp();

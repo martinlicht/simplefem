@@ -2,14 +2,7 @@
 
 /**/
 
-#include <ostream>
-// #include <fstream>
-
 #include "../../basic.hpp"
-#include "../../mesh/coordinates.hpp"
-#include "../../mesh/mesh.simplicial2D.hpp"
-#include "../../mesh/examples2D.hpp"
-#include "../../mesh/examples3D.hpp"
 #include "../../fem/finitediff.hpp"
 
 

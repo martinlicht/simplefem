@@ -17,6 +17,7 @@
 #include "../operators/floatvector.hpp"
 #include "../operators/simpleoperators.hpp"
 #include "../sparse/sparsematrix.hpp"
+#include "../utility/random.hpp"
 
 
 DenseMatrix::DenseMatrix( const DenseMatrix& mat )
@@ -146,7 +147,7 @@ DenseMatrix::DenseMatrix( const DiagonalOperator& dia )
         
 DenseMatrix::DenseMatrix( const SparseMatrix& matrix )
 : LinearOperator( matrix.getdimout(), matrix.getdimin() ), 
-  entries( new (std::nothrow) Float[ matrix.getdimout() * matrix.getdimin() ] )
+  entries( new (std::nothrow) Float[ matrix.getdimout() * matrix.getdimin() ]() )
 {
     assert( entries != nullptr );
     for( const SparseMatrix::MatrixEntry& entry : matrix.getentries() )
@@ -202,6 +203,40 @@ std::string DenseMatrix::text() const
     }
     return ret;
 }
+
+std::string DenseMatrix::data_as_text( bool indexed, bool print_as_list ) const
+{
+    const int nc_precision = 3;
+
+    const int nc_width = 7 + nc_precision;
+    
+    std::string ret;
+
+    if( print_as_list ){
+        
+        for( int r = 0; r < getdimout(); r++ )
+        for( int c = 0; c < getdimin(); c++ )
+            if(indexed) 
+                ret += printf_into_string("%*d %*d %*.*e\n", nc_width, r, nc_width, c, nc_width, nc_precision, (*this)(r,c) );
+            else
+                ret += printf_into_string("%*.*e\n", nc_width, nc_precision, (*this)(r,c) );
+        
+    } else {
+
+        for( int r = 0; r < getdimout(); r++ ) {
+
+            if(indexed) ret += printf_into_string( "%*d : ", nc_width, r );
+            
+            for( int c = 0; c < getdimin(); c++ )
+                ret += printf_into_string( "%*.*e ", nc_width, nc_precision, (*this)(r,c) );
+            
+            ret += '\n'; 
+        }
+            }
+
+    return ret;
+}
+
 
 DenseMatrix DenseMatrix::clone() const
 {

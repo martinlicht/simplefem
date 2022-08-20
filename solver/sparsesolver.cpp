@@ -17,8 +17,8 @@
 #endif
 
 
-inline const bool csr_restart_on_full_dimension = false;
-inline const bool csr_restart_before_finish     = false;
+static const bool csr_restart_on_full_dimension = false;
+static const bool csr_restart_before_finish     = false;
 
 
 
@@ -1532,7 +1532,7 @@ int WHATEVER(
 // The Convergence of Inexact Chebyshev and Richardson Iterative Methods for Solving Linear Systems
 
 
-int CheybyshevIteration_DiagonalPreconditioner( 
+int ChebyshevIteration_DiagonalPreconditioner( 
     const int N, 
     Float* __restrict__ x, 
     const Float* __restrict__ b, 

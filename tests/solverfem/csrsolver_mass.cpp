@@ -2,23 +2,13 @@
 
 /**/
 
-#include <ostream>
-// #include <fstream>
-// #include <iomanip>
-
 #include "../../basic.hpp"
-#include "../../utility/utility.hpp"
-#include "../../operators/composedoperators.hpp"
-// #include "../../operators/composed.hpp"
-#include "../../dense/densematrix.hpp"
+#include "../../utility/convergencetable.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
-#include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
-#include "../../vtk/vtkwriter.hpp"
 #include "../../solver/sparsesolver.hpp"
-// #include "../../solver/chebyshev.hpp"
 #include "../../solver/iterativesolver.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
@@ -197,9 +187,8 @@ int main()
 
                     SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
-                    LOG << "...compose mass matrix" << endl;
-            
-                    const auto composed_mass      = incmatrix_t * scalar_massmatrix * incmatrix;
+                    // LOG << "...compose mass matrix" << endl;
+                    // const auto composed_mass      = incmatrix_t * scalar_massmatrix * incmatrix;
 
                     auto mass_prelim_csr = incmatrix_t & ( scalar_massmatrix & incmatrix );
                     mass_prelim_csr.sortentries();
@@ -677,7 +666,7 @@ int main()
                             auto max_iteration_count = sol.getdimension();
                             timestamp start = gettimestamp();
                             auto recent_iteration_count = 
-                            CheybyshevIteration_DiagonalPreconditioner( 
+                            ChebyshevIteration_DiagonalPreconditioner( 
                                 sol.getdimension(), 
                                 sol.raw(), 
                                 rhs.raw(), 

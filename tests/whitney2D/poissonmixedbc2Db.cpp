@@ -2,22 +2,18 @@
 
 /**/
 
-#include <ostream>
 #include <fstream>
-// #include <iomanip>
 
 #include "../../basic.hpp"
-#include "../../utility/utility.hpp"
+#include "../../utility/convergencetable.hpp"
+#include "../../utility/files.hpp"
 #include "../../operators/composedoperators.hpp"
-// #include "../../operators/composed.hpp"
-#include "../../dense/densematrix.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
-#include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
 #include "../../vtk/vtkwriter.hpp"
-#include "../../solver/iterativesolver.hpp"
+#include "../../solver/sparsesolver.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
@@ -207,8 +203,18 @@ int main()
 
                         {
                             sol.zero();
-                            MinimumResidualMethod Solver( stiffness_csr );
-                            Solver.solve( sol, rhs );
+                            FloatVector residual( rhs );
+                            
+                            ConjugateGradientSolverCSR( 
+                                sol.getdimension(), 
+                                sol.raw(), 
+                                rhs.raw(), 
+                                stiffness_csr.getA(), stiffness_csr.getC(), stiffness_csr.getV(),
+                                residual.raw(),
+                                1e-16,
+                                1
+                            );
+
                         }
 
                         timestamp end = gettimestamp();

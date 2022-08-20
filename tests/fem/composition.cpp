@@ -2,14 +2,9 @@
 
 /**/
 
-#include <ostream>
-// #include <fstream>
-// #include <iomanip>
-
 #include "../../basic.hpp"
 #include "../../operators/composedoperators.hpp"
 #include "../../sparse/matcsr.hpp"
-#include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial1D.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"

@@ -144,6 +144,11 @@ DiagonalOperator InverseDiagonalPreconditioner( const SparseMatrix& mat );
 
 
 
+inline SparseMatrix Transpose( const SparseMatrix& op )
+{
+    return op.getTranspose();
+}
+
 inline SparseMatrix operator&( const SparseMatrix& left, const SparseMatrix& right )
 {
     return SparseMatrixMultiplication( left, right );

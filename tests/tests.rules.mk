@@ -13,11 +13,15 @@
 # # projectdir=../../
 # # pathvar=$(shell pwd)/../../
 
+
+
+
 ifeq ($(OS),Windows_NT)
 ending := exe
 else
 ending := out
 endif
+# cp $@ $(patsubst %.out,%.exe,$@)
 
 $(context).sources := $(sort $(wildcard $(contextdir)/*.cpp))
 
@@ -46,14 +50,15 @@ $(error No linking mode recognized: $(LINKINGTYPE))
 endif
 
 
+
+#####################################
+# How to compile the executables 
+
 .PHONY: $($(context).depdir)
 $($(context).depdir):
 	@-mkdir -p $@
 
-
-
-
-
+DEPFLAGS = -MT $@ -MF $($(mycontext).depdir)/$*.d -MP -MMD
 
 $($(context).outs): mycontext    := $(context)
 $($(context).outs): mycontextdir := $(contextdir)
@@ -70,13 +75,14 @@ $($(context).outs): $(contextdir)/%.$(ending): $(contextdir)/%.cpp | $($(context
 #	@ echo rpath:       $($(mycontext).rpath)
 #	@ echo lib:         $($(mycontext).lib)
 	@echo Compiling $@ ...
-	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -std=c++2a -MM $(mycontextdir)/$*.cpp -MT $@ -MF $($(mycontext).depdir)/$*.d
+#	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -std=c++2a -MT $@ -MF $($(mycontext).depdir)/$*.d -MM $(mycontextdir)/$*.cpp
 ifeq ($(LINKINGTYPE),dynamic)
-	@$(CXX) $(CXXFLAGS_EXECUTABLE) $(CPPFLAGS) $< $($(mycontext).include) $($(mycontext).rpath) $($(mycontext).mylib) -o $@ $(LDLIBS)
+	@$(CXX) $(CXXFLAGS_EXECUTABLE) $(CPPFLAGS) $< $($(mycontext).include) $($(mycontext).rpath) $($(mycontext).mylib) -o $@ $(LDLIBS) $(DEPFLAGS)
 else
-	@$(CXX) $(CXXFLAGS_EXECUTABLE) $(CPPFLAGS) $< $($(mycontext).include)                       $($(mycontext).mylib) -o $@ $(LDLIBS)
+	@$(CXX) $(CXXFLAGS_EXECUTABLE) $(CPPFLAGS) $< $($(mycontext).include)                       $($(mycontext).mylib) -o $@ $(LDLIBS) $(DEPFLAGS)
 endif
-#	cp $@ $(patsubst %.out,%.exe,$@)
+	
+$($(context).dependencies):
 
 -include $($(context).dependencies)
 
@@ -90,32 +96,23 @@ $(context).tests: $($(context).outs)
 
 
 
+###################################################
+# How to automatically run the executables
 
-
-
-
-
-
-$(context).sources     := $(sort $(wildcard $(contextdir)/*cpp))
-$(context).executables := $(patsubst %.cpp,%.out,$($(context).sources))
 $(context).runs        := $(patsubst %.cpp,%.run,$($(context).sources))
-$(context).silent_runs := $(patsubst %.cpp,%.silent_run,$($(context).sources))
-
 
 run: $(context).run
-
 $(context).run: $($(context).runs)
-
-$($(context).runs): %.run : %.out
+$($(context).runs): %.run : %.$(ending)
 	./$< 
 
+$(context).silent_runs := $(patsubst %.cpp,%.silent_run,$($(context).sources))
+
 silent_run: $(context).silent_run
-
 $(context).silent_run: $($(context).silent_runs)
-
-$($(context).silent_runs): %.silent_run : %.out
+$($(context).silent_runs): %.silent_run : %.$(ending)
 	./$< > /dev/null 
 
-# 2> /dev/null
+PHONY: $(context).run $(context).silent_run $($(context).runs) $($(context).silent_runs)
 
-PHONY: $($(context).runs) $($(context).silent_runs)
+# 2> /dev/null

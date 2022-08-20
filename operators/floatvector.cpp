@@ -8,6 +8,7 @@
 #include "../basic.hpp"
 #include "floatvector.hpp"
 #include "linearoperator.hpp"
+#include "../utility/random.hpp"
 
 
 
@@ -170,6 +171,30 @@ std::string FloatVector::text() const
         ret = ret + "\n" + std::to_string(p) + ": " + std::to_string(getentry(p));
     return ret;
 }
+
+std::string FloatVector::data_as_text( bool indexed, bool print_rowwise ) const
+{
+    const int nc_precision = 3;
+
+    const int nc_width = 7 + nc_precision;
+    
+    std::string ret;
+
+    if( print_rowwise ){
+        if(indexed) for( int p = 0; p < getdimension(); p++ ) ret += printf_into_string(    "%*d ", nc_width, p );
+        if(indexed) ret += '\n';
+        for( int p = 0; p < getdimension(); p++ ) ret += printf_into_string( "%*.*e ", nc_width, nc_precision, getentry(p) );
+    } else {
+        for( int p = 0; p < getdimension(); p++ )
+            if(indexed) 
+                ret += printf_into_string( "%*d : %*.*e\n", nc_width, p, nc_width, nc_precision, getentry(p) );
+            else 
+                ret += printf_into_string( "%*.*e\n", nc_width, nc_precision, getentry(p) );
+    }
+
+    return ret;
+}
+
 
 void FloatVector::print( std::ostream& output ) const 
 {
@@ -527,6 +552,16 @@ Float FloatVector::scalarproductwith( const FloatVector& right, const std::vecto
 
 
 
+
+Float FloatVector::min() const 
+{
+    check();
+    assert( getdimension() > 0 );
+    Float ret = pointer[0];
+    for( int d = 1; d < getdimension(); d++ )
+        ret = ( ret < pointer[d] ) ? ret : pointer[d];
+    return ret;
+}
 
 Float FloatVector::average() const 
 {

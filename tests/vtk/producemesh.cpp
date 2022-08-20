@@ -6,7 +6,7 @@
 #include <fstream>
 
 #include "../../basic.hpp"
-#include "../../utility/utility.hpp"
+#include "../../utility/convergencetable.hpp"
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"

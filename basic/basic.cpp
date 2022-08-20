@@ -10,9 +10,9 @@ template class std::vector<Float>;
 // Since all literals throughout are double unless marked otherwise 
 // we enforce that `Float` is at least enough to store double.
 // Any of those should do:
-static_assert( Float(std::numeric_limits<double>::max()) == std::numeric_limits<double>::max() );
-// static_assert( Float(1.1) == 1.1 );
-static_assert( sizeof(Float) >= sizeof(double) );
+// 
+// static_assert( Float(std::numeric_limits<double>::max()) == std::numeric_limits<double>::max(), "Float must be at least double" );
+static_assert( sizeof(Float) >= sizeof(double), "Float must be at least double" );
 
 
 #include <cstdarg>

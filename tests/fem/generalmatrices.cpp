@@ -1,8 +1,8 @@
-#include <ostream>
-// #include <fstream>
+
+
+/**/
 
 #include "../../basic.hpp"
-#include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial1D.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"

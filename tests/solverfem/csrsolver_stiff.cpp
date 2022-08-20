@@ -2,23 +2,14 @@
 
 /**/
 
-#include <ostream>
-// #include <fstream>
-// #include <iomanip>
-
 #include "../../basic.hpp"
-#include "../../utility/utility.hpp"
-#include "../../operators/composedoperators.hpp"
-// #include "../../operators/composed.hpp"
-#include "../../dense/densematrix.hpp"
+#include "../../utility/convergencetable.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
-#include "../../vtk/vtkwriter.hpp"
 #include "../../solver/sparsesolver.hpp"
-// #include "../../solver/chebyshev.hpp"
 #include "../../solver/iterativesolver.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.sullivanincl.hpp"
@@ -214,20 +205,19 @@ int main()
 
                     LOG << "...compose stiffness and mass matrices" << endl;
             
-                    const auto composed_stiffness = incmatrix_t * diffmatrix_t * vector_massmatrix * diffmatrix * incmatrix;
-                    const auto composed_mass      = incmatrix_t * scalar_massmatrix * incmatrix;
+                    // const auto composed_stiffness = incmatrix_t * diffmatrix_t * vector_massmatrix * diffmatrix * incmatrix;
+                    // const auto composed_mass      = incmatrix_t * scalar_massmatrix * incmatrix;
 
                     auto opr  = diffmatrix & incmatrix;
                     auto opl  = opr.getTranspose(); 
                     auto stiffness_csr_prelim = opl & ( vector_massmatrix & opr );
-                    
-                    LOG << "...convert to CSR" << endl;
-            
                     stiffness_csr_prelim.sortentries();
                     auto stiffness_csr = MatrixCSR( stiffness_csr_prelim );
 
+                    auto mass_csr = incmatrix_t & scalar_massmatrix & incmatrix;
+
                     const auto& stiffness = stiffness_csr;
-                    const auto& mass      = composed_mass;
+                    const auto& mass      =      mass_csr;
                     
                     LOG << "...matrices done" << endl;
 

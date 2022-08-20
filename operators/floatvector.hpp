@@ -57,6 +57,8 @@ class FloatVector
         
         std::string text() const; 
 
+        std::string data_as_text( bool indexed = true, bool rowwise = false ) const; 
+
         void print( std::ostream& ) const;
         
         // void lg() const { LOG << text() << std::endl; };
@@ -155,6 +157,8 @@ class FloatVector
         
         
         /* Calculations */
+        
+        Float min() const;
         
         Float average() const;
         

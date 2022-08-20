@@ -4,6 +4,6 @@
 #include "gaussjordan.cpp"
 #include "matrixtensorproduct.cpp"
 #include "qr.factorization.cpp"
-#include "readwrite.cpp"
+//#include "readwrite.cpp"
 #include "scalarfunctions.cpp"
 #include "simplesolver.cpp"
