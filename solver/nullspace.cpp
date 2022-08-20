@@ -7,6 +7,7 @@
 #include "../operators/linearoperator.hpp"
 #include "sparsesolver.hpp"
 #include "iterativesolver.hpp"
+#include "../utility/random.hpp"
 
 #include "nullspace.hpp"
 

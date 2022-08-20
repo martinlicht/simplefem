@@ -17,6 +17,7 @@
 #include "../operators/floatvector.hpp"
 #include "../operators/simpleoperators.hpp"
 #include "../sparse/sparsematrix.hpp"
+#include "../utility/random.hpp"
 
 
 DenseMatrix::DenseMatrix( const DenseMatrix& mat )

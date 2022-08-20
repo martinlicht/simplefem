@@ -18,7 +18,7 @@ CMD_DEPCLEAN := if [ -d .deps/ ]; then rm -f .deps/*.d .deps/.all.d; rmdir .deps
 .PHONY: clean vktclean dependclean
 
 clean: 
-	@-$(CMD_CLEAN); #$(CMD_VTKCLEAN); $(CMD_DEPCLEAN); 
+	@-$(CMD_CLEAN); $(CMD_VTKCLEAN); $(CMD_DEPCLEAN); 
 
 vtkclean: 
 	@-$(CMD_VTKCLEAN); 

@@ -8,6 +8,7 @@
 #include "../basic.hpp"
 #include "floatvector.hpp"
 #include "linearoperator.hpp"
+#include "../utility/random.hpp"
 
 
 

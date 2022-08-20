@@ -48,7 +48,7 @@ FLAG_DISABLE_CHECK_MESHES=yes
 # Do you want to DISABLE the custom logging framework
 # in favor of standard library routines?
 # Uncomment the following line for that
-FLAG_USE_PRIMITIVE_LOGGING=yes
+# FLAG_USE_PRIMITIVE_LOGGING=yes
 
 # Do you want to ENABLE the standard library debugging flags 
 # Uncomment the following line to enable the standard library debugging flags 
@@ -446,6 +446,7 @@ CXXFLAGS_WARNINGS += -Wno-unused-parameter
 CXXFLAGS_WARNINGS += -Wno-vla
 CXXFLAGS_WARNINGS += -Wno-unknown-pragmas
 CXXFLAGS_WARNINGS += -Wno-type-limits 
+CXXFLAGS_WARNINGS += -Wno-defaulted-function-deleted
 # for Clang...
 ifeq ($(FLAG_CXX),GCC)
 else ifeq ($(FLAG_CXX),CLANG)

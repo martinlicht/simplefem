@@ -11,7 +11,7 @@
 
 #include "sparsematrix.hpp"
 #include "../dense/densematrix.hpp"
-#include "../utility/utility.hpp"
+//#include "../utility/utility.hpp"
 
 
 

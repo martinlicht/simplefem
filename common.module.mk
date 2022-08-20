@@ -39,12 +39,12 @@ make_dependencies: $(depdir)
 $(objects): %.o: %.cpp .deps/%.d | $(depdir)
 	@echo Compile object and generate dependencies: $@ 
 #	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -MM $*.cpp -MF .deps/$*.d #
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS)       $< -c -o $@ $(DEPFLAGS)
+	@$(CXX) $(CXXFLAGS) $(CPPFLAGS)       $< -c -o $@ $(DEPFLAGS)
 
 .all.o: $(sources) .all.cpp .deps/.all.d | $(depdir)
 	@echo Compiling and setting dependencies: $(libraryobject)
 #	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -MM .all.cpp -MF .deps/.all.d
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) .all.cpp -c -o $@  $(DEPFLAGS)
+	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) .all.cpp -c -o $@  $(DEPFLAGS)
 
 .deps/.all.d:
 $(dependencies):
