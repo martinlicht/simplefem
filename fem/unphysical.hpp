@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "../basic.hpp"
+#include "../utility/random.hpp"
 #include "../combinatorics/generatemultiindices.hpp"
 #include "../operators/linearoperator.hpp"
 #include "../operators/simpleoperators.hpp"
