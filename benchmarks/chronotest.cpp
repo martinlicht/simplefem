@@ -12,17 +12,17 @@ void f()
        for(int m=0; m<10000; ++m)
            d = d + d*n*m;
 }
- 
+
+volatile long double foo;
+
 int main()
 {
     
     std::clock_t c_start = std::clock();
     auto t_start = std::chrono::high_resolution_clock::now();
     
-    long double foo = 1.;
-    
-    for( int t = 0; t < 10000; t++)
-        foo *= ( t - 1. ) / ( t + 1. );
+    foo = 1.;
+    for( int t = 0; t < 1200000; t++) foo *= ( t - 1. ) / ( t + 1. );
     
     std::clock_t c_end = std::clock();
     auto t_end = std::chrono::high_resolution_clock::now();
