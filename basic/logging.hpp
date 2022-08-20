@@ -152,9 +152,14 @@ class Logger : public std::ostringstream
 
 // utilize the printf template for stream-like objects 
 
+
+#if __cplusplus < 202002L
+#define LOGPRINTF(...) printf_into_stream( LOG, __VA_ARGS__ );
+#define ERRPRINTF(...) printf_into_stream( ERR, __VA_ARGS__ );
+#else
 #define LOGPRINTF( formatstring, ...) printf_into_stream( LOG, formatstring __VA_OPT__(,) __VA_ARGS__ );
 #define ERRPRINTF( formatstring, ...) printf_into_stream( ERR, formatstring __VA_OPT__(,) __VA_ARGS__ );
-
+#endif
 
 
 

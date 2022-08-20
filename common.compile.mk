@@ -195,7 +195,7 @@ endif
 #                                             #
 ###############################################
 
-CXXFLAGS_LANG := -std=c++2a -pedantic 
+CXXFLAGS_LANG := -std=c++17 -pedantic 
 
 
 

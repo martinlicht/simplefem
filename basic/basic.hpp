@@ -819,8 +819,11 @@ __attribute__ (( format (printf,1,2) ));
 // {
 //     stream << printf_into_string( formatstring, args... );
 // }
-#define printf_into_stream( stream, formatstring, ... ) \
- { stream << printf_into_string( formatstring __VA_OPT__(,) __VA_ARGS__ ); }
+#if __cplusplus < 202002L
+#define printf_into_stream( stream, ... ) { stream << printf_into_string( __VA_ARGS__ ); }
+#else
+#define printf_into_stream( stream, formatstring, ... ) { stream << printf_into_string( formatstring __VA_OPT__(,) __VA_ARGS__ ); }
+#endif
 
 
 /******************************************************/
