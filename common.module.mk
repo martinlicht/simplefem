@@ -13,7 +13,7 @@ depdir  := .deps
 sources      := $(wildcard *.cpp)
 headers      := $(wildcard *.hpp)
 objects      := $(patsubst %.cpp,%.o,$(sources))
-dependencies := $(patsubst %.cpp,.deps/%.d,$(sources))
+dependencies := $(patsubst %.cpp,$(depdir)/%.d,$(sources))
 
 sharedlibrarybasename := lib$(dirname)
 libraryobject         := lib$(dirname).o
@@ -30,23 +30,23 @@ $(depdir):
 	@"mkdir" -p $@
 #	@echo $(dirname)
 
-DEPFLAGS = -MT $@ -MMD -MP -MF .deps/$*.d
+DEPFLAGS = -MT $@ -MMD -MP -MF $(depdir)/$*.d
 
 .PHONY: make_dependencies
 make_dependencies: $(depdir)
-	@for item in $(sources); do $(CXX) $(CXXFLAGS) $(CPPFLAGS) $$item -MM -MP -MF .deps/$$item.d; done
+	@for item in $(sources); do $(CXX) $(CXXFLAGS) $(CPPFLAGS) $$item -MM -MP -MF $(depdir)/$$item.d; done
 
-$(objects): %.o: %.cpp .deps/%.d | $(depdir)
+$(objects): %.o: %.cpp $(depdir)/%.d | $(depdir)
 	@echo Compile object and generate dependencies: $@ 
-#	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -MM $*.cpp -MF .deps/$*.d #
+#	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -MM $*.cpp -MF $(depdir)/$*.d #
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS)       $< -c -o $@ $(DEPFLAGS)
 
-.all.o: $(sources) .all.cpp .deps/.all.d | $(depdir)
+.all.o: $(sources) .all.cpp $(depdir)/.all.d | $(depdir)
 	@echo Compiling and setting dependencies: $(libraryobject)
-#	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -MM .all.cpp -MF .deps/.all.d
+#	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -MM .all.cpp -MF $(depdir)/.all.d
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) .all.cpp -c -o $@  $(DEPFLAGS)
 
-.deps/.all.d:
+$(depdir)/.all.d:
 $(dependencies):
 
 -include $(depdir)/.all.d

@@ -29,7 +29,7 @@ $(context).outs    := $(patsubst %.cpp,%.$(ending),$($(context).sources))
 
 $(context).depdir  := $(contextdir)/$(depdir)
 
-$(context).dependencies := $(patsubst $(contextdir)/%.cpp,$(contextdir)/.deps/%.d,$($(context).sources))
+$(context).dependencies := $(patsubst $(contextdir)/%.cpp,$(contextdir)/$(depdir)/%.d,$($(context).sources))
 
 $(context).include := $(patsubst %,-L$(projectdir)/%,$(affix.$(context)))
 linkerprefix       :=-Wl,
