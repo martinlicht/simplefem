@@ -2,6 +2,7 @@
 #include "systemsparsesolver.hpp"
 
 
+#include "sparsesolver.hpp"
 
 inline const bool csrsys_restart_on_full_dimension = false;
 inline const bool csrsys_restart_before_finish     = false;
@@ -127,6 +128,8 @@ int HodgeConjugateResidualSolverCSR_diagonal(
     
     int k = 0;
     
+    LOGPRINTF( "Hodge Conjugate Residual (diag) CSR\n" );
+
     while( k < N ){
         
         bool restart_condition = ( k == 0 ) or ( csrsys_restart_on_full_dimension and k % N == 0 );
@@ -479,6 +482,8 @@ int HodgeConjugateResidualSolverCSR_SSOR(
     
     int k = 0;
     
+    LOGPRINTF( "Hodge Conjugate Residual (SSOR) CSR\n" );
+
     while( k < N ){
         
         bool restart_condition = ( k == 0 ) or ( csrsys_restart_on_full_dimension and k % N == 0 );
@@ -813,6 +818,8 @@ int HodgeConjugateResidualSolverCSR_textbook(
     
     int k = 0;
     
+    LOGPRINTF( "Hodge Conjugate Residual (textbook) CSR\n" );
+
     while( k < N ){
         
         bool restart_condition = ( k == 0 ) or ( csrsys_restart_on_full_dimension and k % N == 0 );
@@ -1147,6 +1154,8 @@ int HodgeHerzogSoodhalterMethod(
     
     int max_iteration_count = dimension_A + dimension_C;
     int recent_iteration_count = 0;
+
+    LOGPRINTF( "Hodge Herzog-Soodhalter CSR\n" );
 
     while( recent_iteration_count < max_iteration_count ){
         

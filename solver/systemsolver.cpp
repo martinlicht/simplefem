@@ -97,6 +97,8 @@ int BlockHerzogSoodhalterMethod(
     int max_iteration_count = dimension_A + dimension_C;
     int recent_iteration_count = 0;
 
+    LOGPRINTF( "Block Herzog-Soodhalter CSR\n" );
+
     while( recent_iteration_count < max_iteration_count ){
         
         bool restart_condition = ( recent_iteration_count == 0 ) or ( cppsys_restart_on_full_dimension and recent_iteration_count );;

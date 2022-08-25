@@ -1,8 +1,6 @@
 #ifndef INCLUDEGUARD_FEM_UTILITIES_HPP
 #define INCLUDEGUARD_FEM_UTILITIES_HPP
 
-#include <algorithm>
-#include <vector>
 
 #include "../basic.hpp"
 #include "../dense/densematrix.hpp"
@@ -77,7 +75,6 @@ DenseMatrix EvaluationMatrix( int r, const DenseMatrix& bcs );
 // [ J.dimin()+1 x J.dimout() ]
 // 
 
-
 DenseMatrix BarycentricProjectionMatrix( const DenseMatrix& J );
 
 
@@ -121,7 +118,6 @@ DenseMatrix EvaluateField(
 // The output is a vector whose coefficients represent the volume-wise interpolations 
 // into the local Sullivan space of k-forms with polynomial degree r 
 // 
-
 
 FloatVector Interpolation( 
             const Mesh& m, 

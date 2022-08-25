@@ -90,6 +90,20 @@ void TransposeSquareInSitu( DenseMatrix& src )
 
 
 
+DenseMatrix skip_row( int r, const DenseMatrix& mat )
+{
+    assert( 0 <= r and r < mat.getdimout() );
+    DenseMatrix ret( mat.getdimout()-1, mat.getdimin() );
+    for( int i = 0;   i < r;               i++ ) ret.setrow( i,   mat.getrow(i) );
+    for( int i = r+1; i < mat.getdimout(); i++ ) ret.setrow( i-1, mat.getrow(i) );
+    return ret; 
+}
+
+DenseMatrix skip_column( int c, const DenseMatrix& mat )
+{
+    return Transpose( skip_row(c, Transpose(mat) ) );
+}
+
 
 
 

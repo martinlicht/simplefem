@@ -332,7 +332,7 @@ void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector&
     
     recent_iteration_count = 0;
     
-    if( verbosity >= VerbosityLevel::verbose ) LOG << "START Conjugate Residual iteration" << nl;
+    if( verbosity >= VerbosityLevel::verbose ) LOG << "START Conjugate Residual (explicit) iteration" << nl;
         
     while( recent_iteration_count < max_iteration_count )
     {
@@ -489,7 +489,7 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
     
     recent_iteration_count = 0;
     
-    if( verbosity >= VerbosityLevel::verbose ) LOG << "START Conjugate Residual iteration" << nl;
+    if( verbosity >= VerbosityLevel::verbose ) LOG << "START Conjugate Residual (robust) iteration" << nl;
         
     while( recent_iteration_count < max_iteration_count )
     {
@@ -618,7 +618,7 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
     
     Float Ar_r = notanumber;
     
-    if( verbosity >= VerbosityLevel::verbose ) LOG << "START Conjugate Residual iteration" << nl;
+    if( verbosity >= VerbosityLevel::verbose ) LOG << "START Conjugate Residual (fast) iteration" << nl;
         
     while( recent_iteration_count < max_iteration_count )
     {
@@ -1585,6 +1585,8 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
     
     recent_iteration_count = 0;
 
+    if( verbosity >= VerbosityLevel::verbose ) LOG << "START Herzog-Soodhalter iteration" << nl;
+                
     while( recent_iteration_count < max_iteration_count ){
         
         bool restart_condition = ( recent_iteration_count == 0 ) or ( cpp_restart_on_full_dimension and recent_iteration_count % x.getdimension() == 0 );;

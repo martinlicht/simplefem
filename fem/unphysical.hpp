@@ -1,14 +1,11 @@
 #ifndef INCLUDEGUARD_FEM_UNPHYSICAL_HPP
 #define INCLUDEGUARD_FEM_UNPHYSICAL_HPP
 
-#include <algorithm>
 #include <vector>
 
 #include "../basic.hpp"
 #include "../utility/random.hpp"
 #include "../combinatorics/generatemultiindices.hpp"
-#include "../operators/linearoperator.hpp"
-#include "../operators/simpleoperators.hpp"
 #include "../dense/densematrix.hpp"
 #include "../dense/matrixtensorproduct.hpp"
 #include "../dense/functions.hpp"
