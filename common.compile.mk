@@ -700,6 +700,25 @@ endif
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+###############################################
+#                                             #
+#             Show all parameters             #
+#                                             #
+###############################################
+
 # print all the compilation flags set manually or automatically
 .PHONY: parameters
 parameters:

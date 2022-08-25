@@ -164,7 +164,7 @@ cpplint:
 # print the build parameters
 
 parameters:
-	@make --no-print-directory -f common.compile.mk parameters
+	@$(MAKE) --no-print-directory -f common.compile.mk parameters
 	@true
 
 .PHONY: parameters 
