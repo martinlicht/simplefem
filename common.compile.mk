@@ -105,12 +105,9 @@ FLAG_NO_EXCEPTIONS=yes
 
 
 
-
-
 # Use this file to overwrite the default settings above on a local machine
+# At this point, only the flags above will be set.
 -include OVERWRITE.COMPILE.mk
-
-
 
 # If we are in RELEASE_MODE then set the following flags 
 
@@ -125,37 +122,6 @@ FLAG_NO_EXCEPTIONS=yes
 FLAG_DO_STRIP=yes
 FLAG_USE_PRIMITIVE_LOGGING=yes
 endif
-
-
-
-
-
-# print all the compilation flags set manually or automatically
-.PHONY: parameters
-parameters:
-	$(info FLAG_CXX                       = $(FLAG_CXX) )
-	$(info FLAG_DISABLE_ASSERTIONS        = $(FLAG_DISABLE_ASSERTIONS) ) 
-	$(info FLAG_USE_ORIGINAL_ASSERT_MACRO = $(FLAG_USE_ORIGINAL_ASSERT_MACRO) )
-	$(info FLAG_DISABLE_CHECK_MESHES      = $(FLAG_DISABLE_CHECK_MESHES) ) 
-	$(info FLAG_USE_PRIMITIVE_LOGGING     = $(FLAG_USE_PRIMITIVE_LOGGING) )
-	$(info FLAG_DISABLE_STDLIBDEBUG       = $(FLAG_DISABLE_STDLIBDEBUG) ) 
-	$(info FLAG_NO_EXCEPTIONS             = $(FLAG_NO_EXCEPTIONS) ) 
-	$(info FLAG_DO_USE_EXTENDED_PRECISION = $(FLAG_DO_USE_EXTENDED_PRECISION) ) 
-	$(info FLAG_EXCESSIVE_WARNINGS        = $(FLAG_EXCESSIVE_WARNINGS) ) 
-	$(info FLAG_DO_USE_SANITIZER          = $(FLAG_DO_USE_SANITIZER) ) 
-	$(info FLAG_DO_STATICANALYSIS         = $(FLAG_DO_STATICANALYSIS) ) 
-	$(info FLAG_DO_OPTIMIZE               = $(FLAG_DO_OPTIMIZE) ) 
-	$(info FLAG_ENABLE_OPENMP             = $(FLAG_ENABLE_OPENMP) ) 
-	$(info FLAG_USE_TCMALLOC              = $(FLAG_USE_TCMALLOC) ) 
-	$(info FLAG_NO_DEBUGINFO              = $(FLAG_NO_DEBUGINFO) ) 
-	$(info FLAG_USE_BACKTRACER            = $(FLAG_USE_BACKTRACER) ) 
-	$(info FLAG_DO_STRIP                  = $(FLAG_DO_STRIP) ) 
-	$(info FLAG_DO_PROFILE                = $(FLAG_DO_PROFILE) ) 
-	@true
-
-
-
-
 
 
 
@@ -601,12 +567,16 @@ endif
 
 
 
+###############################################
+#                                             #
+#     Include the overwrite file again,       #
+#     this time the strings will be set       #
+#                                             #
+###############################################
 
-
-
-
-
-
+# Use this file to overwrite the default settings above on a local machine
+# At this point, also the compiler flags will be set 
+-include OVERWRITE.COMPILE.mk
 
 
 
@@ -708,9 +678,6 @@ LDLIBS := $(strip $(LDLIBS))
 
 
 
-
-
-
 ###############################################
 #                                             #
 #         Choose the type of linking          #
@@ -733,4 +700,44 @@ endif
 
 
 
-
+# print all the compilation flags set manually or automatically
+.PHONY: parameters
+parameters:
+	$(info FLAG_CXX                       = $(FLAG_CXX) )
+	$(info FLAG_DISABLE_ASSERTIONS        = $(FLAG_DISABLE_ASSERTIONS) ) 
+	$(info FLAG_USE_ORIGINAL_ASSERT_MACRO = $(FLAG_USE_ORIGINAL_ASSERT_MACRO) )
+	$(info FLAG_DISABLE_CHECK_MESHES      = $(FLAG_DISABLE_CHECK_MESHES) ) 
+	$(info FLAG_USE_PRIMITIVE_LOGGING     = $(FLAG_USE_PRIMITIVE_LOGGING) )
+	$(info FLAG_DISABLE_STDLIBDEBUG       = $(FLAG_DISABLE_STDLIBDEBUG) ) 
+	$(info FLAG_NO_EXCEPTIONS             = $(FLAG_NO_EXCEPTIONS) ) 
+	$(info FLAG_DO_USE_EXTENDED_PRECISION = $(FLAG_DO_USE_EXTENDED_PRECISION) ) 
+	$(info FLAG_EXCESSIVE_WARNINGS        = $(FLAG_EXCESSIVE_WARNINGS) ) 
+	$(info FLAG_DO_USE_SANITIZER          = $(FLAG_DO_USE_SANITIZER) ) 
+	$(info FLAG_DO_STATICANALYSIS         = $(FLAG_DO_STATICANALYSIS) ) 
+	$(info FLAG_DO_OPTIMIZE               = $(FLAG_DO_OPTIMIZE) ) 
+	$(info FLAG_ENABLE_OPENMP             = $(FLAG_ENABLE_OPENMP) ) 
+	$(info FLAG_USE_TCMALLOC              = $(FLAG_USE_TCMALLOC) ) 
+	$(info FLAG_NO_DEBUGINFO              = $(FLAG_NO_DEBUGINFO) ) 
+	$(info FLAG_USE_BACKTRACER            = $(FLAG_USE_BACKTRACER) ) 
+	$(info FLAG_DO_STRIP                  = $(FLAG_DO_STRIP) ) 
+	$(info FLAG_DO_PROFILE                = $(FLAG_DO_PROFILE) ) 
+	@true
+	$(info ) 
+	@true
+	$(info CXX                      = $(CXX) )
+	$(info CXXFLAGS_LANG            = $(CXXFLAGS_LANG) ) 
+	$(info CXXFLAGS_OPTIMIZE        = $(CXXFLAGS_OPTIMIZE) )
+	$(info CXXFLAGS_CODEGEN         = $(CXXFLAGS_CODEGEN) ) 
+	$(info CXXFLAGS_WARNINGS        = $(CXXFLAGS_WARNINGS) )
+	$(info CXXFLAGS_DEBUG           = $(CXXFLAGS_DEBUG) ) 
+	$(info CXXFLAGS_PROF            = $(CXXFLAGS_PROF) ) 
+	$(info SANITIZERS               = $(SANITIZERS) ) 
+	$(info CXXFLAGS_SANI            = $(CXXFLAGS_SANI) ) 
+	$(info CXXFLAGS_MALLOC          = $(CXXFLAGS_MALLOC) ) 
+	$(info CXXFLAGS_STATICANALYSER  = $(CXXFLAGS_STATICANALYSER) ) 
+	$(info CXXFLAGS_DIAGNOSISFORMAT = $(CXXFLAGS_DIAGNOSISFORMAT) ) 	
+	$(info CXXFLAGS_EXECUTABLE      = $(CXXFLAGS_EXECUTABLE) ) 
+	$(info CPPFLAGS                 = $(CPPFLAGS) )
+	$(info LDLIBS                   = $(LDLIBS) ) 
+	$(info LINKINGTYPE              = $(LINKINGTYPE) ) 
+	@true
