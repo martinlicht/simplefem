@@ -2,9 +2,7 @@
 #define INCLUDEGUARD_FEM_FINITEDIFF_HPP
 
 
-// #include <cassert>
 #include <functional>
-#include <ostream>
 #include <vector>
 
 #include "../basic.hpp"
@@ -15,7 +13,6 @@
 #include "../combinatorics/generateindexmaps.hpp"
 #include "../operators/floatvector.hpp"
 #include "../dense/densematrix.hpp"
-#include "../operators/linearoperator.hpp"
 
 
 

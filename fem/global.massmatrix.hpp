@@ -2,10 +2,6 @@
 #define INCLUDEGUARD_FEM_FEECBROKENMASSMATRIX
 
 
-// #include <cassert>
-#include <ostream>
-#include <vector>
-
 #include "../operators/floatvector.hpp"
 #include "../sparse/sparsematrix.hpp"
 #include "../mesh/mesh.hpp"
@@ -31,30 +27,6 @@ SparseMatrix FEECBrokenMassMatrixRightFactor( const Mesh& mesh, int n, int k, in
 FloatVector FEECBrokenMassMatrix_cellwisemass( const Mesh& mesh, int n, int k, int r, const FloatVector vec );
 
 SparseMatrix FEECBrokenMassMatrix_cellwiseinverse( const Mesh& mesh, int n, int k, int r );
-
-
-
-
-
-
-
-
-
-// inline DenseMatrix elementmassmatrix( int n, int ambientdim, int r, int k, DenseMatrix Jacobian )
-// {
-//     
-//     assert( Jacobian.getdimin() == n && Jacobian.getdimout() == ambientdim ); 
-//     assert( n <= ambientdim );
-//     assert( n >= 0 && n >= k );
-//         
-//     DenseMatrix polyMM = polynomialmassmatrix( n, r );
-//     
-//     DenseMatrix formMM = SubdeterminantMatrix( mesh.getGradientProductMatrix( n, t ), k );
-//         
-//     return TensorProduct( polyMM, formMM ) * absolute( determinant( Jacobian ) ) / factorial_numerical( n );
-//     
-// }
-
 
 
 #endif

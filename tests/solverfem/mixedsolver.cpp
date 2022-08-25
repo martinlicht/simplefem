@@ -121,22 +121,22 @@ int main()
             
             bool do_crmcsr = true;
             bool do_crmcpp = false; //true;
-            bool do_blockherzog = false; //true;
-            bool do_blockminres = false; // does not work well
+            bool do_herzogblock = false; //true;
+            bool do_minresblock = false; // does not work well
             bool do_systemherzog = true;
             bool do_sparseherzog = false;
             
             if( do_crmcsr )       { contable_sigma << "CRMcsr"; contable_u << "CRMcsr"; contable_du << "CRMcsr"; contable_iter << "CRMcsr"; contable_time << "CRMcsr"; contable_res << "CRMcsr"; } 
             if( do_crmcpp )       { contable_sigma << "CRMcpp"; contable_u << "CRMcpp"; contable_du << "CRMcpp"; contable_iter << "CRMcpp"; contable_time << "CRMcpp"; contable_res << "CRMcpp"; } 
-            if( do_blockherzog )  { contable_sigma << "Herzog"; contable_u << "Herzog"; contable_du << "Herzog"; contable_iter << "Herzog"; contable_time << "Herzog"; contable_res << "Herzog"; } 
-            if( do_blockminres )  { contable_sigma << "Minres"; contable_u << "Minres"; contable_du << "Minres"; contable_iter << "Minres"; contable_time << "Minres"; contable_res << "Minres"; } 
+            if( do_herzogblock )  { contable_sigma << "Herzog"; contable_u << "Herzog"; contable_du << "Herzog"; contable_iter << "Herzog"; contable_time << "Herzog"; contable_res << "Herzog"; } 
+            if( do_minresblock )  { contable_sigma << "Minres"; contable_u << "Minres"; contable_du << "Minres"; contable_iter << "Minres"; contable_time << "Minres"; contable_res << "Minres"; } 
             if( do_systemherzog ) { contable_sigma << "SysHerzog"; contable_u << "SysHerzog"; contable_du << "SysHerzog"; contable_iter << "SysHerzog"; contable_time << "SysHerzog"; contable_res << "SysHerzog"; } 
             if( do_sparseherzog ) { contable_sigma << "SpaHerzog"; contable_u << "SpaHerzog"; contable_du << "SpaHerzog"; contable_iter << "SpaHerzog"; contable_time << "SpaHerzog"; contable_res << "SpaHerzog"; } 
             
 
             const int min_l = 0; 
             
-            const int max_l = 6;
+            const int max_l = 5;
             
             const int min_r = 1; 
             
@@ -231,8 +231,8 @@ int main()
 
                             if( k==0 and not do_crmcsr ) continue;
                             if( k==1 and not do_crmcpp ) continue;
-                            if( k==2 and not do_blockherzog ) continue;
-                            if( k==3 and not do_blockminres ) continue;
+                            if( k==2 and not do_herzogblock ) continue;
+                            if( k==3 and not do_minresblock ) continue;
                             if( k==4 and not do_systemherzog ) continue;
                             if( k==5 and not do_sparseherzog ) continue;
                             
@@ -288,7 +288,7 @@ int main()
                             }
 
 
-                            if( k==2 and do_blockherzog )
+                            if( k==2 and do_herzogblock )
                             {
                                 auto X = Block2x2Operator( A.getdimout() + B.getdimout(), A.getdimin() + Bt.getdimin(), -A, Bt, B, C );
 
@@ -316,7 +316,7 @@ int main()
                             }
 
 
-                            if( k==3 and do_blockminres )
+                            if( k==3 and do_minresblock )
                             {   
                                 auto X = Block2x2Operator( A.getdimout() + B.getdimout(), A.getdimin() + Bt.getdimin(), -A, Bt, B, C );
 
@@ -350,8 +350,8 @@ int main()
                                 
                                 // const auto PAinv = IdentityOperator(A.getdimin());
                                 // const auto PCinv = IdentityOperator(C.getdimin());
-                                const auto PAinv = inv(PA,desired_precision,0);
-                                const auto PCinv = inv(PC,desired_precision,0);
+                                const auto PAinv = inv(PA,desired_precision,-1);
+                                const auto PCinv = inv(PC,desired_precision,-1);
 
                                 FloatVector  x_A( A.getdimin(),  0. ); 
                                 FloatVector& x_C = sol;

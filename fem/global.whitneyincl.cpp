@@ -111,14 +111,14 @@ SparseMatrix FEECWhitneyInclusionMatrix( const Mesh& mesh, int n, int k, int r )
 
             // const MultiIndex alpha_effective = alpha;
             // alpha_effective.add( rho[j] );
-            const MultiIndex alpha_effective = [&,alpha,rho,j]()->auto{
+            const MultiIndex alpha_effective = [&,alpha,rho,j]()->MultiIndex{
                 auto temp = alpha;
                 temp.add( rho[j] );
                 return temp;
             }();
 
             // IndexMap sigma_effective = rho.skip(j).shiftup();
-            const IndexMap sigma_effective = [&,rho,j]()->auto{
+            const IndexMap sigma_effective = [&,rho,j]()->IndexMap{
                 auto values = rho.getvalues();
                 values.erase( values.begin() + j );
                 return IndexMap( IndexRange(1,k), IndexRange(0,d), values );

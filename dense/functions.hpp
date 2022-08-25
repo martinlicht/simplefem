@@ -20,6 +20,13 @@ void TransposeSquareInSitu( DenseMatrix& );
 
 
 
+ // remove single rows or columns
+
+DenseMatrix skip_row( int i, const DenseMatrix& mat );
+
+DenseMatrix skip_column( int i, const DenseMatrix& mat );
+
+
 
 
 
