@@ -4,6 +4,7 @@
 ################## Project directory makefile 
 SHELL = /bin/sh
 
+# TODO: all phony targets should be declared as such in all files 
 
 # The default target builds all files  
 
@@ -70,12 +71,11 @@ modules+=vtk
 #modules+=matrixmarket
 modules+=fem
 
+.buildmodules: $(patsubst %,%.build,$(modules))
 
 projectdir :=.
 
 include common.compile.mk
-
-buildtarget :=.buildmodules
 
 moddir :=./basic
 module:=basic
@@ -119,7 +119,6 @@ include common.module.mk
 
 
 
-
 ################################################################## 
 ################################################################## 
 ################################################################## 
@@ -133,15 +132,11 @@ include common.module.mk
 
 build: .buildmodules .buildtests .buildbenchmarks
 
-# .build.modules := $(patsubst %.build,%,$(modules))
-
-# .buildtests: | $(.build.modules)
 .buildtests: | .buildmodules
 	@echo $(.build.modules)
 	@echo Build tests
 	@cd ./tests/ && $(MAKE) --no-print-directory build
 
-# .buildbenchmarks: | $(.build.modules)
 .buildbenchmarks: | .buildmodules
 	@echo Build Benchmarks
 	@cd ./benchmarks/ && $(MAKE) --no-print-directory build

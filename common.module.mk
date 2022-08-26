@@ -4,6 +4,8 @@
 # They create the dependency auxiliary files, 
 # the object files, and the shared libraries. 
 
+# TODO Remove that idea with build here, and reduce the number of variables expected here. 
+#      Instead, just produce $(module).build, and let the outside take care of that target. 
 
 # Do we need basename or path here?
 # https://www.gnu.org/software/make/manual/html_node/File-Name-Functions.html
@@ -15,15 +17,11 @@ $(module).headers      := $(wildcard $(moddir)/*.hpp)
 $(module).objects      := $(patsubst %.cpp,%.o,$($(module).sources))
 $(module).dependencies := $(patsubst %.cpp,$($(module).depdir)/%.d,$(notdir $($(module).sources)))
 
-$(module).sharedlibrarybasename := $(moddir)/lib$(module)
-$(module).libraryobject         := $(moddir)/lib$(module).o
-$(module).sharedlibrary         := $(moddir)/lib$(module).so
-$(module).staticlibrary         := $(moddir)/lib$(module).a
+$(module).libraryobject := $(moddir)/lib$(module).o
+$(module).sharedlibrary := $(moddir)/lib$(module).so
+$(module).staticlibrary := $(moddir)/lib$(module).a
 
-# TODO Remove that idea with build here, and reduce the number of variables expected here. 
-#      Instead, just produce $(module).build, and let the outside take care of that target. 
-
-# TODO Can we introduce the recipe variables for all $(module).* components simultaneously?
+# Set target specific variables for all recipes
 $(module).%: mymodule := $(module)
 $(module).%: mymoddir := $(moddir)
 
@@ -37,13 +35,12 @@ $(moddir)/*.o $(moddir)/.all.o: $(projectdir)/makefile $(projectdir)/common.comp
 ###################################################################################################
 # How to compile the .o files and .all.o file 
 
-
 $($(module).depdir):
 	@echo $@
 	@"mkdir" -p $@
 
 DEPFLAGS = -MT $@ -MMD -MP -MF $($(mymodule).depdir)/$(notdir $*.d)
-# Generate the dependency files 
+# We generate dependency files during compilation using the following compiler flags 
 # -MT $@ : sets the target of the makefile rule, stripped of any directory components
 # -MP    : add dependencies as phony targets
 # -MF ...: sets the output file for the rules 
@@ -51,35 +48,23 @@ DEPFLAGS = -MT $@ -MMD -MP -MF $($(mymodule).depdir)/$(notdir $*.d)
 # alternatively,
 # -MM    : list headers, excluding system headers, and do not compile anything
 
-
-.PHONY: make_dependencies $(module).make_dependencies
-make_dependencies: $(module).make_dependencies
-# $(module).make_dependencies: mymodule := $(module)
-$(module).make_dependencies: $($(module).depdir)
-	@for item in $($(mymodule).sources); do \
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $$item -MM -MP -MF $($(module).depdir)/$$item.d; \
-	done
-
-
 $(moddir)/$($(module).objects): %.o: %.cpp $($(module).depdir)/%.d | $($(module).depdir)
 	@echo Compiling and listing dependencies: $@ 
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS)                       $< -c -o $@ $(DEPFLAGS)
 
-# $(module).all.o: mymodule := $(module)
-# $(module).all.o: mymoddir := $(moddir)
 $(moddir)/.all.o: $($(module).sources) $(moddir)/.all.cpp $($(module).depdir)/.all.d | $($(module).depdir)
-	@echo $(mymodule).depdir
-	@echo $($(mymodule).depdir) 
-	@echo $($(mymodule).sources) 
-	@echo $($(mymodule).headers) 
-	@echo $($(mymodule).objects) 
-	@echo $($(mymodule).dependencies) 
-	@echo $($(mymodule).sharedlibrarybasename)
-	@echo $($(mymodule).libraryobject)
-	@echo $($(mymodule).sharedlibrary)
-	@echo $($(mymodule).staticlibrary)
-	@echo $@
-	@echo $*
+# 	@echo $(mymodule).depdir
+# 	@echo $($(mymodule).depdir) 
+# 	@echo $($(mymodule).sources) 
+# 	@echo $($(mymodule).headers) 
+# 	@echo $($(mymodule).objects) 
+# 	@echo $($(mymodule).dependencies) 
+# 	@echo $($(mymodule).sharedlibrarybasename)
+# 	@echo $($(mymodule).libraryobject)
+# 	@echo $($(mymodule).sharedlibrary)
+# 	@echo $($(mymodule).staticlibrary)
+# 	@echo $@
+# 	@echo $*
 	@echo Compiling and listing dependencies: $($(mymodule).libraryobject)
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(mymoddir)/.all.cpp -c -o $@  $(DEPFLAGS)
 
@@ -91,25 +76,30 @@ $($(module).dependencies):
 -include $($(module).dependencies)
 
 
-# How to provide the library .o file, and possibly static/shared libraries
+# We can also generate the dependency files without compiling anything 
 
-# $($(module).libraryobject): mymodule := $(module)
-# $($(module).libraryobject): mymoddir := $(moddir)
+.PHONY: make_dependencies $(module).make_dependencies
+make_dependencies: $(module).make_dependencies
+
+$(module).make_dependencies: $($(module).depdir)
+	@for item in $($(mymodule).sources); do \
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $$item -MM -MP -MF $($(module).depdir)/$$item.d; \
+	done
+
+# How to the .o files into library objects 
+
 $($(module).libraryobject): $(moddir)/.all.o
 	@echo Library object: $@
 	@cp $(mymoddir)/.all.o $($(mymodule).libraryobject)
 
-# $($(module).sharedlibrary): mymodule := $(module)
-# $($(module).sharedlibrary): mymoddir := $(moddir)
 $($(module).sharedlibrary): $($(module).libraryobject)
 	@echo Shared library: $@
 	@$(CXX) $(CXXFLAGS) -shared -o $@ $^ $(LDLIBS)
 
-# $($(module).staticlibrary): mymodule := $(module)
-# $($(module).staticlibrary): mymoddir := $(moddir)
 $($(module).staticlibrary): $($(module).libraryobject)
 	@echo Static library: $@
 	@ar rcs $($(mymodule).staticlibrary) $($(mymodule).libraryobject)
+
 
 
 
@@ -128,9 +118,7 @@ buildso:      $(module).buildso
 builda:       $(module).builda
 
 
-.PHONY: $(buildtarget) $(module).build
-
-$(buildtarget): $(module).build
+.PHONY: $(module).build
 
 ifeq ($(OS),Windows_NT)
 $(module).build: $(module).builda
@@ -145,9 +133,9 @@ endif
 
 .PHONY:  list_of_objects $(module).list_of_objects
 .SILENT: list_of_objects $(module).list_of_objects
+
 list_of_objects: $(module).list_of_objects
-# $(module).list_of_objects: mymodule := $(module)
-# $(module).list_of_objects: mymoddir := $(moddir)
+
 $(module).list_of_objects: 
 	@echo $(projecdir);
 	@echo $(mymodule);
@@ -205,16 +193,19 @@ grepissues: $(module).grepissues
 # $(module).grepissues: mymodule := $(module)
 # $(module).grepissues: mymoddir := $(moddir)
 $(module).grepissues:
-#	@echo Find trailing whitespace...
+#	@echo Search trailing whitespace...
 #	@-grep --line-number --color '\s+$$' -r $(mymoddir)/*pp
-#	@echo Find non-ASCII characters...
+#	@echo Search non-ASCII characters...
 #	@-grep --line-number --color '[^\x00-\x7F]' -r $(mymoddir)/*pp
 #	@echo Find consecutive spaces...
 #	@-grep --line-number --color '\b\s{2,}' -r $(mymoddir)/*pp
+#	@echo Find standard asserts...
 #	@-grep --line-number --color 'assert(' $(mymoddir)/*pp
+#	@echo Find usage of 'cout' ...
 	@-grep --line-number --color 'cout' $(mymoddir)/*pp
+#	@echo Find floating-point numbers ...
 #	@-grep --line-number --color -E '\.*[0-9]' $(mymoddir)/*pp
-	@-grep --line-number --color -E '(0-9)e' $(mymoddir)/*pp
+#	@-grep --line-number --color -E '(0-9)e' $(mymoddir)/*pp
 	@-grep --line-number --color -E '([0-9]+e[0-9]+)|([0-9]+\.[0-9]+)|((+-\ )\.[0-9]+)|((+-\ )[0-9]+\.)' $(mymoddir)/*pp
 
 
