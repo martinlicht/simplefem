@@ -20,6 +20,12 @@ $(module).libraryobject         := $(moddir)/lib$(module).o
 $(module).sharedlibrary         := $(moddir)/lib$(module).so
 $(module).staticlibrary         := $(moddir)/lib$(module).a
 
+# TODO Remove that idea with build here, and reduce the number of variables expected here. 
+#      Instead, just produce $(module).build, and let the outside take care of that target. 
+
+# TODO Can we introduce the recipe variables for all $(module).* components simultaneously?
+$(module).%: mymodule := $(module)
+$(module).%: mymoddir := $(moddir)
 
 ###################################################################################################
 # All object files that are compiled (and their descendants) also depend on the makefiles 
@@ -42,36 +48,39 @@ DEPFLAGS = -MT $@ -MMD -MP -MF $($(mymodule).depdir)/$(notdir $*.d)
 # -MP    : add dependencies as phony targets
 # -MF ...: sets the output file for the rules 
 # -MMD   : list headers as a by-product of compiling, excluding system headers
-# alternatively, -MM implicates that no compilation takes place 
+# alternatively,
+# -MM    : list headers, excluding system headers, and do not compile anything
 
-# TODO: Separate set of flags for dependency generation with or without compilation 
 
 .PHONY: make_dependencies $(module).make_dependencies
 make_dependencies: $(module).make_dependencies
-$(module).make_dependencies: mymodule := $(module)
+# $(module).make_dependencies: mymodule := $(module)
 $(module).make_dependencies: $($(module).depdir)
-	@for item in $($(mymodule).sources); do $(CXX) $(CXXFLAGS) $(CPPFLAGS) $$item -MM -MP -MF .deps/$$item.d; done
+	@for item in $($(mymodule).sources); do \
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $$item -MM -MP -MF $($(module).depdir)/$$item.d; \
+	done
+
 
 $(moddir)/$($(module).objects): %.o: %.cpp $($(module).depdir)/%.d | $($(module).depdir)
-	@echo Generate dependencies: $@ 
+	@echo Compiling and listing dependencies: $@ 
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS)                       $< -c -o $@ $(DEPFLAGS)
 
-$(module).all.o: mymodule := $(module)
-$(module).all.o: mymoddir := $(moddir)
+# $(module).all.o: mymodule := $(module)
+# $(module).all.o: mymoddir := $(moddir)
 $(moddir)/.all.o: $($(module).sources) $(moddir)/.all.cpp $($(module).depdir)/.all.d | $($(module).depdir)
-# 	@echo $(mymodule).depdir
-# 	@echo $($(mymodule).depdir) 
-# 	@echo $($(mymodule).sources) 
-# 	@echo $($(mymodule).headers) 
-# 	@echo $($(mymodule).objects) 
-# 	@echo $($(mymodule).dependencies) 
-# 	@echo $($(mymodule).sharedlibrarybasename)
-# 	@echo $($(mymodule).libraryobject)
-# 	@echo $($(mymodule).sharedlibrary)
-# 	@echo $($(mymodule).staticlibrary)
-# 	@echo $@
-# 	@echo $*
-	@echo Compiling and setting dependencies: $($(mymodule).libraryobject)
+	@echo $(mymodule).depdir
+	@echo $($(mymodule).depdir) 
+	@echo $($(mymodule).sources) 
+	@echo $($(mymodule).headers) 
+	@echo $($(mymodule).objects) 
+	@echo $($(mymodule).dependencies) 
+	@echo $($(mymodule).sharedlibrarybasename)
+	@echo $($(mymodule).libraryobject)
+	@echo $($(mymodule).sharedlibrary)
+	@echo $($(mymodule).staticlibrary)
+	@echo $@
+	@echo $*
+	@echo Compiling and listing dependencies: $($(mymodule).libraryobject)
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(mymoddir)/.all.cpp -c -o $@  $(DEPFLAGS)
 
 $($(module).depdir)/.all.d:
@@ -84,20 +93,20 @@ $($(module).dependencies):
 
 # How to provide the library .o file, and possibly static/shared libraries
 
-$($(module).libraryobject): mymodule := $(module)
-$($(module).libraryobject): mymoddir := $(moddir)
+# $($(module).libraryobject): mymodule := $(module)
+# $($(module).libraryobject): mymoddir := $(moddir)
 $($(module).libraryobject): $(moddir)/.all.o
 	@echo Library object: $@
 	@cp $(mymoddir)/.all.o $($(mymodule).libraryobject)
 
-$($(module).sharedlibrary): mymodule := $(module)
-$($(module).sharedlibrary): mymoddir := $(moddir)
+# $($(module).sharedlibrary): mymodule := $(module)
+# $($(module).sharedlibrary): mymoddir := $(moddir)
 $($(module).sharedlibrary): $($(module).libraryobject)
 	@echo Shared library: $@
 	@$(CXX) $(CXXFLAGS) -shared -o $@ $^ $(LDLIBS)
 
-$($(module).staticlibrary): mymodule := $(module)
-$($(module).staticlibrary): mymoddir := $(moddir)
+# $($(module).staticlibrary): mymodule := $(module)
+# $($(module).staticlibrary): mymoddir := $(moddir)
 $($(module).staticlibrary): $($(module).libraryobject)
 	@echo Static library: $@
 	@ar rcs $($(mymodule).staticlibrary) $($(mymodule).libraryobject)
@@ -119,9 +128,9 @@ buildso:      $(module).buildso
 builda:       $(module).builda
 
 
-.PHONY: build $(module).build
+.PHONY: $(buildtarget) $(module).build
 
-.modules.build: $(module).build
+$(buildtarget): $(module).build
 
 ifeq ($(OS),Windows_NT)
 $(module).build: $(module).builda
@@ -137,8 +146,8 @@ endif
 .PHONY:  list_of_objects $(module).list_of_objects
 .SILENT: list_of_objects $(module).list_of_objects
 list_of_objects: $(module).list_of_objects
-$(module).list_of_objects: mymodule := $(module)
-$(module).list_of_objects: mymoddir := $(moddir)
+# $(module).list_of_objects: mymodule := $(module)
+# $(module).list_of_objects: mymoddir := $(moddir)
 $(module).list_of_objects: 
 	@echo $(projecdir);
 	@echo $(mymodule);
@@ -193,8 +202,8 @@ $(module).cppcheck:
 
 .PHONY: grepissues $(module).grepissues
 grepissues: $(module).grepissues
-$(module).grepissues: mymodule := $(module)
-$(module).grepissues: mymoddir := $(moddir)
+# $(module).grepissues: mymodule := $(module)
+# $(module).grepissues: mymoddir := $(moddir)
 $(module).grepissues:
 #	@echo Find trailing whitespace...
 #	@-grep --line-number --color '\s+$$' -r $(mymoddir)/*pp
@@ -209,6 +218,12 @@ $(module).grepissues:
 	@-grep --line-number --color -E '([0-9]+e[0-9]+)|([0-9]+\.[0-9]+)|((+-\ )\.[0-9]+)|((+-\ )[0-9]+\.)' $(mymoddir)/*pp
 
 
+########################################################################
+# Target 'check' is a generic test. Currently, it defaults to 'tidy'
+
+check: tidy
+
+.PHONY: check
 
 
 ########################################################################

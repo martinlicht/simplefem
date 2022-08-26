@@ -48,6 +48,10 @@ help:
 
 
 
+################################################################## 
+################################################################## 
+################################################################## 
+################################################################## 
 
 # Describe the different modules of the software
 # Provide all targets for the different modules in building the modules 
@@ -67,9 +71,11 @@ modules+=vtk
 modules+=fem
 
 
-projectdir   :=.
+projectdir :=.
 
 include common.compile.mk
+
+buildtarget :=.buildmodules
 
 moddir :=./basic
 module:=basic
@@ -114,35 +120,31 @@ include common.module.mk
 
 
 
-
-
-
-
-
+################################################################## 
+################################################################## 
+################################################################## 
+################################################################## 
 
 # Describe the 'build' target and its subtargets
-# Recap all this .... 
+# TODO: Recap all this .... 
 
 
-.PHONY: build .modules.build .tests.build .benchmarks.build
+.PHONY: build .buildmodules .buildtests .buildbenchmarks
 
-build: .modules.build .tests.build .benchmarks.build
+build: .buildmodules .buildtests .buildbenchmarks
 
 # .build.modules := $(patsubst %.build,%,$(modules))
 
-# .tests.build: | $(.build.modules)
-.tests.build: | .modules.build
+# .buildtests: | $(.build.modules)
+.buildtests: | .buildmodules
 	@echo $(.build.modules)
 	@echo Build tests
 	@cd ./tests/ && $(MAKE) --no-print-directory build
 
-# .benchmarks.build: | $(.build.modules)
-.benchmarks.build: | .modules.build
+# .buildbenchmarks: | $(.build.modules)
+.buildbenchmarks: | .buildmodules
 	@echo Build Benchmarks
 	@cd ./benchmarks/ && $(MAKE) --no-print-directory build
-
-
-
 
 
 
@@ -169,22 +171,12 @@ build: .modules.build .tests.build .benchmarks.build
 
 
 ########################################################################
-# Apply cpplint to all cpp and hpp files in the directory. Read-only. 
+# Apply cpplint to all cpp and hpp files in the entire source directory. Read-only. 
 
-.PHONY: cpplint $(module).cpplint
-cpplint: $(module).cpplint
-$(module).cpplint:
-	$(error This command is not implemented.)
+.PHONY: cpplint
+cpplint:
 	( $(projectdir)/Tools/cpplint.py --exclude=$(projectdir)/.private/ --exclude=$(projectdir)/.legacy/ --exclude=$(projectdir)/.playground/ --recursive --filter=-whitespace,-legal,-build/namespace,readability/alt_tokens,readability/todo,readability/inheritance --quiet $(projectdir) ) | sort | uniq -c 2> $(projectdir)/OUTPUT_CPPLINT.txt
 
-
-
-# # print the build parameters
-
-# .PHONY: parameters 
-# parameters:
-# 	@$(MAKE) --no-print-directory -f common.compile.mk parameters
-# 	@true
 
 
 
@@ -202,6 +194,3 @@ print-%:
 
 .PHONY: printall
 printall: $(subst :,\:,$(foreach variable,$(.VARIABLES),print-$(variable)))
-
-
-
