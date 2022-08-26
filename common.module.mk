@@ -1,4 +1,3 @@
-SHELL = /bin/bash
 
 # This file contains makefile rules for object creation
 # that can be applied in every single source directory
@@ -6,87 +5,127 @@ SHELL = /bin/bash
 # the object files, and the shared libraries. 
 
 
+# Do we need basename or path here?
+# https://www.gnu.org/software/make/manual/html_node/File-Name-Functions.html
 
-dirname := $(notdir $(CURDIR))
-depdir  := .deps
+$(module).depdir  := $(moddir)/.deps
 
-sources      := $(wildcard *.cpp)
-headers      := $(wildcard *.hpp)
-objects      := $(patsubst %.cpp,%.o,$(sources))
-dependencies := $(patsubst %.cpp,$(depdir)/%.d,$(sources))
+$(module).sources      := $(wildcard $(moddir)/*.cpp)
+$(module).headers      := $(wildcard $(moddir)/*.hpp)
+$(module).objects      := $(patsubst %.cpp,%.o,$($(module).sources))
+$(module).dependencies := $(patsubst %.cpp,$($(module).depdir)/%.d,$(notdir $($(module).sources)))
 
-sharedlibrarybasename := lib$(dirname)
-libraryobject         := lib$(dirname).o
-sharedlibrary         := lib$(dirname).so
-staticlibrary         := lib$(dirname).a
+$(module).sharedlibrarybasename := $(moddir)/lib$(module)
+$(module).libraryobject         := $(moddir)/lib$(module).o
+$(module).sharedlibrary         := $(moddir)/lib$(module).so
+$(module).staticlibrary         := $(moddir)/lib$(module).a
 
+
+###################################################################################################
+# All object files that are compiled (and their descendants) also depend on the makefiles 
+# TODO: correct this 
+# $(moddir)/*.o $(moddir)/.all.o: ./makefile ../makefile ../common.compile.mk ../common.module.mk ../common.upkeep.mk
 
 
 ###################################################################################################
 # How to compile the .o files and .all.o file 
 
 
-$(depdir):
+$($(module).depdir):
+	@echo $@
 	@"mkdir" -p $@
-#	@echo $(dirname)
 
-DEPFLAGS = -MT $@ -MMD -MP -MF $(depdir)/$*.d
+DEPFLAGS = -MT $@ -MMD -MP -MF $($(mymodule).depdir)/$(notdir $*.d)
+# Generate the dependency files 
+# -MT $@ : sets the target of the makefile rule, stripped of any directory components
+# -MP    : add dependencies as phony targets
+# -MF ...: sets the output file for the rules 
+# -MMD   : list headers as a by-product of compiling, excluding system headers
+# alternatively, -MM implicates that no compilation takes place 
 
-.PHONY: make_dependencies
-make_dependencies: $(depdir)
-	@for item in $(sources); do $(CXX) $(CXXFLAGS) $(CPPFLAGS) $$item -MM -MP -MF $(depdir)/$$item.d; done
+# TODO: Separate set of flags for dependency generation with or without compilation 
 
-$(objects): %.o: %.cpp $(depdir)/%.d | $(depdir)
-	@echo Compile object and generate dependencies: $@ 
-#	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -MM $*.cpp -MF $(depdir)/$*.d #
-	@$(CXX) $(CXXFLAGS) $(CPPFLAGS)       $< -c -o $@ $(DEPFLAGS)
+.PHONY: make_dependencies $(module).make_dependencies
+make_dependencies: $(module).make_dependencies
+$(module).make_dependencies: mymodule := $(module)
+$(module).make_dependencies: $($(module).depdir)
+	@for item in $($(mymodule).sources); do $(CXX) $(CXXFLAGS) $(CPPFLAGS) $$item -MM -MP -MF .deps/$$item.d; done
 
-.all.o: $(sources) .all.cpp $(depdir)/.all.d | $(depdir)
-	@echo Compiling and setting dependencies: $(libraryobject)
-#	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -MM .all.cpp -MF $(depdir)/.all.d
-	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) .all.cpp -c -o $@  $(DEPFLAGS)
+$(moddir)/$($(module).objects): %.o: %.cpp $($(module).depdir)/%.d | $($(module).depdir)
+	@echo Generate dependencies: $@ 
+	@$(CXX) $(CXXFLAGS) $(CPPFLAGS)                       $< -c -o $@ $(DEPFLAGS)
 
-$(depdir)/.all.d:
-$(dependencies):
+$(module).all.o: mymodule := $(module)
+$(module).all.o: mymoddir := $(moddir)
+$(moddir)/.all.o: $($(module).sources) $(moddir)/.all.cpp $($(module).depdir)/.all.d | $($(module).depdir)
+	@echo $(mymodule).depdir
+	@echo $($(mymodule).depdir) 
+	@echo $($(mymodule).sources) 
+	@echo $($(mymodule).headers) 
+	@echo $($(mymodule).objects) 
+	@echo $($(mymodule).dependencies) 
+	@echo $($(mymodule).sharedlibrarybasename)
+	@echo $($(mymodule).libraryobject)
+	@echo $($(mymodule).sharedlibrary)
+	@echo $($(mymodule).staticlibrary)
+	@echo $@
+	@echo $*
+	@echo Compiling and setting dependencies: $($(mymodule).libraryobject)
+	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(mymoddir)/.all.cpp -c -o $@  $(DEPFLAGS)
 
--include $(depdir)/.all.d
--include $(dependencies)
+$($(module).depdir)/.all.d:
+
+$($(module).dependencies):
+
+-include $($(module).depdir)/.all.d
+-include $($(module).dependencies)
 
 
 # How to provide the library .o file, and possibly static/shared libraries
 
-$(libraryobject): .all.o
+$($(module).libraryobject): mymodule := $(module)
+$($(module).libraryobject): mymoddir := $(moddir)
+$($(module).libraryobject): $(moddir)/.all.o
 	@echo Library object: $@
-	@cp .all.o $(libraryobject)
+	@cp $(mymoddir)/.all.o $($(mymodule).libraryobject)
 
-$(sharedlibrary): $(libraryobject)
+$($(module).sharedlibrary): mymodule := $(module)
+$($(module).sharedlibrary): mymoddir := $(moddir)
+$($(module).sharedlibrary): $($(module).libraryobject)
 	@echo Shared library: $@
 	@$(CXX) $(CXXFLAGS) -shared -o $@ $^ $(LDLIBS)
 
-$(staticlibrary): $(libraryobject)
+$($(module).staticlibrary): mymodule := $(module)
+$($(module).staticlibrary): mymoddir := $(moddir)
+$($(module).staticlibrary): $($(module).libraryobject)
 	@echo Static library: $@
-	@ar rcs $(staticlibrary) $(libraryobject)
+	@ar rcs $($(mymodule).staticlibrary) $($(mymodule).libraryobject)
 
-
-###################################################################################################
-# All object files that are compiled (and their descendants) also depend on the makefiles 
-
-*.o .all.o: ./makefile ../makefile ../common.compile.mk ../common.module.mk ../common.upkeep.mk
 
 
 ###################################################################################################
 # Finally, determine the build target depending on whether shared libraries are poossible or not
 
-.PHONY: build buildobjects buildso builda
+.PHONY: buildobjects buildso builda
+.PHONY: $(module).buildobjects $(module).buildso $(module).builda
 
-buildobjects: $(objects)
-buildso:      $(sharedlibrary)
-builda:       $(staticlibrary)
+$(module).buildobjects: $($(module).objects)
+$(module).buildso:      $($(module).sharedlibrary)
+$(module).builda:       $($(module).staticlibrary)
+
+buildobjects: $(module).buildobjects
+buildso:      $(module).buildso
+builda:       $(module).builda
+
+
+.PHONY: build $(module).build
+
+build: $(module).build
 
 ifeq ($(OS),Windows_NT)
-build: builda
+$(module).build: $(module).builda
 else
-build: buildso builda
+$(module).build: $(module).builda $(module).buildso
 endif
 
 
@@ -94,46 +133,114 @@ endif
 ########################################################################
 # List several objects. Read-only
 
-.PHONY:  list_of_objects
-.SILENT: list_of_objects
-list_of_objects: 
-	@echo $(dirname);
-	@echo $(staticlibrary);
-	@echo $(sharedlibrary);
-	@echo $(objects);
-	@echo $(dependencies);
-	@echo $(build);
+.PHONY:  list_of_objects $(module).list_of_objects
+.SILENT: list_of_objects $(module).list_of_objects
+list_of_objects: $(module).list_of_objects
+$(module).list_of_objects: mymodule := $(module)
+$(module).list_of_objects: mymoddir := $(moddir)
+$(module).list_of_objects: 
+	@echo $(projecdir);
+	@echo $(mymodule);
+	@echo $(mymoddir);
+	@echo $($(mymodule).staticlibrary);
+	@echo $($(mymodule).sharedlibrary);
+	@echo $($(mymodule).objects);
+	@echo $($(mymodule).dependencies);
+	@echo $($(mymodule).build);
 
 
 ########################################################################
 # Check whether the header files have correct syntax. Read-only.
 
-headerchecks := $(patsubst %.hpp,check-%.hpp,$(headers))
+$(module).headerchecks := $(patsubst %.hpp,check-%.hpp,$($(module).headers))
 
-.PHONY: $(headerchecks) checkheaders
-
-checkheaders: $(headerchecks)
-
-$(headerchecks): check-%.hpp : 
+.PHONY: checkheaders $($(module).headerchecks)
+checkheaders: $($(module).headerchecks)
+$($(module).headerchecks): check-%.hpp : 
 	$(info Check header: $*.hpp)
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $*.hpp -fsyntax-only
 
 
 
 
+########################################################################
+# Apply clang-tidy to all cpp and hpp files in the directory. Read-only.
+
+.PHONY: tidy $(module).tidy
+tidy: $(module).tidy
+$(module).tidy:
+	clang-tidy ./*.?pp -checks=llvm*,bugprone-*,clang-analyzer-*,misc-*,-llvm-header-guard,-llvm-include-order -- -std=c++2a
+
+
+########################################################################
+# Apply cppcheck to all cpp and hpp files in the directory. Read-only. 
+
+.PHONY: cppcheck $(module).cppcheck
+cppcheck: $(module).cppcheck
+$(module).cppcheck:
+	cppcheck -i ./.playground/ -i ./.legacy \
+	--enable=warning,style,performance,portability --suppress=duplicateCondition\
+	--suppress=assertWithSideEffect --suppress=useStlAlgorithm\
+	--std=c++17 -q . ./*pp
+
+
+########################################################################
+# Regex several useful things. Read-only. 
+# - find trailing white spaces 
+# - find non-ASCII characters 
+# - find consecutive spaces 
+
+.PHONY: grepissues $(module).grepissues
+grepissues: $(module).grepissues
+$(module).grepissues: mymodule := $(module)
+$(module).grepissues: mymoddir := $(moddir)
+$(module).grepissues:
+#	@echo Find trailing whitespace...
+#	@-grep --line-number --color '\s+$$' -r $(mymoddir)/*pp
+#	@echo Find non-ASCII characters...
+#	@-grep --line-number --color '[^\x00-\x7F]' -r $(mymoddir)/*pp
+#	@echo Find consecutive spaces...
+#	@-grep --line-number --color '\b\s{2,}' -r $(mymoddir)/*pp
+#	@-grep --line-number --color 'assert(' $(mymoddir)/*pp
+	@-grep --line-number --color 'cout' $(mymoddir)/*pp
+#	@-grep --line-number --color -E '\.*[0-9]' $(mymoddir)/*pp
+	@-grep --line-number --color -E '(0-9)e' $(mymoddir)/*pp
+	@-grep --line-number --color -E '([0-9]+e[0-9]+)|([0-9]+\.[0-9]+)|((+-\ )\.[0-9]+)|((+-\ )[0-9]+\.)' $(mymoddir)/*pp
 
 
 
 
+########################################################################
+# Commands for cleaning out numerous files that are not part of the project.
+# These remove the following:
+# - clean: delete all binary files and temporary output, and the following two.
+# - vtkclean: delete all *vtk output files
+# - dependclean: delete .deps directories and their content
 
-#buildobjects # NOTE: the .o files were required for our .so files originally
+CMD_CLEAN    = rm -f .all.o *.a *.o *.d *.so *.gch OUTPUT_CPPLINT.txt callgrind.out.* *.exe *.exe.stackdump *.out *.out.stackdump 
+CMD_VTKCLEAN = rm -f ./*.vtk ./*/*.vtk ./*/*/*.vtk
+CMD_DEPCLEAN = if [ -d .deps/ ]; then rm -f .deps/*.d .deps/.all.d; rmdir .deps/; fi 
 
-# NOTE: Original recipe for the shared library, now there is just one object
-# $(sharedlibrary): $(objects)
-# 	$(CXX) $(CXXFLAGS) -shared -o $@ $^ $(LDLIBS)
+.PHONY: clean vktclean dependclean
+.PHONY: $(module).clean $(module).vktclean $(module).dependclean
 
-# $(sharedlibrary): #$(objects)
-# 	# TODO : create the dependencies of the cpp file 
-# 	MYFILE=''; for mycpp in *.cpp; do MYFILE+=$$'#include \"'$$mycpp$$'\"\n'; done; (echo "$$MYFILE") > $(sharedlibrarybasename).code
-# 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -x c++ $(sharedlibrarybasename).code -c -o $(sharedlibrarybasename).o
-# 	$(CXX) $(CXXFLAGS) -shared -o $@ $(sharedlibrarybasename).o $(LDLIBS)
+clean:       $(module).clean
+vtkclean:    $(module).vtkclean
+dependclean: $(module).dependclean
+
+$(module).clean $(module).vtkclean $(module).dependclean: mymodule := $(module)
+$(module).clean $(module).vtkclean $(module).dependclean: mymoddir := $(moddir)
+
+$(module).clean: 
+#	@-echo $(PWD)
+	@-cd $(mymoddir); $(CMD_CLEAN); $(CMD_VTKCLEAN); $(CMD_DEPCLEAN); 
+
+$(module).vtkclean: 
+#	@-echo $(PWD)
+	@-cd $(mymoddir); $(CMD_VTKCLEAN); 
+
+$(module).dependclean: 
+#	@-echo $(PWD)
+	@-cd $(mymoddir); $(CMD_DEPCLEAN); 
+
+
