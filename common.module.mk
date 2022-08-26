@@ -23,8 +23,9 @@ $(module).staticlibrary         := $(moddir)/lib$(module).a
 
 ###################################################################################################
 # All object files that are compiled (and their descendants) also depend on the makefiles 
-# TODO: correct this 
-# $(moddir)/*.o $(moddir)/.all.o: ./makefile ../makefile ../common.compile.mk ../common.module.mk ../common.upkeep.mk
+
+$(moddir)/*.o $(moddir)/.all.o: $(moddir)/makefile
+$(moddir)/*.o $(moddir)/.all.o: $(projectdir)/makefile $(projectdir)/common.compile.mk $(projectdir)/common.module.mk 
 
 
 ###################################################################################################
@@ -58,18 +59,18 @@ $(moddir)/$($(module).objects): %.o: %.cpp $($(module).depdir)/%.d | $($(module)
 $(module).all.o: mymodule := $(module)
 $(module).all.o: mymoddir := $(moddir)
 $(moddir)/.all.o: $($(module).sources) $(moddir)/.all.cpp $($(module).depdir)/.all.d | $($(module).depdir)
-	@echo $(mymodule).depdir
-	@echo $($(mymodule).depdir) 
-	@echo $($(mymodule).sources) 
-	@echo $($(mymodule).headers) 
-	@echo $($(mymodule).objects) 
-	@echo $($(mymodule).dependencies) 
-	@echo $($(mymodule).sharedlibrarybasename)
-	@echo $($(mymodule).libraryobject)
-	@echo $($(mymodule).sharedlibrary)
-	@echo $($(mymodule).staticlibrary)
-	@echo $@
-	@echo $*
+# 	@echo $(mymodule).depdir
+# 	@echo $($(mymodule).depdir) 
+# 	@echo $($(mymodule).sources) 
+# 	@echo $($(mymodule).headers) 
+# 	@echo $($(mymodule).objects) 
+# 	@echo $($(mymodule).dependencies) 
+# 	@echo $($(mymodule).sharedlibrarybasename)
+# 	@echo $($(mymodule).libraryobject)
+# 	@echo $($(mymodule).sharedlibrary)
+# 	@echo $($(mymodule).staticlibrary)
+# 	@echo $@
+# 	@echo $*
 	@echo Compiling and setting dependencies: $($(mymodule).libraryobject)
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(mymoddir)/.all.cpp -c -o $@  $(DEPFLAGS)
 
@@ -120,7 +121,7 @@ builda:       $(module).builda
 
 .PHONY: build $(module).build
 
-build: $(module).build
+.modules.build: $(module).build
 
 ifeq ($(OS),Windows_NT)
 $(module).build: $(module).builda

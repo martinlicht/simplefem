@@ -7,12 +7,13 @@ SHELL = /bin/sh
 
 # The default target builds all files  
 
-.PHONY: default all build tests benchmarks 
-
 default: build
 
 all: build tests benchmarks 
 	@echo "Finished all"
+
+.PHONY: default all build tests benchmarks 
+
 
 
 
@@ -39,67 +40,6 @@ help:
 
 
 
-
-
-
-
-
-
-
-# Describe the 'build' target and its subtargets
-# Recap all this .... 
-
-build.modules   :=$(patsubst %,.build.%,   $(modules) )
-build.modules.a :=$(patsubst %,.build.%.a, $(modules) )
-build.modules.so:=$(patsubst %,.build.%.so,$(modules) )
-
-build: .build.modules .build.tests .build.benchmarks
-
-.build.modules: $(build.modules)
-
-.build.tests:
-	@echo Build tests
-	@cd ./tests/ && $(MAKE) --no-print-directory build
-
-.build.benchmarks:
-	@echo Build Benchmarks
-	@cd ./benchmarks/ && $(MAKE) --no-print-directory build
-
-.build.a:  $(build.modules.a)
-
-.build.so: $(build.modules.so)
-
-$(build.modules): .build.%: %
-	@echo Build: $*
-	@cd ./$* && $(MAKE) --no-print-directory build
-
-$(build.modules.a): .build.%.a:
-	@echo Build A: $*
-	@cd ./$* && $(MAKE) --no-print-directory builda
-
-$(build.modules.so): .build.%.so: 
-	@echo Build SO: $*
-	@cd ./$* && $(MAKE) --no-print-directory buildso
-
-.PHONY: build .build.tests .build.benchmarks $(build.modules)
-.PHONY: .build.a .build.so $(build.modules.a) $(build.modules.so) 
-
-
-
-# # The target 'test' runs all the tests in the test directory 
-
-# test:
-# 	@cd ./tests && $(MAKE) --no-print-directory run
-
-# .PHONY: test
-
-
-# # The target 'benchmark' runs all the benchmarks in the benchmark directory
-
-# benchmarks:
-# 	@cd ./benchmarks && $(MAKE) --no-print-directory 
-
-# .PHONY: benchmarks
 
 
 
@@ -176,6 +116,58 @@ include common.module.mk
 
 
 
+
+
+
+
+# Describe the 'build' target and its subtargets
+# Recap all this .... 
+
+
+.PHONY: build .modules.build .tests.build .benchmarks.build
+
+build: .modules.build .tests.build .benchmarks.build
+
+# .build.modules := $(patsubst %.build,%,$(modules))
+
+# .tests.build: | $(.build.modules)
+.tests.build: | .modules.build
+	@echo $(.build.modules)
+	@echo Build tests
+	@cd ./tests/ && $(MAKE) --no-print-directory build
+
+# .benchmarks.build: | $(.build.modules)
+.benchmarks.build: | .modules.build
+	@echo Build Benchmarks
+	@cd ./benchmarks/ && $(MAKE) --no-print-directory build
+
+
+
+
+
+
+# # The target 'test' runs all the tests in the test directory 
+
+# test:
+# 	@cd ./tests && $(MAKE) --no-print-directory run
+
+# .PHONY: test
+
+
+# # The target 'benchmark' runs all the benchmarks in the benchmark directory
+
+# benchmarks:
+# 	@cd ./benchmarks && $(MAKE) --no-print-directory 
+
+# .PHONY: benchmarks
+
+
+
+
+
+
+
+
 ########################################################################
 # Apply cpplint to all cpp and hpp files in the directory. Read-only. 
 
@@ -187,12 +179,12 @@ $(module).cpplint:
 
 
 
-# print the build parameters
+# # print the build parameters
 
-.PHONY: parameters 
-parameters:
-	@$(MAKE) --no-print-directory -f common.compile.mk parameters
-	@true
+# .PHONY: parameters 
+# parameters:
+# 	@$(MAKE) --no-print-directory -f common.compile.mk parameters
+# 	@true
 
 
 
