@@ -8,7 +8,7 @@ default: build
 
 include ../../common.compile.mk 
 
-include ../../common.upkeep.mk
+# include ../../common.upkeep.mk
 
 include ../tests.affices.mk
 
@@ -21,7 +21,7 @@ depdir := .deps
 contextdir:=.
 
 # context:=$(shell basename $$(pwd))
-context:=$(shell basename $(CURDIR))
+context:=$(notdir $(CURDIR))
 
 
 build: $(context).tests

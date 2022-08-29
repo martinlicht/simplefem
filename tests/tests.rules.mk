@@ -116,3 +116,102 @@ $($(context).silent_runs): %.silent_run : %.$(ending)
 PHONY: $(context).run $(context).silent_run $($(context).runs) $($(context).silent_runs)
 
 # 2> /dev/null
+
+
+
+
+
+
+# TODO: clean out the stuff below and adapt to the test directory
+
+
+########################################################################
+# Apply clang-tidy to all cpp and hpp files in the directory. Read-only.
+
+.PHONY: tidy $(context).tidy
+tidy: $(context).tidy
+$(context).tidy:
+	clang-tidy ./*.?pp -checks=llvm*,bugprone-*,clang-analyzer-*,misc-*,-llvm-header-guard,-llvm-include-order -- -std=c++2a
+
+
+########################################################################
+# Apply cppcheck to all cpp and hpp files in the directory. Read-only. 
+
+.PHONY: cppcheck $(context).cppcheck
+cppcheck: $(context).cppcheck
+$(context).cppcheck:
+	cppcheck -i ./.playground/ -i ./.legacy \
+	--enable=warning,style,performance,portability --suppress=duplicateCondition\
+	--suppress=assertWithSideEffect --suppress=useStlAlgorithm\
+	--std=c++17 -q . ./*pp
+
+
+########################################################################
+# Regex several useful things. Read-only. 
+# - find trailing white spaces 
+# - find non-ASCII characters 
+# - find consecutive spaces 
+
+.PHONY: grepissues $(context).grepissues
+grepissues: $(context).grepissues
+# $(context).grepissues: mycontext := $(context)
+# $(context).grepissues: mycontextdir := $(contextdir)
+$(context).grepissues:
+#	@echo Search trailing whitespace...
+#	@-grep --line-number --color '\s+$$' -r $(mycontextdir)/*pp
+#	@echo Search non-ASCII characters...
+#	@-grep --line-number --color '[^\x00-\x7F]' -r $(mycontextdir)/*pp
+#	@echo Find consecutive spaces...
+#	@-grep --line-number --color '\b\s{2,}' -r $(mycontextdir)/*pp
+#	@echo Find standard asserts...
+#	@-grep --line-number --color 'assert(' $(mycontextdir)/*pp
+#	@echo Find usage of 'cout' ...
+	@-grep --line-number --color 'cout' $(mycontextdir)/*pp
+#	@echo Find floating-point numbers ...
+#	@-grep --line-number --color -E '\.*[0-9]' $(mycontextdir)/*pp
+#	@-grep --line-number --color -E '(0-9)e' $(mycontextdir)/*pp
+	@-grep --line-number --color -E '([0-9]+e[0-9]+)|([0-9]+\.[0-9]+)|((+-\ )\.[0-9]+)|((+-\ )[0-9]+\.)' $(mycontextdir)/*pp
+
+
+########################################################################
+# Target 'check' is a generic test. Currently, it defaults to 'tidy'
+
+check: tidy
+
+.PHONY: check
+
+
+########################################################################
+# Commands for cleaning out numerous files that are not part of the project.
+# These remove the following:
+# - clean: delete all binary files and temporary output, and the following two.
+# - vtkclean: delete all *vtk output files
+# - dependclean: delete .deps directories and their content
+
+CMD_CLEAN    = rm -f .all.o *.a *.o *.d *.so *.gch OUTPUT_CPPLINT.txt callgrind.out.* *.exe *.exe.stackdump *.out *.out.stackdump 
+CMD_VTKCLEAN = rm -f ./*.vtk ./*/*.vtk ./*/*/*.vtk
+CMD_DEPCLEAN = if [ -d .deps/ ]; then rm -f .deps/*.d .deps/.all.d; rmdir .deps/; fi 
+
+.PHONY: clean vktclean dependclean
+.PHONY: $(context).clean $(context).vktclean $(context).dependclean
+
+clean:       $(context).clean
+vtkclean:    $(context).vtkclean
+dependclean: $(context).dependclean
+
+$(context).clean $(context).vtkclean $(context).dependclean: mycontext    := $(context)
+$(context).clean $(context).vtkclean $(context).dependclean: mycontextdir := $(contextdir)
+
+$(context).clean: 
+#	@-echo $(PWD)
+	@-cd $(mycontextdir); $(CMD_CLEAN); $(CMD_VTKCLEAN); $(CMD_DEPCLEAN); 
+
+$(context).vtkclean: 
+#	@-echo $(PWD)
+	@-cd $(mycontextdir); $(CMD_VTKCLEAN); 
+
+$(context).dependclean: 
+#	@-echo $(PWD)
+	@-cd $(mycontextdir); $(CMD_DEPCLEAN); 
+
+

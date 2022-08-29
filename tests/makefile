@@ -29,7 +29,7 @@ components+=solverfem
 components+=nullspace
 
 
-
+# TODO: but this dependency into the rules file 
 %.out: ./makefile tests.rules.mk tests.affices.mk ../common.compile.mk
 
 
@@ -144,63 +144,63 @@ build: afem.tests
 
 
 
-# 
+# # 
 
-clean.components :=$(patsubst %,.clean.%,$(components) )
+# clean.components :=$(patsubst %,.clean.%,$(components) )
 
-.PHONY: $(clean.components)
-$(clean.components): .clean.%: 
-	@cd ./$* && $(MAKE) --no-print-directory clean
+# .PHONY: $(clean.components)
+# $(clean.components): .clean.%: 
+# 	@cd ./$* && $(MAKE) --no-print-directory clean
 
-.PHONY: clean
-clean: $(clean.components)
-	@$(MAKE) --no-print-directory -f ../common.upkeep.mk clean
-	@echo "finished cleaning." 
-
-
-dependclean.components :=$(patsubst %,.dependclean.%,$(components) )
-
-.PHONY: $(dependclean.components)
-$(dependclean.components): .dependclean.%: 
-	@cd ./$* && $(MAKE) --no-print-directory dependclean
-
-.PHONY: dependclean
-dependclean: $(dependclean.components)
-	$(MAKE) --no-print-directory -f ../common.upkeep.mk dependclean
-	@echo "finished cleaning dependency information files." 
+# .PHONY: clean
+# clean: $(clean.components)
+# 	@$(MAKE) --no-print-directory -f ../common.upkeep.mk clean
+# 	@echo "finished cleaning." 
 
 
-vtkclean.components :=$(patsubst %,.vtkclean.%,$(components) )
+# dependclean.components :=$(patsubst %,.dependclean.%,$(components) )
 
-.PHONY: $(vtkclean.components)
-$(vtkclean.components): .vtkclean.%: 
-	@cd ./$* && $(MAKE) --no-print-directory vtkclean
+# .PHONY: $(dependclean.components)
+# $(dependclean.components): .dependclean.%: 
+# 	@cd ./$* && $(MAKE) --no-print-directory dependclean
 
-.PHONY: vtkclean
-vtkclean: $(vtkclean.components)
-	$(MAKE) --no-print-directory -f ../common.upkeep.mk vtkclean
-	@echo "finished cleaning .vtk files." 
-
-
-tidy.components :=$(patsubst %,.tidy.%,$(components) )
-
-.PHONY: $(tidy.components)
-$(tidy.components): .tidy.%: 
-	@cd ./$* && $(MAKE) --no-print-directory tidy
-
-.PHONY: tidy
-tidy: $(tidy.components)
-	$(MAKE) --no-print-directory -f ../common.upkeep.mk tidy
+# .PHONY: dependclean
+# dependclean: $(dependclean.components)
+# 	$(MAKE) --no-print-directory -f ../common.upkeep.mk dependclean
+# 	@echo "finished cleaning dependency information files." 
 
 
-cppcheck.components :=$(patsubst %,.cppcheck.%,$(components) )
+# vtkclean.components :=$(patsubst %,.vtkclean.%,$(components) )
 
-.PHONY: $(cppcheck.components)
-$(cppcheck.components): .cppcheck.%: 
-	@cd ./$* && $(MAKE) --no-print-directory cppcheck
+# .PHONY: $(vtkclean.components)
+# $(vtkclean.components): .vtkclean.%: 
+# 	@cd ./$* && $(MAKE) --no-print-directory vtkclean
 
-.PHONY: cppcheck
-cppcheck: $(cppcheck.components)
-	$(MAKE) --no-print-directory -f ../common.upkeep.mk cppcheck
+# .PHONY: vtkclean
+# vtkclean: $(vtkclean.components)
+# 	$(MAKE) --no-print-directory -f ../common.upkeep.mk vtkclean
+# 	@echo "finished cleaning .vtk files." 
+
+
+# tidy.components :=$(patsubst %,.tidy.%,$(components) )
+
+# .PHONY: $(tidy.components)
+# $(tidy.components): .tidy.%: 
+# 	@cd ./$* && $(MAKE) --no-print-directory tidy
+
+# .PHONY: tidy
+# tidy: $(tidy.components)
+# 	$(MAKE) --no-print-directory -f ../common.upkeep.mk tidy
+
+
+# cppcheck.components :=$(patsubst %,.cppcheck.%,$(components) )
+
+# .PHONY: $(cppcheck.components)
+# $(cppcheck.components): .cppcheck.%: 
+# 	@cd ./$* && $(MAKE) --no-print-directory cppcheck
+
+# .PHONY: cppcheck
+# cppcheck: $(cppcheck.components)
+# 	$(MAKE) --no-print-directory -f ../common.upkeep.mk cppcheck
 
 
