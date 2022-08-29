@@ -188,6 +188,20 @@ check: tidy
 # - vtkclean: delete all *vtk output files
 # - dependclean: delete .deps directories and their content
 
+# TODO: rewrite the entire thing ...
+
+# $(context).cleanpattern    := .all.o *.a *.o *.d *.so *.gch *.exe *.exe.stackdump *.out *.out.stackdump OUTPUT_CPPLINT.txt callgrind.out.* 
+# $(context).vtkcleanpattern := *.vtk
+# $(context).depcleanpattern := .deps
+
+# $(context).cleanfiles    := $(patsubst %, $(CURDIR)/%, $(wildcard $($(context).cleanpattern   )) )
+# $(context).vtkcleanfiles := $(patsubst %, $(CURDIR)/%, $(wildcard $($(context).vtkcleanpattern)) )
+# $(context).depcleanfiles := $(patsubst %, $(CURDIR)/%, $(wildcard $($(context).depcleanpattern)) )
+
+# cleanfiles    += $($(context).cleanfiles)
+# vtkcleanfiles += $($(context).vtkcleanfiles)
+# depcleanfiles += $($(context).depcleanfiles)
+
 CMD_CLEAN    = rm -f .all.o *.a *.o *.d *.so *.gch OUTPUT_CPPLINT.txt callgrind.out.* *.exe *.exe.stackdump *.out *.out.stackdump 
 CMD_VTKCLEAN = rm -f ./*.vtk ./*/*.vtk ./*/*/*.vtk
 CMD_DEPCLEAN = if [ -d .deps/ ]; then rm -f .deps/*.d .deps/.all.d; rmdir .deps/; fi 

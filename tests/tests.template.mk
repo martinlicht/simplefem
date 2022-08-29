@@ -28,3 +28,11 @@ build: $(context).tests
 
 include ../tests.rules.mk
 
+# clean:
+# 	echo $(cleanfiles)
+
+# vtkclean:
+# 	echo $(vtkcleanfiles)
+
+# depclean:
+# 	echo $(depcleanfiles)

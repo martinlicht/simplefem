@@ -32,11 +32,15 @@ components+=nullspace
 # TODO: but this dependency into the rules file 
 %.out: ./makefile tests.rules.mk tests.affices.mk ../common.compile.mk
 
+# cleanfiles    :=
+# vtkcleanfiles :=
+# depcleanfiles :=
+
 
 depdir := .deps
 
 projectdir:=../
-pathvar:=$(shell pwd)/../
+pathvar:=$(CURDIR)/../
 
 contextdir:=./basic
 context:=basic
@@ -143,8 +147,18 @@ build: afem.tests
 
 
 
+# clean:
+# 	echo $(cleanfiles)
 
-# # 
+# vtkclean:
+# 	echo $(vtkcleanfiles)
+
+# depclean:
+# 	echo $(depcleanfiles)
+	
+
+
+
 
 # clean.components :=$(patsubst %,.clean.%,$(components) )
 
