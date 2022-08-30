@@ -14,14 +14,27 @@
 # # pathvar=$(shell pwd)/../../
 
 
+################################################################################
+# EXPECTED VARIABLES:
+# - projectdir : path/to/project/directory
+# - context    : path/to/test/component/directory
+# - contextdir : name of the test component
 
+
+######################################################################################
+# Decide whether to use .exe or .out as executable file ending 
 
 ifeq ($(OS),Windows_NT)
 ending := exe
 else
 ending := out
 endif
-# cp $@ $(patsubst %.out,%.exe,$@)
+
+
+
+######################################################################################
+# Set the variables for this file 
+# determine whether to use static or dynamic linking 
 
 $(context).sources := $(sort $(wildcard $(contextdir)/*.cpp))
 
@@ -51,14 +64,20 @@ endif
 
 
 
-#####################################
-# How to compile the executables 
+##########################################################################
+# Specific definitions and recipes on how to compile the executables 
 
 .PHONY: $($(context).depdir)
 $($(context).depdir):
 	@-mkdir -p $@
 
 DEPFLAGS = -MT $@ -MF $($(mycontext).depdir)/$*.d -MP -MMD
+# We generate dependency files during compilation using the following compiler flags 
+# -MT $@ : sets the target of the makefile rule, stripped of any directory components
+# -MP    : add dependencies as phony targets
+# -MF ...: sets the output file for the rules 
+# -MMD   : list headers as a by-product of compiling, excluding system headers
+
 
 $($(context).outs): mycontext    := $(context)
 $($(context).outs): mycontextdir := $(contextdir)
@@ -90,6 +109,7 @@ $($(context).outs): $(contextdir)/%.$(ending): $(contextdir)/makefile
 $($(context).outs): $(contextdir)/%.$(ending): $(projectdir)/makefile 
 $($(context).outs): $(contextdir)/%.$(ending): $(projectdir)/*.mk $(projectdir)/tests/*.mk
 
+PHONY: $(context).tests
 $(context).tests: $($(context).outs)
 
 
@@ -113,7 +133,7 @@ $(context).silent_run: $($(context).silent_runs)
 $($(context).silent_runs): %.silent_run : %.$(ending)
 	./$< > /dev/null 
 
-PHONY: $(context).run $(context).silent_run $($(context).runs) $($(context).silent_runs)
+PHONY: run silent_run $(context).run $(context).silent_run $($(context).runs) $($(context).silent_runs)
 
 # 2> /dev/null
 

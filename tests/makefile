@@ -1,12 +1,12 @@
 SHELL = /bin/sh
 
+PHONY: default 
 default: build
 
+PHONY: build 
+# build is set up below 
+
 include ../common.compile.mk 
-
-include tests.affices.mk
-
-
 
 components:=
 components+=basic
@@ -38,6 +38,8 @@ components+=nullspace
 
 
 depdir := .deps
+
+include tests.affices.mk
 
 projectdir:=../
 pathvar:=$(CURDIR)/../

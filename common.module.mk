@@ -4,6 +4,12 @@
 # They create the dependency auxiliary files, 
 # the object files, and the shared libraries. 
 
+################################################################################
+# EXPECTED VARIABLES:
+# - projectdir : path/to/project/directory
+# - moddir     : path/to/module/directory
+# - module     : name of the module 
+
 # TODO Remove that idea with build here, and reduce the number of variables expected here. 
 #      Instead, just produce $(module).build, and let the outside take care of that target. 
 
@@ -212,9 +218,9 @@ $(module).grepissues:
 ########################################################################
 # Target 'check' is a generic test. Currently, it defaults to 'tidy'
 
+.PHONY: check
 check: tidy
 
-.PHONY: check
 
 
 ########################################################################
