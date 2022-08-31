@@ -9,12 +9,17 @@
 # - projectdir : path/to/project/directory
 # - moddir     : path/to/module/directory
 # - module     : name of the module 
+ifndef module
+$(error Expect 'context')
+endif
+ifndef moddir
+$(error Expect 'contextdir')
+endif
 
-# TODO Remove that idea with build here, and reduce the number of variables expected here. 
-#      Instead, just produce $(module).build, and let the outside take care of that target. 
 
-# Do we need basename or path here?
-# https://www.gnu.org/software/make/manual/html_node/File-Name-Functions.html
+######################################################################################
+# Set the variables for this file 
+# determine whether to use static or dynamic linking 
 
 $(module).depdir  := $(moddir)/.deps
 

@@ -71,6 +71,7 @@ modules+=vtk
 #modules+=matrixmarket
 modules+=fem
 
+PHONY: .buildmodules
 .buildmodules: $(patsubst %,%.build,$(modules))
 
 projectdir :=.

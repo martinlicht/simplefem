@@ -3,25 +3,20 @@
 # within the 'tests' folder. It imports all the stuff it needs.
 # 
 
-PHONY: default 
+.PHONY: default 
 default: build
+
+context    :=$(notdir $(CURDIR))
+contextdir :=.
+testsdir   :=../
+projectdir :=../../
+pathvar    :=$(CURDIR)/../../
 
 include ../../common.compile.mk 
 
 include ../tests.affices.mk
 
-projectdir:=../../
-pathvar:=$(CURDIR)/../../
-
-# should be a subdirectory of where the sources are
-# TODO: remove depdir from the discussion 
-depdir := .deps
-
-
-context    :=$(notdir $(CURDIR))
-contextdir :=.
-
-PHONY: build 
+.PHONY: build 
 build: $(context).tests
 
 include ../tests.rules.mk

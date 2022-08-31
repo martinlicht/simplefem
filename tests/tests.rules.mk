@@ -19,7 +19,15 @@
 # - projectdir : path/to/project/directory
 # - context    : path/to/test/component/directory
 # - contextdir : name of the test component
-
+ifndef projectdir
+$(error Expect 'projectdir')
+endif
+ifndef context
+$(error Expect 'context')
+endif
+ifndef contextdir
+$(error Expect 'contextdir')
+endif
 
 ######################################################################################
 # Decide whether to use .exe or .out as executable file ending 
@@ -40,9 +48,9 @@ $(context).sources := $(sort $(wildcard $(contextdir)/*.cpp))
 
 $(context).outs    := $(patsubst %.cpp,%.$(ending),$($(context).sources))
 
-$(context).depdir  := $(contextdir)/$(depdir)
+$(context).depdir  := $(contextdir)/.deps
 
-$(context).dependencies := $(patsubst $(contextdir)/%.cpp,$(contextdir)/$(depdir)/%.d,$($(context).sources))
+$(context).dependencies := $(patsubst $(contextdir)/%.cpp,$(contextdir)/.deps/%.d,$($(context).sources))
 
 $(context).include := $(patsubst %,-L$(projectdir)/%,$(affix.$(context)))
 linkerprefix       :=-Wl,
@@ -63,13 +71,17 @@ $(error No linking mode recognized: $(LINKINGTYPE))
 endif
 
 
+###################################################################################################
+# All executables compiled depend on the makefiles 
+
+%.$(ending): $(testsdir)/makefile $(testsdir)/tests.rules.mk $(testsdir)/tests.affices.mk $(projectsdir)/common.compile.mk
 
 ##########################################################################
 # Specific definitions and recipes on how to compile the executables 
 
 .PHONY: $($(context).depdir)
 $($(context).depdir):
-	@-mkdir -p $@
+	@"mkdir" -p $@
 
 DEPFLAGS = -MT $@ -MF $($(mycontext).depdir)/$*.d -MP -MMD
 # We generate dependency files during compilation using the following compiler flags 
@@ -109,7 +121,7 @@ $($(context).outs): $(contextdir)/%.$(ending): $(contextdir)/makefile
 $($(context).outs): $(contextdir)/%.$(ending): $(projectdir)/makefile 
 $($(context).outs): $(contextdir)/%.$(ending): $(projectdir)/*.mk $(projectdir)/tests/*.mk
 
-PHONY: $(context).tests
+.PHONY: $(context).tests
 $(context).tests: $($(context).outs)
 
 
@@ -133,9 +145,9 @@ $(context).silent_run: $($(context).silent_runs)
 $($(context).silent_runs): %.silent_run : %.$(ending)
 	./$< > /dev/null 
 
-PHONY: run silent_run $(context).run $(context).silent_run $($(context).runs) $($(context).silent_runs)
+.PHONY: run silent_run $(context).run $(context).silent_run $($(context).runs) $($(context).silent_runs)
 
-# 2> /dev/null
+# # 2> /dev/null
 
 
 

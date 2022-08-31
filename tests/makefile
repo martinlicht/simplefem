@@ -1,10 +1,12 @@
 SHELL = /bin/sh
 
-PHONY: default 
+.PHONY: default 
 default: build
 
-PHONY: build 
+.PHONY: build 
 # build is set up below 
+
+projectdir :=.
 
 include ../common.compile.mk 
 
@@ -29,18 +31,14 @@ components+=solverfem
 components+=nullspace
 
 
-# TODO: but this dependency into the rules file 
-%.out: ./makefile tests.rules.mk tests.affices.mk ../common.compile.mk
-
 # cleanfiles    :=
 # vtkcleanfiles :=
 # depcleanfiles :=
 
 
-depdir := .deps
-
 include tests.affices.mk
 
+testsdir:=.
 projectdir:=../
 pathvar:=$(CURDIR)/../
 
