@@ -11,6 +11,7 @@
 #include "../../mesh/examples2D.hpp"
 #include "../../solver/iterativesolver.hpp"
 #include "../../solver/inv.hpp"
+#include "../../solver/systemsolver.hpp"
 #include "../../solver/systemsparsesolver.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
@@ -55,9 +56,9 @@ int main()
             assert( vec.getdimension() == 2 );
             // return FloatVector({ 1. });
             return FloatVector({ 
-                bumpfunction(vec[0])*bumpfunction(vec[1])
+                 sin( Constants::twopi * vec[0] ) * cos( Constants::twopi * vec[1] )
                 ,
-                bumpfunction(vec[0])*bumpfunction(vec[1])
+                -cos( Constants::twopi * vec[0] ) * sin( Constants::twopi * vec[1] )
                 });
         };
     
@@ -65,9 +66,11 @@ int main()
         [=](const FloatVector& vec) -> FloatVector{
             assert( vec.getdimension() == 2 );
             return FloatVector({ 
-                bumpfunction_dev(vec[0])*bumpfunction(vec[1]) - bumpfunction(vec[0])*bumpfunction_devdev(vec[1]) + bumpfunction_dev(vec[0])*bumpfunction_dev(vec[1])
+                bumpfunction_dev(vec[0])*bumpfunction(vec[1]) 
+                + Constants::fourpisquare * ( sin( Constants::twopi * vec[0] ) *  cos( Constants::twopi * vec[1] ) + sin( Constants::twopi * vec[0] ) * cos( Constants::twopi * vec[1] ) )
                 ,
-                bumpfunction(vec[0])*bumpfunction_dev(vec[1]) - bumpfunction_devdev(vec[0])*bumpfunction(vec[1]) + bumpfunction_dev(vec[0])*bumpfunction_dev(vec[1])
+                bumpfunction(vec[0])*bumpfunction_dev(vec[1])
+                + Constants::fourpisquare * ( cos( Constants::twopi * vec[0] ) *  sin( Constants::twopi * vec[1] ) - cos( Constants::twopi * vec[0] ) * sin( Constants::twopi * vec[1] ) )
                 });
         };
     
@@ -148,6 +151,13 @@ int main()
             
             auto C  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
             
+            // TODO: develop preconditioners 
+            // auto PA = IdentityMatrix( A.getdimin() );
+            // auto PC = IdentityMatrix( C.getdimin() );
+            auto PA = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix )
+                              + MatrixCSR( vector_incmatrix_t & vector_diffmatrix_t & volume_massmatrix & vector_diffmatrix & vector_incmatrix );
+            auto PC = MatrixCSR( scalar_incmatrix_t & scalar_diffmatrix_t & vector_massmatrix & scalar_diffmatrix & scalar_incmatrix );
+                
             
             const auto& function_sol = experiment_sol;
             const auto& function_rhs = experiment_rhs;
@@ -162,8 +172,8 @@ int main()
             FloatVector rhs_sol = vector_incmatrix_t * vector_massmatrix * interpol_rhs;
             FloatVector rhs_aux = scalar_incmatrix_t * scalar_diffmatrix_t * vector_massmatrix * interpol_sol ;// FloatVector( B.getdimout(), 0. );
 
-            FloatVector sol( A.getdimout() );
-            FloatVector aux( B.getdimout() );
+            FloatVector sol( A.getdimout(), 0. );
+            FloatVector aux( B.getdimout(), 0. );
 
             // compute the solution ....
 
@@ -171,22 +181,38 @@ int main()
 
             timestamp start = gettimestamp();
 
-            { 
-                auto X = Block2x2Operator( A.getdimout() + B.getdimout(), A.getdimin() + Bt.getdimin(), A, Bt, B, C );
+            //TODO: set up operator preconditioner
+            // { 
+            //     auto X = Block2x2Operator( A.getdimout() + B.getdimout(), A.getdimin() + Bt.getdimin(), A, Bt, B, C );    
+            //     //
+            //     FloatVector sol_full( A.getdimin()  + Bt.getdimin(),  0. );
+            //     sol_full.setslice(             0, sol );
+            //     sol_full.setslice( A.getdimout(), aux );
+            //     //
+            //     FloatVector rhs_full( A.getdimout() +  B.getdimout(), 0. );
+            //     rhs_full.setslice(             0, rhs_sol );
+            //     rhs_full.setslice( A.getdimout(), rhs_aux );
+            //     //
+            //     HerzogSoodhalterMethod Solver( X );
+            //     Solver.solve( sol_full, rhs_full );
+            //     //
+            //     sol = sol_full.getslice(             0, A.getdimout() );
+            //     aux = sol_full.getslice( A.getdimout(), B.getdimout() );
+            // }
 
-                FloatVector sol_full( A.getdimin()  + Bt.getdimin(),  0. );
-                sol_full.setslice(             0, sol );
-                sol_full.setslice( A.getdimout(), aux );
-
-                FloatVector rhs_full( A.getdimout() +  B.getdimout(), 0. );
-                rhs_full.setslice(             0, rhs_sol );
-                rhs_full.setslice( A.getdimout(), rhs_aux );
-                
-                HerzogSoodhalterMethod Solver( X );
-                Solver.solve( sol_full, rhs_full );
-
-                FloatVector sol = sol_full.getslice(             0, A.getdimout() );
-                FloatVector aux = sol_full.getslice( A.getdimout(), B.getdimout() );
+            {
+                const auto PAinv = inv(PA,desired_precision,-1);
+                const auto PCinv = inv(PC,desired_precision,-1);
+                BlockHerzogSoodhalterMethod( 
+                    sol, 
+                    aux, 
+                    rhs_sol, 
+                    rhs_aux, 
+                    -A, Bt, B, C, 
+                    desired_precision,
+                    1,
+                    PAinv, PCinv
+                );
             }
 
             timestamp end = gettimestamp();
