@@ -1159,11 +1159,11 @@ int HodgeHerzogSoodhalterMethod(
 
     while( recent_iteration_count < max_iteration_count ){
         
-        bool restart_condition = ( recent_iteration_count == 0 ) or ( cppsys_restart_on_full_dimension and recent_iteration_count );;
+        bool restart_condition = ( recent_iteration_count == 0 ) or ( csrsys_restart_on_full_dimension and recent_iteration_count );;
         
         bool residual_seems_small = ( recent_iteration_count != 0 ) and ( absolute(eta) < threshold );
         
-        if( restart_condition or ( cppsys_restart_before_finish and residual_seems_small ) ) {
+        if( restart_condition or ( csrsys_restart_before_finish and residual_seems_small ) ) {
             
             for( int a = 0; a < dimension_A; a++ ) v0_A[a] = w0_A[a] = w1_A[a] = 0.;
             for( int c = 0; c < dimension_C; c++ ) v0_C[c] = w0_C[c] = w1_C[c] = 0.;

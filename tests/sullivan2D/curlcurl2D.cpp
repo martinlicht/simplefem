@@ -175,7 +175,9 @@ int main()
                 auto X = Block2x2Operator( A.getdimout() + B.getdimout(), A.getdimin() + Bt.getdimin(), A, Bt, B, C );
 
                 FloatVector sol_full( A.getdimin()  + Bt.getdimin(),  0. );
-                
+                sol_full.setslice(             0, sol );
+                sol_full.setslice( A.getdimout(), aux );
+
                 FloatVector rhs_full( A.getdimout() +  B.getdimout(), 0. );
                 rhs_full.setslice(             0, rhs_sol );
                 rhs_full.setslice( A.getdimout(), rhs_aux );
