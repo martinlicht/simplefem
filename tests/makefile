@@ -6,7 +6,7 @@ default: build
 .PHONY: build 
 # build is set up below 
 
-projectdir :=.
+projectdir :=..
 
 include ../common.compile.mk 
 

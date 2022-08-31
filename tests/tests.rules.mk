@@ -29,6 +29,9 @@ ifndef contextdir
 $(error Expect 'contextdir')
 endif
 
+$(context).%: mycontext    := $(context)
+$(context).%: mycontextdir := $(contextdir)
+
 ######################################################################################
 # Decide whether to use .exe or .out as executable file ending 
 
@@ -163,7 +166,7 @@ $($(context).silent_runs): %.silent_run : %.$(ending)
 .PHONY: tidy $(context).tidy
 tidy: $(context).tidy
 $(context).tidy:
-	clang-tidy $(contextdir)/*.?pp -checks=llvm*,bugprone-*,clang-analyzer-*,misc-*,-llvm-header-guard,-llvm-include-order -- -std=c++2a
+	clang-tidy $(mycontextdir)/*.?pp -checks=llvm*,bugprone-*,clang-analyzer-*,misc-*,-llvm-header-guard,-llvm-include-order -- -std=c++2a
 
 
 ########################################################################
@@ -173,9 +176,9 @@ $(context).tidy:
 cppcheck: $(context).cppcheck
 $(context).cppcheck:
 	cppcheck -i ./.playground/ -i ./.legacy \
-	--enable=warning,style,performance,portability --suppress=duplicateCondition\
-	--suppress=assertWithSideEffect --suppress=useStlAlgorithm\
-	--std=c++17 -q $(contextdir)/*pp
+	--enable=warning,style,performance,portability --suppress=duplicateCondition \
+	--suppress=assertWithSideEffect --suppress=useStlAlgorithm \
+	--std=c++17 -q $(mycontextdir)/*pp
 
 
 ########################################################################
