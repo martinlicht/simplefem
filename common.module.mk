@@ -178,7 +178,7 @@ $($(module).headerchecks): check-%.hpp :
 .PHONY: tidy $(module).tidy
 tidy: $(module).tidy
 $(module).tidy:
-	clang-tidy ./*.?pp -checks=llvm*,bugprone-*,clang-analyzer-*,misc-*,-llvm-header-guard,-llvm-include-order -- -std=c++2a
+	clang-tidy $(moddir)/*.?pp -checks=llvm*,bugprone-*,clang-analyzer-*,misc-*,-llvm-header-guard,-llvm-include-order -- -std=c++2a
 
 
 ########################################################################
@@ -190,7 +190,7 @@ $(module).cppcheck:
 	cppcheck -i ./.playground/ -i ./.legacy \
 	--enable=warning,style,performance,portability --suppress=duplicateCondition\
 	--suppress=assertWithSideEffect --suppress=useStlAlgorithm\
-	--std=c++17 -q . ./*pp
+	--std=c++17 -q $(moddir)/*pp
 
 
 ########################################################################
