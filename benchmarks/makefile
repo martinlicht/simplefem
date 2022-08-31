@@ -19,7 +19,7 @@ sources      := $(wildcard ./*.cpp)
 outs         := $(patsubst %.cpp,%.$(ending),$(sources))
 runs         := $(patsubst %.cpp,%.run,$(sources))
 dependencies := $(patsubst ./%.cpp,./.deps/%.d,$(sources))
-depdir       := ./deps
+depdir       := ./.deps
 
 linkerprefix :=-Wl,
 includes := $(patsubst %,-L../%,$(affices))
@@ -30,7 +30,7 @@ link     := $(patsubst %,-l%,$(affices))
 $(depdir):
 	@"mkdir" -p $@
 
-DEPFLAGS = -MT $@ -MF $($(mycontext).depdir)/$*.d -MP -MMD
+DEPFLAGS = -MT $@ -MF .deps/$*.d -MP -MMD
 # We generate dependency files during compilation using the following compiler flags 
 # -MT $@ : sets the target of the makefile rule, stripped of any directory components
 # -MP    : add dependencies as phony targets
@@ -47,7 +47,7 @@ endif
 	
 -include $(dependencies)
 
-%.$(ending): ./makefile ../makefile ../common.compile.mk ../common.upkeep.mk
+%.$(ending): ./makefile ../makefile ../common.compile.mk
 
 .PHONY: build
 build: $(outs)

@@ -147,6 +147,25 @@ build: afem.tests
 
 
 
+.PHONY: clean
+clean:
+	@echo "finished cleaning test directory." 
+
+
+.PHONY: dependclean
+dependclean:
+	@echo "finished cleaning test directory dependency information files." 
+
+
+.PHONY: vtkclean
+vtkclean:
+	@echo "finished cleaning test directory .vtk files." 
+
+
+
+
+
+
 # clean:
 # 	echo $(cleanfiles)
 

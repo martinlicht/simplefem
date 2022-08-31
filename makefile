@@ -133,13 +133,15 @@ include common.module.mk
 
 build: .buildmodules .buildtests .buildbenchmarks
 
+.buildmodules:
+	@echo Built modules 
+	
 .buildtests: | .buildmodules
-	@echo $(.build.modules)
-	@echo Build tests
+	@echo Building tests...
 	@cd ./tests/ && $(MAKE) --no-print-directory build
 
 .buildbenchmarks: | .buildmodules
-	@echo Build Benchmarks
+	@echo Building benchmarks...
 	@cd ./benchmarks/ && $(MAKE) --no-print-directory build
 
 
@@ -162,6 +164,23 @@ build: .buildmodules .buildtests .buildbenchmarks
 
 
 
+
+
+.PHONY: clean
+clean:
+	@cd ./tests && $(MAKE) --no-print-directory clean
+
+.PHONY: tidy
+tidy:
+	@cd ./tests && $(MAKE) --no-print-directory tidy
+
+.PHONY: cppcheck
+cppcheck:
+	@cd ./tests && $(MAKE) --no-print-directory cppcheck
+
+.PHONY: check
+check:
+	@cd ./tests && $(MAKE) --no-print-directory check
 
 
 
