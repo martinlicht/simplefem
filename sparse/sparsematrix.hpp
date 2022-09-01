@@ -1,7 +1,7 @@
 #ifndef INCLUDEGUARD_SPARSE_SPARSEMATRIX_HPP
 #define INCLUDEGUARD_SPARSE_SPARSEMATRIX_HPP
 
-#include <memory>
+//#include <memory>
 #include <utility>
 #include <vector>
 

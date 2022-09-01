@@ -11,6 +11,7 @@
 #include "../../mesh/examples2D.hpp"
 #include "../../solver/iterativesolver.hpp"
 #include "../../solver/inv.hpp"
+#include "../../solver/systemsolver.hpp"
 #include "../../solver/systemsparsesolver.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
@@ -30,7 +31,7 @@ int main()
 
     LOG << "Initial mesh..." << endl;
     
-    MeshSimplicial2D M = StandardSquare2D();
+    MeshSimplicial2D M = StandardSquare2D_simple();
     
     M.check();
     
@@ -50,14 +51,19 @@ int main()
     
     // u dx + v dy -> ( v_x - u_y ) dxdy -> ( - u_yy + v_xy , - v_xx + u_xy )
     
+    const Float A = Constants::twopi;
+
+            
     std::function<FloatVector(const FloatVector&)> experiment_sol = 
         [=](const FloatVector& vec) -> FloatVector{
             assert( vec.getdimension() == 2 );
             // return FloatVector({ 1. });
             return FloatVector({ 
-                bumpfunction(vec[0])*bumpfunction(vec[1])
+                 //blob( vec[0] ) * blob_dev( vec[1] )
+                 square( vec[0]*vec[0] - 1. ) * 4. * vec[1] * ( vec[1]*vec[1] - 1. )
                 ,
-                bumpfunction(vec[0])*bumpfunction(vec[1])
+                //-blob_dev( vec[0] ) * blob( vec[1] )
+                -4. * vec[0] * ( vec[0]*vec[0] - 1. ) * square( vec[1]*vec[1] - 1. )
                 });
         };
     
@@ -65,9 +71,15 @@ int main()
         [=](const FloatVector& vec) -> FloatVector{
             assert( vec.getdimension() == 2 );
             return FloatVector({ 
-                bumpfunction_dev(vec[0])*bumpfunction(vec[1]) - bumpfunction(vec[0])*bumpfunction_devdev(vec[1]) + bumpfunction_dev(vec[0])*bumpfunction_dev(vec[1])
+                blob_dev(vec[0])*blob(vec[1]) 
+                + 
+                // ( - blob( vec[0] ) * blob_devdevdev( vec[1] )     - blob_devdev( vec[0] ) * blob_dev( vec[1] ) )
+                ( - square( vec[0]*vec[0] - 1. ) * 24. * vec[1]      - ( 12. * vec[0]*vec[0] - 4. ) * ( 4. * vec[1] * ( vec[1]*vec[1] - 1. ) ) )
                 ,
-                bumpfunction(vec[0])*bumpfunction_dev(vec[1]) - bumpfunction_devdev(vec[0])*bumpfunction(vec[1]) + bumpfunction_dev(vec[0])*bumpfunction_dev(vec[1])
+                blob(vec[0])*blob_dev(vec[1])
+                + 
+                // ( + blob_devdevdev( vec[0] ) * blob_dev( vec[1] ) + blob_dev( vec[0] ) * blob_devdev( vec[1] ) )
+                (   24. * vec[0] * square( vec[1]*vec[1] - 1. )      + ( 4. * vec[0] * ( vec[0]*vec[0] - 1. ) ) * ( 12. * vec[1]*vec[1] - 4. ) )
                 });
         };
     
@@ -76,7 +88,7 @@ int main()
             assert( vec.getdimension() == 2 );
             // return FloatVector({ 1. });
             return FloatVector( { 
-                bumpfunction(vec[0])*bumpfunction(vec[1])
+                blob(vec[0])*blob(vec[1])
                 });
         };
     
@@ -89,8 +101,8 @@ int main()
 
     LOG << "Solving Poisson Problem with Neumann boundary conditions" << endl;
 
-    const int min_l = 0; 
-    const int max_l = 5;
+    const int min_l = 1; 
+    const int max_l = 4;
     
     const int min_r = 1;
     const int max_r = 1;
@@ -148,6 +160,13 @@ int main()
             
             auto C  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
             
+            // TODO: develop preconditioners 
+            // auto PA = IdentityMatrix( A.getdimin() );
+            // auto PC = IdentityMatrix( C.getdimin() );
+            auto PA = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix )
+                              + MatrixCSR( vector_incmatrix_t & vector_diffmatrix_t & volume_massmatrix & vector_diffmatrix & vector_incmatrix );
+            auto PC = MatrixCSR( scalar_incmatrix_t & scalar_diffmatrix_t & vector_massmatrix & scalar_diffmatrix & scalar_incmatrix );
+                
             
             const auto& function_sol = experiment_sol;
             const auto& function_rhs = experiment_rhs;
@@ -162,8 +181,8 @@ int main()
             FloatVector rhs_sol = vector_incmatrix_t * vector_massmatrix * interpol_rhs;
             FloatVector rhs_aux = scalar_incmatrix_t * scalar_diffmatrix_t * vector_massmatrix * interpol_sol ;// FloatVector( B.getdimout(), 0. );
 
-            FloatVector sol( A.getdimout() );
-            FloatVector aux( B.getdimout() );
+            FloatVector sol( A.getdimout(), 0. );
+            FloatVector aux( B.getdimout(), 0. );
 
             // compute the solution ....
 
@@ -171,20 +190,38 @@ int main()
 
             timestamp start = gettimestamp();
 
-            { 
-                auto X = Block2x2Operator( A.getdimout() + B.getdimout(), A.getdimin() + Bt.getdimin(), A, Bt, B, C );
+            //TODO: set up operator preconditioner
+            // { 
+            //     auto X = Block2x2Operator( A.getdimout() + B.getdimout(), A.getdimin() + Bt.getdimin(), A, Bt, B, C );    
+            //     //
+            //     FloatVector sol_full( A.getdimin()  + Bt.getdimin(),  0. );
+            //     sol_full.setslice(             0, sol );
+            //     sol_full.setslice( A.getdimout(), aux );
+            //     //
+            //     FloatVector rhs_full( A.getdimout() +  B.getdimout(), 0. );
+            //     rhs_full.setslice(             0, rhs_sol );
+            //     rhs_full.setslice( A.getdimout(), rhs_aux );
+            //     //
+            //     HerzogSoodhalterMethod Solver( X );
+            //     Solver.solve( sol_full, rhs_full );
+            //     //
+            //     sol = sol_full.getslice(             0, A.getdimout() );
+            //     aux = sol_full.getslice( A.getdimout(), B.getdimout() );
+            // }
 
-                FloatVector sol_full( A.getdimin()  + Bt.getdimin(),  0. );
-                
-                FloatVector rhs_full( A.getdimout() +  B.getdimout(), 0. );
-                rhs_full.setslice(             0, rhs_sol );
-                rhs_full.setslice( A.getdimout(), rhs_aux );
-                
-                HerzogSoodhalterMethod Solver( X );
-                Solver.solve( sol_full, rhs_full );
-
-                FloatVector sol = sol_full.getslice(             0, A.getdimout() );
-                FloatVector aux = sol_full.getslice( A.getdimout(), B.getdimout() );
+            {
+                const auto PAinv = inv(PA,desired_precision,-1);
+                const auto PCinv = inv(PC,desired_precision,-1);
+                BlockHerzogSoodhalterMethod( 
+                    sol, 
+                    aux, 
+                    rhs_sol, 
+                    rhs_aux, 
+                    A, Bt, B, C, 
+                    desired_precision,
+                    1,
+                    PAinv, PCinv
+                );
             }
 
             timestamp end = gettimestamp();
@@ -208,6 +245,8 @@ int main()
             LOG << "aux error:    " << errornorm_aux << endl;
             LOG << "residual:     " << residual_sol << endl;
             LOG << "aux residual: " << residual_aux << endl;
+
+            LOG << "aux rhs: " << rhs_aux.norm() << endl;
 
             contable << errornorm_sol;
             contable << errornorm_aux;

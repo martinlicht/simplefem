@@ -2,10 +2,12 @@
 #define INCLUDEGUARD_FEM_FINITEDIFF_HPP
 
 
+#include <algorithm>
 #include <functional>
 #include <vector>
 
 #include "../basic.hpp"
+#include "../utility/stl.hpp"
 #include "../combinatorics/indexrange.hpp"
 #include "../combinatorics/indexmap.hpp"
 #include "../combinatorics/multiindex.hpp"

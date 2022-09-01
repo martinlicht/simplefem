@@ -7,23 +7,23 @@
 #endif
 
 
-#include <cmath>     
-#include <cstdint>     
-#include <cstdio>     
-#include <cstdlib>     
-#include <ctime>     
+#include <cmath>
+// #include <cstdint>
+// #include <cstdio>
+// #include <cstdlib>
+// #include <ctime>
 
-#include <algorithm>
+// #include <algorithm>
 #include <array>
-#include <chrono>
-#include <functional>
+// #include <chrono>
+// #include <functional>
 // #include <ostream>
-#include <iterator>
+// #include <iterator>
 #include <limits>
-#include <list>
+// #include <list>
 #include <string>
 #include <type_traits>
-#include <utility>
+// #include <utility>
 #include <vector>
 
 
@@ -494,119 +494,23 @@ inline constexpr Float binomial_numerical( int64_t n, int64_t k )
 /////////////////////////////////////////////////
 
 
-// TODO: Move time to cpp
-static_assert( std::is_integral< decltype( std::chrono::time_point_cast< std::chrono::milliseconds>( std::chrono::steady_clock::now() ).time_since_epoch().count() ) >::value , "Time measurement must be integral" );
-
 
 typedef uintmax_t timestamp;
 
-inline timestamp gettimestamp()
-{
-    
-    static timestamp start_timestamp = std::chrono::time_point_cast<std::chrono::milliseconds>( std::chrono::steady_clock::now() ).time_since_epoch().count();
-    
-    timestamp now = std::chrono::time_point_cast<std::chrono::milliseconds>( std::chrono::steady_clock::now() ).time_since_epoch().count();
-    
-    Assert( now >= start_timestamp );
-    
-    return now - start_timestamp;
-}
-
-
+timestamp gettimestamp();
 
 // TODO: move to utility 
 
-inline std::string timestamp2measurement( const timestamp& t )
-{
-    return std::to_string( static_cast<uintmax_t>(t) ) + "ms";
-}
+std::string timestamp2measurement( const timestamp& t );
 
 // inline std::string measurementnow( const timestamp& t ) // TODO Remove this line 
-inline std::string measurementnow()
-{
-    return timestamp2measurement( gettimestamp() );
-}
+std::string measurementnow();
 
+std::string timestamp2digitalcode( const timestamp& t );
 
+std::string digitalcodenow();
 
-inline std::string timestamp2digitalcode( const timestamp& t )
-{
-    const int numdigits = 10;
-    const int fulllength = numdigits+1;
-    char digits[fulllength];
-    snprintf( digits, fulllength, "%*ju", numdigits, (uintmax_t)t );
-    for( int i = 0; i < numdigits; i++ ) if( digits[i] == ' ' ) digits[i] = '_';
-    return std::string(digits);
-}
-
-inline std::string digitalcodenow()
-{
-    return timestamp2digitalcode( gettimestamp() );
-}
-
-
-
-inline std::string protocolprefixnow()
-{
-    // static const std::string foo = std::string("\e[36m[");
-    // static const std::string bar = std::string("]\e[39m\t");
-    static const std::string foo = std::string("[");
-    static const std::string bar = std::string("]\t");
-    return foo + digitalcodenow() + bar;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/////////////////////////////////////////////////
-//                                             //
-//       SUM INTEGERS PRODUCED BY LAMBDA       //
-//                                             //
-/////////////////////////////////////////////////
-
-inline int sum_int( int from, int to, const std::function<int(int)>& calc )
-{
-    if( from > to )
-        return 0;
-    int ret = 0;
-    for( int i = from; i <= to; i++ )
-        ret += calc( i );
-    return ret;
-}
-
-inline int sum_int( int to, const std::function<int(int)>& calc )
-{
-    return sum_int( 0, to, calc );
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+std::string protocolprefixnow();
 
 
 
@@ -622,91 +526,21 @@ inline int sum_int( int to, const std::function<int(int)>& calc )
 //                                             //
 /////////////////////////////////////////////////
 
-// TODO: Move to utilities 
+Float bumpfunction( Float x );
 
+Float bumpfunction_dev( Float x );
 
+Float bumpfunction_devdev( Float x );
 
+Float bumpfunction_devdevdev( Float x );
 
-inline Float bumpfunction( Float x )
-{
-    Float delta = x*x - 1.;
+Float blob( Float x );
 
-    if( absolute(x) < 0.99999999 ) {
+Float blob_dev( Float x );
 
-        return std::exp( 1. / delta );
+Float blob_devdev( Float x );
 
-    } else {
-
-        return 0;
-        
-    }
-}
-
-inline Float bumpfunction_dev( Float x )
-{
-    
-    Float delta = x*x - 1.;
-    Float delta_sq = delta*delta;
-
-    if( absolute(x) < 0.99999999 ) {
-        
-        return -2. * x * std::exp( 1. / delta ) / delta_sq;
-        
-    } else {
-        
-        return 0;
-        
-    }
-}
-
-inline Float bumpfunction_devdev( Float x )
-{
-    
-    
-//     Float t1 = std::exp( -1. / ( 1. - x*x ) );
-//     Float t2 = std::exp( 1 - x*x );
-// 
-//     if( x*x < 1 )
-//         return
-//             t1 * ( 4*x*x*pow(t2,-4.) - 2*pow(t2,-2.) - 8*x*x*pow(t2,-3.) );
-//     else
-//         return
-//             0.;
-                            
-
-    
-    
-    Float delta = x*x - 1.;
-    
-    Float delta_sq = delta    * delta;
-    Float delta_p4 = delta_sq * delta_sq;
-
-    if( absolute(x) < 0.99999999 ) {
-        
-        return std::exp( 1. / delta ) * (  6.*x*x*x*x - 2. ) / delta_p4;
-        
-    } else {
-        
-        return 0.;
-        
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Float blob_devdevdev( Float x );
 
 
 
@@ -718,17 +552,136 @@ inline Float bumpfunction_devdev( Float x )
 //                                             //
 /////////////////////////////////////////////////
 
-inline void cartesian_to_polar_coordinates2D( const Float& x, const Float& y, Float& radius, Float& angle )
+void cartesian_to_polar_coordinates2D( const Float& x, const Float& y, Float& radius, Float& angle );
+
+void polar_to_cartesian_coordinates2D( const Float& radius, const Float& angle, Float& x, Float& y );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/////////////////////////////////////////////////
+//                                             //
+//            STRING UTILITIES                 //
+//                                             //
+/////////////////////////////////////////////////
+
+/******************************************************/
+/*      insert tabs before each line                  */
+/*      pad each line                                 */
+/******************************************************/
+
+inline std::string tab_each_line( std::string str ) // TODO: Move to utilities 
+{ 
+    str.insert( 0, 1, '\t' );
+    for( int c = str.size(); c > 0; c-- ) {
+        if( str[c-1] == '\n' )
+            str.insert(c, 1, '\t');
+    }
+    return str;
+} 
+
+// inline std::string pad_each_line( std::string str, std::string pad )
+// {
+//     int c = 0;
+//     for( int i = 0; i < str.length(); i++ ) if( str[i] == '\n' ) c++;
+//     std::string ret = pad;
+//     ret.reserve( str.length() + c * pad.length() );
+//     for( int i = 0; i < str.length(); i++ )
+//     {
+//         ret += str[i];
+//         if( str[i] == '\n' ) ret += pad.length();
+    
+//     return ret;
+// }
+
+
+/******************************************************/
+/*      count the white space within STL string       */
+/******************************************************/
+
+inline int count_white_space( const std::string& str ) // TODO: Move to utilities 
+{ 
+    int ret = 0;  
+    for( int c = 0; c < str.size(); c++ ) if( isspace( str[c] ) ) ret++; 
+    return ret;
+} 
+
+
+
+
+
+
+
+
+
+
+
+/////////////////////////////////////////////////
+//                                             //
+//            GENERIC STREAMING                //
+//                                             //
+/////////////////////////////////////////////////
+
+
+/***********************************************/
+/*   GENERIC STREAM TEMPLATE FOR std::array    */ 
+/***********************************************/
+
+// TODO: Move into separate include file 
+template <typename S, typename T, size_t N>
+inline S& operator<<( S& stream, const std::array<T, N>& v)
 {
-    radius = std::sqrt( x*x + y*y );
-    angle  = std::atan2( x, y );
+    for( const auto& item : v )
+        stream << item << space;
+    stream << nl;
+    return stream;
 }
 
-inline void polar_to_cartesian_coordinates2D( const Float& radius, const Float& angle, Float& x, Float& y )
-{
-    x = radius * std::cos( angle );
-    y = radius * std::sin( angle );
-}
+/******************************************************/
+/*       printf into C++ strings and streams          */
+/******************************************************/
+
+// template< typename... Params >
+// inline std::string printf_into_string( const char* formatstring, Params... args )
+// {
+//     std::size_t length = std::snprintf(nullptr, 0, formatstring, args... ) + 1;
+//     char* c_str = new char[length];
+//     std::snprintf( c_str, length, formatstring, args... );
+//     std::string ret( c_str );
+//     delete[] c_str;
+//     return ret;
+// }
+
+std::string printf_into_string( const char* formatstring, ... ) 
+__attribute__ (( format (printf,1,2) ));
+
+
+
+// template< typename L, typename... Params >
+// inline void printf_into_stream( L& stream, const char* formatstring, Params... args )
+// {
+//     stream << printf_into_string( formatstring, args... );
+// }
+#if __cplusplus < 202002L
+#define printf_into_stream( stream, ... ) { stream << printf_into_string( __VA_ARGS__ ); }
+#else
+#define printf_into_stream( stream, formatstring, ... ) { stream << printf_into_string( formatstring __VA_OPT__(,) __VA_ARGS__ ); }
+#endif
+
+
+
+
+
 
 
 
@@ -794,215 +747,6 @@ inline int SIZECAST( std::uintmax_t size )
 }
 
 
-/******************************************************/
-/*       printf into C++ strings and streams          */
-/******************************************************/
-
-// template< typename... Params >
-// inline std::string printf_into_string( const char* formatstring, Params... args )
-// {
-//     std::size_t length = std::snprintf(nullptr, 0, formatstring, args... ) + 1;
-//     char* c_str = new char[length];
-//     std::snprintf( c_str, length, formatstring, args... );
-//     std::string ret( c_str );
-//     delete[] c_str;
-//     return ret;
-// }
-
-std::string printf_into_string( const char* formatstring, ... ) 
-__attribute__ (( format (printf,1,2) ));
-
-
-
-// template< typename L, typename... Params >
-// inline void printf_into_stream( L& stream, const char* formatstring, Params... args )
-// {
-//     stream << printf_into_string( formatstring, args... );
-// }
-#if __cplusplus < 202002L
-#define printf_into_stream( stream, ... ) { stream << printf_into_string( __VA_ARGS__ ); }
-#else
-#define printf_into_stream( stream, formatstring, ... ) { stream << printf_into_string( formatstring __VA_OPT__(,) __VA_ARGS__ ); }
-#endif
-
-
-/******************************************************/
-/*      insert tabs before each line                  */
-/*      pad each line                                 */
-/******************************************************/
-
-inline std::string tab_each_line( std::string str ) // TODO: Move to utilities 
-{ 
-    str.insert( 0, 1, '\t' );
-    for( int c = str.size(); c > 0; c-- ) {
-        if( str[c-1] == '\n' )
-            str.insert(c, 1, '\t');
-    }
-    return str;
-} 
-
-inline std::string pad_each_line( std::string str, std::string pad )
-{
-    int c = 0;
-    for( int i = 0; i < str.length(); i++ ) if( str[i] == '\n' ) c++;
-    
-    std::string ret = pad;
-    ret.reserve( str.length() + c * pad.length() );
-    for( int i = 0; i < str.length(); i++ )
-    {
-        ret += str[i];
-        if( str[i] == '\n' ) ret += pad.length();
-    }
-    
-    return ret;
-}
-
-
-/******************************************************/
-/*      count the white space within STL string       */
-/******************************************************/
-
-inline int count_white_space( const std::string& str ) // TODO: Move to utilities 
-{ 
-    int ret = 0;
-    
-    for( int c = 0; c < str.size(); c++ ) 
-        if( isspace( str[c] ) ) 
-            ret++; 
-    
-    return ret;
-} 
-
-
-/******************************************************/
-/*        write zero-based range into vector          */
-/******************************************************/
-
-inline std::vector<int> range( int to )
-{
-    Assert( to >= 0 );
-    std::vector<int> ret(to+1);
-    for( int i = 0; i <= to; i++ ) ret.at(i) = i;
-    Assert( ret.size() == to+1 );
-    return ret;
-}
-
-
-/******************************************************/
-/*   remove duplicates from random access container   */
-/******************************************************/
-
-template< typename T >
-inline void sort_and_remove_duplicates( T& t )
-{
-    std::sort( t.begin(), t.end() );
-    auto last = std::unique( t.begin(), t.end() );
-    t.erase( last, t.end() );
-}
-
-
-/******************************************************/
-/*      find index of element with STL vector         */
-/******************************************************/
-
-template<typename T>
-inline int find_index( const std::vector<T>& vec, const T& t )
-{
-   const auto it = std::find( vec.begin(), vec.end(), t );
-   Assert( it != vec.end() );
-   const auto ret = std::distance( vec.begin(), it );
-   Assert( ret >= 0 );
-   Assert( ret < vec.size() );
-   return SIZECAST( ret );
-}
-
-
-/******************************************************/
-/*            merge two sorted STL lists              */
-/******************************************************/
-
-// TODO: Move into separate include file 
-template<typename T>
-inline void mergeelementsinsortedlist
-( std::list<T>& L, 
-  const std::function<T( const T&, const T& )>& merge,
-  const std::function<bool( const T&, const T& )>& compare
-) {
-    typename std::list<T>::iterator it = L.begin();
-    while( it != L.end() ){
-
-        typename std::list<T>::iterator now = it; 
-        typename std::list<T>::iterator next = ++it;
-
-        if( next == L.end() ) return;
-
-        if( compare( *it, *next ) )
-        {
-            *now = merge( *now, *next );
-            L.erase( next );
-            it = now;
-        } 
-
-    }
-}
-
-
-
-
-/***********************************************/
-/*   GENERIC STREAM TEMPLATE FOR std::array    */ 
-/***********************************************/
-
-// TODO: Move into separate include file 
-template <typename S, typename T, size_t N>
-inline S& operator<<( S& stream, const std::array<T, N>& v)
-{
-    for( const auto& item : v )
-        stream << item << space;
-    stream << nl;
-    return stream;
-}
-
-
-
-
-/***********************************************/
-/*         make_unique HACK                    */ 
-/***********************************************/
-
-#if __cplusplus < 201402L
-
-/****
- * 
- * A very imperfect solution for make_unique in C++11
- * We enter undefined behavior territory here
- * 
- ****/
-#warning \
-This code extends the std namespace so that `make_unique` \
-is available throughout the code. This was triggered by a C++ version \
-below C++14. While this may be a practical workaround, it is officially \
-considered undefined behavior in the C++ standard. Please try to compile \
-with C++14 or higher.
-
-#include <memory>
-
-namespace std
-{
-template <typename T, typename ...Args> 
-inline std::unique_ptr<T> make_unique(Args && ...args)
-{
-  return std::unique_ptr<T>( new T(std::forward<Args>(args)...) );
-}
-}
-
-#endif
-
-
-
-
-
-
 
 
 
@@ -1022,7 +766,7 @@ inline std::unique_ptr<T> make_unique(Args && ...args)
 //     for( int i = 1; i < length; i++ )
 //     for( int j = 1; j < length; j++ )
 //         if( start[j-1] > start[j] ) 
-//             std::swap( start[j-1], start[j] );
+//             std::swap( start[j-1], start[j] ); // TODO: requires <utility>
 // }
 
 
