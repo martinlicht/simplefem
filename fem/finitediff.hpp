@@ -2,6 +2,7 @@
 #define INCLUDEGUARD_FEM_FINITEDIFF_HPP
 
 
+#include <algorithm>
 #include <functional>
 #include <vector>
 

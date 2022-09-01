@@ -2,7 +2,7 @@
 #define INCLUDEGUARD_OPERATOR_COMPOSEDOPERATORS_HPP
 
 #include <cassert>
-#include <memory>
+//#include <memory>
 #include <type_traits>
 #include <utility>
 
