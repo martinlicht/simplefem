@@ -188,6 +188,34 @@ Float bumpfunction_devdev( Float x )
 
 
 
+Float bumpfunction_devdevdev( Float x )
+{
+    // TODO: compute the correct value     
+
+    Float x2 = x*x;
+    Float x4 = x2 * x2;
+    Float x6 = x4 * x2;
+
+    Float delta = x2 - 1.;
+    
+    Float delta_p2 = delta    * delta;
+    Float delta_p4 = delta_p2 * delta_p2;
+    Float delta_p6 = delta_p4 * delta_p2;
+
+    if( absolute(x) < 0.99999999 ) {
+        
+        return -4. * x * std::exp( 1. / delta ) * (  6.*x6 + 3.*x4 - 10.*x2 + 3. ) / delta_p6;
+        
+    } else {
+        
+        return 0.;
+        
+    }
+}
+
+
+
+
 /////////////////////////////////////////////////
 //                                             //
 //       CARTESIAN AND POLAR COORDINATES       //

@@ -51,14 +51,17 @@ int main()
     
     // u dx + v dy -> ( v_x - u_y ) dxdy -> ( - u_yy + v_xy , - v_xx + u_xy )
     
+    const Float A = Constants::twopi;
+
+            
     std::function<FloatVector(const FloatVector&)> experiment_sol = 
         [=](const FloatVector& vec) -> FloatVector{
             assert( vec.getdimension() == 2 );
             // return FloatVector({ 1. });
             return FloatVector({ 
-                 sin( Constants::twopi * vec[0] ) * cos( Constants::twopi * vec[1] )
+                 bumpfunction( vec[0] ) * bumpfunction_dev( vec[1] )
                 ,
-                -cos( Constants::twopi * vec[0] ) * sin( Constants::twopi * vec[1] )
+                -bumpfunction_dev( vec[0] ) * bumpfunction( vec[1] )
                 });
         };
     
@@ -67,10 +70,12 @@ int main()
             assert( vec.getdimension() == 2 );
             return FloatVector({ 
                 bumpfunction_dev(vec[0])*bumpfunction(vec[1]) 
-                + Constants::fourpisquare * ( sin( Constants::twopi * vec[0] ) *  cos( Constants::twopi * vec[1] ) + sin( Constants::twopi * vec[0] ) * cos( Constants::twopi * vec[1] ) )
+                + 
+                ( - bumpfunction( vec[0] ) * bumpfunction_devdevdev( vec[1] )     - bumpfunction_devdev( vec[0] ) * bumpfunction_dev( vec[1] ) ) 
                 ,
                 bumpfunction(vec[0])*bumpfunction_dev(vec[1])
-                + Constants::fourpisquare * ( cos( Constants::twopi * vec[0] ) *  sin( Constants::twopi * vec[1] ) - cos( Constants::twopi * vec[0] ) * sin( Constants::twopi * vec[1] ) )
+                + 
+                ( - bumpfunction_devdevdev( vec[0] ) * bumpfunction_dev( vec[1] ) + bumpfunction_dev( vec[0] ) * bumpfunction_devdev( vec[1] ) )
                 });
         };
     
@@ -208,7 +213,7 @@ int main()
                     aux, 
                     rhs_sol, 
                     rhs_aux, 
-                    -A, Bt, B, C, 
+                    A, Bt, B, C, 
                     desired_precision,
                     1,
                     PAinv, PCinv
@@ -236,6 +241,8 @@ int main()
             LOG << "aux error:    " << errornorm_aux << endl;
             LOG << "residual:     " << residual_sol << endl;
             LOG << "aux residual: " << residual_aux << endl;
+
+            LOG << "aux rhs: " << rhs_aux.norm() << endl;
 
             contable << errornorm_sol;
             contable << errornorm_aux;

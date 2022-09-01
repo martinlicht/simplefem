@@ -534,6 +534,8 @@ Float bumpfunction_dev( Float x );
 
 Float bumpfunction_devdev( Float x );
 
+Float bumpfunction_devdevdev( Float x );
+
 
 
 
