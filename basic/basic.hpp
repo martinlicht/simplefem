@@ -526,13 +526,21 @@ std::string protocolprefixnow();
 //                                             //
 /////////////////////////////////////////////////
 
-// TODO: Move to utilities 
-
 Float bumpfunction( Float x );
 
 Float bumpfunction_dev( Float x );
 
 Float bumpfunction_devdev( Float x );
+
+Float bumpfunction_devdevdev( Float x );
+
+Float blob( Float x );
+
+Float blob_dev( Float x );
+
+Float blob_devdev( Float x );
+
+Float blob_devdevdev( Float x );
 
 
 
