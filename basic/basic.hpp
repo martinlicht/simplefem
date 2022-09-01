@@ -520,6 +520,175 @@ std::string protocolprefixnow();
 
 
 
+/////////////////////////////////////////////////
+//                                             //
+//              BUMP FUNCTIONS                 //
+//                                             //
+/////////////////////////////////////////////////
+
+// TODO: Move to utilities 
+
+Float bumpfunction( Float x );
+
+Float bumpfunction_dev( Float x );
+
+Float bumpfunction_devdev( Float x );
+
+
+
+
+
+/////////////////////////////////////////////////
+//                                             //
+//       CARTESIAN AND POLAR COORDINATES       //
+//                                             //
+/////////////////////////////////////////////////
+
+void cartesian_to_polar_coordinates2D( const Float& x, const Float& y, Float& radius, Float& angle );
+
+void polar_to_cartesian_coordinates2D( const Float& radius, const Float& angle, Float& x, Float& y );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/////////////////////////////////////////////////
+//                                             //
+//            STRING UTILITIES                 //
+//                                             //
+/////////////////////////////////////////////////
+
+/******************************************************/
+/*      insert tabs before each line                  */
+/*      pad each line                                 */
+/******************************************************/
+
+inline std::string tab_each_line( std::string str ) // TODO: Move to utilities 
+{ 
+    str.insert( 0, 1, '\t' );
+    for( int c = str.size(); c > 0; c-- ) {
+        if( str[c-1] == '\n' )
+            str.insert(c, 1, '\t');
+    }
+    return str;
+} 
+
+// inline std::string pad_each_line( std::string str, std::string pad )
+// {
+//     int c = 0;
+//     for( int i = 0; i < str.length(); i++ ) if( str[i] == '\n' ) c++;
+//     std::string ret = pad;
+//     ret.reserve( str.length() + c * pad.length() );
+//     for( int i = 0; i < str.length(); i++ )
+//     {
+//         ret += str[i];
+//         if( str[i] == '\n' ) ret += pad.length();
+    
+//     return ret;
+// }
+
+
+/******************************************************/
+/*      count the white space within STL string       */
+/******************************************************/
+
+inline int count_white_space( const std::string& str ) // TODO: Move to utilities 
+{ 
+    int ret = 0;  
+    for( int c = 0; c < str.size(); c++ ) if( isspace( str[c] ) ) ret++; 
+    return ret;
+} 
+
+
+
+
+
+
+
+
+
+
+
+/////////////////////////////////////////////////
+//                                             //
+//            GENERIC STREAMING                //
+//                                             //
+/////////////////////////////////////////////////
+
+
+/***********************************************/
+/*   GENERIC STREAM TEMPLATE FOR std::array    */ 
+/***********************************************/
+
+// TODO: Move into separate include file 
+template <typename S, typename T, size_t N>
+inline S& operator<<( S& stream, const std::array<T, N>& v)
+{
+    for( const auto& item : v )
+        stream << item << space;
+    stream << nl;
+    return stream;
+}
+
+/******************************************************/
+/*       printf into C++ strings and streams          */
+/******************************************************/
+
+// template< typename... Params >
+// inline std::string printf_into_string( const char* formatstring, Params... args )
+// {
+//     std::size_t length = std::snprintf(nullptr, 0, formatstring, args... ) + 1;
+//     char* c_str = new char[length];
+//     std::snprintf( c_str, length, formatstring, args... );
+//     std::string ret( c_str );
+//     delete[] c_str;
+//     return ret;
+// }
+
+std::string printf_into_string( const char* formatstring, ... ) 
+__attribute__ (( format (printf,1,2) ));
+
+
+
+// template< typename L, typename... Params >
+// inline void printf_into_stream( L& stream, const char* formatstring, Params... args )
+// {
+//     stream << printf_into_string( formatstring, args... );
+// }
+#if __cplusplus < 202002L
+#define printf_into_stream( stream, ... ) { stream << printf_into_string( __VA_ARGS__ ); }
+#else
+#define printf_into_stream( stream, formatstring, ... ) { stream << printf_into_string( formatstring __VA_OPT__(,) __VA_ARGS__ ); }
+#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -575,45 +744,6 @@ inline int sum_int( int to, const std::function<int(int)>& calc )
 
 /////////////////////////////////////////////////
 //                                             //
-//              BUMP FUNCTIONS                 //
-//                                             //
-/////////////////////////////////////////////////
-
-// TODO: Move to utilities 
-
-Float bumpfunction( Float x );
-
-Float bumpfunction_dev( Float x );
-
-Float bumpfunction_devdev( Float x );
-
-
-
-
-
-/////////////////////////////////////////////////
-//                                             //
-//       CARTESIAN AND POLAR COORDINATES       //
-//                                             //
-/////////////////////////////////////////////////
-
-void cartesian_to_polar_coordinates2D( const Float& x, const Float& y, Float& radius, Float& angle );
-
-void polar_to_cartesian_coordinates2D( const Float& radius, const Float& angle, Float& x, Float& y );
-
-
-
-
-
-
-
-
-
-
-
-
-/////////////////////////////////////////////////
-//                                             //
 //          MISC LIBRARY HACKS                 //
 //                                             //
 /////////////////////////////////////////////////
@@ -629,86 +759,6 @@ inline int SIZECAST( std::uintmax_t size )
     Assert( size < std::numeric_limits<int>::max() );
     return static_cast<int>( size );
 }
-
-
-/******************************************************/
-/*       printf into C++ strings and streams          */
-/******************************************************/
-
-// template< typename... Params >
-// inline std::string printf_into_string( const char* formatstring, Params... args )
-// {
-//     std::size_t length = std::snprintf(nullptr, 0, formatstring, args... ) + 1;
-//     char* c_str = new char[length];
-//     std::snprintf( c_str, length, formatstring, args... );
-//     std::string ret( c_str );
-//     delete[] c_str;
-//     return ret;
-// }
-
-std::string printf_into_string( const char* formatstring, ... ) 
-__attribute__ (( format (printf,1,2) ));
-
-
-
-// template< typename L, typename... Params >
-// inline void printf_into_stream( L& stream, const char* formatstring, Params... args )
-// {
-//     stream << printf_into_string( formatstring, args... );
-// }
-#if __cplusplus < 202002L
-#define printf_into_stream( stream, ... ) { stream << printf_into_string( __VA_ARGS__ ); }
-#else
-#define printf_into_stream( stream, formatstring, ... ) { stream << printf_into_string( formatstring __VA_OPT__(,) __VA_ARGS__ ); }
-#endif
-
-
-/******************************************************/
-/*      insert tabs before each line                  */
-/*      pad each line                                 */
-/******************************************************/
-
-inline std::string tab_each_line( std::string str ) // TODO: Move to utilities 
-{ 
-    str.insert( 0, 1, '\t' );
-    for( int c = str.size(); c > 0; c-- ) {
-        if( str[c-1] == '\n' )
-            str.insert(c, 1, '\t');
-    }
-    return str;
-} 
-
-inline std::string pad_each_line( std::string str, std::string pad )
-{
-    int c = 0;
-    for( int i = 0; i < str.length(); i++ ) if( str[i] == '\n' ) c++;
-    
-    std::string ret = pad;
-    ret.reserve( str.length() + c * pad.length() );
-    for( int i = 0; i < str.length(); i++ )
-    {
-        ret += str[i];
-        if( str[i] == '\n' ) ret += pad.length();
-    }
-    
-    return ret;
-}
-
-
-/******************************************************/
-/*      count the white space within STL string       */
-/******************************************************/
-
-inline int count_white_space( const std::string& str ) // TODO: Move to utilities 
-{ 
-    int ret = 0;
-    
-    for( int c = 0; c < str.size(); c++ ) 
-        if( isspace( str[c] ) ) 
-            ret++; 
-    
-    return ret;
-} 
 
 
 /******************************************************/
@@ -784,26 +834,6 @@ inline int find_index( const std::vector<T>& vec, const T& t )
 //     }
 // }
 
-
-
-
-/***********************************************/
-/*   GENERIC STREAM TEMPLATE FOR std::array    */ 
-/***********************************************/
-
-// TODO: Move into separate include file 
-template <typename S, typename T, size_t N>
-inline S& operator<<( S& stream, const std::array<T, N>& v)
-{
-    for( const auto& item : v )
-        stream << item << space;
-    stream << nl;
-    return stream;
-}
-
-
-
-
 /***********************************************/
 /*         make_unique HACK                    */ 
 /***********************************************/
@@ -835,6 +865,12 @@ inline std::unique_ptr<T> make_unique(Args && ...args)
 }
 
 #endif
+
+
+
+
+
+
 
 
 
