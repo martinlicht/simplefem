@@ -7,23 +7,23 @@
 #endif
 
 
-#include <cmath>     
-#include <cstdint>     
-#include <cstdio>     
-#include <cstdlib>     
-#include <ctime>     
+#include <cmath>
+// #include <cstdint>
+// #include <cstdio>
+// #include <cstdlib>
+// #include <ctime>
 
 #include <algorithm>
 #include <array>
-#include <chrono>
+// #include <chrono>
 #include <functional>
 // #include <ostream>
-#include <iterator>
+// #include <iterator>
 #include <limits>
-#include <list>
+// #include <list>
 #include <string>
 #include <type_traits>
-#include <utility>
+// #include <utility>
 #include <vector>
 
 
@@ -494,66 +494,23 @@ inline constexpr Float binomial_numerical( int64_t n, int64_t k )
 /////////////////////////////////////////////////
 
 
-// TODO: Move time to cpp
-static_assert( std::is_integral< decltype( std::chrono::time_point_cast< std::chrono::milliseconds>( std::chrono::steady_clock::now() ).time_since_epoch().count() ) >::value , "Time measurement must be integral" );
-
 
 typedef uintmax_t timestamp;
 
-inline timestamp gettimestamp()
-{
-    
-    static timestamp start_timestamp = std::chrono::time_point_cast<std::chrono::milliseconds>( std::chrono::steady_clock::now() ).time_since_epoch().count();
-    
-    timestamp now = std::chrono::time_point_cast<std::chrono::milliseconds>( std::chrono::steady_clock::now() ).time_since_epoch().count();
-    
-    Assert( now >= start_timestamp );
-    
-    return now - start_timestamp;
-}
-
-
+timestamp gettimestamp();
 
 // TODO: move to utility 
 
-inline std::string timestamp2measurement( const timestamp& t )
-{
-    return std::to_string( static_cast<uintmax_t>(t) ) + "ms";
-}
+std::string timestamp2measurement( const timestamp& t );
 
 // inline std::string measurementnow( const timestamp& t ) // TODO Remove this line 
-inline std::string measurementnow()
-{
-    return timestamp2measurement( gettimestamp() );
-}
+std::string measurementnow();
 
+std::string timestamp2digitalcode( const timestamp& t );
 
+std::string digitalcodenow();
 
-inline std::string timestamp2digitalcode( const timestamp& t )
-{
-    const int numdigits = 10;
-    const int fulllength = numdigits+1;
-    char digits[fulllength];
-    snprintf( digits, fulllength, "%*ju", numdigits, (uintmax_t)t );
-    for( int i = 0; i < numdigits; i++ ) if( digits[i] == ' ' ) digits[i] = '_';
-    return std::string(digits);
-}
-
-inline std::string digitalcodenow()
-{
-    return timestamp2digitalcode( gettimestamp() );
-}
-
-
-
-inline std::string protocolprefixnow()
-{
-    // static const std::string foo = std::string("\e[36m[");
-    // static const std::string bar = std::string("]\e[39m\t");
-    static const std::string foo = std::string("[");
-    static const std::string bar = std::string("]\t");
-    return foo + digitalcodenow() + bar;
-}
+std::string protocolprefixnow();
 
 
 
@@ -624,89 +581,11 @@ inline int sum_int( int to, const std::function<int(int)>& calc )
 
 // TODO: Move to utilities 
 
+Float bumpfunction( Float x );
 
+Float bumpfunction_dev( Float x );
 
-
-inline Float bumpfunction( Float x )
-{
-    Float delta = x*x - 1.;
-
-    if( absolute(x) < 0.99999999 ) {
-
-        return std::exp( 1. / delta );
-
-    } else {
-
-        return 0;
-        
-    }
-}
-
-inline Float bumpfunction_dev( Float x )
-{
-    
-    Float delta = x*x - 1.;
-    Float delta_sq = delta*delta;
-
-    if( absolute(x) < 0.99999999 ) {
-        
-        return -2. * x * std::exp( 1. / delta ) / delta_sq;
-        
-    } else {
-        
-        return 0;
-        
-    }
-}
-
-inline Float bumpfunction_devdev( Float x )
-{
-    
-    
-//     Float t1 = std::exp( -1. / ( 1. - x*x ) );
-//     Float t2 = std::exp( 1 - x*x );
-// 
-//     if( x*x < 1 )
-//         return
-//             t1 * ( 4*x*x*pow(t2,-4.) - 2*pow(t2,-2.) - 8*x*x*pow(t2,-3.) );
-//     else
-//         return
-//             0.;
-                            
-
-    
-    
-    Float delta = x*x - 1.;
-    
-    Float delta_sq = delta    * delta;
-    Float delta_p4 = delta_sq * delta_sq;
-
-    if( absolute(x) < 0.99999999 ) {
-        
-        return std::exp( 1. / delta ) * (  6.*x*x*x*x - 2. ) / delta_p4;
-        
-    } else {
-        
-        return 0.;
-        
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Float bumpfunction_devdev( Float x );
 
 
 
@@ -718,51 +597,9 @@ inline Float bumpfunction_devdev( Float x )
 //                                             //
 /////////////////////////////////////////////////
 
-inline void cartesian_to_polar_coordinates2D( const Float& x, const Float& y, Float& radius, Float& angle )
-{
-    radius = std::sqrt( x*x + y*y );
-    angle  = std::atan2( x, y );
-}
+void cartesian_to_polar_coordinates2D( const Float& x, const Float& y, Float& radius, Float& angle );
 
-inline void polar_to_cartesian_coordinates2D( const Float& radius, const Float& angle, Float& x, Float& y )
-{
-    x = radius * std::cos( angle );
-    y = radius * std::sin( angle );
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+void polar_to_cartesian_coordinates2D( const Float& radius, const Float& angle, Float& x, Float& y );
 
 
 
@@ -921,30 +758,31 @@ inline int find_index( const std::vector<T>& vec, const T& t )
 /*            merge two sorted STL lists              */
 /******************************************************/
 
-// TODO: Move into separate include file 
-template<typename T>
-inline void mergeelementsinsortedlist
-( std::list<T>& L, 
-  const std::function<T( const T&, const T& )>& merge,
-  const std::function<bool( const T&, const T& )>& compare
-) {
-    typename std::list<T>::iterator it = L.begin();
-    while( it != L.end() ){
+// TODO: Move into legacy
 
-        typename std::list<T>::iterator now = it; 
-        typename std::list<T>::iterator next = ++it;
+// template<typename T>
+// inline void mergeelementsinsortedlist
+// ( std::list<T>& L, 
+//   const std::function<T( const T&, const T& )>& merge,
+//   const std::function<bool( const T&, const T& )>& compare
+// ) {
+//     typename std::list<T>::iterator it = L.begin();
+//     while( it != L.end() ){
 
-        if( next == L.end() ) return;
+//         typename std::list<T>::iterator now = it; 
+//         typename std::list<T>::iterator next = ++it;
 
-        if( compare( *it, *next ) )
-        {
-            *now = merge( *now, *next );
-            L.erase( next );
-            it = now;
-        } 
+//         if( next == L.end() ) return;
 
-    }
-}
+//         if( compare( *it, *next ) )
+//         {
+//             *now = merge( *now, *next );
+//             L.erase( next );
+//             it = now;
+//         } 
+
+//     }
+// }
 
 
 
@@ -979,11 +817,11 @@ inline S& operator<<( S& stream, const std::array<T, N>& v)
  * 
  ****/
 #warning \
-This code extends the std namespace so that `make_unique` \
-is available throughout the code. This was triggered by a C++ version \
-below C++14. While this may be a practical workaround, it is officially \
-considered undefined behavior in the C++ standard. Please try to compile \
-with C++14 or higher.
+This code extends the std namespace so that `make_unique` is available throughout the code. \
+This was triggered by a C++ version below C++14. \
+The lack of `make_unique` is generally considered an oversight in the official standard. \
+While this may be a practical workaround, it is officially considered undefined behavior. \
+Please try to compile with C++14 or higher.
 
 #include <memory>
 
@@ -1022,7 +860,7 @@ inline std::unique_ptr<T> make_unique(Args && ...args)
 //     for( int i = 1; i < length; i++ )
 //     for( int j = 1; j < length; j++ )
 //         if( start[j-1] > start[j] ) 
-//             std::swap( start[j-1], start[j] );
+//             std::swap( start[j-1], start[j] ); // TODO: requires <utility>
 // }
 
 

@@ -1,7 +1,7 @@
 #ifndef INCLUDEGUARD_DENSE_DENSEMATRIX_HPP
 #define INCLUDEGUARD_DENSE_DENSEMATRIX_HPP
 
-#include <memory>
+//#include <memory>
 #include <utility>
 #include <vector>
 

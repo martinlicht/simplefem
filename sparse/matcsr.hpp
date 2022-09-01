@@ -1,7 +1,7 @@
 #ifndef INCLUDEGUARD_SPARSE_MATCSR_HPP
 #define INCLUDEGUARD_SPARSE_MATCSR_HPP
 
-#include <memory>
+//#include <memory>
 #include <utility>
 #include <vector>
 
