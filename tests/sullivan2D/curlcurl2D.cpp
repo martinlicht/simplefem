@@ -31,7 +31,7 @@ int main()
 
     LOG << "Initial mesh..." << endl;
     
-    MeshSimplicial2D M = StandardSquare2D();
+    MeshSimplicial2D M = StandardSquare2D_simple();
     
     M.check();
     
@@ -59,9 +59,11 @@ int main()
             assert( vec.getdimension() == 2 );
             // return FloatVector({ 1. });
             return FloatVector({ 
-                 bumpfunction( vec[0] ) * bumpfunction_dev( vec[1] )
+                 //blob( vec[0] ) * blob_dev( vec[1] )
+                 square( vec[0]*vec[0] - 1. ) * 4. * vec[1] * ( vec[1]*vec[1] - 1. )
                 ,
-                -bumpfunction_dev( vec[0] ) * bumpfunction( vec[1] )
+                //-blob_dev( vec[0] ) * blob( vec[1] )
+                -4. * vec[0] * ( vec[0]*vec[0] - 1. ) * square( vec[1]*vec[1] - 1. )
                 });
         };
     
@@ -69,13 +71,15 @@ int main()
         [=](const FloatVector& vec) -> FloatVector{
             assert( vec.getdimension() == 2 );
             return FloatVector({ 
-                bumpfunction_dev(vec[0])*bumpfunction(vec[1]) 
+                blob_dev(vec[0])*blob(vec[1]) 
                 + 
-                ( - bumpfunction( vec[0] ) * bumpfunction_devdevdev( vec[1] )     - bumpfunction_devdev( vec[0] ) * bumpfunction_dev( vec[1] ) ) 
+                // ( - blob( vec[0] ) * blob_devdevdev( vec[1] )     - blob_devdev( vec[0] ) * blob_dev( vec[1] ) )
+                ( - square( vec[0]*vec[0] - 1. ) * 24. * vec[1]      - ( 12. * vec[0]*vec[0] - 4. ) * ( 4. * vec[1] * ( vec[1]*vec[1] - 1. ) ) )
                 ,
-                bumpfunction(vec[0])*bumpfunction_dev(vec[1])
+                blob(vec[0])*blob_dev(vec[1])
                 + 
-                ( - bumpfunction_devdevdev( vec[0] ) * bumpfunction_dev( vec[1] ) + bumpfunction_dev( vec[0] ) * bumpfunction_devdev( vec[1] ) )
+                // ( + blob_devdevdev( vec[0] ) * blob_dev( vec[1] ) + blob_dev( vec[0] ) * blob_devdev( vec[1] ) )
+                (   24. * vec[0] * square( vec[1]*vec[1] - 1. )      + ( 4. * vec[0] * ( vec[0]*vec[0] - 1. ) ) * ( 12. * vec[1]*vec[1] - 4. ) )
                 });
         };
     
@@ -84,7 +88,7 @@ int main()
             assert( vec.getdimension() == 2 );
             // return FloatVector({ 1. });
             return FloatVector( { 
-                bumpfunction(vec[0])*bumpfunction(vec[1])
+                blob(vec[0])*blob(vec[1])
                 });
         };
     
@@ -97,8 +101,8 @@ int main()
 
     LOG << "Solving Poisson Problem with Neumann boundary conditions" << endl;
 
-    const int min_l = 0; 
-    const int max_l = 5;
+    const int min_l = 1; 
+    const int max_l = 4;
     
     const int min_r = 1;
     const int max_r = 1;
