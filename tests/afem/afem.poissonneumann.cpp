@@ -2,6 +2,7 @@
 
 /**/
 
+#include <algorithm>
 #include <ostream>
 #include <fstream>
 // #include <iomanip>

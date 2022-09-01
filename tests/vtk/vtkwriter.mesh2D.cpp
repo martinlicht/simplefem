@@ -6,6 +6,7 @@
 #include <fstream>
 
 #include "../../basic.hpp"
+#include "../../utility/stl.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
 #include "../../vtk/vtkwriter.hpp"
