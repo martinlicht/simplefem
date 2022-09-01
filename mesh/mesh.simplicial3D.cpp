@@ -1484,41 +1484,41 @@ void MeshSimplicial3D::check() const
 
 void MeshSimplicial3D::print( std::ostream& os ) const
 {
-    os << "Printe Triangulation of 3D Manifold!" << std::endl;
+    os << "Printe Triangulation of 3D Manifold!" << nl;
     
     os << counter_tetrahedra << space << counter_faces << space << counter_edges << space << counter_vertices << nl;
     
     
     
     
-    os << "Tetrahedron faces" << std::endl;
+    os << "Tetrahedron faces" << nl;
     
     for( const auto& quartett : data_tetrahedron_faces )
       os << quartett[0] << space << quartett[1] << space << quartett[2] << space << quartett[3] << nl;
     
-    os << "Faces first parent Tetrahedron" << std::endl;
+    os << "Faces first parent Tetrahedron" << nl;
     
     for( int fp : data_face_firstparent_tetrahedron )
       os << fp << nl;
     
-    os << "Tetrahedron next parents of faces" << std::endl;
+    os << "Tetrahedron next parents of faces" << nl;
     
     for( const auto& quartett : data_tetrahedron_nextparents_of_faces )
       os << quartett[0] << space << quartett[1] << space << quartett[2] << space << quartett[3] << nl;
     
     
     
-    os << "Tetrahedron edges" << std::endl;
+    os << "Tetrahedron edges" << nl;
     
     for( const auto& sextett : data_tetrahedron_edges )
       os << sextett[0] << space << sextett[1] << space << sextett[2] << sextett[3] << space << sextett[4] << space << sextett[5] << nl;
     
-    os << "Edge first parent tetrahedra" << std::endl;
+    os << "Edge first parent tetrahedra" << nl;
     
     for( int fp : data_edge_firstparent_tetrahedron )
       os << fp << nl;
     
-    os << "Tetrahedron next parents of edges" << std::endl;
+    os << "Tetrahedron next parents of edges" << nl;
     
     for( const auto& sextett : data_tetrahedron_nextparents_of_edges )
       os << sextett[0] << space << sextett[1] << space << sextett[2] << sextett[3] << space << sextett[4] << space << sextett[5] << nl;
@@ -1527,17 +1527,17 @@ void MeshSimplicial3D::print( std::ostream& os ) const
     
     
     
-    os << "Tetrahedron vertices" << std::endl;
+    os << "Tetrahedron vertices" << nl;
     
     for( const auto& quartett : data_tetrahedron_vertices )
       os << quartett[0] << space << quartett[1] << space << quartett[2] << space << quartett[3] << nl;
     
-    os << "Edge first parent tetrahedra" << std::endl;
+    os << "Edge first parent tetrahedra" << nl;
     
     for( int fp : data_vertex_firstparent_tetrahedron )
       os << fp << nl;
     
-    os << "Tetrahedron next parents of edges" << std::endl;
+    os << "Tetrahedron next parents of edges" << nl;
     
     for( const auto& quartett : data_tetrahedron_nextparents_of_vertices )
       os << quartett[0] << space << quartett[1] << space << quartett[2] << space << quartett[3] << nl;
@@ -1547,17 +1547,17 @@ void MeshSimplicial3D::print( std::ostream& os ) const
     
     
     
-    os << "Face edges" << std::endl;
+    os << "Face edges" << nl;
     
     for( const auto& triple : data_face_edges )
       os << triple[0] << space << triple[1] << space << triple[2] << nl;
     
-    os << "Edge first parent faces" << std::endl;
+    os << "Edge first parent faces" << nl;
     
     for( int fp : data_edge_firstparent_face )
       os << fp << nl;
     
-    os << "Face next parents of edges" << std::endl;
+    os << "Face next parents of edges" << nl;
     
     for( const auto& triple : data_face_nextparents_of_edges )
       os << triple[0] << space << triple[1] << space << triple[2] << nl;
@@ -1566,17 +1566,17 @@ void MeshSimplicial3D::print( std::ostream& os ) const
     
     
     
-    os << "Face vertices" << std::endl;
+    os << "Face vertices" << nl;
     
     for( const auto& triple : data_face_vertices )
       os << triple[0] << space << triple[1] << space << triple[2] << nl;
     
-    os << "Edge first parent faces" << std::endl;
+    os << "Edge first parent faces" << nl;
     
     for( int fp : data_vertex_firstparent_face )
       os << fp << nl;
     
-    os << "Face next parents of edges" << std::endl;
+    os << "Face next parents of edges" << nl;
     
     for( const auto& triple : data_face_nextparents_of_vertices )
       os << triple[0] << space << triple[1] << space << triple[2] << nl;
@@ -1584,17 +1584,17 @@ void MeshSimplicial3D::print( std::ostream& os ) const
     
     
     
-    os << "Edge vertices" << std::endl;
+    os << "Edge vertices" << nl;
     
     for( const auto& duple : data_edge_vertices )
       os << duple[0] << space << duple[1] << nl;
     
-    os << "Vertex first parents" << std::endl;
+    os << "Vertex first parents" << nl;
     
     for( int fp : data_vertex_firstparent_edge )
       os << fp << nl;
     
-    os << "Edge next parents " << std::endl;
+    os << "Edge next parents " << nl;
     
     for( const auto& duple : data_edge_nextparents_of_vertices )
       os << duple[0] << space << duple[1] << nl;

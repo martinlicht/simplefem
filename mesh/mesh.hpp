@@ -74,7 +74,7 @@ class Mesh
         
         // virtual std::string text() const = 0;
         
-        // // void lg() const { LOG << *this << std::endl; };
+        // // void lg() const { LOG << *this << nl; };
         
         
         /* OTHER METHODS */

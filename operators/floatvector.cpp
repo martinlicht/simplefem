@@ -199,9 +199,9 @@ std::string FloatVector::data_as_text( bool indexed, bool print_rowwise ) const
 void FloatVector::print( std::ostream& output ) const 
 {
     check();
-    output << "float vector of dimension: " << getdimension() << std::endl;
+    output << "float vector of dimension: " << getdimension() << nl;
     for( int p = 0; p < getdimension(); p++ )
-        output << p << ": " << getentry(p) << std::endl;
+        output << p << ": " << getentry(p) << nl;
 }
 
 

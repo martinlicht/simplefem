@@ -61,7 +61,7 @@ std::string MultiIndex::text( bool embellish ) const
     for( int p : getIndexRange() )
         ss << at( p ) << "\t";
     if( embellish ) 
-        ss << std::endl;
+        ss << nl;
     
     return ss.str();
 }
@@ -72,7 +72,7 @@ void MultiIndex::print( std::ostream& os, bool embellish ) const
     for( int p : getIndexRange() )
         os << at( p ) << "\t";
     if( embellish ) 
-        os << std::endl;
+        os << nl;
 }
 
 IndexRange MultiIndex::getIndexRange() const

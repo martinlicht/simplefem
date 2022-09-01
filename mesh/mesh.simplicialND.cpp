@@ -141,9 +141,9 @@ MeshSimplicialND::MeshSimplicialND(
     assert( counter_simplices[0]-1 == *std::max_element( simplex_vertices.begin(), simplex_vertices.end() ) );
     
     
-    LOG << "Rebuild inside constructor..." << space << innerdim << space << outerdim << space << std::endl;
+    LOG << "Rebuild inside constructor..." << space << innerdim << space << outerdim << space << nl;
     rebuild();
-    LOG << "...done" << std::endl;
+    LOG << "...done" << nl;
     
     /* check and exit */
     MeshSimplicialND::check();
@@ -301,7 +301,7 @@ void MeshSimplicialND::check() const
         continue;
       
       LOG << sup << space << sub << space << S << space << si << space 
-                << data_nextparents[index_from_pair(sup,sub)][ S * count_subsimplices(sup,sub) + si ] << std::endl;     
+                << data_nextparents[index_from_pair(sup,sub)][ S * count_subsimplices(sup,sub) + si ] << nl;     
       assert( data_nextparents[index_from_pair(sup,sub)][ S * count_subsimplices(sup,sub) + si ] >= 0                   );
       assert( data_nextparents[index_from_pair(sup,sub)][ S * count_subsimplices(sup,sub) + si ] <  count_simplices(sup) );
     }
@@ -364,7 +364,7 @@ void MeshSimplicialND::check() const
 
 void MeshSimplicialND::print( std::ostream& os ) const
 {
-    os << "Printe Triangulation of N-dimensional Manifold!" << std::endl;
+    os << "Printe Triangulation of N-dimensional Manifold!" << nl;
     
     os << "inner dimension: " << getinnerdimension() << nl
        << "outer dimension: " << getouterdimension() << nl;

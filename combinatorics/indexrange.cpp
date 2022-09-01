@@ -44,7 +44,7 @@ std::string IndexRange::text( bool embellish ) const
 void IndexRange::print( std::ostream& os, bool embellish ) const
 {
     check();
-    os << text( embellish ) << std::endl;
+    os << text( embellish ) << nl;
 }
 
 

@@ -54,7 +54,7 @@ struct IterativeSolver
 
     virtual std::string text() const = 0;
 
-//     // void lg() const { LOG << *this << std::endl; };
+//     // void lg() const { LOG << *this << nl; };
 
     virtual void solve( FloatVector& unknown, const FloatVector& rhs ) const = 0;
 
