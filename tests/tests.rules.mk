@@ -115,6 +115,7 @@ ifeq ($(LINKINGTYPE),dynamic)
 else
 	@$(CXX) $(CXXFLAGS_EXECUTABLE) $(CPPFLAGS) $< $($(mycontext).include)                       $($(mycontext).mylib) -o $@ $(LDLIBS) $(DEPFLAGS)
 endif
+	@touch $@
 	
 $($(context).dependencies):
 
