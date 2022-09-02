@@ -52,22 +52,16 @@ ConvergenceTable& ConvergenceTable::operator<<( char code )
     
     return *this; 
 }
-        
+
+
 std::string ConvergenceTable::text() const
 {
     return text( display_convergence_rates );
 }
         
-std::string ConvergenceTable::text( bool display_convergence_rates ) const
-{
-    std::ostringstream ss;
-    print( ss, display_convergence_rates );
-    return ss.str();
-}
-        
 void ConvergenceTable::lg() const
 {
-    lg( display_convergence_rates );
+    LOG << text();
 }
 
 void ConvergenceTable::lg( bool display_convergence_rates ) const
@@ -77,29 +71,33 @@ void ConvergenceTable::lg( bool display_convergence_rates ) const
 
 void ConvergenceTable::print( std::ostream& os )
 {
-    print( os, display_convergence_rates );
+    os << text();
 }
         
 
-
-void ConvergenceTable::print( std::ostream& os, bool display_convergence_rates ) const
+std::string ConvergenceTable::text( bool display_convergence_rates ) const
 {
+    std::ostringstream ss;
+
+    ss << std::string( 80, '-' ) << nl;
     
-    os << std::string( 80, '-' ) << nl;
     if( print_rowwise_instead_of_columnwise )
-        print_transpose( os, display_convergence_rates );
+        ss << text_transpose( display_convergence_rates );
     else
-        print_standard( os, display_convergence_rates );
-    os << nl;
-    os << std::string( 80, '-' ) << nl;
+        ss << text_standard( display_convergence_rates );
+    
+    ss << nl;
+    
+    ss << std::string( 80, '-' ) << nl;
 
+    return ss.str();
 }
-        
-        
-        
-void ConvergenceTable::print_standard( std::ostream& os, bool display_convergence_rates ) const
+
+std::string ConvergenceTable::text_standard( bool display_convergence_rates ) const
 {
     
+    std::ostringstream ss;
+
     // introduce several constants that drive the output format 
     
     const char* column_separator = "   ";
@@ -121,11 +119,11 @@ void ConvergenceTable::print_standard( std::ostream& os, bool display_convergenc
 
 
     // First line is the name of the table 
-    printf_into_stream( os,  "\n%s\n", table_name.c_str() );
+    printf_into_stream( ss,  "\n%s\n", table_name.c_str() );
 
     if( entries.empty() ) {
-        printf_into_stream( os,  "----------- Table is empty!\n" );
-        return;
+        printf_into_stream( ss,  "----------- Table is empty!\n" );
+        return ss.str();
     }
     
     const int num_series = entries[0].size();
@@ -136,7 +134,7 @@ void ConvergenceTable::print_standard( std::ostream& os, bool display_convergenc
         
         Assert( seriesheaders.size() == num_series, seriesheaders.size(), num_series );
 
-        printf_into_stream( os,  "%s %s", std::string( nc_indent_width, ' ' ).c_str(), column_separator ); // printf_into_stream( os, "   \t");
+        printf_into_stream( ss,  "%s %s", std::string( nc_indent_width, ' ' ).c_str(), column_separator ); // printf_into_stream( ss, "   \t");
             
         for( int j = 0; j < seriesheaders.size(); j++ )
         {
@@ -148,15 +146,15 @@ void ConvergenceTable::print_standard( std::ostream& os, bool display_convergenc
                 seriesheader[ nc_cell_width-1 ] = '~';
             }
             
-            printf_into_stream( os,  "%*s%s", nc_cell_width, seriesheader.c_str(), column_separator );
+            printf_into_stream( ss,  "%*s%s", nc_cell_width, seriesheader.c_str(), column_separator );
             
             if( display_convergence_rates ) {
-                printf_into_stream( os,  "%s%s", std::string( nc_rate_width, ' ' ).c_str(), column_separator ); // printf_into_stream( os, "          \t");
+                printf_into_stream( ss,  "%s%s", std::string( nc_rate_width, ' ' ).c_str(), column_separator ); // printf_into_stream( ss, "          \t");
             }
 
         }
         
-        printf_into_stream( os, "\n");
+        printf_into_stream( ss, "\n");
         
     }
     
@@ -164,7 +162,7 @@ void ConvergenceTable::print_standard( std::ostream& os, bool display_convergenc
     for( int i = 0; i < entries.size(); i++ )
     {
         
-        printf_into_stream( os,  "%*d:%s", nc_indent_width, i, column_separator );
+        printf_into_stream( ss,  "%*d:%s", nc_indent_width, i, column_separator );
 
         assert( entries[i].size() == num_series );
         
@@ -172,13 +170,13 @@ void ConvergenceTable::print_standard( std::ostream& os, bool display_convergenc
         for( int j = 0; j < entries[i].size(); j++ )
         {
             
-            printf_into_stream( os, "% *.*e%s", nc_cell_width, nc_cell_precision, (double) entries[i][j], column_separator ); 
+            printf_into_stream( ss, "% *.*e%s", nc_cell_width, nc_cell_precision, (double) entries[i][j], column_separator ); 
             
             if( display_convergence_rates ){
                 
                 if( i == 0 ) {
                     
-                    printf_into_stream( os,  "%s", std::string( nc_rate_width, '-' ).c_str() ); //printf_into_stream( os, "----------");
+                    printf_into_stream( ss,  "%s", std::string( nc_rate_width, '-' ).c_str() ); //printf_into_stream( ss, "----------");
                 
                 } else {
                 
@@ -187,34 +185,38 @@ void ConvergenceTable::print_standard( std::ostream& os, bool display_convergenc
                         double computed_rate = (double)std::log2( entries[i-1][j] / entries[i][j] );
                         
                         if( rates_are_float ) { 
-                            printf_into_stream( os, "%*.*e", nc_rate_width, nc_rate_precision, computed_rate  );
+                            printf_into_stream( ss, "%*.*e", nc_rate_width, nc_rate_precision, computed_rate  );
                         } else {
-                            printf_into_stream( os, "%*.*f", nc_rate_width, nc_rate_precision, computed_rate  );
+                            printf_into_stream( ss, "%*.*f", nc_rate_width, nc_rate_precision, computed_rate  );
                         }
 
                     } else {
                         
-                        printf_into_stream( os,  "%s", std::string( nc_rate_width, '$' ).c_str() ); //printf_into_stream( os,  "%s", "$$$$$$$$$$" );
+                        printf_into_stream( ss,  "%s", std::string( nc_rate_width, '$' ).c_str() ); //printf_into_stream( ss,  "%s", "$$$$$$$$$$" );
 
                     }
                 
                 }
                 
-                printf_into_stream( os,  "%s", column_separator );
+                printf_into_stream( ss,  "%s", column_separator );
             }
             
         }        
         
-        printf_into_stream( os, "\n");
+        printf_into_stream( ss, "\n");
         
     }
+
+    return ss.str();
                 
 }
 
 
-void ConvergenceTable::print_transpose( std::ostream& os, bool display_convergence_rates ) const
+std::string ConvergenceTable::text_transpose( bool display_convergence_rates ) const
 {
     
+    std::ostringstream ss;
+
     // introduce several constants that drive the output format 
     
     const char* cell_separator = "   ";
@@ -234,13 +236,13 @@ void ConvergenceTable::print_transpose( std::ostream& os, bool display_convergen
     // see above ....
 
     // First line is the name of the table 
-    printf_into_stream( os,  "\n%s\n", table_name.c_str() );
+    printf_into_stream( ss,  "\n%s\n", table_name.c_str() );
 
     const int num_entries_per_series = entries.size(); 
     
     if( entries.empty() ) {
-        printf_into_stream( os,  "----------- Table is empty!\n" );
-        return;
+        printf_into_stream( ss,  "----------- Table is empty!\n" );
+        return ss.str();
     }
     
     const int num_series = entries[0].size();
@@ -260,7 +262,7 @@ void ConvergenceTable::print_transpose( std::ostream& os, bool display_convergen
                 seriesheader[ nc_header_width-1 ] = '~';
             }
 
-            printf_into_stream( os,  "%*s%s", nc_header_width, seriesheader.c_str(), cell_separator );
+            printf_into_stream( ss,  "%*s%s", nc_header_width, seriesheader.c_str(), cell_separator );
 
         }
 
@@ -268,24 +270,24 @@ void ConvergenceTable::print_transpose( std::ostream& os, bool display_convergen
 
             assert( entries[i].size() == num_series );
             
-            printf_into_stream( os, "% *.*e%s", nc_cell_width, nc_cell_precision, (double) entries[i][j], cell_separator );
+            printf_into_stream( ss, "% *.*e%s", nc_cell_width, nc_cell_precision, (double) entries[i][j], cell_separator );
             
         }
 
-        printf_into_stream( os, "\n");
+        printf_into_stream( ss, "\n");
         
         if( display_convergence_rates )
         {
             
             if( not seriesheaders.empty() )
-                printf_into_stream( os,  "%s%s", std::string( nc_header_width, ' ' ).c_str(), cell_separator );
+                printf_into_stream( ss,  "%s%s", std::string( nc_header_width, ' ' ).c_str(), cell_separator );
 
             for( int i = 0; i < num_entries_per_series; i++ )
             {
 
                 if( i == 0 ) {
                         
-                    printf_into_stream( os,  "%s%s", std::string( nc_rate_width, '-' ).c_str(), cell_separator ); //printf_into_stream( os, "----------");
+                    printf_into_stream( ss,  "%s%s", std::string( nc_rate_width, '-' ).c_str(), cell_separator ); //printf_into_stream( ss, "----------");
                     
                 } else {
                 
@@ -294,14 +296,14 @@ void ConvergenceTable::print_transpose( std::ostream& os, bool display_convergen
                         double computed_rate = std::log2( entries[i-1][j] / entries[i][j] );
                         
                         if( rates_are_float ) { 
-                            printf_into_stream( os, "% *.*e%s", nc_rate_width, nc_rate_precision, computed_rate, cell_separator );
+                            printf_into_stream( ss, "% *.*e%s", nc_rate_width, nc_rate_precision, computed_rate, cell_separator );
                         } else {
-                            printf_into_stream( os, "% *.*f%s", nc_rate_width, nc_rate_precision, computed_rate, cell_separator );
+                            printf_into_stream( ss, "% *.*f%s", nc_rate_width, nc_rate_precision, computed_rate, cell_separator );
                         }
 
                     } else {
                         
-                        printf_into_stream( os,  "%s%s", std::string( nc_rate_width, '$' ).c_str(), cell_separator ); //printf_into_stream( os,  "%s", "$$$$$$$$$$" );
+                        printf_into_stream( ss,  "%s%s", std::string( nc_rate_width, '$' ).c_str(), cell_separator ); //printf_into_stream( ss,  "%s", "$$$$$$$$$$" );
 
                     }
                 
@@ -309,11 +311,13 @@ void ConvergenceTable::print_transpose( std::ostream& os, bool display_convergen
 
             }
 
-            printf_into_stream( os, "\n");
+            printf_into_stream( ss, "\n");
 
         }
 
     }
+
+    return ss.str();
             
 }
 
@@ -321,47 +325,47 @@ void ConvergenceTable::print_transpose( std::ostream& os, bool display_convergen
 
 
 
-//         void print_stream( std::ostream& os, bool display_convergence_rates ) const 
+//         void print_stream( std::ostream& ss, bool display_convergence_rates ) const 
 //         {
 //             std::ostringstream str;
 //             
 //             for( int i = 0; i < entries.size(); i++ )
 //             {
 //                 
-//                 os << std::setw(3) << i << ":\t";
+//                 ss << std::setw(3) << i << ":\t";
 // 
 //                 assert( entries[i].size() == entries.front().size() );
 //                 
 //                 for( int j = 0; j < entries[i].size(); j++ )
 //                 {
 //                     
-//                     os << std::setprecision(6) << std::scientific << std::showpos << (double) entries[i][j];
+//                     ss << std::setprecision(6) << std::scientific << std::showpos << (double) entries[i][j];
 //                     
 //                     if( display_convergence_rates ){
 //                         
 //                         if( i == 0 ) {
 //                             
-//                             os << "----------";
+//                             ss << "----------";
 //                         
 //                         } else {
 //                         
 //                             if( entries[i][j] > 0. and entries[i-1][j] > 0. ) 
-//                                 os << std::setw(10) << std::setprecision(3) << std::scientific << std::showpos << (double) std::log2( entries[i-1][j] / entries[i][j] );
+//                                 ss << std::setw(10) << std::setprecision(3) << std::scientific << std::showpos << (double) std::log2( entries[i-1][j] / entries[i][j] );
 //                             else
-//                                 os << "$$$$$$$$$$";
+//                                 ss << "$$$$$$$$$$";
 //                         
 //                         }
 //                         
-//                         os << '\t';
+//                         ss << '\t';
 //                     }
 //                     
 //                 }        
 //                 
-//                 os << nl;
+//                 ss << nl;
 //                 
 //             }
 //             
-//             os << str.str();
+//             ss << str.str();
 //             
 //         }
 

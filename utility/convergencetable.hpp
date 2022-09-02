@@ -31,12 +31,10 @@ class ConvergenceTable
         
         ConvergenceTable& operator<<( const std::string& seriesheader );
         
-        
         ConvergenceTable& operator<<( char code );
         
+
         std::string text() const;
-        
-        std::string text( bool display_convergence_rates ) const;
         
         void lg() const;
         
@@ -45,15 +43,11 @@ class ConvergenceTable
         void print( std::ostream& os );
         
 
-
-        void print( std::ostream& os, bool display_convergence_rates ) const;
+        std::string text( bool display_convergence_rates ) const;
         
-        
-        
-        void print_standard( std::ostream& os, bool display_convergence_rates ) const;
+        std::string text_standard( bool display_convergence_rates ) const;
 
-
-        void print_transpose( std::ostream& os, bool display_convergence_rates ) const;
+        std::string text_transpose( bool display_convergence_rates ) const;
 
 };
 
