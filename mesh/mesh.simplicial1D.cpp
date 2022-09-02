@@ -309,21 +309,21 @@ void MeshSimplicial1D::check() const
 
 void MeshSimplicial1D::print( std::ostream& os ) const
 {
-    os << "Printe Triangulation of 1D Manifold!" << std::endl;
+    os << "Printe Triangulation of 1D Manifold!" << nl;
     
     os << counter_edges << space << counter_vertices << nl;
     
-    os << "Edge vertices" << std::endl;
+    os << "Edge vertices" << nl;
     
     for( const auto& duple : data_edge_vertices )
       os << duple[0] << space << duple[1] << nl;
     
-    os << "Vertex first parents" << std::endl;
+    os << "Vertex first parents" << nl;
     
     for( int fp : data_vertex_firstparent_edge )
       os << fp << nl;
     
-    os << "Edge next parents " << std::endl;
+    os << "Edge next parents " << nl;
     
     for( const auto& duple : data_edge_nextparents_of_vertices )
       os << duple[0] << space << duple[1] << nl;

@@ -147,7 +147,7 @@ VTKWriter VTKWriter::writeTopDimensionalCells()
         os << nl;
     }
     
-    os << std::endl;
+    os << nl;
     
     os << "CELL_TYPES" << space << mesh.count_simplices(topdim) << nl;
     
@@ -185,7 +185,7 @@ VTKWriter VTKWriter::writeVertexScalarData( const FloatVector& data, const std::
     for( int v = 0; v < mesh.count_simplices(0); v++ )
         os << scaling * data.at(v) << nl;
     
-    os << std::endl;
+    os << nl;
 
     return *this;
 }
@@ -216,7 +216,7 @@ VTKWriter VTKWriter::writeCellScalarData( const FloatVector& data, const std::st
     for( int c = 0; c < mesh.count_simplices(topdim); c++ )
         os << scaling * data.at(c) << nl;
     
-    os << std::endl;
+    os << nl;
 
     return *this;
 }
@@ -256,7 +256,7 @@ VTKWriter VTKWriter::writeCellVectorData(
          << scaling * dataz.at(c) 
          << nl;
     
-    os << std::endl;
+    os << nl;
 
     return *this;
 }

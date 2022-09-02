@@ -243,11 +243,9 @@ int main()
 
 
                         if( r == 1 ){
-                    
                             
                             auto outputdata1 = sol;
                             auto outputdata2 = sol;
-                            
                             
                             for( int c = 0; c < M.count_simplices(0); c++ ) { 
                                 auto x = M.getcoordinates().getdata(c,0);
@@ -255,7 +253,6 @@ int main()
                                 auto value = experiment_rhs( { x, y } )[0];
                                 outputdata2[c] = value;
                             }
-                            
                             
                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                 

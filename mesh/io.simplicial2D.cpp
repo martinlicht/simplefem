@@ -45,40 +45,40 @@ MeshSimplicial2D readMeshSimplicial2D( const char* filename )
 void writeMeshSimplicial2D( std::ostream& out, const MeshSimplicial2D& mesh, bool sugar )
 {
     /* Preamble */
-    if( sugar ) out << "Writing simplicial 2D Mesh..." << std::endl;
+    if( sugar ) out << "Writing simplicial 2D Mesh..." << nl;
     
-    if( sugar ) out << "number of triangles: " << std::endl;;
-    out << mesh.count_triangles() << std::endl;
+    if( sugar ) out << "number of triangles: " << nl;;
+    out << mesh.count_triangles() << nl;
     
-    if( sugar ) out << "number of edges: " << std::endl;;
-    out << mesh.count_edges() << std::endl;
+    if( sugar ) out << "number of edges: " << nl;;
+    out << mesh.count_edges() << nl;
     
-    if( sugar ) out << "number of vertices: " << std::endl;
-    out << mesh.count_vertices() << std::endl;
+    if( sugar ) out << "number of vertices: " << nl;
+    out << mesh.count_vertices() << nl;
     
-    if( sugar ) out << "external dimension: " << std::endl;
-    out << mesh.getcoordinates().getdimension() << std::endl;
+    if( sugar ) out << "external dimension: " << nl;
+    out << mesh.getcoordinates().getdimension() << nl;
     
     /* triangle -> edges */
     
-    if( sugar ) out << "for each triangle, the edges: " << std::endl;
+    if( sugar ) out << "for each triangle, the edges: " << nl;
     for( int t = 0; t < mesh.count_triangles(); t++ ) {
         if( sugar ) out << t << ": ";
         out << mesh.get_triangle_edge( t, 0 )
             << space
             << mesh.get_triangle_edge( t, 1 )
             << space
-            << mesh.get_triangle_edge( t, 2 ) << std::endl;
+            << mesh.get_triangle_edge( t, 2 ) << nl;
     }
     
-    if( sugar ) out << "for each edge, the first parent triangle: " << std::endl;
+    if( sugar ) out << "for each edge, the first parent triangle: " << nl;
     for( int e = 0; e < mesh.count_edges(); e++ ) {
         if( sugar ) out << e << ": ";
         out << mesh.get_edge_firstparent_triangle( e )
-            << std::endl;
+            << nl;
     }
     
-    if( sugar ) out << "for each triangle, the next neighbors: " << std::endl;
+    if( sugar ) out << "for each triangle, the next neighbors: " << nl;
     for( int t = 0; t < mesh.count_triangles(); t++ ) {
         if( sugar ) out << t << ": ";
         out << mesh.get_triangle_nextparent_of_edge( t, 0 )
@@ -86,29 +86,29 @@ void writeMeshSimplicial2D( std::ostream& out, const MeshSimplicial2D& mesh, boo
             << mesh.get_triangle_nextparent_of_edge( t, 1 )
             << space
             << mesh.get_triangle_nextparent_of_edge( t, 2 )
-            << std::endl;
+            << nl;
     }
     
     /* triangle -> vertices */
     
-    if( sugar ) out << "for each triangle, the vertices: " << std::endl;
+    if( sugar ) out << "for each triangle, the vertices: " << nl;
     for( int t = 0; t < mesh.count_triangles(); t++ ) {
         if( sugar ) out << t << ": ";
         out << mesh.get_triangle_vertex( t, 0 )
             << space
             << mesh.get_triangle_vertex( t, 1 )
             << space
-            << mesh.get_triangle_vertex( t, 2 ) << std::endl;
+            << mesh.get_triangle_vertex( t, 2 ) << nl;
     }
     
-    if( sugar ) out << "for each vertex, the first parent triangle: " << std::endl;
+    if( sugar ) out << "for each vertex, the first parent triangle: " << nl;
     for( int v = 0; v < mesh.count_vertices(); v++ ) {
         if( sugar ) out << v << ": ";
         out << mesh.get_vertex_firstparent_triangle( v )
-            << std::endl;
+            << nl;
     }
     
-    if( sugar ) out << "for each triangle, the next neighbors: " << std::endl;
+    if( sugar ) out << "for each triangle, the next neighbors: " << nl;
     for( int t = 0; t < mesh.count_triangles(); t++ ) {
         if( sugar ) out << t << ": ";
         out << mesh.get_triangle_nextparent_of_vertex( t, 0 )
@@ -116,35 +116,35 @@ void writeMeshSimplicial2D( std::ostream& out, const MeshSimplicial2D& mesh, boo
             << mesh.get_triangle_nextparent_of_vertex( t, 1 )
             << space
             << mesh.get_triangle_nextparent_of_vertex( t, 2 )
-            << std::endl;
+            << nl;
     }
     
     assert( out.good() );
     
     /* edge -> vertices */
     
-    if( sugar ) out << "for each edge, the vertices: " << std::endl;
+    if( sugar ) out << "for each edge, the vertices: " << nl;
     for( int e = 0; e < mesh.count_edges(); e++ ) {
         if( sugar ) out << e << ": ";
         out << mesh.get_edge_vertex( e, 0 )
             << space
-            << mesh.get_edge_vertex( e, 1 ) << std::endl;
+            << mesh.get_edge_vertex( e, 1 ) << nl;
     }
     
-    if( sugar ) out << "for each vertex, the first parent edge: " << std::endl;
+    if( sugar ) out << "for each vertex, the first parent edge: " << nl;
     for( int v = 0; v < mesh.count_vertices(); v++ ) {
         if( sugar ) out << v << ": ";
         out << mesh.get_vertex_firstparent_edge( v )
-            << std::endl;
+            << nl;
     }
     
-    if( sugar ) out << "for each edge, the next neighbors: " << std::endl;
+    if( sugar ) out << "for each edge, the next neighbors: " << nl;
     for( int e = 0; e < mesh.count_edges(); e++ ) {
         if( sugar ) out << e << ": ";
         out << mesh.get_edge_nextparent_of_vertex( e, 0 )
             << space
             << mesh.get_edge_nextparent_of_vertex( e, 1 )
-            << std::endl;
+            << nl;
     }
     
     assert( out.good() );

@@ -226,11 +226,9 @@ int main()
 
 
                         if( r == 1 ){
-                    
                             
                             auto outputdata1 = sol;
                             auto outputdata2 = sol;
-                            
                             
                             for( int c = 0; c < M.count_simplices(0); c++ ) { 
                                 auto x = M.getcoordinates().getdata(c,0);
@@ -240,19 +238,14 @@ int main()
                                 outputdata2[c] = value;
                             }
                             
-                            
                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
-                
                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
                             vtk.writeCoordinateBlock( outputdata1 );
                             vtk.writeTopDimensionalCells();
-                            
                             vtk.writeVertexScalarData( -outputdata1, "iterativesolution_scalar_data" , 1.0 );
                             vtk.writeVertexScalarData(  outputdata2, "reference_scalar_data" , 1.0 );
                             // vtk.writeCellVectorData( interpol_grad, "gradient_interpolation" , 0.1 );
-                            
                             fs.close();
-                    
                         }
 
 

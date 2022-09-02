@@ -248,18 +248,13 @@ int main()
 
 
                         if( r == 1 ){
-                    
                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
-                
                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
                             vtk.writeCoordinateBlock( 0.3 * sol );
                             vtk.writeTopDimensionalCells();
-                            
                             vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
                             // vtk.writeCellVectorData( interpol_grad, "gradient_interpolation" , 0.1 );
-                            
                             fs.close();
-                    
                         }
 
 

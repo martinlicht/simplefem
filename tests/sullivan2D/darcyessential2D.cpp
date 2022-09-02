@@ -2,8 +2,6 @@
 
 /**/
 
-#include <fstream>
-
 #include "../../basic.hpp"
 #include "../../utility/convergencetable.hpp"
 #include "../../operators/composedoperators.hpp"
@@ -262,10 +260,6 @@ int main()
                         contable << nl;
 
                     }
-
-
-
-
 
                     contable.lg();
     
