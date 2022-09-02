@@ -179,7 +179,7 @@ int main()
                         
                         FloatVector interpol_one  = Interpolation( M, M.getinnerdimension(), 0, r, constant_one );
                         
-                        LOG << "...measure kernel component: " << std::flush;
+                        LOG << "...measure kernel component: ";
             
                         Float average_sol = interpol_one * ( scalar_massmatrix * interpol_sol );
                         Float average_rhs = interpol_one * ( scalar_massmatrix * interpol_rhs );
