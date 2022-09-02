@@ -253,7 +253,6 @@ Float blob_devdev( Float x )
 
     Float x2 = x*x;
     Float x4 = x2 * x2;
-    Float x6 = x4 * x2;
 
     Float delta = x2 - 1.;
     
