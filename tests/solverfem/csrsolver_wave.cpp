@@ -389,7 +389,7 @@ int main()
                         LOG << "CGM - CSR Classic" << nl;
                     
                         FloatVector residual( rhs );
-                        auto max_iteration_count = sol.getdimension();
+                        // auto max_iteration_count = sol.getdimension();
                         timestamp start = gettimestamp();
                         auto recent_iteration_count = 
                         ConjugateGradientSolverCSR( 
@@ -413,7 +413,7 @@ int main()
                         LOG << "CRM - CSR Classic" << nl;
                     
                         FloatVector residual( rhs );
-                        auto max_iteration_count = sol.getdimension();
+                        // auto max_iteration_count = sol.getdimension();
                         timestamp start = gettimestamp();
                         auto recent_iteration_count = 
                         ConjugateResidualSolverCSR( 
@@ -438,7 +438,7 @@ int main()
                         LOG << "CRM - CSR Textbook" << nl;
                     
                         FloatVector residual( rhs );
-                        auto max_iteration_count = sol.getdimension();
+                        // auto max_iteration_count = sol.getdimension();
                         timestamp start = gettimestamp();
                         auto recent_iteration_count = 
                         ConjugateResidualSolverCSR_textbook( 
@@ -463,7 +463,7 @@ int main()
                         LOG << "MINRES CSR" << nl;
                     
                         FloatVector residual( rhs );
-                        auto max_iteration_count = sol.getdimension();
+                        // auto max_iteration_count = sol.getdimension();
                         timestamp start = gettimestamp();
                         auto recent_iteration_count = 
                         MINRESCSR( 
@@ -489,7 +489,7 @@ int main()
                         LOG << "WHATEVER CSR" << nl;
                     
                         FloatVector residual( rhs );
-                        auto max_iteration_count = sol.getdimension();
+                        // auto max_iteration_count = sol.getdimension();
                         timestamp start = gettimestamp();
                         auto recent_iteration_count = 
                         WHATEVER( 
@@ -516,7 +516,7 @@ int main()
                         auto precon = InverseDiagonalPreconditioner( SystemMatrix );
 
                         FloatVector residual( rhs );
-                        auto max_iteration_count = sol.getdimension();
+                        // auto max_iteration_count = sol.getdimension();
                         timestamp start = gettimestamp();
                         auto recent_iteration_count = 
                         ConjugateGradientSolverCSR_DiagonalPreconditioner( 
@@ -544,7 +544,7 @@ int main()
                         auto diagonal = SystemMatrix.diagonal();
 
                         FloatVector residual( rhs );
-                        auto max_iteration_count = sol.getdimension();
+                        // auto max_iteration_count = sol.getdimension();
                         timestamp start = gettimestamp();
                         auto recent_iteration_count = 
                         ConjugateGradientSolverCSR_SSOR( 
