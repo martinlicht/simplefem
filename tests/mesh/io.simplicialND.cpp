@@ -25,7 +25,7 @@ int main()
         
         mesh.check();
         
-        LOG << "start IO..." << std::endl;
+        LOG << "start IO..." << nl;
         
         std::stringstream ss;
         
@@ -37,11 +37,11 @@ int main()
         
         MeshSimplicialND mesh2 = readMeshSimplicialND( ss );
         
-        LOG << "check original mesh..." << std::endl;
+        LOG << "check original mesh..." << nl;
         mesh.check();
-        LOG << "check replicated mesh..." << std::endl;
+        LOG << "check replicated mesh..." << nl;
         mesh2.check();
-        LOG << "check mesh equivalence..." << std::endl;
+        LOG << "check mesh equivalence..." << nl;
         assert( mesh == mesh2 );
     }
     

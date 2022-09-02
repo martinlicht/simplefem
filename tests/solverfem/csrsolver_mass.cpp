@@ -170,7 +170,7 @@ int main()
 
             for( int l = min_l; l <= max_l; l++ ){
                 
-                LOG << "Level: " << l << "/" << max_l << std::endl;
+                LOG << "Level: " << l << "/" << max_l << nl;
                 LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
                 const int r = 1;
@@ -228,7 +228,7 @@ int main()
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
 
@@ -256,7 +256,7 @@ int main()
                             timestamp start = gettimestamp();
                             Solver.solve_explicit( sol, rhs );
                             timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
 
@@ -284,7 +284,7 @@ int main()
                             timestamp start = gettimestamp();
                             Solver.solve_robust( sol, rhs );
                             timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
 
@@ -312,7 +312,7 @@ int main()
                             timestamp start = gettimestamp();
                             Solver.solve_fast( sol, rhs );
                             timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
 
@@ -340,7 +340,7 @@ int main()
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
 
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
 
@@ -368,7 +368,7 @@ int main()
                             timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
                             timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
 
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
 
@@ -405,7 +405,7 @@ int main()
                             );
 
                             timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
 
@@ -441,7 +441,7 @@ int main()
                             );
 
                             timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
 
@@ -477,7 +477,7 @@ int main()
                             );
 
                             timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
 
@@ -513,7 +513,7 @@ int main()
                             );
 
                             timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
 
@@ -550,7 +550,7 @@ int main()
                             );
 
                             timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
 
@@ -593,7 +593,7 @@ int main()
                             );
 
                             timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
 
@@ -636,7 +636,7 @@ int main()
                             );
 
                             timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
 
@@ -680,7 +680,7 @@ int main()
                             );
 
                             timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
 

@@ -84,7 +84,7 @@ int main()
 
             for( const int N : Ns ){
                 
-                LOG << "Level: " << N << std::endl;
+                LOG << "Level: " << N << nl;
                 
                 {
                     
@@ -154,7 +154,7 @@ int main()
                             timestamp start = gettimestamp();
                             Solver.solve( mysol, rhs );
                             timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             auto stat_sol = Float( ( sol - mysol ).norm() );
                             auto stat_res = Float( ( system * mysol - rhs ).norm() );
@@ -178,7 +178,7 @@ int main()
                             Solver.solve_explicit( mysol, rhs );
                             timestamp end = gettimestamp();
                             
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             auto stat_sol = Float( ( sol - mysol ).norm() );
                             auto stat_res = Float( ( system * mysol - rhs ).norm() );
@@ -202,7 +202,7 @@ int main()
                             Solver.solve_robust( mysol, rhs );
                             timestamp end = gettimestamp();
                             
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             auto stat_sol = Float( ( sol - mysol ).norm() );
                             auto stat_res = Float( ( system * mysol - rhs ).norm() );
@@ -226,7 +226,7 @@ int main()
                             Solver.solve_fast( mysol, rhs );
                             timestamp end = gettimestamp();
                             
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             auto stat_sol = Float( ( sol - mysol ).norm() );
                             auto stat_res = Float( ( system * mysol - rhs ).norm() );
@@ -249,7 +249,7 @@ int main()
                             timestamp start = gettimestamp();
                             Solver.solve( mysol, rhs );
                             timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
 
                             auto stat_sol = Float( ( sol - mysol ).norm() );
                             auto stat_res = Float( ( system * mysol - rhs ).norm() );
@@ -272,7 +272,7 @@ int main()
                             timestamp start = gettimestamp();
                             Solver.solve( mysol, rhs );
                             timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
 
                             auto stat_sol = Float( ( sol - mysol ).norm() );
                             auto stat_res = Float( ( system * mysol - rhs ).norm() );

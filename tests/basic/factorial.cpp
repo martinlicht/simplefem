@@ -15,19 +15,19 @@ int main()
     
     /* survey factorials */
 
-    std::cout << "\nLargest number whose factorial fits into data type (signed)" << std::endl;
-    std::cout << "    case signed char       : " << largest_factorial_base<       signed char>() << std::endl;
-    std::cout << "    case signed short      : " << largest_factorial_base<      signed short>() << std::endl;
-    std::cout << "    case signed int        : " << largest_factorial_base<        signed int>() << std::endl;
-    std::cout << "    case signed long       : " << largest_factorial_base<       signed long>() << std::endl;
-    std::cout << "    case signed long long  : " << largest_factorial_base<  signed long long>() << std::endl;
+    std::cout << "\nLargest number whose factorial fits into data type (signed)" << nl;
+    std::cout << "    case signed char       : " << largest_factorial_base<       signed char>() << nl;
+    std::cout << "    case signed short      : " << largest_factorial_base<      signed short>() << nl;
+    std::cout << "    case signed int        : " << largest_factorial_base<        signed int>() << nl;
+    std::cout << "    case signed long       : " << largest_factorial_base<       signed long>() << nl;
+    std::cout << "    case signed long long  : " << largest_factorial_base<  signed long long>() << nl;
 
-    std::cout << "\nLargest number whose factorial fits into data type (unsigned)" << std::endl;
-    std::cout << "    case unsigned char     : " << largest_factorial_base<     unsigned char>() << std::endl;
-    std::cout << "    case unsigned short    : " << largest_factorial_base<    unsigned short>() << std::endl;
-    std::cout << "    case unsigned int      : " << largest_factorial_base<      unsigned int>() << std::endl;
-    std::cout << "    case unsigned long     : " << largest_factorial_base<     unsigned long>() << std::endl;
-    std::cout << "    case unsigned long long: " << largest_factorial_base<unsigned long long>() << std::endl;
+    std::cout << "\nLargest number whose factorial fits into data type (unsigned)" << nl;
+    std::cout << "    case unsigned char     : " << largest_factorial_base<     unsigned char>() << nl;
+    std::cout << "    case unsigned short    : " << largest_factorial_base<    unsigned short>() << nl;
+    std::cout << "    case unsigned int      : " << largest_factorial_base<      unsigned int>() << nl;
+    std::cout << "    case unsigned long     : " << largest_factorial_base<     unsigned long>() << nl;
+    std::cout << "    case unsigned long long: " << largest_factorial_base<unsigned long long>() << nl;
 
     /* check factorials */
 

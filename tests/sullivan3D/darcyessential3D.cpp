@@ -123,7 +123,7 @@ int main()
 
         for( int l = min_l; l <= max_l; l++ ){
             
-            LOG << "Level: " << l << "/" << max_l << std::endl;
+            LOG << "Level: " << l << "/" << max_l << nl;
             LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
             
             if( l != 0 )
@@ -215,7 +215,7 @@ int main()
                     }
                     
                     timestamp end = gettimestamp();
-                    LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                    LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                                         
                     auto grad = inv(A,1e-14) * Bt * sol;
 

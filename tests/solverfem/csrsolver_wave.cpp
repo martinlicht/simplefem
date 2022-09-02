@@ -220,13 +220,13 @@ int main()
     for( int l = min_l; l <= max_l; l++ )
     {
         
-        LOG << "Level: " << l << "/" << max_l << std::endl;
+        LOG << "Level: " << l << "/" << max_l << nl;
         LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
         
         for( int r = min_r; r <= max_r; r++ )
         {
             
-            LOG << "Polynomial degree: " << r << "/" << max_r << std::endl;
+            LOG << "Polynomial degree: " << r << "/" << max_r << nl;
             
             LOG << "...assemble partial matrices" << nl;
     
@@ -293,7 +293,7 @@ int main()
                         timestamp start = gettimestamp();
                         Solver.solve( sol, rhs );
                         timestamp end = gettimestamp();
-                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                         
                         runtime  = static_cast<Float>( end - start );
                         iteration_count = Solver.recent_iteration_count;
@@ -310,7 +310,7 @@ int main()
                         timestamp start = gettimestamp();
                         Solver.solve_explicit( sol, rhs );
                         timestamp end = gettimestamp();
-                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                         
                         runtime  = static_cast<Float>( end - start );
                         iteration_count = Solver.recent_iteration_count;
@@ -327,7 +327,7 @@ int main()
                         timestamp start = gettimestamp();
                         Solver.solve_robust( sol, rhs );
                         timestamp end = gettimestamp();
-                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                         
                         runtime  = static_cast<Float>( end - start );
                         iteration_count = Solver.recent_iteration_count;
@@ -344,7 +344,7 @@ int main()
                         timestamp start = gettimestamp();
                         Solver.solve_fast( sol, rhs );
                         timestamp end = gettimestamp();
-                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                         
                         runtime  = static_cast<Float>( end - start );
                         iteration_count = Solver.recent_iteration_count;
@@ -361,7 +361,7 @@ int main()
                         timestamp start = gettimestamp();
                         Solver.solve( sol, rhs );
                         timestamp end = gettimestamp();
-                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
 
                         runtime  = static_cast<Float>( end - start );
                         iteration_count = Solver.recent_iteration_count;
@@ -378,7 +378,7 @@ int main()
                         timestamp start = gettimestamp();
                         Solver.solve( sol, rhs );
                         timestamp end = gettimestamp();
-                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
 
                         runtime  = static_cast<Float>( end - start );
                         iteration_count = Solver.recent_iteration_count;
@@ -402,7 +402,7 @@ int main()
                             0
                         );
                         timestamp end = gettimestamp();
-                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                         
                         runtime  = static_cast<Float>( end - start );
                         iteration_count = recent_iteration_count;
@@ -427,7 +427,7 @@ int main()
                         );
 
                         timestamp end = gettimestamp();
-                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                         
                         runtime  = static_cast<Float>( end - start );
                         iteration_count = recent_iteration_count;
@@ -452,7 +452,7 @@ int main()
                         );
 
                         timestamp end = gettimestamp();
-                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                         
                         runtime  = static_cast<Float>( end - start );
                         iteration_count = recent_iteration_count;
@@ -477,7 +477,7 @@ int main()
                         );
 
                         timestamp end = gettimestamp();
-                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                         
                         runtime  = static_cast<Float>( end - start );
                         iteration_count = recent_iteration_count;
@@ -503,7 +503,7 @@ int main()
                         );
 
                         timestamp end = gettimestamp();
-                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                         
                         runtime  = static_cast<Float>( end - start );
                         iteration_count = recent_iteration_count;
@@ -531,7 +531,7 @@ int main()
                         );
 
                         timestamp end = gettimestamp();
-                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                         
                         runtime  = static_cast<Float>( end - start );
                         iteration_count = recent_iteration_count;
@@ -560,7 +560,7 @@ int main()
                         );
 
                         timestamp end = gettimestamp();
-                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                         
                         runtime  = static_cast<Float>( end - start );
                         iteration_count = recent_iteration_count;

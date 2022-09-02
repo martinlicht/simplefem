@@ -17,7 +17,7 @@ int main()
     sorthack( foo );
     
     for( int i = 1; i < N; i++ ) 
-        assert( foo[i] >= foo[i-1] ); //std::cout << foo[i] << std::endl;
+        assert( foo[i] >= foo[i-1] ); //std::cout << foo[i] << nl;
     
     return 0;
 }
