@@ -33,10 +33,12 @@ int main()
             ConvergenceTable contable_sol("L2 Error");
             ConvergenceTable contable_res("L2 Residual");
             ConvergenceTable contable_num("Iteration percentage");
+            ConvergenceTable contable_sec("Time");
             
             contable_sol.print_rowwise_instead_of_columnwise = true;
             contable_res.print_rowwise_instead_of_columnwise = true;
             contable_num.print_rowwise_instead_of_columnwise = true;
+            contable_sec.print_rowwise_instead_of_columnwise = true;
             
             bool do_cgmpp      = false;
             bool do_crmpp_expl = false;
@@ -123,6 +125,23 @@ int main()
             if( do_cgm_diagonal_csr )       contable_num << "CGMcsr_diag"  ;
             if( do_cgm_ssor_csr )           contable_num << "CGMcsr_ssor"  ;
             if( do_chebyshev_diagonal_csr ) contable_num << "Chebyshev_csr";
+
+            contable_sec << "Index";
+            if( do_cgmpp      ) contable_sec << "CGM++"      ;
+            if( do_crmpp_expl ) contable_sec << "CRM++(expl)";
+            if( do_crmpp_robt ) contable_sec << "CRM++(robt)";
+            if( do_crmpp_fast ) contable_sec << "CRM++(fast)";
+            if( do_minres     ) contable_sec << "MINRES"     ;
+            if( do_herzog     ) contable_sec << "HERZOG"     ;
+            //
+            if( do_cgm_csr )                contable_sec << "CGMcsr"       ;
+            if( do_crm_csr )                contable_sec << "CRMcsr"       ;
+            if( do_crm_csrtextbook )        contable_sec << "CRMcsr_tb"    ;
+            if( do_minres_csr )             contable_sec << "MINREScsr"    ;
+            if( do_whatever_csr )           contable_sec << "WHATEVER"     ;
+            if( do_cgm_diagonal_csr )       contable_sec << "CGMcsr_diag"  ;
+            if( do_cgm_ssor_csr )           contable_sec << "CGMcsr_ssor"  ;
+            if( do_chebyshev_diagonal_csr ) contable_sec << "Chebyshev_csr";
             
 
             const std::vector<int> Ns = { 4, 8, 16, 32 };
@@ -188,6 +207,7 @@ int main()
                         contable_sol << static_cast<Float>(N);
                         contable_res << static_cast<Float>(N);
                         contable_num << static_cast<Float>(N);
+                        contable_sec << static_cast<Float>(N);
 
                         if( do_cgmpp )
                         {
@@ -209,6 +229,7 @@ int main()
                             contable_sol << stat_sol;
                             contable_res << stat_res;
                             contable_num << stat_num;
+                            contable_sec << Float( end - start );
                         }
 
                         if( do_crmpp_expl )
@@ -233,6 +254,7 @@ int main()
                             contable_sol << stat_sol;
                             contable_res << stat_res;
                             contable_num << stat_num;
+                            contable_sec << Float( end - start );
                         }
 
                         if( do_crmpp_robt )
@@ -257,6 +279,7 @@ int main()
                             contable_sol << stat_sol;
                             contable_res << stat_res;
                             contable_num << stat_num;
+                            contable_sec << Float( end - start );
                         }
 
                         if( do_crmpp_fast )
@@ -281,6 +304,7 @@ int main()
                             contable_sol << stat_sol;
                             contable_res << stat_res;
                             contable_num << stat_num;
+                            contable_sec << Float( end - start );
                         }
 
                         if( do_minres )
@@ -304,6 +328,7 @@ int main()
                             contable_sol << stat_sol;
                             contable_res << stat_res;
                             contable_num << stat_num;
+                            contable_sec << Float( end - start );
                         }
 
                         if( do_herzog )
@@ -327,6 +352,7 @@ int main()
                             contable_sol << stat_sol;
                             contable_res << stat_res;
                             contable_num << stat_num;
+                            contable_sec << Float( end - start );
                         }
                         
                         
@@ -356,12 +382,15 @@ int main()
                             );
                             timestamp end = gettimestamp();
 
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            
                             auto stat_sol = Float( ( sol - mysol ).norm() );
                             auto stat_res = Float( ( system * mysol - rhs ).norm() );
                             auto stat_num = Float( recent_iteration_count )/ (N*N); 
                             contable_sol << stat_sol;
                             contable_res << stat_res;
                             contable_num << stat_num;
+                            contable_sec << Float( end - start );
                         }
 
                         if( do_crm_csr )
@@ -385,12 +414,15 @@ int main()
                             );
                             timestamp end = gettimestamp();
 
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            
                             auto stat_sol = Float( ( sol - mysol ).norm() );
                             auto stat_res = Float( ( system * mysol - rhs ).norm() );
                             auto stat_num = Float( recent_iteration_count )/ (N*N); 
                             contable_sol << stat_sol;
                             contable_res << stat_res;
                             contable_num << stat_num;
+                            contable_sec << Float( end - start );
                         }
 
                         if( do_crm_csrtextbook )
@@ -414,12 +446,15 @@ int main()
                             );
                             timestamp end = gettimestamp();
 
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            
                             auto stat_sol = Float( ( sol - mysol ).norm() );
                             auto stat_res = Float( ( system * mysol - rhs ).norm() );
                             auto stat_num = Float( recent_iteration_count )/ (N*N); 
                             contable_sol << stat_sol;
                             contable_res << stat_res;
                             contable_num << stat_num;
+                            contable_sec << Float( end - start );
                         }
 
                         if( do_minres_csr )
@@ -443,12 +478,15 @@ int main()
                             );
                             timestamp end = gettimestamp();
 
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            
                             auto stat_sol = Float( ( sol - mysol ).norm() );
                             auto stat_res = Float( ( system * mysol - rhs ).norm() );
                             auto stat_num = Float( recent_iteration_count )/ (N*N); 
                             contable_sol << stat_sol;
                             contable_res << stat_res;
                             contable_num << stat_num;
+                            contable_sec << Float( end - start );
                         }
 
 
@@ -473,12 +511,15 @@ int main()
                             );
                             timestamp end = gettimestamp();
 
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            
                             auto stat_sol = Float( ( sol - mysol ).norm() );
                             auto stat_res = Float( ( system * mysol - rhs ).norm() );
                             auto stat_num = Float( recent_iteration_count )/ (N*N); 
                             contable_sol << stat_sol;
                             contable_res << stat_res;
                             contable_num << stat_num;
+                            contable_sec << Float( end - start );
                         }
 
 
@@ -509,12 +550,15 @@ int main()
                             );
                             timestamp end = gettimestamp();
 
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            
                             auto stat_sol = Float( ( sol - mysol ).norm() );
                             auto stat_res = Float( ( system * mysol - rhs ).norm() );
                             auto stat_num = Float( recent_iteration_count )/ (N*N); 
                             contable_sol << stat_sol;
                             contable_res << stat_res;
                             contable_num << stat_num;
+                            contable_sec << Float( end - start );
                         }
                         
                         
@@ -545,12 +589,15 @@ int main()
                             );
                             timestamp end = gettimestamp();
 
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            
                             auto stat_sol = Float( ( sol - mysol ).norm() );
                             auto stat_res = Float( ( system * mysol - rhs ).norm() );
                             auto stat_num = Float( recent_iteration_count )/ (N*N); 
                             contable_sol << stat_sol;
                             contable_res << stat_res;
                             contable_num << stat_num;
+                            contable_sec << Float( end - start );
                         }
                         
                         
@@ -582,23 +629,28 @@ int main()
                             );
                             timestamp end = gettimestamp();
 
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                            
                             auto stat_sol = Float( ( sol - mysol ).norm() );
                             auto stat_res = Float( ( system * mysol - rhs ).norm() );
                             auto stat_num = Float( recent_iteration_count )/ (N*N); 
                             contable_sol << stat_sol;
                             contable_res << stat_res;
                             contable_num << stat_num;
+                            contable_sec << Float( end - start );
                         }
                         
                         contable_sol << nl;
                         contable_res << nl;
                         contable_num << nl;
+                        contable_sec << nl;
                         
                     }
                     
                     contable_sol.lg( false );
                     contable_res.lg( false );
                     contable_num.lg( false );
+                    contable_sec.lg( false );
 
                     }
 

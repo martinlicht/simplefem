@@ -179,7 +179,7 @@ $($(module).headerchecks): check-%.hpp :
 .PHONY: tidy $(module).tidy
 tidy: $(module).tidy
 $(module).tidy:
-	clang-tidy $(mymoddir)/*.?pp -checks=llvm*,bugprone-*,clang-analyzer-*,misc-*,-llvm-header-guard,-llvm-include-order -- -std=c++2a
+	clang-tidy $(mymoddir)/*.?pp -checks=llvm*,bugprone-*,clang-analyzer-*,misc-*,-llvmlibc-*,-llvm-header-guard,-llvm-include-order,-misc-static-assert -- -std=c++17 -fno-exceptions
 
 
 ########################################################################
