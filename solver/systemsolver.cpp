@@ -6,8 +6,8 @@
 #include "../operators/floatvector.hpp"
 
 
-inline const bool cppsys_restart_on_full_dimension = false;
-inline const bool cppsys_restart_before_finish     = false;
+static const bool cppsys_restart_on_full_dimension = false;
+static const bool cppsys_restart_before_finish     = false;
 
 
 

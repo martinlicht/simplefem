@@ -1,7 +1,4 @@
 
-#include <ostream>
-#include <fstream>
-
 #include "../basic.hpp"
 #include "../operators/floatvector.hpp"
 #include "../operators/linearoperator.hpp"

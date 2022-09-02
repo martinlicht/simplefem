@@ -4,8 +4,8 @@
 
 #include "sparsesolver.hpp"
 
-inline const bool csrsys_restart_on_full_dimension = false;
-inline const bool csrsys_restart_before_finish     = false;
+static const bool csrsys_restart_on_full_dimension = false;
+static const bool csrsys_restart_before_finish     = false;
 
 
 

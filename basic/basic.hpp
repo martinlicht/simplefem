@@ -194,6 +194,7 @@ inline constexpr int power_integer( int base, int exponent )
     Assert( base != 0 or exponent != 0 );
     Assert( exponent >= 0 );
     if( exponent == 0 ) return 1;
+    if( base == 0 ) return 0;
     int rec = power_integer( base, exponent - 1 );
     int ret = base * rec;
     Assert( ret / base == rec );
