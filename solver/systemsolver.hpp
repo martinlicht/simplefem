@@ -2,9 +2,6 @@
 #define INCLUDEGUARD_SOLVER_SYSTEMSOLVER
 
 
-#include <ostream>
-#include <limits>
-
 #include "../basic.hpp"
 #include "../operators/linearoperator.hpp"
 

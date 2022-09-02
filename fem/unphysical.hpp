@@ -35,6 +35,8 @@ inline FloatVector FEECCanonicalizeBroken( int n, int k, int r, const FloatVecto
 
     const int space_size = poly_size * form_size;
     
+    Assert( space_size > 0 );
+
     const int cellcount = vec.getdimension() / space_size;
     
     Assert( cellcount * space_size == vec.getdimension(), cellcount, space_size, vec.getdimension(), n, k, r, poly_size, form_size );
@@ -76,6 +78,8 @@ inline FloatVector FEECRandomizeBroken( int n, int k, int r, const FloatVector& 
 
     const int space_size = poly_size * form_size;
     
+    Assert( space_size > 0 );
+
     const int cellcount = vec.getdimension() / space_size;
     
     Assert( cellcount * space_size == vec.getdimension(), cellcount, space_size, vec.getdimension(), n, k, r, poly_size, form_size );

@@ -8,7 +8,6 @@
 #include "../basic.hpp"
 
 
-
 /////////////////////////////////////////////////
 //                                             //
 //       SUM INTEGERS PRODUCED BY LAMBDA       //
