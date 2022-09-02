@@ -78,6 +78,7 @@ $(moddir)/.all.o: $($(module).sources) $(moddir)/.all.cpp $($(module).depdir)/.a
 # 	@echo $*
 	@echo Compiling and listing dependencies: $($(mymodule).libraryobject)
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(mymoddir)/.all.cpp -c -o $@  $(DEPFLAGS)
+	@touch $@
 
 $($(module).depdir)/.all.d:
 
@@ -94,7 +95,7 @@ make_dependencies: $(module).make_dependencies
 
 $(module).make_dependencies: $($(module).depdir)
 	@for item in $($(mymodule).sources); do \
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $$item -MM -MP -MF $($(module).depdir)/$$item.d; \
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $$item -MM -MP -MF $$item.d; \
 	done
 
 # How to the .o files into library objects 

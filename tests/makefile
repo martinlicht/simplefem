@@ -149,17 +149,17 @@ build: afem.tests
 
 .PHONY: clean
 clean:
-	@echo "finished cleaning test directory." 
+	@echo "Finished cleaning test directory." 
 
 
 .PHONY: dependclean
 dependclean:
-	@echo "finished cleaning test directory dependency information files." 
+	@echo "Finished cleaning test directory dependency information files." 
 
 
 .PHONY: vtkclean
 vtkclean:
-	@echo "finished cleaning test directory .vtk files." 
+	@echo "Finished cleaning test directory .vtk files." 
 
 
 
@@ -188,7 +188,7 @@ vtkclean:
 # .PHONY: clean
 # clean: $(clean.components)
 # 	@$(MAKE) --no-print-directory -f ../common.upkeep.mk clean
-# 	@echo "finished cleaning." 
+# 	@echo "Finished cleaning." 
 
 
 # dependclean.components :=$(patsubst %,.dependclean.%,$(components) )
@@ -200,7 +200,7 @@ vtkclean:
 # .PHONY: dependclean
 # dependclean: $(dependclean.components)
 # 	$(MAKE) --no-print-directory -f ../common.upkeep.mk dependclean
-# 	@echo "finished cleaning dependency information files." 
+# 	@echo "Finished cleaning dependency information files." 
 
 
 # vtkclean.components :=$(patsubst %,.vtkclean.%,$(components) )
@@ -212,7 +212,7 @@ vtkclean:
 # .PHONY: vtkclean
 # vtkclean: $(vtkclean.components)
 # 	$(MAKE) --no-print-directory -f ../common.upkeep.mk vtkclean
-# 	@echo "finished cleaning .vtk files." 
+# 	@echo "Finished cleaning .vtk files." 
 
 
 # tidy.components :=$(patsubst %,.tidy.%,$(components) )

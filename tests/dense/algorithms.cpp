@@ -3,7 +3,6 @@
 /**/
 
 #include <ostream>
-#include <iomanip>
 #include "../../basic.hpp"
 #include "../../dense/cholesky.hpp"
 #include "../../dense/functions.hpp"

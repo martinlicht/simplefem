@@ -71,7 +71,7 @@ modules+=vtk
 #modules+=matrixmarket
 modules+=fem
 
-PHONY: .buildmodules
+.PHONY: .buildmodules
 .buildmodules: $(patsubst %,%.build,$(modules))
 
 projectdir :=.
@@ -169,6 +169,17 @@ build: .buildmodules .buildtests .buildbenchmarks
 .PHONY: clean
 clean:
 	@cd ./tests && $(MAKE) --no-print-directory clean
+	@echo "Finished cleaning."
+
+.PHONY: vtkclean
+vtkclean:
+	@cd ./tests && $(MAKE) --no-print-directory vtkclean
+	@echo "Finished cleaning .vtk files."
+
+.PHONY: dependclean
+dependclean:
+	@cd ./tests && $(MAKE) --no-print-directory dependclean
+	@echo "Finished cleaning dependency information files."
 
 .PHONY: tidy
 tidy:
