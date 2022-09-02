@@ -31,13 +31,13 @@ using namespace std;
 int main()
 {
         
-        LOG << "Unit Test: Compare numerical solvers CRM vs MINRES\n           for Solution of Dirichlet Problem" << endl;
+        LOG << "Unit Test: Compare numerical solvers CRM vs MINRES\n           for Solution of Dirichlet Problem" << nl;
         
         // LOG << std::setprecision(10);
 
         if(true){
 
-            LOG << "Initial mesh..." << endl;
+            LOG << "Initial mesh..." << nl;
             
             MeshSimplicial2D Mx = StandardSquare2D();
             
@@ -63,7 +63,7 @@ int main()
                     };
             
 
-            LOG << "Nullspace computation" << endl;
+            LOG << "Nullspace computation" << nl;
 
             
             ConvergenceTable contable("Nullvectors found");
@@ -100,27 +100,27 @@ int main()
                     
                     LOG << "Polynomial degree: " << r << "/" << max_r << std::endl;
                     
-                    LOG << "...assemble matrices" << endl;
+                    LOG << "...assemble matrices" << nl;
             
                     SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
                     
-                    LOG << "...assemble vector mass matrix" << endl;
+                    LOG << "...assemble vector mass matrix" << nl;
             
                     SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
                     
-                    LOG << "...assemble differential matrix and transpose" << endl;
+                    LOG << "...assemble differential matrix and transpose" << nl;
 
                     SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r );
 
                     SparseMatrix diffmatrix_t = diffmatrix.getTranspose();
 
-                    LOG << "...assemble inclusion matrix and transpose" << endl;
+                    LOG << "...assemble inclusion matrix and transpose" << nl;
             
                     SparseMatrix incmatrix = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 0, r );
 
                     SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
-                    LOG << "...assemble stiffness matrix" << endl;
+                    LOG << "...assemble stiffness matrix" << nl;
             
                     auto opr  = diffmatrix & incmatrix;
                     auto opl  = opr.getTranspose(); 
@@ -146,7 +146,7 @@ int main()
                     
                     assert( SystemMatrix.diagonal().isfinite() );
                     
-//                     LOG << SystemMatrix << endl;
+//                     LOG << SystemMatrix << nl;
                     
                     std::vector<FloatVector> nullvectorgallery;
                     
@@ -374,7 +374,7 @@ int main()
         
         
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test" << nl;
         
         return 0;
 }

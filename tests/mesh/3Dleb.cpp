@@ -18,11 +18,11 @@ using namespace std;
 
 int main()
 {
-        LOG << "Unit Test for Simplicial 3D Module" << endl;
+        LOG << "Unit Test for Simplicial 3D Module" << nl;
         
         {
             
-            LOG << "Second Experiment" << endl;
+            LOG << "Second Experiment" << nl;
             
             MeshSimplicial3D M = UnitSimplex3D();
             
@@ -59,7 +59,7 @@ int main()
             
         }
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test" << nl;
         
         return 0;
 }

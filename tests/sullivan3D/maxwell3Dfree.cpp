@@ -30,13 +30,13 @@ using namespace std;
 int main()
 {
         
-        LOG << "Unit Test: 3D Maxwell System" << endl;
+        LOG << "Unit Test: 3D Maxwell System" << nl;
         
         // LOG << std::setprecision(10);
 
         if(true){
 
-            LOG << "Initial mesh..." << endl;
+            LOG << "Initial mesh..." << nl;
             
             MeshSimplicial3D M = StandardCube3D();
             
@@ -158,7 +158,7 @@ int main()
                     
                     LOG << "Polynomial degree: " << r << "/" << max_r << std::endl;
                     
-                    LOG << "... assemble matrices" << endl;
+                    LOG << "... assemble matrices" << nl;
             
                     
                     SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r+1 );
@@ -216,7 +216,7 @@ int main()
                         const auto& function_curl = experiment_curl;
                         const auto& function_rhs  = experiment_rhs;
                         
-                        LOG << "...interpolate explicit solution and rhs" << endl;
+                        LOG << "...interpolate explicit solution and rhs" << nl;
                         
                         FloatVector interpol_ndiv = Interpolation( M, M.getinnerdimension(), 0, r+1, function_ndiv  );
                         FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 1, r,   function_sol  );
@@ -234,7 +234,7 @@ int main()
 
                         {
 
-                            LOG << "...iterative solver" << endl;
+                            LOG << "...iterative solver" << nl;
                             
                             auto PA = MatrixCSR( scalar_incmatrix_t & scalar_massmatrix & scalar_incmatrix )
                                       + MatrixCSR( scalar_incmatrix_t & scalar_diffmatrix_t & vector_massmatrix & scalar_diffmatrix & scalar_incmatrix );
@@ -276,7 +276,7 @@ int main()
                         
                         auto curl = vector_diffmatrix * vector_incmatrix * sol;
                         
-                        LOG << "...compute error and residual:" << endl;
+                        LOG << "...compute error and residual:" << nl;
 
                         auto errornorm_aux_ndiv = interpol_ndiv - scalar_incmatrix * ndiv;
                         auto errornorm_aux_sol  = interpol_sol  - vector_incmatrix *  sol;
@@ -287,7 +287,7 @@ int main()
                         Float errornorm_curl_sq = ( errornorm_aux_curl * ( pseudo_massmatrix * errornorm_aux_curl ) );
                         Float residualnorm      = ( rhs - B * inv(A,1e-14) * Bt * sol - C * sol ).norm();
 
-                        LOG << errornorm_ndiv_sq << space << errornorm_sol_sq << space << errornorm_curl_sq << endl;
+                        LOG << errornorm_ndiv_sq << space << errornorm_sol_sq << space << errornorm_curl_sq << nl;
 
                         assert( errornorm_ndiv_sq >= 0 );
                         assert( errornorm_sol_sq  >= 0 );
@@ -297,15 +297,15 @@ int main()
                         Float errornorm_sol  = sqrt( errornorm_sol_sq  );
                         Float errornorm_curl = sqrt( errornorm_curl_sq );
                         
-                        LOG << "div  error sq: " << errornorm_ndiv_sq << endl;
-                        LOG << "sol  error sq: " << errornorm_sol_sq << endl;
-                        LOG << "curl error sq: " << errornorm_curl_sq << endl;
+                        LOG << "div  error sq: " << errornorm_ndiv_sq << nl;
+                        LOG << "sol  error sq: " << errornorm_sol_sq << nl;
+                        LOG << "curl error sq: " << errornorm_curl_sq << nl;
                         
-                        LOG << "div  error: " << errornorm_ndiv << endl;
-                        LOG << "sol  error: " << errornorm_sol << endl;
-                        LOG << "curl error: " << errornorm_curl << endl;
+                        LOG << "div  error: " << errornorm_ndiv << nl;
+                        LOG << "sol  error: " << errornorm_sol << nl;
+                        LOG << "curl error: " << errornorm_curl << nl;
                         
-                        LOG << "residual:   " << residualnorm  << endl;
+                        LOG << "residual:   " << residualnorm  << nl;
 
                         contable << errornorm_ndiv;
                         contable << errornorm_sol;
@@ -337,7 +337,7 @@ int main()
         
         
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test" << nl;
         
         return 0;
 }

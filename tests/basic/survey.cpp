@@ -8,7 +8,7 @@ using namespace std;
 
 int main()
 {
-    cout << "Survey of machine data (floating-point)" << endl;
+    cout << "Survey of machine data (floating-point)" << nl;
 
     assert( machine_epsilon < 1e-10 );
 

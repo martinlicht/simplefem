@@ -18,11 +18,11 @@ using namespace std;
 
 int main()
 {
-    LOG << "Unit Test for Simplicial 2D Module" << endl;
+    LOG << "Unit Test for Simplicial 2D Module" << nl;
     
     {
         
-        LOG << "First Experiment" << endl;
+        LOG << "First Experiment" << nl;
         
         MeshSimplicial2D M = UnitTriangle2D();
         
@@ -63,7 +63,7 @@ int main()
     
     {
         
-        LOG << "Second Experiment" << endl;
+        LOG << "Second Experiment" << nl;
         
         MeshSimplicial2D M = TetrahedralSurface2D(); //StandardSquare2D();
         
@@ -104,7 +104,7 @@ int main()
     
     {
         
-        LOG << "Third Experiment" << endl;
+        LOG << "Third Experiment" << nl;
         
         MeshSimplicial2D M = TetrahedralSurface2D();
         
@@ -145,7 +145,7 @@ int main()
         
     {
         
-        LOG << "Fourth Experiment: uniform distribution" << endl;
+        LOG << "Fourth Experiment: uniform distribution" << nl;
         
         MeshSimplicial2D M = UnitTriangle2D(); M.check();
         
@@ -179,7 +179,7 @@ int main()
     
     {
         
-        LOG << "Fifth Experiment: repeated bisection of a fixed triangle" << endl;
+        LOG << "Fifth Experiment: repeated bisection of a fixed triangle" << nl;
         
         MeshSimplicial2D M = UnitTriangle2D(); M.check();
         
@@ -213,7 +213,7 @@ int main()
     }
 
 
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test" << nl;
         
         return 0;
 }

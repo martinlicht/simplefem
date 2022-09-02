@@ -5,7 +5,7 @@
 #include <functional>
 #include <vector>
 
-#include "../basic/basic.hpp"
+#include "../basic.hpp"
 
 
 /////////////////////////////////////////////////

@@ -18,11 +18,11 @@ using namespace std;
 
 int main()
 {
-        LOG << "Unit Test for Simplicial 3D Module" << endl;
+        LOG << "Unit Test for Simplicial 3D Module" << nl;
         
         {
             
-            LOG << "First Experiment" << endl;
+            LOG << "First Experiment" << nl;
             
             MeshSimplicial3D M = UnitSimplex3D();
             
@@ -42,7 +42,7 @@ int main()
             
             M.check_dirichlet_flags();
 
-            LOG << "Start iterations" << endl;
+            LOG << "Start iterations" << nl;
             
             for( int c = 0; c < c_max; c++ ) {
             
@@ -76,7 +76,7 @@ int main()
             
         }
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test" << nl;
         
         return 0;
 }

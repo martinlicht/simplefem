@@ -15,7 +15,7 @@ using namespace std;
 
 int main()
 {
-        LOG << "Unit Test for Simplicial 2D Module" << endl;
+        LOG << "Unit Test for Simplicial 2D Module" << nl;
         
 //        MeshSimplicial2D M = TetrahedralSurface2D();
         MeshSimplicial2D M = StandardSquare2D();
@@ -28,7 +28,7 @@ int main()
             
         M.check_dirichlet_flags();
             
-        LOG << "Refinement" << endl;
+        LOG << "Refinement" << nl;
         
         for( int c = 0; c < 2; c++ )
           M.uniformrefinement();
@@ -37,11 +37,11 @@ int main()
         
 //         M.check_dirichlet_flags();
             
-        LOG << M << endl;
+        LOG << M << nl;
         
         M.outputTikZ( std::cout );
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test" << nl;
         
         return 0;
 }

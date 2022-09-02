@@ -3,28 +3,29 @@
 # within the 'tests' folder. It imports all the stuff it needs.
 # 
 
-
+.PHONY: default 
 default: build
+
+context    :=$(notdir $(CURDIR))
+contextdir :=.
+testsdir   :=../
+projectdir :=../../
+pathvar    :=$(CURDIR)/../../
 
 include ../../common.compile.mk 
 
-include ../../common.upkeep.mk
-
 include ../tests.affices.mk
 
-projectdir:=../../
-pathvar:=$(CURDIR)/../../
-
-# should be a subdirectory of where the sources are
-depdir := .deps
-
-contextdir:=.
-
-# context:=$(shell basename $$(pwd))
-context:=$(shell basename $(CURDIR))
-
-
+.PHONY: build 
 build: $(context).tests
 
 include ../tests.rules.mk
 
+# clean:
+# 	echo $(cleanfiles)
+
+# vtkclean:
+# 	echo $(vtkcleanfiles)
+
+# depclean:
+# 	echo $(depcleanfiles)

@@ -23,13 +23,13 @@ using namespace std;
 int main()
 {
         
-        LOG << "Unit Test: Compare numerical solvers CRM vs MINRES\n           for Solution of Dirichlet Problem" << endl;
+        LOG << "Unit Test: Compare numerical solvers CRM vs MINRES\n           for Solution of Dirichlet Problem" << nl;
         
         // LOG << std::setprecision(10);
 
         if(true){
 
-            LOG << "Initial mesh..." << endl;
+            LOG << "Initial mesh..." << nl;
             
             MeshSimplicial2D M = StandardSquare2D();
             
@@ -39,7 +39,7 @@ int main()
             
             M.check_dirichlet_flags();
             
-            LOG << "Prepare scalar fields for testing..." << endl;
+            LOG << "Prepare scalar fields for testing..." << nl;
             
 
             // std::function<FloatVector(const FloatVector&)> constant_one
@@ -67,7 +67,7 @@ int main()
             
             
 
-            LOG << "Solving Poisson Problem with Dirichlet boundary conditions" << endl;
+            LOG << "Solving Poisson Problem with Dirichlet boundary conditions" << nl;
 
             // ConvergenceTable contable_sol("L2 Error");
             ConvergenceTable contable_res("L2 Residual");
@@ -178,32 +178,32 @@ int main()
                 
                 {
                     
-                    LOG << "...assemble scalar mass matrix" << endl;
+                    LOG << "...assemble scalar mass matrix" << nl;
             
                     SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
                     
-                    LOG << "...assemble vector mass matrix" << endl;
+                    LOG << "...assemble vector mass matrix" << nl;
             
                     SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
 
-                    LOG << "...sort and compress mass matrices" << endl;
+                    LOG << "...sort and compress mass matrices" << nl;
             
                     scalar_massmatrix.sortandcompressentries();
                     vector_massmatrix.sortandcompressentries();
 
-                    LOG << "...assemble differential matrix and transpose" << endl;
+                    LOG << "...assemble differential matrix and transpose" << nl;
 
                     SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r );
 
                     SparseMatrix diffmatrix_t = diffmatrix.getTranspose();
 
-                    LOG << "...assemble inclusion matrix and transpose" << endl;
+                    LOG << "...assemble inclusion matrix and transpose" << nl;
             
                     SparseMatrix incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r );
 
                     SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
-                    LOG << "...compose stiffness and mass matrices" << endl;
+                    LOG << "...compose stiffness and mass matrices" << nl;
             
                     // const auto composed_stiffness = incmatrix_t * diffmatrix_t * vector_massmatrix * diffmatrix * incmatrix;
                     // const auto composed_mass      = incmatrix_t * scalar_massmatrix * incmatrix;
@@ -219,7 +219,7 @@ int main()
                     const auto& stiffness = stiffness_csr;
                     const auto& mass      =      mass_csr;
                     
-                    LOG << "...matrices done" << endl;
+                    LOG << "...matrices done" << nl;
 
                     {
 
@@ -237,7 +237,7 @@ int main()
 
                         if( do_cgmpp )
                         {
-                            LOG << "CGM C++" << endl;
+                            LOG << "CGM C++" << nl;
                         
                             FloatVector sol = sol_original;
                             const FloatVector rhs = rhs_original;
@@ -265,7 +265,7 @@ int main()
 
                         if( do_crmpp_expl )
                         {
-                            LOG << "CRM C++" << endl;
+                            LOG << "CRM C++" << nl;
                         
                             FloatVector sol = sol_original;
                             const FloatVector rhs = rhs_original;
@@ -295,7 +295,7 @@ int main()
 
                         if( do_crmpp_robt )
                         {
-                            LOG << "CRM C++" << endl;
+                            LOG << "CRM C++" << nl;
                         
                             FloatVector sol = sol_original;
                             const FloatVector rhs = rhs_original;
@@ -325,7 +325,7 @@ int main()
 
                         if( do_crmpp_fast )
                         {
-                            LOG << "CRM C++" << endl;
+                            LOG << "CRM C++" << nl;
                         
                             FloatVector sol = sol_original;
                             const FloatVector rhs = rhs_original;
@@ -355,7 +355,7 @@ int main()
 
                         if( do_minres )
                         {
-                            LOG << "MINRES C++" << endl;
+                            LOG << "MINRES C++" << nl;
                         
                             FloatVector sol = sol_original;
                             const FloatVector rhs = rhs_original;
@@ -385,7 +385,7 @@ int main()
 
                         if( do_herzog )
                         {
-                            LOG << "HERZOG SOODHALTER C++" << endl;
+                            LOG << "HERZOG SOODHALTER C++" << nl;
                         
                             FloatVector sol = sol_original;
                             const FloatVector rhs = rhs_original;
@@ -415,7 +415,7 @@ int main()
                         
                         if( do_cgm_csr )
                         {
-                            LOG << "CGM - CSR Classic" << endl;
+                            LOG << "CGM - CSR Classic" << nl;
                         
                             FloatVector sol = sol_original;
                             const FloatVector rhs = rhs_original;
@@ -451,7 +451,7 @@ int main()
 
                         if( do_crm_csr )
                         {
-                            LOG << "CRM - CSR Classic" << endl;
+                            LOG << "CRM - CSR Classic" << nl;
                         
                             FloatVector sol = sol_original;
                             const FloatVector rhs = rhs_original;
@@ -487,7 +487,7 @@ int main()
 
                         if( do_crm_csrtextbook )
                         {
-                            LOG << "CRM - CSR Textbook" << endl;
+                            LOG << "CRM - CSR Textbook" << nl;
                         
                             FloatVector sol = sol_original;
                             const FloatVector rhs = rhs_original;
@@ -523,7 +523,7 @@ int main()
 
                         if( do_minres_csr )
                         {
-                            LOG << "MINRES CSR" << endl;
+                            LOG << "MINRES CSR" << nl;
                         
                             FloatVector sol = sol_original;
                             const FloatVector rhs = rhs_original;
@@ -560,7 +560,7 @@ int main()
 
                         if( do_whatever_csr )
                         {
-                            LOG << "WHATEVER CSR" << endl;
+                            LOG << "WHATEVER CSR" << nl;
                         
                             FloatVector sol = sol_original;
                             const FloatVector rhs = rhs_original;
@@ -596,7 +596,7 @@ int main()
 
                         if( do_cgm_diagonal_csr )
                         {
-                            LOG << "CGM - CSR Classic with diagonal preconditioning" << endl;
+                            LOG << "CGM - CSR Classic with diagonal preconditioning" << nl;
                             
                             auto precon = InverseDiagonalPreconditioner( stiffness );
 
@@ -636,7 +636,7 @@ int main()
 
                         if( do_cgm_ssor_csr )
                         {
-                            LOG << "CGM - CSR Classic with SSOR" << endl;
+                            LOG << "CGM - CSR Classic with SSOR" << nl;
                             
                             auto diagonal = stiffness.diagonal();
 
@@ -691,7 +691,7 @@ int main()
                 }
 
                 if( l != max_l ){ 
-                    LOG << "Refinement..." << endl;
+                    LOG << "Refinement..." << nl;
                     M.uniformrefinement();
                 }
 
@@ -703,7 +703,7 @@ int main()
         
         
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test" << nl;
         
         return 0;
 }

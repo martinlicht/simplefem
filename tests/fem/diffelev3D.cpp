@@ -19,11 +19,11 @@ using namespace std;
 int main()
 {
         
-        LOG << "Unit Test: (3D) degree elevation commutes with exterior derivative" << endl;
+        LOG << "Unit Test: (3D) degree elevation commutes with exterior derivative" << nl;
         
         // LOG << std::setprecision(10);
 
-        LOG << "Initial mesh..." << endl;
+        LOG << "Initial mesh..." << nl;
         
         MeshSimplicial3D M = StandardCube3D();
         
@@ -88,14 +88,14 @@ int main()
 
         for( int l = l_min; l <= l_max; l++ ){
             
-            LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << endl;
+            LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << nl;
             
             for( int k      =     0; k      <  M.getinnerdimension(); k++      ) 
             for( int r      = r_min; r      <=                 r_max; r++      ) 
             for( int r_plus =     0; r_plus <=            r_plus_max; r_plus++ ) 
             {
                 
-                LOG << "...assemble matrices: l=" << l << " k=" << k << " r=" << r << " rplus=" << r_plus << endl;
+                LOG << "...assemble matrices: l=" << l << " k=" << k << " r=" << r << " rplus=" << r_plus << nl;
         
                 SparseMatrix lower_diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), k, r          );
 
@@ -129,7 +129,7 @@ int main()
 
             if( l != l_max )
             {
-                LOG << "Refinement..." << endl;
+                LOG << "Refinement..." << nl;
             
                 M.uniformrefinement();
             }
@@ -189,7 +189,7 @@ int main()
         }
             
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test" << nl;
         
         return 0;
 }

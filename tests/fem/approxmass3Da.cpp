@@ -16,11 +16,11 @@ using namespace std;
 int main()
 {
         
-        LOG << "Unit Test: (3D) masses are correctly approximated: precomputed mass" << endl;
+        LOG << "Unit Test: (3D) masses are correctly approximated: precomputed mass" << nl;
         
         // LOG << std::setprecision(10);
 
-        LOG << "Initial mesh..." << endl;
+        LOG << "Initial mesh..." << nl;
         
         MeshSimplicial3D M = UnitCube3D();
         
@@ -151,14 +151,14 @@ int main()
 
         for( int l = l_min; l <= l_max; l++ ){
             
-            LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << endl;
+            LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << nl;
             
             for( int r = r_min; r <= r_max; r++ ) 
             {
                 
-                LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << endl;
+                LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << nl;
 
-                LOG << "assemble mass matrices..." << endl;
+                LOG << "assemble mass matrices..." << nl;
                 
                 SparseMatrix massmatrix_scalar = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
                 
@@ -173,7 +173,7 @@ int main()
                 assert( massmatrix_pseudo.isfinite() );
                 assert( massmatrix_volume.isfinite() );
                 
-                LOG << "experiments..." << endl;
+                LOG << "experiments..." << nl;
                 
                 for( int i = 0; i < experiments_scalar_field.size(); i++ ){
 
@@ -231,7 +231,7 @@ int main()
             
             if( l != l_max )
             {
-                LOG << "Refinement..." << endl;
+                LOG << "Refinement..." << nl;
             
                 M.uniformrefinement();
             }
@@ -328,7 +328,7 @@ int main()
         }
         
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test" << nl;
         
         return 0;
 }

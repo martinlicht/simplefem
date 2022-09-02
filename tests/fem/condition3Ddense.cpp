@@ -142,7 +142,7 @@ FloatVector Eigenvalues( DenseMatrix A, int repetitions, Float shift = 0. )
 int main()
 {
         
-        LOG << "Unit Test: (3D) condition numbers" << endl;
+        LOG << "Unit Test: (3D) condition numbers" << nl;
         
         MeshSimplicial3D M = RegularSimplex3D();
         
@@ -193,9 +193,9 @@ int main()
             for( int r = r_min; r <= r_max; r++ ) 
             {
                 
-                LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << endl;
+                LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << nl;
 
-                LOG << "...assemble mass matrices" << endl;
+                LOG << "...assemble mass matrices" << nl;
                 
                 auto massmatrix_scalar = DenseMatrix( FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r ) );
                 auto massmatrix_vector = DenseMatrix( FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r ) );
@@ -252,7 +252,7 @@ int main()
                 assert( s_stiff_vector.isfinite() ); assert( w_stiff_vector.isfinite() );
                 assert( s_stiff_pseudo.isfinite() ); assert( w_stiff_pseudo.isfinite() ); 
                 
-                LOG << "...diagonalize" << endl;
+                LOG << "...diagonalize" << nl;
                 
                 const int repetitions = 200;
                 
@@ -428,7 +428,7 @@ int main()
         
         LOG << nl;
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test" << nl;
         
         return 0;
 }

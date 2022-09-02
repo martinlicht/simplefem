@@ -1,6 +1,10 @@
-
+##########################################################################
+##########################################################################
+##########################################################################
+################## Project directory makefile 
 SHELL = /bin/sh
 
+# TODO: all phony targets should be declared as such in all files 
 
 # The default target builds all files  
 
@@ -9,18 +13,20 @@ default: build
 all: build tests benchmarks 
 	@echo "Finished all"
 
-.PHONY: default all 
+.PHONY: default all build tests benchmarks 
+
+
 
 
 # Prints the help message: a list of possible makefile targets
 
 .PHONY: help 
 help:
-	@echo Use one of the following targets:
+	@echo "Use one of the following targets:"
 	@echo ""
 	@echo " help:         Print this help."
 	@echo " build:        Build all FEECpp libraries, and compile the tests and benchmarks."
-	@echo " tests:        Run all tests for all components."
+	@echo " tests:        Run all tests for all modules."
 	@echo " benchmarks:   Perform the benchmarks." 
 	@echo " all:          build, test, and benchmark"
 	@echo " parameters:   Display the build parameters."
@@ -31,143 +37,179 @@ help:
 	@echo ""
 	@echo " The default target is [build]"
 	@echo ""
-	@echo " build, tests, and benchmark require only a C++20 compiler and GNU Make."
+	@echo " build, tests, and benchmark require only a C++14 compiler and GNU Make."
 
 
-# Describe the different components of the software
-
-components:=
-components+=basic
-components+=utility
-components+=combinatorics
-components+=operators
-components+=dense
-components+=sparse
-components+=solver
-components+=mesh
-components+=vtk
-#components+=matrixmarket
-components+=fem
 
 
+
+
+
+
+
+
+
+################################################################## 
+################################################################## 
+################################################################## 
+################################################################## 
+
+# Describe the different modules of the software
+# Provide all targets for the different modules in building the modules 
+
+
+modules:=
+modules+=basic
+modules+=utility
+modules+=combinatorics
+modules+=operators
+modules+=dense
+modules+=sparse
+modules+=solver
+modules+=mesh
+modules+=vtk
+#modules+=matrixmarket
+modules+=fem
+
+.PHONY: .buildmodules
+.buildmodules: $(patsubst %,%.build,$(modules))
+
+projectdir :=.
+
+include common.compile.mk
+
+moddir :=./basic
+module:=basic
+include common.module.mk
+
+moddir :=./utility
+module:=utility
+include common.module.mk
+
+moddir :=./combinatorics
+module:=combinatorics
+include common.module.mk
+
+moddir :=./operators
+module:=operators
+include common.module.mk
+
+moddir :=./dense
+module:=dense
+include common.module.mk
+
+moddir :=./sparse
+module:=sparse
+include common.module.mk
+
+moddir :=./solver
+module:=solver
+include common.module.mk
+
+moddir :=./mesh
+module:=mesh
+include common.module.mk
+
+moddir :=./vtk
+module:=vtk
+include common.module.mk
+
+moddir :=./fem
+module:=fem
+include common.module.mk
+
+
+
+################################################################## 
+################################################################## 
+################################################################## 
+################################################################## 
 
 # Describe the 'build' target and its subtargets
+# TODO: Recap all this .... 
 
-build.components   :=$(patsubst %,.build.%,   $(components) )
-build.components.a :=$(patsubst %,.build.%.a, $(components) )
-build.components.so:=$(patsubst %,.build.%.so,$(components) )
 
-build: .build.modules .build.tests .build.benchmarks
+.PHONY: build .buildmodules .buildtests .buildbenchmarks
 
-.build.modules: $(build.components)
+build: .buildmodules .buildtests .buildbenchmarks
 
-.build.tests:
-	@echo Build tests
+.buildmodules:
+	@echo Built modules 
+	
+.buildtests: | .buildmodules
+	@echo Building tests...
 	@cd ./tests/ && $(MAKE) --no-print-directory build
 
-.build.benchmarks:
-	@echo Build Benchmarks
+.buildbenchmarks: | .buildmodules
+	@echo Building benchmarks...
 	@cd ./benchmarks/ && $(MAKE) --no-print-directory build
 
-.build.a:  $(build.components.a)
 
-.build.so: $(build.components.so)
 
-$(build.components): .build.%: %
-	@echo Build: $*
-	@cd ./$* && $(MAKE) --no-print-directory build
+# # The target 'test' runs all the tests in the test directory 
 
-$(build.components.a): .build.%.a:
-	@echo Build A: $*
-	@cd ./$* && $(MAKE) --no-print-directory builda
+# test:
+# 	@cd ./tests && $(MAKE) --no-print-directory run
 
-$(build.components.so): .build.%.so: 
-	@echo Build SO: $*
-	@cd ./$* && $(MAKE) --no-print-directory buildso
+# .PHONY: test
 
-.PHONY: build .build.tests .build.benchmarks $(build.components)
-.PHONY: .build.a .build.so $(build.components.a) $(build.components.so) 
+
+# # The target 'benchmark' runs all the benchmarks in the benchmark directory
+
+# benchmarks:
+# 	@cd ./benchmarks && $(MAKE) --no-print-directory 
+
+# .PHONY: benchmarks
 
 
 
-# The target 'test' runs all the tests in the test directory 
-
-test:
-	@cd ./tests && $(MAKE) --no-print-directory run
-
-.PHONY: test
 
 
-# The target 'benchmark' runs all the benchmarks in the benchmark directory
 
-benchmarks:
-	@cd ./benchmarks && $(MAKE) --no-print-directory 
+.PHONY: clean
+clean:
+	@cd ./tests && $(MAKE) --no-print-directory clean
+	@echo "Finished cleaning."
 
-.PHONY: benchmarks
+.PHONY: vtkclean
+vtkclean:
+	@cd ./tests && $(MAKE) --no-print-directory vtkclean
+	@echo "Finished cleaning .vtk files."
 
+.PHONY: dependclean
+dependclean:
+	@cd ./tests && $(MAKE) --no-print-directory dependclean
+	@echo "Finished cleaning dependency information files."
 
-# Target 'check' is a generic test. Currently, it defaults to 'tidy'
+.PHONY: tidy
+tidy:
+	@cd ./tests && $(MAKE) --no-print-directory tidy
 
-check: tidy
+.PHONY: cppcheck
+cppcheck:
+	@cd ./tests && $(MAKE) --no-print-directory cppcheck
 
 .PHONY: check
+check:
+	@cd ./tests && $(MAKE) --no-print-directory check
 
 
-# Check all the headers for stand-alone compilation.
-# In particular, check for self-inclusion.
-
-checkheaders.components :=$(patsubst %,.checkheaders.%,$(components) )
-
-$(checkheaders.components): .checkheaders.%: 
-	@cd ./$* && $(MAKE) --no-print-directory checkheaders
-
-checkheaders: $(checkheaders.components)
-	@echo "finished..." 
-
-.PHONY: $(checkheaders.components) checkheaders
 
 
-# Target 'tidy' to call clang-tidy
-
-tidy.components :=$(patsubst %,.tidy.%,$(components) )
-
-$(tidy.components): .tidy.%: 
-	@cd ./$* && $(MAKE) --no-print-directory tidy
-
-tidy: $(tidy.components)
-	@$(MAKE) --no-print-directory -f common.upkeep.mk tidy
-
-.PHONY: $(tidy.components) tidy
-
-
-# Call 'cppcheck'
-cppcheck.components :=$(patsubst %,.cppcheck.%,$(components) )
-
-$(cppcheck.components): .cppcheck.%: 
-	@cd ./$* && $(MAKE) --no-print-directory cppcheck
-
-cppcheck: $(cppcheck.components)
-	@$(MAKE) --no-print-directory -f common.upkeep.mk cppcheck
-
-.PHONY: $(cppcheck.components) cppcheck
-
-
-# Call 'cpplint' 
-
-cpplint:
-#	@ cpplint --exclude=tests/* --exclude=tests/*/* --exclude=.legacy/* --exclude=.private/* --exclude=.playground/* --exclude=tests/.legacy/ --recursive --filter=-readability/todo,-build/header_guard,-build/include,-readability/alt_tokens,-whitespace,-legal --quiet . 2>&1 | sort | uniq -c > OUTPUT_CPPLINT.txt ; cat OUTPUT_CPPLINT.txt
-	@ ./Tools/cpplint.py --exclude=tests/* --exclude=tests/*/* --exclude=.legacy/* --exclude=.private/* --exclude=.playground/* --exclude=tests/.legacy/ --recursive --filter=-readability/todo,-build/header_guard,-build/include,-readability/alt_tokens,-whitespace,-legal --quiet . 2>&1 | sort | uniq -c > OUTPUT_CPPLINT.txt ; cat OUTPUT_CPPLINT.txt
+########################################################################
+# Apply cpplint to all cpp and hpp files in the entire source directory. Read-only. 
 
 .PHONY: cpplint
+cpplint:
+	( $(projectdir)/Tools/cpplint.py \
+	--exclude=$(projectdir)/.private/* --exclude=$(projectdir)/.legacy/* --exclude=$(projectdir)/.playground/* \
+	--filter=-whitespace,-legal,-build/namespace,-readability/alt_tokens,-readability/todo,-readability/inheritance \
+	--recursive --quiet $(projectdir) 2>&1 ) | \
+	sort | uniq | \
+	cat > $(projectdir)/OUTPUT_CPPLINT.txt; \
+	cat $(projectdir)/OUTPUT_CPPLINT.txt
 
 
-# print the build parameters
-
-parameters:
-	@$(MAKE) --no-print-directory -f common.compile.mk parameters
-	@true
-
-.PHONY: parameters 
 
 
 # Display the value of a variable
@@ -182,80 +224,5 @@ print-%:
 
 # Display the value of all variables.
 
-printall: $(subst :,\:,$(foreach variable,$(.VARIABLES),print-$(variable)))
-
 .PHONY: printall
-
-#printall: 
-#	@$(info $(foreach variable,$(.VARIABLES),print-$(variable)) )
-#	@true
-
-
-
-
-# 'Clean' target
-
-clean.components :=$(patsubst %,.clean.%,$(components) )
-
-$(clean.components): .clean.%: 
-	@cd ./$* && $(MAKE) --no-print-directory clean
-
-clean: $(clean.components)
-	@cd ./tests && $(MAKE) --no-print-directory clean
-	@cd ./benchmarks && $(MAKE) --no-print-directory clean
-	@$(MAKE) --no-print-directory -f common.upkeep.mk clean
-	@echo "finished cleaning files." 
-
-.PHONY: $(clean.components) clean
-
-
-# Clean all dependency files with this target 
-
-dependclean.components :=$(patsubst %,.dependclean.%,$(components) )
-
-$(dependclean.components): .dependclean.%: 
-	@cd ./$* && $(MAKE) --no-print-directory dependclean
-
-dependclean: $(dependclean.components)
-	@cd ./tests && $(MAKE) --no-print-directory dependclean
-	@cd ./benchmarks && $(MAKE) --no-print-directory dependclean
-	@$(MAKE) --no-print-directory -f common.upkeep.mk dependclean
-	@echo "finished cleaning dependency information files." 
-
-.PHONY: $(dependclean.components) dependclean
-
-
-# Clean all VTK files
-
-vtkclean.components :=$(patsubst %,.vtkclean.%,$(components) )
-
-$(vtkclean.components): .vtkclean.%: 
-	@cd ./$* && $(MAKE) --no-print-directory vtkclean
-
-vtkclean: $(vtkclean.components)
-	@cd ./tests && $(MAKE) --no-print-directory vtkclean
-	@cd ./benchmarks && $(MAKE) --no-print-directory vtkclean
-	@$(MAKE) --no-print-directory -f common.upkeep.mk vtkclean
-	@echo "finished cleaning .vtk files." 
-
-.PHONY: $(vtkclean.components) vtkclean
-
-
-# Find some common issues
-
-grepissues.components :=$(patsubst %,.grepissues.%,$(components) )
-
-$(grepissues.components): .grepissues.%: 
-	@cd ./$* && $(MAKE) --no-print-directory grepissues
-
-grepissues: $(grepissues.components)
-	@cd ./tests && $(MAKE) --no-print-directory grepissues
-	@cd ./benchmarks && $(MAKE) --no-print-directory grepissues
-	@$(MAKE) --no-print-directory -f common.upkeep.mk grepissues
-	@echo "finished cleaning .vtk files." 
-
-.PHONY: $(grepissues.components) grepissues
-
-
-
-
+printall: $(subst :,\:,$(foreach variable,$(.VARIABLES),print-$(variable)))
