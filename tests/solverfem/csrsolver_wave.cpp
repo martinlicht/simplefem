@@ -28,11 +28,11 @@ using namespace std;
 int main()
 {
         
-    LOG << "Unit Test: 2D Maxwell System" << endl;
+    LOG << "Unit Test: 2D Maxwell System" << nl;
     
     // LOG << std::setprecision(10);
 
-    LOG << "Initial mesh..." << endl;
+    LOG << "Initial mesh..." << nl;
     
     MeshSimplicial2D M = StandardSquare2D();
     
@@ -228,7 +228,7 @@ int main()
             
             LOG << "Polynomial degree: " << r << "/" << max_r << std::endl;
             
-            LOG << "...assemble partial matrices" << endl;
+            LOG << "...assemble partial matrices" << nl;
     
             SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   );
             SparseMatrix volume_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r-1 );
@@ -239,7 +239,7 @@ int main()
             SparseMatrix vector_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r );
             SparseMatrix vector_diffmatrix_t = vector_diffmatrix.getTranspose();
 
-            LOG << "...convert to CSR" << endl;
+            LOG << "...convert to CSR" << nl;
     
             auto MassMatrix = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix );
             auto DiffMatrix = MatrixCSR( vector_incmatrix_t & vector_diffmatrix_t & volume_massmatrix & vector_diffmatrix & vector_incmatrix );
@@ -247,7 +247,7 @@ int main()
             
             {
 
-                LOG << "...interpolate explicit solution and rhs" << endl;
+                LOG << "...interpolate explicit solution and rhs" << nl;
                 
                 FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 1, r,   experiment_sol  );
                 FloatVector interpol_curl = Interpolation( M, M.getinnerdimension(), 2, r-1, experiment_curl );
@@ -284,7 +284,7 @@ int main()
 
                     if( k== 0 and do_cgmpp )
                     {
-                        LOG << "CGM C++" << endl;
+                        LOG << "CGM C++" << nl;
                     
                         ConjugateGradientMethod Solver( SystemMatrix );
                         Solver.print_modulo        = 0;
@@ -301,7 +301,7 @@ int main()
 
                     if( k== 1 and do_crmpp_expl )
                     {
-                        LOG << "CRM C++" << endl;
+                        LOG << "CRM C++" << nl;
                     
                         ConjugateResidualMethod Solver( SystemMatrix );
                         Solver.print_modulo        = 0;
@@ -318,7 +318,7 @@ int main()
 
                     if( k== 2 and do_crmpp_robt )
                     {
-                        LOG << "CRM C++" << endl;
+                        LOG << "CRM C++" << nl;
                     
                         ConjugateResidualMethod Solver( SystemMatrix );
                         Solver.print_modulo        = 0;
@@ -335,7 +335,7 @@ int main()
 
                     if( k== 3 and do_crmpp_fast )
                     {
-                        LOG << "CRM C++" << endl;
+                        LOG << "CRM C++" << nl;
                     
                         ConjugateResidualMethod Solver( SystemMatrix );
                         Solver.print_modulo        = 0;
@@ -352,7 +352,7 @@ int main()
 
                     if( k== 4 and do_minres )
                     {
-                        LOG << "MINRES C++" << endl;
+                        LOG << "MINRES C++" << nl;
                     
                         MinimumResidualMethod Solver( SystemMatrix );
                         Solver.print_modulo        = 0;
@@ -369,7 +369,7 @@ int main()
 
                     if( k== 5 and do_herzog )
                     {
-                        LOG << "HERZOG SOODHALTER C++" << endl;
+                        LOG << "HERZOG SOODHALTER C++" << nl;
                     
                         HerzogSoodhalterMethod Solver( SystemMatrix );
                         Solver.print_modulo        = 0;
@@ -386,7 +386,7 @@ int main()
                     
                     if( k== 6 and do_cgm_csr )
                     {
-                        LOG << "CGM - CSR Classic" << endl;
+                        LOG << "CGM - CSR Classic" << nl;
                     
                         FloatVector residual( rhs );
                         auto max_iteration_count = sol.getdimension();
@@ -410,7 +410,7 @@ int main()
 
                     if( k== 7 and do_crm_csr )
                     {
-                        LOG << "CRM - CSR Classic" << endl;
+                        LOG << "CRM - CSR Classic" << nl;
                     
                         FloatVector residual( rhs );
                         auto max_iteration_count = sol.getdimension();
@@ -435,7 +435,7 @@ int main()
 
                     if( k== 8 and do_crm_csrtextbook )
                     {
-                        LOG << "CRM - CSR Textbook" << endl;
+                        LOG << "CRM - CSR Textbook" << nl;
                     
                         FloatVector residual( rhs );
                         auto max_iteration_count = sol.getdimension();
@@ -460,7 +460,7 @@ int main()
 
                     if( k== 9 and do_minres_csr )
                     {
-                        LOG << "MINRES CSR" << endl;
+                        LOG << "MINRES CSR" << nl;
                     
                         FloatVector residual( rhs );
                         auto max_iteration_count = sol.getdimension();
@@ -486,7 +486,7 @@ int main()
 
                     if( k==10 and do_whatever_csr )
                     {
-                        LOG << "WHATEVER CSR" << endl;
+                        LOG << "WHATEVER CSR" << nl;
                     
                         FloatVector residual( rhs );
                         auto max_iteration_count = sol.getdimension();
@@ -511,7 +511,7 @@ int main()
 
                     if( k==11 and do_cgm_diagonal_csr )
                     {
-                        LOG << "CGM - CSR Classic with diagonal preconditioning" << endl;
+                        LOG << "CGM - CSR Classic with diagonal preconditioning" << nl;
                         
                         auto precon = InverseDiagonalPreconditioner( SystemMatrix );
 
@@ -539,7 +539,7 @@ int main()
 
                     if( k==12 and do_cgm_ssor_csr )
                     {
-                        LOG << "CGM - CSR Classic with SSOR" << endl;
+                        LOG << "CGM - CSR Classic with SSOR" << nl;
                         
                         auto diagonal = SystemMatrix.diagonal();
 
@@ -568,7 +568,7 @@ int main()
 
                     assert( sol.isfinite() );
 
-                    LOG << "...compute error and residual:" << k << endl;
+                    LOG << "...compute error and residual:" << k << nl;
 
                     auto errornorm_aux_sol  = interpol_sol  - vector_incmatrix *  sol;
                     auto errornorm_aux_curl = interpol_curl - vector_diffmatrix * vector_incmatrix * sol;
@@ -611,7 +611,7 @@ int main()
     contable_iter .lg();
     contable_time .lg();
     
-    LOG << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test" << nl;
     
     return 0;
 }

@@ -4,7 +4,6 @@
 #include <cassert>
 #include <functional>
 //#include <memory>
-#include <ostream>
 #include <utility>
 
 #include "../basic.hpp"

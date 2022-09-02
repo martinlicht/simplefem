@@ -734,23 +734,23 @@ void MeshSimplicial2D::check() const
 
 void MeshSimplicial2D::print( std::ostream& os ) const
 {
-    os << "Printe Triangulation of 2D Manifold!" << std::endl;
+    os << "Printe Triangulation of 2D Manifold!" << nl;
     
     os << counter_triangles << space << counter_edges << space << counter_vertices << nl;
     
     
     
-    os << "Triangle edges" << std::endl;
+    os << "Triangle edges" << nl;
     
     for( const auto& triple : data_triangle_edges )
       os << triple[0] << space << triple[1] << space << triple[2] << nl;
     
-    os << "Edge first parent triangles" << std::endl;
+    os << "Edge first parent triangles" << nl;
     
     for( int fp : data_edge_firstparent_triangle )
       os << fp << nl;
     
-    os << "Triangle next parents of edges" << std::endl;
+    os << "Triangle next parents of edges" << nl;
     
     for( const auto& triple : data_triangle_nextparents_of_edges )
       os << triple[0] << space << triple[1] << space << triple[2] << nl;
@@ -758,34 +758,34 @@ void MeshSimplicial2D::print( std::ostream& os ) const
     
     
     
-    os << "Triangle vertices" << std::endl;
+    os << "Triangle vertices" << nl;
     
     for( const auto& triple : data_triangle_vertices )
       os << triple[0] << space << triple[1] << space << triple[2] << nl;
     
-    os << "Edge first parent triangles" << std::endl;
+    os << "Edge first parent triangles" << nl;
     
     for( int fp : data_vertex_firstparent_triangle )
       os << fp << nl;
     
-    os << "Triangle next parents of edges" << std::endl;
+    os << "Triangle next parents of edges" << nl;
     
     for( const auto& triple : data_triangle_nextparents_of_vertices )
       os << triple[0] << space << triple[1] << space << triple[2] << nl;
     
     
     
-    os << "Edge vertices" << std::endl;
+    os << "Edge vertices" << nl;
     
     for( const auto& duple : data_edge_vertices )
       os << duple[0] << space << duple[1] << nl;
     
-    os << "Vertex first parents" << std::endl;
+    os << "Vertex first parents" << nl;
     
     for( int fp : data_vertex_firstparent_edge )
       os << fp << nl;
     
-    os << "Edge next parents " << std::endl;
+    os << "Edge next parents " << nl;
     
     for( const auto& duple : data_edge_nextparents_of_vertices )
       os << duple[0] << space << duple[1] << nl;
@@ -2955,7 +2955,7 @@ void MeshSimplicial2D::midpoint_refinement_global()
     int N = counter_triangles;
     
     for( int t = 0; t < N; t++ ) {
-      LOG << t << std::endl;
+      LOG << t << nl;
       midpoint_refinement( t );
       
     }

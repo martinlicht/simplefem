@@ -2,7 +2,7 @@
 #include "generateindexmaps.hpp"
 
 #include <cassert>
-#include <algorithm>
+// #include <algorithm>
 #include <vector>
 
 #include "../basic.hpp"

@@ -169,27 +169,33 @@ inline std::string Concat2String( const T& t, const Params&... params )
 
 #ifdef USE_ORIGINAL_ASSERT_MACRO
 
-constexpr bool Cond( bool b ) { return b; }
-template<typename... Params> constexpr bool Cond( bool b, const Params&... params ) { return b; }
-
 #include <cassert>
 
 #if __cplusplus < 202002L
+constexpr bool Cond( bool b ) { return b; }
+template<typename... Params> constexpr bool Cond( bool b, const Params&... params ) { return b; }
 #define Assert(...)     assert(Cond(__VA_ARGS__))
 #else
 #define Assert(x,...)     assert(x)
-#endif
+#endif // __cplusplus < 202002L
 
 #define unreachable()   fprintf( stderr, "Unreachable reached: %s:%d\n", __FILE__, __LINE__ ),abort()
 #define unimplemented() fprintf( stderr,  "Unimplemented path: %s:%d\n", __FILE__, __LINE__ ),abort()
 
 #else // USE_ORIGINAL_ASSERT_MACRO
 
+#if __cplusplus < 202002L
+#include <cassert>
+constexpr bool Cond( bool b ) { return b; }
+template<typename... Params> constexpr bool Cond( bool b, const Params&... params ) { return b; }
+#define Assert(...)     assert(Cond(__VA_ARGS__))
+#else 
 #ifndef DISCARD_ASSERT_MESSAGES
 #define Assert(x,...) (static_cast<bool>(x)?(void(0)):myActualAssert( __FILE__, __LINE__, #x, 0 __VA_OPT__(+1)?Concat2String(__VA_ARGS__).c_str():nullptr ) )
 #else
 #define Assert(x,...) (static_cast<bool>(x)?(void(0)):myActualAssert( __FILE__, __LINE__, #x, nullptr ) )
-#endif 
+#endif // DISCARD_ASSERT_MESSAGES
+#endif // __cplusplus < 202002L
 
 
 #define unreachable()   { myActualUnreachable(__FILE__, __LINE__), abort(); }

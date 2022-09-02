@@ -3,7 +3,6 @@
 /**/
 
 #include <ostream>
-#include <iomanip>
 #include "../../basic.hpp"
 #include "../../dense/cholesky.hpp"
 #include "../../dense/functions.hpp"
@@ -16,10 +15,10 @@ using namespace std;
 
 int main()
 {
-    LOG << "Unit Tests for QR Algorithm" << endl;
+    LOG << "Unit Tests for QR Algorithm" << nl;
     
     {
-        LOG << "8. Unit Test for QR Factorization" << endl;
+        LOG << "8. Unit Test for QR Factorization" << nl;
     
         const int dim = 4;
         DenseMatrix A(dim,dim);
@@ -45,7 +44,7 @@ int main()
     
     
     
-    LOG << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test" << nl;
 
     return 0;
     

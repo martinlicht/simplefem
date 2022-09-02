@@ -1,4 +1,4 @@
-#include <ostream>
+#include <algorithm>
 #include <utility>
 #include <vector>
 

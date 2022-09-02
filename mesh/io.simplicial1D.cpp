@@ -45,41 +45,41 @@ MeshSimplicial1D readMeshSimplicial1D( const char* filename )
 void writeMeshSimplicial1D( std::ostream& out, const MeshSimplicial1D& mesh, bool sugar )
 {
     /* Preamble */
-    if( sugar ) out << "Writing simplicial 1D Mesh..." << std::endl;
+    if( sugar ) out << "Writing simplicial 1D Mesh..." << nl;
     
-    if( sugar ) out << "number of edges: " << std::endl;;
-    out << mesh.count_edges() << std::endl;
+    if( sugar ) out << "number of edges: " << nl;;
+    out << mesh.count_edges() << nl;
     
-    if( sugar ) out << "number of vertices: " << std::endl;
-    out << mesh.count_vertices() << std::endl;
+    if( sugar ) out << "number of vertices: " << nl;
+    out << mesh.count_vertices() << nl;
     
-    if( sugar ) out << "external dimension: " << std::endl;
-    out << mesh.getcoordinates().getdimension() << std::endl;
+    if( sugar ) out << "external dimension: " << nl;
+    out << mesh.getcoordinates().getdimension() << nl;
     
     /* edge -> vertices */
-    if( sugar ) out << "for each edge, the vertices: " << std::endl;
+    if( sugar ) out << "for each edge, the vertices: " << nl;
     for( int e = 0; e < mesh.count_edges(); e++ ) {
         if( sugar ) out << e << ": ";
         out << mesh.get_edge_vertex( e, 0 )
             << space
-            << mesh.get_edge_vertex( e, 1 ) << std::endl;
+            << mesh.get_edge_vertex( e, 1 ) << nl;
     }
     
-    if( sugar ) out << "for each vertex, the first parent edge: " << std::endl;
+    if( sugar ) out << "for each vertex, the first parent edge: " << nl;
     for( int v = 0; v < mesh.count_vertices(); v++ ) {
         if( sugar ) out << v << ": ";
         out << mesh.get_vertex_firstparent_edge( v )
-            << std::endl;
+            << nl;
     }
     
     /* edge -> next parent of vertex vertices */
-    if( sugar ) out << "for each edge, the next neighbors: " << std::endl;
+    if( sugar ) out << "for each edge, the next neighbors: " << nl;
     for( int e = 0; e < mesh.count_edges(); e++ ) {
         if( sugar ) out << e << ": ";
         out << mesh.get_edge_nextparent_of_vertex( e, 0 )
             << space
             << mesh.get_edge_nextparent_of_vertex( e, 1 )
-            << std::endl;
+            << nl;
     }
     
     assert( out.good() );

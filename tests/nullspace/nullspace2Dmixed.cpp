@@ -34,13 +34,13 @@ using namespace std;
 int main()
 {
         
-        LOG << "Unit Test: Compute a nullspace " << endl;
+        LOG << "Unit Test: Compute a nullspace " << nl;
         
         // LOG << std::setprecision(10);
 
         if(true){
 
-            LOG << "Initial mesh..." << endl;
+            LOG << "Initial mesh..." << nl;
             
             MeshSimplicial2D Mx = StandardSquare2D();
             
@@ -67,7 +67,7 @@ int main()
                     };
             
 
-            LOG << "Nullspace computation" << endl;
+            LOG << "Nullspace computation" << nl;
 
             ConvergenceTable contable("Mass error");
             
@@ -103,7 +103,7 @@ int main()
                     
                     LOG << "Polynomial degree: " << r << "/" << max_r << std::endl;
                     
-                    LOG << "...assemble partial matrices" << endl;
+                    LOG << "...assemble partial matrices" << nl;
             
                     SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   );
                     
@@ -120,7 +120,7 @@ int main()
                     SparseMatrix volume_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 2, r-1 );
                     SparseMatrix volume_incmatrix_t = volume_incmatrix.getTranspose();
                     
-                    LOG << "... assemble full matrices" << endl;
+                    LOG << "... assemble full matrices" << nl;
             
                     auto physical_mass = volume_incmatrix_t * volume_massmatrix * volume_incmatrix;
 
@@ -406,7 +406,7 @@ int main()
         
         
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test" << nl;
         
         return 0;
 }

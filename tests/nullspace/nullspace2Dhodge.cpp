@@ -35,13 +35,13 @@ using namespace std;
 int main()
 {
         
-        LOG << "Unit Test: Compare numerical solvers CRM vs MINRES\n           for Solution of Dirichlet Problem" << endl;
+        LOG << "Unit Test: Compare numerical solvers CRM vs MINRES\n           for Solution of Dirichlet Problem" << nl;
         
         // LOG << std::setprecision(10);
 
         if(true){
 
-            LOG << "Initial mesh..." << endl;
+            LOG << "Initial mesh..." << nl;
             
             MeshSimplicial2D Mx = StandardSquare2D_tiles3x3();
             
@@ -92,7 +92,7 @@ int main()
                     };
             
 
-            LOG << "Nullspace computation" << endl;
+            LOG << "Nullspace computation" << nl;
 
             ConvergenceTable contable("Mass error");
             
@@ -130,7 +130,7 @@ int main()
                     
                     LOG << "Polynomial degree: " << r << "/" << max_r << std::endl;
                     
-                    LOG << "...assemble partial matrices" << endl;
+                    LOG << "...assemble partial matrices" << nl;
             
                     SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r   );
                     SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   );
@@ -152,7 +152,7 @@ int main()
                     SparseMatrix vector_diffmatrix_t = vector_diffmatrix.getTranspose();
 
 
-                    LOG << "... full matrices" << endl;
+                    LOG << "... full matrices" << nl;
             
                     auto mass = vector_incmatrix_t * vector_massmatrix * vector_incmatrix;
 
@@ -425,7 +425,7 @@ int main()
         
         
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test" << nl;
         
         return 0;
 }

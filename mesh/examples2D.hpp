@@ -3,7 +3,7 @@
 
 
 #include <cmath>
-#include <algorithm>
+// #include <algorithm>
 #include <vector>
 
 #include "mesh.hpp"
@@ -420,7 +420,13 @@ inline MeshSimplicial2D Halo( int K = 1, int L = 3 )
     
     assert( tris.size() == num_triangles );
 
-    for( auto& t : tris ) std::sort( t.begin(), t.end() );
+    for( auto& t : tris ) //std::sort( t.begin(), t.end() );
+    {
+      if( t[0] > t[1] ) { int i = t[0]; t[0] = t[1]; t[1] = i; }
+      if( t[0] > t[2] ) { int i = t[0]; t[0] = t[2]; t[2] = i; }
+      if( t[1] > t[2] ) { int i = t[1]; t[1] = t[2]; t[2] = i; }
+      assert( t[0] < t[1] and t[1] < t[2] );
+    }
     
     return MeshSimplicial2D(
       3,
@@ -462,9 +468,13 @@ inline MeshSimplicial2D UnitDisk( int L = 1 )
     // 2.1 Calculate the radii
     
     std::vector<Float> Rs(L);
+    
     Rs[0] = 1.;
     for( int l = 1; l < L; l++ ) Rs[l] = Rs[l-1] + 1.5 * Constants::twopi * Rs[l-1] / ( 3. * power_numerical( 2., l ) );
-    Float Rmax = *std::max_element(Rs.begin(),Rs.end());
+    
+    Float Rmax = Rs[0];
+    for( const Float R : Rs ) if( Rmax < R ) Rmax = R; // *std::max_element(Rs.begin(),Rs.end());
+    
     for( Float& R : Rs ) R /= Rmax;
     
     // 2.2 fill in the values
@@ -527,7 +537,13 @@ inline MeshSimplicial2D UnitDisk( int L = 1 )
 //     for( auto t : tris ){ for( auto v : t ) 
 //         LOG << v << space; LOG << nl; }
     
-    for( auto& t : tris ) std::sort( t.begin(), t.end() );
+    for( auto& t : tris ) //std::sort( t.begin(), t.end() );
+    {
+      if( t[0] > t[1] ) { int i = t[0]; t[0] = t[1]; t[1] = i; }
+      if( t[0] > t[2] ) { int i = t[0]; t[0] = t[2]; t[2] = i; }
+      if( t[1] > t[2] ) { int i = t[1]; t[1] = t[2]; t[2] = i; }
+      assert( t[0] < t[1] and t[1] < t[2] );
+    }
     
 //     for( auto t : tris ){ for( auto v : t ) 
 //         LOG << v << space; LOG << nl; }
@@ -574,7 +590,10 @@ inline MeshSimplicial2D Annulus( int Linner, int Louter = 1 )
     std::vector<Float> Rs(Louter);
     for( int l = 0; l < Linner; l++ ) Rs[l] = 1.;
     for( int l = Linner; l < Louter; l++ ) Rs[l] = Rs[l-1] + 1.5 * 2 * 3.14159 * Rs[l-1] / ( 3. * (1<<(l)) );
-    Float Rmax = *std::max_element(Rs.begin(),Rs.end());
+    
+    Float Rmax = Rs[0];
+    for( const Float R : Rs ) if( Rmax < R ) Rmax = R; // *std::max_element(Rs.begin(),Rs.end());
+    
     for( Float& R : Rs ) R = power_numerical( R / Rmax, 1.5 );
     
     // 2.2 fill in the values
@@ -635,7 +654,13 @@ inline MeshSimplicial2D Annulus( int Linner, int Louter = 1 )
 //     for( auto t : tris ){ for( auto v : t ) 
 //         LOG << v << space; LOG << nl; }
     
-    for( auto& t : tris ) std::sort( t.begin(), t.end() );
+    for( auto& t : tris ) //std::sort( t.begin(), t.end() );
+    {
+      if( t[0] > t[1] ) { int i = t[0]; t[0] = t[1]; t[1] = i; }
+      if( t[0] > t[2] ) { int i = t[0]; t[0] = t[2]; t[2] = i; }
+      if( t[1] > t[2] ) { int i = t[1]; t[1] = t[2]; t[2] = i; }
+      assert( t[0] < t[1] and t[1] < t[2] );
+    }
     
 //     for( auto t : tris ){ for( auto v : t ) 
 //         LOG << v << space; LOG << nl; }

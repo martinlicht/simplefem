@@ -17,6 +17,12 @@
 # 
 #  
 
+################################################################################
+# EXPECTED VARIABLES:
+# - projectdir : path/to/project/directory
+ifndef projectdir
+$(error Expect 'projectdir')
+endif
 
 
 
@@ -107,7 +113,7 @@ FLAG_NO_EXCEPTIONS=yes
 
 # Use this file to overwrite the default settings above on a local machine
 # At this point, only the flags above will be set.
--include OVERWRITE.COMPILE.mk
+-include $(projectdir)/OVERWRITE.COMPILE.mk
 
 # If we are in RELEASE_MODE then set the following flags 
 
@@ -576,7 +582,7 @@ endif
 
 # Use this file to overwrite the default settings above on a local machine
 # At this point, also the compiler flags will be set 
--include OVERWRITE.COMPILE.mk
+-include $(projectdir)/OVERWRITE.COMPILE.mk
 
 
 

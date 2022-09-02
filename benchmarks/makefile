@@ -1,13 +1,13 @@
 SHELL = /bin/sh
 
+.PHONY:default 
 default: build
 
+projectdir :=.
+
 include ../common.compile.mk 
-include ../common.upkeep.mk
 
 affices:= fem vtk mesh solver dense sparse operators combinatorics utility basic
-
-depdir := .deps
 
 ifeq ($(OS),Windows_NT)
 ending := exe
@@ -19,7 +19,7 @@ sources      := $(wildcard ./*.cpp)
 outs         := $(patsubst %.cpp,%.$(ending),$(sources))
 runs         := $(patsubst %.cpp,%.run,$(sources))
 dependencies := $(patsubst ./%.cpp,./.deps/%.d,$(sources))
-depdir       := ./$(depdir)
+depdir       := ./.deps
 
 linkerprefix :=-Wl,
 includes := $(patsubst %,-L../%,$(affices))
@@ -28,21 +28,28 @@ rpath    := $(patsubst %,$(linkerprefix)%,$(rpath_t))
 link     := $(patsubst %,-l%,$(affices))
 
 $(depdir):
-	@mkdir -p $@
+	@"mkdir" -p $@
+
+DEPFLAGS = -MT $@ -MF .deps/$*.d -MP -MMD
+# We generate dependency files during compilation using the following compiler flags 
+# -MT $@ : sets the target of the makefile rule, stripped of any directory components
+# -MP    : add dependencies as phony targets
+# -MF ...: sets the output file for the rules 
+# -MMD   : list headers as a by-product of compiling, excluding system headers
 
 $(outs): ./%.$(ending): ./%.cpp | $(depdir)
 	@echo Compiling $@ ...
-	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -MM ./$*.cpp -MT $@ -MF $(depdir)/$*.d
 ifeq ($(LINKINGTYPE),dynamic)
-	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(includes) $(rpath) $(link) -o $@ $(LDLIBS)
+	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(includes) $(rpath) $(link) -o $@ $(LDLIBS) $(DEPFLAGS)
 else
-	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(includes)          $(link) -o $@ $(LDLIBS)
+	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(includes)          $(link) -o $@ $(LDLIBS) $(DEPFLAGS)
 endif
 	
 -include $(dependencies)
 
-%.$(ending): ./makefile ../makefile ../common.compile.mk ../common.upkeep.mk
+%.$(ending): ./makefile ../makefile ../common.compile.mk
 
+.PHONY: build
 build: $(outs)
 
 

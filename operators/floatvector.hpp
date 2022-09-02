@@ -61,7 +61,7 @@ class FloatVector
 
         void print( std::ostream& ) const;
         
-        // void lg() const { LOG << text() << std::endl; };
+        // void lg() const { LOG << text() << nl; };
         
         
         /* OTHER METHODS */

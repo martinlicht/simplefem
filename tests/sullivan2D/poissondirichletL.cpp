@@ -27,13 +27,13 @@ using namespace std;
 int main()
 {
         
-        LOG << "Unit Test for Solution of Dirichlet Problem" << endl;
+        LOG << "Unit Test for Solution of Dirichlet Problem" << nl;
         
         // LOG << std::setprecision(10);
 
         if(true){
 
-            LOG << "Initial mesh..." << endl;
+            LOG << "Initial mesh..." << nl;
             
             MeshSimplicial2D M = LShapedDomain2D();
 
@@ -43,7 +43,7 @@ int main()
             
             M.check_dirichlet_flags();
             
-            LOG << "Prepare scalar fields for testing..." << endl;
+            LOG << "Prepare scalar fields for testing..." << nl;
             
 
             std::function<FloatVector(const FloatVector&)> constant_one
@@ -81,7 +81,7 @@ int main()
 
             
 
-            LOG << "Solving Poisson Problem with Dirichlet boundary conditions" << endl;
+            LOG << "Solving Poisson Problem with Dirichlet boundary conditions" << nl;
 
             const int min_l = 0; 
             const int max_l = 3;
@@ -104,7 +104,7 @@ int main()
                 LOG << "Level: " << l << "/" << max_l << std::endl;
                 LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
-                LOG << "...assemble matrices" << endl;
+                LOG << "...assemble matrices" << nl;
         
                 SparseMatrix     scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r+0 );
                 SparseMatrix aug_scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r+1 );
@@ -154,7 +154,7 @@ int main()
                 timestamp start = gettimestamp();
 
                 {
-                    LOG << "...iterative solver 1" << endl;
+                    LOG << "...iterative solver 1" << nl;
                 
                     sol.zero();
                     ConjugateGradientMethod Solver( stiffness_csr );
@@ -162,7 +162,7 @@ int main()
                 }
 
                 {
-                    LOG << "...iterative solver 2" << endl;
+                    LOG << "...iterative solver 2" << nl;
                 
                     aug_sol.zero();
                     ConjugateGradientMethod Solver( aug_stiffness_csr );
@@ -172,7 +172,7 @@ int main()
                 timestamp end = gettimestamp();
                 LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
-                LOG << "...compute error and residual:" << endl;
+                LOG << "...compute error and residual:" << nl;
 
                 FloatVector error     = aug_incmatrix * aug_sol - elevation_matrix * incmatrix * sol;
                 FloatVector graderror = aug_diffmatrix * ( aug_incmatrix * aug_sol - elevation_matrix * incmatrix * sol );
@@ -180,10 +180,10 @@ int main()
                 Float graderrornorm   = std::sqrt( graderror * ( aug_vector_massmatrix * graderror ) );
                 Float residualnorm  = ( rhs - stiffness * sol ).norm();
 
-                LOG << "error:     " << errornorm    << endl;
-                LOG << "graderror: " << graderrornorm << endl;
-                LOG << "residual:  " << residualnorm << endl;
-                LOG << "time:      " << Float( end - start ) << endl;
+                LOG << "error:     " << errornorm    << nl;
+                LOG << "graderror: " << graderrornorm << nl;
+                LOG << "residual:  " << residualnorm << nl;
+                LOG << "time:      " << Float( end - start ) << nl;
                         
                 contable << errornorm;
                 contable << graderrornorm;
@@ -195,18 +195,13 @@ int main()
 
 
                 if( r == 1 ){
-            
                     fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
-        
                     VTKWriter vtk( M, fs, getbasename(__FILE__) );
                     vtk.writeCoordinateBlock();
                     vtk.writeTopDimensionalCells();
-                    
                     vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
                     // vtk.writeCellVectorData( interpol_grad, "gradient_interpolation" , 0.1 );
-                    
                     fs.close();
-            
                 }
                 
                 if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
@@ -219,7 +214,7 @@ int main()
         
         
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test" << nl;
         
         return 0;
 }

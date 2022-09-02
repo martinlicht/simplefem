@@ -51,11 +51,11 @@ std::string Coordinates::text() const
 
 void Coordinates::print( std::ostream& os ) const
 {
-    os << "dimension: " << dimension << " - #vertices: " << number << std::endl;
+    os << "dimension: " << dimension << " - #vertices: " << number << nl;
     for( int n = 0; n < number; n++ ) {
         for( int d = 0; d < dimension; d++ )
             os << getdata( n, d ) << " ";
-        os << std::endl;
+        os << nl;
     }
 }
 

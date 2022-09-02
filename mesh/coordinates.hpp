@@ -49,7 +49,7 @@ class Coordinates
         void print( std::ostream& ) const;
         std::string text() const;
         
-        // // void lg() const { LOG << *this << std::endl; };
+        // // void lg() const { LOG << *this << nl; };
         
 
         void read( std::istream& ) ;

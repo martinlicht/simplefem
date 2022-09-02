@@ -1,4 +1,3 @@
-#include <ostream>
 #include <vector>
 
 #include "../basic.hpp"

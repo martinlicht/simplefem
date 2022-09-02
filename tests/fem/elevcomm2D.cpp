@@ -18,11 +18,11 @@ using namespace std;
 int main()
 {
         
-        LOG << "Unit Test: (1D) degree elevations commute" << endl;
+        LOG << "Unit Test: (1D) degree elevations commute" << nl;
         
         // LOG << std::setprecision(10);
 
-        LOG << "Initial mesh..." << endl;
+        LOG << "Initial mesh..." << nl;
         
         auto M = UnitSquare2D();
         
@@ -51,17 +51,17 @@ int main()
 
         for( int l = l_min; l <= l_max; l++ ){
             
-            LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << endl;
+            LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << nl;
             
             for( int k = 0; k <= M.getinnerdimension(); k++ ) 
             for( int r = r_min; r <= r_max; r++ ) 
             {
                 
-                LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << endl;
+                LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << nl;
 
-                LOG << "Form degree: " << space << k << endl;
+                LOG << "Form degree: " << space << k << nl;
 
-                LOG << "assemble matrices..." << endl;
+                LOG << "assemble matrices..." << nl;
         
                 SparseMatrix elevation_r_1 = FEECBrokenElevationMatrix( M, M.getinnerdimension(), k, r  , 1 );
                 SparseMatrix elevation_r_2 = FEECBrokenElevationMatrix( M, M.getinnerdimension(), k, r+1, 1 );
@@ -92,7 +92,7 @@ int main()
 
             if( l != l_max )
             {
-                LOG << "Refinement..." << endl;
+                LOG << "Refinement..." << nl;
             
                 M.uniformrefinement();
             }
@@ -143,7 +143,7 @@ int main()
         
         
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test" << nl;
         
         return 0;
 }

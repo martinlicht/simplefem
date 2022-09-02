@@ -7,7 +7,7 @@
 
 #ifndef USE_PRIMITIVE_LOGGING
 
-#include <ostream>
+// #include <ostream>
 #include <string>
 #include <sstream>
 

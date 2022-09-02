@@ -15,22 +15,22 @@ using namespace std;
 
 int main()
 {
-    LOG << "Unit Test for Manifold 1D Module" << endl;
+    LOG << "Unit Test for Manifold 1D Module" << nl;
 
     MeshSimplicial1D M = StandardInterval1D();
     
-    LOG << "Check" << endl;
+    LOG << "Check" << nl;
     
     M.check();
 
-    LOG << M << endl;
+    LOG << M << nl;
     
-    LOG << "Start refinement" << endl;
+    LOG << "Start refinement" << nl;
     
     for( int c = 0; c < 10; c++ )
         M.improved_uniformrefinement();
     
-    LOG << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test" << nl;
 
     return 0;
 }

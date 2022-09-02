@@ -12,7 +12,7 @@ using namespace std;
 
 int main()
 {
-        LOG << "Unit Test: Evaluation Matrix and its Invertibility" << endl;
+        LOG << "Unit Test: Evaluation Matrix and its Invertibility" << nl;
         
         // LOG << std::setprecision(10);
         
@@ -24,8 +24,8 @@ int main()
         for( int n = n_min; n <= n_max; n++ )
         for( int r = r_min; r <= r_max; r++ )
         {
-            LOG << "Dimension: " << space << n_min << " <= " << n << " <= " << n_max << endl;
-            LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << endl;
+            LOG << "Dimension: " << space << n_min << " <= " << n << " <= " << n_max << nl;
+            LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << nl;
             
             const auto lpsbc = InterpolationPointsBarycentricCoordinates( n, r );
             
@@ -47,7 +47,7 @@ int main()
             
         }
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test" << nl;
         
         
         return 0;

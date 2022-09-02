@@ -1,12 +1,14 @@
 SHELL = /bin/sh
 
+.PHONY: default 
 default: build
 
+.PHONY: build 
+# build is set up below 
+
+projectdir :=..
+
 include ../common.compile.mk 
-
-include tests.affices.mk
-
-
 
 components:=
 components+=basic
@@ -29,14 +31,16 @@ components+=solverfem
 components+=nullspace
 
 
+# cleanfiles    :=
+# vtkcleanfiles :=
+# depcleanfiles :=
 
-%.out: ./makefile tests.rules.mk tests.affices.mk ../common.compile.mk
 
+include tests.affices.mk
 
-depdir := .deps
-
+testsdir:=.
 projectdir:=../
-pathvar:=$(shell pwd)/../
+pathvar:=$(CURDIR)/../
 
 contextdir:=./basic
 context:=basic
@@ -143,64 +147,93 @@ build: afem.tests
 
 
 
-
-# 
-
-clean.components :=$(patsubst %,.clean.%,$(components) )
-
-.PHONY: $(clean.components)
-$(clean.components): .clean.%: 
-	@cd ./$* && $(MAKE) --no-print-directory clean
-
 .PHONY: clean
-clean: $(clean.components)
-	@$(MAKE) --no-print-directory -f ../common.upkeep.mk clean
-	@echo "finished cleaning." 
+clean:
+	@echo "Finished cleaning test directory." 
 
-
-dependclean.components :=$(patsubst %,.dependclean.%,$(components) )
-
-.PHONY: $(dependclean.components)
-$(dependclean.components): .dependclean.%: 
-	@cd ./$* && $(MAKE) --no-print-directory dependclean
 
 .PHONY: dependclean
-dependclean: $(dependclean.components)
-	$(MAKE) --no-print-directory -f ../common.upkeep.mk dependclean
-	@echo "finished cleaning dependency information files." 
+dependclean:
+	@echo "Finished cleaning test directory dependency information files." 
 
-
-vtkclean.components :=$(patsubst %,.vtkclean.%,$(components) )
-
-.PHONY: $(vtkclean.components)
-$(vtkclean.components): .vtkclean.%: 
-	@cd ./$* && $(MAKE) --no-print-directory vtkclean
 
 .PHONY: vtkclean
-vtkclean: $(vtkclean.components)
-	$(MAKE) --no-print-directory -f ../common.upkeep.mk vtkclean
-	@echo "finished cleaning .vtk files." 
+vtkclean:
+	@echo "Finished cleaning test directory .vtk files." 
 
 
-tidy.components :=$(patsubst %,.tidy.%,$(components) )
-
-.PHONY: $(tidy.components)
-$(tidy.components): .tidy.%: 
-	@cd ./$* && $(MAKE) --no-print-directory tidy
-
-.PHONY: tidy
-tidy: $(tidy.components)
-	$(MAKE) --no-print-directory -f ../common.upkeep.mk tidy
 
 
-cppcheck.components :=$(patsubst %,.cppcheck.%,$(components) )
 
-.PHONY: $(cppcheck.components)
-$(cppcheck.components): .cppcheck.%: 
-	@cd ./$* && $(MAKE) --no-print-directory cppcheck
 
-.PHONY: cppcheck
-cppcheck: $(cppcheck.components)
-	$(MAKE) --no-print-directory -f ../common.upkeep.mk cppcheck
+# clean:
+# 	echo $(cleanfiles)
+
+# vtkclean:
+# 	echo $(vtkcleanfiles)
+
+# depclean:
+# 	echo $(depcleanfiles)
+	
+
+
+
+
+# clean.components :=$(patsubst %,.clean.%,$(components) )
+
+# .PHONY: $(clean.components)
+# $(clean.components): .clean.%: 
+# 	@cd ./$* && $(MAKE) --no-print-directory clean
+
+# .PHONY: clean
+# clean: $(clean.components)
+# 	@$(MAKE) --no-print-directory -f ../common.upkeep.mk clean
+# 	@echo "Finished cleaning." 
+
+
+# dependclean.components :=$(patsubst %,.dependclean.%,$(components) )
+
+# .PHONY: $(dependclean.components)
+# $(dependclean.components): .dependclean.%: 
+# 	@cd ./$* && $(MAKE) --no-print-directory dependclean
+
+# .PHONY: dependclean
+# dependclean: $(dependclean.components)
+# 	$(MAKE) --no-print-directory -f ../common.upkeep.mk dependclean
+# 	@echo "Finished cleaning dependency information files." 
+
+
+# vtkclean.components :=$(patsubst %,.vtkclean.%,$(components) )
+
+# .PHONY: $(vtkclean.components)
+# $(vtkclean.components): .vtkclean.%: 
+# 	@cd ./$* && $(MAKE) --no-print-directory vtkclean
+
+# .PHONY: vtkclean
+# vtkclean: $(vtkclean.components)
+# 	$(MAKE) --no-print-directory -f ../common.upkeep.mk vtkclean
+# 	@echo "Finished cleaning .vtk files." 
+
+
+# tidy.components :=$(patsubst %,.tidy.%,$(components) )
+
+# .PHONY: $(tidy.components)
+# $(tidy.components): .tidy.%: 
+# 	@cd ./$* && $(MAKE) --no-print-directory tidy
+
+# .PHONY: tidy
+# tidy: $(tidy.components)
+# 	$(MAKE) --no-print-directory -f ../common.upkeep.mk tidy
+
+
+# cppcheck.components :=$(patsubst %,.cppcheck.%,$(components) )
+
+# .PHONY: $(cppcheck.components)
+# $(cppcheck.components): .cppcheck.%: 
+# 	@cd ./$* && $(MAKE) --no-print-directory cppcheck
+
+# .PHONY: cppcheck
+# cppcheck: $(cppcheck.components)
+# 	$(MAKE) --no-print-directory -f ../common.upkeep.mk cppcheck
 
 

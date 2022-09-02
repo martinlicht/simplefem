@@ -170,7 +170,7 @@ void SparseMatrix::printplain( std::ostream& os ) const
 {
     for( const MatrixEntry& entry : entries )
         os << entry.row << " " << entry.column << " " << entry.value << nl;
-    os << std::endl;
+    os << nl;
 }
 
 
@@ -588,15 +588,15 @@ SparseMatrix SparseMatrixMultiplication( const SparseMatrix& left, const SparseM
 
     assert( left.getdimin() == right.getdimout() );
     
-//     LOG << "--- SparseMatrix Product" << std::endl;
-//     LOG << "--- Sort and compress" << std::endl;
+//     LOG << "--- SparseMatrix Product" << nl;
+//     LOG << "--- Sort and compress" << nl;
 
     // TimeBeacon beacon;
     
     left.sortandcompressentries( SparseMatrix::MatrixEntrySorting::columnwise );
     right.sortandcompressentries( SparseMatrix::MatrixEntrySorting::rowwise );
 
-    // beacon.ping("Sorted"); // LOG << "--- Counting" << std::endl;
+    // beacon.ping("Sorted"); // LOG << "--- Counting" << nl;
     
     const int lnum = left.getnumberofentries();
     const int rnum = right.getnumberofentries();
@@ -638,7 +638,7 @@ SparseMatrix SparseMatrixMultiplication( const SparseMatrix& left, const SparseM
 
     }
     
-    // beacon.ping("Counted"); // LOG << "--- Assemble" << std::endl;
+    // beacon.ping("Counted"); // LOG << "--- Assemble" << nl;
 
     std::vector<SparseMatrix::MatrixEntry> new_entries;
     new_entries.reserve( counter );
@@ -685,13 +685,13 @@ SparseMatrix SparseMatrixMultiplication( const SparseMatrix& left, const SparseM
 
     }
 
-    // beacon.ping("Assembled"); // LOG << "--- Construct" << std::endl;
+    // beacon.ping("Assembled"); // LOG << "--- Construct" << nl;
 
     assert( new_entries.size() == counter );
 
     SparseMatrix ret( left.getdimout(), right.getdimin(), new_entries );
         
-    // beacon.ping("Re-sort"); // LOG << "--- Sort and compress again" << std::endl;
+    // beacon.ping("Re-sort"); // LOG << "--- Sort and compress again" << nl;
     
     ret.sortandcompressentries();
     
@@ -701,13 +701,13 @@ SparseMatrix SparseMatrixMultiplication( const SparseMatrix& left, const SparseM
 
 // {
 // 
-//     LOG << "--- SparseMatrix Product" << std::endl;
-//     LOG << "--- Sort and compress" << std::endl;
+//     LOG << "--- SparseMatrix Product" << nl;
+//     LOG << "--- Sort and compress" << nl;
 //     
 //     left.sortandcompressentries( SparseMatrix::MatrixEntrySorting::columnwise );
 //     right.sortandcompressentries( SparseMatrix::MatrixEntrySorting::rowwise );
 // 
-//     LOG << "--- Counting" << std::endl;
+//     LOG << "--- Counting" << nl;
 //     
 //     int counter = 0;
 //     for( SparseMatrix::MatrixEntry l : left.getentries()  )
@@ -715,7 +715,7 @@ SparseMatrix SparseMatrixMultiplication( const SparseMatrix& left, const SparseM
 //         if( l.column == r.row ) 
 //             counter++;
 // 
-//     LOG << "--- Assemble" << std::endl;
+//     LOG << "--- Assemble" << nl;
 //     
 //     std::vector<SparseMatrix::MatrixEntry> new_entries;
 //     new_entries.reserve( counter );
@@ -726,10 +726,10 @@ SparseMatrix SparseMatrixMultiplication( const SparseMatrix& left, const SparseM
 //     
 //     assert( new_entries.size() == counter );
 // 
-//     LOG << "--- Construct" << std::endl;
+//     LOG << "--- Construct" << nl;
 //     SparseMatrix ret( left.getdimout(), right.getdimin(), new_entries );
 //         
-//     LOG << "--- Sort and compress again" << std::endl;
+//     LOG << "--- Sort and compress again" << nl;
 //     ret.sortandcompressentries();
 //     
 //     return ret;

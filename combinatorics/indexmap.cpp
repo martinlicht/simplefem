@@ -19,7 +19,7 @@
 // : src(from), dest(to), values( std::max( src.max() - src.min() + 1, 0 ), to.min() )
 // {
 //     if( src.max() >= src.min() )
-//       LOG << "Index Map initialized without actual values" << std::endl;
+//       LOG << "Index Map initialized without actual values" << nl;
 //     src.check();
 //     to.check();
 //     check();

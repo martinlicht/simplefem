@@ -11,7 +11,7 @@ using namespace std;
 
 int main()
 {
-    cout << "Unit Test and Benchmark for Factorials and Binomials" << endl;
+    cout << "Unit Test and Benchmark for Factorials and Binomials" << nl;
     
     /* survey factorials */
 
@@ -126,7 +126,7 @@ int main()
     std::cout << "Numerical, Loop method, elapsed time:  " << elapsed_seconds_n_loop.count()  << "s\n";
     std::cout << "Numerical, Table method, elapsed time: " << elapsed_seconds_n_table.count() << "s\n";    
     
-    cout << "Finished Unit Test" << endl;
+    cout << "Finished Unit Test" << nl;
     
     return 0;
 }

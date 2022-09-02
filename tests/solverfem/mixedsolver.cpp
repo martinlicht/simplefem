@@ -27,13 +27,13 @@ using namespace std;
 int main()
 {
         
-        LOG << "Unit Test: 2D Maxwell System" << endl;
+        LOG << "Unit Test: 2D Maxwell System" << nl;
         
         // LOG << std::setprecision(10);
 
         if(true){
 
-            LOG << "Initial mesh..." << endl;
+            LOG << "Initial mesh..." << nl;
             
             MeshSimplicial2D M = StandardSquare2D();
             
@@ -159,7 +159,7 @@ int main()
                     
                     LOG << "Polynomial degree: " << r << "/" << max_r << std::endl;
                     
-                    LOG << "...assemble partial matrices" << endl;
+                    LOG << "...assemble partial matrices" << nl;
             
                     SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r   );
                     SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   );
@@ -181,7 +181,7 @@ int main()
                     SparseMatrix vector_diffmatrix_t = vector_diffmatrix.getTranspose();
 
 
-                    LOG << "... full matrices" << endl;
+                    LOG << "... full matrices" << nl;
             
                     auto mass = vector_incmatrix_t * vector_massmatrix * vector_incmatrix;
 
@@ -213,7 +213,7 @@ int main()
                     
                     {
 
-                        LOG << "...interpolate explicit solution and rhs" << endl;
+                        LOG << "...interpolate explicit solution and rhs" << nl;
                         
                         FloatVector interpol_ndiv = Interpolation( M, M.getinnerdimension(), 0, r, experiment_ndiv  );
                         FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 1, r,   experiment_sol  );
@@ -421,7 +421,7 @@ int main()
                             
                             auto curl = vector_diffmatrix * vector_incmatrix * sol;
                             
-                            LOG << "...compute error and residual:" << k << endl;
+                            LOG << "...compute error and residual:" << k << nl;
 
                             auto errornorm_aux_ndiv = interpol_ndiv - scalar_incmatrix * ndiv;
                             auto errornorm_aux_sol  = interpol_sol  - vector_incmatrix *  sol;
@@ -475,7 +475,7 @@ int main()
         
         }
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test" << nl;
         
         return 0;
 }

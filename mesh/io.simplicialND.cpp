@@ -45,22 +45,22 @@ MeshSimplicialND readMeshSimplicialND( const char* filename )
 void writeMeshSimplicialND( std::ostream& out, const MeshSimplicialND& mesh, bool sugar )
 {
     /* Preamble */
-    if( sugar ) out << "Writing simplicial ND Mesh..." << std::endl;
+    if( sugar ) out << "Writing simplicial ND Mesh..." << nl;
     
-    if( sugar ) out << "inner dimension: " << std::endl;;
-    out << mesh.getinnerdimension() << std::endl;
+    if( sugar ) out << "inner dimension: " << nl;;
+    out << mesh.getinnerdimension() << nl;
     
-    if( sugar ) out << "number of top-dimensional simplices: " << std::endl;;
-    out << mesh.count_simplices( mesh.getinnerdimension() ) << std::endl;
+    if( sugar ) out << "number of top-dimensional simplices: " << nl;;
+    out << mesh.count_simplices( mesh.getinnerdimension() ) << nl;
     
-    if( sugar ) out << "number of vertices: " << std::endl;
-    out << mesh.count_simplices(0) << std::endl;
+    if( sugar ) out << "number of vertices: " << nl;
+    out << mesh.count_simplices(0) << nl;
     
-    if( sugar ) out << "external dimension: " << std::endl;
-    out << mesh.getcoordinates().getdimension() << std::endl;
+    if( sugar ) out << "external dimension: " << nl;
+    out << mesh.getcoordinates().getdimension() << nl;
     
     /* simplices -> vertices */
-    if( sugar ) out << "for each simplex, the vertices: " << std::endl;
+    if( sugar ) out << "for each simplex, the vertices: " << nl;
     for( int S = 0; S < mesh.count_simplices( mesh.getinnerdimension() ); S++ ) {
         
         if( sugar ) out << S << ": ";
@@ -68,7 +68,7 @@ void writeMeshSimplicialND( std::ostream& out, const MeshSimplicialND& mesh, boo
         for( int d = 0; d <= mesh.getinnerdimension(); d++ )
           out << mesh.get_subsimplex( mesh.getinnerdimension(), 0, S, d ) << space;
         
-        out << std::endl;
+        out << nl;
     }
     
     assert( out.good() );

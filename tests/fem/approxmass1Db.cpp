@@ -17,11 +17,11 @@ using namespace std;
 int main()
 {
         
-        LOG << "Unit Test: (1D) masses are correctly approximated: mass of reference interpolation" << endl;
+        LOG << "Unit Test: (1D) masses are correctly approximated: mass of reference interpolation" << nl;
         
         // LOG << std::setprecision(10);
 
-        LOG << "Initial mesh..." << endl;
+        LOG << "Initial mesh..." << nl;
         
         MeshSimplicial1D M = UnitInterval1D();
         
@@ -76,9 +76,9 @@ int main()
 
         for( int l = l_min; l <= l_max; l++ ){
             
-            LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << endl;
+            LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << nl;
         
-            LOG << "...assemble mass matrices" << endl;
+            LOG << "...assemble mass matrices" << nl;
         
             SparseMatrix massmatrix_scalar = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r_ref );
             
@@ -89,9 +89,9 @@ int main()
                 
             for( int r = r_min; r <= r_max; r++ ) 
             {
-                LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << endl;
+                LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << nl;
 
-                LOG << "...assemble degree elevation matrices" << endl;
+                LOG << "...assemble degree elevation matrices" << nl;
         
                 SparseMatrix elevation_scalar = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 0, r, r_ref - r );
                 
@@ -100,7 +100,7 @@ int main()
                 assert( elevation_scalar.isfinite() );
                 assert( elevation_volume.isfinite() );
                 
-                LOG << "experiments..." << endl;
+                LOG << "experiments..." << nl;
                 
                 for( int i = 0; i < experiments_scalar_field.size(); i++ ){
 
@@ -138,7 +138,7 @@ int main()
 
             if( l != l_max )
             {
-                LOG << "Refinement..." << endl;
+                LOG << "Refinement..." << nl;
             
                 M.uniformrefinement();
             }
@@ -207,7 +207,7 @@ int main()
         }
         
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test" << nl;
         
         return 0;
 }

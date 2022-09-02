@@ -1,5 +1,4 @@
 
-#include <ostream>
 #include <vector>
 
 #include "../basic.hpp"
@@ -44,7 +43,7 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
 
     assert( polyMM.issquare() and polyMM.getdimin() == binomial_integer( n+r, n ) );
     
-//     LOG << polyMM << std::endl;
+//     LOG << polyMM << nl;
         
     #if defined(_OPENMP)
     #pragma omp parallel for
@@ -67,11 +66,11 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
             assert( ( fullMM - polyMM * measure ).issmall() );
         }
         
-        // LOG << measure << std::endl;
+        // LOG << measure << nl;
         
-        // LOG << formMM << std::endl;
+        // LOG << formMM << nl;
         
-        // LOG << fullMM << std::endl;
+        // LOG << fullMM << nl;
         
         for( int i = 0; i < localdim; i++ )
         for( int j = 0; j < localdim; j++ )
@@ -126,15 +125,15 @@ SparseMatrix FEECBrokenMassMatrixRightFactor( const Mesh& mesh, int n, int k, in
 
     {
 
-        // LOG << polyMM << std::endl;        
-        // LOG << ( Transpose(polyMM_right) * polyMM_right ) << std::endl;        
-        // LOG << polyMM_right.getdimin() << std::endl;        
-        // LOG << polyMM.getdimin() << space << ( Transpose(polyMM_right) * polyMM_right - polyMM ).norm() << std::endl;        
+        // LOG << polyMM << nl;        
+        // LOG << ( Transpose(polyMM_right) * polyMM_right ) << nl;        
+        // LOG << polyMM_right.getdimin() << nl;        
+        // LOG << polyMM.getdimin() << space << ( Transpose(polyMM_right) * polyMM_right - polyMM ).norm() << nl;        
         assert( ( Transpose(polyMM_right) * polyMM_right - polyMM ).issmall() ); 
 
     }
             
-//     LOG << polyMM << std::endl;
+//     LOG << polyMM << nl;
         
     #if defined(_OPENMP)
     #pragma omp parallel for
