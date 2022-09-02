@@ -24,9 +24,9 @@ jobs:
       run: clang-tidy --version 
     - name: checkout repository
       uses: actions/checkout@v2
-    - name: static code analysis: check header files
+    - name: static code analysis check header files
       run: make checkheaders
-    - name: static code analysis: clang-tidy
+    - name: static code analysis clang-tidy
       run: make tidy
     - name: build project
       run: make all
