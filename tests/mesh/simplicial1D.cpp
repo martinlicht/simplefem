@@ -15,17 +15,17 @@ using namespace std;
 
 int main()
 {
-        LOG << "Unit Test for one-dimensional simplicial mesh" << endl;
+        LOG << "Unit Test for one-dimensional simplicial mesh" << nl;
 
         MeshSimplicial1D M = StandardInterval1D();
         
-        LOG << "Check" << endl;
+        LOG << "Check" << nl;
         
         M.check();
         
-        LOG << M << endl;
+        LOG << M << nl;
         
-        LOG << "Start refinement" << endl;
+        LOG << "Start refinement" << nl;
         
         for( int c = 0; c < 100; c++ ) 
         {
@@ -36,7 +36,7 @@ int main()
           M.check();
         }
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test" << nl;
 
         return 0;
 }

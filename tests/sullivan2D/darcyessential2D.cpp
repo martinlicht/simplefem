@@ -27,19 +27,19 @@ using namespace std;
 int main()
 {
     
-    LOG << "Unit Test for Solution of Darcy Problem" << endl;
+    LOG << "Unit Test for Solution of Darcy Problem" << nl;
     
     // LOG << std::setprecision(10);
 
     if(true){
 
-        LOG << "Initial mesh..." << endl;
+        LOG << "Initial mesh..." << nl;
         
         MeshSimplicial2D M = StandardSquare2D_simple();
         
         M.check();
         
-        LOG << "Prepare scalar fields for testing..." << endl;
+        LOG << "Prepare scalar fields for testing..." << nl;
         
 
         std::function<FloatVector(const FloatVector&)> constant_one
@@ -98,7 +98,7 @@ int main()
 
         
 
-        LOG << "Solving Poisson Problem with Neumann boundary conditions" << endl;
+        LOG << "Solving Poisson Problem with Neumann boundary conditions" << nl;
 
         const int min_l = 0; 
         const int max_l = 3;
@@ -129,7 +129,7 @@ int main()
             for( int r = min_r; r <= max_r; r++ ) 
             {
                 
-                LOG << "... assemble matrices" << endl;
+                LOG << "... assemble matrices" << nl;
         
                 SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   );
                 
@@ -174,7 +174,7 @@ int main()
                     const auto& function_grad = experiment_grad;
                     const auto& function_rhs  = experiment_rhs;
                     
-                    LOG << "...interpolate explicit solution and rhs" << endl;
+                    LOG << "...interpolate explicit solution and rhs" << nl;
                     
                     FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r,   function_grad );
                     FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 2, r-1, function_sol  );
@@ -187,7 +187,7 @@ int main()
 
                         FloatVector sol( volume_incmatrix.getdimin(), 0. );
                         
-                        LOG << "...iterative solver" << endl;
+                        LOG << "...iterative solver" << nl;
                         
                         
                         sol.zero();
@@ -230,7 +230,7 @@ int main()
                         
                         auto grad = inv(A,desired_precision) * Bt * sol;
 
-                        LOG << "...compute error and residual:" << endl;
+                        LOG << "...compute error and residual:" << nl;
 
                         
                         FloatVector interpol_grad_aug = Interpolation( M, M.getinnerdimension(), 1, r + aug_r,     function_grad );
@@ -249,9 +249,9 @@ int main()
                         Float errornorm_grad = sqrt( errornorm_aux_grad * ( vector_massmatrix_aug * errornorm_aux_grad ) );
                         Float residualnorm   = ( rhs - B * inv(A,1e-14) * Bt * sol ).norm();
 
-                        LOG << "error:     " << errornorm_sol << endl;
-                        LOG << "aux error: " << errornorm_grad << endl;
-                        LOG << "residual:  " << residualnorm << endl;
+                        LOG << "error:     " << errornorm_sol << nl;
+                        LOG << "aux error: " << errornorm_grad << nl;
+                        LOG << "residual:  " << residualnorm << nl;
 
                         contable << errornorm_sol;
                         contable << errornorm_grad;
@@ -278,7 +278,7 @@ int main()
     
     
     
-    LOG << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test" << nl;
     
     return 0;
 }

@@ -15,7 +15,7 @@ using namespace std;
 int main()
 {
     
-    LOG << "Unit Test for Simplicial 3D Mesh IO" << endl;
+    LOG << "Unit Test for Simplicial 3D Mesh IO" << nl;
     
     {
         
@@ -43,7 +43,7 @@ int main()
         assert( mesh == mesh2 );
     }
     
-    LOG << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test" << nl;
     
     return 0;
 }

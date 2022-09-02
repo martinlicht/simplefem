@@ -14,7 +14,7 @@ using namespace std;
 
 int main()
 {
-        LOG << "Unit Test for Interpolation in FEEC" << endl;
+        LOG << "Unit Test for Interpolation in FEEC" << nl;
         
         MeshSimplicial2D M = UnitDisk(6);
         
@@ -28,9 +28,9 @@ int main()
         
         FloatVector results = Interpolation( M, M.getinnerdimension(), 0, 2, scalarfield );
         
-        LOG << results << endl;
+        LOG << results << nl;
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test" << nl;
         
         return 0;
 }

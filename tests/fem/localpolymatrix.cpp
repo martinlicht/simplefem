@@ -20,7 +20,7 @@ using namespace std;
 
 int main()
 {
-    LOG << "Unit Test for Inverse of Poly Matrix" << endl;
+    LOG << "Unit Test for Inverse of Poly Matrix" << nl;
     
     // LOG << std::setprecision(10);
 
@@ -38,8 +38,8 @@ int main()
     
         int N = MM.getdimin();
 
-        LOG << "Dimension: " << space << n_min << " <= " << n << " <= " << n_max << endl;
-        LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << endl;
+        LOG << "Dimension: " << space << n_min << " <= " << n << " <= " << n_max << nl;
+        LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << nl;
 
                 
         LOG << "Matrix dimension: " << N << nl;
@@ -66,7 +66,7 @@ int main()
                     
     }
     
-    LOG << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test" << nl;
     
     
     

@@ -18,11 +18,11 @@ using namespace std;
 
 int main()
 {
-        LOG << "Unit Test for Simplicial 2D Module" << endl;
+        LOG << "Unit Test for Simplicial 2D Module" << nl;
         
         {
             
-            LOG << "First Experiment" << endl;
+            LOG << "First Experiment" << nl;
             
             MeshSimplicial2D M = UnitTriangle2D();
             
@@ -72,7 +72,7 @@ int main()
         
         {
             
-            LOG << "Second Experiment" << endl;
+            LOG << "Second Experiment" << nl;
             
             MeshSimplicial2D M = StandardSquare2D();
             
@@ -119,7 +119,7 @@ int main()
         }
         
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test" << nl;
         
         return 0;
 }

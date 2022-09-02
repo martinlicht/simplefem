@@ -15,11 +15,11 @@ int main()
     return 0; // TODO: complete the class for N-dimensional meshes in the first place
 
     // MeshSimplicialND M = HypertetrahedralSurface4D();
-    //     LOG << "Check" << endl;
+    //     LOG << "Check" << nl;
     //     M.check();
-    //     LOG << "Check done" << endl;
-    //     LOG << M << endl;
-    //     LOG << "Finished Unit Test" << endl;
+    //     LOG << "Check done" << nl;
+    //     LOG << M << nl;
+    //     LOG << "Finished Unit Test" << nl;
 
     return 0;
 }

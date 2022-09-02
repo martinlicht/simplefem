@@ -12,11 +12,11 @@ using namespace std;
 
 int main()
 {
-        LOG << "Unit Test for Simple operator" << endl;
+        LOG << "Unit Test for Simple operator" << nl;
         
         {
         
-                LOG << "Unit Test for Scaling Component" << endl;
+                LOG << "Unit Test for Scaling Component" << nl;
         
                 FloatVector a(5);
                 for( int i = 0; i < 5; i++ )
@@ -24,34 +24,34 @@ int main()
                 
                 ScalingOperator S( 5, 3.14159 );
                 
-                LOG << "We start with this Vector:" << endl;
-                LOG << a << endl;
+                LOG << "We start with this Vector:" << nl;
+                LOG << a << nl;
                 
-                LOG << "Scaled with PI:" << endl;
-                LOG << S * a << endl;
+                LOG << "Scaled with PI:" << nl;
+                LOG << S * a << nl;
                 
-                LOG << "The Scaling is " << S.getscaling() << endl;
+                LOG << "The Scaling is " << S.getscaling() << nl;
                 S.setscaling( 2.718 );
-                LOG << "Now the Scaling is " << S.getscaling() << endl;
-                LOG << "Accordingly:" << endl;
-                LOG << S * a << endl;
+                LOG << "Now the Scaling is " << S.getscaling() << nl;
+                LOG << "Accordingly:" << nl;
+                LOG << S * a << nl;
                 
-                LOG << "Product of scaling by 11 and then 4" << endl;
-                LOG << ScalingOperator(10,4) * ScalingOperator(10,11) << endl;
-                LOG << ScalingOperator(10,11) * ScalingOperator(10,4) << endl;
+                LOG << "Product of scaling by 11 and then 4" << nl;
+                LOG << ScalingOperator(10,4) * ScalingOperator(10,11) << nl;
+                LOG << ScalingOperator(10,11) * ScalingOperator(10,4) << nl;
                 
                 FloatVector b(10);
                 for( int i = 0; i < 10; i++ )
                         b.setentry( i, i+1 );
                 
-                LOG << ScalingOperator(10,11) * ScalingOperator(10,4) * b << endl;
+                LOG << ScalingOperator(10,11) * ScalingOperator(10,4) * b << nl;
         
         }
 
 
         {
         
-                LOG << "Unit Test for Diagonal Component" << endl;
+                LOG << "Unit Test for Diagonal Component" << nl;
         
                 int dim = 10;
         
@@ -61,30 +61,30 @@ int main()
                 
                 DiagonalOperator D( dia );
                 
-                LOG << "We start with these entries:" << endl;
-                LOG << dia << endl;
+                LOG << "We start with these entries:" << nl;
+                LOG << dia << nl;
                 
-                LOG << "This is the diagonal matrix:" << endl;
-                LOG << D << endl;
+                LOG << "This is the diagonal matrix:" << nl;
+                LOG << D << nl;
                 
-                LOG << "Pick a vector:" << endl;
+                LOG << "Pick a vector:" << nl;
                 FloatVector x(dim);
                 for( int i = 0; i < dim; i++ )
                         x.setentry( i, 3.01 );
-                LOG << x << endl;
-                LOG << "Apply the diagonal operator:" << endl;
-                LOG << D * x << endl;
+                LOG << x << nl;
+                LOG << "Apply the diagonal operator:" << nl;
+                LOG << D * x << nl;
                 
-                LOG << "Now the product of diagonal operators: " << endl;
-                LOG << D * D << endl;
+                LOG << "Now the product of diagonal operators: " << nl;
+                LOG << D * D << nl;
                 
-                LOG << "Finished Unit Test" << endl;
+                LOG << "Finished Unit Test" << nl;
 
                 return 0;
         
         }
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test" << nl;
 
         return 0;
 }

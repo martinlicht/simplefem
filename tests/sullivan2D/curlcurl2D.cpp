@@ -25,11 +25,11 @@ using namespace std;
 int main()
 {
     
-    LOG << "Unit Test for Solution of Darcy Problem" << endl;
+    LOG << "Unit Test for Solution of Darcy Problem" << nl;
     
     // LOG << std::setprecision(10);
 
-    LOG << "Initial mesh..." << endl;
+    LOG << "Initial mesh..." << nl;
     
     MeshSimplicial2D M = StandardSquare2D_simple();
     
@@ -39,7 +39,7 @@ int main()
     M.check_dirichlet_flags();
 
     
-    LOG << "Prepare scalar fields for testing..." << endl;
+    LOG << "Prepare scalar fields for testing..." << nl;
     
 
     std::function<FloatVector(const FloatVector&)> constant_one
@@ -99,7 +99,7 @@ int main()
 
     
 
-    LOG << "Solving Poisson Problem with Neumann boundary conditions" << endl;
+    LOG << "Solving Poisson Problem with Neumann boundary conditions" << nl;
 
     const int min_l = 1; 
     const int max_l = 4;
@@ -127,7 +127,7 @@ int main()
         for( int r = min_r; r <= max_r; r++ ) 
         {
             
-            LOG << "... assemble matrices" << endl;
+            LOG << "... assemble matrices" << nl;
     
             SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r+1 );
             SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   );
@@ -172,7 +172,7 @@ int main()
             const auto& function_rhs = experiment_rhs;
             const auto& function_aux = experiment_aux;
             
-            LOG << "...interpolate explicit solution and rhs" << endl;
+            LOG << "...interpolate explicit solution and rhs" << nl;
             
             FloatVector interpol_sol = Interpolation( M, M.getinnerdimension(), 1, r,   function_sol );
             FloatVector interpol_rhs = Interpolation( M, M.getinnerdimension(), 1, r,   function_rhs );
@@ -230,7 +230,7 @@ int main()
 
             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
             
-            LOG << "...compute error and residual:" << endl;
+            LOG << "...compute error and residual:" << nl;
 
             auto errornorm_aux_sol = interpol_sol - vector_incmatrix * sol;
             auto errornorm_aux_aux = interpol_aux - scalar_incmatrix * aux;
@@ -241,12 +241,12 @@ int main()
             Float residual_sol  = ( rhs_sol - A * sol - Bt * aux ).norm();
             Float residual_aux  = ( rhs_aux - B * sol -  C * aux ).norm();
 
-            LOG << "error:        " << errornorm_sol << endl;
-            LOG << "aux error:    " << errornorm_aux << endl;
-            LOG << "residual:     " << residual_sol << endl;
-            LOG << "aux residual: " << residual_aux << endl;
+            LOG << "error:        " << errornorm_sol << nl;
+            LOG << "aux error:    " << errornorm_aux << nl;
+            LOG << "residual:     " << residual_sol << nl;
+            LOG << "aux residual: " << residual_aux << nl;
 
-            LOG << "aux rhs: " << rhs_aux.norm() << endl;
+            LOG << "aux rhs: " << rhs_aux.norm() << nl;
 
             contable << errornorm_sol;
             contable << errornorm_aux;
@@ -266,7 +266,7 @@ int main()
     } 
 
     
-    LOG << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test" << nl;
     
     return 0;
 }

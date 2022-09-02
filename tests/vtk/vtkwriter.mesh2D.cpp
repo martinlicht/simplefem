@@ -19,7 +19,7 @@ using namespace std;
 
 int main()
 {
-    LOG << "Unit Test for VTK output of Simplicial Mesh (2D)" << endl;
+    LOG << "Unit Test for VTK output of Simplicial Mesh (2D)" << nl;
     
     {
         
@@ -101,7 +101,7 @@ int main()
     
         
     
-    LOG << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test" << nl;
 
     return 0;
 }

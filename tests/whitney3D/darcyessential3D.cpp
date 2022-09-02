@@ -29,13 +29,13 @@ using namespace std;
 int main()
 {
     
-    LOG << "Unit Test for Solution of Darcy Problem" << endl;
+    LOG << "Unit Test for Solution of Darcy Problem" << nl;
     
     // LOG << std::setprecision(10);
 
     if(true){
 
-        LOG << "Initial mesh..." << endl;
+        LOG << "Initial mesh..." << nl;
         
         MeshSimplicial3D M = StandardCube3D();
         
@@ -45,7 +45,7 @@ int main()
 //             M.check_dirichlet_flags();
 
         
-        LOG << "Prepare scalar fields for testing..." << endl;
+        LOG << "Prepare scalar fields for testing..." << nl;
         
 
         std::function<FloatVector(const FloatVector&)> constant_one
@@ -139,7 +139,7 @@ int main()
             for( int r = min_r; r <= max_r; r++ ) 
             {
                 
-                LOG << "... assemble matrices" << endl; // TODO: correct the degrees, perhaps via degree elevation
+                LOG << "... assemble matrices" << nl; // TODO: correct the degrees, perhaps via degree elevation
         
                 SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r );
                                 
@@ -180,7 +180,7 @@ int main()
                     const auto& function_grad = experiment_grad;
                     const auto& function_rhs  = experiment_rhs;
                     
-                    LOG << "...interpolate explicit solution and rhs" << endl;
+                    LOG << "...interpolate explicit solution and rhs" << nl;
                     
                     FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 2, r,   function_grad );
                     FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 3, r-1, function_sol  );
@@ -194,7 +194,7 @@ int main()
 
                     {
 
-                        LOG << "...iterative solver" << endl;
+                        LOG << "...iterative solver" << nl;
                         
                         auto PA = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix )
                               + MatrixCSR( vector_incmatrix_t & diffmatrix_t & volume_elevationmatrix_t & volume_massmatrix & volume_elevationmatrix & diffmatrix & vector_incmatrix );
@@ -230,7 +230,7 @@ int main()
                                         
                     auto grad = inv(A,1e-14) * Bt * sol;
 
-                    LOG << "...compute error and residual:" << endl;
+                    LOG << "...compute error and residual:" << nl;
 
                     auto errornorm_aux_sol  = volume_elevationmatrix * interpol_sol  - volume_incmatrix *  sol;
                     auto errornorm_aux_grad = interpol_grad - vector_incmatrix * grad;
@@ -239,9 +239,9 @@ int main()
                     Float errornorm_grad = sqrt( errornorm_aux_grad * ( vector_massmatrix * errornorm_aux_grad ) );
                     Float residualnorm   = ( rhs - B * inv(A,1e-10) * Bt * sol ).norm();
 
-                    LOG << "error:     " << errornorm_sol << endl;
-                    LOG << "aux error: " << errornorm_grad << endl;
-                    LOG << "residual:  " << residualnorm << endl;
+                    LOG << "error:     " << errornorm_sol << nl;
+                    LOG << "aux error: " << errornorm_grad << nl;
+                    LOG << "residual:  " << residualnorm << nl;
 
                     contable << errornorm_sol;
                     contable << errornorm_grad;
@@ -266,7 +266,7 @@ int main()
     
     
     
-    LOG << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test" << nl;
     
     return 0;
 }

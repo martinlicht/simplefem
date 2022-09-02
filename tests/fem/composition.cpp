@@ -23,9 +23,9 @@ using namespace std;
 int main()
 {
         
-        LOG << "Unit Test: (?D) Compare different matrix-matrix products" << endl;
+        LOG << "Unit Test: (?D) Compare different matrix-matrix products" << nl;
         
-        LOG << "Initial mesh..." << endl;
+        LOG << "Initial mesh..." << nl;
         
         MeshSimplicial1D M1 = UnitInterval1D();
         MeshSimplicial2D M2 = UnitTriangle2D(); //StandardSquare2D_simple();
@@ -73,9 +73,9 @@ int main()
                 Mesh& M = *(Ms[d]);
                 
                 
-                LOG << "DIMENSION " << d+1 << " AT LEVEL " << l << endl;
+                LOG << "DIMENSION " << d+1 << " AT LEVEL " << l << nl;
         
-                LOG << "...basic FEEC matrices" << endl;
+                LOG << "...basic FEEC matrices" << nl;
         
                 auto feec_vectormass = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, 0 );
                 
@@ -99,7 +99,7 @@ int main()
                 auto feec_inc_t_csr = MatrixCSR( feec_inc_t );
             
 
-                LOG << "...composed FEEC matrices" << endl;
+                LOG << "...composed FEEC matrices" << nl;
                 
                 auto stiffness_cpp  = feec_inc_t * feec_diff_t * feec_vectormass * feec_diff * feec_inc;
                 auto stiffness_coo1 = feec_inc_t & feec_diff_t & feec_vectormass & feec_diff & feec_inc;
@@ -169,7 +169,7 @@ int main()
                 
             if( l != l_max ) { 
 
-                LOG << "Refinement..." << endl;
+                LOG << "Refinement..." << nl;
         
                 M1.uniformrefinement();
                 M2.uniformrefinement();
@@ -232,12 +232,12 @@ int main()
         for( int t = 0; t < number_of_comparisons; t++ )
         {
             if( not ( errors[l-l_min][d][t] < 10e-10 ) )
-                LOG << l << space << d << space << t << space << errors[l-l_min][d][t] << endl;
+                LOG << l << space << d << space << t << space << errors[l-l_min][d][t] << nl;
             assert( errors[l-l_min][d][t] < 10e-10 );
         }
         
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test" << nl;
         
         return 0;
 }

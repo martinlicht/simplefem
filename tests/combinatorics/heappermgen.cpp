@@ -13,7 +13,7 @@ using namespace std;
 
 int main()
 {
-    LOG << "Unit Test for producting permutations via Heap's algorithm" << endl;
+    LOG << "Unit Test for producting permutations via Heap's algorithm" << nl;
     
     
     if(true)
@@ -50,10 +50,10 @@ int main()
         
         for( const auto& some_perm : perms ) {
             for ( int entry : some_perm ) LOG << entry << space;
-            LOG << endl;
+            LOG << nl;
         }
         
-        LOG << "--------------------" << endl;
+        LOG << "--------------------" << nl;
         
     }
     
@@ -99,17 +99,17 @@ int main()
             
             for( const auto& some_perm : perms ) {
                 for ( int entry : some_perm ) LOG << entry << space;
-                LOG << endl;
+                LOG << nl;
             }
             
-            LOG << "--------------------" << endl;
+            LOG << "--------------------" << nl;
             
             
         }
     
     }
 
-    LOG << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test" << nl;
     
     return 0;
 }

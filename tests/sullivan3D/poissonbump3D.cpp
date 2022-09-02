@@ -28,13 +28,13 @@ using namespace std;
 int main()
 {
         
-        LOG << "Unit Test for Solution of Neumann Problem" << endl;
+        LOG << "Unit Test for Solution of Neumann Problem" << nl;
         
         // LOG << std::setprecision(10);
 
         if(true){
 
-            LOG << "Initial mesh..." << endl;
+            LOG << "Initial mesh..." << nl;
             
             MeshSimplicial3D M = StandardCube3D();
             
@@ -46,7 +46,7 @@ int main()
 
             M.getcoordinates().scale(1.1);
             
-            LOG << "Prepare scalar fields for testing..." << endl;
+            LOG << "Prepare scalar fields for testing..." << nl;
             
 
 
@@ -116,21 +116,21 @@ int main()
                 for( int r = min_r; r <= max_r; r++ ) 
                 {
                     
-                    LOG << "...assemble scalar mass matrices" << endl;
+                    LOG << "...assemble scalar mass matrices" << nl;
             
                     SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
 
-                    LOG << "...assemble vector mass matrix" << endl;
+                    LOG << "...assemble vector mass matrix" << nl;
             
                     SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
                     
-                    LOG << "...assemble differential matrix and transpose" << endl;
+                    LOG << "...assemble differential matrix and transpose" << nl;
 
                     SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r );
 
                     SparseMatrix diffmatrix_t = diffmatrix.getTranspose();
 
-                    LOG << "...assemble inclusion matrix and transpose" << endl;
+                    LOG << "...assemble inclusion matrix and transpose" << nl;
             
                     SparseMatrix incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r );
                     
@@ -140,7 +140,7 @@ int main()
 
                     SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
-                    LOG << "...assemble stiffness matrix" << endl;
+                    LOG << "...assemble stiffness matrix" << nl;
             
                     // ProductOperator 
 //                     auto stiffness = incmatrix_t * diffmatrix_t * vector_massmatrix * diffmatrix * incmatrix;
@@ -167,27 +167,27 @@ int main()
                         const auto& function_grad = experiment_grad;
                         const auto& function_rhs  = experiment_rhs;
                         
-                        LOG << "...interpolate explicit solution and rhs" << endl;
+                        LOG << "...interpolate explicit solution and rhs" << nl;
             
                         FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 0, r,   function_sol  );
                         FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r-1, function_grad );
                         FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r,   function_rhs  );
                         
-                        LOG << "...compute norms of solution and right-hand side:" << endl;
+                        LOG << "...compute norms of solution and right-hand side:" << nl;
             
                         Float sol_norm = interpol_sol * ( scalar_massmatrix * interpol_sol );
                         Float rhs_norm = interpol_rhs * ( scalar_massmatrix * interpol_rhs );
                         
-                        LOG << "solution norm: " << sol_norm << endl;
-                        LOG << "rhs norm:      " << rhs_norm << endl;
+                        LOG << "solution norm: " << sol_norm << nl;
+                        LOG << "rhs norm:      " << rhs_norm << nl;
 
-                        LOG << "...create RHS vector" << endl;
+                        LOG << "...create RHS vector" << nl;
 
                         FloatVector rhs = incmatrix_t * ( scalar_massmatrix * interpol_rhs );
 
                         FloatVector sol( incmatrix.getdimin(), 0. );
                         
-                        LOG << "...iterative solver" << endl;
+                        LOG << "...iterative solver" << nl;
                         
                         timestamp start = gettimestamp();
                         
@@ -200,7 +200,7 @@ int main()
                         timestamp end = gettimestamp();
                         LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
-                        LOG << "...compute error and residual:" << endl;
+                        LOG << "...compute error and residual:" << nl;
             
                         
                         auto errornorm_aux = interpol_sol  - incmatrix * sol;
@@ -210,9 +210,9 @@ int main()
                         Float graderrornorm = sqrt( graderror_aux * ( vector_massmatrix * graderror_aux ) );
                         Float residualnorm  = ( rhs - stiffness * sol ).norm();
                         
-                        LOG << "error:     " << errornorm    << endl;
-                        LOG << "graderror: " << graderrornorm << endl;
-                        LOG << "residual:  " << residualnorm << endl;
+                        LOG << "error:     " << errornorm    << nl;
+                        LOG << "graderror: " << graderrornorm << nl;
+                        LOG << "residual:  " << residualnorm << nl;
                         
                         
                         
@@ -264,7 +264,7 @@ int main()
         
         
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test" << nl;
         
         return 0;
 }

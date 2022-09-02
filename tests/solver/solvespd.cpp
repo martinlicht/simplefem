@@ -23,7 +23,7 @@ TESTNAME( "Solve SPD system: CGM, CRM, MINRES, HerzoogSoodhalter" );
 
 int main()
 {
-        LOG << "Unit Test: " << TestName << endl;
+        LOG << "Unit Test: " << TestName << nl;
         
         // LOG << std::setprecision(5);
 
@@ -88,7 +88,7 @@ int main()
                 
                 {
                     
-                    LOG << "...assemble matrix" << endl;
+                    LOG << "...assemble matrix" << nl;
 
                     std::vector< SparseMatrix::MatrixEntry > entries;
 
@@ -113,7 +113,7 @@ int main()
                     auto system = SparseMatrix( N*N, N*N, entries );
 
 
-                    LOG << "...create solutions and right-hand sides" << endl;
+                    LOG << "...create solutions and right-hand sides" << nl;
 
                     const int T = 10;
 
@@ -144,7 +144,7 @@ int main()
 
                         if( do_cgmpp )
                         {
-                            LOG << "CGM C++" << endl;
+                            LOG << "CGM C++" << nl;
                         
                             FloatVector mysol( N*N );
                             mysol.zero();
@@ -166,7 +166,7 @@ int main()
 
                         if( do_crmpp_expl )
                         {
-                            LOG << "CRM C++ (explicit)" << endl;
+                            LOG << "CRM C++ (explicit)" << nl;
                         
                             FloatVector mysol( N*N );
                             mysol.zero();
@@ -190,7 +190,7 @@ int main()
 
                         if( do_crmpp_robt )
                         {
-                            LOG << "CRM C++ (robust)" << endl;
+                            LOG << "CRM C++ (robust)" << nl;
                         
                             FloatVector mysol( N*N );
                             mysol.zero();
@@ -214,7 +214,7 @@ int main()
 
                         if( do_crmpp_fast )
                         {
-                            LOG << "CRM C++ (fast)" << endl;
+                            LOG << "CRM C++ (fast)" << nl;
                         
                             FloatVector mysol( N*N );
                             mysol.zero();
@@ -238,7 +238,7 @@ int main()
 
                         if( do_minres )
                         {
-                            LOG << "MINRES C++" << endl;
+                            LOG << "MINRES C++" << nl;
                         
                             FloatVector mysol( N*N );
                             mysol.zero();
@@ -261,7 +261,7 @@ int main()
 
                         if( do_herzog )
                         {
-                            LOG << "HERZOG SOODHALTER C++" << endl;
+                            LOG << "HERZOG SOODHALTER C++" << nl;
                         
                             FloatVector mysol( N*N );
                             mysol.zero();
@@ -304,7 +304,7 @@ int main()
         
         
         
-        LOG << "Finished Unit Test: " << TestName << endl;
+        LOG << "Finished Unit Test: " << TestName << nl;
         
         return 0;
 }

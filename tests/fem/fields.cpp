@@ -10,13 +10,13 @@ using namespace std;
 
 int main()
 {
-        LOG << "Unit Test for Fields and Finite Differences" << endl;
+        LOG << "Unit Test for Fields and Finite Differences" << nl;
         
         //TODO: Brush up these tests
         
         {
             
-            LOG << "Two-dimensional setting" << endl;
+            LOG << "Two-dimensional setting" << nl;
         
             auto scalar = []( const FloatVector& point ) -> FloatVector { 
                 return FloatVector({ 
@@ -48,7 +48,7 @@ int main()
         
         {
             
-            LOG << "Three-dimensional setting" << endl;
+            LOG << "Three-dimensional setting" << nl;
         
             auto scalarfield = []( const FloatVector& point ) -> FloatVector { 
                 return FloatVector({ 
@@ -79,7 +79,7 @@ int main()
             for( int k = 0; k < 5; k++ ){
                 FloatVector v(3); 
                 v.random();
-                LOG << d_form1(v) << endl;
+                LOG << d_form1(v) << nl;
             }
             
             
@@ -88,7 +88,7 @@ int main()
 
         {
             
-            LOG << "Six-dimensional setting" << endl;
+            LOG << "Six-dimensional setting" << nl;
         
             auto scalarfield = []( const FloatVector& point ) -> FloatVector { 
                 return FloatVector({ 
@@ -108,7 +108,7 @@ int main()
             for( int k = 0; k < 5; k++ ){
                 FloatVector v(6); 
                 v.random();
-                LOG << dd_form0(v) << endl;
+                LOG << dd_form0(v) << nl;
             }
             
             

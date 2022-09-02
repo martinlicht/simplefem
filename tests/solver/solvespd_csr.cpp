@@ -24,7 +24,7 @@ TESTNAME( "Solve SPD system: CSR Solvers" );
 
 int main()
 {
-        LOG << "Unit Test: " << TestName << endl;
+        LOG << "Unit Test: " << TestName << nl;
         
         // LOG << std::setprecision(5);
 
@@ -133,7 +133,7 @@ int main()
                 
                 {
                     
-                    LOG << "...assemble matrix" << endl;
+                    LOG << "...assemble matrix" << nl;
 
                     std::vector< SparseMatrix::MatrixEntry > entries;
 
@@ -160,7 +160,7 @@ int main()
                     auto system = MatrixCSR( system_prelim );
 
 
-                    LOG << "...create solutions and right-hand sides" << endl;
+                    LOG << "...create solutions and right-hand sides" << nl;
 
                     const int T = 5;
 
@@ -191,7 +191,7 @@ int main()
 
                         if( do_cgmpp )
                         {
-                            LOG << "CGM C++" << endl;
+                            LOG << "CGM C++" << nl;
                         
                             FloatVector mysol( N*N );
                             mysol.zero();
@@ -213,7 +213,7 @@ int main()
 
                         if( do_crmpp_expl )
                         {
-                            LOG << "CRM C++ (explicit)" << endl;
+                            LOG << "CRM C++ (explicit)" << nl;
                         
                             FloatVector mysol( N*N );
                             mysol.zero();
@@ -237,7 +237,7 @@ int main()
 
                         if( do_crmpp_robt )
                         {
-                            LOG << "CRM C++ (robust)" << endl;
+                            LOG << "CRM C++ (robust)" << nl;
                         
                             FloatVector mysol( N*N );
                             mysol.zero();
@@ -261,7 +261,7 @@ int main()
 
                         if( do_crmpp_fast )
                         {
-                            LOG << "CRM C++ (fast)" << endl;
+                            LOG << "CRM C++ (fast)" << nl;
                         
                             FloatVector mysol( N*N );
                             mysol.zero();
@@ -285,7 +285,7 @@ int main()
 
                         if( do_minres )
                         {
-                            LOG << "MINRES C++" << endl;
+                            LOG << "MINRES C++" << nl;
                         
                             FloatVector mysol( N*N );
                             mysol.zero();
@@ -308,7 +308,7 @@ int main()
 
                         if( do_herzog )
                         {
-                            LOG << "HERZOG SOODHALTER C++" << endl;
+                            LOG << "HERZOG SOODHALTER C++" << nl;
                         
                             FloatVector mysol( N*N );
                             mysol.zero();
@@ -337,7 +337,7 @@ int main()
 
                         if( do_cgm_csr )
                         {
-                            LOG << "CGM - CSR Classic" << endl;
+                            LOG << "CGM - CSR Classic" << nl;
                         
                             FloatVector mysol( N*N );
                             mysol.zero();
@@ -366,7 +366,7 @@ int main()
 
                         if( do_crm_csr )
                         {
-                            LOG << "CRM - CSR Classic" << endl;
+                            LOG << "CRM - CSR Classic" << nl;
                         
                             FloatVector mysol( N*N );
                             mysol.zero();
@@ -395,7 +395,7 @@ int main()
 
                         if( do_crm_csrtextbook )
                         {
-                            LOG << "CRM - CSR Textbook" << endl;
+                            LOG << "CRM - CSR Textbook" << nl;
                         
                             FloatVector mysol( N*N );
                             mysol.zero();
@@ -424,7 +424,7 @@ int main()
 
                         if( do_minres_csr )
                         {
-                            LOG << "MINRES CSR" << endl;
+                            LOG << "MINRES CSR" << nl;
                         
                             FloatVector mysol( N*N );
                             mysol.zero();
@@ -454,7 +454,7 @@ int main()
 
                         if( do_whatever_csr )
                         {
-                            LOG << "WHATEVER CSR" << endl;
+                            LOG << "WHATEVER CSR" << nl;
                         
                             FloatVector mysol( N*N );
                             mysol.zero();
@@ -484,7 +484,7 @@ int main()
 
                         if( do_cgm_diagonal_csr )
                         {
-                            LOG << "CGM diagonal preconditioner CSR" << endl;
+                            LOG << "CGM diagonal preconditioner CSR" << nl;
                         
                             DiagonalOperator invprecon = InverseDiagonalPreconditioner( system_prelim );
 //                             invprecon.setentries( 1. );
@@ -520,7 +520,7 @@ int main()
                         
                         if( do_cgm_ssor_csr )
                         {
-                            LOG << "CGM SSOR preconditioner CSR" << endl;
+                            LOG << "CGM SSOR preconditioner CSR" << nl;
                         
                             FloatVector diagonal = system.diagonal();
                             assert( diagonal.isfinite() );
@@ -556,7 +556,7 @@ int main()
                         
                         if( do_chebyshev_diagonal_csr )
                         {
-                            LOG << "CHEBYSHEV CSR" << endl;
+                            LOG << "CHEBYSHEV CSR" << nl;
                         
                             DiagonalOperator invprecon = InverseDiagonalPreconditioner( system_prelim );
                             assert( invprecon.getdiagonal().isfinite() );
@@ -611,7 +611,7 @@ int main()
         
         
         
-        LOG << "Finished Unit Test: " << TestName << endl;
+        LOG << "Finished Unit Test: " << TestName << nl;
         
         return 0;
 }

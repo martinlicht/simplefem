@@ -18,7 +18,7 @@ using namespace std;
 
 int main()
 {
-    LOG << "Unit Test for VTK output of Simplicial Mesh" << endl;
+    LOG << "Unit Test for VTK output of Simplicial Mesh" << nl;
     
     // MeshSimplicial2D M = UnitCubeTriangulation(3,3);
     MeshSimplicial2D M = LShapedDomain2D();
@@ -27,7 +27,7 @@ int main()
 
     for( int l = 0; l < 7; l++ )
     {
-        LOG << "Print VTK-type file" << endl;
+        LOG << "Print VTK-type file" << nl;
         LOG << "T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
         
         fstream fs( string("./locallshaped") + std::to_string(l) + string(".vtk"), std::fstream::out );
@@ -38,7 +38,7 @@ int main()
 
         fs.close();
 
-        LOG << "Refine" << endl;
+        LOG << "Refine" << nl;
 
         if( l != l_max ) {
             
@@ -82,7 +82,7 @@ int main()
         
         
     
-    LOG << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test" << nl;
 
     return 0;
 }

@@ -115,7 +115,7 @@ int main()
         LOG << "While Loop " << std::endl;
         IndexRange::ConstIterator iri = irC.begin();
         while( iri != irC.end() )
-            LOG << *(iri++) << space << endl;
+            LOG << *(iri++) << space << nl;
         LOG << nl;
         
     }
@@ -131,7 +131,7 @@ int main()
     
     }
         
-    LOG << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test" << nl;
     
     return 0;
 }
