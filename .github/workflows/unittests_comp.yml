@@ -1,4 +1,4 @@
-name: Unit tests for finite elment methods
+name: Unit tests for finite element methods
 
 on:
   workflow_dispatch:

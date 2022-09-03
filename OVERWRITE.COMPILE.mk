@@ -1,2 +1,2 @@
 FLAG_CXX := CLANG
-CXXFLAGS_OPTIMIZE += -Os -Ofast-math
+CXXFLAGS_OPTIMIZE += -Os -ffast-math
