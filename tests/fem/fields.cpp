@@ -36,12 +36,12 @@ int main()
             
             FloatVector point = {1.*3.14159/2,0.};
 
-//             LOG << h/2.0 << space << ( foo( {0.+h,0.} ) - foo( {0.,0.} ) )[0] / h << std::endl << std::endl;
-//             LOG << h/2.0 << space << ( 2 * foo( {0.,0.} ) - foo( {0.+h,0.} ) - foo( {0.-h,0.} ) )[0] / (h*h) << std::endl;
+//             LOG << h/2.0 << space << ( foo( {0.+h,0.} ) - foo( {0.,0.} ) )[0] / h << nl << nl;
+//             LOG << h/2.0 << space << ( 2 * foo( {0.,0.} ) - foo( {0.+h,0.} ) - foo( {0.-h,0.} ) )[0] / (h*h) << nl;
 
-            LOG << foo( point ) << space << foo.exteriorderivative(h)(point) << space << bar( point ) << std::endl;
+            LOG << foo( point ) << space << foo.exteriorderivative(h)(point) << space << bar( point ) << nl;
 
-            LOG << foo.exteriorderivative(h).exteriorderivative(h)( {2., 3.} ) << std::endl;
+            LOG << foo.exteriorderivative(h).exteriorderivative(h)( {2., 3.} ) << nl;
         
         }
         

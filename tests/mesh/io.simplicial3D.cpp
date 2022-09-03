@@ -23,7 +23,7 @@ int main()
         
         mesh.check();
         
-        LOG << "start IO..." << std::endl;
+        LOG << "start IO..." << nl;
         
         std::stringstream ss;
         
@@ -31,15 +31,15 @@ int main()
         
         ss.seekg( std::ios_base::beg );
         
-        LOG << "create next mesh..." << std::endl;
+        LOG << "create next mesh..." << nl;
         
         MeshSimplicial3D mesh2 = readMeshSimplicial3D( ss );
         
-        LOG << "check original mesh..." << std::endl;
+        LOG << "check original mesh..." << nl;
         mesh.check();
-        LOG << "check replicated mesh..." << std::endl;
+        LOG << "check replicated mesh..." << nl;
         mesh2.check();
-        LOG << "check mesh equivalence..." << std::endl;
+        LOG << "check mesh equivalence..." << nl;
         assert( mesh == mesh2 );
     }
     

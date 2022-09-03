@@ -112,7 +112,7 @@ int main()
 
             for( int l = 0; l <= max_l; l++ ){
                 
-                LOG << "Level: " << l << "/" << max_l << std::endl;
+                LOG << "Level: " << l << "/" << max_l << nl;
                 LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
                 
@@ -159,7 +159,7 @@ int main()
                 
                 //auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. );
                 auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
-                LOG << "Average value of diagonal preconditioner: " << stiffness_invprecon.getdiagonal().average() << std::endl;
+                LOG << "Average value of diagonal preconditioner: " << stiffness_invprecon.getdiagonal().average() << nl;
 
                 const auto& function_sol = experiments_sol[0];
                 const auto& function_grad= experiments_grad[0];
@@ -173,7 +173,7 @@ int main()
                 
                 FloatVector interpol_one  = Interpolation( M, M.getinnerdimension(), 0, r, constant_one );
                 
-                LOG << "...measure kernel component: " << std::flush;
+                LOG << "...measure kernel component: ";
     
                 Float average_sol = interpol_one * ( scalar_massmatrix * interpol_sol );
                 Float average_rhs = interpol_one * ( scalar_massmatrix * interpol_rhs );
@@ -204,7 +204,7 @@ int main()
                     CRM.threshold = 1e-10;
                     CRM.solve( sol, rhs );
                     timestamp end = gettimestamp();
-                    LOG << "\t\t\t " << timestamp2measurement( end - start ) << std::endl;
+                    LOG << "\t\t\t " << timestamp2measurement( end - start ) << nl;
                 }
                         
                 if(false)
@@ -216,7 +216,7 @@ int main()
                     PCRM.threshold = 1e-10;
                     PCRM.solve( sol, rhs );
                     timestamp end = gettimestamp();
-                    LOG << "\t\t\t " << timestamp2measurement( end - start ) << std::endl;
+                    LOG << "\t\t\t " << timestamp2measurement( end - start ) << nl;
                 }
 
                 LOG << "...compute error and residual:" << nl;

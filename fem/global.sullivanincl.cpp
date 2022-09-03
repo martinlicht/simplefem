@@ -20,9 +20,7 @@
 /* 
 TODO:
 - The major difficulty here is whether the subsimplex indices of the vertices are ordered or not.
-- The lack of a general ordering principle forecloses an efficient implmentation
-where the loop is completely streamed.
-- 
+- The lack of a general ordering principle forecloses an efficient implmentation where the loop is completely uniform.
 */
 
 SparseMatrix FEECSullivanInclusionMatrix( const Mesh& mesh, int n, int k, int r )
@@ -31,7 +29,7 @@ SparseMatrix FEECSullivanInclusionMatrix( const Mesh& mesh, int n, int k, int r 
     // check whether the parameters are right 
     assert( n >= 0 && n <= mesh.getinnerdimension() );
     assert( k >= 0 && k <= n );
-    assert( r >= 1 or k == n ); // TODO: wir erlauben r==0 im falle von volumenformen
+    assert( r >= 1 or k == n ); // TODO: we allow r == 0 in case of volume forms 
 
     // generate the list of sigmas and multiindices for each dimension 
     

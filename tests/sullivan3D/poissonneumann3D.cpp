@@ -124,7 +124,7 @@ int main()
 
             for( int l = min_l; l <= max_l; l++ ){
                 
-                LOG << "Level: " << l << "/" << max_l << std::endl;
+                LOG << "Level: " << l << "/" << max_l << nl;
                 LOG << "# T/F/E/V: " << M.count_tetrahedra() << "/" << M.count_faces() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
                 for( int r = min_r; r <= max_r; r++ ) 
@@ -173,7 +173,7 @@ int main()
                     
                     auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. );
 //                     auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
-                    LOG << "Average value of diagonal preconditioner: " << stiffness_invprecon.getdiagonal().average() << std::endl;
+                    LOG << "Average value of diagonal preconditioner: " << stiffness_invprecon.getdiagonal().average() << nl;
 
                     {
 
@@ -189,7 +189,7 @@ int main()
                         
                         FloatVector interpol_one  = Interpolation( M, M.getinnerdimension(), 0, r, constant_one );
                         
-                        LOG << "...measure kernel component: " << std::flush;
+                        LOG << "...measure kernel component: ";
             
                         Float average_sol = interpol_one * ( scalar_massmatrix * interpol_sol );
                         Float average_rhs = interpol_one * ( scalar_massmatrix * interpol_rhs );
@@ -221,7 +221,7 @@ int main()
                         }
 
                         timestamp end = gettimestamp();
-                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                         
                         LOG << "...compute error and residual:" << nl;
             

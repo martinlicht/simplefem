@@ -95,13 +95,13 @@ int main()
             for( int l = min_l; l <= max_l; l++ )
             {
                 
-                LOG << "Level: " << l << "/" << max_l << std::endl;
+                LOG << "Level: " << l << "/" << max_l << nl;
                 LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
                 for( int r = min_r; r <= max_r; r++ )
                 {
                     
-                    LOG << "Polynomial degree: " << r << "/" << max_r << std::endl;
+                    LOG << "Polynomial degree: " << r << "/" << max_r << nl;
                     
                     LOG << "...assemble partial matrices" << nl;
             
@@ -174,10 +174,10 @@ int main()
                             }
                             
                             Float reduced_mass = candidate.norm(mass);
-                            LOG << "\t\t\t Preprocessed mass: " << reduced_mass << std::endl;
+                            LOG << "\t\t\t Preprocessed mass: " << reduced_mass << nl;
                             
                             if( reduced_mass < 1e-6 ) {
-                                LOG << "**** The candidate already has very small mass" << std::endl;
+                                LOG << "**** The candidate already has very small mass" << nl;
 //                                 continue;
                             }
                         }
@@ -232,25 +232,25 @@ int main()
                                     -1
                                 );
                                 
-                                LOG << "\t\t\t (eucl) delta:     " << ( residual - rhs + SystemMatrix * candidate ).norm() << std::endl;
-                                LOG << "\t\t\t (mass) delta:     " << ( residual - rhs + SystemMatrix * candidate ).norm( mass ) << std::endl;
-                                LOG << "\t\t\t (eucl) res:       " << residual.norm() << std::endl;
-                                LOG << "\t\t\t (mass) res:       " << residual.norm( mass ) << std::endl;
-                                LOG << "\t\t\t (eucl) x:         " << candidate.norm() << std::endl;
-                                LOG << "\t\t\t (mass) x:         " << candidate.norm( mass ) << std::endl;
-                                LOG << "\t\t\t (eucl) Ax:        " << ( SystemMatrix * candidate ).norm() << std::endl;
-                                LOG << "\t\t\t (mass) Ax:        " << ( SystemMatrix * candidate ).norm( mass ) << std::endl;
-                                LOG << "\t\t\t (eucl) b - Ax:    " << ( SystemMatrix * candidate - rhs ).norm() << std::endl;
-                                LOG << "\t\t\t (mass) b - Ax:    " << ( SystemMatrix * candidate - rhs ).norm( mass ) << std::endl;
+                                LOG << "\t\t\t (eucl) delta:     " << ( residual - rhs + SystemMatrix * candidate ).norm() << nl;
+                                LOG << "\t\t\t (mass) delta:     " << ( residual - rhs + SystemMatrix * candidate ).norm( mass ) << nl;
+                                LOG << "\t\t\t (eucl) res:       " << residual.norm() << nl;
+                                LOG << "\t\t\t (mass) res:       " << residual.norm( mass ) << nl;
+                                LOG << "\t\t\t (eucl) x:         " << candidate.norm() << nl;
+                                LOG << "\t\t\t (mass) x:         " << candidate.norm( mass ) << nl;
+                                LOG << "\t\t\t (eucl) Ax:        " << ( SystemMatrix * candidate ).norm() << nl;
+                                LOG << "\t\t\t (mass) Ax:        " << ( SystemMatrix * candidate ).norm( mass ) << nl;
+                                LOG << "\t\t\t (eucl) b - Ax:    " << ( SystemMatrix * candidate - rhs ).norm() << nl;
+                                LOG << "\t\t\t (mass) b - Ax:    " << ( SystemMatrix * candidate - rhs ).norm( mass ) << nl;
                                 
                                 candidate.normalize( mass );
                                 
                                 assert( candidate.isfinite() );
                                 
-                                LOG << "\t\t\t (norm eucl) x:         " << candidate.norm() << std::endl;
-                                LOG << "\t\t\t (norm mass) x:         " << candidate.norm( mass ) << std::endl;
-                                LOG << "\t\t\t (norm eucl) Ax:        " << ( SystemMatrix* candidate ).norm() << std::endl;
-                                LOG << "\t\t\t (norm mass) Ax:        " << ( SystemMatrix * candidate ).norm( mass ) << std::endl;
+                                LOG << "\t\t\t (norm eucl) x:         " << candidate.norm() << nl;
+                                LOG << "\t\t\t (norm mass) x:         " << candidate.norm( mass ) << nl;
+                                LOG << "\t\t\t (norm eucl) Ax:        " << ( SystemMatrix* candidate ).norm() << nl;
+                                LOG << "\t\t\t (norm mass) Ax:        " << ( SystemMatrix * candidate ).norm( mass ) << nl;
                                 
                             }
                         }
@@ -265,10 +265,10 @@ int main()
                         }
                         
                         Float reduced_mass = candidate.norm(mass);
-                        LOG << "\t\t\t Reduced mass: " << reduced_mass << std::endl;
+                        LOG << "\t\t\t Reduced mass: " << reduced_mass << nl;
                         
                         if( reduced_mass < 1e-6 ) {
-                            LOG << "!!!!!!!!!!!!!Discard vector because mass is too small!" << std::endl;
+                            LOG << "!!!!!!!!!!!!!Discard vector because mass is too small!" << nl;
                             continue;
                         }
                         
@@ -276,16 +276,16 @@ int main()
                         
                         Float residual_mass = ( SystemMatrix * candidate ).norm(mass);
                         
-                        LOG << "\t\t\t Numerical residual: " << residual_mass << std::endl;
+                        LOG << "\t\t\t Numerical residual: " << residual_mass << nl;
                         
                         if( false and residual_mass > 1e-6 ) {
-                            LOG << "!!!!!!!!!!!!!Discard vector because not nullspace enough!" << std::endl;
+                            LOG << "!!!!!!!!!!!!!Discard vector because not nullspace enough!" << nl;
                             continue;
                         }
                         
                         assert( candidate.isfinite() );
                         
-                        LOG << "Accept vector: " << nullvectorgallery.size() + 1 << std::endl;
+                        LOG << "Accept vector: " << nullvectorgallery.size() + 1 << nl;
                     
                         
                         nullvectorgallery.push_back( candidate );
@@ -354,9 +354,9 @@ int main()
 //                             
 //                             assert( sol.isfinite() );
 //                             
-//                             LOG << "\t\t\t x:         " << sol.norm( mass ) << std::endl;
-//                             LOG << "\t\t\t Ax:        " << ( mat * sol ).norm( mass ) << std::endl;
-//                             LOG << "\t\t\t b - Ax:    " << ( mat * sol - rhs ).norm( mass ) << std::endl;
+//                             LOG << "\t\t\t x:         " << sol.norm( mass ) << nl;
+//                             LOG << "\t\t\t Ax:        " << ( mat * sol ).norm( mass ) << nl;
+//                             LOG << "\t\t\t b - Ax:    " << ( mat * sol - rhs ).norm( mass ) << nl;
 //                         
 //                         }
 //                         

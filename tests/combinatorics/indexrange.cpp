@@ -12,12 +12,12 @@ using namespace std;
 
 int main()
 {
-    LOG << "Unit Test for Index Ranges" << std::endl;
+    LOG << "Unit Test for Index Ranges" << nl;
     
     if( true ) 
     {
         
-        LOG << "Test empty index ranges" << std::endl;
+        LOG << "Test empty index ranges" << nl;
         
         IndexRange irE1(  3,  2 );
         IndexRange irE2(  5,  1 );
@@ -44,7 +44,7 @@ int main()
     if( true ) 
     {
         
-        LOG << "Test non-empty index ranges" << std::endl;
+        LOG << "Test non-empty index ranges" << nl;
         
         IndexRange irA( 3, 7 );
         IndexRange irB( 5, 5 );
@@ -80,7 +80,7 @@ int main()
         assert( !irB.contains(4) );
         assert( !irB.contains(6) );
         
-        LOG << "Test indexing in non-empty index ranges" << std::endl;
+        LOG << "Test indexing in non-empty index ranges" << nl;
         
         assert( irB.element2position(5) == 0 );
         assert( irB.position2element(0) == 5 );
@@ -96,23 +96,23 @@ int main()
     if( true )
     {
         
-        LOG << "Test Index Range iterators" << std::endl;
+        LOG << "Test Index Range iterators" << nl;
         
         IndexRange irC( 2, 5 );
         
         assert( not irC.isempty() );
         
-        LOG << "For each loop " << std::endl;
+        LOG << "For each loop " << nl;
         for( int i : irC )
             LOG << i << space;
         LOG << nl;
 
-        LOG << "Classical For loop " << std::endl;
+        LOG << "Classical For loop " << nl;
         for( IndexRange::ConstIterator iri = irC.begin(); iri != irC.end(); iri++ )
             LOG << *iri << space;
         LOG << nl;
         
-        LOG << "While Loop " << std::endl;
+        LOG << "While Loop " << nl;
         IndexRange::ConstIterator iri = irC.begin();
         while( iri != irC.end() )
             LOG << *(iri++) << space << nl;
@@ -123,11 +123,11 @@ int main()
     if( false )
     {
     
-        LOG << "Test invalid index ranges" << std::endl;
+        LOG << "Test invalid index ranges" << nl;
     
         IndexRange dummy( 0, std::numeric_limits<int>::max() );
         LOG << dummy << " " << std::numeric_limits<int>::max();
-        LOG << "FAIL: Invalid range created" << std::endl;
+        LOG << "FAIL: Invalid range created" << nl;
     
     }
         
