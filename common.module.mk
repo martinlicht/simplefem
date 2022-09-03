@@ -152,6 +152,8 @@ $(module).list_of_objects:
 	@echo $(projecdir);
 	@echo $(mymodule);
 	@echo $(mymoddir);
+	@echo $($(mymodule).sources);
+	@echo $($(mymodule).headers);
 	@echo $($(mymodule).staticlibrary);
 	@echo $($(mymodule).sharedlibrary);
 	@echo $($(mymodule).objects);
@@ -179,7 +181,7 @@ $($(module).headerchecks): check-%.hpp :
 .PHONY: tidy $(module).tidy
 tidy: $(module).tidy
 $(module).tidy:
-	clang-tidy $(mymoddir)/*.?pp --config-file=$(projectdir)/Tools/clang-tidy.yaml -- -std=c++17 -fno-exceptions
+	clang-tidy $($(mymodule).sources) --config-file=$(projectdir)/Tools/clang-tidy.yaml -- -std=c++17 -fno-exceptions
 
 
 ########################################################################
