@@ -208,9 +208,13 @@ class Mesh
         Float getShapemeasure( int dim ) const;
         Float getShapemeasure() const;
         
+        FloatVector get_midpoint( int dim, int index ) const;
+        
         DenseMatrix getVertexCoordinateMatrix( int dim, int index ) const;
         
         DenseMatrix getTransformationJacobian( int dim, int index ) const;
+        
+        DenseMatrix getGradientMatrix( int dim, int index ) const;
         
         DenseMatrix getGradientProductMatrix( int dim, int index ) const;
         

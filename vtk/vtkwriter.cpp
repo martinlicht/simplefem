@@ -287,11 +287,23 @@ VTKWriter VTKWriter::writeCellVectorData(
     
     for( int c = 0; c < mesh.count_simplices(topdim); c++ )
     {
+         
+        FloatVector coefficients( mesh.getinnerdimension()+1 );
+        
+        const int N = mesh.getinnerdimension() + 1;
+
+        for( int i = 0; i <= mesh.getinnerdimension(); i++ )
+            coefficients[i] = v.at( c * N + i );
+        
+        FloatVector directions = scaling * mesh.getGradientMatrix(topdim,c) * coefficients;
+
         // TODO: implement this function 
-        os << scaling * v.at(3*c+0) << space 
-           << scaling * v.at(3*c+1) << space 
-           << scaling * v.at(3*c+2) 
-           << nl;
+        os << directions.at(0) << space 
+           << ( mesh.getouterdimension() >= 2 ? directions.at(1) : 0. ) << space 
+           << ( mesh.getouterdimension() >= 3 ? directions.at(2) : 0. ) << nl; 
+        // os << mesh.get_midpoint( topdim, c ).at(0) << space 
+        //    << mesh.get_midpoint( topdim, c ).at(1) << space 
+        //    << 0. << nl; 
     }
     
     os << nl;
