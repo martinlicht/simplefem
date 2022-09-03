@@ -167,7 +167,7 @@ $($(context).silent_runs): %.silent_run : %.$(ending)
 .PHONY: tidy $(context).tidy
 tidy: $(context).tidy
 $(context).tidy:
-	clang-tidy $(mycontextdir)/*.?pp -checks=llvm*,bugprone-*,clang-analyzer-*,misc-*,-llvmlibc-*,-llvm-header-guard,-llvm-include-order,-misc-static-assert -- -std=c++17 -fno-exceptions
+	clang-tidy $(mycontextdir)/*.?pp --config-file=$(projectdir)/Tools/clang-tidy.yaml -- -std=c++17 -fno-exceptions
 
 
 ########################################################################
