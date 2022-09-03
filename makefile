@@ -176,6 +176,7 @@ clean:
 vtkclean:
 	@cd ./tests && $(MAKE) --no-print-directory vtkclean
 	@cd ./benchmarks && $(MAKE) --no-print-directory vtkclean
+	@rm -f ./*.vtk ./*/*.vtk ./*/*/*.vtk
 	@echo "Finished cleaning .vtk files."
 
 .PHONY: dependclean

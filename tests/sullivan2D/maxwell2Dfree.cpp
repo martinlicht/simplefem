@@ -28,8 +28,6 @@ int main()
         
         LOG << "Unit Test: 2D Maxwell System" << nl;
         
-        // LOG << std::setprecision(10);
-
         if(true){
 
             LOG << "Initial mesh..." << nl;

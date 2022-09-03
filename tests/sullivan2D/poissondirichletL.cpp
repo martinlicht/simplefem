@@ -2,8 +2,6 @@
 
 /**/
 
-#include <fstream>
-
 #include "../../basic.hpp"
 #include "../../utility/convergencetable.hpp"
 #include "../../utility/files.hpp"
@@ -12,7 +10,6 @@
 #include "../../sparse/matcsr.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
-#include "../../vtk/vtkwriter.hpp"
 #include "../../solver/iterativesolver.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.elevation.hpp"
@@ -29,8 +26,6 @@ int main()
         
         LOG << "Unit Test for Solution of Dirichlet Problem" << nl;
         
-        // LOG << std::setprecision(10);
-
         if(true){
 
             LOG << "Initial mesh..." << nl;
@@ -193,17 +188,6 @@ int main()
                 
                 contable.lg();
 
-
-                if( r == 1 ){
-                    fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
-                    VTKWriter vtk( M, fs, getbasename(__FILE__) );
-                    vtk.writeCoordinateBlock();
-                    vtk.writeTopDimensionalCells();
-                    vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
-                    // vtk.writeCellVectorData( interpol_grad, "gradient_interpolation" , 0.1 );
-                    fs.close();
-                }
-                
                 if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
                 
 

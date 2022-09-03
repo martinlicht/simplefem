@@ -262,6 +262,44 @@ VTKWriter VTKWriter::writeCellVectorData(
 }
 
 
+VTKWriter VTKWriter::writeCellVectorData( 
+    const FloatVector& v,
+    const std::string name, 
+    Float scaling )
+{
+    assert( current_stage >= Stage::cells );
+    assert( current_stage <= Stage::celldata );
+    
+    const int topdim = mesh.getinnerdimension();
+    
+    assert( 0 < name.size() and name.size() <= 256 );
+    assert( name.find('\n') == std::string::npos );
+    assert( count_white_space( name ) == 0 );
+    
+    assert( v.getdimension() == mesh.count_simplices(topdim) * (mesh.getinnerdimension()+1) );
+    
+    if( current_stage != Stage::celldata ){
+        os << "CELL_DATA " << mesh.count_simplices(topdim) << nl << nl;
+        current_stage = Stage::celldata;
+    }
+    
+    os << "VECTORS " << name << " double" << nl;
+    
+    for( int c = 0; c < mesh.count_simplices(topdim); c++ )
+    {
+        // TODO: implement this function 
+        os << scaling * v.at(3*c+0) << space 
+           << scaling * v.at(3*c+1) << space 
+           << scaling * v.at(3*c+2) 
+           << nl;
+    }
+    
+    os << nl;
+
+    return *this;
+}
+
+
 
 
 

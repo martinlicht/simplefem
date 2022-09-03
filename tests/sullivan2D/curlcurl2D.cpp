@@ -27,8 +27,6 @@ int main()
     
     LOG << "Unit Test for Solution of Darcy Problem" << nl;
     
-    // LOG << std::setprecision(10);
-
     LOG << "Initial mesh..." << nl;
     
     MeshSimplicial2D M = StandardSquare2D_simple();

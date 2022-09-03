@@ -69,10 +69,10 @@ void ConvergenceTable::lg( bool display_convergence_rates ) const
     LOG << text( display_convergence_rates );
 }
 
-void ConvergenceTable::print( std::ostream& os )
-{
-    os << text();
-}
+// void ConvergenceTable::print( std::ostream& os )
+// {
+//     os << text();
+// }
         
 
 std::string ConvergenceTable::text( bool display_convergence_rates ) const

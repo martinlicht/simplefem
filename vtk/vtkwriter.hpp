@@ -20,7 +20,7 @@ class VTKWriter
     
     public:
         
-        VTKWriter( const Mesh& m1D, std::ostream& os, const std::string& name );
+        VTKWriter( const Mesh& m, std::ostream& os, const std::string& name );
         
         VTKWriter writeCoordinateBlock();
         VTKWriter writeCoordinateBlock( const FloatVector& );
@@ -41,6 +41,11 @@ class VTKWriter
             const FloatVector& x, 
             const FloatVector& y, 
             const FloatVector& z, 
+            const std::string name, Float scaling = 1. 
+        );
+        
+        VTKWriter writeCellVectorData(
+            const FloatVector& v, 
             const std::string name, Float scaling = 1. 
         );
         

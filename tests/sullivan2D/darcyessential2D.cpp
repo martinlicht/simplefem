@@ -29,8 +29,6 @@ int main()
     
     LOG << "Unit Test for Solution of Darcy Problem" << nl;
     
-    // LOG << std::setprecision(10);
-
     if(true){
 
         LOG << "Initial mesh..." << nl;
@@ -232,6 +230,8 @@ int main()
 
                         LOG << "...compute error and residual:" << nl;
 
+                        
+                        // improved error estimation 
                         
                         FloatVector interpol_grad_aug = Interpolation( M, M.getinnerdimension(), 1, r + aug_r,     function_grad );
                         FloatVector interpol_sol_aug  = Interpolation( M, M.getinnerdimension(), 2, r + aug_r - 1, function_sol  );

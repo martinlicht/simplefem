@@ -1,7 +1,7 @@
 #ifndef INCLUDEGUARD_UTILITY_CONVERGENCETABLE_HPP
 #define INCLUDEGUARD_UTILITY_CONVERGENCETABLE_HPP
 
-#include <ostream>
+// #include <ostream>
 #include <string>
 #include <vector>
 
@@ -40,7 +40,7 @@ class ConvergenceTable
         
         void lg( bool display_convergence_rates ) const;
         
-        void print( std::ostream& os );
+//         void print( std::ostream& os );
         
 
         std::string text( bool display_convergence_rates ) const;

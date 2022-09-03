@@ -29,8 +29,6 @@ int main()
         
         LOG << "Unit Test for Solution of Neumann Problem" << nl;
         
-        // LOG << std::setprecision(10);
-
         if(true){
 
             LOG << "Initial mesh..." << nl;
@@ -59,8 +57,6 @@ int main()
             
 
 
-            
-            // std::function<FloatVector(const std::function<FloatVector(const FloatVector&) ) >scalarfield = 
             
             std::function<FloatVector(const FloatVector&)> experiment_sol = 
                 [](const FloatVector& vec) -> FloatVector{
@@ -143,22 +139,10 @@ int main()
             
                     SparseMatrix incmatrix = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 0, r );
                     
-//                     LOG << incmatrix.getdimin() <<space<< L_incmatrix.getdimin() <<space<< incmatrix.getdimout() <<space<< L_incmatrix.getdimout() << nl;
-//                     assert( incmatrix.getdimin()  == L_incmatrix.getdimin() );
-//                     assert( incmatrix.getdimout() == L_incmatrix.getdimout() );
-
                     SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
                     LOG << "...assemble stiffness matrix" << nl;
             
-                    // ProductOperator 
-//                     auto stiffness = incmatrix_t * diffmatrix_t * vector_massmatrix * diffmatrix * incmatrix;
-//                     auto op1 = incmatrix_t * diffmatrix_t;
-//                     auto op2 = op1 * vector_massmatrix;
-//                     auto op3 = op2 * diffmatrix;
-//                     auto stiffness = op3 * incmatrix;
-//                     auto& stiffness_csr = stiffness;
-
                     auto opr = diffmatrix & incmatrix;
                     auto opl = opr.getTranspose(); 
                     auto stiffness = opl & ( vector_massmatrix & opr );
@@ -182,14 +166,6 @@ int main()
                         FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r-1, function_grad );
                         FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r,   function_rhs  );
                         
-                        LOG << "...compute norms of solution and right-hand side:" << nl;
-            
-                        Float sol_norm = interpol_sol * ( scalar_massmatrix * interpol_sol );
-                        Float rhs_norm = interpol_rhs * ( scalar_massmatrix * interpol_rhs );
-                        
-                        LOG << "solution norm: " << sol_norm << nl;
-                        LOG << "rhs norm:      " << rhs_norm << nl;
-
                         LOG << "...create RHS vector" << nl;
 
                         FloatVector rhs = incmatrix_t * ( scalar_massmatrix * interpol_rhs );
@@ -223,8 +199,11 @@ int main()
                         LOG << "...compute error and residual:" << nl;
             
                         
-                        auto errornorm_aux = interpol_sol  - incmatrix * sol;
-                        auto graderror_aux = interpol_grad - diffmatrix * incmatrix * sol;
+                        auto computed_sol  = incmatrix * sol;
+                        auto computed_grad = diffmatrix * incmatrix * sol;
+                        
+                        auto errornorm_aux = interpol_sol  - computed_sol;
+                        auto graderror_aux = interpol_grad - computed_grad;
                         
                         Float errornorm     = sqrt( errornorm_aux * ( scalar_massmatrix * errornorm_aux ) );
                         Float graderrornorm = sqrt( graderror_aux * ( vector_massmatrix * graderror_aux ) );
@@ -245,18 +224,13 @@ int main()
 
 
                         if( r == 1 ){
-                    
                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
-                
                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
-                            vtk.writeCoordinateBlock( 0.3 * sol );
+                            vtk.writeCoordinateBlock();
                             vtk.writeTopDimensionalCells();
-                            
                             vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
-                            // vtk.writeCellVectorData( interpol_grad, "gradient_interpolation" , 0.1 );
-                            
+                            vtk.writeCellVectorData( computed_grad, "gradient_interpolation" , 0.1 );
                             fs.close();
-                    
                         }
 
 
