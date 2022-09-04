@@ -229,7 +229,7 @@ class MeshSimplicial2D
         
         /* TikZ */
         
-        void outputTikZ( std::ostream& os ) const;
+        std::string outputTikZ() const;
         
         
         

@@ -3211,8 +3211,10 @@ void MeshSimplicial2D::merge( const MeshSimplicial2D& mesh )
 
 
 
-void MeshSimplicial2D::outputTikZ( std::ostream& os ) const
+std::string MeshSimplicial2D::outputTikZ() const
 {
+    std::ostringstream os;
+    
     const auto& coords = getcoordinates();
     
     for( int n = 0; n < coords.getnumber(); n++ )
@@ -3239,6 +3241,7 @@ void MeshSimplicial2D::outputTikZ( std::ostream& os ) const
         os << "cycle;" << nl;
     }
     
+    return os.str();
 }
         
 
