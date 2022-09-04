@@ -11,7 +11,7 @@ using namespace std;
 
 int main()
 {
-        LOG << std::unitbuf;
+        //LOG << std::unitbuf;
         LOG << "Unit Test for Vector class" << nl;
         
         if(true)

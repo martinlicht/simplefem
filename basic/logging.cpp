@@ -29,7 +29,7 @@ Logger::~Logger()
     
     FILE* f = use_cerr ? stderr : stdout;
     
-    const auto str = this->str();
+    const auto& str = *this; //this->str();
     
     bool use_prefix_next  = log_has_a_fresh_line;
     

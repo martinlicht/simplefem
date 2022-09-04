@@ -9,7 +9,7 @@
 
 // #include <ostream>
 #include <string>
-#include <sstream>
+// #include <sstream>
 
 // #include "logger.hpp"
 // #include "prefixbuffer.hpp"
@@ -22,7 +22,7 @@ std::string protocolprefixnow();
 // It is not global for the entire program 
 extern bool log_has_a_fresh_line;
 
-class Logger : public std::ostringstream
+class Logger : public std::string
 {
     private:
         bool use_cerr; //std::ostream& internalstream;
@@ -50,9 +50,88 @@ class Logger : public std::ostringstream
         // linenumber( linenumber )
         // {}
 
+        Logger( Logger& ) = delete;
+        Logger( Logger&& ) = delete;
+
+        Logger& operator=( Logger& ) = delete;
+        Logger& operator=( Logger&& ) = delete;
+
+
         ~Logger();
 
 };
+
+inline Logger& operator<<( Logger&& str, const std::string& t )
+{
+    str += t;
+    return str;
+}
+
+inline Logger& operator<<( Logger&& str, const char* t )
+{
+    str += std::string(t);
+    return str;
+}
+
+inline Logger& operator<<( Logger&& str, const char t )
+{
+    str += std::string(1,t);
+    return str;
+}
+
+inline Logger& operator<<( Logger& str, const std::string& t )
+{
+    str += t;
+    return str;
+}
+
+inline Logger& operator<<( Logger& str, const char* t )
+{
+    str += std::string(t);
+    return str;
+}
+
+inline Logger& operator<<( Logger& str, const char t )
+{
+    str += std::string(1,t);
+    return str;
+}
+
+template <typename T>
+inline
+typename std::enable_if< std::is_same< decltype( std::to_string( *((T*)nullptr) ) ), std::string >::value , Logger >::type& 
+operator<<( Logger& str, const T& t )
+{
+    str += std::to_string(t);
+    return str;
+}
+
+template <typename T>
+inline
+typename std::enable_if< std::is_same< decltype( ((T*)nullptr)->text()), std::string >::value , Logger >::type& 
+operator<<( Logger& str, const T& t )
+{
+    str += t.text();
+    return str;
+}
+
+template <typename T>
+inline
+typename std::enable_if< std::is_same< decltype( std::to_string( *((T*)nullptr) ) ), std::string >::value , Logger >::type& 
+operator<<( Logger&& str, const T& t )
+{
+    str += std::to_string(t);
+    return str;
+}
+
+template <typename T>
+inline
+typename std::enable_if< std::is_same< decltype( ((T*)nullptr)->text()), std::string >::value , Logger >::type& 
+operator<<( Logger&& str, const T& t )
+{
+    str += t.text();
+    return str;
+}
 
 
 
