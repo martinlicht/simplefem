@@ -61,22 +61,22 @@ class Logger : public std::string
 
 };
 
-inline Logger& operator<<( Logger&& str, const std::string& t )
+inline Logger&& operator<<( Logger&& str, const std::string& t )
 {
     str += t;
-    return str;
+    return static_cast<Logger&&>(str);
 }
 
-inline Logger& operator<<( Logger&& str, const char* t )
+inline Logger&& operator<<( Logger&& str, const char* t )
 {
     str += std::string(t);
-    return str;
+    return static_cast<Logger&&>(str);
 }
 
-inline Logger& operator<<( Logger&& str, const char t )
+inline Logger&& operator<<( Logger&& str, const char t )
 {
     str += std::string(1,t);
-    return str;
+    return static_cast<Logger&&>(str);
 }
 
 inline Logger& operator<<( Logger& str, const std::string& t )
@@ -117,20 +117,20 @@ operator<<( Logger& str, const T& t )
 
 template <typename T>
 inline
-typename std::enable_if< std::is_same< decltype( std::to_string( *((T*)nullptr) ) ), std::string >::value , Logger >::type& 
+typename std::enable_if< std::is_same< decltype( std::to_string( *((T*)nullptr) ) ), std::string >::value , Logger >::type&&
 operator<<( Logger&& str, const T& t )
 {
     str += std::to_string(t);
-    return str;
+    return static_cast<Logger&&>(str);
 }
 
 template <typename T>
 inline
-typename std::enable_if< std::is_same< decltype( ((T*)nullptr)->text()), std::string >::value , Logger >::type& 
+typename std::enable_if< std::is_same< decltype( ((T*)nullptr)->text()), std::string >::value , Logger >::type&&
 operator<<( Logger&& str, const T& t )
 {
     str += t.text();
-    return str;
+    return static_cast<Logger&&>(str);
 }
 
 
