@@ -70,9 +70,9 @@ class Mesh
         
         void check() const;
         
-        virtual void print( std::ostream& out ) const = 0;
+        void print( std::ostream& out ) const;
         
-        // virtual std::string text() const = 0;
+        virtual std::string text() const = 0;
         
         // // void lg() const { LOG << *this << nl; };
         

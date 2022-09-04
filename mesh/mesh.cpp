@@ -111,6 +111,12 @@ void Mesh::check() const
   
 }
 
+void Mesh::print( std::ostream& out ) const
+{
+  out << text();
+}
+
+
 
 
 
