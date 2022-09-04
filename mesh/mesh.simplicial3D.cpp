@@ -1602,7 +1602,7 @@ std::string MeshSimplicial3D::text() const
     
     
     
-    os << "Finished printing" << nl;
+    os << "Finished text output" << nl;
     
     return os.str();
 }

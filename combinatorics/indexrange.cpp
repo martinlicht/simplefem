@@ -4,7 +4,7 @@
 #include <cassert>
 
 // #include <algorithm>
-#include <ostream>
+// #include <ostream>
 #include <sstream>
 #include <string>
 
@@ -41,11 +41,11 @@ std::string IndexRange::text( bool embellish ) const
     return ss.str();
 }
 
-void IndexRange::print( std::ostream& os, bool embellish ) const
-{
-    check();
-    os << text( embellish ) << nl;
-}
+// void IndexRange::print( std::ostream& os, bool embellish ) const
+// {
+//     check();
+//     os << text( embellish ) << nl;
+// }
 
 
 int IndexRange::min() const

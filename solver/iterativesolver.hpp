@@ -2,7 +2,7 @@
 #define INCLUDEGUARD_SOLVER_ITERATIVESOLVER
 
 
-#include <ostream>
+// #include <ostream>
 #include <limits>
 
 #include "../basic.hpp"
@@ -73,11 +73,11 @@ struct IterativeSolver
 
 
 
-inline std::ostream& operator<<( std::ostream& os, const IterativeSolver& solver )
-{
-    os << solver.text();
-    return os;
-}
+// inline std::ostream& operator<<( std::ostream& os, const IterativeSolver& solver )
+// {
+//     os << solver.text();
+//     return os;
+// }
 
 
 

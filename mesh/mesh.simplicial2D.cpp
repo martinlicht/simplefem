@@ -791,7 +791,7 @@ std::string MeshSimplicial2D::text() const
     for( const auto& duple : data_edge_nextparents_of_vertices )
       os << duple[0] << space << duple[1] << nl;
     
-    os << "Finished printing" << nl;
+    os << "Finished text output" << nl;
     
     return os.str();
 }

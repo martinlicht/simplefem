@@ -5,7 +5,7 @@
 
 
 //#include <memory>
-#include <ostream>
+// #include <ostream>
 
 #include "../basic.hpp"
 #include "floatvector.hpp"
@@ -49,7 +49,7 @@ class LinearOperator
 
         virtual std::string text() const = 0;
         
-        void print( std::ostream& os ) const;
+        // void print( std::ostream& os ) const;
 
         // // void lg() const { LOG << text() << nl; };
         
@@ -93,13 +93,13 @@ inline FloatVector operator*( const LinearOperator& op, const FloatVector& vec )
     return ret;
 }
   
-inline std::ostream& operator<<( std::ostream& os, const LinearOperator& op )
-{
-    op.check();
-    op.print( os );
-    op.check();
-    return os;
-}
+// inline std::ostream& operator<<( std::ostream& os, const LinearOperator& op )
+// {
+//     op.check();
+//     op.print( os );
+//     op.check();
+//     return os;
+// }
   
 
 

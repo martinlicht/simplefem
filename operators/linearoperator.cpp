@@ -40,10 +40,10 @@ void LinearOperator::check() const
     assert( dimout >= 0 && dimin >= 0 );
 }
 
-void LinearOperator::print( std::ostream& os ) const
-{
-    os << text();
-}
+// void LinearOperator::print( std::ostream& os ) const
+// {
+//     os << text();
+// }
 
 bool LinearOperator::issquare() const
 {

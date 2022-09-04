@@ -2,7 +2,7 @@
 #include "multiindex.hpp"
 
 #include <cassert>
-#include <ostream>
+// #include <ostream>
 #include <string>
 #include <vector>
 
@@ -66,14 +66,14 @@ std::string MultiIndex::text( bool embellish ) const
     return ss.str();
 }
 
-void MultiIndex::print( std::ostream& os, bool embellish ) const
-{
-    check();
-    for( int p : getIndexRange() )
-        os << at( p ) << "\t";
-    if( embellish ) 
-        os << nl;
-}
+// void MultiIndex::print( std::ostream& os, bool embellish ) const
+// {
+//     check();
+//     for( int p : getIndexRange() )
+//         os << at( p ) << "\t";
+//     if( embellish ) 
+//         os << nl;
+// }
 
 IndexRange MultiIndex::getIndexRange() const
 {

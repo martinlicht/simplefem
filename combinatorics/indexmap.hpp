@@ -6,7 +6,7 @@
 
 #include <functional>
 #include <initializer_list>
-#include <ostream>
+// #include <ostream>
 #include <string>
 #include <vector>
 
@@ -55,7 +55,7 @@ class IndexMap
         
         std::string text( bool embellish = true ) const;
         
-        void print( std::ostream&, bool embellish = true ) const;
+        // void print( std::ostream&, bool embellish = true ) const;
 
         // void lg() const { LOG << text() << nl; };
 
@@ -168,14 +168,14 @@ inline bool operator<( const IndexMap& left, const IndexMap& right )
 }
 
 
-inline std::ostream& operator<<( std::ostream& os, const IndexMap& im )
-{
-    im.check();
+// inline std::ostream& operator<<( std::ostream& os, const IndexMap& im )
+// {
+//     im.check();
 
-    im.print( os );
+//     im.print( os );
 
-    return os;
-}
+//     return os;
+// }
 
 
 

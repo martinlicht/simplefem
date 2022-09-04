@@ -2,8 +2,8 @@
 
 // #include <cassert>
 #include <algorithm>
-#include <istream>
-#include <ostream>
+// #include <istream>
+// #include <ostream>
 #include <sstream>
 #include <iterator>
 #include <vector>
@@ -42,10 +42,10 @@ void Coordinates::check() const
 
 
 
-void Coordinates::print( std::ostream& os ) const 
-{
-    os << text();
-}
+// void Coordinates::print( std::ostream& os ) const 
+// {
+//     os << text();
+// }
 
 std::string Coordinates::text() const
 {

@@ -634,6 +634,16 @@ inline int count_white_space( const std::string& str ) // TODO: Move to utilitie
 /////////////////////////////////////////////////
 
 
+template <typename S, typename T>
+inline
+typename std::enable_if< std::is_same< decltype( ((T*)nullptr)->text()), std::string >::value ,S>::type& 
+operator<<( S& stream, const T& t )
+{
+    stream << t.text();
+    return stream;
+}
+
+
 /***********************************************/
 /*   GENERIC STREAM TEMPLATE FOR std::array    */ 
 /***********************************************/
