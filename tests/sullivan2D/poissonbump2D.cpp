@@ -115,7 +115,8 @@ int main()
             const int min_r = 1;
             const int max_r = 1;
             
-            const int r_plus = 0;
+            const int r_plus_scalar = 0;
+            const int r_plus_vector = 0;
             
             ConvergenceTable contable("Mass error");
             
@@ -139,11 +140,11 @@ int main()
                     
                     LOG << "...assemble scalar mass matrices" << nl;
             
-                    SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r   + r_plus );
+                    SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r   + r_plus_scalar );
 
                     LOG << "...assemble vector mass matrix" << nl;
             
-                    SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 + r_plus );
+                    SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 + r_plus_vector );
                     
                     LOG << "...assemble differential matrix and transpose" << nl;
 
@@ -159,8 +160,8 @@ int main()
 
                     LOG << "...assemble elevation matrices and transposes" << nl;
             
-                    SparseMatrix scalar_elevmatrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 0, r  , r_plus );
-                    SparseMatrix vector_elevmatrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 1, r-1, r_plus );
+                    SparseMatrix scalar_elevmatrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 0, r  , r_plus_scalar );
+                    SparseMatrix vector_elevmatrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 1, r-1, r_plus_vector );
                     
                     SparseMatrix scalar_elevmatrix_t = scalar_elevmatrix.getTranspose();
                     SparseMatrix vector_elevmatrix_t = vector_elevmatrix.getTranspose();
@@ -186,9 +187,9 @@ int main()
                         
                         LOG << "...interpolate explicit solution and rhs" << nl;
             
-                        FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 0, r   + r_plus, function_sol  );
-                        FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r-1 + r_plus, function_grad );
-                        FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r   + r_plus, function_rhs  );
+                        FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 0, r   + r_plus_scalar, function_sol  );
+                        FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r-1 + r_plus_vector, function_grad );
+                        FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r   + r_plus_scalar, function_rhs  );
                         
                         LOG << "...compute norms of solution and right-hand side:" << nl;
             

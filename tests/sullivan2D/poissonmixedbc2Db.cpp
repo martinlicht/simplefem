@@ -15,6 +15,7 @@
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/iterativesolver.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
+#include "../../fem/global.elevation.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.sullivanincl.hpp"
@@ -104,6 +105,9 @@ int main()
             const int min_r = 3;
             const int max_r = 3;
             
+            const int r_plus_scalar = 0;
+            const int r_plus_vector = 0;
+            
             ConvergenceTable contable("Mass error");
             
             contable << "u_error" << "du_error" << "residual" << "time" << nl;
@@ -126,11 +130,11 @@ int main()
                     
                     LOG << "...assemble scalar mass matrices" << nl;
             
-                    SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
+                    SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r   + r_plus_scalar );
 
                     LOG << "...assemble vector mass matrix" << nl;
             
-                    SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
+                    SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 + r_plus_vector );
                     
                     LOG << "...assemble differential matrix and transpose" << nl;
 
@@ -144,6 +148,14 @@ int main()
                     
                     SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
+                    LOG << "...assemble elevation matrices and transposes" << nl;
+            
+                    SparseMatrix scalar_elevmatrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 0, r  , r_plus_scalar );
+                    SparseMatrix vector_elevmatrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 1, r-1, r_plus_vector );
+                    
+                    SparseMatrix scalar_elevmatrix_t = scalar_elevmatrix.getTranspose();
+                    SparseMatrix vector_elevmatrix_t = vector_elevmatrix.getTranspose();
+
                     LOG << "...assemble stiffness matrix" << nl;
             
                     // ProductOperator 
@@ -154,7 +166,7 @@ int main()
 //                     auto stiffness = op3 * incmatrix;
 //                     auto& stiffness_csr = stiffness;
 
-                    auto opr = diffmatrix & incmatrix;
+                    auto opr = vector_elevmatrix & diffmatrix & incmatrix;
                     auto opl = opr.getTranspose(); 
                     auto stiffness = opl & ( vector_massmatrix & opr );
                     
@@ -173,9 +185,9 @@ int main()
                         
                         LOG << "...interpolate explicit solution and rhs" << nl;
             
-                        FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 0, r,   function_sol  );
-                        FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r-1, function_grad );
-                        FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r,   function_rhs  );
+                        FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 0, r   + r_plus_scalar, function_sol  );
+                        FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r-1 + r_plus_vector, function_grad );
+                        FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r   + r_plus_scalar, function_rhs  );
                         
                         LOG << "...create RHS vector" << nl;
 
@@ -202,8 +214,8 @@ int main()
                         auto computed_sol  = incmatrix * sol;
                         auto computed_grad = diffmatrix * incmatrix * sol;
                         
-                        auto errornorm_aux = interpol_sol  - computed_sol;
-                        auto graderror_aux = interpol_grad - computed_grad;
+                        auto errornorm_aux = interpol_sol  - scalar_elevmatrix * computed_sol;
+                        auto graderror_aux = interpol_grad - vector_elevmatrix * computed_grad;
                         
                         Float errornorm     = sqrt( errornorm_aux * ( scalar_massmatrix * errornorm_aux ) );
                         Float graderrornorm = sqrt( graderror_aux * ( vector_massmatrix * graderror_aux ) );
