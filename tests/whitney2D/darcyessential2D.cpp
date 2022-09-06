@@ -16,6 +16,7 @@
 #include "../../solver/inv.hpp"
 #include "../../solver/systemsparsesolver.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
+#include "../../fem/global.elevation.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.elevation.hpp"
@@ -110,6 +111,9 @@ int main()
         
         const int min_r = 1;
         const int max_r = 1;
+
+        const int r_plus_vector = 1;
+        const int r_plus_volume = 1;
         
         
         ConvergenceTable contable("Mass error");
@@ -119,6 +123,7 @@ int main()
 
         assert( 0 <= min_l and min_l <= max_l );
         assert( 0 <= min_r and min_r <= max_r );
+        assert( 0 <= r_plus_vector and 0 <= r_plus_volume );
             
         for( int l = 0; l < min_l; l++ )
             M.uniformrefinement();
@@ -135,9 +140,7 @@ int main()
                 LOG << "... assemble matrices" << nl; // TODO: correct the degrees, perhaps via degree elevation
         
                 SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r );
-                
-//                 SparseMatrix vector_massmatrix_inv = FEECBrokenMassMatrix_cellwiseinverse( M, M.getinnerdimension(), 1, r );
-                
+                                
                 SparseMatrix volume_elevationmatrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 2, r-1, 1 );
                 SparseMatrix volume_elevationmatrix_t = volume_elevationmatrix.getTranspose();
 

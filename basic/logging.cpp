@@ -12,15 +12,15 @@ Logger::Logger(
             const bool do_newline,
             const char* filename,
             const int linenumber
-        )
-        : 
-        use_cerr( use_cerr ), // internalstream( use_cerr ? std::cerr : std::cout ), // internalstream( os ),
-        pad_newline_if_there_is_none( do_newline ),
-        filename( filename ),
-        linenumber( linenumber )
-        {
-            //*this << std::setprecision(10);
-        }
+)
+: 
+use_cerr( use_cerr ), // internalstream( use_cerr ? std::cerr : std::cout ), // internalstream( os ),
+pad_newline_if_there_is_none( do_newline ),
+filename( filename ),
+linenumber( linenumber )
+{
+    //*this << std::setprecision(10);
+}
 
         
 
@@ -87,8 +87,14 @@ Logger::~Logger()
     
 }
 
+template Logger& operator<<<int>( Logger& str, const int& t );
+template Logger& operator<<<double>( Logger& str, const double& t );
 
-
+template Logger&& operator<< <std::string>( Logger&& str, const std::string& t );
+template Logger&& operator<< <char const*>( Logger&& str, char const* const& t );
+template Logger&& operator<< <char>( Logger&& str, const char& t );
+template Logger&& operator<< <int>( Logger&& str, const int& t );
+template Logger&& operator<< <double>( Logger&& str, const double& t );
 
 
 

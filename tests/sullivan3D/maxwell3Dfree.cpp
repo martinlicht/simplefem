@@ -19,6 +19,7 @@
 // #include "../../solver/pcrm.hpp"
 // #include "../../solver/minres.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
+#include "../../fem/global.elevation.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.sullivanincl.hpp"
@@ -132,17 +133,19 @@ int main()
             
 
             const int min_l = 0; 
-            
             const int max_l = 4;
             
             const int min_r = 2; 
-            
             const int max_r = 2;
+            
+            const int r_plus_scalar = 1;
+            const int r_plus_vector = 1; 
             
 
             
             assert( 0 <= min_l and min_l <= max_l );
             assert( 0 <= min_r and min_r <= max_r );
+            assert( 0 <= r_plus_scalar and 0 <= r_plus_vector );
             
             for( int l = 0; l < min_l; l++ )
                 M.uniformrefinement();

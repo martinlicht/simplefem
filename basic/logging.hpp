@@ -61,44 +61,25 @@ class Logger : public std::string
 
 };
 
-inline Logger&& operator<<( Logger&& str, const std::string& t )
+Logger& operator<<( Logger& str, const std::string& t )
 {
     str += t;
     return static_cast<Logger&&>(str);
 }
 
-inline Logger&& operator<<( Logger&& str, const char* t )
+Logger& operator<<( Logger& str, const char* t )
 {
     str += std::string(t);
     return static_cast<Logger&&>(str);
 }
 
-inline Logger&& operator<<( Logger&& str, const char t )
-{
-    str += std::string(1,t);
-    return static_cast<Logger&&>(str);
-}
-
-inline Logger& operator<<( Logger& str, const std::string& t )
-{
-    str += t;
-    return str;
-}
-
-inline Logger& operator<<( Logger& str, const char* t )
-{
-    str += std::string(t);
-    return str;
-}
-
-inline Logger& operator<<( Logger& str, const char t )
+Logger& operator<<( Logger& str, const char t )
 {
     str += std::string(1,t);
     return str;
 }
 
 template <typename T>
-inline
 typename std::enable_if< std::is_same< decltype( std::to_string( *((T*)nullptr) ) ), std::string >::value , Logger >::type& 
 operator<<( Logger& str, const T& t )
 {
@@ -107,7 +88,6 @@ operator<<( Logger& str, const T& t )
 }
 
 template <typename T>
-inline
 typename std::enable_if< std::is_same< decltype( ((T*)nullptr)->text()), std::string >::value , Logger >::type& 
 operator<<( Logger& str, const T& t )
 {
@@ -115,24 +95,21 @@ operator<<( Logger& str, const T& t )
     return str;
 }
 
-template <typename T>
-inline
-typename std::enable_if< std::is_same< decltype( std::to_string( *((T*)nullptr) ) ), std::string >::value , Logger >::type&&
-operator<<( Logger&& str, const T& t )
+template<typename T>
+inline Logger&& operator<<( Logger&& str, const T& t ) 
 {
-    str += std::to_string(t);
+    str << t;
     return static_cast<Logger&&>(str);
 }
 
-template <typename T>
-inline
-typename std::enable_if< std::is_same< decltype( ((T*)nullptr)->text()), std::string >::value , Logger >::type&&
-operator<<( Logger&& str, const T& t )
-{
-    str += t.text();
-    return static_cast<Logger&&>(str);
-}
+extern template Logger&  operator<< <int>( Logger& str, const int& t );
+extern template Logger&  operator<< <double>( Logger& str, const double& t );
 
+extern template Logger&& operator<< <std::string>( Logger&& str, const std::string& t );
+extern template Logger&& operator<< <char const*>( Logger&& str, char const* const& t );
+extern template Logger&& operator<< <char>( Logger&& str, const char& t );
+extern template Logger&& operator<< <int>( Logger&& str, const int& t );
+extern template Logger&& operator<< <double>( Logger&& str, const double& t );
 
 
 
