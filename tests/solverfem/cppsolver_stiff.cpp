@@ -2,9 +2,9 @@
 
 /**/
 
-#include <iostream>
-#include <fstream>
-#include <iomanip>
+#include <ostream>
+// #include <fstream>
+// #include <iomanip>
 
 #include "../../basic.hpp"
 #include "../../utility/utility.hpp"
@@ -37,7 +37,7 @@ int main()
 {
         LOG << "Unit Test: " << TestName << endl;
         
-        LOG << std::setprecision(10);
+        // LOG << std::setprecision(10);
 
         if(true){
 
@@ -78,17 +78,19 @@ int main()
             // ConvergenceTable contable_sol("L2 Error");
             ConvergenceTable contable_res("L2 Residual");
             ConvergenceTable contable_num("Iteration percentage");
+            ConvergenceTable contable_sec("Time");
 
-            // contable_sol.print_transpose_instead_of_standard = true;
-            contable_res.print_transpose_instead_of_standard = true;
-            contable_num.print_transpose_instead_of_standard = true;
+            // contable_sol.print_rowwise_instead_of_columnwise = true;
+            contable_res.print_rowwise_instead_of_columnwise = true;
+            contable_num.print_rowwise_instead_of_columnwise = true;
+            contable_sec.print_rowwise_instead_of_columnwise = true;
             
             bool do_cgmpp      = true;
             bool do_crmpp_expl = true;
             bool do_crmpp_robt = true;
             bool do_crmpp_fast = true;
             bool do_minres     = true;
-            bool do_herzog     = false;
+            bool do_herzog     = true;
             //
             bool do_cgm_csr                = true;
             bool do_crm_csr                = true;
@@ -147,11 +149,27 @@ int main()
             // if( do_cgm_ssor_csr )           contable_num << "CGMcsr_ssor"  ;
             // if( do_chebyshev_diagonal_csr ) contable_num << "Chebyshev_csr";
             
+            if( do_cgmpp      ) contable_sec << "CGM++"      ;
+            if( do_crmpp_expl ) contable_sec << "CRM++(expl)";
+            if( do_crmpp_robt ) contable_sec << "CRM++(robt)";
+            if( do_crmpp_fast ) contable_sec << "CRM++(fast)";
+            if( do_minres     ) contable_sec << "MINRES"     ;
+            if( do_herzog     ) contable_sec << "HERZOG"     ;
+            //
+            // if( do_cgm_csr )                contable_sec << "CGMcsr"       ;
+            // if( do_crm_csr )                contable_sec << "CRMcsr"       ;
+            // if( do_crm_csrtextbook )        contable_sec << "CRMcsr_tb"    ;
+            // if( do_minres_csr )             contable_sec << "MINREScsr"    ;
+            // if( do_whatever_csr )           contable_sec << "WHATEVER"     ;
+            // if( do_cgm_diagonal_csr )       contable_sec << "CGMcsr_diag"  ;
+            // if( do_cgm_ssor_csr )           contable_sec << "CGMcsr_ssor"  ;
+            // if( do_chebyshev_diagonal_csr ) contable_sec << "Chebyshev_csr";
+            
 
             
 
-            const int min_l = 1; 
-            const int max_l = 8;
+            const int min_l = 0; 
+            const int max_l = 6;
 
             assert( 0 <= min_l and min_l <= max_l );
             
@@ -167,16 +185,19 @@ int main()
                 
                 {
                     
-                    LOG << "...assemble matrices" << endl;
+                    LOG << "...assemble scalar mass matrix" << endl;
             
                     SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
-                    scalar_massmatrix.sortandcompressentries();
                     
                     LOG << "...assemble vector mass matrix" << endl;
             
                     SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
+
+                    LOG << "...sort and compress mass matrices" << endl;
+            
+                    scalar_massmatrix.sortandcompressentries();
                     vector_massmatrix.sortandcompressentries();
-                    
+
                     LOG << "...assemble differential matrix and transpose" << endl;
 
                     SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r );
@@ -189,7 +210,7 @@ int main()
 
                     SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
-                    LOG << "...assemble stiffness and mass matrices" << endl;
+                    LOG << "...compose stiffness and mass matrices" << endl;
             
                     const auto composed_stiffness = incmatrix_t * diffmatrix_t * vector_massmatrix * diffmatrix * incmatrix;
                     const auto composed_mass      = incmatrix_t * scalar_massmatrix * incmatrix;
@@ -197,12 +218,17 @@ int main()
                     auto opr  = diffmatrix & incmatrix;
                     auto opl  = opr.getTranspose(); 
                     auto stiffness_csr_prelim = opl & ( vector_massmatrix & opr );
+                    
+                    LOG << "...convert to CSR" << endl;
+            
                     stiffness_csr_prelim.sortentries();
                     auto stiffness_csr = MatrixCSR( stiffness_csr_prelim );
 
-                    const auto& stiffness = stiffness_csr;
+                    const auto& stiffness = composed_stiffness;
                     const auto& mass      = composed_mass;
                     
+                    LOG << "...matrices done" << endl;
+
                     {
 
                         FloatVector sol_original( M.count_simplices(0), 0. );
@@ -232,7 +258,7 @@ int main()
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             
-                             LOG << sol.norm( mass ) << nl;
+                            LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
 
                             auto runtime  = static_cast<Float>( end - start );
                             // auto stat_sol = Float( ( sol - ... ).norm() );
@@ -242,6 +268,7 @@ int main()
                             //contable_sol << stat_sol;
                             contable_res << stat_res;
                             contable_num << stat_num;
+                            contable_sec << runtime;
                         }
 
                         if( do_crmpp_expl )
@@ -261,7 +288,7 @@ int main()
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             
-                             LOG << sol.norm( mass ) << nl;
+                            LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
 
                             auto runtime  = static_cast<Float>( end - start );
                             // auto stat_sol = Float( ( sol - ... ).norm() );
@@ -271,6 +298,7 @@ int main()
                             //contable_sol << stat_sol;
                             contable_res << stat_res;
                             contable_num << stat_num;
+                            contable_sec << runtime;
                         }
 
                         if( do_crmpp_robt )
@@ -290,7 +318,7 @@ int main()
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             
-                             LOG << sol.norm( mass ) << nl;
+                            LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
 
                             auto runtime  = static_cast<Float>( end - start );
                             // auto stat_sol = Float( ( sol - ... ).norm() );
@@ -300,6 +328,7 @@ int main()
                             //contable_sol << stat_sol;
                             contable_res << stat_res;
                             contable_num << stat_num;
+                            contable_sec << runtime;
                         }
 
                         if( do_crmpp_fast )
@@ -319,7 +348,7 @@ int main()
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                             
-                             LOG << sol.norm( mass ) << nl;
+                            LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
 
                             auto runtime  = static_cast<Float>( end - start );
                             // auto stat_sol = Float( ( sol - ... ).norm() );
@@ -329,6 +358,7 @@ int main()
                             //contable_sol << stat_sol;
                             contable_res << stat_res;
                             contable_num << stat_num;
+                            contable_sec << runtime;
                         }
 
                         if( do_minres )
@@ -348,7 +378,7 @@ int main()
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
-                             LOG << sol.norm( mass ) << nl;
+                            LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
 
                             auto runtime  = static_cast<Float>( end - start );
                             // auto stat_sol = Float( ( sol - ... ).norm() );
@@ -358,6 +388,7 @@ int main()
                             //contable_sol << stat_sol;
                             contable_res << stat_res;
                             contable_num << stat_num;
+                            contable_sec << runtime;
                         }
 
                         if( do_herzog )
@@ -377,7 +408,7 @@ int main()
                             timestamp end = gettimestamp();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
 
-                             LOG << sol.norm( mass ) << nl;
+                            LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
 
                             auto runtime  = static_cast<Float>( end - start );
                             // auto stat_sol = Float( ( sol - ... ).norm() );
@@ -387,17 +418,21 @@ int main()
                             //contable_sol << stat_sol;
                             contable_res << stat_res;
                             contable_num << stat_num;
+                            contable_sec << runtime;
                         }
                         
                         
                         // contable_sol << nl;
                         contable_res << nl;
                         contable_num << nl;
+                        contable_sec << nl;
+
+                        // contable_sol.lg( false );
+                        contable_res.lg( false );
+                        contable_num.lg( false );
+                        contable_sec.lg( false );
+
                     }
-                        
-                    // contable_sol.lg( false );
-                    contable_res.lg( false );
-                    contable_num.lg( false );
                     
                 }
 

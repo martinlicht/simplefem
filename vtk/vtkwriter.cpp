@@ -71,7 +71,7 @@ VTKWriter VTKWriter::writeCoordinateBlock()
               << mesh.getcoordinates().getdata(v,2) 
               << nl;
       } else {
-          std::cout << "outer dimension is: " << mesh.getouterdimension() << nl;
+          LOG << "outer dimension is: " << mesh.getouterdimension() << nl;
           unreachable();
       }
         

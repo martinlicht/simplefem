@@ -1,11 +1,13 @@
-#ifndef INCLUDEGUARD_SOLVER_SYSTEMSOLVER
-#define INCLUDEGUARD_SOLVER_SYSTEMSOLVER
+#ifndef INCLUDEGUARD_SOLVER_SYSTEMSPARSESOLVER
+#define INCLUDEGUARD_SOLVER_SYSTEMSPARSESOLVER
 
 #include <cassert>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
+#if defined(_OPENMP)
 #include <omp.h>
+#endif
 #include <new>
 #include <utility>
 
@@ -14,7 +16,7 @@
 
 const Float expected_sign_of_A =  1.;
 
-void HodgeConjugateResidualSolverCSR( 
+int HodgeConjugateResidualSolverCSR( 
     const int N, 
     const int L, 
     Float* x, 
@@ -30,7 +32,7 @@ void HodgeConjugateResidualSolverCSR(
     int inneriteration_print_modulo
 );
 
-void HodgeConjugateResidualSolverCSR_diagonal( 
+int HodgeConjugateResidualSolverCSR_diagonal( 
     const int N, 
     const int L, 
     Float* x, 
@@ -46,7 +48,7 @@ void HodgeConjugateResidualSolverCSR_diagonal(
     int inneriteration_print_modulo
 );
 
-void HodgeConjugateResidualSolverCSR_textbook( 
+int HodgeConjugateResidualSolverCSR_textbook( 
     const int N, 
     const int L, 
     Float* x, 
@@ -62,7 +64,7 @@ void HodgeConjugateResidualSolverCSR_textbook(
     int inneriteration_print_modulo
 );
 
-void HodgeConjugateResidualSolverCSR_SSOR( 
+int HodgeConjugateResidualSolverCSR_SSOR( 
     const int N, 
     const int L, 
     Float* x, 
@@ -78,6 +80,23 @@ void HodgeConjugateResidualSolverCSR_SSOR(
     int inneriteration_print_modulo
 );
 
-
+int HodgeHerzogSoodhalterMethod( 
+    const int dimension_A, 
+    const int dimension_C, 
+    Float* __restrict__ x_A, 
+    Float* __restrict__ x_C, 
+    const Float* __restrict__ b_A, 
+    const Float* __restrict__ b_C, 
+    const int* __restrict__  Arows, const int* __restrict__  Acolumns, const Float* __restrict__  Avalues, 
+    const int* __restrict__  Brows, const int* __restrict__  Bcolumns, const Float* __restrict__  Bvalues, 
+    const int* __restrict__ Btrows, const int* __restrict__ Btcolumns, const Float* __restrict__ Btvalues, 
+    const int* __restrict__  Crows, const int* __restrict__  Ccolumns, const Float* __restrict__  Cvalues, 
+    Float threshold,
+    int print_modulo,
+    const int* __restrict__ PArows, const int* __restrict__ PAcolumns, const Float* __restrict__ PAvalues, 
+    const int* __restrict__ PCrows, const int* __restrict__ PCcolumns, const Float* __restrict__ PCvalues, 
+    Float inneriteration_threshold,
+    int inneriteration_print_modulo
+);
  
 #endif

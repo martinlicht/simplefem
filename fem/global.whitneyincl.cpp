@@ -1,5 +1,5 @@
 
-#include <iostream>
+#include <ostream>
 #include <utility>
 #include <vector>
 
@@ -144,10 +144,10 @@ SparseMatrix FEECWhitneyInclusionMatrix( const Mesh& mesh, int n, int k, int r )
             
             const auto index_sigma_vol = std::find( sigmas_dst.begin(), sigmas_dst.end(), sigma_vol ) - sigmas_dst.begin();
 
-            if( 0 <= index_sigma_vol and index_sigma_vol < sigmas_dst.size() );
-            else std::cout << rho << tab << j << tab << sigma_effective << sigma_vol << nl;
-            if( 0 <= index_alpha_vol and index_alpha_vol < multis_dst.size() );
-            else std::cout << alpha_vol << nl;
+//             if( 0 <= index_sigma_vol and index_sigma_vol < sigmas_dst.size() );
+//             else std::cout << rho << tab << j << tab << sigma_effective << sigma_vol << nl;
+//             if( 0 <= index_alpha_vol and index_alpha_vol < multis_dst.size() );
+//             else std::cout << alpha_vol << nl;
             
 
 

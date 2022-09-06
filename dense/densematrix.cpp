@@ -4,7 +4,6 @@
 #include <cstdlib>
 #include <algorithm>
 #include <functional>
-#include <iostream>
 #include <limits>
 #include <memory>
 #include <new>
@@ -195,7 +194,7 @@ void DenseMatrix::check() const
 std::string DenseMatrix::text() const
 {
     check();
-    std::string ret = "Print Matrix " + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) + nl;
+    std::string ret = "Dense Matrix " + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) + nl;
     for( int r = 0; r < getdimout(); r++ ) {
         for( int c = 0; c < getdimin(); c++ )
             ret += std::to_string( (*this)(r,c) ) + "\t";

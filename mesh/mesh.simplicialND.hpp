@@ -2,10 +2,7 @@
 #define INCLUDEGUARD_MESH_SIMPLICIAL_ND_HPP
 
 
-#include <fstream>
-#include <iostream>
-#include <map>
-#include <string>
+#include <ostream>
 #include <utility>
 #include <vector>
 
@@ -59,6 +56,8 @@ class MeshSimplicialND
         virtual void check() const;
         
         virtual void print( std::ostream& out ) const override;
+
+        // virtual std::string text() const override ;
         
         /* OTHER METHODS */
         

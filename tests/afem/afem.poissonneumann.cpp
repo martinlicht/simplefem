@@ -2,9 +2,9 @@
 
 /**/
 
-#include <iostream>
+#include <ostream>
 #include <fstream>
-#include <iomanip>
+// #include <iomanip>
 
 #include "../../basic.hpp"
 #include "../../utility/utility.hpp"
@@ -38,7 +38,7 @@ int main()
 {
         LOG << "Unit Test: " << TestName << endl;
         
-        LOG << std::setprecision(10);
+        // LOG << std::setprecision(10);
 
         if(true){
 
@@ -182,11 +182,6 @@ int main()
                 
                 LOG << average_sol << space << average_rhs << endl;
 
-                LOG << "...measure interpolation commutativity" << endl;
-    
-                Float commutatorerror = ( vector_massmatrix_fac * ( interpol_grad - diffmatrix * interpol_sol ) ).norm();
-                LOG << "commutator error: " << commutatorerror << endl;
-                
                 LOG << "...compute norms of solution and right-hand side:" << endl;
     
                 Float sol_norm = ( scalar_massmatrix_fac * interpol_sol ).norm();
@@ -259,10 +254,10 @@ int main()
             
                 }
                 
-                LOG << "Refinement..." << endl;
-            
                 if( l != max_l ) {
 
+                    LOG << "Refinement..." << endl;
+            
                     FloatVector vec = interpol_grad - diffmatrix * ( incmatrix * sol );
 
                     FloatVector cellwisemass = 

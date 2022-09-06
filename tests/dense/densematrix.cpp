@@ -2,7 +2,7 @@
 
 /**/
 
-#include <iostream>
+#include <ostream>
 #include "../../basic.hpp"
 #include "../../dense/densematrix.hpp"
 
@@ -16,6 +16,7 @@ TESTNAME( "Dense Matrix class" );
 
 int main()
 {
+    
 	LOG << "Unit Test: " << TestName << endl;
 	
 	DenseMatrix A( 3, 4 );
@@ -40,9 +41,8 @@ int main()
 	auto S5 = 5. * I3;
 	LOG << S5 << endl;
 	LOG << S5 * A << endl;
-	
-	
+
 	LOG << "Finished Unit Test: " << TestName << endl;
 
-	return 0;
+    return 0;
 }

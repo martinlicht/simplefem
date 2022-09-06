@@ -1,7 +1,7 @@
 
 /**/
 
-#include <iostream>
+#include <ostream>
 #include "../../basic.hpp"
 #include "../../operators/floatvector.hpp"
 #include "../../operators/simpleoperators.hpp"

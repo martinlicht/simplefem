@@ -17,9 +17,7 @@
 
  * Future features:
  * * mesh refinement in several dimensions (10h)
- * * product operators, operator block matrices (5h)
  * * better preconditioners (4h)
- * * move semantics for floatvectors and densematrices (3h)
  * * parallelism (lots and lots)
  
     -----------------------

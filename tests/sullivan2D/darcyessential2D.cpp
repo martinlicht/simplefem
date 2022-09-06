@@ -2,9 +2,9 @@
 
 /**/
 
-#include <iostream>
+#include <ostream>
 #include <fstream>
-#include <iomanip>
+// #include <iomanip>
 
 #include "../../basic.hpp"
 #include "../../utility/utility.hpp"
@@ -15,12 +15,11 @@
 #include "../../mesh/examples2D.hpp"
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/iterativesolver.hpp"
-// #include "../../solver/crm.hpp"
-// #include "../../solver/minres.hpp"
-// #include "../../solver/herzogsoodhalter.hpp"
 #include "../../solver/inv.hpp"
 #include "../../solver/systemsparsesolver.hpp"
+#include "../../solver/systemsolver.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
+#include "../../fem/global.elevation.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.sullivanincl.hpp"
@@ -38,19 +37,15 @@ int main()
 {
     LOG << "Unit Test: " << TestName << endl;
     
-    LOG << std::setprecision(10);
+    // LOG << std::setprecision(10);
 
     if(true){
 
         LOG << "Initial mesh..." << endl;
         
-        MeshSimplicial2D M = StandardSquare2D();
+        MeshSimplicial2D M = StandardSquare2D_simple();
         
         M.check();
-        
-//             M.automatic_dirichlet_flags();
-//             M.check_dirichlet_flags();
-
         
         LOG << "Prepare scalar fields for testing..." << endl;
         
@@ -112,15 +107,17 @@ int main()
         
 
         const int min_l = 0; 
-        const int max_l = 5;
+        const int max_l = 3;
         
-        const int min_r = 1;
-        const int max_r = 1;
+        const int min_r = 5;
+        const int max_r = 5;
+
+        const int aug_r = 1;
         
         
         ConvergenceTable contable("Mass error");
         
-        contable << "sigma_error" << "u_error";
+        contable << "sigma_error" << "u_error" << "residual" << "time";
         
 
         assert( 0 <= min_l and min_l <= max_l );
@@ -172,7 +169,12 @@ int main()
                 
                 auto C  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
                 
-                auto Schur = B * inv(A,1e-10) * Bt;
+                auto Schur = B * inv(A,1e-14) * Bt;
+
+                auto PA = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix )
+                              + MatrixCSR( vector_incmatrix_t & diffmatrix_t & volume_massmatrix & diffmatrix & vector_incmatrix );
+                auto PC = MatrixCSR( volume_incmatrix_t & volume_massmatrix & volume_incmatrix );
+                    
                 
                 {
 
@@ -186,21 +188,7 @@ int main()
                     FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 2, r-1, function_sol  );
                     FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 2, r-1, function_rhs  );
                     
-                    LOG << "...measure interpolation commutativity" << endl;
-        
-                    {
-                        auto commutatorerror_aux = interpol_rhs - diffmatrix * interpol_grad;
-                        Float commutatorerror  = commutatorerror_aux * ( volume_massmatrix * commutatorerror_aux );
-                        LOG << "algebraic commutator error 1: " << commutatorerror << endl;
-                    }
                     
-//                         {
-//                             auto commutatorerror_aux = interpol_grad - vector_massmatrix_inv * diffmatrix_t * volume_massmatrix * interpol_rhs;
-//                             Float commutatorerror  = commutatorerror_aux * ( commutatorerror_aux );
-//                             LOG << "algebraic commutator error 2: " << commutatorerror << endl << space << commutatorerror2
-//                         }
-                    
-
                     {
                         
                         FloatVector rhs = volume_incmatrix_t * ( volume_massmatrix * interpol_rhs );
@@ -218,37 +206,56 @@ int main()
 
                         timestamp start = gettimestamp();
 
-                        HodgeConjugateResidualSolverCSR_SSOR( // TODO
-//                             HodgeConjugateResidualSolverCSR_textbook( 
-                            B.getdimout(), 
-                            A.getdimout(), 
-                            sol.raw(), 
-                            rhs.raw(), 
-                            A.getA(),   A.getC(),  A.getV(), 
-                            B.getA(),   B.getC(),  B.getV(), 
-                            Bt.getA(), Bt.getC(), Bt.getV(), 
-                            C.getA(),   C.getC(),  C.getV(), 
-                            res.raw(),
-                            1e-10,
-                            1,
-                            desired_precision,
-                            0
-                        );
+                        {
+
+                            const auto PAinv = inv(PA,desired_precision,-1);
+                            const auto PCinv = inv(PC,desired_precision,-1);
+
+                            FloatVector  x_A( A.getdimin(),  0. ); 
+                            FloatVector& x_C = sol;
+                            
+                            const FloatVector  b_A( A.getdimin(),  0. ); 
+                            const FloatVector& b_C = rhs; 
+                            
+                            auto Z  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
+
+                            BlockHerzogSoodhalterMethod( 
+                                x_A, 
+                                x_C, 
+                                b_A, 
+                                b_C, 
+                                -A, Bt, B, Z, 
+                                desired_precision,
+                                1,
+                                PAinv, PCinv
+                            );
+
+                        }
 
                         timestamp end = gettimestamp();
                         LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                         
                         
-                        auto grad = inv(A,1e-14) * Bt * sol;
+                        auto grad = inv(A,desired_precision) * Bt * sol;
 
                         LOG << "...compute error and residual:" << endl;
 
-                        auto errornorm_aux_sol  = interpol_sol  - volume_incmatrix *  sol;
-                        auto errornorm_aux_grad = interpol_grad - vector_incmatrix * grad;
+                        
+                        FloatVector interpol_grad_aug = Interpolation( M, M.getinnerdimension(), 1, r + aug_r,     function_grad );
+                        FloatVector interpol_sol_aug  = Interpolation( M, M.getinnerdimension(), 2, r + aug_r - 1, function_sol  );
 
-                        Float errornorm_sol  = sqrt( errornorm_aux_sol  * ( volume_massmatrix *  errornorm_aux_sol ) );
-                        Float errornorm_grad = sqrt( errornorm_aux_grad * ( vector_massmatrix * errornorm_aux_grad ) );
-                        Float residualnorm   = ( rhs - B * inv(A,1e-10) * Bt * sol ).norm();
+                        SparseMatrix vector_elevation_matrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 1, r,   aug_r );
+                        SparseMatrix volume_elevation_matrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 2, r-1, aug_r );
+
+                        SparseMatrix vector_massmatrix_aug = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r + aug_r     );
+                        SparseMatrix volume_massmatrix_aug = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r + aug_r - 1 );
+
+                        auto errornorm_aux_sol  = interpol_sol_aug  - volume_elevation_matrix * volume_incmatrix *  sol;
+                        auto errornorm_aux_grad = interpol_grad_aug - vector_elevation_matrix * vector_incmatrix * grad;
+
+                        Float errornorm_sol  = sqrt( errornorm_aux_sol  * ( volume_massmatrix_aug *  errornorm_aux_sol ) );
+                        Float errornorm_grad = sqrt( errornorm_aux_grad * ( vector_massmatrix_aug * errornorm_aux_grad ) );
+                        Float residualnorm   = ( rhs - B * inv(A,1e-14) * Bt * sol ).norm();
 
                         LOG << "error:     " << errornorm_sol << endl;
                         LOG << "aux error: " << errornorm_grad << endl;
@@ -256,105 +263,23 @@ int main()
 
                         contable << errornorm_sol;
                         contable << errornorm_grad;
+                        contable << residualnorm;
+                        contable << Float( end - start );
                         contable << nl;
 
-                        contable.lg();
-                        
-                    }
-
-                    if(false)
-                    {
-                        
-                        FloatVector rhs = volume_incmatrix_t * ( volume_massmatrix * interpol_rhs );
-
-                        FloatVector sol( volume_incmatrix.getdimin(), 0. );
-                        
-                        LOG << "...iterative solver" << endl;
-                        
-                        
-                        sol.zero();
-                        
-                        auto X = B * inv(A,1e-08) * Bt;
-//                             auto y = FloatVector( Bt.getdimin(), 0. );
-//                             auto f = X * y;
-                        
-                        ConjugateResidualMethod Solver( X );
-//                             HerzogSoodhalterMethod Solver( X );
-                        Solver.threshold           = 1e-10;
-                        Solver.print_modulo        = 1;
-                        Solver.max_iteration_count = 4 * sol.getdimension();
-                        timestamp start = gettimestamp();
-                        Solver.solve_fast( sol, rhs );
-//                             Solver.solve( sol, rhs );
-                        timestamp end = gettimestamp();
-                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
-
-                        LOG << "...compute error and residual:" << endl;
-
-                        auto errornorm_aux = interpol_sol  - volume_incmatrix * sol;
-
-                        Float errornorm     = sqrt( errornorm_aux * ( volume_massmatrix * errornorm_aux ) );
-                        Float residualnorm  = ( rhs - Schur * sol ).norm();
-
-                        LOG << "error:     " << errornorm    << endl;
-                        LOG << "residual:  " << residualnorm << endl;
-
-                        contable << errornorm;
-                        contable << nl;
-
-                        contable.lg();
-                        
-                    }
-
-                    if(false)
-                    {
-                        
-                        auto O = ScalingOperator( Bt.getdimin(), 10. );
-                        auto X = Block2x2Operator( A.getdimout() + B.getdimout(), A.getdimin() + Bt.getdimin(), A, Bt, B, O );
-
-                        FloatVector sol( A.getdimin()  + Bt.getdimin(),  0. );
-                        FloatVector rhs( A.getdimout() +  B.getdimout(), 0. );
-                        
-                        sol.random();
-                        rhs = X * sol;
-                        sol.zero();
-//                             rhs.setslice( A.getdimin(), volume_incmatrix_t * ( volume_massmatrix * interpol_rhs ) );
-                        
-                        HerzogSoodhalterMethod Solver( X );
-                        Solver.threshold           = 1e-10;
-                        Solver.print_modulo        = 1;
-                        Solver.max_iteration_count = 10 * sol.getdimension();
-                        timestamp start = gettimestamp();
-                        Solver.solve( sol, rhs );
-                        timestamp end = gettimestamp();
-                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
-
-                        LOG << "...compute error and residual:" << endl;
-
-                        auto errornorm_aux = interpol_sol - volume_incmatrix * sol.getslice( A.getdimin(), Bt.getdimin() );
-
-                        Float errornorm     = sqrt( errornorm_aux * ( volume_massmatrix * errornorm_aux ) );
-                        Float residualnorm  = ( rhs - X * sol ).norm();
-
-                        LOG << "error:     " << errornorm    << endl;
-                        LOG << "residual:  " << residualnorm << endl;
-
-                        contable << errornorm;
-                        contable << nl;
-
-                        contable.lg();
-                        
-                        
                     }
 
 
+
+
+
+                    contable.lg();
+    
                 }
                 
             }
 
-            LOG << "Refinement..." << endl;
-        
-            if( l != max_l ) M.uniformrefinement();
+            if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
             
             
 

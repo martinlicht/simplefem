@@ -24,8 +24,8 @@
 
 # Do you want to use GCC or Clang?
 # Uncomment the appropriate definition below
-FLAG_CXX := CLANG
-# FLAG_CXX := GCC
+# FLAG_CXX := CLANG
+FLAG_CXX := GCC
 # FLAG_CXX := ICC
 
 
@@ -36,6 +36,10 @@ FLAG_CXX := CLANG
 # Do you want the standard library assert macro instead of the custom one?
 # Uncomment the following line to use the standard library assert macro 
 # FLAG_USE_ORIGINAL_ASSERT_MACRO=yes
+
+# Do you want assert messages to be discarded?
+# Uncomment the following line to simplify the debugging macros 
+# FLAG_DISCARD_ASSERT_MESSAGES=yes
 
 # Do you want to DISABLE checking of meshes?
 # Uncomment the following line to disable extensive check routines for meshes
@@ -48,11 +52,11 @@ FLAG_DISABLE_CHECK_MESHES=yes
 
 # Do you want to ENABLE the standard library debugging flags 
 # Uncomment the following line to enable the standard library debugging flags 
-# FLAG_DISABLE_STDLIBDEBUG=yes
+FLAG_DISABLE_STDLIBDEBUG=yes
 
 # Do you want to DISABLE excpetion handling?
 # Uncomment the following line to disable exception handling
-# FLAG_NO_EXCEPTIONS=yes
+FLAG_NO_EXCEPTIONS=yes
 
 # Do you want to ENABLE extended precision?
 # Uncomment the following line to switch from double precision to extended precision
@@ -61,7 +65,7 @@ FLAG_DISABLE_CHECK_MESHES=yes
 
 # Do you want to ENABLE excessive warning options?
 # Uncomment the following line to enable excessive warning options
-# FLAG_EXCESSIVE_WARNINGS=yes
+FLAG_EXCESSIVE_WARNINGS=yes
 
 # Do you want to ENABLE the Clang sanitizer?
 # Uncomment the following line to enable compilation with the Clang sanitizer
@@ -110,7 +114,7 @@ FLAG_DISABLE_CHECK_MESHES=yes
 
 # If we are in RELEASE_MODE then set the following flags 
 
-ifdef $(RELEASE_MODE)
+ifdef RELEASE_MODE
 FLAG_DISABLE_CHECK_MESHES=yes
 FLAG_DISABLE_STDLIBDEBUG=yes
 FLAG_DISABLE_ASSERTIONS=yes
@@ -161,33 +165,29 @@ parameters:
 ###############################################
 #                                             #
 #         Set the compiler command            #
-#                                             #
+#       (see also language std below)         #
 ###############################################
 
 ifeq ($(FLAG_CXX),GCC)
 
-  CXX := g++ -std=c++2a -ftime-report
+  CXX := g++ 
+  #-ftime-report
+  #-fuse-ld=lld
   
 else ifeq ($(FLAG_CXX),CLANG)
 
-  CXX := clang++ -std=c++2a -ftime-trace
+  CXX := clang++ 
+  #-ftime-trace
 
 else ifeq ($(FLAG_CXX),ICC)
 
-  CXX := icc -std=c++2a
+  CXX := icc 
 
 else
 
   $(error No compiler recognized)
 
 endif
-
-
-
-
-
-
-
 
 ###############################################
 #                                             #
@@ -231,7 +231,7 @@ ifeq ($(FLAG_DO_OPTIMIZE),yes)
 	else 
 		CXXFLAGS_OPTIMIZE += -Ofast 
 		CXXFLAGS_OPTIMIZE += -march=native 
-		ifeq ($(FLAG_CXX),CLANG)
+		ifeq ($(FLAG_CXX),GCC)
 			CXXFLAGS_OPTIMIZE := -inline-threshold=1200
 		endif
 		CXXFLAGS_OPTIMIZE += -flto
@@ -267,7 +267,7 @@ endif
 
 CXXFLAGS_CODEGEN := 
 
-ifneq ($(FLAG_NO_EXCEPTIONS),yes)
+ifeq ($(FLAG_NO_EXCEPTIONS),yes)
 	CXXFLAGS_CODEGEN += -fno-exceptions
 endif
 
@@ -424,6 +424,8 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 		CXXFLAGS_WARNINGS += 
 
 		#CXXFLAGS_WARNINGS += -Wno-unused-variable
+		#CXXFLAGS_WARNINGS += -Wno-gnu-zero-variadic-macro-arguments
+		#CXXFLAGS_WARNINGS += -Wno-vla-extension
 
 
 			#Some of the .... suchen auf der CLANG seite 
@@ -444,7 +446,12 @@ CXXFLAGS_WARNINGS += -Wno-unused-parameter
 CXXFLAGS_WARNINGS += -Wno-vla
 CXXFLAGS_WARNINGS += -Wno-unknown-pragmas
 CXXFLAGS_WARNINGS += -Wno-type-limits 
-
+# for Clang...
+ifeq ($(FLAG_CXX),GCC)
+else ifeq ($(FLAG_CXX),CLANG)
+CXXFLAGS_WARNINGS += -Wno-vla-extension
+CXXFLAGS_WARNINGS += -Wno-gnu-zero-variadic-macro-arguments
+endif
 
 
 
@@ -657,6 +664,19 @@ endif
 
 ifeq ($(FLAG_DISABLE_ASSERTIONS),yes)
 CPPFLAGS += -DNDEBUG
+endif
+
+ifeq ($(FLAG_DISCARD_ASSERT_MESSAGES),yes)
+CPPFLAGS += -DDISCARD_ASSERT_MESSAGES
+endif
+
+ifeq ($(FLAG_USE_ORIGINAL_ASSERT_MACRO),yes)
+CPPFLAGS += -DUSE_ORIGINAL_ASSERT_MACRO
+endif
+
+
+ifeq ($(FLAG_USE_PRIMITIVE_LOGGING),yes)
+CPPFLAGS += -DUSE_PRIMITIVE_LOGGING
 endif
 
 ifeq ($(FLAG_DISABLE_STDLIBDEBUG),yes)

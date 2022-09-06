@@ -1,7 +1,8 @@
 #ifndef INCLUDEGUARD_SPARSE_READWRITE_HPP
 #define INCLUDEGUARD_SPARSE_READWRITE_HPP
 
-#include <iostream>
+#include <istream>
+#include <ostream>
 
 #include "../basic.hpp"
 
@@ -24,17 +25,17 @@ void readSparseMatrix( SparseMatrix& mat, std::istream& input );
 void readSparseMatrixHeader( SparseMatrix& mat, std::istream& input );
 void readSparseMatrixData  ( SparseMatrix& mat, std::istream& input );
 
-inline std::ostream& operator<<( std::ostream& output, const SparseMatrix& mat )
-{
-  writeSparseMatrix( mat, output );
-  return output;
-}
+// inline std::ostream& operator<<( std::ostream& output, const SparseMatrix& mat )
+// {
+//   writeSparseMatrix( mat, output );
+//   return output;
+// }
 
-inline std::istream& operator>>( std::istream&  input,       SparseMatrix& mat )
-{
-  readSparseMatrix( mat, input );
-  return input;
-}
+// inline std::istream& operator>>( std::istream&  input,       SparseMatrix& mat )
+// {
+//   readSparseMatrix( mat, input );
+//   return input;
+// }
 
 
 

@@ -2,9 +2,9 @@
 
 /**/
 
-#include <iostream>
+#include <ostream>
 #include <fstream>
-#include <iomanip>
+// #include <iomanip>
 
 #include "../../basic.hpp"
 #include "../../utility/utility.hpp"
@@ -18,12 +18,9 @@
 #include "../../mesh/examples2D.hpp"
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/iterativesolver.hpp"
-// #include "../../solver/crm.hpp"
-// #include "../../solver/minres.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
-// #include "../../fem/global.lagrangeincl.hpp"
 #include "../../fem/global.sullivanincl.hpp"
 #include "../../fem/utilities.hpp"
 
@@ -39,7 +36,7 @@ int main()
 {
         LOG << "Unit Test: " << TestName << endl;
         
-        LOG << std::setprecision(10);
+        // LOG << std::setprecision(10);
 
         if(true){
 
@@ -57,18 +54,6 @@ int main()
             LOG << "Prepare scalar fields for testing..." << endl;
             
 
-            std::function<FloatVector(const FloatVector&)> constant_one
-                = [](const FloatVector& vec) -> FloatVector{
-                        assert( vec.getdimension() == 2 );
-                        return FloatVector({ 1. });
-                    };
-            
-            
-            
-            
-
-
-            
             // std::function<FloatVector(const std::function<FloatVector(const FloatVector&) ) >scalarfield = 
             
             const Float xfeq = 1.;
@@ -117,7 +102,7 @@ int main()
             
             ConvergenceTable contable("Mass error");
             
-            contable << "u_error" << "du_error" << nl;
+            contable << "u_error" << "du_error" << "residual" << "time" << nl;
             
 
             assert( 0 <= min_l and min_l <= max_l );
@@ -194,12 +179,6 @@ int main()
                         FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r-1, function_grad );
                         FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r,   function_rhs  );
                         
-                        LOG << "...measure interpolation commutativity" << endl;
-            
-                        auto commutatorerror_aux = interpol_grad - diffmatrix * interpol_sol;
-                        Float commutatorerror = commutatorerror_aux * ( vector_massmatrix * commutatorerror_aux );
-                        LOG << "commutator error: " << commutatorerror << endl;
-                        
                         LOG << "...compute norms of solution and right-hand side:" << endl;
             
                         Float sol_norm = interpol_sol * ( scalar_massmatrix * interpol_sol );
@@ -216,19 +195,17 @@ int main()
                         
                         LOG << "...iterative solver" << endl;
                         
+                        timestamp start = gettimestamp();
+                        
                         {
                             sol.zero();
                             MinimumResidualMethod Solver( stiffness_csr );
-//                             PreconditionedConjugateResidualMethod Solver( stiffness_csr, stiffness_invprecon );
-                            Solver.print_modulo        = 1+sol.getdimension();
-                            Solver.max_iteration_count = 4 * sol.getdimension();
-                            timestamp start = gettimestamp();
                             Solver.solve( sol, rhs );
-//                             Solver.solve( sol, rhs );
-                            timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
                         }
 
+                        timestamp end = gettimestamp();
+                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << std::endl;
+                    
                         LOG << "...compute error and residual:" << endl;
             
                         
@@ -242,10 +219,13 @@ int main()
                         LOG << "error:     " << errornorm    << endl;
                         LOG << "graderror: " << graderrornorm << endl;
                         LOG << "residual:  " << residualnorm << endl;
+                        LOG << "time:      " << Float( end - start ) << endl;
                         
-                        
-                        
-                        contable << errornorm << graderrornorm << nl;
+                        contable << errornorm;
+                        contable << graderrornorm;
+                        contable << residualnorm;
+                        contable << Float( end - start );
+                        contable << nl;
                         
                         contable.lg();
 
@@ -270,9 +250,7 @@ int main()
                     
                 }
 
-                LOG << "Refinement..." << endl;
-            
-                if( l != max_l ) M.uniformrefinement();
+                if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
                 
                 
 

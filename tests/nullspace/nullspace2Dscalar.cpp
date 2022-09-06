@@ -2,9 +2,9 @@
 
 /**/
 
-#include <iostream>
+#include <ostream>
 #include <fstream>
-#include <iomanip>
+// #include <iomanip>
 
 #include "../../basic.hpp"
 #include "../../utility/utility.hpp"
@@ -41,7 +41,7 @@ int main()
 {
         LOG << "Unit Test: " << TestName << endl;
         
-        LOG << std::setprecision(10);
+        // LOG << std::setprecision(10);
 
         if(true){
 
@@ -106,7 +106,7 @@ int main()
                 for( int r = min_r; r <= max_r; r++ )
                 {
                     
-                    LOG << "Polynomial degree: " << r << std::endl;
+                    LOG << "Polynomial degree: " << r << "/" << max_r << std::endl;
                     
                     LOG << "...assemble matrices" << endl;
             
@@ -288,20 +288,38 @@ int main()
                     
                     LOG << "How much nullspace are our vectors?" << nl;
                     for( const auto& nullvector : nullvectorgallery ) {
-                        LOG << std::showpos << std::scientific << std::setprecision(5) << std::setw(10) << ( SystemMatrix * nullvector ).norm(mass) << tab;
+                        LOGPRINTF( "% 10.5e\t", ( SystemMatrix * nullvector ).norm(mass) );
+                        // LOG << std::showpos << std::scientific << std::setprecision(5) << std::setw(10) << ( SystemMatrix * nullvector ).norm(mass) << tab;
                     }
                     LOG << nl;
                     
                     LOG << "How orthonormal are our vectors?" << nl;
                     for( const auto& nullvector1 : nullvectorgallery ) {
                         for( const auto& nullvector2 : nullvectorgallery ) {
-                            LOG << std::showpos << std::scientific << std::setprecision(5) << std::setw(10) << mass * nullvector1 * nullvector2 << tab;
+                            LOGPRINTF( "% 10.5e\t", mass * nullvector1 * nullvector2 );
+                            // LOG << std::showpos << std::scientific << std::setprecision(5) << std::setw(10) << mass * nullvector1 * nullvector2 << tab;
                         }
                         LOG << nl;
                     }
                     
                     
                     contable << static_cast<Float>(nullvectorgallery.size());   
+
+                    if( r == 1 )
+                    for( const auto& nullvector : nullvectorgallery )
+                    {
+                
+                        fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
+            
+                        VTKWriter vtk( M, fs, getbasename(__FILE__) );
+                        vtk.writeCoordinateBlock();
+                        vtk.writeTopDimensionalCells();
+                        
+                        vtk.writeVertexScalarData( nullvector,  "nullvector" , 1.0 );
+                        
+                        fs.close();
+                
+                    }
                     
                     
                     
@@ -341,21 +359,6 @@ int main()
 //                         contable << sol.norm( mass ) << ( SystemMatrix * sol ).norm( mass );
 //                         
 //                         
-//                         if( r == 1 ) {
-//                     
-//                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
-//                 
-//                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
-//                             vtk.writeCoordinateBlock();
-//                             vtk.writeTopDimensionalCells();
-//                             
-//                             vtk.writeVertexScalarData( sol,  "data1" , 1.0 );
-// //                             vtk.writeVertexScalarData( sol2, "data2" , 1.0 );
-//                             // vtk.writeCellVectorData( interpol_grad, "gradient_interpolation" , 0.1 );
-//                             
-//                             fs.close();
-//                     
-//                         }
 // 
 //                             
 //                             
@@ -367,9 +370,7 @@ int main()
                     
                 }
 
-                LOG << "Refinement..." << endl;
-            
-                if( l != max_l ) M.uniformrefinement();
+                if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
 
                 contable << nl;
                 
