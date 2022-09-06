@@ -189,7 +189,7 @@ int main()
             
             FloatVector rhs_sol = vector_incmatrix_t * vector_elevmatrix_t * vector_massmatrix * interpol_rhs;
             FloatVector rhs_aux = scalar_incmatrix_t * scalar_diffmatrix_t * vector_elevmatrix_t * vector_massmatrix * interpol_sol ;// FloatVector( B.getdimout(), 0. );
-
+            
             FloatVector sol( A.getdimout(), 0. );
             FloatVector aux( B.getdimout(), 0. );
 

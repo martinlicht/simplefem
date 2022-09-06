@@ -100,6 +100,7 @@ int main()
 
             assert( 0 <= min_l and min_l <= max_l );
             assert( 0 <= min_r and min_r <= max_r );
+            assert( 0 <= r_plus_scalar and 0 <= r_plus_vector);
             
             for( int l = 0; l < min_l; l++ )
                 M.uniformrefinement();
