@@ -14,6 +14,7 @@
 #include "../../solver/systemsolver.hpp"
 #include "../../solver/systemsparsesolver.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
+#include "../../fem/global.elevation.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.sullivanincl.hpp"
@@ -104,6 +105,9 @@ int main()
     
     const int min_r = 1;
     const int max_r = 1;
+
+    const int r_plus_vector = 2;
+    const int r_plus_scalar = 2;
     
     
     ConvergenceTable contable("Mass error and numerical residuals");
@@ -113,7 +117,8 @@ int main()
 
     assert( 0 <= min_l and min_l <= max_l );
     assert( 0 <= min_r and min_r <= max_r );
-        
+    assert( 0 <= r_plus_scalar and 0 <= r_plus_vector);
+      
     for( int l = 0; l < min_l; l++ )
         M.uniformrefinement();
 
@@ -127,26 +132,32 @@ int main()
             
             LOG << "... assemble matrices" << nl;
     
-            SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r+1 );
-            SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   );
+            SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r+1 + r_plus_scalar );
+            SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   + r_plus_vector);
             SparseMatrix volume_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r-1 );
 
             SparseMatrix scalar_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r+1 );
             SparseMatrix scalar_incmatrix_t = scalar_incmatrix.getTranspose();
 
-            SparseMatrix scalar_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r+1 );
-            SparseMatrix scalar_diffmatrix_t = scalar_diffmatrix.getTranspose();
-
             SparseMatrix vector_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 1, r   );
             SparseMatrix vector_incmatrix_t = vector_incmatrix.getTranspose();
+
+            SparseMatrix scalar_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r+1 );
+            SparseMatrix scalar_diffmatrix_t = scalar_diffmatrix.getTranspose();
 
             SparseMatrix vector_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r );
             SparseMatrix vector_diffmatrix_t = vector_diffmatrix.getTranspose();
 
+            SparseMatrix scalar_elevmatrix   = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 0, r+1, r_plus_scalar );
+            SparseMatrix scalar_elevmatrix_t = scalar_elevmatrix.getTranspose();
+
+            SparseMatrix vector_elevmatrix   = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 1, r  , r_plus_vector );
+            SparseMatrix vector_elevmatrix_t = vector_elevmatrix.getTranspose();
+
             auto mat_A  = vector_incmatrix_t & vector_diffmatrix_t & volume_massmatrix & vector_diffmatrix & vector_incmatrix;
             mat_A.sortandcompressentries();
                 
-            auto mat_Bt = vector_incmatrix_t & vector_massmatrix & scalar_diffmatrix & scalar_incmatrix; // upper right
+            auto mat_Bt = vector_incmatrix_t & vector_elevmatrix_t & vector_massmatrix & vector_elevmatrix & scalar_diffmatrix & scalar_incmatrix; // upper right
             mat_Bt.sortandcompressentries();
             
             auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & volume_massmatrix & diffmatrix & vector_incmatrix; // lower bottom
@@ -161,9 +172,9 @@ int main()
             // TODO: develop preconditioners 
             // auto PA = IdentityMatrix( A.getdimin() );
             // auto PC = IdentityMatrix( C.getdimin() );
-            auto PA = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix )
+            auto PA = MatrixCSR( vector_incmatrix_t & vector_elevmatrix_t & vector_massmatrix & vector_elevmatrix & vector_incmatrix )
                               + MatrixCSR( vector_incmatrix_t & vector_diffmatrix_t & volume_massmatrix & vector_diffmatrix & vector_incmatrix );
-            auto PC = MatrixCSR( scalar_incmatrix_t & scalar_diffmatrix_t & vector_massmatrix & scalar_diffmatrix & scalar_incmatrix );
+            auto PC = MatrixCSR( scalar_incmatrix_t & scalar_diffmatrix_t & vector_elevmatrix_t & vector_massmatrix & vector_elevmatrix & scalar_diffmatrix & scalar_incmatrix );
                 
             
             const auto& function_sol = experiment_sol;
@@ -172,13 +183,13 @@ int main()
             
             LOG << "...interpolate explicit solution and rhs" << nl;
             
-            FloatVector interpol_sol = Interpolation( M, M.getinnerdimension(), 1, r,   function_sol );
-            FloatVector interpol_rhs = Interpolation( M, M.getinnerdimension(), 1, r,   function_rhs );
-            FloatVector interpol_aux = Interpolation( M, M.getinnerdimension(), 0, r+1, function_aux );
+            FloatVector interpol_sol = Interpolation( M, M.getinnerdimension(), 1, r   + r_plus_vector, function_sol );
+            FloatVector interpol_rhs = Interpolation( M, M.getinnerdimension(), 1, r   + r_plus_vector, function_rhs );
+            FloatVector interpol_aux = Interpolation( M, M.getinnerdimension(), 0, r+1 + r_plus_scalar, function_aux );
             
-            FloatVector rhs_sol = vector_incmatrix_t * vector_massmatrix * interpol_rhs;
-            FloatVector rhs_aux = scalar_incmatrix_t * scalar_diffmatrix_t * vector_massmatrix * interpol_sol ;// FloatVector( B.getdimout(), 0. );
-
+            FloatVector rhs_sol = vector_incmatrix_t * vector_elevmatrix_t * vector_massmatrix * interpol_rhs;
+            FloatVector rhs_aux = scalar_incmatrix_t * scalar_diffmatrix_t * vector_elevmatrix_t * vector_massmatrix * interpol_sol ;// FloatVector( B.getdimout(), 0. );
+            
             FloatVector sol( A.getdimout(), 0. );
             FloatVector aux( B.getdimout(), 0. );
 
@@ -230,8 +241,8 @@ int main()
             
             LOG << "...compute error and residual:" << nl;
 
-            auto errornorm_aux_sol = interpol_sol - vector_incmatrix * sol;
-            auto errornorm_aux_aux = interpol_aux - scalar_incmatrix * aux;
+            auto errornorm_aux_sol = interpol_sol - vector_elevmatrix * vector_incmatrix * sol;
+            auto errornorm_aux_aux = interpol_aux - scalar_elevmatrix * scalar_incmatrix * aux;
 
             Float errornorm_sol = sqrt( errornorm_aux_sol * ( vector_massmatrix * errornorm_aux_sol ) );
             Float errornorm_aux = sqrt( errornorm_aux_aux * ( scalar_massmatrix * errornorm_aux_aux ) );
