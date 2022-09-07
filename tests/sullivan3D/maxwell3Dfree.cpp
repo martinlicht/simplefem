@@ -287,7 +287,7 @@ int main()
                         Float errornorm_curl_sq = ( errornorm_aux_curl * ( pseudo_massmatrix * errornorm_aux_curl ) );
                         Float residualnorm      = ( rhs - B * inv(A,1e-14) * Bt * sol - C * sol ).norm();
 
-                        LOG << errornorm_ndiv_sq << space << errornorm_sol_sq << space << errornorm_curl_sq << nl;
+                        // LOG << errornorm_ndiv_sq << space << errornorm_sol_sq << space << errornorm_curl_sq << nl;
 
                         assert( errornorm_ndiv_sq >= 0 );
                         assert( errornorm_sol_sq  >= 0 );
@@ -315,8 +315,6 @@ int main()
                         contable << nl;
 
                         contable.lg();
-                        
-
 
                     }
                     
@@ -333,9 +331,6 @@ int main()
             contable.lg();
         
         }
-        
-        
-        
         
         LOG << "Finished Unit Test" << nl;
         

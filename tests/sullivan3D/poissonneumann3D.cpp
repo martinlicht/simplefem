@@ -258,21 +258,15 @@ int main()
                             fs.close();
                         }
 
-
                     }
                     
                 }
 
                 if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
-                
-                
 
             } 
         
         }
-        
-        
-        
         
         LOG << "Finished Unit Test" << nl;
         

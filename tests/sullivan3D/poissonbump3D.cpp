@@ -171,13 +171,13 @@ int main()
                         FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r-1 + r_plus_vector, function_grad );
                         FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r   + r_plus_scalar, function_rhs  );
                         
-                        LOG << "...compute norms of solution and right-hand side:" << nl;
+                        // LOG << "...compute norms of solution and right-hand side:" << nl;
             
-                        Float sol_norm = interpol_sol * ( scalar_massmatrix * interpol_sol );
-                        Float rhs_norm = interpol_rhs * ( scalar_massmatrix * interpol_rhs );
+                        // Float sol_norm = interpol_sol * ( scalar_massmatrix * interpol_sol );
+                        // Float rhs_norm = interpol_rhs * ( scalar_massmatrix * interpol_rhs );
                         
-                        LOG << "solution norm: " << sol_norm << nl;
-                        LOG << "rhs norm:      " << rhs_norm << nl;
+                        // LOG << "solution norm: " << sol_norm << nl;
+                        // LOG << "rhs norm:      " << rhs_norm << nl;
 
                         LOG << "...create RHS vector" << nl;
 
@@ -248,21 +248,15 @@ int main()
                             fs.close();
                         }
 
-
                     }
                     
                 }
 
                 if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
-                
-                
 
             } 
         
         }
-        
-        
-        
         
         LOG << "Finished Unit Test" << nl;
         
