@@ -11,7 +11,6 @@
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
 #include "../../solver/iterativesolver.hpp"
-#include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.elevation.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
