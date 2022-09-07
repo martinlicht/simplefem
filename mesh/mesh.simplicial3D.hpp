@@ -2,7 +2,7 @@
 #define INCLUDEGUARD_MESH_SIMPLICIAL_3D_HPP
 
 
-#include <ostream>
+#include <string>
 #include <utility>
 #include <vector>
 
@@ -78,9 +78,9 @@ class MeshSimplicial3D
         
         virtual void check() const;
         
-        virtual void print( std::ostream& out ) const override;
+        // virtual void print( std::ostream& out ) const override;
 
-        // virtual std::string text() const override;
+        virtual std::string text() const override;
 
 
         /* OTHER METHODS */

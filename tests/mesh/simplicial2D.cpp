@@ -31,7 +31,7 @@ int main()
         
         LOG << M << nl;
         
-        M.outputTikZ( std::cout );
+        std::cout << M.outputTikZ();
         
         LOG << "Finished Unit Test" << nl;
         

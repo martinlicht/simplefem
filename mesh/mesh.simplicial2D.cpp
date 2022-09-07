@@ -1,8 +1,7 @@
 
 #include <cmath>
 #include <algorithm>
-// #include <fstream>
-#include <ostream>
+#include <sstream>
 #include <list>
 #include <map>
 #include <stack> 
@@ -732,9 +731,11 @@ void MeshSimplicial2D::check() const
 
 
 
-void MeshSimplicial2D::print( std::ostream& os ) const
+std::string MeshSimplicial2D::text() const
 {
-    os << "Printe Triangulation of 2D Manifold!" << nl;
+    std::ostringstream os;
+    
+    os << "Triangulation of 2D Manifold!" << nl;
     
     os << counter_triangles << space << counter_edges << space << counter_vertices << nl;
     
@@ -792,6 +793,7 @@ void MeshSimplicial2D::print( std::ostream& os ) const
     
     os << "Finished printing" << nl;
     
+    return os.str();
 }
 
 
@@ -3209,8 +3211,10 @@ void MeshSimplicial2D::merge( const MeshSimplicial2D& mesh )
 
 
 
-void MeshSimplicial2D::outputTikZ( std::ostream& os ) const
+std::string MeshSimplicial2D::outputTikZ() const
 {
+    std::ostringstream os;
+    
     const auto& coords = getcoordinates();
     
     for( int n = 0; n < coords.getnumber(); n++ )
@@ -3237,6 +3241,7 @@ void MeshSimplicial2D::outputTikZ( std::ostream& os ) const
         os << "cycle;" << nl;
     }
     
+    return os.str();
 }
         
 

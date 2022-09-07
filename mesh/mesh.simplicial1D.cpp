@@ -1,7 +1,6 @@
 
 #include <algorithm>
-// #include <fstream>
-#include <ostream>
+#include <sstream>
 #include <map>
 #include <string>
 #include <utility>
@@ -307,9 +306,11 @@ void MeshSimplicial1D::check() const
 
 
 
-void MeshSimplicial1D::print( std::ostream& os ) const
+std::string MeshSimplicial1D::text() const
 {
-    os << "Printe Triangulation of 1D Manifold!" << nl;
+    std::ostringstream os;
+
+    os << "Triangulation of 1D Manifold!" << nl;
     
     os << counter_edges << space << counter_vertices << nl;
     
@@ -330,6 +331,7 @@ void MeshSimplicial1D::print( std::ostream& os ) const
     
     os << "Finished printing" << nl;
     
+    return os.str();
 }
 
 

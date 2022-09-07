@@ -13,7 +13,6 @@
 #include "../../solver/inv.hpp"
 #include "../../solver/systemsolver.hpp"
 #include "../../solver/systemsparsesolver.hpp"
-#include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.elevation.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"

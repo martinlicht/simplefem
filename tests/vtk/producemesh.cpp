@@ -88,7 +88,7 @@ int main()
             
             {
                 fstream fs( string("./rounddisk.tex"), std::fstream::out );
-                M.outputTikZ( fs );
+                fs << M.outputTikZ();
                 fs.close();
             }
             
