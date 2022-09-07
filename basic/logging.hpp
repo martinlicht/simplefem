@@ -64,13 +64,13 @@ class Logger : public std::string
 Logger& operator<<( Logger& str, const std::string& t )
 {
     str += t;
-    return static_cast<Logger&&>(str);
+    return str;
 }
 
 Logger& operator<<( Logger& str, const char* t )
 {
     str += std::string(t);
-    return static_cast<Logger&&>(str);
+    return str;
 }
 
 Logger& operator<<( Logger& str, const char t )
