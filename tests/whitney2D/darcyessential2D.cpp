@@ -114,7 +114,7 @@ int main()
         
         ConvergenceTable contable("Mass error");
         
-        contable << "sigma_error" << "u_error" << "residual" << "time";
+        contable << "sigma_error" << "u_error" << "sigma_res" << "u_res" << "time";
         
 
         assert( 0 <= min_l and min_l <= max_l );
@@ -188,7 +188,7 @@ int main()
 
                     FloatVector rhs = volume_incmatrix_t * ( volume_massmatrix * volume_elevationmatrix * interpol_rhs );
 
-                    {
+                    // {
                         LOG << "...iterative solver" << nl;
 
                         FloatVector res = sol;
@@ -209,29 +209,32 @@ int main()
                             0
                         );
                         
-                    }
+                    // }
 
                     timestamp end = gettimestamp();
                     LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
 
                     LOG << "...compute error and residual:" << nl;
 
-                    auto grad = inv(A,1e-14) * Bt * sol;
+                    auto grad = inv(A,desired_precision) * Bt * sol;
 
                     auto errornorm_aux_sol  = volume_elevationmatrix * interpol_sol  - volume_incmatrix * sol;
                     auto errornorm_aux_grad = interpol_grad - vector_incmatrix * grad;
 
                     Float errornorm_sol  = sqrt( errornorm_aux_sol  * ( volume_massmatrix *  errornorm_aux_sol ) );
                     Float errornorm_grad = sqrt( errornorm_aux_grad * ( vector_massmatrix * errornorm_aux_grad ) );
-                    Float residualnorm   = ( rhs - B * inv(A,1e-10) * Bt * sol ).norm();
-
+                    Float residual_sol   = ( rhs - B * grad ).norm();
+                    Float residual_grad  = ( - A * grad + Bt * sol ).norm();
+                
                     LOG << "error:     " << errornorm_sol << nl;
                     LOG << "aux error: " << errornorm_grad << nl;
-                    LOG << "residual:  " << residualnorm << nl;
+                    LOG << "residual:  " << residual_sol << nl;
+                    LOG << "residual:  " << residual_grad << nl;
 
                     contable << errornorm_sol;
                     contable << errornorm_grad;
-                    contable << residualnorm;
+                    contable << residual_sol;
+                    contable << residual_grad;
                     contable << Float( end - start );
                     contable << nl;
 
