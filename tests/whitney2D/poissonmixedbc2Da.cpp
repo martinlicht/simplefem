@@ -15,7 +15,6 @@
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/iterativesolver.hpp"
 #include "../../solver/sparsesolver.hpp"
-#include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.whitneyincl.hpp"

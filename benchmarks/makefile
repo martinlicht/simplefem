@@ -3,7 +3,7 @@ SHELL = /bin/sh
 .PHONY:default 
 default: build
 
-projectdir :=.
+projectdir :=..
 
 include ../common.compile.mk 
 
