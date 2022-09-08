@@ -123,8 +123,8 @@ int main()
         const int max_r = 1;
         
         
-        const int r_plus_pseudo = 0;
-        const int r_plus_volume = 0;
+        const int r_plus_pseudo = 2;
+        const int r_plus_volume = 2;
         
         
         ConvergenceTable contable("Mass error");
