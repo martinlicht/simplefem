@@ -63,8 +63,8 @@ int main()
         // std::function<FloatVector(const std::function<FloatVector(const FloatVector&) ) >scalarfield = 
         
         const Float xfeq = 1.;
-        const Float yfeq = 1.;
-        const Float zfeq = 1.;
+        const Float yfeq = 2.;
+        const Float zfeq = 3.;
         
         
         // u dx + v dy -> u_y dydx + v_x dxdy = ( v_x - u_y ) dxdy
@@ -74,23 +74,21 @@ int main()
         std::function<FloatVector(const FloatVector&)> experiment_sol = 
             [=](const FloatVector& vec) -> FloatVector{
                 assert( vec.getdimension() == 3 );
-                // return FloatVector({ 1. });
-                return FloatVector({ 
-                       std::sin( xfeq * Constants::twopi * vec[0] )
-                     * std::sin( yfeq * Constants::twopi * vec[1] )
-                     * std::sin( zfeq * Constants::twopi * vec[2] )
-                     });
+                return FloatVector({ std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] ) * std::sin( zfeq * Constants::twopi * vec[2] ) });
+                // return FloatVector({ blob( vec[0] ) * blob( vec[1] ) * blob( vec[2] ) });
             };
         
         
         std::function<FloatVector(const FloatVector&)> experiment_grad = 
             [=](const FloatVector& vec) -> FloatVector{
                 assert( vec.getdimension() == 3 );
-                // return FloatVector({ 1. });
                 return FloatVector( { 
-                        -xfeq * Constants::twopi * std::cos( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] ) * std::sin( yfeq * Constants::twopi * vec[2] ), 
-                        -yfeq * Constants::twopi * std::sin( xfeq * Constants::twopi * vec[0] ) * std::cos( yfeq * Constants::twopi * vec[1] ) * std::sin( yfeq * Constants::twopi * vec[2] ),
-                        -zfeq * Constants::twopi * std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] ) * std::cos( yfeq * Constants::twopi * vec[2] ),
+                        -zfeq * Constants::twopi * std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] ) * std::cos( zfeq * Constants::twopi * vec[2] ), //xy
+                        +yfeq * Constants::twopi * std::sin( xfeq * Constants::twopi * vec[0] ) * std::cos( yfeq * Constants::twopi * vec[1] ) * std::sin( zfeq * Constants::twopi * vec[2] ), //xz
+                        -xfeq * Constants::twopi * std::cos( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] ) * std::sin( zfeq * Constants::twopi * vec[2] )  //yz
+                        // - blob( vec[0] )     * blob( vec[1] )     * blob_dev( vec[2] ),
+                        // + blob( vec[0] )     * blob_dev( vec[1] ) * blob( vec[2] ),
+                        // - blob_dev( vec[0] ) * blob( vec[1] )     * blob( vec[2] )
                     });
             };
         
@@ -104,6 +102,12 @@ int main()
                     yfeq*yfeq * Constants::fourpisquare * std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] ) * std::sin( zfeq * Constants::twopi * vec[2] )
                     +
                     zfeq*zfeq * Constants::fourpisquare * std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] ) * std::sin( zfeq * Constants::twopi * vec[2] )
+                    // -
+                    //  blob_devdev( vec[0] ) * blob( vec[1] ) * blob( vec[2] )
+                    // -
+                    // blob( vec[0] ) * blob_devdev( vec[1] ) * blob( vec[2] )
+                    // -
+                    // blob( vec[0] ) * blob( vec[1] ) * blob_devdev( vec[2] )
                     });
             };
         
@@ -174,6 +178,8 @@ int main()
                 
                 auto Schur = B * inv(A,1e-10) * Bt;
                 
+                auto negA = - A; 
+                
                 {
 
                     const auto& function_sol  = experiment_sol;
@@ -210,14 +216,12 @@ int main()
                         const FloatVector  b_A( A.getdimin(),  0. ); 
                         const FloatVector& b_C = rhs; 
                         
-                        auto Z  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
-
                         BlockHerzogSoodhalterMethod( 
                             x_A, 
                             x_C, 
                             b_A, 
                             b_C, 
-                            -A, Bt, B, Z, 
+                            negA, Bt, B, C, 
                             desired_precision,
                             1,
                             PAinv, PCinv
@@ -259,15 +263,10 @@ int main()
             }
 
             if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
-            
-            
 
         } 
     
     }
-    
-    
-    
     
     LOG << "Finished Unit Test" << nl;
     
