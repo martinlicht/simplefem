@@ -130,9 +130,9 @@ int main()
             
             
 
-            const int min_l = 0; 
+            const int min_l = 4; 
             
-            const int max_l = 4;
+            const int max_l = 7;
             
             const int min_r = 2; 
             
