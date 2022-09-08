@@ -452,6 +452,9 @@ int ConjugateGradientSolverCSR_SSOR(
 
         if( restart_condition or ( csr_restart_before_finish and preconresidual_seems_small ) ) {
             
+            #if defined(_OPENMP)
+            #pragma omp parallel for
+            #endif
             for( int c = 0; c < N; c++ ) {
                 
                 if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
@@ -465,6 +468,7 @@ int ConjugateGradientSolverCSR_SSOR(
             
             // inv( L^t + D/omega ) * D * inv( L + D/omega )
             
+            // NOTE: Don't parallelize
             for( int c = 0; c < N; c++ ) {
                 
                 if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
@@ -479,6 +483,9 @@ int ConjugateGradientSolverCSR_SSOR(
                 
             }
         
+            #if defined(_OPENMP)
+            #pragma omp parallel for
+            #endif
             for( int c = 0; c < N; c++ ) {
             
                 if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
@@ -488,6 +495,7 @@ int ConjugateGradientSolverCSR_SSOR(
                 mittlerer[c] *= ( 2. - omega ) / omega;
             }
             
+            // NOTE: Don't parallelize
             for( int c = N-1; c >= 0; c-- ) {
                 
                 if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
@@ -504,6 +512,9 @@ int ConjugateGradientSolverCSR_SSOR(
             
             z_r = 0.;
         
+            #if defined(_OPENMP)
+            #pragma omp parallel for reduction( + : z_r )
+            #endif
             for( int c = 0; c < N; c++ ) {
                             
                 if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
@@ -539,6 +550,9 @@ int ConjugateGradientSolverCSR_SSOR(
         
         Float d_Ad = 0.;
         
+        #if defined(_OPENMP)
+        #pragma omp parallel for reduction( + : d_Ad ) 
+        #endif
         for( int c = 0; c < N; c++ )
         {
             auxiliary[c] = 0.;
@@ -567,8 +581,9 @@ int ConjugateGradientSolverCSR_SSOR(
         }
         
         
-        Float alpha = z_r / d_Ad;
+        const Float alpha = z_r / d_Ad;
     
+        // NOTE: Don't parallelize 
         for( int c = 0; c < N; c++ )
         {
             
@@ -594,6 +609,7 @@ int ConjugateGradientSolverCSR_SSOR(
 //         
 //         }
         
+        // NOTE: Don't parallelize
         for( int c = N-1; c >= 0; c-- ) {
             
             if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
@@ -614,10 +630,13 @@ int ConjugateGradientSolverCSR_SSOR(
             
         }
         
-        Float beta = z_r_new / z_r;
+        const Float beta = z_r_new / z_r;
         
         z_r = z_r_new;
         
+        #if defined(_OPENMP)
+        #pragma omp parallel for 
+        #endif
         for( int c = 0; c < N; c++ ) {
             
             if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
