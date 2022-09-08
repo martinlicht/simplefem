@@ -137,6 +137,10 @@ int main()
             for( int r = min_r; r <= max_r; r++ ) 
             {
                 
+                LOG << "Polynomial degree: " << r << "/" << max_r << nl;
+                    
+                LOG << "integration with: " << r_plus_vector << ", " << r_plus_volume << nl;
+                    
                 LOG << "... assemble matrices" << nl; // TODO: correct the degrees, perhaps via degree elevation
         
                 SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r + r_plus_vector );

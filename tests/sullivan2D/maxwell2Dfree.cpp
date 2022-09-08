@@ -172,6 +172,8 @@ int main()
                     
                     LOG << "Polynomial degree: " << r << "/" << max_r << nl;
                     
+                    LOG << "integration with: " << r_plus_scalar << ", " << r_plus_vector << ", " << r_plus_volume << nl;
+                    
                     LOG << "... assemble matrices" << nl;
             
                     
