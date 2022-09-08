@@ -139,17 +139,15 @@ int main()
                 
                 LOG << "... assemble matrices" << nl; // TODO: correct the degrees, perhaps via degree elevation
         
-                SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r );
+                SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r + r_plus_vector );
                 
-                SparseMatrix volume_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r );
+                SparseMatrix volume_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r + r_plus_volume );
 
-//                 SparseMatrix vector_massmatrix_inv = FEECBrokenMassMatrix_cellwiseinverse( M, M.getinnerdimension(), 1, r );
-                
-                SparseMatrix volume_elevationmatrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 2, r-1, 1 );
-                SparseMatrix volume_elevationmatrix_t = volume_elevationmatrix.getTranspose();
-
-                SparseMatrix diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r );
-                SparseMatrix diffmatrix_t = diffmatrix.getTranspose();
+                SparseMatrix vector_augdiffmatrix   = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 2, r-1, 1 )
+                                                      &
+                                                      FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r )
+                                                      ;
+                SparseMatrix vector_augdiffmatrix_t = vector_augdiffmatrix.getTranspose();
 
                 SparseMatrix vector_incmatrix   = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 1, r );
                 SparseMatrix vector_incmatrix_t = vector_incmatrix.getTranspose();
@@ -157,19 +155,19 @@ int main()
                 SparseMatrix volume_incmatrix   = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 2, r );
                 SparseMatrix volume_incmatrix_t = volume_incmatrix.getTranspose();
 
-                SparseMatrix vector_elevmatrix   = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 1, r  , r_plus_vector );
+                SparseMatrix vector_elevmatrix   = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 1, r, r_plus_vector );
                 SparseMatrix vector_elevmatrix_t = vector_elevmatrix.getTranspose();
 
-                SparseMatrix volume_elevmatrix   = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 2, r-1, r_plus_volume );
+                SparseMatrix volume_elevmatrix   = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 2, r, r_plus_volume );
                 SparseMatrix volume_elevmatrix_t = volume_elevmatrix.getTranspose();
 
-                auto mat_A  = vector_incmatrix_t & vector_massmatrix & vector_incmatrix;
+                auto mat_A  = vector_incmatrix_t & vector_elevmatrix_t & vector_massmatrix & vector_elevmatrix & vector_incmatrix;
                 mat_A.sortandcompressentries();
                 
-                auto mat_Bt = vector_incmatrix_t & diffmatrix_t & volume_elevationmatrix_t & volume_massmatrix & volume_incmatrix; // upper right
+                auto mat_Bt = vector_incmatrix_t & vector_augdiffmatrix_t & volume_elevmatrix_t & volume_massmatrix & volume_elevmatrix & volume_incmatrix; // upper right
                 mat_Bt.sortandcompressentries();
                 
-                auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & volume_massmatrix & diffmatrix & vector_incmatrix; // lower bottom
+                auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & volume_massmatrix & vector_diffmatrix & vector_incmatrix; // lower bottom
                 mat_B.sortandcompressentries();
                 
                 auto A  = MatrixCSR( mat_A  );
@@ -177,8 +175,6 @@ int main()
                 auto B  = MatrixCSR( mat_B  );
                 
                 auto C  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
-                
-                auto Schur = B * inv(A,1e-10) * Bt;
                 
                 {
 
@@ -188,19 +184,25 @@ int main()
                     
                     LOG << "...interpolate explicit solution and rhs" << nl;
                     
-                    FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r   + r_plus_vector, function_grad );
-                    FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 2, r-1 + r_plus_volume, function_sol  );
-                    FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 2, r-1 + r_plus_volume, function_rhs  );
+                    FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r + r_plus_vector, function_grad );
+                    FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 2, r + r_plus_volume, function_sol  );
+                    FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 2, r + r_plus_volume, function_rhs  );
                     
                     timestamp start = gettimestamp();
 
                     FloatVector sol( volume_incmatrix.getdimin(), 0. );
                     sol.zero();
 
-                    FloatVector rhs = volume_incmatrix_t * ( volume_massmatrix * volume_elevationmatrix * interpol_rhs );
+                    FloatVector rhs = volume_incmatrix_t * volume_elevmatrix_t 
+                        * ( volume_massmatrix * interpol_rhs );
 
                     // {
                         LOG << "...iterative solver" << nl;
+
+                        // auto PA = MatrixCSR( vector_incmatrix_t & vector_elevmatrix_t & vector_massmatrix & vector_elevmatrix & vector_incmatrix )
+                        //         + MatrixCSR( vector_incmatrix_t & vector_augdiffmatrix_t & volume_elevmatrix_t & volume_massmatrix & volume_elevmatrix & vector_augdiffmatrix & vector_incmatrix );
+                        // auto PC = MatrixCSR( volume_incmatrix_t & volume_elevmatrix_t & volume_massmatrix & volume_elevmatrix & volume_incmatrix );
+
 
                         FloatVector res = sol;
                         
@@ -232,17 +234,18 @@ int main()
                         
                     // improved error estimation 
                     
-                    FloatVector interpol_grad_aug = Interpolation( M, M.getinnerdimension(), 1, r   + r_plus_vector, function_grad );
-                    FloatVector interpol_sol_aug  = Interpolation( M, M.getinnerdimension(), 2, r-1 + r_plus_volume, function_sol  );
+                    FloatVector interpol_grad_aug = Interpolation( M, M.getinnerdimension(), 1, r + r_plus_vector, function_grad );
+                    FloatVector interpol_sol_aug  = Interpolation( M, M.getinnerdimension(), 2, r + r_plus_volume, function_sol  );
 
                     auto errornorm_aux_grad = interpol_grad_aug - vector_elevmatrix * vector_incmatrix * grad;
                     auto errornorm_aux_sol  = interpol_sol_aug  - volume_elevmatrix * volume_incmatrix *  sol;
 
                     Float errornorm_grad = sqrt( errornorm_aux_grad * ( vector_massmatrix * errornorm_aux_grad ) );
                     Float errornorm_sol  = sqrt( errornorm_aux_sol  * ( volume_massmatrix *  errornorm_aux_sol ) );
+                    
                     Float residual_sol   = ( rhs - B * grad ).norm();
                     Float residual_grad  = ( - A * grad + Bt * sol ).norm();
-                
+
                     LOG << "error:     " << errornorm_sol << nl;
                     LOG << "aux error: " << errornorm_grad << nl;
                     LOG << "residual:  " << residual_sol << nl;
@@ -254,7 +257,7 @@ int main()
                     contable << residual_grad;
                     contable << Float( end - start );
                     contable << nl;
-
+                    
                     contable.lg();
                     
                 }
