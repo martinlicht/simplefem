@@ -68,9 +68,9 @@ int main()
                     Assert( vec.getdimension() == 3 );
                     // return FloatVector({ 1. });
                     return FloatVector( { 
-                        - bumpfunction_dev(vec[0]) * bumpfunction(vec[1]) * bumpfunction(vec[2])
-                        - bumpfunction(vec[0]) * bumpfunction_dev(vec[1]) * bumpfunction(vec[2])
-                        - bumpfunction(vec[0]) * bumpfunction(vec[1]) * bumpfunction_dev(vec[2])
+                        - bumpfunction_dev(vec[0]) * bumpfunction(vec[1])     * bumpfunction(vec[2])
+                        - bumpfunction(vec[0])     * bumpfunction_dev(vec[1]) * bumpfunction(vec[2])
+                        - bumpfunction(vec[0])     * bumpfunction(vec[1])     * bumpfunction_dev(vec[2])
                     });
                 };
             
@@ -80,14 +80,14 @@ int main()
                     Assert( vec.getdimension() == 3 );
                     // return FloatVector({ 1. });
                     return FloatVector( { // - partial_y + partial_x
-                        + bumpfunction(vec[0]) * bumpfunction_dev(vec[1]) * bumpfunction(vec[2])
-                        - bumpfunction_dev(vec[0]) * bumpfunction(vec[1]) * bumpfunction(vec[2]) // xy
+                        + bumpfunction(vec[0])     * bumpfunction_dev(vec[1]) * bumpfunction(vec[2])
+                        - bumpfunction_dev(vec[0]) * bumpfunction(vec[1])     * bumpfunction(vec[2]) // xy
                         ,
-                        - bumpfunction(vec[0]) * bumpfunction(vec[1]) * bumpfunction_dev(vec[2])
+                        - bumpfunction(vec[0])     * bumpfunction(vec[1]) * bumpfunction_dev(vec[2])
                         + bumpfunction_dev(vec[0]) * bumpfunction(vec[1]) * bumpfunction(vec[2]) // xz
                         ,
                         + bumpfunction(vec[0]) * bumpfunction_dev(vec[1]) * bumpfunction(vec[2])
-                        - bumpfunction(vec[0]) * bumpfunction(vec[1]) * bumpfunction_dev(vec[2]) // yz
+                        - bumpfunction(vec[0]) * bumpfunction(vec[1])     * bumpfunction_dev(vec[2]) // yz
                     });
                 };
             
@@ -137,9 +137,9 @@ int main()
             const int min_r = 2; 
             const int max_r = 2;
             
-            const int r_plus_scalar = 0;
-            const int r_plus_vector = 0; 
-            const int r_plus_pseudo = 0; 
+            const int r_plus_scalar = 2;
+            const int r_plus_vector = 2; 
+            const int r_plus_pseudo = 2; 
 
             
             assert( 0 <= min_l and min_l <= max_l );
@@ -214,11 +214,11 @@ int main()
                     auto B  = MatrixCSR( mat_B  );
                     auto C  = MatrixCSR( mat_C  );
 
-                    auto negA  = A;  negA.scale(-1);
-                    auto negB  = B;  negB.scale(-1);
-                    auto negBt = Bt; negBt.scale(-1);
+                    // auto negA  = A;  negA.scale(-1);
+                    // auto negB  = B;  negB.scale(-1);
+                    // auto negBt = Bt; negBt.scale(-1);
                     
-                    auto SystemMatrix = C + B * inv(A,desired_precision) * Bt;
+                    // auto SystemMatrix = C + B * inv(A,desired_precision) * Bt;
                     
                     {
 
