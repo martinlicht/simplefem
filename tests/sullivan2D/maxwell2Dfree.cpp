@@ -255,7 +255,7 @@ int main()
                         
                         timestamp start = gettimestamp();
                         
-                        {
+                        // {
                             LOG << "...iterative solver" << nl;
                             
                             auto PA = MatrixCSR( scalar_incmatrix_t & scalar_elevmatrix_t & scalar_massmatrix & scalar_elevmatrix & scalar_incmatrix )
@@ -285,7 +285,7 @@ int main()
                                 1,
                                 PAinv, PCinv
                             );
-                        }
+                        // }
                         
                         timestamp end = gettimestamp();
         
@@ -299,6 +299,10 @@ int main()
                         
                         LOG << "...compute error and residual:" << nl;
 
+                        LOG << "Variable difference: " << ( x_A - ndiv ).norm() << nl;
+
+                        ndiv = x_A;
+                        
                         auto errornorm_aux_ndiv = interpol_ndiv - scalar_elevmatrix * scalar_incmatrix * ndiv;
                         auto errornorm_aux_sol  = interpol_sol  - vector_elevmatrix * vector_incmatrix *  sol;
                         auto errornorm_aux_curl = interpol_curl - volume_elevmatrix *                    curl;
@@ -306,7 +310,7 @@ int main()
                         Float errornorm_ndiv_sq = ( errornorm_aux_ndiv * ( scalar_massmatrix * errornorm_aux_ndiv ) );
                         Float errornorm_sol_sq  = ( errornorm_aux_sol  * ( vector_massmatrix * errornorm_aux_sol  ) );
                         Float errornorm_curl_sq = ( errornorm_aux_curl * ( volume_massmatrix * errornorm_aux_curl ) );
-                        Float residualnorm      = ( rhs - B * inv(A,1e-14) * Bt * sol - C * sol ).norm();
+                        Float residualnorm      = ( rhs - B * ndiv - C * sol ).norm();
 
                         LOG << errornorm_ndiv_sq << space << errornorm_sol_sq << space << errornorm_curl_sq << nl;
 
@@ -337,23 +341,17 @@ int main()
 
                         contable.lg();
                         
-
-
                     }
                     
                 }
 
                 if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
 
-        
             } 
             
             contable.lg();
         
         }
-        
-        
-        
         
         LOG << "Finished Unit Test" << nl;
         

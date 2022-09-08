@@ -128,11 +128,11 @@ int main()
                     
                     LOG << "...assemble scalar mass matrices" << nl;
             
-                    SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
+                    SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r + r_plus_scalar );
 
                     LOG << "...assemble vector mass matrix" << nl;
             
-                    SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
+                    SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 + r_plus_vector );
                     
                     LOG << "...assemble differential matrix and transpose" << nl;
 
@@ -246,22 +246,16 @@ int main()
                             fs.close();
                         }
 
-
                     }
                     
                 }
 
                 if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
-                
-                
 
             } 
         
         }
-        
-        
-        
-        
+
         LOG << "Finished Unit Test" << nl;
         
         return 0;

@@ -114,8 +114,8 @@ int main()
             const int min_r = 1;
             const int max_r = 1;
             
-            const int r_plus_scalar = 0;
-            const int r_plus_vector = 0;
+            const int r_plus_scalar = 2;
+            const int r_plus_vector = 2;
             
             ConvergenceTable contable("Mass error");
             
