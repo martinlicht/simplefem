@@ -111,6 +111,12 @@ void Mesh::check() const
   
 }
 
+void Mesh::print( std::ostream& out ) const
+{
+  out << text();
+}
+
+
 
 
 
@@ -453,6 +459,21 @@ Float Mesh::getShapemeasure() const
 }
 
 
+FloatVector Mesh::get_midpoint( int dim, int index ) const
+{
+    assert( 0 <= dim && dim <= getinnerdimension() );
+    assert( 0 <= index && index < count_simplices(dim) );
+    FloatVector mid( getouterdimension(), 0. );
+    
+    for( int v = 0; v <= dim; v++ )
+    for( int d = 0; d < getouterdimension(); d++ )
+      mid[d] += getcoordinates().getdata( get_subsimplex( dim, 0, index, v ), d );
+    
+    for( int d = 0; d < getouterdimension(); d++ )
+      mid[d] /= dim + 1;
+
+    return mid;
+}
 
 
 DenseMatrix Mesh::getVertexCoordinateMatrix( int dim, int index ) const 
@@ -487,6 +508,25 @@ DenseMatrix Mesh::getTransformationJacobian( int dim, int index ) const
 }
 
 
+DenseMatrix Mesh::getGradientMatrix( int dim, int index ) const 
+{
+    assert( 0 <= dim && dim <= getinnerdimension() );
+    assert( 0 <= index && index < count_simplices(dim) );
+    
+    DenseMatrix ret( getouterdimension(), dim+1, 0. );
+    
+    DenseMatrix vcm = getVertexCoordinateMatrix( dim, index );
+    
+    for( int v = 1; v <= dim; v++ )
+    for( int c = 0; c < getouterdimension(); c++ )
+    {
+        ret( c, v ) = vcm( c, v ) - vcm( c, 0 );
+        ret( c, 0 ) -= ret( c, v );
+    }
+    
+    return ret;
+}
+        
 DenseMatrix Mesh::getGradientProductMatrix( int dim, int index ) const 
 {
     assert( 0 <= dim   && dim   <= getinnerdimension() );

@@ -2,7 +2,7 @@
 #define INCLUDEGUARD_MESH_SIMPLICIAL_2D_HPP
 
 
-#include <ostream>
+#include <string>
 #include <utility>
 #include <vector>
 
@@ -70,9 +70,9 @@ class MeshSimplicial2D
         
         virtual void check() const;
         
-        virtual void print( std::ostream& out ) const override;
+        // virtual void print( std::ostream& out ) const override;
 
-        // virtual std::string text() const override;
+        virtual std::string text() const override;
 
         /* OTHER METHODS */
         
@@ -229,7 +229,7 @@ class MeshSimplicial2D
         
         /* TikZ */
         
-        void outputTikZ( std::ostream& os ) const;
+        std::string outputTikZ() const;
         
         
         

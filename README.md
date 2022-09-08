@@ -20,26 +20,24 @@ FEECPP builds and runs on Linux, Windows (Cygwin), and MacOS. Its only necessary
 prerequisites are a C++17 compiler (such as GCC and Clang) and GNU Make.
 
 Most important features:
-[x] Written in C++
-[x] Minimal dependencies: C++17 compiler and GNU make
-[x] Compiles and runs on Linux, Windows+Cygwin, or Windows+MinGW-w64
-[x] Whitney and Sullivan k-forms of any polynomial degree in any dimension
-[ ] Operations such as exterior derivatives, Mass matrices, Traces, Hodge-star 
-[x] Meshes in dimension 1, 2, and 3, supporting uniform refinement and longest edge bisection.
-[ ] Residual error estimators and adaptive mesh refinement
+
+ - [x] Written in C++
+ - [x] Minimal dependencies: C++17 compiler and GNU make
+ - [x] Compiles and runs on Linux, Windows+Cygwin, or Windows+MinGW-w64
+ - [x] Meshes in dimension 1, 2, and 3
+ - [x] uniform mesh refinement and longest edge bisection
+ - [x] Whitney and Sullivan k-forms of any polynomial degree in any dimension
+ - [ ] Operations such as exterior derivatives, Mass matrices, Traces, Hodge-star 
+ - [ ] Residual error estimators and adaptive mesh refinement
 
 Planned features:
-[ ] Different bases
-[ ] Curved geometries and non-trivial coefficients
 
-
-What this is not:
-
-[ ] This software does not aim at running well-known methods as fast as possible. It aims at prototyping new methods that are outside of the standard textbooks.
-[ ] 
-
+ - [ ] Different bases
+ - [ ] Curved geometries and non-trivial coefficients
 
 Lastly, high performance and massive parallelism are explicit **non-goals** of this project 
-for the time being. 
+for the time being. This software does not aim at running well-known methods as fast as possible.
+It aims at prototyping new methods that are outside of the standard textbooks.
+
 
 

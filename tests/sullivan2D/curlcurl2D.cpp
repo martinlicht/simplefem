@@ -13,7 +13,6 @@
 #include "../../solver/inv.hpp"
 #include "../../solver/systemsolver.hpp"
 #include "../../solver/systemsparsesolver.hpp"
-#include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.sullivanincl.hpp"
@@ -27,8 +26,6 @@ int main()
     
     LOG << "Unit Test for Solution of Darcy Problem" << nl;
     
-    // LOG << std::setprecision(10);
-
     LOG << "Initial mesh..." << nl;
     
     MeshSimplicial2D M = StandardSquare2D_simple();

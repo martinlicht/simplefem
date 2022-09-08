@@ -3,7 +3,7 @@ SHELL = /bin/sh
 .PHONY:default 
 default: build
 
-projectdir :=.
+projectdir :=..
 
 include ../common.compile.mk 
 
@@ -62,5 +62,24 @@ $(runs): %.run : %.$(ending)
 run: $(runs)
 
 
+
+
+CMD_CLEAN    = rm -f .all.o *.a *.o *.d *.so *.gch OUTPUT_CPPLINT.txt callgrind.out.* *.exe *.exe.stackdump *.out *.out.stackdump 
+CMD_VTKCLEAN = rm -f ./*.vtk ./*/*.vtk ./*/*/*.vtk
+CMD_DEPCLEAN = if [ -d .deps/ ]; then rm -f .deps/*.d .deps/.all.d; rmdir .deps/; fi 
+
+.PHONY: clean vktclean dependclean
+
+clean: 
+	@$(CMD_CLEAN); $(CMD_VTKCLEAN); $(CMD_DEPCLEAN); 
+	@echo "Finished cleaning benchmark directory." 
+
+vtkclean: 
+	@$(CMD_VTKCLEAN); 
+	@echo "Finished cleaning benchmark directory .vtk files." 
+
+dependclean: 
+	@$(CMD_DEPCLEAN); 
+	@echo "Finished cleaning benchmark directory dependency information files." 
 
 

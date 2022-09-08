@@ -3,9 +3,6 @@
 /**/
 
 #include <algorithm>
-#include <ostream>
-#include <fstream>
-// #include <iomanip>
 
 #include "../../basic.hpp"
 #include "../../utility/convergencetable.hpp"
@@ -17,12 +14,8 @@
 #include "../../sparse/matcsr.hpp"
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
-#include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examplesUK.hpp"
-#include "../../mesh/examples3D.hpp"
-#include "../../vtk/vtkwriter.hpp"
 #include "../../solver/iterativesolver.hpp"
-#include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/lagrangematrices.hpp"
@@ -36,8 +29,6 @@ int main()
         
         LOG << "Unit Test for Solution of Neumann Problem" << nl;
         
-        // LOG << std::setprecision(10);
-
         if(true){
 
             LOG << "Case 2D" << nl;
@@ -63,8 +54,6 @@ int main()
 
 
             
-            // std::function<FloatVector(const FloatVector&) scalarfield = 
-            
             Float xfeq = 1.;
             Float yfeq = 1.;
             
@@ -80,7 +69,6 @@ int main()
             experiments_grad.push_back( 
                 [xfeq,yfeq](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
-                    // return FloatVector({ 1. });
                     return FloatVector( { 
                             -xfeq * Constants::pi * std::sin( xfeq * Constants::pi * vec[0] ) * std::cos( yfeq * Constants::pi * vec[1] ),
                             -yfeq * Constants::pi * std::cos( xfeq * Constants::pi * vec[0] ) * std::sin( yfeq * Constants::pi * vec[1] ), 
@@ -140,13 +128,6 @@ int main()
 
                 LOG << "...assemble stiffness matrix" << nl;
         
-                // ProductOperator 
-                // auto stiffness = incmatrix_t * diffmatrix_t * vector_massmatrix * diffmatrix * incmatrix;
-                // auto op1 = incmatrix_t * diffmatrix_t;
-                // auto op2 = op1 * vector_massmatrix;
-                // auto op3 = op2 * diffmatrix;
-                // auto stiffness = op3 * incmatrix;
-
                 auto opr1 = diffmatrix & incmatrix;
                 auto opr  = vector_massmatrix_fac & opr1;
                 auto opl  = opr.getTranspose(); 
@@ -223,33 +204,11 @@ int main()
                 Float graderrornorm = ( vector_massmatrix_fac * ( interpol_grad - diffmatrix * incmatrix * sol ) ).norm();
                 Float residualnorm  = ( rhs - stiffness * sol ).norm();
                 
-                // FloatVector gradfoo = diffmatrix * ( interpol_sol - incmatrix * sol );
-                // Float graderrornorm = gradfoo.scalarproductwith( vector_massmatrix * gradfoo );
-                // Float errornorm1 = interpol_sol * ( scalar_massmatrix * interpol_sol );
-                // Float errornorm2 = power_numerical( ( scalar_massmatrix_fac * interpol_sol ).norm(), 2. );
-
                 LOG << "error:     " << errornorm    << nl;
                 LOG << "graderror: " << graderrornorm << nl;
                 LOG << "residual:  " << residualnorm << nl;
 
 
-                {
-            
-                    fstream fs( adaptfilename("./afempoissonneumannUK.vtk"), std::fstream::out );
-        
-                    VTKWriter vtk( M, fs, "Poisson-Neumann problem" );
-                    vtk.writeCoordinateBlock();
-                    vtk.writeTopDimensionalCells();
-
-                    // vtk.write
-                    
-                    vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
-                    // vtk.writeCellVectorData( interpol_grad, "gradient_interpolation" , 0.1 );
-                    
-                    fs.close();
-            
-                }
-                
                 if( l != max_l ) {
 
                     LOG << "Refinement..." << nl;

@@ -42,35 +42,37 @@ void Coordinates::check() const
 
 
 
-std::string Coordinates::text() const 
+void Coordinates::print( std::ostream& os ) const 
 {
-    std::stringstream ss;
-    print( ss );
-    return ss.str();
+    os << text();
 }
 
-void Coordinates::print( std::ostream& os ) const
+std::string Coordinates::text() const
 {
+    std::stringstream os;
+    
     os << "dimension: " << dimension << " - #vertices: " << number << nl;
     for( int n = 0; n < number; n++ ) {
         for( int d = 0; d < dimension; d++ )
             os << getdata( n, d ) << " ";
         os << nl;
     }
+
+    return os.str();
 }
 
 
-void Coordinates::read( std::istream& is ) 
-{
-    for( int n = 0; n < number; n++ ) {
-        for( int d = 0; d < dimension; d++ ) {
-            Float temp;
-            is >> temp;
-            setdata( n, d, temp );
-            assert( ! is.fail() );
-        }
-    }
-}
+// void Coordinates::read( std::istream& is ) 
+// {
+//     for( int n = 0; n < number; n++ ) {
+//         for( int d = 0; d < dimension; d++ ) {
+//             Float temp;
+//             is >> temp;
+//             setdata( n, d, temp );
+//             assert( ! is.fail() );
+//         }
+//     }
+// }
 
 
 

@@ -70,9 +70,9 @@ class Mesh
         
         void check() const;
         
-        virtual void print( std::ostream& out ) const = 0;
+        void print( std::ostream& out ) const;
         
-        // virtual std::string text() const = 0;
+        virtual std::string text() const = 0;
         
         // // void lg() const { LOG << *this << nl; };
         
@@ -208,9 +208,13 @@ class Mesh
         Float getShapemeasure( int dim ) const;
         Float getShapemeasure() const;
         
+        FloatVector get_midpoint( int dim, int index ) const;
+        
         DenseMatrix getVertexCoordinateMatrix( int dim, int index ) const;
         
         DenseMatrix getTransformationJacobian( int dim, int index ) const;
+        
+        DenseMatrix getGradientMatrix( int dim, int index ) const;
         
         DenseMatrix getGradientProductMatrix( int dim, int index ) const;
         

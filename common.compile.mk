@@ -30,8 +30,8 @@ endif
 
 # Do you want to use GCC or Clang?
 # Uncomment the appropriate definition below
-# FLAG_CXX := CLANG
-FLAG_CXX := GCC
+FLAG_CXX := CLANG
+# FLAG_CXX := GCC
 # FLAG_CXX := ICC
 
 

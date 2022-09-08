@@ -48,6 +48,8 @@ kcachegrind callgrind.out.[pid]
 ```
 The target audience for this software are researchers in numerical partial differential equations who are well-versed in C++ and who want a customizable finite element software.
 
+Another alternative is `gprof` as a GUI for profiling data. 
+
 
 # (HIGH) text output
 

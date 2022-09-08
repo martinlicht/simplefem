@@ -16,7 +16,6 @@
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/sparsesolver.hpp"
 #include "../../solver/iterativesolver.hpp"
-#include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.sullivanincl.hpp"
@@ -30,8 +29,6 @@ int main()
         
         LOG << "Unit Test for Solution of Neumann Problem" << nl;
         
-        // LOG << std::setprecision(10);
-
         if(true){
 
             LOG << "Initial mesh..." << nl;
@@ -60,8 +57,6 @@ int main()
             
 
 
-            
-            // std::function<FloatVector(const std::function<FloatVector(const FloatVector&) ) >scalarfield = 
             
             std::function<FloatVector(const FloatVector&)> experiment_sol = 
                 [](const FloatVector& vec) -> FloatVector{
@@ -144,10 +139,6 @@ int main()
             
                     SparseMatrix incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r );
                     
-//                     LOG << incmatrix.getdimin() <<space<< L_incmatrix.getdimin() <<space<< incmatrix.getdimout() <<space<< L_incmatrix.getdimout() << nl;
-//                     assert( incmatrix.getdimin()  == L_incmatrix.getdimin() );
-//                     assert( incmatrix.getdimout() == L_incmatrix.getdimout() );
-
                     SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
                     LOG << "...assemble stiffness matrix" << nl;
@@ -220,7 +211,7 @@ int main()
                                 stiffness_csr.getA(), stiffness_csr.getC(), stiffness_csr.getV(),
                                 residual.raw(),
                                 1e-16,
-                                1,
+                                0,
                                 diagonal.raw(),
                                 1.0
                             );
@@ -233,8 +224,11 @@ int main()
                         LOG << "...compute error and residual:" << nl;
             
                         
-                        auto errornorm_aux = interpol_sol  - incmatrix * sol;
-                        auto graderror_aux = interpol_grad - diffmatrix * incmatrix * sol;
+                        auto computed_sol  = incmatrix * sol;
+                        auto computed_grad = diffmatrix * incmatrix * sol;
+                        
+                        auto errornorm_aux = interpol_sol  - computed_sol;
+                        auto graderror_aux = interpol_grad - computed_grad;
                         
                         Float errornorm     = sqrt( errornorm_aux * ( scalar_massmatrix * errornorm_aux ) );
                         Float graderrornorm = sqrt( graderror_aux * ( vector_massmatrix * graderror_aux ) );
@@ -256,10 +250,10 @@ int main()
                         if( r == 1 ){
                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
-                            vtk.writeCoordinateBlock( 0.3 * sol );
+                            vtk.writeCoordinateBlock();
                             vtk.writeTopDimensionalCells();
                             vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
-                            // vtk.writeCellVectorData( interpol_grad, "gradient_interpolation" , 0.1 );
+                            vtk.writeCellVectorData( computed_grad, "gradient_interpolation" , 0.1 );
                             fs.close();
                         }
 

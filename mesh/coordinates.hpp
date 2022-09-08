@@ -52,7 +52,7 @@ class Coordinates
         // // void lg() const { LOG << *this << nl; };
         
 
-        void read( std::istream& ) ;
+        // void read( std::istream& ) ;
 
         int getdimension() const;
         int getnumber() const;

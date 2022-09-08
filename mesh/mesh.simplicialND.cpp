@@ -1,7 +1,6 @@
 
 #include <algorithm>
-// #include <fstream>
-#include <ostream>
+#include <sstream>
 #include <map>
 #include <string>
 #include <utility>
@@ -362,9 +361,11 @@ void MeshSimplicialND::check() const
 
 
 
-void MeshSimplicialND::print( std::ostream& os ) const
+std::string MeshSimplicialND::text() const
 {
-    os << "Printe Triangulation of N-dimensional Manifold!" << nl;
+    std::ostringstream os;
+    
+    os << "Triangulation of N-dimensional Manifold!" << nl;
     
     os << "inner dimension: " << getinnerdimension() << nl
        << "outer dimension: " << getouterdimension() << nl;
@@ -424,7 +425,8 @@ void MeshSimplicialND::print( std::ostream& os ) const
     getcoordinates().print( os );
     
     os << "Finished printing" << nl;
-    
+
+    return os.str();
 }
 
 
