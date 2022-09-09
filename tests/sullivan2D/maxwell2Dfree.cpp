@@ -251,7 +251,9 @@ int main()
                             auto PC = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix )
                                       + MatrixCSR( vector_incmatrix_t & vector_diffmatrix_t & volume_massmatrix & vector_diffmatrix & vector_incmatrix );
                             
-                            
+                            LOG << "share zero PA = " << PA.getnumberofzeroentries() << "/" << (Float) PA.getnumberofentries() << nl;
+                            LOG << "share zero PC = " << PC.getnumberofzeroentries() << "/" << (Float) PC.getnumberofentries() << nl;
+
                             const auto PAinv = inv(PA,desired_precision,-1);
                             const auto PCinv = inv(PC,desired_precision,-1);
 

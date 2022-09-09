@@ -322,10 +322,13 @@ Float MatrixCSR::eigenvalueupperbound() const
 
 
 
-void sort_and_compress_csrdata( std::vector<int> A, std::vector<int> C, std::vector<Float> V )
+void sort_and_compress_csrdata( std::vector<int>& A, std::vector<int>& C, std::vector<Float>& V )
 {
 
-    return;
+    // return ; 
+    
+    std::vector<int> nnz( A.size()-1 );
+
     #if defined(_OPENMP)
     #pragma omp parallel for
     #endif
@@ -343,7 +346,6 @@ void sort_and_compress_csrdata( std::vector<int> A, std::vector<int> C, std::vec
             }
             
             // if the columns are in the wrong order, 
-            // or if the V[i] is zero  or V[i] == 0.
             // then swap 
             if( C[i] > C[j] ) {
                 std::swap( C[i], C[j] );
@@ -352,10 +354,77 @@ void sort_and_compress_csrdata( std::vector<int> A, std::vector<int> C, std::vec
             
         }
         
-        for( int i = A[r]+1; i < A[r+1]; i++ ) 
-            assert( C[i-1] < C[i] or ( C[i-1] == C[i] and V[i] == 0. ) );
+        // swap all the zeroes to the very end
+        for( int i = A[r]; i < A[r+1]; i++ ) 
+        for( int j = i+1; j < A[r+1]; j++ ) 
+        {
+            if( V[j-1] == 0. and V[j] != 0. ) {
+                std::swap( C[j-1], C[j] );
+                std::swap( V[j-1], V[j] );
+            }
+
+        }
         
+        // for( int i = A[r]; i < A[r+1]; i++ ) 
+        //     LOG << i << space << C[i] << space << V[i] << nl;
+            
+        for( int i = A[r]+1; i < A[r+1]; i++ ) 
+            Assert( C[i-1] < C[i] or V[i] == 0., i, C[i-1], C[i], V[i] );
+        
+        int first_zero = A[r];
+        for( ; V[first_zero] != 0. and first_zero < A[r+1]; first_zero++ ) 
+        
+        for( int i = A[r]; i < first_zero-1; i++ ) Assert( C[i] < C[i+1], i, C[i], C[i+1], V[i], V[i+1] );
+        
+        for( int i = first_zero; i < A[r+1]; i++ ) Assert( V[i] == 0., i, C[i], V[i] );
+
+        nnz[r] = first_zero - A[r]; // we save the number of non-zeroes
+
+        Assert( nnz[r] <= A[r+1]-A[r] );
+
     }
+
+    std::vector<int> newA( A.size() );
+    
+    for( int r = 1; r < newA.size(); r++ ){
+        newA[r] = newA[r-1] + nnz[r-1];
+    }
+
+    for( int r = 0; r < newA.size()-1; r++ )
+        Assert( nnz[r] == newA[r+1] - newA[r] );
+
+    std::vector<int>   newC( newA.back() );
+    std::vector<Float> newV( newA.back() );
+    
+    // Fill in the new data 
+    #if defined(_OPENMP)
+    #pragma omp parallel for
+    #endif
+    for( int r = 0; r < newA.size()-1; r++ ) {
+
+        int base = newA[r];
+        int len  = nnz[r];
+
+        Assert( len <= A[r+1]-A[r] );
+        
+        for( int i = 0; i < len; i++ ) {
+            newC[ base + i ] = C[ A[r] + i ];
+            newV[ base + i ] = V[ A[r] + i ];
+        }
+
+    }
+
+
+    for( int r = 0; r < newA.size()-1; r++ )
+    for( int i = newA[r]+1; i < newA[r+1]; i++ ) 
+        assert( newC[i-1] < newC[i]);
+    
+    for( int i = 0; i < newV.size(); i++ ) 
+        assert( newV[i] != 0. );
+
+    A = std::move( newA );
+    C = std::move( newC );
+    V = std::move( newV );
     
 }
 
