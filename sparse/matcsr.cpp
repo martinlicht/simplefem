@@ -7,8 +7,6 @@
 
 #include "matcsr.hpp"
 
-
-
 MatrixCSR::MatrixCSR( 
     int rows,
     int columns,
@@ -324,6 +322,124 @@ Float MatrixCSR::eigenvalueupperbound() const
 
 
 
+void sort_and_compress_csrdata( std::vector<int>& A, std::vector<int>& C, std::vector<Float>& V )
+{
+
+    // return ; 
+
+    int num_rows = A.size()-1;
+    
+    assert( A.back() == C.size() );
+    assert( A.back() == V.size() );
+    
+    std::vector<int> nnz( num_rows );
+
+    // #if defined(_OPENMP)
+    // #pragma omp parallel for
+    // #endif
+    for( int r = 0; r < num_rows; r++ ) {
+        
+        for( int i = A[r]; i < A[r+1]; i++ ) 
+        for( int j = i+1; j < A[r+1]; j++ ) 
+        {
+            
+            // if the columns are the same, first merge the entries
+            // there is nothing more to be done
+            if( C[i] == C[j] ) {
+                V[i] += V[j];
+                V[j] = 0.;
+                continue;
+            }
+            
+            // if the columns are in the wrong order, 
+            // then swap 
+            if( C[i] > C[j] ) {
+                std::swap( C[i], C[j] );
+                std::swap( V[i], V[j] );
+            }
+            
+        }
+        
+        // // // // swap all the zeroes to the very end
+        for( int i = A[r]  ; i < A[r+1]; i++ ) // bubble sort
+        for( int j = A[r]+1; j < A[r+1]; j++ ) 
+        {
+            if( V[j-1] == 0. and V[j] != 0. ) {
+                std::swap( C[j-1], C[j] );
+                std::swap( V[j-1], V[j] );
+            }
+
+        }
+        
+        // for( int i = A[r]; i < A[r+1]; i++ ) 
+        //     LOG << i << space << C[i] << space << V[i] << nl;
+            
+        for( int i = A[r]+1; i < A[r+1]; i++ ) 
+            Assert( C[i-1] < C[i] or V[i] == 0., i, C[i-1], C[i], V[i] );
+        
+        int first_zero = A[r];
+        for(; first_zero < A[r+1] and V[first_zero] != 0.; first_zero++ ) 
+        
+        for( int i = A[r]; i < first_zero-1; i++ ) Assert( C[i] < C[i+1], i, C[i], C[i+1], V[i], V[i+1] );        
+        for( int i = A[r]; i < first_zero;   i++ ) Assert( V[i] != 0., i, C[i], V[i] );
+        for( int i = first_zero; i < A[r+1]; i++ ) Assert( V[i] == 0., i, C[i], V[i] );
+
+        nnz[r] = first_zero - A[r]; // we save the number of non-zeroes
+
+        Assert( nnz[r] <= A[r+1] - A[r] );
+
+    }
+
+    std::vector<int> newA( num_rows + 1 );
+    
+    newA[0] = 0;
+    for( int r = 0; r < num_rows; r++ ){
+        newA[r+1] = newA[r] + nnz[r];
+    }
+
+    for( int r = 0; r < num_rows; r++ )
+        Assert( nnz[r] == newA[r+1] - newA[r] && newA[r+1] > newA[r] );
+
+    std::vector<int>   newC( newA[ num_rows ] );
+    std::vector<Float> newV( newA[ num_rows ] );
+    
+    // Fill in the new data 
+    // #if defined(_OPENMP)
+    // #pragma omp parallel for
+    // #endif
+    for( int r = 0; r < num_rows; r++ ) {
+
+        Assert( nnz[r] <= A[r+1] - A[r] );
+        Assert( nnz[r] == newA[r+1] - newA[r] );
+
+        for( int i =          A[r]; i < A[r] + nnz[r]; i++ ) Assert( V[i] != 0. );
+        for( int i = A[r] + nnz[r]; i <        A[r+1]; i++ ) Assert( V[i] == 0. );
+        
+        for( int i = 0; i < nnz[r]; i++ ) {
+            newC[ newA[r] + i ] = C[ A[r] + i ];
+            newV[ newA[r] + i ] = V[ A[r] + i ];
+        }
+
+    }
+
+
+    for( int r = 0; r < num_rows; r++ )
+    for( int i = newA[r]+1; i < newA[r+1]; i++ ) 
+        assert( newC[i-1] < newC[i]);
+    
+    for( int i = 0; i < newV.size(); i++ ) 
+        assert( newV[i] != 0. );
+
+    A = std::move( newA );
+    C = std::move( newC );
+    V = std::move( newV );
+    
+}
+
+
+
+
+
 MatrixCSR MatrixCSRAddition( const MatrixCSR& mat1, const MatrixCSR& mat2, Float s1, Float s2 )
 {
     // gather relevant data
@@ -377,6 +493,8 @@ MatrixCSR MatrixCSRAddition( const MatrixCSR& mat1, const MatrixCSR& mat2, Float
     }
     
     // computations done, create matrix 
+
+    sort_and_compress_csrdata(A, C, V );
 
     return MatrixCSR( matn_rows, matn_cols, A, C, V );
 
@@ -450,7 +568,11 @@ MatrixCSR MatrixCSRMultiplication( const MatrixCSR& mat1, const MatrixCSR& mat2 
 
     }
         
-    // computations done, create matrix 
+    // computations done
+    
+    // create matrix 
+    
+    sort_and_compress_csrdata( A, C, V );
 
     return MatrixCSR( matn_rows, matn_cols, A, C, V );
 
