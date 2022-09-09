@@ -159,6 +159,7 @@ dependclean:
 
 .PHONY: vtkclean
 vtkclean:
+	@rm -f ./*.vtk ./*/*.vtk ./*/*/*.vtk
 	@echo "Finished cleaning test directory .vtk files." 
 
 
