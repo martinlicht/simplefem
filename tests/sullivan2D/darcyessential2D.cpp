@@ -164,8 +164,8 @@ int main()
                               + MatrixCSR( vector_incmatrix_t & diffmatrix_t & volume_massmatrix & diffmatrix & vector_incmatrix );
                 auto PC = MatrixCSR( volume_incmatrix_t & volume_massmatrix & volume_incmatrix );
                     
-                LOG << "share zero PA = " << PA.getnumberofzeroentries() << "/" << (Float) PA.getnumberofentries() << nl;
-                LOG << "share zero PC = " << PC.getnumberofzeroentries() << "/" << (Float) PC.getnumberofentries() << nl;
+                LOG << "share zero PA = " << PA.getnumberofzeroentries() << "/" <<  PA.getnumberofentries() << nl;
+                LOG << "share zero PC = " << PC.getnumberofzeroentries() << "/" <<  PC.getnumberofentries() << nl;
                         
                         
                 {
