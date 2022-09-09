@@ -326,17 +326,23 @@ void sort_and_compress_csrdata( std::vector<int>& A, std::vector<int>& C, std::v
 {
 
     // return ; 
-    
-    std::vector<int> nnz( A.size()-1 );
 
-    #if defined(_OPENMP)
-    #pragma omp parallel for
-    #endif
-    for( int r = 0; r < A.size()-1; r++ ) {
+    int num_rows = A.size()-1;
+    
+    assert( A.back() == C.size() );
+    assert( A.back() == V.size() );
+    
+    std::vector<int> nnz( num_rows );
+
+    // #if defined(_OPENMP)
+    // #pragma omp parallel for
+    // #endif
+    for( int r = 0; r < num_rows; r++ ) {
         
         for( int i = A[r]; i < A[r+1]; i++ ) 
         for( int j = i+1; j < A[r+1]; j++ ) 
         {
+            
             // if the columns are the same, first merge the entries
             // there is nothing more to be done
             if( C[i] == C[j] ) {
@@ -354,9 +360,9 @@ void sort_and_compress_csrdata( std::vector<int>& A, std::vector<int>& C, std::v
             
         }
         
-        // swap all the zeroes to the very end
-        for( int i = A[r]; i < A[r+1]; i++ ) 
-        for( int j = i+1; j < A[r+1]; j++ ) 
+        // // // // swap all the zeroes to the very end
+        for( int i = A[r]  ; i < A[r+1]; i++ ) // bubble sort
+        for( int j = A[r]+1; j < A[r+1]; j++ ) 
         {
             if( V[j-1] == 0. and V[j] != 0. ) {
                 std::swap( C[j-1], C[j] );
@@ -372,50 +378,52 @@ void sort_and_compress_csrdata( std::vector<int>& A, std::vector<int>& C, std::v
             Assert( C[i-1] < C[i] or V[i] == 0., i, C[i-1], C[i], V[i] );
         
         int first_zero = A[r];
-        for( ; V[first_zero] != 0. and first_zero < A[r+1]; first_zero++ ) 
+        for(; first_zero < A[r+1] and V[first_zero] != 0.; first_zero++ ) 
         
-        for( int i = A[r]; i < first_zero-1; i++ ) Assert( C[i] < C[i+1], i, C[i], C[i+1], V[i], V[i+1] );
-        
+        for( int i = A[r]; i < first_zero-1; i++ ) Assert( C[i] < C[i+1], i, C[i], C[i+1], V[i], V[i+1] );        
+        for( int i = A[r]; i < first_zero;   i++ ) Assert( V[i] != 0., i, C[i], V[i] );
         for( int i = first_zero; i < A[r+1]; i++ ) Assert( V[i] == 0., i, C[i], V[i] );
 
         nnz[r] = first_zero - A[r]; // we save the number of non-zeroes
 
-        Assert( nnz[r] <= A[r+1]-A[r] );
+        Assert( nnz[r] <= A[r+1] - A[r] );
 
     }
 
-    std::vector<int> newA( A.size() );
+    std::vector<int> newA( num_rows + 1 );
     
-    for( int r = 1; r < newA.size(); r++ ){
-        newA[r] = newA[r-1] + nnz[r-1];
+    newA[0] = 0;
+    for( int r = 0; r < num_rows; r++ ){
+        newA[r+1] = newA[r] + nnz[r];
     }
 
-    for( int r = 0; r < newA.size()-1; r++ )
-        Assert( nnz[r] == newA[r+1] - newA[r] );
+    for( int r = 0; r < num_rows; r++ )
+        Assert( nnz[r] == newA[r+1] - newA[r] && newA[r+1] > newA[r] );
 
-    std::vector<int>   newC( newA.back() );
-    std::vector<Float> newV( newA.back() );
+    std::vector<int>   newC( newA[ num_rows ] );
+    std::vector<Float> newV( newA[ num_rows ] );
     
     // Fill in the new data 
-    #if defined(_OPENMP)
-    #pragma omp parallel for
-    #endif
-    for( int r = 0; r < newA.size()-1; r++ ) {
+    // #if defined(_OPENMP)
+    // #pragma omp parallel for
+    // #endif
+    for( int r = 0; r < num_rows; r++ ) {
 
-        int base = newA[r];
-        int len  = nnz[r];
+        Assert( nnz[r] <= A[r+1] - A[r] );
+        Assert( nnz[r] == newA[r+1] - newA[r] );
 
-        Assert( len <= A[r+1]-A[r] );
+        for( int i =          A[r]; i < A[r] + nnz[r]; i++ ) Assert( V[i] != 0. );
+        for( int i = A[r] + nnz[r]; i <        A[r+1]; i++ ) Assert( V[i] == 0. );
         
-        for( int i = 0; i < len; i++ ) {
-            newC[ base + i ] = C[ A[r] + i ];
-            newV[ base + i ] = V[ A[r] + i ];
+        for( int i = 0; i < nnz[r]; i++ ) {
+            newC[ newA[r] + i ] = C[ A[r] + i ];
+            newV[ newA[r] + i ] = V[ A[r] + i ];
         }
 
     }
 
 
-    for( int r = 0; r < newA.size()-1; r++ )
+    for( int r = 0; r < num_rows; r++ )
     for( int i = newA[r]+1; i < newA[r+1]; i++ ) 
         assert( newC[i-1] < newC[i]);
     
