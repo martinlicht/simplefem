@@ -7,8 +7,6 @@
 
 #include "matcsr.hpp"
 
-
-
 MatrixCSR::MatrixCSR( 
     int rows,
     int columns,
@@ -324,6 +322,47 @@ Float MatrixCSR::eigenvalueupperbound() const
 
 
 
+void sort_and_compress_csrdata( std::vector<int> A, std::vector<int> C, std::vector<Float> V )
+{
+
+    return;
+    #if defined(_OPENMP)
+    #pragma omp parallel for
+    #endif
+    for( int r = 0; r < A.size()-1; r++ ) {
+        
+        for( int i = A[r]; i < A[r+1]; i++ ) 
+        for( int j = i+1; j < A[r+1]; j++ ) 
+        {
+            // if the columns are the same, first merge the entries
+            // there is nothing more to be done
+            if( C[i] == C[j] ) {
+                V[i] += V[j];
+                V[j] = 0.;
+                continue;
+            }
+            
+            // if the columns are in the wrong order, 
+            // or if the V[i] is zero  or V[i] == 0.
+            // then swap 
+            if( C[i] > C[j] ) {
+                std::swap( C[i], C[j] );
+                std::swap( V[i], V[j] );
+            }
+            
+        }
+        
+        for( int i = A[r]+1; i < A[r+1]; i++ ) 
+            assert( C[i-1] < C[i] or ( C[i-1] == C[i] and V[i] == 0. ) );
+        
+    }
+    
+}
+
+
+
+
+
 MatrixCSR MatrixCSRAddition( const MatrixCSR& mat1, const MatrixCSR& mat2, Float s1, Float s2 )
 {
     // gather relevant data
@@ -377,6 +416,8 @@ MatrixCSR MatrixCSRAddition( const MatrixCSR& mat1, const MatrixCSR& mat2, Float
     }
     
     // computations done, create matrix 
+
+    sort_and_compress_csrdata(A, C, V );
 
     return MatrixCSR( matn_rows, matn_cols, A, C, V );
 
@@ -450,7 +491,11 @@ MatrixCSR MatrixCSRMultiplication( const MatrixCSR& mat1, const MatrixCSR& mat2 
 
     }
         
-    // computations done, create matrix 
+    // computations done
+    
+    // create matrix 
+    
+    sort_and_compress_csrdata( A, C, V );
 
     return MatrixCSR( matn_rows, matn_cols, A, C, V );
 
