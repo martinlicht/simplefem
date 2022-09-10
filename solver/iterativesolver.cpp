@@ -43,6 +43,155 @@ std::string ConjugateGradientMethod::text() const
 
 
 
+ConjugateResidualMethod::ConjugateResidualMethod( const LinearOperator& op )
+: IterativeSolver(), A( op )
+{
+    this->max_iteration_count = op.getdimin();
+    ConjugateResidualMethod::check();
+}
+
+ConjugateResidualMethod::~ConjugateResidualMethod()
+{
+    ConjugateResidualMethod::check();
+}
+
+void ConjugateResidualMethod::check() const
+{
+    IterativeSolver::check();
+    assert( A.getdimin() == A.getdimout() );
+}
+
+std::string ConjugateResidualMethod::text() const
+{
+    return "Solver: Conjugate Residual Method";
+}
+
+
+
+
+
+
+  
+PreconditionedConjugateResidualMethod::PreconditionedConjugateResidualMethod( const LinearOperator& op, const LinearOperator& M )
+: IterativeSolver(), A( op ), M( M )
+{
+    this->max_iteration_count = op.getdimin();
+    PreconditionedConjugateResidualMethod::check();
+}
+
+PreconditionedConjugateResidualMethod::~PreconditionedConjugateResidualMethod()
+{
+    PreconditionedConjugateResidualMethod::check();
+}
+  
+void PreconditionedConjugateResidualMethod::check() const
+{
+    IterativeSolver::check();
+    assert( A.getdimin() == A.getdimout() );
+    assert( M.getdimin() == M.getdimout() );
+    assert( A.getdimin() == M.getdimout() );
+}
+
+std::string PreconditionedConjugateResidualMethod::text() const
+{
+    return "Solver: Preconditioned Conjugate Residual Method.";
+}
+
+
+
+
+
+
+HerzogSoodhalterMethod::HerzogSoodhalterMethod( const LinearOperator& op )
+: IterativeSolver(), A( op )
+{
+    this->max_iteration_count = op.getdimin();
+    HerzogSoodhalterMethod::check();
+}
+
+HerzogSoodhalterMethod::~HerzogSoodhalterMethod()
+{
+    HerzogSoodhalterMethod::check();
+}
+
+void HerzogSoodhalterMethod::check() const
+{
+    IterativeSolver::check();
+    assert( A.getdimin() == A.getdimout() );
+}
+
+std::string HerzogSoodhalterMethod::text() const
+{
+    return "Solver: Herzog-Soodhalter Method";
+}
+
+
+
+
+
+
+
+
+ResidualDescentMethod::ResidualDescentMethod( const LinearOperator& op )
+: IterativeSolver(), A( op )
+{
+    this->max_iteration_count = op.getdimin();
+    ResidualDescentMethod::check();
+}
+
+ResidualDescentMethod::~ResidualDescentMethod()
+{
+    ResidualDescentMethod::check();
+}
+
+void ResidualDescentMethod::check() const
+{
+    IterativeSolver::check();
+    assert( A.getdimin() == A.getdimout() );
+}
+
+std::string ResidualDescentMethod::text() const
+{
+    return "Solver: Residual Descent Method";
+}
+
+
+
+
+
+
+
+MinimumResidualMethod::MinimumResidualMethod( const LinearOperator& op )
+: IterativeSolver(), A( op )
+{
+    this->max_iteration_count = op.getdimin();
+    MinimumResidualMethod::check();
+}
+
+MinimumResidualMethod::~MinimumResidualMethod()
+{
+    MinimumResidualMethod::check();
+}
+
+void MinimumResidualMethod::check() const
+{
+    IterativeSolver::check();
+    assert( A.getdimin() == A.getdimout() );
+}
+
+std::string MinimumResidualMethod::text() const
+{
+    return "Solver: Minimum Residual Method";
+}
+
+
+
+
+
+
+
+
+
 
   
 
@@ -256,42 +405,6 @@ void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) cons
 
 
 
-ConjugateResidualMethod::ConjugateResidualMethod( const LinearOperator& op )
-: IterativeSolver(), A( op )
-{
-    this->max_iteration_count = op.getdimin();
-    ConjugateResidualMethod::check();
-}
-
-ConjugateResidualMethod::~ConjugateResidualMethod()
-{
-    ConjugateResidualMethod::check();
-}
-
-void ConjugateResidualMethod::check() const
-{
-    IterativeSolver::check();
-    assert( A.getdimin() == A.getdimout() );
-}
-
-std::string ConjugateResidualMethod::text() const
-{
-    return "Solver: Conjugate Residual Method";
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -445,30 +558,15 @@ void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector&
 
     
 }
-  
 
-  
 
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
 void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b ) const
 {
     check();
@@ -574,19 +672,6 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
         LOGPRINTF( "FINISHED (%d/%d) Residual: %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) sqrt(recent_deviation), (long double)threshold ); 
     
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -815,35 +900,6 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
 
 
 
-  
-PreconditionedConjugateResidualMethod::PreconditionedConjugateResidualMethod( const LinearOperator& op, const LinearOperator& M )
-: IterativeSolver(), A( op ), M( M )
-{
-    this->max_iteration_count = op.getdimin();
-    PreconditionedConjugateResidualMethod::check();
-}
-
-PreconditionedConjugateResidualMethod::~PreconditionedConjugateResidualMethod()
-{
-    PreconditionedConjugateResidualMethod::check();
-}
-  
-void PreconditionedConjugateResidualMethod::check() const
-{
-    IterativeSolver::check();
-    assert( A.getdimin() == A.getdimout() );
-    assert( M.getdimin() == M.getdimout() );
-    assert( A.getdimin() == M.getdimout() );
-}
-
-std::string PreconditionedConjugateResidualMethod::text() const
-{
-    return "Solver: Preconditioned Conjugate Residual Method.";
-}
-
-
-
-
 
 void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
 {
@@ -1021,32 +1077,6 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
 
 
 
-
-
-
-
-MinimumResidualMethod::MinimumResidualMethod( const LinearOperator& op )
-: IterativeSolver(), A( op )
-{
-    this->max_iteration_count = op.getdimin();
-    MinimumResidualMethod::check();
-}
-
-MinimumResidualMethod::~MinimumResidualMethod()
-{
-    MinimumResidualMethod::check();
-}
-
-void MinimumResidualMethod::check() const
-{
-    IterativeSolver::check();
-    assert( A.getdimin() == A.getdimout() );
-}
-
-std::string MinimumResidualMethod::text() const
-{
-    return "Solver: Minimum Residual Method";
-}
 
 
 
@@ -1249,16 +1279,6 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
     
 }
 
-
-
-
-
-
-
-
-
-
-
 /*  
 function [x,r] = minres(A,b,x0,maxit,tol)
   x = x0;
@@ -1350,32 +1370,6 @@ end*/
 
 
 
-
-
-
-
-ResidualDescentMethod::ResidualDescentMethod( const LinearOperator& op )
-: IterativeSolver(), A( op )
-{
-    this->max_iteration_count = op.getdimin();
-    ResidualDescentMethod::check();
-}
-
-ResidualDescentMethod::~ResidualDescentMethod()
-{
-    ResidualDescentMethod::check();
-}
-
-void ResidualDescentMethod::check() const
-{
-    IterativeSolver::check();
-    assert( A.getdimin() == A.getdimout() );
-}
-
-std::string ResidualDescentMethod::text() const
-{
-    return "Solver: Residual Descent Method";
-}
 
 
 
@@ -1523,33 +1517,6 @@ void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
 
 
 
-
-
-
-
-
-HerzogSoodhalterMethod::HerzogSoodhalterMethod( const LinearOperator& op )
-: IterativeSolver(), A( op )
-{
-    this->max_iteration_count = op.getdimin();
-    HerzogSoodhalterMethod::check();
-}
-
-HerzogSoodhalterMethod::~HerzogSoodhalterMethod()
-{
-    HerzogSoodhalterMethod::check();
-}
-
-void HerzogSoodhalterMethod::check() const
-{
-    IterativeSolver::check();
-    assert( A.getdimin() == A.getdimout() );
-}
-
-std::string HerzogSoodhalterMethod::text() const
-{
-    return "Solver: Herzog-Soodhalter Method";
-}
 
 
 
