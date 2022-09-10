@@ -231,9 +231,9 @@ int main()
         for( int d = 0; d < 3; d++ )
         for( int t = 0; t < number_of_comparisons; t++ )
         {
-            if( not ( errors[l-l_min][d][t] < 10e-10 ) )
+            if( not ( errors[l-l_min][d][t] < 100 * machine_epsilon ) )
                 LOG << l << space << d << space << t << space << errors[l-l_min][d][t] << nl;
-            assert( errors[l-l_min][d][t] < 10e-10 );
+            assert( errors[l-l_min][d][t] < 100 * machine_epsilon );
         }
         
         

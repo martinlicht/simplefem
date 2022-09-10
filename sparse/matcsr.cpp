@@ -397,8 +397,11 @@ void sort_and_compress_csrdata( std::vector<int>& A, std::vector<int>& C, std::v
         newA[r+1] = newA[r] + nnz[r];
     }
 
-    for( int r = 0; r < num_rows; r++ )
-        Assert( nnz[r] == newA[r+1] - newA[r] && newA[r+1] >= newA[r] );
+    for( int r = 0; r < num_rows; r++ ) {
+        Assert( nnz[r] == newA[r+1] - newA[r] );
+        Assert( newA[r+1] >= newA[r] );
+    }
+        
 
     std::vector<int>   newC( newA[ num_rows ] );
     std::vector<Float> newV( newA[ num_rows ] );

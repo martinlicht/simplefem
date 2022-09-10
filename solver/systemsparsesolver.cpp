@@ -128,7 +128,7 @@ int HodgeConjugateResidualSolverCSR_diagonal(
     
     int k = 0;
     
-    LOGPRINTF( "Hodge Conjugate Residual (diag) CSR\n" );
+    if( print_modulo >= 0 ) LOGPRINTF( "START Hodge Conjugate Residual (diag) CSR\n" );
 
     while( k < N ){
         
@@ -482,7 +482,7 @@ int HodgeConjugateResidualSolverCSR_SSOR(
     
     int k = 0;
     
-    LOGPRINTF( "Hodge Conjugate Residual (SSOR) CSR\n" );
+    if( print_modulo >= 0 ) LOGPRINTF( "START Hodge Conjugate Residual (SSOR) CSR\n" );
 
     while( k < N ){
         
@@ -818,7 +818,7 @@ int HodgeConjugateResidualSolverCSR_textbook(
     
     int k = 0;
     
-    LOGPRINTF( "Hodge Conjugate Residual (textbook) CSR\n" );
+    if( print_modulo >= 0 ) LOGPRINTF( "START Hodge Conjugate Residual (textbook) CSR\n" );
 
     while( k < N ){
         
@@ -1155,7 +1155,7 @@ int HodgeHerzogSoodhalterMethod(
     int max_iteration_count = dimension_A + dimension_C;
     int recent_iteration_count = 0;
 
-    LOGPRINTF( "Hodge Herzog-Soodhalter CSR\n" );
+    if( print_modulo >= 0 ) LOGPRINTF( "START Hodge Herzog-Soodhalter CSR\n" );
 
     while( recent_iteration_count < max_iteration_count ){
         

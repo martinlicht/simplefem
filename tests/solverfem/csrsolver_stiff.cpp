@@ -90,10 +90,10 @@ int main()
             bool do_crm_csr                = true;
             bool do_crm_csrtextbook        = true;
             bool do_minres_csr             = true;
-            bool do_whatever_csr           = false;
+            bool do_whatever_csr           = true;
             bool do_cgm_diagonal_csr       = true;
             bool do_cgm_ssor_csr           = true;
-            bool do_chebyshev_diagonal_csr = false;
+            bool do_chebyshev_diagonal_csr = false; //grossly inefficient
 
             // if( do_cgmpp      ) contable_sol << "CGM++"      ;
             // if( do_crmpp_expl ) contable_sol << "CRM++(expl)";
@@ -667,6 +667,50 @@ int main()
                             auto runtime  = static_cast<Float>( end - start );
                             // auto stat_sol = Float( ( sol - ... ).norm() );
                             auto stat_res = Float( ( stiffness * sol - rhs ).norm() );
+                            auto stat_num = Float( recent_iteration_count ) / max_iteration_count;
+                            
+                            //contable_sol << stat_sol;
+                            contable_res << stat_res;
+                            contable_num << stat_num;
+                            contable_sec << runtime;
+                        }
+                        
+                        
+                        if( do_chebyshev_diagonal_csr )
+                        {
+                            LOG << "CHEBYSHEV CSR" << nl;
+                        
+                            DiagonalOperator invprecon = InverseDiagonalPreconditioner( stiffness_csr_prelim );
+                            assert( invprecon.getdiagonal().isfinite() );
+                            assert( invprecon.getdiagonal().isnonnegative() );
+                            
+                            FloatVector sol = sol_original;
+                            const FloatVector rhs = rhs_original;
+                            FloatVector residual( rhs );
+                            auto max_iteration_count = sol.getdimension();
+                            timestamp start = gettimestamp();
+                            auto recent_iteration_count = 
+                            ChebyshevIteration_DiagonalPreconditioner( 
+                                sol.getdimension(), 
+                                sol.raw(), 
+                                rhs.raw(), 
+                                stiffness.getA(), stiffness.getC(), stiffness.getV(),
+                                residual.raw(),
+                                desired_precision,
+                                10,
+                                invprecon.getdiagonal().raw(),
+                                0.,
+                                100 * invprecon.getdiagonal().maxnorm()
+                            );
+
+                            timestamp end = gettimestamp();
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
+                            
+                            LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
+
+                            auto runtime  = static_cast<Float>( end - start );
+                            // auto stat_sol = Float( ( sol - ... ).norm() );
+                            auto stat_res = Float( ( mass * sol - rhs ).norm() );
                             auto stat_num = Float( recent_iteration_count ) / max_iteration_count;
                             
                             //contable_sol << stat_sol;
