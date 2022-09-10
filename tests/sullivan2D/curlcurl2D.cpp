@@ -126,6 +126,7 @@ int main()
         LOG << "Level: " << l << "/" << max_l << nl;
         LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
         
+        if( l != 0 )
         for( int r = min_r; r <= max_r; r++ ) 
         {
             
