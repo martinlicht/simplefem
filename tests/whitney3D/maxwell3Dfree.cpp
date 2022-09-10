@@ -135,14 +135,14 @@ int main()
             
 
             const int min_l = 0; 
-            const int max_l = 4;
+            const int max_l = 3;
             
             const int min_r = 2; 
             const int max_r = 2;
             
-            const int r_plus_scalar = 2;
-            const int r_plus_vector = 2; 
-            const int r_plus_pseudo = 2; 
+            const int r_plus_scalar = 1;
+            const int r_plus_vector = 1; 
+            const int r_plus_pseudo = 1; 
             
 
             
@@ -167,7 +167,7 @@ int main()
                     
                     LOG << "Polynomial degree: " << r << "/" << max_r << nl;
                     
-                    //  LOG << "integration with: " << r_plus_scalar << ", " << r_plus_vector << ", " << r_plus_pseudo << nl;
+                     LOG << "integration with: " << r_plus_scalar << ", " << r_plus_vector << ", " << r_plus_pseudo << nl;
                     
                     LOG << "... assemble matrices" << nl;
             

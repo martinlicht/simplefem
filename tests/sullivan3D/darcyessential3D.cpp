@@ -104,7 +104,7 @@ int main()
         
 
         const int min_l = 0; 
-        const int max_l = 5;
+        const int max_l = 3;
         
         const int min_r = 1;
         const int max_r = 1;

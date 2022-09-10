@@ -117,14 +117,14 @@ int main()
         
 
         const int min_l = 0; 
-        const int max_l = 4;
+        const int max_l = 3;
         
         const int min_r = 1;
         const int max_r = 1;
         
         
-        const int r_plus_pseudo = 2;
-        const int r_plus_volume = 2;
+        const int r_plus_pseudo = 1;
+        const int r_plus_volume = 1;
         
         
         ConvergenceTable contable("Mass error");
@@ -191,7 +191,7 @@ int main()
                 
                 auto C  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
                 
-                auto Schur = B * inv(A,1e-10) * Bt;
+                // auto Schur = B * inv(A,1e-10) * Bt;
                 
                 auto negA = - A; 
                 
