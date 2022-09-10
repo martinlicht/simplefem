@@ -92,7 +92,7 @@ int main()
             bool do_whatever_csr           = true;
             bool do_cgm_diagonal_csr       = true;
             bool do_cgm_ssor_csr           = true;
-            bool do_chebyshev_diagonal_csr = false;
+            bool do_chebyshev_diagonal_csr = false; //grossly inefficient
 
             // if( do_cgmpp      ) contable_sol << "CGM++"      ;
             // if( do_crmpp_expl ) contable_sol << "CRM++(expl)";
@@ -658,7 +658,7 @@ int main()
                         
                             DiagonalOperator invprecon = InverseDiagonalPreconditioner( mass_prelim_csr );
                             assert( invprecon.getdiagonal().isfinite() );
-                            assert( invprecon.getdiagonal().ispositive() );
+                            assert( invprecon.getdiagonal().isnonnegative() );
                             
                             FloatVector sol = sol_original;
                             const FloatVector rhs = rhs_original;
