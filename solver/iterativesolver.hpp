@@ -101,9 +101,7 @@ struct ConjugateGradientMethod
 {
 
         using IterativeSolver::IterativeSolver;
-        
         virtual std::string text() const override;
-        
         virtual void solve( FloatVector&, const FloatVector& ) const override;
 
 };
@@ -114,9 +112,7 @@ struct ConjugateResidualMethod
 {
 
         using IterativeSolver::IterativeSolver;
-        
         virtual std::string text() const override;
-        
         virtual void solve( FloatVector&, const FloatVector& ) const override;
 
         virtual void solve_explicit( FloatVector&, const FloatVector& ) const;
@@ -126,18 +122,13 @@ struct ConjugateResidualMethod
 };
 
 
-
-
 struct PreconditionedConjugateResidualMethod
 : public IterativeSolver
 {
 
         explicit PreconditionedConjugateResidualMethod( const LinearOperator& op, const LinearOperator& M );
-        
         virtual void check() const override;
-        
         virtual std::string text() const override;
-        
         virtual void solve( FloatVector&, const FloatVector& ) const override;
         
     private:
@@ -152,33 +143,29 @@ struct MinimumResidualMethod
 {
 
         using IterativeSolver::IterativeSolver;
-        
         virtual std::string text() const override;
-        
         virtual void solve( FloatVector&, const FloatVector& ) const override;
 
 };
+
 
 struct ResidualDescentMethod
 : public IterativeSolver
 {
 
         using IterativeSolver::IterativeSolver;
-        
         virtual std::string text() const override;
-        
         virtual void solve( FloatVector&, const FloatVector& ) const override;
 
 };
+
 
 struct HerzogSoodhalterMethod
 : public IterativeSolver
 {
 
         using IterativeSolver::IterativeSolver;
-        
         virtual std::string text() const override;
-        
         virtual void solve( FloatVector&, const FloatVector& ) const override;
 
 };

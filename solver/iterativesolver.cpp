@@ -59,7 +59,6 @@ std::string ResidualDescentMethod::text() const
     return "Solver: Residual Descent Method";
 }
 
-
 std::string MinimumResidualMethod::text() const
 {
     return "Solver: Minimum Residual Method";
