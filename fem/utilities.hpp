@@ -47,14 +47,36 @@ DenseMatrix InterpolationPointsBarycentricCoordinates( int n, int r );
 // (in barycentric coordinates) over a d simplex.
 // 
 // The output matrix is as follows:
-// - rows correspond to the evaluation points 
-// - columns correspond to the multiindices (standard Lagrange basis of degree r)
+// - row indices correspond to the evaluation points 
+// - column indices correspond to the multiindices (standard Lagrange basis of degree r)
 // - the entries are value of the corresponding polynomial at the corresponding point
 // 
 // Size of returned matrix:
 // [ n+r choose r ] x [ number of evaluation points ]
 
 DenseMatrix EvaluationMatrix( int r, const DenseMatrix& bcs );
+
+
+
+
+
+
+
+// 
+// Suppose that the columns of bcs are evaluation points
+// (in barycentric coordinates) over a d simplex.
+// 
+// The output matrix is as follows:
+// - row indices correspond to the multiindices (standard Lagrange basis of degree r)
+// - column indices correspond to the evaluation points 
+// - each entry is the coefficient of the corresponding multindex 
+//   for the Lagrange polynomial associated to the evaluation point 
+//   TODO: fix whether that should be transposed.
+// 
+// Size of returned matrix:
+// [ n+r choose r ] x [ n+r choose r ]
+
+DenseMatrix LagrangePolynomialCoefficients( int n, int r );
 
 
 

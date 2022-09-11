@@ -83,6 +83,20 @@ DenseMatrix EvaluationMatrix( int r, const DenseMatrix& bcs )
 
 
 
+DenseMatrix LagrangePolynomialCoefficients( int n, int r )
+{
+    assert( 0 <= n && 0 <= r );
+    
+    auto lps = InterpolationPointsBarycentricCoordinates( n, r );
+
+    auto EM = EvaluationMatrix( r, lps );
+
+    return Inverse( EM );
+}
+
+
+
+
 DenseMatrix BarycentricProjectionMatrix( const DenseMatrix& J )
 {
     assert( J.getdimout() >= J.getdimin() );

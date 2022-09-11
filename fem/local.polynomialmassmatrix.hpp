@@ -1,11 +1,16 @@
 #ifndef INCLUDEGUARD_FEM_POLYNOMIALMASSMATRIX_HPP
 #define INCLUDEGUARD_FEM_POLYNOMIALMASSMATRIX_HPP
 
+#include "../combinatorics/multiindex.hpp"
 #include "../dense/densematrix.hpp"
 
 
 
 DenseMatrix polynomialmassmatrix( int n, int r );
+
+DenseMatrix polynomialmassmatrix( int n, int r, MultiIndex& base );
+
+std::vector<DenseMatrix> polynomialmassmatrix( int n, int r, int s );
 
 
 #endif
