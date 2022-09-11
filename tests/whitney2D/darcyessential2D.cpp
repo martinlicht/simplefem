@@ -225,15 +225,15 @@ int main()
                     Float residual_sol   = ( rhs - B * grad ).norm();
                     Float residual_grad  = ( - A * grad + Bt * sol ).norm();
                 
-                    LOG << "error:     " << errornorm_sol << nl;
-                    LOG << "aux error: " << errornorm_grad << nl;
-                    LOG << "residual:  " << residual_sol << nl;
-                    LOG << "residual:  " << residual_grad << nl;
+                    LOG << "error:      " << errornorm_sol << nl;
+                    LOG << "grad error: " << errornorm_grad << nl;
+                    LOG << "residual:   " << residual_sol << nl;
+                    LOG << "residual:   " << residual_grad << nl;
 
-                    contable << errornorm_sol;
                     contable << errornorm_grad;
-                    contable << residual_sol;
+                    contable << errornorm_sol;
                     contable << residual_grad;
+                    contable << residual_sol;
                     contable << Float( end - start );
                     contable << nl;
 
