@@ -18,6 +18,7 @@
 
 
 
+template<typename Operator = LinearOperator>
 class InverseOperator final
 : public LinearOperator 
 {
@@ -31,7 +32,7 @@ class InverseOperator final
         InverseOperator& operator=( InverseOperator&& invop )      = default; 
 
         
-        explicit InverseOperator( const LinearOperator& op, Float tolerance, int print_modulo = -1 )
+        explicit InverseOperator( const Operator& op, Float tolerance, int print_modulo = -1 )
         : LinearOperator( op.getdimout(), op.getdimin() ), 
           op( op ), tolerance(tolerance), print_modulo( print_modulo ), previous_sol( op.getdimin(), 0. )
         { 
@@ -59,66 +60,11 @@ class InverseOperator final
                     + tab_each_line( op.text() );
         }
         
-        using LinearOperator::apply;
-        virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override {
-            check();
-            src.check();
-            dest.check();
-            
-            assert( getdimin() == src.getdimension() );
-            assert( getdimout() == dest.getdimension() );
-            
-            if( use_previous_sol ) 
-                dest = previous_sol;
-            else 
-                dest.zero();
-
-            if( dynamic_cast<const MatrixCSR*>(&op) != nullptr ){
-                
-                const auto* opcsr = dynamic_cast<const MatrixCSR*>(&op);
-                
-                const auto diagonal = opcsr->diagonal();
-
-                FloatVector res( dest );
-                
-                ConjugateGradientSolverCSR_SSOR( 
-                    src.getdimension(),
-                    dest.raw(), 
-                    src.raw(), 
-                    opcsr->getA(), opcsr->getC(), opcsr->getV(), 
-                    res.raw(),
-                    tolerance,
-                    print_modulo,
-                    diagonal.raw(),
-                    1.0
-                );
-                
-            } else {
-            
-                ConjugateGradientMethod Solver( op );
-                
-                Solver.max_iteration_count = op.getdimin();
-                Solver.print_modulo        = print_modulo;
-                Solver.verbosity           = ConjugateResidualMethod::VerbosityLevel::silent;
-                
-                Solver.solve( dest, src );
-                
-            }
-            
-            dest *= scaling;
-            
-            if( use_previous_sol ) 
-                previous_sol = dest;
-            
-//             LOG << "call inverse" << nl;
-//             LOG << op.text() << nl;   //op.print( std::cout );
-//             op.apply( dest, src, scaling );    
-//             LOG << "done inverse" << nl;
-        }
-
+        virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling = 1. ) const override;
+        
     private:
 
-        const LinearOperator& op;
+        const Operator& op;
         Float tolerance;
         int print_modulo;
 
@@ -128,12 +74,87 @@ class InverseOperator final
         bool use_previous_sol = true;
     
 };
-  
-  
-inline InverseOperator inv( const LinearOperator& op, Float tolerance, int print_modulo = -1 )
+
+
+
+template<typename T>
+void InverseOperator<T>::apply( FloatVector& dest, const FloatVector& src, Float scaling ) const
+{
+    check();
+    src.check();
+    dest.check();
+    
+    assert( getdimin() == src.getdimension() );
+    assert( getdimout() == dest.getdimension() );
+    
+    if( use_previous_sol ) 
+        dest = previous_sol;
+    else 
+        dest.zero();
+
+    ConjugateGradientMethod Solver( op );
+    
+    Solver.max_iteration_count = op.getdimin();
+    Solver.print_modulo        = print_modulo;
+    Solver.verbosity           = ConjugateResidualMethod::VerbosityLevel::silent;
+    
+    Solver.solve( dest, src );
+    
+    dest *= scaling;
+    
+    if( use_previous_sol ) previous_sol = dest;
+    
+}
+
+template<>
+void InverseOperator<MatrixCSR>::apply( FloatVector& dest, const FloatVector& src, Float scaling ) const
+{
+    check();
+    src.check();
+    dest.check();
+    
+    assert( getdimin() == src.getdimension() );
+    assert( getdimout() == dest.getdimension() );
+    
+    if( use_previous_sol ) 
+        dest = previous_sol;
+    else 
+        dest.zero();
+
+    const auto diagonal = op.diagonal();
+
+    FloatVector res( dest );
+    
+    ConjugateGradientSolverCSR_SSOR( 
+        src.getdimension(),
+        dest.raw(), 
+        src.raw(), 
+        op.getA(), op.getC(), op.getV(), 
+        res.raw(),
+        tolerance,
+        print_modulo,
+        diagonal.raw(),
+        1.0
+    );
+    
+    dest *= scaling;
+    
+    if( use_previous_sol ) previous_sol = dest;
+    
+}
+
+
+inline InverseOperator<LinearOperator> inv( const LinearOperator& op, Float tolerance, int print_modulo = -1 )
 {
     op.check();
-    return InverseOperator( op, tolerance, print_modulo );
+    return InverseOperator<LinearOperator>( op, tolerance, print_modulo );
+} 
+  
+  
+inline InverseOperator<MatrixCSR> inv( const MatrixCSR& op, Float tolerance, int print_modulo = -1 )
+{
+    op.check();
+    return InverseOperator<MatrixCSR>( op, tolerance, print_modulo );
 }  
 
 

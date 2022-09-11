@@ -10,6 +10,7 @@
 #include "../../sparse/matcsr.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
+#include "../../vtk/vtkwriter.hpp"
 #include "../../solver/iterativesolver.hpp"
 #include "../../fem/global.elevation.hpp"
 #include "../../fem/global.massmatrix.hpp"
@@ -59,6 +60,26 @@ int main()
             
 
 
+            std::function<FloatVector(const FloatVector&)> experiment_sol = 
+                [=](const FloatVector& vec) -> FloatVector{
+                    assert( vec.getdimension() == 2 );
+                    Float r; 
+                    Float theta;
+                    cartesian_to_polar_coordinates2D( vec[0], vec[1], r, theta );
+                    const Float pi = Constants::pi; 
+
+                    Float u_p = (-1)*r*r/(6*pi) 
+                                * 
+                                ( 3 * pi / 2 + 2 * log( r ) * sin( 2 * theta ) + ( 2 * theta - 3 / 2 * pi ) * cos(2*theta) );
+
+                    const int j = 1; // only odd indices count ... 
+                    const Float alpha_j = 0.40192487;
+                    Float u = alpha_j * power_numerical( r, 2 * j / 3. ) * sin( 2./3. * j * theta );
+
+                    return FloatVector({ u + u_p });
+                };
+        
+        
             std::function<FloatVector(const FloatVector&)> experiment_rhs = 
                 [=](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
@@ -78,7 +99,7 @@ int main()
             LOG << "Solving Poisson Problem with Dirichlet boundary conditions" << nl;
 
             const int min_l = 0; 
-            const int max_l = 3;
+            const int max_l = 8;
             
 
             ConvergenceTable contable("Mass error");
@@ -87,6 +108,8 @@ int main()
 
             
             const int r = 1;
+
+            const int r_plus = 2;
             
             assert( 0 <= min_l and min_l <= max_l );
             
@@ -100,26 +123,26 @@ int main()
                 
                 LOG << "...assemble matrices" << nl;
         
-                SparseMatrix     scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r+0 );
-                SparseMatrix aug_scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r+1 );
+                SparseMatrix     scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r+0        );
+                SparseMatrix aug_scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r  +r_plus );
                 
-                SparseMatrix     vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
-                SparseMatrix aug_vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-0 );
+                SparseMatrix     vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1        );
+                SparseMatrix aug_vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1+r_plus );
                 
-                SparseMatrix     diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r+0 );
-                SparseMatrix aug_diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r+1 );
+                SparseMatrix     diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r        );
+                SparseMatrix aug_diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r+r_plus );
 
                 SparseMatrix     diffmatrix_t =     diffmatrix.getTranspose();
                 SparseMatrix aug_diffmatrix_t = aug_diffmatrix.getTranspose();
 
-                SparseMatrix     incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r+0 );
-                SparseMatrix aug_incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r+1 );
+                SparseMatrix     incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r        );
+                SparseMatrix aug_incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r+r_plus );
 
                 SparseMatrix     incmatrix_t =     incmatrix.getTranspose();
                 SparseMatrix aug_incmatrix_t = aug_incmatrix.getTranspose();
 
                 
-                SparseMatrix elevation_matrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 0, r+0, 1 );
+                SparseMatrix elevation_matrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 0, r, r_plus );
                 
 
                 auto opr  = diffmatrix & incmatrix;
@@ -135,9 +158,12 @@ int main()
                 auto aug_stiffness_csr = MatrixCSR( aug_stiffness );
                 
                 
+                const auto& function_sol  = experiment_sol;
                 const auto& function_rhs  = experiment_rhs;
-                FloatVector     interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r,   function_rhs  );
-                FloatVector aug_interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r+1, function_rhs  );
+                
+                FloatVector     interpol_sol  = Interpolation( M, M.getinnerdimension(), 0, r,        function_sol  );
+                FloatVector     interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r,        function_rhs  );
+                FloatVector aug_interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r+r_plus, function_rhs  );
 
                 FloatVector     rhs =     incmatrix_t * (     scalar_massmatrix *     interpol_rhs );
                 FloatVector aug_rhs = aug_incmatrix_t * ( aug_scalar_massmatrix * aug_interpol_rhs );
@@ -174,6 +200,9 @@ int main()
                 Float graderrornorm   = std::sqrt( graderror * ( aug_vector_massmatrix * graderror ) );
                 Float residualnorm  = ( rhs - stiffness * sol ).norm();
 
+                FloatVector othererror = interpol_sol - incmatrix * sol;
+                Float othererrornorm = std::sqrt( othererror * ( scalar_massmatrix * othererror ) );
+
                 LOG << "error:     " << errornorm    << nl;
                 LOG << "graderror: " << graderrornorm << nl;
                 LOG << "residual:  " << residualnorm << nl;
@@ -186,6 +215,17 @@ int main()
                 contable << nl;
                 
                 contable.lg();
+
+                if( r == 1 )
+                {
+                    fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
+                    VTKWriter vtk( M, fs, getbasename(__FILE__) );
+                    vtk.writeCoordinateBlock();
+                    vtk.writeTopDimensionalCells();
+                    vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
+                    // vtk.writeCellVectorData( computed_grad, "gradient_interpolation" , 0.1 );
+                    fs.close();
+                }
 
                 if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
                 
