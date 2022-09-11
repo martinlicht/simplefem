@@ -98,10 +98,10 @@ int main()
         LOG << "Solving Poisson Problem with Neumann boundary conditions" << nl;
 
         const int min_l = 0; 
-        const int max_l = 4;
+        const int max_l = 5;
         
-        const int min_r = 2;
-        const int max_r = 2;
+        const int min_r = 1;
+        const int max_r = 1;
 
         const int r_plus_vector = 1;
         const int r_plus_volume = 1;
@@ -256,15 +256,15 @@ int main()
                         Float residual_sol   = ( rhs - B * grad ).norm();
                         Float residual_grad  = ( - A * grad + Bt * sol ).norm();
 
-                        LOG << "error:     " << errornorm_sol << nl;
-                        LOG << "aux error: " << errornorm_grad << nl;
-                        LOG << "residual:  " << residual_sol << nl;
-                        LOG << "residual:  " << residual_grad << nl;
+                        LOG << "error:      " << errornorm_sol << nl;
+                        LOG << "grad error: " << errornorm_grad << nl;
+                        LOG << "residual:   " << residual_sol << nl;
+                        LOG << "residual:   " << residual_grad << nl;
 
-                        contable << errornorm_sol;
                         contable << errornorm_grad;
-                        contable << residual_sol;
+                        contable << errornorm_sol;
                         contable << residual_grad;
+                        contable << residual_sol;
                         contable << Float( end - start );
                         contable << nl;
 

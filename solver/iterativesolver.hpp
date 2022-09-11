@@ -27,14 +27,16 @@ struct IterativeSolver
         verbose = 2
     };
     
-    explicit IterativeSolver( Float threshold = desired_precision, int max_iteration_count = 0, int print_modulo = -1 )
-    : threshold( threshold ), 
-        recent_deviation( 0. ), 
-        max_iteration_count( max_iteration_count ),
-        recent_iteration_count(0),
-        print_modulo( print_modulo ), 
-        verbosity( VerbosityLevel::verbose ) 
+    explicit IterativeSolver( const LinearOperator& A, Float threshold = desired_precision, int max_iteration_count = 0, int print_modulo = -1 )
+    : A(A), 
+      threshold( threshold ), 
+      recent_deviation( 0. ), 
+      max_iteration_count( max_iteration_count ),
+      recent_iteration_count(0),
+      print_modulo( print_modulo ), 
+      verbosity( VerbosityLevel::verbose ) 
     {
+        this->max_iteration_count = this->A.getdimin();
         IterativeSolver::check();
     }
     
@@ -49,26 +51,29 @@ struct IterativeSolver
         assert( recent_iteration_count >= 0 );
         assert( recent_iteration_count <= max_iteration_count );
 
-//         assert( print_modulo >= 0 );
+        assert( print_modulo >= -1 );
+        
+        A.check();
+        assert( A.getdimin() == A.getdimout() );
     }
 
     virtual std::string text() const = 0;
 
-//     // void lg() const { LOG << *this << nl; };
-
     virtual void solve( FloatVector& unknown, const FloatVector& rhs ) const = 0;
+
+
+    const LinearOperator& A;   
 
     mutable Float threshold;
     mutable Float recent_deviation;
     
-    mutable int   max_iteration_count;
-    mutable int   recent_iteration_count;
+    mutable int max_iteration_count;
+    mutable int recent_iteration_count;
     
-    mutable int   print_modulo;
+    mutable int print_modulo;
     
     mutable VerbosityLevel verbosity;
     
-
 };
 
 
@@ -91,254 +96,79 @@ inline std::ostream& operator<<( std::ostream& os, const IterativeSolver& solver
 
 
 
-/************************
-****
-****  Class for Conjugate Gradient Method
-****  - instantiates IterativeSolver
-****  - features iteration start and iteration step,
-****    which can be called as such, or from solve().
-****  
-************************/
 
-
-
-
-class ConjugateGradientMethod
+struct ConjugateGradientMethod
 : public IterativeSolver
 {
 
-        public:
-        
-                explicit ConjugateGradientMethod( const LinearOperator& op );
-                virtual ~ConjugateGradientMethod();
+        using IterativeSolver::IterativeSolver;
+        virtual std::string text() const override;
+        virtual void solve( FloatVector&, const FloatVector& ) const override;
 
-                virtual void check() const override;
-                virtual std::string text() const override;
-                
-                virtual void solve( FloatVector&, const FloatVector& ) const override;
-
-        private: 
-
-                const LinearOperator& A;   
 };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/************************
-****
-****  Class for Conjugate Residual Method
-****  - instantiates IterativeSolver
-****  - features iteration start and iteration step,
-****    which can be called as such, or from solve().
-****  
-************************/
-
-
-
-
-class ConjugateResidualMethod
+struct ConjugateResidualMethod
 : public IterativeSolver
 {
 
-        public:
-        
-                explicit ConjugateResidualMethod( const LinearOperator& op );
-                virtual ~ConjugateResidualMethod();
+        using IterativeSolver::IterativeSolver;
+        virtual std::string text() const override;
+        virtual void solve( FloatVector&, const FloatVector& ) const override;
 
-                virtual void check() const override;
-                virtual std::string text() const override;
-                
-                virtual void solve( FloatVector&, const FloatVector& ) const override;
+        virtual void solve_explicit( FloatVector&, const FloatVector& ) const;
+        virtual void solve_robust( FloatVector&, const FloatVector& ) const;
+        virtual void solve_fast( FloatVector&, const FloatVector& ) const;
 
-                virtual void solve_explicit( FloatVector&, const FloatVector& ) const;
-                virtual void solve_robust( FloatVector&, const FloatVector& ) const;
-                virtual void solve_fast( FloatVector&, const FloatVector& ) const;
-
-        private: 
-
-                const LinearOperator& A;   
 };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/************************
-****
-****  Class for Conjugate Residual Method
-****  - instantiates IterativeSolver
-****  - features iteration start and iteration step,
-****    which can be called as such, or from solve().
-****  
-************************/
-
-
-
-
-class PreconditionedConjugateResidualMethod
+struct PreconditionedConjugateResidualMethod
 : public IterativeSolver
 {
 
-    public:
-        
         explicit PreconditionedConjugateResidualMethod( const LinearOperator& op, const LinearOperator& M );
-        virtual ~PreconditionedConjugateResidualMethod();
-
         virtual void check() const override;
         virtual std::string text() const override;
-        
         virtual void solve( FloatVector&, const FloatVector& ) const override;
         
     private:
 
-        const LinearOperator& A;   
         const LinearOperator& M;
 
 };
-  
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class MinimumResidualMethod
+struct MinimumResidualMethod
 : public IterativeSolver
 {
 
-        public:
-        
-                explicit MinimumResidualMethod( const LinearOperator& op );
-                virtual ~MinimumResidualMethod();
+        using IterativeSolver::IterativeSolver;
+        virtual std::string text() const override;
+        virtual void solve( FloatVector&, const FloatVector& ) const override;
 
-                virtual void check() const override;
-                virtual std::string text() const override;
-                
-                virtual void solve( FloatVector&, const FloatVector& ) const override;
-
-        private: 
-
-                const LinearOperator& A;   
 };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-class ResidualDescentMethod
+struct ResidualDescentMethod
 : public IterativeSolver
 {
 
-        public:
-        
-                explicit ResidualDescentMethod( const LinearOperator& op );
-                virtual ~ResidualDescentMethod();
+        using IterativeSolver::IterativeSolver;
+        virtual std::string text() const override;
+        virtual void solve( FloatVector&, const FloatVector& ) const override;
 
-                virtual void check() const override;
-                virtual std::string text() const override;
-                
-                virtual void solve( FloatVector&, const FloatVector& ) const override;
-
-        private: 
-
-                const LinearOperator& A;   
 };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class HerzogSoodhalterMethod
+struct HerzogSoodhalterMethod
 : public IterativeSolver
 {
 
-        public:
-        
-                explicit HerzogSoodhalterMethod( const LinearOperator& op );
-                virtual ~HerzogSoodhalterMethod();
+        using IterativeSolver::IterativeSolver;
+        virtual std::string text() const override;
+        virtual void solve( FloatVector&, const FloatVector& ) const override;
 
-                virtual void check() const override;
-                virtual std::string text() const override;
-                
-                virtual void solve( FloatVector&, const FloatVector& ) const override;
-
-        private: 
-
-                const LinearOperator& A;   
 };
 
 

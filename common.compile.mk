@@ -167,7 +167,7 @@ endif
 #                                             #
 ###############################################
 
-CXXFLAGS_LANG := -std=c++14 -pedantic 
+CXXFLAGS_LANG := -std=c++14 -pedantic -fno-rtti
 
 
 
