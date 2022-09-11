@@ -36,6 +36,7 @@ struct IterativeSolver
       print_modulo( print_modulo ), 
       verbosity( VerbosityLevel::verbose ) 
     {
+        this->max_iteration_count = this->A.getdimin();
         IterativeSolver::check();
     }
     
