@@ -53,6 +53,11 @@ DenseMatrix InterpolationPointsBarycentricCoordinates( int n, int r );
 // 
 // Size of returned matrix:
 // [ n+r choose r ] x [ number of evaluation points ]
+// 
+// NOTE: if EM is the output matrix and x some coefficient vector for a polynomial,
+//       then y = EM * x is the values of that polynomial at the Lagrange points
+//       If EM is invertible, then x = inv(EM) y provides the monomial coefficients 
+//       for a given vector y of point values.
 
 DenseMatrix EvaluationMatrix( int r, const DenseMatrix& bcs );
 
@@ -96,6 +101,8 @@ DenseMatrix LagrangePolynomialCoefficients( int n, int r );
 // Size of output matrix:
 // [ J.dimin()+1 x J.dimout() ]
 // 
+// TODO: This should be a member of the mesh class rather than a function 
+//       in the FEM module. Should be moved from here.
 
 DenseMatrix BarycentricProjectionMatrix( const DenseMatrix& J );
 
@@ -114,7 +121,7 @@ DenseMatrix BarycentricProjectionMatrix( const DenseMatrix& J );
 // 
 // The output is a matrix of size [dim choose k] x [var1]
 // whose column are the evaluations of the field 
-// at each of the evaluation points.
+// at each of the evaluation points, given in Euclidean coordinates.
 // 
 
 DenseMatrix EvaluateField( 

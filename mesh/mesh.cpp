@@ -509,6 +509,24 @@ DenseMatrix Mesh::getTransformationJacobian( int dim, int index ) const
 }
 
 
+// DenseMatrix Mesh::getGradientMatrix( int dim, int index ) const 
+// {
+//     assert( 0 <= dim && dim <= getinnerdimension() );
+//     assert( 0 <= index && index < count_simplices(dim) );
+    
+//     DenseMatrix ret( getouterdimension(), dim+1, 0. );
+    
+//     DenseMatrix vcm = getVertexCoordinateMatrix( dim, index );
+    
+//     for( int v = 1; v <= dim; v++ )
+//     for( int c = 0; c < getouterdimension(); c++ )
+//     {
+//         ret( c, v ) = vcm( c, v ) - vcm( c, 0 );
+//         ret( c, 0 ) -= ret( c, v );
+//     }
+    
+//     return ret;
+// }
 DenseMatrix Mesh::getGradientMatrix( int dim, int index ) const 
 {
     assert( 0 <= dim   && dim   <= getinnerdimension() );
