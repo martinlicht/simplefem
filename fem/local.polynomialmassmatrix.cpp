@@ -148,7 +148,7 @@ std::vector<DenseMatrix> polynomialmassmatrices_per_lagrangepoint( int n, int r,
 
     for( int i = 0; i < N; i++ ) // i -> index of lagrangepoint 
     for( int j = 0; j < N; j++ ) // j -> index of monomial in lagrange polynomial
-        ret[i] = coefficients(j,i) * massmatrices[j];
+        ret[i] += coefficients(j,i) * massmatrices[j];
     
     return ret;
 }

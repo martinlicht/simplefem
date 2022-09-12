@@ -19,7 +19,7 @@
 
 
 SparseMatrix FEECBrokenCoefficientMassMatrix( const Mesh& mesh, int n, int k, int r,
-                                              int s, std::function<DenseMatrix(FloatVector)>& generator 
+                                              int w, std::function<DenseMatrix(FloatVector)>& generator 
 ) {
     
     // check whether the parameters are right 
@@ -29,7 +29,7 @@ SparseMatrix FEECBrokenCoefficientMassMatrix( const Mesh& mesh, int n, int k, in
     assert( n >= 0 && n <= mesh.getinnerdimension() );
     assert( k >= 0 && k <= n );
     assert( binomial_integer( n+r, n ) == binomial_integer( n+r, r ) );
-    assert( s >= 0 );
+    assert( w >= 0 );
     
     // Dimensions of the output matrix and number of entries 
     
@@ -49,11 +49,11 @@ SparseMatrix FEECBrokenCoefficientMassMatrix( const Mesh& mesh, int n, int k, in
     // - coefficients of Lagrange polynomials
     // mass matrices 
 
-    auto lpbcs = InterpolationPointsBarycentricCoordinates( n, s );
+    auto lpbcs = InterpolationPointsBarycentricCoordinates( n, w );
 
-    auto lpcoeff = Inverse( EvaluationMatrix( s, lpbcs ) );
+    auto lpcoeff = Inverse( EvaluationMatrix( w, lpbcs ) );
     
-    auto polymassmatrix_per_point = polynomialmassmatrices_per_lagrangepoint( n, r, s );
+    auto polymassmatrix_per_point = polynomialmassmatrices_per_lagrangepoint( n, r, w );
     
     
     // loop over the simplices and compute the mass matrices
@@ -91,9 +91,14 @@ SparseMatrix FEECBrokenCoefficientMassMatrix( const Mesh& mesh, int n, int k, in
             
             auto formMM = Transpose(extGM) * matrix_at_point * extGM;
 
-            auto fullMM = MatrixTensorProduct( polyMM, formMM );
+            DenseMatrix GPM = SubdeterminantMatrix( mesh.getGradientProductMatrix( n, s ), k );
+            assert( ( GPM - formMM ).issmall() );
 
-            full_element_matrix += fullMM;
+            if( w == 0 ) assert( ( polyMM - polynomialmassmatrix(n,r) ).issmall() );
+
+            auto fullMM = measure * MatrixTensorProduct( polyMM, formMM );
+
+            full_element_matrix = full_element_matrix + fullMM;
         }
         
         // DONE ... now list everything.
