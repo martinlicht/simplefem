@@ -91,8 +91,8 @@ SparseMatrix FEECBrokenCoefficientMassMatrix( const Mesh& mesh, int n, int k, in
             
             auto formMM = Transpose(extGM) * matrix_at_point * extGM;
 
-            DenseMatrix GPM = SubdeterminantMatrix( mesh.getGradientProductMatrix( n, s ), k );
-            assert( ( GPM - formMM ).issmall() );
+            // DenseMatrix GPM = SubdeterminantMatrix( mesh.getGradientProductMatrix( n, s ), k );
+            // assert( ( GPM - formMM ).issmall() );
 
             if( w == 0 ) assert( ( polyMM - polynomialmassmatrix(n,r) ).issmall() );
 
