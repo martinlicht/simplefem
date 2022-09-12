@@ -57,11 +57,8 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
 
         DenseMatrix GPM    = mesh.getGradientProductMatrix( n, s );
             
-        {
-            
-            assert( ( GPM = calcAtA(mesh.getGradientMatrix( n, s )) ).issmall() );
-        }
-
+        assert( ( GPM - calcAtA(mesh.getGradientMatrix( n, s )) ).issmall() );
+        
         DenseMatrix formMM = SubdeterminantMatrix( GPM, k );
     
         DenseMatrix fullMM = MatrixTensorProduct( polyMM, formMM ) * measure;

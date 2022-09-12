@@ -6,8 +6,9 @@
 #include "../combinatorics/multiindex.hpp"
 #include "../combinatorics/generatemultiindices.hpp"
 #include "../dense/densematrix.hpp"
+#include "../fem/utilities.hpp"
 
-// #include "../fem/local.polynomialmassmatrix.hpp"
+#include "../fem/local.polynomialmassmatrix.hpp"
 
 
 
@@ -111,7 +112,7 @@ DenseMatrix polynomialmassmatrix( int n, int r, MultiIndex& base )
 
 
 
-std::vector<DenseMatrix> polynomialmassmatrix( int n, int r, int s )
+std::vector<DenseMatrix> polynomialmassmatrices_per_multiindex( int n, int r, int s )
 {
     assert( n >= 0 && r >= 0 && s >= 0 );
     
@@ -131,4 +132,23 @@ std::vector<DenseMatrix> polynomialmassmatrix( int n, int r, int s )
     return ret;
 }
 
+
+std::vector<DenseMatrix> polynomialmassmatrices_per_lagrangepoint( int n, int r, int s )
+{
+    assert( n >= 0 && r >= 0 && s >= 0 );
+
+    int N = binomial_integer( n+s, n );
+    
+    std::vector<DenseMatrix> massmatrices = polynomialmassmatrices_per_multiindex( n, r, s );
+    
+    DenseMatrix coefficients = LagrangePolynomialCoefficients( n, s );
+
+    std::vector<DenseMatrix> ret( N, DenseMatrix( binomial_integer( n + r , r ) ) );
+
+    for( int i = 0; i < N; i++ )
+    for( int j = 0; j < N; j++ )
+        ret[i] = coefficients(i,j) * massmatrices[j]; // TODO: correct choices of indices?
+    
+    return ret;
+}
 
