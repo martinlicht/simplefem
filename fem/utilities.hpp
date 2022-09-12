@@ -38,7 +38,7 @@ inline int SullivanSpanSize( int n, int k, int r )
 // Size of returned matrix:
 // [n+1] x [ n+r choose r ]
 
-DenseMatrix InterpolationPointsBarycentricCoordinates( int n, int r );
+DenseMatrix InterpolationPointsInBarycentricCoordinates( int n, int r );
 
 
 
@@ -52,14 +52,14 @@ DenseMatrix InterpolationPointsBarycentricCoordinates( int n, int r );
 // - the entries are value of the corresponding polynomial at the corresponding point
 // 
 // Size of returned matrix:
-// [ n+r choose r ] x [ number of evaluation points ]
+// [ number of evaluation points ] x [ n+r choose r ]
 // 
-// NOTE: if EM is the output matrix and x some coefficient vector for a polynomial,
-//       then y = EM * x is the values of that polynomial at the Lagrange points
-//       If EM is invertible, then x = inv(EM) y provides the monomial coefficients 
+// NOTE: if M is the output matrix and x some coefficient vector for a polynomial,
+//       then y = M * x is the values of that polynomial at the Lagrange points
+//       If M is invertible, then x = inv(M) y provides the monomial coefficients 
 //       for a given vector y of point values.
 
-DenseMatrix EvaluationMatrix( int r, const DenseMatrix& bcs );
+DenseMatrix PointValuesOfMonomials( int r, const DenseMatrix& bcs );
 
 
 

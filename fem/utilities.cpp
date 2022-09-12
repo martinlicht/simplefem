@@ -26,7 +26,7 @@
 // Size of returned matrix:
 // [n+1] x [ n+r choose r ]
 
-DenseMatrix InterpolationPointsBarycentricCoordinates( int n, int r )
+DenseMatrix InterpolationPointsInBarycentricCoordinates( int n, int r )
 {
     assert( 0 <= n && 0 <= r );
     
@@ -72,12 +72,12 @@ DenseMatrix InterpolationPointsBarycentricCoordinates( int n, int r )
 // Size of returned matrix:
 // [ number of evaluation points ] x [ n+r choose r ]
 // 
-// NOTE: if EM is the output matrix and x some coefficient vector for a polynomial,
-//       then y = EM * x is the values of that polynomial at the Lagrange points.
-//       If EM is invertible, then x = inv(EM) y provides the monomial coefficients 
+// NOTE: if M is the output matrix and x some coefficient vector for a polynomial,
+//       then y = M * x is the values of that polynomial at the Lagrange points
+//       If M is invertible, then x = inv(M) y provides the monomial coefficients 
 //       for a given vector y of point values.
 
-DenseMatrix EvaluationMatrix( int r, const DenseMatrix& bcs )
+DenseMatrix PointValuesOfMonomials( int r, const DenseMatrix& bcs )
 {
     assert( 0 <= r );
     assert( 0 < bcs.getdimout() );
@@ -128,13 +128,9 @@ DenseMatrix EvaluationMatrix( int r, const DenseMatrix& bcs )
 
 DenseMatrix LagrangePolynomialCoefficients( int n, int r )
 {
-    assert( 0 <= n && 0 <= r );
-    
-    auto lagrangepoints_baryc = InterpolationPointsBarycentricCoordinates( n, r );
+    auto lagrangepoints_baryc = InterpolationPointsInBarycentricCoordinates( n, r );
 
-    auto EM = EvaluationMatrix( r, lagrangepoints_baryc );
-
-    return Inverse( EM );
+    return Inverse( PointValuesOfMonomials( r, lagrangepoints_baryc ) );
 }
 
 
@@ -158,22 +154,22 @@ DenseMatrix LagrangePolynomialCoefficients( int n, int r )
 // TODO: Remove this function 
 // 
 
-DenseMatrix BarycentricProjectionMatrix( const DenseMatrix& J )
-{
-    assert( J.getdimout() >= J.getdimin() );
+// DenseMatrix BarycentricProjectionMatrix( const DenseMatrix& J )
+// {
+//     assert( J.getdimout() >= J.getdimin() );
     
-    const auto F = Transpose(J);
+//     const auto F = Transpose(J);
     
-    DenseMatrix ret( J.getdimin()+1, J.getdimout(), 0.0 );
+//     DenseMatrix ret( J.getdimin()+1, J.getdimout(), 0.0 );
     
-    for( int r = 0; r < J.getdimin();  r++ )
-    for( int c = 0; c < J.getdimout(); c++ )
-        ret( r+1, c ) = F(r,c);
+//     for( int r = 0; r < J.getdimin();  r++ )
+//     for( int c = 0; c < J.getdimout(); c++ )
+//         ret( r+1, c ) = F(r,c);
     
-    assert( ret.isfinite() );
+//     assert( ret.isfinite() );
     
-    return ret;
-}
+//     return ret;
+// }
 
 
 
@@ -262,24 +258,24 @@ FloatVector Interpolation(
     // degree r polynomials over a dim simplex 
     // [dim+1] x [number of lagrange points] 
     // 
-    // EM is the function values of the Lagrange polynomials at those points 
+    // M is the function values of the Lagrange polynomials at those points 
     // [n+r choose r] x [number of lagrange points] (actually, square)
     // 
-    // EMinv is the inverse of EM.
-    // [same size as EM]
+    // Minv is the inverse of M.
+    // [same size as M]
     
-    const auto lagrangepoints_baryc = InterpolationPointsBarycentricCoordinates( dim, r );
+    const auto lagrangepoints_baryc = InterpolationPointsInBarycentricCoordinates( dim, r );
     
-    const auto EM = EvaluationMatrix( r, lagrangepoints_baryc );
+    const auto M = PointValuesOfMonomials( r, lagrangepoints_baryc );
         
-    const auto EMinv = Inverse( EM );
+    const auto Minv = Inverse( M );
     
     assert( lagrangepoints_baryc.getdimin()  == SullivanSpanSize(dim,0,r) );
     assert( lagrangepoints_baryc.getdimout() == dim+1 );
-    assert( EM.getdimout()    == SullivanSpanSize(dim,0,r) );
-    assert( EM.getdimin()     == SullivanSpanSize(dim,0,r) );
-    assert( EM.isfinite()    );
-    assert( EMinv.isfinite() );
+    assert( M.getdimout()    == SullivanSpanSize(dim,0,r) );
+    assert( M.getdimin()     == SullivanSpanSize(dim,0,r) );
+    assert( M.isfinite()    );
+    assert( Minv.isfinite() );
     
     #if defined(_OPENMP)
     #pragma omp parallel for
@@ -293,35 +289,33 @@ FloatVector Interpolation(
         // 
         // lagrangepoints_eucl are the physical coordinates of the interpolation points 
         // (outerdim) x (number of Lagrange points)
-        // 
         
-        const auto coords = m.getVertexCoordinateMatrix( dim, s );
+
+        const auto euclidean_coords = m.getVertexCoordinateMatrix( dim, s );
         
-        const auto lagrangepoints_eucl = coords * lagrangepoints_baryc;
+        const auto lagrangepoints_eucl = euclidean_coords * lagrangepoints_baryc;
         
-        // 
+        
         // Jac is a matrix of size [outerdimension] x [dim]
         // which is the jacobian of the transformation mapping of simplex s
         // 
         // bpm is a matrix of size [dim+1]x[outerdimension]
         // that is the barycentric projection matrix (see paper)
         // 
-        // P is the matrix of subdeterminants of size k 
-        // of that matrix 
-        // 
+        // P is the matrix of subdeterminants of size k of that matrix 
         
-        // TODO: complete remove the following two lines 
-        const auto Jac = m.getTransformationJacobian( dim, s );
-        const auto bpm_ = BarycentricProjectionMatrix( Jac );
-
+        
         const auto bpm = m.getBarycentricProjectionMatrix( dim, s );
 
-        assert( ( bpm - bpm_ ).norm() == 0. );
-        
         const auto P = SubdeterminantMatrix( bpm, k );
         
-        // The InterpolationMatrix is the tensor product matrix 
-        // of EMinv and P.
+        
+        // TODO: complete remove the following two lines 
+        // const auto Jac = m.getTransformationJacobian( dim, s );
+        // const auto bpm_ = BarycentricProjectionMatrix( Jac );
+        // assert( ( bpm - bpm_ ).norm() == 0. );
+        
+        // The InterpolationMatrix is the tensor product matrix of Minv and P.
         // 
         // Evaluations is a matrix of size [dim choose k] x [lagrangepoints_eucl.dimin]
         // whose columsn are the outputs of the field at the Lagrange points
@@ -329,7 +323,7 @@ FloatVector Interpolation(
         // localResults contains the coeffecients of the interpolation
         // in the canonical basis (Lagrange polynomials x barycentric gradients)
         
-        const auto InterpolationMatrix = MatrixTensorProduct( EMinv, P );
+        const auto InterpolationMatrix = MatrixTensorProduct( Minv, P );
         
         const auto Evaluations      = EvaluateField( outerdim, k, lagrangepoints_eucl, field );
         const auto EvaluationVector = Evaluations.flattencolumns();
@@ -339,11 +333,8 @@ FloatVector Interpolation(
         #ifndef NDEBUG
 
         assert( lagrangepoints_eucl.isfinite() );
-        
         assert( P.isfinite() );
-        
         assert( InterpolationMatrix.isfinite() );
-
         assert( Evaluations.isfinite()      );
         assert( EvaluationVector.isfinite() );
         
@@ -352,15 +343,15 @@ FloatVector Interpolation(
         if( k == 0 ) {
             
             assert( ( P - DenseMatrix( 1, 1, 1. ) ).iszero() );
-            assert( ( InterpolationMatrix - EMinv ).iszero() );
+            assert( ( InterpolationMatrix - Minv ).iszero() );
             
-            if( not ( EM * localResult - EvaluationVector ).issmall() ) {
-                LOG << EM * localResult << space << EvaluationVector << nl;
-                LOG << EM * localResult - EvaluationVector << nl;
-                LOG << ( EM * localResult - EvaluationVector ).norm() << nl;
+            if( not ( M * localResult - EvaluationVector ).issmall() ) {
+                LOG << M * localResult << space << EvaluationVector << nl;
+                LOG << M * localResult - EvaluationVector << nl;
+                LOG << ( M * localResult - EvaluationVector ).norm() << nl;
             }
-            assert( ( EM * localResult - EvaluationVector ).issmall() );
-            assert( ( InterpolationMatrix - EMinv ).issmall() );
+            assert( ( M * localResult - EvaluationVector ).issmall() );
+            assert( ( InterpolationMatrix - Minv ).issmall() );
         }
         #endif
         

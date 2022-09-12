@@ -27,9 +27,9 @@ int main()
             LOG << "Dimension: " << space << n_min << " <= " << n << " <= " << n_max << nl;
             LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << nl;
             
-            const auto lpsbc = InterpolationPointsBarycentricCoordinates( n, r );
+            const auto lpsbc = InterpolationPointsInBarycentricCoordinates( n, r );
             
-            const auto EM = EvaluationMatrix( r, lpsbc );
+            const auto EM = PointValuesOfMonomials( r, lpsbc );
             
             assert( EM.issquare() );
         
