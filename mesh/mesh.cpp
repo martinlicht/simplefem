@@ -509,6 +509,27 @@ DenseMatrix Mesh::getTransformationJacobian( int dim, int index ) const
 }
 
 
+DenseMatrix Mesh::getBarycentricProjectionMatrix( int dim, int index ) const
+{
+    assert( 0 <= dim && dim <= getinnerdimension() );
+    assert( 0 <= index && index < count_simplices(dim) );
+    
+    const auto Jac = getTransformationJacobian( dim, index );
+
+    assert( Jac.getdimout() >= Jac.getdimin() );
+    
+    DenseMatrix ret( Jac.getdimin()+1, Jac.getdimout(), 0.0 );
+    
+    for( int r = 0; r < Jac.getdimin();  r++ )
+    for( int c = 0; c < Jac.getdimout(); c++ )
+        ret( r+1, c ) = Jac(c,r);
+    
+    assert( ret.isfinite() );
+    
+    return ret;
+}
+
+
 // DenseMatrix Mesh::getGradientMatrix( int dim, int index ) const 
 // {
 //     assert( 0 <= dim && dim <= getinnerdimension() );

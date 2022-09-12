@@ -155,8 +155,7 @@ DenseMatrix LagrangePolynomialCoefficients( int n, int r )
 // Size of output matrix:
 // [ J.dimin()+1 x J.dimout() ]
 // 
-// TODO: This should be a member of the mesh class rather than a function 
-//       in the FEM module. Should be moved from here.
+// TODO: Remove this function 
 // 
 
 DenseMatrix BarycentricProjectionMatrix( const DenseMatrix& J )
@@ -311,9 +310,13 @@ FloatVector Interpolation(
         // of that matrix 
         // 
         
+        // TODO: complete remove the following two lines 
         const auto Jac = m.getTransformationJacobian( dim, s );
-        
-        const auto bpm = BarycentricProjectionMatrix( Jac );
+        const auto bpm_ = BarycentricProjectionMatrix( Jac );
+
+        const auto bpm = m.getBarycentricProjectionMatrix( dim, s );
+
+        assert( ( bpm - bpm_ ).norm() == 0. );
         
         const auto P = SubdeterminantMatrix( bpm, k );
         

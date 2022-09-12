@@ -104,7 +104,7 @@ DenseMatrix LagrangePolynomialCoefficients( int n, int r );
 // TODO: This should be a member of the mesh class rather than a function 
 //       in the FEM module. Should be moved from here.
 
-DenseMatrix BarycentricProjectionMatrix( const DenseMatrix& J );
+// DenseMatrix BarycentricProjectionMatrix( const DenseMatrix& J );
 
 
 

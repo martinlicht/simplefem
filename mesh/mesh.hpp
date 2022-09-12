@@ -213,6 +213,8 @@ class Mesh
         DenseMatrix getVertexCoordinateMatrix( int dim, int index ) const;
         
         DenseMatrix getTransformationJacobian( int dim, int index ) const;
+
+        DenseMatrix getBarycentricProjectionMatrix( int dim, int index ) const; 
         
         DenseMatrix getGradientMatrix( int dim, int index ) const;
         
