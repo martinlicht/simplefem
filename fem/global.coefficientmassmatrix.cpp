@@ -10,6 +10,7 @@
 #include "../dense/matrixtensorproduct.hpp"
 #include "../sparse/sparsematrix.hpp"
 #include "../mesh/mesh.hpp"
+#include "../fem/utilities.hpp"
 
 #include "../fem/local.polynomialmassmatrix.hpp"
 
@@ -30,65 +31,73 @@ SparseMatrix FEECBrokenCoefficientMassMatrix( const Mesh& mesh, int n, int k, in
     assert( binomial_integer( n+r, n ) == binomial_integer( n+r, r ) );
     assert( s >= 0 );
     
-    // Auxiliary calculations and preparations
+    // Dimensions of the output matrix and number of entries 
     
-    // generate the polynomial mass matrices wrt to same base weight 
-    // create the coefficients of the lagrange polynomials for each integration point 
-    // sum up so that you get the polynomial mass matrices for each integration point 
-
     const int num_simplices = mesh.count_simplices( n );
         
     const int localdim = binomial_integer( n+r, n ) * binomial_integer( n+1, k );
     
-    const int internaldim = binomial_integer( n+s, n )
-
     const int dim_in      = num_simplices * localdim;
     const int dim_out     = num_simplices * localdim;
-    const int num_entries = num_simplices * localdim * localdim * internaldim;
+    const int num_entries = num_simplices * localdim * localdim;
     
     SparseMatrix ret( dim_out, dim_in, num_entries );
     
-    auto internal_mi = generateMultiIndices( IndexRange(0,n), s );
+    
+    // assemble algebraic auxiliary material
+    // - lagrange points in barycentric coordinates 
+    // - coefficients of Lagrange polynomials
+    // mass matrices 
 
-    std::vector<DenseMatrix> coefficientmassmatrices( internaldim );
-    
-    for( int i = 0; i < coefficientmassmatrices.size(); i++ )
-        coefficientmassmatrices[i]
-    
-    DenseMatrix polyMM = polynomialmassmatrix( n, r ); // TODO: polymassmatrix with extra base weight 
+    auto lpbcs = InterpolationPointsBarycentricCoordinates( n, s );
 
-    assert( polyMM.issquare() and polyMM.getdimin() == binomial_integer( n+r, n ) );
+    auto lpcoeff = Inverse( EvaluationMatrix( s, lpbcs ) );
     
-//     LOG << polyMM << nl;
-        
+    auto polymassmatrix_per_point = polynomialmassmatrices_per_lagrangepoint( n, r, s );
+    
+    
+    // loop over the simplices and compute the mass matrices
+
     #if defined(_OPENMP)
     #pragma omp parallel for
     #endif
     for( int s = 0; s < num_simplices; s++ )
     {
         
-        /* get the values of form matrix at the integration points */
-        /* get the polynomial coefficients of the corresponding Lagrange polynomial */
+        DenseMatrix full_element_matrix( localdim, localdim, 0. );
 
-
-        Float measure       = mesh.getMeasure( n, s );
-
-        DenseMatrix GM      = mesh.getGradientMatrix( n, s );
+        // assemble some data for the element 
+        // - measure 
+        // - barycentric coordinates 
+        // - lagrange points 
         
-        DenseMatrix Product = GM // TODO: complete this
-        assert(false);
-        DenseMatrix formMM  = SubdeterminantMatrix( Product, k );
-    
-        DenseMatrix fullMM  = MatrixTensorProduct( polyMM, formMM ) * measure;
-
+        Float measure       = mesh.getMeasure( n, s );
         assert( measure >= 0. );
 
-        // LOG << measure << nl;
+        DenseMatrix GM    = mesh.getGradientMatrix( n, s );
+        DenseMatrix extGM = SubdeterminantMatrix( GM, k );
+
+        auto vertex_coordinates = mesh.getVertexCoordinateMatrix( n, s );
+        auto lpeucl             = vertex_coordinates * lpbcs;
+
+        // compute the mass matrix contribution 
+        // for each lagrange point 
         
-        // LOG << formMM << nl;
+        for( int p = 0; p < polymassmatrix_per_point.size(); p++ )
+        {
+            DenseMatrix matrix_at_point = generator( lpeucl.getcolumn(p) );
+
+            auto polyMM = polymassmatrix_per_point[p];
+            
+            auto formMM = Transpose(extGM) * matrix_at_point * extGM;
+
+            auto fullMM = MatrixTensorProduct( polyMM, formMM );
+
+            full_element_matrix += fullMM;
+        }
         
-        // LOG << fullMM << nl;
-        
+        // DONE ... now list everything.
+
         for( int i = 0; i < localdim; i++ )
         for( int j = 0; j < localdim; j++ )
         {
@@ -97,13 +106,11 @@ SparseMatrix FEECBrokenCoefficientMassMatrix( const Mesh& mesh, int n, int k, in
             SparseMatrix::MatrixEntry entry;
             entry.row    = s * localdim + i;
             entry.column = s * localdim + j;
-            entry.value  = fullMM( i, j );
+            entry.value  = full_element_matrix( i, j );
             
             ret.setentry( index_of_entry, entry );
         }
-        
-        
-        
+
     }
     
     return ret;

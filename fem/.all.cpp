@@ -1,5 +1,6 @@
 #include "global.diffmatrix.cpp"
 #include "global.massmatrix.cpp"
+#include "global.coefficientmassmatrix.cpp"
 #include "indexfunctions.cpp"
 #include "local.polynomialmassmatrix.cpp"
 #include "global.elevation.cpp"
