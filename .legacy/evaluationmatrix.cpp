@@ -13,7 +13,7 @@
 // 
 // TODO Reread and compare with previous version 
 
-inline DenseMatrix EvaluationMatrix( std::vector<MultiIndex> mis, const DenseMatrix& lpsbc )
+inline DenseMatrix PointValuesOfMonomials( std::vector<MultiIndex> mis, const DenseMatrix& lpsbc )
 {
     
     const int num_points = lpsbc.getdimin();

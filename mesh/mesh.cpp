@@ -8,6 +8,7 @@
 #include "../basic.hpp"
 #include "../combinatorics/generateindexmaps.hpp"
 #include "../dense/cholesky.hpp"
+#include "../dense/qr.factorization.hpp"
 #include "mesh.hpp"
 
 
@@ -508,23 +509,65 @@ DenseMatrix Mesh::getTransformationJacobian( int dim, int index ) const
 }
 
 
-DenseMatrix Mesh::getGradientMatrix( int dim, int index ) const 
+DenseMatrix Mesh::getBarycentricProjectionMatrix( int dim, int index ) const
 {
     assert( 0 <= dim && dim <= getinnerdimension() );
     assert( 0 <= index && index < count_simplices(dim) );
     
-    DenseMatrix ret( getouterdimension(), dim+1, 0. );
+    const auto Jac = getTransformationJacobian( dim, index );
+
+    assert( Jac.getdimout() >= Jac.getdimin() );
     
-    DenseMatrix vcm = getVertexCoordinateMatrix( dim, index );
+    DenseMatrix ret( Jac.getdimin()+1, Jac.getdimout(), 0.0 );
     
-    for( int v = 1; v <= dim; v++ )
-    for( int c = 0; c < getouterdimension(); c++ )
-    {
-        ret( c, v ) = vcm( c, v ) - vcm( c, 0 );
-        ret( c, 0 ) -= ret( c, v );
-    }
+    for( int r = 0; r < Jac.getdimin();  r++ )
+    for( int c = 0; c < Jac.getdimout(); c++ )
+        ret( r+1, c ) = Jac(c,r);
+    
+    assert( ret.isfinite() );
     
     return ret;
+}
+
+
+// DenseMatrix Mesh::getGradientMatrix( int dim, int index ) const 
+// {
+//     assert( 0 <= dim && dim <= getinnerdimension() );
+//     assert( 0 <= index && index < count_simplices(dim) );
+    
+//     DenseMatrix ret( getouterdimension(), dim+1, 0. );
+    
+//     DenseMatrix vcm = getVertexCoordinateMatrix( dim, index );
+    
+//     for( int v = 1; v <= dim; v++ )
+//     for( int c = 0; c < getouterdimension(); c++ )
+//     {
+//         ret( c, v ) = vcm( c, v ) - vcm( c, 0 );
+//         ret( c, 0 ) -= ret( c, v );
+//     }
+    
+//     return ret;
+// }
+DenseMatrix Mesh::getGradientMatrix( int dim, int index ) const 
+{
+    assert( 0 <= dim   && dim   <= getinnerdimension() );
+    assert( 0 <= index && index <  count_simplices(dim) );
+    
+    DenseMatrix multiplier( dim, dim+1, 0. );
+    for( int i = 0; i <  dim; i++ ) {
+        multiplier(i,i+1) =  1.;
+        multiplier(i,  0) = -1.;
+    }
+    
+    // D^-1 D^-t = ( D^t D )^-1
+    DenseMatrix Jac    = getTransformationJacobian( dim, index );
+
+    DenseMatrix R( Jac.getdimin() );
+    DenseMatrix Q( Jac.getdimout(), Jac.getdimin() );
+    QRFactorization( Jac, Q, R );
+
+    return Q * Transpose( Inverse(R) ) * multiplier;
+    // return Transpose(multiplier) * middle * multiplier;
 }
         
 DenseMatrix Mesh::getGradientProductMatrix( int dim, int index ) const 

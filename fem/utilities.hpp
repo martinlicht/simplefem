@@ -38,7 +38,7 @@ inline int SullivanSpanSize( int n, int k, int r )
 // Size of returned matrix:
 // [n+1] x [ n+r choose r ]
 
-DenseMatrix InterpolationPointsBarycentricCoordinates( int n, int r );
+DenseMatrix InterpolationPointsInBarycentricCoordinates( int n, int r );
 
 
 
@@ -47,14 +47,41 @@ DenseMatrix InterpolationPointsBarycentricCoordinates( int n, int r );
 // (in barycentric coordinates) over a d simplex.
 // 
 // The output matrix is as follows:
-// - rows correspond to the evaluation points 
-// - columns correspond to the multiindices (standard Lagrange basis of degree r)
+// - row indices correspond to the evaluation points 
+// - column indices correspond to the multiindices (standard Lagrange basis of degree r)
 // - the entries are value of the corresponding polynomial at the corresponding point
 // 
 // Size of returned matrix:
-// [ n+r choose r ] x [ number of evaluation points ]
+// [ number of evaluation points ] x [ n+r choose r ]
+// 
+// NOTE: if M is the output matrix and x some coefficient vector for a polynomial,
+//       then y = M * x is the values of that polynomial at the Lagrange points
+//       If M is invertible, then x = inv(M) y provides the monomial coefficients 
+//       for a given vector y of point values.
 
-DenseMatrix EvaluationMatrix( int r, const DenseMatrix& bcs );
+DenseMatrix PointValuesOfMonomials( int r, const DenseMatrix& bcs );
+
+
+
+
+
+
+
+// 
+// Suppose that the columns of bcs are evaluation points
+// (in barycentric coordinates) over a d simplex.
+// 
+// The output matrix is as follows:
+// - row indices correspond to the multiindices (standard Lagrange basis of degree r)
+// - column indices correspond to the evaluation points 
+// - each entry is the coefficient of the corresponding multindex 
+//   for the Lagrange polynomial associated to the evaluation point 
+//   TODO: fix whether that should be transposed.
+// 
+// Size of returned matrix:
+// [ n+r choose r ] x [ n+r choose r ]
+
+DenseMatrix LagrangePolynomialCoefficients( int n, int r );
 
 
 
@@ -74,8 +101,10 @@ DenseMatrix EvaluationMatrix( int r, const DenseMatrix& bcs );
 // Size of output matrix:
 // [ J.dimin()+1 x J.dimout() ]
 // 
+// TODO: This should be a member of the mesh class rather than a function 
+//       in the FEM module. Should be moved from here.
 
-DenseMatrix BarycentricProjectionMatrix( const DenseMatrix& J );
+// DenseMatrix BarycentricProjectionMatrix( const DenseMatrix& J );
 
 
 
@@ -92,13 +121,13 @@ DenseMatrix BarycentricProjectionMatrix( const DenseMatrix& J );
 // 
 // The output is a matrix of size [dim choose k] x [var1]
 // whose column are the evaluations of the field 
-// at each of the evaluation points.
+// at each of the evaluation points, given in Euclidean coordinates.
 // 
 
 DenseMatrix EvaluateField( 
             int outerdim, int k,  
             const DenseMatrix& lps, 
-            std::function< FloatVector( const FloatVector& ) > field
+            const std::function< FloatVector( const FloatVector& ) >& field
             );
 
 
@@ -122,8 +151,15 @@ DenseMatrix EvaluateField(
 FloatVector Interpolation( 
             const Mesh& m, 
             int dim, int k, int r, 
-            std::function< FloatVector( const FloatVector& ) > field
+            const std::function< FloatVector( const FloatVector& ) >& field
             );
+
+
+// std::vector<DenseMatrix> Interpolation( 
+//             const Mesh& m, 
+//             int dim, int r, 
+//             std::function< DenseMatrix( const FloatVector& ) > matrixfield
+//             );
 
 
 #endif

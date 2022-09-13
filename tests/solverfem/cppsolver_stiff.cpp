@@ -84,7 +84,7 @@ int main()
             bool do_crm_csr                = true;
             bool do_crm_csrtextbook        = true;
             bool do_minres_csr             = true;
-            bool do_whatever_csr           = true;
+            bool do_whatever_csr           = false;
             bool do_cgm_diagonal_csr       = true;
             bool do_cgm_ssor_csr           = true;
             bool do_chebyshev_diagonal_csr = true;
