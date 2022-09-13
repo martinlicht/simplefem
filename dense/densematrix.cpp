@@ -122,6 +122,18 @@ DenseMatrix::DenseMatrix( int rows, int columns, const std::vector<FloatVector>&
     DenseMatrix::check();
 }
 
+DenseMatrix::DenseMatrix( int rows, int columns, const std::initializer_list<Float>& rowdata )
+: LinearOperator( rows, columns ), entries( new (std::nothrow) Float[ rows * columns ] )
+{
+    assert( rowdata.size() == rows * columns );
+    assert( entries != nullptr );
+
+    int i = 0;
+    for( const Float& f : rowdata ) entries[i++] = f;
+    DenseMatrix::check();
+}
+
+
 
 DenseMatrix::DenseMatrix( const ScalingOperator& scaling )
 : LinearOperator( scaling.getdimout(), scaling.getdimin() ), 

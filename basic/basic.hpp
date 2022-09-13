@@ -101,12 +101,21 @@ inline constexpr int kronecker( const T& i, const T& j )
 
 
 template<typename T>
-inline constexpr T absolute( const T& n )
+inline constexpr T absolute( const T& x )
 {
-    if( n >= 0 ) return  n;
-    if( n <= 0 ) return -n;
-    Assert( not std::isfinite(n) );
-    return n;
+    if( x >= 0 ) return  x;
+    if( x <= 0 ) return -x;
+    Assert( not std::isfinite(x) );
+    return x;
+}
+
+template<typename T>
+inline constexpr T sign( const T& x )
+{
+    Assert( std::isfinite(x) );
+    if( x > 0 ) return  1;
+    if( x < 0 ) return -1;
+    else        return  0;
 }
 
 template<typename T>

@@ -588,7 +588,7 @@ Float FloatVector::norm_sq() const
     check();
     Float ret = 0.;
     for( int d = 0; d < getdimension(); d++ )
-        ret += absolute( pointer[d] ) * absolute( pointer[d] );
+        ret += absolute( pointer[d] * pointer[d] );
     return ret;
 }
 
