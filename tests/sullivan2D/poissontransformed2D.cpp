@@ -15,7 +15,7 @@
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/iterativesolver.hpp"
 #include "../../fem/global.elevation.hpp"
-#include "../../fem/global.massmatrix.hpp"
+#include "../../fem/global.coefficientmassmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.sullivanincl.hpp"
 #include "../../fem/utilities.hpp"
@@ -48,7 +48,7 @@ int main()
             const Float yfeq = 1.;
             
 
-            std::function<FloatVector(const FloatVector&)> experiment_sol = 
+            auto experiment_sol = 
                 [=](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
                     // return FloatVector({ 1. });
@@ -56,7 +56,7 @@ int main()
                 };
             
 
-            std::function<FloatVector(const FloatVector&)> experiment_grad = 
+            auto experiment_grad = 
                 [=](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
                     return FloatVector( { 
@@ -66,7 +66,7 @@ int main()
                 };
             
 
-            std::function<FloatVector(const FloatVector&)> experiment_rhs = 
+            auto experiment_rhs = 
                 [=](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
                     return FloatVector({ 
@@ -75,6 +75,23 @@ int main()
                         yfeq*yfeq * Constants::fourpisquare * std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] )
                      });
                 };
+            
+            
+            // std::function<DenseMatrix(const FloatVector&)> 
+            auto weight_scalar = 
+                [](const FloatVector& vec) -> DenseMatrix{
+                    assert( vec.getdimension() == 2 );
+                    return DenseMatrix(1,1, kronecker<int> );
+                };
+            
+            
+            // std::function<DenseMatrix(const FloatVector&)> 
+            auto weight_vector = 
+                [=](const FloatVector& vec) -> DenseMatrix{
+                    assert( vec.getdimension() == 2 );
+                    return DenseMatrix(2,2, kronecker<int> );
+                };
+            
             
             
             
@@ -92,6 +109,8 @@ int main()
             const int r_plus_scalar = 0;
             const int r_plus_vector = 0;
             
+            const int w = 2;
+            
             ConvergenceTable contable("Mass error");
             
             contable << "u_error" << "du_error" << "residual" << "time" << nl;
@@ -99,7 +118,6 @@ int main()
 
             assert( 0 <= min_l and min_l <= max_l );
             assert( 0 <= min_r and min_r <= max_r );
-            assert( 0 <= r_plus_scalar and 0 <= r_plus_vector);
             
             for( int l = 0; l < min_l; l++ )
                 M.uniformrefinement();
@@ -117,13 +135,15 @@ int main()
                     
                     LOG << "integration with: " << r_plus_scalar << ", " << r_plus_vector << nl;
                     
+                    LOG << "geometric approximation: " << w << nl;
+                    
                     LOG << "...assemble scalar mass matrices" << nl;
             
-                    SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r   + r_plus_scalar );
+                    SparseMatrix scalar_massmatrix = FEECBrokenCoefficientMassMatrix( M, M.getinnerdimension(), 0, r   + r_plus_vector, w, weight_scalar );
 
                     LOG << "...assemble vector mass matrix" << nl;
             
-                    SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 + r_plus_vector );
+                    SparseMatrix vector_massmatrix = FEECBrokenCoefficientMassMatrix( M, M.getinnerdimension(), 1, r-1 + r_plus_vector, w, weight_vector );
                     
                     LOG << "...assemble differential matrix and transpose" << nl;
 
@@ -147,7 +167,7 @@ int main()
 
                     LOG << "...assemble stiffness matrix" << nl;
             
-                    auto opr  = vector_elevmatrix & diffmatrix & incmatrix;
+                    auto opr  = diffmatrix & incmatrix;
                     auto opl  = opr.getTranspose(); 
                     auto stiffness = opl & ( vector_massmatrix & opr );
                     
@@ -166,9 +186,9 @@ int main()
                         
                         LOG << "...interpolate explicit solution and rhs" << nl;
             
-                        FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 0, r   + r_plus_scalar, function_sol  );
-                        FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r-1 + r_plus_vector, function_grad );
-                        FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r   + r_plus_scalar, function_rhs  );
+                        FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 0, r,   function_sol  );
+                        FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r-1, function_grad );
+                        FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r,   function_rhs  );
                         
                         LOG << "...compute norms of solution and right-hand side:" << nl;
             
@@ -180,7 +200,7 @@ int main()
 
                         LOG << "...create RHS vector" << nl;
 
-                        FloatVector rhs = incmatrix_t * scalar_elevmatrix_t * ( scalar_massmatrix * interpol_rhs );
+                        FloatVector rhs = incmatrix_t * ( scalar_massmatrix * interpol_rhs );
 
                         FloatVector sol( incmatrix.getdimin(), 0. );
                         
@@ -203,8 +223,8 @@ int main()
                         auto computed_sol  = incmatrix * sol;
                         auto computed_grad = diffmatrix * incmatrix * sol;
                         
-                        auto errornorm_aux = interpol_sol  - scalar_elevmatrix * computed_sol;
-                        auto graderror_aux = interpol_grad - vector_elevmatrix * computed_grad;
+                        auto errornorm_aux = interpol_sol  - computed_sol;
+                        auto graderror_aux = interpol_grad - computed_grad;
                         
                         Float errornorm     = sqrt( errornorm_aux * ( scalar_massmatrix * errornorm_aux ) );
                         Float graderrornorm = sqrt( graderror_aux * ( vector_massmatrix * graderror_aux ) );
@@ -234,13 +254,12 @@ int main()
                             fs.close();
                         }
 
-
                     }
                     
                 }
 
                 if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
-                
+        
             } 
         
         }
