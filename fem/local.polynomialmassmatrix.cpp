@@ -142,12 +142,13 @@ std::vector<DenseMatrix> polynomialmassmatrices_per_lagrangepoint( int n, int r,
     std::vector<DenseMatrix> massmatrices = polynomialmassmatrices_per_multiindex( n, r, s );
     
     DenseMatrix coefficients = LagrangePolynomialCoefficients( n, s );
+    // each column contains the coefficients for the monomials
 
-    std::vector<DenseMatrix> ret( N, DenseMatrix( binomial_integer( n + r , r ) ) );
+    std::vector<DenseMatrix> ret( N, DenseMatrix( binomial_integer( n + r , r ), 0. ) );
 
-    for( int i = 0; i < N; i++ )
-    for( int j = 0; j < N; j++ )
-        ret[i] = coefficients(i,j) * massmatrices[j]; // TODO: correct choices of indices?
+    for( int i = 0; i < N; i++ ) // i -> index of lagrangepoint 
+    for( int j = 0; j < N; j++ ) // j -> index of monomial in lagrange polynomial
+        ret[i] += coefficients(j,i) * massmatrices[j];
     
     return ret;
 }

@@ -1,5 +1,5 @@
-#ifndef INCLUDEGUARD_FEM_FEECBROKENMASSMATRIX
-#define INCLUDEGUARD_FEM_FEECBROKENMASSMATRIX
+#ifndef INCLUDEGUARD_FEM_FEECBROKENCOEFFICIENTMASSMATRIX
+#define INCLUDEGUARD_FEM_FEECBROKENCOEFFICIENTMASSMATRIX
 
 
 #include <functional>
@@ -22,6 +22,7 @@
 //                                                  //
 //////////////////////////////////////////////////////
 
-SparseMatrix FEECBrokenCoefficientMassMatrix( const Mesh& mesh, int n, int k, int r, std::function<DenseMatrix(FloatVector)>& generator );
+SparseMatrix FEECBrokenCoefficientMassMatrix( const Mesh& mesh, int n, int k, int r, 
+                                              int w, const std::function<DenseMatrix(const FloatVector&)>& generator );
 
 #endif

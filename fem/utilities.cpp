@@ -192,7 +192,7 @@ DenseMatrix LagrangePolynomialCoefficients( int n, int r )
 DenseMatrix EvaluateField( 
             int outerdim, int k,  
             const DenseMatrix& lagrangepoints_eucl, 
-            std::function< FloatVector( const FloatVector& ) > field
+            const std::function< FloatVector( const FloatVector& ) >& field
             )
 {
     
@@ -242,7 +242,7 @@ DenseMatrix EvaluateField(
 FloatVector Interpolation( 
             const Mesh& m, 
             int dim, int k, int r, 
-            std::function< FloatVector( const FloatVector& ) > field
+            const std::function< FloatVector( const FloatVector& ) >& field
             )
 {
     
@@ -364,31 +364,31 @@ FloatVector Interpolation(
     return ret;
 }
 
-std::vector<DenseMatrix> Interpolation( 
-            const Mesh& m, 
-            int dim, int r, 
-            std::function< DenseMatrix( const FloatVector& ) > matrixfield
-            )
-{
+// std::vector<DenseMatrix> Interpolation( 
+//             const Mesh& m, 
+//             int dim, int r, 
+//             const std::function< DenseMatrix( const FloatVector& ) >& matrixfield
+//             )
+// {
     
-    assert( 0 <= dim && dim <= m.getinnerdimension() );
-    assert( 0 <= r );
+//     assert( 0 <= dim && dim <= m.getinnerdimension() );
+//     assert( 0 <= r );
     
-    // std::vector<DenseMatrix> ret( m.count_simplices(dim) * binomial_integer(dim+r,r) );
+//     // std::vector<DenseMatrix> ret( m.count_simplices(dim) * binomial_integer(dim+r,r) );
     
-    const int outerdim = m.getouterdimension();
+//     const int outerdim = m.getouterdimension();
     
     
-    const auto lagrangepoints_baryc = InterpolationPointsInBarycentricCoordinates( dim, r );
+//     const auto lagrangepoints_baryc = InterpolationPointsInBarycentricCoordinates( dim, r );
     
-    const auto M = PointValuesOfMonomials( r, lagrangepoints_baryc );
+//     const auto M = PointValuesOfMonomials( r, lagrangepoints_baryc );
         
-    const auto Minv = Inverse( M );
+//     const auto Minv = Inverse( M );
     
-    // TODO
+//     // TODO
     
-    // return ret;
-}
+//     // return ret;
+// }
 
 
 
