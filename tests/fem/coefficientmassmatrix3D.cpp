@@ -29,7 +29,7 @@ int main()
     
     M.check();
 
-    std::function<DenseMatrix(FloatVector)> generator
+    std::function<DenseMatrix(const FloatVector&)> generator
             = [](const FloatVector&) -> DenseMatrix{ return IdentityMatrix(3); };
     
     const int min_r = 0;

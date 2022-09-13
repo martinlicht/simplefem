@@ -22,6 +22,7 @@
 //                                                  //
 //////////////////////////////////////////////////////
 
-SparseMatrix FEECBrokenCoefficientMassMatrix( const Mesh& mesh, int n, int k, int r, int s, std::function<DenseMatrix(FloatVector)>& generator );
+SparseMatrix FEECBrokenCoefficientMassMatrix( const Mesh& mesh, int n, int k, int r, 
+                                              int w, const std::function<DenseMatrix(const FloatVector&)>& generator );
 
 #endif

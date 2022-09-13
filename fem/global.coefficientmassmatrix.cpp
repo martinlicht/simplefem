@@ -19,7 +19,7 @@
 
 
 SparseMatrix FEECBrokenCoefficientMassMatrix( const Mesh& mesh, int n, int k, int r,
-                                              int w, std::function<DenseMatrix(FloatVector)>& generator 
+                                              int w, const std::function<DenseMatrix(const FloatVector&)>& generator 
 ) {
     
     // check whether the parameters are right 
