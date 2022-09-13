@@ -127,7 +127,7 @@ DenseMatrix LagrangePolynomialCoefficients( int n, int r );
 DenseMatrix EvaluateField( 
             int outerdim, int k,  
             const DenseMatrix& lps, 
-            std::function< FloatVector( const FloatVector& ) > field
+            const std::function< FloatVector( const FloatVector& ) >& field
             );
 
 
@@ -151,8 +151,15 @@ DenseMatrix EvaluateField(
 FloatVector Interpolation( 
             const Mesh& m, 
             int dim, int k, int r, 
-            std::function< FloatVector( const FloatVector& ) > field
+            const std::function< FloatVector( const FloatVector& ) >& field
             );
+
+
+// std::vector<DenseMatrix> Interpolation( 
+//             const Mesh& m, 
+//             int dim, int r, 
+//             std::function< DenseMatrix( const FloatVector& ) > matrixfield
+//             );
 
 
 #endif
