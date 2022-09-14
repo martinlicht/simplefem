@@ -5,6 +5,8 @@
 
 #include "../operators/floatvector.hpp"
 #include "densematrix.hpp"
+#include "functions.hpp"
+#include "simplesolver.hpp"
 
 
 
@@ -15,9 +17,9 @@ void QRFactorization( const DenseMatrix& A, DenseMatrix& Q, DenseMatrix& R )
     Q.check();
     R.check();
     assert( A.getdimout() == Q.getdimout() );
-    assert( Q.getdimin() == R.getdimout() );
-    assert( A.getdimin() == R.getdimin() ); 
-    assert( A.getdimin() <= A.getdimout() );
+    assert( Q.getdimin()  == R.getdimout() );
+    assert( A.getdimin()  == R.getdimin()  ); 
+    assert( A.getdimin()  <= A.getdimout() );
     assert( R.issquare() );
     
     R.zeromatrix();
@@ -61,6 +63,22 @@ void LQFactorization( const DenseMatrix& A, DenseMatrix& L, DenseMatrix& Q )
         Q.setrow( r, v / L(r,r) );
     }
     
+}
+
+
+FloatVector SolveOverconstrained( const DenseMatrix& A, const FloatVector& b )
+{
+    assert( A.getdimout() == b.getdimension() );
+
+    DenseMatrix Q( A.getdimout(), A.getdimin() );
+    DenseMatrix R( A.getdimin() );
+    QRFactorization(A,Q,R);
+
+    FloatVector x( A.getdimin() );
+
+    UpperTriangularSolve( R, x, Transpose(Q) * b );
+
+    return x; 
 }
 
 
