@@ -13,6 +13,7 @@ void QRFactorization( const DenseMatrix&, DenseMatrix&, DenseMatrix& );
 
 void LQFactorization( const DenseMatrix&, DenseMatrix&, DenseMatrix& );
 
+FloatVector SolveOverconstrained( const DenseMatrix& A, const FloatVector& v );
 
 
  // QR repeated 
