@@ -32,8 +32,18 @@ class VTKWriter
             const std::string name, Float scaling = 1. 
         );
         
+        VTKWriter writeVertexScalarData(
+            const std::function<Float(const FloatVector&)>&, 
+            const std::string name, Float scaling = 1. 
+        );
+        
         VTKWriter writeCellScalarData(
             const FloatVector&, 
+            const std::string name, Float scaling = 1. 
+        );
+        
+        VTKWriter writeCellScalarData(
+            const std::function<Float(const FloatVector&)>&, 
             const std::string name, Float scaling = 1. 
         );
         
@@ -46,6 +56,11 @@ class VTKWriter
         
         VTKWriter writeCellVectorData(
             const FloatVector& v, 
+            const std::string name, Float scaling = 1. 
+        );
+
+        VTKWriter writeCellVectorData(
+            const std::function<FloatVector(const FloatVector&)>&, 
             const std::string name, Float scaling = 1. 
         );
         
