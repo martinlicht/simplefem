@@ -31,7 +31,7 @@ int main()
 
             LOG << "Initial mesh..." << nl;
             
-            MeshSimplicial2D M = StandardSquare2D();
+            MeshSimplicial2D M = RhombicAnnulus2D();
             
             M.check();
             
@@ -43,44 +43,89 @@ int main()
             LOG << "Prepare scalar fields for testing..." << nl;
             
 
-            const Float xfeq = 1.;
-            const Float yfeq = 1.;
-            
+            auto trafo     = [](const FloatVector& vec) -> FloatVector { 
+                assert( vec.getdimension() == 2 );
+                return vec.sumnorm() / vec.l2norm() * vec;
+            };
 
-            auto experiment_sol = 
+            auto trafo_inv = [](const FloatVector& vec) -> FloatVector { 
+                assert( vec.getdimension() == 2 );
+                return vec.l2norm() / vec.sumnorm() * vec;
+            };
+
+            // auto trafo_jacobian
+            auto jacobian = [](const FloatVector& vec) -> DenseMatrix { 
+                assert( vec.getdimension() == 2 );
+                
+                Float x = vec[0];
+                Float y = vec[1];
+                Float sx = sign(x);
+                Float sy = sign(y);
+                
+                Float l1  = vec.sumnorm();
+                Float l2  = vec.l2norm();
+                Float l2c = l2*l2*l2;
+                
+                return DenseMatrix( 2, 2, {
+                    x * sx / l2 - x*x * l1/l2c + l1/l2, x * sy / l2 - y*x * l1/l2c,
+                    y * sx / l2 - x*y * l1/l2c,         y * sy / l2 - y*y * l1/l2c + l1/l2 
+                });
+            };
+
+
+
+            
+            auto physical_u = 
                 [=](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
-                    // return FloatVector({ 1. });
-                    return FloatVector({ std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] ) });
+                    
+                    Float r2 = vec.norm_sq();
+                    
+                    Float val = 0.25 + 3 * log(r2) / ( 32 * log(2) ) - r2/4.;
+
+                    return FloatVector({ val });
                 };
             
-
-            auto experiment_grad = 
+            auto physical_gradu = 
                 [=](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
+                    Float l2sq = vec.norm_sq();
                     return FloatVector( { 
-                            xfeq * Constants::twopi * std::cos( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] ),
-                            yfeq * Constants::twopi * std::sin( xfeq * Constants::twopi * vec[0] ) * std::cos( yfeq * Constants::twopi * vec[1] ), 
+                            vec[0] * ( 3. / ( log(2) * l2sq ) - 8. ) / 16., 
+                            vec[1] * ( 3. / ( log(2) * l2sq ) - 8. ) / 16. // TODO: actual solution gradient
                         });
                 };
             
-
-            auto experiment_rhs = 
+            auto physical_f = 
                 [=](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
                     return FloatVector({ 
-                        xfeq*xfeq * Constants::fourpisquare * std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] )
-                        +
-                        yfeq*yfeq * Constants::fourpisquare * std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] )
+                        1.
                      });
+                };
+            
+            auto parametric_u = 
+                [=](const FloatVector& vec) -> FloatVector{
+                    return physical_u ( trafo( vec ) );
+                };
+            
+            auto parametric_gradu = 
+                [=](const FloatVector& vec) -> FloatVector{
+                    return Transpose(jacobian(vec)) * physical_gradu ( trafo( vec ) );
+                };
+            
+            auto parametric_f = 
+                [=](const FloatVector& vec) -> FloatVector{
+                    return physical_f( trafo(vec) );
                 };
             
             
             // std::function<DenseMatrix(const FloatVector&)> 
             auto weight_scalar = 
-                [](const FloatVector& vec) -> DenseMatrix{
+                [=](const FloatVector& vec) -> DenseMatrix{
                     assert( vec.getdimension() == 2 );
-                    return DenseMatrix(1,1, kronecker<int> );
+                    // return DenseMatrix(1,1, kronecker<int> );
+                    return DenseMatrix(1,1,absolute(Determinant(jacobian(vec))));
                 };
             
             
@@ -88,7 +133,22 @@ int main()
             auto weight_vector = 
                 [=](const FloatVector& vec) -> DenseMatrix{
                     assert( vec.getdimension() == 2 );
-                    return DenseMatrix(2,2, kronecker<int> );
+                    // return DenseMatrix(2,2, kronecker<int> );
+                    auto jac = jacobian(vec);
+
+                    auto det = Determinant(jac);
+
+                    // Float x = vec[0];
+                    // Float y = vec[1];
+                    // Float sx = sign(x);
+                    // Float sy = sign(y);
+                    // Float other_det = ( ( abs(x) + abs(y) ) * (sx*x+sy*y) / (x*x+y*y) );
+                    // LOG << x << tab << y << tab << sx << tab << sy << tab << det << tab << other_det << nl;
+                    // assert(
+                    //     isaboutequal( det, ( ( abs(x) + abs(y) ) * (sx*x+sy*y) / (x*x+y*y) ) )
+                    // );
+
+                    return absolute(det) * Inverse( Transpose(jac) * jac );
                 };
             
             
@@ -100,9 +160,9 @@ int main()
             LOG << "Solving Poisson Problem with Neumann boundary conditions" << nl;
 
             const int min_l = 0; 
-            const int max_l = 8;
+            const int max_l = 5;
 
-            const int w = 2;
+            const int w = 4;
             
             const int min_r = 1;
             const int max_r = 1;
@@ -123,7 +183,7 @@ int main()
                 LOG << "Level: " << l << "/" << max_l << nl;
                 LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
                 
-                if( l != 0 )
+                // if( l != 0 )
                 for( int r = min_r; r <= max_r; r++ ) 
                 {
                     
@@ -162,9 +222,9 @@ int main()
 
                     {
 
-                        const auto& function_sol  = experiment_sol;
-                        const auto& function_grad = experiment_grad;
-                        const auto& function_rhs  = experiment_rhs;
+                        const auto& function_sol  = parametric_u;
+                        const auto& function_grad = parametric_gradu;
+                        const auto& function_rhs  = parametric_f;
                         
                         LOG << "...interpolate explicit solution and rhs" << nl;
             
@@ -227,11 +287,16 @@ int main()
 
 
                         if( r == 1 ){
+                            
+                            FloatVector low_interpol_sol  = Interpolation( M, M.getinnerdimension(), 0, 0,   function_sol  );
+                        
+                            
                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
                             vtk.writeCoordinateBlock();
                             vtk.writeTopDimensionalCells();
                             vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
+                            vtk.writeCellScalarData( low_interpol_sol, "interpolated_solution" , 1.0 );
                             vtk.writeCellVectorData( computed_grad, "gradient_interpolation" , 0.1 );
                             fs.close();
                         }

@@ -44,6 +44,29 @@ int main()
     
     
     
+    {
+        LOG << "Solving Least-Squares problem with QR factorization" << nl;
+    
+        const int cols =  4;
+        const int rows = 40;
+        
+        DenseMatrix A(rows,cols);
+        A.randommatrix();
+        
+        FloatVector b( A.getdimout() );
+        b.random();
+        
+        auto x = SolveOverconstrained( A, b );
+        
+        auto r = b - A * x;
+        
+        LOG << "residual: " << r.norm() << nl;
+        LOG << "orthogonality: " << (Transpose(A) * r).norm() << nl;
+        
+    }
+    
+    
+    
     LOG << "Finished Unit Test" << nl;
 
     return 0;

@@ -37,10 +37,12 @@ class DenseMatrix final
         explicit DenseMatrix( int dim, Float initialvalue = notanumber );
         DenseMatrix( int dim, const std::function<Float(int,int)>& generator );
         DenseMatrix( int dim, const std::vector<FloatVector>& coldata );
+        DenseMatrix( int dim, const std::initializer_list<Float>& rowdata );
         
         DenseMatrix( int rows, int columns, Float initialvalue = notanumber );
         DenseMatrix( int rows, int columns, const std::function<Float(int,int)>& generator );
         DenseMatrix( int rows, int columns, const std::vector<FloatVector>& coldata );
+        DenseMatrix( int rows, int columns, const std::initializer_list<Float>& rowdata );
 
         explicit DenseMatrix( const ScalingOperator& );
         explicit DenseMatrix( const DiagonalOperator& );

@@ -311,6 +311,66 @@ VTKWriter VTKWriter::writeCellVectorData(
     return *this;
 }
 
+VTKWriter VTKWriter::writeVertexScalarData(
+    const std::function<Float(const FloatVector&)>& function, 
+    const std::string name, Float scaling 
+) {
+    int N = mesh.count_simplices(0);
+    FloatVector vec( N, 
+        [&](int i) -> Float {
+            return function( mesh.get_midpoint(0,i) );
+        }
+    );
+    writeVertexScalarData( vec, name, scaling );
+
+    return *this;
+}
+
+VTKWriter VTKWriter::writeCellScalarData(
+    const std::function<Float(const FloatVector&)>& function, 
+    const std::string name, Float scaling 
+) {
+    int D = mesh.getinnerdimension();
+    int N = mesh.count_simplices(D);
+    FloatVector vec( N, 
+        [&](int i) -> Float {
+            return function( mesh.get_midpoint(D,i) );
+        }
+    );
+    writeVertexScalarData( vec, name, scaling );
+
+    return *this;
+}
+
+VTKWriter VTKWriter::writeCellVectorData(
+    const std::function<FloatVector(const FloatVector&)>& function, 
+    const std::string name, Float scaling 
+) {
+    int D = mesh.getinnerdimension();
+    int G = mesh.getouterdimension();
+    int N = mesh.count_simplices(D);
+
+    FloatVector vec( N * G );
+
+    for( int s = 0; s < N; s++ )
+    {
+        auto local_vec = function( mesh.get_midpoint(D,s) );
+
+        for( int t = 0; t < G; t++ )
+            vec[ s * G + t ] = local_vec[t];
+    }
+    // FloatVector vec( N * G, 
+    //     [&](int i) -> Float {
+    //         int s = i / G;
+    //         int t = i % G;
+    //         return function( mesh.get_midpoint(D,s) )[t];
+    //     }
+    // );
+    writeVertexScalarData( vec, name, scaling );
+
+    return *this;
+}
+
 
 
 
