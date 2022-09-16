@@ -77,7 +77,7 @@ int main()
         v /= alpha;
     }
     
-    LOG << "Time passed: " << 1000.0 * (c_end-c_start) / Float(CLOCKS_PER_SEC) << "ms" << nl;
+    LOG << "Time passed: " << 1000.0 * (c_sum) / Float(CLOCKS_PER_SEC) << "ms" << nl;
     LOG << "Dummy output to distract optimizer: " << dummy << nl;
 
     LOG << "Finished Unit Test" << nl;
