@@ -186,13 +186,20 @@ void MatrixCSR::apply( FloatVector& dest, const FloatVector& add, Float scaling 
     assert( &dest != &add );
 
     dest.zero();
-    
+
+    Float*       __restrict _dest = dest.raw();
+    const Float* __restrict _add  = add.raw();
+    const int*   __restrict _A    = A.data();
+    const int*   __restrict _C    = C.data();
+    const Float* __restrict _V    = V.data();
+    const int N = A.size();
+
     #if defined(_OPENMP)
     #pragma omp parallel for
     #endif
-    for( int i = 0; i < A.size()-1; i++ ){
-        for( int j = A[i]; j < A[i+1] ; j++ ){
-            dest[i] += scaling * V[j] * add[ C[j] ];
+    for( int i = 0; i < N-1; i++ ){
+        for( int j = _A[i]; j < _A[i+1] ; j++ ){
+            _dest[i] += scaling * _V[j] * _add[ _C[j] ];
         }
     }
 
