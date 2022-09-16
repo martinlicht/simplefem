@@ -53,7 +53,7 @@ int main()
                 + blob( vec[0] ) * blob( vec[1] ) * blob_dev( vec[2] ) - blob_dev( vec[0] ) * blob( vec[1] ) * blob( vec[2] ) // v 
                 ,
                 - blob_dev( vec[0] ) * blob( vec[1] ) * blob( vec[2] ) - blob( vec[0] ) * blob_dev( vec[1] ) * blob( vec[2] ) // w 
-                });
+            });
         };
     
     // u dx + v dy + w dz 
@@ -77,7 +77,7 @@ int main()
                 ,
                 - blob_dev( vec[0] ) * blob_dev( vec[1] ) * blob( vec[2] ) - blob( vec[0] ) * blob_devdev( vec[1] ) * blob( vec[2] ) //  w_y
                 - blob( vec[0] ) * blob( vec[1] ) * blob_devdev( vec[2] ) + blob_dev( vec[0] ) * blob( vec[1] ) * blob_dev( vec[2] ) // -v_z
-                });
+            });
         };
     
     // ( v_x - u_y ) dxy + ( w_x - u_z ) dxz + ( w_y - v_z ) dyz
@@ -117,27 +117,60 @@ int main()
                 blob_dev(vec[0]) * blob(vec[1]) * blob(vec[2]) 
                 +
                 (
-                + blob_devdev( vec[0] ) * blob( vec[1] ) * blob_dev( vec[2] ) + blob_devdev( vec[0] ) * blob_dev( vec[1] ) * blob( vec[2] )
-                + blob( vec[0] ) * blob_devdev( vec[1] ) * blob_dev( vec[2] ) + blob( vec[0] ) * blob_devdevdev( vec[1] ) * blob( vec[2] )
-                + blob( vec[0] ) * blob( vec[1] ) * blob_devdevdev( vec[2] ) + blob( vec[0] ) * blob_dev( vec[1] ) * blob_devdev( vec[2] )
+                - (   blob( vec[0] ) * blob_devdev( vec[1] ) * blob_dev( vec[2] ) + blob( vec[0] ) * blob_devdevdev( vec[1] ) * blob( vec[2] ) ) // u_yy
+                - (   blob( vec[0] ) * blob( vec[1] ) * blob_devdevdev( vec[2] ) + blob( vec[0] ) * blob_dev( vec[1] ) * blob_devdev( vec[2] ) ) // u_zz
+                + (   blob_dev( vec[0] ) * blob_dev( vec[1] ) * blob_dev( vec[2] ) - blob_devdev( vec[0] ) * blob_dev( vec[1] ) * blob( vec[2] ) ) // v_xy 
+                + ( - blob_devdev( vec[0] ) * blob( vec[1] ) * blob_dev( vec[2] ) - blob_dev( vec[0] ) * blob_dev( vec[1] ) * blob_dev( vec[2] ) ) // w_xz 
                 )
                 ,
                 blob(vec[0]) * blob_dev(vec[1]) * blob(vec[2]) 
                 + 
                 (
-                + blob_devdev( vec[0] ) * blob( vec[1] ) * blob_dev( vec[2] ) - blob_devdevdev( vec[0] ) * blob( vec[1] ) * blob( vec[2] ) // v 
-                + blob( vec[0] ) * blob_devdev( vec[1] ) * blob_dev( vec[2] ) - blob_dev( vec[0] ) * blob_devdev( vec[1] ) * blob( vec[2] ) // v 
-                + blob( vec[0] ) * blob( vec[1] ) * blob_devdevdev( vec[2] ) - blob_dev( vec[0] ) * blob( vec[1] ) * blob_devdev( vec[2] ) // v 
+                - (   blob_devdev( vec[0] ) * blob( vec[1] ) * blob_dev( vec[2] ) - blob_devdevdev( vec[0] ) * blob( vec[1] ) * blob( vec[2] ) ) // v_xx 
+                - (   blob( vec[0] ) * blob( vec[1] ) * blob_devdevdev( vec[2] ) - blob_dev( vec[0] ) * blob( vec[1] ) * blob_devdev( vec[2] ) ) // v_zz 
+                + (   blob_dev( vec[0] ) * blob( vec[1] ) * blob_devdev( vec[2] ) + blob_dev( vec[0] ) * blob_dev( vec[1] ) * blob_dev( vec[2] ) ) // u_xy
+                + ( - blob_dev( vec[0] ) * blob_dev( vec[1] ) * blob_dev( vec[2] ) - blob( vec[0] ) * blob_devdev( vec[1] ) * blob_dev( vec[2] ) ) // w_yz 
                 )
                 ,
                 blob(vec[0]) * blob(vec[1]) * blob_dev(vec[2])
                 + 
                 (
-                - blob_devdevdev( vec[0] ) * blob( vec[1] ) * blob( vec[2] ) - blob_devdev( vec[0] ) * blob_dev( vec[1] ) * blob( vec[2] ) // w 
-                - blob_dev( vec[0] ) * blob_devdev( vec[1] ) * blob( vec[2] ) - blob( vec[0] ) * blob_devdevdev( vec[1] ) * blob( vec[2] ) // w 
-                - blob_dev( vec[0] ) * blob( vec[1] ) * blob_devdev( vec[2] ) - blob( vec[0] ) * blob_dev( vec[1] ) * blob_devdev( vec[2] ) // w 
+                - ( - blob_devdevdev( vec[0] ) * blob( vec[1] ) * blob( vec[2] ) - blob_devdev( vec[0] ) * blob_dev( vec[1] ) * blob( vec[2] ) ) // w_xx 
+                - ( - blob_dev( vec[0] ) * blob_devdev( vec[1] ) * blob( vec[2] ) - blob( vec[0] ) * blob_devdevdev( vec[1] ) * blob( vec[2] ) ) // w_yy 
+                + (   blob_dev( vec[0] ) * blob( vec[1] ) * blob_devdev( vec[2] ) + blob_dev( vec[0] ) * blob_dev( vec[1] ) * blob_dev( vec[2] ) ) // u_xz
+                + (   blob( vec[0] ) * blob_dev( vec[1] ) * blob_devdev( vec[2] ) - blob_dev( vec[0] ) * blob_dev( vec[1] ) * blob_dev( vec[2] ) ) // v_yz 
                 )
-                });
+            });
+        };
+    
+    std::function<FloatVector(const FloatVector&)> experiment_rhs2 = 
+        [=](const FloatVector& vec) -> FloatVector{
+            assert( vec.getdimension() == 3 );
+            return FloatVector({ 
+                blob_dev(vec[0]) * blob(vec[1]) * blob(vec[2]) 
+                +
+                (
+                + blob_devdev( vec[0] ) * blob( vec[1] )        * blob_dev( vec[2] )       + blob_devdev( vec[0] ) * blob_dev( vec[1] )       * blob( vec[2] )
+                + blob( vec[0] )        * blob_devdev( vec[1] ) * blob_dev( vec[2] )       + blob( vec[0] )        * blob_devdevdev( vec[1] ) * blob( vec[2] )
+                + blob( vec[0] )        * blob( vec[1] )        * blob_devdevdev( vec[2] ) + blob( vec[0] )        * blob_dev( vec[1] )       * blob_devdev( vec[2] )
+                )
+                ,
+                blob(vec[0]) * blob_dev(vec[1]) * blob(vec[2]) 
+                + 
+                (
+                + blob_devdev( vec[0] ) * blob( vec[1] )        * blob_dev( vec[2] )       - blob_devdevdev( vec[0] ) * blob( vec[1] )        * blob( vec[2] ) // v 
+                + blob( vec[0] )        * blob_devdev( vec[1] ) * blob_dev( vec[2] )       - blob_dev( vec[0] )       * blob_devdev( vec[1] ) * blob( vec[2] ) // v 
+                + blob( vec[0] )        * blob( vec[1] )        * blob_devdevdev( vec[2] ) - blob_dev( vec[0] )       * blob( vec[1] )        * blob_devdev( vec[2] ) // v 
+                )
+                ,
+                blob(vec[0]) * blob(vec[1]) * blob_dev(vec[2])
+                + 
+                (
+                - blob_devdevdev( vec[0] ) * blob( vec[1] )        * blob( vec[2] )        - blob_devdev( vec[0] ) * blob_dev( vec[1] )       * blob( vec[2] ) // w 
+                - blob_dev( vec[0] )       * blob_devdev( vec[1] ) * blob( vec[2] )        - blob( vec[0] )        * blob_devdevdev( vec[1] ) * blob( vec[2] ) // w 
+                - blob_dev( vec[0] )       * blob( vec[1] )        * blob_devdev( vec[2] ) - blob( vec[0] )        * blob_dev( vec[1] )       * blob_devdev( vec[2] ) // w 
+                )
+            });
         };
     
     std::function<FloatVector(const FloatVector&)> experiment_aux = 
@@ -146,7 +179,7 @@ int main()
             // return FloatVector({ 1. });
             return FloatVector( { 
                 blob(vec[0])*blob(vec[1])*blob(vec[2])
-                });
+            });
         };
     
     
@@ -164,9 +197,9 @@ int main()
     const int min_r = 1;
     const int max_r = 1;
 
-    const int r_plus_vector = 2;
-    const int r_plus_scalar = 2;
-    const int r_plus_pseudo = 2;
+    const int r_plus_vector = 0;
+    const int r_plus_scalar = 0;
+    const int r_plus_pseudo = 0;
     
     
     ConvergenceTable contable("Mass error and numerical residuals");
