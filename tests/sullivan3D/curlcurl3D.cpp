@@ -4,6 +4,7 @@
 
 #include "../../basic.hpp"
 #include "../../utility/convergencetable.hpp"
+#include "../../utility/files.hpp"
 #include "../../operators/composedoperators.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
@@ -18,6 +19,7 @@
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.sullivanincl.hpp"
 #include "../../fem/utilities.hpp"
+#include "../../vtk/vtkwriter.hpp"
 
 
 using namespace std;
@@ -114,7 +116,8 @@ int main()
         [=](const FloatVector& vec) -> FloatVector{
             assert( vec.getdimension() == 3 );
             return FloatVector({ 
-                blob_dev(vec[0]) * blob(vec[1]) * blob(vec[2]) 
+                // blob_dev(vec[0]) * blob(vec[1]) * blob(vec[2]) 
+                Constants::pi * cos(Constants::pi * vec[0]) * sin(Constants::pi * vec[1]) * sin(Constants::pi * vec[2]) 
                 +
                 (
                 - (   blob( vec[0] ) * blob_devdev( vec[1] ) * blob_dev( vec[2] ) + blob( vec[0] ) * blob_devdevdev( vec[1] ) * blob( vec[2] ) ) // u_yy
@@ -123,7 +126,8 @@ int main()
                 + ( - blob_devdev( vec[0] ) * blob( vec[1] ) * blob_dev( vec[2] ) - blob_dev( vec[0] ) * blob_dev( vec[1] ) * blob_dev( vec[2] ) ) // w_xz 
                 )
                 ,
-                blob(vec[0]) * blob_dev(vec[1]) * blob(vec[2]) 
+                //blob(vec[0]) * blob_dev(vec[1]) * blob(vec[2]) 
+                Constants::pi * sin(Constants::pi * vec[0]) * cos(Constants::pi * vec[1]) * sin(Constants::pi * vec[2]) 
                 + 
                 (
                 - (   blob_devdev( vec[0] ) * blob( vec[1] ) * blob_dev( vec[2] ) - blob_devdevdev( vec[0] ) * blob( vec[1] ) * blob( vec[2] ) ) // v_xx 
@@ -132,7 +136,8 @@ int main()
                 + ( - blob_dev( vec[0] ) * blob_dev( vec[1] ) * blob_dev( vec[2] ) - blob( vec[0] ) * blob_devdev( vec[1] ) * blob_dev( vec[2] ) ) // w_yz 
                 )
                 ,
-                blob(vec[0]) * blob(vec[1]) * blob_dev(vec[2])
+                //blob(vec[0]) * blob(vec[1]) * blob_dev(vec[2])
+                Constants::pi * sin(Constants::pi * vec[0]) * sin(Constants::pi * vec[1]) * cos(Constants::pi * vec[2]) 
                 + 
                 (
                 - ( - blob_devdevdev( vec[0] ) * blob( vec[1] ) * blob( vec[2] ) - blob_devdev( vec[0] ) * blob_dev( vec[1] ) * blob( vec[2] ) ) // w_xx 
@@ -178,7 +183,8 @@ int main()
             assert( vec.getdimension() == 3 );
             // return FloatVector({ 1. });
             return FloatVector( { 
-                blob(vec[0])*blob(vec[1])*blob(vec[2])
+                //blob(vec[0])*blob(vec[1])*blob(vec[2])
+                sin(Constants::pi * vec[0]) * sin(Constants::pi * vec[1]) * sin(Constants::pi * vec[2]) 
             });
         };
     
@@ -192,7 +198,7 @@ int main()
     LOG << "Solving Poisson Problem with Neumann boundary conditions" << nl;
 
     const int min_l = 0; 
-    const int max_l = 5;
+    const int max_l = 7;
     
     const int min_r = 1;
     const int max_r = 1;
@@ -362,6 +368,21 @@ int main()
             contable << nl;
 
             contable.lg();
+            
+
+
+            if( r == 1 ){
+                fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
+                VTKWriter vtk( M, fs, getbasename(__FILE__) );
+                vtk.writeCoordinateBlock();
+                vtk.writeTopDimensionalCells();
+                // vtk.writeVertexScalarData( function_aux, "iterativesolution_aux_data" , 1.0 );
+                // vtk.writeCellVectorData( sol, "iterativesolution_data" , 1.0 );
+                vtk.writeCellVectorData( function_sol, "interpolated_sol" , 1.0 );
+                vtk.writeCellVectorData( function_rhs, "interpolated_rhs" , 1.0 );
+                vtk.writeCellVectorData( function_curl, "interpolated_curl" , 1.0 );
+                fs.close();
+            }
             
         }
 
