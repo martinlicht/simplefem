@@ -204,7 +204,7 @@ ifeq ($(FLAG_DO_OPTIMIZE),yes)
 		CXXFLAGS_OPTIMIZE += -Ofast 
 		CXXFLAGS_OPTIMIZE += -march=native 
 		ifeq ($(FLAG_CXX),GCC)
-			CXXFLAGS_OPTIMIZE := -inline-threshold=1200
+			CXXFLAGS_OPTIMIZE += -inline-threshold=1200
 		endif
 		CXXFLAGS_OPTIMIZE += -flto
 	endif
