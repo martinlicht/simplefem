@@ -90,6 +90,8 @@ public LinearOperator /* every matrix is a linear operator */
 
         int getnumberofzeroentries() const;
 
+        int getmaxrowwidth() const;
+
         Float eigenvalueupperbound() const;
 
 //         void sortentries() const;

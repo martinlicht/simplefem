@@ -41,7 +41,7 @@ FLAG_CXX := CLANG
 
 # Do you want the standard library assert macro instead of the custom one?
 # Uncomment the following line to use the standard library assert macro 
-FLAG_USE_ORIGINAL_ASSERT_MACRO=yes
+# FLAG_USE_ORIGINAL_ASSERT_MACRO=yes
 
 # Do you want assert messages to be discarded?
 # Uncomment the following line to simplify the debugging macros 

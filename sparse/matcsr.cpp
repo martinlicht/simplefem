@@ -250,19 +250,6 @@ FloatVector MatrixCSR::diagonal() const
 }
 
 
-int MatrixCSR::getnumberofzeroentries() const
-{ 
-    check();
-    
-    int ret = 0;
-    
-    for( const auto& value : V )
-        if( value == 0. )
-            ret++;
-    
-    return ret;
-
-}
 
 
 
@@ -293,6 +280,36 @@ int MatrixCSR::getnumberofentries() const
 {
     return SIZECAST( V.size() );
 }
+
+int MatrixCSR::getnumberofzeroentries() const
+{ 
+    check();
+    
+    int ret = 0;
+    
+    for( const auto& value : V )
+        if( value == 0. )
+            ret++;
+    
+    return ret;
+
+}
+
+int MatrixCSR::getmaxrowwidth() const
+{
+    check();    
+
+    int ret = 0;
+
+    for( int r = 0; r < getdimout(); r++ ) {
+        int width = A[r+1] - A[r];
+        if( width > ret ) ret = width;
+    }
+
+    return ret;
+}
+
+
 
 
 // void MatrixCSR::sortentries() const
