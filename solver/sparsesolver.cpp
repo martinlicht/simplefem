@@ -749,6 +749,8 @@ int ConjugateGradientSolverCSR_Rainbow(
 
                     int c = R[i];
                     
+                    // assert( F[c] == color );
+                    
                     if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
 
                     Assert( F[c] == color, N, c, F[c], color );
@@ -789,7 +791,7 @@ int ConjugateGradientSolverCSR_Rainbow(
                     
                     if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
                 
-                    assert( F[c] == color );
+                    // assert( F[c] == color );
                     
                     Float aux = mittlerer[c];
                     
@@ -888,7 +890,7 @@ int ConjugateGradientSolverCSR_Rainbow(
                 
                 if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
                 
-                assert( F[c] == color );
+                // assert( F[c] == color );
                     
                 x[c] += alpha * direction[c];
                 
@@ -926,7 +928,7 @@ int ConjugateGradientSolverCSR_Rainbow(
                 
                 if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
                 
-                assert( F[c] == color );
+                // assert( F[c] == color );
                     
                 mittlerer[c] *= diagonal[c];
                 

@@ -6,6 +6,7 @@
 #include "../../utility/convergencetable.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
+#include "../../sparse/rainbow.hpp"
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
@@ -94,6 +95,7 @@ int main()
             bool do_cgm_diagonal_csr       = true;
             bool do_cgm_ssor_csr           = true;
             bool do_chebyshev_diagonal_csr = false; //grossly inefficient
+            bool do_cgm_rainbow_csr        = true;
 
             // if( do_cgmpp      ) contable_sol << "CGM++"      ;
             // if( do_crmpp_expl ) contable_sol << "CRM++(expl)";
@@ -126,6 +128,7 @@ int main()
             if( do_cgm_diagonal_csr )       contable_res << "CGMcsr_diag"  ;
             if( do_cgm_ssor_csr )           contable_res << "CGMcsr_ssor"  ;
             if( do_chebyshev_diagonal_csr ) contable_res << "Chebyshev_csr";
+            if( do_cgm_rainbow_csr )        contable_res << "CGMcsr_rainbow";
 
             if( do_cgmpp      ) contable_num << "CGM++"      ;
             if( do_crmpp_expl ) contable_num << "CRM++(expl)";
@@ -142,6 +145,7 @@ int main()
             if( do_cgm_diagonal_csr )       contable_num << "CGMcsr_diag"  ;
             if( do_cgm_ssor_csr )           contable_num << "CGMcsr_ssor"  ;
             if( do_chebyshev_diagonal_csr ) contable_num << "Chebyshev_csr";
+            if( do_cgm_rainbow_csr )        contable_num << "CGMcsr_rainbow";
 
             if( do_cgmpp      ) contable_sec << "CGM++"      ;
             if( do_crmpp_expl ) contable_sec << "CRM++(expl)";
@@ -158,6 +162,9 @@ int main()
             if( do_cgm_diagonal_csr )       contable_sec << "CGMcsr_diag"  ;
             if( do_cgm_ssor_csr )           contable_sec << "CGMcsr_ssor"  ;
             if( do_chebyshev_diagonal_csr ) contable_sec << "Chebyshev_csr";
+            if( do_cgm_rainbow_csr )        contable_sec << "CGMcsr_rainbow";
+
+            
             
 
             const int min_l = 0;
@@ -718,7 +725,53 @@ int main()
                             contable_num << stat_num;
                             contable_sec << runtime;
                         }
+                        
 
+                        if( do_cgm_rainbow_csr )
+                        {
+                            LOG << "CGM - CSR Classic with Rainbow-SSOR" << nl;
+                            
+                            auto diagonal = stiffness.diagonal();
+
+                            Rainbow rainbow( stiffness );
+                            
+                            FloatVector sol = sol_original;
+                            const FloatVector rhs = rhs_original;
+                            FloatVector residual( rhs );
+                            auto max_iteration_count = sol.getdimension();
+                            timestamp start = gettimestamp();
+                            auto recent_iteration_count = 
+                            ConjugateGradientSolverCSR_Rainbow( 
+                                sol.getdimension(), 
+                                sol.raw(), 
+                                rhs.raw(), 
+                                stiffness.getA(), stiffness.getC(), stiffness.getV(),
+                                residual.raw(),
+                                desired_precision,
+                                0,
+                                diagonal.raw(),
+                                1.0,
+                                rainbow.num_colors, rainbow.F.data(), rainbow.B.data(), rainbow.R.data()
+                            );
+
+                            timestamp end = gettimestamp();
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
+                            
+                            LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
+
+                            auto runtime  = static_cast<Float>( end - start );
+                            // auto stat_sol = Float( ( sol - ... ).norm() );
+                            auto stat_res = Float( ( stiffness * sol - rhs ).norm() );
+                            auto stat_num = Float( recent_iteration_count ) / max_iteration_count;
+                            
+                            //contable_sol << stat_sol;
+                            contable_res << stat_res;
+                            contable_num << stat_num;
+                            contable_sec << runtime;
+                        }
+                        
+                        
+                        
                         
                         // contable_sol << nl;
                         contable_res << nl;
