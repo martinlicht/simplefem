@@ -87,7 +87,7 @@ FLAG_NO_EXCEPTIONS=yes
 
 # Do you want to ENABLE the use of openMP?
 # Uncomment the following line to enable compilation with openMP
-# FLAG_ENABLE_OPENMP=yes
+FLAG_ENABLE_OPENMP=yes
 
 # Do you want to ENABLE the use of tcmalloc?
 # Uncomment the following line to enable tcmalloc
@@ -320,7 +320,7 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 
 		CXXFLAGS_WARNINGS += -Wabstract-vbase-init
 		CXXFLAGS_WARNINGS += -Walloca
-		CXXFLAGS_WARNINGS += -Wno-vla-extension -Werror-implicit -Wabsolute-value -Wno-shorten-64-to-32
+		CXXFLAGS_WARNINGS += -Wno-vla-extension -Werror-implicit-function-declaration -Wabsolute-value -Wno-shorten-64-to-32
 		CXXFLAGS_WARNINGS += -Wanon-enum-enum-conversion -Wassign-enum
 		CXXFLAGS_WARNINGS += -Warray-bounds-pointer-arithmetic
 		CXXFLAGS_WARNINGS += -Wbad-function-cast
