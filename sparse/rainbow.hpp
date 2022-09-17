@@ -14,7 +14,10 @@ struct Rainbow
 {
     Rainbow( const MatrixCSR& );
 
+    void check() const;
+
     // number of colors used 
+    int num_rows;
     int num_colors;
 
     // for each row index, give the color index 

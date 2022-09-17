@@ -737,23 +737,34 @@ int ConjugateGradientSolverCSR_Rainbow(
                 
             }
             
-            // inv( L^t + D/omega ) * D * inv( L + D/omega )
+            // (2-omega)/omega * inv( L^t + D/omega ) * D * inv( L + D/omega )
             
-            // NOTE: Don't parallelize
-            for( int c = 0; c < N; c++ ) {
-                
-                if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
-                
-                Float aux = residual[c];
-                
-                for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
-                    if( csrcolumns[d] < c )
-                        aux -= csrvalues[ d ] * mittlerer[ csrcolumns[d] ];
-                
-                mittlerer[c] = aux * omega /  diagonal[c];
-                
+            // NOTE: Rainbow-ing of CSR matrix used here 
+            for( int color = 0; color < num_colors; color++ ) {
+            
+                #if defined(_OPENMP)
+                #pragma omp parallel for
+                #endif
+                for( int i = B[color]; i < B[color+1]; i++ ) {
+
+                    int c = R[i];
+                    
+                    if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+
+                    Assert( F[c] == color, N, c, F[c], color );
+                    
+                    Float aux = residual[c];
+                    
+                    for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                        if( F[csrcolumns[d]] < F[c] )
+                            aux -= csrvalues[ d ] * mittlerer[ csrcolumns[d] ];
+                    
+                    mittlerer[c] = aux * omega /  diagonal[c];
+                    
+                }
+
             }
-        
+            
             #if defined(_OPENMP)
             #pragma omp parallel for
             #endif
@@ -766,18 +777,29 @@ int ConjugateGradientSolverCSR_Rainbow(
                 mittlerer[c] *= ( 2. - omega ) / omega;
             }
             
-            // NOTE: Don't parallelize
-            for( int c = N-1; c >= 0; c-- ) {
-                
-                if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+            // NOTE: Rainbow-ing of CSR matrix used here 
+            for( int color = num_colors - 1; color >= 0; color-- ) {
             
-                Float aux = mittlerer[c];
+                #if defined(_OPENMP)
+                #pragma omp parallel for
+                #endif
+                for( int i = B[color]; i < B[color+1]; i++ ) {
+
+                    int c = R[i];
+                    
+                    if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
                 
-                for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
-                    if( csrcolumns[d] > c )
-                        aux -= csrvalues[ d ] * zirconium[ csrcolumns[d] ];
+                    assert( F[c] == color );
+                    
+                    Float aux = mittlerer[c];
+                    
+                    for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                        if( F[csrcolumns[d]] > F[c] )
+                            aux -= csrvalues[ d ] * zirconium[ csrcolumns[d] ];
+                    
+                    zirconium[c] = aux * omega /  diagonal[c];
                 
-                zirconium[c] = aux * omega /  diagonal[c];
+                }
             
             }
             
@@ -854,24 +876,34 @@ int ConjugateGradientSolverCSR_Rainbow(
         
         const Float alpha = z_r / d_Ad;
     
-        // NOTE: Don't parallelize 
-        for( int c = 0; c < N; c++ )
-        {
-            
-            if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
-            
-            x[c] += alpha * direction[c];
-            
-            residual[c] -= alpha * auxiliary[c];
-            
-            Float aux = residual[c];
-            
-            for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
-                if( csrcolumns[d] < c )
-                    aux -= csrvalues[ d ] * mittlerer[ csrcolumns[d] ];
-            
-            mittlerer[c] = aux * omega / diagonal[c];
+        // NOTE: Rainbow-ing of CSR matrix used here 
+        for( int color = 0; color < num_colors; color++ ) {
         
+            #if defined(_OPENMP)
+            #pragma omp parallel for
+            #endif
+            for( int i = B[color]; i < B[color+1]; i++ ) {
+
+                int c = R[i];
+                
+                if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+                
+                assert( F[c] == color );
+                    
+                x[c] += alpha * direction[c];
+                
+                residual[c] -= alpha * auxiliary[c];
+                
+                Float aux = residual[c];
+                
+                for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                    if( F[csrcolumns[d]] < F[c] )
+                        aux -= csrvalues[ d ] * mittlerer[ csrcolumns[d] ];
+                
+                mittlerer[c] = aux * omega / diagonal[c];
+            
+            }
+
         }
         
         Float z_r_new = 0.;
@@ -880,25 +912,40 @@ int ConjugateGradientSolverCSR_Rainbow(
 //         
 //         }
         
-        // NOTE: Don't parallelize
-        for( int c = N-1; c >= 0; c-- ) {
-            
-            if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
-            
-            mittlerer[c] *= diagonal[c];
-            
-            mittlerer[c] *= ( 2. - omega ) / omega;
+        // NOTE: Rainbow-ing of CSR matrix used here 
+        for( int color = num_colors - 1; color >= 0; color-- ) {
         
-            Float aux = mittlerer[c];
+            Float z_r_new_local = 0.; 
+
+            #if defined(_OPENMP)
+            #pragma omp parallel for reduction( + : z_r_new_local ) 
+            #endif
+            for( int i = B[color]; i < B[color+1]; i++ ) {
+
+                int c = R[i];
+                
+                if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+                
+                assert( F[c] == color );
+                    
+                mittlerer[c] *= diagonal[c];
+                
+                mittlerer[c] *= ( 2. - omega ) / omega;
             
-            for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
-                if( csrcolumns[d] > c )
-                    aux -= csrvalues[ d ] * zirconium[ csrcolumns[d] ];
-            
-            zirconium[c] = aux * omega / diagonal[c];
-            
-            z_r_new += zirconium[c] * residual[c];
-            
+                Float aux = mittlerer[c];
+                
+                for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                    if( F[csrcolumns[d]] > F[c] )
+                        aux -= csrvalues[ d ] * zirconium[ csrcolumns[d] ];
+                
+                zirconium[c] = aux * omega / diagonal[c];
+                
+                z_r_new_local += zirconium[c] * residual[c];
+                
+            }
+
+            z_r_new += z_r_new_local;
+
         }
         
         const Float beta = z_r_new / z_r;

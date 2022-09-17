@@ -17,6 +17,8 @@ Rainbow::Rainbow( const MatrixCSR& mat )
 
     const int N = mat.getdimout();
 
+    num_rows = N;
+
     // 1. Determine the number of colors and assign each row its color (F)
 
     num_colors = 1;
@@ -96,6 +98,19 @@ Rainbow::Rainbow( const MatrixCSR& mat )
 
     // Assert that the colors are all the correct ones 
 
+    check();
+
+    // for( int t : B ) LOG << t << nl;
+    // LOG << "number rows: " << N << nl;
+    // LOG << "number colors: " << num_colors << nl;
+
+}
+
+
+void Rainbow::check() const
+{
+    const int N = num_rows;
+
     for( int c = 0; c < num_colors; c++ )
         for( int i = B[c]; i < B[c+1]; i++ )
             assert( F[ R[ i ] ] == c );
@@ -111,10 +126,4 @@ Rainbow::Rainbow( const MatrixCSR& mat )
 
         assert( found );
     }
-
-
-    // for( int t : B ) LOG << t << nl;
-    // LOG << "number rows: " << N << nl;
-    // LOG << "number colors: " << num_colors << nl;
-
 }
