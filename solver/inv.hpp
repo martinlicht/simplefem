@@ -60,6 +60,7 @@ class InverseOperator final
                     + tab_each_line( op.text() );
         }
         
+        using LinearOperator::apply;
         virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling = 1. ) const override;
         
     private:

@@ -552,6 +552,11 @@ Float blob_devdev( Float x );
 
 Float blob_devdevdev( Float x );
 
+Float sinpy( Float x );
+
+Float cospy( Float x );
+
+
 
 
 

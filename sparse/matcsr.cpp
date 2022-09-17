@@ -329,7 +329,7 @@ Float MatrixCSR::eigenvalueupperbound() const
 
 
 
-void sort_and_compress_csrdata( std::vector<int>& A, std::vector<int>& C, std::vector<Float>& V )
+static void sort_and_compress_csrdata( std::vector<int>& A, std::vector<int>& C, std::vector<Float>& V )
 {
 
     // return ; 

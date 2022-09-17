@@ -22,7 +22,7 @@ using namespace std;
 
 // TODO: replace by pivoted row and column elimination
 
-Float lowest( const FloatVector vec, Float threshold )
+static Float lowest( const FloatVector vec, Float threshold )
 {
     assert( vec.getdimension() > 0 and threshold >= 0. );
     Float ret = vec[0];
@@ -32,7 +32,7 @@ Float lowest( const FloatVector vec, Float threshold )
     return ret;
 }
 
-Float PowerMethod( const LinearOperator& A, int repetitions )
+static Float PowerMethod( const LinearOperator& A, int repetitions )
 {
     assert( A.issquare() );
 
@@ -48,7 +48,7 @@ Float PowerMethod( const LinearOperator& A, int repetitions )
 }
 
 
-Float InversePowerMethod( const LinearOperator& A, int repetitions )
+static Float InversePowerMethod( const LinearOperator& A, int repetitions )
 {
     assert( A.issquare() );
 
@@ -70,7 +70,7 @@ Float InversePowerMethod( const LinearOperator& A, int repetitions )
 }
 
 
-// FloatVector Eigenvalues( DenseMatrix A, int repetitions, Float shift = 0. )
+// static FloatVector Eigenvalues( DenseMatrix A, int repetitions, Float shift = 0. )
 // {
 //     assert( A.issquare() );
 //     const int dim = A.getdimin();
@@ -86,7 +86,7 @@ Float InversePowerMethod( const LinearOperator& A, int repetitions )
 //     return ret;        
 // }
 
-FloatVector Eigenvalues( DenseMatrix A, int repetitions, Float shift = 0. )
+static FloatVector Eigenvalues( DenseMatrix A, int repetitions, Float shift = 0. )
 {
     assert( A.issquare() );
     const int dim = A.getdimin();
@@ -102,7 +102,7 @@ FloatVector Eigenvalues( DenseMatrix A, int repetitions, Float shift = 0. )
     return ret;        
 }
 
-// FloatVector Eigenvalues( DenseMatrix A, int repetitions, Float shift = 0. )
+// static FloatVector Eigenvalues( DenseMatrix A, int repetitions, Float shift = 0. )
 // {
 //     assert( A.issquare() );
 //     const int dim = A.getdimin();
@@ -121,7 +121,7 @@ FloatVector Eigenvalues( DenseMatrix A, int repetitions, Float shift = 0. )
 //     return ret;        
 // }
 
-// FloatVector Eigenvalues( DenseMatrix A, int repetitions, Float shift = 0. )
+// static FloatVector Eigenvalues( DenseMatrix A, int repetitions, Float shift = 0. )
 // {
 //     assert( A.issquare() );
 //     const int dim = A.getdimin();
