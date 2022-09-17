@@ -14,6 +14,7 @@
 #include "sparsesolver.hpp"
 
 #include "../sparse/matcsr.hpp"
+#include "../sparse/rainbow.hpp"
 
 
 
@@ -126,6 +127,22 @@ void InverseOperator<MatrixCSR>::apply( FloatVector& dest, const FloatVector& sr
 
     FloatVector res( dest );
     
+    #if defined(_OPENMP)
+    Rainbow rainbow( op );
+
+    ConjugateGradientSolverCSR_Rainbow( 
+        src.getdimension(),
+        dest.raw(), 
+        src.raw(), 
+        op.getA(), op.getC(), op.getV(), 
+        res.raw(),
+        tolerance,
+        print_modulo,
+        diagonal.raw(),
+        1.0,
+        rainbow.num_colors, rainbow.F.data(), rainbow.B.data(), rainbow.R.data()
+    );
+    #else
     ConjugateGradientSolverCSR_SSOR( 
         src.getdimension(),
         dest.raw(), 
@@ -137,7 +154,7 @@ void InverseOperator<MatrixCSR>::apply( FloatVector& dest, const FloatVector& sr
         diagonal.raw(),
         1.0
     );
-    
+    #endif
     dest *= scaling;
     
     if( use_previous_sol ) previous_sol = dest;
