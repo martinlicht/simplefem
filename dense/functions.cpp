@@ -508,7 +508,9 @@ DenseMatrix SubdeterminantMatrix( const DenseMatrix& A, int k )
 {
     A.check();
     assert( 0 <= k && k <= A.getdimin() && k <= A.getdimout() );
-    
+
+    if( A.issquare() ) return SubdeterminantMatrixSquare(A,k);
+
     // performance "hacks", which can be disabled at any time
     if( k == 0 ) return DenseMatrix(1,1,1.);
     if( k == 1 ) return A;
