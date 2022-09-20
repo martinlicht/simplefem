@@ -1,9 +1,9 @@
 #ifndef INCLUDEGUARD_SPARSE_CSRRAINBOW_HPP
 #define INCLUDEGUARD_SPARSE_CSRRAINBOW_HPP
 
-//#include <memory>
-#include <utility>
+#include <string>
 #include <vector>
+#include <utility>
 
 #include "../basic.hpp"
 #include "matcsr.hpp"
@@ -15,6 +15,8 @@ struct Rainbow
     Rainbow( const MatrixCSR& );
 
     void check() const;
+
+    std::string text() const;
 
     // number of colors used 
     int num_rows;

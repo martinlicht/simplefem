@@ -70,6 +70,9 @@ SparseMatrix FEECWhitneyInclusionMatrix( const Mesh& mesh, int n, int k, int r )
     for( int d  = 0; d  <= n;                          d++  )    // go over all the subsimplex dimensions
     for( int fi = 0; fi  < binomial_integer(n+1,d+1); fi++  )    // go over all the d dimensional subsimplices 
     for( const auto& alpharho : lists_of_Whitney_indices[d] )    // go over the corresponding alpha/rho pairs
+    #if defined(_OPENMP)
+    #pragma omp parallel for
+    #endif 
     for( int s  = 0; s   < num_volumes;                s++  )    // go over all the volumes 
     {
         

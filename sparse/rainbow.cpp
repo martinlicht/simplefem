@@ -127,3 +127,10 @@ void Rainbow::check() const
         assert( found );
     }
 }
+
+std::string Rainbow::text() const 
+{
+    std::string str;
+    str += "num_colors: ";
+    str += std::to_string(num_colors);
+}
