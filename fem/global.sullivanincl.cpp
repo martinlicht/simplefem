@@ -78,20 +78,22 @@ SparseMatrix FEECSullivanInclusionMatrix( const Mesh& mesh, int n, int k, int r 
     
     for( int d  = 0; d  <= n;                          d++ )       // go over all the subsimplex dimensions
     for( int fi = 0; fi  < binomial_integer(n+1,d+1); fi++ )       // go over all the d dimensional subsimplices 
-    for( const auto& alphasigma : lists_of_sullivan_indices[d] )   // go over the corresponding alpha/sigma pairs
+    // for( const auto& alphasigma : lists_of_sullivan_indices[d] )   // go over the corresponding alpha/sigma pairs
+    for( int index_alphasigma = 0; index_alphasigma < lists_of_sullivan_indices[d].size(); index_alphasigma++ )   // go over the corresponding alpha/sigma pairs
     for( int s  = 0; s   < num_volumes;                s++ )       // go over all the volumes 
     {
         
         // Find indices of things and prepare auxiliary variables 
-        
+        const auto& alphasigma = lists_of_sullivan_indices[d][index_alphasigma];
+
         const MultiIndex& alpha = alphasigma.first;
         
         const IndexMap&   sigma = alphasigma.second;
         
-        const int index_alphasigma = 
-            std::find( lists_of_sullivan_indices[d].begin(), lists_of_sullivan_indices[d].end(), alphasigma )
-            - 
-            lists_of_sullivan_indices[d].begin();
+        // const int index_alphasigma = 
+        //     std::find( lists_of_sullivan_indices[d].begin(), lists_of_sullivan_indices[d].end(), alphasigma )
+        //     - 
+        //     lists_of_sullivan_indices[d].begin();
         assert( 0 <= index_alphasigma && index_alphasigma < lists_of_sullivan_indices[d].size() );
         assert( lists_of_sullivan_indices[d][index_alphasigma] == alphasigma );
         

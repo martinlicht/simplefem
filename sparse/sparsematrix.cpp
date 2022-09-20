@@ -528,6 +528,7 @@ SparseMatrix SparseMatrix::getTranspose() const
     
     auto newentries = entries;
 
+    // TODO: parallelize 
     for( auto& newentry : newentries )
         std::swap( newentry.row, newentry.column );
 
