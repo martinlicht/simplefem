@@ -39,6 +39,11 @@ int main()
         
         M.automatic_dirichlet_flags();
         
+        for( int d = 0; d <= 2; d++ )
+        for( int s = 0; s < M.count_simplices(d); s++ )
+            if( M.get_flag(d,s) == SimplexFlagNull and M.get_midpoint(d,s)[0] >= 0. )
+                M.set_flag( d, s, SimplexFlagNull );
+
         M.check_dirichlet_flags();
 
         
@@ -61,25 +66,32 @@ int main()
         auto jacobian = [](const FloatVector& vec) -> DenseMatrix { 
             assert( vec.getdimension() == 3 );
             
-            return DenseMatrix(3,3, kronecker<int> ); // TODO: deactivate 
+            Float scalar = vec.maxnorm() > 0.5 ? 1. : 2. ;
+            return scalar * DenseMatrix(3,3, kronecker<int> ); // TODO: deactivate 
 
             Float x = vec[0];
             Float y = vec[1];
             Float z = vec[2];
+
             Float sx = sign(x);
             Float sy = sign(y);
             Float sz = sign(z);
+
+            Float dx = ( x >= y and x >= z ) ? 1. : 0.;
+            Float dy = ( y >= x and y >= z ) ? 1. : 0.;
+            Float dz = ( z >= x and z >= y ) ? 1. : 0.;
             
-            Float l1  = vec.sumnorm();
+            Float li  = vec.sumnorm();
             Float l2  = vec.l2norm();
             Float l2c = l2*l2*l2;
+
+            Float liol2  = li / l2;
+            Float liol2c = li / l2c;
             
             return DenseMatrix( 3, 3, {
-                // x * sx / l2 - x*x * l1/l2c + l1/l2, x * sy / l2 - y*x * l1/l2c          , 1.0,
-                // y * sx / l2 - x*y * l1/l2c,         y * sy / l2 - y*y * l1/l2c + l1/l2  , 1.0,
-                1.0, 0.0, 0.0, 
-                0.0, 1.0, 0.0, 
-                0.0, 0.0, 1.0 // TODO: fill in coefficients
+                liol2 + x * dx/l2 - x*x* liol2c,    x * dy/l2 - x * y * liol2c,        x * dz/l2 - x * z * liol2c, 
+                y * dx/l2 - y * x * liol2c,         liol2 + x * dx/l2 - x*x* liol2c,   y * dz/l2 - y * z * liol2c,  
+                z * dx/l2 - z * z * liol2c,         z * dy/l2 - z * y * liol2c,        liol2 + z * dz/l2 - z*z* liol2c, 
             });
         };
 
@@ -143,7 +155,7 @@ int main()
 
         LOG << "Solving Poisson Problem with Neumann boundary conditions" << nl;
 
-        const int min_l = 0; 
+        const int min_l = 1; 
         const int max_l = 5;
 
         const int min_r = 1;
@@ -239,6 +251,9 @@ int main()
                     
                     timestamp start = gettimestamp();
                     
+                    assert( stiffness_csr.getC() );
+
+
                     {
                         sol.zero();
 
