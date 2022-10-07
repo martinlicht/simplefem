@@ -52,34 +52,37 @@ int main()
 
         auto trafo     = [](const FloatVector& vec) -> FloatVector { 
             assert( vec.getdimension() == 3 );
-            return vec; // TODO: correct trafo
-            // return vec.sumnorm() / vec.l2norm() * vec;
+            // return vec; // TODO: correct trafo
+            return vec.sumnorm() / vec.l2norm() * vec;
         };
 
         auto trafo_inv = [](const FloatVector& vec) -> FloatVector { 
             assert( vec.getdimension() == 3 );
-            return vec; // TODO: correct trafo
-            // return vec.l2norm() / vec.sumnorm() * vec;
+            // return vec; // TODO: correct trafo
+            return vec.l2norm() / vec.sumnorm() * vec;
         };
 
         // auto trafo_jacobian
         auto jacobian = [](const FloatVector& vec) -> DenseMatrix { 
             assert( vec.getdimension() == 3 );
             
-            Float scalar = vec.maxnorm() > 0.5 ? 1. : 2. ;
-            return scalar * DenseMatrix(3,3, kronecker<int> ); // TODO: deactivate 
+            // return scalar * DenseMatrix(3,3, kronecker<int> ); // TODO: deactivate 
 
             Float x = vec[0];
             Float y = vec[1];
             Float z = vec[2];
 
+            Float ax = absolute(x);
+            Float ay = absolute(y);
+            Float az = absolute(z);
+
             Float sx = sign(x);
             Float sy = sign(y);
             Float sz = sign(z);
 
-            Float dx = ( x >= y and x >= z ) ? 1. : 0.;
-            Float dy = ( y >= x and y >= z ) ? 1. : 0.;
-            Float dz = ( z >= x and z >= y ) ? 1. : 0.;
+            Float dx = ( ax >= ay and ax >= az ) ? sx : 0.;
+            Float dy = ( ay >= ax and ay >= az ) ? sy : 0.;
+            Float dz = ( az >= ax and az >= ay ) ? sz : 0.;
             
             Float li  = vec.sumnorm();
             Float l2  = vec.l2norm();
@@ -116,7 +119,8 @@ int main()
         auto physical_A = 
             [=](const FloatVector& vec) -> DenseMatrix{
                 assert( vec.getdimension() == 3 );
-                return DenseMatrix(3,3, kronecker<int> );
+                Float scalar = vec.l2norm() > 0.5 ? 1. : 2. ;
+                return scalar * DenseMatrix(3,3, kronecker<int> );
             };
         
         auto parametric_A = 
