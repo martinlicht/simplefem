@@ -14,6 +14,7 @@
 #include "../../mesh/examples3D.hpp"
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/iterativesolver.hpp"
+#include "../../solver/sparsesolver.hpp"
 #include "../../fem/global.elevation.hpp"
 #include "../../fem/global.coefficientmassmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
@@ -46,18 +47,22 @@ int main()
 
         auto trafo     = [](const FloatVector& vec) -> FloatVector { 
             assert( vec.getdimension() == 3 );
-            return vec.sumnorm() / vec.l2norm() * vec;
+            return vec; // TODO: correct trafo
+            // return vec.sumnorm() / vec.l2norm() * vec;
         };
 
         auto trafo_inv = [](const FloatVector& vec) -> FloatVector { 
             assert( vec.getdimension() == 3 );
-            return vec.l2norm() / vec.sumnorm() * vec;
+            return vec; // TODO: correct trafo
+            // return vec.l2norm() / vec.sumnorm() * vec;
         };
 
         // auto trafo_jacobian
         auto jacobian = [](const FloatVector& vec) -> DenseMatrix { 
             assert( vec.getdimension() == 3 );
             
+            return DenseMatrix(3,3, kronecker<int> ); // TODO: deactivate 
+
             Float x = vec[0];
             Float y = vec[1];
             Float z = vec[2];
@@ -70,8 +75,10 @@ int main()
             Float l2c = l2*l2*l2;
             
             return DenseMatrix( 3, 3, {
-                x * sx / l2 - x*x * l1/l2c + l1/l2, x * sy / l2 - y*x * l1/l2c          , 1.0,
-                y * sx / l2 - x*y * l1/l2c,         y * sy / l2 - y*y * l1/l2c + l1/l2  , 1.0,
+                // x * sx / l2 - x*x * l1/l2c + l1/l2, x * sy / l2 - y*x * l1/l2c          , 1.0,
+                // y * sx / l2 - x*y * l1/l2c,         y * sy / l2 - y*y * l1/l2c + l1/l2  , 1.0,
+                1.0, 0.0, 0.0, 
+                0.0, 1.0, 0.0, 
                 0.0, 0.0, 1.0 // TODO: fill in coefficients
             });
         };
@@ -94,6 +101,17 @@ int main()
             };
         
         
+        auto physical_A = 
+            [=](const FloatVector& vec) -> DenseMatrix{
+                assert( vec.getdimension() == 3 );
+                return DenseMatrix(3,3, kronecker<int> );
+            };
+        
+        auto parametric_A = 
+            [=](const FloatVector& vec) -> DenseMatrix{
+                return physical_A( trafo(vec) );
+            };
+        
         // std::function<DenseMatrix(const FloatVector&)> 
         auto weight_scalar = 
             [=](const FloatVector& vec) -> DenseMatrix{
@@ -112,7 +130,9 @@ int main()
 
                 auto det = Determinant(jac);
 
-                return absolute(det) * Inverse( Transpose(jac) * jac );
+                auto invjac = Inverse( jac );
+
+                return absolute(det) * invjac * parametric_A(vec) * Transpose(invjac);
             };
         
         
@@ -129,8 +149,8 @@ int main()
         const int min_r = 1;
         const int max_r = 1;
 
-        const int r_plus = 1;
-        const int w_plus = 1;
+        const int r_plus = 2;
+        const int w_plus = 2;
         
         ConvergenceTable contable("Mass error");
         
@@ -221,8 +241,40 @@ int main()
                     
                     {
                         sol.zero();
-                        ConjugateGradientMethod Solver( stiffness_csr );
-                        Solver.solve( sol, rhs );
+
+                        auto diagonal = stiffness.diagonal();
+                        FloatVector residual( rhs );
+                        ConjugateGradientSolverCSR_SSOR( 
+                            sol.getdimension(), 
+                            sol.raw(), 
+                            rhs.raw(), 
+                            stiffness_csr.getA(), stiffness_csr.getC(), stiffness_csr.getV(),
+                            residual.raw(),
+                            desired_precision,
+                            0,
+                            diagonal.raw(),
+                            1.0
+                        );
+
+                    }
+
+                    {
+                        aug_sol.zero();
+
+                        auto aug_diagonal = aug_stiffness.diagonal();
+                        FloatVector aug_residual( aug_rhs );
+                        ConjugateGradientSolverCSR_SSOR( 
+                            aug_sol.getdimension(), 
+                            aug_sol.raw(), 
+                            aug_rhs.raw(), 
+                            aug_stiffness_csr.getA(), aug_stiffness_csr.getC(), aug_stiffness_csr.getV(),
+                            aug_residual.raw(),
+                            desired_precision,
+                            0,
+                            aug_diagonal.raw(),
+                            1.0
+                        );
+
                     }
 
                     timestamp end = gettimestamp();
