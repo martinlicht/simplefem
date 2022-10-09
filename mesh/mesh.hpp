@@ -210,6 +210,8 @@ class Mesh
         
         FloatVector get_midpoint( int dim, int index ) const;
         
+        int get_longest_edge_index( int dim, int index ) const;
+        
         DenseMatrix getVertexCoordinateMatrix( int dim, int index ) const;
         
         DenseMatrix getTransformationJacobian( int dim, int index ) const;

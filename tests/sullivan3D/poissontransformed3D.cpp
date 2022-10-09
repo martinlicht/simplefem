@@ -2,7 +2,9 @@
 
 /**/
 
+#include <algorithm>
 #include <fstream>
+#include <vector>
 
 #include "../../basic.hpp"
 #include "../../utility/convergencetable.hpp"
@@ -27,7 +29,7 @@ using namespace std;
 int main()
 {
         
-    LOG << "Unit Test for Solution of Neumann Problem" << nl;
+    LOG << "Unit Test for transformed 3D Poisson Problem" << nl;
     
     if(true){
 
@@ -38,12 +40,28 @@ int main()
         M.check();
         
         M.automatic_dirichlet_flags();
-        
-        for( int d = 0; d <= 2; d++ )
-        for( int s = 0; s < M.count_simplices(d); s++ )
-            if( M.get_flag(d,s) == SimplexFlagNull and M.get_midpoint(d,s)[0] >= 0. )
-                M.set_flag( d, s, SimplexFlagNull );
 
+        M.check_dirichlet_flags();
+
+        for( int e = 0; e < M.count_edges(); e++ ) {
+
+            if( M.get_flag(1,e) != SimplexFlagDirichlet ) continue;
+            
+            Float D = M.getDiameter(1,e);
+
+            if( 1.9 < D and D < 2.1 ) M.bisect_edge(e); 
+            
+        }
+
+        for( int d = 0; d <= 2; d++ )
+        for( int s = 0; s < M.count_simplices(d); s++ ) 
+        {
+            auto mid = M.get_midpoint(d,s);
+            bool b = ( mid[0] < 0. );
+            if( M.get_flag(d,s) == SimplexFlagDirichlet and b )
+                M.set_flag( d, s, SimplexFlagNull );
+        }
+            
         M.check_dirichlet_flags();
 
         

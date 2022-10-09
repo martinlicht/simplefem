@@ -477,6 +477,32 @@ FloatVector Mesh::get_midpoint( int dim, int index ) const
 }
 
 
+int Mesh::get_longest_edge_index( int dim, int index ) const
+{
+    assert( 0 <= dim && dim <= getinnerdimension() );
+    assert( 0 <= index && index < count_simplices(dim) );
+    
+    const int N = binomial_integer(dim+1,2);
+    
+    int longest_edge_index = 0;
+
+    Float diameter = getDiameter(1,0);
+
+    for( int n = 1; n < N; n++ )
+    {
+        int e = get_subsimplex( dim, 1, index, n );
+        Float diameter_e = getDiameter(1,e);
+        if( diameter_e > diameter ){
+            diameter = diameter_e;
+            longest_edge_index = e;
+        }
+    }
+    
+    return longest_edge_index;
+}
+        
+        
+
 DenseMatrix Mesh::getVertexCoordinateMatrix( int dim, int index ) const 
 {
     assert( 0 <= dim && dim <= getinnerdimension() );
