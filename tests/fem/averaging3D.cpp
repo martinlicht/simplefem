@@ -1,0 +1,157 @@
+
+
+/**/
+
+#include "../../basic.hpp"
+#include "../../mesh/mesh.simplicial3D.hpp"
+#include "../../mesh/examples3D.hpp"
+#include "../../fem/global.massmatrix.hpp"
+#include "../../fem/global.elevation.hpp"
+#include "../../fem/utilities.hpp"
+#include "../../fem/global.sullivanincl.hpp"
+#include "../../fem/global.avgsullivan.hpp"
+#include "../../utility/convergencetable.hpp"
+
+
+using namespace std;
+
+int main()
+{
+        
+        LOG << "Unit Test: (3D) degree elevation of interpolation preserves mass" << nl;
+        
+        // LOG << std::setprecision(10);
+
+        LOG << "Initial mesh..." << nl;
+        
+        MeshSimplicial3D M = UnitSimplex3D();
+        
+        M.automatic_dirichlet_flags();
+        
+        M.check();
+        
+        
+        
+        
+        
+        const int r_min = 0;
+        
+        const int r_max = 2;
+        
+        const int l_min = 2;
+        
+        const int l_max = 4;
+        
+        const int number_of_samples = 3;
+        
+           
+        
+        Float errors[ M.getinnerdimension()+1 ][ l_max - l_min + 1 ][ r_max - r_min + 1 ];
+
+        
+        
+        for( int l = 0; l < l_min; l++ )
+            M.uniformrefinement();
+
+        for( int l = l_min; l <= l_max; l++ ){
+            
+            LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << nl;
+            
+            for( int k = 0;     k <= M.getinnerdimension(); k++ ) 
+            for( int r = r_min; r <= r_max;                 r++ ) 
+            {
+                
+                LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << nl;
+
+                LOG << "Form degree: " << space << k << nl;
+
+                LOG << "assemble mass matrices..." << nl;
+                
+                SparseMatrix massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), k, r );
+                
+                SparseMatrix inclusion  = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), k, r );
+                
+                SparseMatrix averaging  = FEECSullivanAveragingMatrix( M, M.getinnerdimension(), k, r );
+                
+                errors[k][ l ][ r ] = 0.;
+                
+                for( int i = 0; i < number_of_samples; i++ ){
+
+                    auto field = inclusion.createinputvector();
+                    field.random();
+                    field.normalize();
+                    
+                    assert( field.isfinite() );
+                    
+                    const auto included = inclusion * field;
+                    
+                    const auto averaged = averaging * included;
+                    
+                    const auto error_eucl = ( averaged - field ).norm();
+                    
+                    const auto error_mass = ( included - inclusion * averaged ).norm(massmatrix);
+
+                    Float error = max( error_eucl, error_mass );
+                    
+                    errors[k][l-l_min][r-r_min] = maximum( errors[k][l-l_min][r-r_min], error );
+                    
+                }
+                
+            }
+            
+            if( l != l_max )
+            {
+                LOG << "Refinement..." << nl;
+            
+                M.uniformrefinement();
+            }
+            
+        } 
+    
+        LOG << "Convergence tables" << nl;
+    
+    
+        ConvergenceTable contable[ M.getinnerdimension()+1 ];
+        
+        for( int k = 0; k <= M.getinnerdimension(); k++ ) 
+            contable->table_name = "Rounding errors D3K" + std::to_string(k);
+        for( int k = 0; k <= M.getinnerdimension(); k++ ) 
+        for( int r = r_min; r <= r_max; r++ ) 
+            contable[k] << ( "R" + std::to_string(r-r_min) );
+
+        for( int k = 0; k <= M.getinnerdimension(); k++ ) 
+        for( int l = l_min; l <= l_max; l++ ) 
+        {
+            
+            for( int r = r_min; r <= r_max; r++ ) 
+                contable[k] << errors[k][l-l_min][r-r_min];
+            
+            contable[k] << nl; 
+            
+        }
+        
+        
+        
+        for( int k = 0; k <= M.getinnerdimension(); k++ ) 
+        {
+            contable[k].lg(); 
+            LOG << "-------------------" << nl;
+        }
+        
+        
+        
+        LOG << "Check that differences are small" << nl;
+        
+        for( int l      = l_min; l <=                 l_max; l++ ) 
+        for( int r      = r_min; r <=                 r_max; r++ ) 
+        for( int k      =     0; k <= M.getinnerdimension(); k++ ) 
+        {
+            assert( errors[k][l-l_min][r-r_min] < 10e-14 );
+        }
+        
+        
+        
+        LOG << "Finished Unit Test" << nl;
+        
+        return 0;
+}

@@ -16,7 +16,7 @@
 //                                                  //
 //////////////////////////////////////////////////////
 
-SparseMatrix FEECSullivanInclusionMatrix( const Mesh& mesh, int n, int k, int r );
+SparseMatrix FEECSullivanAveragingMatrix( const Mesh& mesh, int n, int k, int r );
 
 
 
