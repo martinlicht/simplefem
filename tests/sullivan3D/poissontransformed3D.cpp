@@ -2,6 +2,8 @@
 
 /**/
 
+#include <cmath>
+
 #include <algorithm>
 #include <fstream>
 #include <vector>
@@ -22,6 +24,20 @@
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.sullivanincl.hpp"
 #include "../../fem/utilities.hpp"
+
+
+
+Float alpha(const Float x) { 
+    Float maxnorm = absolute(x);
+    return std::exp( - 1. / maxnorm ) / Constants::euler;
+};
+
+Float alpha_dev(const Float x) { 
+    Float maxnorm = absolute(x);
+    Float maxnorm_sq = square(maxnorm);            
+    return std::exp( - 1. / maxnorm ) / ( maxnorm_sq * Constants::euler );
+};
+
 
 
 using namespace std;
@@ -66,26 +82,20 @@ int main()
 
         
         LOG << "Prepare scalar fields for testing..." << nl;
+
+
         
 
         auto trafo     = [](const FloatVector& vec) -> FloatVector { 
             assert( vec.getdimension() == 3 );
-            // return vec; // TODO: correct trafo
-            return vec.sumnorm() / vec.l2norm() * vec;
+            
+            return vec + alpha( vec.maxnorm() ) * ( 1./vec.l2norm() - 1./vec.maxnorm() ) * vec;
         };
 
-        auto trafo_inv = [](const FloatVector& vec) -> FloatVector { 
-            assert( vec.getdimension() == 3 );
-            // return vec; // TODO: correct trafo
-            return vec.l2norm() / vec.sumnorm() * vec;
-        };
-
-        // auto trafo_jacobian
+        
         auto jacobian = [](const FloatVector& vec) -> DenseMatrix { 
             assert( vec.getdimension() == 3 );
             
-            // return scalar * DenseMatrix(3,3, kronecker<int> ); // TODO: deactivate 
-
             Float x = vec[0];
             Float y = vec[1];
             Float z = vec[2];
@@ -103,21 +113,38 @@ int main()
             Float dz = ( az >= ax and az >= ay ) ? sz : 0.;
             
             Float li  = vec.sumnorm();
+            Float lis = li*li;
             Float l2  = vec.l2norm();
             Float l2c = l2*l2*l2;
 
-            Float liol2  = li / l2;
-            Float liol2c = li / l2c;
+            Float a     = alpha(li);
+            Float a_dev = alpha_dev(li);
             
             return DenseMatrix( 3, 3, {
-                liol2 + x * dx/l2 - x*x* liol2c,    x * dy/l2 - x * y * liol2c,        x * dz/l2 - x * z * liol2c, 
-                y * dx/l2 - y * x * liol2c,         liol2 + x * dx/l2 - x*x* liol2c,   y * dz/l2 - y * z * liol2c,  
-                z * dx/l2 - z * z * liol2c,         z * dy/l2 - z * y * liol2c,        liol2 + z * dz/l2 - z*z* liol2c, 
+                1. + alpha(li) * ( 1/l2 - 1/li ) + ( alpha_dev(li) * sx * dx * ( 1/l2 - 1/li ) + alpha(li) * ( -x/l2c - sx*dx/lis ) ) * x 
+                ,
+                                                   (                                             alpha(li) * ( -y/l2c             ) ) * x 
+                ,
+                                                   (                                             alpha(li) * ( -z/l2c             ) ) * x 
+                ,
+                //
+                                                   (                                             alpha(li) * ( -x/l2c             ) ) * y 
+                ,
+                1. + alpha(li) * ( 1/l2 - 1/li ) + ( alpha_dev(li) * sy * dy * ( 1/l2 - 1/li ) + alpha(li) * ( -y/l2c - sy*dy/lis ) ) * y 
+                ,
+                                                   (                                             alpha(li) * ( -z/l2c             ) ) * y 
+                ,
+                //
+                                                   (                                             alpha(li) * ( -x/l2c             ) ) * z 
+                ,
+                                                   (                                             alpha(li) * ( -y/l2c             ) ) * z 
+                ,
+                1. + alpha(li) * ( 1/l2 - 1/li ) + ( alpha_dev(li) * sz * dz * ( 1/l2 - 1/li ) + alpha(li) * ( -z/l2c - sz*dz/lis ) ) * z 
+                ,
             });
         };
 
-        // jacobian matrix of { x * max(x,y,z) / sqrt(xx+yy+zz), y * max(x,y,z) / sqrt(xx+yy+zz), z * max(x,y,z) / sqrt(xx+yy+zz) }
-
+        
 
         
         auto physical_f = 
