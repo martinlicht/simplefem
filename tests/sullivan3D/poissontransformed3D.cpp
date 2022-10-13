@@ -38,6 +38,101 @@ Float alpha_dev(const Float x) {
     return std::exp( - 1. / maxnorm ) / ( maxnorm_sq * Constants::euler );
 };
 
+FloatVector trafo(const FloatVector& vec) { 
+    assert( vec.getdimension() == 3 );
+    
+    return vec + alpha( vec.maxnorm() ) * ( 1./vec.l2norm() - 1./vec.maxnorm() ) * vec;
+};
+
+        
+DenseMatrix jacobian(const FloatVector& vec) { 
+    assert( vec.getdimension() == 3 );
+    
+    // return DenseMatrix( 3, 3, kronecker<int> );
+
+    Float x = vec[0];
+    Float y = vec[1];
+    Float z = vec[2];
+
+    Float ax = absolute(x);
+    Float ay = absolute(y);
+    Float az = absolute(z);
+
+    Float sx = sign(x);
+    Float sy = sign(y);
+    Float sz = sign(z);
+
+    Float dx = ( ax >= ay and ax >= az ) ? sx : 0.;
+    Float dy = ( ay >= ax and ay >= az ) ? sy : 0.;
+    Float dz = ( az >= ax and az >= ay ) ? sz : 0.;
+    
+    Float li  = vec.sumnorm();
+    Float lis = li*li;
+    Float l2  = vec.l2norm();
+    Float l2c = l2*l2*l2;
+
+    Float a     = std::exp( - 1. / li ) / Constants::euler;
+    Float a_dev = a / lis;
+    
+    return DenseMatrix( 3, 3, {
+        1. + a * ( 1/l2 - 1/li ) + ( a_dev * sx * dx * ( 1/l2 - 1/li ) + a * ( -x/l2c - sx*dx/lis ) ) * x 
+        ,
+                                   (                                     a * ( -y/l2c             ) ) * x 
+        ,
+                                   (                                     a * ( -z/l2c             ) ) * x 
+        ,
+        //
+                                   (                                     a * ( -x/l2c             ) ) * y 
+        ,
+        1. + a * ( 1/l2 - 1/li ) + ( a_dev * sy * dy * ( 1/l2 - 1/li ) + a * ( -y/l2c - sy*dy/lis ) ) * y 
+        ,
+                                   (                                     a * ( -z/l2c             ) ) * y 
+        ,
+        //
+                                   (                                     a * ( -x/l2c             ) ) * z 
+        ,
+                                   (                                     a * ( -y/l2c             ) ) * z 
+        ,
+        1. + a * ( 1/l2 - 1/li ) + ( a_dev * sz * dz * ( 1/l2 - 1/li ) + a * ( -z/l2c - sz*dz/lis ) ) * z 
+        ,
+    });
+};
+
+        
+FloatVector physical_f(const FloatVector& vec) 
+{
+    assert( vec.getdimension() == 3 );
+    return FloatVector({ 
+        1.
+        });
+};
+
+FloatVector parametric_f(const FloatVector& vec) 
+{
+    return physical_f( trafo(vec) );
+};
+
+
+DenseMatrix physical_A(const FloatVector& vec) 
+{
+    assert( vec.getdimension() == 3 );
+    Float scalar = vec.l2norm() > 0.5 ? 1. : 2. ;
+    return scalar * DenseMatrix(3,3, kronecker<int> );
+};
+
+DenseMatrix parametric_A(const FloatVector& vec) 
+{
+    return physical_A( trafo(vec) );
+};
+
+
+
+
+
+
+
+
+
 
 
 using namespace std;
@@ -86,92 +181,6 @@ int main()
 
         
 
-        auto trafo     = [](const FloatVector& vec) -> FloatVector { 
-            assert( vec.getdimension() == 3 );
-            
-            return vec + alpha( vec.maxnorm() ) * ( 1./vec.l2norm() - 1./vec.maxnorm() ) * vec;
-        };
-
-        
-        auto jacobian = [](const FloatVector& vec) -> DenseMatrix { 
-            assert( vec.getdimension() == 3 );
-            
-            Float x = vec[0];
-            Float y = vec[1];
-            Float z = vec[2];
-
-            Float ax = absolute(x);
-            Float ay = absolute(y);
-            Float az = absolute(z);
-
-            Float sx = sign(x);
-            Float sy = sign(y);
-            Float sz = sign(z);
-
-            Float dx = ( ax >= ay and ax >= az ) ? sx : 0.;
-            Float dy = ( ay >= ax and ay >= az ) ? sy : 0.;
-            Float dz = ( az >= ax and az >= ay ) ? sz : 0.;
-            
-            Float li  = vec.sumnorm();
-            Float lis = li*li;
-            Float l2  = vec.l2norm();
-            Float l2c = l2*l2*l2;
-
-            Float a     = alpha(li);
-            Float a_dev = alpha_dev(li);
-            
-            return DenseMatrix( 3, 3, {
-                1. + alpha(li) * ( 1/l2 - 1/li ) + ( alpha_dev(li) * sx * dx * ( 1/l2 - 1/li ) + alpha(li) * ( -x/l2c - sx*dx/lis ) ) * x 
-                ,
-                                                   (                                             alpha(li) * ( -y/l2c             ) ) * x 
-                ,
-                                                   (                                             alpha(li) * ( -z/l2c             ) ) * x 
-                ,
-                //
-                                                   (                                             alpha(li) * ( -x/l2c             ) ) * y 
-                ,
-                1. + alpha(li) * ( 1/l2 - 1/li ) + ( alpha_dev(li) * sy * dy * ( 1/l2 - 1/li ) + alpha(li) * ( -y/l2c - sy*dy/lis ) ) * y 
-                ,
-                                                   (                                             alpha(li) * ( -z/l2c             ) ) * y 
-                ,
-                //
-                                                   (                                             alpha(li) * ( -x/l2c             ) ) * z 
-                ,
-                                                   (                                             alpha(li) * ( -y/l2c             ) ) * z 
-                ,
-                1. + alpha(li) * ( 1/l2 - 1/li ) + ( alpha_dev(li) * sz * dz * ( 1/l2 - 1/li ) + alpha(li) * ( -z/l2c - sz*dz/lis ) ) * z 
-                ,
-            });
-        };
-
-        
-
-        
-        auto physical_f = 
-            [=](const FloatVector& vec) -> FloatVector{
-                assert( vec.getdimension() == 3 );
-                return FloatVector({ 
-                    1.
-                    });
-            };
-        
-        auto parametric_f = 
-            [=](const FloatVector& vec) -> FloatVector{
-                return physical_f( trafo(vec) );
-            };
-        
-        
-        auto physical_A = 
-            [=](const FloatVector& vec) -> DenseMatrix{
-                assert( vec.getdimension() == 3 );
-                Float scalar = vec.l2norm() > 0.5 ? 1. : 2. ;
-                return scalar * DenseMatrix(3,3, kronecker<int> );
-            };
-        
-        auto parametric_A = 
-            [=](const FloatVector& vec) -> DenseMatrix{
-                return physical_A( trafo(vec) );
-            };
         
         // std::function<DenseMatrix(const FloatVector&)> 
         auto weight_scalar = 
