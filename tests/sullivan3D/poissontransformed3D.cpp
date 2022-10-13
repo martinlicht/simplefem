@@ -276,6 +276,8 @@ int main()
 
                 LOG << "...assemble stiffness matrix" << nl;
         
+                display_mallinfo();
+
                 auto opr  = diffmatrix & incmatrix;
                 auto opl  = opr.getTranspose(); 
                 auto stiffness = opl & ( vector_massmatrix & opr );                
