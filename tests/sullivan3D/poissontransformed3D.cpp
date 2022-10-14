@@ -319,15 +319,15 @@ int main()
                     // if(false)
                     {
                         LOG << "[0]" << nl;
-                        auto opr  = diffmatrix & incmatrix;
-                        LOG << "[0]" << nl;
-                        auto opl  = opr.getTranspose(); 
-                        LOG << "[0]" << nl;
-                        auto stiffness = opl & ( vector_massmatrix & opr );                
+                        auto opr  = MatrixCSR(diffmatrix) & MatrixCSR(incmatrix);
                         LOG << "[1]" << nl;
-                        stiffness.sortentries();
+                        // auto opl  = MatrixCSR(incmatrix_t) & MatrixCSR(diffmatrix_t);
+                        auto opl  = opr.getTranspose();
                         LOG << "[2]" << nl;
-                        auto stiffness_csr = MatrixCSR( stiffness );
+                        auto stiffness = (opl) & MatrixCSR(vector_massmatrix) & (opr);
+                        LOG << "[3]" << nl;
+                        auto& stiffness_csr = stiffness; //MatrixCSR( stiffness );
+                        LOG << "[4]" << nl;
                         
                         sol.zero();
 
@@ -360,7 +360,8 @@ int main()
                         LOG << "[0]" << nl;
                         auto aug_opr  = MatrixCSR(aug_diffmatrix) & MatrixCSR(aug_incmatrix);
                         LOG << "[1]" << nl;
-                        auto aug_opl  = aug_opr.getTranspose(); //MatrixCSR(aug_incmatrix_t) & MatrixCSR(aug_diffmatrix_t);
+                        // auto aug_opl  = MatrixCSR(aug_incmatrix_t) & MatrixCSR(aug_diffmatrix_t);
+                        auto aug_opl  = aug_opr.getTranspose();
                         LOG << "[2]" << nl;
                         auto aug_stiffness = (aug_opl) & MatrixCSR(aug_vector_massmatrix) & (aug_opr);
                         LOG << "[3]" << nl;

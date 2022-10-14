@@ -25,7 +25,6 @@ MatrixCSR::MatrixCSR(
 ): LinearOperator( matrix.getdimout(), matrix.getdimin() ),
    A(0), C(0), V(0) 
 {
-    LOG << "[A]";
     matrix.check();
     
     if( not matrix.is_sorted() ) {
@@ -40,7 +39,6 @@ MatrixCSR::MatrixCSR(
     // std::vector<int>   C( numentries, 0  );
     // std::vector<Float> V( numentries, 0. );
     
-    LOG << "[B]";
     A.resize( rows+1     );
     C.resize( numentries );
     V.resize( numentries );
@@ -55,9 +53,7 @@ MatrixCSR::MatrixCSR(
         A[i] += A[i-1];
     }
 
-    LOG << "[C]";
     MatrixCSR::check();
-    LOG << "[D]";
     
 }
 

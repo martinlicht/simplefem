@@ -1,21 +1,22 @@
+#include <stdio.h>
 
-#if false and ( defined(__unix__) ||  defined(__linux__) )
+#if defined(__linux__) && (__GLIBC__ >= 2) and (__GLIBC_MINOR__ >= 33)
 
 #include <malloc.h>
 #include <stdio.h>
 
 void display_mallinfo()
 {
-    mallinfo2 mi;
+    struct mallinfo2 mi;
 
     mi = mallinfo2();
 
     printf("Heap usage statistics:\n");
 
     printf("Total non-mmapped bytes (arena):       %zu\t\t%.3f GiB\n", (size_t)mi.arena,    mi.arena    / 1073741824. );
-    printf("# of free chunks (ordblks):            %zu\n", (size_t)mi.ordblks );
-    printf("# of free fastbin blocks (smblks):     %zu\n", (size_t)mi.smblks );
-    printf("# of mapped regions (hblks):           %zu\n", (size_t)mi.hblks );
+    printf("# of free chunks (ordblks):            %zu\n",             (size_t)mi.ordblks                             );
+    printf("# of free fastbin blocks (smblks):     %zu\n",             (size_t)mi.smblks                              );
+    printf("# of mapped regions (hblks):           %zu\n",             (size_t)mi.hblks                               );
     printf("Bytes in mapped regions (hblkhd):      %zu\t\t%.3f GiB\n", (size_t)mi.hblkhd,   mi.hblkhd   / 1073741824. );
     printf("Max. total allocated space (usmblks):  %zu\t\t%.3f GiB\n", (size_t)mi.usmblks,  mi.usmblks  / 1073741824. );
     printf("Free bytes held in fastbins (fsmblks): %zu\t\t%.3f GiB\n", (size_t)mi.fsmblks,  mi.fsmblks  / 1073741824. );
@@ -24,6 +25,7 @@ void display_mallinfo()
     printf("Topmost releasable block (keepcost):   %zu\t\t%.3f GiB\n", (size_t)mi.keepcost, mi.keepcost / 1073741824. );
 
     malloc_stats();
+    printf("Glibc version: %d %d\n", __GLIBC__, __GLIBC_MINOR__ );
 }
 
 #else 
@@ -31,6 +33,7 @@ void display_mallinfo()
 #include <stdio.h>
 void display_mallinfo(){
     printf("Heap usage statistics: requested but not available in this implementation.\n");
+    printf("Glibc version: %d %d\n", __GLIBC__, __GLIBC_MINOR__ );
 }
 
 #endif 
