@@ -164,288 +164,282 @@ int main()
         
     LOG << "Unit Test for transformed 3D Poisson Problem" << nl;
     
-    if(true){
-
-        LOG << "Initial mesh..." << nl;
-        
-        MeshSimplicial3D M = FicheraCorner3D();
-        
-        M.check();
-
-        
-        for( int e = 0; e < M.count_edges(); e++ ) {
-            Float D = M.getDiameter(1,e);
-            if( 1.9 < D and D < 2.1 )
-                M.bisect_edge(e); 
-        }
-
-        
-        for( int s = 0; s < M.count_simplices(2); s++ ) 
-        {
-            if( M.getsupersimplices(3,2,s).size() > 1 ) continue;
-            
-            auto midpoint = M.get_midpoint(2,s);
-
-            bool eligible = ( midpoint[0] < 0. );
-
-            if( not eligible ) continue;
-
-            M.set_flag( 2, s, SimplexFlagDirichlet );
-            
-            M.set_flag( 1, M.get_subsimplex( 2, 1, s, 0 ), SimplexFlagDirichlet );
-            M.set_flag( 1, M.get_subsimplex( 2, 1, s, 1 ), SimplexFlagDirichlet );
-            M.set_flag( 1, M.get_subsimplex( 2, 1, s, 2 ), SimplexFlagDirichlet );
-            
-            M.set_flag( 0, M.get_subsimplex( 2, 0, s, 0 ), SimplexFlagDirichlet );
-            M.set_flag( 0, M.get_subsimplex( 2, 0, s, 1 ), SimplexFlagDirichlet );
-            M.set_flag( 0, M.get_subsimplex( 2, 0, s, 2 ), SimplexFlagDirichlet );
-            
-        }
-        
-        M.check_dirichlet_flags(false);
-
-        // for( int s = 0; s < M.count_simplices(2); s++ ) 
-        // {
-        //     auto mid = M.get_midpoint(2,s);
-        //     bool b = ( mid[0] < 0. );
-        //     if( M.get_flag(d,s) == SimplexFlagDirichlet and b )
-        //         M.set_flag( d, s, SimplexFlagNull );
-        // }
-            
-        M.check_dirichlet_flags(false);
-
-        
-        LOG << "Prepare scalar fields for testing..." << nl;
-
-
-        
-
-        
-        
-        
-        
-
-        
-
-        LOG << "Solving Poisson Problem with Neumann boundary conditions" << nl;
-
-        const int min_l = 1; 
-        const int max_l = 5;
-
-        const int min_r = 1;
-        const int max_r = 1;
-
-        const int r_plus = 1;
-        const int w_plus = 1;
-        
-        ConvergenceTable contable("Mass error");
-        
-        contable << "u_error" << "du_error" << "residual" << "time" << nl;
-        
-
-        assert( 0 <= min_l and min_l <= max_l );
-        assert( 0 <= min_r and min_r <= max_r );
-        
-        for( int l = 0; l < min_l; l++ )
-            M.uniformrefinement();
-
-        for( int l = min_l; l <= max_l; l++ ){
-            
-            LOG << "Level: " << l << "/" << max_l << nl;
-            LOG << "# T/F/E/V: " << M.count_tetrahedra() << "/" << M.count_faces() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
-            
-            // if( l != 0 )
-            for( int r = min_r; r <= max_r; r++ ) 
-            {
-                
-                int w = r;
-
-                LOGPRINTF("Polynomial degrees: r=%d w=%d r+=%d w+=%d \n", r, w, r_plus, w_plus );
-                
-                LOG << "...assemble scalar mass matrices" << nl;
-        
-                SparseMatrix     scalar_massmatrix = FEECBrokenCoefficientMassMatrix( M, M.getinnerdimension(), 0, r         , w         , weight_scalar );
-                SparseMatrix aug_scalar_massmatrix = FEECBrokenCoefficientMassMatrix( M, M.getinnerdimension(), 0, r + r_plus, w + w_plus, weight_scalar );
-
-                LOG << "...assemble vector mass matrix" << nl;
-        
-                SparseMatrix     vector_massmatrix = FEECBrokenCoefficientMassMatrix( M, M.getinnerdimension(), 1, r-1         , w         , weight_vector );
-                SparseMatrix aug_vector_massmatrix = FEECBrokenCoefficientMassMatrix( M, M.getinnerdimension(), 1, r-1 + r_plus, w + w_plus, weight_vector );
-                
-                LOG << "...assemble differential matrix and transpose" << nl;
-
-                SparseMatrix     diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r          );
-                SparseMatrix aug_diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r + r_plus );
-
-                SparseMatrix     diffmatrix_t =     diffmatrix.getTranspose();
-                SparseMatrix aug_diffmatrix_t = aug_diffmatrix.getTranspose();
-
-                LOG << "...assemble inclusion matrix and transpose" << nl;
-        
-                SparseMatrix     incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r          );
-                SparseMatrix aug_incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r + r_plus );
-                
-                SparseMatrix     incmatrix_t =     incmatrix.getTranspose();
-                SparseMatrix aug_incmatrix_t = aug_incmatrix.getTranspose();
-
-                LOG << "...assemble elevation matrix" << nl;
-        
-                SparseMatrix elevation_matrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 0, r, r_plus );
-
-                display_mallinfo();
-
-                {
-
-                    const auto& function_rhs  = parametric_f;
-                    
-                    LOG << "...interpolate explicit solution and rhs" << nl;
-        
-                    FloatVector     interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r,        function_rhs  );
-                    FloatVector aug_interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r+r_plus, function_rhs  );
-
-                    FloatVector     rhs =     incmatrix_t * (     scalar_massmatrix *     interpol_rhs );
-                    FloatVector aug_rhs = aug_incmatrix_t * ( aug_scalar_massmatrix * aug_interpol_rhs );
-
-                    FloatVector     sol(     incmatrix.getdimin(), 0. );
-                    FloatVector aug_sol( aug_incmatrix.getdimin(), 0. );
-                    
-                    FloatVector     residual(     incmatrix.getdimin(), 0. );
-                    FloatVector aug_residual( aug_incmatrix.getdimin(), 0. );
-                    
-                    timestamp solver_time;
-
-                    LOG << "...iterative solver" << nl;
-                    
-                    // if(false)
-                    {
-                        LOG << "[0]" << nl;
-                        auto opr  = MatrixCSR(diffmatrix) & MatrixCSR(incmatrix);
-                        LOG << "[1]" << nl;
-                        // auto opl  = MatrixCSR(incmatrix_t) & MatrixCSR(diffmatrix_t);
-                        auto opl  = opr.getTranspose();
-                        LOG << "[2]" << nl;
-                        auto stiffness = (opl) & MatrixCSR(vector_massmatrix) & (opr);
-                        LOG << "[3]" << nl;
-                        auto& stiffness_csr = stiffness; //MatrixCSR( stiffness );
-                        LOG << "[4]" << nl;
-                        
-                        sol.zero();
-
-                        auto diagonal = stiffness.diagonal();
-                        // FloatVector residual( rhs );
-                    
-                        timestamp start = gettimestamp();
-                        ConjugateGradientSolverCSR_SSOR( 
-                            sol.getdimension(), 
-                            sol.raw(), 
-                            rhs.raw(), 
-                            stiffness_csr.getA(), stiffness_csr.getC(), stiffness_csr.getV(),
-                            residual.raw(),
-                            desired_precision,
-                            0,
-                            diagonal.raw(),
-                            1.0
-                        );
-                        timestamp end = gettimestamp();
-                        solver_time = end - start;
-                        LOG << "\t\t\t Time: " << timestamp2measurement( solver_time ) << nl;
-
-                        residual = rhs - stiffness * sol;
-
-                        display_mallinfo();
-
-                    }
-
-                    {
-                        LOG << "[0]" << nl;
-                        auto aug_opr  = MatrixCSR(aug_diffmatrix) & MatrixCSR(aug_incmatrix);
-                        LOG << "[1]" << nl;
-                        // auto aug_opl  = MatrixCSR(aug_incmatrix_t) & MatrixCSR(aug_diffmatrix_t);
-                        auto aug_opl  = aug_opr.getTranspose();
-                        LOG << "[2]" << nl;
-                        auto aug_stiffness = (aug_opl) & MatrixCSR(aug_vector_massmatrix) & (aug_opr);
-                        LOG << "[3]" << nl;
-                        auto& aug_stiffness_csr = aug_stiffness; //MatrixCSR( aug_stiffness );
-                        LOG << "[4]" << nl;
-
-                        aug_sol.zero();
-
-                        auto aug_diagonal = aug_stiffness.diagonal();
-                        // FloatVector aug_residual( aug_rhs );
-                        
-                        timestamp start = gettimestamp();
-                        ConjugateGradientSolverCSR_SSOR( 
-                            aug_sol.getdimension(), 
-                            aug_sol.raw(), 
-                            aug_rhs.raw(), 
-                            aug_stiffness_csr.getA(), aug_stiffness_csr.getC(), aug_stiffness_csr.getV(),
-                            aug_residual.raw(),
-                            desired_precision,
-                            0,
-                            aug_diagonal.raw(),
-                            1.0
-                        );
-                        timestamp end = gettimestamp();
-                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
-
-                        aug_residual = aug_rhs - aug_stiffness * aug_sol;
-
-                        display_mallinfo();
-
-                    }
-
-                
-                    
-                    
-                    LOG << "...compute error and residual:" << nl;
-
-                    FloatVector error     = aug_incmatrix * aug_sol - elevation_matrix * incmatrix * sol;
-                    FloatVector graderror = aug_diffmatrix * ( aug_incmatrix * aug_sol - elevation_matrix * incmatrix * sol );
-                    Float errornorm       = std::sqrt( error * ( aug_scalar_massmatrix * error ) );
-                    Float graderrornorm   = std::sqrt( graderror * ( aug_vector_massmatrix * graderror ) );
-                    Float residualnorm    = residual.norm();
-
-                    LOG << "error:     " << errornorm    << nl;
-                    LOG << "graderror: " << graderrornorm << nl;
-                    LOG << "residual:  " << residualnorm << nl;
-                    LOG << "time:      " << Float( solver_time ) << nl;
-                            
-                    contable << errornorm;
-                    contable << graderrornorm;
-                    contable << residualnorm;
-                    contable << Float( solver_time );
-                    contable << nl;
-                        
-                    contable.lg();
-
-
-                    if( r == 1 ){
-                        
-                        auto computed_grad = diffmatrix * incmatrix * sol;
-                        
-                        fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
-                        VTKWriter vtk( M, fs, getbasename(__FILE__) );
-                        vtk.writeCoordinateBlock();
-                        vtk.writeTopDimensionalCells();
-                        vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
-                        vtk.writeCellVectorData( computed_grad, "gradient_interpolation" , 0.1 );
-                        fs.close();
-                    }
-
-
-                }
-                
-            }
-
-            if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
-            
-            
-
-        } 
+    LOG << "Initial mesh..." << nl;
     
+    MeshSimplicial3D M = FicheraCorner3D();
+    
+    M.check();
+
+    
+    for( int e = 0; e < M.count_edges(); e++ ) {
+        Float D = M.getDiameter(1,e);
+        if( 1.9 < D and D < 2.1 )
+            M.bisect_edge(e); 
+    }
+
+    
+    for( int s = 0; s < M.count_simplices(2); s++ ) 
+    {
+        if( M.getsupersimplices(3,2,s).size() > 1 ) continue;
+        
+        auto midpoint = M.get_midpoint(2,s);
+
+        bool eligible = ( midpoint[0] < 0. );
+
+        if( not eligible ) continue;
+
+        M.set_flag( 2, s, SimplexFlagDirichlet );
+        
+        M.set_flag( 1, M.get_subsimplex( 2, 1, s, 0 ), SimplexFlagDirichlet );
+        M.set_flag( 1, M.get_subsimplex( 2, 1, s, 1 ), SimplexFlagDirichlet );
+        M.set_flag( 1, M.get_subsimplex( 2, 1, s, 2 ), SimplexFlagDirichlet );
+        
+        M.set_flag( 0, M.get_subsimplex( 2, 0, s, 0 ), SimplexFlagDirichlet );
+        M.set_flag( 0, M.get_subsimplex( 2, 0, s, 1 ), SimplexFlagDirichlet );
+        M.set_flag( 0, M.get_subsimplex( 2, 0, s, 2 ), SimplexFlagDirichlet );
+        
     }
     
+    M.check_dirichlet_flags(false);
+
+    // for( int s = 0; s < M.count_simplices(2); s++ ) 
+    // {
+    //     auto mid = M.get_midpoint(2,s);
+    //     bool b = ( mid[0] < 0. );
+    //     if( M.get_flag(d,s) == SimplexFlagDirichlet and b )
+    //         M.set_flag( d, s, SimplexFlagNull );
+    // }
+        
+    M.check_dirichlet_flags(false);
+
     
+    LOG << "Prepare scalar fields for testing..." << nl;
+
+
+    
+
+    
+    
+    
+    
+
+    
+
+    LOG << "Solving Poisson Problem with Neumann boundary conditions" << nl;
+
+    const int min_l = 1; 
+    const int max_l = 2;
+
+    const int min_r = 2;
+    const int max_r = 2;
+
+    const int r_plus = 1;
+    const int w_plus = 1;
+    
+    ConvergenceTable contable("Mass error");
+    
+    contable << "u_error" << "du_error" << "residual" << "time" << nl;
+    
+
+    assert( 0 <= min_l and min_l <= max_l );
+    assert( 0 <= min_r and min_r <= max_r );
+    
+    for( int l = 0; l < min_l; l++ )
+        M.uniformrefinement();
+
+    for( int l = min_l; l <= max_l; l++ ){
+        
+        LOG << "Level: " << l << "/" << max_l << nl;
+        LOG << "# T/F/E/V: " << M.count_tetrahedra() << "/" << M.count_faces() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
+        
+        // if( l != 0 )
+        for( int r = min_r; r <= max_r; r++ ) 
+        {
+            
+            int w = r;
+
+            LOGPRINTF("Polynomial degrees: r=%d w=%d r+=%d w+=%d \n", r, w, r_plus, w_plus );
+            
+            LOG << "...assemble scalar mass matrices" << nl;
+    
+            auto     scalar_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix( M, M.getinnerdimension(), 0, r         , w         , weight_scalar ) );
+            auto aug_scalar_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix( M, M.getinnerdimension(), 0, r + r_plus, w + w_plus, weight_scalar ) );
+
+            LOG << "...assemble vector mass matrix" << nl;
+    
+            auto     vector_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix( M, M.getinnerdimension(), 1, r-1         , w         , weight_vector ) );
+            auto aug_vector_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix( M, M.getinnerdimension(), 1, r-1 + r_plus, w + w_plus, weight_vector ) );
+            
+            LOG << "...assemble differential matrix and transpose" << nl;
+
+            auto     diffmatrix = MatrixCSR( FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r          ) );
+            auto aug_diffmatrix = MatrixCSR( FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r + r_plus ) );
+
+            auto     diffmatrix_t =     diffmatrix.getTranspose();
+            auto aug_diffmatrix_t = aug_diffmatrix.getTranspose();
+
+            LOG << "...assemble inclusion matrix and transpose" << nl;
+    
+            auto     incmatrix = MatrixCSR( FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r          ) );
+            auto aug_incmatrix = MatrixCSR( FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r + r_plus ) );
+            
+            auto     incmatrix_t =     incmatrix.getTranspose();
+            auto aug_incmatrix_t = aug_incmatrix.getTranspose();
+
+            LOG << "...assemble elevation matrix" << nl;
+    
+            auto elevation_matrix = MatrixCSR( FEECBrokenElevationMatrix( M, M.getinnerdimension(), 0, r, r_plus ) );
+
+            display_mallinfo();
+
+            {
+
+                const auto& function_rhs  = parametric_f;
+                
+                LOG << "...interpolate explicit solution and rhs" << nl;
+    
+                FloatVector     interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r,        function_rhs  );
+                FloatVector aug_interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r+r_plus, function_rhs  );
+
+                FloatVector     rhs =     incmatrix_t * (     scalar_massmatrix *     interpol_rhs );
+                FloatVector aug_rhs = aug_incmatrix_t * ( aug_scalar_massmatrix * aug_interpol_rhs );
+
+                FloatVector     sol(     incmatrix.getdimin(), 0. );
+                FloatVector aug_sol( aug_incmatrix.getdimin(), 0. );
+                
+                FloatVector     residual(     incmatrix.getdimin(), 0. );
+                FloatVector aug_residual( aug_incmatrix.getdimin(), 0. );
+                
+                timestamp solver_time;
+
+                LOG << "...iterative solver" << nl;
+                
+                // if(false)
+                {
+                    LOG << "[0]" << nl;
+                    auto opr  = (diffmatrix) & (incmatrix);
+                    LOG << "[1]" << nl;
+                    // auto opl  = MatrixCSR(incmatrix_t) & MatrixCSR(diffmatrix_t);
+                    auto opl  = opr.getTranspose();
+                    LOG << "[2]" << nl;
+                    auto stiffness = (opl) & (vector_massmatrix) & (opr);
+                    LOG << "[3]" << nl;
+                    auto& stiffness_csr = stiffness; //MatrixCSR( stiffness );
+                    LOG << "[4]" << nl;
+                    
+                    sol.zero();
+
+                    auto diagonal = stiffness.diagonal();
+                    // FloatVector residual( rhs );
+                
+                    timestamp start = gettimestamp();
+                    ConjugateGradientSolverCSR_SSOR( 
+                        sol.getdimension(), 
+                        sol.raw(), 
+                        rhs.raw(), 
+                        stiffness_csr.getA(), stiffness_csr.getC(), stiffness_csr.getV(),
+                        residual.raw(),
+                        desired_precision,
+                        0,
+                        diagonal.raw(),
+                        1.0
+                    );
+                    timestamp end = gettimestamp();
+                    solver_time = end - start;
+                    LOG << "\t\t\t Time: " << timestamp2measurement( solver_time ) << nl;
+
+                    residual = rhs - stiffness * sol;
+
+                    display_mallinfo();
+
+                }
+
+                {
+                    LOG << "[0]" << nl;
+                    auto aug_opr  = (aug_diffmatrix) & (aug_incmatrix);
+                    LOG << "[1]" << nl;
+                    // auto aug_opl  = MatrixCSR(aug_incmatrix_t) & MatrixCSR(aug_diffmatrix_t);
+                    auto aug_opl  = aug_opr.getTranspose();
+                    LOG << "[2]" << nl;
+                    auto aug_stiffness = (aug_opl) & (aug_vector_massmatrix) & (aug_opr);
+                    LOG << "[3]" << nl;
+                    auto& aug_stiffness_csr = aug_stiffness; //MatrixCSR( aug_stiffness );
+                    LOG << "[4]" << nl;
+
+                    aug_sol.zero();
+
+                    auto aug_diagonal = aug_stiffness.diagonal();
+                    // FloatVector aug_residual( aug_rhs );
+                    
+                    timestamp start = gettimestamp();
+                    ConjugateGradientSolverCSR_SSOR( 
+                        aug_sol.getdimension(), 
+                        aug_sol.raw(), 
+                        aug_rhs.raw(), 
+                        aug_stiffness_csr.getA(), aug_stiffness_csr.getC(), aug_stiffness_csr.getV(),
+                        aug_residual.raw(),
+                        desired_precision,
+                        0,
+                        aug_diagonal.raw(),
+                        1.0
+                    );
+                    timestamp end = gettimestamp();
+                    LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
+
+                    aug_residual = aug_rhs - aug_stiffness * aug_sol;
+
+                    display_mallinfo();
+
+                }
+
+            
+                
+                
+                LOG << "...compute error and residual:" << nl;
+
+                FloatVector error     = aug_incmatrix * aug_sol - elevation_matrix * incmatrix * sol;
+                FloatVector graderror = aug_diffmatrix * ( aug_incmatrix * aug_sol - elevation_matrix * incmatrix * sol );
+                Float errornorm       = std::sqrt( error * ( aug_scalar_massmatrix * error ) );
+                Float graderrornorm   = std::sqrt( graderror * ( aug_vector_massmatrix * graderror ) );
+                Float residualnorm    = residual.norm();
+
+                LOG << "error:     " << errornorm    << nl;
+                LOG << "graderror: " << graderrornorm << nl;
+                LOG << "residual:  " << residualnorm << nl;
+                LOG << "time:      " << Float( solver_time ) << nl;
+                        
+                contable << errornorm;
+                contable << graderrornorm;
+                contable << residualnorm;
+                contable << Float( solver_time );
+                contable << nl;
+                    
+                contable.lg();
+
+
+                if( r == 1 ){
+                    
+                    auto computed_grad = diffmatrix * incmatrix * sol;
+                    
+                    fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
+                    VTKWriter vtk( M, fs, getbasename(__FILE__) );
+                    vtk.writeCoordinateBlock();
+                    vtk.writeTopDimensionalCells();
+                    vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
+                    vtk.writeCellVectorData( computed_grad, "gradient_interpolation" , 0.1 );
+                    fs.close();
+                }
+
+
+            }
+            
+        }
+
+        if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
+        
+        
+
+    } 
     
     
     LOG << "Finished Unit Test" << nl;
