@@ -273,11 +273,17 @@ MatrixCSR MatrixCSR::getTranspose() const
     std::vector<int>   D( num_entries,  0  );
     std::vector<Float> W( num_entries,  0. );
     
+    std::vector<int>   Z( mat_cols, 0  );
+    
     for( int i = 0; i < num_entries; i++ )
-        B[ D[i] ]++;
+        Z[ matC[i] ]++;
 
     for( int c = 1; c <= mat_cols; c++ )
-        B[c] += B[c-1];
+        B[c] = B[c-1] + Z[c-1];
+
+    assert( B[mat_cols] == num_entries );
+    for( int c = 1; c <= mat_cols; c++ ) assert( B[c-1] <= B[c] );
+    
 
     for( int r = 0; r < mat_rows; r++ ) {
         
@@ -286,19 +292,30 @@ MatrixCSR MatrixCSR::getTranspose() const
             int c = matC[i];
             int v = matV[i];
 
-            int index = --B[c];
-            D[index] = r;
-            W[index] = v;
+            int base = B[c];
+            int index = --Z[c];
+            D[ base + index ] = r;
+            W[ base + index ] = v;
 
+            assert( index  >= 0 );
+            assert( index  <= B[c+1] - B[c] );
+            assert( B[c]   <= base + index );
+            assert( B[c+1] >= base + index );
+            
         }
 
     }
+
+    assert( B[mat_cols] == num_entries );
+    assert( B[0] == 0 );
+    for( int c = 1; c <= mat_cols; c++ ) assert( B[c-1] <= B[c] );
+    
     
     // computations done, create matrix 
 
     sort_and_compress_csrdata(B, D, W );
 
-    return MatrixCSR( mat_cols, mat_rows, A, C, V );
+    return MatrixCSR( mat_cols, mat_rows, B, D, W );
 }
 
 

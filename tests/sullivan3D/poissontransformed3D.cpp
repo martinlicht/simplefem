@@ -229,7 +229,7 @@ int main()
 
         LOG << "Solving Poisson Problem with Neumann boundary conditions" << nl;
 
-        const int min_l = 5; 
+        const int min_l = 1; 
         const int max_l = 5;
 
         const int min_r = 1;
@@ -316,7 +316,7 @@ int main()
 
                     LOG << "...iterative solver" << nl;
                     
-                    if(false)
+                    // if(false)
                     {
                         LOG << "[0]" << nl;
                         auto opr  = diffmatrix & incmatrix;
@@ -360,7 +360,7 @@ int main()
                         LOG << "[0]" << nl;
                         auto aug_opr  = MatrixCSR(aug_diffmatrix) & MatrixCSR(aug_incmatrix);
                         LOG << "[1]" << nl;
-                        auto aug_opl  = MatrixCSR(aug_incmatrix_t) & MatrixCSR(aug_diffmatrix_t);
+                        auto aug_opl  = aug_opr.getTranspose(); //MatrixCSR(aug_incmatrix_t) & MatrixCSR(aug_diffmatrix_t);
                         LOG << "[2]" << nl;
                         auto aug_stiffness = (aug_opl) & MatrixCSR(aug_vector_massmatrix) & (aug_opr);
                         LOG << "[3]" << nl;
