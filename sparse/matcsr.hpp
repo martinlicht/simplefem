@@ -77,6 +77,8 @@ public LinearOperator /* every matrix is a linear operator */
         
         FloatVector diagonal() const;
 
+        MatrixCSR getTranspose() const;
+
         
         /* access and information to internal data */
         

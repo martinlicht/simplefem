@@ -25,6 +25,7 @@ MatrixCSR::MatrixCSR(
 ): LinearOperator( matrix.getdimout(), matrix.getdimin() ),
    A(0), C(0), V(0) 
 {
+    LOG << "[A]";
     matrix.check();
     
     if( not matrix.is_sorted() ) {
@@ -39,6 +40,7 @@ MatrixCSR::MatrixCSR(
     // std::vector<int>   C( numentries, 0  );
     // std::vector<Float> V( numentries, 0. );
     
+    LOG << "[B]";
     A.resize( rows+1     );
     C.resize( numentries );
     V.resize( numentries );
@@ -53,8 +55,10 @@ MatrixCSR::MatrixCSR(
         A[i] += A[i-1];
     }
 
+    LOG << "[C]";
     MatrixCSR::check();
-
+    LOG << "[D]";
+    
 }
 
 MatrixCSR::MatrixCSR( int rows, int columns )
@@ -251,6 +255,51 @@ FloatVector MatrixCSR::diagonal() const
 }
 
 
+static void sort_and_compress_csrdata( std::vector<int>& A, std::vector<int>& C, std::vector<Float>& V );
+
+MatrixCSR MatrixCSR::getTranspose() const 
+{
+    // gather relevant data
+    int mat_rows = getdimout();
+    int mat_cols = getdimin();
+    
+    const int*   matA = getA();
+    const int*   matC = getC();
+    const Float* matV = getV();
+    
+    int num_entries = getnumberofentries();
+    
+    std::vector<int>   B( mat_cols + 1, 0  );
+    std::vector<int>   D( num_entries,  0  );
+    std::vector<Float> W( num_entries,  0. );
+    
+    for( int i = 0; i < num_entries; i++ )
+        B[ D[i] ]++;
+
+    for( int c = 1; c <= mat_cols; c++ )
+        B[c] += B[c-1];
+
+    for( int r = 0; r < mat_rows; r++ ) {
+        
+        for( int i = matA[r]; i < matA[r+1]; i++ ) {
+            
+            int c = matC[i];
+            int v = matV[i];
+
+            int index = --B[c];
+            D[index] = r;
+            W[index] = v;
+
+        }
+
+    }
+    
+    // computations done, create matrix 
+
+    sort_and_compress_csrdata(B, D, W );
+
+    return MatrixCSR( mat_cols, mat_rows, A, C, V );
+}
 
 
 
@@ -550,7 +599,7 @@ MatrixCSR MatrixCSRMultiplication( const MatrixCSR& mat1, const MatrixCSR& mat2 
     int matn_rows = mat1_rows;
     int matn_cols = mat2_cols;
 
-    // create index list A, allocate C and V 
+    LOG << "create index list A, allocate C and V" << nl; 
     
     std::vector<int> A( mat1_rows + 1, 0 );
 
@@ -575,6 +624,8 @@ MatrixCSR MatrixCSRMultiplication( const MatrixCSR& mat1, const MatrixCSR& mat2 
     std::vector<int>   C( A[matn_rows] );
     std::vector<Float> V( A[matn_rows] );
 
+    LOG << "allocated" << nl; 
+    
     // compute entries     
 
     #if defined(_OPENMP)
@@ -602,6 +653,8 @@ MatrixCSR MatrixCSRMultiplication( const MatrixCSR& mat1, const MatrixCSR& mat2 
     
     sort_and_compress_csrdata( A, C, V );
 
+    LOG << "return" << nl; 
+    
     return MatrixCSR( matn_rows, matn_cols, A, C, V );
 
 }
