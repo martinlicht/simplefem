@@ -344,7 +344,33 @@ DenseMatrix Inverse( DenseMatrix A )
 {
     
     assert( A.issquare() );
-    if( A.getdimin() <= 6 ) {
+    if( A.getdimin() == 1 ) {
+        return DenseMatrix( 1, 1, 1. / A(0,0) );
+    } else if( A.getdimin() == 2 ) {
+        return DenseMatrix( 2, 2, { A(1,1), -A(0,1), -A(1,0), A(0,0) } ) / ( A(0,0) * A(1,1) - A(0,1) * A(1,0) );
+    // } else if( A.getdimin() == 3 ) {
+
+    //     Float D_00 = A(1,1) * A(2,2) - A(2,1) * A(1,2);
+    //     Float D_01 = A(1,0) * A(2,2) - A(2,0) * A(1,2);
+    //     Float D_02 = A(1,0) * A(2,1) - A(2,0) * A(1,1);
+        
+    //     Float D_10 = A(0,1) * A(2,2) - A(2,1) * A(0,2);
+    //     Float D_11 = A(0,0) * A(2,2) - A(2,0) * A(0,2);
+    //     Float D_12 = A(0,0) * A(2,1) - A(2,0) * A(0,1);
+        
+    //     Float D_20 = A(0,1) * A(1,2) - A(1,1) * A(0,2);
+    //     Float D_21 = A(0,0) * A(1,2) - A(1,0) * A(0,2);
+    //     Float D_22 = A(0,0) * A(1,1) - A(1,0) * A(0,1);
+
+    //     Float D = A(0,0) * D_00 - A(0,1) * D_01 + A(0,2) * D_02;
+        
+    //     return DenseMatrix( 3, 3, {
+    //        +D_00/D, -D_10/D, +D_20/D,
+    //        -D_01/D, +D_11/D, -D_21/D,
+    //        +D_02/D, -D_12/D, +D_22/D           
+    //     } );
+
+    } else if( A.getdimin() <= 6 ) {
         Inverse_CramersRule_InSitu( A );
     } else {
         Inverse_gauss_InSitu( A );

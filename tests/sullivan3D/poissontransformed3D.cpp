@@ -66,10 +66,11 @@ DenseMatrix jacobian(const FloatVector& vec) {
     Float dy = ( ay >= ax and ay >= az ) ? sy : 0.;
     Float dz = ( az >= ax and az >= ay ) ? sz : 0.;
     
-    Float li  = vec.sumnorm();
+    Float li  = maximum(ax,maximum(ay,az));
     Float lis = li*li;
-    Float l2  = vec.l2norm();
-    Float l2c = l2*l2*l2;
+    Float l2s = x*x + y*y + z*z;
+    Float l2  = sqrt( l2s );
+    Float l2c = l2*l2s;
 
     Float a     = std::exp( - 1. / li ) / Constants::euler;
     Float a_dev = a / lis;
@@ -129,6 +130,27 @@ DenseMatrix parametric_A(const FloatVector& vec)
 
 
 
+DenseMatrix weight_scalar(const FloatVector& vec) 
+{
+    assert( vec.getdimension() == 3 );
+    // return DenseMatrix(1,1, kronecker<int> );
+    return DenseMatrix(1,1,absolute(Determinant(jacobian(vec))));
+};
+        
+DenseMatrix weight_vector(const FloatVector& vec)
+{
+    assert( vec.getdimension() == 3 );
+    // return DenseMatrix(3,3, kronecker<int> );
+    auto jac = jacobian(vec);
+
+    auto det = Determinant(jac);
+
+    auto invjac = Inverse( jac );
+
+    return absolute(det) * invjac * parametric_A(vec) * Transpose(invjac);
+};
+        
+        
 
 
 
@@ -149,31 +171,48 @@ int main()
         MeshSimplicial3D M = FicheraCorner3D();
         
         M.check();
+
         
-        M.automatic_dirichlet_flags();
-
-        M.check_dirichlet_flags();
-
         for( int e = 0; e < M.count_edges(); e++ ) {
-
-            if( M.get_flag(1,e) != SimplexFlagDirichlet ) continue;
-            
             Float D = M.getDiameter(1,e);
-
-            if( 1.9 < D and D < 2.1 ) M.bisect_edge(e); 
-            
+            if( 1.9 < D and D < 2.1 )
+                M.bisect_edge(e); 
         }
 
-        for( int d = 0; d <= 2; d++ )
-        for( int s = 0; s < M.count_simplices(d); s++ ) 
+        
+        for( int s = 0; s < M.count_simplices(2); s++ ) 
         {
-            auto mid = M.get_midpoint(d,s);
-            bool b = ( mid[0] < 0. );
-            if( M.get_flag(d,s) == SimplexFlagDirichlet and b )
-                M.set_flag( d, s, SimplexFlagNull );
-        }
+            if( M.getsupersimplices(3,2,s).size() > 1 ) continue;
             
-        M.check_dirichlet_flags();
+            auto midpoint = M.get_midpoint(2,s);
+
+            bool eligible = ( midpoint[0] < 0. );
+
+            if( not eligible ) continue;
+
+            M.set_flag( 2, s, SimplexFlagDirichlet );
+            
+            M.set_flag( 1, M.get_subsimplex( 2, 1, s, 0 ), SimplexFlagDirichlet );
+            M.set_flag( 1, M.get_subsimplex( 2, 1, s, 1 ), SimplexFlagDirichlet );
+            M.set_flag( 1, M.get_subsimplex( 2, 1, s, 2 ), SimplexFlagDirichlet );
+            
+            M.set_flag( 0, M.get_subsimplex( 2, 0, s, 0 ), SimplexFlagDirichlet );
+            M.set_flag( 0, M.get_subsimplex( 2, 0, s, 1 ), SimplexFlagDirichlet );
+            M.set_flag( 0, M.get_subsimplex( 2, 0, s, 2 ), SimplexFlagDirichlet );
+            
+        }
+        
+        M.check_dirichlet_flags(false);
+
+        // for( int s = 0; s < M.count_simplices(2); s++ ) 
+        // {
+        //     auto mid = M.get_midpoint(2,s);
+        //     bool b = ( mid[0] < 0. );
+        //     if( M.get_flag(d,s) == SimplexFlagDirichlet and b )
+        //         M.set_flag( d, s, SimplexFlagNull );
+        // }
+            
+        M.check_dirichlet_flags(false);
 
         
         LOG << "Prepare scalar fields for testing..." << nl;
@@ -181,29 +220,6 @@ int main()
 
         
 
-        
-        // std::function<DenseMatrix(const FloatVector&)> 
-        auto weight_scalar = 
-            [=](const FloatVector& vec) -> DenseMatrix{
-                assert( vec.getdimension() == 3 );
-                // return DenseMatrix(1,1, kronecker<int> );
-                return DenseMatrix(1,1,absolute(Determinant(jacobian(vec))));
-            };
-        
-        
-        // std::function<DenseMatrix(const FloatVector&)> 
-        auto weight_vector = 
-            [=](const FloatVector& vec) -> DenseMatrix{
-                assert( vec.getdimension() == 3 );
-                // return DenseMatrix(3,3, kronecker<int> );
-                auto jac = jacobian(vec);
-
-                auto det = Determinant(jac);
-
-                auto invjac = Inverse( jac );
-
-                return absolute(det) * invjac * parametric_A(vec) * Transpose(invjac);
-            };
         
         
         
@@ -274,26 +290,10 @@ int main()
         
                 SparseMatrix elevation_matrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 0, r, r_plus );
 
+                display_mallinfo();
+
                 LOG << "...assemble stiffness matrix" << nl;
         
-                LOG << "[0]" << nl;
-                auto opr  = diffmatrix & incmatrix;
-                auto opl  = opr.getTranspose(); 
-                auto stiffness = opl & ( vector_massmatrix & opr );                
-                LOG << "[1]" << nl;
-                stiffness.sortentries();
-                LOG << "[2]" << nl;
-                auto stiffness_csr = MatrixCSR( stiffness );
-                
-                LOG << "[0]" << nl;
-                auto aug_opr  = aug_diffmatrix & aug_incmatrix;
-                auto aug_opl  = aug_opr.getTranspose(); 
-                auto aug_stiffness = aug_opl & ( aug_vector_massmatrix & aug_opr );                
-                LOG << "[1]" << nl;
-                aug_stiffness.sortentries();
-                LOG << "[2]" << nl;
-                auto aug_stiffness_csr = MatrixCSR( aug_stiffness );
-                
                 {
 
                     const auto& function_rhs  = parametric_f;
@@ -309,20 +309,29 @@ int main()
                     FloatVector     sol(     incmatrix.getdimin(), 0. );
                     FloatVector aug_sol( aug_incmatrix.getdimin(), 0. );
                     
-                
+                    FloatVector     residual(     incmatrix.getdimin(), 0. );
+                    FloatVector aug_residual( aug_incmatrix.getdimin(), 0. );
+                    
+                    timestamp solver_time;
 
                     LOG << "...iterative solver" << nl;
                     
-                    timestamp start = gettimestamp();
-                    
-                    assert( stiffness_csr.getC() );
-
-
                     {
+                        LOG << "[0]" << nl;
+                        auto opr  = diffmatrix & incmatrix;
+                        auto opl  = opr.getTranspose(); 
+                        auto stiffness = opl & ( vector_massmatrix & opr );                
+                        LOG << "[1]" << nl;
+                        stiffness.sortentries();
+                        LOG << "[2]" << nl;
+                        auto stiffness_csr = MatrixCSR( stiffness );
+                        
                         sol.zero();
 
                         auto diagonal = stiffness.diagonal();
-                        FloatVector residual( rhs );
+                        // FloatVector residual( rhs );
+                    
+                        timestamp start = gettimestamp();
                         ConjugateGradientSolverCSR_SSOR( 
                             sol.getdimension(), 
                             sol.raw(), 
@@ -334,14 +343,32 @@ int main()
                             diagonal.raw(),
                             1.0
                         );
+                        timestamp end = gettimestamp();
+                        solver_time = end - start;
+                        LOG << "\t\t\t Time: " << timestamp2measurement( solver_time ) << nl;
+
+                        residual = rhs - stiffness * sol;
+
+                        display_mallinfo();
 
                     }
 
                     {
+                        LOG << "[0]" << nl;
+                        auto aug_opr  = aug_diffmatrix & aug_incmatrix;
+                        auto aug_opl  = aug_opr.getTranspose(); 
+                        auto aug_stiffness = aug_opl & ( aug_vector_massmatrix & aug_opr );                
+                        LOG << "[1]" << nl;
+                        aug_stiffness.sortentries();
+                        LOG << "[2]" << nl;
+                        auto aug_stiffness_csr = MatrixCSR( aug_stiffness );
+                
                         aug_sol.zero();
 
                         auto aug_diagonal = aug_stiffness.diagonal();
-                        FloatVector aug_residual( aug_rhs );
+                        // FloatVector aug_residual( aug_rhs );
+                        
+                        timestamp start = gettimestamp();
                         ConjugateGradientSolverCSR_SSOR( 
                             aug_sol.getdimension(), 
                             aug_sol.raw(), 
@@ -353,11 +380,15 @@ int main()
                             aug_diagonal.raw(),
                             1.0
                         );
+                        timestamp end = gettimestamp();
+                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
+
+                        aug_residual = aug_rhs - aug_stiffness * aug_sol;
+
+                        display_mallinfo();
 
                     }
 
-                    timestamp end = gettimestamp();
-                    LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                 
                     
                     
@@ -367,17 +398,17 @@ int main()
                     FloatVector graderror = aug_diffmatrix * ( aug_incmatrix * aug_sol - elevation_matrix * incmatrix * sol );
                     Float errornorm       = std::sqrt( error * ( aug_scalar_massmatrix * error ) );
                     Float graderrornorm   = std::sqrt( graderror * ( aug_vector_massmatrix * graderror ) );
-                    Float residualnorm  = ( rhs - stiffness * sol ).norm();
+                    Float residualnorm    = residual.norm();
 
                     LOG << "error:     " << errornorm    << nl;
                     LOG << "graderror: " << graderrornorm << nl;
                     LOG << "residual:  " << residualnorm << nl;
-                    LOG << "time:      " << Float( end - start ) << nl;
+                    LOG << "time:      " << Float( solver_time ) << nl;
                             
                     contable << errornorm;
                     contable << graderrornorm;
                     contable << residualnorm;
-                    contable << Float( end - start );
+                    contable << Float( solver_time );
                     contable << nl;
                         
                     contable.lg();

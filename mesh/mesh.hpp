@@ -192,7 +192,7 @@ class Mesh
         
         void automatic_dirichlet_flags();
         
-        void check_dirichlet_flags();
+        void check_dirichlet_flags( bool check_for_full_dirichlet = true );
         
         
         /* 

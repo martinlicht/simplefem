@@ -149,10 +149,11 @@ void MatrixCSR::check() const
     // check that A is ascending 
     for( int p = 1; p <= getdimout(); p++ ) assert( A[p-1] <= A[p] );
     
-    // chekc the final values of A and the validity of the values in C and V
+    // check the final values of A and the validity of the values in C and V
     assert( A[ getdimout() ] == V.size() );
     assert( A[ getdimout() ] == C.size() );
     for( int i = 0; i < C.size(); i++ ) assert( 0 <= C[i] && C[i] < getdimin() && std::isfinite( V[i] ) );
+
 }
 
 std::string MatrixCSR::text() const

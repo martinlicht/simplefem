@@ -1,3 +1,7 @@
+
+#include <algorithm> // for shuffle 
+#include <vector>
+
 #include "../basic.hpp"
 #include "matcsr.hpp"
 
@@ -19,14 +23,23 @@ Rainbow::Rainbow( const MatrixCSR& mat )
 
     num_rows = N;
 
+    
     // 1. Determine the number of colors and assign each row its color (F)
 
     num_colors = 1;
 
+    std::vector<int> painting_order( N ); // determine in which orders the colors are assigned
+
+    for( int i = 0; i < N; i++ ) painting_order[i] = i;
+    std::random_shuffle( painting_order.begin(), painting_order.end() );
+
     F = std::vector<int>( N, 0 );
 
-    for( int r = 0; r < N; r++ )
+    for( int p = 0; p < N; p++ )
     {
+        
+        int r = painting_order[p];
+        
         loop:
         for( int c = A[r]; c < A[r+1]; c++ )
         {
