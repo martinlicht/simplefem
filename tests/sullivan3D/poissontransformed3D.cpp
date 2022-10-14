@@ -229,7 +229,7 @@ int main()
 
         LOG << "Solving Poisson Problem with Neumann boundary conditions" << nl;
 
-        const int min_l = 1; 
+        const int min_l = 5; 
         const int max_l = 5;
 
         const int min_r = 1;
@@ -260,6 +260,8 @@ int main()
                 
                 int w = r;
 
+                LOGPRINTF("Polynomial degrees: r=%d w=%d r+=%d w+=%d \n", r, w, r_plus, w_plus );
+                
                 LOG << "...assemble scalar mass matrices" << nl;
         
                 SparseMatrix     scalar_massmatrix = FEECBrokenCoefficientMassMatrix( M, M.getinnerdimension(), 0, r         , w         , weight_scalar );
@@ -292,8 +294,6 @@ int main()
 
                 display_mallinfo();
 
-                LOG << "...assemble stiffness matrix" << nl;
-        
                 {
 
                     const auto& function_rhs  = parametric_f;
@@ -316,10 +316,13 @@ int main()
 
                     LOG << "...iterative solver" << nl;
                     
+                    if(false)
                     {
                         LOG << "[0]" << nl;
                         auto opr  = diffmatrix & incmatrix;
+                        LOG << "[0]" << nl;
                         auto opl  = opr.getTranspose(); 
+                        LOG << "[0]" << nl;
                         auto stiffness = opl & ( vector_massmatrix & opr );                
                         LOG << "[1]" << nl;
                         stiffness.sortentries();
@@ -355,14 +358,15 @@ int main()
 
                     {
                         LOG << "[0]" << nl;
-                        auto aug_opr  = aug_diffmatrix & aug_incmatrix;
-                        auto aug_opl  = aug_opr.getTranspose(); 
-                        auto aug_stiffness = aug_opl & ( aug_vector_massmatrix & aug_opr );                
+                        auto aug_opr  = MatrixCSR(aug_diffmatrix) & MatrixCSR(aug_incmatrix);
                         LOG << "[1]" << nl;
-                        aug_stiffness.sortentries();
+                        auto aug_opl  = MatrixCSR(aug_incmatrix_t) & MatrixCSR(aug_diffmatrix_t);
                         LOG << "[2]" << nl;
-                        auto aug_stiffness_csr = MatrixCSR( aug_stiffness );
-                
+                        auto aug_stiffness = (aug_opl) & MatrixCSR(aug_vector_massmatrix) & (aug_opr);
+                        LOG << "[3]" << nl;
+                        auto& aug_stiffness_csr = aug_stiffness; //MatrixCSR( aug_stiffness );
+                        LOG << "[4]" << nl;
+
                         aug_sol.zero();
 
                         auto aug_diagonal = aug_stiffness.diagonal();
