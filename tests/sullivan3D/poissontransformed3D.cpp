@@ -219,8 +219,8 @@ int main()
         const int min_r = 1;
         const int max_r = 1;
 
-        const int r_plus = 2;
-        const int w_plus = 2;
+        const int r_plus = 1;
+        const int w_plus = 1;
         
         ConvergenceTable contable("Mass error");
         
@@ -276,16 +276,22 @@ int main()
 
                 LOG << "...assemble stiffness matrix" << nl;
         
+                LOG << "[0]" << nl;
                 auto opr  = diffmatrix & incmatrix;
                 auto opl  = opr.getTranspose(); 
                 auto stiffness = opl & ( vector_massmatrix & opr );                
+                LOG << "[1]" << nl;
                 stiffness.sortentries();
+                LOG << "[2]" << nl;
                 auto stiffness_csr = MatrixCSR( stiffness );
                 
+                LOG << "[0]" << nl;
                 auto aug_opr  = aug_diffmatrix & aug_incmatrix;
                 auto aug_opl  = aug_opr.getTranspose(); 
                 auto aug_stiffness = aug_opl & ( aug_vector_massmatrix & aug_opr );                
+                LOG << "[1]" << nl;
                 aug_stiffness.sortentries();
+                LOG << "[2]" << nl;
                 auto aug_stiffness_csr = MatrixCSR( aug_stiffness );
                 
                 {
