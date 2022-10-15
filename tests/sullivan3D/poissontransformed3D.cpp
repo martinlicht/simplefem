@@ -21,6 +21,7 @@
 #include "../../solver/sparsesolver.hpp"
 #include "../../fem/global.elevation.hpp"
 #include "../../fem/global.coefficientmassmatrix.hpp"
+#include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.sullivanincl.hpp"
 #include "../../fem/utilities.hpp"
@@ -29,19 +30,21 @@
 
 Float alpha(const Float x) { 
     Float maxnorm = absolute(x);
-    return std::exp( - 1. / maxnorm ) / Constants::euler;
+    return std::exp( 1 - 1. / maxnorm );
 };
 
 Float alpha_dev(const Float x) { 
     Float maxnorm = absolute(x);
     Float maxnorm_sq = square(maxnorm);            
-    return std::exp( - 1. / maxnorm ) / ( maxnorm_sq * Constants::euler );
+    return std::exp( 1 - 1. / maxnorm ) / ( maxnorm_sq );
 };
+
+const Float B = 2.;
 
 FloatVector trafo(const FloatVector& vec) { 
     assert( vec.getdimension() == 3 );
     
-    return vec + alpha( vec.maxnorm() ) * ( 1./vec.l2norm() - 1./vec.maxnorm() ) * vec;
+    return vec / B + alpha( vec.maxnorm() ) * ( 1./vec.l2norm() - 1./vec.maxnorm()/B ) * vec;
 };
 
         
@@ -72,29 +75,29 @@ DenseMatrix jacobian(const FloatVector& vec) {
     Float l2  = sqrt( l2s );
     Float l2c = l2*l2s;
 
-    Float a     = std::exp( - 1. / li ) / Constants::euler;
+    Float a     = std::exp( 1. - 1. / li );
     Float a_dev = a / lis;
     
     return DenseMatrix( 3, 3, {
-        1. + a * ( 1/l2 - 1/li ) + ( a_dev * sx * dx * ( 1/l2 - 1/li ) + a * ( -x/l2c - sx*dx/lis ) ) * x 
+        1./B + a * ( 1/l2 - 1/li/B ) + ( a_dev * sx * dx * ( 1/l2 - 1/li/B ) + a * ( -x/l2c - sx*dx/lis/B ) ) * x 
         ,
-                                   (                                     a * ( -y/l2c             ) ) * x 
+                                       (                                       a * ( -y/l2c               ) ) * x 
         ,
-                                   (                                     a * ( -z/l2c             ) ) * x 
-        ,
-        //
-                                   (                                     a * ( -x/l2c             ) ) * y 
-        ,
-        1. + a * ( 1/l2 - 1/li ) + ( a_dev * sy * dy * ( 1/l2 - 1/li ) + a * ( -y/l2c - sy*dy/lis ) ) * y 
-        ,
-                                   (                                     a * ( -z/l2c             ) ) * y 
+                                       (                                       a * ( -z/l2c               ) ) * x 
         ,
         //
-                                   (                                     a * ( -x/l2c             ) ) * z 
+                                       (                                       a * ( -x/l2c               ) ) * y 
         ,
-                                   (                                     a * ( -y/l2c             ) ) * z 
+        1./B + a * ( 1/l2 - 1/li/B ) + ( a_dev * sy * dy * ( 1/l2 - 1/li/B ) + a * ( -y/l2c - sy*dy/lis/B ) ) * y 
         ,
-        1. + a * ( 1/l2 - 1/li ) + ( a_dev * sz * dz * ( 1/l2 - 1/li ) + a * ( -z/l2c - sz*dz/lis ) ) * z 
+                                       (                                       a * ( -z/l2c               ) ) * y 
+        ,
+        //
+                                       (                                       a * ( -x/l2c               ) ) * z 
+        ,
+                                       (                                       a * ( -y/l2c               ) ) * z 
+        ,
+        1./B + a * ( 1/l2 - 1/li/B ) + ( a_dev * sz * dz * ( 1/l2 - 1/li/B ) + a * ( -z/l2c - sz*dz/lis/B ) ) * z 
         ,
     });
 };
@@ -153,6 +156,27 @@ DenseMatrix weight_vector(const FloatVector& vec)
         
 
 
+
+FloatVector IncreaseResolution( const MeshSimplicial3D& mesh, const FloatVector& lores )
+{
+    int counter_vertices = mesh.count_vertices();
+    int counter_edges    = mesh.count_edges();
+
+    assert( lores.getdimension() == counter_vertices );
+
+    FloatVector hires( counter_vertices + counter_edges );
+
+    for( int v = 0; v < counter_vertices; v++ ) hires[v] = lores[v];
+
+    for( int e = 0; e < counter_edges; e++ ) {
+        int v0 = mesh.get_edge_vertex(e,0);
+        int v1 = mesh.get_edge_vertex(e,1);
+        Float value = ( lores[v0] + lores[v1] ) / 2.;
+        hires[counter_vertices + e] = value;
+    }
+
+    return hires;
+}
 
 
 
@@ -228,10 +252,10 @@ int main()
     LOG << "Solving Poisson Problem with Neumann boundary conditions" << nl;
 
     const int min_l = 1; 
-    const int max_l = 2;
+    const int max_l = 3;
 
-    const int min_r = 2;
-    const int max_r = 2;
+    const int min_r = 1;
+    const int max_r = 1;
 
     const int r_plus = 1;
     const int w_plus = 1;
@@ -264,11 +288,15 @@ int main()
     
             auto     scalar_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix( M, M.getinnerdimension(), 0, r         , w         , weight_scalar ) );
             auto aug_scalar_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix( M, M.getinnerdimension(), 0, r + r_plus, w + w_plus, weight_scalar ) );
+            // auto     scalar_massmatrix = MatrixCSR( FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r          ) );
+            // auto aug_scalar_massmatrix = MatrixCSR( FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r + r_plus ) );
 
             LOG << "...assemble vector mass matrix" << nl;
     
             auto     vector_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix( M, M.getinnerdimension(), 1, r-1         , w         , weight_vector ) );
             auto aug_vector_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix( M, M.getinnerdimension(), 1, r-1 + r_plus, w + w_plus, weight_vector ) );
+            // auto     vector_massmatrix = MatrixCSR( FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1          ) );
+            // auto aug_vector_massmatrix = MatrixCSR( FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 + r_plus ) );
             
             LOG << "...assemble differential matrix and transpose" << nl;
 
