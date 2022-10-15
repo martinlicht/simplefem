@@ -113,7 +113,7 @@ FloatVector physical_f(const FloatVector& vec)
 
 FloatVector parametric_f(const FloatVector& vec) 
 {
-    return absolute(Determinant(jacobian(vec))) * physical_f( trafo(vec) );
+    return physical_f( trafo(vec) );
 };
 
 
@@ -156,7 +156,7 @@ DenseMatrix weight_vector(const FloatVector& vec)
         
 
 
-// #define IncreaseResolution( M, V) (V)
+
 FloatVector IncreaseResolution( const MeshSimplicial3D& mesh, const FloatVector& lores )
 {
     int counter_vertices = mesh.count_vertices();
@@ -190,8 +190,7 @@ int main()
     
     LOG << "Initial mesh..." << nl;
     
-    // MeshSimplicial3D M = FicheraCorner3D();
-    MeshSimplicial3D M = CrossedBricks3D();
+    MeshSimplicial3D M = FicheraCorner3D();
     
     M.check();
 
@@ -209,7 +208,7 @@ int main()
         
         auto midpoint = M.get_midpoint(2,s);
 
-        bool eligible = ( midpoint[1] < 0. );
+        bool eligible = ( midpoint[0] < 0. );
 
         if( not eligible ) continue;
 
@@ -226,6 +225,17 @@ int main()
     }
     
     M.check_dirichlet_flags(false);
+
+    // for( int s = 0; s < M.count_simplices(2); s++ ) 
+    // {
+    //     auto mid = M.get_midpoint(2,s);
+    //     bool b = ( mid[0] < 0. );
+    //     if( M.get_flag(d,s) == SimplexFlagDirichlet and b )
+    //         M.set_flag( d, s, SimplexFlagNull );
+    // }
+        
+    M.check_dirichlet_flags(false);
+
     
     LOG << "Prepare scalar fields for testing..." << nl;
 
@@ -244,11 +254,19 @@ int main()
     const int min_l = 1; 
     const int max_l = 3;
 
+    const int min_r = 1;
+    const int max_r = 1;
+
+    const int r_plus = 1;
+    const int w_plus = 1;
+    
     ConvergenceTable contable("Mass error");
     
     contable << "u_error" << "du_error" << "residual" << "time" << nl;
     
 
+    assert( 0 <= min_l and min_l <= max_l );
+    assert( 0 <= min_r and min_r <= max_r );
     
     for( int l = 0; l < min_l; l++ )
         M.uniformrefinement();
@@ -258,56 +276,58 @@ int main()
         LOG << "Level: " << l << "/" << max_l << nl;
         LOG << "# T/F/E/V: " << M.count_tetrahedra() << "/" << M.count_faces() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
         
+        // if( l != 0 )
+        for( int r = min_r; r <= max_r; r++ ) 
         {
             
-            int r = 1;
             int w = r;
 
-            LOGPRINTF("Polynomial degrees: r=%d w=%d \n", r, w );
+            LOGPRINTF("Polynomial degrees: r=%d w=%d r+=%d w+=%d \n", r, w, r_plus, w_plus );
             
-            auto inter_M = M;
-            inter_M.uniformrefinement();
-            auto aug_M = inter_M;
-            aug_M.uniformrefinement();
-
             LOG << "...assemble scalar mass matrices" << nl;
     
-            auto     scalar_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix(     M,     M.getinnerdimension(), 0, r, w, weight_scalar ) );
-            auto aug_scalar_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix( aug_M, aug_M.getinnerdimension(), 0, r, w, weight_scalar ) );
-            // auto     scalar_massmatrix = MatrixCSR( FEECBrokenMassMatrix(     M,     M.getinnerdimension(), 0, r ) );
-            // auto aug_scalar_massmatrix = MatrixCSR( FEECBrokenMassMatrix( aug_M, aug_M.getinnerdimension(), 0, r ) );
+            auto     scalar_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix( M, M.getinnerdimension(), 0, r         , w         , weight_scalar ) );
+            auto aug_scalar_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix( M, M.getinnerdimension(), 0, r + r_plus, w + w_plus, weight_scalar ) );
+            // auto     scalar_massmatrix = MatrixCSR( FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r          ) );
+            // auto aug_scalar_massmatrix = MatrixCSR( FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r + r_plus ) );
 
             LOG << "...assemble vector mass matrix" << nl;
     
-            auto     vector_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix(     M,     M.getinnerdimension(), 1, r-1, w-1, weight_vector ) );
-            auto aug_vector_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix( aug_M, aug_M.getinnerdimension(), 1, r-1, w-1, weight_vector ) );
-            // auto     vector_massmatrix = MatrixCSR( FEECBrokenMassMatrix(     M,     M.getinnerdimension(), 1, r-1 ) );
-            // auto aug_vector_massmatrix = MatrixCSR( FEECBrokenMassMatrix( aug_M, aug_M.getinnerdimension(), 1, r-1 ) );
+            auto     vector_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix( M, M.getinnerdimension(), 1, r-1         , w         , weight_vector ) );
+            auto aug_vector_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix( M, M.getinnerdimension(), 1, r-1 + r_plus, w + w_plus, weight_vector ) );
+            // auto     vector_massmatrix = MatrixCSR( FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1          ) );
+            // auto aug_vector_massmatrix = MatrixCSR( FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 + r_plus ) );
             
             LOG << "...assemble differential matrix and transpose" << nl;
 
-            auto     diffmatrix = MatrixCSR( FEECBrokenDiffMatrix(     M,     M.getinnerdimension(), 0, r ) );
-            auto aug_diffmatrix = MatrixCSR( FEECBrokenDiffMatrix( aug_M, aug_M.getinnerdimension(), 0, r ) );
+            auto     diffmatrix = MatrixCSR( FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r          ) );
+            auto aug_diffmatrix = MatrixCSR( FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r + r_plus ) );
 
             auto     diffmatrix_t =     diffmatrix.getTranspose();
             auto aug_diffmatrix_t = aug_diffmatrix.getTranspose();
 
             LOG << "...assemble inclusion matrix and transpose" << nl;
     
-            auto     incmatrix = MatrixCSR( FEECSullivanInclusionMatrix(     M,     M.getinnerdimension(), 0, r ) );
-            auto aug_incmatrix = MatrixCSR( FEECSullivanInclusionMatrix( aug_M, aug_M.getinnerdimension(), 0, r ) );
+            auto     incmatrix = MatrixCSR( FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r          ) );
+            auto aug_incmatrix = MatrixCSR( FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r + r_plus ) );
             
             auto     incmatrix_t =     incmatrix.getTranspose();
             auto aug_incmatrix_t = aug_incmatrix.getTranspose();
 
-            // display_mallinfo();
+            LOG << "...assemble elevation matrix" << nl;
+    
+            auto elevation_matrix = MatrixCSR( FEECBrokenElevationMatrix( M, M.getinnerdimension(), 0, r, r_plus ) );
+
+            display_mallinfo();
 
             {
 
+                const auto& function_rhs  = parametric_f;
+                
                 LOG << "...interpolate explicit solution and rhs" << nl;
     
-                FloatVector     interpol_rhs  = Interpolation(     M,     M.getinnerdimension(), 0, r, parametric_f  );
-                FloatVector aug_interpol_rhs  = Interpolation( aug_M, aug_M.getinnerdimension(), 0, r, parametric_f  );
+                FloatVector     interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r,        function_rhs  );
+                FloatVector aug_interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r+r_plus, function_rhs  );
 
                 FloatVector     rhs =     incmatrix_t * (     scalar_massmatrix *     interpol_rhs );
                 FloatVector aug_rhs = aug_incmatrix_t * ( aug_scalar_massmatrix * aug_interpol_rhs );
@@ -322,6 +342,7 @@ int main()
 
                 LOG << "...iterative solver" << nl;
                 
+                // if(false)
                 {
                     LOG << "[0]" << nl;
                     auto opr  = (diffmatrix) & (incmatrix);
@@ -357,7 +378,7 @@ int main()
 
                     residual = rhs - stiffness * sol;
 
-                    // display_mallinfo();
+                    display_mallinfo();
 
                 }
 
@@ -395,7 +416,7 @@ int main()
 
                     aug_residual = aug_rhs - aug_stiffness * aug_sol;
 
-                    // display_mallinfo();
+                    display_mallinfo();
 
                 }
 
@@ -404,10 +425,8 @@ int main()
                 
                 LOG << "...compute error and residual:" << nl;
 
-                FloatVector foo_sol = IncreaseResolution( inter_M, IncreaseResolution( M, sol ) );
-
-                FloatVector error     = aug_incmatrix  * ( aug_sol - foo_sol );
-                FloatVector graderror = aug_diffmatrix * error;
+                FloatVector error     = aug_incmatrix * aug_sol - elevation_matrix * incmatrix * sol;
+                FloatVector graderror = aug_diffmatrix * ( aug_incmatrix * aug_sol - elevation_matrix * incmatrix * sol );
                 Float errornorm       = std::sqrt( error * ( aug_scalar_massmatrix * error ) );
                 Float graderrornorm   = std::sqrt( graderror * ( aug_vector_massmatrix * graderror ) );
                 Float residualnorm    = residual.norm();
