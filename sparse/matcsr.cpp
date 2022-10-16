@@ -40,9 +40,13 @@ MatrixCSR::MatrixCSR(
 {
     matrix.check();
     
+    LOG << "Sorting CCO -> CSR: " << matrix.getnumberofentries() << nl;
+
     if( not matrix.is_sorted() ) {
         matrix.sortandcompressentries();
     }
+    
+    LOG << "Allocating CCO -> CSR: " << matrix.getnumberofentries() << nl;
     
     int rows       = matrix.getdimout();
     int columns    = matrix.getdimin();
@@ -65,6 +69,8 @@ MatrixCSR::MatrixCSR(
     for( int i = 1; i < A.size(); i++ ){
         A[i] += A[i-1];
     }
+
+    LOG << "DONE CCO -> CSR: " << matrix.getnumberofentries() << nl;
 
     MatrixCSR::check();
     
