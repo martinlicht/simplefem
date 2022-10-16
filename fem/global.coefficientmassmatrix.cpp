@@ -118,7 +118,7 @@ SparseMatrix FEECBrokenCoefficientMassMatrix( const Mesh& mesh, int n, int k, in
 
     }
 
-    LOG << "Finished Sparse Matrix entries\n";
+    LOG << "Finished Sparse Matrix entries: " << num_entries << "\n";
     
     return ret;
 }
