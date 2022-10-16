@@ -2925,6 +2925,54 @@ void MeshSimplicial3D::merge( const MeshSimplicial3D& mesh )
 
 
 
+
+
+
+std::string MeshSimplicial3D::outputTikZ() const
+{
+    std::ostringstream os;
+    
+    const auto& coords = getcoordinates();
+    
+    for( int n = 0; n < coords.getnumber(); n++ )
+    {
+        os << "\\coordinate (V" << n << ")  at ( ";
+        for( int d = 0; d < coords.getdimension(); d++ )
+        {
+           os << coords.getdata(n,d) << ( d == coords.getdimension()-1 ? "" : ", ");
+        }
+        
+        os << ");" << nl;
+        
+    }
+    
+    for( int t = 0; t < count_simplices(3); t++ )
+    {
+        os << "\\draw[join=round,fill=grey] ";
+        os << "(V" << get_subsimplex(3,0,t,0) << ") -- ";
+        os << "(" << get_subsimplex(3,0,t,1) << ") -- ";
+        os << "(" << get_subsimplex(3,0,t,2) << ") -- ";
+        os << "(" << get_subsimplex(3,0,t,3) << ") -- ";
+        os << "cycle;" << nl;
+    }
+    
+    return os.str();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #include "mesh.simplicial3D.br.cxx"
 
 #include "mesh.simplicial3D.ur.cxx"

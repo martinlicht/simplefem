@@ -323,6 +323,11 @@ class MeshSimplicial3D
 
         int get_oldest_edge( int t ) const;
         
+
+
+        /* TikZ */
+        
+        std::string outputTikZ() const;
         
     private:
 
