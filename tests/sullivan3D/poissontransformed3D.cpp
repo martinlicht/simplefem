@@ -243,8 +243,8 @@ int main()
 
     LOG << "Solving Poisson Problem with Neumann boundary conditions" << nl;
 
-    const int min_l = 1; 
-    const int max_l = 3;
+    const int min_l = 3; 
+    const int max_l = 5;
 
     ConvergenceTable contable("Mass error");
     
@@ -281,8 +281,8 @@ int main()
 
             LOG << "...assemble vector mass matrix" << nl;
     
-            auto     vector_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix(     M,     M.getinnerdimension(), 1, r-1, w-1, weight_vector ) );
-            auto aug_vector_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix( aug_M, aug_M.getinnerdimension(), 1, r-1, w-1, weight_vector ) );
+            auto     vector_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix(     M,     M.getinnerdimension(), 1, r-1, w, weight_vector ) );
+            auto aug_vector_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix( aug_M, aug_M.getinnerdimension(), 1, r-1, w, weight_vector ) );
             // auto     vector_massmatrix = MatrixCSR( FEECBrokenMassMatrix(     M,     M.getinnerdimension(), 1, r-1 ) );
             // auto aug_vector_massmatrix = MatrixCSR( FEECBrokenMassMatrix( aug_M, aug_M.getinnerdimension(), 1, r-1 ) );
             
@@ -291,16 +291,16 @@ int main()
             auto     diffmatrix = MatrixCSR( FEECBrokenDiffMatrix(     M,     M.getinnerdimension(), 0, r ) );
             auto aug_diffmatrix = MatrixCSR( FEECBrokenDiffMatrix( aug_M, aug_M.getinnerdimension(), 0, r ) );
 
-            auto     diffmatrix_t =     diffmatrix.getTranspose();
-            auto aug_diffmatrix_t = aug_diffmatrix.getTranspose();
+            // auto     diffmatrix_t =     diffmatrix.getTranspose();
+            // auto aug_diffmatrix_t = aug_diffmatrix.getTranspose();
 
             LOG << "...assemble inclusion matrix and transpose" << nl;
     
             auto     incmatrix = MatrixCSR( FEECSullivanInclusionMatrix(     M,     M.getinnerdimension(), 0, r ) );
             auto aug_incmatrix = MatrixCSR( FEECSullivanInclusionMatrix( aug_M, aug_M.getinnerdimension(), 0, r ) );
             
-            auto     incmatrix_t =     incmatrix.getTranspose();
-            auto aug_incmatrix_t = aug_incmatrix.getTranspose();
+            // auto     incmatrix_t =     incmatrix.getTranspose();
+            // auto aug_incmatrix_t = aug_incmatrix.getTranspose();
 
             // display_mallinfo();
 
@@ -311,8 +311,8 @@ int main()
                 FloatVector     interpol_rhs  = Interpolation(     M,     M.getinnerdimension(), 0, r, parametric_f  );
                 FloatVector aug_interpol_rhs  = Interpolation( aug_M, aug_M.getinnerdimension(), 0, r, parametric_f  );
 
-                FloatVector     rhs =     incmatrix_t * (     scalar_massmatrix *     interpol_rhs );
-                FloatVector aug_rhs = aug_incmatrix_t * ( aug_scalar_massmatrix * aug_interpol_rhs );
+                FloatVector     rhs =     incmatrix.getTranspose() * (     scalar_massmatrix *     interpol_rhs );
+                FloatVector aug_rhs = aug_incmatrix.getTranspose() * ( aug_scalar_massmatrix * aug_interpol_rhs );
 
                 FloatVector     sol(     incmatrix.getdimin(), 0. );
                 FloatVector aug_sol( aug_incmatrix.getdimin(), 0. );
