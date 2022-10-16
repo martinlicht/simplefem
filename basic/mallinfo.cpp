@@ -28,6 +28,34 @@ void display_mallinfo()
     printf("Glibc version: %d %d\n", __GLIBC__, __GLIBC_MINOR__ );
 }
 
+#elif defined(__linux__) && (__GLIBC__ >= 2) and (__GLIBC_MINOR__ >= 15)
+
+#include <malloc.h>
+#include <stdio.h>
+
+void display_mallinfo()
+{
+    struct mallinfo mi;
+
+    mi = mallinfo();
+
+    printf("Heap usage statistics:\n");
+
+    printf("Total non-mmapped bytes (arena):       %d\t\t%.3f GiB\n", (int)mi.arena,    mi.arena    / 1073741824. );
+    printf("# of free chunks (ordblks):            %d\n",             (int)mi.ordblks                             );
+    printf("# of free fastbin blocks (smblks):     %d\n",             (int)mi.smblks                              );
+    printf("# of mapped regions (hblks):           %d\n",             (int)mi.hblks                               );
+    printf("Bytes in mapped regions (hblkhd):      %d\t\t%.3f GiB\n", (int)mi.hblkhd,   mi.hblkhd   / 1073741824. );
+    printf("Max. total allocated space (usmblks):  %d\t\t%.3f GiB\n", (int)mi.usmblks,  mi.usmblks  / 1073741824. );
+    printf("Free bytes held in fastbins (fsmblks): %d\t\t%.3f GiB\n", (int)mi.fsmblks,  mi.fsmblks  / 1073741824. );
+    printf("Total allocated space (uordblks):      %d\t\t%.3f GiB\n", (int)mi.uordblks, mi.uordblks / 1073741824. );
+    printf("Total free space (fordblks):           %d\t\t%.3f GiB\n", (int)mi.fordblks, mi.fordblks / 1073741824. );
+    printf("Topmost releasable block (keepcost):   %d\t\t%.3f GiB\n", (int)mi.keepcost, mi.keepcost / 1073741824. );
+
+    malloc_stats();
+    printf("Glibc version: %d %d\n", __GLIBC__, __GLIBC_MINOR__ );
+}
+
 #else 
 
 #include <stdio.h>
