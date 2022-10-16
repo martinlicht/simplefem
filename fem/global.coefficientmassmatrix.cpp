@@ -49,11 +49,11 @@ SparseMatrix FEECBrokenCoefficientMassMatrix( const Mesh& mesh, int n, int k, in
     // - coefficients of Lagrange polynomials
     // mass matrices 
 
-    auto lpbcs = InterpolationPointsInBarycentricCoordinates( n, w );
+    const auto lpbcs = InterpolationPointsInBarycentricCoordinates( n, w );
 
-    auto lpcoeff = Inverse( PointValuesOfMonomials( w, lpbcs ) );
+    const auto lpcoeff = Inverse( PointValuesOfMonomials( w, lpbcs ) );
     
-    auto polymassmatrix_per_point = polynomialmassmatrices_per_lagrangepoint( n, r, w );
+    const auto polymassmatrix_per_point = polynomialmassmatrices_per_lagrangepoint( n, r, w );
     
     
     // loop over the simplices and compute the mass matrices
@@ -64,8 +64,6 @@ SparseMatrix FEECBrokenCoefficientMassMatrix( const Mesh& mesh, int n, int k, in
     for( int s = 0; s < num_simplices; s++ )
     {
         
-        DenseMatrix full_element_matrix( localdim, localdim, 0. );
-
         // assemble some data for the element 
         // - measure 
         // - barycentric coordinates 
@@ -83,6 +81,8 @@ SparseMatrix FEECBrokenCoefficientMassMatrix( const Mesh& mesh, int n, int k, in
         // compute the mass matrix contribution 
         // for each lagrange point 
         
+        DenseMatrix full_element_matrix( localdim, localdim, 0. );
+
         for( int p = 0; p < polymassmatrix_per_point.size(); p++ )
         {
             DenseMatrix matrix_at_point = generator( lpeucl.getcolumn(p) );
@@ -103,20 +103,22 @@ SparseMatrix FEECBrokenCoefficientMassMatrix( const Mesh& mesh, int n, int k, in
         
         // DONE ... now list everything.
 
-        for( int i = 0; i < localdim; i++ )
-        for( int j = 0; j < localdim; j++ )
+        for( int row = 0; row < localdim; row++ )
+        for( int col = 0; col < localdim; col++ )
         {
-            int index_of_entry = s * localdim * localdim + i * localdim + j;
+            int index_of_entry = s * localdim * localdim + row * localdim + col;
             
             SparseMatrix::MatrixEntry entry;
-            entry.row    = s * localdim + i;
-            entry.column = s * localdim + j;
-            entry.value  = full_element_matrix( i, j );
+            entry.row    = s * localdim + row;
+            entry.column = s * localdim + col;
+            entry.value  = full_element_matrix( row, col );
             
             ret.setentry( index_of_entry, entry );
         }
 
     }
+
+    LOG << "Finished Sparse Matrix entries\n";
     
     return ret;
 }

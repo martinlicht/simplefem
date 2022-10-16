@@ -21,6 +21,7 @@
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/iterativesolver.hpp"
 #include "../../solver/sparsesolver.hpp"
+#include "../../sparse/rainbow.hpp"
 #include "../../fem/global.elevation.hpp"
 #include "../../fem/global.coefficientmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
@@ -33,13 +34,13 @@
 Float alpha(const Float x) { 
     Float maxnorm = absolute(x);
     return std::exp( 1 - 1. / maxnorm );
-};
+}
 
 Float alpha_dev(const Float x) { 
     Float maxnorm = absolute(x);
     Float maxnorm_sq = square(maxnorm);            
     return std::exp( 1 - 1. / maxnorm ) / ( maxnorm_sq );
-};
+}
 
 const Float B = 2.;
 
@@ -47,7 +48,7 @@ FloatVector trafo(const FloatVector& vec) {
     assert( vec.getdimension() == 3 );
     
     return vec / B + alpha( vec.maxnorm() ) * ( 1./vec.l2norm() - 1./vec.maxnorm()/B ) * vec;
-};
+}
 
         
 DenseMatrix jacobian(const FloatVector& vec) { 
@@ -102,7 +103,7 @@ DenseMatrix jacobian(const FloatVector& vec) {
         1./B + a * ( 1/l2 - 1/li/B ) + ( a_dev * sz * dz * ( 1/l2 - 1/li/B ) + a * ( -z/l2c - sz*dz/lis/B ) ) * z 
         ,
     });
-};
+}
 
         
 FloatVector physical_f(const FloatVector& vec) 
@@ -111,12 +112,12 @@ FloatVector physical_f(const FloatVector& vec)
     return FloatVector({ 
         1.
         });
-};
+}
 
 FloatVector parametric_f(const FloatVector& vec) 
 {
     return absolute(Determinant(jacobian(vec))) * physical_f( trafo(vec) );
-};
+}
 
 
 DenseMatrix physical_A(const FloatVector& vec) 
@@ -124,12 +125,12 @@ DenseMatrix physical_A(const FloatVector& vec)
     assert( vec.getdimension() == 3 );
     Float scalar = vec.l2norm() > 0.5 ? 1. : 2. ;
     return scalar * DenseMatrix(3,3, kronecker<int> );
-};
+}
 
 DenseMatrix parametric_A(const FloatVector& vec) 
 {
     return physical_A( trafo(vec) );
-};
+}
 
 
 
@@ -140,7 +141,7 @@ DenseMatrix weight_scalar(const FloatVector& vec)
     assert( vec.getdimension() == 3 );
     // return DenseMatrix(1,1, kronecker<int> );
     return DenseMatrix(1,1,absolute(Determinant(jacobian(vec))));
-};
+}
         
 DenseMatrix weight_vector(const FloatVector& vec)
 {
@@ -153,12 +154,11 @@ DenseMatrix weight_vector(const FloatVector& vec)
     auto invjac = Inverse( jac );
 
     return absolute(det) * invjac * parametric_A(vec) * Transpose(invjac);
-};
+}
         
         
 
 
-// #define IncreaseResolution( M, V) (V)
 FloatVector IncreaseResolution( const MeshSimplicial3D& mesh, const FloatVector& lores )
 {
     int counter_vertices = mesh.count_vertices();
@@ -262,6 +262,8 @@ int main()
         
         {
             
+            display_mallinfo();
+
             int r = 1;
             int w = r;
 
@@ -341,8 +343,10 @@ int main()
                     auto diagonal = stiffness.diagonal();
                     // FloatVector residual( rhs );
                 
+                    Rainbow rainbow( stiffness );
+
                     timestamp start = gettimestamp();
-                    ConjugateGradientSolverCSR_SSOR( 
+                    ConjugateGradientSolverCSR_Rainbow( 
                         sol.getdimension(), 
                         sol.raw(), 
                         rhs.raw(), 
@@ -351,7 +355,8 @@ int main()
                         desired_precision,
                         0,
                         diagonal.raw(),
-                        1.0
+                        1.0,
+                        rainbow.num_colors, rainbow.F.data(), rainbow.B.data(), rainbow.R.data()
                     );
                     timestamp end = gettimestamp();
                     solver_time = end - start;
@@ -375,13 +380,16 @@ int main()
                     auto& aug_stiffness_csr = aug_stiffness; //MatrixCSR( aug_stiffness );
                     LOG << "[4]" << nl;
 
-                    aug_sol.zero();
+                    // aug_sol.zero();
+                    aug_sol = IncreaseResolution( inter_M, IncreaseResolution( M, sol ) );
 
                     auto aug_diagonal = aug_stiffness.diagonal();
                     // FloatVector aug_residual( aug_rhs );
                     
+                    Rainbow rainbow( aug_stiffness );
+
                     timestamp start = gettimestamp();
-                    ConjugateGradientSolverCSR_SSOR( 
+                    ConjugateGradientSolverCSR_Rainbow( 
                         aug_sol.getdimension(), 
                         aug_sol.raw(), 
                         aug_rhs.raw(), 
@@ -390,7 +398,8 @@ int main()
                         desired_precision,
                         0,
                         aug_diagonal.raw(),
-                        1.0
+                        1.0,
+                        rainbow.num_colors, rainbow.F.data(), rainbow.B.data(), rainbow.R.data()
                     );
                     timestamp end = gettimestamp();
                     LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
