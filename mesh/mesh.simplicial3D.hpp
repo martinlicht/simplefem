@@ -327,7 +327,7 @@ class MeshSimplicial3D
 
         /* TikZ */
         
-        std::string outputTikZ() const;
+        std::string outputTikZ( bool boundary_only = false ) const;
         
     private:
 

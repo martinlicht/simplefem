@@ -4,6 +4,8 @@
 
 #include <cmath>
 
+#include <iostream>
+
 #include <algorithm>
 #include <fstream>
 #include <vector>
@@ -234,7 +236,7 @@ int main()
 
     
     
-    
+    std::cout << M.outputTikZ(true);
     
 
     
