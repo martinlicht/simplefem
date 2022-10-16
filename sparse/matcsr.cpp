@@ -21,6 +21,19 @@ MatrixCSR::MatrixCSR(
 
 
 MatrixCSR::MatrixCSR( 
+    int rows,
+    int columns,
+    const std::vector<int>&& A, 
+    const std::vector<int>&& C, 
+    const std::vector<Float>&& V
+): LinearOperator( rows, columns ),
+   A(std::move(A)), C(std::move(C)), V(std::move(V)) 
+{
+    MatrixCSR::check();
+}
+
+
+MatrixCSR::MatrixCSR( 
     const SparseMatrix& matrix
 ): LinearOperator( matrix.getdimout(), matrix.getdimin() ),
    A(0), C(0), V(0) 
@@ -311,7 +324,7 @@ MatrixCSR MatrixCSR::getTranspose() const
 
     sort_and_compress_csrdata(B, D, W );
 
-    return MatrixCSR( mat_cols, mat_rows, B, D, W );
+    return MatrixCSR( mat_cols, mat_rows, std::move(B), std::move(D), std::move(W) );
 }
 
 
@@ -512,6 +525,8 @@ static void sort_and_compress_csrdata( std::vector<int>& A, std::vector<int>& C,
 
     }
 
+    nnz.clear(); // NOTE: just to free some memory
+
 
     for( int r = 0; r < num_rows; r++ )
     for( int i = newA[r]+1; i < newA[r+1]; i++ ) 
@@ -586,7 +601,7 @@ MatrixCSR MatrixCSRAddition( const MatrixCSR& mat1, const MatrixCSR& mat2, Float
 
     sort_and_compress_csrdata(A, C, V );
 
-    return MatrixCSR( matn_rows, matn_cols, A, C, V );
+    return MatrixCSR( matn_rows, matn_cols, std::move(A), std::move(C), std::move(V) );
 
 }
 
@@ -668,7 +683,7 @@ MatrixCSR MatrixCSRMultiplication( const MatrixCSR& mat1, const MatrixCSR& mat2 
 
     LOG << "return" << nl; 
     
-    return MatrixCSR( matn_rows, matn_cols, A, C, V );
+    return MatrixCSR( matn_rows, matn_cols, std::move(A), std::move(C), std::move(V) );
 
 }
 

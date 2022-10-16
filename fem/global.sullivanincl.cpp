@@ -75,6 +75,18 @@ SparseMatrix FEECSullivanInclusionMatrix( const Mesh& mesh, int n, int k, int r 
     std::vector< std::vector<IndexMap> > subsimplex_inclusions( n+1 );
     for( auto d : IndexRange(0,n) )
         subsimplex_inclusions[d] = generateSigmas( IndexRange(0,d), IndexRange(0,n) );
+
+
+    // for auxiliary purposes, compute the column offsets 
+    std::vector<int> column_offset( n+1, 0 );
+    for( int d = 1; d <= n; d++ )
+        column_offset[d] = column_offset[d-1] + mesh.count_simplices(d-1) * lists_of_sullivan_indices[d-1].size();
+
+    // for auxiliary purposes, compute the entries offsets 
+    std::vector<int> entries_offset( n+1, 0 );
+    for( int d = 1; d <= n; d++ )
+        entries_offset[d] = entries_offset[d-1] + binomial_integer(n+1,d) * lists_of_sullivan_indices[d-1].size()  * num_volumes; // 
+
     
     for( int d  = 0; d  <= n;                          d++ )       // go over all the subsimplex dimensions
     for( int fi = 0; fi  < binomial_integer(n+1,d+1); fi++ )       // go over all the d dimensional subsimplices 
@@ -148,9 +160,7 @@ SparseMatrix FEECSullivanInclusionMatrix( const Mesh& mesh, int n, int k, int r 
                        + 
                        index_sigma_vol;
 
-        int colindex = sum_int( d-1, 
-                        [&mesh,&lists_of_sullivan_indices](int i) -> int { return mesh.count_simplices(i) * lists_of_sullivan_indices[i].size(); } 
-                       )
+        int colindex = column_offset[d]  //sum_int( d-1, [&mesh,&lists_of_sullivan_indices](int i) -> int { return mesh.count_simplices(i) * lists_of_sullivan_indices[i].size(); } )
                        + 
                        index_fi * lists_of_sullivan_indices[d].size()
                        +
@@ -159,9 +169,7 @@ SparseMatrix FEECSullivanInclusionMatrix( const Mesh& mesh, int n, int k, int r 
 
         Float value  = 1.;
 
-        int index_of_entry = sum_int( d-1, 
-                                [ &lists_of_sullivan_indices, n ](int c) -> int { return binomial_integer(n+1,c+1) * lists_of_sullivan_indices[c].size(); }
-                             ) * num_volumes
+        int index_of_entry = entries_offset[d] // sum_int( d-1, [ &lists_of_sullivan_indices, n ](int c) -> int { return binomial_integer(n+1,c+1) * lists_of_sullivan_indices[c].size(); } ) * num_volumes
                              +
                              fi * lists_of_sullivan_indices[d].size() * num_volumes
                              +

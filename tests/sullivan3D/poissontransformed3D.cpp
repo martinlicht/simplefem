@@ -243,7 +243,7 @@ int main()
 
     LOG << "Solving Poisson Problem with Neumann boundary conditions" << nl;
 
-    const int min_l = 3; 
+    const int min_l = 1; 
     const int max_l = 5;
 
     ConvergenceTable contable("Mass error");
@@ -302,7 +302,7 @@ int main()
             // auto     incmatrix_t =     incmatrix.getTranspose();
             // auto aug_incmatrix_t = aug_incmatrix.getTranspose();
 
-            // display_mallinfo();
+            display_mallinfo();
 
             {
 
@@ -359,7 +359,7 @@ int main()
 
                     residual = rhs - stiffness * sol;
 
-                    // display_mallinfo();
+                    display_mallinfo();
 
                 }
 
@@ -397,7 +397,7 @@ int main()
 
                     aug_residual = aug_rhs - aug_stiffness * aug_sol;
 
-                    // display_mallinfo();
+                    display_mallinfo();
 
                 }
 

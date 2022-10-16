@@ -36,6 +36,11 @@ public LinearOperator /* every matrix is a linear operator */
                             const std::vector<int>& C, 
                             const std::vector<Float>& V );
 
+        explicit MatrixCSR( int rows, int columns, 
+                            const std::vector<int>&& A, 
+                            const std::vector<int>&& C, 
+                            const std::vector<Float>&& V );
+
         explicit MatrixCSR( const SparseMatrix& mat );
 
         explicit MatrixCSR( int rows, int columns );
