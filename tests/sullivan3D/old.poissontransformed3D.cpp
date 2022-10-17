@@ -252,12 +252,11 @@ int main()
     LOG << "Solving Poisson Problem with Neumann boundary conditions" << nl;
 
     const int min_l = 1; 
-    const int max_l = 5;
+    const int max_l = 3;
 
-    std::vector<MeshSimplicial3D>    meshes;
-    std::vector<FloatVector>         solutions;
-    std::vector<ConvergenceTable>    contables;
+    ConvergenceTable contable("Mass error");
     
+    contable << "u_error" << "du_error" << "residual" << "time" << nl;
     
 
     
@@ -278,21 +277,40 @@ int main()
 
             LOGPRINTF("Polynomial degrees: r=%d w=%d \n", r, w );
             
+            auto& inter_M = M;
+            // inter_M.uniformrefinement();
+            auto aug_M = inter_M;
+            aug_M.uniformrefinement();
+
             LOG << "...assemble scalar mass matrices" << nl;
     
             auto     scalar_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix(     M,     M.getinnerdimension(), 0, r, w, weight_scalar ) );
+            auto aug_scalar_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix( aug_M, aug_M.getinnerdimension(), 0, r, w, weight_scalar ) );
+            // auto     scalar_massmatrix = MatrixCSR( FEECBrokenMassMatrix(     M,     M.getinnerdimension(), 0, r ) );
+            // auto aug_scalar_massmatrix = MatrixCSR( FEECBrokenMassMatrix( aug_M, aug_M.getinnerdimension(), 0, r ) );
 
             LOG << "...assemble vector mass matrix" << nl;
     
             auto     vector_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix(     M,     M.getinnerdimension(), 1, r-1, w, weight_vector ) );
+            auto aug_vector_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix( aug_M, aug_M.getinnerdimension(), 1, r-1, w, weight_vector ) );
+            // auto     vector_massmatrix = MatrixCSR( FEECBrokenMassMatrix(     M,     M.getinnerdimension(), 1, r-1 ) );
+            // auto aug_vector_massmatrix = MatrixCSR( FEECBrokenMassMatrix( aug_M, aug_M.getinnerdimension(), 1, r-1 ) );
             
             LOG << "...assemble differential matrix and transpose" << nl;
 
             auto     diffmatrix = MatrixCSR( FEECBrokenDiffMatrix(     M,     M.getinnerdimension(), 0, r ) );
+            auto aug_diffmatrix = MatrixCSR( FEECBrokenDiffMatrix( aug_M, aug_M.getinnerdimension(), 0, r ) );
+
+            // auto     diffmatrix_t =     diffmatrix.getTranspose();
+            // auto aug_diffmatrix_t = aug_diffmatrix.getTranspose();
 
             LOG << "...assemble inclusion matrix and transpose" << nl;
     
             auto     incmatrix = MatrixCSR( FEECSullivanInclusionMatrix(     M,     M.getinnerdimension(), 0, r ) );
+            auto aug_incmatrix = MatrixCSR( FEECSullivanInclusionMatrix( aug_M, aug_M.getinnerdimension(), 0, r ) );
+            
+            // auto     incmatrix_t =     incmatrix.getTranspose();
+            // auto aug_incmatrix_t = aug_incmatrix.getTranspose();
 
             display_mallinfo();
 
@@ -301,12 +319,16 @@ int main()
                 LOG << "...interpolate explicit solution and rhs" << nl;
     
                 FloatVector     interpol_rhs  = Interpolation(     M,     M.getinnerdimension(), 0, r, parametric_f  );
+                FloatVector aug_interpol_rhs  = Interpolation( aug_M, aug_M.getinnerdimension(), 0, r, parametric_f  );
 
                 FloatVector     rhs =     incmatrix.getTranspose() * (     scalar_massmatrix *     interpol_rhs );
+                FloatVector aug_rhs = aug_incmatrix.getTranspose() * ( aug_scalar_massmatrix * aug_interpol_rhs );
 
                 FloatVector     sol(     incmatrix.getdimin(), 0. );
+                FloatVector aug_sol( aug_incmatrix.getdimin(), 0. );
                 
                 FloatVector     residual(     incmatrix.getdimin(), 0. );
+                FloatVector aug_residual( aug_incmatrix.getdimin(), 0. );
                 
                 timestamp solver_time;
 
@@ -354,81 +376,95 @@ int main()
 
                 }
 
+                {
+                    LOG << "[0]" << nl;
+                    auto aug_opr  = (aug_diffmatrix) & (aug_incmatrix);
+                    LOG << "[1]" << nl;
+                    // auto aug_opl  = MatrixCSR(aug_incmatrix_t) & MatrixCSR(aug_diffmatrix_t);
+                    auto aug_opl  = aug_opr.getTranspose();
+                    LOG << "[2]" << nl;
+                    auto aug_stiffness = (aug_opl) & (aug_vector_massmatrix) & (aug_opr);
+                    LOG << "[3]" << nl;
+                    auto& aug_stiffness_csr = aug_stiffness; //MatrixCSR( aug_stiffness );
+                    LOG << "[4]" << nl;
 
+                    // aug_sol.zero();
+                    // aug_sol = IncreaseResolution( inter_M, IncreaseResolution( M, sol ) );
+                    aug_sol = IncreaseResolution( M, sol );
 
+                    auto aug_diagonal = aug_stiffness.diagonal();
+                    // FloatVector aug_residual( aug_rhs );
+                    
+                    Rainbow rainbow( aug_stiffness );
+
+                    timestamp start = gettimestamp();
+                    ConjugateGradientSolverCSR_Rainbow( 
+                        aug_sol.getdimension(), 
+                        aug_sol.raw(), 
+                        aug_rhs.raw(), 
+                        aug_stiffness_csr.getA(), aug_stiffness_csr.getC(), aug_stiffness_csr.getV(),
+                        aug_residual.raw(),
+                        desired_precision,
+                        0,
+                        aug_diagonal.raw(),
+                        1.0,
+                        rainbow.num_colors, rainbow.F.data(), rainbow.B.data(), rainbow.R.data()
+                    );
+                    timestamp end = gettimestamp();
+                    LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
+
+                    aug_residual = aug_rhs - aug_stiffness * aug_sol;
+
+                    display_mallinfo();
+
+                }
+
+            
+                
+                
+                LOG << "...compute error and residual:" << nl;
+
+                // FloatVector foo_sol = IncreaseResolution( inter_M, IncreaseResolution( M, sol ) );
+                FloatVector foo_sol = IncreaseResolution( M, sol );
+
+                FloatVector error     = aug_incmatrix  * ( aug_sol - foo_sol );
+                FloatVector graderror = aug_diffmatrix * error;
+                Float errornorm       = std::sqrt( error * ( aug_scalar_massmatrix * error ) );
+                Float graderrornorm   = std::sqrt( graderror * ( aug_vector_massmatrix * graderror ) );
                 Float residualnorm    = residual.norm();
+
+                LOG << "error:     " << errornorm    << nl;
+                LOG << "graderror: " << graderrornorm << nl;
                 LOG << "residual:  " << residualnorm << nl;
                 LOG << "time:      " << Float( solver_time ) << nl;
-                
-                
-                LOG << "...update saved old solutions:" << nl;
-                if( l > min_l )
-                {
-                    std::vector<FloatVector> new_solutions;
-
-                    const auto& old_M = meshes[ l - min_l - 1 ];
-
-                    for( const auto& sol : solutions )
-                        new_solutions.push_back( IncreaseResolution( old_M, sol ) );
-
-                    assert( solutions.size() == new_solutions.size() );
+                        
+                contable << errornorm;
+                contable << graderrornorm;
+                contable << residualnorm;
+                contable << Float( solver_time );
+                contable << nl;
                     
-                    solutions.clear();
-
-                    assert( solutions.size() == 0 );
-
-                    solutions = std::move( new_solutions );
-                }
-
-                solutions.push_back( sol );
-
-                Assert( solutions.size() == l-min_l+1, solutions.size(), l-min_l+1 );
-
-
-
-                LOG << "...compute errors against previous solutions:" << nl;
-                
-                ConvergenceTable contable( printf_into_string("Mass error (l=%d)", l ) );
-                
-                contable << "level" << "u_error" << "du_error" << nl;
-
-                for( int i = 0; i < solutions.size(); i++ )
-                {
-
-                    const auto& old_sol = solutions[i];
-
-                    FloatVector error     = incmatrix  * ( sol - old_sol );
-                    FloatVector graderror = diffmatrix * error;
-                    Float errornorm       = std::sqrt( error * ( scalar_massmatrix * error ) );
-                    Float graderrornorm   = std::sqrt( graderror * ( vector_massmatrix * graderror ) );
-                    
-                    LOG << "error:     " << errornorm    << nl;
-                    LOG << "graderror: " << graderrornorm << nl;
-                            
-                    contable << Float(i+min_l);
-                    contable << errornorm;
-                    contable << graderrornorm;
-                    contable << nl;
-
-                }
-
                 contable.lg();
 
 
-                // save the mesh, solutions, and convergence tables
-
-                meshes.push_back(M);
-                // solutions.push_back(sol);
-                contables.push_back(contable);
+                if( r == 1 ){
+                    
+                    auto computed_grad = diffmatrix * incmatrix * sol;
+                    
+                    fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
+                    VTKWriter vtk( M, fs, getbasename(__FILE__) );
+                    vtk.writeCoordinateBlock();
+                    vtk.writeTopDimensionalCells();
+                    vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
+                    vtk.writeCellVectorData( computed_grad, "gradient_interpolation" , 0.1 );
+                    fs.close();
+                }
 
 
             }
             
         }
 
-        for( const auto& contable: contables )
-            contable.lg();
-        
         if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
         
         
