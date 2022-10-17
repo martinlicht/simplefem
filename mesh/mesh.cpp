@@ -318,19 +318,71 @@ void Mesh::automatic_dirichlet_flags()
 }
 
 
-void Mesh::check_dirichlet_flags()
+void Mesh::check_dirichlet_flags( bool check_for_full_dirichlet )
 {
     const int full = getinnerdimension();
     
     assert( dimension_counted(full-1) );
     assert( supersimplices_listed(full,full-1) );
     
-    // check that no flags are invalid
-    for( int s = 0; s < count_simplices(full-1); s++ )
-        assert( get_flag( full-1, s ) != SimplexFlagInvalid );
-    
+    // check that full-dimensional simplices have no Dirichlet condition 
     for( int s = 0; s < count_simplices(full); s++ )
         assert( get_flag( full, s ) == SimplexFlagNull );
+
+    // check that no flags are invalid
+    for( int d = 0; d <= full-1; d++ )
+    for( int s = 0; s < count_simplices(d); s++ )
+        assert( get_flag( d, s ) != SimplexFlagInvalid );
+    
+    // if some cell has the Dirichlet condition, then so do its subcells
+    for( int d = 1; d <= full-1; d++ )
+    for( int s = 0; s < count_simplices(d); s++ )
+        if( get_flag( d, s ) == SimplexFlagDirichlet )
+            for( int subindex = 0; subindex < count_subsimplices( d, d-1 ); subindex++ ) 
+                assert( get_flag( d-1, get_subsimplex( d, d-1, s, subindex ) ) == SimplexFlagDirichlet );
+    
+    // for all lower dimensional simplices 
+    // if they are Dirichlet, check that they are contained in a Dirichlet face 
+    // if they are not, then check that they are not contained in a Dirichlet face 
+    for( int d = 0; d <= full-2; d++ )
+    for( int sub = 0; sub < count_simplices(d); sub++ ) 
+    {
+
+        if( get_flag( d, sub ) == SimplexFlagDirichlet ) {
+
+            bool found = false;
+            
+            for( 
+                int sup = get_firstparent_of_subsimplex( d+1, d, sub ); 
+                sup != nullindex; 
+                sup = get_nextparent_of_subsimplex( d+1, d, sup, sub ) 
+            ){
+                found = found or ( get_flag(d+1,sup) == SimplexFlagDirichlet );
+            }
+            
+            if( not found ) LOG << d << space << sub;
+            
+            assert( found );
+
+        } else {
+
+            assert( get_flag( d, sub ) == SimplexFlagNull );
+
+            for( 
+                int sup = get_firstparent_of_subsimplex( d+1, d, sub ); 
+                sup != nullindex; 
+                sup = get_nextparent_of_subsimplex( d+1, d, sup, sub ) 
+            ){
+                assert( get_flag(d+1,sup) == SimplexFlagNull ); // turn into equality check
+            }
+        }
+
+    }
+
+        
+    if( not check_for_full_dirichlet ) return;
+
+
     
     // for each face, check that those faces with less than two parents have the Dirichlet flag 
     for( int s = 0; s < count_simplices(full-1); s++ )
@@ -353,40 +405,7 @@ void Mesh::check_dirichlet_flags()
             assert( get_flag( full-1, s ) == SimplexFlagDirichlet );
         }
  
-    // for all Dirichlet faces, check that the subsimplices are Dirichlet too 
-    for( int s = 0; s < count_simplices(full-1); s++ )
-        if( get_flag( full-1, s ) == SimplexFlagDirichlet )
-            for( int d = 0; d < full-1; d++ )
-                for( int subindex = 0; subindex < count_subsimplices( full-1, d ); subindex++ ) 
-                    assert( get_flag( d, get_subsimplex( full-1, d, s, subindex ) ) == SimplexFlagDirichlet );
     
-    // for all lower dimensional simplices 
-    // if they are Dirichlet, check that they are contained in a Dirichlet face 
-    // if they are not, then check that they are not contained in a Dirichlet face 
-    for( int d = 0; d < full-1; d++ )
-        for( int sub = 0; sub < count_simplices(d); sub++ )
-            if( get_flag( d, sub ) == SimplexFlagDirichlet ) {
-                bool found = false;
-                assert( get_firstparent_of_subsimplex( full-1, d, sub ) != nullindex );
-                for( 
-                    int sup = get_firstparent_of_subsimplex( full-1, d, sub ); 
-                    sup != nullindex; 
-                    sup = get_nextparent_of_subsimplex( full-1, d, sup, sub ) 
-                ){
-                    found = found || ( get_flag(full-1,sup) == SimplexFlagDirichlet );
-                }
-                if( not found ) LOG << d << space << sub;
-                assert( found );
-            } else {
-                assert( get_flag( d, sub ) == SimplexFlagNull );
-                for( 
-                    int sup = get_firstparent_of_subsimplex( full-1, d, sub ); 
-                    sup != nullindex; 
-                    sup = get_nextparent_of_subsimplex( full-1, d, sup, sub ) 
-                ){
-                    assert( get_flag(full-1,sup) != SimplexFlagDirichlet ); // turn into equality check
-                }
-            }
     
 }
 
@@ -476,6 +495,32 @@ FloatVector Mesh::get_midpoint( int dim, int index ) const
     return mid;
 }
 
+
+int Mesh::get_longest_edge_index( int dim, int index ) const
+{
+    assert( 0 <= dim && dim <= getinnerdimension() );
+    assert( 0 <= index && index < count_simplices(dim) );
+    
+    const int N = binomial_integer(dim+1,2);
+    
+    int longest_edge_index = 0;
+
+    Float diameter = getDiameter(1,0);
+
+    for( int n = 1; n < N; n++ )
+    {
+        int e = get_subsimplex( dim, 1, index, n );
+        Float diameter_e = getDiameter(1,e);
+        if( diameter_e > diameter ){
+            diameter = diameter_e;
+            longest_edge_index = e;
+        }
+    }
+    
+    return longest_edge_index;
+}
+        
+        
 
 DenseMatrix Mesh::getVertexCoordinateMatrix( int dim, int index ) const 
 {

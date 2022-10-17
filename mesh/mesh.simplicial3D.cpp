@@ -2925,6 +2925,56 @@ void MeshSimplicial3D::merge( const MeshSimplicial3D& mesh )
 
 
 
+
+
+
+std::string MeshSimplicial3D::outputTikZ( bool boundary_only ) const
+{
+    std::ostringstream os;
+    
+    const auto& coords = getcoordinates();
+    
+    for( int n = 0; n < coords.getnumber(); n++ )
+    {
+        os << "\\coordinate (V" << n << ")  at ( ";
+        for( int d = 0; d < coords.getdimension(); d++ )
+        {
+           os << coords.getdata(n,d) << ( d == coords.getdimension()-1 ? "" : ", ");
+        }
+        
+        os << ");" << nl;
+        
+    }
+    
+    for( int f = 0; f < count_simplices(2); f++ )
+    {
+        if( boundary_only && count_face_tetrahedron_parents(f) > 1 )
+            continue;
+        
+        os << "\\draw[join=round,fill=gray] ";
+        os << "(V" << get_subsimplex(2,0,f,0) << ") -- ";
+        os << "(V" << get_subsimplex(2,0,f,1) << ") -- ";
+        os << "(V" << get_subsimplex(2,0,f,2) << ") -- ";
+        os << "cycle;" << nl;
+    }
+    
+    return os.str();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #include "mesh.simplicial3D.br.cxx"
 
 #include "mesh.simplicial3D.ur.cxx"

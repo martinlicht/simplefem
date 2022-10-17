@@ -14,7 +14,7 @@
 
 #include "../fem/local.polynomialmassmatrix.hpp"
 
-#include "../fem/global.massmatrix.hpp"
+#include "../fem/global.coefficientmassmatrix.hpp"
 
 
 
@@ -49,11 +49,11 @@ SparseMatrix FEECBrokenCoefficientMassMatrix( const Mesh& mesh, int n, int k, in
     // - coefficients of Lagrange polynomials
     // mass matrices 
 
-    auto lpbcs = InterpolationPointsInBarycentricCoordinates( n, w );
+    const auto lpbcs = InterpolationPointsInBarycentricCoordinates( n, w );
 
-    auto lpcoeff = Inverse( PointValuesOfMonomials( w, lpbcs ) );
+    const auto lpcoeff = Inverse( PointValuesOfMonomials( w, lpbcs ) );
     
-    auto polymassmatrix_per_point = polynomialmassmatrices_per_lagrangepoint( n, r, w );
+    const auto polymassmatrix_per_point = polynomialmassmatrices_per_lagrangepoint( n, r, w );
     
     
     // loop over the simplices and compute the mass matrices
@@ -64,59 +64,64 @@ SparseMatrix FEECBrokenCoefficientMassMatrix( const Mesh& mesh, int n, int k, in
     for( int s = 0; s < num_simplices; s++ )
     {
         
-        DenseMatrix full_element_matrix( localdim, localdim, 0. );
-
         // assemble some data for the element 
         // - measure 
         // - barycentric coordinates 
         // - lagrange points 
         
-        Float measure       = mesh.getMeasure( n, s );
+        const Float measure     = mesh.getMeasure( n, s );
         assert( measure >= 0. );
 
-        DenseMatrix GM    = mesh.getGradientMatrix( n, s );
-        DenseMatrix extGM = SubdeterminantMatrix( GM, k );
+        const DenseMatrix GM    = mesh.getGradientMatrix( n, s );
+        const DenseMatrix extGM = SubdeterminantMatrix( GM, k );
 
-        auto vertex_coordinates = mesh.getVertexCoordinateMatrix( n, s );
-        auto lpeucl             = vertex_coordinates * lpbcs;
+        const auto vertex_coordinates = mesh.getVertexCoordinateMatrix( n, s );
+        const auto lpeucl             = vertex_coordinates * lpbcs;
 
         // compute the mass matrix contribution 
         // for each lagrange point 
         
+        DenseMatrix full_element_matrix( localdim, localdim, 0. );
+
         for( int p = 0; p < polymassmatrix_per_point.size(); p++ )
         {
-            DenseMatrix matrix_at_point = generator( lpeucl.getcolumn(p) );
-
-            auto polyMM = polymassmatrix_per_point[p];
+            const auto& polyMM = polymassmatrix_per_point[p];
             
-            auto formMM = Transpose(extGM) * matrix_at_point * extGM;
+            const DenseMatrix matrix_at_point = generator( lpeucl.getcolumn(p) );
+
+            const auto formMM = Transpose(extGM) * matrix_at_point * extGM;
+            // const auto formMM = MatrixTripleMult( matrix_at_point, extGM );
 
             // DenseMatrix GPM = SubdeterminantMatrix( mesh.getGradientProductMatrix( n, s ), k );
             // assert( ( GPM - formMM ).issmall() );
 
             if( w == 0 ) assert( ( polyMM - polynomialmassmatrix(n,r) ).issmall() );
 
-            auto fullMM = measure * MatrixTensorProduct( polyMM, formMM );
+            //auto fullMM = measure * MatrixTensorProduct( polyMM, formMM );
+            auto fullMM = MatrixTensorProduct( polyMM, formMM );
+            fullMM *= measure;
 
-            full_element_matrix = full_element_matrix + fullMM;
+            full_element_matrix += fullMM;
         }
         
         // DONE ... now list everything.
 
-        for( int i = 0; i < localdim; i++ )
-        for( int j = 0; j < localdim; j++ )
+        for( int row = 0; row < localdim; row++ )
+        for( int col = 0; col < localdim; col++ )
         {
-            int index_of_entry = s * localdim * localdim + i * localdim + j;
+            int index_of_entry = s * localdim * localdim + row * localdim + col;
             
             SparseMatrix::MatrixEntry entry;
-            entry.row    = s * localdim + i;
-            entry.column = s * localdim + j;
-            entry.value  = full_element_matrix( i, j );
+            entry.row    = s * localdim + row;
+            entry.column = s * localdim + col;
+            entry.value  = full_element_matrix( row, col );
             
             ret.setentry( index_of_entry, entry );
         }
 
     }
+
+    LOG << "Finished Sparse Matrix entries: " << num_entries << "\n";
     
     return ret;
 }

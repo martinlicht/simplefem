@@ -192,7 +192,7 @@ class Mesh
         
         void automatic_dirichlet_flags();
         
-        void check_dirichlet_flags();
+        void check_dirichlet_flags( bool check_for_full_dirichlet = true );
         
         
         /* 
@@ -209,6 +209,8 @@ class Mesh
         Float getShapemeasure() const;
         
         FloatVector get_midpoint( int dim, int index ) const;
+        
+        int get_longest_edge_index( int dim, int index ) const;
         
         DenseMatrix getVertexCoordinateMatrix( int dim, int index ) const;
         

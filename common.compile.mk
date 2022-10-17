@@ -41,7 +41,7 @@ FLAG_CXX := CLANG
 
 # Do you want the standard library assert macro instead of the custom one?
 # Uncomment the following line to use the standard library assert macro 
-FLAG_USE_ORIGINAL_ASSERT_MACRO=yes
+# FLAG_USE_ORIGINAL_ASSERT_MACRO=yes
 
 # Do you want assert messages to be discarded?
 # Uncomment the following line to simplify the debugging macros 
@@ -87,7 +87,7 @@ FLAG_NO_EXCEPTIONS=yes
 
 # Do you want to ENABLE the use of openMP?
 # Uncomment the following line to enable compilation with openMP
-# FLAG_ENABLE_OPENMP=yes
+FLAG_ENABLE_OPENMP=yes
 
 # Do you want to ENABLE the use of tcmalloc?
 # Uncomment the following line to enable tcmalloc
@@ -204,7 +204,7 @@ ifeq ($(FLAG_DO_OPTIMIZE),yes)
 		CXXFLAGS_OPTIMIZE += -Ofast 
 		CXXFLAGS_OPTIMIZE += -march=native 
 		ifeq ($(FLAG_CXX),GCC)
-			CXXFLAGS_OPTIMIZE := -inline-threshold=1200
+			CXXFLAGS_OPTIMIZE += -inline-threshold=1200
 		endif
 		CXXFLAGS_OPTIMIZE += -flto
 	endif
@@ -320,7 +320,7 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 
 		CXXFLAGS_WARNINGS += -Wabstract-vbase-init
 		CXXFLAGS_WARNINGS += -Walloca
-		CXXFLAGS_WARNINGS += -Wno-vla-extension -Werror-implicit -Wabsolute-value -Wno-shorten-64-to-32
+		CXXFLAGS_WARNINGS += -Wno-vla-extension -Werror-implicit-function-declaration -Wabsolute-value -Wno-shorten-64-to-32
 		CXXFLAGS_WARNINGS += -Wanon-enum-enum-conversion -Wassign-enum
 		CXXFLAGS_WARNINGS += -Warray-bounds-pointer-arithmetic
 		CXXFLAGS_WARNINGS += -Wbad-function-cast

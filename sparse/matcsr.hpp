@@ -36,6 +36,11 @@ public LinearOperator /* every matrix is a linear operator */
                             const std::vector<int>& C, 
                             const std::vector<Float>& V );
 
+        explicit MatrixCSR( int rows, int columns, 
+                            const std::vector<int>&& A, 
+                            const std::vector<int>&& C, 
+                            const std::vector<Float>&& V );
+
         explicit MatrixCSR( const SparseMatrix& mat );
 
         explicit MatrixCSR( int rows, int columns );
@@ -77,6 +82,8 @@ public LinearOperator /* every matrix is a linear operator */
         
         FloatVector diagonal() const;
 
+        MatrixCSR getTranspose() const;
+
         
         /* access and information to internal data */
         
@@ -89,6 +96,8 @@ public LinearOperator /* every matrix is a linear operator */
         int getnumberofentries() const;
 
         int getnumberofzeroentries() const;
+
+        int getmaxrowwidth() const;
 
         Float eigenvalueupperbound() const;
 

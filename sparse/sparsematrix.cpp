@@ -339,19 +339,19 @@ const SparseMatrix& SparseMatrix::sortentries( SparseMatrix::MatrixEntrySorting 
 {
     check();
 
-    if( manner == MatrixEntrySorting::rowwise )
-        std::qsort( entries.data(), entries.size(), sizeof(MatrixEntry), &internal_compare_rowfirst );
-    else 
-        std::qsort( entries.data(), entries.size(), sizeof(MatrixEntry), &internal_compare_colfirst );
+    // if( manner == MatrixEntrySorting::rowwise )
+    //     std::qsort( entries.data(), entries.size(), sizeof(MatrixEntry), &internal_compare_rowfirst );
+    // else 
+    //     std::qsort( entries.data(), entries.size(), sizeof(MatrixEntry), &internal_compare_colfirst );
 
-//     if( manner == MatrixEntrySorting::rowwise )
-//         std::sort( entries.begin(), entries.end(), []( const MatrixEntry& a, const MatrixEntry& b) {
-//             return a.row < b.row || ( a.row == b.row && a.column < b.column );   
-//         });
-//     else 
-//         std::sort( entries.begin(), entries.end(), []( const MatrixEntry& a, const MatrixEntry& b) {
-//             return a.column < b.column || ( a.column == b.column && a.row < b.row );   
-//         });
+    if( manner == MatrixEntrySorting::rowwise )
+        std::sort( entries.begin(), entries.end(), []( const MatrixEntry& a, const MatrixEntry& b) {
+            return a.row < b.row || ( a.row == b.row && a.column < b.column );   
+        });
+    else 
+        std::sort( entries.begin(), entries.end(), []( const MatrixEntry& a, const MatrixEntry& b) {
+            return a.column < b.column || ( a.column == b.column && a.row < b.row );   
+        });
     
     
 //     const int N = getnumberofentries();
@@ -528,6 +528,7 @@ SparseMatrix SparseMatrix::getTranspose() const
     
     auto newentries = entries;
 
+    // TODO: parallelize 
     for( auto& newentry : newentries )
         std::swap( newentry.row, newentry.column );
 

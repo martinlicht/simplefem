@@ -31,13 +31,14 @@ Coordinates::Coordinates( int dimension, int number, const std::vector<Float>& d
 
 Coordinates::~Coordinates()
 {
-    Coordinates::check();
+    // Coordinates::check();
 }
 
 void Coordinates::check() const
 {
     assert( dimension >= 0 && number >= 0 );
-    assert( data.size() == dimension * number );
+    if( data.size() != 0 )
+        assert( data.size() == dimension * number );
 }
 
 

@@ -217,8 +217,16 @@ int main()
                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
                             vtk.writeCoordinateBlock();
                             vtk.writeTopDimensionalCells();
-                            vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
-                            vtk.writeCellVectorData( computed_grad, "gradient_interpolation" , 0.1 );
+
+                            vtk.writeVertexScalarData( sol,                                                          "iterativesolution_scalar_data" );
+                            vtk.writeVertexScalarData( [&](FloatVector vec) -> Float{ return function_sol(vec)[0]; }, "interpolated_sol" );
+                            vtk.writeVertexScalarData( [&](FloatVector vec) -> Float{ return function_rhs(vec)[0]; }, "interpolated_rhs" );
+
+                            vtk.writeCellScalarData( [&](FloatVector vec) -> Float{ return function_sol(vec)[0]; }, "interpolated_sol" );
+                            vtk.writeCellScalarData( [&](FloatVector vec) -> Float{ return function_rhs(vec)[0]; }, "interpolated_rhs" );
+
+                            vtk.writeCellVectorData( computed_grad,  "gradient_calculation" );
+                            vtk.writeCellVectorData( function_grad,  "gradient_interpolation" );
                             fs.close();
                         }
 

@@ -10,6 +10,7 @@
 #include "../../utility/convergencetable.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
+#include "../../sparse/rainbow.hpp"
 // #include "../../solver/chebyshev.hpp"
 #include "../../solver/sparsesolver.hpp"
 #include "../../solver/iterativesolver.hpp"
@@ -55,6 +56,7 @@ int main()
             bool do_cgm_diagonal_csr       = false;
             bool do_cgm_ssor_csr           = false;
             bool do_chebyshev_diagonal_csr = false;
+            bool do_cgm_rainbow_csr        = false;
 
             do_cgmpp      = true;
             do_crmpp_expl = true;
@@ -71,7 +73,8 @@ int main()
             do_cgm_diagonal_csr       = true;
             do_cgm_ssor_csr           = true;
             do_chebyshev_diagonal_csr = true;
-            
+            do_cgm_rainbow_csr        = true;
+
             
             
             
@@ -91,6 +94,7 @@ int main()
             if( do_cgm_diagonal_csr )       contable_sol << "CGMcsr_diag"  ;
             if( do_cgm_ssor_csr )           contable_sol << "CGMcsr_ssor"  ;
             if( do_chebyshev_diagonal_csr ) contable_sol << "Chebyshev_csr";
+            if( do_cgm_rainbow_csr )        contable_sol << "CGMcsr_rainbow";
             
             contable_res << "Index";
             if( do_cgmpp      ) contable_res << "CGM++"      ;
@@ -108,6 +112,7 @@ int main()
             if( do_cgm_diagonal_csr )       contable_res << "CGMcsr_diag"  ;
             if( do_cgm_ssor_csr )           contable_res << "CGMcsr_ssor"  ;
             if( do_chebyshev_diagonal_csr ) contable_res << "Chebyshev_csr";
+            if( do_cgm_rainbow_csr )        contable_res << "CGMcsr_rainbow";
 
             contable_num << "Index";
             if( do_cgmpp      ) contable_num << "CGM++"      ;
@@ -125,6 +130,8 @@ int main()
             if( do_cgm_diagonal_csr )       contable_num << "CGMcsr_diag"  ;
             if( do_cgm_ssor_csr )           contable_num << "CGMcsr_ssor"  ;
             if( do_chebyshev_diagonal_csr ) contable_num << "Chebyshev_csr";
+            if( do_cgm_rainbow_csr )        contable_num << "CGMcsr_rainbow";
+
 
             contable_sec << "Index";
             if( do_cgmpp      ) contable_sec << "CGM++"      ;
@@ -142,6 +149,8 @@ int main()
             if( do_cgm_diagonal_csr )       contable_sec << "CGMcsr_diag"  ;
             if( do_cgm_ssor_csr )           contable_sec << "CGMcsr_ssor"  ;
             if( do_chebyshev_diagonal_csr ) contable_sec << "Chebyshev_csr";
+            if( do_cgm_rainbow_csr )        contable_sec << "CGMcsr_rainbow";
+
             
 
             const std::vector<int> Ns = { 4, 8, 16, 32 };
@@ -622,7 +631,7 @@ int main()
                                 system.getA(), system.getC(), system.getV(),
                                 residual.raw(),
                                 desired_precision,
-                                1,
+                                0,
                                 invprecon.getdiagonal().raw(),
                                 0.,
                                 system.eigenvalueupperbound()
@@ -639,6 +648,49 @@ int main()
                             contable_num << stat_num;
                             contable_sec << Float( end - start );
                         }
+                        
+
+                        if( do_cgm_rainbow_csr )
+                        {
+                            LOG << "CGM Rainbow-SSOR preconditioner CSR" << nl;
+                        
+                            FloatVector diagonal = system.diagonal();
+                            assert( diagonal.isfinite() );
+                            assert( diagonal.isnonnegative() );
+                            
+                            FloatVector mysol( N*N );
+                            mysol.zero();
+                            FloatVector residual( rhs );
+
+                            Rainbow rainbow( system );
+
+                            timestamp start = gettimestamp();
+                            int recent_iteration_count =
+                            ConjugateGradientSolverCSR_Rainbow( 
+                                mysol.getdimension(), 
+                                mysol.raw(), 
+                                rhs.raw(), 
+                                system.getA(), system.getC(), system.getV(),
+                                residual.raw(),
+                                desired_precision,
+                                0,
+                                diagonal.raw(),
+                                0.9123456789,
+                                rainbow.num_colors, rainbow.F.data(), rainbow.B.data(), rainbow.R.data()
+                            );
+                            timestamp end = gettimestamp();
+
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
+                            
+                            auto stat_sol = Float( ( sol - mysol ).norm() );
+                            auto stat_res = Float( ( system * mysol - rhs ).norm() );
+                            auto stat_num = Float( recent_iteration_count )/ (N*N); 
+                            contable_sol << stat_sol;
+                            contable_res << stat_res;
+                            contable_num << stat_num;
+                            contable_sec << Float( end - start );
+                        }
+                        
                         
                         contable_sol << nl;
                         contable_res << nl;

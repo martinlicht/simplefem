@@ -69,20 +69,26 @@ SparseMatrix FEECWhitneyInclusionMatrix( const Mesh& mesh, int n, int k, int r )
     
     for( int d  = 0; d  <= n;                          d++  )    // go over all the subsimplex dimensions
     for( int fi = 0; fi  < binomial_integer(n+1,d+1); fi++  )    // go over all the d dimensional subsimplices 
-    for( const auto& alpharho : lists_of_Whitney_indices[d] )    // go over the corresponding alpha/rho pairs
+    // for( const auto& alpharho : lists_of_Whitney_indices[d] )    // go over the corresponding alpha/rho pairs
+    for( int index_alpharho = 0; index_alpharho < lists_of_Whitney_indices[d].size(); index_alpharho++ )
+    #if defined(_OPENMP)
+    #pragma omp parallel for
+    #endif 
     for( int s  = 0; s   < num_volumes;                s++  )    // go over all the volumes 
     {
         
         // Find indices of things and prepare auxiliary variables 
         
+        const auto& alpharho = lists_of_Whitney_indices[d][index_alpharho];
+
         const MultiIndex& alpha = alpharho.first;
         
         const IndexMap&     rho = alpharho.second;
         
-        const int index_alpharho = 
-            std::find( lists_of_Whitney_indices[d].begin(), lists_of_Whitney_indices[d].end(), alpharho )
-            - 
-            lists_of_Whitney_indices[d].begin();
+        // const int index_alpharho = 
+        //     std::find( lists_of_Whitney_indices[d].begin(), lists_of_Whitney_indices[d].end(), alpharho )
+        //     - 
+        //     lists_of_Whitney_indices[d].begin();
         assert( 0 <= index_alpharho && index_alpharho < lists_of_Whitney_indices[d].size() );
         assert( lists_of_Whitney_indices[d][index_alpharho] == alpharho );
         

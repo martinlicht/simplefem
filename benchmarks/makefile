@@ -4,6 +4,7 @@ SHELL = /bin/sh
 default: build
 
 projectdir :=..
+pathvar    :=$(CURDIR)/../
 
 include ../common.compile.mk 
 
@@ -23,7 +24,7 @@ depdir       := ./.deps
 
 linkerprefix :=-Wl,
 includes := $(patsubst %,-L../%,$(affices))
-rpath_t  := $(patsubst %,-rpath=../%,$(affices)) 
+rpath_t  := $(patsubst %,-rpath=$(pathvar)/%,$(affices)) 
 rpath    := $(patsubst %,$(linkerprefix)%,$(rpath_t)) 
 link     := $(patsubst %,-l%,$(affices))
 

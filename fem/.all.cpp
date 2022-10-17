@@ -4,6 +4,7 @@
 #include "indexfunctions.cpp"
 #include "local.polynomialmassmatrix.cpp"
 #include "global.elevation.cpp"
+#include "global.avgsullivan.cpp"
 #include "global.sullivanincl.cpp"
 #include "global.whitneyincl.cpp"
 #include "global.unphysical.cpp"
