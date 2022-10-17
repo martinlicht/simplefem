@@ -236,6 +236,44 @@ inline DenseMatrix MatrixMult( const DenseMatrix& left, const DenseMatrix& right
 }
 
 
+inline DenseMatrix MatrixTripleMult( const DenseMatrix& A, const DenseMatrix& B )
+{
+    A.check();
+    B.check();
+
+    assert( A.issquare());
+
+    const int a = A.getdimin();
+    const int b = B.getdimin();
+    
+    assert( a == B.getdimout() );
+
+    DenseMatrix ret( b, b, 0. );
+
+    for( int j = 0; j < b; j++ )
+    for( int k = 0; k < a; k++ ) 
+    {
+        Float AB_kj = 0;
+    
+        for( int l = 0; l < a; l++ )
+            AB_kj += A(k,l) * B(l,j);
+    
+        for( int i = 0; i < b; i++ )
+            ret(i,j) += B(k,i) * AB_kj;
+    }
+
+
+    // for( int i = 0; i < b; i++ )
+    // for( int k = 0; k < a; k++ )
+    // for( int j = 0; j < b; j++ )
+    // for( int l = 0; l < a; l++ )
+    //     ret( i, j ) += B(k,i) * A(k,l) * B(l,j);
+
+    ret.check();
+    return ret;
+}
+
+
 inline DenseMatrix HilbertMatrix( int n )
 {
     std::function<Float(int,int)> hilbertmatrix_generator = [](int r, int c) { return 1. / (r+c+1); };

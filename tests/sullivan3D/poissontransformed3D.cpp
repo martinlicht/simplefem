@@ -146,14 +146,22 @@ DenseMatrix weight_scalar(const FloatVector& vec)
 DenseMatrix weight_vector(const FloatVector& vec)
 {
     assert( vec.getdimension() == 3 );
+    
     // return DenseMatrix(3,3, kronecker<int> );
+    
     auto jac = jacobian(vec);
-
     auto det = Determinant(jac);
-
     auto invjac = Inverse( jac );
-
+    auto invtjac = Transpose(invjac);
     return absolute(det) * invjac * parametric_A(vec) * Transpose(invjac);
+
+    // auto jac = jacobian(vec);
+    // auto det = Determinant(jac);
+    // auto invjac = Inverse( jac );
+    // auto ret = MatrixTripleMult( parametric_A(vec), invjac );
+    // ret *= absolute(det);
+    // TransposeSquareInSitu(ret);
+    // return ret;
 }
         
         
@@ -236,7 +244,7 @@ int main()
 
     
     
-    std::cout << M.outputTikZ(true);
+    // std::cout << M.outputTikZ(true);
     
 
     
@@ -244,7 +252,7 @@ int main()
     LOG << "Solving Poisson Problem with Neumann boundary conditions" << nl;
 
     const int min_l = 1; 
-    const int max_l = 5;
+    const int max_l = 1;
 
     ConvergenceTable contable("Mass error");
     

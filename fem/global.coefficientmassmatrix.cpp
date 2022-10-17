@@ -69,14 +69,14 @@ SparseMatrix FEECBrokenCoefficientMassMatrix( const Mesh& mesh, int n, int k, in
         // - barycentric coordinates 
         // - lagrange points 
         
-        Float measure       = mesh.getMeasure( n, s );
+        const Float measure     = mesh.getMeasure( n, s );
         assert( measure >= 0. );
 
-        DenseMatrix GM    = mesh.getGradientMatrix( n, s );
-        DenseMatrix extGM = SubdeterminantMatrix( GM, k );
+        const DenseMatrix GM    = mesh.getGradientMatrix( n, s );
+        const DenseMatrix extGM = SubdeterminantMatrix( GM, k );
 
-        auto vertex_coordinates = mesh.getVertexCoordinateMatrix( n, s );
-        auto lpeucl             = vertex_coordinates * lpbcs;
+        const auto vertex_coordinates = mesh.getVertexCoordinateMatrix( n, s );
+        const auto lpeucl             = vertex_coordinates * lpbcs;
 
         // compute the mass matrix contribution 
         // for each lagrange point 
@@ -85,20 +85,23 @@ SparseMatrix FEECBrokenCoefficientMassMatrix( const Mesh& mesh, int n, int k, in
 
         for( int p = 0; p < polymassmatrix_per_point.size(); p++ )
         {
-            DenseMatrix matrix_at_point = generator( lpeucl.getcolumn(p) );
-
-            auto polyMM = polymassmatrix_per_point[p];
+            const auto& polyMM = polymassmatrix_per_point[p];
             
-            auto formMM = Transpose(extGM) * matrix_at_point * extGM;
+            const DenseMatrix matrix_at_point = generator( lpeucl.getcolumn(p) );
+
+            const auto formMM = Transpose(extGM) * matrix_at_point * extGM;
+            // const auto formMM = MatrixTripleMult( matrix_at_point, extGM );
 
             // DenseMatrix GPM = SubdeterminantMatrix( mesh.getGradientProductMatrix( n, s ), k );
             // assert( ( GPM - formMM ).issmall() );
 
             if( w == 0 ) assert( ( polyMM - polynomialmassmatrix(n,r) ).issmall() );
 
-            auto fullMM = measure * MatrixTensorProduct( polyMM, formMM );
+            //auto fullMM = measure * MatrixTensorProduct( polyMM, formMM );
+            auto fullMM = MatrixTensorProduct( polyMM, formMM );
+            fullMM *= measure;
 
-            full_element_matrix = full_element_matrix + fullMM;
+            full_element_matrix += fullMM;
         }
         
         // DONE ... now list everything.
