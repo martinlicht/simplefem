@@ -51,7 +51,8 @@ static const constexpr Float notanumber = std::numeric_limits<Float>::quiet_NaN(
 
 static const constexpr Float machine_epsilon = std::numeric_limits<Float>::epsilon();
 
-static const /*constexpr*/ Float desired_precision = std::sqrt( machine_epsilon );
+static const /*constexpr*/ Float desired_precision = 
+                                    sizeof(Float) == sizeof(float) ? 10e-6 : std::sqrt( machine_epsilon );
 
 
 // TODO: Put these somewhere where it makes sense 
