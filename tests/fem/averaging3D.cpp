@@ -91,7 +91,7 @@ int main()
                     
                     const auto error_mass = ( included - inclusion * averaged ).norm(massmatrix);
 
-                    Float error = max( error_eucl, error_mass );
+                    Float error = maximum( error_eucl, error_mass );
                     
                     errors[k][l-l_min][r-r_min] = maximum( errors[k][l-l_min][r-r_min], error );
                     

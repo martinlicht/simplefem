@@ -20,38 +20,28 @@ ConvergenceTable::ConvergenceTable( std::string table_name )
     make_new_row = true;
 }
         
-ConvergenceTable& ConvergenceTable::operator<<( Float entry )
+
+void ConvergenceTable::insert_numerical_entry( Float entry )
 {
-    
     if( make_new_row ) {
         entries.push_back( std::vector<Float>(0) );
         make_new_row = false;
     }
     
     entries.back().push_back( entry );
-    
-    return *this;
 }
         
-ConvergenceTable& ConvergenceTable::operator<<( const std::string& seriesheader )
-{
-    
+void ConvergenceTable::insert_seriesheader( const std::string& seriesheader )
+{   
     seriesheaders.push_back( seriesheader );
-    
-    return *this;
 }
         
         
-ConvergenceTable& ConvergenceTable::operator<<( char code )
+void ConvergenceTable::insert_newline()
 {
-    
-    if( code == nl )
-        make_new_row = true; 
-    else
-        assert(false);
-    
-    return *this; 
+    make_new_row = true; 
 }
+
 
 
 std::string ConvergenceTable::text() const
