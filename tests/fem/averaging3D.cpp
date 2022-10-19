@@ -34,9 +34,9 @@ int main()
         
         
         
-        const int r_min = 0;
+        const int r_min = 1;
         
-        const int r_max = 2;
+        const int r_max = 3;
         
         const int l_min = 2;
         
@@ -73,7 +73,7 @@ int main()
                 
                 SparseMatrix averaging  = FEECSullivanAveragingMatrix( M, M.getinnerdimension(), k, r );
                 
-                errors[k][ l ][ r ] = 0.;
+                errors[k][ l-l_min ][ r-r_min ] = 0.;
                 
                 for( int i = 0; i < number_of_samples; i++ ){
 

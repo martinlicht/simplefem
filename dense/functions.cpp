@@ -345,9 +345,15 @@ DenseMatrix Inverse( DenseMatrix A )
     
     assert( A.issquare() );
     if( A.getdimin() == 1 ) {
+
         return DenseMatrix( 1, 1, 1. / A(0,0) );
+    
     } else if( A.getdimin() == 2 ) {
-        return DenseMatrix( 2, 2, { A(1,1), -A(0,1), -A(1,0), A(0,0) } ) / ( A(0,0) * A(1,1) - A(0,1) * A(1,0) );
+
+        Float D = A(0,0) * A(1,1) - A(0,1) * A(1,0);
+        
+        return DenseMatrix( 2, 2, { A(1,1)/D, -A(0,1)/D, -A(1,0)/D, A(0,0)/D } );
+
     // } else if( A.getdimin() == 3 ) {
 
     //     Float D_00 = A(1,1) * A(2,2) - A(2,1) * A(1,2);

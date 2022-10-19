@@ -5,24 +5,29 @@
 
 
 
-DenseMatrix MatrixTensorProduct( const DenseMatrix& left, const DenseMatrix& right )
+DenseMatrix MatrixTensorProduct( const DenseMatrix& A, const DenseMatrix& B )
 {
-    left.check(); right.check();
-    int newrows = left.getdimout() * right.getdimout();
-    int newcols = left.getdimin() * right.getdimin();
+    A.check(); B.check();
+    int newrows = A.getdimout() * B.getdimout();
+    int newcols = A.getdimin()  * B.getdimin();
     
     DenseMatrix ret( newrows, newcols );
     assert( ret.getdimout() == newrows );
-    assert( ret.getdimin() == newcols );
+    assert( ret.getdimin()  == newcols );
+
+    const int num_A_rows = A.getdimout();
+    const int num_A_cols  = A.getdimin();
+    const int num_B_rows = B.getdimout();
+    const int num_B_cols  = B.getdimin();
     
-    for( int rl = 0; rl < left.getdimout(); rl++ )
-    for( int cl = 0; cl < left.getdimin(); cl++ )
-    for( int rr = 0; rr < right.getdimout(); rr++ )
-    for( int cr = 0; cr < right.getdimin(); cr++ )
+    for( int rl = 0; rl < num_A_rows; rl++ )
+    for( int cl = 0; cl < num_A_cols; cl++ )
+    for( int rr = 0; rr < num_B_rows; rr++ )
+    for( int cr = 0; cr < num_B_cols; cr++ )
     {
-        ret( rl * right.getdimout() + rr, cl * right.getdimin() + cr )
+        ret( rl * num_B_rows + rr, cl * num_B_cols + cr )
         =
-        left( rl, cl ) * right( rr, cr );
+        A( rl, cl ) * B( rr, cr );
     }
     
     ret.check();
