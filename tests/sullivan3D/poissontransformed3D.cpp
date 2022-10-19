@@ -258,9 +258,13 @@ int main()
     std::vector<FloatVector>         solutions;
     std::vector<ConvergenceTable>    contables;
     
-    
+    ConvergenceTable contable_pastone("Mass errror, one before");
+    ConvergenceTable contable_pasttwo("Mass errror, two before");   
 
-    
+    contable_pastone << "level" << "u_error" << "du_error" << nl;
+    contable_pasttwo << "level" << "u_error" << "du_error" << nl;
+
+
     for( int l = 0; l < min_l; l++ )
         M.uniformrefinement();
 
@@ -410,6 +414,12 @@ int main()
                     contable << graderrornorm;
                     contable << nl;
 
+                    if( i+min_l == l-1 )
+                        contable_pastone << Float(l-1) << errornorm << graderrornorm << nl;
+                    
+                    if( i+min_l == l-2 )
+                        contable_pasttwo << Float(l-2) << errornorm << graderrornorm << nl;
+                    
                 }
 
                 contable.lg();
@@ -428,6 +438,9 @@ int main()
 
         for( const auto& contable: contables )
             contable.lg();
+
+        contable_pastone.lg();
+        contable_pasttwo.lg();
         
         if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
         
