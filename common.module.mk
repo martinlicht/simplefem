@@ -110,7 +110,7 @@ $($(module).sharedlibrary): $($(module).libraryobject)
 
 $($(module).staticlibrary): $($(module).libraryobject)
 	@echo Static library: $@
-	@ar rcs $($(mymodule).staticlibrary) $($(mymodule).libraryobject)
+	@ar crs $($(mymodule).staticlibrary) $($(mymodule).libraryobject)
 
 
 
@@ -132,11 +132,26 @@ builda:       $(module).builda
 
 .PHONY: $(module).build
 
-ifeq ($(OS),Windows_NT)
-$(module).build: $(module).builda
+# ifeq ($(OS),Windows_NT)
+# $(module).build: $(module).builda
+# else
+# $(module).build: $(module).builda $(module).buildso
+# endif
+
+ifeq ($(LINKINGTYPE),objectfile)
+$(module).build: $($(module).libraryobject)
 else
-$(module).build: $(module).builda $(module).buildso
+ifeq ($(LINKINGTYPE),static)
+$(module).build: $(module).builda
+else 
+ifeq ($(LINKINGTYPE),dynamic)
+$(module).build: $(module).buildso
+else 
+$(error Unknown linkingtype $(LINKINGTYPE))
+endif 
+endif 
 endif
+
 
 
 
@@ -219,7 +234,7 @@ $(module).grepissues:
 	@-grep --line-number --color 'cout' $(mymoddir)/*pp
 #	@echo Find floating-point numbers ...
 #	@-grep --line-number --color -E '\.*[0-9]' $(mymoddir)/*pp
-#	@-grep --line-number --color -E '(0-9)e' $(mymoddir)/*pp
+	@-grep --line-number --color -E '(0-9)e' $(mymoddir)/*pp
 	@-grep --line-number --color -E '([0-9]+e[0-9]+)|([0-9]+\.[0-9]+)|((+-\ )\.[0-9]+)|((+-\ )[0-9]+\.)' $(mymoddir)/*pp
 
 

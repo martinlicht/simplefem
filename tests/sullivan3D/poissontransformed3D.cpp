@@ -200,8 +200,8 @@ int main()
     
     LOG << "Initial mesh..." << nl;
     
-    // MeshSimplicial3D M = FicheraCorner3D();
-    MeshSimplicial3D M = CrossedBricks3D();
+    MeshSimplicial3D M = FicheraCorner3D();
+    // MeshSimplicial3D M = CrossedBricks3D();
     
     M.check();
 
@@ -252,7 +252,7 @@ int main()
     LOG << "Solving Poisson Problem with Neumann boundary conditions" << nl;
 
     const int min_l = 1; 
-    const int max_l = 5;
+    const int max_l = 7;
 
     std::vector<MeshSimplicial3D>    meshes;
     std::vector<FloatVector>         solutions;
@@ -288,7 +288,7 @@ int main()
 
             LOG << "...assemble vector mass matrix" << nl;
     
-            auto     vector_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix(     M,     M.getinnerdimension(), 1, r-1, w, weight_vector ) );
+            auto     vector_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix(     M,     M.getinnerdimension(), 1, r, w, weight_vector ) );
             
             LOG << "...assemble differential matrix and transpose" << nl;
 

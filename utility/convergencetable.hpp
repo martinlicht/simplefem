@@ -52,36 +52,15 @@ class ConvergenceTable
 
 
 
-ConvergenceTable& operator<<( ConvergenceTable& contable, float entry )
-{
-    contable.insert_numerical_entry( entry );
-    return contable;
-}
+ConvergenceTable& operator<<( ConvergenceTable& contable, float entry );
 
-ConvergenceTable& operator<<( ConvergenceTable& contable, double entry )
-{
-    contable.insert_numerical_entry( entry );
-    return contable;
-}
+ConvergenceTable& operator<<( ConvergenceTable& contable, double entry );
 
-ConvergenceTable& operator<<( ConvergenceTable& contable, long double entry )
-{
-    contable.insert_numerical_entry( entry );
-    return contable;
-}
+ConvergenceTable& operator<<( ConvergenceTable& contable, long double entry );
 
-ConvergenceTable& operator<<( ConvergenceTable& contable, const std::string& seriesheader )
-{
-    contable.insert_seriesheader( seriesheader );
-    return contable;
-}
+ConvergenceTable& operator<<( ConvergenceTable& contable, const std::string& seriesheader );
 
-ConvergenceTable& operator<<( ConvergenceTable& contable, char code )
-{
-    assert( code == nl );
-    contable.insert_newline();
-    return contable;
-};
+ConvergenceTable& operator<<( ConvergenceTable& contable, char code );
         
 
 

@@ -60,6 +60,7 @@ linkerprefix       :=-Wl,
 $(context).rpath_t := $(patsubst %,-rpath=$(pathvar)/%,$(affix.$(context))) 
 $(context).rpath   := $(patsubst %,$(linkerprefix)%,$($(context).rpath_t)) 
 $(context).lib     := $(patsubst %,-l%,$(affix.$(context)))
+$(context).olib    := $(patsubst %,$(projectdir)/%/.all.o,$(affix.$(context)))
 $(context).alib    := $(patsubst %,-l:lib%.a,$(affix.$(context)))
 $(context).solib   := $(patsubst %,-l:lib%.so,$(affix.$(context)))
 
@@ -67,6 +68,8 @@ ifeq ($(LINKINGTYPE),static)
 $(context).mylib := $($(context).alib)
 else ifeq ($(LINKINGTYPE),dynamic)
 $(context).mylib := $($(context).solib)
+else ifeq ($(LINKINGTYPE),objectfile)
+$(context).mylib := $($(context).olib)
 else ifeq ($(LINKINGTYPE),unspecified)
 $(context).mylib := $($(context).lib)
 else
@@ -101,13 +104,17 @@ $($(context).outs): $(contextdir)/%.$(ending): $(contextdir)/%.cpp | $($(context
 #	@ echo context:     $(mycontext)
 #	@ echo context dir: $(mycontextdir)
 #	@ echo target:      $@
-#	@ echo target:      $<
-#	@ echo target:      $^
+#	@ echo source file: $<
+#	@ echo all prereq:  $^
 #	@ echo contextdir:  $(mycontextdir)
 #	@ echo depdir:      $($(mycontext).depdir)
 #	@ echo include:     $($(mycontext).include)
 #	@ echo rpath:       $($(mycontext).rpath)
 #	@ echo lib:         $($(mycontext).lib)
+#	@ echo a:           $($(mycontext).alib)
+#	@ echo object:      $($(mycontext).olib)
+#	@ echo so:          $($(mycontext).solib)
+#	@ echo used lib:    $($(mycontext).mylib)
 	@echo Compiling $@ ...
 #	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -std=c++2a -MT $@ -MF $($(mycontext).depdir)/$*.d -MM $(mycontextdir)/$*.cpp
 ifeq ($(LINKINGTYPE),dynamic)

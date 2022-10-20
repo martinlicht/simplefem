@@ -165,7 +165,7 @@ int main()
 
                     std::vector< SparseMatrix::MatrixEntry > entries;
 
-                    const Float h = 1. / (N+1);
+                    const Float h = Float(1.) / (N+1);
                     const Float h2 = h * h;
 
                     for( int e = 0; e < N*N; e++ )
@@ -174,12 +174,12 @@ int main()
                         int y = e % N;
                         assert( e == x * N + y );
 
-                        entries.push_back({ x * N + y, x * N + y, 4. / h2 });
+                        entries.push_back({ x * N + y, x * N + y, Float(4.) / h2 });
 
-                        if( x != 0   ) entries.push_back({ x * N + y, (x-1) * N + y,   -1. / h2 });
-                        if( x != N-1 ) entries.push_back({ x * N + y, (x+1) * N + y,   -1. / h2 });
-                        if( y != 0   ) entries.push_back({ x * N + y, (x  ) * N + y-1, -1. / h2 });
-                        if( y != N-1 ) entries.push_back({ x * N + y, (x  ) * N + y+1, -1. / h2 });
+                        if( x != 0   ) entries.push_back({ x * N + y, (x-1) * N + y,   Float(-1.) / h2 });
+                        if( x != N-1 ) entries.push_back({ x * N + y, (x+1) * N + y,   Float(-1.) / h2 });
+                        if( y != 0   ) entries.push_back({ x * N + y, (x  ) * N + y-1, Float(-1.) / h2 });
+                        if( y != N-1 ) entries.push_back({ x * N + y, (x  ) * N + y+1, Float(-1.) / h2 });
                         
                     }
 

@@ -94,9 +94,9 @@ std::string ConvergenceTable::text_standard( bool display_convergence_rates ) co
 
     const bool rates_are_float = false;
     
-    const int nc_indent_width = 3;
+    const int nc_indent_width = 8;
     
-    const int nc_cell_precision = 3;
+    const int nc_cell_precision = 4;
 
     const int nc_rate_precision = 2;
 
@@ -215,9 +215,9 @@ std::string ConvergenceTable::text_transpose( bool display_convergence_rates ) c
     
     const int nc_header_width = 10;
     
-    const int nc_cell_precision = 3;
+    const int nc_cell_precision = 8;
 
-    const int nc_rate_precision = 2;
+    const int nc_rate_precision = 4;
 
     const int nc_cell_width = 6 + nc_cell_precision + 2;
     // 12; sign + digit + . + e + sign + two digits = 6 chars 
@@ -310,6 +310,44 @@ std::string ConvergenceTable::text_transpose( bool display_convergence_rates ) c
     return ss.str();
             
 }
+
+
+
+
+
+ConvergenceTable& operator<<( ConvergenceTable& contable, float entry )
+{
+    contable.insert_numerical_entry( entry );
+    return contable;
+}
+
+ConvergenceTable& operator<<( ConvergenceTable& contable, double entry )
+{
+    contable.insert_numerical_entry( entry );
+    return contable;
+}
+
+ConvergenceTable& operator<<( ConvergenceTable& contable, long double entry )
+{
+    contable.insert_numerical_entry( entry );
+    return contable;
+}
+
+ConvergenceTable& operator<<( ConvergenceTable& contable, const std::string& seriesheader )
+{
+    contable.insert_seriesheader( seriesheader );
+    return contable;
+}
+
+ConvergenceTable& operator<<( ConvergenceTable& contable, char code )
+{
+    assert( code == nl );
+    contable.insert_newline();
+    return contable;
+}
+        
+
+
 
 
 
