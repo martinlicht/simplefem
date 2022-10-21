@@ -14,7 +14,7 @@ template class std::vector<Float>;
 // Any of those should do:
 // 
 // static_assert( Float(std::numeric_limits<double>::max()) == std::numeric_limits<double>::max(), "Float must be at least double" );
-static_assert( sizeof(Float) >= sizeof(double), "Float must be at least double" );
+// static_assert( sizeof(Float) >= sizeof(double), "Float must be at least double" );
 
 
 #include <cstdarg>

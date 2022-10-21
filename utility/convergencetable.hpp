@@ -27,12 +27,10 @@ class ConvergenceTable
 
         explicit ConvergenceTable( std::string table_name = "---------- Default Table Name ----------" );
         
-        ConvergenceTable& operator<<( Float entry );
-        
-        ConvergenceTable& operator<<( const std::string& seriesheader );
-        
-        ConvergenceTable& operator<<( char code );
-        
+        void insert_numerical_entry( Float entry );
+        void insert_seriesheader( const std::string& seriesheader );
+        void insert_newline();
+
 
         std::string text() const;
         
@@ -52,6 +50,18 @@ class ConvergenceTable
 };
 
 
+
+
+ConvergenceTable& operator<<( ConvergenceTable& contable, float entry );
+
+ConvergenceTable& operator<<( ConvergenceTable& contable, double entry );
+
+ConvergenceTable& operator<<( ConvergenceTable& contable, long double entry );
+
+ConvergenceTable& operator<<( ConvergenceTable& contable, const std::string& seriesheader );
+
+ConvergenceTable& operator<<( ConvergenceTable& contable, char code );
+        
 
 
 #endif

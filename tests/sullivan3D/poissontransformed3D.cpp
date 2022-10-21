@@ -200,8 +200,8 @@ int main()
     
     LOG << "Initial mesh..." << nl;
     
-    // MeshSimplicial3D M = FicheraCorner3D();
-    MeshSimplicial3D M = CrossedBricks3D();
+    MeshSimplicial3D M = FicheraCorner3D();
+    // MeshSimplicial3D M = CrossedBricks3D();
     
     M.check();
 
@@ -252,15 +252,19 @@ int main()
     LOG << "Solving Poisson Problem with Neumann boundary conditions" << nl;
 
     const int min_l = 1; 
-    const int max_l = 5;
+    const int max_l = 7;
 
     std::vector<MeshSimplicial3D>    meshes;
     std::vector<FloatVector>         solutions;
     std::vector<ConvergenceTable>    contables;
     
-    
+    ConvergenceTable contable_pastone("Mass errror, one before");
+    ConvergenceTable contable_pasttwo("Mass errror, two before");   
 
-    
+    contable_pastone << "level" << "u_error" << "du_error" << nl;
+    contable_pasttwo << "level" << "u_error" << "du_error" << nl;
+
+
     for( int l = 0; l < min_l; l++ )
         M.uniformrefinement();
 
@@ -284,7 +288,7 @@ int main()
 
             LOG << "...assemble vector mass matrix" << nl;
     
-            auto     vector_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix(     M,     M.getinnerdimension(), 1, r-1, w, weight_vector ) );
+            auto     vector_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix(     M,     M.getinnerdimension(), 1, r, w, weight_vector ) );
             
             LOG << "...assemble differential matrix and transpose" << nl;
 
@@ -410,6 +414,12 @@ int main()
                     contable << graderrornorm;
                     contable << nl;
 
+                    if( i+min_l == l-1 )
+                        contable_pastone << Float(l-1) << errornorm << graderrornorm << nl;
+                    
+                    if( i+min_l == l-2 )
+                        contable_pasttwo << Float(l-2) << errornorm << graderrornorm << nl;
+                    
                 }
 
                 contable.lg();
@@ -428,6 +438,9 @@ int main()
 
         for( const auto& contable: contables )
             contable.lg();
+
+        contable_pastone.lg();
+        contable_pasttwo.lg();
         
         if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
         
