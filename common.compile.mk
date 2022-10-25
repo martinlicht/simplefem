@@ -205,9 +205,13 @@ ifeq ($(FLAG_DO_OPTIMIZE),yes)
 		CXXFLAGS_OPTIMIZE += -Ofast  
 		CXXFLAGS_OPTIMIZE += -march=native -mtune=native 
 		ifeq ($(FLAG_CXX),GCC)
+# 			CXXFLAGS_OPTIMIZE += -finline-limit=1200
+			CXXFLAGS_OPTIMIZE += -fno-fat-lto-objects
+		endif
+		ifeq ($(FLAG_CXX),CLANG)
 #			 CXXFLAGS_OPTIMIZE += -finline-limit=1200
 		endif
-		CXXFLAGS_OPTIMIZE += -flto -fno-fat-lto-objects
+		CXXFLAGS_OPTIMIZE += -flto
 	endif
 else
 	CXXFLAGS_OPTIMIZE += -O0

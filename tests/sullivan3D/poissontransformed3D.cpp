@@ -284,19 +284,21 @@ int main()
             
             LOG << "...assemble scalar mass matrices" << nl;
     
-            auto     scalar_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix(     M,     M.getinnerdimension(), 0, r, w, weight_scalar ) );
+            // auto     scalar_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix( M, M.getinnerdimension(), 0, r,   w, weight_scalar ) );
+            auto     scalar_massmatrix = MatrixCSR( FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r ) );
 
             LOG << "...assemble vector mass matrix" << nl;
     
-            auto     vector_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix(     M,     M.getinnerdimension(), 1, r, w, weight_vector ) );
+            // auto     vector_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix( M, M.getinnerdimension(), 1, r-1, w, weight_vector ) );
+            auto     vector_massmatrix = MatrixCSR( FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 ) );
             
             LOG << "...assemble differential matrix and transpose" << nl;
 
-            auto     diffmatrix = MatrixCSR( FEECBrokenDiffMatrix(     M,     M.getinnerdimension(), 0, r ) );
+            auto     diffmatrix = MatrixCSR( FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r ) );
 
             LOG << "...assemble inclusion matrix and transpose" << nl;
     
-            auto     incmatrix = MatrixCSR( FEECSullivanInclusionMatrix(     M,     M.getinnerdimension(), 0, r ) );
+            auto     incmatrix = MatrixCSR( FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r ) );
 
             display_mallinfo();
 

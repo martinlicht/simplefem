@@ -87,11 +87,15 @@ int main()
                     
                     const auto averaged = averaging * included;
                     
-                    const auto error_eucl = ( averaged - field ).norm();
+                    // const auto error_eucl = ( averaged - field ).norm();
                     
                     const auto error_mass = ( included - inclusion * averaged ).norm(massmatrix);
 
-                    Float error = maximum( error_eucl, error_mass );
+                    // LOG << error_eucl << space << error_mass << nl; 
+                    
+                    // assert( error_eucl < 10e-14 and error_mass < 10e-14 ); 
+                    
+                    Float error = error_mass;
                     
                     errors[k][l-l_min][r-r_min] = maximum( errors[k][l-l_min][r-r_min], error );
                     
