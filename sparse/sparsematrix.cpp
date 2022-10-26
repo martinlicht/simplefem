@@ -378,8 +378,12 @@ const SparseMatrix& SparseMatrix::sortentries( SparseMatrix::MatrixEntrySorting 
 const SparseMatrix& SparseMatrix::sortandcompressentries( SparseMatrix::MatrixEntrySorting manner ) const
 {
     check();
+
+    LOG << "SparseMatrix: Sorting..." << nl;
     
     sortentries( manner );
+    
+    LOG << "SparseMatrix: Compressing..." << nl;
     
     assert( is_sorted(manner) );
     
@@ -434,6 +438,8 @@ const SparseMatrix& SparseMatrix::sortandcompressentries( SparseMatrix::MatrixEn
     }
     
     assert( is_sorted(manner) );
+    
+    LOG << "SparseMatrix: Done!" << nl;
     
     return *this;
 }

@@ -22,14 +22,20 @@ int main()
         
         {
             
-            LOG << "Second Experiment" << nl;
-            
-            MeshSimplicial3D M = UnitSimplex3D();
+//             MeshSimplicial3D M = UnitSimplex3D();
+            MeshSimplicial3D M = StandardCubeFive3D();
             
             M.check();
             
-            for( int k = 0; k < 2; k++ ) M.uniformrefinement();
+            LOG << "Uniform refinements..." << nl;
+
+            for( int k = 0; k <= 2; k++ ) {             
+                LOG << "Uniform refinements..." << k << nl;
+                M.uniformrefinement();
+            }
             
+            LOG << "Longest edge bisections..." << nl;
+
             int cell_count_initial = M.count_tetrahedra();
             int cell_marked_count  = 0;
             

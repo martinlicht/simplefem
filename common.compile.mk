@@ -30,8 +30,8 @@ endif
 
 # Do you want to use GCC or Clang?
 # Uncomment the appropriate definition below
-FLAG_CXX := CLANG
-# FLAG_CXX := GCC
+# FLAG_CXX := CLANG
+FLAG_CXX := GCC
 # FLAG_CXX := ICC
 
 
@@ -58,11 +58,11 @@ FLAG_DISABLE_CHECK_MESHES=yes
 
 # Do you want to ENABLE the standard library debugging flags 
 # Uncomment the following line to enable the standard library debugging flags 
-FLAG_DISABLE_STDLIBDEBUG=yes
+# FLAG_DISABLE_STDLIBDEBUG=yes
 
 # Do you want to DISABLE excpetion handling?
 # Uncomment the following line to disable exception handling
-FLAG_NO_EXCEPTIONS=yes
+# FLAG_NO_EXCEPTIONS=yes
 
 # Do you want to ENABLE extended precision?
 # Uncomment the following line to switch from double precision to extended precision
@@ -83,7 +83,7 @@ FLAG_NO_EXCEPTIONS=yes
 
 # Do you want to compile with all optimization flags enabled?
 # Uncomment the following line to have this done so
-# FLAG_DO_OPTIMIZE=yes
+FLAG_DO_OPTIMIZE=yes
 
 # Do you want to ENABLE the use of openMP?
 # Uncomment the following line to enable compilation with openMP
@@ -187,7 +187,7 @@ CXXFLAGS_LANG := -std=c++14 -pedantic -fno-rtti
 ###############################################
 
 # If optimization is enabled, then set a number of flags 
-# In the absence of optimization, we set O1
+# In the absence of optimization, we set O0
 
 CXXFLAGS_OPTIMIZE:=
 
@@ -196,15 +196,20 @@ ifeq ($(FLAG_DO_OPTIMIZE),yes)
 	ifeq ($(FLAG_CXX),ICC)
 		CXXFLAGS_OPTIMIZE += -march=core-avx2
 		CXXFLAGS_OPTIMIZE += -intel-optimized-headers 
-		CXXFLAGS_OPTIMIZE += -Ofast -xHOST -O3 -ipo -no-prec-div -fp-model fast=2
+		CXXFLAGS_OPTIMIZE += -xHOST -O3 -Ofast -ipo -no-prec-div -fp-model fast=2
 		CXXFLAGS_OPTIMIZE += 
 		CXXFLAGS_OPTIMIZE += 
 		CXXFLAGS_OPTIMIZE += 
 	else 
-		CXXFLAGS_OPTIMIZE += -Ofast 
-		CXXFLAGS_OPTIMIZE += -march=native 
+# wierd warnings appear at LTO and O1+ ....
+		CXXFLAGS_OPTIMIZE += -Ofast  
+		CXXFLAGS_OPTIMIZE += -march=native -mtune=native 
 		ifeq ($(FLAG_CXX),GCC)
-			CXXFLAGS_OPTIMIZE += -inline-threshold=1200
+# 			CXXFLAGS_OPTIMIZE += -finline-limit=1200
+			CXXFLAGS_OPTIMIZE += -fno-fat-lto-objects
+		endif
+		ifeq ($(FLAG_CXX),CLANG)
+#			 CXXFLAGS_OPTIMIZE += -finline-limit=1200
 		endif
 		CXXFLAGS_OPTIMIZE += -flto
 	endif
@@ -612,10 +617,10 @@ CXXFLAGS_EXECUTABLE+=$(CXXFLAGS)
 
 ifeq ($(FLAG_DO_OPTIMIZE),yes)
 	ifeq ($(FLAG_CXX),ICC)
-		CXXFLAGS_EXECUTABLE+=-fwhole-program
+		CXXFLAGS_EXECUTABLE+=-fwhole-program -fuse-linker-plugin
 	else 
 		ifeq ($(FLAG_CXX),GCC)
-			CXXFLAGS_EXECUTABLE+=-fwhole-program
+			CXXFLAGS_EXECUTABLE+=-fwhole-program -fuse-linker-plugin
 		endif
 	endif
 else
@@ -696,12 +701,14 @@ LDLIBS := $(strip $(LDLIBS))
 
 LINKINGTYPE:=unspecified
 
-ifeq ($(OS),Windows_NT)
-LINKINGTYPE:=static
-else ifeq ($(FLAG_DO_OPTIMIZE=yes),yes)
-LINKINGTYPE:=static
+ifeq ($(FLAG_DO_OPTIMIZE),yes)
+	LINKINGTYPE:=objectfile
 else
-LINKINGTYPE:=dynamic
+ifeq ($(OS),Windows_NT)
+	LINKINGTYPE:=static
+else 
+	LINKINGTYPE:=dynamic
+endif
 endif
 
 

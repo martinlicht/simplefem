@@ -47,34 +47,41 @@ typedef long double Float;
 #endif
 
 
-// inline constexpr Float HeronStep( Float x, Float a )
-// {
-//     return 0.5 * ( x + a / x );
-// }
+constexpr Float SqrtHelper( Float a, Float x, unsigned int i )
+{
+    return ( i == 0 ) ? x : SqrtHelper( a, ( a / x + x ) / 2, i-1 );
+}
 
-// inline constexpr Float HeronAlgorithm( Float x, Float a, unsigned int i )
-// {
-//     return i==0 ? x : HeronStep( HeronAlgorithm(x,a,i-1), a );
-// }
+constexpr Float Sqrt( Float a, unsigned int i = 40 )
+{
+    return SqrtHelper( a, a, i );
+}
 
-// template<unsigned int i = 10>
-// static Float Sqrt( Float a )
-// {
-//     return HeronAlgorithm( x, a, i );
-// }
+constexpr Float Sqrt_( Float a, bool init = true, unsigned int i = 40, Float x = 0. )
+{
+    return ( init ) ? Sqrt_( a, false, i, a ) : ( i==0 ? x : Sqrt_( a, false, i-1, ( a / x + x ) / 2 ) );
+}
+
+
+
 
 
 static const constexpr Float notanumber = std::numeric_limits<Float>::quiet_NaN();
 
 static const constexpr Float machine_epsilon = std::numeric_limits<Float>::epsilon();
 
-static const /*constexpr*/ Float desired_precision = 
-                                    sizeof(Float) == sizeof(float) ? 10e-6 : std::sqrt( machine_epsilon );
+static const constexpr Float desired_precision = 
+                                    sizeof(Float) == sizeof(float) ? 10e-6 : Sqrt( machine_epsilon );
 
 
 // TODO: Put these somewhere where it makes sense 
 extern template class std::vector<int>;
 extern template class std::vector<Float>;
+
+
+
+
+
 
 
 

@@ -28,8 +28,14 @@ int main()
         
         M.check();
         
-//             for( int k = 0; k < 2; k++ ) M.uniformrefinement();
+        for( int k = 0; k <= 2; k++ ) 
+        { 
+            LOG << "Uniform refinements..." << k << nl;
+            M.uniformrefinement();
+        }
         
+        LOG << "Newest vertex bisections..." << nl;
+
         int cell_count_initial = M.count_triangles();
         int cell_marked_count  = 0;
         
@@ -69,8 +75,14 @@ int main()
         
         M.check();
         
-//             for( int k = 0; k < 2; k++ ) M.uniformrefinement();
+        for( int k = 0; k <= 2; k++ ) 
+        { 
+            LOG << "Uniform refinements..." << k << nl;
+            M.uniformrefinement();
+        }
         
+        LOG << "Newest vertex bisections..." << nl;
+
         int cell_count_initial = M.count_triangles();
         int cell_marked_count  = 0;
         
@@ -110,8 +122,14 @@ int main()
         
         M.check();
         
-//             for( int k = 0; k < 2; k++ ) M.uniformrefinement();
+        for( int k = 0; k <= 2; k++ ) 
+        { 
+            LOG << "Uniform refinements..." << k << nl;
+            M.uniformrefinement();
+        }
         
+        LOG << "Newest vertex bisections..." << nl;
+
         int cell_count_initial = M.count_triangles();
         int cell_marked_count  = 0;
         
@@ -149,6 +167,8 @@ int main()
         
         MeshSimplicial2D M = UnitTriangle2D(); M.check();
         
+        LOG << "Newest vertex bisections..." << nl;
+
         int cell_count_initial = M.count_triangles();
         int cell_marked_count  = 0;
         
@@ -188,6 +208,8 @@ int main()
         
         int iter_max = 2000;
         
+        LOG << "Newest vertex bisections..." << nl;
+
         for( int i = 0; i < iter_max; i++ ) {
         
 //             std::vector<int> markedcells;
