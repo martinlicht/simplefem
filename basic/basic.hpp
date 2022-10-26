@@ -47,6 +47,23 @@ typedef long double Float;
 #endif
 
 
+// inline constexpr Float HeronStep( Float x, Float a )
+// {
+//     return 0.5 * ( x + a / x );
+// }
+
+// inline constexpr Float HeronAlgorithm( Float x, Float a, unsigned int i )
+// {
+//     return i==0 ? x : HeronStep( HeronAlgorithm(x,a,i-1), a );
+// }
+
+// template<unsigned int i = 10>
+// static Float Sqrt( Float a )
+// {
+//     return HeronAlgorithm( x, a, i );
+// }
+
+
 static const constexpr Float notanumber = std::numeric_limits<Float>::quiet_NaN();
 
 static const constexpr Float machine_epsilon = std::numeric_limits<Float>::epsilon();

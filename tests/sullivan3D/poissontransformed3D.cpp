@@ -82,7 +82,7 @@ DenseMatrix jacobian(const FloatVector& vec) {
     Float a_dev = a / lis;
     
     return DenseMatrix( 3, 3, {
-        1./B + a * ( 1/l2 - 1/li/B ) + ( a_dev * sx * dx * ( 1/l2 - 1/li/B ) + a * ( -x/l2c - sx*dx/lis/B ) ) * x 
+        1/B + a * ( 1/l2 - 1/li/B ) + ( a_dev * sx * dx * ( 1/l2 - 1/li/B ) + a * ( -x/l2c - sx*dx/lis/B ) ) * x 
         ,
                                        (                                       a * ( -y/l2c               ) ) * x 
         ,
@@ -91,7 +91,7 @@ DenseMatrix jacobian(const FloatVector& vec) {
         //
                                        (                                       a * ( -x/l2c               ) ) * y 
         ,
-        1./B + a * ( 1/l2 - 1/li/B ) + ( a_dev * sy * dy * ( 1/l2 - 1/li/B ) + a * ( -y/l2c - sy*dy/lis/B ) ) * y 
+        1/B + a * ( 1/l2 - 1/li/B ) + ( a_dev * sy * dy * ( 1/l2 - 1/li/B ) + a * ( -y/l2c - sy*dy/lis/B ) ) * y 
         ,
                                        (                                       a * ( -z/l2c               ) ) * y 
         ,
@@ -100,7 +100,7 @@ DenseMatrix jacobian(const FloatVector& vec) {
         ,
                                        (                                       a * ( -y/l2c               ) ) * z 
         ,
-        1./B + a * ( 1/l2 - 1/li/B ) + ( a_dev * sz * dz * ( 1/l2 - 1/li/B ) + a * ( -z/l2c - sz*dz/lis/B ) ) * z 
+        1/B + a * ( 1/l2 - 1/li/B ) + ( a_dev * sz * dz * ( 1/l2 - 1/li/B ) + a * ( -z/l2c - sz*dz/lis/B ) ) * z 
         ,
     });
 }
@@ -200,8 +200,8 @@ int main()
     
     LOG << "Initial mesh..." << nl;
     
-    // MeshSimplicial3D M = FicheraCorner3D();
-    MeshSimplicial3D M = CrossedBricks3D();
+    MeshSimplicial3D M = FicheraCorner3D();
+    // MeshSimplicial3D M = CrossedBricks3D();
     
     M.check();
 
@@ -252,7 +252,7 @@ int main()
     LOG << "Solving Poisson Problem with Neumann boundary conditions" << nl;
 
     const int min_l = 1; 
-    const int max_l = 5;
+    const int max_l = 8;
 
     std::vector<MeshSimplicial3D>    meshes;
     std::vector<FloatVector>         solutions;

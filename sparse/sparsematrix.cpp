@@ -20,6 +20,7 @@ SparseMatrix::SparseMatrix( int dimout, int dimin, int numentries, std::function
   entries(0)
 {
     assert( 0 <= numentries );
+    assert( numentries <= entries.max_size() );
     entries.reserve( numentries );
     
     for( int i = 0; i < numentries; i++ ) 
