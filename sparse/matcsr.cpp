@@ -4,6 +4,7 @@
 #include <ostream>
 #include <utility>
 #include <vector>
+#include <set>
 
 #include "matcsr.hpp"
 
@@ -633,11 +634,11 @@ MatrixCSR MatrixCSRMultiplication( const MatrixCSR& mat1, const MatrixCSR& mat2 
     int matn_rows = mat1_rows;
     int matn_cols = mat2_cols;
 
-    LOG << "create index list A, allocate C and V" << nl; 
+    LOG << "MatrixCSRMultiplication: create index list A, allocate C and V" << nl; 
     
     std::vector<int> A( mat1_rows + 1, 0 );
 
-    // LOG << mat1.text() << nl << mat2.text() << nl;
+    LOG << mat1.text() << nl << mat2.text() << nl;
 
     #if defined(_OPENMP)
     #pragma omp parallel for
@@ -653,12 +654,12 @@ MatrixCSR MatrixCSRMultiplication( const MatrixCSR& mat1, const MatrixCSR& mat2 
 
     // for( int r = 0; r <= matn_rows; r++ ) LOG << A[r] << space; LOG << nl;
     
-    // LOG << A[matn_rows] << nl;
+    LOG << "MatrixCSRMultiplication: Temporary number of elements:" << A[matn_rows] << nl;
 
     std::vector<int>   C( A[matn_rows] );
     std::vector<Float> V( A[matn_rows] );
 
-    LOG << "allocated" << nl; 
+    LOG << "MatrixCSRMultiplication: allocated" << nl; 
     
     // compute entries     
 
@@ -687,7 +688,121 @@ MatrixCSR MatrixCSRMultiplication( const MatrixCSR& mat1, const MatrixCSR& mat2 
     
     sort_and_compress_csrdata( A, C, V );
 
-    LOG << "return" << nl; 
+    LOG << "MatrixCSRMultiplication: return" << nl; 
+    
+    return MatrixCSR( matn_rows, matn_cols, std::move(A), std::move(C), std::move(V) );
+
+}
+
+
+
+
+
+
+
+MatrixCSR MatrixCSRMultiplication_reduced( const MatrixCSR& mat1, const MatrixCSR& mat2 )
+{
+    // gather relevant data
+    int mat1_rows = mat1.getdimout();
+    int mat1_cols = mat1.getdimin();
+    int mat2_rows = mat2.getdimout();
+    int mat2_cols = mat2.getdimin();
+    
+    const int* mat1A = mat1.getA();
+    const int* mat2A = mat2.getA();
+    
+    const int* mat1C = mat1.getC();
+    const int* mat2C = mat2.getC();
+
+    const Float* mat1V = mat1.getV();
+    const Float* mat2V = mat2.getV();
+
+    Assert( mat1_cols == mat2_rows );
+
+    int matn_rows = mat1_rows;
+    int matn_cols = mat2_cols;
+
+    LOG << "MatrixCSRMultiplication reduced: create index list A and fill in" << nl; 
+    
+    std::vector<int> A( mat1_rows + 1, 0 );
+
+    #if defined(_OPENMP)
+    #pragma omp parallel for
+    #endif
+    for( int r = 0; r < matn_rows; r++ )
+    {
+        std::set<int> column_indices;
+
+        for( int c1 = mat1A[r];           c1 < mat1A[r+1];           c1++ )
+        for( int c2 = mat2A[ mat1C[c1] ]; c2 < mat2A[ mat1C[c1]+1 ]; c2++ )
+            column_indices.insert( mat2C[c2] );
+
+        A[r+1] = column_indices.size();
+    }
+
+    for( int r = 1; r <= matn_rows; r++ ) A[r] += A[r-1];
+    for( int r = 1; r <= matn_rows; r++ ) assert( A[r-1] <= A[r] );
+
+    // for( int r = 0; r <= matn_rows; r++ ) LOG << A[r] << space; LOG << nl;    
+    // LOG << mat1.text() << nl << mat2.text() << nl;
+
+    LOG << "MatrixCSRMultiplication reduced: Temporary number of elements:" << A[matn_rows] << nl;
+
+    std::vector<int>   C( A[matn_rows], 0  );
+    
+    #if defined(_OPENMP)
+    #pragma omp parallel for
+    #endif
+    for( int r = 0; r < matn_rows; r++ )
+    {
+        std::set<int> column_indices;
+
+        for( int c1 = mat1A[r];           c1 < mat1A[r+1];           c1++ )
+        for( int c2 = mat2A[ mat1C[c1] ]; c2 < mat2A[ mat1C[c1]+1 ]; c2++ )
+            column_indices.insert( mat2C[c2] );
+
+        Assert( A[r] + column_indices.size() == A[r+1] );
+
+        int i = 0;
+        for( int c : column_indices ) {
+            C[ A[r] + i ] = c;
+            i++;
+        }
+        assert( i == column_indices.size() );
+
+        for( int c = A[r]+1; c < A[r+1]; c++ ){
+            assert( C[c] > C[c-1] );
+        }
+        
+
+        Assert( A[r]+i == A[r+1], A[r], i, A[r+1] );
+
+    }
+
+    std::vector<Float> V( A[matn_rows], 0. );
+
+    #if defined(_OPENMP)
+    #pragma omp parallel for
+    #endif
+    for( int r = 0; r < matn_rows; r++ )
+    {
+        for( int c = A[r]; c < A[r+1]; c++ )
+        for( int c1 = mat1A[r];           c1 < mat1A[r+1];           c1++ )
+        for( int c2 = mat2A[ mat1C[c1] ]; c2 < mat2A[ mat1C[c1]+1 ]; c2++ )
+        {
+            assert( A[r] < A[r+1] );
+            
+            if( C[c] == mat2C[c2] )
+                V[ c ] += mat1V[ c1 ] * mat2V[ c2 ];
+        }
+        
+    }
+
+    LOG << "MatrixCSRMultiplication reduced: compressing" << nl; 
+    
+    sort_and_compress_csrdata( A, C, V );
+
+    LOG << "MatrixCSRMultiplication reduced: return " << A.back() << nl; 
     
     return MatrixCSR( matn_rows, matn_cols, std::move(A), std::move(C), std::move(V) );
 

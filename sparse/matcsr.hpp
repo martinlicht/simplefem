@@ -118,6 +118,8 @@ public LinearOperator /* every matrix is a linear operator */
 
 MatrixCSR MatrixCSRMultiplication( const MatrixCSR& mat1, const MatrixCSR& mat2 );
 
+MatrixCSR MatrixCSRMultiplication_reduced( const MatrixCSR& mat1, const MatrixCSR& mat2 );
+
 MatrixCSR MatrixCSRAddition( const MatrixCSR& mat1, const MatrixCSR& mat2, Float s1, Float s2 );
 
 DiagonalOperator InverseDiagonalPreconditioner( const MatrixCSR& mat );
@@ -137,7 +139,7 @@ inline MatrixCSR operator-( const MatrixCSR& mat1, const MatrixCSR& mat2 )
 
 inline MatrixCSR operator&( const MatrixCSR& mat1, const MatrixCSR& mat2 )
 {
-    return MatrixCSRMultiplication( mat1, mat2 );
+    return MatrixCSRMultiplication_reduced( mat1, mat2 );
 }
 
 inline MatrixCSR operator*( const MatrixCSR& mat, Float s )

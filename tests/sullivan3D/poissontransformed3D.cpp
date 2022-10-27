@@ -200,8 +200,8 @@ int main()
     
     LOG << "Initial mesh..." << nl;
     
-    MeshSimplicial3D M = FicheraCorner3D();
-    // MeshSimplicial3D M = CrossedBricks3D();
+    // MeshSimplicial3D M = FicheraCorner3D();
+    MeshSimplicial3D M = CrossedBricks_Five3D();
     
     M.check();
 
@@ -432,6 +432,18 @@ int main()
                 meshes.push_back(M);
                 // solutions.push_back(sol);
                 contables.push_back(contable);
+
+                
+                if( false and r == 1 )
+                {
+                    fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
+                    VTKWriter vtk( M, fs, getbasename(__FILE__) );
+                    vtk.writeCoordinateBlock();
+                    vtk.writeTopDimensionalCells();
+                    vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
+                    // vtk.writeCellVectorData( computed_grad, "gradient_interpolation" , 0.1 );
+                    fs.close();
+                }
 
 
             }
