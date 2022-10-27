@@ -21,6 +21,9 @@ SparseMatrix::SparseMatrix( int dimout, int dimin, int numentries, std::function
 {
     assert( 0 <= numentries );
     assert( numentries <= entries.max_size() );
+    
+    LOG << "SparseMatrix allocation: " << numentries << nl;
+    
     entries.reserve( numentries );
     
     for( int i = 0; i < numentries; i++ ) 

@@ -804,6 +804,8 @@ MatrixCSR MatrixCSRMultiplication( const MatrixCSR& mat1, const MatrixCSR& mat2 
     
     // create matrix 
     
+    LOG << "MatrixCSRMultiplication: sort and compress" << nl; 
+    
     sort_and_compress_csrdata( A, C, V );
 
     LOG << "MatrixCSRMultiplication: return" << nl; 
@@ -916,9 +918,10 @@ MatrixCSR MatrixCSRMultiplication_reduced( const MatrixCSR& mat1, const MatrixCS
         
     }
 
-    // LOG << "MatrixCSRMultiplication reduced: compressing" << nl; 
-    // sort_and_compress_csrdata( A, C, V );
-
+    LOG << "MatrixCSRMultiplication reduced: compressing" << nl; 
+    sort_and_compress_csrdata( A, C, V );
+    
+    assert( A.back() == A[matn_rows] );
     LOG << "MatrixCSRMultiplication reduced: return " << A.back() << nl; 
     
     return MatrixCSR( matn_rows, matn_cols, std::move(A), std::move(C), std::move(V) );
