@@ -855,7 +855,8 @@ MatrixCSR MatrixCSRMultiplication_reduced( const MatrixCSR& mat1, const MatrixCS
 
         for( int c1 = mat1A[r];           c1 < mat1A[r+1];           c1++ )
         for( int c2 = mat2A[ mat1C[c1] ]; c2 < mat2A[ mat1C[c1]+1 ]; c2++ )
-            column_indices.insert( mat2C[c2] );
+            if( mat1V[ c1 ] != 0. && mat2V[ c2 ] != 0. )
+                column_indices.insert( mat2C[c2] );
 
         A[r+1] = column_indices.size();
     }
@@ -879,7 +880,8 @@ MatrixCSR MatrixCSRMultiplication_reduced( const MatrixCSR& mat1, const MatrixCS
 
         for( int c1 = mat1A[r];           c1 < mat1A[r+1];           c1++ )
         for( int c2 = mat2A[ mat1C[c1] ]; c2 < mat2A[ mat1C[c1]+1 ]; c2++ )
-            column_indices.insert( mat2C[c2] );
+            if( mat1V[ c1 ] != 0. && mat2V[ c2 ] != 0. )
+                column_indices.insert( mat2C[c2] );
 
         Assert( A[r] + column_indices.size() == A[r+1] );
 
@@ -913,7 +915,8 @@ MatrixCSR MatrixCSRMultiplication_reduced( const MatrixCSR& mat1, const MatrixCS
             assert( A[r] < A[r+1] );
             
             if( C[c] == mat2C[c2] )
-                V[ c ] += mat1V[ c1 ] * mat2V[ c2 ];
+                if( mat1V[ c1 ] != 0. && mat2V[ c2 ] != 0. )
+                    V[ c ] += mat1V[ c1 ] * mat2V[ c2 ];
         }
         
     }

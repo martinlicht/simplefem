@@ -382,6 +382,20 @@ const SparseMatrix& SparseMatrix::sortandcompressentries( SparseMatrix::MatrixEn
 {
     check();
 
+    LOG << "SparseMatrix: Remove zeroes..." << nl;
+    
+    {
+        
+        // for( int c = 0; c < entries.size(); c++ ) 
+        //     if( entries[c].value == 0 ) { entries.erase( entries.begin()+c ); c--; }
+        
+        auto it = std::remove_if(entries.begin(), entries.end(), []( const SparseMatrix::MatrixEntry e ){ return e.value == 0.; } );
+        entries.erase( it, entries.end() );
+        
+        for( int c = 0; c < entries.size(); c++ ) assert( entries[c].value != 0. );
+        
+    }
+    
     LOG << "SparseMatrix: Sorting..." << nl;
     
     sortentries( manner );
@@ -415,28 +429,6 @@ const SparseMatrix& SparseMatrix::sortandcompressentries( SparseMatrix::MatrixEn
         entries.resize( dest+1 );
     
         check(); 
-        
-    }
-    
-    assert( is_sorted(manner) );
-    
-    {
-        
-//         for( int c = 0; c < entries.size(); c++ ){
-//             if( entries[c].value == 0 ) {
-//                 entries.erase( entries.begin()+c );
-//                 c--;
-//             }
-//         }
-        
-        
-        entries.erase(
-            std::remove_if(entries.begin(), entries.end(), []( const SparseMatrix::MatrixEntry e ){ return e.value == 0.; } ),
-            entries.end()
-        );
-        
-        for( int c = 0; c < entries.size(); c++ ) assert( entries[c].value != 0. );
-        
         
     }
     
