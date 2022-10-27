@@ -441,9 +441,9 @@ static void sort_and_compress_csrdata( std::vector<int>& A, std::vector<int>& C,
     
     std::vector<int> nnz( num_rows );
 
-    // #if defined(_OPENMP)
-    // #pragma omp parallel for
-    // #endif
+    #if defined(_OPENMP)
+    #pragma omp parallel for
+    #endif
     for( int r = 0; r < num_rows; r++ ) {
         
         for( int i = A[r]; i < A[r+1]; i++ ) 
@@ -467,7 +467,7 @@ static void sort_and_compress_csrdata( std::vector<int>& A, std::vector<int>& C,
             
         }
         
-        // // // // swap all the zeroes to the very end
+        // swap all the zeroes to the very end
         for( int i = A[r]  ; i < A[r+1]; i++ ) // bubble sort
         for( int j = A[r]+1; j < A[r+1]; j++ ) 
         {
@@ -484,6 +484,7 @@ static void sort_and_compress_csrdata( std::vector<int>& A, std::vector<int>& C,
         for( int i = A[r]+1; i < A[r+1]; i++ ) 
             Assert( C[i-1] < C[i] or V[i] == 0., i, C[i-1], C[i], V[i] );
         
+        // Find the first zero within the current row data 
         int first_zero = A[r];
         for(; first_zero < A[r+1] and V[first_zero] != 0.; first_zero++ ) 
         
@@ -798,9 +799,8 @@ MatrixCSR MatrixCSRMultiplication_reduced( const MatrixCSR& mat1, const MatrixCS
         
     }
 
-    LOG << "MatrixCSRMultiplication reduced: compressing" << nl; 
-    
-    sort_and_compress_csrdata( A, C, V );
+    // LOG << "MatrixCSRMultiplication reduced: compressing" << nl; 
+    // sort_and_compress_csrdata( A, C, V );
 
     LOG << "MatrixCSRMultiplication reduced: return " << A.back() << nl; 
     
