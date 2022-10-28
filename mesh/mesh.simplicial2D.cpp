@@ -1153,10 +1153,12 @@ std::vector<int> MeshSimplicial2D::get_triangle_parents_of_edge( int e ) const
   
   std::vector<int> ret;
   
-  for( int t = 0; t < count_triangles(); t++ ) 
-    for( int te : get_triangle_edges(t) )
-      if( e == te )
-        ret.push_back( t );
+  int t = get_edge_firstparent_triangle(e);
+  while( t != nullindex )
+  {
+    ret.push_back(t);
+    t = this->get_edge_nextparent_triangle(e,t);
+  }
   
   return ret;
 }
@@ -1221,11 +1223,13 @@ std::vector<int> MeshSimplicial2D::get_triangle_parents_of_vertex( int v ) const
   
   std::vector<int> ret;
   
-  for( int t = 0; t < count_triangles(); t++ ) 
-    for( int tv : get_triangle_vertices(t) )
-      if( v == tv )
-        ret.push_back( t );
-  
+  int t = get_vertex_firstparent_triangle(v);
+  while( t != nullindex )
+  {
+    ret.push_back(t);
+    t = this->get_vertex_nextparent_triangle(v,t);
+  }
+
   return ret;
 }
 
@@ -1289,11 +1293,13 @@ std::vector<int> MeshSimplicial2D::get_edge_parents_of_vertex( int v ) const
   
   std::vector<int> ret;
   
-  for( int e = 0; e < count_edges(); e++ ) 
-    for( int ev : get_edge_vertices(e) )
-      if( v == ev )
-        ret.push_back( e );
-  
+  int e = get_vertex_firstparent_edge(v);
+  while( e != nullindex )
+  {
+    ret.push_back(e);
+    e = this->get_vertex_nextparent_edge(v,e);
+  }
+
   return ret;
 }
 

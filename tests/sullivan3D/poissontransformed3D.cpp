@@ -290,6 +290,9 @@ int main()
             
             // display_mallinfo();
 
+            mass.compressentries();
+            stiffness.compressentries();
+
             LOG << "Size of mass matrix: " << sizeof(int) * ( mass.getdimout() + mass.getnumberofentries() ) + sizeof(Float) * mass.getnumberofentries() << nl;
             LOG << "Size of mass matrix: " << sizeof(int) * ( stiffness.getdimout() + stiffness.getnumberofentries() ) + sizeof(Float) * stiffness.getnumberofentries() << nl;
 
