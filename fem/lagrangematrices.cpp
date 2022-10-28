@@ -3,6 +3,7 @@
 #include <set>
 
 #include "../basic.hpp"
+#include "../utility/stl.hpp"
 #include "../dense/densematrix.hpp"
 #include "../dense/functions.hpp"
 #include "../dense/matrixtensorproduct.hpp"
@@ -336,36 +337,48 @@ MatrixCSR LagrangeCoefficientMassMatrix( const Mesh& mesh, int r, int w, const s
     
     int n = mesh.getinnerdimension();
     
-    const int num_volumes = mesh.count_simplices( n );
-        
     const int num_vertices = mesh.count_simplices( 0 );
     
+    const int num_edges    = mesh.count_simplices( 1 );
+    
+    const int num_volumes  = mesh.count_simplices( n );
+        
     const int dim_in  = num_vertices;
     const int dim_out = num_vertices;
     
-    // Compute the number of entries
-    // and set up A
-
-    LOG << "Setting up A..." << num_vertices << nl;
+    
+    LOG << "Setting up A..." << num_vertices << space << nl;
 
     std::vector<int> A( num_vertices + 1 );
 
     #if defined(_OPENMP)
     #pragma omp parallel for
     #endif
-    for( int v = 0; v < num_vertices; v++ )
+    for( int e = 0; e < num_edges; e++ )
     {
-        std::set<int> adjacent_vertices;
+        int v1 = mesh.get_subsimplex(1,0,e,0);
+        int v2 = mesh.get_subsimplex(1,0,e,1);
+        
+        assert( 0 <= v1 && v1 < num_vertices );
+        assert( 0 <= v2 && v2 < num_vertices );
 
-        auto parent_edges = mesh.getsupersimplices(1,0,v);
+        #if defined(_OPENMP)
+        #pragma omp atomic
+        #endif
+        A[v1+1]++;
 
-        for( const auto e : parent_edges ) {
-            adjacent_vertices.insert( mesh.get_subsimplex(1,0,e,0) );
-            adjacent_vertices.insert( mesh.get_subsimplex(1,0,e,1) );
-        }
-            
-        A[v+1] = adjacent_vertices.size();
-    }
+        #if defined(_OPENMP)
+        #pragma omp atomic
+        #endif
+        A[v2+1]++;
+    }   
+
+    for( int v = 1; v <= num_vertices; v++ ) A[v] = A[v] + 1;
+
+    LOG << "max width... ";
+    int max_width = 0;
+    for( int v = 1; v <= num_vertices; v++ ) max_width = maximum( max_width, A[v] );
+    LOG << max_width << nl;
 
     A[0] = 0; 
     for( int v = 1; v <= num_vertices; v++ )
@@ -387,28 +400,36 @@ MatrixCSR LagrangeCoefficientMassMatrix( const Mesh& mesh, int r, int w, const s
     #endif
     for( int v = 0; v < num_vertices; v++ )
     {
-        std::set<int> adjacent_vertices;
-
+        int counter = 0;
+        
+        C[ A[v] + (counter++) ] = v;
+        
         auto parent_edges = mesh.getsupersimplices(1,0,v);
 
-        for( const auto e : parent_edges ) {
-            adjacent_vertices.insert( mesh.get_subsimplex(1,0,e,0) );
-            adjacent_vertices.insert( mesh.get_subsimplex(1,0,e,1) );
+        for( const auto e : parent_edges )
+        {
+            
+            int v1 = mesh.get_subsimplex(1,0,e,0);
+            if( v1 != v ) C[ A[v] + (counter++) ] = v1;
+            
+            int v2 = mesh.get_subsimplex(1,0,e,1);
+            if( v2 != v ) C[ A[v] + (counter++) ] = v2;
+
+            assert( v == v1 or v == v2 );
+
         }
 
-        assert( adjacent_vertices.size() == A[v+1] - A[v] );
+        assert( counter == A[v+1] - A[v] );
 
-        int i = 0;
-        for( const auto a : adjacent_vertices ){
-            C[ A[v] + i ] = a;
-            i++;
-        }
-
-        assert( i == adjacent_vertices.size() );
-        Assert( A[v]+i == A[v+1], A[v], i, A[v+1] );
+        // std::sort( A.begin() + A[v], A.begin() + A[v+1] );
         for( int i = A[v]+1; i < A[v+1]; i++ )
-            assert( C[i] > C[i-1] );
-        
+        for( int j = A[v]+1; j < A[v+1]; j++ )
+            if( C[j-1] > C[j] )
+                std::swap( C[j-1], C[j] );
+
+        for( int i = A[v]+1; i < A[v+1]; i++ )
+            Assert( C[i] > C[i-1], C[i], C[i-1], counter, A[v+1], A[v] );
+                
     }
 
     
@@ -549,7 +570,7 @@ MatrixCSR LagrangeCoefficientStiffnessMatrix( const Mesh& mesh, int r, int w, co
     
     const int dim_in  = num_vertices;
     const int dim_out = num_vertices;
-    
+
     // Compute the number of entries
     // and set up A
 
@@ -564,11 +585,16 @@ MatrixCSR LagrangeCoefficientStiffnessMatrix( const Mesh& mesh, int r, int w, co
     {
         std::set<int> adjacent_vertices;
 
-        auto parent_edges = mesh.getsupersimplices(1,0,v);
-
-        for( const auto e : parent_edges ) {
+        // auto parent_edges = mesh.getsupersimplices(1,0,v);
+        // for( const auto e : parent_edges ) {
+        //     adjacent_vertices.insert( mesh.get_subsimplex(1,0,e,0) );
+        //     adjacent_vertices.insert( mesh.get_subsimplex(1,0,e,1) );
+        // }
+        int e = mesh.get_firstparent_of_subsimplex(1,0,v);
+        while( e != Mesh::nullindex ){
             adjacent_vertices.insert( mesh.get_subsimplex(1,0,e,0) );
             adjacent_vertices.insert( mesh.get_subsimplex(1,0,e,1) );
+            e = mesh.get_nextparent_of_subsimplex(1,0,e,v);
         }
             
         A[v+1] = adjacent_vertices.size();
@@ -596,11 +622,16 @@ MatrixCSR LagrangeCoefficientStiffnessMatrix( const Mesh& mesh, int r, int w, co
     {
         std::set<int> adjacent_vertices;
 
-        auto parent_edges = mesh.getsupersimplices(1,0,v);
-
-        for( const auto e : parent_edges ) {
+        // auto parent_edges = mesh.getsupersimplices(1,0,v);
+        // for( const auto e : parent_edges ) {
+        //     adjacent_vertices.insert( mesh.get_subsimplex(1,0,e,0) );
+        //     adjacent_vertices.insert( mesh.get_subsimplex(1,0,e,1) );
+        // }
+        int e = mesh.get_firstparent_of_subsimplex(1,0,v);
+        while( e != Mesh::nullindex ){
             adjacent_vertices.insert( mesh.get_subsimplex(1,0,e,0) );
             adjacent_vertices.insert( mesh.get_subsimplex(1,0,e,1) );
+            e = mesh.get_nextparent_of_subsimplex(1,0,e,v);
         }
 
         assert( adjacent_vertices.size() == A[v+1] - A[v] );

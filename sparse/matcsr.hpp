@@ -101,7 +101,7 @@ public LinearOperator /* every matrix is a linear operator */
 
         Float eigenvalueupperbound() const;
 
-//         void sortentries() const;
+        void compressentries() const;
         
         
         

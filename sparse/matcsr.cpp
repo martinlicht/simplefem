@@ -666,7 +666,14 @@ static void sort_and_compress_csrdata( std::vector<int>& A, std::vector<int>& C,
 }
 
 
+void MatrixCSR::compressentries() const
+{
+    auto& _A = const_cast< std::vector<int>& >(A);
+    auto& _C = const_cast< std::vector<int>& >(C);
+    auto& _V = const_cast< std::vector<Float>& >(V);
 
+    sort_and_compress_csrdata(_A,_C,_V);
+};
 
 
 
