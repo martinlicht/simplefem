@@ -20,6 +20,10 @@ SparseMatrix::SparseMatrix( int dimout, int dimin, int numentries, std::function
   entries(0)
 {
     assert( 0 <= numentries );
+    assert( numentries <= entries.max_size() );
+    
+    LOG << "SparseMatrix allocation: " << numentries << nl;
+    
     entries.reserve( numentries );
     
     for( int i = 0; i < numentries; i++ ) 
@@ -377,8 +381,26 @@ const SparseMatrix& SparseMatrix::sortentries( SparseMatrix::MatrixEntrySorting 
 const SparseMatrix& SparseMatrix::sortandcompressentries( SparseMatrix::MatrixEntrySorting manner ) const
 {
     check();
+
+    LOG << "SparseMatrix: Remove zeroes..." << nl;
+    
+    {
+        
+        // for( int c = 0; c < entries.size(); c++ ) 
+        //     if( entries[c].value == 0 ) { entries.erase( entries.begin()+c ); c--; }
+        
+        auto it = std::remove_if(entries.begin(), entries.end(), []( const SparseMatrix::MatrixEntry e ){ return e.value == 0.; } );
+        entries.erase( it, entries.end() );
+        
+        for( int c = 0; c < entries.size(); c++ ) assert( entries[c].value != 0. );
+        
+    }
+    
+    LOG << "SparseMatrix: Sorting..." << nl;
     
     sortentries( manner );
+    
+    LOG << "SparseMatrix: Compressing..." << nl;
     
     assert( is_sorted(manner) );
     
@@ -412,27 +434,7 @@ const SparseMatrix& SparseMatrix::sortandcompressentries( SparseMatrix::MatrixEn
     
     assert( is_sorted(manner) );
     
-    {
-        
-//         for( int c = 0; c < entries.size(); c++ ){
-//             if( entries[c].value == 0 ) {
-//                 entries.erase( entries.begin()+c );
-//                 c--;
-//             }
-//         }
-        
-        
-        entries.erase(
-            std::remove_if(entries.begin(), entries.end(), []( const SparseMatrix::MatrixEntry e ){ return e.value == 0.; } ),
-            entries.end()
-        );
-        
-        for( int c = 0; c < entries.size(); c++ ) assert( entries[c].value != 0. );
-        
-        
-    }
-    
-    assert( is_sorted(manner) );
+    LOG << "SparseMatrix: Done!" << nl;
     
     return *this;
 }

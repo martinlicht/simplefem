@@ -45,11 +45,11 @@ SparseMatrix FEECWhitneyInclusionMatrix( const Mesh& mesh, int n, int k, int r )
     
     // dimensions of the matrix 
     
-    const int dim_out = num_volumes * binomial_integer( n+1, k ) * binomial_integer( n+r, r );
+    const int dim_broken = num_volumes * binomial_integer( n+1, k ) * binomial_integer( n+r, r );
     
-    int dim_in  = 0;
+    int dim_continuous  = 0;
     for( auto d : IndexRange(0,n) )
-        dim_in += num_faces[d] * lists_of_Whitney_indices[d].size();
+        dim_continuous += num_faces[d] * lists_of_Whitney_indices[d].size();
     
     int num_entries = 0;
     for( auto d : IndexRange(0,n) )
@@ -57,7 +57,7 @@ SparseMatrix FEECWhitneyInclusionMatrix( const Mesh& mesh, int n, int k, int r )
     
     // create that matrix 
     
-    SparseMatrix ret( dim_out, dim_in, num_entries );
+    SparseMatrix ret( dim_broken, dim_continuous, num_entries );
     
     
     // for auxiliary purposes, create the index inclusion maps 
@@ -174,13 +174,13 @@ SparseMatrix FEECWhitneyInclusionMatrix( const Mesh& mesh, int n, int k, int r )
 
             // enter the values of the data structure 
 
-            int rowindex = s * binomial_integer(n+r,r) * binomial_integer(n+1,k) 
+            int broken_index = s * binomial_integer(n+r,r) * binomial_integer(n+1,k) 
                            +
                            index_alpha_vol * binomial_integer(n+1,k)
                            + 
                            index_sigma_vol;
 
-            int colindex = column_offset[d] // sum_int( d-1, [&mesh,&lists_of_Whitney_indices](int i) -> int { return mesh.count_simplices(i) * lists_of_Whitney_indices[i].size(); } )
+            int continuous_index = column_offset[d] // sum_int( d-1, [&mesh,&lists_of_Whitney_indices](int i) -> int { return mesh.count_simplices(i) * lists_of_Whitney_indices[i].size(); } )
                            + 
                            index_fi * lists_of_Whitney_indices[d].size()
                            +
@@ -199,17 +199,17 @@ SparseMatrix FEECWhitneyInclusionMatrix( const Mesh& mesh, int n, int k, int r )
                                  +
                                  s; 
                                 
-            assert( rowindex       < dim_out );
-            assert( colindex       < dim_in  );
-            assert( index_of_entry < num_entries );
-            assert( rowindex >= 0 && colindex >= 0 && index_of_entry >= 0 );
+            assert( broken_index     < dim_broken );
+            assert( continuous_index < dim_continuous  );
+            assert( index_of_entry   < num_entries );
+            assert( broken_index >= 0 && continuous_index >= 0 && index_of_entry >= 0 );
                 
             // set up the actual entry
             
             SparseMatrix::MatrixEntry entry;
             
-            entry.row    = rowindex;
-            entry.column = colindex;
+            entry.row    = broken_index;
+            entry.column = continuous_index;
             entry.value  = value;
             
             if( mesh.get_flag( d, index_fi ) == SimplexFlagDirichlet )

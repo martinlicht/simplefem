@@ -91,7 +91,13 @@ int main()
                     
                     const auto error_mass = ( included - inclusion * averaged ).norm(massmatrix);
 
-                    Float error = maximum( error_eucl, error_mass );
+                    LOG << error_eucl << space << error_mass << nl; 
+                    
+                    // assert( error_eucl < 10e-14 and error_mass < 10e-14 ); 
+                    
+                    Float error = error_mass;
+
+                    error = maximum( error, error_eucl );
                     
                     errors[k][l-l_min][r-r_min] = maximum( errors[k][l-l_min][r-r_min], error );
                     
@@ -111,44 +117,45 @@ int main()
         LOG << "Convergence tables" << nl;
     
     
-        ConvergenceTable contable[ M.getinnerdimension()+1 ];
+        ConvergenceTable contables[ M.getinnerdimension()+1 ];
         
         for( int k = 0; k <= M.getinnerdimension(); k++ ) 
-            contable->table_name = "Rounding errors D3K" + std::to_string(k);
+            contables[k].table_name = "Rounding errors D3K" + std::to_string(k);
         for( int k = 0; k <= M.getinnerdimension(); k++ ) 
         for( int r = r_min; r <= r_max; r++ ) 
-            contable[k] << ( "R" + std::to_string(r-r_min) );
+            contables[k] << ( "R" + std::to_string(r) );
 
         for( int k = 0; k <= M.getinnerdimension(); k++ ) 
         for( int l = l_min; l <= l_max; l++ ) 
         {
             
             for( int r = r_min; r <= r_max; r++ ) 
-                contable[k] << errors[k][l-l_min][r-r_min];
+                contables[k] << errors[k][l-l_min][r-r_min];
             
-            contable[k] << nl; 
+            contables[k] << nl; 
             
         }
-        
-        
-        
-        for( int k = 0; k <= M.getinnerdimension(); k++ ) 
-        {
-            contable[k].lg(); 
-            LOG << "-------------------" << nl;
-        }
-        
-        
         
         LOG << "Check that differences are small" << nl;
         
-        for( int l      = l_min; l <=                 l_max; l++ ) 
-        for( int r      = r_min; r <=                 r_max; r++ ) 
         for( int k      =     0; k <= M.getinnerdimension(); k++ ) 
         {
-            assert( errors[k][l-l_min][r-r_min] < 10e-14 );
+
+            contables[k].lg(); 
+            LOG << "-------------------" << nl;
+
+            for( int l      = l_min; l <=                 l_max; l++ ) 
+            for( int r      = r_min; r <=                 r_max; r++ ) 
+            {
+                Assert( errors[k][l-l_min][r-r_min] < 10e-14, errors[k][l-l_min][r-r_min] );
+            }
+
         }
         
+        
+        // for( int k = 0; k <= M.getinnerdimension(); k++ ) 
+        // {
+        // }
         
         
         LOG << "Finished Unit Test" << nl;

@@ -5,6 +5,9 @@
 #include <utility>
 #include <vector>
 
+#include <set>
+#include <numeric>
+
 #include "matcsr.hpp"
 
 MatrixCSR::MatrixCSR( 
@@ -428,7 +431,7 @@ Float MatrixCSR::eigenvalueupperbound() const
 
 
 
-static void sort_and_compress_csrdata( std::vector<int>& A, std::vector<int>& C, std::vector<Float>& V )
+static void sort_and_compress_csrdata_perform( std::vector<int>& A, std::vector<int>& C, std::vector<Float>& V )
 {
 
     // return ; 
@@ -440,9 +443,9 @@ static void sort_and_compress_csrdata( std::vector<int>& A, std::vector<int>& C,
     
     std::vector<int> nnz( num_rows );
 
-    // #if defined(_OPENMP)
-    // #pragma omp parallel for
-    // #endif
+    #if defined(_OPENMP)
+    #pragma omp parallel for
+    #endif
     for( int r = 0; r < num_rows; r++ ) {
         
         for( int i = A[r]; i < A[r+1]; i++ ) 
@@ -466,7 +469,7 @@ static void sort_and_compress_csrdata( std::vector<int>& A, std::vector<int>& C,
             
         }
         
-        // // // // swap all the zeroes to the very end
+        // swap all the zeroes to the very end
         for( int i = A[r]  ; i < A[r+1]; i++ ) // bubble sort
         for( int j = A[r]+1; j < A[r+1]; j++ ) 
         {
@@ -483,6 +486,7 @@ static void sort_and_compress_csrdata( std::vector<int>& A, std::vector<int>& C,
         for( int i = A[r]+1; i < A[r+1]; i++ ) 
             Assert( C[i-1] < C[i] or V[i] == 0., i, C[i-1], C[i], V[i] );
         
+        // Find the first zero within the current row data 
         int first_zero = A[r];
         for(; first_zero < A[r+1] and V[first_zero] != 0.; first_zero++ ) 
         
@@ -548,6 +552,128 @@ static void sort_and_compress_csrdata( std::vector<int>& A, std::vector<int>& C,
 }
 
 
+
+
+
+static void sort_and_compress_csrdata_reduced( std::vector<int>& A, std::vector<int>& C, std::vector<Float>& V )
+{
+
+    // return ; 
+
+    int num_rows = A.size()-1;
+    
+    assert( A.back() == C.size() );
+    assert( A.back() == V.size() );
+    
+    // sort the row data and count the zero entries
+    std::vector<int> nnz( num_rows );
+
+    #if defined(_OPENMP)
+    #pragma omp parallel for
+    #endif
+    for( int r = 0; r < num_rows; r++ ) {
+        
+        for( int i = A[r]; i < A[r+1]; i++ ) 
+        for( int j = i+1; j < A[r+1]; j++ ) 
+        {
+            
+            // if the columns are the same, first merge the entries
+            // there is nothing more to be done
+            if( C[i] == C[j] ) {
+                V[i] += V[j];
+                V[j] = 0.;
+                continue;
+            }
+            
+            // if the columns are in the wrong order, 
+            // then swap 
+            if( C[i] > C[j] ) {
+                std::swap( C[i], C[j] );
+                std::swap( V[i], V[j] );
+            }
+            
+        }
+        
+        // swap all the zeroes to the very end
+        for( int i = A[r]  ; i < A[r+1]; i++ ) // bubble sort
+        for( int j = A[r]+1; j < A[r+1]; j++ ) 
+        {
+            if( V[j-1] == 0. and V[j] != 0. ) {
+                std::swap( C[j-1], C[j] );
+                std::swap( V[j-1], V[j] );
+            }
+
+        }
+        
+        // for( int i = A[r]; i < A[r+1]; i++ ) 
+        //     LOG << i << space << C[i] << space << V[i] << nl;
+            
+        for( int i = A[r]+1; i < A[r+1]; i++ ) 
+            Assert( C[i-1] < C[i] or V[i] == 0., i, C[i-1], C[i], V[i] );
+        
+        // Find the first zero within the current row data 
+        int first_zero = A[r];
+        for(; first_zero < A[r+1] and V[first_zero] != 0.; first_zero++ ) 
+        
+        for( int i = A[r]; i < first_zero-1; i++ ) Assert( C[i] < C[i+1], i, C[i], C[i+1], V[i], V[i+1] );        
+        for( int i = A[r]; i < first_zero;   i++ ) Assert( V[i] != 0., i, C[i], V[i] );
+        for( int i = first_zero; i < A[r+1]; i++ ) Assert( V[i] == 0., i, C[i], V[i] );
+
+        nnz[r] = first_zero - A[r]; // we save the number of non-zeroes
+
+        Assert( nnz[r] <= A[r+1] - A[r] );
+
+    }
+
+    
+    // Update C and V (sequential)
+    int index_target = 0;
+    
+    for( int r = 0; r < num_rows; r++ )
+    {
+        for( int i = A[r]; i < A[r] + nnz[r]; i++ )
+        {
+            assert( index_target <= i );
+            C[index_target] = C[i];
+            V[index_target] = V[i];
+            index_target++;
+        }
+    }
+
+
+    // Update A (sequential)
+    for( int r = 0; r < num_rows; r++ )
+    {
+        A[r+1] = nnz[r];
+    }
+
+    A[0] = 0;
+    for( int r = 1; r <= num_rows; r++ )
+    {
+        A[r] += A[r-1];
+    }
+
+    C.resize( A[num_rows] );
+    V.resize( A[num_rows] );
+
+    assert( A[num_rows] == std::accumulate( nnz.begin(), nnz.end(), 0 ) );
+}
+
+
+static void sort_and_compress_csrdata( std::vector<int>& A, std::vector<int>& C, std::vector<Float>& V )
+{
+    sort_and_compress_csrdata_reduced( A, C, V );
+}
+
+
+void MatrixCSR::compressentries() const
+{
+    auto& _A = const_cast< std::vector<int>& >(A);
+    auto& _C = const_cast< std::vector<int>& >(C);
+    auto& _V = const_cast< std::vector<Float>& >(V);
+
+    sort_and_compress_csrdata(_A,_C,_V);
+};
 
 
 
@@ -633,11 +759,11 @@ MatrixCSR MatrixCSRMultiplication( const MatrixCSR& mat1, const MatrixCSR& mat2 
     int matn_rows = mat1_rows;
     int matn_cols = mat2_cols;
 
-    LOG << "create index list A, allocate C and V" << nl; 
+    LOG << "MatrixCSRMultiplication: create index list A, allocate C and V" << nl; 
     
     std::vector<int> A( mat1_rows + 1, 0 );
 
-    // LOG << mat1.text() << nl << mat2.text() << nl;
+    LOG << mat1.text() << nl << mat2.text() << nl;
 
     #if defined(_OPENMP)
     #pragma omp parallel for
@@ -653,12 +779,12 @@ MatrixCSR MatrixCSRMultiplication( const MatrixCSR& mat1, const MatrixCSR& mat2 
 
     // for( int r = 0; r <= matn_rows; r++ ) LOG << A[r] << space; LOG << nl;
     
-    // LOG << A[matn_rows] << nl;
+    LOG << "MatrixCSRMultiplication: Temporary number of elements:" << A[matn_rows] << nl;
 
     std::vector<int>   C( A[matn_rows] );
     std::vector<Float> V( A[matn_rows] );
 
-    LOG << "allocated" << nl; 
+    LOG << "MatrixCSRMultiplication: allocated" << nl; 
     
     // compute entries     
 
@@ -685,9 +811,128 @@ MatrixCSR MatrixCSRMultiplication( const MatrixCSR& mat1, const MatrixCSR& mat2 
     
     // create matrix 
     
+    LOG << "MatrixCSRMultiplication: sort and compress" << nl; 
+    
     sort_and_compress_csrdata( A, C, V );
 
-    LOG << "return" << nl; 
+    LOG << "MatrixCSRMultiplication: return" << nl; 
+    
+    return MatrixCSR( matn_rows, matn_cols, std::move(A), std::move(C), std::move(V) );
+
+}
+
+
+
+
+
+
+
+MatrixCSR MatrixCSRMultiplication_reduced( const MatrixCSR& mat1, const MatrixCSR& mat2 )
+{
+    // gather relevant data
+    int mat1_rows = mat1.getdimout();
+    int mat1_cols = mat1.getdimin();
+    int mat2_rows = mat2.getdimout();
+    int mat2_cols = mat2.getdimin();
+    
+    const int* mat1A = mat1.getA();
+    const int* mat2A = mat2.getA();
+    
+    const int* mat1C = mat1.getC();
+    const int* mat2C = mat2.getC();
+
+    const Float* mat1V = mat1.getV();
+    const Float* mat2V = mat2.getV();
+
+    Assert( mat1_cols == mat2_rows );
+
+    int matn_rows = mat1_rows;
+    int matn_cols = mat2_cols;
+
+    LOG << "MatrixCSRMultiplication reduced: create index list A and fill in" << nl; 
+    
+    std::vector<int> A( mat1_rows + 1, 0 );
+
+    #if defined(_OPENMP)
+    #pragma omp parallel for
+    #endif
+    for( int r = 0; r < matn_rows; r++ )
+    {
+        std::set<int> column_indices;
+
+        for( int c1 = mat1A[r];           c1 < mat1A[r+1];           c1++ )
+        for( int c2 = mat2A[ mat1C[c1] ]; c2 < mat2A[ mat1C[c1]+1 ]; c2++ )
+            if( mat1V[ c1 ] != 0. && mat2V[ c2 ] != 0. )
+                column_indices.insert( mat2C[c2] );
+
+        A[r+1] = column_indices.size();
+    }
+
+    for( int r = 1; r <= matn_rows; r++ ) A[r] += A[r-1];
+    for( int r = 1; r <= matn_rows; r++ ) assert( A[r-1] <= A[r] );
+
+    // for( int r = 0; r <= matn_rows; r++ ) LOG << A[r] << space; LOG << nl;    
+    // LOG << mat1.text() << nl << mat2.text() << nl;
+
+    LOG << "MatrixCSRMultiplication reduced: Temporary number of elements:" << A[matn_rows] << nl;
+
+    std::vector<int>   C( A[matn_rows], 0  );
+    
+    #if defined(_OPENMP)
+    #pragma omp parallel for
+    #endif
+    for( int r = 0; r < matn_rows; r++ )
+    {
+        std::set<int> column_indices;
+
+        for( int c1 = mat1A[r];           c1 < mat1A[r+1];           c1++ )
+        for( int c2 = mat2A[ mat1C[c1] ]; c2 < mat2A[ mat1C[c1]+1 ]; c2++ )
+            if( mat1V[ c1 ] != 0. && mat2V[ c2 ] != 0. )
+                column_indices.insert( mat2C[c2] );
+
+        Assert( A[r] + column_indices.size() == A[r+1] );
+
+        int i = 0;
+        for( int c : column_indices ) {
+            C[ A[r] + i ] = c;
+            i++;
+        }
+        assert( i == column_indices.size() );
+
+        for( int c = A[r]+1; c < A[r+1]; c++ ){
+            assert( C[c] > C[c-1] );
+        }
+        
+
+        Assert( A[r]+i == A[r+1], A[r], i, A[r+1] );
+
+    }
+
+    std::vector<Float> V( A[matn_rows], 0. );
+
+    #if defined(_OPENMP)
+    #pragma omp parallel for
+    #endif
+    for( int r = 0; r < matn_rows; r++ )
+    {
+        for( int c = A[r]; c < A[r+1]; c++ )
+        for( int c1 = mat1A[r];           c1 < mat1A[r+1];           c1++ )
+        for( int c2 = mat2A[ mat1C[c1] ]; c2 < mat2A[ mat1C[c1]+1 ]; c2++ )
+        {
+            assert( A[r] < A[r+1] );
+            
+            if( C[c] == mat2C[c2] )
+                if( mat1V[ c1 ] != 0. && mat2V[ c2 ] != 0. )
+                    V[ c ] += mat1V[ c1 ] * mat2V[ c2 ];
+        }
+        
+    }
+
+    LOG << "MatrixCSRMultiplication reduced: compressing" << nl; 
+    sort_and_compress_csrdata( A, C, V );
+    
+    assert( A.back() == A[matn_rows] );
+    LOG << "MatrixCSRMultiplication reduced: return " << A.back() << nl; 
     
     return MatrixCSR( matn_rows, matn_cols, std::move(A), std::move(C), std::move(V) );
 
