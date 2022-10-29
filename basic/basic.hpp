@@ -7,6 +7,17 @@
 #endif
 
 
+#ifdef ELIDE_HOT_FUNCTIONS
+#if defined(__GNUC__) or defined(__clang__)
+#define __HOTCALL __attribute__((hot,warning("Performance-critical function call not elided.")))
+#endif // defined(__GCNUC__) or defined(__clang__)
+#else 
+#define __HOTCALL 
+// #warning No hot calls
+#endif // ELIDE_HOT_FUNCTIONS
+
+
+
 #include <cmath>
 // #include <cstdint>
 // #include <cstdio>
@@ -40,10 +51,18 @@
 //                                             //
 /////////////////////////////////////////////////
 
-#ifndef EXTENDED_PRECISION
-typedef double Float;
-#else 
+// #ifndef EXTENDED_PRECISION
+// typedef double Float;
+// #else 
+// typedef long double Float;
+// #endif
+
+#if defined(EXTENDED_PRECISION)
 typedef long double Float;
+#elif defined(SINGLE_PRECISION)
+typedef float Float;
+#else 
+typedef double Float;
 #endif
 
 

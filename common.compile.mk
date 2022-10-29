@@ -30,8 +30,8 @@ endif
 
 # Do you want to use GCC or Clang?
 # Uncomment the appropriate definition below
-# FLAG_CXX := CLANG
-FLAG_CXX := GCC
+FLAG_CXX := CLANG
+# FLAG_CXX := GCC
 # FLAG_CXX := ICC
 
 
@@ -51,27 +51,36 @@ FLAG_CXX := GCC
 # Uncomment the following line to disable extensive check routines for meshes
 FLAG_DISABLE_CHECK_MESHES=yes
 
+# Do you want to ENABLE the standard library debugging flags 
+# Uncomment the following line to enable the standard library debugging flags 
+# FLAG_DISABLE_STDLIBDEBUG=yes
+
 # Do you want to DISABLE the custom logging framework
 # in favor of standard library routines?
 # Uncomment the following line for that
 # FLAG_USE_PRIMITIVE_LOGGING=yes
 
-# Do you want to ENABLE the standard library debugging flags 
-# Uncomment the following line to enable the standard library debugging flags 
-# FLAG_DISABLE_STDLIBDEBUG=yes
-
 # Do you want to DISABLE excpetion handling?
 # Uncomment the following line to disable exception handling
 # FLAG_NO_EXCEPTIONS=yes
 
-# Do you want to ENABLE extended precision?
-# Uncomment the following line to switch from double precision to extended precision
-# FLAG_DO_USE_EXTENDED_PRECISION=yes 
-# := -DEXTENDED_PRECISION
+# Do you want to compile with all optimization flags enabled?
+# Uncomment the following line to have this done so
+# FLAG_DO_OPTIMIZE=yes
+
+# Do you want to ENABLE the use of openMP?
+# Uncomment the following line to enable compilation with openMP
+# FLAG_ENABLE_OPENMP=yes
 
 # Do you want to ENABLE excessive warning options?
 # Uncomment the following line to enable excessive warning options
 # FLAG_EXCESSIVE_WARNINGS=yes
+
+# Do you want to ENABLE either extended precision or single precision?
+# Uncomment one the following lines to switch from double precision
+# to either extended precision or single precision
+# FLAG_DO_USE_EXTENDED_PRECISION=yes 
+# FLAG_DO_USE_SINGLE_PRECISION=yes 
 
 # Do you want to ENABLE the Clang sanitizer?
 # Uncomment the following line to enable compilation with the Clang sanitizer
@@ -80,14 +89,6 @@ FLAG_DISABLE_CHECK_MESHES=yes
 # Do you want to enable static analysis during the compilation process
 # Uncomment the following line to enable static analysis
 # FLAG_DO_STATICANALYSIS=yes
-
-# Do you want to compile with all optimization flags enabled?
-# Uncomment the following line to have this done so
-FLAG_DO_OPTIMIZE=yes
-
-# Do you want to ENABLE the use of openMP?
-# Uncomment the following line to enable compilation with openMP
-FLAG_ENABLE_OPENMP=yes
 
 # Do you want to ENABLE the use of tcmalloc?
 # Uncomment the following line to enable tcmalloc
@@ -111,6 +112,15 @@ FLAG_ENABLE_OPENMP=yes
 
 
 
+
+
+
+###############################################
+#                                             #
+#       Post-process the option choices       #
+#                                             #
+###############################################
+
 # Use this file to overwrite the default settings above on a local machine
 # At this point, only the flags above will be set.
 -include $(projectdir)/OVERWRITE.COMPILE.mk
@@ -129,6 +139,17 @@ FLAG_DO_STRIP=yes
 FLAG_USE_PRIMITIVE_LOGGING=yes
 endif
 
+ifdef FLAG_DO_USE_EXTENDED_PRECISION
+ifdef FLAG_DO_USE_SINGLE_PRECISION
+$(error Extended and single precision requested at the same time)
+endif
+endif
+
+ifneq ($(FLAG_CXX),GCC)
+ifdef FLAG_DO_USE_SINGLE_PRECISION
+$(error Single precision floating-point setup only with GCC)
+endif
+endif
 
 
 
@@ -202,16 +223,18 @@ ifeq ($(FLAG_DO_OPTIMIZE),yes)
 		CXXFLAGS_OPTIMIZE += 
 	else 
 # wierd warnings appear at LTO and O1+ ....
+		CXXFLAGS_OPTIMIZE += -flto
 		CXXFLAGS_OPTIMIZE += -Ofast  
 		CXXFLAGS_OPTIMIZE += -march=native -mtune=native 
 		ifeq ($(FLAG_CXX),GCC)
 # 			CXXFLAGS_OPTIMIZE += -finline-limit=1200
 			CXXFLAGS_OPTIMIZE += -fno-fat-lto-objects
+			CXXFLAGS_OPTIMIZE += -fno-signed-zeros -fno-trapping-math -fassociative-math
+			CXXFLAGS_OPTIMIZE += -fmerge-all-constants
 		endif
 		ifeq ($(FLAG_CXX),CLANG)
 #			 CXXFLAGS_OPTIMIZE += -finline-limit=1200
 		endif
-		CXXFLAGS_OPTIMIZE += -flto
 	endif
 else
 	CXXFLAGS_OPTIMIZE += -O0
@@ -252,6 +275,10 @@ CXXFLAGS_CODEGEN += -fvisibility=default
 
 ifneq ($(OS),Windows_NT)
 	CXXFLAGS_CODEGEN += -fpic 
+endif
+
+ifeq ($(FLAG_DO_USE_SINGLE_PRECISION),yes)
+	CXXFLAGS_CODEGEN += -fsingle-precision-constant
 endif
 
 
@@ -669,6 +696,13 @@ endif
 ifeq ($(FLAG_DO_USE_EXTENDED_PRECISION),yes)
 CPPFLAGS += -DEXTENDED_PRECISION
 endif
+ifeq ($(FLAG_DO_USE_SINGLE_PRECISION),yes)
+CPPFLAGS += -DSINGLE_PRECISION
+endif
+
+ifeq ($(FLAG_DO_OPTIMIZE),yes)
+CPPFLAGS += -DELIDE_HOT_FUNCTIONS
+endif
 
 CPPFLAGS := $(strip $(CPPFLAGS))
 
@@ -743,6 +777,7 @@ parameters:
 	$(info FLAG_DISABLE_STDLIBDEBUG       = $(FLAG_DISABLE_STDLIBDEBUG) ) 
 	$(info FLAG_NO_EXCEPTIONS             = $(FLAG_NO_EXCEPTIONS) ) 
 	$(info FLAG_DO_USE_EXTENDED_PRECISION = $(FLAG_DO_USE_EXTENDED_PRECISION) ) 
+	$(info FLAG_DO_USE_SINGLE_PRECISION   = $(FLAG_DO_USE_SINGLE_PRECISION) ) 
 	$(info FLAG_EXCESSIVE_WARNINGS        = $(FLAG_EXCESSIVE_WARNINGS) ) 
 	$(info FLAG_DO_USE_SANITIZER          = $(FLAG_DO_USE_SANITIZER) ) 
 	$(info FLAG_DO_STATICANALYSIS         = $(FLAG_DO_STATICANALYSIS) ) 
