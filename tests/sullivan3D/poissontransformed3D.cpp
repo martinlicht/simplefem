@@ -266,13 +266,13 @@ int main()
 
     for( int l = min_l; l <= max_l; l++ ){
         
+        display_mallinfo();
+
         LOG << "Level: " << l << "/" << max_l << nl;
         LOG << "# T/F/E/V: " << M.count_tetrahedra() << "/" << M.count_faces() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
         
         {
             
-            display_mallinfo();
-
             int r = 1;
             int w = r;
 
@@ -289,6 +289,9 @@ int main()
             // auto stiffness = MatrixCSR( LagrangeStiffnessMatrix( M, r ) );
             
             // display_mallinfo();
+
+            mass.compressentries();
+            stiffness.compressentries();
 
             LOG << "Size of mass matrix: " << sizeof(int) * ( mass.getdimout() + mass.getnumberofentries() ) + sizeof(Float) * mass.getnumberofentries() << nl;
             LOG << "Size of mass matrix: " << sizeof(int) * ( stiffness.getdimout() + stiffness.getnumberofentries() ) + sizeof(Float) * stiffness.getnumberofentries() << nl;
@@ -361,8 +364,8 @@ int main()
                     desired_precision,
                     0,
                     diagonal.raw(),
-                    1.2, // empircally chosen at 1.2, barely any influence
-                    rainbow.num_colors, rainbow.F.data(), rainbow.B.data(), rainbow.R.data()
+                    1.2 // empircally chosen at 1.2, barely any influence
+                    , rainbow.num_colors, rainbow.F.data(), rainbow.B.data(), rainbow.R.data()
                 );
                 timestamp end = gettimestamp();
                 solver_time = end - start;

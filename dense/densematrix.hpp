@@ -91,12 +91,12 @@ class DenseMatrix final
         
         /* Access entries */
         
-        Float get(int,int) const;
-        void set(int,int,Float);
-        Float& at( int, int ) &;
-        const Float& at( int, int ) const &;
-        Float& operator()( int, int ) &;
-        const Float& operator()( int, int ) const &;
+        __HOTCALL Float get(int,int) const;
+        __HOTCALL void set(int,int,Float);
+        __HOTCALL Float& at( int, int ) &;
+        __HOTCALL const Float& at( int, int ) const &;
+        __HOTCALL Float& operator()( int, int ) &;
+        __HOTCALL const Float& operator()( int, int ) const &;
         
         /* Access rows and columns */
         

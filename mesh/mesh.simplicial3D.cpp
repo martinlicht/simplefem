@@ -2158,11 +2158,13 @@ std::vector<int> MeshSimplicial3D::get_tetrahedron_parents_of_face( int f ) cons
   
   std::vector<int> ret;
   
-  for( int t = 0; t < count_tetrahedra(); t++ ) 
-    for( int tf : get_tetrahedron_faces(t) )
-      if( f == tf )
-        ret.push_back( t );
-  
+  int t = get_face_firstparent_tetrahedron(f);
+  while( t != nullindex )
+  {
+    ret.push_back(t);
+    t = this->get_face_nextparent_tetrahedron(f,t);
+  }
+
   return ret;
 }
 
@@ -2236,10 +2238,12 @@ std::vector<int> MeshSimplicial3D::get_tetrahedron_parents_of_edge( int e ) cons
   
   std::vector<int> ret;
   
-  for( int t = 0; t < count_tetrahedra(); t++ ) 
-    for( int te : get_tetrahedron_edges(t) )
-      if( e == te )
-        ret.push_back( t );
+  int t = get_edge_firstparent_tetrahedron(e);
+  while( t != nullindex )
+  {
+    ret.push_back(t);
+    t = this->get_edge_nextparent_tetrahedron(e,t);
+  }
   
   return ret;
 }
@@ -2314,11 +2318,13 @@ std::vector<int> MeshSimplicial3D::get_tetrahedron_parents_of_vertex( int v ) co
   
   std::vector<int> ret;
   
-  for( int t = 0; t < count_tetrahedra(); t++ ) 
-    for( int tv : get_tetrahedron_vertices(t) )
-      if( v == tv )
-        ret.push_back( t );
-  
+  int t = get_vertex_firstparent_tetrahedron(v);
+  while( t != nullindex )
+  {
+    ret.push_back(t);
+    t = this->get_vertex_nextparent_tetrahedron(v,t);
+  }
+
   return ret;
 }
 
@@ -2387,11 +2393,13 @@ std::vector<int> MeshSimplicial3D::get_face_parents_of_edge( int e ) const
   
   std::vector<int> ret;
   
-  for( int f = 0; f < count_faces(); f++ ) 
-    for( int fe : get_face_edges(f) )
-      if( e == fe )
-        ret.push_back( f );
-  
+  int f = get_edge_firstparent_face(e);
+  while( f != nullindex )
+  {
+    ret.push_back(f);
+    f = this->get_edge_nextparent_face(e,f);
+  }
+
   return ret;
 }
 
@@ -2455,11 +2463,13 @@ std::vector<int> MeshSimplicial3D::get_face_parents_of_vertex( int v ) const
   
   std::vector<int> ret;
   
-  for( int f = 0; f < count_faces(); f++ ) 
-    for( int fv : get_face_vertices(f) )
-      if( v == fv )
-        ret.push_back( f );
-  
+  int f = get_vertex_firstparent_face(v);
+  while( f != nullindex )
+  {
+    ret.push_back(f);
+    f = this->get_vertex_nextparent_face(v,f);
+  }
+
   return ret;
 }
 
@@ -2522,12 +2532,14 @@ std::vector<int> MeshSimplicial3D::get_edge_parents_of_vertex( int v ) const
   assert( 0 <= v && v < count_vertices() );
   
   std::vector<int> ret;
-  
-  for( int e = 0; e < count_edges(); e++ ) 
-    for( int ev : get_edge_vertices(e) )
-      if( v == ev )
-        ret.push_back( e );
-  
+
+  int e = get_vertex_firstparent_edge(v);
+  while( e != nullindex )
+  {
+    ret.push_back(e);
+    e = this->get_vertex_nextparent_edge(v,e);
+  }
+
   return ret;
 }
 

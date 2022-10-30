@@ -29,7 +29,7 @@ SparseMatrix FEECSullivanAveragingMatrix( const Mesh& mesh, int n, int k, int r 
     // check whether the parameters are right 
     assert( n >= 0 && n <= mesh.getinnerdimension() );
     assert( k >= 0 && k <= n );
-    assert( r >= 1 or k == n ); // TODO: we allow r == 0 in case of volume forms 
+    assert( r >= 0 or k == n ); // TODO: we allow r == 0 in case of volume forms 
 
     // generate the list of sigmas and multiindices for each dimension 
     
