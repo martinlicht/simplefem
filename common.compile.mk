@@ -30,14 +30,14 @@ endif
 
 # Do you want to use GCC or Clang?
 # Uncomment the appropriate definition below
-FLAG_CXX := CLANG
-# FLAG_CXX := GCC
+# FLAG_CXX := CLANG
+FLAG_CXX := GCC
 # FLAG_CXX := ICC
 
 
 # Do you want to DISABLE the general assert macro?
 # Uncomment the following line to disable the general assert macro
-# FLAG_DISABLE_ASSERTIONS=yes
+FLAG_DISABLE_ASSERTIONS=yes
 
 # Do you want the standard library assert macro instead of the custom one?
 # Uncomment the following line to use the standard library assert macro 
@@ -53,7 +53,7 @@ FLAG_DISABLE_CHECK_MESHES=yes
 
 # Do you want to ENABLE the standard library debugging flags 
 # Uncomment the following line to enable the standard library debugging flags 
-# FLAG_DISABLE_STDLIBDEBUG=yes
+FLAG_DISABLE_STDLIBDEBUG=yes
 
 # Do you want to DISABLE the custom logging framework
 # in favor of standard library routines?
@@ -62,15 +62,15 @@ FLAG_DISABLE_CHECK_MESHES=yes
 
 # Do you want to DISABLE excpetion handling?
 # Uncomment the following line to disable exception handling
-# FLAG_NO_EXCEPTIONS=yes
+FLAG_NO_EXCEPTIONS=yes
 
 # Do you want to compile with all optimization flags enabled?
 # Uncomment the following line to have this done so
-# FLAG_DO_OPTIMIZE=yes
+FLAG_DO_OPTIMIZE=yes
 
 # Do you want to ENABLE the use of openMP?
 # Uncomment the following line to enable compilation with openMP
-# FLAG_ENABLE_OPENMP=yes
+FLAG_ENABLE_OPENMP=yes
 
 # Do you want to ENABLE excessive warning options?
 # Uncomment the following line to enable excessive warning options
@@ -227,10 +227,17 @@ ifeq ($(FLAG_DO_OPTIMIZE),yes)
 		CXXFLAGS_OPTIMIZE += -Ofast  
 		CXXFLAGS_OPTIMIZE += -march=native -mtune=native 
 		ifeq ($(FLAG_CXX),GCC)
-# 			CXXFLAGS_OPTIMIZE += -finline-limit=1200
 			CXXFLAGS_OPTIMIZE += -fno-fat-lto-objects
-			CXXFLAGS_OPTIMIZE += -fno-signed-zeros -fno-trapping-math -fassociative-math
+# 			CXXFLAGS_OPTIMIZE += -finline-limit=1200
+# 			CXXFLAGS_OPTIMIZE += -fno-signed-zeros -fno-trapping-math -fassociative-math
 			CXXFLAGS_OPTIMIZE += -fmerge-all-constants
+			CXXFLAGS_OPTIMIZE += -fipa-pta 
+			CXXFLAGS_OPTIMIZE += -fdevirtualize-speculatively
+# Loop unrolling is very speculative			
+			CXXFLAGS_OPTIMIZE += -funroll-loops -fvariable-expansion-in-unroller -floop-nest-optimize
+			CXXFLAGS_OPTIMIZE += -fshort-enums
+			CXXFLAGS_OPTIMIZE += -fomit-frame-pointer
+#			CXXFLAGS_OPTIMIZE += -malign-double 
 		endif
 		ifeq ($(FLAG_CXX),CLANG)
 #			 CXXFLAGS_OPTIMIZE += -finline-limit=1200

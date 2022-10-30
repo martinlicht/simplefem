@@ -684,8 +684,8 @@ MatrixCSR LagrangeCoefficientStiffnessMatrix( const Mesh& mesh, int r, int w, co
         Float measure = mesh.getMeasure( n, s );
         assert( measure >= 0. );
 
-        const DenseMatrix GM    = mesh.getGradientMatrix( n, s );
-        const DenseMatrix extGM = SubdeterminantMatrix( GM, 1 );
+        const DenseMatrix  GM    = mesh.getGradientMatrix( n, s );
+        const DenseMatrix& extGM = GM; //SubdeterminantMatrix( GM, 1 );
 
         const auto vertex_coordinates = mesh.getVertexCoordinateMatrix( n, s );
         const auto lpeucl             = vertex_coordinates * lpbcs;
