@@ -565,6 +565,12 @@ SparseMatrix SparseMatrix::getTranspose() const
 
 
 
+/* Memory size */
+        
+long long SparseMatrix::memorysize() const
+{
+    return sizeof(*this) + entries.size() * sizeof(decltype(entries)::value_type);
+}
 
 
 

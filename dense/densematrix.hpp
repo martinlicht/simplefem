@@ -194,6 +194,10 @@ class DenseMatrix final
         Float* raw();
         const Float* raw() const;
 
+        /* Memory size */
+        
+        long long memorysize() const;
+
     private:
         
         Float* entries;

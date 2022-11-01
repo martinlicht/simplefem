@@ -213,6 +213,13 @@ class FloatVector
         
         
         
+        /* Memory size */
+        
+        long long memorysize() const;
+        
+        
+        
+        
         /* For each semantics */ 
         
         class ConstIterator {

@@ -427,6 +427,20 @@ Float MatrixCSR::eigenvalueupperbound() const
 
 
 
+/* Memory size */
+        
+long long MatrixCSR::memorysize() const
+{
+    long long ret = 0;
+    ret += sizeof(*this);
+    ret += A.size() * sizeof(A[0]);
+    ret += C.size() * sizeof(C[0]);
+    ret += V.size() * sizeof(V[0]);
+    return ret;
+}
+
+
+
 
 
 

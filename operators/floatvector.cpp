@@ -730,7 +730,12 @@ const Float* FloatVector::raw() const
 
 
 
-
+/* Memory size */
+        
+long long FloatVector::memorysize() const
+{
+    return sizeof(*this) + this->dimension * sizeof(decltype(*pointer));
+}
 
 
 

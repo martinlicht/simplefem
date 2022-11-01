@@ -102,6 +102,10 @@ public LinearOperator /* every matrix is a linear operator */
         Float eigenvalueupperbound() const;
 
         void compressentries() const;
+
+        /* Memory size */
+        
+        long long memorysize() const;
         
         
         
