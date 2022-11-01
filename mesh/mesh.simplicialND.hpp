@@ -93,6 +93,8 @@ class MeshSimplicialND
         /* other things */
         
         FloatVector get_simplex_midpoint( int dim, int cell ) const;
+
+        long long memorysize() const override;
         
         
     private: 

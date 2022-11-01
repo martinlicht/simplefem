@@ -3256,6 +3256,41 @@ std::string MeshSimplicial2D::outputTikZ() const
 
 
 
+long long MeshSimplicial2D::memorysize() const
+{
+    long long ret = 0;
+
+    ret += getcoordinates().memorysize();
+
+    ret += sizeof(getinnerdimension());
+    ret += sizeof(getouterdimension());
+
+    ret += sizeof( counter_triangles );
+    ret += sizeof( counter_edges     );
+    ret += sizeof( counter_vertices  );
+
+    { const auto& D = data_triangle_edges;                   ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_edge_firstparent_triangle;        ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_triangle_nextparents_of_edges;    ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    
+    { const auto& D = data_triangle_vertices;                ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_vertex_firstparent_triangle;      ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_triangle_nextparents_of_vertices; ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    
+    { const auto& D = data_edge_vertices;                    ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_vertex_firstparent_edge;          ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_edge_nextparents_of_vertices;     ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    
+    { const auto& D = flags_triangles; ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = flags_edges;     ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = flags_vertices;  ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+
+    return ret;
+}
+
+
+
+
 //         if( data_edge_firstparent_triangle[ t_e2 ] == t_old ) {
 //           
 //           data_edge_firstparent_triangle[ t_e2 ] = counter_triangles + ot;

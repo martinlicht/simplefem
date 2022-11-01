@@ -96,6 +96,11 @@ class Coordinates
         FloatVector getShiftPart( const IndexMap& ) const;
         
         FloatVector getCenter() const;
+
+
+        /* other */ 
+        
+        long long memorysize() const;
         
     private:
             
