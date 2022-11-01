@@ -328,6 +328,11 @@ class MeshSimplicial3D
         /* TikZ */
         
         std::string outputTikZ( bool boundary_only = false ) const;
+
+
+        /* other */ 
+        
+        virtual long long memorysize() const override;
         
     private:
 

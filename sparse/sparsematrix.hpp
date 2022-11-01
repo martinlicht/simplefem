@@ -129,6 +129,10 @@ public LinearOperator /* every matrix is a linear operator */
         /* obtain a transpose */
 
         SparseMatrix getTranspose() const;
+
+        /* Memory size */
+        
+        long long memorysize() const;
         
     private:
 

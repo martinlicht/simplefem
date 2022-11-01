@@ -31,13 +31,14 @@ Most important features:
  - [ ] Algebraic linear operations such as exterior derivatives and traces 
  - [ ] Metric linear operations such as mass operator and Hodge star operator 
  - [x] Mass matrices with constant or non-uniform coefficients  
- - [ ] Duality-based error error estimators and adaptive mesh refinement
+ - [ ] Duality-based error error estimators and adaptive strategies
 
 Planned features:
 
  - [ ] Different bases
  - [ ] Polynomial multigrid
- - [ ] Curved geometries and non-trivial coefficients
+ - [ ] Curved geometries
+ - [ ] Finite element spaces with non-uniform polynomial degree
 
 This software aims for easy prototyping new methods that are outside of the standard textbooks.
 This software aims to be easy to hack and to be portable with regard to OS and machine power. 

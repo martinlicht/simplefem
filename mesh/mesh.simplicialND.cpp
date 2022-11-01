@@ -791,6 +791,37 @@ FloatVector MeshSimplicialND::get_simplex_midpoint( int dim, int s ) const
 
 
 
+long long MeshSimplicialND::memorysize() const
+{
+    long long ret = 0;
+
+    ret += getcoordinates().memorysize();
+
+    for( const auto& counter: counter_simplices )
+    {
+      ret += sizeof(counter);
+    }
+
+    for( const auto& D : data_subsimplices ) {
+      ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); 
+    }
+
+    for( const auto& D : data_firstparents ) {
+      ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); 
+    }
+
+    for( const auto& D : data_nextparents ) {
+      ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); 
+    }
+
+    for( const auto& D : flags_simplices ) {
+      ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); 
+    }
+
+    return ret;
+}
+
+
 
 
 

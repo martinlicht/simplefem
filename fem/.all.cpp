@@ -7,6 +7,7 @@
 #include "global.avgsullivan.cpp"
 #include "global.sullivanincl.cpp"
 #include "global.whitneyincl.cpp"
+#include "global.flags.cpp"
 #include "global.unphysical.cpp"
 #include "lagrangematrices.cpp"
 #include "utilities.cpp"

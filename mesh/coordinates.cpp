@@ -266,6 +266,12 @@ FloatVector Coordinates::getCenter() const
 }
 
 
+long long Coordinates::memorysize() const
+{
+    return sizeof(*this) + data.size() * sizeof(Float);
+}
+
+
 
 
 bool compare( const Coordinates& coords_left, const Coordinates& coords_right, Float tolerance )

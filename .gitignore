@@ -1,6 +1,8 @@
 
 
 .private/
+.playground/
+.legacy/
 
 # Eclipse project settings
 *cproject

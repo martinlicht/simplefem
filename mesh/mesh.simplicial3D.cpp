@@ -2974,6 +2974,51 @@ std::string MeshSimplicial3D::outputTikZ( bool boundary_only ) const
 }
 
 
+long long MeshSimplicial3D::memorysize() const
+{
+    long long ret = 0;
+
+    ret += getcoordinates().memorysize();
+
+    ret += sizeof(getinnerdimension());
+    ret += sizeof(getouterdimension());
+
+    ret += sizeof( counter_tetrahedra );
+    ret += sizeof( counter_faces      );
+    ret += sizeof( counter_edges      );
+    ret += sizeof( counter_vertices   );
+
+    { const auto& D = data_tetrahedron_faces;                   ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_face_firstparent_tetrahedron;        ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_tetrahedron_nextparents_of_faces;    ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    
+    { const auto& D = data_tetrahedron_edges;                   ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_edge_firstparent_tetrahedron;        ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_tetrahedron_nextparents_of_edges;    ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    
+    { const auto& D = data_tetrahedron_vertices;                ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_vertex_firstparent_tetrahedron;      ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_tetrahedron_nextparents_of_vertices; ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    
+    { const auto& D = data_face_edges;                          ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_edge_firstparent_face;               ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_face_nextparents_of_edges;           ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    
+    { const auto& D = data_face_vertices;                       ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_vertex_firstparent_face;             ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_face_nextparents_of_vertices;        ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    
+    { const auto& D = data_edge_vertices;                       ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_vertex_firstparent_edge;             ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_edge_nextparents_of_vertices;        ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    
+    { const auto& D = flags_tetrahedra; ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = flags_faces;      ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = flags_edges;      ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = flags_vertices;   ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+
+    return ret;
+}
 
 
 

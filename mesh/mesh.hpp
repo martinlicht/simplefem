@@ -27,12 +27,13 @@
 *******************/
 
 
-typedef unsigned int SimplexFlag;
+typedef unsigned char SimplexFlag;
 
-const SimplexFlag SimplexFlagNull    = 0x1B1B1B1B;
-const SimplexFlag SimplexFlagInvalid = 0x77777777;
+const SimplexFlag SimplexFlagNull    = 0x1B;
+const SimplexFlag SimplexFlagInvalid = 0x77;
 
-const SimplexFlag SimplexFlagDirichlet = 0xF1F1F1F1;
+const SimplexFlag SimplexFlagDirichlet = 0xF1;
+
 
 
 /*******************
@@ -224,6 +225,8 @@ class Mesh
         
         DenseMatrix getGradientProductMatrixRightFactor( int dim, int index ) const;
         
+
+        virtual long long memorysize() const = 0;
         
     private:
         
@@ -234,14 +237,14 @@ class Mesh
         
     private:
         
-        std::vector< std::vector< std::vector<IndexMap> > > auxdata;
+        // std::vector< std::vector< std::vector<IndexMap> > > auxdata;
         
     public: 
         
 #if __cplusplus >= 201402L
-        const auto& getauxdata() { return auxdata; }
+        // const auto& getauxdata() { return auxdata; }
 #else
-        const decltype(auxdata)& getauxdata() { return auxdata; }
+        // const decltype(auxdata)& getauxdata() { return auxdata; }
 #endif
         
 };

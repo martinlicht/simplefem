@@ -12,9 +12,9 @@ It also outputs the C++ version.
 
 int main()
 {
-    cout << "Hello World! " << __cplusplus << endl;
+    cout << "Hello World! " << endl;
                 
-    cout << "C++ The version is " << __cplusplus << endl;
+    cout << "C++ version: " << __cplusplus << endl;
         
     cout << "Now an intentional leak..." << endl;
     

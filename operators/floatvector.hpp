@@ -73,7 +73,7 @@ class FloatVector
 
         /* information and data access */
         
-        int getdimension() const;
+        __HOTCALL int getdimension() const;
         
         Float setentry( int, Float );
         
@@ -209,6 +209,13 @@ class FloatVector
         Float* raw();
         
         const Float* raw() const;
+        
+        
+        
+        
+        /* Memory size */
+        
+        long long memorysize() const;
         
         
         

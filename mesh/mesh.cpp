@@ -26,6 +26,7 @@ Mesh::Mesh( int inner, int outer )
 {
   
   /* Build up the static auxiliary data */
+  /*
   auxdata.resize( innerdimension+1 );
   for( int sup = 0; sup <= innerdimension; sup++ ) 
   {
@@ -42,6 +43,7 @@ Mesh::Mesh( int inner, int outer )
     }
   
   }
+  */
 
   Mesh::check();
   

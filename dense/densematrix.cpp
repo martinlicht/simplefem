@@ -867,3 +867,10 @@ const Float* DenseMatrix::raw() const
 {
     return entries;
 }
+
+/* Memory size */
+        
+long long DenseMatrix::memorysize() const
+{
+    return sizeof(*this) + getdimin() * getdimout() * sizeof(this->entries[0]);
+}
