@@ -25,16 +25,17 @@ Most important features:
  - [x] Meshes in dimension 1, 2, and 3
  - [x] uniform mesh refinement and longest edge bisection
  - [x] Whitney and Sullivan k-forms of any polynomial degree in any dimension
- - [x] Mass matrices with constant or non-uniform coefficients  
  - [ ] Algebraic linear operations such as exterior derivatives and traces 
  - [ ] Metric linear operations such as mass operator and Hodge star operator 
- - [ ] Duality-based error error estimators and adaptive mesh refinement
+ - [x] Mass matrices with constant or non-uniform coefficients  
+ - [ ] Duality-based error error estimators and adaptive strategies
 
 Planned features:
 
  - [ ] Different bases
  - [ ] Polynomial multigrid
  - [ ] Curved geometries
+ - [ ] Finite element spaces with non-uniform polynomial degree
 
 This software aims for easy prototyping new methods that are outside of the standard textbooks.
 This software aims to be easy to hack and to be portable with regard to OS and machine power. 
