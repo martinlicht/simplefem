@@ -5,6 +5,7 @@
 #include "../../basic.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples3D.hpp"
+#include "../../sparse/matcsr.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.elevation.hpp"
 #include "../../fem/utilities.hpp"
@@ -24,7 +25,7 @@ int main()
 
         LOG << "Initial mesh..." << nl;
         
-        MeshSimplicial3D M = UnitSimplex3D();
+        MeshSimplicial3D M = UnitCube3D();
         
         M.automatic_dirichlet_flags();
         
@@ -38,9 +39,9 @@ int main()
         
         const int r_max = 3;
         
-        const int l_min = 2;
+        const int l_min = 1;
         
-        const int l_max = 4;
+        const int l_max = 1;
         
         const int number_of_samples = 3;
         
@@ -67,18 +68,37 @@ int main()
 
                 LOG << "assemble mass matrices..." << nl;
                 
-                SparseMatrix massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), k, r );
+                auto massmatrix = MatrixCSR( FEECBrokenMassMatrix( M, M.getinnerdimension(), k, r ) );
                 
-                SparseMatrix inclusion  = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), k, r );
+                auto inclusion  = MatrixCSR( FEECSullivanInclusionMatrix( M, M.getinnerdimension(), k, r ) );
                 
-                SparseMatrix averaging  = FEECSullivanAveragingMatrix( M, M.getinnerdimension(), k, r );
+                auto averaging  = MatrixCSR( FEECSullivanAveragingMatrix( M, M.getinnerdimension(), k, r ) );
                 
+                {
+                    
+                    for( int r = 0; r < averaging.getdimout(); r++ ) {
+                        Float sum = 0.;
+                        for( int i = averaging.getA()[r]; i < averaging.getA()[r+1]; i++ ) {
+                            Assert( 0 <= i and i < averaging.getnumberofentries(), i );
+                            sum += averaging.getV()[i];
+                        }
+                            
+                        Assert( sum == 0. or isaboutequal( sum, 1. ), sum );
+                    }
+
+                }
+
+
                 errors[k][ l-l_min ][ r-r_min ] = 0.;
                 
                 for( int i = 0; i < number_of_samples; i++ ){
 
                     auto field = inclusion.createinputvector();
+                    
                     field.random();
+                    
+                    // TODO: zero out the DOF associated with the Dirichlet simplices 
+
                     field.normalize();
                     
                     assert( field.isfinite() );
