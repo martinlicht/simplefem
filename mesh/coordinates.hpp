@@ -96,6 +96,14 @@ class Coordinates
         FloatVector getShiftPart( const IndexMap& ) const;
         
         FloatVector getCenter() const;
+
+
+        /* other */ 
+
+        std::vector<Float>& raw();
+        const std::vector<Float>& raw() const;
+        
+        long long memorysize() const;
         
     private:
             

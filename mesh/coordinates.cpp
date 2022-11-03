@@ -268,6 +268,30 @@ FloatVector Coordinates::getCenter() const
 
 
 
+std::vector<Float>& Coordinates::raw()
+{
+    return data;
+}
+
+const std::vector<Float>& Coordinates::raw() const
+{
+    return data;
+}
+
+
+
+
+        
+
+
+long long Coordinates::memorysize() const
+{
+    return sizeof(*this) + data.size() * sizeof(Float);
+}
+
+
+
+
 bool compare( const Coordinates& coords_left, const Coordinates& coords_right, Float tolerance )
 {
     if( coords_left.getnumber() != coords_right.getnumber() )

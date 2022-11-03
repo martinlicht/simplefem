@@ -153,6 +153,8 @@ class MeshSimplicial1D
         FloatVector get_edge_midpoint( int e ) const;
         
         void merge( const MeshSimplicial1D& );
+
+        virtual long long memorysize() const override;
         
     private:
 

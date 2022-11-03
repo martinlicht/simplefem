@@ -230,6 +230,11 @@ class MeshSimplicial2D
         /* TikZ */
         
         std::string outputTikZ() const;
+
+
+        /* other */ 
+        
+        virtual long long memorysize() const override;
         
         
         
