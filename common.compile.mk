@@ -37,7 +37,7 @@ FLAG_CXX := GCC
 
 # Do you want to DISABLE the general assert macro?
 # Uncomment the following line to disable the general assert macro
-FLAG_DISABLE_ASSERTIONS=yes
+# FLAG_DISABLE_ASSERTIONS=yes
 
 # Do you want the standard library assert macro instead of the custom one?
 # Uncomment the following line to use the standard library assert macro 
@@ -53,7 +53,7 @@ FLAG_DISABLE_CHECK_MESHES=yes
 
 # Do you want to ENABLE the standard library debugging flags 
 # Uncomment the following line to enable the standard library debugging flags 
-FLAG_DISABLE_STDLIBDEBUG=yes
+# FLAG_DISABLE_STDLIBDEBUG=yes
 
 # Do you want to DISABLE the custom logging framework
 # in favor of standard library routines?
@@ -66,7 +66,7 @@ FLAG_NO_EXCEPTIONS=yes
 
 # Do you want to compile with all optimization flags enabled?
 # Uncomment the following line to have this done so
-FLAG_DO_OPTIMIZE=yes
+# FLAG_DO_OPTIMIZE=yes
 
 # Do you want to ENABLE the use of openMP?
 # Uncomment the following line to enable compilation with openMP

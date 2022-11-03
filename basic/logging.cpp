@@ -27,7 +27,7 @@ Logger::Logger(
 Logger::~Logger()
 {
     
-    FILE* f = use_cerr ? stderr : stdout;
+    FILE* f = stderr; //use_cerr ? stderr : stdout;
     
     const auto str = this->str();
     

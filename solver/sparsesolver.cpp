@@ -713,7 +713,7 @@ int ConjugateGradientSolverCSR_Rainbow(
     int K = 0;
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "START Conjugate Gradient CSR (SSOR)\n" );
+        LOGPRINTF( "START Conjugate Gradient CSR (SSOR-Rainbow)\n" );
 
     while( K < N ){
         

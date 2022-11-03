@@ -1,5 +1,7 @@
 #include <stdio.h>
 
+#include "mallinfo.hpp"
+
 #if defined(__linux__) && (__GLIBC__ >= 2) and (__GLIBC_MINOR__ >= 33)
 
 #include <malloc.h>

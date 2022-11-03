@@ -132,7 +132,7 @@ int main()
 
             LOG << "Distortion..." << nl;
         
-            for( auto& x : M.getcoordinates().getdata() )
+            for( auto& x : M.getcoordinates().raw() )
             {
                 x = sqrt(x);
             }

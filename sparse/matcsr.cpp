@@ -307,8 +307,8 @@ MatrixCSR MatrixCSR::getTranspose() const
         
         for( int i = matA[r]; i < matA[r+1]; i++ ) {
             
-            int c = matC[i];
-            int v = matV[i];
+            int   c = matC[i];
+            Float v = matV[i];
 
             int base = B[c];
             int index = --Z[c];
@@ -687,7 +687,7 @@ void MatrixCSR::compressentries() const
     auto& _V = const_cast< std::vector<Float>& >(V);
 
     sort_and_compress_csrdata(_A,_C,_V);
-};
+}
 
 
 

@@ -6,6 +6,7 @@
 
 void display_mallinfo();
 
+#if 0 
 void* operator new( decltype(sizeof(0)) size )
 {
     if( size == 0 )
@@ -80,3 +81,5 @@ void operator delete(void* pointer) noexcept
     if( pointer == nullptr ) return;
     std::free(pointer);
 }
+
+#endif
