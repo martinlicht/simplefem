@@ -43,6 +43,19 @@ int ConjugateGradientSolverCSR_SSOR(
 );
 
 
+int ConjugateGradientSolverCSR_SSOR_Eisenstat( 
+    const int N, 
+    Float* x, 
+    const Float* b, 
+    const int* csrrows, const int* csrcolumns, const Float* csrvalues, 
+    Float* residual,
+    Float threshold,
+    int print_modulo,
+    const Float* precon,
+    Float omega
+);
+
+
 int ConjugateGradientSolverCSR_Rainbow( 
     const int N, 
     Float* x, 
