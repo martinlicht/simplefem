@@ -10,6 +10,7 @@
 
 class ConvergenceTable
 {
+    typedef long double Float; 
     
     private:
         

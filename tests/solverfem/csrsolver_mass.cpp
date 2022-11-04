@@ -94,7 +94,8 @@ int main()
             bool do_cgm_diagonal_csr       = true;
             bool do_cgm_ssor_csr           = true;
             bool do_cgm_ssor_eisenstat_csr = true;
-            bool do_cgm_rainbow_csr        = true;
+            bool do_cgm_ssor_rainbow_csr        = true;
+            bool do_cgm_ssor_eisenstat_rainbow_csr = true;
             bool do_chebyshev_diagonal_csr = false; //grossly inefficient
 
             // if( do_cgmpp      ) contable_sol << "CGM++"      ;
@@ -112,7 +113,7 @@ int main()
             // if( do_cgm_diagonal_csr )       contable_sol << "CGMcsr_diag"  ;
             // if( do_cgm_ssor_csr )           contable_sol << "CGMcsr_ssor"  ;
             // if( do_cgm_ssor_eisenstat_csr ) contable_sol << "CGMcsr_ssor_ei";
-            // if( do_cgm_rainbow_csr )        contable_sol << "CGMcsr_rainbow";
+            // if( do_cgm_ssor_rainbow_csr )        contable_sol << "CGMcsr_ssor_rb" ;
             // if( do_chebyshev_diagonal_csr ) contable_sol << "Chebyshev_csr";
             
             if( do_cgmpp      ) contable_res << "CGM++"      ;
@@ -130,7 +131,8 @@ int main()
             if( do_cgm_diagonal_csr )       contable_res << "CGMcsr_diag"  ;
             if( do_cgm_ssor_csr )           contable_res << "CGMcsr_ssor"  ;
             if( do_cgm_ssor_eisenstat_csr ) contable_res << "CGMcsr_ssor_ei";
-            if( do_cgm_rainbow_csr )        contable_res << "CGMcsr_rainbow";
+            if( do_cgm_ssor_rainbow_csr )   contable_res << "CGMcsr_ssor_rb" ;
+            if( do_cgm_ssor_eisenstat_rainbow_csr )   contable_res << "CGMcsr_ssor_eirb" ;
             if( do_chebyshev_diagonal_csr ) contable_res << "Chebyshev_csr";
 
             if( do_cgmpp      ) contable_num << "CGM++"      ;
@@ -147,8 +149,9 @@ int main()
             if( do_whatever_csr )           contable_num << "WHATEVER"     ;
             if( do_cgm_diagonal_csr )       contable_num << "CGMcsr_diag"  ;
             if( do_cgm_ssor_csr )           contable_num << "CGMcsr_ssor"  ;
-            if( do_cgm_ssor_eisenstat_csr ) contable_res << "CGMcsr_ssor_ei";
-            if( do_cgm_rainbow_csr )        contable_res << "CGMcsr_rainbow";
+            if( do_cgm_ssor_eisenstat_csr ) contable_num << "CGMcsr_ssor_ei";
+            if( do_cgm_ssor_rainbow_csr )   contable_num << "CGMcsr_ssor_rb" ;
+            if( do_cgm_ssor_eisenstat_rainbow_csr )   contable_num << "CGMcsr_ssor_eirb" ;
             if( do_chebyshev_diagonal_csr ) contable_num << "Chebyshev_csr";
             
             if( do_cgmpp      ) contable_sec << "CGM++"      ;
@@ -166,13 +169,14 @@ int main()
             if( do_cgm_diagonal_csr )       contable_sec << "CGMcsr_diag"  ;
             if( do_cgm_ssor_csr )           contable_sec << "CGMcsr_ssor"  ;
             if( do_cgm_ssor_eisenstat_csr ) contable_sec << "CGMcsr_ssor_ei";
-            if( do_cgm_rainbow_csr )        contable_sec << "CGMcsr_rainbow";
+            if( do_cgm_ssor_rainbow_csr )   contable_sec << "CGMcsr_ssor_rb" ;
+            if( do_cgm_ssor_eisenstat_rainbow_csr )   contable_sec << "CGMcsr_ssor_eirb" ;
             if( do_chebyshev_diagonal_csr ) contable_sec << "Chebyshev_csr";
             
 
             const int min_l = 0;
             
-            const int max_l = 6;
+            const int max_l = 8;
 
             assert( 0 <= min_l and min_l <= max_l );
             
@@ -677,7 +681,7 @@ int main()
                             auto max_iteration_count = sol.getdimension();
                             timestamp start = gettimestamp();
                             auto recent_iteration_count = 
-                            ConjugateGradientSolverCSR_SSOR( 
+                            ConjugateGradientSolverCSR_SSOR_Eisenstat( 
                                 sol.getdimension(), 
                                 sol.raw(), 
                                 rhs.raw(), 
@@ -706,7 +710,7 @@ int main()
                         }
                         
                         
-                        if( do_cgm_rainbow_csr )
+                        if( do_cgm_ssor_rainbow_csr )
                         {
                             LOG << "CGM Rainbow-SSOR preconditioner CSR" << nl;
                         
@@ -723,6 +727,52 @@ int main()
                             timestamp start = gettimestamp();
                             auto recent_iteration_count = 
                             ConjugateGradientSolverCSR_Rainbow( 
+                                sol.getdimension(), 
+                                sol.raw(), 
+                                rhs.raw(), 
+                                mass.getA(), mass.getC(), mass.getV(),
+                                residual.raw(),
+                                desired_precision,
+                                0,
+                                diagonal.raw(),
+                                0.9123456789,
+                                rainbow.num_colors, rainbow.F.data(), rainbow.B.data(), rainbow.R.data()
+                            );
+
+                            timestamp end = gettimestamp();
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
+                            
+                            LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
+
+                            auto runtime  = static_cast<Float>( end - start );
+                            // auto stat_sol = Float( ( sol - ... ).norm() );
+                            auto stat_res = Float( ( mass * sol - rhs ).norm() );
+                            auto stat_num = Float( recent_iteration_count ) / max_iteration_count;
+                            
+                            //contable_sol << stat_sol;
+                            contable_res << stat_res;
+                            contable_num << stat_num;
+                            contable_sec << runtime;
+                        }
+                        
+                        
+                        if( do_cgm_ssor_eisenstat_rainbow_csr )
+                        {
+                            LOG << "CGM Eisenstat-Rainbow-SSOR preconditioner CSR" << nl;
+                        
+                            FloatVector diagonal = mass.diagonal();
+                            assert( diagonal.isfinite() );
+                            assert( diagonal.isnonnegative() );
+                            
+                            Rainbow rainbow( mass );
+                        
+                            FloatVector sol = sol_original;
+                            const FloatVector rhs = rhs_original;
+                            FloatVector residual( rhs );
+                            auto max_iteration_count = sol.getdimension();
+                            timestamp start = gettimestamp();
+                            auto recent_iteration_count = 
+                            ConjugateGradientSolverCSR_Eisenstat_Rainbow( 
                                 sol.getdimension(), 
                                 sol.raw(), 
                                 rhs.raw(), 

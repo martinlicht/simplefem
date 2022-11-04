@@ -74,7 +74,7 @@ FLAG_ENABLE_OPENMP=yes
 
 # Do you want to ENABLE excessive warning options?
 # Uncomment the following line to enable excessive warning options
-# FLAG_EXCESSIVE_WARNINGS=yes
+FLAG_EXCESSIVE_WARNINGS=yes
 
 # Do you want to ENABLE either extended precision or single precision?
 # Uncomment one the following lines to switch from double precision

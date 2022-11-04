@@ -31,6 +31,33 @@
 
 
 
+
+
+Float alpha(const Float x);
+
+Float alpha_dev(const Float x);
+
+FloatVector trafo(const FloatVector& vec);
+
+DenseMatrix jacobian(const FloatVector& vec);
+        
+FloatVector physical_f(const FloatVector& vec) ;
+
+FloatVector parametric_f(const FloatVector& vec);
+
+DenseMatrix physical_A(const FloatVector& vec);
+
+DenseMatrix parametric_A(const FloatVector& vec);
+
+DenseMatrix weight_scalar(const FloatVector& vec);
+        
+DenseMatrix weight_vector(const FloatVector& vec);        
+        
+FloatVector IncreaseResolution( const MeshSimplicial3D& mesh, const FloatVector& lores );
+
+
+
+
 Float alpha(const Float x) { 
     Float maxnorm = absolute(x);
     return std::exp( 1 - 1. / maxnorm );

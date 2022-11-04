@@ -20,6 +20,7 @@
 
 
 
+FloatVector IncreaseResolution( const MeshSimplicial2D& mesh, const FloatVector& lores );
 
 FloatVector IncreaseResolution( const MeshSimplicial2D& mesh, const FloatVector& lores )
 {

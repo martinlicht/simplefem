@@ -15,6 +15,8 @@ jobs:
     steps:
 #    - name: install valgrind here 
 #      run: sudo apt install -y valgrind
+    - name: show information on the current node
+      run: lscpu
     - name: checkout repository...
       uses: actions/checkout@v2
     - name: build project...
