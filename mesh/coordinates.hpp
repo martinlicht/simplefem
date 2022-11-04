@@ -99,6 +99,9 @@ class Coordinates
 
 
         /* other */ 
+
+        std::vector<Float>& raw();
+        const std::vector<Float>& raw() const;
         
         long long memorysize() const;
         

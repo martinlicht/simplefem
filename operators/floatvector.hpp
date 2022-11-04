@@ -73,7 +73,7 @@ class FloatVector
 
         /* information and data access */
         
-        __HOTCALL int getdimension() const;
+        HOTCALL int getdimension() const;
         
         Float setentry( int, Float );
         

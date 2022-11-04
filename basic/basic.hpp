@@ -9,10 +9,10 @@
 
 #ifdef ELIDE_HOT_FUNCTIONS
 #if defined(__GNUC__) or defined(__clang__)
-#define __HOTCALL __attribute__((hot,warning("Performance-critical function call not elided.")))
+#define HOTCALL __attribute__((hot,warning("Performance-critical function call not elided.")))
 #endif // defined(__GCNUC__) or defined(__clang__)
 #else 
-#define __HOTCALL 
+#define HOTCALL 
 // #warning No hot calls
 #endif // ELIDE_HOT_FUNCTIONS
 

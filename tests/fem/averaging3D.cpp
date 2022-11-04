@@ -5,6 +5,7 @@
 #include "../../basic.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples3D.hpp"
+#include "../../sparse/matcsr.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.elevation.hpp"
 #include "../../fem/utilities.hpp"
@@ -23,32 +24,26 @@ int main()
     
     LOG << "Initial mesh..." << nl;
     
-    MeshSimplicial3D M = UnitSimplex3D();
+    MeshSimplicial3D M = UnitCube3D();
     
     M.automatic_dirichlet_flags();
     
     M.check();
     
     
-    
-    
-    
     const int r_min = 1;
     
     const int r_max = 3;
     
-    const int l_min = 2;
+    const int l_min = 1;
     
     const int l_max = 3;
     
     const int number_of_samples = 3;
-    
         
     
     Float errors[ M.getinnerdimension()+1 ][ l_max - l_min + 1 ][ r_max - r_min + 1 ];
 
-    
-    
     for( int l = 0; l < l_min; l++ )
         M.uniformrefinement();
 
@@ -74,6 +69,25 @@ int main()
             
             auto flagmatrix = FEECSullivanFlagMatrix( M, M.getinnerdimension(), k, r );
             
+            {
+                auto matrix = MatrixCSR( averaging ); 
+
+                for( int r = 0; r < matrix.getdimout(); r++ ) {
+                    Float sum = 0.;
+                    for( int i = matrix.getA()[r]; i < matrix.getA()[r+1]; i++ ) {
+                        Assert( 0 <= i and i < matrix.getnumberofentries(), i );
+                        sum += matrix.getV()[i];
+                    }
+
+                    if( flagmatrix.getdiagonal()[r] == 0. )
+                        Assert( sum == 0., sum );
+                    else 
+                        Assert( isaboutequal( sum, 1. ), sum );
+                }
+
+            }
+
+
             
             errors[k][ l-l_min ][ r-r_min ] = 0.;
             
@@ -115,6 +129,14 @@ int main()
             LOG << "Refinement..." << nl;
         
             M.uniformrefinement();
+
+            LOG << "Distortion..." << nl;
+        
+            for( auto& x : M.getcoordinates().raw() )
+            {
+                x = sqrt(x);
+            }
+
         }
         
     } 

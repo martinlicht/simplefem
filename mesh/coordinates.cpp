@@ -266,6 +266,24 @@ FloatVector Coordinates::getCenter() const
 }
 
 
+
+
+std::vector<Float>& Coordinates::raw()
+{
+    return data;
+}
+
+const std::vector<Float>& Coordinates::raw() const
+{
+    return data;
+}
+
+
+
+
+        
+
+
 long long Coordinates::memorysize() const
 {
     return sizeof(*this) + data.size() * sizeof(Float);

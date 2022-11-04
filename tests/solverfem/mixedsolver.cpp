@@ -229,15 +229,15 @@ int main()
                             Float runtime;
                             int iteration_count;
 
-                            if( k==0 and not do_crmcsr ) continue;
-                            if( k==1 and not do_crmcpp ) continue;
-                            if( k==2 and not do_herzogblock ) continue;
-                            if( k==3 and not do_minresblock ) continue;
-                            if( k==4 and not do_systemherzog ) continue;
-                            if( k==5 and not do_sparseherzog ) continue;
+                            if( k == 0 and not do_crmcsr ) continue;
+                            if( k == 1 and not do_crmcpp ) continue;
+                            if( k == 2 and not do_herzogblock ) continue;
+                            if( k == 3 and not do_minresblock ) continue;
+                            if( k == 4 and not do_systemherzog ) continue;
+                            if( k == 5 and not do_sparseherzog ) continue;
                             
 
-                            if( k==0 and do_crmcsr )
+                            if( k == 0 and do_crmcsr )
                             {
                                 sol.zero();
                                 
@@ -269,7 +269,7 @@ int main()
                             }
 
 
-                            if( k==1 and do_crmcpp )
+                            if( k == 1 and do_crmcpp )
                             {
                                 sol.zero();
                                 
@@ -288,7 +288,7 @@ int main()
                             }
 
 
-                            if( k==2 and do_herzogblock )
+                            if( k == 2 and do_herzogblock )
                             {
                                 auto X = Block2x2Operator( A.getdimout() + B.getdimout(), A.getdimin() + Bt.getdimin(), -A, Bt, B, C );
 
@@ -316,7 +316,7 @@ int main()
                             }
 
 
-                            if( k==3 and do_minresblock )
+                            if( k == 3 and do_minresblock )
                             {   
                                 auto X = Block2x2Operator( A.getdimout() + B.getdimout(), A.getdimin() + Bt.getdimin(), -A, Bt, B, C );
 
@@ -344,7 +344,7 @@ int main()
                             }
 
 
-                            if( k==4 and do_systemherzog )
+                            if( k == 4 and do_systemherzog )
                             {   
                                 sol.zero();
                                 
@@ -378,7 +378,7 @@ int main()
                             }
 
 
-                            if( k==5 and do_sparseherzog )
+                            if( k == 5 and do_sparseherzog )
                             {   
                                 sol.zero();
                                 
