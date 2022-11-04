@@ -217,9 +217,9 @@ int main()
     if( do_chebyshev_diagonal_csr ) contable_res << "Chebyshev_csr";
     
 
-    const int min_l = 4; 
+    const int min_l = 1; 
     
-    const int max_l = 6;
+    const int max_l = 4;
     
     const int min_r = 1; 
     
@@ -587,7 +587,7 @@ int main()
 
                     if( k == 13 and do_cgm_ssor_eisenstat_csr )
                     {
-                        LOG << "CGM - CSR Classic with SSOR" << nl;
+                        LOG << "CGM - CSR Classic with Eisenstat-SSOR" << nl;
                         
                         auto diagonal = SystemMatrix.diagonal();
 
@@ -617,7 +617,7 @@ int main()
 
                     if( k == 14 and do_cgm_rainbow_csr )
                     {
-                        LOG << "CGM Rainbow-SSOR preconditioner CSR" << nl;
+                        LOG << "CGM - CSR Classic with Rainbow-SSOR" << nl;
                     
                         FloatVector diagonal = SystemMatrix.diagonal();
                         

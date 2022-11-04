@@ -154,7 +154,7 @@ std::string ConvergenceTable::text_standard( bool display_convergence_rates ) co
         
         printf_into_stream( ss,  "%*d:%s", nc_indent_width, i, column_separator );
 
-        assert( entries[i].size() == num_series );
+        Assert( entries[i].size() == num_series, entries[i].size(), num_series );
         
         // in the current row, print the entries 
         for( int j = 0; j < entries[i].size(); j++ )

@@ -147,8 +147,8 @@ int main()
             if( do_whatever_csr )           contable_num << "WHATEVER"     ;
             if( do_cgm_diagonal_csr )       contable_num << "CGMcsr_diag"  ;
             if( do_cgm_ssor_csr )           contable_num << "CGMcsr_ssor"  ;
-            if( do_cgm_ssor_eisenstat_csr ) contable_res << "CGMcsr_ssor_ei";
-            if( do_cgm_rainbow_csr )        contable_res << "CGMcsr_rainbow";
+            if( do_cgm_ssor_eisenstat_csr ) contable_num << "CGMcsr_ssor_ei";
+            if( do_cgm_rainbow_csr )        contable_num << "CGMcsr_rainbow";
             if( do_chebyshev_diagonal_csr ) contable_num << "Chebyshev_csr";
             
             if( do_cgmpp      ) contable_sec << "CGM++"      ;
