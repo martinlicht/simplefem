@@ -12,7 +12,7 @@
 
 struct Rainbow
 {
-    Rainbow( const MatrixCSR& );
+    Rainbow( const MatrixCSR&, bool do_shuffle = false );
 
     void check() const;
 

@@ -9,7 +9,7 @@
 
 
 
-Rainbow::Rainbow( const MatrixCSR& mat )
+Rainbow::Rainbow( const MatrixCSR& mat, bool do_shuffle )
 {
     mat.check();
     assert( mat.issquare() );
@@ -31,7 +31,9 @@ Rainbow::Rainbow( const MatrixCSR& mat )
     std::vector<int> painting_order( N ); // determine in which orders the colors are assigned
 
     for( int i = 0; i < N; i++ ) painting_order[i] = i;
-    std::random_shuffle( painting_order.begin(), painting_order.end() );
+    
+    if( do_shuffle) 
+        std::random_shuffle( painting_order.begin(), painting_order.end() );
 
     F = std::vector<int>( N, 0 );
 

@@ -87,15 +87,16 @@ int main()
             bool do_minres     = true;
             bool do_herzog     = true;
             //
-            bool do_cgm_csr                = true;
-            bool do_crm_csr                = true;
-            bool do_crm_csrtextbook        = true;
-            bool do_minres_csr             = true;
-            bool do_whatever_csr           = false;
-            bool do_cgm_diagonal_csr       = true;
-            bool do_cgm_ssor_csr           = true;
-            bool do_cgm_ssor_eisenstat_csr = true;
-            bool do_cgm_rainbow_csr        = true;
+            bool do_cgm_csr                        = true;
+            bool do_crm_csr                        = true;
+            bool do_crm_csrtextbook                = true;
+            bool do_minres_csr                     = true;
+            bool do_whatever_csr                   = false;
+            bool do_cgm_diagonal_csr               = true;
+            bool do_cgm_ssor_csr                   = true;
+            bool do_cgm_ssor_eisenstat_csr         = true;
+            bool do_cgm_ssor_rainbow_csr           = true;
+            bool do_cgm_ssor_eisenstat_rainbow_csr = true;
             bool do_chebyshev_diagonal_csr = false; //grossly inefficient
 
             // if( do_cgmpp      ) contable_sol << "CGM++"      ;
@@ -114,6 +115,24 @@ int main()
             // if( do_cgm_ssor_csr )           contable_sol << "CGMcsr_ssor"  ;
             // if( do_chebyshev_diagonal_csr ) contable_sol << "Chebyshev_csr";
             
+            // if( do_cgmpp      ) contable_sol << "CGM++"      ;
+            // if( do_crmpp_expl ) contable_sol << "CRM++(expl)";
+            // if( do_crmpp_robt ) contable_sol << "CRM++(robt)";
+            // if( do_crmpp_fast ) contable_sol << "CRM++(fast)";
+            // if( do_minres     ) contable_sol << "MINRES"     ;
+            // if( do_herzog     ) contable_sol << "HERZOG"     ;
+            // //
+            // if( do_cgm_csr )                contable_sol << "CGMcsr"       ;
+            // if( do_crm_csr )                contable_sol << "CRMcsr"       ;
+            // if( do_crm_csrtextbook )        contable_sol << "CRMcsr_tb"    ;
+            // if( do_minres_csr )             contable_sol << "MINREScsr"    ;
+            // if( do_whatever_csr )           contable_sol << "WHATEVER"     ;
+            // if( do_cgm_diagonal_csr )       contable_sol << "CGMcsr_diag"  ;
+            // if( do_cgm_ssor_csr )           contable_sol << "CGMcsr_ssor"  ;
+            // if( do_cgm_ssor_eisenstat_csr ) contable_sol << "CGMcsr_ssor_ei";
+            // if( do_cgm_ssor_rainbow_csr )        contable_sol << "CGMcsr_ssor_rb" ;
+            // if( do_chebyshev_diagonal_csr ) contable_sol << "Chebyshev_csr";
+            
             if( do_cgmpp      ) contable_res << "CGM++"      ;
             if( do_crmpp_expl ) contable_res << "CRM++(expl)";
             if( do_crmpp_robt ) contable_res << "CRM++(robt)";
@@ -128,8 +147,9 @@ int main()
             if( do_whatever_csr )           contable_res << "WHATEVER"     ;
             if( do_cgm_diagonal_csr )       contable_res << "CGMcsr_diag"  ;
             if( do_cgm_ssor_csr )           contable_res << "CGMcsr_ssor"  ;
-            if( do_cgm_ssor_eisenstat_csr ) contable_res << "CGMcsr_ssor_Ei";
-            if( do_cgm_rainbow_csr )        contable_res << "CGMcsr_rainbow";
+            if( do_cgm_ssor_eisenstat_csr ) contable_res << "CGMcsr_ssor_ei";
+            if( do_cgm_ssor_rainbow_csr )   contable_res << "CGMcsr_ssor_rb" ;
+            if( do_cgm_ssor_eisenstat_rainbow_csr )   contable_res << "CGMcsr_ssor_eirb" ;
             if( do_chebyshev_diagonal_csr ) contable_res << "Chebyshev_csr";
 
             if( do_cgmpp      ) contable_num << "CGM++"      ;
@@ -146,10 +166,11 @@ int main()
             if( do_whatever_csr )           contable_num << "WHATEVER"     ;
             if( do_cgm_diagonal_csr )       contable_num << "CGMcsr_diag"  ;
             if( do_cgm_ssor_csr )           contable_num << "CGMcsr_ssor"  ;
-            if( do_cgm_ssor_eisenstat_csr ) contable_num << "CGMcsr_ssor_Ei";
-            if( do_cgm_rainbow_csr )        contable_num << "CGMcsr_rainbow";
+            if( do_cgm_ssor_eisenstat_csr ) contable_num << "CGMcsr_ssor_ei";
+            if( do_cgm_ssor_rainbow_csr )   contable_num << "CGMcsr_ssor_rb" ;
+            if( do_cgm_ssor_eisenstat_rainbow_csr )   contable_num << "CGMcsr_ssor_eirb" ;
             if( do_chebyshev_diagonal_csr ) contable_num << "Chebyshev_csr";
-
+            
             if( do_cgmpp      ) contable_sec << "CGM++"      ;
             if( do_crmpp_expl ) contable_sec << "CRM++(expl)";
             if( do_crmpp_robt ) contable_sec << "CRM++(robt)";
@@ -164,8 +185,9 @@ int main()
             if( do_whatever_csr )           contable_sec << "WHATEVER"     ;
             if( do_cgm_diagonal_csr )       contable_sec << "CGMcsr_diag"  ;
             if( do_cgm_ssor_csr )           contable_sec << "CGMcsr_ssor"  ;
-            if( do_cgm_ssor_eisenstat_csr ) contable_sec << "CGMcsr_ssor_Ei";
-            if( do_cgm_rainbow_csr )        contable_sec << "CGMcsr_rainbow";
+            if( do_cgm_ssor_eisenstat_csr ) contable_sec << "CGMcsr_ssor_ei";
+            if( do_cgm_ssor_rainbow_csr )   contable_sec << "CGMcsr_ssor_rb" ;
+            if( do_cgm_ssor_eisenstat_rainbow_csr )   contable_sec << "CGMcsr_ssor_eirb" ;
             if( do_chebyshev_diagonal_csr ) contable_sec << "Chebyshev_csr";
 
             
@@ -731,7 +753,7 @@ int main()
                         }
                         
 
-                        if( do_cgm_rainbow_csr )
+                        if( do_cgm_ssor_rainbow_csr )
                         {
                             LOG << "CGM - CSR Classic with Rainbow-SSOR" << nl;
                             
@@ -746,6 +768,50 @@ int main()
                             timestamp start = gettimestamp();
                             auto recent_iteration_count = 
                             ConjugateGradientSolverCSR_Rainbow( 
+                                sol.getdimension(), 
+                                sol.raw(), 
+                                rhs.raw(), 
+                                stiffness.getA(), stiffness.getC(), stiffness.getV(),
+                                residual.raw(),
+                                desired_precision,
+                                0,
+                                diagonal.raw(),
+                                1.0,
+                                rainbow.num_colors, rainbow.F.data(), rainbow.B.data(), rainbow.R.data()
+                            );
+
+                            timestamp end = gettimestamp();
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
+                            
+                            LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
+
+                            auto runtime  = static_cast<Float>( end - start );
+                            // auto stat_sol = Float( ( sol - ... ).norm() );
+                            auto stat_res = Float( ( stiffness * sol - rhs ).norm() );
+                            auto stat_num = Float( recent_iteration_count ) / max_iteration_count;
+                            
+                            //contable_sol << stat_sol;
+                            contable_res << stat_res;
+                            contable_num << stat_num;
+                            contable_sec << runtime;
+                        }
+                        
+                        
+                        if( do_cgm_ssor_eisenstat_rainbow_csr )
+                        {
+                            LOG << "CGM Eisenstat-Rainbow-SSOR preconditioner CSR" << nl;
+                        
+                            auto diagonal = stiffness.diagonal();
+
+                            Rainbow rainbow( stiffness );
+                            
+                            FloatVector sol = sol_original;
+                            const FloatVector rhs = rhs_original;
+                            FloatVector residual( rhs );
+                            auto max_iteration_count = sol.getdimension();
+                            timestamp start = gettimestamp();
+                            auto recent_iteration_count = 
+                            ConjugateGradientSolverCSR_Eisenstat_Rainbow( 
                                 sol.getdimension(), 
                                 sol.raw(), 
                                 rhs.raw(), 

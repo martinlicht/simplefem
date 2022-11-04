@@ -213,7 +213,7 @@ std::string ConvergenceTable::text_transpose( bool display_convergence_rates ) c
 
     const bool rates_are_float = false;
     
-    const int nc_header_width = 10;
+    const int nc_header_width = 14;
     
     const int nc_cell_precision = 8;
 
@@ -226,7 +226,7 @@ std::string ConvergenceTable::text_transpose( bool display_convergence_rates ) c
     // see above ....
 
     // First line is the name of the table 
-    printf_into_stream( ss,  "\n%s\n", table_name.c_str() );
+    printf_into_stream( ss,  "\n>> %s\n", table_name.c_str() );
 
     const int num_entries_per_series = entries.size(); 
     
@@ -252,7 +252,7 @@ std::string ConvergenceTable::text_transpose( bool display_convergence_rates ) c
                 seriesheader[ nc_header_width-1 ] = '~';
             }
 
-            printf_into_stream( ss,  "%*s%s", nc_header_width, seriesheader.c_str(), cell_separator );
+            printf_into_stream( ss,  ">> %*s%s", nc_header_width, seriesheader.c_str(), cell_separator );
 
         }
 
