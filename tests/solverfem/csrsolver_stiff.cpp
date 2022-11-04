@@ -94,8 +94,9 @@ int main()
             bool do_whatever_csr           = false;
             bool do_cgm_diagonal_csr       = true;
             bool do_cgm_ssor_csr           = true;
-            bool do_chebyshev_diagonal_csr = false; //grossly inefficient
+            bool do_cgm_ssor_eisenstat_csr = true;
             bool do_cgm_rainbow_csr        = true;
+            bool do_chebyshev_diagonal_csr = false; //grossly inefficient
 
             // if( do_cgmpp      ) contable_sol << "CGM++"      ;
             // if( do_crmpp_expl ) contable_sol << "CRM++(expl)";
@@ -127,8 +128,9 @@ int main()
             if( do_whatever_csr )           contable_res << "WHATEVER"     ;
             if( do_cgm_diagonal_csr )       contable_res << "CGMcsr_diag"  ;
             if( do_cgm_ssor_csr )           contable_res << "CGMcsr_ssor"  ;
-            if( do_chebyshev_diagonal_csr ) contable_res << "Chebyshev_csr";
+            if( do_cgm_ssor_eisenstat_csr ) contable_res << "CGMcsr_ssor_Ei";
             if( do_cgm_rainbow_csr )        contable_res << "CGMcsr_rainbow";
+            if( do_chebyshev_diagonal_csr ) contable_res << "Chebyshev_csr";
 
             if( do_cgmpp      ) contable_num << "CGM++"      ;
             if( do_crmpp_expl ) contable_num << "CRM++(expl)";
@@ -144,8 +146,9 @@ int main()
             if( do_whatever_csr )           contable_num << "WHATEVER"     ;
             if( do_cgm_diagonal_csr )       contable_num << "CGMcsr_diag"  ;
             if( do_cgm_ssor_csr )           contable_num << "CGMcsr_ssor"  ;
-            if( do_chebyshev_diagonal_csr ) contable_num << "Chebyshev_csr";
+            if( do_cgm_ssor_eisenstat_csr ) contable_num << "CGMcsr_ssor_Ei";
             if( do_cgm_rainbow_csr )        contable_num << "CGMcsr_rainbow";
+            if( do_chebyshev_diagonal_csr ) contable_num << "Chebyshev_csr";
 
             if( do_cgmpp      ) contable_sec << "CGM++"      ;
             if( do_crmpp_expl ) contable_sec << "CRM++(expl)";
@@ -161,15 +164,16 @@ int main()
             if( do_whatever_csr )           contable_sec << "WHATEVER"     ;
             if( do_cgm_diagonal_csr )       contable_sec << "CGMcsr_diag"  ;
             if( do_cgm_ssor_csr )           contable_sec << "CGMcsr_ssor"  ;
-            if( do_chebyshev_diagonal_csr ) contable_sec << "Chebyshev_csr";
+            if( do_cgm_ssor_eisenstat_csr ) contable_sec << "CGMcsr_ssor_Ei";
             if( do_cgm_rainbow_csr )        contable_sec << "CGMcsr_rainbow";
+            if( do_chebyshev_diagonal_csr ) contable_sec << "Chebyshev_csr";
 
             
             
 
             const int min_l = 0;
             
-            const int max_l = 6;
+            const int max_l = 5;
 
             assert( 0 <= min_l and min_l <= max_l );
             
@@ -663,7 +667,95 @@ int main()
                                 desired_precision,
                                 0,
                                 diagonal.raw(),
-                                1.0
+                                1.2
+                            );
+
+                            timestamp end = gettimestamp();
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
+                            
+                            LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
+
+                            auto runtime  = static_cast<Float>( end - start );
+                            // auto stat_sol = Float( ( sol - ... ).norm() );
+                            auto stat_res = Float( ( stiffness * sol - rhs ).norm() );
+                            auto stat_num = Float( recent_iteration_count ) / max_iteration_count;
+                            
+                            //contable_sol << stat_sol;
+                            contable_res << stat_res;
+                            contable_num << stat_num;
+                            contable_sec << runtime;
+                        }
+                        
+                        
+                        
+
+                        if( do_cgm_ssor_eisenstat_csr )
+                        {
+                            LOG << "CGM - CSR Classic with SSOR-Eisenstat" << nl;
+                            
+                            auto diagonal = stiffness.diagonal();
+
+                            
+                            FloatVector sol = sol_original;
+                            const FloatVector rhs = rhs_original;
+                            FloatVector residual( rhs );
+                            auto max_iteration_count = sol.getdimension();
+                            timestamp start = gettimestamp();
+                            auto recent_iteration_count = 
+                            ConjugateGradientSolverCSR_SSOR_Eisenstat( 
+                                sol.getdimension(), 
+                                sol.raw(), 
+                                rhs.raw(), 
+                                stiffness.getA(), stiffness.getC(), stiffness.getV(),
+                                residual.raw(),
+                                desired_precision,
+                                0,
+                                diagonal.raw(),
+                                1.2
+                            );
+
+                            timestamp end = gettimestamp();
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
+                            
+                            LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
+
+                            auto runtime  = static_cast<Float>( end - start );
+                            // auto stat_sol = Float( ( sol - ... ).norm() );
+                            auto stat_res = Float( ( stiffness * sol - rhs ).norm() );
+                            auto stat_num = Float( recent_iteration_count ) / max_iteration_count;
+                            
+                            //contable_sol << stat_sol;
+                            contable_res << stat_res;
+                            contable_num << stat_num;
+                            contable_sec << runtime;
+                        }
+                        
+
+                        if( do_cgm_rainbow_csr )
+                        {
+                            LOG << "CGM - CSR Classic with Rainbow-SSOR" << nl;
+                            
+                            auto diagonal = stiffness.diagonal();
+
+                            Rainbow rainbow( stiffness );
+                            
+                            FloatVector sol = sol_original;
+                            const FloatVector rhs = rhs_original;
+                            FloatVector residual( rhs );
+                            auto max_iteration_count = sol.getdimension();
+                            timestamp start = gettimestamp();
+                            auto recent_iteration_count = 
+                            ConjugateGradientSolverCSR_Rainbow( 
+                                sol.getdimension(), 
+                                sol.raw(), 
+                                rhs.raw(), 
+                                stiffness.getA(), stiffness.getC(), stiffness.getV(),
+                                residual.raw(),
+                                desired_precision,
+                                0,
+                                diagonal.raw(),
+                                1.0,
+                                rainbow.num_colors, rainbow.F.data(), rainbow.B.data(), rainbow.R.data()
                             );
 
                             timestamp end = gettimestamp();
@@ -718,50 +810,6 @@ int main()
                             auto runtime  = static_cast<Float>( end - start );
                             // auto stat_sol = Float( ( sol - ... ).norm() );
                             auto stat_res = Float( ( mass * sol - rhs ).norm() );
-                            auto stat_num = Float( recent_iteration_count ) / max_iteration_count;
-                            
-                            //contable_sol << stat_sol;
-                            contable_res << stat_res;
-                            contable_num << stat_num;
-                            contable_sec << runtime;
-                        }
-                        
-
-                        if( do_cgm_rainbow_csr )
-                        {
-                            LOG << "CGM - CSR Classic with Rainbow-SSOR" << nl;
-                            
-                            auto diagonal = stiffness.diagonal();
-
-                            Rainbow rainbow( stiffness );
-                            
-                            FloatVector sol = sol_original;
-                            const FloatVector rhs = rhs_original;
-                            FloatVector residual( rhs );
-                            auto max_iteration_count = sol.getdimension();
-                            timestamp start = gettimestamp();
-                            auto recent_iteration_count = 
-                            ConjugateGradientSolverCSR_Rainbow( 
-                                sol.getdimension(), 
-                                sol.raw(), 
-                                rhs.raw(), 
-                                stiffness.getA(), stiffness.getC(), stiffness.getV(),
-                                residual.raw(),
-                                desired_precision,
-                                0,
-                                diagonal.raw(),
-                                1.0,
-                                rainbow.num_colors, rainbow.F.data(), rainbow.B.data(), rainbow.R.data()
-                            );
-
-                            timestamp end = gettimestamp();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
-                            
-                            LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
-
-                            auto runtime  = static_cast<Float>( end - start );
-                            // auto stat_sol = Float( ( sol - ... ).norm() );
-                            auto stat_res = Float( ( stiffness * sol - rhs ).norm() );
                             auto stat_num = Float( recent_iteration_count ) / max_iteration_count;
                             
                             //contable_sol << stat_sol;
