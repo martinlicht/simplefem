@@ -21,7 +21,7 @@ jobs:
     - name: print software versions
       run: clang++ --version; g++ --version; clang-tidy --version 
     - name: checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: static code analysis check header files
       run: make checkheaders
 #    - name: static code analysis clang-tidy
