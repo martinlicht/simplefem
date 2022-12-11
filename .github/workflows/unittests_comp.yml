@@ -13,6 +13,8 @@ jobs:
     timeout-minutes: 180
 
     steps:
+    - name: Install OpenMP
+      run: sudo apt-get install -y libomp-dev
 #    - name: install valgrind here 
 #      run: sudo apt install -y valgrind
     - name: show information on the current node
