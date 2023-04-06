@@ -86,12 +86,21 @@ using namespace Magick;
 
 */
 
+enum class ColorComp { red, green, blue };
 
 struct Pixel
 {
     unsigned char red;
     unsigned char green;
     unsigned char blue;
+
+    unsigned char operator()(ColorComp cc) const { 
+        switch(cc) {
+            case ColorComp::red:   return red;
+            case ColorComp::green: return green;
+            case ColorComp::blue:  return blue;
+        }
+    }
 };
 
 class PixelImage
@@ -108,6 +117,10 @@ class PixelImage
         {}
         
         ~PixelImage() {}
+
+        size_t getheight(){ return height; };
+
+        size_t getwidth(){ return width; };
 
         Pixel& operator()( size_t row, size_t col ) {
             assert(row >= 0 && row < height);
@@ -154,6 +167,24 @@ PixelImage readPixelImage( std::string str )
     return ret;
 }
 
+
+PixelImage pixelimage(1,1);
+
+auto get_pixel_color = []( double x, double y, ColorComp cc ) -> double
+{
+    double ny = floor( y * pixelimage.getwidth()  );
+    double nx = floor( x * pixelimage.getheight() );
+
+    Pixel p00 = pixelimage( ny+0, nx+0 );
+    Pixel p01 = pixelimage( ny+0, nx+1 );
+    Pixel p10 = pixelimage( ny+1, nx+0 );
+    Pixel p11 = pixelimage( ny+1, nx+1 );
+
+    double lx = x - nx;
+    double ly = y - ny;
+
+    return lx * ly * p00(cc) + (1-lx) * ly * p01(cc) + lx * (1-ly) * p10(cc) + (1-lx) * (1-ly) * p11(cc);
+};
 
 
 
