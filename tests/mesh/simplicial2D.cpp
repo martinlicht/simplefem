@@ -37,7 +37,8 @@ int main()
         fstream fs( experimentfile( getbasename(__FILE__), "svg" ), std::fstream::out );
         int num_tets = M.count_triangles();
         FloatVector red( num_tets, 128 ), green( num_tets, 240 ), blue( num_tets, 38 );
-        fs << M.outputSVG( 0.01, "array", "blue", &red, &green, &blue );
+        red.random_within_range(0.,255.); green.random_within_range(0.,255.); blue.random_within_range(0.,255.);
+        fs << M.outputSVG( 0.01, "array", "white", &red, &green, &blue );
         fs.close();
         
         LOG << "Finished Unit Test" << nl;

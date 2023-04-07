@@ -323,6 +323,18 @@ void FloatVector::random()
         setentry( p, gaussrand() ); 
 }
 
+void FloatVector::random_within_range( Float min, Float max )
+{
+    check();
+    for( int p = 0; p < getdimension(); p++ ) {
+        Float value = (max-min)*random_uniform() + min; 
+        assert( min <= value and value <= max );
+        setentry( p, value ); 
+    }
+        
+}
+        
+        
 void FloatVector::zero() 
 {
     check();
