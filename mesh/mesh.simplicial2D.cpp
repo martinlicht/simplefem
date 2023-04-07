@@ -3252,6 +3252,73 @@ std::string MeshSimplicial2D::outputTikZ() const
         
 
 
+inline int leading_digits( double num )
+{
+    // If the number is negative, take its absolute value
+    // Calculate the order of magnitude of the number
+    // If the number is greater than 1, return the integer part of the order, else, return 0
+    
+    if( num < 0 ) num = -num;
+    int order = (int)ceil( log10(num) );
+    if( order >= 0 ) return order + 1; else return 0;
+}
+
+inline std::string render_number( double num, int tail )
+{
+    int lead = leading_digits( num );
+    char str[1+lead+1+tail+1];
+    sprintf( str, "%0*.*f", lead+1+tail, tail, num);
+    return std::string(str);
+}
+
+std::string MeshSimplicial2D::outputSVG( 
+    Float stroke_width,
+    std::string fill,
+    std::string stroke 
+) const {
+    std::ostringstream os;
+
+    const auto& coords = getcoordinates();
+
+    os << "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.200000\" width=\"100%\" height=\"100%\" "
+       << "viewBox=\""
+       << coords.getmin(0) << space 
+       << coords.getmin(1) << space 
+       << coords.getmax(0) << space 
+       << coords.getmax(1) << space 
+       << "\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">"
+       << nl;
+
+    for( int t = 0; t < this->count_triangles(); t++ ) {
+      
+      int v0 = this->get_triangle_vertex(t,0);
+      int v1 = this->get_triangle_vertex(t,1);
+      int v2 = this->get_triangle_vertex(t,2);
+      
+      Float x0 = coords.getdata(v0,0);
+      Float y0 = coords.getdata(v0,1);
+      Float x1 = coords.getdata(v1,0);
+      Float y1 = coords.getdata(v1,1);
+      Float x2 = coords.getdata(v2,0);
+      Float y2 = coords.getdata(v2,1);
+      
+      os << "<polygon points=\"" 
+         << render_number(x0,9) << "," << render_number(y0,9) << " " 
+         << render_number(x1,9) << "," << render_number(y1,9) << " " 
+         << render_number(x2,9) << "," << render_number(y2,9) << "\"";
+      os << " fill=\"" << "red" << "\"";
+      os << " stroke=\"" << stroke << "\"";
+      os << " stroke-width=\"" << render_number(stroke_width,9) << "\"";
+      os << "></polygon>";
+      os << nl;
+        
+    }
+    
+    os << "</svg>";
+    
+    return os.str();
+}
+
 
 
 

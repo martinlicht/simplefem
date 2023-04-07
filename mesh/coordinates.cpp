@@ -114,6 +114,25 @@ FloatVector Coordinates::getvectorclone( int n ) const
     return getvectorclone( n, 1. );
 }
 
+/* get range of coordinates */
+        
+Float Coordinates::getmin( int d ) const {
+    assert( 0 <= d && d < dimension );
+    Float ret = getdata(0,d);
+    for( int n = 1; n < number; n++ )
+        ret = std::min(ret,getdata(n,d));
+    return ret;
+}
+Float Coordinates::getmax( int d ) const {
+    assert( 0 <= d && d < dimension );
+    Float ret = getdata(0,d);
+    for( int n = 1; n < number; n++ )
+        ret = std::max(ret,getdata(n,d));
+    return ret;
+}
+        
+        
+        
 FloatVector Coordinates::getvectorclone( int n, Float scale ) const
 {
     assert( 0 <= n && n < number );

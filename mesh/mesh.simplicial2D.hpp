@@ -231,6 +231,12 @@ class MeshSimplicial2D
         
         std::string outputTikZ() const;
 
+        std::string outputSVG( 
+            Float stroke_width = 1.,
+            std::string fill   = "red",
+            std::string stroke = "blue" 
+        ) const;
+
 
         /* other */ 
         

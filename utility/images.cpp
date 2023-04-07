@@ -35,8 +35,9 @@ int leading_digits( double num )
     if( order >= 0 ) return order + 1; else return 0;
 }
 
-std::string render_number( double num, int lead, int tail )
+std::string render_number( double num, int tail )
 {
+    int lead = leading_digits( num );
     char str[1+lead+1+tail+1];
     sprintf( str, "%0*.*f", lead+1+tail, tail, num);
     return std::string(str);
@@ -71,16 +72,18 @@ using namespace Magick;
     std::string generatePolygonString(
         double x1, double y1, double x2, double y2, double x3, double y3, 
         std::string fill, 
-        std::string stroke
+        std::string stroke,
+        double stroke_width
     ) {
         std::stringstream ss;
         ss << "<polygon points=\"" 
            << x1 << "," << y1 << " " 
            << x2 << "," << y2 << " " 
-           << x3 << "," << y3 << " "  
-           << "\" fill=\"" << fill 
-           << "\" stroke=\"" << stroke
-           << "\"></polygon>";
+           << x3 << "," << y3 << "\""  
+        ss << " fill=\"" << fill << "\""  
+        ss << " stroke=\"" << stroke << "\""  
+        ss << " stroke-width=\"" << stroke_width << "\""  
+        ss << "></polygon>";
         return ss.str();
     }
 
