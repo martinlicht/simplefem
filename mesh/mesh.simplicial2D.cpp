@@ -3252,6 +3252,13 @@ std::string MeshSimplicial2D::outputTikZ() const
         
 
 
+std::string rgb_to_string( unsigned char r, unsigned char g, unsigned char b )
+{
+    char result[8] = {0,0,0,0,0,0,0,0};
+    sprintf(result, "#%02x%02x%02x", r, g, b);
+    return std::string( result );
+}
+
 inline int leading_digits( double num )
 {
     // If the number is negative, take its absolute value
@@ -3260,10 +3267,10 @@ inline int leading_digits( double num )
     
     if( num < 0 ) num = -num;
     int order = (int)ceil( log10(num) );
-    if( order >= 0 ) return order + 1; else return 0;
+    if( order >= 0 ) return order + 1; else return 1;
 }
 
-inline std::string render_number( double num, int tail )
+inline std::string render_number( double num, int tail = 3 )
 {
     int lead = leading_digits( num );
     char str[1+lead+1+tail+1];
@@ -3274,19 +3281,25 @@ inline std::string render_number( double num, int tail )
 std::string MeshSimplicial2D::outputSVG( 
     Float stroke_width,
     std::string fill,
-    std::string stroke 
+    std::string stroke,
+    const FloatVector* triangle_red,
+    const FloatVector* triangle_green,
+    const FloatVector* triangle_blue
 ) const {
     std::ostringstream os;
 
-    const auto& coords = getcoordinates();
+    auto coords = getcoordinates();
+
+    coords.shift( { 
+        -getcoordinates().getmin(0), 
+        -getcoordinates().getmin(1) 
+    } );
 
     os << "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.200000\" width=\"100%\" height=\"100%\" "
        << "viewBox=\""
-       << coords.getmin(0) << space 
-       << coords.getmin(1) << space 
-       << coords.getmax(0) << space 
-       << coords.getmax(1) << space 
-       << "\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">"
+       << coords.getmin(0) << space << coords.getmin(1) << space 
+       << coords.getmax(0) << space << coords.getmax(1) << "\""
+       << " xmlns:xlink=\"http://www.w3.org/1999/xlink\">"
        << nl;
 
     for( int t = 0; t < this->count_triangles(); t++ ) {
@@ -3303,12 +3316,20 @@ std::string MeshSimplicial2D::outputSVG(
       Float y2 = coords.getdata(v2,1);
       
       os << "<polygon points=\"" 
-         << render_number(x0,9) << "," << render_number(y0,9) << " " 
-         << render_number(x1,9) << "," << render_number(y1,9) << " " 
-         << render_number(x2,9) << "," << render_number(y2,9) << "\"";
-      os << " fill=\"" << "red" << "\"";
+         << render_number(x0) << "," << render_number(y0) << " " 
+         << render_number(x1) << "," << render_number(y1) << " " 
+         << render_number(x2) << "," << render_number(y2) << "\"";
+      if( fill == "array"){
+        assert( triangle_red ); assert( triangle_green); assert( triangle_blue );
+        std::string colorstring = rgb_to_string( triangle_red->at(t), triangle_green->at(t), triangle_blue->at(t) );
+        os << " fill=\"" << colorstring << "\"";
+        LOG << "!\n";
+      }
+      else {
+        os << " fill=\"" << "red" << "\"";
+      }
       os << " stroke=\"" << stroke << "\"";
-      os << " stroke-width=\"" << render_number(stroke_width,9) << "\"";
+      os << " stroke-width=\"" << render_number(stroke_width) << "\"";
       os << "></polygon>";
       os << nl;
         
