@@ -3319,14 +3319,29 @@ std::string MeshSimplicial2D::outputSVG(
          << render_number(x0) << "," << render_number(y0) << " " 
          << render_number(x1) << "," << render_number(y1) << " " 
          << render_number(x2) << "," << render_number(y2) << "\"";
+      
       if( fill == "array"){
-        assert( triangle_red ); assert( triangle_green); assert( triangle_blue );
-        std::string colorstring = rgb_to_string( triangle_red->at(t), triangle_green->at(t), triangle_blue->at(t) );
+      
+        assert( triangle_red ); assert( triangle_green ); assert( triangle_blue );
+      
+        double channel_red   = triangle_red->at(t);
+        double channel_green = triangle_green->at(t);
+        double channel_blue  = triangle_blue->at(t);
+
+        // LOG << channel_blue << space << channel_green << space << channel_red << nl;
+
+        assert( 0. <= channel_red   and channel_red <= 255. );
+        assert( 0. <= channel_green and channel_green <= 255. );
+        assert( 0. <= channel_blue  and channel_blue <= 255. );
+      
+        std::string colorstring = rgb_to_string( 
+            (unsigned char)channel_red, 
+            (unsigned char)channel_green, 
+            (unsigned char)channel_blue );
+
         os << " fill=\"" << colorstring << "\"";
-        LOG << "!\n";
-      }
-      else {
-        os << " fill=\"" << "red" << "\"";
+      } else {
+        os << " fill=\"" << "red"       << "\"";
       }
       os << " stroke=\"" << stroke << "\"";
       os << " stroke-width=\"" << render_number(stroke_width) << "\"";

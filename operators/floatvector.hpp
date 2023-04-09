@@ -99,6 +99,8 @@ class FloatVector
         
         void random_within_range( Float min, Float max );
         
+        void to_absolute();
+        
         void zero();
         
         void clear();

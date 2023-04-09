@@ -334,6 +334,13 @@ void FloatVector::random_within_range( Float min, Float max )
         
 }
         
+void FloatVector::to_absolute() 
+{
+    check();
+    for( int p = 0; p < getdimension(); p++ )
+        setentry( p, absolute( getentry(p) ) ); 
+}
+
         
 void FloatVector::zero() 
 {

@@ -8,14 +8,16 @@
 #include <string>
 #include <iostream>
 
-#include <Magick++.h>
-using namespace Magick;
-
-#include "pixelimage.hpp"
-
 // g++ images.cpp `Magick++-config --cxxflags --cppflags --ldflags --libs`
 // sudo apt install graphicsmagick-libmagick-dev-compat libgraphicsmagick++1-dev libmagick++-6-headers libmagick++-dev
 // sudo apt-get update; sudo apt-get upgrade; sudo apt-get install imagemagick-common
+// #include <Magick++.h>
+// using namespace Magick;
+#include "_CImg.h"
+using namespace cimg_library;
+
+#include "pixelimage.hpp"
+
 
 /*
 I am looking for a header-only C++ library that allows me to read images in various (common) file formats. 
@@ -38,23 +40,31 @@ Up to now, I have been using Magick++ for that purposes. Not only is that overbl
 
 PixelImage readPixelImage( std::string str )
 {
-    InitializeMagick(nullptr);
 
-    Image image;    
-    image.read( str.c_str() );
+    // InitializeMagick(nullptr);
 
-    size_t width  = image.columns();
-    size_t height = image.rows();
+    // Image image;    
+    // image.read( str.c_str() );
+
+    CImg<unsigned char> image( str.c_str() );
+    
+    // size_t width  = image.columns();
+    // size_t height = image.rows();
+    int width  = image.width();
+    int height = image.height();
 
     PixelImage ret( height, width ); 
     
-    for( size_t row = 0; row < height; row++) 
-    for( size_t col = 0; col < width; col++)
+    for( int row = 0; row < height; row++) 
+    for( int col = 0; col < width; col++)
     {
-        ColorRGB color = image.pixelColor( row, col ); 
-        ret(row,col).red   = (int)(255*color.red());
-        ret(row,col).green = (int)(255*color.green());
-        ret(row,col).blue  = (int)(255*color.blue());
+        // ColorRGB color = image.pixelColor( row, col ); 
+        // ret(row,col).red   = (int)(255*color.red());
+        // ret(row,col).green = (int)(255*color.green());
+        // ret(row,col).blue  = (int)(255*color.blue());
+        ret(row,col).red   = image(col,row,0,0);
+        ret(row,col).green = image(col,row,0,1);
+        ret(row,col).blue  = image(col,row,0,2);
     }
 
     return ret;
@@ -65,20 +75,26 @@ void savePixelImage( const PixelImage& pim, std::string str )
 {
     // InitializeMagick(nullptr);
 
-    size_t width  = pim.getwidth();
-    size_t height = pim.getheight();
+    unsigned int width  = pim.getwidth();
+    unsigned int height = pim.getheight();
 
-    Image image( Geometry(width, height), "white" );
+    // Image image( Geometry(width, height), "white" );
+    
+    CImg<float> image( width, height, 1, 3, 0 );
 
-    for( size_t row = 0; row < height; row++) 
-    for( size_t col = 0; col < width; col++)
+    for( unsigned int row = 0; row < height; row++) 
+    for( unsigned int col = 0; col < width; col++)
     {
-        auto color = pim( row, col );
-        image.pixelColor( row, col, ColorRGB( color.red/255., color.green/255., color.blue/255. ) ); 
+        image(col,row,0,0) = pim(row,col).red;
+        image(col,row,0,1) = pim(row,col).green;
+        image(col,row,0,2) = pim(row,col).blue;
+
+        // auto color = pim( row, col );
+        // image.pixelColor( row, col, ColorRGB( color.red/255., color.green/255., color.blue/255. ) ); 
     }
         
-    image.write( str ); 
-    return;
+    // image.write( str ); 
+    image.save( str.c_str() ); 
 }
 
 

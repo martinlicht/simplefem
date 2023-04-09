@@ -125,6 +125,8 @@ cachegrind.out.*
 *.pvts
 *.pvtu
 
+# SVG output
+*.svg
 
 # Temporary file
 *.temp
