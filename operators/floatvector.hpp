@@ -182,7 +182,7 @@ class FloatVector
         
         Float l2norm() const;
         
-        Float lpnorm( Float ) const;
+        Float lpnorm( Float p, Float inner_weight = 1. ) const;
         
         
         

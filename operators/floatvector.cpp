@@ -330,8 +330,7 @@ void FloatVector::random_within_range( Float min, Float max )
         Float value = (max-min)*random_uniform() + min; 
         assert( min <= value and value <= max );
         setentry( p, value ); 
-    }
-        
+    }   
 }
         
 void FloatVector::to_absolute() 
@@ -651,16 +650,18 @@ Float FloatVector::l2norm() const
     return norm();
 }
 
-Float FloatVector::lpnorm( Float p ) const
+Float FloatVector::lpnorm( Float p, Float innerweight ) const
 {
     check();
     assert( p > 0 );
     assert( std::isfinite(p) );
     assert( std::isnormal(p) );
+    assert( std::isfinite(innerweight) and innerweight > 0. );
     
     Float ret = 0.;
     for( int d = 0; d < getdimension(); d++ )
         ret += power_numerical( absolute( pointer[d] ), p );
+    ret *= innerweight;
     return power_numerical( ret, 1./p );
 }
 

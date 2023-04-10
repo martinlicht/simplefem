@@ -64,30 +64,29 @@ class PixelImage
             {
                 const PixelImage& pixelimage = *this;
                 
-                double sy = y * ( pixelimage.getwidth() - 1 );
-                double sx = x * ( pixelimage.getheight() - 1 );
+                int ny = (int)floor( y );
+                int nx = (int)floor( x );
 
-                int ny = (int)floor( sy );
-                int nx = (int)floor( sx );
+                double lx = x - nx;
+                double ly = y - ny;
 
-                double lx = sx - nx;
-                double ly = sy - ny;
-
-                assert( 0 <= ny and ny+1 < height  );
-                assert( 0 <= nx and nx+1 < width );
-                assert( 0. <= ly and ly <= 1. );
-                assert( 0. <= lx and lx <= 1. );
+                assert( 0 <= ny and ny < height );
+                assert( 0 <= nx and nx < width  );
+                // assert( 0 <= ny and ny+1 < height );
+                // assert( 0 <= nx and nx+1 < width  );
+                // assert( 0. <= ly and ly <= 1. );
+                // assert( 0. <= lx and lx <= 1. );
 
                 PixelColor p00 = pixelimage( ny+0, nx+0 );
-                PixelColor p01 = pixelimage( ny+0, nx+1 );
-                PixelColor p10 = pixelimage( ny+1, nx+0 );
-                PixelColor p11 = pixelimage( ny+1, nx+1 );
+                // PixelColor p01 = pixelimage( ny+0, nx+1 );
+                // PixelColor p10 = pixelimage( ny+1, nx+0 );
+                // PixelColor p11 = pixelimage( ny+1, nx+1 );
 
                 return p00(cc);
-                return       ly *     lx * p00(cc) 
-                       + (1-ly) *     lx * p01(cc) 
-                       +     ly * (1-lx) * p10(cc) 
-                       + (1-ly) * (1-lx) * p11(cc);
+                // return       ly *     lx * p00(cc) 
+                //        + (1-ly) *     lx * p01(cc) 
+                //        +     ly * (1-lx) * p10(cc) 
+                //        + (1-ly) * (1-lx) * p11(cc);
             };
         }
 

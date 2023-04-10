@@ -83,6 +83,7 @@ class Coordinates
         /* transform all coordinates  */
         
         void scale( Float );
+        void scale( FloatVector );
         void shift( const FloatVector& );
         void lineartransform( const LinearOperator& );
         

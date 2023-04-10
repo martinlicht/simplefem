@@ -6,6 +6,7 @@
 
 
 #include "../basic.hpp"
+#include "../utility/random.hpp"
 #include "../combinatorics/generateindexmaps.hpp"
 #include "../dense/cholesky.hpp"
 #include "../dense/qr.factorization.hpp"
@@ -496,6 +497,44 @@ FloatVector Mesh::get_midpoint( int dim, int index ) const
 
     return mid;
 }
+
+FloatVector Mesh::getPointFromBarycentric( int dim, int index, const FloatVector& barycoords ) const
+{
+    assert( 0 <= dim && dim <= getinnerdimension() );
+    assert( 0 <= index && index < count_simplices(dim) );
+    assert( barycoords.getdimension() == dim+1 );
+    assert( isaboutequal( barycoords.sum(), 1. ) );
+
+    FloatVector ret( getouterdimension(), 0. );
+    
+    for( int v = 0; v <= dim; v++ )
+    for( int d = 0; d < getouterdimension(); d++ )
+      ret[d] += barycoords[v] * getcoordinates().getdata( get_subsimplex( dim, 0, index, v ), d );
+    
+    return ret;
+}
+
+FloatVector Mesh::get_random_point( int dim, int index ) const
+{
+    FloatVector samples( dim );
+    do samples.random_within_range(0.,1.); while( samples.sum() > 1. );
+    FloatVector randomcoords( dim+1 );
+    for( int p = 0; p < dim; p++ ) randomcoords[p] = samples[p];
+    randomcoords[dim] = 1. - samples.sum();
+    return getPointFromBarycentric( dim, index, randomcoords );
+    
+    // std::vector<Float> barycoords( dim+2, 0. );
+    // for( auto& x : barycoords ) x = random_uniform();
+    // barycoords.back() = 1.;
+    // barycoords.front() = 0.;
+    // for( auto& x : barycoords ) assert( 0. <= x and x <= 1. );
+    // std::sort( barycoords.begin(), barycoords.end() );
+    // for( int i = 0; i <= dim; i++ ) barycoords[i] = barycoords[i+1] - barycoords[i];
+    // barycoords.pop_back();
+    // return getPointFromBarycentric( dim, index, FloatVector(barycoords) );
+}
+
+
 
 
 int Mesh::get_longest_edge_index( int dim, int index ) const

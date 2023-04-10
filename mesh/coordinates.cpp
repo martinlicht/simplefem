@@ -187,6 +187,13 @@ void Coordinates::scale( Float alpha )
             data.at( n * dimension + d ) *= alpha;
 }
                                 
+void Coordinates::scale( FloatVector alphas )
+{
+    for( int n = 0; n < number; n++ )
+        for( int d = 0; d < dimension; d++ )
+            data.at( n * dimension + d ) *= alphas[d];
+}
+                                
 void Coordinates::shift( const FloatVector& add )
 {
     assert( add.getdimension() == dimension );

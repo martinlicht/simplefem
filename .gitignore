@@ -128,6 +128,14 @@ cachegrind.out.*
 # SVG output
 *.svg
 
+# other files 
+*.zip 
+*.tiff 
+*.jpg 
+*.jpeg 
+*.webp 
+
+
 # Temporary file
 *.temp
 

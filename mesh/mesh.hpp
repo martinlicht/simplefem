@@ -210,6 +210,11 @@ class Mesh
         Float getShapemeasure() const;
         
         FloatVector get_midpoint( int dim, int index ) const;
+
+        FloatVector get_random_point( int dim, int index ) const;
+
+        FloatVector getPointFromBarycentric( int dim, int index, const FloatVector& barycoords ) const;
+
         
         int get_longest_edge_index( int dim, int index ) const;
         

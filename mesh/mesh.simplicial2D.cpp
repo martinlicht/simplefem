@@ -3270,7 +3270,7 @@ inline int leading_digits( double num )
     if( order >= 0 ) return order + 1; else return 1;
 }
 
-inline std::string render_number( double num, int tail = 3 )
+inline std::string render_number( double num, int tail = 8 )
 {
     int lead = leading_digits( num );
     char str[1+lead+1+tail+1];
@@ -3299,7 +3299,7 @@ std::string MeshSimplicial2D::outputSVG(
        << "viewBox=\""
        << coords.getmin(0) << space << coords.getmin(1) << space 
        << coords.getmax(0) << space << coords.getmax(1) << "\""
-       << " xmlns:xlink=\"http://www.w3.org/1999/xlink\">"
+       << " shape-rendering=\"crispEdges\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">"
        << nl;
 
     for( int t = 0; t < this->count_triangles(); t++ ) {
@@ -3330,9 +3330,9 @@ std::string MeshSimplicial2D::outputSVG(
 
         // LOG << channel_blue << space << channel_green << space << channel_red << nl;
 
-        assert( 0. <= channel_red   and channel_red <= 255. );
+        assert( 0. <= channel_red   and channel_red   <= 255. );
         assert( 0. <= channel_green and channel_green <= 255. );
-        assert( 0. <= channel_blue  and channel_blue <= 255. );
+        assert( 0. <= channel_blue  and channel_blue  <= 255. );
       
         std::string colorstring = rgb_to_string( 
             (unsigned char)channel_red, 
