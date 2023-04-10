@@ -24,7 +24,8 @@ int main()
 
     M.check();
 
-    std::string name = "aurora.jpeg";
+    // std::string name = "aurora.jpeg";
+    std::string name = "lena_color.tiff";
     // std::string name = "testbild.jpg";
 
     // PixelImage pim = readPixelImage("lena_color.tiff");
@@ -37,7 +38,7 @@ int main()
     M.getcoordinates().scale( { (Float)pim.getwidth(), (Float)pim.getheight() } );
 
     int l_min =  0;
-    int l_max =  7;
+    int l_max =  15;
     
     for( int c = 0; c < l_min; c++ ) M.uniformrefinement();
 
@@ -86,7 +87,7 @@ int main()
 
         if( l == l_max ) break;
 
-        M.uniformrefinement(); continue;
+        // M.uniformrefinement(); continue;
 
         ///////////////////////////////////////////////////////////
 
@@ -106,24 +107,19 @@ int main()
             for( int k = 0; k < K; k++ )
             {
                 auto P = M.get_random_point(2,t);
-                samples_R[k] = red(   P[0], P[1] );
-                samples_G[k] = green( P[0], P[1] );
-                samples_B[k] = blue(  P[0], P[1] );
+                samples_R[k] = red(   P[0], P[1] ) - interpol_red[t];
+                samples_G[k] = green( P[0], P[1] ) - interpol_green[t];
+                samples_B[k] = blue(  P[0], P[1] ) - interpol_blue[t];
             }
             
-            samples_R.shift( -interpol_red[t]   ).scale(1./K);
-            samples_G.shift( -interpol_green[t] ).scale(1./K);
-            samples_B.shift( -interpol_blue[t]  ).scale(1./K);
-
-            // Float weight = flip_coin(0.9);
-
             Float measure = M.getMeasure( 2, t );
 
-            Float weight =   samples_R.lpnorm(2.,measure) 
-                           + samples_G.lpnorm(2.,measure) 
-                           + samples_B.lpnorm(2.,measure);
+            Float weight =   samples_R.lpnorm(2.,measure) / K 
+                           + samples_G.lpnorm(2.,measure) / K 
+                           + samples_B.lpnorm(2.,measure) / K;
+            // Float weight = flip_coin(0.9);
             
-            weights[t] = pair<int,Float>(t,weight);
+            weights[t] = pair<int,Float>( t, weight );
         }
 
         // sort descending by weight
@@ -142,6 +138,8 @@ int main()
 
         // dew it!
         M.longest_edge_bisection_recursive( to_refine );
+
+        ///////////////////////////////////////////////////////////
 
     }
 
