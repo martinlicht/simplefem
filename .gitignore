@@ -133,6 +133,7 @@ cachegrind.out.*
 *.tiff 
 *.jpg 
 *.jpeg 
+*.png 
 *.webp 
 
 

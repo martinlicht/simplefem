@@ -8,6 +8,7 @@
 #include "../../utility/files.hpp"
 #include "../../utility/pixelimage.hpp"
 #include "../../utility/random.hpp"
+#include "../../dense/functions.hpp"
 #include "../../dense/qr.factorization.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
@@ -25,8 +26,9 @@ int main()
 
     M.check();
 
-    // std::string name = "aurora.jpeg";
-    std::string name = "lena_color.tiff";
+    // std::string name = "blue.png";
+    std::string name = "aurora.jpeg";
+    // std::string name = "lena_color.tiff";
     // std::string name = "testbild.jpg";
 
     // PixelImage pim = readPixelImage("lena_color.tiff");
@@ -39,7 +41,7 @@ int main()
     M.getcoordinates().scale( { (Float)pim.getwidth(), (Float)pim.getheight() } );
 
     int l_min =  0;
-    int l_max =  15;
+    int l_max =  6;
     
     for( int c = 0; c < l_min; c++ ) M.uniformrefinement();
 
@@ -63,31 +65,39 @@ int main()
             FloatVector sample_G(K);
             FloatVector sample_B(K);
 
+            // points = IdentityMatrix(3); // TODO 
+            
             for( int k = 0; k < K; k++ )
             {
                 auto barycoords = get_random_barycentric_coordinates(2);
+                assert( barycoords.isnonnegative() );
+                assert( isaboutequal( barycoords.sum(), 1. ) );
+                
                 auto P = M.getPointFromBarycentric( 2, t, barycoords );
 
-                points.setrow( k, barycoords );
+                points.setrow( k, barycoords ); // TODO
                 sample_R[k] = red(   P[0], P[1] );
                 sample_G[k] = green( P[0], P[1] );
                 sample_B[k] = blue(  P[0], P[1] );
             }
+            
 
             auto local_red   = SolveOverconstrained( points, sample_R );
             auto local_green = SolveOverconstrained( points, sample_G );
             auto local_blue  = SolveOverconstrained( points, sample_B );
+            
+            // auto invpoints = Inverse(points);
+            // auto local_red   = invpoints * sample_R;
+            // auto local_green = invpoints * sample_G;
+            // auto local_blue  = invpoints * sample_B;
 
             for( int c = 0; c <= 2; c++ ) {
-                interpol_red[  3*t+c] = sample_R[c];
-                interpol_green[3*t+c] = sample_G[c];
-                interpol_blue[ 3*t+c] = sample_B[c];
+                interpol_red[  3*t+c] = local_red  [c];
+                interpol_green[3*t+c] = local_green[c];
+                interpol_blue[ 3*t+c] = local_blue [c];
             }
         }
 
-
-        // FloatVector redvec( num_tets, 128 ), greenvec( num_tets, 240 ), bluevec( num_tets, 38 );
-        // redvec.random_within_range(0.,255.); greenvec.random_within_range(0.,255.); blue.random_within_range(0.,255.);
 
         fstream fs( experimentfile( getbasename(__FILE__), "svg" ), std::fstream::out );
         fs << M.outputLinearSVG( interpol_red, interpol_green, interpol_blue, 0.000, "array", "none" );
@@ -95,7 +105,7 @@ int main()
 
         if( l == l_max ) break;
 
-        // M.uniformrefinement(); continue;
+        M.uniformrefinement(); continue;
 
         ///////////////////////////////////////////////////////////
 
@@ -107,7 +117,7 @@ int main()
         // compute the weight of all the volumes
         for( int t = 0; t < num_volumes; t++ ) {
                 
-            int K = 30;
+            int K = 3;
 
             DenseMatrix points( K, 3 );
 
@@ -121,9 +131,9 @@ int main()
                 auto P = M.getPointFromBarycentric( 2, t, barycoords );
 
                 points.setrow( k, barycoords );
-                samples_R[k] = red(   P[0], P[1] ) - barycoords[0] * interpol_red[3*t+0]   - barycoords[1] * interpol_red[3*t+1]   - barycoords[2] * interpol_red[3*t+2];
+                samples_R[k] = red(   P[0], P[1] ) - barycoords[0] *   interpol_red[3*t+0] - barycoords[1] *   interpol_red[3*t+1] - barycoords[2] *   interpol_red[3*t+2];
                 samples_G[k] = green( P[0], P[1] ) - barycoords[0] * interpol_green[3*t+0] - barycoords[1] * interpol_green[3*t+1] - barycoords[2] * interpol_green[3*t+2];
-                samples_B[k] = blue(  P[0], P[1] ) - barycoords[0] * interpol_blue[3*t+0]  - barycoords[1] * interpol_blue[3*t+1]  - barycoords[2] * interpol_blue[3*t+2];
+                samples_B[k] = blue(  P[0], P[1] ) - barycoords[0] *  interpol_blue[3*t+0] - barycoords[1] *  interpol_blue[3*t+1] - barycoords[2] *  interpol_blue[3*t+2];
             }
 
             Float measure = M.getMeasure( 2, t );
