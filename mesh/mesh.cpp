@@ -516,11 +516,7 @@ FloatVector Mesh::getPointFromBarycentric( int dim, int index, const FloatVector
 
 FloatVector Mesh::get_random_point( int dim, int index ) const
 {
-    FloatVector samples( dim );
-    do samples.random_within_range(0.,1.); while( samples.sum() > 1. );
-    FloatVector randomcoords( dim+1 );
-    for( int p = 0; p < dim; p++ ) randomcoords[p] = samples[p];
-    randomcoords[dim] = 1. - samples.sum();
+    auto randomcoords = get_random_barycentric_coordinates(dim);
     return getPointFromBarycentric( dim, index, randomcoords );
     
     // std::vector<Float> barycoords( dim+2, 0. );
@@ -696,3 +692,13 @@ DenseMatrix Mesh::getGradientProductMatrixRightFactor( int dim, int index ) cons
     return middle_rightfactor * multiplier; //TODO Probelesen
 }
 
+
+FloatVector get_random_barycentric_coordinates( int dim )
+{
+    FloatVector samples( dim );
+    do samples.random_within_range(0.,1.); while( samples.sum() > 1. );
+    FloatVector randomcoords( dim+1 );
+    for( int p = 0; p < dim; p++ ) randomcoords[p] = samples[p];
+    randomcoords[dim] = 1. - samples.sum();
+    return randomcoords;
+}   

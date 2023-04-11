@@ -3355,6 +3355,89 @@ std::string MeshSimplicial2D::outputSVG(
     return os.str();
 }
 
+std::string MeshSimplicial2D::outputLinearSVG( 
+    const FloatVector& triangle_red,
+    const FloatVector& triangle_green,
+    const FloatVector& triangle_blue,
+    Float stroke_width,
+    std::string fill,
+    std::string stroke
+) const {
+    std::ostringstream os;
+
+    // 1. copy coordinates and shift them 
+    auto coords = getcoordinates();
+
+    coords.shift( { 
+        -getcoordinates().getmin(0), 
+        -getcoordinates().getmin(1) 
+    } );
+
+    // 2. preamble 
+    os << "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.200000\" width=\"100%\" height=\"100%\" "
+       << "viewBox=\""
+       << coords.getmin(0) << space << coords.getmin(1) << space 
+       << coords.getmax(0) << space << coords.getmax(1) << "\""
+       << " shape-rendering=\"crispEdges\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">"
+       << nl;
+
+    // 2. print the defs of the linear gradients 
+    // TODO: complete this 
+
+    // 3. print the triangles 
+    for( int t = 0; t < this->count_triangles(); t++ ) {
+      
+      int v0 = this->get_triangle_vertex(t,0);
+      int v1 = this->get_triangle_vertex(t,1);
+      int v2 = this->get_triangle_vertex(t,2);
+      
+      Float x0 = coords.getdata(v0,0);
+      Float y0 = coords.getdata(v0,1);
+      Float x1 = coords.getdata(v1,0);
+      Float y1 = coords.getdata(v1,1);
+      Float x2 = coords.getdata(v2,0);
+      Float y2 = coords.getdata(v2,1);
+      
+      os << "<polygon points=\"" 
+         << render_number(x0) << "," << render_number(y0) << " " 
+         << render_number(x1) << "," << render_number(y1) << " " 
+         << render_number(x2) << "," << render_number(y2) << "\"";
+      
+      if( fill == "array"){
+      
+        double channel_red   = (   triangle_red[3*t+0] +   triangle_red[3*t+1] +   triangle_red[3*t+2] ) / 3.;
+        double channel_green = ( triangle_green[3*t+0] + triangle_green[3*t+1] + triangle_green[3*t+2] ) / 3.;
+        double channel_blue  = (  triangle_blue[3*t+0] +  triangle_blue[3*t+1] +  triangle_blue[3*t+2] ) / 3.;
+
+        // LOG << channel_blue << space << channel_green << space << channel_red << nl;
+
+        assert( 0. <= channel_red   and channel_red   <= 255. );
+        assert( 0. <= channel_green and channel_green <= 255. );
+        assert( 0. <= channel_blue  and channel_blue  <= 255. );
+      
+        std::string colorstring = rgb_to_string( 
+            (unsigned char)channel_red, 
+            (unsigned char)channel_green, 
+            (unsigned char)channel_blue );
+
+        os << " fill=\"" << colorstring << "\"";
+      } else {
+        os << " fill=\"" << "red"       << "\"";
+      }
+      os << " stroke=\"" << stroke << "\"";
+      os << " stroke-width=\"" << render_number(stroke_width) << "\"";
+      os << "></polygon>";
+      os << nl;
+        
+    }
+    
+    // 4. close the SVG 
+    os << "</svg>";
+    
+    return os.str();
+}
+
+
 
 
 

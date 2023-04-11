@@ -240,6 +240,15 @@ class MeshSimplicial2D
             const FloatVector* triangle_blue  = nullptr
         ) const;
 
+        std::string outputLinearSVG( 
+            const FloatVector& triangle_red,
+            const FloatVector& triangle_green,
+            const FloatVector& triangle_blue, 
+            Float stroke_width = 0.01,
+            std::string fill   = "red",
+            std::string stroke = "blue"
+        ) const;
+
 
         /* other */ 
         

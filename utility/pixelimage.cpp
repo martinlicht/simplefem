@@ -13,7 +13,7 @@
 // sudo apt-get update; sudo apt-get upgrade; sudo apt-get install imagemagick-common
 // #include <Magick++.h>
 // using namespace Magick;
-#include "_CImg.h"
+#include "cimg.hpp"
 using namespace cimg_library;
 
 #include "pixelimage.hpp"

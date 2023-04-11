@@ -250,30 +250,30 @@ check: tidy
 # Commands for cleaning out numerous files that are not part of the project.
 # These remove the following:
 # - clean: delete all binary files and temporary output, and the following two.
-# - vtkclean: delete all *vtk output files
+# - outputclean: delete all *vtk output files
 # - dependclean: delete .deps directories and their content
 
 CMD_CLEAN    = rm -f .all.o *.a *.o *.d *.so *.gch OUTPUT_CPPLINT.txt callgrind.out.* *.exe *.exe.stackdump *.out *.out.stackdump 
-CMD_VTKCLEAN = rm -f ./*.vtk ./*/*.vtk ./*/*/*.vtk
+CMD_OUTPUTCLEAN = rm -f ./*.vtk ./*/*.vtk ./*/*/*.vtk ./*.svg ./*/*.svg ./*/*/*.svg
 CMD_DEPCLEAN = if [ -d .deps/ ]; then rm -f .deps/*.d .deps/.all.d; rmdir .deps/; fi 
 
 .PHONY: clean vktclean dependclean
 .PHONY: $(module).clean $(module).vktclean $(module).dependclean
 
 clean:       $(module).clean
-vtkclean:    $(module).vtkclean
+outputclean: $(module).outputclean
 dependclean: $(module).dependclean
 
-$(module).clean $(module).vtkclean $(module).dependclean: mymodule := $(module)
-$(module).clean $(module).vtkclean $(module).dependclean: mymoddir := $(moddir)
+$(module).clean $(module).outputclean $(module).dependclean: mymodule := $(module)
+$(module).clean $(module).outputclean $(module).dependclean: mymoddir := $(moddir)
 
 $(module).clean: 
 #	@-echo $(PWD)
-	@-cd $(mymoddir); $(CMD_CLEAN); $(CMD_VTKCLEAN); $(CMD_DEPCLEAN); 
+	@-cd $(mymoddir); $(CMD_CLEAN); $(CMD_OUTPUTCLEAN); $(CMD_DEPCLEAN); 
 
-$(module).vtkclean: 
+$(module).outputclean: 
 #	@-echo $(PWD)
-	@-cd $(mymoddir); $(CMD_VTKCLEAN); 
+	@-cd $(mymoddir); $(CMD_OUTPUTCLEAN); 
 
 $(module).dependclean: 
 #	@-echo $(PWD)

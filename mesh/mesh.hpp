@@ -265,6 +265,7 @@ inline std::ostream& operator<<( std::ostream& os, const Mesh& mesh )
 
 
 
+FloatVector get_random_barycentric_coordinates( int dim );
 
 // static inline int countsubsimplices( int n, int k )
 // {

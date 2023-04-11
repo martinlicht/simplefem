@@ -77,16 +77,18 @@ class PixelImage
                 // assert( 0 <= ny and ny+1 < height );
                 // assert( 0 <= nx and nx+1 < width  );
 
-                PixelColor p00 = pixelimage( ny+0, nx+0 );
-                PixelColor p01 = pixelimage( ny+0, nx+1 );
-                PixelColor p10 = pixelimage( ny+1, nx+0 );
-                PixelColor p11 = pixelimage( ny+1, nx+1 );
+                // LOG << nx << space << ny << space << width << space << height << nl;
 
-                // return p00(cc);
-                return       ly *     lx * p00(cc) 
-                       + (1-ly) *     lx * p01(cc) 
-                       +     ly * (1-lx) * p10(cc) 
-                       + (1-ly) * (1-lx) * p11(cc);
+                PixelColor p00 = pixelimage( ny+0, nx+0 );
+                // PixelColor p01 = pixelimage( ny+0, nx+1 );
+                // PixelColor p10 = pixelimage( ny+1, nx+0 );
+                // PixelColor p11 = pixelimage( ny+1, nx+1 );
+
+                return p00(cc);
+                // return       ly *     lx * p00(cc) 
+                //        + (1-ly) *     lx * p01(cc) 
+                //        +     ly * (1-lx) * p10(cc) 
+                //        + (1-ly) * (1-lx) * p11(cc);
             };
         }
 
