@@ -3362,13 +3362,13 @@ std::string MeshSimplicial2D::outputSVG(
     return os.str();
 }
 
-inline void computeProjection( double x0, double y0, double x1, double y1, double x2, double y2, double* px, double* py ) 
+inline void computeProjection( Float x0, Float y0, Float x1, Float y1, Float x2, Float y2, Float& px, Float& py ) 
 {
-    double dx = x2 - x1; double dy = y2 - y1;
-    double norm_sq = dx * dx + dy * dy;
-    double lambda = ( (x0 - x1) * dx + (y0 - y1) * dy ) / norm_sq;
-    *px = x1 + lambda * dx; 
-    *py = y1 + lambda * dy;
+    Float dx = x2 - x1; Float dy = y2 - y1;
+    Float norm_sq = dx * dx + dy * dy;
+    Float lambda = ( (x0 - x1) * dx + (y0 - y1) * dy ) / norm_sq;
+    px = x1 + lambda * dx; 
+    py = y1 + lambda * dy;
 }
 
 std::string MeshSimplicial2D::outputLinearSVG( 
@@ -3410,9 +3410,9 @@ std::string MeshSimplicial2D::outputLinearSVG(
       Float x2 = coords.getdata(v2,0); Float y2 = coords.getdata(v2,1);
 
       Float cx0, cx1, cx2, cy0, cy1, cy2;
-      computeProjection( x0, y0, x1, y1, x2, y2, &cx0, &cy0 );
-      computeProjection( x1, y1, x0, y0, x2, y2, &cx1, &cy1 );
-      computeProjection( x2, y2, x1, y1, x0, y0, &cx2, &cy2 );
+      computeProjection( x0, y0, x1, y1, x2, y2, cx0, cy0 );
+      computeProjection( x1, y1, x0, y0, x2, y2, cx1, cy1 );
+      computeProjection( x2, y2, x1, y1, x0, y0, cx2, cy2 );
 
       // Float cx0 = ( x1 + x2 ) / 2.;
       // Float cy0 = ( y1 + y2 ) / 2.;

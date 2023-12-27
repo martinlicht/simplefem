@@ -25,8 +25,9 @@ int main()
     M.check();
 
     // std::string name = "aurora.jpeg";
-    std::string name = "lena_color.tiff";
+    // std::string name = "lena_color.tiff";
     // std::string name = "testbild.jpg";
+    std::string name = "sanfrancisco.jpg";
 
     // PixelImage pim = readPixelImage("lena_color.tiff");
     PixelImage pim = readPixelImage( name );

@@ -27,9 +27,10 @@ int main()
     M.check();
 
     // std::string name = "blue.png";
-    std::string name = "aurora.jpeg";
+    // std::string name = "aurora.jpeg";
     // std::string name = "lena_color.tiff";
     // std::string name = "testbild.jpg";
+    std::string name = "sanfrancisco.jpg";
 
     // PixelImage pim = readPixelImage("lena_color.tiff");
     PixelImage pim = readPixelImage( name );
@@ -41,7 +42,7 @@ int main()
     M.getcoordinates().scale( { (Float)pim.getwidth(), (Float)pim.getheight() } );
 
     int l_min =  0;
-    int l_max =  6;
+    int l_max = 10;
     
     for( int c = 0; c < l_min; c++ ) M.uniformrefinement();
 
@@ -105,7 +106,7 @@ int main()
 
         if( l == l_max ) break;
 
-        M.uniformrefinement(); continue;
+        // M.uniformrefinement(); continue;
 
         ///////////////////////////////////////////////////////////
 
@@ -117,7 +118,7 @@ int main()
         // compute the weight of all the volumes
         for( int t = 0; t < num_volumes; t++ ) {
                 
-            int K = 3;
+            int K = 30;
 
             DenseMatrix points( K, 3 );
 

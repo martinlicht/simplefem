@@ -4,10 +4,11 @@
 
 using namespace std;
 
-int main() {
+int main( int argc, char** argv ) {
     
     // auto pim = readPixelImage("lena_color.tiff");
-    auto pim = readPixelImage("aurora.jpeg");
+    // auto pim = readPixelImage("aurora.jpeg");
+    auto pim = readPixelImage("sanfrancisco.jpg");
 
     LOG << pim.getheight() << "x" << pim.getwidth() << nl;
 
@@ -19,8 +20,7 @@ int main() {
         pim(row,col).blue  = 255 - pim(row,col).blue;
     }
 
-    // savePixelImage(pim,"anel_color.tiff");
-    savePixelImage(pim,"arorua.jpeg");
+    savePixelImage(pim,"reverse.tiff");
 
     return 0;
 
