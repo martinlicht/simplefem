@@ -223,8 +223,9 @@ int BlockHerzogSoodhalterMethod(
             FloatVector r_A = b_A - A * x_A - Bt * x_C;
             FloatVector r_C = b_C - B * x_A - C  * x_C;
             Float r = sqrt( r_A * r_A + r_C * r_C );
-            LOGPRINTF( "INTERIM Residual: %.9Le\n", (long double)r );
-
+            if( print_modulo >= 0 ) {
+                LOGPRINTF( "INTERIM Full Residual: %.9Le\n", (long double)r );
+            }
 
         }
 
