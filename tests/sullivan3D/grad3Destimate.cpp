@@ -43,8 +43,7 @@ int main()
     LOG << "Prepare scalar fields for testing..." << nl;
     
 
-    const Float A = Constants::twopi;
-
+    
             
     
     
@@ -61,10 +60,6 @@ int main()
     
     const int min_r = 1;
     const int max_r = 1;
-
-    const int r_plus_vector = 0;
-    const int r_plus_scalar = 0;
-    const int r_plus_pseudo = 0;
     
     
     ConvergenceTable contable("Mass error and numerical residuals");
@@ -74,7 +69,6 @@ int main()
 
     assert( 0 <= min_l and min_l <= max_l );
     assert( 0 <= min_r and min_r <= max_r );
-    assert( 0 <= r_plus_scalar and 0 <= r_plus_vector and 0 <= r_plus_pseudo );
       
     for( int l = 0; l < min_l; l++ )
         M.uniformrefinement();
@@ -90,12 +84,10 @@ int main()
             
             LOG << "Polynomial degree: " << r << "/" << max_r << nl;
                     
-            LOG << "integration with: " << r_plus_vector << ", " << r_plus_scalar << nl;
-                    
             LOG << "... assemble mass matrices" << nl;
     
-            SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r+1 + r_plus_scalar );
-            SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   + r_plus_vector );
+            SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r+1 );
+            SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   );
             
             LOG << "... assemble inclusion matrices" << nl;
     
@@ -123,44 +115,31 @@ int main()
 
             LOG << "...begin inverse iteration" << nl;
             
-            const int max_attempts = 5;
+            const int max_attempts = 3;
 
             for( int s = 0; s < max_attempts; s++ )
             {
 
                 FloatVector candidate = FloatVector( A.getdimout(), 0. ); 
                 candidate.random(); 
+                candidate = A * candidate;
                 candidate.normalize( scalar_incmatrix_t * scalar_massmatrix * scalar_incmatrix ); 
                 
                 const int max_inverseiterations = 10;
 
                 Float newratio = -1;
-
-                
                 
                 timestamp start = gettimestamp();
+                
                 for( int t = 0; t <= max_inverseiterations; t++ )
                 {
                     
-                    
-                    // assess the current candidate 
-
-                    const auto A_candidate = A * candidate;
-                    const auto M_candidate = ( scalar_incmatrix_t * scalar_massmatrix * scalar_incmatrix ) * candidate; 
-                    
-                    const auto candidate_A_product = candidate * A_candidate; 
-                    const auto candidate_M_product = candidate * M_candidate; 
-
-                    newratio = candidate_A_product / candidate_M_product;
-
-                    LOG << "current ratio : " << newratio << " (" << t << "/" << max_inverseiterations << ")" << nl;
-
                     
                     // find the next candidate
 
                     FloatVector sol( A.getdimout(), 0. );
                     
-                    const FloatVector rhs_sol = ( scalar_incmatrix_t * scalar_massmatrix * scalar_incmatrix ) * candidate / sqrt( candidate_M_product );
+                    const FloatVector rhs_sol = ( scalar_incmatrix_t * scalar_massmatrix * scalar_incmatrix ) * candidate;
                     
                     auto residual = sol;
                     ConjugateGradientSolverCSR( 
@@ -173,11 +152,25 @@ int main()
                         -1
                     );
                     
-                    
                     candidate = sol;
                     
                     
+                    // assess this new candidate 
+
+                    const auto A_candidate = A * candidate;
+                    const auto M_candidate = ( scalar_incmatrix_t * scalar_massmatrix * scalar_incmatrix ) * candidate; 
+                    
+                    const auto candidate_A_product = candidate * A_candidate; 
+                    const auto candidate_M_product = candidate * M_candidate; 
+
+                    newratio = candidate_A_product / candidate_M_product;
+
+                    candidate /= sqrt(candidate_M_product); // Optional step
+
+                    LOG << "current ratio : " << newratio << " (" << t << "/" << max_inverseiterations << ")" << nl;
+                    
                     Float u_residualmass_sq   = ( A * sol - rhs_sol ).norm_sq(); // ( scalar_incmatrix_t * scalar_massmatrix * scalar_incmatrix ); 
+                    
                     LOG << "current residual : " << u_residualmass_sq << nl;
 
                     
