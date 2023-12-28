@@ -39,7 +39,9 @@ class InverseOperator
         { 
             assert( op.getdimin() == op.getdimout() );
             
-            LOG << "Inverse created" << nl; 
+            if( print_modulo >= 0 ) {
+                LOG << "Inverse created" << nl; 
+            } 
         }
         
         virtual ~InverseOperator() = default;
@@ -95,7 +97,9 @@ class PseudoInverseOperator final
         { 
             assert( op.getdimin() == op.getdimout() );
 
-            LOG << "PseudoInverse created" << nl; 
+            if( print_modulo >= 0 ) {
+                LOG << "PseudoInverse created" << nl; 
+            }
         }
         
         virtual ~PseudoInverseOperator() = default;

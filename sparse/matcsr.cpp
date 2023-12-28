@@ -10,6 +10,8 @@
 
 #include "matcsr.hpp"
 
+const bool csr_matrix_verbosity = false;
+
 MatrixCSR::MatrixCSR( 
     int rows,
     int columns,
@@ -43,13 +45,13 @@ MatrixCSR::MatrixCSR(
 {
     matrix.check();
     
-    LOG << "Sorting CCO -> CSR: " << matrix.getnumberofentries() << nl;
+    if( csr_matrix_verbosity ) LOG << "Sorting CCO -> CSR: " << matrix.getnumberofentries() << nl;
 
     if( not matrix.is_sorted() ) {
         matrix.sortandcompressentries();
     }
     
-    LOG << "Allocating CCO -> CSR: " << matrix.getnumberofentries() << nl;
+    if( csr_matrix_verbosity ) LOG << "Allocating CCO -> CSR: " << matrix.getnumberofentries() << nl;
     
     int rows       = matrix.getdimout();
     int columns    = matrix.getdimin();
@@ -73,7 +75,7 @@ MatrixCSR::MatrixCSR(
         A[i] += A[i-1];
     }
 
-    LOG << "DONE CCO -> CSR: " << matrix.getnumberofentries() << nl;
+    if( csr_matrix_verbosity ) LOG << "DONE CCO -> CSR: " << matrix.getnumberofentries() << nl;
 
     MatrixCSR::check();
     
@@ -773,7 +775,7 @@ MatrixCSR MatrixCSRMultiplication( const MatrixCSR& mat1, const MatrixCSR& mat2 
     int matn_rows = mat1_rows;
     int matn_cols = mat2_cols;
 
-    LOG << "MatrixCSRMultiplication: create index list A, allocate C and V" << nl; 
+    if( csr_matrix_verbosity ) LOG << "MatrixCSRMultiplication: create index list A, allocate C and V" << nl; 
     
     std::vector<int> A( mat1_rows + 1, 0 );
 
@@ -793,12 +795,12 @@ MatrixCSR MatrixCSRMultiplication( const MatrixCSR& mat1, const MatrixCSR& mat2 
 
     // for( int r = 0; r <= matn_rows; r++ ) LOG << A[r] << space; LOG << nl;
     
-    LOG << "MatrixCSRMultiplication: Temporary number of elements:" << A[matn_rows] << nl;
+    if( csr_matrix_verbosity ) LOG << "MatrixCSRMultiplication: Temporary number of elements:" << A[matn_rows] << nl;
 
     std::vector<int>   C( A[matn_rows] );
     std::vector<Float> V( A[matn_rows] );
 
-    LOG << "MatrixCSRMultiplication: allocated" << nl; 
+    if( csr_matrix_verbosity ) LOG << "MatrixCSRMultiplication: allocated" << nl; 
     
     // compute entries     
 
@@ -825,11 +827,11 @@ MatrixCSR MatrixCSRMultiplication( const MatrixCSR& mat1, const MatrixCSR& mat2 
     
     // create matrix 
     
-    LOG << "MatrixCSRMultiplication: sort and compress" << nl; 
+    if( csr_matrix_verbosity ) LOG << "MatrixCSRMultiplication: sort and compress" << nl; 
     
     sort_and_compress_csrdata( A, C, V );
 
-    LOG << "MatrixCSRMultiplication: return" << nl; 
+    if( csr_matrix_verbosity ) LOG << "MatrixCSRMultiplication: return" << nl; 
     
     return MatrixCSR( matn_rows, matn_cols, std::move(A), std::move(C), std::move(V) );
 
@@ -863,7 +865,7 @@ MatrixCSR MatrixCSRMultiplication_reduced( const MatrixCSR& mat1, const MatrixCS
     int matn_rows = mat1_rows;
     int matn_cols = mat2_cols;
 
-    LOG << "MatrixCSRMultiplication reduced: create index list A and fill in" << nl; 
+    if( csr_matrix_verbosity ) LOG << "MatrixCSRMultiplication reduced: create index list A and fill in" << nl; 
     
     std::vector<int> A( mat1_rows + 1, 0 );
 
@@ -888,7 +890,7 @@ MatrixCSR MatrixCSRMultiplication_reduced( const MatrixCSR& mat1, const MatrixCS
     // for( int r = 0; r <= matn_rows; r++ ) LOG << A[r] << space; LOG << nl;    
     // LOG << mat1.text() << nl << mat2.text() << nl;
 
-    LOG << "MatrixCSRMultiplication reduced: Temporary number of elements:" << A[matn_rows] << nl;
+    if( csr_matrix_verbosity ) LOG << "MatrixCSRMultiplication reduced: Temporary number of elements:" << A[matn_rows] << nl;
 
     std::vector<int>   C( A[matn_rows], 0  );
     
@@ -942,11 +944,11 @@ MatrixCSR MatrixCSRMultiplication_reduced( const MatrixCSR& mat1, const MatrixCS
         
     }
 
-    LOG << "MatrixCSRMultiplication reduced: compressing" << nl; 
+    if( csr_matrix_verbosity ) LOG << "MatrixCSRMultiplication reduced: compressing" << nl; 
     sort_and_compress_csrdata( A, C, V );
     
     assert( A.back() == A[matn_rows] );
-    LOG << "MatrixCSRMultiplication reduced: return " << A.back() << nl; 
+    if( csr_matrix_verbosity ) LOG << "MatrixCSRMultiplication reduced: return " << A.back() << nl; 
     
     return MatrixCSR( matn_rows, matn_cols, std::move(A), std::move(C), std::move(V) );
 

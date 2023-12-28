@@ -58,8 +58,8 @@ int main()
     const int min_l = 0; 
     const int max_l = 7;
     
-    const int min_r = 1;
-    const int max_r = 1;
+    const int min_r = 2;
+    const int max_r = 2;
     
     
     ConvergenceTable contable("Mass error and numerical residuals");

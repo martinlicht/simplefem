@@ -58,8 +58,8 @@ int main()
     const int min_l = 0; 
     const int max_l = 7;
     
-    const int min_r = 1;
-    const int max_r = 1;
+    const int min_r = 2;
+    const int max_r = 2;
     
     
     ConvergenceTable contable("Mass error and numerical residuals");
@@ -215,7 +215,7 @@ int main()
                     Float u_residualmass_sq   = ( A * sol + Bt * aux - rhs_sol ).norm_sq(); // ( scalar_incmatrix_t * scalar_massmatrix * scalar_incmatrix ); 
                     Float aux_residualmass_sq = ( B * sol            - rhs_aux ).norm_sq(); // ( vector_incmatrix_t * vector_massmatrix * vector_incmatrix ); 
                     
-                    LOG << "current residuals : " << u_residualmass_sq << " " << aux_residualmass_sq << nl;
+                    LOG << "current residuals : " << u_residualmass_sq << tab << aux_residualmass_sq << nl;
 
                     
                 }
