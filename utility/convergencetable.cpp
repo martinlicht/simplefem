@@ -315,6 +315,163 @@ std::string ConvergenceTable::text_transpose( bool display_convergence_rates ) c
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+std::string ConvergenceTable::TeXtabular() const
+{
+    std::vector<bool> show_column( entries[0].size() );
+    for( auto b : show_column ) b = true;
+    return TeXtabular( show_column );
+}
+
+
+std::string ConvergenceTable::TeXtabular( const std::vector<bool>& show_column ) const
+{
+    
+    std::ostringstream ss;
+
+    // introduce several constants that drive the output format 
+    
+    const char* column_separator = " & ";
+
+    const bool rates_are_float = false;
+    
+    const int nc_indent_width = 8;
+    
+    const int nc_cell_precision = 4;
+
+    const int nc_rate_precision = 2;
+
+    const int nc_cell_width = 7 + nc_cell_precision + 0;
+    // 12; sign + digit + . + e + sign + two digits = 6 chars 
+
+    const int nc_rate_width = ( rates_are_float ? ( 7 + nc_rate_precision ) : 3 + nc_rate_precision ) + 0;
+    // if float: 10; sign + digit + . + e + sign + two digits = 7 chars 
+    // if fixed:  6; sign + digit + . = 3 chars 
+
+
+    
+    const int num_series = entries[0].size(); // TODO: count_if with lambda here 
+
+    // if necessary, print column headers 
+    if( not seriesheaders.empty() )
+    {
+        
+        Assert( seriesheaders.size() == num_series, seriesheaders.size(), num_series );
+
+        printf_into_stream( ss,  "%s %s", std::string( nc_indent_width, ' ' ).c_str(), column_separator ); // printf_into_stream( ss, "   \t");
+            
+        for( int j = 0; j < seriesheaders.size(); j++ )
+        {
+            
+            if( not show_column[j] ) continue;
+            
+            std::string seriesheader = seriesheaders[j];
+            
+            if( seriesheader.size() > nc_cell_width ) {
+                seriesheader.resize( nc_cell_width );
+                seriesheader[ nc_cell_width-1 ] = '~';
+            }
+            
+            printf_into_stream( ss,  "%*s%s", nc_cell_width, seriesheader.c_str(), column_separator );
+            
+            if( display_convergence_rates ) {
+                printf_into_stream( ss,  "%s%s", std::string( nc_rate_width, ' ' ).c_str(), column_separator ); // printf_into_stream( ss, "          \t");
+            }
+
+        }
+        
+        printf_into_stream( ss, "\n\\\\\n");
+        
+    }
+    
+    // print the entries of the table, row by row 
+    for( int i = 0; i < entries.size(); i++ )
+    {
+        
+        printf_into_stream( ss,  "%*d:%s", nc_indent_width, i, column_separator );
+
+        Assert( entries[i].size() == num_series, entries[i].size(), num_series );
+        
+        // in the current row, print the entries 
+        for( int j = 0; j < entries[i].size(); j++ )
+        {
+            
+            if( not show_column[j] ) continue;
+            
+            printf_into_stream( ss, "% *.*e%s", nc_cell_width, nc_cell_precision, (double) entries[i][j], column_separator ); 
+            
+            if( display_convergence_rates ){
+                
+                if( i == 0 ) {
+                    
+                    printf_into_stream( ss,  "%s", std::string( nc_rate_width, '-' ).c_str() ); //printf_into_stream( ss, "----------");
+                
+                } else {
+                
+                    if( entries[i][j] > 0. and entries[i-1][j] > 0. ) {
+
+                        double computed_rate = (double)std::log2( entries[i-1][j] / entries[i][j] );
+                        
+                        if( rates_are_float ) { 
+                            printf_into_stream( ss, "%*.*e", nc_rate_width, nc_rate_precision, computed_rate  );
+                        } else {
+                            printf_into_stream( ss, "%*.*f", nc_rate_width, nc_rate_precision, computed_rate  );
+                        }
+
+                    } else {
+                        
+                        printf_into_stream( ss,  "%s", std::string( nc_rate_width, '-' ).c_str() ); //printf_into_stream( ss,  "%s", "----------" );
+
+                    }
+                
+                }
+                
+                printf_into_stream( ss,  "%s", column_separator );
+            }
+            
+        }        
+        
+        printf_into_stream( ss, "\n\\\\\n");
+        
+    }
+
+    return ss.str();
+                
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ConvergenceTable& operator<<( ConvergenceTable& contable, float entry )
 {
     contable.insert_numerical_entry( entry );
