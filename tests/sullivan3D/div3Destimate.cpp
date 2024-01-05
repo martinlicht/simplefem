@@ -36,15 +36,11 @@ int main()
     
     M.check();
     
-    bool do_neumann = true;
-
-    if( not do_neumann ){
-        M.automatic_dirichlet_flags();
-        M.check_dirichlet_flags();
-    }
+    // M.automatic_dirichlet_flags();
+    // M.check_dirichlet_flags();
 
     
-    LOG << "Prepare scalar fields for testing..." << nl;
+    LOG << "Prepare vector fields for testing..." << nl;
     
 
     
@@ -60,10 +56,10 @@ int main()
     LOG << "Estimating Poincare-Friedrichs constant of curl operator" << nl;
 
     const int min_l = 0; 
-    const int max_l = 7;
+    const int max_l = 5;
     
     const int min_r = 1;
-    const int max_r = 2;
+    const int max_r = 1;
     
     
     std::vector<ConvergenceTable> contables(max_r-min_r+1); //();
@@ -71,7 +67,7 @@ int main()
         contables[r-min_r].table_name = "Mass error and numerical residuals r=" + std::to_string(r);
         contables[r-min_r] << "eigenvalue" << "ratio" << "log_2(ratio)" << "diff" << "log_2(diff)" << "u_mass" << "du_mass" << "time";
     } 
-    
+
     
 
     assert( 0 <= min_l and min_l <= max_l );
@@ -93,31 +89,55 @@ int main()
                     
             LOG << "... assemble mass matrices" << nl;
     
-            SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r+1 );
-            SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   );
+            SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r+1 );
+            SparseMatrix pseudo_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r   );
+            SparseMatrix volume_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 3, r-1 );
             
             LOG << "... assemble inclusion matrices" << nl;
     
-            SparseMatrix scalar_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r+1 );
-            SparseMatrix scalar_incmatrix_t = scalar_incmatrix.getTranspose();
-
-            SparseMatrix vector_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 1, r   );
+            SparseMatrix vector_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 1, r+1 );
             SparseMatrix vector_incmatrix_t = vector_incmatrix.getTranspose();
+
+            SparseMatrix pseudo_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 2, r   );
+            SparseMatrix pseudo_incmatrix_t = pseudo_incmatrix.getTranspose();
 
             LOG << "... assemble algebraic matrices" << nl;
     
-            SparseMatrix scalar_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r+1 );
-            SparseMatrix scalar_diffmatrix_t = scalar_diffmatrix.getTranspose();
+            SparseMatrix vector_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r+1 );
+            SparseMatrix vector_diffmatrix_t = vector_diffmatrix.getTranspose();
+
+            SparseMatrix pseudo_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 2, r   );
+            SparseMatrix pseudo_diffmatrix_t = pseudo_diffmatrix.getTranspose();
 
             LOG << "... compose system matrices" << nl;
     
-            auto mat_A  = scalar_incmatrix_t & scalar_diffmatrix_t & ( vector_massmatrix ) & scalar_diffmatrix & scalar_incmatrix;
+            auto mat_A  = pseudo_incmatrix_t & pseudo_diffmatrix_t & volume_massmatrix & pseudo_diffmatrix & pseudo_incmatrix;
             mat_A.sortandcompressentries();
                 
+            auto mat_Bt = pseudo_incmatrix_t & pseudo_massmatrix & vector_diffmatrix & vector_incmatrix; // upper right
+            mat_Bt.sortandcompressentries();
+            
+            auto mat_B = mat_Bt.getTranspose(); //pseudo_incmatrix_t & pseudo_massmatrix & vector_diffmatrix & vector_incmatrix; // lower bottom
+            mat_B.sortandcompressentries();
+            
             LOG << "... compose CSR system matrices" << nl;
     
             auto A  = MatrixCSR( mat_A  );
+            auto Bt = MatrixCSR( mat_Bt );
+            auto B  = MatrixCSR( mat_B  );
             
+            auto C  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
+            
+            // TODO: develop preconditioners 
+            // auto PA = IdentityMatrix( A.getdimin() );
+            // auto PC = IdentityMatrix( C.getdimin() );
+
+            auto PA = MatrixCSR( pseudo_incmatrix_t & pseudo_massmatrix & pseudo_incmatrix )
+                              + MatrixCSR( pseudo_incmatrix_t & pseudo_diffmatrix_t & volume_massmatrix & pseudo_diffmatrix & pseudo_incmatrix );
+            auto PC = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix )
+                              + MatrixCSR( vector_incmatrix_t & vector_diffmatrix_t & pseudo_massmatrix & vector_diffmatrix & vector_incmatrix );
+            // LOG << "share zero PA = " << PA.getnumberofzeroentries() << "/" <<  PA.getnumberofentries() << nl;
+            // LOG << "share zero PC = " << PC.getnumberofzeroentries() << "/" <<  PC.getnumberofentries() << nl;
                         
 
             LOG << "...begin inverse iteration" << nl;
@@ -130,49 +150,62 @@ int main()
                 FloatVector candidate = FloatVector( A.getdimout(), 0. ); 
                 candidate.random(); 
                 candidate = A * candidate;
-                candidate.normalize( scalar_incmatrix_t * scalar_massmatrix * scalar_incmatrix ); 
+                candidate.normalize( pseudo_incmatrix_t * pseudo_massmatrix * pseudo_incmatrix ); 
                 
                 const int max_inverseiterations = 10;
 
                 Float newratio = -1;
                 
                 timestamp start = gettimestamp();
-                
-                for( int t = 0; t <= max_inverseiterations; t++ )
+
+                for( int t = 0; t < max_inverseiterations; t++ )
                 {
                     
                     
                     // find the next candidate
 
                     FloatVector sol( A.getdimout(), 0. );
+                    FloatVector aux( B.getdimout(), 0. );
+
+                    const FloatVector rhs_sol = ( pseudo_incmatrix_t * pseudo_massmatrix * pseudo_incmatrix ) * candidate;
+                    const FloatVector rhs_aux = FloatVector( B.getdimout(), 0. );
+
+                    // auto residual = sol;
+                    // ConjugateResidualSolverCSR_textbook( 
+                    //     sol.getdimension(), 
+                    //     sol.raw(), 
+                    //     rhs_sol.raw(), 
+                    //     A.getA(), A.getC(), A.getV(),
+                    //     residual.raw(),
+                    //     desired_precision,
+                    //     -1
+                    // );
                     
-                    const FloatVector rhs_sol = ( scalar_incmatrix_t * scalar_massmatrix * scalar_incmatrix ) * candidate;
+                    // const auto PAinv = pinv(PA,desired_precision,-1);
+                    // const auto PCinv = pinv(PC,desired_precision,-1);
+                    // sol = PAinv * rhs_sol;
                     
-                    auto residual = sol;
-                    ConjugateResidualSolverCSR( 
-                        sol.getdimension(), 
-                        sol.raw(), 
-                        rhs_sol.raw(), 
-                        A.getA(), A.getC(), A.getV(),
-                        residual.raw(),
-                        desired_precision / 10000,
-                        -1
+                    const auto PAinv = inv(PA,desired_precision,-1);
+                    const auto PCinv = inv(PC,desired_precision,-1);
+                    BlockHerzogSoodhalterMethod( 
+                        sol, 
+                        aux, 
+                        rhs_sol, 
+                        rhs_aux, 
+                        A, Bt, B, C, 
+                        desired_precision * sqrt(desired_precision),
+                        -1,
+                        // IdentityMatrix( A.getdimin() ), IdentityMatrix( C.getdimin() ) 
+                        PAinv, PCinv
                     );
 
-                    if( do_neumann )
-                    {
-                        auto constant_one = FloatVector( scalar_massmatrix.getdimout(), 1. );
-                        Float average = ( scalar_massmatrix * scalar_incmatrix * sol ) * constant_one;
-                        sol.shift( average );
-                    }
-                    
                     candidate = sol;
                     
                     
-                    // assess this new candidate 
+                    // assess the current candidate 
 
                     const auto A_candidate = A * candidate;
-                    const auto M_candidate = ( scalar_incmatrix_t * scalar_massmatrix * scalar_incmatrix ) * candidate; 
+                    const auto M_candidate = ( pseudo_incmatrix_t * pseudo_massmatrix * pseudo_incmatrix ) * candidate; 
                     
                     const auto candidate_A_product = candidate * A_candidate; 
                     const auto candidate_M_product = candidate * M_candidate; 
@@ -182,10 +215,11 @@ int main()
                     candidate /= sqrt(candidate_M_product); // Optional step
 
                     LOG << "current ratio : " << newratio << " (" << t << "/" << max_inverseiterations << ")" << nl;
+
+                    Float u_residualmass_sq   = ( A * sol + Bt * aux - rhs_sol ).norm_sq(); // ( vector_incmatrix_t * vector_massmatrix * vector_incmatrix ); 
+                    Float aux_residualmass_sq = ( B * sol            - rhs_aux ).norm_sq(); // ( pseudo_incmatrix_t * pseudo_massmatrix * pseudo_incmatrix ); 
                     
-                    Float u_residualmass_sq   = ( A * sol - rhs_sol ).norm_sq(); // ( scalar_incmatrix_t * scalar_massmatrix * scalar_incmatrix ); 
-                    
-                    LOG << "current residual : " << u_residualmass_sq << nl;
+                    LOG << "current residuals : " << u_residualmass_sq << tab << aux_residualmass_sq << nl;
 
                     
                 }
@@ -200,14 +234,16 @@ int main()
 
                 auto sol = candidate; 
 
-                Float u_massnorm     = sol * ( scalar_incmatrix_t * ( scalar_massmatrix * scalar_incmatrix * sol  ) );
-                Float ugrad_massnorm = sol * ( mat_A * sol );
-                Float curratio       = ugrad_massnorm / u_massnorm;
+                Float u_massnorm     = sol * ( pseudo_incmatrix_t * ( pseudo_massmatrix * pseudo_incmatrix * sol  ) );
+                Float udiv_massnorm = sol * ( mat_A * sol );
+                Float curratio       = udiv_massnorm / u_massnorm;
+                Float u_defectmass   = ( B * sol ).norm_sq( vector_incmatrix_t * vector_massmatrix * vector_incmatrix ); 
                 
                 LOG << "ratio:           " << newratio << nl;
                 LOG << "ratio:           " << curratio << nl;
                 LOG << "u mass:          " << u_massnorm << nl;
-                LOG << "u grad mass      " << ugrad_massnorm << nl;
+                LOG << "u div mass       " << udiv_massnorm << nl;
+                LOG << "u defect mass:   " << u_defectmass << nl;
                 
                 const Float true_eigenvalue = 3.; // 3.0 is the true value 
 
@@ -217,7 +253,7 @@ int main()
                 contables[r-min_r] << newratio - true_eigenvalue;
                 contables[r-min_r] << std::log2( newratio - true_eigenvalue );
                 contables[r-min_r] << u_massnorm;
-                contables[r-min_r] << ugrad_massnorm;
+                contables[r-min_r] << udiv_massnorm;
                 contables[r-min_r] << Float( end - start );
                 contables[r-min_r] << nl;
 

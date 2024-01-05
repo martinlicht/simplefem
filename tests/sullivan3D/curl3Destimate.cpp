@@ -36,8 +36,8 @@ int main()
     
     M.check();
     
-    M.automatic_dirichlet_flags();
-    M.check_dirichlet_flags();
+    // M.automatic_dirichlet_flags();
+    // M.check_dirichlet_flags();
 
     
     LOG << "Prepare scalar fields for testing..." << nl;
@@ -56,15 +56,18 @@ int main()
     LOG << "Estimating Poincare-Friedrichs constant of curl operator" << nl;
 
     const int min_l = 0; 
-    const int max_l = 7;
+    const int max_l = 5;
     
-    const int min_r = 2;
+    const int min_r = 1;
     const int max_r = 2;
     
     
-    ConvergenceTable contable("Mass error and numerical residuals");
-    
-    contable << "ratio" << "u_mass" << "du_mass" << "u_defect" << "time";
+    std::vector<ConvergenceTable> contables(max_r-min_r+1); //();
+    for( int r = min_r; r <= max_r; r++ ){
+        contables[r-min_r].table_name = "Mass error and numerical residuals r=" + std::to_string(r);
+        contables[r-min_r] << "eigenvalue" << "ratio" << "log_2(ratio)" << "diff" << "log_2(diff)" << "u_mass" << "du_mass" << "time";
+    } 
+
     
 
     assert( 0 <= min_l and min_l <= max_l );
@@ -130,15 +133,18 @@ int main()
             // auto PC = IdentityMatrix( C.getdimin() );
 
             auto PA = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix )
-                              + MatrixCSR( vector_incmatrix_t & vector_diffmatrix_t & pseudo_massmatrix & vector_diffmatrix & vector_incmatrix );
-            auto PC = MatrixCSR( scalar_incmatrix_t & scalar_diffmatrix_t & vector_massmatrix & scalar_diffmatrix & scalar_incmatrix );
+                      + 
+                      MatrixCSR( vector_incmatrix_t & vector_diffmatrix_t & pseudo_massmatrix & vector_diffmatrix & vector_incmatrix );
+            auto PC = MatrixCSR( scalar_incmatrix_t & scalar_massmatrix & scalar_incmatrix )
+                      + 
+                      MatrixCSR( scalar_incmatrix_t & scalar_diffmatrix_t & vector_massmatrix & scalar_diffmatrix & scalar_incmatrix );
             // LOG << "share zero PA = " << PA.getnumberofzeroentries() << "/" <<  PA.getnumberofentries() << nl;
             // LOG << "share zero PC = " << PC.getnumberofzeroentries() << "/" <<  PC.getnumberofentries() << nl;
                         
 
             LOG << "...begin inverse iteration" << nl;
             
-            const int max_attempts = 3;
+            const int max_attempts = 1;
 
             for( int s = 0; s < max_attempts; s++ )
             {
@@ -241,14 +247,19 @@ int main()
                 LOG << "u curl mass      " << ucurl_massnorm << nl;
                 LOG << "u defect mass:   " << u_defectmass << nl;
                 
-                contable << newratio;
-                contable << u_massnorm;
-                contable << ucurl_massnorm;
-                contable << u_defectmass;
-                contable << Float( end - start );
-                contable << nl;
+                const Float true_eigenvalue = 2.; // 3.0 is the true value 
 
-                contable.lg();
+                contables[r-min_r] << newratio;
+                contables[r-min_r] << newratio / true_eigenvalue - 1.;
+                contables[r-min_r] << - std::log2( newratio / true_eigenvalue - 1. ); 
+                contables[r-min_r] << newratio - true_eigenvalue;
+                contables[r-min_r] << std::log2( newratio - true_eigenvalue );
+                contables[r-min_r] << u_massnorm;
+                contables[r-min_r] << ucurl_massnorm;
+                contables[r-min_r] << Float( end - start );
+                contables[r-min_r] << nl;
+
+                contables[r-min_r].lg();
             
             }
             
