@@ -57,13 +57,13 @@ int main()
 
     
 
-    LOG << "Estimating Poincare-Friedrichs constant of curl operator" << nl;
+    LOG << "Estimating Poincare-Friedrichs constant of grad operator" << nl;
 
     const int min_l = 0; 
     const int max_l = 7;
     
     const int min_r = 1;
-    const int max_r = 2;
+    const int max_r = 3;
     
     
     std::vector<ConvergenceTable> contables(max_r-min_r+1); //();
@@ -144,6 +144,14 @@ int main()
                     
                     // find the next candidate
 
+                    if( do_neumann )
+                    {
+                        auto constant_one = FloatVector( scalar_massmatrix.getdimout(), 1. );
+                        auto weight = ( scalar_massmatrix * constant_one ) * constant_one;
+                        Float average = ( scalar_massmatrix * scalar_incmatrix * candidate ) * constant_one;
+                        candidate.shift( - average / weight );
+                    }
+
                     FloatVector sol( A.getdimout(), 0. );
                     
                     const FloatVector rhs_sol = ( scalar_incmatrix_t * scalar_massmatrix * scalar_incmatrix ) * candidate;
@@ -162,8 +170,9 @@ int main()
                     if( do_neumann )
                     {
                         auto constant_one = FloatVector( scalar_massmatrix.getdimout(), 1. );
+                        auto weight = ( scalar_massmatrix * constant_one ) * constant_one;
                         Float average = ( scalar_massmatrix * scalar_incmatrix * sol ) * constant_one;
-                        sol.shift( average );
+                        sol.shift( - average / weight );
                     }
                     
                     candidate = sol;
@@ -209,7 +218,9 @@ int main()
                 LOG << "u mass:          " << u_massnorm << nl;
                 LOG << "u grad mass      " << ugrad_massnorm << nl;
                 
-                const Float true_eigenvalue = 3.; // 3.0 is the true value 
+                const Float true_eigenvalue = ( do_neumann ? 3.0 : 3.0 );
+                // 1.0 is the true value 
+                // 3.0 is the true value 
 
                 contables[r-min_r] << newratio;
                 contables[r-min_r] << newratio / true_eigenvalue - 1.;

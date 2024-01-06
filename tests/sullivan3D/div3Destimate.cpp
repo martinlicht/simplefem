@@ -53,13 +53,13 @@ int main()
 
     
 
-    LOG << "Estimating Poincare-Friedrichs constant of curl operator" << nl;
+    LOG << "Estimating Poincare-Friedrichs constant of div operator (Sullivan)" << nl;
 
     const int min_l = 0; 
     const int max_l = 5;
     
     const int min_r = 1;
-    const int max_r = 1;
+    const int max_r = 3;
     
     
     std::vector<ConvergenceTable> contables(max_r-min_r+1); //();

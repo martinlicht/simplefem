@@ -17,7 +17,7 @@
 #include "../../fem/global.elevation.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
-#include "../../fem/global.sullivanincl.hpp"
+#include "../../fem/global.whitneyincl.hpp"
 #include "../../fem/utilities.hpp"
 #include "../../vtk/vtkwriter.hpp"
 
@@ -40,7 +40,7 @@ int main()
     // M.check_dirichlet_flags();
 
     
-    LOG << "Prepare scalar fields for testing..." << nl;
+    LOG << "Prepare vector fields for testing..." << nl;
     
 
     
@@ -53,7 +53,7 @@ int main()
 
     
 
-    LOG << "Estimating Poincare-Friedrichs constant of curl operator (Whitney)" << nl;
+    LOG << "Estimating Poincare-Friedrichs constant of div operator (Whitney)" << nl;
 
     const int min_l = 0; 
     const int max_l = 5;
@@ -89,35 +89,39 @@ int main()
                     
             LOG << "... assemble mass matrices" << nl;
     
-            SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r+1 );
             SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   );
-            SparseMatrix pseudo_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r-1 );
-
+            SparseMatrix pseudo_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r   );
+            SparseMatrix volume_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 3, r-1 );
+            
             LOG << "... assemble inclusion matrices" << nl;
     
-            SparseMatrix scalar_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r+1 );
-            SparseMatrix scalar_incmatrix_t = scalar_incmatrix.getTranspose();
-
-            SparseMatrix vector_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 1, r   );
+            SparseMatrix vector_incmatrix   = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 1, r   );
             SparseMatrix vector_incmatrix_t = vector_incmatrix.getTranspose();
+
+            SparseMatrix pseudo_incmatrix   = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 2, r   );
+            SparseMatrix pseudo_incmatrix_t = pseudo_incmatrix.getTranspose();
 
             LOG << "... assemble algebraic matrices" << nl;
     
-            SparseMatrix scalar_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r+1 );
-            SparseMatrix scalar_diffmatrix_t = scalar_diffmatrix.getTranspose();
-
             SparseMatrix vector_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r );
             SparseMatrix vector_diffmatrix_t = vector_diffmatrix.getTranspose();
 
+            SparseMatrix pseudo_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 2, r );
+            SparseMatrix pseudo_diffmatrix_t = pseudo_diffmatrix.getTranspose();
+
+            SparseMatrix pseudo_elevationmatrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 2, r-1, 1 );
+            SparseMatrix pseudo_elevationmatrix_t = pseudo_elevationmatrix.getTranspose();
+
+
             LOG << "... compose system matrices" << nl;
     
-            auto mat_A  = vector_incmatrix_t & vector_diffmatrix_t & pseudo_massmatrix & vector_diffmatrix & vector_incmatrix;
+            auto mat_A  = pseudo_incmatrix_t & pseudo_diffmatrix_t & volume_massmatrix & pseudo_diffmatrix & pseudo_incmatrix;
             mat_A.sortandcompressentries();
                 
-            auto mat_Bt = vector_incmatrix_t & vector_massmatrix & scalar_diffmatrix & scalar_incmatrix; // upper right
+            auto mat_Bt = pseudo_incmatrix_t & pseudo_massmatrix & pseudo_elevationmatrix & vector_diffmatrix & vector_incmatrix; // upper right
             mat_Bt.sortandcompressentries();
             
-            auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & pseudo_massmatrix & diffmatrix & vector_incmatrix; // lower bottom
+            auto mat_B = mat_Bt.getTranspose(); //pseudo_incmatrix_t & pseudo_massmatrix & vector_diffmatrix & vector_incmatrix; // lower bottom
             mat_B.sortandcompressentries();
             
             LOG << "... compose CSR system matrices" << nl;
@@ -132,12 +136,12 @@ int main()
             // auto PA = IdentityMatrix( A.getdimin() );
             // auto PC = IdentityMatrix( C.getdimin() );
 
-            auto PA = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix )
-                      + 
-                      MatrixCSR( vector_incmatrix_t & vector_diffmatrix_t & pseudo_massmatrix & vector_diffmatrix & vector_incmatrix );
-            auto PC = MatrixCSR( scalar_incmatrix_t & scalar_massmatrix & scalar_incmatrix )
-                      + 
-                      MatrixCSR( scalar_incmatrix_t & scalar_diffmatrix_t & vector_massmatrix & scalar_diffmatrix & scalar_incmatrix );
+            auto PA = MatrixCSR( pseudo_incmatrix_t & pseudo_massmatrix & pseudo_incmatrix )
+                      +
+                      MatrixCSR( pseudo_incmatrix_t & pseudo_diffmatrix_t & volume_massmatrix & pseudo_diffmatrix & pseudo_incmatrix );
+            auto PC = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix )
+                      +
+                      MatrixCSR( vector_incmatrix_t & vector_diffmatrix_t & pseudo_elevationmatrix_t & pseudo_massmatrix & pseudo_elevationmatrix & vector_diffmatrix & vector_incmatrix );
             // LOG << "share zero PA = " << PA.getnumberofzeroentries() << "/" <<  PA.getnumberofentries() << nl;
             // LOG << "share zero PC = " << PC.getnumberofzeroentries() << "/" <<  PC.getnumberofentries() << nl;
                         
@@ -152,7 +156,7 @@ int main()
                 FloatVector candidate = FloatVector( A.getdimout(), 0. ); 
                 candidate.random(); 
                 candidate = A * candidate;
-                candidate.normalize( vector_incmatrix_t * vector_massmatrix * vector_incmatrix ); 
+                candidate.normalize( pseudo_incmatrix_t * pseudo_massmatrix * pseudo_incmatrix ); 
                 
                 const int max_inverseiterations = 10;
 
@@ -169,7 +173,7 @@ int main()
                     FloatVector sol( A.getdimout(), 0. );
                     FloatVector aux( B.getdimout(), 0. );
 
-                    const FloatVector rhs_sol = ( vector_incmatrix_t * vector_massmatrix * vector_incmatrix ) * candidate;
+                    const FloatVector rhs_sol = ( pseudo_incmatrix_t * pseudo_massmatrix * pseudo_incmatrix ) * candidate;
                     const FloatVector rhs_aux = FloatVector( B.getdimout(), 0. );
 
                     // auto residual = sol;
@@ -207,7 +211,7 @@ int main()
                     // assess the current candidate 
 
                     const auto A_candidate = A * candidate;
-                    const auto M_candidate = ( vector_incmatrix_t * vector_massmatrix * vector_incmatrix ) * candidate; 
+                    const auto M_candidate = ( pseudo_incmatrix_t * pseudo_massmatrix * pseudo_incmatrix ) * candidate; 
                     
                     const auto candidate_A_product = candidate * A_candidate; 
                     const auto candidate_M_product = candidate * M_candidate; 
@@ -218,8 +222,8 @@ int main()
 
                     LOG << "current ratio : " << newratio << " (" << t << "/" << max_inverseiterations << ")" << nl;
 
-                    Float u_residualmass_sq   = ( A * sol + Bt * aux - rhs_sol ).norm_sq(); // ( scalar_incmatrix_t * scalar_massmatrix * scalar_incmatrix ); 
-                    Float aux_residualmass_sq = ( B * sol            - rhs_aux ).norm_sq(); // ( vector_incmatrix_t * vector_massmatrix * vector_incmatrix ); 
+                    Float u_residualmass_sq   = ( A * sol + Bt * aux - rhs_sol ).norm_sq(); // ( vector_incmatrix_t * vector_massmatrix * vector_incmatrix ); 
+                    Float aux_residualmass_sq = ( B * sol            - rhs_aux ).norm_sq(); // ( pseudo_incmatrix_t * pseudo_massmatrix * pseudo_incmatrix ); 
                     
                     LOG << "current residuals : " << u_residualmass_sq << tab << aux_residualmass_sq << nl;
 
@@ -236,18 +240,18 @@ int main()
 
                 auto sol = candidate; 
 
-                Float u_massnorm     = sol * ( vector_incmatrix_t * ( vector_massmatrix * vector_incmatrix * sol  ) );
-                Float ucurl_massnorm = sol * ( mat_A * sol );
-                Float curratio       = ucurl_massnorm / u_massnorm;
-                Float u_defectmass   = ( B * sol ).norm_sq( scalar_incmatrix_t * scalar_massmatrix * scalar_incmatrix ); 
+                Float u_massnorm     = sol * ( pseudo_incmatrix_t * ( pseudo_massmatrix * pseudo_incmatrix * sol  ) );
+                Float udiv_massnorm = sol * ( mat_A * sol );
+                Float curratio       = udiv_massnorm / u_massnorm;
+                Float u_defectmass   = ( B * sol ).norm_sq( vector_incmatrix_t * vector_massmatrix * vector_incmatrix ); 
                 
                 LOG << "ratio:           " << newratio << nl;
                 LOG << "ratio:           " << curratio << nl;
                 LOG << "u mass:          " << u_massnorm << nl;
-                LOG << "u curl mass      " << ucurl_massnorm << nl;
+                LOG << "u div mass       " << udiv_massnorm << nl;
                 LOG << "u defect mass:   " << u_defectmass << nl;
                 
-                const Float true_eigenvalue = 2.; // 3.0 is the true value 
+                const Float true_eigenvalue = 3.; // 3.0 is the true value 
 
                 contables[r-min_r] << newratio;
                 contables[r-min_r] << newratio / true_eigenvalue - 1.;
@@ -255,7 +259,7 @@ int main()
                 contables[r-min_r] << newratio - true_eigenvalue;
                 contables[r-min_r] << std::log2( newratio - true_eigenvalue );
                 contables[r-min_r] << u_massnorm;
-                contables[r-min_r] << ucurl_massnorm;
+                contables[r-min_r] << udiv_massnorm;
                 contables[r-min_r] << Float( end - start );
                 contables[r-min_r] << nl;
 
