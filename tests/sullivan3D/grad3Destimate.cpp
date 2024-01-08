@@ -62,8 +62,8 @@ int main()
     const int min_l = 0; 
     const int max_l = 7;
     
-    const int min_r = 1;
-    const int max_r = 3;
+    const int min_r = 2;
+    const int max_r = 2;
     
     
     std::vector<ConvergenceTable> contables(max_r-min_r+1); //();
@@ -110,7 +110,7 @@ int main()
             SparseMatrix scalar_diffmatrix_t = scalar_diffmatrix.getTranspose();
 
             LOG << "... compose system matrices" << nl;
-    
+
             auto mat_A  = scalar_incmatrix_t & scalar_diffmatrix_t & ( vector_massmatrix ) & scalar_diffmatrix & scalar_incmatrix;
             mat_A.sortandcompressentries();
                 
@@ -146,33 +146,63 @@ int main()
 
                     if( do_neumann )
                     {
-                        auto constant_one = FloatVector( scalar_massmatrix.getdimout(), 1. );
-                        auto weight = ( scalar_massmatrix * constant_one ) * constant_one;
-                        Float average = ( scalar_massmatrix * scalar_incmatrix * candidate ) * constant_one;
-                        candidate.shift( - average / weight );
+                        auto constant_one = FloatVector( scalar_incmatrix.getdimin(), 1. );
+                        Float average = ( scalar_massmatrix * scalar_incmatrix * candidate    ) * ( scalar_incmatrix * constant_one );
+                        Float weight  = ( scalar_massmatrix * scalar_incmatrix * constant_one ) * ( scalar_incmatrix * constant_one );
+                        candidate = candidate - ( average / weight ) * constant_one;
                     }
 
                     FloatVector sol( A.getdimout(), 0. );
                     
-                    const FloatVector rhs_sol = ( scalar_incmatrix_t * scalar_massmatrix * scalar_incmatrix ) * candidate;
+                    FloatVector rhs_sol = ( scalar_incmatrix_t * scalar_massmatrix * scalar_incmatrix ) * candidate;
                     
+                    if( do_neumann )
+                    {
+                        auto constant_one = FloatVector( scalar_incmatrix.getdimin(), 1. );
+                        Float average = ( scalar_massmatrix * scalar_incmatrix * rhs_sol      ) * ( scalar_incmatrix * constant_one );
+                        Float weight  = ( scalar_massmatrix * scalar_incmatrix * constant_one ) * ( scalar_incmatrix * constant_one );
+                        rhs_sol = rhs_sol - ( average / weight ) * constant_one;
+                    }
+
                     auto residual = sol;
-                    ConjugateResidualSolverCSR( 
-                        sol.getdimension(), 
-                        sol.raw(), 
-                        rhs_sol.raw(), 
-                        A.getA(), A.getC(), A.getV(),
-                        residual.raw(),
-                        desired_precision / 10000,
-                        -1
-                    );
+                    
+                    // ConjugateResidualSolverCSR( 
+                    //     sol.getdimension(), 
+                    //     sol.raw(), 
+                    //     rhs_sol.raw(), 
+                    //     A.getA(), A.getC(), A.getV(),
+                    //     residual.raw(),
+                    //     desired_precision,
+                    //     -1
+                    // );
+
+                    {
+                        DenseMatrix Bt( A.getdimout(), 1, 1. );
+                        DenseMatrix B = Transpose(Bt);
+                        DenseMatrix C(1,1,0.);
+                        
+                        auto aux     = FloatVector(1,0.);
+                        auto rhs_aux = FloatVector(1,0.);
+                        
+                        BlockHerzogSoodhalterMethod( 
+                            sol, 
+                            aux, 
+                            rhs_sol, 
+                            rhs_aux, 
+                            A, Bt, B, C, 
+                            desired_precision * sqrt(desired_precision),
+                            -1,
+                            IdentityMatrix( A.getdimin() ), IdentityMatrix( C.getdimin() ) 
+                        );
+
+                    }
 
                     if( do_neumann )
                     {
-                        auto constant_one = FloatVector( scalar_massmatrix.getdimout(), 1. );
-                        auto weight = ( scalar_massmatrix * constant_one ) * constant_one;
-                        Float average = ( scalar_massmatrix * scalar_incmatrix * sol ) * constant_one;
-                        sol.shift( - average / weight );
+                        auto constant_one = FloatVector( scalar_incmatrix.getdimin(), 1. );
+                        Float average = ( scalar_massmatrix * scalar_incmatrix * sol          ) * ( scalar_incmatrix * constant_one );
+                        Float weight  = ( scalar_massmatrix * scalar_incmatrix * constant_one ) * ( scalar_incmatrix * constant_one );
+                        sol = sol - ( average / weight ) * constant_one;
                     }
                     
                     candidate = sol;
@@ -218,7 +248,7 @@ int main()
                 LOG << "u mass:          " << u_massnorm << nl;
                 LOG << "u grad mass      " << ugrad_massnorm << nl;
                 
-                const Float true_eigenvalue = ( do_neumann ? 3.0 : 3.0 );
+                const Float true_eigenvalue = ( do_neumann ? 1.0 : 3.0 );
                 // 1.0 is the true value 
                 // 3.0 is the true value 
 
