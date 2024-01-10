@@ -176,6 +176,30 @@ int Mesh::get_subsimplex( int sup, int sub, int cellsup, int localindex ) const
   return im[ localindex ];  
 }
 
+int Mesh::get_opposite_subsimplex_index( int sup, int sub, int cellsup, int localindex ) const
+{
+    
+    const int cellsub = get_subsimplex( sup, sub, cellsup, localindex );
+    
+    const auto my_vertices = getsubsimplices( sub, 0, cellsub );
+    
+    for( int otherindex = 0; otherindex < count_subsimplices(sup,sup-sub-1); otherindex++ )
+    {
+        const int othercell = get_subsimplex( sup, sup-sub-1, cellsup, otherindex );
+        
+        const auto other_vertices = getsubsimplices( sup, sub, othercell );
+        
+        bool alive = true;
+        for( int i = 0; i <    my_vertices.getSourceRange().cardinality() and alive; i++ )
+        for( int j = 0; j < other_vertices.getSourceRange().cardinality() and alive; j++ )
+          alive = ( my_vertices[i] != other_vertices[j] );
+
+        if( alive )
+          return otherindex;
+    }
+    unreachable();
+}
+
 
 
 
@@ -458,6 +482,15 @@ Float Mesh::getMeasure( int dim, int index ) const
         return std::sqrt( absolute( Determinant( Transpose(Jac) * Jac ) ) ) / factorial_numerical( getinnerdimension() );
 }
 
+Float Mesh::getHeight( int dim, int cell, int vertexindex ) const
+{
+    int oppositeface_index = get_opposite_subsimplex_index( dim, 0, cell, vertexindex );
+    int oppositeface = get_subsimplex( dim, dim-1, cell, oppositeface_index );
+    Float vol_t = getMeasure( dim, cell );
+    Float vol_f = getMeasure( dim-1, oppositeface );
+    return ( vol_t / vol_f ) * dim;
+}
+
 Float Mesh::getShapemeasure( int dim, int index ) const 
 {
     assert( 0 <= dim && dim <= getinnerdimension() );
@@ -702,3 +735,38 @@ FloatVector get_random_barycentric_coordinates( int dim )
     randomcoords[dim] = 1. - samples.sum();
     return randomcoords;
 }   
+
+
+
+void Mesh::shake_interior_vertices( Float intensity, Float probability )
+{
+    assert( 0. <= probability and probability <= 1.0 );
+    assert( 0. <= intensity and intensity <= 1.0 );
+    assert( getinnerdimension() == getouterdimension() ); 
+    
+    const int dim = getinnerdimension();
+
+    for( int v = 0; v < count_simplices(0); v++ )
+    {
+        if( random_uniform() > probability ) continue; 
+
+        Float radius = std::numeric_limits<Float>::infinity();
+
+        const auto ts = getsupersimplices( dim, 0, v );
+
+        for( const int t : ts )
+        {
+            int vi = get_subsimplex_index( dim, 0, t, v );
+            Float height = getHeight( dim, t, vi );
+            radius = std::min( height, radius );
+        }
+
+        FloatVector shift(dim,0.);
+        shift.random_within_range(-1.,1.);
+        shift /= shift.l2norm() * sqrt( random_uniform() ) * radius * intensity;
+
+        for( int c = 0; c < dim; c++ )
+            getcoordinates().setdata( v, c, getcoordinates().getdata( v, c ) + shift[c] );
+
+    }
+}

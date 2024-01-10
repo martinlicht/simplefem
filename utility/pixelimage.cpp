@@ -6,7 +6,6 @@
 #include <string.h>
 
 #include <string>
-#include <iostream>
 
 // g++ images.cpp `Magick++-config --cxxflags --cppflags --ldflags --libs`
 // sudo apt install graphicsmagick-libmagick-dev-compat libgraphicsmagick++1-dev libmagick++-6-headers libmagick++-dev

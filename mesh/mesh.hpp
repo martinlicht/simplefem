@@ -139,6 +139,8 @@ class Mesh
         
         virtual int get_subsimplex( int sup, int sub, int cellsup, int localindex ) const;
         
+        int get_opposite_subsimplex_index( int sup, int sub, int cellsup, int localindex ) const;
+        
         
         
         /* 
@@ -168,7 +170,7 @@ class Mesh
         virtual int get_index_of_supersimplex( int sup, int sub, int cellsup, int cellsub ) const;
         
         virtual int get_supersimplex_by_index( int sup, int sub, int cellsub, int parentindex ) const;
-        
+
         // TODO: Iterator interface
         // ContainerInterface -- container.hpp 
         // derive from that class 
@@ -205,6 +207,8 @@ class Mesh
         
         Float getMeasure( int dim, int index ) const;
         
+        Float getHeight( int dim, int index, int vertexindex ) const;
+        
         Float getShapemeasure( int dim, int index ) const;
         Float getShapemeasure( int dim ) const;
         Float getShapemeasure() const;
@@ -229,6 +233,14 @@ class Mesh
         DenseMatrix getGradientProductMatrix( int dim, int index ) const;
         
         DenseMatrix getGradientProductMatrixRightFactor( int dim, int index ) const;
+
+        
+        /* 
+         * Manipulation
+         * 
+         */
+        
+        void shake_interior_vertices( Float intensity = 0.25, Float probability = 0.5 );
         
 
         virtual long long memorysize() const = 0;

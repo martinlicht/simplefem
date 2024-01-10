@@ -233,8 +233,8 @@ class MeshSimplicial2D
 
         std::string outputSVG( 
             Float stroke_width = 0.01,
-            std::string fill   = "red",
-            std::string stroke = "blue",
+            std::string fill   = "white",
+            std::string stroke = "black",
             const FloatVector* triangle_red   = nullptr,
             const FloatVector* triangle_green = nullptr,
             const FloatVector* triangle_blue  = nullptr

@@ -9,7 +9,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <iostream>
 #include <vector>
 
 enum class ColorChannel { red = 0, green = 1, blue = 2 };
