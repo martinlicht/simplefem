@@ -45,10 +45,10 @@ inline std::string adaptfilename( std::string filename )
 }
 
 
-inline std::string experimentfile( const std::string& basename )
+inline std::string experimentfile( const std::string& basename, const std::string extension = "vtk" )
 {
     std::string ret;
-    for( int i = 0; fileexists( ret = basename + std::string(".") + std::to_string(i) + std::string(".vtk") ); i++ );
+    for( int i = 0; fileexists( ret = basename + std::string(".") + std::to_string(i) + std::string(".") + std::string(extension) ); i++ );
     return ret;
 }
 

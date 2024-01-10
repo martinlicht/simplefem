@@ -48,6 +48,11 @@ class ConvergenceTable
 
         std::string text_transpose( bool display_convergence_rates ) const;
 
+
+        std::string TeXtabular() const;
+        std::string TeXtabular( const std::vector<bool>& ) const;
+
+
 };
 
 

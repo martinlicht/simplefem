@@ -13,6 +13,7 @@
 #include "../dense/densematrix.hpp"
 //#include "../utility/utility.hpp"
 
+const bool sparse_matrix_verbosity = false;
 
 
 SparseMatrix::SparseMatrix( int dimout, int dimin, int numentries, std::function<MatrixEntry(int)> generator )
@@ -22,7 +23,7 @@ SparseMatrix::SparseMatrix( int dimout, int dimin, int numentries, std::function
     assert( 0 <= numentries );
     assert( numentries <= entries.max_size() );
     
-    LOG << "SparseMatrix allocation: " << numentries << nl;
+    if( sparse_matrix_verbosity ) LOG << "SparseMatrix allocation: " << numentries << nl;
     
     entries.reserve( numentries );
     
@@ -382,7 +383,7 @@ const SparseMatrix& SparseMatrix::sortandcompressentries( SparseMatrix::MatrixEn
 {
     check();
 
-    LOG << "SparseMatrix: Remove zeroes..." << nl;
+    if( sparse_matrix_verbosity ) LOG << "SparseMatrix: Remove zeroes..." << nl;
     
     {
         
@@ -396,11 +397,11 @@ const SparseMatrix& SparseMatrix::sortandcompressentries( SparseMatrix::MatrixEn
         
     }
     
-    LOG << "SparseMatrix: Sorting..." << nl;
+    if( sparse_matrix_verbosity ) LOG << "SparseMatrix: Sorting..." << nl;
     
     sortentries( manner );
     
-    LOG << "SparseMatrix: Compressing..." << nl;
+    if( sparse_matrix_verbosity ) LOG << "SparseMatrix: Compressing..." << nl;
     
     assert( is_sorted(manner) );
     
@@ -434,7 +435,7 @@ const SparseMatrix& SparseMatrix::sortandcompressentries( SparseMatrix::MatrixEn
     
     assert( is_sorted(manner) );
     
-    LOG << "SparseMatrix: Done!" << nl;
+    if( sparse_matrix_verbosity ) LOG << "SparseMatrix: Done!" << nl;
     
     return *this;
 }

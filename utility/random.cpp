@@ -14,6 +14,13 @@ int random_integer()
     return ret;
 }
 
+int flip_coin( Float prob_zero )
+{
+    assert( 0 <= prob_zero and prob_zero <= 1. );
+    Float value = random_uniform();
+    if( value < prob_zero ) return 0; else return 1;
+}
+
 Float random_uniform()
 {
     Float ret = static_cast<Float>( rand() ) / static_cast<Float>( RAND_MAX );
