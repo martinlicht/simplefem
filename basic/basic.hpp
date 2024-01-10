@@ -19,9 +19,9 @@
 
 
 #include <cmath>
-// #include <cstdint>
-// #include <cstdio>
-// #include <cstdlib>
+#include <cstdint>
+#include <cstdio>
+#include <cstdlib>
 // #include <ctime>
 
 // #include <algorithm>

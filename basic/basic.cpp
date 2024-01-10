@@ -17,6 +17,7 @@ template class std::vector<Float>;
 // static_assert( sizeof(Float) >= sizeof(double), "Float must be at least double" );
 
 
+#include <cstdio>
 #include <cstdarg>
 
 std::string printf_into_string( const char* formatstring, ... )
