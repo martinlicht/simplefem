@@ -11,6 +11,8 @@
 
 #include <vector>
 
+#include "../basic.hpp"
+
 enum class ColorChannel { red = 0, green = 1, blue = 2 };
 
 struct PixelColor

@@ -196,7 +196,7 @@ $($(module).headerchecks): check-%.hpp :
 .PHONY: tidy $(module).tidy
 tidy: $(module).tidy
 $(module).tidy:
-	clang-tidy $($(mymodule).sources) --config-file=$(projectdir)/Tools/clang-tidy.yaml -- -std=c++17 -fno-exceptions
+	clang-tidy $($(mymodule).sources) --config-file=$(projectdir)/Tools/clang-tidy.yaml -- -std=c++17 # -fno-exceptions
 
 
 ########################################################################
