@@ -10,7 +10,7 @@ jobs:
 
     runs-on: ubuntu-latest
     
-    timeout-minutes: 180
+    timeout-minutes: 600
 
     steps:
     - name: Install OpenMP
@@ -22,20 +22,20 @@ jobs:
     - name: checkout repository...
       uses: actions/checkout@v3
     - name: build project...
-      run: make
+      run: make FLAG_DO_OPTIMIZE=yes FLAG_ENABLE_OPENMP=yes 
     - name: run tests (solverfem)...
       run: cd tests/ && make solverfem.run && cd .. 
       continue-on-error: true
-#     - name: run tests (sullivan2D)...
-#       run: cd tests/ && make sullivan2D.run && cd .. 
-#       continue-on-error: true
+    - name: run tests (sullivan2D)...
+      run: cd tests/ && make sullivan2D.run && cd .. 
+      continue-on-error: true
 #     - name: run tests (sullivan3D)...
 #       run: cd tests/ && make sullivan3D.run && cd ..  
 #       continue-on-error: true
-#     - name: run tests (sullivan2D)...
-#       run: cd tests/ && make whitney2D.run && cd .. 
-#       continue-on-error: true
-#     - name: run tests (sullivan3D)...
+    - name: run tests (whitney2D)...
+      run: cd tests/ && make whitney2D.run && cd .. 
+      continue-on-error: true
+#     - name: run tests (whitney3D)...
 #       run: cd tests/ && make whitney3D.run && cd .. 
 #       continue-on-error: true
 #     - name: run tests (nullspace)...
