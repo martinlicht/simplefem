@@ -22,6 +22,7 @@ components+=mesh
 components+=vtk
 #components+=matrixmarket
 components+=fem
+components+=image
 components+=afem
 components+=sullivan2D
 components+=sullivan3D
@@ -107,6 +108,12 @@ context:=fem
 include tests.rules.mk
 #include tests.run.mk
 build: fem.tests
+
+contextdir:=./image
+context:=image
+include tests.rules.mk
+#include tests.run.mk
+build: image.tests
 
 contextdir:=./solverfem
 context:=solverfem
