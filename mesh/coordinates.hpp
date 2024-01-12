@@ -116,26 +116,34 @@ class Coordinates
         int dimension;
         int number;
         std::vector<Float> data;
-        
+
+    public:
+
+        friend inline bool operator==( const Coordinates& coords_left, const Coordinates& coords_right )
+        {
+            bool compare( const Coordinates&, const Coordinates&, Float );
+            return compare( coords_left, coords_right, 0.00001 );
+        }
+
+        friend inline bool operator!=( const Coordinates& coords_left, const Coordinates& coords_right )
+        {
+            return ! ( coords_left == coords_right );
+        }
+
+        friend inline std::ostream& operator<<( std::ostream& os, const Coordinates& co )
+        {
+            co.print( os );
+            return os;
+        }
+
+
 };
+
+
 
 bool compare( const Coordinates& coords_left, const Coordinates& coords_right, Float tolerance = 0.00001 );
 
-inline std::ostream& operator<<( std::ostream& os, const Coordinates& co )
-{
-    co.print( os );
-    return os;
-}
 
-inline bool operator==( const Coordinates& coords_left, const Coordinates& coords_right )
-{
-    return compare( coords_left, coords_right, 0.00001 );
-}
-
-inline bool operator!=( const Coordinates& coords_left, const Coordinates& coords_right )
-{
-    return ! ( coords_left == coords_right );
-}
 
 
 #endif
