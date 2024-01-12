@@ -162,7 +162,21 @@ VTKWriter VTKWriter::writeTopDimensionalCells()
 
 
 
-VTKWriter VTKWriter::writeVertexScalarData( const FloatVector& data, const std::string name, Float scaling )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+VTKWriter VTKWriter::writeVertexScalarData( const std::function<Float(int)>& datafunction, const std::string name, Float scaling )
 {
     assert( current_stage >= Stage::cells );
     assert( current_stage <= Stage::vertexdata );
@@ -170,8 +184,6 @@ VTKWriter VTKWriter::writeVertexScalarData( const FloatVector& data, const std::
     assert( 0 < name.size() and name.size() <= 256 );
     assert( name.find('\n') == std::string::npos );
     assert( count_white_space( name ) == 0 );
-    
-    assert( data.getdimension() == mesh.count_simplices(0) );
     
     if( current_stage != Stage::vertexdata ){
         os << "POINT_DATA " << mesh.count_simplices(0) << nl << nl;
@@ -183,15 +195,14 @@ VTKWriter VTKWriter::writeVertexScalarData( const FloatVector& data, const std::
     os << "LOOKUP_TABLE default" << nl;
     
     for( int v = 0; v < mesh.count_simplices(0); v++ )
-        os << scaling * data.at(v) << nl;
+        os << scaling * datafunction(v) << nl;
     
     os << nl;
 
     return *this;
 }
 
-
-VTKWriter VTKWriter::writeCellScalarData( const FloatVector& data, const std::string name, Float scaling )
+VTKWriter VTKWriter::writeCellScalarData( const std::function<Float(int)>& datafunction, const std::string name, Float scaling )
 {
     assert( current_stage >= Stage::cells );
     assert( current_stage <= Stage::celldata );
@@ -201,8 +212,6 @@ VTKWriter VTKWriter::writeCellScalarData( const FloatVector& data, const std::st
     assert( 0 < name.size() and name.size() <= 256 );
     assert( name.find('\n') == std::string::npos );
     assert( count_white_space( name ) == 0 );
-    
-    assert( data.getdimension() == mesh.count_simplices(topdim) );
     
     if( current_stage != Stage::celldata ){
         os << "CELL_DATA " << mesh.count_simplices(topdim) << nl << nl;
@@ -214,7 +223,116 @@ VTKWriter VTKWriter::writeCellScalarData( const FloatVector& data, const std::st
     os << "LOOKUP_TABLE default" << nl;
     
     for( int c = 0; c < mesh.count_simplices(topdim); c++ )
-        os << scaling * data.at(c) << nl;
+        os << scaling * datafunction(c) << nl;
+    
+    os << nl;
+
+    return *this;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+VTKWriter VTKWriter::writeVertexScalarData( const std::function<Float(const FloatVector&)>& function, const std::string name, Float scaling )
+{
+    auto datafunction = [&](int c) -> Float { return function( mesh.get_midpoint(0,c) ); };
+
+    writeVertexScalarData( datafunction, name, scaling );
+
+    return *this;
+}
+
+VTKWriter VTKWriter::writeVertexScalarData( const FloatVector& data, const std::string name, Float scaling )
+{
+    assert( data.getdimension() == mesh.count_simplices(0) );
+
+    auto datafunction = [&](int c) -> Float { return data.at(c); };
+
+    writeVertexScalarData( datafunction, name, scaling );
+    
+    return *this;
+}
+
+
+
+
+
+
+VTKWriter VTKWriter::writeCellScalarData( const std::function<Float(const FloatVector&)>& function, const std::string name, Float scaling )
+{
+    const int topdim = mesh.getinnerdimension();
+
+    auto datafunction = [&](int c) -> Float { return function( mesh.get_midpoint(topdim,c) ); };
+
+    writeCellScalarData( datafunction, name, scaling );
+
+    return *this;
+}
+
+VTKWriter VTKWriter::writeCellScalarData( const FloatVector& data, const std::string name, Float scaling )
+{
+    const int topdim = mesh.getinnerdimension();
+
+    assert( data.getdimension() == mesh.count_simplices(topdim) );
+
+    auto datafunction = [&](int c) -> Float { return data.at(c); };
+
+    writeCellScalarData( datafunction, name, scaling );
+    
+    return *this;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+VTKWriter VTKWriter::writeCellVectorData( const std::function<FloatVector(int)>& datafunction, const std::string name, Float scaling )
+{
+    assert( current_stage >= Stage::cells );
+    assert( current_stage <= Stage::celldata );
+    
+    assert( 0 < name.size() and name.size() <= 256 );
+    assert( name.find('\n') == std::string::npos );
+    assert( count_white_space( name ) == 0 );
+    
+    const int topdim = mesh.getinnerdimension();
+    
+    if( current_stage != Stage::celldata ){
+        os << "CELL_DATA " << mesh.count_simplices(topdim) << nl << nl;
+        current_stage = Stage::celldata;
+    }
+    
+    os << "VECTORS " << name << " double" << nl;
+    // VECTORS (name_of_data) Datentyp(=float) 
+    
+    for( int c = 0; c < mesh.count_simplices(topdim); c++ ) {
+
+        auto data_item = datafunction(c);
+
+        os << data_item.at(0) << space 
+           << ( mesh.getouterdimension() >= 2 ? data_item.at(1) : 0. ) << space 
+           << ( mesh.getouterdimension() >= 3 ? data_item.at(2) : 0. ) << nl;
+    }
     
     os << nl;
 
@@ -229,88 +347,67 @@ VTKWriter VTKWriter::writeCellVectorData(
     const std::string name, 
     Float scaling )
 {
-    assert( current_stage >= Stage::cells );
-    assert( current_stage <= Stage::celldata );
-    
     const int topdim = mesh.getinnerdimension();
-    
-    assert( 0 < name.size() and name.size() <= 256 );
-    assert( name.find('\n') == std::string::npos );
-    assert( count_white_space( name ) == 0 );
     
     assert( datax.getdimension() == datay.getdimension() );
     assert( datax.getdimension() == dataz.getdimension() );
     assert( datax.getdimension() == mesh.count_simplices(topdim) );
     
-    if( current_stage != Stage::celldata ){
-        os << "CELL_DATA " << mesh.count_simplices(topdim) << nl << nl;
-        current_stage = Stage::celldata;
-    }
+    auto datafunction = [&](int c) -> FloatVector { return FloatVector({datax[c],datay[c],dataz[c]}); };
+
+    writeCellVectorData( datafunction, name, scaling );
     
-    os << "VECTORS " << name << " double" << nl;
-    // VECTORS (name_of_data) Datentyp(=float) 
+    return *this;
+}
+
+
+
+VTKWriter VTKWriter::writeCellVectorData( const std::function<FloatVector(const FloatVector&)>& function, const std::string name, Float scaling )
+{
+    const int topdim = mesh.getinnerdimension();
+
+    auto datafunction = [&](int c) -> FloatVector { return function( mesh.get_midpoint(topdim,c) ); };
     
-    for( int c = 0; c < mesh.count_simplices(topdim); c++ )
-      os << scaling * datax.at(c) << space 
-         << scaling * datay.at(c) << space 
-         << scaling * dataz.at(c) 
-         << nl;
-    
-    os << nl;
+    writeCellVectorData( datafunction, name, scaling );
 
     return *this;
 }
 
 
-VTKWriter VTKWriter::writeCellVectorData( 
-    const FloatVector& v,
-    const std::string name, 
-    Float scaling )
+
+
+
+
+
+
+
+
+
+
+
+
+
+VTKWriter VTKWriter::writeCellVectorData( const FloatVector& v, const std::string name, Float scaling )
 {
-    assert( current_stage >= Stage::cells );
-    assert( current_stage <= Stage::celldata );
-    
     const int topdim = mesh.getinnerdimension();
     
-    assert( 0 < name.size() and name.size() <= 256 );
-    assert( name.find('\n') == std::string::npos );
-    assert( count_white_space( name ) == 0 );
-    
     assert( v.getdimension() == mesh.count_simplices(topdim) * (mesh.getinnerdimension()+1) );
-    
-    if( current_stage != Stage::celldata ){
-        os << "CELL_DATA " << mesh.count_simplices(topdim) << nl << nl;
-        current_stage = Stage::celldata;
-    }
-    
-    os << "VECTORS " << name << " double" << nl;
-    
-    for( int c = 0; c < mesh.count_simplices(topdim); c++ )
-    {
-         
-        FloatVector coefficients( mesh.getinnerdimension()+1 );
         
-        const int N = mesh.getinnerdimension() + 1;
-
-        for( int i = 0; i <= mesh.getinnerdimension(); i++ )
-            coefficients[i] = v.at( c * N + i );
+    auto datafunction = [&](int c) -> FloatVector {
+    
+        FloatVector coefficients( topdim+1 );
+        
+        for( int i = 0; i <= mesh.getinnerdimension(); i++ ) coefficients[i] = v.at( c * (topdim+1) + i );
         
         FloatVector directions = scaling * mesh.getGradientMatrix(topdim,c) * coefficients;
 
-        // TODO: implement this function 
-        os << directions.at(0) << space 
-           << ( mesh.getouterdimension() >= 2 ? directions.at(1) : 0. ) << space 
-           << ( mesh.getouterdimension() >= 3 ? directions.at(2) : 0. ) << nl; 
-        // os << mesh.get_midpoint( topdim, c ).at(0) << space 
-        //    << mesh.get_midpoint( topdim, c ).at(1) << space 
-        //    << 0. << nl; 
-    }
+        return directions;
+    };
     
-    os << nl;
-
+    writeCellVectorData( datafunction, name, scaling );
+    
     return *this;
 }
-
 
 
 

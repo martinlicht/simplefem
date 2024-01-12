@@ -7,6 +7,7 @@
 #include "../../operators/composedoperators.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
+#include "../../sparse/rainbow.hpp"
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
@@ -107,20 +108,23 @@ int main()
     contable_res.display_convergence_rates   = false;
     
 
-    bool do_cgmpp      = true;
-    bool do_crmpp_expl = true;
-    bool do_crmpp_robt = true;
-    bool do_crmpp_fast = true;
-    bool do_minres     = true;
-    bool do_herzog     = true;
+    bool do_cgmpp      = false;
+    bool do_crmpp_expl = false;
+    bool do_crmpp_robt = false;
+    bool do_crmpp_fast = false;
+    bool do_minres     = false;
+    bool do_herzog     = false;
     //
-    bool do_cgm_csr                = true;
+    bool do_cgm_csr                = false;
     bool do_crm_csr                = true;
     bool do_crm_csrtextbook        = true;
     bool do_minres_csr             = true;
     bool do_whatever_csr           = false;
-    bool do_cgm_diagonal_csr       = true;
+    bool do_cgm_diagonal_csr       = false;
     bool do_cgm_ssor_csr           = true;
+    bool do_cgm_ssor_eisenstat_csr = true;
+    bool do_cgm_ssor_rainbow_csr   = true;
+    bool do_cgm_ssor_eisenstat_rainbow_csr = true;
     bool do_chebyshev_diagonal_csr = false;
 
     if( do_cgmpp      ) contable_u << "CGM++"      ;
@@ -137,6 +141,9 @@ int main()
     if( do_whatever_csr )           contable_u << "WHATEVER"     ;
     if( do_cgm_diagonal_csr )       contable_u << "CGMcsr_diag"  ;
     if( do_cgm_ssor_csr )           contable_u << "CGMcsr_ssor"  ;
+    if( do_cgm_ssor_eisenstat_csr ) contable_u << "CGMcsr_ssor_ei";
+    if( do_cgm_ssor_rainbow_csr )        contable_u << "CGMcsr_ssor_rb";
+    if( do_cgm_ssor_eisenstat_rainbow_csr )   contable_u << "CGMcsr_ssor_eirb" ;
     if( do_chebyshev_diagonal_csr ) contable_u << "Chebyshev_csr";
     
     if( do_cgmpp      ) contable_du << "CGM++"      ;
@@ -153,6 +160,9 @@ int main()
     if( do_whatever_csr )           contable_du << "WHATEVER"     ;
     if( do_cgm_diagonal_csr )       contable_du << "CGMcsr_diag"  ;
     if( do_cgm_ssor_csr )           contable_du << "CGMcsr_ssor"  ;
+    if( do_cgm_ssor_eisenstat_csr ) contable_du << "CGMcsr_ssor_ei";
+    if( do_cgm_ssor_rainbow_csr )        contable_du << "CGMcsr_ssor_rb";
+    if( do_cgm_ssor_eisenstat_rainbow_csr )   contable_du << "CGMcsr_ssor_eirb" ;
     if( do_chebyshev_diagonal_csr ) contable_du << "Chebyshev_csr";
     
     if( do_cgmpp      ) contable_iter << "CGM++"      ;
@@ -169,6 +179,9 @@ int main()
     if( do_whatever_csr )           contable_iter << "WHATEVER"     ;
     if( do_cgm_diagonal_csr )       contable_iter << "CGMcsr_diag"  ;
     if( do_cgm_ssor_csr )           contable_iter << "CGMcsr_ssor"  ;
+    if( do_cgm_ssor_eisenstat_csr ) contable_iter << "CGMcsr_ssor_ei";
+    if( do_cgm_ssor_rainbow_csr )        contable_iter << "CGMcsr_ssor_rb";
+    if( do_cgm_ssor_eisenstat_rainbow_csr )   contable_iter << "CGMcsr_ssor_eirb" ;
     if( do_chebyshev_diagonal_csr ) contable_iter << "Chebyshev_csr";
 
     if( do_cgmpp      ) contable_time << "CGM++"      ;
@@ -185,6 +198,9 @@ int main()
     if( do_whatever_csr )           contable_time << "WHATEVER"     ;
     if( do_cgm_diagonal_csr )       contable_time << "CGMcsr_diag"  ;
     if( do_cgm_ssor_csr )           contable_time << "CGMcsr_ssor"  ;
+    if( do_cgm_ssor_eisenstat_csr ) contable_time << "CGMcsr_ssor_ei";
+    if( do_cgm_ssor_rainbow_csr )        contable_time << "CGMcsr_ssor_rb";
+    if( do_cgm_ssor_eisenstat_rainbow_csr )   contable_time << "CGMcsr_ssor_eirb" ;
     if( do_chebyshev_diagonal_csr ) contable_time << "Chebyshev_csr";
 
     if( do_cgmpp      ) contable_res << "CGM++"      ;
@@ -201,11 +217,15 @@ int main()
     if( do_whatever_csr )           contable_res << "WHATEVER"     ;
     if( do_cgm_diagonal_csr )       contable_res << "CGMcsr_diag"  ;
     if( do_cgm_ssor_csr )           contable_res << "CGMcsr_ssor"  ;
+    if( do_cgm_ssor_eisenstat_csr ) contable_res << "CGMcsr_ssor_ei";
+    if( do_cgm_ssor_rainbow_csr )        contable_res << "CGMcsr_ssor_rb";
+    if( do_cgm_ssor_eisenstat_rainbow_csr )   contable_res << "CGMcsr_ssor_eirb" ;
     if( do_chebyshev_diagonal_csr ) contable_res << "Chebyshev_csr";
-
-    const int min_l = 0; 
     
-    const int max_l = 6;
+
+    const int min_l = 1; 
+    
+    const int max_l = 4;
     
     const int min_r = 1; 
     
@@ -257,32 +277,35 @@ int main()
                 
                 FloatVector sol_orignal( SystemMatrix.getdimin(), 0. );
 
-                for( int k = 0; k <= 12; k++ )
+                for( int k = 0; k <= 15; k++ )
                 {
 
-                    Float runtime;
-                    int iteration_count;
+                    Float runtime = 0.;
+                    int iteration_count = 0;
 
-                    if( k== 0 and not do_cgmpp      ) continue;
-                    if( k== 1 and not do_crmpp_expl ) continue;
-                    if( k== 2 and not do_crmpp_robt ) continue;
-                    if( k== 3 and not do_crmpp_fast ) continue;
-                    if( k== 4 and not do_minres     ) continue;
-                    if( k== 5 and not do_herzog     ) continue;
+                    if( k ==  0 and not do_cgmpp      ) continue;
+                    if( k ==  1 and not do_crmpp_expl ) continue;
+                    if( k ==  2 and not do_crmpp_robt ) continue;
+                    if( k ==  3 and not do_crmpp_fast ) continue;
+                    if( k ==  4 and not do_minres     ) continue;
+                    if( k ==  5 and not do_herzog     ) continue;
                     //
-                    if( k== 6 and not do_cgm_csr )                continue;
-                    if( k== 7 and not do_crm_csr )                continue;
-                    if( k== 8 and not do_crm_csrtextbook )        continue;
-                    if( k== 9 and not do_minres_csr )             continue;
-                    if( k==10 and not do_whatever_csr )           continue;
-                    if( k==11 and not do_cgm_diagonal_csr )       continue;
-                    if( k==12 and not do_cgm_ssor_csr )           continue;
-                    if( k==13 and not do_chebyshev_diagonal_csr ) continue;
+                    if( k ==  6 and not do_cgm_csr )                continue;
+                    if( k ==  7 and not do_crm_csr )                continue;
+                    if( k ==  8 and not do_crm_csrtextbook )        continue;
+                    if( k ==  9 and not do_minres_csr )             continue;
+                    if( k == 10 and not do_whatever_csr )           continue;
+                    if( k == 11 and not do_cgm_diagonal_csr )       continue;
+                    if( k == 12 and not do_cgm_ssor_csr )           continue;
+                    if( k == 13 and not do_cgm_ssor_eisenstat_csr ) continue;
+                    if( k == 14 and not do_cgm_ssor_rainbow_csr )   continue;
+                    if( k == 15 and not do_cgm_ssor_eisenstat_rainbow_csr ) continue;
+                    if( k == 16 and not do_chebyshev_diagonal_csr ) continue;
 
                     auto sol = sol_orignal;
                         
 
-                    if( k== 0 and do_cgmpp )
+                    if( k == 0 and do_cgmpp )
                     {
                         LOG << "CGM C++" << nl;
                     
@@ -299,7 +322,7 @@ int main()
                         iteration_count = Solver.recent_iteration_count;
                     }
 
-                    if( k== 1 and do_crmpp_expl )
+                    if( k == 1 and do_crmpp_expl )
                     {
                         LOG << "CRM C++" << nl;
                     
@@ -316,7 +339,7 @@ int main()
                         iteration_count = Solver.recent_iteration_count;
                     }
 
-                    if( k== 2 and do_crmpp_robt )
+                    if( k == 2 and do_crmpp_robt )
                     {
                         LOG << "CRM C++" << nl;
                     
@@ -333,7 +356,7 @@ int main()
                         iteration_count = Solver.recent_iteration_count;
                     }
 
-                    if( k== 3 and do_crmpp_fast )
+                    if( k == 3 and do_crmpp_fast )
                     {
                         LOG << "CRM C++" << nl;
                     
@@ -350,7 +373,7 @@ int main()
                         iteration_count = Solver.recent_iteration_count;
                     }
 
-                    if( k== 4 and do_minres )
+                    if( k == 4 and do_minres )
                     {
                         LOG << "MINRES C++" << nl;
                     
@@ -367,7 +390,7 @@ int main()
                         iteration_count = Solver.recent_iteration_count;
                     }
 
-                    if( k== 5 and do_herzog )
+                    if( k == 5 and do_herzog )
                     {
                         LOG << "HERZOG SOODHALTER C++" << nl;
                     
@@ -384,7 +407,7 @@ int main()
                         iteration_count = Solver.recent_iteration_count;
                     }
                     
-                    if( k== 6 and do_cgm_csr )
+                    if( k == 6 and do_cgm_csr )
                     {
                         LOG << "CGM - CSR Classic" << nl;
                     
@@ -408,7 +431,7 @@ int main()
                         iteration_count = recent_iteration_count;
                     }
 
-                    if( k== 7 and do_crm_csr )
+                    if( k == 7 and do_crm_csr )
                     {
                         LOG << "CRM - CSR Classic" << nl;
                     
@@ -433,7 +456,7 @@ int main()
                         iteration_count = recent_iteration_count;
                     }
 
-                    if( k== 8 and do_crm_csrtextbook )
+                    if( k == 8 and do_crm_csrtextbook )
                     {
                         LOG << "CRM - CSR Textbook" << nl;
                     
@@ -458,7 +481,7 @@ int main()
                         iteration_count = recent_iteration_count;
                     }
 
-                    if( k== 9 and do_minres_csr )
+                    if( k == 9 and do_minres_csr )
                     {
                         LOG << "MINRES CSR" << nl;
                     
@@ -484,7 +507,7 @@ int main()
                     }
 
 
-                    if( k==10 and do_whatever_csr )
+                    if( k == 10 and do_whatever_csr )
                     {
                         LOG << "WHATEVER CSR" << nl;
                     
@@ -509,7 +532,7 @@ int main()
                         iteration_count = recent_iteration_count;
                     }
 
-                    if( k==11 and do_cgm_diagonal_csr )
+                    if( k == 11 and do_cgm_diagonal_csr )
                     {
                         LOG << "CGM - CSR Classic with diagonal preconditioning" << nl;
                         
@@ -537,7 +560,7 @@ int main()
                         iteration_count = recent_iteration_count;
                     }
 
-                    if( k==12 and do_cgm_ssor_csr )
+                    if( k == 12 and do_cgm_ssor_csr )
                     {
                         LOG << "CGM - CSR Classic with SSOR" << nl;
                         
@@ -565,6 +588,136 @@ int main()
                         runtime  = static_cast<Float>( end - start );
                         iteration_count = recent_iteration_count;
                     }
+                        
+
+                    
+
+                    if( k == 13 and do_cgm_ssor_eisenstat_csr )
+                    {
+                        LOG << "CGM - CSR Classic with Eisenstat-SSOR" << nl;
+                        
+                        auto diagonal = SystemMatrix.diagonal();
+
+                        FloatVector residual( rhs );
+                        // auto max_iteration_count = sol.getdimension();
+                        timestamp start = gettimestamp();
+                        auto recent_iteration_count = 
+                        ConjugateGradientSolverCSR_SSOR_Eisenstat( 
+                            sol.getdimension(), 
+                            sol.raw(), 
+                            rhs.raw(), 
+                            SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
+                            residual.raw(),
+                            desired_precision,
+                            0,
+                            diagonal.raw(),
+                            1.0
+                        );
+
+                        timestamp end = gettimestamp();
+                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
+                        
+                        runtime  = static_cast<Float>( end - start );
+                        iteration_count = recent_iteration_count;
+                    }
+                        
+
+                    if( k == 14 and do_cgm_ssor_rainbow_csr )
+                    {
+                        LOG << "CGM - CSR Classic with Rainbow-SSOR" << nl;
+                    
+                        FloatVector diagonal = SystemMatrix.diagonal();
+                        
+                        Rainbow rainbow( SystemMatrix );
+
+                        FloatVector residual( rhs );
+                        // auto max_iteration_count = sol.getdimension();
+                        timestamp start = gettimestamp();
+                        int recent_iteration_count =
+                        ConjugateGradientSolverCSR_Rainbow( 
+                            sol.getdimension(), 
+                            sol.raw(), 
+                            rhs.raw(), 
+                            SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
+                            residual.raw(),
+                            desired_precision,
+                            0,
+                            diagonal.raw(),
+                            1.0,
+                            rainbow.num_colors, rainbow.F.data(), rainbow.B.data(), rainbow.R.data()
+                        );
+                        timestamp end = gettimestamp();
+                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
+                        
+                        runtime  = static_cast<Float>( end - start );
+                        iteration_count = recent_iteration_count;
+                    }
+                        
+
+                    if( k == 15 and do_cgm_ssor_eisenstat_rainbow_csr )
+                    {
+                        LOG << "CGM - CSR Classic with Eisenstat-Rainbow-SSOR" << nl;
+                    
+                        FloatVector diagonal = SystemMatrix.diagonal();
+                        
+                        Rainbow rainbow( SystemMatrix );
+
+                        FloatVector residual( rhs );
+                        // auto max_iteration_count = sol.getdimension();
+                        timestamp start = gettimestamp();
+                        int recent_iteration_count =
+                        ConjugateGradientSolverCSR_Eisenstat_Rainbow( 
+                            sol.getdimension(), 
+                            sol.raw(), 
+                            rhs.raw(), 
+                            SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
+                            residual.raw(),
+                            desired_precision,
+                            0,
+                            diagonal.raw(),
+                            1.0,
+                            rainbow.num_colors, rainbow.F.data(), rainbow.B.data(), rainbow.R.data()
+                        );
+                        timestamp end = gettimestamp();
+                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
+                        
+                        runtime  = static_cast<Float>( end - start );
+                        iteration_count = recent_iteration_count;
+                    }
+                        
+                        
+                    if( k == 16 and do_chebyshev_diagonal_csr )
+                    {
+                        LOG << "CHEBYSHEV CSR" << nl;
+                    
+                        DiagonalOperator invprecon = InverseDiagonalPreconditioner( SystemMatrix );
+                        assert( invprecon.getdiagonal().isfinite() );
+                        assert( invprecon.getdiagonal().isnonnegative() );
+                        
+                        FloatVector residual( rhs );
+                        // auto max_iteration_count = sol.getdimension();
+                        timestamp start = gettimestamp();
+                        int recent_iteration_count =
+                        ChebyshevIteration_DiagonalPreconditioner( 
+                            sol.getdimension(), 
+                            sol.raw(), 
+                            rhs.raw(), 
+                            SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
+                            residual.raw(),
+                            desired_precision,
+                            10,
+                            invprecon.getdiagonal().raw(),
+                            0.,
+                            100 * invprecon.getdiagonal().maxnorm()
+                        );
+                        timestamp end = gettimestamp();
+                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
+                        
+                        runtime  = static_cast<Float>( end - start );
+                        iteration_count = recent_iteration_count;
+                    }
+
+
 
                     assert( sol.isfinite() );
 

@@ -52,12 +52,12 @@ SparseMatrix FEECSullivanInclusionMatrix( const Mesh& mesh, int n, int k, int r 
     
     // dimensions of the matrix 
     
-    const int dim_out = num_volumes * binomial_integer( n+1, k ) * binomial_integer( n+r, r );
+    const int dim_broken = num_volumes * binomial_integer( n+1, k ) * binomial_integer( n+r, r );
     // 2+1+1 choose 1
-    // const int dim_in = sum_int( n, [ num_faces&, lists_of_sullivan_indices& ](int d) -> int{ return num_faces[d] * lists_of_sullivan_indices[d].size(); } )
-    int dim_in  = 0;
+    // const int dim_continuous = sum_int( n, [ num_faces&, lists_of_sullivan_indices& ](int d) -> int{ return num_faces[d] * lists_of_sullivan_indices[d].size(); } )
+    int dim_continuous  = 0;
     for( auto d : IndexRange(0,n) )
-        dim_in += num_faces[d] * lists_of_sullivan_indices[d].size();
+        dim_continuous += num_faces[d] * lists_of_sullivan_indices[d].size();
     
     // const int num_entries = num_volumes * sum_int( n, [ num_faces&, lists_of_sullivan_indices&, n ](int d) -> int{ return binomial_integer(n+1,d+1) * lists_of_sullivan_indices[d].size(); } )
     int num_entries = 0;
@@ -66,7 +66,7 @@ SparseMatrix FEECSullivanInclusionMatrix( const Mesh& mesh, int n, int k, int r 
     
     // create that matrix 
     
-    SparseMatrix ret( dim_out, dim_in, num_entries );
+    SparseMatrix ret( dim_broken, dim_continuous, num_entries );
     
     
     // for auxiliary purposes, create the index inclusion maps 
@@ -75,23 +75,40 @@ SparseMatrix FEECSullivanInclusionMatrix( const Mesh& mesh, int n, int k, int r 
     std::vector< std::vector<IndexMap> > subsimplex_inclusions( n+1 );
     for( auto d : IndexRange(0,n) )
         subsimplex_inclusions[d] = generateSigmas( IndexRange(0,d), IndexRange(0,n) );
+
+
+    // for auxiliary purposes, compute the column offsets 
+    std::vector<int> column_offset( n+1, 0 );
+    for( int d = 1; d <= n; d++ )
+        column_offset[d] = column_offset[d-1] + mesh.count_simplices(d-1) * lists_of_sullivan_indices[d-1].size();
+
+    // for auxiliary purposes, compute the entries offsets 
+    std::vector<int> entries_offset( n+1, 0 );
+    for( int d = 1; d <= n; d++ )
+        entries_offset[d] = entries_offset[d-1] + binomial_integer(n+1,d) * lists_of_sullivan_indices[d-1].size()  * num_volumes; // 
+
     
     for( int d  = 0; d  <= n;                          d++ )       // go over all the subsimplex dimensions
     for( int fi = 0; fi  < binomial_integer(n+1,d+1); fi++ )       // go over all the d dimensional subsimplices 
-    for( const auto& alphasigma : lists_of_sullivan_indices[d] )   // go over the corresponding alpha/sigma pairs
+    // for( const auto& alphasigma : lists_of_sullivan_indices[d] )   // go over the corresponding alpha/sigma pairs
+    for( int index_alphasigma = 0; index_alphasigma < lists_of_sullivan_indices[d].size(); index_alphasigma++ )   // go over the corresponding alpha/sigma pairs
+    #if defined(_OPENMP)
+    #pragma omp parallel for
+    #endif 
     for( int s  = 0; s   < num_volumes;                s++ )       // go over all the volumes 
     {
         
         // Find indices of things and prepare auxiliary variables 
-        
+        const auto& alphasigma = lists_of_sullivan_indices[d][index_alphasigma];
+
         const MultiIndex& alpha = alphasigma.first;
         
         const IndexMap&   sigma = alphasigma.second;
         
-        const int index_alphasigma = 
-            std::find( lists_of_sullivan_indices[d].begin(), lists_of_sullivan_indices[d].end(), alphasigma )
-            - 
-            lists_of_sullivan_indices[d].begin();
+        // const int index_alphasigma = 
+        //     std::find( lists_of_sullivan_indices[d].begin(), lists_of_sullivan_indices[d].end(), alphasigma )
+        //     - 
+        //     lists_of_sullivan_indices[d].begin();
         assert( 0 <= index_alphasigma && index_alphasigma < lists_of_sullivan_indices[d].size() );
         assert( lists_of_sullivan_indices[d][index_alphasigma] == alphasigma );
         
@@ -137,15 +154,13 @@ SparseMatrix FEECSullivanInclusionMatrix( const Mesh& mesh, int n, int k, int r 
 
         // enter the values of the data structure 
 
-        int rowindex = s * binomial_integer(n+r,r) * binomial_integer(n+1,k) 
+        int broken_index = s * binomial_integer(n+r,r) * binomial_integer(n+1,k) 
                        +
                        index_alpha_vol * binomial_integer(n+1,k)
                        + 
                        index_sigma_vol;
 
-        int colindex = sum_int( d-1, 
-                        [&mesh,&lists_of_sullivan_indices](int i) -> int { return mesh.count_simplices(i) * lists_of_sullivan_indices[i].size(); } 
-                       )
+        int continuous_index = column_offset[d]  //sum_int( d-1, [&mesh,&lists_of_sullivan_indices](int i) -> int { return mesh.count_simplices(i) * lists_of_sullivan_indices[i].size(); } )
                        + 
                        index_fi * lists_of_sullivan_indices[d].size()
                        +
@@ -154,9 +169,7 @@ SparseMatrix FEECSullivanInclusionMatrix( const Mesh& mesh, int n, int k, int r 
 
         Float value  = 1.;
 
-        int index_of_entry = sum_int( d-1, 
-                                [ &lists_of_sullivan_indices, n ](int c) -> int { return binomial_integer(n+1,c+1) * lists_of_sullivan_indices[c].size(); }
-                             ) * num_volumes
+        int index_of_entry = entries_offset[d] // sum_int( d-1, [ &lists_of_sullivan_indices, n ](int c) -> int { return binomial_integer(n+1,c+1) * lists_of_sullivan_indices[c].size(); } ) * num_volumes
                              +
                              fi * lists_of_sullivan_indices[d].size() * num_volumes
                              +
@@ -164,17 +177,17 @@ SparseMatrix FEECSullivanInclusionMatrix( const Mesh& mesh, int n, int k, int r 
                              +
                              s; 
                              
-        assert( rowindex       < dim_out );
-        assert( colindex       < dim_in  );
-        assert( index_of_entry < num_entries );
-        assert( rowindex >= 0 && colindex >= 0 && index_of_entry >= 0 );
+        assert( broken_index     < dim_broken );
+        assert( continuous_index < dim_continuous  );
+        assert( index_of_entry   < num_entries );
+        assert( broken_index >= 0 && continuous_index >= 0 && index_of_entry >= 0 );
             
         // set up the actual entry
         
         SparseMatrix::MatrixEntry entry;
         
-        entry.row    = rowindex;
-        entry.column = colindex;
+        entry.row    = broken_index;
+        entry.column = continuous_index;
         entry.value  = value;
         
         if( mesh.get_flag( d, index_fi ) == SimplexFlagDirichlet )

@@ -91,12 +91,12 @@ class DenseMatrix final
         
         /* Access entries */
         
-        Float get(int,int) const;
-        void set(int,int,Float);
-        Float& at( int, int ) &;
-        const Float& at( int, int ) const &;
-        Float& operator()( int, int ) &;
-        const Float& operator()( int, int ) const &;
+        HOTCALL Float get(int,int) const;
+        HOTCALL void set(int,int,Float);
+        HOTCALL Float& at( int, int ) &;
+        HOTCALL const Float& at( int, int ) const &;
+        HOTCALL Float& operator()( int, int ) &;
+        HOTCALL const Float& operator()( int, int ) const &;
         
         /* Access rows and columns */
         
@@ -194,6 +194,10 @@ class DenseMatrix final
         Float* raw();
         const Float* raw() const;
 
+        /* Memory size */
+        
+        long long memorysize() const;
+
     private:
         
         Float* entries;
@@ -230,6 +234,44 @@ inline DenseMatrix MatrixMult( const DenseMatrix& left, const DenseMatrix& right
     for( int ri = 0; ri < rin; ri++ )
     for( int m = 0; m < rout; m++ )
         ret( lo, ri ) += left( lo, m ) * right( m, ri );
+
+    ret.check();
+    return ret;
+}
+
+
+inline DenseMatrix MatrixTripleMult( const DenseMatrix& A, const DenseMatrix& B )
+{
+    A.check();
+    B.check();
+
+    assert( A.issquare());
+
+    const int a = A.getdimin();
+    const int b = B.getdimin();
+    
+    assert( a == B.getdimout() );
+
+    DenseMatrix ret( b, b, 0. );
+
+    for( int j = 0; j < b; j++ )
+    for( int k = 0; k < a; k++ ) 
+    {
+        Float AB_kj = 0;
+    
+        for( int l = 0; l < a; l++ )
+            AB_kj += A(k,l) * B(l,j);
+    
+        for( int i = 0; i < b; i++ )
+            ret(i,j) += B(k,i) * AB_kj;
+    }
+
+
+    // for( int i = 0; i < b; i++ )
+    // for( int k = 0; k < a; k++ )
+    // for( int j = 0; j < b; j++ )
+    // for( int l = 0; l < a; l++ )
+    //     ret( i, j ) += B(k,i) * A(k,l) * B(l,j);
 
     ret.check();
     return ret;

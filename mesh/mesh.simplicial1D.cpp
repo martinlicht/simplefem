@@ -404,7 +404,7 @@ const std::vector<int> MeshSimplicial1D::getsupersimplices( int sup, int sub, in
     
     assert( 0 <= cell && cell < count_vertices() );
     auto temp = get_edge_parents_of_vertex( cell ); 
-    return std::vector<int>( temp.begin(), temp.end() );
+    return temp; //return std::vector<int>( temp.begin(), temp.end() );
     
   } else if( sup == 1 && sub == 1 ) {
     
@@ -560,10 +560,12 @@ std::vector<int> MeshSimplicial1D::get_edge_parents_of_vertex( int v ) const
   
   std::vector<int> ret;
   
-  for( int e = 0; e < count_edges(); e++ ) 
-    for( int ev : get_edge_vertices(e) )
-      if( v == ev )
-        ret.push_back( e );
+  int e = get_vertex_firstparent_edge(v);
+  while( e != nullindex )
+  {
+    ret.push_back(e);
+    e = this->get_vertex_nextparent_edge(v,e);
+  }
   
   return ret;
 }
@@ -937,6 +939,32 @@ void MeshSimplicial1D::merge( const MeshSimplicial1D& mesh )
 
 
 
+
+
+
+
+
+long long MeshSimplicial1D::memorysize() const
+{
+    long long ret = 0;
+
+    ret += getcoordinates().memorysize();
+
+    ret += sizeof(getinnerdimension());
+    ret += sizeof(getouterdimension());
+
+    ret += sizeof( counter_edges    );
+    ret += sizeof( counter_vertices );
+
+    { const auto& D = data_edge_vertices;                ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_vertex_firstparent_edge;      ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_edge_nextparents_of_vertices; ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    
+    { const auto& D = flags_edges;    ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = flags_vertices; ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+
+    return ret;
+}
 
 
 

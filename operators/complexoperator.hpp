@@ -62,7 +62,7 @@ class ComplexOperator final
         
         ComplexOperator( int dim, Float real, Float imag )
         : ComplexOperator( ScalingOperator(dim,real), ScalingOperator(dim,imag) )
-        {};
+        {}
         
 
         /* standard methods for operators */

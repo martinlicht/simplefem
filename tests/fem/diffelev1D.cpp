@@ -118,13 +118,13 @@ int main()
         
         LOG << "Convergence tables" << nl;
     
-        ConvergenceTable contable[ M.getinnerdimension() ];
+        ConvergenceTable contables[ M.getinnerdimension() ];
         
         for( int k = 0; k < M.getinnerdimension(); k++ ) 
-            contable[k].table_name = "Rounding errors D1K" + std::to_string(k);
+            contables[k].table_name = "Rounding errors D1K" + std::to_string(k);
         for( int k = 0; k < M.getinnerdimension(); k++ ) 
         for( int r = r_min; r <= r_max; r++ ) 
-            contable[k] << printf_into_string("R%d+%d", r-r_min, r_plus_max );;
+            contables[k] << printf_into_string("R%d+%d", r-r_min, r_plus_max );;
 
         
         for( int l = l_min; l <= l_max; l++ ) 
@@ -134,12 +134,12 @@ int main()
             {
                 
                 for( int i = 0; i < M.getinnerdimension(); i++ ) 
-                    contable[i] << errors[i][l-l_min][r-r_min][r_plus_max];
+                    contables[i] << errors[i][l-l_min][r-r_min][r_plus_max];
                         
             }
             
             for( int i = 0; i < M.getinnerdimension(); i++ ) 
-                contable[i] << nl; 
+                contables[i] << nl; 
             
         }
         
@@ -147,7 +147,7 @@ int main()
         
         for( int i = 0; i < M.getinnerdimension(); i++ ) 
         {
-            contable[i].lg(); 
+            contables[i].lg(); 
             LOG << "-------------------" << nl;
         }
                 

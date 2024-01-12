@@ -34,5 +34,7 @@ int main()
         
         Contable.lg();
         
+        LOG << Contable.TeXtabular();
+        
         return 0;
 }

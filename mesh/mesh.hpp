@@ -27,12 +27,13 @@
 *******************/
 
 
-typedef unsigned int SimplexFlag;
+typedef unsigned char SimplexFlag;
 
-const SimplexFlag SimplexFlagNull    = 0x1B1B1B1B;
-const SimplexFlag SimplexFlagInvalid = 0x77777777;
+const SimplexFlag SimplexFlagNull    = 0x1B;
+const SimplexFlag SimplexFlagInvalid = 0x77;
 
-const SimplexFlag SimplexFlagDirichlet = 0xF1F1F1F1;
+const SimplexFlag SimplexFlagDirichlet = 0xF1;
+
 
 
 /*******************
@@ -138,6 +139,8 @@ class Mesh
         
         virtual int get_subsimplex( int sup, int sub, int cellsup, int localindex ) const;
         
+        int get_opposite_subsimplex_index( int sup, int sub, int cellsup, int localindex ) const;
+        
         
         
         /* 
@@ -167,7 +170,7 @@ class Mesh
         virtual int get_index_of_supersimplex( int sup, int sub, int cellsup, int cellsub ) const;
         
         virtual int get_supersimplex_by_index( int sup, int sub, int cellsub, int parentindex ) const;
-        
+
         // TODO: Iterator interface
         // ContainerInterface -- container.hpp 
         // derive from that class 
@@ -192,7 +195,7 @@ class Mesh
         
         void automatic_dirichlet_flags();
         
-        void check_dirichlet_flags();
+        void check_dirichlet_flags( bool check_for_full_dirichlet = true );
         
         
         /* 
@@ -204,11 +207,20 @@ class Mesh
         
         Float getMeasure( int dim, int index ) const;
         
+        Float getHeight( int dim, int index, int vertexindex ) const;
+        
         Float getShapemeasure( int dim, int index ) const;
         Float getShapemeasure( int dim ) const;
         Float getShapemeasure() const;
         
         FloatVector get_midpoint( int dim, int index ) const;
+
+        FloatVector get_random_point( int dim, int index ) const;
+
+        FloatVector getPointFromBarycentric( int dim, int index, const FloatVector& barycoords ) const;
+
+        
+        int get_longest_edge_index( int dim, int index ) const;
         
         DenseMatrix getVertexCoordinateMatrix( int dim, int index ) const;
         
@@ -221,7 +233,17 @@ class Mesh
         DenseMatrix getGradientProductMatrix( int dim, int index ) const;
         
         DenseMatrix getGradientProductMatrixRightFactor( int dim, int index ) const;
+
         
+        /* 
+         * Manipulation
+         * 
+         */
+        
+        void shake_interior_vertices( Float intensity = 0.25, Float probability = 0.5 );
+        
+
+        virtual long long memorysize() const = 0;
         
     private:
         
@@ -232,14 +254,14 @@ class Mesh
         
     private:
         
-        std::vector< std::vector< std::vector<IndexMap> > > auxdata;
+        // std::vector< std::vector< std::vector<IndexMap> > > auxdata;
         
     public: 
         
 #if __cplusplus >= 201402L
-        const auto& getauxdata() { return auxdata; }
+        // const auto& getauxdata() { return auxdata; }
 #else
-        const decltype(auxdata)& getauxdata() { return auxdata; }
+        // const decltype(auxdata)& getauxdata() { return auxdata; }
 #endif
         
 };
@@ -255,6 +277,7 @@ inline std::ostream& operator<<( std::ostream& os, const Mesh& mesh )
 
 
 
+FloatVector get_random_barycentric_coordinates( int dim );
 
 // static inline int countsubsimplices( int n, int k )
 // {

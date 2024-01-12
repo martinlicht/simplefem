@@ -7,10 +7,21 @@
 #endif
 
 
+#ifdef ELIDE_HOT_FUNCTIONS
+#if defined(__GNUC__) or defined(__clang__)
+#define HOTCALL __attribute__((hot,warning("Performance-critical function call not elided.")))
+#endif // defined(__GCNUC__) or defined(__clang__)
+#else 
+#define HOTCALL 
+// #warning No hot calls
+#endif // ELIDE_HOT_FUNCTIONS
+
+
+
 #include <cmath>
-// #include <cstdint>
-// #include <cstdio>
-// #include <cstdlib>
+#include <cstdint>
+#include <cstdio>
+#include <cstdlib>
 // #include <ctime>
 
 // #include <algorithm>
@@ -40,23 +51,56 @@
 //                                             //
 /////////////////////////////////////////////////
 
-#ifndef EXTENDED_PRECISION
-typedef double Float;
-#else 
+// #ifndef EXTENDED_PRECISION
+// typedef double Float;
+// #else 
+// typedef long double Float;
+// #endif
+
+#if defined(EXTENDED_PRECISION)
 typedef long double Float;
+#elif defined(SINGLE_PRECISION)
+typedef float Float;
+#else 
+typedef double Float;
 #endif
+
+
+constexpr Float SqrtHelper( Float a, Float x, unsigned int i )
+{
+    return ( i == 0 ) ? x : SqrtHelper( a, ( a / x + x ) / 2, i-1 );
+}
+
+constexpr Float Sqrt( Float a, unsigned int i = 40 )
+{
+    return SqrtHelper( a, a, i );
+}
+
+constexpr Float Sqrt_( Float a, bool init = true, unsigned int i = 40, Float x = 0. )
+{
+    return ( init ) ? Sqrt_( a, false, i, a ) : ( i==0 ? x : Sqrt_( a, false, i-1, ( a / x + x ) / 2 ) );
+}
+
+
+
 
 
 static const constexpr Float notanumber = std::numeric_limits<Float>::quiet_NaN();
 
 static const constexpr Float machine_epsilon = std::numeric_limits<Float>::epsilon();
 
-static const /*constexpr*/ Float desired_precision = std::sqrt( machine_epsilon );
+static const constexpr Float desired_precision = 
+                                    sizeof(Float) == sizeof(float) ? 10e-6 : Sqrt( machine_epsilon );
 
 
 // TODO: Put these somewhere where it makes sense 
 extern template class std::vector<int>;
 extern template class std::vector<Float>;
+
+
+
+
+
 
 
 
@@ -551,6 +595,11 @@ Float blob_dev( Float x );
 Float blob_devdev( Float x );
 
 Float blob_devdevdev( Float x );
+
+Float sinpy( Float x );
+
+Float cospy( Float x );
+
 
 
 

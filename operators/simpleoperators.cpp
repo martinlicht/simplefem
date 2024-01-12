@@ -262,3 +262,57 @@ const DiagonalOperator DiagonalOperator::sqrt() const
     } );
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+LambdaOperator::LambdaOperator( int n, std::function<FloatVector(const FloatVector&)> func )
+: LambdaOperator( n, n, func )
+{
+    LambdaOperator::check();
+}
+
+LambdaOperator::LambdaOperator( int dimout, int dimin, std::function<FloatVector(const FloatVector&)> func )
+: LinearOperator( dimout, dimin ), func(func)
+{
+    LambdaOperator::check();
+}
+
+LambdaOperator::~LambdaOperator()
+{
+    LambdaOperator::check();
+}
+
+void LambdaOperator::check() const  
+{
+    LinearOperator::check();
+}
+
+std::string LambdaOperator::text() const 
+{
+    return "Lambda Operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin());
+}
+
+void LambdaOperator::apply( FloatVector& dest, const FloatVector& src, Float s ) const 
+{
+    check();
+    src.check();
+    dest.check();
+    
+    assert( getdimin() == getdimout() );
+    assert( getdimin() == src.getdimension() );
+    assert( getdimout() == dest.getdimension() );
+
+    dest = s * func( src );
+        
+}

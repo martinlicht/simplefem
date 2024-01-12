@@ -323,6 +323,24 @@ void FloatVector::random()
         setentry( p, gaussrand() ); 
 }
 
+void FloatVector::random_within_range( Float min, Float max )
+{
+    check();
+    for( int p = 0; p < getdimension(); p++ ) {
+        Float value = (max-min)*random_uniform() + min; 
+        assert( min <= value and value <= max );
+        setentry( p, value ); 
+    }   
+}
+        
+void FloatVector::to_absolute() 
+{
+    check();
+    for( int p = 0; p < getdimension(); p++ )
+        setentry( p, absolute( getentry(p) ) ); 
+}
+
+        
 void FloatVector::zero() 
 {
     check();
@@ -632,16 +650,18 @@ Float FloatVector::l2norm() const
     return norm();
 }
 
-Float FloatVector::lpnorm( Float p ) const
+Float FloatVector::lpnorm( Float p, Float innerweight ) const
 {
     check();
     assert( p > 0 );
     assert( std::isfinite(p) );
     assert( std::isnormal(p) );
+    assert( std::isfinite(innerweight) and innerweight > 0. );
     
     Float ret = 0.;
     for( int d = 0; d < getdimension(); d++ )
         ret += power_numerical( absolute( pointer[d] ), p );
+    ret *= innerweight;
     return power_numerical( ret, 1./p );
 }
 
@@ -730,7 +750,12 @@ const Float* FloatVector::raw() const
 
 
 
-
+/* Memory size */
+        
+long long FloatVector::memorysize() const
+{
+    return sizeof(*this) + this->dimension * sizeof(decltype(*pointer));
+}
 
 
 

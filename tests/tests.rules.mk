@@ -60,6 +60,7 @@ linkerprefix       :=-Wl,
 $(context).rpath_t := $(patsubst %,-rpath=$(pathvar)/%,$(affix.$(context))) 
 $(context).rpath   := $(patsubst %,$(linkerprefix)%,$($(context).rpath_t)) 
 $(context).lib     := $(patsubst %,-l%,$(affix.$(context)))
+$(context).olib    := $(patsubst %,$(projectdir)/%/.all.o,$(affix.$(context)))
 $(context).alib    := $(patsubst %,-l:lib%.a,$(affix.$(context)))
 $(context).solib   := $(patsubst %,-l:lib%.so,$(affix.$(context)))
 
@@ -67,6 +68,8 @@ ifeq ($(LINKINGTYPE),static)
 $(context).mylib := $($(context).alib)
 else ifeq ($(LINKINGTYPE),dynamic)
 $(context).mylib := $($(context).solib)
+else ifeq ($(LINKINGTYPE),objectfile)
+$(context).mylib := $($(context).olib)
 else ifeq ($(LINKINGTYPE),unspecified)
 $(context).mylib := $($(context).lib)
 else
@@ -101,13 +104,17 @@ $($(context).outs): $(contextdir)/%.$(ending): $(contextdir)/%.cpp | $($(context
 #	@ echo context:     $(mycontext)
 #	@ echo context dir: $(mycontextdir)
 #	@ echo target:      $@
-#	@ echo target:      $<
-#	@ echo target:      $^
+#	@ echo source file: $<
+#	@ echo all prereq:  $^
 #	@ echo contextdir:  $(mycontextdir)
 #	@ echo depdir:      $($(mycontext).depdir)
 #	@ echo include:     $($(mycontext).include)
 #	@ echo rpath:       $($(mycontext).rpath)
 #	@ echo lib:         $($(mycontext).lib)
+#	@ echo a:           $($(mycontext).alib)
+#	@ echo object:      $($(mycontext).olib)
+#	@ echo so:          $($(mycontext).solib)
+#	@ echo used lib:    $($(mycontext).mylib)
 	@echo Compiling $@ ...
 #	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -std=c++2a -MT $@ -MF $($(mycontext).depdir)/$*.d -MM $(mycontextdir)/$*.cpp
 ifeq ($(LINKINGTYPE),dynamic)
@@ -221,44 +228,44 @@ check: tidy
 # Commands for cleaning out numerous files that are not part of the project.
 # These remove the following:
 # - clean: delete all binary files and temporary output, and the following two.
-# - vtkclean: delete all *vtk output files
+# - outputclean: delete all *vtk output files
 # - dependclean: delete .deps directories and their content
 
 # TODO: rewrite the entire thing ...
 
 # $(context).cleanpattern    := .all.o *.a *.o *.d *.so *.gch *.exe *.exe.stackdump *.out *.out.stackdump OUTPUT_CPPLINT.txt callgrind.out.* 
-# $(context).vtkcleanpattern := *.vtk
+# $(context).outputcleanpattern := *.vtk
 # $(context).depcleanpattern := .deps
 
-# $(context).cleanfiles    := $(patsubst %, $(CURDIR)/%, $(wildcard $($(context).cleanpattern   )) )
-# $(context).vtkcleanfiles := $(patsubst %, $(CURDIR)/%, $(wildcard $($(context).vtkcleanpattern)) )
-# $(context).depcleanfiles := $(patsubst %, $(CURDIR)/%, $(wildcard $($(context).depcleanpattern)) )
+# $(context).cleanfiles       := $(patsubst %, $(CURDIR)/%, $(wildcard $($(context).cleanpattern   )) )
+# $(context).outputcleanfiles := $(patsubst %, $(CURDIR)/%, $(wildcard $($(context).outputcleanpattern)) )
+# $(context).depcleanfiles    := $(patsubst %, $(CURDIR)/%, $(wildcard $($(context).depcleanpattern)) )
 
 # cleanfiles    += $($(context).cleanfiles)
-# vtkcleanfiles += $($(context).vtkcleanfiles)
+# outputcleanfiles += $($(context).outputcleanfiles)
 # depcleanfiles += $($(context).depcleanfiles)
 
-CMD_CLEAN    = rm -f .all.o *.a *.o *.d *.so *.gch OUTPUT_CPPLINT.txt callgrind.out.* *.exe *.exe.stackdump *.out *.out.stackdump 
-CMD_VTKCLEAN = rm -f ./*.vtk ./*/*.vtk ./*/*/*.vtk
-CMD_DEPCLEAN = if [ -d .deps/ ]; then rm -f .deps/*.d .deps/.all.d; rmdir .deps/; fi 
+CMD_CLEAN       = rm -f .all.o *.a *.o *.d *.so *.gch OUTPUT_CPPLINT.txt callgrind.out.* *.exe *.exe.stackdump *.out *.out.stackdump 
+CMD_OUTPUTCLEAN = rm -f ./*.vtk ./*/*.vtk ./*/*/*.vtk ./*.svg ./*/*.svg ./*/*/*.svg
+CMD_DEPCLEAN    = if [ -d .deps/ ]; then rm -f .deps/*.d .deps/.all.d; rmdir .deps/; fi 
 
 .PHONY: clean vktclean dependclean
 .PHONY: $(context).clean $(context).vktclean $(context).dependclean
 
 clean:       $(context).clean
-vtkclean:    $(context).vtkclean
+outputclean: $(context).outputclean
 dependclean: $(context).dependclean
 
-$(context).clean $(context).vtkclean $(context).dependclean: mycontext    := $(context)
-$(context).clean $(context).vtkclean $(context).dependclean: mycontextdir := $(contextdir)
+$(context).clean $(context).outputclean $(context).dependclean: mycontext    := $(context)
+$(context).clean $(context).outputclean $(context).dependclean: mycontextdir := $(contextdir)
 
 $(context).clean: 
 #	@-echo $(PWD)
-	@-cd $(mycontextdir); $(CMD_CLEAN); $(CMD_VTKCLEAN); $(CMD_DEPCLEAN); 
+	@-cd $(mycontextdir); $(CMD_CLEAN); $(CMD_OUTPUTCLEAN); $(CMD_DEPCLEAN); 
 
-$(context).vtkclean: 
+$(context).outputclean: 
 #	@-echo $(PWD)
-	@-cd $(mycontextdir); $(CMD_VTKCLEAN); 
+	@-cd $(mycontextdir); $(CMD_OUTPUTCLEAN); 
 
 $(context).dependclean: 
 #	@-echo $(PWD)

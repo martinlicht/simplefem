@@ -1726,19 +1726,19 @@ const std::vector<int> MeshSimplicial3D::getsupersimplices( int sup, int sub, in
     
     assert( 0 <= cell && cell < count_faces() );
     auto temp = get_tetrahedron_parents_of_face( cell ); 
-    return std::vector<int>( temp.begin(), temp.end() );
+    return temp; //return std::vector<int>( temp.begin(), temp.end() );
     
   } else if( sup == 3 && sub == 1 ) {
     
     assert( 0 <= cell && cell < count_edges() );
     auto temp = get_tetrahedron_parents_of_edge( cell ); 
-    return std::vector<int>( temp.begin(), temp.end() );
+    return temp; //return std::vector<int>( temp.begin(), temp.end() );
     
   } else if( sup == 3 && sub == 0 ) {
     
     assert( 0 <= cell && cell < count_vertices() );
     auto temp = get_tetrahedron_parents_of_vertex( cell ); 
-    return std::vector<int>( temp.begin(), temp.end() );
+    return temp; //return std::vector<int>( temp.begin(), temp.end() );
     
   } else if( sup == 2 && sub == 2 ) {
     
@@ -1749,13 +1749,13 @@ const std::vector<int> MeshSimplicial3D::getsupersimplices( int sup, int sub, in
     
     assert( 0 <= cell && cell < count_edges() );
     auto temp = get_face_parents_of_edge( cell ); 
-    return std::vector<int>( temp.begin(), temp.end() );
+    return temp; //return std::vector<int>( temp.begin(), temp.end() );
     
   } else if( sup == 2 && sub == 0 ) {
     
     assert( 0 <= cell && cell < count_vertices() );
     auto temp = get_face_parents_of_vertex( cell ); 
-    return std::vector<int>( temp.begin(), temp.end() );
+    return temp; //return std::vector<int>( temp.begin(), temp.end() );
     
   } else if( sup == 1 && sub == 1 ) {
     
@@ -1766,7 +1766,7 @@ const std::vector<int> MeshSimplicial3D::getsupersimplices( int sup, int sub, in
     
     assert( 0 <= cell && cell < count_vertices() );
     auto temp = get_edge_parents_of_vertex( cell ); 
-    return std::vector<int>( temp.begin(), temp.end() );
+    return temp; //return std::vector<int>( temp.begin(), temp.end() );
     
   } else if( sup == 0 && sub == 0 ) {
     
@@ -2158,11 +2158,13 @@ std::vector<int> MeshSimplicial3D::get_tetrahedron_parents_of_face( int f ) cons
   
   std::vector<int> ret;
   
-  for( int t = 0; t < count_tetrahedra(); t++ ) 
-    for( int tf : get_tetrahedron_faces(t) )
-      if( f == tf )
-        ret.push_back( t );
-  
+  int t = get_face_firstparent_tetrahedron(f);
+  while( t != nullindex )
+  {
+    ret.push_back(t);
+    t = this->get_face_nextparent_tetrahedron(f,t);
+  }
+
   return ret;
 }
 
@@ -2236,10 +2238,12 @@ std::vector<int> MeshSimplicial3D::get_tetrahedron_parents_of_edge( int e ) cons
   
   std::vector<int> ret;
   
-  for( int t = 0; t < count_tetrahedra(); t++ ) 
-    for( int te : get_tetrahedron_edges(t) )
-      if( e == te )
-        ret.push_back( t );
+  int t = get_edge_firstparent_tetrahedron(e);
+  while( t != nullindex )
+  {
+    ret.push_back(t);
+    t = this->get_edge_nextparent_tetrahedron(e,t);
+  }
   
   return ret;
 }
@@ -2314,11 +2318,13 @@ std::vector<int> MeshSimplicial3D::get_tetrahedron_parents_of_vertex( int v ) co
   
   std::vector<int> ret;
   
-  for( int t = 0; t < count_tetrahedra(); t++ ) 
-    for( int tv : get_tetrahedron_vertices(t) )
-      if( v == tv )
-        ret.push_back( t );
-  
+  int t = get_vertex_firstparent_tetrahedron(v);
+  while( t != nullindex )
+  {
+    ret.push_back(t);
+    t = this->get_vertex_nextparent_tetrahedron(v,t);
+  }
+
   return ret;
 }
 
@@ -2387,11 +2393,13 @@ std::vector<int> MeshSimplicial3D::get_face_parents_of_edge( int e ) const
   
   std::vector<int> ret;
   
-  for( int f = 0; f < count_faces(); f++ ) 
-    for( int fe : get_face_edges(f) )
-      if( e == fe )
-        ret.push_back( f );
-  
+  int f = get_edge_firstparent_face(e);
+  while( f != nullindex )
+  {
+    ret.push_back(f);
+    f = this->get_edge_nextparent_face(e,f);
+  }
+
   return ret;
 }
 
@@ -2455,11 +2463,13 @@ std::vector<int> MeshSimplicial3D::get_face_parents_of_vertex( int v ) const
   
   std::vector<int> ret;
   
-  for( int f = 0; f < count_faces(); f++ ) 
-    for( int fv : get_face_vertices(f) )
-      if( v == fv )
-        ret.push_back( f );
-  
+  int f = get_vertex_firstparent_face(v);
+  while( f != nullindex )
+  {
+    ret.push_back(f);
+    f = this->get_vertex_nextparent_face(v,f);
+  }
+
   return ret;
 }
 
@@ -2522,12 +2532,14 @@ std::vector<int> MeshSimplicial3D::get_edge_parents_of_vertex( int v ) const
   assert( 0 <= v && v < count_vertices() );
   
   std::vector<int> ret;
-  
-  for( int e = 0; e < count_edges(); e++ ) 
-    for( int ev : get_edge_vertices(e) )
-      if( v == ev )
-        ret.push_back( e );
-  
+
+  int e = get_vertex_firstparent_edge(v);
+  while( e != nullindex )
+  {
+    ret.push_back(e);
+    e = this->get_vertex_nextparent_edge(v,e);
+  }
+
   return ret;
 }
 
@@ -2920,6 +2932,101 @@ void MeshSimplicial3D::merge( const MeshSimplicial3D& mesh )
     
     check();
 }
+
+
+
+
+
+
+
+
+std::string MeshSimplicial3D::outputTikZ( bool boundary_only ) const
+{
+    std::ostringstream os;
+    
+    const auto& coords = getcoordinates();
+    
+    for( int n = 0; n < coords.getnumber(); n++ )
+    {
+        os << "\\coordinate (V" << n << ")  at ( ";
+        for( int d = 0; d < coords.getdimension(); d++ )
+        {
+           os << coords.getdata(n,d) << ( d == coords.getdimension()-1 ? "" : ", ");
+        }
+        
+        os << ");" << nl;
+        
+    }
+    
+    for( int f = 0; f < count_simplices(2); f++ )
+    {
+        if( boundary_only && count_face_tetrahedron_parents(f) > 1 )
+            continue;
+        
+        os << "\\draw[join=round,fill=gray] ";
+        os << "(V" << get_subsimplex(2,0,f,0) << ") -- ";
+        os << "(V" << get_subsimplex(2,0,f,1) << ") -- ";
+        os << "(V" << get_subsimplex(2,0,f,2) << ") -- ";
+        os << "cycle;" << nl;
+    }
+    
+    return os.str();
+}
+
+
+long long MeshSimplicial3D::memorysize() const
+{
+    long long ret = 0;
+
+    ret += getcoordinates().memorysize();
+
+    ret += sizeof(getinnerdimension());
+    ret += sizeof(getouterdimension());
+
+    ret += sizeof( counter_tetrahedra );
+    ret += sizeof( counter_faces      );
+    ret += sizeof( counter_edges      );
+    ret += sizeof( counter_vertices   );
+
+    { const auto& D = data_tetrahedron_faces;                   ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_face_firstparent_tetrahedron;        ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_tetrahedron_nextparents_of_faces;    ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    
+    { const auto& D = data_tetrahedron_edges;                   ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_edge_firstparent_tetrahedron;        ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_tetrahedron_nextparents_of_edges;    ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    
+    { const auto& D = data_tetrahedron_vertices;                ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_vertex_firstparent_tetrahedron;      ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_tetrahedron_nextparents_of_vertices; ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    
+    { const auto& D = data_face_edges;                          ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_edge_firstparent_face;               ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_face_nextparents_of_edges;           ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    
+    { const auto& D = data_face_vertices;                       ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_vertex_firstparent_face;             ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_face_nextparents_of_vertices;        ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    
+    { const auto& D = data_edge_vertices;                       ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_vertex_firstparent_edge;             ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_edge_nextparents_of_vertices;        ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    
+    { const auto& D = flags_tetrahedra; ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = flags_faces;      ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = flags_edges;      ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = flags_vertices;   ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+
+    return ret;
+}
+
+
+
+
+
+
+
+
 
 
 

@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "basic.hpp"
+#include "constants.hpp"
 
 template class std::vector<int>;
 template class std::vector<Float>;
@@ -13,9 +14,10 @@ template class std::vector<Float>;
 // Any of those should do:
 // 
 // static_assert( Float(std::numeric_limits<double>::max()) == std::numeric_limits<double>::max(), "Float must be at least double" );
-static_assert( sizeof(Float) >= sizeof(double), "Float must be at least double" );
+// static_assert( sizeof(Float) >= sizeof(double), "Float must be at least double" );
 
 
+#include <cstdio>
 #include <cstdarg>
 
 std::string printf_into_string( const char* formatstring, ... )
@@ -300,6 +302,21 @@ Float blob_devdevdev( Float x )
 
 
 
+
+
+Float sinpy( Float x )
+{
+    return sin( Constants::pi * x );
+}
+
+Float cospy( Float x )
+{
+    return cos( Constants::pi * x );
+}
+
+
+
+
 /////////////////////////////////////////////////
 //                                             //
 //       CARTESIAN AND POLAR COORDINATES       //
@@ -309,7 +326,8 @@ Float blob_devdevdev( Float x )
 void cartesian_to_polar_coordinates2D( const Float& x, const Float& y, Float& radius, Float& angle )
 {
     radius = std::sqrt( x*x + y*y );
-    angle  = std::atan2( x, y );
+    angle  = std::atan2( y, x );
+    if( angle < 0. ) angle = Constants::twopi + angle;
 }
 
 void polar_to_cartesian_coordinates2D( const Float& radius, const Float& angle, Float& x, Float& y )

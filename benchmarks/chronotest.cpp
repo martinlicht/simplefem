@@ -5,7 +5,7 @@
 #include <thread>
  
 // the function f() does some time-consuming work
-void f()
+static void f()
 {
     volatile double d = 0;
     for(int n=0; n<10000; ++n)

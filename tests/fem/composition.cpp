@@ -185,22 +185,22 @@ int main()
             
             LOG << "Convergence tables, final results" << nl;
 
-            ConvergenceTable contable[3];
+            ConvergenceTable contables[3];
             
             
             
             for( int d = 0; d <            3; d++ )
             {
-                contable[d].table_name = "Rounding errors, D" + std::to_string(d+1);
-                contable[d] << "COO1";           // 0
-                contable[d] << "COO2";        // 1
-                contable[d] << "COO3";        // 2 
-                contable[d] << "CSR1";     // 3
-                contable[d] << "CSR2";       // 4
-                contable[d] << "CSR3";       // 5
-                // contable[d] << "stiff comp";    // 6
-                // contable[d] << "br mass";       // 7
-                // contable[d] << "br stiff";      // 8
+                contables[d].table_name = "Rounding errors, D" + std::to_string(d+1);
+                contables[d] << "COO1";           // 0
+                contables[d] << "COO2";        // 1
+                contables[d] << "COO3";        // 2 
+                contables[d] << "CSR1";     // 3
+                contables[d] << "CSR2";       // 4
+                contables[d] << "CSR3";       // 5
+                // contables[d] << "stiff comp";    // 6
+                // contables[d] << "br mass";       // 7
+                // contables[d] << "br stiff";      // 8
                 
                 
                 for( int m = 0; m <= l_max-l_min; m++ ) 
@@ -208,17 +208,17 @@ int main()
                     
                     for( int t = 0; t < number_of_comparisons; t++ )
                     {
-                        contable[d] << errors[m][d][t];
+                        contables[d] << errors[m][d][t];
                     }
                     
-                    contable[d] << nl; 
+                    contables[d] << nl; 
                     
                 }    
             }
 
             for( int d = 0; d < 3; d++ ) {
                 LOG << "Dimension: " << d+1 << '\n';
-                contable[d].lg();
+                contables[d].lg();
                 LOG << "----------------------------------" << nl;
             }
 

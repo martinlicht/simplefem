@@ -4,13 +4,17 @@
 
 using namespace std;
 
+/*
+The purpose of this program is to check whether your development environment is set up correctly,
+including compiler, linker, debug software, etc...
+It also outputs the C++ version.
+*/
+
 int main()
 {
-    cout << "Hello World! " << __cplusplus << endl;
+    cout << "Hello World! " << endl;
                 
-    #if __cplusplus < 201703L
-    cout << "The version is " << __cplusplus << endl;
-    #endif 
+    cout << "C++ version: " << __cplusplus << endl;
         
     cout << "Now an intentional leak..." << endl;
     

@@ -43,7 +43,7 @@ int main()
                 assert( vec.getdimension() == 1 );
                 auto x = vec[0];
                 return FloatVector({ 
-                    ( x*x - 1. ) / ( x*x + 1. ) 
+                    ( x*x - Float(1.) ) / ( x*x + Float(1.) ) 
                 });
             }
         );

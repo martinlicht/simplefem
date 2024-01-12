@@ -162,8 +162,8 @@ inline std::string Concat2String( const T& t, const Params&... params )
 #ifdef NDEBUG
 
 #define Assert(...)   (static_cast<void>(0))
-#define unreachable()   (static_cast<void>(0))
-#define unimplemented() (static_cast<void>(0))
+#define unreachable()   (static_cast<void>(0),exit( EXIT_FAILURE ))
+#define unimplemented() (static_cast<void>(0),exit( EXIT_FAILURE ))
 
 #else // NDEBUG
 

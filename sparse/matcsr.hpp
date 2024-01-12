@@ -36,6 +36,11 @@ public LinearOperator /* every matrix is a linear operator */
                             const std::vector<int>& C, 
                             const std::vector<Float>& V );
 
+        explicit MatrixCSR( int rows, int columns, 
+                            const std::vector<int>&& A, 
+                            const std::vector<int>&& C, 
+                            const std::vector<Float>&& V );
+
         explicit MatrixCSR( const SparseMatrix& mat );
 
         explicit MatrixCSR( int rows, int columns );
@@ -77,6 +82,8 @@ public LinearOperator /* every matrix is a linear operator */
         
         FloatVector diagonal() const;
 
+        MatrixCSR getTranspose() const;
+
         
         /* access and information to internal data */
         
@@ -90,9 +97,15 @@ public LinearOperator /* every matrix is a linear operator */
 
         int getnumberofzeroentries() const;
 
+        int getmaxrowwidth() const;
+
         Float eigenvalueupperbound() const;
 
-//         void sortentries() const;
+        void compressentries() const;
+
+        /* Memory size */
+        
+        long long memorysize() const;
         
         
         
@@ -108,6 +121,8 @@ public LinearOperator /* every matrix is a linear operator */
 
 
 MatrixCSR MatrixCSRMultiplication( const MatrixCSR& mat1, const MatrixCSR& mat2 );
+
+MatrixCSR MatrixCSRMultiplication_reduced( const MatrixCSR& mat1, const MatrixCSR& mat2 );
 
 MatrixCSR MatrixCSRAddition( const MatrixCSR& mat1, const MatrixCSR& mat2, Float s1, Float s2 );
 
@@ -128,7 +143,7 @@ inline MatrixCSR operator-( const MatrixCSR& mat1, const MatrixCSR& mat2 )
 
 inline MatrixCSR operator&( const MatrixCSR& mat1, const MatrixCSR& mat2 )
 {
-    return MatrixCSRMultiplication( mat1, mat2 );
+    return MatrixCSRMultiplication_reduced( mat1, mat2 );
 }
 
 inline MatrixCSR operator*( const MatrixCSR& mat, Float s )

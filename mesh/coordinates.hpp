@@ -63,6 +63,11 @@ class Coordinates
         Float getdata( int n, int d) const;
         void setdata( int n, int d, Float v );
         
+        /* get range of coordinates */
+        
+        Float getmin( int d) const;
+        Float getmax( int d) const;
+        
         /* get/set points as vectors  */
         
         FloatVector getvectorclone( int n ) const;
@@ -78,6 +83,7 @@ class Coordinates
         /* transform all coordinates  */
         
         void scale( Float );
+        void scale( FloatVector );
         void shift( const FloatVector& );
         void lineartransform( const LinearOperator& );
         
@@ -96,6 +102,14 @@ class Coordinates
         FloatVector getShiftPart( const IndexMap& ) const;
         
         FloatVector getCenter() const;
+
+
+        /* other */ 
+
+        std::vector<Float>& raw();
+        const std::vector<Float>& raw() const;
+        
+        long long memorysize() const;
         
     private:
             

@@ -172,9 +172,9 @@ int main()
                     
                     for( const IndexMap& im : all ) {
                         assert( im.getSourceRange() == im.getTargetRange() );
-                        for( const int& i : bereich ) {
+                        for( const int i : bereich ) {
                             assert( bereich.min() <= im[i] and im[i] <= bereich.max() );
-                            for( const int& j : bereich  )
+                            for( const int j : bereich  )
                                 if( i != j )
                                     assert( im[i] != im[j] );
                         }
@@ -223,7 +223,7 @@ int main()
                     for( const IndexMap& sigma : all ) {
                         assert( sigma.getSourceRange() == source );
                         assert( sigma.getTargetRange() == target );
-                        for( const int& i : source ) {
+                        for( const int i : source ) {
                             assert( target.min() <= sigma[i] and sigma[i] <= target.max() );
                             if( i != source.max() )
                                 assert( sigma[i] < sigma[i+1] );

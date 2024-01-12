@@ -13,6 +13,7 @@
 #include "../dense/densematrix.hpp"
 //#include "../utility/utility.hpp"
 
+const bool sparse_matrix_verbosity = false;
 
 
 SparseMatrix::SparseMatrix( int dimout, int dimin, int numentries, std::function<MatrixEntry(int)> generator )
@@ -20,6 +21,10 @@ SparseMatrix::SparseMatrix( int dimout, int dimin, int numentries, std::function
   entries(0)
 {
     assert( 0 <= numentries );
+    assert( numentries <= entries.max_size() );
+    
+    if( sparse_matrix_verbosity ) LOG << "SparseMatrix allocation: " << numentries << nl;
+    
     entries.reserve( numentries );
     
     for( int i = 0; i < numentries; i++ ) 
@@ -339,19 +344,19 @@ const SparseMatrix& SparseMatrix::sortentries( SparseMatrix::MatrixEntrySorting 
 {
     check();
 
-    if( manner == MatrixEntrySorting::rowwise )
-        std::qsort( entries.data(), entries.size(), sizeof(MatrixEntry), &internal_compare_rowfirst );
-    else 
-        std::qsort( entries.data(), entries.size(), sizeof(MatrixEntry), &internal_compare_colfirst );
+    // if( manner == MatrixEntrySorting::rowwise )
+    //     std::qsort( entries.data(), entries.size(), sizeof(MatrixEntry), &internal_compare_rowfirst );
+    // else 
+    //     std::qsort( entries.data(), entries.size(), sizeof(MatrixEntry), &internal_compare_colfirst );
 
-//     if( manner == MatrixEntrySorting::rowwise )
-//         std::sort( entries.begin(), entries.end(), []( const MatrixEntry& a, const MatrixEntry& b) {
-//             return a.row < b.row || ( a.row == b.row && a.column < b.column );   
-//         });
-//     else 
-//         std::sort( entries.begin(), entries.end(), []( const MatrixEntry& a, const MatrixEntry& b) {
-//             return a.column < b.column || ( a.column == b.column && a.row < b.row );   
-//         });
+    if( manner == MatrixEntrySorting::rowwise )
+        std::sort( entries.begin(), entries.end(), []( const MatrixEntry& a, const MatrixEntry& b) {
+            return a.row < b.row || ( a.row == b.row && a.column < b.column );   
+        });
+    else 
+        std::sort( entries.begin(), entries.end(), []( const MatrixEntry& a, const MatrixEntry& b) {
+            return a.column < b.column || ( a.column == b.column && a.row < b.row );   
+        });
     
     
 //     const int N = getnumberofentries();
@@ -377,8 +382,26 @@ const SparseMatrix& SparseMatrix::sortentries( SparseMatrix::MatrixEntrySorting 
 const SparseMatrix& SparseMatrix::sortandcompressentries( SparseMatrix::MatrixEntrySorting manner ) const
 {
     check();
+
+    if( sparse_matrix_verbosity ) LOG << "SparseMatrix: Remove zeroes..." << nl;
+    
+    {
+        
+        // for( int c = 0; c < entries.size(); c++ ) 
+        //     if( entries[c].value == 0 ) { entries.erase( entries.begin()+c ); c--; }
+        
+        auto it = std::remove_if(entries.begin(), entries.end(), []( const SparseMatrix::MatrixEntry e ){ return e.value == 0.; } );
+        entries.erase( it, entries.end() );
+        
+        for( int c = 0; c < entries.size(); c++ ) assert( entries[c].value != 0. );
+        
+    }
+    
+    if( sparse_matrix_verbosity ) LOG << "SparseMatrix: Sorting..." << nl;
     
     sortentries( manner );
+    
+    if( sparse_matrix_verbosity ) LOG << "SparseMatrix: Compressing..." << nl;
     
     assert( is_sorted(manner) );
     
@@ -412,27 +435,7 @@ const SparseMatrix& SparseMatrix::sortandcompressentries( SparseMatrix::MatrixEn
     
     assert( is_sorted(manner) );
     
-    {
-        
-//         for( int c = 0; c < entries.size(); c++ ){
-//             if( entries[c].value == 0 ) {
-//                 entries.erase( entries.begin()+c );
-//                 c--;
-//             }
-//         }
-        
-        
-        entries.erase(
-            std::remove_if(entries.begin(), entries.end(), []( const SparseMatrix::MatrixEntry e ){ return e.value == 0.; } ),
-            entries.end()
-        );
-        
-        for( int c = 0; c < entries.size(); c++ ) assert( entries[c].value != 0. );
-        
-        
-    }
-    
-    assert( is_sorted(manner) );
+    if( sparse_matrix_verbosity ) LOG << "SparseMatrix: Done!" << nl;
     
     return *this;
 }
@@ -528,6 +531,7 @@ SparseMatrix SparseMatrix::getTranspose() const
     
     auto newentries = entries;
 
+    // TODO: parallelize 
     for( auto& newentry : newentries )
         std::swap( newentry.row, newentry.column );
 
@@ -562,6 +566,12 @@ SparseMatrix SparseMatrix::getTranspose() const
 
 
 
+/* Memory size */
+        
+long long SparseMatrix::memorysize() const
+{
+    return sizeof(*this) + entries.size() * sizeof(decltype(entries)::value_type);
+}
 
 
 

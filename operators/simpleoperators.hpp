@@ -277,4 +277,71 @@ inline DiagonalOperator operator*( const DiagonalOperator& left, const DiagonalO
   
   
 
+
+
+
+
+
+
+
+
+class LambdaOperator final
+: public LinearOperator
+{
+
+    public:
+
+        /* Constructors */
+        
+        explicit LambdaOperator( int dim, std::function<FloatVector(const FloatVector&)> );
+        explicit LambdaOperator( int dimout, int dimin, std::function<FloatVector(const FloatVector&)> );
+        
+        /* standard interface */
+        
+        LambdaOperator()                                      = delete;
+        LambdaOperator( const LambdaOperator& )               = default;
+        LambdaOperator( LambdaOperator&& )                    = default;
+        LambdaOperator& operator=( const LambdaOperator& op ) = default;
+        LambdaOperator& operator=( LambdaOperator&& op )      = default; 
+        virtual ~LambdaOperator();
+
+        /* standard methods for operators */
+        
+        virtual void check() const override;
+        
+        virtual std::string text() const override;
+
+        /* OTHER METHODS */
+        
+        virtual LambdaOperator* pointer_to_heir() && override
+        {
+            return new typename std::remove_reference<decltype(*this)>::type( std::move(*this) );
+        }
+        
+        using LinearOperator::apply;
+        virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override;
+
+    private:
+
+        const std::function<FloatVector(const FloatVector&)> func;
+    
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #endif

@@ -43,6 +43,47 @@ int ConjugateGradientSolverCSR_SSOR(
 );
 
 
+int ConjugateGradientSolverCSR_SSOR_Eisenstat( 
+    const int N, 
+    Float* x, 
+    const Float* b, 
+    const int* csrrows, const int* csrcolumns, const Float* csrvalues, 
+    Float* residual,
+    Float threshold,
+    int print_modulo,
+    const Float* precon,
+    Float omega
+);
+
+
+int ConjugateGradientSolverCSR_Rainbow( 
+    const int N, 
+    Float* x, 
+    const Float* b, 
+    const int* csrrows, const int* csrcolumns, const Float* csrvalues, 
+    Float* residual,
+    Float threshold,
+    int print_modulo,
+    const Float* precon,
+    Float omega,
+    int num_colors, const int* F, const int* B, const int* R
+);
+
+
+int ConjugateGradientSolverCSR_Eisenstat_Rainbow( 
+    const int N, 
+    Float* x, 
+    const Float* b, 
+    const int* csrrows, const int* csrcolumns, const Float* csrvalues, 
+    Float* residual,
+    Float threshold,
+    int print_modulo,
+    const Float* precon,
+    Float omega,
+    int num_colors, const int* F, const int* B, const int* R
+);
+
+
 // Solves the sparse matrix system with conjugate residuals
 
 int ConjugateResidualSolverCSR( 

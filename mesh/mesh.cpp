@@ -6,6 +6,7 @@
 
 
 #include "../basic.hpp"
+#include "../utility/random.hpp"
 #include "../combinatorics/generateindexmaps.hpp"
 #include "../dense/cholesky.hpp"
 #include "../dense/qr.factorization.hpp"
@@ -26,6 +27,7 @@ Mesh::Mesh( int inner, int outer )
 {
   
   /* Build up the static auxiliary data */
+  /*
   auxdata.resize( innerdimension+1 );
   for( int sup = 0; sup <= innerdimension; sup++ ) 
   {
@@ -42,6 +44,7 @@ Mesh::Mesh( int inner, int outer )
     }
   
   }
+  */
 
   Mesh::check();
   
@@ -171,6 +174,30 @@ int Mesh::get_subsimplex( int sup, int sub, int cellsup, int localindex ) const
 {
   const IndexMap im = getsubsimplices( sup, sub, cellsup );
   return im[ localindex ];  
+}
+
+int Mesh::get_opposite_subsimplex_index( int sup, int sub, int cellsup, int localindex ) const
+{
+    
+    const int cellsub = get_subsimplex( sup, sub, cellsup, localindex );
+    
+    const auto my_vertices = getsubsimplices( sub, 0, cellsub );
+    
+    for( int otherindex = 0; otherindex < count_subsimplices(sup,sup-sub-1); otherindex++ )
+    {
+        const int othercell = get_subsimplex( sup, sup-sub-1, cellsup, otherindex );
+        
+        const auto other_vertices = getsubsimplices( sup, sub, othercell );
+        
+        bool alive = true;
+        for( int i = 0; i <    my_vertices.getSourceRange().cardinality() and alive; i++ )
+        for( int j = 0; j < other_vertices.getSourceRange().cardinality() and alive; j++ )
+          alive = ( my_vertices[i] != other_vertices[j] );
+
+        if( alive )
+          return otherindex;
+    }
+    unreachable();
 }
 
 
@@ -318,19 +345,71 @@ void Mesh::automatic_dirichlet_flags()
 }
 
 
-void Mesh::check_dirichlet_flags()
+void Mesh::check_dirichlet_flags( bool check_for_full_dirichlet )
 {
     const int full = getinnerdimension();
     
     assert( dimension_counted(full-1) );
     assert( supersimplices_listed(full,full-1) );
     
-    // check that no flags are invalid
-    for( int s = 0; s < count_simplices(full-1); s++ )
-        assert( get_flag( full-1, s ) != SimplexFlagInvalid );
-    
+    // check that full-dimensional simplices have no Dirichlet condition 
     for( int s = 0; s < count_simplices(full); s++ )
         assert( get_flag( full, s ) == SimplexFlagNull );
+
+    // check that no flags are invalid
+    for( int d = 0; d <= full-1; d++ )
+    for( int s = 0; s < count_simplices(d); s++ )
+        assert( get_flag( d, s ) != SimplexFlagInvalid );
+    
+    // if some cell has the Dirichlet condition, then so do its subcells
+    for( int d = 1; d <= full-1; d++ )
+    for( int s = 0; s < count_simplices(d); s++ )
+        if( get_flag( d, s ) == SimplexFlagDirichlet )
+            for( int subindex = 0; subindex < count_subsimplices( d, d-1 ); subindex++ ) 
+                assert( get_flag( d-1, get_subsimplex( d, d-1, s, subindex ) ) == SimplexFlagDirichlet );
+    
+    // for all lower dimensional simplices 
+    // if they are Dirichlet, check that they are contained in a Dirichlet face 
+    // if they are not, then check that they are not contained in a Dirichlet face 
+    for( int d = 0; d <= full-2; d++ )
+    for( int sub = 0; sub < count_simplices(d); sub++ ) 
+    {
+
+        if( get_flag( d, sub ) == SimplexFlagDirichlet ) {
+
+            bool found = false;
+            
+            for( 
+                int sup = get_firstparent_of_subsimplex( d+1, d, sub ); 
+                sup != nullindex; 
+                sup = get_nextparent_of_subsimplex( d+1, d, sup, sub ) 
+            ){
+                found = found or ( get_flag(d+1,sup) == SimplexFlagDirichlet );
+            }
+            
+            if( not found ) LOG << d << space << sub;
+            
+            assert( found );
+
+        } else {
+
+            assert( get_flag( d, sub ) == SimplexFlagNull );
+
+            for( 
+                int sup = get_firstparent_of_subsimplex( d+1, d, sub ); 
+                sup != nullindex; 
+                sup = get_nextparent_of_subsimplex( d+1, d, sup, sub ) 
+            ){
+                assert( get_flag(d+1,sup) == SimplexFlagNull ); // turn into equality check
+            }
+        }
+
+    }
+
+        
+    if( not check_for_full_dirichlet ) return;
+
+
     
     // for each face, check that those faces with less than two parents have the Dirichlet flag 
     for( int s = 0; s < count_simplices(full-1); s++ )
@@ -353,40 +432,7 @@ void Mesh::check_dirichlet_flags()
             assert( get_flag( full-1, s ) == SimplexFlagDirichlet );
         }
  
-    // for all Dirichlet faces, check that the subsimplices are Dirichlet too 
-    for( int s = 0; s < count_simplices(full-1); s++ )
-        if( get_flag( full-1, s ) == SimplexFlagDirichlet )
-            for( int d = 0; d < full-1; d++ )
-                for( int subindex = 0; subindex < count_subsimplices( full-1, d ); subindex++ ) 
-                    assert( get_flag( d, get_subsimplex( full-1, d, s, subindex ) ) == SimplexFlagDirichlet );
     
-    // for all lower dimensional simplices 
-    // if they are Dirichlet, check that they are contained in a Dirichlet face 
-    // if they are not, then check that they are not contained in a Dirichlet face 
-    for( int d = 0; d < full-1; d++ )
-        for( int sub = 0; sub < count_simplices(d); sub++ )
-            if( get_flag( d, sub ) == SimplexFlagDirichlet ) {
-                bool found = false;
-                assert( get_firstparent_of_subsimplex( full-1, d, sub ) != nullindex );
-                for( 
-                    int sup = get_firstparent_of_subsimplex( full-1, d, sub ); 
-                    sup != nullindex; 
-                    sup = get_nextparent_of_subsimplex( full-1, d, sup, sub ) 
-                ){
-                    found = found || ( get_flag(full-1,sup) == SimplexFlagDirichlet );
-                }
-                if( not found ) LOG << d << space << sub;
-                assert( found );
-            } else {
-                assert( get_flag( d, sub ) == SimplexFlagNull );
-                for( 
-                    int sup = get_firstparent_of_subsimplex( full-1, d, sub ); 
-                    sup != nullindex; 
-                    sup = get_nextparent_of_subsimplex( full-1, d, sup, sub ) 
-                ){
-                    assert( get_flag(full-1,sup) != SimplexFlagDirichlet ); // turn into equality check
-                }
-            }
     
 }
 
@@ -436,6 +482,15 @@ Float Mesh::getMeasure( int dim, int index ) const
         return std::sqrt( absolute( Determinant( Transpose(Jac) * Jac ) ) ) / factorial_numerical( getinnerdimension() );
 }
 
+Float Mesh::getHeight( int dim, int cell, int vertexindex ) const
+{
+    int oppositeface_index = get_opposite_subsimplex_index( dim, 0, cell, vertexindex );
+    int oppositeface = get_subsimplex( dim, dim-1, cell, oppositeface_index );
+    Float vol_t = getMeasure( dim, cell );
+    Float vol_f = getMeasure( dim-1, oppositeface );
+    return ( vol_t / vol_f ) * dim;
+}
+
 Float Mesh::getShapemeasure( int dim, int index ) const 
 {
     assert( 0 <= dim && dim <= getinnerdimension() );
@@ -476,6 +531,66 @@ FloatVector Mesh::get_midpoint( int dim, int index ) const
     return mid;
 }
 
+FloatVector Mesh::getPointFromBarycentric( int dim, int index, const FloatVector& barycoords ) const
+{
+    assert( 0 <= dim && dim <= getinnerdimension() );
+    assert( 0 <= index && index < count_simplices(dim) );
+    assert( barycoords.getdimension() == dim+1 );
+    assert( isaboutequal( barycoords.sum(), 1. ) );
+
+    FloatVector ret( getouterdimension(), 0. );
+    
+    for( int v = 0; v <= dim; v++ )
+    for( int d = 0; d < getouterdimension(); d++ )
+      ret[d] += barycoords[v] * getcoordinates().getdata( get_subsimplex( dim, 0, index, v ), d );
+    
+    return ret;
+}
+
+FloatVector Mesh::get_random_point( int dim, int index ) const
+{
+    auto randomcoords = get_random_barycentric_coordinates(dim);
+    return getPointFromBarycentric( dim, index, randomcoords );
+    
+    // std::vector<Float> barycoords( dim+2, 0. );
+    // for( auto& x : barycoords ) x = random_uniform();
+    // barycoords.back() = 1.;
+    // barycoords.front() = 0.;
+    // for( auto& x : barycoords ) assert( 0. <= x and x <= 1. );
+    // std::sort( barycoords.begin(), barycoords.end() );
+    // for( int i = 0; i <= dim; i++ ) barycoords[i] = barycoords[i+1] - barycoords[i];
+    // barycoords.pop_back();
+    // return getPointFromBarycentric( dim, index, FloatVector(barycoords) );
+}
+
+
+
+
+int Mesh::get_longest_edge_index( int dim, int index ) const
+{
+    assert( 0 <= dim && dim <= getinnerdimension() );
+    assert( 0 <= index && index < count_simplices(dim) );
+    
+    const int N = binomial_integer(dim+1,2);
+    
+    int longest_edge_index = 0;
+
+    Float diameter = getDiameter(1,0);
+
+    for( int n = 1; n < N; n++ )
+    {
+        int e = get_subsimplex( dim, 1, index, n );
+        Float diameter_e = getDiameter(1,e);
+        if( diameter_e > diameter ){
+            diameter = diameter_e;
+            longest_edge_index = e;
+        }
+    }
+    
+    return longest_edge_index;
+}
+        
+        
 
 DenseMatrix Mesh::getVertexCoordinateMatrix( int dim, int index ) const 
 {
@@ -610,3 +725,48 @@ DenseMatrix Mesh::getGradientProductMatrixRightFactor( int dim, int index ) cons
     return middle_rightfactor * multiplier; //TODO Probelesen
 }
 
+
+FloatVector get_random_barycentric_coordinates( int dim )
+{
+    FloatVector samples( dim );
+    do samples.random_within_range(0.,1.); while( samples.sum() > 1. );
+    FloatVector randomcoords( dim+1 );
+    for( int p = 0; p < dim; p++ ) randomcoords[p] = samples[p];
+    randomcoords[dim] = 1. - samples.sum();
+    return randomcoords;
+}   
+
+
+
+void Mesh::shake_interior_vertices( Float intensity, Float probability )
+{
+    assert( 0. <= probability and probability <= 1.0 );
+    assert( 0. <= intensity and intensity <= 1.0 );
+    assert( getinnerdimension() == getouterdimension() ); 
+    
+    const int dim = getinnerdimension();
+
+    for( int v = 0; v < count_simplices(0); v++ )
+    {
+        if( random_uniform() > probability ) continue; 
+
+        Float radius = std::numeric_limits<Float>::infinity();
+
+        const auto ts = getsupersimplices( dim, 0, v );
+
+        for( const int t : ts )
+        {
+            int vi = get_subsimplex_index( dim, 0, t, v );
+            Float height = getHeight( dim, t, vi );
+            radius = std::min( height, radius );
+        }
+
+        FloatVector shift(dim,0.);
+        shift.random_within_range(-1.,1.);
+        shift /= shift.l2norm() * sqrt( random_uniform() ) * radius * intensity;
+
+        for( int c = 0; c < dim; c++ )
+            getcoordinates().setdata( v, c, getcoordinates().getdata( v, c ) + shift[c] );
+
+    }
+}

@@ -30,8 +30,8 @@ endif
 
 # Do you want to use GCC or Clang?
 # Uncomment the appropriate definition below
-FLAG_CXX := CLANG
-# FLAG_CXX := GCC
+# FLAG_CXX := CLANG
+FLAG_CXX := GCC
 # FLAG_CXX := ICC
 
 
@@ -41,7 +41,7 @@ FLAG_CXX := CLANG
 
 # Do you want the standard library assert macro instead of the custom one?
 # Uncomment the following line to use the standard library assert macro 
-FLAG_USE_ORIGINAL_ASSERT_MACRO=yes
+# FLAG_USE_ORIGINAL_ASSERT_MACRO=yes
 
 # Do you want assert messages to be discarded?
 # Uncomment the following line to simplify the debugging macros 
@@ -51,35 +51,18 @@ FLAG_USE_ORIGINAL_ASSERT_MACRO=yes
 # Uncomment the following line to disable extensive check routines for meshes
 FLAG_DISABLE_CHECK_MESHES=yes
 
+# Do you want to ENABLE the standard library debugging flags 
+# Uncomment the following line to enable the standard library debugging flags 
+# FLAG_DISABLE_STDLIBDEBUG=yes
+
 # Do you want to DISABLE the custom logging framework
 # in favor of standard library routines?
 # Uncomment the following line for that
 # FLAG_USE_PRIMITIVE_LOGGING=yes
 
-# Do you want to ENABLE the standard library debugging flags 
-# Uncomment the following line to enable the standard library debugging flags 
-FLAG_DISABLE_STDLIBDEBUG=yes
-
 # Do you want to DISABLE excpetion handling?
 # Uncomment the following line to disable exception handling
-FLAG_NO_EXCEPTIONS=yes
-
-# Do you want to ENABLE extended precision?
-# Uncomment the following line to switch from double precision to extended precision
-# FLAG_DO_USE_EXTENDED_PRECISION=yes 
-# := -DEXTENDED_PRECISION
-
-# Do you want to ENABLE excessive warning options?
-# Uncomment the following line to enable excessive warning options
-# FLAG_EXCESSIVE_WARNINGS=yes
-
-# Do you want to ENABLE the Clang sanitizer?
-# Uncomment the following line to enable compilation with the Clang sanitizer
-# FLAG_DO_USE_SANITIZER=yes
-
-# Do you want to enable static analysis during the compilation process
-# Uncomment the following line to enable static analysis
-# FLAG_DO_STATICANALYSIS=yes
+# FLAG_NO_EXCEPTIONS=yes
 
 # Do you want to compile with all optimization flags enabled?
 # Uncomment the following line to have this done so
@@ -88,6 +71,24 @@ FLAG_NO_EXCEPTIONS=yes
 # Do you want to ENABLE the use of openMP?
 # Uncomment the following line to enable compilation with openMP
 # FLAG_ENABLE_OPENMP=yes
+
+# Do you want to ENABLE excessive warning options?
+# Uncomment the following line to enable excessive warning options
+# FLAG_EXCESSIVE_WARNINGS=yes
+
+# Do you want to ENABLE either extended precision or single precision?
+# Uncomment one the following lines to switch from double precision
+# to either extended precision or single precision
+# FLAG_DO_USE_EXTENDED_PRECISION=yes 
+# FLAG_DO_USE_SINGLE_PRECISION=yes 
+
+# Do you want to ENABLE the Clang sanitizer?
+# Uncomment the following line to enable compilation with the Clang sanitizer
+# FLAG_DO_USE_SANITIZER=yes
+
+# Do you want to enable static analysis during the compilation process
+# Uncomment the following line to enable static analysis
+# FLAG_DO_STATICANALYSIS=yes
 
 # Do you want to ENABLE the use of tcmalloc?
 # Uncomment the following line to enable tcmalloc
@@ -111,6 +112,15 @@ FLAG_NO_EXCEPTIONS=yes
 
 
 
+
+
+
+###############################################
+#                                             #
+#       Post-process the option choices       #
+#                                             #
+###############################################
+
 # Use this file to overwrite the default settings above on a local machine
 # At this point, only the flags above will be set.
 -include $(projectdir)/OVERWRITE.COMPILE.mk
@@ -129,6 +139,17 @@ FLAG_DO_STRIP=yes
 FLAG_USE_PRIMITIVE_LOGGING=yes
 endif
 
+ifdef FLAG_DO_USE_EXTENDED_PRECISION
+ifdef FLAG_DO_USE_SINGLE_PRECISION
+$(error Extended and single precision requested at the same time)
+endif
+endif
+
+ifneq ($(FLAG_CXX),GCC)
+ifdef FLAG_DO_USE_SINGLE_PRECISION
+$(error Single precision floating-point setup only with GCC)
+endif
+endif
 
 
 
@@ -187,7 +208,7 @@ CXXFLAGS_LANG := -std=c++14 -pedantic -fno-rtti
 ###############################################
 
 # If optimization is enabled, then set a number of flags 
-# In the absence of optimization, we set O1
+# In the absence of optimization, we set O0
 
 CXXFLAGS_OPTIMIZE:=
 
@@ -196,17 +217,31 @@ ifeq ($(FLAG_DO_OPTIMIZE),yes)
 	ifeq ($(FLAG_CXX),ICC)
 		CXXFLAGS_OPTIMIZE += -march=core-avx2
 		CXXFLAGS_OPTIMIZE += -intel-optimized-headers 
-		CXXFLAGS_OPTIMIZE += -Ofast -xHOST -O3 -ipo -no-prec-div -fp-model fast=2
+		CXXFLAGS_OPTIMIZE += -xHOST -O3 -Ofast -ipo -no-prec-div -fp-model fast=2
 		CXXFLAGS_OPTIMIZE += 
 		CXXFLAGS_OPTIMIZE += 
 		CXXFLAGS_OPTIMIZE += 
 	else 
-		CXXFLAGS_OPTIMIZE += -Ofast 
-		CXXFLAGS_OPTIMIZE += -march=native 
-		ifeq ($(FLAG_CXX),GCC)
-			CXXFLAGS_OPTIMIZE := -inline-threshold=1200
-		endif
+# wierd warnings appear at LTO and O1+ ....
 		CXXFLAGS_OPTIMIZE += -flto
+		CXXFLAGS_OPTIMIZE += -Ofast  
+		CXXFLAGS_OPTIMIZE += -march=native -mtune=native 
+		ifeq ($(FLAG_CXX),GCC)
+			CXXFLAGS_OPTIMIZE += -fno-fat-lto-objects
+# 			CXXFLAGS_OPTIMIZE += -finline-limit=1200
+# 			CXXFLAGS_OPTIMIZE += -fno-signed-zeros -fno-trapping-math -fassociative-math
+			CXXFLAGS_OPTIMIZE += -fmerge-all-constants
+			CXXFLAGS_OPTIMIZE += -fipa-pta 
+			CXXFLAGS_OPTIMIZE += -fdevirtualize-speculatively
+# Loop unrolling is very speculative			
+			CXXFLAGS_OPTIMIZE += -funroll-loops -fvariable-expansion-in-unroller -floop-nest-optimize
+			CXXFLAGS_OPTIMIZE += -fshort-enums
+			CXXFLAGS_OPTIMIZE += -fomit-frame-pointer
+#			CXXFLAGS_OPTIMIZE += -malign-double 
+		endif
+		ifeq ($(FLAG_CXX),CLANG)
+#			 CXXFLAGS_OPTIMIZE += -finline-limit=1200
+		endif
 	endif
 else
 	CXXFLAGS_OPTIMIZE += -O0
@@ -247,6 +282,10 @@ CXXFLAGS_CODEGEN += -fvisibility=default
 
 ifneq ($(OS),Windows_NT)
 	CXXFLAGS_CODEGEN += -fpic 
+endif
+
+ifeq ($(FLAG_DO_USE_SINGLE_PRECISION),yes)
+	CXXFLAGS_CODEGEN += -fsingle-precision-constant
 endif
 
 
@@ -320,7 +359,7 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 
 		CXXFLAGS_WARNINGS += -Wabstract-vbase-init
 		CXXFLAGS_WARNINGS += -Walloca
-		CXXFLAGS_WARNINGS += -Wno-vla-extension -Werror-implicit -Wabsolute-value -Wno-shorten-64-to-32
+		CXXFLAGS_WARNINGS += -Wno-vla-extension -Werror-implicit-function-declaration -Wabsolute-value -Wno-shorten-64-to-32
 		CXXFLAGS_WARNINGS += -Wanon-enum-enum-conversion -Wassign-enum
 		CXXFLAGS_WARNINGS += -Warray-bounds-pointer-arithmetic
 		CXXFLAGS_WARNINGS += -Wbad-function-cast
@@ -612,10 +651,10 @@ CXXFLAGS_EXECUTABLE+=$(CXXFLAGS)
 
 ifeq ($(FLAG_DO_OPTIMIZE),yes)
 	ifeq ($(FLAG_CXX),ICC)
-		CXXFLAGS_EXECUTABLE+=-fwhole-program
+		CXXFLAGS_EXECUTABLE+=-fwhole-program -fuse-linker-plugin
 	else 
 		ifeq ($(FLAG_CXX),GCC)
-			CXXFLAGS_EXECUTABLE+=-fwhole-program
+			CXXFLAGS_EXECUTABLE+=-fwhole-program -fuse-linker-plugin
 		endif
 	endif
 else
@@ -664,6 +703,13 @@ endif
 ifeq ($(FLAG_DO_USE_EXTENDED_PRECISION),yes)
 CPPFLAGS += -DEXTENDED_PRECISION
 endif
+ifeq ($(FLAG_DO_USE_SINGLE_PRECISION),yes)
+CPPFLAGS += -DSINGLE_PRECISION
+endif
+
+ifeq ($(FLAG_DO_OPTIMIZE),yes)
+CPPFLAGS += -DELIDE_HOT_FUNCTIONS
+endif
 
 CPPFLAGS := $(strip $(CPPFLAGS))
 
@@ -696,12 +742,14 @@ LDLIBS := $(strip $(LDLIBS))
 
 LINKINGTYPE:=unspecified
 
-ifeq ($(OS),Windows_NT)
-LINKINGTYPE:=static
-else ifeq ($(FLAG_DO_OPTIMIZE=yes),yes)
-LINKINGTYPE:=static
+ifeq ($(FLAG_DO_OPTIMIZE),yes)
+	LINKINGTYPE:=objectfile
 else
-LINKINGTYPE:=dynamic
+ifeq ($(OS),Windows_NT)
+	LINKINGTYPE:=static
+else 
+	LINKINGTYPE:=dynamic
+endif
 endif
 
 
@@ -736,6 +784,7 @@ parameters:
 	$(info FLAG_DISABLE_STDLIBDEBUG       = $(FLAG_DISABLE_STDLIBDEBUG) ) 
 	$(info FLAG_NO_EXCEPTIONS             = $(FLAG_NO_EXCEPTIONS) ) 
 	$(info FLAG_DO_USE_EXTENDED_PRECISION = $(FLAG_DO_USE_EXTENDED_PRECISION) ) 
+	$(info FLAG_DO_USE_SINGLE_PRECISION   = $(FLAG_DO_USE_SINGLE_PRECISION) ) 
 	$(info FLAG_EXCESSIVE_WARNINGS        = $(FLAG_EXCESSIVE_WARNINGS) ) 
 	$(info FLAG_DO_USE_SANITIZER          = $(FLAG_DO_USE_SANITIZER) ) 
 	$(info FLAG_DO_STATICANALYSIS         = $(FLAG_DO_STATICANALYSIS) ) 

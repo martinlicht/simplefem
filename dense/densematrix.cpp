@@ -655,12 +655,22 @@ void DenseMatrix::indexmapping( const IndexMap& im )
         
 void DenseMatrix::add( const DenseMatrix& addendum )
 {
-    add( 1., addendum );
+    check();
+    addendum.check();
+    for( int r = 0; r < getdimout(); r++ )
+        for( int c = 0; c < getdimin(); c++ )
+            (*this)(r,c) = (*this)(r,c) + addendum(r,c);
+    check();
 }
 
-void DenseMatrix::add( Float s, const DenseMatrix& addendum )
+void DenseMatrix::add( Float t, const DenseMatrix& addendum )
 {
-    add( 1., s, addendum );
+    check();
+    addendum.check();
+    for( int r = 0; r < getdimout(); r++ )
+        for( int c = 0; c < getdimin(); c++ )
+            (*this)(r,c) = (*this)(r,c) + t * addendum(r,c);
+    check();
 }
 
 void DenseMatrix::add( Float s, Float t, const DenseMatrix& addendum )
@@ -856,4 +866,11 @@ Float* DenseMatrix::raw()
 const Float* DenseMatrix::raw() const
 {
     return entries;
+}
+
+/* Memory size */
+        
+long long DenseMatrix::memorysize() const
+{
+    return sizeof(*this) + getdimin() * getdimout() * sizeof(this->entries[0]);
 }

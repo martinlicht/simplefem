@@ -73,7 +73,7 @@ class FloatVector
 
         /* information and data access */
         
-        int getdimension() const;
+        HOTCALL int getdimension() const;
         
         Float setentry( int, Float );
         
@@ -96,6 +96,10 @@ class FloatVector
         void setentries( Float );
         
         void random();
+        
+        void random_within_range( Float min, Float max );
+        
+        void to_absolute();
         
         void zero();
         
@@ -178,7 +182,7 @@ class FloatVector
         
         Float l2norm() const;
         
-        Float lpnorm( Float ) const;
+        Float lpnorm( Float p, Float inner_weight = 1. ) const;
         
         
         
@@ -209,6 +213,13 @@ class FloatVector
         Float* raw();
         
         const Float* raw() const;
+        
+        
+        
+        
+        /* Memory size */
+        
+        long long memorysize() const;
         
         
         

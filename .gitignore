@@ -1,6 +1,8 @@
 
-
+OVERWRITE.COMPILE.mk
 .private/
+.playground/
+.legacy/
 
 # Eclipse project settings
 *cproject
@@ -122,6 +124,17 @@ cachegrind.out.*
 *.pvtr
 *.pvts
 *.pvtu
+
+# SVG output
+*.svg
+
+# other files 
+*.zip 
+*.tiff 
+*.jpg 
+*.jpeg 
+*.png 
+*.webp 
 
 
 # Temporary file

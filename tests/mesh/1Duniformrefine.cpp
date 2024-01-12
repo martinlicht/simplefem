@@ -27,8 +27,13 @@ int main()
     
     LOG << "Start refinement" << nl;
     
-    for( int c = 0; c < 10; c++ )
+    for( int c = 0; c <= 10; c++ )
+    {
+        
+        LOG << "uniform refinement: " << c << nl;
+
         M.improved_uniformrefinement();
+    }
     
     LOG << "Finished Unit Test" << nl;
 

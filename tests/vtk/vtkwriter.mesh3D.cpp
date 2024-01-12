@@ -21,7 +21,7 @@ int main()
     
     {
         
-        const MeshSimplicial3D Mx = StandardCube3D();  std::string meshname = "Standard Cube 3D";
+        const MeshSimplicial3D Mx = FicheraCorner3D();  std::string meshname = "Fichera Corner 3D";
         
         internal_print( Mx, meshname );
         

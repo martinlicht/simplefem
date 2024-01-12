@@ -31,13 +31,14 @@ Coordinates::Coordinates( int dimension, int number, const std::vector<Float>& d
 
 Coordinates::~Coordinates()
 {
-    Coordinates::check();
+    // Coordinates::check();
 }
 
 void Coordinates::check() const
 {
     assert( dimension >= 0 && number >= 0 );
-    assert( data.size() == dimension * number );
+    if( data.size() != 0 )
+        assert( data.size() == dimension * number );
 }
 
 
@@ -113,6 +114,25 @@ FloatVector Coordinates::getvectorclone( int n ) const
     return getvectorclone( n, 1. );
 }
 
+/* get range of coordinates */
+        
+Float Coordinates::getmin( int d ) const {
+    assert( 0 <= d && d < dimension );
+    Float ret = getdata(0,d);
+    for( int n = 1; n < number; n++ )
+        ret = std::min(ret,getdata(n,d));
+    return ret;
+}
+Float Coordinates::getmax( int d ) const {
+    assert( 0 <= d && d < dimension );
+    Float ret = getdata(0,d);
+    for( int n = 1; n < number; n++ )
+        ret = std::max(ret,getdata(n,d));
+    return ret;
+}
+        
+        
+        
 FloatVector Coordinates::getvectorclone( int n, Float scale ) const
 {
     assert( 0 <= n && n < number );
@@ -165,6 +185,13 @@ void Coordinates::scale( Float alpha )
     for( int n = 0; n < number; n++ )
         for( int d = 0; d < dimension; d++ )
             data.at( n * dimension + d ) *= alpha;
+}
+                                
+void Coordinates::scale( FloatVector alphas )
+{
+    for( int n = 0; n < number; n++ )
+        for( int d = 0; d < dimension; d++ )
+            data.at( n * dimension + d ) *= alphas[d];
 }
                                 
 void Coordinates::shift( const FloatVector& add )
@@ -262,6 +289,30 @@ FloatVector Coordinates::getCenter() const
     for( int d = 0; d < dimension; d++ )
         center[ d ] /= number;
     return center;
+}
+
+
+
+
+std::vector<Float>& Coordinates::raw()
+{
+    return data;
+}
+
+const std::vector<Float>& Coordinates::raw() const
+{
+    return data;
+}
+
+
+
+
+        
+
+
+long long Coordinates::memorysize() const
+{
+    return sizeof(*this) + data.size() * sizeof(Float);
 }
 
 

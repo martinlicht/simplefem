@@ -36,6 +36,8 @@ public LinearOperator /* every matrix is a linear operator */
             Float value;
         };
 
+        static_assert( sizeof(MatrixEntry) == 2 * sizeof(int) + sizeof(Float), "MatrixEntry takes too much memory" );
+
         enum class MatrixEntrySorting {
             rowwise,
             columnwise
@@ -127,6 +129,10 @@ public LinearOperator /* every matrix is a linear operator */
         /* obtain a transpose */
 
         SparseMatrix getTranspose() const;
+
+        /* Memory size */
+        
+        long long memorysize() const;
         
     private:
 

@@ -110,7 +110,7 @@ $($(module).sharedlibrary): $($(module).libraryobject)
 
 $($(module).staticlibrary): $($(module).libraryobject)
 	@echo Static library: $@
-	@ar rcs $($(mymodule).staticlibrary) $($(mymodule).libraryobject)
+	@ar crs $($(mymodule).staticlibrary) $($(mymodule).libraryobject)
 
 
 
@@ -132,11 +132,26 @@ builda:       $(module).builda
 
 .PHONY: $(module).build
 
-ifeq ($(OS),Windows_NT)
-$(module).build: $(module).builda
+# ifeq ($(OS),Windows_NT)
+# $(module).build: $(module).builda
+# else
+# $(module).build: $(module).builda $(module).buildso
+# endif
+
+ifeq ($(LINKINGTYPE),objectfile)
+$(module).build: $($(module).libraryobject)
 else
-$(module).build: $(module).builda $(module).buildso
+ifeq ($(LINKINGTYPE),static)
+$(module).build: $(module).builda
+else 
+ifeq ($(LINKINGTYPE),dynamic)
+$(module).build: $(module).buildso
+else 
+$(error Unknown linkingtype $(LINKINGTYPE))
+endif 
+endif 
 endif
+
 
 
 
@@ -219,7 +234,7 @@ $(module).grepissues:
 	@-grep --line-number --color 'cout' $(mymoddir)/*pp
 #	@echo Find floating-point numbers ...
 #	@-grep --line-number --color -E '\.*[0-9]' $(mymoddir)/*pp
-#	@-grep --line-number --color -E '(0-9)e' $(mymoddir)/*pp
+	@-grep --line-number --color -E '(0-9)e' $(mymoddir)/*pp
 	@-grep --line-number --color -E '([0-9]+e[0-9]+)|([0-9]+\.[0-9]+)|((+-\ )\.[0-9]+)|((+-\ )[0-9]+\.)' $(mymoddir)/*pp
 
 
@@ -235,30 +250,30 @@ check: tidy
 # Commands for cleaning out numerous files that are not part of the project.
 # These remove the following:
 # - clean: delete all binary files and temporary output, and the following two.
-# - vtkclean: delete all *vtk output files
+# - outputclean: delete all *vtk output files
 # - dependclean: delete .deps directories and their content
 
 CMD_CLEAN    = rm -f .all.o *.a *.o *.d *.so *.gch OUTPUT_CPPLINT.txt callgrind.out.* *.exe *.exe.stackdump *.out *.out.stackdump 
-CMD_VTKCLEAN = rm -f ./*.vtk ./*/*.vtk ./*/*/*.vtk
+CMD_OUTPUTCLEAN = rm -f ./*.vtk ./*/*.vtk ./*/*/*.vtk ./*.svg ./*/*.svg ./*/*/*.svg
 CMD_DEPCLEAN = if [ -d .deps/ ]; then rm -f .deps/*.d .deps/.all.d; rmdir .deps/; fi 
 
 .PHONY: clean vktclean dependclean
 .PHONY: $(module).clean $(module).vktclean $(module).dependclean
 
 clean:       $(module).clean
-vtkclean:    $(module).vtkclean
+outputclean: $(module).outputclean
 dependclean: $(module).dependclean
 
-$(module).clean $(module).vtkclean $(module).dependclean: mymodule := $(module)
-$(module).clean $(module).vtkclean $(module).dependclean: mymoddir := $(moddir)
+$(module).clean $(module).outputclean $(module).dependclean: mymodule := $(module)
+$(module).clean $(module).outputclean $(module).dependclean: mymoddir := $(moddir)
 
 $(module).clean: 
 #	@-echo $(PWD)
-	@-cd $(mymoddir); $(CMD_CLEAN); $(CMD_VTKCLEAN); $(CMD_DEPCLEAN); 
+	@-cd $(mymoddir); $(CMD_CLEAN); $(CMD_OUTPUTCLEAN); $(CMD_DEPCLEAN); 
 
-$(module).vtkclean: 
+$(module).outputclean: 
 #	@-echo $(PWD)
-	@-cd $(mymoddir); $(CMD_VTKCLEAN); 
+	@-cd $(mymoddir); $(CMD_OUTPUTCLEAN); 
 
 $(module).dependclean: 
 #	@-echo $(PWD)

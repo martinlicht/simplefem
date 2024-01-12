@@ -80,8 +80,35 @@ int main()
                 
                 LOG << "Finished Unit Test" << nl;
 
-                return 0;
+        }
         
+        {
+        
+                LOG << "Unit Test for Lambda Component" << nl;
+        
+                int dim = 10;
+        
+                FloatVector vec(dim);
+                for( int i = 0; i < dim; i++ )
+                        vec.setentry( i, i * i );
+                
+                LambdaOperator L( dim,
+                        [](const FloatVector& input ) -> FloatVector
+                        {
+                                return 3. * input;
+                        }
+                );
+                
+                LOG << "Pick a vector:" << nl;
+                FloatVector x(dim);
+                for( int i = 0; i < dim; i++ )
+                        x.setentry( i, i );
+                LOG << x << nl;
+                LOG << "Apply the Lambda operator:" << nl;
+                LOG << L * x << nl;
+                
+                LOG << "Finished Unit Test" << nl;
+
         }
         
         LOG << "Finished Unit Test" << nl;

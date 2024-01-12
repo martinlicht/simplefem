@@ -28,8 +28,14 @@ int main()
             
             M.check();
             
-            for( int k = 0; k < 2; k++ ) 
+            LOG << "Uniform refinements..." << nl;
+
+            for( int k = 0; k <= 2; k++ ) {             
+                LOG << "Uniform refinements..." << k << nl;
                 M.uniformrefinement();
+            }
+            
+            LOG << "Longest edge bisections..." << nl;
             
             int cell_count_initial = M.count_triangles();
             int cell_marked_count  = 0;
@@ -70,8 +76,14 @@ int main()
             
             M.check();
             
-            for( int k = 0; k < 2; k++ ) 
+            LOG << "Uniform refinements..." << nl;
+
+            for( int k = 0; k <= 2; k++ ) {             
+                LOG << "Uniform refinements..." << k << nl;
                 M.uniformrefinement();
+            }
+            
+            LOG << "Longest edge bisections..." << nl;
             
             int cell_count_initial = M.count_triangles();
             int cell_marked_count  = 0;
