@@ -208,97 +208,16 @@ class DenseMatrix final
 
 
 
-inline DenseMatrix IdentityMatrix( int dim )
-{
-    return DenseMatrix( dim, []( int r, int c ) -> Float{ return r==c ? 1. : 0.; } );
-}
+DenseMatrix IdentityMatrix( int dim );
+
+DenseMatrix MatrixMult( const DenseMatrix& left, const DenseMatrix& right );
+
+DenseMatrix MatrixTripleMult( const DenseMatrix& A, const DenseMatrix& B );
 
 
+DenseMatrix HilbertMatrix( int n );
 
-
-inline DenseMatrix MatrixMult( const DenseMatrix& left, const DenseMatrix& right )
-{
-    left.check();
-    right.check();
-
-    const int lin = left.getdimin();
-    const int lout = left.getdimout();
-    const int rin = right.getdimin();
-    const int rout = right.getdimout();
-
-    assert( lin == rout );
-
-    DenseMatrix ret( lout, rin, 0. );
-    
-    for( int lo = 0; lo < lout; lo++ )
-    for( int ri = 0; ri < rin; ri++ )
-    for( int m = 0; m < rout; m++ )
-        ret( lo, ri ) += left( lo, m ) * right( m, ri );
-
-    ret.check();
-    return ret;
-}
-
-
-inline DenseMatrix MatrixTripleMult( const DenseMatrix& A, const DenseMatrix& B )
-{
-    A.check();
-    B.check();
-
-    assert( A.issquare());
-
-    const int a = A.getdimin();
-    const int b = B.getdimin();
-    
-    assert( a == B.getdimout() );
-
-    DenseMatrix ret( b, b, 0. );
-
-    for( int j = 0; j < b; j++ )
-    for( int k = 0; k < a; k++ ) 
-    {
-        Float AB_kj = 0;
-    
-        for( int l = 0; l < a; l++ )
-            AB_kj += A(k,l) * B(l,j);
-    
-        for( int i = 0; i < b; i++ )
-            ret(i,j) += B(k,i) * AB_kj;
-    }
-
-
-    // for( int i = 0; i < b; i++ )
-    // for( int k = 0; k < a; k++ )
-    // for( int j = 0; j < b; j++ )
-    // for( int l = 0; l < a; l++ )
-    //     ret( i, j ) += B(k,i) * A(k,l) * B(l,j);
-
-    ret.check();
-    return ret;
-}
-
-
-inline DenseMatrix HilbertMatrix( int n )
-{
-    std::function<Float(int,int)> hilbertmatrix_generator = [](int r, int c) { return 1. / (r+c+1); };
-
-    return DenseMatrix( n, hilbertmatrix_generator );
-}
-
-inline DenseMatrix InvHilbertMatrix( int n )
-{
-    std::function<Float(int,int)> invhilbertmatrix_generator = [=](int r, int c) { 
-        // https://mathoverflow.net/questions/47561/deriving-inverse-of-hilbert-matrix
-        const int i = r+1;
-        const int j = c+1;
-        return signpower(i+j) * (i+j-1)
-               * binomial_integer( n+i-1, n-j )
-               * binomial_integer( n+j-1, n-i )
-               * square( binomial_integer(i+j-2,i-1) );
-    };
-
-    return DenseMatrix( n, invhilbertmatrix_generator );
-}
+DenseMatrix InvHilbertMatrix( int n );
     
 
 
