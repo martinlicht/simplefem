@@ -280,6 +280,20 @@ class MeshSimplicial2D
         std::vector<SimplexFlag> flags_vertices;
 
 
+    public:
+
+        inline bool operator==( const MeshSimplicial2D& m2 )
+        {
+            return this->compare( m2 );
+        }
+
+        inline bool operator!=( const MeshSimplicial2D& m2 )
+        {
+            return !( *this == m2 );
+        }
+
+
+
 };
 
 
@@ -292,19 +306,6 @@ class MeshSimplicial2D
 // }
 
 
-
-
-
-
-inline bool operator==( const MeshSimplicial2D& m1, const MeshSimplicial2D& m2 )
-{
-    return m1.compare( m2 );
-}
-
-inline bool operator!=( const MeshSimplicial2D& m1, const MeshSimplicial2D& m2 )
-{
-    return !( m1 == m2 );
-}
 
 
 

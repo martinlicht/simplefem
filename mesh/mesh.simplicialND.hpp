@@ -115,6 +115,20 @@ class MeshSimplicialND
         std::vector<std::vector<int>> data_nextparents;
     
         std::vector<std::vector<SimplexFlag>> flags_simplices;
+
+
+    public:
+
+        inline bool operator==( const MeshSimplicialND& m2 )
+        {
+            return this->compare( m2 );
+        }
+
+        inline bool operator!=( const MeshSimplicialND& m2 )
+        {
+            return !( *this == m2 );
+        }
+
     
 };
 
@@ -129,15 +143,6 @@ class MeshSimplicialND
 
 
 
-inline bool operator==( const MeshSimplicialND& m1, const MeshSimplicialND& m2 )
-{
-    return m1.compare( m2 );
-}
-
-inline bool operator!=( const MeshSimplicialND& m1, const MeshSimplicialND& m2 )
-{
-    return !( m1 == m2 );
-}
 
 
 
