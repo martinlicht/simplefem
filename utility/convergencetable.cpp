@@ -472,32 +472,37 @@ std::string ConvergenceTable::TeXtabular( const std::vector<bool>& show_column )
 
 
 
-ConvergenceTable& operator<<( ConvergenceTable& contable, float entry )
+ConvergenceTable& ConvergenceTable::operator<<( float entry )
 {
+    ConvergenceTable& contable = *this;
     contable.insert_numerical_entry( entry );
     return contable;
 }
 
-ConvergenceTable& operator<<( ConvergenceTable& contable, double entry )
+ConvergenceTable& ConvergenceTable::operator<<( double entry )
 {
+    ConvergenceTable& contable = *this;
     contable.insert_numerical_entry( entry );
     return contable;
 }
 
-ConvergenceTable& operator<<( ConvergenceTable& contable, long double entry )
+ConvergenceTable& ConvergenceTable::operator<<( long double entry )
 {
+    ConvergenceTable& contable = *this;
     contable.insert_numerical_entry( entry );
     return contable;
 }
 
-ConvergenceTable& operator<<( ConvergenceTable& contable, const std::string& seriesheader )
+ConvergenceTable& ConvergenceTable::operator<<( const std::string& seriesheader )
 {
+    ConvergenceTable& contable = *this;
     contable.insert_seriesheader( seriesheader );
     return contable;
 }
 
-ConvergenceTable& operator<<( ConvergenceTable& contable, char code )
+ConvergenceTable& ConvergenceTable::operator<<( char code )
 {
+    ConvergenceTable& contable = *this;
     assert( code == nl );
     contable.insert_newline();
     return contable;

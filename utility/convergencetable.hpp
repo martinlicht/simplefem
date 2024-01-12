@@ -53,20 +53,23 @@ class ConvergenceTable
         std::string TeXtabular( const std::vector<bool>& ) const;
 
 
+        // stream operators 
+
+        ConvergenceTable& operator<<( float entry );
+
+        ConvergenceTable& operator<<( double entry );
+
+        ConvergenceTable& operator<<( long double entry );
+
+        ConvergenceTable& operator<<( const std::string& seriesheader );
+
+        ConvergenceTable& operator<<( char code );
+
 };
 
 
 
 
-ConvergenceTable& operator<<( ConvergenceTable& contable, float entry );
-
-ConvergenceTable& operator<<( ConvergenceTable& contable, double entry );
-
-ConvergenceTable& operator<<( ConvergenceTable& contable, long double entry );
-
-ConvergenceTable& operator<<( ConvergenceTable& contable, const std::string& seriesheader );
-
-ConvergenceTable& operator<<( ConvergenceTable& contable, char code );
         
 
 
