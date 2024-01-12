@@ -264,16 +264,17 @@ class Mesh
         // const decltype(auxdata)& getauxdata() { return auxdata; }
 #endif
         
+        friend inline std::ostream& operator<<( std::ostream& os, const Mesh& mesh )
+        {
+            mesh.print( os );
+            return os;
+        }
+
 };
 
 
 
 
-inline std::ostream& operator<<( std::ostream& os, const Mesh& mesh )
-{
-    mesh.print( os );
-    return os;
-}
 
 
 

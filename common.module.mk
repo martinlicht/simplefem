@@ -191,6 +191,20 @@ $($(module).headerchecks): check-%.hpp :
 
 
 ########################################################################
+# Check whether the source files have correct syntax. Read-only.
+
+$(module).sourcechecks := $(patsubst %.cpp,check-%.cpp,$($(module).sources))
+
+.PHONY: checksources $($(module).sourcechecks)
+checksources: $($(module).sourcechecks)
+$($(module).sourcechecks): check-%.cpp : 
+	$(info Check source: $*.cpp)
+	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $*.cpp -fsyntax-only
+
+
+
+
+########################################################################
 # Apply clang-tidy to all cpp and hpp files in the directory. Read-only.
 
 .PHONY: tidy $(module).tidy
