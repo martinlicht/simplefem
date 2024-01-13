@@ -93,7 +93,15 @@ static const constexpr Float desired_precision =
                                     sizeof(Float) == sizeof(float) ? 10e-6 : Sqrt( machine_epsilon );
 
 
-// TODO: Put these somewhere where it makes sense 
+
+                                    
+/////////////////////////////////////////////////
+//                                             //
+//          TEMPLATE INSTANTIATIONS            //
+//                                             //
+/////////////////////////////////////////////////
+
+extern template class std::vector<char>;
 extern template class std::vector<int>;
 extern template class std::vector<Float>;
 

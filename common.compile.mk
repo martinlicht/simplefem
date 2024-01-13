@@ -8,6 +8,7 @@
 # 	- CXX
 # 	- CXXFLAGS
 # 	- CPPFLAGS
+# 	- LDFLAGS
 # 	- LDLIBS
 # 
 # Note that these include several preprocessor variables
@@ -28,20 +29,19 @@ endif
 
 
 
-# Do you want to use GCC or Clang?
-# Uncomment the appropriate definition below
-# FLAG_CXX := CLANG
-FLAG_CXX := GCC
+# Uncomment your choice of compiler below
+FLAG_CXX := CLANG
+# FLAG_CXX := GCC
 # FLAG_CXX := ICC
 
 
 # Do you want to DISABLE the general assert macro?
 # Uncomment the following line to disable the general assert macro
-# FLAG_DISABLE_ASSERTIONS=yes
+FLAG_DISABLE_ASSERTIONS=yes
 
 # Do you want the standard library assert macro instead of the custom one?
 # Uncomment the following line to use the standard library assert macro 
-# FLAG_USE_ORIGINAL_ASSERT_MACRO=yes
+FLAG_USE_ORIGINAL_ASSERT_MACRO=yes
 
 # Do you want assert messages to be discarded?
 # Uncomment the following line to simplify the debugging macros 
@@ -53,7 +53,7 @@ FLAG_DISABLE_CHECK_MESHES=yes
 
 # Do you want to ENABLE the standard library debugging flags 
 # Uncomment the following line to enable the standard library debugging flags 
-# FLAG_DISABLE_STDLIBDEBUG=yes
+FLAG_DISABLE_STDLIBDEBUG=yes
 
 # Do you want to DISABLE the custom logging framework
 # in favor of standard library routines?
@@ -110,6 +110,11 @@ FLAG_DISABLE_CHECK_MESHES=yes
 # Uncomment the following line to enable profile generation at every run.
 # FLAG_DO_PROFILE=yes
 
+# Choose the linker by uncommenting, or leave commented for default linker 
+# LDFLAGS += -fuse-ld=bfd
+LDFLAGS += -fuse-ld=lld
+# LDFLAGS += -fuse-ld=gold
+# LDFLAGS += -fuse-ld=mold
 
 
 
@@ -812,6 +817,7 @@ parameters:
 	$(info CXXFLAGS_DIAGNOSISFORMAT = $(CXXFLAGS_DIAGNOSISFORMAT) ) 	
 	$(info CXXFLAGS_EXECUTABLE      = $(CXXFLAGS_EXECUTABLE) ) 
 	$(info CPPFLAGS                 = $(CPPFLAGS) )
+	$(info LDFLAGS                  = $(LDFLAGS) ) 
 	$(info LDLIBS                   = $(LDLIBS) ) 
 	$(info LINKINGTYPE              = $(LINKINGTYPE) ) 
 	@true
