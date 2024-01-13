@@ -18,7 +18,7 @@ using namespace std;
 int main()
 {
         
-        LOG << "Unit Test: (1D) degree elevations commute" << nl;
+        LOG << "Unit Test: (3D) degree elevations commute" << nl;
         
         // LOG << std::setprecision(10);
 
