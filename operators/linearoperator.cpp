@@ -2,8 +2,6 @@
 
 #include "linearoperator.hpp"
 
-#include <cassert>
-
 #include "floatvector.hpp"
 
 LinearOperator::LinearOperator( int out, int in )

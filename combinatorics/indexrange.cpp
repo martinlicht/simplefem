@@ -1,9 +1,6 @@
 
 #include "indexrange.hpp"
 
-#include <cassert>
-
-// #include <algorithm>
 #include <ostream>
 #include <sstream>
 #include <string>

@@ -92,7 +92,7 @@ DenseMatrix PointValuesOfMonomials( int r, const DenseMatrix& bcs )
     
     assert( mis.size() == binomial_integer( dim+r, r ) );
     
-    DenseMatrix ret( number_of_polynomials, number_of_evaluation_points );
+    DenseMatrix ret( number_of_evaluation_points, number_of_polynomials );
     
     for( int row = 0; row < number_of_evaluation_points; row++ ) // row -> interpolation point 
     for( int col = 0; col < number_of_polynomials;       col++ ) // col -> barycentric poly 

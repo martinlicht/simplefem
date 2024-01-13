@@ -1,8 +1,6 @@
 
 #include "simplesolver.hpp"
 
-#include <cassert>
-
 #include "../operators/floatvector.hpp"
 #include "densematrix.hpp"
 

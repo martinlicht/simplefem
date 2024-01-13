@@ -4,11 +4,12 @@
 
 #include "../../basic.hpp"
 #include "../../operators/composedoperators.hpp"
-#include "../../mesh/mesh.simplicial2D.hpp"
-#include "../../mesh/examples2D.hpp"
+#include "../../mesh/mesh.simplicial3D.hpp"
+#include "../../mesh/examples3D.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.elevation.hpp"
+#include "../../fem/global.interpol.hpp"
 #include "../../fem/utilities.hpp"
 #include "../../utility/convergencetable.hpp"
 
@@ -18,13 +19,13 @@ using namespace std;
 int main()
 {
         
-        LOG << "Unit Test: (2D) degree elevations commute" << nl;
+        LOG << "Unit Test: (3D) degree elevations commute" << nl;
         
         // LOG << std::setprecision(10);
 
         LOG << "Initial mesh..." << nl;
         
-        auto M = UnitSquare2D();
+        auto M = UnitCube3D();
         
         M.check();
         
@@ -32,17 +33,19 @@ int main()
 
         const int r_min = 0;
         
-        const int r_max = 5;
+        const int r_max = 3;
         
         const int l_min = 0;
         
-        const int l_max = 4;
+        const int l_max = 2;
+        
+        const int r_plus_max = 3;
         
         const int number_of_samples = 3;
         
            
         
-        Float errors[ M.getinnerdimension()+1 ][ l_max - l_min + 1 ][ r_max - r_min + 1 ];
+        Float errors[ M.getinnerdimension()+1 ][ l_max - l_min + 1 ][ r_max - r_min + 1 ][ r_plus_max + 1 ];
         
         
             
@@ -53,38 +56,33 @@ int main()
             
             LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << nl;
             
-            for( int k = 0; k <= M.getinnerdimension(); k++ ) 
-            for( int r = r_min; r <= r_max; r++ ) 
+            for( int k      = 0;     k <= M.getinnerdimension(); k++      ) 
+            for( int r      = r_min; r <= r_max;                 r++      ) 
+            for( int r_plus = 0;     r_plus <= r_plus_max;       r_plus++ ) 
             {
                 
-                LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << nl;
+                LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << " +" << r_plus << nl;
 
                 LOG << "Form degree: " << space << k << nl;
 
                 LOG << "assemble matrices..." << nl;
         
-                SparseMatrix elevation_r_1 = FEECBrokenElevationMatrix( M, M.getinnerdimension(), k, r  , 1 );
-                SparseMatrix elevation_r_2 = FEECBrokenElevationMatrix( M, M.getinnerdimension(), k, r+1, 1 );
-                SparseMatrix elevation_r_3 = FEECBrokenElevationMatrix( M, M.getinnerdimension(), k, r+2, 1 );
-                SparseMatrix elevation_r_g = FEECBrokenElevationMatrix( M, M.getinnerdimension(), k, r  , 3 );
+                SparseMatrix elevation = FEECBrokenElevationMatrix    ( M, M.getinnerdimension(), k, r, r_plus );
+                SparseMatrix interpol  = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), k, r, r_plus );
                 
-                errors[k][ l ][ r ] = 0.;
+                errors[k][ l ][ r ][ r_plus ] = 0.;
                 
                 for( int i = 0; i < number_of_samples; i++ ){
 
-                    auto field = elevation_r_g.createinputvector();
+                    auto field = elevation.createinputvector();
                     field.random();
                     field.normalize();
                     
                     assert( field.isfinite() );
                     
-                    const auto path_direct   = elevation_r_g * field;
+                    const auto error_mass = ( field - interpol * elevation * field ).norm();
                     
-                    const auto path_indirect = elevation_r_3 * elevation_r_2 * elevation_r_1 * field;
-                    
-                    const auto error_mass = ( path_direct - path_indirect ).norm();
-                    
-                    errors[k][l-l_min][r-r_min] = maximum( errors[k][l-l_min][r-r_min], error_mass );
+                    errors[k][l-l_min][r-r_min][r_plus] = maximum( errors[k][l-l_min][r-r_min][r_plus], error_mass );
                     
                 }
                 
@@ -107,16 +105,19 @@ int main()
         
         for( int k = 0; k <= M.getinnerdimension(); k++ ) 
             contables[k].table_name = "Rounding errors D1K" + std::to_string(k);
+        
         for( int k = 0; k <= M.getinnerdimension(); k++ ) 
         for( int r = r_min; r <= r_max; r++ ) 
-            contables[k] << ( "R" + std::to_string(r) );
+        for( int r_plus = 0; r_plus <= r_plus_max; r_plus++ ) 
+            contables[k] << ( "R" + std::to_string(r) + "+" + std::to_string(r_plus) );
 
         for( int k = 0; k <= M.getinnerdimension(); k++ ) 
         for( int l = l_min; l <= l_max; l++ ) 
         {
             
             for( int r = r_min; r <= r_max; r++ ) 
-                contables[k] << errors[k][l-l_min][r-r_min];
+            for( int r_plus = 0; r_plus <= r_plus_max; r_plus++ ) 
+                contables[k] << errors[k][l-l_min][r-r_min][r_plus];
             
             contables[k] << nl; 
             
@@ -134,11 +135,12 @@ int main()
         
         LOG << "Check that differences are small" << nl;
         
-        for( int l      = l_min; l <=                 l_max; l++ ) 
-        for( int r      = r_min; r <=                 r_max; r++ ) 
-        for( int k      =     0; k <= M.getinnerdimension(); k++ ) 
+        for( int k      =     0; k      <= M.getinnerdimension(); k++      ) 
+        for( int l      = l_min; l      <=                 l_max; l++      ) 
+        for( int r      = r_min; r      <=                 r_max; r++      ) 
+        for( int r_plus =     0; r_plus <=            r_plus_max; r_plus++ ) 
         {
-            assert( errors[k][l-l_min][r-r_min] < 10e-14 );
+            assert( errors[k][l-l_min][r-r_min][r_plus] < 10e-14 );
         }
         
         

@@ -1,7 +1,6 @@
 #ifndef INCLUDEGUARD_OPERATOR_FLOATVECTOR_HPP
 #define INCLUDEGUARD_OPERATOR_FLOATVECTOR_HPP
 
-#include <cassert>
 #include <functional>
 #include <initializer_list>
 #include <ostream>

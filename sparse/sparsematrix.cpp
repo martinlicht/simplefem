@@ -1,5 +1,4 @@
 
-#include <cassert>
 #include <cstdlib>
 
 #include <algorithm>
@@ -11,7 +10,6 @@
 
 #include "sparsematrix.hpp"
 #include "../dense/densematrix.hpp"
-//#include "../utility/utility.hpp"
 
 const bool sparse_matrix_verbosity = false;
 

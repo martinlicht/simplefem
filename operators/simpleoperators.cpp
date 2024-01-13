@@ -2,8 +2,6 @@
 #include "simpleoperators.hpp"
 
 #include <cmath>
-#include <functional>
-#include <ostream>
 
 #include "../basic.hpp"
 #include "floatvector.hpp"
