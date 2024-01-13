@@ -2,8 +2,6 @@
 #define INCLUDEGUARD_COMBINATORICS_INDEXMAP_HPP
 
 
-#include <cassert>
-
 #include <functional>
 #include <initializer_list>
 #include <ostream>

@@ -1,9 +1,6 @@
 #ifndef INCLUDEGUARD_OPERATOR_COMPLEXOPERATOR_HPP
 #define INCLUDEGUARD_OPERATOR_COMPLEXOPERATOR_HPP
 
-#include <cassert>
-#include <functional>
-//#include <memory>
 #include <utility>
 
 template<typename T>

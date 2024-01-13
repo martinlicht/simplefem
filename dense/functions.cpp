@@ -1,7 +1,6 @@
 
 #include "functions.hpp"
 
-#include <cassert>
 #include <new>
 #include <vector>
 

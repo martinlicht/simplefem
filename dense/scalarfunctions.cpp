@@ -1,7 +1,6 @@
 
 #include "scalarfunctions.hpp"
 
-#include <cassert>
 #include <algorithm>
 
 #include "densematrix.hpp"

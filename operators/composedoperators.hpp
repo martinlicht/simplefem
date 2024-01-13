@@ -1,8 +1,6 @@
 #ifndef INCLUDEGUARD_OPERATOR_COMPOSEDOPERATORS_HPP
 #define INCLUDEGUARD_OPERATOR_COMPOSEDOPERATORS_HPP
 
-#include <cassert>
-//#include <memory>
 #include <type_traits>
 #include <utility>
 

@@ -2,8 +2,6 @@
 #include "cholesky.hpp"
 
 
-#include <cassert>
-
 #include "densematrix.hpp"
 
 

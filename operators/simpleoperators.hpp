@@ -1,11 +1,6 @@
 #ifndef INCLUDEGUARD_OPERATOR_SIMPLEOPERATORS_HPP
 #define INCLUDEGUARD_OPERATOR_SIMPLEOPERATORS_HPP
 
-#include <cassert>
-#include <functional>
-//#include <memory>
-#include <utility>
-
 #include "../basic.hpp"
 #include "floatvector.hpp"
 #include "linearoperator.hpp"

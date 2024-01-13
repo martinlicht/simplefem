@@ -2,7 +2,6 @@
 
 #include "generatemultiindices.hpp"
 
-#include <cassert>
 #include <vector>
 
 #include "../basic.hpp"

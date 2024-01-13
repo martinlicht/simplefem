@@ -1,7 +1,6 @@
 
 #include "matrixtensorproduct.hpp"
 
-#include <cassert>
 
 
 
