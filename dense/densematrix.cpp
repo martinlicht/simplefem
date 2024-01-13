@@ -180,6 +180,29 @@ DenseMatrix::DenseMatrix( const FloatVector& myvector )
     }
     DenseMatrix::check();
 }
+
+
+DenseMatrix::DenseMatrix( const DenseMatrix& mat, Float scaling )
+: LinearOperator( mat.getdimout(), mat.getdimin() ), entries( new (std::nothrow) Float[ mat.getdimout() * mat.getdimin() ] ) // wierd
+{
+    assert( entries != nullptr );
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimin(); c++ )
+        (*this)(r,c) = scaling * mat(r,c);
+    DenseMatrix::check();
+}
+        
+DenseMatrix::DenseMatrix( DenseMatrix&& mat, Float scaling )
+: LinearOperator( mat.getdimout(), mat.getdimin() ), entries( std::move(mat.entries) )
+{
+    assert( entries != nullptr );
+    mat.entries = nullptr;
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimin(); c++ )
+        (*this)(r,c) *= scaling;
+    DenseMatrix::check();
+}
+
         
 DenseMatrix::~DenseMatrix()
 {
