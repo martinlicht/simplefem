@@ -5,6 +5,7 @@
 #include "basic.hpp"
 #include "constants.hpp"
 
+template class std::vector<char>;
 template class std::vector<int>;
 template class std::vector<Float>;
 
