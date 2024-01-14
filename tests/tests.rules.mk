@@ -169,6 +169,20 @@ $($(context).silent_runs): %.silent_run : %.$(ending)
 
 
 ########################################################################
+# Check whether the source files have correct syntax. Read-only.
+
+$(context).sourcechecks := $(patsubst %.cpp,check-%.cpp,$($(context).sources))
+
+.PHONY: checksources $($(context).sourcechecks)
+checksources: $($(context).sourcechecks)
+$($(context).sourcechecks): check-%.cpp : 
+	$(info Check source: $*.cpp)
+	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $*.cpp -fsyntax-only
+
+
+
+
+########################################################################
 # Apply clang-tidy to all cpp and hpp files in the directory. Read-only.
 
 .PHONY: tidy $(context).tidy
