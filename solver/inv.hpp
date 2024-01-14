@@ -185,7 +185,7 @@ void InverseOperator<MatrixCSR>::apply( FloatVector& dest, const FloatVector& sr
         rainbow.num_colors, rainbow.F.data(), rainbow.B.data(), rainbow.R.data()
     );
     #else
-    ConjugateGradientSolverCSR_SSOR( 
+    ConjugateGradientSolverCSR_SSOR_Eisenstat( 
         src.getdimension(),
         dest.raw(), 
         src.raw(), 

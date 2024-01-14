@@ -7,6 +7,8 @@
 
 #include <string>
 
+#include "pixelimage.hpp"
+
 // g++ images.cpp `Magick++-config --cxxflags --cppflags --ldflags --libs`
 // sudo apt install graphicsmagick-libmagick-dev-compat libgraphicsmagick++1-dev libmagick++-6-headers libmagick++-dev
 // sudo apt-get update; sudo apt-get upgrade; sudo apt-get install imagemagick-common
@@ -15,7 +17,6 @@
 #include "cimg.hpp"
 using namespace cimg_library;
 
-#include "pixelimage.hpp"
 
 
 /*

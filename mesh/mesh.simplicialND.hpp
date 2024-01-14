@@ -119,12 +119,12 @@ class MeshSimplicialND
 
     public:
 
-        inline bool operator==( const MeshSimplicialND& m2 )
+        inline bool operator==( const MeshSimplicialND& m2 ) const 
         {
             return this->compare( m2 );
         }
 
-        inline bool operator!=( const MeshSimplicialND& m2 )
+        inline bool operator!=( const MeshSimplicialND& m2 ) const 
         {
             return !( *this == m2 );
         }
