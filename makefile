@@ -31,6 +31,7 @@ help:
 	@echo " all:          build, test, and benchmark"
 	@echo " parameters:   Display the build parameters."
 	@echo " checkheaders: Run a static code analysis tool. The particular tool is not specified."
+	@echo " checksources: Run a static code analysis tool. The particular tool is not specified."
 	@echo " check:        Run a static code analysis tool. The particular tool is not specified."
 	@echo " clean:        Clean all output from previous builds, tests, and benchmarks,"
 	@echo "               including all VTK output"
