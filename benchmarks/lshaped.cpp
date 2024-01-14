@@ -116,9 +116,9 @@ int main()
             
             const int max_l = 5;
             
-            const int min_r = 1; 
+            const int min_r = 2; 
             
-            const int max_r = 1;
+            const int max_r = 2;
             
 
             
@@ -154,8 +154,11 @@ int main()
                     SparseMatrix scalar_incmatrix0_t = scalar_incmatrix0.getTranspose();
                     SparseMatrix scalar_incmatrix1_t = scalar_incmatrix1.getTranspose();
 
-                    FloatVector dir0 = Interpolation( M, 2, 1, 0, function_x );
-                    FloatVector dir1 = Interpolation( M, 2, 1, 0, function_y );
+                    SparseMatrix scalar_elevationmatrix   = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 1, 0, r );
+                    SparseMatrix scalar_elevationmatrix_t = scalar_elevationmatrix.getTranspose();
+
+                    FloatVector dir0 = Interpolation( M, M.getinnerdimension(), 1, 0, function_x );
+                    FloatVector dir1 = Interpolation( M, M.getinnerdimension(), 1, 0, function_y );
 
                     SparseMatrix contractionmatrix0   = FEECBrokenContractionMatrix( M, 2, 1, r-1, 1, 0, dir0 );
                     SparseMatrix contractionmatrix1   = FEECBrokenContractionMatrix( M, 2, 1, r-1, 1, 0, dir1 );
@@ -190,17 +193,28 @@ int main()
                         FloatVector interpol_rhs  = concatFloatVector( -dir0, dir1 );
                         
                         FloatVector rhs = concatFloatVector( 
-                                scalar_incmatrix0_t * ( scalar_massmatrix_plus * dir0 ),
-                                scalar_incmatrix1_t * ( scalar_massmatrix_plus * dir1 )
+                                scalar_incmatrix0_t * ( scalar_massmatrix_plus * ( scalar_elevationmatrix * -dir0 ) ),
+                                scalar_incmatrix1_t * ( scalar_massmatrix_plus * ( scalar_elevationmatrix *  dir1 ) )
                             );
 
                         FloatVector sol( rhs.getdimension(), 0. );
+
+
+                        // for( int t = 0; t < 10; t++ ){
+                        //     //const auto& S = scalar_incmatrix0_t * scalar_diffmatrix_t * contractionmatrix1_t * scalar_massmatrix * contractionmatrix1 * scalar_diffmatrix * scalar_incmatrix0;
+                        //     const auto& S = scalar_incmatrix0_t * scalar_diffmatrix_t * scalar_diffmatrix * scalar_incmatrix0;
+                        //     auto v = S.createinputvector();
+                        //     v.random(); v.normalize();
+                        //     auto w = S * v;
+                        //     LOG << v.getdimension() << space << v.norm() << space << w.norm() << space << w.norm() / v.norm() << nl;
+                        // }
+                        // LOG << contractionmatrix0 << nl;
                         
                         
                         timestamp start = gettimestamp();
                         
-                        auto minres = MinimumResidualMethod( SystemMatrix );
-                        minres.solve( sol, rhs );
+                        auto solver = ConjugateResidualMethod( SystemMatrix, desired_precision, 100, 0 );
+                        solver.solve( sol, rhs );
 
                         timestamp end = gettimestamp();
         
