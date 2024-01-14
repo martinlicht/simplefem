@@ -100,7 +100,7 @@ SparseMatrix FEECBrokenContractionMatrix( const Mesh& mesh, int n, int k, int r 
             
             entry.value = 0.;
             for( int g_i = 0; g_i < binomial_integer(n+1,k); g_i++ )
-                entry.value += field[ s * mis_factor.size() * binomial_integer(n+1,k)  + m_f * binomial_integer(n+1,k) + f_i ] * formMM( f_i, g_i );
+                entry.value += field[ s * mis_factor.size() * binomial_integer(n+1,k)  + m_f * binomial_integer(n+1,k) + g_i ] * formMM( g_i, f_i );
 
             int index_of_entry = s * couplings.size() * binomial_integer( n+1, k ) + coupling_index * binomial_integer( n+1, k ) + f_i;
             

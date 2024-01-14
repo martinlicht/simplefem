@@ -79,7 +79,7 @@ int main()
             
 
             
-            std::function<FloatVector(const FloatVector&)> function_rhs = 
+            std::function<FloatVector(const FloatVector&)> vectorfield_rhs = 
                 [=](const FloatVector& vec) -> FloatVector{
                     Assert( vec.getdimension() == 2 );
                     return FloatVector({
@@ -89,23 +89,31 @@ int main()
                      });
                 };
 
-            std::function<FloatVector(const FloatVector&)> function_x = 
+            std::function<FloatVector(const FloatVector&)> vectorfield_x = 
                 [=](const FloatVector& vec) -> FloatVector{
                     Assert( vec.getdimension() == 2 );
                     return FloatVector({
-                        -1.0
+                        1.0
                         ,
-                        +1.0
+                        0.0
                      });
                 };
 
-            std::function<FloatVector(const FloatVector&)> function_y = 
+            std::function<FloatVector(const FloatVector&)> vectorfield_y = 
                 [=](const FloatVector& vec) -> FloatVector{
                     Assert( vec.getdimension() == 2 );
                     return FloatVector({
-                        -1.0
+                        0.0
                         ,
-                        +1.0
+                        1.0
+                     });
+                };
+
+            std::function<FloatVector(const FloatVector&)> scalarfield_constantone = 
+                [=](const FloatVector& vec) -> FloatVector{
+                    Assert( vec.getdimension() == 2 );
+                    return FloatVector({
+                        1.0
                      });
                 };
 
@@ -114,7 +122,7 @@ int main()
 
             const int min_l = 0; 
             
-            const int max_l = 5;
+            const int max_l = 3;
             
             const int min_r = 2; 
             
@@ -154,11 +162,11 @@ int main()
                     SparseMatrix scalar_incmatrix0_t = scalar_incmatrix0.getTranspose();
                     SparseMatrix scalar_incmatrix1_t = scalar_incmatrix1.getTranspose();
 
-                    SparseMatrix scalar_elevationmatrix   = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 1, 0, r );
+                    SparseMatrix scalar_elevationmatrix   = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 0, 0, r );
                     SparseMatrix scalar_elevationmatrix_t = scalar_elevationmatrix.getTranspose();
 
-                    FloatVector dir0 = Interpolation( M, M.getinnerdimension(), 1, 0, function_x );
-                    FloatVector dir1 = Interpolation( M, M.getinnerdimension(), 1, 0, function_y );
+                    FloatVector dir0 = Interpolation( M, M.getinnerdimension(), 1, 0, vectorfield_x );
+                    FloatVector dir1 = Interpolation( M, M.getinnerdimension(), 1, 0, vectorfield_y );
 
                     SparseMatrix contractionmatrix0   = FEECBrokenContractionMatrix( M, 2, 1, r-1, 1, 0, dir0 );
                     SparseMatrix contractionmatrix1   = FEECBrokenContractionMatrix( M, 2, 1, r-1, 1, 0, dir1 );
@@ -191,29 +199,36 @@ int main()
                     {
 
                         FloatVector interpol_rhs  = concatFloatVector( -dir0, dir1 );
+
+                        FloatVector interpol_constantone = Interpolation( M, M.getinnerdimension(), 0, r, scalarfield_constantone );
+                        
+                        // LOG << scalar_incmatrix0_t.getdimout()    << space << scalar_incmatrix0_t.getdimin() << nl;
+                        // LOG << scalar_massmatrix_plus.getdimout() << space << scalar_massmatrix_plus.getdimin() << nl;
+                        // LOG << scalar_elevationmatrix.getdimout() << space << scalar_elevationmatrix.getdimin() << nl;
+                        // LOG << dir0.getdimension() << nl;
                         
                         FloatVector rhs = concatFloatVector( 
-                                scalar_incmatrix0_t * ( scalar_massmatrix_plus * ( scalar_elevationmatrix * -dir0 ) ),
-                                scalar_incmatrix1_t * ( scalar_massmatrix_plus * ( scalar_elevationmatrix *  dir1 ) )
+                                scalar_incmatrix0_t * ( scalar_massmatrix_plus * ( -interpol_constantone ) ),
+                                scalar_incmatrix1_t * ( scalar_massmatrix_plus * (  interpol_constantone ) )
                             );
 
                         FloatVector sol( rhs.getdimension(), 0. );
 
 
-                        // for( int t = 0; t < 10; t++ ){
-                        //     //const auto& S = scalar_incmatrix0_t * scalar_diffmatrix_t * contractionmatrix1_t * scalar_massmatrix * contractionmatrix1 * scalar_diffmatrix * scalar_incmatrix0;
-                        //     const auto& S = scalar_incmatrix0_t * scalar_diffmatrix_t * scalar_diffmatrix * scalar_incmatrix0;
-                        //     auto v = S.createinputvector();
-                        //     v.random(); v.normalize();
-                        //     auto w = S * v;
-                        //     LOG << v.getdimension() << space << v.norm() << space << w.norm() << space << w.norm() / v.norm() << nl;
-                        // }
+                        for( int t = 0; t < 10; t++ ){
+                            const auto& S = scalar_incmatrix0_t * scalar_diffmatrix_t * contractionmatrix0_t * scalar_massmatrix * contractionmatrix0 * scalar_diffmatrix * scalar_incmatrix0;
+                            // const auto& S = scalar_incmatrix0_t * scalar_diffmatrix_t * scalar_diffmatrix * scalar_incmatrix0;
+                            auto v = S.createinputvector();
+                            v.random(); v.normalize();
+                            auto w = S * v;
+                            LOG << v.getdimension() << space << v.norm() << space << w.norm() << " -- " << w.norm() / v.norm() << nl;
+                        }
                         // LOG << contractionmatrix0 << nl;
                         
                         
                         timestamp start = gettimestamp();
                         
-                        auto solver = ConjugateResidualMethod( SystemMatrix, desired_precision, 100, 0 );
+                        auto solver = ConjugateResidualMethod( SystemMatrix, desired_precision, SystemMatrix.getdimin() * 1000, 1 );
                         solver.solve( sol, rhs );
 
                         timestamp end = gettimestamp();
