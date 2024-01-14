@@ -29,6 +29,7 @@ SparseMatrix FEECBrokenContractionMatrix( const Mesh& mesh, int n, int k, int r 
     assert( k >= 0 && k <= n );
     assert( l >= 0 && l <= n );
     assert( r >= s && k >= l );
+    assert( field.isfinite() );
 
     assert( k == l ); // restricted special case for now...
     
@@ -77,14 +78,15 @@ SparseMatrix FEECBrokenContractionMatrix( const Mesh& mesh, int n, int k, int r 
         
         DenseMatrix GPM    = mesh.getGradientProductMatrix( n, s );
         DenseMatrix formMM = SubdeterminantMatrix( GPM, k );
+        assert( formMM.isfinite() );
 
-        for( int local_index_of_entry = 0; local_index_of_entry < couplings.size();        local_index_of_entry++ ) 
-        for( int f_i                  = 0;                  f_i < binomial_integer(n+1,k); f_i++                  )
+        for( int j   = 0; j   < couplings.size();        j++   ) 
+        for( int f_i = 0; f_i < binomial_integer(n+1,k); f_i++ )
         {
 
-            int m_i = couplings[local_index_of_entry][0];
-            int m_f = couplings[local_index_of_entry][1];
-            int m_o = couplings[local_index_of_entry][2];
+            int m_i = couplings[j][0];
+            int m_f = couplings[j][1];
+            int m_o = couplings[j][2];
 
             SparseMatrix::MatrixEntry entry;
             entry.row    = s * mis_output.size() + m_o;
@@ -95,13 +97,16 @@ SparseMatrix FEECBrokenContractionMatrix( const Mesh& mesh, int n, int k, int r 
                 entry.value += field[ s * mis_factor.size() * binomial_integer(n+1,k)  + m_f * binomial_integer(n+1,k) + f_i ]
                                  * formMM( f_i, g_i );
 
-            int index_of_entry = s * couplings.size() * binomial_integer( n+1, k ) + local_index_of_entry;
+            int index_of_entry = s * couplings.size() * binomial_integer( n+1, k ) + j * binomial_integer( n+1, k ) + f_i;
             
             ret.setentry( index_of_entry,  entry );
+            assert( std::isfinite(entry.value) );
         }        
         
     }
     
+    assert( ret.isfinite() );
+
     return ret;
 }
 

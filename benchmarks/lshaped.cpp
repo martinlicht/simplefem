@@ -162,22 +162,23 @@ int main()
                     SparseMatrix contractionmatrix0_t = contractionmatrix0.getTranspose();
                     SparseMatrix contractionmatrix1_t = contractionmatrix1.getTranspose();
                     
-                    
+                    assert( dir0.isfinite() and dir1.isfinite() );
+                    assert( contractionmatrix0.isfinite() and contractionmatrix1.isfinite() );
 
                     const auto SystemMatrix1 = 
                         Block2x2Operator( 
-                            scalar_incmatrix0_t * scalar_diffmatrix_t * contractionmatrix0_t * scalar_massmatrix * contractionmatrix0 * scalar_diffmatrix * scalar_incmatrix0,
-                            scalar_incmatrix0_t * scalar_diffmatrix_t * contractionmatrix0_t * scalar_massmatrix * contractionmatrix1 * scalar_diffmatrix * scalar_incmatrix1,
-                            scalar_incmatrix1_t * scalar_diffmatrix_t * contractionmatrix1_t * scalar_massmatrix * contractionmatrix0 * scalar_diffmatrix * scalar_incmatrix0,
-                            scalar_incmatrix1_t * scalar_diffmatrix_t * contractionmatrix1_t * scalar_massmatrix * contractionmatrix1 * scalar_diffmatrix * scalar_incmatrix1 
+                            scalar_incmatrix0_t & scalar_diffmatrix_t & contractionmatrix0_t & scalar_massmatrix & contractionmatrix0 & scalar_diffmatrix & scalar_incmatrix0,
+                            scalar_incmatrix0_t & scalar_diffmatrix_t & contractionmatrix0_t & scalar_massmatrix & contractionmatrix1 & scalar_diffmatrix & scalar_incmatrix1,
+                            scalar_incmatrix1_t & scalar_diffmatrix_t & contractionmatrix1_t & scalar_massmatrix & contractionmatrix0 & scalar_diffmatrix & scalar_incmatrix0,
+                            scalar_incmatrix1_t & scalar_diffmatrix_t & contractionmatrix1_t & scalar_massmatrix & contractionmatrix1 & scalar_diffmatrix & scalar_incmatrix1 
                         );
                     
                     const auto SystemMatrix2 = 
                         Block2x2Operator( 
-                             scalar_incmatrix0_t * scalar_diffmatrix_t * contractionmatrix1_t * scalar_massmatrix * contractionmatrix1 * scalar_diffmatrix * scalar_incmatrix0,
-                            -scalar_incmatrix0_t * scalar_diffmatrix_t * contractionmatrix1_t * scalar_massmatrix * contractionmatrix0 * scalar_diffmatrix * scalar_incmatrix1,
-                             scalar_incmatrix1_t * scalar_diffmatrix_t * contractionmatrix0_t * scalar_massmatrix * contractionmatrix1 * scalar_diffmatrix * scalar_incmatrix0,
-                            -scalar_incmatrix1_t * scalar_diffmatrix_t * contractionmatrix0_t * scalar_massmatrix * contractionmatrix0 * scalar_diffmatrix * scalar_incmatrix1
+                             scalar_incmatrix0_t & scalar_diffmatrix_t & contractionmatrix1_t & scalar_massmatrix & contractionmatrix1 & scalar_diffmatrix & scalar_incmatrix0,
+                            -( scalar_incmatrix0_t & scalar_diffmatrix_t & contractionmatrix1_t & scalar_massmatrix & contractionmatrix0 & scalar_diffmatrix & scalar_incmatrix1 ),
+                             scalar_incmatrix1_t & scalar_diffmatrix_t & contractionmatrix0_t & scalar_massmatrix & contractionmatrix1 & scalar_diffmatrix & scalar_incmatrix0,
+                            -( scalar_incmatrix1_t & scalar_diffmatrix_t & contractionmatrix0_t & scalar_massmatrix & contractionmatrix0 & scalar_diffmatrix & scalar_incmatrix1 )
                         );
                     
                     const auto SystemMatrix = SystemMatrix1 + SystemMatrix2;
@@ -199,7 +200,7 @@ int main()
                         
                         timestamp start = gettimestamp();
                         
-                        auto minres = MinimumResidualMethod( SystemMatrix );
+                        auto minres = ConjugateGradientMethod( SystemMatrix, desired_precision, SystemMatrix.getdimin(), 0 );
                         minres.solve( sol, rhs );
 
                         timestamp end = gettimestamp();
