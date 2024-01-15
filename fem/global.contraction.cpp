@@ -29,6 +29,7 @@ SparseMatrix FEECBrokenContractionMatrix( const Mesh& mesh, int n, int k, int r 
     assert( k >= 0 && k <= n );
     assert( l >= 0 && l <= n );
     assert( r >= s && k >= l );
+    assert( field.isfinite() );
 
     assert( k == l ); // restricted special case for now...
     
@@ -62,8 +63,7 @@ SparseMatrix FEECBrokenContractionMatrix( const Mesh& mesh, int n, int k, int r 
         }
     }
 
-    LOG << "Couplings: " << couplings.size() << nl;
-    for( const auto& a : couplings ) LOG << a[0] << space << a[1] << space << a[2] << nl;
+    // LOG << "Couplings: " << couplings.size() << nl; for( const auto& a : couplings ) LOG << a[0] << space << a[1] << space << a[2] << nl;
 
 
     
@@ -81,6 +81,7 @@ SparseMatrix FEECBrokenContractionMatrix( const Mesh& mesh, int n, int k, int r 
         
         DenseMatrix GPM    = mesh.getGradientProductMatrix( n, s );
         DenseMatrix formMM = SubdeterminantMatrix( GPM, k );
+        assert( formMM.isfinite() );
 
         assert( not formMM.iszero() );
         assert( formMM.issquare() );
@@ -105,11 +106,12 @@ SparseMatrix FEECBrokenContractionMatrix( const Mesh& mesh, int n, int k, int r 
             int index_of_entry = s * couplings.size() * binomial_integer( n+1, k ) + coupling_index * binomial_integer( n+1, k ) + f_i;
             
             ret.setentry( index_of_entry,  entry );
+            assert( std::isfinite(entry.value) );
         }        
         
     }
     
-    ret.isfinite();
+    assert( ret.isfinite() );
 
     return ret;
 }

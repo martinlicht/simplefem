@@ -173,22 +173,23 @@ int main()
                     SparseMatrix contractionmatrix0_t = contractionmatrix0.getTranspose();
                     SparseMatrix contractionmatrix1_t = contractionmatrix1.getTranspose();
                     
-                    
+                    assert( dir0.isfinite() and dir1.isfinite() );
+                    assert( contractionmatrix0.isfinite() and contractionmatrix1.isfinite() );
 
                     const auto SystemMatrix1 = 
                         Block2x2Operator( 
-                            scalar_incmatrix0_t * scalar_diffmatrix_t * contractionmatrix0_t * scalar_massmatrix * contractionmatrix0 * scalar_diffmatrix * scalar_incmatrix0,
-                            scalar_incmatrix0_t * scalar_diffmatrix_t * contractionmatrix0_t * scalar_massmatrix * contractionmatrix1 * scalar_diffmatrix * scalar_incmatrix1,
-                            scalar_incmatrix1_t * scalar_diffmatrix_t * contractionmatrix1_t * scalar_massmatrix * contractionmatrix0 * scalar_diffmatrix * scalar_incmatrix0,
-                            scalar_incmatrix1_t * scalar_diffmatrix_t * contractionmatrix1_t * scalar_massmatrix * contractionmatrix1 * scalar_diffmatrix * scalar_incmatrix1 
+                            scalar_incmatrix0_t & scalar_diffmatrix_t & contractionmatrix0_t & scalar_massmatrix & contractionmatrix0 & scalar_diffmatrix & scalar_incmatrix0,
+                            scalar_incmatrix0_t & scalar_diffmatrix_t & contractionmatrix0_t & scalar_massmatrix & contractionmatrix1 & scalar_diffmatrix & scalar_incmatrix1,
+                            scalar_incmatrix1_t & scalar_diffmatrix_t & contractionmatrix1_t & scalar_massmatrix & contractionmatrix0 & scalar_diffmatrix & scalar_incmatrix0,
+                            scalar_incmatrix1_t & scalar_diffmatrix_t & contractionmatrix1_t & scalar_massmatrix & contractionmatrix1 & scalar_diffmatrix & scalar_incmatrix1 
                         );
                     
                     const auto SystemMatrix2 = 
                         Block2x2Operator( 
-                             scalar_incmatrix0_t * scalar_diffmatrix_t * contractionmatrix1_t * scalar_massmatrix * contractionmatrix1 * scalar_diffmatrix * scalar_incmatrix0,
-                            -scalar_incmatrix0_t * scalar_diffmatrix_t * contractionmatrix1_t * scalar_massmatrix * contractionmatrix0 * scalar_diffmatrix * scalar_incmatrix1,
-                             scalar_incmatrix1_t * scalar_diffmatrix_t * contractionmatrix0_t * scalar_massmatrix * contractionmatrix1 * scalar_diffmatrix * scalar_incmatrix0,
-                            -scalar_incmatrix1_t * scalar_diffmatrix_t * contractionmatrix0_t * scalar_massmatrix * contractionmatrix0 * scalar_diffmatrix * scalar_incmatrix1
+                             scalar_incmatrix0_t & scalar_diffmatrix_t & contractionmatrix1_t & scalar_massmatrix & contractionmatrix1 & scalar_diffmatrix & scalar_incmatrix0,
+                            -( scalar_incmatrix0_t & scalar_diffmatrix_t & contractionmatrix1_t & scalar_massmatrix & contractionmatrix0 & scalar_diffmatrix & scalar_incmatrix1 ),
+                             scalar_incmatrix1_t & scalar_diffmatrix_t & contractionmatrix0_t & scalar_massmatrix & contractionmatrix1 & scalar_diffmatrix & scalar_incmatrix0,
+                            -( scalar_incmatrix1_t & scalar_diffmatrix_t & contractionmatrix0_t & scalar_massmatrix & contractionmatrix0 & scalar_diffmatrix & scalar_incmatrix1 )
                         );
                     
                     const auto SystemMatrix = SystemMatrix1 + SystemMatrix2;
@@ -215,20 +216,20 @@ int main()
                         FloatVector sol( rhs.getdimension(), 0. );
 
 
-                        for( int t = 0; t < 10; t++ ){
-                            const auto& S = scalar_incmatrix0_t * scalar_diffmatrix_t * contractionmatrix0_t * scalar_massmatrix * contractionmatrix0 * scalar_diffmatrix * scalar_incmatrix0;
-                            // const auto& S = scalar_incmatrix0_t * scalar_diffmatrix_t * scalar_diffmatrix * scalar_incmatrix0;
-                            auto v = S.createinputvector();
-                            v.random(); v.normalize();
-                            auto w = S * v;
-                            LOG << v.getdimension() << space << v.norm() << space << w.norm() << " -- " << w.norm() / v.norm() << nl;
-                        }
+                        // for( int t = 0; t < 10; t++ ){
+                        //     const auto& S = scalar_incmatrix0_t * scalar_diffmatrix_t * contractionmatrix0_t * scalar_massmatrix * contractionmatrix0 * scalar_diffmatrix * scalar_incmatrix0;
+                        //     // const auto& S = scalar_incmatrix0_t * scalar_diffmatrix_t * scalar_diffmatrix * scalar_incmatrix0;
+                        //     auto v = S.createinputvector();
+                        //     v.random(); v.normalize();
+                        //     auto w = S * v;
+                        //     LOG << v.getdimension() << space << v.norm() << space << w.norm() << " -- " << w.norm() / v.norm() << nl;
+                        // }
                         // LOG << contractionmatrix0 << nl;
                         
                         
                         timestamp start = gettimestamp();
                         
-                        auto solver = ConjugateResidualMethod( SystemMatrix, desired_precision, SystemMatrix.getdimin() * 1000, 1 );
+                        auto solver = MinimumResidualMethod( SystemMatrix, desired_precision, SystemMatrix.getdimin() * 1, 0 );
                         solver.solve( sol, rhs );
 
                         timestamp end = gettimestamp();
@@ -241,14 +242,20 @@ int main()
                         // LOG << "residual:   " << residualnorm  << nl;
 
                         
-                        if( r == 1 ){
+                        if( true ){
                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
                             vtk.writeCoordinateBlock();
                             vtk.writeTopDimensionalCells();
 
-                            auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r );
+                            auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 0, 0, r );
 
+                            auto x_values = interpol_matrix * scalar_incmatrix0 * sol.getslice( 0, scalar_incmatrix0.getdimin() );
+                            auto y_values = interpol_matrix * scalar_incmatrix1 * sol.getslice(    scalar_incmatrix0.getdimin(), scalar_incmatrix1.getdimin() );
+
+                            vtk.writeCellScalarData( x_values, "solution_x" );
+                            vtk.writeCellScalarData( y_values, "solution_y" );
+                            
                             fs.close();
                         }
 
