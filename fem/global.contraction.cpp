@@ -63,6 +63,9 @@ SparseMatrix FEECBrokenContractionMatrix( const Mesh& mesh, int n, int k, int r 
         }
     }
 
+    // LOG << "Couplings: " << couplings.size() << nl; for( const auto& a : couplings ) LOG << a[0] << space << a[1] << space << a[2] << nl;
+
+
     
     const int dim_in      = num_simplices * localdim_in;
     const int dim_out     = num_simplices * localdim_out;
@@ -80,13 +83,17 @@ SparseMatrix FEECBrokenContractionMatrix( const Mesh& mesh, int n, int k, int r 
         DenseMatrix formMM = SubdeterminantMatrix( GPM, k );
         assert( formMM.isfinite() );
 
-        for( int j   = 0; j   < couplings.size();        j++   ) 
-        for( int f_i = 0; f_i < binomial_integer(n+1,k); f_i++ )
+        assert( not formMM.iszero() );
+        assert( formMM.issquare() );
+        assert( formMM.issymmetric() );
+
+        for( int coupling_index = 0; coupling_index < couplings.size();        coupling_index++ ) 
+        for( int f_i            = 0;            f_i < binomial_integer(n+1,k); f_i++            )
         {
 
-            int m_i = couplings[j][0];
-            int m_f = couplings[j][1];
-            int m_o = couplings[j][2];
+            int m_i = couplings[coupling_index][0];
+            int m_f = couplings[coupling_index][1];
+            int m_o = couplings[coupling_index][2];
 
             SparseMatrix::MatrixEntry entry;
             entry.row    = s * mis_output.size() + m_o;
@@ -94,10 +101,9 @@ SparseMatrix FEECBrokenContractionMatrix( const Mesh& mesh, int n, int k, int r 
             
             entry.value = 0.;
             for( int g_i = 0; g_i < binomial_integer(n+1,k); g_i++ )
-                entry.value += field[ s * mis_factor.size() * binomial_integer(n+1,k)  + m_f * binomial_integer(n+1,k) + f_i ]
-                                 * formMM( f_i, g_i );
+                entry.value += field[ s * mis_factor.size() * binomial_integer(n+1,k)  + m_f * binomial_integer(n+1,k) + g_i ] * formMM( g_i, f_i );
 
-            int index_of_entry = s * couplings.size() * binomial_integer( n+1, k ) + j * binomial_integer( n+1, k ) + f_i;
+            int index_of_entry = s * couplings.size() * binomial_integer( n+1, k ) + coupling_index * binomial_integer( n+1, k ) + f_i;
             
             ret.setentry( index_of_entry,  entry );
             assert( std::isfinite(entry.value) );

@@ -79,7 +79,7 @@ int main()
             
 
             
-            std::function<FloatVector(const FloatVector&)> function_rhs = 
+            std::function<FloatVector(const FloatVector&)> vectorfield_rhs = 
                 [=](const FloatVector& vec) -> FloatVector{
                     Assert( vec.getdimension() == 2 );
                     return FloatVector({
@@ -89,23 +89,31 @@ int main()
                      });
                 };
 
-            std::function<FloatVector(const FloatVector&)> function_x = 
+            std::function<FloatVector(const FloatVector&)> vectorfield_x = 
                 [=](const FloatVector& vec) -> FloatVector{
                     Assert( vec.getdimension() == 2 );
                     return FloatVector({
-                        -1.0
+                        1.0
                         ,
-                        +1.0
+                        0.0
                      });
                 };
 
-            std::function<FloatVector(const FloatVector&)> function_y = 
+            std::function<FloatVector(const FloatVector&)> vectorfield_y = 
                 [=](const FloatVector& vec) -> FloatVector{
                     Assert( vec.getdimension() == 2 );
                     return FloatVector({
-                        -1.0
+                        0.0
                         ,
-                        +1.0
+                        1.0
+                     });
+                };
+
+            std::function<FloatVector(const FloatVector&)> scalarfield_constantone = 
+                [=](const FloatVector& vec) -> FloatVector{
+                    Assert( vec.getdimension() == 2 );
+                    return FloatVector({
+                        1.0
                      });
                 };
 
@@ -114,11 +122,11 @@ int main()
 
             const int min_l = 0; 
             
-            const int max_l = 5;
+            const int max_l = 3;
             
-            const int min_r = 1; 
+            const int min_r = 2; 
             
-            const int max_r = 1;
+            const int max_r = 2;
             
 
             
@@ -154,8 +162,11 @@ int main()
                     SparseMatrix scalar_incmatrix0_t = scalar_incmatrix0.getTranspose();
                     SparseMatrix scalar_incmatrix1_t = scalar_incmatrix1.getTranspose();
 
-                    FloatVector dir0 = Interpolation( M, 2, 1, 0, function_x );
-                    FloatVector dir1 = Interpolation( M, 2, 1, 0, function_y );
+                    SparseMatrix scalar_elevationmatrix   = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 0, 0, r );
+                    SparseMatrix scalar_elevationmatrix_t = scalar_elevationmatrix.getTranspose();
+
+                    FloatVector dir0 = Interpolation( M, M.getinnerdimension(), 1, 0, vectorfield_x );
+                    FloatVector dir1 = Interpolation( M, M.getinnerdimension(), 1, 0, vectorfield_y );
 
                     SparseMatrix contractionmatrix0   = FEECBrokenContractionMatrix( M, 2, 1, r-1, 1, 0, dir0 );
                     SparseMatrix contractionmatrix1   = FEECBrokenContractionMatrix( M, 2, 1, r-1, 1, 0, dir1 );
@@ -189,19 +200,37 @@ int main()
                     {
 
                         FloatVector interpol_rhs  = concatFloatVector( -dir0, dir1 );
+
+                        FloatVector interpol_constantone = Interpolation( M, M.getinnerdimension(), 0, r, scalarfield_constantone );
+                        
+                        // LOG << scalar_incmatrix0_t.getdimout()    << space << scalar_incmatrix0_t.getdimin() << nl;
+                        // LOG << scalar_massmatrix_plus.getdimout() << space << scalar_massmatrix_plus.getdimin() << nl;
+                        // LOG << scalar_elevationmatrix.getdimout() << space << scalar_elevationmatrix.getdimin() << nl;
+                        // LOG << dir0.getdimension() << nl;
                         
                         FloatVector rhs = concatFloatVector( 
-                                scalar_incmatrix0_t * ( scalar_massmatrix_plus * dir0 ),
-                                scalar_incmatrix1_t * ( scalar_massmatrix_plus * dir1 )
+                                scalar_incmatrix0_t * ( scalar_massmatrix_plus * ( -interpol_constantone ) ),
+                                scalar_incmatrix1_t * ( scalar_massmatrix_plus * (  interpol_constantone ) )
                             );
 
                         FloatVector sol( rhs.getdimension(), 0. );
+
+
+                        // for( int t = 0; t < 10; t++ ){
+                        //     const auto& S = scalar_incmatrix0_t * scalar_diffmatrix_t * contractionmatrix0_t * scalar_massmatrix * contractionmatrix0 * scalar_diffmatrix * scalar_incmatrix0;
+                        //     // const auto& S = scalar_incmatrix0_t * scalar_diffmatrix_t * scalar_diffmatrix * scalar_incmatrix0;
+                        //     auto v = S.createinputvector();
+                        //     v.random(); v.normalize();
+                        //     auto w = S * v;
+                        //     LOG << v.getdimension() << space << v.norm() << space << w.norm() << " -- " << w.norm() / v.norm() << nl;
+                        // }
+                        // LOG << contractionmatrix0 << nl;
                         
                         
                         timestamp start = gettimestamp();
                         
-                        auto minres = ConjugateGradientMethod( SystemMatrix, desired_precision, SystemMatrix.getdimin(), 0 );
-                        minres.solve( sol, rhs );
+                        auto solver = MinimumResidualMethod( SystemMatrix, desired_precision, SystemMatrix.getdimin() * 1, 0 );
+                        solver.solve( sol, rhs );
 
                         timestamp end = gettimestamp();
         
@@ -213,14 +242,20 @@ int main()
                         // LOG << "residual:   " << residualnorm  << nl;
 
                         
-                        if( r == 1 ){
+                        if( true ){
                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
                             vtk.writeCoordinateBlock();
                             vtk.writeTopDimensionalCells();
 
-                            auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r );
+                            auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 0, 0, r );
 
+                            auto x_values = interpol_matrix * scalar_incmatrix0 * sol.getslice( 0, scalar_incmatrix0.getdimin() );
+                            auto y_values = interpol_matrix * scalar_incmatrix1 * sol.getslice(    scalar_incmatrix0.getdimin(), scalar_incmatrix1.getdimin() );
+
+                            vtk.writeCellScalarData( x_values, "solution_x" );
+                            vtk.writeCellScalarData( y_values, "solution_y" );
+                            
                             fs.close();
                         }
 
