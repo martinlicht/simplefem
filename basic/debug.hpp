@@ -34,6 +34,17 @@
 
 
 
+
+
+/* 
+ * 
+ * Unless we are told to use the original assert macros, we define the internal functions 
+ * that implement the error output. No checks are performed here!
+ * 
+ * If the original assert macro is to be used, then we don't need those.
+ * 
+ */
+
 #ifndef USE_ORIGINAL_ASSERT_MACRO
 
 #include <cstdio>
@@ -103,6 +114,24 @@ inline void myActualUnimplemented [[noreturn]] ( const char* filename, const int
 
 
 
+/* 
+ * 
+ * Unless 
+ * 
+ * - assertions are disabled 
+ * OR
+ * - we discard assert messages 
+ * OR 
+ * - we use the original assert macro
+ * 
+ * the following prepares facilities for a varyadic assert macro: 
+ * we provide a varyadic template (C++11) which builds a string from a number of objects.
+ * The string is via the shift operator << and assumes that this can be performed. 
+ * No checks done here!.
+ * 
+ * 
+ */
+
 
 
 #if !defined NDEBUG && !defined DISCARD_ASSERT_MESSAGES && !defined USE_ORIGINAL_ASSERT_MACRO 
@@ -146,16 +175,26 @@ inline std::string Concat2String( const T& t, const Params&... params )
     return ss.str();
 }
 
-// template< typename... Params >
-// inline void myTemplatedAssert( const char* filename, const int linenumber, const char* expression, const Params&... params )
-// {
-//     myActualAssert( filename, linenumber, expression, Concat2String( params... ) );
-// }
-
-
 #endif // !defined NDEBUG && !defined DISCARD_ASSERT_MESSAGES && !defined USE_ORIGINAL_ASSERT_MACRO 
 
 
+
+/* 
+ * 
+ * Now we define the relevant macros. 
+ * If assertions are disabled, then `Assert` does nothing 
+ * and `unreachable` and `unimplemented` simply call exit with failure.
+ * 
+ * 
+ * Now, if we use the original assert macro, then `Assert` simply redirects the boolean variable into the standard `assert` macro.
+ * If the C++ version is below 20, we wrap this into another varyadic macro, which clogs the output a bit
+ * If the C++ version at least 20, then we forward the boolean via a varyadic macro
+ * 
+ * Instead, if the custom assert macro is used, then 
+ * If the C++ version is below 20, we do as above 
+ * If the C++ version is least 20, we use everything
+ * 
+ */
 
 
 
