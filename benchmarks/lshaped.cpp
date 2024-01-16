@@ -51,6 +51,11 @@ int main()
             MeshSimplicial2D M1 = LShapedDomain2D();
             auto& M = M0;
 
+            // M0.automatic_dirichlet_flags();
+            // M1.automatic_dirichlet_flags();
+
+
+            // if(0)
             for( int e = 0; e < M.count_edges(); e++ )
             {
                 if( M.count_edge_triangle_parents(e) == 2 ) continue;
@@ -62,12 +67,12 @@ int main()
                 auto cs0 = M.getcoordinates().getvectorclone( v0 );
                 auto cs1 = M.getcoordinates().getvectorclone( v1 );
 
-                if( cs0[0] == cs1[0] ) {
+                if( cs0[1] == cs1[1] ) {
                     M0.set_flag( 0, v0, SimplexFlagDirichlet );
                     M0.set_flag( 0, v1, SimplexFlagDirichlet );
                     M0.set_flag( 1, e,  SimplexFlagDirichlet );
                     LOG << "x: " << e << space << v0 << space << v1 << nl;
-                } else if( cs0[1] == cs1[1] ) {
+                } else if( cs0[0] == cs1[0] ) {
                     M1.set_flag( 0, v0, SimplexFlagDirichlet );
                     M1.set_flag( 0, v1, SimplexFlagDirichlet );
                     M1.set_flag( 1, e,  SimplexFlagDirichlet );
@@ -122,11 +127,11 @@ int main()
 
             const int min_l = 0; 
             
-            const int max_l = 3;
+            const int max_l = 6;
             
-            const int min_r = 2; 
+            const int min_r = 1; 
             
-            const int max_r = 2;
+            const int max_r = 1;
             
 
             
@@ -148,7 +153,7 @@ int main()
                     LOG << "Polynomial degree: " << r << "/" << max_r << nl;
                     
                     LOG << "... assemble matrices" << nl;
-            
+                    
                     
                     SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r-1 );
                     
@@ -176,6 +181,9 @@ int main()
                     assert( dir0.isfinite() and dir1.isfinite() );
                     assert( contractionmatrix0.isfinite() and contractionmatrix1.isfinite() );
 
+                    const int dimension0 = scalar_incmatrix0.getdimin();
+                    const int dimension1 = scalar_incmatrix1.getdimin();
+
                     const auto SystemMatrix1 = 
                         Block2x2Operator( 
                             scalar_incmatrix0_t & scalar_diffmatrix_t & contractionmatrix0_t & scalar_massmatrix & contractionmatrix0 & scalar_diffmatrix & scalar_incmatrix0,
@@ -188,8 +196,8 @@ int main()
                         Block2x2Operator( 
                              scalar_incmatrix0_t & scalar_diffmatrix_t & contractionmatrix1_t & scalar_massmatrix & contractionmatrix1 & scalar_diffmatrix & scalar_incmatrix0,
                             -( scalar_incmatrix0_t & scalar_diffmatrix_t & contractionmatrix1_t & scalar_massmatrix & contractionmatrix0 & scalar_diffmatrix & scalar_incmatrix1 ),
-                             scalar_incmatrix1_t & scalar_diffmatrix_t & contractionmatrix0_t & scalar_massmatrix & contractionmatrix1 & scalar_diffmatrix & scalar_incmatrix0,
-                            -( scalar_incmatrix1_t & scalar_diffmatrix_t & contractionmatrix0_t & scalar_massmatrix & contractionmatrix0 & scalar_diffmatrix & scalar_incmatrix1 )
+                            -( scalar_incmatrix1_t & scalar_diffmatrix_t & contractionmatrix0_t & scalar_massmatrix & contractionmatrix1 & scalar_diffmatrix & scalar_incmatrix0 ),
+                             scalar_incmatrix1_t & scalar_diffmatrix_t & contractionmatrix0_t & scalar_massmatrix & contractionmatrix0 & scalar_diffmatrix & scalar_incmatrix1 
                         );
                     
                     const auto SystemMatrix = SystemMatrix1 + SystemMatrix2;
@@ -229,7 +237,7 @@ int main()
                         
                         timestamp start = gettimestamp();
                         
-                        auto solver = MinimumResidualMethod( SystemMatrix, desired_precision, SystemMatrix.getdimin() * 1, 0 );
+                        auto solver = MinimumResidualMethod( SystemMatrix, desired_precision, SystemMatrix.getdimin() * 1, 1 );
                         solver.solve( sol, rhs );
 
                         timestamp end = gettimestamp();
@@ -250,11 +258,17 @@ int main()
 
                             auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 0, 0, r );
 
-                            auto x_values = interpol_matrix * scalar_incmatrix0 * sol.getslice( 0, scalar_incmatrix0.getdimin() );
-                            auto y_values = interpol_matrix * scalar_incmatrix1 * sol.getslice(    scalar_incmatrix0.getdimin(), scalar_incmatrix1.getdimin() );
+                            auto x_vertexvalues = sol.getslice( 0, scalar_incmatrix0.getdimin()                               );
+                            auto y_vertexvalues = sol.getslice(    scalar_incmatrix0.getdimin(), scalar_incmatrix1.getdimin() );
 
-                            vtk.writeCellScalarData( x_values, "solution_x" );
-                            vtk.writeCellScalarData( y_values, "solution_y" );
+                            auto x_cellvalues = interpol_matrix * scalar_incmatrix0 * x_vertexvalues;
+                            auto y_cellvalues = interpol_matrix * scalar_incmatrix1 * y_vertexvalues;
+
+                            if( r == 1 ) vtk.writeVertexScalarData( x_vertexvalues, "solution_x_vertex");
+                            if( r == 1 ) vtk.writeVertexScalarData( y_vertexvalues, "solution_y_vertex");
+                            
+                            vtk.writeCellScalarData( x_cellvalues, "solution_x_cell" );
+                            vtk.writeCellScalarData( y_cellvalues, "solution_y_cell" );
                             
                             fs.close();
                         }

@@ -58,7 +58,13 @@ void IdentityOperator::apply( FloatVector& dest, const FloatVector& src, Float s
 
 
 ZeroOperator::ZeroOperator( int dimension )
-: LinearOperator( dimension )
+: LinearOperator( dimension, dimension )
+{
+    ZeroOperator::check();
+}
+
+ZeroOperator::ZeroOperator( int dimout, int dimin )
+: LinearOperator( dimout, dimin )
 {
     ZeroOperator::check();
 }
@@ -84,7 +90,6 @@ void ZeroOperator::apply( FloatVector& dest, const FloatVector& src, Float s ) c
     src.check();
     dest.check();
     
-    assert( getdimin() == getdimout() );
     assert( getdimin() == src.getdimension() );
     assert( getdimout() == dest.getdimension() );
     

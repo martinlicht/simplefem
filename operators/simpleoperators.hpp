@@ -79,7 +79,8 @@ class ZeroOperator final
 
         /* Constructors */
         
-        explicit ZeroOperator( int n );
+        explicit ZeroOperator( int dim );
+        explicit ZeroOperator( int dimout, int dimin );
         
         /* standard interface */
         
