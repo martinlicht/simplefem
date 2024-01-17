@@ -761,3 +761,14 @@ long long FloatVector::memorysize() const
 
 
 
+FloatVector interlace( const FloatVector& first, const FloatVector& second )
+{
+    Assert( first.getdimension() == second.getdimension() );
+    FloatVector ret( first.getdimension() * 2 );
+    for( int i = 0; i < first.getdimension(); i++ )
+    {
+        ret[2*i+0] = first[i];
+        ret[2*i+1] = second[i];
+    }
+    return ret;
+}

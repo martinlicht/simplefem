@@ -444,6 +444,8 @@ inline FloatVector unitvector( int d, int i )
 }
 
 
+
+
 // Base function to end recursion
 FloatVector concatFloatVector( const FloatVector& vec ) {
     return vec;
@@ -459,6 +461,8 @@ FloatVector concatFloatVector( const FloatVector& first, Args... args) {
     return ret;
 }
 
+//
+FloatVector interlace( const FloatVector& first, const FloatVector& second );
 
 
 

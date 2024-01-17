@@ -37,7 +37,7 @@ FLAG_CXX := CLANG
 
 # Do you want to DISABLE the general assert macro?
 # Uncomment the following line to disable the general assert macro
-FLAG_DISABLE_ASSERTIONS=yes
+# FLAG_DISABLE_ASSERTIONS=yes
 
 # Do you want the standard library assert macro instead of the custom one?
 # Uncomment the following line to use the standard library assert macro 
@@ -53,7 +53,7 @@ FLAG_DISABLE_CHECK_MESHES=yes
 
 # Do you want to ENABLE the standard library debugging flags 
 # Uncomment the following line to enable the standard library debugging flags 
-FLAG_DISABLE_STDLIBDEBUG=yes
+# FLAG_DISABLE_STDLIBDEBUG=yes
 
 # Do you want to DISABLE the custom logging framework
 # in favor of standard library routines?
@@ -193,7 +193,7 @@ endif
 #                                             #
 ###############################################
 
-CXXFLAGS_LANG := -std=c++14 -pedantic -fno-rtti
+CXXFLAGS_LANG := -std=c++20 -pedantic -fno-rtti 
 
 
 
