@@ -43,6 +43,9 @@ class VTKWriter
                                        const FloatVector& z,                                           const std::string name, Float scaling = 1. );
         VTKWriter writeCellVectorData_Whitney(
                                        const FloatVector& gradvalues,                                  const std::string name, Float scaling = 1. );
+        VTKWriter writeCellVectorData_Euclidean(
+                                       int outerdim, 
+                                       const FloatVector& directions,                                  const std::string name, Float scaling = 1. );
 
         
     private:

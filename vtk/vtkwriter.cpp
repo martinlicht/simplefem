@@ -327,7 +327,7 @@ VTKWriter VTKWriter::writeCellVectorData( const std::function<FloatVector(int)>&
     
     for( int c = 0; c < mesh.count_simplices(topdim); c++ ) {
 
-        auto data_item = datafunction(c);
+        auto data_item = scaling * datafunction(c);
 
         os << data_item.at(0) << space 
            << ( mesh.getouterdimension() >= 2 ? data_item.at(1) : 0. ) << space 
@@ -402,6 +402,22 @@ VTKWriter VTKWriter::writeCellVectorData_Whitney( const FloatVector& v, const st
         FloatVector directions = scaling * mesh.getGradientMatrix(topdim,c) * coefficients;
 
         return directions;
+    };
+    
+    writeCellVectorData( datafunction, name, scaling );
+    
+    return *this;
+}
+
+
+VTKWriter VTKWriter::writeCellVectorData_Euclidean( int outerdim, const FloatVector& v, const std::string name, Float scaling )
+{
+    const int topdim = mesh.getinnerdimension();
+    
+    assert( v.getdimension() == mesh.count_simplices(topdim) * (mesh.getinnerdimension()+1) );
+        
+    auto datafunction = [&](int c) -> FloatVector {    
+        return v.getslice( outerdim*c, outerdim );
     };
     
     writeCellVectorData( datafunction, name, scaling );
