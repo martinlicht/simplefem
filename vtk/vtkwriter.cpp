@@ -387,7 +387,7 @@ VTKWriter VTKWriter::writeCellVectorData( const std::function<FloatVector(const 
 
 
 
-VTKWriter VTKWriter::writeCellVectorData( const FloatVector& v, const std::string name, Float scaling )
+VTKWriter VTKWriter::writeCellVectorData_Whitney( const FloatVector& v, const std::string name, Float scaling )
 {
     const int topdim = mesh.getinnerdimension();
     

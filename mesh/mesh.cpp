@@ -738,6 +738,40 @@ FloatVector get_random_barycentric_coordinates( int dim )
 
 
 
+
+
+
+
+
+
+
+
+FloatVector Mesh::transform_whitney_to_euclidean( int dim, const FloatVector& whitneyvalues, int zero_padding ) const 
+{
+    Assert( whitneyvalues.getdimension() == count_simplices(dim) * (dim+1) );
+
+    FloatVector ret( ( getouterdimension() + zero_padding ) * count_simplices(dim), 0. );
+
+    for( int t = 0; t < count_simplices(dim); t++ )
+    {
+        FloatVector coefficients( dim+1 );
+        
+        for( int i = 0; i <= getinnerdimension(); i++ )
+            coefficients[i] = whitneyvalues.at( t * (dim+1) + i );
+        
+        FloatVector directions = getGradientMatrix(dim,t) * coefficients;
+
+        ret.setslice( ( getouterdimension() + zero_padding ) * t, directions );
+    }
+        
+    return ret;
+};
+
+
+
+
+
+
 void Mesh::shake_interior_vertices( Float intensity, Float probability )
 {
     assert( 0. <= probability and probability <= 1.0 );

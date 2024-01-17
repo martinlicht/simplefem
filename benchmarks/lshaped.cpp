@@ -266,6 +266,16 @@ int main()
 
                             if( r == 1 ) vtk.writeVertexScalarData( x_vertexvalues, "solution_x_vertex");
                             if( r == 1 ) vtk.writeVertexScalarData( y_vertexvalues, "solution_y_vertex");
+
+                            FloatVector interlaced( 3 * x_cellvalues.getdimension() );
+                            for( int i = 0; i < x_cellvalues.getdimension(); i++ ) {
+                                interlaced[ 3 * i + 0 ] = x_cellvalues[i];
+                                interlaced[ 3 * i + 1 ] = y_cellvalues[i];
+                                interlaced[ 3 * i + 2 ] = 0.;
+                            }
+
+
+//                             vtk.writeCellVectorData( interlaced, "solution_cell" );
                             
                             vtk.writeCellScalarData( x_cellvalues, "solution_x_cell" );
                             vtk.writeCellScalarData( y_cellvalues, "solution_y_cell" );

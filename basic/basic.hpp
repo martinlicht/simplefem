@@ -449,17 +449,17 @@ inline constexpr int binomial_integer( int n, int k )
 
 
 
-/////////////////////////////////////////////////
-//                                             //
-//       NUMERICAL FACTORIAL, BINOMIALS        //
-//               AND AUXILIARIES               //
-//                                             //
-//   NOTE:                                     //
-//   For small inputs, the loop method seems   //
-//   to be fastest, whereas the recursive form //
-//   of the faculty performs 10% slower.       //
-//                                             //
-/////////////////////////////////////////////////
+//////////////////////////////////////////////////
+//                                              //
+//       NUMERICAL FACTORIAL, BINOMIALS         //
+//               AND AUXILIARIES                //
+//                                              //
+//   NOTE:                                      //
+//   For small inputs, the loop method seems    //
+//   to be fastest, whereas the recursive form  //
+//   of the factorial performs 10% slower.      //
+//                                              //
+//////////////////////////////////////////////////
 
 inline constexpr Float factorial_numerical_naive( int64_t n )
 {

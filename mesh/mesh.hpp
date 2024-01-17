@@ -234,6 +234,9 @@ class Mesh
         
         DenseMatrix getGradientProductMatrixRightFactor( int dim, int index ) const;
 
+
+        FloatVector transform_whitney_to_euclidean( int dim, const FloatVector& whitneyvalues, int zero_padding = 0 ) const;
+
         
         /* 
          * Manipulation

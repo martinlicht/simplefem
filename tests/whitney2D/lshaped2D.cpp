@@ -225,7 +225,7 @@ int main()
                             vtk.writeCoordinateBlock();
                             vtk.writeTopDimensionalCells();
 
-                            vtk.writeCellVectorData( computed_sol,  "solution_calculation" );
+                            vtk.writeCellVectorData_Whitney( computed_sol,  "solution_calculation" );
                             fs.close();
                         }
 
