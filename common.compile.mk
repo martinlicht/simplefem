@@ -41,7 +41,7 @@ FLAG_CXX := CLANG
 
 # Do you want the standard library assert macro instead of the custom one?
 # Uncomment the following line to use the standard library assert macro 
-FLAG_USE_ORIGINAL_ASSERT_MACRO=yes
+# FLAG_USE_ORIGINAL_ASSERT_MACRO=yes
 
 # Do you want assert messages to be discarded?
 # Uncomment the following line to simplify the debugging macros 
@@ -62,7 +62,7 @@ FLAG_DISABLE_CHECK_MESHES=yes
 
 # Do you want to DISABLE excpetion handling?
 # Uncomment the following line to disable exception handling
-# FLAG_NO_EXCEPTIONS=yes
+FLAG_NO_EXCEPTIONS=yes
 
 # Do you want to compile with all optimization flags enabled?
 # Uncomment the following line to have this done so

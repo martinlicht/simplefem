@@ -7,19 +7,39 @@
 
 #include <string>
 
-
-#include "stb_image.h"
-#include "stb_image_write.h"
-
 #include "pixelimage.hpp"
 
+// g++ images.cpp `Magick++-config --cxxflags --cppflags --ldflags --libs`
+// sudo apt install graphicsmagick-libmagick-dev-compat libgraphicsmagick++1-dev libmagick++-6-headers libmagick++-dev
+// sudo apt-get update; sudo apt-get upgrade; sudo apt-get install imagemagick-common
+// #include <Magick++.h>
+// using namespace Magick;
+// #include "cimg.hpp"
+// using namespace cimg_library;
 
 
-// utility for getting file ending
-std::string tail(std::string const& source, size_t const length) {
-  if (length >= source.size()) { return source; }
-  return source.substr(source.size() - length);
-} 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
+
+
+/*
+I am looking for a header-only C++ library that allows me to read images in various (common) file formats. 
+My usage will be conceptually no more complicated than this self-explaining pseudocode:
+
+    // read image in any Format
+    auto my_image( "oldimage.gif" );
+    
+    // read and write pixels 
+    my_image( row, column ).red = 55;
+    
+    // save image in any format
+    my_image.save( "newimage.tiff" );
+
+Up to now, I have been using Magick++ for that purposes. Not only is that overblown for my very limited purposes, but getting it to link is a pain in the *ss in a large project. I hope another library just accomplishes the job with little to no frills.
+*/
 
 
 
@@ -27,30 +47,31 @@ std::string tail(std::string const& source, size_t const length) {
 PixelImage readPixelImage( std::string str )
 {
 
-    int width, height, channels;
-    
-    LOG << "Loading: " << str << nl;
+    // InitializeMagick(nullptr);
 
-    unsigned char *image = stbi_load( str.c_str(), &width, &height, &channels, 0 );
+    // Image image;    
+    // image.read( str.c_str() );
+
+    CImg<unsigned char> image( str.c_str() );
     
-    if( image == nullptr ) { 
-        LOG << "STATUS: " << stbi_failure_reason() << nl;
-        Assert( image != nullptr );
-    }
-    
-    // std::cout << "Loaded image with a width of " << width << ", a height of " << height << " and " << channels << " channels" << std::endl;
+    // size_t width  = image.columns();
+    // size_t height = image.rows();
+    int width  = image.width();
+    int height = image.height();
 
     PixelImage ret( height, width ); 
     
     for( int row = 0; row < height; row++) 
     for( int col = 0; col < width; col++)
     {
-        ret(row,col).red   = image[ channels * ( row * width + col ) + 0 ];
-        ret(row,col).green = image[ channels * ( row * width + col ) + 1 ];
-        ret(row,col).blue  = image[ channels * ( row * width + col ) + 2 ];
+        // ColorRGB color = image.pixelColor( row, col ); 
+        // ret(row,col).red   = (int)(255*color.red());
+        // ret(row,col).green = (int)(255*color.green());
+        // ret(row,col).blue  = (int)(255*color.blue());
+        ret(row,col).red   = image(col,row,0,0);
+        ret(row,col).green = image(col,row,0,1);
+        ret(row,col).blue  = image(col,row,0,2);
     }
-
-    stbi_image_free( image );
 
     return ret;
 
@@ -58,27 +79,28 @@ PixelImage readPixelImage( std::string str )
 
 void savePixelImage( const PixelImage& pim, std::string str )
 {
+    // InitializeMagick(nullptr);
+
+    unsigned int width  = pim.getwidth();
+    unsigned int height = pim.getheight();
+
+    // Image image( Geometry(width, height), "white" );
     
-    int width    = pim.getwidth();
-    int height   = pim.getheight();
-    int channels = 3;
+    CImg<float> image( width, height, 1, 3, 0 );
 
-    unsigned char *image = new unsigned char[ width * height * 3 ];
-
-    for( int row = 0; row < height; row++ ) 
-    for( int col = 0; col < width;  col++ )
+    for( unsigned int row = 0; row < height; row++) 
+    for( unsigned int col = 0; col < width; col++)
     {
-        image[ 3 * ( row * width + col ) + 0 ] = pim(row,col).red;
-        image[ 3 * ( row * width + col ) + 1 ] = pim(row,col).green;
-        image[ 3 * ( row * width + col ) + 2 ] = pim(row,col).blue;
-    }
+        image(col,row,0,0) = pim(row,col).red;
+        image(col,row,0,1) = pim(row,col).green;
+        image(col,row,0,2) = pim(row,col).blue;
 
-    bool output_success = stbi_write_png( str.c_str(), width, height, channels, image, width * channels );
-    
-    Assert( output_success );
-    
-    delete[] image;
-    
+        // auto color = pim( row, col );
+        // image.pixelColor( row, col, ColorRGB( color.red/255., color.green/255., color.blue/255. ) ); 
+    }
+        
+    // image.write( str ); 
+    image.save( str.c_str() ); 
 }
 
 
