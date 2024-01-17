@@ -127,7 +127,7 @@ int main()
 
             const int min_l = 0; 
             
-            const int max_l = 6;
+            const int max_l = 5;
             
             const int min_r = 1; 
             
@@ -211,11 +211,6 @@ int main()
 
                         FloatVector interpol_constantone = Interpolation( M, M.getinnerdimension(), 0, r, scalarfield_constantone );
                         
-                        // LOG << scalar_incmatrix0_t.getdimout()    << space << scalar_incmatrix0_t.getdimin() << nl;
-                        // LOG << scalar_massmatrix_plus.getdimout() << space << scalar_massmatrix_plus.getdimin() << nl;
-                        // LOG << scalar_elevationmatrix.getdimout() << space << scalar_elevationmatrix.getdimin() << nl;
-                        // LOG << dir0.getdimension() << nl;
-                        
                         FloatVector rhs = concatFloatVector( 
                                 scalar_incmatrix0_t * ( scalar_massmatrix_plus * ( -interpol_constantone ) ),
                                 scalar_incmatrix1_t * ( scalar_massmatrix_plus * (  interpol_constantone ) )
@@ -224,16 +219,6 @@ int main()
                         FloatVector sol( rhs.getdimension(), 0. );
 
 
-                        // for( int t = 0; t < 10; t++ ){
-                        //     const auto& S = scalar_incmatrix0_t * scalar_diffmatrix_t * contractionmatrix0_t * scalar_massmatrix * contractionmatrix0 * scalar_diffmatrix * scalar_incmatrix0;
-                        //     // const auto& S = scalar_incmatrix0_t * scalar_diffmatrix_t * scalar_diffmatrix * scalar_incmatrix0;
-                        //     auto v = S.createinputvector();
-                        //     v.random(); v.normalize();
-                        //     auto w = S * v;
-                        //     LOG << v.getdimension() << space << v.norm() << space << w.norm() << " -- " << w.norm() / v.norm() << nl;
-                        // }
-                        // LOG << contractionmatrix0 << nl;
-                        
                         
                         timestamp start = gettimestamp();
                         
@@ -246,9 +231,8 @@ int main()
                         
                         assert( sol.isfinite() );
 
-                        // LOG << "...compute residual:" << nl;
-                        // LOG << "residual:   " << residualnorm  << nl;
-
+                        
+                        
                         
                         if( true ){
                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
@@ -275,7 +259,8 @@ int main()
                             }
 
 
-//                             vtk.writeCellVectorData( interlaced, "solution_cell" );
+                            vtk.writeCellVectorData_Euclidean( 3, interlaced, "solution_cell" );
+                            vtk.writeCellVectorData( x_cellvalues, y_cellvalues, FloatVector( M.count_triangles(), 0. ), "solution_cell" );
                             
                             vtk.writeCellScalarData( x_cellvalues, "solution_x_cell" );
                             vtk.writeCellScalarData( y_cellvalues, "solution_y_cell" );

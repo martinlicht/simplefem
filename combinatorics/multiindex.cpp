@@ -1,13 +1,13 @@
 
-#include "multiindex.hpp"
-
-#include <ostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
 #include "../basic.hpp"
 
 #include "indexrange.hpp"
+
+#include "multiindex.hpp"
 
 
 

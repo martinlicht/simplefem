@@ -447,13 +447,13 @@ inline FloatVector unitvector( int d, int i )
 
 
 // Base function to end recursion
-FloatVector concatFloatVector( const FloatVector& vec ) {
+inline FloatVector concatFloatVector( const FloatVector& vec ) {
     return vec;
 }
 
 // Template function to concatenate strings
 template <typename... Args>
-FloatVector concatFloatVector( const FloatVector& first, Args... args) {
+inline FloatVector concatFloatVector( const FloatVector& first, Args... args) {
     auto others = concatFloatVector(args...);
     FloatVector ret( first.getdimension() + others.getdimension() );
     ret.setslice( 0, first );
