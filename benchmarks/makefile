@@ -8,7 +8,7 @@ pathvar    :=$(CURDIR)/../
 
 include ../common.compile.mk 
 
-affices:= fem vtk mesh solver dense sparse operators combinatorics utility basic
+affices:= fem vtk mesh solver dense sparse operators combinatorics utility basic external
 
 ifeq ($(OS),Windows_NT)
 ending := exe

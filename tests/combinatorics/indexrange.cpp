@@ -1,14 +1,9 @@
 
 
-/**/
-
-#include <ostream>
 #include "../../basic.hpp"
 #include "../../combinatorics/indexrange.hpp"
 
 
-
-using namespace std;
 
 int main()
 {

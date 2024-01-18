@@ -1,14 +1,8 @@
 
-
-/**/
-
-#include <ostream>
 #include "../../basic.hpp"
 #include "../../operators/floatvector.hpp"
 #include "../../sparse/sparsematrix.hpp"
 
-
-using namespace std;
 
 int main()
 {

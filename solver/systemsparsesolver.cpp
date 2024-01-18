@@ -137,7 +137,7 @@ int HodgeConjugateResidualSolverCSR_diagonal(
         bool residualenergy_seems_small = ( k != 0 ) and absolute(Md_r) < threshold*threshold;
         // bool residualenergy_seems_small = false;
 
-        if( restart_condition or ( csrsys_restart_before_finish and residualenergy_seems_small ) ) [[unlikely]] {
+        if( restart_condition or ( csrsys_restart_before_finish and residualenergy_seems_small ) ) UNLIKELY {
             
             #if defined(_OPENMP)
             #pragma omp parallel for
@@ -234,7 +234,7 @@ int HodgeConjugateResidualSolverCSR_diagonal(
         
         /* Print information */
         
-        if( print_modulo > 0 and k % print_modulo == 0 ) [[unlikely]] 
+        if( print_modulo > 0 and k % print_modulo == 0 ) UNLIKELY 
             LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
         
         /* Check whether res is small */
@@ -242,12 +242,12 @@ int HodgeConjugateResidualSolverCSR_diagonal(
         bool residualenergy_is_unreasonable = not std::isfinite(Md_r) or Md_r < 0.;
         bool residualenergy_is_small = absolute(Md_r) < threshold*threshold;
         
-        if( residualenergy_is_unreasonable ) [[unlikely]] {
+        if( residualenergy_is_unreasonable ) UNLIKELY {
             if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Residual energy is unreasonable with %.9Le\n", (long double)Md_r );
             break;
         }
 
-        if( residualenergy_is_small ) [[unlikely]] 
+        if( residualenergy_is_small ) UNLIKELY 
             break;
         
         
@@ -255,12 +255,12 @@ int HodgeConjugateResidualSolverCSR_diagonal(
         bool denominator_is_unreasonable = not std::isfinite(Md_Md) or Md_Md < 0.;
         bool denominator_is_small    = sqrt(absolute(Md_Md)) < machine_epsilon;
         
-        if( denominator_is_unreasonable ) [[unlikely]] {
+        if( denominator_is_unreasonable ) UNLIKELY {
             if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Gradient double energy is unreasonable with %.9Le\n", (long double)Md_Md );
             break;
         }
         
-        if( denominator_is_small ) [[unlikely]] {
+        if( denominator_is_small ) UNLIKELY {
             LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
             LOGPRINTF( "WARNING: Gradient double energy is small with %.9Le\n", (long double)Md_Md );
             break;
@@ -491,7 +491,7 @@ int HodgeConjugateResidualSolverCSR_SSOR(
         bool residualenergy_seems_small = ( k != 0 ) and absolute(Md_r) < threshold*threshold;
         // bool residualenergy_seems_small = false;
 
-        if( restart_condition or ( csrsys_restart_before_finish and residualenergy_seems_small ) ) [[unlikely]] {
+        if( restart_condition or ( csrsys_restart_before_finish and residualenergy_seems_small ) ) UNLIKELY {
             
             #if defined(_OPENMP)
             #pragma omp parallel for
@@ -588,21 +588,21 @@ int HodgeConjugateResidualSolverCSR_SSOR(
         
         /* Print information */
         
-        if( print_modulo > 0 and k % print_modulo == 0 ) [[unlikely]] 
+        if( print_modulo > 0 and k % print_modulo == 0 ) UNLIKELY 
             LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
         
         /* Check whether res is small */
                 
         bool residualenergy_is_unreasonable = not std::isfinite(Md_r) or Md_r < 0.;
 
-        if( residualenergy_is_unreasonable ) [[unlikely]] {
+        if( residualenergy_is_unreasonable ) UNLIKELY {
             if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Residual energy is unreasonable with %.9Le\n", (long double)Md_r );
             break;
         }
 
         bool residualenergy_is_small = absolute(Md_r) < threshold*threshold;
         
-        if( residualenergy_is_small ) [[unlikely]] 
+        if( residualenergy_is_small ) UNLIKELY 
             break;
         
         
@@ -610,12 +610,12 @@ int HodgeConjugateResidualSolverCSR_SSOR(
         bool denominator_is_unreasonable = not std::isfinite(Md_Md) or Md_Md < 0.;
         bool denominator_is_small    = sqrt(absolute(Md_Md)) < machine_epsilon;
         
-        if( denominator_is_unreasonable ) [[unlikely]] {
+        if( denominator_is_unreasonable ) UNLIKELY {
             LOGPRINTF( "BREAKDOWN: Gradient double energy is unreasonable with %.9Le\n", (long double)Md_Md );
             break;
         }
         
-        if( denominator_is_small ) [[unlikely]] {
+        if( denominator_is_small ) UNLIKELY {
             LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
             LOGPRINTF( "WARNING: Gradient double energy is small with %.9Le\n", (long double)Md_Md );
             break;

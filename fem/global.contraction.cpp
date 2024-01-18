@@ -4,20 +4,17 @@
 #include "../basic.hpp"
 #include "../combinatorics/generatemultiindices.hpp"
 #include "../operators/floatvector.hpp"
-#include "../dense/cholesky.hpp"
 #include "../dense/functions.hpp"
 #include "../dense/densematrix.hpp"
 #include "../dense/matrixtensorproduct.hpp"
 #include "../sparse/sparsematrix.hpp"
 #include "../mesh/mesh.hpp"
 
-#include "../fem/local.polynomialmassmatrix.hpp"
-
-#include "../fem/global.massmatrix.hpp"
+#include "../fem/global.contraction.hpp"
 
 
 
-SparseMatrix FEECBrokenContractionMatrix( const Mesh& mesh, int n, int k, int r , int l, int s, FloatVector field )
+SparseMatrix FEECBrokenVeeMatrix( const Mesh& mesh, int n, int k, int r , int l, int s, FloatVector field )
 {
     
     // check whether the parameters are right 

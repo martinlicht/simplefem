@@ -1,8 +1,4 @@
 
-
-/**/
-
-#include <ostream>
 #include <sstream>
 #include "../../basic.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"

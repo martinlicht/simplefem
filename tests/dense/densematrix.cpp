@@ -1,13 +1,7 @@
 
-
-/**/
-
-#include <ostream>
 #include "../../basic.hpp"
 #include "../../dense/densematrix.hpp"
 
-
-using namespace std;
 
 int main()
 {

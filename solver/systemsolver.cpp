@@ -105,7 +105,7 @@ int BlockHerzogSoodhalterMethod(
         
         bool residual_seems_small = ( recent_iteration_count != 0 ) and ( absolute(eta) < threshold );
         
-        if( restart_condition or ( cppsys_restart_before_finish and residual_seems_small ) ) [[unlikely]] {
+        if( restart_condition or ( cppsys_restart_before_finish and residual_seems_small ) ) UNLIKELY {
             
             v0_A.zero(); w0_A.zero(); w1_A.zero();
             v0_C.zero(); w0_C.zero(); w1_C.zero();
@@ -149,7 +149,7 @@ int BlockHerzogSoodhalterMethod(
         
         bool residual_is_small = ( absolute(eta) < threshold );
         
-        if( residual_is_small ) [[unlikely]] 
+        if( residual_is_small ) UNLIKELY 
             break;
 
             
@@ -236,7 +236,7 @@ int BlockHerzogSoodhalterMethod(
         
         bool print_condition = ( print_modulo > 0 and recent_iteration_count % print_modulo == 0 );
         
-        if( print_modulo >= 0 and print_condition ) [[unlikely]] {
+        if( print_modulo >= 0 and print_condition ) UNLIKELY {
             LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) recent_deviation, (long double)threshold );
             LOGPRINTF( "INTERIM Gamma: %.9Le Eta: %.9Le\n", (long double)gamma, (long double)eta );
         }

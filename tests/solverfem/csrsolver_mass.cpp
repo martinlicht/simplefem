@@ -1,7 +1,4 @@
 
-
-/**/
-
 #include "../../basic.hpp"
 #include "../../utility/convergencetable.hpp"
 #include "../../sparse/sparsematrix.hpp"
@@ -17,8 +14,6 @@
 #include "../../fem/global.sullivanincl.hpp"
 #include "../../fem/utilities.hpp"
 
-
-using namespace std;
 
 int main()
 {

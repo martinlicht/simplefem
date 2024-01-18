@@ -1,13 +1,7 @@
 
-
-/**/
-
-#include <ostream>
 #include "../../basic.hpp"
 #include "../../operators/floatvector.hpp"
 
-
-using namespace std;
 
 int main()
 {

@@ -1,8 +1,4 @@
 
-
-/**/
-#include <ctime>
-
 #include "../../basic.hpp"
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
@@ -12,8 +8,6 @@
 #include "../../fem/global.sullivanincl.hpp"
 #include "../../fem/global.massmatrix.hpp"
 
-
-using namespace std;
 
 int main()
 {

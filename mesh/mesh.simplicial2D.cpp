@@ -3252,14 +3252,14 @@ std::string MeshSimplicial2D::outputTikZ() const
         
 
 
-std::string rgb_to_string( unsigned char r, unsigned char g, unsigned char b )
+inline std::string rgb_to_string( unsigned char r, unsigned char g, unsigned char b )
 {
     char result[8] = {0,0,0,0,0,0,0,0};
     sprintf(result, "#%02x%02x%02x", r, g, b);
     return std::string( result );
 }
 
-unsigned char float_to_color( Float f )
+inline unsigned char float_to_color( Float f )
 {
   if( f >= 255.) f = 255.;
   if( f <= 0.  ) f = 0.;

@@ -1,6 +1,7 @@
 
 #include <cmath>
 #include <algorithm>
+#include <array>
 #include <sstream>
 #include <map>
 #include <string>

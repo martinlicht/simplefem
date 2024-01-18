@@ -1,9 +1,5 @@
 
-
-/**/
-
-#include <iostream>
-// #include <fstream>
+#include <cstdio>
 
 #include "../../basic.hpp"
 #include "../../mesh/coordinates.hpp"
@@ -39,7 +35,8 @@ int main()
             
         LOG << M << nl;
         
-        std::cout << M.outputTikZ();
+        // std::cout << M.outputTikZ();
+        puts( M.outputTikZ().c_str() );
         
         LOG << "Finished Unit Test" << nl;
         
