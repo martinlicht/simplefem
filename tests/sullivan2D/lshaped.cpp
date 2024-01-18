@@ -216,8 +216,9 @@ int main()
                             auto lowest_rhs = interpol_matrix * interpol_rhs;
 
                             vtk.writeCellVectorData( function_rhs, "rhs_field" );
-                            vtk.writeCellVectorData( lowest_rhs,   "righthandside" );
-                            vtk.writeCellVectorData( lowest_sol,   "solution_calculation" );
+                            
+                            vtk.writeCellVectorData_Whitney( lowest_rhs,   "righthandside" );
+                            vtk.writeCellVectorData_Whitney( lowest_sol,   "solution_calculation" );
                             fs.close();
                         }
 

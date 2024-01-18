@@ -5,7 +5,7 @@
 #include <fstream>
 #include <string>
 
-
+#include "../basic.hpp"
 
 
 inline std::fstream openinputfile( std::string filename )
@@ -55,7 +55,7 @@ inline std::string getbasename( const std::string& path )
       std::string::size_type last_slash = path.find_last_of("/");
       std::string::size_type last_dot   = path.find_last_of(".");
       
-      assert( last_dot != std::string::npos );
+      Assert( last_dot != std::string::npos );
       
       std::string::size_type begin = ( last_slash != std::string::npos ) ? ( last_slash+1 ) : 0;
       std::string::size_type end   = last_dot;

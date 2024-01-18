@@ -282,12 +282,12 @@ class MeshSimplicial2D
 
     public:
 
-        inline bool operator==( const MeshSimplicial2D& m2 )
+        inline bool operator==( const MeshSimplicial2D& m2 ) const 
         {
             return this->compare( m2 );
         }
 
-        inline bool operator!=( const MeshSimplicial2D& m2 )
+        inline bool operator!=( const MeshSimplicial2D& m2 ) const 
         {
             return !( *this == m2 );
         }

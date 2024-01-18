@@ -68,8 +68,6 @@ SparseMatrix FEECBrokenInterpolationMatrix( const Mesh& mesh, int n, int k, int 
     for( int high_poly_index = 0; high_poly_index < multis_high.size(); high_poly_index++ )
     for( int      form_index = 0;      form_index <      sigmas.size();      form_index++ )
     {
-        localmatrixentries;
-
         SparseMatrix::MatrixEntry entry;
         
         entry.row    = low_poly_index  * sigmas.size() + form_index;

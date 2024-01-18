@@ -1,10 +1,10 @@
 
-#include "indexmap.hpp"
-
 #include <algorithm>
-#include <ostream>
+#include <sstream>
 
 #include "indexrange.hpp"
+#include "indexmap.hpp"
+
 
 
 
