@@ -135,11 +135,11 @@ class MeshSimplicialND
 
 
 
-// inline std::ostream& operator<<( std::ostream& os, const MeshSimplicialND& mND )
-// {
-//     mND.print( os );
-//     return os;
-// }
+inline std::ostream& operator<<( std::ostream& os, const MeshSimplicialND& mND )
+{
+    os << mND.text(); // mND.print( os );
+    return os;
+}
 
 
 

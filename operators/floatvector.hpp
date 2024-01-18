@@ -427,9 +427,12 @@ inline Float operator*( const FloatVector& left, const FloatVector& right )
 
 
 /* Output stream notation */
-inline std::ostream& operator<<( std::ostream& out, const FloatVector& vec )
+// inline std::ostream& operator<<( std::ostream& out, const FloatVector& vec )
+template<typename Stream>
+// inline std::ostream& operator<<( std::ostream& out, const FloatVector& vec )
+inline Stream& operator<<( Stream& out, const FloatVector& vec )
 {
-    vec.print( out );
+    out << vec.text(); // vec.print( out );
     return out;
 }
 

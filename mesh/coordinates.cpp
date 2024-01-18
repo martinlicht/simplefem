@@ -43,10 +43,10 @@ void Coordinates::check() const
 
 
 
-void Coordinates::print( std::ostream& os ) const 
-{
-    os << text();
-}
+// void Coordinates::print( std::ostream& os ) const 
+// {
+//     os << text();
+// }
 
 std::string Coordinates::text() const
 {

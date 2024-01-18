@@ -54,7 +54,7 @@ class IndexMap
         
         std::string text( bool embellish = true ) const;
         
-        void print( std::ostream&, bool embellish = true ) const;
+        // void print( std::ostream&, bool embellish = true ) const;
 
         // void lg() const { LOG << text() << nl; };
 
@@ -175,7 +175,7 @@ inline std::ostream& operator<<( std::ostream& os, const IndexMap& im )
 {
     im.check();
 
-    im.print( os );
+    os << im.text(); // im.print( os );
 
     return os;
 }

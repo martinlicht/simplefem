@@ -38,7 +38,7 @@ class IndexRange final
         
         std::string text( bool embellish = false ) const;
         
-        void print( std::ostream&, bool embellish = true ) const;
+        // void print( std::ostream&, bool embellish = true ) const;
 
         // void lg() const { LOG << text() << nl; };
         
@@ -132,7 +132,7 @@ class IndexRange final
 
 inline std::ostream& operator<<( std::ostream& os, const IndexRange& ir )
 {
-    ir.print( os );
+    os << ir.text(); // ir.print( os );
     return os;
 }
 

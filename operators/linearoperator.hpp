@@ -96,7 +96,7 @@ inline FloatVector operator*( const LinearOperator& op, const FloatVector& vec )
 inline std::ostream& operator<<( std::ostream& os, const LinearOperator& op )
 {
     op.check();
-    op.print( os );
+    os << op.text(); // op.print( os );
     op.check();
     return os;
 }

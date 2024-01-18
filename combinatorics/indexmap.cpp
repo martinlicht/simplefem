@@ -121,10 +121,10 @@ std::string IndexMap::text( bool embellish ) const
     return ss.str();
 }
 
-void IndexMap::print( std::ostream& os, bool embellish ) const 
-{
-    os << text( embellish );
-}
+// void IndexMap::print( std::ostream& os, bool embellish ) const 
+// {
+//     os << text( embellish );
+// }
 
 const IndexRange& IndexMap::getSourceRange() const 
 {
