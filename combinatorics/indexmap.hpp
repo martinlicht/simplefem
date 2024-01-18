@@ -34,6 +34,7 @@ class IndexMap
         IndexMap( const IndexRange&, const std::function<int(int)>& );
         IndexMap( const IndexRange&, const std::initializer_list<int>& );
         
+        IndexMap( const IndexRange&, const IndexRange&, const int& );
         IndexMap( const IndexRange&, const IndexRange&, const std::vector<int>& );
         IndexMap( const IndexRange&, const IndexRange&, const std::function<int(int)>& );
         IndexMap( const IndexRange&, const IndexRange&, const std::initializer_list<int>& );
