@@ -1,8 +1,9 @@
 // g++ sorthacktest.cpp -o sorthacktest
 
-#include <vector>
 #include <cstdlib>
 #include <cassert>
+
+#include <vector>
 #include <algorithm>
 #include "../../basic/sorthack.hpp"
 

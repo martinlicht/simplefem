@@ -1,8 +1,4 @@
 
-
-/**/
-
-#include <ostream>
 #include "../../basic.hpp"
 #include "../../dense/cholesky.hpp"
 #include "../../dense/functions.hpp"
@@ -10,8 +6,6 @@
 #include "../../dense/qr.factorization.hpp"
 #include "../../dense/scalarfunctions.hpp"
 
-
-using namespace std;
 
 int main()
 {

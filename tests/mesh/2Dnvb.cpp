@@ -1,11 +1,5 @@
 
-
-/**/
-
-#include <ostream>
-// #include <fstream>
 #include <vector>
-#include <algorithm>
 
 #include "../../basic.hpp"
 #include "../../utility/stl.hpp"

@@ -2,14 +2,11 @@
 
 /**/
 
-#include <ostream>
 #include "../../basic.hpp"
 #include "../../combinatorics/indexrange.hpp"
 #include "../../combinatorics/indexmap.hpp"
 #include "../../combinatorics/generateindexmaps.hpp"
 
-
-using namespace std;
 
 int main()
 {

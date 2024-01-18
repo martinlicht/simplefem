@@ -1,8 +1,6 @@
 
+#include <cstdio>
 
-/**/
-
-#include <iostream>
 #include <fstream>
 
 #include "../../basic.hpp"
@@ -32,7 +30,8 @@ int main()
         
         LOG << M << nl;
         
-        std::cout << M.outputTikZ();
+        // std::cout << M.outputTikZ();
+        puts( M.outputTikZ().c_str() );
         
         fstream fs( experimentfile( getbasename(__FILE__), "svg" ), std::fstream::out );
         int num_tets = M.count_triangles();

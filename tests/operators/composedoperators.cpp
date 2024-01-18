@@ -1,15 +1,9 @@
 
-
-/**/
-
-#include <ostream>
 #include "../../basic.hpp"
 #include "../../operators/floatvector.hpp"
 #include "../../operators/simpleoperators.hpp"
 #include "../../operators/composedoperators.hpp"
 
-
-using namespace std;
 
 int main()
 {

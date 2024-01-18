@@ -1,7 +1,3 @@
-
-
-/**/
-
 #include <ostream>
 #include <fstream>
 
