@@ -173,8 +173,8 @@ int main()
                     FloatVector dir0 = Interpolation( M, M.getinnerdimension(), 1, 0, vectorfield_x );
                     FloatVector dir1 = Interpolation( M, M.getinnerdimension(), 1, 0, vectorfield_y );
 
-                    SparseMatrix contractionmatrix0   = FEECBrokenContractionMatrix( M, 2, 1, r-1, 1, 0, dir0 );
-                    SparseMatrix contractionmatrix1   = FEECBrokenContractionMatrix( M, 2, 1, r-1, 1, 0, dir1 );
+                    SparseMatrix contractionmatrix0   = FEECBrokenVeeMatrix( M, 2, 1, r-1, 1, 0, dir0 );
+                    SparseMatrix contractionmatrix1   = FEECBrokenVeeMatrix( M, 2, 1, r-1, 1, 0, dir1 );
                     SparseMatrix contractionmatrix0_t = contractionmatrix0.getTranspose();
                     SparseMatrix contractionmatrix1_t = contractionmatrix1.getTranspose();
                     

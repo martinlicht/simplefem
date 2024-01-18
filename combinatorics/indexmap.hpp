@@ -123,6 +123,10 @@ class IndexMap
 
 
 
+IndexMap mergeSigmas( const IndexMap& left, const IndexMap& right, int& sign );
+
+
+
 inline IndexMap operator*( const IndexMap& leave, const IndexMap& enter )
 {
     leave.check();
