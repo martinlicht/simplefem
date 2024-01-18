@@ -1,6 +1,8 @@
 #ifndef INCLUDEGUARD_FEM_LAGRANGE_MATRICES
 #define INCLUDEGUARD_FEM_LAGRANGE_MATRICES
 
+#include <functional>
+
 #include "../sparse/sparsematrix.hpp"
 #include "../sparse/matcsr.hpp"
 #include "../mesh/mesh.hpp"

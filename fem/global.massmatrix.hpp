@@ -6,7 +6,6 @@
 #include "../sparse/sparsematrix.hpp"
 #include "../mesh/mesh.hpp"
 
-#include "../fem/local.polynomialmassmatrix.hpp"
 
 
 

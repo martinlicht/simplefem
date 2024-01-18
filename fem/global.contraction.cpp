@@ -4,16 +4,13 @@
 #include "../basic.hpp"
 #include "../combinatorics/generatemultiindices.hpp"
 #include "../operators/floatvector.hpp"
-#include "../dense/cholesky.hpp"
 #include "../dense/functions.hpp"
 #include "../dense/densematrix.hpp"
 #include "../dense/matrixtensorproduct.hpp"
 #include "../sparse/sparsematrix.hpp"
 #include "../mesh/mesh.hpp"
 
-#include "../fem/local.polynomialmassmatrix.hpp"
-
-#include "../fem/global.massmatrix.hpp"
+#include "../fem/global.contraction.hpp"
 
 
 
