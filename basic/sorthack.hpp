@@ -22,7 +22,13 @@ inline void sorthack( std::vector<A>& vec )
     /* insertion sort */
     for( int s = 0; s < vec.size(); s++ )
     for( int t = s; t > 0 && vec.at(t-1) > vec.at(t); t-- )
+    // {
+    //     A temp = vec[t-1];
+    //     vec[t-1] = vec[t];
+    //     vec[t] = temp;
+    // }
         std::swap( vec[t-1], vec[t] );
+    // TODO: understand why swap for arrays is not found here
     
     for( int t = 1; t < vec.size(); t++ )
         assert( vec[t-1] <= vec[t] );

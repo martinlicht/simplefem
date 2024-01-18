@@ -60,6 +60,7 @@ help:
 
 
 modules:=
+modules+=external
 modules+=basic
 modules+=utility
 modules+=combinatorics
@@ -78,6 +79,10 @@ modules+=fem
 projectdir :=.
 
 include common.compile.mk
+
+moddir :=./external
+module:=external
+include common.module.mk
 
 moddir :=./basic
 module:=basic
@@ -207,7 +212,7 @@ check:
 .PHONY: cpplint
 cpplint:
 	( $(projectdir)/Tools/cpplint.py \
-	--exclude=$(projectdir)/.private/* --exclude=$(projectdir)/.legacy/* --exclude=$(projectdir)/.playground/* --exclude=$(projectdir)/utility/cimg.hpp \
+	--exclude=$(projectdir)/.private/* --exclude=$(projectdir)/.legacy/* --exclude=$(projectdir)/.playground/* --exclude=$(projectdir)/external/* \
 	--filter=-whitespace,-legal,-build/namespace,-readability/alt_tokens,-readability/todo,-readability/inheritance \
 	--recursive --quiet $(projectdir) 2>&1 ) | \
 	sort | uniq | \

@@ -17,6 +17,15 @@
 #endif // ELIDE_HOT_FUNCTIONS
 
 
+#if __cplusplus < 202002L
+#define LIKELY
+#define UNLIKELY
+#else
+#define LIKELY   [[likely]]
+#define UNLIKELY [[unlikely]]
+#endif
+
+
 
 #include <cmath>
 #include <cstdint>
@@ -25,16 +34,16 @@
 // #include <ctime>
 
 // #include <algorithm>
-#include <array>
+// #include <array>
 // #include <chrono>
 // #include <functional>
-// #include <ostream>
 // #include <iterator>
-#include <limits>
 // #include <list>
+// #include <ostream>
+#include <limits>
 #include <string>
 #include <type_traits>
-// #include <utility>
+#include <utility>
 #include <vector>
 
 
@@ -555,8 +564,6 @@ inline constexpr Float binomial_numerical( int64_t n, int64_t k )
 //                                             //
 /////////////////////////////////////////////////
 
-
-
 typedef uintmax_t timestamp;
 
 timestamp gettimestamp();
@@ -596,45 +603,20 @@ std::string protocolprefixnow();
 /////////////////////////////////////////////////
 
 /******************************************************/
-/*      insert tabs before each line                  */
-/*      pad each line                                 */
-/******************************************************/
-
-inline std::string tab_each_line( std::string str ) // TODO: Move to utilities 
-{ 
-    str.insert( 0, 1, '\t' );
-    for( int c = str.size(); c > 0; c-- ) {
-        if( str[c-1] == '\n' )
-            str.insert(c, 1, '\t');
-    }
-    return str;
-} 
-
-// inline std::string pad_each_line( std::string str, std::string pad )
-// {
-//     int c = 0;
-//     for( int i = 0; i < str.length(); i++ ) if( str[i] == '\n' ) c++;
-//     std::string ret = pad;
-//     ret.reserve( str.length() + c * pad.length() );
-//     for( int i = 0; i < str.length(); i++ )
-//     {
-//         ret += str[i];
-//         if( str[i] == '\n' ) ret += pad.length();
-    
-//     return ret;
-// }
-
-
-/******************************************************/
 /*      count the white space within STL string       */
 /******************************************************/
 
-inline int count_white_space( const std::string& str ) // TODO: Move to utilities 
-{ 
-    int ret = 0;  
-    for( int c = 0; c < str.size(); c++ ) if( isspace( str[c] ) ) ret++; 
-    return ret;
-} 
+int count_white_space( const std::string& str ); // TODO: Move to utilities 
+
+/******************************************************/
+/*          insert tabs before each line              */
+/******************************************************/
+
+std::string tab_each_line( std::string str ); // TODO: Move to utilities 
+
+
+
+
 
 
 
@@ -654,18 +636,29 @@ inline int count_white_space( const std::string& str ) // TODO: Move to utilitie
 
 
 /***********************************************/
-/*   GENERIC STREAM TEMPLATE FOR std::array    */ 
+/*   GENERIC STREAM TEMPLATE FOR ITERABLES     */ 
 /***********************************************/
 
-// TODO: Move into separate include file 
-template <typename S, typename T, size_t N>
-inline S& operator<<( S& stream, const std::array<T, N>& v)
+
+template< typename Stream, typename Container, typename Begin = decltype( std::begin( std::declval<Container>() ) ) >
+inline Stream& operator<<( Stream& stream, const Container& container )
 {
-    for( const auto& item : v )
+	for( const auto& item : container )
         stream << item << space;
-    stream << nl;
-    return stream;
+	return stream;
 }
+
+
+
+// // TODO: Move into separate include file 
+// template <typename StreamType, typename T, size_t N>
+// inline StreamType& operator<<( StreamType& stream, const std::array<T, N>& v)
+// {
+//     for( const auto& item : v )
+//         stream << "" << item << space;
+//     stream << nl;
+//     return stream;
+// }
 
 /******************************************************/
 /*       printf into C++ strings and streams          */

@@ -60,7 +60,7 @@ int ConjugateGradientSolverCSR(
         
         bool residual_seems_small = ( K != 0 ) and absolute(r_r) < threshold*threshold;
 
-        if( restart_condition or ( csr_restart_before_finish and residual_seems_small ) ) [[unlikely]] {
+        if( restart_condition or ( csr_restart_before_finish and residual_seems_small ) ) UNLIKELY {
             
             r_r = 0.;
         
@@ -122,12 +122,12 @@ int ConjugateGradientSolverCSR(
         bool denominator_is_unreasonable = not std::isfinite(d_Ad) or d_Ad < 0.;
         bool denominator_is_small    = sqrt(absolute(d_Ad)) < machine_epsilon;
         
-        if( denominator_is_unreasonable ) [[unlikely]] {
+        if( denominator_is_unreasonable ) UNLIKELY {
             if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
             break;
         }
         
-        if( denominator_is_small ) [[unlikely]] {
+        if( denominator_is_small ) UNLIKELY {
             if( print_modulo >= 0 ) LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(r_r), (long double) threshold );
             if( print_modulo >= 0 ) LOGPRINTF( "WARNING: Gradient energy is small with %.9Le\n", (long double)d_Ad );
             break;
@@ -239,7 +239,7 @@ int ConjugateGradientSolverCSR_DiagonalPreconditioner(
         
         bool preconresidual_seems_small = ( K != 0 ) and absolute(z_r) < threshold*threshold;
 
-        if( restart_condition or ( csr_restart_before_finish and preconresidual_seems_small ) ) [[unlikely]] {
+        if( restart_condition or ( csr_restart_before_finish and preconresidual_seems_small ) ) UNLIKELY {
             
             z_r = 0.;
         
@@ -273,7 +273,7 @@ int ConjugateGradientSolverCSR_DiagonalPreconditioner(
         
         /* printing information */
 
-        if( print_modulo > 0 and K % print_modulo == 0 ) [[unlikely]] 
+        if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
             LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
         
         /* Check whether residual is small */
@@ -309,12 +309,12 @@ int ConjugateGradientSolverCSR_DiagonalPreconditioner(
         bool denominator_is_unreasonable = not std::isfinite(d_Ad) or d_Ad < 0.;
         bool denominator_is_small    = sqrt(absolute(d_Ad)) < machine_epsilon;
         
-        if( denominator_is_unreasonable ) [[unlikely]] {
+        if( denominator_is_unreasonable ) UNLIKELY {
             if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
             break;
         }
         
-        if( denominator_is_small ) [[unlikely]] {
+        if( denominator_is_small ) UNLIKELY {
             if( print_modulo >= 0 ) LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
             if( print_modulo >= 0 ) LOGPRINTF( "WARNING: Gradient energy is small with %.9Le\n", (long double)d_Ad );
             break;
@@ -450,7 +450,7 @@ int ConjugateGradientSolverCSR_SSOR(
         
         bool preconresidual_seems_small = ( K != 0 ) and absolute(z_r) < threshold*threshold;
 
-        if( restart_condition or ( csr_restart_before_finish and preconresidual_seems_small ) ) [[unlikely]] {
+        if( restart_condition or ( csr_restart_before_finish and preconresidual_seems_small ) ) UNLIKELY {
             
             #if defined(_OPENMP)
             #pragma omp parallel for
@@ -525,7 +525,7 @@ int ConjugateGradientSolverCSR_SSOR(
             
             }
 
-            if( print_modulo >= 0 ) [[unlikely]] 
+            if( print_modulo >= 0 ) UNLIKELY 
                 LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
 
             
@@ -533,7 +533,7 @@ int ConjugateGradientSolverCSR_SSOR(
         
         /* printing information */
 
-        if( print_modulo > 0 and K % print_modulo == 0 ) [[unlikely]] 
+        if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
             LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
         
         /* Check whether residual is small */
@@ -569,12 +569,12 @@ int ConjugateGradientSolverCSR_SSOR(
         bool denominator_is_unreasonable = not std::isfinite(d_Ad) or d_Ad < 0.;
         bool denominator_is_small    = sqrt(absolute(d_Ad)) < machine_epsilon;
         
-        if( denominator_is_unreasonable ) [[unlikely]] {
+        if( denominator_is_unreasonable ) UNLIKELY {
             if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
             break;
         }
         
-        if( denominator_is_small ) [[unlikely]] {
+        if( denominator_is_small ) UNLIKELY {
             if( print_modulo >= 0 ) LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
             if( print_modulo >= 0 ) LOGPRINTF( "WARNING: Gradient energy is small with %.9Le\n", (long double)d_Ad );
             break;
@@ -649,7 +649,7 @@ int ConjugateGradientSolverCSR_SSOR(
         
     }
     
-    if( print_modulo >= 0 ) [[unlikely]] 
+    if( print_modulo >= 0 ) UNLIKELY 
         LOGPRINTF( "FINISHED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
 
     
@@ -714,7 +714,7 @@ int ConjugateGradientSolverCSR_SSOR_Eisenstat(
         
         bool preconresidual_seems_small = ( K != 0 ) and absolute(z_r) < threshold*threshold;
 
-        if( restart_condition or ( csr_restart_before_finish and preconresidual_seems_small ) ) [[unlikely]] {
+        if( restart_condition or ( csr_restart_before_finish and preconresidual_seems_small ) ) UNLIKELY {
             
 
             // compute the residual, save it in 'auxiliary'
@@ -768,7 +768,7 @@ int ConjugateGradientSolverCSR_SSOR_Eisenstat(
                 z_r += zirconium[c] * residual[c];
             }
             
-            if( print_modulo >= 0 ) [[unlikely]] 
+            if( print_modulo >= 0 ) UNLIKELY 
                 LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
 
             
@@ -776,14 +776,14 @@ int ConjugateGradientSolverCSR_SSOR_Eisenstat(
         
         /* printing information */
 
-        if( print_modulo > 0 and K % print_modulo == 0 ) [[unlikely]] 
+        if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
             LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
         
         /* Check whether residual is small */
                 
         bool preconresidual_is_small = absolute(z_r) < threshold*threshold;
         
-        if( preconresidual_is_small ) [[unlikely]] 
+        if( preconresidual_is_small ) UNLIKELY 
             break;
 
 
@@ -847,12 +847,12 @@ int ConjugateGradientSolverCSR_SSOR_Eisenstat(
         bool denominator_is_unreasonable = not std::isfinite(d_Ad) or d_Ad < 0.;
         bool denominator_is_small    = sqrt(absolute(d_Ad)) < machine_epsilon;
         
-        if( denominator_is_unreasonable ) [[unlikely]] {
+        if( denominator_is_unreasonable ) UNLIKELY {
             if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
             break;
         }
         
-        if( denominator_is_small ) [[unlikely]] {
+        if( denominator_is_small ) UNLIKELY {
             if( print_modulo >= 0 ) LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
             if( print_modulo >= 0 ) LOGPRINTF( "WARNING: Gradient energy is small with %.9Le\n", (long double)d_Ad );
             break;
@@ -972,7 +972,7 @@ int ConjugateGradientSolverCSR_Rainbow(
         
         bool preconresidual_seems_small = ( K != 0 ) and absolute(z_r) < threshold*threshold;
 
-        if( restart_condition or ( csr_restart_before_finish and preconresidual_seems_small ) ) [[unlikely]] {
+        if( restart_condition or ( csr_restart_before_finish and preconresidual_seems_small ) ) UNLIKELY {
             
             #if defined(_OPENMP)
             #pragma omp parallel for
@@ -1071,7 +1071,7 @@ int ConjugateGradientSolverCSR_Rainbow(
             
             }
 
-            if( print_modulo >= 0 ) [[unlikely]] 
+            if( print_modulo >= 0 ) UNLIKELY 
                 LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
 
             
@@ -1079,7 +1079,7 @@ int ConjugateGradientSolverCSR_Rainbow(
         
         /* printing information */
 
-        if( print_modulo > 0 and K % print_modulo == 0 ) [[unlikely]] 
+        if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
             LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
         
         /* Check whether residual is small */
@@ -1115,12 +1115,12 @@ int ConjugateGradientSolverCSR_Rainbow(
         bool denominator_is_unreasonable = not std::isfinite(d_Ad) or d_Ad < 0.;
         bool denominator_is_small    = sqrt(absolute(d_Ad)) < machine_epsilon;
         
-        if( denominator_is_unreasonable ) [[unlikely]] {
+        if( denominator_is_unreasonable ) UNLIKELY {
             if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
             break;
         }
         
-        if( denominator_is_small ) [[unlikely]] {
+        if( denominator_is_small ) UNLIKELY {
             if( print_modulo >= 0 ) LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
             if( print_modulo >= 0 ) LOGPRINTF( "WARNING: Gradient energy is small with %.9Le\n", (long double)d_Ad );
             break;
@@ -1220,7 +1220,7 @@ int ConjugateGradientSolverCSR_Rainbow(
         
     }
     
-    if( print_modulo >= 0 ) [[unlikely]] 
+    if( print_modulo >= 0 ) UNLIKELY 
         LOGPRINTF( "FINISHED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
 
     
@@ -1291,7 +1291,7 @@ int ConjugateGradientSolverCSR_Eisenstat_Rainbow(
         
         bool preconresidual_seems_small = ( K != 0 ) and absolute(z_r) < threshold*threshold;
 
-        if( restart_condition or ( csr_restart_before_finish and preconresidual_seems_small ) ) [[unlikely]] {
+        if( restart_condition or ( csr_restart_before_finish and preconresidual_seems_small ) ) UNLIKELY {
             
 
             // compute the residual, save it in 'auxiliary'
@@ -1364,7 +1364,7 @@ int ConjugateGradientSolverCSR_Eisenstat_Rainbow(
         
         /* printing information */
 
-        if( print_modulo > 0 and K % print_modulo == 0 ) [[unlikely]] 
+        if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
             LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
         
         /* Check whether residual is small */
@@ -1457,12 +1457,12 @@ int ConjugateGradientSolverCSR_Eisenstat_Rainbow(
         bool denominator_is_unreasonable = not std::isfinite(d_Ad) or d_Ad < 0.;
         bool denominator_is_small    = sqrt(absolute(d_Ad)) < machine_epsilon;
         
-        if( denominator_is_unreasonable ) [[unlikely]] {
+        if( denominator_is_unreasonable ) UNLIKELY {
             if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
             break;
         }
         
-        if( denominator_is_small ) [[unlikely]] {
+        if( denominator_is_small ) UNLIKELY {
             if( print_modulo >= 0 ) LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
             if( print_modulo >= 0 ) LOGPRINTF( "WARNING: Gradient energy is small with %.9Le\n", (long double)d_Ad );
             break;
@@ -1608,7 +1608,7 @@ int ConjugateResidualSolverCSR(
         
         bool residualenergy_seems_small = ( K != 0 ) and absolute(Ad_r) < threshold*threshold;
 
-        if( restart_condition or ( csr_restart_before_finish and residualenergy_seems_small ) ) [[unlikely]] {
+        if( restart_condition or ( csr_restart_before_finish and residualenergy_seems_small ) ) UNLIKELY {
             
             #if defined(_OPENMP)
             #pragma omp parallel for
@@ -1651,7 +1651,7 @@ int ConjugateResidualSolverCSR(
         
         /* printing information */
 
-        if( print_modulo > 0 and K % print_modulo == 0 ) [[unlikely]] 
+        if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
             LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(Ad_r), (long double) threshold );
 
         
@@ -1660,7 +1660,7 @@ int ConjugateResidualSolverCSR(
         bool residualenergy_is_small = absolute(Ad_r) < threshold*threshold;
         bool residualenergy_is_unreasonable = not std::isfinite(Ad_r) or Ad_r < 0.;
         
-        if( residualenergy_is_unreasonable ) [[unlikely]] {
+        if( residualenergy_is_unreasonable ) UNLIKELY {
             if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Residual energy is unreasonable with %.9Le\n", (long double)Ad_r );
             break;
         }
@@ -1673,12 +1673,12 @@ int ConjugateResidualSolverCSR(
         bool denominator_is_unreasonable = not std::isfinite(Ad_Ad) or Ad_Ad < 0.;
         bool denominator_is_small    = sqrt(absolute(Ad_Ad)) < machine_epsilon;
         
-        if( denominator_is_unreasonable ) [[unlikely]] {
+        if( denominator_is_unreasonable ) UNLIKELY {
             if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Gradient double energy is unreasonable with %.9Le\n", (long double)Ad_Ad );
             break;
         }
         
-        if( denominator_is_small ) [[unlikely]] {
+        if( denominator_is_small ) UNLIKELY {
             if( print_modulo >= 0 ) LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(Ad_r), (long double) threshold );
             if( print_modulo >= 0 ) LOGPRINTF( "WARNING: Gradient double energy is small with %.9Le\n", (long double)Ad_Ad );
             break;
@@ -1821,7 +1821,7 @@ int ConjugateResidualSolverCSR_textbook(
         
         bool residualenergy_seems_small = ( K != 0 ) and absolute(Ar_r) < threshold*threshold;
 
-        if( restart_condition or ( csr_restart_before_finish and residualenergy_seems_small ) ) [[unlikely]] {
+        if( restart_condition or ( csr_restart_before_finish and residualenergy_seems_small ) ) UNLIKELY {
             
             #if defined(_OPENMP)
             #pragma omp parallel for
@@ -1864,7 +1864,7 @@ int ConjugateResidualSolverCSR_textbook(
         
         /* printing information */
 
-        if( print_modulo > 0 and K % print_modulo == 0 ) [[unlikely]] 
+        if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
             LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(Ar_r), (long double) threshold );
         
         /* Check whether res is small */
@@ -1872,7 +1872,7 @@ int ConjugateResidualSolverCSR_textbook(
         bool residualenergy_is_unreasonable = not std::isfinite(Ar_r) or Ar_r < 0.;
         bool residualenergy_is_small = absolute(Ar_r) < threshold*threshold;
         
-        if( residualenergy_is_unreasonable ) [[unlikely]] {
+        if( residualenergy_is_unreasonable ) UNLIKELY {
             if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Residual energy is unreasonable with %.9Le\n", (long double)Ar_r );
             break;
         }
@@ -1884,12 +1884,12 @@ int ConjugateResidualSolverCSR_textbook(
         bool denominator_is_unreasonable = not std::isfinite(Ad_Ad) or Ad_Ad < 0.;
         bool denominator_is_small    = sqrt(absolute(Ad_Ad)) < machine_epsilon;
         
-        if( denominator_is_unreasonable ) [[unlikely]] {
+        if( denominator_is_unreasonable ) UNLIKELY {
             if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Gradient double energy is unreasonable with %.9Le\n", (long double)Ad_Ad );
             break;
         }
         
-        if( denominator_is_small ) [[unlikely]] {
+        if( denominator_is_small ) UNLIKELY {
             if( print_modulo >= 0 ) LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(Ar_r), (long double) threshold );
             if( print_modulo >= 0 ) LOGPRINTF( "WARNING: Gradient double energy is small with %.9Le\n", (long double)Ad_Ad );
             break;
@@ -2192,7 +2192,7 @@ int MINRESCSR(
         }
 
         
-        if( print_modulo > 0 and K % print_modulo == 0 ) [[unlikely]] 
+        if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
             LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double)eta, (long double) threshold );
         
         K++;
@@ -2393,7 +2393,7 @@ int WHATEVER(
             
             
         
-        if( print_modulo > 0 and K % print_modulo == 0 ) [[unlikely]] 
+        if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
             LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double)std::sqrt(r_r), (long double) threshold );
         
         K++;
@@ -2489,7 +2489,7 @@ int ChebyshevIteration_DiagonalPreconditioner(
 
         bool residual_seems_small = ( K != 0 ) and std::sqrt(r_r) < threshold;
 
-        if( restart_condition or ( csr_restart_before_finish and residual_seems_small ) ) [[unlikely]] {
+        if( restart_condition or ( csr_restart_before_finish and residual_seems_small ) ) UNLIKELY {
             
             gamma_prev = 1.;
             
@@ -2566,7 +2566,7 @@ int ChebyshevIteration_DiagonalPreconditioner(
         std::swap( x_next, x_curr );
         
         
-        if( print_modulo > 0 and K % print_modulo == 0 ) [[unlikely]] 
+        if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
             LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double)std::sqrt(r_r), (long double) threshold );
         
         K++;
