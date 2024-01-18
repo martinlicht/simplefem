@@ -27,21 +27,15 @@
 
 IndexMap::IndexMap( const IndexRange& range, const std::vector<int>& values )
 : IndexMap( range, range, values )
-{
-    IndexMap::check();
-}
+{}
 
 IndexMap::IndexMap( const IndexRange& from, const IndexRange& to, const std::vector<int>& values )
 : src(from), dest(to), values(values)
-{
-    IndexMap::check();
-}
+{}
 
 IndexMap::IndexMap( const IndexRange& range, const std::function<int(int)>& generator )
 : IndexMap( range, range, generator )
-{
-    IndexMap::check();
-}
+{}
 
 IndexMap::IndexMap( const IndexRange& from, const IndexRange& to, const std::function<int(int)>& generator )
 : src(from), dest(to), values()
@@ -63,15 +57,15 @@ IndexMap::IndexMap( const IndexRange& from, const IndexRange& to, const std::fun
 
 IndexMap::IndexMap( const IndexRange& range, const std::initializer_list<int>& values )
 : IndexMap( range, std::vector<int>(values) )
-{
-    IndexMap::check();
-}
+{}
 
 IndexMap::IndexMap( const IndexRange& from, const IndexRange& to, const std::initializer_list<int>& values )
 : IndexMap( from, to, std::vector<int>(values) )
-{
-    IndexMap::check();
-}
+{}
+
+IndexMap::IndexMap( const IndexRange& from, const IndexRange& to, const int& value )
+: IndexMap( from, to, [=](int) -> int { return value; } )
+{}
 
 
         
