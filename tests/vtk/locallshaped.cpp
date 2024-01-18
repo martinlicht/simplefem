@@ -1,9 +1,5 @@
 
-
-/**/
-
 #include <algorithm>
-#include <ostream>
 #include <fstream>
 
 #include "../../basic.hpp"

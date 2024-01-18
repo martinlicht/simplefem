@@ -1,13 +1,7 @@
 
-
-/**/
-
-#include <ostream>
 #include "../../basic.hpp"
 #include "../../combinatorics/generatemultiindices.hpp"
 
-
-using namespace std;
 
 int main()
 {

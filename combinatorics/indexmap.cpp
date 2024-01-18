@@ -301,6 +301,50 @@ bool IndexMap::less( const IndexMap& im ) const
 
 
 
+
+IndexMap mergeSigmas( const IndexMap& left, const IndexMap& right, int& sign )
+{
+    assert(  left.getSourceRange().min() == 1 );
+    assert( right.getSourceRange().min() == 1 );
+    assert(  left.getTargetRange().min() == 0 );
+    assert( right.getTargetRange().min() == 0 );
+
+    int k =  left.getSourceRange().max();
+    int l = right.getSourceRange().max();
+
+    int n = maximum( left.getTargetRange().max(), right.getTargetRange().max() );
+
+    std::vector<int> values(k+l);
+    for( int i = 0; i < k; i++ ) values[  i] =  left.getvalues()[i];
+    for( int i = 0; i < l; i++ ) values[k+i] = right.getvalues()[i];
+
+    sign = 1;
+    // lazy bubble sort, easy to count the swaps
+    for( int i = 0; i < k+l; i++ )
+    for( int j = 0; j < k+l; j++ )
+    {
+        if( i < j and values[i] > values[j] )
+        {
+            std::swap( values[i], values[j] );
+            sign = -sign;
+        }
+    }
+
+    for( int i = 1; i < k+l; i++ )
+        if( values[i-1] == values[i] )
+            sign = 0;
+
+    return IndexMap( IndexRange(1,k+l), IndexRange(0,n), values );
+}
+
+
+
+
+
+
+
+
+
 IndexMap expand_zero( const IndexMap& im, int p )
 {
     const auto& src_range = im.getSourceRange();

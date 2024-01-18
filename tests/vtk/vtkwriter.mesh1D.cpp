@@ -1,7 +1,4 @@
 
-
-/**/
-
 #include <ostream>
 #include <fstream>
 

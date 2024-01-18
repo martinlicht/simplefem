@@ -2,6 +2,7 @@
 #define INCLUDEGUARD_MESH_SIMPLICIAL_3D_HPP
 
 
+#include <array>
 #include <string>
 #include <utility>
 #include <vector>

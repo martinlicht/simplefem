@@ -2,7 +2,7 @@
 #define INCLUDEGUARD_MESH_COORDINATES_HPP
 
 
-// #include <cassert>
+#include <array>
 #include <ostream>
 #include <vector>
 

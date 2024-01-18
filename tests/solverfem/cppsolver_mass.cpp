@@ -1,7 +1,4 @@
 
-
-/**/
-
 #include "../../basic.hpp"
 #include "../../utility/convergencetable.hpp"
 #include "../../operators/composedoperators.hpp"
@@ -22,8 +19,6 @@
 #include "../../fem/global.sullivanincl.hpp"
 #include "../../fem/utilities.hpp"
 
-
-using namespace std;
 
 int main()
 {

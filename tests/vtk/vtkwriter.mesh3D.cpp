@@ -1,10 +1,4 @@
 
-
-/**/
-
-#include <ostream>
-#include <fstream>
-
 #include "../../basic.hpp"
 #include "../../utility/stl.hpp"
 #include "../../mesh/examples3D.hpp"

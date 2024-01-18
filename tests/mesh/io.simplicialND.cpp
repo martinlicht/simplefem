@@ -1,9 +1,6 @@
 
-
-/**/
-
-#include <ostream>
 #include <sstream>
+
 #include "../../basic.hpp"
 #include "../../mesh/mesh.simplicialND.hpp"
 #include "../../mesh/io.simplicialND.hpp"

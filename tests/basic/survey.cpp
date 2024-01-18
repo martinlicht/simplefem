@@ -1,14 +1,13 @@
 
 #include <cstdio>
 #include <cfloat>
-#include <iostream>
 #include "../../basic.hpp"
 
 using namespace std;
 
 int main()
 {
-    cout << "Survey of machine data (integral and floating-point)" << nl;
+    printf("Survey of machine data (integral and floating-point)");
 
     /* output integer parameters */
 
@@ -77,12 +76,11 @@ int main()
     printf("Float has signaling NaN: %d\n",  (int) std::numeric_limits<Float>::has_signaling_NaN     );
     printf("Float is IEC-559:        %d\n",  (int) std::numeric_limits<Float>::is_iec559             );
     printf("Float detectes tinyness: %d\n",  (int) std::numeric_limits<Float>::tinyness_before       );
-    // TODO: Show the same properties in the same order as above 
-
+    
     printf("Machine epsilon variable:        %Le\n",    (long double)machine_epsilon );
-    printf("Machine epsilon variable (sqrt): %.25Le\n", (long double)std::sqrt(machine_epsilon) );
-    printf("Machine epsilon variable (Sqrt): %.25Le\n", (long double)Sqrt(machine_epsilon) );
-    printf("Machine epsilon variable_(Sqrt): %.25Le\n", (long double)Sqrt_(machine_epsilon) );
+    printf("Machine epsilon variable (sqrt ): %.25Le\n", (long double)std::sqrt(machine_epsilon) );
+    printf("Machine epsilon variable (Sqrt ): %.25Le\n", (long double)Sqrt(machine_epsilon) );
+    printf("Machine epsilon variable (Sqrt_): %.25Le\n", (long double)Sqrt_(machine_epsilon) );
     printf("Desired precision variable:      %Le\n",    (long double)desired_precision );
     
     
