@@ -183,10 +183,8 @@ SparseMatrix FEECBrokenWedgeMatrix( const Mesh& mesh, int n, int k, int r , int 
         const auto& sigma_input  = sigmas_input[s_i];
         const auto& sigma_factor = sigmas_factor[s_f];
         
-        IndexMap sigma_prod( IndexRange(1,k+l), IndexRange(0,n) );
         int signum;
-
-        // TODO
+        IndexMap sigma_prod = mergeSigmas( sigma_factor, sigma_input, signum );
 
         if( signum == 0 ) continue;
         
@@ -231,16 +229,15 @@ SparseMatrix FEECBrokenWedgeMatrix( const Mesh& mesh, int n, int k, int r , int 
             int signum = sigma_couplings[sigma_coupling_index][3];
 
             SparseMatrix::MatrixEntry entry;
-            entry.row    = s * mis_output.size() * binomial_integer(n+1,k+l) + m_i * binomial_integer(n+1,k+l) + s_i;
-            entry.column = s * mis_input.size()  * binomial_integer(n+1,k  ) + m_o * binomial_integer(n+1,k  ) + s_o;
-            
-            entry.value = 0.; // TODO
+            entry.row    =                s * mis_output.size() * binomial_integer(n+1,k+l) + m_o * binomial_integer(n+1,k+l) + s_o;
+            entry.column =                s * mis_input.size()  * binomial_integer(n+1,k  ) + m_i * binomial_integer(n+1,k  ) + s_i;
+            entry.value = signum * field[ s * mis_factor.size() * binomial_integer(n+1,  l) + m_f * binomial_integer(n+1,  l) + s_f ];
             
             assert( std::isfinite(entry.value) );
 
             int index_of_entry = s * mi_couplings.size() * sigma_couplings.size() + local_index_of_entry;
             
-            ret.setentry( index_of_entry,  entry );
+            ret.setentry( index_of_entry, entry );
             local_index_of_entry++;
         }        
         
