@@ -3,7 +3,7 @@
 
 #include <functional>
 #include <initializer_list>
-#include <ostream>
+// #include <ostream>
 #include <vector>
 
 #include "../basic.hpp"
@@ -58,7 +58,7 @@ class FloatVector
 
         std::string data_as_text( bool indexed = true, bool rowwise = false ) const; 
 
-        void print( std::ostream& ) const;
+        // void print( std::ostream& ) const;
         
         // void lg() const { LOG << text() << nl; };
         

@@ -4,7 +4,7 @@
 
 #include <functional>
 #include <initializer_list>
-#include <ostream>
+// #include <ostream>
 #include <string>
 #include <vector>
 
@@ -170,13 +170,11 @@ inline bool operator<( const IndexMap& left, const IndexMap& right )
     return left.less( right );
 }
 
-
-inline std::ostream& operator<<( std::ostream& os, const IndexMap& im )
+template<typename Stream>
+inline Stream& operator<<( Stream& os, const IndexMap& im )
 {
     im.check();
-
     os << im.text(); // im.print( os );
-
     return os;
 }
 

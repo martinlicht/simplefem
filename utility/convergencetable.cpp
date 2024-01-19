@@ -1,6 +1,6 @@
 
 #include <cstdio>
-#include <ostream>
+// #include <ostream>
 // #include <iomanip>
 #include <string>
 #include <sstream>

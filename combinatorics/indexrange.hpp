@@ -2,7 +2,7 @@
 #define INCLUDEGUARD_COMBINATORICS_INDEXRANGE_HPP
 
 
-#include <ostream>
+// #include <ostream>
 #include <limits>
 #include <string>
 
@@ -130,7 +130,8 @@ class IndexRange final
         
 };
 
-inline std::ostream& operator<<( std::ostream& os, const IndexRange& ir )
+template<typename Stream>
+inline Stream& operator<<( Stream& os, const IndexRange& ir )
 {
     os << ir.text(); // ir.print( os );
     return os;

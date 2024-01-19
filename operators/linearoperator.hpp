@@ -5,7 +5,7 @@
 
 
 //#include <memory>
-#include <ostream>
+// #include <ostream>
 
 #include "../basic.hpp"
 #include "floatvector.hpp"
@@ -93,7 +93,8 @@ inline FloatVector operator*( const LinearOperator& op, const FloatVector& vec )
     return ret;
 }
   
-inline std::ostream& operator<<( std::ostream& os, const LinearOperator& op )
+template<typename Stream>
+inline Stream& operator<<( Stream& os, const LinearOperator& op )
 {
     op.check();
     os << op.text(); // op.print( os );

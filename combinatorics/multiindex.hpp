@@ -4,7 +4,7 @@
 
 #include <functional>
 #include <initializer_list>
-#include <ostream>
+// #include <ostream>
 #include <string>
 #include <vector>
 
@@ -106,7 +106,8 @@ inline MultiIndex ZeroMultiIndex( const IndexRange& ir )
 
 
 
-inline std::ostream& operator<<( std::ostream& os, const MultiIndex& mi )
+template<typename Stream>
+inline Stream& operator<<( Stream& os, const MultiIndex& mi )
 {
     mi.check();
     os << mi.text(); // mi.print( os );

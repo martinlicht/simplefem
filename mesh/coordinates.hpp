@@ -3,7 +3,7 @@
 
 
 #include <array>
-#include <ostream>
+// #include <ostream>
 #include <vector>
 
 #include "../basic.hpp"
