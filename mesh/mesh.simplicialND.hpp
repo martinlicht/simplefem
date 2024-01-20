@@ -2,7 +2,7 @@
 #define INCLUDEGUARD_MESH_SIMPLICIAL_ND_HPP
 
 
-#include <ostream>
+// #include <ostream>
 #include <utility>
 #include <vector>
 
@@ -135,11 +135,6 @@ class MeshSimplicialND
 
 
 
-// inline std::ostream& operator<<( std::ostream& os, const MeshSimplicialND& mND )
-// {
-//     mND.print( os );
-//     return os;
-// }
 
 
 

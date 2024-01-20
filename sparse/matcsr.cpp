@@ -194,10 +194,10 @@ std::string MatrixCSR::text() const
                         // + "\n";
 }
 
-void MatrixCSR::printplain( std::ostream& os ) const
-{
-    print( os );
-}
+// void MatrixCSR::printplain( std::ostream& os ) const
+// {
+//     print( os );
+// }
 
 void MatrixCSR::apply( FloatVector& dest, const FloatVector& add, Float scaling ) const
 {

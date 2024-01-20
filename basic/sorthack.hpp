@@ -2,12 +2,17 @@
 #define INCLUDEGUARD_SORTHACK_HPP
 
 #include <cassert>
+
+#include <algorithm>
 #include <utility>
 #include <vector>
 
 template<typename A>
 inline void sorthack( std::vector<A>& vec )
 {
+
+    std::sort( vec.begin(), vec.end() );
+/*
 //     for( int s = 0; s < vec.size(); s++ )
 //     for( int t = 0; t < vec.size(); t++ )
 //     {
@@ -19,19 +24,20 @@ inline void sorthack( std::vector<A>& vec )
 //         }
 //     }
     
-    /* insertion sort */
+    // insertion sort 
     for( int s = 0; s < vec.size(); s++ )
     for( int t = s; t > 0 && vec.at(t-1) > vec.at(t); t-- )
-    // {
-    //     A temp = vec[t-1];
-    //     vec[t-1] = vec[t];
-    //     vec[t] = temp;
-    // }
-        std::swap( vec[t-1], vec[t] );
-    // TODO: understand why swap for arrays is not found here
+    {
+        A temp = vec[t-1];
+        vec[t-1] = vec[t];
+        vec[t] = temp;
+    }
+    //     std::swap<typename std::vector<A>::value_type>( vec[t-1], vec[t] ); 
+    // TODO: understand why swap for arrays does not work
     
     for( int t = 1; t < vec.size(); t++ )
         assert( vec[t-1] <= vec[t] );
+*/
 }
 
 #endif

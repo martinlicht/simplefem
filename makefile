@@ -1,11 +1,20 @@
 ##########################################################################
 ##########################################################################
 ##########################################################################
-################## Project directory makefile 
+################## Project directory makefile ############################
+##########################################################################
+##########################################################################
+##########################################################################
+
 SHELL = /bin/sh
 
 # TODO: all phony targets should be declared as such in all files 
 
+# The main targets are 
+#  - all 
+#  - build 
+#  - tests
+#  - benchmarks
 # The default target builds all files  
 
 default: build
@@ -38,7 +47,7 @@ help:
 	@echo ""
 	@echo " The default target is [build]"
 	@echo ""
-	@echo " build, tests, and benchmark require only a C++14 compiler and GNU Make."
+	@echo " build, tests, and benchmark require a C++14 compiler and GNU Make."
 
 
 
@@ -56,8 +65,7 @@ help:
 ################################################################## 
 
 # Describe the different modules of the software
-# Provide all targets for the different modules in building the modules 
-
+# Define all targets for the different modules in building the modules 
 
 modules:=
 modules+=external
@@ -131,8 +139,7 @@ include common.module.mk
 ################################################################## 
 ################################################################## 
 
-# Describe the 'build' target and its subtargets
-# TODO: Recap all this .... 
+# The 'build' target depends on the builds of modules, tests, and benchmarks
 
 
 .PHONY: build .buildmodules .buildtests .buildbenchmarks
@@ -142,35 +149,36 @@ build: .buildmodules .buildtests .buildbenchmarks
 .buildmodules:
 	@echo Built modules 
 	
-.buildtests: | .buildmodules
+.buildtests: .buildmodules
 	@echo Building tests...
 	@cd ./tests/ && $(MAKE) --no-print-directory build
 
-.buildbenchmarks: | .buildmodules
+.buildbenchmarks: .buildmodules
 	@echo Building benchmarks...
 	@cd ./benchmarks/ && $(MAKE) --no-print-directory build
 
 
 
-# # The target 'test' runs all the tests in the test directory 
 
-# test:
-# 	@cd ./tests && $(MAKE) --no-print-directory run
+# The target 'test' runs all the tests in the test directory 
+# The target 'benchmark' runs all the benchmarks in the benchmark directory
 
-# .PHONY: test
+test:
+	@cd ./tests && $(MAKE) --no-print-directory run
 
+benchmarks:
+	@cd ./benchmarks && $(MAKE) --no-print-directory 
 
-# # The target 'benchmark' runs all the benchmarks in the benchmark directory
-
-# benchmarks:
-# 	@cd ./benchmarks && $(MAKE) --no-print-directory 
-
-# .PHONY: benchmarks
+.PHONY: test benchmarks
 
 
 
 
 
+
+# Upkeep targets that remove clutter and temporary files 
+# Also commands for source code checking 
+# More targets are defined in each module 
 
 .PHONY: clean
 clean:
@@ -178,12 +186,12 @@ clean:
 	@cd ./benchmarks && $(MAKE) --no-print-directory clean
 	@echo "Finished cleaning."
 
-.PHONY: vtkclean
-vtkclean:
-	@cd ./tests && $(MAKE) --no-print-directory vtkclean
-	@cd ./benchmarks && $(MAKE) --no-print-directory vtkclean
-	@rm -f ./*.vtk ./*/*.vtk ./*/*/*.vtk
-	@echo "Finished cleaning .vtk files."
+.PHONY: outputclean
+outputclean:
+	@cd ./tests && $(MAKE) --no-print-directory outputclean
+	@cd ./benchmarks && $(MAKE) --no-print-directory outputclean
+	@rm -f ./*.vtk ./*/*.vtk ./*/*/*.vtk ./*.svg ./*/*.svg ./*/*/*.svg
+	@echo "Finished cleaning output files."
 
 .PHONY: dependclean
 dependclean:
@@ -206,8 +214,9 @@ check:
 
 
 
-########################################################################
-# Apply cpplint to all cpp and hpp files in the entire source directory. Read-only. 
+###############################################################################################
+####   Apply cpplint to all cpp and hpp files in the entire source directory. Read-only.   ####
+###############################################################################################
 
 .PHONY: cpplint
 cpplint:
@@ -221,6 +230,10 @@ cpplint:
 
 
 
+
+###############################################################################################
+#######    Display the value of all variables defined after parsing this makefile     #########
+###############################################################################################
 
 # Display the value of a variable
 

@@ -115,10 +115,10 @@ void Mesh::check() const
   
 }
 
-void Mesh::print( std::ostream& out ) const
-{
-  out << text();
-}
+// void Mesh::print( std::ostream& out ) const
+// {
+//   out << text();
+// }
 
 
 
@@ -765,7 +765,7 @@ FloatVector Mesh::transform_whitney_to_euclidean( int dim, const FloatVector& wh
     }
         
     return ret;
-};
+}
 
 
 

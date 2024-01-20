@@ -24,8 +24,8 @@ include ../tests.rules.mk
 # clean:
 # 	echo $(cleanfiles)
 
-# vtkclean:
-# 	echo $(vtkcleanfiles)
+# outputclean:
+# 	echo $(outputcleanfiles)
 
 # depclean:
 # 	echo $(depcleanfiles)

@@ -422,7 +422,7 @@ std::string MeshSimplicialND::text() const
       
     }
     
-    getcoordinates().print( os );
+    os << getcoordinates().text(); // getcoordinates().print( os );
     
     os << "Finished printing" << nl;
 

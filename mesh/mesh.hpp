@@ -2,7 +2,7 @@
 #define INCLUDEGUARD_MESH_MESH_HPP
 
 
-#include <ostream>
+// #include <ostream>
 #include <utility>
 #include <vector>
 
@@ -71,7 +71,7 @@ class Mesh
         
         void check() const;
         
-        void print( std::ostream& out ) const;
+        // void print( std::ostream& out ) const;
         
         virtual std::string text() const = 0;
         
@@ -267,9 +267,10 @@ class Mesh
         // const decltype(auxdata)& getauxdata() { return auxdata; }
 #endif
         
-        friend inline std::ostream& operator<<( std::ostream& os, const Mesh& mesh )
+        template<typename Stream>
+        friend inline Stream& operator<<( Stream& os, const Mesh& mesh )
         {
-            mesh.print( os );
+            os << mesh.text(); // mesh.print( os );
             return os;
         }
 
