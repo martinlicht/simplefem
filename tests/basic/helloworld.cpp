@@ -16,6 +16,18 @@ int main()
                 
     cout << "C++ version: " << __cplusplus << endl;
         
+    #ifdef __GLIBCXX__
+    std::cout << "GNU libstdc++ version " << __GLIBCXX__ << std::endl;
+    #endif
+
+    #ifdef _LIBCPP_VERSION
+    std::cout << "LLVM libc++ version " << _LIBCPP_VERSION << std::endl;
+    #endif
+
+    #ifdef _MSC_VER
+    std::cout << "MSVC standard library with _MSC_VER=" << _MSC_VER << std::endl;
+    #endif
+
     cout << "Now an intentional leak..." << endl;
     
     int * p = new (std::nothrow) int[10000];

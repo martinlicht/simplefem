@@ -80,7 +80,7 @@ int main()
     printf("Machine epsilon variable:        %Le\n",    (long double)machine_epsilon );
     printf("Machine epsilon variable (sqrt ): %.25Le\n", (long double)std::sqrt(machine_epsilon) );
     printf("Machine epsilon variable (Sqrt ): %.25Le\n", (long double)Sqrt(machine_epsilon) );
-    printf("Machine epsilon variable (Sqrt_): %.25Le\n", (long double)Sqrt_(machine_epsilon) );
+    // printf("Machine epsilon variable (Sqrt_): %.25Le\n", (long double)Sqrt_(machine_epsilon) );
     printf("Desired precision variable:      %Le\n",    (long double)desired_precision );
     
     

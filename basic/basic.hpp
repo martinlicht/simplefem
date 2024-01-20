@@ -75,20 +75,23 @@ typedef double Float;
 #endif
 
 
-constexpr Float SqrtHelper( Float a, Float x, unsigned int i )
+// constexpr Float SqrtHelper( Float a, Float x, unsigned int i )
+// {
+//     return ( i == 0 ) ? x : SqrtHelper( a, ( a / x + x ) / 2, i-1 );
+// }
+
+constexpr Float Sqrt( Float a, unsigned int i = 10 )
 {
-    return ( i == 0 ) ? x : SqrtHelper( a, ( a / x + x ) / 2, i-1 );
+    Float x = a;
+    while ( i --> 0 ) x = ( x + a / x ) / 2.;
+    return x;    
+    // return SqrtHelper( a, a, i );
 }
 
-constexpr Float Sqrt( Float a, unsigned int i = 40 )
-{
-    return SqrtHelper( a, a, i );
-}
-
-constexpr Float Sqrt_( Float a, bool init = true, unsigned int i = 40, Float x = 0. )
-{
-    return ( init ) ? Sqrt_( a, false, i, a ) : ( i==0 ? x : Sqrt_( a, false, i-1, ( a / x + x ) / 2 ) );
-}
+// constexpr Float Sqrt_( Float a, bool init = true, unsigned int i = 40, Float x = 0. )
+// {
+//     return ( init ) ? Sqrt_( a, false, i, a ) : ( i==0 ? x : Sqrt_( a, false, i-1, ( a / x + x ) / 2 ) );
+// }
 
 
 

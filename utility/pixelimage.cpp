@@ -15,11 +15,11 @@
 
 
 
-// utility for getting file ending
-std::string tail(std::string const& source, size_t const length) {
-  if (length >= source.size()) { return source; }
-  return source.substr(source.size() - length);
-} 
+// // utility for getting file ending
+// std::string tail(std::string const& source, size_t const length) {
+//   if (length >= source.size()) { return source; }
+//   return source.substr(source.size() - length);
+// } 
 
 
 

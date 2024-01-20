@@ -44,11 +44,14 @@ class PixelImage
         : height(height), width(width), data( width*height, {128,128,128} ) 
         {}
         
+        PixelImage( const PixelImage& ) = default;
+        PixelImage( PixelImage&& ) = default;
+        
         ~PixelImage() {}
 
-        size_t getheight() const { return height; };
+        size_t getheight() const { return height; }
 
-        size_t getwidth() const { return width; };
+        size_t getwidth() const { return width; }
 
         PixelColor& operator()( size_t row, size_t col ) {
             assert( row >= 0 && row < height && col >= 0 && col < width );

@@ -765,7 +765,7 @@ FloatVector Mesh::transform_whitney_to_euclidean( int dim, const FloatVector& wh
     }
         
     return ret;
-};
+}
 
 
 
