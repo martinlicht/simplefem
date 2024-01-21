@@ -4,16 +4,16 @@
 # They create the dependency auxiliary files, 
 # the object files, and the shared libraries. 
 
-################################################################################
+######################################################################################
 # EXPECTED VARIABLES:
 # - projectdir : path/to/project/directory
 # - moddir     : path/to/module/directory
 # - module     : name of the module 
 ifndef module
-$(error Expect 'context')
+$(error Expect 'module')
 endif
 ifndef moddir
-$(error Expect 'contextdir')
+$(error Expect 'moddir')
 endif
 
 
@@ -120,6 +120,7 @@ $($(module).staticlibrary): $($(module).libraryobject)
 
 .PHONY: buildobjects buildso builda
 .PHONY: $(module).buildobjects $(module).buildso $(module).builda
+.PHONY: $(module).build
 
 $(module).buildobjects: $($(module).objects)
 $(module).buildso:      $($(module).sharedlibrary)
@@ -129,14 +130,6 @@ buildobjects: $(module).buildobjects
 buildso:      $(module).buildso
 builda:       $(module).builda
 
-
-.PHONY: $(module).build
-
-# ifeq ($(OS),Windows_NT)
-# $(module).build: $(module).builda
-# else
-# $(module).build: $(module).builda $(module).buildso
-# endif
 
 ifeq ($(LINKINGTYPE),objectfile)
 $(module).build: $($(module).libraryobject)
@@ -152,10 +145,17 @@ endif
 endif 
 endif
 
+# ifeq ($(OS),Windows_NT)
+# $(module).build: $(module).builda
+# else
+# $(module).build: $(module).builda $(module).buildso
+# endif
 
 
 
-########################################################################
+
+
+##########################################################################################
 # List several objects. Read-only
 
 .PHONY:  list_of_objects $(module).list_of_objects
@@ -164,19 +164,19 @@ endif
 list_of_objects: $(module).list_of_objects
 
 $(module).list_of_objects: 
-	@echo $(projecdir);
-	@echo $(mymodule);
-	@echo $(mymoddir);
-	@echo $($(mymodule).sources);
-	@echo $($(mymodule).headers);
-	@echo $($(mymodule).staticlibrary);
-	@echo $($(mymodule).sharedlibrary);
-	@echo $($(mymodule).objects);
-	@echo $($(mymodule).dependencies);
-	@echo $($(mymodule).build);
+	@echo Project directory: $(projecdir);
+	@echo Module name:       $(mymodule);
+	@echo Module directory:  $(mymoddir);
+	@echo Sources:           $($(mymodule).sources);
+	@echo Headers:           $($(mymodule).headers);
+	@echo Static lib:        $($(mymodule).staticlibrary);
+	@echo Shared lib:        $($(mymodule).sharedlibrary);
+	@echo Objects:           $($(mymodule).objects);
+	@echo Dependencies:      $($(mymodule).dependencies);
+	@echo Build:             $($(mymodule).build);
 
 
-########################################################################
+##########################################################################################
 # Check whether the header files have correct syntax. Read-only.
 
 $(module).headerchecks := $(patsubst %.hpp,check-%.hpp,$($(module).headers))
@@ -190,7 +190,7 @@ $($(module).headerchecks): check-%.hpp :
 
 
 
-########################################################################
+##########################################################################################
 # Check whether the source files have correct syntax. Read-only.
 
 $(module).sourcechecks := $(patsubst %.cpp,check-%.cpp,$($(module).sources))
@@ -204,7 +204,13 @@ $($(module).sourcechecks): check-%.cpp :
 
 
 
-########################################################################
+##########################################################################################
+# Target 'check' is a generic test. Currently, it defaults to 'tidy'
+
+.PHONY: check
+check: tidy
+
+##########################################################################################
 # Apply clang-tidy to all cpp and hpp files in the directory. Read-only.
 
 .PHONY: tidy $(module).tidy
@@ -213,7 +219,7 @@ $(module).tidy:
 	clang-tidy $($(mymodule).sources) --config-file=$(projectdir)/Tools/clang-tidy.yaml -- -std=c++17 # -fno-exceptions
 
 
-########################################################################
+##########################################################################################
 # Apply cppcheck to all cpp and hpp files in the directory. Read-only. 
 
 .PHONY: cppcheck $(module).cppcheck
@@ -225,7 +231,7 @@ $(module).cppcheck:
 	--std=c++17 -q $(mymoddir)/*pp
 
 
-########################################################################
+##########################################################################################
 # Regex several useful things. Read-only. 
 # - find trailing white spaces 
 # - find non-ASCII characters 
@@ -252,27 +258,22 @@ $(module).grepissues:
 	@-grep --line-number --color -E '([0-9]+e[0-9]+)|([0-9]+\.[0-9]+)|((+-\ )\.[0-9]+)|((+-\ )[0-9]+\.)' $(mymoddir)/*pp
 
 
-########################################################################
-# Target 'check' is a generic test. Currently, it defaults to 'tidy'
-
-.PHONY: check
-check: tidy
 
 
 
-########################################################################
+##########################################################################################
 # Commands for cleaning out numerous files that are not part of the project.
 # These remove the following:
-# - clean: delete all binary files and temporary output, and the following two.
+# - clean:       delete all binary files and temporary output, and the following two.
 # - outputclean: delete all *vtk output files
 # - dependclean: delete .deps directories and their content
 
-CMD_CLEAN    = rm -f .all.o *.a *.o *.d *.so *.gch OUTPUT_CPPLINT.txt callgrind.out.* *.exe *.exe.stackdump *.out *.out.stackdump 
+CMD_CLEAN       = rm -f .all.o .all.json .json *.a *.o *.d *.so *.json *.gch OUTPUT_CPPLINT.txt callgrind.out.* *.exe *.exe.stackdump *.out *.out.stackdump 
 CMD_OUTPUTCLEAN = rm -f ./*.vtk ./*/*.vtk ./*/*/*.vtk ./*.svg ./*/*.svg ./*/*/*.svg
-CMD_DEPCLEAN = if [ -d .deps/ ]; then rm -f .deps/*.d .deps/.all.d; rmdir .deps/; fi 
+CMD_DEPCLEAN    = if [ -d .deps/ ]; then rm -f .deps/*.d .deps/.all.d; rmdir .deps/; fi 
 
-.PHONY: clean vktclean dependclean
-.PHONY: $(module).clean $(module).vktclean $(module).dependclean
+.PHONY: clean outputclean dependclean
+.PHONY: $(module).clean $(module).outputclean $(module).dependclean
 
 clean:       $(module).clean
 outputclean: $(module).outputclean

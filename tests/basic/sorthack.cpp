@@ -7,18 +7,17 @@
 #include <algorithm>
 #include "../../basic/sorthack.hpp"
 
-
-
 int main()
 {
-    int N = 100;
+    std::size_t N = 2 << 22;
     std::vector<int> foo( N );
-    for( int i = 0; i < N; i++ ) foo[i] = rand() / 100000;
+    for( std::size_t i = 0; i < N; i++ ) foo[i] = rand() / 100000;
 
+    //std::sort( foo.begin(), foo.end() ); 
     sorthack( foo );
     
-    for( int i = 1; i < N; i++ ) 
-        assert( foo[i] >= foo[i-1] ); //std::cout << foo[i] << nl;
+    for( std::size_t i = 1; i < N; i++ ) 
+        assert( foo[i-1] <= foo[i] ); //std::cout << foo[i] << nl;
     
     return 0;
 }

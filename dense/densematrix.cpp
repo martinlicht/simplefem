@@ -407,8 +407,8 @@ DenseMatrix DenseMatrix::submatrix( const IndexMap& rows, const IndexMap& column
 //     assert( rows.isstrictlyascending() );
 //     assert( columns.isstrictlyascending() );
 //     
-//     DenseMatrix ret( std::max(0,rows.getSourceRange().max() - 1), 
-//                     std::max(0,columns.getSourceRange().max() - 1) );
+//     DenseMatrix ret( maximum(0,rows.getSourceRange().max() - 1), 
+//                     maximum(0,columns.getSourceRange().max() - 1) );
 //     for( int nr = 0; nr < ret.getdimout(); nr++ )
 //     for( int nc = 0; nc < ret.getdimin();  nc++ )
 //         ret( nr, nc ) = (*this)( rows[nr], columns[nc] );
@@ -739,7 +739,7 @@ Float DenseMatrix::maxabsoluteentry() const
     Float ret = - std::numeric_limits<Float>::infinity();
     for( int r = 0; r < getdimout(); r++ )
         for( int c = 0; c < getdimin(); c++ )
-            ret = std::max( ret, (*this)(r,c) );
+            ret = maximum( ret, (*this)(r,c) );
     return ret;
 }
 
@@ -856,7 +856,7 @@ Float DenseMatrix::maxnorm() const
     Float ret = 0.;
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin();  c++ )
-        ret = std::max( ret, get(r,c) );
+        ret = maximum( ret, get(r,c) );
     return ret;
 }
 

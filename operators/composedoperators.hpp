@@ -311,7 +311,38 @@ inline ProduktOperator operator*( LinearOperator&& left, const LinearOperator& r
 
 inline ProduktOperator operator*( LinearOperator&& left, LinearOperator&& right )
 { return ProduktOperator( std::move(left), std::move(right) ); }
-  
+
+inline ProduktOperator operator-( LinearOperator&& op )
+{
+    return ProduktOperator( ScalingOperator( op.getdimout(), -1. ), std::move(op) );
+}
+
+inline ProduktOperator operator-( const LinearOperator& op )
+{
+    return ProduktOperator( ScalingOperator( op.getdimout(), -1. ), op );
+}
+
+inline ProduktOperator operator+( LinearOperator&& op )
+{
+    return ProduktOperator( IdentityOperator( op.getdimout() ), std::move(op) );
+}
+
+inline ProduktOperator operator+( const LinearOperator& op )
+{
+    return ProduktOperator( IdentityOperator( op.getdimout() ), op );
+}
+
+inline ProduktOperator operator*( Float s, LinearOperator&& op )
+{
+    return ProduktOperator( ScalingOperator( op.getdimout(), s ), std::move(op) );
+}
+
+inline ProduktOperator operator*( Float s, const LinearOperator& op )
+{
+    return ProduktOperator( ScalingOperator( op.getdimout(), s ), op );
+}
+
+
 
 
 
@@ -497,36 +528,6 @@ inline DiffOperator operator-( LinearOperator&& left, LinearOperator&& right )
 
 
 
-
-inline ProduktOperator operator-( LinearOperator&& op )
-{
-    return ProduktOperator( ScalingOperator( op.getdimout(), -1. ), std::move(op) );
-}
-
-inline ProduktOperator operator-( const LinearOperator& op )
-{
-    return ProduktOperator( ScalingOperator( op.getdimout(), -1. ), op );
-}
-
-inline ProduktOperator operator+( LinearOperator&& op )
-{
-    return ProduktOperator( IdentityOperator( op.getdimout() ), std::move(op) );
-}
-
-inline ProduktOperator operator+( const LinearOperator& op )
-{
-    return ProduktOperator( IdentityOperator( op.getdimout() ), op );
-}
-
-inline ProduktOperator operator*( Float s, LinearOperator&& op )
-{
-    return ProduktOperator( ScalingOperator( op.getdimout(), s ), std::move(op) );
-}
-
-inline ProduktOperator operator*( Float s, const LinearOperator& op )
-{
-    return ProduktOperator( ScalingOperator( op.getdimout(), s ), op );
-}
 
 
 

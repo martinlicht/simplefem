@@ -392,9 +392,9 @@ class MeshSimplicial3D
 
 
 
-// inline std::ostream& operator<<( std::ostream& os, const MeshSimplicial3D& mt2d )
+// inline std::ostream& operator<<( std::ostream& os, const MeshSimplicial3D& mt3d )
 // {
-//     mt2d.print( os );
+//     mt3d.print( os );
 //     return os;
 // }
 

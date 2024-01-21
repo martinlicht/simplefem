@@ -344,14 +344,19 @@ FloatVector Interpolation(
             
             assert( ( P - DenseMatrix( 1, 1, 1. ) ).iszero() );
             assert( ( InterpolationMatrix - Minv ).iszero() );
+            assert( ( InterpolationMatrix - Minv ).issmall() );
             
             if( not ( M * localResult - EvaluationVector ).issmall() ) {
-                LOG << M * localResult << space << EvaluationVector << nl;
-                LOG << M * localResult - EvaluationVector << nl;
-                LOG << ( M * localResult - EvaluationVector ).norm() << nl;
+                LOG << M << nl << nl;
+                LOG << Minv << nl << nl;
+                LOG << InterpolationMatrix << nl << nl;
+                LOG << M * Minv << nl << nl;
+                LOG << M * InterpolationMatrix << nl << nl;
+                LOG << M * localResult << nl << nl << EvaluationVector << nl << nl;
+                LOG << M * localResult - EvaluationVector << nl << nl;
+                LOG << ( M * localResult - EvaluationVector ).norm() << nl << nl;
             }
             assert( ( M * localResult - EvaluationVector ).issmall() );
-            assert( ( InterpolationMatrix - Minv ).issmall() );
         }
         #endif
         

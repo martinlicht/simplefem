@@ -4,7 +4,7 @@
 
 #include <functional>
 #include <initializer_list>
-#include <ostream>
+// #include <ostream>
 #include <string>
 #include <vector>
 
@@ -49,7 +49,7 @@ class MultiIndex final
 
         std::string text( bool embellish = false ) const;
         
-        void print( std::ostream&, bool embellish = false ) const;
+        // void print( std::ostream&, bool embellish = false ) const;
 
         // void lg() const { LOG << text() << nl; }
         
@@ -106,10 +106,11 @@ inline MultiIndex ZeroMultiIndex( const IndexRange& ir )
 
 
 
-inline std::ostream& operator<<( std::ostream& os, const MultiIndex& mi )
+template<typename Stream>
+inline Stream& operator<<( Stream& os, const MultiIndex& mi )
 {
     mi.check();
-    mi.print( os );
+    os << mi.text(); // mi.print( os );
     return os;
 }
 

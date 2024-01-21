@@ -33,6 +33,19 @@ Most important features:
  - [ ] Metric linear operations such as mass operator and Hodge star operator 
  - [x] Mass matrices with constant or non-uniform coefficients  
  - [ ] Duality-based error error estimators and adaptive strategies
+ - [ ] Any external library is included
+
+
+
+C++
+
+Minimal requirements and fast compile time 
+C++14 with optional C++17 enhancements
+No dependencies except a C++14 compiler and GNU-Make
+Any external library included
+Fail-fast 
+
+
 
 Planned features:
 

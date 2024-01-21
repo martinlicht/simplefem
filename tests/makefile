@@ -31,12 +31,6 @@ components+=whitney3D
 components+=solverfem
 components+=nullspace
 
-
-# cleanfiles    :=
-# vtkcleanfiles :=
-# depcleanfiles :=
-
-
 include tests.affices.mk
 
 testsdir:=.
@@ -164,24 +158,16 @@ dependclean:
 	@echo "Finished cleaning test directory dependency information files." 
 
 
-.PHONY: vtkclean
-vtkclean:
-	@rm -f ./*.vtk ./*/*.vtk ./*/*/*.vtk
-	@echo "Finished cleaning test directory .vtk files." 
+.PHONY: outputclean
+outputclean:
+	@rm -f ./*.vtk ./*/*.vtk ./*/*/*.vtk ./*.svg ./*/*.svg ./*/*/*.svg
+	@echo "Finished cleaning test directory output files."
 
 
 
 
 
 
-# clean:
-# 	echo $(cleanfiles)
-
-# vtkclean:
-# 	echo $(vtkcleanfiles)
-
-# depclean:
-# 	echo $(depcleanfiles)
 	
 
 
@@ -211,15 +197,15 @@ vtkclean:
 # 	@echo "Finished cleaning dependency information files." 
 
 
-# vtkclean.components :=$(patsubst %,.vtkclean.%,$(components) )
+# outputclean.components :=$(patsubst %,.outputclean.%,$(components) )
 
-# .PHONY: $(vtkclean.components)
-# $(vtkclean.components): .vtkclean.%: 
-# 	@cd ./$* && $(MAKE) --no-print-directory vtkclean
+# .PHONY: $(outputclean.components)
+# $(outputclean.components): .outputclean.%: 
+# 	@cd ./$* && $(MAKE) --no-print-directory outputclean
 
-# .PHONY: vtkclean
-# vtkclean: $(vtkclean.components)
-# 	$(MAKE) --no-print-directory -f ../common.upkeep.mk vtkclean
+# .PHONY: outputclean
+# outputclean: $(outputclean.components)
+# 	$(MAKE) --no-print-directory -f ../common.upkeep.mk outputclean
 # 	@echo "Finished cleaning .vtk files." 
 
 

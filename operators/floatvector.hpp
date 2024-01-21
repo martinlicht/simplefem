@@ -3,7 +3,7 @@
 
 #include <functional>
 #include <initializer_list>
-#include <ostream>
+// #include <ostream>
 #include <vector>
 
 #include "../basic.hpp"
@@ -58,7 +58,7 @@ class FloatVector
 
         std::string data_as_text( bool indexed = true, bool rowwise = false ) const; 
 
-        void print( std::ostream& ) const;
+        // void print( std::ostream& ) const;
         
         // void lg() const { LOG << text() << nl; };
         
@@ -427,9 +427,12 @@ inline Float operator*( const FloatVector& left, const FloatVector& right )
 
 
 /* Output stream notation */
-inline std::ostream& operator<<( std::ostream& out, const FloatVector& vec )
+// inline std::ostream& operator<<( std::ostream& out, const FloatVector& vec )
+template<typename Stream>
+// inline std::ostream& operator<<( std::ostream& out, const FloatVector& vec )
+inline Stream& operator<<( Stream& out, const FloatVector& vec )
 {
-    vec.print( out );
+    out << vec.text(); // vec.print( out );
     return out;
 }
 

@@ -77,8 +77,8 @@ struct IterativeSolver
 };
 
 
-
-inline std::ostream& operator<<( std::ostream& os, const IterativeSolver& solver )
+template<typename Stream>
+inline Stream& operator<<( Stream& os, const IterativeSolver& solver )
 {
     os << solver.text();
     return os;

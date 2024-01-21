@@ -3,7 +3,7 @@
 
 
 #include <array>
-#include <ostream>
+// #include <ostream>
 #include <vector>
 
 #include "../basic.hpp"
@@ -46,7 +46,7 @@ class Coordinates
         virtual ~Coordinates();
         
         void check() const;
-        void print( std::ostream& ) const;
+        // void print( std::ostream& ) const;
         std::string text() const;
         
         // // void lg() const { LOG << *this << nl; };
@@ -132,7 +132,7 @@ class Coordinates
 
         friend inline std::ostream& operator<<( std::ostream& os, const Coordinates& co )
         {
-            co.print( os );
+            os << co.text(); // co.print( os );
             return os;
         }
 

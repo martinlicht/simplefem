@@ -264,9 +264,8 @@ inline DenseMatrix& operator-=( DenseMatrix& left, const DenseMatrix& right )
 
 inline DenseMatrix& operator*=( DenseMatrix& left, const DenseMatrix& right )
 {
-    DenseMatrix temp( left );
-    temp = MatrixMult( left, right );
-    left = temp;
+    DenseMatrix temp = MatrixMult( left, right );
+    left = std::move(temp);
     return left;
 }
 
@@ -278,6 +277,7 @@ inline DenseMatrix& operator*=( DenseMatrix& left, Float right )
 
 inline DenseMatrix& operator/=( DenseMatrix& left, Float right )
 {
+    LOG << "DEW IT " << right << "\n";
     left.scale( 1. / right );
     return left;
 }
@@ -314,17 +314,15 @@ inline DenseMatrix operator*( Float left, const DenseMatrix& right )
     return ret;
 }
 
-inline DenseMatrix operator*( const DenseMatrix& left, Float right )
+inline DenseMatrix operator*( const DenseMatrix& mat, Float s )
 {
-    DenseMatrix ret( left );
-    ret *= right;
-    return ret;
+    return s * mat;
 }
 
-inline DenseMatrix operator/( const DenseMatrix& left, Float right )
+inline DenseMatrix operator/( const DenseMatrix& mat, Float s )
 {
-    DenseMatrix ret( left );
-    ret /= right;
+    DenseMatrix ret( mat );
+    ret /= s;
     return ret;
 }
 

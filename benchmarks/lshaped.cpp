@@ -27,7 +27,7 @@
 #include "../solver/inv.hpp"
 #include "../solver/systemsparsesolver.hpp"
 #include "../solver/systemsolver.hpp"
-#include "../fem/global.contraction.hpp"
+#include "../fem/global.veewedgehodge.hpp"
 #include "../fem/global.diffmatrix.hpp"
 #include "../fem/global.elevation.hpp"
 #include "../fem/global.interpol.hpp"
