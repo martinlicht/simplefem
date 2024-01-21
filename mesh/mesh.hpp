@@ -2,7 +2,7 @@
 #define INCLUDEGUARD_MESH_MESH_HPP
 
 
-#include <ostream>
+// #include <ostream>
 #include <utility>
 #include <vector>
 
@@ -27,12 +27,17 @@
 *******************/
 
 
-typedef unsigned char SimplexFlag;
+enum SimplexFlag
+{
+    SimplexFlagNull      = 0x1B,
+    SimplexFlagInvalid   = 0x77,
+    SimplexFlagDirichlet = 0xF1 
+};
 
-const SimplexFlag SimplexFlagNull    = 0x1B;
-const SimplexFlag SimplexFlagInvalid = 0x77;
+// const SimplexFlag SimplexFlagNull    = 0x1B;
+// const SimplexFlag SimplexFlagInvalid = 0x77;
 
-const SimplexFlag SimplexFlagDirichlet = 0xF1;
+// const SimplexFlag SimplexFlagDirichlet = 0xF1;
 
 
 
@@ -71,7 +76,7 @@ class Mesh
         
         void check() const;
         
-        void print( std::ostream& out ) const;
+        // void print( std::ostream& out ) const;
         
         virtual std::string text() const = 0;
         
@@ -267,9 +272,10 @@ class Mesh
         // const decltype(auxdata)& getauxdata() { return auxdata; }
 #endif
         
-        friend inline std::ostream& operator<<( std::ostream& os, const Mesh& mesh )
+        template<typename Stream>
+        friend inline Stream& operator<<( Stream& os, const Mesh& mesh )
         {
-            mesh.print( os );
+            os << mesh.text(); // mesh.print( os );
             return os;
         }
 

@@ -1,6 +1,6 @@
 
 #include <cstdio>
-#include <ostream>
+// #include <ostream>
 // #include <iomanip>
 #include <string>
 #include <sstream>
@@ -162,7 +162,7 @@ std::string ConvergenceTable::text_standard( bool display_convergence_rates ) co
         for( int j = 0; j < entries[i].size(); j++ )
         {
             
-            printf_into_stream( ss, "% *.*e%s", nc_cell_width, nc_cell_precision, (double) entries[i][j], column_separator ); 
+            printf_into_stream( ss, "% *.*Le%s", nc_cell_width, nc_cell_precision, (long double) entries[i][j], column_separator ); 
             
             if( display_convergence_rates ){
                 
@@ -174,12 +174,12 @@ std::string ConvergenceTable::text_standard( bool display_convergence_rates ) co
                 
                     if( entries[i][j] > 0. and entries[i-1][j] > 0. ) {
 
-                        double computed_rate = (double)std::log2( entries[i-1][j] / entries[i][j] );
+                        long double computed_rate = (long double)std::log2( entries[i-1][j] / entries[i][j] );
                         
                         if( rates_are_float ) { 
-                            printf_into_stream( ss, "%*.*e", nc_rate_width, nc_rate_precision, computed_rate  );
+                            printf_into_stream( ss, "%*.*Le", nc_rate_width, nc_rate_precision, computed_rate  );
                         } else {
-                            printf_into_stream( ss, "%*.*f", nc_rate_width, nc_rate_precision, computed_rate  );
+                            printf_into_stream( ss, "%*.*Lf", nc_rate_width, nc_rate_precision, computed_rate  );
                         }
 
                     } else {
@@ -224,7 +224,7 @@ std::string ConvergenceTable::text_transpose( bool display_convergence_rates ) c
     const int nc_cell_width = 6 + nc_cell_precision + 2;
     // 12; sign + digit + . + e + sign + two digits = 6 chars 
 
-    const int nc_rate_width = std::max( nc_cell_width, ( rates_are_float ? ( 7 + nc_rate_precision ) : 3 + nc_rate_precision ) + 0 );
+    const int nc_rate_width = maximum( nc_cell_width, ( rates_are_float ? ( 7 + nc_rate_precision ) : 3 + nc_rate_precision ) + 0 );
     // see above ....
 
     // First line is the name of the table 
@@ -262,7 +262,7 @@ std::string ConvergenceTable::text_transpose( bool display_convergence_rates ) c
 
             assert( entries[i].size() == num_series );
             
-            printf_into_stream( ss, "% *.*e%s", nc_cell_width, nc_cell_precision, (double) entries[i][j], cell_separator );
+            printf_into_stream( ss, "% *.*Le%s", nc_cell_width, nc_cell_precision, (long double) entries[i][j], cell_separator );
             
         }
 
@@ -285,12 +285,12 @@ std::string ConvergenceTable::text_transpose( bool display_convergence_rates ) c
                 
                     if( entries[i][j] > 0. and entries[i-1][j] > 0. ) {
 
-                        double computed_rate = std::log2( entries[i-1][j] / entries[i][j] );
+                        long double computed_rate = (long double)std::log2( entries[i-1][j] / entries[i][j] );
                         
                         if( rates_are_float ) { 
-                            printf_into_stream( ss, "% *.*e%s", nc_rate_width, nc_rate_precision, computed_rate, cell_separator );
+                            printf_into_stream( ss, "% *.*Le%s", nc_rate_width, nc_rate_precision, computed_rate, cell_separator );
                         } else {
-                            printf_into_stream( ss, "% *.*f%s", nc_rate_width, nc_rate_precision, computed_rate, cell_separator );
+                            printf_into_stream( ss, "% *.*Lf%s", nc_rate_width, nc_rate_precision, computed_rate, cell_separator );
                         }
 
                     } else {
@@ -422,12 +422,12 @@ std::string ConvergenceTable::TeXtabular( const std::vector<bool>& show_column )
                 
                     if( entries[i][j] > 0. and entries[i-1][j] > 0. ) {
 
-                        double computed_rate = (double)std::log2( entries[i-1][j] / entries[i][j] );
+                        long double computed_rate = (long double)std::log2( entries[i-1][j] / entries[i][j] );
                         
                         if( rates_are_float ) { 
-                            printf_into_stream( ss, "%*.*e", nc_rate_width, nc_rate_precision, computed_rate  );
+                            printf_into_stream( ss, "%*.*Le", nc_rate_width, nc_rate_precision, computed_rate  );
                         } else {
-                            printf_into_stream( ss, "%*.*f", nc_rate_width, nc_rate_precision, computed_rate  );
+                            printf_into_stream( ss, "%*.*Lf", nc_rate_width, nc_rate_precision, computed_rate  );
                         }
 
                     } else {

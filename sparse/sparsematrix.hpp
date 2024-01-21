@@ -66,7 +66,7 @@ public LinearOperator /* every matrix is a linear operator */
         
         virtual void check() const override;
         virtual std::string text() const override;
-        virtual void printplain( std::ostream& ) const;
+        // virtual void printplain( std::ostream& ) const;
 
 
         /* OTHER METHODS */
@@ -159,19 +159,18 @@ inline SparseMatrix operator&( const SparseMatrix& left, const SparseMatrix& rig
     return SparseMatrixMultiplication( left, right );
 }
 
-inline SparseMatrix operator*( const SparseMatrix& mat, Float s )
-{
-    auto foo = mat;
-    foo.scale(s);
-    return foo;
-}
-
 inline SparseMatrix operator*( Float s, const SparseMatrix& mat )
 {
     auto foo = mat;
     foo.scale(s);
     return foo;
 }
+
+inline SparseMatrix operator*( const SparseMatrix& mat, Float s )
+{
+    return s * mat;
+}
+
 
 
 

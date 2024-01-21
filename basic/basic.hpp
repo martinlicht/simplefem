@@ -34,7 +34,7 @@
 // #include <ctime>
 
 // #include <algorithm>
-// #include <array>
+#include <array>
 // #include <chrono>
 // #include <functional>
 // #include <iterator>
@@ -75,20 +75,23 @@ typedef double Float;
 #endif
 
 
-constexpr Float SqrtHelper( Float a, Float x, unsigned int i )
+// constexpr Float SqrtHelper( Float a, Float x, unsigned int i )
+// {
+//     return ( i == 0 ) ? x : SqrtHelper( a, ( a / x + x ) / 2, i-1 );
+// }
+
+constexpr Float Sqrt( Float a, unsigned int i = 10 )
 {
-    return ( i == 0 ) ? x : SqrtHelper( a, ( a / x + x ) / 2, i-1 );
+    Float x = a;
+    while ( i --> 0 ) x = ( x + a / x ) / 2.;
+    return x;    
+    // return SqrtHelper( a, a, i );
 }
 
-constexpr Float Sqrt( Float a, unsigned int i = 40 )
-{
-    return SqrtHelper( a, a, i );
-}
-
-constexpr Float Sqrt_( Float a, bool init = true, unsigned int i = 40, Float x = 0. )
-{
-    return ( init ) ? Sqrt_( a, false, i, a ) : ( i==0 ? x : Sqrt_( a, false, i-1, ( a / x + x ) / 2 ) );
-}
+// constexpr Float Sqrt_( Float a, bool init = true, unsigned int i = 40, Float x = 0. )
+// {
+//     return ( init ) ? Sqrt_( a, false, i, a ) : ( i==0 ? x : Sqrt_( a, false, i-1, ( a / x + x ) / 2 ) );
+// }
 
 
 
@@ -635,6 +638,8 @@ std::string tab_each_line( std::string str ); // TODO: Move to utilities
 /////////////////////////////////////////////////
 
 
+
+
 /***********************************************/
 /*   GENERIC STREAM TEMPLATE FOR ITERABLES     */ 
 /***********************************************/
@@ -660,6 +665,34 @@ std::string tab_each_line( std::string str ); // TODO: Move to utilities
 // inline Stream& operator<<( Stream&& stream, const std::string&& container )
 // {
 //     return operator<< <Stream,const char*>( stream, container.c_str() ); 
+// }
+
+// // TODO: Move into separate include file 
+// template <typename StreamType, typename T, size_t N>
+// inline StreamType& operator<<( StreamType& stream, const std::array<T, N>& v)
+// // Define a helper structure template to check for to_text existence
+// template <typename T, typename = void>
+// struct has_text : std::false_type {};
+// 
+// // Specialization that deduces to std::true_type only when to_text method exists
+// template <typename T>
+// struct has_text<T, decltype(std::declval<T>().text(), void())> : std::true_type {};
+// 
+// template< typename Stream, typename Object >
+// // inline Stream& operator<< < Stream, Object, decltype( std::declval<Object>().text() ) >( Stream& stream, const Object& object )
+// inline Stream& operator<<( Stream& stream, const Object& object )
+// {
+//     static_assert( has_text<Object>::value );
+//     stream << object.text(); 
+// 	return stream;
+// }
+
+// template< typename Stream, typename Container, typename = decltype( std::begin( std::declval<Container>() ) ) >
+// inline Stream& operator<<( Stream& stream, const Container& container )
+// {
+// 	for( const auto& item : container )
+//         stream << item << space;
+// 	return stream;
 // }
 
 // // TODO: Move into separate include file 

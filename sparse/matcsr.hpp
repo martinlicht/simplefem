@@ -58,7 +58,7 @@ public LinearOperator /* every matrix is a linear operator */
         
         virtual void check() const override;
         virtual std::string text() const override;
-        virtual void printplain( std::ostream& ) const;
+        // virtual void printplain( std::ostream& ) const;
 
 
         /* OTHER METHODS */
@@ -145,19 +145,18 @@ inline MatrixCSR operator&( const MatrixCSR& mat1, const MatrixCSR& mat2 )
     return MatrixCSRMultiplication_reduced( mat1, mat2 );
 }
 
-inline MatrixCSR operator*( const MatrixCSR& mat, Float s )
-{
-    auto foo = mat;
-    foo.scale(s);
-    return foo;
-}
-
 inline MatrixCSR operator*( Float s, const MatrixCSR& mat )
 {
     auto foo = mat;
     foo.scale(s);
     return foo;
 }
+
+inline MatrixCSR operator*( const MatrixCSR& mat, Float s )
+{
+    return s * mat;
+}
+
 
 
 

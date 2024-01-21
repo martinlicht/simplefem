@@ -4,7 +4,7 @@
 
 #include <functional>
 #include <initializer_list>
-#include <ostream>
+// #include <ostream>
 #include <string>
 #include <vector>
 
@@ -54,7 +54,7 @@ class IndexMap
         
         std::string text( bool embellish = true ) const;
         
-        void print( std::ostream&, bool embellish = true ) const;
+        // void print( std::ostream&, bool embellish = true ) const;
 
         // void lg() const { LOG << text() << nl; };
 
@@ -132,11 +132,10 @@ inline IndexMap operator*( const IndexMap& leave, const IndexMap& enter )
 {
     leave.check();
     enter.check();
-    IndexRange src  = enter.getSourceRange();
-    IndexRange dest = leave.getTargetRange();
-
     assert( enter.getTargetRange() == leave.getSourceRange() );
 
+    IndexRange src  = enter.getSourceRange();
+    IndexRange dest = leave.getTargetRange();
     IndexMap ret( src, dest, [ &leave, &enter ]( int i ) -> int { return leave[ enter[i] ]; } );
 
     ret.check();
@@ -170,13 +169,11 @@ inline bool operator<( const IndexMap& left, const IndexMap& right )
     return left.less( right );
 }
 
-
-inline std::ostream& operator<<( std::ostream& os, const IndexMap& im )
+template<typename Stream>
+inline Stream& operator<<( Stream& os, const IndexMap& im )
 {
     im.check();
-
-    im.print( os );
-
+    os << im.text(); // im.print( os );
     return os;
 }
 

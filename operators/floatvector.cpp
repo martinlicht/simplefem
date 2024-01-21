@@ -195,13 +195,13 @@ std::string FloatVector::data_as_text( bool indexed, bool print_rowwise ) const
 }
 
 
-void FloatVector::print( std::ostream& output ) const 
-{
-    check();
-    output << "float vector of dimension: " << getdimension() << nl;
-    for( int p = 0; p < getdimension(); p++ )
-        output << p << ": " << getentry(p) << nl;
-}
+// void FloatVector::print( std::ostream& output ) const 
+// {
+//     check();
+//     output << "float vector of dimension: " << getdimension() << nl;
+//     for( int p = 0; p < getdimension(); p++ )
+//         output << p << ": " << getentry(p) << nl;
+// }
 
 
 
@@ -630,7 +630,7 @@ Float FloatVector::maxnorm() const
     assert( getdimension() > 0 );
     Float ret = 0.;
     for( int d = 0; d < getdimension(); d++ )
-        ret = std::max( ret, absolute( pointer[d] ) );
+        ret = maximum( ret, absolute( pointer[d] ) );
     return ret;
 }
 

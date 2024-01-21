@@ -16,7 +16,7 @@
 // }
 // 
 // IndexMap::IndexMap( const IndexRange& from, const IndexRange& to )
-// : src(from), dest(to), values( std::max( src.max() - src.min() + 1, 0 ), to.min() )
+// : src(from), dest(to), values( maximum( src.max() - src.min() + 1, 0 ), to.min() )
 // {
 //     if( src.max() >= src.min() )
 //       LOG << "Index Map initialized without actual values" << nl;
@@ -46,7 +46,7 @@ IndexMap::IndexMap( const IndexRange& from, const IndexRange& to, const std::fun
     
     } else {
     
-        values.reserve( std::max( src.max() - src.min() + 1, 0 ) );
+        values.reserve( maximum( src.max() - src.min() + 1, 0 ) );
         for( int e = src.min(); e <= src.max(); e++ )
             // values.at( src.element2position(e) ) = generator(e);
             values.emplace_back( generator(e) );
@@ -88,7 +88,7 @@ void IndexMap::check() const
         
         assert( ! getSourceRange().isempty() );
         
-        assert( std::max( src.max() - src.min() + 1, 0 ) == values.size() );
+        assert( maximum( src.max() - src.min() + 1, 0 ) == values.size() );
     
         assert( ! getTargetRange().isempty() );
         
@@ -121,10 +121,10 @@ std::string IndexMap::text( bool embellish ) const
     return ss.str();
 }
 
-void IndexMap::print( std::ostream& os, bool embellish ) const 
-{
-    os << text( embellish );
-}
+// void IndexMap::print( std::ostream& os, bool embellish ) const 
+// {
+//     os << text( embellish );
+// }
 
 const IndexRange& IndexMap::getSourceRange() const 
 {

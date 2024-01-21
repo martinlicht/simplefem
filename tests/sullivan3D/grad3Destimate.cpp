@@ -60,7 +60,7 @@ int main()
     LOG << "Estimating Poincare-Friedrichs constant of grad operator" << nl;
 
     const int min_l = 0; 
-    const int max_l = 7;
+    const int max_l = 6;
     
     const int min_r = 2;
     const int max_r = 2;

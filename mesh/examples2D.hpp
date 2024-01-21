@@ -3,7 +3,6 @@
 
 
 #include <cmath>
-// #include <algorithm>
 #include <vector>
 
 #include "mesh.hpp"
@@ -498,7 +497,7 @@ inline MeshSimplicial2D Halo( int K = 1, int L = 3 )
     
     assert( tris.size() == num_triangles );
 
-    for( auto& t : tris ) //std::sort( t.begin(), t.end() );
+    for( auto& t : tris ) 
     {
       if( t[0] > t[1] ) { int i = t[0]; t[0] = t[1]; t[1] = i; }
       if( t[0] > t[2] ) { int i = t[0]; t[0] = t[2]; t[2] = i; }

@@ -34,14 +34,4 @@ Float EigenvalueEstimate( const DenseMatrix& );
 
 
 
-
-
-
-
-
-
-
-
-
-
 #endif

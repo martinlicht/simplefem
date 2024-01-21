@@ -41,7 +41,7 @@ FLAG_CXX := CLANG
 
 # Do you want the standard library assert macro instead of the custom one?
 # Uncomment the following line to use the standard library assert macro 
-# FLAG_USE_ORIGINAL_ASSERT_MACRO=yes
+FLAG_USE_ORIGINAL_ASSERT_MACRO=yes
 
 # Do you want assert messages to be discarded?
 # Uncomment the following line to simplify the debugging macros 
@@ -58,7 +58,7 @@ FLAG_DISABLE_CHECK_MESHES=yes
 # Do you want to DISABLE the custom logging framework
 # in favor of standard library routines?
 # Uncomment the following line for that
-# FLAG_USE_PRIMITIVE_LOGGING=yes
+FLAG_USE_PRIMITIVE_LOGGING=yes
 
 # Do you want to DISABLE excpetion handling?
 # Uncomment the following line to disable exception handling
@@ -112,8 +112,8 @@ FLAG_NO_EXCEPTIONS=yes
 
 # Choose the linker by uncommenting, or leave commented for default linker 
 # LDFLAGS += -fuse-ld=bfd
-LDFLAGS += -fuse-ld=lld
-# LDFLAGS += -fuse-ld=gold
+# LDFLAGS += -fuse-ld=lld
+LDFLAGS += -fuse-ld=gold
 # LDFLAGS += -fuse-ld=mold
 
 
@@ -174,7 +174,7 @@ ifeq ($(FLAG_CXX),GCC)
   
 else ifeq ($(FLAG_CXX),CLANG)
 
-  CXX := clang++ -ftime-trace 
+  CXX := clang++ -stdlib=libstdc++ 
   #-ftime-trace
 
 else ifeq ($(FLAG_CXX),ICC)
