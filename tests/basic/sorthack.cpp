@@ -13,8 +13,8 @@ int main()
     std::vector<int> foo( N );
     for( std::size_t i = 0; i < N; i++ ) foo[i] = rand() / 100000;
 
-    //std::sort( foo.begin(), foo.end() ); 
-    sorthack( foo );
+    std::sort( foo.begin(), foo.end() ); 
+    //sorthack( foo );
     
     for( std::size_t i = 1; i < N; i++ ) 
         assert( foo[i-1] <= foo[i] ); //std::cout << foo[i] << nl;

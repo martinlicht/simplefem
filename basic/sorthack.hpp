@@ -48,7 +48,8 @@ void insertionSort( std::vector<T>& vec, int low, int high )
             vec[j] = vec[j-1];
             j--;
         }
-        assert( j >= low and vec[j] <= key );
+        assert( j >= low );
+        assert( vec[j] >= key );
         vec[j] = key;
     }
 
@@ -89,6 +90,41 @@ int partition( std::vector<T>& vec, int low, int high )
         myswap( &vec[i], &vec[j] );
     }
 }
+
+/*
+template<typename T>
+int partition( std::vector<T>& vec, int low, int high )
+{
+    assert( 0 <= low and low <= high and high <= vec.size() - 1 );
+
+    size_t i = low;
+    size_t j = high;
+
+    T pivot = vec[high];
+    
+    while( i < j )
+    {
+        while( i < j && vec[i] <= pivot ){
+            i++;
+        };
+
+        while( i < j && vec[j] > pivot ) {
+            j--;
+        }
+
+        if( vec[i] > vec[j] )
+            myswap( &vec[i], &vec[j] );
+        
+    }
+
+    if( vec[i] > pivot ){
+        myswap( &vec[i], &vec[high] );
+    } else {
+        i = high;
+    }
+    return i;
+}
+*/
 
 template<typename T>
 void quickSort( std::vector<T>& vec, int low, int high )
