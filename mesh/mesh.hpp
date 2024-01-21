@@ -27,12 +27,17 @@
 *******************/
 
 
-typedef unsigned char SimplexFlag;
+enum SimplexFlag
+{
+    SimplexFlagNull      = 0x1B,
+    SimplexFlagInvalid   = 0x77,
+    SimplexFlagDirichlet = 0xF1 
+};
 
-const SimplexFlag SimplexFlagNull    = 0x1B;
-const SimplexFlag SimplexFlagInvalid = 0x77;
+// const SimplexFlag SimplexFlagNull    = 0x1B;
+// const SimplexFlag SimplexFlagInvalid = 0x77;
 
-const SimplexFlag SimplexFlagDirichlet = 0xF1;
+// const SimplexFlag SimplexFlagDirichlet = 0xF1;
 
 
 

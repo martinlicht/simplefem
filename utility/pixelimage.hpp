@@ -68,8 +68,11 @@ class PixelImage
             {
                 const PixelImage& pixelimage = *this;
                 
-                int ny = (int)floor( y );
-                int nx = (int)floor( x );
+                assert( 0 <= y and y < height );
+                assert( 0 <= x and x < width  );
+                
+                int ny = static_cast<int>(floor( y ));
+                int nx = static_cast<int>(floor( x ));
 
                 double lx = x - nx;
                 double ly = y - ny;

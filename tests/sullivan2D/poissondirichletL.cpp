@@ -99,7 +99,7 @@ int main()
     LOG << "Solving Poisson Problem with Dirichlet boundary conditions" << nl;
 
     const int min_l = 1; 
-    const int max_l = 8;
+    const int max_l = 6;
 
     std::vector<MeshSimplicial2D>    meshes;
     std::vector<FloatVector>         solutions;

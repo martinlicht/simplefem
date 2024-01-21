@@ -120,14 +120,14 @@ Float Coordinates::getmin( int d ) const {
     assert( 0 <= d && d < dimension );
     Float ret = getdata(0,d);
     for( int n = 1; n < number; n++ )
-        ret = std::min(ret,getdata(n,d));
+        ret = minimum(ret,getdata(n,d));
     return ret;
 }
 Float Coordinates::getmax( int d ) const {
     assert( 0 <= d && d < dimension );
     Float ret = getdata(0,d);
     for( int n = 1; n < number; n++ )
-        ret = std::max(ret,getdata(n,d));
+        ret = maximum(ret,getdata(n,d));
     return ret;
 }
         
@@ -257,9 +257,9 @@ DenseMatrix Coordinates::getLinearPart( const IndexMap& im ) const
     IndexRange imsrc = im.getSourceRange();
     assert( imsrc.min() == 0 && imsrc.max() <= getdimension() );
     
-    DenseMatrix ret( getdimension(), std::max(0,imsrc.max()-1) );
+    DenseMatrix ret( getdimension(), maximum(0,imsrc.max()-1) );
     assert( ret.getdimout() == getdimension() );
-    assert( ret.getdimin() == std::max(0,imsrc.max()-1) );
+    assert( ret.getdimin() == maximum(0,imsrc.max()-1) );
     
     for( int p = 1; p <= imsrc.max(); p++ )
         ret.setcolumn( p-1, 

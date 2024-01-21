@@ -630,7 +630,7 @@ Float FloatVector::maxnorm() const
     assert( getdimension() > 0 );
     Float ret = 0.;
     for( int d = 0; d < getdimension(); d++ )
-        ret = std::max( ret, absolute( pointer[d] ) );
+        ret = maximum( ret, absolute( pointer[d] ) );
     return ret;
 }
 

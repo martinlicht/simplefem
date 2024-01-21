@@ -132,11 +132,10 @@ inline IndexMap operator*( const IndexMap& leave, const IndexMap& enter )
 {
     leave.check();
     enter.check();
-    IndexRange src  = enter.getSourceRange();
-    IndexRange dest = leave.getTargetRange();
-
     assert( enter.getTargetRange() == leave.getSourceRange() );
 
+    IndexRange src  = enter.getSourceRange();
+    IndexRange dest = leave.getTargetRange();
     IndexMap ret( src, dest, [ &leave, &enter ]( int i ) -> int { return leave[ enter[i] ]; } );
 
     ret.check();

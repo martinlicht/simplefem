@@ -421,7 +421,7 @@ Float MatrixCSR::eigenvalueupperbound() const
         Float candidate_ret = 0.;
         for( int c = A[r]; c < A[r+1]; c++ )
             candidate_ret += absolute( V[c] );
-        ret = std::max( ret, candidate_ret );
+        ret = maximum( ret, candidate_ret );
     }
     return ret;
 }

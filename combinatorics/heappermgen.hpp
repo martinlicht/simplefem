@@ -9,7 +9,7 @@
 
 /***************
 *** 
-***  Generate Permutations using Heaps algorithm
+***  Generate Permutations using Heaps Algorithm
 ***  
 ***  The variables `seed` and `memo` are just auxiliary data,
 ***  whereas `perm` contains the proper data.

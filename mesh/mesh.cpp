@@ -505,7 +505,7 @@ Float Mesh::getShapemeasure( int dim ) const
     
     Float shapemeas = 0.;
     for( int s = 0; s < count_simplices(dim); s++ )
-        shapemeas = std::max( shapemeas, power_numerical( getDiameter( dim, s ), dim ) / getMeasure( dim, s ) );
+        shapemeas = maximum( shapemeas, power_numerical( getDiameter( dim, s ), dim ) / getMeasure( dim, s ) );
     return shapemeas;
 }
 
@@ -792,7 +792,7 @@ void Mesh::shake_interior_vertices( Float intensity, Float probability )
         {
             int vi = get_subsimplex_index( dim, 0, t, v );
             Float height = getHeight( dim, t, vi );
-            radius = std::min( height, radius );
+            radius = minimum( height, radius );
         }
 
         FloatVector shift(dim,0.);

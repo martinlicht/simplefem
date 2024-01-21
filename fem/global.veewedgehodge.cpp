@@ -12,7 +12,7 @@
 #include "../sparse/sparsematrix.hpp"
 #include "../mesh/mesh.hpp"
 
-#include "../fem/global.contraction.hpp"
+#include "../fem/global.veewedgehodge.hpp"
 
 
 

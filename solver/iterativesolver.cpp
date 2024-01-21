@@ -145,7 +145,7 @@ void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) cons
 
             assert( Ad_d >= 0 );
 
-            // sigma_min_sq = std::min( sigma_min_sq, Ad_d / (d*d) );
+            // sigma_min_sq = minimum( sigma_min_sq, Ad_d / (d*d) );
             // LOG << "@" << recent_iteration_count << " : " << std::sqrt( rr_old / ( sigma_min_sq * (x*x) ) ) << " with eigenvalue bound " << std::sqrt(sigma_min_sq) << nl;
 
             bool denominator_is_unreasonable = not std::isfinite(Ad_d) or Ad_d < 0.;

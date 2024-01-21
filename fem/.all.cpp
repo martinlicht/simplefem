@@ -3,7 +3,7 @@
 #include "global.coefficientmassmatrix.cpp"
 #include "indexfunctions.cpp"
 #include "local.polynomialmassmatrix.cpp"
-#include "global.contraction.cpp"
+#include "global.veewedgehodge.cpp"
 #include "global.elevation.cpp"
 #include "global.interpol.cpp"
 #include "global.avgsullivan.cpp"

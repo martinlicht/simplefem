@@ -222,7 +222,7 @@ std::string ConvergenceTable::text_transpose( bool display_convergence_rates ) c
     const int nc_cell_width = 6 + nc_cell_precision + 2;
     // 12; sign + digit + . + e + sign + two digits = 6 chars 
 
-    const int nc_rate_width = std::max( nc_cell_width, ( rates_are_float ? ( 7 + nc_rate_precision ) : 3 + nc_rate_precision ) + 0 );
+    const int nc_rate_width = maximum( nc_cell_width, ( rates_are_float ? ( 7 + nc_rate_precision ) : 3 + nc_rate_precision ) + 0 );
     // see above ....
 
     // First line is the name of the table 
