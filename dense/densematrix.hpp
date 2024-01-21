@@ -277,7 +277,6 @@ inline DenseMatrix& operator*=( DenseMatrix& left, Float right )
 
 inline DenseMatrix& operator/=( DenseMatrix& left, Float right )
 {
-    LOG << "DEW IT " << right << "\n";
     left.scale( 1. / right );
     return left;
 }
