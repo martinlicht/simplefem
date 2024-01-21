@@ -599,7 +599,7 @@ SparseMatrix SparseMatrixMultiplication( const SparseMatrix& left, const SparseM
 //     LOG << "--- SparseMatrix Product" << nl;
 //     LOG << "--- Sort and compress" << nl;
 
-    // TimeBeacon beacon;
+    // SectionProfiler beacon;
     
     left.sortandcompressentries( SparseMatrix::MatrixEntrySorting::columnwise );
     right.sortandcompressentries( SparseMatrix::MatrixEntrySorting::rowwise );

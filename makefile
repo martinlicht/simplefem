@@ -181,9 +181,10 @@ benchmarks:
 # More targets are defined in each module 
 
 .PHONY: clean
-clean:
+clean: 
 	@cd ./tests && $(MAKE) --no-print-directory clean
 	@cd ./benchmarks && $(MAKE) --no-print-directory clean
+	@rm -f ./*.vtk ./*/*.vtk ./*/*/*.vtk ./*.svg ./*/*.svg ./*/*/*.svg
 	@echo "Finished cleaning."
 
 .PHONY: outputclean

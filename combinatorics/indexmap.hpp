@@ -170,7 +170,7 @@ inline bool operator<( const IndexMap& left, const IndexMap& right )
 }
 
 template<typename Stream>
-inline Stream& operator<<( Stream& os, const IndexMap& im )
+inline Stream& operator<<( Stream&& os, const IndexMap& im )
 {
     im.check();
     os << im.text(); // im.print( os );
