@@ -174,7 +174,7 @@ ifeq ($(FLAG_CXX),GCC)
   
 else ifeq ($(FLAG_CXX),CLANG)
 
-  CXX := clang++ 
+  CXX := clang++ -ftime-trace 
   #-ftime-trace
 
 else ifeq ($(FLAG_CXX),ICC)

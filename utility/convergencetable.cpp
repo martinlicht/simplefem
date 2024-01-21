@@ -51,7 +51,9 @@ std::string ConvergenceTable::text() const
         
 void ConvergenceTable::lg() const
 {
-    LOG << text();
+    //LOG << "\n\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n\n" << text();
+    const auto str = text();
+    LOG << str;
 }
 
 void ConvergenceTable::lg( bool display_convergence_rates ) const

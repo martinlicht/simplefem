@@ -639,16 +639,28 @@ std::string tab_each_line( std::string str ); // TODO: Move to utilities
 /*   GENERIC STREAM TEMPLATE FOR ITERABLES     */ 
 /***********************************************/
 
+// template< typename Stream, typename Container, 
+//           typename = decltype( std::begin( std::declval<Container>() ) )
+//         //   ,
+//         //   typename = std::enable_if< not std::is_same<Container,const std::string>::value && not std::is_same<Container,std::string>::value && not std::is_same<Container,char*>::value && not std::is_same<Container,const char*>::value >,
+//         //   typename = std::enable_if< not std::is_same<Container,std::string>::value >,
+//         //   typename = std::enable_if< not std::is_same<Container,const std::string>::value >,
+//         //   typename = std::enable_if< not std::is_same<Container,char*>::value >,
+//         //   typename = std::enable_if< not std::is_same<Container,const char*>::value >
+//         >
+// inline 
+// typename std::enable_if< not std::is_same<Container,const std::string>::value && not std::is_same<Container,std::string>::value && not std::is_same<Container,char*>::value && not std::is_same<Container,const char*>::value, Stream& >::type
+// operator<<( Stream& stream, const Container& container )
+// {
+//     for( const auto& item : container ) stream << item << space;
+// 	return stream;
+// }
 
-template< typename Stream, typename Container, typename Begin = decltype( std::begin( std::declval<Container>() ) ) >
-inline Stream& operator<<( Stream& stream, const Container& container )
-{
-	for( const auto& item : container )
-        stream << item << space;
-	return stream;
-}
-
-
+// template< typename Stream >
+// inline Stream& operator<<( Stream&& stream, const std::string&& container )
+// {
+//     return operator<< <Stream,const char*>( stream, container.c_str() ); 
+// }
 
 // // TODO: Move into separate include file 
 // template <typename StreamType, typename T, size_t N>
