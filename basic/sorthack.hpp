@@ -31,6 +31,32 @@ void insertionSort( std::vector<T>& vec, int low, int high )
         assert( vec[i - 1] <= vec[i] );
 }
 
+/*
+template<typename T>
+void insertionSort( std::vector<T>& vec, int low, int high )
+{
+    assert( 0 <= low and low <= high and high <= vec.size() - 1 );
+
+    for( int i = low + 1; i <= high; i++ )
+    {
+        T key = vec[i];
+        
+        int j = i;
+
+        while( j > low && vec[j-1] > key )
+        {
+            vec[j] = vec[j-1];
+            j--;
+        }
+        assert( j >= low and vec[j] <= key );
+        vec[j] = key;
+    }
+
+    for( int i = low + 1; i <= high; i++ )
+        assert( vec[i - 1] <= vec[i] );
+}
+*/
+
 template<typename T>
 void myswap( T* a, T* b )
 {

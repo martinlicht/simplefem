@@ -398,7 +398,14 @@ void Inverse_CramersRule_InSitu( DenseMatrix& A )
     assert( A.issquare() ); 
     // Float det = Determinant_laplaceexpansion( A );
     // assert( absolute( det ) > machine_epsilon );
-    A = CofactorMatrix( A ) / Determinant( A );
+    
+    // auto B = CofactorMatrix( A ); B /= Determinant( A );
+    // auto C = ( CofactorMatrix( A ) /  Determinant( A ) );
+    // LOG << A << nl << B << nl << C << nl;
+    // LOG << A*B << nl << A*C << nl;
+    // assert( ( C - B ).issmall() );
+
+    A = CofactorMatrix( A ) /  Determinant( A );
 }
 
 

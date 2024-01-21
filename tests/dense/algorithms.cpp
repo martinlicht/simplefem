@@ -80,7 +80,7 @@ int main()
     
     
     {
-        LOG << "B. Unit test for transpoing dense matrices" << nl;
+        LOG << "B. Unit test for transposing dense matrices" << nl;
         
         LOG << "Transpose of square matrices" << nl;
         
@@ -324,6 +324,27 @@ int main()
             LOG << "Determinant (gauss):   " << Determinant_gauss(A) << nl;
             LOG << "Determinant (default): " << Determinant(A) << nl;
             LOG << CofactorMatrix( A ) << nl;
+            LOG << Inverse( A ) << nl;
+            LOG << A * Inverse( A ) << nl;
+            LOG << Inverse( A ) * A << nl;
+        }
+    }
+    
+    {
+        LOG << "10. Inverse and determinants of unit matrices" << nl;
+        for( int t = 0; t < 7; t++ )
+        {
+            
+            DenseMatrix A = 3. * IdentityMatrix(t);
+            
+            LOG << A << nl;
+            
+            LOG << "Determinant (laplace): " << Determinant_laplaceexpansion(A) << nl;
+            LOG << "Determinant (gauss):   " << Determinant_gauss(A) << nl;
+            LOG << "Determinant (default): " << Determinant(A) << nl;
+            
+            LOG << CofactorMatrix( A ) << nl;
+            LOG << GaussJordanInplace( A ) << nl;
             LOG << Inverse( A ) << nl;
             LOG << A * Inverse( A ) << nl;
             LOG << Inverse( A ) * A << nl;

@@ -80,7 +80,7 @@ typedef double Float;
 //     return ( i == 0 ) ? x : SqrtHelper( a, ( a / x + x ) / 2, i-1 );
 // }
 
-constexpr Float Sqrt( Float a, unsigned int i = 10 )
+constexpr Float Sqrt( Float a, unsigned int i = 40 )
 {
     Float x = a;
     while ( i --> 0 ) x = ( x + a / x ) / 2.;
