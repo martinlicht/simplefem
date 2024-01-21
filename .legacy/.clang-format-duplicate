@@ -1,0 +1,61 @@
+---
+AlignAfterOpenBracket: BlockIndent
+AlignArrayOfStructures: Right
+# AlignConsecutiveAssignments:
+  # Enabled: true
+  # AcrossEmptyLines: false
+  # AcrossComments: true
+  # AlignCompound: false
+  # PadOperators: false
+# AlignConsecutiveDeclarations:
+#   Enabled: true
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortIfStatementsOnASingleLine: Never
+AlwaysBreakTemplateDeclarations: Yes
+BraceWrapping:
+  AfterCaseLabel: true
+  AfterClass: true
+  AfterControlStatement: Always
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterObjCDeclaration: true
+  AfterStruct: true
+  AfterUnion: true
+  AfterExternBlock: true
+  BeforeCatch: false
+  BeforeElse: false
+  BeforeWhile: false
+  IndentBraces: false
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+  SplitEmptyNamespace: false
+# BreakAfterAttributes: Leave
+BreakBeforeBraces: Custom
+ColumnLimit: 0
+EmptyLineAfterAccessModifier: Always
+EmptyLineBeforeAccessModifier: Always
+IndentAccessModifiers: true
+IndentWidth: 4
+Language: Cpp
+NamespaceIndentation: All
+PointerAlignment: Left
+ReferenceAlignment: Pointer
+QualifierAlignment: Leave
+SpaceAfterTemplateKeyword: false
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeCaseColon: false
+SpaceBeforeCtorInitializerColon: true
+SpaceBeforeInheritanceColon: true
+SpaceBeforeParens: Never
+SpaceBeforeSquareBrackets: false
+SpaceInEmptyBlock: false
+SpacesInAngles: Leave
+SpacesInContainerLiterals: true
+SpacesInParentheses: true # for 14.0.0
+# SpacesInParens: Custom
+# SpacesInParensOptions:
+#   InConditionalStatements: true
+#   InCStyleCasts: false
+#   InEmptyParentheses: false
+Standard: c++14

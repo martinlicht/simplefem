@@ -3,6 +3,6 @@
 
 #include "convergencetable.hpp"
 #include "files.hpp"
-#include "beacon.hpp"
+#include "profilerutils.hpp"
 #include "random.hpp"
 

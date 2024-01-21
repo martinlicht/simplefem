@@ -680,7 +680,7 @@ std::string tab_each_line( std::string str ); // TODO: Move to utilities
 // 
 // template< typename Stream, typename Object >
 // // inline Stream& operator<< < Stream, Object, decltype( std::declval<Object>().text() ) >( Stream& stream, const Object& object )
-// inline Stream& operator<<( Stream& stream, const Object& object )
+// inline Stream& operator<<( Stream&& stream, const Object& object )
 // {
 //     static_assert( has_text<Object>::value );
 //     stream << object.text(); 
@@ -688,7 +688,7 @@ std::string tab_each_line( std::string str ); // TODO: Move to utilities
 // }
 
 // template< typename Stream, typename Container, typename = decltype( std::begin( std::declval<Container>() ) ) >
-// inline Stream& operator<<( Stream& stream, const Container& container )
+// inline Stream& operator<<( Stream&& stream, const Container& container )
 // {
 // 	for( const auto& item : container )
 //         stream << item << space;
@@ -697,7 +697,7 @@ std::string tab_each_line( std::string str ); // TODO: Move to utilities
 
 // // TODO: Move into separate include file 
 // template <typename StreamType, typename T, size_t N>
-// inline StreamType& operator<<( StreamType& stream, const std::array<T, N>& v)
+// inline StreamType& operator<<( StreamType&& stream, const std::array<T, N>& v)
 // {
 //     for( const auto& item : v )
 //         stream << "" << item << space;

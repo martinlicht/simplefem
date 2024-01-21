@@ -273,7 +273,7 @@ class Mesh
 #endif
         
         template<typename Stream>
-        friend inline Stream& operator<<( Stream& os, const Mesh& mesh )
+        friend inline Stream& operator<<( Stream&& os, const Mesh& mesh )
         {
             os << mesh.text(); // mesh.print( os );
             return os;

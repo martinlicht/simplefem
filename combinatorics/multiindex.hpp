@@ -107,7 +107,7 @@ inline MultiIndex ZeroMultiIndex( const IndexRange& ir )
 
 
 template<typename Stream>
-inline Stream& operator<<( Stream& os, const MultiIndex& mi )
+inline Stream& operator<<( Stream&& os, const MultiIndex& mi )
 {
     mi.check();
     os << mi.text(); // mi.print( os );

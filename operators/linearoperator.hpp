@@ -94,7 +94,7 @@ inline FloatVector operator*( const LinearOperator& op, const FloatVector& vec )
 }
   
 template<typename Stream>
-inline Stream& operator<<( Stream& os, const LinearOperator& op )
+inline Stream& operator<<( Stream&& os, const LinearOperator& op )
 {
     op.check();
     os << op.text(); // op.print( os );

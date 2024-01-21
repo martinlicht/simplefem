@@ -101,12 +101,12 @@ class Logger //: public std::ostringstream
             return *this;
         }
     
-        template <typename T, typename = decltype(std::declval<T>().text())>
-        Logger& operator<<(const T& input) {
-            std::string text = input.text();
-            internal += text;
-            return *this;
-        }
+        // template <typename T, typename = decltype(std::declval<T>().text())>
+        // Logger& operator<<(const T& input) {
+        //     std::string text = input.text();
+        //     internal += text;
+        //     return *this;
+        // }
     
     // Logger& operator<<( intmax_t input ) {
         //     char buffer[ sizeof(decltype(input)) * 3 + 1 + 1 ];
