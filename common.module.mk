@@ -176,6 +176,7 @@ $(module).list_of_objects:
 	@echo Build:             $($(mymodule).build);
 
 
+ifneq ($(module),external)
 ##########################################################################################
 # Check whether the header files have correct syntax. Read-only.
 
@@ -203,7 +204,6 @@ $($(module).sourcechecks): check-%.cpp :
 
 
 
-
 ##########################################################################################
 # Target 'check' is a generic test. Currently, it defaults to 'tidy'
 
@@ -225,7 +225,7 @@ $(module).tidy:
 .PHONY: cppcheck $(module).cppcheck
 cppcheck: $(module).cppcheck
 $(module).cppcheck:
-	cppcheck -i ./.playground/ -i ./.legacy \
+	cppcheck -i ./.playground/ -i ./.legacy/ -i ./external/ \
 	--enable=warning,style,performance,portability --suppress=duplicateCondition \
 	--suppress=assertWithSideEffect --suppress=useStlAlgorithm \
 	--std=c++17 -q $(mymoddir)/*pp
@@ -257,7 +257,7 @@ $(module).grepissues:
 	@-grep --line-number --color -E '(0-9)e' $(mymoddir)/*pp
 	@-grep --line-number --color -E '([0-9]+e[0-9]+)|([0-9]+\.[0-9]+)|((+-\ )\.[0-9]+)|((+-\ )[0-9]+\.)' $(mymoddir)/*pp
 
-
+endif
 
 
 

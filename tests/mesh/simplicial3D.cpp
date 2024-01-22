@@ -7,23 +7,23 @@
 
 int main()
 {
-        LOG << "Unit Test for Simplicial 3D Module" << nl;
-        
-        MeshSimplicial3D M = UnitSimplex3D();
-        
-        M.check();
-        
-        LOG << "Refinement..." << nl;
-        
-        M.uniformrefinement();
-        
-        LOG << "...done" << nl;
-        
-        M.check();
-        
-        LOG << M << nl;
-        
-        LOG << "Finished Unit Test" << nl;
-        
-        return 0;
+    LOG << "Unit Test for Simplicial 3D Module" << nl;
+    
+    MeshSimplicial3D M = UnitSimplex3D();
+    
+    M.check();
+    
+    LOG << "Refinement..." << nl;
+    
+    M.uniformrefinement();
+    
+    LOG << "...done" << nl;
+    
+    M.check();
+    
+    LOG << M << nl;
+    
+    LOG << "Finished Unit Test" << nl;
+    
+    return 0;
 }

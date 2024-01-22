@@ -11,7 +11,7 @@
 
 
 #include "../basic.hpp"
-#include "../basic/sorthack.hpp"
+#include "../utility/sorthack.hpp"
 #include "../combinatorics/indexrange.hpp"
 #include "../combinatorics/indexmap.hpp"
 #include "../combinatorics/generateindexmaps.hpp"

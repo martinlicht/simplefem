@@ -9,28 +9,28 @@ using namespace std;
 
 int main()
 {
-        LOG << "Unit Test for one-dimensional simplicial mesh" << nl;
+    LOG << "Unit Test for one-dimensional simplicial mesh" << nl;
 
-        MeshSimplicial1D M = StandardInterval1D();
-        
-        LOG << "Check" << nl;
-        
+    MeshSimplicial1D M = StandardInterval1D();
+
+    LOG << "Check" << nl;
+
+    M.check();
+
+    LOG << M << nl;
+
+    LOG << "Start refinement" << nl;
+
+    for( int c = 0; c < 100; c++ ) 
+    {
+        int e = c % M.count_edges();
+        LOG << "Bisect edge: " << e << nl;
+        M.bisect_edge( e );
+
         M.check();
-        
-        LOG << M << nl;
-        
-        LOG << "Start refinement" << nl;
-        
-        for( int c = 0; c < 100; c++ ) 
-        {
-          int e = c % M.count_edges();
-          LOG << "Bisect edge: " << e << nl;
-          M.bisect_edge( e );
-          
-          M.check();
-        }
-        
-        LOG << "Finished Unit Test" << nl;
+    }
 
-        return 0;
+    LOG << "Finished Unit Test" << nl;
+
+    return 0;
 }

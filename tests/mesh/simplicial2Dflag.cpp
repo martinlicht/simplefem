@@ -11,34 +11,34 @@ using namespace std;
 
 int main()
 {
-        LOG << "Unit Test for Simplicial 2D Module" << nl;
-        
-//        MeshSimplicial2D M = TetrahedralSurface2D();
-        MeshSimplicial2D M = StandardSquare2D();
-        
-        M.check();
-        
-        M.automatic_dirichlet_flags();
+    LOG << "Unit Test for Simplicial 2D Module" << nl;
+    
+    // MeshSimplicial2D M = TetrahedralSurface2D();
+    MeshSimplicial2D M = StandardSquare2D();
+    
+    M.check();
+    
+    M.automatic_dirichlet_flags();
 
-        M.check();
-            
-        M.check_dirichlet_flags();
-            
-        LOG << "Refinement" << nl;
+    M.check();
         
-        for( int c = 0; c < 2; c++ )
-          M.uniformrefinement();
+    M.check_dirichlet_flags();
         
-        M.check();
-        
+    LOG << "Refinement" << nl;
+    
+    for( int c = 0; c < 2; c++ )
+        M.uniformrefinement();
+    
+    M.check();
+    
 //         M.check_dirichlet_flags();
-            
-        LOG << M << nl;
         
-        // std::cout << M.outputTikZ();
-        puts( M.outputTikZ().c_str() );
-        
-        LOG << "Finished Unit Test" << nl;
-        
-        return 0;
+    LOG << M << nl;
+    
+    // std::cout << M.outputTikZ();
+    puts( M.outputTikZ().c_str() );
+    
+    LOG << "Finished Unit Test" << nl;
+    
+    return 0;
 }
