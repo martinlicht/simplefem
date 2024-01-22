@@ -9,39 +9,39 @@ using namespace std;
 
 int main()
 {
-        LOG << "Unit Test for Simplicial 2D Module" << nl;
+    LOG << "Unit Test for Simplicial 2D Module" << nl;
+    
+    for( int ei = 0; ei < 3; ei++ )
+    {
         
-        for( int ei = 0; ei < 3; ei++ )
-        {
-            
-            MeshSimplicial2D M = UnitTriangle2D();
-            
-            M.check();
-            
-            for( int c = 0; c < 10; c++ ) {
-                M.bisect_edge( M.get_triangle_edge( 0, ei ) );
-            }
-            
-            M.check();
-            
+        MeshSimplicial2D M = UnitTriangle2D();
+        
+        M.check();
+        
+        for( int c = 0; c < 10; c++ ) {
+            M.bisect_edge( M.get_triangle_edge( 0, ei ) );
         }
         
+        M.check();
         
-        {
-            
-            MeshSimplicial2D M = StandardSquare2D();
-            
-            M.check();
-            
-            for( int c = 0; c < 20; c++ ) {
-                M.bisect_edge( M.get_triangle_edge( c % 2, rand() % 3 ) );
-            }
-            
-            M.check();
-            
+    }
+    
+    
+    {
+        
+        MeshSimplicial2D M = StandardSquare2D();
+        
+        M.check();
+        
+        for( int c = 0; c < 20; c++ ) {
+            M.bisect_edge( M.get_triangle_edge( c % 2, rand() % 3 ) );
         }
         
-        LOG << "Finished Unit Test" << nl;
+        M.check();
         
-        return 0;
+    }
+    
+    LOG << "Finished Unit Test" << nl;
+    
+    return 0;
 }

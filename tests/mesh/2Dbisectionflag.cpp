@@ -9,51 +9,51 @@ using namespace std;
 
 int main()
 {
-        LOG << "Unit Test for Simplicial 2D Module" << nl;
+    LOG << "Unit Test for Simplicial 2D Module" << nl;
+    
+    for( int ei = 0; ei < 3; ei++ )
+    {
         
-        for( int ei = 0; ei < 3; ei++ )
-        {
-            
-            MeshSimplicial2D M = UnitTriangle2D();
-            
-            M.check();
+        MeshSimplicial2D M = UnitTriangle2D();
+        
+        M.check();
 
-            M.automatic_dirichlet_flags();
-            
-            M.check_dirichlet_flags();
-            
-            for( int c = 0; c < 10; c++ ) {
-                M.bisect_edge( M.get_triangle_edge( 0, ei ) );
-            }
-            
-            M.check();
-            
-            M.check_dirichlet_flags();
-            
+        M.automatic_dirichlet_flags();
+        
+        M.check_dirichlet_flags();
+        
+        for( int c = 0; c < 10; c++ ) {
+            M.bisect_edge( M.get_triangle_edge( 0, ei ) );
         }
         
+        M.check();
         
-        {
-            
-            MeshSimplicial2D M = StandardSquare2D();
-            
-            M.check();
+        M.check_dirichlet_flags();
+        
+    }
+    
+    
+    {
+        
+        MeshSimplicial2D M = StandardSquare2D();
+        
+        M.check();
 
-            M.automatic_dirichlet_flags();
-            
-            M.check_dirichlet_flags();
-            
-            for( int c = 0; c < 10; c++ ) {
-                M.bisect_edge( M.get_triangle_edge( c % 2, rand() % 3 ) );
-            }
-            
-            M.check();
-            
-            M.check_dirichlet_flags();
-            
+        M.automatic_dirichlet_flags();
+        
+        M.check_dirichlet_flags();
+        
+        for( int c = 0; c < 10; c++ ) {
+            M.bisect_edge( M.get_triangle_edge( c % 2, rand() % 3 ) );
         }
         
-        LOG << "Finished Unit Test" << nl;
+        M.check();
         
-        return 0;
+        M.check_dirichlet_flags();
+        
+    }
+    
+    LOG << "Finished Unit Test" << nl;
+    
+    return 0;
 }

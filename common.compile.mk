@@ -112,9 +112,9 @@ FLAG_NO_EXCEPTIONS=yes
 
 # Choose the linker by uncommenting, or leave commented for default linker 
 # LDFLAGS += -fuse-ld=bfd
-# LDFLAGS += -fuse-ld=lld
+LDFLAGS += -fuse-ld=lld
 # LDFLAGS += -fuse-ld=gold
-LDFLAGS += -fuse-ld=mold
+# LDFLAGS += -fuse-ld=mold
 
 
 

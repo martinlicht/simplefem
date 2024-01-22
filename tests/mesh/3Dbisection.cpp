@@ -9,41 +9,41 @@ using namespace std;
 
 int main()
 {
-        LOG << "Unit Test for Simplicial 3D Module" << nl;
+    LOG << "Unit Test for Simplicial 3D Module" << nl;
+    
+    for( int ei = 0; ei < 6; ei++ )
+    {
         
-        for( int ei = 0; ei < 6; ei++ )
-        {
-            
-            MeshSimplicial3D M = UnitSimplex3D();
-            
-            M.check();
-            
-            for( int c = 0; c < 10; c++ ) {
-                M.bisect_edge( M.get_tetrahedron_edge( 0, ei ) );
-            }
-            
-            M.check();
-            
+        MeshSimplicial3D M = UnitSimplex3D();
+        
+        M.check();
+        
+        for( int c = 0; c < 10; c++ ) {
+            M.bisect_edge( M.get_tetrahedron_edge( 0, ei ) );
         }
         
+        M.check();
         
-        {
-            
-            MeshSimplicial3D M = UnitCube3D();
-            
-            M.check();
-            
-            for( int c = 0; c < 20; c++ ) {
-                M.bisect_edge( M.get_tetrahedron_edge( c % 5, rand() % 6 ) );
-            }
-            
-            M.check();
-            
+    }
+    
+    
+    {
+        
+        MeshSimplicial3D M = UnitCube3D();
+        
+        M.check();
+        
+        for( int c = 0; c < 20; c++ ) {
+            M.bisect_edge( M.get_tetrahedron_edge( c % 5, rand() % 6 ) );
         }
         
+        M.check();
         
-        
-        LOG << "Finished Unit Test" << nl;
-        
-        return 0;
+    }
+    
+    
+    
+    LOG << "Finished Unit Test" << nl;
+    
+    return 0;
 }
