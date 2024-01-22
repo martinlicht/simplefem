@@ -1,6 +1,7 @@
 #ifndef INCLUDEGUARD_UTILITY_PROFILERUTILS_HPP
 #define INCLUDEGUARD_UTILITY_PROFILERUTILS_HPP
 
+#include <chrono>
 #include <string>
 #include <vector>
 
@@ -8,10 +9,11 @@
 
 class SectionProfiler
 {
-    
     private:
     
-        std::vector<  timestamp> times;
+        typedef std::chrono::steady_clock::time_point time_type;
+    
+        std::vector<  time_type> times;
         std::vector<std::string> texts;
         
     public:
@@ -23,17 +25,17 @@ class SectionProfiler
         
         virtual ~SectionProfiler() {
 
+            ping("FINISH");
+
             std::string text;
 
-            int max_text_len = texts.at(0).size();
-            for( int i = 1; i < times.size(); i++ )
-                max_text_len = maximum( max_text_len, SIZECAST( texts.at(i).size() ) );
+            assert( texts.size() == times.size() and texts.size() >= 2 );
 
-            for( int i = 1; i < times.size(); i++ ) {
-                LOGPRINTF( "%12s %*s:\n",
-                           timestamp2measurement( times.at(i) - times.at(i-1) ).c_str(),
-                           max_text_len, texts[i].c_str()
-                         );
+            for( int i = 0; i < times.size()-1; i++ ) {
+                
+                auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>( times.at(i+1) - times.at(i) ).count();
+
+                LOGPRINTF( "%ju ns \t %s\n", static_cast<uintmax_t>( elapsed_time ), texts[i].c_str() );
             }
             LOGPRINTF("\n");
             
@@ -41,8 +43,8 @@ class SectionProfiler
 
         void ping( std::string text = "---" ) 
         {
-            times.push_back( gettimestamp() );
-            texts.push_back( text           );
+            times.push_back( std::chrono::steady_clock::now() );
+            texts.push_back( text                                      );
         }
         
 };
@@ -53,21 +55,25 @@ class StopWatch {
 
     private:
 
-        timestamp   start_time;
+        typedef std::chrono::steady_clock::time_point time_type;
+    
+        time_type   start_time;
         std::string text;
 
     public:
 
-        StopWatch( std::string text = "---" ) {
-            start_time = gettimestamp();
-        }
+        StopWatch( std::string text = "---" ) 
+        : start_time(std::chrono::steady_clock::now()), text(text) 
+        {}
 
         ~StopWatch() {
-            timestamp end_time = gettimestamp();
-            LOGPRINTF( "%12s %*s:\n",
-                        timestamp2measurement( end_time - start_time ).c_str(),
-                        static_cast<int>(text.length()), text.c_str()
-                     );
+            
+            time_type end_time = std::chrono::steady_clock::now();
+            
+            auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>( end_time - start_time ).count();
+
+            LOGPRINTF( "%ju ns \t %s\n", static_cast<uintmax_t>( elapsed_time ), text.c_str() );
+            
         }
 };
 

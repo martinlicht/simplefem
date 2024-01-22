@@ -67,7 +67,7 @@ void myswap( T* a, T* b )
 }
 
 template<typename T>
-int partition( std::vector<T>& vec, int low, int high )
+int partitionCGPT( std::vector<T>& vec, int low, int high )
 {
     assert( 0 <= low and low <= high and high <= vec.size() - 1 );
 
@@ -91,43 +91,11 @@ int partition( std::vector<T>& vec, int low, int high )
     }
 }
 
-/*
-template<typename T>
-int partition( std::vector<T>& vec, int low, int high )
-{
-    assert( 0 <= low and low <= high and high <= vec.size() - 1 );
 
-    size_t i = low;
-    size_t j = high;
 
-    T pivot = vec[high];
-    
-    while( i < j )
-    {
-        while( i < j && vec[i] <= pivot ){
-            i++;
-        };
-
-        while( i < j && vec[j] > pivot ) {
-            j--;
-        }
-
-        if( vec[i] > vec[j] )
-            myswap( &vec[i], &vec[j] );
-        
-    }
-
-    if( vec[i] > pivot ){
-        myswap( &vec[i], &vec[high] );
-    } else {
-        i = high;
-    }
-    return i;
-}
-*/
 
 template<typename T>
-void quickSort( std::vector<T>& vec, int low, int high )
+void quickSortCGPT( std::vector<T>& vec, int low, int high )
 {
     assert( 0 <= low and low <= high and high <= vec.size() - 1 );
 
@@ -140,10 +108,16 @@ void quickSort( std::vector<T>& vec, int low, int high )
             return;
         }
 
-        int pi = partition( vec, low, high );
+        int pi = partitionCGPT( vec, low, high );
 
-        quickSort( vec,    low,   pi );
-        quickSort( vec, pi + 1, high );
+        // assert( low <= pi && pi+1 <= high );
+        for( int i =  low; i <=   pi; i++ ) 
+        for( int j = pi+1; j <= high; j++ ) 
+           assert( vec[i] <= vec[j] );
+
+
+        quickSortCGPT( vec,    low,   pi );
+        quickSortCGPT( vec, pi + 1, high );
 
         for( int i = low + 1; i <= high; i++ )
             assert( vec[i - 1] <= vec[i] );
@@ -152,9 +126,9 @@ void quickSort( std::vector<T>& vec, int low, int high )
 
 // QuickSort function
 template<typename T>
-void quickSort( std::vector<T>& vec )
+void quickSortCGPT( std::vector<T>& vec )
 {
-    quickSort( vec, 0, vec.size() - 1 );
+    quickSortCGPT( vec, 0, vec.size() - 1 );
 }
 
 // template<typename T>
