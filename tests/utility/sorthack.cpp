@@ -9,7 +9,7 @@
 #include <iostream>
 #include <vector>
 
-#include "../../basic/sorthack.hpp"
+#include "../../utility/sorthack.hpp"
 #include "../../utility/profilerutils.hpp"
 
 static void insertionsort( std::vector<int>& vec, std::size_t begin, std::size_t end )

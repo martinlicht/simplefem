@@ -152,8 +152,8 @@ template<typename A>
 inline void sorthack( std::vector<A>& vec )
 {
 
-    quickSort( vec );
-    // std::sort( vec.begin(), vec.end() );
+    // quickSort( vec );
+    std::sort( vec.begin(), vec.end() );
     /*
     //     for( int s = 0; s < vec.size(); s++ )
     //     for( int t = 0; t < vec.size(); t++ )
