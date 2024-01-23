@@ -112,7 +112,7 @@ FLAG_EXCESSIVE_WARNINGS=yes
 
 # Choose the linker by uncommenting, or leave commented for default linker 
 # LDFLAGS += -fuse-ld=bfd
-LDFLAGS += -fuse-ld=lld
+# LDFLAGS += -fuse-ld=lld
 # LDFLAGS += -fuse-ld=gold
 # LDFLAGS += -fuse-ld=mold
 
