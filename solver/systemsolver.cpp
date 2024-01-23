@@ -142,7 +142,7 @@ int BlockHerzogSoodhalterMethod(
             
             if( print_modulo >= 0 ) {
                 LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) absolute(eta), (long double)threshold );
-                LOGPRINTF( "NOTE Gamma: %.9Le \n", (long double)gamma );
+                LOGPRINTF( "NOTE Gamma: %.9Le Eta_A %.9Le Eta_C %.9Le\n", (long double)eta_A, (long double)eta_C, (long double)gamma );
             }
 
         }

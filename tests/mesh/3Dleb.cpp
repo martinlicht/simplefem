@@ -39,7 +39,7 @@ int main()
         
             std::vector<int> markedcells;
             
-            unsigned int p = 3;
+            unsigned int p = 20;
             for( int t = 0; t < M.count_tetrahedra(); t++ )
                 if( rand() % p == 0 ) 
                     markedcells.push_back( t );
@@ -51,7 +51,7 @@ int main()
             
             LOG << c << "/" << c_max << " Refine " << markedcells.size() << "/" << M.count_tetrahedra() << " ... ";
             M.longest_edge_bisection_recursive( markededges );
-            LOG << "Ratio=" << ( M.count_tetrahedra() - cell_count_initial )/(Float)( cell_marked_count ) << nl;
+            LOG << "Ratio of tetrahedra generated vs marked=" << ( M.count_tetrahedra() - cell_count_initial )/(Float)( cell_marked_count ) << nl;
         
         }
         
