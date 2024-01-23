@@ -190,7 +190,7 @@ SparseMatrix FEECSullivanAveragingMatrix( const Mesh& mesh, int n, int k, int r 
         entry.column = broken_index;
         entry.value  = value;
         
-        if( mesh.get_flag( d, index_fi ) == SimplexFlagDirichlet )
+        if( mesh.get_flag( d, index_fi ) == SimplexFlag::SimplexFlagDirichlet )
             entry.value = 0.;
         
         ret.setentry( index_of_entry, entry );

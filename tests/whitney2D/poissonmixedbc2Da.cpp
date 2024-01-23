@@ -36,9 +36,9 @@ int main()
             
             M.check();
             
-            M.set_flag( 1, 0, SimplexFlagDirichlet );
-            M.set_flag( 0, M.get_subsimplex( 1, 0, 0, 0 ), SimplexFlagDirichlet );
-            M.set_flag( 0, M.get_subsimplex( 1, 0, 0, 1 ), SimplexFlagDirichlet );
+            M.set_flag( 1, 0, SimplexFlag::SimplexFlagDirichlet );
+            M.set_flag( 0, M.get_subsimplex( 1, 0, 0, 0 ), SimplexFlag::SimplexFlagDirichlet );
+            M.set_flag( 0, M.get_subsimplex( 1, 0, 0, 1 ), SimplexFlag::SimplexFlagDirichlet );
 //             M.check_dirichlet_flags();
 
             

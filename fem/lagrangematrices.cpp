@@ -126,7 +126,7 @@ SparseMatrix LagrangeMassMatrix( const Mesh& mesh, int r )
             else
                 entry.value =      factorial_numerical(n) * measure / factorial_numerical( 2 + n );
                     
-            if( mesh.get_flag( 0, vertex1 ) == SimplexFlagDirichlet or mesh.get_flag( 0, vertex2 ) == SimplexFlagDirichlet )
+            if( mesh.get_flag( 0, vertex1 ) == SimplexFlag::SimplexFlagDirichlet or mesh.get_flag( 0, vertex2 ) == SimplexFlag::SimplexFlagDirichlet )
                 entry.value = 0.;
 
             ret.setentry( index_of_entry, entry );
@@ -259,7 +259,7 @@ SparseMatrix LagrangeStiffnessMatrix( const Mesh& mesh, int r )
         
         entry.value = GradProds( v1, v2 ) * measure; // / factorial_numerical( n );
         
-        if( mesh.get_flag( 0, vertex1 ) == SimplexFlagDirichlet or mesh.get_flag( 0, vertex2 ) == SimplexFlagDirichlet )
+        if( mesh.get_flag( 0, vertex1 ) == SimplexFlag::SimplexFlagDirichlet or mesh.get_flag( 0, vertex2 ) == SimplexFlag::SimplexFlagDirichlet )
             entry.value = 0.;
         
         ret.setentry( index_of_entry, entry );
@@ -310,7 +310,7 @@ SparseMatrix LagrangeInclusionMatrix( const Mesh& mesh, int n, int r )
         entry.column = vertex;
         entry.value  = 1.0;
         
-        if( mesh.get_flag( 0, vertex ) == SimplexFlagDirichlet )
+        if( mesh.get_flag( 0, vertex ) == SimplexFlag::SimplexFlagDirichlet )
             entry.value = 0.0;
         
         ret.setentry( index_of_entry, entry );
@@ -492,7 +492,7 @@ MatrixCSR LagrangeCoefficientMassMatrix( const Mesh& mesh, int r, int w, const s
             int vertex1 = mesh.get_subsimplex( n, 0, s, v1 );
             int vertex2 = mesh.get_subsimplex( n, 0, s, v2 );
 
-            if( mesh.get_flag( 0, vertex1 ) == SimplexFlagDirichlet or mesh.get_flag( 0, vertex2 ) == SimplexFlagDirichlet )
+            if( mesh.get_flag( 0, vertex1 ) == SimplexFlag::SimplexFlagDirichlet or mesh.get_flag( 0, vertex2 ) == SimplexFlag::SimplexFlagDirichlet )
                 local_mass_matrix( v1, v2 ) = 0.;
 
         }
@@ -732,7 +732,7 @@ MatrixCSR LagrangeCoefficientStiffnessMatrix( const Mesh& mesh, int r, int w, co
             int vertex1 = mesh.get_subsimplex( n, 0, s, v1 );
             int vertex2 = mesh.get_subsimplex( n, 0, s, v2 );
 
-            if( mesh.get_flag( 0, vertex1 ) == SimplexFlagDirichlet or mesh.get_flag( 0, vertex2 ) == SimplexFlagDirichlet )
+            if( mesh.get_flag( 0, vertex1 ) == SimplexFlag::SimplexFlagDirichlet or mesh.get_flag( 0, vertex2 ) == SimplexFlag::SimplexFlagDirichlet )
                 local_mass_matrix( v1, v2 ) = 0.;
 
         }

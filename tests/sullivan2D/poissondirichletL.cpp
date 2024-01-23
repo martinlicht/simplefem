@@ -173,7 +173,7 @@ int main()
                     {
                         int v = M.get_subsimplex( 2, 0, s, vi );
                         
-                        if( M.get_flag(0,v) == SimplexFlagDirichlet ) continue;
+                        if( M.get_flag(0,v) == SimplexFlag::SimplexFlagDirichlet ) continue;
 
                         #pragma omp atomic
                         rhs[v] += contribution;

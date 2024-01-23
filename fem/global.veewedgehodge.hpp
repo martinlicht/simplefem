@@ -20,7 +20,7 @@
 
 SparseMatrix FEECBrokenVeeMatrix( const Mesh& mesh, int n, int k, int r, int l, int s, FloatVector field );
 
-// SparseMatrix FEECBrokenWedgeMatrix( const Mesh& mesh, int n, int k, int r, int l, int s, FloatVector field );
+SparseMatrix FEECBrokenWedgeMatrix( const Mesh& mesh, int n, int k, int r, int l, int s, FloatVector field );
 
 
 

@@ -44,9 +44,9 @@ MeshSimplicial2D::MeshSimplicial2D( int outerdim )
     data_vertex_firstparent_edge(0),
     data_edge_nextparents_of_vertices(0),
     
-    flags_triangles( 0, SimplexFlagNull ),
-    flags_edges    ( 0, SimplexFlagNull ),
-    flags_vertices ( 0, SimplexFlagNull )
+    flags_triangles( 0, SimplexFlag::SimplexFlagNull ),
+    flags_edges    ( 0, SimplexFlag::SimplexFlagNull ),
+    flags_vertices ( 0, SimplexFlag::SimplexFlagNull )
     
 {
     MeshSimplicial2D::check();
@@ -78,9 +78,9 @@ MeshSimplicial2D::MeshSimplicial2D(
     data_vertex_firstparent_edge( 0 ),
     data_edge_nextparents_of_vertices( 0 ),
     
-    flags_triangles( counter_triangles, SimplexFlagNull ),
-    flags_edges    ( 0, SimplexFlagNull ),
-    flags_vertices ( 0, SimplexFlagNull )
+    flags_triangles( counter_triangles, SimplexFlag::SimplexFlagNull ),
+    flags_edges    ( 0, SimplexFlag::SimplexFlagNull ),
+    flags_vertices ( 0, SimplexFlag::SimplexFlagNull )
     
 
 {
@@ -241,12 +241,12 @@ MeshSimplicial2D::MeshSimplicial2D(
     
     
     /* Coda: set the flags to the Null flag */
-    flags_edges.resize   ( counter_edges,    SimplexFlagInvalid );
-    flags_vertices.resize( counter_vertices, SimplexFlagInvalid );
+    flags_edges.resize   ( counter_edges,    SimplexFlag::SimplexFlagInvalid );
+    flags_vertices.resize( counter_vertices, SimplexFlag::SimplexFlagInvalid );
     
-    for( int t =  0; t  <  counter_triangles; t++  ) flags_triangles.at( t ) = SimplexFlagNull;
-    for( int e =  0; e  <  counter_edges;     e++  ) flags_edges.at( e )     = SimplexFlagNull;
-    for( int v =  0; v  <  counter_vertices;  v++  ) flags_vertices.at( v )  = SimplexFlagNull;
+    for( int t =  0; t  <  counter_triangles; t++  ) flags_triangles.at( t ) = SimplexFlag::SimplexFlagNull;
+    for( int e =  0; e  <  counter_edges;     e++  ) flags_edges.at( e )     = SimplexFlag::SimplexFlagNull;
+    for( int v =  0; v  <  counter_vertices;  v++  ) flags_vertices.at( v )  = SimplexFlag::SimplexFlagNull;
     
     
     MeshSimplicial2D::check();
@@ -285,9 +285,9 @@ MeshSimplicial2D::MeshSimplicial2D(
     data_vertex_firstparent_edge( vertex_firstparent_edge ),
     data_edge_nextparents_of_vertices( edge_nextparents_of_vertices ),
     
-    flags_triangles( counter_triangles, SimplexFlagNull ),
-    flags_edges    ( counter_edges,     SimplexFlagNull ),
-    flags_vertices ( counter_vertices,  SimplexFlagNull )
+    flags_triangles( counter_triangles, SimplexFlag::SimplexFlagNull ),
+    flags_edges    ( counter_edges,     SimplexFlag::SimplexFlagNull ),
+    flags_vertices ( counter_vertices,  SimplexFlag::SimplexFlagNull )
 
 {
     
@@ -297,9 +297,9 @@ MeshSimplicial2D::MeshSimplicial2D(
     flags_edges.resize   ( counter_edges    );
     flags_vertices.resize( counter_vertices );
     
-    for( int t =  0; t  <  counter_triangles; t++  ) flags_triangles.at( t ) = SimplexFlagNull;
-    for( int e =  0; e  <  counter_edges;     e++  ) flags_edges.at( e )     = SimplexFlagNull;
-    for( int v =  0; v  <  counter_vertices;  v++  ) flags_vertices.at( v )  = SimplexFlagNull;
+    for( int t =  0; t  <  counter_triangles; t++  ) flags_triangles.at( t ) = SimplexFlag::SimplexFlagNull;
+    for( int e =  0; e  <  counter_edges;     e++  ) flags_edges.at( e )     = SimplexFlag::SimplexFlagNull;
+    for( int v =  0; v  <  counter_vertices;  v++  ) flags_vertices.at( v )  = SimplexFlag::SimplexFlagNull;
 
     MeshSimplicial2D::check();
 }
@@ -707,13 +707,13 @@ void MeshSimplicial2D::check() const
      */
     
     for( int t  = 0; t  <  counter_triangles; t++ )
-        assert( flags_triangles[t] != SimplexFlagInvalid );
+        assert( flags_triangles[t] != SimplexFlag::SimplexFlagInvalid );
 
     for( int e  = 0; e  <  counter_edges; e++ )
-        assert( flags_edges[e] != SimplexFlagInvalid );
+        assert( flags_edges[e] != SimplexFlag::SimplexFlagInvalid );
 
     for( int v  = 0; v  <  counter_vertices; v++ )
-        assert( flags_vertices[v] != SimplexFlagInvalid );
+        assert( flags_vertices[v] != SimplexFlag::SimplexFlagInvalid );
     
     
     
@@ -1410,9 +1410,9 @@ void MeshSimplicial2D::bisect_edge( int e )
     data_vertex_firstparent_edge.resize     ( counter_vertices + 1,                                       nullindex );
     
     
-    flags_triangles.resize( counter_triangles + old_triangles.size(),     SimplexFlagInvalid );
-    flags_edges.resize    ( counter_edges     + old_triangles.size() + 1, SimplexFlagInvalid );
-    flags_vertices.resize ( counter_vertices  + 1,                        SimplexFlagInvalid );
+    flags_triangles.resize( counter_triangles + old_triangles.size(),     SimplexFlag::SimplexFlagInvalid );
+    flags_edges.resize    ( counter_edges     + old_triangles.size() + 1, SimplexFlag::SimplexFlagInvalid );
+    flags_vertices.resize ( counter_vertices  + 1,                        SimplexFlag::SimplexFlagInvalid );
     
 
     
@@ -2210,9 +2210,9 @@ void MeshSimplicial2D::uniformrefinement()
      * update the flags of the 
      */
     
-    flags_triangles.resize ( 4 * counter_triangles                    , SimplexFlagInvalid );
-    flags_edges.resize     ( 2 * counter_edges + 3 * counter_triangles, SimplexFlagInvalid );
-    flags_vertices.resize  ( counter_vertices + counter_edges         , SimplexFlagInvalid );
+    flags_triangles.resize ( 4 * counter_triangles                    , SimplexFlag::SimplexFlagInvalid );
+    flags_edges.resize     ( 2 * counter_edges + 3 * counter_triangles, SimplexFlag::SimplexFlagInvalid );
+    flags_vertices.resize  ( counter_vertices + counter_edges         , SimplexFlag::SimplexFlagInvalid );
     
     // flags of newly created vertices
     for( int e = 0; e < counter_edges; e++ ) flags_vertices[ counter_vertices + e ] = flags_edges[e];
@@ -2928,9 +2928,9 @@ void MeshSimplicial2D::midpoint_refinement( int t )
      * update the flags of the 
      */
     
-    flags_triangles.resize ( counter_triangles + 2, SimplexFlagInvalid );
-    flags_edges.resize     ( counter_edges + 3    , SimplexFlagInvalid );
-    flags_vertices.resize  ( counter_vertices + 1 , SimplexFlagInvalid );
+    flags_triangles.resize ( counter_triangles + 2, SimplexFlag::SimplexFlagInvalid );
+    flags_edges.resize     ( counter_edges + 3    , SimplexFlag::SimplexFlagInvalid );
+    flags_vertices.resize  ( counter_vertices + 1 , SimplexFlag::SimplexFlagInvalid );
     
     flags_vertices[ counter_vertices ] = flags_triangles[t];
     

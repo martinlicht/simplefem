@@ -30,8 +30,8 @@ endif
 
 
 # Uncomment your choice of compiler below
-FLAG_CXX := CLANG
-# FLAG_CXX := GCC
+# FLAG_CXX := CLANG
+FLAG_CXX := GCC
 # FLAG_CXX := ICC
 
 
@@ -74,7 +74,7 @@ FLAG_NO_EXCEPTIONS=yes
 
 # Do you want to ENABLE excessive warning options?
 # Uncomment the following line to enable excessive warning options
-# FLAG_EXCESSIVE_WARNINGS=yes
+FLAG_EXCESSIVE_WARNINGS=yes
 
 # Do you want to ENABLE either extended precision or single precision?
 # Uncomment one the following lines to switch from double precision
@@ -359,6 +359,9 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 			#TODO What is stack smashing???? HSA????
 			#TODO Read the format warnings 
 
+		CXXFLAGS_WARNINGS += -Wno-float-equal
+		
+
 	else ifeq ($(FLAG_CXX),CLANG)
 
 		CXXFLAGS_WARNINGS += -Wabstract-vbase-init
@@ -386,7 +389,7 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 		CXXFLAGS_WARNINGS += -Wenum-compare-conditional
 		CXXFLAGS_WARNINGS += -Wexceptions
 		CXXFLAGS_WARNINGS += -Wextra-semi
-		CXXFLAGS_WARNINGS += -Wfloat-conversion -Wfloat-equal
+		CXXFLAGS_WARNINGS += -Wfloat-conversion
 		CXXFLAGS_WARNINGS += -Wformat
 		CXXFLAGS_WARNINGS += -Wheader-hygiene
 		CXXFLAGS_WARNINGS += -Widiomatic-parentheses
@@ -438,14 +441,16 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 		CXXFLAGS_WARNINGS += 
 		CXXFLAGS_WARNINGS += 
 
+		CXXFLAGS_WARNINGS += -Wno-float-equal
+		
 		#CXXFLAGS_WARNINGS += -Wno-unused-variable
 		#CXXFLAGS_WARNINGS += -Wno-gnu-zero-variadic-macro-arguments
 		#CXXFLAGS_WARNINGS += -Wno-vla-extension
+		
 
+		#Some of the .... suchen auf der CLANG seite 
 
-			#Some of the .... suchen auf der CLANG seite 
-
-			# TODO: Die unused lambda captures will ersetzen durch generelle camptures 
+		# TODO: Die unused lambda captures will ersetzen durch generelle camptures 
 
 	endif
  
