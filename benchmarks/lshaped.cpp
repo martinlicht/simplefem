@@ -68,14 +68,14 @@ int main()
                 auto cs1 = M.getcoordinates().getvectorclone( v1 );
 
                 if( cs0[1] == cs1[1] ) {
-                    M0.set_flag( 0, v0, SimplexFlagDirichlet );
-                    M0.set_flag( 0, v1, SimplexFlagDirichlet );
-                    M0.set_flag( 1, e,  SimplexFlagDirichlet );
+                    M0.set_flag( 0, v0, SimplexFlag::SimplexFlagDirichlet );
+                    M0.set_flag( 0, v1, SimplexFlag::SimplexFlagDirichlet );
+                    M0.set_flag( 1, e,  SimplexFlag::SimplexFlagDirichlet );
                     LOG << "x: " << e << space << v0 << space << v1 << nl;
                 } else if( cs0[0] == cs1[0] ) {
-                    M1.set_flag( 0, v0, SimplexFlagDirichlet );
-                    M1.set_flag( 0, v1, SimplexFlagDirichlet );
-                    M1.set_flag( 1, e,  SimplexFlagDirichlet );
+                    M1.set_flag( 0, v0, SimplexFlag::SimplexFlagDirichlet );
+                    M1.set_flag( 0, v1, SimplexFlag::SimplexFlagDirichlet );
+                    M1.set_flag( 1, e,  SimplexFlag::SimplexFlagDirichlet );
                     LOG << "y: " << e << space << v0 << space << v1 << nl;
                 }
                     

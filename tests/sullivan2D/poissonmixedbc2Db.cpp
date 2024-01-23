@@ -37,11 +37,11 @@ int main()
             
             M.check();
             
-            M.set_flag( 1, 0, SimplexFlagDirichlet );
-            M.set_flag( 1, 1, SimplexFlagDirichlet );
-            M.set_flag( 0, 0, SimplexFlagDirichlet );
-            M.set_flag( 0, 1, SimplexFlagDirichlet );
-            M.set_flag( 0, 2, SimplexFlagDirichlet );
+            M.set_flag( 1, 0, SimplexFlag::SimplexFlagDirichlet );
+            M.set_flag( 1, 1, SimplexFlag::SimplexFlagDirichlet );
+            M.set_flag( 0, 0, SimplexFlag::SimplexFlagDirichlet );
+            M.set_flag( 0, 1, SimplexFlag::SimplexFlagDirichlet );
+            M.set_flag( 0, 2, SimplexFlag::SimplexFlagDirichlet );
 
             
             LOG << "Prepare scalar fields for testing..." << nl;

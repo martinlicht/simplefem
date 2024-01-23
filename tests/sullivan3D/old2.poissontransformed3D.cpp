@@ -248,15 +248,15 @@ int main()
 
         if( not eligible ) continue;
 
-        M.set_flag( 2, s, SimplexFlagDirichlet );
+        M.set_flag( 2, s, SimplexFlag::SimplexFlagDirichlet );
         
-        M.set_flag( 1, M.get_subsimplex( 2, 1, s, 0 ), SimplexFlagDirichlet );
-        M.set_flag( 1, M.get_subsimplex( 2, 1, s, 1 ), SimplexFlagDirichlet );
-        M.set_flag( 1, M.get_subsimplex( 2, 1, s, 2 ), SimplexFlagDirichlet );
+        M.set_flag( 1, M.get_subsimplex( 2, 1, s, 0 ), SimplexFlag::SimplexFlagDirichlet );
+        M.set_flag( 1, M.get_subsimplex( 2, 1, s, 1 ), SimplexFlag::SimplexFlagDirichlet );
+        M.set_flag( 1, M.get_subsimplex( 2, 1, s, 2 ), SimplexFlag::SimplexFlagDirichlet );
         
-        M.set_flag( 0, M.get_subsimplex( 2, 0, s, 0 ), SimplexFlagDirichlet );
-        M.set_flag( 0, M.get_subsimplex( 2, 0, s, 1 ), SimplexFlagDirichlet );
-        M.set_flag( 0, M.get_subsimplex( 2, 0, s, 2 ), SimplexFlagDirichlet );
+        M.set_flag( 0, M.get_subsimplex( 2, 0, s, 0 ), SimplexFlag::SimplexFlagDirichlet );
+        M.set_flag( 0, M.get_subsimplex( 2, 0, s, 1 ), SimplexFlag::SimplexFlagDirichlet );
+        M.set_flag( 0, M.get_subsimplex( 2, 0, s, 2 ), SimplexFlag::SimplexFlagDirichlet );
         
     }
     

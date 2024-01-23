@@ -934,10 +934,10 @@ void MeshSimplicial3D::uniformrefinement()
     
     
     
-    flags_tetrahedra.resize( new_counter_tetrahedra, SimplexFlagInvalid );
-    flags_faces.resize     ( new_counter_faces,      SimplexFlagInvalid );
-    flags_edges.resize     ( new_counter_edges,      SimplexFlagInvalid );
-    flags_vertices.resize  ( new_counter_vertices,   SimplexFlagInvalid );
+    flags_tetrahedra.resize( new_counter_tetrahedra, SimplexFlag::SimplexFlagInvalid );
+    flags_faces.resize     ( new_counter_faces,      SimplexFlag::SimplexFlagInvalid );
+    flags_edges.resize     ( new_counter_edges,      SimplexFlag::SimplexFlagInvalid );
+    flags_vertices.resize  ( new_counter_vertices,   SimplexFlag::SimplexFlagInvalid );
     
     // flags of vertices/edges created from edges vertices
     for( int e = 0; e < counter_edges; e++ ) { 

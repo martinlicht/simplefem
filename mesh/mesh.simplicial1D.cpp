@@ -32,8 +32,8 @@ MeshSimplicial1D::MeshSimplicial1D( int outerdim )
     data_vertex_firstparent_edge(0),
     data_edge_nextparents_of_vertices(0),
     
-    flags_edges   ( 0, SimplexFlagNull ),
-    flags_vertices( 0, SimplexFlagNull )
+    flags_edges   ( 0, SimplexFlag::SimplexFlagNull ),
+    flags_vertices( 0, SimplexFlag::SimplexFlagNull )
     
 {
     MeshSimplicial1D::check();
@@ -55,8 +55,8 @@ MeshSimplicial1D::MeshSimplicial1D(
     data_vertex_firstparent_edge( 0 ),
     data_edge_nextparents_of_vertices( counter_edges, { nullindex, nullindex } ),
 
-    flags_edges   ( counter_edges, SimplexFlagNull ),
-    flags_vertices( 0, SimplexFlagNull )
+    flags_edges   ( counter_edges, SimplexFlag::SimplexFlagNull ),
+    flags_vertices( 0, SimplexFlag::SimplexFlagNull )
     
 {
     
@@ -109,10 +109,10 @@ MeshSimplicial1D::MeshSimplicial1D(
     
     
     /* Coda: set the flags to the Null flag */
-    flags_vertices.resize( counter_vertices, SimplexFlagInvalid );
+    flags_vertices.resize( counter_vertices, SimplexFlag::SimplexFlagInvalid );
     
-    for( int e =  0; e  <  counter_edges;    e++  ) flags_edges.at( e )    = SimplexFlagNull;
-    for( int v =  0; v  <  counter_vertices; v++  ) flags_vertices.at( v ) = SimplexFlagNull;
+    for( int e =  0; e  <  counter_edges;    e++  ) flags_edges.at( e )    = SimplexFlag::SimplexFlagNull;
+    for( int v =  0; v  <  counter_vertices; v++  ) flags_vertices.at( v ) = SimplexFlag::SimplexFlagNull;
     
     
     MeshSimplicial1D::check();
@@ -136,16 +136,16 @@ MeshSimplicial1D::MeshSimplicial1D(
     data_vertex_firstparent_edge( vertex_firstparent_edge ),
     data_edge_nextparents_of_vertices( edge_nextparent_of_vertices ),
 
-    flags_edges   ( counter_edges,    SimplexFlagInvalid ),
-    flags_vertices( counter_vertices, SimplexFlagInvalid )
+    flags_edges   ( counter_edges,    SimplexFlag::SimplexFlagInvalid ),
+    flags_vertices( counter_vertices, SimplexFlag::SimplexFlagInvalid )
     
 {
     
     getcoordinates() = coords;
     
     /* set the flags to the Null flag */    
-    for( int e =  0; e  <  counter_edges;    e++  ) flags_edges.at( e )    = SimplexFlagNull;
-    for( int v =  0; v  <  counter_vertices; v++  ) flags_vertices.at( v ) = SimplexFlagNull;
+    for( int e =  0; e  <  counter_edges;    e++  ) flags_edges.at( e )    = SimplexFlag::SimplexFlagNull;
+    for( int v =  0; v  <  counter_vertices; v++  ) flags_vertices.at( v ) = SimplexFlag::SimplexFlagNull;
 
     MeshSimplicial1D::check();
 }
@@ -292,10 +292,10 @@ void MeshSimplicial1D::check() const
      */
     
     for( int e  = 0; e  <  counter_edges; e++ )
-        assert( flags_edges[e] != SimplexFlagInvalid );
+        assert( flags_edges[e] != SimplexFlag::SimplexFlagInvalid );
 
     for( int v  = 0; v  <  counter_vertices; v++ )
-        assert( flags_vertices[v] != SimplexFlagInvalid );
+        assert( flags_vertices[v] != SimplexFlag::SimplexFlagInvalid );
     
     Mesh::check();
     
@@ -632,8 +632,8 @@ void MeshSimplicial1D::bisect_edge( int e )
     data_edge_vertices.resize               ( counter_edges    + 1 );
     data_vertex_firstparent_edge.resize     ( counter_vertices + 1 );
     
-    flags_edges.resize   ( counter_edges    + 1, SimplexFlagInvalid );
-    flags_vertices.resize( counter_vertices + 1, SimplexFlagInvalid );
+    flags_edges.resize   ( counter_edges    + 1, SimplexFlag::SimplexFlagInvalid );
+    flags_vertices.resize( counter_vertices + 1, SimplexFlag::SimplexFlagInvalid );
     
     /* Write in the data */
     
@@ -725,8 +725,8 @@ void MeshSimplicial1D::improved_uniformrefinement()
     
     getcoordinates().addcoordinates         ( counter_edges                    );
     
-    flags_edges.resize   ( counter_edges    * 2,             SimplexFlagInvalid );
-    flags_vertices.resize( counter_vertices + counter_edges, SimplexFlagInvalid );
+    flags_edges.resize   ( counter_edges    * 2,             SimplexFlag::SimplexFlagInvalid );
+    flags_vertices.resize( counter_vertices + counter_edges, SimplexFlag::SimplexFlagInvalid );
     
     /* create the new coordinates and fill them up */
     

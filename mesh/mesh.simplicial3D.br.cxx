@@ -180,10 +180,10 @@ void MeshSimplicial3D::bisect_edge( int e )
     
     /* flags */
     {
-        flags_tetrahedra.resize( counter_tetrahedra + old_tetrahedra.size(),               SimplexFlagInvalid );
-        flags_faces.resize     ( counter_faces + old_faces.size() + old_tetrahedra.size(), SimplexFlagInvalid );
-        flags_edges.resize     ( counter_edges + 1 + old_faces.size(),                     SimplexFlagInvalid );
-        flags_vertices.resize  ( counter_vertices + 1,                                     SimplexFlagInvalid );
+        flags_tetrahedra.resize( counter_tetrahedra + old_tetrahedra.size(),               SimplexFlag::SimplexFlagInvalid );
+        flags_faces.resize     ( counter_faces + old_faces.size() + old_tetrahedra.size(), SimplexFlag::SimplexFlagInvalid );
+        flags_edges.resize     ( counter_edges + 1 + old_faces.size(),                     SimplexFlag::SimplexFlagInvalid );
+        flags_vertices.resize  ( counter_vertices + 1,                                     SimplexFlag::SimplexFlagInvalid );
         
         SimplexFlag flag_e = flags_edges[e];
         flags_vertices[ counter_vertices ] = flag_e;

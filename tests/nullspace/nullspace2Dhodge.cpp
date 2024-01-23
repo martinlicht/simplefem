@@ -50,23 +50,23 @@ int main()
             // LOG << Mx << nl;
 
             // Seitenmitten: 2, 11, 19, 31
-            Mx.set_flag( 1,  2, SimplexFlagNull );
-            Mx.set_flag( 1, 11, SimplexFlagNull );
-            Mx.set_flag( 1, 19, SimplexFlagNull );
-            Mx.set_flag( 1, 31, SimplexFlagNull );
+            Mx.set_flag( 1,  2, SimplexFlag::SimplexFlagNull );
+            Mx.set_flag( 1, 11, SimplexFlag::SimplexFlagNull );
+            Mx.set_flag( 1, 19, SimplexFlag::SimplexFlagNull );
+            Mx.set_flag( 1, 31, SimplexFlag::SimplexFlagNull );
 
             // Links: 1, 11, 21 Rechts: 9, 19, 29
-            // Mx.set_flag( 1,  1, SimplexFlagNull );
-            // Mx.set_flag( 1, 11, SimplexFlagNull );
-            // Mx.set_flag( 1, 21, SimplexFlagNull );
-            // Mx.set_flag( 1,  9, SimplexFlagNull );
-            // Mx.set_flag( 1, 19, SimplexFlagNull );
-            // Mx.set_flag( 1, 29, SimplexFlagNull );
+            // Mx.set_flag( 1,  1, SimplexFlag::SimplexFlagNull );
+            // Mx.set_flag( 1, 11, SimplexFlag::SimplexFlagNull );
+            // Mx.set_flag( 1, 21, SimplexFlag::SimplexFlagNull );
+            // Mx.set_flag( 1,  9, SimplexFlag::SimplexFlagNull );
+            // Mx.set_flag( 1, 19, SimplexFlag::SimplexFlagNull );
+            // Mx.set_flag( 1, 29, SimplexFlag::SimplexFlagNull );
             
-            // Mx.set_flag( 0, 4, SimplexFlagNull );
-            // Mx.set_flag( 0, 8, SimplexFlagNull );
-            // Mx.set_flag( 0, 7, SimplexFlagNull );
-            // Mx.set_flag( 0,11, SimplexFlagNull );
+            // Mx.set_flag( 0, 4, SimplexFlag::SimplexFlagNull );
+            // Mx.set_flag( 0, 8, SimplexFlag::SimplexFlagNull );
+            // Mx.set_flag( 0, 7, SimplexFlag::SimplexFlagNull );
+            // Mx.set_flag( 0,11, SimplexFlag::SimplexFlagNull );
             
 
 
