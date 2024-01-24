@@ -66,6 +66,11 @@
 // typedef long double Float;
 // #endif
 
+#if defined(EXTENDED_PRECISION) && defined(SINGLE_PRECISION)
+#error Cannot request extended and single precision at the same time!
+#endif
+
+
 #if defined(EXTENDED_PRECISION)
 typedef long double Float;
 #elif defined(SINGLE_PRECISION)
@@ -115,6 +120,7 @@ static const constexpr Float desired_precision =
 
 extern template class std::vector<char>;
 extern template class std::vector<int>;
+extern template class std::vector<std::size_t>;
 extern template class std::vector<Float>;
 
 
@@ -141,6 +147,21 @@ static const constexpr char tab = '\t';
 
 
 
+
+
+
+
+/////////////////////////////////////////////////////////
+//                                                     //
+//    use this to safely cast size_types to C++ int    //
+//                                                     //
+/////////////////////////////////////////////////////////
+
+inline int SIZECAST( std::uintmax_t size )
+{
+    Assert( size < std::numeric_limits<int>::max() );
+    return static_cast<int>( size );
+}
 
 
 
@@ -569,20 +590,17 @@ inline constexpr Float binomial_numerical( int64_t n, int64_t k )
 
 typedef uintmax_t timestamp;
 
-timestamp gettimestamp();
+timestamp timestampnow();
 
 // TODO: move to utility 
 
 std::string timestamp2measurement( const timestamp& t );
 
-// inline std::string measurementnow( const timestamp& t ) // TODO Remove this line 
 std::string measurementnow();
 
 std::string timestamp2digitalcode( const timestamp& t );
 
 std::string digitalcodenow();
-
-std::string protocolprefixnow();
 
 
 
@@ -636,6 +654,25 @@ std::string tab_each_line( std::string str ); // TODO: Move to utilities
 //            GENERIC STREAMING                //
 //                                             //
 /////////////////////////////////////////////////
+
+/******************************************************/
+/*       printf into C++ strings and streams          */
+/******************************************************/
+
+std::string printf_into_string( const char* formatstring, ... ) 
+__attribute__ (( format (printf,1,2) ));
+
+#if __cplusplus < 202002L
+#define printf_into_stream( stream, ... ) { stream << printf_into_string( __VA_ARGS__ ); }
+#else
+#define printf_into_stream( stream, formatstring, ... ) { stream << printf_into_string( formatstring __VA_OPT__(,) __VA_ARGS__ ); }
+#endif
+// template< typename L, typename... Params >
+// inline void printf_into_stream( L& stream, const char* formatstring, Params... args )
+// {
+//     stream << printf_into_string( formatstring, args... );
+// }
+
 
 
 
@@ -704,130 +741,6 @@ std::string tab_each_line( std::string str ); // TODO: Move to utilities
 //     stream << nl;
 //     return stream;
 // }
-
-/******************************************************/
-/*       printf into C++ strings and streams          */
-/******************************************************/
-
-// template< typename... Params >
-// inline std::string printf_into_string( const char* formatstring, Params... args )
-// {
-//     std::size_t length = std::snprintf(nullptr, 0, formatstring, args... ) + 1;
-//     char* c_str = new char[length];
-//     std::snprintf( c_str, length, formatstring, args... );
-//     std::string ret( c_str );
-//     delete[] c_str;
-//     return ret;
-// }
-
-std::string printf_into_string( const char* formatstring, ... ) 
-__attribute__ (( format (printf,1,2) ));
-
-
-
-// template< typename L, typename... Params >
-// inline void printf_into_stream( L& stream, const char* formatstring, Params... args )
-// {
-//     stream << printf_into_string( formatstring, args... );
-// }
-#if __cplusplus < 202002L
-#define printf_into_stream( stream, ... ) { stream << printf_into_string( __VA_ARGS__ ); }
-#else
-#define printf_into_stream( stream, formatstring, ... ) { stream << printf_into_string( formatstring __VA_OPT__(,) __VA_ARGS__ ); }
-#endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/////////////////////////////////////////////////
-//                                             //
-//          MISC LIBRARY HACKS                 //
-//                                             //
-/////////////////////////////////////////////////
-
-
-
-/******************************************************/
-/*    use this to safely cast size_types to C++ int   */
-/******************************************************/
-
-inline int SIZECAST( std::uintmax_t size )
-{
-    Assert( size < std::numeric_limits<int>::max() );
-    return static_cast<int>( size );
-}
-
-
-
-
-
-// template<typename T>
-// inline void setmemory( T* pointer, size_t number, const T& value )
-// {
-//     Assert( pointer != nullptr );
-//     Assert( number >= 0 );
-//     for( int i = 0; i < number; i++ ) pointer[i] = value;
-// }
-
-
-
-// inline void sort_integers( int* start, int length )
-// {
-//     Assert( start != nullptr && length >= 0 );
-//     for( int i = 1; i < length; i++ )
-//     for( int j = 1; j < length; j++ )
-//         if( start[j-1] > start[j] ) 
-//             std::swap( start[j-1], start[j] ); // TODO: requires <utility>
-// }
-
-
 
 
 

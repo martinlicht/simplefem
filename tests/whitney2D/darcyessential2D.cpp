@@ -180,7 +180,7 @@ int main()
                     FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 2, r-1, function_sol  );
                     FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 2, r-1, function_rhs  );
                     
-                    timestamp start = gettimestamp();
+                    timestamp start = timestampnow();
 
                     FloatVector sol( volume_incmatrix.getdimin(), 0. );
                     sol.zero();
@@ -210,7 +210,7 @@ int main()
                         
                     // }
 
-                    timestamp end = gettimestamp();
+                    timestamp end = timestampnow();
                     LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
 
                     LOG << "...compute error and residual:" << nl;

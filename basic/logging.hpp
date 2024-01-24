@@ -16,8 +16,6 @@
 // #include "logger.hpp"
 // #include "prefixbuffer.hpp"
 
-/* forward declarations */
-std::string protocolprefixnow();
 
 
 // This variable has an instance in every translation unit 

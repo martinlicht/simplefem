@@ -239,7 +239,7 @@ int main()
                                 
                                 FloatVector res = rhs;
 
-                                timestamp start = gettimestamp();
+                                timestamp start = timestampnow();
 
                                 iteration_count = 
                                 HodgeConjugateResidualSolverCSR_SSOR(
@@ -258,7 +258,7 @@ int main()
                                     -1
                                 );
         
-                                timestamp end = gettimestamp();
+                                timestamp end = timestampnow();
                                 
                                 LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                                 runtime  = static_cast<Float>( end - start );
@@ -273,9 +273,9 @@ int main()
                                 Solver.print_modulo        = 100;
                                 Solver.max_iteration_count = 1 * sol.getdimension();
 
-                                timestamp start = gettimestamp();
+                                timestamp start = timestampnow();
                                 Solver.solve( sol, rhs );
-                                timestamp end = gettimestamp();
+                                timestamp end = timestampnow();
 
                                 LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                                 runtime  = static_cast<Float>( end - start );
@@ -299,9 +299,9 @@ int main()
                                 Solver.print_modulo        = 100;
                                 Solver.max_iteration_count = 1 * sol_whole.getdimension();
 
-                                timestamp start = gettimestamp();
+                                timestamp start = timestampnow();
                                 Solver.solve( sol_whole, rhs_whole );
-                                timestamp end = gettimestamp();
+                                timestamp end = timestampnow();
 
                                 sol = sol_whole.getslice( A.getdimout(), B.getdimout() );
                                 
@@ -327,9 +327,9 @@ int main()
                                 Solver.print_modulo        = 100;
                                 Solver.max_iteration_count = 1 * sol_whole.getdimension();
 
-                                timestamp start = gettimestamp();
+                                timestamp start = timestampnow();
                                 Solver.solve( sol_whole, rhs_whole );
-                                timestamp end = gettimestamp();
+                                timestamp end = timestampnow();
 
                                 sol = sol_whole.getslice( A.getdimout(), B.getdimout() );
                                 
@@ -355,7 +355,7 @@ int main()
                                 const FloatVector  b_A( A.getdimin(),  0. ); 
                                 const FloatVector& b_C = rhs; 
                                 
-                                timestamp start = gettimestamp();
+                                timestamp start = timestampnow();
                                 iteration_count = 
                                 BlockHerzogSoodhalterMethod( 
                                     x_A, 
@@ -367,7 +367,7 @@ int main()
                                     1,
                                     PAinv, PCinv
                                 );
-                                timestamp end = gettimestamp();
+                                timestamp end = timestampnow();
 
                                 LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                                 runtime  = static_cast<Float>( end - start );
@@ -384,7 +384,7 @@ int main()
                                 const FloatVector  b_A( A.getdimin(),  0. ); 
                                 const FloatVector& b_C = rhs; 
                                 
-                                timestamp start = gettimestamp();
+                                timestamp start = timestampnow();
                                 iteration_count = 
                                 HodgeHerzogSoodhalterMethod( 
                                     x_A.getdimension(), 
@@ -405,7 +405,7 @@ int main()
                                     1
                                 );
                                 
-                                timestamp end = gettimestamp();
+                                timestamp end = timestampnow();
 
                                 LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                                 runtime  = static_cast<Float>( end - start );

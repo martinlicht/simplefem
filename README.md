@@ -26,6 +26,8 @@ Most important features:
  - [x] Written in C++
  - [x] Minimal dependencies: C++14 compiler and GNU make
  - [x] Compiles and runs on Linux, Windows+Cygwin, or Windows+MinGW-w64
+
+Finite element features: 
  - [x] Meshes in dimension 1, 2, and 3
  - [x] uniform mesh refinement and longest edge bisection
  - [x] Whitney and Sullivan k-forms of any polynomial degree in any dimension
@@ -35,19 +37,18 @@ Most important features:
  - [ ] Duality-based error error estimators and adaptive strategies
  - [ ] Any external library is included
 
+C++ design guidelines:
 
+ - [ ] C++14 with optional C++17 enhancements
+ - [ ] C++14 with optional C++17 enhancements
+ - [ ] No dependencies except a C++14 compiler and GNU-Make
+ - [ ] Minimal dependencies: C++14 compiler and GNU Make
+ - [ ] Fast compile time
+ - [ ] Minimal requirements and fast compile time 
+ - [ ] Any external library included
+ - [ ] Fail-fast philosophy: 
 
-C++
-
-Minimal requirements and fast compile time 
-C++14 with optional C++17 enhancements
-No dependencies except a C++14 compiler and GNU-Make
-Any external library included
-Fail-fast 
-
-
-
-Planned features:
+Planned finite element features:
 
  - [ ] Different bases
  - [ ] Polynomial multigrid

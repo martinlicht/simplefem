@@ -242,8 +242,8 @@ grepissues: $(module).grepissues
 # $(module).grepissues: mymodule := $(module)
 # $(module).grepissues: mymoddir := $(moddir)
 $(module).grepissues:
-#	@echo Search trailing whitespace...
-#	@-grep --line-number --color '\s+$$' -r $(mymoddir)/*pp
+	@echo Search trailing whitespace...
+	@-grep --line-number --color '\s+$$' -r $(mymoddir)/*pp
 #	@echo Search non-ASCII characters...
 #	@-grep --line-number --color '[^\x00-\x7F]' -r $(mymoddir)/*pp
 #	@echo Find consecutive spaces...
@@ -251,11 +251,11 @@ $(module).grepissues:
 #	@echo Find standard asserts...
 #	@-grep --line-number --color 'assert(' $(mymoddir)/*pp
 #	@echo Find usage of 'cout' ...
-	@-grep --line-number --color 'cout' $(mymoddir)/*pp
+#	@-grep --line-number --color 'cout' $(mymoddir)/*pp
 #	@echo Find floating-point numbers ...
 #	@-grep --line-number --color -E '\.*[0-9]' $(mymoddir)/*pp
-	@-grep --line-number --color -E '(0-9)e' $(mymoddir)/*pp
-	@-grep --line-number --color -E '([0-9]+e[0-9]+)|([0-9]+\.[0-9]+)|((+-\ )\.[0-9]+)|((+-\ )[0-9]+\.)' $(mymoddir)/*pp
+#	@-grep --line-number --color -E '(0-9)e' $(mymoddir)/*pp
+#	@-grep --line-number --color -E '([0-9]+e[0-9]+)|([0-9]+\.[0-9]+)|((+-\ )\.[0-9]+)|((+-\ )[0-9]+\.)' $(mymoddir)/*pp
 
 endif
 

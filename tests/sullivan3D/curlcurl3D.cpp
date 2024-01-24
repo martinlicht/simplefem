@@ -317,7 +317,7 @@ int main()
 
 
 
-            timestamp start = gettimestamp();
+            timestamp start = timestampnow();
 
             {
                 const auto PAinv = inv(PA,desired_precision,-1);
@@ -334,7 +334,7 @@ int main()
                 );
             }
 
-            timestamp end = gettimestamp();
+            timestamp end = timestampnow();
 
             // ... computed the solution
 

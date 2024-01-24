@@ -136,7 +136,7 @@ int main()
 
                 Float newratio = -1;
                 
-                timestamp start = gettimestamp();
+                timestamp start = timestampnow();
                 
                 for( int t = 0; t <= max_inverseiterations; t++ )
                 {
@@ -229,7 +229,7 @@ int main()
                     
                 }
 
-                timestamp end = gettimestamp();
+                timestamp end = timestampnow();
 
                 // ... computed the solution
 

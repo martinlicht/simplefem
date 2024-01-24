@@ -244,7 +244,7 @@ int main()
                         FloatVector sol( vector_incmatrix.getdimin(), 0. );
                         
                         
-                        timestamp start = gettimestamp();
+                        timestamp start = timestampnow();
 
                         {
 
@@ -280,7 +280,7 @@ int main()
 
                         }
                         
-                        timestamp end = gettimestamp();
+                        timestamp end = timestampnow();
                         LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
 
                         

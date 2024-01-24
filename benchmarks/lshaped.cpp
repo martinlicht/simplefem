@@ -220,12 +220,12 @@ int main()
 
 
                         
-                        timestamp start = gettimestamp();
+                        timestamp start = timestampnow();
                         
                         auto solver = MinimumResidualMethod( SystemMatrix, desired_precision, SystemMatrix.getdimin() * 1, 1 );
                         solver.solve( sol, rhs );
 
-                        timestamp end = gettimestamp();
+                        timestamp end = timestampnow();
         
                         LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                         

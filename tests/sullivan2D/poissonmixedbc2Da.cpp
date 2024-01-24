@@ -191,7 +191,7 @@ int main()
                         LOG << "...iterative solver" << nl;
                         
 
-                        timestamp start = gettimestamp();
+                        timestamp start = timestampnow();
 
                         {
                             LOG << "CGM - Classic" << nl;
@@ -218,7 +218,7 @@ int main()
 
                         }
 
-                        timestamp end = gettimestamp();
+                        timestamp end = timestampnow();
                         LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
 
                         LOG << "...compute error and residual:" << nl;
