@@ -227,9 +227,9 @@ int main()
                             ConjugateGradientMethod Solver( system );
                             Solver.print_modulo        = mysol.getdimension() / 20;
                             Solver.max_iteration_count =     4 * mysol.getdimension();
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             Solver.solve( mysol, rhs );
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             auto stat_sol = Float( ( sol - mysol ).norm() );
@@ -251,9 +251,9 @@ int main()
                             Solver.print_modulo        = mysol.getdimension() / 20;
                             Solver.max_iteration_count = 4 * mysol.getdimension();
                             
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             Solver.solve_explicit( mysol, rhs );
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
@@ -276,9 +276,9 @@ int main()
                             Solver.print_modulo        = mysol.getdimension() / 20;
                             Solver.max_iteration_count = 4 * mysol.getdimension();
                             
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             Solver.solve_robust( mysol, rhs );
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
@@ -301,9 +301,9 @@ int main()
                             Solver.print_modulo        = mysol.getdimension() / 20;
                             Solver.max_iteration_count = 4 * mysol.getdimension();
                             
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             Solver.solve_fast( mysol, rhs );
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
@@ -326,9 +326,9 @@ int main()
                             Solver.print_modulo        = 4 * mysol.getdimension();
                             Solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
                             Solver.max_iteration_count =     4 * mysol.getdimension();
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             Solver.solve( mysol, rhs );
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
 
                             auto stat_sol = Float( ( sol - mysol ).norm() );
@@ -350,9 +350,9 @@ int main()
                             Solver.print_modulo        = 4 * mysol.getdimension();
                             Solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
                             Solver.max_iteration_count =     4 * mysol.getdimension();
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             Solver.solve( mysol, rhs );
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
 
                             auto stat_sol = Float( ( sol - mysol ).norm() );
@@ -378,7 +378,7 @@ int main()
                             mysol.zero();
                             FloatVector residual( rhs );
 
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             int recent_iteration_count =
                             ConjugateGradientSolverCSR( 
                                 mysol.getdimension(), 
@@ -389,7 +389,7 @@ int main()
                                 desired_precision,
                                 0
                             );
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
 
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
@@ -410,7 +410,7 @@ int main()
                             mysol.zero();
                             FloatVector residual( rhs );
 
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             int recent_iteration_count =
                             ConjugateResidualSolverCSR( 
                                 mysol.getdimension(), 
@@ -421,7 +421,7 @@ int main()
                                 desired_precision,
                                 0
                             );
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
 
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
@@ -442,7 +442,7 @@ int main()
                             mysol.zero();
                             FloatVector residual( rhs );
 
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             int recent_iteration_count =
                             ConjugateResidualSolverCSR_textbook( 
                                 mysol.getdimension(), 
@@ -453,7 +453,7 @@ int main()
                                 desired_precision,
                                 0
                             );
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
 
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
@@ -474,7 +474,7 @@ int main()
                             mysol.zero();
                             FloatVector residual( rhs );
 
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             int recent_iteration_count =
                             MINRESCSR( 
                                 mysol.getdimension(), 
@@ -485,7 +485,7 @@ int main()
                                 desired_precision,
                                 0
                             );
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
 
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
@@ -507,7 +507,7 @@ int main()
                             mysol.zero();
                             FloatVector residual( rhs );
 
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             int recent_iteration_count =
                             WHATEVER( 
                                 mysol.getdimension(), 
@@ -518,7 +518,7 @@ int main()
                                 desired_precision,
                                 0
                             );
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
 
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
@@ -545,7 +545,7 @@ int main()
                             mysol.zero();
                             FloatVector residual( rhs );
 
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             int recent_iteration_count =
                             ConjugateGradientSolverCSR_DiagonalPreconditioner( 
                                 mysol.getdimension(), 
@@ -557,7 +557,7 @@ int main()
                                 0,
                                 invprecon.getdiagonal().raw()
                             );
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
 
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
@@ -583,7 +583,7 @@ int main()
                             mysol.zero();
                             FloatVector residual( rhs );
 
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             int recent_iteration_count =
                             ConjugateGradientSolverCSR_SSOR( 
                                 mysol.getdimension(), 
@@ -596,7 +596,7 @@ int main()
                                 diagonal.raw(),
                                 0.9123456789
                             );
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
 
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
@@ -622,7 +622,7 @@ int main()
                             mysol.zero();
                             FloatVector residual( rhs );
 
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             int recent_iteration_count =
                             ChebyshevIteration_DiagonalPreconditioner( 
                                 mysol.getdimension(), 
@@ -636,7 +636,7 @@ int main()
                                 0.,
                                 system.eigenvalueupperbound()
                             );
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
 
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
@@ -664,7 +664,7 @@ int main()
 
                             Rainbow rainbow( system );
 
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             int recent_iteration_count =
                             ConjugateGradientSolverCSR_Rainbow( 
                                 mysol.getdimension(), 
@@ -678,7 +678,7 @@ int main()
                                 0.9123456789,
                                 rainbow.num_colors, rainbow.F.data(), rainbow.B.data(), rainbow.R.data()
                             );
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
 
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             

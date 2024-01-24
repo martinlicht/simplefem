@@ -371,7 +371,7 @@ int main()
                 
                     Rainbow rainbow( stiffness );
 
-                    timestamp start = gettimestamp();
+                    timestamp start = timestampnow();
                     ConjugateGradientSolverCSR_Rainbow( 
                         sol.getdimension(), 
                         sol.raw(), 
@@ -384,7 +384,7 @@ int main()
                         1.2, // empircally chosen at 1.2, barely any influence
                         rainbow.num_colors, rainbow.F.data(), rainbow.B.data(), rainbow.R.data()
                     );
-                    timestamp end = gettimestamp();
+                    timestamp end = timestampnow();
                     solver_time = end - start;
                     LOG << "\t\t\t Time: " << timestamp2measurement( solver_time ) << nl;
 

@@ -1,4 +1,7 @@
 
+#include <cstdio>
+#include <cstdarg>
+
 #include <chrono>
 #include <vector>
 
@@ -7,12 +10,12 @@
 
 template class std::vector<char>;
 template class std::vector<int>;
+template class std::vector<std::size_t>;
 template class std::vector<Float>;
 
 
 // Since all floating-point literals throughout are double unless marked otherwise 
-// we enforce that `Float` is at least enough to store double.
-// Any of those should do:
+// we enforce that `Float` is at least enough to store double. Any of those should do:
 // 
 // static_assert( Float(std::numeric_limits<double>::max()) == std::numeric_limits<double>::max(), "Float must be at least double" );
 // static_assert( sizeof(Float) >= sizeof(double), "Float must be at least double" );
@@ -41,19 +44,6 @@ std::string tab_each_line( std::string str )
     return str;
 } 
 
-// inline std::string pad_each_line( std::string str, std::string pad )
-// {
-//     int c = 0;
-//     for( int i = 0; i < str.length(); i++ ) if( str[i] == '\n' ) c++;
-//     std::string ret = pad;
-//     ret.reserve( str.length() + c * pad.length() );
-//     for( int i = 0; i < str.length(); i++ )
-//     {
-//         ret += str[i];
-//         if( str[i] == '\n' ) ret += pad.length();
-    
-//     return ret;
-// }
 
 
 
@@ -65,8 +55,6 @@ std::string tab_each_line( std::string str )
 
 
 
-#include <cstdio>
-#include <cstdarg>
 
 std::string printf_into_string( const char* formatstring, ... )
 {
@@ -88,14 +76,26 @@ std::string printf_into_string( const char* formatstring, ... )
     return ret;
 }
 
+// template< typename... Params >
+// inline std::string printf_into_string( const char* formatstring, Params... args )
+// {
+//     std::size_t length = std::snprintf(nullptr, 0, formatstring, args... ) + 1;
+//     char* c_str = new char[length];
+//     std::snprintf( c_str, length, formatstring, args... );
+//     std::string ret( c_str );
+//     delete[] c_str;
+//     return ret;
+// }
 
 
 
 
-// TODO: Move time to cpp
+
+// TODO: move to utility 
+
 static_assert( std::is_integral< decltype( std::chrono::time_point_cast< std::chrono::milliseconds>( std::chrono::steady_clock::now() ).time_since_epoch().count() ) >::value , "Time measurement must be integral" );
 
-timestamp gettimestamp()
+timestamp timestampnow()
 {
     
     static timestamp start_timestamp = std::chrono::time_point_cast<std::chrono::milliseconds>( std::chrono::steady_clock::now() ).time_since_epoch().count();
@@ -109,17 +109,14 @@ timestamp gettimestamp()
 
 
 
-// TODO: move to utility 
-
 std::string timestamp2measurement( const timestamp& t )
 {
     return std::to_string( static_cast<uintmax_t>(t) ) + "ms";
 }
 
-// std::string measurementnow( const timestamp& t ) // TODO Remove this line 
 std::string measurementnow()
 {
-    return timestamp2measurement( gettimestamp() );
+    return timestamp2measurement( timestampnow() );
 }
 
 
@@ -136,19 +133,19 @@ std::string timestamp2digitalcode( const timestamp& t )
 
 std::string digitalcodenow()
 {
-    return timestamp2digitalcode( gettimestamp() );
+    return timestamp2digitalcode( timestampnow() );
 }
 
 
 
-std::string protocolprefixnow()
-{
-    // static const std::string foo = std::string("\e[36m[");
-    // static const std::string bar = std::string("]\e[39m\t");
-    static const std::string foo = std::string("[");
-    static const std::string bar = std::string("]\t");
-    return foo + digitalcodenow() + bar;
-}
+// std::string protocolprefixnow()
+// {
+//     // static const std::string foo = std::string("\e[36m[");
+//     // static const std::string bar = std::string("]\e[39m\t");
+//     static const std::string foo = std::string("[");
+//     static const std::string bar = std::string("]\t");
+//     return foo + digitalcodenow() + bar;
+// }
 
 
 

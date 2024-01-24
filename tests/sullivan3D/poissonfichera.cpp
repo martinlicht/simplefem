@@ -164,7 +164,7 @@ int main()
                 FloatVector     sol(     incmatrix.getdimin(), 0. );
                 FloatVector aug_sol( aug_incmatrix.getdimin(), 0. );
                 
-                timestamp start = gettimestamp();
+                timestamp start = timestampnow();
 
                 {
                     LOG << "...iterative solver 1" << nl;
@@ -210,7 +210,7 @@ int main()
 
                 }
 
-                timestamp end = gettimestamp();
+                timestamp end = timestampnow();
                 LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
 
                 LOG << "...compute error and residual:" << nl;

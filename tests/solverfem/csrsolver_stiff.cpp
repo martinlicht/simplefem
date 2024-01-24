@@ -273,9 +273,9 @@ int main()
                             Solver.print_modulo        = 0;
                             Solver.threshold           = desired_precision;
                             Solver.max_iteration_count = 1 * sol.getdimension();
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             Solver.solve( sol, rhs );
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
@@ -303,9 +303,9 @@ int main()
                             Solver.print_modulo        = 0;
                             Solver.threshold           = desired_precision;
                             Solver.max_iteration_count = 1 * sol.getdimension();
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             Solver.solve_explicit( sol, rhs );
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
@@ -333,9 +333,9 @@ int main()
                             Solver.print_modulo        = 0;
                             Solver.threshold           = desired_precision;
                             Solver.max_iteration_count = 1 * sol.getdimension();
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             Solver.solve_robust( sol, rhs );
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
@@ -363,9 +363,9 @@ int main()
                             Solver.print_modulo        = 0;
                             Solver.threshold           = desired_precision;
                             Solver.max_iteration_count = 1 * sol.getdimension();
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             Solver.solve_fast( sol, rhs );
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
@@ -393,9 +393,9 @@ int main()
                             Solver.print_modulo        = 0;
                             Solver.threshold           = desired_precision;
                             Solver.max_iteration_count = 1 * sol.getdimension();
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             Solver.solve( sol, rhs );
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
 
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
@@ -423,9 +423,9 @@ int main()
                             Solver.print_modulo        = 0;
                             Solver.threshold           = desired_precision;
                             Solver.max_iteration_count = 1 * sol.getdimension();
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             Solver.solve( sol, rhs );
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
 
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
@@ -449,7 +449,7 @@ int main()
                             const FloatVector rhs = rhs_original;
                             FloatVector residual( rhs );
                             auto max_iteration_count = sol.getdimension();
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             auto recent_iteration_count = 
                             ConjugateGradientSolverCSR( 
                                 sol.getdimension(), 
@@ -461,7 +461,7 @@ int main()
                                 0
                             );
 
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
@@ -485,7 +485,7 @@ int main()
                             const FloatVector rhs = rhs_original;
                             FloatVector residual( rhs );
                             auto max_iteration_count = sol.getdimension();
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             auto recent_iteration_count = 
                             ConjugateResidualSolverCSR( 
                                 sol.getdimension(), 
@@ -497,7 +497,7 @@ int main()
                                 0
                             );
 
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
@@ -521,7 +521,7 @@ int main()
                             const FloatVector rhs = rhs_original;
                             FloatVector residual( rhs );
                             auto max_iteration_count = sol.getdimension();
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             auto recent_iteration_count = 
                             ConjugateResidualSolverCSR_textbook( 
                                 sol.getdimension(), 
@@ -533,7 +533,7 @@ int main()
                                 0
                             );
 
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
@@ -557,7 +557,7 @@ int main()
                             const FloatVector rhs = rhs_original;
                             FloatVector residual( rhs );
                             auto max_iteration_count = sol.getdimension();
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             auto recent_iteration_count = 
                             MINRESCSR( 
                                 sol.getdimension(), 
@@ -569,7 +569,7 @@ int main()
                                 0
                             );
 
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
@@ -594,7 +594,7 @@ int main()
                             const FloatVector rhs = rhs_original;
                             FloatVector residual( rhs );
                             auto max_iteration_count = sol.getdimension();
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             auto recent_iteration_count = 
                             WHATEVER( 
                                 sol.getdimension(), 
@@ -606,7 +606,7 @@ int main()
                                 0
                             );
 
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
@@ -633,7 +633,7 @@ int main()
                             const FloatVector rhs = rhs_original;
                             FloatVector residual( rhs );
                             auto max_iteration_count = sol.getdimension();
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             auto recent_iteration_count = 
                             ConjugateGradientSolverCSR_DiagonalPreconditioner( 
                                 sol.getdimension(), 
@@ -646,7 +646,7 @@ int main()
                                 precon.getdiagonal().raw()
                             );
 
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
@@ -673,7 +673,7 @@ int main()
                             const FloatVector rhs = rhs_original;
                             FloatVector residual( rhs );
                             auto max_iteration_count = sol.getdimension();
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             auto recent_iteration_count = 
                             ConjugateGradientSolverCSR_SSOR( 
                                 sol.getdimension(), 
@@ -687,7 +687,7 @@ int main()
                                 1.2
                             );
 
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
@@ -717,7 +717,7 @@ int main()
                             const FloatVector rhs = rhs_original;
                             FloatVector residual( rhs );
                             auto max_iteration_count = sol.getdimension();
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             auto recent_iteration_count = 
                             ConjugateGradientSolverCSR_SSOR_Eisenstat( 
                                 sol.getdimension(), 
@@ -731,7 +731,7 @@ int main()
                                 1.2
                             );
 
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
@@ -760,7 +760,7 @@ int main()
                             const FloatVector rhs = rhs_original;
                             FloatVector residual( rhs );
                             auto max_iteration_count = sol.getdimension();
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             auto recent_iteration_count = 
                             ConjugateGradientSolverCSR_Rainbow( 
                                 sol.getdimension(), 
@@ -775,7 +775,7 @@ int main()
                                 rainbow.num_colors, rainbow.F.data(), rainbow.B.data(), rainbow.R.data()
                             );
 
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
@@ -804,7 +804,7 @@ int main()
                             const FloatVector rhs = rhs_original;
                             FloatVector residual( rhs );
                             auto max_iteration_count = sol.getdimension();
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             auto recent_iteration_count = 
                             ConjugateGradientSolverCSR_Eisenstat_Rainbow( 
                                 sol.getdimension(), 
@@ -819,7 +819,7 @@ int main()
                                 rainbow.num_colors, rainbow.F.data(), rainbow.B.data(), rainbow.R.data()
                             );
 
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
@@ -848,7 +848,7 @@ int main()
                             const FloatVector rhs = rhs_original;
                             FloatVector residual( rhs );
                             auto max_iteration_count = sol.getdimension();
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             auto recent_iteration_count = 
                             ChebyshevIteration_DiagonalPreconditioner( 
                                 sol.getdimension(), 
@@ -863,7 +863,7 @@ int main()
                                 100 * invprecon.getdiagonal().maxnorm()
                             );
 
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;

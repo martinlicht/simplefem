@@ -22,7 +22,8 @@ Logger::Logger(
             //*this << std::setprecision(10);
         }
 
-        
+
+auto digitalcodenow() -> std::string;
 
 Logger::~Logger()
 {
@@ -41,14 +42,14 @@ Logger::~Logger()
         return;
     }
 
-    std::string prefix = protocolprefixnow();
+    std::string prefix = digitalcodenow(); 
     
     for( int c = 0; c < str.size(); c++ )
     {
 
         if( use_prefix_next ) { 
             use_prefix_next = false;
-            fputs( prefix.c_str(), f ); // internalstream << prefix;
+            fprintf( f, "[%s]\t", prefix.c_str() );
         }
         
         auto character = str.at(c);

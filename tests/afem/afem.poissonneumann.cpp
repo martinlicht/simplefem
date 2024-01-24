@@ -171,24 +171,24 @@ int main()
                 
                 {
                     sol.zero();
-                    timestamp start = gettimestamp();
+                    timestamp start = timestampnow();
                     ConjugateResidualMethod CRM( stiffness_csr );
                     CRM.print_modulo = 1+sol.getdimension()/1000;
                     CRM.threshold = 1e-10;
                     CRM.solve( sol, rhs );
-                    timestamp end = gettimestamp();
+                    timestamp end = timestampnow();
                     LOG << "\t\t\t " << timestamp2measurement( end - start ) << nl;
                 }
                         
                 if(false)
                 {
                     sol.zero();
-                    timestamp start = gettimestamp();
+                    timestamp start = timestampnow();
                     PreconditionedConjugateResidualMethod PCRM( stiffness_csr, stiffness_invprecon );
                     PCRM.print_modulo = 1+sol.getdimension()/10;
                     PCRM.threshold = 1e-10;
                     PCRM.solve( sol, rhs );
-                    timestamp end = gettimestamp();
+                    timestamp end = timestampnow();
                     LOG << "\t\t\t " << timestamp2measurement( end - start ) << nl;
                 }
 

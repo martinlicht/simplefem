@@ -189,7 +189,7 @@ int main()
 
 
 
-            timestamp start = gettimestamp();
+            timestamp start = timestampnow();
 
             //TODO: set up operator preconditioner
             // { 
@@ -225,7 +225,7 @@ int main()
                 );
             }
 
-            timestamp end = gettimestamp();
+            timestamp end = timestampnow();
 
             // ... computed the solution
 

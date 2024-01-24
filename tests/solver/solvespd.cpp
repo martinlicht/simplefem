@@ -151,9 +151,9 @@ int main()
                             ConjugateGradientMethod Solver( system );
                             Solver.print_modulo        = mysol.getdimension() / 20;
                             Solver.max_iteration_count =     mysol.getdimension();
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             Solver.solve( mysol, rhs );
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             auto stat_sol = Float( ( sol - mysol ).norm() );
@@ -174,9 +174,9 @@ int main()
                             Solver.print_modulo        = mysol.getdimension() / 20;
                             Solver.max_iteration_count = mysol.getdimension();
                             
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             Solver.solve_explicit( mysol, rhs );
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
@@ -198,9 +198,9 @@ int main()
                             Solver.print_modulo        = mysol.getdimension() / 20;
                             Solver.max_iteration_count = mysol.getdimension();
                             
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             Solver.solve_robust( mysol, rhs );
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
@@ -222,9 +222,9 @@ int main()
                             Solver.print_modulo        = mysol.getdimension() / 20;
                             Solver.max_iteration_count = mysol.getdimension();
                             
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             Solver.solve_fast( mysol, rhs );
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
@@ -246,9 +246,9 @@ int main()
                             Solver.print_modulo        = mysol.getdimension() / 20;
                             Solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
                             Solver.max_iteration_count =     mysol.getdimension();
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             Solver.solve( mysol, rhs );
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
 
                             auto stat_sol = Float( ( sol - mysol ).norm() );
@@ -269,9 +269,9 @@ int main()
                             Solver.print_modulo        = mysol.getdimension() / 20;
                             Solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
                             Solver.max_iteration_count =     mysol.getdimension();
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             Solver.solve( mysol, rhs );
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
 
                             auto stat_sol = Float( ( sol - mysol ).norm() );

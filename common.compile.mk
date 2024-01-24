@@ -74,7 +74,7 @@ FLAG_NO_EXCEPTIONS=yes
 
 # Do you want to ENABLE excessive warning options?
 # Uncomment the following line to enable excessive warning options
-FLAG_EXCESSIVE_WARNINGS=yes
+# FLAG_EXCESSIVE_WARNINGS=yes
 
 # Do you want to ENABLE either extended precision or single precision?
 # Uncomment one the following lines to switch from double precision
@@ -112,7 +112,7 @@ FLAG_EXCESSIVE_WARNINGS=yes
 
 # Choose the linker by uncommenting, or leave commented for default linker 
 # LDFLAGS += -fuse-ld=bfd
-LDFLAGS += -fuse-ld=lld
+# LDFLAGS += -fuse-ld=lld
 # LDFLAGS += -fuse-ld=gold
 # LDFLAGS += -fuse-ld=mold
 

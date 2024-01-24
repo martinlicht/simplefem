@@ -229,9 +229,9 @@ int main()
                             Solver.print_modulo        = 0;
                             Solver.threshold        = desired_precision;
                             Solver.max_iteration_count =     1 * sol.getdimension();
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             Solver.solve( sol, rhs );
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
@@ -257,9 +257,9 @@ int main()
                             Solver.print_modulo        = 0;
                             Solver.threshold        = desired_precision;
                             Solver.max_iteration_count =     1 * sol.getdimension();
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             Solver.solve_explicit( sol, rhs );
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
@@ -285,9 +285,9 @@ int main()
                             Solver.print_modulo        = 0;
                             Solver.threshold        = desired_precision;
                             Solver.max_iteration_count =     1 * sol.getdimension();
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             Solver.solve_robust( sol, rhs );
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
@@ -313,9 +313,9 @@ int main()
                             Solver.print_modulo        = 0;
                             Solver.threshold        = desired_precision;
                             Solver.max_iteration_count =     1 * sol.getdimension();
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             Solver.solve_fast( sol, rhs );
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
@@ -341,9 +341,9 @@ int main()
                             Solver.print_modulo        = 0;
                             Solver.threshold        = desired_precision;
                             Solver.max_iteration_count =     1 * sol.getdimension();
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             Solver.solve( sol, rhs );
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
 
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
@@ -369,9 +369,9 @@ int main()
                             Solver.print_modulo        = 0;
                             Solver.threshold        = desired_precision;
                             Solver.max_iteration_count =     1 * sol.getdimension();
-                            timestamp start = gettimestamp();
+                            timestamp start = timestampnow();
                             Solver.solve( sol, rhs );
-                            timestamp end = gettimestamp();
+                            timestamp end = timestampnow();
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
 
                             LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;

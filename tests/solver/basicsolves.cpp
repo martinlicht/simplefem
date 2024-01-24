@@ -91,9 +91,9 @@ int main()
             CRM.threshold = 1e-20;
             
             timestamp start, end;
-            start = gettimestamp();
+            start = timestampnow();
             CRM.solve(y,b);
-            end = gettimestamp();
+            end = timestampnow();
             LOG << timestamp2measurement( end - start ) << nl;
         }
         
@@ -107,9 +107,9 @@ int main()
             PCRM.threshold = 1e-20;
             
             timestamp start, end;
-            start = gettimestamp();
+            start = timestampnow();
             PCRM.solve(y,b);
-            end = gettimestamp();
+            end = timestampnow();
             LOG << timestamp2measurement( end - start ) << nl;
         }
         
@@ -123,9 +123,9 @@ int main()
             MINRES.threshold = 1e-20;
             
             timestamp start, end;
-            start = gettimestamp();
+            start = timestampnow();
             MINRES.solve(y,b);
-            end = gettimestamp();
+            end = timestampnow();
             LOG << timestamp2measurement( end - start ) << nl;
         }
         
@@ -167,9 +167,9 @@ int main()
             MINRES.threshold = 1;
             
             timestamp start, end;
-            start = gettimestamp();
+            start = timestampnow();
             MINRES.solve(y,b);
-            end = gettimestamp();
+            end = timestampnow();
             LOG << timestamp2measurement( end - start ) << nl;
         }
         
