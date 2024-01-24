@@ -191,7 +191,7 @@ int main()
             
             for( int d = 0; d <            3; d++ )
             {
-                contables[d].table_name = "Rounding errors, D" + std::to_string(d+1);
+                contables[d].table_name = "Rounding errors, D" + to_text(d+1);
                 contables[d] << "COO1";           // 0
                 contables[d] << "COO2";        // 1
                 contables[d] << "COO3";        // 2 

@@ -26,7 +26,7 @@ void IdentityOperator::check() const
 
 std::string IdentityOperator::text() const 
 {
-    return "Identity Operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin());
+    return "Identity Operator " + to_text(getdimout()) + "x" + to_text(getdimin());
 }
 
 void IdentityOperator::apply( FloatVector& dest, const FloatVector& src, Float s ) const 
@@ -81,7 +81,7 @@ void ZeroOperator::check() const
 
 std::string ZeroOperator::text() const 
 {
-    return "Zero Operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin());
+    return "Zero Operator " + to_text(getdimout()) + "x" + to_text(getdimin());
 }
 
 void ZeroOperator::apply( FloatVector& dest, const FloatVector& src, Float s ) const 
@@ -128,7 +128,7 @@ void ScalingOperator::check() const
 
 std::string ScalingOperator::text() const 
 {
-    return "Scaling Operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) + ": s = " + std::to_string( scaling );
+    return "Scaling Operator " + to_text(getdimout()) + "x" + to_text(getdimin()) + ": s = " + to_text( scaling );
 }
 
 
@@ -226,7 +226,7 @@ std::string DiagonalOperator::text() const
 
 std::string DiagonalOperator::text( const bool embellish ) const 
 {
-    return "Diagonal operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) 
+    return "Diagonal operator " + to_text(getdimout()) + "x" + to_text(getdimin()) 
             + ( embellish ? "\n" + tab_each_line( diagonal.text() ) : "" );
 }
 
@@ -303,7 +303,7 @@ void LambdaOperator::check() const
 
 std::string LambdaOperator::text() const 
 {
-    return "Lambda Operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin());
+    return "Lambda Operator " + to_text(getdimout()) + "x" + to_text(getdimin());
 }
 
 void LambdaOperator::apply( FloatVector& dest, const FloatVector& src, Float s ) const 

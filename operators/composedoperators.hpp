@@ -96,7 +96,7 @@ class RepeatedDiagonalBlockOperator final
         
         virtual std::string text() const override
         {
-            return "Repeated Diagonal Block Operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) + "\n"
+            return "Repeated Diagonal Block Operator " + to_text(getdimout()) + "x" + to_text(getdimin()) + "\n"
                      + tab_each_line( internal->text() );
         }
         
@@ -221,7 +221,7 @@ class ComposedOperator
         
         virtual std::string text() const override
         {
-            return "Composed Operator" + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) + "\n"
+            return "Composed Operator" + to_text(getdimout()) + "x" + to_text(getdimin()) + "\n"
                      + tab_each_line( left->text() + '\n' + right->text() );
         }
         
@@ -289,7 +289,7 @@ class ProduktOperator final
         
         virtual std::string text() const override
         {
-            return "Produkt Operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) + "\n"
+            return "Produkt Operator " + to_text(getdimout()) + "x" + to_text(getdimin()) + "\n"
                      + tab_each_line( left->text() + '\n' + right->text() );
         }
         
@@ -403,7 +403,7 @@ class SummOperator final
         
         virtual std::string text() const override
         {
-            return "Summ Operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) + "\n"
+            return "Summ Operator " + to_text(getdimout()) + "x" + to_text(getdimin()) + "\n"
                      + tab_each_line( left->text() + '\n' + right->text() );
         }
         
@@ -486,7 +486,7 @@ class DiffOperator final
         
         virtual std::string text() const override
         {
-            return "Diff Operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) + "\n"
+            return "Diff Operator " + to_text(getdimout()) + "x" + to_text(getdimin()) + "\n"
                      + tab_each_line( left->text() + '\n' + right->text() );
         }
         
@@ -664,7 +664,7 @@ class Block2x2Operator
         
         virtual std::string text() const override
         {
-            return "Block Operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) + "\n"
+            return "Block Operator " + to_text(getdimout()) + "x" + to_text(getdimin()) + "\n"
                     + 
                     tab_each_line( 
                         upperleft->text() + '\n' + upperright->text() + '\n' + lowerleft->text() + '\n' + lowerright->text()

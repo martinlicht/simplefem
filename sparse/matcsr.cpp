@@ -183,11 +183,11 @@ std::string MatrixCSR::text() const
 {
     std::string str_A, str_C, str_V; 
 
-    for( int i = 0; i < A.size(); i++ ) str_A += ( std::to_string(A[i]) + " " );
-    for( int i = 0; i < C.size(); i++ ) str_C += ( std::to_string(C[i]) + " " );
-    for( int i = 0; i < V.size(); i++ ) str_V += ( std::to_string(V[i]) + " " );
+    for( int i = 0; i < A.size(); i++ ) str_A += ( to_text(A[i]) + " " );
+    for( int i = 0; i < C.size(); i++ ) str_C += ( to_text(C[i]) + " " );
+    for( int i = 0; i < V.size(); i++ ) str_V += ( to_text(V[i]) + " " );
     
-    return std::string("CSRMatrix ") + std::to_string(getdimout()) + "x" + std::to_string(getdimin())
+    return std::string("CSRMatrix ") + to_text(getdimout()) + "x" + to_text(getdimin())
                         + "\nA: " + str_A
                         + "\nC: " + str_C
                         + "\nV: " + str_V;

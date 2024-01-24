@@ -123,7 +123,7 @@ int main()
         for( int r = r_min; r <= r_max; r++ ) 
         {
             for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
-                contable_scalar[i].table_name = "Numerical errors scalar E" + std::to_string(i);
+                contable_scalar[i].table_name = "Numerical errors scalar E" + to_text(i);
             
             for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
                 contable_scalar[i] << printf_into_string("R%d", r-r_min );

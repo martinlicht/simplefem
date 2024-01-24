@@ -113,7 +113,7 @@ timestamp gettimestamp()
 
 std::string timestamp2measurement( const timestamp& t )
 {
-    return std::to_string( static_cast<uintmax_t>(t) ) + "ms";
+    return to_text( static_cast<uintmax_t>(t) ) + "ms";
 }
 
 // std::string measurementnow( const timestamp& t ) // TODO Remove this line 

@@ -163,9 +163,9 @@ void SparseMatrix::check() const
 
 std::string SparseMatrix::text() const
 {
-    std::string ret = "SparseMatrix " + std::to_string(getdimout()) + "x" + std::to_string(getdimin());
+    std::string ret = "SparseMatrix " + to_text(getdimout()) + "x" + to_text(getdimin());
     for( const MatrixEntry& entry : entries )
-        ret += ( "\n" + std::to_string(entry.row) + " " + std::to_string(entry.column) + " : " + std::to_string(entry.value) );
+        ret += ( "\n" + to_text(entry.row) + " " + to_text(entry.column) + " : " + to_text(entry.value) );
     return ret;
 }
 

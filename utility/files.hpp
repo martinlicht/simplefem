@@ -37,7 +37,7 @@ inline std::string adaptfilename( std::string filename )
     std::string pre_dot  = filename.substr(0,dotpos);
     std::string post_dot = filename.substr(dotpos+1);
     
-    for( int i = 0; fileexists( filename = pre_dot + std::string(".") + std::to_string(i) + std::string(".") + post_dot ); i++ );
+    for( int i = 0; fileexists( filename = pre_dot + std::string(".") + to_text(i) + std::string(".") + post_dot ); i++ );
     
     return filename;
 }
@@ -46,7 +46,7 @@ inline std::string adaptfilename( std::string filename )
 inline std::string experimentfile( const std::string& basename, const std::string extension = "vtk" )
 {
     std::string ret;
-    for( int i = 0; fileexists( ret = basename + std::string(".") + std::to_string(i) + std::string(".") + std::string(extension) ); i++ );
+    for( int i = 0; fileexists( ret = basename + std::string(".") + to_text(i) + std::string(".") + std::string(extension) ); i++ );
     return ret;
 }
 

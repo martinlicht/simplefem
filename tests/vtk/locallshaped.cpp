@@ -26,7 +26,7 @@ int main()
         LOG << "Print VTK-type file" << nl;
         LOG << "T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
         
-        fstream fs( string("./locallshaped") + std::to_string(l) + string(".vtk"), std::fstream::out );
+        fstream fs( string("./locallshaped") + to_text(l) + string(".vtk"), std::fstream::out );
 
         VTKWriter vtk( M, fs, "L-Shaped Domain" );
         vtk.writeCoordinateBlock();

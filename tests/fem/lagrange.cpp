@@ -260,7 +260,7 @@ int main()
             for( int d = 0; d <            3; d++ )
             {
                 
-                contables[d].table_name = "Rounding errors, D" + std::to_string(d+1);
+                contables[d].table_name = "Rounding errors, D" + to_text(d+1);
                 contables[d] << "inc";           // 0
                 contables[d] << "mass S";        // 1
                 contables[d] << "mass W";        // 2 

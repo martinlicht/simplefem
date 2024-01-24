@@ -104,12 +104,12 @@ int main()
         ConvergenceTable contables[ M.getinnerdimension()+1 ];
         
         for( int k = 0; k <= M.getinnerdimension(); k++ ) 
-            contables[k].table_name = "Rounding errors D1K" + std::to_string(k);
+            contables[k].table_name = "Rounding errors D1K" + to_text(k);
         
         for( int k = 0; k <= M.getinnerdimension(); k++ ) 
         for( int r = r_min; r <= r_max; r++ ) 
         for( int r_plus = 0; r_plus <= r_plus_max; r_plus++ ) 
-            contables[k] << ( "R" + std::to_string(r) + "+" + std::to_string(r_plus) );
+            contables[k] << ( "R" + to_text(r) + "+" + to_text(r_plus) );
 
         for( int k = 0; k <= M.getinnerdimension(); k++ ) 
         for( int l = l_min; l <= l_max; l++ ) 

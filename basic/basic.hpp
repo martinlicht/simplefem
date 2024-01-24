@@ -124,6 +124,14 @@ extern template class std::vector<Float>;
 
 
 
+template<typename T>
+decltype( std::to_string( std::declval<T>() ) )
+to_text( T t ) {
+    return std::to_string( t );
+};
+
+
+
 
 /////////////////////////////////////////////////
 //                                             //

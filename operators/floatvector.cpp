@@ -165,9 +165,9 @@ void FloatVector::check() const
 std::string FloatVector::text() const 
 {
     check();
-    std::string ret = "float vector of dimension: " + std::to_string( getdimension() );
+    std::string ret = "float vector of dimension: " + to_text( getdimension() );
     for( int p = 0; p < getdimension(); p++ )
-        ret = ret + "\n" + std::to_string(p) + ": " + std::to_string(getentry(p));
+        ret = ret + "\n" + to_text(p) + ": " + to_text(getentry(p));
     return ret;
 }
 

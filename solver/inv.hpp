@@ -58,7 +58,7 @@ class InverseOperator
         }
         
         virtual std::string text() const override { 
-            return "Inverse Operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) + "\n" 
+            return "Inverse Operator " + to_text(getdimout()) + "x" + to_text(getdimin()) + "\n" 
                     + tab_each_line( op.text() );
         }
         
@@ -109,7 +109,7 @@ class PseudoInverseOperator final
         }
 
         virtual std::string text() const override { 
-            return "PseudoInverse Operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) + "\n" 
+            return "PseudoInverse Operator " + to_text(getdimout()) + "x" + to_text(getdimin()) + "\n" 
                     + tab_each_line( op.text() );
         }
         
