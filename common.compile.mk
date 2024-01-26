@@ -30,8 +30,8 @@ endif
 
 
 # Uncomment your choice of compiler below
-# FLAG_CXX := CLANG
-FLAG_CXX := GCC
+FLAG_CXX := CLANG
+# FLAG_CXX := GCC
 # FLAG_CXX := ICC
 
 
@@ -59,6 +59,9 @@ FLAG_DISABLE_CHECK_MESHES=yes
 # in favor of standard library routines?
 # Uncomment the following line for that
 # FLAG_USE_PRIMITIVE_LOGGING=yes
+
+# Do you want to REPLACE the standard string class by a custom string class?
+# FLAG_USE_CUSTOM_STRINGS=yes
 
 # Do you want to DISABLE excpetion handling?
 # Uncomment the following line to disable exception handling
@@ -112,7 +115,7 @@ FLAG_EXCESSIVE_WARNINGS=yes
 
 # Choose the linker by uncommenting, or leave commented for default linker 
 # LDFLAGS += -fuse-ld=bfd
-LDFLAGS += -fuse-ld=lld
+# LDFLAGS += -fuse-ld=lld
 # LDFLAGS += -fuse-ld=gold
 # LDFLAGS += -fuse-ld=mold
 

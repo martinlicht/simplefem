@@ -41,7 +41,7 @@
 // #include <list>
 // #include <ostream>
 #include <limits>
-#include <string>
+// #include <string>
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -50,6 +50,7 @@
 
 
 
+#include "strings.hpp"
 #include "debug.hpp"
 
 
@@ -72,6 +73,7 @@ typedef long double Float;
 typedef float Float;
 #else 
 typedef double Float;
+static_assert( std::is_same<Float,double>::value, "Float is the same as the type it should be" );
 #endif
 
 
@@ -106,7 +108,7 @@ static const constexpr Float desired_precision =
 
 
 
-                                    
+
 /////////////////////////////////////////////////
 //                                             //
 //          TEMPLATE INSTANTIATIONS            //
@@ -124,11 +126,6 @@ extern template class std::vector<Float>;
 
 
 
-template<typename T>
-decltype( std::to_string( std::declval<T>() ) )
-to_text( T t ) {
-    return std::to_string( t );
-};
 
 
 
@@ -599,31 +596,6 @@ std::string protocolprefixnow();
 
 
 
-
-
-
-
-
-
-
-
-/////////////////////////////////////////////////
-//                                             //
-//            STRING UTILITIES                 //
-//                                             //
-/////////////////////////////////////////////////
-
-/******************************************************/
-/*      count the white space within STL string       */
-/******************************************************/
-
-int count_white_space( const std::string& str ); // TODO: Move to utilities 
-
-/******************************************************/
-/*          insert tabs before each line              */
-/******************************************************/
-
-std::string tab_each_line( std::string str ); // TODO: Move to utilities 
 
 
 
