@@ -157,7 +157,7 @@ static const constexpr char tab = '\t';
 //                                                     //
 /////////////////////////////////////////////////////////
 
-inline int SIZECAST( std::uintmax_t size )
+inline constexpr int SIZECAST( std::uintmax_t size )
 {
     Assert( size < std::numeric_limits<int>::max() );
     return static_cast<int>( size );

@@ -31,22 +31,21 @@ Finite element features:
  - [x] Meshes in dimension 1, 2, and 3
  - [x] uniform mesh refinement and longest edge bisection
  - [x] Whitney and Sullivan k-forms of any polynomial degree in any dimension
- - [ ] Algebraic linear operations such as exterior derivatives and traces 
- - [ ] Metric linear operations such as mass operator and Hodge star operator 
+ - [x] Exterior derivative
+ [ ] Traces
+ - [x] Exterior and interior products
+ [ ] Metric linear operations such as mass operator and Hodge star operator 
  - [x] Mass matrices with constant or non-uniform coefficients  
  - [ ] Duality-based error error estimators and adaptive strategies
- - [ ] Any external library is included
-
+ 
 C++ design guidelines:
 
- - [ ] C++14 with optional C++17 enhancements
- - [ ] C++14 with optional C++17 enhancements
- - [ ] No dependencies except a C++14 compiler and GNU-Make
- - [ ] Minimal dependencies: C++14 compiler and GNU Make
- - [ ] Fast compile time
- - [ ] Minimal requirements and fast compile time 
- - [ ] Any external library included
- - [ ] Fail-fast philosophy: 
+ - C++14 with optional C++17 enhancements
+ - Minimal dependencies: C++14 compiler and GNU Make
+ - Fast compile time
+ - Minimal requirements and fast compile time 
+ - Any external library included
+ - Fail-fast philosophy
 
 Planned finite element features:
 
@@ -56,10 +55,11 @@ Planned finite element features:
  - [ ] Finite element spaces with non-uniform polynomial degree
 
 This software aims for easy prototyping new methods that are outside of the standard textbooks.
+
 This software aims to be easy to hack and to be portable with regard to OS and machine power. 
-There are also explicit **non-goals** of this project: 
-currently, neither high performance nor massive distributed-memory parallelism are within the scope of the project for the time being.  
-This software does not aim at running well-known methods as fast as possible.
+
+This project has some explicit **non-goals**:
+the scope of this code does not cover massively distributed-memory parallelism or peak high-performance computing. It's purpose is to facilitate easy proof-of-concept implementations for methods that are not found in standard textbooks.
 
 
 

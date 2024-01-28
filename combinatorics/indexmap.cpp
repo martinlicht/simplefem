@@ -304,6 +304,10 @@ bool IndexMap::less( const IndexMap& im ) const
 
 IndexMap mergeSigmas( const IndexMap& left, const IndexMap& right, int& sign )
 {
+    sign = 1;
+    if( left.getSourceRange().isempty()  ) return right;
+    if( right.getSourceRange().isempty() ) return left;
+
     assert(  left.getSourceRange().min() == 1 );
     assert( right.getSourceRange().min() == 1 );
     assert(  left.getTargetRange().min() == 0 );
