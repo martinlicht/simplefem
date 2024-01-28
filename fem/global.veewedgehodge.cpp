@@ -1,4 +1,5 @@
 
+#include <algorithm>
 #include <vector>
 #include <tuple>
 
@@ -265,75 +266,136 @@ SparseMatrix FEECBrokenWedgeMatrix( const Mesh& mesh, int n, int k, int r , int 
 SparseMatrix FEECBrokenHodgeMatrix( const Mesh& mesh, int n, int k, int r )
 {
     
-    // check whether the parameters are right 
-    // only lowest order here
-    
     assert( r >= 0 );
     assert( n >= 0 && n <= mesh.getinnerdimension() );
     assert( k >= 0 && k <= n );
-    assert( binomial_integer( n+r, n ) == binomial_integer( n+r, r ) );
     
-    // Auxiliary calculations and preparations
     
     const int num_simplices = mesh.count_simplices( n );
-        
-    const int localdim = binomial_integer( n+r, n ) * binomial_integer( n+1, k );
+
+    auto sigmas_input  = generateSigmas( IndexRange(1,k  ), IndexRange(0,n) );
+    auto sigmas_test   = generateSigmas( IndexRange(1,k  ), IndexRange(0,n) );
+    auto applejack_test = std::remove_if( sigmas_test.begin(), sigmas_test.end(),
+                    [k](IndexMap im) -> bool { assert( im.isstrictlyascending() ); return   k != 0 and im[1] == 0; }
+    );
+    sigmas_test.erase( applejack_test, sigmas_test.end() );
+
+    auto sigmas_output = generateSigmas( IndexRange(1,n-k), IndexRange(0,n) );
+    auto sigmas_hodge  = generateSigmas( IndexRange(1,n-k), IndexRange(0,n) );
+    auto applejack_hodge = std::remove_if( sigmas_hodge.begin(), sigmas_hodge.end(),
+                    [k](IndexMap im) -> bool { assert( im.isstrictlyascending() ); return 3-k != 0 and im[1] == 0; }
+    );
+    sigmas_hodge.erase( applejack_hodge, sigmas_hodge.end() );
+
+    // for( auto x : sigmas_hodge ) LOG << x << nl;
     
-    const int dim_in      = num_simplices * localdim;
-    const int dim_out     = num_simplices * localdim;
-    const int num_entries = num_simplices * localdim * localdim;
+    const int dim_polynomials = binomial_integer( n+r, n   );
+    const int dim_sigmas_in   = binomial_integer( n+1,   k );
+    const int dim_sigmas_out  = binomial_integer( n+1, n-k );
+    
+    assert( sigmas_input.size()  == dim_sigmas_in       );
+    assert( sigmas_output.size() == dim_sigmas_out      );
+    Assert( sigmas_test.size()   == sigmas_hodge.size(), n, k, sigmas_test.size(), sigmas_hodge.size() );
+    
+    
+    // 1. Assemble the algebraic matrix
+
+    DenseMatrix wedge_matrix( sigmas_test.size(), sigmas_hodge.size(), 0. );
+
+    const IndexMap volume_form( IndexRange(1,n), IndexRange(0,n), [](int i)->int{return i;});
+
+    for( int s_h = 0; s_h < sigmas_hodge.size(); s_h++ )
+    for( int s_t = 0; s_t < sigmas_test.size();  s_t++ )
+    {
+        const auto& sigma_hodge = sigmas_hodge[s_h];
+        const auto& sigma_test  = sigmas_test[s_t];
+        
+        int signum;
+        IndexMap sigma_prod = mergeSigmas( sigma_test, sigma_hodge, signum );
+
+        if( signum == 0 ) continue;
+
+        // LOG << sigma_prod << nl << volume_form << nl;
+
+        assert( sigma_prod.isstrictlyascending() );
+
+        assert( sigma_prod == volume_form );
+
+        wedge_matrix( s_t, s_h ) = signum;
+    }
+
+    assert( wedge_matrix.issquare() );
+
+    const DenseMatrix wedge_matrix_inv = Inverse( wedge_matrix ); // TODO: This inversion can be made much simpler ... 
+
+    assert( ( wedge_matrix_inv * wedge_matrix - IdentityMatrix( wedge_matrix.getdimin() ) ).issmall() );
+
+    DenseMatrix wedge_matrix_inv_full( sigmas_output.size(), sigmas_input.size(), 0. );
+    
+    for( int s_h = 0; s_h < sigmas_hodge.size();  s_h++ )
+    for( int s_t = 0; s_t < sigmas_test.size();   s_t++ )
+    for( int s_i = 0; s_i < sigmas_input.size();  s_i++ )
+    for( int s_o = 0; s_o < sigmas_output.size(); s_o++ )
+    {
+        if( sigmas_test[s_t] != sigmas_input[s_i] or sigmas_hodge[s_h] != sigmas_output[s_o] ) {
+            continue;
+        } else {
+            wedge_matrix_inv_full( s_o, s_i ) = wedge_matrix_inv( s_h, s_t );
+        }
+    }
+
+    assert( wedge_matrix_inv_full.isfinite() );
+    // for( auto x : sigmas_output ) LOG << x << nl;
+    // for( auto x : sigmas_input ) LOG << x << nl;
+    // LOG << nl << wedge_matrix_inv_full << nl;
+    
+    
+    
+    
+    // 2. Run over the simplices and compile the local entries 
+    
+    // const int localdim_in  = dim_polynomials * dim_sigmas_in;
+    // const int localdim_out = dim_polynomials * dim_sigmas_out;
+    
+    const int dim_in      = num_simplices * dim_polynomials * dim_sigmas_in;
+    const int dim_out     = num_simplices * dim_polynomials * dim_sigmas_out;
+    const int num_entries = num_simplices * dim_polynomials * dim_sigmas_in * dim_sigmas_out;
     
     SparseMatrix ret( dim_out, dim_in, num_entries );
-    
-    DenseMatrix polyMM = polynomialmassmatrix( n, r );
 
-    assert( polyMM.issquare() and polyMM.getdimin() == binomial_integer( n+r, n ) );
-    
-//     LOG << polyMM << nl;
-        
     #if defined(_OPENMP)
     #pragma omp parallel for
     #endif
     for( int s = 0; s < num_simplices; s++ )
     {
         
-        Float measure      = mesh.getMeasure( n, s );
-
-        DenseMatrix GPM    = mesh.getGradientProductMatrix( n, s );
-            
-        assert( ( GPM - calcAtA(mesh.getGradientMatrix( n, s )) ).issmall() );
+        const DenseMatrix GPM               = mesh.getGradientProductMatrix( n, s );
         
-        DenseMatrix formMM = SubdeterminantMatrix( GPM, k );
+        const DenseMatrix formMM            = SubdeterminantMatrix( GPM, k );
+
+        assert( formMM.isfinite() );
+        
+        const DenseMatrix full_local_matrix = wedge_matrix_inv_full * formMM;
+
+        assert( full_local_matrix.isfinite() );
+        
+        const Float scaling = mesh.getMeasure( n, s ) * factorial_integer(n);
     
-        DenseMatrix fullMM = MatrixTensorProduct( polyMM, formMM ) * measure;
-
-        assert( measure >= 0. );
-
-        if( k == 0 )
+        for( int p   = 0; p   < dim_polynomials; p++   )
+        for( int s_i = 0; s_i < dim_sigmas_in;   s_i++ )
+        for( int s_o = 0; s_o < dim_sigmas_out;  s_o++ )
         {
-            assert( ( fullMM - polyMM * measure ).issmall() );
-        }
-        
-        // LOG << measure << nl;
-        
-        // LOG << formMM << nl;
-        
-        // LOG << fullMM << nl;
-        
-        for( int i = 0; i < localdim; i++ )
-        for( int j = 0; j < localdim; j++ )
-        {
-            int index_of_entry = s * localdim * localdim + i * localdim + j;
+
+            int index_of_entry = s * dim_polynomials * dim_sigmas_in * dim_sigmas_out + p * dim_sigmas_in * dim_sigmas_out + s_i * dim_sigmas_out + s_o;
             
             SparseMatrix::MatrixEntry entry;
-            entry.row    = s * localdim + i;
-            entry.column = s * localdim + j;
-            entry.value  = fullMM( i, j );
-            
+            entry.row    = s * dim_polynomials * dim_sigmas_out + p * dim_sigmas_out + s_o;
+            entry.column = s * dim_polynomials * dim_sigmas_in  + p * dim_sigmas_in  + s_i;
+            entry.value  = full_local_matrix( s_o, s_i ) * scaling;
+                
             ret.setentry( index_of_entry, entry );
+
         }
-        
-        
         
     }
     

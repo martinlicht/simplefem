@@ -30,8 +30,8 @@ endif
 
 
 # Uncomment your choice of compiler below
-# FLAG_CXX := CLANG
-FLAG_CXX := GCC
+FLAG_CXX := CLANG
+# FLAG_CXX := GCC
 # FLAG_CXX := ICC
 
 
@@ -41,7 +41,7 @@ FLAG_CXX := GCC
 
 # Do you want the standard library assert macro instead of the custom one?
 # Uncomment the following line to use the standard library assert macro 
-FLAG_USE_ORIGINAL_ASSERT_MACRO=yes
+# FLAG_USE_ORIGINAL_ASSERT_MACRO=yes
 
 # Do you want assert messages to be discarded?
 # Uncomment the following line to simplify the debugging macros 
@@ -70,7 +70,7 @@ FLAG_NO_EXCEPTIONS=yes
 
 # Do you want to ENABLE the use of openMP?
 # Uncomment the following line to enable compilation with openMP
-# FLAG_ENABLE_OPENMP=yes
+FLAG_ENABLE_OPENMP=yes
 
 # Do you want to ENABLE excessive warning options?
 # Uncomment the following line to enable excessive warning options
@@ -195,7 +195,7 @@ endif
 #                                             #
 ###############################################
 
-CXXFLAGS_LANG := -std=c++14 -pedantic -fno-rtti -D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES 
+CXXFLAGS_LANG := -std=c++20 -pedantic -fno-rtti -D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES 
 
 
 

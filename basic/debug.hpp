@@ -235,6 +235,7 @@ template<typename... Params> constexpr bool Cond( bool b, const Params&... param
 #else
 #define Assert(x,...) (static_cast<bool>(x)?(void(0)):myActualAssert( __FILE__, __LINE__, #x, nullptr ) )
 #endif // DISCARD_ASSERT_MESSAGES
+#define assert(x,...) Assert(x,__VA_ARGS__)
 #endif // __cplusplus < 202002L
 
 

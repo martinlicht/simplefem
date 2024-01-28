@@ -8,8 +8,7 @@
 #include "../../mesh/examples3D.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
-#include "../../fem/global.elevation.hpp"
-#include "../../fem/global.interpol.hpp"
+#include "../../fem/global.veewedgehodge.hpp"
 #include "../../fem/utilities.hpp"
 #include "../../utility/convergencetable.hpp"
 
@@ -21,8 +20,6 @@ int main()
         
         LOG << "Unit Test: (3D) degree elevations commute" << nl;
         
-        // LOG << std::setprecision(10);
-
         LOG << "Initial mesh..." << nl;
         
         auto M = UnitCube3D();
@@ -33,19 +30,17 @@ int main()
 
         const int r_min = 0;
         
-        const int r_max = 3;
+        const int r_max = 2;
         
         const int l_min = 0;
         
         const int l_max = 2;
         
-        const int r_plus_max = 3;
-        
         const int number_of_samples = 3;
         
            
         
-        Float errors[ M.getinnerdimension()+1 ][ l_max - l_min + 1 ][ r_max - r_min + 1 ][ r_plus_max + 1 ];
+        Float errors[ M.getinnerdimension()+1 ][ l_max - l_min + 1 ][ r_max - r_min + 1 ];
         
         
             
@@ -56,33 +51,47 @@ int main()
             
             LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << nl;
             
-            for( int k      = 0;     k <= M.getinnerdimension(); k++      ) 
-            for( int r      = r_min; r <= r_max;                 r++      ) 
-            for( int r_plus = 0;     r_plus <= r_plus_max;       r_plus++ ) 
+            for( int k = 0; k <= M.getinnerdimension(); k++ ) 
+            for( int r = r_min; r <= r_max; r++ ) 
             {
                 
-                LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << " +" << r_plus << nl;
+                LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << nl;
 
                 LOG << "Form degree: " << space << k << nl;
 
                 LOG << "assemble matrices..." << nl;
         
-                SparseMatrix elevation = FEECBrokenElevationMatrix    ( M, M.getinnerdimension(), k, r, r_plus );
-                SparseMatrix interpol  = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), k, r, r_plus );
+                SparseMatrix broken_mass_matrix        = FEECBrokenMassMatrix ( M, M.getinnerdimension(),   k, r );
+                SparseMatrix broken_hodge_matrix       = FEECBrokenHodgeMatrix( M, M.getinnerdimension(),   k, r );
+                SparseMatrix broken_mass_hodged_matrix = FEECBrokenMassMatrix ( M, M.getinnerdimension(), 3-k, r );
                 
-                errors[k][ l ][ r ][ r_plus ] = 0.;
+                assert( broken_hodge_matrix.getdimin()  == broken_mass_matrix.getdimin()  );
+                assert( broken_hodge_matrix.getdimout() == broken_mass_hodged_matrix.getdimout() );
+
+                assert( broken_mass_matrix.isfinite() );
+                assert( broken_hodge_matrix.isfinite() );
+                
+                errors[k][ l ][ r ] = 0.;
                 
                 for( int i = 0; i < number_of_samples; i++ ){
 
-                    auto field = elevation.createinputvector();
+                    auto field = broken_hodge_matrix.createinputvector();
                     field.random();
                     field.normalize();
                     
                     assert( field.isfinite() );
+
+                    const auto hodged_field = broken_hodge_matrix * field;
                     
-                    const auto error_mass = ( field - interpol * elevation * field ).norm();
+                    Float mass        = field * ( broken_mass_matrix * field );
                     
-                    errors[k][l-l_min][r-r_min][r_plus] = maximum( errors[k][l-l_min][r-r_min][r_plus], error_mass );
+                    Float hodged_mass = hodged_field * ( broken_mass_hodged_matrix * hodged_field );
+                    
+                    const auto error_mass = absolute( mass - hodged_mass );
+
+                    LOG << mass << space << hodged_mass << space << hodged_mass / mass << space << error_mass << nl;
+                    
+                    errors[k][l-l_min][r-r_min] = maximum( errors[k][l-l_min][r-r_min], error_mass );
                     
                 }
                 
@@ -105,19 +114,16 @@ int main()
         
         for( int k = 0; k <= M.getinnerdimension(); k++ ) 
             contables[k].table_name = "Rounding errors D3K" + std::to_string(k);
-        
         for( int k = 0; k <= M.getinnerdimension(); k++ ) 
         for( int r = r_min; r <= r_max; r++ ) 
-        for( int r_plus = 0; r_plus <= r_plus_max; r_plus++ ) 
-            contables[k] << ( "R" + std::to_string(r) + "+" + std::to_string(r_plus) );
+            contables[k] << ( "R" + std::to_string(r) );
 
         for( int k = 0; k <= M.getinnerdimension(); k++ ) 
         for( int l = l_min; l <= l_max; l++ ) 
         {
             
             for( int r = r_min; r <= r_max; r++ ) 
-            for( int r_plus = 0; r_plus <= r_plus_max; r_plus++ ) 
-                contables[k] << errors[k][l-l_min][r-r_min][r_plus];
+                contables[k] << errors[k][l-l_min][r-r_min];
             
             contables[k] << nl; 
             
@@ -135,12 +141,11 @@ int main()
         
         LOG << "Check that differences are small" << nl;
         
-        for( int k      =     0; k      <= M.getinnerdimension(); k++      ) 
-        for( int l      = l_min; l      <=                 l_max; l++      ) 
-        for( int r      = r_min; r      <=                 r_max; r++      ) 
-        for( int r_plus =     0; r_plus <=            r_plus_max; r_plus++ ) 
+        for( int l      = l_min; l <=                 l_max; l++ ) 
+        for( int r      = r_min; r <=                 r_max; r++ ) 
+        for( int k      =     0; k <= M.getinnerdimension(); k++ ) 
         {
-            assert( errors[k][l-l_min][r-r_min][r_plus] < 10e-14 );
+            assert( errors[k][l-l_min][r-r_min] < 10e-14 );
         }
         
         
