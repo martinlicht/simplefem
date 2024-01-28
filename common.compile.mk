@@ -74,13 +74,16 @@ FLAG_NO_EXCEPTIONS=yes
 
 # Do you want to ENABLE excessive warning options?
 # Uncomment the following line to enable excessive warning options
-# FLAG_EXCESSIVE_WARNINGS=yes
+FLAG_EXCESSIVE_WARNINGS=yes
 
 # Do you want to ENABLE either extended precision or single precision?
 # Uncomment one the following lines to switch from double precision
 # to either extended precision or single precision
 # FLAG_DO_USE_EXTENDED_PRECISION=yes 
 # FLAG_DO_USE_SINGLE_PRECISION=yes 
+
+# Logging output in color?
+FLAG_COLORED_OUTPUT=yes
 
 # Do you want to ENABLE the Clang sanitizer?
 # Uncomment the following line to enable compilation with the Clang sanitizer
@@ -327,15 +330,31 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 	CXXFLAGS_WARNINGS += -Wcast-align -Wcast-qual -Wmissing-declarations -Wredundant-decls -Wno-redundant-decls
 	CXXFLAGS_WARNINGS += -Wformat=2 -Wformat-nonliteral -Wformat-security -Wformat-y2k -Wmisleading-indentation
 	# CXXFLAGS_WARNINGS += -Wold-style-cast
+	
+	
+	CXXFLAGS_WARNINGS += -Wdouble-promotion
+
+
+	# CXXFLAGS_WARNINGS += -Wlifetime
+	CXXFLAGS_WARNINGS += -Wnon-virtual-dtor
+	CXXFLAGS_WARNINGS += -Wunused -Wno-unused-variable
+	CXXFLAGS_WARNINGS += -Woverloaded-virtual
+	# CXXFLAGS_WARNINGS += -Weffc++
+
+	
 
 	ifeq ($(FLAG_CXX),GCC)
 
+		# CXXFLAGS_WARNINGS += -Wuseless-cast 
+		CXXFLAGS_WARNINGS += -Wmisleading-indentation -Wsign-conversion
+	
 		CXXFLAGS_WARNINGS += -Wmultiple-inheritance -Wvirtual-inheritance
 		CXXFLAGS_WARNINGS += -Wpointer-arith
 		CXXFLAGS_WARNINGS += -Wreturn-local-addr
 		CXXFLAGS_WARNINGS += -Wfloat-equal -Wdouble-promotion -Wfloat-conversion
 		CXXFLAGS_WARNINGS += -Wno-sign-compare
 		CXXFLAGS_WARNINGS += -Wconversion 
+		CXXFLAGS_WARNINGS += -Wsign-promo 
 		CXXFLAGS_WARNINGS += -Wno-sign-conversion
 		CXXFLAGS_WARNINGS += -Wlogical-op -Wreturn-local-addr
 		#check which options there are ... 
@@ -393,6 +412,7 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 		CXXFLAGS_WARNINGS += -Wformat
 		CXXFLAGS_WARNINGS += -Wheader-hygiene
 		CXXFLAGS_WARNINGS += -Widiomatic-parentheses
+		CXXFLAGS_WARNINGS += -Wimplicit-fallthrough
 		CXXFLAGS_WARNINGS += -Wimplicit-float-conversion
 		CXXFLAGS_WARNINGS += -Wimplicit-function-declaration
 		CXXFLAGS_WARNINGS += -Winfinite-recursion
@@ -699,10 +719,15 @@ ifeq ($(FLAG_USE_ORIGINAL_ASSERT_MACRO),yes)
 CPPFLAGS += -DUSE_ORIGINAL_ASSERT_MACRO
 endif
 
-
 ifeq ($(FLAG_USE_PRIMITIVE_LOGGING),yes)
 CPPFLAGS += -DUSE_PRIMITIVE_LOGGING
 endif
+
+ifeq ($(FLAG_COLORED_OUTPUT),yes)
+CPPFLAGS += -DUSE_COLORED_OUTPUT
+endif
+
+
 
 ifeq ($(FLAG_DISABLE_STDLIBDEBUG),yes)
 else 

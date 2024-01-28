@@ -7,6 +7,32 @@ bool log_has_a_fresh_line = true;
 // #include <iomanip>
 #include <cstdio>
 
+
+
+enum class TextColors
+{
+    black          = 30,
+    black_light    = 90,
+    
+    red            = 31,
+    red_light      = 91,
+    green          = 32,
+    green_light    = 92, 
+    yellow         = 33, 
+    yellow_bright  = 93, 
+    
+    blue           = 34,
+    blue_bright    = 94,
+    magenta        = 35,
+    magenta_bright = 95,
+    cyan           = 36,
+    cyan_light     = 96, 
+    
+    white          = 37,
+    white_light    = 97 
+};
+
+
 Logger::Logger( 
             bool use_cerr, //std::ostream& os,
             const bool do_newline,
@@ -46,10 +72,14 @@ Logger::~Logger()
     
     for( int c = 0; c < str.size(); c++ )
     {
-
+        // "\033[46m %3d\033[m"
         if( use_prefix_next ) { 
             use_prefix_next = false;
-            fprintf( f, "[%s]\t", prefix.c_str() );
+            #ifdef USE_COLORED_OUTPUT
+            fprintf( f, "\033[96m[%s %s %4u]\033[m\t", prefix.c_str(), filename.c_str(), linenumber );
+            #else 
+            fprintf( f, "[%s %s %4u]\t", prefix.c_str(), filename.c_str(), linenumber );
+            #endif 
         }
         
         auto character = str.at(c);
@@ -105,6 +135,7 @@ OpenMP_Reporter::OpenMP_Reporter()
     LOG << "OpenMP Reporter: started\n";
     LOG << "\tOpenMP Value: " << _OPENMP << nl;
     LOG << "\tMaximum number of threads: " << omp_get_max_threads() << nl;
+    LOG << "\tThread limit: " << omp_get_thread_limit() << nl;
     // LOG << "\tMaximum number of processors: " << p << " - > " << omp_get_place_num_procs() << nl;
     LOG << "\tMaximum number of places: " << omp_get_num_places() << nl;
     for( int p = 0; p < omp_get_num_places(); p++ ) {

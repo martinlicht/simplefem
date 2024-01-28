@@ -106,7 +106,7 @@ class Logger //: public std::ostringstream
         //     return *this;
         // }
     
-    // Logger& operator<<( intmax_t input ) {
+        // Logger& operator<<( intmax_t input ) {
         //     char buffer[ sizeof(decltype(input)) * 3 + 1 + 1 ];
         //     std::snprintf( buffer, sizeof(buffer), "%jd", input );
         //     internal += buffer;

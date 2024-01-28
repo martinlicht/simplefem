@@ -252,3 +252,90 @@ SparseMatrix FEECBrokenWedgeMatrix( const Mesh& mesh, int n, int k, int r , int 
 
 
 
+
+
+
+
+
+
+
+
+
+
+SparseMatrix FEECBrokenHodgeMatrix( const Mesh& mesh, int n, int k, int r )
+{
+    
+    // check whether the parameters are right 
+    // only lowest order here
+    
+    assert( r >= 0 );
+    assert( n >= 0 && n <= mesh.getinnerdimension() );
+    assert( k >= 0 && k <= n );
+    assert( binomial_integer( n+r, n ) == binomial_integer( n+r, r ) );
+    
+    // Auxiliary calculations and preparations
+    
+    const int num_simplices = mesh.count_simplices( n );
+        
+    const int localdim = binomial_integer( n+r, n ) * binomial_integer( n+1, k );
+    
+    const int dim_in      = num_simplices * localdim;
+    const int dim_out     = num_simplices * localdim;
+    const int num_entries = num_simplices * localdim * localdim;
+    
+    SparseMatrix ret( dim_out, dim_in, num_entries );
+    
+    DenseMatrix polyMM = polynomialmassmatrix( n, r );
+
+    assert( polyMM.issquare() and polyMM.getdimin() == binomial_integer( n+r, n ) );
+    
+//     LOG << polyMM << nl;
+        
+    #if defined(_OPENMP)
+    #pragma omp parallel for
+    #endif
+    for( int s = 0; s < num_simplices; s++ )
+    {
+        
+        Float measure      = mesh.getMeasure( n, s );
+
+        DenseMatrix GPM    = mesh.getGradientProductMatrix( n, s );
+            
+        assert( ( GPM - calcAtA(mesh.getGradientMatrix( n, s )) ).issmall() );
+        
+        DenseMatrix formMM = SubdeterminantMatrix( GPM, k );
+    
+        DenseMatrix fullMM = MatrixTensorProduct( polyMM, formMM ) * measure;
+
+        assert( measure >= 0. );
+
+        if( k == 0 )
+        {
+            assert( ( fullMM - polyMM * measure ).issmall() );
+        }
+        
+        // LOG << measure << nl;
+        
+        // LOG << formMM << nl;
+        
+        // LOG << fullMM << nl;
+        
+        for( int i = 0; i < localdim; i++ )
+        for( int j = 0; j < localdim; j++ )
+        {
+            int index_of_entry = s * localdim * localdim + i * localdim + j;
+            
+            SparseMatrix::MatrixEntry entry;
+            entry.row    = s * localdim + i;
+            entry.column = s * localdim + j;
+            entry.value  = fullMM( i, j );
+            
+            ret.setentry( index_of_entry, entry );
+        }
+        
+        
+        
+    }
+    
+    return ret;
+}
