@@ -25,7 +25,7 @@ SparseMatrix BrokenTraceMatrix( const Mesh& mesh, int n, int k, int r, bool is_s
 {
     
     // TODO: catch the border cases r <= 0 or k >= n
-    
+    /*
     const std::vector<MultiIndex>& multis_src  = generateMultiIndices( IndexRange( 0, n ), r );
     const std::vector<MultiIndex>& multis_dest = generateMultiIndices( IndexRange( 0, n ), r-1 );
     
@@ -60,6 +60,7 @@ SparseMatrix BrokenTraceMatrix( const Mesh& mesh, int n, int k, int r, bool is_s
     }
     
     return ret;
+    */
     
 }
 
