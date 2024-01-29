@@ -10,7 +10,7 @@ including compiler, linker, debug software, etc...
 It also outputs the C++ version.
 */
 
-int main()
+int main( int argc, char *argv[] )
 {
     cout << "Hello World! " << endl;
                 

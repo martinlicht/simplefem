@@ -37,6 +37,8 @@ int main( int argc, char** argv ) {
 
     savePixelImage(pim,"reverse.tiff");
 
+    LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
+        
     return 0;
 
 }

@@ -4,15 +4,20 @@
 
 #include <ostream>
 #include <fstream>
+// #include <iomanip>
 
 #include "../../basic.hpp"
-#include "../../utility/convergencetable.hpp"
+#include "../../utility/utility.hpp"
 #include "../../operators/composedoperators.hpp"
+// #include "../../operators/composed.hpp"
+#include "../../dense/densematrix.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
+#include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
 #include "../../vtk/vtkwriter.hpp"
+#include "../../solver/nullspace.hpp"
 #include "../../solver/sparsesolver.hpp"
 #include "../../solver/iterativesolver.hpp"
 // #include "../../solver/cgm.hpp"
@@ -22,7 +27,7 @@
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
-#include "../../fem/global.whitneyincl.hpp"
+#include "../../fem/global.sullivanincl.hpp"
 #include "../../fem/utilities.hpp"
 
 
@@ -66,7 +71,7 @@ int main( int argc, char *argv[] )
             LOG << "Nullspace computation" << nl;
 
             
-            ConvergenceTable contable("Nullvectors found");
+            ConvergenceTable contable("Mass error");
             
             contable << "#nullvec";
                         
@@ -98,7 +103,7 @@ int main( int argc, char *argv[] )
                 for( int r = min_r; r <= max_r; r++ )
                 {
                     
-                    LOG << "Polynomial degree: " << r << "/" << max_r << nl;
+                    LOG << "Polynomial degree: " << r << nl;
                     
                     LOG << "...assemble matrices" << nl;
             
@@ -116,7 +121,7 @@ int main( int argc, char *argv[] )
 
                     LOG << "...assemble inclusion matrix and transpose" << nl;
             
-                    SparseMatrix incmatrix = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 0, r );
+                    SparseMatrix incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r );
 
                     SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
@@ -148,11 +153,17 @@ int main( int argc, char *argv[] )
                     
 //                     LOG << SystemMatrix << nl;
                     
-                    std::vector<FloatVector> nullvectorgallery;
+                    // const auto& mass = physical_mass;
+                    const auto& mass = IdentityMatrix(physical_mass.getdimin());
+
+                    std::vector<FloatVector> nullvectorgallery
+                    = computeNullspace( SystemMatrix, physical_mass,
+                                        max_number_of_candidates,
+                                        desired_precision, 
+                                        1e-6
+                                      );
                     
-                    const auto& mass = physical_mass;
-//                     const auto& mass = IdentityMatrix(physical_mass.getdimin());
-                    
+                    if(false)
                     for( int no_candidate = 0; no_candidate < max_number_of_candidates; no_candidate++ )
                     {
                         
@@ -280,6 +291,7 @@ int main( int argc, char *argv[] )
                     
                     LOG << "How much nullspace are our vectors?" << nl;
                     for( const auto& nullvector : nullvectorgallery ) {
+                        LOGPRINTF( "% 10.5e\t", ( SystemMatrix * nullvector ).norm(mass) );
                         // LOG << std::showpos << std::scientific << std::setprecision(5) << std::setw(10) << ( SystemMatrix * nullvector ).norm(mass) << tab;
                     }
                     LOG << nl;
@@ -287,6 +299,7 @@ int main( int argc, char *argv[] )
                     LOG << "How orthonormal are our vectors?" << nl;
                     for( const auto& nullvector1 : nullvectorgallery ) {
                         for( const auto& nullvector2 : nullvectorgallery ) {
+                            LOGPRINTF( "% 10.5e\t", mass * nullvector1 * nullvector2 );
                             // LOG << std::showpos << std::scientific << std::setprecision(5) << std::setw(10) << mass * nullvector1 * nullvector2 << tab;
                         }
                         LOG << nl;
@@ -294,6 +307,22 @@ int main( int argc, char *argv[] )
                     
                     
                     contable << static_cast<Float>(nullvectorgallery.size());   
+
+                    if( r == 1 )
+                    for( const auto& nullvector : nullvectorgallery )
+                    {
+                
+                        fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
+            
+                        VTKWriter vtk( M, fs, getbasename(__FILE__) );
+                        vtk.writeCoordinateBlock();
+                        vtk.writeTopDimensionalCells();
+                        
+                        vtk.writeVertexScalarData( nullvector,  "nullvector" , 1.0 );
+                        
+                        fs.close();
+                
+                    }
                     
                     
                     
@@ -333,21 +362,6 @@ int main( int argc, char *argv[] )
 //                         contable << sol.norm( mass ) << ( SystemMatrix * sol ).norm( mass );
 //                         
 //                         
-//                         if( r == 1 ) {
-//                     
-//                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
-//                 
-//                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
-//                             vtk.writeCoordinateBlock();
-//                             vtk.writeTopDimensionalCells();
-//                             
-//                             vtk.writeVertexScalarData( sol,  "data1" , 1.0 );
-// //                             vtk.writeVertexScalarData( sol2, "data2" , 1.0 );
-//                             // vtk.writeCellVectorData( interpol_grad, "gradient_interpolation" , 0.1 );
-//                             
-//                             fs.close();
-//                     
-//                         }
 // 
 //                             
 //                             
@@ -381,3 +395,155 @@ int main( int argc, char *argv[] )
 
 
 
+
+//                      {
+// 
+//                         FloatVector sol_original( opr.getdimin(), 0. );
+//                         FloatVector rhs_original( opr.getdimin(), 0. );
+//                         
+//                         sol_original.random(); sol_original.normalize( mass );
+//                         rhs_original.random(); rhs_original.normalize( mass );
+//                         
+//                         if(false)
+//                         {
+//                             LOG << "Filter out from x (CGM)" << nl;
+//                         
+//                             FloatVector sol( sol_original );
+//                             FloatVector rhs( rhs_original.getdimension(), 0. );
+//                             FloatVector residual( rhs );
+//                             
+//                             assert( sol.isfinite() );
+//                             
+//                             
+//                             ConjugateGradientSolverCSR( 
+//                                 sol.getdimension(), 
+//                                 sol.raw(), 
+//                                 rhs.raw(), 
+//                                 SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
+//                                 residual.raw(),
+//                                 machine_epsilon,
+//                                 1
+//                             );
+//                             sol.normalize( mass );
+//                             
+//                             assert( sol.isfinite() );
+//                             
+//                             LOG << "\t\t\t x_0:       " << sol_original.norm( mass ) << nl;
+//                             LOG << "\t\t\t Ax_0:      " << ( SystemMatrix * sol_original ).norm( mass ) << nl;
+//                             LOG << "\t\t\t b - Ax_0:  " << ( SystemMatrix * sol_original - rhs ).norm( mass ) << nl;
+//                             
+//                             LOG << "\t\t\t x:         " << sol.norm( mass ) << nl;
+//                             LOG << "\t\t\t Ax:        " << ( SystemMatrix * sol ).norm( mass ) << nl;
+//                             LOG << "\t\t\t b - Ax:    " << ( SystemMatrix * sol - rhs ).norm( mass ) << nl;
+//                             
+//                             contable << sol.norm( mass ) << ( SystemMatrix * sol ).norm( mass );
+//                             
+//                             
+//                             FloatVector sol2( sol_original );
+//                             sol2.random();
+//                             FloatVector rhs2( rhs_original.getdimension(), 0. );
+//                             FloatVector residual2( rhs );
+//                             
+//                             ConjugateGradientSolverCSR( 
+//                                 sol2.getdimension(), 
+//                                 sol2.raw(), 
+//                                 rhs2.raw(), 
+//                                 SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
+//                                 residual2.raw(),
+//                                 machine_epsilon,
+//                                 1
+//                             );
+//                             sol2.normalize( mass );
+//                             
+//                             
+//                             
+//                             
+//                             if( r == 1 ) {
+//                         
+//                                 fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
+//                     
+//                                 VTKWriter vtk( M, fs, getbasename(__FILE__) );
+//                                 vtk.writeCoordinateBlock();
+//                                 vtk.writeTopDimensionalCells();
+//                                 
+//                                 vtk.writeVertexScalarData( sol,  "data1" , 1.0 );
+//                                 vtk.writeVertexScalarData( sol2, "data2" , 1.0 );
+//                                 // vtk.writeCellVectorData( interpol_grad, "gradient_interpolation" , 0.1 );
+//                                 
+//                                 fs.close();
+//                         
+//                             }
+// 
+//                             
+//                             
+//                         }
+// 
+//                         if(false)
+//                         {
+//                             LOG << "Filter out from x (CRM)" << nl;
+//                         
+//                             FloatVector sol( sol_original );
+//                             FloatVector rhs( rhs_original.getdimension(), 0. );
+//                             FloatVector residual( rhs );
+//                             
+//                             ConjugateResidualSolverCSR( 
+//                                 sol.getdimension(), 
+//                                 sol.raw(), 
+//                                 rhs.raw(), 
+//                                 SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
+//                                 residual.raw(),
+//                                 machine_epsilon,
+//                                 0
+//                             );
+//                             sol.normalize( mass );
+//                             
+//                             LOG << "\t\t\t x_0:       " << sol_original.norm( mass ) << nl;
+//                             LOG << "\t\t\t Ax_0:      " << ( SystemMatrix * sol_original ).norm( mass ) << nl;
+//                             LOG << "\t\t\t b - Ax_0:  " << ( SystemMatrix * sol_original - rhs ).norm( mass ) << nl;
+//                             
+//                             LOG << "\t\t\t x:         " << sol.norm( mass ) << nl;
+//                             LOG << "\t\t\t Ax:        " << ( SystemMatrix * sol ).norm( mass ) << nl;
+//                             LOG << "\t\t\t b - Ax:    " << ( SystemMatrix * sol - rhs ).norm( mass ) << nl;
+//                             
+//                             contable << sol.norm( mass ) << ( SystemMatrix * sol ).norm( mass );
+//                         }
+// 
+//                         if(false)
+//                         {
+//                             LOG << "Filter out from b" << nl;
+//                         
+//                             FloatVector sol( sol_original.getdimension(), 0. );
+//                             FloatVector rhs( rhs_original );
+//                             FloatVector residual( rhs );
+//                             
+//                             ConjugateResidualSolverCSR_textbook( 
+//                                 sol.getdimension(), 
+//                                 sol.raw(), 
+//                                 rhs.raw(), 
+//                                 SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
+//                                 residual.raw(),
+//                                 desired_precision,
+//                                 0
+//                             );
+//                             residual.normalize( mass );
+//                             
+//                             LOG << "\t\t\t b:       " << rhs_original.norm( mass ) << nl;
+//                             LOG << "\t\t\t Ab:      " << ( SystemMatrix * rhs ).norm( mass ) << nl;
+//                             
+//                             LOG << "\t\t\t r:       " << residual.norm( mass ) << nl;
+//                             LOG << "\t\t\t Ar:      " << ( SystemMatrix * residual ).norm( mass ) << nl;
+//                             
+//                             LOG << "\t\t\t Ar:      " << ( SystemMatrix * ( rhs - SystemMatrix * sol ) ).norm( mass ) << nl;
+//                             
+//                             contable << sol.norm( mass ) << ( SystemMatrix * sol ).norm( mass );
+//                         }
+// 
+//                         
+// 
+//                         
+//                         
+//                         contable << nl;
+//                         
+//                         contable.lg( false );
+// 
+//                     }

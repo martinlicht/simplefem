@@ -24,7 +24,7 @@
 
 using namespace std;
 
-int main()
+int main( int argc, char *argv[] )
 {
     
     LOG << "Unit Test for Solution of Darcy Problem" << nl;
@@ -272,7 +272,7 @@ int main()
     } 
 
     
-    LOG << "Finished Unit Test" << nl;
+    LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
     
     return 0;
 }

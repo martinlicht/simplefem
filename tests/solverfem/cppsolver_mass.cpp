@@ -20,7 +20,7 @@
 #include "../../fem/utilities.hpp"
 
 
-int main()
+int main( int argc, char *argv[] )
 {
         
         LOG << "Unit Test: Compare numerical solvers CRM vs MINRES\n           for Solution of Dirichlet Problem" << nl;
@@ -415,7 +415,7 @@ int main()
         
         
         
-        LOG << "Finished Unit Test" << nl;
+        LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
         
         return 0;
 }

@@ -4,7 +4,7 @@
 #include "../../mesh/mesh.simplicialND.hpp"
 #include "../../mesh/examplesND.hpp"
 
-int main()
+int main( int argc, char *argv[] )
 {
     LOG << "Unit Test for N-dimensional simplicial mesh\n";
     WARNING "NOTHING IMPLEMENTED YET";
@@ -15,7 +15,7 @@ int main()
     //     M.check();
     //     LOG << "Check done" << nl;
     //     LOG << M << nl;
-    //     LOG << "Finished Unit Test" << nl;
+    //     LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
 
     return 0;
 }
