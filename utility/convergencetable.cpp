@@ -21,10 +21,10 @@ ConvergenceTable::ConvergenceTable( std::string table_name )
 }
         
 
-void ConvergenceTable::insert_numerical_entry( Float entry )
+void ConvergenceTable::insert_numerical_entry( EntryType entry )
 {
     if( make_new_row ) {
-        entries.push_back( std::vector<Float>(0) );
+        entries.push_back( std::vector<EntryType>(0) );
         make_new_row = false;
     }
     
@@ -561,7 +561,7 @@ ConvergenceTable& ConvergenceTable::operator<<( char code )
 //             
 //         }
 
-        // Float get_convergence_rate( int row, int column )
+        // EntryType get_convergence_rate( int row, int column )
         // {
         //     assert( 0 <= row );
         //     assert( row < entries.size() );
@@ -569,7 +569,7 @@ ConvergenceTable& ConvergenceTable::operator<<( char code )
         //     assert( 0 <= column );
         //     assert( column < entries[row].size() );
         //     assert( column < entries[row-1].size() );
-        //     Float ret = std::log2( entries[row-1][column] / entries[row][column] );
+        //     EntryType ret = std::log2( entries[row-1][column] / entries[row][column] );
         //     return ret;
         // }
 

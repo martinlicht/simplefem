@@ -332,7 +332,7 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 	# CXXFLAGS_WARNINGS += -Wold-style-cast
 	
 	
-	CXXFLAGS_WARNINGS += -Wdouble-promotion
+	CXXFLAGS_WARNINGS += -Wno-double-promotion
 
 
 	# CXXFLAGS_WARNINGS += -Wlifetime
@@ -351,7 +351,7 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 		CXXFLAGS_WARNINGS += -Wmultiple-inheritance -Wvirtual-inheritance
 		CXXFLAGS_WARNINGS += -Wpointer-arith
 		CXXFLAGS_WARNINGS += -Wreturn-local-addr
-		CXXFLAGS_WARNINGS += -Wfloat-equal -Wdouble-promotion -Wfloat-conversion
+		CXXFLAGS_WARNINGS += -Wfloat-equal -Wno-double-promotion -Wfloat-conversion
 		CXXFLAGS_WARNINGS += -Wno-sign-compare
 		CXXFLAGS_WARNINGS += -Wconversion 
 		CXXFLAGS_WARNINGS += -Wsign-promo 

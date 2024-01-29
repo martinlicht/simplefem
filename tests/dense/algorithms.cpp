@@ -233,7 +233,6 @@ int main( int argc, char *argv[] )
     
     {
         LOG << "6. Unit Test for Gauss Jordan algorithm" << nl;
-        if(false)
         for( int i = 0; i < 6; i++ )
         {
             
