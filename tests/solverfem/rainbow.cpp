@@ -9,7 +9,7 @@
 #include "../../fem/global.massmatrix.hpp"
 
 
-int main()
+int main( int argc, char *argv[] )
 {
     LOG << "Unit test: (3D) CSR-matrix rainbow partition" << nl;
     
@@ -46,7 +46,7 @@ int main()
     LOG << "Number of colors:  " << rainbow.num_colors << nl;
     LOG << "Rough Lower bound: " << binomial_integer( 3+r, r ) << nl;
 
-    LOG << "Finished Unit Test" << nl;
+    LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
     
     return 0;
 }

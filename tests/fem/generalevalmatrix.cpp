@@ -10,7 +10,7 @@
 
 using namespace std;
 
-int main()
+int main( int argc, char *argv[] )
 {
         LOG << "Unit Test: Evaluation Matrix and its Invertibility" << nl;
         
@@ -47,7 +47,7 @@ int main()
             
         }
         
-        LOG << "Finished Unit Test" << nl;
+        LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
         
         
         return 0;

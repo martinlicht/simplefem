@@ -21,7 +21,7 @@ using namespace std;
 
 
 
-int main()
+int main( int argc, char *argv[] )
 {
     LOG << "Output of a few important meshes" << nl;
     
@@ -127,7 +127,7 @@ int main()
     }
         
     
-    LOG << "Finished Unit Test" << nl;
+    LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
 
     return 0;
 }

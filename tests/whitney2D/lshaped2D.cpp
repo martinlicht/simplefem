@@ -25,12 +25,13 @@
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.whitneyincl.hpp"
 #include "../../fem/global.elevation.hpp"
+#include "../../fem/global.interpol.hpp"
 #include "../../fem/utilities.hpp"
 
 
 using namespace std;
 
-int main()
+int main( int argc, char *argv[] )
 {
         
         LOG << "Unit Test: 2D Maxwell System" << nl;
@@ -149,9 +150,9 @@ int main()
                     auto B  = MatrixCSR( mat_B  );
                     auto C  = MatrixCSR( mat_C  );
 
-                    auto negA  = A;  negA.scale(-1);
-                    auto negB  = B;  negB.scale(-1);
-                    auto negBt = Bt; negBt.scale(-1);
+                    // auto negA  = A;  negA.scale(-1);
+                    // auto negB  = B;  negB.scale(-1);
+                    // auto negBt = Bt; negBt.scale(-1);
                     
                     auto SystemMatrix = C + B * inv(A,desired_precision) * Bt;
                     
@@ -212,12 +213,11 @@ int main()
 
                         LOG << "...compute error and residual:" << nl;
 
-                        Float residualnorm      = ( rhs - B * inv(A,1e-14) * Bt * sol - C * sol ).norm();
+                        Float residualnorm = ( rhs - B * inv(A,1e-14) * Bt * sol - C * sol ).norm();
 
                         LOG << "residual:   " << residualnorm  << nl;
 
-                        
-                        auto computed_sol  = vector_incmatrix * sol;
+                        auto computed_sol = vector_incmatrix * sol;
                         
                         if( r == 1 ){
                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
@@ -225,7 +225,11 @@ int main()
                             vtk.writeCoordinateBlock();
                             vtk.writeTopDimensionalCells();
 
-                            vtk.writeCellVectorData_Whitney( computed_sol,  "solution_calculation" );
+                            auto converter = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r );
+
+                            auto printed_sol = converter * computed_sol;
+
+                            vtk.writeCellVectorData_Whitney( printed_sol,  "solution_calculation" );
                             fs.close();
                         }
 
@@ -243,7 +247,7 @@ int main()
         
         
         
-        LOG << "Finished Unit Test" << nl;
+        LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
         
         return 0;
 }

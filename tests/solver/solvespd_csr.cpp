@@ -23,7 +23,7 @@ extern const char* TestName;
 
 TESTNAME( "Solve SPD system: CSR Solvers" );
 
-int main()
+int main( int argc, char *argv[] )
 {
         LOG << "Unit Test: " << TestName << nl;
         

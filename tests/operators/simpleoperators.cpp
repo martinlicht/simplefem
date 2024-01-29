@@ -6,7 +6,7 @@
 
 
 
-int main()
+int main( int argc, char *argv[] )
 {
         LOG << "Unit Test for Simple operator" << nl;
         
@@ -74,7 +74,7 @@ int main()
                 LOG << "Now the product of diagonal operators: " << nl;
                 LOG << D * D << nl;
                 
-                LOG << "Finished Unit Test" << nl;
+                LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
 
         }
         
@@ -103,11 +103,11 @@ int main()
                 LOG << "Apply the Lambda operator:" << nl;
                 LOG << L * x << nl;
                 
-                LOG << "Finished Unit Test" << nl;
+                LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
 
         }
         
-        LOG << "Finished Unit Test" << nl;
+        LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
 
         return 0;
 }

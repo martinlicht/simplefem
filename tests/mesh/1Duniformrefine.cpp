@@ -7,7 +7,7 @@
 
 using namespace std;
 
-int main()
+int main( int argc, char *argv[] )
 {
     LOG << "Unit Test for Manifold 1D Module" << nl;
 
@@ -29,7 +29,7 @@ int main()
         M.improved_uniformrefinement();
     }
     
-    LOG << "Finished Unit Test" << nl;
+    LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
 
     return 0;
 }

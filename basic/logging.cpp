@@ -75,11 +75,11 @@ Logger::~Logger()
         // "\033[46m %3d\033[m"
         if( use_prefix_next ) { 
             use_prefix_next = false;
+            std::string formatstring("[%s %s %4u]\t");
             #ifdef USE_COLORED_OUTPUT
-            fprintf( f, "\033[96m[%s %s %4u]\033[m\t", prefix.c_str(), filename.c_str(), linenumber );
-            #else 
-            fprintf( f, "[%s %s %4u]\t", prefix.c_str(), filename.c_str(), linenumber );
+            formatstring = "\033[96m" + formatstring + "\033[m";
             #endif 
+            fprintf( f, formatstring.c_str(), prefix.c_str(), filename.c_str(), linenumber );
         }
         
         auto character = str.at(c);

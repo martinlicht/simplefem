@@ -4,11 +4,11 @@
 
 #include "../../basic.hpp"
 #include "../../operators/composedoperators.hpp"
-#include "../../mesh/mesh.simplicial1D.hpp"
-#include "../../mesh/examples1D.hpp"
+#include "../../mesh/mesh.simplicial2D.hpp"
+#include "../../mesh/examples2D.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
-#include "../../fem/global.elevation.hpp"
+#include "../../fem/global.veewedgehodge.hpp"
 #include "../../fem/utilities.hpp"
 #include "../../utility/convergencetable.hpp"
 
@@ -18,13 +18,11 @@ using namespace std;
 int main( int argc, char *argv[] )
 {
         
-        LOG << "Unit Test: (1D) degree elevations commute" << nl;
+        LOG << "Unit Test: (2D) degree elevations commute" << nl;
         
-        // LOG << std::setprecision(10);
-
         LOG << "Initial mesh..." << nl;
         
-        auto M = UnitInterval1D();
+        auto M = UnitSquare2D();
         
         M.check();
         
@@ -32,11 +30,11 @@ int main( int argc, char *argv[] )
 
         const int r_min = 0;
         
-        const int r_max = 5;
+        const int r_max = 2;
         
         const int l_min = 0;
         
-        const int l_max = 4;
+        const int l_max = 2;
         
         const int number_of_samples = 3;
         
@@ -63,26 +61,35 @@ int main( int argc, char *argv[] )
 
                 LOG << "assemble matrices..." << nl;
         
-                SparseMatrix elevation_r_1 = FEECBrokenElevationMatrix( M, M.getinnerdimension(), k, r  , 1 );
-                SparseMatrix elevation_r_2 = FEECBrokenElevationMatrix( M, M.getinnerdimension(), k, r+1, 1 );
-                SparseMatrix elevation_r_3 = FEECBrokenElevationMatrix( M, M.getinnerdimension(), k, r+2, 1 );
-                SparseMatrix elevation_r_g = FEECBrokenElevationMatrix( M, M.getinnerdimension(), k, r  , 3 );
+                SparseMatrix broken_mass_matrix        = FEECBrokenMassMatrix ( M, M.getinnerdimension(),   k, r );
+                SparseMatrix broken_hodge_matrix       = FEECBrokenHodgeMatrix( M, M.getinnerdimension(),   k, r );
+                SparseMatrix broken_mass_hodged_matrix = FEECBrokenMassMatrix ( M, M.getinnerdimension(), 2-k, r );
+                
+                assert( broken_hodge_matrix.getdimin()  == broken_mass_matrix.getdimin()  );
+                assert( broken_hodge_matrix.getdimout() == broken_mass_hodged_matrix.getdimout() );
+
+                assert( broken_mass_matrix.isfinite() );
+                assert( broken_hodge_matrix.isfinite() );
                 
                 errors[k][ l ][ r ] = 0.;
                 
                 for( int i = 0; i < number_of_samples; i++ ){
 
-                    auto field = elevation_r_g.createinputvector();
+                    auto field = broken_hodge_matrix.createinputvector();
                     field.random();
                     field.normalize();
                     
                     assert( field.isfinite() );
+
+                    const auto hodged_field = broken_hodge_matrix * field;
                     
-                    const auto path_direct   = elevation_r_g * field;
+                    Float mass        = field * ( broken_mass_matrix * field );
                     
-                    const auto path_indirect = elevation_r_3 * elevation_r_2 * elevation_r_1 * field;
+                    Float hodged_mass = hodged_field * ( broken_mass_hodged_matrix * hodged_field );
                     
-                    const auto error_mass = ( path_direct - path_indirect ).norm();
+                    const auto error_mass = absolute( mass - hodged_mass );
+
+                    LOG << mass << space << hodged_mass << space << hodged_mass / mass << space << error_mass << nl;
                     
                     errors[k][l-l_min][r-r_min] = maximum( errors[k][l-l_min][r-r_min], error_mass );
                     
@@ -106,7 +113,7 @@ int main( int argc, char *argv[] )
         ConvergenceTable contables[ M.getinnerdimension()+1 ];
         
         for( int k = 0; k <= M.getinnerdimension(); k++ ) 
-            contables[k].table_name = "Rounding errors D1K" + std::to_string(k);
+            contables[k].table_name = "Rounding errors D2K" + std::to_string(k);
         for( int k = 0; k <= M.getinnerdimension(); k++ ) 
         for( int r = r_min; r <= r_max; r++ ) 
             contables[k] << ( "R" + std::to_string(r) );
