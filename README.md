@@ -32,9 +32,9 @@ Finite element features:
  - [x] uniform mesh refinement and longest edge bisection
  - [x] Whitney and Sullivan k-forms of any polynomial degree in any dimension
  - [x] Exterior derivative
- [ ] Traces
+   [ ] Traces
  - [x] Exterior and interior products
- [ ] Metric linear operations such as mass operator and Hodge star operator 
+ - [x] Metric linear operations such as mass operator and Hodge star operator 
  - [x] Mass matrices with constant or non-uniform coefficients  
  - [ ] Duality-based error error estimators and adaptive strategies
  
