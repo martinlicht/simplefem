@@ -232,9 +232,9 @@ int main()
                     auto B  = MatrixCSR( mat_B  );
                     auto C  = MatrixCSR( mat_C  );
 
-                    auto negA  = A;  negA.scale(-1);
-                    auto negB  = B;  negB.scale(-1);
-                    auto negBt = Bt; negBt.scale(-1);
+                    // auto negA  = A;  negA.scale(-1);
+                    // auto negB  = B;  negB.scale(-1);
+                    // auto negBt = Bt; negBt.scale(-1);
                     
                     auto SystemMatrix = C + B * inv(A,desired_precision) * Bt;
                     
