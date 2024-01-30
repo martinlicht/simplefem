@@ -9,7 +9,7 @@
 
 using namespace std;
 
-int main()
+int main( int argc, char *argv[] )
 {
     cout << "Unit Test and Benchmark for Factorials and Binomials" << nl;
     

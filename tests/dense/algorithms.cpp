@@ -7,7 +7,7 @@
 #include "../../dense/scalarfunctions.hpp"
 
 
-int main()
+int main( int argc, char *argv[] )
 {
     LOG << "Unit Tests for Matrix Algorithms" << nl;
     
@@ -233,7 +233,6 @@ int main()
     
     {
         LOG << "6. Unit Test for Gauss Jordan algorithm" << nl;
-        if(false)
         for( int i = 0; i < 6; i++ )
         {
             
@@ -353,7 +352,7 @@ int main()
 
    
     
-    LOG << "Finished Unit Test" << nl;
+    LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
 
     return 0;
     

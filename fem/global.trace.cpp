@@ -32,6 +32,10 @@ SparseMatrix BrokenTraceMatrix( const Mesh& mesh, int n, int k, int r, bool is_s
     const std::vector<MultiIndex>& multis = generateMultiIndices( IndexRange( 0, n ), r );
     
     const int dim_polynomials = multis.size();
+    // TODO: catch the border cases r <= 0 or k >= n
+    /*
+    const std::vector<MultiIndex>& multis_src  = generateMultiIndices( IndexRange( 0, n ), r );
+    const std::vector<MultiIndex>& multis_dest = generateMultiIndices( IndexRange( 0, n ), r-1 );
     
     const std::vector<IndexMap>& sigmas_cell = generateSigmas( IndexRange( 0, k ), IndexRange( 0, n   ) );
     const std::vector<IndexMap>& sigmas_face = generateSigmas( IndexRange( 0, k ), IndexRange( 0, n-1 ) );
@@ -89,6 +93,7 @@ SparseMatrix BrokenTraceMatrix( const Mesh& mesh, int n, int k, int r, bool is_s
 
     
     return ret;
+    */
     
 }
 

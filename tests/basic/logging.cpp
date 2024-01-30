@@ -10,7 +10,7 @@
 
 
 
-int main()
+int main( int argc, char *argv[] )
 {
     
     LOG << "This is a line" << nl;

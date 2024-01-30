@@ -15,7 +15,7 @@ static void f()
 
 volatile long double foo;
 
-int main()
+int main( int argc, char *argv[] )
 {
     
     std::clock_t c_start = std::clock();

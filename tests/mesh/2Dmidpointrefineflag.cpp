@@ -6,7 +6,7 @@
 
 using namespace std;
 
-int main()
+int main( int argc, char *argv[] )
 {
     LOG << "Unit Test for Simplicial 2D Module" << nl;
     
@@ -30,7 +30,7 @@ int main()
 
     M.check_dirichlet_flags();
 
-    LOG << "Finished Unit Test" << nl;
+    LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
     
     return 0;
 }
