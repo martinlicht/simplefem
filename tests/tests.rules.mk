@@ -188,7 +188,7 @@ $($(context).sourcechecks): check-%.cpp :
 .PHONY: tidy $(context).tidy
 tidy: $(context).tidy
 $(context).tidy:
-	clang-tidy $(mycontextdir)/*.?pp --config-file=$(projectdir)/Tools/clang-tidy.yaml -- -std=c++17 -fno-exceptions
+	clang-tidy $(mycontextdir)/*.?pp --config-file=$(projectdir)/.Tools/clang-tidy.yaml -- -std=c++17 -fno-exceptions
 
 
 ########################################################################

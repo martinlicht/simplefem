@@ -132,14 +132,14 @@ OpenMP_Reporter::OpenMP_Reporter()
 {
     
     #if defined(_OPENMP)
-    LOG << "OpenMP Reporter: started\n";
-    LOG << "\tOpenMP Value: " << _OPENMP << nl;
-    LOG << "\tMaximum number of threads: " << omp_get_max_threads() << nl;
-    LOG << "\tThread limit: " << omp_get_thread_limit() << nl;
-    // LOG << "\tMaximum number of processors: " << p << " - > " << omp_get_place_num_procs() << nl;
-    LOG << "\tMaximum number of places: " << omp_get_num_places() << nl;
+    LOG << "###OMP###\tOpenMP Reporter: started\n";
+    LOG << "###OMP###\tOpenMP Value: " << _OPENMP << nl;
+    LOG << "###OMP###\tMaximum number of threads: " << omp_get_max_threads() << nl;
+    LOG << "###OMP###\tThread limit: " << omp_get_thread_limit() << nl;
+    // LOG << "###OMP###\tMaximum number of processors: " << p << " - > " << omp_get_place_num_procs() << nl;
+    LOG << "###OMP###\tMaximum number of places: " << omp_get_num_places() << nl;
     for( int p = 0; p < omp_get_num_places(); p++ ) {
-        LOG << "\t\tMaximum number of processors per place: " << p << " - > " << omp_get_place_num_procs(p) << nl;
+        LOG << "###OMP###\t\tMaximum number of processors per place: " << p << " - > " << omp_get_place_num_procs(p) << nl;
     }
     #endif
 }
@@ -147,7 +147,7 @@ OpenMP_Reporter::OpenMP_Reporter()
 OpenMP_Reporter::~OpenMP_Reporter()
 {
     #if defined(_OPENMP)
-    LOG << "OpenMP Reporter: finished\n";
+    LOG << "###OMP###\tOpenMP Reporter: finished\n";
     #endif
 }
 

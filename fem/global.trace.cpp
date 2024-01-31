@@ -21,7 +21,7 @@
 
 
 
-SparseMatrix BrokenTraceMatrix( const Mesh& mesh, int n, int k, int r, bool is_signed )
+SparseMatrix FEECBrokenTraceMatrix( const Mesh& mesh, int n, int k, int r, bool is_signed )
 {
     
     Assert( 0 <= n );

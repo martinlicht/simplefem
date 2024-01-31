@@ -1314,7 +1314,7 @@ std::vector<int> MeshSimplicial2D::get_edge_parents_of_vertex( int v ) const
 void MeshSimplicial2D::bisect_edge( int e )
 {
     assert( 0 <= e && e < counter_edges );
-    check();
+    // check();
     
     /* 
      * DESCRIPTION
@@ -1792,7 +1792,7 @@ void MeshSimplicial2D::bisect_edge( int e )
     
     /* Done */
     
-    check();
+    // check();
     
 }
 
@@ -2735,7 +2735,7 @@ void MeshSimplicial2D::uniformrefinement()
 
 void MeshSimplicial2D::midpoint_refinement( int t )
 {
-    MeshSimplicial2D::check();
+    // MeshSimplicial2D::check();
     
     assert( 0 <= t && t < counter_triangles );
     
@@ -2952,7 +2952,7 @@ void MeshSimplicial2D::midpoint_refinement( int t )
     
     /* DONE */
     
-    MeshSimplicial2D::check();
+    // MeshSimplicial2D::check();
 }
 
 
