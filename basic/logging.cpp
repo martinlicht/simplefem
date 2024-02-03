@@ -136,7 +136,7 @@ OpenMP_Reporter::OpenMP_Reporter()
     LOG << "###OMP###\tOpenMP Value: " << _OPENMP << nl;
     LOG << "###OMP###\tMaximum number of threads: " << omp_get_max_threads() << nl;
     LOG << "###OMP###\tThread limit: " << omp_get_thread_limit() << nl;
-    // LOG << "###OMP###\tMaximum number of processors: " << p << " - > " << omp_get_place_num_procs() << nl;
+    // LOG << "###OMP###\tMaximum number of processors: " << p << " -> " << omp_get_place_num_procs() << nl;
     LOG << "###OMP###\tMaximum number of places: " << omp_get_num_places() << nl;
     for( int p = 0; p < omp_get_num_places(); p++ ) {
         LOG << "###OMP###\t\tMaximum number of processors per place: " << p << " - > " << omp_get_place_num_procs(p) << nl;

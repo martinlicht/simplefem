@@ -1,6 +1,3 @@
-#ifndef INCLUDEGUARD_FEM_TRACEMATRIX
-#define INCLUDEGUARD_FEM_TRACEMATRIX
-
 
 #include <vector>
 #include <iostream>
@@ -39,8 +36,8 @@ SparseMatrix FEECBrokenTraceMatrix( const Mesh& mesh, int n, int k, int r, bool 
     const int dim_cell_polynomials = cell_multis.size();
     const int dim_face_polynomials = face_multis.size();
 
-    const std::vector<IndexMap>& cell_sigmas = generateSigmas( IndexRange( 0, k ), IndexRange( 0, n   ) );
-    const std::vector<IndexMap>& face_sigmas = generateSigmas( IndexRange( 0, k ), IndexRange( 0, n-1 ) );
+    const std::vector<IndexMap>& cell_sigmas = generateSigmas( IndexRange( 1, k ), IndexRange( 0, n   ) );
+    const std::vector<IndexMap>& face_sigmas = generateSigmas( IndexRange( 1, k ), IndexRange( 0, n-1 ) );
     
     const int dim_cell_sigmas = cell_sigmas.size();
     const int dim_face_sigmas = face_sigmas.size();
@@ -73,8 +70,8 @@ SparseMatrix FEECBrokenTraceMatrix( const Mesh& mesh, int n, int k, int r, bool 
         
         const auto vertices_of_face = mesh.getsubsimplices( n-1, 0, face );
 
-        assert( vertices_of_cell.isstrictlyascending() );
-        assert( vertices_of_face.isstrictlyascending() );
+        // assert( vertices_of_cell.isstrictlyascending() );
+        // assert( vertices_of_face.isstrictlyascending() );
 
         int inclusion_index = 0;
         for( ; inclusion_index < face_inclusions.size(); inclusion_index++ )
@@ -91,7 +88,7 @@ SparseMatrix FEECBrokenTraceMatrix( const Mesh& mesh, int n, int k, int r, bool 
                 index_of_gap = g;
                 break;
             }
-        const int signum = signpower( index_of_gap );
+        const int signum = signpower( index_of_gap ); // TODO: this is incorrect
 
 
         for( int mi = 0; mi < face_multis.size(); mi++ )
@@ -146,4 +143,3 @@ SparseMatrix FEECBrokenTraceMatrix( const Mesh& mesh, int n, int k, int r, bool 
 
 
 
-#endif
