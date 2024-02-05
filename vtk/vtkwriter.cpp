@@ -8,10 +8,12 @@ VTKWriter::VTKWriter( const Mesh& m, std::ostream& os, const std::string& name )
 
 VTKWriter::VTKWriter( const Mesh& m, std::ostream& os, const std::string& name, const FloatVector& z )
 : VTKWriter( m, os, name, [&](int i) -> Float { return z[i]; } )
-{}
+{
+    assert( z.isfinite() );
+}
 
 VTKWriter::VTKWriter( const Mesh& m, std::ostream& os, const std::string& name, const std::function<Float(int)>& func_z )
-: mesh(mesh), os(os), current_stage(Stage::nothing)
+: mesh(m), os(os), current_stage(Stage::nothing)
 {
     mesh.check();
     
@@ -44,10 +46,7 @@ VTKWriter VTKWriter::writePreamble( const std::string& name )
     
     assert( 0 < name.size() and name.size() <= 256 );
     assert( name.find('\n') == std::string::npos );
-    // assert( count_white_space( name ) == 0 );
     
-    
-    // std::ostream& os = std::clog;
     os << "# vtk DataFile Version 3.0" << nl;
     os << name << nl;
     os << "ASCII" << nl;
@@ -67,12 +66,13 @@ VTKWriter VTKWriter::writeCoordinateBlock()
 VTKWriter VTKWriter::writeCoordinateBlock( const FloatVector& z )
 {
     assert( mesh.count_simplices(0) == z.getdimension() );
+    assert( z.isfinite() );
     writeCoordinateBlock( [&](int i)->Float { return z.at(i); } );
     return *this;
 }
         
         
-VTKWriter VTKWriter::writeCoordinateBlock( const std::function<Float(int)>& func_z)
+VTKWriter VTKWriter::writeCoordinateBlock( const std::function<Float(int)>& func_z )
 {
     assert( current_stage == Stage::preamble );
     current_stage = Stage::coordinate;
@@ -166,15 +166,15 @@ VTKWriter VTKWriter::writeTopDimensionalCells()
 VTKWriter VTKWriter::writeVertexScalarData( const std::function<Float(int)>& datafunction, const std::string name, Float scaling )
 {
     assert( current_stage >= Stage::cells );
-    assert( current_stage <= Stage::vertexdata );
+    assert( current_stage <= Stage::fielddata );
     
     assert( 0 < name.size() and name.size() <= 256 );
     assert( name.find('\n') == std::string::npos );
     assert( count_white_space( name ) == 0 );
     
-    if( current_stage != Stage::vertexdata ){
+    if( current_stage != Stage::fielddata ){
         os << "POINT_DATA " << mesh.count_simplices(0) << nl << nl;
-        current_stage = Stage::vertexdata;
+        current_stage = Stage::fielddata;
     }
     
     os << "SCALARS " << name << " double 1" << nl;
@@ -192,7 +192,7 @@ VTKWriter VTKWriter::writeVertexScalarData( const std::function<Float(int)>& dat
 VTKWriter VTKWriter::writeCellScalarData( const std::function<Float(int)>& datafunction, const std::string name, Float scaling )
 {
     assert( current_stage >= Stage::cells );
-    assert( current_stage <= Stage::celldata );
+    assert( current_stage <= Stage::fielddata );
     
     const int topdim = mesh.getinnerdimension();
     
@@ -200,9 +200,9 @@ VTKWriter VTKWriter::writeCellScalarData( const std::function<Float(int)>& dataf
     assert( name.find('\n') == std::string::npos );
     assert( count_white_space( name ) == 0 );
     
-    if( current_stage != Stage::celldata ){
+    if( current_stage != Stage::fielddata ){
         os << "CELL_DATA " << mesh.count_simplices(topdim) << nl << nl;
-        current_stage = Stage::celldata;
+        current_stage = Stage::fielddata;
     }
     
     os << "SCALARS " << name << " double 1" << nl;
@@ -244,6 +244,7 @@ VTKWriter VTKWriter::writeVertexScalarData( const std::function<Float(const Floa
 VTKWriter VTKWriter::writeVertexScalarData( const FloatVector& data, const std::string name, Float scaling )
 {
     assert( data.getdimension() == mesh.count_simplices(0) );
+    assert( data.isfinite() );
 
     auto datafunction = [&](int c) -> Float { return data.at(c); };
 
@@ -273,6 +274,7 @@ VTKWriter VTKWriter::writeCellScalarData( const FloatVector& data, const std::st
     const int topdim = mesh.getinnerdimension();
 
     assert( data.getdimension() == mesh.count_simplices(topdim) );
+    assert( data.isfinite() );
 
     auto datafunction = [&](int c) -> Float { return data.at(c); };
 
@@ -296,7 +298,7 @@ VTKWriter VTKWriter::writeCellScalarData( const FloatVector& data, const std::st
 VTKWriter VTKWriter::writeCellVectorData( const std::function<FloatVector(int)>& datafunction, const std::string name, Float scaling )
 {
     assert( current_stage >= Stage::cells );
-    assert( current_stage <= Stage::celldata );
+    assert( current_stage <= Stage::fielddata );
     
     assert( 0 < name.size() and name.size() <= 256 );
     assert( name.find('\n') == std::string::npos );
@@ -304,9 +306,9 @@ VTKWriter VTKWriter::writeCellVectorData( const std::function<FloatVector(int)>&
     
     const int topdim = mesh.getinnerdimension();
     
-    if( current_stage != Stage::celldata ){
+    if( current_stage != Stage::fielddata ){
         os << "CELL_DATA " << mesh.count_simplices(topdim) << nl << nl;
-        current_stage = Stage::celldata;
+        current_stage = Stage::fielddata;
     }
     
     os << "VECTORS " << name << " double" << nl;
@@ -339,6 +341,11 @@ VTKWriter VTKWriter::writeCellVectorData(
     assert( datax.getdimension() == datay.getdimension() );
     assert( datax.getdimension() == dataz.getdimension() );
     assert( datax.getdimension() == mesh.count_simplices(topdim) );
+
+    assert( datax.isfinite() );
+    assert( datay.isfinite() );
+    assert( dataz.isfinite() );
+
     
     auto datafunction = [&](int c) -> FloatVector { return FloatVector({datax[c],datay[c],dataz[c]}); };
 
@@ -379,7 +386,8 @@ VTKWriter VTKWriter::writeCellVectorData_Whitney( const FloatVector& v, const st
     const int topdim = mesh.getinnerdimension();
     
     assert( v.getdimension() == mesh.count_simplices(topdim) * (mesh.getinnerdimension()+1) );
-        
+    assert( v.isfinite() );
+
     auto datafunction = [&](int c) -> FloatVector {
     
         FloatVector coefficients( topdim+1 );
@@ -402,7 +410,8 @@ VTKWriter VTKWriter::writeCellVectorData_Euclidean( int outerdim, const FloatVec
     const int topdim = mesh.getinnerdimension();
     
     assert( v.getdimension() == mesh.count_simplices(topdim) * (mesh.getinnerdimension()+1) );
-        
+    assert( v.isfinite() );
+   
     auto datafunction = [&](int c) -> FloatVector {    
         return v.getslice( outerdim*c, outerdim );
     };
@@ -415,3 +424,31 @@ VTKWriter VTKWriter::writeCellVectorData_Euclidean( int outerdim, const FloatVec
 
 
 
+VTKWriter VTKWriter::writePointCloud( const DenseMatrix& coords )
+{
+    assert( current_stage <= Stage::fielddata );
+    current_stage = Stage::appendix;
+    
+    assert( coords.getdimin() == 2 or coords.getdimin() == 3 );
+    assert( coords.isfinite() );
+
+
+    os << "DATASET POLYDATA" << nl;
+    os << "POINTS " << coords.getdimout() << " double" << nl;
+    
+    for( int v = 0; v < coords.getdimout(); v++ ) {
+        os << space << coords(v,0);
+        os << space << coords(v,1);
+        if( coords.getdimin() == 3 ) 
+            os << space << coords(v,2);
+        else 
+            os << space << 0.;
+        os << nl;
+    }
+    
+    os << nl;
+
+    return *this;
+}
+
+    

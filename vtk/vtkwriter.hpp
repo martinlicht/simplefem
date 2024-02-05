@@ -44,7 +44,9 @@ class VTKWriter
                                        int outerdim, 
                                        const FloatVector& directions,                                  const std::string name, Float scaling = 1. );
 
-        
+        VTKWriter writePointCloud( const DenseMatrix& coords );
+
+
     private:
         
         VTKWriter writePreamble( const std::string& name );
@@ -61,11 +63,11 @@ class VTKWriter
 
         enum class Stage {
             nothing      = -1,
-            preamble     = 0,
-            coordinate   = 1,
-            cells        = 2,
-            vertexdata   = 3,
-            celldata     = 4 
+            preamble     =  0,
+            coordinate   =  1,
+            cells        =  2,
+            fielddata    =  3,
+            appendix     =  4 
         };
         
         Stage current_stage;
