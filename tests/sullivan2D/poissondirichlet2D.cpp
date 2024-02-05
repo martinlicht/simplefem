@@ -210,8 +210,8 @@ int main( int argc, char *argv[] )
                         if( r == 1 ){
                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
-                            vtk.writeCoordinateBlock();
-                            vtk.writeTopDimensionalCells();
+                            // vtk.writeCoordinateBlock();
+                            // vtk.writeTopDimensionalCells();
 
                             vtk.writeVertexScalarData( sol,                                                          "iterativesolution_scalar_data" );
                             vtk.writeVertexScalarData( [&](FloatVector vec) -> Float{ return function_sol(vec)[0]; }, "interpolated_sol" );

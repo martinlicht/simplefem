@@ -21,16 +21,13 @@ class VTKWriter
     public:
         
         VTKWriter( const Mesh& m, std::ostream& os, const std::string& name );
+        VTKWriter( const Mesh& m, std::ostream& os, const std::string& name, const FloatVector& z );
+        VTKWriter( const Mesh& m, std::ostream& os, const std::string& name, const std::function<Float(int)>& func_z );
         
-        VTKWriter writeCoordinateBlock();
-        VTKWriter writeCoordinateBlock( const FloatVector& );
-        
-        VTKWriter writeTopDimensionalCells();
         
         VTKWriter writeVertexScalarData( const std::function<Float(int)>& datafunction,            const std::string name, Float scaling = 1. );
         VTKWriter writeVertexScalarData( const std::function<Float(const FloatVector&)>& function, const std::string name, Float scaling = 1. );
         VTKWriter writeVertexScalarData( const FloatVector& pointvalues,                           const std::string name, Float scaling = 1. );
-        
         
         VTKWriter writeCellScalarData( const std::function<Float(int)>& datafunction,            const std::string name, Float scaling = 1. );
         VTKWriter writeCellScalarData( const std::function<Float(const FloatVector&)>& function, const std::string name, Float scaling = 1. );
@@ -52,6 +49,13 @@ class VTKWriter
         
         VTKWriter writePreamble( const std::string& name );
     
+        VTKWriter writeCoordinateBlock();
+        VTKWriter writeCoordinateBlock( const FloatVector& );
+        VTKWriter writeCoordinateBlock( const std::function<Float(int)>& );
+        
+        VTKWriter writeTopDimensionalCells();
+        
+        
         const Mesh& mesh;
         std::ostream& os;
 

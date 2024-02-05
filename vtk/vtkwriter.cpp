@@ -2,7 +2,15 @@
 #include "vtkwriter.hpp"
 
 
-VTKWriter::VTKWriter( const Mesh& mesh, std::ostream& os, const std::string& name )
+VTKWriter::VTKWriter( const Mesh& m, std::ostream& os, const std::string& name )
+: VTKWriter( m, os, name, [&](int i) -> Float { return 0.; } )
+{}
+
+VTKWriter::VTKWriter( const Mesh& m, std::ostream& os, const std::string& name, const FloatVector& z )
+: VTKWriter( m, os, name, [&](int i) -> Float { return z[i]; } )
+{}
+
+VTKWriter::VTKWriter( const Mesh& m, std::ostream& os, const std::string& name, const std::function<Float(int)>& func_z )
 : mesh(mesh), os(os), current_stage(Stage::nothing)
 {
     mesh.check();
@@ -15,8 +23,17 @@ VTKWriter::VTKWriter( const Mesh& mesh, std::ostream& os, const std::string& nam
     assert( mesh.subsimplices_listed( mesh.getinnerdimension(), 0 ) );
     
     writePreamble( name );
-    
+
     assert( current_stage == Stage::preamble );
+
+    writeCoordinateBlock( func_z );
+
+    assert( current_stage == Stage::coordinate );
+
+    writeTopDimensionalCells();
+    
+    assert( current_stage == Stage::cells );
+
 }
 
 
@@ -43,79 +60,50 @@ VTKWriter VTKWriter::writePreamble( const std::string& name )
 
 VTKWriter VTKWriter::writeCoordinateBlock()
 {
-    assert( current_stage == Stage::preamble );
-    current_stage = Stage::coordinate;
-    
-    // std::ostream& os = std::clog;
-    os << "POINTS " << mesh.count_simplices(0) << " double" << nl;
-    for( int v = 0; v < mesh.count_simplices(0); v++ )
-      if( mesh.getouterdimension() == 1 ) {
-          os << mesh.getcoordinates().getdata(v,0)
-              << space
-              << 0.0 
-              << space 
-              << 0.0
-              << nl;
-      } else if( mesh.getouterdimension() == 2 ) {
-          os << mesh.getcoordinates().getdata(v,0)
-              << space
-              << mesh.getcoordinates().getdata(v,1) 
-              << space 
-              << 0.0
-              << nl;
-      } else if( mesh.getouterdimension() == 3 ) {
-          os << mesh.getcoordinates().getdata(v,0)
-              << space
-              << mesh.getcoordinates().getdata(v,1) 
-              << space 
-              << mesh.getcoordinates().getdata(v,2) 
-              << nl;
-      } else {
-          LOG << "outer dimension is: " << mesh.getouterdimension() << nl;
-          unreachable();
-      }
+    writeCoordinateBlock( [](int)->Float { return 0.; } );
+    return *this;
+}
         
-    
-    os << nl;
-
+VTKWriter VTKWriter::writeCoordinateBlock( const FloatVector& z )
+{
+    assert( mesh.count_simplices(0) == z.getdimension() );
+    writeCoordinateBlock( [&](int i)->Float { return z.at(i); } );
     return *this;
 }
         
         
-VTKWriter VTKWriter::writeCoordinateBlock( const FloatVector& z )
+VTKWriter VTKWriter::writeCoordinateBlock( const std::function<Float(int)>& func_z)
 {
     assert( current_stage == Stage::preamble );
     current_stage = Stage::coordinate;
     
-    // std::ostream& os = std::clog;
     os << "POINTS " << mesh.count_simplices(0) << " double" << nl;
-    assert( z.getdimension() == mesh.count_simplices(0) );
     
     for( int v = 0; v < mesh.count_simplices(0); v++ )
-      if( mesh.getouterdimension() == 1 ) {
-          os << mesh.getcoordinates().getdata(v,0)
-              << space
-              << 0.0 
-              << space 
-              << z.at(v)
-              << nl;
-      } else if( mesh.getouterdimension() == 2 ) {
-          os << mesh.getcoordinates().getdata(v,0)
-              << space
-              << mesh.getcoordinates().getdata(v,1) 
-              << space 
-              << z.at(v)
-              << nl;
-      } else if( mesh.getouterdimension() == 3 ) {
-          os << mesh.getcoordinates().getdata(v,0)
-              << space
-              << mesh.getcoordinates().getdata(v,1) 
-              << space 
-              << mesh.getcoordinates().getdata(v,2) 
-              << nl;
-      } else {
-          unreachable();
-      }
+        if( mesh.getouterdimension() == 1 ) {
+            os << mesh.getcoordinates().getdata(v,0)
+               << space
+               << 0.0 
+               << space 
+               << func_z(v)
+               << nl;
+        } else if( mesh.getouterdimension() == 2 ) {
+            os << mesh.getcoordinates().getdata(v,0)
+               << space
+               << mesh.getcoordinates().getdata(v,1) 
+               << space 
+               << func_z(v)
+               << nl;
+        } else if( mesh.getouterdimension() == 3 ) {
+            os << mesh.getcoordinates().getdata(v,0)
+               << space
+               << mesh.getcoordinates().getdata(v,1) 
+               << space 
+               << mesh.getcoordinates().getdata(v,2) 
+               << nl;
+        } else {
+            unreachable();
+        }
         
     
     os << nl;
@@ -129,8 +117,6 @@ VTKWriter VTKWriter::writeTopDimensionalCells()
     assert( current_stage == Stage::coordinate);
     current_stage = Stage::cells;
     
-    // std::ostream& os = std::clog;
-    
     int topdim = mesh.getinnerdimension();
     
     assert( 1 <= topdim and topdim <= 3 );
@@ -143,7 +129,8 @@ VTKWriter VTKWriter::writeTopDimensionalCells()
     
     for( int S = 0; S < mesh.count_simplices(topdim); S++ ) {
         os << topdim+1; 
-        for( int i = 0; i <= topdim; i++ ) os << space << mesh.getsubsimplices(topdim,0,S)[i];
+        const auto list_of_vertices = mesh.getsubsimplices(topdim,0,S);
+        for( int i = 0; i <= topdim; i++ ) os << space << list_of_vertices[i];
         os << nl;
     }
     
