@@ -375,8 +375,8 @@ int main( int argc, char *argv[] )
             if( r == 1 ){
                 fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                 VTKWriter vtk( M, fs, getbasename(__FILE__) );
-                vtk.writeCoordinateBlock();
-                vtk.writeTopDimensionalCells();
+                // vtk.writeCoordinateBlock();
+                // vtk.writeTopDimensionalCells();
                 // vtk.writeVertexScalarData( function_aux, "iterativesolution_aux_data" , 1.0 );
                 // vtk.writeCellVectorData( sol, "iterativesolution_data" , 1.0 );
                 vtk.writeCellVectorData( function_sol, "interpolated_sol" , 1.0 );

@@ -14,8 +14,8 @@ inline void internal_print( const Mesh& M, std::string meshname, std::string fil
     fstream fs( experimentfile( basename ), std::fstream::out );
     
     VTKWriter vtk( M, fs, meshname );
-    vtk.writeCoordinateBlock();
-    vtk.writeTopDimensionalCells();
+    // vtk.writeCoordinateBlock();
+    // vtk.writeTopDimensionalCells();
     
     {
         FloatVector V( M.count_simplices(0), 

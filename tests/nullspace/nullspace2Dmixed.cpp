@@ -320,8 +320,8 @@ int main( int argc, char *argv[] )
                         fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
             
                         VTKWriter vtk( M, fs, getbasename(__FILE__) );
-                        vtk.writeCoordinateBlock();
-                        vtk.writeTopDimensionalCells();
+                        // vtk.writeCoordinateBlock();
+                        // vtk.writeTopDimensionalCells();
                         
                         // vtk.writeCellVectorData( nullvector, "nullvector H(div)" , 0.1 );
                         
@@ -370,8 +370,8 @@ int main( int argc, char *argv[] )
 //                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
 //                 
 //                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
-//                             vtk.writeCoordinateBlock();
-//                             vtk.writeTopDimensionalCells();
+//                             // vtk.writeCoordinateBlock();
+//                             // vtk.writeTopDimensionalCells();
 //                             
 //                             vtk.writeVertexScalarData( sol,  "data1" , 1.0 );
 // //                             vtk.writeVertexScalarData( sol2, "data2" , 1.0 );
