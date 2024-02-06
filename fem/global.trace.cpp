@@ -28,7 +28,7 @@ SparseMatrix FEECBrokenTraceMatrix( const Mesh& mesh, int n, int k, int r, bool 
     Assert( 0 <= r );
     Assert( 0 <= k and k <= n );
 
-    // TODO: catch the border cases r <= 0 or k >= n
+    
     
     const std::vector<MultiIndex>& cell_multis = generateMultiIndices( IndexRange( 0, n   ), r );
     const std::vector<MultiIndex>& face_multis = generateMultiIndices( IndexRange( 0, n-1 ), r );
@@ -50,13 +50,20 @@ SparseMatrix FEECBrokenTraceMatrix( const Mesh& mesh, int n, int k, int r, bool 
     
     const int num_entries = num_cells * (n+1) * dim_face_polynomials * dim_face_sigmas;
     
+
+    if( k == n ) {
+        return SparseMatrix( 0, dim_in, 0 );
+    }
+
+
+    
     SparseMatrix ret( dim_out, dim_in, num_entries );
 
     auto face_inclusions = generateSigmas( IndexRange(0,n-1), IndexRange(0,n) );
     
 
     #if defined(_OPENMP)
-    #pragma omp parallel for
+    // #pragma omp parallel for
     #endif
     for( int s  = 0; s  <  num_cells;  s++ )
     for( int fi = 0; fi <=         n; fi++ )
@@ -69,6 +76,17 @@ SparseMatrix FEECBrokenTraceMatrix( const Mesh& mesh, int n, int k, int r, bool 
         const int face = mesh.get_subsimplex( n, n-1, s, fi );
         
         const auto vertices_of_face = mesh.getsubsimplices( n-1, 0, face );
+
+        assert( vertices_of_cell.getSourceRange() == IndexRange(0,n  ) );
+        assert( vertices_of_face.getSourceRange() == IndexRange(0,n-1) );
+        for( int p = 1; p <= n-1; p++ )
+        {
+            int v0 = vertices_of_face[p-1];
+            int v1 = vertices_of_face[p  ];
+            int i0 = mesh.get_subsimplex_index( n, 0, s, v0 );
+            int i1 = mesh.get_subsimplex_index( n, 0, s, v1 );
+            assert( i0 < i1 );
+        }
 
         // assert( vertices_of_cell.isstrictlyascending() );
         // assert( vertices_of_face.isstrictlyascending() );
@@ -88,8 +106,18 @@ SparseMatrix FEECBrokenTraceMatrix( const Mesh& mesh, int n, int k, int r, bool 
                 index_of_gap = g;
                 break;
             }
-        const int signum = signpower( index_of_gap ); // TODO: this is incorrect
 
+        const int extra_signum = ( n == mesh.getouterdimension() ? sign( Determinant( mesh.getTransformationJacobian(n,s) ) ) : 1. );
+
+        const int signum = 
+        signpower( index_of_gap ) 
+        * 
+        extra_signum
+        ;
+
+        assert( signum == 1 or signum == -1 );
+
+        LOG << "--> " << s << tab << fi << tab << signum << tab << extra_signum << nl;
 
         for( int mi = 0; mi < face_multis.size(); mi++ )
         for( int fs = 0; fs < face_sigmas.size(); fs++ )
@@ -127,7 +155,13 @@ SparseMatrix FEECBrokenTraceMatrix( const Mesh& mesh, int n, int k, int r, bool 
             entry.value  = is_signed ? signum : 1.0;
             
 
-            int index_of_entry = s * ( (n+1) * dim_face_polynomials * dim_face_sigmas ) + fi * ( dim_face_polynomials * dim_face_sigmas ) + face_multi_index * dim_face_sigmas + face_sigma_index;
+            int index_of_entry = s * ( (n+1) * dim_face_polynomials * dim_face_sigmas ) 
+                                 + 
+                                 fi * ( dim_face_polynomials * dim_face_sigmas ) 
+                                 + 
+                                 face_multi_index * dim_face_sigmas 
+                                 + 
+                                 face_sigma_index;
             // num_cells * (n+1) * dim_face_polynomials * dim_face_sigmas;
 
             ret.setentry( index_of_entry, entry );

@@ -54,43 +54,38 @@ auto digitalcodenow() -> std::string;
 Logger::~Logger()
 {
     
-    //FILE* f = stderr; //use_cerr ? stderr : stdout;
     FILE* f = ( use_cerr ? stderr : stdout );
     
-    // const auto str = this->str();
     const auto& str = internal;
     
     bool use_prefix_next  = log_has_a_fresh_line;
     
-    if( str.empty() ) {
-        // internalstream << prefix;
-        // std::cout << "\nEMPTY\n";
-        return;
-    }
+    
+    if( str.empty() ) return;
 
+    
     std::string prefix = digitalcodenow(); 
     
     for( int c = 0; c < str.size(); c++ )
     {
-        // "\033[46m %3d\033[m"
+    
         if( use_prefix_next ) { 
+    
             use_prefix_next = false;
+    
             std::string formatstring("[%s %s %4u]\t");
             #ifdef USE_COLORED_OUTPUT
             formatstring = "\033[96m" + formatstring + "\033[m";
             #endif 
             fprintf( f, formatstring.c_str(), prefix.c_str(), filename.c_str(), linenumber );
+    
         }
         
         auto character = str.at(c);
-        
-        fputc( character, f ); // internalstream << character;
+        fputc( character, f );
 
         if( character == '\n' ) 
-        { 
-            // internalstream.flush();
             use_prefix_next = true;
-        }
         
     }
     
@@ -102,21 +97,17 @@ Logger::~Logger()
     
     if( not str.empty() && str.back() != '\n' && pad_newline_if_there_is_none ) {
         log_has_a_fresh_line = true;
-        fputc( nl, f ); // internalstream << nl;                
+        fputc( nl, f ); 
     }
     
     
 
     if( print_file_and_line and log_has_a_fresh_line ) {
-        fputs( prefix.c_str(), f ); // internalstream << prefix;
-        // internalstream << "\e[91m" << filename << ':' << linenumber << "\e[39m" << '\n';
-        fprintf( f, "%s:%d\n", filename.c_str(), linenumber ); // internalstream << "" << filename << ':' << linenumber << '\n';
+        fputs( prefix.c_str(), f ); 
+        fprintf( f, "%s:%d\n", filename.c_str(), linenumber ); 
     }
 
-    //#ifndef NDEBUG
-    // internalstream.flush();
     fflush(f);
-    //#endif
     
 }
 
