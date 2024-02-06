@@ -101,11 +101,21 @@ SparseMatrix FEECBrokenTraceMatrix( const Mesh& mesh, int n, int k, int r, bool 
         
 
         int index_of_gap = 0;
-        for( int g = 0; g <= n-1; g++ )
-            if( inclusion_face_to_cell[g] != g ) {
-                index_of_gap = g;
-                break;
-            }
+        while( index_of_gap <= n-1 && vertices_of_face[index_of_gap] == vertices_of_cell[index_of_gap] ) 
+            index_of_gap++;
+
+        assert( not vertices_of_face.rangecontains( vertices_of_cell[index_of_gap] ) );
+
+        // int index_of_gap2 = 0;
+        // for( int g = 0; g <= n-1; g++ )
+        //     if( inclusion_face_to_cell[g] != g ) {
+        //         index_of_gap2 = g;
+        //         break;
+        //     }
+
+        // assert( index_of_gap2 == index_of_gap );
+
+        // assert( not inclusion_face_to_cell.rangecontains( index_of_gap2 ) );
 
         const int extra_signum = ( n == mesh.getouterdimension() ? sign( Determinant( mesh.getTransformationJacobian(n,s) ) ) : 1. );
 

@@ -34,13 +34,13 @@ int main( int argc, char *argv[] )
     assert( M.getouterdimension() == 2 );
     
     
-    const int r_min = 0;
+    const int r_min = 1;
     
-    const int r_max = 0;
+    const int r_max = 2;
     
     const int l_min = 0;
     
-    const int l_max = 1;
+    const int l_max = 2;
     
     const int number_of_samples = 1;
         
@@ -66,49 +66,50 @@ int main( int argc, char *argv[] )
 
             LOG << "assemble matrices..." << nl;
             
+            const auto inclusion  = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), k, r );
+            
             const auto trace      = FEECBrokenTraceMatrix( M, M.getinnerdimension(), k, r, true );
 
             const auto massmatrix = ( M.getinnerdimension() == k ) ? SparseMatrix(ScalingOperator(0,0.)) : FEECBrokenMassMatrix( M, M.getinnerdimension()-1, k, r );
             
             
             
-            if( k != 0 ) continue;
-            auto field = trace.createinputvector();
-            field.setentries(1.0);
-            auto traces_of_field = trace * field;
+            // if( k != 0 ) continue;
+            // auto field = trace.createinputvector();
+            // field.setentries(1.0);
+            // auto traces_of_field = trace * field;
             
-            // auto e0 = massmatrix.createinputvector(); e0.setentries(0.);
-            // auto e1 = e0; 
-            // auto e2 = e0; 
+            // // auto e0 = massmatrix.createinputvector(); e0.setentries(0.);
+            // // auto e1 = e0; 
+            // // auto e2 = e0; 
             
-            // e0[0] = 1.; 
-            // e1[1] = 1.; 
-            // e2[2] = 1.; 
-            // assert( e0.getdimension() == 3 );
+            // // e0[0] = 1.; 
+            // // e1[1] = 1.; 
+            // // e2[2] = 1.; 
+            // // assert( e0.getdimension() == 3 );
             
-            // LOG << M.get_edge_length(0) << tab << M.getMeasure(1,0) << nl; 
-            // LOG << M.get_edge_length(1) << tab << M.getMeasure(1,1) << nl; 
-            // LOG << M.get_edge_length(2) << tab << M.getMeasure(1,2) << nl; 
+            // // LOG << M.get_edge_length(0) << tab << M.getMeasure(1,0) << nl; 
+            // // LOG << M.get_edge_length(1) << tab << M.getMeasure(1,1) << nl; 
+            // // LOG << M.get_edge_length(2) << tab << M.getMeasure(1,2) << nl; 
             
-            // LOG << e0.norm_sq(massmatrix) << nl;
-            // LOG << e1.norm_sq(massmatrix) << nl;
-            // LOG << e2.norm_sq(massmatrix) << nl;
+            // // LOG << e0.norm_sq(massmatrix) << nl;
+            // // LOG << e1.norm_sq(massmatrix) << nl;
+            // // LOG << e2.norm_sq(massmatrix) << nl;
 
-            // return 0;
+            // // return 0;
 
-            auto all_edges = massmatrix.createinputvector();
-            all_edges.setentries(1.0);
-            LOG << "Mass of all edges:    " <<       all_edges.norm(massmatrix)    << nl;
-            LOG << "Mass of all edges sq: " <<       all_edges.norm_sq(massmatrix) << nl;
-            LOG << "Trace of constant sq: " << traces_of_field.norm_sq(massmatrix) << nl;
-            continue;
-
-
+            // auto all_edges = massmatrix.createinputvector();
+            // all_edges.setentries(1.0);
+            // LOG << "Mass of all edges:    " <<       all_edges.norm(massmatrix)    << nl;
+            // LOG << "Mass of all edges sq: " <<       all_edges.norm_sq(massmatrix) << nl;
+            // LOG << "Trace of constant sq: " << traces_of_field.norm_sq(massmatrix) << nl;
+            // continue;
 
 
 
 
-            const auto inclusion  = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), k, r );
+
+
             
             
             
@@ -153,7 +154,7 @@ int main( int argc, char *argv[] )
                         
                     } else {
                         
-                        LOG << e << tab;
+                        LOG << "Non-Dirichlet edge " << e << " with values:" << tab;
                         for( int j = e * dim; j < (e+1)*dim; j++ )
                             LOG << traces_of_field[j] << tab << tab;
                         
@@ -166,7 +167,7 @@ int main( int argc, char *argv[] )
                 
                 const auto error_mass = traces_of_field.norm(massmatrix);
 
-                LOG << traces_of_field.getdimension() << space << error_mass << nl; 
+                LOG << traces_of_field.getdimension() << " dimensional with mass " << error_mass << nl; 
                 
                 Float error = error_mass;
 
