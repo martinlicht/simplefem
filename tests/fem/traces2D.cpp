@@ -36,7 +36,7 @@ int main( int argc, char *argv[] )
     
     const int r_min = 1;
     
-    const int r_max = 2;
+    const int r_max = 3;
     
     const int l_min = 0;
     
@@ -154,11 +154,14 @@ int main( int argc, char *argv[] )
                         
                     } else {
                         
-                        LOG << "Non-Dirichlet edge " << e << " with values:" << tab;
                         for( int j = e * dim; j < (e+1)*dim; j++ )
-                            LOG << traces_of_field[j] << tab << tab;
+                            assert( issmall( traces_of_field[j] ) );
                         
-                        LOG << nl;
+                        // LOG << "Non-Dirichlet edge " << e << " with values:" << tab;
+                        // for( int j = e * dim; j < (e+1)*dim; j++ )
+                        //     LOG << traces_of_field[j] << tab << tab;
+                        // LOG << nl;
+                        
                     }
 
                 }

@@ -88,8 +88,7 @@ SparseMatrix FEECBrokenTraceMatrix( const Mesh& mesh, int n, int k, int r, bool 
             assert( i0 < i1 );
         }
 
-        // assert( vertices_of_cell.isstrictlyascending() );
-        // assert( vertices_of_face.isstrictlyascending() );
+
 
         int inclusion_index = 0;
         for( ; inclusion_index < face_inclusions.size(); inclusion_index++ )
@@ -100,34 +99,22 @@ SparseMatrix FEECBrokenTraceMatrix( const Mesh& mesh, int n, int k, int r, bool 
         const IndexMap inclusion_face_to_cell = face_inclusions[inclusion_index];
         
 
+
         int index_of_gap = 0;
         while( index_of_gap <= n-1 && vertices_of_face[index_of_gap] == vertices_of_cell[index_of_gap] ) 
             index_of_gap++;
 
         assert( not vertices_of_face.rangecontains( vertices_of_cell[index_of_gap] ) );
 
-        // int index_of_gap2 = 0;
-        // for( int g = 0; g <= n-1; g++ )
-        //     if( inclusion_face_to_cell[g] != g ) {
-        //         index_of_gap2 = g;
-        //         break;
-        //     }
 
-        // assert( index_of_gap2 == index_of_gap );
-
-        // assert( not inclusion_face_to_cell.rangecontains( index_of_gap2 ) );
 
         const int extra_signum = ( n == mesh.getouterdimension() ? sign( Determinant( mesh.getTransformationJacobian(n,s) ) ) : 1. );
 
-        const int signum = 
-        signpower( index_of_gap ) 
-        * 
-        extra_signum
-        ;
+        const int signum = signpower( index_of_gap ) * extra_signum;
 
         assert( signum == 1 or signum == -1 );
 
-        LOG << "--> " << s << tab << fi << tab << signum << tab << extra_signum << nl;
+        // LOG << "--> " << s << tab << fi << tab << signum << tab << extra_signum << nl;
 
         for( int mi = 0; mi < face_multis.size(); mi++ )
         for( int fs = 0; fs < face_sigmas.size(); fs++ )
