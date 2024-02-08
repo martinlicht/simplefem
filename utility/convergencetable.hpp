@@ -10,11 +10,11 @@
 
 class ConvergenceTable
 {
-    typedef long double Float; 
+    typedef long double EntryType; 
     
     private:
         
-        std::vector<std::vector<Float>> entries;
+        std::vector<std::vector<EntryType>> entries;
         std::vector<std::string> seriesheaders;
         bool make_new_row;
         
@@ -26,9 +26,9 @@ class ConvergenceTable
     
     public:
 
-        explicit ConvergenceTable( std::string table_name = "---------- Default Table Name ----------" );
+        explicit ConvergenceTable( const std::string& table_name = "---------- Default Table Name ----------" );
         
-        void insert_numerical_entry( Float entry );
+        void insert_numerical_entry( EntryType entry );
         void insert_seriesheader( const std::string& seriesheader );
         void insert_newline();
 

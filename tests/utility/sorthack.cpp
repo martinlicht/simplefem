@@ -243,7 +243,7 @@ void mergeSort( std::vector<T>& vec, std::size_t l, std::size_t r )
     }
 }
 
-int main()
+int main( int argc, char *argv[] )
 {
     std::size_t N = 2 << 10;
     std::vector<int> foo( N );

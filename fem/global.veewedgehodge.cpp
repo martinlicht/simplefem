@@ -283,7 +283,7 @@ SparseMatrix FEECBrokenHodgeMatrix( const Mesh& mesh, int n, int k, int r )
     auto sigmas_output = generateSigmas( IndexRange(1,n-k), IndexRange(0,n) );
     auto sigmas_hodge  = generateSigmas( IndexRange(1,n-k), IndexRange(0,n) );
     auto applejack_hodge = std::remove_if( sigmas_hodge.begin(), sigmas_hodge.end(),
-                    [k](IndexMap im) -> bool { assert( im.isstrictlyascending() ); return 3-k != 0 and im[1] == 0; }
+                    [n,k](IndexMap im) -> bool { assert( im.isstrictlyascending() ); return n-k != 0 and im[1] == 0; }
     );
     sigmas_hodge.erase( applejack_hodge, sigmas_hodge.end() );
 

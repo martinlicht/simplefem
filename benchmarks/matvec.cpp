@@ -13,7 +13,7 @@
 
 using namespace std;
 
-int main()
+int main( int argc, char *argv[] )
 {
     LOG << "Benchmark: (2D) CSR-matrix vector product" << nl;
     
@@ -80,7 +80,7 @@ int main()
     LOG << "Time passed: " << 1000.0 * (c_sum) / Float(CLOCKS_PER_SEC) << "ms" << nl;
     LOG << "Dummy output to distract optimizer: " << dummy << nl;
 
-    LOG << "Finished Unit Test" << nl;
+    LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
     
     return 0;
 }

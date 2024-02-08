@@ -12,7 +12,7 @@ using namespace std;
 
 #include "vtk.testsnippet.cxx"
 
-int main()
+int main( int argc, char *argv[] )
 {
     LOG << "Unit Test for VTK output of Simplicial Mesh (1D)" << nl;
     
@@ -49,7 +49,7 @@ int main()
 
     }
     
-    LOG << "Finished Unit Test" << nl;
+    LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
     
     return 0;
 }

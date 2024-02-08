@@ -33,7 +33,7 @@
 
 using namespace std;
 
-int main()
+int main( int argc, char *argv[] )
 {
         
         LOG << "Unit Test: Compute a nullspace " << nl;
@@ -329,8 +329,8 @@ int main()
 //                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
 //                 
 //                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
-//                             vtk.writeCoordinateBlock();
-//                             vtk.writeTopDimensionalCells();
+//                             // vtk.writeCoordinateBlock();
+//                             // vtk.writeTopDimensionalCells();
 //                             
 //                             vtk.writeVertexScalarData( sol,  "data1" , 1.0 );
 // //                             vtk.writeVertexScalarData( sol2, "data2" , 1.0 );
@@ -365,7 +365,7 @@ int main()
         
         
         
-        LOG << "Finished Unit Test" << nl;
+        LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
         
         return 0;
 }

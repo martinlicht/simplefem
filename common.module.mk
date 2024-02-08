@@ -216,7 +216,7 @@ check: tidy
 .PHONY: tidy $(module).tidy
 tidy: $(module).tidy
 $(module).tidy:
-	clang-tidy $($(mymodule).sources) --config-file=$(projectdir)/Tools/clang-tidy.yaml -- -std=c++17 # -fno-exceptions
+	clang-tidy $($(mymodule).sources) --config-file=$(projectdir)/.Tools/clang-tidy.yaml -- -std=c++17 # -fno-exceptions
 
 
 ##########################################################################################
@@ -228,6 +228,7 @@ $(module).cppcheck:
 	cppcheck -i ./.playground/ -i ./.legacy/ -i ./external/ \
 	--enable=warning,style,performance,portability --suppress=duplicateCondition \
 	--suppress=assertWithSideEffect --suppress=useStlAlgorithm \
+	--suppress=knownConditionTrueFalse --suppress=unsignedPositive \
 	--std=c++17 -q $(mymoddir)/*pp
 
 

@@ -38,7 +38,7 @@
 
 using namespace std;
 
-int main()
+int main( int argc, char *argv[] )
 {
         
         LOG << "Unit Test: 2D Maxwell System" << nl;
@@ -236,9 +236,20 @@ int main()
                         
                         if( true ){
                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
-                            VTKWriter vtk( M, fs, getbasename(__FILE__) );
-                            vtk.writeCoordinateBlock();
-                            vtk.writeTopDimensionalCells();
+
+                            FloatVector z_values( M.count_vertices() );
+
+                            // for ( int v = 0; v < M.count_vertices(); v++ ) {
+                            //     Float c0 = M.getcoordinates().getdata( v, 0 );
+                            //     Float c1 = M.getcoordinates().getdata( v, 1 );
+                            //     Float z  = sin( c0 * Constants::twopi ) * sin( c0 * Constants::twopi );
+                            //     z_values[v] = z;
+                            // }
+
+
+                            VTKWriter vtk( M, fs, getbasename(__FILE__) /*, z_values*/ );
+                            // vtk.writeCoordinateBlock();
+                            // vtk.writeTopDimensionalCells();
 
                             auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 0, 0, r );
 
@@ -264,6 +275,15 @@ int main()
                             
                             vtk.writeCellScalarData( x_cellvalues, "solution_x_cell" );
                             vtk.writeCellScalarData( y_cellvalues, "solution_y_cell" );
+
+                            DenseMatrix triangle_midpoints( M.count_triangles(), 2);
+
+                            for( int t = 0; t < M.count_triangles(); t++ ){
+                                auto midpoint = M.get_midpoint( 2, t );
+                                triangle_midpoints.setrow( t, midpoint );
+                            }
+
+                            vtk.writePointCloud( triangle_midpoints );
                             
                             fs.close();
                         }
@@ -287,7 +307,7 @@ int main()
         
         
         
-        LOG << "Finished Unit Test" << nl;
+        LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
         
         return 0;
 }

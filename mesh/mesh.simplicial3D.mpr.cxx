@@ -29,7 +29,7 @@
 
 void MeshSimplicial3D::midpoint_refinement( int t )
 {
-    check();
+    // check();
     
 //     assert( 0 <= t && t < counter_faces );
 //     

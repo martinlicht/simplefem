@@ -51,7 +51,7 @@ FloatVector IncreaseResolution( const MeshSimplicial2D& mesh, const FloatVector&
 
 using namespace std;
 
-int main()
+int main( int argc, char *argv[] )
 {
         
     LOG << "Unit Test for Solution of Dirichlet Problem" << nl;
@@ -301,8 +301,8 @@ int main()
                 {
                     fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                     VTKWriter vtk( M, fs, getbasename(__FILE__) );
-                    vtk.writeCoordinateBlock();
-                    vtk.writeTopDimensionalCells();
+                    // vtk.writeCoordinateBlock();
+                    // vtk.writeTopDimensionalCells();
                     vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
                     // vtk.writeCellVectorData_Whitney( computed_grad, "gradient_interpolation" , 0.1 );
                     fs.close();
@@ -326,7 +326,7 @@ int main()
     } 
     
     
-    LOG << "Finished Unit Test" << nl;
+    LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
     
     return 0;
 }

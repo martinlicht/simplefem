@@ -23,7 +23,7 @@
 
 using namespace std;
 
-int main()
+int main( int argc, char *argv[] )
 {
         
         LOG << "Unit Test: 2D Maxwell System" << nl;
@@ -215,9 +215,9 @@ int main()
                     auto B  = MatrixCSR( mat_B  );
                     auto C  = MatrixCSR( mat_C  );
 
-                    auto negA  = A;  negA.scale(-1);
-                    auto negB  = B;  negB.scale(-1);
-                    auto negBt = Bt; negBt.scale(-1);
+                    // auto negA  = A;  negA.scale(-1);
+                    // auto negB  = B;  negB.scale(-1);
+                    // auto negBt = Bt; negBt.scale(-1);
                     
                     auto SystemMatrix = C + B * inv(A,desired_precision) * Bt;
                     
@@ -346,7 +346,7 @@ int main()
         
         
         
-        LOG << "Finished Unit Test" << nl;
+        LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
         
         return 0;
 }

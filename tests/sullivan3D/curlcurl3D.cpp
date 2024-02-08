@@ -25,7 +25,7 @@
 
 using namespace std;
 
-int main()
+int main( int argc, char *argv[] )
 {
     
     LOG << "Unit Test for Solution of Darcy Problem" << nl;
@@ -375,8 +375,8 @@ int main()
             if( r == 1 ){
                 fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                 VTKWriter vtk( M, fs, getbasename(__FILE__) );
-                vtk.writeCoordinateBlock();
-                vtk.writeTopDimensionalCells();
+                // vtk.writeCoordinateBlock();
+                // vtk.writeTopDimensionalCells();
                 // vtk.writeVertexScalarData( function_aux, "iterativesolution_aux_data" , 1.0 );
                 // vtk.writeCellVectorData( sol, "iterativesolution_data" , 1.0 );
                 vtk.writeCellVectorData( function_sol, "interpolated_sol" , 1.0 );
@@ -394,7 +394,7 @@ int main()
     } 
 
     
-    LOG << "Finished Unit Test" << nl;
+    LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
     
     return 0;
 }

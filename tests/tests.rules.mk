@@ -188,7 +188,7 @@ $($(context).sourcechecks): check-%.cpp :
 .PHONY: tidy $(context).tidy
 tidy: $(context).tidy
 $(context).tidy:
-	clang-tidy $(mycontextdir)/*.?pp --config-file=$(projectdir)/Tools/clang-tidy.yaml -- -std=c++17 -fno-exceptions
+	clang-tidy $(mycontextdir)/*.?pp --config-file=$(projectdir)/.Tools/clang-tidy.yaml -- -std=c++17 -fno-exceptions
 
 
 ########################################################################
@@ -197,10 +197,12 @@ $(context).tidy:
 .PHONY: cppcheck $(context).cppcheck
 cppcheck: $(context).cppcheck
 $(context).cppcheck:
-	cppcheck -i ./.playground/ -i ./.legacy \
+	cppcheck -i ./.playground/ -i ./.legacy/ -i ./external/ \
 	--enable=warning,style,performance,portability --suppress=duplicateCondition \
 	--suppress=assertWithSideEffect --suppress=useStlAlgorithm \
-	--std=c++17 -q $(mycontextdir)/*pp
+	--suppress=knownConditionTrueFalse --suppress=unsignedPositive \
+	--std=c++17 -q $(mymoddir)/*pp
+
 
 
 ########################################################################

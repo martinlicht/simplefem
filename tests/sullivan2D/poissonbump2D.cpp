@@ -23,7 +23,7 @@
 
 using namespace std;
 
-int main()
+int main( int argc, char *argv[] )
 {
         
         LOG << "Unit Test for Solution of Neumann Problem" << nl;
@@ -242,8 +242,8 @@ int main()
                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                 
                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
-                            vtk.writeCoordinateBlock( outputdata1 );
-                            vtk.writeTopDimensionalCells();
+                            // vtk.writeCoordinateBlock( outputdata1 );
+                            // vtk.writeTopDimensionalCells();
                             
                             vtk.writeVertexScalarData( -outputdata1, "iterativesolution_scalar_data" , 1.0 );
                             vtk.writeVertexScalarData(  outputdata2, "reference_scalar_data" , 1.0 );
@@ -269,7 +269,7 @@ int main()
         
         
         
-        LOG << "Finished Unit Test" << nl;
+        LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
         
         return 0;
 }

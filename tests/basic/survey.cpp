@@ -5,7 +5,7 @@
 
 using namespace std;
 
-int main()
+int main( int argc, char *argv[] )
 {
     printf("Survey of machine data (integral and floating-point)");
 

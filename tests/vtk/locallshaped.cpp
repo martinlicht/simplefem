@@ -12,7 +12,7 @@
 
 using namespace std;
 
-int main()
+int main( int argc, char *argv[] )
 {
     LOG << "Unit Test for VTK output of Simplicial Mesh" << nl;
     
@@ -29,8 +29,8 @@ int main()
         fstream fs( string("./locallshaped") + std::to_string(l) + string(".vtk"), std::fstream::out );
 
         VTKWriter vtk( M, fs, "L-Shaped Domain" );
-        vtk.writeCoordinateBlock();
-        vtk.writeTopDimensionalCells();
+        // vtk.writeCoordinateBlock();
+        // vtk.writeTopDimensionalCells();
 
         fs.close();
 
@@ -78,7 +78,7 @@ int main()
         
         
     
-    LOG << "Finished Unit Test" << nl;
+    LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
 
     return 0;
 }

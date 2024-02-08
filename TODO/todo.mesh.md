@@ -129,13 +129,8 @@ and several implementations
       of pointing to another mesh. 
     - pointers to the original mesh objects so that data 
       can be transfered.
-  
-  
+
   o implement patch constructor 
     - The star constructor will construct submeshes from a given mesh
-  
-  
-  
-  
-  
-  
+
+

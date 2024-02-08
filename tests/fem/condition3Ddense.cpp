@@ -139,7 +139,7 @@ static FloatVector Eigenvalues( DenseMatrix A, int repetitions, Float shift = 0.
 //     return ret;        
 // }
     
-int main()
+int main( int argc, char *argv[] )
 {
         
         LOG << "Unit Test: (3D) condition numbers" << nl;
@@ -428,7 +428,7 @@ int main()
         
         LOG << nl;
         
-        LOG << "Finished Unit Test" << nl;
+        LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
         
         return 0;
 }

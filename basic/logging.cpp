@@ -54,43 +54,43 @@ auto digitalcodenow() -> std::string;
 Logger::~Logger()
 {
     
-    //FILE* f = stderr; //use_cerr ? stderr : stdout;
     FILE* f = ( use_cerr ? stderr : stdout );
     
-    // const auto str = this->str();
     const auto& str = internal;
     
     bool use_prefix_next  = log_has_a_fresh_line;
     
-    if( str.empty() ) {
-        // internalstream << prefix;
-        // std::cout << "\nEMPTY\n";
-        return;
-    }
+    
+    if( str.empty() ) return;
 
+    
     std::string prefix = digitalcodenow(); 
     
     for( int c = 0; c < str.size(); c++ )
     {
-        // "\033[46m %3d\033[m"
+    
         if( use_prefix_next ) { 
+    
             use_prefix_next = false;
+    
+            std::string formatstring("[%s %s %4u]\t");
             #ifdef USE_COLORED_OUTPUT
-            fprintf( f, "\033[96m[%s %s %4u]\033[m\t", prefix.c_str(), filename.c_str(), linenumber );
-            #else 
-            fprintf( f, "[%s %s %4u]\t", prefix.c_str(), filename.c_str(), linenumber );
-            #endif 
+            const std::string colorcode_begin = "\033[96m";
+            const std::string colorcode_close = "\033[m";
+            #else
+            const std::string colorcode_begin = "";
+            const std::string colorcode_close = "";
+            #endif
+            fprintf( f, "%s[%s %s %4d]%s\t", 
+                colorcode_begin.c_str(), prefix.c_str(), filename.c_str(), linenumber, colorcode_close.c_str() );
+    
         }
         
         auto character = str.at(c);
-        
-        fputc( character, f ); // internalstream << character;
+        fputc( character, f );
 
         if( character == '\n' ) 
-        { 
-            // internalstream.flush();
             use_prefix_next = true;
-        }
         
     }
     
@@ -102,21 +102,17 @@ Logger::~Logger()
     
     if( not str.empty() && str.back() != '\n' && pad_newline_if_there_is_none ) {
         log_has_a_fresh_line = true;
-        fputc( nl, f ); // internalstream << nl;                
+        fputc( nl, f ); 
     }
     
     
 
     if( print_file_and_line and log_has_a_fresh_line ) {
-        fputs( prefix.c_str(), f ); // internalstream << prefix;
-        // internalstream << "\e[91m" << filename << ':' << linenumber << "\e[39m" << '\n';
-        fprintf( f, "%s:%d\n", filename.c_str(), linenumber ); // internalstream << "" << filename << ':' << linenumber << '\n';
+        fputs( prefix.c_str(), f ); 
+        fprintf( f, "%s:%d\n", filename.c_str(), linenumber ); 
     }
 
-    //#ifndef NDEBUG
-    // internalstream.flush();
     fflush(f);
-    //#endif
     
 }
 
@@ -132,14 +128,14 @@ OpenMP_Reporter::OpenMP_Reporter()
 {
     
     #if defined(_OPENMP)
-    LOG << "OpenMP Reporter: started\n";
-    LOG << "\tOpenMP Value: " << _OPENMP << nl;
-    LOG << "\tMaximum number of threads: " << omp_get_max_threads() << nl;
-    LOG << "\tThread limit: " << omp_get_thread_limit() << nl;
-    // LOG << "\tMaximum number of processors: " << p << " - > " << omp_get_place_num_procs() << nl;
-    LOG << "\tMaximum number of places: " << omp_get_num_places() << nl;
+    LOG << "###OMP###\tOpenMP Reporter: started\n";
+    LOG << "###OMP###\tOpenMP Value: " << _OPENMP << nl;
+    LOG << "###OMP###\tMaximum number of threads: " << omp_get_max_threads() << nl;
+    LOG << "###OMP###\tThread limit: " << omp_get_thread_limit() << nl;
+    // LOG << "###OMP###\tMaximum number of processors: " << p << " -> " << omp_get_place_num_procs() << nl;
+    LOG << "###OMP###\tMaximum number of places: " << omp_get_num_places() << nl;
     for( int p = 0; p < omp_get_num_places(); p++ ) {
-        LOG << "\t\tMaximum number of processors per place: " << p << " - > " << omp_get_place_num_procs(p) << nl;
+        LOG << "###OMP###\t\tMaximum number of processors per place: " << p << " - > " << omp_get_place_num_procs(p) << nl;
     }
     #endif
 }
@@ -147,7 +143,7 @@ OpenMP_Reporter::OpenMP_Reporter()
 OpenMP_Reporter::~OpenMP_Reporter()
 {
     #if defined(_OPENMP)
-    LOG << "OpenMP Reporter: finished\n";
+    LOG << "###OMP###\tOpenMP Reporter: finished\n";
     #endif
 }
 

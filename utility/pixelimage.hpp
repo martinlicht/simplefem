@@ -118,9 +118,9 @@ class PixelImage
 };
 
 
-PixelImage readPixelImage( std::string str ); 
+PixelImage readPixelImage( const std::string& str ); 
 
-void savePixelImage( const PixelImage& pim, std::string str );
+void savePixelImage( const PixelImage& pim, const std::string& str );
 
 
 

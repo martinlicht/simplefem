@@ -4,7 +4,7 @@
 
 using namespace std;
 
-int main()
+int main( int argc, char *argv[] )
 {
         ConvergenceTable Contable("Test Table");
         
@@ -35,6 +35,8 @@ int main()
         Contable.lg();
         
         LOG << Contable.TeXtabular();
+        
+        LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
         
         return 0;
 }

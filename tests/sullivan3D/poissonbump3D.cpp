@@ -25,7 +25,7 @@
 
 using namespace std;
 
-int main()
+int main( int argc, char *argv[] )
 {
         
         LOG << "Unit Test for Solution of Neumann Problem" << nl;
@@ -216,8 +216,8 @@ int main()
                         if( r == 1 ){
                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
-                            vtk.writeCoordinateBlock();
-                            vtk.writeTopDimensionalCells();
+                            // vtk.writeCoordinateBlock();
+                            // vtk.writeTopDimensionalCells();
 
                             vtk.writeVertexScalarData( sol,                                                          "iterativesolution_scalar_data" );
                             vtk.writeVertexScalarData( [&](FloatVector vec) -> Float{ return function_sol(vec)[0]; }, "interpolated_sol" );
@@ -247,7 +247,7 @@ int main()
         
         
         
-        LOG << "Finished Unit Test" << nl;
+        LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
         
         return 0;
 }
