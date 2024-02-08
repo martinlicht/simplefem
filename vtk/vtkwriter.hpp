@@ -25,24 +25,24 @@ class VTKWriter
         VTKWriter( const Mesh& m, std::ostream& os, const std::string& name, const std::function<Float(int)>& func_z );
         
         
-        VTKWriter writeVertexScalarData( const std::function<Float(int)>& datafunction,            const std::string name, Float scaling = 1. );
-        VTKWriter writeVertexScalarData( const std::function<Float(const FloatVector&)>& function, const std::string name, Float scaling = 1. );
-        VTKWriter writeVertexScalarData( const FloatVector& pointvalues,                           const std::string name, Float scaling = 1. );
+        VTKWriter writeVertexScalarData( const std::function<Float(int)>& datafunction,            const std::string& name, Float scaling = 1. );
+        VTKWriter writeVertexScalarData( const std::function<Float(const FloatVector&)>& function, const std::string& name, Float scaling = 1. );
+        VTKWriter writeVertexScalarData( const FloatVector& pointvalues,                           const std::string& name, Float scaling = 1. );
         
-        VTKWriter writeCellScalarData( const std::function<Float(int)>& datafunction,            const std::string name, Float scaling = 1. );
-        VTKWriter writeCellScalarData( const std::function<Float(const FloatVector&)>& function, const std::string name, Float scaling = 1. );
-        VTKWriter writeCellScalarData( const FloatVector& cellvalues,                            const std::string name, Float scaling = 1. );
+        VTKWriter writeCellScalarData( const std::function<Float(int)>& datafunction,            const std::string& name, Float scaling = 1. );
+        VTKWriter writeCellScalarData( const std::function<Float(const FloatVector&)>& function, const std::string& name, Float scaling = 1. );
+        VTKWriter writeCellScalarData( const FloatVector& cellvalues,                            const std::string& name, Float scaling = 1. );
         
-        VTKWriter writeCellVectorData( const std::function<FloatVector(int)>& datafunction,            const std::string name, Float scaling = 1. );
-        VTKWriter writeCellVectorData( const std::function<FloatVector(const FloatVector&)>& function, const std::string name, Float scaling = 1. );
+        VTKWriter writeCellVectorData( const std::function<FloatVector(int)>& datafunction,            const std::string& name, Float scaling = 1. );
+        VTKWriter writeCellVectorData( const std::function<FloatVector(const FloatVector&)>& function, const std::string& name, Float scaling = 1. );
         VTKWriter writeCellVectorData( const FloatVector& x, 
                                        const FloatVector& y, 
-                                       const FloatVector& z,                                           const std::string name, Float scaling = 1. );
+                                       const FloatVector& z,                                           const std::string& name, Float scaling = 1. );
         VTKWriter writeCellVectorData_Whitney(
-                                       const FloatVector& gradvalues,                                  const std::string name, Float scaling = 1. );
+                                       const FloatVector& gradvalues,                                  const std::string& name, Float scaling = 1. );
         VTKWriter writeCellVectorData_Euclidean(
                                        int outerdim, 
-                                       const FloatVector& directions,                                  const std::string name, Float scaling = 1. );
+                                       const FloatVector& directions,                                  const std::string& name, Float scaling = 1. );
 
         VTKWriter writePointCloud( const DenseMatrix& coords );
 

@@ -163,6 +163,16 @@ inline constexpr int SIZECAST( std::uintmax_t size )
     return static_cast<int>( size );
 }
 
+/////////////////////////////////////////////////////////
+//                                                     //
+//          use this to safely get array length        //
+//                                                     //
+/////////////////////////////////////////////////////////
+
+template < class T, size_t N >
+constexpr size_t countof( const T (&array)[N] ) {
+  return N;
+}
 
 
 

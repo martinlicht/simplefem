@@ -18,7 +18,7 @@ class SectionProfiler
         
     public:
         
-        explicit SectionProfiler( std::string text = "---" )
+        explicit SectionProfiler( const std::string& text = "---" )
         {
             ping( text );
         }
@@ -41,7 +41,7 @@ class SectionProfiler
             
         }
 
-        void ping( std::string text = "---" ) 
+        void ping( const std::string& text = "---" ) 
         {
             times.push_back( std::chrono::steady_clock::now() );
             texts.push_back( text                                      );
@@ -62,7 +62,7 @@ class StopWatch {
 
     public:
 
-        StopWatch( std::string text = "---" ) 
+        StopWatch( const std::string& text = "---" ) 
         : start_time(std::chrono::steady_clock::now()), text(text) 
         {}
 

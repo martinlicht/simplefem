@@ -75,9 +75,14 @@ Logger::~Logger()
     
             std::string formatstring("[%s %s %4u]\t");
             #ifdef USE_COLORED_OUTPUT
-            formatstring = "\033[96m" + formatstring + "\033[m";
-            #endif 
-            fprintf( f, formatstring.c_str(), prefix.c_str(), filename.c_str(), linenumber );
+            const std::string colorcode_begin = "\033[96m";
+            const std::string colorcode_close = "\033[m";
+            #else
+            const std::string colorcode_begin = "";
+            const std::string colorcode_close = "";
+            #endif
+            fprintf( f, "%s[%s %s %4d]%s\t", 
+                colorcode_begin.c_str(), prefix.c_str(), filename.c_str(), linenumber, colorcode_close.c_str() );
     
         }
         

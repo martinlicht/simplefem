@@ -163,7 +163,7 @@ VTKWriter VTKWriter::writeTopDimensionalCells()
 
 
 
-VTKWriter VTKWriter::writeVertexScalarData( const std::function<Float(int)>& datafunction, const std::string name, Float scaling )
+VTKWriter VTKWriter::writeVertexScalarData( const std::function<Float(int)>& datafunction, const std::string& name, Float scaling )
 {
     assert( current_stage >= Stage::cells );
     assert( current_stage <= Stage::fielddata );
@@ -189,7 +189,7 @@ VTKWriter VTKWriter::writeVertexScalarData( const std::function<Float(int)>& dat
     return *this;
 }
 
-VTKWriter VTKWriter::writeCellScalarData( const std::function<Float(int)>& datafunction, const std::string name, Float scaling )
+VTKWriter VTKWriter::writeCellScalarData( const std::function<Float(int)>& datafunction, const std::string& name, Float scaling )
 {
     assert( current_stage >= Stage::cells );
     assert( current_stage <= Stage::fielddata );
@@ -232,7 +232,7 @@ VTKWriter VTKWriter::writeCellScalarData( const std::function<Float(int)>& dataf
 
 
 
-VTKWriter VTKWriter::writeVertexScalarData( const std::function<Float(const FloatVector&)>& function, const std::string name, Float scaling )
+VTKWriter VTKWriter::writeVertexScalarData( const std::function<Float(const FloatVector&)>& function, const std::string& name, Float scaling )
 {
     auto datafunction = [&](int c) -> Float { return function( mesh.get_midpoint(0,c) ); };
 
@@ -241,7 +241,7 @@ VTKWriter VTKWriter::writeVertexScalarData( const std::function<Float(const Floa
     return *this;
 }
 
-VTKWriter VTKWriter::writeVertexScalarData( const FloatVector& data, const std::string name, Float scaling )
+VTKWriter VTKWriter::writeVertexScalarData( const FloatVector& data, const std::string& name, Float scaling )
 {
     assert( data.getdimension() == mesh.count_simplices(0) );
     assert( data.isfinite() );
@@ -258,7 +258,7 @@ VTKWriter VTKWriter::writeVertexScalarData( const FloatVector& data, const std::
 
 
 
-VTKWriter VTKWriter::writeCellScalarData( const std::function<Float(const FloatVector&)>& function, const std::string name, Float scaling )
+VTKWriter VTKWriter::writeCellScalarData( const std::function<Float(const FloatVector&)>& function, const std::string& name, Float scaling )
 {
     const int topdim = mesh.getinnerdimension();
 
@@ -269,7 +269,7 @@ VTKWriter VTKWriter::writeCellScalarData( const std::function<Float(const FloatV
     return *this;
 }
 
-VTKWriter VTKWriter::writeCellScalarData( const FloatVector& data, const std::string name, Float scaling )
+VTKWriter VTKWriter::writeCellScalarData( const FloatVector& data, const std::string& name, Float scaling )
 {
     const int topdim = mesh.getinnerdimension();
 
@@ -295,7 +295,7 @@ VTKWriter VTKWriter::writeCellScalarData( const FloatVector& data, const std::st
 
 
 
-VTKWriter VTKWriter::writeCellVectorData( const std::function<FloatVector(int)>& datafunction, const std::string name, Float scaling )
+VTKWriter VTKWriter::writeCellVectorData( const std::function<FloatVector(int)>& datafunction, const std::string& name, Float scaling )
 {
     assert( current_stage >= Stage::cells );
     assert( current_stage <= Stage::fielddata );
@@ -333,7 +333,7 @@ VTKWriter VTKWriter::writeCellVectorData(
     const FloatVector& datax,
     const FloatVector& datay,
     const FloatVector& dataz,
-    const std::string name, 
+    const std::string& name, 
     Float scaling )
 {
     const int topdim = mesh.getinnerdimension();
@@ -356,7 +356,7 @@ VTKWriter VTKWriter::writeCellVectorData(
 
 
 
-VTKWriter VTKWriter::writeCellVectorData( const std::function<FloatVector(const FloatVector&)>& function, const std::string name, Float scaling )
+VTKWriter VTKWriter::writeCellVectorData( const std::function<FloatVector(const FloatVector&)>& function, const std::string& name, Float scaling )
 {
     const int topdim = mesh.getinnerdimension();
 
@@ -381,7 +381,7 @@ VTKWriter VTKWriter::writeCellVectorData( const std::function<FloatVector(const 
 
 
 
-VTKWriter VTKWriter::writeCellVectorData_Whitney( const FloatVector& v, const std::string name, Float scaling )
+VTKWriter VTKWriter::writeCellVectorData_Whitney( const FloatVector& v, const std::string& name, Float scaling )
 {
     const int topdim = mesh.getinnerdimension();
     
@@ -405,7 +405,7 @@ VTKWriter VTKWriter::writeCellVectorData_Whitney( const FloatVector& v, const st
 }
 
 
-VTKWriter VTKWriter::writeCellVectorData_Euclidean( int outerdim, const FloatVector& v, const std::string name, Float scaling )
+VTKWriter VTKWriter::writeCellVectorData_Euclidean( int outerdim, const FloatVector& v, const std::string& name, Float scaling )
 {
     const int topdim = mesh.getinnerdimension();
     

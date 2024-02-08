@@ -8,21 +8,21 @@
 #include "../basic.hpp"
 
 
-inline std::fstream openinputfile( std::string filename )
+inline std::fstream openinputfile( const std::string& filename )
 {
     std::fstream myfile;
     myfile.open(filename, std::ios::in );
     return myfile;
 }
 
-inline std::fstream openoutputfile( std::string filename )
+inline std::fstream openoutputfile( const std::string& filename )
 {
     std::fstream myfile;
     myfile.open(filename, std::ios::out );
     return myfile;
 }
 
-inline bool fileexists( std::string filename )
+inline bool fileexists( const std::string& filename )
 {
     std::ifstream file( filename.c_str() );
     return file.good();
@@ -43,7 +43,7 @@ inline std::string adaptfilename( std::string filename )
 }
 
 
-inline std::string experimentfile( const std::string& basename, const std::string extension = "vtk" )
+inline std::string experimentfile( const std::string& basename, const std::string& extension = "vtk" )
 {
     std::string ret;
     for( int i = 0; fileexists( ret = basename + std::string(".") + std::to_string(i) + std::string(".") + std::string(extension) ); i++ );

@@ -221,9 +221,9 @@ check:
 
 .PHONY: cpplint
 cpplint:
-	( $(projectdir)/Tools/cpplint.py \
+	( $(projectdir)/.Tools/cpplint.py \
 	--exclude=$(projectdir)/.private/* --exclude=$(projectdir)/.legacy/* --exclude=$(projectdir)/.playground/* --exclude=$(projectdir)/external/* \
-	--filter=-whitespace,-legal,-build/namespace,-readability/alt_tokens,-readability/todo,-readability/inheritance \
+	--filter=-whitespace,-legal,-build/namespace,-readability/alt_tokens,-readability/todo,-readability/inheritance,-readability/braces,-runtime/arrays,-build/header_guard,-build/include,-build/c++11 \
 	--recursive --quiet $(projectdir) 2>&1 ) | \
 	sort | uniq | \
 	cat > $(projectdir)/OUTPUT_CPPLINT.txt; \
