@@ -167,6 +167,7 @@ bool Mesh::is_subsimplex( int sup, int sub, int cellsup, int cellsub ) const
 int  Mesh::get_subsimplex_index( int sup, int sub, int cellsup, int cellsub ) const
 {
   const IndexMap im = getsubsimplices( sup, sub, cellsup );
+  assert( im.rangecontains( cellsub ) );
   return im.preimageof( cellsub );
 }
 
@@ -178,7 +179,8 @@ int Mesh::get_subsimplex( int sup, int sub, int cellsup, int localindex ) const
 
 int Mesh::get_opposite_subsimplex_index( int sup, int sub, int cellsup, int localindex ) const
 {
-    
+    assert( sub < sup );
+
     const int cellsub = get_subsimplex( sup, sub, cellsup, localindex );
     
     const auto my_vertices = getsubsimplices( sub, 0, cellsub );
@@ -192,7 +194,7 @@ int Mesh::get_opposite_subsimplex_index( int sup, int sub, int cellsup, int loca
         bool alive = true;
         for( int i = 0; i <    my_vertices.getSourceRange().cardinality() and alive; i++ )
         for( int j = 0; j < other_vertices.getSourceRange().cardinality() and alive; j++ )
-          alive = ( my_vertices[i] != other_vertices[j] );
+          alive = alive && ( my_vertices[i] != other_vertices[j] );
 
         if( alive )
           return otherindex;
@@ -462,7 +464,7 @@ Float Mesh::getDiameter( int dim, int index ) const
     for( int j = 0; j <= dim; j++ )
         dist(i,j) = ( vcm.getcolumn(i) - vcm.getcolumn(j) ).norm();
     
-//     assert( dist.isnonnegative() && dist.isfinite() );
+    assert( dist.isnonnegative() && dist.isfinite() );
     
     return dist.maxabsoluteentry();
 }
@@ -475,11 +477,15 @@ Float Mesh::getMeasure( int dim, int index ) const
     DenseMatrix Jac = getTransformationJacobian( dim, index );
     
 //     DenseMatrix temp = Transpose( Jac ) * Jac;
+
+    Float det;
     
     if( Jac.issquare() )
-        return absolute( Determinant( Jac ) ) / factorial_numerical( getinnerdimension() );
+        det = absolute( Determinant( Jac ) ); 
     else
-        return std::sqrt( absolute( Determinant( Transpose(Jac) * Jac ) ) ) / factorial_numerical( getinnerdimension() );
+        det = std::sqrt( absolute( Determinant( Transpose(Jac) * Jac ) ) );
+
+    return det / factorial_numerical( dim );
 }
 
 Float Mesh::getHeight( int dim, int cell, int vertexindex ) const

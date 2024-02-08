@@ -94,7 +94,7 @@ class Logger //: public std::ostringstream
         typename std::enable_if< std::is_integral<T>::value && std::is_unsigned<T>::value, Logger&>::type
         operator<<(T input) {
             char buffer[ std::numeric_limits<T>::digits10+1 + 1 + 1];
-            std::snprintf(buffer, sizeof(buffer), "%jd", static_cast<uintmax_t>(input));
+            std::snprintf(buffer, sizeof(buffer), "%ju", static_cast<uintmax_t>(input));
             internal += buffer;
             return *this;
         }

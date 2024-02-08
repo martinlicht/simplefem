@@ -8,7 +8,7 @@
 
 DenseMatrix polynomialmassmatrix( int n, int r );
 
-DenseMatrix polynomialmassmatrix( int n, int r, MultiIndex& base );
+DenseMatrix polynomialmassmatrix( int n, int r, const MultiIndex& base );
 
 std::vector<DenseMatrix> polynomialmassmatrices_per_multiindex( int n, int r, int s );
 

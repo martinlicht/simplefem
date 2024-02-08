@@ -76,6 +76,7 @@ All operators show return the 'this' pointer in their print methods.
 # (HIGH) Floating point exact comparisons ersetzen durch Funktion mit expliziter semantik
 
 # (HIGH) Augmented integration in all numerical tests 
+
 Once the numerical tests have been cleaned up, the right-hand side should always be computed
 with (optional) augmented integration. There should be a parameter 'r_plus' to control the added
 interpolation quality of the right-hand side. Notably, if 'r_plus == 0', then there should be 
@@ -97,9 +98,9 @@ The solver component outputs should all contain the iteration number if possible
 For each element, you extract the coefficients of the local basis associated with a subsimplex using a Gram-Matrix. 
 This works for Sullivan and Whitney bases alike, no difference. 
 You can then average according to some scheme, such as:
-- pick arbitrary
-- weight uniformly
-- weight by volume 
+- [ ] pick arbitrary
+- [x] weight uniformly
+- [ ] weight by volume 
 Thus you can always average from the larger into the smaller space.
 
 # (MEDIUM) preparing for multigrid
@@ -107,12 +108,11 @@ Thus you can always average from the larger into the smaller space.
 # (MEDIUM) clean up DenseMatrix subsystem 
 
 The following modules look reasonable
-- simple solvers 
-- general solvers (Gauss-Jordan, QR, Cholesky -> inverse )
-- simple scalar functions
-- complicated operations (transpose,determinant,tensorproduct)
-- readwrite is never used: retire 
-
+- [ ] simple solvers 
+- [ ] general solvers (Gauss-Jordan, QR, Cholesky -> inverse )
+- [ ] simple scalar functions
+- [ ] complicated operations (transpose,determinant,tensorproduct)
+- [x] readwrite is never used: retire 
 
 # (MEDIUM) Inverse operators via templates 
 
@@ -129,15 +129,13 @@ This requires a unified solver interface.
 
 Go from the most general down to the most specific.
 This ensures any overwriting of macros stays local.
-
 Within each grouping, sort alphabetically.
 
 # (HIGH) Define and adopt a custom assert macro
-    
+
 There is a function that performs the assert, 
 and a macro that delivers the line number and file name
 to a function invocation. No further frills.
-
 Use the custom assert macro throughout the project.
 
 

@@ -121,7 +121,7 @@ class Coordinates
 
         friend inline bool operator==( const Coordinates& coords_left, const Coordinates& coords_right )
         {
-            bool compare( const Coordinates&, const Coordinates&, Float );
+            bool compare( const Coordinates&, const Coordinates&, Float ); // TODO: make compare a member function 
             return compare( coords_left, coords_right, 0.00001 );
         }
 

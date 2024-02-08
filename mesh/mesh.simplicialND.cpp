@@ -701,7 +701,8 @@ void MeshSimplicialND::rebuild()
 
 void MeshSimplicialND::bisect_edge( int e )
 {
-    check(); assert( false );
+    check(); 
+    assert( false );
 }
 
 

@@ -62,7 +62,7 @@ DenseMatrix polynomialmassmatrix( int n, int r )
 
 
 
-DenseMatrix polynomialmassmatrix( int n, int r, MultiIndex& base )
+DenseMatrix polynomialmassmatrix( int n, int r, const MultiIndex& base )
 {
     assert( n >= 0 && r >= 0 );
     

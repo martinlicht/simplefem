@@ -42,7 +42,7 @@
 void MeshSimplicial3D::bisect_edge( int e )
 {
     assert( 0 <= e && e < counter_edges );
-    check();
+    // check();
     
     
     
@@ -1057,7 +1057,7 @@ void MeshSimplicial3D::bisect_edge( int e )
     
     /* Done */
     
-    check();
+    // check();
     
 }
 

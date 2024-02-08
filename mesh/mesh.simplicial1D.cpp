@@ -576,7 +576,7 @@ std::vector<int> MeshSimplicial1D::get_edge_parents_of_vertex( int v ) const
 void MeshSimplicial1D::bisect_edge( int e )
 {
     assert( 0 <= e && e < counter_edges );
-    check();
+    // check();
     
     /* Collect the old data */
     
@@ -687,7 +687,7 @@ void MeshSimplicial1D::bisect_edge( int e )
     /* Done */
     
     
-    check();
+    // check();
     
 }
 
@@ -833,11 +833,11 @@ void MeshSimplicial1D::improved_uniformrefinement()
 
 void MeshSimplicial1D::midpoint_refinement( int e )
 {
-    check();
+    // check();
     
     bisect_edge( e );
     
-    check();
+    // check();
 }
 
 void MeshSimplicial1D::midpoint_refinement_global()
