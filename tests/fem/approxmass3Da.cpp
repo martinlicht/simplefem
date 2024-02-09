@@ -133,7 +133,7 @@ int main( int argc, char *argv[] )
         
         const int r_min = 0;
         
-        const int r_max = 3;
+        const int r_max = 2;
         
         const int l_min = 0;
         
@@ -197,7 +197,7 @@ int main( int argc, char *argv[] )
 
                     Float mass = interpol * ( massmatrix_vector * interpol );
                     
-                    errors_volume[i][l][r] = std::sqrt( std::abs( mass - should_be ) );
+                    errors_vector[i][l][r] = std::sqrt( std::abs( mass - should_be ) );
                     
                 }
                 

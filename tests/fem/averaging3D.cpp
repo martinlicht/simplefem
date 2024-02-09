@@ -72,14 +72,16 @@ int main( int argc, char *argv[] )
             {
                 auto matrix = MatrixCSR( averaging ); 
 
-                for( int r = 0; r < matrix.getdimout(); r++ ) {
+                for( int row = 0; row < matrix.getdimout(); row++ ) {
+                    
                     Float sum = 0.;
-                    for( int i = matrix.getA()[r]; i < matrix.getA()[r+1]; i++ ) {
+                    
+                    for( int i = matrix.getA()[row]; i < matrix.getA()[row+1]; i++ ) {
                         Assert( 0 <= i and i < matrix.getnumberofentries(), i );
                         sum += matrix.getV()[i];
                     }
 
-                    if( flagmatrix.getdiagonal()[r] == 0. )
+                    if( flagmatrix.getdiagonal()[row] == 0. )
                         Assert( sum == 0., sum );
                     else 
                         Assert( isaboutequal( sum, 1. ), sum );
