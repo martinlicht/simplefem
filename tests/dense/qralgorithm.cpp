@@ -31,7 +31,7 @@ int main( int argc, char *argv[] )
             
             A = R * Q;
             
-            if ( repetitions % 100 ) LOG << "Matrix A:" << A;
+            if ( repetitions % 1000 == 0 ) LOG << "Matrix A:" << A;
         }
         
     }
