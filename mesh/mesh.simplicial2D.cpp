@@ -3498,9 +3498,9 @@ std::string MeshSimplicial2D::outputLinearSVG(
 
 
 
-long long MeshSimplicial2D::memorysize() const
+std::size_t MeshSimplicial2D::memorysize() const
 {
-    long long ret = 0;
+    std::size_t ret = 0;
 
     ret += getcoordinates().memorysize();
 

@@ -253,7 +253,7 @@ class MeshSimplicial2D
 
         /* other */ 
         
-        virtual long long memorysize() const override;
+        virtual std::size_t memorysize() const override;
         
         
         

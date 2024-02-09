@@ -310,7 +310,7 @@ const std::vector<Float>& Coordinates::raw() const
         
 
 
-long long Coordinates::memorysize() const
+std::size_t Coordinates::memorysize() const
 {
     return sizeof(*this) + data.size() * sizeof(Float);
 }

@@ -218,7 +218,7 @@ class FloatVector
         
         /* Memory size */
         
-        long long memorysize() const;
+        std::size_t memorysize() const;
         
         
         

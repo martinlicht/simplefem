@@ -892,7 +892,7 @@ const Float* DenseMatrix::raw() const
 
 /* Memory size */
         
-long long DenseMatrix::memorysize() const
+std::size_t DenseMatrix::memorysize() const
 {
     return sizeof(*this) + getdimin() * getdimout() * sizeof(this->entries[0]);
 }

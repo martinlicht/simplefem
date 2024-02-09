@@ -109,7 +109,7 @@ class Coordinates
         std::vector<Float>& raw();
         const std::vector<Float>& raw() const;
         
-        long long memorysize() const;
+        std::size_t memorysize() const;
         
     private:
             
