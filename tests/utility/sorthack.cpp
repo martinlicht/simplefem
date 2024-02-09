@@ -9,6 +9,7 @@
 #include <iostream>
 #include <vector>
 
+#include "../../utility/random.hpp"
 #include "../../utility/sorthack.hpp"
 #include "../../utility/profilerutils.hpp"
 
@@ -326,7 +327,7 @@ int main( int argc, char *argv[] )
             //         for( std::size_t i = 0; i < N; i++ ) std::cout << foo[i] << ' '; std::cout << '\n';
 
             for( std::size_t i = 0; i < N; i++ )
-                std::swap( foo[i], foo[i + rand() % ( N - i )] );
+                std::swap( foo[i], foo[i + random_integer() % ( N - i )] );
 
             //         for( std::size_t i = 0; i < N; i++ ) std::cout << foo[i] << ' '; std::cout << '\n';
 
@@ -349,7 +350,7 @@ int main( int argc, char *argv[] )
             std::printf( "Randomized sequence, all values modulo %lu:   %lu\t%s\n", K, N, name );
 
             for( std::size_t i = 0; i < N; i++ )
-                foo[i] = rand() % K;
+                foo[i] = random_integer() % K;
 
             {
                 StopWatch watch;

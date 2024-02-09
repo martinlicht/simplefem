@@ -54,7 +54,7 @@ int main( int argc, char *argv[] )
                 std::vector<int> refinementedges;
                 
                 for( int k = 0; k < 3 + M.count_edges() / 10; k++ )
-                    refinementedges.push_back( rand() % M.count_edges() );
+                    refinementedges.push_back( random_integer() % M.count_edges() );
                 
                 sort_and_remove_duplicates( refinementedges );
                 
@@ -78,7 +78,7 @@ int main( int argc, char *argv[] )
                 std::vector<int> refinementedges;
                 
                 for( int k = 0; k < 3 + M.count_edges() / 10; k++ )
-                    refinementedges.push_back( rand() % M.count_edges() );
+                    refinementedges.push_back( random_integer() % M.count_edges() );
                 
                 sort_and_remove_duplicates( refinementedges );
                 

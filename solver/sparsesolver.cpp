@@ -2474,7 +2474,7 @@ int ChebyshevIteration_DiagonalPreconditioner(
     
     Float gamma_prev = notanumber;
     Float gamma_curr = notanumber;
-    Float gamma_next = notanumber;
+    //Float gamma_next = notanumber;
     
     Float r_r = notanumber;
     
@@ -2560,8 +2560,10 @@ int ChebyshevIteration_DiagonalPreconditioner(
             
         }
         
-        std::swap( gamma_curr, gamma_prev );
-        std::swap( gamma_next, gamma_curr );
+        gamma_prev = gamma_curr; 
+        gamma_curr = gamma_next; 
+        // std::swap( gamma_curr, gamma_prev );
+        // std::swap( gamma_next, gamma_curr );
         std::swap( x_curr, x_prev );
         std::swap( x_next, x_curr );
         

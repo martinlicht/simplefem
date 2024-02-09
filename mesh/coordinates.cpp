@@ -318,7 +318,7 @@ long long Coordinates::memorysize() const
 
 
 
-bool compare( const Coordinates& coords_left, const Coordinates& coords_right, Float tolerance )
+bool Coordinates::compare( const Coordinates& coords_left, const Coordinates& coords_right )
 {
     if( coords_left.getnumber() != coords_right.getnumber() )
       return false;
@@ -328,7 +328,7 @@ bool compare( const Coordinates& coords_left, const Coordinates& coords_right, F
     
     for( int n = 0; n < coords_left.getnumber(); n++ )
     for( int d = 0; d < coords_left.getdimension(); d++ )
-      if( absolute( coords_left.getdata( n, d ) - coords_right.getdata( n, d ) ) > tolerance )
+      if( isaboutequal( coords_left.getdata( n, d ), coords_right.getdata( n, d ) ) )
         return false;
     
     return true;

@@ -1,5 +1,6 @@
 
 #include "../../basic.hpp"
+#include "../../utility/random.hpp"
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
@@ -34,7 +35,7 @@ int main( int argc, char *argv[] )
         M.check();
         
         for( int c = 0; c < 20; c++ ) {
-            M.bisect_edge( M.get_triangle_edge( c % 2, rand() % 3 ) );
+            M.bisect_edge( M.get_triangle_edge( c % 2, random_integer() % 3 ) );
         }
         
         M.check();

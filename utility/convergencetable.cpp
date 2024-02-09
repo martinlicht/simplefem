@@ -410,7 +410,7 @@ std::string ConvergenceTable::TeXtabular( const std::vector<bool>& show_column )
             
             if( not show_column[j] ) continue;
             
-            printf_into_stream( ss, "% *.*e%s", nc_cell_width, nc_cell_precision, (double) entries[i][j], column_separator ); 
+            printf_into_stream( ss, "% *.*Le%s", nc_cell_width, nc_cell_precision, (long double) entries[i][j], column_separator ); 
             
             if( display_convergence_rates ){
                 

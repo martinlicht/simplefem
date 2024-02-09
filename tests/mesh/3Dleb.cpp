@@ -2,6 +2,7 @@
 #include <vector>
 
 #include "../../basic.hpp"
+#include "../../utility/random.hpp"
 #include "../../utility/stl.hpp"
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
@@ -41,7 +42,7 @@ int main( int argc, char *argv[] )
             
             unsigned int p = 20;
             for( int t = 0; t < M.count_tetrahedra(); t++ )
-                if( rand() % p == 0 ) 
+                if( random_integer() % p == 0 ) 
                     markedcells.push_back( t );
             cell_marked_count += markedcells.size();
             
