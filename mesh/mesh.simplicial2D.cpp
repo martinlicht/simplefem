@@ -3256,7 +3256,7 @@ std::string MeshSimplicial2D::outputTikZ() const
 inline std::string rgb_to_string( unsigned char r, unsigned char g, unsigned char b )
 {
     char result[8] = {0,0,0,0,0,0,0,0};
-    snprintf(result, 8, "#%02x%02x%02x", r, g, b);
+    snprintf(result, countof(result), "#%02x%02x%02x", r, g, b);
     return std::string( result );
 }
 

@@ -553,11 +553,11 @@ DenseMatrix SubdeterminantMatrix( const DenseMatrix& A, int k )
     if( k == 0 ) return DenseMatrix(1,1,1.);
     if( k == 1 ) return A;
 
-    IndexRange range_from = IndexRange( 0, k-1 );
-    IndexRange range_rows = IndexRange( 0, A.getdimout()-1 );
-    IndexRange range_cols = IndexRange( 0, A.getdimin()-1 );
-    std::vector<IndexMap> sigmas_rows = generateSigmas( range_from, range_rows );
-    std::vector<IndexMap> sigmas_cols = generateSigmas( range_from, range_cols );
+    const IndexRange range_from = IndexRange( 0, k-1 );
+    const IndexRange range_rows = IndexRange( 0, A.getdimout()-1 );
+    const IndexRange range_cols = IndexRange( 0, A.getdimin()-1 );
+    const std::vector<IndexMap> sigmas_rows = generateSigmas( range_from, range_rows );
+    const std::vector<IndexMap> sigmas_cols = generateSigmas( range_from, range_cols );
     
     DenseMatrix ret( SIZECAST( sigmas_rows.size() ), SIZECAST( sigmas_cols.size() ), 0. );
     for( int rim = 0; rim < sigmas_rows.size(); rim++ )

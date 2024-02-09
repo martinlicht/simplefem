@@ -7,8 +7,8 @@
 DenseMatrix MatrixTensorProduct( const DenseMatrix& A, const DenseMatrix& B )
 {
     A.check(); B.check();
-    int newrows = A.getdimout() * B.getdimout();
-    int newcols = A.getdimin()  * B.getdimin();
+    const int newrows = A.getdimout() * B.getdimout();
+    const int newcols = A.getdimin()  * B.getdimin();
     
     DenseMatrix ret( newrows, newcols );
     assert( ret.getdimout() == newrows );
