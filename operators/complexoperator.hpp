@@ -42,7 +42,7 @@ class ComplexOperator final
         /* Constructors */
         
         template<typename OpReal>
-        ComplexOperator( OpReal&& Real )
+        explicit ComplexOperator( OpReal&& Real )
         : ComplexOperator( std::forward<OpReal>(Real), ZeroOperator(Real.getdimout(),Real.getdimin()) )
         {}
         

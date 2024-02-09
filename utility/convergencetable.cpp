@@ -12,7 +12,7 @@
 
 
 
-ConvergenceTable::ConvergenceTable( std::string table_name )
+ConvergenceTable::ConvergenceTable( const std::string& table_name )
 : table_name(table_name), 
     display_convergence_rates( true ),
     print_rowwise_instead_of_columnwise(false)

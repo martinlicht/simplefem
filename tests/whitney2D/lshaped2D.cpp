@@ -222,8 +222,8 @@ int main( int argc, char *argv[] )
                         if( r == 1 ){
                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
-                            vtk.writeCoordinateBlock();
-                            vtk.writeTopDimensionalCells();
+                            // vtk.writeCoordinateBlock();
+                            // vtk.writeTopDimensionalCells();
 
                             auto converter = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r );
 

@@ -26,7 +26,7 @@ class ConvergenceTable
     
     public:
 
-        explicit ConvergenceTable( std::string table_name = "---------- Default Table Name ----------" );
+        explicit ConvergenceTable( const std::string& table_name = "---------- Default Table Name ----------" );
         
         void insert_numerical_entry( EntryType entry );
         void insert_seriesheader( const std::string& seriesheader );

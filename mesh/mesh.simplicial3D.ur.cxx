@@ -1001,7 +1001,7 @@ void MeshSimplicial3D::uniformrefinement()
     
     /* DONE */
     
-//     check();
+    check();
 }
 
 

@@ -388,7 +388,9 @@ const SparseMatrix& SparseMatrix::sortandcompressentries( SparseMatrix::MatrixEn
         // for( int c = 0; c < entries.size(); c++ ) 
         //     if( entries[c].value == 0 ) { entries.erase( entries.begin()+c ); c--; }
         
-        auto it = std::remove_if(entries.begin(), entries.end(), []( const SparseMatrix::MatrixEntry e ){ return e.value == 0.; } );
+        auto it = std::remove_if(entries.begin(), entries.end(), 
+                    []( const SparseMatrix::MatrixEntry& e ){ return e.value == 0.; } 
+                  );
         entries.erase( it, entries.end() );
         
         for( int c = 0; c < entries.size(); c++ ) assert( entries[c].value != 0. );

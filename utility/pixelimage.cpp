@@ -24,7 +24,7 @@
 
 
 
-PixelImage readPixelImage( std::string str )
+PixelImage readPixelImage( const std::string& str )
 {
 
     int width, height, channels;
@@ -56,7 +56,7 @@ PixelImage readPixelImage( std::string str )
 
 }
 
-void savePixelImage( const PixelImage& pim, std::string str )
+void savePixelImage( const PixelImage& pim, const std::string& str )
 {
     
     int width    = pim.getwidth();

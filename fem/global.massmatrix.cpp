@@ -32,8 +32,8 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
     // Auxiliary calculations and preparations
     
     const int num_simplices = mesh.count_simplices( n );
-        
-    const int localdim = binomial_integer( n+r, n ) * binomial_integer( n+1, k );
+    
+    const int localdim = binomial_integer( n + r, n ) * binomial_integer( n+1, k );
     
     const int dim_in      = num_simplices * localdim;
     const int dim_out     = num_simplices * localdim;
@@ -43,10 +43,9 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
     
     DenseMatrix polyMM = polynomialmassmatrix( n, r );
 
-    assert( polyMM.issquare() and polyMM.getdimin() == binomial_integer( n+r, n ) );
+    assert( polyMM.issquare() );
+    assert( polyMM.getdimin() == binomial_integer( n+r, n ) );
     
-//     LOG << polyMM << nl;
-        
     #if defined(_OPENMP)
     #pragma omp parallel for
     #endif
@@ -57,10 +56,10 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
 
         DenseMatrix GPM    = mesh.getGradientProductMatrix( n, s );
             
-        assert( ( GPM - calcAtA(mesh.getGradientMatrix( n, s )) ).issmall() );
+        assert( ( GPM - calcAtA( mesh.getGradientMatrix( n, s ) ) ).issmall() );
         
         DenseMatrix formMM = SubdeterminantMatrix( GPM, k );
-    
+        
         DenseMatrix fullMM = MatrixTensorProduct( polyMM, formMM ) * measure;
 
         assert( measure >= 0. );
@@ -69,12 +68,6 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
         {
             assert( ( fullMM - polyMM * measure ).issmall() );
         }
-        
-        // LOG << measure << nl;
-        
-        // LOG << formMM << nl;
-        
-        // LOG << fullMM << nl;
         
         for( int i = 0; i < localdim; i++ )
         for( int j = 0; j < localdim; j++ )

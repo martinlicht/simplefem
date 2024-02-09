@@ -29,8 +29,8 @@ int main( int argc, char *argv[] )
         fstream fs( string("./locallshaped") + std::to_string(l) + string(".vtk"), std::fstream::out );
 
         VTKWriter vtk( M, fs, "L-Shaped Domain" );
-        vtk.writeCoordinateBlock();
-        vtk.writeTopDimensionalCells();
+        // vtk.writeCoordinateBlock();
+        // vtk.writeTopDimensionalCells();
 
         fs.close();
 
