@@ -2976,9 +2976,9 @@ std::string MeshSimplicial3D::outputTikZ( bool boundary_only ) const
 }
 
 
-long long MeshSimplicial3D::memorysize() const
+std::size_t MeshSimplicial3D::memorysize() const
 {
-    long long ret = 0;
+    std::size_t ret = 0;
 
     ret += getcoordinates().memorysize();
 

@@ -155,7 +155,7 @@ class MeshSimplicial1D
         
         void merge( const MeshSimplicial1D& );
 
-        virtual long long memorysize() const override;
+        virtual std::size_t memorysize() const override;
         
     private:
 

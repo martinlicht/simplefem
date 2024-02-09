@@ -9,6 +9,7 @@
 #include <iostream>
 #include <vector>
 
+#include "../../utility/random.hpp"
 #include "../../utility/sorthack.hpp"
 #include "../../utility/profilerutils.hpp"
 
@@ -278,7 +279,7 @@ int main( int argc, char *argv[] )
         auto& name = sorting_call_names[c];
 
         {
-            std::printf( "Stricly ascending sequence:                    %lu\t%s\n", N, name );
+            std::printf( "Stricly ascending sequence:                    %zu\t%s\n", N, name );
 
             for( std::size_t i = 0; i < N; i++ )
                 foo[i] = i;
@@ -298,7 +299,7 @@ int main( int argc, char *argv[] )
         }
 
         {
-            std::printf( "Stricly descending sequence:                   %lu\t%s\n", N, name );
+            std::printf( "Stricly descending sequence:                   %zu\t%s\n", N, name );
 
             for( std::size_t i = 0; i < N; i++ )
                 foo[i] = N - i - 1;
@@ -318,7 +319,7 @@ int main( int argc, char *argv[] )
         }
 
         {
-            std::printf( "Random reorder of strictly ascending sequence: %lu\t%s\n", N, name );
+            std::printf( "Random reorder of strictly ascending sequence: %zu\t%s\n", N, name );
 
             for( std::size_t i = 0; i < N; i++ )
                 foo[i] = i;
@@ -326,7 +327,7 @@ int main( int argc, char *argv[] )
             //         for( std::size_t i = 0; i < N; i++ ) std::cout << foo[i] << ' '; std::cout << '\n';
 
             for( std::size_t i = 0; i < N; i++ )
-                std::swap( foo[i], foo[i + rand() % ( N - i )] );
+                std::swap( foo[i], foo[i + random_integer() % ( N - i )] );
 
             //         for( std::size_t i = 0; i < N; i++ ) std::cout << foo[i] << ' '; std::cout << '\n';
 
@@ -346,10 +347,10 @@ int main( int argc, char *argv[] )
 
         {
             std::size_t K = 1000;
-            std::printf( "Randomized sequence, all values modulo %lu:   %lu\t%s\n", K, N, name );
+            std::printf( "Randomized sequence, all values modulo %zu:   %zu\t%s\n", K, N, name );
 
             for( std::size_t i = 0; i < N; i++ )
-                foo[i] = rand() % K;
+                foo[i] = random_integer() % K;
 
             {
                 StopWatch watch;

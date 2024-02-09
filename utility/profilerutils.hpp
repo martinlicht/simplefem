@@ -62,7 +62,7 @@ class StopWatch {
 
     public:
 
-        StopWatch( const std::string& text = "---" ) 
+        explicit StopWatch( const std::string& text = "---" ) 
         : start_time(std::chrono::steady_clock::now()), text(text) 
         {}
 

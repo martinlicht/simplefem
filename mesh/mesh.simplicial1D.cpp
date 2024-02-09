@@ -945,9 +945,9 @@ void MeshSimplicial1D::merge( const MeshSimplicial1D& mesh )
 
 
 
-long long MeshSimplicial1D::memorysize() const
+std::size_t MeshSimplicial1D::memorysize() const
 {
-    long long ret = 0;
+    std::size_t ret = 0;
 
     ret += getcoordinates().memorysize();
 

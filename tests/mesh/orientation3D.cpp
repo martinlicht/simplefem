@@ -19,7 +19,7 @@ int main( int argc, char *argv[] )
     MeshSimplicial3D M = UnitSimplex3D();
 
     const int l_min = 0;
-    const int l_max = 1;
+    const int l_max = 2;
 
     for( int c = 0; c < l_min; c++ )
         M.uniformrefinement();

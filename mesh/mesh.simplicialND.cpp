@@ -792,9 +792,9 @@ FloatVector MeshSimplicialND::get_simplex_midpoint( int dim, int s ) const
 
 
 
-long long MeshSimplicialND::memorysize() const
+std::size_t MeshSimplicialND::memorysize() const
 {
-    long long ret = 0;
+    std::size_t ret = 0;
 
     ret += getcoordinates().memorysize();
 

@@ -1208,7 +1208,7 @@ int HodgeHerzogSoodhalterMethod(
             }
             
             Float psi_A = v1_z_A / (gamma*gamma); 
-            Float psi_C = v1_z_A / (gamma*gamma);
+            Float psi_C = v1_z_C / (gamma*gamma); // TODO: Is this correct????
             mu_A = psi_A; 
             mu_C = psi_C; 
             

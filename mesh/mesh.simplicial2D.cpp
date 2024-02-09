@@ -3289,8 +3289,8 @@ inline std::string render_number( double num, int tail = 8 )
 
 std::string MeshSimplicial2D::outputSVG( 
     Float stroke_width,
-    std::string fill,
-    std::string stroke,
+    const std::string& fill,
+    const std::string& stroke,
     const FloatVector* triangle_red,
     const FloatVector* triangle_green,
     const FloatVector* triangle_blue
@@ -3329,7 +3329,7 @@ std::string MeshSimplicial2D::outputSVG(
          << render_number(x1) << "," << render_number(y1) << " " 
          << render_number(x2) << "," << render_number(y2) << "\"";
       
-      if( fill == "array"){
+      if( fill == "array" ){
       
         assert( triangle_red ); assert( triangle_green ); assert( triangle_blue );
       
@@ -3378,8 +3378,8 @@ std::string MeshSimplicial2D::outputLinearSVG(
     const FloatVector& triangle_green,
     const FloatVector& triangle_blue,
     Float stroke_width,
-    std::string fill,
-    std::string stroke
+    const std::string& fill,
+    const std::string& stroke
 ) const {
     std::ostringstream os;
 
@@ -3498,9 +3498,9 @@ std::string MeshSimplicial2D::outputLinearSVG(
 
 
 
-long long MeshSimplicial2D::memorysize() const
+std::size_t MeshSimplicial2D::memorysize() const
 {
-    long long ret = 0;
+    std::size_t ret = 0;
 
     ret += getcoordinates().memorysize();
 

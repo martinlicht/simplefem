@@ -91,7 +91,7 @@ FLAG_COLORED_OUTPUT=yes
 
 # Do you want to enable static analysis during the compilation process
 # Uncomment the following line to enable static analysis
-# FLAG_DO_STATICANALYSIS=yes
+FLAG_DO_STATICANALYSIS=yes
 
 # Do you want to ENABLE the use of tcmalloc?
 # Uncomment the following line to enable tcmalloc
@@ -552,10 +552,12 @@ endif
 # thread cannot be combined with address and leak
 # Warning: memory causes considerable slowdown
 
+# NOTE: The following construction of the strings ensures that there are no spaces added.
+
 ifeq ($(FLAG_DO_USE_SANITIZER),yes)
 
-	SANITIZERS := -ftrapv 
-
+	SANITIZERS :=
+	
 	ifeq ($(FLAG_CXX),GCC)
 
 		SANITIZERS :=$(SANITIZERS)pointer-compare,pointer-subtract,
@@ -583,8 +585,10 @@ ifeq ($(FLAG_DO_USE_SANITIZER),yes)
 	# thread cannot be combined with address and leak 
 
 	
+	# SANITIZERS :=-ftrapv,
+
 	# Comment out the following line to disable ALL built-in sanitizers 
-	CXXFLAGS_SANI += -fsanitize=$(SANITIZERS) 
+	CXXFLAGS_SANI := -fsanitize=$(SANITIZERS) -ftrapv 
 
 endif
 

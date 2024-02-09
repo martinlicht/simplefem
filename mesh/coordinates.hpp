@@ -109,7 +109,7 @@ class Coordinates
         std::vector<Float>& raw();
         const std::vector<Float>& raw() const;
         
-        long long memorysize() const;
+        std::size_t memorysize() const;
         
     private:
             
@@ -119,10 +119,11 @@ class Coordinates
 
     public:
 
+        static bool compare( const Coordinates& coords_left, const Coordinates& coords_right );
+
         friend inline bool operator==( const Coordinates& coords_left, const Coordinates& coords_right )
         {
-            bool compare( const Coordinates&, const Coordinates&, Float ); // TODO: make compare a member function 
-            return compare( coords_left, coords_right, 0.00001 );
+            return compare( coords_left, coords_right );
         }
 
         friend inline bool operator!=( const Coordinates& coords_left, const Coordinates& coords_right )
@@ -141,7 +142,6 @@ class Coordinates
 
 
 
-bool compare( const Coordinates& coords_left, const Coordinates& coords_right, Float tolerance = 0.00001 );
 
 
 

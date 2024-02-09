@@ -234,8 +234,8 @@ class MeshSimplicial2D
 
         std::string outputSVG( 
             Float stroke_width = 0.01,
-            std::string fill   = "white",
-            std::string stroke = "black",
+            const std::string& fill   = "white",
+            const std::string& stroke = "black",
             const FloatVector* triangle_red   = nullptr,
             const FloatVector* triangle_green = nullptr,
             const FloatVector* triangle_blue  = nullptr
@@ -246,14 +246,14 @@ class MeshSimplicial2D
             const FloatVector& triangle_green,
             const FloatVector& triangle_blue, 
             Float stroke_width = 0.01,
-            std::string fill   = "red",
-            std::string stroke = "blue"
+            const std::string& fill   = "red",
+            const std::string& stroke = "blue"
         ) const;
 
 
         /* other */ 
         
-        virtual long long memorysize() const override;
+        virtual std::size_t memorysize() const override;
         
         
         

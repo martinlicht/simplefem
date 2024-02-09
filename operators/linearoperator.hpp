@@ -36,7 +36,7 @@ class LinearOperator
 
         /* standard methods for operators */
         
-        explicit LinearOperator() = delete;
+                 LinearOperator()                             = delete;
         explicit LinearOperator( const LinearOperator& )      = default;
         explicit LinearOperator( LinearOperator&& )           = default;
         LinearOperator& operator=( const LinearOperator& op ) = default;

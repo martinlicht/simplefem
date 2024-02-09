@@ -201,7 +201,7 @@ $(context).cppcheck:
 	--enable=warning,style,performance,portability --suppress=duplicateCondition \
 	--suppress=assertWithSideEffect --suppress=useStlAlgorithm \
 	--suppress=knownConditionTrueFalse --suppress=unsignedPositive \
-	--std=c++17 -q $(mymoddir)/*pp
+	--std=c++17 -q $(mycontextdir)/*pp
 
 
 

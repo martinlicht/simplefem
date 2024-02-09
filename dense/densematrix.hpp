@@ -196,7 +196,7 @@ class DenseMatrix final
 
         /* Memory size */
         
-        long long memorysize() const;
+        std::size_t memorysize() const;
 
     private:
         
