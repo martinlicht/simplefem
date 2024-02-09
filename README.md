@@ -1,3 +1,9 @@
+
+FFFFF EEEEE EEEEE  CCCC    +       +  
+F     E     E     C        +       +  
+FFFF  EEEE  EEEE  C     +++++++ +++++++
+F     E     E     C        +       +  
+F     EEEEE EEEEE  CCCC    +       +  
                 [ a short description of what you are doing here]
 
                     [                                    ]
