@@ -18,6 +18,8 @@ int main( int argc, char *argv[] )
     printf("    size of size_t    : %ju\n", (uintmax_t)sizeof(     size_t) );
     printf("    size of size_t    : %ju\n", (uintmax_t)sizeof(std::size_t) );
 
+    printf("    SIZE_MAX          : %ju\n", (uintmax_t) SIZE_MAX           );
+
     /* output floating-point parameters */
 
     printf("    \nsizes of floating-point types\n");

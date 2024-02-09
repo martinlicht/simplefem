@@ -1,5 +1,6 @@
 
 #include "../../basic.hpp"
+#include "../../utility/random.hpp"
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples3D.hpp"
@@ -42,7 +43,7 @@ int main( int argc, char *argv[] )
         M.automatic_dirichlet_flags();
 
         for( int c = 0; c < 20; c++ ) {
-            M.bisect_edge( M.get_tetrahedron_edge( c % 5, rand() % 6 ) );
+            M.bisect_edge( M.get_tetrahedron_edge( c % 5, random_integer() % 6 ) );
         }
         
         M.check();

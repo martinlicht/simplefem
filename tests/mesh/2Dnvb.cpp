@@ -2,6 +2,7 @@
 #include <vector>
 
 #include "../../basic.hpp"
+#include "../../utility/random.hpp"
 #include "../../utility/stl.hpp"
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
@@ -41,7 +42,7 @@ int main( int argc, char *argv[] )
             
             unsigned int p = 40;
             for( int t = 0; t < M.count_triangles(); t++ )
-                if( rand() % p == 0 ) 
+                if( random_integer() % p == 0 ) 
                     markedcells.push_back( t );
             markedcells.push_back( 0 );
             cell_marked_count += markedcells.size();
@@ -88,7 +89,7 @@ int main( int argc, char *argv[] )
             
             unsigned int p = 10;
             for( int t = 0; t < M.count_triangles(); t++ )
-                if( rand() % p == 0 ) 
+                if( random_integer() % p == 0 ) 
                     markedcells.push_back( t );
             markedcells.push_back( 0 );
             cell_marked_count += markedcells.size();
@@ -135,7 +136,7 @@ int main( int argc, char *argv[] )
             
             // unsigned int p = 10;
             // for( int t = 0; t < M.count_triangles(); t++ )
-            //     if( rand() % p == 0 ) 
+            //     if( random_integer() % p == 0 ) 
             //         markedcells.push_back( t );
             markedcells.push_back( 0 );
             cell_marked_count += markedcells.size();
@@ -171,13 +172,13 @@ int main( int argc, char *argv[] )
         for( int i = 0; i < iter_max; i++ ) {
         
 //             std::vector<int> markedcells;
-//             markedcells.push_back( rand() % M.count_triangles() );
+//             markedcells.push_back( random_integer() % M.count_triangles() );
             
             cell_marked_count += 1;
             
             std::vector<int> markededges;
 //             for( int t : markedcells ) markededges.push_back( M.get_oldest_edge( t ) );
-            markededges.push_back( rand() % M.count_edges() );
+            markededges.push_back( random_integer() % M.count_edges() );
             sort_and_remove_duplicates( markededges );
             
 //             LOG << i << "/" << iter_max << " Refine " << markedcells.size() << "/" << M.count_triangles() << " ... ";
