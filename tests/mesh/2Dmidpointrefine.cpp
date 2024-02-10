@@ -13,6 +13,10 @@ int main( int argc, char *argv[] )
     MeshSimplicial2D M = StandardSquare2D();
     
     M.check();
+
+    M.automatic_dirichlet_flags();
+
+    M.check_dirichlet_flags();
     
     LOG << "Refinement" << nl;
     
@@ -22,8 +26,9 @@ int main( int argc, char *argv[] )
         
     }
         
-    
     M.check();
+
+    M.check_dirichlet_flags();
     
     LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
     

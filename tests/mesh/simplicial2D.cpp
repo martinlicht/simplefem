@@ -21,16 +21,30 @@ int main( int argc, char *argv[] )
 
     M.check();
 
+    LOG << "Set automatic Dirichlet flags..." << nl;
+
+    M.automatic_dirichlet_flags();
+
+    M.check();
+
+    M.check_dirichlet_flags();
+
     LOG << "Refinement" << nl;
 
     for( int c = 0; c < 2; c++ ) M.uniformrefinement();
 
     M.check();
 
+    LOG << "Standard output..." << nl;
+
     LOG << M << nl;
+
+    LOG << "TikZ output..." << nl;
 
     // std::cout << M.outputTikZ();
     puts( M.outputTikZ().c_str() );
+
+    LOG << "SVG output..." << nl;
 
     fstream fs( experimentfile( getbasename(__FILE__), "svg" ), std::fstream::out );
     int num_tets = M.count_triangles();

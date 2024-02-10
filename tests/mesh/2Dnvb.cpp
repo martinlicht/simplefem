@@ -22,6 +22,10 @@ int main( int argc, char *argv[] )
         MeshSimplicial2D M = UnitTriangle2D();
         
         M.check();
+
+        M.automatic_dirichlet_flags();
+
+        M.check_dirichlet_flags();
         
         for( int k = 0; k <= 2; k++ ) 
         { 
@@ -58,6 +62,8 @@ int main( int argc, char *argv[] )
         }
         
         M.check();
+
+        M.check_dirichlet_flags();
         
     }
     
@@ -69,6 +75,10 @@ int main( int argc, char *argv[] )
         MeshSimplicial2D M = TetrahedralSurface2D(); //StandardSquare2D();
         
         M.check();
+
+        M.automatic_dirichlet_flags();
+
+        M.check_dirichlet_flags();
         
         for( int k = 0; k <= 2; k++ ) 
         { 
@@ -105,6 +115,8 @@ int main( int argc, char *argv[] )
         }
         
         M.check();
+
+        M.check_dirichlet_flags();
         
     }
     
@@ -116,6 +128,10 @@ int main( int argc, char *argv[] )
         MeshSimplicial2D M = TetrahedralSurface2D();
         
         M.check();
+
+        M.automatic_dirichlet_flags();
+
+        M.check_dirichlet_flags();
         
         for( int k = 0; k <= 2; k++ ) 
         { 
@@ -152,6 +168,8 @@ int main( int argc, char *argv[] )
         }
         
         M.check();
+
+        M.check_dirichlet_flags();
         
     }
         
@@ -160,7 +178,13 @@ int main( int argc, char *argv[] )
         
         LOG << "Fourth Experiment: uniform distribution" << nl;
         
-        MeshSimplicial2D M = UnitTriangle2D(); M.check();
+        MeshSimplicial2D M = UnitTriangle2D();
+        
+        M.check();
+
+        M.automatic_dirichlet_flags();
+
+        M.check_dirichlet_flags();
         
         LOG << "Newest vertex bisections..." << nl;
 
@@ -188,6 +212,8 @@ int main( int argc, char *argv[] )
         }
         
         M.check();
+
+        M.check_dirichlet_flags();
         
     }
     
@@ -196,7 +222,13 @@ int main( int argc, char *argv[] )
         
         LOG << "Fifth Experiment: repeated bisection of a fixed triangle" << nl;
         
-        MeshSimplicial2D M = UnitTriangle2D(); M.check();
+        MeshSimplicial2D M = UnitTriangle2D();
+        
+        M.check();
+
+        M.automatic_dirichlet_flags();
+
+        M.check_dirichlet_flags();
         
         int cell_count_initial = M.count_triangles();
         int cell_marked_count  = 0;
@@ -226,11 +258,13 @@ int main( int argc, char *argv[] )
         }
         
         M.check();
+
+        M.check_dirichlet_flags();
         
     }
 
 
-        LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
-        
-        return 0;
+    LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
+    
+    return 0;
 }

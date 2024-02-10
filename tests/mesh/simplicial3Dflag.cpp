@@ -5,8 +5,6 @@
 #include "../../mesh/examples3D.hpp"
 
 
-using namespace std;
-
 int main( int argc, char *argv[] )
 {
     LOG << "Unit Test for Simplicial 3D Module" << nl;
@@ -15,7 +13,11 @@ int main( int argc, char *argv[] )
 
     M.check();
 
+    LOG << "Set automatic Dirichlet flags..." << nl;
+
     M.automatic_dirichlet_flags();
+
+    M.check();
 
     M.check_dirichlet_flags();
 
@@ -23,11 +25,11 @@ int main( int argc, char *argv[] )
 
     M.uniformrefinement();
 
-    LOG << "...done" << nl;
-
     M.check();
 
     M.check_dirichlet_flags();
+
+    LOG << "Standard output..." << nl;
 
     LOG << M << nl;
 
