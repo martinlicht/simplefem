@@ -67,11 +67,11 @@ void ComplexOperator::apply( FloatVector& dest, const FloatVector& src, Float sc
     assert( getdimin() == src.getdimension() );
     assert( getdimout() == dest.getdimension() );
     
-    auto src_real = RealPart( src );
-    auto src_imag = ImaginaryPart( src );
+    const auto src_real = RealPart( src );
+    const auto src_imag = ImaginaryPart( src );
 
-    auto dest_real = scaling * ( *part_real * src_real - *part_imag * src_imag );
-    auto dest_imag = scaling * ( *part_real * src_imag + *part_imag * src_real );
+    const auto dest_real = scaling * ( *part_real * src_real - *part_imag * src_imag );
+    const auto dest_imag = scaling * ( *part_real * src_imag + *part_imag * src_real );
 
     dest = ComplexFloatVector( dest_real, dest_imag );
 }

@@ -19,11 +19,17 @@ int main( int argc, char *argv[] )
         
         M.check();
         
+        M.automatic_dirichlet_flags();
+
+        M.check_dirichlet_flags();
+        
         for( int c = 0; c < 10; c++ ) {
             M.bisect_edge( M.get_tetrahedron_edge( 0, ei ) );
         }
         
         M.check();
+        
+        M.check_dirichlet_flags();
         
     }
     
@@ -34,12 +40,16 @@ int main( int argc, char *argv[] )
         
         M.check();
         
+        M.automatic_dirichlet_flags();
+
         for( int c = 0; c < 20; c++ ) {
             M.bisect_edge( M.get_tetrahedron_edge( c % 5, random_integer() % 6 ) );
         }
         
         M.check();
         
+        M.check_dirichlet_flags();
+
     }
     
     

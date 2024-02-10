@@ -208,7 +208,7 @@ DiagonalOperator::DiagonalOperator( int dimension, const std::function<Float(int
 
 DiagonalOperator::~DiagonalOperator()
 {
-        /* Nothing */ 
+    /* Nothing */ 
 }
 
 void DiagonalOperator::check() const  

@@ -52,9 +52,9 @@ MatrixCSR::MatrixCSR(
     
     if( csr_matrix_verbosity ) LOG << "Allocating CCO -> CSR: " << matrix.getnumberofentries() << nl;
     
-    int rows       = matrix.getdimout();
-    int columns    = matrix.getdimin();
-    int numentries = matrix.getnumberofentries();
+    const int rows       = matrix.getdimout();
+    const int columns    = matrix.getdimin();
+    const int numentries = matrix.getnumberofentries();
 
     // std::vector<int>   A( rows+1,     0  );
     // std::vector<int>   C( numentries, 0  );
@@ -75,6 +75,11 @@ MatrixCSR::MatrixCSR(
     }
 
     if( csr_matrix_verbosity ) LOG << "DONE CCO -> CSR: " << matrix.getnumberofentries() << nl;
+
+    for( int i = 0; i < matrix.getnumberofentries(); i++ ){
+        assert( 0 <= C[i] and C[i] < columns );
+    }
+ 
 
     MatrixCSR::check();
     
@@ -268,8 +273,6 @@ FloatVector MatrixCSR::diagonal() const
         
     }
     
-    
-        
     return ret;
 }
 
@@ -279,14 +282,14 @@ static void sort_and_compress_csrdata( std::vector<int>& A, std::vector<int>& C,
 MatrixCSR MatrixCSR::getTranspose() const 
 {
     // gather relevant data
-    int mat_rows = getdimout();
-    int mat_cols = getdimin();
+    const int mat_rows = getdimout();
+    const int mat_cols = getdimin();
     
     const int*   matA = getA();
     const int*   matC = getC();
     const Float* matV = getV();
     
-    int num_entries = getnumberofentries();
+    const int num_entries = getnumberofentries();
     
     std::vector<int>   B( mat_cols + 1, 0  );
     std::vector<int>   D( num_entries,  0  );
@@ -451,7 +454,7 @@ static void sort_and_compress_csrdata_perform( std::vector<int>& A, std::vector<
 
     // return ; 
 
-    int num_rows = A.size()-1;
+    const int num_rows = A.size()-1;
     
     assert( A.back() == C.size() );
     assert( A.back() == V.size() );
@@ -575,7 +578,7 @@ static void sort_and_compress_csrdata_reduced( std::vector<int>& A, std::vector<
 
     // return ; 
 
-    int num_rows = A.size()-1;
+    const int num_rows = A.size()-1;
     
     assert( A.back() == C.size() );
     assert( A.back() == V.size() );
@@ -695,10 +698,10 @@ void MatrixCSR::compressentries() const
 MatrixCSR MatrixCSRAddition( const MatrixCSR& mat1, const MatrixCSR& mat2, Float s1, Float s2 )
 {
     // gather relevant data
-    int mat1_rows = mat1.getdimout();
-    int mat1_cols = mat1.getdimin();
-    int mat2_rows = mat2.getdimout();
-    int mat2_cols = mat2.getdimin();
+    const int mat1_rows = mat1.getdimout();
+    const int mat1_cols = mat1.getdimin();
+    const int mat2_rows = mat2.getdimout();
+    const int mat2_cols = mat2.getdimin();
     
     const int* mat1A = mat1.getA();
     const int* mat2A = mat2.getA();
@@ -712,10 +715,10 @@ MatrixCSR MatrixCSRAddition( const MatrixCSR& mat1, const MatrixCSR& mat2, Float
     Assert( mat1_cols == mat2_cols );
     Assert( mat1_rows == mat2_rows );
 
-    int matn_rows = mat1_rows;
-    int matn_cols = mat1_cols;
+    const int matn_rows = mat1_rows;
+    const int matn_cols = mat1_cols;
 
-    int num_entries = mat1A[matn_rows] + mat2A[matn_rows];
+    const int num_entries = mat1A[matn_rows] + mat2A[matn_rows];
     
     std::vector<int>   A( matn_rows + 1, 0 );
     std::vector<int>   C( num_entries, 0  );
@@ -755,10 +758,10 @@ MatrixCSR MatrixCSRAddition( const MatrixCSR& mat1, const MatrixCSR& mat2, Float
 MatrixCSR MatrixCSRMultiplication( const MatrixCSR& mat1, const MatrixCSR& mat2 )
 {
     // gather relevant data
-    int mat1_rows = mat1.getdimout();
-    int mat1_cols = mat1.getdimin();
-    int mat2_rows = mat2.getdimout();
-    int mat2_cols = mat2.getdimin();
+    const int mat1_rows = mat1.getdimout();
+    const int mat1_cols = mat1.getdimin();
+    const int mat2_rows = mat2.getdimout();
+    const int mat2_cols = mat2.getdimin();
     
     const int* mat1A = mat1.getA();
     const int* mat2A = mat2.getA();
@@ -771,8 +774,8 @@ MatrixCSR MatrixCSRMultiplication( const MatrixCSR& mat1, const MatrixCSR& mat2 
 
     Assert( mat1_cols == mat2_rows );
 
-    int matn_rows = mat1_rows;
-    int matn_cols = mat2_cols;
+    const int matn_rows = mat1_rows;
+    const int matn_cols = mat2_cols;
 
     if( csr_matrix_verbosity ) LOG << "MatrixCSRMultiplication: create index list A, allocate C and V" << nl; 
     
@@ -845,10 +848,10 @@ MatrixCSR MatrixCSRMultiplication( const MatrixCSR& mat1, const MatrixCSR& mat2 
 MatrixCSR MatrixCSRMultiplication_reduced( const MatrixCSR& mat1, const MatrixCSR& mat2 )
 {
     // gather relevant data
-    int mat1_rows = mat1.getdimout();
-    int mat1_cols = mat1.getdimin();
-    int mat2_rows = mat2.getdimout();
-    int mat2_cols = mat2.getdimin();
+    const int mat1_rows = mat1.getdimout();
+    const int mat1_cols = mat1.getdimin();
+    const int mat2_rows = mat2.getdimout();
+    const int mat2_cols = mat2.getdimin();
     
     const int* mat1A = mat1.getA();
     const int* mat2A = mat2.getA();
@@ -861,8 +864,8 @@ MatrixCSR MatrixCSRMultiplication_reduced( const MatrixCSR& mat1, const MatrixCS
 
     Assert( mat1_cols == mat2_rows );
 
-    int matn_rows = mat1_rows;
-    int matn_cols = mat2_cols;
+    const int matn_rows = mat1_rows;
+    const int matn_cols = mat2_cols;
 
     if( csr_matrix_verbosity ) LOG << "MatrixCSRMultiplication reduced: create index list A and fill in" << nl; 
     

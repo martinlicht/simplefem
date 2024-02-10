@@ -60,8 +60,6 @@ int main( int argc, char *argv[] )
             
             M.check_dirichlet_flags();
 
-        
-        
         }
         
         LOG << "check";

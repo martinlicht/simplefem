@@ -7,6 +7,7 @@
 #include "../../utility/files.hpp"
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
+#include "../../mesh/io.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
 
 
@@ -21,16 +22,49 @@ int main( int argc, char *argv[] )
 
     M.check();
 
-    LOG << "Refinement" << nl;
+    LOG << "Set automatic Dirichlet flags..." << nl;
 
-    for( int c = 0; c < 2; c++ ) M.uniformrefinement();
+    M.automatic_dirichlet_flags();
 
     M.check();
 
+    M.check_dirichlet_flags();
+
+    LOG << "Refinement" << nl;
+
+    for( int c = 0; c < 3; c++ ) 
+        M.uniformrefinement();
+
+    M.check();
+
+    M.check_dirichlet_flags();
+
+    {
+        
+        LOG << "start IO..." << nl;
+        
+        std::stringstream ss;
+        
+        writeMeshSimplicial2D( ss, M );
+        
+        ss.seekg( std::ios_base::beg );
+        
+        MeshSimplicial2D M2 = readMeshSimplicial2D( ss );
+        
+        LOG << "check mesh equivalence..." << nl;
+        assert( M == M2 );
+    }
+
+    LOG << "Standard output..." << nl;
+
     LOG << M << nl;
+
+    LOG << "TikZ output..." << nl;
 
     // std::cout << M.outputTikZ();
     puts( M.outputTikZ().c_str() );
+
+    LOG << "SVG output..." << nl;
 
     fstream fs( experimentfile( getbasename(__FILE__), "svg" ), std::fstream::out );
     int num_tets = M.count_triangles();

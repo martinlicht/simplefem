@@ -263,6 +263,28 @@ void writeMeshSimplicial3D( std::ostream& out, const MeshSimplicial3D& mesh, boo
     }
     
     assert( out.good() );
+
+    for( int t = 0; t < mesh.count_tetrahedra(); t++ ) {
+        if( sugar ) out << t << ": ";
+        out << static_cast<int>( mesh.get_flag(3,t) ) << nl;
+    }
+
+    for( int f = 0; f < mesh.count_faces(); f++ ) {
+        if( sugar ) out << f << ": ";
+        out << static_cast<int>( mesh.get_flag(2,f) ) << nl;
+    }
+
+    for( int e = 0; e < mesh.count_edges(); e++ ) {
+        if( sugar ) out << e << ": ";
+        out << static_cast<int>( mesh.get_flag(1,e) ) << nl;
+    }
+
+    for( int v = 0; v < mesh.count_vertices(); v++ ) {
+        if( sugar ) out << v << ": ";
+        out << static_cast<int>( mesh.get_flag(0,v) ) << nl;
+    }
+    
+    assert( out.good() );
     
     writeCoordinates( out, mesh.getcoordinates(), sugar );
 }
@@ -415,6 +437,39 @@ MeshSimplicial3D readMeshSimplicial3D( std::istream& in )
     
     assert( in.good() );
     
+    /* flags */
+
+    std::vector<SimplexFlag> flags_tetrahedra( counter_tetrahedra, SimplexFlag::SimplexFlagInvalid );
+    std::vector<SimplexFlag> flags_faces     ( counter_faces,      SimplexFlag::SimplexFlagInvalid );
+    std::vector<SimplexFlag> flags_edges     ( counter_edges,      SimplexFlag::SimplexFlagInvalid );
+    std::vector<SimplexFlag> flags_vertices  ( counter_vertices,   SimplexFlag::SimplexFlagInvalid );
+    
+    for( int t = 0; t < counter_tetrahedra; t++ ) {
+        int temp; 
+        in >> temp;
+        flags_tetrahedra[t] = static_cast<SimplexFlag>( temp );
+    }
+
+    for( int f = 0; f < counter_faces; f++ ) {
+        int temp; 
+        in >> temp;
+        flags_faces[f] = static_cast<SimplexFlag>( temp );
+    }
+
+    for( int e = 0; e < counter_edges; e++ ) {
+        int temp; 
+        in >> temp;
+        flags_edges[e] = static_cast<SimplexFlag>( temp );
+    }
+
+    for( int v = 0; v < counter_vertices; v++ ) {
+        int temp; 
+        in >> temp;
+        flags_vertices[v] = static_cast<SimplexFlag>( temp );
+    }
+    
+    assert( in.good() );
+    
     /* coordinates */
     
     Coordinates coords = readCoordinates( in );
@@ -423,14 +478,21 @@ MeshSimplicial3D readMeshSimplicial3D( std::istream& in )
     
     /* return */
     
-    return MeshSimplicial3D( dim, coords, 
+    auto ret = MeshSimplicial3D( dim, coords, 
                              tetrahedron_faces,    face_firstparent_tetrahedron,   tetrahedron_nextparents_of_faces, 
                              tetrahedron_edges,    edge_firstparent_tetrahedron,   tetrahedron_nextparents_of_edges, 
                              tetrahedron_vertices, vertex_firstparent_tetrahedron, tetrahedron_nextparents_of_vertices, 
                              face_edges,           edge_firstparent_face,          face_nextparents_of_edges, 
                              face_vertices,        vertex_firstparent_face,        face_nextparents_of_vertices, 
                              edge_vertices,        vertex_firstparent_edge,        edge_nextparents_of_vertices
-                           );    
+                           );
+
+    ret.set_flags( 3, flags_tetrahedra );
+    ret.set_flags( 2, flags_faces      );
+    ret.set_flags( 1, flags_edges      );
+    ret.set_flags( 0, flags_vertices   );
+
+    return ret;
 }
 
 

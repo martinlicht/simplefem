@@ -400,9 +400,9 @@ FloatVector& FloatVector::normalize( const LinearOperator& op )
     assert( std::isfinite(value) );
     assert( value >= 0 );
     
-    value = sqrt(value);
+    Float value_sqrt = sqrt(value);
     
-    this->scaleinverse( value );
+    this->scaleinverse( value_sqrt );
     
     return *this;
 }
@@ -451,7 +451,7 @@ FloatVector FloatVector::getslice( int base, int len ) const
     assert( 0 <= base+len && base+len <= getdimension() );
     FloatVector ret( len );
     for( int p = 0; p < len; p++ )
-      ret[p] = pointer[ base + p ];
+        ret[p] = pointer[ base + p ];
     return ret;
 }
 
@@ -473,7 +473,7 @@ void FloatVector::setslice( int base, const FloatVector& slice )
     assert( 0 <= len && len <= getdimension() );
     assert( 0 <= base+len && base+len <= getdimension() );
     for( int p = 0; p < len; p++ )
-      pointer[ base + p ] = slice[p];
+        pointer[ base + p ] = slice[p];
 }
 
 void FloatVector::addslice( int base, const FloatVector& slice, Float s )
@@ -484,7 +484,7 @@ void FloatVector::addslice( int base, const FloatVector& slice, Float s )
     assert( 0 <= len && len <= getdimension() );
     assert( 0 <= base+len && base+len <= getdimension() );
     for( int p = 0; p < len; p++ )
-      pointer[ base + p ] += s * slice[p];
+        pointer[ base + p ] += s * slice[p];
 }
 
 
