@@ -83,6 +83,18 @@ void writeMeshSimplicial1D( std::ostream& out, const MeshSimplicial1D& mesh, boo
     }
     
     assert( out.good() );
+
+    for( int e = 0; e < mesh.count_edges(); e++ ) {
+        if( sugar ) out << e << ": ";
+        out << static_cast<int>( mesh.get_flag(1,e) ) << nl;
+    }
+
+    for( int v = 0; v < mesh.count_vertices(); v++ ) {
+        if( sugar ) out << v << ": ";
+        out << static_cast<int>( mesh.get_flag(0,v) ) << nl;
+    }
+    
+    assert( out.good() );
     
     writeCoordinates( out, mesh.getcoordinates(), sugar );
 }
@@ -115,6 +127,25 @@ MeshSimplicial1D readMeshSimplicial1D( std::istream& in )
     for( int e = 0; e < counter_edges; e++ )
         in >> edge_nextparents_of_vertices[e][0] >> edge_nextparents_of_vertices[e][1];
     
+    /* flags */
+
+    std::vector<SimplexFlag> flags_edges   ( counter_edges,    SimplexFlag::SimplexFlagInvalid );
+    std::vector<SimplexFlag> flags_vertices( counter_vertices, SimplexFlag::SimplexFlagInvalid );
+    
+    for( int e = 0; e < counter_edges; e++ ) {
+        int temp; 
+        in >> temp;
+        flags_edges[e] = static_cast<SimplexFlag>( temp );
+    }
+
+    for( int v = 0; v < counter_vertices; v++ ) {
+        int temp; 
+        in >> temp;
+        flags_vertices[v] = static_cast<SimplexFlag>( temp );
+    }
+    
+    assert( in.good() );
+    
     /* coordinates */
     
     Coordinates coords = readCoordinates( in );
@@ -123,7 +154,12 @@ MeshSimplicial1D readMeshSimplicial1D( std::istream& in )
     
     /* return */
     
-    return MeshSimplicial1D( dim, coords, edge_vertices, edge_nextparents_of_vertices, vertex_firstparent_edge );    
+    auto ret = MeshSimplicial1D( dim, coords, edge_vertices, edge_nextparents_of_vertices, vertex_firstparent_edge );
+
+    ret.set_flags( 1, flags_edges    );
+    ret.set_flags( 0, flags_vertices );
+
+    return ret;
 }
 
 

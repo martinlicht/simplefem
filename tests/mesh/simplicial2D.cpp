@@ -7,6 +7,7 @@
 #include "../../utility/files.hpp"
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
+#include "../../mesh/io.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
 
 
@@ -31,9 +32,28 @@ int main( int argc, char *argv[] )
 
     LOG << "Refinement" << nl;
 
-    for( int c = 0; c < 2; c++ ) M.uniformrefinement();
+    for( int c = 0; c < 3; c++ ) 
+        M.uniformrefinement();
 
     M.check();
+
+    M.check_dirichlet_flags();
+
+    {
+        
+        LOG << "start IO..." << nl;
+        
+        std::stringstream ss;
+        
+        writeMeshSimplicial2D( ss, M );
+        
+        ss.seekg( std::ios_base::beg );
+        
+        MeshSimplicial2D M2 = readMeshSimplicial2D( ss );
+        
+        LOG << "check mesh equivalence..." << nl;
+        assert( M == M2 );
+    }
 
     LOG << "Standard output..." << nl;
 
