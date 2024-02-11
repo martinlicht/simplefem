@@ -16,7 +16,7 @@ int main( int argc, char *argv[] )
         
         MeshSimplicial1D mesh = StandardInterval1D();
         
-        for( int c = 0; c < 14; c++ ) mesh.improved_uniformrefinement();
+        for( int c = 0; c < 0; c++ ) mesh.improved_uniformrefinement();
         
         mesh.check();
         

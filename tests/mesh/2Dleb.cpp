@@ -23,6 +23,11 @@ int main( int argc, char *argv[] )
         
         M.check();
         
+        M.automatic_dirichlet_flags();
+
+        M.check_dirichlet_flags();
+
+        
         LOG << "Uniform refinements..." << nl;
 
         for( int k = 0; k <= 2; k++ ) {             
@@ -60,6 +65,8 @@ int main( int argc, char *argv[] )
         
         M.check();
         
+        M.check_dirichlet_flags();
+        
     }
     
     
@@ -70,6 +77,10 @@ int main( int argc, char *argv[] )
         MeshSimplicial2D M = StandardSquare2D();
         
         M.check();
+        
+        M.automatic_dirichlet_flags();
+
+        M.check_dirichlet_flags();
         
         LOG << "Uniform refinements..." << nl;
 
@@ -106,6 +117,8 @@ int main( int argc, char *argv[] )
         }
         
         M.check();
+        
+        M.check_dirichlet_flags();
         
     }
     

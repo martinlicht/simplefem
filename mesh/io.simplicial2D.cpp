@@ -148,6 +148,23 @@ void writeMeshSimplicial2D( std::ostream& out, const MeshSimplicial2D& mesh, boo
     }
     
     assert( out.good() );
+
+    for( int t = 0; t < mesh.count_triangles(); t++ ) {
+        if( sugar ) out << t << ": ";
+        out << static_cast<int>( mesh.get_flag(2,t) ) << nl;
+    }
+
+    for( int e = 0; e < mesh.count_edges(); e++ ) {
+        if( sugar ) out << e << ": ";
+        out << static_cast<int>( mesh.get_flag(1,e) ) << nl;
+    }
+
+    for( int v = 0; v < mesh.count_vertices(); v++ ) {
+        if( sugar ) out << v << ": ";
+        out << static_cast<int>( mesh.get_flag(0,v) ) << nl;
+    }
+    
+    assert( out.good() );
     
     writeCoordinates( out, mesh.getcoordinates(), sugar );
 }
@@ -226,6 +243,32 @@ MeshSimplicial2D readMeshSimplicial2D( std::istream& in )
     
     assert( in.good() );
     
+    /* flags */
+
+    std::vector<SimplexFlag> flags_triangles( counter_triangles, SimplexFlag::SimplexFlagInvalid );
+    std::vector<SimplexFlag> flags_edges    ( counter_edges,     SimplexFlag::SimplexFlagInvalid );
+    std::vector<SimplexFlag> flags_vertices ( counter_vertices,  SimplexFlag::SimplexFlagInvalid );
+    
+    for( int t = 0; t < counter_triangles; t++ ) {
+        int temp; 
+        in >> temp;
+        flags_triangles[t] = static_cast<SimplexFlag>( temp );
+    }
+
+    for( int e = 0; e < counter_edges; e++ ) {
+        int temp; 
+        in >> temp;
+        flags_edges[e] = static_cast<SimplexFlag>( temp );
+    }
+
+    for( int v = 0; v < counter_vertices; v++ ) {
+        int temp; 
+        in >> temp;
+        flags_vertices[v] = static_cast<SimplexFlag>( temp );
+    }
+    
+    assert( in.good() );
+    
     /* coordinates */
     
     Coordinates coords = readCoordinates( in );
@@ -234,11 +277,17 @@ MeshSimplicial2D readMeshSimplicial2D( std::istream& in )
     
     /* return */
     
-    return MeshSimplicial2D( dim, coords, 
+    auto ret = MeshSimplicial2D( dim, coords, 
                              triangle_edges, edge_firstparent_triangle, triangle_nextparents_of_edges, 
                              triangle_vertices, vertex_firstparent_triangle, triangle_nextparents_of_vertices, 
                              edge_vertices, vertex_firstparent_edge, edge_nextparents_of_vertices
-                           );    
+                           );
+
+    ret.set_flags( 2, flags_triangles );
+    ret.set_flags( 1, flags_edges     );
+    ret.set_flags( 0, flags_vertices  );
+
+    return ret;
 }
 
 

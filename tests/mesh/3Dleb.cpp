@@ -22,12 +22,18 @@ int main( int argc, char *argv[] )
         
         M.check();
         
+        M.automatic_dirichlet_flags();
+
+        M.check_dirichlet_flags();
+        
         LOG << "Uniform refinements..." << nl;
 
         for( int k = 0; k <= 2; k++ ) {             
             LOG << "Uniform refinements..." << k << nl;
             M.uniformrefinement();
         }
+
+        M.check_dirichlet_flags();
         
         LOG << "Longest edge bisections..." << nl;
 
@@ -53,10 +59,14 @@ int main( int argc, char *argv[] )
             LOG << c << "/" << c_max << " Refine " << markedcells.size() << "/" << M.count_tetrahedra() << " ... ";
             M.longest_edge_bisection_recursive( markededges );
             LOG << "Ratio of tetrahedra generated vs marked=" << ( M.count_tetrahedra() - cell_count_initial )/(Float)( cell_marked_count ) << nl;
+            
+            M.check_dirichlet_flags();
         
         }
         
         M.check();
+        
+        M.check_dirichlet_flags();
         
     }
     
