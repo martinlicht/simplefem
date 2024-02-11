@@ -174,7 +174,7 @@ std::string ConvergenceTable::text_standard( bool display_convergence_rates ) co
                 
                     if( entries[i][j] > 0. and entries[i-1][j] > 0. ) {
 
-                        long double computed_rate = (long double)std::log2( entries[i-1][j] / entries[i][j] );
+                        const long double computed_rate = (long double)std::log2( entries[i-1][j] / entries[i][j] );
                         
                         if( rates_are_float ) { 
                             printf_into_stream( ss, "%*.*Le", nc_rate_width, nc_rate_precision, computed_rate  );
@@ -285,7 +285,7 @@ std::string ConvergenceTable::text_transpose( bool display_convergence_rates ) c
                 
                     if( entries[i][j] > 0. and entries[i-1][j] > 0. ) {
 
-                        long double computed_rate = (long double)std::log2( entries[i-1][j] / entries[i][j] );
+                        const long double computed_rate = (long double)std::log2( entries[i-1][j] / entries[i][j] );
                         
                         if( rates_are_float ) { 
                             printf_into_stream( ss, "% *.*Le%s", nc_rate_width, nc_rate_precision, computed_rate, cell_separator );
@@ -422,7 +422,7 @@ std::string ConvergenceTable::TeXtabular( const std::vector<bool>& show_column )
                 
                     if( entries[i][j] > 0. and entries[i-1][j] > 0. ) {
 
-                        long double computed_rate = (long double)std::log2( entries[i-1][j] / entries[i][j] );
+                        const long double computed_rate = (long double)std::log2( entries[i-1][j] / entries[i][j] );
                         
                         if( rates_are_float ) { 
                             printf_into_stream( ss, "%*.*Le", nc_rate_width, nc_rate_precision, computed_rate  );

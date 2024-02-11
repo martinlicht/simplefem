@@ -33,7 +33,7 @@ class SectionProfiler
 
             for( int i = 0; i < times.size()-1; i++ ) {
                 
-                auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>( times.at(i+1) - times.at(i) ).count();
+                const auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>( times.at(i+1) - times.at(i) ).count();
 
                 LOGPRINTF( "%ju ns \t %s\n", static_cast<uintmax_t>( elapsed_time ), texts[i].c_str() );
             }
@@ -44,7 +44,7 @@ class SectionProfiler
         void ping( const std::string& text = "---" ) 
         {
             times.push_back( std::chrono::steady_clock::now() );
-            texts.push_back( text                                      );
+            texts.push_back( text                             );
         }
         
 };
@@ -68,9 +68,9 @@ class StopWatch {
 
         ~StopWatch() {
             
-            time_type end_time = std::chrono::steady_clock::now();
+            const time_type end_time = std::chrono::steady_clock::now();
             
-            auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>( end_time - start_time ).count();
+            const auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>( end_time - start_time ).count();
 
             LOGPRINTF( "%ju ns \t %s\n", static_cast<uintmax_t>( elapsed_time ), text.c_str() );
             
