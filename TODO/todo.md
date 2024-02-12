@@ -63,8 +63,6 @@ and for format (row/column and matrix/list).
 
 All operators show return the 'this' pointer in their print methods.
 
-# (HIGH) Implement Hodge star operation 
-
 # (HIGH) Traces, locally and globally 
 
 [ ] Determine the orientation of a facet induced by its supersimplex 
@@ -125,13 +123,13 @@ This requires a unified solver interface.
 
 
 
-# (HIGH) Change the include orders 
+# (DONE) Change the include orders 
 
 Go from the most general down to the most specific.
 This ensures any overwriting of macros stays local.
 Within each grouping, sort alphabetically.
 
-# (HIGH) Define and adopt a custom assert macro
+# (DONE) Define and adopt a custom assert macro
 
 There is a function that performs the assert, 
 and a macro that delivers the line number and file name
@@ -170,18 +168,6 @@ Fenics: common
 
 
 
-# (HIGH) Conditional compilation when openMP
-
-Furthermore, if openMP is enabled, 
-then you should compile with an inclusion of thread-safe random number generation. 
-
-Generally speaking, you should replace explicit instances of 'rand' and 'srand' 
-by wrapper functions. This makes it easier to switch to different implementations 
-throughout whenever that becomes necessary.
-
-For example:
-- random_integer();
-- seed_random_integer();
 
 
 
@@ -717,6 +703,8 @@ Reading only ASCII
 
 # DONE!
 
+# (DONE) Implement Hodge star operation 
+
 # (DONE) Rewrite composed operators 
 
 Reduce the code complexity of the composed operators using pointers, flags,
@@ -801,4 +789,16 @@ compute their inverses (and check their products)
 perform QR algorithm to find the eigenvalues
 
 Requires: regular triangle and tetrahedra
+
+# (DONE) Conditional compilation when openMP
+
+Furthermore, if openMP is enabled, then you should compile with an inclusion of thread-safe random number generation. 
+
+Generally speaking, you should replace explicit instances of 'rand' and 'srand' 
+by wrapper functions. This makes it easier to switch to different implementations 
+throughout whenever that becomes necessary.
+
+For example:
+- random_integer();
+- seed_random_integer();
 
