@@ -29,6 +29,12 @@ None of the above can be done in a day, so it most likely
 requires regular grinding in order to get it done.
 
 
+# (HIGH) Floating-point comparisons
+
+https://beta.boost.org/doc/libs/1_68_0/libs/math/doc/html/math_toolkit/float_comparison.html
+
+Understand the floating-point comparison functions and import them into this project, mutatis mutandis. 
+
 
 # (HIGH) Profiling
 ---------
@@ -63,7 +69,7 @@ and for format (row/column and matrix/list).
 
 All operators show return the 'this' pointer in their print methods.
 
-# (HIGH) Implement Hodge star operation 
+# (DONE) Implement Hodge star operation 
 
 # (HIGH) Traces, locally and globally 
 

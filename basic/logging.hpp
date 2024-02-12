@@ -16,12 +16,11 @@
 // #include "logger.hpp"
 // #include "prefixbuffer.hpp"
 
+extern bool log_has_a_fresh_line;
 
 
 // This variable has an instance in every translation unit 
 // It is not global for the entire program 
-extern bool log_has_a_fresh_line;
-
 class Logger //: public std::ostringstream
 {
     private:
@@ -33,7 +32,9 @@ class Logger //: public std::ostringstream
         std::string filename;
         int linenumber;
     
-        bool print_file_and_line = false;
+        // static bool log_has_a_fresh_line = true;
+
+        // const static bool print_file_and_line = false;
         
     public:
     
