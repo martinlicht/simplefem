@@ -1,5 +1,5 @@
 
-# Phantom coordinate in 2D mesh output
+# (DONE) Phantom coordinate in 2D mesh output
 
 Add a phantom coordinate coordinate to the output of 2D meshes to plot functions
 

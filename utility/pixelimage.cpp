@@ -59,21 +59,21 @@ PixelImage readPixelImage( const std::string& str )
 void savePixelImage( const PixelImage& pim, const std::string& str )
 {
     
-    int width    = pim.getwidth();
-    int height   = pim.getheight();
-    int channels = 3;
+    const int width    = pim.getwidth();
+    const int height   = pim.getheight();
+    const int channels = 3;
 
-    unsigned char *image = new unsigned char[ width * height * 3 ];
+    unsigned char *image = new unsigned char[ width * height * channels ];
 
     for( int row = 0; row < height; row++ ) 
     for( int col = 0; col < width;  col++ )
     {
-        image[ 3 * ( row * width + col ) + 0 ] = pim(row,col).red;
-        image[ 3 * ( row * width + col ) + 1 ] = pim(row,col).green;
-        image[ 3 * ( row * width + col ) + 2 ] = pim(row,col).blue;
+        image[ channels * ( row * width + col ) + 0 ] = pim(row,col).red;
+        image[ channels * ( row * width + col ) + 1 ] = pim(row,col).green;
+        image[ channels * ( row * width + col ) + 2 ] = pim(row,col).blue;
     }
 
-    bool output_success = stbi_write_png( str.c_str(), width, height, channels, image, width * channels );
+    const bool output_success = stbi_write_png( str.c_str(), width, height, channels, image, width * channels );
     
     Assert( output_success );
     

@@ -15,9 +15,10 @@ int main( int argc, char *argv[] )
     printf("    size of short int : %ju\n", (uintmax_t)sizeof(  short int) );
     printf("    size of int       : %ju\n", (uintmax_t)sizeof(        int) );
     printf("    size of long int  : %ju\n", (uintmax_t)sizeof(   long int) );
+    printf("    size of long long : %ju\n", (uintmax_t)sizeof(  long long) );
+    
     printf("    size of size_t    : %ju\n", (uintmax_t)sizeof(     size_t) );
     printf("    size of size_t    : %ju\n", (uintmax_t)sizeof(std::size_t) );
-
     printf("    SIZE_MAX          : %ju\n", (uintmax_t) SIZE_MAX           );
 
     /* output floating-point parameters */

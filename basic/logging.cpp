@@ -16,15 +16,19 @@ enum class TextColors
     
     red            = 31,
     red_light      = 91,
+    
     green          = 32,
     green_light    = 92, 
+    
     yellow         = 33, 
     yellow_bright  = 93, 
     
     blue           = 34,
     blue_bright    = 94,
+    
     magenta        = 35,
     magenta_bright = 95,
+    
     cyan           = 36,
     cyan_light     = 96, 
     
@@ -61,33 +65,52 @@ Logger::~Logger()
     bool use_prefix_next  = log_has_a_fresh_line;
     
     
+    // if the log string is empty, just do not print anything 
+
     if( str.empty() ) return;
 
     
-    std::string prefix = digitalcodenow(); 
+    // complete the prefix string 
+
+    const std::string time_code = digitalcodenow(); 
+
+    const std::string formatstring("[%s %s %4u]\t");
+    #ifdef USE_COLORED_OUTPUT
+    const std::string colorcode_begin = "\033[96m";
+    const std::string colorcode_close = "\033[m";
+    #else
+    const std::string colorcode_begin = "";
+    const std::string colorcode_close = "";
+    #endif
+    const std::string prefix = printf_into_string(
+        "%s[%s %s %4d]%s\t", 
+        colorcode_begin.c_str(), time_code.c_str(), filename.c_str(), linenumber, colorcode_close.c_str() );
     
-    for( int c = 0; c < str.size(); c++ )
-    {
+    
+    // assemble final output string 
+
+    int number_of_newlines = 0;
+    for( char character : str ) 
+        if( character == '\n' )
+            number_of_newlines++;
+
+    std::string output_string;
+
+    output_string.reserve( 1 + str.size() + number_of_newlines * prefix.size() );
+
+    for( char character : str ) {
     
         if( use_prefix_next ) { 
     
             use_prefix_next = false;
     
-            std::string formatstring("[%s %s %4u]\t");
-            #ifdef USE_COLORED_OUTPUT
-            const std::string colorcode_begin = "\033[96m";
-            const std::string colorcode_close = "\033[m";
-            #else
-            const std::string colorcode_begin = "";
-            const std::string colorcode_close = "";
-            #endif
-            fprintf( f, "%s[%s %s %4d]%s\t", 
-                colorcode_begin.c_str(), prefix.c_str(), filename.c_str(), linenumber, colorcode_close.c_str() );
-    
+            output_string += prefix;
+            // fputs( prefix.c_str(), f );
+            
         }
         
-        auto character = str.at(c);
-        fputc( character, f );
+        output_string += character;
+        // fputc( character, f );
 
         if( character == '\n' ) 
             use_prefix_next = true;
@@ -96,22 +119,17 @@ Logger::~Logger()
     
     log_has_a_fresh_line = false;
     
-    if( not str.empty() && str.back() == '\n' ) {
+    if( str.back() == '\n' or pad_newline_if_there_is_none ) {
+        
         log_has_a_fresh_line = true;
-    }
+        
+        if( str.back() != '\n' and pad_newline_if_there_is_none ) 
+            output_string += nl;
+            // fputc( nl, f ); 
     
-    if( not str.empty() && str.back() != '\n' && pad_newline_if_there_is_none ) {
-        log_has_a_fresh_line = true;
-        fputc( nl, f ); 
-    }
-    
-    
-
-    if( print_file_and_line and log_has_a_fresh_line ) {
-        fputs( prefix.c_str(), f ); 
-        fprintf( f, "%s:%d\n", filename.c_str(), linenumber ); 
     }
 
+    fputs( output_string.c_str(), f );
     fflush(f);
     
 }

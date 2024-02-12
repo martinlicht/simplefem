@@ -17,7 +17,7 @@ std::vector<IndexMap> generateEmptyMap( const IndexRange& from, const IndexRange
     to.check();
     assert( from.isempty() );
     
-    IndexMap myempty = IndexMap( from, to, std::vector<int>(0) );
+    const IndexMap myempty = IndexMap( from, to, std::vector<int>(0) );
     myempty.check();
     
     std::vector<IndexMap> ret;
@@ -92,7 +92,7 @@ std::vector<IndexMap> generatePermutations( const IndexRange& ir )
 {
     
     ir.check();
-    std::vector<IndexMap> allmappings = generateIndexMaps( ir, ir );
+    const std::vector<IndexMap> allmappings = generateIndexMaps( ir, ir );
     
     std::vector<IndexMap> ret;
     ret.reserve( factorial_integer( ir.cardinality() ) );
@@ -176,7 +176,7 @@ std::vector<IndexMap> generateSigmas( const IndexRange& from, const IndexRange& 
     from.check();
     to.check();
     
-    std::vector<IndexMap> allmappings = generateIndexMaps( from, to );
+    const std::vector<IndexMap> allmappings = generateIndexMaps( from, to );
     
     std::vector<IndexMap> ret;
     assert( to.cardinality() >= from.cardinality() ); // TODO: Handle this warning

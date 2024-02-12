@@ -74,8 +74,8 @@ class PixelImage
                 int ny = static_cast<int>(floor( y ));
                 int nx = static_cast<int>(floor( x ));
 
-                double lx = x - nx;
-                double ly = y - ny;
+                const double lx = x - nx;
+                const double ly = y - ny;
 
                 assert( 0. <= ly and ly <= 1. );
                 assert( 0. <= lx and lx <= 1. );

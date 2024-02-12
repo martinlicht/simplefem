@@ -30,9 +30,9 @@ std::vector<MultiIndex> generateMultiIndices( const IndexRange& ir, int degree )
     
     ret.reserve( binomial_integer( ir.cardinality()-1 + degree, ir.cardinality()-1 ) );
     
-    int max_candidate = power_integer( degree+1, ir.cardinality() );
-    int min_index = ir.min();
-    int max_index = ir.max();
+    const int max_candidate = power_integer( degree+1, ir.cardinality() );
+    const int min_index = ir.min();
+    const int max_index = ir.max();
     
     for( int candidate = degree; candidate < max_candidate; candidate++ ) {
         

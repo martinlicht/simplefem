@@ -16,7 +16,7 @@
 
 Float bumpfunction( Float x )
 {
-    Float delta = x*x - 1.;
+    const Float delta = x*x - 1.;
 
     if( absolute(x) < 0.99999999 ) {
 
@@ -32,8 +32,8 @@ Float bumpfunction( Float x )
 Float bumpfunction_dev( Float x )
 {
     
-    Float delta = x*x - 1.;
-    Float delta_sq = delta*delta;
+    const Float delta = x*x - 1.;
+    const Float delta_sq = delta*delta;
 
     if( absolute(x) < 0.99999999 ) {
         
@@ -50,8 +50,8 @@ Float bumpfunction_devdev( Float x )
 {
     
     
-//     Float t1 = std::exp( -1. / ( 1. - x*x ) );
-//     Float t2 = std::exp( 1 - x*x );
+//     const Float t1 = std::exp( -1. / ( 1. - x*x ) );
+//     const Float t2 = std::exp( 1 - x*x );
 // 
 //     if( x*x < 1 )
 //         return
@@ -63,10 +63,10 @@ Float bumpfunction_devdev( Float x )
 
     
     
-    Float delta = x*x - 1.;
+    const Float delta = x*x - 1.;
     
-    Float delta_sq = delta    * delta;
-    Float delta_p4 = delta_sq * delta_sq;
+    const Float delta_sq = delta    * delta;
+    const Float delta_p4 = delta_sq * delta_sq;
 
     if( absolute(x) < 0.99999999 ) {
         
@@ -86,15 +86,15 @@ Float bumpfunction_devdevdev( Float x )
 {
     // TODO: compute the correct value     
 
-    Float x2 = x*x;
-    Float x4 = x2 * x2;
-    Float x6 = x4 * x2;
+    const Float x2 = x*x;
+    const Float x4 = x2 * x2;
+    const Float x6 = x4 * x2;
 
-    Float delta = x2 - 1.;
+    const Float delta = x2 - 1.;
     
-    Float delta_p2 = delta    * delta;
-    Float delta_p4 = delta_p2 * delta_p2;
-    Float delta_p6 = delta_p4 * delta_p2;
+    const Float delta_p2 = delta    * delta;
+    const Float delta_p4 = delta_p2 * delta_p2;
+    const Float delta_p6 = delta_p4 * delta_p2;
 
     if( absolute(x) < 0.99999999 ) {
         
@@ -113,7 +113,7 @@ Float bumpfunction_devdevdev( Float x )
 
 Float blob( Float x )
 {
-    Float delta = x*x - 1.;
+    const Float delta = x*x - 1.;
 
     if( absolute(x) < 0.99999999 ) {
 
@@ -129,8 +129,8 @@ Float blob( Float x )
 Float blob_dev( Float x )
 {
     
-    Float delta = x*x - 1.;
-    Float delta_sq = delta*delta;
+    const Float delta = x*x - 1.;
+    const Float delta_sq = delta*delta;
 
     if( absolute(x) < 0.99999999 ) {
         
@@ -146,13 +146,13 @@ Float blob_dev( Float x )
 Float blob_devdev( Float x )
 {
 
-    Float x2 = x*x;
-    Float x4 = x2 * x2;
+    const Float x2 = x*x;
+    const Float x4 = x2 * x2;
 
-    Float delta = x2 - 1.;
+    const Float delta = x2 - 1.;
     
-    Float delta_sq = delta    * delta;
-    Float delta_p4 = delta_sq * delta_sq;
+    const Float delta_sq = delta    * delta;
+    const Float delta_p4 = delta_sq * delta_sq;
 
     if( absolute(x) < 0.99999999 ) {
         
@@ -172,15 +172,15 @@ Float blob_devdevdev( Float x )
 {
     // TODO: compute the correct value     
 
-    Float x2 = x*x;
-    Float x3 = x2*x;
-    Float x4 = x2 * x2;
+    const Float x2 = x*x;
+    const Float x3 = x2*x;
+    const Float x4 = x2 * x2;
     
-    Float delta = x2 - 1.;
+    const Float delta = x2 - 1.;
     
-    Float delta_p2 = delta    * delta;
-    Float delta_p4 = delta_p2 * delta_p2;
-    Float delta_p6 = delta_p4 * delta_p2;
+    const Float delta_p2 = delta    * delta;
+    const Float delta_p4 = delta_p2 * delta_p2;
+    const Float delta_p6 = delta_p4 * delta_p2;
 
     if( absolute(x) < 0.99999999 ) {
         

@@ -313,10 +313,10 @@ IndexMap mergeSigmas( const IndexMap& left, const IndexMap& right, int& sign )
     assert(  left.getTargetRange().min() == 0 );
     assert( right.getTargetRange().min() == 0 );
 
-    int k =  left.getSourceRange().max();
-    int l = right.getSourceRange().max();
+    const int k =  left.getSourceRange().max();
+    const int l = right.getSourceRange().max();
 
-    int n = maximum( left.getTargetRange().max(), right.getTargetRange().max() );
+    const int n = maximum( left.getTargetRange().max(), right.getTargetRange().max() );
 
     std::vector<int> values(k+l);
     for( int i = 0; i < k; i++ ) values[  i] =  left.getvalues()[i];

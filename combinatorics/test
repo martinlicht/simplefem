@@ -1,7 +1,0 @@
-#include "generateindexmaps.cpp"
-#include "generatemultiindices.cpp"
-#include "heappermgen.cpp"
-#include "indexmap.cpp"
-#include "indexrange.cpp"
-#include "multiindex.cpp"
-

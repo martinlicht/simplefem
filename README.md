@@ -3,28 +3,30 @@
 [![Solverfem unit test](https://github.com/martinlicht/simplefem/actions/workflows/unittests_comp.yml/badge.svg)](https://github.com/martinlicht/simplefem/actions/workflows/unittests_comp.yml)
 
 
-FFFFF EEEEE EEEEE  CCCC    +       +  
-F     E     E     C        +       +  
-FFFF  EEEE  EEEE  C     +++++++ +++++++
-F     E     E     C        +       +  
-F     EEEEE EEEEE  CCCC    +       +  
-                [ a short description of what you are doing here]
+                  [ FFFFF EEEEE EEEEE  CCCC    +       +   ]
+                  [ F     E     E     C        +       +   ]
+                  [ FFFF  EEEE  EEEE  C     +++++++ +++++++]
+                  [ F     E     E     C        +       +   ]
+                  [ F     EEEEE EEEEE  CCCC    +       +   ]
 
-                    [                                    ]
-                    [   PUT LOG HERE WITH SOME ASCII     ]
-                    [   ART. FIGURE OUT A NICE NAME TOO  ]
-                    [                                    ]
+                 [ C++ Finite element library based on FEEC ]
+
+                  [ FFFFF EEEEE EEEEE  CCCC    +       +   ]
+                  [ F     E     E     C        +       +   ]
+                  [ FFFF  EEEE  EEEE  C     +++++++ +++++++]
+                  [ F     E     E     C        +       +   ]
+                  [ F     EEEEE EEEEE  CCCC    +       +   ]
 
                     [www.github.com/martinlicht/simplefem]
 
-FEECPP is a C++ library for finite element methods in the spirit of finite element exterior calculus (FEEC). 
+FEEC++ is a C++ library for finite element methods in the spirit of finite element exterior calculus (FEEC). 
 Its goal is to enable easy prototyping for fundamental research in numerical PDE with a FEEC point-of-view. 
 
-FEECPP implements finite element differential forms of arbitrary (uniform) polynomial degree over simplicial meshes,
+FEEC++ implements finite element differential forms of arbitrary (uniform) polynomial degree over simplicial meshes,
 including Whitney forms and Sullivans forms, together with the relevant algebraic and metric operations. 
 It comes with linear algebra implementations and supports uniform refinement and longest edge bisection.
 
-FEECPP builds and runs on Linux, Windows (Cygwin), and MacOS. 
+FEEC++ builds and runs on Linux, Windows (Cygwin), and MacOS. 
 Its only necessary prerequisites are a C++14 compiler (such as GCC and Clang) and GNU Make.
 
 Most important features:
