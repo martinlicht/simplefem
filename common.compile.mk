@@ -177,7 +177,8 @@ ifeq ($(FLAG_CXX),GCC)
   
 else ifeq ($(FLAG_CXX),CLANG)
 
-  CXX := clang++ -stdlib=libstdc++ -ftime-trace
+  CXX := clang++ -ftime-trace
+  # -stdlib=libstdc++ 
 
 else ifeq ($(FLAG_CXX),ICC)
 
@@ -836,6 +837,7 @@ parameters:
 	@true
 	$(info ) 
 	@true
+	$(info MAKE                     = $(MAKE) )
 	$(info CXX                      = $(CXX) )
 	$(info CXXFLAGS_LANG            = $(CXXFLAGS_LANG) ) 
 	$(info CXXFLAGS_OPTIMIZE        = $(CXXFLAGS_OPTIMIZE) )
