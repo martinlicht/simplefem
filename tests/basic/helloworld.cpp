@@ -2,6 +2,8 @@
 #include <iostream>
 #include <new>
 
+#include "../../basic/mallinfo.hpp"
+
 using namespace std;
 
 /*
@@ -54,6 +56,8 @@ int main( int argc, char *argv[] )
     #else
     cout << "Operating system: unknown" << endl;
     #endif
+    
+    display_mallinfo();
     
     cout << "Now an intentional leak..." << endl;
     

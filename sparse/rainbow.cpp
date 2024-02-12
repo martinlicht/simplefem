@@ -1,5 +1,6 @@
 
 #include <algorithm> // for shuffle 
+#include <random> // for shuffle 
 #include <vector>
 
 #include "../basic.hpp"
@@ -32,8 +33,11 @@ Rainbow::Rainbow( const MatrixCSR& mat, bool do_shuffle )
 
     for( int i = 0; i < N; i++ ) painting_order[i] = i;
     
-    if( do_shuffle) 
-        std::random_shuffle( painting_order.begin(), painting_order.end() );
+    if( do_shuffle) {
+        std::random_device rd;
+        std::mt19937 g(rd());
+        std::shuffle( painting_order.begin(), painting_order.end(), g );
+    }
 
     F = std::vector<int>( N, 0 );
 

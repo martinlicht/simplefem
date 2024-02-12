@@ -6,9 +6,9 @@
 
 void seed_random_integer();
 
-int random_integer();
+unsigned int random_integer();
 
-int flip_coin( Float prob_zero = 0.5 );
+unsigned int flip_coin( Float prob_zero = 0.5 );
 
 Float random_uniform();
 

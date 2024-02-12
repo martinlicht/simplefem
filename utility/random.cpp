@@ -2,19 +2,31 @@
 #include "../basic/basic.hpp"
 #include "random.hpp"
 
+#include <random>
+
+
+#ifdef _OPENMP 
+static thread_local std::default_random_engine randomized(0);
+#else 
+static              std::default_random_engine randomized(0);
+#endif
+
 void seed_random_integer()
 {
-    srand(0);
+    // srand(0);
+    randomized.seed(0);
 }
 
-int random_integer()
+unsigned int random_integer()
 {
-    int ret = rand();
+    // int ret = rand();
+    unsigned int ret = randomized();
     Assert( 0 <= ret and ret <= RAND_MAX );
     return ret;
 }
 
-int flip_coin( Float prob_zero )
+
+unsigned int flip_coin( Float prob_zero )
 {
     assert( 0 <= prob_zero and prob_zero <= 1. );
     Float value = random_uniform();
@@ -39,7 +51,7 @@ inline Float gaussrand_1()
     Float x = 0;
     
     for( int i = 0; i < NSUM; i++) 
-        x += rand() / static_cast<Float>(RAND_MAX);
+        x += random_integer() / static_cast<Float>(RAND_MAX);
     
     x -= NSUM / 2.0;
     x /= std::sqrt( NSUM / 12.0 );
@@ -57,8 +69,8 @@ inline Float gaussrand_2()
     if( phase ) {
         Z = std::sqrt( -2. * std::log(U) ) * std::cos( 2. * PI * V );
     } else {
-        U = ( rand() + 1. ) / ( RAND_MAX + 2. );
-        V = rand() / ( RAND_MAX + 1. );
+        U = ( random_integer() + 1. ) / ( RAND_MAX + 2. );
+        V = random_integer() / ( RAND_MAX + 1. );
         Z = std::sqrt( -2. * std::log(U) ) * std::sin( 2. * PI * V );
     }
         
@@ -72,7 +84,7 @@ inline Float gaussrand_3( Float mean = 0., Float std_dev = 1. )
 {
     Assert( std_dev > machine_epsilon );
 
-    Float x = rand() / (RAND_MAX + 1.0);   /* 0.0 <= x < 1.0 */
+    Float x = random_integer() / (RAND_MAX + 1.0);   /* 0.0 <= x < 1.0 */
     
     bool large = (x < 0.5) ? false : true;
     
@@ -85,8 +97,8 @@ inline Float gaussrand_3( Float mean = 0., Float std_dev = 1. )
 inline Float gaussrand_4()
 {
     const Float PI = 3.14159265358979323846;
-    Float U = ( rand() + 1. ) / ( RAND_MAX + 2. );
-    Float V = ( rand()      ) / ( RAND_MAX + 1. );
+    Float U = ( random_integer() + 1. ) / ( RAND_MAX + 2. );
+    Float V = ( random_integer()      ) / ( RAND_MAX + 1. );
     return std::sqrt( -2. * std::log(U) ) * std::sin( 2. * PI * V );
 }
 

@@ -63,7 +63,11 @@ void display_mallinfo()
 #include <stdio.h>
 void display_mallinfo(){
     fprintf( stderr, "Heap usage statistics: requested but not available in this implementation.\n");
+#if defined(__GLIBC__) && defined(__GLIBC_MINOR__) 
     fprintf( stderr, "Glibc version: %d %d\n", __GLIBC__, __GLIBC_MINOR__ );
+#else
+    fprintf( stderr, "No Glibc version found\n" );
+#endif
 }
 
 #endif 
