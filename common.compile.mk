@@ -837,6 +837,10 @@ parameters:
 	@true
 	$(info ) 
 	@true
+	$(info $(PATH))
+	# echo $(PATH)
+	# echo $$(PATH)
+	# echo %PATH%
 	$(info MAKE                     = $(MAKE) )
 	$(info CXX                      = $(CXX) )
 	$(info CXXFLAGS_LANG            = $(CXXFLAGS_LANG) ) 

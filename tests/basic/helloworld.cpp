@@ -2,6 +2,8 @@
 #include <iostream>
 #include <new>
 
+#include "../../basic/mallinfo.hpp"
+
 using namespace std;
 
 /*
@@ -27,6 +29,8 @@ int main( int argc, char *argv[] )
     #ifdef _MSC_VER
     std::cout << "MSVC standard library with _MSC_VER=" << _MSC_VER << std::endl;
     #endif
+
+    display_mallinfo();
 
     cout << "Now an intentional leak..." << endl;
     
