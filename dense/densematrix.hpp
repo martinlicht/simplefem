@@ -188,7 +188,7 @@ class DenseMatrix final
         bool isnonpositive() const;
         
         
-        bool issmall( Float eps = 0.000001 ) const;
+        bool is_numerically_small( Float eps = 0.000001 ) const;
         
         
         Float* raw();

@@ -145,7 +145,7 @@ int main( int argc, char *argv[] )
         A.reserve( dimension );
         
         // for( int i = 0; i < dimension; i++ ){
-        //     A.addentry( i, i, signpower(i) * 2.51 );
+        //     A.addentry( i, i, sign_power(i) * 2.51 );
         // }
         
         for( int i = 0; i < dimension/2; i++ ){

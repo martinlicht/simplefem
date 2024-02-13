@@ -3274,7 +3274,7 @@ inline int leading_digits( double num )
     // If the number is greater than 1, return the integer part of the order, else, return 0
     
     if( num < 0 ) num = -num;
-    int order = (int)ceil( log10(num) );
+    int order = static_cast<int>( ceil( log10(num) ) );
     if( order >= 0 ) return order + 1; else return 1;
 }
 

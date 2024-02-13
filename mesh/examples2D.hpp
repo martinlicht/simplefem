@@ -579,8 +579,8 @@ inline MeshSimplicial2D UnitDisk( int L = 1 )
     
     for( int l = 1; l < L; l++ )
     {
-        int base_inner  = 3 * ( poweroftwo( l-1 ) - 1 );
-        int count_inner = 3 * poweroftwo( l-1 );
+        int base_inner  = 3 * ( power_of_two( l-1 ) - 1 );
+        int count_inner = 3 * power_of_two( l-1 );
         
         int base_outer  = base_inner + count_inner;
         int count_outer = 2 * count_inner;
@@ -696,8 +696,8 @@ inline MeshSimplicial2D Annulus( int Linner, int Louter = 1 )
     
     for( int l = Linner; l < Louter; l++ )
     {
-        int base_inner  = 3 * ( poweroftwo( l-1 ) - 1 ) - 3 * ( poweroftwo( Linner-1 ) - 1 );
-        int count_inner = 3 * poweroftwo( l-1 );
+        int base_inner  = 3 * ( power_of_two( l-1 ) - 1 ) - 3 * ( power_of_two( Linner-1 ) - 1 );
+        int count_inner = 3 * power_of_two( l-1 );
         
         int base_outer  = base_inner + count_inner;
         int count_outer = 2 * count_inner;

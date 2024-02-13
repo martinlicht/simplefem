@@ -93,9 +93,9 @@ SparseMatrix FEECBrokenCoefficientMassMatrix( const Mesh& mesh, int n, int k, in
             // const auto formMM = MatrixTripleMult( matrix_at_point, extGM );
 
             // DenseMatrix GPM = SubdeterminantMatrix( mesh.getGradientProductMatrix( n, s ), k );
-            // assert( ( GPM - formMM ).issmall() );
+            // assert( ( GPM - formMM ).is_numerically_small() );
 
-            if( w == 0 ) assert( ( polyMM - polynomialmassmatrix(n,r) ).issmall() );
+            if( w == 0 ) assert( ( polyMM - polynomialmassmatrix(n,r) ).is_numerically_small() );
 
             //auto fullMM = measure * MatrixTensorProduct( polyMM, formMM );
             auto fullMM = MatrixTensorProduct( polyMM, formMM );

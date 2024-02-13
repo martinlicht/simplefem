@@ -34,7 +34,7 @@ class Logger //: public std::ostringstream
     
         // static bool log_has_a_fresh_line = true;
 
-        // const static bool print_file_and_line = false;
+        // static const bool print_file_and_line = false;
         
     public:
     
