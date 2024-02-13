@@ -60,16 +60,14 @@ Logger::~Logger()
     
     FILE* f = ( use_cerr ? stderr : stdout );
     
-    const auto& str = internal;
-    
-    bool use_prefix_next  = log_has_a_fresh_line;
+    const auto& message_string = internal;
     
     
     // if the log string is empty, just do not print anything 
 
-    if( str.empty() ) return;
+    if( message_string.empty() ) return;
 
-    
+
     // complete the prefix string 
 
     const std::string time_code = digitalcodenow(); 
@@ -88,46 +86,58 @@ Logger::~Logger()
     
     
     // assemble final output string 
+    // reserve enough space so that (in principle) each nl can be prefixed
 
     int number_of_newlines = 0;
-    for( char character : str ) 
+    for( char character : message_string ) 
         if( character == '\n' )
             number_of_newlines++;
 
     std::string output_string;
 
-    output_string.reserve( 1 + str.size() + number_of_newlines * prefix.size() );
+    output_string.reserve( 1 + message_string.size() + number_of_newlines * prefix.size() );
 
-    for( char character : str ) {
+
+    // if we have inherited a fresh line, then insert a prefix 
     
-        if( use_prefix_next ) { 
+    if( log_has_a_fresh_line ){
+        log_has_a_fresh_line = false;
+        output_string.insert(0,prefix);
+    }
+
     
-            use_prefix_next = false;
+    // for each nl (except possibly at the final position) insert a prefix after it
     
-            output_string += prefix;
-            // fputs( prefix.c_str(), f );
-            
-        }
-        
+    for( int c = 0; c < message_string.length(); c++ ) {
+    
+        char character = message_string[c];
+
         output_string += character;
         // fputc( character, f );
 
-        if( character == '\n' ) 
-            use_prefix_next = true;
+        if( character == '\n' and c != message_string.length()-1 ) 
+            output_string += prefix;
         
     }
     
-    log_has_a_fresh_line = false;
     
-    if( str.back() == '\n' or pad_newline_if_there_is_none ) {
-        
-        log_has_a_fresh_line = true;
-        
-        if( str.back() != '\n' and pad_newline_if_there_is_none ) 
-            output_string += nl;
-            // fputc( nl, f ); 
+    // if the last character is not a newline and we automatically append a newline,
+    // then modify the string accordingly
+    if( message_string.back() != nl and pad_newline_if_there_is_none )
+        output_string += nl;
+
     
-    }
+    log_has_a_fresh_line = ( output_string.back() == nl );
+    
+    // if( message_string.back() == '\n' or pad_newline_if_there_is_none ) {
+    //    
+    //     log_has_a_fresh_line = true;
+    //  
+    //     if( message_string.back() != '\n' and pad_newline_if_there_is_none ) 
+    //         output_string += nl;
+    //         // fputc( nl, f ); 
+    //
+    // }
 
     fputs( output_string.c_str(), f );
     fflush(f);
