@@ -63,22 +63,15 @@ and for format (row/column and matrix/list).
 
 All operators show return the 'this' pointer in their print methods.
 
-# (HIGH) Traces, locally and globally 
-
-[ ] Determine the orientation of a facet induced by its supersimplex 
-[ ] Trace and extension: just the inclusion of the spanning set and its transpose 
-[ ] Global trace, incl. orientation and boundary behavior
-
 # (HIGH) AFW-Basis of Sullivan forms
 
 # (HIGH) Floating point exact comparisons ersetzen durch Funktion mit expliziter semantik
 
 # (HIGH) Augmented integration in all numerical tests 
 
-Once the numerical tests have been cleaned up, the right-hand side should always be computed
-with (optional) augmented integration. There should be a parameter 'r_plus' to control the added
-interpolation quality of the right-hand side. Notably, if 'r_plus == 0', then there should be 
-a fallback that avoid repeated computation of the mass matrix.
+Once the numerical tests have been cleaned up, the right-hand side should always be computed with (optional) augmented integration. 
+There should be a parameter 'r_plus' to control the added interpolation quality of the right-hand side. 
+Notably, if 'r_plus == 0', then there should be a fallback that avoid repeated computation of the mass matrix.
 Similarly, the errors should be computed with augmented integration.
 
 # (HIGH) Clean up unit tests for the numerical examples 
@@ -262,7 +255,7 @@ which may not the case for the bracket access methods.
 Update the unit test **descriptions** in every module. They seem to be off in many regards.
 
 
-# (MEDIUM) Revise logging output 
+# (DONE) Revise logging output 
 
 The logging procedure needs to be reworked.
 
@@ -282,7 +275,7 @@ Revert the current design of logging output: there shouldn't be
 any automatic newlines. Instead, re-introduce the newlines in the tests
 and deactive the automatic newline in the logging object.
 
-# (MEDIUM) Introduce a LOG switch 
+# (DONE) Introduce a LOG switch 
 
 Make the logging framework optional by introducing a macro switch 
 that enables/disables the logging framework
