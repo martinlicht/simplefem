@@ -145,7 +145,7 @@ int main( int argc, char *argv[] )
                     // Float other_det = ( ( abs(x) + abs(y) ) * (sx*x+sy*y) / (x*x+y*y) );
                     // LOG << x << tab << y << tab << sx << tab << sy << tab << det << tab << other_det << nl;
                     // assert(
-                    //     isaboutequal( det, ( ( abs(x) + abs(y) ) * (sx*x+sy*y) / (x*x+y*y) ) )
+                    //     is_numerically_close( det, ( ( abs(x) + abs(y) ) * (sx*x+sy*y) / (x*x+y*y) ) )
                     // );
 
                     return absolute(det) * Inverse( Transpose(jac) * jac );

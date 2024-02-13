@@ -727,7 +727,7 @@ bool FloatVector::isnonpositive() const
 
 
 
-bool FloatVector::issmall( Float eps ) const 
+bool FloatVector::is_numerically_small( Float eps ) const 
 {
     check();
     return this->norm() < eps;

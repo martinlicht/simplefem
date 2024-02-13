@@ -57,7 +57,7 @@ int main( int argc, char *argv[] )
                     "Face %3d (%3d %3d %3d) \thas parent %3d (%3d %3d %3d %3d) \twith orientation s * (-1)^%3d = %2d \n", 
                     f, fv[0], fv[1], fv[2],
                     t, tv[0], tv[1], tv[2], tv[3],
-                    gap_index, signpower( gap_index ) * geometric_orientation
+                    gap_index, sign_power( gap_index ) * geometric_orientation
                     );
 
             }

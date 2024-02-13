@@ -344,9 +344,9 @@ FloatVector Interpolation(
             
             assert( ( P - DenseMatrix( 1, 1, 1. ) ).iszero() );
             assert( ( InterpolationMatrix - Minv ).iszero() );
-            assert( ( InterpolationMatrix - Minv ).issmall() );
+            assert( ( InterpolationMatrix - Minv ).is_numerically_small() );
             
-            if( not ( M * localResult - EvaluationVector ).issmall() ) {
+            if( not ( M * localResult - EvaluationVector ).is_numerically_small() ) {
                 LOG << M << nl << nl;
                 LOG << Minv << nl << nl;
                 LOG << InterpolationMatrix << nl << nl;
@@ -356,7 +356,7 @@ FloatVector Interpolation(
                 LOG << M * localResult - EvaluationVector << nl << nl;
                 LOG << ( M * localResult - EvaluationVector ).norm() << nl << nl;
             }
-            assert( ( M * localResult - EvaluationVector ).issmall() );
+            assert( ( M * localResult - EvaluationVector ).is_numerically_small() );
         }
         #endif
         

@@ -708,7 +708,7 @@ void MeshSimplicialND::bisect_edge( int e )
 
 void MeshSimplicialND::uniformrefinement()
 {
-    const int M = poweroftwo( getinnerdimension() );
+    const int M = power_of_two( getinnerdimension() );
     
     /*
      * iterate over the edges and create new vertices
