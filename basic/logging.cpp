@@ -16,15 +16,19 @@ enum class TextColors
     
     red            = 31,
     red_light      = 91,
+    
     green          = 32,
     green_light    = 92, 
+    
     yellow         = 33, 
     yellow_bright  = 93, 
     
     blue           = 34,
     blue_bright    = 94,
+    
     magenta        = 35,
     magenta_bright = 95,
+    
     cyan           = 36,
     cyan_light     = 96, 
     
@@ -56,62 +60,86 @@ Logger::~Logger()
     
     FILE* f = ( use_cerr ? stderr : stdout );
     
-    const auto& str = internal;
-    
-    bool use_prefix_next  = log_has_a_fresh_line;
+    const auto& message_string = internal;
     
     
-    if( str.empty() ) return;
+    // if the log string is empty, just do not print anything 
+
+    if( message_string.empty() ) return;
+
+
+    // complete the prefix string 
+
+    const std::string time_code = digitalcodenow(); 
+
+    const std::string formatstring("[%s %s %4u]\t");
+    #ifdef USE_COLORED_OUTPUT
+    const std::string colorcode_begin = "\033[96m";
+    const std::string colorcode_close = "\033[m";
+    #else
+    const std::string colorcode_begin = "";
+    const std::string colorcode_close = "";
+    #endif
+    const std::string prefix = printf_into_string(
+        "%s[%s %s %4d]%s\t", 
+        colorcode_begin.c_str(), time_code.c_str(), filename.c_str(), linenumber, colorcode_close.c_str() );
+    
+    
+    // assemble final output string 
+    // reserve enough space so that (in principle) each nl can be prefixed
+
+    int number_of_newlines = 0;
+    for( char character : message_string ) 
+        if( character == '\n' )
+            number_of_newlines++;
+
+    std::string output_string;
+
+    output_string.reserve( 1 + message_string.size() + number_of_newlines * prefix.size() );
+
+
+    // if we have inherited a fresh line, then insert a prefix 
+    
+    if( log_has_a_fresh_line ){
+        log_has_a_fresh_line = false;
+        output_string.insert(0,prefix);
+    }
 
     
-    std::string prefix = digitalcodenow(); 
+    // for each nl (except possibly at the final position) insert a prefix after it
     
-    for( int c = 0; c < str.size(); c++ )
-    {
+    for( int c = 0; c < message_string.length(); c++ ) {
     
-        if( use_prefix_next ) { 
-    
-            use_prefix_next = false;
-    
-            std::string formatstring("[%s %s %4u]\t");
-            #ifdef USE_COLORED_OUTPUT
-            const std::string colorcode_begin = "\033[96m";
-            const std::string colorcode_close = "\033[m";
-            #else
-            const std::string colorcode_begin = "";
-            const std::string colorcode_close = "";
-            #endif
-            fprintf( f, "%s[%s %s %4d]%s\t", 
-                colorcode_begin.c_str(), prefix.c_str(), filename.c_str(), linenumber, colorcode_close.c_str() );
-    
-        }
+        char character = message_string[c];
+
+        output_string += character;
+        // fputc( character, f );
+
+        if( character == '\n' and c != message_string.length()-1 ) 
+            output_string += prefix;
         
-        auto character = str.at(c);
-        fputc( character, f );
+    }
+    
+    
+    // if the last character is not a newline and we automatically append a newline,
+    // then modify the string accordingly
+    if( message_string.back() != nl and pad_newline_if_there_is_none )
+        output_string += nl;
 
-        if( character == '\n' ) 
-            use_prefix_next = true;
-        
-    }
     
-    log_has_a_fresh_line = false;
+    log_has_a_fresh_line = ( output_string.back() == nl );
     
-    if( not str.empty() && str.back() == '\n' ) {
-        log_has_a_fresh_line = true;
-    }
-    
-    if( not str.empty() && str.back() != '\n' && pad_newline_if_there_is_none ) {
-        log_has_a_fresh_line = true;
-        fputc( nl, f ); 
-    }
-    
-    
+    // if( message_string.back() == '\n' or pad_newline_if_there_is_none ) {
+    //    
+    //     log_has_a_fresh_line = true;
+    //  
+    //     if( message_string.back() != '\n' and pad_newline_if_there_is_none ) 
+    //         output_string += nl;
+    //         // fputc( nl, f ); 
+    //
+    // }
 
-    if( print_file_and_line and log_has_a_fresh_line ) {
-        fputs( prefix.c_str(), f ); 
-        fprintf( f, "%s:%d\n", filename.c_str(), linenumber ); 
-    }
-
+    fputs( output_string.c_str(), f );
     fflush(f);
     
 }

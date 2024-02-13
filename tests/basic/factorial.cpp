@@ -50,7 +50,7 @@ int main( int argc, char *argv[] )
         int64_t f3 = factorial_integer_table( i );
         int64_t f4 = factorial_integer_loop( i );
 
-        assert( f1 == f2 and f2 == f3 and f2 == f4 );
+        assert( f1 == f2 and f2 == f3 and f3 == f4 );
 
     }
 

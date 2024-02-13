@@ -55,6 +55,13 @@ int main( int argc, char *argv[] )
         assert( M == M2 );
     }
 
+    {
+
+        for( int e = 0; e < M.count_edges(); e++ )
+            assert( isaboutequal( M.get_edge_length(e), M.getMeasure(1,e) ) );
+
+    }
+
     LOG << "Standard output..." << nl;
 
     LOG << M << nl;
