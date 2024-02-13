@@ -56,7 +56,7 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
 
         DenseMatrix GPM    = mesh.getGradientProductMatrix( n, s );
             
-        assert( ( GPM - calcAtA( mesh.getGradientMatrix( n, s ) ) ).issmall() );
+        assert( ( GPM - calcAtA( mesh.getGradientMatrix( n, s ) ) ).is_numerically_small() );
         
         DenseMatrix formMM = SubdeterminantMatrix( GPM, k );
         
@@ -66,7 +66,7 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
 
         if( k == 0 )
         {
-            assert( ( fullMM - polyMM * measure ).issmall() );
+            assert( ( fullMM - polyMM * measure ).is_numerically_small() );
         }
         
         for( int i = 0; i < localdim; i++ )
@@ -126,7 +126,7 @@ SparseMatrix FEECBrokenMassMatrixRightFactor( const Mesh& mesh, int n, int k, in
         // LOG << ( Transpose(polyMM_right) * polyMM_right ) << nl;        
         // LOG << polyMM_right.getdimin() << nl;        
         // LOG << polyMM.getdimin() << space << ( Transpose(polyMM_right) * polyMM_right - polyMM ).norm() << nl;        
-        assert( ( Transpose(polyMM_right) * polyMM_right - polyMM ).issmall() ); 
+        assert( ( Transpose(polyMM_right) * polyMM_right - polyMM ).is_numerically_small() ); 
 
     }
             
@@ -157,8 +157,8 @@ SparseMatrix FEECBrokenMassMatrixRightFactor( const Mesh& mesh, int n, int k, in
             DenseMatrix formMM_0 = SubdeterminantMatrix( mesh.getGradientProductMatrix( n, s ), k );
             DenseMatrix fullMM_0 = MatrixTensorProduct( polyMM_0, formMM_0 ) * measure;
             
-            assert( ( Transpose(formMM_right) * formMM_right - formMM_0 ).issmall() ); 
-            assert( ( Transpose(fullMM_right) * fullMM_right - fullMM_0 ).issmall() ); 
+            assert( ( Transpose(formMM_right) * formMM_right - formMM_0 ).is_numerically_small() ); 
+            assert( ( Transpose(fullMM_right) * fullMM_right - fullMM_0 ).is_numerically_small() ); 
             
         }
         

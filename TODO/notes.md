@@ -2,9 +2,9 @@
 
   Coffeec.org
   Coffeecpp.org
-  FEECpp.org    
+  FEECpp.org
   FEEC++
-  
+
   http://asp-software.org/www/misv_resources/business-articles/how-to-name-an-app-a-program-a-company-or-a-service/
 
 --- SOFTWARE:
@@ -23,4 +23,3 @@
     -----------------------
     prefixes: 
         eval, get, set, calc, compute, generate, derive, check, complete, count, 
-    

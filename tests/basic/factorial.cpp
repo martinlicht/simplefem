@@ -50,7 +50,7 @@ int main( int argc, char *argv[] )
         int64_t f3 = factorial_integer_table( i );
         int64_t f4 = factorial_integer_loop( i );
 
-        assert( f1 == f2 and f2 == f3 and f2 == f4 );
+        assert( f1 == f2 and f2 == f3 and f3 == f4 );
 
     }
 
@@ -61,13 +61,13 @@ int main( int argc, char *argv[] )
         Float f3 = factorial_numerical_table( i );
         Float f4 = factorial_numerical_loop( i );
 
-        assert( isaboutequal( f1/f2, 1. ) );
-        assert( isaboutequal( f1/f3, 1. ) );
-        assert( isaboutequal( f1/f4, 1. ) );
+        assert( is_numerically_close( f1/f2, 1. ) );
+        assert( is_numerically_close( f1/f3, 1. ) );
+        assert( is_numerically_close( f1/f4, 1. ) );
 
-        assert( isaboutequal( f1, f2 ) );
-        assert( isaboutequal( f1, f3 ) );
-        assert( isaboutequal( f1, f4 ) );
+        assert( is_numerically_close( f1, f2 ) );
+        assert( is_numerically_close( f1, f3 ) );
+        assert( is_numerically_close( f1, f4 ) );
 
     }
 

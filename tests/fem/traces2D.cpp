@@ -155,7 +155,7 @@ int main( int argc, char *argv[] )
                     } else {
                         
                         for( int j = e * dim; j < (e+1)*dim; j++ )
-                            assert( issmall( traces_of_field[j] ) );
+                            assert( is_numerically_small( traces_of_field[j] ) );
                         
                         // LOG << "Non-Dirichlet edge " << e << " with values:" << tab;
                         // for( int j = e * dim; j < (e+1)*dim; j++ )

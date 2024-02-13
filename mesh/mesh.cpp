@@ -542,7 +542,7 @@ FloatVector Mesh::getPointFromBarycentric( int dim, int index, const FloatVector
     assert( 0 <= dim && dim <= getinnerdimension() );
     assert( 0 <= index && index < count_simplices(dim) );
     assert( barycoords.getdimension() == dim+1 );
-    assert( isaboutequal( barycoords.sum(), 1. ) );
+    assert( is_numerically_close( barycoords.sum(), 1. ) );
 
     FloatVector ret( getouterdimension(), 0. );
     
@@ -726,7 +726,7 @@ DenseMatrix Mesh::getGradientProductMatrixRightFactor( int dim, int index ) cons
     
     DenseMatrix middle_rightfactor = Transpose( CholeskyDecomposition( middle ) ); 
 
-    assert( ( middle - Transpose(middle_rightfactor) * middle_rightfactor ).issmall() );
+    assert( ( middle - Transpose(middle_rightfactor) * middle_rightfactor ).is_numerically_small() );
     
     return middle_rightfactor * multiplier; //TODO Probelesen
 }

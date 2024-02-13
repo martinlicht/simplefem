@@ -767,7 +767,7 @@ DiagonalOperator InverseDiagonalPreconditioner( const SparseMatrix& mat )
 //         assert( diag.at( i ) > 0. );
     
     for( int i = 0; i < diag.getdimension(); i++ )
-        if( not issmall( diag.at( i ) ) )
+        if( not is_numerically_small( diag.at( i ) ) )
             diag.at( i ) = 1. / diag.at( i );
         else
             diag.at( i ) = 0.;

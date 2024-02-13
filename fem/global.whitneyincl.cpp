@@ -187,7 +187,7 @@ SparseMatrix FEECWhitneyInclusionMatrix( const Mesh& mesh, int n, int k, int r )
                            index_alpharho
                            ;
 
-            Float value  = signpower(j);
+            Float value  = sign_power(j);
 
             int index_of_entry = entries_offset[d] // sum_int( d-1, [ &lists_of_Whitney_indices, n ](int c) -> int { return binomial_integer(n+1,c+1) * lists_of_Whitney_indices[c].size(); } ) * (k+1) * num_volumes
                                  +

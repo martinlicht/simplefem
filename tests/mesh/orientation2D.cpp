@@ -56,7 +56,7 @@ int main( int argc, char *argv[] )
                 LOGPRINTF( "Edge %3d (%3d %3d) \thas parent %3d (%3d %3d %3d) \twith orientation s * (-1)^%3d = %2d \n", 
                     e, ev[0], ev[1],
                     t, tv[0], tv[1], tv[2],
-                    gap_index, signpower( gap_index ) * geometric_orientation
+                    gap_index, sign_power( gap_index ) * geometric_orientation
                     );
 
             }

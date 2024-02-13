@@ -198,6 +198,8 @@ inline constexpr int kronecker( const T& i, const T& j )
 template<typename T>
 inline constexpr T absolute( const T& x )
 {
+    if( std::is_integral<T>::value && std::is_signed<T>::value )
+        assert( x != std::numeric_limits<T>::min() );
     if( x >= 0 ) return  x;
     if( x <= 0 ) return -x;
     Assert( not std::isfinite(x) );
@@ -264,14 +266,14 @@ inline constexpr T square( const T& x )
     return x * x;
 }
 
-inline constexpr bool issmall( Float value, Float threshold = 100. * machine_epsilon )
+inline constexpr bool is_numerically_small( Float value, Float threshold = 100. * machine_epsilon )
 {
     return absolute(value) < threshold;
 }
 
-inline constexpr bool isaboutequal( Float value1, Float value2, Float threshold = 100. * machine_epsilon )
+inline constexpr bool is_numerically_close( Float value1, Float value2, Float threshold = 100. * machine_epsilon )
 {
-    return issmall( value1 - value2, threshold );
+    return is_numerically_small( value1 - value2, threshold );
 }
 
 // https://codingnest.com/the-little-things-comparing-floating-point-numbers/
@@ -305,12 +307,12 @@ inline constexpr int power_integer( int base, int exponent )
     return ret;
 }
 
-inline constexpr int poweroftwo( int exponent )
+inline constexpr int power_of_two( int exponent )
 {
     return power_integer( 2, exponent );
 }
 
-inline constexpr int signpower( int exponent )
+inline constexpr int sign_power( int exponent )
 {
     return exponent % 2 == 0 ? 1. : -1;
 }
@@ -341,7 +343,7 @@ inline constexpr int signpower( int exponent )
  */
 
 template<typename T>
-inline constexpr uintmax_t largest_factorial_base_AUX( T n, uintmax_t k )
+inline constexpr uintmax_t largest_factorial_base_AUX( T n, intmax_t k )
 {
     static_assert( std::is_fundamental<T>::value and std::is_integral<T>::value, "T must be a fundamental integral value." );
 
@@ -372,7 +374,7 @@ inline constexpr uintmax_t largest_factorial_base()
 
 
 
-inline constexpr uintmax_t factorial_integer_table_old( uintmax_t n )
+inline constexpr uintmax_t factorial_integer_table_old( intmax_t n )
 {
     switch(n){
         case 0: 
@@ -405,7 +407,7 @@ inline constexpr uintmax_t factorial_integer_table_old( uintmax_t n )
     }
 }
 
-inline constexpr uintmax_t factorial_integer_table( uintmax_t n )
+inline constexpr uintmax_t factorial_integer_table( intmax_t n )
 {
     constexpr uintmax_t facs[21] = {
         1,
@@ -435,7 +437,7 @@ inline constexpr uintmax_t factorial_integer_table( uintmax_t n )
     return facs[n];
 }
 
-inline constexpr uintmax_t factorial_integer_naive( uintmax_t n )
+inline constexpr uintmax_t factorial_integer_naive( intmax_t n )
 {
     Assert( 0 <= n and n <= 20 );
     if( n == 0 ) { 
@@ -445,7 +447,7 @@ inline constexpr uintmax_t factorial_integer_naive( uintmax_t n )
     }
 }
 
-inline constexpr uintmax_t factorial_integer_loop( uintmax_t n )
+inline constexpr uintmax_t factorial_integer_loop( intmax_t n )
 {
     Assert( 0 <= n and n <= 20 );
     uintmax_t ret = 1;
@@ -458,7 +460,7 @@ inline constexpr uintmax_t factorial_integer_loop( uintmax_t n )
 
 
 
-inline constexpr int factorial_integer( int n )
+inline constexpr int factorial_integer( intmax_t n )
 {
     Assert( n >= 0 );
     Assert( n <= 20 );
@@ -474,13 +476,15 @@ inline constexpr int factorial_integer( int n )
     return static_cast<int>(result);
 }
 
-inline constexpr int binomial_integer( int n, int k )
+inline constexpr int binomial_integer( intmax_t n, intmax_t k )
 {
     Assert( 0 <= n, "Negative n for integer binomial: ", n ); 
     Assert( 0 <= n );
+    
     if( k < 0 or n < k )
         return 0;
     uintmax_t result = factorial_integer(n) / ( factorial_integer(k) * factorial_integer(n-k) );
+    
     Assert( result <= std::numeric_limits<int>::max() );
     return static_cast<int>(result);
 }
@@ -504,7 +508,7 @@ inline constexpr int binomial_integer( int n, int k )
 //                                              //
 //////////////////////////////////////////////////
 
-inline constexpr Float factorial_numerical_naive( int64_t n )
+inline constexpr Float factorial_numerical_naive( intmax_t n )
 {
     Assert( 0 <= n );
     if( n == 0 ) { 
@@ -514,7 +518,7 @@ inline constexpr Float factorial_numerical_naive( int64_t n )
     }
 }
 
-inline constexpr Float factorial_numerical_loop( int64_t n )
+inline constexpr Float factorial_numerical_loop( intmax_t n )
 {
     Assert( 0 <= n );
     Float ret = 1.;
@@ -522,7 +526,7 @@ inline constexpr Float factorial_numerical_loop( int64_t n )
     return ret;
 }
 
-inline constexpr Float factorial_numerical_table( int64_t n )
+inline constexpr Float factorial_numerical_table( intmax_t n )
 {
     constexpr Float facs[21] = {
         1.,
@@ -552,13 +556,13 @@ inline constexpr Float factorial_numerical_table( int64_t n )
     return facs[n];
 }
 
-inline constexpr Float factorial_numerical( int64_t n )
+inline constexpr Float factorial_numerical( intmax_t n )
 {
     return factorial_numerical_naive( n );
 }
 
 
-inline constexpr Float binomial_numerical( int64_t n, int64_t k )
+inline constexpr Float binomial_numerical( intmax_t n, intmax_t k )
 {
     Assert( 0 <= n );
     if( k < 0 or n < k )

@@ -328,7 +328,7 @@ bool Coordinates::compare( const Coordinates& coords_left, const Coordinates& co
     
     for( int n = 0; n < coords_left.getnumber(); n++ )
     for( int d = 0; d < coords_left.getdimension(); d++ )
-      if( not isaboutequal( coords_left.getdata( n, d ), coords_right.getdata( n, d ), 0.1 ) )
+      if( not is_numerically_close( coords_left.getdata( n, d ), coords_right.getdata( n, d ), 0.1 ) )
         return false;
     
     return true;

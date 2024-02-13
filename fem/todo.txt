@@ -1,8 +1,0 @@
-
-- assembly mass matrix, check for positive definiteness
-- assembly diff matrix, check for commutativity
-- test commutator properties 
-- test approximation properties (mesh and poly refine) for 2D meshes 
-- test approximation properties (mesh and poly refine) for 3D meshes 
-- 
-

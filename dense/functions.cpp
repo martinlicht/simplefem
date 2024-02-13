@@ -306,7 +306,7 @@ DenseMatrix CofactorMatrix( const DenseMatrix& A )
     for( int c = 0; c < A.getdimin(); c++ )
     {
       
-      int sign_entry = signpower( r+c );
+      int sign_entry = sign_power( r+c );
       
       assert( sign_perm * sign_entry == 1 or sign_perm * sign_entry == -1 );
       Float summand = sign_perm * sign_entry;
@@ -403,7 +403,7 @@ void Inverse_CramersRule_InSitu( DenseMatrix& A )
     // auto C = ( CofactorMatrix( A ) /  Determinant( A ) );
     // LOG << A << nl << B << nl << C << nl;
     // LOG << A*B << nl << A*C << nl;
-    // assert( ( C - B ).issmall() );
+    // assert( ( C - B ).is_numerically_small() );
 
     A = CofactorMatrix( A ) /  Determinant( A );
 }

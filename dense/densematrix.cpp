@@ -762,7 +762,7 @@ bool DenseMatrix::issymmetric() const
     
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c <= r; c++ )
-        if( not isaboutequal( get(r,c), get(c,r) ) ) 
+        if( not is_numerically_close( get(r,c), get(c,r) ) ) 
             return false;
     
     return true;
@@ -774,7 +774,7 @@ bool DenseMatrix::isantisymmetric() const
     
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c <= r; c++ )
-        if( not isaboutequal( get(r,c), -get(c,r) ) ) 
+        if( not is_numerically_close( get(r,c), -get(c,r) ) ) 
             return false;
     
     return true;
@@ -836,7 +836,7 @@ bool DenseMatrix::isnonpositive() const
     return true;
 }
 
-bool DenseMatrix::issmall( Float eps ) const
+bool DenseMatrix::is_numerically_small( Float eps ) const
 {
     return this->norm() < eps;
 }
@@ -996,7 +996,7 @@ DenseMatrix InvHilbertMatrix( int n )
         // https://mathoverflow.net/questions/47561/deriving-inverse-of-hilbert-matrix
         const int i = r+1;
         const int j = c+1;
-        return signpower(i+j) * (i+j-1)
+        return sign_power(i+j) * (i+j-1)
                * binomial_integer( n+i-1, n-j )
                * binomial_integer( n+j-1, n-i )
                * square( binomial_integer(i+j-2,i-1) );
