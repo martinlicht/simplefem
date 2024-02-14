@@ -111,7 +111,7 @@ class IndexMap
         
         bool equals( const IndexMap& ) const;
         
-        bool less( const IndexMap& ) const;
+        bool is_less_than( const IndexMap& ) const;
     
     private:
         
@@ -166,7 +166,7 @@ inline bool operator<( const IndexMap& left, const IndexMap& right )
     right.check();
     assert( left.comparablewith( right ) );
 
-    return left.less( right );
+    return left.is_less_than( right );
 }
 
 template<typename Stream>

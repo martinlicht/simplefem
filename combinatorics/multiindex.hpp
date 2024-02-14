@@ -202,7 +202,7 @@ inline bool operator<( const MultiIndex& it, const MultiIndex& mi)
 {
     it.check();
     mi.check();
-    return it.less( mi );
+    return it.is_less_than( mi );
 }
                 
 inline bool operator>( const MultiIndex& it, const MultiIndex& mi)

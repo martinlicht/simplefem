@@ -12,7 +12,7 @@ int main( int argc, char *argv[] )
 
     for( int i = 0; i < 5; i++ )
         for( int j = 0; j < 7; j++ )
-            M.addentry( (3*i) % 2, (2*j) % 3, i / 3. + j*j );
+            M.appendentry( (3*i) % 2, (2*j) % 3, i / 3. + j*j );
 
     LOG << "This is the content of some matrix:" << nl;
     LOG << M << nl;
@@ -26,12 +26,12 @@ int main( int argc, char *argv[] )
     LOG << M << nl;
 
     LOG << "Next Matrix:" << nl;
-    M.addentry( 0, 0, 1. );
-    M.addentry( 0, 1, 2. );
-    M.addentry( 0, 2, 3. );
-    M.addentry( 1, 0, 4. );
-    M.addentry( 1, 1, 5. );
-    M.addentry( 1, 2, 6. );
+    M.appendentry( 0, 0, 1. );
+    M.appendentry( 0, 1, 2. );
+    M.appendentry( 0, 2, 3. );
+    M.appendentry( 1, 0, 4. );
+    M.appendentry( 1, 1, 5. );
+    M.appendentry( 1, 2, 6. );
     LOG << M << nl;
 
     FloatVector vec(3);

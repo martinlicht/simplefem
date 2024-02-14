@@ -233,10 +233,10 @@ void Coordinates::append( const FloatVector& v )
 }
 
 
-void Coordinates::addcapacity( int capacity )
+void Coordinates::addcapacity( int additional_capacity )
 {
-    assert( capacity >= 0 );
-    data.reserve( data.size() + dimension * capacity );
+    assert( additional_capacity >= 0 );
+    data.reserve( data.size() + dimension * additional_capacity );
 }
 
 void Coordinates::addcoordinates( int add_number )

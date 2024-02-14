@@ -109,6 +109,9 @@ static const constexpr Float machine_epsilon = std::numeric_limits<Float>::epsil
 static const constexpr Float desired_precision = 
                                     sizeof(Float) == sizeof(float) ? 10e-6 : Sqrt( machine_epsilon );
 
+static const constexpr Float desired_closeness = 
+                                    sizeof(Float) == sizeof(float) ? 10e-6 : Sqrt( machine_epsilon );
+
 
 
                                     
@@ -266,12 +269,12 @@ inline constexpr T square( const T& x )
     return x * x;
 }
 
-inline constexpr bool is_numerically_small( Float value, Float threshold = 100. * machine_epsilon )
+inline constexpr bool is_numerically_small( Float value, Float threshold = desired_closeness )
 {
     return absolute(value) < threshold;
 }
 
-inline constexpr bool is_numerically_close( Float value1, Float value2, Float threshold = 100. * machine_epsilon )
+inline constexpr bool is_numerically_close( Float value1, Float value2, Float threshold = desired_closeness )
 {
     return is_numerically_small( value1 - value2, threshold );
 }
@@ -321,25 +324,20 @@ inline constexpr int sign_power( int exponent )
 
 
 
-/////////////////////////////////////////////////
-//                                             //
-//        INTEGRAL FACTORIAL, BINOMIALS        //
-//               AND AUXILIARIES               //
-//                                             //
-//   NOTE:                                     //
-//   For small inputs, the naive method seems  //
-//   to perform best, the table method is only //
-//   slightly slower, and the loop method is   //
-//   consistently slowest. The differences     //
-//   are in the range of 5%, so fairly small   //
-//   practically.                              //
-//                                             //
-/////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
+//                                                                                           //
+//                   INTEGRAL FACTORIAL, BINOMIALS AND AUXILIARIES                           //
+//                                                                                           //
+//   NOTE:                                                                                   //
+//   For small inputs, the naive method seems to perform best,                               //
+//   the table method is only slightly slower, and the loop method is consistently slowest.  // 
+//   The differences are in the range of 5%, so fairly small for practical purposes.         //
+//                                                                                           //
+///////////////////////////////////////////////////////////////////////////////////////////////
 
 /*
  * Recursively divide the integer n by larger and larger numbers 1, 2, 3, ... without remainder
- * until the divisor is larger than n. That divisor is the largest numbers 
- * whose factorial is at most n.
+ * until the divisor is larger than n. That divisor is the largest numbers whose factorial is at most n.
  */
 
 template<typename T>

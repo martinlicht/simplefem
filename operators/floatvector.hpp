@@ -201,7 +201,7 @@ class FloatVector
         bool isnonpositive() const;
         
         
-        bool is_numerically_small( Float eps = 1.000e-5 ) const;
+        bool is_numerically_small( Float threshold = desired_closeness ) const;
         
 
 
