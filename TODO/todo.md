@@ -8,7 +8,8 @@ and also necessary next step.
 This requires a rewriting of the unit tests module by
 module to ensure that all functionality is being tested
 without relying on the visual inspection of the output. 
-This is true for the lower levels of the library.
+This is particularly relevant for the lower levels of the library.
+
 The higher level parts require more quality time to 
 ensure that the tests are meaningful. What's more,
 neither benchmarking nor production are relevant for 
@@ -16,8 +17,8 @@ testing functionality, and thus should be separated.
 
 In the wake of this, the framework of the library
 should be progressively extended and polished according
-to demands of the unit tests. That touches join error
-handling, logging, output colors, assertions...
+to demands of the unit tests. That touches upon error handling, 
+logging, output colors, assertions...
 
 Finally, on a larger scale, the file structure of the
 library as well as the makefile setup should be fixed.
@@ -29,11 +30,33 @@ None of the above can be done in a day, so it most likely
 requires regular grinding in order to get it done.
 
 
+# (HIGH) Output of solver component 
+
+The solver component prints should all contain the iteration number if possible.
+Each print should start with the iterartion number, followed by the message class, and then all other info
+RESTARTED
+BREAKDOWN
+---------
+(NOTICE)
+WARNING
+INTERIM
+
+
+# (HIGH) Argument names in all header files 
+    
+The function/method declarations in the header files should provide argument names. 
+The names should coincide with the ones in the code but that's not necessary. 
+
+Rationale: this improves readability.
+
+
 # (HIGH) Floating-point comparisons
 
 https://beta.boost.org/doc/libs/1_68_0/libs/math/doc/html/math_toolkit/float_comparison.html
 
 Understand the floating-point comparison functions and import them into this project, mutatis mutandis. 
+
+# (HIGH) AFW-Basis of Sullivan forms
 
 
 # (HIGH) Profiling
@@ -69,8 +92,6 @@ and for format (row/column and matrix/list).
 
 All operators show return the 'this' pointer in their print methods.
 
-# (HIGH) AFW-Basis of Sullivan forms
-
 # (HIGH) Floating point exact comparisons ersetzen durch Funktion mit expliziter semantik
 
 # (HIGH) Augmented integration in all numerical tests 
@@ -85,10 +106,6 @@ Similarly, the errors should be computed with augmented integration.
 [ ] Don't compute the norms of the solutions and the rhs unless necessary 
 [ ] Don't use MINRES unless necessary 
 [ ] Remove legacy comments, try to localize the structure.
-
-# (HIGH) Output of solver component 
-
-The solver component outputs should all contain the iteration number if possible.
 
 # (MEDIUM) Averaging for Sullivan and Whitney spaces
 
@@ -136,9 +153,6 @@ to a function invocation. No further frills.
 Use the custom assert macro throughout the project.
 
 
-# (HIGH) TODO file names 
-
-???Correct the file names in the VTK output of the different mesh and fem test programs ???
 
 
 
@@ -174,12 +188,6 @@ Fenics: common
 
 
 
-# (HIGH) Argument names in all header files 
-    
-The function/method declarations in the header files should provide argument names. 
-The names should coincide with the ones in the code but that's not necessary. 
-
-Rationale: this improves readability.
 
 
 
@@ -614,6 +622,10 @@ package everything into a namespace.
 
 Should smart pointers be employed throughout the library to make it more robust against user malpractice?
 
+
+# (UNCLEAR) TODO file names 
+
+??? Correct the file names in the VTK output of the different mesh and fem test programs ???
 
 #  (UNCLEAR) VTK OUTPUT 
 
