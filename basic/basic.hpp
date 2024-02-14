@@ -107,10 +107,10 @@ static const constexpr Float notanumber = std::numeric_limits<Float>::quiet_NaN(
 static const constexpr Float machine_epsilon = std::numeric_limits<Float>::epsilon();
 
 static const constexpr Float desired_precision = 
-                                    sizeof(Float) == sizeof(float) ? 10e-6 : Sqrt( machine_epsilon );
+                                    sizeof(Float) == sizeof(float) ? 1e-5 : Sqrt( machine_epsilon );
 
 static const constexpr Float desired_closeness = 
-                                    sizeof(Float) == sizeof(float) ? 10e-6 : Sqrt( machine_epsilon );
+                                    sizeof(Float) == sizeof(float) ? 1e-5 : Sqrt( machine_epsilon );
 
 
 

@@ -50,19 +50,6 @@ The names should coincide with the ones in the code but that's not necessary.
 Rationale: this improves readability.
 
 
-# (HIGH) text output
-
-Generally speaking, linear operators should only output the basic information but no raw data.
-This only affects operators with long data: diagonal, dense, sparse 
-All the small parameters should be expressed explicitly
-
-The dense matrix and float vector classes should implement extra output methods 
-for the raw data. They parameters for the desired precision, whether indices should be printed,
-and for format (row/column and matrix/list).
-
-All operators show return the 'this' pointer in their print methods.
-
-
 # (HIGH) AFW-Basis of Sullivan forms
 
 
