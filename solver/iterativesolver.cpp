@@ -152,13 +152,13 @@ void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) cons
             bool denominator_is_small    = sqrt(absolute(Ad_d)) < machine_epsilon;
             
             if( denominator_is_unreasonable ) {
-                LOGPRINTF( "BREAKDOWN: Gradient energy is unreasonable with %.9Le\n", (long double)Ad_d );
+                LOGPRINTF( "BREAKDOWN (%d/%d): Gradient energy is unreasonable with %.9Le\n", recent_iteration_count, max_iteration_count, (long double)Ad_d );
                 break;
             }
             
             if( denominator_is_small ) {
                 LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) sqrt(rr_old), (long double)threshold );
-                LOGPRINTF( "WARNING: Gradient energy is small with %.9Le\n", (long double)Ad_d );
+                LOGPRINTF( "WARNING (%d/%d): Gradient energy is small with %.9Le\n", recent_iteration_count, max_iteration_count, (long double)Ad_d );
                 break;
             }
             
@@ -391,13 +391,13 @@ void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector&
             bool denominator_is_small    = sqrt(absolute(Ad_Ad)) < machine_epsilon;
             
             if( denominator_is_unreasonable ) {
-                LOGPRINTF( "BREAKDOWN: Gradient double energy is unreasonable with %.9Le\n", (long double)Ad_Ad );
+                LOGPRINTF( "BREAKDOWN (%d/%d): Gradient double energy is unreasonable with %.9Le\n", recent_iteration_count, max_iteration_count, (long double)Ad_Ad );
                 break;
             }
             
             if( denominator_is_small ) {
                 LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) sqrt(rAr), (long double)threshold ); 
-                LOGPRINTF( "WARNING: Gradient double energy is small with %.9Le\n", (long double)Ad_Ad );
+                LOGPRINTF( "WARNING (%d/%d): Gradient double energy is small with %.9Le\n", recent_iteration_count, max_iteration_count, (long double)Ad_Ad );
                 break;
             }
             
@@ -413,7 +413,7 @@ void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector&
             Float beta = rAr / tau;
             
             if( rAr < 0. ) {
-                LOGPRINTF( "BREAKDOWN: Residual energy is unreasonable with %.9Le\n", (long double)rAr );
+                LOGPRINTF( "BREAKDOWN (%d/%d): Residual energy is unreasonable with %.9Le\n", recent_iteration_count, max_iteration_count, (long double)rAr );
                 rAr = 0.; // TODO to avoid useless bug 
                 break;
             }
@@ -518,13 +518,13 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
             bool denominator_is_small        = sqrt(absolute(Ad_Ad)) < machine_epsilon;
             
             if( denominator_is_unreasonable ) {
-                LOGPRINTF( "BREAKDOWN: Gradient double energy is unreasonable with %.9Le\n", (long double)Ad_Ad );
+                LOGPRINTF( "BREAKDOWN (%d/%d): Gradient double energy is unreasonable with %.9Le\n", recent_iteration_count, max_iteration_count, (long double)Ad_Ad );
                 break;
             }
             
             if( denominator_is_small ) {
                 LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) sqrt( Ar * r ), (long double)threshold ); 
-                LOGPRINTF( "WARNING: Gradient double energy is small with %.9Le\n", (long double)Ad_Ad );
+                LOGPRINTF( "WARNING (%d/%d): Gradient double energy is small with %.9Le\n", recent_iteration_count, max_iteration_count, (long double)Ad_Ad );
                 break;
             }
             
@@ -632,13 +632,13 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
             bool denominator_is_small    = sqrt(absolute(Ad_Ad)) < machine_epsilon;
             
             if( denominator_is_unreasonable ) {
-                LOGPRINTF( "BREAKDOWN: Gradient double energy is unreasonable with %.9Le\n", (long double)Ad_Ad );
+                LOGPRINTF( "BREAKDOWN (%d/%d): Gradient double energy is unreasonable with %.9Le\n", recent_iteration_count, max_iteration_count, (long double)Ad_Ad );
                 break;
             }
             
             if( denominator_is_small ) {
                 LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) sqrt( Ar * r ), (long double)threshold );
-                LOGPRINTF( "WARNING: Gradient double energy is small with %.9Le\n", (long double)Ad_Ad );
+                LOGPRINTF( "WARNING (%d/%d): Gradient double energy is small with %.9Le\n", recent_iteration_count, max_iteration_count, (long double)Ad_Ad );
                 break;
             }
             
@@ -878,13 +878,13 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
             bool denominator_is_small    = sqrt(absolute(AMp_MAMp)) < machine_epsilon;
             
             if( denominator_is_unreasonable ) {
-                LOGPRINTF( "BREAKDOWN: Gradient double energy is unreasonable with %.9Le\n", (long double)AMp_MAMp );
+                LOGPRINTF( "BREAKDOWN (%d/%d): Gradient double energy is unreasonable with %.9Le\n", recent_iteration_count, max_iteration_count, (long double)AMp_MAMp );
                 break;
             }
             
             if( denominator_is_small ) {
                 LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) sqrt(Mr * AMr), (long double)threshold );
-                LOGPRINTF( "WARNING: Gradient double energy is small with %.9Le\n", (long double)AMp_MAMp );
+                LOGPRINTF( "WARNING (%d/%d): Gradient double energy is small with %.9Le\n", recent_iteration_count, max_iteration_count, (long double)AMp_MAMp );
                 break;
             }
             
@@ -1115,8 +1115,8 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
             assert( std::isfinite(s2_s2) ); 
             if( s2_s2 < machine_epsilon ) {
                 LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) sqrt(rr), (long double) threshold );
-                LOGPRINTF( "WARNING: Norm of search direction is small with %.9Le\n", (long double) sqrt(s2_s2) );
-                LOGPRINTF( "WARNING: Machine Epsilon: %.9Le\n", (long double) machine_epsilon );
+                LOGPRINTF( "WARNING (%d/%d): Norm of search direction is small with %.9Le\n", recent_iteration_count, max_iteration_count, (long double) sqrt(s2_s2) );
+                LOGPRINTF( "WARNING (%d/%d): Machine Epsilon: %.9Le\n", recent_iteration_count, max_iteration_count, (long double) machine_epsilon );
                 // break;
             }
             
@@ -1459,7 +1459,7 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
             
             if( verbosity >= VerbosityLevel::verbose ) {
                 LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) eta, (long double)threshold );
-                LOGPRINTF( "NOTE Gamma: %.9Le Res: %.9Le\n", (long double)gamma, (long double)(b - A * x).norm() );
+                LOGPRINTF( "INTERIM   (%d/%d) Gamma: %.9Le Res: %.9Le\n", recent_iteration_count, max_iteration_count, (long double)gamma, (long double)(b - A * x).norm() );
             }
 
         }
@@ -1524,7 +1524,7 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
         
         if( verbosity >= VerbosityLevel::verbose and print_condition ) {
             LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) recent_deviation, (long double)threshold );
-            LOGPRINTF( "INTERIM Gamma: %.9Le Eta: %.9Le\n", (long double)gamma, (long double)eta );
+            LOGPRINTF( "INTERIM (%d/%d) Gamma: %.9Le Eta: %.9Le\n", recent_iteration_count, max_iteration_count, (long double)gamma, (long double)eta );
         }
         
         recent_iteration_count++;

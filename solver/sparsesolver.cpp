@@ -123,13 +123,13 @@ int ConjugateGradientSolverCSR(
         bool denominator_is_small    = sqrt(absolute(d_Ad)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
+            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN (%d/%d): Gradient energy is unreasonable with %.9Le\n", K, N, (long double)d_Ad );
             break;
         }
         
         if( denominator_is_small ) UNLIKELY {
             if( print_modulo >= 0 ) LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(r_r), (long double) threshold );
-            if( print_modulo >= 0 ) LOGPRINTF( "WARNING: Gradient energy is small with %.9Le\n", (long double)d_Ad );
+            if( print_modulo >= 0 ) LOGPRINTF( "WARNING (%d/%d): Gradient energy is small with %.9Le\n", K, N, (long double)d_Ad );
             break;
         }
         
@@ -310,13 +310,13 @@ int ConjugateGradientSolverCSR_DiagonalPreconditioner(
         bool denominator_is_small    = sqrt(absolute(d_Ad)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
+            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN (%d/%d): Gradient energy is unreasonable with %.9Le\n", K, N, (long double)d_Ad );
             break;
         }
         
         if( denominator_is_small ) UNLIKELY {
             if( print_modulo >= 0 ) LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
-            if( print_modulo >= 0 ) LOGPRINTF( "WARNING: Gradient energy is small with %.9Le\n", (long double)d_Ad );
+            if( print_modulo >= 0 ) LOGPRINTF( "WARNING (%d/%d): Gradient energy is small with %.9Le\n", K, N, (long double)d_Ad );
             break;
         }
         
@@ -570,13 +570,13 @@ int ConjugateGradientSolverCSR_SSOR(
         bool denominator_is_small    = sqrt(absolute(d_Ad)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
+            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN (%d/%d): Gradient energy is unreasonable with %.9Le\n", K, N, (long double)d_Ad );
             break;
         }
         
         if( denominator_is_small ) UNLIKELY {
             if( print_modulo >= 0 ) LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
-            if( print_modulo >= 0 ) LOGPRINTF( "WARNING: Gradient energy is small with %.9Le\n", (long double)d_Ad );
+            if( print_modulo >= 0 ) LOGPRINTF( "WARNING (%d/%d): Gradient energy is small with %.9Le\n", K, N, (long double)d_Ad );
             break;
         }
         
@@ -848,13 +848,13 @@ int ConjugateGradientSolverCSR_SSOR_Eisenstat(
         bool denominator_is_small    = sqrt(absolute(d_Ad)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
+            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN (%d/%d): Gradient energy is unreasonable with %.9Le\n", K, N, (long double)d_Ad );
             break;
         }
         
         if( denominator_is_small ) UNLIKELY {
             if( print_modulo >= 0 ) LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
-            if( print_modulo >= 0 ) LOGPRINTF( "WARNING: Gradient energy is small with %.9Le\n", (long double)d_Ad );
+            if( print_modulo >= 0 ) LOGPRINTF( "WARNING (%d/%d): Gradient energy is small with %.9Le\n", K, N, (long double)d_Ad );
             break;
         }
         
@@ -1116,13 +1116,13 @@ int ConjugateGradientSolverCSR_Rainbow(
         bool denominator_is_small    = sqrt(absolute(d_Ad)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
+            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN (%d/%d): Gradient energy is unreasonable with %.9Le\n", K, N, (long double)d_Ad );
             break;
         }
         
         if( denominator_is_small ) UNLIKELY {
             if( print_modulo >= 0 ) LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
-            if( print_modulo >= 0 ) LOGPRINTF( "WARNING: Gradient energy is small with %.9Le\n", (long double)d_Ad );
+            if( print_modulo >= 0 ) LOGPRINTF( "WARNING (%d/%d): Gradient energy is small with %.9Le\n", K, N, (long double)d_Ad );
             break;
         }
         
@@ -1458,13 +1458,13 @@ int ConjugateGradientSolverCSR_Eisenstat_Rainbow(
         bool denominator_is_small    = sqrt(absolute(d_Ad)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
+            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN (%d/%d): Gradient energy is unreasonable with %.9Le\n", K, N, (long double)d_Ad );
             break;
         }
         
         if( denominator_is_small ) UNLIKELY {
             if( print_modulo >= 0 ) LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
-            if( print_modulo >= 0 ) LOGPRINTF( "WARNING: Gradient energy is small with %.9Le\n", (long double)d_Ad );
+            if( print_modulo >= 0 ) LOGPRINTF( "WARNING (%d/%d): Gradient energy is small with %.9Le\n", K, N, (long double)d_Ad );
             break;
         }
         
@@ -1661,7 +1661,7 @@ int ConjugateResidualSolverCSR(
         bool residualenergy_is_unreasonable = not std::isfinite(Ad_r) or Ad_r < 0.;
         
         if( residualenergy_is_unreasonable ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Residual energy is unreasonable with %.9Le\n", (long double)Ad_r );
+            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN (%d/%d): Residual energy is unreasonable with %.9Le\n", K, N, (long double)Ad_r );
             break;
         }
 
@@ -1674,13 +1674,13 @@ int ConjugateResidualSolverCSR(
         bool denominator_is_small    = sqrt(absolute(Ad_Ad)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Gradient double energy is unreasonable with %.9Le\n", (long double)Ad_Ad );
+            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN (%d/%d): Gradient double energy is unreasonable with %.9Le\n", K, N, (long double)Ad_Ad );
             break;
         }
         
         if( denominator_is_small ) UNLIKELY {
             if( print_modulo >= 0 ) LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(Ad_r), (long double) threshold );
-            if( print_modulo >= 0 ) LOGPRINTF( "WARNING: Gradient double energy is small with %.9Le\n", (long double)Ad_Ad );
+            if( print_modulo >= 0 ) LOGPRINTF( "WARNING (%d/%d): Gradient double energy is small with %.9Le\n", K, N, (long double)Ad_Ad );
             break;
         }
         
@@ -1873,7 +1873,7 @@ int ConjugateResidualSolverCSR_textbook(
         bool residualenergy_is_small = absolute(Ar_r) < threshold*threshold;
         
         if( residualenergy_is_unreasonable ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Residual energy is unreasonable with %.9Le\n", (long double)Ar_r );
+            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN (%d/%d): Residual energy is unreasonable with %.9Le\n", K, N, (long double)Ar_r );
             break;
         }
   
@@ -1885,13 +1885,13 @@ int ConjugateResidualSolverCSR_textbook(
         bool denominator_is_small    = sqrt(absolute(Ad_Ad)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Gradient double energy is unreasonable with %.9Le\n", (long double)Ad_Ad );
+            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN (%d/%d): Gradient double energy is unreasonable with %.9Le\n", K, N, (long double)Ad_Ad );
             break;
         }
         
         if( denominator_is_small ) UNLIKELY {
             if( print_modulo >= 0 ) LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(Ar_r), (long double) threshold );
-            if( print_modulo >= 0 ) LOGPRINTF( "WARNING: Gradient double energy is small with %.9Le\n", (long double)Ad_Ad );
+            if( print_modulo >= 0 ) LOGPRINTF( "WARNING (%d/%d): Gradient double energy is small with %.9Le\n", K, N, (long double)Ad_Ad );
             break;
         }
         
