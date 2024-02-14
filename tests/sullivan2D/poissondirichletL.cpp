@@ -191,7 +191,7 @@ int main( int argc, char *argv[] )
 
                 sol.zero();
 
-                auto diagonal = stiffness.diagonal();
+                auto diagonal = stiffness.getDiagonal();
             
                 Rainbow rainbow( stiffness );
 

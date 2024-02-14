@@ -86,19 +86,19 @@ class MeshSimplicial3D
 
         /* OTHER METHODS */
         
-        bool compare( const MeshSimplicial3D& mesh ) const;
+        bool is_equal_to( const MeshSimplicial3D& mesh ) const;
         
         /* inherited methods */
         
-        virtual bool dimension_counted( int dim ) const override;
+        virtual bool has_dimension_counted( int dim ) const override;
         
         virtual int count_simplices( int dim ) const override;
         
-        virtual bool subsimplices_listed( int sup, int sub ) const override;
+        virtual bool has_subsimplices_listed( int sup, int sub ) const override;
         
         virtual IndexMap getsubsimplices( int sup, int sub, int cell ) const override;
         
-        virtual bool supersimplices_listed( int sup, int sub ) const override;
+        virtual bool has_supersimplices_listed( int sup, int sub ) const override;
         
         virtual const std::vector<int> getsupersimplices( int sup, int sub, int cell ) const override;
         
@@ -377,7 +377,7 @@ class MeshSimplicial3D
 
         inline bool operator==( const MeshSimplicial3D& m2 ) const 
         {
-            return this->compare( m2 );
+            return this->is_equal_to( m2 );
         }
 
         inline bool operator!=( const MeshSimplicial3D& m2 ) const 

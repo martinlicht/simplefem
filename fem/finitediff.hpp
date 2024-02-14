@@ -82,7 +82,7 @@ class AlternatingForm
                 assert( pattern[p].getdimin()  == sigmas_src.size() );
                 assert( pattern[p].getdimout() == sigmas_dst.size() );
                 
-                if( not src_form.rangecontains(p) ) {
+                if( not src_form.has_value_in_range(p) ) {
                     
                     IndexMap new_form = expand_one( src_form, p );
                     int new_form_index = find_index( sigmas_dst, new_form );

@@ -366,7 +366,7 @@ int main( int argc, char *argv[] )
                     
                     sol.zero();
 
-                    auto diagonal = stiffness.diagonal();
+                    auto diagonal = stiffness.getDiagonal();
                     // FloatVector residual( rhs );
                 
                     Rainbow rainbow( stiffness );

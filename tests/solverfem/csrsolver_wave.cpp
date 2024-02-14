@@ -560,7 +560,7 @@ int main( int argc, char *argv[] )
                     {
                         LOG << "CGM - CSR Classic with SSOR" << nl;
                         
-                        auto diagonal = SystemMatrix.diagonal();
+                        auto diagonal = SystemMatrix.getDiagonal();
 
                         FloatVector residual( rhs );
                         // auto max_iteration_count = sol.getdimension();
@@ -592,7 +592,7 @@ int main( int argc, char *argv[] )
                     {
                         LOG << "CGM - CSR Classic with Eisenstat-SSOR" << nl;
                         
-                        auto diagonal = SystemMatrix.diagonal();
+                        auto diagonal = SystemMatrix.getDiagonal();
 
                         FloatVector residual( rhs );
                         // auto max_iteration_count = sol.getdimension();
@@ -622,7 +622,7 @@ int main( int argc, char *argv[] )
                     {
                         LOG << "CGM - CSR Classic with Rainbow-SSOR" << nl;
                     
-                        FloatVector diagonal = SystemMatrix.diagonal();
+                        FloatVector diagonal = SystemMatrix.getDiagonal();
                         
                         Rainbow rainbow( SystemMatrix );
 
@@ -654,7 +654,7 @@ int main( int argc, char *argv[] )
                     {
                         LOG << "CGM - CSR Classic with Eisenstat-Rainbow-SSOR" << nl;
                     
-                        FloatVector diagonal = SystemMatrix.diagonal();
+                        FloatVector diagonal = SystemMatrix.getDiagonal();
                         
                         Rainbow rainbow( SystemMatrix );
 

@@ -544,7 +544,7 @@ MeshSimplicial3D::~MeshSimplicial3D()
     MeshSimplicial3D::check();
 }
 
-bool MeshSimplicial3D::compare( const MeshSimplicial3D& mesh ) const 
+bool MeshSimplicial3D::is_equal_to( const MeshSimplicial3D& mesh ) const 
 {
   return counter_tetrahedra == mesh.counter_tetrahedra
          &&
@@ -1617,7 +1617,7 @@ std::string MeshSimplicial3D::text() const
 
 
 
-bool MeshSimplicial3D::dimension_counted( int dim ) const
+bool MeshSimplicial3D::has_dimension_counted( int dim ) const
 {
     assert( 0 <= dim && dim <= 3 );
     return true;
@@ -1637,7 +1637,7 @@ int MeshSimplicial3D::count_simplices( int dim ) const
     unreachable();
 }
 
-bool MeshSimplicial3D::subsimplices_listed( int sup, int sub ) const
+bool MeshSimplicial3D::has_subsimplices_listed( int sup, int sub ) const
 {
     assert( 0 <= sub && sub <= sup && sup <= 3 );
     return true;
@@ -1710,7 +1710,7 @@ IndexMap MeshSimplicial3D::getsubsimplices( int sup, int sub, int cell ) const
    
 }
 
-bool MeshSimplicial3D::supersimplices_listed( int sup, int sub ) const
+bool MeshSimplicial3D::has_supersimplices_listed( int sup, int sub ) const
 {
     assert( 0 <= sub && sub <= sup && sup <= 3 );
     return true;

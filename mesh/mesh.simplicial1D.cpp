@@ -158,7 +158,7 @@ MeshSimplicial1D::~MeshSimplicial1D()
 
 
 
-bool MeshSimplicial1D::compare( const MeshSimplicial1D& mesh ) const 
+bool MeshSimplicial1D::is_equal_to( const MeshSimplicial1D& mesh ) const 
 {
   return counter_edges == mesh.counter_edges
          &&
@@ -340,7 +340,7 @@ std::string MeshSimplicial1D::text() const
 
 
 
-bool MeshSimplicial1D::dimension_counted( int dim ) const
+bool MeshSimplicial1D::has_dimension_counted( int dim ) const
 {
     assert( 0 <= dim && dim <= 1 );
     return true;
@@ -356,7 +356,7 @@ int MeshSimplicial1D::count_simplices( int dim ) const
     unreachable();
 }
 
-bool MeshSimplicial1D::subsimplices_listed( int sup, int sub ) const
+bool MeshSimplicial1D::has_subsimplices_listed( int sup, int sub ) const
 {
     assert( 0 <= sub && sub <= sup && sup <= 1 );
     return true;
@@ -388,7 +388,7 @@ IndexMap MeshSimplicial1D::getsubsimplices( int sup, int sub, int cell ) const
   
 }
 
-bool MeshSimplicial1D::supersimplices_listed( int sup, int sub ) const
+bool MeshSimplicial1D::has_supersimplices_listed( int sup, int sub ) const
 {
     assert( 0 <= sub && sub <= sup && sup <= 1 );
     return true;

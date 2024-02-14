@@ -87,9 +87,9 @@ class MultiIndex final
         void sub( const MultiIndex& mi );
                 
 
-        bool comparablewith( const MultiIndex& mi ) const;
+        bool is_comparable_with( const MultiIndex& mi ) const;
 
-        bool equals( const MultiIndex& mi ) const;
+        bool is_equal_to( const MultiIndex& mi ) const;
                 
         bool is_less_than( const MultiIndex& mi ) const;
 
@@ -188,7 +188,7 @@ inline bool operator==( const MultiIndex& it, const MultiIndex& mi)
 {
     it.check();
     mi.check();
-    return it.equals( mi );
+    return it.is_equal_to( mi );
 }
                 
 inline bool operator!=( const MultiIndex& it, const MultiIndex& mi)

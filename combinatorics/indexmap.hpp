@@ -96,7 +96,7 @@ class IndexMap
         
         const std::vector<int>& getvalues() const &;
                 
-        bool rangecontains( int value ) const;
+        bool has_value_in_range( int value ) const;
         
         int preimageof( int value ) const;
         
@@ -107,9 +107,9 @@ class IndexMap
 
 
 
-        bool comparablewith( const IndexMap& im ) const;
+        bool is_comparable_with( const IndexMap& im ) const;
         
-        bool equals( const IndexMap& im ) const;
+        bool is_equal_to( const IndexMap& im ) const;
         
         bool is_less_than( const IndexMap& im ) const;
     
@@ -146,25 +146,25 @@ inline bool operator==( const IndexMap& left, const IndexMap& right )
 {
     left.check();
     right.check();
-    assert( left.comparablewith( right ) );
+    assert( left.is_comparable_with( right ) );
 
-    return left.equals( right );
+    return left.is_equal_to( right );
 }
 
 inline bool operator!=( const IndexMap& left, const IndexMap& right )
 {
     left.check();
     right.check();
-    assert( left.comparablewith( right ) );
+    assert( left.is_comparable_with( right ) );
 
-    return !( left.equals( right ) );
+    return !( left.is_equal_to( right ) );
 }
 
 inline bool operator<( const IndexMap& left, const IndexMap& right )
 {
     left.check();
     right.check();
-    assert( left.comparablewith( right ) );
+    assert( left.is_comparable_with( right ) );
 
     return left.is_less_than( right );
 }
@@ -234,9 +234,9 @@ IndexMap expand_one( const IndexMap& im, int p );
 //     super.check();
 //     assert( sub.getSourceRange().getlength() == super.getSourceRange().getlength() + 1 );
 //     for( int i : sub.getSourceRange() )
-//         assert( super.rangecontains(i) );
+//         assert( super.has_value_in_range(i) );
 //     for( int j : super.getSourceRange() )
-//         if( ! sub.rangecontains(j) )
+//         if( ! sub.has_value_in_range(j) )
 //             return j;
 //         else 
 //             unreachable();

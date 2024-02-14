@@ -251,7 +251,7 @@ bool IndexMap::isstrictlyascending() const
     return true;
 }
 
-bool IndexMap::rangecontains( int p ) const
+bool IndexMap::has_value_in_range( int p ) const
 {
     check();
     assert( getTargetRange().contains(p) );
@@ -271,17 +271,17 @@ int IndexMap::preimageof( int p ) const
     unreachable();
 } 
         
-bool IndexMap::comparablewith( const IndexMap& im ) const
+bool IndexMap::is_comparable_with( const IndexMap& im ) const
 {
     check();
     return getSourceRange() == im.getSourceRange() && getTargetRange() == im.getTargetRange();
 } 
 
-bool IndexMap::equals( const IndexMap& im ) const
+bool IndexMap::is_equal_to( const IndexMap& im ) const
 {
     check();
     im.check();
-    assert( comparablewith( im ) );
+    assert( is_comparable_with( im ) );
     return getvalues() == im.getvalues();
 } 
 
@@ -289,7 +289,7 @@ bool IndexMap::is_less_than( const IndexMap& im ) const
 {
     check();
     im.check();
-    assert( comparablewith( im ) );
+    assert( is_comparable_with( im ) );
     return getvalues() < im.getvalues();
 } 
 

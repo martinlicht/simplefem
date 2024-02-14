@@ -318,7 +318,7 @@ std::size_t Coordinates::memorysize() const
 
 
 
-bool Coordinates::compare( const Coordinates& coords_left, const Coordinates& coords_right )
+bool Coordinates::is_equal_to( const Coordinates& coords_left, const Coordinates& coords_right )
 {
     if( coords_left.getnumber() != coords_right.getnumber() )
       return false;

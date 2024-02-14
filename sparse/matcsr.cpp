@@ -254,7 +254,7 @@ bool MatrixCSR::isfinite() const
     return true;
 }
 
-FloatVector MatrixCSR::diagonal() const
+FloatVector MatrixCSR::getDiagonal() const
 { 
     check();
     assert( getdimin() == getdimout() );
@@ -967,7 +967,7 @@ DiagonalOperator InverseDiagonalPreconditioner( const MatrixCSR& mat )
     mat.check();
     assert( mat.getdimin() == mat.getdimout() );
 
-    auto diag = mat.diagonal();
+    auto diag = mat.getDiagonal();
     
     for( int r = 0; r < mat.getdimin(); r++ )
     {

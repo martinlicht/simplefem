@@ -104,7 +104,7 @@ SparseMatrix FEECBrokenTraceMatrix( const Mesh& mesh, int n, int k, int r, bool 
         while( index_of_gap <= n-1 && vertices_of_face[index_of_gap] == vertices_of_cell[index_of_gap] ) 
             index_of_gap++;
 
-        assert( not vertices_of_face.rangecontains( vertices_of_cell[index_of_gap] ) );
+        assert( not vertices_of_face.has_value_in_range( vertices_of_cell[index_of_gap] ) );
 
 
 
@@ -130,7 +130,7 @@ SparseMatrix FEECBrokenTraceMatrix( const Mesh& mesh, int n, int k, int r, bool 
 
             const MultiIndex cell_multi = MultiIndex( IndexRange(0,n), [&face_multi,&inclusion_face_to_cell]( int p ) -> int {
                                             assert( inclusion_face_to_cell.getTargetRange().contains(p) ); 
-                                            if( inclusion_face_to_cell.rangecontains(p) )
+                                            if( inclusion_face_to_cell.has_value_in_range(p) )
                                                 return face_multi.at( inclusion_face_to_cell.preimageof(p) );
                                             else
                                                 return 0;

@@ -575,7 +575,7 @@ int main( int argc, char *argv[] )
                         {
                             LOG << "CGM SSOR preconditioner CSR" << nl;
                         
-                            FloatVector diagonal = system.diagonal();
+                            FloatVector diagonal = system.getDiagonal();
                             assert( diagonal.isfinite() );
                             assert( diagonal.isnonnegative() );
                             
@@ -654,7 +654,7 @@ int main( int argc, char *argv[] )
                         {
                             LOG << "CGM Rainbow-SSOR preconditioner CSR" << nl;
                         
-                            FloatVector diagonal = system.diagonal();
+                            FloatVector diagonal = system.getDiagonal();
                             assert( diagonal.isfinite() );
                             assert( diagonal.isnonnegative() );
                             

@@ -200,7 +200,7 @@ int main( int argc, char *argv[] )
                             
                             FloatVector residual( rhs );
                             
-                            const FloatVector diagonal = stiffness_csr.diagonal();
+                            const FloatVector diagonal = stiffness_csr.getDiagonal();
                             assert( diagonal.isfinite() );
                             assert( diagonal.isnonnegative() );
                             

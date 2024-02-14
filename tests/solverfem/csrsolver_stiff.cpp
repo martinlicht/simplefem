@@ -666,7 +666,7 @@ int main( int argc, char *argv[] )
                         {
                             LOG << "CGM - CSR Classic with SSOR" << nl;
                             
-                            auto diagonal = stiffness.diagonal();
+                            auto diagonal = stiffness.getDiagonal();
 
                             
                             FloatVector sol = sol_original;
@@ -710,7 +710,7 @@ int main( int argc, char *argv[] )
                         {
                             LOG << "CGM - CSR Classic with SSOR-Eisenstat" << nl;
                             
-                            auto diagonal = stiffness.diagonal();
+                            auto diagonal = stiffness.getDiagonal();
 
                             
                             FloatVector sol = sol_original;
@@ -752,7 +752,7 @@ int main( int argc, char *argv[] )
                         {
                             LOG << "CGM - CSR Classic with Rainbow-SSOR" << nl;
                             
-                            auto diagonal = stiffness.diagonal();
+                            auto diagonal = stiffness.getDiagonal();
 
                             Rainbow rainbow( stiffness );
                             
@@ -796,7 +796,7 @@ int main( int argc, char *argv[] )
                         {
                             LOG << "CGM Eisenstat-Rainbow-SSOR preconditioner CSR" << nl;
                         
-                            auto diagonal = stiffness.diagonal();
+                            auto diagonal = stiffness.getDiagonal();
 
                             Rainbow rainbow( stiffness );
                             

@@ -156,7 +156,7 @@ MeshSimplicialND::~MeshSimplicialND()
 
 
 
-bool MeshSimplicialND::compare ( const MeshSimplicialND& mesh ) const 
+bool MeshSimplicialND::is_equal_to( const MeshSimplicialND& mesh ) const 
 {
   if( getinnerdimension() != mesh.getinnerdimension() ) return false;
   if( getouterdimension() != mesh.getouterdimension() ) return false;
@@ -434,7 +434,7 @@ std::string MeshSimplicialND::text() const
 
 
 
-bool MeshSimplicialND::dimension_counted( int dim ) const
+bool MeshSimplicialND::has_dimension_counted( int dim ) const
 {
     assert( 0 <= dim && dim <= getinnerdimension() );
     return true;
@@ -446,7 +446,7 @@ int MeshSimplicialND::count_simplices( int dim ) const
   return counter_simplices[dim];
 }
 
-bool MeshSimplicialND::subsimplices_listed( int sup, int sub ) const
+bool MeshSimplicialND::has_subsimplices_listed( int sup, int sub ) const
 {
   assert( 0 <= sub && sub <= sup && sup <= getinnerdimension() );
   return true;
@@ -479,7 +479,7 @@ IndexMap MeshSimplicialND::getsubsimplices( int sup, int sub, int cell ) const
     
 }
 
-bool MeshSimplicialND::supersimplices_listed( int sup, int sub ) const
+bool MeshSimplicialND::has_supersimplices_listed( int sup, int sub ) const
 {
     assert( 0 <= sub && sub <= sup && sup <= getinnerdimension() );
     return true;

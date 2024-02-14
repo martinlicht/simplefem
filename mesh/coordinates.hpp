@@ -119,11 +119,11 @@ class Coordinates
 
     public:
 
-        static bool compare( const Coordinates& coords_left, const Coordinates& coords_right );
+        static bool is_equal_to( const Coordinates& coords_left, const Coordinates& coords_right );
 
         friend inline bool operator==( const Coordinates& coords_left, const Coordinates& coords_right )
         {
-            return compare( coords_left, coords_right );
+            return is_equal_to( coords_left, coords_right );
         }
 
         friend inline bool operator!=( const Coordinates& coords_left, const Coordinates& coords_right )

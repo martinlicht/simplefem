@@ -95,7 +95,7 @@ inline int find_index( const std::vector<T>& vec, const T& t )
 
 //         if( next == L.end() ) return;
 
-//         if( compare( *it, *next ) )
+//         if( is_equal_to( *it, *next ) )
 //         {
 //             *now = merge( *now, *next );
 //             L.erase( next );

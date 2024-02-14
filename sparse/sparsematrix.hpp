@@ -87,7 +87,7 @@ public LinearOperator /* every matrix is a linear operator */
 
         bool isfinite() const;
         
-        FloatVector diagonal() const;
+        FloatVector getDiagonal() const;
         
         int getnumberofzeroentries() const;
         

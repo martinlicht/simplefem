@@ -171,7 +171,7 @@ int main( int argc, char *argv[] )
                 
                     sol.zero();
                     
-                    auto diagonal = stiffness_csr.diagonal();
+                    auto diagonal = stiffness_csr.getDiagonal();
                     FloatVector residual( rhs );
 
                     ConjugateGradientSolverCSR_SSOR( 
@@ -193,7 +193,7 @@ int main( int argc, char *argv[] )
                 
                     aug_sol.zero();
                     
-                    auto aug_diagonal = aug_stiffness_csr.diagonal();
+                    auto aug_diagonal = aug_stiffness_csr.getDiagonal();
                     FloatVector aug_residual( aug_rhs );
 
                     ConjugateGradientSolverCSR_SSOR( 

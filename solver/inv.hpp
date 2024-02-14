@@ -165,7 +165,7 @@ void InverseOperator<MatrixCSR>::apply( FloatVector& dest, const FloatVector& sr
     else 
         dest.zero();
 
-    const auto diagonal = op.diagonal();
+    const auto diagonal = op.getDiagonal();
 
     FloatVector res( dest );
     

@@ -237,7 +237,7 @@ void MultiIndex::add( const MultiIndex& mi )
     check();
     mi.check();
     assert( getIndexRange() == mi.getIndexRange() );
-    assert( comparablewith( mi ) );
+    assert( is_comparable_with( mi ) );
     for( int p : getIndexRange() )
         add( p, mi.at( p ) );
     check();
@@ -248,7 +248,7 @@ void MultiIndex::sub( const MultiIndex& mi )
     check();
     mi.check();
     assert( getIndexRange() == mi.getIndexRange() );
-    assert( comparablewith( mi ) );
+    assert( is_comparable_with( mi ) );
     for( int p : getIndexRange() )
         sub( p , mi.at( p ) );
     check();
@@ -259,7 +259,7 @@ void MultiIndex::sub( const MultiIndex& mi )
 
 
 
-bool MultiIndex::comparablewith( const MultiIndex& mi ) const 
+bool MultiIndex::is_comparable_with( const MultiIndex& mi ) const 
 {
     check();
     mi.check();
@@ -271,18 +271,18 @@ bool MultiIndex::is_less_than( const MultiIndex& mi ) const
 {
     check();
     mi.check();
-    assert( comparablewith( mi ) );
+    assert( is_comparable_with( mi ) );
     for( int p : getIndexRange() )
         if( at( p ) >= mi.at( p ) )
             return false;
     return true;
 }
 
-bool MultiIndex::equals( const MultiIndex& mi ) const
+bool MultiIndex::is_equal_to( const MultiIndex& mi ) const
 {
     check();
     mi.check();
-    assert( comparablewith( mi ) );
+    assert( is_comparable_with( mi ) );
     for( int p : getIndexRange() )
         if( at( p ) != mi.at( p ) )
             return false;

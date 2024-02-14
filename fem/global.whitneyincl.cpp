@@ -146,7 +146,7 @@ SparseMatrix FEECWhitneyInclusionMatrix( const Mesh& mesh, int n, int k, int r )
             
             const MultiIndex alpha_vol = MultiIndex( IndexRange(0,n), [&alpha_effective,&inclusion]( int p ) -> int {
                                                 assert( inclusion.getTargetRange().contains(p) ); 
-                                                if( inclusion.rangecontains(p) )
+                                                if( inclusion.has_value_in_range(p) )
                                                     return alpha_effective.at( inclusion.preimageof(p) );
                                                 else
                                                     return 0;

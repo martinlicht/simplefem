@@ -215,7 +215,7 @@ bool SparseMatrix::isfinite() const
     return true;
 }
 
-FloatVector SparseMatrix::diagonal() const
+FloatVector SparseMatrix::getDiagonal() const
 { 
     check();
     assert( getdimin() == getdimout() );
