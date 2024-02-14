@@ -26,7 +26,7 @@ using namespace std;
 int main( int argc, char *argv[] )
 {
         
-        LOG << "Unit Test for Solution of Neumann Problem" << nl;
+        LOG << "Unit Test: 2D Poisson problem with mixed BC" << nl;
         
         if(true){
 

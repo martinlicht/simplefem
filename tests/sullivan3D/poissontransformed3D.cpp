@@ -271,7 +271,7 @@ int main( int argc, char *argv[] )
 
     
 
-    LOG << "Solving Poisson Problem with Neumann boundary conditions" << nl;
+    LOG << "Unit Test: 3D transformed Poisson Problem" << nl;
 
     const int min_l = 1; 
     const int max_l = 6;

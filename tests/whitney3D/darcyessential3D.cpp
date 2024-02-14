@@ -29,7 +29,7 @@ using namespace std;
 int main( int argc, char *argv[] )
 {
     
-    LOG << "Unit Test for Solution of Darcy Problem" << nl;
+    LOG << "Unit Test: 3D Darcy problem" << nl;
     
     // LOG << std::setprecision(10);
 

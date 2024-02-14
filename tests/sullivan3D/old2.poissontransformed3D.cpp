@@ -221,7 +221,7 @@ using namespace std;
 int main( int argc, char *argv[] )
 {
         
-    LOG << "Unit Test for transformed 3D Poisson Problem" << nl;
+    LOG << "Unit Test: 3D transformed Poisson Problem" << nl;
     
     LOG << "Initial mesh..." << nl;
     

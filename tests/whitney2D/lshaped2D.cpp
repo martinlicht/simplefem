@@ -34,7 +34,7 @@ using namespace std;
 int main( int argc, char *argv[] )
 {
         
-        LOG << "Unit Test: 2D Maxwell System" << nl;
+        LOG << "Unit Test: 2D Maxwell System on L-shaped domain" << nl;
         
         // LOG << std::setprecision(10);
 
