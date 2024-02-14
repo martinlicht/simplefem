@@ -40,7 +40,7 @@ int main( int argc, char *argv[] )
         
         assert( id.comparablewith( id ) );
         assert( id.equals( id ) );
-        assert( not id.less( id ) );
+        assert( not id.is_less_than( id ) );
       
     }
     
@@ -63,7 +63,7 @@ int main( int argc, char *argv[] )
         
         assert( leer.comparablewith( leer ) );
         assert( leer.equals( leer ) );
-        assert( not leer.less( leer ) );
+        assert( not leer.is_less_than( leer ) );
       
     }
     

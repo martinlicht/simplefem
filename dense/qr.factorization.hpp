@@ -9,9 +9,9 @@
  // QR decomposition
  // LQ decomposition 
  
-void QRFactorization( const DenseMatrix&, DenseMatrix&, DenseMatrix& );
+void QRFactorization( const DenseMatrix& A, DenseMatrix& Q, DenseMatrix& R );
 
-void LQFactorization( const DenseMatrix&, DenseMatrix&, DenseMatrix& );
+void LQFactorization( const DenseMatrix& A, DenseMatrix& L, DenseMatrix& Q );
 
 FloatVector SolveOverconstrained( const DenseMatrix& A, const FloatVector& v );
 

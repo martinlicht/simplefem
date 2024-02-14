@@ -77,7 +77,7 @@ class MeshSimplicial1D
         
         /* OTHER METHODS */
         
-        bool compare( const MeshSimplicial1D& ) const;
+        bool compare( const MeshSimplicial1D& mesh ) const;
         
         
         /* inherited methods */
@@ -153,7 +153,7 @@ class MeshSimplicial1D
         
         FloatVector get_edge_midpoint( int e ) const;
         
-        void merge( const MeshSimplicial1D& );
+        void merge( const MeshSimplicial1D& other );
 
         virtual std::size_t memorysize() const override;
         

@@ -78,8 +78,8 @@ int main( int argc, char *argv[] )
             auto diff1 = mass1 * v1 - mass1_s * v1;
             auto diff2 = mass2 * v2 - mass2_s * v2;
 
-            assert( diff1.norm() < desired_precision );
-            assert( diff2.norm() < desired_precision );
+            assert( diff1.norm() < desired_closeness );
+            assert( diff2.norm() < desired_closeness );
         }
         LOG << nl;
         
