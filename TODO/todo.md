@@ -54,6 +54,21 @@ The target audience for this software are researchers in numerical partial diffe
 Another alternative is `gprof` as a GUI for profiling data. 
 
 
+# (HIGH) Rename basic to 'base' or 'general' or 'common'
+
+Basic has the wrong connotation, it makes more sense to call it 'base' or 'general'.
+
+Make a survey of a few important projects to get a sense of what name you should use for this one. 
+That will give you a sense of what you should do.
+
+Examples: base, common, core, general, std
+MFEM: general 
+Feelpp: core
+Lifev: core 
+ngsolve std 
+Fenics: common
+
+
 # (HIGH) Floating point exact comparisons ersetzen durch Funktion mit expliziter semantik
 
 # (HIGH) Augmented integration in all numerical tests 
@@ -90,31 +105,7 @@ The following modules look reasonable
 - [ ] complicated operations (transpose,determinant,tensorproduct)
 - [x] readwrite is never used: retire 
 
-# (MEDIUM) Inverse operators via templates 
-
-Use templates for the inverse operators to implement the 'composed operator' behavior.
-Determine the type of solver at compile time depending on the operator class.
-This requires a unified solver interface.
-
-
-# (HIGH) Rename basic to 'base' or 'general' or 'common'
-
-Basic has the wrong connotation, it makes more sense to call it 'base' or 'general'.
-
-Make a survey of a few important projects to get a sense of what name you should use for this one. 
-That will give you a sense of what you should do.
-
-Examples: base, common, core, general, std
-MFEM: general 
-Feelpp: core
-Lifev: core 
-ngsolve std 
-Fenics: common
-
-
 # (HIGH) Question: what are best practices to keep the unit tests up to date with the code?
-
-
 
 # (LOW) Rewrite the unit tests for combinatorics
 
@@ -151,53 +142,7 @@ bool report_breakdown();
 bool iteration_is_printable();
 ```
 
-# (MEDIUM) guarded element access 
 
-All objects that feature element access via brackets,
-either blocky brackets or round brackets,
-also feature an additional at-method with the same effective behavior. 
-The difference is that the at-methods 
-always perform bound checks,
-which may not the case for the bracket access methods.
-
-- Enforce the effective behavior
-- Enforce the bound check policy.
-
-
-# (MEDIUM) Unit test descriptions
-
-Update the unit test **descriptions** in every module. They seem to be off in many cases.
-
-
-# (DONE) Revise logging output 
-
-The logging procedure needs to be reworked.
-
-In particular, switch to an encapsulated approach: all classes should have the ability
-to produce logs of themselves. That way, you can isolate the problem 
-in just a few methods throughout the code.
-
-Basically, implement the following methods:
-
-    - text:        produces a string presentation (no nl)
-    - print:       outputs the text() into a given stream (with nl)
-    - << operator: outputs the text() into a given stream (no nl)
-    - lg:          outputs the text into the log (with nl).
-                   This function may take a preamble argument
-
-Revert the current design of logging output: there shouldn't be
-any automatic newlines. Instead, re-introduce the newlines in the tests
-and deactive the automatic newline in the logging object.
-
-# (DONE) Introduce a LOG switch 
-
-Make the logging framework optional by introducing a macro switch 
-that enables/disables the logging framework
-
-Then introduce the logging framework throughout the entire code	uniformly.
-
-This requires that the logging interface should be used in the same way
-as the entire script for the logging stuff.
 
 # (MEDIUM) Logging class 
 
@@ -365,9 +310,102 @@ Generally, there should only be a few commands to describe what is happening.
 
 
 
+# Linear Algebra module
+
+The linear algebra module provides the abstract linear operator class
+and the float vector class. All linear operators come back to this framework.
+
+
+# (LOW) Rewrite core float vector class 
+
+Write it up in a manner that is close to the STL vector class.
+Perhaps even make it a descendant of std::vector<Float> and wrap it only thinly.
+https://stackoverflow.com/questions/2034916/is-it-okay-to-inherit-implementation-from-stl-containers-rather-than-delegate
+There seem to be complications, so it should be delayed until further notice.
+There is rather a speed-up if we replace it by generic C++ memory allocation.
+In particular, it does not really mesh with later efforts of parallelization. 
+Furthermore, it is better to entirely hide the implementation from the user.
+
+# (LOW) openMP parallelization of Float Vector class
+
+Many of the methods in the float vector class are openMP parallelizable. 
+- Constructors
+- zero, scale
+- NOT random -> perhaps use srand?
+- scalarproductwith
+- norm, maxnorm, lpnorm
+- add vectors 
+
+
+# (INACTIVE) Implement vector slices 
+
+A vector slice refers to a part of a vector.
+The slice knows the original vector and 
+some data determine how to access the original members.
+
+Best approach would be to introduce an abstract class
+for vectors that captures the interface. 
+Then fork off the original class of vectors 
+and the new slice implementation. 
+SEE ALSO Implement lambda-based vectors
+
+# (INACTIVE) Implement lambda-based vectors 
+
+The get/set methods can then be given in terms 
+of lambdas that produce the required terms/references 
+on the spot. This gives the most general functionality.
+
+Note that read-only vectors can be implemented 
+by having the set operation cause an error.
+Alternatively, you can introduce a base class 'readable vector'
+and then derive your general purpose vector from there.
 
 
 
+
+# (LOW) Iterative Methods to implement
+
+The following iterative solvers can be implemented.
+  - [x] Residual Minimizing Descent
+  - [x] Conjugate Residual Method 
+  - [x] Conjugate Residual Method on Normal Equations
+  - [ ] Richardson iteration 
+  - [ ] Gradient energy descent 
+  - [ ] Gradient residual descent 
+  - [ ] Symmetric Lanczos minimum residual method 
+
+# (LOW) GMRES with Restart 
+
+Implement the generalized minimal residual method
+where the search directions are rebuilt from scratch
+after a fixed number of iteration vectors have 
+been constructed.
+
+# (LOW) Rewrite algorithms to be complex number stable 
+
+All algorithms should be written in a manner 
+that is also correct when using complex numbers. 
+This should be accompanied by a written exposition
+of Krylov subspace methods.
+
+
+ 
+# Preconditioners to implement 
+
+  - [ ] Jacobi preconditioner 
+  - [ ] different scaling preconditioners
+  - [ ] Gauss-Seidel preconditioner
+  - [x] SOR + SSOR preconditioner 
+  - [ ] block diagonal preconditioner 
+  - [ ] block gauss-seidel preconditioner 
+  - [ ] adjustable gauss-seidel preconditioner 
+  - [ ] Polynomial preconditioners 
+
+
+# (LOW) Provide Preconditioned variants for all iterative methods
+
+For each iterative method there should be a preconditioned method available.
+New iterative methods should only be added if the preconditioned variant is added too.
 
 
 
@@ -385,6 +423,11 @@ https://beta.boost.org/doc/libs/1_68_0/libs/math/doc/html/math_toolkit/float_com
 
 Understand the floating-point comparison functions and import them into this project, mutatis mutandis. 
 
+# (UNCLEAR) Inverse operators via templates 
+
+Use templates for the inverse operators to implement the 'composed operator' behavior.
+Determine the type of solver at compile time depending on the operator class.
+This requires a unified solver interface.
 
 # (UNCLEAR) Implement LU decomposition with different strategies 
   
@@ -767,3 +810,55 @@ to a function invocation. No further frills.
 Use the custom assert macro throughout the project.
 
 
+# (DONE) Phantom coordinate in 2D mesh output
+
+Add a phantom coordinate coordinate to the output of 2D meshes to plot functions
+
+
+
+# (DONE) Unit test descriptions
+
+Update the unit test **descriptions** in every module. They seem to be off in many cases.
+
+
+# (DONE) Revise logging output 
+
+The logging procedure needs to be reworked.
+
+In particular, switch to an encapsulated approach: all classes should have the ability
+to produce logs of themselves. That way, you can isolate the problem 
+in just a few methods throughout the code.
+
+Basically, implement the following methods:
+
+    - text:        produces a string presentation (no nl)
+    - print:       outputs the text() into a given stream (with nl)
+    - << operator: outputs the text() into a given stream (no nl)
+    - lg:          outputs the text into the log (with nl).
+                   This function may take a preamble argument
+
+Revert the current design of logging output: there shouldn't be
+any automatic newlines. Instead, re-introduce the newlines in the tests
+and deactive the automatic newline in the logging object.
+
+# (DONE) Introduce a LOG switch 
+
+Make the logging framework optional by introducing a macro switch 
+that enables/disables the logging framework
+
+Then introduce the logging framework throughout the entire code	uniformly.
+
+This requires that the logging interface should be used in the same way
+as the entire script for the logging stuff.
+
+# (DONE) guarded element access 
+
+All objects that feature element access via brackets,
+either blocky brackets or round brackets,
+also feature an additional at-method with the same effective behavior. 
+The difference is that the at-methods 
+always perform bound checks,
+which may not the case for the bracket access methods.
+
+- Enforce the effective behavior
+- Enforce the bound check policy.

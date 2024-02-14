@@ -1,9 +1,4 @@
 
-# (DONE) Phantom coordinate in 2D mesh output
-
-Add a phantom coordinate coordinate to the output of 2D meshes to plot functions
-
-
 # (LOW) Bisection method return value 
 
 The bisection methods should return the number of triangles that have been bisected. 
