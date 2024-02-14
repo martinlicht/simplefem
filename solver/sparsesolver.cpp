@@ -81,7 +81,7 @@ int ConjugateGradientSolverCSR(
             }
 
             if( print_modulo >= 0 ) 
-                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(r_r), (long double) threshold );
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(r_r), (long double) threshold );
 
         
         }
@@ -89,7 +89,7 @@ int ConjugateGradientSolverCSR(
         /* printing information */
 
         if( print_modulo > 0 and K % print_modulo == 0 ) 
-            LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(r_r), (long double) threshold );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(r_r), (long double) threshold );
 
         /* Check whether residual is small */
                 
@@ -123,13 +123,13 @@ int ConjugateGradientSolverCSR(
         bool denominator_is_small    = sqrt(absolute(d_Ad)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient energy is unreasonable with %.9Le\n", K, N, (long double)d_Ad );
             break;
         }
         
         if( denominator_is_small ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(r_r), (long double) threshold );
-            if( print_modulo >= 0 ) LOGPRINTF( "WARNING: Gradient energy is small with %.9Le\n", (long double)d_Ad );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(r_r), (long double) threshold );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   WARNING: Gradient energy is small with %.9Le\n", K, N, (long double)d_Ad );
             break;
         }
         
@@ -169,7 +169,7 @@ int ConjugateGradientSolverCSR(
     
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "FINISHED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(r_r), (long double) threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(r_r), (long double) threshold );
 
     
     delete[] ( direction ); 
@@ -266,7 +266,7 @@ int ConjugateGradientSolverCSR_DiagonalPreconditioner(
             }
 
             if( print_modulo >= 0 ) 
-                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
 
             
         }
@@ -274,7 +274,7 @@ int ConjugateGradientSolverCSR_DiagonalPreconditioner(
         /* printing information */
 
         if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
-            LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
         
         /* Check whether residual is small */
                 
@@ -310,13 +310,13 @@ int ConjugateGradientSolverCSR_DiagonalPreconditioner(
         bool denominator_is_small    = sqrt(absolute(d_Ad)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient energy is unreasonable with %.9Le\n", K, N, (long double)d_Ad );
             break;
         }
         
         if( denominator_is_small ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
-            if( print_modulo >= 0 ) LOGPRINTF( "WARNING: Gradient energy is small with %.9Le\n", (long double)d_Ad );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   WARNING: Gradient energy is small with %.9Le\n", K, N, (long double)d_Ad );
             break;
         }
         
@@ -363,7 +363,7 @@ int ConjugateGradientSolverCSR_DiagonalPreconditioner(
     
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "FINISHED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
 
     
     delete[] ( direction ); 
@@ -526,7 +526,7 @@ int ConjugateGradientSolverCSR_SSOR(
             }
 
             if( print_modulo >= 0 ) UNLIKELY 
-                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
 
             
         }
@@ -534,7 +534,7 @@ int ConjugateGradientSolverCSR_SSOR(
         /* printing information */
 
         if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
-            LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
         
         /* Check whether residual is small */
                 
@@ -570,13 +570,13 @@ int ConjugateGradientSolverCSR_SSOR(
         bool denominator_is_small    = sqrt(absolute(d_Ad)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient energy is unreasonable with %.9Le\n", K, N, (long double)d_Ad );
             break;
         }
         
         if( denominator_is_small ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
-            if( print_modulo >= 0 ) LOGPRINTF( "WARNING: Gradient energy is small with %.9Le\n", (long double)d_Ad );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   WARNING: Gradient energy is small with %.9Le\n", K, N, (long double)d_Ad );
             break;
         }
         
@@ -650,7 +650,7 @@ int ConjugateGradientSolverCSR_SSOR(
     }
     
     if( print_modulo >= 0 ) UNLIKELY 
-        LOGPRINTF( "FINISHED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
 
     
     delete[] ( direction ); 
@@ -769,7 +769,7 @@ int ConjugateGradientSolverCSR_SSOR_Eisenstat(
             }
             
             if( print_modulo >= 0 ) UNLIKELY 
-                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
 
             
         }
@@ -777,7 +777,7 @@ int ConjugateGradientSolverCSR_SSOR_Eisenstat(
         /* printing information */
 
         if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
-            LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
         
         /* Check whether residual is small */
                 
@@ -848,13 +848,13 @@ int ConjugateGradientSolverCSR_SSOR_Eisenstat(
         bool denominator_is_small    = sqrt(absolute(d_Ad)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient energy is unreasonable with %.9Le\n", K, N, (long double)d_Ad );
             break;
         }
         
         if( denominator_is_small ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
-            if( print_modulo >= 0 ) LOGPRINTF( "WARNING: Gradient energy is small with %.9Le\n", (long double)d_Ad );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   WARNING: Gradient energy is small with %.9Le\n", K, N, (long double)d_Ad );
             break;
         }
         
@@ -901,7 +901,7 @@ int ConjugateGradientSolverCSR_SSOR_Eisenstat(
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "FINISHED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
 
     
     delete[] ( direction ); 
@@ -1072,7 +1072,7 @@ int ConjugateGradientSolverCSR_Rainbow(
             }
 
             if( print_modulo >= 0 ) UNLIKELY 
-                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
 
             
         }
@@ -1080,7 +1080,7 @@ int ConjugateGradientSolverCSR_Rainbow(
         /* printing information */
 
         if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
-            LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
         
         /* Check whether residual is small */
                 
@@ -1116,13 +1116,13 @@ int ConjugateGradientSolverCSR_Rainbow(
         bool denominator_is_small    = sqrt(absolute(d_Ad)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient energy is unreasonable with %.9Le\n", K, N, (long double)d_Ad );
             break;
         }
         
         if( denominator_is_small ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
-            if( print_modulo >= 0 ) LOGPRINTF( "WARNING: Gradient energy is small with %.9Le\n", (long double)d_Ad );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   WARNING: Gradient energy is small with %.9Le\n", K, N, (long double)d_Ad );
             break;
         }
         
@@ -1221,7 +1221,7 @@ int ConjugateGradientSolverCSR_Rainbow(
     }
     
     if( print_modulo >= 0 ) UNLIKELY 
-        LOGPRINTF( "FINISHED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
 
     
     delete[] ( direction ); 
@@ -1357,7 +1357,7 @@ int ConjugateGradientSolverCSR_Eisenstat_Rainbow(
             }
             
             if( print_modulo >= 0 ) 
-                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
 
             
         }
@@ -1365,7 +1365,7 @@ int ConjugateGradientSolverCSR_Eisenstat_Rainbow(
         /* printing information */
 
         if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
-            LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
         
         /* Check whether residual is small */
                 
@@ -1458,13 +1458,13 @@ int ConjugateGradientSolverCSR_Eisenstat_Rainbow(
         bool denominator_is_small    = sqrt(absolute(d_Ad)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient energy is unreasonable with %.9Le\n", K, N, (long double)d_Ad );
             break;
         }
         
         if( denominator_is_small ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
-            if( print_modulo >= 0 ) LOGPRINTF( "WARNING: Gradient energy is small with %.9Le\n", (long double)d_Ad );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   WARNING: Gradient energy is small with %.9Le\n", K, N, (long double)d_Ad );
             break;
         }
         
@@ -1511,7 +1511,7 @@ int ConjugateGradientSolverCSR_Eisenstat_Rainbow(
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "FINISHED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
 
     
     delete[] ( direction ); 
@@ -1645,14 +1645,14 @@ int ConjugateResidualSolverCSR(
             }
             
             if( print_modulo >= 0 ) 
-                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(Ad_r), (long double) threshold );
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(Ad_r), (long double) threshold );
             
         }
         
         /* printing information */
 
         if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
-            LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(Ad_r), (long double) threshold );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(Ad_r), (long double) threshold );
 
         
         /* Check whether res is small */
@@ -1661,7 +1661,7 @@ int ConjugateResidualSolverCSR(
         bool residualenergy_is_unreasonable = not std::isfinite(Ad_r) or Ad_r < 0.;
         
         if( residualenergy_is_unreasonable ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Residual energy is unreasonable with %.9Le\n", (long double)Ad_r );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Residual energy is unreasonable with %.9Le\n", K, N, (long double)Ad_r );
             break;
         }
 
@@ -1674,13 +1674,13 @@ int ConjugateResidualSolverCSR(
         bool denominator_is_small    = sqrt(absolute(Ad_Ad)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Gradient double energy is unreasonable with %.9Le\n", (long double)Ad_Ad );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient double energy is unreasonable with %.9Le\n", K, N, (long double)Ad_Ad );
             break;
         }
         
         if( denominator_is_small ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(Ad_r), (long double) threshold );
-            if( print_modulo >= 0 ) LOGPRINTF( "WARNING: Gradient double energy is small with %.9Le\n", (long double)Ad_Ad );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(Ad_r), (long double) threshold );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   WARNING: Gradient double energy is small with %.9Le\n", K, N, (long double)Ad_Ad );
             break;
         }
         
@@ -1736,7 +1736,7 @@ int ConjugateResidualSolverCSR(
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "FINISHED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(Ad_r), (long double) threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(Ad_r), (long double) threshold );
 
     
     delete[] (  dir );
@@ -1858,14 +1858,14 @@ int ConjugateResidualSolverCSR_textbook(
             }
 
             if( print_modulo >= 0 ) 
-                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(Ar_r), (long double) threshold );
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(Ar_r), (long double) threshold );
             
         }
         
         /* printing information */
 
         if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
-            LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(Ar_r), (long double) threshold );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(Ar_r), (long double) threshold );
         
         /* Check whether res is small */
                 
@@ -1873,7 +1873,7 @@ int ConjugateResidualSolverCSR_textbook(
         bool residualenergy_is_small = absolute(Ar_r) < threshold*threshold;
         
         if( residualenergy_is_unreasonable ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Residual energy is unreasonable with %.9Le\n", (long double)Ar_r );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Residual energy is unreasonable with %.9Le\n", K, N, (long double)Ar_r );
             break;
         }
   
@@ -1885,13 +1885,13 @@ int ConjugateResidualSolverCSR_textbook(
         bool denominator_is_small    = sqrt(absolute(Ad_Ad)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Gradient double energy is unreasonable with %.9Le\n", (long double)Ad_Ad );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient double energy is unreasonable with %.9Le\n", K, N, (long double)Ad_Ad );
             break;
         }
         
         if( denominator_is_small ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(Ar_r), (long double) threshold );
-            if( print_modulo >= 0 ) LOGPRINTF( "WARNING: Gradient double energy is small with %.9Le\n", (long double)Ad_Ad );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(Ar_r), (long double) threshold );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   WARNING: Gradient double energy is small with %.9Le\n", K, N, (long double)Ad_Ad );
             break;
         }
         
@@ -1945,7 +1945,7 @@ int ConjugateResidualSolverCSR_textbook(
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "FINISHED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) sqrt(Ar_r), (long double) threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(Ar_r), (long double) threshold );
 
     
     delete[] (  dir );
@@ -2093,7 +2093,7 @@ int MINRESCSR(
             eta = gamma;
 
             if( print_modulo >= 0 ) 
-                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double) absolute(eta), (long double) threshold );
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) absolute(eta), (long double) threshold );
 
             
         }
@@ -2193,14 +2193,14 @@ int MINRESCSR(
 
         
         if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
-            LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double)eta, (long double) threshold );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double)eta, (long double) threshold );
         
         K++;
         
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "FINISHED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double)eta, (long double) threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", K, N, (long double)eta, (long double) threshold );
 
     
     delete[] ( v0 );
@@ -2394,14 +2394,14 @@ int WHATEVER(
             
         
         if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
-            LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double)std::sqrt(r_r), (long double) threshold );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double)std::sqrt(r_r), (long double) threshold );
         
         K++;
         
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "FINISHED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double)std::sqrt(r_r), (long double) threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", K, N, (long double)std::sqrt(r_r), (long double) threshold );
 
     
     delete[] (  r );
@@ -2569,13 +2569,13 @@ int ChebyshevIteration_DiagonalPreconditioner(
         
         
         if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
-            LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double)std::sqrt(r_r), (long double) threshold );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double)std::sqrt(r_r), (long double) threshold );
         
         K++;
         
     }
     
-    LOGPRINTF( "FINISHED (%d/%d) Residual: %.9Le < %.9Le\n", K, N, (long double)std::sqrt(r_r), (long double) threshold );
+    LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", K, N, (long double)std::sqrt(r_r), (long double) threshold );
 
     
     delete[] ( x_prev );
