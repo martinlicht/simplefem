@@ -285,7 +285,7 @@ bool IndexMap::equals( const IndexMap& im ) const
     return getvalues() == im.getvalues();
 } 
 
-bool IndexMap::less( const IndexMap& im ) const
+bool IndexMap::is_less_than( const IndexMap& im ) const
 {
     check();
     im.check();

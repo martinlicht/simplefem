@@ -107,11 +107,11 @@ class IndexMap
 
 
 
-        bool comparablewith( const IndexMap& ) const;
+        bool comparablewith( const IndexMap& im ) const;
         
-        bool equals( const IndexMap& ) const;
+        bool equals( const IndexMap& im ) const;
         
-        bool less( const IndexMap& ) const;
+        bool is_less_than( const IndexMap& im ) const;
     
     private:
         

@@ -30,7 +30,7 @@ None of the above can be done in a day, so it most likely
 requires regular grinding in order to get it done.
 
 
-# (HIGH) Output of solver component 
+# (DONE) Output of solver component 
 
 The solver component prints should all contain the iteration number if possible.
 Each print should start with the iterartion number, followed by the message class, and then all other info
@@ -42,7 +42,7 @@ WARNING
 INTERIM
 
 
-# (HIGH) Argument names in all header files 
+# (DONE) Argument names in all header files 
     
 The function/method declarations in the header files should provide argument names. 
 The names should coincide with the ones in the code but that's not necessary. 
@@ -50,11 +50,18 @@ The names should coincide with the ones in the code but that's not necessary.
 Rationale: this improves readability.
 
 
-# (HIGH) Floating-point comparisons
+# (HIGH) text output
 
-https://beta.boost.org/doc/libs/1_68_0/libs/math/doc/html/math_toolkit/float_comparison.html
+Generally speaking, linear operators should only output the basic information but no raw data.
+This only affects operators with long data: diagonal, dense, sparse 
+All the small parameters should be expressed explicitly
 
-Understand the floating-point comparison functions and import them into this project, mutatis mutandis. 
+The dense matrix and float vector classes should implement extra output methods 
+for the raw data. They parameters for the desired precision, whether indices should be printed,
+and for format (row/column and matrix/list).
+
+All operators show return the 'this' pointer in their print methods.
+
 
 # (HIGH) AFW-Basis of Sullivan forms
 
@@ -79,18 +86,6 @@ The target audience for this software are researchers in numerical partial diffe
 
 Another alternative is `gprof` as a GUI for profiling data. 
 
-
-# (HIGH) text output
-
-Linear operators should only output the basic information but no raw data.
-This only affects operators with long data: diagonal, dense, sparse 
-All the small parameters should be expressed explicitly
-
-The dense matrix and float vector classes should implement extra output methods 
-for the raw data. They parameters for the desired precision, whether indices should be printed,
-and for format (row/column and matrix/list).
-
-All operators show return the 'this' pointer in their print methods.
 
 # (HIGH) Floating point exact comparisons ersetzen durch Funktion mit expliziter semantik
 
@@ -477,6 +472,13 @@ Generally, there should only be a few commands to describe what is happening.
 
 
 # TODO UNCLEAR UTILITY
+
+
+# (UNCLEAR) Floating-point comparisons
+
+https://beta.boost.org/doc/libs/1_68_0/libs/math/doc/html/math_toolkit/float_comparison.html
+
+Understand the floating-point comparison functions and import them into this project, mutatis mutandis. 
 
 
 # (UNCLEAR) Implement LU decomposition with different strategies 

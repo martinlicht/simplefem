@@ -267,7 +267,7 @@ bool MultiIndex::comparablewith( const MultiIndex& mi ) const
 }
 
 
-bool MultiIndex::less( const MultiIndex& mi ) const 
+bool MultiIndex::is_less_than( const MultiIndex& mi ) const 
 {
     check();
     mi.check();

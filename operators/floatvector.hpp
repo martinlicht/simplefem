@@ -74,25 +74,25 @@ class FloatVector
         
         HOTCALL int getdimension() const;
         
-        Float setentry( int, Float );
+        Float setentry( int p, Float value );
         
-        Float getentry( int ) const;
+        Float getentry( int p ) const;
         
 
-        Float& at( int ) &;
+        Float& at( int p ) &;
         
-        const Float& at( int ) const &;
+        const Float& at( int p ) const &;
         
-        Float& operator[]( int ) &;
+        Float& operator[]( int p ) &;
         
-        const Float& operator[]( int ) const &;
+        const Float& operator[]( int p ) const &;
         
         const std::vector<Float> getdata() const;
         
         
         /* load values */
         
-        void setentries( Float );
+        void setentries( Float uniform_value );
         
         void random();
         
@@ -113,50 +113,50 @@ class FloatVector
         
         FloatVector& normalize();
         
-        FloatVector& normalize( const LinearOperator& );
+        FloatVector& normalize( const LinearOperator& op );
         
-        FloatVector& scale( Float );
+        FloatVector& scale( Float factor );
         
-        FloatVector& scaleinverse( Float );
+        FloatVector& scaleinverse( Float divisor );
         
-        FloatVector& shift( Float );
+        FloatVector& shift( Float value );
         
-        FloatVector& shiftnegative( Float );
+        FloatVector& shiftnegative( Float value );
         
         
         /* slices */
         
-        FloatVector getslice( int, int ) const;
+        FloatVector getslice( int base, int len ) const;
         
-        void setslice( int, int, Float );
+        void setslice( int base, int len, Float uniform_value );
         
-        void setslice( int, const FloatVector& );
+        void setslice( int base, const FloatVector& src );
         
-        void addslice( int, const FloatVector&, Float );
+        void addslice( int base, const FloatVector& summand, Float factor );
         
         
         /* arithmetics and assignments */
         
-        void copydatafrom( const FloatVector& );
+        void copydatafrom( const FloatVector& src );
         
-        void copydatafrom( Float, const FloatVector& );
-        
-        
-        void generatedatafrom( const std::function<Float(int)>& );
-        
-        void generatedatafrom( Float, const std::function<Float(int)>& );
+        void copydatafrom( Float base, const FloatVector& src );
         
         
-        void adddatafrom( const FloatVector& );
+        void generatedatafrom( const std::function<Float(int)>& generator );
         
-        void adddatafrom( Float, const FloatVector& );
-        
-        void adddatafrom( Float, Float, const FloatVector& );
+        void generatedatafrom( Float factor, const std::function<Float(int)>& generator );
         
         
-        Float scalarproductwith( const FloatVector& ) const;
+        void adddatafrom( const FloatVector& summand );
         
-        Float scalarproductwith( const FloatVector&, const std::vector<bool>& ) const;
+        void adddatafrom( Float scalingsrc, const FloatVector& summand );
+        
+        void adddatafrom( Float scalingdest, Float scalingsrc, const FloatVector& summand );
+        
+        
+        Float scalarproductwith( const FloatVector& other ) const;
+        
+        Float scalarproductwith( const FloatVector& other, const std::vector<bool>& mask ) const;
         
         
         /* Calculations */
@@ -171,9 +171,9 @@ class FloatVector
         
         Float norm_sq() const;
         
-        Float norm( const LinearOperator& ) const;
+        Float norm( const LinearOperator& op ) const;
         
-        Float norm_sq( const LinearOperator& ) const;
+        Float norm_sq( const LinearOperator& op ) const;
         
         Float maxnorm() const;
         
