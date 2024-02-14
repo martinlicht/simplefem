@@ -276,6 +276,8 @@ inline constexpr bool is_numerically_small( Float value, Float threshold = desir
 
 inline constexpr bool is_numerically_close( Float value1, Float value2, Float threshold = desired_closeness )
 {
+    if( std::isinf( value1) and std::isinf( value2) ) return true;
+    if( std::isinf(-value1) and std::isinf(-value2) ) return true;
     return is_numerically_small( value1 - value2, threshold );
 }
 

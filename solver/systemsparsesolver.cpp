@@ -228,14 +228,14 @@ int HodgeConjugateResidualSolverCSR_diagonal(
             }
             
             if( print_modulo >= 0 ) 
-                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
 
         }
         
         /* Print information */
         
         if( print_modulo > 0 and k % print_modulo == 0 ) UNLIKELY 
-            LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
         
         /* Check whether res is small */
         
@@ -243,7 +243,7 @@ int HodgeConjugateResidualSolverCSR_diagonal(
         bool residualenergy_is_small = absolute(Md_r) < threshold*threshold;
         
         if( residualenergy_is_unreasonable ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Residual energy is unreasonable with %.9Le\n", (long double)Md_r );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Residual energy is unreasonable with %.9Le\n", k, N, (long double)Md_r );
             break;
         }
 
@@ -256,13 +256,13 @@ int HodgeConjugateResidualSolverCSR_diagonal(
         bool denominator_is_small    = sqrt(absolute(Md_Md)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Gradient double energy is unreasonable with %.9Le\n", (long double)Md_Md );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient double energy is unreasonable with %.9Le\n", k, N, (long double)Md_Md );
             break;
         }
         
         if( denominator_is_small ) UNLIKELY {
-            LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
-            LOGPRINTF( "WARNING: Gradient double energy is small with %.9Le\n", (long double)Md_Md );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
+            LOGPRINTF( "(%d/%d)   WARNING: Gradient double energy is small with %.9Le\n", k, N, (long double)Md_Md );
             break;
         }
 
@@ -352,7 +352,7 @@ int HodgeConjugateResidualSolverCSR_diagonal(
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "FINISHED (%d/%d) Residual: %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
 
     
     delete[] (  dir );
@@ -582,21 +582,21 @@ int HodgeConjugateResidualSolverCSR_SSOR(
             }
             
             if( print_modulo >= 0 ) 
-                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
 
         }
         
         /* Print information */
         
         if( print_modulo > 0 and k % print_modulo == 0 ) UNLIKELY 
-            LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
         
         /* Check whether res is small */
                 
         bool residualenergy_is_unreasonable = not std::isfinite(Md_r) or Md_r < 0.;
 
         if( residualenergy_is_unreasonable ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Residual energy is unreasonable with %.9Le\n", (long double)Md_r );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Residual energy is unreasonable with %.9Le\n", k, N, (long double)Md_r );
             break;
         }
 
@@ -611,13 +611,13 @@ int HodgeConjugateResidualSolverCSR_SSOR(
         bool denominator_is_small    = sqrt(absolute(Md_Md)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) UNLIKELY {
-            LOGPRINTF( "BREAKDOWN: Gradient double energy is unreasonable with %.9Le\n", (long double)Md_Md );
+            LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient double energy is unreasonable with %.9Le\n", k, N, (long double)Md_Md );
             break;
         }
         
         if( denominator_is_small ) UNLIKELY {
-            LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
-            LOGPRINTF( "WARNING: Gradient double energy is small with %.9Le\n", (long double)Md_Md );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
+            LOGPRINTF( "(%d/%d)   WARNING: Gradient double energy is small with %.9Le\n", k, N, (long double)Md_Md );
             break;
         }
 
@@ -708,7 +708,7 @@ int HodgeConjugateResidualSolverCSR_SSOR(
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "FINISHED (%d/%d) Residual: %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
 
     
     delete[] (  dir );
@@ -915,21 +915,21 @@ int HodgeConjugateResidualSolverCSR_textbook(
             }
 
             if( print_modulo >= 0 ) 
-                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", k, N, (long double) sqrt(Mr_r), (long double) threshold );
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Mr_r), (long double) threshold );
             
         }
         
         /* Print information */
         
         if( print_modulo > 0 and k % print_modulo == 0 ) 
-            LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", k, N, (long double) sqrt(Mr_r), (long double) threshold );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Mr_r), (long double) threshold );
         
         /* Check whether res is small */
                 
         bool residualenergy_is_unreasonable = not std::isfinite(Mr_r) or Mr_r < 0.;
         
         if( residualenergy_is_unreasonable ) {
-            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Residual energy is unreasonable with %.9Le\n", (long double)Mr_r );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Residual energy is unreasonable with %.9Le\n", k, N, (long double)Mr_r );
             break;
         }
 
@@ -944,13 +944,13 @@ int HodgeConjugateResidualSolverCSR_textbook(
         bool denominator_is_small    = sqrt(absolute(Md_Md)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) {
-            if( print_modulo >= 0 ) LOGPRINTF( "BREAKDOWN: Gradient double energy is unreasonable with %.9Le\n", (long double)Md_Md );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient double energy is unreasonable with %.9Le\n", k, N, (long double)Md_Md );
             break;
         }
         
         if( denominator_is_small ) {
-            if( print_modulo >= 0 ) LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", k, N, (long double) sqrt(Mr_r), (long double) threshold );
-            if( print_modulo >= 0 ) LOGPRINTF( "WARNING: Gradient double energy is small with %.9Le\n", (long double)Md_Md );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Mr_r), (long double) threshold );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   WARNING: Gradient double energy is small with %.9Le\n", k, N, (long double)Md_Md );
             break;
         }
 
@@ -1040,7 +1040,7 @@ int HodgeConjugateResidualSolverCSR_textbook(
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "FINISHED (%d/%d) Residual: %.9Le < %.9Le\n", k, N, (long double) sqrt(Mr_r), (long double) threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Mr_r), (long double) threshold );
 
     
     delete[] (  dir );
@@ -1222,8 +1222,8 @@ int HodgeHerzogSoodhalterMethod(
             c0 = c1 = 1;
             
             if( print_modulo >= 0 ) {
-                LOGPRINTF( "RESTARTED (%d/%d) Residual: %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) absolute(eta), (long double)threshold );
-                LOGPRINTF( "NOTE Gamma: %.9Le Eta_A %.9Le Eta_C %.9Le\n", (long double)eta_A, (long double)eta_C, (long double)gamma );
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) absolute(eta), (long double)threshold );
+                LOGPRINTF( "(%d/%d)            Gamma: %.9Le Eta_A %.9Le Eta_C %.9Le\n", recent_iteration_count, max_iteration_count, (long double)eta_A, (long double)eta_C, (long double)gamma );
             }
 
         }
@@ -1344,8 +1344,8 @@ int HodgeHerzogSoodhalterMethod(
         bool print_condition = ( print_modulo > 0 and recent_iteration_count % print_modulo == 0 );
         
         if( print_modulo >= 0 and print_condition ) {
-            LOGPRINTF( "INTERIM (%d/%d) Residual: %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) recent_deviation, (long double)threshold );
-            LOGPRINTF( "INTERIM Gamma: %.9Le Eta: %.9Le\n", (long double)gamma, (long double)eta );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) recent_deviation, (long double)threshold );
+            LOGPRINTF( "                   Gamma: %.9Le Eta: %.9Le\n", (long double)gamma, (long double)eta );
         }
         
         recent_iteration_count++;
@@ -1383,7 +1383,7 @@ int HodgeHerzogSoodhalterMethod(
     Float recent_deviation = absolute( eta );
         
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "FINISHED (%d/%d) Residual: %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double)recent_deviation, (long double)threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double)recent_deviation, (long double)threshold );
 
     return recent_iteration_count;
 }
