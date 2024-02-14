@@ -138,7 +138,7 @@ int main( int argc, char *argv[] )
         for( int r      = r_min; r <=                 r_max; r++ ) 
         for( int k      =     0; k <= M.getinnerdimension(); k++ ) 
         {
-            assert( errors[k][l-l_min][r-r_min] < 10e-14 );
+            assert( errors[k][l-l_min][r-r_min] < desired_closeness );
         }
         
         

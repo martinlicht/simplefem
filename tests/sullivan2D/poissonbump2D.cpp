@@ -79,7 +79,7 @@ int main( int argc, char *argv[] )
                     });
                     
 
-//                     const Float stepsize = 1e-07;
+//                     const Float stepsize = desired_closeness;
 //                     
 //                     FloatVector ret(1);
 //                     

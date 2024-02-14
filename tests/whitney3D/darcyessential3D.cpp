@@ -176,7 +176,7 @@ int main( int argc, char *argv[] )
                 
                 auto C  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
                 
-                auto Schur = B * inv(A,1e-10) * Bt;
+                auto Schur = B * inv(A,desired_precision) * Bt;
                 
                 auto negA = - A; 
                 

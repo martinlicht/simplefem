@@ -161,7 +161,7 @@ int main( int argc, char *argv[] )
                 
                 auto negA = - A; 
                 
-                // auto Schur = B * inv(A,1e-10) * Bt;
+                // auto Schur = B * inv(A,desired_precision) * Bt;
                 
                 {
 

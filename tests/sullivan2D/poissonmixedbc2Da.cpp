@@ -210,7 +210,7 @@ int main( int argc, char *argv[] )
                                 rhs.raw(), 
                                 stiffness_csr.getA(), stiffness_csr.getC(), stiffness_csr.getV(),
                                 residual.raw(),
-                                1e-16,
+                                desired_precision,
                                 0,
                                 diagonal.raw(),
                                 1.0

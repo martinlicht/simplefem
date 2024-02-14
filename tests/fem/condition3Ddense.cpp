@@ -314,7 +314,7 @@ int main( int argc, char *argv[] )
                 min_w_pseudo_mass[r-r_min] = w_diagonal_mass_pseudo.min();
                 min_w_volume_mass[r-r_min] = w_diagonal_mass_volume.min();
 
-                const Float threshold = shift + 1e-8;
+                const Float threshold = shift + desired_closeness;
 
                 LOG << max_w_scalar_mass[r-r_min] << space << PowerMethod( w_mass_scalar, repetitions ) << nl;
 

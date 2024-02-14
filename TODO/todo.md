@@ -30,26 +30,6 @@ None of the above can be done in a day, so it most likely
 requires regular grinding in order to get it done.
 
 
-# (DONE) Output of solver component 
-
-The solver component prints should all contain the iteration number if possible.
-Each print should start with the iterartion number, followed by the message class, and then all other info
-RESTARTED
-BREAKDOWN
----------
-(NOTICE)
-WARNING
-INTERIM
-
-
-# (DONE) Argument names in all header files 
-    
-The function/method declarations in the header files should provide argument names. 
-The names should coincide with the ones in the code but that's not necessary. 
-
-Rationale: this improves readability.
-
-
 # (HIGH) AFW-Basis of Sullivan forms
 
 
@@ -117,32 +97,6 @@ Determine the type of solver at compile time depending on the operator class.
 This requires a unified solver interface.
 
 
-
-
-
-
-# (DONE) Change the include orders 
-
-Go from the most general down to the most specific.
-This ensures any overwriting of macros stays local.
-Within each grouping, sort alphabetically.
-
-# (DONE) Define and adopt a custom assert macro
-
-There is a function that performs the assert, 
-and a macro that delivers the line number and file name
-to a function invocation. No further frills.
-Use the custom assert macro throughout the project.
-
-
-
-
-
-
-
-
-
-
 # (HIGH) Rename basic to 'base' or 'general' or 'common'
 
 Basic has the wrong connotation, it makes more sense to call it 'base' or 'general'.
@@ -158,43 +112,7 @@ ngsolve std
 Fenics: common
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # (HIGH) Question: what are best practices to keep the unit tests up to date with the code?
-
-
-
-
-
-
-
-
-
-
-
-# (HIGH) Precisions for solvers 
-
-The linear algebra solvers may work with any type of precision, 
-such as float or double. Replace the 'magic numbers' in the library
-by multiples of the machine epsilon. Generally speaking, 
-try to find a good stopping criterion.
 
 
 
@@ -248,7 +166,7 @@ which may not the case for the bracket access methods.
 
 # (MEDIUM) Unit test descriptions
 
-Update the unit test **descriptions** in every module. They seem to be off in many regards.
+Update the unit test **descriptions** in every module. They seem to be off in many cases.
 
 
 # (DONE) Revise logging output 
@@ -703,6 +621,17 @@ Reading only ASCII
 
 # DONE!
 
+# (DONE) Precisions for solvers and magic numbers 
+
+The linear algebra solvers may work with any type of precision, such as float or double. 
+Replace the 'magic numbers' in the library by multiples of the machine epsilon. 
+Generally speaking, try to find a good stopping criterion.
+
+grep -E '([0-9]+([eE][-+]?[0-9]+))' ./**/*cpp ./*/*/*pp
+grep -E '([-+]?\.[0-9]+([eE][-+]?[0-9]+)?)' ./*/*pp ./*/*/*pp
+
+
+
 # (DONE) Implement Hodge star operation 
 
 # (DONE) Rewrite composed operators 
@@ -801,4 +730,40 @@ throughout whenever that becomes necessary.
 For example:
 - random_integer();
 - seed_random_integer();
+
+
+
+# (DONE) Output of solver component 
+
+The solver component prints should all contain the iteration number if possible.
+Each print should start with the iterartion number, followed by the message class, and then all other info
+RESTARTED
+BREAKDOWN
+---------
+(NOTICE)
+WARNING
+INTERIM
+
+
+# (DONE) Argument names in all header files 
+    
+The function/method declarations in the header files should provide argument names. 
+The names should coincide with the ones in the code but that's not necessary. 
+
+Rationale: this improves readability.
+
+
+# (DONE) Change the include orders 
+
+Go from the most general down to the most specific.
+This ensures any overwriting of macros stays local.
+Within each grouping, sort alphabetically.
+
+# (DONE) Define and adopt a custom assert macro
+
+There is a function that performs the assert, 
+and a macro that delivers the line number and file name
+to a function invocation. No further frills.
+Use the custom assert macro throughout the project.
+
 

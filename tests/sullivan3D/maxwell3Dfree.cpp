@@ -275,7 +275,7 @@ int main( int argc, char *argv[] )
                         
                         assert( sol.isfinite() );
 
-                        auto ndiv = inv(A,1e-14) * Bt * sol;
+                        auto ndiv = inv(A,desired_precision) * Bt * sol;
                         
                         auto curl = vector_diffmatrix * vector_incmatrix * sol;
                         
@@ -288,7 +288,7 @@ int main( int argc, char *argv[] )
                         Float errornorm_ndiv_sq = ( errornorm_aux_ndiv * ( scalar_massmatrix * errornorm_aux_ndiv ) );
                         Float errornorm_sol_sq  = ( errornorm_aux_sol  * ( vector_massmatrix * errornorm_aux_sol  ) );
                         Float errornorm_curl_sq = ( errornorm_aux_curl * ( pseudo_massmatrix * errornorm_aux_curl ) );
-                        Float residualnorm      = ( rhs - B * inv(A,1e-14) * Bt * sol - C * sol ).norm();
+                        Float residualnorm      = ( rhs - B * inv(A,desired_precision) * Bt * sol - C * sol ).norm();
 
                         LOG << errornorm_ndiv_sq << space << errornorm_sol_sq << space << errornorm_curl_sq << nl;
 
