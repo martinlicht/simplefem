@@ -60,7 +60,7 @@ int ConjugateGradientSolverCSR(
         
         bool residual_seems_small = ( K != 0 ) and absolute(r_r) < tolerance*tolerance;
 
-        if( restart_condition or ( csr_restart_before_finish and residual_seems_small ) ) UNLIKELY {
+        if( restart_condition or ( residual_seems_small and csr_restart_before_finish ) ) UNLIKELY {
             
             r_r = 0.;
         
@@ -239,7 +239,7 @@ int ConjugateGradientSolverCSR_DiagonalPreconditioner(
         
         bool preconresidual_seems_small = ( K != 0 ) and absolute(z_r) < tolerance*tolerance;
 
-        if( restart_condition or ( csr_restart_before_finish and preconresidual_seems_small ) ) UNLIKELY {
+        if( restart_condition or ( preconresidual_seems_small and csr_restart_before_finish ) ) UNLIKELY {
             
             z_r = 0.;
         
@@ -450,7 +450,7 @@ int ConjugateGradientSolverCSR_SSOR(
         
         bool preconresidual_seems_small = ( K != 0 ) and absolute(z_r) < tolerance*tolerance;
 
-        if( restart_condition or ( csr_restart_before_finish and preconresidual_seems_small ) ) UNLIKELY {
+        if( restart_condition or ( preconresidual_seems_small and csr_restart_before_finish ) ) UNLIKELY {
             
             #if defined(_OPENMP)
             #pragma omp parallel for
@@ -714,7 +714,7 @@ int ConjugateGradientSolverCSR_SSOR_Eisenstat(
         
         bool preconresidual_seems_small = ( K != 0 ) and absolute(z_r) < tolerance*tolerance;
 
-        if( restart_condition or ( csr_restart_before_finish and preconresidual_seems_small ) ) UNLIKELY {
+        if( restart_condition or ( preconresidual_seems_small and csr_restart_before_finish ) ) UNLIKELY {
             
 
             // compute the residual, save it in 'auxiliary'
@@ -972,7 +972,7 @@ int ConjugateGradientSolverCSR_Rainbow(
         
         bool preconresidual_seems_small = ( K != 0 ) and absolute(z_r) < tolerance*tolerance;
 
-        if( restart_condition or ( csr_restart_before_finish and preconresidual_seems_small ) ) UNLIKELY {
+        if( restart_condition or ( preconresidual_seems_small and csr_restart_before_finish ) ) UNLIKELY {
             
             #if defined(_OPENMP)
             #pragma omp parallel for
@@ -1291,7 +1291,7 @@ int ConjugateGradientSolverCSR_Eisenstat_Rainbow(
         
         bool preconresidual_seems_small = ( K != 0 ) and absolute(z_r) < tolerance*tolerance;
 
-        if( restart_condition or ( csr_restart_before_finish and preconresidual_seems_small ) ) UNLIKELY {
+        if( restart_condition or ( preconresidual_seems_small and csr_restart_before_finish ) ) UNLIKELY {
             
 
             // compute the residual, save it in 'auxiliary'
@@ -1608,7 +1608,7 @@ int ConjugateResidualSolverCSR(
         
         bool residualenergy_seems_small = ( K != 0 ) and absolute(Ad_r) < tolerance*tolerance;
 
-        if( restart_condition or ( csr_restart_before_finish and residualenergy_seems_small ) ) UNLIKELY {
+        if( restart_condition or ( residualenergy_seems_small and csr_restart_before_finish ) ) UNLIKELY {
             
             #if defined(_OPENMP)
             #pragma omp parallel for
@@ -1821,7 +1821,7 @@ int ConjugateResidualSolverCSR_textbook(
         
         bool residualenergy_seems_small = ( K != 0 ) and absolute(Ar_r) < tolerance*tolerance;
 
-        if( restart_condition or ( csr_restart_before_finish and residualenergy_seems_small ) ) UNLIKELY {
+        if( restart_condition or ( residualenergy_seems_small and csr_restart_before_finish ) ) UNLIKELY {
             
             #if defined(_OPENMP)
             #pragma omp parallel for
@@ -2056,7 +2056,7 @@ int MINRESCSR(
         
         bool residual_seems_small = ( K != 0 ) and ( absolute(eta) < tolerance );
         
-        if( restart_condition or ( csr_restart_before_finish and residual_seems_small ) ) {
+        if( restart_condition or ( residual_seems_small and csr_restart_before_finish ) ) {
             
             Float gamma_sq = 0.;
             
@@ -2103,9 +2103,8 @@ int MINRESCSR(
         if( residual_is_small )
             break;
 
-        Float temp = gamma;
 //         if( K % 100 == 0 )
-//         LOG << K << space << temp << space << eta << space << temp/eta << nl;
+//             LOG << K << space << gamma << space << eta << space << gamma/eta << nl;
             
         {
             
@@ -2489,7 +2488,7 @@ int ChebyshevIteration_DiagonalPreconditioner(
 
         bool residual_seems_small = ( K != 0 ) and std::sqrt(r_r) < tolerance;
 
-        if( restart_condition or ( csr_restart_before_finish and residual_seems_small ) ) UNLIKELY {
+        if( restart_condition or ( residual_seems_small and csr_restart_before_finish ) ) UNLIKELY {
             
             gamma_prev = 1.;
             

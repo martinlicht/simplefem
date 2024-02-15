@@ -57,7 +57,7 @@ void TransposeInSitu( DenseMatrix& src )
             next = (next % numrows) * numcols + next / numrows;
         } while ( next > start );
 
-        if ( next >= start && i != 1 )
+        if( next >= start && i != 1 )
         {
             const Float tmp = src( start / numcols, start % numcols );
             next = start;
@@ -65,7 +65,7 @@ void TransposeInSitu( DenseMatrix& src )
                 i = (next % numrows) * numcols + next / numrows;
                 src( next / numcols, next % numcols ) = ( i == start ) ? tmp : src( i / numcols, i % numcols );
                 next = i;
-            } while (next > start);
+            } while( next > start );
         }
 
     }

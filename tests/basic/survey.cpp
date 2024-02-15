@@ -85,6 +85,7 @@ int main( int argc, char *argv[] )
     printf("Machine epsilon variable (Sqrt ): %.25Le\n", (long double)Sqrt(machine_epsilon) );
     // printf("Machine epsilon variable (Sqrt_): %.25Le\n", (long double)Sqrt_(machine_epsilon) );
     printf("Desired precision variable:      %Le\n",     (long double)desired_precision );
+    printf("Desired closeness variable:      %Le\n",     (long double)desired_closeness );
 
 
 

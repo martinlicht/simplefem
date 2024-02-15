@@ -98,7 +98,7 @@ void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) cons
     
     recent_iteration_count = 0;
 
-    Float sigma_min_sq = b * ( A * b ) / (b*b);
+    // Float sigma_min_sq = b * ( A * b ) / (b*b);
     
     if( verbosity >= VerbosityLevel::verbose ) LOG << "START Conjugate Gradient iteration" << nl;
         
@@ -110,7 +110,7 @@ void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) cons
         bool residual_seems_small = ( recent_iteration_count != 0 ) and absolute( r * r ) < tolerance*tolerance;
         
         /* Start / Restart CRM process */
-        if( restart_condition or ( cpp_restart_before_finish and residual_seems_small ) ) UNLIKELY {
+        if( restart_condition or ( residual_seems_small and cpp_restart_before_finish ) ) UNLIKELY {
         
             r = b - A * x;
             d = r;
@@ -335,7 +335,7 @@ void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector&
         
         bool residual_seems_small = ( recent_iteration_count != 0 ) and ( absolute( r * r ) < tolerance*tolerance or absolute( rAr ) < tolerance*tolerance );
         
-        if( restart_condition or ( cpp_restart_before_finish and residual_seems_small ) ) UNLIKELY {
+        if( restart_condition or ( residual_seems_small and cpp_restart_before_finish ) ) UNLIKELY {
         
             /* r = b - A x */
             r = b - A * x;
@@ -477,7 +477,7 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
         bool residual_seems_small = ( recent_iteration_count != 0 ) and ( absolute( r * r ) < tolerance*tolerance or absolute( r * Ar ) < tolerance*tolerance );
         // first criterion is not in fast 
 
-        if( restart_condition or ( cpp_restart_before_finish and residual_seems_small ) ) UNLIKELY {
+        if( restart_condition or ( residual_seems_small and cpp_restart_before_finish ) ) UNLIKELY {
         
             r  = b - A * x;
             d  = r;
@@ -592,7 +592,7 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
         
         bool residual_seems_small = ( recent_iteration_count != 0 ) and absolute( Ar * r ) < tolerance*tolerance;
         
-        if( restart_condition or ( cpp_restart_before_finish and residual_seems_small ) ) UNLIKELY {
+        if( restart_condition or ( residual_seems_small and cpp_restart_before_finish ) ) UNLIKELY {
         
             r  = b - A * x;
             d  = r;
@@ -821,7 +821,7 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
         bool residual_seems_small = ( recent_iteration_count != 0 ) and absolute( rMAMr ) < tolerance*tolerance;
         
         /* Start / Restart PCRM process */
-        if( restart_condition or ( cpp_restart_before_finish and residual_seems_small ) ) UNLIKELY {
+        if( restart_condition or ( residual_seems_small and cpp_restart_before_finish ) ) UNLIKELY {
         
             {
                 
@@ -1004,7 +1004,7 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
         bool residual_seems_small = ( recent_iteration_count != 0 ) and absolute( rr ) < tolerance*tolerance;
         
         /* Start / Restart MinimumResidualMethod process */
-        if( restart_condition or ( cpp_restart_before_finish and residual_seems_small ) ) UNLIKELY {
+        if( restart_condition or ( residual_seems_small and cpp_restart_before_finish ) ) UNLIKELY {
         
             r = b - A * x;
             
@@ -1179,7 +1179,7 @@ function [x,r] = minres(A,b,x0,maxit,tol)
     x += alpha * p1;
     r -= alpha * s1;
     
-    if ( r * r < tol*tol )
+    if( r * r < tol*tol )
         break;
     
     p0 = s1;
@@ -1202,7 +1202,7 @@ function [x,r] = minres(A,b,x0,maxit,tol)
     x += alpha * p1;
     r -= alpha * s1;
     
-    if ( r * r < tol*tol )
+    if( r * r < tol*tol )
         break;
     
     p0 = s1;
@@ -1212,7 +1212,7 @@ function [x,r] = minres(A,b,x0,maxit,tol)
     p0 -= beta1 * p1;
     s0 -= beta1 * s1;
     
-    if ( iter > 1 ) {
+    if( iter > 1 ) {
     
       Float beta2 = ( s0 * s2 ) / (s2 * s2 );
       p0 -= beta2 * p2;
@@ -1440,7 +1440,7 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
         
         bool residual_seems_small = ( recent_iteration_count != 0 ) and ( absolute(eta) < tolerance );
         
-        if( restart_condition or ( cpp_restart_before_finish and residual_seems_small ) ) UNLIKELY {
+        if( restart_condition or ( residual_seems_small and cpp_restart_before_finish ) ) UNLIKELY {
             
             v0.zero();
             w0.zero();

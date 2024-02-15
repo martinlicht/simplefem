@@ -26,7 +26,6 @@ int main( int argc, char *argv[] )
     LOG << "Output of a few important meshes" << nl;
     
     
-    if(false)
     {
         
         const int L = 5;
@@ -41,7 +40,6 @@ int main( int argc, char *argv[] )
     
     
     
-    if(false)
     {
         
         const int L = 5;
@@ -56,7 +54,6 @@ int main( int argc, char *argv[] )
     
     
     
-    if(false)
     {
         LOG << "Unit Test for VTK output of Simplicial Mesh" << nl;
         
@@ -71,7 +68,6 @@ int main( int argc, char *argv[] )
     
     
     
-    //if(false)
     {
         const int Lmin = 4;
         const int Lmax = 4;
@@ -114,7 +110,6 @@ int main( int argc, char *argv[] )
     
     
     
-    if(false)
     {
         
         const int Lmin = 3;

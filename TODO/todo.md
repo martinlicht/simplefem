@@ -36,6 +36,23 @@ requires regular grinding in order to get it done.
 
 # (HIGH) AFW-Basis of Sullivan forms
 
+# (HIGH) Floating point exact comparisons ersetzen durch Funktion mit expliziter semantik
+
+# (HIGH) Augmented integration in all numerical tests 
+
+Once the numerical tests have been cleaned up, the right-hand side should always be computed with (optional) augmented integration. 
+There should be a parameter 'r_plus' to control the added interpolation quality of the right-hand side. 
+Notably, if 'r_plus == 0', then there should be a fallback that avoid repeated computation of the mass matrix.
+Similarly, the errors should be computed with augmented integration.
+
+# (HIGH) Clean up unit tests for the numerical examples 
+
+[x] IndexRange: what are the valid ranges? Clean up that part of the code
+[ ] Don't compute the norms of the solutions and the rhs unless necessary 
+[ ] Don't use MINRES unless necessary 
+
+# (HIGH) Question: what are best practices to keep the unit tests up to date with the code?
+
 # (HIGH) Profiling
 ---------
 
@@ -56,6 +73,10 @@ The target audience for this software are researchers in numerical partial diffe
 
 Another alternative is `gprof` as a GUI for profiling data. 
 
+# (HIGH) Remove dead code 
+
+grep 'if(false' ./*/*pp
+grep 'if( false' ./*/*pp
 
 # (DONE) 'threshold' should be renamed 'tolerance'
 
@@ -74,21 +95,6 @@ Feelpp: core
 Lifev: core 
 ngsolve std 
 Fenics: common
-
-# (HIGH) Augmented integration in all numerical tests 
-
-Once the numerical tests have been cleaned up, the right-hand side should always be computed with (optional) augmented integration. 
-There should be a parameter 'r_plus' to control the added interpolation quality of the right-hand side. 
-Notably, if 'r_plus == 0', then there should be a fallback that avoid repeated computation of the mass matrix.
-Similarly, the errors should be computed with augmented integration.
-
-# (HIGH) Clean up unit tests for the numerical examples 
-
-[ ] Don't compute the norms of the solutions and the rhs unless necessary 
-[ ] Don't use MINRES unless necessary 
-[ ] Remove legacy comments, try to localize the structure.
-
-# (HIGH) Question: what are best practices to keep the unit tests up to date with the code?
 
 
 
@@ -656,6 +662,12 @@ Generally speaking, try to find a good stopping criterion.
 grep -E '([0-9]+([eE][-+]?[0-9]+))' ./**/*cpp ./*/*/*pp
 grep -E '([-+]?\.[0-9]+([eE][-+]?[0-9]+)?)' ./*/*pp ./*/*/*pp
 
+
+# (DONE) How to abort
+
+Termination is done either via `abort()` or via `throw(0)`, depending on whether exceptions are disabled or not. 
+
+# (DONE) 'threshold' should be renamed 'tolerance'
 
 
 # (DONE) Implement Hodge star operation 

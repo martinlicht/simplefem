@@ -19,10 +19,6 @@ int main( int argc, char *argv[] )
         
         internal_print( Mx, meshname );
         
-        
-        
-        
-        //if(false)
         {
             
             auto M = Mx;
@@ -37,9 +33,6 @@ int main( int argc, char *argv[] )
             
         }    
         
-        
-        
-        //if(false)
         {
             
             auto M = Mx;
@@ -60,11 +53,8 @@ int main( int argc, char *argv[] )
             }
             
         }    
-        
 
     }
-    
-        
     
     LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
 

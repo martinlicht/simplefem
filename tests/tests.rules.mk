@@ -198,9 +198,8 @@ $(context).tidy:
 cppcheck: $(context).cppcheck
 $(context).cppcheck:
 	cppcheck -i ./.playground/ -i ./.legacy/ -i ./external/ \
-	--enable=warning,style,performance,portability --suppress=duplicateCondition \
-	--suppress=assertWithSideEffect --suppress=useStlAlgorithm \
-	--suppress=knownConditionTrueFalse --suppress=unsignedPositive \
+	--enable=warning,style,performance,portability \
+	--suppress=duplicateCondition --suppress=assertWithSideEffect --suppress=useStlAlgorithm --suppress=knownConditionTrueFalse --suppress=unsignedPositive \
 	--std=c++17 -q $(mycontextdir)/*pp
 
 

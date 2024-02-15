@@ -239,7 +239,7 @@ int main( int argc, char *argv[] )
 
                             FloatVector z_values( M.count_vertices() );
 
-                            // for ( int v = 0; v < M.count_vertices(); v++ ) {
+                            // for( int v = 0; v < M.count_vertices(); v++ ) {
                             //     Float c0 = M.getcoordinates().getdata( v, 0 );
                             //     Float c1 = M.getcoordinates().getdata( v, 1 );
                             //     Float z  = sin( c0 * Constants::twopi ) * sin( c0 * Constants::twopi );

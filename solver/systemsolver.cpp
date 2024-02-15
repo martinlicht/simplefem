@@ -105,7 +105,7 @@ int BlockHerzogSoodhalterMethod(
         
         bool residual_seems_small = ( recent_iteration_count != 0 ) and ( absolute(eta) < tolerance );
         
-        if( restart_condition or ( cppsys_restart_before_finish and residual_seems_small ) ) UNLIKELY {
+        if( restart_condition or ( residual_seems_small and cppsys_restart_before_finish ) ) UNLIKELY {
             
             v0_A.zero(); w0_A.zero(); w1_A.zero();
             v0_C.zero(); w0_C.zero(); w1_C.zero();
@@ -142,7 +142,7 @@ int BlockHerzogSoodhalterMethod(
             
             if( print_modulo >= 0 ) {
                 LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) absolute(eta), (long double)tolerance );
-                LOGPRINTF( "(%d/%d)            Gamma: %.9Le Eta_A %.9Le Eta_C %.9Le\n", recent_iteration_count, max_iteration_count, (long double)eta_A, (long double)eta_C, (long double)gamma );
+                LOGPRINTF( "(%d/%d)            Gamma: %.9Le Eta_A %.9Le Eta_C %.9Le\n", recent_iteration_count, max_iteration_count, (long double)gamma, (long double)eta_A, (long double)eta_C );
             }
 
         }
@@ -225,6 +225,7 @@ int BlockHerzogSoodhalterMethod(
             Float r = sqrt( r_A * r_A + r_C * r_C );
             if( print_modulo >= 0 ) {
                 LOGPRINTF( "(%d/%d)   INTERIM: Full Residual norm is %.9Le\n", recent_iteration_count, max_iteration_count, (long double)r );
+                LOGPRINTF( "(%d/%d)            eta_A=%.9Le eta_C=%.9Le\n", recent_iteration_count, max_iteration_count, (long double)eta_A, (long double)eta_C );
             }
 
         }
@@ -238,7 +239,7 @@ int BlockHerzogSoodhalterMethod(
         
         if( print_modulo >= 0 and print_condition ) UNLIKELY {
             LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) recent_deviation, (long double)tolerance );
-            LOGPRINTF( "                   Gamma: %.9Le Eta: %.9Le\n", (long double)gamma, (long double)eta );
+            LOGPRINTF( "(%d/%d)            Gamma: %.9Le Eta: %.9Le\n", recent_iteration_count, max_iteration_count, (long double)gamma, (long double)eta );
         }
         
         recent_iteration_count++;
