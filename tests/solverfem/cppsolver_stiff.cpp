@@ -234,7 +234,7 @@ int main( int argc, char *argv[] )
                             const FloatVector rhs = rhs_original;
                             ConjugateGradientMethod Solver( stiffness );
                             Solver.print_modulo        = 0;
-                            Solver.threshold        = desired_precision;
+                            Solver.tolerance        = desired_precision;
                             Solver.max_iteration_count =     1 * sol.getdimension();
                             timestamp start = timestampnow();
                             Solver.solve( sol, rhs );
@@ -264,7 +264,7 @@ int main( int argc, char *argv[] )
                             // Solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
                             // Solver.print_modulo        = 1;
                             Solver.print_modulo        = 0;
-                            Solver.threshold        = desired_precision;
+                            Solver.tolerance        = desired_precision;
                             Solver.max_iteration_count =     1 * sol.getdimension();
                             timestamp start = timestampnow();
                             Solver.solve_explicit( sol, rhs );
@@ -294,7 +294,7 @@ int main( int argc, char *argv[] )
                             // Solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
                             // Solver.print_modulo        = 1;
                             Solver.print_modulo        = 0;
-                            Solver.threshold        = desired_precision;
+                            Solver.tolerance        = desired_precision;
                             Solver.max_iteration_count =     1 * sol.getdimension();
                             timestamp start = timestampnow();
                             Solver.solve_robust( sol, rhs );
@@ -324,7 +324,7 @@ int main( int argc, char *argv[] )
                             // Solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
                             // Solver.print_modulo        = 1;
                             Solver.print_modulo        = 0;
-                            Solver.threshold        = desired_precision;
+                            Solver.tolerance        = desired_precision;
                             Solver.max_iteration_count =     1 * sol.getdimension();
                             timestamp start = timestampnow();
                             Solver.solve_fast( sol, rhs );
@@ -354,7 +354,7 @@ int main( int argc, char *argv[] )
                             // Solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
                             // Solver.print_modulo        = 1;
                             Solver.print_modulo        = 0;
-                            Solver.threshold        = desired_precision;
+                            Solver.tolerance        = desired_precision;
                             Solver.max_iteration_count =     1 * sol.getdimension();
                             timestamp start = timestampnow();
                             Solver.solve( sol, rhs );
@@ -384,7 +384,7 @@ int main( int argc, char *argv[] )
                             // Solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
                             // Solver.print_modulo        = 1;
                             Solver.print_modulo        = 0;
-                            Solver.threshold        = desired_precision;
+                            Solver.tolerance        = desired_precision;
                             Solver.max_iteration_count =     1 * sol.getdimension();
                             timestamp start = timestampnow();
                             Solver.solve( sol, rhs );

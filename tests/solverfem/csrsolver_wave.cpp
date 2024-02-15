@@ -307,7 +307,7 @@ int main( int argc, char *argv[] )
                     
                         ConjugateGradientMethod Solver( SystemMatrix );
                         Solver.print_modulo        = 0;
-                        Solver.threshold           = desired_precision;
+                        Solver.tolerance           = desired_precision;
                         Solver.max_iteration_count = 1 * sol.getdimension();
                         timestamp start = timestampnow();
                         Solver.solve( sol, rhs );
@@ -324,7 +324,7 @@ int main( int argc, char *argv[] )
                     
                         ConjugateResidualMethod Solver( SystemMatrix );
                         Solver.print_modulo        = 0;
-                        Solver.threshold           = desired_precision;
+                        Solver.tolerance           = desired_precision;
                         Solver.max_iteration_count = 1 * sol.getdimension();
                         timestamp start = timestampnow();
                         Solver.solve_explicit( sol, rhs );
@@ -341,7 +341,7 @@ int main( int argc, char *argv[] )
                     
                         ConjugateResidualMethod Solver( SystemMatrix );
                         Solver.print_modulo        = 0;
-                        Solver.threshold           = desired_precision;
+                        Solver.tolerance           = desired_precision;
                         Solver.max_iteration_count = 1 * sol.getdimension();
                         timestamp start = timestampnow();
                         Solver.solve_robust( sol, rhs );
@@ -358,7 +358,7 @@ int main( int argc, char *argv[] )
                     
                         ConjugateResidualMethod Solver( SystemMatrix );
                         Solver.print_modulo        = 0;
-                        Solver.threshold           = desired_precision;
+                        Solver.tolerance           = desired_precision;
                         Solver.max_iteration_count = 1 * sol.getdimension();
                         timestamp start = timestampnow();
                         Solver.solve_fast( sol, rhs );
@@ -375,7 +375,7 @@ int main( int argc, char *argv[] )
                     
                         MinimumResidualMethod Solver( SystemMatrix );
                         Solver.print_modulo        = 0;
-                        Solver.threshold           = desired_precision;
+                        Solver.tolerance           = desired_precision;
                         Solver.max_iteration_count = 1 * sol.getdimension();
                         timestamp start = timestampnow();
                         Solver.solve( sol, rhs );
@@ -392,7 +392,7 @@ int main( int argc, char *argv[] )
                     
                         HerzogSoodhalterMethod Solver( SystemMatrix );
                         Solver.print_modulo        = 0;
-                        Solver.threshold           = desired_precision;
+                        Solver.tolerance           = desired_precision;
                         Solver.max_iteration_count = 1 * sol.getdimension();
                         timestamp start = timestampnow();
                         Solver.solve( sol, rhs );

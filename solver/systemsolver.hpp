@@ -11,7 +11,7 @@ int BlockHerzogSoodhalterMethod(
     const FloatVector& b_A, 
     const FloatVector& b_C, 
     const LinearOperator& A, const LinearOperator& Bt, const LinearOperator& B, const LinearOperator& C, 
-    Float threshold,
+    Float tolerance,
     int print_modulo,
     const LinearOperator& PAinv, const LinearOperator& PCinv
 );

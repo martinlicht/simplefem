@@ -18,7 +18,7 @@ int BlockHerzogSoodhalterMethod(
     const FloatVector& b_A, 
     const FloatVector& b_C, 
     const LinearOperator& A, const LinearOperator& Bt, const LinearOperator& B, const LinearOperator& C, 
-    Float threshold,
+    Float tolerance,
     int print_modulo,
     const LinearOperator& PAinv, const LinearOperator& PCinv
 ) {
@@ -103,7 +103,7 @@ int BlockHerzogSoodhalterMethod(
         
         bool restart_condition = ( recent_iteration_count == 0 ) or ( cppsys_restart_on_full_dimension and recent_iteration_count );;
         
-        bool residual_seems_small = ( recent_iteration_count != 0 ) and ( absolute(eta) < threshold );
+        bool residual_seems_small = ( recent_iteration_count != 0 ) and ( absolute(eta) < tolerance );
         
         if( restart_condition or ( cppsys_restart_before_finish and residual_seems_small ) ) UNLIKELY {
             
@@ -141,13 +141,13 @@ int BlockHerzogSoodhalterMethod(
             c0 = c1 = 1;
             
             if( print_modulo >= 0 ) {
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) absolute(eta), (long double)threshold );
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) absolute(eta), (long double)tolerance );
                 LOGPRINTF( "(%d/%d)            Gamma: %.9Le Eta_A %.9Le Eta_C %.9Le\n", recent_iteration_count, max_iteration_count, (long double)eta_A, (long double)eta_C, (long double)gamma );
             }
 
         }
         
-        bool residual_is_small = ( absolute(eta) < threshold );
+        bool residual_is_small = ( absolute(eta) < tolerance );
         
         if( residual_is_small ) UNLIKELY 
             break;
@@ -237,7 +237,7 @@ int BlockHerzogSoodhalterMethod(
         bool print_condition = ( print_modulo > 0 and recent_iteration_count % print_modulo == 0 );
         
         if( print_modulo >= 0 and print_condition ) UNLIKELY {
-            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) recent_deviation, (long double)threshold );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) recent_deviation, (long double)tolerance );
             LOGPRINTF( "                   Gamma: %.9Le Eta: %.9Le\n", (long double)gamma, (long double)eta );
         }
         
@@ -250,7 +250,7 @@ int BlockHerzogSoodhalterMethod(
     Float recent_deviation = absolute( eta );
         
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double)recent_deviation, (long double)threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double)recent_deviation, (long double)tolerance );
 
     return recent_iteration_count;
 }

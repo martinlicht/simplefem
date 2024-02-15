@@ -12,7 +12,7 @@
 /************************
 ****
 ****  Abstract class for iterative solvers  
-****  - uses iteration counter, error threshold, and internal residual vector 
+****  - uses iteration counter, error tolerance, and internal residual vector 
 ****  
 ************************/
 
@@ -27,9 +27,9 @@ struct IterativeSolver
         verbose = 2
     };
     
-    explicit IterativeSolver( const LinearOperator& A, Float threshold = desired_precision, int max_iteration_count = 0, int print_modulo = -1 )
+    explicit IterativeSolver( const LinearOperator& A, Float tolerance = desired_precision, int max_iteration_count = 0, int print_modulo = -1 )
     : A(A), 
-      threshold( threshold ), 
+      tolerance( tolerance ), 
       recent_deviation( 0. ), 
       max_iteration_count( max_iteration_count ),
       recent_iteration_count(0),
@@ -44,7 +44,7 @@ struct IterativeSolver
 
     virtual void check() const
     {
-        assert( std::isfinite( threshold ) && threshold >= 0. );
+        assert( std::isfinite( tolerance ) && tolerance >= 0. );
         assert( std::isfinite( recent_deviation ) && recent_deviation >= 0. );
         
         assert( max_iteration_count >= 0 );
@@ -64,7 +64,7 @@ struct IterativeSolver
 
     const LinearOperator& A;   
 
-    mutable Float threshold;
+    mutable Float tolerance;
     mutable Float recent_deviation;
     
     mutable int max_iteration_count;

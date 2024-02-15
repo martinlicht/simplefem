@@ -88,7 +88,7 @@ int main( int argc, char *argv[] )
             
             ConjugateResidualMethod CRM(A);
             CRM.max_iteration_count = dimension;
-            CRM.threshold = desired_precision;
+            CRM.tolerance = desired_precision;
             
             timestamp start, end;
             start = timestampnow();
@@ -104,7 +104,7 @@ int main( int argc, char *argv[] )
             
             PreconditionedConjugateResidualMethod PCRM(A,M);
             PCRM.max_iteration_count = dimension;
-            PCRM.threshold = desired_precision;
+            PCRM.tolerance = desired_precision;
             
             timestamp start, end;
             start = timestampnow();
@@ -120,7 +120,7 @@ int main( int argc, char *argv[] )
             
             MinimumResidualMethod MINRES(A);
             MINRES.max_iteration_count = dimension;
-            MINRES.threshold = desired_precision;
+            MINRES.tolerance = desired_precision;
             
             timestamp start, end;
             start = timestampnow();
@@ -164,7 +164,7 @@ int main( int argc, char *argv[] )
             
             MinimumResidualMethod MINRES(A);
             MINRES.max_iteration_count = dimension;
-            MINRES.threshold = desired_precision;
+            MINRES.tolerance = desired_precision;
             
             timestamp start, end;
             start = timestampnow();

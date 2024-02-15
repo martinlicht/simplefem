@@ -233,7 +233,7 @@ int main( int argc, char *argv[] )
                             const FloatVector rhs = rhs_original;
                             ConjugateGradientMethod Solver( mass );
                             Solver.print_modulo        = 0;
-                            Solver.threshold        = desired_precision;
+                            Solver.tolerance        = desired_precision;
                             Solver.max_iteration_count =     1 * sol.getdimension();
                             timestamp start = timestampnow();
                             Solver.solve( sol, rhs );
@@ -261,7 +261,7 @@ int main( int argc, char *argv[] )
                             const FloatVector rhs = rhs_original;
                             ConjugateResidualMethod Solver( mass );
                             Solver.print_modulo        = 0;
-                            Solver.threshold        = desired_precision;
+                            Solver.tolerance        = desired_precision;
                             Solver.max_iteration_count =     1 * sol.getdimension();
                             timestamp start = timestampnow();
                             Solver.solve_explicit( sol, rhs );
@@ -289,7 +289,7 @@ int main( int argc, char *argv[] )
                             const FloatVector rhs = rhs_original;
                             ConjugateResidualMethod Solver( mass );
                             Solver.print_modulo        = 0;
-                            Solver.threshold        = desired_precision;
+                            Solver.tolerance        = desired_precision;
                             Solver.max_iteration_count =     1 * sol.getdimension();
                             timestamp start = timestampnow();
                             Solver.solve_robust( sol, rhs );
@@ -317,7 +317,7 @@ int main( int argc, char *argv[] )
                             const FloatVector rhs = rhs_original;
                             ConjugateResidualMethod Solver( mass );
                             Solver.print_modulo        = 0;
-                            Solver.threshold        = desired_precision;
+                            Solver.tolerance        = desired_precision;
                             Solver.max_iteration_count =     1 * sol.getdimension();
                             timestamp start = timestampnow();
                             Solver.solve_fast( sol, rhs );
@@ -345,7 +345,7 @@ int main( int argc, char *argv[] )
                             const FloatVector rhs = rhs_original;
                             MinimumResidualMethod Solver( mass );
                             Solver.print_modulo        = 0;
-                            Solver.threshold        = desired_precision;
+                            Solver.tolerance        = desired_precision;
                             Solver.max_iteration_count =     1 * sol.getdimension();
                             timestamp start = timestampnow();
                             Solver.solve( sol, rhs );
@@ -373,7 +373,7 @@ int main( int argc, char *argv[] )
                             const FloatVector rhs = rhs_original;
                             HerzogSoodhalterMethod Solver( mass );
                             Solver.print_modulo        = 0;
-                            Solver.threshold        = desired_precision;
+                            Solver.tolerance        = desired_precision;
                             Solver.max_iteration_count =     1 * sol.getdimension();
                             timestamp start = timestampnow();
                             Solver.solve( sol, rhs );

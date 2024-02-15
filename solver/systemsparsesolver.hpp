@@ -17,9 +17,9 @@ int HodgeConjugateResidualSolverCSR(
     const int* Btrows, const int* Btcolumns, const Float* Btvalues, 
     const int*  Crows, const int*  Ccolumns, const Float*  Cvalues, 
     Float* residual,
-    Float threshold,
+    Float tolerance,
     int print_modulo,
-    Float inneriteration_threshold,
+    Float inneriteration_tolerance,
     int inneriteration_print_modulo
 );
 
@@ -33,9 +33,9 @@ int HodgeConjugateResidualSolverCSR_diagonal(
     const int* Btrows, const int* Btcolumns, const Float* Btvalues, 
     const int*  Crows, const int*  Ccolumns, const Float*  Cvalues, 
     Float* residual,
-    Float threshold,
+    Float tolerance,
     int print_modulo,
-    Float inneriteration_threshold,
+    Float inneriteration_tolerance,
     int inneriteration_print_modulo
 );
 
@@ -49,9 +49,9 @@ int HodgeConjugateResidualSolverCSR_textbook(
     const int* Btrows, const int* Btcolumns, const Float* Btvalues, 
     const int*  Crows, const int*  Ccolumns, const Float*  Cvalues, 
     Float* residual,
-    Float threshold,
+    Float tolerance,
     int print_modulo,
-    Float inneriteration_threshold,
+    Float inneriteration_tolerance,
     int inneriteration_print_modulo
 );
 
@@ -65,9 +65,9 @@ int HodgeConjugateResidualSolverCSR_SSOR(
     const int* Btrows, const int* Btcolumns, const Float* Btvalues, 
     const int*  Crows, const int*  Ccolumns, const Float*  Cvalues, 
     Float* residual,
-    Float threshold,
+    Float tolerance,
     int print_modulo,
-    Float inneriteration_threshold,
+    Float inneriteration_tolerance,
     int inneriteration_print_modulo
 );
 
@@ -82,11 +82,11 @@ int HodgeHerzogSoodhalterMethod(
     const int* __restrict__  Brows, const int* __restrict__  Bcolumns, const Float* __restrict__  Bvalues, 
     const int* __restrict__ Btrows, const int* __restrict__ Btcolumns, const Float* __restrict__ Btvalues, 
     const int* __restrict__  Crows, const int* __restrict__  Ccolumns, const Float* __restrict__  Cvalues, 
-    Float threshold,
+    Float tolerance,
     int print_modulo,
     const int* __restrict__ PArows, const int* __restrict__ PAcolumns, const Float* __restrict__ PAvalues, 
     const int* __restrict__ PCrows, const int* __restrict__ PCcolumns, const Float* __restrict__ PCvalues, 
-    Float inneriteration_threshold,
+    Float inneriteration_tolerance,
     int inneriteration_print_modulo
 );
  

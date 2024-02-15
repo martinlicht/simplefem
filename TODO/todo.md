@@ -30,8 +30,11 @@ None of the above can be done in a day, so it most likely
 requires regular grinding in order to get it done.
 
 
-# (HIGH) AFW-Basis of Sullivan forms
 
+
+
+
+# (HIGH) AFW-Basis of Sullivan forms
 
 # (HIGH) Profiling
 ---------
@@ -54,6 +57,10 @@ The target audience for this software are researchers in numerical partial diffe
 Another alternative is `gprof` as a GUI for profiling data. 
 
 
+# (DONE) 'threshold' should be renamed 'tolerance'
+
+# (HIGH) Floating point exact comparisons ersetzen durch Funktion mit expliziter semantik
+
 # (HIGH) Rename basic to 'base' or 'general' or 'common'
 
 Basic has the wrong connotation, it makes more sense to call it 'base' or 'general'.
@@ -68,9 +75,6 @@ Lifev: core
 ngsolve std 
 Fenics: common
 
-
-# (HIGH) Floating point exact comparisons ersetzen durch Funktion mit expliziter semantik
-
 # (HIGH) Augmented integration in all numerical tests 
 
 Once the numerical tests have been cleaned up, the right-hand side should always be computed with (optional) augmented integration. 
@@ -83,6 +87,19 @@ Similarly, the errors should be computed with augmented integration.
 [ ] Don't compute the norms of the solutions and the rhs unless necessary 
 [ ] Don't use MINRES unless necessary 
 [ ] Remove legacy comments, try to localize the structure.
+
+# (HIGH) Question: what are best practices to keep the unit tests up to date with the code?
+
+
+
+
+
+
+
+
+
+
+
 
 # (MEDIUM) Averaging for Sullivan and Whitney spaces
 
@@ -105,23 +122,9 @@ The following modules look reasonable
 - [ ] complicated operations (transpose,determinant,tensorproduct)
 - [x] readwrite is never used: retire 
 
-# (HIGH) Question: what are best practices to keep the unit tests up to date with the code?
-
-# (LOW) Rewrite the unit tests for combinatorics
-
-Generally speaking, the combinatorics unit tests should be more excessive. 
-Don't shy away from testing basically everything you could possibly think of as relevant. 
-Then move on with the same spirit to 'operators' and the other objects.
-
-
-
-
-
-
 # (MEDIUM) Style checker and configuration
 
-Include a style checker such as KWstyle 
-and add the necessary configuration files 
+Include a style checker such as KWstyle or clang-format, and add the necessary configuration files 
 
 # (MEDIUM) Solver printing data structure 
 
@@ -141,7 +144,6 @@ bool report_breakdown();
 
 bool iteration_is_printable();
 ```
-
 
 
 # (MEDIUM) Logging class 
@@ -203,6 +205,22 @@ As tests get more complicated, it will pay off to introduce parameters
 more abundantly throughtou the code. There shouldn't be any magic numbers 
 and no 
 
+
+
+
+
+
+
+
+
+
+
+# (LOW) Rewrite the unit tests for combinatorics
+
+Generally speaking, the combinatorics unit tests should be more excessive. 
+Don't shy away from testing basically everything you could possibly think of as relevant. 
+Then move on with the same spirit to 'operators' and the other objects.
+
 ## (LOW) Basic unit tests 
 Not much is to be done here but everything should look fine and reasonable.
 
@@ -235,8 +253,6 @@ The unit tests are okay but should be rewritten to make everything seamless and 
 ## (LOW) VTK unit tests 
 There is not much to be written here.
 
-
-
 # (LOW) interesting meshes
 
 Use the US states map from Randy's source code 
@@ -258,22 +274,9 @@ Except for some particular special cases,
 we can and should turn them into non-member operators.
 
 
-
 # (LOW) Gerschgorin circles for Dense and Sparse Matrices
   
 implement the gerschgorin row/column circles and the corresponding maximal estimates 
-
-
-
-
-  
-  
-  
-
-
-
-
-
 
 
 # (LOW) Command line interface
@@ -298,33 +301,7 @@ Generally, there should only be a few commands to describe what is happening.
     
     --outfile
     specify the file were the output should be directed to
-    
-    
 
-
-
-
-
-
-
-
-
-
-# Linear Algebra module
-
-The linear algebra module provides the abstract linear operator class
-and the float vector class. All linear operators come back to this framework.
-
-
-# (LOW) Rewrite core float vector class 
-
-Write it up in a manner that is close to the STL vector class.
-Perhaps even make it a descendant of std::vector<Float> and wrap it only thinly.
-https://stackoverflow.com/questions/2034916/is-it-okay-to-inherit-implementation-from-stl-containers-rather-than-delegate
-There seem to be complications, so it should be delayed until further notice.
-There is rather a speed-up if we replace it by generic C++ memory allocation.
-In particular, it does not really mesh with later efforts of parallelization. 
-Furthermore, it is better to entirely hide the implementation from the user.
 
 # (LOW) openMP parallelization of Float Vector class
 
@@ -335,33 +312,6 @@ Many of the methods in the float vector class are openMP parallelizable.
 - scalarproductwith
 - norm, maxnorm, lpnorm
 - add vectors 
-
-
-# (INACTIVE) Implement vector slices 
-
-A vector slice refers to a part of a vector.
-The slice knows the original vector and 
-some data determine how to access the original members.
-
-Best approach would be to introduce an abstract class
-for vectors that captures the interface. 
-Then fork off the original class of vectors 
-and the new slice implementation. 
-SEE ALSO Implement lambda-based vectors
-
-# (INACTIVE) Implement lambda-based vectors 
-
-The get/set methods can then be given in terms 
-of lambdas that produce the required terms/references 
-on the spot. This gives the most general functionality.
-
-Note that read-only vectors can be implemented 
-by having the set operation cause an error.
-Alternatively, you can introduce a base class 'readable vector'
-and then derive your general purpose vector from there.
-
-
-
 
 # (LOW) Iterative Methods to implement
 
@@ -388,9 +338,8 @@ that is also correct when using complex numbers.
 This should be accompanied by a written exposition
 of Krylov subspace methods.
 
-
  
-# Preconditioners to implement 
+# (LOW) Preconditioners to implement 
 
   - [ ] Jacobi preconditioner 
   - [ ] different scaling preconditioners
@@ -415,6 +364,40 @@ New iterative methods should only be added if the preconditioned variant is adde
 
 
 # TODO UNCLEAR UTILITY
+
+
+# (INACTIVE) Rewrite core float vector class 
+
+Write it up in a manner that is close to the STL vector class.
+Perhaps even make it a descendant of std::vector<Float> and wrap it only thinly.
+https://stackoverflow.com/questions/2034916/is-it-okay-to-inherit-implementation-from-stl-containers-rather-than-delegate
+There seem to be complications, so it should be delayed until further notice.
+There is rather a speed-up if we replace it by generic C++ memory allocation.
+In particular, it does not really mesh with later efforts of parallelization. 
+Furthermore, it is better to entirely hide the implementation from the user.
+
+# (INACTIVE) Implement vector slices 
+
+A vector slice refers to a part of a vector.
+The slice knows the original vector and 
+some data determine how to access the original members.
+
+Best approach would be to introduce an abstract class
+for vectors that captures the interface. 
+Then fork off the original class of vectors 
+and the new slice implementation. 
+SEE ALSO Implement lambda-based vectors
+
+# (INACTIVE) Implement lambda-based vectors 
+
+The get/set methods can then be given in terms 
+of lambdas that produce the required terms/references 
+on the spot. This gives the most general functionality.
+
+Note that read-only vectors can be implemented 
+by having the set operation cause an error.
+Alternatively, you can introduce a base class 'readable vector'
+and then derive your general purpose vector from there.
 
 
 # (UNCLEAR) Floating-point comparisons

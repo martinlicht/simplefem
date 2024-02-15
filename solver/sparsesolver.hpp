@@ -14,7 +14,7 @@ int ConjugateGradientSolverCSR(
     const Float* b, 
     const int* csrrows, const int* csrcolumns, const Float* csrvalues, 
     Float* residual,
-    Float threshold,
+    Float tolerance,
     int print_modulo
 );
 
@@ -24,7 +24,7 @@ int ConjugateGradientSolverCSR_DiagonalPreconditioner(
     const Float* b, 
     const int* csrrows, const int* csrcolumns, const Float* csrvalues, 
     Float* residual,
-    Float threshold,
+    Float tolerance,
     int print_modulo,
     const Float* precon 
 );
@@ -36,7 +36,7 @@ int ConjugateGradientSolverCSR_SSOR(
     const Float* b, 
     const int* csrrows, const int* csrcolumns, const Float* csrvalues, 
     Float* residual,
-    Float threshold,
+    Float tolerance,
     int print_modulo,
     const Float* precon,
     Float omega
@@ -49,7 +49,7 @@ int ConjugateGradientSolverCSR_SSOR_Eisenstat(
     const Float* b, 
     const int* csrrows, const int* csrcolumns, const Float* csrvalues, 
     Float* residual,
-    Float threshold,
+    Float tolerance,
     int print_modulo,
     const Float* precon,
     Float omega
@@ -62,7 +62,7 @@ int ConjugateGradientSolverCSR_Rainbow(
     const Float* b, 
     const int* csrrows, const int* csrcolumns, const Float* csrvalues, 
     Float* residual,
-    Float threshold,
+    Float tolerance,
     int print_modulo,
     const Float* precon,
     Float omega,
@@ -76,7 +76,7 @@ int ConjugateGradientSolverCSR_Eisenstat_Rainbow(
     const Float* b, 
     const int* csrrows, const int* csrcolumns, const Float* csrvalues, 
     Float* residual,
-    Float threshold,
+    Float tolerance,
     int print_modulo,
     const Float* precon,
     Float omega,
@@ -92,7 +92,7 @@ int ConjugateResidualSolverCSR(
     const Float* b, 
     const int* csrrows, const int* csrcolumns, const Float* csrvalues, 
     Float* residual,
-    Float threshold,
+    Float tolerance,
     int print_modulo
 );
 
@@ -102,7 +102,7 @@ int ConjugateResidualSolverCSR_textbook(
     const Float* b, 
     const int* csrrows, const int* csrcolumns, const Float* csrvalues, 
     Float* residual,
-    Float threshold,
+    Float tolerance,
     int print_modulo
 );
 
@@ -115,7 +115,7 @@ int MINRESCSR(
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ res,
-    const Float threshold,
+    const Float tolerance,
     int print_modulo
 );
 
@@ -127,7 +127,7 @@ int WHATEVER(
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ res,
-    const Float threshold,
+    const Float tolerance,
     int print_modulo
 );
 

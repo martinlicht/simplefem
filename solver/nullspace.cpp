@@ -13,8 +13,8 @@ std::vector<FloatVector> computeNullspace(
     const LinearOperator& MassMatrix,
     const int max_number_of_candidates,
     //
-    const Float threshold_residual, 
-    const Float threshold_zero
+    const Float tolerance_residual, 
+    const Float tolerance_zero
 ) {
 
     std::vector<FloatVector> nullvectorgallery;
@@ -42,7 +42,7 @@ std::vector<FloatVector> computeNullspace(
             ConjugateResidualMethod solver( SystemMatrix );
             solver.print_modulo        = -1; //candidate.getdimension();
             solver.max_iteration_count = candidate.getdimension();
-            solver.threshold           = threshold_residual;
+            solver.tolerance           = tolerance_residual;
 
             solver.solve( candidate, rhs );
             
@@ -68,12 +68,12 @@ std::vector<FloatVector> computeNullspace(
         LOG << "\t\t\t (mass) x:         " << candidate.norm( MassMatrix ) << nl;
         
         /* 3. check whether anything is left at all */
-        /*    exit if below threshold               */
+        /*    exit if below tolerance               */
 
         Float purified_mass = candidate.norm( MassMatrix );
         LOG << "\t\t\t Filtered mass: " << purified_mass << nl;
         
-        if( purified_mass < threshold_zero )
+        if( purified_mass < tolerance_zero )
             break;
         
         /* 4. If enough left, normalize and add to gallery */            
@@ -92,7 +92,7 @@ std::vector<FloatVector> computeNullspace(
     
     
     
-    LOG << "How much nullspace are our vectors? (" << threshold_residual << ")" << nl;
+    LOG << "How much nullspace are our vectors? (" << tolerance_residual << ")" << nl;
     for( const auto& nullvector : nullvectorgallery ) {
         LOGPRINTF( "% 10.5e\t", ( SystemMatrix * nullvector ).norm( MassMatrix ) );
     }
