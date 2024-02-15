@@ -26,13 +26,11 @@ int main( int argc, char *argv[] )
         assert( irE2.cardinality() == 0 );
         assert( irE3.cardinality() == 0 );
         
-        LOG << "Test empty index ranges" << nl;
-        
-        for( int i : irE1 ) { assert( irE1.min() <= i && i <= irE1.max() ); unreachable(); }
-        for( int i : irE2 ) { assert( irE2.min() <= i && i <= irE2.max() ); unreachable(); }
-        for( int i : irE3 ) { assert( irE3.min() <= i && i <= irE3.max() ); unreachable(); }
-        
-        LOG << "Test empty index ranges" << nl;
+        int counter = 0;
+        for( int i : irE1 ) { assert( irE1.min() <= i && i <= irE1.max() ); unreachable(); counter++; }
+        for( int i : irE2 ) { assert( irE2.min() <= i && i <= irE2.max() ); unreachable(); counter++; }
+        for( int i : irE3 ) { assert( irE3.min() <= i && i <= irE3.max() ); unreachable(); counter++; }
+        assert( counter == 0 );
         
         assert( irE1 == irE2 );
         assert( irE1 == irE3 );

@@ -33,6 +33,30 @@
 
 
 
+/* 
+ * For the unreachable macro, we may use a built-in signal to mark the code unreachable,
+ * provided that this is available on this platform 
+ */
+
+#if defined(__GNUC__) || defined(__clang__) || defined(__INTEL_COMPILER)
+#define UNREACHABLE_SIGNAL() __builtin_unreachable()
+#elif defined(_MSC_VER)
+#define UNREACHABLE_SIGNAL() __assume(0)
+#else
+#define UNREACHABLE_SIGNAL() 
+#endif
+
+
+
+/* 
+ * Irrespective of whether we use it or not, we define a termination command 
+ */
+#ifdef __cpp_exceptions
+#define TERMINATION_COMMAND() throw(0);
+#else // __cpp_exceptions
+#define TERMINATION_COMMAND() abort();
+#endif // __cpp_exceptions    
+
 
 
 
@@ -66,11 +90,7 @@ inline void myActualAssert [[noreturn]] ( const char* filename, const int linenu
     fprintf( stderr, "!!\n" );
     fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" );
     fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" );    
-#ifdef __cpp_exceptions
-    throw(0);
-#else // __cpp_exceptions
-    abort();
-#endif // __cpp_exceptions    
+    TERMINATION_COMMAND();
 }
 
 inline void myActualUnreachable [[noreturn]] ( const char* filename, const int linenumber )
@@ -82,11 +102,7 @@ inline void myActualUnreachable [[noreturn]] ( const char* filename, const int l
     fprintf( stderr, "!!\n" ); 
     fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ); 
     fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ); 
-#ifdef __cpp_exceptions
-    throw(0);
-#else // __cpp_exceptions
-    abort();
-#endif // __cpp_exceptions    
+    TERMINATION_COMMAND();
 }
 
 inline void myActualUnimplemented [[noreturn]] ( const char* filename, const int linenumber )
@@ -98,15 +114,10 @@ inline void myActualUnimplemented [[noreturn]] ( const char* filename, const int
     fprintf( stderr, "!!\n" ); 
     fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ); 
     fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ); 
-#ifdef __cpp_exceptions
-    throw(0);
-#else // __cpp_exceptions
-    abort();
-#endif // __cpp_exceptions    
+    TERMINATION_COMMAND();
 }
 
 #endif // USE_ORIGINAL_ASSERT_MACRO
-
 
 
 
@@ -202,8 +213,10 @@ inline std::string Concat2String( const T& t, const Params&... params )
 
 #include <cassert>
 #define Assert(...)   (static_cast<void>(0))
-#define unreachable()   (static_cast<void>(0),exit( EXIT_FAILURE ))
-#define unimplemented() (static_cast<void>(0),exit( EXIT_FAILURE ))
+#define unreachable()   { TERMINATION_COMMAND(); UNREACHABLE_SIGNAL(); }
+#define unimplemented() { TERMINATION_COMMAND(); UNREACHABLE_SIGNAL(); }
+
+// Note: replaced `exit( EXIT_FAILURE ))` with `abort()` 
 
 #else // NDEBUG
 
@@ -219,8 +232,8 @@ template<typename... Params> constexpr bool Cond( bool b, const Params&... param
 #define Assert(x,...)     assert(x)
 #endif // __cplusplus < 202002L
 
-#define unreachable()   fprintf( stderr, "Unreachable reached: %s:%d\n", __FILE__, __LINE__ ),abort()
-#define unimplemented() fprintf( stderr,  "Unimplemented path: %s:%d\n", __FILE__, __LINE__ ),abort()
+#define unreachable()   { fprintf( stderr, "Unreachable reached: %s:%d\n", __FILE__, __LINE__ ); TERMINATION_COMMAND(); UNREACHABLE_SIGNAL(); }
+#define unimplemented() { fprintf( stderr,  "Unimplemented path: %s:%d\n", __FILE__, __LINE__ ); TERMINATION_COMMAND(); UNREACHABLE_SIGNAL(); }
 
 #else // USE_ORIGINAL_ASSERT_MACRO
 
@@ -239,8 +252,8 @@ template<typename... Params> constexpr bool Cond( bool b, const Params&... param
 #endif // __cplusplus < 202002L
 
 
-#define unreachable()   { myActualUnreachable(__FILE__, __LINE__), abort(); }
-#define unimplemented() { myActualUnimplemented(__FILE__, __LINE__), abort(); }
+#define unreachable()   { myActualUnreachable  (__FILE__, __LINE__); TERMINATION_COMMAND(); UNREACHABLE_SIGNAL(); }
+#define unimplemented() { myActualUnimplemented(__FILE__, __LINE__); TERMINATION_COMMAND(); UNREACHABLE_SIGNAL(); }
 
 #endif //USE_ORIGINAL_ASSERT_MACRO
 
