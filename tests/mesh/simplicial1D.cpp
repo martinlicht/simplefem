@@ -24,10 +24,10 @@ int main( int argc, char *argv[] )
 
     LOG << "Start refinement" << nl;
 
-    for( int c = 0; c < 0; c++ ) 
+    for( int c = 0; c < 2; c++ ) 
         M.improved_uniformrefinement();
         
-    if(false)for( int c = 0; c < 100; c++ ) 
+    for( int c = 0; c < 30; c++ ) 
     {
         int e = c % M.count_edges();
         LOG << "Bisect edge: " << e << nl;

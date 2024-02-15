@@ -17,13 +17,15 @@ int main( int argc, char *argv[] )
             
         LOG << "Testing generator for empty index map" << nl;
         
-        IndexRange from( 1,-3 );
-        IndexRange targ( 2,5 );
+        const IndexRange from( 1,-3 );
+        const IndexRange targ( 2,5 );
         
-        std::vector<IndexMap>  all = generateEmptyMap( from, targ );
+        const std::vector<IndexMap>  all = generateEmptyMap( from, targ );
         
         for( const IndexMap& im : all )
                 LOG << im << nl;
+
+        assert( all.size() == 1 );
         
         LOG << "Tested" << nl;
         
@@ -39,6 +41,8 @@ int main( int argc, char *argv[] )
 
         for( const IndexMap& im : all )
                 LOG << im << nl;
+
+        assert( all.size() == 9 );
         
         LOG << "Tested" << nl;
         
@@ -54,6 +58,8 @@ int main( int argc, char *argv[] )
 
         for( const IndexMap& im : all )
                 LOG << im << nl << "signum: " << signPermutation( im ) << nl;
+        
+        assert( all.size() == 6 );
         
         LOG << "Tested" << nl;
         
@@ -71,31 +77,14 @@ int main( int argc, char *argv[] )
         for( const IndexMap& im : all )
                 LOG << im << nl;
         
-        LOG << "Tested" << nl;
-            
-    }
-    
-    
-    
-    
-    if(true)
-    {
-        
-        LOG << "Testing generator for empty index map" << nl;
-        
-        const IndexRange from( 1,-3 );
-        const IndexRange targ( 2,5 );
-        
-        const std::vector<IndexMap>  all = generateEmptyMap( from, targ );
-        
-        assert( all.size() == 1 );
-        
-        for( const IndexMap& im : all )
-            LOG << im << nl;
+        assert( all.size() == 4 );
         
         LOG << "Tested" << nl;
             
     }
+    
+    
+    
     
     if(true)
     {

@@ -92,7 +92,7 @@ int main( int argc, char *argv[] )
             
             
             for( const auto& some_perm : perms ) {
-                for ( int entry : some_perm ) LOG << entry << space;
+                for( int entry : some_perm ) LOG << entry << space;
                 LOG << nl;
             }
             

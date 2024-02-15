@@ -137,7 +137,7 @@ int HodgeConjugateResidualSolverCSR_diagonal(
         bool residualenergy_seems_small = ( k != 0 ) and absolute(Md_r) < tolerance*tolerance;
         // bool residualenergy_seems_small = false;
 
-        if( restart_condition or ( csrsys_restart_before_finish and residualenergy_seems_small ) ) UNLIKELY {
+        if( restart_condition or ( residualenergy_seems_small and csrsys_restart_before_finish ) ) UNLIKELY {
             
             #if defined(_OPENMP)
             #pragma omp parallel for
@@ -491,7 +491,7 @@ int HodgeConjugateResidualSolverCSR_SSOR(
         bool residualenergy_seems_small = ( k != 0 ) and absolute(Md_r) < tolerance*tolerance;
         // bool residualenergy_seems_small = false;
 
-        if( restart_condition or ( csrsys_restart_before_finish and residualenergy_seems_small ) ) UNLIKELY {
+        if( restart_condition or ( residualenergy_seems_small and csrsys_restart_before_finish ) ) UNLIKELY {
             
             #if defined(_OPENMP)
             #pragma omp parallel for
@@ -826,7 +826,7 @@ int HodgeConjugateResidualSolverCSR_textbook(
         
         bool residualenergy_seems_small = ( k != 0 ) and absolute(Mr_r) < tolerance*tolerance;
 
-        if( restart_condition or ( csrsys_restart_before_finish and residualenergy_seems_small ) ) {
+        if( restart_condition or ( residualenergy_seems_small and csrsys_restart_before_finish ) ) {
             
             #if defined(_OPENMP)
             #pragma omp parallel for
@@ -1163,7 +1163,7 @@ int HodgeHerzogSoodhalterMethod(
         
         bool residual_seems_small = ( recent_iteration_count != 0 ) and ( absolute(eta) < tolerance );
         
-        if( restart_condition or ( csrsys_restart_before_finish and residual_seems_small ) ) {
+        if( restart_condition or ( residual_seems_small and csrsys_restart_before_finish ) ) {
             
             for( int a = 0; a < dimension_A; a++ ) v0_A[a] = w0_A[a] = w1_A[a] = 0.;
             for( int c = 0; c < dimension_C; c++ ) v0_C[c] = w0_C[c] = w1_C[c] = 0.;
@@ -1333,6 +1333,11 @@ int HodgeHerzogSoodhalterMethod(
             
             c0 = c1; c1 = cn;
             s0 = s1; s1 = sn;
+
+            if( print_modulo >= 0 ) {
+                LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) absolute(eta), (long double)tolerance );
+                LOGPRINTF( "(%d/%d)            Gamma: %.9Le Eta_A %.9Le Eta_C %.9Le\n", recent_iteration_count, max_iteration_count, (long double)eta_A, (long double)eta_C, (long double)gamma );
+            }
 
         }
 

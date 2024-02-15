@@ -57,6 +57,12 @@ The target audience for this software are researchers in numerical partial diffe
 Another alternative is `gprof` as a GUI for profiling data. 
 
 
+
+# (HIGH) Remove dead code 
+
+grep 'if(false' ./*/*pp
+grep 'if( false' ./*/*pp
+
 # (DONE) 'threshold' should be renamed 'tolerance'
 
 # (HIGH) Floating point exact comparisons ersetzen durch Funktion mit expliziter semantik
@@ -86,7 +92,6 @@ Similarly, the errors should be computed with augmented integration.
 
 [ ] Don't compute the norms of the solutions and the rhs unless necessary 
 [ ] Don't use MINRES unless necessary 
-[ ] Remove legacy comments, try to localize the structure.
 
 # (HIGH) Question: what are best practices to keep the unit tests up to date with the code?
 
