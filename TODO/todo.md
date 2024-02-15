@@ -34,9 +34,19 @@ requires regular grinding in order to get it done.
 
 
 
-# (HIGH) AFW-Basis of Sullivan forms
+# (HIGH) Improve the file names used for output
 
-# (HIGH) Floating point exact comparisons ersetzen durch Funktion mit expliziter semantik
+While using the program name for the file output is nice, it is better if you can also add an additional prefix.
+That way you can separate the output of different subtasks more easily.
+
+# (HIGH) clean up DenseMatrix subsystem 
+
+The following modules look reasonable
+- [ ] simple solvers 
+- [ ] general solvers (Gauss-Jordan, QR, Cholesky -> inverse )
+- [ ] simple scalar functions
+- [ ] complicated operations (transpose,determinant,tensorproduct)
+- [x] readwrite is never used: retire 
 
 # (HIGH) Augmented integration in all numerical tests 
 
@@ -45,16 +55,29 @@ There should be a parameter 'r_plus' to control the added interpolation quality 
 Notably, if 'r_plus == 0', then there should be a fallback that avoid repeated computation of the mass matrix.
 Similarly, the errors should be computed with augmented integration.
 
+# (HIGH) Floating point exact comparisons ersetzen durch Funktion mit expliziter semantik
+# (HIGH) Floating-point comparisons
+
+https://beta.boost.org/doc/libs/1_68_0/libs/math/doc/html/math_toolkit/float_comparison.html
+
+Understand the floating-point comparison functions and import them into this project, mutatis mutandis. 
+
+# (HIGH) Fix solvers or fix Wikipedia 
+
+Herzog Soodhalter funktioniert nun, auch die sparse variant.
+Vielleicht sollte das umbenannt werden? Scheint mehr Soodhalter zu sein als Herzog 
+Whatever solver hingegen kackt ab 
+
 # (HIGH) Clean up unit tests for the numerical examples 
 
-[x] IndexRange: what are the valid ranges? Clean up that part of the code
 [ ] Don't compute the norms of the solutions and the rhs unless necessary 
 [ ] Don't use MINRES unless necessary 
 
 # (HIGH) Question: what are best practices to keep the unit tests up to date with the code?
 
+# (HIGH) AFW-Basis of Sullivan forms
+
 # (HIGH) Profiling
----------
 
 Several options are available to generate and assess profiling data. one particularly easy option involves Valgrind. 
 
@@ -73,15 +96,6 @@ The target audience for this software are researchers in numerical partial diffe
 
 Another alternative is `gprof` as a GUI for profiling data. 
 
-# (HIGH) Remove dead code 
-
-grep 'if(false' ./*/*pp
-grep 'if( false' ./*/*pp
-
-# (DONE) 'threshold' should be renamed 'tolerance'
-
-# (HIGH) Floating point exact comparisons ersetzen durch Funktion mit expliziter semantik
-
 # (HIGH) Rename basic to 'base' or 'general' or 'common'
 
 Basic has the wrong connotation, it makes more sense to call it 'base' or 'general'.
@@ -95,6 +109,7 @@ Feelpp: core
 Lifev: core 
 ngsolve std 
 Fenics: common
+concepts: ...
 
 
 
@@ -119,18 +134,27 @@ Thus you can always average from the larger into the smaller space.
 
 # (MEDIUM) preparing for multigrid
 
-# (MEDIUM) clean up DenseMatrix subsystem 
-
-The following modules look reasonable
-- [ ] simple solvers 
-- [ ] general solvers (Gauss-Jordan, QR, Cholesky -> inverse )
-- [ ] simple scalar functions
-- [ ] complicated operations (transpose,determinant,tensorproduct)
-- [x] readwrite is never used: retire 
-
 # (MEDIUM) Style checker and configuration
 
 Include a style checker such as KWstyle or clang-format, and add the necessary configuration files 
+
+Astyle
+#astyle --mode=c --options=none --project=path/to/astylerc --ascii --recursive "./*.cpp,*.hpp,*.cxx" --exclude=".playground" --exclude=".legacy"
+#--style=mozilla
+--attach-namespace 
+--indent=spaces=4
+--indent-classes
+--indent-preproc-cond
+--indent-col1-comments
+--break-blocks 
+--pad-oper 
+--pad-comma
+--unpad-paren
+--pad-paren-in 
+--align-pointer=type 
+--align-reference=type
+--attach-return-type
+
 
 # (MEDIUM) Solver printing data structure 
 
@@ -155,25 +179,19 @@ bool iteration_is_printable();
 # (MEDIUM) Logging class 
 
 Even though advanced logging control would be desirable, 
-for the time being it is sufficient if the logging capabilities 
-are merely present.
+for the time being it is sufficient if the logging capabilities are merely present.
 
 - First layer: semantic wrappers for the cpp streams 
 - Second layer: advanced logging classes for the alias streams
 - Third layer: primitive MACROS that wrap
 
-In the long run, it would be nice to use a logging class 
-that allows for prefixes, git version, date, time, etc.
+In the long run, it would be nice to use a logging class that allows for prefixes, git version, date, time, etc.
 
-Setting this up will require some careful thinking 
-and refactoring of the entire code. 
-A reasonable approach would be a replacement
-of cout and cerr throughout the entire code 
-by new derivations of the stream class
-which facilitate more behavior.
+Setting this up will require some careful thinking and refactoring of the entire code. 
+A reasonable approach would be a replacement of cout and cerr throughout the entire code 
+by new derivations of the stream class which facilitate more behavior.
 
-In a first step, this is just two streams 
-with the some functionality as cout and cerr.
+In a first step, this is just two streams with the some functionality as cout and cerr.
 
 In a second step, more functionality may be added.
 
@@ -189,8 +207,7 @@ and perhaps replace by a macro to read
 
 The nice thing is that the log messages get accummulated in the data structure 
 and only on destruction of the temporary object the message gets actually written
-in the actual logging object. Thus one can impose various 
-prefixes and postfixes. 
+in the actual logging object. Thus one can impose various prefixes and postfixes. 
 
 Encapsulate cout, cerr, and clog within wrapper objects 
 that delegate the input to those streams. 
@@ -208,8 +225,7 @@ examples should be a folder of their own as well.
 Do not shy away from bringing a few tests out of retirement. 
 
 As tests get more complicated, it will pay off to introduce parameters 
-more abundantly throughtou the code. There shouldn't be any magic numbers 
-and no 
+more abundantly throughout the code. 
 
 
 
@@ -227,37 +243,15 @@ Generally speaking, the combinatorics unit tests should be more excessive.
 Don't shy away from testing basically everything you could possibly think of as relevant. 
 Then move on with the same spirit to 'operators' and the other objects.
 
-## (LOW) Basic unit tests 
-Not much is to be done here but everything should look fine and reasonable.
-
-## (LOW) Utility unit tests 
-Not much is to be done here but everything should look fine and reasonable.
-
-## (LOW) Combinatorics unit tests
-Go through all the methods and features in the combinatorics module and write tests for that.
-Find ways to test everything independent of the screen output.
-
-## (LOW) Operators unit tests 
-Go through all the methods of the Float vectors and write tests for that
-Find ways to test the composition operators efficiently.
-
-## (LOW) Dense unit tests 
-Go through all the methods of the dense matrix class and write tests for that
-For each algorithm, write unit tests. You can test the bottom down version of each algorithm first and then the convenient wrappers for each algorithm.
-
-## (LOW) Sparse unit tests 
-Go through all the methods of the sparse matrix class and write tests for that.
-Go over the composition operators and check that they do not change the outcome of the computations.
-
-## (LOW) Solver unit tests 
-Go through all the solvers and write useful convergence tests for each of those.
-You can group them by matrix-type.
-
-## (LOW) Mesh unit tests 
-The unit tests are okay but should be rewritten to make everything seamless and consistent.
-
-## (LOW) VTK unit tests 
-There is not much to be written here.
+- [ ] Basic 
+- [ ] Utility 
+- [ ] Combinatorics: make things independent of screen output 
+- [ ] Operators: make things independent of screen output 
+- [ ] Dense: test everything thoroughly 
+- [ ] Sparse: check that composition does not change the outcome 
+- [ ] Solver: meaningful convergence tests?
+- [ ] Mesh: make everything consistent 
+- [ ] VTK
 
 # (LOW) interesting meshes
 
@@ -265,27 +259,20 @@ Use the US states map from Randy's source code
 and implement it here. Try to find other triangulations 
 too and integrate them as examples. 
 
-# (LOW) Reduce dense matrix module to core functionality 
-
-It suffices to have the core functions for dense linear algebra 
-present in this module. Perhaps the matrix I/O should be externalized?
-Definitely the dense linear algebra IO should be solely string-based
-and not assume specifics about the module.
-
-# (LOW) Operators as non-member functions
+# (LOW) Operators as non-member functions?
 
 Check the classes for member operator functions.
 Except for some particular special cases, 
 = () [] ->
 we can and should turn them into non-member operators.
 
-
-# (LOW) Gerschgorin circles for Dense and Sparse Matrices
-  
-implement the gerschgorin row/column circles and the corresponding maximal estimates 
-
-
 # (LOW) Command line interface
+
+The handling of command line arguments will be facilitated 
+by a set of functions/classes written precisely for that purpose.
+
+This should be a mere extractor class
+and be written in the C-conforming subset of C++.
 
 The project comes with unit tests whose behavior can be controlled via commandline.
 Generally, there should only be a few commands to describe what is happening.
@@ -309,16 +296,6 @@ Generally, there should only be a few commands to describe what is happening.
     specify the file were the output should be directed to
 
 
-# (LOW) openMP parallelization of Float Vector class
-
-Many of the methods in the float vector class are openMP parallelizable. 
-- Constructors
-- zero, scale
-- NOT random -> perhaps use srand?
-- scalarproductwith
-- norm, maxnorm, lpnorm
-- add vectors 
-
 # (LOW) Iterative Methods to implement
 
 The following iterative solvers can be implemented.
@@ -339,10 +316,8 @@ been constructed.
 
 # (LOW) Rewrite algorithms to be complex number stable 
 
-All algorithms should be written in a manner 
-that is also correct when using complex numbers. 
-This should be accompanied by a written exposition
-of Krylov subspace methods.
+All algorithms should be written in a manner that is also correct when using complex numbers. 
+This should be accompanied by a written exposition of Krylov subspace methods.
 
  
 # (LOW) Preconditioners to implement 
@@ -362,6 +337,39 @@ of Krylov subspace methods.
 For each iterative method there should be a preconditioned method available.
 New iterative methods should only be added if the preconditioned variant is added too.
 
+# (LOW) LICENSE File and Copyright notice 
+
+Include a license file into your software.
+
+Include necessary copyright information in the header of each file for the entire project.
+
+The projects can be used as example for this:
+- dune 
+- fetk
+- ngsolve 
+- ????!!
+- LifeV
+- vtk
+
+A uniform licence structure should be agreed upon before mass reproducing the tests. 
+That being said, you can also include the license information at later stages of the project 
+through the use of some simple text manipulation programs.
+
+So for the unit tests, it's more important to have a common structure ready to go. 
+
+# (LOW) Global Index Type
+
+Replace any occurence of 'int' by a user-defined type 'Index'.
+That type should be large enough for your purposes 
+and compatible with the STL standard library.
+For example,
+    typedef std::size_t Index;
+
+# (LOW) Smart Pointers
+
+Should smart pointers be employed throughout the library to make it more robust against user malpractice?
+
+    
 
 
 
@@ -369,8 +377,18 @@ New iterative methods should only be added if the preconditioned variant is adde
 
 
 
-# TODO UNCLEAR UTILITY
 
+# INACTIVE UNTIL FURTHER NOTICE
+
+# (INACTIVE) openMP parallelization of Float Vector class
+
+Many of the methods in the float vector class are openMP parallelizable. 
+- Constructors
+- zero, scale
+- NOT random -> perhaps use srand?
+- scalarproductwith
+- norm, maxnorm, lpnorm
+- add vectors 
 
 # (INACTIVE) Rewrite core float vector class 
 
@@ -394,6 +412,10 @@ Then fork off the original class of vectors
 and the new slice implementation. 
 SEE ALSO Implement lambda-based vectors
 
+# (INACTIVE) Container template 
+
+Flesh out the container template and maybe put it out on code review.
+
 # (INACTIVE) Implement lambda-based vectors 
 
 The get/set methods can then be given in terms 
@@ -405,48 +427,7 @@ by having the set operation cause an error.
 Alternatively, you can introduce a base class 'readable vector'
 and then derive your general purpose vector from there.
 
-
-# (UNCLEAR) Floating-point comparisons
-
-https://beta.boost.org/doc/libs/1_68_0/libs/math/doc/html/math_toolkit/float_comparison.html
-
-Understand the floating-point comparison functions and import them into this project, mutatis mutandis. 
-
-# (UNCLEAR) Inverse operators via templates 
-
-Use templates for the inverse operators to implement the 'composed operator' behavior.
-Determine the type of solver at compile time depending on the operator class.
-This requires a unified solver interface.
-
-# (UNCLEAR) Implement LU decomposition with different strategies 
-  
-  The LU decomposition needs to be implemented 
-  with different pivoting strategies:
-  row, column, or full pivot. 
-
-# (UNCLEAR) Different elementary solvers 
-  
-  Implement solution algorithms for special matrix types:
-  - diagonal solve 
-  - left/right triagonal solve 
-  - unit left/right/ triagonal solve 
-  - averages between left and right solves 
-  
-## (UNCLEAR) warning command 
-
-add a warning function to the core functionality 
-so that you can emit warnings whenever the need arises
-instead of calling std::cout.
-
-## (UNCLEAR) Command line 
-
-The handling of command line arguments will be facilitated 
-by a set of functions/classes written precisely for that purpose.
-
-This should be a mere extractor class
-and be written in the C-conforming subset of C++.
-
-## (UNCLEAR) Fixed-size dynamic array and adoption
+# (INACTIVE) Fixed-size dynamic array and adoption
 
 Define a template class for a dynamically allocated array
 whose size cannot be changed after allocation. 
@@ -457,89 +438,7 @@ Use that fixed-size array throughout your code whenever appropiate,
 replacing the old std::vector variables with the new ones.
 This applies in particular to the linear algebra classes.
     
-## (UNCLEAR) implement minimalist file stream wrapper 
-
-    ```
-    openinputfile( std::string );
-    openoutputfile( std::string );
-    ```
-    
-## (UNCLEAR) Matrix Market
-
-Make Matrix market subdirectory fly.
-Add unit tests, then use a solver for a unit test. 
-
-## (UNCLEAR) Global Index Type
-
-Replace any occurence of 'int' by a user-defined type 'Index'.
-That type should be large enough for your purposes 
-and compatible with the STL standard library.
-For example,
-    typedef std::size_t Index;
-
-## (UNCLEAR) add complete constructor interfaces 
-
-Apply the rule of six and declare all constructors explicitly
-even if merely setting them to default. 
-
-## (UNCLEAR) Add Header files 
-
-All targets should depend on the corresponding header files as well.
-
-## (UNCLEAR) LICENSE File and Copyright notice 
-
-Include a license file into your software.
-
-Include necessary copyright information in the header 
-of each file for the entire project.
-
-The projects can be used as example for this:
-- dune 
-- fetk
-- ngsolve 
-- ????!!
-- LifeV
-- vtk
-
-A uniform licence structure should be agreed upon 
-before mass reproducing the tests. That being said,
-you can also include the license information 
-at later stages of the project through the use 
-of some simple text manipulation programs.
-
-So for the unit tests, it's more important 
-that we have a common structure of the test modules 
-ready to go. 
-
-## (UNCLEAR) Separate build and tests targets 
-
-Introduce two different targets, one for building 
-the object files and libraries, and the other for 
-building the test files 
-
-all: build tests
-
-## (UNCLEAR) Redesign source code organization: library files 
-
-The compilation should place no temporary or output files 
-in the source directories. Instead, all output should be 
-put into a designated 'build' directory.
-
-The different source directories should specify
-the various makefile rules but otherwise not specify anything.
-In particular, no cleaning is necessary in those directories.
-
-The makefile in each source directory
-puts its output into the common build directory.
-
-There is only one cleaning command for the entire build directory.
-
-## (UNCLEAR) Redesign source code organization: test files 
-
-The test codes are maintained in the source directory
-but the programs are put into the same directory.
-
-## (UNCLEAR) Makefile with implicit rules 
+## (INACTIVE) Makefile with implicit rules 
 
 The makefile has implicit rules for cpp files
 which can greatly simplify the entire make process.
@@ -547,37 +446,35 @@ So we may replace the handwritten rules
 by the implicitly defined rules in many cases. 
 We merely need to specify the compiler flags.
 
-# (UNCLEAR) Container template 
-
-Flesh out the container template and maybe put it out on code review.
-
-
-## (UNCLEAR) namespaces for the project
+## (INACTIVE) namespaces for the project
 
 package everything into a namespace.
 
+# (INACTIVE) Inverse operators via templates 
 
-## (UNCLEAR) Smart Pointers
+Use templates for the inverse operators to implement the 'composed operator' behavior.
+Determine the type of solver at compile time depending on the operator class.
+This requires a unified solver interface.
 
-Should smart pointers be employed throughout the library to make it more robust against user malpractice?
-
-
-# (UNCLEAR) TODO file names 
-
-??? Correct the file names in the VTK output of the different mesh and fem test programs ???
-
-#  (UNCLEAR) VTK OUTPUT 
-
-The general philosophy of the VTK module 
-is to treat VTK as an output format alone. 
+# (INACTIVE) Implement LU decomposition with different strategies 
   
-- Perhaps conversion between data set classes
-- Conversion between non-VTK related formats
-- Direct IO with mesh and algebra classes via specialized routines 
+The LU decomposition needs to be implemented with different pivoting strategies:
+row, column, or full pivot. 
 
-Simple legacy format:
-http://www.vtk.org/wp-content/uploads/2015/04/file-formats.pdf
-Reading only ASCII
+# (INACTIVE) Redesign source code organization: library files 
+
+The compilation should place no temporary or output files in the source directories. 
+Instead, all output should be put into a designated 'build' directory.
+
+The different source directories should specify the various makefile rules but otherwise not specify anything.
+In particular, no cleaning is necessary in those directories.
+
+The makefile in each source directory puts its output into the common build directory.
+
+There is only one cleaning command for the entire build directory.
+
+
+
 
 
 
@@ -594,20 +491,7 @@ Reading only ASCII
   
   - class for one-dimensional meshes: graphs with no abandoned nodes
   
-  
-  
-  
-  
-  
-  
-  
   - hash-tabelle 
-  
-  
-
-  
-  
-  
   
   https://scicomp.stackexchange.com/questions/23882/what-is-a-common-file-data-format-for-a-mesh-for-fem
   Gmsh file format: http://gmsh.info/doc/texinfo/gmsh.html
@@ -653,6 +537,50 @@ Reading only ASCII
 
 # DONE!
 
+# (DONE) Github badge C++ >= 17
+
+https://img.shields.io/badge/C++-00599C.svg?style=for-the-badge&logo=C++&logoColor=white
+https://img.shields.io/badge/-c++-black?logo=c%2B%2B&style=social
+https://img.shields.io/badge/C++-14-blue
+https://img.shields.io/badge/-C++14-yellow?logo=c%2B%2B
+https://img.shields.io/badge/-C++14-cyan?logo=c%2B%2B&style=flat-square
+https://img.shields.io/badge/-C++14-skyblue?logo=c%2B%2B&style=flat-square
+https://img.shields.io/badge/-C++14-deepskyblue?logo=c%2B%2B&style=flat-square
+
+# (DONE) Feature: Unphysical operations 
+
+For testing purposes. Given a broken differential form
+(a) put it into canonical form again.
+(b) Alternative, bring it into an equivalent form randomly 
+
+# (DONE) Basic:
+
+[x] Survey of float 
+[x] Survey/benchmark of factorial/binomial and unit tests 
+[x] program with leak, hello world 
+[x] benchmark for memory allocation 
+
+# (DONE) Text output 
+
+- Get text operations to solvers and mesh class 
+- combinatorics, vector & operator classes: emphasize text over print 
+- text: combinatorics, redirect print 
+- text: operators, dense, sparse ; redirect print 
+- text: mesh, redirect print 
+- redirect through entire code 
+
+## (DONE) add complete constructor interfaces 
+
+Apply the rule of six and declare all constructors explicitly even if merely setting them to default. 
+
+# (DONE) Different elementary solvers 
+  
+Implement solution algorithms for special matrix types:
+- diagonal solve 
+- left/right triagonal solve 
+- unit left/right/ triagonal solve 
+- averages between left and right solves 
+  
 # (DONE) Precisions for solvers and magic numbers 
 
 The linear algebra solvers may work with any type of precision, such as float or double. 
@@ -663,12 +591,33 @@ grep -E '([0-9]+([eE][-+]?[0-9]+))' ./**/*cpp ./*/*/*pp
 grep -E '([-+]?\.[0-9]+([eE][-+]?[0-9]+)?)' ./*/*pp ./*/*/*pp
 
 
+## (DONE) Dependencies
+
+- [x] All targets (tests and modules) depend on the header files as well. 
+- [x] Moreover, every test depends also on the static/dynamic libraries. 
+
+
 # (DONE) How to abort
 
 Termination is done either via `abort()` or via `throw(0)`, depending on whether exceptions are disabled or not. 
 
 # (DONE) 'threshold' should be renamed 'tolerance'
 
+# (DONE) Separate build and tests targets 
+
+Introduce two different targets, one for building 
+the object files and libraries, and the other for 
+building the test files 
+
+all: build tests
+
+# (DONE) VTK OUTPUT 
+
+The general philosophy of the VTK module is to treat VTK as an output format alone. 
+  
+Simple legacy format:
+http://www.vtk.org/wp-content/uploads/2015/04/file-formats.pdf
+Reading only ASCII
 
 # (DONE) Implement Hodge star operation 
 
@@ -857,3 +806,14 @@ which may not the case for the bracket access methods.
 
 - Enforce the effective behavior
 - Enforce the bound check policy.
+
+# (DONE) Remove dead code 
+
+grep 'if(false' ./*/*pp
+grep 'if( false' ./*/*pp
+
+# (DONE) 'threshold' should be renamed 'tolerance'
+
+# (DONE) Improve the iterator interface of IndexRange to allow the full scope
+
+# (DONE) Git ID extraction as macro

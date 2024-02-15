@@ -141,7 +141,7 @@ Logger::~Logger()
 
     fputs( output_string.c_str(), f );
     fflush(f);
-    
+
 }
 
 
@@ -154,6 +154,9 @@ Logger::~Logger()
 
 OpenMP_Reporter::OpenMP_Reporter()
 {
+    
+    fputs( GIT_COMMIT_ID, f );
+    fflush(f);
     
     #if defined(_OPENMP)
     LOG << "###OMP###\tOpenMP Reporter: started\n";

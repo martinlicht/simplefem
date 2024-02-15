@@ -704,6 +704,12 @@ endif
 
 CPPFLAGS := 
 
+
+CURRENT_COMMIT_ID := $(shell git rev-parse HEAD)
+
+CPPFLAGS += -D GIT_COMMIT_ID=\"$(CURRENT_COMMIT_ID)\"
+
+
 ifeq ($(FLAG_DISABLE_CHECK_MESHES),yes)
 CPPFLAGS += -DDO_NOT_CHECK_MESHES
 endif
