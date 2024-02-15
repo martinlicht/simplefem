@@ -22,6 +22,11 @@ class SectionProfiler
         {
             ping( text );
         }
+
+        SectionProfiler( const SectionProfiler& ) = delete;
+        SectionProfiler( const SectionProfiler&& ) = delete;
+        SectionProfiler& operator=( const SectionProfiler& ) = delete;
+        SectionProfiler& operator=( const SectionProfiler&& ) = delete;
         
         virtual ~SectionProfiler() {
 

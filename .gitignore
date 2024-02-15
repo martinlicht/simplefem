@@ -3,6 +3,8 @@ OVERWRITE.COMPILE.mk
 .private/
 .playground/
 .legacy/
+.vs/
+.idea/
 
 # Eclipse project settings
 *cproject

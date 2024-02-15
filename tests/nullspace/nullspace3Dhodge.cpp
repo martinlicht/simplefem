@@ -204,7 +204,7 @@ int main( int argc, char *argv[] )
                                 // );
                                 
                                 // ConjugateResidualMethod Solver( X );
-                                // Solver.threshold           = 1e-10;
+                                // Solver.tolerance           = desired_precision;
                                 // Solver.print_modulo        = 100;
                                 // Solver.max_iteration_count = 4 * candidate.getdimension();
                                 // Solver.solve( candidate, rhs );

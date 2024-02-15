@@ -311,7 +311,7 @@ MeshSimplicial2D::~MeshSimplicial2D()
 }
 
 
-bool MeshSimplicial2D::compare( const MeshSimplicial2D& mesh ) const 
+bool MeshSimplicial2D::is_equal_to( const MeshSimplicial2D& mesh ) const 
 {
   return counter_triangles == mesh.counter_triangles
          &&
@@ -802,7 +802,7 @@ std::string MeshSimplicial2D::text() const
 
 
 
-bool MeshSimplicial2D::dimension_counted( int dim ) const
+bool MeshSimplicial2D::has_dimension_counted( int dim ) const
 {
     assert( 0 <= dim && dim <= 2 );
     return true;
@@ -820,7 +820,7 @@ int MeshSimplicial2D::count_simplices( int dim ) const
     unreachable();
 }
 
-bool MeshSimplicial2D::subsimplices_listed( int sup, int sub ) const
+bool MeshSimplicial2D::has_subsimplices_listed( int sup, int sub ) const
 {
     assert( 0 <= sub && sub <= sup && sup <= 2 );
     return true;
@@ -870,7 +870,7 @@ IndexMap MeshSimplicial2D::getsubsimplices( int sup, int sub, int cell ) const
    
 }
 
-bool MeshSimplicial2D::supersimplices_listed( int sup, int sub ) const
+bool MeshSimplicial2D::has_supersimplices_listed( int sup, int sub ) const
 {
     assert( 0 <= sub && sub <= sup && sup <= 2 );
     return true;

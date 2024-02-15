@@ -52,8 +52,8 @@ class VTKWriter
         VTKWriter writePreamble( const std::string& name );
     
         VTKWriter writeCoordinateBlock();
-        VTKWriter writeCoordinateBlock( const FloatVector& );
-        VTKWriter writeCoordinateBlock( const std::function<Float(int)>& );
+        VTKWriter writeCoordinateBlock( const FloatVector& z );
+        VTKWriter writeCoordinateBlock( const std::function<Float(int)>& func_z );
         
         VTKWriter writeTopDimensionalCells();
         

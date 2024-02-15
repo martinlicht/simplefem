@@ -60,7 +60,7 @@ class Coordinates
         
         /* get/set coordinates as per point  */
         
-        Float getdata( int n, int d) const;
+        Float getdata( int n, int d ) const;
         void setdata( int n, int d, Float v );
         
         /* get range of coordinates */
@@ -82,24 +82,24 @@ class Coordinates
         
         /* transform all coordinates  */
         
-        void scale( Float );
-        void scale( FloatVector );
-        void shift( const FloatVector& );
-        void lineartransform( const LinearOperator& );
+        void scale( Float alpha );
+        void scale( FloatVector alphas );
+        void shift( const FloatVector& add );
+        void lineartransform( const LinearOperator& op );
         
         /* Add additional coordiantes */
         
-        void append( const Coordinates& );
-        void append( const FloatVector& );
-        void append( const std::vector<FloatVector>& );
+        void append( const Coordinates& co );
+        void append( const FloatVector& v );
+        // void append( const std::vector<FloatVector>& );
         
-        void addcapacity( int );
-        void addcoordinates( int );
+        void addcapacity( int additional_capacity );
+        void addcoordinates( int add_number );
         
         /* Obtain information about reference transformation of simplex */
         
-        DenseMatrix getLinearPart( const IndexMap& ) const;
-        FloatVector getShiftPart( const IndexMap& ) const;
+        DenseMatrix getLinearPart( const IndexMap& im ) const;
+        FloatVector getShiftPart( const IndexMap& im ) const;
         
         FloatVector getCenter() const;
 
@@ -119,11 +119,11 @@ class Coordinates
 
     public:
 
-        static bool compare( const Coordinates& coords_left, const Coordinates& coords_right );
+        static bool is_equal_to( const Coordinates& coords_left, const Coordinates& coords_right );
 
         friend inline bool operator==( const Coordinates& coords_left, const Coordinates& coords_right )
         {
-            return compare( coords_left, coords_right );
+            return is_equal_to( coords_left, coords_right );
         }
 
         friend inline bool operator!=( const Coordinates& coords_left, const Coordinates& coords_right )

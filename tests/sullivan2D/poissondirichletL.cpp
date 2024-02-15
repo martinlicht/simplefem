@@ -54,7 +54,7 @@ using namespace std;
 int main( int argc, char *argv[] )
 {
         
-    LOG << "Unit Test for Solution of Dirichlet Problem" << nl;
+    LOG << "Unit Test: 2D Dirichlet problem" << nl;
     
     LOG << "Initial mesh..." << nl;
     
@@ -191,7 +191,7 @@ int main( int argc, char *argv[] )
 
                 sol.zero();
 
-                auto diagonal = stiffness.diagonal();
+                auto diagonal = stiffness.getDiagonal();
             
                 Rainbow rainbow( stiffness );
 

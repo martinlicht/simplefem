@@ -63,7 +63,7 @@ class AlternatingForm
         }
         
         
-        AlternatingForm exteriorderivative( Float stepsize = 0.00001 ) const 
+        AlternatingForm exteriorderivative( Float stepsize = desired_closeness ) const 
         {
             
             const std::vector<IndexMap> sigmas_dst = generateSigmas( IndexRange( 1, k+1 ), IndexRange( 0, d-1 ) );
@@ -82,7 +82,7 @@ class AlternatingForm
                 assert( pattern[p].getdimin()  == sigmas_src.size() );
                 assert( pattern[p].getdimout() == sigmas_dst.size() );
                 
-                if( not src_form.rangecontains(p) ) {
+                if( not src_form.has_value_in_range(p) ) {
                     
                     IndexMap new_form = expand_one( src_form, p );
                     int new_form_index = find_index( sigmas_dst, new_form );
@@ -131,7 +131,7 @@ class AlternatingForm
         
         
         
-        AlternatingForm laplacian( Float stepsize = 0.00001 ) const 
+        AlternatingForm laplacian( Float stepsize = desired_closeness ) const 
         {
             
             int d = this->d;

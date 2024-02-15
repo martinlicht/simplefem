@@ -323,16 +323,16 @@ int main( int argc, char *argv[] )
 //         for( int r_plus =     0; r_plus <= r_plus_max; r_plus++ ) 
 //         {
 //             for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
-//                 assert( errors_scalar[i][l-l_min][r-r_min][r_plus] < 10e-14 );
+//                 assert( errors_scalar[i][l-l_min][r-r_min][r_plus] < desired_closeness );
 //             
 //             for( int i = 0; i < experiments_vector_field.size(); i++ ) 
-//                 assert( errors_vector[i][l-l_min][r-r_min][r_plus] < 10e-14 );
+//                 assert( errors_vector[i][l-l_min][r-r_min][r_plus] < desired_closeness );
 //             
 //             for( int i = 0; i < experiments_pseudo_field.size(); i++ ) 
-//                 assert( errors_pseudo[i][l-l_min][r-r_min][r_plus] < 10e-14 );
+//                 assert( errors_pseudo[i][l-l_min][r-r_min][r_plus] < desired_closeness );
 //             
 //             for( int i = 0; i < experiments_volume_field.size(); i++ )
-//                 assert( errors_volume[i][l-l_min][r-r_min][r_plus] < 10e-14 );
+//                 assert( errors_volume[i][l-l_min][r-r_min][r_plus] < desired_closeness );
 //         }
             
         

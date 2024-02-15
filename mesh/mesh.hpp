@@ -117,7 +117,7 @@ class Mesh
         
         /* Counting simplices */
         
-        virtual bool dimension_counted( int dim ) const = 0;
+        virtual bool has_dimension_counted( int dim ) const = 0;
         
         virtual int count_simplices( int dim ) const = 0;
         
@@ -134,7 +134,7 @@ class Mesh
          * 
          */
         
-        virtual bool subsimplices_listed( int sup, int sub ) const = 0;
+        virtual bool has_subsimplices_listed( int sup, int sub ) const = 0;
         
         virtual IndexMap getsubsimplices( int sup, int sub, int cell ) const = 0;
         
@@ -158,7 +158,7 @@ class Mesh
          * 
          */
         
-        virtual bool supersimplices_listed( int sup, int sub ) const = 0;
+        virtual bool has_supersimplices_listed( int sup, int sub ) const = 0;
         
         virtual const std::vector<int> getsupersimplices( int sup, int sub, int cell ) const = 0;
         

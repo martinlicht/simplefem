@@ -26,7 +26,7 @@ using namespace std;
 int main( int argc, char *argv[] )
 {
     
-    LOG << "Unit Test for Solution of Darcy Problem" << nl;
+    LOG << "Unit Test: 2D Darcy problem" << nl;
     
     if(true){
 
@@ -158,7 +158,7 @@ int main( int argc, char *argv[] )
                 
                 auto C  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
                 
-                auto Schur = B * inv(A,1e-14) * Bt;
+                auto Schur = B * inv(A,desired_precision) * Bt;
 
                 auto PA = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix )
                               + MatrixCSR( vector_incmatrix_t & diffmatrix_t & volume_massmatrix & diffmatrix & vector_incmatrix );

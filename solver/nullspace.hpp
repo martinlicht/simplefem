@@ -11,8 +11,8 @@ std::vector<FloatVector> computeNullspace(
     const LinearOperator& MassMatrix,
     const int max_number_of_candidates,
     //
-    const Float threshold_residual, 
-    const Float threshold_zero
+    const Float tolerance_residual, 
+    const Float tolerance_zero
 );
 
 #endif

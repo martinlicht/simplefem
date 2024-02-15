@@ -20,9 +20,9 @@ VTKWriter::VTKWriter( const Mesh& m, std::ostream& os, const std::string& name, 
     assert( mesh.getouterdimension() == 1 || mesh.getouterdimension() == 2 || mesh.getouterdimension() == 3 );
     assert( mesh.getinnerdimension() == 1 || mesh.getinnerdimension() == 2 || mesh.getinnerdimension() == 3 );
     
-    assert( mesh.dimension_counted( mesh.getinnerdimension() ) );
-    assert( mesh.dimension_counted(0) );
-    assert( mesh.subsimplices_listed( mesh.getinnerdimension(), 0 ) );
+    assert( mesh.has_dimension_counted( mesh.getinnerdimension() ) );
+    assert( mesh.has_dimension_counted(0) );
+    assert( mesh.has_subsimplices_listed( mesh.getinnerdimension(), 0 ) );
     
     writePreamble( name );
 

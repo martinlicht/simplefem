@@ -62,10 +62,10 @@ int main( int argc, char *argv[] )
         
         for( int i = 0; i < dimension; i++ ){
             if( i-1 >= 0 ) 
-                A.addentry( i, i-1, 1.25 );
+                A.appendentry( i, i-1, 1.25 );
             if( i+1 < dimension ) 
-                A.addentry( i, i+1, 1.25 );
-            A.addentry( i, i, 2.51 );
+                A.appendentry( i, i+1, 1.25 );
+            A.appendentry( i, i, 2.51 );
         }
         // A.sortentries();
         
@@ -73,7 +73,7 @@ int main( int argc, char *argv[] )
         M.reserve( dimension );
         
         for( int i = 0; i < dimension; i++ ){
-            M.addentry( i, i, 1./2.51 );
+            M.appendentry( i, i, 1./2.51 );
         }
         // A.sortentries();
         
@@ -88,7 +88,7 @@ int main( int argc, char *argv[] )
             
             ConjugateResidualMethod CRM(A);
             CRM.max_iteration_count = dimension;
-            CRM.threshold = 1e-20;
+            CRM.tolerance = desired_precision;
             
             timestamp start, end;
             start = timestampnow();
@@ -104,7 +104,7 @@ int main( int argc, char *argv[] )
             
             PreconditionedConjugateResidualMethod PCRM(A,M);
             PCRM.max_iteration_count = dimension;
-            PCRM.threshold = 1e-20;
+            PCRM.tolerance = desired_precision;
             
             timestamp start, end;
             start = timestampnow();
@@ -120,7 +120,7 @@ int main( int argc, char *argv[] )
             
             MinimumResidualMethod MINRES(A);
             MINRES.max_iteration_count = dimension;
-            MINRES.threshold = 1e-20;
+            MINRES.tolerance = desired_precision;
             
             timestamp start, end;
             start = timestampnow();
@@ -145,12 +145,12 @@ int main( int argc, char *argv[] )
         A.reserve( dimension );
         
         // for( int i = 0; i < dimension; i++ ){
-        //     A.addentry( i, i, sign_power(i) * 2.51 );
+        //     A.appendentry( i, i, sign_power(i) * 2.51 );
         // }
         
         for( int i = 0; i < dimension/2; i++ ){
-            A.addentry(               i,               i,  3+i );
-            A.addentry( dimension/2 + i, dimension/2 + i, -3-i );
+            A.appendentry(               i,               i,  3+i );
+            A.appendentry( dimension/2 + i, dimension/2 + i, -3-i );
         }
         
         LOG << "Compute stuff." << nl;
@@ -164,7 +164,7 @@ int main( int argc, char *argv[] )
             
             MinimumResidualMethod MINRES(A);
             MINRES.max_iteration_count = dimension;
-            MINRES.threshold = 1;
+            MINRES.tolerance = desired_precision;
             
             timestamp start, end;
             start = timestampnow();

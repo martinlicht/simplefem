@@ -28,7 +28,7 @@ int ConjugateGradientSolverCSR(
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ residual,
-    const Float threshold,
+    const Float tolerance,
     int print_modulo
 ) {
     
@@ -39,7 +39,7 @@ int ConjugateGradientSolverCSR(
     assert( csrcolumns );
     assert( csrvalues );
     assert( residual );
-    assert( threshold > 0 );
+    assert( tolerance > 0 );
     assert( print_modulo >= -1 );
     
     Float* __restrict__ direction = new (std::nothrow) Float[N];
@@ -58,7 +58,7 @@ int ConjugateGradientSolverCSR(
         
         bool restart_condition = ( K == 0 ) or ( csr_restart_on_full_dimension and K % N == 0 );
         
-        bool residual_seems_small = ( K != 0 ) and absolute(r_r) < threshold*threshold;
+        bool residual_seems_small = ( K != 0 ) and absolute(r_r) < tolerance*tolerance;
 
         if( restart_condition or ( csr_restart_before_finish and residual_seems_small ) ) UNLIKELY {
             
@@ -81,7 +81,7 @@ int ConjugateGradientSolverCSR(
             }
 
             if( print_modulo >= 0 ) 
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(r_r), (long double) threshold );
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(r_r), (long double) tolerance );
 
         
         }
@@ -89,11 +89,11 @@ int ConjugateGradientSolverCSR(
         /* printing information */
 
         if( print_modulo > 0 and K % print_modulo == 0 ) 
-            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(r_r), (long double) threshold );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(r_r), (long double) tolerance );
 
         /* Check whether residual is small */
                 
-        bool residual_is_small = absolute(r_r) < threshold*threshold;
+        bool residual_is_small = absolute(r_r) < tolerance*tolerance;
         
         if( residual_is_small )
             break;
@@ -128,7 +128,7 @@ int ConjugateGradientSolverCSR(
         }
         
         if( denominator_is_small ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(r_r), (long double) threshold );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(r_r), (long double) tolerance );
             if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   WARNING: Gradient energy is small with %.9Le\n", K, N, (long double)d_Ad );
             break;
         }
@@ -169,7 +169,7 @@ int ConjugateGradientSolverCSR(
     
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(r_r), (long double) threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(r_r), (long double) tolerance );
 
     
     delete[] ( direction ); 
@@ -203,7 +203,7 @@ int ConjugateGradientSolverCSR_DiagonalPreconditioner(
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ residual,
-    const Float threshold,
+    const Float tolerance,
     int print_modulo,
     const Float* __restrict__ precon
 ) {
@@ -215,7 +215,7 @@ int ConjugateGradientSolverCSR_DiagonalPreconditioner(
     assert( csrcolumns );
     assert( csrvalues );
     assert( residual );
-    assert( threshold > 0 );
+    assert( tolerance > 0 );
     assert( print_modulo >= -1 );
     assert( precon );
     
@@ -237,7 +237,7 @@ int ConjugateGradientSolverCSR_DiagonalPreconditioner(
         
         bool restart_condition = ( K == 0 ) or ( csr_restart_on_full_dimension and K % N == 0 );
         
-        bool preconresidual_seems_small = ( K != 0 ) and absolute(z_r) < threshold*threshold;
+        bool preconresidual_seems_small = ( K != 0 ) and absolute(z_r) < tolerance*tolerance;
 
         if( restart_condition or ( csr_restart_before_finish and preconresidual_seems_small ) ) UNLIKELY {
             
@@ -266,7 +266,7 @@ int ConjugateGradientSolverCSR_DiagonalPreconditioner(
             }
 
             if( print_modulo >= 0 ) 
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) tolerance );
 
             
         }
@@ -274,11 +274,11 @@ int ConjugateGradientSolverCSR_DiagonalPreconditioner(
         /* printing information */
 
         if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
-            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) tolerance );
         
         /* Check whether residual is small */
                 
-        bool preconresidual_is_small = absolute(z_r) < threshold*threshold;
+        bool preconresidual_is_small = absolute(z_r) < tolerance*tolerance;
         
         if( preconresidual_is_small )
             break;
@@ -315,7 +315,7 @@ int ConjugateGradientSolverCSR_DiagonalPreconditioner(
         }
         
         if( denominator_is_small ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) tolerance );
             if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   WARNING: Gradient energy is small with %.9Le\n", K, N, (long double)d_Ad );
             break;
         }
@@ -363,7 +363,7 @@ int ConjugateGradientSolverCSR_DiagonalPreconditioner(
     
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) tolerance );
 
     
     delete[] ( direction ); 
@@ -408,7 +408,7 @@ int ConjugateGradientSolverCSR_SSOR(
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ residual,
-    const Float threshold,
+    const Float tolerance,
     int print_modulo,
     const Float* __restrict__ diagonal,
     Float omega
@@ -421,7 +421,7 @@ int ConjugateGradientSolverCSR_SSOR(
     assert( csrcolumns );
     assert( csrvalues );
     assert( residual );
-    assert( threshold > 0 );
+    assert( tolerance > 0 );
     assert( print_modulo >= -1 );
     assert( diagonal );
     
@@ -448,7 +448,7 @@ int ConjugateGradientSolverCSR_SSOR(
         
         bool restart_condition = ( K == 0 ) or ( csr_restart_on_full_dimension and K % N == 0 );
         
-        bool preconresidual_seems_small = ( K != 0 ) and absolute(z_r) < threshold*threshold;
+        bool preconresidual_seems_small = ( K != 0 ) and absolute(z_r) < tolerance*tolerance;
 
         if( restart_condition or ( csr_restart_before_finish and preconresidual_seems_small ) ) UNLIKELY {
             
@@ -526,7 +526,7 @@ int ConjugateGradientSolverCSR_SSOR(
             }
 
             if( print_modulo >= 0 ) UNLIKELY 
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) tolerance );
 
             
         }
@@ -534,11 +534,11 @@ int ConjugateGradientSolverCSR_SSOR(
         /* printing information */
 
         if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
-            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) tolerance );
         
         /* Check whether residual is small */
                 
-        bool preconresidual_is_small = absolute(z_r) < threshold*threshold;
+        bool preconresidual_is_small = absolute(z_r) < tolerance*tolerance;
         
         if( preconresidual_is_small )
             break;
@@ -575,7 +575,7 @@ int ConjugateGradientSolverCSR_SSOR(
         }
         
         if( denominator_is_small ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) tolerance );
             if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   WARNING: Gradient energy is small with %.9Le\n", K, N, (long double)d_Ad );
             break;
         }
@@ -650,7 +650,7 @@ int ConjugateGradientSolverCSR_SSOR(
     }
     
     if( print_modulo >= 0 ) UNLIKELY 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) tolerance );
 
     
     delete[] ( direction ); 
@@ -672,7 +672,7 @@ int ConjugateGradientSolverCSR_SSOR_Eisenstat(
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ residual,
-    const Float threshold,
+    const Float tolerance,
     int print_modulo,
     const Float* __restrict__ diagonal,
     Float omega
@@ -685,7 +685,7 @@ int ConjugateGradientSolverCSR_SSOR_Eisenstat(
     assert( csrcolumns );
     assert( csrvalues );
     assert( residual );
-    assert( threshold > 0 );
+    assert( tolerance > 0 );
     assert( print_modulo >= -1 );
     assert( diagonal );
     
@@ -712,7 +712,7 @@ int ConjugateGradientSolverCSR_SSOR_Eisenstat(
         
         bool restart_condition = ( K == 0 ) or ( csr_restart_on_full_dimension and K % N == 0 );
         
-        bool preconresidual_seems_small = ( K != 0 ) and absolute(z_r) < threshold*threshold;
+        bool preconresidual_seems_small = ( K != 0 ) and absolute(z_r) < tolerance*tolerance;
 
         if( restart_condition or ( csr_restart_before_finish and preconresidual_seems_small ) ) UNLIKELY {
             
@@ -769,7 +769,7 @@ int ConjugateGradientSolverCSR_SSOR_Eisenstat(
             }
             
             if( print_modulo >= 0 ) UNLIKELY 
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) tolerance );
 
             
         }
@@ -777,11 +777,11 @@ int ConjugateGradientSolverCSR_SSOR_Eisenstat(
         /* printing information */
 
         if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
-            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) tolerance );
         
         /* Check whether residual is small */
                 
-        bool preconresidual_is_small = absolute(z_r) < threshold*threshold;
+        bool preconresidual_is_small = absolute(z_r) < tolerance*tolerance;
         
         if( preconresidual_is_small ) UNLIKELY 
             break;
@@ -853,7 +853,7 @@ int ConjugateGradientSolverCSR_SSOR_Eisenstat(
         }
         
         if( denominator_is_small ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) tolerance );
             if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   WARNING: Gradient energy is small with %.9Le\n", K, N, (long double)d_Ad );
             break;
         }
@@ -901,7 +901,7 @@ int ConjugateGradientSolverCSR_SSOR_Eisenstat(
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) tolerance );
 
     
     delete[] ( direction ); 
@@ -924,7 +924,7 @@ int ConjugateGradientSolverCSR_Rainbow(
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ residual,
-    const Float threshold,
+    const Float tolerance,
     int print_modulo,
     const Float* __restrict__ diagonal,
     Float omega,
@@ -938,7 +938,7 @@ int ConjugateGradientSolverCSR_Rainbow(
     assert( csrcolumns );
     assert( csrvalues );
     assert( residual );
-    assert( threshold > 0 );
+    assert( tolerance > 0 );
     assert( print_modulo >= -1 );
     assert( diagonal );
 
@@ -970,7 +970,7 @@ int ConjugateGradientSolverCSR_Rainbow(
         
         bool restart_condition = ( K == 0 ) or ( csr_restart_on_full_dimension and K % N == 0 );
         
-        bool preconresidual_seems_small = ( K != 0 ) and absolute(z_r) < threshold*threshold;
+        bool preconresidual_seems_small = ( K != 0 ) and absolute(z_r) < tolerance*tolerance;
 
         if( restart_condition or ( csr_restart_before_finish and preconresidual_seems_small ) ) UNLIKELY {
             
@@ -1072,7 +1072,7 @@ int ConjugateGradientSolverCSR_Rainbow(
             }
 
             if( print_modulo >= 0 ) UNLIKELY 
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) tolerance );
 
             
         }
@@ -1080,11 +1080,11 @@ int ConjugateGradientSolverCSR_Rainbow(
         /* printing information */
 
         if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
-            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) tolerance );
         
         /* Check whether residual is small */
                 
-        bool preconresidual_is_small = absolute(z_r) < threshold*threshold;
+        bool preconresidual_is_small = absolute(z_r) < tolerance*tolerance;
         
         if( preconresidual_is_small )
             break;
@@ -1121,7 +1121,7 @@ int ConjugateGradientSolverCSR_Rainbow(
         }
         
         if( denominator_is_small ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) tolerance );
             if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   WARNING: Gradient energy is small with %.9Le\n", K, N, (long double)d_Ad );
             break;
         }
@@ -1221,7 +1221,7 @@ int ConjugateGradientSolverCSR_Rainbow(
     }
     
     if( print_modulo >= 0 ) UNLIKELY 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) tolerance );
 
     
     delete[] ( direction ); 
@@ -1244,7 +1244,7 @@ int ConjugateGradientSolverCSR_Eisenstat_Rainbow(
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ residual,
-    const Float threshold,
+    const Float tolerance,
     int print_modulo,
     const Float* __restrict__ diagonal,
     Float omega,
@@ -1258,7 +1258,7 @@ int ConjugateGradientSolverCSR_Eisenstat_Rainbow(
     assert( csrcolumns );
     assert( csrvalues );
     assert( residual );
-    assert( threshold > 0 );
+    assert( tolerance > 0 );
     assert( print_modulo >= -1 );
     assert( diagonal );
 
@@ -1289,7 +1289,7 @@ int ConjugateGradientSolverCSR_Eisenstat_Rainbow(
         
         bool restart_condition = ( K == 0 ) or ( csr_restart_on_full_dimension and K % N == 0 );
         
-        bool preconresidual_seems_small = ( K != 0 ) and absolute(z_r) < threshold*threshold;
+        bool preconresidual_seems_small = ( K != 0 ) and absolute(z_r) < tolerance*tolerance;
 
         if( restart_condition or ( csr_restart_before_finish and preconresidual_seems_small ) ) UNLIKELY {
             
@@ -1357,7 +1357,7 @@ int ConjugateGradientSolverCSR_Eisenstat_Rainbow(
             }
             
             if( print_modulo >= 0 ) 
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) tolerance );
 
             
         }
@@ -1365,11 +1365,11 @@ int ConjugateGradientSolverCSR_Eisenstat_Rainbow(
         /* printing information */
 
         if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
-            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) tolerance );
         
         /* Check whether residual is small */
                 
-        bool preconresidual_is_small = absolute(z_r) < threshold*threshold;
+        bool preconresidual_is_small = absolute(z_r) < tolerance*tolerance;
         
         if( preconresidual_is_small )
             break;
@@ -1463,7 +1463,7 @@ int ConjugateGradientSolverCSR_Eisenstat_Rainbow(
         }
         
         if( denominator_is_small ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) tolerance );
             if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   WARNING: Gradient energy is small with %.9Le\n", K, N, (long double)d_Ad );
             break;
         }
@@ -1511,7 +1511,7 @@ int ConjugateGradientSolverCSR_Eisenstat_Rainbow(
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(z_r), (long double) tolerance );
 
     
     delete[] ( direction ); 
@@ -1569,7 +1569,7 @@ int ConjugateResidualSolverCSR(
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ res,
-    const Float threshold,
+    const Float tolerance,
     int print_modulo
 ) {
     
@@ -1580,7 +1580,7 @@ int ConjugateResidualSolverCSR(
     assert( csrcolumns );
     assert( csrvalues );
     assert( res );
-    assert( threshold > 0 );
+    assert( tolerance > 0 );
     assert( print_modulo >= -1 );
     
     Float* __restrict__  dir = new (std::nothrow) Float[N];
@@ -1606,7 +1606,7 @@ int ConjugateResidualSolverCSR(
         
         bool restart_condition = ( K == 0 ) or ( csr_restart_on_full_dimension and K % N == 0 );
         
-        bool residualenergy_seems_small = ( K != 0 ) and absolute(Ad_r) < threshold*threshold;
+        bool residualenergy_seems_small = ( K != 0 ) and absolute(Ad_r) < tolerance*tolerance;
 
         if( restart_condition or ( csr_restart_before_finish and residualenergy_seems_small ) ) UNLIKELY {
             
@@ -1645,19 +1645,19 @@ int ConjugateResidualSolverCSR(
             }
             
             if( print_modulo >= 0 ) 
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(Ad_r), (long double) threshold );
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(Ad_r), (long double) tolerance );
             
         }
         
         /* printing information */
 
         if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
-            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(Ad_r), (long double) threshold );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(Ad_r), (long double) tolerance );
 
         
         /* Check whether res is small */
                 
-        bool residualenergy_is_small = absolute(Ad_r) < threshold*threshold;
+        bool residualenergy_is_small = absolute(Ad_r) < tolerance*tolerance;
         bool residualenergy_is_unreasonable = not std::isfinite(Ad_r) or Ad_r < 0.;
         
         if( residualenergy_is_unreasonable ) UNLIKELY {
@@ -1679,7 +1679,7 @@ int ConjugateResidualSolverCSR(
         }
         
         if( denominator_is_small ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(Ad_r), (long double) threshold );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(Ad_r), (long double) tolerance );
             if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   WARNING: Gradient double energy is small with %.9Le\n", K, N, (long double)Ad_Ad );
             break;
         }
@@ -1736,7 +1736,7 @@ int ConjugateResidualSolverCSR(
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(Ad_r), (long double) threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(Ad_r), (long double) tolerance );
 
     
     delete[] (  dir );
@@ -1782,7 +1782,7 @@ int ConjugateResidualSolverCSR_textbook(
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ res,
-    const Float threshold,
+    const Float tolerance,
     int print_modulo
 ) {
     
@@ -1793,7 +1793,7 @@ int ConjugateResidualSolverCSR_textbook(
     assert( csrcolumns );
     assert( csrvalues );
     assert( res );
-    assert( threshold > 0 );
+    assert( tolerance > 0 );
     assert( print_modulo >= -1 );
     
     Float* __restrict__  dir = new (std::nothrow) Float[N];
@@ -1819,7 +1819,7 @@ int ConjugateResidualSolverCSR_textbook(
         
         bool restart_condition = ( K == 0 ) or ( csr_restart_on_full_dimension and K % N == 0 );
         
-        bool residualenergy_seems_small = ( K != 0 ) and absolute(Ar_r) < threshold*threshold;
+        bool residualenergy_seems_small = ( K != 0 ) and absolute(Ar_r) < tolerance*tolerance;
 
         if( restart_condition or ( csr_restart_before_finish and residualenergy_seems_small ) ) UNLIKELY {
             
@@ -1858,19 +1858,19 @@ int ConjugateResidualSolverCSR_textbook(
             }
 
             if( print_modulo >= 0 ) 
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(Ar_r), (long double) threshold );
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(Ar_r), (long double) tolerance );
             
         }
         
         /* printing information */
 
         if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
-            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(Ar_r), (long double) threshold );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(Ar_r), (long double) tolerance );
         
         /* Check whether res is small */
                 
         bool residualenergy_is_unreasonable = not std::isfinite(Ar_r) or Ar_r < 0.;
-        bool residualenergy_is_small = absolute(Ar_r) < threshold*threshold;
+        bool residualenergy_is_small = absolute(Ar_r) < tolerance*tolerance;
         
         if( residualenergy_is_unreasonable ) UNLIKELY {
             if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Residual energy is unreasonable with %.9Le\n", K, N, (long double)Ar_r );
@@ -1890,7 +1890,7 @@ int ConjugateResidualSolverCSR_textbook(
         }
         
         if( denominator_is_small ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(Ar_r), (long double) threshold );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(Ar_r), (long double) tolerance );
             if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   WARNING: Gradient double energy is small with %.9Le\n", K, N, (long double)Ad_Ad );
             break;
         }
@@ -1945,7 +1945,7 @@ int ConjugateResidualSolverCSR_textbook(
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(Ar_r), (long double) threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) sqrt(Ar_r), (long double) tolerance );
 
     
     delete[] (  dir );
@@ -2004,7 +2004,7 @@ int MINRESCSR(
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ res,
-    const Float threshold,
+    const Float tolerance,
     int print_modulo
 ) {
     
@@ -2015,7 +2015,7 @@ int MINRESCSR(
     assert( csrcolumns );
     assert( csrvalues );
     assert( res );
-    assert( threshold > 0 );
+    assert( tolerance > 0 );
     assert( print_modulo >= -1 );
     
     Float* __restrict__ v0 = new (std::nothrow) Float[N];
@@ -2054,7 +2054,7 @@ int MINRESCSR(
         
         bool restart_condition = (K == 0) or ( csr_restart_on_full_dimension and K % N == 0 );
         
-        bool residual_seems_small = ( K != 0 ) and ( absolute(eta) < threshold );
+        bool residual_seems_small = ( K != 0 ) and ( absolute(eta) < tolerance );
         
         if( restart_condition or ( csr_restart_before_finish and residual_seems_small ) ) {
             
@@ -2093,12 +2093,12 @@ int MINRESCSR(
             eta = gamma;
 
             if( print_modulo >= 0 ) 
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) absolute(eta), (long double) threshold );
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", K, N, (long double) absolute(eta), (long double) tolerance );
 
             
         }
         
-        bool residual_is_small = ( absolute(eta) < threshold);
+        bool residual_is_small = ( absolute(eta) < tolerance);
         
         if( residual_is_small )
             break;
@@ -2193,14 +2193,14 @@ int MINRESCSR(
 
         
         if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
-            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double)eta, (long double) threshold );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double)eta, (long double) tolerance );
         
         K++;
         
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", K, N, (long double)eta, (long double) threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", K, N, (long double)eta, (long double) tolerance );
 
     
     delete[] ( v0 );
@@ -2231,7 +2231,7 @@ int WHATEVER(
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ res,
-    const Float threshold,
+    const Float tolerance,
     int print_modulo
 ) {
     
@@ -2242,7 +2242,7 @@ int WHATEVER(
     assert( csrcolumns );
     assert( csrvalues );
     assert( res );
-    assert( threshold > 0 );
+    assert( tolerance > 0 );
     assert( print_modulo >= -1 );
     
     Float* __restrict__  r = new (std::nothrow) Float[N];
@@ -2335,7 +2335,7 @@ int WHATEVER(
             r_r += r[c] * r[c];
         }
         
-        if( std::sqrt(r_r) < threshold )
+        if( std::sqrt(r_r) < tolerance )
             break;
         
         Float s0_s1 = 0.;
@@ -2394,14 +2394,14 @@ int WHATEVER(
             
         
         if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
-            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double)std::sqrt(r_r), (long double) threshold );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double)std::sqrt(r_r), (long double) tolerance );
         
         K++;
         
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", K, N, (long double)std::sqrt(r_r), (long double) threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", K, N, (long double)std::sqrt(r_r), (long double) tolerance );
 
     
     delete[] (  r );
@@ -2439,7 +2439,7 @@ int ChebyshevIteration_DiagonalPreconditioner(
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ residual,
-    const Float threshold,
+    const Float tolerance,
     unsigned int print_modulo,
     const Float* __restrict__ precon,
     const Float lower,
@@ -2453,7 +2453,7 @@ int ChebyshevIteration_DiagonalPreconditioner(
     assert( csrcolumns );
     assert( csrvalues );
     assert( residual );
-    assert( threshold > 0 );
+    assert( tolerance > 0 );
     assert( print_modulo >= 0 );
     assert( precon );
     
@@ -2487,7 +2487,7 @@ int ChebyshevIteration_DiagonalPreconditioner(
         
         bool restart_condition = ( K == 0 ) or ( csr_restart_on_full_dimension and K % N == 0 );
 
-        bool residual_seems_small = ( K != 0 ) and std::sqrt(r_r) < threshold;
+        bool residual_seems_small = ( K != 0 ) and std::sqrt(r_r) < tolerance;
 
         if( restart_condition or ( csr_restart_before_finish and residual_seems_small ) ) UNLIKELY {
             
@@ -2527,7 +2527,7 @@ int ChebyshevIteration_DiagonalPreconditioner(
         
         /* Check whether residual is small */
                 
-        bool residual_is_small = std::sqrt(r_r) < threshold;
+        bool residual_is_small = std::sqrt(r_r) < tolerance;
         
         if( residual_is_small )
             break;
@@ -2569,13 +2569,13 @@ int ChebyshevIteration_DiagonalPreconditioner(
         
         
         if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
-            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double)std::sqrt(r_r), (long double) threshold );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", K, N, (long double)std::sqrt(r_r), (long double) tolerance );
         
         K++;
         
     }
     
-    LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", K, N, (long double)std::sqrt(r_r), (long double) threshold );
+    LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", K, N, (long double)std::sqrt(r_r), (long double) tolerance );
 
     
     delete[] ( x_prev );
@@ -2713,7 +2713,7 @@ int ChebyshevIteration_DiagonalPreconditioner(
 //     int maxiter = 10 * (M + pdim);
 //     int iter = 0;
 //     
-//     const Float threshold = threshold;
+//     const Float tolerance = tolerance;
 //     
 //     /*************/
 //     /* MAIN LOOP */
@@ -2794,7 +2794,7 @@ int ChebyshevIteration_DiagonalPreconditioner(
 // 
 //         LOGPRINTF( "@@@@@@@@@@ Residual norm: %f\n", residualnorm );
 //         
-//         if( residualnorm < threshold ) {
+//         if( residualnorm < tolerance ) {
 //             LOGPRINTF( "@@@@@@@@@@ Threshold deceeded.\n" );
 //             break;
 //         }
@@ -3185,7 +3185,7 @@ int ChebyshevIteration_DiagonalPreconditioner(
 //     int maxiter = 10 * (M + pdim);
 //     int iter = 0;
 //     
-//     const Float threshold = threshold;
+//     const Float tolerance = tolerance;
 //     
 //     /*************/
 //     /* MAIN LOOP */
@@ -3245,7 +3245,7 @@ int ChebyshevIteration_DiagonalPreconditioner(
 // 
 //         LOGPRINTF( "@@@@@@@@@@ Residual norm: %f\n", residualnorm );
 //         
-//         if( residualnorm < threshold ) {
+//         if( residualnorm < tolerance ) {
 //             LOGPRINTF( "@@@@@@@@@@ Threshold deceeded.\n" );
 //             break;
 //         }

@@ -64,12 +64,12 @@ std::vector< std::pair<MultiIndex,IndexMap> > ListOfSullivanIndices( int n, int 
         // First, check that every p in 0..n is contained in the ranges of alpha and/or sigma
         bool b1 = std::all_of( N.begin(), N.end(), 
                                [ &alpha, &sigma ]( int p ) -> bool { 
-                                   return sigma.rangecontains(p) or alpha[p] > 0;
+                                   return sigma.has_value_in_range(p) or alpha[p] > 0;
                                    }
                              );
         
         // Second, check that min[alpha] not in [sigma]
-        bool b2 = not sigma.rangecontains( alpha.min() );
+        bool b2 = not sigma.has_value_in_range( alpha.min() );
         
         // if both criteria are satisfied, then save that one
         if( b1 and b2 )
@@ -125,12 +125,12 @@ std::vector< std::pair<MultiIndex,IndexMap> > ListOfWhitneyIndices( int n, int k
         // First, check that every p in 0..n is contained in the ranges of alpha and/or sigma
         bool b1 = std::all_of( N.begin(), N.end(), 
                                [ &alpha, &rho ]( int p ) -> bool { 
-                                   return rho.rangecontains(p) or alpha[p] > 0;
+                                   return rho.has_value_in_range(p) or alpha[p] > 0;
                                    }
                              );
         
         // Second, check that min[sigma] = 0
-        bool b2 = rho.rangecontains( 0 );
+        bool b2 = rho.has_value_in_range( 0 );
         
         // if both criteria are satisfied, then save that one
         if( b1 and b2 )

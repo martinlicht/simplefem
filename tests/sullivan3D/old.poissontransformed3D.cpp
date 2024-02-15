@@ -223,7 +223,7 @@ using namespace std;
 int main( int argc, char *argv[] )
 {
         
-    LOG << "Unit Test for transformed 3D Poisson Problem" << nl;
+    LOG << "Unit Test: 3D transformed Poisson Problem" << nl;
     
     LOG << "Initial mesh..." << nl;
     
@@ -375,7 +375,7 @@ int main( int argc, char *argv[] )
                     
                     sol.zero();
 
-                    auto diagonal = stiffness.diagonal();
+                    auto diagonal = stiffness.getDiagonal();
                     // FloatVector residual( rhs );
                 
                     Rainbow rainbow( stiffness );
@@ -419,7 +419,7 @@ int main( int argc, char *argv[] )
                     // aug_sol = IncreaseResolution( inter_M, IncreaseResolution( M, sol ) );
                     aug_sol = IncreaseResolution( M, sol );
 
-                    auto aug_diagonal = aug_stiffness.diagonal();
+                    auto aug_diagonal = aug_stiffness.getDiagonal();
                     // FloatVector aug_residual( aug_rhs );
                     
                     Rainbow rainbow( aug_stiffness );

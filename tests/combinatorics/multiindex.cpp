@@ -65,10 +65,10 @@ int main( int argc, char *argv[] )
         MultiIndex miA2( irA );
         MultiIndex miB ( irB );
         
-        assert( miA1.comparablewith( miA2 ) );
-        assert( miA2.comparablewith( miA1 ) );
-        assert( not miA1.comparablewith( miB ) );
-        assert( not miB.comparablewith( miA1 ) );
+        assert( miA1.is_comparable_with( miA2 ) );
+        assert( miA2.is_comparable_with( miA1 ) );
+        assert( not miA1.is_comparable_with( miB ) );
+        assert( not miB.is_comparable_with( miA1 ) );
         
         miA1 += 4;
         miA1 += 4;
@@ -82,22 +82,22 @@ int main( int argc, char *argv[] )
         miA2 += 4;
         miA2 += 2;
         
-        assert( miA1.comparablewith( miA2 ) );
-        assert( miA2.comparablewith( miA1 ) );
+        assert( miA1.is_comparable_with( miA2 ) );
+        assert( miA2.is_comparable_with( miA1 ) );
         assert( miA1 == miA2 );
         assert( miA2 == miA1 );
         
         miA2 -= 4;
         
-        assert( miA1.comparablewith( miA2 ) );
-        assert( miA2.comparablewith( miA1 ) );
+        assert( miA1.is_comparable_with( miA2 ) );
+        assert( miA2.is_comparable_with( miA1 ) );
         assert( miA1 != miA2 );
         assert( miA2 != miA1 );
         
         miA1 -= 4;
         
-        assert( miA1.comparablewith( miA2 ) );
-        assert( miA2.comparablewith( miA1 ) );
+        assert( miA1.is_comparable_with( miA2 ) );
+        assert( miA2.is_comparable_with( miA1 ) );
         assert( miA1 == miA2 );
         assert( miA2 == miA1 );
         
@@ -107,8 +107,8 @@ int main( int argc, char *argv[] )
         miA3[4] = 2;
         miA3[5] = 0;
 
-        assert( miA3.comparablewith( miA1+miA2 ) );
-        assert( ( miA1+miA2 ).comparablewith( miA3 ) );
+        assert( miA3.is_comparable_with( miA1+miA2 ) );
+        assert( ( miA1+miA2 ).is_comparable_with( miA3 ) );
         assert( miA3 == ( miA1+miA2 ) );
         assert( ( miA1+miA2 ) == miA3 );
         

@@ -215,7 +215,7 @@ bool SparseMatrix::isfinite() const
     return true;
 }
 
-FloatVector SparseMatrix::diagonal() const
+FloatVector SparseMatrix::getDiagonal() const
 { 
     check();
     assert( getdimin() == getdimout() );
@@ -491,18 +491,18 @@ void SparseMatrix::setentry( int i, MatrixEntry entry )
 }
         
         
-void SparseMatrix::addentry( int r, int c, Float v )
+void SparseMatrix::appendentry( int r, int c, Float v )
 {
 //     check();
     SparseMatrix::MatrixEntry temp;
     temp.row = r;
     temp.column = c;
     temp.value = v;
-    addentry( temp );
+    appendentry( temp );
 //     check();
 }
 
-void SparseMatrix::addentry( SparseMatrix::MatrixEntry entry )
+void SparseMatrix::appendentry( SparseMatrix::MatrixEntry entry )
 {
 //     check();
     assert( 0 <= entry.row && entry.row <= getdimout() );

@@ -174,7 +174,7 @@ int main( int argc, char *argv[] )
                     timestamp start = timestampnow();
                     ConjugateResidualMethod CRM( stiffness_csr );
                     CRM.print_modulo = 1+sol.getdimension()/1000;
-                    CRM.threshold = 1e-10;
+                    CRM.tolerance = desired_precision;
                     CRM.solve( sol, rhs );
                     timestamp end = timestampnow();
                     LOG << "\t\t\t " << timestamp2measurement( end - start ) << nl;
@@ -186,7 +186,7 @@ int main( int argc, char *argv[] )
                     timestamp start = timestampnow();
                     PreconditionedConjugateResidualMethod PCRM( stiffness_csr, stiffness_invprecon );
                     PCRM.print_modulo = 1+sol.getdimension()/10;
-                    PCRM.threshold = 1e-10;
+                    PCRM.tolerance = desired_precision;
                     PCRM.solve( sol, rhs );
                     timestamp end = timestampnow();
                     LOG << "\t\t\t " << timestamp2measurement( end - start ) << nl;

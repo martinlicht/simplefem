@@ -413,7 +413,7 @@ int main( int argc, char *argv[] )
 
                             assert( sol.isfinite() );
 
-                            auto ndiv = inv(A,1e-14) * Bt * sol;
+                            auto ndiv = inv(A,desired_precision) * Bt * sol;
                             
                             auto curl = vector_diffmatrix * vector_incmatrix * sol;
                             

@@ -26,7 +26,7 @@ using namespace std;
 int main( int argc, char *argv[] )
 {
         
-        LOG << "Unit Test for Solution of Neumann Problem" << nl;
+        LOG << "Unit Test: 2D Poisson problem" << nl;
         
         // LOG << std::setprecision(10);
 
@@ -79,7 +79,7 @@ int main( int argc, char *argv[] )
                     });
                     
 
-//                     const Float stepsize = 1e-07;
+//                     const Float stepsize = desired_closeness;
 //                     
 //                     FloatVector ret(1);
 //                     

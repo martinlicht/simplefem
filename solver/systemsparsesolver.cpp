@@ -21,9 +21,9 @@ int HodgeConjugateResidualSolverCSR(
     const int* __restrict__ Btrows, const int* __restrict__ Btcolumns, const Float* __restrict__ Btvalues, 
     const int* __restrict__  Crows, const int* __restrict__  Ccolumns, const Float* __restrict__  Cvalues, 
     Float* res,
-    Float threshold,
+    Float tolerance,
     int print_modulo,
-    Float inneriteration_threshold,
+    Float inneriteration_tolerance,
     int inneriteration_print_modulo
 ) {
     return 
@@ -37,9 +37,9 @@ int HodgeConjugateResidualSolverCSR(
         Btrows, Btcolumns, Btvalues, 
         Crows,   Ccolumns,  Cvalues, 
         res,
-        threshold,
+        tolerance,
         print_modulo,
-        inneriteration_threshold,
+        inneriteration_tolerance,
         inneriteration_print_modulo
     );
 }
@@ -55,9 +55,9 @@ int HodgeConjugateResidualSolverCSR_diagonal(
     const int* __restrict__ Btrows, const int* __restrict__ Btcolumns, const Float* __restrict__ Btvalues, 
     const int* __restrict__  Crows, const int* __restrict__  Ccolumns, const Float* __restrict__  Cvalues, 
     Float* res,
-    Float threshold,
+    Float tolerance,
     int print_modulo,
-    Float inneriteration_threshold,
+    Float inneriteration_tolerance,
     int inneriteration_print_modulo
 ) {
     
@@ -75,7 +75,7 @@ int HodgeConjugateResidualSolverCSR_diagonal(
     assert( Btcolumns );
     assert( Btvalues );
     assert( res );
-    assert( threshold > 0 );
+    assert( tolerance > 0 );
 //     assert( print_modulo >= 0 );
     
     Float* __restrict__  dir = new (std::nothrow) Float[N];
@@ -134,7 +134,7 @@ int HodgeConjugateResidualSolverCSR_diagonal(
         
         bool restart_condition = ( k == 0 ) or ( csrsys_restart_on_full_dimension and k % N == 0 );
         
-        bool residualenergy_seems_small = ( k != 0 ) and absolute(Md_r) < threshold*threshold;
+        bool residualenergy_seems_small = ( k != 0 ) and absolute(Md_r) < tolerance*tolerance;
         // bool residualenergy_seems_small = false;
 
         if( restart_condition or ( csrsys_restart_before_finish and residualenergy_seems_small ) ) UNLIKELY {
@@ -158,7 +158,7 @@ int HodgeConjugateResidualSolverCSR_diagonal(
                 (const Float *)aux1, 
                 Arows, Acolumns, Avalues, 
                 auxR,
-                inneriteration_threshold, 
+                inneriteration_tolerance, 
                 inneriteration_print_modulo
                 , precon
             );
@@ -202,7 +202,7 @@ int HodgeConjugateResidualSolverCSR_diagonal(
                 (const Float *)aux1, 
                 Arows, Acolumns, Avalues, 
                 auxR,
-                inneriteration_threshold,
+                inneriteration_tolerance,
                 inneriteration_print_modulo,
                 precon
             );
@@ -228,19 +228,19 @@ int HodgeConjugateResidualSolverCSR_diagonal(
             }
             
             if( print_modulo >= 0 ) 
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) tolerance );
 
         }
         
         /* Print information */
         
         if( print_modulo > 0 and k % print_modulo == 0 ) UNLIKELY 
-            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) tolerance );
         
         /* Check whether res is small */
         
         bool residualenergy_is_unreasonable = not std::isfinite(Md_r) or Md_r < 0.;
-        bool residualenergy_is_small = absolute(Md_r) < threshold*threshold;
+        bool residualenergy_is_small = absolute(Md_r) < tolerance*tolerance;
         
         if( residualenergy_is_unreasonable ) UNLIKELY {
             if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Residual energy is unreasonable with %.9Le\n", k, N, (long double)Md_r );
@@ -261,7 +261,7 @@ int HodgeConjugateResidualSolverCSR_diagonal(
         }
         
         if( denominator_is_small ) UNLIKELY {
-            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) tolerance );
             LOGPRINTF( "(%d/%d)   WARNING: Gradient double energy is small with %.9Le\n", k, N, (long double)Md_Md );
             break;
         }
@@ -292,7 +292,7 @@ int HodgeConjugateResidualSolverCSR_diagonal(
             (const Float *)aux1, 
             Arows, Acolumns, Avalues, 
             auxR,
-            inneriteration_threshold,
+            inneriteration_tolerance,
             inneriteration_print_modulo
             , precon
         );
@@ -352,7 +352,7 @@ int HodgeConjugateResidualSolverCSR_diagonal(
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) tolerance );
 
     
     delete[] (  dir );
@@ -412,9 +412,9 @@ int HodgeConjugateResidualSolverCSR_SSOR(
     const int* __restrict__ Btrows, const int* __restrict__ Btcolumns, const Float* __restrict__ Btvalues, 
     const int* __restrict__  Crows, const int* __restrict__  Ccolumns, const Float* __restrict__  Cvalues, 
     Float* res,
-    Float threshold,
+    Float tolerance,
     int print_modulo,
-    Float inneriteration_threshold,
+    Float inneriteration_tolerance,
     int inneriteration_print_modulo
 ) {
     
@@ -432,7 +432,7 @@ int HodgeConjugateResidualSolverCSR_SSOR(
     assert( Btcolumns );
     assert( Btvalues );
     assert( res );
-    assert( threshold > 0 );
+    assert( tolerance > 0 );
 //     assert( print_modulo >= 0 );
     
     Float* __restrict__  dir = new (std::nothrow) Float[N];
@@ -488,7 +488,7 @@ int HodgeConjugateResidualSolverCSR_SSOR(
         
         bool restart_condition = ( k == 0 ) or ( csrsys_restart_on_full_dimension and k % N == 0 );
         
-        bool residualenergy_seems_small = ( k != 0 ) and absolute(Md_r) < threshold*threshold;
+        bool residualenergy_seems_small = ( k != 0 ) and absolute(Md_r) < tolerance*tolerance;
         // bool residualenergy_seems_small = false;
 
         if( restart_condition or ( csrsys_restart_before_finish and residualenergy_seems_small ) ) UNLIKELY {
@@ -512,7 +512,7 @@ int HodgeConjugateResidualSolverCSR_SSOR(
                 (const Float *)aux1, 
                 Arows, Acolumns, Avalues, 
                 auxR,
-                inneriteration_threshold,
+                inneriteration_tolerance,
                 inneriteration_print_modulo
                 , diagonal, 1.
             );
@@ -556,7 +556,7 @@ int HodgeConjugateResidualSolverCSR_SSOR(
                 (const Float *)aux1, 
                 Arows, Acolumns, Avalues, 
                 auxR,
-                inneriteration_threshold,
+                inneriteration_tolerance,
                 inneriteration_print_modulo,
                 diagonal, 1.
             );
@@ -582,14 +582,14 @@ int HodgeConjugateResidualSolverCSR_SSOR(
             }
             
             if( print_modulo >= 0 ) 
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) tolerance );
 
         }
         
         /* Print information */
         
         if( print_modulo > 0 and k % print_modulo == 0 ) UNLIKELY 
-            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) tolerance );
         
         /* Check whether res is small */
                 
@@ -600,7 +600,7 @@ int HodgeConjugateResidualSolverCSR_SSOR(
             break;
         }
 
-        bool residualenergy_is_small = absolute(Md_r) < threshold*threshold;
+        bool residualenergy_is_small = absolute(Md_r) < tolerance*tolerance;
         
         if( residualenergy_is_small ) UNLIKELY 
             break;
@@ -616,7 +616,7 @@ int HodgeConjugateResidualSolverCSR_SSOR(
         }
         
         if( denominator_is_small ) UNLIKELY {
-            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) tolerance );
             LOGPRINTF( "(%d/%d)   WARNING: Gradient double energy is small with %.9Le\n", k, N, (long double)Md_Md );
             break;
         }
@@ -647,7 +647,7 @@ int HodgeConjugateResidualSolverCSR_SSOR(
             (const Float *)aux1, 
             Arows, Acolumns, Avalues, 
             auxR,
-            inneriteration_threshold,
+            inneriteration_tolerance,
             inneriteration_print_modulo
             , diagonal, 1.0
         );
@@ -708,7 +708,7 @@ int HodgeConjugateResidualSolverCSR_SSOR(
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Md_r), (long double) tolerance );
 
     
     delete[] (  dir );
@@ -769,9 +769,9 @@ int HodgeConjugateResidualSolverCSR_textbook(
     const int* __restrict__ Btrows, const int* __restrict__ Btcolumns, const Float* __restrict__ Btvalues, 
     const int* __restrict__  Crows, const int* __restrict__  Ccolumns, const Float* __restrict__  Cvalues, 
     Float* res,
-    Float threshold,
+    Float tolerance,
     int print_modulo,
-    Float inneriteration_threshold,
+    Float inneriteration_tolerance,
     int inneriteration_print_modulo
 ) {
     
@@ -789,7 +789,7 @@ int HodgeConjugateResidualSolverCSR_textbook(
     assert( Btcolumns );
     assert( Btvalues );
     assert( res );
-    assert( threshold > 0 );
+    assert( tolerance > 0 );
 //     assert( print_modulo >= 0 );
     
     Float* __restrict__  dir = new (std::nothrow) Float[N];
@@ -824,7 +824,7 @@ int HodgeConjugateResidualSolverCSR_textbook(
         
         bool restart_condition = ( k == 0 ) or ( csrsys_restart_on_full_dimension and k % N == 0 );
         
-        bool residualenergy_seems_small = ( k != 0 ) and absolute(Mr_r) < threshold*threshold;
+        bool residualenergy_seems_small = ( k != 0 ) and absolute(Mr_r) < tolerance*tolerance;
 
         if( restart_condition or ( csrsys_restart_before_finish and residualenergy_seems_small ) ) {
             
@@ -847,7 +847,7 @@ int HodgeConjugateResidualSolverCSR_textbook(
                 (const Float *)aux1, 
                 Arows, Acolumns, Avalues, 
                 auxR,
-                inneriteration_threshold,
+                inneriteration_tolerance,
                 inneriteration_print_modulo
             );
             
@@ -890,7 +890,7 @@ int HodgeConjugateResidualSolverCSR_textbook(
                 (const Float *)aux1, 
                 Arows, Acolumns, Avalues, 
                 auxR,
-                inneriteration_threshold,
+                inneriteration_tolerance,
                 inneriteration_print_modulo
             );
             
@@ -915,14 +915,14 @@ int HodgeConjugateResidualSolverCSR_textbook(
             }
 
             if( print_modulo >= 0 ) 
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Mr_r), (long double) threshold );
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Mr_r), (long double) tolerance );
             
         }
         
         /* Print information */
         
         if( print_modulo > 0 and k % print_modulo == 0 ) 
-            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Mr_r), (long double) threshold );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Mr_r), (long double) tolerance );
         
         /* Check whether res is small */
                 
@@ -933,7 +933,7 @@ int HodgeConjugateResidualSolverCSR_textbook(
             break;
         }
 
-        bool residualenergy_is_small = absolute(Mr_r) < threshold*threshold;
+        bool residualenergy_is_small = absolute(Mr_r) < tolerance*tolerance;
         
         if( residualenergy_is_small )
             break;
@@ -949,7 +949,7 @@ int HodgeConjugateResidualSolverCSR_textbook(
         }
         
         if( denominator_is_small ) {
-            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Mr_r), (long double) threshold );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Mr_r), (long double) tolerance );
             if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   WARNING: Gradient double energy is small with %.9Le\n", k, N, (long double)Md_Md );
             break;
         }
@@ -980,7 +980,7 @@ int HodgeConjugateResidualSolverCSR_textbook(
             (const Float *)aux1, 
             Arows, Acolumns, Avalues, 
             auxR,
-            inneriteration_threshold,
+            inneriteration_tolerance,
             inneriteration_print_modulo
         );
         
@@ -1040,7 +1040,7 @@ int HodgeConjugateResidualSolverCSR_textbook(
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Mr_r), (long double) threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", k, N, (long double) sqrt(Mr_r), (long double) tolerance );
 
     
     delete[] (  dir );
@@ -1077,11 +1077,11 @@ int HodgeHerzogSoodhalterMethod(
     const int* __restrict__  Brows, const int* __restrict__  Bcolumns, const Float* __restrict__  Bvalues, 
     const int* __restrict__ Btrows, const int* __restrict__ Btcolumns, const Float* __restrict__ Btvalues, 
     const int* __restrict__  Crows, const int* __restrict__  Ccolumns, const Float* __restrict__  Cvalues, 
-    Float threshold,
+    Float tolerance,
     int print_modulo,
     const int* __restrict__ PArows, const int* __restrict__ PAcolumns, const Float* __restrict__ PAvalues, 
     const int* __restrict__ PCrows, const int* __restrict__ PCcolumns, const Float* __restrict__ PCvalues, 
-    Float inneriteration_threshold,
+    Float inneriteration_tolerance,
     int inneriteration_print_modulo
 ) {
 
@@ -1100,7 +1100,7 @@ int HodgeHerzogSoodhalterMethod(
     assert( Btrows );
     assert( Btcolumns );
     assert( Btvalues );
-    assert( threshold > 0 );
+    assert( tolerance > 0 );
 //     assert( print_modulo >= 0 );
     // assert( PArows ); // TODO
     // assert( PAcolumns );
@@ -1108,7 +1108,7 @@ int HodgeHerzogSoodhalterMethod(
     // assert( PCrows );
     // assert( PCcolumns );
     // assert( PCvalues );
-    assert( inneriteration_threshold > 0 );
+    assert( inneriteration_tolerance > 0 );
 //     assert( inneriteration_print_modulo >= 0 );
     
     Float* __restrict__ v0_A = new (std::nothrow) Float[ dimension_A ];
@@ -1161,7 +1161,7 @@ int HodgeHerzogSoodhalterMethod(
         
         bool restart_condition = ( recent_iteration_count == 0 ) or ( csrsys_restart_on_full_dimension and recent_iteration_count );;
         
-        bool residual_seems_small = ( recent_iteration_count != 0 ) and ( absolute(eta) < threshold );
+        bool residual_seems_small = ( recent_iteration_count != 0 ) and ( absolute(eta) < tolerance );
         
         if( restart_condition or ( csrsys_restart_before_finish and residual_seems_small ) ) {
             
@@ -1222,13 +1222,13 @@ int HodgeHerzogSoodhalterMethod(
             c0 = c1 = 1;
             
             if( print_modulo >= 0 ) {
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) absolute(eta), (long double)threshold );
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) absolute(eta), (long double)tolerance );
                 LOGPRINTF( "(%d/%d)            Gamma: %.9Le Eta_A %.9Le Eta_C %.9Le\n", recent_iteration_count, max_iteration_count, (long double)eta_A, (long double)eta_C, (long double)gamma );
             }
 
         }
         
-        bool residual_is_small = ( absolute(eta) < threshold );
+        bool residual_is_small = ( absolute(eta) < tolerance );
         
         if( residual_is_small )
             break;
@@ -1344,7 +1344,7 @@ int HodgeHerzogSoodhalterMethod(
         bool print_condition = ( print_modulo > 0 and recent_iteration_count % print_modulo == 0 );
         
         if( print_modulo >= 0 and print_condition ) {
-            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) recent_deviation, (long double)threshold );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) recent_deviation, (long double)tolerance );
             LOGPRINTF( "                   Gamma: %.9Le Eta: %.9Le\n", (long double)gamma, (long double)eta );
         }
         
@@ -1383,7 +1383,7 @@ int HodgeHerzogSoodhalterMethod(
     Float recent_deviation = absolute( eta );
         
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double)recent_deviation, (long double)threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double)recent_deviation, (long double)tolerance );
 
     return recent_iteration_count;
 }

@@ -95,8 +95,8 @@ void Mesh::check() const
   assert( outerdimension == coordinates.getdimension() );
   
   // the vertices and volumes must be counted 
-  // assert( dimension_counted( innerdimension ) );
-  // assert( dimension_counted( 0 ) );
+  // assert( has_dimension_counted( innerdimension ) );
+  // assert( has_dimension_counted( 0 ) );
   
   // the counting of the vertices must agree 
   // assert( count_simplices(0) == coordinates.getnumber() );
@@ -161,13 +161,13 @@ int Mesh::count_subsimplices( int sup, int sub ) const
 bool Mesh::is_subsimplex( int sup, int sub, int cellsup, int cellsub ) const
 {
   const IndexMap im = getsubsimplices( sup, sub, cellsup );
-  return im.rangecontains( cellsub );
+  return im.has_value_in_range( cellsub );
 }
 
 int  Mesh::get_subsimplex_index( int sup, int sub, int cellsup, int cellsub ) const
 {
   const IndexMap im = getsubsimplices( sup, sub, cellsup );
-  assert( im.rangecontains( cellsub ) );
+  assert( im.has_value_in_range( cellsub ) );
   return im.preimageof( cellsub );
 }
 
@@ -215,13 +215,13 @@ int Mesh::get_opposite_subsimplex_index( int sup, int sub, int cellsup, int loca
 bool Mesh::is_supersimplex( int sup, int sub, int cellsup, int cellsub ) const
 {
   
-  if( subsimplices_listed( sup, sub ) ) {
+  if( has_subsimplices_listed( sup, sub ) ) {
     
     return is_subsimplex( sup, sub, cellsup, cellsub );
     
   } else {
     
-    assert( supersimplices_listed( sup, sub ) );
+    assert( has_supersimplices_listed( sup, sub ) );
     std::vector<int> parents = getsupersimplices( sup, sub, cellsub );
     return std::find( parents.begin(), parents.end(), cellsup ) != parents.end();
     
@@ -231,14 +231,14 @@ bool Mesh::is_supersimplex( int sup, int sub, int cellsup, int cellsub ) const
 
 int Mesh::get_firstparent_of_subsimplex( int sup, int sub, int cellsub ) const
 {
-  assert( supersimplices_listed( sup, sub ) );
+  assert( has_supersimplices_listed( sup, sub ) );
   std::vector<int> parents = getsupersimplices( sup, sub, cellsub );
   return parents[0];
 }
 
 int Mesh::get_nextparent_of_subsimplex( int sup, int sub, int cellsup, int cellsub ) const
 {
-  assert( supersimplices_listed( sup, sub ) );
+  assert( has_supersimplices_listed( sup, sub ) );
   std::vector<int> parents = getsupersimplices( sup, sub, cellsub );
   auto it = std::find( parents.begin(), parents.end(), cellsup );
   assert( it != parents.end() );
@@ -251,8 +251,8 @@ int Mesh::get_nextparent_of_subsimplex( int sup, int sub, int cellsup, int cells
 
 int Mesh::get_nextparent_by_localindex( int sup, int sub, int cellsup, int localindex ) const
 {
-  assert( supersimplices_listed( sup, sub ) );
-  assert( subsimplices_listed( sup, sub ) );
+  assert( has_supersimplices_listed( sup, sub ) );
+  assert( has_subsimplices_listed( sup, sub ) );
   int cellsub = getsubsimplices( sup, sub, cellsup )[localindex];
   std::vector<int> parents = getsupersimplices( sup, sub, cellsub );
   auto it = std::find( parents.begin(), parents.end(), cellsup );
@@ -266,7 +266,7 @@ int Mesh::get_nextparent_by_localindex( int sup, int sub, int cellsup, int local
 
 int Mesh::get_index_of_supersimplex( int sup, int sub, int cellsup, int cellsub ) const
 {
-  assert( supersimplices_listed( sup, sub ) );
+  assert( has_supersimplices_listed( sup, sub ) );
   std::vector<int> parents = getsupersimplices( sup, sub, cellsub );
   auto it = std::find( parents.begin(), parents.end(), cellsup );
   assert( it != parents.end() );
@@ -275,7 +275,7 @@ int Mesh::get_index_of_supersimplex( int sup, int sub, int cellsup, int cellsub 
 
 int Mesh::get_supersimplex_by_index( int sup, int sub, int cellsub, int parentindex ) const
 {
-  assert( supersimplices_listed( sup, sub ) );
+  assert( has_supersimplices_listed( sup, sub ) );
   std::vector<int> parents = getsupersimplices( sup, sub, cellsub );
   return parents[ parentindex ];
 }
@@ -295,7 +295,7 @@ int Mesh::get_supersimplex_by_index( int sup, int sub, int cellsub, int parentin
 void Mesh::set_flags( int dim, SimplexFlag flag )
 {
     assert( 0 <= dim && dim <= getinnerdimension() );
-    assert( dimension_counted( dim ) );
+    assert( has_dimension_counted( dim ) );
     for( int s = 0; s < count_simplices(dim); s++ )
         set_flag( dim, s, flag );
 }
@@ -303,7 +303,7 @@ void Mesh::set_flags( int dim, SimplexFlag flag )
 const std::vector<SimplexFlag> Mesh::get_flags( int dim ) const
 {
     assert( 0 <= dim && dim <= getinnerdimension() );
-    assert( dimension_counted( dim ) );
+    assert( has_dimension_counted( dim ) );
     std::vector<SimplexFlag> flags( count_simplices(dim), SimplexFlag::SimplexFlagInvalid );
     for( int s = 0; s < count_simplices(dim); s++ )
         flags[s] = get_flag( dim, s );
@@ -313,7 +313,7 @@ const std::vector<SimplexFlag> Mesh::get_flags( int dim ) const
 void Mesh::set_flags( int dim, std::vector<SimplexFlag> flags )
 {
     assert( 0 <= dim && dim <= getinnerdimension() );
-    assert( dimension_counted( dim ) );
+    assert( has_dimension_counted( dim ) );
     assert( flags.size() == count_simplices( dim ) );
     for( int s = 0; s < count_simplices(dim); s++ )
         set_flag( dim, s, flags[s] );
@@ -323,8 +323,8 @@ void Mesh::automatic_dirichlet_flags()
 {
     const int full = getinnerdimension();
     
-    assert( dimension_counted(full-1) );
-    assert( supersimplices_listed(full,full-1) );
+    assert( has_dimension_counted(full-1) );
+    assert( has_supersimplices_listed(full,full-1) );
     
     for( int d = 0; d <= getinnerdimension(); d++ )
         set_flags( d, SimplexFlag::SimplexFlagNull );
@@ -351,8 +351,8 @@ void Mesh::check_dirichlet_flags( bool check_for_full_dirichlet )
 {
     const int full = getinnerdimension();
     
-    assert( dimension_counted(full-1) );
-    assert( supersimplices_listed(full,full-1) );
+    assert( has_dimension_counted(full-1) );
+    assert( has_supersimplices_listed(full,full-1) );
     
     // check that full-dimensional simplices have no Dirichlet condition 
     for( int s = 0; s < count_simplices(full); s++ )

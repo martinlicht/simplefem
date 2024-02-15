@@ -233,7 +233,7 @@ int main( int argc, char *argv[] )
                                 // );
                                 
                                 // ConjugateResidualMethod Solver( X );
-                                // Solver.threshold           = desired_precision;
+                                // Solver.tolerance           = desired_precision;
                                 // Solver.print_modulo        = 0;
                                 // Solver.max_iteration_count = 1 * candidate.getdimension();
                                 // Solver.solve( candidate, rhs );

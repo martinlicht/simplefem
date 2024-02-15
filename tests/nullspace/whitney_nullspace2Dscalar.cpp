@@ -131,7 +131,7 @@ int main( int argc, char *argv[] )
                     
                     auto physical_mass = MatrixCSR( incmatrix_t & ( scalar_massmatrix & incmatrix ) );
                     
-                    auto stiffness_diagonal = SparseMatrix( DiagonalOperator( vector_massmatrix.diagonal() ) );
+                    auto stiffness_diagonal = SparseMatrix( DiagonalOperator( vector_massmatrix.getDiagonal() ) );
                     assert( stiffness_diagonal.issquare() );
                     assert( stiffness_diagonal.getdimin() == opr.getdimout() );
                     auto simplified_stiffness = MatrixCSR( opl & ( stiffness_diagonal & opr ) );
@@ -144,7 +144,7 @@ int main( int argc, char *argv[] )
 //                     const auto& SystemMatrix = simplified_stiffness;
                     
                     
-                    assert( SystemMatrix.diagonal().isfinite() );
+                    assert( SystemMatrix.getDiagonal().isfinite() );
                     
 //                     LOG << SystemMatrix << nl;
                     

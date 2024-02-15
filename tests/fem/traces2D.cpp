@@ -227,7 +227,7 @@ int main( int argc, char *argv[] )
         for( int l      = l_min; l <=                 l_max; l++ ) 
         for( int r      = r_min; r <=                 r_max; r++ ) 
         {
-            Assert( errors[k][l-l_min][r-r_min] < 10e-14, errors[k][l-l_min][r-r_min] );
+            Assert( errors[k][l-l_min][r-r_min] < desired_closeness, errors[k][l-l_min][r-r_min] );
         }
 
     }

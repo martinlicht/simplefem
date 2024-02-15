@@ -49,7 +49,7 @@ SparseMatrix FEECBrokenDiffMatrix( const Mesh& mesh, int n, int k, int r )
         const MultiIndex& src_poly = multis_src[src_poly_index];
         const IndexMap&   src_form = sigmas_src[src_form_index];
         
-        if( src_poly[p] == 0 or src_form.rangecontains(p) )
+        if( src_poly[p] == 0 or src_form.has_value_in_range(p) )
             continue;
         
         MultiIndex new_poly = src_poly - p;

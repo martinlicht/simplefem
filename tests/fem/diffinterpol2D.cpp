@@ -237,10 +237,10 @@ int main( int argc, char *argv[] )
 //         for( int r = r_min; r <= r_max; r++ ) 
 //         {
 //             for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
-//                 assert( errors_scalar[i][l-l_min][r-r_min] < 10e-6 );
+//                 assert( errors_scalar[i][l-l_min][r-r_min] < desired_closeness );
 //             
 //             for( int i = 0; i < experiments_vector_function.size(); i++ ) 
-//                 assert( errors_vector[i][l-l_min][r-r_min] < 10e-6 );
+//                 assert( errors_vector[i][l-l_min][r-r_min] < desired_closeness );
 //         }
         
         

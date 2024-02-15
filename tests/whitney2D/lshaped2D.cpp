@@ -34,7 +34,7 @@ using namespace std;
 int main( int argc, char *argv[] )
 {
         
-        LOG << "Unit Test: 2D Maxwell System" << nl;
+        LOG << "Unit Test: 2D Maxwell System on L-shaped domain" << nl;
         
         // LOG << std::setprecision(10);
 
@@ -213,7 +213,7 @@ int main( int argc, char *argv[] )
 
                         LOG << "...compute error and residual:" << nl;
 
-                        Float residualnorm = ( rhs - B * inv(A,1e-14) * Bt * sol - C * sol ).norm();
+                        Float residualnorm = ( rhs - B * inv(A,desired_precision) * Bt * sol - C * sol ).norm();
 
                         LOG << "residual:   " << residualnorm  << nl;
 

@@ -71,56 +71,61 @@ class IndexRange final
             private: 
             
                 int value;
+                int minimum;
+                int maximum;
+                bool is_end;
                 
-                explicit ConstIterator(int value) : value(value) 
+                explicit ConstIterator( int value, int minimum, int maximum, bool is_end ) : value(value), minimum(minimum), maximum(maximum), is_end(is_end)
                 { }
                 
             public:
                 
                 inline int operator*() const
                 {
+                    assert( !is_end );
+                    if( minimum <= maximum ) assert( minimum <= value && value <= maximum );
                     return value;                
                 }
                 
                 inline ConstIterator operator++()
                 {
-                    ++value; 
+                    assert( !is_end );
+                    if( value == maximum )
+                        is_end = true;
+                    else 
+                        ++value; 
                     return *this;
                 } // pre-increment
                 
                 inline ConstIterator operator++( int )
                 {
-                    return ConstIterator( value++ );   
+                    assert( !is_end );
+                    auto ret = *this;
+                    ++(*this); 
+                    return ret;
                 } // post-increment
                 
                 inline bool operator!=( const ConstIterator& irit ) const 
                 { 
-                    return value != irit.value;
+                    return ( is_end != irit.is_end ) || ( !is_end && value != irit.value );
                 }
                     
                 inline bool operator==( const ConstIterator& irit ) const 
                 { 
-                    return value == irit.value;
+                    return !( *this != irit );
                 }
                     
         };
         
-        inline ConstIterator begin() const
-        {
-            return ConstIterator(minimum);
-        }
+        inline ConstIterator begin() const { return ConstIterator(minimum,minimum,maximum,minimum>maximum); }
         
-        inline ConstIterator end() const
-        {
-            return ConstIterator(maximum+1);
-        }
+        inline ConstIterator end()   const { return ConstIterator(minimum,minimum,maximum,true ); }
         
         /* enum class */
         
-        // TODO: make general conceptions about how to handle the output of objects 
-        // in these modules. Generally, we would like to control the output format by some parameter 
-        // given to each print function. We can assume that the parameters belong to some enum class 
-        // defined within a class declaration and are specifcally tailored to each class. 
+        // TODO: make general conceptions about how to handle the output of objects in these modules. 
+        // Generally, we would like to control the output format by some parameter given to each print function. 
+        // We can assume that the parameters belong to some enum class defined within a class declaration and are specifcally tailored to each class. 
         // They are a purely optional argument for the print method and may be skipped at convenience.
         
     private:
@@ -148,9 +153,9 @@ inline bool operator!= ( const IndexRange& ir1, const IndexRange& ir2 )
 }
 
 
-static const IndexRange  NonNegativeIntegers = IndexRange( 0, std::numeric_limits<int>::max()-10 );
+static const IndexRange  NonNegativeIntegers = IndexRange( 0, std::numeric_limits<int>::max() );
 
-static const IndexRange  PositiveIntegers    = IndexRange( 1, std::numeric_limits<int>::max()-10 );
+static const IndexRange  PositiveIntegers    = IndexRange( 1, std::numeric_limits<int>::max() );
 
 
 

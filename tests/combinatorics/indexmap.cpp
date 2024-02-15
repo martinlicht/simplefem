@@ -28,7 +28,7 @@ int main( int argc, char *argv[] )
         
         for( int a : irA ) 
         {
-            assert( id.rangecontains( a ) );
+            assert( id.has_value_in_range( a ) );
             assert( id.preimageof( a ) == a );
             assert( id[ a ] == a );
         }
@@ -38,9 +38,9 @@ int main( int argc, char *argv[] )
         assert( id.issurjective() );
         assert( id.isstrictlyascending() );
         
-        assert( id.comparablewith( id ) );
-        assert( id.equals( id ) );
-        assert( not id.less( id ) );
+        assert( id.is_comparable_with( id ) );
+        assert( id.is_equal_to( id ) );
+        assert( not id.is_less_than( id ) );
       
     }
     
@@ -61,9 +61,9 @@ int main( int argc, char *argv[] )
         assert( leer.issurjective() );
         assert( leer.isstrictlyascending() );
         
-        assert( leer.comparablewith( leer ) );
-        assert( leer.equals( leer ) );
-        assert( not leer.less( leer ) );
+        assert( leer.is_comparable_with( leer ) );
+        assert( leer.is_equal_to( leer ) );
+        assert( not leer.is_less_than( leer ) );
       
     }
     
@@ -83,8 +83,8 @@ int main( int argc, char *argv[] )
         assert( !inj.issurjective() );
         assert( inj.getSourceRange() == irB );
         assert( inj.getTargetRange() == irA );
-        assert( inj.rangecontains( 4 ) );
-        assert( !inj.rangecontains( 5 ) );
+        assert( inj.has_value_in_range( 4 ) );
+        assert( !inj.has_value_in_range( 5 ) );
         
         LOG << "Surjection" << nl;
         
@@ -111,14 +111,14 @@ int main( int argc, char *argv[] )
         
         test.check();
         
-        assert( prod.comparablewith( test ) );
+        assert( prod.is_comparable_with( test ) );
         assert( prod == test );
         
-        assert( test.rangecontains( 3 ) );
+        assert( test.has_value_in_range( 3 ) );
         assert( test.preimageof( 3 ) == 0 );
-        assert( test.rangecontains( 2 ) );
+        assert( test.has_value_in_range( 2 ) );
         assert( test.preimageof( 2 ) == 1 );
-        assert( not test.rangecontains( 5 ) );
+        assert( not test.has_value_in_range( 5 ) );
         
     }
 

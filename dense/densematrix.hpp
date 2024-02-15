@@ -91,12 +91,12 @@ class DenseMatrix final
         
         /* Access entries */
         
-        HOTCALL Float get(int,int) const;
-        HOTCALL void set(int,int,Float);
-        HOTCALL Float& at( int, int ) &;
-        HOTCALL const Float& at( int, int ) const &;
-        HOTCALL Float& operator()( int, int ) &;
-        HOTCALL const Float& operator()( int, int ) const &;
+        HOTCALL Float get( int r, int c ) const;
+        HOTCALL void set( int r,int c, Float v );
+        HOTCALL Float& at( int r, int c ) &;
+        HOTCALL const Float& at( int r, int c ) const &;
+        HOTCALL Float& operator()( int r, int c ) &;
+        HOTCALL const Float& operator()( int r, int c ) const &;
         
         /* Access rows and columns */
         
@@ -133,9 +133,9 @@ class DenseMatrix final
         
         /* Basic manipulation */
         
-        void scale( Float );
-        void set( Float );
-        void add( Float );
+        void scale( Float s );
+        void set( Float s );
+        void add( Float s );
         
         /* Special operations */
         
@@ -143,9 +143,9 @@ class DenseMatrix final
         
         /* Arithmetic operations */
         
-        void add( const DenseMatrix& );
-        void add( Float, const DenseMatrix& );
-        void add( Float, Float, const DenseMatrix& );
+        void add( const DenseMatrix& summand );
+        void add( Float scalingsrc, const DenseMatrix& summand );
+        void add( Float scalingdest, Float scalingsrc, const DenseMatrix& summand );
         
         
         /* Measurements */
@@ -188,7 +188,7 @@ class DenseMatrix final
         bool isnonpositive() const;
         
         
-        bool is_numerically_small( Float eps = 0.000001 ) const;
+        bool is_numerically_small( Float threshold = desired_closeness ) const;
         
         
         Float* raw();

@@ -25,7 +25,7 @@ using namespace std;
 int main( int argc, char *argv[] )
 {
         
-        LOG << "Unit Test for Solution of Neumann Problem" << nl;
+        LOG << "Unit Test: 2D Poisson problem with mixed BC" << nl;
         
         if(true){
 
@@ -186,7 +186,7 @@ int main( int argc, char *argv[] )
                                 rhs.raw(), 
                                 stiffness_csr.getA(), stiffness_csr.getC(), stiffness_csr.getV(),
                                 residual.raw(),
-                                1e-16,
+                                desired_precision,
                                 1
                             );
 
