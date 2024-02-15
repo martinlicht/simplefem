@@ -26,9 +26,11 @@ int main( int argc, char *argv[] )
         assert( irE2.cardinality() == 0 );
         assert( irE3.cardinality() == 0 );
         
-        for( int i : irE1 ) assert( false );
-        for( int i : irE2 ) assert( false );
-        for( int i : irE3 ) assert( false );
+        int counter = 0;
+        for( int i : irE1 ) counter++;
+        for( int i : irE2 ) counter++;
+        for( int i : irE3 ) counter++;
+        assert( counter == 0 );
         
         assert( irE1 == irE2 );
         assert( irE1 == irE3 );
