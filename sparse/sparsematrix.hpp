@@ -45,7 +45,7 @@ public LinearOperator /* every matrix is a linear operator */
         /* Constructors */
         
         explicit SparseMatrix( int dimout, int dimin, int numentries = 0, 
-                               std::function<MatrixEntry(int)> generator = [](int i __attribute__((unused)) )->MatrixEntry{ return {0,0,notanumber}; } ); 
+                               std::function<MatrixEntry(int)> generator = [](int)->MatrixEntry{ return {0,0,notanumber}; } ); 
         // explicit SparseMatrix( int dimout, int dimin );
         explicit SparseMatrix( int dimout, int dimin, const std::vector<MatrixEntry>& entries );
         explicit SparseMatrix( int dimout, int dimin, const std::initializer_list<MatrixEntry>& entries );

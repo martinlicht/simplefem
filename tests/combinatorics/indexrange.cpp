@@ -26,9 +26,13 @@ int main( int argc, char *argv[] )
         assert( irE2.cardinality() == 0 );
         assert( irE3.cardinality() == 0 );
         
+        LOG << "Test empty index ranges" << nl;
+        
         for( int i : irE1 ) assert( false );
         for( int i : irE2 ) assert( false );
         for( int i : irE3 ) assert( false );
+        
+        LOG << "Test empty index ranges" << nl;
         
         assert( irE1 == irE2 );
         assert( irE1 == irE3 );
@@ -91,39 +95,95 @@ int main( int argc, char *argv[] )
     if( true )
     {
         
-        LOG << "Test Index Range iterators" << nl;
+        LOG << "Test Index Range iterators over some normal intervals" << nl;
         
-        IndexRange irC( 2, 5 );
-        
-        assert( not irC.isempty() );
-        
-        LOG << "For each loop " << nl;
-        for( int i : irC )
-            LOG << i << space;
-        LOG << nl;
+        std::vector<IndexRange> irs = {
+            IndexRange(  7, 7 ),
+            IndexRange(  2, 5 ),
+            IndexRange( -3, 3 ),
+            IndexRange( -6, 0 )
+        };
 
-        LOG << "Classical For loop " << nl;
-        for( IndexRange::ConstIterator iri = irC.begin(); iri != irC.end(); iri++ )
-            LOG << *iri << space;
-        LOG << nl;
+        for( auto ir : irs ){
+
+            assert( ! ir.isempty() );
         
-        LOG << "While Loop " << nl;
-        IndexRange::ConstIterator iri = irC.begin();
-        while( iri != irC.end() )
-            LOG << *(iri++) << space << nl;
-        LOG << nl;
+            LOG << "For each loop " << ir.min() << space << ir.max() << nl << tab;
+            for( int i : ir ) {
+                LOG << i << space;
+                assert( ir.min() <= i && i <= ir.max() );
+            }
+                
+            LOG << nl;
+
+            LOG << "Classical For loop " << ir.min() << space << ir.max() << nl << tab;
+            for( IndexRange::ConstIterator iri = ir.begin(); iri != ir.end(); iri++ ) {
+                LOG << *iri << space;
+                assert( ir.min() <= *iri && *iri <= ir.max() );
+            }
+                
+            LOG << nl;
+            
+            LOG << "While Loop " << ir.min() << space << ir.max() << nl << tab;
+            IndexRange::ConstIterator iri = ir.begin();
+            while( iri != ir.end() ) {
+                int i = *(iri++);
+                assert( ir.min() <= i && i <= ir.max() );
+                LOG << i << space;
+            }
+
+            LOG << nl;
+            
+        }
         
     }
         
-    if( false )
+    if( true )
     {
     
-        LOG << "Test invalid index ranges" << nl;
-    
-        IndexRange dummy( 0, std::numeric_limits<int>::max() );
-        LOG << dummy << " " << std::numeric_limits<int>::max();
-        LOG << "FAIL: Invalid range created" << nl;
-    
+        LOG << "Test Index Range iterators over some extreme cases" << nl;
+        
+        std::vector<IndexRange> irs = {
+            IndexRange( std::numeric_limits<int>::max()   , std::numeric_limits<int>::max()    ),
+            IndexRange( std::numeric_limits<int>::max()- 1, std::numeric_limits<int>::max()    ),    
+            IndexRange( std::numeric_limits<int>::max()-10, std::numeric_limits<int>::max()    ),
+            IndexRange( std::numeric_limits<int>::min(),    std::numeric_limits<int>::min()    ),
+            IndexRange( std::numeric_limits<int>::min(),    std::numeric_limits<int>::min()+ 1 ),
+            IndexRange( std::numeric_limits<int>::min(),    std::numeric_limits<int>::min()+10 ) 
+        };
+
+        for( auto ir : irs ){
+
+            assert( ! ir.isempty() );
+        
+            LOG << "For each loop " << ir.min() << space << ir.max() << nl << tab;
+            for( int i : ir ) {
+                LOG << i << space;
+                assert( ir.min() <= i && i <= ir.max() );
+            }
+                
+            LOG << nl;
+
+            LOG << "Classical For loop " << ir.min() << space << ir.max() << nl << tab;
+            for( IndexRange::ConstIterator iri = ir.begin(); iri != ir.end(); iri++ ) {
+                LOG << *iri << space;
+                assert( ir.min() <= *iri && *iri <= ir.max() );
+            }
+                
+            LOG << nl;
+            
+            LOG << "While Loop " << ir.min() << space << ir.max() << nl << tab;
+            IndexRange::ConstIterator iri = ir.begin();
+            while( iri != ir.end() ) {
+                int i = *(iri++);
+                assert( ir.min() <= i && i <= ir.max() );
+                LOG << i << space;
+            }
+
+            LOG << nl;
+            
+        }
+        
     }
         
     LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
