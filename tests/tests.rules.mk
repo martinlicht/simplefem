@@ -99,7 +99,7 @@ DEPFLAGS = -MT $@ -MF $($(mycontext).depdir)/$*.d -MP -MMD
 
 $($(context).outs): mycontext    := $(context)
 $($(context).outs): mycontextdir := $(contextdir)
-$($(context).outs): $(contextdir)/%.$(ending): $(contextdir)/%.cpp | $($(context).depdir)
+$($(context).outs): $(contextdir)/%.$(ending): $(contextdir)/%.cpp $($(context).olib) | $($(context).depdir)
 #	@ echo link type:   $(LINKINGTYPE)
 #	@ echo context:     $(mycontext)
 #	@ echo context dir: $(mycontextdir)
@@ -110,11 +110,11 @@ $($(context).outs): $(contextdir)/%.$(ending): $(contextdir)/%.cpp | $($(context
 #	@ echo depdir:      $($(mycontext).depdir)
 #	@ echo include:     $($(mycontext).include)
 #	@ echo rpath:       $($(mycontext).rpath)
-#	@ echo lib:         $($(mycontext).lib)
-#	@ echo a:           $($(mycontext).alib)
-#	@ echo object:      $($(mycontext).olib)
-#	@ echo so:          $($(mycontext).solib)
-#	@ echo used lib:    $($(mycontext).mylib)
+# 	@ echo lib:         $($(mycontext).lib)
+# 	@ echo a:           $($(mycontext).alib)
+# 	@ echo object:      $($(mycontext).olib)
+# 	@ echo so:          $($(mycontext).solib)
+# 	@ echo used lib:    $($(mycontext).mylib)
 	@echo Compiling $@ ...
 #	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -std=c++2a -MT $@ -MF $($(mycontext).depdir)/$*.d -MM $(mycontextdir)/$*.cpp
 ifeq ($(LINKINGTYPE),dynamic)
