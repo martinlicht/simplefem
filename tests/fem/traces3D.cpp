@@ -41,18 +41,20 @@ int main( int argc, char *argv[] )
     const int l_min = 0;
     
     const int l_max = 2;
+
+    const int n = M.getinnerdimension();
     
     const int number_of_samples = 1;
         
     
-    Float errors[ M.getinnerdimension()+1 ][ l_max - l_min + 1 ][ r_max - r_min + 1 ];
+    Float errors[ n+1 ][ l_max - l_min + 1 ][ r_max - r_min + 1 ];
 
     for( int l = 0; l < l_min; l++ )
         M.uniformrefinement();
 
     for( int l = l_min; l <= l_max; l++ ){
         
-        for( int k = 0;     k <= M.getinnerdimension(); k++ ) 
+        for( int k = 0;     k <= n; k++ ) 
         for( int r = r_min; r <= r_max;                 r++ ) 
         {
             LOG << nl;
@@ -197,15 +199,15 @@ int main( int argc, char *argv[] )
     LOG << "Convergence tables" << nl;
 
 
-    ConvergenceTable contables[ M.getinnerdimension()+1 ];
+    std::vector<ConvergenceTable> contables( n+1 );
     
-    for( int k = 0; k <= M.getinnerdimension(); k++ ) 
+    for( int k = 0; k <= n; k++ ) 
         contables[k].table_name = "Rounding errors D3K" + std::to_string(k);
-    for( int k = 0; k <= M.getinnerdimension(); k++ ) 
+    for( int k = 0; k <= n; k++ ) 
     for( int r = r_min; r <= r_max; r++ ) 
         contables[k] << ( "R" + std::to_string(r) );
 
-    for( int k = 0; k <= M.getinnerdimension(); k++ ) 
+    for( int k = 0; k <= n; k++ ) 
     for( int l = l_min; l <= l_max; l++ ) 
     {
         
@@ -218,14 +220,14 @@ int main( int argc, char *argv[] )
     
     LOG << "Check that differences are small" << nl;
     
-    for( int k      =     0; k <= M.getinnerdimension(); k++ ) 
+    for( int k = 0; k <= n; k++ ) 
     {
 
         contables[k].lg(); 
         LOG << "-------------------" << nl;
 
-        for( int l      = l_min; l <=                 l_max; l++ ) 
-        for( int r      = r_min; r <=                 r_max; r++ ) 
+        for( int l = l_min; l <= l_max; l++ ) 
+        for( int r = r_min; r <= r_max; r++ ) 
         {
             Assert( errors[k][l-l_min][r-r_min] < desired_closeness, errors[k][l-l_min][r-r_min] );
         }
