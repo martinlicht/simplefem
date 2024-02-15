@@ -15,7 +15,7 @@
 
                     [www.github.com/martinlicht/simplefem]
 
-https://img.shields.io/badge/-C++14-deepskyblue?logo=c%2B%2B&style=flat-square
+![Cpp](https://img.shields.io/badge/-C++14-deepskyblue?logo=c%2B%2B&style=flat-square)
 
 FEEC++ is a C++ library for finite element methods in the spirit of finite element exterior calculus (FEEC). 
 Its goal is to enable easy prototyping for fundamental research in numerical PDE with a FEEC point-of-view. 
