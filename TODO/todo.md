@@ -32,12 +32,16 @@ requires regular grinding in order to get it done.
 
 
 
+# (DONE) Dynamic library dependencies 
 
+The test programs depend on the object files only if static linking is enabled.
+Otherwise, they don't.
 
-# (HIGH) Improve the file names used for output
+# (DONE) Output program info 
 
 While using the program name for the file output is nice, it is better if you can also add an additional prefix.
 That way you can separate the output of different subtasks more easily.
+
 
 # (HIGH) clean up DenseMatrix subsystem 
 
@@ -817,3 +821,9 @@ grep 'if( false' ./*/*pp
 # (DONE) Improve the iterator interface of IndexRange to allow the full scope
 
 # (DONE) Git ID extraction as macro
+
+# (DONE) Improve the file names used for output
+
+While using the program name for the file output is nice, it is better if you can also add an additional prefix.
+That way you can separate the output of different subtasks more easily.
+
