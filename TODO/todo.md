@@ -73,7 +73,9 @@ The target audience for this software are researchers in numerical partial diffe
 
 Another alternative is `gprof` as a GUI for profiling data. 
 
-# (HIGH) Remove dead code 
+# (DONE) Remove dead code 
+
+Make dead code alive again or remove it. Search for the following pieces:
 
 grep 'if(false' ./*/*pp
 grep 'if( false' ./*/*pp

@@ -91,10 +91,12 @@ SparseMatrix FEECBrokenTraceMatrix( const Mesh& mesh, int n, int k, int r, bool 
 
 
         int inclusion_index = 0;
-        for( ; inclusion_index < face_inclusions.size(); inclusion_index++ )
+        for( ; inclusion_index < face_inclusions.size(); inclusion_index++ ) {
+            assert( 0 <= inclusion_index && inclusion_index < face_inclusions.size() );
             if( vertices_of_face == vertices_of_cell * face_inclusions[inclusion_index] )
                 break;
-        assert( inclusion_index < face_inclusions.size() );
+        }
+        assert( 0 <= inclusion_index && inclusion_index < face_inclusions.size() );
         assert( vertices_of_face == vertices_of_cell * face_inclusions[inclusion_index] );
         const IndexMap inclusion_face_to_cell = face_inclusions[inclusion_index];
         

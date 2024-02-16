@@ -72,7 +72,6 @@ Logger::~Logger()
 
     const std::string time_code = digitalcodenow(); 
 
-    const std::string formatstring("[%s %s %4u]\t");
     #ifdef USE_COLORED_OUTPUT
     const std::string colorcode_begin = "\033[96m";
     const std::string colorcode_close = "\033[m";

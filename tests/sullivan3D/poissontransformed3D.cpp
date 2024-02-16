@@ -164,7 +164,7 @@ Float weight_scalar(const FloatVector& vec)
 {
     assert( vec.getdimension() == 3 );
     return 1.;
-    return absolute(Determinant(jacobian(vec)));
+    // return absolute(Determinant(jacobian(vec)));
 }
         
 DenseMatrix weight_vector(const FloatVector& vec)

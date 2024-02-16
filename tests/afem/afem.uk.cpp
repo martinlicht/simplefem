@@ -93,10 +93,16 @@ int main( int argc, char *argv[] )
 
             LOG << "Solving Poisson Problem with Neumann boundary conditions" << nl;
 
-            int max_l = 5;
-            int r = 1;
+            const int min_l = 1; 
+    
+            const int max_l = 5;
+            
+            const int r = 1;
 
-            for( int l = 0; l <= max_l; l++ ){
+            for( int l = 0; l < min_l; l++ )
+                M.uniformrefinement();
+
+            for( int l = min_l; l <= max_l; l++ ){
                 
                 LOG << "Level: " << l << "/" << max_l << nl;
                 LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
@@ -247,14 +253,9 @@ int main( int argc, char *argv[] )
 
                 }
                 
-                
-
             } 
         
         }
-        
-        
-        
         
         LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
         

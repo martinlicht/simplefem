@@ -196,7 +196,7 @@ inline MeshSimplicial2D UnitSquare2D()
 {
     auto M = StandardSquare2D();
     
-    M.getcoordinates().shift( {1.,1.} );
+    M.getcoordinates().shift( FloatVector({1.,1.}) );
     M.getcoordinates().scale( 0.5 );
     
     return M;
@@ -206,7 +206,7 @@ inline MeshSimplicial2D UnitSquare2D_alternative()
 {
     auto M = StandardSquare2D_alternative();
     
-    M.getcoordinates().shift( {1.,1.} );
+    M.getcoordinates().shift( FloatVector({1.,1.}) );
     M.getcoordinates().scale( 0.5 );
     
     return M;
@@ -216,7 +216,7 @@ inline MeshSimplicial2D UnitSquare2D_centered()
 {
     auto M = StandardSquare2D_centered();
     
-    M.getcoordinates().shift( {1.,1.} );
+    M.getcoordinates().shift( FloatVector({1.,1.}) );
     M.getcoordinates().scale( 0.5 );
     
     return M;
@@ -226,7 +226,7 @@ inline MeshSimplicial2D UnitSquare2D_strange14()
 {
     auto M = StandardSquare2D_strange14();
     
-    M.getcoordinates().shift( {1.,1.} );
+    M.getcoordinates().shift( FloatVector({1.,1.}) );
     M.getcoordinates().scale( 0.5 );
     
     return M;
