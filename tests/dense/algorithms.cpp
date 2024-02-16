@@ -262,7 +262,7 @@ int main( int argc, char *argv[] )
         {
             auto Cinv = GaussJordanInplace(C);
             DenseMatrix I(N); I.unitmatrix();
-            Float relaxation = Cinv.norm();
+            // Float relaxation = Cinv.norm();
             
             for( int t = 0; t < 2000; t++ )
                 Cinv = Cinv + 1.5/ ( std::log(N)) * ( I - C * Cinv );

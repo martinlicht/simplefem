@@ -32,6 +32,8 @@ requires regular grinding in order to get it done.
 
 
 
+# (HIGH) static library dependency 
+
 # (HIGH) clean up DenseMatrix subsystem 
 
 The following modules look reasonable
