@@ -59,19 +59,27 @@ $(context).include := $(patsubst %,-L$(projectdir)/%,$(affix.$(context)))
 linkerprefix       :=-Wl,
 $(context).rpath_t := $(patsubst %,-rpath=$(pathvar)/%,$(affix.$(context))) 
 $(context).rpath   := $(patsubst %,$(linkerprefix)%,$($(context).rpath_t)) 
-$(context).lib     := $(patsubst %,-l%,$(affix.$(context)))
+
 $(context).olib    := $(patsubst %,$(projectdir)/%/.all.o,$(affix.$(context)))
-$(context).alib    := $(patsubst %,-l:lib%.a,$(affix.$(context)))
-$(context).solib   := $(patsubst %,-l:lib%.so,$(affix.$(context)))
+$(context).alib    := $(patsubst %,$(projectdir)/%/.all.a,$(affix.$(context)))
+$(context).solib   := $(patsubst %,$(projectdir)/%/.all.so,$(affix.$(context)))
+
+$(context).linklib     := $(patsubst %,-l%,$(affix.$(context)))
+$(context).linkalib    := $(patsubst %,-l:lib%.a,$(affix.$(context)))
+$(context).linksolib   := $(patsubst %,-l:lib%.so,$(affix.$(context)))
+
+$(context).relevantlibs := 
+
 
 ifeq ($(LINKINGTYPE),static)
-$(context).mylib := $($(context).alib)
+$(context).mylib := $($(context).linkalib)
+$(context).relevantlibs := $($(context).alib)
 else ifeq ($(LINKINGTYPE),dynamic)
-$(context).mylib := $($(context).solib)
+$(context).mylib := $($(context).linksolib)
 else ifeq ($(LINKINGTYPE),objectfile)
 $(context).mylib := $($(context).olib)
 else ifeq ($(LINKINGTYPE),unspecified)
-$(context).mylib := $($(context).lib)
+$(context).mylib := $($(context).linklib)
 else
 $(error No linking mode recognized: $(LINKINGTYPE)) 
 endif
@@ -99,7 +107,7 @@ DEPFLAGS = -MT $@ -MF $($(mycontext).depdir)/$*.d -MP -MMD
 
 $($(context).outs): mycontext    := $(context)
 $($(context).outs): mycontextdir := $(contextdir)
-$($(context).outs): $(contextdir)/%.$(ending): $(contextdir)/%.cpp | $($(context).depdir)
+$($(context).outs): $(contextdir)/%.$(ending): $(contextdir)/%.cpp $($(context).relevantlibs) | $($(context).depdir)
 #	@ echo link type:   $(LINKINGTYPE)
 #	@ echo context:     $(mycontext)
 #	@ echo context dir: $(mycontextdir)
@@ -110,11 +118,13 @@ $($(context).outs): $(contextdir)/%.$(ending): $(contextdir)/%.cpp | $($(context
 #	@ echo depdir:      $($(mycontext).depdir)
 #	@ echo include:     $($(mycontext).include)
 #	@ echo rpath:       $($(mycontext).rpath)
-#	@ echo lib:         $($(mycontext).lib)
-#	@ echo a:           $($(mycontext).alib)
-#	@ echo object:      $($(mycontext).olib)
-#	@ echo so:          $($(mycontext).solib)
-#	@ echo used lib:    $($(mycontext).mylib)
+# 	@ echo object:      $($(mycontext).olib)
+# 	@ echo a:           $($(mycontext).alib)
+# 	@ echo so:          $($(mycontext).solib)
+# 	@ echo lib:         $($(mycontext).linklib)
+# 	@ echo a:           $($(mycontext).linkalib)
+# 	@ echo so:          $($(mycontext).linksolib)
+# 	@ echo used lib:    $($(mycontext).mylib)
 	@echo Compiling $@ ...
 #	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -std=c++2a -MT $@ -MF $($(mycontext).depdir)/$*.d -MM $(mycontextdir)/$*.cpp
 ifeq ($(LINKINGTYPE),dynamic)

@@ -466,7 +466,7 @@ int main( int argc, char *argv[] )
                 contables.push_back(contable);
 
                 
-                if( false and r == 1 )
+                if( r == 1 )
                 {
                     fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                     VTKWriter vtk( M, fs, getbasename(__FILE__) );

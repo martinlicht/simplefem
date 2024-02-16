@@ -316,17 +316,17 @@ class Logger //: public std::ostringstream
 // 
 ////////////////////////////////////////////
 
-#ifdef _OPENMP
+// #ifdef _OPENMP
 
-struct OpenMP_Reporter
+struct System_Reporter
 {
-    OpenMP_Reporter();
-    ~OpenMP_Reporter();
+    System_Reporter();
+    ~System_Reporter();
 };
 
-extern OpenMP_Reporter  omp_reporter;
+extern System_Reporter  omp_reporter;
 
-#endif // _OPENMP
+// #endif // _OPENMP
 
 
 
