@@ -27,9 +27,9 @@ int main( int argc, char *argv[] )
         assert( irE3.cardinality() == 0 );
         
         int counter = 0;
-        for( int i : irE1 ) { assert( irE1.min() <= i && i <= irE1.max() ); unreachable(); counter++; }
-        for( int i : irE2 ) { assert( irE2.min() <= i && i <= irE2.max() ); unreachable(); counter++; }
-        for( int i : irE3 ) { assert( irE3.min() <= i && i <= irE3.max() ); unreachable(); counter++; }
+        for( int i : irE1 ) { assert( irE1.min() <= i && i <= irE1.max() ); counter++; unreachable(); }
+        for( int i : irE2 ) { assert( irE2.min() <= i && i <= irE2.max() ); counter++; unreachable(); }
+        for( int i : irE3 ) { assert( irE3.min() <= i && i <= irE3.max() ); counter++; unreachable(); }
         assert( counter == 0 );
         
         assert( irE1 == irE2 );
@@ -115,7 +115,7 @@ int main( int argc, char *argv[] )
             LOG << nl;
 
             LOG << "Classical For loop " << ir.min() << space << ir.max() << nl << tab;
-            for( IndexRange::ConstIterator iri = ir.begin(); iri != ir.end(); iri++ ) {
+            for( IndexRange::ConstIterator iri = ir.begin(); iri != ir.end(); ++iri ) {
                 LOG << *iri << space;
                 assert( ir.min() <= *iri && *iri <= ir.max() );
             }
@@ -125,7 +125,7 @@ int main( int argc, char *argv[] )
             LOG << "While Loop " << ir.min() << space << ir.max() << nl << tab;
             IndexRange::ConstIterator iri = ir.begin();
             while( iri != ir.end() ) {
-                int i = *(iri++);
+                int i = *(++iri);
                 assert( ir.min() <= i && i <= ir.max() );
                 LOG << i << space;
             }
@@ -163,7 +163,7 @@ int main( int argc, char *argv[] )
             LOG << nl;
 
             LOG << "Classical For loop " << ir.min() << space << ir.max() << nl << tab;
-            for( IndexRange::ConstIterator iri = ir.begin(); iri != ir.end(); iri++ ) {
+            for( IndexRange::ConstIterator iri = ir.begin(); iri != ir.end(); ++iri ) {
                 LOG << *iri << space;
                 assert( ir.min() <= *iri && *iri <= ir.max() );
             }
@@ -173,7 +173,7 @@ int main( int argc, char *argv[] )
             LOG << "While Loop " << ir.min() << space << ir.max() << nl << tab;
             IndexRange::ConstIterator iri = ir.begin();
             while( iri != ir.end() ) {
-                int i = *(iri++);
+                int i = *(++iri);
                 assert( ir.min() <= i && i <= ir.max() );
                 LOG << i << space;
             }

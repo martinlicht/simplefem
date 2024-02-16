@@ -72,7 +72,6 @@ Logger::~Logger()
 
     const std::string time_code = digitalcodenow(); 
 
-    const std::string formatstring("[%s %s %4u]\t");
     #ifdef USE_COLORED_OUTPUT
     const std::string colorcode_begin = "\033[96m";
     const std::string colorcode_close = "\033[m";
@@ -151,36 +150,81 @@ Logger::~Logger()
 
 #if defined(_OPENMP)
 #include <omp.h>
-
-OpenMP_Reporter::OpenMP_Reporter()
-{
-    
-    fputs( GIT_COMMIT_ID, f );
-    fflush(f);
-    
-    #if defined(_OPENMP)
-    LOG << "###OMP###\tOpenMP Reporter: started\n";
-    LOG << "###OMP###\tOpenMP Value: " << _OPENMP << nl;
-    LOG << "###OMP###\tMaximum number of threads: " << omp_get_max_threads() << nl;
-    LOG << "###OMP###\tThread limit: " << omp_get_thread_limit() << nl;
-    // LOG << "###OMP###\tMaximum number of processors: " << p << " -> " << omp_get_place_num_procs() << nl;
-    LOG << "###OMP###\tMaximum number of places: " << omp_get_num_places() << nl;
-    for( int p = 0; p < omp_get_num_places(); p++ ) {
-        LOG << "###OMP###\t\tMaximum number of processors per place: " << p << " - > " << omp_get_place_num_procs(p) << nl;
-    }
-    #endif
-}
-
-OpenMP_Reporter::~OpenMP_Reporter()
-{
-    #if defined(_OPENMP)
-    LOG << "###OMP###\tOpenMP Reporter: finished\n";
-    #endif
-}
-
-OpenMP_Reporter  omp_reporter;
-
 #endif // #if defined(_OPENMP)
+
+System_Reporter::System_Reporter()
+{
+    
+    #if defined(GIT_COMMIT_ID)
+    LOG << "###\tCurrent Git commit ID: " << GIT_COMMIT_ID << nl;
+    #endif
+    
+    #if defined(_OPENMP)
+    LOG << "###\tOpenMP Value: " << _OPENMP << nl;
+    LOG << "###\tMaximum number of threads: " << omp_get_max_threads() << nl;
+    LOG << "###\tMaximum active levels: " << omp_get_max_active_levels() << nl;
+    // LOG << "###\tNested parallelism supported: " << ( omp_get_nested() ? "Yes" : "No" ) << nl;
+    LOG << "###\tDynamic adjustment of the number of threads enabled: " << ( omp_get_dynamic() ? "Yes" : "No" ) << nl;
+    LOG << "###\tThread limit: " << omp_get_thread_limit() << nl;
+    LOG << "###\tNumber of processors available: " << omp_get_num_procs() << nl;
+    LOG << "###\tDefault thread affinity: " << ( omp_get_proc_bind() == omp_proc_bind_false ? "No affinity" : "Affinity" ) << nl;
+    // LOG << "###\tMaximum number of processors: " << p << " -> " << omp_get_place_num_procs() << nl;
+    LOG << "###\tMaximum number of places: " << omp_get_num_places() << nl;
+    for( int p = 0; p < omp_get_num_places(); p++ ) {
+        LOG << "###\t\tMaximum number of processors per place: " << p << " - > " << omp_get_place_num_procs(p) << nl;
+    }
+    #else
+    LOG << "###\tOpenMP is not enabled.\n";
+    #endif
+
+    // #ifdef _OPENMP
+    // LOGPRINTF("OpenMP is enabled.\n");
+    // LOGPRINTF("Number of threads: %d\n", omp_get_max_threads());
+    // LOGPRINTF("Nested parallelism supported: %s\n", omp_get_nested() ? "Yes" : "No");
+    // LOGPRINTF("Dynamic adjustment of the number of threads enabled: %s\n", omp_get_dynamic() ? "Yes" : "No");
+    // LOGPRINTF("Number of processors available: %d\n", omp_get_num_procs());
+    // LOGPRINTF("Default thread affinity: %s\n", omp_get_proc_bind() == omp_proc_bind_false ? "No affinity" : "Affinity");
+    // #else
+    // LOGPRINTF("OpenMP is not enabled.\n");
+    // #endif
+
+    LOGPRINTF("###\tCompiler version: %s\n", __VERSION__);
+
+    #ifdef _DEBUG
+    LOGPRINTF("###\tMSVC Debugging flags enabled.\n");
+    #else
+    LOGPRINTF("###\tMSVC Debugging flags not enabled.\n");
+    #endif
+
+    #ifdef NDEBUG
+    LOGPRINTF("###\tNDEBUG enabled.\n");
+    #else
+    LOGPRINTF("###\tNDEBUG not enabled.\n");
+    #endif
+
+    #ifdef __OPTIMIZE__
+    LOGPRINTF("###\tCompiler optimization level: %d\n", __OPTIMIZE__);
+    // Add more performance-related information here
+    #endif
+
+    #ifdef __unix__
+    LOGPRINTF("###\tOS: Unix\n");
+    #elif defined(_WIN32)
+    LOGPRINTF("###\tOS: Windows\n");
+    #else
+    #error "Unknown platform"
+    #endif
+}
+
+System_Reporter::~System_Reporter()
+{
+    #if defined(_OPENMP)
+    // LOG << "###\tSystem Reporter: finished\n";
+    #endif
+}
+
+System_Reporter  omp_reporter;
+
 
 
 

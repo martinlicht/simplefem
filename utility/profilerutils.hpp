@@ -40,9 +40,11 @@ class SectionProfiler
                 
                 const auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>( times.at(i+1) - times.at(i) ).count();
 
-                LOGPRINTF( "%ju ns \t %s\n", static_cast<uintmax_t>( elapsed_time ), texts[i].c_str() );
+                text += printf_into_string( "%ju ns \t %s\n", static_cast<uintmax_t>( elapsed_time ), texts[i].c_str() );
             }
-            LOGPRINTF("\n");
+            text += "\n";
+
+            LOG << text;
             
         }
 

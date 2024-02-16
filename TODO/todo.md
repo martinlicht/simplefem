@@ -32,13 +32,6 @@ requires regular grinding in order to get it done.
 
 
 
-
-
-# (HIGH) Improve the file names used for output
-
-While using the program name for the file output is nice, it is better if you can also add an additional prefix.
-That way you can separate the output of different subtasks more easily.
-
 # (HIGH) clean up DenseMatrix subsystem 
 
 The following modules look reasonable
@@ -70,8 +63,8 @@ Whatever solver hingegen kackt ab
 
 # (HIGH) Clean up unit tests for the numerical examples 
 
-[ ] Don't compute the norms of the solutions and the rhs unless necessary 
-[ ] Don't use MINRES unless necessary 
+- [ ] Don't compute the norms of the solutions and the rhs unless necessary 
+- [ ] Don't use MINRES unless necessary 
 
 # (HIGH) Question: what are best practices to keep the unit tests up to date with the code?
 
@@ -95,6 +88,8 @@ kcachegrind callgrind.out.[pid]
 The target audience for this software are researchers in numerical partial differential equations who are well-versed in C++ and who want a customizable finite element software.
 
 Another alternative is `gprof` as a GUI for profiling data. 
+
+# (HIGH) Floating point exact comparisons ersetzen durch Funktion mit expliziter semantik
 
 # (HIGH) Rename basic to 'base' or 'general' or 'common'
 
@@ -155,7 +150,6 @@ Astyle
 --align-reference=type
 --attach-return-type
 
-
 # (MEDIUM) Solver printing data structure 
 
 The iterative solvers should be provided a printing data structure 
@@ -174,7 +168,6 @@ bool report_breakdown();
 
 bool iteration_is_printable();
 ```
-
 
 # (MEDIUM) Logging class 
 
@@ -212,7 +205,6 @@ in the actual logging object. Thus one can impose various prefixes and postfixes
 Encapsulate cout, cerr, and clog within wrapper objects 
 that delegate the input to those streams. 
 You can then extend the stream wrappers at a later stage 
-
 
 # (MEDIUM) Unit test framework
 
@@ -319,7 +311,6 @@ been constructed.
 All algorithms should be written in a manner that is also correct when using complex numbers. 
 This should be accompanied by a written exposition of Krylov subspace methods.
 
- 
 # (LOW) Preconditioners to implement 
 
   - [ ] Jacobi preconditioner 
@@ -330,7 +321,6 @@ This should be accompanied by a written exposition of Krylov subspace methods.
   - [ ] block gauss-seidel preconditioner 
   - [ ] adjustable gauss-seidel preconditioner 
   - [ ] Polynomial preconditioners 
-
 
 # (LOW) Provide Preconditioned variants for all iterative methods
 
@@ -438,7 +428,7 @@ Use that fixed-size array throughout your code whenever appropiate,
 replacing the old std::vector variables with the new ones.
 This applies in particular to the linear algebra classes.
     
-## (INACTIVE) Makefile with implicit rules 
+# (INACTIVE) Makefile with implicit rules 
 
 The makefile has implicit rules for cpp files
 which can greatly simplify the entire make process.
@@ -446,7 +436,7 @@ So we may replace the handwritten rules
 by the implicitly defined rules in many cases. 
 We merely need to specify the compiler flags.
 
-## (INACTIVE) namespaces for the project
+# (INACTIVE) namespaces for the project
 
 package everything into a namespace.
 
@@ -483,49 +473,48 @@ There is only one cleaning command for the entire build directory.
 
 
 # TODO
+
+zeige die ersten zeilen aller header dateien an
+for datei in ./*/*.hpp; do head -n 2 $datei; done
+include guards umbenennen 
+  
+class for one-dimensional meshes: graphs with no abandoned nodes
+  
+hash-tabelle 
+  
+https://scicomp.stackexchange.com/questions/23882/what-is-a-common-file-data-format-for-a-mesh-for-fem
+Gmsh file format: http://gmsh.info/doc/texinfo/gmsh.html
+Gambit:           http://web.stanford.edu/class/me469b/handouts/gambit_write.pdf
+  
+Question:
+  - how to manage unit test for a software library?
+  - how to manage makefiles? what dependencies to make explicit?
+
+Documentation:
+  Sphinx seems viable 
+  http://www.sphinx-doc.org/en/stable/
+  Videos at 
+  https://en.wikipedia.org/wiki/Sphinx_(documentation_generator)
+  Could be used for personal websites 
+  
+todo-listen in jedem modul:
+  - liste der klassen und standard punkte 
+    - fertig
+    - check
+    - unittest 
+  - liste der methodenpakete und standard punkte 
+    - unittest 
+  - Feature liste welche erwuenscht ist: near/far future 
+  
+unit test layout:
+  logstream that is reference to std::cout 
+  TEST_DECL_MODULE( str );
+  TEST_DECL_CLASS ( str );
+  TEST_DECL_BASIC (     );
+  TEST_DECL_TOPIC ( str );
+  TEST_ANNOUNCE();
   
   
-  - zeige die ersten zeilen aller header dateien an
-    for datei in ./*/*.hpp; do head -n 2 $datei; done
-    include guards umbenennen 
-  
-  - class for one-dimensional meshes: graphs with no abandoned nodes
-  
-  - hash-tabelle 
-  
-  https://scicomp.stackexchange.com/questions/23882/what-is-a-common-file-data-format-for-a-mesh-for-fem
-  Gmsh file format: http://gmsh.info/doc/texinfo/gmsh.html
-  Gambit:           http://web.stanford.edu/class/me469b/handouts/gambit_write.pdf
-  
-  Question:
-    - how to manage unit test for a software library?
-    - how to manage makefiles? what dependencies to make explicit?
-  
-  Documentation:
-    Sphinx seems viable 
-    http://www.sphinx-doc.org/en/stable/
-    Videos at 
-    https://en.wikipedia.org/wiki/Sphinx_(documentation_generator)
-    Could be used for personal websites 
-    
-  todo-listen in jedem modul:
-    - liste der klassen und standard punkte 
-      - fertig
-      - check
-      - unittest 
-    - liste der methodenpakete und standard punkte 
-      - unittest 
-    - Feature liste welche erwuenscht ist: near/far future 
-    
-  unit test layout:
-    logstream that is reference to std::cout 
-    TEST_DECL_MODULE( str );
-    TEST_DECL_CLASS ( str );
-    TEST_DECL_BASIC (     );
-    TEST_DECL_TOPIC ( str );
-    TEST_ANNOUNCE();
-    
-    
 
 
 
@@ -536,6 +525,15 @@ There is only one cleaning command for the entire build directory.
 
 
 # DONE!
+
+# (DONE) Remove dead code 
+
+Make dead code alive again or remove it. Search for the following pieces:
+
+grep 'if(false' ./*/*pp
+grep 'if( false' ./*/*pp
+
+# (DONE) 'threshold' should be renamed 'tolerance'
 
 # (DONE) Github badge C++ >= 17
 
@@ -569,7 +567,7 @@ For testing purposes. Given a broken differential form
 - text: mesh, redirect print 
 - redirect through entire code 
 
-## (DONE) add complete constructor interfaces 
+# (DONE) add complete constructor interfaces 
 
 Apply the rule of six and declare all constructors explicitly even if merely setting them to default. 
 
@@ -590,12 +588,10 @@ Generally speaking, try to find a good stopping criterion.
 grep -E '([0-9]+([eE][-+]?[0-9]+))' ./**/*cpp ./*/*/*pp
 grep -E '([-+]?\.[0-9]+([eE][-+]?[0-9]+)?)' ./*/*pp ./*/*/*pp
 
-
-## (DONE) Dependencies
+# (DONE) Dependencies
 
 - [x] All targets (tests and modules) depend on the header files as well. 
 - [x] Moreover, every test depends also on the static/dynamic libraries. 
-
 
 # (DONE) How to abort
 
@@ -660,15 +656,15 @@ Introduce a check script which reports common 'errors' in your cpp file,
 that is, stuff you consider important for the design of your code.
 For example,
 
-  - Replace assert(false) by a project-specific macro
-  - Magic floating point constant in code 
+- [ ] Replace assert(false) by a project-specific macro
+- [ ] Magic floating point constant in code 
 
-    ```
-    grep --line-number --recursively --color 'assert(' ./*pp
-    grep --line-number --recursively --color 'cout' ./*pp
-    grep --line-number --recursively --color '.*[0-9]' ./*pp
-    grep --line-number --recursively --color '[0-9]e' ./*pp
-    ```
+```
+grep --line-number --recursively --color 'assert(' ./*pp
+grep --line-number --recursively --color 'cout' ./*pp
+grep --line-number --recursively --color '.*[0-9]' ./*pp
+grep --line-number --recursively --color '[0-9]e' ./*pp
+```
 
 # (DONE) OpenMP pragmas conditional compilation
 
@@ -681,7 +677,7 @@ compile the code with openMP disabled.
 Since the copy constructor is defined, there should also be an assignment operator
 for the different mesh classes, or it should be deleted explicitly.
 
-## (DONE) Clean out 'cout' references throughout code 
+# (DONE) Clean out 'cout' references throughout code 
 
 grep 'cout' ./*/*.?pp 
 Conduct a clean out of all direct references 
@@ -693,7 +689,6 @@ and otherwise only stuff in test files.
 Moreover, consider replacing all the other stuff
 by references to clog instead of cout.
 
-  
 # (DONE) Abgleichen der Gitterweiten bei solverfem 
 
 # (DONE) Unit test for condition numbers of single element matrices 
@@ -718,8 +713,6 @@ For example:
 - random_integer();
 - seed_random_integer();
 
-
-
 # (DONE) Output of solver component 
 
 The solver component prints should all contain the iteration number if possible.
@@ -731,14 +724,12 @@ BREAKDOWN
 WARNING
 INTERIM
 
-
 # (DONE) Argument names in all header files 
     
 The function/method declarations in the header files should provide argument names. 
 The names should coincide with the ones in the code but that's not necessary. 
 
 Rationale: this improves readability.
-
 
 # (DONE) Change the include orders 
 
@@ -753,17 +744,13 @@ and a macro that delivers the line number and file name
 to a function invocation. No further frills.
 Use the custom assert macro throughout the project.
 
-
 # (DONE) Phantom coordinate in 2D mesh output
 
 Add a phantom coordinate coordinate to the output of 2D meshes to plot functions
 
-
-
 # (DONE) Unit test descriptions
 
 Update the unit test **descriptions** in every module. They seem to be off in many cases.
-
 
 # (DONE) Revise logging output 
 
@@ -775,11 +762,11 @@ in just a few methods throughout the code.
 
 Basically, implement the following methods:
 
-    - text:        produces a string presentation (no nl)
-    - print:       outputs the text() into a given stream (with nl)
-    - << operator: outputs the text() into a given stream (no nl)
-    - lg:          outputs the text into the log (with nl).
-                   This function may take a preamble argument
+- text:        produces a string presentation (no nl)
+- print:       outputs the text() into a given stream (with nl)
+- << operator: outputs the text() into a given stream (no nl)
+- lg:          outputs the text into the log (with nl).
+               This function may take a preamble argument
 
 Revert the current design of logging output: there shouldn't be
 any automatic newlines. Instead, re-introduce the newlines in the tests
@@ -817,3 +804,22 @@ grep 'if( false' ./*/*pp
 # (DONE) Improve the iterator interface of IndexRange to allow the full scope
 
 # (DONE) Git ID extraction as macro
+
+# (DONE) Improve the file names used for output
+
+While using the program name for the file output is nice, it is better if you can also add an additional prefix.
+That way you can separate the output of different subtasks more easily.
+
+# (DONE) Dynamic library dependencies 
+
+The test programs depend on the object files only if static linking is enabled.
+Otherwise, they don't.
+
+# (DONE) Output program info 
+
+While using the program name for the file output is nice, it is better if you can also add an additional prefix.
+That way you can separate the output of different subtasks more easily.
+
+
+
+

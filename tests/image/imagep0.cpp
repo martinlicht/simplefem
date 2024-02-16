@@ -36,7 +36,11 @@ int main( int argc, char *argv[] )
     auto green = pim.get_interpolated_green();
     auto blue  = pim.get_interpolated_blue();
     
-    M.getcoordinates().scale( { (Float)pim.getwidth(), (Float)pim.getheight() } );
+    M.getcoordinates().scale( 
+        FloatVector({ 
+            (Float)pim.getwidth(), (Float)pim.getheight() 
+        }) 
+    );
 
     int l_min =  0;
     int l_max =  15;

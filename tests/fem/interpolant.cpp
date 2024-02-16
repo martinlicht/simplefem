@@ -22,7 +22,7 @@ int main( int argc, char *argv[] )
         auto scalarfield = [](const FloatVector& vec) -> FloatVector{
             assert( vec.getdimension() == 2 );
             return FloatVector({ std::sqrt( vec[0]*vec[0] + vec[1]*vec[1] ) });
-            return FloatVector({ 1 + vec[0] + vec[1] * vec[1] });
+            // return FloatVector({ 1 + vec[0] + vec[1] * vec[1] });
         };
         
         FloatVector results = Interpolation( M, M.getinnerdimension(), 0, 2, scalarfield );

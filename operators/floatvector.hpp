@@ -33,7 +33,7 @@ class FloatVector
         explicit FloatVector( const std::vector<Float>&, Float scaling = 1. );
         explicit FloatVector( const std::vector<int>&, Float scaling = 1. );
 
-                 FloatVector( const std::initializer_list<Float>& l );
+        explicit FloatVector( const std::initializer_list<Float>& l );
         
         explicit FloatVector( int dimension, const std::function<Float(int)>& generator, Float scaling = 1. );
 

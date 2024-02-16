@@ -1,5 +1,7 @@
 
 OVERWRITE.COMPILE.mk
+.stuff/
+.CUDA/
 .private/
 .playground/
 .legacy/

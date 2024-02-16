@@ -52,9 +52,9 @@
  * Irrespective of whether we use it or not, we define a termination command 
  */
 #ifdef __cpp_exceptions
-#define TERMINATION_COMMAND() throw(0);
+#define TERMINATION_COMMAND() throw(0)
 #else // __cpp_exceptions
-#define TERMINATION_COMMAND() abort();
+#define TERMINATION_COMMAND() abort()
 #endif // __cpp_exceptions    
 
 
@@ -213,8 +213,8 @@ inline std::string Concat2String( const T& t, const Params&... params )
 
 #include <cassert>
 #define Assert(...)   (static_cast<void>(0))
-#define unreachable()   { TERMINATION_COMMAND(); UNREACHABLE_SIGNAL(); }
-#define unimplemented() { TERMINATION_COMMAND(); UNREACHABLE_SIGNAL(); }
+#define unreachable()   { UNREACHABLE_SIGNAL(); }
+#define unimplemented() { UNREACHABLE_SIGNAL(); }
 
 // Note: replaced `exit( EXIT_FAILURE ))` with `abort()` 
 
@@ -232,8 +232,8 @@ template<typename... Params> constexpr bool Cond( bool b, const Params&... param
 #define Assert(x,...)     assert(x)
 #endif // __cplusplus < 202002L
 
-#define unreachable()   { fprintf( stderr, "Unreachable reached: %s:%d\n", __FILE__, __LINE__ ); TERMINATION_COMMAND(); UNREACHABLE_SIGNAL(); }
-#define unimplemented() { fprintf( stderr,  "Unimplemented path: %s:%d\n", __FILE__, __LINE__ ); TERMINATION_COMMAND(); UNREACHABLE_SIGNAL(); }
+#define unreachable()   { fprintf( stderr, "Unreachable reached: %s:%d\n", __FILE__, __LINE__ ); UNREACHABLE_SIGNAL(); }
+#define unimplemented() { fprintf( stderr,  "Unimplemented path: %s:%d\n", __FILE__, __LINE__ ); UNREACHABLE_SIGNAL(); }
 
 #else // USE_ORIGINAL_ASSERT_MACRO
 
@@ -252,8 +252,8 @@ template<typename... Params> constexpr bool Cond( bool b, const Params&... param
 #endif // __cplusplus < 202002L
 
 
-#define unreachable()   { myActualUnreachable  (__FILE__, __LINE__); TERMINATION_COMMAND(); UNREACHABLE_SIGNAL(); }
-#define unimplemented() { myActualUnimplemented(__FILE__, __LINE__); TERMINATION_COMMAND(); UNREACHABLE_SIGNAL(); }
+#define unreachable()   { myActualUnreachable  (__FILE__, __LINE__); UNREACHABLE_SIGNAL(); }
+#define unimplemented() { myActualUnimplemented(__FILE__, __LINE__); UNREACHABLE_SIGNAL(); }
 
 #endif //USE_ORIGINAL_ASSERT_MACRO
 

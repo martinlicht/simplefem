@@ -508,11 +508,12 @@ MatrixCSR LagrangeCoefficientMassMatrix( const Mesh& mesh, int r, int w, const s
             Assert( 0 <= vertex1 && vertex1 < num_entries, vertex1 );
             Assert( 0 <= vertex2 && vertex2 < num_entries, vertex2 );
 
-            for( int i = A[vertex1]; i < A[vertex1+1]; i++ )
+            for( int i = A[vertex1]; i < A[vertex1+1]; i++ ) {
+            
+                Assert( 0 <= i && i < num_entries, i );
+            
                 if( C[i] == vertex2 ) {
                     
-                    Assert( 0 <= i && i < num_entries, i );
-
                     #if defined(_OPENMP)
                     #pragma omp atomic
                     #endif
@@ -521,6 +522,8 @@ MatrixCSR LagrangeCoefficientMassMatrix( const Mesh& mesh, int r, int w, const s
                     assert( std::isfinite( V[i] ) );
 
                 }
+
+            }
                     
         }
 
@@ -748,11 +751,12 @@ MatrixCSR LagrangeCoefficientStiffnessMatrix( const Mesh& mesh, int r, int w, co
             Assert( 0 <= vertex1 && vertex1 < num_entries, vertex1 );
             Assert( 0 <= vertex2 && vertex2 < num_entries, vertex2 );
 
-            for( int i = A[vertex1]; i < A[vertex1+1]; i++ )
+            for( int i = A[vertex1]; i < A[vertex1+1]; i++ ) {
+
+                Assert( 0 <= i && i < num_entries, i );
+                
                 if( C[i] == vertex2 ) {
                     
-                    Assert( 0 <= i && i < num_entries, i );
-
                     #if defined(_OPENMP)
                     #pragma omp atomic
                     #endif
@@ -761,6 +765,8 @@ MatrixCSR LagrangeCoefficientStiffnessMatrix( const Mesh& mesh, int r, int w, co
                     assert( std::isfinite( V[i] ) );
                     
                 }
+            
+            }
                     
         }
 

@@ -235,7 +235,7 @@ int main( int argc, char *argv[] )
                             for( int c = 0; c < M.count_simplices(0); c++ ) { 
                                 auto x = M.getcoordinates().getdata(c,0);
                                 auto y = M.getcoordinates().getdata(c,1);
-                                auto value = experiment_rhs( { x, y } )[0];
+                                auto value = experiment_rhs( FloatVector({ x, y }) )[0];
                                 outputdata2[c] = value;
                             }
                             

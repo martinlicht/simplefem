@@ -143,8 +143,6 @@ int main( int argc, char *argv[] )
                 if( k != M.getinnerdimension() )
                 for( int e = 0; e < M.count_simplices(M.getinnerdimension()-1); e++ )
                 {
-                    const int n = M.getinnerdimension();
-
                     const int dim = SullivanSpanSize( n-1, k, r );
 
                     assert( dim * M.count_simplices(n-1) == traces_of_field.getdimension() );

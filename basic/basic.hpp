@@ -403,8 +403,9 @@ inline constexpr uintmax_t factorial_integer_table_old( intmax_t n )
         // case 23: return 25852016738884976640000ll;
         // case 24: return 620448401733239439360000ll;
         // case 25: return 15511210043330985984000000ll;
-        default: unreachable();
+        // default: unreachable();
     }
+    unreachable();
 }
 
 inline constexpr uintmax_t factorial_integer_table( intmax_t n )
