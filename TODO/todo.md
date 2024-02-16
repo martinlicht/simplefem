@@ -74,8 +74,8 @@ Whatever solver hingegen kackt ab
 
 # (HIGH) Clean up unit tests for the numerical examples 
 
-[ ] Don't compute the norms of the solutions and the rhs unless necessary 
-[ ] Don't use MINRES unless necessary 
+- [ ] Don't compute the norms of the solutions and the rhs unless necessary 
+- [ ] Don't use MINRES unless necessary 
 
 # (HIGH) Question: what are best practices to keep the unit tests up to date with the code?
 
@@ -159,7 +159,6 @@ Astyle
 --align-reference=type
 --attach-return-type
 
-
 # (MEDIUM) Solver printing data structure 
 
 The iterative solvers should be provided a printing data structure 
@@ -178,7 +177,6 @@ bool report_breakdown();
 
 bool iteration_is_printable();
 ```
-
 
 # (MEDIUM) Logging class 
 
@@ -489,47 +487,47 @@ There is only one cleaning command for the entire build directory.
 # TODO
   
   
-  - zeige die ersten zeilen aller header dateien an
-    for datei in ./*/*.hpp; do head -n 2 $datei; done
-    include guards umbenennen 
+zeige die ersten zeilen aller header dateien an
+for datei in ./*/*.hpp; do head -n 2 $datei; done
+include guards umbenennen 
   
-  - class for one-dimensional meshes: graphs with no abandoned nodes
+class for one-dimensional meshes: graphs with no abandoned nodes
   
-  - hash-tabelle 
+hash-tabelle 
   
-  https://scicomp.stackexchange.com/questions/23882/what-is-a-common-file-data-format-for-a-mesh-for-fem
-  Gmsh file format: http://gmsh.info/doc/texinfo/gmsh.html
-  Gambit:           http://web.stanford.edu/class/me469b/handouts/gambit_write.pdf
+https://scicomp.stackexchange.com/questions/23882/what-is-a-common-file-data-format-for-a-mesh-for-fem
+Gmsh file format: http://gmsh.info/doc/texinfo/gmsh.html
+Gambit:           http://web.stanford.edu/class/me469b/handouts/gambit_write.pdf
   
-  Question:
-    - how to manage unit test for a software library?
-    - how to manage makefiles? what dependencies to make explicit?
+Question:
+  - how to manage unit test for a software library?
+  - how to manage makefiles? what dependencies to make explicit?
+
+Documentation:
+  Sphinx seems viable 
+  http://www.sphinx-doc.org/en/stable/
+  Videos at 
+  https://en.wikipedia.org/wiki/Sphinx_(documentation_generator)
+  Could be used for personal websites 
   
-  Documentation:
-    Sphinx seems viable 
-    http://www.sphinx-doc.org/en/stable/
-    Videos at 
-    https://en.wikipedia.org/wiki/Sphinx_(documentation_generator)
-    Could be used for personal websites 
-    
-  todo-listen in jedem modul:
-    - liste der klassen und standard punkte 
-      - fertig
-      - check
-      - unittest 
-    - liste der methodenpakete und standard punkte 
-      - unittest 
-    - Feature liste welche erwuenscht ist: near/far future 
-    
-  unit test layout:
-    logstream that is reference to std::cout 
-    TEST_DECL_MODULE( str );
-    TEST_DECL_CLASS ( str );
-    TEST_DECL_BASIC (     );
-    TEST_DECL_TOPIC ( str );
-    TEST_ANNOUNCE();
-    
-    
+todo-listen in jedem modul:
+  - liste der klassen und standard punkte 
+    - fertig
+    - check
+    - unittest 
+  - liste der methodenpakete und standard punkte 
+    - unittest 
+  - Feature liste welche erwuenscht ist: near/far future 
+  
+unit test layout:
+  logstream that is reference to std::cout 
+  TEST_DECL_MODULE( str );
+  TEST_DECL_CLASS ( str );
+  TEST_DECL_BASIC (     );
+  TEST_DECL_TOPIC ( str );
+  TEST_ANNOUNCE();
+  
+  
 
 
 

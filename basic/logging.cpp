@@ -163,11 +163,12 @@ System_Reporter::System_Reporter()
     #if defined(_OPENMP)
     LOG << "###\tOpenMP Value: " << _OPENMP << nl;
     LOG << "###\tMaximum number of threads: " << omp_get_max_threads() << nl;
-    LOG << "###\tNested parallelism supported: " << ( omp_get_nested() ? "Yes" : "No" ) << nl;
+    LOG << "###\tMaximum active levels: " << omp_get_max_active_levels() << nl;
+    // LOG << "###\tNested parallelism supported: " << ( omp_get_nested() ? "Yes" : "No" ) << nl;
     LOG << "###\tDynamic adjustment of the number of threads enabled: " << ( omp_get_dynamic() ? "Yes" : "No" ) << nl;
     LOG << "###\tThread limit: " << omp_get_thread_limit() << nl;
-    LOG << "Number of processors available: " << omp_get_num_procs() << nl;
-    LOG << "Default thread affinity: " << ( omp_get_proc_bind() == omp_proc_bind_false ? "No affinity" : "Affinity" ) << nl;
+    LOG << "###\tNumber of processors available: " << omp_get_num_procs() << nl;
+    LOG << "###\tDefault thread affinity: " << ( omp_get_proc_bind() == omp_proc_bind_false ? "No affinity" : "Affinity" ) << nl;
     // LOG << "###\tMaximum number of processors: " << p << " -> " << omp_get_place_num_procs() << nl;
     LOG << "###\tMaximum number of places: " << omp_get_num_places() << nl;
     for( int p = 0; p < omp_get_num_places(); p++ ) {
@@ -191,9 +192,15 @@ System_Reporter::System_Reporter()
     LOGPRINTF("###\tCompiler version: %s\n", __VERSION__);
 
     #ifdef _DEBUG
-    LOGPRINTF("###\tDebugging flags enabled.\n");
+    LOGPRINTF("###\tMSVC Debugging flags enabled.\n");
     #else
-    LOGPRINTF("###\tDebugging flags not enabled.\n");
+    LOGPRINTF("###\tMSVC Debugging flags not enabled.\n");
+    #endif
+
+    #ifdef NDEBUG
+    LOGPRINTF("###\tNDEBUG enabled.\n");
+    #else
+    LOGPRINTF("###\tNDEBUG not enabled.\n");
     #endif
 
     #ifdef __OPTIMIZE__
@@ -208,10 +215,6 @@ System_Reporter::System_Reporter()
     #else
     #error "Unknown platform"
     #endif
-    
-
-
-
 }
 
 System_Reporter::~System_Reporter()
