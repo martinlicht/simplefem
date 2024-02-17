@@ -177,7 +177,8 @@ ifeq ($(FLAG_CXX),GCC)
   
 else ifeq ($(FLAG_CXX),CLANG)
 
-  CXX := clang++ -ftime-trace
+  CXX := clang++ 
+  # -ftime-trace
   # -stdlib=libstdc++ 
 
 else ifeq ($(FLAG_CXX),ICC)
@@ -288,6 +289,11 @@ endif
 
 CXXFLAGS_CODEGEN += -fvisibility=default
 
+CXXFLAGS_CODEGEN += -fvisibility-inlines-hidden
+
+CXXFLAGS_CODEGEN += -fstrict-enums
+# CXXFLAGS_CODEGEN += -fstrict-eval-order
+
 ifneq ($(OS),Windows_NT)
 	CXXFLAGS_CODEGEN += -fpic 
 endif
@@ -335,7 +341,8 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 	
 	CXXFLAGS_WARNINGS += -Wno-double-promotion
 
-
+	# CXXFLAGS_WARNINGS += -Wcomma-subscript
+	
 	# CXXFLAGS_WARNINGS += -Wlifetime
 	CXXFLAGS_WARNINGS += -Wnon-virtual-dtor
 	CXXFLAGS_WARNINGS += -Wunused -Wno-unused-variable
@@ -380,10 +387,13 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 			#TODO Read the format warnings 
 
 		CXXFLAGS_WARNINGS += -Wno-float-equal
+		CXXFLAGS_WARNINGS += -Wzero-as-null-pointer-constant
 		
 
 	else ifeq ($(FLAG_CXX),CLANG)
 
+# 		CXXFLAGS_WARNINGS += -Wdangling-reference
+		
 		CXXFLAGS_WARNINGS += -Wabstract-vbase-init
 		CXXFLAGS_WARNINGS += -Walloca
 		CXXFLAGS_WARNINGS += -Wno-vla-extension -Werror-implicit-function-declaration -Wabsolute-value -Wno-shorten-64-to-32

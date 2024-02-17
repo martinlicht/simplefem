@@ -7,12 +7,7 @@
 #include "../../dense/cholesky.hpp"
 #include "../../dense/qr.factorization.hpp"
 #include "../../mesh/coordinates.hpp"
-#include "../../mesh/mesh.simplicial2D.hpp"
-#include "../../mesh/mesh.simplicial3D.hpp"
-#include "../../mesh/examples2D.hpp"
-#include "../../mesh/examples3D.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
-#include "../../fem/global.massmatrix.hpp"
 #include "../../fem/utilities.hpp"
 
 
@@ -36,7 +31,7 @@ int main( int argc, char *argv[] )
         
         DenseMatrix MM = polynomialmassmatrix( n, r );
     
-        int N = MM.getdimin();
+        const int N = MM.getdimin();
 
         LOG << "Dimension: " << space << n_min << " <= " << n << " <= " << n_max << nl;
         LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << nl;
@@ -55,9 +50,9 @@ int main( int argc, char *argv[] )
         DenseMatrix MMqr_q(MM), MMqr_r(MM);
         QRFactorization(MM,MMqr_q,MMqr_r);
         
-        Float diff_inv  = ( MM * MMinv - IdentityMatrix(N) ).norm();
-        Float diff_chol = ( MMchol * Transpose(MMchol) - MM ).norm();
-        Float diff_qr   = ( MMqr_q * MMqr_r - MM ).norm();
+        const Float diff_inv  = ( MM * MMinv - IdentityMatrix(N) ).norm();
+        const Float diff_chol = ( MMchol * Transpose(MMchol) - MM ).norm();
+        const Float diff_qr   = ( MMqr_q * MMqr_r - MM ).norm();
 
         LOG << "\ta=" << diff_inv
             << "\tb=" << diff_chol
@@ -67,8 +62,6 @@ int main( int argc, char *argv[] )
     }
     
     LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
-    
-    
     
     return 0;
 }

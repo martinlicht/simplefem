@@ -74,6 +74,8 @@ int main( int argc, char *argv[] )
             FloatVector d { -5, -4, -3 };
             FloatVector e { 0,0,0 };
             
+            LOG << FloatVector {3} << nl;
+            
             LOG << "positive:     (no ) " << a.ispositive() << nl;
             LOG << "negative:     (no ) " << a.isnegative() << nl;
             LOG << "non-negative: (yes) " << a.isnonnegative() << nl;
@@ -105,9 +107,9 @@ int main( int argc, char *argv[] )
             LOG << "zero:         (yes) " << e.iszero()       << nl;
             
             LOG << "norm: (3.162)" << a.norm() << space << a.normalize().norm() << nl;
-            LOG << "norm: (3.162)" << b.norm() << space << a.normalize().norm() << nl;
-            LOG << "norm: (4.582)" << c.norm() << space << a.normalize().norm() << nl;
-            LOG << "norm: (7.071)" << d.norm() << space << a.normalize().norm() << nl;
+            LOG << "norm: (3.162)" << b.norm() << space << b.normalize().norm() << nl;
+            LOG << "norm: (4.582)" << c.norm() << space << c.normalize().norm() << nl;
+            LOG << "norm: (7.071)" << d.norm() << space << d.normalize().norm() << nl;
             LOG << "norm: (0.000)" << e.norm() << nl;
             
         }
