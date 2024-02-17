@@ -107,10 +107,8 @@ int main( int argc, char *argv[] )
             if( source == target )
                 assert( all == generateIndexMaps( source) );
 
-            if( source.cardinality() == 0 )
+            if( source.cardinality() == 0 and target.cardinality() == 0 )
                 assert( all.size() == 1 );
-            else if( target.cardinality() == 0 )
-                assert( all.size() == 0 );
             else
                 assert( all.size() == power_integer( target.cardinality(), source.cardinality() ) );
             
@@ -141,29 +139,39 @@ int main( int argc, char *argv[] )
             const IndexRange bereich( 1, N );
             const std::vector<IndexMap>  all = generatePermutations( bereich );
 
+            // check cardinality 
             if( bereich.cardinality() > 0 )
                 assert( all.size() > 0 );
             
             assert( all.size() == factorial_integer( bereich.cardinality() ) );
             
+            // check they are all different 
             for( int i = 0; i < all.size(); i++ )
             for( int j = 0; j < all.size(); j++ )
                 if( i != j )
                     assert( all[i] != all[j] );
             
+            // print their signa
             for( const IndexMap& im : all )
                     LOG << im << nl << "signum: " << signPermutation( im ) << nl;
             
+            // count the even permutations 
             int number_of_even_permutations = 0;
             
             for( const IndexMap& im : all ) {
+                
                 assert( im.getSourceRange() == im.getTargetRange() );
+                
                 for( const int i : bereich ) {
+                
                     assert( bereich.min() <= im[i] and im[i] <= bereich.max() );
+                
                     for( const int j : bereich  )
                         if( i != j )
                             assert( im[i] != im[j] );
+                
                 }
+                
                 assert( im.isbijective() );
                 
                 if( signPermutation( im ) == 1 ) 
@@ -174,8 +182,6 @@ int main( int argc, char *argv[] )
                 assert( number_of_even_permutations * 2 == all.size() );
             else
                 assert( number_of_even_permutations     == all.size() );
-            
-            
             
         }
         
@@ -199,21 +205,27 @@ int main( int argc, char *argv[] )
             IndexRange source( 1, N );
             IndexRange target( 2, L );
             
-            if( source.cardinality() > target.cardinality() )
-                continue;
-            
             std::vector<IndexMap>  all = generateSigmas( source, target );
+            
+            if( source.cardinality() > target.cardinality() )
+                assert( all.size() == 0 );
             
             assert( all.size() == binomial_integer( target.cardinality(), source.cardinality() ) );
             
             for( const IndexMap& sigma : all ) {
+            
                 assert( sigma.getSourceRange() == source );
                 assert( sigma.getTargetRange() == target );
+            
                 for( const int i : source ) {
+            
                     assert( target.min() <= sigma[i] and sigma[i] <= target.max() );
+            
                     if( i != source.max() )
                         assert( sigma[i] < sigma[i+1] );
+            
                 }
+            
                 assert( sigma.isstrictlyascending() );
                 
             }

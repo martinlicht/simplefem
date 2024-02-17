@@ -31,6 +31,16 @@ requires regular grinding in order to get it done.
 
 
 
+# (DONE) Combinatorics generate multiindices tests must actually test something
+
+# (HIGH) orientation tests must be included in usual tests
+
+# (HIGH) shake the coordinates in tests where there is no explicit functions living on them 
+- [ ] meshes 
+- [ ] fem 
+- [ ] solvers?
+- [ ] several finite element tests
+
 # (HIGH) Dense Matrix rewrite 
 
 - [x] simple solvers remain in one file
@@ -57,6 +67,8 @@ Clean up the test for the nullspace computation.
 - [ ] Summarize: global functions 
 
 # (HIGH) static library dependency 
+
+# (HIGH) dependencies for object file compilation  
 
 # (HIGH) clean up DenseMatrix subsystem 
 
