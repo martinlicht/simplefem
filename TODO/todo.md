@@ -31,6 +31,44 @@ requires regular grinding in order to get it done.
 
 
 
+# (DONE) Combinatorics generate multiindices tests must actually test something
+
+# (HIGH) orientation tests must be included in usual tests
+
+# (HIGH) shake the coordinates in tests where there is no explicit functions living on them 
+- [ ] meshes 
+- [ ] fem 
+- [ ] solvers?
+- [ ] several finite element tests
+
+# (HIGH) Dense Matrix rewrite 
+
+- [x] simple solvers remain in one file
+- [x] reconcile the norms of dense matrices with the norms of vectors 
+- [x] matrix tensor product should be part of the functions
+- [ ] Cholesky, QR, and Gauss-Jordan should be one file 
+
+Finally, rearrange and rename everything. One suggestion:
+- operations: addition, subtraction, scalar multiplication, scalar division, matrix multiplication, transposition, determinant calculation, inverse calculation.
+- hard solvers, factorization
+- easy solvers 
+- properties and scalar functions (maybe merge with class?)
+- manipulations (index oriented, not algebra)
+- functions to shelve: transpose, skip r/c, det, cofactor, inv, subdet matrix, tensorprod, trace, gerschgorin/eigenvalue, norm
+
+# (HIGH) Streamline nullspace tests 
+
+Clean up the nullspace computation in the solver component.
+Clean up the test for the nullspace computation. 
+
+# (HIGH) FEM rewrite 
+
+- [ ] Summarize: indexfunctions, local.polynomialmassmatrix, utilities -> utilities
+- [ ] Summarize: global functions 
+
+# (HIGH) static library dependency 
+
+# (HIGH) dependencies for object file compilation  
 
 # (HIGH) clean up DenseMatrix subsystem 
 

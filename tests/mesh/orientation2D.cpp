@@ -51,7 +51,7 @@ int main( int argc, char *argv[] )
                 int gap_index = 0;
                 while( gap_index <= M.getinnerdimension()-1 && ev[gap_index] == tv[gap_index] ) gap_index++;
 
-                int geometric_orientation = sign( Determinant( M.getTransformationJacobian(2,t) ) );
+                int geometric_orientation = sign_integer( Determinant( M.getTransformationJacobian(2,t) ) );
 
                 LOGPRINTF( "Edge %3d (%3d %3d) \thas parent %3d (%3d %3d %3d) \twith orientation s * (-1)^%3d = %2d \n", 
                     e, ev[0], ev[1],

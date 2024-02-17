@@ -40,9 +40,9 @@ int main( int argc, char *argv[] )
     auto blue  = pim.get_interpolated_blue();
     
     M.getcoordinates().scale( 
-        FloatVector({ 
+        FloatVector{ 
             (Float)pim.getwidth(), (Float)pim.getheight() 
-        }) 
+        }
     );
     
     int l_min =  0;

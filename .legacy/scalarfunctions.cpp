@@ -1,82 +1,187 @@
 
+#include "scalarfunctions.hpp"
 
-/**/
+#include <algorithm>
 
-#include <iostream>
-#include "../../basic.hpp"
-#include "../../dense/scalarfunctions.hpp"
+#include "densematrix.hpp"
 
 
-using namespace std;
 
-int main()
+
+
+
+
+
+
+
+
+
+
+Float MatrixTrace( const DenseMatrix& src )
 {
-    cout << "Unit test for scalar functions of matrices" << endl;
-    
-    std::cout.precision(10);
-    std::cout.setf( std::ios::fixed, std:: ios::floatfield );
-    std::cout << std::showpos;
-    
-    DenseMatrix S( 4, 4 );
-    S(0,0) =  3; S(0,1) =  0; S(0,2) = 6; S(0,3) =  0; 
-    S(1,0) =  1; S(1,1) = -1; S(1,2) = 0; S(1,3) =  2; 
-    S(2,0) = -1; S(2,1) =  1; S(2,2) = 1; S(2,3) = -1; 
-    S(3,0) =  2; S(3,1) = -4; S(3,2) = 4; S(3,3) =  0; 
-    
-    
-    cout << S << endl;
-    cout << "Matrix trace:   " << MatrixTrace( S ) << endl;
-    cout << "Norm L1:        " << NormL1( S ) << endl;
-    cout << "Norm Frobenius: " << NormFrobenius( S ) << endl;
-    cout << "Norm Max:       " << NormMax( S ) << endl;
-    
-    Float p = 1.01;
-    cout << endl << "Norm Lp with p=" << p << ": " << NormLp( S, p ) << endl << endl;
-    
-    Float p1 = 100.0001;
-    Float p2 = 1.00001;
-    cout << endl << "Row " << p1 << space
-                 << "Col " << p2 << space
-                 << NormRowCol( S, p1, p2 ) << endl;
-    cout << endl << "Col " << p1 << space
-                 << "Row " << p2 << space 
-                 << NormColRow( S, p1, p2 ) << endl;
-    cout << endl;
-    
-    cout << endl << "Row " << 1. << space
-                 << "Col " << 1. << space
-                 << NormRowCol( S, 1., 1. ) << endl;
-    cout << endl << "Col " << 1. << space
-                 << "Row " << 1. << space 
-                 << NormColRow( S, 1., 1. ) << endl;
-    cout << endl;
-    
-    cout << endl << "Row " << 2. << space
-                 << "Col " << 2. << space
-                 << NormRowCol( S, 2., 2. ) << endl;
-    cout << endl << "Col " << 2. << space
-                 << "Row " << 2. << space 
-                 << NormColRow( S, 2., 2. ) << endl;
-    cout << endl;
-    
-    cout << endl << "Row " << 20. << space
-                 << "Col " << 20. << space
-                 << NormRowCol( S, 20., 20. ) << endl;
-    cout << endl << "Col " << 20. << space
-                 << "Row " << 20. << space 
-                 << NormColRow( S, 20., 20. ) << endl;
-    cout << endl;
-    
-    
-    
-    cout << "Norm Operator L1:  " << NormOperatorL1( S ) << endl;
-    cout << "Norm Operator Max: " << NormOperatorMax( S ) << endl;
-    cout << endl;
-    
-    cout << "GerschgorinRow:    " << GerschgorinRow( S ) << endl;
-    cout << "GerschgorinColumn: " << GerschgorinColumn( S ) << endl;
-    
-    cout << "Finished Unit Test" << endl;
-
-    return 0;
+    src.check();
+    assert( src.issquare() );
+    Float ret = 0.;
+    for( int i = 0; i < src.getdimout(); i++ )
+      ret += src(i,i);
+    return ret;
 }
+
+
+
+
+DenseMatrix Gerschgorin( const DenseMatrix& src )
+{
+    src.check();
+    assert( src.issquare() );
+    return GerschgorinRow( src );
+}
+
+DenseMatrix GerschgorinRow( const DenseMatrix& src )
+{
+    src.check();
+    assert( src.issquare() );
+    DenseMatrix ret( src.getdimout(), 2 );
+    for( int r = 0; r < src.getdimout(); r++ )
+    {
+        ret( r, 0 ) = src(r,r);
+        ret( r, 1 ) = 0.;
+        for( int c = 0; c < r; c++ )
+            ret( r, 1 ) += absolute( src(r,c) );
+        for( int c = r+1; c < src.getdimout(); c++ )
+            ret( r, 1 ) += absolute( src(r,c) );
+    }
+    return ret;
+}
+
+DenseMatrix GerschgorinColumn( const DenseMatrix& src )
+{
+    src.check();
+    assert( src.issquare() );
+    DenseMatrix ret( src.getdimout(), 2 );
+    for( int c = 0; c < src.getdimout(); c++ )
+    {
+        ret( c, 0 ) = src(c,c);
+        ret( c, 1 ) = 0.;
+        for( int r = 0; r < c; r++ )
+            ret( c, 1 ) += absolute( src(r,c) );
+        for( int r = c+1; r < src.getdimout(); r++ )
+            ret( c, 1 ) += absolute( src(r,c) );
+    }
+    return ret;
+}
+
+Float EigenvalueEstimate( const DenseMatrix& A )
+{
+    assert( A.issquare() );
+    return NormMax( A ) * A.getdimout();
+}
+
+
+
+
+
+
+
+Float NormL1( const DenseMatrix& src )
+{
+    src.check();
+    Float ret = 0.;
+    for( int r = 0; r < src.getdimout(); r++ )
+    for( int c = 0; c < src.getdimin(); c++ )
+        ret += absolute( src(r,c) );
+    return ret;
+}
+
+Float NormFrobenius( const DenseMatrix& src )
+{
+    src.check();
+    Float ret = 0.;
+    for( int r = 0; r < src.getdimout(); r++ )
+    for( int c = 0; c < src.getdimin(); c++ ) {
+        Float av = absolute( src(r,c) );
+        ret += av * av;
+    }
+    ret = std::sqrt( ret );
+    return ret;
+}
+
+Float NormMax( const DenseMatrix& src )
+{
+    src.check();
+    Float ret = 0.;
+    for( int r = 0; r < src.getdimout(); r++ )
+    for( int c = 0; c < src.getdimin(); c++ )
+        ret = maximum( ret, absolute( src(r,c) ) );
+    return ret;
+}
+
+Float NormLp( const DenseMatrix& src, Float p )
+{
+    src.check();
+    assert( 1. <= p );
+    Float ret = 0.;
+    for( int r = 0; r < src.getdimout(); r++ )
+    for( int c = 0; c < src.getdimin(); c++ )
+        ret += power_numerical( absolute( src(r,c) ), p );
+    ret = power_numerical( ret, 1. / p );
+    return ret;
+}
+
+Float NormRowCol( const DenseMatrix& src, Float p, Float q )
+{
+    src.check();
+    assert( 1. <= p && 1. <= q );
+    Float ret = 0.;
+    for( int r = 0; r < src.getdimout(); r++ ) {
+        Float zeile = 0.;
+        for( int c = 0; c < src.getdimin(); c++ )
+            zeile += power_numerical( absolute( src(r,c) ), q );
+        ret += power_numerical( zeile, p/q );
+    }
+    ret = power_numerical( ret, 1. / p );
+    return ret;
+}
+
+Float NormColRow( const DenseMatrix& src, Float p, Float q )
+{
+    src.check();
+    assert( 1. <= p && 1. <= q );
+    Float ret = 0.;
+    for( int c = 0; c < src.getdimin(); c++ ) {
+        Float spalte = 0.;
+        for( int r = 0; r < src.getdimout(); r++ )
+            spalte += power_numerical( absolute( src(r,c) ), q );
+        ret += power_numerical( spalte, p/q );
+    }
+    ret = power_numerical( ret, 1. / p );
+    return ret;
+}
+
+Float NormOperatorL1( const DenseMatrix& src )
+{
+    src.check();
+    Float ret = 0.;
+    for( int c = 0; c < src.getdimin(); c++ ) {
+        Float spalte = 0.;
+        for( int r = 0; r < src.getdimout(); r++ )
+            spalte += absolute( src(r,c) );
+        ret = maximum( ret, spalte );
+    }
+    return ret;
+}
+
+Float NormOperatorMax( const DenseMatrix& src )
+{
+    src.check();
+    Float ret = 0.;
+    for( int r = 0; r < src.getdimout(); r++ ) {
+        Float zeile = 0.;
+        for( int c = 0; c < src.getdimin(); c++ )
+            zeile += absolute( src(r,c) );
+        ret = maximum( ret, zeile );
+    }
+    return ret;
+}
+
+

@@ -3299,10 +3299,10 @@ std::string MeshSimplicial2D::outputSVG(
 
     auto coords = getcoordinates();
 
-    coords.shift( FloatVector({ 
+    coords.shift( FloatVector{ 
         -getcoordinates().getmin(0), 
         -getcoordinates().getmin(1) 
-    }) );
+    } );
 
     os << "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.200000\" width=\"100%\" height=\"100%\" "
        << "viewBox=\""
@@ -3386,10 +3386,10 @@ std::string MeshSimplicial2D::outputLinearSVG(
     // 1. copy coordinates and shift them 
     auto coords = getcoordinates();
 
-    coords.shift( FloatVector({ 
+    coords.shift( FloatVector{ 
         -getcoordinates().getmin(0), 
         -getcoordinates().getmin(1) 
-    }) );
+    } );
 
     // 2. preamble 
     os << "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.200000\" width=\"100%\" height=\"100%\" "

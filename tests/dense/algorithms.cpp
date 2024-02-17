@@ -4,7 +4,7 @@
 #include "../../dense/functions.hpp"
 #include "../../dense/gaussjordan.hpp"
 #include "../../dense/qr.factorization.hpp"
-#include "../../dense/scalarfunctions.hpp"
+// #include "../../dense/scalarfunctions.hpp"
 
 
 int main( int argc, char *argv[] )
@@ -26,55 +26,55 @@ int main( int argc, char *argv[] )
         
         
         LOG << S << nl;
-        LOG << "Matrix trace:   " << MatrixTrace( S ) << nl;
-        LOG << "Norm L1:        " << NormL1( S ) << nl;
-        LOG << "Norm Frobenius: " << NormFrobenius( S ) << nl;
-        LOG << "Norm Max:       " << NormMax( S ) << nl;
+        LOG << "Matrix trace:   " << S.trace() << nl;
+        LOG << "Norm L1:        " << S.sumnorm() << nl;
+        LOG << "Norm Frobenius: " << S.frobeniusnorm() << nl;
+        LOG << "Norm Max:       " << S.maxnorm() << nl;
         
         Float p = 1.01;
-        LOG << nl << "Norm Lp with p=" << p << ": " << NormLp( S, p ) << nl << nl;
+        LOG << nl << "Norm Lp with p=" << p << ": " << S.lpnorm( p ) << nl << nl;
         
         Float p1 = 100.0001;
         Float p2 = 1.00001;
         LOG << nl << "Row " << p1 << space
                      << "Col " << p2 << space
-                     << NormRowCol( S, p1, p2 ) << nl;
+                     << S.norm_row_col( p1, p2 ) << nl;
         LOG << nl << "Col " << p1 << space
                      << "Row " << p2 << space 
-                     << NormColRow( S, p1, p2 ) << nl;
+                     << S.norm_col_row( p1, p2 ) << nl;
         
         LOG << nl << "Row " << 1. << space
                      << "Col " << 1. << space
-                     << NormRowCol( S, 1., 1. ) << nl;
+                     << S.norm_row_col( 1., 1. ) << nl;
         LOG << nl << "Col " << 1. << space
                      << "Row " << 1. << space 
-                     << NormColRow( S, 1., 1. ) << nl;
+                     << S.norm_col_row( 1., 1. ) << nl;
         LOG << nl;
         
         LOG << nl << "Row " << 2. << space
                      << "Col " << 2. << space
-                     << NormRowCol( S, 2., 2. ) << nl;
+                     << S.norm_row_col( 2., 2. ) << nl;
         LOG << nl << "Col " << 2. << space
                      << "Row " << 2. << space 
-                     << NormColRow( S, 2., 2. ) << nl;
+                     << S.norm_col_row( 2., 2. ) << nl;
         LOG << nl;
         
         LOG << nl << "Row " << 20. << space
                      << "Col " << 20. << space
-                     << NormRowCol( S, 20., 20. ) << nl;
+                     << S.norm_row_col( 20., 20. ) << nl;
         LOG << nl << "Col " << 20. << space
                      << "Row " << 20. << space 
-                     << NormColRow( S, 20., 20. ) << nl;
+                     << S.norm_col_row( 20., 20. ) << nl;
         LOG << nl;
         
         
         
-        LOG << "Norm Operator L1:  " << NormOperatorL1( S ) << nl;
-        LOG << "Norm Operator Max: " << NormOperatorMax( S ) << nl;
+        LOG << "Norm Operator L1:  " << S.NormOperatorL1() << nl;
+        LOG << "Norm Operator Max: " << S.NormOperatorMax() << nl;
         LOG << nl;
         
-        LOG << "GerschgorinRow:    " << GerschgorinRow( S ) << nl;
-        LOG << "GerschgorinColumn: " << GerschgorinColumn( S ) << nl;
+        LOG << "GerschgorinRow:    " << S.GerschgorinRow() << nl;
+        LOG << "GerschgorinColumn: " << S.GerschgorinColumn() << nl;
         
     }
     
@@ -262,7 +262,7 @@ int main( int argc, char *argv[] )
         {
             auto Cinv = GaussJordanInplace(C);
             DenseMatrix I(N); I.unitmatrix();
-            Float relaxation = Cinv.norm();
+            // Float relaxation = Cinv.norm();
             
             for( int t = 0; t < 2000; t++ )
                 Cinv = Cinv + 1.5/ ( std::log(N)) * ( I - C * Cinv );

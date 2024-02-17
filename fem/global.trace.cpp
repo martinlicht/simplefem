@@ -110,7 +110,7 @@ SparseMatrix FEECBrokenTraceMatrix( const Mesh& mesh, int n, int k, int r, bool 
 
 
 
-        const int extra_signum = ( n == mesh.getouterdimension() ? sign( Determinant( mesh.getTransformationJacobian(n,s) ) ) : 1. );
+        const int extra_signum = ( n == mesh.getouterdimension() ? sign_integer( Determinant( mesh.getTransformationJacobian(n,s) ) ) : 1 );
 
         const int signum = sign_power( index_of_gap ) * extra_signum;
 

@@ -203,7 +203,8 @@ class Logger //: public std::ostringstream
 
 //     // delete[] str;
 // }
-#endif 
+
+#endif // USE_PRIMITIVE_LOGGING
 
 
 
@@ -226,7 +227,7 @@ class Logger //: public std::ostringstream
 #define LOG     std::cout
 #define ERR     std::cerr
 
-#endif 
+#endif // USE_PRIMITIVE_LOGGING
 
 
 
@@ -268,7 +269,7 @@ class Logger //: public std::ostringstream
 #define ALERT   std::cerr <<
 #define ERROR   std::cerr <<
 
-#endif 
+#endif // USE_PRIMITIVE_LOGGING
 
 
 // emit the current file and line number into the log stream 
@@ -351,4 +352,4 @@ extern System_Reporter  omp_reporter;
 // static std::ostream* logalert  = &std::cerr;
 // static std::ostream* logerr    = &std::cerr;
 
-#endif
+#endif // INCLUDEGUARD_LOGGING_HPP

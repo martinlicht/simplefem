@@ -6,7 +6,6 @@
 #include "../utility/stl.hpp"
 #include "../dense/densematrix.hpp"
 #include "../dense/functions.hpp"
-#include "../dense/matrixtensorproduct.hpp"
 #include "../sparse/sparsematrix.hpp"
 #include "../sparse/matcsr.hpp"
 #include "../mesh/mesh.hpp"

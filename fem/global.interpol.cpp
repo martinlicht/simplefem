@@ -10,7 +10,7 @@
 #include "../combinatorics/generatemultiindices.hpp"
 #include "../operators/floatvector.hpp"
 #include "../dense/densematrix.hpp"
-#include "../dense/matrixtensorproduct.hpp"
+#include "../dense/functions.hpp"
 #include "../sparse/sparsematrix.hpp"
 #include "../mesh/mesh.hpp"
 #include "../fem/utilities.hpp"
