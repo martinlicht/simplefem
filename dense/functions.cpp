@@ -603,3 +603,4 @@ DenseMatrix MatrixTensorProduct( const DenseMatrix& A, const DenseMatrix& B )
     ret.check();
     return ret;
 }
+

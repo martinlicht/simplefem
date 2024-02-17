@@ -4,7 +4,7 @@
 #include "../../dense/functions.hpp"
 #include "../../dense/gaussjordan.hpp"
 #include "../../dense/qr.factorization.hpp"
-#include "../../dense/scalarfunctions.hpp"
+// #include "../../dense/scalarfunctions.hpp"
 
 
 int main( int argc, char *argv[] )

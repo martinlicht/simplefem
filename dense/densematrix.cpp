@@ -851,12 +851,17 @@ Float DenseMatrix::norm() const
     return std::sqrt( ret );
 }
 
+Float DenseMatrix::frobeniusnorm() const
+{
+    return norm();
+}
+
 Float DenseMatrix::maxnorm() const
 {
     Float ret = 0.;
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin();  c++ )
-        ret = maximum( ret, get(r,c) );
+        ret = maximum( ret, absolute( get(r,c) ) );
     return ret;
 }
 
@@ -871,13 +876,137 @@ Float DenseMatrix::sumnorm() const
 
 Float DenseMatrix::lpnorm( Float p ) const
 {
-    assert( p > 1. );
+    assert( p >= 1. );
     Float ret = 0.;
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin();  c++ )
         ret += power_numerical( absolute( get(r,c) ), p );
     return power_numerical( ret, 1. / p );
 }
+
+Float DenseMatrix::norm_row_col( Float p, Float q ) const 
+{
+    check();
+    assert( 1. <= p && 1. <= q );
+    Float ret = 0.;
+    for( int r = 0; r < getdimout(); r++ ) {
+        Float zeile = 0.;
+        for( int c = 0; c < getdimin(); c++ )
+            zeile += power_numerical( absolute( get(r,c) ), q );
+        ret += power_numerical( zeile, p/q );
+    }
+    ret = power_numerical( ret, 1. / p );
+    return ret;
+}
+
+Float DenseMatrix::norm_col_row( Float p, Float q ) const 
+{
+    check();
+    assert( 1. <= p && 1. <= q );
+    Float ret = 0.;
+    for( int c = 0; c < getdimin(); c++ ) {
+        Float spalte = 0.;
+        for( int r = 0; r < getdimout(); r++ )
+            spalte += power_numerical( absolute( get(r,c) ), q );
+        ret += power_numerical( spalte, p/q );
+    }
+    ret = power_numerical( ret, 1. / p );
+    return ret;
+}
+
+Float DenseMatrix::NormOperatorL1() const 
+{
+    check();
+    Float ret = 0.;
+    for( int c = 0; c < getdimin(); c++ ) {
+        Float spalte = 0.;
+        for( int r = 0; r < getdimout(); r++ )
+            spalte += absolute( get(r,c) );
+        ret = maximum( ret, spalte );
+    }
+    return ret;
+}
+
+Float DenseMatrix::NormOperatorMax() const 
+{
+    check();
+    Float ret = 0.;
+    for( int r = 0; r < getdimout(); r++ ) {
+        Float zeile = 0.;
+        for( int c = 0; c < getdimin(); c++ )
+            zeile += absolute( get(r,c) );
+        ret = maximum( ret, zeile );
+    }
+    return ret;
+}
+
+
+
+
+
+
+Float DenseMatrix::trace() const 
+{
+    check();
+    assert( issquare() );
+    Float ret = 0.;
+    for( int i = 0; i < getdimout(); i++ )
+      ret += get(i,i);
+    return ret;
+}
+
+
+DenseMatrix DenseMatrix::Gerschgorin() const 
+{
+    check();
+    assert( issquare() );
+    return GerschgorinRow();
+}
+
+DenseMatrix DenseMatrix::GerschgorinRow() const 
+{
+    check();
+    assert( issquare() );
+    DenseMatrix ret( getdimout(), 2 );
+    for( int r = 0; r < getdimout(); r++ )
+    {
+        ret( r, 0 ) = get(r,r);
+        ret( r, 1 ) = 0.;
+        for( int c = 0; c < r; c++ )
+            ret( r, 1 ) += absolute( get(r,c) );
+        for( int c = r+1; c < getdimout(); c++ )
+            ret( r, 1 ) += absolute( get(r,c) );
+    }
+    return ret;
+}
+
+DenseMatrix DenseMatrix::GerschgorinColumn() const
+{
+    check();
+    assert( issquare() );
+    DenseMatrix ret( getdimout(), 2 );
+    for( int c = 0; c < getdimout(); c++ )
+    {
+        ret( c, 0 ) = get(c,c);
+        ret( c, 1 ) = 0.;
+        for( int r = 0; r < c; r++ )
+            ret( c, 1 ) += absolute( get(r,c) );
+        for( int r = c+1; r < getdimout(); r++ )
+            ret( c, 1 ) += absolute( get(r,c) );
+    }
+    return ret;
+}
+
+Float DenseMatrix::EigenvalueEstimate() const 
+{
+    assert( issquare() );
+    return maxnorm() * getdimout();
+}
+
+
+
+
+
 
 
 Float* DenseMatrix::raw()

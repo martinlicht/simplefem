@@ -4,5 +4,5 @@
 #include "gaussjordan.cpp"
 #include "qr.factorization.cpp"
 //#include "readwrite.cpp"
-#include "scalarfunctions.cpp"
+//#include "scalarfunctions.cpp"
 #include "simplesolver.cpp"

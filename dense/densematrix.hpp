@@ -160,12 +160,38 @@ class DenseMatrix final
         
         Float norm() const;
         
+        Float frobeniusnorm() const;
+        
         Float maxnorm() const;
         
         Float sumnorm() const;
         
         Float lpnorm( Float ) const;
+
+        Float norm_row_col( Float p, Float q ) const;
+
+        Float norm_col_row( Float p, Float q ) const;
+
+        Float NormOperatorL1() const;
+
+        Float NormOperatorMax() const;
         
+
+        // matrix trace 
+
+        Float trace() const;
+
+        // Gerschgorin circles : row/column 
+
+        DenseMatrix Gerschgorin() const;
+        DenseMatrix GerschgorinRow() const;
+        DenseMatrix GerschgorinColumn() const;
+
+        // Crude eigenvalue estimate 
+
+        Float EigenvalueEstimate() const;
+
+
         
         /* Investigations */
         

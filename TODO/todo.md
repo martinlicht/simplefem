@@ -44,7 +44,7 @@ requires regular grinding in order to get it done.
 # (HIGH) Dense Matrix rewrite 
 
 - [x] simple solvers remain in one file
-- [ ] reconcile the norms of dense matrices with the norms of vectors 
+- [x] reconcile the norms of dense matrices with the norms of vectors 
 - [x] matrix tensor product should be part of the functions
 - [ ] Cholesky, QR, and Gauss-Jordan should be one file 
 
