@@ -45,8 +45,8 @@ requires regular grinding in order to get it done.
 
 - [x] simple solvers remain in one file
 - [ ] reconcile the norms of dense matrices with the norms of vectors 
-- [ ] matrix tensor product should be part of the functions
-- [ ] cholesky, QR, and Gauss-Jordan should be one file 
+- [x] matrix tensor product should be part of the functions
+- [ ] Cholesky, QR, and Gauss-Jordan should be one file 
 
 Finally, rearrange and rename everything. One suggestion:
 - operations: addition, subtraction, scalar multiplication, scalar division, matrix multiplication, transposition, determinant calculation, inverse calculation.

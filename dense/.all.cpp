@@ -2,7 +2,6 @@
 #include "densematrix.cpp"
 #include "functions.cpp"
 #include "gaussjordan.cpp"
-#include "matrixtensorproduct.cpp"
 #include "qr.factorization.cpp"
 //#include "readwrite.cpp"
 #include "scalarfunctions.cpp"

@@ -1,9 +1,6 @@
 
 #include "matrixtensorproduct.hpp"
 
-
-
-
 DenseMatrix MatrixTensorProduct( const DenseMatrix& A, const DenseMatrix& B )
 {
     A.check(); B.check();
@@ -32,7 +29,3 @@ DenseMatrix MatrixTensorProduct( const DenseMatrix& A, const DenseMatrix& B )
     ret.check();
     return ret;
 }
-
-
-
-
