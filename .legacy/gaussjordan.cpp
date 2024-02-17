@@ -1,89 +1,165 @@
 
+#include "gaussjordan.hpp"
 
-/**/
+#include <new>
 
-#include <iostream>
-#include "../../basic.hpp"
-#include "../../dense/functions.hpp"
-#include "../../dense/gaussjordan.hpp"
-
-
-using namespace std;
-
-int main()
+ // LR factorization, column pivot, 
+ 
+DenseMatrix GaussJordan( DenseMatrix mat )
 {
-    cout << "Unit Test for Gauss Jordan algorithm" << endl;
     
-    std::cout.precision(5);
-    std::cout.setf( std::ios::fixed, std:: ios::floatfield );
-    std::cout << std::showpos;
+    assert( mat.issquare() );
     
-    {
-        
-        DenseMatrix A(4,4);
-        
-        A(0,0) = 1; A(0,1) = 2; A(0,2) = 3; A(0,3) = 5; 
-        A(1,0) = 1; A(1,1) = 1; A(1,2) = 1; A(1,3) = 6; 
-        A(2,0) = 3; A(2,1) = 3; A(2,2) = 1; A(2,3) = 2; 
-        A(3,0) = 2; A(3,1) = 1; A(3,2) = 0; A(3,3) = 1; 
-        
-        cout << "Determinant (default): " << Determinant(A) << endl;
-        cout << "Determinant (laplace): " << Determinant_laplaceexpansion(A) << endl;
-        cout << "Determinant (gauss):   " << Determinant_gauss(A) << endl;
-      
-        
-//         A(0,0) = 4; A(0,1) = 1; A(0,2) = 0; 
-//         A(1,0) = 0; A(1,1) = 1; A(1,2) = 0; 
-//         A(2,0) = 1; A(2,1) = 0; A(2,2) = 1; 
-        
-        cout << "Original matrix:" << A << endl;
-        
-        DenseMatrix M = GaussJordanInplace( A );
-//         DenseMatrix M = GaussJordanInplace( A );
-        
-        cout << "Proposed Inverse:" << M << endl;
-        
-        cout << "Product of both:" << M * A << endl;
-        
-    }
-      
-    for( int i = 0; i < 6; i++ )
-    {
-        DenseMatrix A(8);
-        A.randomintegermatrix(-2,2);
-      
-        cout << "Determinant (default): " << Determinant(A) << endl;
-        cout << "Determinant (laplace): " << Determinant_laplaceexpansion(A) << endl;
-        cout << "Determinant (gauss):   " << Determinant_gauss(A) << endl;
-      
-        
-        cout << GaussJordanInplace(A) * A << nl;
-    }
+    const int n = mat.getdimout();
+//     std::vector<int> pivotcol( n, -17 );
+//     std::vector<int> colperm ( n, -17 );
+//     for( int c = 0; c < n; c++ ) colperm[c] = c;
 
     
-    {
-        int N = 14;
-        DenseMatrix C(N);
-        for( int i = 0; i < N; i++ )
-        for( int j = 0; j < N; j++ )
-            C(i,j) = 1. / ( i+j+1 );
+    DenseMatrix ret(n);
+    ret.unitmatrix();
+    
+    // 1. eliminate lower triangular part, save coeffecients
+    
+    for( int i = 0; i < n; i++ ) {
         
-        cout << C * GaussJordanInplace(C,true) << nl;
-        
-        {
-            auto Cinv = GaussJordanInplace(C);
-            DenseMatrix I(N); I.unitmatrix();
-            Float relaxation = Cinv.norm();
+        for( int k = 0; k < n; k++ ) { // each
             
-            for( int t = 0; t < 2000; t++ )
-                Cinv = Cinv + 1.5/ ( std::log(N)) * ( I - C * Cinv );
+            if( i == k ) continue; 
             
-            cout << C * Cinv << nl;
+            Float coeff = - mat( k, i ) / mat( i, i );
+            
+            for( int j = i; j < n; j++ ) {
+                mat( k, j ) = mat( k, j ) + coeff * mat( i, j );
+            }
+
+            for( int j = 0; j <= i; j++ ) {
+                ret( k, j ) = ret( k, j ) + coeff * ret( i, j );
+            }
+            
         }
         
+        Float coeff = 1. / mat(i,i);
+        
+        for( int j = 0; j <= i; j++ ) {
+            ret(i,j) *= coeff;
+        }
+        
+        for( int j = i; j < n; j++ ) {
+            mat(i,j) *= coeff;
+        }
+            
     }
     
-    cout << "Finished Unit Test" << endl;
-
-    return 0;
+// //     2. normalize the diagonals
+//     
+//     for( int i = 0; i < n; i++ ) {
+//         
+//         Float coeff = 1. / mat(i,i);
+//         
+//         for( int k = 0; k < n; k++ ) {
+//             mat(i,k) *= coeff;
+//             ret(i,k) *= coeff;
+//         }
+        
+//         ret(i,i) = coeff;
+//     }
+    
+    // finished!
+    
+    // LOG << mat;
+    // LOG << ret;
+    
+    return ret;
 }
+
+ 
+
+ 
+ 
+ 
+ 
+DenseMatrix GaussJordanInplace( DenseMatrix mat, bool pivoting )
+{
+    
+    assert( mat.issquare() );
+    
+    const int n = mat.getdimout();
+    
+    int* pivots = nullptr;
+    if(pivoting) pivots = new (std::nothrow) int[n];
+    
+    for( int i = 0; i < n; i++ ) {
+        
+        if( pivoting ) {
+            
+            int c_max = i;
+            for( int c = i+1; c < n; c++ )
+                if( absolute(mat(i,c)) > absolute(mat(i,c_max)) ) 
+                    c_max = c;
+            
+            pivots[i] = c_max;
+            mat.swapcolumn( c_max, i );
+            
+        }
+        
+        for( int k = 0; k < n; k++ ) { // each
+            
+            if( i == k ) continue; 
+            
+            assert( absolute(mat(i,i)) != 0.0 );
+            
+            Float coeff = - mat( k, i ) / mat( i, i );
+            
+            for( int j = i+1; j < n; j++ ) {
+                mat( k, j ) = mat( k, j ) + coeff * mat( i, j );
+            }
+
+            mat( k, i ) = coeff;
+            
+            for( int j = 0; j < i; j++ ) {
+                mat( k, j ) = mat( k, j ) + coeff * mat( i, j );
+            }
+            
+        }
+        
+        Float coeff = 1. / mat(i,i);
+        
+        for( int j = 0; j < i; j++ ) {
+            mat(i,j) *= coeff;
+        }
+        
+        mat(i,i) = coeff;
+        
+        for( int j = i+1; j < n; j++ ) {
+            mat(i,j) *= coeff;
+        }
+            
+    }
+    
+    if( pivoting ) {
+        for( int i = n-1; i >= 0; i-- )
+//         for( int i = 0; i < n; i++ ) 
+        {
+//             LOG << "swap " << i << space << pivots[i] << nl;
+            mat.swaprow( i, pivots[i] );
+        }
+    }
+    
+    // finished!
+    
+    if( pivoting ) delete[] pivots;
+    
+    return mat;
+}
+
+
+
+
+
+
+
+
+
+
+

@@ -6,7 +6,7 @@
 #include "../../utility/convergencetable.hpp"
 #include "../../utility/files.hpp"
 #include "../../operators/composedoperators.hpp"
-#include "../../dense/qr.factorization.hpp"
+#include "../../dense/factorization.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
 #include "../../sparse/rainbow.hpp"

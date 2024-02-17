@@ -4,8 +4,8 @@
 
 #include "../../basic.hpp"
 #include "../../dense/densematrix.hpp"
-#include "../../dense/qr.factorization.hpp"
-#include "../../dense/cholesky.hpp"
+#include "../../dense/factorization.hpp"
+#include "../../dense/factorization.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples3D.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"

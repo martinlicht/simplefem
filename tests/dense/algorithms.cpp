@@ -1,9 +1,9 @@
 
 #include "../../basic.hpp"
-#include "../../dense/cholesky.hpp"
+#include "../../dense/factorization.hpp"
 #include "../../dense/functions.hpp"
-#include "../../dense/gaussjordan.hpp"
-#include "../../dense/qr.factorization.hpp"
+#include "../../dense/factorization.hpp"
+#include "../../dense/factorization.hpp"
 // #include "../../dense/scalarfunctions.hpp"
 
 

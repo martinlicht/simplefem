@@ -4,7 +4,7 @@
 #include "../basic.hpp"
 #include "../combinatorics/generatemultiindices.hpp"
 #include "../operators/floatvector.hpp"
-#include "../dense/cholesky.hpp"
+#include "../dense/factorization.hpp"
 #include "../dense/densematrix.hpp"
 #include "../dense/functions.hpp"
 #include "../sparse/sparsematrix.hpp"
