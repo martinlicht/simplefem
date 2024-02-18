@@ -32,13 +32,22 @@ requires regular grinding in order to get it done.
 
 
 
+# (DONE) static library dependency 
+# (DONE) Compilation mode with object files
+
+Make that you can compile everything if the executables only take the object file themselves. 
+This is a third compilation mode in addition to static and dynamic libraries.
+Make sure it all compiles. 
+
+# (HIGH) orientation tests must be included in usual tests
+
 # (HIGH) Solverfem: options
 
 Streamline the main loop in the different solverfem tests to reduce code redundancy
 
-# (DONE) Introduce more warnings 
+# (DONE) Go over the manuals of GCC and Clang, add more possible warnings 
 
-Introduce a larger amount of warnings. 
+Introduce a larger amount of warnings. Only use those that are not enabled by default. 
 
 However Turn off the following warnings:
 - [x] -Wc++98-compat-local-type-template-args
@@ -46,7 +55,8 @@ However Turn off the following warnings:
 - [x] -Wold-style-cast
 - [x] -Wcovered-switch-default
 
-Following this, go over the list of warnings and re-order everything. Check what needs to be retired.
+Following this, go over the list of warnings and re-order everything for the sake of consistency. 
+Check what needs to be retired.
 
 # (HIGH) Implement LQ factorization or retire it completely
 
@@ -54,6 +64,8 @@ Implement the LQ factorization and test it
 
 # (HIGH) Some warnings to process:
 
+Understand why a compiler might warn about weak vtables and how to avoid that issue. 
+This concerns IndexMap and MultiIndex in particular. 
 https://stackoverflow.com/questions/23746941/what-is-the-meaning-of-clangs-wweak-vtables
 
 # (HIGH) fix warnings about printf truncation 
@@ -74,10 +86,6 @@ In file included from ./basic/.all.cpp:3:
 ./basic/basic.cpp:129:13: note: ‘snprintf’ output between 11 and 21 bytes into a destination of size 11
   129 |     snprintf( digits, fulllength, "%*ju", numdigits, (uintmax_t)t );
       |     ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# (HIGH) orientation tests must be included in usual tests
-
-# (HIGH) Go over the manuals of GCC and Clang, add all possible warnings 
 
 # (HIGH) shake the coordinates in tests where there is no explicit functions living on them 
 - [ ] meshes 
@@ -110,8 +118,6 @@ Clean up the test for the nullspace computation.
 
 - [ ] Summarize: indexfunctions, local.polynomialmassmatrix, utilities -> utilities
 - [ ] Summarize: global functions 
-
-# (HIGH) static library dependency 
 
 # (HIGH) dependencies for object file compilation  
 

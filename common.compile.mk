@@ -30,8 +30,8 @@ endif
 
 
 # Uncomment your choice of compiler below
-FLAG_CXX := CLANG
-# FLAG_CXX := GCC
+# FLAG_CXX := CLANG
+FLAG_CXX := GCC
 # FLAG_CXX := ICC
 
 
@@ -767,24 +767,24 @@ endif
 
 # In any case, remove the following warnings 
 
+CXXFLAGS_WARNINGS += -Wno-unused-variable
+CXXFLAGS_WARNINGS += -Wno-unused-parameter
+CXXFLAGS_WARNINGS += -Wno-unknown-pragmas
+CXXFLAGS_WARNINGS += -Wno-vla
+
 CXXFLAGS_WARNINGS += -Wno-double-promotion
 CXXFLAGS_WARNINGS += -Wno-conversion 
 CXXFLAGS_WARNINGS += -Wno-sign-compare 
-CXXFLAGS_WARNINGS += -Wno-unused-variable
-CXXFLAGS_WARNINGS += -Wno-unused-parameter
-CXXFLAGS_WARNINGS += -Wno-vla
-CXXFLAGS_WARNINGS += -Wno-unknown-pragmas
 CXXFLAGS_WARNINGS += -Wno-type-limits 
-# for Clang...
-ifeq ($(FLAG_CXX),GCC)
 CXXFLAGS_WARNINGS += -Wno-float-equal
+
+ifeq ($(FLAG_CXX),GCC)
 CXXFLAGS_WARNINGS += -Wno-vla
 else ifeq ($(FLAG_CXX),CLANG)
 CXXFLAGS_WARNINGS += -Wno-defaulted-function-deleted
-CXXFLAGS_WARNINGS += -Wno-vla-extension
 CXXFLAGS_WARNINGS += -Wno-gnu-zero-variadic-macro-arguments
-CXXFLAGS_WARNINGS += -Wno-float-equal
-CXXFLAGS_WARNINGS += -Wno-sign-conversion
+#CXXFLAGS_WARNINGS += -Wno-sign-conversion
+CXXFLAGS_WARNINGS += -Wno-vla-extension
 endif
 
 
