@@ -276,8 +276,8 @@ int main( int argc, char *argv[] )
                 for( int k = 0; k <= 15; k++ )
                 {
 
-                    Float runtime = 0.;
-                    int iteration_count = 0;
+                    Float runtime = -1.;
+                    int iteration_count = -1;
 
                     if( k ==  0 and not do_cgmpp      ) continue;
                     if( k ==  1 and not do_crmpp_expl ) continue;
@@ -714,6 +714,8 @@ int main( int argc, char *argv[] )
                     }
 
 
+
+                    assert( runtime >= 0. and iteration_count >= 0 );
 
                     assert( sol.isfinite() );
 

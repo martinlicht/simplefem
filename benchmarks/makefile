@@ -46,8 +46,12 @@ $(outs): ./%.$(ending): ./%.cpp | $(depdir)
 	@echo Compiling $@ ...
 ifeq ($(LINKINGTYPE),dynamic)
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(includes) $(rpath) $(link) -o $@ $(LDLIBS) $(DEPFLAGS)
-else
+else ifeq ($(LINKINGTYPE),static)
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(includes)          $(link) -o $@ $(LDLIBS) $(DEPFLAGS)
+else ifeq ($(LINKINGTYPE),objectfile)
+	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(includes)          $(link) -o $@ $(LDLIBS) $(DEPFLAGS)
+else 
+	@echo Unable to compile the final object $@!
 endif
 	
 -include $(dependencies)

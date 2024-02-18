@@ -27,9 +27,9 @@ int main( int argc, char *argv[] )
         assert( irE3.cardinality() == 0 );
         
         int counter = 0;
-        for( int i : irE1 ) { assert( irE1.min() <= i && i <= irE1.max() ); counter++; unreachable(); }
-        for( int i : irE2 ) { assert( irE2.min() <= i && i <= irE2.max() ); counter++; unreachable(); }
-        for( int i : irE3 ) { assert( irE3.min() <= i && i <= irE3.max() ); counter++; unreachable(); }
+        for( int i : irE1 ) { counter++; assert( irE1.min() <= i && i <= irE1.max() ); unreachable(); }
+        for( int i : irE2 ) { counter++; assert( irE2.min() <= i && i <= irE2.max() ); unreachable(); }
+        for( int i : irE3 ) { counter++; assert( irE3.min() <= i && i <= irE3.max() ); unreachable(); }
         assert( counter == 0 );
         
         assert( irE1 == irE2 );

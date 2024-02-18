@@ -58,8 +58,8 @@ int main( int argc, char *argv[] )
             [&](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
                     return FloatVector( { 
-                            ( vec[0] > 0 and vec[1] > 0 ) ? 1. : 0. ,
-                            ( vec[0] > 0 and vec[1] > 0 ) ? 0. : 0. ,
+                            ( vec[0] > 0 and vec[1] > 0 ) ? 1. : -0. ,
+                            ( vec[0] > 0 and vec[1] > 0 ) ? 0. : -0. , // to disable warnings that the two branches are the same 
                         });
             }
         );

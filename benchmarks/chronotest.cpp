@@ -3,9 +3,15 @@
 #include <chrono>
 #include <ctime>
 #include <thread>
- 
+
+#if defined(__GNUC__) || defined(__clang__)
+#define UNUSED __attribute__((unused))
+#else
+#define UNUSED
+#endif
+
 // the function f() does some time-consuming work
-static void f()
+UNUSED static void f()
 {
     volatile double d = 0;
     for(int n=0; n<10000; ++n)
@@ -13,7 +19,7 @@ static void f()
            d = d + d*n*m;
 }
 
-volatile long double foo;
+volatile static long double foo;
 
 int main( int argc, char *argv[] )
 {

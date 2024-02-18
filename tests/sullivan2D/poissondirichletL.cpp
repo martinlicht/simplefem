@@ -6,7 +6,7 @@
 #include "../../utility/convergencetable.hpp"
 #include "../../utility/files.hpp"
 #include "../../operators/composedoperators.hpp"
-#include "../../dense/qr.factorization.hpp"
+#include "../../dense/factorization.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
 #include "../../sparse/rainbow.hpp"
@@ -175,7 +175,9 @@ int main( int argc, char *argv[] )
                         
                         if( M.get_flag(0,v) == SimplexFlag::SimplexFlagDirichlet ) continue;
 
+                        #if defined(_OPENMP)
                         #pragma omp atomic
+                        #endif
                         rhs[v] += contribution;
 
                     }

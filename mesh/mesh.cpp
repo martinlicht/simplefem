@@ -8,8 +8,8 @@
 #include "../basic.hpp"
 #include "../utility/random.hpp"
 #include "../combinatorics/generateindexmaps.hpp"
-#include "../dense/cholesky.hpp"
-#include "../dense/qr.factorization.hpp"
+#include "../dense/factorization.hpp"
+#include "../dense/factorization.hpp"
 #include "mesh.hpp"
 
 

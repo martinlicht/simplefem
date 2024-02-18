@@ -75,9 +75,11 @@ void TransposeInSitu( DenseMatrix& src )
 void TransposeSquareInSitu( DenseMatrix& src ) 
 {
     src.check();
-    for( int r = 0; r < src.getdimout(); r++ )
-    for( int c = r+1; c < src.getdimin(); c++ )
-        { Float t = src(c,r); src(c,r) = src(r,c); src(r,c) = t; };
+    for( int r =   0; r < src.getdimout(); r++ )
+    for( int c = r+1; c <  src.getdimin(); c++ )
+    { 
+        Float t = src(c,r); src(c,r) = src(r,c); src(r,c) = t; 
+    }
     src.check();
 }
 

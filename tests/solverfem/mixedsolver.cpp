@@ -219,11 +219,13 @@ int main( int argc, char *argv[] )
                         
                         FloatVector sol( vector_incmatrix.getdimin(), 0. );
 
+                        assert( do_crmcsr or do_crmcpp or do_herzogblock or do_minresblock or do_systemherzog or do_sparseherzog );
+                        
                         for( int k = 0; k <= 5; k++ )
                         {
 
-                            Float runtime;
-                            int iteration_count;
+                            Float runtime = -1.;
+                            int iteration_count = -1;
 
                             if( k == 0 and not do_crmcsr ) continue;
                             if( k == 1 and not do_crmcpp ) continue;
@@ -410,6 +412,8 @@ int main( int argc, char *argv[] )
                                 LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                                 runtime  = static_cast<Float>( end - start );
                             }
+
+                            assert( runtime >= 0. and iteration_count >= 0 );
 
                             assert( sol.isfinite() );
 

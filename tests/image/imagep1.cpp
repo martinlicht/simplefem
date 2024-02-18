@@ -9,7 +9,7 @@
 #include "../../utility/pixelimage.hpp"
 #include "../../utility/random.hpp"
 #include "../../dense/functions.hpp"
-#include "../../dense/qr.factorization.hpp"
+#include "../../dense/factorization.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"

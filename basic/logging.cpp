@@ -53,7 +53,7 @@ Logger::Logger(
         }
 
 
-auto digitalcodenow() -> std::string;
+// auto digitalcodenow() -> std::string;
 
 Logger::~Logger()
 {
