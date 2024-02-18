@@ -30,8 +30,8 @@ endif
 
 
 # Uncomment your choice of compiler below
-# FLAG_CXX := CLANG
-FLAG_CXX := GCC
+FLAG_CXX := CLANG
+# FLAG_CXX := GCC
 # FLAG_CXX := ICC
 
 
@@ -338,11 +338,9 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 	CXXFLAGS_WARNINGS += -Wmissing-field-initializers
 	CXXFLAGS_WARNINGS += -Wctor-dtor-privacy
 	CXXFLAGS_WARNINGS += -Wnon-virtual-dtor
-	# CXXFLAGS_WARNINGS += -Wno-unused-variable
 	CXXFLAGS_WARNINGS += -Woverloaded-virtual
 	
 	CXXFLAGS_WARNINGS += -Wmisleading-indentation
-	# CXXFLAGS_WARNINGS += -Wno-missing-braces
 	
 	CXXFLAGS_WARNINGS += -Wsign-promo
 	CXXFLAGS_WARNINGS += -Wcast-align
@@ -361,15 +359,14 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 	# CXXFLAGS_WARNINGS += -Wlifetime
 	# CXXFLAGS_WARNINGS += -Weffc++
 
-	
-
 	ifeq ($(FLAG_CXX),GCC)
 
 		# # DISABLED: CXXFLAGS_WARNINGS += -Wabi
 		CXXFLAGS_WARNINGS += -Wformat=2
 		CXXFLAGS_WARNINGS += -Wformat-overflow=2
 		CXXFLAGS_WARNINGS += -Wformat-signedness
-		CXXFLAGS_WARNINGS += -Wformat-truncation=2
+		CXXFLAGS_WARNINGS += -Wformat-truncation=1
+		# # disabled: CXXFLAGS_WARNINGS += -Wformat-truncation=2
 		CXXFLAGS_WARNINGS += -Wnull-dereference
 		# CXXFLAGS_WARNINGS += -Wnrvo
 		# CXXFLAGS_WARNINGS += -Winfinite-recursion
@@ -407,7 +404,7 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 		CXXFLAGS_WARNINGS += -Wtautological-compare
 		CXXFLAGS_WARNINGS += -Wtrampolines
 		# # DISABELD: CXXFLAGS_WARNINGS += -Wtraditional
-		CXXFLAGS_WARNINGS += -Wshadow
+		# CXXFLAGS_WARNINGS += -Wshadow
 		CXXFLAGS_WARNINGS += -Wfree-nonheap-object
 		CXXFLAGS_WARNINGS += -Wunsafe-loop-optimizations
 		CXXFLAGS_WARNINGS += -Wpointer-arith
@@ -473,19 +470,10 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 		#   CXXFLAGS_WARNINGS += -Winline 
 		CXXFLAGS_WARNINGS += -Wvector-operation-performance
 		CXXFLAGS_WARNINGS += -Wdisabled-optimization
-			#TODO What is stack smashing???? HSA????
-			#TODO Read the format warnings 
+		# # TODO What is stack smashing???? HSA????
+		# # TODO Read the format warnings 
 
 		CXXFLAGS_WARNINGS += -Wzero-as-null-pointer-constant
-
-		CXXFLAGS_WARNINGS += -Wno-double-promotion
-		CXXFLAGS_WARNINGS += -Wno-sign-compare
-		CXXFLAGS_WARNINGS += -Wno-sign-conversion
-		CXXFLAGS_WARNINGS += -Wno-unused-variable
-		CXXFLAGS_WARNINGS += -Wno-shadow
-		# CXXFLAGS_WARNINGS += -Wno-stack-usage
-		
-		
 
 	else ifeq ($(FLAG_CXX),CLANG)
 
@@ -754,11 +742,6 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 
 		
 		
-		CXXFLAGS_WARNINGS += -Wno-vla-extension 
-		CXXFLAGS_WARNINGS += -Wno-shorten-64-to-32
-		#CXXFLAGS_WARNINGS += -Wno-unused-variable
-		#CXXFLAGS_WARNINGS += -Wno-gnu-zero-variadic-macro-arguments
-		#CXXFLAGS_WARNINGS += -Wno-vla-extension
 		
 	endif
  
@@ -767,24 +750,31 @@ endif
 
 # In any case, remove the following warnings 
 
-CXXFLAGS_WARNINGS += -Wno-unused-variable
+# CXXFLAGS_WARNINGS += -Wno-missing-braces
+
+CXXFLAGS_WARNINGS += -Wunused-variable
 CXXFLAGS_WARNINGS += -Wno-unused-parameter
 CXXFLAGS_WARNINGS += -Wno-unknown-pragmas
 CXXFLAGS_WARNINGS += -Wno-vla
 
-CXXFLAGS_WARNINGS += -Wno-double-promotion
-CXXFLAGS_WARNINGS += -Wno-conversion 
-CXXFLAGS_WARNINGS += -Wno-sign-compare 
-CXXFLAGS_WARNINGS += -Wno-type-limits 
-CXXFLAGS_WARNINGS += -Wno-float-equal
+CXXFLAGS_WARNINGS += -Wno-double-promotion	
+CXXFLAGS_WARNINGS += -Wno-conversion 		# mostly unimportant stuff 
+CXXFLAGS_WARNINGS += -Wno-sign-compare      # numerous comparisons between signed and unsigned indices 
+CXXFLAGS_WARNINGS += -Wno-float-equal		# numerous comparisons of float to zero 
+CXXFLAGS_WARNINGS += -Wno-sign-conversion	# too many signed indices 
 
 ifeq ($(FLAG_CXX),GCC)
-CXXFLAGS_WARNINGS += -Wno-vla
+
+# CXXFLAGS_WARNINGS += -Wno-shadow
+# CXXFLAGS_WARNINGS += -Wno-stack-usage
+
 else ifeq ($(FLAG_CXX),CLANG)
+
 CXXFLAGS_WARNINGS += -Wno-defaulted-function-deleted
 CXXFLAGS_WARNINGS += -Wno-gnu-zero-variadic-macro-arguments
-#CXXFLAGS_WARNINGS += -Wno-sign-conversion
-CXXFLAGS_WARNINGS += -Wno-vla-extension
+CXXFLAGS_WARNINGS += -Wno-vla-extension 
+CXXFLAGS_WARNINGS += -Wno-shorten-64-to-32
+
 endif
 
 

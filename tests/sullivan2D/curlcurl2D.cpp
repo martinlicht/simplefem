@@ -49,7 +49,7 @@ int main( int argc, char *argv[] )
     
     // u dx + v dy -> ( v_x - u_y ) dxdy -> ( - u_yy + v_xy , - v_xx + u_xy )
     
-    const Float A = Constants::twopi;
+    // const Float A = Constants::twopi;
 
             
     std::function<FloatVector(const FloatVector&)> experiment_sol = 

@@ -41,8 +41,8 @@ int main( int argc, char *argv[] )
 
     
     
-    const Float xfeq = 2.;
-    const Float yfeq = 2.;
+    // const Float xfeq = 2.;
+    // const Float yfeq = 2.;
     
     std::function<FloatVector(const FloatVector&)> experiment_sol = 
         [=](const FloatVector& vec) -> FloatVector{

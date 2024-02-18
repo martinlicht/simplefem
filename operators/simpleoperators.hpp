@@ -297,8 +297,8 @@ class LambdaOperator final
         LambdaOperator()                                      = delete;
         LambdaOperator( const LambdaOperator& )               = default;
         LambdaOperator( LambdaOperator&& )                    = default;
-        LambdaOperator& operator=( const LambdaOperator& op ) = default;
-        LambdaOperator& operator=( LambdaOperator&& op )      = default; 
+        LambdaOperator& operator=( const LambdaOperator& op ) = delete;
+        LambdaOperator& operator=( LambdaOperator&& op )      = delete; 
         virtual ~LambdaOperator();
 
         /* standard methods for operators */

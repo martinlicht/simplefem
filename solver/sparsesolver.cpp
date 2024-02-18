@@ -1386,10 +1386,10 @@ int ConjugateGradientSolverCSR_Eisenstat_Rainbow(
         // NOTE: Rainbow-ing of CSR matrix used here 
         for( int color = num_colors - 1; color >= 0; color-- ) {
         
-            Float z_r_new_local = 0.; 
+            // Float z_r_new_local = 0.; // TODO: understand whether that variable is needed or whether it is a relic
 
             #if defined(_OPENMP)
-            #pragma omp parallel for reduction( + : z_r_new_local ) 
+            // #pragma omp parallel for reduction( + : z_r_new_local ) 
             #endif
             for( int i = B[color]; i < B[color+1]; i++ ) {
 
@@ -2439,7 +2439,7 @@ int ChebyshevIteration_DiagonalPreconditioner(
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ residual,
     const Float tolerance,
-    unsigned int print_modulo,
+    int print_modulo,
     const Float* __restrict__ precon,
     const Float lower,
     const Float upper

@@ -181,8 +181,8 @@ int main( int argc, char *argv[] )
                     assert( dir0.isfinite() and dir1.isfinite() );
                     assert( contractionmatrix0.isfinite() and contractionmatrix1.isfinite() );
 
-                    const int dimension0 = scalar_incmatrix0.getdimin();
-                    const int dimension1 = scalar_incmatrix1.getdimin();
+                    // const int dimension0 = scalar_incmatrix0.getdimin();
+                    // const int dimension1 = scalar_incmatrix1.getdimin();
 
                     const auto SystemMatrix1 = 
                         Block2x2Operator( 

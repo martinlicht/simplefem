@@ -40,10 +40,10 @@ struct IterativeSolver
         IterativeSolver::check();
     }
     
-    IterativeSolver( const IterativeSolver& ) = default;
-    IterativeSolver( IterativeSolver&& ) = default;
-    IterativeSolver& operator=( const IterativeSolver& ) = default;
-    IterativeSolver& operator=( IterativeSolver&& ) = default;
+    IterativeSolver( const IterativeSolver& )            = default;
+    IterativeSolver( IterativeSolver&& )                 = default;
+    IterativeSolver& operator=( const IterativeSolver& ) = delete;
+    IterativeSolver& operator=( IterativeSolver&& )      = delete;
 
     virtual ~IterativeSolver() = default;
 
