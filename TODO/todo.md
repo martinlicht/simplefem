@@ -38,10 +38,6 @@ Move this into playgrounds together with the unit tests
 
 ./mesh.simplicialND.cpp:703:1: warning: function 'bisect_edge' could be declared with attribute 'noreturn' [-Wmissing-noreturn]
 
-# (HIGH) Reorganize the legacy directory with subdirectories
-
-There already are a few subdirectories. Extend that a little bit.
-
 # (HIGH) Solverfem: options
 
 Streamline the main loop in the different solverfem tests to reduce code redundancy
@@ -922,6 +918,10 @@ That way you can separate the output of different subtasks more easily.
 - [x] matrix tensor product should be part of the functions
 - [x] Cholesky, QR, and Gauss-Jordan should be one file 
 
+
+# (DONE) Reorganize the legacy directory with subdirectories
+
+There already are a few subdirectories. Extend that a little bit.
 
 
 
