@@ -175,7 +175,9 @@ int main( int argc, char *argv[] )
                         
                         if( M.get_flag(0,v) == SimplexFlag::SimplexFlagDirichlet ) continue;
 
+                        #if defined(_OPENMP)
                         #pragma omp atomic
+                        #endif
                         rhs[v] += contribution;
 
                     }

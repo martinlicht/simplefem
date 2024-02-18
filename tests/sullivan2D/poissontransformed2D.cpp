@@ -48,10 +48,10 @@ int main( int argc, char *argv[] )
                 return vec.sumnorm() / vec.l2norm() * vec;
             };
 
-            auto trafo_inv = [](const FloatVector& vec) -> FloatVector { 
-                assert( vec.getdimension() == 2 );
-                return vec.l2norm() / vec.sumnorm() * vec;
-            };
+            // UNUSED auto trafo_inv = [](const FloatVector& vec) -> FloatVector { 
+            //     assert( vec.getdimension() == 2 );
+            //     return vec.l2norm() / vec.sumnorm() * vec;
+            // };
 
             // auto trafo_jacobian
             auto jacobian = [](const FloatVector& vec) -> DenseMatrix { 

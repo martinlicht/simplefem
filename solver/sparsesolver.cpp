@@ -701,7 +701,7 @@ int ConjugateGradientSolverCSR_SSOR_Eisenstat(
 //     for( int i = 0; i < N; i++ )
 //         direction[i] = zirconium[i] = technical[i] = auxiliary[i] = 0.; 
     
-    Float z_r; //= notanumber;
+    Float z_r = notanumber;
 
     int K = 0;
     

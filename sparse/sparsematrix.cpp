@@ -301,7 +301,7 @@ bool SparseMatrix::is_sorted( SparseMatrix::MatrixEntrySorting manner ) const
 }
 
 
-static int internal_compare_rowfirst( const void* _a, const void* _b )
+UNUSED static int internal_compare_rowfirst( const void* _a, const void* _b )
 {
     const SparseMatrix::MatrixEntry* a = static_cast<const SparseMatrix::MatrixEntry*>(_a);
     const SparseMatrix::MatrixEntry* b = static_cast<const SparseMatrix::MatrixEntry*>(_b);
@@ -319,7 +319,7 @@ static int internal_compare_rowfirst( const void* _a, const void* _b )
     }
 }
     
-static int internal_compare_colfirst( const void* _a, const void* _b )
+UNUSED static int internal_compare_colfirst( const void* _a, const void* _b )
 {
     const SparseMatrix::MatrixEntry* a = static_cast<const SparseMatrix::MatrixEntry*>(_a);
     const SparseMatrix::MatrixEntry* b = static_cast<const SparseMatrix::MatrixEntry*>(_b);

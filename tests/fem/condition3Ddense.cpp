@@ -48,7 +48,7 @@ static Float PowerMethod( const LinearOperator& A, int repetitions )
 }
 
 
-static Float InversePowerMethod( const LinearOperator& A, int repetitions )
+UNUSED static Float InversePowerMethod( const LinearOperator& A, int repetitions )
 {
     assert( A.issquare() );
 

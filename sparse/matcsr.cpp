@@ -216,19 +216,19 @@ void MatrixCSR::apply( FloatVector& dest, const FloatVector& add, Float scaling 
 
     dest.zero();
 
-    Float*       __restrict _dest = dest.raw();
-    const Float* __restrict _add  = add.raw();
-    const int*   __restrict _A    = A.data();
-    const int*   __restrict _C    = C.data();
-    const Float* __restrict _V    = V.data();
+    Float*       __restrict p_dest = dest.raw();
+    const Float* __restrict p_add  = add.raw();
+    const int*   __restrict p_A    = A.data();
+    const int*   __restrict p_C    = C.data();
+    const Float* __restrict p_V    = V.data();
     const int N = A.size();
 
     #if defined(_OPENMP)
     #pragma omp parallel for
     #endif
     for( int i = 0; i < N-1; i++ ){
-        for( int j = _A[i]; j < _A[i+1] ; j++ ){
-            _dest[i] += scaling * _V[j] * _add[ _C[j] ];
+        for( int j = p_A[i]; j < p_A[i+1] ; j++ ){
+            p_dest[i] += scaling * p_V[j] * p_add[ p_C[j] ];
         }
     }
 
@@ -449,7 +449,7 @@ std::size_t MatrixCSR::memorysize() const
 
 
 
-static void sort_and_compress_csrdata_perform( std::vector<int>& A, std::vector<int>& C, std::vector<Float>& V )
+UNUSED static void sort_and_compress_csrdata_perform( std::vector<int>& A, std::vector<int>& C, std::vector<Float>& V )
 {
 
     // return ; 
@@ -686,11 +686,11 @@ static void sort_and_compress_csrdata( std::vector<int>& A, std::vector<int>& C,
 
 void MatrixCSR::compressentries() const
 {
-    auto& _A = const_cast< std::vector<int>& >(A);
-    auto& _C = const_cast< std::vector<int>& >(C);
-    auto& _V = const_cast< std::vector<Float>& >(V);
+    auto& p_A = const_cast< std::vector<int>& >(A);
+    auto& p_C = const_cast< std::vector<int>& >(C);
+    auto& p_V = const_cast< std::vector<Float>& >(V);
 
-    sort_and_compress_csrdata(_A,_C,_V);
+    sort_and_compress_csrdata(p_A,p_C,p_V);
 }
 
 

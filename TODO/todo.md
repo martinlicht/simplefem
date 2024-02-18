@@ -31,9 +31,63 @@ requires regular grinding in order to get it done.
 
 
 
-# (DONE) Combinatorics generate multiindices tests must actually test something
+
+# (HIGH) ND meshes
+
+Move this into playgrounds together with the unit tests
+
+./mesh.simplicialND.cpp:703:1: warning: function 'bisect_edge' could be declared with attribute 'noreturn' [-Wmissing-noreturn]
+
+# (HIGH) Reorganize the legacy directory with subdirectories
+
+There already are a few subdirectories. Extend that a little bit.
+
+# (HIGH) Solverfem: options
+
+Streamline the main loop in the different solverfem tests to reduce code redundancy
+
+# (DONE) Introduce more warnings 
+
+Introduce a larger amount of warnings. 
+
+However Turn off the following warnings:
+- [x] -Wc++98-compat-local-type-template-args
+- [x] -Wreserved-identifier
+- [x] -Wold-style-cast
+- [x] -Wcovered-switch-default
+
+Following this, go over the list of warnings and re-order everything. Check what needs to be retired.
+
+# (HIGH) Implement LQ factorization or retire it completely
+
+Implement the LQ factorization and test it
+
+# (HIGH) Some warnings to process:
+
+https://stackoverflow.com/questions/23746941/what-is-the-meaning-of-clangs-wweak-vtables
+
+# (HIGH) fix warnings about printf truncation 
+
+/mesh/mesh.simplicial2D.cpp: In function ‘std::string render_number(double, int)’:
+./mesh/mesh.simplicial2D.cpp:3286:42: warning: ‘% *.*f’ directive output between 2 and 2147483958 bytes may exceed minimum required size of 4095 [-Wformat-truncation=]
+ 3286 |     snprintf( str, str_number_of_chars, "% *.*f", lead+1+tail, tail, num);
+      |                                          ^~~~~~
+./mesh/mesh.simplicial2D.cpp:3286:41: note: assuming directive output of 3 bytes
+ 3286 |     snprintf( str, str_number_of_chars, "% *.*f", lead+1+tail, tail, num);
+      |                                         ^~~~~~~~
+
+In file included from ./basic/.all.cpp:3:
+./basic/basic.cpp: In function ‘std::string timestamp2digitalcode(const timestamp&)’:
+./basic/basic.cpp:129:36: warning: ‘%*ju’ directive output may be truncated writing between 10 and 20 bytes into a region of size 11 [-Wformat-truncation=]
+  129 |     snprintf( digits, fulllength, "%*ju", numdigits, (uintmax_t)t );
+      |                                    ^~~~
+./basic/basic.cpp:129:13: note: ‘snprintf’ output between 11 and 21 bytes into a destination of size 11
+  129 |     snprintf( digits, fulllength, "%*ju", numdigits, (uintmax_t)t );
+      |     ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # (HIGH) orientation tests must be included in usual tests
+
+# (HIGH) Go over the manuals of GCC and Clang, add all possible warnings 
 
 # (HIGH) shake the coordinates in tests where there is no explicit functions living on them 
 - [ ] meshes 
@@ -41,20 +95,21 @@ requires regular grinding in order to get it done.
 - [ ] solvers?
 - [ ] several finite element tests
 
-# (HIGH) Dense Matrix rewrite 
+# (HIGH) Dense Matrix rewrite, part 2
 
-- [x] simple solvers remain in one file
-- [x] reconcile the norms of dense matrices with the norms of vectors 
-- [x] matrix tensor product should be part of the functions
-- [x] Cholesky, QR, and Gauss-Jordan should be one file 
-
-Finally, rearrange and rename everything. One suggestion:
+Finally, rearrange and rename everything in the dense matrix module. One suggestion:
 - operations: addition, subtraction, scalar multiplication, scalar division, matrix multiplication, transposition, determinant calculation, inverse calculation.
 - hard solvers, factorization
 - easy solvers 
-- properties and scalar functions (maybe merge with class?)
 - manipulations (index oriented, not algebra)
 - functions to shelve: transpose, skip r/c, det, cofactor, inv, subdet matrix, tensorprod, trace, gerschgorin/eigenvalue, norm
+
+Based on that:
+- core matrix class: functions where the ratio computation/output size is small 
+- manipulations:     transpose, deleting rows and columns, tensor product 
+- simple solvers
+- factorizations
+- operations: det, cofactor, subdet, inv
 
 # (HIGH) Streamline nullspace tests 
 
@@ -857,6 +912,16 @@ Otherwise, they don't.
 
 While using the program name for the file output is nice, it is better if you can also add an additional prefix.
 That way you can separate the output of different subtasks more easily.
+
+# (DONE) Combinatorics generate multiindices tests must actually test something
+
+# (DONE) Dense Matrix rewrite, part 1
+
+- [x] simple solvers remain in one file
+- [x] reconcile the norms of dense matrices with the norms of vectors 
+- [x] matrix tensor product should be part of the functions
+- [x] Cholesky, QR, and Gauss-Jordan should be one file 
+
 
 
 
