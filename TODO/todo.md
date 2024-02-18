@@ -32,20 +32,7 @@ requires regular grinding in order to get it done.
 
 
 
-# (DONE) static library dependency 
-# (DONE) Compilation mode with object files
-
-Make that you can compile everything if the executables only take the object file themselves. 
-This is a third compilation mode in addition to static and dynamic libraries.
-Make sure it all compiles. 
-
-# (HIGH) orientation tests must be included in usual tests
-
-# (HIGH) Solverfem: options
-
-Streamline the main loop in the different solverfem tests to reduce code redundancy
-
-# (DONE) Go over the manuals of GCC and Clang, add more possible warnings 
+# (HIGH) Go over the manuals of GCC and Clang, add more possible warnings 
 
 Introduce a larger amount of warnings. Only use those that are not enabled by default. 
 
@@ -57,6 +44,12 @@ However Turn off the following warnings:
 
 Following this, go over the list of warnings and re-order everything for the sake of consistency. 
 Check what needs to be retired.
+
+# (HIGH) orientation tests must be included in usual tests
+
+# (HIGH) Solverfem: options
+
+Streamline the main loop in the different solverfem tests to reduce code redundancy
 
 # (HIGH) Implement LQ factorization or retire it completely
 
@@ -927,4 +920,12 @@ There already are a few subdirectories. Extend that a little bit.
 
 Move this into playgrounds together with the unit tests.
 
+# (DONE) static library dependency 
+# (DONE) Compilation mode with object files
+
+Make that you can compile everything if the executables only take the object file themselves. 
+This is a third compilation mode in addition to static and dynamic libraries.
+Make sure it all compiles. 
+
+# (DONE) Prevent warnings from the external stb libraries
 
