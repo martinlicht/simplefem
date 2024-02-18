@@ -32,12 +32,6 @@ requires regular grinding in order to get it done.
 
 
 
-# (HIGH) ND meshes
-
-Move this into playgrounds together with the unit tests
-
-./mesh.simplicialND.cpp:703:1: warning: function 'bisect_edge' could be declared with attribute 'noreturn' [-Wmissing-noreturn]
-
 # (HIGH) Solverfem: options
 
 Streamline the main loop in the different solverfem tests to reduce code redundancy
@@ -923,6 +917,8 @@ That way you can separate the output of different subtasks more easily.
 
 There already are a few subdirectories. Extend that a little bit.
 
+# (DONE) ND meshes
 
+Move this into playgrounds together with the unit tests.
 
 
