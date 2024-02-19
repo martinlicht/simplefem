@@ -31,6 +31,12 @@ requires regular grinding in order to get it done.
 
 
 
+? 
+-fshort-enums
+-frecord-gcc-switches
+-fno-plt
+-fvisibility=hidden
+
 
 # (HIGH) Go over the manuals of GCC and Clang, add more possible warnings 
 

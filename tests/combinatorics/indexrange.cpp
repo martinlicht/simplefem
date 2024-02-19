@@ -96,8 +96,8 @@ int main( int argc, char *argv[] )
         LOG << "Test Index Range iterators over some normal intervals" << nl;
         
         std::vector<IndexRange> irs = {
-            IndexRange(  7, 7 ),
             IndexRange(  2, 5 ),
+            IndexRange(  7, 7 ),
             IndexRange( -3, 3 ),
             IndexRange( -6, 0 )
         };
@@ -125,7 +125,7 @@ int main( int argc, char *argv[] )
             LOG << "While Loop " << ir.min() << space << ir.max() << nl << tab;
             IndexRange::ConstIterator iri = ir.begin();
             while( iri != ir.end() ) {
-                int i = *(++iri);
+                int i = *(iri++);
                 assert( ir.min() <= i && i <= ir.max() );
                 LOG << i << space;
             }
@@ -173,7 +173,7 @@ int main( int argc, char *argv[] )
             LOG << "While Loop " << ir.min() << space << ir.max() << nl << tab;
             IndexRange::ConstIterator iri = ir.begin();
             while( iri != ir.end() ) {
-                int i = *(++iri);
+                int i = *(iri++);
                 assert( ir.min() <= i && i <= ir.max() );
                 LOG << i << space;
             }

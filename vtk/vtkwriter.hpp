@@ -61,7 +61,7 @@ class VTKWriter
         const Mesh& mesh;
         std::ostream& os;
 
-        enum class Stage {
+        enum class Stage : signed char {
             nothing      = -1,
             preamble     =  0,
             coordinate   =  1,

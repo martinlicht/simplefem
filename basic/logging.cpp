@@ -9,7 +9,7 @@ bool log_has_a_fresh_line = true;
 
 
 
-enum class TextColors
+enum class TextColors : unsigned char
 {
     black          = 30,
     black_light    = 90,
