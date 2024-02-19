@@ -244,6 +244,7 @@ ifeq ($(FLAG_DO_OPTIMIZE),yes)
 		CXXFLAGS_OPTIMIZE += -flto
 		CXXFLAGS_OPTIMIZE += -Ofast  
 		CXXFLAGS_OPTIMIZE += -march=native -mtune=native 
+		CXXFLAGS_OPTIMIZE += -fshort-enums
 		ifeq ($(FLAG_CXX),GCC)
 			CXXFLAGS_OPTIMIZE += -fno-fat-lto-objects
 # 			CXXFLAGS_OPTIMIZE += -finline-limit=1200
@@ -253,7 +254,6 @@ ifeq ($(FLAG_DO_OPTIMIZE),yes)
 			CXXFLAGS_OPTIMIZE += -fdevirtualize-speculatively
 # Loop unrolling is very speculative			
 			CXXFLAGS_OPTIMIZE += -funroll-loops -fvariable-expansion-in-unroller -floop-nest-optimize
-			CXXFLAGS_OPTIMIZE += -fshort-enums
 			CXXFLAGS_OPTIMIZE += -fomit-frame-pointer
 #			CXXFLAGS_OPTIMIZE += -malign-double 
 		endif
@@ -296,20 +296,25 @@ ifeq ($(FLAG_NO_EXCEPTIONS),yes)
 	CXXFLAGS_CODEGEN += -fno-exceptions
 endif
 
+ifeq ($(FLAG_DO_USE_SINGLE_PRECISION),yes)
+	CXXFLAGS_CODEGEN += -fsingle-precision-constant
+endif
+
+# If we are NOT on Windows, then use position-independent code. Also, avoid the procedure linkage table 
+ifneq ($(OS),Windows_NT)
+	CXXFLAGS_CODEGEN += -fpic -fno-plt 
+endif
+
 CXXFLAGS_CODEGEN += -fvisibility=default
 
 CXXFLAGS_CODEGEN += -fvisibility-inlines-hidden
 
+# enums can only take values in the enumeration type 
 CXXFLAGS_CODEGEN += -fstrict-enums
+
 # CXXFLAGS_CODEGEN += -fstrict-eval-order
 
-ifneq ($(OS),Windows_NT)
-	CXXFLAGS_CODEGEN += -fpic 
-endif
 
-ifeq ($(FLAG_DO_USE_SINGLE_PRECISION),yes)
-	CXXFLAGS_CODEGEN += -fsingle-precision-constant
-endif
 
 
 

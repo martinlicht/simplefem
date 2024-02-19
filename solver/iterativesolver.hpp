@@ -21,7 +21,7 @@
 struct IterativeSolver
 {
     
-    enum class VerbosityLevel {
+    enum class VerbosityLevel : unsigned char {
         silent = 0,
         resultonly = 1,
         verbose = 2

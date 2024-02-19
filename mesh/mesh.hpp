@@ -27,7 +27,7 @@
 *******************/
 
 
-enum class SimplexFlag
+enum class SimplexFlag : unsigned char
 {
     SimplexFlagNull      = 0x1B,
     SimplexFlagInvalid   = 0x77,
