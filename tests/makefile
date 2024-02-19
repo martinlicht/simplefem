@@ -145,6 +145,12 @@ include tests.rules.mk
 #include tests.run.mk
 build: afem.tests
 
+contextdir:=./nullspace
+context:=nullspace
+include tests.rules.mk
+#include tests.run.mk
+build: nullspace.tests
+
 
 
 

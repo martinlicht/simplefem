@@ -229,7 +229,7 @@ int main( int argc, char *argv[] )
 
                             auto printed_sol = converter * computed_sol;
 
-                            vtk.writeCellVectorData_Whitney( printed_sol,  "solution_calculation" );
+                            vtk.writeCellVectorData_barycentricgradients( printed_sol,  "solution_calculation" );
                             fs.close();
                         }
 
