@@ -26,6 +26,9 @@ jobs:
     - name: run tests (solverfem)...
       run: cd tests/ && make solverfem.run && cd .. 
       continue-on-error: true
+    - name: run tests (nullspace)...
+      run: cd tests/ && make nullspace.run && cd .. 
+      continue-on-error: true
     - name: run tests (sullivan2D)...
       run: cd tests/ && make sullivan2D.run && cd .. 
       continue-on-error: true
