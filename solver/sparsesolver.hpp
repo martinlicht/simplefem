@@ -143,7 +143,7 @@ int ChebyshevIteration_DiagonalPreconditioner(
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ residual,
     const Float allowed_error,
-    unsigned int print_modulo,
+    int print_modulo,
     const Float* __restrict__ precon,
     const Float lower,
     const Float upper

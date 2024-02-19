@@ -1,10 +1,12 @@
 #if defined(__GNUC__) || defined(__clang__)
 #pragma GCC diagnostic push
+#ifdef __clang__
 #pragma GCC diagnostic ignored "-Wconditional-uninitialized"
 #pragma GCC diagnostic ignored "-Wmissing-prototypes"
 #pragma GCC diagnostic ignored "-Wreserved-identifier"
 #pragma GCC diagnostic ignored "-Wreserved-macro-identifier"
 #pragma GCC diagnostic ignored "-Wdisabled-macro-expansion"
+#endif
 #pragma GCC diagnostic ignored "-Wcast-align" 
 #pragma GCC diagnostic ignored "-Wcast-qual" 
 #ifndef __clang__

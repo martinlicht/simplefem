@@ -32,18 +32,17 @@ requires regular grinding in order to get it done.
 
 
 
-# (HIGH) Go over the manuals of GCC and Clang, add more possible warnings 
+# (DONE) Finish the printing in the nullspace computation
 
-Introduce a larger amount of warnings. Only use those that are not enabled by default. 
+Enable for all nullspace vectors printing for any polynomial degree.
 
-However Turn off the following warnings:
-- [x] -Wc++98-compat-local-type-template-args
-- [x] -Wreserved-identifier
-- [x] -Wold-style-cast
-- [x] -Wcovered-switch-default
+# (DONE) Printing of higher order 
 
-Following this, go over the list of warnings and re-order everything for the sake of consistency. 
-Check what needs to be retired.
+Most routines only print if r == 1. Generalize that.
+
+# (HIGH) Fix finite difference tests
+
+Check for notanumber and go over the different tests to ensure they test something.
 
 # (HIGH) orientation tests must be included in usual tests
 
@@ -928,4 +927,17 @@ This is a third compilation mode in addition to static and dynamic libraries.
 Make sure it all compiles. 
 
 # (DONE) Prevent warnings from the external stb libraries
+
+# (DONE) Go over the manuals of GCC and Clang, add more possible warnings 
+
+Introduce a larger amount of warnings. Only use those that are not enabled by default. 
+
+However Turn off the following warnings:
+- [x] -Wc++98-compat-local-type-template-args
+- [x] -Wreserved-identifier
+- [x] -Wold-style-cast
+- [x] -Wcovered-switch-default
+
+Following this, go over the list of warnings and re-order everything for the sake of consistency. 
+Check what needs to be retired.
 

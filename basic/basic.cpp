@@ -126,6 +126,7 @@ std::string timestamp2digitalcode( const timestamp& t )
     const int numdigits = 10;
     const int fulllength = numdigits+1;
     char digits[fulllength];
+    assert( t < 9999999999 ); // ca. 115 days 
     snprintf( digits, fulllength, "%*ju", numdigits, (uintmax_t)t );
     for( int i = 0; i < numdigits; i++ ) if( digits[i] == ' ' ) digits[i] = '_';
     return std::string(digits);

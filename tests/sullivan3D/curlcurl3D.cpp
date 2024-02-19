@@ -43,7 +43,7 @@ int main( int argc, char *argv[] )
     LOG << "Prepare scalar fields for testing..." << nl;
     
 
-    const Float A = Constants::twopi;
+    // const Float A = Constants::twopi;
 
             
     std::function<FloatVector(const FloatVector&)> experiment_sol = 

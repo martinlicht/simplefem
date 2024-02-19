@@ -50,7 +50,6 @@ $($(module).depdir):
 	@echo $@
 	@"mkdir" -p $@
 
-DEPFLAGS = -MT $@ -MMD -MP -MF $($(mymodule).depdir)/$(notdir $*.d)
 # We generate dependency files during compilation using the following compiler flags 
 # -MT $@ : sets the target of the makefile rule, stripped of any directory components
 # -MP    : add dependencies as phony targets
@@ -59,23 +58,58 @@ DEPFLAGS = -MT $@ -MMD -MP -MF $($(mymodule).depdir)/$(notdir $*.d)
 # alternatively,
 # -MM    : list headers, excluding system headers, and do not compile anything
 
+DEPFLAGS = -MT $@ -MMD -MP -MF $($(mymodule).depdir)/$(notdir $*.d)
+
+$(moddir)/$($(module).objects): mymodule := $(module)
+$(moddir)/$($(module).objects): mymoddir := $(moddir)
 $(moddir)/$($(module).objects): %.o: %.cpp $($(module).depdir)/%.d | $($(module).depdir)
+#	 @echo module        $(mymodule)
+#	 @echo mymoddir      $(mymoddir)
+#	 @echo module.depdir $(mymodule).depdir
+#	 @echo depdir        $($(mymodule).depdir) 
+#	 @echo sources       $($(mymodule).sources) 
+#	 @echo headers       $($(mymodule).headers) 
+#	 @echo objects       $($(mymodule).objects) 
+#	 @echo dependencies  $($(mymodule).dependencies) 
+#	 @echo sobase        $($(mymodule).sharedlibrarybasename)
+#	 @echo liboject      $($(mymodule).libraryobject)
+#	 @echo so            $($(mymodule).sharedlibrary)
+#	 @echo a             $($(mymodule).staticlibrary)
+#	 @echo target:       $@
+#	 @echo target(red.)  $*
+#	 @echo source file:  $<
+#	 @echo all prereq:   $^
+#	 @echo DEPFLAGS:     $(DEPFLAGS)
+#	 @echo $($(mymodule).depdir)/$(notdir $*.d)
 	@echo Compiling and listing dependencies: $@ 
-	@$(CXX) $(CXXFLAGS) $(CPPFLAGS)                       $< -c -o $@ $(DEPFLAGS)
+#	$(CXX) $(CXXFLAGS) $(CPPFLAGS)                       $< -c -o $@ $(DEPFLAGS)
+	@touch $@
+
+# Set target specific variables for all recipes
+# $(module).%: mymodule := $(module)
+# $(module).%: mymoddir := $(moddir)
+
+$(moddir)/.all.o: mymoddir := $(module)
+$(moddir)/.all.o: mymoddir := $(moddir)
 
 $(moddir)/.all.o: $($(module).sources) $(moddir)/.all.cpp $($(module).depdir)/.all.d | $($(module).depdir)
-# 	@echo $(mymodule).depdir
-# 	@echo $($(mymodule).depdir) 
-# 	@echo $($(mymodule).sources) 
-# 	@echo $($(mymodule).headers) 
-# 	@echo $($(mymodule).objects) 
-# 	@echo $($(mymodule).dependencies) 
-# 	@echo $($(mymodule).sharedlibrarybasename)
-# 	@echo $($(mymodule).libraryobject)
-# 	@echo $($(mymodule).sharedlibrary)
-# 	@echo $($(mymodule).staticlibrary)
-# 	@echo $@
-# 	@echo $*
+#	 @echo module        $(mymodule)
+#	 @echo mymoddir      $(mymoddir)
+#	 @echo module.depdir $(mymodule).depdir
+#	 @echo depdir        $($(mymodule).depdir) 
+#	 @echo sources       $($(mymodule).sources) 
+#	 @echo headers       $($(mymodule).headers) 
+#	 @echo objects       $($(mymodule).objects) 
+#	 @echo dependencies  $($(mymodule).dependencies) 
+#	 @echo sobase        $($(mymodule).sharedlibrarybasename)
+#	 @echo liboject      $($(mymodule).libraryobject)
+#	 @echo so            $($(mymodule).sharedlibrary)
+#	 @echo a             $($(mymodule).staticlibrary)
+#	 @echo target:       $@
+#	 @echo target_red    $*
+#	 @echo source file:  $<
+#	 @echo all prereq:   $^
+#	 @echo DEPFLAGS:     $(DEPFLAGS)
 	@echo Compiling and listing dependencies: $($(mymodule).libraryobject)
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(mymoddir)/.all.cpp -c -o $@  $(DEPFLAGS)
 	@touch $@

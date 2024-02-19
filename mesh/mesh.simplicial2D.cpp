@@ -3283,7 +3283,7 @@ inline std::string render_number( double num, int tail = 8 )
     int lead = leading_digits( num );
     const int str_number_of_chars = 1+lead+1+tail+1;
     char str[str_number_of_chars];
-    snprintf( str, str_number_of_chars, "% *.*f", lead+1+tail, tail, num);
+    snprintf( str, str_number_of_chars, "% *.*f", 1+lead+1+tail, tail, num);
     return std::string(str);
 }
 

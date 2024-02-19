@@ -217,8 +217,8 @@ int main( int argc, char *argv[] )
 
                             vtk.writeCellVectorData( function_rhs, "rhs_field" );
                             
-                            vtk.writeCellVectorData_Whitney( lowest_rhs,   "righthandside" );
-                            vtk.writeCellVectorData_Whitney( lowest_sol,   "solution_calculation" );
+                            vtk.writeCellVectorData_barycentricgradients( lowest_rhs,   "righthandside" );
+                            vtk.writeCellVectorData_barycentricgradients( lowest_sol,   "solution_calculation" );
                             fs.close();
                         }
 

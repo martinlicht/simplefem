@@ -297,7 +297,7 @@ int main( int argc, char *argv[] )
                             // vtk.writeTopDimensionalCells();
                             vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
                             vtk.writeCellScalarData( low_interpol_sol, "interpolated_solution" , 1.0 );
-                            vtk.writeCellVectorData_Whitney( computed_grad, "gradient_interpolation" , 0.1 );
+                            vtk.writeCellVectorData_barycentricgradients( computed_grad, "gradient_interpolation" , 0.1 );
                             fs.close();
                         }
 

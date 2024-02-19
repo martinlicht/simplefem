@@ -28,6 +28,7 @@
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.whitneyincl.hpp"
 #include "../../fem/global.elevation.hpp"
+#include "../../fem/global.interpol.hpp"
 #include "../../fem/utilities.hpp"
 
 
@@ -57,7 +58,7 @@ int main( int argc, char *argv[] )
             for( int i = 0; i < 3; i++ )
             {
                 auto M2 = Mx;
-                M2.getcoordinates().shift( { i * 3.0, 0.0 } );
+                M2.getcoordinates().shift( FloatVector{ i * 3.0, 0.0 } );
                 M.merge( M2 );
             }
                         
@@ -270,21 +271,43 @@ int main( int argc, char *argv[] )
                     
                     LOG << "How much nullspace are our vectors?" << nl;
                     for( const auto& nullvector : nullvectorgallery ) {
-                        // LOG << std::showpos << std::scientific << std::setprecision(5) << std::setw(10) << ( SystemMatrix * nullvector ).norm(mass) << tab;
+                        Float mass_norm = ( SystemMatrix * nullvector ).norm(mass);
+                        assert( is_numerically_small( mass_norm ) );
+                        LOG << mass_norm << tab;
                     }
                     LOG << nl;
                     
                     LOG << "How orthonormal are our vectors?" << nl;
                     for( const auto& nullvector1 : nullvectorgallery ) {
                         for( const auto& nullvector2 : nullvectorgallery ) {
-                            // LOG << std::showpos << std::scientific << std::setprecision(5) << std::setw(10) << mass * nullvector1 * nullvector2 << tab;
+                            Float mass_norm = mass * nullvector1 * nullvector2;
+                            assert( is_numerically_small( mass_norm ) );
+                            LOG << mass_norm << tab;
                         }
                         LOG << nl;
                     }
                     
                     
                     
-                    contable << static_cast<Float>(nullvectorgallery.size());   
+                    contable << static_cast<Float>(nullvectorgallery.size());     
+                    
+                    
+                    const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 2, 0, r-1 );
+
+                    for( const auto& nullvector : nullvectorgallery )
+                    {
+                
+                        fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
+            
+                        VTKWriter vtk( M, fs, getbasename(__FILE__) );
+                        
+                        auto reduced_nullvector = interpol_matrix * volume_incmatrix * nullvector;
+
+                        vtk.writeCellVectorData_barycentricgradients( reduced_nullvector, "nullvector_L2" , 0.1 );
+                        
+                        fs.close();
+                
+                    }
                     
                     
                     
