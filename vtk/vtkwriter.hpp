@@ -38,7 +38,7 @@ class VTKWriter
         VTKWriter writeCellVectorData( const FloatVector& x, 
                                        const FloatVector& y, 
                                        const FloatVector& z,                                           const std::string& name, Float scaling = 1. );
-        VTKWriter writeCellVectorData_Whitney(
+        VTKWriter writeCellVectorData_barycentricgradients(
                                        const FloatVector& gradvalues,                                  const std::string& name, Float scaling = 1. );
         VTKWriter writeCellVectorData_Euclidean(
                                        int outerdim, 

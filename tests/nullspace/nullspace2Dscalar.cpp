@@ -51,7 +51,7 @@ int main( int argc, char *argv[] )
             for( int i = 0; i < 3; i++ )
             {
                 auto M2 = Mx;
-                M2.getcoordinates().shift( { i * 3.0, 0.0 } );
+                M2.getcoordinates().shift( FloatVector{ i * 3.0, 0.0 } );
                 M.merge( M2 );
             }
                         

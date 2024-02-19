@@ -27,6 +27,7 @@
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.elevation.hpp"
 #include "../../fem/global.whitneyincl.hpp"
+#include "../../fem/global.interpol.hpp"
 #include "../../fem/utilities.hpp"
 
 
@@ -80,7 +81,7 @@ int main( int argc, char *argv[] )
             for( int i = 0; i < 1; i++ )
             {
                 auto M2 = Mx;
-                M2.getcoordinates().shift( { i * 3.0, 0.0 } );
+                M2.getcoordinates().shift( FloatVector{ i * 3.0, 0.0 } );
                 M.merge( M2 );
             }
                         
@@ -338,9 +339,13 @@ int main( int argc, char *argv[] )
                         // vtk.writeCoordinateBlock();
                         // vtk.writeTopDimensionalCells();
 
-                        // TODO: Create cell centered vector field from nullvector
+                        auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r );
+
+                        auto reduced_nullvector = interpol_matrix * vector_incmatrix * nullvector;
+
+                        vtk.writeCellVectorData_barycentricgradients( reduced_nullvector, "nullvector_Hcurl" , 0.1 );
                         
-                        // vtk.writeCellVectorData( nullvector, "nullvector H(curl)" , 0.1 );
+                        // TODO: Create cell centered vector field from nullvector
                         
                         fs.close();
                 

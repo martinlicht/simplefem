@@ -226,7 +226,7 @@ int main( int argc, char *argv[] )
                             vtk.writeCellScalarData( [&](FloatVector vec) -> Float{ return function_sol(vec)[0]; }, "interpolated_sol" );
                             vtk.writeCellScalarData( [&](FloatVector vec) -> Float{ return function_rhs(vec)[0]; }, "interpolated_rhs" );
 
-                            vtk.writeCellVectorData_Whitney( computed_grad,  "gradient_calculation" );
+                            vtk.writeCellVectorData_barycentricgradients( computed_grad,  "gradient_calculation" );
                             vtk.writeCellVectorData( function_grad,  "gradient_interpolation" );
                             fs.close();
                         }

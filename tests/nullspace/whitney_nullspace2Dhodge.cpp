@@ -56,7 +56,7 @@ int main( int argc, char *argv[] )
             for( int i = 0; i < 1; i++ )
             {
                 auto M2 = Mx;
-                M2.getcoordinates().shift( { i * 3.0, 0.0 } );
+                M2.getcoordinates().shift( FloatVector{ i * 3.0, 0.0 } );
                 M.merge( M2 );
             }
                         
@@ -277,14 +277,18 @@ int main( int argc, char *argv[] )
                     
                     LOG << "How much nullspace are our vectors?" << nl;
                     for( const auto& nullvector : nullvectorgallery ) {
-                        // LOG << std::showpos << std::scientific << std::setprecision(5) << std::setw(10) << ( SystemMatrix * nullvector ).norm(mass) << tab;
+                        Float mass_norm = ( SystemMatrix * nullvector ).norm(mass);
+                        assert( is_numerically_small( mass_norm ) );
+                        LOG << mass_norm << tab;
                     }
                     LOG << nl;
                     
                     LOG << "How orthonormal are our vectors?" << nl;
                     for( const auto& nullvector1 : nullvectorgallery ) {
                         for( const auto& nullvector2 : nullvectorgallery ) {
-                            // LOG << std::showpos << std::scientific << std::setprecision(5) << std::setw(10) << mass * nullvector1 * nullvector2 << tab;
+                            Float mass_norm = mass * nullvector1 * nullvector2;
+                            assert( is_numerically_small( mass_norm ) );
+                            LOG << mass_norm << tab;
                         }
                         LOG << nl;
                     }

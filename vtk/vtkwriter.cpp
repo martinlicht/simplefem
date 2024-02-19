@@ -1,5 +1,6 @@
 
 #include "vtkwriter.hpp"
+#include "../combinatorics/generateindexmaps.hpp"
 
 
 VTKWriter::VTKWriter( const Mesh& m, std::ostream& os, const std::string& name )
@@ -381,20 +382,25 @@ VTKWriter VTKWriter::writeCellVectorData( const std::function<FloatVector(const 
 
 
 
-VTKWriter VTKWriter::writeCellVectorData_Whitney( const FloatVector& v, const std::string& name, Float scaling )
+VTKWriter VTKWriter::writeCellVectorData_barycentricgradients( const FloatVector& v, const std::string& name, Float scaling )
 {
     const int topdim = mesh.getinnerdimension();
     
     assert( v.getdimension() == mesh.count_simplices(topdim) * (mesh.getinnerdimension()+1) );
     assert( v.isfinite() );
 
+    auto sigmas = generateSigmas( IndexRange(1,1), IndexRange(0,topdim) );
+
+    for( int i = 1; i <= topdim; i++ )
+        assert( sigmas[i][1] > sigmas[i-1][1] );
+
     auto datafunction = [&](int c) -> FloatVector {
     
-        FloatVector coefficients( topdim+1 );
+        FloatVector extracted_coefficients( topdim+1 );
         
-        for( int i = 0; i <= mesh.getinnerdimension(); i++ ) coefficients[i] = v.at( c * (topdim+1) + i );
+        for( int i = 0; i <= mesh.getinnerdimension(); i++ ) extracted_coefficients[i] = v.at( c * (topdim+1) + i );
         
-        FloatVector directions = scaling * mesh.getGradientMatrix(topdim,c) * coefficients;
+        FloatVector directions = scaling * mesh.getGradientMatrix(topdim,c) * extracted_coefficients;
 
         return directions;
     };
