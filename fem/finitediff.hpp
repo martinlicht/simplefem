@@ -116,6 +116,7 @@ class AlternatingForm
                     FloatVector backward = formula( point - stepsize * unitvector(d,i) );
                     FloatVector diff = 0.5 * ( forward - backward ) / stepsize;
                     diffs.push_back( diff );
+                    assert( diff.getdimension() == dim_src );
                 }
                 
                 for( int i = 0; i < d; i++ )

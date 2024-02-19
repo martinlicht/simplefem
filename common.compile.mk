@@ -30,8 +30,8 @@ endif
 
 
 # Uncomment your choice of compiler below
-FLAG_CXX := CLANG
-# FLAG_CXX := GCC
+# FLAG_CXX := CLANG
+FLAG_CXX := GCC
 # FLAG_CXX := ICC
 
 
@@ -345,7 +345,7 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 	CXXFLAGS_WARNINGS += -Wsign-promo
 	CXXFLAGS_WARNINGS += -Wcast-align
 	CXXFLAGS_WARNINGS += -Wcast-qual
-	# CXXFLAGS_WARNINGS += -Wold-style-cast
+	# # DISABLED: CXXFLAGS_WARNINGS += -Wold-style-cast
 	
 	CXXFLAGS_WARNINGS += -Wundef
 	CXXFLAGS_WARNINGS += -Wunused 
@@ -355,126 +355,105 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 	CXXFLAGS_WARNINGS += -Wformat-security
 	CXXFLAGS_WARNINGS += -Wformat-y2k
 	
-	# CXXFLAGS_WARNINGS += -Wcomma-subscript
-	# CXXFLAGS_WARNINGS += -Wlifetime
-	# CXXFLAGS_WARNINGS += -Weffc++
+	# # DISABLED: CXXFLAGS_WARNINGS += -Wcomma-subscript
+	# # DISABLED: CXXFLAGS_WARNINGS += -Wlifetime
+	# # DISABLED: CXXFLAGS_WARNINGS += -Weffc++
 
 	ifeq ($(FLAG_CXX),GCC)
 
 		# # DISABLED: CXXFLAGS_WARNINGS += -Wabi
+		CXXFLAGS_WARNINGS += -Waggressive-loop-optimizations
+		CXXFLAGS_WARNINGS += -Walloca
+		# # DISABLED: CXXFLAGS_WARNINGS += -Walloc-size
+		CXXFLAGS_WARNINGS += -Walloc-zero
+		CXXFLAGS_WARNINGS += -Warith-conversion
+		CXXFLAGS_WARNINGS += -Warray-bounds
+		CXXFLAGS_WARNINGS += -Warray-bounds=2
+		CXXFLAGS_WARNINGS += -Wattribute-alias=2
+		# # unknown: CXXFLAGS_WARNINGS += -Wbidi-chars=any
+		# # unknown: CXXFLAGS_WARNINGS += -Wcalloc-transposed-args
+		CXXFLAGS_WARNINGS += -Wcast-qual
+		CXXFLAGS_WARNINGS += -Wcast-align
+		CXXFLAGS_WARNINGS += -Wcast-align=strict 
+		CXXFLAGS_WARNINGS += -Wconversion
+		CXXFLAGS_WARNINGS += -Wdangling-else 
+		CXXFLAGS_WARNINGS += -Wdate-time
+		CXXFLAGS_WARNINGS += -Wdisabled-optimization
+		CXXFLAGS_WARNINGS += -Wduplicated-branches 
+		CXXFLAGS_WARNINGS += -Wduplicated-cond
+		CXXFLAGS_WARNINGS += -Wexpansion-to-defined
 		CXXFLAGS_WARNINGS += -Wformat=2
 		CXXFLAGS_WARNINGS += -Wformat-overflow=2
 		CXXFLAGS_WARNINGS += -Wformat-signedness
 		CXXFLAGS_WARNINGS += -Wformat-truncation=1
 		# # disabled: CXXFLAGS_WARNINGS += -Wformat-truncation=2
-		CXXFLAGS_WARNINGS += -Wnull-dereference
-		# CXXFLAGS_WARNINGS += -Wnrvo
-		# CXXFLAGS_WARNINGS += -Winfinite-recursion
-		CXXFLAGS_WARNINGS += -Winit-self
-		CXXFLAGS_WARNINGS += -Wuninitialized
-		CXXFLAGS_WARNINGS += -Wimplicit-fallthrough=4
-		CXXFLAGS_WARNINGS += -Wmissing-include-dirs
-		CXXFLAGS_WARNINGS += -Wreturn-local-addr
-		# CXXFLAGS_WARNINGS += -Wreturn-mismatch
-		CXXFLAGS_WARNINGS += -Wshift-negative-value
-		CXXFLAGS_WARNINGS += -Wshift-overflow=2
-		CXXFLAGS_WARNINGS += -Wsync-nand
-		# CXXFLAGS_WARNINGS += -Wtrivial-auto-var-init
-		CXXFLAGS_WARNINGS += -Wunused
-		CXXFLAGS_WARNINGS += -Wunused-const-variable=1
-		# # DISABLED: CXXFLAGS_WARNINGS += -Wuseless-cast
-		CXXFLAGS_WARNINGS += -Wuninitialized
-		CXXFLAGS_WARNINGS += -Wstrict-aliasing=3
-		# # DISABLED: CXXFLAGS_WARNINGS += -Wstrict-overflow=5
-		CXXFLAGS_WARNINGS += -Wstringop-overflow=4
-		# CXXFLAGS_WARNINGS += -Wstrict-flex-arrays
-		# CXXFLAGS_WARNINGS += -Wsuggest-attribute
-		# CXXFLAGS_WARNINGS += -Walloc-size
-		CXXFLAGS_WARNINGS += -Walloc-zero
-		# CXXFLAGS_WARNINGS += -Wcalloc-transposed-args
-		CXXFLAGS_WARNINGS += -Walloca
-		CXXFLAGS_WARNINGS += -Warith-conversion
-		CXXFLAGS_WARNINGS += -Warray-bounds=2
-		CXXFLAGS_WARNINGS += -Wattribute-alias=2
-		# CXXFLAGS_WARNINGS += -Wbidi-chars=any
-		CXXFLAGS_WARNINGS +=  -Wduplicated-branches
-		CXXFLAGS_WARNINGS += -Wduplicated-cond
-		CXXFLAGS_WARNINGS += -Wzero-length-bounds
-		CXXFLAGS_WARNINGS += -Warray-bounds
-		CXXFLAGS_WARNINGS += -Wtautological-compare
-		CXXFLAGS_WARNINGS += -Wtrampolines
-		# # DISABELD: CXXFLAGS_WARNINGS += -Wtraditional
-		# CXXFLAGS_WARNINGS += -Wshadow
-		CXXFLAGS_WARNINGS += -Wfree-nonheap-object
-		CXXFLAGS_WARNINGS += -Wunsafe-loop-optimizations
-		CXXFLAGS_WARNINGS += -Wpointer-arith
-		CXXFLAGS_WARNINGS += -Wundef
-		CXXFLAGS_WARNINGS += -Wexpansion-to-defined
-		# CXXFLAGS_WARNINGS += -Wunused-macros
-		CXXFLAGS_WARNINGS += -Wcast-qual
-		CXXFLAGS_WARNINGS += -Wcast-align
-		CXXFLAGS_WARNINGS += -Wcast-align=strict 
-		CXXFLAGS_WARNINGS += -Wconversion
-		CXXFLAGS_WARNINGS += -Wdate-time
-		CXXFLAGS_WARNINGS += -Wsign-compare
-		CXXFLAGS_WARNINGS += -Wsign-conversion
 		CXXFLAGS_WARNINGS += -Wfloat-conversion
-		CXXFLAGS_WARNINGS += -Wlogical-op
-		CXXFLAGS_WARNINGS += -Waggressive-loop-optimizations
-		CXXFLAGS_WARNINGS += -Wmissing-declarations
-		# # DISABLED: CXXFLAGS_WARNINGS += -Wpadded
-		CXXFLAGS_WARNINGS += -Wredundant-decls
+		CXXFLAGS_WARNINGS += -Wfloat-equal
+		CXXFLAGS_WARNINGS += -Wfree-nonheap-object
+		CXXFLAGS_WARNINGS += -Wimplicit-fallthrough=4
+		# # DISABLED: CXXFLAGS_WARNINGS += -Winfinite-recursion
+		CXXFLAGS_WARNINGS += -Winit-self
+		# # DISABLED: CXXFLAGS_WARNINGS += -Winline 
+		CXXFLAGS_WARNINGS += -Winline 
 		CXXFLAGS_WARNINGS += -Wint-in-bool-context
 		CXXFLAGS_WARNINGS += -Winvalid-pch
-		# CXXFLAGS_WARNINGS += -Winvalid-utf8
-		# # DISABLED: CXXFLAGS_WARNINGS += -Wlong-long
-		CXXFLAGS_WARNINGS += -Wvector-operation-performance
-		CXXFLAGS_WARNINGS += 
-		CXXFLAGS_WARNINGS += 
-		CXXFLAGS_WARNINGS += 
-		CXXFLAGS_WARNINGS += 
-		
-		# CXXFLAGS_WARNINGS += -Wuseless-cast 
-		CXXFLAGS_WARNINGS += -Wmisleading-indentation 
-		CXXFLAGS_WARNINGS += -Wsign-conversion
-	
-		CXXFLAGS_WARNINGS += -Wmultiple-inheritance 
-		CXXFLAGS_WARNINGS += -Wvirtual-inheritance
-		CXXFLAGS_WARNINGS += -Wpointer-arith
-		CXXFLAGS_WARNINGS += -Wreturn-local-addr
-		CXXFLAGS_WARNINGS += -Wfloat-equal
-		CXXFLAGS_WARNINGS += -Wfloat-conversion
-		CXXFLAGS_WARNINGS += -Wconversion 
-		CXXFLAGS_WARNINGS += -Wsign-promo 
+		# # unknown: CXXFLAGS_WARNINGS += -Winvalid-utf8
 		CXXFLAGS_WARNINGS += -Wlogical-op 
-		CXXFLAGS_WARNINGS += -Wreturn-local-addr
-		#check which options there are ... 
+		# # DISABLED: CXXFLAGS_WARNINGS += -Wlong-long
+		CXXFLAGS_WARNINGS += -Wmisleading-indentation 
+		CXXFLAGS_WARNINGS += -Wmissing-declarations
+		CXXFLAGS_WARNINGS += -Wmissing-include-dirs
+		CXXFLAGS_WARNINGS += -Wmultiple-inheritance 
+		# # DISABLED: CXXFLAGS_WARNINGS += -Wnrvo
 		CXXFLAGS_WARNINGS += -Wnull-dereference
-		CXXFLAGS_WARNINGS += -Wswitch-default 
-		CXXFLAGS_WARNINGS += -Wswitch-enum
-		CXXFLAGS_WARNINGS += -Wunused 
-		CXXFLAGS_WARNINGS += -Wuninitialized
+		# # DISABLED: CXXFLAGS_WARNINGS += -Wpadded
+		CXXFLAGS_WARNINGS += -Wparentheses
+		CXXFLAGS_WARNINGS += -Wpointer-arith
+		CXXFLAGS_WARNINGS += -Wpointer-arith
+		CXXFLAGS_WARNINGS += -Wredundant-decls
+		CXXFLAGS_WARNINGS += -Wreturn-local-addr
+		# # DISABLED: CXXFLAGS_WARNINGS += -Wreturn-mismatch
+		# # DISABLED: CXXFLAGS_WARNINGS += -Wshadow
+		# # DISABLED: CXXFLAGS_WARNINGS += -Wshadow=global
+		CXXFLAGS_WARNINGS += -Wshift-negative-value
+		CXXFLAGS_WARNINGS += -Wshift-overflow=2
+		CXXFLAGS_WARNINGS += -Wsign-compare
+		CXXFLAGS_WARNINGS += -Wsign-conversion
+		CXXFLAGS_WARNINGS += -Wsign-promo 
+		CXXFLAGS_WARNINGS += -Wstrict-aliasing=3
+		# # DISABLED: CXXFLAGS_WARNINGS += -Wstrict-flex-arrays
+		# # DISABLED: CXXFLAGS_WARNINGS += -Wstrict-overflow=5
+		CXXFLAGS_WARNINGS += -Wstringop-overflow=4
+		# # DISABLED: CXXFLAGS_WARNINGS += -Wsuggest-attribute
 		CXXFLAGS_WARNINGS += -Wsuggest-final-types 
 		CXXFLAGS_WARNINGS += -Wsuggest-final-methods 
 		CXXFLAGS_WARNINGS += -Wsuggest-override
-		CXXFLAGS_WARNINGS += -Walloca
-		CXXFLAGS_WARNINGS += -Warray-bounds=2
-		CXXFLAGS_WARNINGS += -Wduplicated-branches 
-		CXXFLAGS_WARNINGS += -Wduplicated-cond
-		#CXXFLAGS_WARNINGS += -Wshadow=global
-		CXXFLAGS_WARNINGS += 
-		CXXFLAGS_WARNINGS += -Wdangling-else 
-		CXXFLAGS_WARNINGS += -Wparentheses
-		CXXFLAGS_WARNINGS += -Wwrite-strings
-		CXXFLAGS_WARNINGS += -Wunsafe-loop-optimizations 
-		#   CXXFLAGS_WARNINGS += -Winline 
+		CXXFLAGS_WARNINGS += -Wswitch-default 
+		CXXFLAGS_WARNINGS += -Wswitch-enum
+		CXXFLAGS_WARNINGS += -Wsync-nand
+		CXXFLAGS_WARNINGS += -Wtautological-compare
+		# # DISABELD: CXXFLAGS_WARNINGS += -Wtraditional
+		CXXFLAGS_WARNINGS += -Wtrampolines
+		# # DISABELD: CXXFLAGS_WARNINGS += -Wtrivial-auto-var-init
+		CXXFLAGS_WARNINGS += -Wuninitialized
+		CXXFLAGS_WARNINGS += -Wunused 
+		CXXFLAGS_WARNINGS += -Wunused-const-variable=1
+		# # DISABLED: CXXFLAGS_WARNINGS += -Wunused-macros
+		# # DISABLED: CXXFLAGS_WARNINGS += -Wuseless-cast
+		CXXFLAGS_WARNINGS += -Wunsafe-loop-optimizations
+		CXXFLAGS_WARNINGS += -Wundef
 		CXXFLAGS_WARNINGS += -Wvector-operation-performance
-		CXXFLAGS_WARNINGS += -Wdisabled-optimization
+		CXXFLAGS_WARNINGS += -Wvirtual-inheritance
+		CXXFLAGS_WARNINGS += -Wwrite-strings
+		CXXFLAGS_WARNINGS += -Wzero-length-bounds
+		CXXFLAGS_WARNINGS += -Wzero-as-null-pointer-constant
+		
+		# # check which options there are ... 
 		# # TODO What is stack smashing???? HSA????
 		# # TODO Read the format warnings 
 
-		CXXFLAGS_WARNINGS += -Wzero-as-null-pointer-constant
-
+		CXXFLAGS_WARNINGS += 
+		
 	else ifeq ($(FLAG_CXX),CLANG)
 
 # 		CXXFLAGS_WARNINGS += -Wdangling-reference
@@ -537,7 +516,7 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 		CXXFLAGS_WARNINGS += -Wdirect-ivar-access
 		CXXFLAGS_WARNINGS += -Wdisabled-macro-expansion
 		CXXFLAGS_WARNINGS += -Wdollar-in-identifier-extension
-		#   CXXFLAGS_WARNINGS += -Wdouble-promotion #disabled
+		# # DISABLED: CXXFLAGS_WARNINGS += -Wdouble-promotion #disabled
 		#	CXXFLAGS_WARNINGS += -Wdtor-name  TODO: Is this one actually defined???
 		CXXFLAGS_WARNINGS += -Wduplicate-decl-specifier 
 		CXXFLAGS_WARNINGS += -Wduplicate-enum 
@@ -546,18 +525,16 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 		CXXFLAGS_WARNINGS += -Wembedded-directive
 		CXXFLAGS_WARNINGS += -Wempty-init-stmt
 		CXXFLAGS_WARNINGS += -Wempty-translation-unit
-		
-		
-		
 		CXXFLAGS_WARNINGS += -Wenum-compare-conditional
 		CXXFLAGS_WARNINGS += -Wexceptions
 		# # disabled: CXXFLAGS_WARNINGS += -Wexit-time-destructors
 		CXXFLAGS_WARNINGS += -Wexpansion-to-defined
 		CXXFLAGS_WARNINGS += -Wextra-semi
 		# # disabled: CXXFLAGS_WARNINGS += -Wextra-semi-stmt
+		
 		CXXFLAGS_WARNINGS += -Wfixed-enum-extension
 		CXXFLAGS_WARNINGS += -Wflexible-array-extensions
-		# CXXFLAGS_WARNINGS += -Wfloat-equal
+		# # DISABLED: CXXFLAGS_WARNINGS += -Wfloat-equal
 		CXXFLAGS_WARNINGS += -Wfloat-overflow-conversion
 		CXXFLAGS_WARNINGS += -Wfloat-conversion
 		CXXFLAGS_WARNINGS += -Wfloat-zero-conversion
@@ -685,7 +662,7 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 		CXXFLAGS_WARNINGS += -Wstring-compare
 		CXXFLAGS_WARNINGS += -Wstring-concatenation
 		CXXFLAGS_WARNINGS += -Wstring-conversion
-		#   CXXFLAGS_WARNINGS += -Wsuggest-destructor-override #unknown
+		# # unknown: CXXFLAGS_WARNINGS += -Wsuggest-destructor-override
 		CXXFLAGS_WARNINGS += -Wsuggest-override
 		CXXFLAGS_WARNINGS += -Wsuper-class-method-mismatch
 		CXXFLAGS_WARNINGS += -Wswitch-default
@@ -715,7 +692,7 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 		CXXFLAGS_WARNINGS += -Wunnamed-type-template-args
 		CXXFLAGS_WARNINGS += -Wunneeded-internal-declaration
 		CXXFLAGS_WARNINGS += -Wunneeded-member-function
-		#   CXXFLAGS_WARNINGS += -Wuninitialized-const-reference #unknown
+		# # unknown: CXXFLAGS_WARNINGS += -Wuninitialized-const-reference
 		CXXFLAGS_WARNINGS += -Wunreachable-code
 		CXXFLAGS_WARNINGS += -Wunreachable-code-aggressive
 		CXXFLAGS_WARNINGS += -Wunused
@@ -734,14 +711,6 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 		CXXFLAGS_WARNINGS += -Wzero-as-null-pointer-constant
 		CXXFLAGS_WARNINGS += -Wzero-length-array
 		CXXFLAGS_WARNINGS += 
-		CXXFLAGS_WARNINGS += 
-		CXXFLAGS_WARNINGS += 
-		CXXFLAGS_WARNINGS += 
-		CXXFLAGS_WARNINGS += 
-		CXXFLAGS_WARNINGS += 
-
-		
-		
 		
 	endif
  
@@ -750,7 +719,7 @@ endif
 
 # In any case, remove the following warnings 
 
-# CXXFLAGS_WARNINGS += -Wno-missing-braces
+# # DISABLED: CXXFLAGS_WARNINGS += -Wno-missing-braces
 
 CXXFLAGS_WARNINGS += -Wunused-variable
 CXXFLAGS_WARNINGS += -Wno-unused-parameter
@@ -765,8 +734,8 @@ CXXFLAGS_WARNINGS += -Wno-sign-conversion	# too many signed indices
 
 ifeq ($(FLAG_CXX),GCC)
 
-# CXXFLAGS_WARNINGS += -Wno-shadow
-# CXXFLAGS_WARNINGS += -Wno-stack-usage
+# # DISABLED: CXXFLAGS_WARNINGS += -Wno-shadow
+# # DISABLED: CXXFLAGS_WARNINGS += -Wno-stack-usage
 
 else ifeq ($(FLAG_CXX),CLANG)
 

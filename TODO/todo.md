@@ -32,7 +32,7 @@ requires regular grinding in order to get it done.
 
 
 
-# (HIGH) Go over the manuals of GCC and Clang, add more possible warnings 
+# (DONE) Go over the manuals of GCC and Clang, add more possible warnings 
 
 Introduce a larger amount of warnings. Only use those that are not enabled by default. 
 
