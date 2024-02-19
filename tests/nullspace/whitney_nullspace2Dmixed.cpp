@@ -28,6 +28,7 @@
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.whitneyincl.hpp"
 #include "../../fem/global.elevation.hpp"
+#include "../../fem/global.interpol.hpp"
 #include "../../fem/utilities.hpp"
 
 
@@ -288,7 +289,25 @@ int main( int argc, char *argv[] )
                     
                     
                     
-                    contable << static_cast<Float>(nullvectorgallery.size());   
+                    contable << static_cast<Float>(nullvectorgallery.size());     
+                    
+                    
+                    const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 2, 0, r-1 );
+
+                    for( const auto& nullvector : nullvectorgallery )
+                    {
+                
+                        fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
+            
+                        VTKWriter vtk( M, fs, getbasename(__FILE__) );
+                        
+                        auto reduced_nullvector = interpol_matrix * volume_incmatrix * nullvector;
+
+                        vtk.writeCellVectorData_barycentricgradients( reduced_nullvector, "nullvector_L2" , 0.1 );
+                        
+                        fs.close();
+                
+                    }
                     
                     
                     

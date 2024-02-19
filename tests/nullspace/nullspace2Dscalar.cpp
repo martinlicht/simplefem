@@ -23,6 +23,7 @@
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.sullivanincl.hpp"
+#include "../../fem/global.interpol.hpp"
 #include "../../fem/utilities.hpp"
 
 
@@ -297,7 +298,9 @@ int main( int argc, char *argv[] )
                     
                     contable << static_cast<Float>(nullvectorgallery.size());   
 
-                    if( r == 1 )
+                    
+                    const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 0, 0, r );
+
                     for( const auto& nullvector : nullvectorgallery )
                     {
                 
@@ -307,7 +310,9 @@ int main( int argc, char *argv[] )
                         // vtk.writeCoordinateBlock();
                         // vtk.writeTopDimensionalCells();
                         
-                        vtk.writeVertexScalarData( nullvector,  "nullvector" , 1.0 );
+                        auto reduced_nullvector = interpol_matrix * incmatrix * nullvector;
+
+                        vtk.writeVertexScalarData( reduced_nullvector,  "nullvector" , 1.0 );
                         
                         fs.close();
                 

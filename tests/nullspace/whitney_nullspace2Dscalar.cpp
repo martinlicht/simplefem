@@ -7,6 +7,7 @@
 
 #include "../../basic.hpp"
 #include "../../utility/convergencetable.hpp"
+#include "../../utility/files.hpp"
 #include "../../operators/composedoperators.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
@@ -23,6 +24,7 @@
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.whitneyincl.hpp"
+#include "../../fem/global.interpol.hpp"
 #include "../../fem/utilities.hpp"
 
 
@@ -297,7 +299,27 @@ int main( int argc, char *argv[] )
                     }
                     
                     
-                    contable << static_cast<Float>(nullvectorgallery.size());   
+                    contable << static_cast<Float>(nullvectorgallery.size());     
+
+                    
+                    const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 0, 0, r );
+
+                    for( const auto& nullvector : nullvectorgallery )
+                    {
+                
+                        fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
+            
+                        VTKWriter vtk( M, fs, getbasename(__FILE__) );
+                        // vtk.writeCoordinateBlock();
+                        // vtk.writeTopDimensionalCells();
+                        
+                        auto reduced_nullvector = interpol_matrix * incmatrix * nullvector;
+
+                        vtk.writeVertexScalarData( reduced_nullvector,  "nullvector" , 1.0 );
+                        
+                        fs.close();
+                
+                    }
                     
                     
                     

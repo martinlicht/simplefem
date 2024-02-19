@@ -27,6 +27,7 @@
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.whitneyincl.hpp"
+#include "../../fem/global.interpol.hpp"
 #include "../../fem/utilities.hpp"
 
 
@@ -297,6 +298,25 @@ int main( int argc, char *argv[] )
                     
                     contable << static_cast<Float>(nullvectorgallery.size());   
                     
+
+                    const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r );
+
+                    for( const auto& nullvector : nullvectorgallery )
+                    {
+                
+                        fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
+            
+                        VTKWriter vtk( M, fs, getbasename(__FILE__) );
+                        // vtk.writeCoordinateBlock();
+                        // vtk.writeTopDimensionalCells();
+
+                        auto reduced_nullvector = interpol_matrix * vector_incmatrix * nullvector;
+
+                        vtk.writeCellVectorData_barycentricgradients( reduced_nullvector, "nullvector_Hcurl" , 0.1 );
+                        
+                        fs.close();
+                
+                    } 
                     
                     
 //                     {
@@ -335,21 +355,6 @@ int main( int argc, char *argv[] )
 //                         contable << sol.norm( mass ) << ( mat * sol ).norm( mass );
 //                         
 //                         
-//                         if( r == 1 ) {
-//                     
-//                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
-//                 
-//                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
-//                             // vtk.writeCoordinateBlock();
-//                             // vtk.writeTopDimensionalCells();
-//                             
-//                             vtk.writeVertexScalarData( sol,  "data1" , 1.0 );
-// //                             vtk.writeVertexScalarData( sol2, "data2" , 1.0 );
-//                             // vtk.writeCellVectorData( interpol_grad, "gradient_interpolation" , 0.1 );
-//                             
-//                             fs.close();
-//                     
-//                         }
 // 
 //                             
 //                             

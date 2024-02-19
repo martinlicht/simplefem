@@ -314,6 +314,9 @@ int main( int argc, char *argv[] )
                     
                     contable << static_cast<Float>(nullvectorgallery.size());   
                     
+                    
+                    const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 2, 0, r-1 );
+
                     for( const auto& nullvector : nullvectorgallery )
                     {
                 
@@ -323,8 +326,6 @@ int main( int argc, char *argv[] )
                         // vtk.writeCoordinateBlock();
                         // vtk.writeTopDimensionalCells();
                         
-                        const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 2, 0, r-1 );
-
                         auto reduced_nullvector = interpol_matrix * volume_incmatrix * nullvector;
 
                         vtk.writeCellVectorData_barycentricgradients( reduced_nullvector, "nullvector_L2" , 0.1 );

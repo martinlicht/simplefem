@@ -329,7 +329,9 @@ int main( int argc, char *argv[] )
                     
                     contable << static_cast<Float>(nullvectorgallery.size());  
 
-                    if( r == 1 )
+                    
+                    const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r );
+
                     for( const auto& nullvector : nullvectorgallery )
                     {
                 
@@ -339,13 +341,9 @@ int main( int argc, char *argv[] )
                         // vtk.writeCoordinateBlock();
                         // vtk.writeTopDimensionalCells();
 
-                        auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r );
-
                         auto reduced_nullvector = interpol_matrix * vector_incmatrix * nullvector;
 
                         vtk.writeCellVectorData_barycentricgradients( reduced_nullvector, "nullvector_Hcurl" , 0.1 );
-                        
-                        // TODO: Create cell centered vector field from nullvector
                         
                         fs.close();
                 

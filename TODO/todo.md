@@ -32,9 +32,13 @@ requires regular grinding in order to get it done.
 
 
 
-# (HIGH) Finish the printing in the nullspace computation
+# (DONE) Finish the printing in the nullspace computation
 
-Enable for all nullspace vectors for any polynomial degree.
+Enable for all nullspace vectors printing for any polynomial degree.
+
+# (DONE) Printing of higher order 
+
+Most routines only print if r == 1. Generalize that.
 
 # (HIGH) Fix finite difference tests
 
