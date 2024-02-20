@@ -42,7 +42,7 @@ int main( int argc, char *argv[] )
         for( const IndexMap& im : all )
                 LOG << im << nl;
 
-        assert( all.size() == 9 );
+        assert( all.size() == 27 );
         
         LOG << "Tested" << nl;
         

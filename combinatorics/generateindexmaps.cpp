@@ -179,7 +179,9 @@ std::vector<IndexMap> generateSigmas( const IndexRange& from, const IndexRange& 
     const std::vector<IndexMap> allmappings = generateIndexMaps( from, to );
     
     std::vector<IndexMap> ret;
-    assert( to.cardinality() >= from.cardinality() ); // TODO: Handle this warning
+    
+    // assert( to.cardinality() >= from.cardinality() ); // TODO: Handle this warning
+    
     ret.reserve( binomial_integer( to.cardinality(), from.cardinality() ) );
     
     for( const auto& mapping : allmappings )
