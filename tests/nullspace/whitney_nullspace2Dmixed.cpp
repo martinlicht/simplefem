@@ -272,7 +272,7 @@ int main( int argc, char *argv[] )
                     LOG << "How much nullspace are our vectors?" << nl;
                     for( const auto& nullvector : nullvectorgallery ) {
                         Float mass_norm = ( SystemMatrix * nullvector ).norm(mass);
-                        assert( is_numerically_small( mass_norm ) );
+                        Assert( is_numerically_small( mass_norm ), mass_norm );
                         LOG << mass_norm << tab;
                     }
                     LOG << nl;
@@ -282,9 +282,9 @@ int main( int argc, char *argv[] )
                         for( int n2 = 0; n2 < nullvectorgallery.size(); n2++ ) {
                             auto nullvector1 = nullvectorgallery[n1];
                             auto nullvector2 = nullvectorgallery[n2];
-                            Float mass_norm = mass * nullvector1 * nullvector2;
-                            LOG << mass_norm << tab;
-                            if( n1 != n2 ) assert( is_numerically_small( mass_norm ) );
+                            Float mass_prod = mass * nullvector1 * nullvector2;
+                            LOG << mass_prod << tab;
+                            if( n1 != n2 ) Assert( is_numerically_small( mass_prod ), mass_prod );
                             
                         }
                         LOG << nl;
