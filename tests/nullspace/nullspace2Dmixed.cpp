@@ -302,10 +302,14 @@ int main( int argc, char *argv[] )
                     LOG << nl;
                     
                     LOG << "How orthonormal are our vectors?" << nl;
-                    for( const auto& nullvector1 : nullvectorgallery ) {
-                        for( const auto& nullvector2 : nullvectorgallery ) {
-                            LOGPRINTF( "% 10.5e\t", mass * nullvector1 * nullvector2 );
-                            // LOG << std::showpos << std::scientific << std::setprecision(5) << std::setw(10) << mass * nullvector1 * nullvector2 << tab;
+                    for( int n1 = 0; n1 < nullvectorgallery.size(); n1++ ) {
+                        for( int n2 = 0; n2 < nullvectorgallery.size(); n2++ ) {
+                            auto nullvector1 = nullvectorgallery[n1];
+                            auto nullvector2 = nullvectorgallery[n2];
+                            Float mass_norm = mass * nullvector1 * nullvector2;
+                            LOGPRINTF( "% 10.5e\t", mass_norm );
+                            if( n1 != n2 ) assert( is_numerically_small( mass_norm ) );
+                            
                         }
                         LOG << nl;
                     }

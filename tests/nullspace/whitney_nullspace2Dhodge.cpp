@@ -285,14 +285,19 @@ int main( int argc, char *argv[] )
                     LOG << nl;
                     
                     LOG << "How orthonormal are our vectors?" << nl;
-                    for( const auto& nullvector1 : nullvectorgallery ) {
-                        for( const auto& nullvector2 : nullvectorgallery ) {
+                    for( int n1 = 0; n1 < nullvectorgallery.size(); n1++ ) {
+                        for( int n2 = 0; n2 < nullvectorgallery.size(); n2++ ) {
+                            auto nullvector1 = nullvectorgallery[n1];
+                            auto nullvector2 = nullvectorgallery[n2];
                             Float mass_norm = mass * nullvector1 * nullvector2;
-                            assert( is_numerically_small( mass_norm ) );
                             LOG << mass_norm << tab;
+                            if( n1 != n2 ) assert( is_numerically_small( mass_norm ) );
+                            
                         }
                         LOG << nl;
                     }
+                    
+                    
                     
                     
                     

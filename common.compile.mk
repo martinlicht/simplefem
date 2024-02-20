@@ -296,7 +296,7 @@ ifneq ($(OS),Windows_NT)
 	CXXFLAGS_CODEGEN += -fpic -fno-plt 
 endif
 
-CXXFLAGS_CODEGEN += -fvisibility=default
+# CXXFLAGS_CODEGEN += -fvisibility=default
 
 CXXFLAGS_CODEGEN += -fvisibility-inlines-hidden
 
