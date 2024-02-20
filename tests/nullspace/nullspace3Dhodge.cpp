@@ -319,51 +319,6 @@ int main( int argc, char *argv[] )
                 
                     } 
                     
-//                     {
-// 
-//                         FloatVector sol( opr.getdimin(), 0. ); sol.random(); sol.normalize(mass);
-//                         
-//                         assert( sol.isfinite() );
-//                         
-//                         FloatVector rhs( opr.getdimin(), 0. );
-//                         
-//                         FloatVector residual( rhs );
-//                         
-//                         for( int t = 0; t < 3; t++ ) {
-//                             
-//                             ConjugateResidualSolverCSR( 
-//                                 sol.getdimension(), 
-//                                 sol.raw(), 
-//                                 rhs.raw(), 
-//                                 mat.getA(), mat.getC(), mat.getV(),
-//                                 residual.raw(),
-//                                 desired_precision,
-//                                 1
-//                             );
-//                             sol.normalize( mass );
-//                             
-//                             assert( sol.isfinite() );
-//                             
-//                             LOG << "\t\t\t x:         " << sol.norm( mass ) << nl;
-//                             LOG << "\t\t\t Ax:        " << ( mat * sol ).norm( mass ) << nl;
-//                             LOG << "\t\t\t b - Ax:    " << ( mat * sol - rhs ).norm( mass ) << nl;
-//                         
-//                         }
-//                         
-//                         
-//                         
-//                         contable << sol.norm( mass ) << ( mat * sol ).norm( mass );
-//                         
-//                         
-// 
-//                             
-//                             
-//                         contable << nl;
-//                         
-//                         contable.lg( false );
-// 
-//                     }
-                    
                 }
 
                 if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }

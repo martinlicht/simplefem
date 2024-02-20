@@ -12,6 +12,7 @@ inline std::fstream openinputfile( const std::string& filename )
 {
     std::fstream myfile;
     myfile.open(filename, std::ios::in );
+    Assert( myfile.is_open(), filename );
     return myfile;
 }
 
@@ -19,6 +20,7 @@ inline std::fstream openoutputfile( const std::string& filename )
 {
     std::fstream myfile;
     myfile.open(filename, std::ios::out );
+    Assert( myfile.is_open(), filename );
     return myfile;
 }
 

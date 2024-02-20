@@ -219,7 +219,7 @@ int main( int argc, char *argv[] )
 
                         auto computed_sol = vector_incmatrix * sol;
                         
-                        if( r == 1 ){
+                        {
                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
                             // vtk.writeCoordinateBlock();
