@@ -34,6 +34,10 @@ requires regular grinding in order to get it done.
 
 # (DONE) Finish the printing in the nullspace computation
 
+Clean up the code in the nullspace computation. 
+
+# (DONE) Finish the printing in the nullspace computation
+
 Enable for all nullspace vectors printing for any polynomial degree.
 
 # (DONE) Printing of higher order 
