@@ -42,7 +42,14 @@ requires regular grinding in order to get it done.
 
 Enable for all nullspace vectors printing for any polynomial degree.
 
-# (DONE) Printing of higher order 
+# (HIGH) Robustness
+
+The code assumes at several points that indexmaps and sigmas are ordered, 
+at least when the indexmaps contains only one element. 
+Introduce a fixed shuffle and make sure the code is robust against it;
+at least with some randomized checking.
+
+# (HIGH) Printing of higher order 
 
 Most routines only print if r == 1. Generalize that.
 

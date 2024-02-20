@@ -334,66 +334,6 @@ int main( int argc, char *argv[] )
                 
                     }
                     
-//                     {
-// 
-//                         FloatVector sol( opr.getdimin(), 0. ); sol.random(); sol.normalize(mass);
-//                         
-//                         assert( sol.isfinite() );
-//                         
-//                         FloatVector rhs( opr.getdimin(), 0. );
-//                         
-//                         FloatVector residual( rhs );
-//                         
-//                         for( int t = 0; t < 3; t++ ) {
-//                             
-//                             ConjugateResidualSolverCSR( 
-//                                 sol.getdimension(), 
-//                                 sol.raw(), 
-//                                 rhs.raw(), 
-//                                 mat.getA(), mat.getC(), mat.getV(),
-//                                 residual.raw(),
-//                                 desired_precision,
-//                                 1
-//                             );
-//                             sol.normalize( mass );
-//                             
-//                             assert( sol.isfinite() );
-//                             
-//                             LOG << "\t\t\t x:         " << sol.norm( mass ) << nl;
-//                             LOG << "\t\t\t Ax:        " << ( mat * sol ).norm( mass ) << nl;
-//                             LOG << "\t\t\t b - Ax:    " << ( mat * sol - rhs ).norm( mass ) << nl;
-//                         
-//                         }
-//                         
-//                         
-//                         
-//                         contable << sol.norm( mass ) << ( mat * sol ).norm( mass );
-//                         
-//                         
-//                         if( r == 1 ) {
-//                     
-//                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
-//                 
-//                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
-//                             // vtk.writeCoordinateBlock();
-//                             // vtk.writeTopDimensionalCells();
-//                             
-//                             vtk.writeVertexScalarData( sol,  "data1" , 1.0 );
-// //                             vtk.writeVertexScalarData( sol2, "data2" , 1.0 );
-//                             // vtk.writeCellVectorData( interpol_grad, "gradient_interpolation" , 0.1 );
-//                             
-//                             fs.close();
-//                     
-//                         }
-// 
-//                             
-//                             
-//                         contable << nl;
-//                         
-//                         contable.lg( false );
-// 
-//                     }
-                    
                 }
 
                 if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
