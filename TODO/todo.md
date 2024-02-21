@@ -38,6 +38,11 @@ requires regular grinding in order to get it done.
 -fvisibility=hidden
 
 
+# (HIGH) Conjugate computation
+
+whitney2D/poissonmixedbc2Da.cpp takes too long to assemble the matrices.
+Try out a subroutine to reduce the computational effort. 
+
 # (DONE) Finish the printing in the nullspace computation
 
 Clean up the code in the nullspace computation. 
