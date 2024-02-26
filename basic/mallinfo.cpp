@@ -7,13 +7,19 @@
 #include <malloc.h>
 #include <stdio.h>
 
-void display_mallinfo()
+void display_mallinfo( bool full )
 {
     struct mallinfo2 mi;
 
     mi = mallinfo2();
 
     fprintf( stderr, "Heap usage statistics (mallinfo 2):\n");
+
+    if( not full ){
+        fprintf( stderr, "Total allocated space (uordblks):      %zu\t\t%.3f GiB\n", (size_t)mi.uordblks, mi.uordblks / 1073741824. );
+        fprintf( stderr, "Total free space (fordblks):           %zu\t\t%.3f GiB\n", (size_t)mi.fordblks, mi.fordblks / 1073741824. );
+        return;
+    }
 
     fprintf( stderr, "Total non-mmapped bytes (arena):       %zu\t\t%.3f GiB\n", (size_t)mi.arena,    mi.arena    / 1073741824. );
     fprintf( stderr, "# of free chunks (ordblks):            %zu\n",             (size_t)mi.ordblks                             );
@@ -35,13 +41,19 @@ void display_mallinfo()
 #include <malloc.h>
 #include <stdio.h>
 
-void display_mallinfo()
+void display_mallinfo( bool full )
 {
     struct mallinfo mi;
 
     mi = mallinfo();
 
     fprintf( stderr, "Heap usage statistics (mallinfo 1):\n");
+
+    if( not full ){
+        fprintf( stderr, "Total allocated space (uordblks):      %zu\t\t%.3f GiB\n", (size_t)mi.uordblks, mi.uordblks / 1073741824. );
+        fprintf( stderr, "Total free space (fordblks):           %zu\t\t%.3f GiB\n", (size_t)mi.fordblks, mi.fordblks / 1073741824. );
+        return;
+    }
 
     fprintf( stderr, "Total non-mmapped bytes (arena):       %d\t\t%.3f GiB\n", (int)mi.arena,    mi.arena    / 1073741824. );
     fprintf( stderr, "# of free chunks (ordblks):            %d\n",             (int)mi.ordblks                             );
@@ -61,13 +73,14 @@ void display_mallinfo()
 #else 
 
 #include <stdio.h>
-void display_mallinfo(){
+void display_mallinfo( bool full )
+{
     fprintf( stderr, "Heap usage statistics: requested but not available in this implementation.\n");
-#if defined(__GLIBC__) && defined(__GLIBC_MINOR__) 
+    #if defined(__GLIBC__) && defined(__GLIBC_MINOR__) 
     fprintf( stderr, "Glibc version: %d %d\n", __GLIBC__, __GLIBC_MINOR__ );
-#else
+    #else
     fprintf( stderr, "No Glibc version found\n" );
-#endif
+    #endif
 }
 
 #endif 

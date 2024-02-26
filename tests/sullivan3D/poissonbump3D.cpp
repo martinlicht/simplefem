@@ -20,6 +20,7 @@
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.sullivanincl.hpp"
+#include "../../fem/global.interpol.hpp"
 #include "../../fem/utilities.hpp"
 
 
@@ -213,20 +214,26 @@ int main( int argc, char *argv[] )
                         contable.lg();
 
 
-                        if( r == 1 ){
+                        {
                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
                             // vtk.writeCoordinateBlock();
                             // vtk.writeTopDimensionalCells();
 
+                            if( r == 1 ) 
                             vtk.writeVertexScalarData( sol,                                                          "iterativesolution_scalar_data" );
+                            
                             vtk.writeVertexScalarData( [&](FloatVector vec) -> Float{ return function_sol(vec)[0]; }, "interpolated_sol" );
                             vtk.writeVertexScalarData( [&](FloatVector vec) -> Float{ return function_rhs(vec)[0]; }, "interpolated_rhs" );
 
                             vtk.writeCellScalarData( [&](FloatVector vec) -> Float{ return function_sol(vec)[0]; }, "interpolated_sol" );
                             vtk.writeCellScalarData( [&](FloatVector vec) -> Float{ return function_rhs(vec)[0]; }, "interpolated_rhs" );
 
-                            vtk.writeCellVectorData_barycentricgradients( computed_grad,  "gradient_calculation" );
+                            const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r-1 );
+
+                            const auto printable_grad = interpol_matrix * diffmatrix * incmatrix * sol;
+                            
+                            vtk.writeCellVectorData_barycentricgradients( printable_grad,  "gradient_calculation" );
                             vtk.writeCellVectorData( function_grad,  "gradient_interpolation" );
                             fs.close();
                         }

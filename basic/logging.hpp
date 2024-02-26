@@ -323,6 +323,7 @@ struct System_Reporter
 {
     System_Reporter();
     ~System_Reporter();
+    void output();
 };
 
 extern System_Reporter  omp_reporter;

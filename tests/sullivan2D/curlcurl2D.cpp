@@ -4,6 +4,7 @@
 
 #include "../../basic.hpp"
 #include "../../utility/convergencetable.hpp"
+#include "../../utility/files.hpp"
 #include "../../utility/math.hpp"
 #include "../../operators/composedoperators.hpp"
 #include "../../sparse/sparsematrix.hpp"
@@ -17,7 +18,9 @@
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.sullivanincl.hpp"
+#include "../../fem/global.interpol.hpp"
 #include "../../fem/utilities.hpp"
+#include "../../vtk/vtkwriter.hpp"
 
 
 using namespace std;
@@ -257,6 +260,18 @@ int main( int argc, char *argv[] )
             contable << nl;
 
             contable.lg();
+            
+
+
+            {
+                fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
+                VTKWriter vtk( M, fs, getbasename(__FILE__) );
+
+                vtk.writeCellVectorData( function_sol, "interpolated_sol" , 1.0 );
+                vtk.writeCellVectorData( function_rhs, "interpolated_rhs" , 1.0 );
+            
+                fs.close();
+            }
             
         }
 
