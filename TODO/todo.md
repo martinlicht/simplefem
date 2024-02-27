@@ -31,11 +31,40 @@ requires regular grinding in order to get it done.
 
 
 
-? 
--fshort-enums
--frecord-gcc-switches
--fno-plt
--fvisibility=hidden
+# (ARTICLES)  
+
+- [ ] -fshort-enums: enumerations, their size, their values 
+- [ ] -fno-plt
+- [ ] -fvisibility=hidden
+- [ ] find the largest factorial with only divisions 
+- [ ] 
+
+
+
+-Wanalyzer-too-complex
+
+-Wanalyzer-double-fclose 
+-Wanalyzer-double-free 
+-Wanalyzer-exposure-through-output-file 
+-Wanalyzer-file-leak 
+-Wanalyzer-free-of-non-heap 
+-Wanalyzer-malloc-leak 
+-Wanalyzer-possible-null-argument 
+-Wanalyzer-possible-null-dereference 
+-Wanalyzer-null-argument 
+-Wanalyzer-null-dereference 
+-Wanalyzer-stale-setjmp-buffer 
+-Wanalyzer-tainted-array-index 
+-Wanalyzer-unsafe-call-within-signal-handler 
+-Wanalyzer-use-after-free 
+-Wanalyzer-use-of-pointer-in-stale-stack-frame 
+
+? -fanalyzer-transitivity
+-fanalyzer-verbosity=level # default 
+
+TODO: write an email to the mailing list about the static analyzer. 
+
+
 
 
 # (HIGH) Conjugate computation
@@ -45,7 +74,7 @@ Try out a subroutine to reduce the computational effort.
 
 # (DONE) Finish the printing in the nullspace computation
 
-Clean up the code in the nullspace computation. 
+
 
 # (DONE) Finish the printing in the nullspace computation
 

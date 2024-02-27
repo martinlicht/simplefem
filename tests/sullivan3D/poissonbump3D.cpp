@@ -214,12 +214,15 @@ int main( int argc, char *argv[] )
                         contable.lg();
 
 
-                        if( r == 1 ){
+                        {
                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
                             // vtk.writeCoordinateBlock();
                             // vtk.writeTopDimensionalCells();
 
+                            if( r == 1 ) 
+                            vtk.writeVertexScalarData( sol,                                                          "iterativesolution_scalar_data" );
+                            
                             vtk.writeVertexScalarData( [&](FloatVector vec) -> Float{ return function_sol(vec)[0]; }, "interpolated_sol" );
                             vtk.writeVertexScalarData( [&](FloatVector vec) -> Float{ return function_rhs(vec)[0]; }, "interpolated_rhs" );
 
@@ -236,7 +239,14 @@ int main( int argc, char *argv[] )
                                 vtk.writeCellScalarData( printable_sol, "iterativesolution_scalar_data_cellwise" , 1.0 );
                             }
                             
-                            vtk.writeCellVectorData( function_grad,  "gradient_interpolation" );
+
+                            {
+                                const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r-1 );
+                                const auto printable_grad = interpol_matrix * diffmatrix * incmatrix * sol;
+                            
+                                vtk.writeCellVectorData_barycentricgradients( printable_grad,  "gradient_calculation" );
+                                vtk.writeCellVectorData( function_grad,  "gradient_interpolation" );
+                            }
                             
                             {
                                 const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r-1 );
