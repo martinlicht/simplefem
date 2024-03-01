@@ -39,6 +39,8 @@ requires regular grinding in order to get it done.
 - [ ] find the largest factorial with only divisions 
 - [ ] 
 
+
+
 -Wanalyzer-too-complex
 
 -Wanalyzer-double-fclose 
@@ -62,6 +64,10 @@ requires regular grinding in order to get it done.
 
 TODO: write an email to the mailing list about the static analyzer. 
 
+# (HIGH) Conjugate computation
+
+whitney2D/poissonmixedbc2Da.cpp takes too long to assemble the matrices.
+Try out a subroutine to reduce the computational effort. 
 
 # (HIGH) Robustness
 
@@ -74,6 +80,7 @@ at least with some randomized checking.
 
 Most routines only print if r == 1. Generalize that.
 
+- [ ] What should the curl-curl tests print?
 - [ ] Decide what the different tests are supposed to do.
 - [ ] For example, the Lagrange test should reflect simple things and additional overhead
 - [ ] Remove overhead from the other tests if possible 

@@ -377,9 +377,9 @@ int main( int argc, char *argv[] )
                 fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                 VTKWriter vtk( M, fs, getbasename(__FILE__) );
 
-                vtk.writeCellVectorData( function_sol, "interpolated_sol" , 1.0 );
-                vtk.writeCellVectorData( function_rhs, "interpolated_rhs" , 1.0 );
-                vtk.writeCellVectorData( function_curl, "interpolated_curl" , 1.0 );
+                vtk.writeCellVectorData( function_sol,  "function_sol" , 1.0 );
+                vtk.writeCellVectorData( function_rhs,  "function_rhs" , 1.0 );
+                vtk.writeCellVectorData( function_curl, "function_curl" , 1.0 );
             
                 fs.close();
             }

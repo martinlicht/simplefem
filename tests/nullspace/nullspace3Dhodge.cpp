@@ -287,9 +287,9 @@ int main( int argc, char *argv[] )
                         for( int n2 = 0; n2 < nullvectorgallery.size(); n2++ ) {
                             auto nullvector1 = nullvectorgallery[n1];
                             auto nullvector2 = nullvectorgallery[n2];
-                            Float mass_norm = mass * nullvector1 * nullvector2;
-                            LOGPRINTF( "% 10.5e\t", mass_norm );
-                            if( n1 != n2 ) assert( is_numerically_small( mass_norm ) );
+                            Float mass_prod = mass * nullvector1 * nullvector2;
+                            LOGPRINTF( "% 10.5e\t", mass_prod );
+                            if( n1 != n2 ) assert( is_numerically_small( mass_prod ) );
                             
                         }
                         LOG << nl;
