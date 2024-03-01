@@ -68,6 +68,12 @@ int main( int argc, char *argv[] )
                 });
         };
     
+    std::function<FloatVector(const FloatVector&)> experiment_curl = 
+        [=](const FloatVector& vec) -> FloatVector{
+            assert( vec.getdimension() == 1 );
+            return FloatVector({ 17. });
+        };
+    
     std::function<FloatVector(const FloatVector&)> experiment_rhs = 
         [=](const FloatVector& vec) -> FloatVector{
             assert( vec.getdimension() == 2 );
@@ -175,6 +181,7 @@ int main( int argc, char *argv[] )
             const auto& function_sol = experiment_sol;
             const auto& function_rhs = experiment_rhs;
             const auto& function_aux = experiment_aux;
+            const auto& function_curl = experiment_curl;
             
             LOG << "...interpolate explicit solution and rhs" << nl;
             

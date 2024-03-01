@@ -3,6 +3,8 @@
 
 #include <vector>
 
+#include <random>
+
 #include "../basic.hpp"
 #include "indexrange.hpp"
 #include "indexmap.hpp"
@@ -22,8 +24,13 @@ std::vector<IndexMap> generateEmptyMap( const IndexRange& from, const IndexRange
     
     std::vector<IndexMap> ret;
     ret.push_back( myempty );
-    return ret;
+
+    {
+        std::mt19937 g( 123456789 );
+        std::shuffle( ret.begin(), ret.end(), g );
+    }
     
+    return ret;    
 }
 
 
@@ -74,6 +81,11 @@ std::vector<IndexMap> generateIndexMaps( const IndexRange& from, const IndexRang
     for( const auto& foo : ret )
         foo.check();
     
+    {
+        std::mt19937 g( 123456789 );
+        std::shuffle( ret.begin(), ret.end(), g );
+    }
+    
     return ret;
     
 }
@@ -103,6 +115,11 @@ std::vector<IndexMap> generatePermutations( const IndexRange& ir )
             
     for( const auto& perm : ret )
         assert( (perm.check(),true) && perm.isbijective() );
+    
+    {
+        std::mt19937 g( 123456789 );
+        std::shuffle( ret.begin(), ret.end(), g );
+    }
     
     return ret;
     
@@ -190,6 +207,11 @@ std::vector<IndexMap> generateSigmas( const IndexRange& from, const IndexRange& 
             
     for( const auto& sigma : ret )
         assert( (sigma.check(),true) and sigma.isstrictlyascending() );
+    
+    {
+        std::mt19937 g( 123456789 );
+        std::shuffle( ret.begin(), ret.end(), g );
+    }
     
     return ret;
     

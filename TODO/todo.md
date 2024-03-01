@@ -85,7 +85,12 @@ Most routines only print if r == 1. Generalize that.
 - [ ] For example, the Lagrange test should reflect simple things and additional overhead
 - [ ] Remove overhead from the other tests if possible 
 - [ ] enable higher-order printing wherever convenient, and provide higher-order printing. Agree on polydegree
-- [ ] 
+
+- [ ] What should curl do?        plot the actual content 
+- [ ] What should darcy do?       NOTHING FOR NOW
+- [ ] What should maxwell do?     NOTHING FOR NOW
+
+
 
 # (HIGH) Fix finite difference tests
 
