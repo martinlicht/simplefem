@@ -245,6 +245,20 @@ VTKWriter VTKWriter::writeVertexScalarData( const std::function<Float(const Floa
     return *this;
 }
 
+VTKWriter VTKWriter::writeVertexScalarData( const std::function<FloatVector(const FloatVector&)>& function, const std::string& name, Float scaling )
+{
+    auto datafunction = [&](int v) -> Float { 
+        assert( 0 <= v and v < this->mesh.count_simplices(0) );
+        FloatVector evaluation = function( mesh.get_midpoint(0,v) ); 
+        assert( evaluation.getdimension() == 1 );
+        return evaluation[0];
+    };
+
+    writeVertexScalarData( datafunction, name, scaling );
+
+    return *this;
+}
+
 VTKWriter VTKWriter::writeVertexScalarData( const FloatVector& data, const std::string& name, Float scaling )
 {
     assert( data.getdimension() == mesh.count_simplices(0) );
@@ -272,6 +286,22 @@ VTKWriter VTKWriter::writeCellScalarData( const std::function<Float(const FloatV
     auto datafunction = [&](int c) -> Float { 
         assert( 0 <= c and c < this->mesh.count_simplices(topdim) );
         return function( mesh.get_midpoint(topdim,c) ); 
+    };
+
+    writeCellScalarData( datafunction, name, scaling );
+
+    return *this;
+}
+
+VTKWriter VTKWriter::writeCellScalarData( const std::function<FloatVector(const FloatVector&)>& function, const std::string& name, Float scaling )
+{
+    const int topdim = mesh.getinnerdimension();
+
+    auto datafunction = [&](int c) -> Float { 
+        assert( 0 <= c and c < this->mesh.count_simplices(topdim) );
+        FloatVector evaluation = function( mesh.get_midpoint(0,c) ); 
+        assert( evaluation.getdimension() == 1 );
+        return evaluation[0];
     };
 
     writeCellScalarData( datafunction, name, scaling );

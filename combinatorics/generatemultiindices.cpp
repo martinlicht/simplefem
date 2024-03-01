@@ -4,6 +4,8 @@
 
 #include <vector>
 
+#include <random>
+
 #include "../basic.hpp"
 
 #include "indexrange.hpp"
@@ -58,6 +60,11 @@ std::vector<MultiIndex> generateMultiIndices( const IndexRange& ir, int degree )
         
     }
     
+    {
+        std::mt19937 g( 123456789 );
+        std::shuffle( ret.begin(), ret.end(), g );
+    }
+
     assert( ret.size() == binomial_integer( ir.cardinality()-1 + degree, ir.cardinality()-1 ) );
     
     assert( ret.size() == ret.capacity() );
