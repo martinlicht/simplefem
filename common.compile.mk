@@ -30,8 +30,8 @@ endif
 
 
 # Uncomment your choice of compiler below
-# FLAG_CXX := CLANG
-FLAG_CXX := GCC
+FLAG_CXX := CLANG
+# FLAG_CXX := GCC
 # FLAG_CXX := ICC
 
 

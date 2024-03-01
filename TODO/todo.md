@@ -63,10 +63,6 @@ requires regular grinding in order to get it done.
 TODO: write an email to the mailing list about the static analyzer. 
 
 
-# (DONE) Finish the printing in the nullspace computation
-
-Enable for all nullspace vectors printing for any polynomial degree.
-
 # (HIGH) Robustness
 
 The code assumes at several points that indexmaps and sigmas are ordered, 
@@ -77,6 +73,12 @@ at least with some randomized checking.
 # (HIGH) Printing of higher order 
 
 Most routines only print if r == 1. Generalize that.
+
+- [ ] Decide what the different tests are supposed to do.
+- [ ] For example, the Lagrange test should reflect simple things and additional overhead
+- [ ] Remove overhead from the other tests if possible 
+- [ ] enable higher-order printing wherever convenient, and provide higher-order printing. Agree on polydegree
+- [ ] 
 
 # (HIGH) Fix finite difference tests
 
@@ -978,4 +980,8 @@ However Turn off the following warnings:
 
 Following this, go over the list of warnings and re-order everything for the sake of consistency. 
 Check what needs to be retired.
+
+# (DONE) Finish the printing in the nullspace computation
+
+Enable for all nullspace vectors printing for any polynomial degree.
 

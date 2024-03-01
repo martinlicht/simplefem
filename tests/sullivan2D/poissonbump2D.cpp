@@ -77,28 +77,6 @@ int main( int argc, char *argv[] )
                         -
                         bumpfunction(vec[0])        * bumpfunction_devdev(vec[1])
                     });
-                    
-
-//                     const Float stepsize = desired_closeness;
-//                     
-//                     FloatVector ret(1);
-//                     
-//                     auto point = vec;
-//                     
-//                     FloatVector mid    = experiment_sol( point                              );
-//                     FloatVector left   = experiment_sol( point - stepsize * unitvector(2,0) );
-//                     FloatVector right  = experiment_sol( point + stepsize * unitvector(2,0) );
-//                     FloatVector up     = experiment_sol( point - stepsize * unitvector(2,1) );
-//                     FloatVector down   = experiment_sol( point + stepsize * unitvector(2,1) );
-//                     
-//                     ret = - ( up + down + left + right - 4 * mid );
-//                     
-//                     ret /= ( stepsize * stepsize );
-//                     
-//                     assert( ret.getdimension() == 1 );
-//                     
-//                     return ret;
-                                    
                 };
             
             
@@ -242,8 +220,6 @@ int main( int argc, char *argv[] )
                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                 
                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
-                            // vtk.writeCoordinateBlock( outputdata1 );
-                            // vtk.writeTopDimensionalCells();
                             
                             vtk.writeVertexScalarData( -outputdata1, "iterativesolution_scalar_data" , 1.0 );
                             vtk.writeVertexScalarData(  outputdata2, "reference_scalar_data" , 1.0 );
@@ -253,22 +229,16 @@ int main( int argc, char *argv[] )
                     
                         }
 
-
                     }
                     
                 }
 
                 if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
-                
-                
 
             } 
         
         }
-        
-        
-        
-        
+
         LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
         
         return 0;
