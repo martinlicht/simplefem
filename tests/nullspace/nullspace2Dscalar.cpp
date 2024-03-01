@@ -287,10 +287,14 @@ int main( int argc, char *argv[] )
                     LOG << nl;
                     
                     LOG << "How orthonormal are our vectors?" << nl;
-                    for( const auto& nullvector1 : nullvectorgallery ) {
-                        for( const auto& nullvector2 : nullvectorgallery ) {
-                            LOGPRINTF( "% 10.5e\t", mass * nullvector1 * nullvector2 );
-                            // LOG << std::showpos << std::scientific << std::setprecision(5) << std::setw(10) << mass * nullvector1 * nullvector2 << tab;
+                    for( int n1 = 0; n1 < nullvectorgallery.size(); n1++ ) {
+                        for( int n2 = 0; n2 < nullvectorgallery.size(); n2++ ) {
+                            auto nullvector1 = nullvectorgallery[n1];
+                            auto nullvector2 = nullvectorgallery[n2];
+                            Float mass_prod = mass * nullvector1 * nullvector2;
+                            LOGPRINTF( "% 10.5e\t", mass_prod );
+                            if( n1 != n2 ) assert( is_numerically_small( mass_prod ) );
+                            
                         }
                         LOG << nl;
                     }
@@ -312,7 +316,7 @@ int main( int argc, char *argv[] )
                         
                         auto reduced_nullvector = interpol_matrix * incmatrix * nullvector;
 
-                        vtk.writeVertexScalarData( reduced_nullvector,  "nullvector" , 1.0 );
+                        vtk.writeCellScalarData( reduced_nullvector,  "nullvector" , 1.0 );
                         
                         fs.close();
                 
@@ -448,27 +452,6 @@ int main( int argc, char *argv[] )
 //                                 1
 //                             );
 //                             sol2.normalize( mass );
-//                             
-//                             
-//                             
-//                             
-//                             if( r == 1 ) {
-//                         
-//                                 fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
-//                     
-//                                 VTKWriter vtk( M, fs, getbasename(__FILE__) );
-//                                 // vtk.writeCoordinateBlock();
-//                                 // vtk.writeTopDimensionalCells();
-//                                 
-//                                 vtk.writeVertexScalarData( sol,  "data1" , 1.0 );
-//                                 vtk.writeVertexScalarData( sol2, "data2" , 1.0 );
-//                                 // vtk.writeCellVectorData( interpol_grad, "gradient_interpolation" , 0.1 );
-//                                 
-//                                 fs.close();
-//                         
-//                             }
-// 
-//                             
 //                             
 //                         }
 // 

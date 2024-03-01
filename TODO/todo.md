@@ -31,20 +31,61 @@ requires regular grinding in order to get it done.
 
 
 
-? 
--fshort-enums
--frecord-gcc-switches
--fno-plt
--fvisibility=hidden
+# (ARTICLES)  
+
+- [ ] -fshort-enums: enumerations, their size, their values 
+- [ ] -fno-plt
+- [ ] -fvisibility=hidden
+- [ ] find the largest factorial with only divisions 
+- [ ] 
 
 
-# (DONE) Finish the printing in the nullspace computation
 
-Enable for all nullspace vectors printing for any polynomial degree.
+-Wanalyzer-too-complex
 
-# (DONE) Printing of higher order 
+-Wanalyzer-double-fclose 
+-Wanalyzer-double-free 
+-Wanalyzer-exposure-through-output-file 
+-Wanalyzer-file-leak 
+-Wanalyzer-free-of-non-heap 
+-Wanalyzer-malloc-leak 
+-Wanalyzer-possible-null-argument 
+-Wanalyzer-possible-null-dereference 
+-Wanalyzer-null-argument 
+-Wanalyzer-null-dereference 
+-Wanalyzer-stale-setjmp-buffer 
+-Wanalyzer-tainted-array-index 
+-Wanalyzer-unsafe-call-within-signal-handler 
+-Wanalyzer-use-after-free 
+-Wanalyzer-use-of-pointer-in-stale-stack-frame 
+
+? -fanalyzer-transitivity
+-fanalyzer-verbosity=level # default 
+
+TODO: write an email to the mailing list about the static analyzer. 
+
+# (HIGH) Conjugate computation
+
+whitney2D/poissonmixedbc2Da.cpp takes too long to assemble the matrices.
+Try out a subroutine to reduce the computational effort. 
+
+# (HIGH) Robustness
+
+The code assumes at several points that indexmaps and sigmas are ordered, 
+at least when the indexmaps contains only one element. 
+Introduce a fixed shuffle and make sure the code is robust against it;
+at least with some randomized checking.
+
+# (HIGH) Printing of higher order 
 
 Most routines only print if r == 1. Generalize that.
+
+- [ ] What should the curl-curl tests print?
+- [ ] Decide what the different tests are supposed to do.
+- [ ] For example, the Lagrange test should reflect simple things and additional overhead
+- [ ] Remove overhead from the other tests if possible 
+- [ ] enable higher-order printing wherever convenient, and provide higher-order printing. Agree on polydegree
+- [ ] 
 
 # (HIGH) Fix finite difference tests
 
@@ -946,4 +987,8 @@ However Turn off the following warnings:
 
 Following this, go over the list of warnings and re-order everything for the sake of consistency. 
 Check what needs to be retired.
+
+# (DONE) Finish the printing in the nullspace computation
+
+Enable for all nullspace vectors printing for any polynomial degree.
 

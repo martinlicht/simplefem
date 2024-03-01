@@ -330,8 +330,6 @@ int main( int argc, char *argv[] )
 
                         contable.lg();
                         
-
-
                     }
                     
                 }
@@ -347,9 +345,6 @@ int main( int argc, char *argv[] )
             contable.lg();
         
         }
-        
-        
-        
         
         LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
         

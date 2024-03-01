@@ -285,14 +285,19 @@ int main( int argc, char *argv[] )
                     LOG << nl;
                     
                     LOG << "How orthonormal are our vectors?" << nl;
-                    for( const auto& nullvector1 : nullvectorgallery ) {
-                        for( const auto& nullvector2 : nullvectorgallery ) {
-                            Float mass_norm = mass * nullvector1 * nullvector2;
-                            assert( is_numerically_small( mass_norm ) );
-                            LOG << mass_norm << tab;
+                    for( int n1 = 0; n1 < nullvectorgallery.size(); n1++ ) {
+                        for( int n2 = 0; n2 < nullvectorgallery.size(); n2++ ) {
+                            auto nullvector1 = nullvectorgallery[n1];
+                            auto nullvector2 = nullvectorgallery[n2];
+                            Float mass_prod = mass * nullvector1 * nullvector2;
+                            LOG << mass_prod << tab;
+                            if( n1 != n2 ) assert( is_numerically_small( mass_prod ) );
+                            
                         }
                         LOG << nl;
                     }
+                    
+                    
                     
                     
                     
@@ -317,52 +322,6 @@ int main( int argc, char *argv[] )
                         fs.close();
                 
                     } 
-                    
-                    
-//                     {
-// 
-//                         FloatVector sol( opr.getdimin(), 0. ); sol.random(); sol.normalize(mass);
-//                         
-//                         assert( sol.isfinite() );
-//                         
-//                         FloatVector rhs( opr.getdimin(), 0. );
-//                         
-//                         FloatVector residual( rhs );
-//                         
-//                         for( int t = 0; t < 3; t++ ) {
-//                             
-//                             ConjugateResidualSolverCSR( 
-//                                 sol.getdimension(), 
-//                                 sol.raw(), 
-//                                 rhs.raw(), 
-//                                 mat.getA(), mat.getC(), mat.getV(),
-//                                 residual.raw(),
-//                                 desired_precision,
-//                                 1
-//                             );
-//                             sol.normalize( mass );
-//                             
-//                             assert( sol.isfinite() );
-//                             
-//                             LOG << "\t\t\t x:         " << sol.norm( mass ) << nl;
-//                             LOG << "\t\t\t Ax:        " << ( mat * sol ).norm( mass ) << nl;
-//                             LOG << "\t\t\t b - Ax:    " << ( mat * sol - rhs ).norm( mass ) << nl;
-//                         
-//                         }
-//                         
-//                         
-//                         
-//                         contable << sol.norm( mass ) << ( mat * sol ).norm( mass );
-//                         
-//                         
-// 
-//                             
-//                             
-//                         contable << nl;
-//                         
-//                         contable.lg( false );
-// 
-//                     }
                     
                 }
 

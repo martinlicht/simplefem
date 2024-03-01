@@ -154,6 +154,18 @@ Logger::~Logger()
 
 System_Reporter::System_Reporter()
 {
+    output();
+}
+
+System_Reporter::~System_Reporter()
+{
+    #if defined(_OPENMP)
+    // LOG << "###\tSystem Reporter: finished\n";
+    #endif
+}   
+
+void System_Reporter::output()
+{
     
     #if defined(GIT_COMMIT_ID)
     LOG << "###\tCurrent Git commit ID: " << GIT_COMMIT_ID << nl;
@@ -213,13 +225,6 @@ System_Reporter::System_Reporter()
     LOGPRINTF("###\tOS: Windows\n");
     #else
     #error "Unknown platform"
-    #endif
-}
-
-System_Reporter::~System_Reporter()
-{
-    #if defined(_OPENMP)
-    // LOG << "###\tSystem Reporter: finished\n";
     #endif
 }
 

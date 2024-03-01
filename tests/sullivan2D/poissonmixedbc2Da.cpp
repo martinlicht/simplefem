@@ -19,6 +19,7 @@
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.sullivanincl.hpp"
+#include "../../fem/global.interpol.hpp"
 #include "../../fem/utilities.hpp"
 
 
@@ -247,13 +248,26 @@ int main( int argc, char *argv[] )
                         contable.lg();
 
 
-                        if( r == 1 ){
+                        {
                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
-                            // vtk.writeCoordinateBlock();
-                            // vtk.writeTopDimensionalCells();
-                            vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
-                            vtk.writeCellVectorData_barycentricgradients( computed_grad, "gradient_interpolation" , 0.1 );
+                            
+                            if( r == 1 ) { 
+                                vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
+                            } 
+                            
+                            {
+                                const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 0, 0, r );
+                                const auto printable_sol = interpol_matrix * incmatrix * sol; 
+                                vtk.writeCellScalarData( printable_sol, "iterativesolution_scalar_data_cellwise" , 1.0 );
+                            }
+                            
+                            {
+                                const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r-1 );
+                                const auto printable_grad = interpol_matrix * computed_grad; 
+                                vtk.writeCellVectorData_barycentricgradients( printable_grad, "gradient_interpolation" , 0.1 );
+                            }
+                            
                             fs.close();
                         }
 

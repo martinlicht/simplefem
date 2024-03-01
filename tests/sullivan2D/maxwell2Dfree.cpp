@@ -91,23 +91,6 @@ int main( int argc, char *argv[] )
                     Assert( vec.getdimension() == 2 );
                     
                     
-//                     const Float stepsize = desired_closeness;
-//                     FloatVector ret(2);
-//                     auto point = vec;
-//                     
-//                     FloatVector mid    = experiment_sol( point                              );
-//                     FloatVector left   = experiment_sol( point - stepsize * unitvector(2,0) );
-//                     FloatVector right  = experiment_sol( point + stepsize * unitvector(2,0) );
-//                     FloatVector up     = experiment_sol( point - stepsize * unitvector(2,1) );
-//                     FloatVector down   = experiment_sol( point + stepsize * unitvector(2,1) );
-//                     
-//                     ret = - ( up + down + left + right - 4 * mid );
-//                     
-//                     ret /= ( stepsize * stepsize );
-//                     
-//                     Assert( ret.getdimension() == 2 );
-//                     
-//                     return ret;
 
                     
                     
@@ -120,15 +103,7 @@ int main( int argc, char *argv[] )
                         -
                         bumpfunction_devdev(vec[0]) *        bumpfunction(vec[1])
                         -
-                        bumpfunction(vec[0])        * bumpfunction_devdev(vec[1])
-                        
-//                         ( xfeq*xfeq + yfeq*yfeq ) * Constants::pisquare 
-//                         * 
-//                         std::sin( xfeq * Constants::pi * vec[0] ) * std::sin( yfeq * Constants::pi * vec[1] )
-//                         ,
-//                         ( xfeq*xfeq + yfeq*yfeq ) * Constants::pisquare 
-//                         * 
-//                         std::sin( xfeq * Constants::pi * vec[0] ) * std::sin( yfeq * Constants::pi * vec[1] )
+                        bumpfunction(vec[0])        * bumpfunction_devdev(vec[1])                        
                      });
                 };
 
@@ -328,8 +303,6 @@ int main( int argc, char *argv[] )
 
                         contable.lg();
                         
-
-
                     }
                     
                 }
@@ -342,9 +315,6 @@ int main( int argc, char *argv[] )
             contable.lg();
         
         }
-        
-        
-        
         
         LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
         

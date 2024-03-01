@@ -122,8 +122,8 @@ int main( int argc, char *argv[] )
         
         {
             
-            int r = 1;
-            int w = r;
+            const int r = 1;
+            const int w = r;
 
             LOGPRINTF("Polynomial degrees: r=%d w=%d \n", r, w );
             
@@ -299,14 +299,14 @@ int main( int argc, char *argv[] )
                 contables.push_back(contable);
 
                 
-                if( true and r == 1 )
                 {
                     fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                     VTKWriter vtk( M, fs, getbasename(__FILE__) );
-                    // vtk.writeCoordinateBlock();
-                    // vtk.writeTopDimensionalCells();
+                    
+                    assert( r == 1 );
+
                     vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
-                    // vtk.writeCellVectorData_barycentricgradients( computed_grad, "gradient_interpolation" , 0.1 );
+                    
                     fs.close();
                 }
 

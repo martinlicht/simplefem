@@ -18,6 +18,7 @@
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.whitneyincl.hpp"
+#include "../../fem/global.interpol.hpp"
 #include "../../fem/utilities.hpp"
 
 
@@ -95,7 +96,7 @@ int main( int argc, char *argv[] )
             LOG << "Solving Poisson Problem with Neumann boundary conditions" << nl;
 
             const int min_l = 0; 
-            const int max_l = 6;
+            const int max_l = 5;
             
             const int min_r = 4;
             const int max_r = 4;
@@ -140,12 +141,14 @@ int main( int argc, char *argv[] )
                     
                     SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
-                    LOG << "...assemble stiffness matrix" << nl;
+                    LOG << "...assemble stiffness matrix ... " << nl;
             
                     auto opr = diffmatrix & incmatrix;
                     auto opl = opr.getTranspose(); 
                     auto stiffness = opl & ( vector_massmatrix & opr );
                     
+                    LOG << "conversion" << nl;
+            
                     stiffness.sortentries();
                     auto stiffness_csr = MatrixCSR( stiffness );
                     
@@ -222,16 +225,25 @@ int main( int argc, char *argv[] )
                         contable.lg();
 
 
-                        if( r == 1 ){
+                        {
                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
-                            // vtk.writeCoordinateBlock();
-                            // vtk.writeTopDimensionalCells();
-                            vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
-                            vtk.writeCellVectorData_barycentricgradients( computed_grad, "gradient_interpolation" , 0.1 );
+                            
+                            {
+                                const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 0, 0, r );
+                                const auto printable_sol = interpol_matrix * incmatrix * sol; 
+                                vtk.writeCellScalarData( printable_sol, "iterativesolution_scalar_data_cellwise" , 1.0 );
+                            }
+                            
+                            {
+                                const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r-1 );
+                                const auto printable_grad = interpol_matrix * computed_grad; 
+                                vtk.writeCellVectorData_barycentricgradients( printable_grad, "gradient_interpolation" , 0.1 );
+                            }
+                            
                             fs.close();
                         }
-
+                        
 
                     }
                     

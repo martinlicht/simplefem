@@ -235,7 +235,10 @@ VTKWriter VTKWriter::writeCellScalarData( const std::function<Float(int)>& dataf
 
 VTKWriter VTKWriter::writeVertexScalarData( const std::function<Float(const FloatVector&)>& function, const std::string& name, Float scaling )
 {
-    auto datafunction = [&](int c) -> Float { return function( mesh.get_midpoint(0,c) ); };
+    auto datafunction = [&](int v) -> Float { 
+        assert( 0 <= v and v < this->mesh.count_simplices(0) );
+        return function( mesh.get_midpoint(0,v) ); 
+    };
 
     writeVertexScalarData( datafunction, name, scaling );
 
@@ -247,7 +250,10 @@ VTKWriter VTKWriter::writeVertexScalarData( const FloatVector& data, const std::
     assert( data.getdimension() == mesh.count_simplices(0) );
     assert( data.isfinite() );
 
-    auto datafunction = [&](int c) -> Float { return data.at(c); };
+    auto datafunction = [&](int v) -> Float { 
+        assert( 0 <= v and v < this->mesh.count_simplices(0) );
+        return data.at(v); 
+    };
 
     writeVertexScalarData( datafunction, name, scaling );
     
@@ -263,7 +269,10 @@ VTKWriter VTKWriter::writeCellScalarData( const std::function<Float(const FloatV
 {
     const int topdim = mesh.getinnerdimension();
 
-    auto datafunction = [&](int c) -> Float { return function( mesh.get_midpoint(topdim,c) ); };
+    auto datafunction = [&](int c) -> Float { 
+        assert( 0 <= c and c < this->mesh.count_simplices(topdim) );
+        return function( mesh.get_midpoint(topdim,c) ); 
+    };
 
     writeCellScalarData( datafunction, name, scaling );
 
@@ -277,7 +286,10 @@ VTKWriter VTKWriter::writeCellScalarData( const FloatVector& data, const std::st
     assert( data.getdimension() == mesh.count_simplices(topdim) );
     assert( data.isfinite() );
 
-    auto datafunction = [&](int c) -> Float { return data.at(c); };
+    auto datafunction = [&](int c) -> Float { 
+        assert( 0 <= c and c < this->mesh.count_simplices(topdim) );
+        return data.at(c); 
+    };
 
     writeCellScalarData( datafunction, name, scaling );
     
@@ -348,7 +360,10 @@ VTKWriter VTKWriter::writeCellVectorData(
     assert( dataz.isfinite() );
 
     
-    auto datafunction = [&](int c) -> FloatVector { return FloatVector({datax[c],datay[c],dataz[c]}); };
+    auto datafunction = [&](int c) -> FloatVector { 
+        assert( 0 <= c and c < this->mesh.count_simplices(topdim) );
+        return FloatVector({datax[c],datay[c],dataz[c]}); 
+    };
 
     writeCellVectorData( datafunction, name, scaling );
     
@@ -361,7 +376,10 @@ VTKWriter VTKWriter::writeCellVectorData( const std::function<FloatVector(const 
 {
     const int topdim = mesh.getinnerdimension();
 
-    auto datafunction = [&](int c) -> FloatVector { return function( mesh.get_midpoint(topdim,c) ); };
+    auto datafunction = [&](int c) -> FloatVector { 
+        assert( 0 <= c and c < this->mesh.count_simplices(topdim) );
+        return function( mesh.get_midpoint(topdim,c) ); 
+    };
     
     writeCellVectorData( datafunction, name, scaling );
 
@@ -396,6 +414,8 @@ VTKWriter VTKWriter::writeCellVectorData_barycentricgradients( const FloatVector
 
     auto datafunction = [&](int c) -> FloatVector {
     
+        assert( 0 <= c and c < this->mesh.count_simplices(topdim) );
+        
         FloatVector extracted_coefficients( topdim+1 );
         
         for( int i = 0; i <= mesh.getinnerdimension(); i++ ) extracted_coefficients[i] = v.at( c * (topdim+1) + i );
@@ -419,7 +439,11 @@ VTKWriter VTKWriter::writeCellVectorData_Euclidean( int outerdim, const FloatVec
     assert( v.isfinite() );
    
     auto datafunction = [&](int c) -> FloatVector {    
+        
+        assert( 0 <= c and c < this->mesh.count_simplices(topdim) );
+        
         return v.getslice( outerdim*c, outerdim );
+        
     };
     
     writeCellVectorData( datafunction, name, scaling );
