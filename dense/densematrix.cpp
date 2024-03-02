@@ -838,7 +838,7 @@ bool DenseMatrix::isnonpositive() const
 
 bool DenseMatrix::is_numerically_small( Float threshold ) const
 {
-    return this->norm() < threshold;
+    return this->maxnorm() < threshold;
 }
 
 
