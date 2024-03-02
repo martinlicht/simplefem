@@ -64,6 +64,12 @@ requires regular grinding in order to get it done.
 
 TODO: write an email to the mailing list about the static analyzer. 
 
+
+# (HIGH) fem/diffelev..
+# (HIGH) fem/diffinterpol
+# (HIGH) fem/lagrange
+See to reduce error terms. They are purely algebraic.
+
 # (HIGH) Conjugate computation
 
 whitney2D/poissonmixedbc2Da.cpp takes too long to assemble the matrices.
@@ -89,7 +95,7 @@ Most routines only print if r == 1. Generalize that.
 - [ ] Remove overhead from the other tests if possible 
 - [ ] enable higher-order printing wherever convenient, and provide higher-order printing. Agree on polydegree
 
-- [ ] What should curl do?        Right now they print the original functions. Let me print the actual content.  
+- [ ] What should curl do?        Right now they print the original functions. Let me print the actual content.
 - [ ] What should darcy do?       Right now, nothing. Dito
 - [ ] What should maxwell do?     Right now, nothing. Dito
 

@@ -55,7 +55,16 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
 
         DenseMatrix GPM    = mesh.getGradientProductMatrix( n, s );
             
-        assert( ( GPM - calcAtA( mesh.getGradientMatrix( n, s ) ) ).is_numerically_small() );
+        assert( GPM.isfinite() );
+        if( not ( GPM - calcAtA( mesh.getGradientMatrix( n, s ) ) ).is_numerically_small() ){
+            const auto AtA = calcAtA( mesh.getGradientMatrix( n, s ) );
+            assert( AtA.isfinite() );
+            LOG << AtA << nl;
+            LOG << GPM << nl;
+            LOG << ( GPM - AtA ).norm() << nl;
+            assert( ( GPM - AtA ).is_numerically_small() );
+        }
+        
         
         DenseMatrix formMM = SubdeterminantMatrix( GPM, k );
         
