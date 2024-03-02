@@ -400,6 +400,113 @@ IndexMap expand_one( const IndexMap& im, int p )
     }
 }
 
+
+
+IndexMap complement_sigma( const IndexMap& sigma, const int n )
+{
+    const auto source_range = sigma.getSourceRange();
+    const auto target_range = sigma.getTargetRange();
+
+    assert( n >= 0 );
+    assert( not target_range.isempty() );
+    assert( target_range.min() == 0 );
+    assert( target_range.max() == n );
+
+    if( source_range.isempty() )
+        return IndexMap( IndexRange(0,n), IndexRange(0,n), [](int i)->int{return i;} );
+
+    const unsigned int k = source_range.max();
+
+    assert( source_range.min() == 1 );
+    assert( source_range.max() <= n );
+    assert( sigma.isstrictlyascending() );
+
+    std::vector<int> rho_values( n+1-k, -1 );
+    
+    int index = 0;
+    const std::vector<int>& sigma_values = sigma.getvalues();
+
+    assert( sigma_values.size() == k );
+    
+    for( auto value : IndexRange(0,n) )
+    {
+        int c = 0; 
+        
+        while( c < k and sigma_values[c] != value ) c++;
+        
+        if( c == k ) {
+            rho_values[index] = value;
+            index++;
+        }
+    }
+
+    Assert( index == n-k+1, index, n, k, n-k+1 );
+
+    IndexMap rho( IndexRange(0,n-k), IndexRange(0,n), rho_values );
+
+    for( auto value : IndexRange(1,  k) ) assert( not   rho.has_value_in_range( sigma[value] ) );
+    for( auto value : IndexRange(0,n-k) ) assert( not sigma.has_value_in_range(   rho[value] ) );
+
+    return rho;
+}
+
+
+
+
+int sign_of_rho_sigma( const IndexMap& sigma )
+{
+    const auto source_range = sigma.getSourceRange();
+    const auto target_range = sigma.getTargetRange();
+
+    assert( not target_range.isempty() );
+    
+    const unsigned int n = target_range.max();
+
+    assert( target_range.min() == 0 );
+    assert( target_range.max() == n );
+
+    if( source_range.isempty() )
+        return 1;
+
+    const unsigned int k = source_range.max();
+
+    assert( source_range.min() == 1 );
+    assert( source_range.max() <= n );
+    assert( sigma.isstrictlyascending() );
+
+    const auto rho = complement_sigma( sigma, n );
+
+    assert( not rho.getSourceRange().isempty() and rho.getSourceRange().max() == n-k );
+
+    const auto sigma_values = sigma.getvalues();
+    const auto rho_values   =   rho.getvalues();
+
+    auto values = std::vector<int>();
+    values.reserve(n+1);
+
+    for( auto value :   rho_values ) values.push_back( value );
+    for( auto value : sigma_values ) values.push_back( value );
+    
+    int swaps = 0;
+    
+    for( int i =   0; i < values.size(); ++i )
+    for( int j = i+1; j < values.size(); ++j )
+    {
+        if( i != j ) assert( values[i] != values[j] );
+
+        if( values[i] > values[j] ) 
+        {
+            std::swap( values[i], values[j] );
+            swaps++;
+        }
+    }
+
+    for( int i = 1; i < values.size(); ++i )
+        assert( values[i-1] < values[i] );
+    
+    return (swaps % 2 == 0) ? 1 : -1;
+}
+
 // IndexMap IndexMap::skip( int i ) const 
 // {
 //     check();

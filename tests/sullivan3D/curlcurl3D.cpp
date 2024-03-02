@@ -377,10 +377,30 @@ int main( int argc, char *argv[] )
                 fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                 VTKWriter vtk( M, fs, getbasename(__FILE__) );
 
-                vtk.writeCellVectorData( function_sol,  "function_sol" , 1.0 );
-                vtk.writeCellVectorData( function_rhs,  "function_rhs" , 1.0 );
+                {
+                    const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 0, 0, r+1 );
+                    const auto printable_aux = interpol_matrix * scalar_incmatrix * aux; 
+                    vtk.writeCellScalarData( printable_aux, "computed_aux" , 1.0 );
+                }
+                
+                {
+                    const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r );
+                    const auto printable_sol = interpol_matrix * vector_incmatrix * sol; 
+                    vtk.writeCellVectorData_barycentricgradients( printable_sol, "computed_solution" , 1.0 );
+                }
+                
+                {
+                    const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 2, 0, r-1 );
+                    const auto printable_curl = interpol_matrix * vector_diffmatrix * vector_incmatrix * sol; 
+                    vtk.writeCellVectorData_barycentriccrosses( printable_curl, "computed_curl" , 1.0 );
+                }
+
+                vtk.writeCellScalarData( function_aux,  "function_aux" ,  1.0 );
+                vtk.writeCellVectorData( function_sol,  "function_sol" ,  1.0 );
                 vtk.writeCellVectorData( function_curl, "function_curl" , 1.0 );
             
+                vtk.writeCellVectorData( function_rhs,  "function_rhs" , 1.0 );
+
                 fs.close();
             }
             

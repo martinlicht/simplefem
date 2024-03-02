@@ -34,6 +34,8 @@ class VTKWriter
         VTKWriter writeCellScalarData( const std::function<Float(const FloatVector&)>& function,       const std::string& name, Float scaling = 1. );
         VTKWriter writeCellScalarData( const std::function<FloatVector(const FloatVector&)>& function, const std::string& name, Float scaling = 1. );
         VTKWriter writeCellScalarData( const FloatVector& cellvalues,                                  const std::string& name, Float scaling = 1. );
+        VTKWriter writeCellScalarData_barycentricvolumes(
+                                       const FloatVector& volumevalues,                                const std::string& name, Float scaling = 1. );
         
         VTKWriter writeCellVectorData( const std::function<FloatVector(int)>& datafunction,            const std::string& name, Float scaling = 1. );
         VTKWriter writeCellVectorData( const std::function<FloatVector(const FloatVector&)>& function, const std::string& name, Float scaling = 1. );
@@ -42,6 +44,8 @@ class VTKWriter
                                        const FloatVector& z,                                           const std::string& name, Float scaling = 1. );
         VTKWriter writeCellVectorData_barycentricgradients(
                                        const FloatVector& gradvalues,                                  const std::string& name, Float scaling = 1. );
+        VTKWriter writeCellVectorData_barycentriccrosses(
+                                       const FloatVector& crossvalues,                                 const std::string& name, Float scaling = 1. );
         VTKWriter writeCellVectorData_Euclidean(
                                        int outerdim, 
                                        const FloatVector& directions,                                  const std::string& name, Float scaling = 1. );

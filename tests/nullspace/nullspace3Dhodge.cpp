@@ -313,7 +313,7 @@ int main( int argc, char *argv[] )
 
                         auto reduced_nullvector = interpol_matrix * vector_incmatrix * nullvector;
 
-                        vtk.writeCellVectorData_barycentricgradients( reduced_nullvector, "nullvector_Hcurl" , 0.1 );
+                        vtk.writeCellVectorData_barycentricgradients( reduced_nullvector, "nullvector_Hcurl" , 1.0 );
                         
                         fs.close();
                 

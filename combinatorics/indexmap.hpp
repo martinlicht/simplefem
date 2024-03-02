@@ -226,6 +226,10 @@ IndexMap expand_zero( const IndexMap& im, int p );
 
 IndexMap expand_one( const IndexMap& im, int p );
 
+IndexMap complement_sigma( const IndexMap& sigma, const int n );
+
+int sign_of_rho_sigma( const IndexMap& sigma );
+
 
 
 // inline int fehlstelle( const IndexMap& sub, const IndexMap& super )

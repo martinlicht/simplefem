@@ -80,16 +80,29 @@ at least with some randomized checking.
 
 Most routines only print if r == 1. Generalize that.
 
+- [ ] writeCellVector data: print barycentric 2-forms 
+- [ ] writeCellScalar data: print barycentric n-forms
+
 - [ ] What should the curl-curl tests print?
 - [ ] Decide what the different tests are supposed to do.
 - [ ] For example, the Lagrange test should reflect simple things and additional overhead
 - [ ] Remove overhead from the other tests if possible 
 - [ ] enable higher-order printing wherever convenient, and provide higher-order printing. Agree on polydegree
 
-- [ ] What should curl do?        plot the actual content 
-- [ ] What should darcy do?       NOTHING FOR NOW
-- [ ] What should maxwell do?     NOTHING FOR NOW
+- [ ] What should curl do?        Right now they print the original functions. Let me print the actual content.  
+- [ ] What should darcy do?       Right now, nothing. Dito
+- [ ] What should maxwell do?     Right now, nothing. Dito
 
+# (HIGH) Check convergence rates
+
+The tests in FEM and the finite element computations should explicitly check the convergence rates. 
+Enable the convergence table class to provide convergence rates.
+
+
+# (HIGH) Check convergence rates
+
+The tests in FEM and the finite element computations should explicitly check the convergence rates. 
+Enable the convergence table class to provide convergence rates.
 
 
 # (HIGH) Fix finite difference tests
