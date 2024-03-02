@@ -70,7 +70,7 @@ int main( int argc, char *argv[] )
     
     std::function<FloatVector(const FloatVector&)> experiment_curl = 
         [=](const FloatVector& vec) -> FloatVector{
-            assert( vec.getdimension() == 1 );
+            assert( vec.getdimension() == 2 );
             return FloatVector({ 17. });
         };
     
@@ -94,9 +94,7 @@ int main( int argc, char *argv[] )
         [=](const FloatVector& vec) -> FloatVector{
             assert( vec.getdimension() == 2 );
             // return FloatVector({ 1. });
-            return FloatVector( { 
-                blob(vec[0])*blob(vec[1])
-                });
+            return FloatVector( 1, blob(vec[0])*blob(vec[1]) );
         };
     
     
@@ -274,9 +272,34 @@ int main( int argc, char *argv[] )
                 fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                 VTKWriter vtk( M, fs, getbasename(__FILE__) );
 
+                {
+                    const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 0, 0, r+1 );
+                    const auto printable_aux = interpol_matrix * scalar_incmatrix * aux; 
+                    vtk.writeCellScalarData( printable_aux, "computed_aux" , 1.0 );
+                }
+                
+                {
+                    const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r );
+                    const auto printable_sol = interpol_matrix * vector_incmatrix * sol; 
+                    vtk.writeCellVectorData_barycentricgradients( printable_sol, "computed_solution" , 1.0 );
+                }
+                
+                {
+                     const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 2, 0, r-1 );
+                     const auto printable_curl = interpol_matrix * vector_diffmatrix * vector_incmatrix * sol; 
+                     Assert( printable_curl.getdimension() == (M.getinnerdimension()+1) * M.count_simplices(M.getinnerdimension()), 
+                                    printable_curl.getdimension(), M.count_simplices(M.getinnerdimension()) );
+                     vtk.writeCellScalarData_barycentricvolumes( printable_curl, "computed_curl" , 1.0 );
+                }
+                
+                            
+                assert( function_aux( FloatVector{0.0,0.0 }).getdimension() == 1 );
+                vtk.writeCellScalarData( function_aux,  "function_aux" , 1.0 );
                 vtk.writeCellVectorData( function_sol,  "function_sol" , 1.0 );
-                vtk.writeCellVectorData( function_rhs,  "function_rhs" , 1.0 );
                 vtk.writeCellScalarData( function_curl, "function_curl" , 1.0 );
+
+                vtk.writeCellVectorData( function_rhs,  "function_rhs" , 1.0 );
+
             
                 fs.close();
             }

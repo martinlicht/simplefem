@@ -85,7 +85,7 @@ clean:
 
 outputclean: 
 	@$(CMD_OUTPUTCLEAN); 
-	@echo "Finished cleaning benchmark directory .vtk files." 
+	@echo "Finished cleaning benchmark directory output files." 
 
 dependclean: 
 	@$(CMD_DEPCLEAN); 

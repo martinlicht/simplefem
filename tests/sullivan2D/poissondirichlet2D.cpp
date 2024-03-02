@@ -233,7 +233,7 @@ int main( int argc, char *argv[] )
                             {
                                 const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r-1 );
                                 const auto printable_grad = interpol_matrix * computed_grad; 
-                                vtk.writeCellVectorData_barycentricgradients( printable_grad, "gradient_interpolation" , 0.1 );
+                                vtk.writeCellVectorData_barycentricgradients( printable_grad, "gradient_interpolation" , 1.0 );
                             }
                             
                             fs.close();
