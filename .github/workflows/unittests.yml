@@ -23,34 +23,34 @@ jobs:
       run: make
     - name: run tests (basic)...
       run: cd tests/ && make basic.run && cd .. 
-      continue-on-error: true
+#      continue-on-error: true
     - name: run tests (utility)...
       run: cd tests/ && make utility.run && cd .. 
-      continue-on-error: true
+#      continue-on-error: true
     - name: run tests (combinatorics)...
       run: cd tests/ && make combinatorics.run && cd .. 
-      continue-on-error: true
+#      continue-on-error: true
     - name: run tests (operators)...
       run: cd tests/ && make operators.run && cd .. 
-      continue-on-error: true
+#      continue-on-error: true
     - name: run tests (dense)...
       run: cd tests/ && make dense.run && cd .. 
-      continue-on-error: true
+#      continue-on-error: true
     - name: run tests (sparse)...
       run: cd tests/ && make sparse.run && cd .. 
-      continue-on-error: true
+#      continue-on-error: true
     - name: run tests (solver)...
       run: cd tests/ && make solver.run && cd .. 
-      continue-on-error: true
+#      continue-on-error: true
     - name: run tests (mesh)...
       run: cd tests/ && make mesh.run && cd .. 
-      continue-on-error: true
+#      continue-on-error: true
     - name: run tests (vtk)...
       run: cd tests/ && make vtk.run && cd .. 
-      continue-on-error: true
+#      continue-on-error: true
     - name: run tests (fem)...
       run: cd tests/ && make fem.run && cd .. 
-      continue-on-error: true
+#      continue-on-error: true
 #     - name: run tests (solverfem)...
 #       run: cd tests/ && make solverfem.run && cd .. 
 #       continue-on-error: true
