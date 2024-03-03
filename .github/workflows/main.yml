@@ -19,6 +19,9 @@ jobs:
 
     steps:
 
+    - name: Show Processor Information (Linux)
+      run: lscpu
+
     - name: print software versions
       run: g++ --version; clang++ --version; clang-tidy --version;
     

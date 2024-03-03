@@ -13,6 +13,8 @@ jobs:
     timeout-minutes: 600
 
     steps:
+    - name: Show Processor Information (Linux)
+      run: lscpu
     - name: Install OpenMP
       run: sudo apt-get install -y libomp-dev
 #    - name: install valgrind here 
