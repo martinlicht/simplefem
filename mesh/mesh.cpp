@@ -688,7 +688,6 @@ DenseMatrix Mesh::getGradientMatrix( int dim, int index ) const
     QRFactorization( Jac, Q, R );
 
     return Q * Transpose( Inverse(R) ) * multiplier;
-    // return Transpose(multiplier) * middle * multiplier;
 }
         
 DenseMatrix Mesh::getGradientProductMatrix( int dim, int index ) const 
@@ -703,10 +702,17 @@ DenseMatrix Mesh::getGradientProductMatrix( int dim, int index ) const
     }
     
     // D^-1 D^-t = ( D^t D )^-1
-    DenseMatrix Jac    = getTransformationJacobian( dim, index );
-    DenseMatrix middle = Inverse( Transpose(Jac) * Jac );
     
-    return Transpose(multiplier) * middle * multiplier;
+    DenseMatrix Jac    = getTransformationJacobian( dim, index );
+    
+    // DenseMatrix middle = Inverse( Transpose(Jac) * Jac );
+    // return Transpose(multiplier) * middle * multiplier;
+
+    DenseMatrix R( Jac.getdimin() );
+    DenseMatrix Q( Jac.getdimout(), Jac.getdimin() );
+    QRFactorization( Jac, Q, R );
+    DenseMatrix Rinv( Inverse(R) );
+    return Transpose(multiplier) * ( Rinv * Transpose(Rinv) ) * multiplier;
 }
         
 DenseMatrix Mesh::getGradientProductMatrixRightFactor( int dim, int index ) const 

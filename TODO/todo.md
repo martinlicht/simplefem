@@ -65,9 +65,15 @@ requires regular grinding in order to get it done.
 TODO: write an email to the mailing list about the static analyzer. 
 
 
-# (HIGH) fem/diffelev..
-# (HIGH) fem/diffinterpol
-# (HIGH) fem/lagrange
+# (HIGH) fem/diffelev 
+
+The commutativity is not satisfied sufficiently. 
+That seems to be due to the mass matrix, since canonicalization reduces that effect 
+Can we canonicalize everything things already in the matrix assembly?
+
+# (HIGH) the mass matrix suffers from rounding errors. Try to canonicalize on the go
+# (HIGH) speed up canonicalize?
+
 See to reduce error terms. They are purely algebraic.
 
 # (HIGH) Conjugate computation
@@ -614,6 +620,11 @@ In particular, no cleaning is necessary in those directories.
 The makefile in each source directory puts its output into the common build directory.
 
 There is only one cleaning command for the entire build directory.
+
+# (INACTIVE) fem/diffinterpol
+
+Can these errors be reduced? Probably not, it's a standard procedure.
+
 
 
 

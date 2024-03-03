@@ -61,7 +61,7 @@ std::vector<MultiIndex> generateMultiIndices( const IndexRange& ir, int degree )
         
     }
     
-    {
+    if(false){
         std::mt19937 g( 123456789 );
         std::shuffle( ret.begin(), ret.end(), g );
     }

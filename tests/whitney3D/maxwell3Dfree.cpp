@@ -4,6 +4,7 @@
 
 #include "../../basic.hpp"
 #include "../../utility/convergencetable.hpp"
+#include "../../utility/files.hpp"
 #include "../../utility/math.hpp"
 #include "../../operators/composedoperators.hpp"
 #include "../../sparse/sparsematrix.hpp"
@@ -23,7 +24,9 @@
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.whitneyincl.hpp"
 #include "../../fem/global.elevation.hpp"
+#include "../../fem/global.interpol.hpp"
 #include "../../fem/utilities.hpp"
+#include "../../vtk/vtkwriter.hpp"
 
 
 using namespace std;
@@ -329,6 +332,41 @@ int main( int argc, char *argv[] )
                         contable << nl;
 
                         contable.lg();
+
+                        
+
+                        {
+                            fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
+                            VTKWriter vtk( M, fs, getbasename(__FILE__) );
+
+                            {
+                                const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 0, 0, r );
+                                const auto printable_sol = interpol_matrix * scalar_incmatrix * ndiv; 
+                                vtk.writeCellScalarData( printable_sol, "computed_negative_divergence" , 1.0 );
+                            }
+                        
+                            {
+                                const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r );
+                                const auto printable_sol = interpol_matrix * vector_incmatrix * sol; 
+                                vtk.writeCellVectorData_barycentricgradients( printable_sol, "computed_solution" , 1.0 );
+                            }
+                        
+                            {
+                                const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 2, 0, r-1 );
+                                const auto printable_curl = interpol_matrix * vector_diffmatrix * vector_incmatrix * sol; 
+                                Assert( printable_curl.getdimension() == 6 * M.count_simplices(M.getinnerdimension()), 
+                                                M.count_simplices(M.getinnerdimension()) );
+                                vtk.writeCellVectorData_barycentriccrosses( printable_curl, "computed_curl" , 1.0 );
+                            }
+                            
+                            vtk.writeCellScalarData( function_ndiv, "function_ndiv" , 1.0 );
+                            vtk.writeCellVectorData( function_sol,  "function_sol"  , 1.0 );
+                            vtk.writeCellVectorData( function_curl, "function_curl" , 1.0 );
+
+                            vtk.writeCellVectorData( function_rhs,  "function_rhs" , 1.0 );
+                        
+                            fs.close();
+                        }
                         
                     }
                     
