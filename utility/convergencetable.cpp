@@ -39,6 +39,8 @@ void ConvergenceTable::insert_seriesheader( const std::string& seriesheader )
         
 void ConvergenceTable::insert_newline()
 {
+    assert( not make_new_row );
+    
     make_new_row = true; 
 }
 

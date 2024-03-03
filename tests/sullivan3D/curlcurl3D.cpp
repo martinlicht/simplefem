@@ -227,7 +227,6 @@ int main( int argc, char *argv[] )
         LOG << "Level: " << l << "/" << max_l << nl;
         LOG << "# T/F/E/V: " << M.count_tetrahedra() << "/" << M.count_faces() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
         
-        if( l != 0 )
         for( int r = min_r; r <= max_r; r++ ) 
         {
             
@@ -392,6 +391,8 @@ int main( int argc, char *argv[] )
                 {
                     const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 2, 0, r-1 );
                     const auto printable_curl = interpol_matrix * vector_diffmatrix * vector_incmatrix * sol; 
+                    Assert( printable_curl.getdimension() == 6 * M.count_simplices(M.getinnerdimension()), 
+                                    M.count_simplices(M.getinnerdimension()) );
                     vtk.writeCellVectorData_barycentriccrosses( printable_curl, "computed_curl" , 1.0 );
                 }
 

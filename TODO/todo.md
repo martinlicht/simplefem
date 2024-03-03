@@ -65,13 +65,16 @@ requires regular grinding in order to get it done.
 TODO: write an email to the mailing list about the static analyzer. 
 
 
+
+
 # (HIGH) fem/diffelev 
+# (HIGH) the mass matrix suffers from rounding errors. 
+# (HIGH) Try to canonicalize on the go
 
 The commutativity is not satisfied sufficiently. 
 That seems to be due to the mass matrix, since canonicalization reduces that effect 
 Can we canonicalize everything things already in the matrix assembly?
 
-# (HIGH) the mass matrix suffers from rounding errors. Try to canonicalize on the go
 # (HIGH) speed up canonicalize?
 
 See to reduce error terms. They are purely algebraic.
@@ -88,22 +91,21 @@ at least when the indexmaps contains only one element.
 Introduce a fixed shuffle and make sure the code is robust against it;
 at least with some randomized checking.
 
-# (HIGH) Printing of higher order 
+# (HIGH) Printing of higher order & Clean up of unit tests 
 
 Most routines only print if r == 1. Generalize that.
 
-- [ ] writeCellVector data: print barycentric 2-forms 
-- [ ] writeCellScalar data: print barycentric n-forms
+- [x] writeCellVector data: print barycentric 2-forms 
+- [x] writeCellScalar data: print barycentric n-forms
 
-- [ ] What should the curl-curl tests print?
+- [ ] Apply uniform format to Darcy, Maxwell, and curlcurl
+
+- [x] What should the curl-curl tests print?
 - [ ] Decide what the different tests are supposed to do.
 - [ ] For example, the Lagrange test should reflect simple things and additional overhead
 - [ ] Remove overhead from the other tests if possible 
-- [ ] enable higher-order printing wherever convenient, and provide higher-order printing. Agree on polydegree
+- [x] enable higher-order printing wherever convenient, and provide higher-order printing. Agree on polydegree
 
-- [ ] What should curl do?        Right now they print the original functions. Let me print the actual content.
-- [ ] What should darcy do?       Right now, nothing. Dito
-- [ ] What should maxwell do?     Right now, nothing. Dito
 
 # (HIGH) Check convergence rates
 

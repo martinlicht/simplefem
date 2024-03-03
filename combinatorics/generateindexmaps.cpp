@@ -26,7 +26,7 @@ std::vector<IndexMap> generateEmptyMap( const IndexRange& from, const IndexRange
     std::vector<IndexMap> ret;
     ret.push_back( myempty );
 
-    if(false){
+    if( /* DISABLES CODE */ ( false ) ){ 
         std::mt19937 g( 123456789 );
         std::shuffle( ret.begin(), ret.end(), g );
     }
@@ -82,7 +82,7 @@ std::vector<IndexMap> generateIndexMaps( const IndexRange& from, const IndexRang
     for( const auto& foo : ret )
         foo.check();
     
-    if(false){
+    if( /* DISABLES CODE */ ( false ) ){ 
         std::mt19937 g( 123456789 );
         std::shuffle( ret.begin(), ret.end(), g );
     }
@@ -117,7 +117,7 @@ std::vector<IndexMap> generatePermutations( const IndexRange& ir )
     for( const auto& perm : ret )
         assert( (perm.check(),true) && perm.isbijective() );
     
-    if(false){
+    if( /* DISABLES CODE */ ( false ) ){ 
         std::mt19937 g( 123456789 );
         std::shuffle( ret.begin(), ret.end(), g );
     }
@@ -209,7 +209,7 @@ std::vector<IndexMap> generateSigmas( const IndexRange& from, const IndexRange& 
     for( const auto& sigma : ret )
         assert( (sigma.check(),true) and sigma.isstrictlyascending() );
     
-    if(false){
+    if( /* DISABLES CODE */ ( false ) ){ 
         std::mt19937 g( 123456789 );
         std::shuffle( ret.begin(), ret.end(), g );
     }
