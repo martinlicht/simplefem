@@ -244,7 +244,6 @@ int main( int argc, char *argv[] )
                             auto PC = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix )
                                       + MatrixCSR( vector_incmatrix_t & vector_diffmatrix_t & pseudo_massmatrix & vector_diffmatrix & vector_incmatrix );
                             
-                            
                             LOG << "share zero PA = " << PA.getnumberofzeroentries() << "/" <<  PA.getnumberofentries() << nl;
                             LOG << "share zero PC = " << PC.getnumberofzeroentries() << "/" <<  PC.getnumberofentries() << nl;
                         
@@ -321,6 +320,8 @@ int main( int argc, char *argv[] )
                         contable << nl;
 
                         contable.lg();
+                        
+                        
 
                         {
                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
@@ -361,8 +362,6 @@ int main( int argc, char *argv[] )
 
                 if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
 
-                contable << nl;
-                
                 contable.lg();
         
             } 
@@ -375,7 +374,3 @@ int main( int argc, char *argv[] )
         
         return 0;
 }
-
-
-
-

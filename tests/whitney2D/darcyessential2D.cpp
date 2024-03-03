@@ -130,15 +130,12 @@ int main( int argc, char *argv[] )
             LOG << "Level: " << l << "/" << max_l << nl;
             LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
             
-            if( l != 0 )
             for( int r = min_r; r <= max_r; r++ ) 
             {
                 
-                LOG << "... assemble matrices" << nl; // TODO: correct the degrees, perhaps via degree elevation
+                LOG << "... assemble matrices" << nl; 
         
                 SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r );
-                
-//                 SparseMatrix vector_massmatrix_inv = FEECBrokenMassMatrix_cellwiseinverse( M, M.getinnerdimension(), 1, r );
                 
                 SparseMatrix volume_elevationmatrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 2, r-1, 1 );
                 SparseMatrix volume_elevationmatrix_t = volume_elevationmatrix.getTranspose();
@@ -179,20 +176,21 @@ int main( int argc, char *argv[] )
                     
                     LOG << "...interpolate explicit solution and rhs" << nl;
                     
-                    FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r, function_grad );
+                    FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r,   function_grad );
                     FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 2, r-1, function_sol  );
                     FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 2, r-1, function_rhs  );
                     
-                    timestamp start = timestampnow();
+                    FloatVector rhs = volume_incmatrix_t * ( volume_massmatrix * volume_elevationmatrix * interpol_rhs );
 
                     FloatVector sol( volume_incmatrix.getdimin(), 0. );
                     sol.zero();
 
-                    FloatVector rhs = volume_incmatrix_t * ( volume_massmatrix * volume_elevationmatrix * interpol_rhs );
+                    LOG << "...iterative solver" << nl;
+                    
+                    timestamp start = timestampnow();
 
                     // {
-                        LOG << "...iterative solver" << nl;
-
+                    
                         FloatVector res = sol;
                         
                         HodgeConjugateResidualSolverCSR_SSOR( 
@@ -272,22 +270,14 @@ int main( int argc, char *argv[] )
                     }
                     
                 }
-
-                
-
-                
+            
             }
 
             if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
-            
-            
 
         } 
     
     }
-    
-    
-    
     
     LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
     

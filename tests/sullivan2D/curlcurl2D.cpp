@@ -115,9 +115,9 @@ int main( int argc, char *argv[] )
     
     ConvergenceTable contable("Mass error and numerical residuals");
     
-    contable << "u_error" << "sigma_error" << "u_res" << "sigma_res" << "time";
-    
+    contable << "u_error" << "du_error" << "sigma_error" << "u_res" << "sigma_res" << "time";
 
+    
     assert( 0 <= min_l and min_l <= max_l );
     assert( 0 <= min_r and min_r <= max_r );
         
@@ -132,15 +132,21 @@ int main( int argc, char *argv[] )
         for( int r = min_r; r <= max_r; r++ ) 
         {
             
+            LOG << "Polynomial degree: " << r << "/" << max_r << nl;
+                    
             LOG << "... assemble matrices" << nl;
     
             SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r+1 );
             SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   );
             SparseMatrix volume_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r-1 );
 
+            LOG << "... assemble inclusion matrices" << nl;
+    
             SparseMatrix scalar_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r+1 );
             SparseMatrix scalar_incmatrix_t = scalar_incmatrix.getTranspose();
 
+            LOG << "... assemble algebraic matrices" << nl;
+    
             SparseMatrix scalar_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r+1 );
             SparseMatrix scalar_diffmatrix_t = scalar_diffmatrix.getTranspose();
 
@@ -150,6 +156,8 @@ int main( int argc, char *argv[] )
             SparseMatrix vector_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r );
             SparseMatrix vector_diffmatrix_t = vector_diffmatrix.getTranspose();
 
+            LOG << "... compose system matrices" << nl;
+    
             auto mat_A  = vector_incmatrix_t & vector_diffmatrix_t & volume_massmatrix & vector_diffmatrix & vector_incmatrix;
             mat_A.sortandcompressentries();
                 
@@ -159,6 +167,8 @@ int main( int argc, char *argv[] )
             auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & volume_massmatrix & diffmatrix & vector_incmatrix; // lower bottom
             mat_B.sortandcompressentries();
             
+            LOG << "... compose CSR system matrices" << nl;
+    
             auto A  = MatrixCSR( mat_A  );
             auto Bt = MatrixCSR( mat_Bt );
             auto B  = MatrixCSR( mat_B  );
@@ -183,9 +193,10 @@ int main( int argc, char *argv[] )
             
             LOG << "...interpolate explicit solution and rhs" << nl;
             
-            FloatVector interpol_sol = Interpolation( M, M.getinnerdimension(), 1, r,   function_sol );
-            FloatVector interpol_rhs = Interpolation( M, M.getinnerdimension(), 1, r,   function_rhs );
-            FloatVector interpol_aux = Interpolation( M, M.getinnerdimension(), 0, r+1, function_aux );
+            FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 1, r,    function_sol );
+            FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 1, r,    function_rhs );
+            FloatVector interpol_aux  = Interpolation( M, M.getinnerdimension(), 0, r+1,  function_aux );
+            FloatVector interpol_curl = Interpolation( M, M.getinnerdimension(), 2, r-1, function_curl );
             
             FloatVector rhs_sol = vector_incmatrix_t * vector_massmatrix * interpol_rhs;
             FloatVector rhs_aux = scalar_incmatrix_t * scalar_diffmatrix_t * vector_massmatrix * interpol_sol ;// FloatVector( B.getdimout(), 0. );
@@ -241,11 +252,13 @@ int main( int argc, char *argv[] )
             
             LOG << "...compute error and residual:" << nl;
 
-            auto errornorm_aux_sol = interpol_sol - vector_incmatrix * sol;
-            auto errornorm_aux_aux = interpol_aux - scalar_incmatrix * aux;
+            auto errornorm_aux_sol  = interpol_sol  - vector_incmatrix * sol;
+            auto errornorm_aux_curl = interpol_curl - vector_diffmatrix * vector_incmatrix * sol;
+            auto errornorm_aux_aux  = interpol_aux  - scalar_incmatrix * aux;
 
-            Float errornorm_sol = sqrt( errornorm_aux_sol * ( vector_massmatrix * errornorm_aux_sol ) );
-            Float errornorm_aux = sqrt( errornorm_aux_aux * ( scalar_massmatrix * errornorm_aux_aux ) );
+            Float errornorm_sol  = sqrt( errornorm_aux_sol  * ( vector_massmatrix * errornorm_aux_sol ) );
+            Float errornorm_curl = sqrt( errornorm_aux_curl * ( volume_massmatrix * errornorm_aux_curl ) );
+            Float errornorm_aux  = sqrt( errornorm_aux_aux  * ( scalar_massmatrix * errornorm_aux_aux ) );
             
             Float residual_sol  = ( rhs_sol - A * sol - Bt * aux ).norm();
             Float residual_aux  = ( rhs_aux - B * sol -  C * aux ).norm();
@@ -258,6 +271,7 @@ int main( int argc, char *argv[] )
             LOG << "aux rhs: " << rhs_aux.norm() << nl;
 
             contable << errornorm_sol;
+            contable << errornorm_curl;
             contable << errornorm_aux;
             contable << residual_sol;
             contable << residual_aux;
@@ -291,7 +305,6 @@ int main( int argc, char *argv[] )
                                     printable_curl.getdimension(), M.count_simplices(M.getinnerdimension()) );
                      vtk.writeCellScalarData_barycentricvolumes( printable_curl, "computed_curl" , 1.0 );
                 }
-                
                             
                 assert( function_aux( FloatVector{0.0,0.0 }).getdimension() == 1 );
                 vtk.writeCellScalarData( function_aux,  "function_aux" , 1.0 );
@@ -299,7 +312,6 @@ int main( int argc, char *argv[] )
                 vtk.writeCellScalarData( function_curl, "function_curl" , 1.0 );
 
                 vtk.writeCellVectorData( function_rhs,  "function_rhs" , 1.0 );
-
             
                 fs.close();
             }

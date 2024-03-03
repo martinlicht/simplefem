@@ -128,7 +128,6 @@ int main( int argc, char *argv[] )
             LOG << "Level: " << l << "/" << max_l << nl;
             LOG << "# T/F/E/V: " << M.count_tetrahedra() << "/" << M.count_faces() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
             
-            if( l != 0 )
             for( int r = min_r; r <= max_r; r++ ) 
             {
                 
@@ -162,9 +161,11 @@ int main( int argc, char *argv[] )
                 auto Bt = MatrixCSR( mat_Bt );
                 auto B  = MatrixCSR( mat_B  );
                 
-                auto negA = - A; 
+                auto C  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
                 
-                // auto Schur = B * inv(A,desired_precision) * Bt;
+                auto Schur = B * inv(A,desired_precision) * Bt;
+                
+                auto negA = - A; 
                 
                 {
 
@@ -204,14 +205,12 @@ int main( int argc, char *argv[] )
                         const FloatVector  b_A( A.getdimin(),  0. ); 
                         const FloatVector& b_C = rhs; 
                         
-                        auto Z  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
-
                         BlockHerzogSoodhalterMethod( 
                             x_A, 
                             x_C, 
                             b_A, 
                             b_C, 
-                            negA, Bt, B, Z, 
+                            negA, Bt, B, C, 
                             desired_precision,
                             1,
                             PAinv, PCinv
@@ -281,7 +280,7 @@ int main( int argc, char *argv[] )
                 
             }
 
-        if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
+            if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
             
         } 
     

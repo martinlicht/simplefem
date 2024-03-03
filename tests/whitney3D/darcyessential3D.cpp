@@ -142,11 +142,10 @@ int main( int argc, char *argv[] )
             LOG << "Level: " << l << "/" << max_l << nl;
             LOG << "# T/F/E/V: " << M.count_tetrahedra() << "/" << M.count_faces() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
             
-            if( l != 0 )
             for( int r = min_r; r <= max_r; r++ ) 
             {
                 
-                LOG << "... assemble matrices" << nl; // TODO: correct the degrees, perhaps via degree elevation
+                LOG << "... assemble matrices" << nl; 
         
                 SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r );
                                 

@@ -181,9 +181,7 @@ int main( int argc, char *argv[] )
                     LOG << "Polynomial degree: " << r << "/" << max_r << nl;
                     
                     LOG << "... assemble matrices" << nl;
-            
                     
-                     // TODO: correct the degrees, perhaps via degree elevation
                     
                     SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
                     SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r );
@@ -273,6 +271,9 @@ int main( int argc, char *argv[] )
                             auto PC = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix )
                                       + MatrixCSR( vector_incmatrix_t & vector_diffmatrix_t & vector_elevationmatrix_t & volume_massmatrix & vector_elevationmatrix & vector_diffmatrix & vector_incmatrix );
                             
+                            LOG << "share zero PA = " << PA.getnumberofzeroentries() << "/" <<  PA.getnumberofentries() << nl;
+                            LOG << "share zero PC = " << PC.getnumberofzeroentries() << "/" <<  PC.getnumberofentries() << nl;
+                        
                             const auto PAinv = inv(PA,desired_precision,-1);
                             const auto PCinv = inv(PC,desired_precision,-1);
 
@@ -386,8 +387,6 @@ int main( int argc, char *argv[] )
 
                 if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
 
-                contable << nl;
-                
                 contable.lg();
         
             } 

@@ -223,6 +223,7 @@ int main( int argc, char *argv[] )
                         timestamp start = timestampnow();
                         
                         {
+                            
                             LOG << "...iterative solver" << nl;
                             
                             auto PA = MatrixCSR( scalar_incmatrix_t & scalar_massmatrix & scalar_incmatrix )
@@ -344,6 +345,8 @@ int main( int argc, char *argv[] )
                 }
 
                 if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
+
+                contable.lg();
 
         
             } 
