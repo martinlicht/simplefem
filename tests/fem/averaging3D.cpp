@@ -116,7 +116,7 @@ int main( int argc, char *argv[] )
 
                 LOG << error_eucl << space << error_mass << nl; 
                 
-                // assert( error_eucl < desired_closeness and error_mass < desired_closeness ); 
+                // Assert( error_eucl < desired_closeness and error_mass < desired_closeness, desired_closeness ); 
                 
                 Float error = error_mass;
 

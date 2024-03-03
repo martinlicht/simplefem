@@ -182,13 +182,13 @@ std::string FloatVector::data_as_text( bool indexed, bool print_rowwise ) const
     if( print_rowwise ){
         if(indexed) for( int p = 0; p < getdimension(); p++ ) ret += printf_into_string(    "%*d ", nc_width, p );
         if(indexed) ret += '\n';
-        for( int p = 0; p < getdimension(); p++ ) ret += printf_into_string( "%*.*e ", nc_width, nc_precision, getentry(p) );
+        for( int p = 0; p < getdimension(); p++ ) ret += printf_into_string( "%*.*Le ", nc_width, nc_precision, (long double)getentry(p) );
     } else {
         for( int p = 0; p < getdimension(); p++ )
             if(indexed) 
-                ret += printf_into_string( "%*d : %*.*e\n", nc_width, p, nc_width, nc_precision, getentry(p) );
+                ret += printf_into_string( "%*d : %*.*Le\n", nc_width, p, nc_width, nc_precision, (long double)getentry(p) );
             else 
-                ret += printf_into_string( "%*.*e\n", nc_width, nc_precision, getentry(p) );
+                ret += printf_into_string( "%*.*Le\n", nc_width, nc_precision, (long double)getentry(p) );
     }
 
     return ret;

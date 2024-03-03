@@ -251,9 +251,9 @@ std::string DenseMatrix::data_as_text( bool indexed, bool print_as_list ) const
         for( int r = 0; r < getdimout(); r++ )
         for( int c = 0; c < getdimin(); c++ )
             if(indexed) 
-                ret += printf_into_string("%*d %*d %*.*e\n", nc_width, r, nc_width, c, nc_width, nc_precision, (*this)(r,c) );
+                ret += printf_into_string("%*d %*d %*.*Le\n", nc_width, r, nc_width, c, nc_width, nc_precision, (long double)(*this)(r,c) );
             else
-                ret += printf_into_string("%*.*e\n", nc_width, nc_precision, (*this)(r,c) );
+                ret += printf_into_string("%*.*Le\n", nc_width, nc_precision, (long double)(*this)(r,c) );
         
     } else {
 
@@ -262,7 +262,7 @@ std::string DenseMatrix::data_as_text( bool indexed, bool print_as_list ) const
             if(indexed) ret += printf_into_string( "%*d : ", nc_width, r );
             
             for( int c = 0; c < getdimin(); c++ )
-                ret += printf_into_string( "%*.*e ", nc_width, nc_precision, (*this)(r,c) );
+                ret += printf_into_string( "%*.*Le ", nc_width, nc_precision, (long double)(*this)(r,c) );
             
             ret += '\n'; 
         }
@@ -377,10 +377,19 @@ DenseMatrix DenseMatrix::submatrix( const IndexMap& rows, const IndexMap& column
     rows.check(); 
     columns.check();
     
+    assert( rows.getSourceRange().min() == 0 );
+    assert( rows.getSourceRange().max() <= getdimout() - 1 );
+    assert( rows.getTargetRange().min() == 0 );
+    assert( rows.getTargetRange().max() == getdimout() - 1 );
+    assert( columns.getSourceRange().min() == 0 );
+    assert( columns.getSourceRange().max() <= getdimin() - 1 );
+    assert( columns.getTargetRange().min() == 0 );
+    assert( columns.getTargetRange().max() == getdimin() - 1 );
+
     assert( rows.isstrictlyascending()    );
     assert( columns.isstrictlyascending() );
     
-    DenseMatrix ret( rows.getSourceRange().cardinality(), columns.getSourceRange().cardinality(), 0. );
+    DenseMatrix ret( rows.getSourceRange().cardinality(), columns.getSourceRange().cardinality(), notanumber );
     
     for( int nr = 0; nr < ret.getdimout(); nr++ )
     for( int nc = 0; nc < ret.getdimin();  nc++ )
@@ -838,7 +847,7 @@ bool DenseMatrix::isnonpositive() const
 
 bool DenseMatrix::is_numerically_small( Float threshold ) const
 {
-    return this->maxnorm() < threshold;
+    return this->sumnorm() < threshold;
 }
 
 

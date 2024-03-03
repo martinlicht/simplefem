@@ -6,6 +6,7 @@ bool log_has_a_fresh_line = true;
 // #include <iostream>
 // #include <iomanip>
 #include <cstdio>
+#include <ctime>
 
 
 
@@ -170,6 +171,10 @@ void System_Reporter::output()
     #if defined(GIT_COMMIT_ID)
     LOG << "###\tCurrent Git commit ID: " << GIT_COMMIT_ID << nl;
     #endif
+
+    time_t t = std::time(nullptr);
+    tm tm = *std::localtime(&t);
+    LOGPRINTF("###\t%d-%02d-%02d %02d:%02d:%02d\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
     
     #if defined(_OPENMP)
     LOG << "###\tOpenMP Value: " << _OPENMP << nl;

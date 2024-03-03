@@ -35,7 +35,7 @@ public LinearOperator /* every matrix is a linear operator */
             Float value;
         };
 
-        static_assert( sizeof(MatrixEntry) == 2 * sizeof(int) + sizeof(Float), "MatrixEntry takes too much memory" );
+        // static_assert( sizeof(MatrixEntry) == 2 * sizeof(int) + sizeof(Float), "MatrixEntry takes too much memory" ); // TODO: Try to reduce the memory foot print. Re-order the entries
 
         enum class MatrixEntrySorting : unsigned char {
             rowwise,

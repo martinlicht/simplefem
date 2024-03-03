@@ -67,7 +67,7 @@ TODO: write an email to the mailing list about the static analyzer.
 
 
 
-# (HIGH) fem/diffelev 
+# (HIGH) fem/diffelev3D
 # (HIGH) the mass matrix suffers from rounding errors. 
 # (HIGH) Try to canonicalize on the go
 

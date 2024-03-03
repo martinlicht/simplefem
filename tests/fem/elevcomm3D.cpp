@@ -140,7 +140,7 @@ int main( int argc, char *argv[] )
         for( int r = r_min; r <= r_max; r++ ) 
         for( int k = 0; k <= n; k++ ) 
         {
-            assert( errors[k][l-l_min][r-r_min] < desired_closeness );
+            Assert( errors[k][l-l_min][r-r_min] < desired_closeness, desired_closeness );
         }
         
         

@@ -256,13 +256,13 @@ inline DiagonalOperator operator*( const DiagonalOperator& left, const DiagonalO
     
     const FloatVector& leftdia = left.getdiagonal();
     const FloatVector& rightdia = right.getdiagonal();
-    const int dimension = leftdia.getdimension();
+    // const int dimension = leftdia.getdimension();
     
     assert( leftdia.getdimension() == rightdia.getdimension() );
     
     return DiagonalOperator( FloatVector( leftdia.getdimension(), 
                                           [&](int d) -> Float { 
-                                            assert( 0 <= d && d < dimension ); 
+                                            assert( 0 <= d && d < leftdia.getdimension() ); 
                                             return leftdia[d] * rightdia[d];
                                           }
                                         )

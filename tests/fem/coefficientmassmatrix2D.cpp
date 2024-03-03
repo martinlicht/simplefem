@@ -63,7 +63,7 @@ int main( int argc, char *argv[] )
 
             auto diff = massmatrix * v - massmatrix_s * v;
 
-            assert( diff.norm() < desired_closeness );
+            Assert( diff.norm() < desired_closeness, desired_closeness );
         }
         LOG << nl;
 

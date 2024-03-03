@@ -302,7 +302,7 @@ int main( int argc, char *argv[] )
         {
             if( not ( errors[l-l_min][d][t] < desired_closeness ) )
                 LOG << l << space << d << space << t << space << errors[l-l_min][d][t] << nl;
-            assert( errors[l-l_min][d][t] < desired_closeness );
+            Assert( errors[l-l_min][d][t] < desired_closeness, desired_closeness );
         }
         
         
