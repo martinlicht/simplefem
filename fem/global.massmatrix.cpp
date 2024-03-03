@@ -54,6 +54,7 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
         Float measure      = mesh.getMeasure( n, s );
 
         DenseMatrix GPM    = mesh.getGradientProductMatrix( n, s );
+        // DenseMatrix GPM    = calcAtA( mesh.getGradientMatrix( n, s ) );
             
         assert( GPM.isfinite() );
         if( not ( GPM - calcAtA( mesh.getGradientMatrix( n, s ) ) ).is_numerically_small() ){

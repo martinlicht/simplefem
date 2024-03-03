@@ -4,6 +4,7 @@
 
 #include "../../basic.hpp"
 #include "../../utility/convergencetable.hpp"
+#include "../../utility/files.hpp"
 #include "../../operators/composedoperators.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
@@ -19,7 +20,9 @@
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.sullivanincl.hpp"
+#include "../../fem/global.interpol.hpp"
 #include "../../fem/utilities.hpp"
+#include "../../vtk/vtkwriter.hpp"
 
 
 using namespace std;
@@ -244,12 +247,41 @@ int main( int argc, char *argv[] )
                     contable << nl;
 
                     contable.lg();
+
+                    
+
+                    if( r == min_r ) 
+                    {
+                        fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
+                        VTKWriter vtk( M, fs, getbasename(__FILE__) );
+
+                        {
+                            const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 2, 0, r );
+                            const auto printable_grad = interpol_matrix * vector_incmatrix * grad; 
+                            vtk.writeCellVectorData_barycentriccrosses( printable_grad, "computed_grad" , 1.0 );
+                        }
+                    
+                        {
+                            const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 3, 0, r-1 );
+                            const auto printable_sol = interpol_matrix * volume_incmatrix * sol; 
+                            Assert( printable_sol.getdimension() == (M.getinnerdimension()+1) * M.count_simplices(M.getinnerdimension()), 
+                                            printable_sol.getdimension(), M.count_simplices(M.getinnerdimension()) );
+                            vtk.writeCellScalarData_barycentricvolumes( printable_sol, "computed_sol" , 1.0 );
+                        }
+                        
+                        vtk.writeCellVectorData( function_grad, "function_grad", 1.0 );
+                        vtk.writeCellScalarData( function_sol,  "function_sol" , 1.0 );
+
+                        vtk.writeCellScalarData( function_rhs,  "function_rhs" , 1.0 );
+                    
+                        fs.close();
+                    }
                 
                 }
                 
             }
 
-            if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
+        if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
             
         } 
     
