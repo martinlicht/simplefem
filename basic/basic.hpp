@@ -17,6 +17,13 @@
 #endif // ELIDE_HOT_FUNCTIONS
 
 
+#if defined(__GNUC__) or defined(__clang__)
+#define PACKED __attribute__((packed))
+#else 
+#define PACKED
+#endif 
+
+
 #if __cplusplus < 202002L
 #define LIKELY
 #define UNLIKELY

@@ -172,8 +172,6 @@ int main( int argc, char *argv[] )
                         
                         timestamp start = timestampnow();
                         
-                        {
-
                             LOG << "...iterative solver" << nl;
                             
                             auto PA = MatrixCSR( scalar_incmatrix_t & scalar_massmatrix & scalar_incmatrix )
@@ -203,8 +201,6 @@ int main( int argc, char *argv[] )
                                 PAinv, PCinv
                             );
 
-                        }
-                        
                         timestamp end = timestampnow();
         
                         LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
@@ -222,14 +218,33 @@ int main( int argc, char *argv[] )
                         {
                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
-                            // vtk.writeCoordinateBlock();
-                            // vtk.writeTopDimensionalCells();
+                        
+                            // auto converter = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r );
+                            // auto printed_sol = converter * computed_sol;
+                            // vtk.writeCellVectorData_barycentricgradients( printed_sol,  "solution_calculation" );
+                        
+                            vtk.writeCellVectorData( function_rhs, "rhs_field" );
+                            
+                            {
+                                auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r );
+                                auto lowest_sol = interpol_matrix * computed_sol;
+                                auto lowest_rhs = interpol_matrix * interpol_rhs;
+                                vtk.writeCellVectorData_barycentricgradients( lowest_rhs,   "righthandside" );
+                                vtk.writeCellVectorData_barycentricgradients( lowest_sol,   "solution_calculation" );
+                            }
 
-                            auto converter = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r );
+                            {
+                                auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 0, 0, r );
+                                auto lowest_ndiv = interpol_matrix * x_C;
+                                vtk.writeCellScalarData( lowest_ndiv, "negative_divergence" );
+                            }
+                            
+                            {
+                                auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 0, 0, r-1 );
+                                auto lowest_ndiv = interpol_matrix * vector_diffmatrix * computed_sol;
+                                vtk.writeCellVectorData_barycentriccrosses( lowest_ndiv, "curl" );
+                            }
 
-                            auto printed_sol = converter * computed_sol;
-
-                            vtk.writeCellVectorData_barycentricgradients( printed_sol,  "solution_calculation" );
                             fs.close();
                         }
 

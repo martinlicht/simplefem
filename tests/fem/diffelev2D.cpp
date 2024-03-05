@@ -61,7 +61,7 @@ int main( int argc, char *argv[] )
         
         const int l_max = 2; // TODO set this value back to 4
         
-        const int r_plus_max = 3;
+        const int r_plus_max = 2;
          
         Float errors[ M.getinnerdimension() ][ l_max - l_min + 1 ][ r_max - r_min + 1 ][ r_plus_max + 1 ];
         

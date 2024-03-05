@@ -145,15 +145,15 @@ int main( int argc, char *argv[] )
             
                     auto opr = diffmatrix & incmatrix;
                     auto opl = opr.getTranspose(); 
-                    auto stiffness = opl & ( vector_massmatrix & opr );
+                    auto stiffness = MatrixCSR(opl) & ( MatrixCSR(vector_massmatrix) & MatrixCSR(opr) );
                     
                     LOG << "conversion" << nl;
             
-                    stiffness.sortentries();
+                    // stiffness.sortentries();
                     auto stiffness_csr = MatrixCSR( stiffness );
                     
-                    auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. );
-//                     auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
+                    // auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. );
+                    auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
                     LOG << "Average value of diagonal preconditioner: " << stiffness_invprecon.getdiagonal().average() << nl;
 
                     {
@@ -183,14 +183,18 @@ int main( int argc, char *argv[] )
                             sol.zero();
                             FloatVector residual( rhs );
                             
-                            ConjugateGradientSolverCSR( 
+                            const Float* precon = stiffness_invprecon.getdiagonal().raw();
+
+                            ConjugateGradientSolverCSR_SSOR( 
                                 sol.getdimension(), 
                                 sol.raw(), 
                                 rhs.raw(), 
                                 stiffness_csr.getA(), stiffness_csr.getC(), stiffness_csr.getV(),
                                 residual.raw(),
                                 desired_precision,
-                                1
+                                1,
+                                precon,
+                                1.
                             );
 
                         }

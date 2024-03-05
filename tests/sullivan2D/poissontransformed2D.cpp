@@ -289,7 +289,6 @@ int main( int argc, char *argv[] )
                         if( r == 1 ){
                             
                             FloatVector low_interpol_sol  = Interpolation( M, M.getinnerdimension(), 0, 0,   function_sol  );
-                        
                             
                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
@@ -297,6 +296,7 @@ int main( int argc, char *argv[] )
                             vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
                             vtk.writeCellScalarData( low_interpol_sol, "interpolated_solution" , 1.0 );
                             vtk.writeCellVectorData_barycentricgradients( computed_grad, "gradient_interpolation" , 1.0 );
+                            
                             fs.close();
                         }
 

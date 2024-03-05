@@ -18,16 +18,21 @@ using namespace std;
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for Interpolation in FEEC" << nl;
-
+    LOG << "Unit Test for Image triangulation" << nl;
+    
     MeshSimplicial2D M = UnitSquare2D_centered();
 
     M.check();
 
-    // std::string name = "aurora.jpeg";
-    // std::string name = "lena_color.tiff";
-    std::string name = "testbild.jpg";
-    // std::string name = "sanfrancisco.jpg";
+//     const std::string image_name = "aurora.jpeg";
+//     const std::string image_name = "lena_color.tiff";
+//     const std::string image_name = "testbild.jpg";
+    const std::string image_name = "sanfrancisco.jpg";
+    
+    const std::string execution_name = argv[0];
+    const std::string name = get_parent_directory( execution_name ) + "/" + image_name;
+    
+    LOG << name << nl;
 
     // PixelImage pim = readPixelImage("lena_color.tiff");
     PixelImage pim = readPixelImage( name );

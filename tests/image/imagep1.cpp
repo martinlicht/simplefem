@@ -26,13 +26,17 @@ int main( int argc, char *argv[] )
 
     M.check();
 
-    // std::string name = "blue.png";
-    // std::string name = "aurora.jpeg";
-    // std::string name = "lena_color.tiff";
-    // std::string name = "testbild.jpg";
-    std::string name = "sanfrancisco.jpg";
+    // const std::string image_name = "blue.png";
+    // const std::string image_name = "aurora.jpeg";
+    // const std::string image_name = "lena_color.tiff";
+    // const std::string image_name = "testbild.jpg";
+    std::string image_name = "sanfrancisco.jpg";
 
-    // PixelImage pim = readPixelImage("lena_color.tiff");
+    const std::string execution_name = argv[0];
+    const std::string name = get_parent_directory( execution_name ) + "/" + image_name;
+    
+    LOG << name << nl;
+    
     PixelImage pim = readPixelImage( name );
 
     auto red   = pim.get_interpolated_red();

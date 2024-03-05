@@ -208,7 +208,7 @@ int main( int argc, char *argv[] )
                         contable.lg();
 
 
-                        if( r == 1 ){
+                        {
                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
 

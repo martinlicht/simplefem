@@ -67,6 +67,24 @@ TODO: write an email to the mailing list about the static analyzer.
 
 
 
+# (HIGH) Clean up unit tests 
+
+Clarify output strings of different unit tests 
+Decide what the different tests are supposed to do.
+For example, the Lagrange test should reflect simple things and additional overhead
+Remove overhead from the other tests if possible 
+
+
+# (DONE) Printing of higher order & Clean up of unit tests 
+
+Most routines only print if r == 1. Generalize that.
+- [x] enable higher-order printing wherever convenient, and provide higher-order printing. Agree on polydegree
+- [x] writeCellVector data: print barycentric 2-forms 
+- [x] writeCellScalar data: print barycentric n-forms
+- [x] Apply uniform format to Darcy, Maxwell, and curlcurl
+- [x] Apply uniform format to lshaped?
+- [x] Apply uniform format to Poisson
+
 # (HIGH) fem/diffelev3D
 # (HIGH) the mass matrix suffers from rounding errors. 
 # (HIGH) Try to canonicalize on the go
@@ -91,22 +109,6 @@ at least when the indexmaps contains only one element.
 Introduce a fixed shuffle and make sure the code is robust against it;
 at least with some randomized checking.
 
-# (HIGH) Printing of higher order & Clean up of unit tests 
-
-Most routines only print if r == 1. Generalize that.
-
-- [x] writeCellVector data: print barycentric 2-forms 
-- [x] writeCellScalar data: print barycentric n-forms
-
-- [ ] Apply uniform format to Darcy, Maxwell, and curlcurl
-
-- [x] What should the curl-curl tests print?
-- [ ] Decide what the different tests are supposed to do.
-- [ ] For example, the Lagrange test should reflect simple things and additional overhead
-- [ ] Remove overhead from the other tests if possible 
-- [x] enable higher-order printing wherever convenient, and provide higher-order printing. Agree on polydegree
-
-
 # (HIGH) Check convergence rates
 
 The tests in FEM and the finite element computations should explicitly check the convergence rates. 
@@ -129,7 +131,7 @@ Check for notanumber and go over the different tests to ensure they test somethi
 
 Streamline the main loop in the different solverfem tests to reduce code redundancy
 
-# (HIGH) Implement LQ factorization or retire it completely
+# (HIGH) Either implement LQ factorization or retire it completely
 
 Implement the LQ factorization and test it
 
