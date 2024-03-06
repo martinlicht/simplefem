@@ -1,13 +1,18 @@
-#include <fcntl.h>   // file control
-#include <pthread.h> // Multithreading
 #include <stdio.h>
 #include <stdlib.h>  // for atexit()
-#include <termios.h> // For changing terminal mode
 #include <time.h>    // For measuring time
+
+#if defined(__linux__) or defined(__unix__)
+#include <fcntl.h>   // file control
+#include <pthread.h> // Multithreading
+#include <termios.h> // For changing terminal mode
 #include <unistd.h>  // For changing terminal mode
+#endif 
 
 #include "../../basic.hpp"
 
+
+#if defined(__linux__) or defined(__unix__)
 
 static termios original;   // A struct to save the original state of terminal
 static int process_reading_is_finished = 0; // For thread communication
@@ -16,19 +21,6 @@ void restore_terminal_mode();
 void change_terminal_mode();
 void *process_read_keyboard( void* );
 void *process_print( void* );
-
-int main() {
-  // Start Multithreading
-  pthread_t id_print, id_read;
-
-  pthread_create(&id_print, nullptr, process_print, nullptr);
-  pthread_create(&id_read, nullptr, process_read_keyboard, nullptr);
-
-  pthread_join(id_print, nullptr);
-  pthread_join(id_read, nullptr);
-
-  return 0;
-}
 
 /// Reads keyboard input
 void *process_read_keyboard( void* ) {
@@ -112,6 +104,29 @@ void change_terminal_mode() {
 void restore_terminal_mode() {
   tcsetattr(STDIN_FILENO, TCSAFLUSH, &original); 
   // Set terminal to original state
+}
+
+#endif 
+
+
+
+int main() {
+
+#if defined(__linux__) or defined(__unix__)
+
+  // Start Multithreading
+  pthread_t id_print, id_read;
+
+  pthread_create(&id_print, nullptr, process_print, nullptr);
+  pthread_create(&id_read, nullptr, process_read_keyboard, nullptr);
+
+  pthread_join(id_print, nullptr);
+  pthread_join(id_read, nullptr);
+
+  return 0;
+  
+#endif 
+
 }
 
 
