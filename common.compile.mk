@@ -70,7 +70,7 @@ FLAG_NO_EXCEPTIONS=yes
 
 # Do you want to ENABLE the use of openMP?
 # Uncomment the following line to enable compilation with openMP
-FLAG_ENABLE_OPENMP=yes
+# FLAG_ENABLE_OPENMP=yes
 
 # Do you want to ENABLE excessive warning options?
 # Uncomment the following line to enable excessive warning options
@@ -79,8 +79,8 @@ FLAG_EXCESSIVE_WARNINGS=yes
 # Do you want to ENABLE either extended precision or single precision?
 # Uncomment one the following lines to switch from double precision
 # to either extended precision or single precision
-# FLAG_DO_USE_EXTENDED_PRECISION=yes 
-# FLAG_DO_USE_SINGLE_PRECISION=yes 
+# FLAG_DO_USE_EXTENDED_PRECISION=yes
+# FLAG_DO_USE_SINGLE_PRECISION=yes
 
 # Logging output in color?
 FLAG_COLORED_OUTPUT=yes
@@ -221,7 +221,7 @@ CXXFLAGS_LANG := -std=c++14 -pedantic -fno-rtti -D_LIBCPP_REMOVE_TRANSITIVE_INCL
 
 CXXFLAGS_OPTIMIZE:=
 
-CXXFLAGS_OPTIMIZE += -march=native -mtune=native 
+# CXXFLAGS_OPTIMIZE += -march=native -mtune=native 
 
 ifeq ($(FLAG_DO_OPTIMIZE),yes)
 

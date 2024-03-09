@@ -135,10 +135,10 @@ int main( int argc, char *argv[] )
                 SparseMatrix canonical_pseudo = FEECCanonicalizeBroken( M, M.getinnerdimension(), 2, r );
                 SparseMatrix canonical_volume = FEECCanonicalizeBroken( M, M.getinnerdimension(), 3, r );
                 
-                SparseMatrix randomize_scalar = FEECRandomizeBroken( M, M.getinnerdimension(), 0, r );
-                SparseMatrix randomize_vector = FEECRandomizeBroken( M, M.getinnerdimension(), 1, r );
-                SparseMatrix randomize_pseudo = FEECRandomizeBroken( M, M.getinnerdimension(), 2, r );
-                SparseMatrix randomize_volume = FEECRandomizeBroken( M, M.getinnerdimension(), 3, r );
+                SparseMatrix randomize_scalar = FEECRandomizeBroken( M, M.getinnerdimension(), 0, r, notanumber );
+                SparseMatrix randomize_vector = FEECRandomizeBroken( M, M.getinnerdimension(), 1, r, notanumber );
+                SparseMatrix randomize_pseudo = FEECRandomizeBroken( M, M.getinnerdimension(), 2, r, notanumber );
+                SparseMatrix randomize_volume = FEECRandomizeBroken( M, M.getinnerdimension(), 3, r, notanumber );
                 
                 // LOG << massmatrix_scalar << nl;
                 // LOG << massmatrix_vector << nl;
@@ -167,6 +167,8 @@ int main( int argc, char *argv[] )
 
                     Float error_mass = maxabs( mass_ii - mass_ci, mass_ii - mass_cc, mass_ii - mass_rr, mass_ii - mass_cr );
                     
+                    LOG << mass_ii - mass_ci << space << mass_ii - mass_cc << space << mass_ii - mass_rr << space << mass_ii - mass_cr << nl;
+                    
                     errors_scalar[i][l-l_min][r-r_min] = error_mass;
                     
                 }
@@ -192,6 +194,8 @@ int main( int argc, char *argv[] )
                     Float mass_cr = absolute( interpol_canon * ( massmatrix_vector * interpol_randm ) );
 
                     Float error_mass = maxabs( mass_ii - mass_ci, mass_ii - mass_cc, mass_ii - mass_rr, mass_ii - mass_cr );
+                    
+                    LOG << mass_ii - mass_ci << space << mass_ii - mass_cc << space << mass_ii - mass_rr << space << mass_ii - mass_cr << nl;
                     
                     errors_vector[i][l-l_min][r-r_min] = error_mass;
                     
@@ -219,6 +223,8 @@ int main( int argc, char *argv[] )
 
                     Float error_mass = maxabs( mass_ii - mass_ci, mass_ii - mass_cc, mass_ii - mass_rr, mass_ii - mass_cr );
                     
+                    LOG << mass_ii - mass_ci << space << mass_ii - mass_cc << space << mass_ii - mass_rr << space << mass_ii - mass_cr << nl;
+                    
                     errors_pseudo[i][l-l_min][r-r_min] = error_mass;
                     
                 }
@@ -244,6 +250,8 @@ int main( int argc, char *argv[] )
                     Float mass_cr = absolute( interpol_canon * ( massmatrix_volume * interpol_randm ) );
 
                     Float error_mass = maxabs( mass_ii - mass_ci, mass_ii - mass_cc, mass_ii - mass_rr, mass_ii - mass_cr );
+                    
+                    LOG << mass_ii - mass_ci << space << mass_ii - mass_cc << space << mass_ii - mass_rr << space << mass_ii - mass_cr << nl;
                     
                     errors_volume[i][l-l_min][r-r_min] = error_mass;
                     

@@ -13,6 +13,9 @@
 #include "../../fem/utilities.hpp"
 #include "../../utility/convergencetable.hpp"
 
+#include "../../fem/global.unphysical.hpp"
+
+
 
 using namespace std;
 
@@ -71,13 +74,13 @@ int main( int argc, char *argv[] )
 
         const int r_min = 1;
         
-        const int r_max = 3;
+        const int r_max = 1;
         
         const int l_min = 0;
         
-        const int l_max = 2;
+        const int l_max = 1;
         
-        const int r_plus_max = 3;
+        const int r_plus_max = 1;
          
         Float errors[ M.getinnerdimension() ][ l_max - l_min + 1 ][ r_max - r_min + 1 ][ r_plus_max + 1 ];
         
@@ -115,8 +118,16 @@ int main( int argc, char *argv[] )
 
                 auto path2 = upper_diffmatrix * diyi_elevation * interpol_function;
 
+
+//                 SparseMatrix canon = FEECRandomizeBroken( M, M.getinnerdimension(), k+1, r + r_plus - 1, notanumber );
+//                 SparseMatrix canon = FEECCanonicalizeBroken( M, M.getinnerdimension(), k+1, r + r_plus - 1 );
+//                 auto commutator_error = canon * ( path1 - path2 );
+                
                 auto commutator_error = path1 - path2;
                 
+
+
+
                 Float commutator_error_mass = commutator_error * ( massmatrix * commutator_error );
 
                 assert( std::isfinite( commutator_error_mass ) );

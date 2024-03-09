@@ -75,16 +75,6 @@ For example, the Lagrange test should reflect simple things and additional overh
 Remove overhead from the other tests if possible 
 
 
-# (DONE) Printing of higher order & Clean up of unit tests 
-
-Most routines only print if r == 1. Generalize that.
-- [x] enable higher-order printing wherever convenient, and provide higher-order printing. Agree on polydegree
-- [x] writeCellVector data: print barycentric 2-forms 
-- [x] writeCellScalar data: print barycentric n-forms
-- [x] Apply uniform format to Darcy, Maxwell, and curlcurl
-- [x] Apply uniform format to lshaped?
-- [x] Apply uniform format to Poisson
-
 # (HIGH) fem/diffelev3D
 # (HIGH) the mass matrix suffers from rounding errors. 
 # (HIGH) Try to canonicalize on the go
@@ -93,11 +83,7 @@ The commutativity is not satisfied sufficiently.
 That seems to be due to the mass matrix, since canonicalization reduces that effect 
 Can we canonicalize everything things already in the matrix assembly?
 
-# (HIGH) speed up canonicalize?
-
-See to reduce error terms. They are purely algebraic.
-
-# (HIGH) Conjugate computation
+# (UNCLEAR) Conjugate computation
 
 whitney2D/poissonmixedbc2Da.cpp takes too long to assemble the matrices.
 Try out a subroutine to reduce the computational effort. 
@@ -109,24 +95,12 @@ at least when the indexmaps contains only one element.
 Introduce a fixed shuffle and make sure the code is robust against it;
 at least with some randomized checking.
 
-# (HIGH) Check convergence rates
+# (HIGH) Unit tests must check convergence rates
 
 The tests in FEM and the finite element computations should explicitly check the convergence rates. 
 Enable the convergence table class to provide convergence rates.
-
-
-# (HIGH) Check convergence rates
-
-The tests in FEM and the finite element computations should explicitly check the convergence rates. 
-Enable the convergence table class to provide convergence rates.
-
-
-# (HIGH) Fix finite difference tests
-
-Check for notanumber and go over the different tests to ensure they test something.
 
 # (HIGH) orientation tests must be included in usual tests
-
 # (HIGH) Solverfem: options
 
 Streamline the main loop in the different solverfem tests to reduce code redundancy
@@ -1030,4 +1004,24 @@ Check what needs to be retired.
 # (DONE) Finish the printing in the nullspace computation
 
 Enable for all nullspace vectors printing for any polynomial degree.
+
+# (DONE) Printing of higher order & Clean up of unit tests 
+
+Most routines only print if r == 1. Generalize that.
+- [x] enable higher-order printing wherever convenient, and provide higher-order printing. Agree on polydegree
+- [x] writeCellVector data: print barycentric 2-forms 
+- [x] writeCellScalar data: print barycentric n-forms
+- [x] Apply uniform format to Darcy, Maxwell, and curlcurl
+- [x] Apply uniform format to lshaped?
+- [x] Apply uniform format to Poisson
+
+# (DONE) speed up canonicalize?
+
+- [x] Reduce the number of zero entries in the canonicalization
+- [x] Adapt the randomization accordingly
+
+# (DONE) Fix finite difference tests
+
+Check for notanumber and go over the different tests to ensure they test something.
+
 

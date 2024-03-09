@@ -14,6 +14,8 @@
 #include "../fem/global.unphysical.hpp"
 
 
+
+
 SparseMatrix FEECCanonicalizeBroken( const Mesh& mesh, int n, int k, int r )
 {
     Assert( 0 <= n );
@@ -29,15 +31,13 @@ SparseMatrix FEECCanonicalizeBroken( const Mesh& mesh, int n, int k, int r )
     const int poly_size = binomial_integer( n+r, n );
     const int form_size = binomial_integer( n+1, k );
 
-    const int localdim = poly_size * form_size;
-    
-    const int dim_in      = num_simplices * localdim;
-    const int dim_out     = num_simplices * localdim;
-    const int num_entries = num_simplices * localdim * localdim;
+    const int dim_in      = num_simplices * poly_size * form_size;
+    const int dim_out     = num_simplices * poly_size * form_size;
+    const int num_entries = num_simplices * poly_size * form_size * form_size;
     
     SparseMatrix ret( dim_out, dim_in, num_entries );
     
-
+    
     // Calculate local matrix 
 
     DenseMatrix Aux1( n+1, n+1, 0. );
@@ -53,33 +53,30 @@ SparseMatrix FEECCanonicalizeBroken( const Mesh& mesh, int n, int k, int r )
     #if defined(_OPENMP)
     #pragma omp parallel for
     #endif
-    for( int s = 0; s < num_simplices; s++ )
-    for( int i = 0; i < localdim; i++ )
-    for( int j = 0; j < localdim; j++ )
+    for( int s  = 0;  s < num_simplices;  s++ )
+    for( int p  = 0;  p <     poly_size;  p++ )
+    for( int f1 = 0; f1 <     form_size; f1++ )
+    for( int f2 = 0; f2 <     form_size; f2++ )
     {
-        int index_of_entry = s * localdim * localdim + i * localdim + j;
+        int index_of_entry = s * poly_size * form_size * form_size + p * form_size * form_size + f1 * form_size + f2;
 
-        int p_row = i / form_size;
-        int p_col = j / form_size;
-
-        int f_row = i % form_size;
-        int f_col = j % form_size;
-        
         SparseMatrix::MatrixEntry entry;
-        entry.row    = s * localdim + i;
-        entry.column = s * localdim + j;
-        entry.value  = ( p_row == p_col ) ? Aux2( f_row, f_col ) : 0.;
+        entry.row    = s * poly_size * form_size + p * form_size + f1;
+        entry.column = s * poly_size * form_size + p * form_size + f2;
+        entry.value  = Aux2( f1, f2 );
         
         ret.setentry( index_of_entry, entry );
     }
-
     
     return ret;
 
 }
 
 
-SparseMatrix FEECRandomizeBroken( const Mesh& mesh, int n, int k, int r )
+
+
+
+SparseMatrix FEECRandomizeBroken( const Mesh& mesh, int n, int k, int r, Float base_alpha )
 {
     Assert( 0 <= n );
     Assert( n <= mesh.getinnerdimension() );
@@ -94,61 +91,63 @@ SparseMatrix FEECRandomizeBroken( const Mesh& mesh, int n, int k, int r )
     const int poly_size = binomial_integer( n+r, n );
     const int form_size = binomial_integer( n+1, k );
 
-    const int localdim = poly_size * form_size;
-    
-    const int dim_in      = num_simplices * localdim;
-    const int dim_out     = num_simplices * localdim;
-    const int num_entries = num_simplices * localdim * localdim;
+    const int dim_in      = num_simplices * poly_size * form_size;
+    const int dim_out     = num_simplices * poly_size * form_size;
+    const int num_entries = num_simplices * poly_size * form_size * form_size;
     
     SparseMatrix ret( dim_out, dim_in, num_entries );
     
+    
+    std::vector<DenseMatrix> auxiliaries( n+1, DenseMatrix(form_size,form_size,notanumber) );
 
     // Calculate local matrix 
+    for( int t = 0; t <= n; t++ )
+    {
+//         Float alpha = ( 0 <= base_alpha and base_alpha <= 1.0 ) ? base_alpha : random_uniform();
+        Float alpha = 1.;
+        Assert( 0. <= alpha and alpha <= 1. );
 
-    int t = random_integer() % (n+1);
-    
-    // int alpha = random_uniform();
-    Float alpha = random_uniform(); //static_cast<Float>( rand() ) / static_cast<Float>( RAND_MAX );
-    Assert( 0. <= alpha and alpha <= 1. );
+        DenseMatrix Aux1( n+1, n+1, 0. );
+        for( int i = 0; i < t; i++ ) {
+            Aux1(i,i) =  1.;
+            Aux1(i,t) = -alpha;
+        }
+        Aux1(t,t) = 1. - alpha;    
+        for( int i = t+1; i <= n; i++ ) {
+            Aux1(i,i) = 1.;
+            Aux1(i,t) = -alpha;
+        }
+        
+        const DenseMatrix Aux2 = SubdeterminantMatrix( Aux1, k );
 
-    DenseMatrix Aux1( n+1, n+1, 0. );
-    for( int i = 0; i < t; i++ ) {
-        Aux1(i,i) =  1.;
-        Aux1(i,t) = -alpha;
+        assert( Aux2.issquare() and Aux2.getdimout() == form_size );        
+
+        auxiliaries[t] = Aux2;
     }
-    Aux1(t,t) = 1. - alpha;    
-    for( int i = t+1; i <= n; i++ ) {
-        Aux1(i,i) = 1.;
-        Aux1(i,t) = -alpha;
-    }
-    
-    const DenseMatrix Aux2 = SubdeterminantMatrix( Aux1, k );
-
-    assert( Aux2.issquare() and Aux2.getdimout() == form_size );
     
     #if defined(_OPENMP)
     #pragma omp parallel for
     #endif
-    for( int s = 0; s < num_simplices; s++ )
-    for( int i = 0; i < localdim; i++ )
-    for( int j = 0; j < localdim; j++ )
+    for( int s  = 0;  s < num_simplices;  s++ )
     {
-        int index_of_entry = s * localdim * localdim + i * localdim + j;
-
-        int p_row = i / form_size;
-        int p_col = j / form_size;
-
-        int f_row = i % form_size;
-        int f_col = j % form_size;
+        int t = random_integer() % (n+1);
+        assert( 0 <= t and t <= n );
         
-        SparseMatrix::MatrixEntry entry;
-        entry.row    = s * localdim + i;
-        entry.column = s * localdim + j;
-        entry.value  = ( p_row == p_col ) ? Aux2( f_row, f_col ) : 0.;
-        
-        ret.setentry( index_of_entry, entry );
+        for( int p  = 0;  p <     poly_size;  p++ )
+        for( int f1 = 0; f1 <     form_size; f1++ )
+        for( int f2 = 0; f2 <     form_size; f2++ )
+        {
+            int index_of_entry = s * poly_size * form_size * form_size + p * form_size * form_size + f1 * form_size + f2;
+            
+            
+            SparseMatrix::MatrixEntry entry;
+            entry.row    = s * poly_size * form_size + p * form_size + f1;
+            entry.column = s * poly_size * form_size + p * form_size + f2;
+            entry.value  = auxiliaries[t]( f1, f2 );
+            
+            ret.setentry( index_of_entry, entry );
+        }
     }
-
     
     return ret;
 
