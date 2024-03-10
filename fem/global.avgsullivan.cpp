@@ -23,7 +23,7 @@ TODO:
 - The lack of a general ordering principle forecloses an efficient implmentation where the loop is completely uniform.
 */
 
-SparseMatrix FEECSullivanAveragingMatrix( const Mesh& mesh, int n, int k, int r )
+SparseMatrix FEECSullivanAveragingMatrix( const Mesh& mesh, int n, int k, int r, FEECAveragingMode mode )
 {
     
     // check whether the parameters are right 
@@ -99,6 +99,7 @@ SparseMatrix FEECSullivanAveragingMatrix( const Mesh& mesh, int n, int k, int r 
     {
         
         // Find indices of things and prepare auxiliary variables 
+        
         const auto& alphasigma = lists_of_sullivan_indices[d][index_alphasigma];
 
         const MultiIndex& alpha = alphasigma.first;
@@ -167,7 +168,36 @@ SparseMatrix FEECSullivanAveragingMatrix( const Mesh& mesh, int n, int k, int r 
                        index_alphasigma
                        ;
 
-        Float value  = 1. / mesh.getsupersimplices( n, d, index_fi ).size();
+        Float value = notanumber; 
+
+        if( mode == FEECAveragingMode::weighted_uniformly ){
+            
+            const auto list_of_supersimplices = mesh.getsupersimplices( n, d, index_fi );
+
+            value = 1. / list_of_supersimplices.size();
+
+        } else if ( mode == FEECAveragingMode::weighted_by_volume ) {
+
+            const auto list_of_supersimplices = mesh.getsupersimplices( n, d, index_fi );
+
+            Float sum_of_volumes = 0.;
+
+            for( int i = 0; i < list_of_supersimplices.size(); i++ )
+            {
+                sum_of_volumes += mesh.getMeasure( n, list_of_supersimplices[i] );
+            }
+
+            value = mesh.getMeasure(n,s) / sum_of_volumes;
+
+        } else if( mode == FEECAveragingMode::arbitrary_choice ) {
+            
+            const auto list_of_supersimplices = mesh.getsupersimplices( n, d, index_fi );
+
+            value = ( s == list_of_supersimplices[0] ) ? 1. : 0.;
+
+        } else {
+            unreachable();
+        }
 
         int index_of_entry = entries_offset[d] // sum_int( d-1, [ &lists_of_sullivan_indices, n ](int c) -> int { return binomial_integer(n+1,c+1) * lists_of_sullivan_indices[c].size(); } ) * num_volumes
                              +

@@ -309,6 +309,42 @@ int main( int argc, char *argv[] )
     }
     
     {
+        LOG << "8a. Unit Test for LQ Factorization" << nl;
+    
+        const int dim = 4;
+        DenseMatrix A(dim,dim);
+    
+        A.zeromatrix();
+        for( int s = 0; s < dim; s++ )
+        for( int t = 0; t < dim; t++ )
+            A(s,t) = 3 * kronecker(s,t) - kronecker(s,t-1) - kronecker(s,t+1);
+            
+        {
+            DenseMatrix L(dim,dim), Q(dim,dim);
+            
+            LQFactorization( A, L, Q );
+            
+            DenseMatrix Linv =   Inverse(L);
+            DenseMatrix Qt   = Transpose(Q);
+            
+            LOG << "Matrix A:" << A;
+            LOG << "Matrix Q:" << Q;
+            LOG << "Matrix L:" << L;
+            LOG << "Matrix L * Q:" << L * Q;
+            LOG << "Matrix Q^t:" << Qt;
+            LOG << "Matrix Linv:" << Linv;
+            LOG << "Matrix L * Linv:" << L * Linv;
+            LOG << "Matrix Linv * L:" << Linv * L;
+            LOG << "Matrix Q * Qinv:" << Q * Qt;
+            LOG << "Matrix Qinv * Q:" << Qt * Q;
+            LOG << "Matrix Q^t * Linv * A:" << Qt * Linv * A;
+            LOG << "Matrix A * Qt * Linv:" << A * Qt * Linv;
+        }
+        
+    }
+    
+    // if(false)
+    {
         LOG << "9. Compare Determinats of Matrices with random coefficients" << nl;
         for( int t = 0; t < 7; t++ )
         for( int i = 0; i < 6; i++ )
@@ -329,6 +365,7 @@ int main( int argc, char *argv[] )
         }
     }
     
+    // if(false)
     {
         LOG << "10. Inverse and determinants of unit matrices" << nl;
         for( int t = 0; t < 7; t++ )
@@ -349,8 +386,7 @@ int main( int argc, char *argv[] )
             LOG << Inverse( A ) * A << nl;
         }
     }
-
-   
+    
     
     LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
 

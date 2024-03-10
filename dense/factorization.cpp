@@ -242,7 +242,7 @@ void LQFactorization( const DenseMatrix& A, DenseMatrix& L, DenseMatrix& Q )
     Q.check();
     
     // TODO: check algorithm
-    unreachable();
+    // unreachable();
     
     assert( A.getdimout() == L.getdimout() );
     assert( A.getdimin()  == Q.getdimin()  ); 
