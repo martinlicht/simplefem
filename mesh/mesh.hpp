@@ -248,7 +248,7 @@ class Mesh
          * 
          */
         
-        void shake_interior_vertices( Float intensity = 0.25, Float probability = 0.5 );
+        void shake_interior_vertices( Float intensity = 0.10, Float probability = 0.5 );
         
 
         virtual std::size_t memorysize() const = 0;

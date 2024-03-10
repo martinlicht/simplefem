@@ -232,7 +232,7 @@ std::string DenseMatrix::text() const
     std::string ret = "Dense Matrix " + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) + nl;
     for( int r = 0; r < getdimout(); r++ ) {
         for( int c = 0; c < getdimin(); c++ )
-            ret += std::to_string( (*this)(r,c) ) + "\t";
+            ret += printf_into_string( "% .10Le", (long double)(*this)(r,c) ) + "\t";
         ret += nl;
     }
     return ret;

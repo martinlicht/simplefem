@@ -507,7 +507,10 @@ Float Mesh::getHeight( int dim, int cell, int vertexindex ) const
     
     Float vol_t = getMeasure( dim, cell );
     Float vol_f = getMeasure( dim-1, oppositeface );
-    return ( vol_t / vol_f ) * dim;
+
+    // vol_t = vol_f * height / dim 
+
+    return ( vol_t / vol_f ) * (dim);
 }
 
 Float Mesh::getShapemeasure( int dim, int index ) const 
@@ -809,6 +812,20 @@ void Mesh::shake_interior_vertices( Float intensity, Float probability )
     {
         if( random_uniform() > probability ) continue; 
 
+        const auto es = getsupersimplices( 1, 0, v );
+
+        bool boundary_detected = false;
+
+        for( const int e : es )
+        {
+            const auto ts = getsupersimplices( dim, 1, e );
+            assert( ts.size() >= 1 );
+            if( ts.size() == 1 ) boundary_detected = true;
+        }
+
+        if( boundary_detected ) 
+            continue;
+
         Float radius = std::numeric_limits<Float>::infinity();
 
         const auto ts = getsupersimplices( dim, 0, v );
@@ -820,9 +837,13 @@ void Mesh::shake_interior_vertices( Float intensity, Float probability )
             radius = minimum( height, radius );
         }
 
+        assert( std::isfinite(radius) && radius >= 0. );
+
         FloatVector shift(dim,0.);
         shift.random_within_range(-1.,1.);
-        shift /= shift.l2norm() * sqrt( random_uniform() ) * radius * intensity;
+        shift /= shift.l2norm();
+        assert( shift.isfinite() );
+        shift *= sqrt( random_uniform() ) * radius * intensity;
 
         for( int c = 0; c < dim; c++ )
             getcoordinates().setdata( v, c, getcoordinates().getdata( v, c ) + shift[c] );

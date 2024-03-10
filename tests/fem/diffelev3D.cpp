@@ -49,7 +49,7 @@ int main( int argc, char *argv[] )
                 auto ret = FloatVector({ 
                                 std::exp( vec[0] + vec[2] ), 
                                 std::sin( -5.*vec[0] -vec[1] ),
-                                std::atan( vec[1] * vec[2] )
+                                std::exp( vec[1] * vec[2] )
                 });
                 assert( ret.getdimension() == 3 );
                 return ret;
@@ -120,10 +120,10 @@ int main( int argc, char *argv[] )
 
 
 //                 SparseMatrix canon = FEECRandomizeBroken( M, M.getinnerdimension(), k+1, r + r_plus - 1, notanumber );
-//                 SparseMatrix canon = FEECCanonicalizeBroken( M, M.getinnerdimension(), k+1, r + r_plus - 1 );
-//                 auto commutator_error = canon * ( path1 - path2 );
+                SparseMatrix canon = FEECCanonicalizeBroken( M, M.getinnerdimension(), k+1, r + r_plus - 1 );
+                auto commutator_error = canon * ( path1 - path2 );
                 
-                auto commutator_error = path1 - path2;
+                // auto commutator_error = path1 - path2;
                 
 
 
@@ -144,7 +144,11 @@ int main( int argc, char *argv[] )
             
                 M.uniformrefinement();
 
+                LOG << M.getcoordinates().text() << nl;
+
                 M.shake_interior_vertices();
+
+                LOG << M.getcoordinates().text() << nl;
             }
             
             

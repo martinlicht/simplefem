@@ -104,12 +104,13 @@ int main( int argc, char *argv[] )
 
 
 //                 SparseMatrix canon = FEECRandomizeBroken( M, M.getinnerdimension(), k+1, r + r_plus - 1, notanumber );
-//                 SparseMatrix canon = FEECCanonicalizeBroken( M, M.getinnerdimension(), k+1, r + r_plus - 1 );
-//                 auto commutator_error = canon * ( path1 - path2 );
+                SparseMatrix canon = FEECCanonicalizeBroken( M, M.getinnerdimension(), k+1, r + r_plus - 1 );
+                auto commutator_error = canon * ( path1 - path2 );
                 
-                auto commutator_error = path2 - path1;
+                // auto commutator_error = path2 - path1;
                 
-                Float commutator_error_mass = commutator_error * ( massmatrix * ((path2-path1)) );
+                // Float commutator_error_mass = commutator_error * ( massmatrix * ((path2-path1)) );
+                Float commutator_error_mass = commutator_error * ( massmatrix * commutator_error );
 
                 assert( std::isfinite( commutator_error_mass ) );
                 

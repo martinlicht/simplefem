@@ -119,6 +119,8 @@ DenseMatrix skip_column( int c, const DenseMatrix& mat )
 Float Determinant( const DenseMatrix& A )
 {
     assert( A.issquare() );
+
+    // LOG << A.getdimin() << nl;
     
     if( A.getdimin() == 0 ) {
         
@@ -134,18 +136,19 @@ Float Determinant( const DenseMatrix& A )
         
     } else if( A.getdimin() == 3 ) {
         
-//          TODO: use this one after all unit tests are in place.
-//         return + A(0,0) * ( A(1,1)*A(2,2) - A(2,1)*A(1,2) )
-//                - A(1,0) * ( A(0,1)*A(2,2) - A(2,1)*A(0,2) )
-//                + A(2,0) * ( A(0,1)*A(1,2) - A(1,1)*A(0,2) );
-        
-        return + A(0,0) * A(1,1) * A(2,2) // 1 2 3 + 
-               - A(0,0) * A(1,2) * A(2,1) // 1 3 2 - 
-               - A(0,1) * A(1,0) * A(2,2) // 2 1 3 - 
-               + A(0,1) * A(1,2) * A(2,0) // 2 3 1 + 
-               - A(0,2) * A(1,1) * A(2,0) // 3 2 1 - 
-               + A(0,2) * A(1,0) * A(2,1) // 3 1 2 + 
+        //          TODO: use this one after all unit tests are in place.
+        return + A(0,0) * ( A(1,1)*A(2,2) - A(2,1)*A(1,2) )
+               - A(1,0) * ( A(0,1)*A(2,2) - A(2,1)*A(0,2) )
+               + A(2,0) * ( A(0,1)*A(1,2) - A(1,1)*A(0,2) )
                ;
+        
+        // return + A(0,0) * A(1,1) * A(2,2) // 1 2 3 + 
+        //        - A(0,0) * A(1,2) * A(2,1) // 1 3 2 - 
+        //        - A(0,1) * A(1,0) * A(2,2) // 2 1 3 - 
+        //        + A(0,1) * A(1,2) * A(2,0) // 2 3 1 + 
+        //        - A(0,2) * A(1,1) * A(2,0) // 3 2 1 - 
+        //        + A(0,2) * A(1,0) * A(2,1) // 3 1 2 + 
+        //        ;
         
     // } else if( A.getdimin() == 4 ) {
         
@@ -349,11 +352,11 @@ DenseMatrix Inverse( DenseMatrix A )
 
         return DenseMatrix( 1, 1, 1. / A(0,0) );
     
-    } else if( A.getdimin() == 2 ) {
+    // } else if( A.getdimin() == 2 ) {
 
-        Float D = A(0,0) * A(1,1) - A(0,1) * A(1,0);
+    //     Float D = A(0,0) * A(1,1) - A(0,1) * A(1,0);
         
-        return DenseMatrix( 2, 2, { A(1,1)/D, -A(0,1)/D, -A(1,0)/D, A(0,0)/D } );
+    //     return DenseMatrix( 2, 2, { A(1,1)/D, -A(0,1)/D, -A(1,0)/D, A(0,0)/D } );
 
     // } else if( A.getdimin() == 3 ) {
 
@@ -377,8 +380,8 @@ DenseMatrix Inverse( DenseMatrix A )
     //        +D_02/D, -D_12/D, +D_22/D           
     //     } );
 
-    } else if( A.getdimin() <= 6 ) {
-        Inverse_CramersRule_InSitu( A );
+    // } else if( A.getdimin() <= 6 ) {
+    //     Inverse_CramersRule_InSitu( A );
     } else {
         Inverse_gauss_InSitu( A );
     }

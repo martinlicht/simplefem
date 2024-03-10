@@ -126,11 +126,10 @@ In file included from ./basic/.all.cpp:3:
   129 |     snprintf( digits, fulllength, "%*ju", numdigits, (uintmax_t)t );
       |     ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# (HIGH) shake the coordinates in tests where there is no explicit functions living on them 
-- [ ] meshes 
-- [ ] fem 
-- [ ] solvers?
-- [ ] several finite element tests
+# (DONE) shake the coordinates in tests where there is no explicit functions living on them 
+- [x] fem 
+- [x] solvers?
+- [x] several finite element tests
 
 # (HIGH) Dense Matrix rewrite, part 2
 
