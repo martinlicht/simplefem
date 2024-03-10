@@ -3272,7 +3272,7 @@ inline unsigned char float_to_color( Float f )
   return (unsigned char)f;
 }
 
-inline int leading_digits( double num )
+UNUSED inline int leading_digits( double num )
 {
     // If the number is negative, take its absolute value
     // Calculate the order of magnitude of the number
@@ -3283,12 +3283,20 @@ inline int leading_digits( double num )
     if( order >= 0 ) return order + 1; else return 1;
 }
 
-inline std::string render_number( double num, int tail = 8 )
+inline std::string render_number( double num, unsigned int tail = 8 )
 {
-    int lead = leading_digits( num );
-    const int str_number_of_chars = 1+lead+1+tail+1;
-    char str[str_number_of_chars];
-    snprintf( str, str_number_of_chars, "% *.*f", 1+lead+1+tail, tail, num);
+    assert( std::isfinite(num) );
+    
+    // int lead = leading_digits( num );
+    // const int str_number_of_chars = 1+lead+1+tail+1;
+    // char str[str_number_of_chars];
+    // snprintf( str, str_number_of_chars, "% *.*f", 1+lead+1+tail, tail, num);
+
+    const int str_number_of_printed_chars = ( 1 + 1 + 1 ) + tail + 1 + (4);
+    assert( str_number_of_printed_chars >= 0 );
+    char str[str_number_of_printed_chars+1];
+    snprintf( str, str_number_of_printed_chars, "%.*e", tail, num );
+    
     return std::string(str);
 }
 

@@ -41,6 +41,31 @@ requires regular grinding in order to get it done.
 
 
 
+
+
+# (ARTICLE) Profiling 
+
+Several options are available to generate and assess profiling data. one particularly easy option involves Valgrind. 
+
+The compiler should be invoked with the '-g' option. Then the `callgrind` tool is invoked from command line,
+
+```
+valgrind --tool=callgrind [callgrind options] your-program [program options]
+```
+
+to generate a file `callgrind.out.[pid]` with the profiling data. Then the profiling data can be presented in the GUI tool `kcachegrind`, as in 
+
+```
+kcachegrind callgrind.out.[pid]
+```
+The target audience for this software are researchers in numerical partial differential equations who are well-versed in C++ and who want a customizable finite element software.
+
+Another alternative is `gprof` as a GUI for profiling data. 
+
+
+
+
+
 -Wanalyzer-too-complex
 
 -Wanalyzer-double-fclose 
@@ -66,13 +91,42 @@ TODO: write an email to the mailing list about the static analyzer.
 
 
 
+# (HIGH) dependencies for object file compilation  
+
+Ensure that object files have all their dependencies correctly defined.
+
+# (HIGH) Streamline nullspace tests 
+
+Clean up the nullspace computation in the solver component.
+Clean up the test for the nullspace computation. 
+
+# (HIGH) Unit tests must check convergence rates
+
+The tests in FEM and the finite element computations should explicitly check the convergence rates. 
+Enable the convergence table class to calculate convergence rates explicitly.
 
 # (HIGH) Clean up unit tests 
 
-Clarify output strings of different unit tests 
-Decide what the different tests are supposed to do.
-For example, the Lagrange test should reflect simple things and additional overhead
-Remove overhead from the other tests if possible 
+- [ ] Don't compute the norms of the solutions and the rhs unless necessary 
+- [ ] Clarify output strings of different unit tests 
+- [ ] Decide what the different tests are supposed to do. For example, the Lagrange test should reflect simple things and additional overhead
+- [ ] Remove overhead from the other tests if possible 
+- [ ] Streamline the main loop in the different solverfem tests to reduce code redundancy
+- [ ] Don't use MINRES whenever you can use another solver 
+- [ ] orientation tests must be included in usual tests in order to save compile time 
+
+# (MEDIUM) Fix Whatever solvers or fix Wikipedia 
+
+Herzog Soodhalter funktioniert nun, auch die sparse variant.
+Vielleicht sollte das umbenannt werden? Scheint mehr Soodhalter zu sein als Herzog 
+Whatever solver hingegen kackt ab 
+
+# (HIGH) Floating point exact comparisons ersetzen durch Funktion mit expliziter semantik
+# (HIGH) Floating-point comparisons
+
+https://beta.boost.org/doc/libs/1_68_0/libs/math/doc/html/math_toolkit/float_comparison.html
+
+Understand the floating-point comparison functions and import them into this project, mutatis mutandis. 
 
 # (HIGH) fem/diffelev3D
 # (HIGH) the mass matrix suffers from rounding errors. 
@@ -82,54 +136,27 @@ The commutativity is not satisfied sufficiently.
 That seems to be due to the mass matrix, since canonicalization reduces that effect 
 Can we canonicalize everything things already in the matrix assembly?
 
-# (UNCLEAR) Speed computation of conjugation in sparse matrices
+# (HIGH) AFW-Basis of Sullivan forms
 
-whitney2D/poissonmixedbc2Da.cpp takes too long to assemble the matrices.
-Try out a subroutine to reduce the computational effort. 
 
-# (HIGH) Unit tests must check convergence rates
 
-The tests in FEM and the finite element computations should explicitly check the convergence rates. 
-Enable the convergence table class to provide convergence rates.
 
-# (HIGH) orientation tests must be included in usual tests
-# (HIGH) Solverfem: options
 
-Streamline the main loop in the different solverfem tests to reduce code redundancy
 
-# (HIGH) Either implement LQ factorization or retire it completely
 
-Implement the LQ factorization and test it
+# (HIGH) FEM rewrite 
 
-# (HIGH) Some warnings to process:
+- [ ] Summarize: indexfunctions, local.polynomialmassmatrix, utilities -> utilities
+- [ ] Summarize: global functions 
 
-Understand why a compiler might warn about weak vtables and how to avoid that issue. 
-This concerns IndexMap and MultiIndex in particular. 
-https://stackoverflow.com/questions/23746941/what-is-the-meaning-of-clangs-wweak-vtables
+# (HIGH) clean up DenseMatrix subsystem 
 
-# (HIGH) fix warnings about printf truncation 
-
-/mesh/mesh.simplicial2D.cpp: In function ‘std::string render_number(double, int)’:
-./mesh/mesh.simplicial2D.cpp:3286:42: warning: ‘% *.*f’ directive output between 2 and 2147483958 bytes may exceed minimum required size of 4095 [-Wformat-truncation=]
- 3286 |     snprintf( str, str_number_of_chars, "% *.*f", lead+1+tail, tail, num);
-      |                                          ^~~~~~
-./mesh/mesh.simplicial2D.cpp:3286:41: note: assuming directive output of 3 bytes
- 3286 |     snprintf( str, str_number_of_chars, "% *.*f", lead+1+tail, tail, num);
-      |                                         ^~~~~~~~
-
-In file included from ./basic/.all.cpp:3:
-./basic/basic.cpp: In function ‘std::string timestamp2digitalcode(const timestamp&)’:
-./basic/basic.cpp:129:36: warning: ‘%*ju’ directive output may be truncated writing between 10 and 20 bytes into a region of size 11 [-Wformat-truncation=]
-  129 |     snprintf( digits, fulllength, "%*ju", numdigits, (uintmax_t)t );
-      |                                    ^~~~
-./basic/basic.cpp:129:13: note: ‘snprintf’ output between 11 and 21 bytes into a destination of size 11
-  129 |     snprintf( digits, fulllength, "%*ju", numdigits, (uintmax_t)t );
-      |     ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# (DONE) shake the coordinates in tests where there is no explicit functions living on them 
-- [x] fem 
-- [x] solvers?
-- [x] several finite element tests
+The following modules look reasonable
+- [ ] simple solvers 
+- [ ] general solvers (Gauss-Jordan, QR, Cholesky -> inverse )
+- [ ] simple scalar functions
+- [ ] complicated operations (transpose,determinant,tensorproduct)
+- [x] readwrite is never used: retire 
 
 # (HIGH) Dense Matrix rewrite, part 2
 
@@ -147,93 +174,6 @@ Based on that:
 - factorizations
 - operations: det, cofactor, subdet, inv
 
-# (HIGH) Streamline nullspace tests 
-
-Clean up the nullspace computation in the solver component.
-Clean up the test for the nullspace computation. 
-
-# (HIGH) FEM rewrite 
-
-- [ ] Summarize: indexfunctions, local.polynomialmassmatrix, utilities -> utilities
-- [ ] Summarize: global functions 
-
-# (HIGH) dependencies for object file compilation  
-
-Ensure that object files have all their dependencies correctly defined.
-
-# (HIGH) clean up DenseMatrix subsystem 
-
-The following modules look reasonable
-- [ ] simple solvers 
-- [ ] general solvers (Gauss-Jordan, QR, Cholesky -> inverse )
-- [ ] simple scalar functions
-- [ ] complicated operations (transpose,determinant,tensorproduct)
-- [x] readwrite is never used: retire 
-
-# (HIGH) Augmented integration in all numerical tests 
-
-Once the numerical tests have been cleaned up, the right-hand side should always be computed with (optional) augmented integration. 
-There should be a parameter 'r_plus' to control the added interpolation quality of the right-hand side. 
-Notably, if 'r_plus == 0', then there should be a fallback that avoid repeated computation of the mass matrix.
-Similarly, the errors should be computed with augmented integration.
-
-# (HIGH) Floating point exact comparisons ersetzen durch Funktion mit expliziter semantik
-# (HIGH) Floating-point comparisons
-
-https://beta.boost.org/doc/libs/1_68_0/libs/math/doc/html/math_toolkit/float_comparison.html
-
-Understand the floating-point comparison functions and import them into this project, mutatis mutandis. 
-
-# (HIGH) Fix solvers or fix Wikipedia 
-
-Herzog Soodhalter funktioniert nun, auch die sparse variant.
-Vielleicht sollte das umbenannt werden? Scheint mehr Soodhalter zu sein als Herzog 
-Whatever solver hingegen kackt ab 
-
-# (HIGH) Clean up unit tests for the numerical examples 
-
-- [ ] Don't compute the norms of the solutions and the rhs unless necessary 
-- [ ] Don't use MINRES unless necessary 
-
-# (HIGH) Question: what are best practices to keep the unit tests up to date with the code?
-
-# (HIGH) AFW-Basis of Sullivan forms
-
-# (HIGH) Profiling
-
-Several options are available to generate and assess profiling data. one particularly easy option involves Valgrind. 
-
-The compiler should be invoked with the '-g' option. Then the `callgrind` tool is invoked from command line,
-
-```
-valgrind --tool=callgrind [callgrind options] your-program [program options]
-```
-
-to generate a file `callgrind.out.[pid]` with the profiling data. Then the profiling data can be presented in the GUI tool `kcachegrind`, as in 
-
-```
-kcachegrind callgrind.out.[pid]
-```
-The target audience for this software are researchers in numerical partial differential equations who are well-versed in C++ and who want a customizable finite element software.
-
-Another alternative is `gprof` as a GUI for profiling data. 
-
-# (HIGH) Floating point exact comparisons ersetzen durch Funktion mit expliziter semantik
-
-# (HIGH) Rename basic to 'base' or 'general' or 'common'
-
-Basic has the wrong connotation, it makes more sense to call it 'base' or 'general'.
-
-Make a survey of a few important projects to get a sense of what name you should use for this one. 
-That will give you a sense of what you should do.
-
-Examples: base, common, core, general, std
-MFEM: general 
-Feelpp: core
-Lifev: core 
-ngsolve std 
-Fenics: common
-concepts: ...
 
 
 
@@ -246,38 +186,19 @@ concepts: ...
 
 
 
-# (MEDIUM) Averaging for Sullivan and Whitney spaces
 
-For each element, you extract the coefficients of the local basis associated with a subsimplex using a Gram-Matrix. 
-This works for Sullivan and Whitney bases alike, no difference. 
-You can then average according to some scheme, such as:
-- [ ] pick arbitrary
-- [x] weight uniformly
-- [ ] weight by volume 
-Thus you can always average from the larger into the smaller space.
 
-# (MEDIUM) preparing for multigrid
 
-# (MEDIUM) Style checker and configuration
 
-Include a style checker such as KWstyle or clang-format, and add the necessary configuration files 
 
-Astyle
-#astyle --mode=c --options=none --project=path/to/astylerc --ascii --recursive "./*.cpp,*.hpp,*.cxx" --exclude=".playground" --exclude=".legacy"
-#--style=mozilla
---attach-namespace 
---indent=spaces=4
---indent-classes
---indent-preproc-cond
---indent-col1-comments
---break-blocks 
---pad-oper 
---pad-comma
---unpad-paren
---pad-paren-in 
---align-pointer=type 
---align-reference=type
---attach-return-type
+
+
+
+# (MEDIUM) Interesting meshes
+
+Use the US states map from Randy's source code 
+and implement it here. Try to find other triangulations 
+too and integrate them as examples. 
 
 # (MEDIUM) Solver printing data structure 
 
@@ -298,7 +219,51 @@ bool report_breakdown();
 bool iteration_is_printable();
 ```
 
-# (MEDIUM) Logging class 
+# (MEDIUM) Unit test framework
+
+Agree to a common style for the unit tests 
+
+The existing unit tests should be streamlined and polished. 
+Generally speaking, they should be reduced to tests only:
+benchmarks should be put into a folder of their own;
+examples should be a folder of their own as well.
+Do not shy away from bringing a few tests out of retirement. 
+
+As tests get more complicated, it will pay off to introduce parameters 
+more abundantly throughout the code. 
+
+
+
+
+
+
+
+
+
+
+
+# (LOW) Style checker and configuration
+
+Include a style checker such as KWstyle or clang-format, and add the necessary configuration files 
+
+Astyle
+#astyle --mode=c --options=none --project=path/to/astylerc --ascii --recursive "./*.cpp,*.hpp,*.cxx" --exclude=".playground" --exclude=".legacy"
+#--style=mozilla
+--attach-namespace 
+--indent=spaces=4
+--indent-classes
+--indent-preproc-cond
+--indent-col1-comments
+--break-blocks 
+--pad-oper 
+--pad-comma
+--unpad-paren
+--pad-paren-in 
+--align-pointer=type 
+--align-reference=type
+--attach-return-type
+
+# (LOW) Logging class 
 
 Even though advanced logging control would be desirable, 
 for the time being it is sufficient if the logging capabilities are merely present.
@@ -335,30 +300,7 @@ Encapsulate cout, cerr, and clog within wrapper objects
 that delegate the input to those streams. 
 You can then extend the stream wrappers at a later stage 
 
-# (MEDIUM) Unit test framework
-
-Agree to a common style for the unit tests 
-
-The existing unit tests should be streamlined and polished. 
-Generally speaking, they should be reduced to tests only:
-benchmarks should be put into a folder of their own;
-examples should be a folder of their own as well.
-Do not shy away from bringing a few tests out of retirement. 
-
-As tests get more complicated, it will pay off to introduce parameters 
-more abundantly throughout the code. 
-
-
-
-
-
-
-
-
-
-
-
-# (LOW) Rewrite the unit tests for combinatorics
+# (LOW) Rewrite the unit tests
 
 Generally speaking, the combinatorics unit tests should be more excessive. 
 Don't shy away from testing basically everything you could possibly think of as relevant. 
@@ -373,12 +315,6 @@ Then move on with the same spirit to 'operators' and the other objects.
 - [ ] Solver: meaningful convergence tests?
 - [ ] Mesh: make everything consistent 
 - [ ] VTK
-
-# (LOW) interesting meshes
-
-Use the US states map from Randy's source code 
-and implement it here. Try to find other triangulations 
-too and integrate them as examples. 
 
 # (LOW) Operators as non-member functions?
 
@@ -499,6 +435,8 @@ Should smart pointers be employed throughout the library to make it more robust 
 
 # INACTIVE UNTIL FURTHER NOTICE
 
+# (INACTIVE) Question: what are best practices to keep the unit tests up to date with the code?
+
 # (INACTIVE) openMP parallelization of Float Vector class
 
 Many of the methods in the float vector class are openMP parallelizable. 
@@ -596,9 +534,34 @@ There is only one cleaning command for the entire build directory.
 
 Can these errors be reduced? Probably not, it's a standard procedure.
 
+# (INACTIVE) Augmented integration in all numerical tests 
 
+Once the numerical tests have been cleaned up, the right-hand side should always be computed with (optional) augmented integration. 
+There should be a parameter 'r_plus' to control the added interpolation quality of the right-hand side. 
+Notably, if 'r_plus == 0', then there should be a fallback that avoid repeated computation of the mass matrix.
+Similarly, the errors should be computed with augmented integration.
 
+# (INACTIVE) Speed computation of conjugation in sparse matrices
 
+whitney2D/poissonmixedbc2Da.cpp takes too long to assemble the matrices.
+Try out a subroutine to reduce the computational effort. 
+
+# (INACTIVE) Rename basic to 'base' or 'general' or 'common'
+
+Basic has the wrong connotation, it makes more sense to call it 'base' or 'general'.
+
+Make a survey of a few important projects to get a sense of what name you should use for this one. 
+That will give you a sense of what you should do.
+
+Examples: base, common, core, general, std
+MFEM:     general 
+Feelpp:   core
+Lifev:    core 
+ngsolve:  std 
+Fenics:   common
+Hermes:   common 
+concepts: ...
+https://en.wikipedia.org/wiki/List_of_finite_element_software_packages
 
 
 
@@ -1025,5 +988,51 @@ at least when the indexmaps contains only one element.
 Result: 
  - Shuffling the multindices is fine. 
  - Shuffling the sigmas is more difficult.
+
+# (DONE) shake the coordinates in tests where there is no explicit functions living on them 
+- [x] fem 
+- [x] solvers?
+- [x] several finite element tests
+
+# (DONE) Either implement LQ factorization or retire it completely
+
+Implement the LQ factorization and test it
+
+# (DONE) Some warnings to process:
+
+Understand why a compiler might warn about weak vtables and how to avoid that issue. 
+This concerns IndexMap and MultiIndex in particular. 
+https://stackoverflow.com/questions/23746941/what-is-the-meaning-of-clangs-wweak-vtables
+
+This is not particulary dangerous for this project.
+
+# (DONE) Averaging for Sullivan and Whitney spaces
+
+For each element, you extract the coefficients of the local basis associated with a subsimplex using a Gram-Matrix. 
+This works for Sullivan and Whitney bases alike, no difference. 
+You can then average according to some scheme, such as:
+- [x] arbitrary choice
+- [x] weight uniformly
+- [x] weight by volume 
+Thus you can always average from the non-conforming into the conforming space.
+
+# (DONE) fix warnings about printf truncation 
+
+/mesh/mesh.simplicial2D.cpp: In function ‘std::string render_number(double, int)’:
+./mesh/mesh.simplicial2D.cpp:3286:42: warning: ‘% *.*f’ directive output between 2 and 2147483958 bytes may exceed minimum required size of 4095 [-Wformat-truncation=]
+ 3286 |     snprintf( str, str_number_of_chars, "% *.*f", lead+1+tail, tail, num);
+      |                                          ^~~~~~
+./mesh/mesh.simplicial2D.cpp:3286:41: note: assuming directive output of 3 bytes
+ 3286 |     snprintf( str, str_number_of_chars, "% *.*f", lead+1+tail, tail, num);
+      |                                         ^~~~~~~~
+
+In file included from ./basic/.all.cpp:3:
+./basic/basic.cpp: In function ‘std::string timestamp2digitalcode(const timestamp&)’:
+./basic/basic.cpp:129:36: warning: ‘%*ju’ directive output may be truncated writing between 10 and 20 bytes into a region of size 11 [-Wformat-truncation=]
+  129 |     snprintf( digits, fulllength, "%*ju", numdigits, (uintmax_t)t );
+      |                                    ^~~~
+./basic/basic.cpp:129:13: note: ‘snprintf’ output between 11 and 21 bytes into a destination of size 11
+  129 |     snprintf( digits, fulllength, "%*ju", numdigits, (uintmax_t)t );
+      |     ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 

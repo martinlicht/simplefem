@@ -16,7 +16,14 @@
 //                                                  //
 //////////////////////////////////////////////////////
 
-SparseMatrix FEECSullivanAveragingMatrix( const Mesh& mesh, int n, int k, int r );
+enum class FEECAveragingMode
+{
+    weighted_uniformly,
+    arbitrary_choice,
+    weighted_by_volume
+};
+
+SparseMatrix FEECSullivanAveragingMatrix( const Mesh& mesh, int n, int k, int r, FEECAveragingMode mode );
 
 
 

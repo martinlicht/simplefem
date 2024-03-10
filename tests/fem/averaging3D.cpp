@@ -33,7 +33,7 @@ int main( int argc, char *argv[] )
     
     const int r_min = 1;
     
-    const int r_max = 3;
+    const int r_max = 2;
     
     const int l_min = 1;
     
@@ -51,8 +51,8 @@ int main( int argc, char *argv[] )
 
     for( int l = l_min; l <= l_max; l++ ){
         
-        for( int k = 0;     k <= n; k++ ) 
-        for( int r = r_min; r <= r_max;                 r++ ) 
+        for( int k = 0;     k <= n;     k++ ) 
+        for( int r = r_min; r <= r_max; r++ ) 
         {
             
             LOG << "Level:       " << l_min << " <= " << l << " <= " << l_max << nl;
@@ -67,7 +67,7 @@ int main( int argc, char *argv[] )
             
             auto inclusion  = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), k, r );
             
-            auto averaging  = FEECSullivanAveragingMatrix( M, M.getinnerdimension(), k, r );
+            auto averaging  = FEECSullivanAveragingMatrix( M, M.getinnerdimension(), k, r, FEECAveragingMode::weighted_uniformly );
             
             auto flagmatrix = FEECSullivanFlagMatrix( M, M.getinnerdimension(), k, r );
             
@@ -136,10 +136,11 @@ int main( int argc, char *argv[] )
 
             LOG << "Distortion..." << nl;
         
-            for( auto& x : M.getcoordinates().raw() )
-            {
-                x = sqrt(x);
-            }
+            M.shake_interior_vertices();
+            // for( auto& x : M.getcoordinates().raw() )
+            // {
+            //     x = sqrt(x);
+            // }
 
         }
         
