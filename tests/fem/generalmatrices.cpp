@@ -39,6 +39,8 @@ int main( int argc, char *argv[] )
         
         for( int i = 0; i < number_of_refinements; i++ )
             M.uniformrefinement();
+
+        M.shake_interior_vertices();
         
         LOG << "...assemble matrices" << nl;
         

@@ -31,6 +31,8 @@ int main( int argc, char *argv[] )
             for( int c = 0; c < 6; c++ ) {
             
                 M.uniformrefinement();
+
+                M.shake_interior_vertices();
                 
                 internal_print( M, meshname );
             

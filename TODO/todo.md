@@ -74,7 +74,6 @@ Decide what the different tests are supposed to do.
 For example, the Lagrange test should reflect simple things and additional overhead
 Remove overhead from the other tests if possible 
 
-
 # (HIGH) fem/diffelev3D
 # (HIGH) the mass matrix suffers from rounding errors. 
 # (HIGH) Try to canonicalize on the go
@@ -83,17 +82,10 @@ The commutativity is not satisfied sufficiently.
 That seems to be due to the mass matrix, since canonicalization reduces that effect 
 Can we canonicalize everything things already in the matrix assembly?
 
-# (UNCLEAR) Conjugate computation
+# (UNCLEAR) Speed computation of conjugation in sparse matrices
 
 whitney2D/poissonmixedbc2Da.cpp takes too long to assemble the matrices.
 Try out a subroutine to reduce the computational effort. 
-
-# (HIGH) Robustness
-
-The code assumes at several points that indexmaps and sigmas are ordered, 
-at least when the indexmaps contains only one element. 
-Introduce a fixed shuffle and make sure the code is robust against it;
-at least with some randomized checking.
 
 # (HIGH) Unit tests must check convergence rates
 
@@ -167,6 +159,8 @@ Clean up the test for the nullspace computation.
 - [ ] Summarize: global functions 
 
 # (HIGH) dependencies for object file compilation  
+
+Ensure that object files have all their dependencies correctly defined.
 
 # (HIGH) clean up DenseMatrix subsystem 
 
@@ -1023,5 +1017,14 @@ Most routines only print if r == 1. Generalize that.
 # (DONE) Fix finite difference tests
 
 Check for notanumber and go over the different tests to ensure they test something.
+
+# (DONE) Robustness under shuffling combinatorial data
+
+The code assumes at several points that indexmaps and sigmas are ordered, 
+at least when the indexmaps contains only one element. 
+
+Result: 
+ - Shuffling the multindices is fine. 
+ - Shuffling the sigmas is more difficult.
 
 

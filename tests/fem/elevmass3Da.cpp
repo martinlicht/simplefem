@@ -268,6 +268,8 @@ int main( int argc, char *argv[] )
                 LOG << "Refinement..." << nl;
             
                 M.uniformrefinement();
+
+                M.shake_interior_vertices();
             }
             
         } 

@@ -38,6 +38,8 @@ int main( int argc, char *argv[] )
         LOG << "2D Calculations" << nl;
     
         MeshSimplicial2D M = UnitDisk(3);
+
+        M.shake_interior_vertices();
         
         LOG << "... mesh done" << nl;
     

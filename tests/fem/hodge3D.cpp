@@ -128,7 +128,8 @@ int main( int argc, char *argv[] )
                 contables[k] << errors[k][l-l_min][r-r_min];
             
             contables[k] << nl; 
-            
+
+            M.shake_interior_vertices();
         }
         
         

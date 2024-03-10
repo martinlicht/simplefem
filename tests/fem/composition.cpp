@@ -174,7 +174,10 @@ int main( int argc, char *argv[] )
                 M1.uniformrefinement();
                 M2.uniformrefinement();
                 M3.uniformrefinement();
-
+                
+                M1.shake_interior_vertices();
+                M2.shake_interior_vertices();
+                M3.shake_interior_vertices();
             }
         
         }

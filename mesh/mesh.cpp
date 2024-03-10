@@ -179,17 +179,25 @@ int Mesh::get_subsimplex( int sup, int sub, int cellsup, int localindex ) const
 
 int Mesh::get_opposite_subsimplex_index( int sup, int sub, int cellsup, int localindex ) const
 {
-    assert( sub < sup );
-
+    assert( 0 <= sub && sub < sup && sup <= getinnerdimension() );
+    assert( 0 <= cellsup && cellsup <= count_simplices(sup) );
+    assert( 0 <= cellsup && cellsup <= count_simplices(sup) );
+    
     const int cellsub = get_subsimplex( sup, sub, cellsup, localindex );
+    
+    assert( 0 <= cellsub && cellsub <= count_simplices(sub) );
     
     const auto my_vertices = getsubsimplices( sub, 0, cellsub );
     
-    for( int otherindex = 0; otherindex < count_subsimplices(sup,sup-sub-1); otherindex++ )
+    for( int opposite_index = 0; opposite_index < count_subsimplices(sup,sup-sub-1); opposite_index++ )
     {
-        const int othercell = get_subsimplex( sup, sup-sub-1, cellsup, otherindex );
+        assert( 0 <= opposite_index && opposite_index <= count_subsimplices(sup,sup-sub-1) );
+    
+        const int opposite_cell = get_subsimplex( sup, sup-sub-1, cellsup, opposite_index );
         
-        const auto other_vertices = getsubsimplices( sup, sub, othercell );
+        assert( 0 <= opposite_cell && opposite_cell <= count_simplices(sup-sub-1) );
+    
+        const auto other_vertices = getsubsimplices( sup-sub-1, 0, opposite_cell ); // BUG HERE????
         
         bool alive = true;
         for( int i = 0; i <    my_vertices.getSourceRange().cardinality() and alive; i++ )
@@ -197,7 +205,7 @@ int Mesh::get_opposite_subsimplex_index( int sup, int sub, int cellsup, int loca
           alive = alive && ( my_vertices[i] != other_vertices[j] );
 
         if( alive )
-          return otherindex;
+          return opposite_index;
     }
     unreachable();
 }
@@ -490,8 +498,13 @@ Float Mesh::getMeasure( int dim, int index ) const
 
 Float Mesh::getHeight( int dim, int cell, int vertexindex ) const
 {
+    assert( 0 <= dim && dim <= getinnerdimension() );
+    assert( 0 <= cell && cell <= count_simplices(dim) );
+    assert( 0 <= vertexindex && vertexindex <= dim );
+    
     int oppositeface_index = get_opposite_subsimplex_index( dim, 0, cell, vertexindex );
     int oppositeface = get_subsimplex( dim, dim-1, cell, oppositeface_index );
+    
     Float vol_t = getMeasure( dim, cell );
     Float vol_f = getMeasure( dim-1, oppositeface );
     return ( vol_t / vol_f ) * dim;
