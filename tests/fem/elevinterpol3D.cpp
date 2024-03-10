@@ -95,6 +95,8 @@ int main( int argc, char *argv[] )
                 LOG << "Refinement..." << nl;
             
                 M.uniformrefinement();
+
+                M.shake_interior_vertices();
             }
             
         } 
@@ -142,7 +144,7 @@ int main( int argc, char *argv[] )
         for( int r      = r_min; r      <=                 r_max; r++      ) 
         for( int r_plus =     0; r_plus <=            r_plus_max; r_plus++ ) 
         {
-            assert( errors[k][l-l_min][r-r_min][r_plus] < desired_closeness );
+            Assert( errors[k][l-l_min][r-r_min][r_plus] < desired_closeness, desired_closeness );
         }
         
         

@@ -23,6 +23,13 @@ int main( int argc, char *argv[] )
     LOG << "Initial mesh..." << nl;
         
     MeshSimplicial2D M = StandardSquare2D_simple();
+
+    for( int l = 0; l < 5; l++ )
+    {
+        M.uniformrefinement();
+    }
+                
+    M.shake_interior_vertices();
     
     M.check();
 
@@ -63,7 +70,7 @@ int main( int argc, char *argv[] )
 
             auto diff = massmatrix * v - massmatrix_s * v;
 
-            assert( diff.norm() < desired_closeness );
+            Assert( diff.norm() < desired_closeness, desired_closeness );
         }
         LOG << nl;
 

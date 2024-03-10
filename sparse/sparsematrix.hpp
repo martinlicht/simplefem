@@ -28,8 +28,10 @@ public LinearOperator /* every matrix is a linear operator */
 
     public:
 
-        struct MatrixEntry
+        struct PACKED MatrixEntry
         {
+            MatrixEntry(int row, int column, Float value) : row(row), column(column), value(value) {}
+            MatrixEntry(){}
             int row;
             int column;
             Float value;
@@ -45,7 +47,7 @@ public LinearOperator /* every matrix is a linear operator */
         /* Constructors */
         
         explicit SparseMatrix( int dimout, int dimin, int numentries = 0, 
-                               std::function<MatrixEntry(int)> generator = [](int)->MatrixEntry{ return {0,0,notanumber}; } ); 
+                               std::function<MatrixEntry(int)> generator = [](int)->MatrixEntry{ return MatrixEntry(0,0,notanumber); } ); 
         // explicit SparseMatrix( int dimout, int dimin );
         explicit SparseMatrix( int dimout, int dimin, const std::vector<MatrixEntry>& entries );
         explicit SparseMatrix( int dimout, int dimin, const std::initializer_list<MatrixEntry>& entries );

@@ -8,6 +8,27 @@
 #include "../basic.hpp"
 
 
+
+
+
+inline std::string get_parent_directory( const std::string& filepath ) 
+{
+    size_t pos = filepath.find_last_of("/\\");
+    
+    if (pos == std::string::npos) {
+        // No directory separator found, implying the file is in the current directory
+        return ".";
+    } else if (pos == 0) {
+        // The file is in the root directory
+        return "/";
+    } else {
+        // Extract the parent directory path
+        return filepath.substr(0, pos);
+    }
+}
+
+
+
 inline std::fstream openinputfile( const std::string& filename )
 {
     std::fstream myfile;

@@ -65,7 +65,6 @@ class AlternatingForm
         
         AlternatingForm exteriorderivative( Float stepsize = desired_closeness ) const 
         {
-            
             const std::vector<IndexMap> sigmas_dst = generateSigmas( IndexRange( 1, k+1 ), IndexRange( 0, d-1 ) );
             const std::vector<IndexMap> sigmas_src  = generateSigmas( IndexRange( 1, k   ), IndexRange( 0, d-1 ) );
             
@@ -96,12 +95,13 @@ class AlternatingForm
             int k = this->k;
             const auto formula = this->formula;
             
-            const auto newformula = [k,d,pattern,formula,stepsize]( const FloatVector& point ) -> FloatVector {
+            // const auto newformula = [k,d,pattern,formula,stepsize]( const FloatVector& point ) -> FloatVector {
+            const auto newformula = [=]( const FloatVector& point ) -> FloatVector {
                 
                 int dim_src = binomial_integer(d,k  );
                 int dim_dst = binomial_integer(d,k+1);
                 
-                FloatVector ret( dim_dst );
+                FloatVector ret( dim_dst, 0. );
                 
 //                 LOG << dim_src << space << dim_dst << space << pattern.size() << nl;
                 

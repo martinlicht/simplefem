@@ -211,6 +211,8 @@ int main( int argc, char *argv[] )
                 LOG << "Refinement..." << nl;
             
                 M.uniformrefinement();
+
+                M.shake_interior_vertices();
             }
             
             
@@ -249,13 +251,13 @@ int main( int argc, char *argv[] )
             {
                 
                 for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
-                    contable_scalar[i] << errors_scalar[i][l-l_min][r-r_min]; // assert( errors_scalar[i][l-l_min][r-r_min] >= 0. ); //
+                    contable_scalar[i] << errors_scalar[i][l-l_min][r-r_min]; // Assert( errors_scalar[i][l-l_min][r-r_min] >= 0. ); //
             
                 for( int i = 0; i < experiments_vector_function.size(); i++ ) 
-                    contable_vector[i] << errors_vector[i][l-l_min][r-r_min]; // assert( errors_vector[i][l-l_min][r-r_min] >= 0. ); //
+                    contable_vector[i] << errors_vector[i][l-l_min][r-r_min]; // Assert( errors_vector[i][l-l_min][r-r_min] >= 0. ); //
             
                 for( int i = 0; i < experiments_pseudo_function.size(); i++ ) 
-                    contable_pseudo[i] << errors_pseudo[i][l-l_min][r-r_min]; // assert( errors_pseudo[i][l-l_min][r-r_min] >= 0. ); //
+                    contable_pseudo[i] << errors_pseudo[i][l-l_min][r-r_min]; // Assert( errors_pseudo[i][l-l_min][r-r_min] >= 0. ); //
             
             }
             
@@ -282,13 +284,13 @@ int main( int argc, char *argv[] )
 //         for( int r = r_min; r <= r_max; r++ ) 
 //         {
 //             for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
-//                 assert( errors_scalar[i][l-l_min][r-r_min] < desired_closeness );
+//                 Assert( errors_scalar[i][l-l_min][r-r_min] < desired_closeness, desired_closeness );
 //             
 //             for( int i = 0; i < experiments_vector_function.size(); i++ ) 
-//                 assert( errors_vector[i][l-l_min][r-r_min] < desired_closeness );
+//                 Assert( errors_vector[i][l-l_min][r-r_min] < desired_closeness, desired_closeness );
 // 
 //             for( int i = 0; i < experiments_pseudo_function.size(); i++ ) 
-//                 assert( errors_pseudo[i][l-l_min][r-r_min] < desired_closeness );
+//                 Assert( errors_pseudo[i][l-l_min][r-r_min] < desired_closeness, desired_closeness );
 //         }
         
         

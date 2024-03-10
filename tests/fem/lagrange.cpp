@@ -242,6 +242,10 @@ int main( int argc, char *argv[] )
                 M1.uniformrefinement();
                 M2.uniformrefinement();
                 M3.uniformrefinement();
+        
+                M1.shake_interior_vertices();
+                M2.shake_interior_vertices();
+                M3.shake_interior_vertices();
 
             }
         
@@ -302,7 +306,7 @@ int main( int argc, char *argv[] )
         {
             if( not ( errors[l-l_min][d][t] < desired_closeness ) )
                 LOG << l << space << d << space << t << space << errors[l-l_min][d][t] << nl;
-            assert( errors[l-l_min][d][t] < desired_closeness );
+            Assert( errors[l-l_min][d][t] < desired_closeness, desired_closeness );
         }
         
         

@@ -189,7 +189,8 @@ int main( int argc, char *argv[] )
             M.uniformrefinement();
 
             LOG << "Distortion..." << nl;
-        
+
+            M.shake_interior_vertices();
         }
         
     } 

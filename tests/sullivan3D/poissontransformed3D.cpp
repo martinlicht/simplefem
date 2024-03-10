@@ -488,7 +488,6 @@ int main( int argc, char *argv[] )
                     VTKWriter vtk( M, fs, getbasename(__FILE__) );
                     
                     vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
-                    // vtk.writeCellVectorData_barycentricgradients( computed_grad, "gradient_interpolation" , 1.0 );
                     fs.close();
                 }
 

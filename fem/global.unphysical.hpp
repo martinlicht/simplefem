@@ -14,7 +14,7 @@
 
 SparseMatrix FEECCanonicalizeBroken( const Mesh& mesh, int n, int k, int r );
 
-SparseMatrix FEECRandomizeBroken( const Mesh& mesh, int n, int k, int r );
+SparseMatrix FEECRandomizeBroken( const Mesh& mesh, int n, int k, int r, Float base_alpha );
  
 
 #endif

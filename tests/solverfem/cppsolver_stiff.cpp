@@ -423,6 +423,7 @@ int main( int argc, char *argv[] )
                 if( l != max_l ){ 
                     LOG << "Refinement..." << nl;
                     M.uniformrefinement();
+                    M.shake_interior_vertices();
                 }
 
                 

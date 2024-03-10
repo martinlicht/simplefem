@@ -38,13 +38,16 @@ int main( int argc, char *argv[] )
 
 //             LOG << h/2.0 << space << ( foo( {0.+h,0.} ) - foo( {0.,0.} ) )[0] / h << nl << nl;
 //             LOG << h/2.0 << space << ( 2 * foo( {0.,0.} ) - foo( {0.+h,0.} ) - foo( {0.-h,0.} ) )[0] / (h*h) << nl;
+            
+            auto ext = foo.exteriorderivative(h)(point);
+            
+            auto extext = foo.exteriorderivative(h).exteriorderivative(h)( FloatVector({2., 3.}) );
 
-            LOG << foo( point ) << space << foo.exteriorderivative(h)(point) << space << bar( point ) << nl;
+            LOG << foo( point ) << nl << ext << nl << bar( point ) << nl;
 
-            LOG << foo.exteriorderivative(h).exteriorderivative(h)( FloatVector({2., 3.}) ) << nl;
+            LOG << extext << nl;
         
         }
-        
         
         {
             

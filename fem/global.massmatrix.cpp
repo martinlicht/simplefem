@@ -53,6 +53,8 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
         
         Float measure      = mesh.getMeasure( n, s );
 
+        assert( measure >= 0. );
+
         DenseMatrix GPM    = mesh.getGradientProductMatrix( n, s );
         // DenseMatrix GPM    = calcAtA( mesh.getGradientMatrix( n, s ) );
             
@@ -65,18 +67,138 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
             LOG << ( GPM - AtA ).norm() << nl;
             assert( ( GPM - AtA ).is_numerically_small() );
         }
-        
-        
+
+        // if(false)
+        {
+            DenseMatrix rankone = IdentityMatrix(n+1) - DenseMatrix( n+1,n+1, 1./(n+1) );
+
+            const DenseMatrix foo = Transpose(rankone) * GPM * rankone;
+
+            const DenseMatrix delta = GPM - foo;
+
+            Assert( delta.is_numerically_small(), GPM, foo );
+
+            // LOGPRINTF("%.15Le\n", (long double)delta.sumnorm() );
+
+            // GPM = foo;
+        }
+
         DenseMatrix formMM = SubdeterminantMatrix( GPM, k );
+
+        {
+            const DenseMatrix Jac = mesh.getTransformationJacobian( n, s );
+
+            DenseMatrix multiplier( n, n+1, 0. );
+            for( int i = 0; i <  n; i++ ) {
+                multiplier(i,i+1) =  1.;
+                multiplier(i,  0) = -1.;
+            }
+
+            // if(false)
+            {
+                const DenseMatrix middle = Inverse( Transpose(Jac) * Jac );
+
+                const DenseMatrix middle_minors = SubdeterminantMatrix( middle, k );
+
+                const DenseMatrix multiplier_minors = SubdeterminantMatrix( multiplier, k );
+
+                // LOG << multiplier_minors << nl;
+
+                const DenseMatrix foo = Transpose(multiplier_minors) * middle_minors * multiplier_minors;
+
+                const DenseMatrix delta = formMM - foo;
+
+                Assert( delta.is_numerically_small(), formMM, foo );
+
+                // LOGPRINTF("%.15Le\n", (long double)delta.sumnorm() );
+
+                // formMM = foo;
+            }
+            
+            // if(false)
+            {
+                DenseMatrix R( Jac.getdimin() );
+                DenseMatrix Q( Jac.getdimout(), Jac.getdimin() );
+                QRFactorization( Jac, Q, R );
+
+                const DenseMatrix Rinv = Inverse(R);
+                const DenseMatrix Rinvt = Transpose(Rinv);
+        
+                const DenseMatrix minors = SubdeterminantMatrix( Rinvt * multiplier, k );
+
+                const DenseMatrix foo = Transpose(minors) * minors;
+
+                const DenseMatrix delta = formMM - foo;
+
+                Assert( delta.is_numerically_small(), formMM, foo );
+
+                // LOGPRINTF("%.15Le\n", (long double)delta.sumnorm() );
+                
+                // formMM = foo;
+            }
+
+            // if(false)
+            {
+                DenseMatrix rankone = IdentityMatrix(n+1) - DenseMatrix( n+1,n+1, 1./(n+1) );
+
+                DenseMatrix rankone_minors = SubdeterminantMatrix(rankone,k);
+
+                const DenseMatrix foo = Transpose(rankone_minors) * formMM * rankone_minors;
+
+                const DenseMatrix delta = formMM - foo;
+
+                Assert( delta.is_numerically_small(), formMM, foo );
+
+                // LOGPRINTF("%.15Le\n", (long double)delta.sumnorm() );
+
+                // formMM = foo;
+            }
+        }
+        
+        
+        if(false)
+        { // This does have an effect somewhere ...
+            DenseMatrix Aux1( n+1, n+1, 0. );
+            for( int i = 1; i <= n; i++ ) {
+                Aux1(i,i) = 1.;
+                Aux1(i,0) = -1.;
+            }
+            
+            const DenseMatrix Aux2 = SubdeterminantMatrix( Aux1, k );
+
+            const DenseMatrix foo = formMM;
+
+            // formMM = Transpose(Aux2) * formMM * Aux2;
+
+            const DenseMatrix delta = formMM - foo;
+
+            Assert( delta.is_numerically_small(), formMM, foo );
+        }
         
         DenseMatrix fullMM = MatrixTensorProduct( polyMM, formMM ) * measure;
 
-        assert( measure >= 0. );
+        if(false)
+        { // This does have an effect somewhere ...
+            DenseMatrix Aux1( n+1, n+1, 0. );
+            for( int i = 1; i <= n; i++ ) {
+                Aux1(i,i) = 1.;
+                Aux1(i,0) = -1.;
+            }
+            
+            const DenseMatrix Aux2 = MatrixTensorProduct( IdentityMatrix(polyMM.getdimin()), SubdeterminantMatrix( Aux1, k ) );
 
-        if( k == 0 )
-        {
-            assert( ( fullMM - polyMM * measure ).is_numerically_small() );
+            const DenseMatrix foo = fullMM;
+
+            // fullMM = Transpose(Aux2) * fullMM * Aux2;
+
+            const DenseMatrix delta = fullMM - foo;
+
+            Assert( delta.is_numerically_small(), fullMM, foo );
+
+            // LOGPRINTF( "delta %.10e\n", delta.maxnorm() );
         }
+        
+        assert( k != 0 or ( fullMM - polyMM * measure ).is_numerically_small() );
         
         for( int i = 0; i < localdim; i++ )
         for( int j = 0; j < localdim; j++ )
@@ -90,8 +212,6 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
             
             ret.setentry( index_of_entry, entry );
         }
-        
-        
         
     }
     

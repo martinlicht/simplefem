@@ -27,7 +27,7 @@ int main( int argc, char *argv[] )
 
         LOG << "Initial mesh..." << nl;
         
-        MeshSimplicial2D M = StandardSquare2D();
+        MeshSimplicial2D M = StandardSquare2D_strange14();
         
         M.check();
         
@@ -61,7 +61,7 @@ int main( int argc, char *argv[] )
         
         const int l_max = 2; // TODO set this value back to 4
         
-        const int r_plus_max = 3;
+        const int r_plus_max = 2;
          
         Float errors[ M.getinnerdimension() ][ l_max - l_min + 1 ][ r_max - r_min + 1 ][ r_plus_max + 1 ];
         
@@ -93,18 +93,23 @@ int main( int argc, char *argv[] )
                 
                 
                 
-                FloatVector interpol_function = Interpolation( M, M.getinnerdimension(), k, r, fields[k] );
+                // FloatVector interpol_function = Interpolation( M, M.getinnerdimension(), k, r, fields[k] );
+
+                FloatVector interpol_function = lower_diffmatrix.createinputvector();
+                interpol_function.random();
 
                 auto path1 = dier_elevation * lower_diffmatrix * interpol_function;
 
                 auto path2 = upper_diffmatrix * diyi_elevation * interpol_function;
 
 
+//                 SparseMatrix canon = FEECRandomizeBroken( M, M.getinnerdimension(), k+1, r + r_plus - 1, notanumber );
                 SparseMatrix canon = FEECCanonicalizeBroken( M, M.getinnerdimension(), k+1, r + r_plus - 1 );
-
-
                 auto commutator_error = canon * ( path1 - path2 );
                 
+                // auto commutator_error = path2 - path1;
+                
+                // Float commutator_error_mass = commutator_error * ( massmatrix * ((path2-path1)) );
                 Float commutator_error_mass = commutator_error * ( massmatrix * commutator_error );
 
                 assert( std::isfinite( commutator_error_mass ) );
@@ -120,6 +125,8 @@ int main( int argc, char *argv[] )
                 LOG << "Refinement..." << nl;
             
                 M.uniformrefinement();
+
+                M.shake_interior_vertices();
             }
             
             
@@ -173,7 +180,7 @@ int main( int argc, char *argv[] )
         for( int r_plus =     0; r_plus <=      r_plus_max; r_plus++ ) 
         for( int i      =     0; i < M.getinnerdimension(); i++      ) 
         {
-            assert( errors[i][l-l_min][r-r_min][r_plus] < desired_closeness );
+            Assert( errors[i][l-l_min][r-r_min][r_plus] < desired_closeness, desired_closeness );
         }
             
         

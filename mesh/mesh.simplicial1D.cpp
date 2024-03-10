@@ -364,6 +364,12 @@ bool MeshSimplicial1D::has_subsimplices_listed( int sup, int sub ) const
 
 IndexMap MeshSimplicial1D::getsubsimplices( int sup, int sub, int cell ) const
 {
+  assert( 0 <= sub && sub <= sup && sup <= 1 );
+  assert( 0 <= cell );
+  if( sup == 0 ) assert( cell <= count_vertices() );
+  if( sup == 1 ) assert( cell <= count_edges()    );
+  
+  
   if( sup == 0 && sub == 0 ) {
     
     assert( 0 <= cell && cell < count_vertices() );

@@ -22,8 +22,7 @@ int main( int argc, char *argv[] )
         
         const std::vector<IndexMap>  all = generateEmptyMap( from, targ );
         
-        for( const IndexMap& im : all )
-                LOG << im << nl;
+        for( const IndexMap& im : all ) LOG << im << nl;
 
         assert( all.size() == 1 );
         
@@ -39,8 +38,7 @@ int main( int argc, char *argv[] )
         IndexRange bereich( 1,3 );
         std::vector<IndexMap> all = generateIndexMaps( bereich, bereich );
 
-        for( const IndexMap& im : all )
-                LOG << im << nl;
+        for( const IndexMap& im : all ) LOG << im << nl;
 
         assert( all.size() == 27 );
         
@@ -56,8 +54,7 @@ int main( int argc, char *argv[] )
         IndexRange bereich( 1,3 );
         std::vector<IndexMap>  all = generatePermutations( bereich );
 
-        for( const IndexMap& im : all )
-                LOG << im << nl << "signum: " << signPermutation( im ) << nl;
+        for( const IndexMap& im : all ) LOG << im << nl << "signum: " << signPermutation( im ) << nl;
         
         assert( all.size() == 6 );
         
@@ -74,8 +71,7 @@ int main( int argc, char *argv[] )
         IndexRange targ( 2,5 );
         std::vector<IndexMap>  all = generateSigmas( from, targ );
 
-        for( const IndexMap& im : all )
-                LOG << im << nl;
+        for( const IndexMap& im : all ) LOG << im << nl;
         
         assert( all.size() == 4 );
         
@@ -117,8 +113,7 @@ int main( int argc, char *argv[] )
                 if( i != j )
                     assert( all[i] != all[j] );
             
-            for( const IndexMap& im : all )
-                LOG << im << nl;
+            for( const IndexMap& im : all ) LOG << im << nl;
             
         }
         
@@ -152,8 +147,7 @@ int main( int argc, char *argv[] )
                     assert( all[i] != all[j] );
             
             // print their signa
-            for( const IndexMap& im : all )
-                    LOG << im << nl << "signum: " << signPermutation( im ) << nl;
+            for( const IndexMap& im : all ) LOG << im << nl << "signum: " << signPermutation( im ) << nl;
             
             // count the even permutations 
             int number_of_even_permutations = 0;
@@ -230,14 +224,51 @@ int main( int argc, char *argv[] )
                 
             }
             
-            for( const IndexMap& sigma : all )
-                LOG << sigma << nl;
+            for( const IndexMap& sigma : all ) LOG << sigma << nl;
             
         }
         
         LOG << "Tested" << nl;
             
     }
+    
+    if(true)
+    {
+        
+        LOG << "Testing generator for sigmas in 2D:" << nl;
+        
+        const std::vector<IndexRange> sources = { IndexRange(1,1), IndexRange(1,2) };
+        const IndexRange target( 0,2 );
+        
+        for( auto source : sources ) 
+        {
+            std::vector<IndexMap> sigmas = generateSigmas( source, target );
+            for( const IndexMap& im : sigmas ) LOG << im << nl;
+            assert( sigmas.size() == binomial_integer( 3, source.max() ) );
+        }
+        LOG << "Tested" << nl;
+        
+    }
+    
+    if(true)
+    {
+        
+        LOG << "Testing generator for sigmas in 3D:" << nl;
+        
+        const std::vector<IndexRange> sources = { IndexRange(1,1), IndexRange(1,2), IndexRange(1,3) };
+        const IndexRange target( 0,3 );
+        
+        for( auto source : sources ) 
+        {
+            std::vector<IndexMap> sigmas = generateSigmas( source, target );
+            for( const IndexMap& im : sigmas ) LOG << im << nl;
+            assert( sigmas.size() == binomial_integer( 4, source.max() ) );
+        }
+        LOG << "Tested" << nl;
+        
+    }
+    
+    
     
     LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
     

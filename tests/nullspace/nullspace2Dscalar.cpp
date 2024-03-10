@@ -281,7 +281,7 @@ int main( int argc, char *argv[] )
                     
                     LOG << "How much nullspace are our vectors?" << nl;
                     for( const auto& nullvector : nullvectorgallery ) {
-                        LOGPRINTF( "% 10.5e\t", ( SystemMatrix * nullvector ).norm(mass) );
+                        LOGPRINTF( "% 10.5Le\t", (long double)( SystemMatrix * nullvector ).norm(mass) );
                         // LOG << std::showpos << std::scientific << std::setprecision(5) << std::setw(10) << ( SystemMatrix * nullvector ).norm(mass) << tab;
                     }
                     LOG << nl;
@@ -292,7 +292,7 @@ int main( int argc, char *argv[] )
                             auto nullvector1 = nullvectorgallery[n1];
                             auto nullvector2 = nullvectorgallery[n2];
                             Float mass_prod = mass * nullvector1 * nullvector2;
-                            LOGPRINTF( "% 10.5e\t", mass_prod );
+                            LOGPRINTF( "% 10.5Le\t", (long double)mass_prod );
                             if( n1 != n2 ) assert( is_numerically_small( mass_prod ) );
                             
                         }

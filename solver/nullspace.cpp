@@ -94,14 +94,15 @@ std::vector<FloatVector> computeNullspace(
     
     LOG << "How much nullspace are our vectors? (" << tolerance_residual << ")" << nl;
     for( const auto& nullvector : nullvectorgallery ) {
-        LOGPRINTF( "% 10.5e\t", ( SystemMatrix * nullvector ).norm( MassMatrix ) );
+        LOGPRINTF( "% 10.5Le\t", (long double)( SystemMatrix * nullvector ).norm( MassMatrix ) );
     }
     LOG << nl;
     
     LOG << "How orthonormal are our vectors?" << nl;
     for( const auto& nullvector1 : nullvectorgallery ) {
         for( const auto& nullvector2 : nullvectorgallery ) {
-            LOGPRINTF( "% 10.5e\t", MassMatrix * nullvector1 * nullvector2 );
+            Float mass_prod = ( MassMatrix * nullvector1) * nullvector2;
+            LOGPRINTF( "% 10.5Le\t", (long double)mass_prod );
         }
         LOG << nl;
     }

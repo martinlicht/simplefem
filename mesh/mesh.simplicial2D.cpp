@@ -828,6 +828,11 @@ bool MeshSimplicial2D::has_subsimplices_listed( int sup, int sub ) const
 
 IndexMap MeshSimplicial2D::getsubsimplices( int sup, int sub, int cell ) const
 {
+  assert( 0 <= sub && sub <= sup && sup <= 2 );
+  assert( 0 <= cell );
+  if( sup == 0 ) assert( cell <= count_vertices()  );
+  if( sup == 1 ) assert( cell <= count_edges()     );
+  if( sup == 2 ) assert( cell <= count_triangles() );
   
   if( sup == 2 && sub == 2 ) {
     

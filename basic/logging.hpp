@@ -125,7 +125,7 @@ class Logger //: public std::ostringstream
         typename std::enable_if<std::is_floating_point<T>::value, Logger&>::type
         operator<<( T input ) {
             char buffer[ std::numeric_limits<float>::max_digits10 + std::numeric_limits<float>::max_exponent10 + 10 + 1];
-            std::snprintf( buffer, sizeof(buffer), "%g", input );
+            std::snprintf( buffer, sizeof(buffer), "%Lg", (long double)input );
             internal += buffer;
             return *this;
         }

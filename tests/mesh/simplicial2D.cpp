@@ -2,6 +2,7 @@
 #include <cstdio>
 
 #include <fstream>
+#include <sstream>
 
 #include "../../basic.hpp"
 #include "../../utility/files.hpp"

@@ -198,6 +198,7 @@ DenseMatrix EvaluateField(
     assert( 0 <= outerdim );
     assert( 0 <= k && k <= outerdim );
     assert( lagrangepoints_eucl.getdimout() == outerdim );
+    assert( lagrangepoints_eucl.isfinite() );
     
     const auto fielddim = binomial_integer(outerdim,k);
     
@@ -208,8 +209,12 @@ DenseMatrix EvaluateField(
     for( int p = 0; p < number_of_evaluation_points; p++ )
     {
         const auto evaluation_point = lagrangepoints_eucl.getcolumn(p);
+
+        assert( evaluation_point.isfinite() );
         
         const auto value = field( evaluation_point );
+        
+        Assert( value.isfinite(), evaluation_point, value );
         
         assert( value.getdimension() == binomial_integer( outerdim, k ) );
         

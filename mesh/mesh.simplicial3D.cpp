@@ -1645,6 +1645,12 @@ bool MeshSimplicial3D::has_subsimplices_listed( int sup, int sub ) const
 
 IndexMap MeshSimplicial3D::getsubsimplices( int sup, int sub, int cell ) const
 {
+  assert( 0 <= sub && sub <= sup && sup <= 3 );
+  assert( 0 <= cell );
+  if( sup == 0 ) assert( cell <= count_vertices()   );
+  if( sup == 1 ) assert( cell <= count_edges()      );
+  if( sup == 2 ) assert( cell <= count_faces()      );
+  if( sup == 3 ) assert( cell <= count_tetrahedra() );
   
   if( sup == 3 && sub == 3 ) {
     

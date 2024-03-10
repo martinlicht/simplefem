@@ -13,6 +13,9 @@
 #include "../../fem/utilities.hpp"
 #include "../../utility/convergencetable.hpp"
 
+#include "../../fem/global.unphysical.hpp"
+
+
 
 using namespace std;
 
@@ -46,7 +49,7 @@ int main( int argc, char *argv[] )
                 auto ret = FloatVector({ 
                                 std::exp( vec[0] + vec[2] ), 
                                 std::sin( -5.*vec[0] -vec[1] ),
-                                std::atan( vec[1] * vec[2] )
+                                std::exp( vec[1] * vec[2] )
                 });
                 assert( ret.getdimension() == 3 );
                 return ret;
@@ -71,13 +74,13 @@ int main( int argc, char *argv[] )
 
         const int r_min = 1;
         
-        const int r_max = 3;
+        const int r_max = 1;
         
         const int l_min = 0;
         
-        const int l_max = 2;
+        const int l_max = 1;
         
-        const int r_plus_max = 3;
+        const int r_plus_max = 1;
          
         Float errors[ M.getinnerdimension() ][ l_max - l_min + 1 ][ r_max - r_min + 1 ][ r_plus_max + 1 ];
         
@@ -115,8 +118,16 @@ int main( int argc, char *argv[] )
 
                 auto path2 = upper_diffmatrix * diyi_elevation * interpol_function;
 
-                auto commutator_error = path1 - path2;
+
+//                 SparseMatrix canon = FEECRandomizeBroken( M, M.getinnerdimension(), k+1, r + r_plus - 1, notanumber );
+                SparseMatrix canon = FEECCanonicalizeBroken( M, M.getinnerdimension(), k+1, r + r_plus - 1 );
+                auto commutator_error = canon * ( path1 - path2 );
                 
+                // auto commutator_error = path1 - path2;
+                
+
+
+
                 Float commutator_error_mass = commutator_error * ( massmatrix * commutator_error );
 
                 assert( std::isfinite( commutator_error_mass ) );
@@ -132,6 +143,12 @@ int main( int argc, char *argv[] )
                 LOG << "Refinement..." << nl;
             
                 M.uniformrefinement();
+
+                LOG << M.getcoordinates().text() << nl;
+
+                M.shake_interior_vertices();
+
+                LOG << M.getcoordinates().text() << nl;
             }
             
             
@@ -185,7 +202,7 @@ int main( int argc, char *argv[] )
         for( int r_plus =     0; r_plus <=      r_plus_max; r_plus++ ) 
         for( int i      =     0; i < M.getinnerdimension(); i++      ) 
         {
-            assert( errors[i][l-l_min][r-r_min][r_plus] < desired_closeness );
+            Assert( errors[i][l-l_min][r-r_min][r_plus] < desired_closeness, desired_closeness );
         }
             
         

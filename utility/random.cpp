@@ -6,22 +6,23 @@
 
 
 #ifdef _OPENMP 
-static thread_local std::default_random_engine randomized(0);
+static thread_local std::default_random_engine random_engine(0);
 #else 
-static              std::default_random_engine randomized(0);
+static              std::default_random_engine random_engine(0);
 #endif
+static thread_local std::uniform_int_distribution<int> distribution(0, std::numeric_limits<int>::max());
 
 void seed_random_integer()
 {
     // srand(0);
-    randomized.seed(0);
+    random_engine.seed(0);
 }
 
 unsigned int random_integer()
 {
     // int ret = rand();
-    unsigned int ret = randomized();
-    Assert( 0 <= ret and ret <= RAND_MAX );
+    unsigned int ret = distribution( random_engine );
+    Assert( 0 <= ret and ret <= std::numeric_limits<int>::max() );
     return ret;
 }
 
@@ -35,7 +36,8 @@ unsigned int flip_coin( Float prob_zero )
 
 Float random_uniform()
 {
-    Float ret = static_cast<Float>( rand() ) / static_cast<Float>( RAND_MAX );
+    // Float ret = static_cast<Float>( rand() ) / static_cast<Float>( RAND_MAX );
+    Float ret = static_cast<Float>( random_integer() ) / std::numeric_limits<int>::max();
     Assert( 0. <= ret and ret <= 1. );
     return ret;
 }

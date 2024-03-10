@@ -362,12 +362,8 @@ int main( int argc, char *argv[] )
 
                 if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
 
-                contable.lg();
-        
             } 
             
-            contable.lg();
-        
         }
         
         LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
