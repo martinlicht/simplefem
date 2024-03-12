@@ -46,8 +46,6 @@ SparseMatrix FEECCanonicalizeBroken( const Mesh& mesh, int n, int k, int r )
     //     Aux1(i,0) = -1.;
     // }
     DenseMatrix Aux1 = IdentityMatrix(n+1) - DenseMatrix( n+1, n+1, 1./(n+1) );
-    
-    
     const DenseMatrix Aux2 = SubdeterminantMatrix( Aux1, k );
 
     assert( Aux2.issquare() and Aux2.getdimout() == form_size );

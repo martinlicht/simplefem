@@ -49,6 +49,8 @@ class DenseMatrix final
         explicit DenseMatrix( const SparseMatrix& );
         explicit DenseMatrix( const FloatVector& );
                 
+        DenseMatrix( int number_of_blocks, const DenseMatrix& mat, Float scaling );
+
         explicit DenseMatrix( const DenseMatrix&, Float scaling );
         explicit DenseMatrix( DenseMatrix&&, Float scaling );
 
