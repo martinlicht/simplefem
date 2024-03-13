@@ -214,12 +214,12 @@ int main( int argc, char *argv[] )
 
                     candidate /= sqrt(candidate_M_product); // Optional step
 
-                    LOG << "current ratio : " << newratio << " (" << t << "/" << max_inverseiterations << ")" << nl;
+                    LOG << "current ratio: " << newratio << " (" << t << "/" << max_inverseiterations << ")" << nl;
 
                     Float u_residualmass_sq   = ( A * sol + Bt * aux - rhs_sol ).norm_sq(); // ( vector_incmatrix_t * vector_massmatrix * vector_incmatrix ); 
                     Float aux_residualmass_sq = ( B * sol            - rhs_aux ).norm_sq(); // ( pseudo_incmatrix_t * pseudo_massmatrix * pseudo_incmatrix ); 
                     
-                    LOG << "current residuals : " << u_residualmass_sq << tab << aux_residualmass_sq << nl;
+                    LOG << "current residuals: " << u_residualmass_sq << tab << aux_residualmass_sq << nl;
 
                     
                 }
@@ -230,7 +230,7 @@ int main( int argc, char *argv[] )
 
                 LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                 
-                LOG << "...compute error and residual:" << nl;
+                LOG << "...compute error and residual" << nl;
 
                 auto sol = candidate; 
 

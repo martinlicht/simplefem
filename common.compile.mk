@@ -1054,6 +1054,7 @@ else
 endif
 endif
 
+# LINKINGTYPE:=static
 
 
 

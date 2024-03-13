@@ -207,7 +207,7 @@ int main( int argc, char *argv[] )
                         
                         assert( sol.isfinite() );
 
-                        LOG << "...compute error and residual:" << nl;
+                        LOG << "...compute residual" << nl;
 
                         Float residualnorm = ( rhs - B * inv(A,desired_precision) * Bt * sol - C * sol ).norm();
 

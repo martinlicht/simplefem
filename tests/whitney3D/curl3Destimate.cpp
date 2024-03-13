@@ -222,12 +222,12 @@ int main( int argc, char *argv[] )
 
                     candidate /= sqrt(candidate_M_product); // Optional step
 
-                    LOG << "current ratio : " << newratio << " (" << t << "/" << max_inverseiterations << ")" << nl;
+                    LOG << "current ratio: " << newratio << " (" << t << "/" << max_inverseiterations << ")" << nl;
 
                     Float u_residualmass_sq   = ( A * sol + Bt * aux - rhs_sol ).norm_sq(); // ( scalar_incmatrix_t * scalar_massmatrix * scalar_incmatrix ); 
                     Float aux_residualmass_sq = ( B * sol            - rhs_aux ).norm_sq(); // ( vector_incmatrix_t * vector_massmatrix * vector_incmatrix ); 
                     
-                    LOG << "current residuals : " << u_residualmass_sq << tab << aux_residualmass_sq << nl;
+                    LOG << "current residuals: " << u_residualmass_sq << tab << aux_residualmass_sq << nl;
 
                     
                 }
@@ -238,7 +238,7 @@ int main( int argc, char *argv[] )
 
                 LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                 
-                LOG << "...compute error and residual:" << nl;
+                LOG << "...compute error and residual" << nl;
 
                 auto sol = candidate; 
 
@@ -247,11 +247,11 @@ int main( int argc, char *argv[] )
                 Float curratio       = ucurl_massnorm / u_massnorm;
                 Float u_defectmass   = ( B * sol ).norm_sq( scalar_incmatrix_t * scalar_massmatrix * scalar_incmatrix ); 
                 
-                LOG << "ratio:           " << newratio << nl;
-                LOG << "ratio:           " << curratio << nl;
-                LOG << "u mass:          " << u_massnorm << nl;
-                LOG << "u curl mass      " << ucurl_massnorm << nl;
-                LOG << "u defect mass:   " << u_defectmass << nl;
+                LOG << "ratio:         " << newratio << nl;
+                LOG << "ratio:         " << curratio << nl;
+                LOG << "u mass:        " << u_massnorm << nl;
+                LOG << "u curl mass    " << ucurl_massnorm << nl;
+                LOG << "u defect mass: " << u_defectmass << nl;
                 
                 const Float true_eigenvalue = 2.; // 3.0 is the true value 
 

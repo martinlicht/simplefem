@@ -33,10 +33,12 @@
 
 using namespace std;
 
+const Float mass_threshold_for_small_vectors = 1e-6;
+
 int main( int argc, char *argv[] )
 {
         
-        LOG << "Unit Test: Compare numerical solvers CRM vs MINRES\n           for Solution of Dirichlet Problem" << nl;
+        LOG << "Unit Test: Nullspace computation (2D) Hodge-Laplacian" << nl;
         
         // LOG << std::setprecision(10);
 
@@ -73,7 +75,7 @@ int main( int argc, char *argv[] )
 
             ConvergenceTable contable("Number of nullvectors");
             
-            contable << "#nullvec";
+            contable << "#nullvec" << nl;
             
 
             const int min_l = 0; 
@@ -150,7 +152,7 @@ int main( int argc, char *argv[] )
                     
                     auto Z  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
                     
-                    auto SystemMatrix = C + B * inv(A,desired_precision, 1) * Bt;
+                    auto SystemMatrix = C + B * inv(A,desired_precision, -1) * Bt;
                     
                     
                     
@@ -168,16 +170,33 @@ int main( int argc, char *argv[] )
                         candidate.random(); 
                         candidate.normalize(mass);
                         
+                        {
+                            for( int s = 0; s < 2; s++ )
+                            for( const auto& nullvector : nullvectorgallery ) {
+                                Float alpha = (mass*candidate*nullvector) / (mass*nullvector*nullvector);
+                                candidate = candidate - alpha * nullvector;
+                            }
+                            
+                            Float reduced_mass = candidate.norm(mass);
+                            LOG << "\t\t\t Preprocessed mass: " << reduced_mass << nl;
+                            
+                            if( reduced_mass < mass_threshold_for_small_vectors ) {
+                                LOG << "**** The candidate already has very small mass" << nl;
+//                                 continue;
+                            }
+                        }
+                        
+                        
                         /* reduce the candidate to its nullspace component */
                         {
-                            FloatVector rhs( Bt.getdimin(), 0. );
+                            const FloatVector rhs( Bt.getdimin(), 0. );
                         
                             FloatVector residual( rhs );
                             
                             for( int t = 0; t < max_number_of_purifications; t++ )
                             {
                                 
-                                auto X = B * inv(A,desired_precision) * Bt + C;
+                                const auto& X = SystemMatrix;
 
                                 HodgeConjugateResidualSolverCSR_SSOR(
                                     B.getdimout(), 
@@ -233,8 +252,6 @@ int main( int argc, char *argv[] )
                                 LOG << "\t\t\t (norm eucl) Ax:        " << ( X * candidate ).norm() << nl;
                                 LOG << "\t\t\t (norm mass) Ax:        " << ( X * candidate ).norm( mass ) << nl;
                                 
-                                
-                                
                             }
                         }
                         
@@ -250,7 +267,7 @@ int main( int argc, char *argv[] )
                         Float reduced_mass = candidate.norm(mass);
                         LOG << "\t\t\t Reduced mass: " << reduced_mass << nl;
                         
-                        if( reduced_mass < 1e-6 ) {
+                        if( reduced_mass < mass_threshold_for_small_vectors ) {
                             LOG << "!!!!!!!!!!!!!Discard vector because mass is too small!" << nl;
                             continue;
                         }
@@ -261,7 +278,7 @@ int main( int argc, char *argv[] )
                         
                         LOG << "\t\t\t Numerical residual: " << residual_mass << nl;
                         
-                        if( residual_mass > 1e-6 ) {
+                        if( residual_mass > mass_threshold_for_small_vectors ) {
                             LOG << "!!!!!!!!!!!!!Discard vector because not nullspace enough!" << nl;
                             continue;
                         }
@@ -279,7 +296,8 @@ int main( int argc, char *argv[] )
                     LOG << "How much nullspace are our vectors?" << nl;
                     for( const auto& nullvector : nullvectorgallery ) {
                         Float mass_norm = ( SystemMatrix * nullvector ).norm(mass);
-                        assert( is_numerically_small( mass_norm ) );
+                        Assert( mass_norm < mass_threshold_for_small_vectors, mass_norm, mass_threshold_for_small_vectors );
+                        // LOGPRINTF( "% 10.5Le\t", (long double)mass_norm );
                         LOG << mass_norm << tab;
                     }
                     LOG << nl;
@@ -290,6 +308,7 @@ int main( int argc, char *argv[] )
                             auto nullvector1 = nullvectorgallery[n1];
                             auto nullvector2 = nullvectorgallery[n2];
                             Float mass_prod = mass * nullvector1 * nullvector2;
+                            // LOGPRINTF( "% 10.5Le\t", (long double)mass_prod );
                             LOG << mass_prod << tab;
                             if( n1 != n2 ) assert( is_numerically_small( mass_prod ) );
                             
@@ -312,8 +331,6 @@ int main( int argc, char *argv[] )
                         fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
             
                         VTKWriter vtk( M, fs, getbasename(__FILE__) );
-                        // vtk.writeCoordinateBlock();
-                        // vtk.writeTopDimensionalCells();
 
                         auto reduced_nullvector = interpol_matrix * vector_incmatrix * nullvector;
 

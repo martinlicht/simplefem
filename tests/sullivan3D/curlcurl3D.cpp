@@ -340,7 +340,7 @@ int main( int argc, char *argv[] )
 
             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
             
-            LOG << "...compute error and residual:" << nl;
+            LOG << "...compute error and residual" << nl;
 
             auto errornorm_aux_sol  = interpol_sol  - vector_elevmatrix * vector_incmatrix * sol;
             auto errornorm_aux_curl = interpol_curl - pseudo_elevmatrix * vector_diffmatrix * vector_incmatrix * sol;

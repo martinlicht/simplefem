@@ -183,7 +183,6 @@ int main( int argc, char *argv[] )
                     FloatVector rhs = volume_incmatrix_t * ( volume_massmatrix * volume_elevationmatrix * interpol_rhs );
 
                     FloatVector sol( volume_incmatrix.getdimin(), 0. );
-                    sol.zero();
 
                     LOG << "...iterative solver" << nl;
                     
@@ -214,7 +213,7 @@ int main( int argc, char *argv[] )
                     timestamp end = timestampnow();
                     LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
 
-                    LOG << "...compute error and residual:" << nl;
+                    LOG << "...compute error and residual" << nl;
 
                     auto grad = inv(A,desired_precision) * Bt * sol;
 

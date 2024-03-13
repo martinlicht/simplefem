@@ -238,7 +238,7 @@ int main( int argc, char *argv[] )
                                         
                     auto grad = x_A; // inv(A,desired_precision) * Bt * sol;
 
-                    LOG << "...compute error and residual:" << nl;
+                    LOG << "...compute error and residual" << nl;
 
                     auto errornorm_aux_sol  = volume_elevationmatrix * interpol_sol  - volume_incmatrix *  sol;
                     auto errornorm_aux_grad = interpol_grad - vector_incmatrix * grad;
