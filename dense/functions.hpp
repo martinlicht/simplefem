@@ -57,6 +57,8 @@ Float Determinant_laplaceexpansion( const DenseMatrix& );
 
 Float Determinant_gauss( DenseMatrix );
 
+Float Determinant_bareiss( DenseMatrix A );
+
 void Inverse_CramersRule_InSitu( DenseMatrix& );
 
 void Inverse_gauss_InSitu( DenseMatrix&, bool pivoting = true );

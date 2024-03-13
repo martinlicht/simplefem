@@ -123,10 +123,10 @@ int main() {
   pthread_join(id_print, nullptr);
   pthread_join(id_read, nullptr);
 
-  return 0;
   
 #endif 
 
+  return 0;
 }
 
 

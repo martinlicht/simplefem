@@ -8,7 +8,7 @@ bool log_has_a_fresh_line = true;
 #include <cstdio>
 #include <ctime>
 
-
+#include <float.h> 
 
 enum class TextColors : unsigned char
 {
@@ -231,6 +231,13 @@ void System_Reporter::output()
     #else
     #error "Unknown platform"
     #endif
+
+
+    #if false and defined(_WIN32)
+    LOGPRINTF("###\tFlushing subnormal numbers\n");
+    _controlfp_s( nullptr, _DN_FLUSH, _MCW_DN ); // Flush denormals to zero, both operands and results 
+    #endif
+
 }
 
 System_Reporter  omp_reporter;

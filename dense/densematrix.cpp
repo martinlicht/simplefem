@@ -502,10 +502,19 @@ void DenseMatrix::randommatrix()
 void DenseMatrix::randomintegermatrix( int min, int max )
 {
     check();
+    assert( min < max );
     assert( min+2 <= max );
+    unsigned long int diff = max - min;
+    assert( diff+1 > 0 );
+    LOG << diff << nl << max << nl << min << nl;
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin(); c++ )
-        (*this)(r,c) = min + random_integer() % (max-min);
+    {
+        unsigned int random_int = random_integer();
+        Float value = random_int % (diff+1) + (Float)min; // force the addition to be floating-point, avoid unsigned arithmetic
+        (*this)(r,c) = value;
+    }
+        
 }
 
 void DenseMatrix::scale( Float s )
