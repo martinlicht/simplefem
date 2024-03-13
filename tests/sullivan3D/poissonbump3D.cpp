@@ -159,15 +159,13 @@ int main( int argc, char *argv[] )
                         FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r-1, function_grad );
                         FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r,   function_rhs  );
                         
-                        LOG << "...compute norms of solution and right-hand side:" << nl;
+                        LOG << "...compute norms of solution and right-hand side" << nl;
             
                         Float sol_norm = interpol_sol * ( scalar_massmatrix * interpol_sol );
                         Float rhs_norm = interpol_rhs * ( scalar_massmatrix * interpol_rhs );
                         
                         LOG << "solution norm: " << sol_norm << nl;
                         LOG << "rhs norm:      " << rhs_norm << nl;
-
-                        LOG << "...create RHS vector" << nl;
 
                         FloatVector rhs = incmatrix_t * ( scalar_massmatrix * interpol_rhs );
 
@@ -186,7 +184,7 @@ int main( int argc, char *argv[] )
                         timestamp end = timestampnow();
                         LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
 
-                        LOG << "...compute error and residual:" << nl;
+                        LOG << "...compute error and residual" << nl;
             
                         
                         auto computed_sol  = incmatrix * sol;

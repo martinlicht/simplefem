@@ -72,7 +72,7 @@ $(moddir)/$($(module).objects): %.o: %.cpp $($(module).depdir)/%.d | $($(module)
 #	 @echo objects       $($(mymodule).objects) 
 #	 @echo dependencies  $($(mymodule).dependencies) 
 #	 @echo sobase        $($(mymodule).sharedlibrarybasename)
-#	 @echo liboject      $($(mymodule).libraryobject)
+#	 @echo libobject     $($(mymodule).libraryobject)
 #	 @echo so            $($(mymodule).sharedlibrary)
 #	 @echo a             $($(mymodule).staticlibrary)
 #	 @echo target:       $@
@@ -102,7 +102,7 @@ $(moddir)/.all.o: $($(module).sources) $(moddir)/.all.cpp $($(module).depdir)/.a
 #	 @echo objects       $($(mymodule).objects) 
 #	 @echo dependencies  $($(mymodule).dependencies) 
 #	 @echo sobase        $($(mymodule).sharedlibrarybasename)
-#	 @echo liboject      $($(mymodule).libraryobject)
+#	 @echo libobject     $($(mymodule).libraryobject)
 #	 @echo so            $($(mymodule).sharedlibrary)
 #	 @echo a             $($(mymodule).staticlibrary)
 #	 @echo target:       $@
@@ -110,7 +110,9 @@ $(moddir)/.all.o: $($(module).sources) $(moddir)/.all.cpp $($(module).depdir)/.a
 #	 @echo source file:  $<
 #	 @echo all prereq:   $^
 #	 @echo DEPFLAGS:     $(DEPFLAGS)
-	@echo Compiling and listing dependencies: $($(mymodule).libraryobject)
+#	 @echo Compiling and listing dependencies: $($(mymodule).libraryobject)
+#	 @echo Compiling and listing dependencies: $@
+	@echo Compiling and listing dependencies: $(mymoddir)
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(mymoddir)/.all.cpp -c -o $@  $(DEPFLAGS)
 	@touch $@
 

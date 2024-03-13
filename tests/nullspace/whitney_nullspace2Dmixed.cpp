@@ -2,9 +2,7 @@
 
 /**/
 
-#include <ostream>
 #include <fstream>
-// #include <iomanip>
 
 #include "../../basic.hpp"
 #include "../../utility/convergencetable.hpp"
@@ -18,6 +16,7 @@
 #include "../../solver/sparsesolver.hpp"
 #include "../../solver/inv.hpp"
 #include "../../solver/systemsparsesolver.hpp"
+#include "../../solver/systemsolver.hpp"
 #include "../../solver/iterativesolver.hpp"
 // #include "../../solver/cgm.hpp"
 // #include "../../solver/crm.hpp"
@@ -33,6 +32,8 @@
 
 
 using namespace std;
+
+const Float mass_threshold_for_small_vectors = 1e-6;
 
 int main( int argc, char *argv[] )
 {
@@ -74,7 +75,7 @@ int main( int argc, char *argv[] )
 
             ConvergenceTable contable("Number of nullvectors");
             
-            contable << "#nullvec";
+            contable << "#nullvec" << nl;
             
 
             const int min_l = 0; 
@@ -87,7 +88,7 @@ int main( int argc, char *argv[] )
             
             const int max_number_of_candidates = 6;
 
-            const int max_number_of_purifications = 1;
+            const int max_number_of_purifications = 2;
 
             assert( 0 <= min_l and min_l <= max_l );
             assert( 0 <= min_r and min_r <= max_r );
@@ -106,9 +107,7 @@ int main( int argc, char *argv[] )
                     
                     LOG << "Polynomial degree: " << r << "/" << max_r << nl;
                     
-                    LOG << "...assemble matrices" << nl;
-            
-                    LOG << "... assemble matrices" << nl;
+                    LOG << "...assemble partial matrices" << nl;
             
                     SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r );
                     
@@ -128,6 +127,8 @@ int main( int argc, char *argv[] )
                     SparseMatrix volume_elevationmatrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 2, r-1, 1 );
                     SparseMatrix volume_elevationmatrix_t = volume_elevationmatrix.getTranspose();
 
+                    LOG << "... assemble full matrices" << nl;
+            
                     auto physical_mass = volume_incmatrix_t * volume_massmatrix * volume_incmatrix;
 
                     auto mat_A  = vector_incmatrix_t & vector_massmatrix & vector_incmatrix;
@@ -148,7 +149,7 @@ int main( int argc, char *argv[] )
                     
                     
 //                     auto SystemMatrix = B * inv( A, 1e-10, 0 ) * Bt;
-                    const auto SystemMatrix = B * inv( A, desired_precision, 1 ) * Bt;
+                    const auto SystemMatrix = B * inv( A, desired_precision, -1 ) * Bt;
                     
                     const auto& mass = physical_mass;
                     
@@ -177,7 +178,7 @@ int main( int argc, char *argv[] )
                             Float reduced_mass = candidate.norm(mass);
                             LOG << "\t\t\t Preprocessed mass: " << reduced_mass << nl;
                             
-                            if( reduced_mass < 1e-6 ) {
+                            if( reduced_mass < mass_threshold_for_small_vectors ) {
                                 LOG << "**** The candidate already has very small mass" << nl;
 //                                 continue;
                             }
@@ -185,12 +186,41 @@ int main( int argc, char *argv[] )
                         
                         /* reduce the candidate to its nullspace component */
                         {
-                            FloatVector rhs( Bt.getdimin(), 0. );
+                            const FloatVector rhs( Bt.getdimin(), 0. );
                         
                             FloatVector residual( rhs );
                             
                             for( int t = 0; t < max_number_of_purifications; t++ )
                             {
+                                
+                                if( /* DISABLES CODE */ (false) )
+                                {
+
+                                    auto PA = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix )
+                                            + MatrixCSR( vector_incmatrix_t & diffmatrix_t & volume_elevationmatrix_t & volume_massmatrix & volume_elevationmatrix & diffmatrix & vector_incmatrix );
+                                    auto PC = MatrixCSR( volume_incmatrix_t & volume_massmatrix & volume_incmatrix );
+                    
+                                    const auto PAinv = inv(PA,desired_precision,-1);
+                                    const auto PCinv = inv(PC,desired_precision,-1);
+
+                                    FloatVector  x_A( A.getdimin(),  0. ); 
+                                    FloatVector& x_C = candidate;
+                                    
+                                    const FloatVector  b_A( A.getdimin(),  0. ); 
+                                    const FloatVector& b_C = rhs; 
+                                    
+                                    BlockHerzogSoodhalterMethod( 
+                                        x_A, 
+                                        x_C, 
+                                        b_A, 
+                                        b_C, 
+                                        -A, Bt, B, Z, 
+                                        desired_precision,
+                                        -1,
+                                        PAinv, PCinv
+                                    );
+
+                                }
                                 
                                 HodgeConjugateResidualSolverCSR_SSOR(
                                     B.getdimout(), 
@@ -202,7 +232,7 @@ int main( int argc, char *argv[] )
                                     Bt.getA(), Bt.getC(), Bt.getV(), 
                                     Z.getA(),   Z.getC(),  Z.getV(), 
                                     residual.raw(),
-                                    desired_precision, 
+                                    desired_precision,
                                     -1,
                                     desired_precision,
                                     -1
@@ -243,7 +273,7 @@ int main( int argc, char *argv[] )
                         Float reduced_mass = candidate.norm(mass);
                         LOG << "\t\t\t Reduced mass: " << reduced_mass << nl;
                         
-                        if( reduced_mass < 1e-6 ) {
+                        if( reduced_mass < mass_threshold_for_small_vectors ) {
                             LOG << "!!!!!!!!!!!!!Discard vector because mass is too small!" << nl;
                             continue;
                         }
@@ -254,7 +284,7 @@ int main( int argc, char *argv[] )
                         
                         LOG << "\t\t\t Numerical residual: " << residual_mass << nl;
                         
-                        if( false and residual_mass > 1e-6 ) {
+                        if( residual_mass > mass_threshold_for_small_vectors ) {
                             LOG << "!!!!!!!!!!!!!Discard vector because not nullspace enough!" << nl;
                             continue;
                         }
@@ -272,7 +302,8 @@ int main( int argc, char *argv[] )
                     LOG << "How much nullspace are our vectors?" << nl;
                     for( const auto& nullvector : nullvectorgallery ) {
                         Float mass_norm = ( SystemMatrix * nullvector ).norm(mass);
-                        Assert( is_numerically_small( mass_norm ), mass_norm );
+                        Assert( mass_norm < mass_threshold_for_small_vectors, mass_norm, mass_threshold_for_small_vectors );
+                        // LOGPRINTF( "% 10.5Le\t", (long double)mass_norm );
                         LOG << mass_norm << tab;
                     }
                     LOG << nl;
@@ -283,8 +314,9 @@ int main( int argc, char *argv[] )
                             auto nullvector1 = nullvectorgallery[n1];
                             auto nullvector2 = nullvectorgallery[n2];
                             Float mass_prod = mass * nullvector1 * nullvector2;
+                            // LOGPRINTF( "% 10.5Le\t", (long double)mass_prod );
                             LOG << mass_prod << tab;
-                            if( n1 != n2 ) Assert( is_numerically_small( mass_prod ), mass_prod );
+                            if( n1 != n2 ) assert( is_numerically_small( mass_prod ) );
                             
                         }
                         LOG << nl;
@@ -295,7 +327,7 @@ int main( int argc, char *argv[] )
                     contable << static_cast<Float>(nullvectorgallery.size());     
                     
                     
-                    const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 2, 0, r-1 );
+                    const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 2, 0, r );
 
                     for( const auto& nullvector : nullvectorgallery )
                     {
@@ -306,7 +338,7 @@ int main( int argc, char *argv[] )
                         
                         auto reduced_nullvector = interpol_matrix * volume_incmatrix * nullvector;
 
-                        vtk.writeCellVectorData_barycentricgradients( reduced_nullvector, "nullvector_L2" , 1.0 );
+                        vtk.writeCellScalarData_barycentricvolumes( reduced_nullvector, "nullvector_L2" , 1.0 );
                         
                         fs.close();
                 

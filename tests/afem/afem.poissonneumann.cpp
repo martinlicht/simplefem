@@ -197,7 +197,7 @@ int main( int argc, char *argv[] )
                     LOG << "\t\t\t " << timestamp2measurement( end - start ) << nl;
                 }
                         
-                LOG << "...compute error and residual:" << nl;
+                LOG << "...compute error and residual" << nl;
 
                 Float errornorm     = ( scalar_massmatrix_fac * ( interpol_sol  - incmatrix * sol ) ).norm();
                 Float graderrornorm = ( vector_massmatrix_fac * ( interpol_grad - diffmatrix * incmatrix * sol ) ).norm();
