@@ -220,11 +220,11 @@ int main( int argc, char *argv[] )
 
                     candidate /= sqrt(candidate_M_product); // Optional step
 
-                    LOG << "current ratio : " << newratio << " (" << t << "/" << max_inverseiterations << ")" << nl;
+                    LOG << "current ratio: " << newratio << " (" << t << "/" << max_inverseiterations << ")" << nl;
                     
                     Float u_residualmass_sq   = ( A * sol - rhs_sol ).norm_sq(); // ( scalar_incmatrix_t * scalar_massmatrix * scalar_incmatrix ); 
                     
-                    LOG << "current residual : " << u_residualmass_sq << nl;
+                    LOG << "current residual: " << u_residualmass_sq << nl;
 
                     
                 }
@@ -235,7 +235,7 @@ int main( int argc, char *argv[] )
 
                 LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                 
-                LOG << "...compute error and residual:" << nl;
+                LOG << "...compute error and residual" << nl;
 
                 auto sol = candidate; 
 
@@ -243,10 +243,10 @@ int main( int argc, char *argv[] )
                 Float ugrad_massnorm = sol * ( mat_A * sol );
                 Float curratio       = ugrad_massnorm / u_massnorm;
                 
-                LOG << "ratio:           " << newratio << nl;
-                LOG << "ratio:           " << curratio << nl;
-                LOG << "u mass:          " << u_massnorm << nl;
-                LOG << "u grad mass      " << ugrad_massnorm << nl;
+                LOG << "ratio:       " << newratio << nl;
+                LOG << "ratio:       " << curratio << nl;
+                LOG << "u mass:      " << u_massnorm << nl;
+                LOG << "u grad mass: " << ugrad_massnorm << nl;
                 
                 const Float true_eigenvalue = ( do_neumann ? 1.0 : 3.0 );
                 // 1.0 is the true value 

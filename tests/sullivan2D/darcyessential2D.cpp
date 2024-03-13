@@ -221,7 +221,7 @@ int main( int argc, char *argv[] )
                     
                     auto grad = x_A; // inv(A,desired_precision) * Bt * sol;
 
-                    LOG << "...compute error and residual:" << nl;
+                    LOG << "...compute error and residual" << nl;
 
                     
                     // improved error estimation 

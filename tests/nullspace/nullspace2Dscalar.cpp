@@ -29,10 +29,12 @@
 
 using namespace std;
 
+const Float mass_threshold_for_small_vectors = 1e-6;
+
 int main( int argc, char *argv[] )
 {
         
-        LOG << "Unit Test: Compare numerical solvers CRM vs MINRES\n           for Solution of Dirichlet Problem" << nl;
+        LOG << "Unit Test: Nullspace computation (2D) scalar" << nl;
         
         // LOG << std::setprecision(10);
 
@@ -67,9 +69,9 @@ int main( int argc, char *argv[] )
             LOG << "Nullspace computation" << nl;
 
             
-            ConvergenceTable contable("Mass error");
+            ConvergenceTable contable("Nullvectors found");
             
-            contable << "#nullvec";
+            contable << "#nullvec" << nl;
                         
 
             const int min_l = 0; 
@@ -172,7 +174,7 @@ int main( int argc, char *argv[] )
                             Float reduced_mass = candidate.norm(mass);
                             LOG << "\t\t\t Preprocessed mass: " << reduced_mass << nl;
                             
-                            if( reduced_mass < 1e-6 ) {
+                            if( reduced_mass < mass_threshold_for_small_vectors ) {
                                 LOG << "**** The candidate already has very small mass" << nl;
 //                                 continue;
                             }
@@ -181,13 +183,12 @@ int main( int argc, char *argv[] )
                         
                         /* reduce the candidate to its nullspace component */
                         {
-                            FloatVector rhs( opr.getdimin(), 0. );
-                        
-                            FloatVector residual( rhs );
-                            
                             for( int t = 0; t < max_number_of_purifications; t++ )
                             {
                                 
+                                const FloatVector rhs( opr.getdimin(), 0. );
+                                FloatVector residual( rhs );
+                            
                                 ConjugateResidualSolverCSR( 
                                     candidate.getdimension(), 
                                     candidate.raw(), 
@@ -197,6 +198,20 @@ int main( int argc, char *argv[] )
                                     desired_precision,
                                     0
                                 );
+                                
+//                                 FloatVector zero( candidate.getdimension(), 0. );
+//                                 FloatVector residual( candidate.getdimension(), 0. );
+//                                 
+//                                 ConjugateResidualSolverCSR( 
+//                                     zero.getdimension(), 
+//                                     zero.raw(), 
+//                                     candidate.raw(), 
+//                                     SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
+//                                     residual.raw(),
+//                                     desired_precision,
+//                                     0
+//                                 );
+//                                 candidate = residual;
                                 
                                 LOG << "\t\t\t (eucl) delta:     " << ( residual - rhs + SystemMatrix * candidate ).norm() << nl;
                                 LOG << "\t\t\t (mass) delta:     " << ( residual - rhs + SystemMatrix * candidate ).norm( mass ) << nl;
@@ -219,25 +234,6 @@ int main( int argc, char *argv[] )
                                 LOG << "\t\t\t (norm eucl) Ax:        " << ( SystemMatrix* candidate ).norm() << nl;
                                 LOG << "\t\t\t (norm mass) Ax:        " << ( SystemMatrix * candidate ).norm( mass ) << nl;
                                 
-                                
-//                                 FloatVector zero( candidate.getdimension(), 0. );
-//                                 FloatVector residual( candidate.getdimension(), 0. );
-//                                 
-//                                 ConjugateResidualSolverCSR( 
-//                                     zero.getdimension(), 
-//                                     zero.raw(), 
-//                                     candidate.raw(), 
-//                                     SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
-//                                     residual.raw(),
-//                                     desired_precision,
-//                                     0
-//                                 );
-//                                 candidate = residual;
-//                                 candidate.normalize( mass );
-                                
-                                
-                                
-                                
                             }
                         }
                         
@@ -253,7 +249,7 @@ int main( int argc, char *argv[] )
                         Float reduced_mass = candidate.norm(mass);
                         LOG << "\t\t\t Reduced mass: " << reduced_mass << nl;
                         
-                        if( reduced_mass < 1e-6 ) {
+                        if( reduced_mass < mass_threshold_for_small_vectors ) {
                             LOG << "!!!!!!!!!!!!!Discard vector because mass is too small!" << nl;
                             continue;
                         }
@@ -264,7 +260,7 @@ int main( int argc, char *argv[] )
                         
                         LOG << "\t\t\t Numerical residual: " << residual_mass << nl;
                         
-                        if( residual_mass > 1e-6 ) {
+                        if( residual_mass > mass_threshold_for_small_vectors ) {
                             LOG << "!!!!!!!!!!!!!Discard vector because not nullspace enough!" << nl;
                             continue;
                         }
@@ -281,8 +277,10 @@ int main( int argc, char *argv[] )
                     
                     LOG << "How much nullspace are our vectors?" << nl;
                     for( const auto& nullvector : nullvectorgallery ) {
-                        LOGPRINTF( "% 10.5Le\t", (long double)( SystemMatrix * nullvector ).norm(mass) );
-                        // LOG << std::showpos << std::scientific << std::setprecision(5) << std::setw(10) << ( SystemMatrix * nullvector ).norm(mass) << tab;
+                        Float mass_norm = ( SystemMatrix * nullvector ).norm(mass);
+                        Assert( mass_norm < mass_threshold_for_small_vectors, mass_norm, mass_threshold_for_small_vectors );
+                        // LOGPRINTF( "% 10.5Le\t", (long double)mass_norm );
+                        LOG << mass_norm << tab;
                     }
                     LOG << nl;
                     
@@ -292,7 +290,8 @@ int main( int argc, char *argv[] )
                             auto nullvector1 = nullvectorgallery[n1];
                             auto nullvector2 = nullvectorgallery[n2];
                             Float mass_prod = mass * nullvector1 * nullvector2;
-                            LOGPRINTF( "% 10.5Le\t", (long double)mass_prod );
+                            // LOGPRINTF( "% 10.5Le\t", (long double)mass_prod );
+                            LOG << mass_prod << tab;
                             if( n1 != n2 ) assert( is_numerically_small( mass_prod ) );
                             
                         }
@@ -300,7 +299,7 @@ int main( int argc, char *argv[] )
                     }
                     
                     
-                    contable << static_cast<Float>(nullvectorgallery.size());   
+                    contable << static_cast<Float>(nullvectorgallery.size());
 
                     
                     const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 0, 0, r );
@@ -311,8 +310,6 @@ int main( int argc, char *argv[] )
                         fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
             
                         VTKWriter vtk( M, fs, getbasename(__FILE__) );
-                        // vtk.writeCoordinateBlock();
-                        // vtk.writeTopDimensionalCells();
                         
                         auto reduced_nullvector = interpol_matrix * incmatrix * nullvector;
 
@@ -321,53 +318,6 @@ int main( int argc, char *argv[] )
                         fs.close();
                 
                     }
-                    
-                    
-                    
-//                     {
-// 
-//                         FloatVector sol( opr.getdimin(), 0. ); sol.random(); sol.normalize(mass);
-//                         
-//                         assert( sol.isfinite() );
-//                         
-//                         FloatVector rhs( opr.getdimin(), 0. );
-//                         
-//                         FloatVector residual( rhs );
-//                         
-//                         for( int t = 0; t < 3; t++ ) {
-//                             
-//                             ConjugateResidualSolverCSR( 
-//                                 sol.getdimension(), 
-//                                 sol.raw(), 
-//                                 rhs.raw(), 
-//                                 SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
-//                                 residual.raw(),
-//                                 desired_precision,
-//                                 1
-//                             );
-//                             sol.normalize( mass );
-//                             
-//                             assert( sol.isfinite() );
-//                             
-//                             LOG << "\t\t\t x:         " << sol.norm( mass ) << nl;
-//                             LOG << "\t\t\t Ax:        " << ( SystemMatrix * sol ).norm( mass ) << nl;
-//                             LOG << "\t\t\t b - Ax:    " << ( SystemMatrix * sol - rhs ).norm( mass ) << nl;
-//                         
-//                         }
-//                         
-//                         
-//                         
-//                         contable << sol.norm( mass ) << ( SystemMatrix * sol ).norm( mass );
-//                         
-//                         
-// 
-//                             
-//                             
-//                         contable << nl;
-//                         
-//                         contable.lg( false );
-// 
-//                     }
                     
                 }
 
@@ -392,135 +342,3 @@ int main( int argc, char *argv[] )
 }
 
 
-
-
-//                      {
-// 
-//                         FloatVector sol_original( opr.getdimin(), 0. );
-//                         FloatVector rhs_original( opr.getdimin(), 0. );
-//                         
-//                         sol_original.random(); sol_original.normalize( mass );
-//                         rhs_original.random(); rhs_original.normalize( mass );
-//                         
-//                         if(false)
-//                         {
-//                             LOG << "Filter out from x (CGM)" << nl;
-//                         
-//                             FloatVector sol( sol_original );
-//                             FloatVector rhs( rhs_original.getdimension(), 0. );
-//                             FloatVector residual( rhs );
-//                             
-//                             assert( sol.isfinite() );
-//                             
-//                             
-//                             ConjugateGradientSolverCSR( 
-//                                 sol.getdimension(), 
-//                                 sol.raw(), 
-//                                 rhs.raw(), 
-//                                 SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
-//                                 residual.raw(),
-//                                 machine_epsilon,
-//                                 1
-//                             );
-//                             sol.normalize( mass );
-//                             
-//                             assert( sol.isfinite() );
-//                             
-//                             LOG << "\t\t\t x_0:       " << sol_original.norm( mass ) << nl;
-//                             LOG << "\t\t\t Ax_0:      " << ( SystemMatrix * sol_original ).norm( mass ) << nl;
-//                             LOG << "\t\t\t b - Ax_0:  " << ( SystemMatrix * sol_original - rhs ).norm( mass ) << nl;
-//                             
-//                             LOG << "\t\t\t x:         " << sol.norm( mass ) << nl;
-//                             LOG << "\t\t\t Ax:        " << ( SystemMatrix * sol ).norm( mass ) << nl;
-//                             LOG << "\t\t\t b - Ax:    " << ( SystemMatrix * sol - rhs ).norm( mass ) << nl;
-//                             
-//                             contable << sol.norm( mass ) << ( SystemMatrix * sol ).norm( mass );
-//                             
-//                             
-//                             FloatVector sol2( sol_original );
-//                             sol2.random();
-//                             FloatVector rhs2( rhs_original.getdimension(), 0. );
-//                             FloatVector residual2( rhs );
-//                             
-//                             ConjugateGradientSolverCSR( 
-//                                 sol2.getdimension(), 
-//                                 sol2.raw(), 
-//                                 rhs2.raw(), 
-//                                 SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
-//                                 residual2.raw(),
-//                                 machine_epsilon,
-//                                 1
-//                             );
-//                             sol2.normalize( mass );
-//                             
-//                         }
-// 
-//                         if(false)
-//                         {
-//                             LOG << "Filter out from x (CRM)" << nl;
-//                         
-//                             FloatVector sol( sol_original );
-//                             FloatVector rhs( rhs_original.getdimension(), 0. );
-//                             FloatVector residual( rhs );
-//                             
-//                             ConjugateResidualSolverCSR( 
-//                                 sol.getdimension(), 
-//                                 sol.raw(), 
-//                                 rhs.raw(), 
-//                                 SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
-//                                 residual.raw(),
-//                                 machine_epsilon,
-//                                 0
-//                             );
-//                             sol.normalize( mass );
-//                             
-//                             LOG << "\t\t\t x_0:       " << sol_original.norm( mass ) << nl;
-//                             LOG << "\t\t\t Ax_0:      " << ( SystemMatrix * sol_original ).norm( mass ) << nl;
-//                             LOG << "\t\t\t b - Ax_0:  " << ( SystemMatrix * sol_original - rhs ).norm( mass ) << nl;
-//                             
-//                             LOG << "\t\t\t x:         " << sol.norm( mass ) << nl;
-//                             LOG << "\t\t\t Ax:        " << ( SystemMatrix * sol ).norm( mass ) << nl;
-//                             LOG << "\t\t\t b - Ax:    " << ( SystemMatrix * sol - rhs ).norm( mass ) << nl;
-//                             
-//                             contable << sol.norm( mass ) << ( SystemMatrix * sol ).norm( mass );
-//                         }
-// 
-//                         if(false)
-//                         {
-//                             LOG << "Filter out from b" << nl;
-//                         
-//                             FloatVector sol( sol_original.getdimension(), 0. );
-//                             FloatVector rhs( rhs_original );
-//                             FloatVector residual( rhs );
-//                             
-//                             ConjugateResidualSolverCSR_textbook( 
-//                                 sol.getdimension(), 
-//                                 sol.raw(), 
-//                                 rhs.raw(), 
-//                                 SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
-//                                 residual.raw(),
-//                                 desired_precision,
-//                                 0
-//                             );
-//                             residual.normalize( mass );
-//                             
-//                             LOG << "\t\t\t b:       " << rhs_original.norm( mass ) << nl;
-//                             LOG << "\t\t\t Ab:      " << ( SystemMatrix * rhs ).norm( mass ) << nl;
-//                             
-//                             LOG << "\t\t\t r:       " << residual.norm( mass ) << nl;
-//                             LOG << "\t\t\t Ar:      " << ( SystemMatrix * residual ).norm( mass ) << nl;
-//                             
-//                             LOG << "\t\t\t Ar:      " << ( SystemMatrix * ( rhs - SystemMatrix * sol ) ).norm( mass ) << nl;
-//                             
-//                             contable << sol.norm( mass ) << ( SystemMatrix * sol ).norm( mass );
-//                         }
-// 
-//                         
-// 
-//                         
-//                         
-//                         contable << nl;
-//                         
-//                         contable.lg( false );
-// 
-//                     }

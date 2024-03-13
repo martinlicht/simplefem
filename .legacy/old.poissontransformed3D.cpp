@@ -449,7 +449,7 @@ int main( int argc, char *argv[] )
             
                 
                 
-                LOG << "...compute error and residual:" << nl;
+                LOG << "...compute error and residual" << nl;
 
                 // FloatVector foo_sol = IncreaseResolution( inter_M, IncreaseResolution( M, sol ) );
                 FloatVector foo_sol = IncreaseResolution( M, sol );

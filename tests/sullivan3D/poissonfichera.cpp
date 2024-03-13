@@ -214,7 +214,7 @@ int main( int argc, char *argv[] )
                 timestamp end = timestampnow();
                 LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
 
-                LOG << "...compute error and residual:" << nl;
+                LOG << "...compute error and residual" << nl;
 
                 FloatVector error     = aug_incmatrix * aug_sol - elevmatrix * incmatrix * sol;
                 FloatVector graderror = aug_diffmatrix * ( aug_incmatrix * aug_sol - elevmatrix * incmatrix * sol );

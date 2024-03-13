@@ -38,6 +38,8 @@ class ConvergenceTable
         void insert_seriesheader( const std::string& seriesheader );
         void insert_newline();
 
+        Float get_convergence_rate( int row_index, int column_index );
+
 
         std::string text() const;
         
