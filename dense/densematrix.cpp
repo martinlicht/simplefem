@@ -508,6 +508,32 @@ void DenseMatrix::randomintegermatrix( int min, int max )
         (*this)(r,c) = min + random_integer() % (max-min);
 }
 
+void DenseMatrix::random_orthogonal_matrix()
+{
+    check();
+    assert( issquare() );
+
+    const auto N = getdimin();
+    auto rows = std::vector<FloatVector>( N, FloatVector(N) );
+    
+    for( auto& row : rows ) { 
+        row.random(); 
+        row.normalize(); 
+        assert( row.isfinite() ); 
+        assert( std::isfinite( row.norm() ) ); 
+    }
+    
+    for( int i = 0; i < N; i++ ) {
+        for( int j = 0; j < i; j++ )
+            rows[i] -= (rows[i]*rows[j]) * rows[j];
+        rows[i].normalize();
+    }
+    
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimin(); c++ )
+        (*this)(r,c) = rows[r][c];
+}
+
 void DenseMatrix::scale( Float s )
 {
     check();

@@ -128,6 +128,7 @@ class DenseMatrix final
         void zeromatrix();
         void randommatrix();
         void randomintegermatrix( int min, int max );
+        void random_orthogonal_matrix();
         void unitmatrix();
         void indexmapping( const IndexMap& );
         

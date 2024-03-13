@@ -67,14 +67,14 @@ Understand the floating-point comparison functions and import them into this pro
       - [ ] Sullivan2D
       - [ ] Sullivan3D
       - [x] Whitney2D/3D
-      - [ ] what are poissontransformed old, old2, and the other one? Retire?
+      - [x] what are poissontransformed old, old2, and the other one? Retire?
       For example, the Lagrange test should reflect simple things and additional overhead
 - [x] Clean up the test for the nullspace computation. 
-- [ ] include visualization script 
 - [ ] Clean up the nullspace computation in the solver component.
+- [ ] include visualization script 
 - [ ] Unit tests must check convergence rates 
 - [ ] Streamline the main loop in the different solverfem tests to reduce code redundancy
-- [ ] Mesh: improve consistency. Orientation tests must be included in usual tests in order to save compile time 
+- [ ] Mesh: improve consistency. Include orientation tests in usual tests to save compile time 
 - [ ] VTK: different outputs 
 - [ ] Combinatorics: make things independent of screen output 
 - [ ] Operators: make things independent of screen output 

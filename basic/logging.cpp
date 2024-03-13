@@ -8,6 +8,10 @@ bool log_has_a_fresh_line = true;
 #include <cstdio>
 #include <ctime>
 
+// For controlling the floating-point behavior
+#include <fenv.h>
+#include <float.h>
+
 
 
 enum class TextColors : unsigned char
@@ -230,6 +234,10 @@ void System_Reporter::output()
     LOGPRINTF("###\tOS: Windows\n");
     #else
     #error "Unknown platform"
+    #endif
+
+    #if defined(_WIN32) and true 
+    _controlfp_s( nullptr, _DN_FLUSH, _MCW_DN ); 
     #endif
 }
 
