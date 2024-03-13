@@ -403,6 +403,13 @@ int main( int argc, char *argv[] )
             LOG << "Determinant (laplace): " << Determinant_laplaceexpansion(A) << nl;
             LOG << "Determinant (gauss):   " << Determinant_gauss(A) << nl;
             LOG << "Determinant (default): " << Determinant(A) << nl;
+
+            {
+                const int dim = t;
+                DenseMatrix Q(dim,dim), R(dim,dim);
+                QRFactorization( A, Q, R );
+                LOG << "Determinant (QR): " << Determinant(R) << nl;
+            }
             
             // LOG << CofactorMatrix( A ) << nl;
             // LOG << Inverse( A ) << nl;
@@ -426,6 +433,13 @@ int main( int argc, char *argv[] )
             LOG << t << " Determinant (laplace): " << Determinant_laplaceexpansion(A) << nl;
             LOG << t << " Determinant (gauss):   " << Determinant_gauss(A) << nl;
             LOG << t << " Determinant (default): " << Determinant(A) << nl;
+            
+            {
+                const int dim = 2;
+                DenseMatrix Q(dim,dim), R(dim,dim);
+                QRFactorization( A, Q, R );
+                LOG << "Determinant (QR): " << Determinant(R) << nl;
+            }
             
             LOG << CofactorMatrix( A ) << nl;
             LOG << Inverse( A ) << nl;
@@ -456,6 +470,13 @@ int main( int argc, char *argv[] )
             LOG << t << " Determinant (laplace): " << Determinant_laplaceexpansion(A) << nl;
             LOG << t << " Determinant (gauss):   " << Determinant_gauss(A) << nl;
             LOG << t << " Determinant (default): " << Determinant(A) << nl;
+            
+            {
+                const int dim = 2;
+                DenseMatrix Q(dim,dim), R(dim,dim);
+                QRFactorization( A, Q, R );
+                LOG << "Determinant (QR): " << Determinant(R) << nl;
+            }
             
             LOG << CofactorMatrix( A ) << nl;
             LOG << Inverse( A ) << nl;
