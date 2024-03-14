@@ -129,9 +129,18 @@ int main( int argc, char *argv[] )
             
             LOG << A << nl;
             
-            LOG << "Determinant (default): " << Determinant(A) << nl;
-            LOG << "Determinant (laplace): " << Determinant_laplaceexpansion(A) << nl;
-            LOG << "Determinant (gauss):   " << Determinant_gauss(A) << nl;
+            Float det = Determinant(A);
+            Float det_l = Determinant_laplaceexpansion(A);
+            Float det_g = Determinant_gauss(A);
+            Float det_b = Determinant_bareiss(A);
+
+            LOG << "Determinant (default): " << det << nl;
+            LOG << "Determinant (laplace): " << det_l << nl;
+            LOG << "Determinant (gauss):   " << det_g << nl;
+            LOG << "Determinant (bareiss): " << det_b << nl;
+
+            assert( is_numerically_close( det, det_l ) && is_numerically_close( det, det_g ) && is_numerically_close( det, det_b ) );
+
             LOG << CofactorMatrix( A ) << nl;
             LOG << Inverse( A ) << nl;
             LOG << A * Inverse( A ) << nl;
@@ -190,9 +199,18 @@ int main( int argc, char *argv[] )
         A(1,0) = -1; A(1,1) =  1; A(1,2) =  3; 
         A(2,0) =  2; A(2,1) =  0; A(2,2) = -1; 
 
-        LOG << "Determinant (default): " << Determinant(A) << nl;
-        LOG << "Determinant (laplace): " << Determinant_laplaceexpansion(A) << nl;
-        LOG << "Determinant (gauss):   " << Determinant_gauss(A) << nl;
+        Float det = Determinant(A);
+        Float det_l = Determinant_laplaceexpansion(A);
+        Float det_g = Determinant_gauss(A);
+        Float det_b = Determinant_bareiss(A);
+
+        LOG << "Determinant (default): " << det << nl;
+        LOG << "Determinant (laplace): " << det_l << nl;
+        LOG << "Determinant (gauss):   " << det_g << nl;
+        LOG << "Determinant (bareiss): " << det_b << nl;
+
+        assert( is_numerically_close( det, det_l ) && is_numerically_close( det, det_g ) && is_numerically_close( det, det_b ) );
+
         LOG << CofactorMatrix( A ) << nl;
         LOG << Inverse( A ) << nl;
         LOG << A * Inverse( A ) << nl;
@@ -237,17 +255,29 @@ int main( int argc, char *argv[] )
         {
             
             DenseMatrix A(8);
+            LOG << A << nl;
             A.randomintegermatrix(-2,2);
-        
-            LOG << "Determinant (default): " << Determinant(A) << nl;
-            LOG << "Determinant (laplace): " << Determinant_laplaceexpansion(A) << nl;
-            LOG << "Determinant (gauss):   " << Determinant_gauss(A) << nl;
-        
+            LOG << A << nl;
+            
+            
+            Float det = Determinant(A);
+            Float det_l = Determinant_laplaceexpansion(A);
+            Float det_g = Determinant_gauss(A);
+            Float det_b = Determinant_bareiss(A);
+
+            LOG << "Determinant (default): " << det << nl;
+            LOG << "Determinant (laplace): " << det_l << nl;
+            LOG << "Determinant (gauss):   " << det_g << nl;
+            LOG << "Determinant (bareiss): " << det_b << nl;
+            
+            LOG << A << nl;
+
+            assert( is_numerically_close( det, det_l ) && is_numerically_close( det, det_g ) && is_numerically_close( det, det_b ) );
             
             LOG << GaussJordanInplace(A) * A << nl;
         }
     }
-    
+
     {
         LOG << "7. Gauss Jordan algorithm" << nl;
     
@@ -353,11 +383,20 @@ int main( int argc, char *argv[] )
             DenseMatrix A(t);
             A.randomintegermatrix(10,80);
             
-            LOG << A << Determinant_laplaceexpansion(A);
+            Float det = Determinant(A);
+            Float det_l = Determinant_laplaceexpansion(A);
+            Float det_g = Determinant_gauss(A);
+            Float det_b = Determinant_bareiss(A);
+
+            LOG << "Determinant (default): " << det << nl;
+            LOG << "Determinant (laplace): " << det_l << nl;
+            LOG << "Determinant (gauss):   " << det_g << nl;
+            LOG << "Determinant (bareiss): " << det_b << nl;
+
+            // LOGPRINTF( "%.17e %.17e %.17e %.17e \n", det, det_l, det_g, det_b );
+
+            assert( is_numerically_close( det / det_l, 1. ) && is_numerically_close( det / det_g, 1. ) && is_numerically_close( det / det_b, 1. ) );
             
-            LOG << "Determinant (laplace): " << Determinant_laplaceexpansion(A) << nl;
-            LOG << "Determinant (gauss):   " << Determinant_gauss(A) << nl;
-            LOG << "Determinant (default): " << Determinant(A) << nl;
             LOG << CofactorMatrix( A ) << nl;
             LOG << Inverse( A ) << nl;
             LOG << A * Inverse( A ) << nl;
@@ -365,7 +404,6 @@ int main( int argc, char *argv[] )
         }
     }
     
-    // if(false)
     {
         LOG << "10. Inverse and determinants of unit matrices" << nl;
         for( int t = 0; t < 7; t++ )
@@ -373,11 +411,19 @@ int main( int argc, char *argv[] )
             
             DenseMatrix A = 3. * IdentityMatrix(t);
             
-            LOG << A << nl;
+            // LOG << A << nl;
             
-            LOG << "Determinant (laplace): " << Determinant_laplaceexpansion(A) << nl;
-            LOG << "Determinant (gauss):   " << Determinant_gauss(A) << nl;
-            LOG << "Determinant (default): " << Determinant(A) << nl;
+            Float det = Determinant(A);
+            Float det_l = Determinant_laplaceexpansion(A);
+            Float det_g = Determinant_gauss(A);
+            Float det_b = Determinant_bareiss(A);
+
+            LOG << "Determinant (default): " << det << nl;
+            LOG << "Determinant (laplace): " << det_l << nl;
+            LOG << "Determinant (gauss):   " << det_g << nl;
+            LOG << "Determinant (bareiss): " << det_b << nl;
+
+            assert( is_numerically_close( det, det_l ) && is_numerically_close( det, det_g ) && is_numerically_close( det, det_b ) );
             
             LOG << CofactorMatrix( A ) << nl;
             LOG << GaussJordanInplace( A ) << nl;

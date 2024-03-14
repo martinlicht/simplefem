@@ -236,9 +236,12 @@ void System_Reporter::output()
     #error "Unknown platform"
     #endif
 
-    #if defined(_WIN32) and true 
-    _controlfp_s( nullptr, _DN_FLUSH, _MCW_DN ); 
+
+    #if true and defined(_WIN32)
+    LOGPRINTF("###\tFlushing subnormal numbers\n");
+    _controlfp_s( nullptr, _DN_FLUSH, _MCW_DN ); // Flush denormals, both operands and results, to zero 
     #endif
+
 }
 
 System_Reporter  omp_reporter;
