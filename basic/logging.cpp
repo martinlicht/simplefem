@@ -8,7 +8,11 @@ bool log_has_a_fresh_line = true;
 #include <cstdio>
 #include <ctime>
 
-#include <float.h> 
+// For controlling the floating-point behavior
+#include <fenv.h>
+#include <float.h>
+
+
 
 enum class TextColors : unsigned char
 {
@@ -233,9 +237,9 @@ void System_Reporter::output()
     #endif
 
 
-    #if false and defined(_WIN32)
+    #if true and defined(_WIN32)
     LOGPRINTF("###\tFlushing subnormal numbers\n");
-    _controlfp_s( nullptr, _DN_FLUSH, _MCW_DN ); // Flush denormals to zero, both operands and results 
+    _controlfp_s( nullptr, _DN_FLUSH, _MCW_DN ); // Flush denormals, both operands and results, to zero 
     #endif
 
 }

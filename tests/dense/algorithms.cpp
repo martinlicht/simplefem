@@ -432,7 +432,104 @@ int main( int argc, char *argv[] )
             LOG << Inverse( A ) * A << nl;
         }
     }
+
     
+    // if(false)
+    {
+        LOG << "11. Compare Determinats of random orthogonal Matrices" << nl;
+        for( int t = 3; t < 7; t++ )
+        for( int i = 0; i < 6; i++ )
+        {
+            
+            DenseMatrix A(t);
+            A.random_orthogonal_matrix();
+
+            LOG << A << nl;
+            
+            LOG << "Determinant (laplace): " << Determinant_laplaceexpansion(A) << nl;
+            LOG << "Determinant (gauss):   " << Determinant_gauss(A) << nl;
+            LOG << "Determinant (default): " << Determinant(A) << nl;
+
+            {
+                const int dim = t;
+                DenseMatrix Q(dim,dim), R(dim,dim);
+                QRFactorization( A, Q, R );
+                LOG << "Determinant (QR): " << Determinant(R) << nl;
+            }
+            
+            // LOG << CofactorMatrix( A ) << nl;
+            // LOG << Inverse( A ) << nl;
+            // LOG << A * Inverse( A ) << nl;
+            // LOG << Inverse( A ) * A << nl;
+        }
+    }
+    
+    
+    {
+        LOG << "12. Compare Determinats of random ill-conditioned matrices" << nl;
+        for( int t = 3; t < 7; t++ )
+        {
+            
+            DenseMatrix A(2,2);
+            A(0,0) = power_numerical( 10, t );
+            A(0,1) = power_numerical( 10, t ) - 1;
+            A(1,0) = power_numerical( 10, t ) - 1;
+            A(1,1) = power_numerical( 10, t ) - 2;
+            
+            LOG << t << " Determinant (laplace): " << Determinant_laplaceexpansion(A) << nl;
+            LOG << t << " Determinant (gauss):   " << Determinant_gauss(A) << nl;
+            LOG << t << " Determinant (default): " << Determinant(A) << nl;
+            
+            {
+                const int dim = 2;
+                DenseMatrix Q(dim,dim), R(dim,dim);
+                QRFactorization( A, Q, R );
+                LOG << "Determinant (QR): " << Determinant(R) << nl;
+            }
+            
+            LOG << CofactorMatrix( A ) << nl;
+            LOG << Inverse( A ) << nl;
+            LOG << A * Inverse( A ) << nl;
+            LOG << Inverse( A ) * A << nl;
+        }
+    }
+    
+
+    
+    
+    {
+        LOG << "13. Compare Determinats of random ill-conditioned matrices" << nl;
+        for( int t = 3; t < 10; t++ )
+        {
+            
+            DenseMatrix Q(2);
+            Q.random_orthogonal_matrix();
+
+            DenseMatrix M(2,2);
+            M(0,0) = power_numerical( 10, t );
+            M(0,1) = 0.;
+            M(1,0) = 0.;
+            M(1,1) = 1. / power_numerical( 10, t );
+
+            DenseMatrix A = Transpose(Q) * M * Q;
+            
+            LOG << t << " Determinant (laplace): " << Determinant_laplaceexpansion(A) << nl;
+            LOG << t << " Determinant (gauss):   " << Determinant_gauss(A) << nl;
+            LOG << t << " Determinant (default): " << Determinant(A) << nl;
+            
+            {
+                const int dim = 2;
+                DenseMatrix Q(dim,dim), R(dim,dim);
+                QRFactorization( A, Q, R );
+                LOG << "Determinant (QR): " << Determinant(R) << nl;
+            }
+            
+            LOG << CofactorMatrix( A ) << nl;
+            LOG << Inverse( A ) << nl;
+            LOG << A * Inverse( A ) << nl;
+            LOG << Inverse( A ) * A << nl;
+        }
+    }
     
     LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
 

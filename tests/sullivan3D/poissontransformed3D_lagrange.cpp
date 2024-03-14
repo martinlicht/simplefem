@@ -4,7 +4,7 @@
 
 #include <cmath>
 
-#include <iostream>
+// #include <iostream>
 
 #include <algorithm>
 #include <fstream>
@@ -22,8 +22,8 @@
 #include "../../solver/iterativesolver.hpp"
 #include "../../solver/sparsesolver.hpp"
 #include "../../sparse/rainbow.hpp"
-#include "../../fem/global.elevation.hpp"
 #include "../../fem/global.coefficientmassmatrix.hpp"
+#include "../../fem/lagrangematrices.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.sullivanincl.hpp"
@@ -39,19 +39,20 @@ FloatVector trafo(const FloatVector& vec);
 
 DenseMatrix jacobian(const FloatVector& vec);
         
-FloatVector physical_f(const FloatVector& vec) ;
+Float physical_f(const FloatVector& vec) ;
 
-FloatVector parametric_f(const FloatVector& vec);
+Float parametric_f(const FloatVector& vec);
 
 DenseMatrix physical_A(const FloatVector& vec);
 
 DenseMatrix parametric_A(const FloatVector& vec);
 
-DenseMatrix weight_scalar(const FloatVector& vec);
+Float weight_scalar(const FloatVector& vec);
         
 DenseMatrix weight_vector(const FloatVector& vec);        
         
 FloatVector IncreaseResolution( const MeshSimplicial3D& mesh, const FloatVector& lores );
+
 
 
 
@@ -131,15 +132,13 @@ DenseMatrix jacobian(const FloatVector& vec) {
 }
 
         
-FloatVector physical_f(const FloatVector& vec) 
+Float physical_f(const FloatVector& vec) 
 {
     assert( vec.getdimension() == 3 );
-    return FloatVector({ 
-        1.
-        });
+    return 1.;
 }
 
-FloatVector parametric_f(const FloatVector& vec) 
+Float parametric_f(const FloatVector& vec) 
 {
     return absolute(Determinant(jacobian(vec))) * physical_f( trafo(vec) );
 }
@@ -161,18 +160,16 @@ DenseMatrix parametric_A(const FloatVector& vec)
 
 
 
-DenseMatrix weight_scalar(const FloatVector& vec) 
+Float weight_scalar(const FloatVector& vec) 
 {
     assert( vec.getdimension() == 3 );
-    // return DenseMatrix(1,1, kronecker<int> );
-    return DenseMatrix(1,1,absolute(Determinant(jacobian(vec))));
+    return 1.;
+    // return absolute(Determinant(jacobian(vec)));
 }
         
 DenseMatrix weight_vector(const FloatVector& vec)
 {
     assert( vec.getdimension() == 3 );
-    
-    // return DenseMatrix(3,3, kronecker<int> );
     
     auto jac = jacobian(vec);
     auto det = Determinant(jac);
@@ -221,7 +218,7 @@ using namespace std;
 int main( int argc, char *argv[] )
 {
         
-    LOG << "Unit Test: 3D transformed Poisson Problem" << nl;
+    LOG << "Unit Test for transformed 3D Poisson Problem" << nl;
     
     LOG << "Initial mesh..." << nl;
     
@@ -274,7 +271,7 @@ int main( int argc, char *argv[] )
 
     
 
-    LOG << "Solving Poisson Problem with Neumann boundary conditions" << nl;
+    LOG << "Unit Test: 3D transformed Poisson Problem (Lagrange matrices)" << nl;
 
     const int min_l = 1; 
     const int max_l = 6;
@@ -295,13 +292,13 @@ int main( int argc, char *argv[] )
 
     for( int l = min_l; l <= max_l; l++ ){
         
+        display_mallinfo();
+
         LOG << "Level: " << l << "/" << max_l << nl;
         LOG << "# T/F/E/V: " << M.count_tetrahedra() << "/" << M.count_faces() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
         
         {
             
-            display_mallinfo();
-
             int r = 1;
             int w = r;
 
@@ -309,92 +306,103 @@ int main( int argc, char *argv[] )
             
             LOG << "...assemble scalar mass matrices" << nl;
     
-            // auto     scalar_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix( M, M.getinnerdimension(), 0, r,   w, weight_scalar ) );
-            auto     scalar_massmatrix = MatrixCSR( FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r ) );
+            auto mass = LagrangeCoefficientMassMatrix( M, r, w, weight_scalar );
+            // auto mass = MatrixCSR( LagrangeMassMatrix( M, r ) );
 
             LOG << "...assemble vector mass matrix" << nl;
     
-            // auto     vector_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix( M, M.getinnerdimension(), 1, r-1, w, weight_vector ) );
-            auto     vector_massmatrix = MatrixCSR( FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 ) );
+            auto stiffness = LagrangeCoefficientStiffnessMatrix( M, r, w, weight_vector );
+            // auto stiffness = MatrixCSR( LagrangeStiffnessMatrix( M, r ) );
             
-            LOG << "...assemble differential matrix and transpose" << nl;
+            // display_mallinfo();
 
-            auto     diffmatrix = MatrixCSR( FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r ) );
+            mass.compressentries();
+            stiffness.compressentries();
 
-            LOG << "...assemble inclusion matrix and transpose" << nl;
-    
-            auto     incmatrix = MatrixCSR( FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r ) );
+            LOG << "Size of mass matrix: " << sizeof(int) * ( mass.getdimout() + mass.getnumberofentries() ) + sizeof(Float) * mass.getnumberofentries() << nl;
+            LOG << "Size of mass matrix: " << sizeof(int) * ( stiffness.getdimout() + stiffness.getnumberofentries() ) + sizeof(Float) * stiffness.getnumberofentries() << nl;
 
-            display_mallinfo();
+            assert( mass.isfinite() );
+            assert( stiffness.isfinite() );
 
-            LOG << "Size of mass matrix: " << sizeof(int) * ( scalar_massmatrix.getdimout() + scalar_massmatrix.getnumberofentries() ) + sizeof(Float) * scalar_massmatrix.getnumberofentries() << nl;
-            LOG << "Size of mass matrix: " << sizeof(int) * ( vector_massmatrix.getdimout() + vector_massmatrix.getnumberofentries() ) + sizeof(Float) * vector_massmatrix.getnumberofentries() << nl;
-            LOG << "Size of diff matrix: " << sizeof(int) * ( diffmatrix.getdimout() + diffmatrix.getnumberofentries() ) + sizeof(Float) * diffmatrix.getnumberofentries() << nl;
-            LOG << "Size of incl matrix: " << sizeof(int) * ( incmatrix.getdimout() + incmatrix.getnumberofentries() ) + sizeof(Float) * incmatrix.getnumberofentries() << nl;
-            
+
 
             {
 
                 LOG << "...interpolate explicit solution and rhs" << nl;
     
-                FloatVector     interpol_rhs  = Interpolation(     M,     M.getinnerdimension(), 0, r, parametric_f  );
-
-                FloatVector     rhs =     incmatrix.getTranspose() * (     scalar_massmatrix *     interpol_rhs );
-
-                FloatVector     sol(     incmatrix.getdimin(), 0. );
+                FloatVector      sol( M.count_vertices(), 0. );
                 
-                FloatVector     residual(     incmatrix.getdimin(), 0. );
-                
-                timestamp solver_time;
+                FloatVector residual( M.count_vertices(), 0. );
 
-                LOG << "...iterative solver" << nl;
+                FloatVector     rhs( M.count_vertices(), 0. );
                 
+                #if defined(_OPENMP)
+                #pragma omp parallel for
+                #endif
+                for( int s = 0; s < M.count_tetrahedra(); s++ )
                 {
-                    LOG << "[0]" << nl;
-                    auto opr  = (diffmatrix) & (incmatrix);
-                    LOG << "[1]" << nl;
-                    // auto opl  = MatrixCSR(incmatrix_t) & MatrixCSR(diffmatrix_t);
-                    auto opl  = opr.getTranspose();
-                    display_mallinfo();
-                    LOG << "[2]" << nl;
-                    auto stiffness = (opl) & (vector_massmatrix) & (opr);
-                    LOG << "[3]" << nl;
-                    display_mallinfo();
-                    auto& stiffness_csr = stiffness; //MatrixCSR( stiffness );
-                    LOG << "Size of stiffness matrix: " << sizeof(int) * ( stiffness.getdimout() + stiffness.getnumberofentries() ) + sizeof(Float) * stiffness.getnumberofentries() << nl;
-                    LOG << "[4]" << nl;
-                    
-                    sol.zero();
+                    auto measure = M.getMeasure(3,s);
 
-                    auto diagonal = stiffness.getDiagonal();
-                    // FloatVector residual( rhs );
-                
-                    Rainbow rainbow( stiffness );
+                    auto midpoint = M.get_midpoint(3,s);
 
-                    timestamp start = timestampnow();
-                    ConjugateGradientSolverCSR_Rainbow( 
-                        sol.getdimension(), 
-                        sol.raw(), 
-                        rhs.raw(), 
-                        stiffness_csr.getA(), stiffness_csr.getC(), stiffness_csr.getV(),
-                        residual.raw(),
-                        desired_precision,
-                        0,
-                        diagonal.raw(),
-                        1.2, // empircally chosen at 1.2, barely any influence
-                        rainbow.num_colors, rainbow.F.data(), rainbow.B.data(), rainbow.R.data()
-                    );
-                    timestamp end = timestampnow();
-                    solver_time = end - start;
-                    LOG << "\t\t\t Time: " << timestamp2measurement( solver_time ) << nl;
+                    auto f = parametric_f(midpoint);
 
-                    residual = rhs - stiffness * sol;
+                    auto contribution = f * measure / 4.;
+
+                    for( int vi = 0; vi < 4; vi++ )
+                    {
+                        int v = M.get_subsimplex( 3, 0, s, vi );
+                        
+                        if( M.get_flag(0,v) == SimplexFlag::SimplexFlagDirichlet ) continue;
+
+                        #if defined(_OPENMP)
+                        #pragma omp atomic
+                        #endif
+                        rhs[v] += contribution;
+
+                    }
 
                 }
 
+                assert( rhs.isfinite() );
 
+                
+                LOG << "...iterative solver" << nl;
+                
+                auto& stiffness_csr = stiffness;
 
-                Float residualnorm    = residual.norm();
+                LOG << "Size of stiffness matrix: " << sizeof(int) * ( stiffness.getdimout() + stiffness.getnumberofentries() ) + sizeof(Float) * stiffness.getnumberofentries() << nl;
+                
+                sol.zero();
+
+                auto diagonal = stiffness.getDiagonal();
+            
+                Rainbow rainbow( stiffness );
+
+                timestamp solver_time;
+
+                timestamp start = timestampnow();
+                ConjugateGradientSolverCSR_Rainbow( 
+                    sol.getdimension(), 
+                    sol.raw(), 
+                    rhs.raw(), 
+                    stiffness_csr.getA(), stiffness_csr.getC(), stiffness_csr.getV(),
+                    residual.raw(),
+                    desired_precision,
+                    0,
+                    diagonal.raw(),
+                    1.2 // empircally chosen at 1.2, barely any influence
+                    , rainbow.num_colors, rainbow.F.data(), rainbow.B.data(), rainbow.R.data()
+                );
+                timestamp end = timestampnow();
+                solver_time = end - start;
+                LOG << "\t\t\t Time: " << timestamp2measurement( solver_time ) << nl;
+
+                residual = rhs - stiffness * sol;
+
+                Float residualnorm = residual.norm();
+
                 LOG << "residual:  " << residualnorm << nl;
                 LOG << "time:      " << Float( solver_time ) << nl;
                 
@@ -435,10 +443,18 @@ int main( int argc, char *argv[] )
 
                     const auto& old_sol = solutions[i];
 
-                    FloatVector error     = incmatrix  * ( sol - old_sol );
-                    FloatVector graderror = diffmatrix * error;
-                    Float errornorm       = std::sqrt( error * ( scalar_massmatrix * error ) );
-                    Float graderrornorm   = std::sqrt( graderror * ( vector_massmatrix * graderror ) );
+                    FloatVector error   = sol - old_sol;
+
+                    assert( error.isfinite() );
+                    assert( ( mass * error ).isfinite() );
+
+
+
+                    LOG <<  error * ( mass * error ) << nl;
+                    LOG <<  error * ( stiffness * error ) << nl;
+                    
+                    Float errornorm     = std::sqrt( error * ( mass * error ) );
+                    Float graderrornorm = std::sqrt( error * ( stiffness * error ) );
                     
                     LOG << "error:     " << errornorm    << nl;
                     LOG << "graderror: " << graderrornorm << nl;
@@ -466,13 +482,12 @@ int main( int argc, char *argv[] )
                 contables.push_back(contable);
 
                 
-                if( r == 1 )
+                if( true and r == 1 )
                 {
                     fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                     VTKWriter vtk( M, fs, getbasename(__FILE__) );
                     
                     vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
-                    // vtk.writeCellVectorData_barycentricgradients( computed_grad, "gradient_interpolation" , 1.0 );
                     fs.close();
                 }
 
