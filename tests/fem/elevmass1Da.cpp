@@ -164,7 +164,7 @@ int main( int argc, char *argv[] )
             
                 M.uniformrefinement();
 
-                M.shake_interior_vertices();
+                // M.shake_interior_vertices(); // The inner and outer dimension may differ.
             }
             
         } 
@@ -186,6 +186,9 @@ int main( int argc, char *argv[] )
             for( int i = 0; i < experiments_volume_field.size(); i++ ) 
                 contable_volume[i] << printf_into_string("R%d+%d", r-r_min, r_plus_max );
         
+            for( int i = 0; i < experiments_scalar_field.size(); i++ ) contable_scalar[i] << nl; 
+            for( int i = 0; i < experiments_volume_field.size(); i++ ) contable_volume[i] << nl; 
+
         }
         
         for( int l = l_min; l <= l_max; l++ ) 

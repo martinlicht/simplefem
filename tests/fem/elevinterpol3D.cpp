@@ -110,21 +110,22 @@ int main( int argc, char *argv[] )
         for( int k = 0; k <= n; k++ ) 
             contables[k].table_name = "Rounding errors D3K" + std::to_string(k);
         
-        for( int k = 0; k <= n; k++ ) 
-        for( int r = r_min; r <= r_max; r++ ) 
-        for( int r_plus = 0; r_plus <= r_plus_max; r_plus++ ) 
-            contables[k] << ( "R" + std::to_string(r) + "+" + std::to_string(r_plus) );
+        for( int k = 0; k <= n; k++ ) {
+            for( int r = r_min; r <= r_max; r++ ) 
+            for( int r_plus = 0; r_plus <= r_plus_max; r_plus++ ) 
+                contables[k] << ( "R" + std::to_string(r) + "+" + std::to_string(r_plus) );
+
+            contables[k] << nl;
+        }
 
         for( int k = 0; k <= n; k++ ) 
         for( int l = l_min; l <= l_max; l++ ) 
-        {
-            
+        {            
             for( int r = r_min; r <= r_max; r++ ) 
             for( int r_plus = 0; r_plus <= r_plus_max; r_plus++ ) 
                 contables[k] << errors[k][l-l_min][r-r_min][r_plus];
             
-            contables[k] << nl; 
-            
+            contables[k] << nl;    
         }
         
         

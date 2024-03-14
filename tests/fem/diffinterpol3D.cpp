@@ -241,6 +241,10 @@ int main( int argc, char *argv[] )
                 contable_vector[i] << printf_into_string("R%d", r-r_min );
             for( int i = 0; i < experiments_pseudo_function.size(); i++ ) 
                 contable_pseudo[i] << printf_into_string("R%d", r-r_min );
+
+            for( int i = 0; i < experiments_scalar_function.size(); i++ ) contable_scalar[i] << nl; 
+            for( int i = 0; i < experiments_vector_function.size(); i++ ) contable_vector[i] << nl; 
+            for( int i = 0; i < experiments_pseudo_function.size(); i++ ) contable_pseudo[i] << nl; 
         }
         
         
