@@ -131,6 +131,7 @@ int main( int argc, char *argv[] )
 
                 auto field = inclusion.createinputvector();
                 field.random();
+                field.normalize(massmatrix);
 
                 auto included_field = inclusion * field;
 

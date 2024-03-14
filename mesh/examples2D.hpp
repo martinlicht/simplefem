@@ -759,10 +759,10 @@ inline MeshSimplicial2D SphericalSurface2D( int L = 0 )
     MeshSimplicial2D ret(
       3,
       Coordinates( 3, 4, {
-          Sqrt(8./9.),          0.0, -1./3., // 0
-         -Sqrt(2./9.),  Sqrt(2./3.), -1./3., // 1
-         -Sqrt(2./9.), -Sqrt(2./3.), -1./3., // 2
-                  0.0,          0.0,    1.0, // 3
+          std::sqrt(8./9.),               0.0, -1./3., // 0
+         -std::sqrt(2./9.),  std::sqrt(2./3.), -1./3., // 1
+         -std::sqrt(2./9.), -std::sqrt(2./3.), -1./3., // 2
+                       0.0,               0.0,  1.0  , // 3
       } ),
       {
         { 0, 1, 2 },

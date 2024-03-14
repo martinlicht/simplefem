@@ -99,6 +99,7 @@ int main( int argc, char *argv[] )
 
                 auto field = inclusion.createinputvector();
                 field.random();
+                field.norm(massmatrix);
 
                 field = flagmatrix * field;
 

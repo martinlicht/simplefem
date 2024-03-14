@@ -4,6 +4,7 @@
 
 #include "../../basic.hpp"
 #include "../../operators/composedoperators.hpp"
+#include "../../sparse/matcsr.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
 #include "../../fem/local.polynomialmassmatrix.hpp"
@@ -27,7 +28,7 @@ int main( int argc, char *argv[] )
 
         LOG << "Initial mesh..." << nl;
         
-        MeshSimplicial2D M = StandardSquare2D_strange14();
+        MeshSimplicial2D M = UnitTriangle2D(); // StandardSquare2D_strange14();
         
         M.check();
         
@@ -55,13 +56,13 @@ int main( int argc, char *argv[] )
 
         const int r_min = 1;
         
-        const int r_max = 3;
+        const int r_max = 2;
         
         const int l_min = 0;
         
-        const int l_max = 2; // TODO set this value back to 4
+        const int l_max = 1; // TODO set this value back to 4
         
-        const int r_plus_max = 2;
+        const int r_plus_max = 1;
          
         Float errors[ M.getinnerdimension() ][ l_max - l_min + 1 ][ r_max - r_min + 1 ][ r_plus_max + 1 ];
         
@@ -91,30 +92,51 @@ int main( int argc, char *argv[] )
                 
                 SparseMatrix massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), k+1, r + r_plus - 1 );
                 
+                SparseMatrix origin_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), k, r );
+                
                 
                 
                 // FloatVector interpol_function = Interpolation( M, M.getinnerdimension(), k, r, fields[k] );
 
                 FloatVector interpol_function = lower_diffmatrix.createinputvector();
                 interpol_function.random();
+                interpol_function.normalize(origin_massmatrix);
 
                 auto path1 = dier_elevation * lower_diffmatrix * interpol_function;
 
                 auto path2 = upper_diffmatrix * diyi_elevation * interpol_function;
 
 
-//                 SparseMatrix canon = FEECRandomizeBroken( M, M.getinnerdimension(), k+1, r + r_plus - 1, notanumber );
+                // SparseMatrix canon = FEECRandomizeBroken( M, M.getinnerdimension(), k+1, r + r_plus - 1, notanumber );
                 SparseMatrix canon = FEECCanonicalizeBroken( M, M.getinnerdimension(), k+1, r + r_plus - 1 );
-                auto commutator_error = canon * ( path1 - path2 );
+                // auto canon = IdentityOperator( path1.getdimension() );
+                // auto commutator_error = canon * ( path1 - path2 );
                 
-                // auto commutator_error = path2 - path1;
+                auto commutator_error = path2 - path1;
+
+                LOG << massmatrix * ( canon * ( path1 - path2 ) - ( path1 - path2 ) ) << nl;
+
+                // const auto corrected = MatrixCSR(canon.getTranspose()) & MatrixCSR(massmatrix) & MatrixCSR(canon);
                 
+                // Float commutator_error_mass = commutator_error * ( massmatrix * commutator_error );
+                // Float commutator_error_mass = norm_sq_of_vector( massmatrix, canon * commutator_error );
+                auto foo = canon * commutator_error; Float commutator_error_mass = foo * ( massmatrix * foo );
                 // Float commutator_error_mass = commutator_error * ( massmatrix * ((path2-path1)) );
-                Float commutator_error_mass = commutator_error * ( massmatrix * commutator_error );
+                // Float commutator_error_mass = commutator_error * ( corrected * commutator_error );
 
                 assert( std::isfinite( commutator_error_mass ) );
+                assert( 0. <= commutator_error_mass );
                 
                 errors[k][l-l_min][r-r_min][r_plus] = std::sqrt( std::fabs( commutator_error_mass ) );
+
+
+                if(k==0 and false)
+                {
+
+                    LOG << massmatrix << nl;
+                    LOG << ( canon & massmatrix & canon ) << nl;
+
+                }
             
                 
                 
@@ -140,9 +162,11 @@ int main( int argc, char *argv[] )
         
         for( int k = 0; k < M.getinnerdimension(); k++ ) 
             contables[k].table_name = "Rounding errors D2K" + std::to_string(k);
-        for( int k = 0; k < M.getinnerdimension(); k++ ) 
-        for( int r = r_min; r <= r_max; r++ ) 
-            contables[k] << printf_into_string("R%d+%d", r-r_min, r_plus_max );;
+        for( int k = 0; k < M.getinnerdimension(); k++ ) {
+            for( int r = r_min; r <= r_max; r++ ) 
+                contables[k] << printf_into_string("R%d+%d", r-r_min, r_plus_max );;
+            contables[k] << nl;
+        }
 
         
         for( int l = l_min; l <= l_max; l++ ) 

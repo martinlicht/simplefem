@@ -117,7 +117,7 @@ int main( int argc, char *argv[] )
 
             ConvergenceTable contable("Mass error and solver residual");
             
-            contable << "sigma_error" << "u_error" << "du_error" << "residual" << "time";
+            contable << "sigma_error" << "u_error" << "du_error" << "residual" << "time" << nl;
             
             
 

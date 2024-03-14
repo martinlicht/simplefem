@@ -181,6 +181,24 @@ DenseMatrix::DenseMatrix( const FloatVector& myvector )
 }
 
 
+DenseMatrix::DenseMatrix( int number_of_blocks, const DenseMatrix& mat, Float scaling )
+: LinearOperator( mat.getdimout() * number_of_blocks, mat.getdimin() * number_of_blocks), 
+  entries( new (std::nothrow) Float[ number_of_blocks * number_of_blocks * mat.getdimout() * mat.getdimin() ] ) // wierd
+{
+    assert( number_of_blocks >= 0);
+    assert( entries != nullptr );
+    
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimin(); c++ )
+        (*this)( r, c ) = 0.;
+    
+    for( int b = 0; b < number_of_blocks; b++ )
+    for( int r = 0; r < mat.getdimout(); r++ )
+    for( int c = 0; c < mat.getdimin(); c++ )
+        (*this)( b * mat.getdimout() + r, b * mat.getdimin() + c ) = scaling * mat( r, c );
+    DenseMatrix::check();
+}
+
 DenseMatrix::DenseMatrix( const DenseMatrix& mat, Float scaling )
 : LinearOperator( mat.getdimout(), mat.getdimin() ), entries( new (std::nothrow) Float[ mat.getdimout() * mat.getdimin() ] ) // wierd
 {
@@ -190,7 +208,7 @@ DenseMatrix::DenseMatrix( const DenseMatrix& mat, Float scaling )
         (*this)(r,c) = scaling * mat(r,c);
     DenseMatrix::check();
 }
-        
+
 DenseMatrix::DenseMatrix( DenseMatrix&& mat, Float scaling )
 : LinearOperator( mat.getdimout(), mat.getdimin() ), entries( std::move(mat.entries) )
 {
@@ -240,7 +258,7 @@ std::string DenseMatrix::text() const
 
 std::string DenseMatrix::data_as_text( bool indexed, bool print_as_list ) const
 {
-    const int nc_precision = 3;
+    const int nc_precision = 10;
 
     const int nc_width = 7 + nc_precision;
     
@@ -502,10 +520,45 @@ void DenseMatrix::randommatrix()
 void DenseMatrix::randomintegermatrix( int min, int max )
 {
     check();
+    assert( min < max );
     assert( min+2 <= max );
+    unsigned long int diff = max - min;
+    assert( diff+1 > 0 );
+    LOG << diff << nl << max << nl << min << nl;
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin(); c++ )
-        (*this)(r,c) = min + random_integer() % (max-min);
+    {
+        unsigned int random_int = random_integer();
+        Float value = random_int % (diff+1) + (Float)min; // force the addition to be floating-point, avoid unsigned arithmetic
+        (*this)(r,c) = value;
+    }
+        
+}
+
+void DenseMatrix::random_orthogonal_matrix()
+{
+    check();
+    assert( issquare() );
+
+    const auto N = getdimin();
+    auto rows = std::vector<FloatVector>( N, FloatVector(N) );
+    
+    for( auto& row : rows ) { 
+        row.random(); 
+        row.normalize(); 
+        assert( row.isfinite() ); 
+        assert( std::isfinite( row.norm() ) ); 
+    }
+    
+    for( int i = 0; i < N; i++ ) {
+        for( int j = 0; j < i; j++ )
+            rows[i] -= (rows[i]*rows[j]) * rows[j];
+        rows[i].normalize();
+    }
+    
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimin(); c++ )
+        (*this)(r,c) = rows[r][c];
 }
 
 void DenseMatrix::scale( Float s )

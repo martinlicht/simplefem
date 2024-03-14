@@ -65,7 +65,7 @@ int main( int argc, char *argv[] )
     std::vector<ConvergenceTable> contables(max_r-min_r+1); //();
     for( int r = min_r; r <= max_r; r++ ){
         contables[r-min_r].table_name = "Mass error and numerical residuals r=" + std::to_string(r);
-        contables[r-min_r] << "eigenvalue" << "ratio" << "log_2(ratio)" << "diff" << "log_2(diff)" << "u_mass" << "du_mass" << "time";
+        contables[r-min_r] << "eigenvalue" << "ratio" << "log_2(ratio)" << "diff" << "log_2(diff)" << "u_mass" << "du_mass" << "time" << nl;
     } 
 
     

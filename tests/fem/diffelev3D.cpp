@@ -162,9 +162,11 @@ int main( int argc, char *argv[] )
         
         for( int k = 0; k < M.getinnerdimension(); k++ ) 
             contables[k].table_name = "Rounding errors D3K" + std::to_string(k);
-        for( int k = 0; k < M.getinnerdimension(); k++ ) 
-        for( int r = r_min; r <= r_max; r++ ) 
-            contables[k] << printf_into_string("R%d+%d", r-r_min, r_plus_max );;
+        for( int k = 0; k < M.getinnerdimension(); k++ ) {
+            for( int r = r_min; r <= r_max; r++ ) 
+                contables[k] << printf_into_string("R%d+%d", r-r_min, r_plus_max );;
+            contables[k] << nl;
+        }
 
         
         for( int l = l_min; l <= l_max; l++ ) 

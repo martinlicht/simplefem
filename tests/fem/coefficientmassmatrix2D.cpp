@@ -67,6 +67,7 @@ int main( int argc, char *argv[] )
         {
             FloatVector v = massmatrix.createinputvector();
             v.random();
+            v.normalize(massmatrix);
 
             auto diff = massmatrix * v - massmatrix_s * v;
 

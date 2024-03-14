@@ -166,6 +166,7 @@ std::string SparseMatrix::text() const
     std::string ret = "SparseMatrix " + std::to_string(getdimout()) + "x" + std::to_string(getdimin());
     for( const MatrixEntry& entry : entries )
         ret += ( "\n" + std::to_string(entry.row) + " " + std::to_string(entry.column) + " : " + std::to_string(entry.value) );
+        // ret += ( "\n" + std::to_string(entry.row) + " " + std::to_string(entry.column) + " : " + printf_into_string("%.17le",entry.value) );
     return ret;
 }
 
@@ -190,6 +191,13 @@ void SparseMatrix::apply( FloatVector& dest, const FloatVector& add, Float scali
     
     for( const MatrixEntry& rcv : entries )
         dest.setentry( rcv.row, dest.getentry( rcv.row ) + scaling * rcv.value * add.getentry( rcv.column ) );
+
+    for( int e = 0; e < entries.size(); e++ ){
+        
+        dest[ entries[e].row ] += scaling * entries[e].value * add[ entries[e].column ];
+        
+    }
+
 
 }
 
@@ -776,5 +784,40 @@ DiagonalOperator InverseDiagonalPreconditioner( const SparseMatrix& mat )
 
 }
 
+
+
+Float norm_sq_of_vector( const SparseMatrix& A, const FloatVector& vec )
+{
+    assert( A.issquare() );
+    assert( A.getdimin() == vec.getdimension() );
+
+    const auto& entries = A.getentries();
+
+    assert( entries.size() > 0 );
+
+    long double ret = 0.;
+    
+    for( const auto& entry : entries )
+    {
+        // LOGPRINTF("%d %d %f\n", entry.row, entry.column, entry.value );
+        ret += entry.value * vec[ entry.row ] * vec[ entry.column ];
+    }
+    // LOG << ret << nl;
+
+    long double ret1 = 0.;
+    long double ret2 = 0.;
+    
+    for( const auto& entry : entries )
+    {
+        // LOGPRINTF("%d %d %f\n", entry.row, entry.column, entry.value );
+        if( entry.row == entry.column )
+            ret1 += entry.value * vec[ entry.row ] * vec[ entry.row ];
+        if ( entry.row < entry.column )
+            ret2 += entry.value * vec[ entry.row ] * vec[ entry.column ];
+    }
+    
+    // return static_cast<Float>( ret1 + 2. * ret2 );
+    return static_cast<Float>( ret );
+}
 
 
