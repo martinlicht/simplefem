@@ -303,6 +303,10 @@ int main( int argc, char *argv[] )
                 contable_vector[i] << printf_into_string("R%d", r-r_min );
             for( int i = 0; i < experiments_volume_field.size(); i++ ) 
                 contable_volume[i] << printf_into_string("R%d", r-r_min );
+
+            for( int i = 0; i < experiments_scalar_field.size(); i++ ) contable_scalar[i] << nl; 
+            for( int i = 0; i < experiments_vector_field.size(); i++ ) contable_vector[i] << nl; 
+            for( int i = 0; i < experiments_volume_field.size(); i++ ) contable_volume[i] << nl; 
         }
         
         

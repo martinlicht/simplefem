@@ -110,7 +110,7 @@ int main( int argc, char *argv[] )
             
                 M.uniformrefinement();
 
-                M.shake_interior_vertices();
+                // M.shake_interior_vertices(); // The inner and outer dimension may differ.
             }
             
             
@@ -129,6 +129,9 @@ int main( int argc, char *argv[] )
             
             for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
                 contable_scalar[i] << printf_into_string("R%d", r-r_min );
+
+            for( int i = 0; i < experiments_scalar_function.size(); i++ ) contable_scalar[i] << nl; 
+
         }
         
         

@@ -109,23 +109,22 @@ int main( int argc, char *argv[] )
 
                 // SparseMatrix canon = FEECRandomizeBroken( M, M.getinnerdimension(), k+1, r + r_plus - 1, notanumber );
                 SparseMatrix canon = FEECCanonicalizeBroken( M, M.getinnerdimension(), k+1, r + r_plus - 1 );
-                // auto canon = IdentityOperator( path1.getdimension() );
-                // auto commutator_error = canon * ( path1 - path2 );
                 
                 auto commutator_error = path2 - path1;
 
                 LOG << massmatrix * ( canon * ( path1 - path2 ) - ( path1 - path2 ) ) << nl;
 
-                // const auto corrected = MatrixCSR(canon.getTranspose()) & MatrixCSR(massmatrix) & MatrixCSR(canon);
+                const auto csr_product = MatrixCSR(canon.getTranspose()) & MatrixCSR(massmatrix) & MatrixCSR(canon);
                 
                 // Float commutator_error_mass = commutator_error * ( massmatrix * commutator_error );
+                // Float commutator_error_mass = ( canon * commutator_error ) * ( massmatrix * commutator_error );
                 // Float commutator_error_mass = norm_sq_of_vector( massmatrix, canon * commutator_error );
-                auto foo = canon * commutator_error; Float commutator_error_mass = foo * ( massmatrix * foo );
-                // Float commutator_error_mass = commutator_error * ( massmatrix * ((path2-path1)) );
-                // Float commutator_error_mass = commutator_error * ( corrected * commutator_error );
+                Float commutator_error_mass = norm_sq_of_vector( massmatrix, commutator_error );
+                // auto foo = canon * commutator_error; Float commutator_error_mass = foo * ( massmatrix * foo );
+                // Float commutator_error_mass = commutator_error * ( csr_product * commutator_error );
 
                 assert( std::isfinite( commutator_error_mass ) );
-                assert( 0. <= commutator_error_mass );
+                assert( 0. <= commutator_error_mass, commutator_error_mass );
                 
                 errors[k][l-l_min][r-r_min][r_plus] = std::sqrt( std::fabs( commutator_error_mass ) );
 

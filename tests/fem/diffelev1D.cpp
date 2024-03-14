@@ -110,7 +110,7 @@ int main( int argc, char *argv[] )
             
                 M.uniformrefinement();
 
-                M.shake_interior_vertices();
+                // M.shake_interior_vertices(); // The inner and outer dimension may differ.
             }
             
             

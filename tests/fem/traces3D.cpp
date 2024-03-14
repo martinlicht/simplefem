@@ -131,6 +131,7 @@ int main( int argc, char *argv[] )
 
                 auto field = inclusion.createinputvector();
                 field.random();
+                field.normalize();
 
                 auto included_field = inclusion * field;
 
@@ -202,9 +203,11 @@ int main( int argc, char *argv[] )
     
     for( int k = 0; k <= n; k++ ) 
         contables[k].table_name = "Rounding errors D3K" + std::to_string(k);
-    for( int k = 0; k <= n; k++ ) 
-    for( int r = r_min; r <= r_max; r++ ) 
-        contables[k] << ( "R" + std::to_string(r) );
+    for( int k = 0; k < M.getinnerdimension(); k++ ) {
+        for( int r = r_min; r <= r_max; r++ ) 
+            contables[k] << printf_into_string("R%d", r-r_min );;
+        contables[k] << nl;
+    }
 
     for( int k = 0; k <= n; k++ ) 
     for( int l = l_min; l <= l_max; l++ ) 

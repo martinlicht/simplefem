@@ -203,8 +203,8 @@ int main( int argc, char *argv[] )
                 contables[d] << "CSR3";       // 5
                 // contables[d] << "stiff comp";    // 6
                 // contables[d] << "br mass";       // 7
-                // contables[d] << "br stiff";      // 8
-                
+                // contables[d] << "br stiff";      // 8                
+                contables[d] << nl; 
                 
                 for( int m = 0; m <= l_max-l_min; m++ ) 
                 {
