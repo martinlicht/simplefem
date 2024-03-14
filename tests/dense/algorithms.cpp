@@ -16,7 +16,7 @@ int main( int argc, char *argv[] )
     // LOG << std::showpos;
     
     {
-        LOG << "A. Unit test for scalar functions of matrices" << nl;
+        LOG << "A. Scalar functions of matrices" << nl;
        
         DenseMatrix S( 4, 4 );
         S(0,0) =  3; S(0,1) =  0; S(0,2) = 6; S(0,3) =  0; 
@@ -80,7 +80,7 @@ int main( int argc, char *argv[] )
     
     
     {
-        LOG << "B. Unit test for transposing dense matrices" << nl;
+        LOG << "B. Transposing dense matrices" << nl;
         
         LOG << "Transpose of square matrices" << nl;
         
@@ -121,7 +121,7 @@ int main( int argc, char *argv[] )
     
     
     {
-        LOG << "1. Unit test for matrix determinant, inverse, cofactor matrix" << nl;
+        LOG << "1. Matrix determinant, inverse, cofactor matrix" << nl;
         
         for( int dim = 1; dim < 6; dim++ ) 
         {
@@ -143,7 +143,7 @@ int main( int argc, char *argv[] )
     
     {
         
-        LOG << "2. Unit Test for Cholesky decomposition" << nl;
+        LOG << "2. Cholesky decomposition" << nl;
         
         DenseMatrix A(3,3);
         
@@ -161,7 +161,7 @@ int main( int argc, char *argv[] )
       
     {
     
-        LOG << "3. Unit Test for Cholesky decomposition" << nl;
+        LOG << "3. Cholesky decomposition" << nl;
         
         int dim = 3;
         DenseMatrix A(dim);
@@ -183,7 +183,7 @@ int main( int argc, char *argv[] )
     
     {
       
-        LOG << "4. Unit test for matrix determinant, inverse, cofactor matrix" << nl;
+        LOG << "4. Matrix determinant, inverse, cofactor matrix" << nl;
 
         DenseMatrix A( 3 );
         A(0,0) = -2; A(0,1) =  2; A(0,2) = -3; 
@@ -202,7 +202,7 @@ int main( int argc, char *argv[] )
     
     {
         
-        LOG << "5. Unit Test for Gauss Jordan algorithm" << nl;
+        LOG << "5. Gauss Jordan algorithm" << nl;
     
         DenseMatrix A(4,4);
         
@@ -232,7 +232,7 @@ int main( int argc, char *argv[] )
     }
     
     {
-        LOG << "6. Unit Test for Gauss Jordan algorithm" << nl;
+        LOG << "6. Gauss Jordan algorithm" << nl;
         for( int i = 0; i < 6; i++ )
         {
             
@@ -249,7 +249,7 @@ int main( int argc, char *argv[] )
     }
     
     {
-        LOG << "7. Unit Test for Gauss Jordan algorithm" << nl;
+        LOG << "7. Gauss Jordan algorithm" << nl;
     
         int N = 14;
         DenseMatrix C(N);
@@ -274,7 +274,7 @@ int main( int argc, char *argv[] )
     
     
     {
-        LOG << "8. Unit Test for QR Factorization" << nl;
+        LOG << "8. QR Factorization" << nl;
     
         const int dim = 4;
         DenseMatrix A(dim,dim);
@@ -309,7 +309,7 @@ int main( int argc, char *argv[] )
     }
     
     {
-        LOG << "8a. Unit Test for LQ Factorization" << nl;
+        LOG << "8a. LQ Factorization" << nl;
     
         const int dim = 4;
         DenseMatrix A(dim,dim);

@@ -18,6 +18,7 @@ ConvergenceTable::ConvergenceTable( const std::string& table_name )
     print_rowwise_instead_of_columnwise(false)
 {
     make_new_row = true;
+    LOG << "Table created! " << this << nl;
 }
         
 
@@ -33,7 +34,7 @@ void ConvergenceTable::insert_numerical_entry( EntryType entry )
         
 void ConvergenceTable::insert_seriesheader( const std::string& seriesheader )
 {   
-    assert( make_new_row and entries.size() == 0 );
+    assert( make_new_row or entries.size() == 0 );
 
     make_new_row = false; 
     
