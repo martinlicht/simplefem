@@ -132,6 +132,9 @@ int main( int argc, char *argv[] )
 
                     Float mass_elev = interpol_elev * ( massmatrix_scalar_plus * interpol_elev );
 
+                    Assert( mass >= 0., mass );
+                    Assert( mass_elev >= 0., mass_elev);
+                    
                     Float error_mass = mass - mass_elev;
                     
                     errors_scalar[i][l-l_min][r-r_min][r_plus] = error_mass;
@@ -150,6 +153,9 @@ int main( int argc, char *argv[] )
 
                     Float mass_elev = interpol_elev * ( massmatrix_volume_plus * interpol_elev );
 
+                    Assert( mass >= 0., mass );
+                    Assert( mass_elev >= 0., mass_elev);
+                    
                     Float error_mass = mass - mass_elev;
                     
                     errors_volume[i][l-l_min][r-r_min][r_plus] = error_mass;
@@ -237,10 +243,10 @@ int main( int argc, char *argv[] )
         for( int r_plus =     0; r_plus <= r_plus_max; r_plus++ ) 
         {
             for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
-                Assert( errors_scalar[i][l-l_min][r-r_min][r_plus] < desired_closeness, desired_closeness );
+                Assert( errors_scalar[i][l-l_min][r-r_min][r_plus] < desired_closeness, errors_scalar[i][l-l_min][r-r_min][r_plus], desired_closeness );
             
             for( int i = 0; i < experiments_volume_field.size(); i++ )
-                Assert( errors_volume[i][l-l_min][r-r_min][r_plus] < desired_closeness, desired_closeness );
+                Assert( errors_volume[i][l-l_min][r-r_min][r_plus] < desired_closeness, errors_volume[i][l-l_min][r-r_min][r_plus], desired_closeness );
         }
             
         

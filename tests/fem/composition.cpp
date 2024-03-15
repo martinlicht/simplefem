@@ -236,7 +236,7 @@ int main( int argc, char *argv[] )
         {
             if( not ( errors[l-l_min][d][t] < 100 * machine_epsilon ) )
                 LOG << l << space << d << space << t << space << errors[l-l_min][d][t] << nl;
-            assert( errors[l-l_min][d][t] < 100 * machine_epsilon );
+            Assert( errors[l-l_min][d][t] < 100 * machine_epsilon, errors[l-l_min][d][t] );
         }
         
         

@@ -171,6 +171,9 @@ int main( int argc, char *argv[] )
                 
                 const auto error_mass = traces_of_field.norm(massmatrix);
 
+                Assert( error_eucl >= 0. , error_eucl );
+                Assert( error_mass >= 0. , error_mass );
+
                 LOG << traces_of_field.getdimension() << " dimensional with mass " << error_mass << nl; 
                 
                 Float error = error_mass;
@@ -231,7 +234,7 @@ int main( int argc, char *argv[] )
         for( int l = l_min; l <= l_max; l++ ) 
         for( int r = r_min; r <= r_max; r++ ) 
         {
-            Assert( errors[k][l-l_min][r-r_min] < desired_closeness, errors[k][l-l_min][r-r_min] );
+            Assert( errors[k][l-l_min][r-r_min] < desired_closeness, errors[k][l-l_min][r-r_min], desired_closeness );
         }
 
     }

@@ -86,6 +86,8 @@ int main( int argc, char *argv[] )
                     
                     const auto error_mass = ( path_direct - path_indirect ).norm();
                     
+                    Assert( error_mass >= 0., error_mass );
+                    
                     errors[k][l-l_min][r-r_min] = maximum( errors[k][l-l_min][r-r_min], error_mass );
                     
                 }
@@ -145,7 +147,7 @@ int main( int argc, char *argv[] )
         for( int r = r_min; r <= r_max; r++ ) 
         for( int k = 0; k <= n; k++ ) 
         {
-            Assert( errors[k][l-l_min][r-r_min] < desired_closeness, desired_closeness );
+            Assert( errors[k][l-l_min][r-r_min] < desired_closeness, errors[k][l-l_min][r-r_min], desired_closeness );
         }
         
         
