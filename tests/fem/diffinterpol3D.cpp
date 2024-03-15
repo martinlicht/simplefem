@@ -159,6 +159,7 @@ int main( int argc, char *argv[] )
                     Float commutator_error_mass = commutator_error * ( vector_massmatrix * commutator_error );
                     
                     assert( std::isfinite( commutator_error_mass ) );
+                    Assert( commutator_error_mass >= 0., commutator_error_mass );
                     
                     errors_scalar[i][l-l_min][r-r_min] = std::sqrt( std::fabs( commutator_error_mass ) );
             
@@ -179,6 +180,7 @@ int main( int argc, char *argv[] )
                     Float commutator_error_mass = commutator_error * ( pseudo_massmatrix * commutator_error );
                     
                     assert( std::isfinite( commutator_error_mass ) );
+                    Assert( commutator_error_mass >= 0., commutator_error_mass );
                     
                     errors_vector[i][l-l_min][r-r_min] = std::sqrt( std::fabs( commutator_error_mass ) );
             
@@ -199,6 +201,7 @@ int main( int argc, char *argv[] )
                     Float commutator_error_mass = commutator_error * ( volume_massmatrix * commutator_error );
                     
                     assert( std::isfinite( commutator_error_mass ) );
+                    Assert( commutator_error_mass >= 0., commutator_error_mass );
                     
                     errors_pseudo[i][l-l_min][r-r_min] = std::sqrt( std::fabs( commutator_error_mass ) );
             
@@ -288,13 +291,13 @@ int main( int argc, char *argv[] )
 //         for( int r = r_min; r <= r_max; r++ ) 
 //         {
 //             for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
-//                 Assert( errors_scalar[i][l-l_min][r-r_min] < desired_closeness, desired_closeness );
+//                 Assert( errors_scalar[i][l-l_min][r-r_min] < desired_closeness, errors_scalar[i][l-l_min][r-r_min], desired_closeness );
 //             
 //             for( int i = 0; i < experiments_vector_function.size(); i++ ) 
-//                 Assert( errors_vector[i][l-l_min][r-r_min] < desired_closeness, desired_closeness );
+//                 Assert( errors_vector[i][l-l_min][r-r_min] < desired_closeness, errors_vector[i][l-l_min][r-r_min], desired_closeness );
 // 
 //             for( int i = 0; i < experiments_pseudo_function.size(); i++ ) 
-//                 Assert( errors_pseudo[i][l-l_min][r-r_min] < desired_closeness, desired_closeness );
+//                 Assert( errors_pseudo[i][l-l_min][r-r_min] < desired_closeness, errors_pseudo[i][l-l_min][r-r_min], desired_closeness );
 //         }
         
         

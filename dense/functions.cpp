@@ -187,7 +187,7 @@ Float Determinant( const DenseMatrix& A )
         
     } else {
         
-        return Determinant_gauss( A );
+        return Determinant_bareiss( A );
         
     }
 }

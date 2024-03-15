@@ -84,6 +84,8 @@ int main( int argc, char *argv[] )
                     
                     const auto error_mass = ( field - interpol * elevation * field ).norm();
                     
+                    Assert( error_mass >= 0., error_mass );
+                    
                     errors[k][l-l_min][r-r_min][r_plus] = maximum( errors[k][l-l_min][r-r_min][r_plus], error_mass );
                     
                 }
@@ -145,7 +147,7 @@ int main( int argc, char *argv[] )
         for( int r      = r_min; r      <=                 r_max; r++      ) 
         for( int r_plus =     0; r_plus <=            r_plus_max; r_plus++ ) 
         {
-            Assert( errors[k][l-l_min][r-r_min][r_plus] < desired_closeness, desired_closeness );
+            Assert( errors[k][l-l_min][r-r_min][r_plus] < desired_closeness, errors[k][l-l_min][r-r_min][r_plus], desired_closeness );
         }
         
         

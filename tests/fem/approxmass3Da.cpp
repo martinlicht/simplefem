@@ -184,6 +184,8 @@ int main( int argc, char *argv[] )
 
                     Float mass = interpol * ( massmatrix_scalar * interpol );
                     
+                    Assert( mass >= 0., mass );
+                    
                     errors_scalar[i][l-l_min][r-r_min] = std::sqrt( std::abs( mass - should_be ) );
                     
                 }
@@ -196,6 +198,8 @@ int main( int argc, char *argv[] )
                     FloatVector interpol = Interpolation( M, M.getinnerdimension(), 1, r, vectorfield );
 
                     Float mass = interpol * ( massmatrix_vector * interpol );
+                    
+                    Assert( mass >= 0., mass );
                     
                     errors_vector[i][l][r] = std::sqrt( std::abs( mass - should_be ) );
                     
@@ -210,6 +214,8 @@ int main( int argc, char *argv[] )
 
                     Float mass = interpol * ( massmatrix_pseudo * interpol );
                     
+                    Assert( mass >= 0., mass );
+                    
                     errors_pseudo[i][l][r] = std::sqrt( std::abs( mass - should_be ) );
                     
                 }
@@ -222,6 +228,8 @@ int main( int argc, char *argv[] )
                     FloatVector interpol = Interpolation( M, M.getinnerdimension(), 3, r, volumefield );
 
                     Float mass = interpol * ( massmatrix_volume * interpol );
+                    
+                    Assert( mass >= 0., mass );
                     
                     errors_volume[i][l][r] = std::sqrt( std::abs( mass - should_be ) );
                     
@@ -324,16 +332,16 @@ int main( int argc, char *argv[] )
             // TODO: find a meaningful test here 
 
             // for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
-            //     Assert( errors_scalar[i][l-l_min][r-r_min] < desired_closeness, desired_closeness );
+            //     Assert( errors_scalar[i][l-l_min][r-r_min] < desired_closeness, errors_scalar[i][l-l_min][r-r_min], desired_closeness );
             
             // for( int i = 0; i < experiments_vector_field.size(); i++ ) 
-            //     Assert( errors_vector[i][l-l_min][r-r_min] < desired_closeness, desired_closeness );
+            //     Assert( errors_vector[i][l-l_min][r-r_min] < desired_closeness, errors_vector[i][l-l_min][r-r_min], desired_closeness );
             
             // for( int i = 0; i < experiments_pseudo_field.size(); i++ ) 
-            //     Assert( errors_pseudo[i][l-l_min][r-r_min] < desired_closeness, desired_closeness );
+            //     Assert( errors_pseudo[i][l-l_min][r-r_min] < desired_closeness, errors_pseudo[i][l-l_min][r-r_min], desired_closeness );
             
             // for( int i = 0; i < experiments_volume_field.size(); i++ )
-            //     Assert( errors_volume[i][l-l_min][r-r_min] < desired_closeness, desired_closeness );
+            //     Assert( errors_volume[i][l-l_min][r-r_min] < desired_closeness, errors_volume[i][l-l_min][r-r_min], desired_closeness );
         }
         
         
