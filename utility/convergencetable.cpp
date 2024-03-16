@@ -28,6 +28,8 @@ void ConvergenceTable::insert_numerical_entry( EntryType entry )
         entries.push_back( std::vector<EntryType>(0) );
         make_new_row = false;
     }
+
+    assert( entries.size() > 0 );
     
     assert( entries.back().size() < seriesheaders.size() );
 
@@ -38,9 +40,11 @@ void ConvergenceTable::insert_seriesheader( const std::string& seriesheader )
 {   
     assert( entries.size() == 0 );
 
-    if( make_new_row ) assert( seriesheaders.size() == 0 );
+    if( make_new_row ) assert( not seriesheaders.size() > 0 );
 
     if( seriesheaders.size() == 0 ) assert( make_new_row );
+
+    if( seriesheaders.size() > 0 ) assert( not make_new_row );
 
     make_new_row = false; 
     

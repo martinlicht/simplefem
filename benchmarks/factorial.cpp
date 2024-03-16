@@ -4,7 +4,7 @@
 #include <chrono>
 #include <iostream>
 
-#include "../../basic.hpp"
+#include "../basic.hpp"
 
 
 using namespace std;

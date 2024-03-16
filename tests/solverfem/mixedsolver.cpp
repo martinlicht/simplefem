@@ -129,6 +129,8 @@ int main( int argc, char *argv[] )
             if( do_systemherzog ) { contable_sigma << "SysHerzog"; contable_u << "SysHerzog"; contable_du << "SysHerzog"; contable_iter << "SysHerzog"; contable_time << "SysHerzog"; contable_res << "SysHerzog"; } 
             if( do_sparseherzog ) { contable_sigma << "SpaHerzog"; contable_u << "SpaHerzog"; contable_du << "SpaHerzog"; contable_iter << "SpaHerzog"; contable_time << "SpaHerzog"; contable_res << "SpaHerzog"; } 
             
+            { contable_sigma << nl; contable_u << nl; contable_du << nl; contable_iter << nl; contable_time << nl; contable_res << nl; } 
+            
 
             const int min_l = 0; 
             

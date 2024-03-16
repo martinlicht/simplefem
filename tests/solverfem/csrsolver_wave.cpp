@@ -141,6 +141,7 @@ int main( int argc, char *argv[] )
     if( do_cgm_ssor_rainbow_csr )        contable_u << "CGMcsr_ssor_rb";
     if( do_cgm_ssor_eisenstat_rainbow_csr )   contable_u << "CGMcsr_ssor_eirb" ;
     if( do_chebyshev_diagonal_csr ) contable_u << "Chebyshev_csr";
+    contable_u << nl;
     
     if( do_cgmpp      ) contable_du << "CGM++"      ;
     if( do_crmpp_expl ) contable_du << "CRM++(expl)";
@@ -160,6 +161,7 @@ int main( int argc, char *argv[] )
     if( do_cgm_ssor_rainbow_csr )        contable_du << "CGMcsr_ssor_rb";
     if( do_cgm_ssor_eisenstat_rainbow_csr )   contable_du << "CGMcsr_ssor_eirb" ;
     if( do_chebyshev_diagonal_csr ) contable_du << "Chebyshev_csr";
+    contable_du << nl;
     
     if( do_cgmpp      ) contable_iter << "CGM++"      ;
     if( do_crmpp_expl ) contable_iter << "CRM++(expl)";
@@ -179,6 +181,7 @@ int main( int argc, char *argv[] )
     if( do_cgm_ssor_rainbow_csr )        contable_iter << "CGMcsr_ssor_rb";
     if( do_cgm_ssor_eisenstat_rainbow_csr )   contable_iter << "CGMcsr_ssor_eirb" ;
     if( do_chebyshev_diagonal_csr ) contable_iter << "Chebyshev_csr";
+    contable_iter << nl;
 
     if( do_cgmpp      ) contable_time << "CGM++"      ;
     if( do_crmpp_expl ) contable_time << "CRM++(expl)";
@@ -198,6 +201,7 @@ int main( int argc, char *argv[] )
     if( do_cgm_ssor_rainbow_csr )        contable_time << "CGMcsr_ssor_rb";
     if( do_cgm_ssor_eisenstat_rainbow_csr )   contable_time << "CGMcsr_ssor_eirb" ;
     if( do_chebyshev_diagonal_csr ) contable_time << "Chebyshev_csr";
+    contable_time << nl;
 
     if( do_cgmpp      ) contable_res << "CGM++"      ;
     if( do_crmpp_expl ) contable_res << "CRM++(expl)";
@@ -217,6 +221,7 @@ int main( int argc, char *argv[] )
     if( do_cgm_ssor_rainbow_csr )        contable_res << "CGMcsr_ssor_rb";
     if( do_cgm_ssor_eisenstat_rainbow_csr )   contable_res << "CGMcsr_ssor_eirb" ;
     if( do_chebyshev_diagonal_csr ) contable_res << "Chebyshev_csr";
+    contable_res << nl;
     
 
     const int min_l = 1; 
