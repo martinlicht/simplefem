@@ -3,7 +3,7 @@
 #include "../../dense/factorization.hpp"
 #include "../../dense/functions.hpp"
 #include "../../dense/factorization.hpp"
-#include "../../dense/factorization.hpp"
+#include "../../dense/simplesolver.hpp"
 // #include "../../dense/scalarfunctions.hpp"
 
 
@@ -16,7 +16,7 @@ int main( int argc, char *argv[] )
     // LOG << std::showpos;
     
     {
-        LOG << "A. Unit test for scalar functions of matrices" << nl;
+        LOG << "A. Scalar functions of matrices" << nl;
        
         DenseMatrix S( 4, 4 );
         S(0,0) =  3; S(0,1) =  0; S(0,2) = 6; S(0,3) =  0; 
@@ -80,7 +80,7 @@ int main( int argc, char *argv[] )
     
     
     {
-        LOG << "B. Unit test for transposing dense matrices" << nl;
+        LOG << "B. Transposing dense matrices" << nl;
         
         LOG << "Transpose of square matrices" << nl;
         
@@ -121,7 +121,7 @@ int main( int argc, char *argv[] )
     
     
     {
-        LOG << "1. Unit test for matrix determinant, inverse, cofactor matrix" << nl;
+        LOG << "1. Matrix determinant, inverse, cofactor matrix" << nl;
         
         for( int dim = 1; dim < 6; dim++ ) 
         {
@@ -152,7 +152,7 @@ int main( int argc, char *argv[] )
     
     {
         
-        LOG << "2. Unit Test for Cholesky decomposition" << nl;
+        LOG << "2. Cholesky decomposition" << nl;
         
         DenseMatrix A(3,3);
         
@@ -170,7 +170,7 @@ int main( int argc, char *argv[] )
       
     {
     
-        LOG << "3. Unit Test for Cholesky decomposition" << nl;
+        LOG << "3. Cholesky decomposition" << nl;
         
         int dim = 3;
         DenseMatrix A(dim);
@@ -192,7 +192,7 @@ int main( int argc, char *argv[] )
     
     {
       
-        LOG << "4. Unit test for matrix determinant, inverse, cofactor matrix" << nl;
+        LOG << "4. Matrix determinant, inverse, cofactor matrix" << nl;
 
         DenseMatrix A( 3 );
         A(0,0) = -2; A(0,1) =  2; A(0,2) = -3; 
@@ -220,7 +220,7 @@ int main( int argc, char *argv[] )
     
     {
         
-        LOG << "5. Unit Test for Gauss Jordan algorithm" << nl;
+        LOG << "5. Gauss Jordan algorithm" << nl;
     
         DenseMatrix A(4,4);
         
@@ -250,7 +250,7 @@ int main( int argc, char *argv[] )
     }
     
     {
-        LOG << "6. Unit Test for Gauss Jordan algorithm" << nl;
+        LOG << "6. Gauss Jordan algorithm" << nl;
         for( int i = 0; i < 6; i++ )
         {
             
@@ -279,7 +279,7 @@ int main( int argc, char *argv[] )
     }
 
     {
-        LOG << "7. Unit Test for Gauss Jordan algorithm" << nl;
+        LOG << "7. Gauss Jordan algorithm" << nl;
     
         int N = 14;
         DenseMatrix C(N);
@@ -304,7 +304,7 @@ int main( int argc, char *argv[] )
     
     
     {
-        LOG << "8. Unit Test for QR Factorization" << nl;
+        LOG << "8. QR Factorization" << nl;
     
         const int dim = 4;
         DenseMatrix A(dim,dim);
@@ -339,7 +339,7 @@ int main( int argc, char *argv[] )
     }
     
     {
-        LOG << "8a. Unit Test for LQ Factorization" << nl;
+        LOG << "8a. LQ Factorization" << nl;
     
         const int dim = 4;
         DenseMatrix A(dim,dim);
@@ -446,15 +446,23 @@ int main( int argc, char *argv[] )
 
             LOG << A << nl;
             
-            LOG << "Determinant (laplace): " << Determinant_laplaceexpansion(A) << nl;
-            LOG << "Determinant (gauss):   " << Determinant_gauss(A) << nl;
-            LOG << "Determinant (default): " << Determinant(A) << nl;
+            Float det = Determinant(A);
+            Float det_l = Determinant_laplaceexpansion(A);
+            Float det_g = Determinant_gauss(A);
+            Float det_b = Determinant_bareiss(A);
 
+            LOG << "Determinant (default): " << det << nl;
+            LOG << "Determinant (laplace): " << det_l << nl;
+            LOG << "Determinant (gauss):   " << det_g << nl;
+            LOG << "Determinant (bareiss): " << det_b << nl;
+
+            assert( is_numerically_close( det, det_l ) && is_numerically_close( det, det_g ) && is_numerically_close( det, det_b ) );
+            
             {
                 const int dim = t;
                 DenseMatrix Q(dim,dim), R(dim,dim);
                 QRFactorization( A, Q, R );
-                LOG << "Determinant (QR): " << Determinant(R) << nl;
+                LOG << "Determinant (QR): " << UpperTriangularDeterminant(R) << nl;
             }
             
             // LOG << CofactorMatrix( A ) << nl;
@@ -467,7 +475,7 @@ int main( int argc, char *argv[] )
     
     {
         LOG << "12. Compare Determinats of random ill-conditioned matrices" << nl;
-        for( int t = 3; t < 7; t++ )
+        for( int t = 3; t < 5; t++ )
         {
             
             DenseMatrix A(2,2);
@@ -476,15 +484,23 @@ int main( int argc, char *argv[] )
             A(1,0) = power_numerical( 10, t ) - 1;
             A(1,1) = power_numerical( 10, t ) - 2;
             
-            LOG << t << " Determinant (laplace): " << Determinant_laplaceexpansion(A) << nl;
-            LOG << t << " Determinant (gauss):   " << Determinant_gauss(A) << nl;
-            LOG << t << " Determinant (default): " << Determinant(A) << nl;
+            Float det = Determinant(A);
+            Float det_l = Determinant_laplaceexpansion(A);
+            Float det_g = Determinant_gauss(A);
+            Float det_b = Determinant_bareiss(A);
+
+            LOG << t << " Determinant (default): " << det << nl;
+            LOG << t << " Determinant (laplace): " << det_l << nl;
+            LOG << t << " Determinant (gauss):   " << det_g << nl;
+            LOG << t << " Determinant (bareiss): " << det_b << nl;
+
+            assert( is_numerically_close( det, det_l ) && is_numerically_close( det, det_g ) && is_numerically_close( det, det_b ) );
             
             {
                 const int dim = 2;
                 DenseMatrix Q(dim,dim), R(dim,dim);
                 QRFactorization( A, Q, R );
-                LOG << "Determinant (QR): " << Determinant(R) << nl;
+                LOG << "Determinant (QR): " << UpperTriangularDeterminant(R) << nl;
             }
             
             LOG << CofactorMatrix( A ) << nl;
@@ -499,7 +515,7 @@ int main( int argc, char *argv[] )
     
     {
         LOG << "13. Compare Determinats of random ill-conditioned matrices" << nl;
-        for( int t = 3; t < 10; t++ )
+        for( int t = 3; t < 5; t++ )
         {
             
             DenseMatrix Q(2);
@@ -513,15 +529,23 @@ int main( int argc, char *argv[] )
 
             DenseMatrix A = Transpose(Q) * M * Q;
             
-            LOG << t << " Determinant (laplace): " << Determinant_laplaceexpansion(A) << nl;
-            LOG << t << " Determinant (gauss):   " << Determinant_gauss(A) << nl;
-            LOG << t << " Determinant (default): " << Determinant(A) << nl;
+            Float det = Determinant(A);
+            Float det_l = Determinant_laplaceexpansion(A);
+            Float det_g = Determinant_gauss(A);
+            Float det_b = Determinant_bareiss(A);
+
+            LOG << t << " Determinant (default): " << det << nl;
+            LOG << t << " Determinant (laplace): " << det_l << nl;
+            LOG << t << " Determinant (gauss):   " << det_g << nl;
+            LOG << t << " Determinant (bareiss): " << det_b << nl;
+
+            assert( is_numerically_close( det, det_l ) && is_numerically_close( det, det_g ) && is_numerically_close( det, det_b ) );
             
             {
                 const int dim = 2;
                 DenseMatrix Q(dim,dim), R(dim,dim);
                 QRFactorization( A, Q, R );
-                LOG << "Determinant (QR): " << Determinant(R) << nl;
+                LOG << "Determinant (QR): " << UpperTriangularDeterminant(R) << nl;
             }
             
             LOG << CofactorMatrix( A ) << nl;

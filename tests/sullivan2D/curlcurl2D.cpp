@@ -115,7 +115,7 @@ int main( int argc, char *argv[] )
     
     ConvergenceTable contable("Mass error and numerical residuals");
     
-    contable << "u_error" << "du_error" << "sigma_error" << "u_res" << "sigma_res" << "time";
+    contable << "u_error" << "du_error" << "sigma_error" << "u_res" << "sigma_res" << "time" << nl;
 
     
     assert( 0 <= min_l and min_l <= max_l );

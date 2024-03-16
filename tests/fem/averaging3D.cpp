@@ -99,9 +99,7 @@ int main( int argc, char *argv[] )
 
                 auto field = inclusion.createinputvector();
                 field.random();
-
                 field = flagmatrix * field;
-
                 field.normalize();
                 
                 assert( field.isfinite() );
@@ -116,7 +114,8 @@ int main( int argc, char *argv[] )
 
                 LOG << error_eucl << space << error_mass << nl; 
                 
-                // Assert( error_eucl < desired_closeness and error_mass < desired_closeness, desired_closeness ); 
+                Assert( error_eucl >= 0., error_eucl ) ;
+                Assert( error_mass >= 0., error_mass ) ;
                 
                 Float error = error_mass;
 
@@ -153,19 +152,22 @@ int main( int argc, char *argv[] )
     
     for( int k = 0; k <= n; k++ ) 
         contables[k].table_name = "Rounding errors D3K" + std::to_string(k);
+    
     for( int k = 0; k <= n; k++ ) 
-    for( int r = r_min; r <= r_max; r++ ) 
-        contables[k] << ( "R" + std::to_string(r) );
+    {
+        for( int r = r_min; r <= r_max; r++ ) 
+            contables[k] << ( "R" + std::to_string(r) );
+
+        contables[k] << nl;     
+    }
 
     for( int k = 0; k <= n; k++ ) 
     for( int l = l_min; l <= l_max; l++ ) 
     {
-        
         for( int r = r_min; r <= r_max; r++ ) 
             contables[k] << errors[k][l-l_min][r-r_min];
         
-        contables[k] << nl; 
-        
+        contables[k] << nl;     
     }
     
     LOG << "Check that differences are small" << nl;
@@ -179,7 +181,7 @@ int main( int argc, char *argv[] )
         for( int l = l_min; l <= l_max; l++ ) 
         for( int r = r_min; r <= r_max; r++ ) 
         {
-            Assert( errors[k][l-l_min][r-r_min] < desired_closeness, errors[k][l-l_min][r-r_min] );
+            Assert( errors[k][l-l_min][r-r_min] < desired_closeness, desired_closeness, errors[k][l-l_min][r-r_min] );
         }
 
     }

@@ -72,14 +72,17 @@ int main( int argc, char *argv[] )
         {
             FloatVector v1 = mass1.createinputvector();
             FloatVector v2 = mass2.createinputvector();
-            v1.random();
-            v2.random();
+            v1.random(); v1.normalize(mass1);
+            v2.random(); v2.normalize(mass2);
 
             auto diff1 = mass1 * v1 - mass1_s * v1;
             auto diff2 = mass2 * v2 - mass2_s * v2;
 
-            Assert( diff1.norm() < desired_closeness, desired_closeness );
-            Assert( diff2.norm() < desired_closeness, desired_closeness );
+            Float norm_diff1 = diff1.norm();
+            Float norm_diff2 = diff2.norm();
+
+            Assert( norm_diff1 < desired_closeness, norm_diff1, desired_closeness );
+            Assert( norm_diff2 < desired_closeness, norm_diff2, desired_closeness );
         }
         LOG << nl;
         

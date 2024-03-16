@@ -232,6 +232,8 @@ int main( int argc, char *argv[] )
 
                     auto error_mass = error * ( massmatrix_scalar * error );
                     
+                    Assert( error_mass >= 0., error_mass );
+                    
                     errors_scalar[i][l-l_min][r-r_min] = std::sqrt( std::abs( error_mass ) );
                     
                 }
@@ -248,6 +250,8 @@ int main( int argc, char *argv[] )
 
                     auto error_mass = error * ( massmatrix_vector * error );
                     
+                    Assert( error_mass >= 0., error_mass );
+                    
                     errors_vector[i][l-l_min][r-r_min] = std::sqrt( std::abs( error_mass ) );
                     
                 }
@@ -263,6 +267,8 @@ int main( int argc, char *argv[] )
                     auto error = interpol_ref - elevation_volume * interpol;
 
                     auto error_mass = error * ( massmatrix_volume * error );
+                    
+                    Assert( error_mass >= 0., error_mass );
                     
                     errors_volume[i][l-l_min][r-r_min] = std::sqrt( std::abs( error_mass ) );
                     
@@ -303,6 +309,10 @@ int main( int argc, char *argv[] )
                 contable_vector[i] << printf_into_string("R%d", r-r_min );
             for( int i = 0; i < experiments_volume_field.size(); i++ ) 
                 contable_volume[i] << printf_into_string("R%d", r-r_min );
+
+            for( int i = 0; i < experiments_scalar_field.size(); i++ ) contable_scalar[i] << nl; 
+            for( int i = 0; i < experiments_vector_field.size(); i++ ) contable_vector[i] << nl; 
+            for( int i = 0; i < experiments_volume_field.size(); i++ ) contable_volume[i] << nl; 
         }
         
         
@@ -348,13 +358,13 @@ int main( int argc, char *argv[] )
                 continue;
             
             for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
-                Assert( errors_scalar[i][l-l_min][r-r_min] < desired_closeness, desired_closeness );
+                Assert( errors_scalar[i][l-l_min][r-r_min] < desired_closeness, errors_scalar[i][l-l_min][r-r_min], desired_closeness );
             
             for( int i = 0; i < experiments_vector_field.size(); i++ ) 
-                Assert( errors_vector[i][l-l_min][r-r_min] < desired_closeness, desired_closeness );
+                Assert( errors_vector[i][l-l_min][r-r_min] < desired_closeness, errors_vector[i][l-l_min][r-r_min], desired_closeness );
 
             for( int i = 0; i < experiments_volume_field.size(); i++ )
-                Assert( errors_volume[i][l-l_min][r-r_min] < desired_closeness, desired_closeness );
+                Assert( errors_volume[i][l-l_min][r-r_min] < desired_closeness, errors_volume[i][l-l_min][r-r_min], desired_closeness );
         }
         
         

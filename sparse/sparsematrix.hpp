@@ -173,6 +173,7 @@ inline SparseMatrix operator*( const SparseMatrix& mat, Float s )
     return s * mat;
 }
 
+Float norm_sq_of_vector( const SparseMatrix& A, const FloatVector& vec );
 
 
 

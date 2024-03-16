@@ -65,6 +65,8 @@ class AlternatingForm
         
         AlternatingForm exteriorderivative( Float stepsize = desired_closeness ) const 
         {
+            if( stepsize < 0 ) stepsize = std::cbrt( std::numeric_limits<Float>::epsilon() );
+
             const std::vector<IndexMap> sigmas_dst = generateSigmas( IndexRange( 1, k+1 ), IndexRange( 0, d-1 ) );
             const std::vector<IndexMap> sigmas_src  = generateSigmas( IndexRange( 1, k   ), IndexRange( 0, d-1 ) );
             
@@ -135,6 +137,8 @@ class AlternatingForm
         AlternatingForm laplacian( Float stepsize = desired_closeness ) const 
         {
             
+            if( stepsize < 0 ) stepsize = std::cbrt( std::numeric_limits<Float>::epsilon() );
+
             int d = this->d;
             int k = this->k;
             const auto formula = this->formula;

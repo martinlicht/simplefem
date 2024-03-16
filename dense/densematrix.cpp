@@ -258,7 +258,7 @@ std::string DenseMatrix::text() const
 
 std::string DenseMatrix::data_as_text( bool indexed, bool print_as_list ) const
 {
-    const int nc_precision = 3;
+    const int nc_precision = 10;
 
     const int nc_width = 7 + nc_precision;
     

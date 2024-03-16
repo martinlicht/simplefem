@@ -89,6 +89,9 @@ int main( int argc, char *argv[] )
                     
                     Float hodged_mass = hodged_field * ( broken_mass_hodged_matrix * hodged_field );
                     
+                    Assert( mass >= 0., mass );
+                    Assert( hodged_mass >= 0., hodged_mass );
+                    
                     const auto error_mass = absolute( mass - hodged_mass );
 
                     LOG << mass << space << hodged_mass << space << hodged_mass / mass << space << error_mass << nl;
@@ -118,9 +121,11 @@ int main( int argc, char *argv[] )
         
         for( int k = 0; k <= n; k++ ) 
             contables[k].table_name = "Rounding errors D2K" + std::to_string(k);
-        for( int k = 0; k <= n; k++ ) 
-        for( int r = r_min; r <= r_max; r++ ) 
-            contables[k] << ( "R" + std::to_string(r) );
+        for( int k = 0; k < M.getinnerdimension(); k++ ) {
+            for( int r = r_min; r <= r_max; r++ ) 
+                contables[k] << ( "R" + std::to_string(r) );
+            contables[k] << nl;
+        }
 
         for( int k = 0; k <= n; k++ ) 
         for( int l = l_min; l <= l_max; l++ ) 
@@ -149,7 +154,7 @@ int main( int argc, char *argv[] )
         for( int r = r_min; r <= r_max; r++ ) 
         for( int k = 0; k <= n; k++ ) 
         {
-            Assert( errors[k][l-l_min][r-r_min] < desired_closeness, desired_closeness );
+            Assert( errors[k][l-l_min][r-r_min] < desired_closeness, errors[k][l-l_min][r-r_min], desired_closeness );
         }
         
         

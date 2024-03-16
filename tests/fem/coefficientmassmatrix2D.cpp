@@ -67,10 +67,13 @@ int main( int argc, char *argv[] )
         {
             FloatVector v = massmatrix.createinputvector();
             v.random();
+            v.normalize(massmatrix);
 
             auto diff = massmatrix * v - massmatrix_s * v;
 
-            Assert( diff.norm() < desired_closeness, desired_closeness );
+            Float norm_diff = diff.norm();
+
+            Assert( norm_diff < desired_closeness, norm_diff, desired_closeness );
         }
         LOG << nl;
 

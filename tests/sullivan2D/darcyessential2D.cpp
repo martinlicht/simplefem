@@ -110,7 +110,7 @@ int main( int argc, char *argv[] )
         
         ConvergenceTable contable("Mass error");
         
-        contable << "sigma_error" << "u_error" << "sigma_res" << "u_res" << "time";
+        contable << "sigma_error" << "u_error" << "sigma_res" << "u_res" << "time" << nl;
         
 
         assert( 0 <= min_l and min_l <= max_l );
