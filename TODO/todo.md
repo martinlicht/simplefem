@@ -70,7 +70,7 @@ Understand the floating-point comparison functions and import them into this pro
       - [x] what are poissontransformed old, old2, and the other one? Retire?
       For example, the Lagrange test should reflect simple things and additional overhead
 - [x] Clean up the test for the nullspace computation. 
-- [ ] FEM tests check assertions more thoroughly
+- [x] FEM tests check assertions more thoroughly
 - [ ] Clean up the nullspace computation in the solver component.
 - [ ] include visualization script 
 - [ ] Unit tests must check convergence rates 
