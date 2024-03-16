@@ -19,7 +19,7 @@ using namespace std;
 extern const char* TestName;
 #define TESTNAME( cstr ) const char* TestName = cstr
 
-TESTNAME( "Solve SPD system: CGM, CRM, MINRES, HerzoogSoodhalter" );
+TESTNAME( "Solve SPD system: CGM, CRM, MINRES, HerzogSoodhalter" );
 
 int main( int argc, char *argv[] )
 {
@@ -62,6 +62,7 @@ int main( int argc, char *argv[] )
             if( do_crmpp_fast ) contable_sol << "CRM++(fast)";
             if( do_minres     ) contable_sol << "MINRES"     ;
             if( do_herzog     ) contable_sol << "HERZOG"     ;
+            contable_sol << nl;
 
             contable_res << "Index";
             if( do_cgmpp      ) contable_res << "CGM++"      ;
@@ -70,6 +71,7 @@ int main( int argc, char *argv[] )
             if( do_crmpp_fast ) contable_res << "CRM++(fast)";
             if( do_minres     ) contable_res << "MINRES"     ;
             if( do_herzog     ) contable_res << "HERZOG"     ;
+            contable_res << nl;
 
             contable_num << "Index";
             if( do_cgmpp      ) contable_num << "CGM++"      ;
@@ -78,6 +80,7 @@ int main( int argc, char *argv[] )
             if( do_crmpp_fast ) contable_num << "CRM++(fast)";
             if( do_minres     ) contable_num << "MINRES"     ;
             if( do_herzog     ) contable_num << "HERZOG"     ;
+            contable_num << nl;
 
             
             const std::vector<int> Ns = { 16, 32 };

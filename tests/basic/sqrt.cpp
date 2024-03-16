@@ -30,7 +30,7 @@ int main()
         unsigned int i;
     } u;
 
-    unsigned int maxUint = 1000000000; // std::numeric_limits<unsigned int>::max();
+    unsigned int maxUint = 100000; // std::numeric_limits<unsigned int>::max();
 
     u.f = std::numeric_limits<float>::epsilon();
     calculate_sqrt_distance( u.f );

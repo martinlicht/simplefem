@@ -27,13 +27,16 @@ void ConvergenceTable::insert_numerical_entry( EntryType entry )
         entries.push_back( std::vector<EntryType>(0) );
         make_new_row = false;
     }
+
+    assert( entries.size() > 0 );
     
     entries.back().push_back( entry );
 }
         
 void ConvergenceTable::insert_seriesheader( const std::string& seriesheader )
 {   
-    assert( make_new_row and entries.size() == 0 );
+    assert( entries.size() == 0 );
+    assert( seriesheaders.size() == 0 or not make_new_row );
 
     make_new_row = false; 
     

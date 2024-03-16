@@ -30,7 +30,7 @@ int main( int argc, char *argv[] )
             
                 M.uniformrefinement();
 
-                M.shake_interior_vertices();
+                // M.shake_interior_vertices(); // only if inner and outer dimension match
                 
                 internal_print( M, meshname );
             
