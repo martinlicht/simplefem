@@ -30,7 +30,11 @@ int main()
         unsigned int i;
     } u;
 
-    unsigned int maxUint = 1000000000; // std::numeric_limits<unsigned int>::max();
+<<<<<<< HEAD
+    unsigned int maxUint = 10000; // std::numeric_limits<unsigned int>::max();
+=======
+    unsigned int maxUint = 10000; // std::numeric_limits<unsigned int>::max();
+>>>>>>> f2e5a8a2d79e33408fe445d1a95770a565056323
 
     u.f = std::numeric_limits<float>::epsilon();
     calculate_sqrt_distance( u.f );
@@ -41,17 +45,19 @@ int main()
     float worst_lower = 0.;
     
     #if defined(_OPENMP)
-    #pragma omp parallel for reduce( get_max : worst_upper ) reduce( get_max : worst_lower )
+    #pragma omp parallel for reduction(max:worst_upper,worst_lower)
     #endif
-    for( u.i = 0; u.i < maxUint; ++u.i)
+    for( int i = 0; i < maxUint; ++i )
     {
+        u.i = i;
+
         // Optionally, break or continue on specific conditions to avoid NaNs, infinities, etc.
         if (std::isnan(u.f) || std::isinf(u.f)) {
             continue; // Skip this iteration
         }
 
         if( u.f < 0 ) 
-            break;
+            continue; // skip from here on 
 
         auto worst = calculate_sqrt_distance(u.f);
 

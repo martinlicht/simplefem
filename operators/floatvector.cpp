@@ -168,7 +168,7 @@ std::string FloatVector::text() const
     std::string ret = "float vector of dimension: " + std::to_string( getdimension() );
     for( int p = 0; p < getdimension(); p++ ) {
         // ret = ret + "\n" + std::to_string(p) + ": " + std::to_string(getentry(p));
-        ret = ret + "\n" + std::to_string(p) + ": " + printf_into_string( "% .17le", getentry(p) );
+        ret = ret + "\n" + std::to_string(p) + ": " + printf_into_string( "% .17Le", (long double)getentry(p) );
     }
     return ret;
 }
