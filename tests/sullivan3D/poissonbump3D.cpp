@@ -213,14 +213,13 @@ int main( int argc, char *argv[] )
 
 
                         {
+                            /* Print the iterative solution and also the data */
+
                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
                             
-                            if( r == 1 ) 
-                            vtk.writeVertexScalarData( sol,                                                          "iterativesolution_scalar_data" );
-                            
-                            vtk.writeVertexScalarData( [&](FloatVector vec) -> Float{ return function_sol(vec)[0]; }, "interpolated_sol" );
-                            vtk.writeVertexScalarData( [&](FloatVector vec) -> Float{ return function_rhs(vec)[0]; }, "interpolated_rhs" );
+                            vtk.writeVertexScalarData( [&](FloatVector vec) -> Float{ return function_sol(vec)[0]; }, "interpolated_vertex_sol" );
+                            vtk.writeVertexScalarData( [&](FloatVector vec) -> Float{ return function_rhs(vec)[0]; }, "interpolated_vertex_rhs" );
 
                             if( r == 1) {
                                 vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
@@ -259,15 +258,10 @@ int main( int argc, char *argv[] )
                 }
 
                 if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
-                
-                
-
+        
             } 
         
         }
-        
-        
-        
         
         LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
         

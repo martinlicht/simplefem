@@ -88,8 +88,6 @@ int main( int argc, char *argv[] )
 
             
 
-            LOG << "Solving Poisson Problem with Dirichlet boundary conditions" << nl;
-
             const int min_l = 1; 
             const int max_l = 3;
             
@@ -260,14 +258,10 @@ int main( int argc, char *argv[] )
                 }
 
                 if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
-                
-
+        
             } 
         
         }
-        
-        
-        
         
         LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
         

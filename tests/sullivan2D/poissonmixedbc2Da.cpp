@@ -28,7 +28,7 @@ using namespace std;
 int main( int argc, char *argv[] )
 {
         
-        LOG << "Unit Test: 2D Poisson problem" << nl;
+        LOG << "Unit Test: 2D Poisson problem, Dirichlet BC on one side " << nl;
         
         if(true){
 
@@ -41,7 +41,6 @@ int main( int argc, char *argv[] )
             M.set_flag( 1, 0, SimplexFlag::SimplexFlagDirichlet );
             M.set_flag( 0, M.get_subsimplex( 1, 0, 0, 0 ), SimplexFlag::SimplexFlagDirichlet );
             M.set_flag( 0, M.get_subsimplex( 1, 0, 0, 1 ), SimplexFlag::SimplexFlagDirichlet );
-//             M.check_dirichlet_flags();
 
             
             LOG << "Prepare scalar fields for testing..." << nl;
@@ -93,8 +92,6 @@ int main( int argc, char *argv[] )
             
 
             
-
-            LOG << "Solving Poisson Problem with Neumann boundary conditions" << nl;
 
             const int min_l = 0; 
             const int max_l = 6;

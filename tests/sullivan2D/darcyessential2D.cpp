@@ -97,8 +97,6 @@ int main( int argc, char *argv[] )
 
         
 
-        LOG << "Solving Poisson Problem with Neumann boundary conditions" << nl;
-
         const int min_l = 0; 
         const int max_l = 6;
         
