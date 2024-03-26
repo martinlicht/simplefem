@@ -26,7 +26,7 @@ using namespace std;
 int main( int argc, char *argv[] )
 {
         
-        LOG << "Unit Test: 2D Poisson problem" << nl;
+        LOG << "Unit Test: 2D Poisson problem with Dirichlet BC" << nl;
         
         if(true){
 
@@ -80,8 +80,6 @@ int main( int argc, char *argv[] )
             
 
             
-
-            LOG << "Solving Poisson Problem with Neumann boundary conditions" << nl;
 
             const int min_l = 0; 
             const int max_l = 6;

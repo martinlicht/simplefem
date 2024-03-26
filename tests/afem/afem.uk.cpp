@@ -91,8 +91,6 @@ int main( int argc, char *argv[] )
 
             assert( experiments_sol.size() == experiments_rhs.size() );
 
-            LOG << "Solving Poisson Problem with Neumann boundary conditions" << nl;
-
             const int min_l = 1; 
     
             const int max_l = 5;

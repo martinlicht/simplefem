@@ -63,11 +63,12 @@ Understand the floating-point comparison functions and import them into this pro
 - [x] Don't use MINRES whenever you can use another solver 
 - [x] convergence tables can compute convergence rates 
 - [x] Don't compute the norms of the solutions and the rhs unless necessary 
-- [ ] Decide what the purpose each test, remove overhead, clarify output strings
-      - [ ] Sullivan2D
-      - [ ] Sullivan3D
+- [x] Decide what the purpose each test, remove overhead, clarify output strings
+      - [x] Sullivan2D
+      - [x] Sullivan3D
       - [x] Whitney2D/3D
       - [x] what are poissontransformed old, old2, and the other one? Retire?
+      - [x] lshaped? -> these are maxwell systems. Annotate them
       For example, the Lagrange test should reflect simple things and additional overhead
 - [x] Clean up the test for the nullspace computation. 
 - [x] FEM tests check assertions more thoroughly

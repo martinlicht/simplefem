@@ -63,8 +63,6 @@ int main( int argc, char *argv[] )
             
             
 
-            LOG << "Solving Poisson Problem with Dirichlet boundary conditions" << nl;
-
             // ConvergenceTable contable_sol("L2 Error");
             ConvergenceTable contable_res("L2 Residual");
             ConvergenceTable contable_num("Iteration percentage");

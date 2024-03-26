@@ -27,7 +27,7 @@ using namespace std;
 int main( int argc, char *argv[] )
 {
         
-        LOG << "Unit Test: 2D Poisson problem" << nl;
+        LOG << "Unit Test: 2D Dirichlet problem with Bump function" << nl;
         
         // LOG << std::setprecision(10);
 
@@ -84,8 +84,6 @@ int main( int argc, char *argv[] )
             
 
             
-
-            LOG << "Solving Poisson Problem with Dirichlet boundary conditions" << nl;
 
             const int min_l = 0; 
             const int max_l = 5;

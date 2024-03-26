@@ -104,8 +104,6 @@ int main( int argc, char *argv[] )
 
     
 
-    LOG << "Solving Poisson Problem with Neumann boundary conditions" << nl;
-
     const int min_l = 1; 
     const int max_l = 4;
     
@@ -267,8 +265,6 @@ int main( int argc, char *argv[] )
             LOG << "aux error:    " << errornorm_aux << nl;
             LOG << "residual:     " << residual_sol << nl;
             LOG << "aux residual: " << residual_aux << nl;
-
-            LOG << "aux rhs: " << rhs_aux.norm() << nl;
 
             contable << errornorm_sol;
             contable << errornorm_curl;
