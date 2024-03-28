@@ -10,7 +10,7 @@ int main( int argc, char *argv[] )
     if(true)
     {
             
-        LOG << "Select combinations" << nl;
+        LOG << "1. Selected combinations" << nl;
         
         const std::vector<int> mins = { 1, 0, 0, 0, 0, 2,  2 };
         const std::vector<int> maxs = { 4, 2, 2, 2, 2, 2, -3 };
@@ -66,7 +66,7 @@ int main( int argc, char *argv[] )
     if(true)
     {
             
-        LOG << "Test generator for general multiindices" << nl;
+        LOG << "2. Test generator for general multiindices from 1 to ..." << nl;
         
         const std::vector<int> Ns = { -1, 0, 1, 2, 3, 4 };
         const std::vector<int> Rs = {  0, 1, 2, 3, 4, 5, 6 };
