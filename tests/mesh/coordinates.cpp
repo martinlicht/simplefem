@@ -11,8 +11,7 @@ int main( int argc, char *argv[] )
 {
     LOG << "Unit Test for Coordinates" << nl;
     
-    {
-        
+    {        
         Coordinates coords(5,0);
         
         assert( coords == coords );

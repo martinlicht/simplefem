@@ -40,7 +40,7 @@ void ConvergenceTable::insert_seriesheader( const std::string& seriesheader )
 {   
     assert( entries.size() == 0 );
 
-    if( make_new_row ) assert( not seriesheaders.size() > 0 );
+    if( make_new_row ) assert( not ( seriesheaders.size() > 0 ) );
 
     if( seriesheaders.size() == 0 ) assert( make_new_row );
 
