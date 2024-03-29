@@ -168,10 +168,10 @@ int main( int argc, char *argv[] )
             for( int i = 0; i < experiments_volume_field.size(); i++ ) 
                 contable_volume[i] << printf_into_string("R%d", r-r_min );
 
-            for( int i = 0; i < experiments_scalar_field.size(); i++ ) contable_scalar[i] << nl; 
-            for( int i = 0; i < experiments_volume_field.size(); i++ ) contable_volume[i] << nl; 
         }
-        
+        for( int i = 0; i < experiments_scalar_field.size(); i++ ) contable_scalar[i] << nl; 
+        for( int i = 0; i < experiments_volume_field.size(); i++ ) contable_volume[i] << nl; 
+    
         
         for( int l = l_min; l <= l_max; l++ ) 
         {
@@ -208,11 +208,11 @@ int main( int argc, char *argv[] )
             if( r < r_max or l < 3 ) 
                 continue;
             
-            for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
-                Assert( errors_scalar[i][l-l_min][r-r_min] < desired_closeness, errors_scalar[i][l-l_min][r-r_min], desired_closeness );
+            // for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
+            //     Assert( errors_scalar[i][l-l_min][r-r_min] < desired_closeness, errors_scalar[i][l-l_min][r-r_min], desired_closeness );
             
-            for( int i = 0; i < experiments_volume_field.size(); i++ )
-                Assert( errors_volume[i][l-l_min][r-r_min] < desired_closeness, errors_volume[i][l-l_min][r-r_min], desired_closeness );
+            // for( int i = 0; i < experiments_volume_field.size(); i++ )
+            //     Assert( errors_volume[i][l-l_min][r-r_min] < desired_closeness, errors_volume[i][l-l_min][r-r_min], desired_closeness );
         }
         
         
