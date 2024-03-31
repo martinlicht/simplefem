@@ -189,8 +189,8 @@ void SparseMatrix::apply( FloatVector& dest, const FloatVector& add, Float scali
 
     dest.zero();
     
-    for( const MatrixEntry& rcv : entries )
-        dest.setentry( rcv.row, dest.getentry( rcv.row ) + scaling * rcv.value * add.getentry( rcv.column ) );
+    // for( const MatrixEntry& rcv : entries )
+    //     dest.setentry( rcv.row, dest.getentry( rcv.row ) + scaling * rcv.value * add.getentry( rcv.column ) );
 
     for( int e = 0; e < entries.size(); e++ ){
         
