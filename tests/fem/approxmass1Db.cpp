@@ -114,7 +114,7 @@ int main( int argc, char *argv[] )
 
                     auto error_mass = error * ( massmatrix_scalar * error );
                     
-                    Assert( error_mass >= -desired_precision, error_mass );
+                    Assert( error_mass >= -desired_closeness, error_mass );
                     
                     errors_scalar[i][l-l_min][r-r_min] = std::sqrt( std::abs( error_mass ) );
                     
@@ -132,7 +132,7 @@ int main( int argc, char *argv[] )
 
                     auto error_mass = error * ( massmatrix_volume * error );
                     
-                    Assert( error_mass >= -desired_precision, error_mass );
+                    Assert( error_mass >= -desired_closeness, error_mass );
                     
                     errors_volume[i][l-l_min][r-r_min] = std::sqrt( std::abs( error_mass ) );
                     
@@ -200,7 +200,7 @@ int main( int argc, char *argv[] )
         
         
         
-        LOG << "Check that differences are small" << nl;
+        LOG << "Check that differences are small: " << desired_closeness << nl;
         
         for( int l      = l_min; l      <=      l_max; l++      ) 
         for( int r      = r_min; r      <=      r_max; r++      ) 

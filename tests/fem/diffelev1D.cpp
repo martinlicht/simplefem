@@ -98,7 +98,7 @@ int main( int argc, char *argv[] )
 
                 assert( std::isfinite( commutator_error_mass ) );
 
-                Assert( commutator_error_mass >= -desired_precision, commutator_error_mass );
+                Assert( commutator_error_mass >= -desired_closeness, commutator_error_mass );
                 
                 errors[k][l-l_min][r-r_min][r_plus] = std::sqrt( std::fabs( commutator_error_mass ) );
             
@@ -161,7 +161,7 @@ int main( int argc, char *argv[] )
         
         
         
-        LOG << "Check that differences are small" << nl;
+        LOG << "Check that differences are small: " << desired_closeness << nl;
         
         for( int l      = l_min; l      <=           l_max; l++      ) 
         for( int r      = r_min; r      <=           r_max; r++      ) 

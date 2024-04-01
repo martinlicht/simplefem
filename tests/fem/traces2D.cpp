@@ -171,8 +171,8 @@ int main( int argc, char *argv[] )
                 
                 const auto error_mass = traces_of_field.norm(massmatrix);
 
-                Assert( error_eucl >= -desired_precision , error_eucl );
-                Assert( error_mass >= -desired_precision , error_mass );
+                Assert( error_eucl >= -desired_closeness , error_eucl );
+                Assert( error_mass >= -desired_closeness , error_mass );
 
                 LOG << traces_of_field.getdimension() << " dimensional with mass " << error_mass << nl; 
                 
@@ -223,7 +223,7 @@ int main( int argc, char *argv[] )
         
     }
     
-    LOG << "Check that differences are small" << nl;
+    LOG << "Check that differences are small: " << desired_closeness << nl;
     
     for( int k = 0; k <= n; k++ ) 
     {
