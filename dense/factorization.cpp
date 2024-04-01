@@ -281,6 +281,21 @@ FloatVector SolveOverconstrained( const DenseMatrix& A, const FloatVector& b )
 }
 
 
+FloatVector QRIteration( DenseMatrix A, int repetitions ) 
+{
+    assert( A.issquare() && A.issymmetric() );
+    
+    const int dim = A.getdimin();
+    
+    while( repetitions --> 0 )
+    {
+        DenseMatrix Q(dim,dim), R(dim,dim);        
+        QRFactorization( A, Q, R ); A = R * Q;
+    }
+
+    return A.getDiagonal();
+}
+
 // // // void QRFactorizationRepeated( const DenseMatrix& A, DenseMatrix& Q, DenseMatrix& R, unsigned int t )
 // // // {
 // // //     if( t == 0 )

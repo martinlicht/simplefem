@@ -144,6 +144,8 @@ class DenseMatrix final
         
         DenseMatrix submatrix( const IndexMap& rows, const IndexMap& columns ) const;
         
+        FloatVector getDiagonal() const;
+        
         /* Arithmetic operations */
         
         void add( const DenseMatrix& summand );

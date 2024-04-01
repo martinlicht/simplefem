@@ -12,7 +12,7 @@ int main( int argc, char *argv[] )
     LOG << "Unit Tests for QR Algorithm" << nl;
     
     {
-        LOG << "8. Unit Test for QR Factorization" << nl;
+        LOG << "1. QR Iteration" << nl;
     
         const int dim = 4;
         DenseMatrix A(dim,dim);
@@ -23,23 +23,17 @@ int main( int argc, char *argv[] )
             A(s,t) = 3 * kronecker(s,t) - kronecker(s,t-1) - kronecker(s,t+1);
             
         int repetitions = 4000;
-        while ( repetitions --> 0 )
-        {
-            DenseMatrix Q(dim,dim), R(dim,dim);
-            
-            QRFactorization( A, Q, R );
-            
-            A = R * Q;
-            
-            if( repetitions % 1000 == 0 ) LOG << "Matrix A:" << A;
-        }
+
+        FloatVector D = QRIteration( A );
+        
+        LOG << "Diagonals:" << D << nl;
         
     }
     
     
     
     {
-        LOG << "Solving Least-Squares problem with QR factorization" << nl;
+        LOG << "2. Solving Least-Squares problem with QR factorization" << nl;
     
         const int cols =  4;
         const int rows = 40;

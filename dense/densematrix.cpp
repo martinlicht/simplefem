@@ -445,7 +445,14 @@ DenseMatrix DenseMatrix::submatrix( const IndexMap& rows, const IndexMap& column
     
 }
 
-
+FloatVector DenseMatrix::getDiagonal() const {
+    int dim = minimum( getdimin(), getdimout() );
+    FloatVector ret( dim );
+    for( int d = 0; d < dim; d++ ) ret[d] = at(d,d);
+    return ret;
+};
+        
+        
 
 
 FloatVector DenseMatrix::flattencolumns() const
