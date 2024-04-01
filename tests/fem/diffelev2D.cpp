@@ -112,7 +112,7 @@ int main( int argc, char *argv[] )
                 
                 auto commutator_error = path2 - path1;
 
-                LOG << massmatrix * ( canon * ( path1 - path2 ) - ( path1 - path2 ) ) << nl;
+                // LOG << massmatrix * ( canon * ( path1 - path2 ) - ( path1 - path2 ) ) << nl;
 
                 const auto csr_product = MatrixCSR(canon.getTranspose()) & MatrixCSR(massmatrix) & MatrixCSR(canon);
                 
@@ -124,7 +124,7 @@ int main( int argc, char *argv[] )
                 // Float commutator_error_mass = commutator_error * ( csr_product * commutator_error );
 
                 assert( std::isfinite( commutator_error_mass ) );
-                Assert( commutator_error_mass >= -desired_precision, commutator_error_mass );
+                Assert( commutator_error_mass >= -desired_closeness, commutator_error_mass );
                                 
                 errors[k][l-l_min][r-r_min][r_plus] = std::sqrt( std::fabs( commutator_error_mass ) );
 
@@ -196,7 +196,7 @@ int main( int argc, char *argv[] )
         
         
         
-        LOG << "Check that differences are small" << nl;
+        LOG << "Check that differences are small: " << desired_closeness << nl;
         
         for( int l      = l_min; l      <=           l_max; l++      ) 
         for( int r      = r_min; r      <=           r_max; r++      ) 

@@ -86,7 +86,7 @@ int main( int argc, char *argv[] )
                     
                     const auto error_mass = ( path_direct - path_indirect ).norm();
 
-                    Assert( error_mass >= -desired_precision, error_mass );
+                    Assert( error_mass >= -desired_closeness, error_mass );
                     
                     errors[k][l-l_min][r-r_min] = maximum( errors[k][l-l_min][r-r_min], error_mass );
                     
@@ -141,7 +141,7 @@ int main( int argc, char *argv[] )
         
         
         
-        LOG << "Check that differences are small" << nl;
+        LOG << "Check that differences are small: " << desired_closeness << nl;
         
         for( int l = l_min; l <= l_max; l++ ) 
         for( int r = r_min; r <= r_max; r++ ) 

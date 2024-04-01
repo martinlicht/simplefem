@@ -184,7 +184,7 @@ int main( int argc, char *argv[] )
 
                     Float mass = interpol * ( massmatrix_scalar * interpol );
                     
-                    Assert( mass >= -desired_precision, mass );
+                    Assert( mass >= -desired_closeness, mass );
                     
                     errors_scalar[i][l-l_min][r-r_min] = std::sqrt( std::abs( mass - should_be ) );
                     
@@ -199,7 +199,7 @@ int main( int argc, char *argv[] )
 
                     Float mass = interpol * ( massmatrix_vector * interpol );
                     
-                    Assert( mass >= -desired_precision, mass );
+                    Assert( mass >= -desired_closeness, mass );
                     
                     errors_vector[i][l][r] = std::sqrt( std::abs( mass - should_be ) );
                     
@@ -214,7 +214,7 @@ int main( int argc, char *argv[] )
 
                     Float mass = interpol * ( massmatrix_pseudo * interpol );
                     
-                    Assert( mass >= -desired_precision, mass );
+                    Assert( mass >= -desired_closeness, mass );
                     
                     errors_pseudo[i][l][r] = std::sqrt( std::abs( mass - should_be ) );
                     
@@ -229,7 +229,7 @@ int main( int argc, char *argv[] )
 
                     Float mass = interpol * ( massmatrix_volume * interpol );
                     
-                    Assert( mass >= -desired_precision, mass );
+                    Assert( mass >= -desired_closeness, mass );
                     
                     errors_volume[i][l][r] = std::sqrt( std::abs( mass - should_be ) );
                     
@@ -321,7 +321,7 @@ int main( int argc, char *argv[] )
         
         
         
-        LOG << "Check that differences are small" << nl;
+        LOG << "Check that differences are small: " << desired_closeness << nl;
         
         for( int l      = l_min; l      <=      l_max; l++      ) 
         for( int r      = r_min; r      <=      r_max; r++      ) 

@@ -127,8 +127,8 @@ int main( int argc, char *argv[] )
                 // Still works Mar 10: 1f2d2b02a6ed96087db2d5a262b4d60a87bea166 
                 // DOES NOT WORK:      a05c56458585ea03e133849b0426cf7675001923   
 
-                Assert( error_eucl >= -desired_precision, error_eucl ) ;
-                Assert( error_mass >= -desired_precision, error_mass ) ;
+                Assert( error_eucl >= -desired_closeness, error_eucl ) ;
+                Assert( error_mass >= -desired_closeness, error_mass ) ;
                 
                 Float error = error_mass;
 
@@ -183,7 +183,7 @@ int main( int argc, char *argv[] )
         contables[k] << nl;     
     }
     
-    LOG << "Check that differences are small" << nl;
+    LOG << "Check that differences are small: " << desired_closeness << nl;
     
     for( int k = 0; k <= n; k++ ) 
     {
