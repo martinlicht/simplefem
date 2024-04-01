@@ -28,20 +28,18 @@ int main( int argc, char *argv[] )
     
     LOG << "Initial mesh..." << nl;
     
-    MeshSimplicial3D M = UnitCube3D();
-    M.getcoordinates().scale( Constants::pi );
+    MeshSimplicial3D M = UnitSimplex3D();
+    // MeshSimplicial3D M = UnitCube3D();
     
     M.check();
     
     // M.automatic_dirichlet_flags();
     // M.check_dirichlet_flags();
 
-    return 0; // TODO: Don't do anything yet
-
     LOG << "Estimating Poincare-Friedrichs constant of Cech complex" << nl;
 
     const int min_l = 0; 
-    const int max_l = 5;
+    const int max_l = 6;
 
     const int n = M.getinnerdimension();
     
@@ -67,7 +65,7 @@ int main( int argc, char *argv[] )
         SparseMatrix vertexones = SparseMatrix( M.count_vertices(), 1, M.count_vertices(), [](int r)->SparseMatrix::MatrixEntry{ return SparseMatrix::MatrixEntry(r,0,1.0); } );
     
         std::vector<SparseMatrix> cech_massmatrix;
-        for( int k = 0; k <= n-1; k++ ) cech_massmatrix.push_back( FEECCechMassMatrix( M, M.getinnerdimension(), k, -k ) );
+        for( int k = 0; k <= n; k++ ) cech_massmatrix.push_back( FEECCechMassMatrix( M, M.getinnerdimension(), k, -k ) );
 
         std::vector<SparseMatrix> cech_diffmatrix;
         for( int k = 0; k <= n-1; k++ ) cech_diffmatrix.push_back( FEECCechDiffMatrix( M, M.getinnerdimension(), k ) );
@@ -76,21 +74,25 @@ int main( int argc, char *argv[] )
         for( int k = 0; k <= n-1; k++ ) cech_diffmatrix_t.push_back( cech_diffmatrix[k].getTranspose() );
 
         std::vector<SparseMatrix> A;
-        for( int k = 0; k <= n-1; k++ ) A.push_back( cech_diffmatrix_t[k] & cech_massmatrix[k] & cech_diffmatrix[k] );
+        for( int k = 0; k <= n-1; k++ ) A.push_back( cech_diffmatrix_t[k] & cech_massmatrix[k+1] & cech_diffmatrix[k] );
 
         std::vector<SparseMatrix> B;
-        B[0] = cech_massmatrix[0] & vertexones;
-        for( int k = 1; k <= n-1; k++ ) B.push_back( cech_massmatrix[k] & cech_diffmatrix[k-1] );
+        B.push_back( vertexones.getTranspose() & cech_massmatrix[0] );
+        for( int k = 1; k <= n-1; k++ ) B.push_back( cech_diffmatrix_t[k-1] & cech_massmatrix[k] );
 
         std::vector<SparseMatrix> Bt;
-        Bt[0] = vertexones & cech_massmatrix[0];
-        for( int k = 1; k <= n-1; k++ ) Bt.push_back( cech_diffmatrix_t[k-1] & cech_massmatrix[k] );
+        Bt.push_back( cech_massmatrix[0] & vertexones );
+        for( int k = 1; k <= n-1; k++ ) Bt.push_back( cech_massmatrix[k] & cech_diffmatrix[k-1] );
 
         std::vector<ZeroOperator> C;
-        for( int k = 0; k <= n-1; k++ ) C.push_back( ZeroOperator( B[k].getdimin() ) );
+        for( int k = 0; k <= n-1; k++ ) C.push_back( ZeroOperator( Bt[k].getdimin() ) );
 
         LOG << "... compute lowest eigenvalues" << nl;
-    
+
+
+        // LOG << M << nl;
+        // for( const auto& mat : cech_massmatrix ) LOG << mat << nl;
+        
         for( int k = 0; k <= n-1; k++ )
         {
             
@@ -106,12 +108,13 @@ int main( int argc, char *argv[] )
                 candidate = A[k] * candidate;
                 candidate.normalize( cech_massmatrix[k] ); 
                 
-                const int max_inverseiterations = 10;
+                const int max_inverseiterations = 3;
 
                 Float newratio = -1;
                 
                 timestamp start = timestampnow();
 
+                if( k == 0 )
                 for( int t = 0; t < max_inverseiterations; t++ )
                 {
 
@@ -171,31 +174,21 @@ int main( int argc, char *argv[] )
 
                 // assess the current candidate 
 
-                {
-
-                    const auto A_sol = A[k]               * sol;
-                    const auto M_sol = cech_massmatrix[k] * sol; 
-                    
-                    const auto sol_A_product = sol * A_sol; 
-                    const auto sol_M_product = sol * M_sol; 
-
-                    newratio = sol_A_product / sol_M_product;
+                const auto A_sol = A[k]               * sol;
+                const auto M_sol = cech_massmatrix[k] * sol; 
                 
-                    contable << newratio;
-                
-                }
+                const auto sol_A_product = sol * A_sol; 
+                const auto sol_M_product = sol * M_sol; 
 
-                // Float u_massnorm     = sol * ( vector_incmatrix_t * ( vector_massmatrix * vector_incmatrix * sol  ) );
-                // Float ucurl_massnorm = sol * ( mat_A * sol );
-                // Float curratio       = ucurl_massnorm / u_massnorm;
-                // Float u_defectmass   = ( B * sol ).norm_sq( scalar_incmatrix_t * scalar_massmatrix * scalar_incmatrix ); 
-                
-                // LOG << "ratio:           " << newratio << nl;
-                // LOG << "ratio:           " << curratio << nl;
-                // LOG << "u mass:          " << u_massnorm << nl;
-                // LOG << "u curl mass      " << ucurl_massnorm << nl;
-                // LOG << "u defect mass:   " << u_defectmass << nl;
+                newratio = sol_A_product / sol_M_product;
             
+                const Float defect_euclnorm = ( B[k] * sol ).norm_sq();
+            
+                contable << newratio;
+
+                LOG << "ratio: " << newratio << " defect: " << defect_euclnorm << nl;
+
+                
             }
             
         }

@@ -765,12 +765,12 @@ std::string MeshSimplicial2D::text() const
     for( const auto& triple : data_triangle_vertices )
       os << triple[0] << space << triple[1] << space << triple[2] << nl;
     
-    os << "Edge first parent triangles" << nl;
+    os << "Vertex first parent triangles" << nl;
     
     for( int fp : data_vertex_firstparent_triangle )
       os << fp << nl;
     
-    os << "Triangle next parents of edges" << nl;
+    os << "Triangle next parents of vertices" << nl;
     
     for( const auto& triple : data_triangle_nextparents_of_vertices )
       os << triple[0] << space << triple[1] << space << triple[2] << nl;
@@ -787,7 +787,7 @@ std::string MeshSimplicial2D::text() const
     for( int fp : data_vertex_firstparent_edge )
       os << fp << nl;
     
-    os << "Edge next parents " << nl;
+    os << "Edge next parents of vertices" << nl;
     
     for( const auto& duple : data_edge_nextparents_of_vertices )
       os << duple[0] << space << duple[1] << nl;

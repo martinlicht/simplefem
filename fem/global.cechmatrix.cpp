@@ -1,4 +1,5 @@
 
+#include <algorithm>
 #include <vector>
 
 #include "../basic.hpp"
@@ -94,39 +95,25 @@ SparseMatrix FEECCechDiffMatrix( const Mesh& mesh, int n, int k )
     for( int i = 0; i < faces_per_cell; i++ )
     {
         
-        const int face_index = mesh.get_subsimplex( n, k, s, i );
+        const int face_index = mesh.get_subsimplex( k+1, k, s, i );
 
-        // TODO: compute value 
-        // {
+        auto std_vector_cellvertices = mesh.getsubsimplices( k+1, 0, s ).getvalues();
+        std::sort( std_vector_cellvertices.begin(), std_vector_cellvertices.end() );
+        
+        auto std_vector_facevertices = mesh.getsubsimplices( k, 0, face_index ).getvalues();
+        std::sort( std_vector_facevertices.begin(), std_vector_facevertices.end() );
 
-        //     auto ftp = M.get_tetrahedron_parents_of_face(f);
-
-        //     auto fv = M.getsubsimplices(2,0,f);
-
-        //     for( auto t : ftp ) 
-        //     {
-                
-        //         auto s_vertices = M.getsubsimplices(k+1,0,s);
-
-        //         int index = 0;
-        //         for( ; index < face_inclusions.size(); index++ )
-        //             if( s_vertices * face_inclusions[index] == fv )
-        //                 break;
-        //         assert( index < face_inclusions.size() );
-
-        //         int gap_index = 0;
-        //         while( gap_index <= M.getinnerdimension()-1 && fv[gap_index] == tv[gap_index] ) gap_index++;
-
-        //     }
-
-        // }
-
+        int gap_index = 0;
+        while( gap_index <= k && std_vector_facevertices[gap_index] == std_vector_cellvertices[gap_index] ) gap_index++;
+        
+        for( int i = gap_index; i <= k; i++ ) assert( std_vector_facevertices[i] == std_vector_cellvertices[i+1] );
+        
         int index_of_entry = s * faces_per_cell + i;
             
         SparseMatrix::MatrixEntry entry;
         entry.row    = s;
         entry.column = face_index;
-        entry.value  = 1.;
+        entry.value  = sign_power( gap_index );
         
         ret.setentry( index_of_entry, entry );
         

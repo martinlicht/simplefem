@@ -94,10 +94,10 @@ int main( int argc, char *argv[] )
             
 
             const int min_l = 0; 
-            const int max_l = 6;
+            const int max_l = 3;
             
-            const int min_r = 4;
-            const int max_r = 4;
+            const int min_r = 3;
+            const int max_r = 3;
             
             ConvergenceTable contable("Mass error");
             

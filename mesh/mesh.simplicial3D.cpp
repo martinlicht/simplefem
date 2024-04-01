@@ -1514,7 +1514,7 @@ std::string MeshSimplicial3D::text() const
     os << "Tetrahedron edges" << nl;
     
     for( const auto& sextett : data_tetrahedron_edges )
-      os << sextett[0] << space << sextett[1] << space << sextett[2] << sextett[3] << space << sextett[4] << space << sextett[5] << nl;
+      os << sextett[0] << space << sextett[1] << space << sextett[2] << space << sextett[3] << space << sextett[4] << space << sextett[5] << nl;
     
     os << "Edge first parent tetrahedra" << nl;
     
@@ -1524,7 +1524,7 @@ std::string MeshSimplicial3D::text() const
     os << "Tetrahedron next parents of edges" << nl;
     
     for( const auto& sextett : data_tetrahedron_nextparents_of_edges )
-      os << sextett[0] << space << sextett[1] << space << sextett[2] << sextett[3] << space << sextett[4] << space << sextett[5] << nl;
+      os << sextett[0] << space << sextett[1] << space << sextett[2] << space << sextett[3] << space << sextett[4] << space << sextett[5] << nl;
     
     
     
@@ -1535,12 +1535,12 @@ std::string MeshSimplicial3D::text() const
     for( const auto& quartett : data_tetrahedron_vertices )
       os << quartett[0] << space << quartett[1] << space << quartett[2] << space << quartett[3] << nl;
     
-    os << "Edge first parent tetrahedra" << nl;
+    os << "Vertex first parent tetrahedra" << nl;
     
     for( int fp : data_vertex_firstparent_tetrahedron )
       os << fp << nl;
     
-    os << "Tetrahedron next parents of edges" << nl;
+    os << "Tetrahedron next parents of vertices" << nl;
     
     for( const auto& quartett : data_tetrahedron_nextparents_of_vertices )
       os << quartett[0] << space << quartett[1] << space << quartett[2] << space << quartett[3] << nl;
