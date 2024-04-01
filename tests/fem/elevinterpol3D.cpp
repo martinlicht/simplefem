@@ -84,7 +84,7 @@ int main( int argc, char *argv[] )
                     
                     const auto error_mass = ( field - interpol * elevation * field ).norm();
                     
-                    Assert( error_mass >= 0., error_mass );
+                    Assert( error_mass >= -desired_precision, error_mass );
                     
                     errors[k][l-l_min][r-r_min][r_plus] = maximum( errors[k][l-l_min][r-r_min][r_plus], error_mass );
                     

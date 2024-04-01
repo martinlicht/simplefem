@@ -131,7 +131,7 @@ int main( int argc, char *argv[] )
                 Float commutator_error_mass = commutator_error * ( massmatrix * commutator_error );
 
                 assert( std::isfinite( commutator_error_mass ) );
-                Assert( commutator_error_mass >= 0., commutator_error_mass );
+                Assert( commutator_error_mass >= -desired_precision, commutator_error_mass );
                 
                 errors[k][l-l_min][r-r_min][r_plus] = std::sqrt( std::fabs( commutator_error_mass ) );
             

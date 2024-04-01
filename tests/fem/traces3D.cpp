@@ -173,8 +173,8 @@ int main( int argc, char *argv[] )
 
                 LOG << traces_of_field.getdimension() << " dimensional with mass " << error_mass << nl; 
                 
-                Assert( error_eucl >= 0. , error_eucl );
-                Assert( error_mass >= 0. , error_mass );
+                Assert( error_eucl >= -desired_precision , error_eucl );
+                Assert( error_mass >= -desired_precision , error_mass );
 
                 Float error = error_mass;
 

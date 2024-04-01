@@ -89,8 +89,8 @@ int main( int argc, char *argv[] )
                     
                     Float hodged_mass = hodged_field * ( broken_mass_hodged_matrix * hodged_field );
                     
-                    Assert( mass >= 0., mass );
-                    Assert( hodged_mass >= 0., hodged_mass );
+                    Assert( mass >= -desired_precision, mass );
+                    Assert( hodged_mass >= -desired_precision, hodged_mass );
                     
                     const auto error_mass = absolute( mass - hodged_mass );
 

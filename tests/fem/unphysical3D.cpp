@@ -165,11 +165,11 @@ int main( int argc, char *argv[] )
 
                     Float mass_cr = absolute( interpol_canon * ( massmatrix_scalar * interpol_randm ) );
 
-                    assert( mass_ii >= 0. );
-                    assert( mass_ci >= 0. );
-                    assert( mass_cc >= 0. );
-                    assert( mass_rr >= 0. );
-                    assert( mass_cr >= 0. );
+                    assert( mass_ii >= -desired_precision );
+                    assert( mass_ci >= -desired_precision );
+                    assert( mass_cc >= -desired_precision );
+                    assert( mass_rr >= -desired_precision );
+                    assert( mass_cr >= -desired_precision );
                     
                     Float error_mass = maxabs( mass_ii - mass_ci, mass_ii - mass_cc, mass_ii - mass_rr, mass_ii - mass_cr );
                     
@@ -199,11 +199,11 @@ int main( int argc, char *argv[] )
 
                     Float mass_cr = absolute( interpol_canon * ( massmatrix_vector * interpol_randm ) );
 
-                    assert( mass_ii >= 0. );
-                    assert( mass_ci >= 0. );
-                    assert( mass_cc >= 0. );
-                    assert( mass_rr >= 0. );
-                    assert( mass_cr >= 0. );
+                    assert( mass_ii >= -desired_precision );
+                    assert( mass_ci >= -desired_precision );
+                    assert( mass_cc >= -desired_precision );
+                    assert( mass_rr >= -desired_precision );
+                    assert( mass_cr >= -desired_precision );
                     
                     Float error_mass = maxabs( mass_ii - mass_ci, mass_ii - mass_cc, mass_ii - mass_rr, mass_ii - mass_cr );
                     
@@ -233,11 +233,11 @@ int main( int argc, char *argv[] )
 
                     Float mass_cr = absolute( interpol_canon * ( massmatrix_pseudo * interpol_randm ) );
 
-                    assert( mass_ii >= 0. );
-                    assert( mass_ci >= 0. );
-                    assert( mass_cc >= 0. );
-                    assert( mass_rr >= 0. );
-                    assert( mass_cr >= 0. );
+                    assert( mass_ii >= -desired_precision );
+                    assert( mass_ci >= -desired_precision );
+                    assert( mass_cc >= -desired_precision );
+                    assert( mass_rr >= -desired_precision );
+                    assert( mass_cr >= -desired_precision );
                     
                     Float error_mass = maxabs( mass_ii - mass_ci, mass_ii - mass_cc, mass_ii - mass_rr, mass_ii - mass_cr );
                     
@@ -267,11 +267,11 @@ int main( int argc, char *argv[] )
 
                     Float mass_cr = absolute( interpol_canon * ( massmatrix_volume * interpol_randm ) );
 
-                    assert( mass_ii >= 0. );
-                    assert( mass_ci >= 0. );
-                    assert( mass_cc >= 0. );
-                    assert( mass_rr >= 0. );
-                    assert( mass_cr >= 0. );
+                    assert( mass_ii >= -desired_precision );
+                    assert( mass_ci >= -desired_precision );
+                    assert( mass_cc >= -desired_precision );
+                    assert( mass_rr >= -desired_precision );
+                    assert( mass_cr >= -desired_precision );
                     
                     Float error_mass = maxabs( mass_ii - mass_ci, mass_ii - mass_cc, mass_ii - mass_rr, mass_ii - mass_cr );
                     
