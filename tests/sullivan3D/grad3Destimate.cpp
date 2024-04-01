@@ -57,7 +57,7 @@ int main( int argc, char *argv[] )
 
     
 
-    LOG << "Estimating Poincare-Friedrichs constant of grad operator" << nl;
+    LOG << "Estimating Poincare-Friedrichs constant of grad operator (Sullivan)" << nl;
 
     const int min_l = 0; 
     const int max_l = 6;

@@ -53,7 +53,7 @@ int main( int argc, char *argv[] )
 
     
 
-    LOG << "Estimating Poincare-Friedrichs constant of curl operator (Whitney)" << nl;
+    LOG << "Estimating Poincare-Friedrichs constant of curl operator (Sullivan)" << nl;
 
     const int min_l = 0; 
     const int max_l = 5;

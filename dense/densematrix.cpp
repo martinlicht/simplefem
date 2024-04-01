@@ -450,7 +450,7 @@ FloatVector DenseMatrix::getDiagonal() const {
     FloatVector ret( dim );
     for( int d = 0; d < dim; d++ ) ret[d] = at(d,d);
     return ret;
-};
+}
         
         
 

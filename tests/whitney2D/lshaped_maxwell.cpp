@@ -235,14 +235,14 @@ int main( int argc, char *argv[] )
 
                             {
                                 auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 0, 0, r );
-                                auto lowest_ndiv = interpol_matrix * x_C;
+                                auto lowest_ndiv = interpol_matrix * scalar_incmatrix * x_A;
                                 vtk.writeCellScalarData( lowest_ndiv, "negative_divergence" );
                             }
                             
                             {
-                                auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 0, 0, r-1 );
+                                auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 2, 0, r-1 );
                                 auto lowest_curl = interpol_matrix * vector_diffmatrix * computed_sol;
-                                vtk.writeCellVectorData_barycentriccrosses( lowest_curl, "curl" );
+                                vtk.writeCellScalarData_barycentricvolumes( lowest_curl, "curl" );
                             }
 
                             fs.close();

@@ -51,6 +51,7 @@ public LinearOperator /* every matrix is a linear operator */
         // explicit SparseMatrix( int dimout, int dimin );
         explicit SparseMatrix( int dimout, int dimin, const std::vector<MatrixEntry>& entries );
         explicit SparseMatrix( int dimout, int dimin, const std::initializer_list<MatrixEntry>& entries );
+        explicit SparseMatrix( const FloatVector& diagonal );
         explicit SparseMatrix( const ScalingOperator& matrix );
         explicit SparseMatrix( const DiagonalOperator& matrix );
         explicit SparseMatrix( const DenseMatrix& matrix );
