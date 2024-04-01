@@ -197,8 +197,6 @@ int main( int argc, char *argv[] )
 
     
 
-    LOG << "Solving Poisson Problem with Neumann boundary conditions" << nl;
-
     const int min_l = 0; 
     const int max_l = 6;
     
@@ -212,7 +210,7 @@ int main( int argc, char *argv[] )
     
     ConvergenceTable contable("Mass error and numerical residuals");
     
-    contable << "u_error" << "du_error" << "sigma_error" << "u_res" << "sigma_res" << "time";
+    contable << "u_error" << "du_error" << "sigma_error" << "u_res" << "sigma_res" << "time" << nl;
     
 
     assert( 0 <= min_l and min_l <= max_l );
@@ -340,7 +338,7 @@ int main( int argc, char *argv[] )
 
             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
             
-            LOG << "...compute error and residual:" << nl;
+            LOG << "...compute error and residual" << nl;
 
             auto errornorm_aux_sol  = interpol_sol  - vector_elevmatrix * vector_incmatrix * sol;
             auto errornorm_aux_curl = interpol_curl - pseudo_elevmatrix * vector_diffmatrix * vector_incmatrix * sol;
@@ -357,8 +355,6 @@ int main( int argc, char *argv[] )
             LOG << "aux error:    " << errornorm_aux << nl;
             LOG << "residual:     " << residual_sol << nl;
             LOG << "aux residual: " << residual_aux << nl;
-
-            LOG << "aux rhs: " << rhs_aux.norm() << nl;
 
             contable << errornorm_sol;
             contable << errornorm_curl;

@@ -117,7 +117,7 @@ int main( int argc, char *argv[] )
 
             ConvergenceTable contable("Mass error and solver residual");
             
-            contable << "sigma_error" << "u_error" << "du_error" << "residual" << "time";
+            contable << "sigma_error" << "u_error" << "du_error" << "residual" << "time" << nl;
             
             
 
@@ -267,7 +267,7 @@ int main( int argc, char *argv[] )
                         
                         auto curl = vector_diffmatrix * vector_incmatrix * sol;
                         
-                        LOG << "...compute error and residual:" << nl;
+                        LOG << "...compute error and residual" << nl;
 
                         auto errornorm_aux_ndiv = interpol_ndiv - scalar_incmatrix * ndiv;
                         auto errornorm_aux_sol  = interpol_sol  - vector_incmatrix *  sol;

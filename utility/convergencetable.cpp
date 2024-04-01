@@ -18,6 +18,7 @@ ConvergenceTable::ConvergenceTable( const std::string& table_name )
     print_rowwise_instead_of_columnwise(false)
 {
     make_new_row = true;
+    LOG << "Table created! " << this << nl;
 }
         
 
@@ -27,12 +28,26 @@ void ConvergenceTable::insert_numerical_entry( EntryType entry )
         entries.push_back( std::vector<EntryType>(0) );
         make_new_row = false;
     }
+
+    assert( entries.size() > 0 );
     
+    Assert( entries.back().size() < seriesheaders.size(), entries.back().size(), seriesheaders.size(), entry );
+
     entries.back().push_back( entry );
 }
         
 void ConvergenceTable::insert_seriesheader( const std::string& seriesheader )
 {   
+    assert( entries.size() == 0 );
+
+    if( make_new_row ) assert( not ( seriesheaders.size() > 0 ) );
+
+    if( seriesheaders.size() == 0 ) assert( make_new_row );
+
+    if( seriesheaders.size() > 0 ) assert( not make_new_row );
+
+    make_new_row = false; 
+    
     seriesheaders.push_back( seriesheader );
 }
         
@@ -43,6 +58,23 @@ void ConvergenceTable::insert_newline()
     
     make_new_row = true; 
 }
+
+
+Float ConvergenceTable::get_convergence_rate( int row_index, int column_index )
+{
+    assert( 1 <= row_index    and row_index    < entries.size()       );
+    assert( 0 <= column_index and column_index < seriesheaders.size() );
+    assert( 0 <= column_index and column_index < entries[row_index].size() );
+    assert( 0 <= column_index and column_index < entries[row_index-1].size() );
+    
+    Float value_current = entries[row_index  ][column_index];
+    Float value_before  = entries[row_index-1][column_index];
+
+    return std::log2( value_before / value_current );
+}
+
+
+
 
 
 

@@ -28,6 +28,22 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
     assert( k >= 0 && k <= n );
     assert( binomial_integer( n+r, n ) == binomial_integer( n+r, r ) );
     
+    if(false) 
+    {
+        DenseMatrix multiplier( n, n+1, 0. );
+        for( int i = 0; i <  n; i++ ) {
+            multiplier(i,i+1) =  1.;
+            multiplier(i,  0) = -1.;
+        }
+        
+        DenseMatrix rankone = IdentityMatrix(n+1) - DenseMatrix( n+1,n+1, 1./(n+1) );
+        
+        LOG << multiplier << nl;
+        LOG << rankone << nl;
+        LOG << multiplier * rankone << nl;
+
+    }
+    
     // Auxiliary calculations and preparations
     
     const int num_simplices = mesh.count_simplices( n );
@@ -68,7 +84,16 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
             assert( ( GPM - AtA ).is_numerically_small() );
         }
 
-        // if(false)
+        if(false)
+        {
+            auto result = GPM * FloatVector( n+1, 1. );
+
+            LOG << result.norm() << nl;
+
+            Assert( result.is_numerically_small(), result );
+        }
+
+        if(false)
         {
             DenseMatrix rankone = IdentityMatrix(n+1) - DenseMatrix( n+1,n+1, 1./(n+1) );
 
@@ -77,7 +102,7 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
             const DenseMatrix delta = GPM - foo;
 
             Assert( delta.is_numerically_small(), GPM, foo );
-
+            
             // LOGPRINTF("%.15Le\n", (long double)delta.sumnorm() );
 
             // GPM = foo;
@@ -85,6 +110,8 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
 
         DenseMatrix formMM = SubdeterminantMatrix( GPM, k );
 
+
+        if(false)
         {
             const DenseMatrix Jac = mesh.getTransformationJacobian( n, s );
 
@@ -94,7 +121,7 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
                 multiplier(i,  0) = -1.;
             }
 
-            // if(false)
+            if(false) // TODO: this leads to failure ...
             {
                 const DenseMatrix middle = Inverse( Transpose(Jac) * Jac );
 
@@ -110,12 +137,20 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
 
                 Assert( delta.is_numerically_small(), formMM, foo );
 
+                {
+                    auto D = QRIteration( formMM );
+                    LOG << k << ":NULL:"<< D << nl;
+                }
+                {
+                    auto D = QRIteration( foo );
+                    LOG << k << ":EINS:"<< D << nl;
+                }
                 // LOGPRINTF("%.15Le\n", (long double)delta.sumnorm() );
 
                 // formMM = foo;
             }
             
-            // if(false)
+            if(false)
             {
                 DenseMatrix R( Jac.getdimin() );
                 DenseMatrix Q( Jac.getdimout(), Jac.getdimin() );
@@ -132,12 +167,16 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
 
                 Assert( delta.is_numerically_small(), formMM, foo );
 
+                {
+                    auto D = QRIteration( foo );
+                    LOG << k << ":ZWEI:"<< D << nl;
+                }
                 // LOGPRINTF("%.15Le\n", (long double)delta.sumnorm() );
                 
                 // formMM = foo;
             }
 
-            // if(false)
+            if(false)
             {
                 DenseMatrix rankone = IdentityMatrix(n+1) - DenseMatrix( n+1,n+1, 1./(n+1) );
 
@@ -149,6 +188,10 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
 
                 Assert( delta.is_numerically_small(), formMM, foo );
 
+                {
+                    auto D = QRIteration( foo );
+                    LOG << k << ":DREI:"<< D << nl; // INDICATES WORSE PERFORMANCE
+                }
                 // LOGPRINTF("%.15Le\n", (long double)delta.sumnorm() );
 
                 // formMM = foo;
@@ -168,17 +211,41 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
 
             const DenseMatrix foo = formMM;
 
+            {
+                auto D = QRIteration( foo );
+                LOG << k << ":VIER:" << D << nl;
+            }
             // formMM = Transpose(Aux2) * formMM * Aux2;
 
             const DenseMatrix delta = formMM - foo;
 
             Assert( delta.is_numerically_small(), formMM, foo );
         }
+
+        // {
+        //     auto result = formMM * FloatVector( formMM.getdimout(), 1. );
+        //     LOG << result.norm() << nl;
+        //     Assert( result.is_numerically_small(), result );
+        // }
+
+        // LOG << formMM << nl;
+
+        
         
         DenseMatrix fullMM = MatrixTensorProduct( polyMM, formMM ) * measure;
 
         if(false)
-        { // This does have an effect somewhere ...
+        {
+            DenseMatrix Aux1 = IdentityMatrix(n+1) - DenseMatrix( n+1, n+1, 1./(n+1) );
+            const DenseMatrix Aux2 = SubdeterminantMatrix( Aux1, k );
+            const DenseMatrix Aux3 = DenseMatrix( polyMM.getdimin(), Aux2, 1. );
+            auto foo = Transpose(Aux3) * fullMM * Aux3; 
+            fullMM = foo;
+        }
+        
+        
+        if(false)
+        { // This does have an effect anywhere ...
             DenseMatrix Aux1( n+1, n+1, 0. );
             for( int i = 1; i <= n; i++ ) {
                 Aux1(i,i) = 1.;
@@ -195,6 +262,14 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
 
             Assert( delta.is_numerically_small(), fullMM, foo );
 
+            {
+                auto D = QRIteration( fullMM );
+                LOG << k << ":FUNF:"<< D << nl;
+            }
+            {
+                auto D = QRIteration( foo );
+                LOG << k << ":SECHS:"<< D << nl;
+            }
             // LOGPRINTF( "delta %.10e\n", delta.maxnorm() );
         }
         

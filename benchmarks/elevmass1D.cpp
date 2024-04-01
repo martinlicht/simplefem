@@ -193,7 +193,7 @@ int main( int argc, char *argv[] )
         
         
         
-//         LOG << "Check that differences are small" << nl;
+//         LOG << "Check that differences are small: " << desired_closeness << nl;
 //         
 //         for( int l      = l_min; l      <=      l_max; l++      ) 
 //         for( int r      = r_min; r      <=      r_max; r++      ) 

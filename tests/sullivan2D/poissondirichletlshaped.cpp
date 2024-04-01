@@ -54,7 +54,7 @@ using namespace std;
 int main( int argc, char *argv[] )
 {
         
-    LOG << "Unit Test: 2D Dirichlet problem" << nl;
+    LOG << "Unit Test: 2D Dirichlet problem on L-shaped domain" << nl;
     
     LOG << "Initial mesh..." << nl;
     
@@ -95,8 +95,6 @@ int main( int argc, char *argv[] )
     
 
         
-
-    LOG << "Solving Poisson Problem with Dirichlet boundary conditions" << nl;
 
     const int min_l = 1; 
     const int max_l = 6;

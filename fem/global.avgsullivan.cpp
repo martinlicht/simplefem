@@ -168,17 +168,16 @@ SparseMatrix FEECSullivanAveragingMatrix( const Mesh& mesh, int n, int k, int r,
                        index_alphasigma
                        ;
 
+        
+        const auto list_of_supersimplices = mesh.getsupersimplices( n, d, index_fi );
+
         Float value = notanumber; 
 
         if( mode == FEECAveragingMode::weighted_uniformly ){
-            
-            const auto list_of_supersimplices = mesh.getsupersimplices( n, d, index_fi );
-
+        
             value = 1. / list_of_supersimplices.size();
 
         } else if ( mode == FEECAveragingMode::weighted_by_volume ) {
-
-            const auto list_of_supersimplices = mesh.getsupersimplices( n, d, index_fi );
 
             Float sum_of_volumes = 0.;
 
@@ -191,8 +190,6 @@ SparseMatrix FEECSullivanAveragingMatrix( const Mesh& mesh, int n, int k, int r,
 
         } else if( mode == FEECAveragingMode::arbitrary_choice ) {
             
-            const auto list_of_supersimplices = mesh.getsupersimplices( n, d, index_fi );
-
             value = ( s == list_of_supersimplices[0] ) ? 1. : 0.;
 
         } else {

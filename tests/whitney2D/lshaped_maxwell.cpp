@@ -207,7 +207,7 @@ int main( int argc, char *argv[] )
                         
                         assert( sol.isfinite() );
 
-                        LOG << "...compute error and residual:" << nl;
+                        LOG << "...compute residual" << nl;
 
                         Float residualnorm = ( rhs - B * inv(A,desired_precision) * Bt * sol - C * sol ).norm();
 
@@ -241,8 +241,8 @@ int main( int argc, char *argv[] )
                             
                             {
                                 auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 0, 0, r-1 );
-                                auto lowest_ndiv = interpol_matrix * vector_diffmatrix * computed_sol;
-                                vtk.writeCellVectorData_barycentriccrosses( lowest_ndiv, "curl" );
+                                auto lowest_curl = interpol_matrix * vector_diffmatrix * computed_sol;
+                                vtk.writeCellVectorData_barycentriccrosses( lowest_curl, "curl" );
                             }
 
                             fs.close();
@@ -258,10 +258,7 @@ int main( int argc, char *argv[] )
             } 
             
         }
-        
-        
-        
-        
+                
         LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
         
         return 0;

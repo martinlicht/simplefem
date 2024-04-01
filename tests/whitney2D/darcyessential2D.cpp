@@ -105,8 +105,6 @@ int main( int argc, char *argv[] )
 
         
 
-        LOG << "Solving Poisson Problem with Neumann boundary conditions" << nl;
-
         const int min_l = 0; 
         const int max_l = 5;
         
@@ -116,7 +114,7 @@ int main( int argc, char *argv[] )
         
         ConvergenceTable contable("Mass error");
         
-        contable << "sigma_error" << "u_error" << "sigma_res" << "u_res" << "time";
+        contable << "sigma_error" << "u_error" << "sigma_res" << "u_res" << "time" << nl;
         
 
         assert( 0 <= min_l and min_l <= max_l );
@@ -183,7 +181,6 @@ int main( int argc, char *argv[] )
                     FloatVector rhs = volume_incmatrix_t * ( volume_massmatrix * volume_elevationmatrix * interpol_rhs );
 
                     FloatVector sol( volume_incmatrix.getdimin(), 0. );
-                    sol.zero();
 
                     LOG << "...iterative solver" << nl;
                     
@@ -214,7 +211,7 @@ int main( int argc, char *argv[] )
                     timestamp end = timestampnow();
                     LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
 
-                    LOG << "...compute error and residual:" << nl;
+                    LOG << "...compute error and residual" << nl;
 
                     auto grad = inv(A,desired_precision) * Bt * sol;
 

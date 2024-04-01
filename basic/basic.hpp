@@ -100,9 +100,12 @@ typedef double Float;
 //     return ( i == 0 ) ? x : SqrtHelper( a, ( a / x + x ) / 2, i-1 );
 // }
 
-constexpr Float Sqrt( Float a, int i = 40 )
+template<typename T>
+constexpr typename std::enable_if< std::is_floating_point<T>::value, T>::type Sqrt( T a, int i = 40 )
 {
-    Float x = a;
+    T x = a;
+    // assert( x >= 0. );
+    if( not ( x > 0. ) ) return 0.;
     while ( i --> 0 ) x = ( x + a / x ) / 2.;
     return x;    
     // return SqrtHelper( a, a, i );

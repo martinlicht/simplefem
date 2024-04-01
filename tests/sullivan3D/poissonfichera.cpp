@@ -88,8 +88,6 @@ int main( int argc, char *argv[] )
 
             
 
-            LOG << "Solving Poisson Problem with Dirichlet boundary conditions" << nl;
-
             const int min_l = 1; 
             const int max_l = 3;
             
@@ -214,7 +212,7 @@ int main( int argc, char *argv[] )
                 timestamp end = timestampnow();
                 LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
 
-                LOG << "...compute error and residual:" << nl;
+                LOG << "...compute error and residual" << nl;
 
                 FloatVector error     = aug_incmatrix * aug_sol - elevmatrix * incmatrix * sol;
                 FloatVector graderror = aug_diffmatrix * ( aug_incmatrix * aug_sol - elevmatrix * incmatrix * sol );
@@ -260,14 +258,10 @@ int main( int argc, char *argv[] )
                 }
 
                 if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
-                
-
+        
             } 
         
         }
-        
-        
-        
         
         LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
         

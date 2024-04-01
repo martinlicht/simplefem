@@ -18,6 +18,8 @@
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.sullivanincl.hpp"
+#include "../../fem/global.whitneyincl.hpp"
+#include "../../fem/global.elevation.hpp"
 #include "../../fem/global.interpol.hpp"
 #include "../../fem/utilities.hpp"
 
@@ -47,8 +49,6 @@ int main( int argc, char *argv[] )
             
             LOG << "Prepare scalar fields for testing..." << nl;
             
-
-
             std::function<FloatVector(const FloatVector&)> experiment_sol = 
                 [=](const FloatVector& vec) -> FloatVector{
                     assert( vec.getdimension() == 2 );
@@ -90,10 +90,14 @@ int main( int argc, char *argv[] )
             
             const int min_r = 1;
             const int max_r = 1;
+
             
-            ConvergenceTable contable("Mass error");
+            const int sullivan = 0;
+            const int whitney  = 1;
+            ConvergenceTable contable[2] = { ConvergenceTable("Mass error"), ConvergenceTable("Mass error") };
             
-            contable << "u_error" << "du_error" << "residual" << "time" << nl;
+            contable[sullivan] << "u_error" << "du_error" << "residual" << "time" << nl;
+            contable[whitney]  << "u_error" << "du_error" << "residual" << "time" << nl;
             
 
             assert( 0 <= min_l and min_l <= max_l );
@@ -127,22 +131,37 @@ int main( int argc, char *argv[] )
 
                     LOG << "...assemble inclusion matrix and transpose" << nl;
             
-                    SparseMatrix incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r );
+                    SparseMatrix incmatrix_s = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r );
                     
-                    SparseMatrix incmatrix_t = incmatrix.getTranspose();
+                    SparseMatrix incmatrix_s_t = incmatrix_s.getTranspose();
+
+                    SparseMatrix incmatrix_w = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 0, r );
+                    // FEECBrokenElevationMatrix( M, M.getinnerdimension(), 0, r, 1 ) & 
+                    
+                    
+                    SparseMatrix incmatrix_w_t = incmatrix_w.getTranspose();
 
                     LOG << "...assemble stiffness matrix" << nl;
             
-                    auto opr  = diffmatrix & incmatrix;
-                    auto opl  = opr.getTranspose(); 
-                    auto stiffness = opl & ( vector_massmatrix & opr );
+                    auto opr_s  = diffmatrix & incmatrix_s;
+                    auto opl_s  = opr_s.getTranspose(); 
+                    auto stiffness_s = opl_s & ( vector_massmatrix & opr_s );
                     
-                    stiffness.sortentries();
-                    auto stiffness_csr = MatrixCSR( stiffness );
+                    stiffness_s.sortentries();
+                    auto stiffness_csr_s = MatrixCSR( stiffness_s );
                     
-                    auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. );
-//                     auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
-                    LOG << "Average value of diagonal preconditioner: " << stiffness_invprecon.getdiagonal().average() << nl;
+                    auto opr_w  = diffmatrix & incmatrix_w;
+                    auto opl_w  = opr_w.getTranspose(); 
+                    auto stiffness_w = opl_w & ( vector_massmatrix & opr_w );
+                    
+                    stiffness_w.sortentries();
+                    auto stiffness_csr_w = MatrixCSR( stiffness_w );
+                    
+                    
+                    auto stiffness_invprecon_s = DiagonalOperator( stiffness_s.getdimin(), 1. );
+                    auto stiffness_invprecon_w = DiagonalOperator( stiffness_w.getdimin(), 1. );
+                    LOG << "Average value of diagonal preconditioner (Sullivan): " << stiffness_invprecon_s.getdiagonal().average() << nl;
+                    LOG << "Average value of diagonal preconditioner (Whitney) : " << stiffness_invprecon_w.getdiagonal().average() << nl;
 
                     {
 
@@ -156,48 +175,90 @@ int main( int argc, char *argv[] )
                         FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r-1, function_grad );
                         FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r,   function_rhs  );
                         
-                        FloatVector rhs = incmatrix_t * ( scalar_massmatrix * interpol_rhs );
+                        FloatVector rhs_s = incmatrix_s_t * ( scalar_massmatrix * interpol_rhs );
+                        FloatVector sol_s( incmatrix_s.getdimin(), 0. );
+                        
+                        FloatVector rhs_w = incmatrix_w_t * ( scalar_massmatrix * interpol_rhs );
+                        FloatVector sol_w( incmatrix_w.getdimin(), 0. );
+                        
 
-                        FloatVector sol( incmatrix.getdimin(), 0. );
-                        
-                        LOG << "...iterative solver" << nl;
-                        
-                        timestamp start = timestampnow();
+                        LOG << "...iterative solver (Sullivan)" << nl;
+                        timestamp start_s = timestampnow();
 
                         {
-                            sol.zero();
-                            ConjugateGradientMethod Solver( stiffness_csr );
-                            Solver.solve( sol, rhs );
+                            sol_s.zero();
+                            ConjugateGradientMethod Solver( stiffness_csr_s );
+                            Solver.solve( sol_s, rhs_s );
                         }
 
-                        timestamp end = timestampnow();
-                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
+                        timestamp end_s = timestampnow();
+                        LOG << "\t\t\t Time (Sullivan): " << timestamp2measurement( end_s - start_s ) << nl;
 
-                        LOG << "...compute error and residual" << nl;
-            
+                        LOG << "...iterative solver (Whitney)" << nl;
+                        timestamp start_w = timestampnow();
+
+                        {
+                            sol_w.zero();
+                            ConjugateGradientMethod Solver( stiffness_csr_w );
+                            Solver.solve( sol_w, rhs_w );
+                        }
+
+                        timestamp end_w = timestampnow();
+                        LOG << "\t\t\t Time (Whitney): " << timestamp2measurement( end_w - start_w ) << nl;
+
+
+
+                        LOG << "...compute error and residual (Sullivan)" << nl;
                         
-                        auto computed_sol  = incmatrix * sol;
-                        auto computed_grad = diffmatrix * incmatrix * sol;
+                        auto computed_sol_s  = incmatrix_s * sol_s;
+                        auto computed_grad_s = diffmatrix * incmatrix_s * sol_s;
                         
-                        auto errornorm_aux = interpol_sol  - computed_sol;
-                        auto graderror_aux = interpol_grad - computed_grad;
+                        auto errornorm_aux_s = interpol_sol  - computed_sol_s;
+                        auto graderror_aux_s = interpol_grad - computed_grad_s;
                         
-                        Float errornorm     = sqrt( errornorm_aux * ( scalar_massmatrix * errornorm_aux ) );
-                        Float graderrornorm = sqrt( graderror_aux * ( vector_massmatrix * graderror_aux ) );
-                        Float residualnorm  = ( rhs - stiffness * sol ).norm();
+                        Float errornorm_s     = sqrt( errornorm_aux_s * ( scalar_massmatrix * errornorm_aux_s ) );
+                        Float graderrornorm_s = sqrt( graderror_aux_s * ( vector_massmatrix * graderror_aux_s ) );
+                        Float residualnorm_s  = ( rhs_s - stiffness_s * sol_s ).norm();
                         
-                        LOG << "error:     " << errornorm    << nl;
-                        LOG << "graderror: " << graderrornorm << nl;
-                        LOG << "residual:  " << residualnorm << nl;
-                        LOG << "time:      " << Float( end - start ) << nl;
+                        LOG << "error:     " << errornorm_s     << nl;
+                        LOG << "graderror: " << graderrornorm_s << nl;
+                        LOG << "residual:  " << residualnorm_s  << nl;
+                        LOG << "time:      " << Float( end_s - start_s ) << nl;
                         
-                        contable << errornorm;
-                        contable << graderrornorm;
-                        contable << residualnorm;
-                        contable << Float( end - start );
-                        contable << nl;
+                        contable[sullivan] << errornorm_s;
+                        contable[sullivan] << graderrornorm_s;
+                        contable[sullivan] << residualnorm_s;
+                        contable[sullivan] << Float( end_s - start_s );
+                        contable[sullivan] << nl;
                         
-                        contable.lg();
+                        contable[sullivan].lg();
+
+
+
+                        LOG << "...compute error and residual (Whitney)" << nl;
+                        
+                        auto computed_sol_w  = incmatrix_w * sol_w;
+                        auto computed_grad_w = diffmatrix * incmatrix_w * sol_w;
+                        
+                        auto errornorm_aux_w = interpol_sol  - computed_sol_w;
+                        auto graderror_aux_w = interpol_grad - computed_grad_w;
+                        
+                        Float errornorm_w     = sqrt( errornorm_aux_w * ( scalar_massmatrix * errornorm_aux_w ) );
+                        Float graderrornorm_w = sqrt( graderror_aux_w * ( vector_massmatrix * graderror_aux_w ) );
+                        Float residualnorm_w  = ( rhs_w - stiffness_w * sol_w ).norm();
+                        
+                        LOG << "error:     " << errornorm_w     << nl;
+                        LOG << "graderror: " << graderrornorm_w << nl;
+                        LOG << "residual:  " << residualnorm_w  << nl;
+                        LOG << "time:      " << Float( end_w - start_w ) << nl;
+                        
+                        contable[whitney] << errornorm_w;
+                        contable[whitney] << graderrornorm_w;
+                        contable[whitney] << residualnorm_w;
+                        contable[whitney] << Float( end_w - start_w );
+                        contable[whitney] << nl;
+                        
+                        contable[whitney].lg();
 
 
                         {
@@ -207,12 +268,13 @@ int main( int argc, char *argv[] )
                             
                             
                             if( r == 1) {
-                                vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
+                                vtk.writeVertexScalarData( sol_s, "iterativesolution_scalar_data_s" , 1.0 );
+                                vtk.writeVertexScalarData( sol_w, "iterativesolution_scalar_data_w" , 1.0 );
                             }
                             
                             {
                                 const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 0, 0, r );
-                                const auto printable_sol = interpol_matrix * incmatrix * sol; 
+                                const auto printable_sol = interpol_matrix * incmatrix_s * sol_s; 
                                 vtk.writeCellScalarData( printable_sol, "iterativesolution_scalar_data_cellwise" , 1.0 );
                             }
                             
@@ -231,7 +293,7 @@ int main( int argc, char *argv[] )
                             
                             {
                                 const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r-1 );
-                                const auto printable_grad = interpol_matrix * computed_grad; 
+                                const auto printable_grad = interpol_matrix * computed_grad_s; 
                                 vtk.writeCellVectorData_barycentricgradients( printable_grad, "gradient_interpolation" , 1.0 );
                             }
                             

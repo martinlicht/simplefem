@@ -95,6 +95,7 @@ int main( int argc, char *argv[] )
             if( do_cgm_ssor_csr )           contable_sol << "CGMcsr_ssor"  ;
             if( do_chebyshev_diagonal_csr ) contable_sol << "Chebyshev_csr";
             if( do_cgm_rainbow_csr )        contable_sol << "CGMcsr_rainbow";
+            contable_sol << nl;
             
             contable_res << "Index";
             if( do_cgmpp      ) contable_res << "CGM++"      ;
@@ -113,6 +114,7 @@ int main( int argc, char *argv[] )
             if( do_cgm_ssor_csr )           contable_res << "CGMcsr_ssor"  ;
             if( do_chebyshev_diagonal_csr ) contable_res << "Chebyshev_csr";
             if( do_cgm_rainbow_csr )        contable_res << "CGMcsr_rainbow";
+            contable_res << nl;
 
             contable_num << "Index";
             if( do_cgmpp      ) contable_num << "CGM++"      ;
@@ -131,6 +133,7 @@ int main( int argc, char *argv[] )
             if( do_cgm_ssor_csr )           contable_num << "CGMcsr_ssor"  ;
             if( do_chebyshev_diagonal_csr ) contable_num << "Chebyshev_csr";
             if( do_cgm_rainbow_csr )        contable_num << "CGMcsr_rainbow";
+            contable_num << nl;
 
 
             contable_sec << "Index";
@@ -150,6 +153,7 @@ int main( int argc, char *argv[] )
             if( do_cgm_ssor_csr )           contable_sec << "CGMcsr_ssor"  ;
             if( do_chebyshev_diagonal_csr ) contable_sec << "Chebyshev_csr";
             if( do_cgm_rainbow_csr )        contable_sec << "CGMcsr_rainbow";
+            contable_sec << nl;
 
             
 

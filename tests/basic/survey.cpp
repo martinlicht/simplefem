@@ -80,13 +80,16 @@ int main( int argc, char *argv[] )
     printf("Float is IEC-559:        %d\n",  (int) std::numeric_limits<Float>::is_iec559             );
     printf("Float detectes tinyness: %d\n",  (int) std::numeric_limits<Float>::tinyness_before       );
     
-    printf("Machine epsilon variable:        %Le\n",     (long double)machine_epsilon );
+    printf("Machine epsilon variable:         %.25Le\n", (long double)machine_epsilon );
     printf("Machine epsilon variable (sqrt ): %.25Le\n", (long double)std::sqrt(machine_epsilon) );
     printf("Machine epsilon variable (Sqrt ): %.25Le\n", (long double)Sqrt(machine_epsilon) );
     // printf("Machine epsilon variable (Sqrt_): %.25Le\n", (long double)Sqrt_(machine_epsilon) );
     printf("Desired precision variable:      %Le\n",     (long double)desired_precision );
     printf("Desired closeness variable:      %Le\n",     (long double)desired_closeness );
 
+    // printf("test: %.25Le\n", (long double)std::sqrt(4 * machine_epsilon * machine_epsilon) / 2 );
+    // printf("test: %.25Le\n", (long double)std::sqrt(machine_epsilon * machine_epsilon)/machine_epsilon );
+    
 
 
     // {

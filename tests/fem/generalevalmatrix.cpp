@@ -42,8 +42,8 @@ int main( int argc, char *argv[] )
             
             LOG << "dim(A)=" << N << "\tdiff1=" << diff_inv_1 << "\tdiff2=" << diff_inv_2 << space << machine_epsilon << nl;
             
-            assert( diff_inv_1 < std::sqrt( machine_epsilon ) );
-            assert( diff_inv_2 < std::sqrt( machine_epsilon ) );
+            assert( diff_inv_1 < desired_closeness );
+            assert( diff_inv_2 < desired_closeness );
             
         }
         

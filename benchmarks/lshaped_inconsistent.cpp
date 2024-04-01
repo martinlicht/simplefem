@@ -4,15 +4,6 @@
 
 #include <fstream>
 
-
-
-
-
-
-
-
-
-
 #include "../basic.hpp"
 #include "../utility/files.hpp"
 #include "../utility/convergencetable.hpp"

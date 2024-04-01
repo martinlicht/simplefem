@@ -40,17 +40,16 @@ SparseMatrix FEECCanonicalizeBroken( const Mesh& mesh, int n, int k, int r )
     
     // Calculate local matrix 
 
-    // DenseMatrix Aux1( n+1, n+1, 0. );
-    // for( int i = 1; i <= n; i++ ) {
-    //     Aux1(i,i) = 1.;
-    //     Aux1(i,0) = -1.;
-    // }
-    DenseMatrix Aux1 = IdentityMatrix(n+1) - DenseMatrix( n+1, n+1, 1./(n+1) );
+    DenseMatrix Aux1( n+1, n+1, 0. );
+    for( int i = 1; i <= n; i++ ) {
+        Aux1(i,i) = 1.;
+        Aux1(i,0) = -1.;
+    }
+    // DenseMatrix Aux1 = IdentityMatrix(n+1) - DenseMatrix( n+1, n+1, 1./(n+1) );
     
-    
-    const DenseMatrix Aux2 = SubdeterminantMatrix( Aux1, k );
+    const DenseMatrix Aux = SubdeterminantMatrix( Aux1, k );
 
-    assert( Aux2.issquare() and Aux2.getdimout() == form_size );
+    assert( Aux.issquare() and Aux.getdimout() == form_size );
 
     #if defined(_OPENMP)
     #pragma omp parallel for
@@ -65,7 +64,7 @@ SparseMatrix FEECCanonicalizeBroken( const Mesh& mesh, int n, int k, int r )
         SparseMatrix::MatrixEntry entry;
         entry.row    = s * poly_size * form_size + p * form_size + f1;
         entry.column = s * poly_size * form_size + p * form_size + f2;
-        entry.value  = Aux2( f1, f2 );
+        entry.value  = Aux( f1, f2 );
         
         ret.setentry( index_of_entry, entry );
     }

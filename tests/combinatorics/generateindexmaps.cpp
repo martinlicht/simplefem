@@ -15,7 +15,7 @@ int main( int argc, char *argv[] )
     if(true)
     {
             
-        LOG << "Testing generator for empty index map" << nl;
+        LOG << "1. Testing generator for empty index map" << nl;
         
         const IndexRange from( 1,-3 );
         const IndexRange targ( 2,5 );
@@ -33,7 +33,7 @@ int main( int argc, char *argv[] )
     if(true)
     {
         
-        LOG << "Testing generator for all: [1,3] -> [1,3]" << nl;
+        LOG << "2. Testing generator for all: [1,3] -> [1,3]" << nl;
         
         IndexRange bereich( 1,3 );
         std::vector<IndexMap> all = generateIndexMaps( bereich, bereich );
@@ -49,7 +49,7 @@ int main( int argc, char *argv[] )
     if(true)
     {
         
-        LOG << "Testing generator for permutations of [1,3]" << nl;
+        LOG << "3. Testing generator for permutations of [1,3]" << nl;
         
         IndexRange bereich( 1,3 );
         std::vector<IndexMap>  all = generatePermutations( bereich );
@@ -65,7 +65,7 @@ int main( int argc, char *argv[] )
     if(true)
     {
         
-        LOG << "Testing generator for sigmas [1,3] -> [2,5]" << nl;
+        LOG << "4. Testing generator for sigmas [1,3] -> [2,5]" << nl;
         
         IndexRange from( 1,3 );
         IndexRange targ( 2,5 );
@@ -85,7 +85,7 @@ int main( int argc, char *argv[] )
     if(true)
     {
             
-        LOG << "Testing generator for general index mappings" << nl;
+        LOG << "5. Testing generator for general index mappings" << nl;
         
         const std::vector<int> Ns = { -1, 0, 1, 2, 3, 4 };
         const std::vector<int> Ks = { -1, 0, 1, 2, 3, 4 };
@@ -124,7 +124,7 @@ int main( int argc, char *argv[] )
     if(true)
     {
             
-        LOG << "Testing generator for permutations" << nl;
+        LOG << "6. Testing generator for permutations" << nl;
         
         const std::vector<int> Ns = { -1, 0, 1, 2, 3, 5 };
         

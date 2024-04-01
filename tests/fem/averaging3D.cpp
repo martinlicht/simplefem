@@ -24,7 +24,7 @@ int main( int argc, char *argv[] )
     
     LOG << "Initial mesh..." << nl;
     
-    MeshSimplicial3D M = UnitCube3D();
+    MeshSimplicial3D M = UnitSimplex3D();
     
     M.automatic_dirichlet_flags();
     
@@ -35,7 +35,7 @@ int main( int argc, char *argv[] )
     
     const int r_max = 2;
     
-    const int l_min = 1;
+    const int l_min = 0;
     
     const int l_max = 3;
 
@@ -101,8 +101,7 @@ int main( int argc, char *argv[] )
                 field.random();
 
                 field = flagmatrix * field;
-
-                field.normalize();
+                if ( field.norm() > 0 ) field.normalize();
                 
                 assert( field.isfinite() );
                 
@@ -114,9 +113,22 @@ int main( int argc, char *argv[] )
                 
                 const auto error_mass = ( included - inclusion * averaged ).norm(massmatrix);
 
+                // LOG << (inclusion * averaged).norm(massmatrix) << space << included.norm(massmatrix) << space << error_eucl << space << error_mass << nl; 
                 LOG << error_eucl << space << error_mass << nl; 
                 
-                // Assert( error_eucl < desired_closeness and error_mass < desired_closeness, desired_closeness ); 
+                if( error_mass >= desired_closeness )
+                {
+                    LOG << included - inclusion * averaged << nl;
+                    exit(1);
+                }
+
+                // Last secure commit: 0ba56fe0cf92ab656d303b3fde331cb4f9b0d578
+                // Still works Mar 1:  22b838bbe40d311c5675170b6f2310b296a1a8f2    
+                // Still works Mar 10: 1f2d2b02a6ed96087db2d5a262b4d60a87bea166 
+                // DOES NOT WORK:      a05c56458585ea03e133849b0426cf7675001923   
+
+                Assert( error_eucl >= -desired_closeness, error_eucl ) ;
+                Assert( error_mass >= -desired_closeness, error_mass ) ;
                 
                 Float error = error_mass;
 
@@ -153,22 +165,25 @@ int main( int argc, char *argv[] )
     
     for( int k = 0; k <= n; k++ ) 
         contables[k].table_name = "Rounding errors D3K" + std::to_string(k);
+    
     for( int k = 0; k <= n; k++ ) 
-    for( int r = r_min; r <= r_max; r++ ) 
-        contables[k] << ( "R" + std::to_string(r) );
+    {
+        for( int r = r_min; r <= r_max; r++ ) 
+            contables[k] << ( "R" + std::to_string(r) );
+
+        contables[k] << nl;     
+    }
 
     for( int k = 0; k <= n; k++ ) 
     for( int l = l_min; l <= l_max; l++ ) 
     {
-        
         for( int r = r_min; r <= r_max; r++ ) 
             contables[k] << errors[k][l-l_min][r-r_min];
         
-        contables[k] << nl; 
-        
+        contables[k] << nl;     
     }
     
-    LOG << "Check that differences are small" << nl;
+    LOG << "Check that differences are small: " << desired_closeness << nl;
     
     for( int k = 0; k <= n; k++ ) 
     {
@@ -179,7 +194,7 @@ int main( int argc, char *argv[] )
         for( int l = l_min; l <= l_max; l++ ) 
         for( int r = r_min; r <= r_max; r++ ) 
         {
-            Assert( errors[k][l-l_min][r-r_min] < desired_closeness, errors[k][l-l_min][r-r_min] );
+            Assert( errors[k][l-l_min][r-r_min] < desired_closeness, desired_closeness, errors[k][l-l_min][r-r_min] );
         }
 
     }

@@ -187,7 +187,7 @@ Float Determinant( const DenseMatrix& A )
         
     } else {
         
-        return Determinant_gauss( A );
+        return Determinant_bareiss( A );
         
     }
 }
@@ -253,8 +253,13 @@ Float Determinant_gauss( DenseMatrix A )
             }
         
         // make swappings in the range i..n
+        assert( r >= i and r >= i );
         if( r != i ) { signum = -signum; A.swaprow   ( r, i ); }
         if( c != i ) { signum = -signum; A.swapcolumn( c, i ); }
+        
+        for( int s = i; s < n; s++ )
+        for( int d = i; d < n; d++ )
+            assert( absolute(A(s,d)) <= absolute(A(i,i)) );
         
         if( absolute( A(i,i) ) == 0.0 )
             return 0.; 
@@ -275,6 +280,66 @@ Float Determinant_gauss( DenseMatrix A )
     return ret;
     
 }
+
+
+
+
+
+Float Determinant_bareiss( DenseMatrix A )
+{
+    assert( A.issquare() );
+    
+    if( A.getdimin() == 0 )
+        return 1.;
+    
+    const int n = A.getdimin();
+    
+    
+    int signum = 1;
+
+    for( int i = 0; i < n - 1; i++ )
+    {
+
+        int r = i, c = i;
+
+        for( int s = i; s < n; s++ )
+        for( int d = i; d < n; d++ )
+            if( absolute(A(s,d)) > absolute(A(r,c)) ) {
+                r = s; c = d;
+            }
+        
+        // make swappings in the range i..n
+        assert( r >= i and r >= i );
+        if( r != i ) { signum = -signum; A.swaprow   ( r, i ); }
+        if( c != i ) { signum = -signum; A.swapcolumn( c, i ); }
+        
+        for( int s = i; s < n; s++ )
+        for( int d = i; d < n; d++ )
+            assert( absolute(A(s,d)) <= absolute(A(i,i)) );
+        
+        if( absolute( A(i,i) ) == 0.0 )
+            return 0.; 
+
+        
+
+        //Apply formula
+        for (int r = i + 1; r < n; r++) 
+        for (int c = i + 1; c < n; c++) 
+        {
+            A(r,c) = A(i,i) * A(r,c) - A(r,i) * A(i,c);
+            if(i != 0) { A(r,c) /= A(i-1,i-1); }
+        }
+    }
+
+    return signum * A(n-1,n-1);
+}
+
+
+
+
+
+
+
 
 
 

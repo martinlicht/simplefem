@@ -8,9 +8,11 @@ int main( int argc, char *argv[] )
 {
         ConvergenceTable Contable("Test Table");
         
-        Contable.lg();
+        Contable << "a";
+        Contable << "b" << "c" << "d";
+        Contable << "qwertyuiopasdfghjkl" << nl;
 
-        Contable << "a" << "b" << "c" << "d" << "qwertyuiopasdfghjkl";
+        Contable.lg();
 
         for( int i = 0; i < 7; i++ ) {
             for( int j = 0; j < 5; j++ )

@@ -43,90 +43,48 @@ requires regular grinding in order to get it done.
 
 
 
-# (ARTICLE) Profiling 
 
-Several options are available to generate and assess profiling data. one particularly easy option involves Valgrind. 
-
-The compiler should be invoked with the '-g' option. Then the `callgrind` tool is invoked from command line,
-
-```
-valgrind --tool=callgrind [callgrind options] your-program [program options]
-```
-
-to generate a file `callgrind.out.[pid]` with the profiling data. Then the profiling data can be presented in the GUI tool `kcachegrind`, as in 
-
-```
-kcachegrind callgrind.out.[pid]
-```
-The target audience for this software are researchers in numerical partial differential equations who are well-versed in C++ and who want a customizable finite element software.
-
-Another alternative is `gprof` as a GUI for profiling data. 
-
-
-
-
-
--Wanalyzer-too-complex
-
--Wanalyzer-double-fclose 
--Wanalyzer-double-free 
--Wanalyzer-exposure-through-output-file 
--Wanalyzer-file-leak 
--Wanalyzer-free-of-non-heap 
--Wanalyzer-malloc-leak 
--Wanalyzer-possible-null-argument 
--Wanalyzer-possible-null-dereference 
--Wanalyzer-null-argument 
--Wanalyzer-null-dereference 
--Wanalyzer-stale-setjmp-buffer 
--Wanalyzer-tainted-array-index 
--Wanalyzer-unsafe-call-within-signal-handler 
--Wanalyzer-use-after-free 
--Wanalyzer-use-of-pointer-in-stale-stack-frame 
-
-? -fanalyzer-transitivity
--fanalyzer-verbosity=level # default 
-
-TODO: write an email to the mailing list about the static analyzer. 
-
-
-
-# (HIGH) dependencies for object file compilation  
-
-Ensure that object files have all their dependencies correctly defined.
-
-# (HIGH) Streamline nullspace tests 
-
-Clean up the nullspace computation in the solver component.
-Clean up the test for the nullspace computation. 
-
-# (HIGH) Unit tests must check convergence rates
-
-The tests in FEM and the finite element computations should explicitly check the convergence rates. 
-Enable the convergence table class to calculate convergence rates explicitly.
-
-# (HIGH) Clean up unit tests 
-
-- [ ] Don't compute the norms of the solutions and the rhs unless necessary 
-- [ ] Clarify output strings of different unit tests 
-- [ ] Decide what the different tests are supposed to do. For example, the Lagrange test should reflect simple things and additional overhead
-- [ ] Remove overhead from the other tests if possible 
-- [ ] Streamline the main loop in the different solverfem tests to reduce code redundancy
-- [ ] Don't use MINRES whenever you can use another solver 
-- [ ] orientation tests must be included in usual tests in order to save compile time 
-
-# (MEDIUM) Fix Whatever solvers or fix Wikipedia 
-
-Herzog Soodhalter funktioniert nun, auch die sparse variant.
-Vielleicht sollte das umbenannt werden? Scheint mehr Soodhalter zu sein als Herzog 
-Whatever solver hingegen kackt ab 
 
 # (HIGH) Floating point exact comparisons ersetzen durch Funktion mit expliziter semantik
 # (HIGH) Floating-point comparisons
 
 https://beta.boost.org/doc/libs/1_68_0/libs/math/doc/html/math_toolkit/float_comparison.html
-
 Understand the floating-point comparison functions and import them into this project, mutatis mutandis. 
+
+# (HIGH) AFW-Basis of Sullivan forms
+
+- [ ] Write about those bases in your article and detail out their construction 
+- [ ] Implement them 
+- [ ] Compare the condition numbers of the bases.
+- [ ] Compare the sparsity on standard triangles: rectangular, regular, split-symmetry
+
+# (HIGH) Clean up unit tests 
+
+- [x] Don't use MINRES whenever you can use another solver 
+- [x] convergence tables can compute convergence rates 
+- [x] Don't compute the norms of the solutions and the rhs unless necessary 
+- [x] Decide what the purpose each test, remove overhead, clarify output strings
+      - [x] Sullivan2D
+      - [x] Sullivan3D
+      - [x] Whitney2D/3D
+      - [x] what are poissontransformed old, old2, and the other one? Retire?
+      - [x] lshaped? -> these are maxwell systems. Annotate them
+      For example, the Lagrange test should reflect simple things and additional overhead
+- [x] Clean up the test for the nullspace computation. 
+- [x] FEM tests check assertions more thoroughly
+- [ ] ~\writing\project.simplefem :      changes all copied 
+- [ ] ~\writing\project.simplefem.test : changes all copied 
+- [x] Mesh: improve consistency. Include orientation tests in usual tests to save compile time 
+- [ ] VTK: different outputs 
+- [x] Combinatorics: make things independent of screen output 
+- [ ] Operators: make things independent of screen output 
+- [ ] Dense: test everything thoroughly, even up to smaller rounding errors 
+- [ ] Sparse: check that composition does not change the outcome 
+- [ ] Solver: meaningful convergence tests?
+- [ ] Clean up the nullspace computation in the solver component.
+- [ ] include visualization script 
+- [ ] Unit tests must check convergence rates 
+- [ ] Streamline the main loop in the different solverfem tests to reduce code redundancy
 
 # (HIGH) fem/diffelev3D
 # (HIGH) the mass matrix suffers from rounding errors. 
@@ -136,7 +94,10 @@ The commutativity is not satisfied sufficiently.
 That seems to be due to the mass matrix, since canonicalization reduces that effect 
 Can we canonicalize everything things already in the matrix assembly?
 
-# (HIGH) AFW-Basis of Sullivan forms
+# (HIGH) Code Coverage: background and application
+
+
+
 
 
 
@@ -193,36 +154,46 @@ Based on that:
 
 
 
+# (MEDIUM) Solvers study the size of the RHS
+
+```
+// the argument is now called `_threshold`
+Float threshold = _threshold;
+    Float RHS_NORM_SQUARED = 0.;    
+    for( int i = 0; i < N; i++ ) RHS_NORM_SQUARED += b[i]*b[i];
+    threshold *= sqrt(RHS_NORM_SQUARED);
+```
+
+
+# (MEDIUM) Solvers print whether they have been successful 
+```
+/* HOW DID WE FINISH ? */
+    recent_deviation = rMAMr;
+    if( rMAMr > tolerance ) {
+        LOG << "PCRM process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
+        LOG << "PCRM process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << recent_deviation << "/" << tolerance;
+    } else { 
+        LOG << "PCRM process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
+        LOG << "PCRM process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << recent_deviation << "/" << tolerance;
+ 
+    }
+```
+
+
+# (MEDIUM) Fix Whatever solvers or fix Wikipedia 
+
+- [x] Herzog Soodhalter funktioniert nun, auch die sparse variant.
+- [ ] Identify the sources for these solvers 
+- [ ] Fix the whatever solver or retire it 
 
 # (MEDIUM) Interesting meshes
 
-Use the US states map from Randy's source code 
-and implement it here. Try to find other triangulations 
-too and integrate them as examples. 
-
-# (MEDIUM) Solver printing data structure 
-
-The iterative solvers should be provided a printing data structure 
-that describes the desired level of printing.
-This object can be constructed in various ways. 
-Whatever the implementation, it provides semantics for telling 
-what is supposed to be reported.
-
-```
-bool report_startup();
-bool report_finish_success();
-bool report_finish_fail();
-bool report_restart();
-bool report_alert();
-bool report_breakdown();
-
-bool iteration_is_printable();
-```
+Use the US states map from Randy's source code and implement it here. 
+Try to find other triangulations too and integrate them as examples. 
 
 # (MEDIUM) Unit test framework
 
-Agree to a common style for the unit tests 
-
+Agree to a common style for the unit tests. 
 The existing unit tests should be streamlined and polished. 
 Generally speaking, they should be reduced to tests only:
 benchmarks should be put into a folder of their own;
@@ -241,6 +212,17 @@ more abundantly throughout the code.
 
 
 
+
+# (LOW) Operators as non-member functions?
+
+Check the classes for member operator functions.
+Except for some particular special cases, 
+= () [] ->
+we can and should turn them into non-member operators.
+
+# (LOW) Gmsh support
+
+Learn more about Gmsh and how to utilize it for this project. 
 
 # (LOW) Style checker and configuration
 
@@ -300,28 +282,24 @@ Encapsulate cout, cerr, and clog within wrapper objects
 that delegate the input to those streams. 
 You can then extend the stream wrappers at a later stage 
 
-# (LOW) Rewrite the unit tests
+# (LOW) Solver printing data structure 
 
-Generally speaking, the combinatorics unit tests should be more excessive. 
-Don't shy away from testing basically everything you could possibly think of as relevant. 
-Then move on with the same spirit to 'operators' and the other objects.
+The iterative solvers should be provided a printing data structure 
+that describes the desired level of printing.
+This object can be constructed in various ways. 
+Whatever the implementation, it provides semantics for telling 
+what is supposed to be reported.
 
-- [ ] Basic 
-- [ ] Utility 
-- [ ] Combinatorics: make things independent of screen output 
-- [ ] Operators: make things independent of screen output 
-- [ ] Dense: test everything thoroughly 
-- [ ] Sparse: check that composition does not change the outcome 
-- [ ] Solver: meaningful convergence tests?
-- [ ] Mesh: make everything consistent 
-- [ ] VTK
+```
+bool report_startup();
+bool report_finish_success();
+bool report_finish_fail();
+bool report_restart();
+bool report_alert();
+bool report_breakdown();
 
-# (LOW) Operators as non-member functions?
-
-Check the classes for member operator functions.
-Except for some particular special cases, 
-= () [] ->
-we can and should turn them into non-member operators.
+bool iteration_is_printable();
+```
 
 # (LOW) Command line interface
 
@@ -563,6 +541,29 @@ Hermes:   common
 concepts: ...
 https://en.wikipedia.org/wiki/List_of_finite_element_software_packages
 
+# (INACTIVE/ARTICLE) Static analyzer 
+
+-Wanalyzer-too-complex
+-Wanalyzer-double-fclose 
+-Wanalyzer-double-free 
+-Wanalyzer-exposure-through-output-file 
+-Wanalyzer-file-leak 
+-Wanalyzer-free-of-non-heap 
+-Wanalyzer-malloc-leak 
+-Wanalyzer-possible-null-argument 
+-Wanalyzer-possible-null-dereference 
+-Wanalyzer-null-argument 
+-Wanalyzer-null-dereference 
+-Wanalyzer-stale-setjmp-buffer 
+-Wanalyzer-tainted-array-index 
+-Wanalyzer-unsafe-call-within-signal-handler 
+-Wanalyzer-use-after-free 
+-Wanalyzer-use-of-pointer-in-stale-stack-frame 
+
+? -fanalyzer-transitivity
+-fanalyzer-verbosity=level # default 
+
+TODO: write an email to the mailing list about the static analyzer. 
 
 
 
@@ -1015,6 +1016,10 @@ You can then average according to some scheme, such as:
 - [x] weight uniformly
 - [x] weight by volume 
 Thus you can always average from the non-conforming into the conforming space.
+
+# (DONE) dependencies for object file compilation  
+
+Ensure that object files have all their dependencies correctly defined.
 
 # (DONE) fix warnings about printf truncation 
 

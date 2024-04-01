@@ -132,6 +132,9 @@ int main( int argc, char *argv[] )
 
                     Float mass_elev = interpol_elev * ( massmatrix_scalar_plus * interpol_elev );
 
+                    Assert( mass >= -desired_closeness, mass );
+                    Assert( mass_elev >= -desired_closeness, mass_elev);
+                    
                     Float error_mass = mass - mass_elev;
                     
                     errors_scalar[i][l-l_min][r-r_min][r_plus] = error_mass;
@@ -150,6 +153,9 @@ int main( int argc, char *argv[] )
 
                     Float mass_elev = interpol_elev * ( massmatrix_volume_plus * interpol_elev );
 
+                    Assert( mass >= -desired_closeness, mass );
+                    Assert( mass_elev >= -desired_closeness, mass_elev);
+                    
                     Float error_mass = mass - mass_elev;
                     
                     errors_volume[i][l-l_min][r-r_min][r_plus] = error_mass;
@@ -164,7 +170,7 @@ int main( int argc, char *argv[] )
             
                 M.uniformrefinement();
 
-                M.shake_interior_vertices();
+                // M.shake_interior_vertices(); // The inner and outer dimension may differ.
             }
             
         } 
@@ -187,6 +193,10 @@ int main( int argc, char *argv[] )
                 contable_volume[i] << printf_into_string("R%d+%d", r-r_min, r_plus_max );
         
         }
+        for( int i = 0; i < experiments_scalar_field.size(); i++ ) contable_scalar[i] << nl; 
+        for( int i = 0; i < experiments_volume_field.size(); i++ ) contable_volume[i] << nl; 
+
+        
         
         for( int l = l_min; l <= l_max; l++ ) 
         {
@@ -227,17 +237,17 @@ int main( int argc, char *argv[] )
         
         
         
-        LOG << "Check that differences are small" << nl;
+        LOG << "Check that differences are small: " << desired_closeness << nl;
         
         for( int l      = l_min; l      <=      l_max; l++      ) 
         for( int r      = r_min; r      <=      r_max; r++      ) 
         for( int r_plus =     0; r_plus <= r_plus_max; r_plus++ ) 
         {
             for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
-                Assert( errors_scalar[i][l-l_min][r-r_min][r_plus] < desired_closeness, desired_closeness );
+                Assert( errors_scalar[i][l-l_min][r-r_min][r_plus] < desired_closeness, errors_scalar[i][l-l_min][r-r_min][r_plus], desired_closeness );
             
             for( int i = 0; i < experiments_volume_field.size(); i++ )
-                Assert( errors_volume[i][l-l_min][r-r_min][r_plus] < desired_closeness, desired_closeness );
+                Assert( errors_volume[i][l-l_min][r-r_min][r_plus] < desired_closeness, errors_volume[i][l-l_min][r-r_min][r_plus], desired_closeness );
         }
             
         

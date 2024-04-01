@@ -274,6 +274,7 @@ int main( int argc, char *argv[] )
                 contables[d] << "stiff comp";    // 6
                 contables[d] << "br mass";       // 7
                 contables[d] << "br stiff";      // 8
+                contables[d] << nl;
                 
                 
                 for( int m = 0; m <= l_max-l_min; m++ ) 
@@ -298,7 +299,7 @@ int main( int argc, char *argv[] )
         }
             
             
-        LOG << "Check that differences are small" << nl;
+        LOG << "Check that differences are small: " << desired_closeness << nl;
         
         for( int l = l_min; l <= l_max; l++ ) 
         for( int d = 0; d < 3; d++ )
@@ -306,7 +307,7 @@ int main( int argc, char *argv[] )
         {
             if( not ( errors[l-l_min][d][t] < desired_closeness ) )
                 LOG << l << space << d << space << t << space << errors[l-l_min][d][t] << nl;
-            Assert( errors[l-l_min][d][t] < desired_closeness, desired_closeness );
+            Assert( errors[l-l_min][d][t] < desired_closeness, errors[l-l_min][d][t], desired_closeness );
         }
         
         

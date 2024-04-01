@@ -28,7 +28,7 @@ using namespace std;
 int main( int argc, char *argv[] )
 {
         
-        LOG << "Unit Test: 2D Poisson problem" << nl;
+        LOG << "Unit Test: 2D Poisson problem, Dirichlet BC on one side " << nl;
         
         if(true){
 
@@ -41,7 +41,6 @@ int main( int argc, char *argv[] )
             M.set_flag( 1, 0, SimplexFlag::SimplexFlagDirichlet );
             M.set_flag( 0, M.get_subsimplex( 1, 0, 0, 0 ), SimplexFlag::SimplexFlagDirichlet );
             M.set_flag( 0, M.get_subsimplex( 1, 0, 0, 1 ), SimplexFlag::SimplexFlagDirichlet );
-//             M.check_dirichlet_flags();
 
             
             LOG << "Prepare scalar fields for testing..." << nl;
@@ -93,8 +92,6 @@ int main( int argc, char *argv[] )
             
 
             
-
-            LOG << "Solving Poisson Problem with Neumann boundary conditions" << nl;
 
             const int min_l = 0; 
             const int max_l = 6;
@@ -175,15 +172,13 @@ int main( int argc, char *argv[] )
                         FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r-1, function_grad );
                         FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r,   function_rhs  );
                         
-                        LOG << "...compute norms of solution and right-hand side:" << nl;
+                        LOG << "...compute norms of solution and right-hand side" << nl;
             
                         Float sol_norm = interpol_sol * ( scalar_massmatrix * interpol_sol );
                         Float rhs_norm = interpol_rhs * ( scalar_massmatrix * interpol_rhs );
                         
                         LOG << "solution norm: " << sol_norm << nl;
                         LOG << "rhs norm:      " << rhs_norm << nl;
-
-                        LOG << "...create RHS vector" << nl;
 
                         FloatVector rhs = incmatrix_t * ( scalar_massmatrix * interpol_rhs );
 
@@ -222,7 +217,7 @@ int main( int argc, char *argv[] )
                         timestamp end = timestampnow();
                         LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
 
-                        LOG << "...compute error and residual:" << nl;
+                        LOG << "...compute error and residual" << nl;
             
                         
                         auto computed_sol  = incmatrix * sol;

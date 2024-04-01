@@ -97,6 +97,8 @@ int main( int argc, char *argv[] )
                 Float commutator_error_mass = commutator_error * ( massmatrix * commutator_error );
 
                 assert( std::isfinite( commutator_error_mass ) );
+
+                Assert( commutator_error_mass >= -desired_closeness, commutator_error_mass );
                 
                 errors[k][l-l_min][r-r_min][r_plus] = std::sqrt( std::fabs( commutator_error_mass ) );
             
@@ -110,7 +112,7 @@ int main( int argc, char *argv[] )
             
                 M.uniformrefinement();
 
-                M.shake_interior_vertices();
+                // M.shake_interior_vertices(); // The inner and outer dimension may differ.
             }
             
             
@@ -124,9 +126,11 @@ int main( int argc, char *argv[] )
         
         for( int k = 0; k < M.getinnerdimension(); k++ ) 
             contables[k].table_name = "Rounding errors D1K" + std::to_string(k);
-        for( int k = 0; k < M.getinnerdimension(); k++ ) 
-        for( int r = r_min; r <= r_max; r++ ) 
-            contables[k] << printf_into_string("R%d+%d", r-r_min, r_plus_max );;
+        for( int k = 0; k < M.getinnerdimension(); k++ ) {
+            for( int r = r_min; r <= r_max; r++ ) 
+                contables[k] << printf_into_string("R%d+%d", r-r_min, r_plus_max );;
+            contables[k] << nl;
+        }
 
         
         for( int l = l_min; l <= l_max; l++ ) 
@@ -157,14 +161,14 @@ int main( int argc, char *argv[] )
         
         
         
-        LOG << "Check that differences are small" << nl;
+        LOG << "Check that differences are small: " << desired_closeness << nl;
         
         for( int l      = l_min; l      <=           l_max; l++      ) 
         for( int r      = r_min; r      <=           r_max; r++      ) 
         for( int r_plus =     0; r_plus <=      r_plus_max; r_plus++ ) 
         for( int i      =     0; i < M.getinnerdimension(); i++      ) 
         {
-            Assert( errors[i][l-l_min][r-r_min][r_plus] < desired_closeness, desired_closeness );
+            Assert( errors[i][l-l_min][r-r_min][r_plus] < desired_closeness, errors[i][l-l_min][r-r_min][r_plus], desired_closeness );
         }
             
         

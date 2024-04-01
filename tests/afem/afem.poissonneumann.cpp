@@ -93,8 +93,6 @@ int main( int argc, char *argv[] )
 
             assert( experiments_sol.size() == experiments_rhs.size() );
 
-            LOG << "Solving Poisson Problem with Neumann boundary conditions" << nl;
-
             const int min_l = 1; 
     
             const int max_l = 5;
@@ -197,7 +195,7 @@ int main( int argc, char *argv[] )
                     LOG << "\t\t\t " << timestamp2measurement( end - start ) << nl;
                 }
                         
-                LOG << "...compute error and residual:" << nl;
+                LOG << "...compute error and residual" << nl;
 
                 Float errornorm     = ( scalar_massmatrix_fac * ( interpol_sol  - incmatrix * sol ) ).norm();
                 Float graderrornorm = ( vector_massmatrix_fac * ( interpol_grad - diffmatrix * incmatrix * sol ) ).norm();

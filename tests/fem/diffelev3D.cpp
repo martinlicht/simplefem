@@ -110,28 +110,38 @@ int main( int argc, char *argv[] )
                 
                 SparseMatrix massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), k+1, r + r_plus - 1 );
                 
+                SparseMatrix origin_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), k, r );
                 
                 
-                FloatVector interpol_function = Interpolation( M, M.getinnerdimension(), k, r, fields[k] );
+                
+                FloatVector interpol_function = lower_diffmatrix.createinputvector();
+                interpol_function.random();
+                interpol_function.normalize(origin_massmatrix);
 
                 auto path1 = dier_elevation * lower_diffmatrix * interpol_function;
 
                 auto path2 = upper_diffmatrix * diyi_elevation * interpol_function;
 
 
-//                 SparseMatrix canon = FEECRandomizeBroken( M, M.getinnerdimension(), k+1, r + r_plus - 1, notanumber );
+                // SparseMatrix canon = FEECRandomizeBroken( M, M.getinnerdimension(), k+1, r + r_plus - 1, notanumber );
                 SparseMatrix canon = FEECCanonicalizeBroken( M, M.getinnerdimension(), k+1, r + r_plus - 1 );
-                auto commutator_error = canon * ( path1 - path2 );
                 
-                // auto commutator_error = path1 - path2;
+                auto commutator_error = path2 - path1;
+
+                // LOG << massmatrix * ( canon * ( path1 - path2 ) - ( path1 - path2 ) ) << nl;
+
+                // const auto csr_product = MatrixCSR(canon.getTranspose()) & MatrixCSR(massmatrix) & MatrixCSR(canon);
                 
-
-
-
-                Float commutator_error_mass = commutator_error * ( massmatrix * commutator_error );
+                // Float commutator_error_mass = commutator_error * ( massmatrix * commutator_error );
+                // Float commutator_error_mass = ( canon * commutator_error ) * ( massmatrix * commutator_error );
+                // Float commutator_error_mass = norm_sq_of_vector( massmatrix, canon * commutator_error );
+                Float commutator_error_mass = norm_sq_of_vector( massmatrix, commutator_error );
+                // auto foo = canon * commutator_error; Float commutator_error_mass = foo * ( massmatrix * foo );
+                // Float commutator_error_mass = commutator_error * ( csr_product * commutator_error );
 
                 assert( std::isfinite( commutator_error_mass ) );
-                
+                Assert( commutator_error_mass >= -desired_closeness, commutator_error_mass );
+                                
                 errors[k][l-l_min][r-r_min][r_plus] = std::sqrt( std::fabs( commutator_error_mass ) );
             
                 
@@ -162,9 +172,11 @@ int main( int argc, char *argv[] )
         
         for( int k = 0; k < M.getinnerdimension(); k++ ) 
             contables[k].table_name = "Rounding errors D3K" + std::to_string(k);
-        for( int k = 0; k < M.getinnerdimension(); k++ ) 
-        for( int r = r_min; r <= r_max; r++ ) 
-            contables[k] << printf_into_string("R%d+%d", r-r_min, r_plus_max );;
+        for( int k = 0; k < M.getinnerdimension(); k++ ) {
+            for( int r = r_min; r <= r_max; r++ ) 
+                contables[k] << printf_into_string("R%d+%d", r-r_min, r_plus_max );;
+            contables[k] << nl;
+        }
 
         
         for( int l = l_min; l <= l_max; l++ ) 
@@ -195,14 +207,14 @@ int main( int argc, char *argv[] )
         
         
         
-        LOG << "Check that differences are small" << nl;
+        LOG << "Check that differences are small: " << desired_closeness << nl;
         
         for( int l      = l_min; l      <=           l_max; l++      ) 
         for( int r      = r_min; r      <=           r_max; r++      ) 
         for( int r_plus =     0; r_plus <=      r_plus_max; r_plus++ ) 
         for( int i      =     0; i < M.getinnerdimension(); i++      ) 
         {
-            Assert( errors[i][l-l_min][r-r_min][r_plus] < desired_closeness, desired_closeness );
+            Assert( errors[i][l-l_min][r-r_min][r_plus] < desired_closeness, errors[i][l-l_min][r-r_min][r_plus], desired_closeness );
         }
             
         

@@ -276,7 +276,7 @@ int main( int argc, char *argv[] )
 
     
 
-    LOG << "Solving Poisson Problem with Neumann boundary conditions" << nl;
+    LOG << "Unit Test: 3D transformed Poisson Problem" << nl;
 
     const int min_l = 1; 
     const int max_l = 3;
@@ -449,7 +449,7 @@ int main( int argc, char *argv[] )
             
                 
                 
-                LOG << "...compute error and residual:" << nl;
+                LOG << "...compute error and residual" << nl;
 
                 // FloatVector foo_sol = IncreaseResolution( inter_M, IncreaseResolution( M, sol ) );
                 FloatVector foo_sol = IncreaseResolution( M, sol );

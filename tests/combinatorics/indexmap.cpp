@@ -17,7 +17,7 @@ int main( int argc, char *argv[] )
     if(true)
     {
       
-        LOG << "Test Identity of usual interval" << nl;
+        LOG << "1. Test Identity of usual interval" << nl;
         
         const IndexMap id  = identityIndexMap( irA );
         LOG << id << nl;
@@ -47,7 +47,7 @@ int main( int argc, char *argv[] )
     if(true)
     {
       
-        LOG << "Test Empty Index Map" << nl;
+        LOG << "2. Test Empty Index Map" << nl;
         
         const IndexMap leer  = identityIndexMap( irE );
         LOG << leer << nl;
@@ -70,12 +70,13 @@ int main( int argc, char *argv[] )
     if(true)
     {
 
-        LOG << "Test Injection and Surjection" << nl;
+        LOG << "3. Test Injection and Surjection" << nl;
         
         LOG << "Injection" << nl;
         
         IndexMap inj( irB, irA, {2,3,4} );
         inj[3] = 2; inj[4] = 3; inj[5] = 4;
+        assert( inj[3] == 2 && inj[4] == 3 && inj[5] == 4 );
         
         inj.check();
         
@@ -91,6 +92,8 @@ int main( int argc, char *argv[] )
         IndexMap sur( irD, irB, {4,3,5,4,3,5,4,3} );
         sur[0] = 4; sur[1] = 3; sur[2] = 5; sur[3] = 4;
         sur[4] = 3; sur[5] = 5; sur[6] = 4; sur[7] = 3;
+        assert( sur[0] == 4 && sur[1] == 3 && sur[2] == 5 && sur[3] == 4 );
+        assert( sur[4] == 3 && sur[5] == 5 && sur[6] == 4 && sur[7] == 3 );
 
         sur.check();
         
@@ -108,6 +111,8 @@ int main( int argc, char *argv[] )
         IndexMap test( irD, irA, {3,2,4,3,2,4,3,2} );
         test[0] = 3; test[1] = 2; test[2] = 4; test[3] = 3;
         test[4] = 2; test[5] = 4; test[6] = 3; test[7] = 2;
+        assert( test[0] == 3 && test[1] == 2 && test[2] == 4 && test[3] == 3 );
+        assert( test[4] == 2 && test[5] == 4 && test[6] == 3 && test[7] == 2 );
         
         test.check();
         

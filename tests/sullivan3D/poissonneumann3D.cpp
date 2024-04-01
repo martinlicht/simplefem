@@ -187,8 +187,6 @@ int main( int argc, char *argv[] )
                         
                         LOG << average_sol << space << average_rhs << nl;
 
-                        LOG << "...create RHS vector" << nl;
-
                         FloatVector rhs = incmatrix_t * ( scalar_massmatrix * interpol_rhs );
 
                         FloatVector sol( incmatrix.getdimin(), 0. );
@@ -206,8 +204,7 @@ int main( int argc, char *argv[] )
                         timestamp end = timestampnow();
                         LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                         
-                        LOG << "...compute error and residual:" << nl;
-            
+                        LOG << "...compute error and residual" << nl;
                         
                         auto computed_sol  = incmatrix * sol;
                         auto computed_grad = diffmatrix * incmatrix * sol;
@@ -260,14 +257,9 @@ int main( int argc, char *argv[] )
 
                 if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
                 
-                
-
             } 
         
         }
-        
-        
-        
         
         LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
         

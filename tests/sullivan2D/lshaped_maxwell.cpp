@@ -115,8 +115,6 @@ int main( int argc, char *argv[] )
 
                     
                     
-                    
-                    
                     auto mat_A  = scalar_incmatrix_t & scalar_massmatrix & scalar_incmatrix;
                     mat_A.sortandcompressentries();
                     
@@ -134,17 +132,6 @@ int main( int argc, char *argv[] )
                     auto B  = MatrixCSR( mat_B  );
                     auto C  = MatrixCSR( mat_C  );
 
-                    
-                    
-                    
-                    
-                    
-                    
-                    // auto LagrangeBlock = Block2x2Operator()
-                    
-                    
-                    
-                    
                     
                     {
 
@@ -193,7 +180,7 @@ int main( int argc, char *argv[] )
                         
                         assert( sol.isfinite() );
 
-                        LOG << "...compute residual:" << nl;
+                        LOG << "...compute residual" << nl;
 
                         Float residualnorm      = ( rhs - B * inv(A,desired_precision) * Bt * sol - C * sol ).norm();
 
@@ -224,8 +211,8 @@ int main( int argc, char *argv[] )
                             
                             {
                                 auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 0, 0, r-1 );
-                                auto lowest_ndiv = interpol_matrix * vector_diffmatrix * computed_sol;
-                                vtk.writeCellScalarData_barycentricvolumes( lowest_ndiv, "curl" );
+                                auto lowest_curl = interpol_matrix * vector_diffmatrix * computed_sol;
+                                vtk.writeCellScalarData_barycentricvolumes( lowest_curl, "curl" );
                             }
 
                             fs.close();

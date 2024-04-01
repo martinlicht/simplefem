@@ -97,8 +97,6 @@ int main( int argc, char *argv[] )
 
         
 
-        LOG << "Solving Poisson Problem with Neumann boundary conditions" << nl;
-
         const int min_l = 0; 
         const int max_l = 6;
         
@@ -110,7 +108,7 @@ int main( int argc, char *argv[] )
         
         ConvergenceTable contable("Mass error");
         
-        contable << "sigma_error" << "u_error" << "sigma_res" << "u_res" << "time";
+        contable << "sigma_error" << "u_error" << "sigma_res" << "u_res" << "time" << nl;
         
 
         assert( 0 <= min_l and min_l <= max_l );
@@ -221,7 +219,7 @@ int main( int argc, char *argv[] )
                     
                     auto grad = x_A; // inv(A,desired_precision) * Bt * sol;
 
-                    LOG << "...compute error and residual:" << nl;
+                    LOG << "...compute error and residual" << nl;
 
                     
                     // improved error estimation 
