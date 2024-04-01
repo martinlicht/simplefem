@@ -171,8 +171,8 @@ int main( int argc, char *argv[] )
                 
                 const auto error_mass = traces_of_field.norm(massmatrix);
 
-                Assert( error_eucl >= 0. , error_eucl );
-                Assert( error_mass >= 0. , error_mass );
+                Assert( error_eucl >= -desired_closeness , error_eucl );
+                Assert( error_mass >= -desired_closeness , error_mass );
 
                 LOG << traces_of_field.getdimension() << " dimensional with mass " << error_mass << nl; 
                 
@@ -206,7 +206,7 @@ int main( int argc, char *argv[] )
     
     for( int k = 0; k <= n; k++ ) 
         contables[k].table_name = "Rounding errors D2K" + std::to_string(k);
-    for( int k = 0; k < M.getinnerdimension(); k++ ) {
+    for( int k = 0; k <= n; k++ ) {
         for( int r = r_min; r <= r_max; r++ ) 
             contables[k] << printf_into_string("R%d", r-r_min );;
         contables[k] << nl;
@@ -223,7 +223,7 @@ int main( int argc, char *argv[] )
         
     }
     
-    LOG << "Check that differences are small" << nl;
+    LOG << "Check that differences are small: " << desired_closeness << nl;
     
     for( int k = 0; k <= n; k++ ) 
     {

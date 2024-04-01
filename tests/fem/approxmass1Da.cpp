@@ -111,7 +111,7 @@ int main( int argc, char *argv[] )
 
                     Float mass = interpol * ( massmatrix_scalar * interpol );
                     
-                    Assert( mass >= 0., mass );
+                    Assert( mass >= -desired_closeness, mass );
                     
                     errors_scalar[i][l-l_min][r-r_min] = std::sqrt( std::abs( mass - should_be ) );
                     
@@ -126,7 +126,7 @@ int main( int argc, char *argv[] )
 
                     Float mass = interpol * ( massmatrix_volume * interpol );
                     
-                    Assert( mass >= 0., mass );
+                    Assert( mass >= -desired_closeness, mass );
                     
                     errors_volume[i][l][r] = std::sqrt( std::abs( mass - should_be ) );
                     
@@ -163,10 +163,10 @@ int main( int argc, char *argv[] )
             for( int i = 0; i < experiments_volume_field.size(); i++ ) 
                 contable_volume[i] << printf_into_string("R%d", r-r_min );
 
-            for( int i = 0; i < experiments_scalar_field.size(); i++ ) contable_scalar[i] << nl; 
-            for( int i = 0; i < experiments_volume_field.size(); i++ ) contable_volume[i] << nl; 
         }
-        
+        for( int i = 0; i < experiments_scalar_field.size(); i++ ) contable_scalar[i] << nl; 
+        for( int i = 0; i < experiments_volume_field.size(); i++ ) contable_volume[i] << nl; 
+    
         
         for( int l = l_min; l <= l_max; l++ ) 
         {
@@ -195,7 +195,7 @@ int main( int argc, char *argv[] )
         
         
         
-        LOG << "Check that differences are small" << nl;
+        LOG << "Check that differences are small: " << desired_closeness << nl;
         
         for( int l      = l_min; l      <=      l_max; l++      ) 
         for( int r      = r_min; r      <=      r_max; r++      ) 

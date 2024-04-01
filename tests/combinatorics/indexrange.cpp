@@ -12,7 +12,7 @@ int main( int argc, char *argv[] )
     if( true ) 
     {
         
-        LOG << "Test empty index ranges" << nl;
+        LOG << "1. Test empty index ranges" << nl;
         
         IndexRange irE1(  3,  2 );
         IndexRange irE2(  5,  1 );
@@ -41,7 +41,7 @@ int main( int argc, char *argv[] )
     if( true ) 
     {
         
-        LOG << "Test non-empty index ranges" << nl;
+        LOG << "2. Test non-empty index ranges" << nl;
         
         IndexRange irA( 3, 7 );
         IndexRange irB( 5, 5 );
@@ -93,7 +93,7 @@ int main( int argc, char *argv[] )
     if( true )
     {
         
-        LOG << "Test Index Range iterators over some normal intervals" << nl;
+        LOG << "3. Test Index Range iterators over some normal intervals" << nl;
         
         std::vector<IndexRange> irs = {
             IndexRange(  2, 5 ),
@@ -139,7 +139,7 @@ int main( int argc, char *argv[] )
     if( true )
     {
     
-        LOG << "Test Index Range iterators over some extreme cases" << nl;
+        LOG << "4. Test Index Range iterators over some extreme cases" << nl;
         
         std::vector<IndexRange> irs = {
             IndexRange( std::numeric_limits<int>::max()   , std::numeric_limits<int>::max()    ),

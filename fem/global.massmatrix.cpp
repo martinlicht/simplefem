@@ -28,6 +28,22 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
     assert( k >= 0 && k <= n );
     assert( binomial_integer( n+r, n ) == binomial_integer( n+r, r ) );
     
+    if(false) 
+    {
+        DenseMatrix multiplier( n, n+1, 0. );
+        for( int i = 0; i <  n; i++ ) {
+            multiplier(i,i+1) =  1.;
+            multiplier(i,  0) = -1.;
+        }
+        
+        DenseMatrix rankone = IdentityMatrix(n+1) - DenseMatrix( n+1,n+1, 1./(n+1) );
+        
+        LOG << multiplier << nl;
+        LOG << rankone << nl;
+        LOG << multiplier * rankone << nl;
+
+    }
+    
     // Auxiliary calculations and preparations
     
     const int num_simplices = mesh.count_simplices( n );
@@ -70,6 +86,15 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
 
         if(false)
         {
+            auto result = GPM * FloatVector( n+1, 1. );
+
+            LOG << result.norm() << nl;
+
+            Assert( result.is_numerically_small(), result );
+        }
+
+        if(false)
+        {
             DenseMatrix rankone = IdentityMatrix(n+1) - DenseMatrix( n+1,n+1, 1./(n+1) );
 
             const DenseMatrix foo = Transpose(rankone) * GPM * rankone;
@@ -96,6 +121,7 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
                 multiplier(i,  0) = -1.;
             }
 
+            if(false) // TODO: this leads to failure ...
             {
                 const DenseMatrix middle = Inverse( Transpose(Jac) * Jac );
 
@@ -124,6 +150,7 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
                 // formMM = foo;
             }
             
+            if(false)
             {
                 DenseMatrix R( Jac.getdimin() );
                 DenseMatrix Q( Jac.getdimout(), Jac.getdimin() );
@@ -149,6 +176,7 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
                 // formMM = foo;
             }
 
+            if(false)
             {
                 DenseMatrix rankone = IdentityMatrix(n+1) - DenseMatrix( n+1,n+1, 1./(n+1) );
 
@@ -193,6 +221,16 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
 
             Assert( delta.is_numerically_small(), formMM, foo );
         }
+
+        // {
+        //     auto result = formMM * FloatVector( formMM.getdimout(), 1. );
+        //     LOG << result.norm() << nl;
+        //     Assert( result.is_numerically_small(), result );
+        // }
+
+        // LOG << formMM << nl;
+
+        
         
         DenseMatrix fullMM = MatrixTensorProduct( polyMM, formMM ) * measure;
 

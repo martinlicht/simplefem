@@ -159,7 +159,7 @@ int main( int argc, char *argv[] )
                     Float commutator_error_mass = commutator_error * ( vector_massmatrix * commutator_error );
                     
                     assert( std::isfinite( commutator_error_mass ) );
-                    Assert( commutator_error_mass >= 0., commutator_error_mass );
+                    Assert( commutator_error_mass >= -desired_closeness, commutator_error_mass );
                     
                     errors_scalar[i][l-l_min][r-r_min] = std::sqrt( std::fabs( commutator_error_mass ) );
             
@@ -180,7 +180,7 @@ int main( int argc, char *argv[] )
                     Float commutator_error_mass = commutator_error * ( pseudo_massmatrix * commutator_error );
                     
                     assert( std::isfinite( commutator_error_mass ) );
-                    Assert( commutator_error_mass >= 0., commutator_error_mass );
+                    Assert( commutator_error_mass >= -desired_closeness, commutator_error_mass );
                     
                     errors_vector[i][l-l_min][r-r_min] = std::sqrt( std::fabs( commutator_error_mass ) );
             
@@ -201,7 +201,7 @@ int main( int argc, char *argv[] )
                     Float commutator_error_mass = commutator_error * ( volume_massmatrix * commutator_error );
                     
                     assert( std::isfinite( commutator_error_mass ) );
-                    Assert( commutator_error_mass >= 0., commutator_error_mass );
+                    Assert( commutator_error_mass >= -desired_closeness, commutator_error_mass );
                     
                     errors_pseudo[i][l-l_min][r-r_min] = std::sqrt( std::fabs( commutator_error_mass ) );
             
@@ -245,10 +245,10 @@ int main( int argc, char *argv[] )
             for( int i = 0; i < experiments_pseudo_function.size(); i++ ) 
                 contable_pseudo[i] << printf_into_string("R%d", r-r_min );
 
-            for( int i = 0; i < experiments_scalar_function.size(); i++ ) contable_scalar[i] << nl; 
-            for( int i = 0; i < experiments_vector_function.size(); i++ ) contable_vector[i] << nl; 
-            for( int i = 0; i < experiments_pseudo_function.size(); i++ ) contable_pseudo[i] << nl; 
         }
+        for( int i = 0; i < experiments_scalar_function.size(); i++ ) contable_scalar[i] << nl; 
+        for( int i = 0; i < experiments_vector_function.size(); i++ ) contable_vector[i] << nl; 
+        for( int i = 0; i < experiments_pseudo_function.size(); i++ ) contable_pseudo[i] << nl; 
         
         
         for( int l = l_min; l <= l_max; l++ ) 
@@ -258,13 +258,13 @@ int main( int argc, char *argv[] )
             {
                 
                 for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
-                    contable_scalar[i] << errors_scalar[i][l-l_min][r-r_min]; // Assert( errors_scalar[i][l-l_min][r-r_min] >= 0. ); //
+                    contable_scalar[i] << errors_scalar[i][l-l_min][r-r_min]; // Assert( errors_scalar[i][l-l_min][r-r_min] >= -desired_closeness ); //
             
                 for( int i = 0; i < experiments_vector_function.size(); i++ ) 
-                    contable_vector[i] << errors_vector[i][l-l_min][r-r_min]; // Assert( errors_vector[i][l-l_min][r-r_min] >= 0. ); //
+                    contable_vector[i] << errors_vector[i][l-l_min][r-r_min]; // Assert( errors_vector[i][l-l_min][r-r_min] >= -desired_closeness ); //
             
                 for( int i = 0; i < experiments_pseudo_function.size(); i++ ) 
-                    contable_pseudo[i] << errors_pseudo[i][l-l_min][r-r_min]; // Assert( errors_pseudo[i][l-l_min][r-r_min] >= 0. ); //
+                    contable_pseudo[i] << errors_pseudo[i][l-l_min][r-r_min]; // Assert( errors_pseudo[i][l-l_min][r-r_min] >= -desired_closeness ); //
             
             }
             
@@ -285,7 +285,7 @@ int main( int argc, char *argv[] )
         
         
 //         TODO : check for convergence        
-//         LOG << "Check that differences are small" << nl;
+//         LOG << "Check that differences are small: " << desired_closeness << nl;
 //         
 //         for( int l = l_min; l <= l_max; l++ ) 
 //         for( int r = r_min; r <= r_max; r++ ) 

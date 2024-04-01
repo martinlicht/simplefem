@@ -72,17 +72,19 @@ Understand the floating-point comparison functions and import them into this pro
       For example, the Lagrange test should reflect simple things and additional overhead
 - [x] Clean up the test for the nullspace computation. 
 - [x] FEM tests check assertions more thoroughly
-- [ ] Clean up the nullspace computation in the solver component.
-- [ ] include visualization script 
-- [ ] Unit tests must check convergence rates 
-- [ ] Streamline the main loop in the different solverfem tests to reduce code redundancy
-- [ ] Mesh: improve consistency. Include orientation tests in usual tests to save compile time 
+- [ ] ~\writing\project.simplefem :      changes all copied 
+- [ ] ~\writing\project.simplefem.test : changes all copied 
+- [x] Mesh: improve consistency. Include orientation tests in usual tests to save compile time 
 - [ ] VTK: different outputs 
-- [ ] Combinatorics: make things independent of screen output 
+- [x] Combinatorics: make things independent of screen output 
 - [ ] Operators: make things independent of screen output 
 - [ ] Dense: test everything thoroughly, even up to smaller rounding errors 
 - [ ] Sparse: check that composition does not change the outcome 
 - [ ] Solver: meaningful convergence tests?
+- [ ] Clean up the nullspace computation in the solver component.
+- [ ] include visualization script 
+- [ ] Unit tests must check convergence rates 
+- [ ] Streamline the main loop in the different solverfem tests to reduce code redundancy
 
 # (HIGH) fem/diffelev3D
 # (HIGH) the mass matrix suffers from rounding errors. 
@@ -151,6 +153,31 @@ Based on that:
 
 
 
+
+# (MEDIUM) Solvers study the size of the RHS
+
+```
+// the argument is now called `_threshold`
+Float threshold = _threshold;
+    Float RHS_NORM_SQUARED = 0.;    
+    for( int i = 0; i < N; i++ ) RHS_NORM_SQUARED += b[i]*b[i];
+    threshold *= sqrt(RHS_NORM_SQUARED);
+```
+
+
+# (MEDIUM) Solvers print whether they have been successful 
+```
+/* HOW DID WE FINISH ? */
+    recent_deviation = rMAMr;
+    if( rMAMr > tolerance ) {
+        LOG << "PCRM process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
+        LOG << "PCRM process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << recent_deviation << "/" << tolerance;
+    } else { 
+        LOG << "PCRM process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
+        LOG << "PCRM process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << recent_deviation << "/" << tolerance;
+ 
+    }
+```
 
 
 # (MEDIUM) Fix Whatever solvers or fix Wikipedia 

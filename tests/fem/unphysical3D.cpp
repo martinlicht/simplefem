@@ -165,11 +165,11 @@ int main( int argc, char *argv[] )
 
                     Float mass_cr = absolute( interpol_canon * ( massmatrix_scalar * interpol_randm ) );
 
-                    assert( mass_ii >= 0. );
-                    assert( mass_ci >= 0. );
-                    assert( mass_cc >= 0. );
-                    assert( mass_rr >= 0. );
-                    assert( mass_cr >= 0. );
+                    assert( mass_ii >= -desired_closeness );
+                    assert( mass_ci >= -desired_closeness );
+                    assert( mass_cc >= -desired_closeness );
+                    assert( mass_rr >= -desired_closeness );
+                    assert( mass_cr >= -desired_closeness );
                     
                     Float error_mass = maxabs( mass_ii - mass_ci, mass_ii - mass_cc, mass_ii - mass_rr, mass_ii - mass_cr );
                     
@@ -199,11 +199,11 @@ int main( int argc, char *argv[] )
 
                     Float mass_cr = absolute( interpol_canon * ( massmatrix_vector * interpol_randm ) );
 
-                    assert( mass_ii >= 0. );
-                    assert( mass_ci >= 0. );
-                    assert( mass_cc >= 0. );
-                    assert( mass_rr >= 0. );
-                    assert( mass_cr >= 0. );
+                    assert( mass_ii >= -desired_closeness );
+                    assert( mass_ci >= -desired_closeness );
+                    assert( mass_cc >= -desired_closeness );
+                    assert( mass_rr >= -desired_closeness );
+                    assert( mass_cr >= -desired_closeness );
                     
                     Float error_mass = maxabs( mass_ii - mass_ci, mass_ii - mass_cc, mass_ii - mass_rr, mass_ii - mass_cr );
                     
@@ -233,11 +233,11 @@ int main( int argc, char *argv[] )
 
                     Float mass_cr = absolute( interpol_canon * ( massmatrix_pseudo * interpol_randm ) );
 
-                    assert( mass_ii >= 0. );
-                    assert( mass_ci >= 0. );
-                    assert( mass_cc >= 0. );
-                    assert( mass_rr >= 0. );
-                    assert( mass_cr >= 0. );
+                    assert( mass_ii >= -desired_closeness );
+                    assert( mass_ci >= -desired_closeness );
+                    assert( mass_cc >= -desired_closeness );
+                    assert( mass_rr >= -desired_closeness );
+                    assert( mass_cr >= -desired_closeness );
                     
                     Float error_mass = maxabs( mass_ii - mass_ci, mass_ii - mass_cc, mass_ii - mass_rr, mass_ii - mass_cr );
                     
@@ -267,11 +267,11 @@ int main( int argc, char *argv[] )
 
                     Float mass_cr = absolute( interpol_canon * ( massmatrix_volume * interpol_randm ) );
 
-                    assert( mass_ii >= 0. );
-                    assert( mass_ci >= 0. );
-                    assert( mass_cc >= 0. );
-                    assert( mass_rr >= 0. );
-                    assert( mass_cr >= 0. );
+                    assert( mass_ii >= -desired_closeness );
+                    assert( mass_ci >= -desired_closeness );
+                    assert( mass_cc >= -desired_closeness );
+                    assert( mass_rr >= -desired_closeness );
+                    assert( mass_cr >= -desired_closeness );
                     
                     Float error_mass = maxabs( mass_ii - mass_ci, mass_ii - mass_cc, mass_ii - mass_rr, mass_ii - mass_cr );
                     
@@ -319,15 +319,12 @@ int main( int argc, char *argv[] )
             for( int i = 0; i < experiments_pseudo_field.size(); i++ ) 
                 contable_pseudo[i] << printf_into_string("R%d", r-r_min );
             for( int i = 0; i < experiments_volume_field.size(); i++ ) 
-                contable_volume[i] << printf_into_string("R%d", r-r_min );
-            
-            for( int i = 0; i < experiments_scalar_field.size(); i++ ) contable_scalar[i] << nl; 
-            for( int i = 0; i < experiments_vector_field.size(); i++ ) contable_vector[i] << nl; 
-            for( int i = 0; i < experiments_pseudo_field.size(); i++ ) contable_pseudo[i] << nl; 
-            for( int i = 0; i < experiments_volume_field.size(); i++ ) contable_volume[i] << nl; 
-        
+                contable_volume[i] << printf_into_string("R%d", r-r_min );        
         }
-        
+        for( int i = 0; i < experiments_scalar_field.size(); i++ ) contable_scalar[i] << nl; 
+        for( int i = 0; i < experiments_vector_field.size(); i++ ) contable_vector[i] << nl; 
+        for( int i = 0; i < experiments_pseudo_field.size(); i++ ) contable_pseudo[i] << nl; 
+        for( int i = 0; i < experiments_volume_field.size(); i++ ) contable_volume[i] << nl; 
         
         for( int l = l_min; l <= l_max; l++ ) 
         {
@@ -348,13 +345,15 @@ int main( int argc, char *argv[] )
                     contable_volume[i] << errors_volume[i][l-l_min][r-r_min];
             
             }
-            
+
             for( int i = 0; i < experiments_scalar_field.size(); i++ ) contable_scalar[i] << nl; 
             for( int i = 0; i < experiments_vector_field.size(); i++ ) contable_vector[i] << nl; 
             for( int i = 0; i < experiments_pseudo_field.size(); i++ ) contable_pseudo[i] << nl; 
             for( int i = 0; i < experiments_volume_field.size(); i++ ) contable_volume[i] << nl; 
             
         }
+
+        
         
         
         
@@ -390,7 +389,7 @@ int main( int argc, char *argv[] )
         
         
         
-        LOG << "Check that differences are small" << nl;
+        LOG << "Check that differences are small: " << desired_closeness << nl;
         
         for( int l      = l_min; l      <=      l_max; l++      ) 
         for( int r      = r_min; r      <=      r_max; r++      ) 

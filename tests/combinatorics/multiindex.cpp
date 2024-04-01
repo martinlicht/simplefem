@@ -12,7 +12,7 @@ int main( int argc, char *argv[] )
         
     if( true )
     {
-        LOG << "Basic functionality" << nl;
+        LOG << "1. Basic functionality" << nl;
         
         IndexRange irA( 2, 5 );
         MultiIndex miA( irA );
@@ -56,7 +56,7 @@ int main( int argc, char *argv[] )
     
     if( true )
     {
-        LOG << "Comparison and arithmetics" << nl;
+        LOG << "2. Comparison and arithmetics" << nl;
         
         IndexRange irA( 2, 5 );
         IndexRange irB( 1, 4 );

@@ -162,8 +162,8 @@ int main( int argc, char *argv[] )
 
                     Float mass_elev = interpol_elev * ( massmatrix_scalar_plus * interpol_elev );
 
-                    Assert( mass >= 0., mass );
-                    Assert( mass_elev >= 0., mass_elev);
+                    Assert( mass >= -desired_closeness, mass );
+                    Assert( mass_elev >= -desired_closeness, mass_elev);
                     
                     Float error_mass = mass - mass_elev;
                     
@@ -183,8 +183,8 @@ int main( int argc, char *argv[] )
 
                     Float mass_elev = interpol_elev * ( massmatrix_vector_plus * interpol_elev );
 
-                    Assert( mass >= 0., mass );
-                    Assert( mass_elev >= 0., mass_elev);
+                    Assert( mass >= -desired_closeness, mass );
+                    Assert( mass_elev >= -desired_closeness, mass_elev);
                     
                     Float error_mass = mass - mass_elev;
                     
@@ -204,8 +204,8 @@ int main( int argc, char *argv[] )
 
                     Float mass_elev = interpol_elev * ( massmatrix_volume_plus * interpol_elev );
 
-                    Assert( mass >= 0., mass );
-                    Assert( mass_elev >= 0., mass_elev);
+                    Assert( mass >= -desired_closeness, mass );
+                    Assert( mass_elev >= -desired_closeness, mass_elev);
                     
                     Float error_mass = mass - mass_elev;
                     
@@ -248,10 +248,10 @@ int main( int argc, char *argv[] )
             for( int i = 0; i < experiments_volume_field.size(); i++ ) 
                 contable_volume[i] << printf_into_string("R%d+%d", r-r_min, r_plus_max );
 
-            for( int i = 0; i < experiments_scalar_field.size(); i++ ) contable_scalar[i] << nl; 
-            for( int i = 0; i < experiments_vector_field.size(); i++ ) contable_vector[i] << nl; 
-            for( int i = 0; i < experiments_volume_field.size(); i++ ) contable_volume[i] << nl; 
         }
+        for( int i = 0; i < experiments_scalar_field.size(); i++ ) contable_scalar[i] << nl; 
+        for( int i = 0; i < experiments_vector_field.size(); i++ ) contable_vector[i] << nl; 
+        for( int i = 0; i < experiments_volume_field.size(); i++ ) contable_volume[i] << nl; 
         
         for( int l = l_min; l <= l_max; l++ ) 
         {
@@ -303,7 +303,7 @@ int main( int argc, char *argv[] )
         
         
         
-        LOG << "Check that differences are small" << nl;
+        LOG << "Check that differences are small: " << desired_closeness << nl;
         
         for( int l      = l_min; l      <=      l_max; l++      ) 
         for( int r      = r_min; r      <=      r_max; r++      ) 

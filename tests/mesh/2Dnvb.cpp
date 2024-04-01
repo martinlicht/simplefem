@@ -17,7 +17,7 @@ int main( int argc, char *argv[] )
     
     {
         
-        LOG << "First Experiment" << nl;
+        LOG << "1. Refine triangles" << nl;
         
         MeshSimplicial2D M = UnitTriangle2D();
         
@@ -70,7 +70,7 @@ int main( int argc, char *argv[] )
     
     {
         
-        LOG << "Second Experiment" << nl;
+        LOG << "2. Refine surface" << nl;
         
         MeshSimplicial2D M = TetrahedralSurface2D(); //StandardSquare2D();
         
@@ -123,7 +123,7 @@ int main( int argc, char *argv[] )
     
     {
         
-        LOG << "Third Experiment" << nl;
+        LOG << "3. Refine surface, again" << nl; // TODO: streamline with previous test
         
         MeshSimplicial2D M = TetrahedralSurface2D();
         
@@ -176,7 +176,7 @@ int main( int argc, char *argv[] )
         
     {
         
-        LOG << "Fourth Experiment: uniform distribution" << nl;
+        LOG << "4. uniform distribution" << nl;
         
         MeshSimplicial2D M = UnitTriangle2D();
         
@@ -220,7 +220,7 @@ int main( int argc, char *argv[] )
     
     {
         
-        LOG << "Fifth Experiment: repeated bisection of a fixed triangle" << nl;
+        LOG << "5. repeated bisection of a fixed triangle" << nl;
         
         MeshSimplicial2D M = UnitTriangle2D();
         
