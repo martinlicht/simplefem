@@ -31,7 +31,7 @@ void ConvergenceTable::insert_numerical_entry( EntryType entry )
 
     assert( entries.size() > 0 );
     
-    assert( entries.back().size() < seriesheaders.size() );
+    Assert( entries.back().size() < seriesheaders.size(), entries.back().size(), seriesheaders.size(), entry );
 
     entries.back().push_back( entry );
 }
