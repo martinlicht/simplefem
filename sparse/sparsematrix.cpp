@@ -58,6 +58,16 @@ SparseMatrix::SparseMatrix( int dimout, int dimin, const std::initializer_list<M
     assert( ent.size() == entries.size() );
 }
 
+SparseMatrix::SparseMatrix( const FloatVector& diagonal )
+: LinearOperator( diagonal.getdimension() ),
+  entries( diagonal.getdimension() )
+{
+    assert( getdimin() == getdimout() );
+    for( int r = 0; r < getdimout(); r++ )
+        entries[r] = { r, r, diagonal.at(r) };
+    SparseMatrix::check();    
+}
+
 SparseMatrix::SparseMatrix( const ScalingOperator& matrix )
 : LinearOperator( matrix.getdimout(), matrix.getdimin() ),
   entries( matrix.getdimout() )
