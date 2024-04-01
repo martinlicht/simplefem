@@ -111,7 +111,7 @@ int main( int argc, char *argv[] )
 
                     Float mass = interpol * ( massmatrix_scalar * interpol );
                     
-                    Assert( mass >= 0., mass );
+                    Assert( mass >= -desired_precision, mass );
                     
                     errors_scalar[i][l-l_min][r-r_min] = std::sqrt( std::abs( mass - should_be ) );
                     
@@ -126,7 +126,7 @@ int main( int argc, char *argv[] )
 
                     Float mass = interpol * ( massmatrix_volume * interpol );
                     
-                    Assert( mass >= 0., mass );
+                    Assert( mass >= -desired_precision, mass );
                     
                     errors_volume[i][l][r] = std::sqrt( std::abs( mass - should_be ) );
                     

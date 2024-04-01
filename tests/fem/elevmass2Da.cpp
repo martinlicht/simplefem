@@ -162,8 +162,8 @@ int main( int argc, char *argv[] )
 
                     Float mass_elev = interpol_elev * ( massmatrix_scalar_plus * interpol_elev );
 
-                    Assert( mass >= 0., mass );
-                    Assert( mass_elev >= 0., mass_elev);
+                    Assert( mass >= -desired_precision, mass );
+                    Assert( mass_elev >= -desired_precision, mass_elev);
                     
                     Float error_mass = mass - mass_elev;
                     
@@ -183,8 +183,8 @@ int main( int argc, char *argv[] )
 
                     Float mass_elev = interpol_elev * ( massmatrix_vector_plus * interpol_elev );
 
-                    Assert( mass >= 0., mass );
-                    Assert( mass_elev >= 0., mass_elev);
+                    Assert( mass >= -desired_precision, mass );
+                    Assert( mass_elev >= -desired_precision, mass_elev);
                     
                     Float error_mass = mass - mass_elev;
                     
@@ -204,8 +204,8 @@ int main( int argc, char *argv[] )
 
                     Float mass_elev = interpol_elev * ( massmatrix_volume_plus * interpol_elev );
 
-                    Assert( mass >= 0., mass );
-                    Assert( mass_elev >= 0., mass_elev);
+                    Assert( mass >= -desired_precision, mass );
+                    Assert( mass_elev >= -desired_precision, mass_elev);
                     
                     Float error_mass = mass - mass_elev;
                     

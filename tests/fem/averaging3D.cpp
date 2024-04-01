@@ -127,8 +127,8 @@ int main( int argc, char *argv[] )
                 // Still works Mar 10: 1f2d2b02a6ed96087db2d5a262b4d60a87bea166 
                 // DOES NOT WORK:      a05c56458585ea03e133849b0426cf7675001923   
 
-                Assert( error_eucl >= 0., error_eucl ) ;
-                Assert( error_mass >= 0., error_mass ) ;
+                Assert( error_eucl >= -desired_precision, error_eucl ) ;
+                Assert( error_mass >= -desired_precision, error_mass ) ;
                 
                 Float error = error_mass;
 

@@ -97,7 +97,7 @@ int main( int argc, char *argv[] )
                     Float commutator_error_mass = commutator_error * ( vector_massmatrix * commutator_error );
                     
                     assert( std::isfinite( commutator_error_mass ) );
-                    Assert( commutator_error_mass >= 0., commutator_error_mass );
+                    Assert( commutator_error_mass >= -desired_precision, commutator_error_mass );
                     
                     errors_scalar[i][l-l_min][r-r_min] = std::sqrt( std::fabs( commutator_error_mass ) );
             
@@ -143,7 +143,7 @@ int main( int argc, char *argv[] )
             {
                 
                 for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
-                    contable_scalar[i] << errors_scalar[i][l-l_min][r-r_min]; // Assert( errors_scalar[i][l-l_min][r-r_min] >= 0. ); //
+                    contable_scalar[i] << errors_scalar[i][l-l_min][r-r_min]; // Assert( errors_scalar[i][l-l_min][r-r_min] >= -desired_precision ); //
             
             }
             

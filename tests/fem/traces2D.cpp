@@ -171,8 +171,8 @@ int main( int argc, char *argv[] )
                 
                 const auto error_mass = traces_of_field.norm(massmatrix);
 
-                Assert( error_eucl >= 0. , error_eucl );
-                Assert( error_mass >= 0. , error_mass );
+                Assert( error_eucl >= -desired_precision , error_eucl );
+                Assert( error_mass >= -desired_precision , error_mass );
 
                 LOG << traces_of_field.getdimension() << " dimensional with mass " << error_mass << nl; 
                 

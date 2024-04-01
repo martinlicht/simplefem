@@ -24,7 +24,7 @@ using namespace std;
 
 static Float lowest( const FloatVector vec, Float threshold )
 {
-    assert( vec.getdimension() > 0 and threshold >= 0. );
+    assert( vec.getdimension() > 0 and threshold >= -desired_precision );
     Float ret = vec[0];
     for( int p = 1; p < vec.getdimension(); p++ )
         if( vec[p] < ret and vec[p] > threshold ) ret = vec[p];

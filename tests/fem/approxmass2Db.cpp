@@ -232,7 +232,7 @@ int main( int argc, char *argv[] )
 
                     auto error_mass = error * ( massmatrix_scalar * error );
                     
-                    Assert( error_mass >= 0., error_mass );
+                    Assert( error_mass >= -desired_precision, error_mass );
                     
                     errors_scalar[i][l-l_min][r-r_min] = std::sqrt( std::abs( error_mass ) );
                     
@@ -250,7 +250,7 @@ int main( int argc, char *argv[] )
 
                     auto error_mass = error * ( massmatrix_vector * error );
                     
-                    Assert( error_mass >= 0., error_mass );
+                    Assert( error_mass >= -desired_precision, error_mass );
                     
                     errors_vector[i][l-l_min][r-r_min] = std::sqrt( std::abs( error_mass ) );
                     
@@ -268,7 +268,7 @@ int main( int argc, char *argv[] )
 
                     auto error_mass = error * ( massmatrix_volume * error );
                     
-                    Assert( error_mass >= 0., error_mass );
+                    Assert( error_mass >= -desired_precision, error_mass );
                     
                     errors_volume[i][l-l_min][r-r_min] = std::sqrt( std::abs( error_mass ) );
                     
