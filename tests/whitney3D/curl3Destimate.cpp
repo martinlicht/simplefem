@@ -59,7 +59,7 @@ int main( int argc, char *argv[] )
     const int max_l = 3;
     
     const int min_r = 1;
-    const int max_r = 3;
+    const int max_r = 2;
     
     
     std::vector<ConvergenceTable> contables(max_r-min_r+1); //();

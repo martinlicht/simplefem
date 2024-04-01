@@ -136,7 +136,7 @@ int main( int argc, char *argv[] )
 
             const int min_l = 1; 
             
-            const int max_l = 6;
+            const int max_l = 3;
             
             const int min_r = 2; 
             

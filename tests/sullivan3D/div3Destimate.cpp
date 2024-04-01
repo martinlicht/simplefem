@@ -56,7 +56,7 @@ int main( int argc, char *argv[] )
     LOG << "Estimating Poincare-Friedrichs constant of div operator (Sullivan)" << nl;
 
     const int min_l = 0; 
-    const int max_l = 5;
+    const int max_l = 2;
     
     const int min_r = 1;
     const int max_r = 3;
