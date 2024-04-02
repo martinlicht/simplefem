@@ -40,7 +40,8 @@ SparseMatrix FEECCechMassMatrix( const Mesh& mesh, int n, int k, int ss )
         assert( measure >= 0. );
 
         const int index = mesh.get_subsimplex( n, k, volume, cell );
-
+        assert( 0 <= index && index < mesh.count_simplices(k) );
+        
         Float diameter = 0.;
 
         if( k > 0 ) {

@@ -116,7 +116,7 @@ SparseMatrix::SparseMatrix( const SparseMatrix& mat )
     LOG << "*********** WARNING: DEEP COPY ******************\n";
     LOG << "***********  OF SPARSE MATRIX  ******************\n";
     LOG << "*************************************************\n";
-    SparseMatrix::check();
+    SparseMatrix::check();  assert(false);
 }
 
 SparseMatrix& SparseMatrix::operator=( const SparseMatrix& mat )

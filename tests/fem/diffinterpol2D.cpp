@@ -201,9 +201,9 @@ int main( int argc, char *argv[] )
                 contable_vector[i].table_name = "Numerical errors vector E" + std::to_string(i);
             
             for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
-                contable_scalar[i] << printf_into_string("R%d", r-r_min );
+                contable_scalar[i] << printf_into_string("R%d", r );
             for( int i = 0; i < experiments_vector_function.size(); i++ ) 
-                contable_vector[i] << printf_into_string("R%d", r-r_min );
+                contable_vector[i] << printf_into_string("R%d", r );
 
         }
         for( int i = 0; i < experiments_scalar_function.size(); i++ ) contable_scalar[i] << nl; 
@@ -238,17 +238,19 @@ int main( int argc, char *argv[] )
         
         
 //         TODO : check for convergence        
-//         LOG << "Check that differences are small: " << desired_closeness << nl;
-//         
-//         for( int l = l_min; l <= l_max; l++ ) 
-//         for( int r = r_min; r <= r_max; r++ ) 
-//         {
-//             for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
-//                 Assert( errors_scalar[i][l-l_min][r-r_min] < desired_closeness, errors_scalar[i][l-l_min][r-r_min], desired_closeness );
-//             
-//             for( int i = 0; i < experiments_vector_function.size(); i++ ) 
-//                 Assert( errors_vector[i][l-l_min][r-r_min] < desired_closeness, errors_vector[i][l-l_min][r-r_min], desired_closeness );
-//         }
+        // LOG << "Check that differences are small: " << desired_closeness << nl;
+        
+        // for( int l = l_min; l <= l_max; l++ ) 
+        // for( int r = r_min; r <= r_max; r++ ) 
+        // {
+        //     if( r < r_max || l < 8 ) continue;
+        // 
+        //     for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
+        //         Assert( errors_scalar[i][l-l_min][r-r_min] < desired_closeness, errors_scalar[i][l-l_min][r-r_min], desired_closeness );
+        //    
+        //     for( int i = 0; i < experiments_vector_function.size(); i++ ) 
+        //         Assert( errors_vector[i][l-l_min][r-r_min] < desired_closeness, errors_vector[i][l-l_min][r-r_min], desired_closeness );
+        // }
         
         
         LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;

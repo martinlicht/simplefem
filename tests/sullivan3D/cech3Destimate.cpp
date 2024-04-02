@@ -39,7 +39,7 @@ int main( int argc, char *argv[] )
     LOG << "Estimating Poincare-Friedrichs constant of Cech complex" << nl;
 
     const int min_l = 0; 
-    const int max_l = 6;
+    const int max_l = 4;
 
     const int n = M.getinnerdimension();
     
@@ -65,13 +65,15 @@ int main( int argc, char *argv[] )
         SparseMatrix vertexones = SparseMatrix( M.count_vertices(), 1, M.count_vertices(), [](int r)->SparseMatrix::MatrixEntry{ return SparseMatrix::MatrixEntry(r,0,1.0); } );
     
         std::vector<SparseMatrix> cech_massmatrix;
-        for( int k = 0; k <= n; k++ ) cech_massmatrix.push_back( FEECCechMassMatrix( M, M.getinnerdimension(), k, -k ) );
+        for( int k = 0; k <= n; k++ ) cech_massmatrix.emplace_back( FEECCechMassMatrix( M, M.getinnerdimension(), k, 0 ) );
 
         std::vector<SparseMatrix> cech_diffmatrix;
         for( int k = 0; k <= n-1; k++ ) cech_diffmatrix.push_back( FEECCechDiffMatrix( M, M.getinnerdimension(), k ) );
 
         std::vector<SparseMatrix> cech_diffmatrix_t;
         for( int k = 0; k <= n-1; k++ ) cech_diffmatrix_t.push_back( cech_diffmatrix[k].getTranspose() );
+
+        LOG << "... assemble composed matrices" << nl;
 
         std::vector<SparseMatrix> A;
         for( int k = 0; k <= n-1; k++ ) A.push_back( cech_diffmatrix_t[k] & cech_massmatrix[k+1] & cech_diffmatrix[k] );
@@ -108,13 +110,12 @@ int main( int argc, char *argv[] )
                 candidate = A[k] * candidate;
                 candidate.normalize( cech_massmatrix[k] ); 
                 
-                const int max_inverseiterations = 3;
+                const int max_inverseiterations = 5;
 
                 Float newratio = -1;
                 
                 timestamp start = timestampnow();
 
-                if( k == 0 )
                 for( int t = 0; t < max_inverseiterations; t++ )
                 {
 
