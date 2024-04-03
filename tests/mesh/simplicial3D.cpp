@@ -27,7 +27,14 @@ int main( int argc, char *argv[] )
     LOG << "Refinement..." << nl;
 
     for( int c = 0; c < 3; c++ ) 
+    {
         M.uniformrefinement();
+
+        LOG << "maximum diameter: " << M.getMaximumDiameter() << nl;
+        LOG << "minumum diameter: " << M.getMinimumDiameter() << nl;
+        LOG << "height ratio:     " << M.getHeightRatio() << nl;
+        LOG << "shape measure:    " << M.getShapemeasure() << nl;
+    }
 
     {
         
@@ -58,7 +65,7 @@ int main( int argc, char *argv[] )
 
     LOG << "Standard output..." << nl;
 
-    LOG << M << nl;
+    //LOG << M << nl;
 
     LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
 

@@ -26,7 +26,15 @@ int main( int argc, char *argv[] )
     LOG << "Start refinement" << nl;
 
     for( int c = 0; c < 2; c++ ) 
+    {
         M.improved_uniformrefinement();
+
+        LOG << "maximum diameter: " << M.getMaximumDiameter() << nl;
+        LOG << "minumum diameter: " << M.getMinimumDiameter() << nl;
+        LOG << "height ratio:     " << M.getHeightRatio() << nl;
+        LOG << "shape measure:    " << M.getShapemeasure() << nl;
+    }
+        
         
     for( int c = 0; c < 30; c++ ) 
     {

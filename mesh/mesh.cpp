@@ -477,6 +477,25 @@ Float Mesh::getDiameter( int dim, int index ) const
     return dist.maxabsoluteentry();
 }
 
+Float Mesh::getMaximumDiameter() const
+{
+    Float ret = 0.;
+    for( int e = 0; e < count_simplices(1); e++ )
+        ret = maximum( ret, getDiameter(1,e) );
+    return ret;
+}
+
+Float Mesh::getMinimumDiameter() const
+{
+    Float ret = std::numeric_limits<Float>::infinity();
+    for( int e = 0; e < count_simplices(1); e++ )
+        ret = minimum( ret, getDiameter(1,e) );
+    assert( std::isfinite(ret) );
+    return ret;
+}
+        
+        
+
 Float Mesh::getMeasure( int dim, int index ) const 
 {
     assert( 0 <= dim   && dim <= getinnerdimension() );
@@ -512,6 +531,47 @@ Float Mesh::getHeight( int dim, int cell, int vertexindex ) const
 
     return ( vol_t / vol_f ) * (dim);
 }
+
+
+Float Mesh::getHeightRatio( int dim, int cell ) const
+{
+    assert( 1 <= dim && dim <= getinnerdimension() );
+    assert( 0 <= cell && cell <= count_simplices(dim) );
+    
+    Float vol_t = getMeasure( dim, cell );
+    Float diameter = getDiameter( dim, cell );
+    Float ret = 0.;
+    for( int i = 0; i <= dim; i++ )
+    {
+        Float vol_f = getMeasure( dim-1, get_subsimplex(dim,dim-1,cell,i) );
+        Float height = ( vol_t / vol_f ) * (dim);
+        Float ratio = diameter / height;
+        ret = maximum( ret, ratio );
+    }
+    
+    return ret;
+}
+
+Float Mesh::getHeightRatio( int dim ) const
+{
+    assert( 1 <= dim && dim <= getinnerdimension() ); // TODO: What is the height of a vertex?
+    
+    Float height_ratio = 0.;
+    for( int s = 0; s < count_simplices(dim); s++ )
+        height_ratio = maximum( height_ratio, getHeightRatio(dim,s) );
+    
+    return height_ratio;
+}
+
+Float Mesh::getHeightRatio() const
+{
+    Float ret = 0.;
+    for( int d = 1; d <= getinnerdimension(); d++ )
+        ret = maximum( ret, getHeightRatio(d) ); 
+    return ret;
+}
+        
+        
 
 Float Mesh::getShapemeasure( int dim, int index ) const 
 {
