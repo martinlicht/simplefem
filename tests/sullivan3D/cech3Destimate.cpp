@@ -64,36 +64,65 @@ int main( int argc, char *argv[] )
 
         SparseMatrix vertexones = SparseMatrix( M.count_vertices(), 1, M.count_vertices(), [](int r)->SparseMatrix::MatrixEntry{ return SparseMatrix::MatrixEntry(r,0,1.0); } );
     
-        std::vector<SparseMatrix> cech_massmatrix;
-        for( int k = 0; k <= n; k++ ) cech_massmatrix.emplace_back( FEECCechMassMatrix( M, M.getinnerdimension(), k, 0 ) );
+        // std::vector<SparseMatrix> bar;
+        // bar.push_back( FEECCechMassMatrix( M, M.getinnerdimension(), 1, 0 ) );
 
-        std::vector<SparseMatrix> cech_diffmatrix;
+        // return 0;
+
+        std::vector<SparseMatrix> cech_massmatrix; cech_massmatrix.reserve(4); // TODO: wierd behavior, calls copy constructor
+        for( int k = 0; k <= n; k++ ) cech_massmatrix.push_back( FEECCechMassMatrix( M, M.getinnerdimension(), k, 0 ) );
+
+        std::vector<SparseMatrix> cech_diffmatrix; cech_diffmatrix.reserve(3);
         for( int k = 0; k <= n-1; k++ ) cech_diffmatrix.push_back( FEECCechDiffMatrix( M, M.getinnerdimension(), k ) );
 
-        std::vector<SparseMatrix> cech_diffmatrix_t;
+        std::vector<SparseMatrix> cech_diffmatrix_t; cech_diffmatrix_t.reserve(3);
         for( int k = 0; k <= n-1; k++ ) cech_diffmatrix_t.push_back( cech_diffmatrix[k].getTranspose() );
 
         LOG << "... assemble composed matrices" << nl;
 
-        std::vector<SparseMatrix> A;
+        std::vector<SparseMatrix> A; A.reserve(3);
         for( int k = 0; k <= n-1; k++ ) A.push_back( cech_diffmatrix_t[k] & cech_massmatrix[k+1] & cech_diffmatrix[k] );
 
-        std::vector<SparseMatrix> B;
+        std::vector<SparseMatrix> B; B.reserve(3);
         B.push_back( vertexones.getTranspose() & cech_massmatrix[0] );
         for( int k = 1; k <= n-1; k++ ) B.push_back( cech_diffmatrix_t[k-1] & cech_massmatrix[k] );
 
-        std::vector<SparseMatrix> Bt;
+        std::vector<SparseMatrix> Bt; Bt.reserve(3);
         Bt.push_back( cech_massmatrix[0] & vertexones );
         for( int k = 1; k <= n-1; k++ ) Bt.push_back( cech_massmatrix[k] & cech_diffmatrix[k-1] );
 
-        std::vector<ZeroOperator> C;
+        std::vector<ZeroOperator> C; C.reserve(3);
         for( int k = 0; k <= n-1; k++ ) C.push_back( ZeroOperator( Bt[k].getdimin() ) );
 
+        
+        
+        
+        LOG << "... compute mesh parameters" << nl;
+
+        const Float shape_measure       = M.getShapemeasure();
+
+        const Float comparison_quotient = M.getComparisonQuotient();
+
+        const Float radii_quotient      = M.getRadiiQuotient();
+        
+        const int patch_size            = M.getPatchSize(); 
+
+        DenseMatrix Antihor( n+1, n+1, notanumber );
+        DenseMatrix Diffver( n+1, n+1, notanumber );
+
+        for( int i = 0; i <= n; i++ )
+        for( int j = 0; j <= n; j++ )
+        {
+            if( i != 0 )
+                Antihor(i,j) = std::sqrt( n / ( 4.*j - 2. + 2.*n*j - n) * power_numerical( 1. + 1./radii_quotient, n+2 ) );
+            
+            if( j != 0 ) 
+                Diffver(i,j) = std::sqrt( n * patch_size );
+        }
+
+        
+        
         LOG << "... compute lowest eigenvalues" << nl;
-
-
-        // LOG << M << nl;
-        // for( const auto& mat : cech_massmatrix ) LOG << mat << nl;
         
         for( int k = 0; k <= n-1; k++ )
         {
@@ -112,14 +141,10 @@ int main( int argc, char *argv[] )
                 
                 const int max_inverseiterations = 5;
 
-                Float newratio = -1;
-                
                 timestamp start = timestampnow();
 
                 for( int t = 0; t < max_inverseiterations; t++ )
                 {
-
-                    // find the next candidate
 
                     FloatVector sol( A[k].getdimout(), 0. );
                     FloatVector aux( B[k].getdimout(), 0. );
@@ -149,11 +174,13 @@ int main( int argc, char *argv[] )
                     const auto candidate_A_product = candidate * A_candidate; 
                     const auto candidate_M_product = candidate * M_candidate; 
 
-                    newratio = candidate_A_product / candidate_M_product;
+                    Float rayleigh_quotient = -1;
+                
+                    rayleigh_quotient = candidate_A_product / candidate_M_product;
 
                     candidate /= sqrt(candidate_M_product); // Optional step
 
-                    LOG << "current ratio: " << newratio << " (" << t << "/" << max_inverseiterations << ")" << nl;
+                    LOG << "current ratio: " << rayleigh_quotient << " (" << t << "/" << max_inverseiterations << ")" << nl;
 
                     Float u_residualmass_sq   = ( A[k] * sol + Bt[k] * aux - rhs_sol ).norm_sq(); 
                     Float aux_residualmass_sq = ( B[k] * sol               - rhs_aux ).norm_sq(); 
@@ -171,23 +198,23 @@ int main( int argc, char *argv[] )
                 
                 LOG << "...compute error and residual" << nl;
 
-                auto sol = candidate; 
+                auto eigenvector = candidate; 
 
                 // assess the current candidate 
 
-                const auto A_sol = A[k]               * sol;
-                const auto M_sol = cech_massmatrix[k] * sol; 
+                const auto A_eigenvector = A[k]               * eigenvector;
+                const auto M_eigenvector = cech_massmatrix[k] * eigenvector; 
                 
-                const auto sol_A_product = sol * A_sol; 
-                const auto sol_M_product = sol * M_sol; 
+                const auto eigenvector_A_product = eigenvector * A_eigenvector; 
+                const auto eigenvector_M_product = eigenvector * M_eigenvector; 
 
-                newratio = sol_A_product / sol_M_product;
+                Float eigenvalue = eigenvector_A_product / eigenvector_M_product;
             
-                const Float defect_euclnorm = ( B[k] * sol ).norm_sq();
+                const Float defect_euclnorm = ( B[k] * eigenvector ).norm_sq();
             
-                contable << newratio;
+                contable << eigenvalue;
 
-                LOG << "ratio: " << newratio << " defect: " << defect_euclnorm << nl;
+                LOG << "ratio: " << eigenvalue << " defect: " << defect_euclnorm << nl;
 
                 
             }

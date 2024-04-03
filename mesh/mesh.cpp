@@ -537,6 +537,70 @@ Float Mesh::getShapemeasure() const
 }
 
 
+int Mesh::getPatchSize() const
+{
+    int ret = 0;
+    for( int s = 0; s < count_simplices(0); s++ )
+    {
+        int count = getsupersimplices( getinnerdimension(), 0, s ).size();
+        ret = maximum(ret,count);
+    }
+    return ret;
+}
+
+Float Mesh::getComparisonQuotient() const
+{
+    int n = getinnerdimension();
+    
+    Float physical_ratio = 1.;
+    for( int s = 0; s < count_simplices(n); s++ )
+    {
+        auto edges = getsubsimplices( n, 1, s ).getvalues();
+        Float diameter = getDiameter( n, s );
+        for( auto e : edges )
+        {
+            Float edgelength = getDiameter( 1, e );
+            physical_ratio = maximum( physical_ratio, diameter / edgelength );
+        }
+    }
+
+    Float vertex_ratio = 1.;
+    for( int v = 0; v < count_simplices(0); v++ )
+    {
+        auto volumes = getsupersimplices( n, 0, v );
+        auto edges  = getsupersimplices( 1, 0, v );
+
+        Float max_diameter = 0.;
+        for( auto t : volumes ) max_diameter = maximum( max_diameter, getDiameter( n, t ) );
+        
+        Float min_length = 0.;
+        for( auto e : edges ) min_length = minimum( min_length, getDiameter( 1, e ) );
+
+        assert( max_diameter > min_length );
+
+    }
+    
+    return maximum( physical_ratio, vertex_ratio );
+
+}
+
+Float Mesh::getRadiiQuotient() const
+{
+    int n = getinnerdimension();
+
+    Float comparison_quotient = getComparisonQuotient();
+    
+    Float shape_measure = getShapemeasure();
+    
+    Float sigma = factorial_numerical(n) / ( power_numerical( n, n / 2. ) * shape_measure * std::sqrt(2) );
+    
+    return comparison_quotient * std::sqrt(n) * (n+1) / sigma;
+}
+
+
+
+
+
 FloatVector Mesh::get_midpoint( int dim, int index ) const
 {
     assert( 0 <= dim && dim <= getinnerdimension() );

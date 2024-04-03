@@ -217,6 +217,12 @@ class Mesh
         Float getShapemeasure( int dim, int index ) const;
         Float getShapemeasure( int dim ) const;
         Float getShapemeasure() const;
+
+        int getPatchSize() const;
+        
+        Float getComparisonQuotient() const;
+
+        Float getRadiiQuotient() const;
         
         FloatVector get_midpoint( int dim, int index ) const;
 
