@@ -210,9 +210,16 @@ class Mesh
         
         Float getDiameter( int dim, int index ) const;
         
+        Float getMaximumDiameter() const;
+        Float getMinimumDiameter() const;
+        
         Float getMeasure( int dim, int index ) const;
         
         Float getHeight( int dim, int index, int vertexindex ) const;
+        
+        Float getHeightRatio( int dim, int index ) const;
+        Float getHeightRatio( int dim ) const;
+        Float getHeightRatio() const;
         
         Float getShapemeasure( int dim, int index ) const;
         Float getShapemeasure( int dim ) const;
