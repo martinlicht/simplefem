@@ -533,7 +533,7 @@ Float Mesh::getHeight( int dim, int cell, int vertexindex ) const
 }
 
 
-Float Mesh::getHeightRatio( int dim, int cell ) const
+Float Mesh::getHeightQuotient( int dim, int cell ) const
 {
     assert( 1 <= dim && dim <= getinnerdimension() );
     assert( 0 <= cell && cell <= count_simplices(dim) );
@@ -552,22 +552,22 @@ Float Mesh::getHeightRatio( int dim, int cell ) const
     return ret;
 }
 
-Float Mesh::getHeightRatio( int dim ) const
+Float Mesh::getHeightQuotient( int dim ) const
 {
     assert( 1 <= dim && dim <= getinnerdimension() ); // TODO: What is the height of a vertex?
     
     Float height_ratio = 0.;
     for( int s = 0; s < count_simplices(dim); s++ )
-        height_ratio = maximum( height_ratio, getHeightRatio(dim,s) );
+        height_ratio = maximum( height_ratio, getHeightQuotient(dim,s) );
     
     return height_ratio;
 }
 
-Float Mesh::getHeightRatio() const
+Float Mesh::getHeightQuotient() const
 {
     Float ret = 0.;
     for( int d = 1; d <= getinnerdimension(); d++ )
-        ret = maximum( ret, getHeightRatio(d) ); 
+        ret = maximum( ret, getHeightQuotient(d) ); 
     return ret;
 }
         
@@ -597,7 +597,7 @@ Float Mesh::getShapemeasure() const
 }
 
 
-int Mesh::getPatchSize() const
+int Mesh::getVertexPatchSize() const
 {
     int ret = 0;
     for( int s = 0; s < count_simplices(0); s++ )
@@ -607,6 +607,21 @@ int Mesh::getPatchSize() const
     }
     return ret;
 }
+
+int Mesh::getSupersimplexSize( int dim ) const
+{
+    assert( 0 <= dim && dim < getinnerdimension() );
+    
+    int ret = 0;
+    for( int s = 0; s < count_simplices(dim); s++ )
+    {
+        int count = getsupersimplices( dim+1, dim, s ).size();
+        ret = maximum(ret,count);
+    }
+    return ret;
+}
+        
+        
 
 Float Mesh::getComparisonQuotient() const
 {
@@ -644,10 +659,12 @@ Float Mesh::getComparisonQuotient() const
 
 }
 
-Float Mesh::getRadiiQuotient() const
+Float Mesh::getRadiiQuotient( int dim ) const
 {
     int n = getinnerdimension();
 
+    return getHeightQuotient() * (dim+1);
+    
     Float comparison_quotient = getComparisonQuotient();
     
     Float shape_measure = getShapemeasure();

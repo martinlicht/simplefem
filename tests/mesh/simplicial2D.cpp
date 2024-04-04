@@ -37,10 +37,14 @@ int main( int argc, char *argv[] )
     {
         M.uniformrefinement();
 
-        LOG << "maximum diameter: " << M.getMaximumDiameter() << nl;
-        LOG << "minumum diameter: " << M.getMinimumDiameter() << nl;
-        LOG << "height ratio:     " << M.getHeightRatio() << nl;
-        LOG << "shape measure:    " << M.getShapemeasure() << nl;
+        LOG << c << "\tpatch size:          " << M.getVertexPatchSize() << nl;
+        LOG << c << "\tmaximum diameter:    " << M.getMaximumDiameter() << nl;
+        LOG << c << "\tminumum diameter:    " << M.getMinimumDiameter() << nl;
+        LOG << c << "\tcomparison quotient: " << M.getComparisonQuotient() << nl;
+        LOG << c << "\tradii quotient:      " << M.getRadiiQuotient(2) << nl;
+        LOG << c << "\theight ratio:        " << M.getHeightQuotient() << nl;
+        LOG << c << "\tshape measure:       " << M.getShapemeasure() << nl;
+        LOG << nl;
     }
 
     M.check();

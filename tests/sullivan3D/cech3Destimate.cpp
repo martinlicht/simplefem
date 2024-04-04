@@ -43,9 +43,13 @@ int main( int argc, char *argv[] )
 
     const int n = M.getinnerdimension();
     
-    ConvergenceTable contable;
-    contable.table_name = "Cech complex estimates";
-    contable << "level" << "#V" << "#E" << "#F" << "#T" << "C_grad" << "C_curl" << "C_div" << nl;
+    ConvergenceTable contable_results;
+    contable_results.table_name = "Cech complex estimates";
+    contable_results << "level" << "#V" << "#E" << "#F" << "#T" << "C_grad" << "C_curl" << "C_div" << nl;
+    
+    ConvergenceTable contable_parameters;
+    contable_parameters.table_name = "Mesh parameters";
+    contable_parameters << "level" << "maxD" << "shape" << "comp" << "radii" << "height" << "size" << nl;
     
     assert( 0 <= min_l and min_l <= max_l );
     
@@ -57,8 +61,8 @@ int main( int argc, char *argv[] )
         LOG << "Level: " << l << "/" << max_l << nl;
         LOG << "# T/F/E/V: " << M.count_tetrahedra() << "/" << M.count_faces() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
 
-        contable << (float)l;
-        contable << (float)M.count_vertices() << (float)M.count_edges() << (float)M.count_faces() << (float)M.count_tetrahedra();
+        contable_results << (float)l;
+        contable_results << (float)M.count_vertices() << (float)M.count_edges() << (float)M.count_faces() << (float)M.count_tetrahedra();
 
         LOG << "... assemble matrices" << nl;
 
@@ -99,28 +103,48 @@ int main( int argc, char *argv[] )
         
         LOG << "... compute mesh parameters" << nl;
 
+        const Float maxdiameter         = M.getMaximumDiameter();
+
         const Float shape_measure       = M.getShapemeasure();
 
         const Float comparison_quotient = M.getComparisonQuotient();
 
-        const Float radii_quotient      = M.getRadiiQuotient();
+        const Float height_quotient     = M.getHeightQuotient();
         
-        const int patch_size            = M.getPatchSize(); 
+        const Float radii_quotient[4]   = { M.getRadiiQuotient(0), M.getRadiiQuotient(1), M.getRadiiQuotient(2), M.getRadiiQuotient(3) };
+        
+        const int   patch_size          = M.getVertexPatchSize(); 
 
+        const int   supsimplex_size[4]  = { M.getSupersimplexSize(0), M.getSupersimplexSize(1), M.getSupersimplexSize(2), -1 };
+        
         DenseMatrix Antihor( n+1, n+1, notanumber );
         DenseMatrix Diffver( n+1, n+1, notanumber );
 
         for( int i = 0; i <= n; i++ )
         for( int j = 0; j <= n; j++ )
         {
-            if( i != 0 )
-                Antihor(i,j) = std::sqrt( n / ( 4.*j - 2. + 2.*n*j - n) * power_numerical( 1. + 1./radii_quotient, n+2 ) );
+            if( j != 0 )
+                Antihor(i,j) = std::sqrt( n / ( ( 2. + n ) * j*j ) * power_numerical( radii_quotient[i] + 1., n ) ) * ( 1. + 1./radii_quotient[i] ) ;
             
-            if( j != 0 ) 
-                Diffver(i,j) = std::sqrt( n * patch_size );
+            Antihor(0,1) = 1. / Constants::pi;
+            
+            if( i != 3 ) 
+                // Diffver(i,j) = std::sqrt( n * supsimplex_size[i] );
+                Diffver(i,j) = std::sqrt( n * (n-i) ); // TODO: full proof in the manuscript
         }
 
-        
+
+        {
+            LOG << "patch size:          " << M.getVertexPatchSize() << nl;
+            LOG << "maximum diameter:    " << M.getMaximumDiameter() << nl;
+            LOG << "minumum diameter:    " << M.getMinimumDiameter() << nl;
+            LOG << "comparison quotient: " << M.getComparisonQuotient() << nl;
+            LOG << "radii quotient:      " << M.getRadiiQuotient(0) << nl;
+            LOG << "height ratio:        " << M.getHeightQuotient() << nl;
+            LOG << "shape measure:       " << M.getShapemeasure() << nl;
+        }
+
+        contable_parameters << (Float)l << maxdiameter << shape_measure << comparison_quotient << radii_quotient[3] << height_quotient << (Float)patch_size << nl;
         
         LOG << "... compute lowest eigenvalues" << nl;
         
@@ -146,7 +170,9 @@ int main( int argc, char *argv[] )
                 for( int t = 0; t < max_inverseiterations; t++ )
                 {
 
-                    FloatVector sol( A[k].getdimout(), 0. );
+                    LOG << "...purification: " << t << nl;
+            
+                    FloatVector sol( A[k].getdimout(), 0. ); sol = candidate;
                     FloatVector aux( B[k].getdimout(), 0. );
 
                     const FloatVector rhs_sol = cech_massmatrix[k] * candidate;
@@ -159,7 +185,7 @@ int main( int argc, char *argv[] )
                         rhs_aux, 
                         A[k], Bt[k], B[k], C[k], 
                         desired_precision * sqrt(desired_precision),
-                        -1,
+                        0,
                         IdentityMatrix( A[k].getdimin() ), IdentityMatrix( C[k].getdimin() ) 
                     );
 
@@ -212,18 +238,46 @@ int main( int argc, char *argv[] )
             
                 const Float defect_euclnorm = ( B[k] * eigenvector ).norm_sq();
             
-                contable << eigenvalue;
+                contable_results << eigenvalue;
 
                 LOG << "ratio: " << eigenvalue << " defect: " << defect_euclnorm << nl;
 
-                
+                Float ConstantPFCech = 1. / std::sqrt(eigenvalue);
+
+                if( k == 0 ) {
+
+                    Float Cgrad = Antihor(0,1) * maxdiameter + ConstantPFCech * Diffver(0,0) * Antihor(0,1);
+
+                    LOG << nl;
+                    LOG << "Cech PF Constant:     " << ConstantPFCech << nl;
+                    LOG << "Gradient PF Constant: " << Cgrad << nl;
+                    LOG << "Gradient Antihor:     " << Antihor(0,1) << nl;
+                    LOG << "Gradient Diffver:     " << Diffver(0,0) << nl;
+                    LOG << nl;
+
+                }    
+
+                if( k == 1 ) {
+                    
+                    Float Ccurl 
+                    = Antihor(0,2) * maxdiameter
+                      + comparison_quotient * std::sqrt( (n+1) * 3./2. ) * height_quotient * ConstantPFCech * Diffver(1,0) * Antihor(1,1) * Diffver(0,1) * Antihor(0,2)
+                      + ( (n+1) * 3./2. ) * comparison_quotient * ( 1 + height_quotient * Antihor(1,1) ) * Diffver(0,1) * Antihor(0,2) * maxdiameter;
+
+                    LOG << nl;
+                    LOG << "Cech PF Constant: " << ConstantPFCech << nl;
+                    LOG << "Curl PF Constant: " << Ccurl << nl;
+                    LOG << nl;
+
+                }
             }
             
         }
 
-        contable << nl;
+        contable_results << nl;
 
-        contable.lg();
+        contable_results.lg();
+        contable_parameters.lg();
 
         if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
         
