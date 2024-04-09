@@ -239,11 +239,11 @@ int main( int argc, char *argv[] )
                 contable_pseudo[i].table_name = "Numerical errors pseudo E" + std::to_string(i);
         
             for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
-                contable_scalar[i] << printf_into_string("R%d", r-r_min );
+                contable_scalar[i] << printf_into_string("R%d", r );
             for( int i = 0; i < experiments_vector_function.size(); i++ ) 
-                contable_vector[i] << printf_into_string("R%d", r-r_min );
+                contable_vector[i] << printf_into_string("R%d", r );
             for( int i = 0; i < experiments_pseudo_function.size(); i++ ) 
-                contable_pseudo[i] << printf_into_string("R%d", r-r_min );
+                contable_pseudo[i] << printf_into_string("R%d", r );
 
         }
         for( int i = 0; i < experiments_scalar_function.size(); i++ ) contable_scalar[i] << nl; 

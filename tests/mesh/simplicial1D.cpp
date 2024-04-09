@@ -26,7 +26,19 @@ int main( int argc, char *argv[] )
     LOG << "Start refinement" << nl;
 
     for( int c = 0; c < 2; c++ ) 
+    {
         M.improved_uniformrefinement();
+
+        LOG << c << "\tpatch size:          " << M.getVertexPatchSize() << nl;
+        LOG << c << "\tmaximum diameter:    " << M.getMaximumDiameter() << nl;
+        LOG << c << "\tminumum diameter:    " << M.getMinimumDiameter() << nl;
+        LOG << c << "\tcomparison quotient: " << M.getComparisonQuotient() << nl;
+        LOG << c << "\tradii quotient:      " << M.getRadiiQuotient(1) << nl;
+        LOG << c << "\theight ratio:        " << M.getHeightQuotient() << nl;
+        LOG << c << "\tshape measure:       " << M.getShapemeasure() << nl;
+        LOG << nl;
+    }
+        
         
     for( int c = 0; c < 30; c++ ) 
     {
