@@ -1334,7 +1334,9 @@ int HodgeHerzogSoodhalterMethod(
             c0 = c1; c1 = cn;
             s0 = s1; s1 = sn;
 
-            if( print_modulo >= 0 ) {
+            bool print_condition = ( print_modulo > 0 and recent_iteration_count % print_modulo == 0 );
+
+            if( print_modulo > 0 and print_condition ) {
                 LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) absolute(eta), (long double)tolerance );
                 LOGPRINTF( "(%d/%d)            Gamma: %.9Le Eta_A %.9Le Eta_C %.9Le\n", recent_iteration_count, max_iteration_count, (long double)eta_A, (long double)eta_C, (long double)gamma );
             }

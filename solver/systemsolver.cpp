@@ -223,7 +223,10 @@ int BlockHerzogSoodhalterMethod(
             FloatVector r_A = b_A - A * x_A - Bt * x_C;
             FloatVector r_C = b_C - B * x_A - C  * x_C;
             Float r = sqrt( r_A * r_A + r_C * r_C );
-            if( print_modulo >= 0 ) {
+
+            bool print_condition = ( print_modulo > 0 and recent_iteration_count % print_modulo == 0 );
+            
+            if( print_modulo > 0 and print_condition ) {
                 LOGPRINTF( "(%d/%d)   INTERIM: Full Residual norm is %.9Le\n", recent_iteration_count, max_iteration_count, (long double)r );
                 LOGPRINTF( "(%d/%d)            eta_A=%.9Le eta_C=%.9Le\n", recent_iteration_count, max_iteration_count, (long double)eta_A, (long double)eta_C );
             }

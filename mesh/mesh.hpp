@@ -217,13 +217,21 @@ class Mesh
         
         Float getHeight( int dim, int index, int vertexindex ) const;
         
-        Float getHeightRatio( int dim, int index ) const;
-        Float getHeightRatio( int dim ) const;
-        Float getHeightRatio() const;
+        Float getHeightQuotient( int dim, int index ) const;
+        Float getHeightQuotient( int dim ) const;
+        Float getHeightQuotient() const;
         
         Float getShapemeasure( int dim, int index ) const;
         Float getShapemeasure( int dim ) const;
         Float getShapemeasure() const;
+
+        int getVertexPatchSize() const;
+        
+        int getSupersimplexSize( int dim ) const;
+        
+        Float getComparisonQuotient() const;
+
+        Float getRadiiQuotient( int dim ) const;
         
         FloatVector get_midpoint( int dim, int index ) const;
 
