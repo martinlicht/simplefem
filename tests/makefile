@@ -23,12 +23,13 @@ components+=vtk
 #components+=matrixmarket
 components+=fem
 components+=image
-components+=afem
+components+=solverfem
 components+=sullivan2D
 components+=sullivan3D
 components+=whitney2D
 components+=whitney3D
-components+=solverfem
+components+=eigenvalue
+components+=afem
 components+=nullspace
 
 include tests.affices.mk
@@ -138,6 +139,12 @@ context:=whitney3D
 include tests.rules.mk
 #include tests.run.mk
 build: whitney3D.tests
+
+contextdir:=./eigenvalue
+context:=eigenvalue
+include tests.rules.mk
+#include tests.run.mk
+build: eigenvalue.tests
 
 contextdir:=./afem
 context:=afem
