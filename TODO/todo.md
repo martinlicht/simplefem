@@ -113,11 +113,11 @@ Can we canonicalize everything things already in the matrix assembly?
 # (HIGH) clean up DenseMatrix subsystem 
 
 The following modules look reasonable
-- [ ] simple solvers 
-- [ ] general solvers (Gauss-Jordan, QR, Cholesky -> inverse )
-- [ ] simple scalar functions
-- [ ] complicated operations (transpose,determinant,tensorproduct)
+- [x] simple scalar functions into the class
 - [x] readwrite is never used: retire 
+- [x] factorizations (Gauss-Jordan, QR, Cholesky -> inverse )
+- [x] complicated operations (transpose,determinant,tensorproduct)
+- [x] simple solvers 
 
 # (HIGH) Dense Matrix rewrite, part 2
 
