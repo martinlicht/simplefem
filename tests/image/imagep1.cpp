@@ -164,7 +164,7 @@ int main( int argc, char *argv[] )
         // list all indices to be refined  
         std::vector<int> to_refine;
         int share = 3;
-        LOG << weights.front().second << space << weights.back().second << nl;
+        LOG << "Weights min/max: " << weights.front().second << space << weights.back().second << nl;
         to_refine.reserve( num_volumes / share + 1 );
         for( int i = 0; i < num_volumes / share + 1; i++ )
             to_refine.push_back( weights[i].first );

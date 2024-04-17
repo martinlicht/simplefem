@@ -184,14 +184,14 @@ benchmarks:
 clean: 
 	@cd ./tests && $(MAKE) --no-print-directory clean
 	@cd ./benchmarks && $(MAKE) --no-print-directory clean
-	@rm -f ./*.vtk ./*/*.vtk ./*/*/*.vtk ./*.svg ./*/*.svg ./*/*/*.svg
+	@rm -f ./*.vtk ./*/*.vtk ./*/*/*.vtk ./*.svg ./*/*.svg ./*/*/*.svg ./*.tex ./*/*.tex ./*/*/*.tex
 	@echo "Finished cleaning."
 
 .PHONY: outputclean
 outputclean:
 	@cd ./tests && $(MAKE) --no-print-directory outputclean
 	@cd ./benchmarks && $(MAKE) --no-print-directory outputclean
-	@rm -f ./*.vtk ./*/*.vtk ./*/*/*.vtk ./*.svg ./*/*.svg ./*/*/*.svg
+	@rm -f ./*.vtk ./*/*.vtk ./*/*/*.vtk ./*.svg ./*/*.svg ./*/*/*.svg ./*.tex ./*/*.tex ./*/*/*.tex
 	@echo "Finished cleaning output files."
 
 .PHONY: dependclean
