@@ -1102,7 +1102,7 @@ int HodgeHerzogSoodhalterMethod(
     assert( Btvalues );
     assert( tolerance > 0 );
 //     assert( print_modulo >= 0 );
-    // assert( PArows ); // TODO
+    // assert( PArows ); 
     // assert( PAcolumns );
     // assert( PAvalues );
     // assert( PCrows );
@@ -1165,16 +1165,17 @@ int HodgeHerzogSoodhalterMethod(
         
         if( restart_condition or ( residual_seems_small and csrsys_restart_before_finish ) ) {
             
+            // 1
             for( int a = 0; a < dimension_A; a++ ) v0_A[a] = w0_A[a] = w1_A[a] = 0.;
             for( int c = 0; c < dimension_C; c++ ) v0_C[c] = w0_C[c] = w1_C[c] = 0.;
             
+            // 2 
             for( int r = 0; r < dimension_A; r++ ) {
                 v1_A[r] = b_A[r];
                 for( int d = Arows[r]; d < Arows[r+1]; d++ )
                     v1_A[r] += expected_sign_of_A * Avalues[d] * x_A[ Acolumns[d] ];
                 for( int d = Btrows[r]; d < Btrows[r+1]; d++ )
                     v1_A[r] -= Btvalues[d] * x_C[ Btcolumns[d] ];
-                z_A[r] = v1_A[r]; // TODO
             }
             for( int r = 0; r < dimension_C; r++ ) {
                 v1_C[r] = b_C[r];
@@ -1182,13 +1183,16 @@ int HodgeHerzogSoodhalterMethod(
                     v1_C[r] -= Bvalues[d] * x_A[ Bcolumns[d] ];
                 for( int d = Crows[r]; d < Crows[r+1]; d++ )
                     v1_C[r] -= Cvalues[d] * x_C[ Ccolumns[d] ];
-                z_C[r] = v1_C[r]; // TODO
             }
 
-            // TODO
+            // We don't use preconditioners for the time being 
             // z_A = PAinv * v1_A;
             // z_C = PCinv * v1_C;
+            for( int r = 0; r < dimension_A; r++ ) z_A[r] = v1_A[r]; 
+            for( int r = 0; r < dimension_C; r++ ) z_C[r] = v1_C[r]; 
             
+            
+            // 3 -- 6
             Float v1_z_A = 0.;
             Float v1_z_C = 0.;
             for( int a = 0; a < dimension_A; a++ ) v1_z_A += v1_A[a] * z_A[a];
@@ -1208,10 +1212,11 @@ int HodgeHerzogSoodhalterMethod(
             }
             
             Float psi_A = v1_z_A / (gamma*gamma); 
-            Float psi_C = v1_z_C / (gamma*gamma); // TODO: Is this correct????
+            Float psi_C = v1_z_C / (gamma*gamma); 
             mu_A = psi_A; 
             mu_C = psi_C; 
             
+            // 7 
             eta = gamma; 
             eta_A = gamma * sqrt( psi_A );
             eta_C = gamma * sqrt( psi_C );
@@ -1236,6 +1241,8 @@ int HodgeHerzogSoodhalterMethod(
             
         {
             
+            // ???? 
+
             Float z_p_A = 0.;
             Float z_p_C = 0.;
             
@@ -1283,6 +1290,8 @@ int HodgeHerzogSoodhalterMethod(
             for( int a = 0; a < dimension_A; a++ ){ vn_A[a] /= gamma; zn_A[a] /= gamma; }
             for( int c = 0; c < dimension_C; c++ ){ vn_C[c] /= gamma; zn_C[c] /= gamma; }
 
+            // 15 -- 18
+
             Float alpha_0 = c1 * delta - c0 * s1 * gamma;
             assert( alpha_0 * alpha_0 + gamma_n * gamma_n > 0. );
             Float alpha_1 = std::sqrt( alpha_0 * alpha_0 + gamma_n * gamma_n );
@@ -1291,9 +1300,11 @@ int HodgeHerzogSoodhalterMethod(
  
             assert( alpha_1 > 0. );
 
+            // 19
             Float cn = alpha_0 / alpha_1;
             Float sn = gamma_n / alpha_1;
             
+            // 20
             Float theta_A = 0.;
             Float theta_C = 0.;
             Float psi_A = 0.;
@@ -1301,6 +1312,7 @@ int HodgeHerzogSoodhalterMethod(
             for( int a = 0; a < dimension_A; a++ ){ theta_A += m_A[a] * zn_A[a]; psi_A += zn_A[a]*vn_A[a]; }
             for( int c = 0; c < dimension_C; c++ ){ theta_C += m_C[c] * zn_C[c]; psi_C += zn_C[c]*vn_C[c]; }
             
+            // 22 -- 24
             for( int a = 0; a < dimension_A; a++ ){
                 m_A [a] = - sn * m_A[a] + cn * vn_A[a];
                 wn_A[a] = ( z_A[a] - alpha_3 * w0_A[a] - alpha_2 * w1_A[a] ) / alpha_1;
@@ -1313,9 +1325,11 @@ int HodgeHerzogSoodhalterMethod(
                 x_C [c] = x_C[c] + cn * eta * wn_C[c];
             }
  
+            // 25 -- 26
             mu_A = sn * sn * mu_A - 2 * sn * cn * theta_A + cn * cn * psi_A;
             mu_C = sn * sn * mu_C - 2 * sn * cn * theta_C + cn * cn * psi_C;
 
+            // 27 -- 28
             eta   = -sn * eta;
             eta_A = eta * sqrt( psi_A );
             eta_C = eta * sqrt( psi_C );

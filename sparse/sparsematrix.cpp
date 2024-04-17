@@ -549,7 +549,6 @@ SparseMatrix SparseMatrix::getTranspose() const
     
     auto newentries = entries;
 
-    // TODO: parallelize 
     for( auto& newentry : newentries )
         std::swap( newentry.row, newentry.column );
 
@@ -592,17 +591,6 @@ std::size_t SparseMatrix::memorysize() const
 }
 
 
-
-
-
-
-
-
-
-// TODO: Figure out the difference between & and the multiplication function below. 
-// Then merge both methods into one 
-
-// SparseMatrix operator&( const SparseMatrix& left, const SparseMatrix& right )
 
 
 

@@ -395,8 +395,9 @@ std::string ConvergenceTable::TeXtabular( const std::vector<bool>& show_column )
     // if fixed:  6; sign + digit + . = 3 chars 
 
 
-    
-    const int num_series = entries[0].size(); // TODO: count_if with lambda here 
+    assert( entries.size() >= 1 ); // NB: we want at least one line in the table 
+
+    const int num_series = entries[0].size();
 
     // if necessary, print column headers 
     if( not seriesheaders.empty() )

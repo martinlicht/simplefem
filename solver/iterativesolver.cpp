@@ -414,7 +414,7 @@ void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector&
             
             if( rAr < 0. ) {
                 LOGPRINTF( "(%d/%d) BREAKDOWN: Residual energy is unreasonable with %.9Le\n", recent_iteration_count, max_iteration_count, (long double)rAr );
-                rAr = 0.; // TODO to avoid useless bug 
+                // rAr = 0.; 
                 break;
             }
 
@@ -533,7 +533,7 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
             Ar = Ar - alpha * p;
             
             Float Ar_r_new = Ar * r;
-            Float beta = Ar_r_new / Ad_r; // fast uses and maintains Ar_r // TODO: abort if Ad_r is negative?
+            Float beta = Ar_r_new / Ad_r; // fast uses and maintains Ar_r 
             
             // assert( Ar_r_new >= 0. );
 

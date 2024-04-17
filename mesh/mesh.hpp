@@ -176,11 +176,6 @@ class Mesh
         
         virtual int get_supersimplex_by_index( int sup, int sub, int cellsub, int parentindex ) const;
 
-        // TODO: Iterator interface
-        // ContainerInterface -- container.hpp 
-        // derive from that class 
-        
-        
         
         /* 
          * 

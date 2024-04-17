@@ -514,9 +514,7 @@ VTKWriter VTKWriter::writeCellVectorData_barycentricgradients( const FloatVector
 }
 
 
-// TODO: change this to actually use 2-forms
-// This only uses the three-dimensional case 
-// TODO: decide on the algorithm 
+
 VTKWriter VTKWriter::writeCellVectorData_barycentriccrosses( const FloatVector& v, const std::string& name, Float scaling )
 {
     const int topdim = mesh.getinnerdimension();

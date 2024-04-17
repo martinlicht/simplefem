@@ -48,7 +48,7 @@ int main( int argc, char *argv[] )
     );
 
     int l_min =  0;
-    int l_max =  15;
+    int l_max =  10;
     
     for( int c = 0; c < l_min; c++ ) M.uniformrefinement();
 

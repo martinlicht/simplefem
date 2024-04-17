@@ -174,8 +174,6 @@ inline void sorthack( std::vector<A>& vec )
             vec[t-1] = vec[t];
             vec[t] = temp;
         }
-        //     std::myswap<typename std::vector<A>::value_type>( vec[t-1], vec[t] );
-        // TODO: understand why myswap for arrays does not work
 
         for( int t = 1; t < vec.size(); t++ )
             assert( vec[t-1] <= vec[t] );

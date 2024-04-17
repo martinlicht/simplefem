@@ -18,7 +18,7 @@ int main( int argc, char *argv[] )
                 for( int i = 0; i < 5; i++ )
                         a.setentry( i, i+1 );
                 
-                ScalingOperator S( 5, 3.14159 );
+                ScalingOperator S( 5, Constants::pi );
                 
                 LOG << "We start with this Vector:" << nl;
                 LOG << a << nl;
