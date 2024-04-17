@@ -78,7 +78,7 @@ Understand the floating-point comparison functions and import them into this pro
 - [ ] VTK: different outputs 
 - [x] Combinatorics: make things independent of screen output 
 - [ ] Operators: make things independent of screen output 
-- [ ] Dense: test everything thoroughly, even up to smaller rounding errors 
+- [x] Dense: test everything thoroughly, even up to smaller rounding errors 
 - [ ] Sparse: check that composition does not change the outcome 
 - [ ] Solver: meaningful convergence tests?
 - [ ] Clean up the nullspace computation in the solver component.

@@ -40,37 +40,39 @@ DenseMatrix TransposeSquare( const DenseMatrix& src )
     return Transpose( src );
 }
 
-void TransposeInSitu( DenseMatrix& src )
-{
-    src.check();
-    const int numrows = src.getdimout();
-    const int numcols = src.getdimin();
-
-    for( int start = 0; start < numcols * numrows; ++start )
-    {
-
-        int next = start;
-        int i = 0;
-
-        do {
-            ++i;
-            next = (next % numrows) * numcols + next / numrows;
-        } while ( next > start );
-
-        if( next >= start && i != 1 )
-        {
-            const Float tmp = src( start / numcols, start % numcols );
-            next = start;
-            do {
-                i = (next % numrows) * numcols + next / numrows;
-                src( next / numcols, next % numcols ) = ( i == start ) ? tmp : src( i / numcols, i % numcols );
-                next = i;
-            } while( next > start );
-        }
-
-    }
-  
-}
+// void TransposeInSitu( DenseMatrix& src )
+// {
+//     src.check();
+//     const int numrows = src.getdimout();
+//     const int numcols = src.getdimin();
+// 
+//     for( int start = 0; start < numcols * numrows; ++start )
+//     {
+// 
+//         int next = start;
+//         int i = 0;
+// 
+//         do {
+//             ++i;
+//             next = (next % numrows) * numcols + next / numrows;
+//         } while ( next > start );
+// 
+//         if( next >= start && i != 1 )
+//         {
+//             const Float tmp = src( start / numcols, start % numcols );
+//             next = start;
+//             do {
+//                 i = (next % numrows) * numcols + next / numrows;
+//                 src( next / numcols, next % numcols ) = ( i == start ) ? tmp : src( i / numcols, i % numcols );
+//                 next = i;
+//             } while( next > start );
+//         }
+// 
+//     }
+// 
+//     // We cannot change the dimensions of the matrix `src`
+// 
+// }
 
 void TransposeSquareInSitu( DenseMatrix& src ) 
 {

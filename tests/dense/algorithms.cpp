@@ -19,10 +19,10 @@ int main( int argc, char *argv[] )
         LOG << "A. Scalar functions of matrices" << nl;
        
         DenseMatrix S( 4, 4 );
-        S(0,0) =  3; S(0,1) =  0; S(0,2) = 6; S(0,3) =  0; 
-        S(1,0) =  1; S(1,1) = -1; S(1,2) = 0; S(1,3) =  2; 
-        S(2,0) = -1; S(2,1) =  1; S(2,2) = 1; S(2,3) = -1; 
-        S(3,0) =  2; S(3,1) = -4; S(3,2) = 4; S(3,3) =  0; 
+        S(0,0) =  3; S(0,1) =  0; S(0,2) = -6; S(0,3) =  0; 
+        S(1,0) =  1; S(1,1) = -1; S(1,2) =  0; S(1,3) =  2; 
+        S(2,0) = -1; S(2,1) =  1; S(2,2) =  1; S(2,3) = -1; 
+        S(3,0) =  2; S(3,1) = -4; S(3,2) =  4; S(3,3) =  0; 
         
         
         LOG << S << nl;
@@ -30,18 +30,27 @@ int main( int argc, char *argv[] )
         LOG << "Norm L1:        " << S.sumnorm() << nl;
         LOG << "Norm Frobenius: " << S.frobeniusnorm() << nl;
         LOG << "Norm Max:       " << S.maxnorm() << nl;
+
+        assert( S.trace()         == 3-1+1+0 );
+        assert( S.sumnorm()       == 7+6+11+3 );
+        assert( S.frobeniusnorm() == std::sqrt(91) );
+        assert( S.maxnorm()       == 6 );
         
         Float p = 1.01;
         LOG << nl << "Norm Lp with p=" << p << ": " << S.lpnorm( p ) << nl << nl;
         
-        Float p1 = 100.0001;
-        Float p2 = 1.00001;
+        Float p1 = 200.00000001;
+        Float p2 = 1.0000000001;
         LOG << nl << "Row " << p1 << space
                      << "Col " << p2 << space
                      << S.norm_row_col( p1, p2 ) << nl;
         LOG << nl << "Col " << p1 << space
                      << "Row " << p2 << space 
                      << S.norm_col_row( p1, p2 ) << nl;
+        
+        assert( is_numerically_close( 10, S.norm_row_col( p1, p2 ) ), S.norm_row_col( p1, p2 ) );
+        assert( is_numerically_close( 11, S.norm_col_row( p1, p2 ) ), S.norm_col_row( p1, p2 ) );
+        
         
         LOG << nl << "Row " << 1. << space
                      << "Col " << 1. << space
@@ -51,6 +60,9 @@ int main( int argc, char *argv[] )
                      << S.norm_col_row( 1., 1. ) << nl;
         LOG << nl;
         
+        assert( is_numerically_close( 27, S.norm_row_col( 1., 1. ) ) );
+        assert( is_numerically_close( 27, S.norm_col_row( 1., 1. ) ) );
+        
         LOG << nl << "Row " << 2. << space
                      << "Col " << 2. << space
                      << S.norm_row_col( 2., 2. ) << nl;
@@ -58,6 +70,9 @@ int main( int argc, char *argv[] )
                      << "Row " << 2. << space 
                      << S.norm_col_row( 2., 2. ) << nl;
         LOG << nl;
+
+        assert( is_numerically_close( S.frobeniusnorm(), S.norm_row_col( 2., 2. ) ) );
+        assert( is_numerically_close( S.frobeniusnorm(), S.norm_col_row( 2., 2. ) ) );
         
         LOG << nl << "Row " << 20. << space
                      << "Col " << 20. << space
@@ -66,12 +81,20 @@ int main( int argc, char *argv[] )
                      << "Row " << 20. << space 
                      << S.norm_col_row( 20., 20. ) << nl;
         LOG << nl;
+
+        assert( is_numerically_close( 6, S.norm_row_col( 200., 200. ) ), S.norm_row_col( 200., 200. ) );
+        assert( is_numerically_close( 6, S.norm_col_row( 200., 200. ) ), S.norm_col_row( 200., 200. ) );
+        
+        
         
         
         
         LOG << "Norm Operator L1:  " << S.NormOperatorL1() << nl;
         LOG << "Norm Operator Max: " << S.NormOperatorMax() << nl;
         LOG << nl;
+
+        assert( S.NormOperatorL1()  == 11 );
+        assert( S.NormOperatorMax() == 10 );
         
         LOG << "GerschgorinRow:    " << S.GerschgorinRow() << nl;
         LOG << "GerschgorinColumn: " << S.GerschgorinColumn() << nl;
@@ -93,10 +116,20 @@ int main( int argc, char *argv[] )
             DenseMatrix A(dim, testmatrix);
             DenseMatrix B = A;
             
-            LOG << A << Transpose( A ) << TransposeSquare( A ) << nl;
-            TransposeInSitu( A );
+            auto At1 = Transpose( A );
+            auto At2 = TransposeSquare( A );
+            LOG << A << At1 << At2 << nl;
+
+            for( int r = 0; r < dim; r++ )
+            for( int c = 0; c < dim; c++ )
+                assert( A(r,c) == At1(c,r) and A(r,c) == At2(c,r) );
+            
             TransposeSquareInSitu( B );
-            LOG << A << B << nl;
+            LOG << B << nl;
+            
+            for( int r = 0; r < dim; r++ )
+            for( int c = 0; c < dim; c++ )
+                assert( At1(r,c) == B(r,c) );
             
         }
         
@@ -110,10 +143,19 @@ int main( int argc, char *argv[] )
                                                         { return 2*r + c; };
             
             DenseMatrix A( dimr, dimc, testmatrix );
+            const auto At = Transpose(A);
             
-            LOG << A << Transpose(A) << nl;
-            TransposeInSitu( A );
-            LOG << A << nl;
+            for( int r = 0; r < dimr; r++ )
+            for( int c = 0; c < dimc; c++ )
+                assert( A(r,c) == At(c,r) );
+            
+            LOG << A << At << nl;
+            //TransposeInSitu( A );
+            // LOG << A << nl;
+
+            // for( int r = 0; r < dimr; r++ )
+            // for( int c = 0; c < dimc; c++ )
+            //     assert( A(c,r) == At(c,r) );
             
         }
         
@@ -121,7 +163,57 @@ int main( int argc, char *argv[] )
     
     
     {
-        LOG << "1. Matrix determinant, inverse, cofactor matrix" << nl;
+        
+        LOG << "1. Cholesky decomposition" << nl;
+        
+        DenseMatrix A(3,3);
+        
+        A(0,0) =   4; A(0,1) =  12; A(0,2) = -16; 
+        A(1,0) =  12; A(1,1) =  37; A(1,2) = -43; 
+        A(2,0) = -16; A(2,1) = -43; A(2,2) =  98; 
+        
+        DenseMatrix L = CholeskyDecomposition( A );
+
+        DenseMatrix ActualL( 3, 3 );
+        ActualL(0,0) =  2; ActualL(0,1) = 0; ActualL(0,2) = 0; 
+        ActualL(1,0) =  6; ActualL(1,1) = 1; ActualL(1,2) = 0; 
+        ActualL(2,0) = -8; ActualL(2,1) = 5; ActualL(2,2) = 3; 
+        
+        //LOG << "Original matrix:" << A << nl;
+        //LOG << "Factor matrix:" << L << nl;
+        //LOG << "Product matrix:" << L * Transpose(L) << nl;
+
+        assert( ( ActualL - L ).is_numerically_small() );
+        assert( ( L * Transpose(L) - A ).is_numerically_small() );
+        
+    }
+      
+    {
+    
+        LOG << "2. Cholesky decomposition" << nl;
+        
+        int dim = 3;
+        DenseMatrix A(dim);
+        
+        A.zeromatrix();
+        for( int s = 0; s < dim; s++ )
+        for( int t = 0; t < dim; t++ )
+            A(s,t) = 3 * kronecker(s,t) - kronecker(s,t-1) - kronecker(s,t+1);
+        
+        DenseMatrix L = CholeskyDecomposition( A );
+        
+        LOG << "Original matrix:" << A << nl;
+        
+        LOG << "Factor matrix:" << L << nl;
+        
+        LOG << "Product matrix:" << L * Transpose(L) << nl;
+
+        assert( ( L * Transpose(L) - A ).is_numerically_small() );
+        
+    }
+    
+    {
+        LOG << "3. Matrix determinant, inverse, cofactor matrix" << nl;
         
         for( int dim = 1; dim < 6; dim++ ) 
         {
@@ -141,53 +233,19 @@ int main( int argc, char *argv[] )
 
             assert( is_numerically_close( det, det_l ) && is_numerically_close( det, det_g ) && is_numerically_close( det, det_b ) );
 
-            LOG << CofactorMatrix( A ) << nl;
-            LOG << Inverse( A ) << nl;
-            LOG << A * Inverse( A ) << nl;
-            LOG << Inverse( A ) * A << nl;
-            LOG << 1. / Determinant(A) - Determinant( Inverse(A) ) << nl;
-            LOG << A - Inverse( Inverse(A) ) << nl;
+            const auto Acof = CofactorMatrix( A );
+            const auto Ainv = Inverse( A );
+
+            LOG << Acof << nl;
+            LOG << Ainv << nl;
+            LOG << A * Ainv << nl;
+            LOG << Ainv * A << nl;
+            LOG << 1. / Determinant(A) - Determinant( Ainv ) << nl;
+            LOG << A - Inverse( Ainv ) << nl;
+
+            assert( ( Ainv * A ).is_numerically_identity() );
+            assert( ( A * Ainv ).is_numerically_identity() );
         }
-    }
-    
-    {
-        
-        LOG << "2. Cholesky decomposition" << nl;
-        
-        DenseMatrix A(3,3);
-        
-        A(0,0) =   4; A(0,1) =  12; A(0,2) = -16; 
-        A(1,0) =  12; A(1,1) =  37; A(1,2) = -43; 
-        A(2,0) = -16; A(2,1) = -43; A(2,2) =  98; 
-        
-        DenseMatrix L = CholeskyDecomposition( A );
-        
-        //LOG << "Original matrix:" << A << nl;
-        //LOG << "Factor matrix:" << L << nl;
-        //LOG << "Product matrix:" << L * Transpose(L) << nl;
-        
-    }
-      
-    {
-    
-        LOG << "3. Cholesky decomposition" << nl;
-        
-        int dim = 3;
-        DenseMatrix A(dim);
-        
-        A.zeromatrix();
-        for( int s = 0; s < dim; s++ )
-        for( int t = 0; t < dim; t++ )
-            A(s,t) = 3 * kronecker(s,t) - kronecker(s,t-1) - kronecker(s,t+1);
-        
-        DenseMatrix L = CholeskyDecomposition( A );
-        
-        //LOG << "Original matrix:" << A << nl;
-        
-        //LOG << "Factor matrix:" << L << nl;
-        
-        //LOG << "Product matrix:" << L * Transpose(L) << nl;
-        
     }
     
     {
@@ -211,10 +269,16 @@ int main( int argc, char *argv[] )
 
         assert( is_numerically_close( det, det_l ) && is_numerically_close( det, det_g ) && is_numerically_close( det, det_b ) );
 
-        LOG << CofactorMatrix( A ) << nl;
-        LOG << Inverse( A ) << nl;
-        LOG << A * Inverse( A ) << nl;
-        LOG << Inverse( A ) * A << nl;
+        const auto Acof = CofactorMatrix( A );
+        const auto Ainv = Inverse( A );
+
+        LOG << Acof << nl;
+        LOG << Ainv << nl;
+        LOG << A * Ainv << nl;
+        LOG << Ainv * A << nl;
+
+        assert( ( Ainv * A ).is_numerically_identity() );
+        assert( ( A * Ainv ).is_numerically_identity() );
       
     }
     
@@ -240,12 +304,13 @@ int main( int argc, char *argv[] )
         
         LOG << "Original matrix:" << A << nl;
         
-        DenseMatrix M = GaussJordanInplace( A );
-//         DenseMatrix M = GaussJordanInplace( A );
+        const DenseMatrix Ainv = GaussJordanInplace( A );
         
-        LOG << "Proposed Inverse:" << M << nl;
+        LOG << "Proposed Inverse:" << Ainv << nl;
         
-        LOG << "Product of both:" << M * A << nl;
+        LOG << "Product of both:" << Ainv * A << nl;
+
+        assert( ( Ainv * A ).is_numerically_identity() );
         
     }
     
@@ -273,103 +338,116 @@ int main( int argc, char *argv[] )
             LOG << A << nl;
 
             assert( is_numerically_close( det, det_l ) && is_numerically_close( det, det_g ) && is_numerically_close( det, det_b ) );
+
+            const auto Ainv = GaussJordanInplace(A);
             
-            LOG << GaussJordanInplace(A) * A << nl;
+            LOG << Ainv * A << nl;
+
+            assert( ( Ainv * A ).is_numerically_identity() );
         }
     }
 
     {
         LOG << "7. Gauss Jordan algorithm" << nl;
     
-        int N = 14;
-        DenseMatrix C(N);
-        for( int i = 0; i < N; i++ )
-        for( int j = 0; j < N; j++ )
-            C(i,j) = 1. / ( i+j+1 );
-        
-        LOG << C * GaussJordanInplace(C,true) << nl;
-        
+        for( int N = 1; N <= 7; N++ )
         {
-            auto Cinv = GaussJordanInplace(C);
-            DenseMatrix I(N); I.unitmatrix();
-            // Float relaxation = Cinv.norm();
+            DenseMatrix C(N);
+            for( int i = 0; i < N; i++ )
+            for( int j = 0; j < N; j++ )
+                C(i,j) = 1. / ( i+j+1 );
             
-            for( int t = 0; t < 2000; t++ )
-                Cinv = Cinv + 1.5/ ( std::log(N)) * ( I - C * Cinv );
+            LOG << C * GaussJordanInplace(C,true) << nl;
             
-            LOG << C * Cinv << nl;
+            {
+                auto Cinv = GaussJordanInplace(C);
+                const auto I = IdentityMatrix(N);
+                // Float relaxation = Cinv.norm();
+
+                Assert( ( C * Cinv ).is_numerically_identity(), C * Cinv );
+            }
         }
+        
         
     }
     
     
     {
-        LOG << "8. QR Factorization" << nl;
+        LOG << "8. QR and QL Factorization" << nl;
     
-        const int dim = 4;
-        DenseMatrix A(dim,dim);
-    
-        A.zeromatrix();
-        for( int s = 0; s < dim; s++ )
-        for( int t = 0; t < dim; t++ )
-            A(s,t) = 3 * kronecker(s,t) - kronecker(s,t-1) - kronecker(s,t+1);
+        for( int dim = 1; dim <= 10; dim++ ){
             
-        {
-            DenseMatrix Q(dim,dim), R(dim,dim);
-            
-            QRFactorization( A, Q, R );
-            
-            DenseMatrix Rinv =   Inverse(R);
-            DenseMatrix Qt   = Transpose(Q);
-            
-            LOG << "Matrix A:" << A;
-            LOG << "Matrix Q:" << Q;
-            LOG << "Matrix R:" << R;
-            LOG << "Matrix Q * R:" << Q * R;
-            LOG << "Matrix Q^t:" << Qt;
-            LOG << "Matrix Rinv:" << Rinv;
-            LOG << "Matrix R * Rinv:" << R * Rinv;
-            LOG << "Matrix Rinv * R:" << Rinv * R;
-            LOG << "Matrix Q * Qinv:" << Q * Qt;
-            LOG << "Matrix Qinv * Q:" << Qt * Q;
-            LOG << "Matrix Rinv * Q^t * A:" << Rinv * Qt * A;
-            LOG << "Matrix A * Rinv * Q^t:" << A * Rinv * Qt;
+            DenseMatrix A(dim,dim);
+        
+            A.zeromatrix();
+            for( int s = 0; s < dim; s++ )
+            for( int t = 0; t < dim; t++ )
+                A(s,t) = 3 * kronecker(s,t) - kronecker(s,t-1) - kronecker(s,t+1);
+                
+            {
+                DenseMatrix Q(dim,dim), R(dim,dim);
+                
+                QRFactorization( A, Q, R );
+                
+                DenseMatrix Rinv =   Inverse(R);
+                DenseMatrix Qt   = Transpose(Q);
+                
+                assert( ( Q * R - A ).is_numerically_small() );
+                assert( ( Q * Qt ).is_numerically_identity() );
+                
+                LOG << "Matrix A:" << A;
+                LOG << "Matrix Q:" << Q;
+                LOG << "Matrix R:" << R;
+                LOG << "Matrix Q * R:" << Q * R;
+                LOG << "Matrix Q^t:" << Qt;
+                LOG << "Matrix Rinv:" << Rinv;
+                LOG << "Matrix R * Rinv:" << R * Rinv;
+                LOG << "Matrix Rinv * R:" << Rinv * R;
+                LOG << "Matrix Q * Qinv:" << Q * Qt;
+                LOG << "Matrix Qinv * Q:" << Qt * Q;
+                LOG << "Matrix Rinv * Q^t * A:" << Rinv * Qt * A;
+                LOG << "Matrix A * Rinv * Q^t:" << A * Rinv * Qt;
+            }
+
+            {
+                DenseMatrix L(dim,dim), Q(dim,dim);
+                
+                LQFactorization( A, L, Q );
+                
+                DenseMatrix Linv =   Inverse(L);
+                DenseMatrix Qt   = Transpose(Q);
+
+                assert( ( L * Q - A ).is_numerically_small() );
+                assert( ( Q * Qt ).is_numerically_identity() );
+                
+                LOG << "Matrix A:" << A;
+                LOG << "Matrix Q:" << Q;
+                LOG << "Matrix L:" << L;
+                LOG << "Matrix L * Q:" << L * Q;
+                LOG << "Matrix Q^t:" << Qt;
+                LOG << "Matrix Linv:" << Linv;
+                LOG << "Matrix L * Linv:" << L * Linv;
+                LOG << "Matrix Linv * L:" << Linv * L;
+                LOG << "Matrix Q * Qinv:" << Q * Qt;
+                LOG << "Matrix Qinv * Q:" << Qt * Q;
+                LOG << "Matrix Q^t * Linv * A:" << Qt * Linv * A;
+                LOG << "Matrix A * Qt * Linv:" << A * Qt * Linv;
+            }
+
+            {
+                DenseMatrix Q1(dim,dim), R(dim,dim);
+                QRFactorization( A, Q1, R );
+
+                DenseMatrix L(dim,dim), Q2(dim,dim);
+                LQFactorization( Transpose(A), L, Q2 );
+
+                assert( ( Q1 * R - Transpose(Q2) * Transpose(L) ).is_numerically_small() );
+                
+            }
+
+
         }
         
-    }
-    
-    {
-        LOG << "8a. LQ Factorization" << nl;
-    
-        const int dim = 4;
-        DenseMatrix A(dim,dim);
-    
-        A.zeromatrix();
-        for( int s = 0; s < dim; s++ )
-        for( int t = 0; t < dim; t++ )
-            A(s,t) = 3 * kronecker(s,t) - kronecker(s,t-1) - kronecker(s,t+1);
-            
-        {
-            DenseMatrix L(dim,dim), Q(dim,dim);
-            
-            LQFactorization( A, L, Q );
-            
-            DenseMatrix Linv =   Inverse(L);
-            DenseMatrix Qt   = Transpose(Q);
-            
-            LOG << "Matrix A:" << A;
-            LOG << "Matrix Q:" << Q;
-            LOG << "Matrix L:" << L;
-            LOG << "Matrix L * Q:" << L * Q;
-            LOG << "Matrix Q^t:" << Qt;
-            LOG << "Matrix Linv:" << Linv;
-            LOG << "Matrix L * Linv:" << L * Linv;
-            LOG << "Matrix Linv * L:" << Linv * L;
-            LOG << "Matrix Q * Qinv:" << Q * Qt;
-            LOG << "Matrix Qinv * Q:" << Qt * Q;
-            LOG << "Matrix Q^t * Linv * A:" << Qt * Linv * A;
-            LOG << "Matrix A * Qt * Linv:" << A * Qt * Linv;
-        }
         
     }
     
@@ -397,10 +475,16 @@ int main( int argc, char *argv[] )
 
             assert( is_numerically_close( det / det_l, 1. ) && is_numerically_close( det / det_g, 1. ) && is_numerically_close( det / det_b, 1. ) );
             
-            LOG << CofactorMatrix( A ) << nl;
-            LOG << Inverse( A ) << nl;
-            LOG << A * Inverse( A ) << nl;
-            LOG << Inverse( A ) * A << nl;
+            const auto Acof = CofactorMatrix( A );
+            const auto Ainv = Inverse( A );
+
+            LOG << Acof << nl;
+            LOG << Ainv << nl;
+            LOG << A * Ainv << nl;
+            LOG << Ainv * A << nl;
+
+            assert( ( Ainv * A ).is_numerically_identity() );
+            assert( ( A * Ainv ).is_numerically_identity() );
         }
     }
     
@@ -425,11 +509,16 @@ int main( int argc, char *argv[] )
 
             assert( is_numerically_close( det, det_l ) && is_numerically_close( det, det_g ) && is_numerically_close( det, det_b ) );
             
-            LOG << CofactorMatrix( A ) << nl;
-            LOG << GaussJordanInplace( A ) << nl;
-            LOG << Inverse( A ) << nl;
-            LOG << A * Inverse( A ) << nl;
-            LOG << Inverse( A ) * A << nl;
+            const auto Acof = CofactorMatrix( A );
+            const auto Ainv = GaussJordanInplace( A );
+
+            LOG << Acof << nl;
+            LOG << Ainv << nl;
+            LOG << A * Ainv << nl;
+            LOG << Ainv * A << nl;
+
+            assert( ( Ainv * A ).is_numerically_identity() );
+            assert( ( A * Ainv ).is_numerically_identity() );
         }
     }
 
@@ -462,19 +551,29 @@ int main( int argc, char *argv[] )
                 const int dim = t;
                 DenseMatrix Q(dim,dim), R(dim,dim);
                 QRFactorization( A, Q, R );
-                LOG << "Determinant (QR): " << UpperTriangularDeterminant(R) << nl;
+                Float detR = UpperTriangularDeterminant(R); Float detQ = Determinant(Q);
+                LOG << "Determinant (QR): " << detR << nl;
+                Assert( is_numerically_close( detQ, 1. ) or is_numerically_close( detQ, -1. ));
+                Assert( is_numerically_close( det, detQ * detR ) );
+
             }
             
-            // LOG << CofactorMatrix( A ) << nl;
-            // LOG << Inverse( A ) << nl;
-            // LOG << A * Inverse( A ) << nl;
-            // LOG << Inverse( A ) * A << nl;
+            const auto Acof = CofactorMatrix( A );
+            const auto Ainv = Inverse( A );
+
+            LOG << Acof << nl;
+            LOG << Ainv << nl;
+            LOG << A * Ainv << nl;
+            LOG << Ainv * A << nl;
+
+            assert( ( Ainv * A ).is_numerically_identity() );
+            assert( ( A * Ainv ).is_numerically_identity() );
         }
     }
     
     
     {
-        LOG << "12. Compare Determinats of random ill-conditioned matrices" << nl;
+        LOG << "12. Compare Determinats of random ill-conditioned 2x2 matrices" << nl;
         for( int t = 3; t < 5; t++ )
         {
             
@@ -500,13 +599,22 @@ int main( int argc, char *argv[] )
                 const int dim = 2;
                 DenseMatrix Q(dim,dim), R(dim,dim);
                 QRFactorization( A, Q, R );
-                LOG << "Determinant (QR): " << UpperTriangularDeterminant(R) << nl;
+                Float detR = UpperTriangularDeterminant(R); Float detQ = Determinant(Q);
+                LOG << "Determinant (QR): " << detR << nl;
+                Assert( is_numerically_close( detQ, 1. ) or is_numerically_close( detQ, -1. ));
+                Assert( is_numerically_close( det, detQ * detR ) );
             }
             
-            LOG << CofactorMatrix( A ) << nl;
-            LOG << Inverse( A ) << nl;
-            LOG << A * Inverse( A ) << nl;
-            LOG << Inverse( A ) * A << nl;
+            const auto Acof = CofactorMatrix( A );
+            const auto Ainv = Inverse( A );
+
+            LOG << Acof << nl;
+            LOG << Ainv << nl;
+            LOG << A * Ainv << nl;
+            LOG << Ainv * A << nl;
+
+            assert( ( Ainv * A ).is_numerically_identity( 1e-7 ), Ainv * A );
+            assert( ( A * Ainv ).is_numerically_identity( 1e-7 ), A * Ainv );
         }
     }
     
@@ -545,13 +653,22 @@ int main( int argc, char *argv[] )
                 const int dim = 2;
                 DenseMatrix Q(dim,dim), R(dim,dim);
                 QRFactorization( A, Q, R );
-                LOG << "Determinant (QR): " << UpperTriangularDeterminant(R) << nl;
+                Float detR = UpperTriangularDeterminant(R); Float detQ = Determinant(Q);
+                LOG << "Determinant (QR): " << detR << nl;
+                Assert( is_numerically_close( detQ, 1. ) or is_numerically_close( detQ, -1. ));
+                Assert( is_numerically_close( det, detQ * detR ) );
             }
             
-            LOG << CofactorMatrix( A ) << nl;
-            LOG << Inverse( A ) << nl;
-            LOG << A * Inverse( A ) << nl;
-            LOG << Inverse( A ) * A << nl;
+            const auto Acof = CofactorMatrix( A );
+            const auto Ainv = Inverse( A );
+
+            LOG << Acof << nl;
+            LOG << Ainv << nl;
+            LOG << A * Ainv << nl;
+            LOG << Ainv * A << nl;
+
+            assert( ( Ainv * A ).is_numerically_identity() );
+            assert( ( A * Ainv ).is_numerically_identity() );
         }
     }
     

@@ -9,6 +9,7 @@ int main( int argc, char *argv[] )
     LOG << "Unit Test for SparseMatrix" << nl;
 
     {
+        LOG << "1. Action of Identity Matrix" << nl;
         const int dim = 5;
         
         SparseMatrix M( dim, dim );
@@ -16,6 +17,7 @@ int main( int argc, char *argv[] )
         for( int i = 0; i < dim; i++ ) M.appendentry( i, i, 1. );
         
         FloatVector vec( dim, 1.23 );
+        for( int i = 0; i < dim; i++ ) vec[i] = i * 1.2345;
 
         auto Mvec = M * vec;
 

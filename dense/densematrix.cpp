@@ -910,6 +910,19 @@ bool DenseMatrix::is_numerically_small( Float threshold ) const
     return this->sumnorm() < threshold;
 }
 
+bool DenseMatrix::is_numerically_identity( Float threshold ) const
+{
+    //Float sum = 0.;
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimin();  c++ )
+    {
+        if ( r == c and absolute( get(r,c) - 1.0 ) >= threshold ) return false;
+
+        if ( r != c and absolute( get(r,c) ) >= threshold ) return false;
+    }
+    return true;
+}
+
 
 Float DenseMatrix::norm() const
 {

@@ -11,7 +11,7 @@
 
 DenseMatrix Transpose( const DenseMatrix& ); 
 
-void TransposeInSitu( DenseMatrix& );
+// void TransposeInSitu( DenseMatrix& ); // The interface does not allow changing the dimension of the matrix
 
 DenseMatrix TransposeSquare( const DenseMatrix& ); 
 

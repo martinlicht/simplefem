@@ -221,6 +221,8 @@ class DenseMatrix final
         
         bool is_numerically_small( Float threshold = desired_closeness ) const;
         
+        bool is_numerically_identity( Float threshold = desired_closeness ) const;
+        
         
         Float* raw();
         const Float* raw() const;
