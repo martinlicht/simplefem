@@ -206,13 +206,35 @@ more abundantly throughout the code.
 
 
 
+# TODO: Choose the variant of the determinant. Make manual computation a special case 
 
+# TODO: The finite element matrices shoul allow the case r==0 for volume forms 
 
+# TODO: Solvers should abort if Ar_r or Ad_r is negative ? 
 
+# TODO: Conjugate Residual method: check // rAr = 0.; 
 
+# TODO: Double check Herzog-Soodhalter implementation in systemsparsesolver 
 
+# TODO: parallelize matrix transposition 
 
+# TODO: unit test for LQ factorization 
 
+# TODO: embellish the output of complex operators and other operators with optional flag 
+
+# TODO: mergeelementsinsortedlist should be moved into legacy 
+
+# TODO: Fix output of generate multiindices 
+
+# TODO: make general conceptions about how to handle the output of objects in these modules. 
+
+# TODO: test getdimensionclone/loaddimension for the Coordinates class
+
+Generally, we would like to control the output format by some parameter given to each print function. 
+We can assume that the parameters belong to some enum class defined within a class declaration and are specifcally tailored to each class. 
+They are a purely optional argument for the print method and may be skipped at convenience.
+
+        
 # (LOW) Operators as non-member functions?
 
 Check the classes for member operator functions.
@@ -412,6 +434,86 @@ Should smart pointers be employed throughout the library to make it more robust 
 
 
 # INACTIVE UNTIL FURTHER NOTICE
+
+# (INACTIVE) Some snippet from linear algebra 
+
+// TODO: Cholesky with Crout pattern, and other possible patterns 
+// TODO: Break down condition?
+
+// TODO: Cholesky with Pivoting 
+
+
+ // QR repeated 
+ // LQ repeated 
+
+// void QRFactorizationRepeated( const DenseMatrix& A, DenseMatrix& Q, DenseMatrix& R, unsigned int t );
+// void LQFactorizationRepeated( const DenseMatrix& A, DenseMatrix& Q, DenseMatrix& R, unsigned int t );
+
+
+// // // void QRFactorizationRepeated( const DenseMatrix& A, DenseMatrix& Q, DenseMatrix& R, unsigned int t )
+// // // {
+// // //     if( t == 0 )
+// // //         return;
+// // //     if( t == 1 )
+// // //         QRFactorization( A, Q, R );
+// // //     else {
+// // //         DenseMatrix Qw(Q), Qv(Q);
+// // //         DenseMatrix Rw(R), Rv(R);
+// // //         QRFactorizationRepeated( A, Qw, Rw, t-1 );
+// // //         QRFactorization( Qw, Qv, Rv );
+// // //         Q = Qv;
+// // //         R = Rv * Rw;
+// // //     }
+// // // }
+// // // 
+// // // 
+// // // void LQFactorizationRepeated( const DenseMatrix& A, DenseMatrix& L, DenseMatrix& Q, unsigned int t )
+// // // {
+// // //     unreachable();
+// // //     
+// // //     if( t == 0 )
+// // //         return;
+// // //     if( t == 1 )
+// // //         LQFactorization( A, L, Q );
+// // //     else {
+// // //         DenseMatrix Qw(Q), Qv(Q);
+// // //         DenseMatrix Lw(L), Lv(L);
+// // //         LQFactorizationRepeated( A, Lw, Qw, t-1 );
+// // //         LQFactorization( Qw, Lv, Qv );
+// // //         Q = Qv;
+// // //         L = Lw * Lv;
+// // //     }
+// // // }
+
+
+
+
+# (INACTIVE) mesh.simplicial2D.cpp 
+
+//         if( data_edge_firstparent_triangle[ t_e2 ] == t_old ) {
+//           
+//           data_edge_firstparent_triangle[ t_e2 ] = counter_triangles + ot;
+//           
+//         } else {
+//           
+//           int current_edge = data_vertex_firstparent_edge[ e_front_vertex ];
+//           while( data_edge_nextparents_of_vertices[ current_edge ][ indexof_edge_vertex( current_edge, e_front_vertex ) ] != e )
+//             current_edge = data_edge_nextparents_of_vertices[ current_edge ][ indexof_edge_vertex( current_edge, e_front_vertex ) ];
+//           data_edge_nextparents_of_vertices[ current_edge ][ indexof_edge_vertex( current_edge, e_front_vertex ) ] = counter_edge;
+//           
+//         }
+//       
+//         /* TODO: triangle parents of opposing vertex */
+//         if( data_vertex_firstparent_triangle[ t_v2 ] == t_old ) { 
+//           int nextparent_tri = data_triangle_nextparents_of_vertices[ current_tri ][ 2 ];
+//           data_vertex_firstparent_triangle[ t_v2 ] = counter_edges;
+//         } else {
+//           int current_tri = data_vertex_firstparent_triangle[ t_v2 ];
+//           while( data_triangle_nextparents_of_vertices[ current_tri ][ 2 ] != t_old )
+//             current_tri = data_triangle_nextparents_of_vertices[ current_tri ][ 2 ];
+//           data_triangle_nextparents_of_vertices[ current_tri ][ 2 ] = counter_edge;
+//         }
+
 
 # (INACTIVE) Question: what are best practices to keep the unit tests up to date with the code?
 

@@ -198,7 +198,8 @@ std::vector<IndexMap> generateSigmas( const IndexRange& from, const IndexRange& 
     
     std::vector<IndexMap> ret;
     
-    // assert( to.cardinality() >= from.cardinality() ); // TODO: Handle this warning
+    if( from.isempty() ) 
+        assert( allmappings.size() == 1 ); 
     
     ret.reserve( binomial_integer( to.cardinality(), from.cardinality() ) );
     
@@ -206,8 +207,10 @@ std::vector<IndexMap> generateSigmas( const IndexRange& from, const IndexRange& 
         if( mapping.isstrictlyascending() )
             ret.push_back( mapping );
             
-    for( const auto& sigma : ret )
-        assert( (sigma.check(),true) and sigma.isstrictlyascending() );
+    for( const auto& sigma : ret ) {
+        sigma.check();
+        assert( sigma.isstrictlyascending() );
+    }
     
     if( /* DISABLES CODE */ ( false ) ){ 
         std::mt19937 g( 567891234 );

@@ -24,7 +24,7 @@ inline T* allocate(const T& )
 
 /************************
 ****
-****  Classes for Composition of Operators TODO
+****  Classes for Composition of Operators 
 ****  - instantiates LinearOperator
 ****  
 ************************/

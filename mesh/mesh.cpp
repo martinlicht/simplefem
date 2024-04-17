@@ -554,7 +554,7 @@ Float Mesh::getHeightQuotient( int dim, int cell ) const
 
 Float Mesh::getHeightQuotient( int dim ) const
 {
-    assert( 1 <= dim && dim <= getinnerdimension() ); // TODO: What is the height of a vertex?
+    assert( 1 <= dim && dim <= getinnerdimension() ); 
     
     Float height_ratio = 0.;
     for( int s = 0; s < count_simplices(dim); s++ )

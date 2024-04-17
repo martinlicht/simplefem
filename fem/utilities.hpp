@@ -86,26 +86,6 @@ DenseMatrix LagrangePolynomialCoefficients( int n, int r );
 
 
 
-// 
-// The input matrix J is a Jacobian of the transformation which transforms 
-// the [dimin] reference simplex onto a simplex 
-// within [dimout] dimensional ambient space 
-// 
-// We transpose the matrix and prepend a zero row.
-// 
-// If we multiply a vector in standard basis coordinates 
-// we get the same vector in barycentric coordinates, 
-// using only the gradients 1 through n. 
-// Gradient 0 is redundant and thus the zero-th row is 0.
-// 
-// Size of output matrix:
-// [ J.dimin()+1 x J.dimout() ]
-// 
-// TODO: This should be a member of the mesh class rather than a function 
-//       in the FEM module. Should be moved from here.
-
-// DenseMatrix BarycentricProjectionMatrix( const DenseMatrix& J );
-
 
 
 

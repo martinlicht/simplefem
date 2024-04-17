@@ -13,7 +13,7 @@ int main( int argc, char *argv[] )
           
         //     LOG << "Test with two scaling matrices" << nl;
         
-        //     ScalingOperator S1( 5, 3.14159 );
+        //     ScalingOperator S1( 5, Constants::pi );
         //     ScalingOperator S2( 5, 4.6692 );
         //     ScalingOperator S3( 5, Constants::feigenbaum_first );
         //     ScalingOperator S4( 5, Constants::feigenbaum_second );

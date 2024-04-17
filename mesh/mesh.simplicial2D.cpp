@@ -990,8 +990,6 @@ int MeshSimplicial2D::count_vertices() const
 
 
 
-// TODO: Proofread the following methods 
-
 /* subsimplex relation of triangles and edges */
 
 bool MeshSimplicial2D::contains_triangle_edge( int t, int e ) const
@@ -1098,7 +1096,6 @@ const std::array<int,2> MeshSimplicial2D::get_edge_vertices( int e ) const
 
 
 
-// TODO: Proofread the following methods 
 
 /* triangle parents of a edge */
 
@@ -3412,7 +3409,7 @@ std::string MeshSimplicial2D::outputLinearSVG(
        << " shape-rendering=\"crispEdges\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">"
        << nl;
 
-    // 2. print the defs of the linear gradients // TODO: Debug
+    // 2. print the defs of the linear gradients 
     os << "<defs>" << nl;
     for( int t = 0; t < this->count_triangles(); t++ ) {
       
@@ -3456,7 +3453,6 @@ std::string MeshSimplicial2D::outputLinearSVG(
       std::ostringstream grad1;
       std::ostringstream grad2;
 
-      // TODO: change floating-point number output 
       grad0 << "<linearGradient gradientUnits=\"userSpaceOnUse\" id=\"myshade0_" << t << "\" x1=\"" << render_number(x0) << "\" y1=\"" << render_number(y0) << "\" x2=\"" << render_number(cx0) << "\" y2=\"" << render_number(cy0) << "\" >"
             << "<stop offset=\"0%\" stop-color=\"" << color0 << "\" stop-opacity=\"100%\" />"
             << "<stop offset=\"100%\" stop-color=\"" << color0 << "\" stop-opacity=\"100%\" />"
@@ -3546,26 +3542,3 @@ std::size_t MeshSimplicial2D::memorysize() const
 
 
 
-//         if( data_edge_firstparent_triangle[ t_e2 ] == t_old ) {
-//           
-//           data_edge_firstparent_triangle[ t_e2 ] = counter_triangles + ot;
-//           
-//         } else {
-//           
-//           int current_edge = data_vertex_firstparent_edge[ e_front_vertex ];
-//           while( data_edge_nextparents_of_vertices[ current_edge ][ indexof_edge_vertex( current_edge, e_front_vertex ) ] != e )
-//             current_edge = data_edge_nextparents_of_vertices[ current_edge ][ indexof_edge_vertex( current_edge, e_front_vertex ) ];
-//           data_edge_nextparents_of_vertices[ current_edge ][ indexof_edge_vertex( current_edge, e_front_vertex ) ] = counter_edge;
-//           
-//         }
-//       
-//         /* TODO: triangle parents of opposing vertex */
-//         if( data_vertex_firstparent_triangle[ t_v2 ] == t_old ) { 
-//           int nextparent_tri = data_triangle_nextparents_of_vertices[ current_tri ][ 2 ];
-//           data_vertex_firstparent_triangle[ t_v2 ] = counter_edges;
-//         } else {
-//           int current_tri = data_vertex_firstparent_triangle[ t_v2 ];
-//           while( data_triangle_nextparents_of_vertices[ current_tri ][ 2 ] != t_old )
-//             current_tri = data_triangle_nextparents_of_vertices[ current_tri ][ 2 ];
-//           data_triangle_nextparents_of_vertices[ current_tri ][ 2 ] = counter_edge;
-//         }

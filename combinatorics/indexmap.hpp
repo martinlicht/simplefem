@@ -76,15 +76,7 @@ class IndexMap
         bool isstrictlyascending() const;
         
         
-        // TODO
-        // This interface looks like a std::vector 
-        // but it should really be a mapping.
-        // What's more, the return of references 
-        // may break the codomain, so to speak.
         
-        // As a solution, the element access should only be const 
-        // so it does not break the encapsulation of the class
-        // and there should be explicit getter/setter methods
         
         int& at( int i ) &;
         

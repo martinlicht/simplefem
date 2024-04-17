@@ -221,7 +221,7 @@ void DiagonalOperator::check() const
 
 std::string DiagonalOperator::text() const 
 {
-    return text( false ); // TODO use embellish...
+    return text( false ); 
 }
 
 std::string DiagonalOperator::text( const bool embellish ) const 

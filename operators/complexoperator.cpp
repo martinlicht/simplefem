@@ -49,7 +49,7 @@ void ComplexOperator::check() const
 
 std::string ComplexOperator::text() const 
 {
-    return text( false ); // TODO use embellish...
+    return text( false ); 
 }
 
 std::string ComplexOperator::text( const bool embellish ) const 

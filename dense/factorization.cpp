@@ -241,9 +241,6 @@ void LQFactorization( const DenseMatrix& A, DenseMatrix& L, DenseMatrix& Q )
     L.check();
     Q.check();
     
-    // TODO: check algorithm
-    // unreachable();
-    
     assert( A.getdimout() == L.getdimout() );
     assert( A.getdimin()  == Q.getdimin()  ); 
     assert( Q.getdimout() == L.getdimin() );
@@ -295,43 +292,6 @@ FloatVector QRIteration( DenseMatrix A, int repetitions )
 
     return A.getDiagonal();
 }
-
-// // // void QRFactorizationRepeated( const DenseMatrix& A, DenseMatrix& Q, DenseMatrix& R, unsigned int t )
-// // // {
-// // //     if( t == 0 )
-// // //         return;
-// // //     if( t == 1 )
-// // //         QRFactorization( A, Q, R );
-// // //     else {
-// // //         DenseMatrix Qw(Q), Qv(Q);
-// // //         DenseMatrix Rw(R), Rv(R);
-// // //         QRFactorizationRepeated( A, Qw, Rw, t-1 );
-// // //         QRFactorization( Qw, Qv, Rv );
-// // //         Q = Qv;
-// // //         R = Rv * Rw;
-// // //     }
-// // // }
-// // // 
-// // // 
-// // // void LQFactorizationRepeated( const DenseMatrix& A, DenseMatrix& L, DenseMatrix& Q, unsigned int t )
-// // // {
-// // //     unreachable();
-// // //     
-// // //     if( t == 0 )
-// // //         return;
-// // //     if( t == 1 )
-// // //         LQFactorization( A, L, Q );
-// // //     else {
-// // //         DenseMatrix Qw(Q), Qv(Q);
-// // //         DenseMatrix Lw(L), Lv(L);
-// // //         LQFactorizationRepeated( A, Lw, Qw, t-1 );
-// // //         LQFactorization( Qw, Lv, Qv );
-// // //         Q = Qv;
-// // //         L = Lw * Lv;
-// // //     }
-// // // }
-
-
 
 
 

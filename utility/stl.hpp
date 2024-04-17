@@ -79,8 +79,6 @@ inline int find_index( const std::vector<T>& vec, const T& t )
 /*            merge two sorted STL lists              */
 /******************************************************/
 
-// TODO: Move into legacy
-
 // template<typename T>
 // inline void mergeelementsinsortedlist
 // ( std::list<T>& L, 

@@ -447,16 +447,14 @@ inline MeshSimplicial2D RhombicAnnulus2D()
 
 
 
-// TODO: fix the argument names and clean up
-
-inline MeshSimplicial2D Halo( int K = 1, int L = 3 )
+inline MeshSimplicial2D Halo( int Levels = 1, int Division = 3 )
 {
-    assert( K >= 1 );
-    assert( L >= 3 );
+    assert( Levels >= 1 );
+    assert( Division >= 3 );
     
-    int num_vertices = L * (K+1);
+    int num_vertices = Division * (Levels+1);
     
-    int num_triangles = 2 * L * K;
+    int num_triangles = 2 * Division * Levels;
     
     
     
@@ -465,11 +463,11 @@ inline MeshSimplicial2D Halo( int K = 1, int L = 3 )
     std::vector<Float> coords;
     coords.reserve( 3 * num_vertices );
     
-    for( int k = 0; k <= K; k++ )
-    for( int l = 0; l < L; l++ ) {
-            coords.push_back( std::sin( 2 * 3.14159 * l / (Float)L ) );
-            coords.push_back( std::cos( 2 * 3.14159 * l / (Float)L ) );
-            coords.push_back( 0.0 + k / (Float) K );
+    for( int level    = 0; level    <= Levels;   level++    )
+    for( int division = 0; division <  Division; division++ ) {
+            coords.push_back( std::sin( 2 * Constants::pi * division / (Float)Division ) );
+            coords.push_back( std::cos( 2 * Constants::pi * division / (Float)Division ) );
+            coords.push_back( 0.0 + level / (Float) Levels );
     }
     
     assert( coords.size() == 3 * num_vertices );
@@ -477,20 +475,20 @@ inline MeshSimplicial2D Halo( int K = 1, int L = 3 )
     std::vector<std::array<int,3>> tris;
     tris.reserve( num_triangles );
     
-    for( int k = 0; k < K; k++ ) 
-    for( int l = 0; l < L; l++ )
+    for( int level = 0; level < Levels; level++ ) 
+    for( int division = 0; division < Division; division++ )
     {
         
         tris.push_back( { 
-            (k+0)*L + (l    ) % L,
-            (k+1)*L + (l    ) % L, 
-            (k+1)*L + (l + 1) % L
+            (level+0)*Division + (division    ) % Division,
+            (level+1)*Division + (division    ) % Division, 
+            (level+1)*Division + (division + 1) % Division
             } );
         
         tris.push_back( { 
-            (k+0)*L + (l    ) % L, 
-            (k+0)*L + (l + 1) % L,
-            (k+1)*L + (l + 1) % L
+            (level+0)*Division + (division    ) % Division, 
+            (level+0)*Division + (division + 1) % Division,
+            (level+1)*Division + (division + 1) % Division
             } );
                 
     }
@@ -564,8 +562,8 @@ inline MeshSimplicial2D UnitDisk( int L = 1 )
         
         for( int a = 0; a < N; a++ )
         {
-            coords.push_back( radius * std::cos( 2 * 3.14159 * a / (Float)N ) );
-            coords.push_back( radius * std::sin( 2 * 3.14159 * a / (Float)N ) );
+            coords.push_back( radius * std::cos( 2 * Constants::pi * a / (Float)N ) );
+            coords.push_back( radius * std::sin( 2 * Constants::pi * a / (Float)N ) );
         }
     }
     
@@ -666,7 +664,7 @@ inline MeshSimplicial2D Annulus( int Linner, int Louter = 1 )
     
     std::vector<Float> Rs(Louter);
     for( int l = 0; l < Linner; l++ ) Rs[l] = 1.;
-    for( int l = Linner; l < Louter; l++ ) Rs[l] = Rs[l-1] + 1.5 * 2 * 3.14159 * Rs[l-1] / ( 3. * (1<<(l)) );
+    for( int l = Linner; l < Louter; l++ ) Rs[l] = Rs[l-1] + 1.5 * 2 * Constants::pi * Rs[l-1] / ( 3. * (1<<(l)) );
     
     Float Rmax = Rs[0];
     for( const Float R : Rs ) if( Rmax < R ) Rmax = R; // *std::max_element(Rs.begin(),Rs.end());
@@ -683,8 +681,8 @@ inline MeshSimplicial2D Annulus( int Linner, int Louter = 1 )
         
         for( int a = 0; a < N; a++ )
         {
-            coords.push_back( radius * std::cos( 2 * 3.14159 * a / (Float)N ) );
-            coords.push_back( radius * std::sin( 2 * 3.14159 * a / (Float)N ) );
+            coords.push_back( radius * std::cos( 2 * Constants::pi * a / (Float)N ) );
+            coords.push_back( radius * std::sin( 2 * Constants::pi * a / (Float)N ) );
         }
     }
     

@@ -48,21 +48,6 @@ Float bumpfunction_dev( Float x )
 
 Float bumpfunction_devdev( Float x )
 {
-    
-    
-//     const Float t1 = std::exp( -1. / ( 1. - x*x ) );
-//     const Float t2 = std::exp( 1 - x*x );
-// 
-//     if( x*x < 1 )
-//         return
-//             t1 * ( 4*x*x*pow(t2,-4.) - 2*pow(t2,-2.) - 8*x*x*pow(t2,-3.) );
-//     else
-//         return
-//             0.;
-                            
-
-    
-    
     const Float delta = x*x - 1.;
     
     const Float delta_sq = delta    * delta;
@@ -84,8 +69,6 @@ Float bumpfunction_devdev( Float x )
 
 Float bumpfunction_devdevdev( Float x )
 {
-    // TODO: compute the correct value     
-
     const Float x2 = x*x;
     const Float x4 = x2 * x2;
     const Float x6 = x4 * x2;
@@ -170,8 +153,6 @@ Float blob_devdev( Float x )
 
 Float blob_devdevdev( Float x )
 {
-    // TODO: compute the correct value     
-
     const Float x2 = x*x;
     const Float x3 = x2*x;
     const Float x4 = x2 * x2;

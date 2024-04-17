@@ -33,7 +33,7 @@ int main( int argc, char *argv[] )
                 LOG << vmi.size() << nl;
                 
                 for( const auto& mi : vmi ) 
-                    LOG << mi << space << mi.absolute() << nl; // TODO: fix the output of generateMultiIndices
+                    LOG << mi << space << mi.absolute() << nl;
                 
                 Assert( vmi.size() == 0 );
                 

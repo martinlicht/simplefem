@@ -121,12 +121,6 @@ class IndexRange final
         
         inline ConstIterator end()   const { return ConstIterator(minimum,minimum,maximum,true ); }
         
-        /* enum class */
-        
-        // TODO: make general conceptions about how to handle the output of objects in these modules. 
-        // Generally, we would like to control the output format by some parameter given to each print function. 
-        // We can assume that the parameters belong to some enum class defined within a class declaration and are specifcally tailored to each class. 
-        // They are a purely optional argument for the print method and may be skipped at convenience.
         
     private:
 

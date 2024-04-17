@@ -159,7 +159,7 @@ void Coordinates::loadvector( int n, const FloatVector& input, Float scale )
 
 /* get/set coordinates as vectors  */
         
-FloatVector Coordinates::getdimensionclone( int d, Float s ) const // TODO: Test these routines 
+FloatVector Coordinates::getdimensionclone( int d, Float s ) const 
 {
     assert( 0 <= d && d < dimension );
     FloatVector ret( number );
