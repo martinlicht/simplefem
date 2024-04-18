@@ -6,7 +6,7 @@
 #include "../../dense/densematrix.hpp"
 #include "../../dense/factorization.hpp"
 #include "../../mesh/coordinates.hpp"
-#include "../../fem/local.polynomialmassmatrix.hpp"
+#include "../../fem/polynomialmassmatrix.hpp"
 #include "../../fem/utilities.hpp"
 
 

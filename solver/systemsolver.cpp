@@ -107,35 +107,40 @@ int BlockHerzogSoodhalterMethod(
         
         if( restart_condition or ( residual_seems_small and cppsys_restart_before_finish ) ) UNLIKELY {
             
+            // 1
             v0_A.zero(); w0_A.zero(); w1_A.zero();
             v0_C.zero(); w0_C.zero(); w1_C.zero();
 
+            // 2 
             v1_A = b_A - A * x_A - Bt * x_C;
             z_A = PAinv * v1_A;
             v1_C = b_C - B * x_A - C  * x_C;
             z_C = PCinv * v1_C;
             
+            // 3
             gamma = sqrt( v1_A * z_A + v1_C * z_C );
+            
+            assert( gamma >= 0. );
             
             v1_A /= gamma;
             v1_C /= gamma;
             z_A /= gamma;
             z_C /= gamma;
             
+            // 4 -- 5 
             Float psi_A = z_A * v1_A; 
             Float psi_C = z_C * v1_C;
             mu_A = psi_A; 
             mu_C = psi_C; 
             
-            
+            // 6 
             m_A = v1_A;
             m_C = v1_C;
 
+            // 7 
             eta = gamma; 
             eta_A = gamma * sqrt( psi_A );
             eta_C = gamma * sqrt( psi_C );
-            
-            assert( gamma >= 0. );
             
             s0 = s1 = 0;
             c0 = c1 = 1;
@@ -155,23 +160,29 @@ int BlockHerzogSoodhalterMethod(
             
         {
             
-
+            // 8 -- 9
             p_A = A * z_A + Bt * z_C;
             p_C = B * z_A + C  * z_C;
  
             Float delta = z_A * p_A + z_C * p_C;
 
+            // 10 
             vn_A = p_A - delta * v1_A - gamma * v0_A;
             vn_C = p_C - delta * v1_C - gamma * v0_C;
             
+            // 11 
             zn_A = PAinv * vn_A;
             zn_C = PCinv * vn_C;
 
+            // 12 
             Float gamma_n = std::sqrt( zn_A * vn_A + zn_C * vn_C );
- 
+            Assert( gamma_n > 0., gamma_n );
+
+            // 13 -- 14
             vn_A /= gamma_n; zn_A /= gamma_n;
             vn_C /= gamma_n; zn_C /= gamma_n;
 
+            // 15 -- 18
             Float alpha_0 = c1 * delta - c0 * s1 * gamma;
             assert( alpha_0 * alpha_0 + gamma_n * gamma_n > 0. );
             Float alpha_1 = std::sqrt( alpha_0 * alpha_0 + gamma_n * gamma_n );
@@ -180,32 +191,40 @@ int BlockHerzogSoodhalterMethod(
  
             assert( alpha_1 > 0. );
 
+            // 19 
             Float cn = alpha_0 / alpha_1;
             Float sn = gamma_n / alpha_1;
             
-            
+            // 20 -- 21 
             Float theta_A = m_A * zn_A;
             Float theta_C = m_C * zn_C; 
             
             Float psi_A = zn_A * vn_A;
             Float psi_C = zn_C * vn_C; 
 
+            // 22 
             m_A = - sn * m_A + cn * vn_A;
             m_C = - sn * m_C + cn * vn_C;
 
+            // 23 
             wn_A = ( z_A - alpha_3 * w0_A - alpha_2 * w1_A ) / alpha_1;
             wn_C = ( z_C - alpha_3 * w0_C - alpha_2 * w1_C ) / alpha_1;
 
+            // 24 
             x_A = x_A + cn * eta * wn_A;
             x_C = x_C + cn * eta * wn_C;
  
+            // 25 -- 26
             mu_A = sn * sn * mu_A - 2 * sn * cn * theta_A + cn * cn * psi_A;
             mu_C = sn * sn * mu_C - 2 * sn * cn * theta_C + cn * cn * psi_C;
 
+            // 27 -- 28 
             eta   = -sn * eta;
             eta_A = eta * sqrt( psi_A );
             eta_C = eta * sqrt( psi_C );
 
+
+            // update 
             v0_A = v1_A; v1_A = vn_A;
             v0_C = v1_C; v1_C = vn_C;
             w0_A = w1_A; w1_A = wn_A;

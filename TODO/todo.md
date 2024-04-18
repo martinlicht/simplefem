@@ -45,6 +45,11 @@ requires regular grinding in order to get it done.
 
 
 
+# (HIGH) Semantics for matrix vector multiplication 
+
+Specify which operation should be the most basic one and stick with that one. 
+
+
 # (HIGH) Floating point exact comparisons ersetzen durch Funktion mit expliziter semantik
 # (HIGH) Floating-point comparisons
 
@@ -78,13 +83,14 @@ Understand the floating-point comparison functions and import them into this pro
 - [ ] VTK: different outputs 
 - [x] Combinatorics: make things independent of screen output 
 - [ ] Operators: make things independent of screen output 
-- [ ] Dense: test everything thoroughly, even up to smaller rounding errors 
+- [x] Dense: test everything thoroughly, even up to smaller rounding errors 
 - [ ] Sparse: check that composition does not change the outcome 
 - [ ] Solver: meaningful convergence tests?
 - [ ] Clean up the nullspace computation in the solver component.
 - [ ] include visualization script 
 - [ ] Unit tests must check convergence rates 
 - [ ] Streamline the main loop in the different solverfem tests to reduce code redundancy
+- [ ] mixedsolver should test each variant of Hodge-CRM
 
 # (HIGH) fem/diffelev3D
 # (HIGH) the mass matrix suffers from rounding errors. 
@@ -113,11 +119,11 @@ Can we canonicalize everything things already in the matrix assembly?
 # (HIGH) clean up DenseMatrix subsystem 
 
 The following modules look reasonable
-- [ ] simple solvers 
-- [ ] general solvers (Gauss-Jordan, QR, Cholesky -> inverse )
-- [ ] simple scalar functions
-- [ ] complicated operations (transpose,determinant,tensorproduct)
+- [x] simple scalar functions into the class
 - [x] readwrite is never used: retire 
+- [x] factorizations (Gauss-Jordan, QR, Cholesky -> inverse )
+- [x] complicated operations (transpose,determinant,tensorproduct)
+- [x] simple solvers 
 
 # (HIGH) Dense Matrix rewrite, part 2
 

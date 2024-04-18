@@ -40,37 +40,39 @@ DenseMatrix TransposeSquare( const DenseMatrix& src )
     return Transpose( src );
 }
 
-void TransposeInSitu( DenseMatrix& src )
-{
-    src.check();
-    const int numrows = src.getdimout();
-    const int numcols = src.getdimin();
-
-    for( int start = 0; start < numcols * numrows; ++start )
-    {
-
-        int next = start;
-        int i = 0;
-
-        do {
-            ++i;
-            next = (next % numrows) * numcols + next / numrows;
-        } while ( next > start );
-
-        if( next >= start && i != 1 )
-        {
-            const Float tmp = src( start / numcols, start % numcols );
-            next = start;
-            do {
-                i = (next % numrows) * numcols + next / numrows;
-                src( next / numcols, next % numcols ) = ( i == start ) ? tmp : src( i / numcols, i % numcols );
-                next = i;
-            } while( next > start );
-        }
-
-    }
-  
-}
+// void TransposeInSitu( DenseMatrix& src )
+// {
+//     src.check();
+//     const int numrows = src.getdimout();
+//     const int numcols = src.getdimin();
+// 
+//     for( int start = 0; start < numcols * numrows; ++start )
+//     {
+// 
+//         int next = start;
+//         int i = 0;
+// 
+//         do {
+//             ++i;
+//             next = (next % numrows) * numcols + next / numrows;
+//         } while ( next > start );
+// 
+//         if( next >= start && i != 1 )
+//         {
+//             const Float tmp = src( start / numcols, start % numcols );
+//             next = start;
+//             do {
+//                 i = (next % numrows) * numcols + next / numrows;
+//                 src( next / numcols, next % numcols ) = ( i == start ) ? tmp : src( i / numcols, i % numcols );
+//                 next = i;
+//             } while( next > start );
+//         }
+// 
+//     }
+// 
+//     // We cannot change the dimensions of the matrix `src`
+// 
+// }
 
 void TransposeSquareInSitu( DenseMatrix& src ) 
 {
@@ -91,19 +93,19 @@ void TransposeSquareInSitu( DenseMatrix& src )
 
 
 
-DenseMatrix skip_row( int r, const DenseMatrix& mat )
-{
-    assert( 0 <= r and r < mat.getdimout() );
-    DenseMatrix ret( mat.getdimout()-1, mat.getdimin() );
-    for( int i = 0;   i < r;               i++ ) ret.setrow( i,   mat.getrow(i) );
-    for( int i = r+1; i < mat.getdimout(); i++ ) ret.setrow( i-1, mat.getrow(i) );
-    return ret; 
-}
+// DenseMatrix skip_row( int r, const DenseMatrix& mat )
+// {
+//     assert( 0 <= r and r < mat.getdimout() );
+//     DenseMatrix ret( mat.getdimout()-1, mat.getdimin() );
+//     for( int i = 0;   i < r;               i++ ) ret.setrow( i,   mat.getrow(i) );
+//     for( int i = r+1; i < mat.getdimout(); i++ ) ret.setrow( i-1, mat.getrow(i) );
+//     return ret; 
+// }
 
-DenseMatrix skip_column( int c, const DenseMatrix& mat )
-{
-    return Transpose( skip_row(c, Transpose(mat) ) );
-}
+// DenseMatrix skip_column( int c, const DenseMatrix& mat )
+// {
+//     return Transpose( skip_row(c, Transpose(mat) ) );
+// }
 
 
 

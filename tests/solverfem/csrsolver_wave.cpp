@@ -14,7 +14,6 @@
 #include "../../solver/inv.hpp"
 #include "../../solver/systemsparsesolver.hpp"
 #include "../../solver/systemsolver.hpp"
-#include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.elevation.hpp"

@@ -7,7 +7,6 @@
 #include "../../sparse/matcsr.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
-#include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.elevation.hpp"
@@ -129,13 +128,11 @@ int main( int argc, char *argv[] )
                 errors[k][l-l_min][r-r_min][r_plus] = std::sqrt( std::fabs( commutator_error_mass ) );
 
 
-                if(k==0 and false)
-                {
-
-                    LOG << massmatrix << nl;
-                    LOG << ( canon & massmatrix & canon ) << nl;
-
-                }
+                // if(k==0 and false)
+                // {
+                //     LOG << massmatrix << nl;
+                //     LOG << ( canon & massmatrix & canon ) << nl;
+                // }
             
                 
                 
