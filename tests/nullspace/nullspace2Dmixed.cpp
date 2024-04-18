@@ -22,7 +22,6 @@
 // #include "../../solver/crm.hpp"
 // #include "../../solver/pcrm.hpp"
 // #include "../../solver/minres.hpp"
-#include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.sullivanincl.hpp"

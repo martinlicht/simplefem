@@ -46,6 +46,11 @@ requires regular grinding in order to get it done.
 
 # (HIGH) Compare different Herzog-Soodhalter methods 
 
+# (HIGH) Semantics for matrix vector multiplication 
+
+Specify which operation should be the most basic one and stick with that one. 
+
+
 # (HIGH) Floating point exact comparisons ersetzen durch Funktion mit expliziter semantik
 # (HIGH) Floating-point comparisons
 
@@ -86,6 +91,7 @@ Understand the floating-point comparison functions and import them into this pro
 - [ ] include visualization script 
 - [ ] Unit tests must check convergence rates 
 - [ ] Streamline the main loop in the different solverfem tests to reduce code redundancy
+- [ ] mixedsolver should test each variant of Hodge-CRM
 
 # (HIGH) fem/diffelev3D
 # (HIGH) the mass matrix suffers from rounding errors. 

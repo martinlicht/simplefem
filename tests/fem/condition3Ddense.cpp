@@ -8,7 +8,6 @@
 #include "../../dense/factorization.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples3D.hpp"
-#include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.sullivanincl.hpp"

@@ -12,7 +12,6 @@
 #include "../../solver/inv.hpp"
 #include "../../solver/systemsparsesolver.hpp"
 #include "../../solver/systemsolver.hpp"
-#include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.elevation.hpp"
@@ -116,11 +115,11 @@ int main( int argc, char *argv[] )
             contable_res.display_convergence_rates   = false;
             
             bool do_crmcsr = true;
-            bool do_crmcpp = false; //true;
-            bool do_herzogblock = false; //true;
-            bool do_minresblock = false; // does not work well
+            bool do_crmcpp = true; 
+            bool do_herzogblock = true; 
+            bool do_minresblock = false; // comparable to Herzog-Soodhalter 
             bool do_systemherzog = true;
-            bool do_sparseherzog = false;
+            bool do_sparseherzog = true;
             
             if( do_crmcsr )       { contable_sigma << "CRMcsr"; contable_u << "CRMcsr"; contable_du << "CRMcsr"; contable_iter << "CRMcsr"; contable_time << "CRMcsr"; contable_res << "CRMcsr"; } 
             if( do_crmcpp )       { contable_sigma << "CRMcpp"; contable_u << "CRMcpp"; contable_du << "CRMcpp"; contable_iter << "CRMcpp"; contable_time << "CRMcpp"; contable_res << "CRMcpp"; } 
@@ -226,6 +225,8 @@ int main( int argc, char *argv[] )
                         for( int k = 0; k <= 5; k++ )
                         {
 
+                            sol.zero();
+                            
                             Float runtime = -1.;
                             int iteration_count = -1;
 
@@ -236,7 +237,6 @@ int main( int argc, char *argv[] )
                             if( k == 4 and not do_systemherzog ) continue;
                             if( k == 5 and not do_sparseherzog ) continue;
                             
-
                             if( k == 0 and do_crmcsr )
                             {
                                 sol.zero();
@@ -290,6 +290,8 @@ int main( int argc, char *argv[] )
 
                             if( k == 2 and do_herzogblock )
                             {
+                                sol.zero();
+                                
                                 auto X = Block2x2Operator( A.getdimout() + B.getdimout(), A.getdimin() + Bt.getdimin(), -A, Bt, B, C );
 
                                 FloatVector sol_whole( A.getdimin()  + Bt.getdimin(),  0. );
@@ -318,6 +320,8 @@ int main( int argc, char *argv[] )
 
                             if( k == 3 and do_minresblock )
                             {   
+                                sol.zero();
+                                
                                 auto X = Block2x2Operator( A.getdimout() + B.getdimout(), A.getdimin() + Bt.getdimin(), -A, Bt, B, C );
 
                                 FloatVector sol_whole( A.getdimin()  + Bt.getdimin(),  0. );
@@ -403,8 +407,10 @@ int main( int argc, char *argv[] )
                                     C.getA(),    C.getC(),    C.getV(),
                                     desired_precision,
                                     1,
-                                    nullptr, nullptr, nullptr,
-                                    nullptr, nullptr, nullptr,
+                                    // nullptr, nullptr, nullptr,
+                                    // nullptr, nullptr, nullptr,
+                                    PA.getA(), PA.getC(), PA.getV(),
+                                    PC.getA(), PC.getC(), PC.getV(),
                                     desired_precision, 
                                     1
                                 );
@@ -438,7 +444,7 @@ int main( int argc, char *argv[] )
                             contable_u     << errornorm_sol;
                             contable_du    << errornorm_curl;
                             contable_res   << residualnorm;
-                            contable_iter  << iteration_count / static_cast<Float>( SystemMatrix.getdimin() );
+                            contable_iter  << iteration_count / static_cast<Float>( A.getdimin() + C.getdimin() );
                             contable_time  << runtime;
                             
                         }

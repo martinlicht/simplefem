@@ -5,7 +5,6 @@
 #include "../../basic.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples3D.hpp"
-#include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.elevation.hpp"
 #include "../../fem/utilities.hpp"

@@ -1,6 +1,6 @@
 #include "indexfunctions.cpp"
 #include "utilities.cpp"
-#include "local.polynomialmassmatrix.cpp"
+#include "polynomialmassmatrix.cpp"
 #include "lagrangematrices.cpp"
 #include "global.diffmatrix.cpp"
 #include "global.massmatrix.cpp"
