@@ -90,6 +90,7 @@ Understand the floating-point comparison functions and import them into this pro
 - [ ] include visualization script 
 - [ ] Unit tests must check convergence rates 
 - [ ] Streamline the main loop in the different solverfem tests to reduce code redundancy
+- [ ] mixedsolver should test each variant of Hodge-CRM
 
 # (HIGH) fem/diffelev3D
 # (HIGH) the mass matrix suffers from rounding errors. 

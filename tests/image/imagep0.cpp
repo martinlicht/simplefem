@@ -10,7 +10,6 @@
 #include "../../utility/random.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
-#include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/utilities.hpp"
 
 

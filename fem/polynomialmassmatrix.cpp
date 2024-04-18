@@ -8,7 +8,7 @@
 #include "../dense/densematrix.hpp"
 #include "../fem/utilities.hpp"
 
-#include "../fem/local.polynomialmassmatrix.hpp"
+#include "../fem/polynomialmassmatrix.hpp"
 
 
 

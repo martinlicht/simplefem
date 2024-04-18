@@ -12,7 +12,7 @@
 
 #include "../fem/lagrangematrices.hpp"
 #include "../fem/utilities.hpp"
-#include "../fem/local.polynomialmassmatrix.hpp"
+#include "../fem/polynomialmassmatrix.hpp"
 
 
 

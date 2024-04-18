@@ -12,7 +12,6 @@
 #include "../../solver/inv.hpp"
 #include "../../solver/systemsparsesolver.hpp"
 #include "../../solver/systemsolver.hpp"
-#include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.elevation.hpp"
@@ -118,7 +117,7 @@ int main( int argc, char *argv[] )
             bool do_crmcsr = true;
             bool do_crmcpp = true; 
             bool do_herzogblock = true; 
-            bool do_minresblock = false; // does not work well
+            bool do_minresblock = false; // comparable to Herzog-Soodhalter 
             bool do_systemherzog = true;
             bool do_sparseherzog = true;
             

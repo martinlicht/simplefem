@@ -3,7 +3,6 @@
 /**/
 
 #include "../../basic.hpp"
-#include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/utilities.hpp"
 
