@@ -11,8 +11,6 @@ int main( int argc, char *argv[] )
     for( int dim = 0; dim <     10; dim++ )
     for( int t   = 0;   t <= dim+1; t++   )
     {
-        LOG << dim << nl;
-
         DenseMatrix A(dim,dim);
         A.randommatrix();
 

@@ -117,6 +117,8 @@ int BlockHerzogSoodhalterMethod(
             
             gamma = sqrt( v1_A * z_A + v1_C * z_C );
             
+            assert( gamma >= 0. );
+            
             v1_A /= gamma;
             v1_C /= gamma;
             z_A /= gamma;
@@ -134,8 +136,6 @@ int BlockHerzogSoodhalterMethod(
             eta = gamma; 
             eta_A = gamma * sqrt( psi_A );
             eta_C = gamma * sqrt( psi_C );
-            
-            assert( gamma >= 0. );
             
             s0 = s1 = 0;
             c0 = c1 = 1;

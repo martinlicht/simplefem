@@ -201,6 +201,17 @@ int main( int argc, char *argv[] )
                                 auto lowest_rhs = interpol_matrix * interpol_rhs;
                                 vtk.writeCellVectorData_barycentricgradients( lowest_rhs,   "righthandside" );
                                 vtk.writeCellVectorData_barycentricgradients( lowest_sol,   "solution_calculation" );
+
+                                auto constant_field = [](const FloatVector& vec) -> FloatVector{
+                                    assert( vec.getdimension() == 2 );
+                                    return FloatVector({ 1., 1. });
+                                };
+                                
+                                auto interpolated_constant_r = Interpolation( M, M.getinnerdimension(), 1, r, constant_field );
+                                auto interpolated_constant_0 = Interpolation( M, M.getinnerdimension(), 1, 0, constant_field );
+
+                                vtk.writeCellVectorData_barycentricgradients( interpol_matrix * interpolated_constant_r, "constant_r" );
+                                vtk.writeCellVectorData_barycentricgradients(                   interpolated_constant_0, "constant_0" );
                             }
 
                             {

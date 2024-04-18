@@ -44,6 +44,7 @@ requires regular grinding in order to get it done.
 
 
 
+# (HIGH) Compare different Herzog-Soodhalter methods 
 
 # (HIGH) Floating point exact comparisons ersetzen durch Funktion mit expliziter semantik
 # (HIGH) Floating-point comparisons
@@ -72,16 +73,16 @@ Understand the floating-point comparison functions and import them into this pro
       For example, the Lagrange test should reflect simple things and additional overhead
 - [x] Clean up the test for the nullspace computation. 
 - [x] FEM tests check assertions more thoroughly
-- [ ] ~\writing\project.simplefem :      changes all copied 
-- [ ] ~\writing\project.simplefem.test : changes all copied 
+- [x] ~\writing\project.simplefem :      changes all copied 
+- [x] ~\writing\project.simplefem.test : changes all copied 
 - [x] Mesh: improve consistency. Include orientation tests in usual tests to save compile time 
-- [ ] VTK: different outputs 
+- [x] VTK: different outputs 
 - [x] Combinatorics: make things independent of screen output 
-- [ ] Operators: make things independent of screen output 
 - [x] Dense: test everything thoroughly, even up to smaller rounding errors 
+- [x] Operators: make things independent of screen output 
 - [ ] Sparse: check that composition does not change the outcome 
 - [ ] Solver: meaningful convergence tests?
-- [ ] Clean up the nullspace computation in the solver component.
+- [ ] Clean up the nullspace computation in the solver module.
 - [ ] include visualization script 
 - [ ] Unit tests must check convergence rates 
 - [ ] Streamline the main loop in the different solverfem tests to reduce code redundancy
@@ -109,15 +110,6 @@ Can we canonicalize everything things already in the matrix assembly?
 
 - [ ] Summarize: indexfunctions, local.polynomialmassmatrix, utilities -> utilities
 - [ ] Summarize: global functions 
-
-# (HIGH) clean up DenseMatrix subsystem 
-
-The following modules look reasonable
-- [x] simple scalar functions into the class
-- [x] readwrite is never used: retire 
-- [x] factorizations (Gauss-Jordan, QR, Cholesky -> inverse )
-- [x] complicated operations (transpose,determinant,tensorproduct)
-- [x] simple solvers 
 
 # (HIGH) Dense Matrix rewrite, part 2
 
@@ -157,8 +149,8 @@ Based on that:
 # (MEDIUM) Solvers study the size of the RHS
 
 ```
-// the argument is now called `_threshold`
-Float threshold = _threshold;
+    // the argument is now called `_threshold`
+    Float threshold = _threshold;
     Float RHS_NORM_SQUARED = 0.;    
     for( int i = 0; i < N; i++ ) RHS_NORM_SQUARED += b[i]*b[i];
     threshold *= sqrt(RHS_NORM_SQUARED);
@@ -206,25 +198,15 @@ more abundantly throughout the code.
 
 
 
-# TODO: Choose the variant of the determinant. Make manual computation a special case 
-
-# TODO: The finite element matrices shoul allow the case r==0 for volume forms 
-
 # TODO: Solvers should abort if Ar_r or Ad_r is negative ? 
 
 # TODO: Conjugate Residual method: check // rAr = 0.; 
 
 # TODO: Double check Herzog-Soodhalter implementation in systemsparsesolver 
 
-# TODO: parallelize matrix transposition 
-
-# TODO: unit test for LQ factorization 
-
 # TODO: embellish the output of complex operators and other operators with optional flag 
 
 # TODO: mergeelementsinsortedlist should be moved into legacy 
-
-# TODO: Fix output of generate multiindices 
 
 # TODO: make general conceptions about how to handle the output of objects in these modules. 
 
@@ -434,6 +416,8 @@ Should smart pointers be employed throughout the library to make it more robust 
 
 
 # INACTIVE UNTIL FURTHER NOTICE
+
+# (INACTIVE): parallelize matrix transposition 
 
 # (INACTIVE) Some snippet from linear algebra 
 
@@ -725,6 +709,15 @@ unit test layout:
 
 
 # DONE!
+
+# (DONE) clean up DenseMatrix subsystem 
+
+The following modules look reasonable
+- [x] simple scalar functions into the class
+- [x] readwrite is never used: retire 
+- [x] factorizations (Gauss-Jordan, QR, Cholesky -> inverse )
+- [x] complicated operations (transpose,determinant,tensorproduct)
+- [x] simple solvers 
 
 # (DONE) Remove dead code 
 
@@ -1141,5 +1134,14 @@ In file included from ./basic/.all.cpp:3:
 ./basic/basic.cpp:129:13: note: ‘snprintf’ output between 11 and 21 bytes into a destination of size 11
   129 |     snprintf( digits, fulllength, "%*ju", numdigits, (uintmax_t)t );
       |     ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+# (DONE): Choose the variant of the determinant. Make manual computation a special case 
+
+# (DONE): The finite element matrices should allow the case r==0 for volume forms 
+
+# (DONE): unit test for LQ factorization 
+
+# (DONE): Fix output of generate multiindices 
 
 

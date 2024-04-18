@@ -22,7 +22,7 @@ SparseMatrix FEECAFWInclusionMatrix( const Mesh& mesh, int n, int k, int r )
     // check whether the parameters are right 
     assert( n >= 0 && n <= mesh.getinnerdimension() );
     assert( k >= 0 && k <= n );
-    assert( r >= 1 );
+    assert( r >= 1 or k == n ); // NB: we allow r == 0 in case of volume forms 
     
     // generate the list of rhos and multiindices for each dimension
     

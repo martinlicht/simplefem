@@ -331,6 +331,20 @@ class FloatVector
         int dimension;
         Float* pointer;
 
+    public:
+
+        static bool is_equal_to( const FloatVector& vector_left, const FloatVector& vector_right );
+
+        friend inline bool operator==( const FloatVector& vector_left, const FloatVector& vector_right )
+        {
+            return is_equal_to( vector_left, vector_right );
+        }
+
+        friend inline bool operator!=( const FloatVector& vector_left, const FloatVector& vector_right )
+        {
+            return not is_equal_to( vector_left, vector_right );
+        }
+
 };
 
 

@@ -759,6 +759,16 @@ std::size_t FloatVector::memorysize() const
 }
 
 
+bool FloatVector::is_equal_to( const FloatVector& vector_left, const FloatVector& vector_right )
+{
+    assert( vector_left.getdimension() == vector_right.getdimension() );
+    for( int i = 0; i < vector_left.getdimension(); i++ )
+        if( vector_left[i] != vector_right[i] )
+            return false;
+    return true;
+}
+
+        
 
 
 

@@ -96,8 +96,20 @@ int main( int argc, char *argv[] )
         assert( S.NormOperatorL1()  == 11 );
         assert( S.NormOperatorMax() == 10 );
         
-        LOG << "GerschgorinRow:    " << S.GerschgorinRow() << nl;
-        LOG << "GerschgorinColumn: " << S.GerschgorinColumn() << nl;
+        const auto GR = S.GerschgorinRow();
+        const auto GC = S.GerschgorinColumn();
+        LOG << "GerschgorinRow:    " << GR << nl;
+        LOG << "GerschgorinColumn: " << GC << nl;
+
+        assert( GR(0,0) ==  3 and GR(0,1) ==  6 );
+        assert( GR(1,0) == -1 and GR(1,1) ==  3 );
+        assert( GR(2,0) ==  1 and GR(2,1) ==  3 );
+        assert( GR(3,0) ==  0 and GR(3,1) == 10 );
+
+        assert( GC(0,0) ==  3 and GC(0,1) ==  4 );
+        assert( GC(1,0) == -1 and GC(1,1) ==  5 );
+        assert( GC(2,0) ==  1 and GC(2,1) == 10 );
+        assert( GC(3,0) ==  0 and GC(3,1) ==  3 );
         
     }
     
@@ -192,30 +204,32 @@ int main( int argc, char *argv[] )
     
         LOG << "2. Cholesky decomposition" << nl;
         
-        int dim = 3;
-        DenseMatrix A(dim);
-        
-        A.zeromatrix();
-        for( int s = 0; s < dim; s++ )
-        for( int t = 0; t < dim; t++ )
-            A(s,t) = 3 * kronecker(s,t) - kronecker(s,t-1) - kronecker(s,t+1);
-        
-        DenseMatrix L = CholeskyDecomposition( A );
-        
-        LOG << "Original matrix:" << A << nl;
-        
-        LOG << "Factor matrix:" << L << nl;
-        
-        LOG << "Product matrix:" << L * Transpose(L) << nl;
+        for( int dim = 0; dim <= 3; dim++ ) 
+        {
+            DenseMatrix A(dim);
+            
+            A.zeromatrix();
+            for( int s = 0; s < dim; s++ )
+            for( int t = 0; t < dim; t++ )
+                A(s,t) = 3 * kronecker(s,t) - kronecker(s,t-1) - kronecker(s,t+1);
+            
+            DenseMatrix L = CholeskyDecomposition( A );
+            
+            LOG << "Original matrix: " << A << nl;
+            
+            LOG << "Factor matrix:   " << L << nl;
+            
+            LOG << "Product matrix:  " << L * Transpose(L) << nl;
 
-        assert( ( L * Transpose(L) - A ).is_numerically_small() );
+            assert( ( L * Transpose(L) - A ).is_numerically_small() );
+        }
         
     }
     
     {
         LOG << "3. Matrix determinant, inverse, cofactor matrix" << nl;
         
-        for( int dim = 1; dim < 6; dim++ ) 
+        for( int dim = 0; dim < 6; dim++ ) 
         {
             DenseMatrix A = HilbertMatrix( dim );
             
@@ -375,7 +389,7 @@ int main( int argc, char *argv[] )
     {
         LOG << "8. QR and QL Factorization" << nl;
     
-        for( int dim = 1; dim <= 10; dim++ ){
+        for( int dim = 0; dim <= 10; dim++ ){
             
             DenseMatrix A(dim,dim);
         
@@ -526,7 +540,7 @@ int main( int argc, char *argv[] )
     // if(false)
     {
         LOG << "11. Compare Determinats of random orthogonal Matrices" << nl;
-        for( int t = 3; t < 7; t++ )
+        for( int t = 0; t < 7; t++ )
         for( int i = 0; i < 6; i++ )
         {
             
