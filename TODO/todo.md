@@ -114,7 +114,7 @@ Can we canonicalize everything things already in the matrix assembly?
 
 # (HIGH) FEM rewrite 
 
-- [ ] Summarize: indexfunctions, local.polynomialmassmatrix, utilities -> utilities
+- [ ] Summarize: indexfunctions, polynomialmassmatrix, utilities -> utilities
 - [ ] Summarize: global functions 
 
 # (HIGH) Dense Matrix rewrite, part 2

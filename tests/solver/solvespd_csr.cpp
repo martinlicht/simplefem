@@ -52,7 +52,6 @@ int main( int argc, char *argv[] )
             bool do_crm_csr                = false;
             bool do_crm_csrtextbook        = false;
             bool do_minres_csr             = false;
-            bool do_whatever_csr           = false;
             bool do_cgm_diagonal_csr       = false;
             bool do_cgm_ssor_csr           = false;
             bool do_chebyshev_diagonal_csr = false;
@@ -69,7 +68,6 @@ int main( int argc, char *argv[] )
             do_crm_csr                = true;
             do_crm_csrtextbook        = true;
             do_minres_csr             = true;
-            do_whatever_csr           = true;
             do_cgm_diagonal_csr       = true;
             do_cgm_ssor_csr           = true;
             do_chebyshev_diagonal_csr = true;
@@ -90,7 +88,6 @@ int main( int argc, char *argv[] )
             if( do_crm_csr )                contable_sol << "CRMcsr"       ;
             if( do_crm_csrtextbook )        contable_sol << "CRMcsr_tb"    ;
             if( do_minres_csr )             contable_sol << "MINREScsr"    ;
-            if( do_whatever_csr )           contable_sol << "WHATEVER"     ;
             if( do_cgm_diagonal_csr )       contable_sol << "CGMcsr_diag"  ;
             if( do_cgm_ssor_csr )           contable_sol << "CGMcsr_ssor"  ;
             if( do_chebyshev_diagonal_csr ) contable_sol << "Chebyshev_csr";
@@ -109,7 +106,6 @@ int main( int argc, char *argv[] )
             if( do_crm_csr )                contable_res << "CRMcsr"       ;
             if( do_crm_csrtextbook )        contable_res << "CRMcsr_tb"    ;
             if( do_minres_csr )             contable_res << "MINREScsr"    ;
-            if( do_whatever_csr )           contable_res << "WHATEVER"     ;
             if( do_cgm_diagonal_csr )       contable_res << "CGMcsr_diag"  ;
             if( do_cgm_ssor_csr )           contable_res << "CGMcsr_ssor"  ;
             if( do_chebyshev_diagonal_csr ) contable_res << "Chebyshev_csr";
@@ -128,7 +124,6 @@ int main( int argc, char *argv[] )
             if( do_crm_csr )                contable_num << "CRMcsr"       ;
             if( do_crm_csrtextbook )        contable_num << "CRMcsr_tb"    ;
             if( do_minres_csr )             contable_num << "MINREScsr"    ;
-            if( do_whatever_csr )           contable_num << "WHATEVER"     ;
             if( do_cgm_diagonal_csr )       contable_num << "CGMcsr_diag"  ;
             if( do_cgm_ssor_csr )           contable_num << "CGMcsr_ssor"  ;
             if( do_chebyshev_diagonal_csr ) contable_num << "Chebyshev_csr";
@@ -148,7 +143,6 @@ int main( int argc, char *argv[] )
             if( do_crm_csr )                contable_sec << "CRMcsr"       ;
             if( do_crm_csrtextbook )        contable_sec << "CRMcsr_tb"    ;
             if( do_minres_csr )             contable_sec << "MINREScsr"    ;
-            if( do_whatever_csr )           contable_sec << "WHATEVER"     ;
             if( do_cgm_diagonal_csr )       contable_sec << "CGMcsr_diag"  ;
             if( do_cgm_ssor_csr )           contable_sec << "CGMcsr_ssor"  ;
             if( do_chebyshev_diagonal_csr ) contable_sec << "Chebyshev_csr";
@@ -481,39 +475,6 @@ int main( int argc, char *argv[] )
                             timestamp start = timestampnow();
                             int recent_iteration_count =
                             MINRESCSR( 
-                                mysol.getdimension(), 
-                                mysol.raw(), 
-                                rhs.raw(), 
-                                system.getA(), system.getC(), system.getV(),
-                                residual.raw(),
-                                desired_precision,
-                                0
-                            );
-                            timestamp end = timestampnow();
-
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
-                            
-                            auto stat_sol = Float( ( sol - mysol ).norm() );
-                            auto stat_res = Float( ( system * mysol - rhs ).norm() );
-                            auto stat_num = Float( recent_iteration_count )/ (N*N); 
-                            contable_sol << stat_sol;
-                            contable_res << stat_res;
-                            contable_num << stat_num;
-                            contable_sec << Float( end - start );
-                        }
-
-
-                        if( do_whatever_csr )
-                        {
-                            LOG << "WHATEVER CSR" << nl;
-                        
-                            FloatVector mysol( N*N );
-                            mysol.zero();
-                            FloatVector residual( rhs );
-
-                            timestamp start = timestampnow();
-                            int recent_iteration_count =
-                            WHATEVER( 
                                 mysol.getdimension(), 
                                 mysol.raw(), 
                                 rhs.raw(), 
