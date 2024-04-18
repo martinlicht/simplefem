@@ -1442,16 +1442,19 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
         
         if( restart_condition or ( residual_seems_small and cpp_restart_before_finish ) ) UNLIKELY {
             
+            // 1 -- 2 
             v0.zero();
             w0.zero();
             v1 = b - A * x;
             w1.zero();
             
+            // 3
             gamma = v1.norm();
             v1 /= gamma;
             
             assert( gamma > 0. );
             
+            // 7
             s0 = s1 = 0;
             c0 = c1 = 1;
             
@@ -1473,16 +1476,20 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
         {
             
 
+            // 9 
             /*FloatVector*/ p = A * v1;
  
             Float delta = p * v1;
  
+            // 10 
             /*FloatVector*/ vn = p - delta * v1 - gamma * v0;
  
+            // 12 -- 13
             Float gamma_n = vn.norm();
             vn /= gamma_n;
             assert( gamma_n > 0. );
  
+            // 15 - 18
             Float alpha_0 = c1 * delta - c0 * s1 * gamma;
             assert( alpha_0 * alpha_0 + gamma_n * gamma_n > 0. );
             Float alpha_1 = std::sqrt( alpha_0 * alpha_0 + gamma_n * gamma_n );
@@ -1491,12 +1498,15 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
  
             assert( alpha_1 > 0. );
 
+            // 19 
             Float cn = alpha_0 / alpha_1;
             Float sn = gamma_n / alpha_1;
             
+            // 23 -- 24
             /*FloatVector*/ wn = ( v1 - alpha_2 * w1 - alpha_3 * w0 ) / alpha_1;
             x = x + cn * eta * wn;
  
+            // 27 
             eta = - sn * eta;
             
             

@@ -1155,7 +1155,24 @@ int HodgeHerzogSoodhalterMethod(
     int max_iteration_count = dimension_A + dimension_C;
     int recent_iteration_count = 0;
 
+
+    bool precon_A_available = PArows and PAcolumns and PAvalues;
+    bool precon_C_available = PCrows and PCcolumns and PCvalues;
+    if( precon_A_available ) {
+        assert( PArows ); 
+        assert( PAcolumns );
+        assert( PAvalues );
+    }
+    if( precon_C_available ) {
+        assert( PCrows ); 
+        assert( PCcolumns );
+        assert( PCvalues );
+    }
+    
     if( print_modulo >= 0 ) LOGPRINTF( "START Hodge Herzog-Soodhalter CSR\n" );
+    
+    if( precon_A_available ) LOGPRINTF("      Preconditioner for A detected\n");
+    if( precon_C_available ) LOGPRINTF("      Preconditioner for C detected\n");
 
     while( recent_iteration_count < max_iteration_count ){
         
@@ -1185,11 +1202,39 @@ int HodgeHerzogSoodhalterMethod(
                     v1_C[r] -= Cvalues[d] * x_C[ Ccolumns[d] ];
             }
 
-            // We don't use preconditioners for the time being 
-            // z_A = PAinv * v1_A;
-            // z_C = PCinv * v1_C;
+            // In case we don't use preconditioners 
             for( int r = 0; r < dimension_A; r++ ) z_A[r] = v1_A[r]; 
             for( int r = 0; r < dimension_C; r++ ) z_C[r] = v1_C[r]; 
+            
+            // if preconditioners are available, we simply ditch the write above and compute z_A and z_C again from v1_A and v1_C, respectively.
+            // z_A = PAinv * v1_A;
+            // z_C = PCinv * v1_C;
+            
+            if( precon_A_available )
+            {
+                ConjugateResidualSolverCSR( 
+                    dimension_A, 
+                    z_A, 
+                    v1_A, 
+                    PArows, PAcolumns, PAvalues,
+                    wn_A, // we recycle this memory 
+                    inneriteration_tolerance,
+                    inneriteration_print_modulo
+                );
+            }
+
+            if( precon_C_available )
+            {
+                ConjugateResidualSolverCSR( 
+                    dimension_C, 
+                    z_C, 
+                    v1_C, 
+                    PCrows, PCcolumns, PCvalues,
+                    wn_C, // we recycle this memory 
+                    inneriteration_tolerance,
+                    inneriteration_print_modulo
+                );
+            }
             
             
             // 3 -- 6
@@ -1198,8 +1243,9 @@ int HodgeHerzogSoodhalterMethod(
             for( int a = 0; a < dimension_A; a++ ) v1_z_A += v1_A[a] * z_A[a];
             for( int c = 0; c < dimension_C; c++ ) v1_z_C += v1_C[c] * z_C[c];
             
-            Assert( v1_z_A + v1_z_C >= 0., v1_z_A + v1_z_C );
+            Assert( v1_z_A + v1_z_C >= 0., v1_z_A, v1_z_C );
             gamma = sqrt( v1_z_A + v1_z_C );
+            Assert( gamma > 0., recent_iteration_count, gamma );
             
             for( int a = 0; a < dimension_A; a++ ){
                 v1_A[a] /= gamma; z_A[a] /= gamma; 
@@ -1241,35 +1287,45 @@ int HodgeHerzogSoodhalterMethod(
             
         {
             
-            // ???? 
-
+            // 9  
             Float z_p_A = 0.;
             Float z_p_C = 0.;
             
             for( int r = 0; r < dimension_A; r++ ) {
                 p_A[r] = 0.;
                 for( int d = Arows[r]; d < Arows[r+1]; d++ )
-                    p_A[r] -= expected_sign_of_A * Avalues[d]  * x_A[ Acolumns[d] ];
+                    p_A[r] -= expected_sign_of_A * Avalues[d]  * z_A[ Acolumns[d] ];
                 for( int d = Btrows[r]; d < Btrows[r+1]; d++ )
-                    p_A[r] += Btvalues[d] * x_C[ Btcolumns[d] ];
+                    p_A[r] += Btvalues[d] * z_C[ Btcolumns[d] ];
                 z_p_A += p_A[r] * z_A[r];
             }
             for( int r = 0; r < dimension_C; r++ ) {
                 p_C[r] = 0.;
                 for( int d = Brows[r]; d < Brows[r+1]; d++ )
-                    p_C[r] += Bvalues[d] * x_A[ Bcolumns[d] ];
+                    p_C[r] += Bvalues[d] * z_A[ Bcolumns[d] ];
                 for( int d = Crows[r]; d < Crows[r+1]; d++ )
-                    p_C[r] += Cvalues[d] * x_C[ Ccolumns[d] ];
+                    p_C[r] += Cvalues[d] * z_C[ Ccolumns[d] ];
                 z_p_C += p_C[r] * z_C[r];
             }
                 
  
             Float delta = z_p_A + z_p_C;
 
+            // 10 
             for( int a = 0; a < dimension_A; a++ ) vn_A[a] = p_A[a] - delta * v1_A[a] - gamma * v0_A[a];
             for( int c = 0; c < dimension_C; c++ ) vn_C[c] = p_C[c] - delta * v1_C[c] - gamma * v0_C[c];
             
-            // TODO
+            // for( int a = 0; a < dimension_A; a++ ) {
+            //     LOG << "A " << a << " : " << v1_A[a] << nl;
+            // }
+            // for( int c = 0; c < dimension_C; c++ ) {
+            //     LOG << "C " << c << " : " << v1_C[c] << nl;
+            // }
+
+            
+
+            // 11
+            // In case we don't use preconditioners 
             Float zn_vn_A = 0.;
             Float zn_vn_C = 0.;
             for( int a = 0; a < dimension_A; a++ ) {
@@ -1280,18 +1336,55 @@ int HodgeHerzogSoodhalterMethod(
                 zn_C[c] = vn_C[c];
                 zn_vn_C += zn_C[c] * vn_C[c];
             }
-            // zn_A = PAinv * vn_A;
-            // zn_C = PCinv * vn_C;
+            
+            
+            // if preconditioners are available, we simply ditch the write above and compute z_A and z_C again from v1_A and v1_C, respectively.
+            // z_A = PAinv * v1_A;
+            // z_C = PCinv * v1_C;
+            
+            if( precon_A_available )
+            {
+                ConjugateResidualSolverCSR( 
+                    dimension_A, 
+                    zn_A, 
+                    vn_A, 
+                    PArows, PAcolumns, PAvalues,
+                    wn_A, // we recycle this memory 
+                    inneriteration_tolerance,
+                    inneriteration_print_modulo
+                );
 
+                zn_vn_A = 0.;
+                for( int a = 0; a < dimension_A; a++ ) zn_vn_A += zn_A[a] * vn_A[a];
+            }
+
+            if( precon_C_available )
+            {
+                ConjugateResidualSolverCSR( 
+                    dimension_C, 
+                    zn_C, 
+                    vn_C, 
+                    PCrows, PCcolumns, PCvalues,
+                    wn_C, // we recycle this memory 
+                    inneriteration_tolerance,
+                    inneriteration_print_modulo
+                );
+
+                zn_vn_C = 0.;
+                for( int c = 0; c < dimension_C; c++ ) zn_vn_C += zn_C[c] * vn_C[c];
+            }
+            
+
+            // 12 
             Assert( zn_vn_A + zn_vn_C >= 0., zn_vn_A + zn_vn_C );
             Float gamma_n = std::sqrt( zn_vn_A + zn_vn_C );
-            Assert( gamma_n > 0., gamma_n );
+            Assert( gamma_n > 0., recent_iteration_count, gamma_n );
             
-            for( int a = 0; a < dimension_A; a++ ){ vn_A[a] /= gamma; zn_A[a] /= gamma; }
-            for( int c = 0; c < dimension_C; c++ ){ vn_C[c] /= gamma; zn_C[c] /= gamma; }
+            // 13 -- 14 
+            for( int a = 0; a < dimension_A; a++ ){ vn_A[a] /= gamma_n; zn_A[a] /= gamma_n; }
+            for( int c = 0; c < dimension_C; c++ ){ vn_C[c] /= gamma_n; zn_C[c] /= gamma_n; }
 
             // 15 -- 18
-
             Float alpha_0 = c1 * delta - c0 * s1 * gamma;
             assert( alpha_0 * alpha_0 + gamma_n * gamma_n > 0. );
             Float alpha_1 = std::sqrt( alpha_0 * alpha_0 + gamma_n * gamma_n );
@@ -1304,13 +1397,13 @@ int HodgeHerzogSoodhalterMethod(
             Float cn = alpha_0 / alpha_1;
             Float sn = gamma_n / alpha_1;
             
-            // 20
+            // 20 -- 21 
             Float theta_A = 0.;
             Float theta_C = 0.;
             Float psi_A = 0.;
             Float psi_C = 0.;
-            for( int a = 0; a < dimension_A; a++ ){ theta_A += m_A[a] * zn_A[a]; psi_A += zn_A[a]*vn_A[a]; }
-            for( int c = 0; c < dimension_C; c++ ){ theta_C += m_C[c] * zn_C[c]; psi_C += zn_C[c]*vn_C[c]; }
+            for( int a = 0; a < dimension_A; a++ ){ theta_A += m_A[a] * zn_A[a]; psi_A += zn_A[a] * vn_A[a]; }
+            for( int c = 0; c < dimension_C; c++ ){ theta_C += m_C[c] * zn_C[c]; psi_C += zn_C[c] * vn_C[c]; }
             
             // 22 -- 24
             for( int a = 0; a < dimension_A; a++ ){
@@ -1366,7 +1459,7 @@ int HodgeHerzogSoodhalterMethod(
         
         if( print_modulo >= 0 and print_condition ) {
             LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9Le < %.9Le\n", recent_iteration_count, max_iteration_count, (long double) recent_deviation, (long double)tolerance );
-            LOGPRINTF( "                   Gamma: %.9Le Eta: %.9Le\n", (long double)gamma, (long double)eta );
+            LOGPRINTF( "(%d/%d)            Gamma: %.9Le Eta: %.9Le\n", recent_iteration_count, max_iteration_count, (long double)gamma, (long double)eta );
         }
         
         recent_iteration_count++;

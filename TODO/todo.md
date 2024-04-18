@@ -45,6 +45,11 @@ requires regular grinding in order to get it done.
 
 
 
+# (HIGH) Semantics for matrix vector multiplication 
+
+Specify which operation should be the most basic one and stick with that one. 
+
+
 # (HIGH) Floating point exact comparisons ersetzen durch Funktion mit expliziter semantik
 # (HIGH) Floating-point comparisons
 
