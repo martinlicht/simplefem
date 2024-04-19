@@ -48,8 +48,8 @@ int main( int argc, char *argv[] )
                      << "Row " << p2 << space 
                      << S.norm_col_row( p1, p2 ) << nl;
         
-        assert( is_numerically_close( 10, S.norm_row_col( p1, p2 ) ), S.norm_row_col( p1, p2 ) );
-        assert( is_numerically_close( 11, S.norm_col_row( p1, p2 ) ), S.norm_col_row( p1, p2 ) );
+        Assert( is_numerically_close( 10, S.norm_row_col( p1, p2 ) ), S.norm_row_col( p1, p2 ) );
+        Assert( is_numerically_close( 11, S.norm_col_row( p1, p2 ) ), S.norm_col_row( p1, p2 ) );
         
         
         LOG << nl << "Row " << 1. << space
@@ -71,8 +71,8 @@ int main( int argc, char *argv[] )
                      << S.norm_col_row( 2., 2. ) << nl;
         LOG << nl;
 
-        assert( is_numerically_close( S.frobeniusnorm(), S.norm_row_col( 2., 2. ) ) );
-        assert( is_numerically_close( S.frobeniusnorm(), S.norm_col_row( 2., 2. ) ) );
+        Assert( is_numerically_close( S.frobeniusnorm(), S.norm_row_col( 2., 2. ) ) );
+        Assert( is_numerically_close( S.frobeniusnorm(), S.norm_col_row( 2., 2. ) ) );
         
         LOG << nl << "Row " << 20. << space
                      << "Col " << 20. << space
@@ -82,8 +82,8 @@ int main( int argc, char *argv[] )
                      << S.norm_col_row( 20., 20. ) << nl;
         LOG << nl;
 
-        assert( is_numerically_close( 6, S.norm_row_col( 200., 200. ) ), S.norm_row_col( 200., 200. ) );
-        assert( is_numerically_close( 6, S.norm_col_row( 200., 200. ) ), S.norm_col_row( 200., 200. ) );
+        Assert( is_numerically_close( 6, S.norm_row_col( 200., 200. ) ), S.norm_row_col( 200., 200. ) );
+        Assert( is_numerically_close( 6, S.norm_col_row( 200., 200. ) ), S.norm_col_row( 200., 200. ) );
         
         
         
@@ -487,7 +487,7 @@ int main( int argc, char *argv[] )
 
             // LOGPRINTF( "%.17e %.17e %.17e %.17e \n", det, det_l, det_g, det_b );
 
-            assert( is_numerically_close( det / det_l, 1. ) && is_numerically_close( det / det_g, 1. ) && is_numerically_close( det / det_b, 1. ) );
+            assert( is_numerically_one( det / det_l ) && is_numerically_one( det / det_g ) && is_numerically_one( det / det_b ) );
             
             const auto Acof = CofactorMatrix( A );
             const auto Ainv = Inverse( A );
@@ -567,7 +567,7 @@ int main( int argc, char *argv[] )
                 QRFactorization( A, Q, R );
                 Float detR = UpperTriangularDeterminant(R); Float detQ = Determinant(Q);
                 LOG << "Determinant (QR): " << detR << nl;
-                Assert( is_numerically_close( detQ, 1. ) or is_numerically_close( detQ, -1. ));
+                Assert( is_numerically_one( detQ ) or is_numerically_one( -detQ ) );
                 Assert( is_numerically_close( det, detQ * detR ) );
 
             }
@@ -615,7 +615,7 @@ int main( int argc, char *argv[] )
                 QRFactorization( A, Q, R );
                 Float detR = UpperTriangularDeterminant(R); Float detQ = Determinant(Q);
                 LOG << "Determinant (QR): " << detR << nl;
-                Assert( is_numerically_close( detQ, 1. ) or is_numerically_close( detQ, -1. ));
+                Assert( is_numerically_one( detQ ) or is_numerically_one( -detQ ) );
                 Assert( is_numerically_close( det, detQ * detR ) );
             }
             
@@ -627,8 +627,8 @@ int main( int argc, char *argv[] )
             LOG << A * Ainv << nl;
             LOG << Ainv * A << nl;
 
-            assert( ( Ainv * A ).is_numerically_identity( 1e-7 ), Ainv * A );
-            assert( ( A * Ainv ).is_numerically_identity( 1e-7 ), A * Ainv );
+            Assert( ( Ainv * A ).is_numerically_identity( 1e-7 ), Ainv * A );
+            Assert( ( A * Ainv ).is_numerically_identity( 1e-7 ), A * Ainv );
         }
     }
     
@@ -669,7 +669,7 @@ int main( int argc, char *argv[] )
                 QRFactorization( A, Q, R );
                 Float detR = UpperTriangularDeterminant(R); Float detQ = Determinant(Q);
                 LOG << "Determinant (QR): " << detR << nl;
-                Assert( is_numerically_close( detQ, 1. ) or is_numerically_close( detQ, -1. ));
+                Assert( is_numerically_one( detQ ) or is_numerically_one( -detQ ) );
                 Assert( is_numerically_close( det, detQ * detR ) );
             }
             

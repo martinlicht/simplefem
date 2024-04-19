@@ -79,7 +79,7 @@ int main( int argc, char *argv[] )
             {
                 auto barycoords = get_random_barycentric_coordinates(2);
                 assert( barycoords.isnonnegative() );
-                assert( is_numerically_close( barycoords.sum(), 1. ) );
+                assert( is_numerically_one( barycoords.sum() ) );
                 
                 auto P = M.getPointFromBarycentric( 2, t, barycoords );
 

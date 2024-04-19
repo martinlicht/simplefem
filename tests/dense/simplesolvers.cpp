@@ -88,7 +88,7 @@ int main( int argc, char *argv[] )
                     assert( Part(r,c) == A(r,c) );
             }
 
-            assert( (Part*PartInv).is_numerically_identity(), Part, PartInv );
+            Assert( (Part*PartInv).is_numerically_identity(), Part, PartInv );
             assert( (PartInv*Part).is_numerically_identity() );
 
             auto PartInv2 = Part;

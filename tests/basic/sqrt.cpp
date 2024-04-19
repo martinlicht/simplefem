@@ -19,11 +19,12 @@ static worst_and_worst calculate_sqrt_distance( float x ) {
 int main() 
 {
 
+    #if __cplusplus >= 201703L
     LOGPRINTF( "%e %e %e \n", FLT_MIN, FLT_TRUE_MIN, FLT_MIN / 2. );
+    #endif
 
 
-
-    static_assert( sizeof(float) == sizeof(int) );
+    static_assert( sizeof(float) == sizeof(int), "sizeof(float) == sizeof(int) failed" );
 
     union {
         float f;

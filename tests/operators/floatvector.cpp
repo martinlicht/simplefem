@@ -195,10 +195,10 @@ int main( int argc, char *argv[] )
         Float norm_d_normalized = d.norm();
         
         // Assertions for norms after normalization
-        assert( is_numerically_close( norm_a_normalized, 1. ) );
-        assert( is_numerically_close( norm_b_normalized, 1. ) );
-        assert( is_numerically_close( norm_c_normalized, 1. ) );
-        assert( is_numerically_close( norm_d_normalized, 1. ) );
+        assert( is_numerically_one( norm_a_normalized ) );
+        assert( is_numerically_one( norm_b_normalized ) );
+        assert( is_numerically_one( norm_c_normalized ) );
+        assert( is_numerically_one( norm_d_normalized ) );
         
     }
 
