@@ -308,6 +308,11 @@ inline constexpr bool is_numerically_close( Float value1, Float value2, Float th
     return is_numerically_small( value1 - value2, threshold );
 }
 
+inline constexpr bool is_numerically_one( Float value, Float threshold = desired_closeness )
+{
+    return is_numerically_close( value, 1., threshold );
+}
+
 // https://codingnest.com/the-little-things-comparing-floating-point-numbers/
 
 

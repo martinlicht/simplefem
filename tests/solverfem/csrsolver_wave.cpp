@@ -114,7 +114,6 @@ int main( int argc, char *argv[] )
     bool do_crm_csr                = true;
     bool do_crm_csrtextbook        = true;
     bool do_minres_csr             = true;
-    bool do_whatever_csr           = false;
     bool do_cgm_diagonal_csr       = false;
     bool do_cgm_ssor_csr           = true;
     bool do_cgm_ssor_eisenstat_csr = true;
@@ -133,7 +132,6 @@ int main( int argc, char *argv[] )
     if( do_crm_csr )                contable_u << "CRMcsr"       ;
     if( do_crm_csrtextbook )        contable_u << "CRMcsr_tb"    ;
     if( do_minres_csr )             contable_u << "MINREScsr"    ;
-    if( do_whatever_csr )           contable_u << "WHATEVER"     ;
     if( do_cgm_diagonal_csr )       contable_u << "CGMcsr_diag"  ;
     if( do_cgm_ssor_csr )           contable_u << "CGMcsr_ssor"  ;
     if( do_cgm_ssor_eisenstat_csr ) contable_u << "CGMcsr_ssor_ei";
@@ -153,7 +151,6 @@ int main( int argc, char *argv[] )
     if( do_crm_csr )                contable_du << "CRMcsr"       ;
     if( do_crm_csrtextbook )        contable_du << "CRMcsr_tb"    ;
     if( do_minres_csr )             contable_du << "MINREScsr"    ;
-    if( do_whatever_csr )           contable_du << "WHATEVER"     ;
     if( do_cgm_diagonal_csr )       contable_du << "CGMcsr_diag"  ;
     if( do_cgm_ssor_csr )           contable_du << "CGMcsr_ssor"  ;
     if( do_cgm_ssor_eisenstat_csr ) contable_du << "CGMcsr_ssor_ei";
@@ -173,7 +170,6 @@ int main( int argc, char *argv[] )
     if( do_crm_csr )                contable_iter << "CRMcsr"       ;
     if( do_crm_csrtextbook )        contable_iter << "CRMcsr_tb"    ;
     if( do_minres_csr )             contable_iter << "MINREScsr"    ;
-    if( do_whatever_csr )           contable_iter << "WHATEVER"     ;
     if( do_cgm_diagonal_csr )       contable_iter << "CGMcsr_diag"  ;
     if( do_cgm_ssor_csr )           contable_iter << "CGMcsr_ssor"  ;
     if( do_cgm_ssor_eisenstat_csr ) contable_iter << "CGMcsr_ssor_ei";
@@ -193,7 +189,6 @@ int main( int argc, char *argv[] )
     if( do_crm_csr )                contable_time << "CRMcsr"       ;
     if( do_crm_csrtextbook )        contable_time << "CRMcsr_tb"    ;
     if( do_minres_csr )             contable_time << "MINREScsr"    ;
-    if( do_whatever_csr )           contable_time << "WHATEVER"     ;
     if( do_cgm_diagonal_csr )       contable_time << "CGMcsr_diag"  ;
     if( do_cgm_ssor_csr )           contable_time << "CGMcsr_ssor"  ;
     if( do_cgm_ssor_eisenstat_csr ) contable_time << "CGMcsr_ssor_ei";
@@ -213,7 +208,6 @@ int main( int argc, char *argv[] )
     if( do_crm_csr )                contable_res << "CRMcsr"       ;
     if( do_crm_csrtextbook )        contable_res << "CRMcsr_tb"    ;
     if( do_minres_csr )             contable_res << "MINREScsr"    ;
-    if( do_whatever_csr )           contable_res << "WHATEVER"     ;
     if( do_cgm_diagonal_csr )       contable_res << "CGMcsr_diag"  ;
     if( do_cgm_ssor_csr )           contable_res << "CGMcsr_ssor"  ;
     if( do_cgm_ssor_eisenstat_csr ) contable_res << "CGMcsr_ssor_ei";
@@ -277,7 +271,7 @@ int main( int argc, char *argv[] )
                 
                 FloatVector sol_orignal( SystemMatrix.getdimin(), 0. );
 
-                for( int k = 0; k <= 15; k++ )
+                for( int k = 0; k <= 14; k++ )
                 {
 
                     Float runtime = -1.;
@@ -294,13 +288,12 @@ int main( int argc, char *argv[] )
                     if( k ==  7 and not do_crm_csr )                continue;
                     if( k ==  8 and not do_crm_csrtextbook )        continue;
                     if( k ==  9 and not do_minres_csr )             continue;
-                    if( k == 10 and not do_whatever_csr )           continue;
-                    if( k == 11 and not do_cgm_diagonal_csr )       continue;
-                    if( k == 12 and not do_cgm_ssor_csr )           continue;
-                    if( k == 13 and not do_cgm_ssor_eisenstat_csr ) continue;
-                    if( k == 14 and not do_cgm_ssor_rainbow_csr )   continue;
-                    if( k == 15 and not do_cgm_ssor_eisenstat_rainbow_csr ) continue;
-                    if( k == 16 and not do_chebyshev_diagonal_csr ) continue;
+                    if( k == 10 and not do_cgm_diagonal_csr )       continue;
+                    if( k == 11 and not do_cgm_ssor_csr )           continue;
+                    if( k == 12 and not do_cgm_ssor_eisenstat_csr ) continue;
+                    if( k == 13 and not do_cgm_ssor_rainbow_csr )   continue;
+                    if( k == 14 and not do_cgm_ssor_eisenstat_rainbow_csr ) continue;
+                    if( k == 15 and not do_chebyshev_diagonal_csr ) continue;
 
                     auto sol = sol_orignal;
                         
@@ -507,32 +500,7 @@ int main( int argc, char *argv[] )
                     }
 
 
-                    if( k == 10 and do_whatever_csr )
-                    {
-                        LOG << "WHATEVER CSR" << nl;
-                    
-                        FloatVector residual( rhs );
-                        // auto max_iteration_count = sol.getdimension();
-                        timestamp start = timestampnow();
-                        auto recent_iteration_count = 
-                        WHATEVER( 
-                            sol.getdimension(), 
-                            sol.raw(), 
-                            rhs.raw(), 
-                            SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
-                            residual.raw(),
-                            desired_precision,
-                            0
-                        );
-
-                        timestamp end = timestampnow();
-                        LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
-                        
-                        runtime  = static_cast<Float>( end - start );
-                        iteration_count = recent_iteration_count;
-                    }
-
-                    if( k == 11 and do_cgm_diagonal_csr )
+                    if( k == 10 and do_cgm_diagonal_csr )
                     {
                         LOG << "CGM - CSR Classic with diagonal preconditioning" << nl;
                         
@@ -560,7 +528,7 @@ int main( int argc, char *argv[] )
                         iteration_count = recent_iteration_count;
                     }
 
-                    if( k == 12 and do_cgm_ssor_csr )
+                    if( k == 11 and do_cgm_ssor_csr )
                     {
                         LOG << "CGM - CSR Classic with SSOR" << nl;
                         
@@ -592,7 +560,7 @@ int main( int argc, char *argv[] )
 
                     
 
-                    if( k == 13 and do_cgm_ssor_eisenstat_csr )
+                    if( k == 12 and do_cgm_ssor_eisenstat_csr )
                     {
                         LOG << "CGM - CSR Classic with Eisenstat-SSOR" << nl;
                         
@@ -622,7 +590,7 @@ int main( int argc, char *argv[] )
                     }
                         
 
-                    if( k == 14 and do_cgm_ssor_rainbow_csr )
+                    if( k == 13 and do_cgm_ssor_rainbow_csr )
                     {
                         LOG << "CGM - CSR Classic with Rainbow-SSOR" << nl;
                     
@@ -654,7 +622,7 @@ int main( int argc, char *argv[] )
                     }
                         
 
-                    if( k == 15 and do_cgm_ssor_eisenstat_rainbow_csr )
+                    if( k == 14 and do_cgm_ssor_eisenstat_rainbow_csr )
                     {
                         LOG << "CGM - CSR Classic with Eisenstat-Rainbow-SSOR" << nl;
                     
@@ -686,7 +654,7 @@ int main( int argc, char *argv[] )
                     }
                         
                         
-                    if( k == 16 and do_chebyshev_diagonal_csr )
+                    if( k == 15 and do_chebyshev_diagonal_csr )
                     {
                         LOG << "CHEBYSHEV CSR" << nl;
                     

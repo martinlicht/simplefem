@@ -1247,6 +1247,8 @@ int HodgeHerzogSoodhalterMethod(
             gamma = sqrt( v1_z_A + v1_z_C );
             Assert( gamma > 0., recent_iteration_count, gamma );
             
+            Assert( gamma > 0., v1_z_A, v1_z_C );
+            
             for( int a = 0; a < dimension_A; a++ ){
                 v1_A[a] /= gamma; z_A[a] /= gamma; 
                 m_A[a] = v1_A[a];
@@ -1266,8 +1268,6 @@ int HodgeHerzogSoodhalterMethod(
             eta = gamma; 
             eta_A = gamma * sqrt( psi_A );
             eta_C = gamma * sqrt( psi_C );
-            
-            assert( gamma > 0. );
             
             s0 = s1 = 0;
             c0 = c1 = 1;
@@ -1378,7 +1378,8 @@ int HodgeHerzogSoodhalterMethod(
             // 12 
             Assert( zn_vn_A + zn_vn_C >= 0., zn_vn_A + zn_vn_C );
             Float gamma_n = std::sqrt( zn_vn_A + zn_vn_C );
-            Assert( gamma_n > 0., recent_iteration_count, gamma_n );
+            Assert( gamma_n > 0., recent_iteration_count, gamma_n, zn_vn_A, zn_vn_C );
+            
             
             // 13 -- 14 
             for( int a = 0; a < dimension_A; a++ ){ vn_A[a] /= gamma_n; zn_A[a] /= gamma_n; }

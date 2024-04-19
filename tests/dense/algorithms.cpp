@@ -48,8 +48,8 @@ int main( int argc, char *argv[] )
                      << "Row " << p2 << space 
                      << S.norm_col_row( p1, p2 ) << nl;
         
-        assert( is_numerically_close( 10, S.norm_row_col( p1, p2 ) ), S.norm_row_col( p1, p2 ) );
-        assert( is_numerically_close( 11, S.norm_col_row( p1, p2 ) ), S.norm_col_row( p1, p2 ) );
+        Assert( is_numerically_close( 10, S.norm_row_col( p1, p2 ) ), S.norm_row_col( p1, p2 ) );
+        Assert( is_numerically_close( 11, S.norm_col_row( p1, p2 ) ), S.norm_col_row( p1, p2 ) );
         
         
         LOG << nl << "Row " << 1. << space
@@ -71,8 +71,8 @@ int main( int argc, char *argv[] )
                      << S.norm_col_row( 2., 2. ) << nl;
         LOG << nl;
 
-        assert( is_numerically_close( S.frobeniusnorm(), S.norm_row_col( 2., 2. ) ) );
-        assert( is_numerically_close( S.frobeniusnorm(), S.norm_col_row( 2., 2. ) ) );
+        Assert( is_numerically_close( S.frobeniusnorm(), S.norm_row_col( 2., 2. ) ) );
+        Assert( is_numerically_close( S.frobeniusnorm(), S.norm_col_row( 2., 2. ) ) );
         
         LOG << nl << "Row " << 20. << space
                      << "Col " << 20. << space
@@ -82,8 +82,8 @@ int main( int argc, char *argv[] )
                      << S.norm_col_row( 20., 20. ) << nl;
         LOG << nl;
 
-        assert( is_numerically_close( 6, S.norm_row_col( 200., 200. ) ), S.norm_row_col( 200., 200. ) );
-        assert( is_numerically_close( 6, S.norm_col_row( 200., 200. ) ), S.norm_col_row( 200., 200. ) );
+        Assert( is_numerically_close( 6, S.norm_row_col( 200., 200. ) ), S.norm_row_col( 200., 200. ) );
+        Assert( is_numerically_close( 6, S.norm_col_row( 200., 200. ) ), S.norm_col_row( 200., 200. ) );
         
         
         
@@ -96,8 +96,20 @@ int main( int argc, char *argv[] )
         assert( S.NormOperatorL1()  == 11 );
         assert( S.NormOperatorMax() == 10 );
         
-        LOG << "GerschgorinRow:    " << S.GerschgorinRow() << nl;
-        LOG << "GerschgorinColumn: " << S.GerschgorinColumn() << nl;
+        const auto GR = S.GerschgorinRow();
+        const auto GC = S.GerschgorinColumn();
+        LOG << "GerschgorinRow:    " << GR << nl;
+        LOG << "GerschgorinColumn: " << GC << nl;
+
+        assert( GR(0,0) ==  3 and GR(0,1) ==  6 );
+        assert( GR(1,0) == -1 and GR(1,1) ==  3 );
+        assert( GR(2,0) ==  1 and GR(2,1) ==  3 );
+        assert( GR(3,0) ==  0 and GR(3,1) == 10 );
+
+        assert( GC(0,0) ==  3 and GC(0,1) ==  4 );
+        assert( GC(1,0) == -1 and GC(1,1) ==  5 );
+        assert( GC(2,0) ==  1 and GC(2,1) == 10 );
+        assert( GC(3,0) ==  0 and GC(3,1) ==  3 );
         
     }
     
@@ -192,30 +204,32 @@ int main( int argc, char *argv[] )
     
         LOG << "2. Cholesky decomposition" << nl;
         
-        int dim = 3;
-        DenseMatrix A(dim);
-        
-        A.zeromatrix();
-        for( int s = 0; s < dim; s++ )
-        for( int t = 0; t < dim; t++ )
-            A(s,t) = 3 * kronecker(s,t) - kronecker(s,t-1) - kronecker(s,t+1);
-        
-        DenseMatrix L = CholeskyDecomposition( A );
-        
-        LOG << "Original matrix:" << A << nl;
-        
-        LOG << "Factor matrix:" << L << nl;
-        
-        LOG << "Product matrix:" << L * Transpose(L) << nl;
+        for( int dim = 0; dim <= 3; dim++ ) 
+        {
+            DenseMatrix A(dim);
+            
+            A.zeromatrix();
+            for( int s = 0; s < dim; s++ )
+            for( int t = 0; t < dim; t++ )
+                A(s,t) = 3 * kronecker(s,t) - kronecker(s,t-1) - kronecker(s,t+1);
+            
+            DenseMatrix L = CholeskyDecomposition( A );
+            
+            LOG << "Original matrix: " << A << nl;
+            
+            LOG << "Factor matrix:   " << L << nl;
+            
+            LOG << "Product matrix:  " << L * Transpose(L) << nl;
 
-        assert( ( L * Transpose(L) - A ).is_numerically_small() );
+            assert( ( L * Transpose(L) - A ).is_numerically_small() );
+        }
         
     }
     
     {
         LOG << "3. Matrix determinant, inverse, cofactor matrix" << nl;
         
-        for( int dim = 1; dim < 6; dim++ ) 
+        for( int dim = 0; dim < 6; dim++ ) 
         {
             DenseMatrix A = HilbertMatrix( dim );
             
@@ -375,7 +389,7 @@ int main( int argc, char *argv[] )
     {
         LOG << "8. QR and QL Factorization" << nl;
     
-        for( int dim = 1; dim <= 10; dim++ ){
+        for( int dim = 0; dim <= 10; dim++ ){
             
             DenseMatrix A(dim,dim);
         
@@ -473,7 +487,7 @@ int main( int argc, char *argv[] )
 
             // LOGPRINTF( "%.17e %.17e %.17e %.17e \n", det, det_l, det_g, det_b );
 
-            assert( is_numerically_close( det / det_l, 1. ) && is_numerically_close( det / det_g, 1. ) && is_numerically_close( det / det_b, 1. ) );
+            assert( is_numerically_one( det / det_l ) && is_numerically_one( det / det_g ) && is_numerically_one( det / det_b ) );
             
             const auto Acof = CofactorMatrix( A );
             const auto Ainv = Inverse( A );
@@ -526,7 +540,7 @@ int main( int argc, char *argv[] )
     // if(false)
     {
         LOG << "11. Compare Determinats of random orthogonal Matrices" << nl;
-        for( int t = 3; t < 7; t++ )
+        for( int t = 0; t < 7; t++ )
         for( int i = 0; i < 6; i++ )
         {
             
@@ -553,7 +567,7 @@ int main( int argc, char *argv[] )
                 QRFactorization( A, Q, R );
                 Float detR = UpperTriangularDeterminant(R); Float detQ = Determinant(Q);
                 LOG << "Determinant (QR): " << detR << nl;
-                Assert( is_numerically_close( detQ, 1. ) or is_numerically_close( detQ, -1. ));
+                Assert( is_numerically_one( detQ ) or is_numerically_one( -detQ ) );
                 Assert( is_numerically_close( det, detQ * detR ) );
 
             }
@@ -601,7 +615,7 @@ int main( int argc, char *argv[] )
                 QRFactorization( A, Q, R );
                 Float detR = UpperTriangularDeterminant(R); Float detQ = Determinant(Q);
                 LOG << "Determinant (QR): " << detR << nl;
-                Assert( is_numerically_close( detQ, 1. ) or is_numerically_close( detQ, -1. ));
+                Assert( is_numerically_one( detQ ) or is_numerically_one( -detQ ) );
                 Assert( is_numerically_close( det, detQ * detR ) );
             }
             
@@ -613,8 +627,8 @@ int main( int argc, char *argv[] )
             LOG << A * Ainv << nl;
             LOG << Ainv * A << nl;
 
-            assert( ( Ainv * A ).is_numerically_identity( 1e-7 ), Ainv * A );
-            assert( ( A * Ainv ).is_numerically_identity( 1e-7 ), A * Ainv );
+            Assert( ( Ainv * A ).is_numerically_identity( 1e-7 ), Ainv * A );
+            Assert( ( A * Ainv ).is_numerically_identity( 1e-7 ), A * Ainv );
         }
     }
     
@@ -655,7 +669,7 @@ int main( int argc, char *argv[] )
                 QRFactorization( A, Q, R );
                 Float detR = UpperTriangularDeterminant(R); Float detQ = Determinant(Q);
                 LOG << "Determinant (QR): " << detR << nl;
-                Assert( is_numerically_close( detQ, 1. ) or is_numerically_close( detQ, -1. ));
+                Assert( is_numerically_one( detQ ) or is_numerically_one( -detQ ) );
                 Assert( is_numerically_close( det, detQ * detR ) );
             }
             

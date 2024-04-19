@@ -83,7 +83,6 @@ int main( int argc, char *argv[] )
             bool do_crm_csr                        = true;
             bool do_crm_csrtextbook                = true;
             bool do_minres_csr                     = true;
-            bool do_whatever_csr                   = false;
             bool do_cgm_diagonal_csr               = true;
             bool do_cgm_ssor_csr                   = true;
             bool do_cgm_ssor_eisenstat_csr         = true;
@@ -102,7 +101,6 @@ int main( int argc, char *argv[] )
             // if( do_crm_csr )                contable_sol << "CRMcsr"       ;
             // if( do_crm_csrtextbook )        contable_sol << "CRMcsr_tb"    ;
             // if( do_minres_csr )             contable_sol << "MINREScsr"    ;
-            // if( do_whatever_csr )           contable_sol << "WHATEVER"     ;
             // if( do_cgm_diagonal_csr )       contable_sol << "CGMcsr_diag"  ;
             // if( do_cgm_ssor_csr )           contable_sol << "CGMcsr_ssor"  ;
             // if( do_chebyshev_diagonal_csr ) contable_sol << "Chebyshev_csr";
@@ -119,7 +117,6 @@ int main( int argc, char *argv[] )
             // if( do_crm_csr )                contable_sol << "CRMcsr"       ;
             // if( do_crm_csrtextbook )        contable_sol << "CRMcsr_tb"    ;
             // if( do_minres_csr )             contable_sol << "MINREScsr"    ;
-            // if( do_whatever_csr )           contable_sol << "WHATEVER"     ;
             // if( do_cgm_diagonal_csr )       contable_sol << "CGMcsr_diag"  ;
             // if( do_cgm_ssor_csr )           contable_sol << "CGMcsr_ssor"  ;
             // if( do_cgm_ssor_eisenstat_csr ) contable_sol << "CGMcsr_ssor_ei";
@@ -138,7 +135,6 @@ int main( int argc, char *argv[] )
             if( do_crm_csr )                contable_res << "CRMcsr"       ;
             if( do_crm_csrtextbook )        contable_res << "CRMcsr_tb"    ;
             if( do_minres_csr )             contable_res << "MINREScsr"    ;
-            if( do_whatever_csr )           contable_res << "WHATEVER"     ;
             if( do_cgm_diagonal_csr )       contable_res << "CGMcsr_diag"  ;
             if( do_cgm_ssor_csr )           contable_res << "CGMcsr_ssor"  ;
             if( do_cgm_ssor_eisenstat_csr ) contable_res << "CGMcsr_ssor_ei";
@@ -158,7 +154,6 @@ int main( int argc, char *argv[] )
             if( do_crm_csr )                contable_num << "CRMcsr"       ;
             if( do_crm_csrtextbook )        contable_num << "CRMcsr_tb"    ;
             if( do_minres_csr )             contable_num << "MINREScsr"    ;
-            if( do_whatever_csr )           contable_num << "WHATEVER"     ;
             if( do_cgm_diagonal_csr )       contable_num << "CGMcsr_diag"  ;
             if( do_cgm_ssor_csr )           contable_num << "CGMcsr_ssor"  ;
             if( do_cgm_ssor_eisenstat_csr ) contable_num << "CGMcsr_ssor_ei";
@@ -178,7 +173,6 @@ int main( int argc, char *argv[] )
             if( do_crm_csr )                contable_sec << "CRMcsr"       ;
             if( do_crm_csrtextbook )        contable_sec << "CRMcsr_tb"    ;
             if( do_minres_csr )             contable_sec << "MINREScsr"    ;
-            if( do_whatever_csr )           contable_sec << "WHATEVER"     ;
             if( do_cgm_diagonal_csr )       contable_sec << "CGMcsr_diag"  ;
             if( do_cgm_ssor_csr )           contable_sec << "CGMcsr_ssor"  ;
             if( do_cgm_ssor_eisenstat_csr ) contable_sec << "CGMcsr_ssor_ei";
@@ -562,43 +556,6 @@ int main( int argc, char *argv[] )
                             timestamp start = timestampnow();
                             auto recent_iteration_count = 
                             MINRESCSR( 
-                                sol.getdimension(), 
-                                sol.raw(), 
-                                rhs.raw(), 
-                                stiffness.getA(), stiffness.getC(), stiffness.getV(),
-                                residual.raw(),
-                                desired_precision,
-                                0
-                            );
-
-                            timestamp end = timestampnow();
-                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
-                            
-                            LOG << "Mass of approximate solution: " << sol.norm( mass ) << nl;
-
-                            auto runtime  = static_cast<Float>( end - start );
-                            // auto stat_sol = Float( ( sol - ... ).norm() );
-                            auto stat_res = Float( ( stiffness * sol - rhs ).norm() );
-                            auto stat_num = Float( recent_iteration_count ) / max_iteration_count;
-                            
-                            //contable_sol << stat_sol;
-                            contable_res << stat_res;
-                            contable_num << stat_num;
-                            contable_sec << runtime;
-                        }
-
-
-                        if( do_whatever_csr )
-                        {
-                            LOG << "WHATEVER CSR" << nl;
-                        
-                            FloatVector sol = sol_original;
-                            const FloatVector rhs = rhs_original;
-                            FloatVector residual( rhs );
-                            auto max_iteration_count = sol.getdimension();
-                            timestamp start = timestampnow();
-                            auto recent_iteration_count = 
-                            WHATEVER( 
                                 sol.getdimension(), 
                                 sol.raw(), 
                                 rhs.raw(), 

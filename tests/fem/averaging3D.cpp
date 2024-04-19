@@ -86,7 +86,7 @@ int main( int argc, char *argv[] )
                     if( flagmatrix.getdiagonal()[row] == 0. )
                         Assert( sum == 0., sum );
                     else 
-                        Assert( is_numerically_close( sum, 1. ), sum );
+                        Assert( is_numerically_one( sum ), sum );
                 }
 
             }

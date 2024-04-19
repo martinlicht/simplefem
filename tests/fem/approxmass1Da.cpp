@@ -112,6 +112,9 @@ int main( int argc, char *argv[] )
                     
                     Assert( mass >= -desired_closeness, mass );
                     
+                    // LOG << mass << space << should_be << space << std::sqrt( std::abs( mass - should_be ) ) << nl;
+                    // printf( "%.20f %.20f %.20f \n", mass, should_be, std::sqrt( std::abs( mass - should_be ) ) );
+                    
                     errors_scalar[i][l-l_min][r-r_min] = std::sqrt( std::abs( mass - should_be ) );
                     
                 }
@@ -126,7 +129,7 @@ int main( int argc, char *argv[] )
                     Float mass = interpol * ( massmatrix_volume * interpol );
                     
                     Assert( mass >= -desired_closeness, mass );
-                    
+
                     errors_volume[i][l][r] = std::sqrt( std::abs( mass - should_be ) );
                     
                 }
@@ -202,12 +205,12 @@ int main( int argc, char *argv[] )
             if( r < r_max or l < 5 ) 
                 continue;
             
-            continue; // TODO: find a meaningful test here 
-            for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
-                Assert( errors_scalar[i][l-l_min][r-r_min] < desired_closeness, errors_scalar[i][l-l_min][r-r_min], desired_closeness, errors_scalar[i][l-l_min][r-r_min]/desired_closeness );
+            // continue; // TODO: find a meaningful test here 
+            // for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
+            //     Assert( errors_scalar[i][l-l_min][r-r_min] < desired_closeness, errors_scalar[i][l-l_min][r-r_min], desired_closeness, errors_scalar[i][l-l_min][r-r_min]/desired_closeness );
             
             for( int i = 0; i < experiments_volume_field.size(); i++ )
-                Assert( errors_volume[i][l-l_min][r-r_min] < desired_closeness, errors_volume[i][l-l_min][r-r_min], desired_closeness, errors_scalar[i][l-l_min][r-r_min]/desired_closeness );
+                Assert( errors_volume[i][l-l_min][r-r_min] < desired_closeness, errors_volume[i][l-l_min][r-r_min], desired_closeness, errors_volume[i][l-l_min][r-r_min]/desired_closeness );
         }
         
         
