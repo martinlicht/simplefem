@@ -50,7 +50,6 @@ requires regular grinding in order to get it done.
 
 Specify which operation should be the most basic one and stick with that one. 
 
-
 # (HIGH) Floating point exact comparisons ersetzen durch Funktion mit expliziter semantik
 # (HIGH) Floating-point comparisons
 
@@ -99,7 +98,7 @@ Understand the floating-point comparison functions and import them into this pro
 
 The commutativity is not satisfied sufficiently. 
 That seems to be due to the mass matrix, since canonicalization reduces that effect 
-Can we canonicalize everything things already in the matrix assembly?
+Can we canonicalize everything already in the matrix assembly?
 
 # (HIGH) Code Coverage: background and application
 
@@ -165,7 +164,7 @@ Based on that:
 
 # (MEDIUM) Solvers print whether they have been successful 
 ```
-/* HOW DID WE FINISH ? */
+    /* HOW DID WE FINISH ? */
     recent_deviation = rMAMr;
     if( rMAMr > tolerance ) {
         LOG << "PCRM process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
@@ -181,8 +180,8 @@ Based on that:
 # (MEDIUM) Fix Whatever solvers or fix Wikipedia 
 
 - [x] Herzog Soodhalter funktioniert nun, auch die sparse variant.
-- [ ] Identify the sources for these solvers 
-- [ ] Fix the whatever solver or retire it 
+- [ ] Identify the source for MINRES solver; the other ones are known
+- [x] Fix the whatever solver or retire it 
 
 # (MEDIUM) Interesting meshes
 
@@ -222,7 +221,7 @@ Generally, we would like to control the output format by some parameter given to
 We can assume that the parameters belong to some enum class defined within a class declaration and are specifcally tailored to each class. 
 They are a purely optional argument for the print method and may be skipped at convenience.
 
-        
+
 # (LOW) Operators as non-member functions?
 
 Check the classes for member operator functions.

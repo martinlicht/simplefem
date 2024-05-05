@@ -8,6 +8,35 @@ int main( int argc, char *argv[] )
     LOG << "Unit Test for Vector class" << nl;
 
     {
+        // Test default initialization
+        FloatVector v1(5);
+        for (int i = 0; i < 5; ++i) {
+            assert( std::isnan( v1.getentry(i) ) );
+        }
+
+        // Test initialization with specific value
+        FloatVector v2(5, 3.0);
+        for (int i = 0; i < 5; ++i) {
+            assert( v2.getentry(i) == 3.0 );
+        }
+
+        // Test initialization from std::vector
+        std::vector<Float> vals = {1.0, 2.0, 3.0, 4.0, 5.0};
+        FloatVector v3(vals);
+        for (size_t i = 0; i < vals.size(); ++i) {
+            assert( v3.getentry(i) == vals[i] );
+        }
+
+        // Set entries and check values
+        FloatVector v(5, 0.0);
+        for (int i = 0; i < 5; ++i) {
+            v.setentry( i, static_cast<Float>(i) );
+            assert( v.getentry(i) == i );
+        }
+    }
+    
+
+    {
 
         FloatVector a(5);
 

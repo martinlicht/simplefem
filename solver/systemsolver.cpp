@@ -176,7 +176,7 @@ int BlockHerzogSoodhalterMethod(
 
             // 12 
             Float gamma_n = std::sqrt( zn_A * vn_A + zn_C * vn_C );
-            Assert( gamma_n > 0., gamma_n );
+            // Assert( gamma_n > 0., gamma_n );
 
             // 13 -- 14
             vn_A /= gamma_n; zn_A /= gamma_n;

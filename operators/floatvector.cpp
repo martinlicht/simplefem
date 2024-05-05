@@ -15,7 +15,7 @@
 
 
 FloatVector::FloatVector( const FloatVector& src )
-: dimension( src.getdimension() ), pointer( new (std::nothrow) Float[ src.getdimension() ] )
+: dimension( src.dimension ), pointer( new (std::nothrow) Float[ src.dimension ] )
 {
     assert( dimension >= 0 and pointer != nullptr );
     for( int p = 0; p < dimension; p++ ) pointer[p] = src.pointer[p];
@@ -23,18 +23,17 @@ FloatVector::FloatVector( const FloatVector& src )
 }
 
 FloatVector::FloatVector( FloatVector&& src )
-: dimension( src.getdimension() ), pointer( src.pointer )
+: dimension( src.dimension ), pointer( src.pointer )
 {
     assert( dimension >= 0 and pointer != nullptr and pointer == src.pointer and dimension == src.dimension );
+    src.dimension = 0;
     src.pointer = nullptr;
     FloatVector::check();
 }
 
 FloatVector& FloatVector::operator=( const FloatVector& vec )
 {
-    assert( pointer     != nullptr );
-    assert( vec.pointer != nullptr );
-    assert( getdimension() == vec.getdimension() );
+    assert( dimension == vec.dimension );
     
     if( this != &vec ) {
         for( int p = 0; p < dimension; p++ ) pointer[p] = vec.pointer[p];
@@ -46,14 +45,13 @@ FloatVector& FloatVector::operator=( const FloatVector& vec )
 
 FloatVector& FloatVector::operator=( FloatVector&& vec )
 {
-//     assert( pointer     != nullptr );
-    assert( vec.pointer != nullptr );
-    assert( getdimension() == vec.getdimension() );
+    assert( dimension == vec.dimension );
     
     if( this != &vec ) {
-        delete[] this->pointer;
-        this->pointer = vec.pointer;
-        vec.pointer = nullptr;
+        std::swap( this->pointer, vec.pointer );
+        // delete[] this->pointer;
+        // this->pointer = vec.pointer;
+        // vec.pointer = nullptr;
     }
     
     check();
@@ -89,7 +87,7 @@ FloatVector::FloatVector( int dim, Float initialvalue )
 }
 
 FloatVector::FloatVector( const FloatVector& src, Float alpha )
-: dimension( src.getdimension() ), pointer( new (std::nothrow) Float[ src.getdimension() ] )
+: dimension( src.dimension ), pointer( new (std::nothrow) Float[ src.dimension ] )
 {
     assert( dimension >= 0 and pointer != nullptr );
     for( int p = 0; p < dimension; p++ ) pointer[p] = alpha * src.pointer[p];
@@ -97,7 +95,7 @@ FloatVector::FloatVector( const FloatVector& src, Float alpha )
 }
 
 FloatVector::FloatVector( FloatVector&& src, Float alpha )
-: dimension( src.getdimension() ), pointer( src.pointer )
+: dimension( src.dimension ), pointer( src.pointer )
 {
     assert( dimension >= 0 and pointer != nullptr and pointer == src.pointer and dimension == src.dimension );
     src.pointer = nullptr;
@@ -159,7 +157,8 @@ void FloatVector::check() const
     return;
     #endif
     assert( dimension >= 0 );
-//     if( dimension > 0 ) assert( pointer != nullptr );
+    // if( pointer == nullptr ) assert( dimension == 0 );
+    // if( dimension > 0 ) assert( pointer != nullptr );
 }
 
 std::string FloatVector::text() const 

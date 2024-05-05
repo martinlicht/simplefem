@@ -174,6 +174,48 @@ inline MeshSimplicial3D RegularSimplex3D()
     );
 }
 
+inline MeshSimplicial3D Simplex3D_needle( Float len_x, Float len_y )
+{
+    assert( len_x >= 0. && len_y >= 0. );
+    return MeshSimplicial3D(
+      3,  
+      Coordinates( 3, 4, {
+         0.0,   0.0,   0.0, // 0
+         len_x, 0.0,   0.0, // 1
+         0.0,   len_y, 0.0, // 2
+         0.0,   0.0,   1.0  // 3
+      } ),
+      {
+        { 0, 1, 2, 3 }
+      }
+    );
+}
+
+inline MeshSimplicial3D Simplex3D_tent( Float height )
+{
+    assert( height >= 0. );
+    return MeshSimplicial3D(
+      3,  
+      Coordinates( 3, 4, {
+         cos( 0./3. * Constants::twopi ), sin( 0./3. * Constants::twopi ), 0.0, // 0
+         cos( 1./3. * Constants::twopi ), sin( 1./3. * Constants::twopi ), 0.0, // 0
+         cos( 2./3. * Constants::twopi ), sin( 2./3. * Constants::twopi ), 0.0, // 0
+         0.0,   0.0,   height  // 3
+      } ),
+      {
+        { 0, 1, 2, 3 }
+      }
+    );
+}
+
+
+
+
+
+
+
+
+
 
 
 
