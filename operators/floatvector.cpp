@@ -26,7 +26,6 @@ FloatVector::FloatVector( FloatVector&& src )
 : dimension( src.dimension ), pointer( src.pointer )
 {
     assert( dimension >= 0 and pointer != nullptr and pointer == src.pointer and dimension == src.dimension );
-    src.dimension = 0;
     src.pointer = nullptr;
     FloatVector::check();
 }
