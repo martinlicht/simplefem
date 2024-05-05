@@ -32,7 +32,7 @@ std::string ConjugateResidualMethod::text() const
 PreconditionedConjugateResidualMethod::PreconditionedConjugateResidualMethod( const LinearOperator& op, const LinearOperator& M )
 : IterativeSolver( op ), M( M )
 {
-    check();
+    PreconditionedConjugateResidualMethod::check();
 }
 
 void PreconditionedConjugateResidualMethod::check() const
