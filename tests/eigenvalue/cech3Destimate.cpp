@@ -61,8 +61,8 @@ int main( int argc, char *argv[] )
         LOG << "Level: " << l << "/" << max_l << nl;
         LOG << "# T/F/E/V: " << M.count_tetrahedra() << "/" << M.count_faces() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
 
-        contable_results << (float)l;
-        contable_results << (float)M.count_vertices() << (float)M.count_edges() << (float)M.count_faces() << (float)M.count_tetrahedra();
+        contable_results << (Float)l;
+        contable_results << (Float)M.count_vertices() << (Float)M.count_edges() << (Float)M.count_faces() << (Float)M.count_tetrahedra();
 
         LOG << "... assemble matrices" << nl;
 
@@ -124,7 +124,8 @@ int main( int argc, char *argv[] )
         for( int j = 0; j <= n; j++ )
         {
             if( j != 0 )
-                Antihor(i,j) = std::sqrt( n / ( ( 2. + n ) * j*j ) * power_numerical( radii_quotient[i] + 1., n ) ) * ( 1. + 1./radii_quotient[i] ) ;
+                // Antihor(i,j) = std::sqrt( n / ( ( 2. + n ) * j*j ) * power_numerical( radii_quotient[i] + 1., n ) ) * ( 1. + 1./radii_quotient[i] ) ;
+                Antihor(i,j) = 2. / ( Constants::pi * std::sqrt(j) );
             
             Antihor(0,1) = 1. / Constants::pi;
             
@@ -249,10 +250,11 @@ int main( int argc, char *argv[] )
                     Float Cgrad = Antihor(0,1) * maxdiameter + ConstantPFCech * Diffver(0,0) * Antihor(0,1);
 
                     LOG << nl;
-                    LOG << "Cech PF Constant:     " << ConstantPFCech << nl;
-                    LOG << "Gradient PF Constant: " << Cgrad << nl;
-                    LOG << "Gradient Antihor:     " << Antihor(0,1) << nl;
-                    LOG << "Gradient Diffver:     " << Diffver(0,0) << nl;
+                    LOG << "Cech PF Constant:          " << ConstantPFCech << nl;
+                    LOG << "Gradient PF Constant:      " << Cgrad << nl;
+                    LOG << "True Gradient PF Constant: " << 1. / Constants::pi << nl;
+                    LOG << "Gradient Antihor:          " << Antihor(0,1) << nl;
+                    LOG << "Gradient Diffver:          " << Diffver(0,0) << nl;
                     LOG << nl;
 
                 }    
@@ -265,8 +267,9 @@ int main( int argc, char *argv[] )
                       + ( (n+1) * 3./2. ) * comparison_quotient * ( 1 + height_quotient * Antihor(1,1) ) * Diffver(0,1) * Antihor(0,2) * maxdiameter;
 
                     LOG << nl;
-                    LOG << "Cech PF Constant: " << ConstantPFCech << nl;
-                    LOG << "Curl PF Constant: " << Ccurl << nl;
+                    LOG << "Cech PF Constant:      " << ConstantPFCech << nl;
+                    LOG << "Curl PF Constant:      " << Ccurl << nl;
+                    LOG << "True Curl PF Constant: " << 1. / ( std::sqrt(2.) * Constants::pi ) << nl;
                     LOG << nl;
 
                 }

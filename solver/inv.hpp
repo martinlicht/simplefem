@@ -172,7 +172,7 @@ void InverseOperator<MatrixCSR>::apply( FloatVector& dest, const FloatVector& sr
     #if defined(_OPENMP)
     Rainbow rainbow( op );
 
-    ConjugateGradientSolverCSR_Rainbow( 
+    ConjugateGradientSolverCSR_Eisenstat_Rainbow( 
         src.getdimension(),
         dest.raw(), 
         src.raw(), 
