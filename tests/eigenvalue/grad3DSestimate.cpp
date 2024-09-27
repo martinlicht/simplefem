@@ -22,6 +22,29 @@
 #include "../../vtk/vtkwriter.hpp"
 
 
+#include <queue>
+#include <utility> // for std::pair
+
+
+
+// TODO: can this be a local lambda?
+// Comparator for the priority queue (min-heap, based on weights)
+struct Compare {
+    bool operator()(const std::pair<int, double>& p1, const std::pair<int, double>& p2) {
+        // Use > to prioritize the pair with the smaller weight
+        return p1.second > p2.second;
+    }
+};
+
+
+
+
+
+
+
+
+
+
 using namespace std;
 
 int main( int argc, char *argv[] )
@@ -268,6 +291,102 @@ int main( int argc, char *argv[] )
             
         }
 
+        // estimate the eigenvalue using one of the recursive estimates 
+        {
+        
+            const int num_cells    = M.count_tetrahedra();
+
+            typedef std::vector<int>    array_prec;
+            typedef std::vector<double> array_cost;
+            std::vector<array_prec> arrays_of_prec( num_cells, array_prec(num_cells,-1)                                       );
+            std::vector<array_cost> arrays_of_cost( num_cells, array_cost(num_cells, std::numeric_limits<double>::infinity()) );
+
+            for( int curr_root = 0; curr_root < num_cells; curr_root++ )
+            {
+                auto& curr_tree = arrays_of_prec[curr_root];
+                auto& curr_cost = arrays_of_cost[curr_root];
+                
+                // construct the trees
+                {
+                    // Priority queue to store {cell, distance} pairs, sorted by distance
+                    std::priority_queue<std::pair<int, double>, std::vector<std::pair<int, double>>, Compare> pq;
+
+                    // Initialize root distance
+                    curr_cost[curr_root] = 0.0;
+                    pq.push( { curr_root, 0.0 } );
+
+                    int security_counter = 0; // if cycles occur    
+                    while( not pq.empty() && security_counter++ < num_cells+10 ) 
+                    {
+                        const auto   top_entry = pq.top();
+                        pq.pop();
+                        
+                        const int    cell = top_entry.first;
+                        const double cost = top_entry.second;
+                        
+                        // If this distance is greater than the already found distance, skip
+                        if( cost > curr_cost[cell] ) continue;
+                        
+                        // Get adjacent cells
+                        std::vector<int> adjacent_cells;
+                        for( int fi = 0; fi <= M.getinnerdimension(); fi++ )
+                        {
+                            const int face = M.get_tetrahedron_face( cell, fi );
+                            const auto& parents = M.get_tetrahedron_parents_of_face( face );
+                            
+                            assert( parents.size() == 2 );
+                            assert( parents[0] == cell or parents[1] == cell );
+                            if( parents[0] == cell ) adjacent_cells.push_back( parents[1] );
+                            if( parents[1] == cell ) adjacent_cells.push_back( parents[0] );
+                        }
+
+                        // iterate over adjacent cells 
+                        for( int neighbor : adjacent_cells )
+                        {
+                            // Calculate potential new distance
+                            double edge_cost_additive       = get_edge_weight(cell, neighbor); // TODO
+                            double edge_cost_multiplicative = get_edge_weight(cell, neighbor);
+                            double new_dist = edge_cost_multiplicative * curr_cost[cell] + edge_cost_additive;
+                            
+                            // If a shorter path is found
+                            if( new_dist < curr_cost[neighbor] )
+                            {
+                                curr_cost[neighbor] = new_dist;
+                                curr_tree[neighbor] = cell;  // Set the predecessor
+                                pq.push({neighbor, new_dist});
+                            }
+                        }
+                    
+                    }
+                    assert( security_counter == num_cells );
+
+                }
+                
+                
+                
+                // Check that each cell has been visited (except the root)
+                for( int i = 0; i < num_cells; i++) {
+                    if( i != curr_root) {
+                        assert(curr_tree[i] != i);
+                    }
+                }
+
+                // Check that each cell leads to the root and distance is descending along that path to the root
+                for( int i = 0; i < num_cells; i++) {
+                    int c = i;
+                    for( int j = 0; j < num_cells && c != curr_root; j++) {
+                        assert(curr_cost[c] >= curr_cost[curr_tree[c]]); // Ensure non-increasing distances
+                        c = curr_tree[c];  // Follow the path to the root
+                    }
+                    assert(c == curr_root);  // Ensure the cell eventually leads to the root
+                }
+
+            }
+
+
+
+        }
+        
         if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
 
     } 
