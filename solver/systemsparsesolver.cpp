@@ -1212,7 +1212,7 @@ int HodgeHerzogSoodhalterMethod(
             
             if( precon_A_available )
             {
-                ConjugateResidualSolverCSR( 
+                ConjugateGradientSolverCSR( 
                     dimension_A, 
                     z_A, 
                     v1_A, 
@@ -1225,7 +1225,7 @@ int HodgeHerzogSoodhalterMethod(
 
             if( precon_C_available )
             {
-                ConjugateResidualSolverCSR( 
+                ConjugateGradientSolverCSR( 
                     dimension_C, 
                     z_C, 
                     v1_C, 
@@ -1344,7 +1344,7 @@ int HodgeHerzogSoodhalterMethod(
             
             if( precon_A_available )
             {
-                ConjugateResidualSolverCSR( 
+                ConjugateGradientSolverCSR( 
                     dimension_A, 
                     zn_A, 
                     vn_A, 
@@ -1360,7 +1360,7 @@ int HodgeHerzogSoodhalterMethod(
 
             if( precon_C_available )
             {
-                ConjugateResidualSolverCSR( 
+                ConjugateGradientSolverCSR( 
                     dimension_C, 
                     zn_C, 
                     vn_C, 

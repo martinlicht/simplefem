@@ -1,4 +1,400 @@
 
+
+
+
+
+
+	
+#	----------- UPKEEP & MINOR FIXES -------------
+
+[ ] remove commutativity check in the FEM tests 
+
+[ ] augmented integration for error checks
+[ ] augmented integration for rhs? First, understand integration better. 
+[ ] interpolation points: what are best interpolation points with smallest lebesgue constant?
+
+[ ] adaptive interpolation 
+
+[ ] Handle self-assignment in operator=
+
+[x] correct the computation in the nullspace test 
+
+[x] diffinterpol2D/3D hat komische ausgaben 
+
+[x] Check debug.hpp for errors 
+
+[x] cpp file which contains the logging
+
+[ ] Why does CLOG go into stderr?
+
+[x] tests output into logs 
+  [x] create a silent option for each run in the makefile 
+  [x] make sure the tests only output into stdout 
+  [x] adapt makefile to create a log  		
+  
+[x] Zum laufen bringen auf SCITAS 
+  [x] login SCITAS shell 
+  [x] git repo transferieren 
+  [x] job framework aufsetzen 
+  
+[ ] experiments:
+  Die Konvergenztabellen sollen immer aussagen was gerade approximiert wird 
+  Der Printmodulo soll immer ein 1/20 der max-iteration betragen 
+
+	
+
+
+# ------------------ Makefile ---------------------------------------------
+
+[ ] de-clutter the makefiles
+  include links to the manual in the makefiles for quicker reference 
+
+[ ] makefile structure 
+  [x] common.recipe -> common.compile.mk
+  [ ] vtkclean -> outputclean 
+  [ ] 
+
+[ ] Die automatische dependency generation funktioniert noch nicht 
+  werden alte dependency angaben erased?
+
+
+  
+
+# ----------- Rewrite text output -------------
+
+[x] Jede (bedeutende) Klasse soll eine Log-Funktion verwenden:
+  
+  ```
+  void lg() const { LOG << *this << std::endl; } 
+  ```
+
+[x] Jede Klasse soll das Shift interface implementieren 
+  
+  ```
+  ostream& operator<<( T t, ostream& os )
+  {
+    t.print( os );
+  }
+  ```
+
+[x] Print soll genau das tun: 
+  
+  ```
+  virtual std::string text() const override; 
+  
+  void print( ostream& os ) const
+  {
+    os << text() << nl;
+  }
+  ```
+
+[ ] text() method 
+    The text() shall only emit 'shallow' data,
+  so that no content of vectors and matrices is shown
+  If such content is to be shown, one can use a method 
+  such as 
+  ```
+  std::string fulltext() const;
+  ```
+  Many of your unit tests will need to be rewritten 
+
+[ ] Retire die erweiterten print methoden (etwa ausgabe) 
+
+[ ] composed operators hierarchisch ausgeben: und zwar nur thin mittels text 
+
+[ ] Retire the print() methods throughout the code.
+
+
+
+
+# ------------ sparse matrix component -------------------------
+
+[ ] can you return anon structs?
+
+[ ] SparseMatrix, CSR-Matrix
+  Wieviele eintraege sind mindest/durchschnittlich/maximal in einer Reihe um die Diagonale?
+  Ausgabe mittels statistics substruktur -> return stat struct 
+
+[ ] check symmetry 
+  schreibe eine methode um die deviation von der symmetry zu untersuchen
+  du kannst annehmen, dass sort+compress angewendet worden ist 
+  use a map datastructure to investigate that
+
+[ ] Die Sortierung und Kompression der SparseMatrix braucht nicht soviel Zeit
+  Lasse den Output weg 
+
+
+
+# ------------- SOLVERS, upkeep ---------------
+
+[ ] vereinfache die verschiedenen CR solver 
+  [ ] finde die unterschiede und markiere sie im Code 
+  [ ] mache fallunterscheidungen und vereinheitliche 
+  [ ] commit und merge 
+  
+
+[ ] alle C++ solvers mit preconditioner 
+
+[ ] solver logging 
+  make the logging more reasonable, 
+  e.g., give out iteration numbers at the beginning
+
+[ ] solver unit tests:
+  Die Konvergenztabellen sollen immer den Namen des Solvers enthalten 
+  Der Printmodulo soll immer ein 1/20 der max-iteration betragen 
+
+[ ] im gesamten code durchweg desired_precision anwenden
+    das kann in der solver klasse so gesetzt werden 
+
+[ ] Unified solver interface: 
+  Es macht wenig Sinn, einen solver als Klasse aufzuziehen. 
+  Besser altmodisch mit Parametern, eventuell mit speziellen Default-Werten 
+  Idee: Zur Not kann man einen Solver dann einer Klasse verpacken 
+        mittels einer Template-Konstruktion?
+      
+  Funktionen sind:
+  - Matrix, initial guess, rhs
+  - residual
+  - max steps, desired precision
+  - print modus 
+  - Preconditioner?
+
+# ------------- SOLVERS, important stuff ---------------
+
+[ ] Multiplicative Schwarz / Gauss-Seidel algorithms 
+
+  [ ] DOF partitioning
+    Schreibe einen Algorithmus welcher zu gegebener CSR-Matrix 
+    die DOF partitioniert. Das ist eine Instanz des graph coloring problem.
+    Die max. Zahl der Farben kann man nach oben abschaetzen durch die Anzahl
+    der DOF, aber allgemein genuegt es, greedy vorzugehen.
+    We can restrict to symmetric matrices 
+    
+  [ ] Schreibe einen solver, welcher das Faerbung verwendet 
+    vielleicht mit einer Gauss-Seidel methode,
+    fuer eine multiplicative Schwarz methode.
+    
+  [ ] Teste das for the mass matrix 
+
+[ ] verstehe die stopping criteria for iterative solvers etwas besser 
+[ ] was ist die richtige variante von CG? (E-Mail Meurant?)
+  
+[ ] Chebyshev iteration:
+  Der Solver scheint zu funktionieren. 
+  Als naechstes den mittleren Versuch erasen, 
+  dann den externen archivieren. 
+  
+[ ] Verstehe den Chebyshev solver von theoretischer Seite 
+  und auch die verschiedenen Arten ihn aufzuschreiben
+  
+
+
+# ---------- COMPOSED OPERATORS -----------------
+
+[ ] Rekapituliere das interface der composed operators,
+    und weswegen es diese make-pointer methoden gibt. 
+  Lassen sich diese moeglicherweise ueberladen,
+  so dass du sie nur einmal definieren brauchst?
+
+
+
+
+
+# ----------- LOW IMPORTANCE -------------
+
+[x] Die Tests spiegeln nicht unbedingt den source tree wieder 
+
+[ ] rename basic.hpp in the main folder,
+	move to basic subfolder,
+	and have all exec.s include it
+
+[ ] rename 'basic' module 
+	e.g. common, base, ....
+
+[ ] Pseudo unit tests umordnen nach woanders 
+	basic/ benchmark helloworld leak logging
+	
+[ ] In MFEM gibt es die Option entweder eine shared oder static library zu builden.
+	That should be used in this project as well.
+	
+[ ] Generally speaking, go over the unreal engine and harvest good ideas
+	[x] unreachable, specialized for virtual functions 
+
+Upvote: https://stackoverflow.com/questions/10865957/printf-with-stdstring
+
+
+
+
+
+
+#----------- UNIT TESTING -------------
+
+[ ] Rewrite unit tests as follows:
+    - use meaningful names for the tests 
+  - introduce unit test names as a special variable in each test
+  - once that is done, externalize the tests 
+  - create a single header file that includes all the setup / teardown code 
+
+[ ] new unit test: solver 
+  Erstelle eine 08/15 FD matrix (square, laplace, Dirichlet) 
+  Solve that SPD matrix using all available solvers 
+  
+[ ] new unit test: solver 
+  Erstelle eine 08/15 FD matrix (square, laplace, periodisch) 
+  Solve that SPD matrix using all available solvers 
+
+[x] Rewrite unit tests:
+    - die namen der tests als variable 
+    - nachpruefen dass die namen auch sinn ergeben
+  
+[ ] SIGINT handler einbauen:
+      im falle eines abbruchs geben den namen des tests aus 
+    
+[ ] Have a look at the following unit test frameworks:
+
+  - http://unitpp.sourceforge.net/
+  - https://github.com/burner/sweet.hpp/blob/master/options.hpp
+  - https://github.com/burner/sweet.hpp/blob/master/filesystemtest/filesystemtest.cpp
+  - https://github.com/burner/sweet.hpp/blob/master/fector.hpp
+  - https://github.com/ccosmin/tinytest/blob/master/examples/code1.c
+  - https://github.com/greg-white/sTest
+  
+
+[ ] verstehe die command line options von catch2
+
+[ ] Wie kann man unit tests verwenden, 
+    welche eine exception werfen? Vielleicht im Catch2 forum anfragen.
+
+  ------------------------------------------------------------------------------
+  TimeOfWonder
+  
+  Hello,
+  I have been working with some handwritten unit tests for a C++ project and would like to refactor those into using catch2 as an alternative. 
+  
+  Most of my tests work with `assert` macros or by throwing exceptions. If a test fails, the corresponding program just crashes. In principle, the unit tests look as follows:
+  
+  ```
+  #include "mylib.hpp"
+  int main(){
+    do_stuff_just_pass_on_success_and_crash_on_fail();
+  }
+  ```
+  
+  I am wondering how to convert those into catch2 unit tests in a minimally invasive way, so I don't have to refactor the entire library (at once).
+  
+  What is a your recommendation?
+  ------------------------------------------------------------------------------
+	
+	
+
+
+
+# --------------------- Scott Meyers book --------------
+
+[ ] 7: declare destructors virtual in polymorphic base classes
+[ ] 9: never call virtual functions during construction or destruction 
+[ ] 10: have assignments return reference to *this
+[ ] 11: handle self-assignment in operator=
+
+Better make operators non-member
+	
+#--------------- Layout & Comment --------------
+
+[ ] Layout of class declarations 
+  Which constructors are declared and in which order?
+  What is the order of the different methods?
+  Which should be explicitly deleted or defaulted?
+  
+  This concerns the classes in 
+  - combinatorics
+  - meshes 
+  - operators, dense, sparse
+  
+[ ] Gehe allen Klassen durch und kommentiere das grundlegende Interface:
+  - custom constructors 
+  - the standard six
+  - your personal standard interface 
+  - everything else 
+  Dabei beobachtest du auch die copy und move semantics,
+  und lieferst eventuell implementierung nach.
+  Falls Abweichungen auftauchen, fuegst du kommentare ein 
+  oder behebst die Abweichungen, insb. Move semantics 
+
+
+[ ] Kommentiere die Combinatorics-Klassen 
+[ ] Kommentiere die Combinatorics-Funktionen 
+
+[ ] Gleiche das Interface von Sparse und CSR Matrix ab wo sinnvoll
+
+[ ] Abgleichen der FloatVector und DenseMatrix class interfaces 
+    Vereinfache soweit es geht
+
+[ ] Kommentiere FloatVector und LinearOperator
+
+[ ] Kommentiere die verschiedenen einfachen Operatoren 
+  und den flag operator 
+
+[ ] Kommentiere die composed operators soweit es geht,
+  und lasse eventuell das komplizierte pointer zeugs vorest aus 
+
+
+
+#	---------------- DECOUPLE FROM C++ ------------------------------
+
+[ ] Remove precision from the test files and benchmarks 
+  [x] remove iostream when possible 
+  [ ] seems to reduce compile time, by a few seconds 
+  [!] take care of the ./basic test modules 
+
+[x] Remove fstream 
+
+[ ] In each module, reduce includes in header files to bare minimum, use forward declarations
+
+[ ] Move STL references to where they are needed, away from basic to the cpp file 
+  
+[ ] replace 'assert' by 'Assert'
+
+[ ] Custom Strings library 
+  Custom Output library 
+
+[x] Remove iomanip in each test module 
+
+[ ] Change to makefile to save a few seconds and make it more reasonable:
+  as in the test folder, use inclusions 
+
+
+
+	
+	
+	 
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # TODO general
 
 The complexity of the project is at a point
@@ -51,7 +447,6 @@ The macro is defined in MSVC. Should I use it?
 
 Specify which operation should be the most basic one and stick with that one. 
 
-
 # (HIGH) Floating point exact comparisons ersetzen durch Funktion mit expliziter semantik
 # (HIGH) Floating-point comparisons
 
@@ -100,7 +495,7 @@ Understand the floating-point comparison functions and import them into this pro
 
 The commutativity is not satisfied sufficiently. 
 That seems to be due to the mass matrix, since canonicalization reduces that effect 
-Can we canonicalize everything things already in the matrix assembly?
+Can we canonicalize everything already in the matrix assembly?
 
 # (HIGH) Code Coverage: background and application
 
@@ -166,7 +561,7 @@ Based on that:
 
 # (MEDIUM) Solvers print whether they have been successful 
 ```
-/* HOW DID WE FINISH ? */
+    /* HOW DID WE FINISH ? */
     recent_deviation = rMAMr;
     if( rMAMr > tolerance ) {
         LOG << "PCRM process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
@@ -182,8 +577,8 @@ Based on that:
 # (MEDIUM) Fix Whatever solvers or fix Wikipedia 
 
 - [x] Herzog Soodhalter funktioniert nun, auch die sparse variant.
-- [ ] Identify the sources for these solvers 
-- [ ] Fix the whatever solver or retire it 
+- [ ] Identify the source for MINRES solver; the other ones are known
+- [x] Fix the whatever solver or retire it 
 
 # (MEDIUM) Interesting meshes
 
@@ -223,7 +618,7 @@ Generally, we would like to control the output format by some parameter given to
 We can assume that the parameters belong to some enum class defined within a class declaration and are specifcally tailored to each class. 
 They are a purely optional argument for the print method and may be skipped at convenience.
 
-        
+
 # (LOW) Operators as non-member functions?
 
 Check the classes for member operator functions.

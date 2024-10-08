@@ -247,6 +247,25 @@ inline MeshSimplicial2D UnitSquare2D_strange14()
 
 
 
+inline MeshSimplicial2D Triangle_by_angle_and_length( Float angle, Float length )
+{
+    assert( 0 <= angle && angle <= Constants::twopi );
+    assert( 0 <= length );
+    return MeshSimplicial2D(
+      2,
+      Coordinates( 2, 3, {
+        0., 0., // 0
+        1., 0., // 1
+        length * cos(angle) , length * sin(angle)  // 2
+      } ),
+      {
+        { 0, 1, 2 }
+      }
+    );
+}
+
+
+
 inline MeshSimplicial2D UnitTriangle2D()
 {
     return MeshSimplicial2D(
