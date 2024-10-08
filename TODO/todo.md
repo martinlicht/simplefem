@@ -42,7 +42,8 @@ requires regular grinding in order to get it done.
 
 
 
-
+# (HIGH) _HAS_EXCEPTIONS
+The macro is defined in MSVC. Should I use it?
 
 # (HIGH) Compare different Herzog-Soodhalter methods 
 
