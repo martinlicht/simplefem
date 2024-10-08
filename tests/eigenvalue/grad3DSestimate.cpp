@@ -301,6 +301,16 @@ int main( int argc, char *argv[] )
             std::vector<array_prec> arrays_of_prec( num_cells, array_prec(num_cells,-1)                                       );
             std::vector<array_cost> arrays_of_cost( num_cells, array_cost(num_cells, std::numeric_limits<double>::infinity()) );
 
+            // collect volumes and diameters of all cells 
+            std::vector<Float> volumes( num_cells );
+            std::vector<Float> diameters( num_cells );
+
+            for( int c = 0; c < num_cells; c++ ) 
+            {
+                volumes[c]   = M.getMeasure( M.getinnerdimension(), c );
+                diameters[c] = M.getDiameter( M.getinnerdimension(), c );
+            }
+
             for( int curr_root = 0; curr_root < num_cells; curr_root++ )
             {
                 auto& curr_tree = arrays_of_prec[curr_root];
@@ -334,18 +344,24 @@ int main( int argc, char *argv[] )
                             const int face = M.get_tetrahedron_face( cell, fi );
                             const auto& parents = M.get_tetrahedron_parents_of_face( face );
                             
-                            assert( parents.size() == 2 );
+                            assert( 1 <= parents.size() && parents.size() <= 2 );
+
+                            if( parents.size() == 1 ){
+                                assert( parents[0] == cell );
+                                continue;
+                            }
+                            
                             assert( parents[0] == cell or parents[1] == cell );
-                            if( parents[0] == cell ) adjacent_cells.push_back( parents[1] );
-                            if( parents[1] == cell ) adjacent_cells.push_back( parents[0] );
+                            if( parents[0] != cell ) adjacent_cells.push_back( parents[0] );
+                            if( parents[1] != cell ) adjacent_cells.push_back( parents[1] );
                         }
 
                         // iterate over adjacent cells 
                         for( int neighbor : adjacent_cells )
                         {
                             // Calculate potential new distance
-                            double edge_cost_additive       = get_edge_weight(cell, neighbor); // TODO
-                            double edge_cost_multiplicative = get_edge_weight(cell, neighbor);
+                            double edge_cost_additive       = 1.; 
+                            double edge_cost_multiplicative = 1.; 
                             double new_dist = edge_cost_multiplicative * curr_cost[cell] + edge_cost_additive;
                             
                             // If a shorter path is found
