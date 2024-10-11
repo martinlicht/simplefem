@@ -132,7 +132,7 @@ std::string ConvergenceTable::text_standard( bool display_convergence_rates ) co
     
     const int nc_indent_width = 8;
     
-    const int nc_cell_precision = 4;
+    const int nc_cell_precision = ( minimum_printed_precision > 4 ) ? minimum_printed_precision : 4;
 
     const int nc_rate_precision = 2;
 
@@ -251,7 +251,7 @@ std::string ConvergenceTable::text_transpose( bool display_convergence_rates ) c
     
     const int nc_header_width = 14;
     
-    const int nc_cell_precision = 8;
+    const int nc_cell_precision = ( minimum_printed_precision > 8 ) ? minimum_printed_precision : 8;
 
     const int nc_rate_precision = 4;
 

@@ -355,6 +355,22 @@ void Mesh::automatic_dirichlet_flags()
 }
 
 
+void Mesh::complete_dirichlet_flags_from_facets()
+{
+    const int full = getinnerdimension();
+    
+    assert( has_dimension_counted(full-1) );
+    assert( has_supersimplices_listed(full,full-1) );
+    
+    for( int s = 0; s < count_simplices(full-1); s++ )
+        if( get_flag( full-1, s ) == SimplexFlag::SimplexFlagDirichlet )
+            for( int d = 0; d < full-1; d++ )
+                for( int subindex = 0; subindex < count_subsimplices( full-1, d ); subindex++ ) 
+                    set_flag( d, get_subsimplex( full-1, d, s, subindex ), SimplexFlag::SimplexFlagDirichlet );
+
+}
+
+
 void Mesh::check_dirichlet_flags( bool check_for_full_dirichlet )
 {
     const int full = getinnerdimension();

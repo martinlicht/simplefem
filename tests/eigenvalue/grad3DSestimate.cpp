@@ -24,13 +24,14 @@
 
 #include <queue>
 #include <utility> // for std::pair
+#include <numeric> // for accumulate
 
 
 
 // TODO: can this be a local lambda?
 // Comparator for the priority queue (min-heap, based on weights)
 struct Compare {
-    bool operator()(const std::pair<int, double>& p1, const std::pair<int, double>& p2) {
+    bool operator()(const std::pair<int, Float>& p1, const std::pair<int, Float>& p2) {
         // Use > to prioritize the pair with the smaller weight
         return p1.second > p2.second;
     }
@@ -292,14 +293,19 @@ int main( int argc, char *argv[] )
         }
 
         // estimate the eigenvalue using one of the recursive estimates 
+        if( l == 0 )
         {
         
+            LOG << "Estimate Eigenvalue using recursive construction" << nl;
+            
             const int num_cells    = M.count_tetrahedra();
 
-            typedef std::vector<int>    array_prec;
-            typedef std::vector<double> array_cost;
-            std::vector<array_prec> arrays_of_prec( num_cells, array_prec(num_cells,-1)                                       );
-            std::vector<array_cost> arrays_of_cost( num_cells, array_cost(num_cells, std::numeric_limits<double>::infinity()) );
+            typedef std::vector<int>   array_prec;
+            typedef std::vector<int>   array_rank;
+            typedef std::vector<Float> array_cost;
+            std::vector<array_prec> arrays_of_prec( num_cells, array_prec(num_cells,-1)                                      );
+            std::vector<array_rank> arrays_of_rank( num_cells, array_rank(num_cells,-1)                                      );
+            std::vector<array_cost> arrays_of_cost( num_cells, array_cost(num_cells, std::numeric_limits<Float>::infinity()) );
 
             // collect volumes and diameters of all cells 
             std::vector<Float> volumes( num_cells );
@@ -311,31 +317,65 @@ int main( int argc, char *argv[] )
                 diameters[c] = M.getDiameter( M.getinnerdimension(), c );
             }
 
+            Float volumeratio = 1.;
+            Float maxdiameter = 0.;
+            Float Cxi = ( 1. + sqrt(6.) ) * sqrt(6.);
+
+            LOG << "Compute coefficients: " << num_cells << nl;
+            for( int c1 =    0; c1 < num_cells; c1++ ) 
+            for( int c2 = c1+1; c2 < num_cells; c2++ ) 
+            {
+                volumeratio = maximum( volumeratio, volumes[c1] / volumes[c2] );
+                maxdiameter = maximum( maxdiameter, diameters[c1] );
+            }
+            
+            Float A  = maxdiameter / sqrt(2.);
+            Float Ap = maxdiameter / sqrt(2.) * sqrt( volumeratio ) * Cxi;
+            Float B = power_numerical( volumeratio, 1./2. );
+            
+            
+
+            LOG << "Attempt different roots: " << num_cells << nl;
+
+            Float minimal_costs = numeric_limits<Float>::infinity();
+            
             for( int curr_root = 0; curr_root < num_cells; curr_root++ )
             {
                 auto& curr_tree = arrays_of_prec[curr_root];
+                auto& curr_rank = arrays_of_rank[curr_root];
                 auto& curr_cost = arrays_of_cost[curr_root];
                 
                 // construct the trees
                 {
                     // Priority queue to store {cell, distance} pairs, sorted by distance
-                    std::priority_queue<std::pair<int, double>, std::vector<std::pair<int, double>>, Compare> pq;
+                    std::priority_queue<std::pair<int, Float>, std::vector<std::pair<int, Float>>, Compare> pq;
 
                     // Initialize root distance
-                    curr_cost[curr_root] = 0.0;
-                    pq.push( { curr_root, 0.0 } );
+                    curr_tree[curr_root] = -1;
+                    curr_rank[curr_root] = 0;
+                    curr_cost[curr_root] = A*A;
+                    pq.push( { curr_root, curr_cost[curr_root] } );
 
-                    int security_counter = 0; // if cycles occur    
-                    while( not pq.empty() && security_counter++ < num_cells+10 ) 
+                    //int security_counter = 0; // if cycles occur    
+                    while( not pq.empty()  )  // && security_counter++ < num_cells+10
                     {
                         const auto   top_entry = pq.top();
                         pq.pop();
                         
-                        const int    cell = top_entry.first;
-                        const double cost = top_entry.second;
+                        const int   cell = top_entry.first;
+                        const Float cost = top_entry.second;
                         
                         // If this distance is greater than the already found distance, skip
+                        // In this version of Dijkstra, the PQ may have multiple instances of the same node 
                         if( cost > curr_cost[cell] ) continue;
+
+                        // cell is already at minimum cost and the predecessor is real predecessor
+                        
+                        if( curr_tree[cell] == -1 ) assert( cell == curr_root );
+                        if( curr_tree[cell] != -1 ) {
+                            curr_rank[cell] = 1 + curr_rank[ curr_tree[cell] ];
+                        }
+
                         
                         // Get adjacent cells
                         std::vector<int> adjacent_cells;
@@ -359,10 +399,22 @@ int main( int argc, char *argv[] )
                         // iterate over adjacent cells 
                         for( int neighbor : adjacent_cells )
                         {
+                            auto volume_ratio = maximum( volumes[cell] / volumes[neighbor], volumes[neighbor] / volumes[cell] );
+                            
+                            Float edge_cost_additive       = volume_ratio; 
+
+                            Float edge_cost_multiplicative = volume_ratio; 
+                            
                             // Calculate potential new distance
-                            double edge_cost_additive       = 1.; 
-                            double edge_cost_multiplicative = 1.; 
-                            double new_dist = edge_cost_multiplicative * curr_cost[cell] + edge_cost_additive;
+                            if( curr_rank[cell] == 0 ) {
+                                edge_cost_additive       = (Ap+A*B)*(Ap+A*B);
+                                edge_cost_multiplicative = 1.; 
+                            } else {
+                                edge_cost_additive       = (Ap+A*B)*(Ap+A*B) * power_numerical(B*B,curr_rank[cell]);
+                                edge_cost_multiplicative = 1.; 
+                            }
+
+                            Float new_dist = ( edge_cost_additive + edge_cost_multiplicative * curr_cost[cell] );
                             
                             // If a shorter path is found
                             if( new_dist < curr_cost[neighbor] )
@@ -374,7 +426,7 @@ int main( int argc, char *argv[] )
                         }
                     
                     }
-                    assert( security_counter == num_cells );
+                    //assert( security_counter == num_cells );
 
                 }
                 
@@ -397,9 +449,21 @@ int main( int argc, char *argv[] )
                     assert(c == curr_root);  // Ensure the cell eventually leads to the root
                 }
 
+                // output: total costs of tree
+                Float total_costs = std::accumulate( curr_cost.begin(), curr_cost.end(), 0.);
+                LOG << "From root " << curr_root << " the total costs are " << total_costs << nl;
+
+                // output: structure of graph
+                // Float total_edge_costs = 0.;
+                // for( int i = 0; i < num_cells; i++) {
+                //     LOG << " At " << i << " prec " << curr_tree[i] << " rank " << curr_rank[i] << " cost " << curr_cost[i] << nl;
+                // }
+
+                minimal_costs = minimum( minimal_costs, total_costs );
+
             }
 
-
+            LOG << "minimal costs, sqrt : " << minimal_costs << space << sqrt(minimal_costs) << nl;
 
         }
         

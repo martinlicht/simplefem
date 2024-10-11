@@ -195,6 +195,8 @@ class Mesh
         
         void automatic_dirichlet_flags();
         
+        void complete_dirichlet_flags_from_facets();
+        
         void check_dirichlet_flags( bool check_for_full_dirichlet = true );
         
         
