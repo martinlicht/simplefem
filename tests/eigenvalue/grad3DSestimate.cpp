@@ -299,6 +299,7 @@ int main( int argc, char *argv[] )
             LOG << "Estimate Eigenvalue using recursive construction" << nl;
             
             const int num_cells    = M.count_tetrahedra();
+            const int num_faces    = M.count_faces();
 
             typedef std::vector<int>   array_prec;
             typedef std::vector<int>   array_rank;
@@ -319,16 +320,22 @@ int main( int argc, char *argv[] )
 
             Float volumeratio = 1.;
             Float maxdiameter = 0.;
-            Float Cxi = ( 1. + sqrt(6.) ) * sqrt(6.);
-
             LOG << "Compute coefficients: " << num_cells << nl;
+
             for( int c1 =    0; c1 < num_cells; c1++ ) 
             for( int c2 = c1+1; c2 < num_cells; c2++ ) 
             {
                 volumeratio = maximum( volumeratio, volumes[c1] / volumes[c2] );
                 maxdiameter = maximum( maxdiameter, diameters[c1] );
             }
+            for( int f = 0; f < num_faces; f++ ) 
+            {
+                const auto reflection_matrix_jacobian = M.get_reflection_along_face(f);
+                const auto singular_value             = reflection_matrix_jacobian.operator_norm_estimate();
+            }
             
+            Float Cxi = ( 1. + sqrt(6.) ) * sqrt(6.);
+
             Float A  = maxdiameter / sqrt(2.);
             Float Ap = maxdiameter / sqrt(2.) * sqrt( volumeratio ) * Cxi;
             Float B = power_numerical( volumeratio, 1./2. );

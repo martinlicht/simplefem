@@ -2556,7 +2556,51 @@ std::vector<int> MeshSimplicial3D::get_edge_parents_of_vertex( int v ) const
 
 
 
+DenseMatrix MeshSimplicial3D::get_reflection_along_face( int f ) const
+{
+    assert( 0 <= f && f < counter_faces );
+    assert( count_face_tetrahedron_parents(f) == 2 );
+    
+    assert( getouterdimension() == 3 );
 
+    const auto parents = get_tetrahedron_parents_of_face( f );
+    assert( parents.size() == 2 );
+
+    const auto t0 = parents[0];
+    const auto t1 = parents[1];
+    
+    const auto face_vertices = get_face_vertices( f );
+    const auto local_f0 = this->get_subsimplex_index( 3, 2, t0, f );
+    const auto local_f1 = this->get_subsimplex_index( 3, 2, t1, f );
+
+    const auto local_v0 = this->get_opposite_subsimplex_index( 3, 2, t0, local_f0 );
+    const auto local_v1 = this->get_opposite_subsimplex_index( 3, 2, t1, local_f0 );
+
+    const auto v0 = get_subsimplex( 3, 0, t0, local_v0 );
+    const auto v1 = get_subsimplex( 3, 0, t0, local_v1 );
+
+    const auto vec_f0 = getcoordinates().getvectorclone( face_vertices[0] );  assert( vec_f0.getdimension() == 3 );
+    const auto vec_f1 = getcoordinates().getvectorclone( face_vertices[0] );  assert( vec_f1.getdimension() == 3 );
+    const auto vec_f2 = getcoordinates().getvectorclone( face_vertices[0] );  assert( vec_f2.getdimension() == 3 );
+    const auto vec_v0 = getcoordinates().getvectorclone( v0 );                assert( vec_v0.getdimension() == 3 );
+    const auto vec_v1 = getcoordinates().getvectorclone( v1 );                assert( vec_v1.getdimension() == 3 );
+
+    DenseMatrix M0( 3, 3 );
+    DenseMatrix M1( 3, 3 );
+    M0.setcolumn( 0, vec_f1 - vec_f0 );
+    M0.setcolumn( 1, vec_f2 - vec_f0 );
+    M0.setcolumn( 2, vec_v0 - vec_f0 );
+    M1.setcolumn( 0, vec_f1 - vec_f0 );
+    M1.setcolumn( 1, vec_f2 - vec_f0 );
+    M1.setcolumn( 2, vec_v1 - vec_f0 );
+    assert( M0.isfinite() and M1.isfinite() );
+
+    const auto ret = M1 * Inverse(M0);
+    assert( ret.isfinite() );
+
+    return ret;
+}
+        
 FloatVector MeshSimplicial3D::get_tetrahedron_midpoint( int t ) const
 {
     assert( 0 <= t && t < counter_tetrahedra );

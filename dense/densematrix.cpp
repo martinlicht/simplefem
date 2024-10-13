@@ -1085,6 +1085,28 @@ Float DenseMatrix::EigenvalueEstimate() const
     return maxnorm() * getdimout();
 }
 
+Float DenseMatrix::operator_norm_estimate() const
+{
+    const auto&  M = *this;
+    
+    DenseMatrix Mt( M.getdimin(), M.getdimout() );
+    for( int r = 0; r < M.getdimout(); r++ )
+    for( int c = 0; c < M.getdimin();  c++ )
+        Mt(c,r) = M(r,c);
+
+    DenseMatrix MtM = Mt * M;
+
+    auto vec = MtM.createinputvector();
+    vec.random();
+    for( int i = 0; i < 10; i++ )
+    {
+        vec.normalize();
+        vec = MtM * vec;
+    }
+    return sqrt( vec.norm() );
+    
+}
+
 
 
 
