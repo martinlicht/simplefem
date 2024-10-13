@@ -192,9 +192,10 @@ class DenseMatrix final
         DenseMatrix GerschgorinRow() const;
         DenseMatrix GerschgorinColumn() const;
 
-        // Crude eigenvalue estimate 
+        // Crude eigenvalue and singular value estimate 
 
         Float EigenvalueEstimate() const;
+        Float operator_norm_estimate() const;
 
 
         

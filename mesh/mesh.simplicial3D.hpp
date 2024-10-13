@@ -314,6 +314,7 @@ class MeshSimplicial3D
         
         /* other things */
         
+        DenseMatrix get_reflection_along_face( int f ) const;
         FloatVector get_tetrahedron_midpoint( int t ) const;
         FloatVector get_face_midpoint( int f ) const;
         FloatVector get_edge_midpoint( int e ) const;

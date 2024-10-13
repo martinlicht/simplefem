@@ -55,8 +55,9 @@ int main( int argc, char *argv[] )
     
     LOG << "Initial mesh..." << nl;
     
-    MeshSimplicial3D M = UnitCube3D(); 
+    // MeshSimplicial3D M = UnitCube3D(); 
     // MeshSimplicial3D M = FicheraCorner3D();
+    MeshSimplicial3D M = CrossedBricks3D();
     
     M.check();
     
@@ -271,6 +272,8 @@ int main( int argc, char *argv[] )
                 LOG << "ratio:       " << curratio << nl;
                 LOG << "u mass:      " << u_massnorm << nl;
                 LOG << "u grad mass: " << ugrad_massnorm << nl;
+
+                LOG << "PF constant estimates: " << sqrt(curratio) << space  << sqrt(newratio) << nl;
                 
                 const Float true_eigenvalue = ( do_neumann ? 1.0 : 3.0 );
                 // 1.0 is the true value 
@@ -299,6 +302,7 @@ int main( int argc, char *argv[] )
             LOG << "Estimate Eigenvalue using recursive construction" << nl;
             
             const int num_cells    = M.count_tetrahedra();
+            const int num_faces    = M.count_faces();
 
             typedef std::vector<int>   array_prec;
             typedef std::vector<int>   array_rank;
@@ -317,13 +321,10 @@ int main( int argc, char *argv[] )
                 diameters[c] = M.getDiameter( M.getinnerdimension(), c );
             }
 
+            LOG << "Compute coefficients: " << num_cells << nl;
+
             Float volumeratio = 1.;
             Float maxdiameter = 0.;
-            //Float Cxi = ( 1. + sqrt(6.) * sqrt(6.) );
-            // Float Cxi = sqrt( 1. + power_numerical( sqrt(6.) * sqrt(6.), 2 ) );
-            Float Cxi = sqrt( 1. + power_numerical( 1. * sqrt(6.), 2 ) );
-
-            LOG << "Compute coefficients: " << num_cells << nl;
             for( int c1 =    0; c1 < num_cells; c1++ ) 
             for( int c2 = c1+1; c2 < num_cells; c2++ ) 
             {
@@ -331,6 +332,22 @@ int main( int argc, char *argv[] )
                 maxdiameter = maximum( maxdiameter, diameters[c1] );
             }
             
+            Float Cxi = 0.;
+            for( int f = 0; f < num_faces; f++ ) 
+            {
+                if( M.count_face_tetrahedron_parents(f) != 2 ) continue;
+                const auto reflection_matrix_jacobian = M.get_reflection_along_face(f);
+                const auto singular_value             = reflection_matrix_jacobian.operator_norm_estimate();
+                LOG << singular_value << nl;
+                Cxi = maximum( Cxi, singular_value );
+            }
+            
+            //Float Cxi = ( 1. + sqrt(6.) * sqrt(6.) );
+            // Float Cxi = sqrt( 1. + power_numerical( sqrt(6.) * sqrt(6.), 2 ) );
+            //Float Cxi = ( 1. + sqrt(6.) ) * sqrt(6.);
+
+            assert( Cxi <= ( 1. + sqrt(6.) ) * sqrt(6.) );
+
             Float A  = maxdiameter / sqrt(2.);
             Float Ap = maxdiameter / sqrt(2.) * sqrt( volumeratio ) * Cxi;
             Float B = power_numerical( volumeratio, 1./2. );
