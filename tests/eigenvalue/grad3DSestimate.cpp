@@ -55,8 +55,8 @@ int main( int argc, char *argv[] )
     
     LOG << "Initial mesh..." << nl;
     
-    MeshSimplicial3D M = UnitCube3D();
-    M.getcoordinates().scale( Constants::pi );
+    MeshSimplicial3D M = UnitCube3D(); 
+    // MeshSimplicial3D M = FicheraCorner3D();
     
     M.check();
     
@@ -319,7 +319,9 @@ int main( int argc, char *argv[] )
 
             Float volumeratio = 1.;
             Float maxdiameter = 0.;
-            Float Cxi = ( 1. + sqrt(6.) ) * sqrt(6.);
+            //Float Cxi = ( 1. + sqrt(6.) * sqrt(6.) );
+            // Float Cxi = sqrt( 1. + power_numerical( sqrt(6.) * sqrt(6.), 2 ) );
+            Float Cxi = sqrt( 1. + power_numerical( 1. * sqrt(6.), 2 ) );
 
             LOG << "Compute coefficients: " << num_cells << nl;
             for( int c1 =    0; c1 < num_cells; c1++ ) 
