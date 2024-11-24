@@ -12,14 +12,20 @@
 ////////  forward declarations /////////
 ////////////////////////////////////////
 
-std::vector<std::vector<int>> generate_ordered_combinations( int N, int k );
+struct Edge{
+    int index;
+    int first;
+    int second;
+};
+
+std::vector<std::vector<int>> generate_combinations( int N, int k );
 
 bool check_spanning_tree( 
-        const std::vector<std::pair<int,int>>& nodes_of_edges, 
+        const std::vector<Edge>& nodes_of_edges, 
         const std::vector<int>& tree_candidate 
 );
 
-std::vector<std::vector<int>> list_face_spanning_trees( const Mesh& mesh );
+std::pair< std::vector<int>, std::vector<std::vector<int>> > list_face_spanning_trees( const Mesh& mesh );
 
 ////////////////////////////////////////
 
@@ -28,7 +34,7 @@ std::vector<std::vector<int>> list_face_spanning_trees( const Mesh& mesh );
 
 
 // Function to generate all combinations of k elements from 0 to N-1
-std::vector<std::vector<int>> generate_ordered_combinations( int N, int k ){
+std::vector<std::vector<int>> generate_combinations( int N, int k ){
     
     std::vector<std::vector<int>> result;
     std::vector<int> combination(k);
@@ -70,6 +76,8 @@ std::vector<std::vector<int>> generate_ordered_combinations( int N, int k ){
         }
     }
 
+    assert( result.size() == binomial_integer( N, k ) );
+
     return result;
 }
 
@@ -79,11 +87,12 @@ std::vector<std::vector<int>> generate_ordered_combinations( int N, int k ){
 
 
 bool check_spanning_tree( 
-        const std::vector<std::pair<int,int>>& nodes_of_edges, 
+        const std::vector<Edge>& nodes_of_edges, 
         const std::vector<int>& tree_candidate 
 )
 {
     for( const auto& e : nodes_of_edges ) assert( e.first >= 0 and e.second >= 0 );
+    for( const auto& e : nodes_of_edges ) assert( e.index >= 0 );
 
     for( const auto& e : tree_candidate ) assert( 0 <= e and e < nodes_of_edges.size() );
 
@@ -108,6 +117,8 @@ bool check_spanning_tree(
         visited[n2] = true;
     }
     for( const bool v : visited ) if( not v ) return false;
+
+
 
     // create the adjaceny list for all nodges
     std::vector<std::vector<int>> adjacency_list(number_of_nodes);
@@ -153,52 +164,61 @@ bool check_spanning_tree(
 
 
 
-std::vector<std::vector<int>> list_face_spanning_trees( const Mesh& mesh )
+std::pair< std::vector<int>, std::vector<std::vector<int>> > list_face_spanning_trees( const Mesh& mesh )
 {
     // check that input mesh is reasonable 
     const int dim = mesh.getinnerdimension();
     assert( dim >= 1 );
 
-    const int count_volumes = mesh.count_simplices(dim);
-    const int count_faces   = mesh.count_simplices(dim-1);
+    const int num_volumes = mesh.count_simplices(dim);
+    const int num_faces   = mesh.count_simplices(dim-1);
 
-    assert( count_faces >= count_volumes-1 );
+    assert( num_faces >= num_volumes-1 );
 
     // generate the list of parents of each face with two parents 
-    std::vector<std::pair<int,int>> nodes_of_edges;
-    nodes_of_edges.reserve( count_faces );
+    std::vector<Edge> nodes_of_edges;
+    nodes_of_edges.reserve( num_faces );
     
-    for( int f = 0; f < count_faces; f++ ) 
+    for( int f = 0; f < num_faces; f++ ) 
     {
         const auto parent_volumes = mesh.getsupersimplices( dim, dim-1, f );
         
         if( parent_volumes.size() == 1 ) continue; 
         
-        std::pair<int,int> edge = { parent_volumes[0], parent_volumes[1] };
-        assert( 0 <= edge.first  and edge.first  < count_volumes );
-        assert( 0 <= edge.second and edge.second < count_volumes );
-        assert( edge.first == edge.second );
+        Edge edge = { .index = f, .first = parent_volumes[0], .second = parent_volumes[1] };
+        assert( 0 <= edge.first  and edge.first  < num_volumes );
+        assert( 0 <= edge.second and edge.second < num_volumes );
+        assert( edge.first != edge.second );
         
         nodes_of_edges.push_back( edge );
     }
     
     // generate the ordered spanning tree candidates and filter them out 
-    auto ordered_spanning_tree_candidates = generate_ordered_combinations( nodes_of_edges.size(), count_volumes-1 );
+    auto spanning_tree_candidates = generate_combinations( nodes_of_edges.size(), num_volumes-1 );
 
-    for( int t = 0; t < ordered_spanning_tree_candidates.size(); )
+    // LOG << nodes_of_edges.size() << space << binomial_integer( nodes_of_edges.size(), num_volumes-1 ) << nl;
+    // for( const auto& candidate : spanning_tree_candidates ) {
+    //     for( const int e : candidate ) LOG << e << space;
+    //     LOG << "---" << nl;
+    // }
+
+    for( int t = 0; t < spanning_tree_candidates.size(); )
     {
-        const auto& candidate = ordered_spanning_tree_candidates[t];
+        const auto& candidate = spanning_tree_candidates[t];
 
         bool is_tree = check_spanning_tree( nodes_of_edges, candidate );
 
         if( not is_tree ) {
-            ordered_spanning_tree_candidates.erase( ordered_spanning_tree_candidates.begin() + t );
+            spanning_tree_candidates.erase( spanning_tree_candidates.begin() + t );
         } else {
             t++;
         }
     }
 
-    return ordered_spanning_tree_candidates;
+    std::vector<int> index2face( nodes_of_edges.size() );
+    for( int i = 0; i < nodes_of_edges.size(); i++ ) index2face[i] = nodes_of_edges[i].index;
+
+    return { index2face, spanning_tree_candidates };
 
 }
 

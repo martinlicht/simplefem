@@ -47,7 +47,17 @@ int main( int argc, char *argv[] )
     
             
     
-    
+    const std::pair< std::vector<int>, std::vector<std::vector<int>> > index2face_and_trees = list_face_spanning_trees( M );
+    const auto& index2face = index2face_and_trees.first;
+    const auto& trees      = index2face_and_trees.second;
+
+    for( const auto& tree : trees ) {
+        for( const int e : tree ) LOG << index2face[e] << space;
+        LOG << nl;
+    }
+
+    LOG << M.text() << nl;
+
     
     
     
