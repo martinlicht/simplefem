@@ -70,7 +70,7 @@ FLAG_NO_EXCEPTIONS=yes
 
 # Do you want to ENABLE the use of openMP?
 # Uncomment the following line to enable compilation with openMP
-FLAG_ENABLE_OPENMP=yes
+# FLAG_ENABLE_OPENMP=yes
 
 # Do you want to ENABLE excessive warning options?
 # Uncomment the following line to enable excessive warning options
@@ -83,7 +83,7 @@ FLAG_EXCESSIVE_WARNINGS=yes
 # FLAG_DO_USE_SINGLE_PRECISION=yes
 
 # Logging output in color?
-FLAG_COLORED_OUTPUT=yes
+# FLAG_COLORED_OUTPUT=yes
 
 # Do you want to ENABLE the Clang sanitizer?
 # Uncomment the following line to enable compilation with the Clang sanitizer

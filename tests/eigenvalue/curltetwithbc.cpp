@@ -37,10 +37,10 @@ int main( int argc, char *argv[] )
     
     M.check();
     
-    int number_of_flagged_faces = 1;
+    int last_flagged_face = 1;
 
-    for( int f = 0; f <= number_of_flagged_faces; f++ ) 
-        M.set_flag( 2, number_of_flagged_faces - f, SimplexFlag::SimplexFlagDirichlet );
+    for( int f = 0; f <= last_flagged_face; f++ ) 
+        M.set_flag( 2, last_flagged_face - f, SimplexFlag::SimplexFlagDirichlet );
     M.complete_dirichlet_flags_from_facets();
     
     // M.automatic_dirichlet_flags();
@@ -59,12 +59,12 @@ int main( int argc, char *argv[] )
         
         poincare_friedrichs_estimate
         =
-        n * power_numerical( 2, (n-number_of_flagged_faces)/2. + n + 1. )
+        n * power_numerical( 2, (n-(last_flagged_face)/2. + n + 1. )
         *
         //power_integer( 2, k-1 ) // CB, simplified
         ( 1./n + 1./2. )
         *
-        (4./3.) * Constants::pi * factorial_numerical(n) / (number_of_flagged_faces+1)
+        (4./3.) * Constants::pi * factorial_numerical(n) / (last_flagged_face+1)
         *
         1. // condition number 
         *
@@ -74,7 +74,7 @@ int main( int argc, char *argv[] )
         ;
     }        
 
-    if( number_of_flagged_faces == 3 )
+    if( last_flagged_face == 3 )
     {
         int n = 3;
         int k = 2;
@@ -110,7 +110,7 @@ int main( int argc, char *argv[] )
     
     std::vector<ConvergenceTable> contables(max_r-min_r+1); //();
     for( int r = min_r; r <= max_r; r++ ){
-        contables[r-min_r].table_name = "Mass error and numerical residuals r=" + std::to_string(r) + " fs=" + std::to_string(number_of_flagged_faces);
+        contables[r-min_r].table_name = "Mass error and numerical residuals r=" + std::to_string(r) + " fs=" + std::to_string(last_flagged_face);
         contables[r-min_r] << "L eigen" << "PF comp" << "PF est" << "ratio" << "u_mass" << "du_mass" << "time" << nl;
         contables[r-min_r].minimum_printed_precision = 8;
     } 
