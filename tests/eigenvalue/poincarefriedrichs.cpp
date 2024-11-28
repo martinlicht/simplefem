@@ -32,7 +32,7 @@ int main( int argc, char *argv[] )
     
     LOG << "Initial mesh..." << nl;
     
-    MeshSimplicial3D M = UnitCube3D();
+    MeshSimplicial3D M = CrossedBricks3D();
     M.getcoordinates().scale( Constants::pi );
     
     M.check();
@@ -47,11 +47,16 @@ int main( int argc, char *argv[] )
     
             
     
+    LOG << "Generate spanning trees..." << nl;
     const std::pair< std::vector<int>, std::vector<std::vector<int>> > index2face_and_trees = list_face_spanning_trees( M );
     const auto& index2face = index2face_and_trees.first;
     const auto& trees      = index2face_and_trees.second;
 
-    for( const auto& tree : trees ) {
+    LOG << "Print spanning trees..." << nl;
+    for( int t = 0; t < trees.size(); t++ )
+    {
+        const auto& tree = trees[t];
+        LOG << t << "\t:\t";
         for( const int e : tree ) LOG << index2face[e] << space;
         LOG << nl;
     }

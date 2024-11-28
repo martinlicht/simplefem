@@ -76,14 +76,27 @@ int main( int argc, char *argv[] )
 
     for( int n = 0; n <= 7; n++ ) assert( binomial_integer( n, 0 ) == 1 );
     for( int n = 0; n <= 7; n++ ) assert( binomial_integer( n, n ) == 1 );
+
+    assert( binomial_integer( 0, 0 ) == 1 );
+
     
     for( int n = 0; n <= 7; n++ ) 
-    for( int k = 0; k <= 6; k++ ) 
+    for( int k = 1; k <= 6; k++ ) 
+    {
         assert( binomial_integer( n, n + k ) == 0 );
+    }
 
     for( int n = 0; n <= 7; n++ ) 
     for( int k = 0; k <= n; k++ ) 
+    {
         assert( binomial_integer( n, k ) == factorial_integer(n) / factorial_integer(k) / factorial_integer(n-k) );
+    }
+
+    for( int n = 0; n <= 7; n++ ) 
+    for( int k = 0; k <= n; k++ ) 
+    {
+        assert( binomial_integer( n, k ) == binomial_integer_secured( n, k ) );
+    }
 
     assert( 252 == binomial_integer(10,5) );
 

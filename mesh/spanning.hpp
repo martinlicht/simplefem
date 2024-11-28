@@ -76,7 +76,7 @@ std::vector<std::vector<int>> generate_combinations( int N, int k ){
         }
     }
 
-    assert( result.size() == binomial_integer( N, k ) );
+    assert( result.size() == binomial_integer_secured( N, k ) );
 
     return result;
 }
@@ -109,8 +109,9 @@ bool check_spanning_tree(
     std::vector<int> visited( number_of_nodes, false );
     for( const auto& e : tree_candidate ) 
     {
-        int n1 = nodes_of_edges[e].first;
-        int n2 = nodes_of_edges[e].second;
+        const auto& edge = nodes_of_edges[e];
+        int n1 = edge.first;
+        int n2 = edge.second;
         assert( 0 <= n1 and n1 < number_of_nodes );
         assert( 0 <= n2 and n2 < number_of_nodes );
         visited[n1] = true;
@@ -122,9 +123,10 @@ bool check_spanning_tree(
 
     // create the adjaceny list for all nodges
     std::vector<std::vector<int>> adjacency_list(number_of_nodes);
-    for (const auto& e : tree_candidate) {
-        int u = nodes_of_edges[e].first;
-        int v = nodes_of_edges[e].second;
+    for( const auto& e : tree_candidate) {
+        const auto& edge = nodes_of_edges[e];
+        int u = edge.first;
+        int v = edge.second;
         adjacency_list[u].push_back(v);
         adjacency_list[v].push_back(u);
     }
@@ -163,7 +165,6 @@ bool check_spanning_tree(
 
 
 
-
 std::pair< std::vector<int>, std::vector<std::vector<int>> > list_face_spanning_trees( const Mesh& mesh )
 {
     // check that input mesh is reasonable 
@@ -193,7 +194,9 @@ std::pair< std::vector<int>, std::vector<std::vector<int>> > list_face_spanning_
         nodes_of_edges.push_back( edge );
     }
     
-    // generate the ordered spanning tree candidates and filter them out 
+    LOG << "generate combinations: " << nodes_of_edges.size() << space << num_volumes-1 << nl;
+    
+    // generate the spanning tree candidates and filter them out 
     auto spanning_tree_candidates = generate_combinations( nodes_of_edges.size(), num_volumes-1 );
 
     // LOG << nodes_of_edges.size() << space << binomial_integer( nodes_of_edges.size(), num_volumes-1 ) << nl;
@@ -202,24 +205,158 @@ std::pair< std::vector<int>, std::vector<std::vector<int>> > list_face_spanning_
     //     LOG << "---" << nl;
     // }
 
-    for( int t = 0; t < spanning_tree_candidates.size(); )
+    LOG << "check for trees: " << spanning_tree_candidates.size() << nl;
+
+    std::vector<bool> is_tree( spanning_tree_candidates.size() );
+    
+    for( int t = 0; t < spanning_tree_candidates.size(); t++ )
     {
         const auto& candidate = spanning_tree_candidates[t];
-
-        bool is_tree = check_spanning_tree( nodes_of_edges, candidate );
-
-        if( not is_tree ) {
-            spanning_tree_candidates.erase( spanning_tree_candidates.begin() + t );
-        } else {
-            t++;
-        }
+        
+        is_tree[t] = check_spanning_tree( nodes_of_edges, candidate );
     }
+
+    LOG << "list trees: " << spanning_tree_candidates.size() << nl;
+
+    std::vector<std::vector<int>> spanning_trees;
+    spanning_trees.reserve( spanning_tree_candidates.size() );
+
+    for( int t = 0; t < spanning_tree_candidates.size(); t++ )
+    {
+        if( not is_tree[t] ) continue;
+
+        spanning_trees.push_back( spanning_tree_candidates[t] );
+    }
+    spanning_trees.shrink_to_fit();
+
+    
+
+
 
     std::vector<int> index2face( nodes_of_edges.size() );
     for( int i = 0; i < nodes_of_edges.size(); i++ ) index2face[i] = nodes_of_edges[i].index;
 
-    return { index2face, spanning_tree_candidates };
+    return { index2face, spanning_trees };
 
 }
+
+
+
+
+
+
+std::vector<std::vector<int>> list_topological_vertex_sortings_of_subtree(
+    const Mesh& mesh, 
+    const std::vector<std::vector<int>>& adjacency_list, 
+    int forbidden_node,
+    int current_node
+){
+    assert( forbidden_node == mesh.nullindex or 0 <= forbidden_node < adjacency_list.size() );
+    assert( 0 <= current_node and current_node < adjacency_list.size() );
+    assert( adjacency_list.size() == mesh.count_simplices( mesh.getinnerdimension() ) );
+    for( const auto& vs : adjacency_list ) for( const auto& v : vs ) assert( 0 <= v and v < mesh.count_simplices( mesh.getinnerdimension() ) );
+    
+    const std::vector<int>& start_neighbors = adjacency_list[current_node];
+
+    if( forbidden_node != mesh.nullindex) 
+        // std::find( start_neighbors.begin(), start_neighbors.end(), forbidden_node ) != start_neighbors.end();
+    {
+        bool found = false;
+        for( int succ : start_neighbors ) if( succ == forbidden_node ) found = true;
+        assert( found );
+    }
+
+    const int number_of_neighbors = start_neighbors.size();
+
+    std::vector<std::vector<std::vector<int>>> top_sorts_of_succs( number_of_neighbors );
+
+    for( int t = 0; t < number_of_neighbors; t++ )
+    {
+        int succ = start_neighbors[t];
+
+        if( succ == forbidden_node ) continue;
+
+        top_sorts_of_succs[t] = list_topological_vertex_sortings_of_subtree( mesh, adjacency_list, current_node, succ );
+    }
+
+}
+
+
+
+
+
+
+// std::pair< std::vector<int>, std::vector<std::vector<int>> > list_ordered_face_spanning_trees( 
+//     const Mesh& mesh, 
+//     const std::vector<int>& index2face, 
+//     std::vector<std::vector<int>>& spanning_trees
+// ){
+
+//     // check that input mesh is reasonable 
+//     const int dim = mesh.getinnerdimension();
+//     assert( dim >= 1 );
+
+//     const int num_volumes = mesh.count_simplices(dim);
+//     const int num_faces   = mesh.count_simplices(dim-1);
+
+//     assert( num_faces >= num_volumes-1 );
+
+//     const int number_of_nodes = num_volumes;
+
+//     // enumerate all the edges' nodes
+//     std::vector<Edge> nodes_of_edges;
+//     nodes_of_edges.reserve( num_faces );
+    
+//     for( int f = 0; f < num_faces; f++ ) 
+//     {
+//         const auto parent_volumes = mesh.getsupersimplices( dim, dim-1, f );
+        
+//         if( parent_volumes.size() == 1 ) continue; 
+        
+//         Edge edge = { .index = f, .first = parent_volumes[0], .second = parent_volumes[1] };
+//         assert( 0 <= edge.first  and edge.first  < num_volumes );
+//         assert( 0 <= edge.second and edge.second < num_volumes );
+//         assert( edge.first != edge.second );
+        
+//         nodes_of_edges.push_back( edge );
+//     }
+    
+//     for( const auto& spanning_tree : spanning_trees )
+//     {
+
+//         // create the adjacency tree for the subgraph 
+//         std::vector<std::vector<int>> adjacency_list(number_of_nodes);
+//         for( const auto& e : spanning_tree ) 
+//         {
+//             int u = nodes_of_edges[e].first;
+//             int v = nodes_of_edges[e].second;
+//             adjacency_list[u].push_back(v);
+//             adjacency_list[v].push_back(u);
+//         }
+        
+    
+//         std::vector<int> visited( number_of_nodes, false );
+//         for( const auto& e : spanning_tree ) 
+//         {
+//             int n1 = nodes_of_edges[e].first;
+//             int n2 = nodes_of_edges[e].second;
+//             assert( 0 <= n1 and n1 < number_of_nodes );
+//             assert( 0 <= n2 and n2 < number_of_nodes );
+//             visited[n1] = true;
+//             visited[n2] = true;
+//         }
+//         for( const bool v : visited ) if( not v ) return false;
+//     }
+
+// }
+
+
+
+
+
+
+
+
+
 
 #endif // SPANNING_TREE_LISTER_HPP

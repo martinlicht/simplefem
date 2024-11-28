@@ -522,7 +522,28 @@ inline constexpr int binomial_integer( intmax_t n, intmax_t k )
     return static_cast<int>(result);
 }
 
+inline unsigned long long binomial_integer_secured( unsigned int n, unsigned int k )
+{
+    Assert( k <= n ); 
 
+    if( k > n - k ) { 
+        k = n - k;
+    }
+    
+    unsigned long long result = 1;
+
+    for( unsigned int i = 1; i <= k; ++i ) 
+    {
+        // Check for overflow before multiplication
+        Assert( result <= std::numeric_limits<unsigned long long>::max() / (n - i + 1) );
+        
+        // Multiply result by (n - i + 1) and then divide result by i (guaranteed to be exact)
+        result *= (n - i + 1);
+        result /= i;
+    }
+
+    return result;
+}
 
 
 
