@@ -32,7 +32,7 @@ int main( int argc, char *argv[] )
     
     LOG << "Initial mesh..." << nl;
     
-    MeshSimplicial3D M = CrossedBricks3D();
+    MeshSimplicial3D M = UnitCube3D();
     M.getcoordinates().scale( Constants::pi );
     
     M.check();
@@ -60,6 +60,17 @@ int main( int argc, char *argv[] )
         for( const int e : tree ) LOG << index2face[e] << space;
         LOG << nl;
     }
+
+
+    LOG << "Print ordered spanning trees..." << nl;
+    for( int t = 0; t < trees.size(); t++ )
+    {
+        LOG << t << "\t";
+        const auto& tree = trees[t];
+        const auto& results = list_ordered_face_spanning_trees( M, index2face, trees[t] );
+        LOG << results.size() << nl;
+    }
+    
 
     LOG << M.text() << nl;
 
