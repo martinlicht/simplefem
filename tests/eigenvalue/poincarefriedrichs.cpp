@@ -71,6 +71,7 @@ int main( int argc, char *argv[] )
         LOG << results.size() << nl;
     }
     
+    return 0;
 
     LOG << M.text() << nl;
 

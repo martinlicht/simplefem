@@ -59,7 +59,7 @@ int main( int argc, char *argv[] )
         
         poincare_friedrichs_estimate
         =
-        n * power_numerical( 2, (n-(last_flagged_face)/2. + n + 1. )
+        n * power_numerical( 2, (n-(last_flagged_face)/2. + n + 1. ) )
         *
         //power_integer( 2, k-1 ) // CB, simplified
         ( 1./n + 1./2. )

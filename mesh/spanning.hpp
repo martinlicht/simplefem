@@ -34,6 +34,124 @@ std::pair< std::vector<int>, std::vector<std::vector<int>> > list_face_spanning_
 
 
 
+void interleaveLists(
+    const std::vector<int>& list1,
+    const std::vector<int>& list2,
+    std::vector<int>& current,
+    int index1,
+    int index2,
+    std::vector<std::vector<int>>& results
+);
+
+// Internal function to interleave lists using backtracking
+void interleaveLists(
+    const std::vector<int>& list1,
+    const std::vector<int>& list2,
+    std::vector<int>& current,
+    int index1,
+    int index2,
+    std::vector<std::vector<int>>& results
+){
+
+    // If we've used all elements from both lists, store the result
+    if (index1 == list1.size() && index2 == list2.size()) {
+        results.push_back(current);
+        return;
+    }
+
+    // If there are remaining elements in list1, add the next one
+    if (index1 < list1.size()) {
+        current.push_back(list1[index1]);
+        interleaveLists(list1, list2, current, index1 + 1, index2, results);
+        current.pop_back(); // Backtrack
+    }
+
+    // If there are remaining elements in list2, add the next one
+    if (index2 < list2.size()) {
+        current.push_back(list2[index2]);
+        interleaveLists(list1, list2, current, index1, index2 + 1, results);
+        current.pop_back(); // Backtrack
+    }
+}
+
+
+
+
+
+std::vector<std::vector<int>> interleaveLists( 
+    const std::vector<int>& list1,
+    const std::vector<int>& list2
+);
+
+std::vector<std::vector<int>> interleaveLists( 
+    const std::vector<int>& list1,
+    const std::vector<int>& list2
+){
+    std::vector<std::vector<int>> results;
+    std::vector<int> current;
+    interleaveLists( list1, list2, current, 0, 0, results );
+    return results;
+}
+
+
+
+std::vector<std::vector<int>> interleaveLists( 
+    const std::vector<std::vector<int>>& listlists1,
+    const std::vector<std::vector<int>>& listlists2
+);
+
+std::vector<std::vector<int>> interleaveLists( 
+    const std::vector<std::vector<int>>& listlists1,
+    const std::vector<std::vector<int>>& listlists2
+){
+    std::vector<std::vector<int>> results;
+
+    for( const auto& list1 : listlists1 )
+    for( const auto& list2 : listlists2 )
+    {
+        // LOG << "L1 " << list1.size() << nl;
+        // LOG << "L2 " << list2.size() << nl;
+        const auto temp = interleaveLists( list1, list2 );
+        results.insert( results.end(), temp.begin(), temp.end() );
+    }
+
+    // LOG << "LL1 " << listlists1.size() << nl;
+    // LOG << "LL2 " << listlists2.size() << nl;
+    // LOG << "R  " << results.size() << nl;
+    
+    assert( listlists1.size() + listlists2.size() <= results.size() );
+
+    return results;
+}
+
+
+std::vector<std::vector<int>> interleaveLists( 
+    const std::vector<std::vector<std::vector<int>>>& listlistlists
+);
+
+std::vector<std::vector<int>> interleaveLists( 
+    const std::vector<std::vector<std::vector<int>>>& listlistlists
+){
+    // LOG << "LLL " << listlistlists.size() << nl;
+    if( listlistlists.size() == 0 ) return {};
+
+    std::vector<std::vector<int>> result = listlistlists[0];
+    
+    for( int t = 1; t < listlistlists.size(); t++ )
+    {
+        result = interleaveLists( result, listlistlists[t] );
+    }
+
+    // LOG << "LLL+" << result.size() << nl;
+    
+    return result;
+}
+
+
+
+
+
+
 
 std::vector<Link> get_nodes_of_links( const Mesh& mesh );
 
@@ -294,6 +412,13 @@ std::vector<std::vector<int>> list_topological_node_sortings_of_subtree(
     const std::vector<std::vector<int>>& adjacency_list, 
     int forbidden_node,
     int current_node
+);
+
+std::vector<std::vector<int>> list_topological_node_sortings_of_subtree(
+    const Mesh& mesh, 
+    const std::vector<std::vector<int>>& adjacency_list, 
+    int forbidden_node,
+    int current_node
 ){
     assert( forbidden_node == Mesh::nullindex or 0 <= forbidden_node < adjacency_list.size() );
     assert( 0 <= current_node and current_node < adjacency_list.size() );
@@ -318,7 +443,8 @@ std::vector<std::vector<int>> list_topological_node_sortings_of_subtree(
 
     
 
-    std::vector<std::vector<std::vector<int>>> top_sorts_of_succs( number_of_neighbors );
+    std::vector<std::vector<std::vector<int>>> top_sorts_of_succs;
+    top_sorts_of_succs.reserve( number_of_neighbors );
 
     for( int t = 0; t < number_of_neighbors; t++ )
     {
@@ -326,23 +452,38 @@ std::vector<std::vector<int>> list_topological_node_sortings_of_subtree(
 
         if( succ == forbidden_node ) continue;
 
-        top_sorts_of_succs[t] = list_topological_node_sortings_of_subtree( mesh, adjacency_list, current_node, succ );
+        const auto& current = list_topological_node_sortings_of_subtree( mesh, adjacency_list, current_node, succ );
 
-        for( auto& sort : top_sorts_of_succs[t] ) sort.insert( sort.begin(), current_node );
+        assert( current.size() > 0 );
+
+        top_sorts_of_succs.push_back( current );
     }
+
+    assert( top_sorts_of_succs.size() > 0 );
+
+    
 
     // TODO : interleave these. Right now, it's a list of choices
-
     std::vector<std::vector<int>> results;
-    for( int t = 0; t < number_of_neighbors; t++ )
-    {
-        results.insert( results.end(), top_sorts_of_succs[t].begin(), top_sorts_of_succs[t].end() );
-    }
+    
+    results = interleaveLists( top_sorts_of_succs );
 
+    // for( int t = 0; t < number_of_neighbors; t++ ) results.insert( results.end(), top_sorts_of_succs[t].begin(), top_sorts_of_succs[t].end() );
+    
+    for( auto& list : results ) list.insert( list.begin(), current_node );
+    
+    assert( results.size() > 0 );
+    
     return results;
 
 }
 
+
+std::vector<std::vector<int>> list_ordered_face_spanning_trees( 
+    const Mesh& mesh, 
+    const std::vector<int>& index2face, 
+    const std::vector<int>& spanning_tree
+);
 
 std::vector<std::vector<int>> list_ordered_face_spanning_trees( 
     const Mesh& mesh, 
