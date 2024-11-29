@@ -295,17 +295,18 @@ bool check_spanning_tree(
     
 
 
-    // traverse the tree candidate via BFS and check whether all links have been visited
+    // traverse the tree candidate via DFS and check whether all links have been visited
     std::fill( visited.begin(), visited.end(), false );
-    std::queue<int> q;
-    q.push(0); // Start BFS from node 0
+    std::vector<int> S;
+    S.reserve( adjacency_list.size() );
+    S.push_back(0); // Start DFS from node 0
     visited[0] = true;
 
     int visited_count = 0;
-    while( not q.empty() ) 
+    while( not S.empty() ) 
     {
-        int node = q.front();
-        q.pop();
+        int node = S.front();
+        S.pop_back();
         visited_count++;
 
         for( int neighbor : adjacency_list[node] )
@@ -313,7 +314,7 @@ bool check_spanning_tree(
             if( not visited[neighbor] )
             {
                 visited[neighbor] = true;
-                q.push(neighbor);
+                S.push_back(neighbor);
             }
         }
     }

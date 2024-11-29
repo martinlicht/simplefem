@@ -32,7 +32,7 @@ int main( int argc, char *argv[] )
     
     LOG << "Initial mesh..." << nl;
     
-    MeshSimplicial3D M = UnitCube3D();
+    MeshSimplicial3D M = CrossedBricks3D();
     M.getcoordinates().scale( Constants::pi );
     
     M.check();
