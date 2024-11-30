@@ -7,7 +7,7 @@ using namespace std;
 
 
 
-// Function to merge lists using backtracking
+// Internal function to merge lists using backtracking
 void mergeLists(
     const std::vector<int>& list1,
     const std::vector<int>& list2,
@@ -36,6 +36,9 @@ void mergeLists(
         current.pop_back(); // Backtrack
     }
 }
+
+
+
 
 
 std::vector<std::vector<int>> mergeLists( 

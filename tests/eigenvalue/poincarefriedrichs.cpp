@@ -33,7 +33,7 @@ int main( int argc, char *argv[] )
     
     LOG << "Initial mesh..." << nl;
     
-    MeshSimplicial3D M = FicheraCorner3D();
+    MeshSimplicial3D M = CrossedBricks3D();
     M.getcoordinates().scale( Constants::pi );
     
     M.check();
@@ -42,7 +42,7 @@ int main( int argc, char *argv[] )
     // M.check_dirichlet_flags();
 
     
-    LOG << "Prepare scalar fields for testing..." << nl;
+    // LOG << "Prepare scalar fields for testing..." << nl;
     
 
     if(false)
@@ -80,6 +80,9 @@ int main( int argc, char *argv[] )
 
         return 0;
 
+        
+        LOG << "Generate shellings based on those trees..." << nl;
+        
         for( const auto tree : trees )
         {
             assert( M.count_simplices(3) == tree.size()+1 );
@@ -141,6 +144,7 @@ int main( int argc, char *argv[] )
         // }
         
     }
+
 
     return 0;
 
