@@ -152,6 +152,17 @@ int Mesh::count_subsimplices( int sup, int sub ) const
 
 
 
+
+std::vector<int> Mesh::count_simplices() const
+{
+    const int dim = getinnerdimension();
+    std::vector<int> counts( dim+1 );
+    for( int d = 0; d <= dim; d++ ) counts[d] = count_simplices(d);
+    return counts;
+}
+
+
+
  /*
   * 
   * Accessing subsimplices 

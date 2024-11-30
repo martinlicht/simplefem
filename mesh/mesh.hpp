@@ -120,6 +120,8 @@ class Mesh
         virtual bool has_dimension_counted( int dim ) const = 0;
         
         virtual int count_simplices( int dim ) const = 0;
+
+        std::vector<int> count_simplices() const;
         
         
         

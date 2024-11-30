@@ -11,6 +11,7 @@
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples3D.hpp"
 #include "../../mesh/spanning.hpp"
+#include "../../mesh/shelling.hpp"
 #include "../../solver/iterativesolver.hpp"
 #include "../../solver/inv.hpp"
 #include "../../solver/systemsolver.hpp"
@@ -32,7 +33,7 @@ int main( int argc, char *argv[] )
     
     LOG << "Initial mesh..." << nl;
     
-    MeshSimplicial3D M = UnitCube3D();
+    MeshSimplicial3D M = FicheraCorner3D();
     M.getcoordinates().scale( Constants::pi );
     
     M.check();
@@ -44,33 +45,104 @@ int main( int argc, char *argv[] )
     LOG << "Prepare scalar fields for testing..." << nl;
     
 
-    
+    if(false)
+    {
+        const auto shellings_found = generateShellings( M );
+
+        LOG << shellings_found.size() << nl;
+
+        for( int t = 0; t < shellings_found.size(); t++ )
+        {
+            const auto& shelling = shellings_found[t];
+            LOG << t << "\t:\t";
+            for( const int s : shelling ) LOG << s << space;
+            LOG << nl;
+        }
+
+        return 0;
+    }
             
     
-    LOG << "Generate spanning trees..." << nl;
-    const std::pair< std::vector<int>, std::vector<std::vector<int>> > index2face_and_trees = list_face_spanning_trees( M );
-    const auto& index2face = index2face_and_trees.first;
-    const auto& trees      = index2face_and_trees.second;
-
-    LOG << "Print spanning trees..." << nl;
-    for( int t = 0; t < trees.size(); t++ )
     {
-        const auto& tree = trees[t];
-        LOG << t << "\t:\t";
-        for( const int e : tree ) LOG << index2face[e] << space;
-        LOG << nl;
+        LOG << "Generate spanning trees..." << nl;
+        const std::pair< std::vector<int>, std::vector<std::vector<int>> > index2face_and_trees = list_face_spanning_trees( M );
+        const auto& index2face = index2face_and_trees.first;
+        const auto& trees      = index2face_and_trees.second;
+
+        LOG << "Print spanning trees..." << nl;
+        for( int t = 0; t < trees.size(); t++ )
+        {
+            const auto& tree = trees[t];
+            LOG << t << "\t:\t";
+            for( const int e : tree ) LOG << index2face[e] << space;
+            LOG << nl;
+        }
+
+        return 0;
+
+        for( const auto tree : trees )
+        {
+            assert( M.count_simplices(3) == tree.size()+1 );
+
+            std::vector<std::vector<int>> volume_acceptable_face_list( M.count_simplices(3) );
+
+            for( int index : tree ) 
+            {
+                int face = index2face[ index ];
+
+                assert( 0 <= face and face < M.count_simplices(2) );
+
+                const auto& parents = M.getsupersimplices(3,2,face);
+
+                assert( parents.size() == 2 );
+
+                for( int p : parents ) {
+                    assert( 0 <= p and p < M.count_simplices(3) );
+                    volume_acceptable_face_list[p].push_back(face);
+                }
+            
+            }
+
+            for( auto fl : volume_acceptable_face_list )
+            {
+                for( auto f : fl ) LOG << f << space;
+                LOG << ", ";
+            }
+            LOG << nl;
+
+            
+
+            
+            const auto shellings_found = generateShellings( M, volume_acceptable_face_list );
+
+            LOG << shellings_found.size() << nl;
+
+            for( int t = 0; t < shellings_found.size(); t++ )
+            {
+                const auto& shelling = shellings_found[t];
+                LOG << t << "\t:\t";
+                for( const int s : shelling ) LOG << s << space;
+                LOG << nl;
+            }
+
+        }
+        
+
+
+
+
+        // LOG << "Print ordered spanning trees..." << nl;
+        // for( int t = 0; t < trees.size(); t++ )
+        // {
+        //     LOG << t << "\t";
+        //     const auto& tree = trees[t];
+        //     const auto& results = list_ordered_face_spanning_trees( M, index2face, trees[t] );
+        //     LOG << results.size() << nl;
+        // }
+        
     }
 
-
-    LOG << "Print ordered spanning trees..." << nl;
-    for( int t = 0; t < trees.size(); t++ )
-    {
-        LOG << t << "\t";
-        const auto& tree = trees[t];
-        const auto& results = list_ordered_face_spanning_trees( M, index2face, trees[t] );
-        LOG << results.size() << nl;
-    }
-    
+    return 0;
 
     LOG << M.text() << nl;
 

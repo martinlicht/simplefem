@@ -64,6 +64,14 @@ inline void sort_and_remove_duplicates( T& t )
 /******************************************************/
 
 template<typename T>
+inline int contains( const std::vector<T>& vec, const T& t )
+{
+   const auto it = std::find( vec.begin(), vec.end(), t );
+   return it != vec.end();
+}
+
+
+template<typename T>
 inline int find_index( const std::vector<T>& vec, const T& t )
 {
    const auto it = std::find( vec.begin(), vec.end(), t );
