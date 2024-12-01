@@ -33,7 +33,7 @@ int main( int argc, char *argv[] )
     
     LOG << "Initial mesh..." << nl;
     
-    MeshSimplicial3D M = CrossedBricks3D();
+    MeshSimplicial3D M = UnitCube3D();
     M.getcoordinates().scale( Constants::pi );
     
     M.check();
@@ -43,6 +43,7 @@ int main( int argc, char *argv[] )
     // 12 (0) 3 (1) 13 (1) 14 (1) 15 (2)     1 (2)  9 (2) 4 (2) 16 (3) 19 (3)       0 (3)  7 (3)  5 (3) 20 (4) 17 (4)   18 (4)  6 (4)  2 (4) 21 (5) 22 (5)  8 (5) 10 (5) 23 (6) 11 (6)
     // 12 (0) 2 (1) 13 (1) 18 (1)  4 (2)    10 (2) 19 (2) 3 (2) 22 (2) 5  (3)      15 (3) 11 (3) 17 (3) 23 (3)  1 (3)    0 (4) 16 (4) 14 (4)  7 (4) 21 (4)  9 (5)  6 (5)  8 (6) 20 (5)
     
+
     if(false)
     {
         const auto shellings_found = generateShellings( M );

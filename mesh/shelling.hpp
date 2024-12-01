@@ -25,9 +25,19 @@ void generateShellings(
     const int dim = mesh.getinnerdimension();
     assert( dim >= 1 );
 
+
+    // count all the simplices of the mesh 
     const auto counts = mesh.count_simplices();
 
-    // if the current prefix is already containing all volumes, then we are done 
+
+    // TODO:
+    // if enough shellings have been found already, then return 
+    if( shellings_found.size() >= 1 )
+        return;
+
+
+    // if the current prefix is already containing all volumes, 
+    // then a shelling has been found and can be added 
     if( current_prefix.size() == counts[dim] )
     {
         shellings_found.push_back( current_prefix );
@@ -35,57 +45,62 @@ void generateShellings(
         return;
     }
 
-    // there are still volumes to be added
-    // run over all volumes and check whether they can be added 
-    // for( int s = 0; s < counts[dim]; s++ )
-    for( int s : remaining_nodes )
+
+    // There are still volumes to be added
+    // Run over all volumes and check whether they can be added 
+    for( int node : remaining_nodes )
     {
         
-        // if already contained within prefix, then skip 
-        if( contains( current_prefix, s ) ) 
-            continue;
+        assert( not contains( current_prefix, node ) );
         
         
         {
             for( int t : current_prefix ) LOG << t << space;
-            LOG << s << nl;    
+            LOG << node << nl;    
         }
         
 
-        // list the faces and check whether it is connected to one of the previous simplices 
+        // list the faces adjacent to the node
+        // and check whether it is connected to one of th prefix nodes  
         
-        const auto faces = mesh.getsubsimplices(dim,dim-1,s).getvalues();
+        const auto faces = mesh.getsubsimplices( dim, dim-1, node ).getvalues();
         assert( faces.size() == dim+1 );
         std::vector<bool> face_is_connected( dim+1, false );
 
-        for( int f = 0; f < faces.size(); f++ )
+        for( int index_f = 0; index_f < faces.size(); index_f++ )
         {
-            const int face = faces[f];
+            const int face = faces[index_f];
             const auto parents = mesh.getsupersimplices( dim, dim-1, face );
             
-            assert( contains( parents, s ) );
+            assert( 1 <= parents.size() and parents.size() <= 2 );
 
-            for( const auto parent : parents ){
-                if( parent == s ) continue;
-                if( contains( current_prefix, parent ) ) face_is_connected[f] = true;
-            }
+            if( parents.size() == 1 ) continue;
+
+            assert( parents[0] == node or parents[1] == node );
+
+            if( parents[0] != node and contains( current_prefix, parents[0] ) ) face_is_connected[index_f] = true;
+            if( parents[1] != node and contains( current_prefix, parents[1] ) ) face_is_connected[index_f] = true;
         }
 
         
         // OPTIMIZATION
-        // if current_prefix is not empty and volume s has no common face with the volumes in current_prefix, then skip 
+        // if current_prefix is not empty and volume node has no common face with the volumes in current_prefix, then skip 
         
         if( current_prefix.size() != 0 )
-        if( not std::any_of( face_is_connected.begin(), face_is_connected.end(), [](bool val) { return val; } ) )
+        if( not std::any_of( face_is_connected.begin(), face_is_connected.end(), [](bool b) { return b; } ) )
             continue;
 
 
-        // if the connection to the previous volumes is not via an acceptable face, then skip
+        // Suppose that there are some previous volumes 
+        // If the connection to the previous volumes is not via an acceptable face, then skip
+        
         bool acceptable_connection = false;
-        for( int f = 0; f <= dim; f++ ){
-            if( current_prefix.size() > 0 and not face_is_connected[f] ) continue;
-            if( contains( volume_acceptable_face_list[s], faces[f] ) )
-                acceptable_connection = true;
+        
+        for( int index_f = 0; index_f <= dim; index_f++ ){
+        
+            if( current_prefix.size() > 0 and not face_is_connected[index_f] )  continue;
+        
+            if( contains( volume_acceptable_face_list[node], faces[index_f] ) ) acceptable_connection = true;
         }
 
         if( not acceptable_connection ) {
@@ -94,20 +109,20 @@ void generateShellings(
         }
         
         
-        // for each proper subsimplex f of the volume s
-        // if f is a subsimplex of one of the previous volumes 
+        // for each proper subsimplex index_f of the volume s
+        // if index_f is a subsimplex of one of the previous volumes 
         // then it must be contained in one of the connected faces 
 
         bool is_compatible = true;
 
-        // List all proper subsimplices of s, excluding s and its faces 
+        // List all proper subsimplices of s, excluding node and its faces 
         for( int d = 0; d <= dim-2; d++ )
         {
             if( not is_compatible ) break;
             
-            const auto subsimplices_of_s = mesh.getsubsimplices( dim, d, s ).getvalues();
+            const auto subsimplices_of_s = mesh.getsubsimplices( dim, d, node ).getvalues();
 
-            // For each of those proper subsimplices of s ...
+            // For each of those proper subsimplices of node ...
             for( const auto sub : subsimplices_of_s )
             {
                 
@@ -129,20 +144,20 @@ void generateShellings(
 
                 const auto faces_containing_sub = mesh.getsupersimplices( dim-1, d, sub );
 
-                for( int f = 0; f < faces.size(); f++ ){
-                    if( not face_is_connected[f] ) continue;
-                    if( contains( faces_containing_sub, faces[f] ) )
+                for( int index_f = 0; index_f < faces.size(); index_f++ ){
+                    if( not face_is_connected[index_f] ) continue;
+                    if( contains( faces_containing_sub, faces[index_f] ) )
                         within_connected_face = true;
                 }
 
-                // if sub is not within a connected face, then s is not compatible 
+                // if sub is not within a connected face, then node is not compatible 
                 if( not within_connected_face )
                     is_compatible = false;
 
             }
         }
 
-        // We have determined whether s is compatible. If not, then continue with the next one
+        // We have determined whether node is compatible. If not, then continue with the next one
 
         // is_compatible = true; // TODO
 
@@ -151,15 +166,15 @@ void generateShellings(
             continue;
         }
 
-        // s is compatible with the prefix, then recursion 
+        // node is compatible with the prefix, then recursion 
 
         {
             auto next_prefix = current_prefix;
             next_prefix.reserve( counts[dim] );
-            next_prefix.push_back( s );
+            next_prefix.push_back( node );
 
             auto next_remaining_nodes = remaining_nodes;
-            auto it = std::find( next_remaining_nodes.begin(), next_remaining_nodes.end(), s );
+            auto it = std::find( next_remaining_nodes.begin(), next_remaining_nodes.end(), node );
             assert( it != next_remaining_nodes.end() );
             next_remaining_nodes.erase( it );
 
@@ -188,7 +203,7 @@ std::vector<std::vector<int>> generateShellings(
     std::vector<int> current_prefix;
 
     std::vector<int> remaining_nodes( mesh.count_simplices( dim ) );
-    for( int s = 0; s < remaining_nodes.size(); s++ ) remaining_nodes[s] = s;
+    for( int node = 0; node < remaining_nodes.size(); node++ ) remaining_nodes[node] = node;
 
     generateShellings( mesh, volume_acceptable_face_list, shellings_found, current_prefix, remaining_nodes );
     
@@ -205,9 +220,9 @@ std::vector<std::vector<int>> generateShellings(
     // create the list of faces of each volume that is acceptable 
     std::vector<std::vector<int>> volume_acceptable_face_list( mesh.count_simplices(dim) );
     
-    for( int s = 0; s < mesh.count_simplices(dim); s++ ) 
+    for( int node = 0; node < mesh.count_simplices(dim); node++ ) 
     {
-        const auto faces = mesh.getsubsimplices(dim,dim-1,s).getvalues();
+        const auto faces = mesh.getsubsimplices(dim,dim-1,node).getvalues();
         
         for( auto face : faces ) 
         {
@@ -216,7 +231,7 @@ std::vector<std::vector<int>> generateShellings(
 
             assert( 0 < parents.size() && parents.size() <= 2 );
             
-            volume_acceptable_face_list[s].push_back(face);
+            volume_acceptable_face_list[node].push_back(face);
         }
     }
 
