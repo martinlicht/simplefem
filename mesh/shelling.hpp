@@ -160,6 +160,7 @@ void generateShellings(
 
             auto next_remaining_nodes = remaining_nodes;
             auto it = std::find( next_remaining_nodes.begin(), next_remaining_nodes.end(), s );
+            assert( it != next_remaining_nodes.end() );
             next_remaining_nodes.erase( it );
 
             generateShellings( mesh, volume_acceptable_face_list, shellings_found, next_prefix, next_remaining_nodes );
@@ -221,6 +222,260 @@ std::vector<std::vector<int>> generateShellings(
 
     return generateShellings( mesh, volume_acceptable_face_list );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void generate_ranked_shelling(
+    const Mesh& mesh,
+    std::vector<std::vector<std::pair<int,Float>>>& shellings_found,
+    std::vector<std::pair<int,Float>> current_prefix,
+    std::vector<std::pair<int,Float>> remaining_nodes
+){
+    
+    // check that input mesh is reasonable 
+    const int dim = mesh.getinnerdimension();
+    assert( dim >= 1 );
+
+    const auto counts = mesh.count_simplices();
+
+    // only one shelling is sufficient
+    if( shellings_found.size() > 0 ) return;
+
+    // if the current prefix is already containing all volumes, then we are done 
+    if( current_prefix.size() == counts[dim] )
+    {
+        shellings_found.push_back( current_prefix );
+        LOG << "found" << nl;
+        return;
+    }
+
+    if( current_prefix.size() == 1 ) 
+    {
+        current_prefix[0].second = 0;
+    }
+
+    // TODO:
+    // re-eval the ranks of the remaining_nodes and sort them 
+    for( auto& s : remaining_nodes )
+    {
+        
+        const auto faces = mesh.getsubsimplices(dim,dim-1,s.first).getvalues();
+        
+        for( int f = 0; f < faces.size(); f++ )
+        {
+            const int face = faces[f];
+            const auto parents = mesh.getsupersimplices( dim, dim-1, face );
+            
+            assert( contains( parents, s.first ) );
+
+            if( parents.size() == 1 ) continue;
+
+            for( const auto parent : parents ){
+                
+                if( parent == s.first ) continue;
+                
+                for( auto c : current_prefix ) if( c.first == parent ) s.second = minimum( s.second, c.second + 1 );
+                
+            }
+        }
+    }
+
+    std::sort( remaining_nodes.begin(), remaining_nodes.end(), 
+        []( std::pair<int,Float> x1, std::pair<int,Float> x2 )
+        {
+            return x1.second < x2.second;
+        }
+    );
+
+
+    // there are still volumes to be added
+    // run over all volumes and check whether they can be added 
+    // for( int s = 0; s < counts[dim]; s++ )
+    for( auto s : remaining_nodes )
+    {
+        
+        // if already contained within prefix, then skip 
+        if( contains( current_prefix, s ) ) 
+            continue;
+        
+        
+        {
+            for( auto t : current_prefix ) LOG << t.first << " (" << t.second << ")" << space;
+            LOG << s.first << " (" << s.second << ")" << nl;    
+        }
+        
+
+        // list the faces and check whether it is connected to one of the previous simplices 
+        
+        const auto faces = mesh.getsubsimplices(dim,dim-1,s.first).getvalues();
+        assert( faces.size() == dim+1 );
+        std::vector<bool> face_is_connected( dim+1, false );
+
+        for( int f = 0; f < faces.size(); f++ )
+        {
+            const int face = faces[f];
+            const auto parents = mesh.getsupersimplices( dim, dim-1, face );
+            
+            assert( contains( parents, s.first ) );
+
+            for( const auto parent : parents ){
+                if( parent == s.first ) continue;
+                for( auto c : current_prefix ) if( c.first == parent ) face_is_connected[f] = true;
+            }
+        }
+
+        
+        // OPTIMIZATION
+        // if current_prefix is not empty and volume s has no common face with the volumes in current_prefix, then skip 
+        
+        if( current_prefix.size() != 0 )
+        if( not std::any_of( face_is_connected.begin(), face_is_connected.end(), [](bool val) { return val; } ) )
+            continue;
+
+
+        // for each proper subsimplex f of the volume s
+        // if f is a subsimplex of one of the previous volumes 
+        // then it must be contained in one of the connected faces 
+
+        bool is_compatible = true;
+
+        // List all proper subsimplices of s, excluding s and its faces 
+        for( int d = 0; d <= dim-2; d++ )
+        {
+            if( not is_compatible ) break;
+            
+            const auto subsimplices_of_s = mesh.getsubsimplices( dim, d, s.first ).getvalues();
+
+            // For each of those proper subsimplices of s ...
+            for( const auto sub : subsimplices_of_s )
+            {
+                
+                if( not is_compatible ) break;
+
+                // check whether it has got a supersimplex within the prefix
+                const auto supersimplices_of_sub = mesh.getsupersimplices( dim, d, sub );
+
+                bool sub_of_prefix = std::any_of( 
+                    supersimplices_of_sub.begin(), supersimplices_of_sub.end(),
+                    [&]( int val ) { 
+                        
+                        return std::any_of( current_prefix.begin(), current_prefix.end(), 
+                            [=]( std::pair<int,Float> c ){ 
+                                return c.first == val; 
+                            }
+                        );
+
+                    }
+                );
+
+                // if not, there is nothing to check 
+                if( not sub_of_prefix ) continue;
+
+                // otherwise, check whether its contained within one of the active faces 
+                bool within_connected_face = false;
+
+                const auto faces_containing_sub = mesh.getsupersimplices( dim-1, d, sub );
+
+                for( int f = 0; f < faces.size(); f++ ){
+                    if( not face_is_connected[f] ) continue;
+                    if( contains( faces_containing_sub, faces[f] ) )
+                        within_connected_face = true;
+                }
+
+                // if sub is not within a connected face, then s is not compatible 
+                if( not within_connected_face )
+                    is_compatible = false;
+
+            }
+        }
+
+        // We have determined whether s is compatible. If not, then continue with the next one
+
+        // is_compatible = true; // TODO
+
+        if( not is_compatible ) {
+            LOG << "reject" << nl;
+            continue;
+        }
+
+        // s is compatible with the prefix, then recursion 
+
+        {
+            auto next_prefix = current_prefix;
+            next_prefix.reserve( counts[dim] );
+            next_prefix.push_back( s );
+
+            auto next_remaining_nodes = remaining_nodes;
+            auto it = std::find( next_remaining_nodes.begin(), next_remaining_nodes.end(), s );
+            // auto it = std::find_if( next_remaining_nodes.begin(), next_remaining_nodes.end(), [=]( std::pair<int,Float> p ) { return p.second == s.second; }  );
+            assert( it != next_remaining_nodes.end() );
+            next_remaining_nodes.erase( it );
+
+            generate_ranked_shelling( mesh, shellings_found, next_prefix, next_remaining_nodes );
+        }
+
+    }
+    
+
+    
+}
+
+
+
+
+std::vector<std::vector<std::pair<int,Float>>> generate_ranked_shelling(
+    const Mesh& mesh
+){
+    const int dim = mesh.getinnerdimension();
+
+    std::vector<std::vector<std::pair<int,Float>>> ret;
+
+    for( int t = 0; t < mesh.count_simplices(dim); t++ ) 
+    {
+        std::vector<std::vector<std::pair<int,Float>>> shellings_found;
+        
+        std::vector<std::pair<int,Float>> current_prefix;
+
+        std::vector<std::pair<int,Float>> remaining_nodes( mesh.count_simplices( dim ) );
+        for( int s = 0; s < remaining_nodes.size(); s++ ) remaining_nodes[s] = { s, std::numeric_limits<Float>::infinity() };
+
+        current_prefix.push_back( { t, 0. } );
+
+        generate_ranked_shelling( mesh, shellings_found, current_prefix, remaining_nodes );
+        
+        ret.insert( ret.end(), shellings_found.begin(), shellings_found.end() ); 
+    }
+    return ret;
+}
+
+
+
+
+
+
+
 
 
 

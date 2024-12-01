@@ -37,14 +37,12 @@ int main( int argc, char *argv[] )
     M.getcoordinates().scale( Constants::pi );
     
     M.check();
-    
-    // M.automatic_dirichlet_flags();
-    // M.check_dirichlet_flags();
 
+    LOG << "TETS: " << M.count_tetrahedra() << nl;
     
-    // LOG << "Prepare scalar fields for testing..." << nl;
+    // 12 (0) 3 (1) 13 (1) 14 (1) 15 (2)     1 (2)  9 (2) 4 (2) 16 (3) 19 (3)       0 (3)  7 (3)  5 (3) 20 (4) 17 (4)   18 (4)  6 (4)  2 (4) 21 (5) 22 (5)  8 (5) 10 (5) 23 (6) 11 (6)
+    // 12 (0) 2 (1) 13 (1) 18 (1)  4 (2)    10 (2) 19 (2) 3 (2) 22 (2) 5  (3)      15 (3) 11 (3) 17 (3) 23 (3)  1 (3)    0 (4) 16 (4) 14 (4)  7 (4) 21 (4)  9 (5)  6 (5)  8 (6) 20 (5)
     
-
     if(false)
     {
         const auto shellings_found = generateShellings( M );
@@ -56,6 +54,25 @@ int main( int argc, char *argv[] )
             const auto& shelling = shellings_found[t];
             LOG << t << "\t:\t";
             for( const int s : shelling ) LOG << s << space;
+            LOG << nl;
+        }
+
+        return 0;
+    }
+            
+    
+    {
+        const auto shellings_found = generate_ranked_shelling( M );
+
+        LOG << shellings_found.size() << nl;
+
+        for( int t = 0; t < shellings_found.size(); t++ )
+        {
+            Float weight = 0.;
+            const auto& shelling = shellings_found[t];
+            LOG << t << "\t:\t";
+            for( const auto s : shelling ) { LOG << s.first << " (" << s.second << ")" << space; weight += s.second; }
+            LOG << space << weight;
             LOG << nl;
         }
 
