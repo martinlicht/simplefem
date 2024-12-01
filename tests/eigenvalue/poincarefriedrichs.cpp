@@ -62,6 +62,7 @@ int main( int argc, char *argv[] )
     }
             
     
+    //if(false)
     {
         const auto shellings_found = generate_ranked_shelling( M );
 
@@ -72,7 +73,7 @@ int main( int argc, char *argv[] )
             Float weight = 0.;
             const auto& shelling = shellings_found[t];
             LOG << t << "\t:\t";
-            for( const auto s : shelling ) { LOG << s.first << " (" << s.second << ")" << space; weight += s.second; }
+            for( const auto& s : shelling ) { LOG << s.first << " (" << s.second << ")" << space; weight += s.second; }
             LOG << space << weight;
             LOG << nl;
         }
@@ -101,11 +102,11 @@ int main( int argc, char *argv[] )
         
         LOG << "Generate shellings based on those trees..." << nl;
         
-        for( const auto tree : trees )
+        for( const auto& tree : trees )
         {
             assert( M.count_simplices(3) == tree.size()+1 );
 
-            std::vector<std::vector<int>> volume_acceptable_face_list( M.count_simplices(3) );
+            std::vector<bool> acceptable_face_list( M.count_simplices(2) );
 
             for( int index : tree ) 
             {
@@ -113,28 +114,17 @@ int main( int argc, char *argv[] )
 
                 assert( 0 <= face and face < M.count_simplices(2) );
 
-                const auto& parents = M.getsupersimplices(3,2,face);
-
-                assert( parents.size() == 2 );
-
-                for( int p : parents ) {
-                    assert( 0 <= p and p < M.count_simplices(3) );
-                    volume_acceptable_face_list[p].push_back(face);
-                }
+                acceptable_face_list[face] = true;
             
             }
 
-            for( auto fl : volume_acceptable_face_list )
-            {
-                for( auto f : fl ) LOG << f << space;
-                LOG << ", ";
-            }
+            for( auto fl : acceptable_face_list ) LOG << fl << space;
             LOG << nl;
 
             
 
             
-            const auto shellings_found = generateShellings( M, volume_acceptable_face_list );
+            const auto shellings_found = generateShellings( M, acceptable_face_list );
 
             LOG << shellings_found.size() << nl;
 
