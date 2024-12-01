@@ -15,7 +15,7 @@
 
 void generateShellings(
     const Mesh& mesh,
-    const std::vector<std::vector<int>>& volume_acceptable_face_list,
+    const std::vector<bool>& acceptable_face_list,
     std::vector<std::vector<int>>& shellings_found,
     std::vector<int> current_prefix,
     std::vector<int> remaining_nodes
@@ -91,20 +91,19 @@ void generateShellings(
             continue;
 
 
-        // Suppose that there are some previous volumes 
         // If the connection to the previous volumes is not via an acceptable face, then skip
         
         bool acceptable_connection = false;
         
         for( int index_f = 0; index_f <= dim; index_f++ ){
-        
-            if( current_prefix.size() > 0 and not face_is_connected[index_f] )  continue;
-        
-            if( contains( volume_acceptable_face_list[node], faces[index_f] ) ) acceptable_connection = true;
+            const auto face = faces[index_f];
+            if( current_prefix.size() == 0 )
+            if( acceptable_face_list[face] and face_is_connected[index_f] ) 
+                acceptable_connection = true;
         }
 
         if( not acceptable_connection ) {
-            LOG << "unacceptable" << nl;
+            LOG << "no acceptable face" << nl;
             continue;
         }
         
@@ -115,15 +114,15 @@ void generateShellings(
 
         bool is_compatible = true;
 
-        // List all proper subsimplices of s, excluding node and its faces 
+        // List all proper subsimplices of the node, excluding itself and its faces 
         for( int d = 0; d <= dim-2; d++ )
         {
             if( not is_compatible ) break;
             
-            const auto subsimplices_of_s = mesh.getsubsimplices( dim, d, node ).getvalues();
+            const auto subsimplices_of_node = mesh.getsubsimplices( dim, d, node ).getvalues();
 
-            // For each of those proper subsimplices of node ...
-            for( const auto sub : subsimplices_of_s )
+            // For each such proper subsimplex of the node ...
+            for( const auto sub : subsimplices_of_node )
             {
                 
                 if( not is_compatible ) break;
@@ -178,7 +177,7 @@ void generateShellings(
             assert( it != next_remaining_nodes.end() );
             next_remaining_nodes.erase( it );
 
-            generateShellings( mesh, volume_acceptable_face_list, shellings_found, next_prefix, next_remaining_nodes );
+            generateShellings( mesh, acceptable_face_list, shellings_found, next_prefix, next_remaining_nodes );
         }
 
     }
@@ -194,7 +193,7 @@ void generateShellings(
 
 std::vector<std::vector<int>> generateShellings(
     const Mesh& mesh,
-    const std::vector<std::vector<int>>& volume_acceptable_face_list
+    const std::vector<bool>& acceptable_face_list
 ){
     const int dim = mesh.getinnerdimension();
 
@@ -205,7 +204,7 @@ std::vector<std::vector<int>> generateShellings(
     std::vector<int> remaining_nodes( mesh.count_simplices( dim ) );
     for( int node = 0; node < remaining_nodes.size(); node++ ) remaining_nodes[node] = node;
 
-    generateShellings( mesh, volume_acceptable_face_list, shellings_found, current_prefix, remaining_nodes );
+    generateShellings( mesh, acceptable_face_list, shellings_found, current_prefix, remaining_nodes );
     
     return shellings_found;
 }
@@ -217,25 +216,15 @@ std::vector<std::vector<int>> generateShellings(
 ){
     const int dim = mesh.getinnerdimension();
 
-    // create the list of faces of each volume that is acceptable 
-    std::vector<std::vector<int>> volume_acceptable_face_list( mesh.count_simplices(dim) );
+    std::vector<bool> acceptable_face_list( mesh.count_simplices(dim) );
     
-    for( int node = 0; node < mesh.count_simplices(dim); node++ ) 
+    for( int face = 0; face < mesh.count_simplices(dim-1); face++ ) 
     {
-        const auto faces = mesh.getsubsimplices(dim,dim-1,node).getvalues();
-        
-        for( auto face : faces ) 
-        {
-            const auto& parents = mesh.getsupersimplices(dim,dim-1,face);
-            if( parents.size() == 1 ) continue;
-
-            assert( 0 < parents.size() && parents.size() <= 2 );
-            
-            volume_acceptable_face_list[node].push_back(face);
-        }
+        const auto& parents = mesh.getsupersimplices(dim,dim-1,face);
+        acceptable_face_list[face] = ( parents.size() != 1 );
     }
 
-    return generateShellings( mesh, volume_acceptable_face_list );
+    return generateShellings( mesh, acceptable_face_list );
 }
 
 
