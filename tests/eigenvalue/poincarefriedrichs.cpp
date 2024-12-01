@@ -33,7 +33,7 @@ int main( int argc, char *argv[] )
     
     LOG << "Initial mesh..." << nl;
     
-    MeshSimplicial3D M = CrossedBricks3D();
+    MeshSimplicial3D M = UnitCube3D();
     M.getcoordinates().scale( Constants::pi );
     
     M.check();
@@ -45,7 +45,7 @@ int main( int argc, char *argv[] )
     // LOG << "Prepare scalar fields for testing..." << nl;
     
 
-    if(false)
+    // if(false)
     {
         const auto shellings_found = generateShellings( M );
 
