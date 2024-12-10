@@ -15,7 +15,8 @@
 ConvergenceTable::ConvergenceTable( const std::string& table_name )
 : table_name(table_name), 
     display_convergence_rates( true ),
-    print_rowwise_instead_of_columnwise(false)
+    print_rowwise_instead_of_columnwise(false),
+    minimum_printed_precision( 15 )
 {
     make_new_row = true;
     LOG << "Table created! " << this << nl;

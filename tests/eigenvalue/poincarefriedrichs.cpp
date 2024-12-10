@@ -29,21 +29,15 @@ using namespace std;
 int main( int argc, char *argv[] )
 {
     
-    LOG << "Unit Test: 3D curl estimate" << nl;
+    LOG << "Unit Test: 3D curl PF estimates using shellings" << nl;
     
     LOG << "Initial mesh..." << nl;
     
-    MeshSimplicial3D M = UnitCube3D();
-    M.getcoordinates().scale( Constants::pi );
-    
+    MeshSimplicial3D M = FicheraCorner3D();
     M.check();
 
-    LOG << "TETS: " << M.count_tetrahedra() << nl;
+    LOG << "Number of tetrahedra: " << M.count_tetrahedra() << nl;
     
-    // 12 (0) 3 (1) 13 (1) 14 (1) 15 (2)     1 (2)  9 (2) 4 (2) 16 (3) 19 (3)       0 (3)  7 (3)  5 (3) 20 (4) 17 (4)   18 (4)  6 (4)  2 (4) 21 (5) 22 (5)  8 (5) 10 (5) 23 (6) 11 (6)
-    // 12 (0) 2 (1) 13 (1) 18 (1)  4 (2)    10 (2) 19 (2) 3 (2) 22 (2) 5  (3)      15 (3) 11 (3) 17 (3) 23 (3)  1 (3)    0 (4) 16 (4) 14 (4)  7 (4) 21 (4)  9 (5)  6 (5)  8 (6) 20 (5)
-    
-
     if(false)
     {
         const auto shellings_found = generateShellings( M );
@@ -62,6 +56,8 @@ int main( int argc, char *argv[] )
     }
             
     
+    Float PF_estimate_via_shellings = std::numeric_limits<Float>::infinity();
+
     //if(false)
     {
         const auto shellings_found = generate_ranked_shelling( M );
@@ -76,12 +72,20 @@ int main( int argc, char *argv[] )
             for( const auto& s : shelling ) { LOG << s.first << " (" << s.second << ")" << space; weight += s.second; }
             LOG << space << weight;
             LOG << nl;
+
+            std::vector<int> indices( shelling.size() );
+            for( int i = 0; i < shelling.size(); i++ ) indices[i] = shelling[i].first;
+            Float estimate = estimate_shelling_quality( M, indices, 1 );
+
+            PF_estimate_via_shellings = minimum( PF_estimate_via_shellings, estimate );
         }
 
-        return 0;
+        LOG << "PF estimate via shellings: " << PF_estimate_via_shellings << nl;
+        
     }
             
     
+    if(false)
     {
         LOG << "Generate spanning trees..." << nl;
         const std::pair< std::vector<int>, std::vector<std::vector<int>> > index2face_and_trees = list_face_spanning_trees( M );
@@ -154,9 +158,9 @@ int main( int argc, char *argv[] )
     }
 
 
-    return 0;
+    // return 0;
 
-    LOG << M.text() << nl;
+    // LOG << M.text() << nl;
 
     
     
@@ -166,17 +170,17 @@ int main( int argc, char *argv[] )
 
     LOG << "Estimating Poincare-Friedrichs constant of curl operator (Sullivan)" << nl;
 
-    const int min_l = 0; 
-    const int max_l = 2;
+    const int min_l = 1; 
+    const int max_l = 4;
     
     const int min_r = 1;
-    const int max_r = 3;
+    const int max_r = 1;
     
     
     std::vector<ConvergenceTable> contables(max_r-min_r+1); //();
     for( int r = min_r; r <= max_r; r++ ){
         contables[r-min_r].table_name = "Mass error and numerical residuals r=" + std::to_string(r);
-        contables[r-min_r] << "eigenvalue" << "ratio" << "log_2(ratio)" << "diff" << "log_2(diff)" << "u_mass" << "du_mass" << "time" << nl;
+        contables[r-min_r] << "eigenvalue (iterated)" << "eigenvalue (post)" << "PF (post)" << "PF ratio" << "u_mass" << "du_mass" << "time" << nl;
     } 
 
     
@@ -352,19 +356,16 @@ int main( int argc, char *argv[] )
                 Float curratio       = ucurl_massnorm / u_massnorm;
                 Float u_defectmass   = ( B * sol ).norm_sq( scalar_incmatrix_t * scalar_massmatrix * scalar_incmatrix ); 
                 
-                LOG << "ratio:           " << newratio << nl;
-                LOG << "ratio:           " << curratio << nl;
-                LOG << "u mass:          " << u_massnorm << nl;
-                LOG << "u curl mass      " << ucurl_massnorm << nl;
-                LOG << "u defect mass:   " << u_defectmass << nl;
+                LOG << "ratio (iteration):   " << newratio << nl;
+                LOG << "ratio (postprocess): " << curratio << nl;
+                LOG << "u mass:              " << u_massnorm << nl;
+                LOG << "u curl mass          " << ucurl_massnorm << nl;
+                LOG << "u defect mass:       " << u_defectmass << nl;
                 
-                const Float true_eigenvalue = 2.; // 3.0 is the true value 
-
                 contables[r-min_r] << newratio;
-                contables[r-min_r] << newratio / true_eigenvalue - 1.;
-                contables[r-min_r] << - std::log2( newratio / true_eigenvalue - 1. ); 
-                contables[r-min_r] << newratio - true_eigenvalue;
-                contables[r-min_r] << std::log2( newratio - true_eigenvalue );
+                contables[r-min_r] << curratio;
+                contables[r-min_r] << sqrt(curratio);
+                contables[r-min_r] << PF_estimate_via_shellings / sqrt(curratio);
                 contables[r-min_r] << u_massnorm;
                 contables[r-min_r] << ucurl_massnorm;
                 contables[r-min_r] << Float( end - start );

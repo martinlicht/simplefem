@@ -24,7 +24,7 @@ class ConvergenceTable
         bool display_convergence_rates;
         bool print_rowwise_instead_of_columnwise;
 
-        unsigned int minimum_printed_precision = 0; // may increase the displayed precision.
+        unsigned int minimum_printed_precision; // may increase the displayed precision.
     
     public:
 
