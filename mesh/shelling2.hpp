@@ -240,6 +240,8 @@ std::vector<std::vector<int>> generate_shellings(
     {
         bool already_in_prefix = std::any_of( current_prefix.begin(), current_prefix.end(), [=]( const int node ){ return node == s; } );
 
+        if( current_prefix.size() == 0 ) assert( not already_in_prefix );
+
         if( not already_in_prefix ) remaining_nodes.push_back( s );
     }
 
@@ -308,9 +310,11 @@ std::vector<std::vector<int>> generate_shellings(
             }
         }
 
+        assert( remaining_nodes.size() > 0 );
         assert( remaining_nodes.size() == face_is_connected.size()        );
         assert( remaining_nodes.size() == how_many_connected_faces.size() );
     }
+
 
 
 
@@ -319,7 +323,8 @@ std::vector<std::vector<int>> generate_shellings(
     
     // compute the weight associated with the extension along each possible node 
 
-    std::vector<int>   shared_subsimplex_dim( remaining_nodes.size(), -1 );
+    std::vector<int>   shared_subsimplex_dim( remaining_nodes.size(), -1    );
+    std::vector<bool>  shelling_compatible  ( remaining_nodes.size(), true );
 
     std::vector<Float> weight_for_node_1( remaining_nodes.size(), std::numeric_limits<Float>::infinity() );
     std::vector<Float> weight_for_node_2( remaining_nodes.size(), std::numeric_limits<Float>::infinity() );
@@ -329,7 +334,7 @@ std::vector<std::vector<int>> generate_shellings(
 
 
 
-    // start computing the relevant data on each piece 
+    // start computing the relevant data on each node  
     for( int i = 0; i < remaining_nodes.size(); i++ ) 
     {
         
@@ -452,34 +457,36 @@ std::vector<std::vector<int>> generate_shellings(
 
     
     
-    // unless we are at the beginning, delete all the non-reachable nodes, that is, those without active faces 
+    // delete all the nodes that don't give a shelling 
     if( current_prefix.size() > 0 )
     {
         int i = 0;
         while( i < remaining_nodes.size() )
         {
-            if( shared_subsimplex_dim[i] != -1 ) {
+            if( shelling_compatible[i] ) {
                 i++;
             } else {
                 remaining_nodes.erase(          remaining_nodes.begin() + i          );
                 face_is_connected.erase(        face_is_connected.begin() + i        );
                 how_many_connected_faces.erase( how_many_connected_faces.begin() + i );
                 shared_subsimplex_dim.erase(    shared_subsimplex_dim.begin() + i    );
+                shelling_compatible.erase(      shelling_compatible.begin() + i      );
                 weight_for_node_1.erase(        weight_for_node_1.begin() + i        );
                 weight_for_node_2.erase(        weight_for_node_2.begin() + i        );
             }
         }
 
+        assert( remaining_nodes.size() > 0 );
         assert( remaining_nodes.size() == face_is_connected.size()        );
         assert( remaining_nodes.size() == how_many_connected_faces.size() );
         assert( remaining_nodes.size() == shared_subsimplex_dim.size()    );
+        assert( remaining_nodes.size() == shelling_compatible.size()      );
         assert( remaining_nodes.size() == weight_for_node_1.size()        );
         assert( remaining_nodes.size() == weight_for_node_2.size()        );
     }
 
-    // unless we are at the beginning, sort nodes by priority
+    // sort nodes by priority
     // simply some lazy bubble sort
-    if( current_prefix.size() > 0 )
     for( int i = 0; i < remaining_nodes.size(); i++ )
     for( int j = 0; j < remaining_nodes.size(); j++ )
     {
@@ -491,6 +498,7 @@ std::vector<std::vector<int>> generate_shellings(
         std::swap( how_many_connected_faces[i], how_many_connected_faces[j] );
         std::swap( face_is_connected[i],        face_is_connected[j]        );
         std::swap( shared_subsimplex_dim[i],    shared_subsimplex_dim[j]    );
+        std::swap( shelling_compatible[i],      shelling_compatible[j]      );
         std::swap( weight_for_node_1[i],        weight_for_node_1[j]        );
         std::swap( weight_for_node_2[i],        weight_for_node_2[j]        );
     }
@@ -509,163 +517,6 @@ std::vector<std::vector<int>> generate_shellings(
     }
 
 
-
-
-
-
-
-
-
-    std::vector<FloatVector> coefficient_table( counts[dim], FloatVector( counts[dim], 0. ) );
-    
-    // start computing the relevant data on each piece 
-    for( int i = 0; i < counts[dim]; i++ )
-    {
-        
-        int current_node = shelling[i];
-        assert( 0 <= current_node and current_node < counts[dim] );
-        
-        // list the faces adjacent to the i-th node among the previous nodes 
-        
-        const auto faces_of_node = mesh.getsubsimplices( dim, dim-1, current_node ).getvalues();
-        std::vector<bool> face_is_connected( dim+1, false );
-        assert( faces_of_node.size() == face_is_connected.size() );
-
-        for( int index_f = 0; index_f < faces_of_node.size(); index_f++ )
-        {
-            const int face = faces_of_node[index_f];
-            
-            const auto parents = mesh.getsupersimplices( dim, dim-1, face );
-            
-            assert( 1 <= parents.size() and parents.size() <= 2 );
-
-            if( parents.size() == 1 ) { 
-                assert( mesh.is_subsimplex(dim,dim-1,parents[0],face) ); 
-                continue; 
-            }
-
-            assert( parents[0] == current_node or parents[1] == current_node );
-            assert( parents[0] != current_node or parents[1] != current_node );
-
-            for( int j = 0; j < i; j++ ) 
-                face_is_connected[index_f] = face_is_connected[index_f] or ( parents[0] == shelling[j] or parents[1] == shelling[j] );
-        }
-
-
-        // What is the dimension of the subsimplex around which the interface is made?
-        
-        int k = dim - std::count_if( face_is_connected.begin(), face_is_connected.end(), [](bool b){return b;} );
-        Assert( i == 0 or k < dim, i, k );
-
-
-        // Determine the common subsimplex
-        int common_subsimplex = mesh.nullindex; 
-
-        if( i == 0 ) {
-
-            assert( k == dim );
-
-            common_subsimplex = shelling[0];
-
-        } else {
-            
-            LOGPRINTF( "Subsimplex of dimension %i shared by %i-th simplex, which is %i\n", k, i, current_node );
-            
-            // get the subsimplices of the proposed node of dimension k
-            const auto k_subsimplices_of_node = mesh.getsubsimplices( dim, k, current_node ).getvalues();
-
-            // find the node which is contained in all connected faces
-            
-            assert( common_subsimplex == mesh.nullindex );
-            
-            for( int k_sub : k_subsimplices_of_node ) 
-            {
-                bool is_match = true;
-                for( int f = 0; f < faces_of_node.size() && is_match; f++ )
-                    if( face_is_connected[f] and not mesh.is_subsimplex( dim-1, k, faces_of_node[f], k_sub ) )
-                        is_match = false;
-
-                assert( not is_match or common_subsimplex == mesh.nullindex );
-                
-                if( is_match ) common_subsimplex = k_sub;
-            }
-
-            assert( common_subsimplex != mesh.nullindex );
-
-            for( int k_sub : k_subsimplices_of_node ) 
-            {
-                bool is_match = true;
-                for( int f = 0; f < faces_of_node.size() && is_match; f++ )
-                    if( face_is_connected[f] and not mesh.is_subsimplex( dim-1, k, faces_of_node[f], k_sub ) )
-                        is_match = false;
-
-                assert( not is_match or common_subsimplex == k_sub );
-            }
-
-            
-
-            // check that all of its parents are here
-            const auto& parents = mesh.getsupersimplices( dim, k, common_subsimplex );
-            std::vector<bool> parent_is_already_here( parents.size(), false );
-
-            
-            LOG << "Parents ";
-            for( int p = 0; p < parents.size(); p++ ) LOG << space << parents[p];
-            LOG << nl;
-            LOG << "Shelling ";
-            for( int j = 0; j <= i; j++ ) LOG << shelling[j] << tab;
-            LOG << nl;
-                
-            
-            for( int p = 0; p < parents.size(); p++ )
-            {
-                if ( parents[p] == shelling[i] ) parent_is_already_here[p] = true;
-
-                for( int j = 0; j < i; j++ ) { 
-                    if ( parents[p] == shelling[j] ) parent_is_already_here[p] = true;
-                }
-            }
-
-            bool all_parents_are_here = std::all_of( parent_is_already_here.begin(), parent_is_already_here.end(), [](bool b){return b;} );
-
-            assert( all_parents_are_here );
-
-        }
-
-
-
-        // Having computed the coefficients, let us now compute the coefficient table
-
-        // fill in values here 
-        {
-            Float PF = 1. / Constants::pi ; // * 2. * power_numerical( algebraic_condition_number[i], form_degree+1 ) / trafo_singular_min[i];
-
-            Float A = PF;
-            Float B = PF * C5[i] * power_numerical( C5prime[i], form_degree   ) * sqrt( C6det[i] );
-            Float C =      C5[i] * power_numerical( C5prime[i], form_degree-1 ) * sqrt( C6det[i] );
-
-            // obtain all previous indices of the common subsimplex of dimension n-k
-            const auto& relevant_volumes = mesh.getsupersimplices( dim, dim-1, common_subsimplex );
-
-            coefficient_table[i][i] = A;
-
-            for( int j = 0; j < i; j++ )
-            {
-                bool is_relevant = std::find( relevant_volumes.begin(), relevant_volumes.end(), shelling[j] ) != relevant_volumes.end();
-
-                if( not is_relevant ) continue;
-
-                coefficient_table[i][j] += B;
-
-                coefficient_table[i] += C * coefficient_table[j];
-            }
-
-        }
-
-
-        
-        
-    }
 
     // Compute the second estimate 
 
