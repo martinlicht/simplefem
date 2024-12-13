@@ -49,6 +49,9 @@ void polar_to_cartesian_coordinates2D( const Float& radius, const Float& angle, 
 
 
 
+Float unitBallVolume( int n );
+
+Float unitSphereArea(int n);
 
 
 
