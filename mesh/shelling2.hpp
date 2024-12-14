@@ -33,137 +33,154 @@ struct mesh_information_for_shelling
     std::vector<std::vector<std::vector<Float>>> C8;
     
     // Constructor
-    mesh_information_for_shelling( const Mesh& mesh )
-    {
-        
-        // check input consistency
-    
-        const int dim = mesh.getinnerdimension();
-        assert( dim >= 1 );
+    mesh_information_for_shelling( const Mesh& mesh );
 
-        const auto counts = mesh.count_simplices();
-
-        // Initialize vectors with required sizes and fill them with notanumber
-        
-        diameters.resize(counts[dim], notanumber);
-        volumes.resize(counts[dim], notanumber);
-        heights.resize(counts[dim], notanumber);
-        
-        trafo_singular_max.resize(counts[dim], notanumber);
-        trafo_singular_min.resize(counts[dim], notanumber);
-        
-        aspect_condition_number.resize(counts[dim], notanumber);
-        algebraic_condition_number.resize(counts[dim], notanumber);
-        
-        C5.resize( counts[dim]+1, std::vector<std::vector<Float>>( dim+1, std::vector<Float>( dim+1, notanumber ) ) );
-        C6.resize( counts[dim]+1, std::vector<std::vector<Float>>( dim+1, std::vector<Float>( dim+1, notanumber ) ) );
-        C7.resize( counts[dim]+1, std::vector<std::vector<Float>>( dim+1, std::vector<Float>( dim+1, notanumber ) ) );
-        C8.resize( counts[dim]+1, std::vector<std::vector<Float>>( dim+1, std::vector<Float>( dim+1, notanumber ) ) );
-        
-        // estimate several geometric properties of each n-simplex
-        // - diameter
-        // - volume
-        // - aspect condition number
-        // - algebraic condition number
-    
-        for( int i = 0; i < counts[dim]; i++ ) 
-        {
-            diameters[i] = mesh.getDiameter(dim,i);
-            
-            volumes[i] = mesh.getMeasure(dim,i);
-
-            const auto faces = mesh.getsubsimplices(dim,dim-1,i).getvalues();
-
-            std::vector<Float> heights( dim+1 );
-            for( int f = 0; f < faces.size(); f++ ) 
-                heights[f] = dim * volumes[i] / mesh.getMeasure( dim-1, faces[f] );
-
-            Float min_height = *min_element( heights.begin(), heights.end() );
-
-            aspect_condition_number[i] = diameters[i] / min_height;
-
-            const auto& trafo    = mesh.getTransformationJacobian(dim,i);
-            const auto& invtrafo = Inverse(trafo);
-
-            trafo_singular_max[i] =         trafo.operator_norm_estimate();
-            trafo_singular_min[i] = 1. / invtrafo.operator_norm_estimate();
-
-            algebraic_condition_number[i] = trafo_singular_max[i] / trafo_singular_min[i];
-        }
-        
-        LOG << "Max aspect condition number:    " << *std::max_element(    aspect_condition_number.begin(),    aspect_condition_number.end() ) << nl;
-        LOG << "Max algebraic condition number: " << *std::max_element( algebraic_condition_number.begin(), algebraic_condition_number.end() ) << nl;
-        
-        // run over all the n-simplices and compare their diameters
-        // Lazy estimate 
-        
-        Float max_diameter_ratio = 0.;
-        for( int e1 = 0; e1 < counts[1]; e1++ ) 
-        for( int e2 = 0; e2 < counts[1]; e2++ ) 
-        {
-            Float diam1 = mesh.getDiameter(1,e1);
-            Float diam2 = mesh.getDiameter(1,e2);
-            max_diameter_ratio = maximum( max_diameter_ratio, diam1/diam2 );
-        }
-
-        LOG << "Max diameter ratio: " << max_diameter_ratio << nl;
-
-
-        // Compute the coefficients 
-        for( int i = 0; i < counts[dim]; i++ ) 
-        for( int l = 0; l <= dim; l++ )
-        {
-            const   int n = dim;
-
-            const Float Ctheta = max_diameter_ratio;
-
-            const Float kappa = aspect_condition_number[i];
-
-            const Float mu_l_part = (n-l) * kappa;
-            
-            const Float mu_l = sqrt( 1. + square( mu_l_part ) ) + mu_l_part;
-
-            const Float nu_l_part = (l+1) * (1+mu_l) * kappa / 2.;
-            
-            const Float nu_l = sqrt( 1. + square( nu_l_part ) ) + nu_l_part;
-
-            for( int k = 0; k <= dim; k++ )
-            {
-                
-                C5[i][l][k]   = mu_l * nu_l * power_numerical( mu_l * kappa * Ctheta * (l+1), k - n/2. );
-            
-                C6[i][l][k]   = mu_l * nu_l * power_numerical(        kappa * Ctheta * (l+1), k - n/2. );
-
-                const Float temp = 1. + 3./2. * (l+1) * kappa;
-            
-                C7[i][l][k]   = temp * nu_l * power_numerical( mu_l * kappa * Ctheta * (l+1), k - n/2. ) * power_numerical(2,n/2.);
-            
-                C8[i][l][k]   = temp * nu_l * power_numerical(        kappa * Ctheta * (l+1), k - n/2. ) * power_numerical(2,n/2.);
-
-        }
-
-        for( auto a : C5 ) for( auto b : a ) for( auto c : b ) assert( not std::isnan(c) );
-        for( auto a : C6 ) for( auto b : a ) for( auto c : b ) assert( not std::isnan(c) );
-        for( auto a : C7 ) for( auto b : a ) for( auto c : b ) assert( not std::isnan(c) );
-        for( auto a : C8 ) for( auto b : a ) for( auto c : b ) assert( not std::isnan(c) );
-        
-        for( auto a : aspect_condition_number ) assert( not std::isnan(a) );
-
-        for( auto a : algebraic_condition_number ) assert( not std::isnan(a) );
-        
-    }
 };
 
+mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
+{
+        
+    // check input consistency
+
+    const int dim = mesh.getinnerdimension();
+    assert( dim >= 1 );
+
+    const auto counts = mesh.count_simplices();
+
+    // Initialize vectors with required sizes and fill them with notanumber
+    
+    diameters.resize(counts[dim], notanumber);
+    volumes.resize(counts[dim], notanumber);
+    heights.resize(counts[dim], notanumber);
+    
+    trafo_singular_max.resize(counts[dim], notanumber);
+    trafo_singular_min.resize(counts[dim], notanumber);
+    
+    aspect_condition_number.resize(counts[dim], notanumber);
+    algebraic_condition_number.resize(counts[dim], notanumber);
+    
+    // estimate several geometric properties of each n-simplex
+    // - diameter
+    // - volume
+    // - aspect condition number
+    // - algebraic condition number
+
+    for( int i = 0; i < counts[dim]; i++ ) 
+    {
+        diameters[i] = mesh.getDiameter(dim,i);
+        
+        volumes[i] = mesh.getMeasure(dim,i);
+
+        const auto faces = mesh.getsubsimplices(dim,dim-1,i).getvalues();
+
+        std::vector<Float> heights( dim+1 );
+        for( int f = 0; f < faces.size(); f++ ) 
+            heights[f] = dim * volumes[i] / mesh.getMeasure( dim-1, faces[f] );
+
+        Float min_height = *min_element( heights.begin(), heights.end() );
+
+        aspect_condition_number[i] = diameters[i] / min_height;
+
+        const auto& trafo    = mesh.getTransformationJacobian(dim,i);
+        const auto& invtrafo = Inverse(trafo);
+
+        trafo_singular_max[i] =         trafo.operator_norm_estimate();
+        trafo_singular_min[i] = 1. / invtrafo.operator_norm_estimate();
+
+        assert( trafo.isfinite() );
+        assert( invtrafo.isfinite() );
+        Assert( trafo_singular_max[i] > 0., trafo_singular_max[i] );
+        assert( trafo_singular_min[i] > 0. );
+
+        algebraic_condition_number[i] = trafo_singular_max[i] / trafo_singular_min[i];
+    }
+        
+    LOG << "Max aspect condition number:    " << *std::max_element(    aspect_condition_number.begin(),    aspect_condition_number.end() ) << nl;
+    LOG << "Max algebraic condition number: " << *std::max_element( algebraic_condition_number.begin(), algebraic_condition_number.end() ) << nl;
+    
+    // run over all the n-simplices and compare their diameters
+    // Lazy estimate 
+    
+    Float max_diameter_ratio = 0.;
+    for( int e1 = 0; e1 < counts[1]; e1++ ) 
+    for( int e2 = 0; e2 < counts[1]; e2++ ) 
+    {
+        Float diam1 = mesh.getDiameter(1,e1);
+        Float diam2 = mesh.getDiameter(1,e2);
+        max_diameter_ratio = maximum( max_diameter_ratio, diam1/diam2 );
+    }
+
+    LOG << "Max diameter ratio: " << max_diameter_ratio << nl;
+
+
+    C5.resize( counts[dim], std::vector<std::vector<Float>>( dim+1, std::vector<Float>( dim+1, notanumber ) ) );
+    C6.resize( counts[dim], std::vector<std::vector<Float>>( dim+1, std::vector<Float>( dim+1, notanumber ) ) );
+    C7.resize( counts[dim], std::vector<std::vector<Float>>( dim+1, std::vector<Float>( dim+1, notanumber ) ) );
+    C8.resize( counts[dim], std::vector<std::vector<Float>>( dim+1, std::vector<Float>( dim+1, notanumber ) ) );
+
+    // Compute the coefficients 
+    for( int i = 0; i < counts[dim]; i++ ) 
+    for( int l = 0; l <= dim; l++ )
+    {
+        const   int n = dim;
+
+        const Float Ctheta = max_diameter_ratio;
+
+        const Float kappa = aspect_condition_number[i];
+
+        const Float mu_l_part = (n-l) * kappa;
+        
+        const Float mu_l = sqrt( 1. + square( mu_l_part ) ) + mu_l_part;
+
+        const Float nu_l_part = (l+1) * (1+mu_l) * kappa / 2.;
+        
+        const Float nu_l = sqrt( 1. + square( nu_l_part ) ) + nu_l_part;
+
+        assert( not std::isnan( kappa ) && kappa > 0 );
+        assert( not std::isnan( Ctheta ) && Ctheta > 0 );
+        assert( not std::isnan( mu_l ) && mu_l > 0 );
+        assert( not std::isnan( nu_l ) && nu_l > 0 );
+
+        for( int k = 0; k <= dim; k++ )
+        {
+            
+            C5[i][l][k]   = mu_l * nu_l * power_numerical( mu_l * kappa * Ctheta * (l+1.), k - n/2. );
+
+            Assert( not std::isnan( C5[i][l][k] ), k );
+        
+            C6[i][l][k]   = mu_l * nu_l * power_numerical(        kappa * Ctheta * (l+1.), k - n/2. );
+
+            const Float temp = 1. + 3./2. * (l+1) * kappa;
+        
+            C7[i][l][k]   = temp * nu_l * power_numerical( mu_l * kappa * Ctheta * (l+1.), k - n/2. ) * power_numerical(2,n/2.);
+        
+            C8[i][l][k]   = temp * nu_l * power_numerical(        kappa * Ctheta * (l+1.), k - n/2. ) * power_numerical(2,n/2.);
+
+        }
+
+    }
+
+    for( auto a : C5 ) for( auto b : a ) for( auto c : b ) assert( not std::isnan(c) );
+    for( auto a : C6 ) for( auto b : a ) for( auto c : b ) assert( not std::isnan(c) );
+    for( auto a : C7 ) for( auto b : a ) for( auto c : b ) assert( not std::isnan(c) );
+    for( auto a : C8 ) for( auto b : a ) for( auto c : b ) assert( not std::isnan(c) );
+    
+    for( auto a : aspect_condition_number ) assert( not std::isnan(a) );
+
+    for( auto a : algebraic_condition_number ) assert( not std::isnan(a) );
+    
+}
 
 
 
 
-std::vector<std::vector<int>> generate_shellings( 
+
+std::vector<std::vector<int>> generate_shellings2( 
     const Mesh& mesh,
     int form_degree
 );
 
-std::vector<std::vector<int>> generate_shellings(
+void generate_shellings2(
     const Mesh& mesh,
     int form_degree,
     const mesh_information_for_shelling& info,
@@ -172,7 +189,7 @@ std::vector<std::vector<int>> generate_shellings(
     const std::vector<FloatVector>& coefficient_table
 );
 
-std::vector<std::vector<int>> generate_shellings( 
+std::vector<std::vector<int>> generate_shellings2( 
     const Mesh& mesh,
     int form_degree
 ){
@@ -185,13 +202,13 @@ std::vector<std::vector<int>> generate_shellings(
 
     std::vector<FloatVector> coefficient_table;
 
-    auto result = generate_shellings( mesh, form_degree, info, shellings_found, current_prefix, coefficient_table );
+    generate_shellings2( mesh, form_degree, info, shellings_found, current_prefix, coefficient_table );
 
-    return result;
+    return shellings_found;
 }
 
 
-std::vector<std::vector<int>> generate_shellings(
+void generate_shellings2(
     const Mesh& mesh,
     int form_degree,
     const mesh_information_for_shelling& info,
@@ -200,11 +217,6 @@ std::vector<std::vector<int>> generate_shellings(
     const std::vector<FloatVector>& coefficient_table
 ){
 
-    const int dim = mesh.getinnerdimension();
-
-    const auto counts = mesh.count_simplices();
-
-    
     // check that input mesh is reasonable 
     const int dim = mesh.getinnerdimension();
     assert( dim >= 1 );
@@ -225,7 +237,20 @@ std::vector<std::vector<int>> generate_shellings(
     if( current_prefix.size() == counts[dim] )
     {
         shellings_found.push_back( current_prefix );
-        LOG << "found" << nl;
+
+        // Compute the second estimate 
+
+        Float estimate1 = 0.;
+
+        // skip the first one
+        for( int i = 1; i < counts[dim]; i++ )
+        for( int j = 1; j < counts[dim]; j++ )
+        {
+            estimate1 += square( coefficient_table[i][j] );
+        }
+
+        LOG << "found" << sqrt( estimate1 ) << nl;
+        
         return;
     }
     assert( current_prefix.size() < counts[dim]               );
@@ -295,7 +320,8 @@ std::vector<std::vector<int>> generate_shellings(
     }
 
 
-    // unless we are at the start, delete all the non-reachable nodes, that is, those without active faces 
+    // unless we are at the start: 
+    // delete all the non-reachable nodes, that is, those without active faces 
     if( current_prefix.size() > 0 )
     {
         int i = 0;
@@ -341,32 +367,18 @@ std::vector<std::vector<int>> generate_shellings(
         int current_node = remaining_nodes[i];
         assert( 0 <= current_node and current_node < counts[dim] );
         
-        // What is the dimension of the subsimplex around which the interface is made?
-        
+        // What is the dimension of the subsimplex around which the interface is made?        
         int k = dim - how_many_connected_faces[i];
         Assert( i == 0 or k < dim, i, k );
-
 
         // Determine the common subsimplex
         int common_subsimplex = mesh.nullindex; 
 
-        if( i == 0 ) {
+        {
 
-            assert( k == dim );
-
-            common_subsimplex = shelling[0];
-
-        } else {
-            
-            LOGPRINTF( "Subsimplex of dimension %i shared by %i-th simplex, which is %i\n", k, i, current_node );
-            
             // get the subsimplices of the proposed node of dimension k
             const auto k_subsimplices_of_node = mesh.getsubsimplices( dim, k, current_node ).getvalues();
 
-            // find the node which is contained in all connected faces
-            
-            assert( common_subsimplex == mesh.nullindex );
-            
             const auto faces_of_node = mesh.getsubsimplices( dim, dim-1, current_node ).getvalues();
 
             for( int k_sub : k_subsimplices_of_node ) 
@@ -383,73 +395,55 @@ std::vector<std::vector<int>> generate_shellings(
 
             assert( common_subsimplex != mesh.nullindex );
 
-            for( int k_sub : k_subsimplices_of_node ) 
-            {
-                bool is_match = true;
-                for( int f = 0; f < faces_of_node.size() && is_match; f++ )
-                    if( face_is_connected[i][f] and not mesh.is_subsimplex( dim-1, k, faces_of_node[f], k_sub ) )
-                        is_match = false;
-
-                assert( not is_match or common_subsimplex == k_sub );
-            }
-
-            
-
-            // check that all of its parents are here
+            // check that all parents of the k subsimplex are here
             const auto& parents = mesh.getsupersimplices( dim, k, common_subsimplex );
             std::vector<bool> parent_is_already_here( parents.size(), false );
 
-            
-            LOG << "Parents ";
-            for( int p = 0; p < parents.size(); p++ ) LOG << space << parents[p];
-            LOG << nl;
-            LOG << "Shelling ";
-            for( int j = 0; j <= i; j++ ) LOG << shelling[j] << tab;
-            LOG << nl;
-                
-            
             for( int p = 0; p < parents.size(); p++ )
             {
-                if ( parents[p] == shelling[i] ) parent_is_already_here[p] = true;
+                if( parents[p] == current_node ) parent_is_already_here[p] = true;
 
-                for( int j = 0; j < i; j++ ) { 
-                    if ( parents[p] == shelling[j] ) parent_is_already_here[p] = true;
+                for( int s : current_prefix ) { 
+                    if( parents[p] == s ) parent_is_already_here[p] = true;
                 }
             }
 
             bool all_parents_are_here = std::all_of( parent_is_already_here.begin(), parent_is_already_here.end(), [](bool b){return b;} );
 
-            assert( all_parents_are_here );
-
+            shelling_compatible[i] = all_parents_are_here;
         }
 
 
 
-        // Having computed the coefficients, let us now compute the coefficient table
-
-        // fill in values here 
+        // Having computed the coefficients, let us now compute the next vector in the coefficient table
         {
-            Float PF = 1. / Constants::pi ; // * 2. * power_numerical( algebraic_condition_number[i], form_degree+1 ) / trafo_singular_min[i];
+            Float PF = 1. / Constants::pi ; 
 
             Float A = PF;
-            Float B = PF * C5[i] * power_numerical( C5prime[i], form_degree   ) * sqrt( C6det[i] );
-            Float C =      C5[i] * power_numerical( C5prime[i], form_degree-1 ) * sqrt( C6det[i] );
+            Float B = PF * info.C5[i][k][form_degree];
+            Float C =      info.C5[i][k][form_degree];
 
             // obtain all previous indices of the common subsimplex of dimension n-k
             const auto& relevant_volumes = mesh.getsupersimplices( dim, dim-1, common_subsimplex );
 
-            coefficient_table[i][i] = A;
+            FloatVector new_coefficients( counts[dim], notanumber );
+
+            new_coefficients[i] = A;
 
             for( int j = 0; j < i; j++ )
             {
-                bool is_relevant = std::find( relevant_volumes.begin(), relevant_volumes.end(), shelling[j] ) != relevant_volumes.end();
+                bool is_relevant = std::find( relevant_volumes.begin(), relevant_volumes.end(), current_prefix[j] ) != relevant_volumes.end();
 
                 if( not is_relevant ) continue;
 
-                coefficient_table[i][j] += B;
+                new_coefficients[j] += B;
 
-                coefficient_table[i] += C * coefficient_table[j];
+                new_coefficients += C * coefficient_table[j];
             }
+
+            weight_for_node_1[i] = new_coefficients.l2norm();
+
+            weight_for_node_2[i] = info.C7[i][k][form_degree] * info.C8[i][k][form_degree]; // TODO: which form degree?
 
         }
     
@@ -457,6 +451,7 @@ std::vector<std::vector<int>> generate_shellings(
 
     
     
+    // unless we are at the start:
     // delete all the nodes that don't give a shelling 
     if( current_prefix.size() > 0 )
     {
@@ -485,8 +480,10 @@ std::vector<std::vector<int>> generate_shellings(
         assert( remaining_nodes.size() == weight_for_node_2.size()        );
     }
 
+    // unless we are at the start:
     // sort nodes by priority
     // simply some lazy bubble sort
+    if( current_prefix.size() > 0 )
     for( int i = 0; i < remaining_nodes.size(); i++ )
     for( int j = 0; j < remaining_nodes.size(); j++ )
     {
@@ -506,6 +503,7 @@ std::vector<std::vector<int>> generate_shellings(
 
     // only reachable nodes are left and they are ordered by priority 
 
+    if( current_prefix.size() > 0 )
     for( int i = 0; i < remaining_nodes.size(); i++ )
     {
         int node = remaining_nodes[i];
@@ -513,38 +511,9 @@ std::vector<std::vector<int>> generate_shellings(
         auto next_prefix = current_prefix;
         next_prefix.push_back( node );
 
-        generate_shellings( mesh, form_degree, info, shellings_found, next_prefix, coefficient_table );
+        generate_shellings2( mesh, form_degree, info, shellings_found, next_prefix, coefficient_table );
     }
-
-
-
-    // Compute the second estimate 
-
-    Float estimate1 = 0.;
-
-    // skip the first one
-    for( int i = 1; i < counts[dim]; i++ )
-    for( int j = 1; j < counts[dim]; j++ )
-    {
-        estimate1 += square( coefficient_table[i][j] );
-    }
-
-    LOG << "First estimate: " << sqrt( estimate1 ) << nl;
-
-
-    Float estimate2 = 1.;
-
-    // skip the first one
-    for( int i = 1; i < counts[dim]; i++ )
-    {
-        estimate2 *= C8[i] * power_numerical( C8prime[i], form_degree ) * C7[i] * power_numerical( C7prime[i], form_degree-1 ) * sqrt( C8det[i] * C7det[i] );
-        LOG << i << tab << estimate2 << nl;
-    }
-
-    LOG << "Second estimate: " << estimate2 << nl;
-
-    return estimate1;
-
+    
 }
 
 

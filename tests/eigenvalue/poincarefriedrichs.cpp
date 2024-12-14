@@ -12,6 +12,7 @@
 #include "../../mesh/examples3D.hpp"
 #include "../../mesh/spanning.hpp"
 #include "../../mesh/shelling.hpp"
+#include "../../mesh/shelling2.hpp"
 #include "../../solver/iterativesolver.hpp"
 #include "../../solver/inv.hpp"
 #include "../../solver/systemsolver.hpp"
@@ -33,7 +34,7 @@ int main( int argc, char *argv[] )
     
     LOG << "Initial mesh..." << nl;
     
-    MeshSimplicial3D M = FicheraCorner3D();
+    MeshSimplicial3D M = UnitCube3D();
     M.check();
 
     LOG << "Number of tetrahedra: " << M.count_tetrahedra() << nl;
@@ -58,7 +59,7 @@ int main( int argc, char *argv[] )
     
     Float PF_estimate_via_shellings = std::numeric_limits<Float>::infinity();
 
-    //if(false)
+    if(false)
     {
         const auto shellings_found = generate_ranked_shelling( M );
 
@@ -81,6 +82,23 @@ int main( int argc, char *argv[] )
         }
 
         LOG << "PF estimate via shellings: " << PF_estimate_via_shellings << nl;
+        
+    }
+            
+    
+    {
+        const auto shellings_found = generate_shellings2( M, 1 );
+
+        LOG << shellings_found.size() << nl;
+
+        for( int t = 0; t < shellings_found.size(); t++ )
+        {
+            const auto& shelling = shellings_found[t];
+            LOG << t << "\t:\t";
+            for( const auto& s : shelling ) { LOG << s << space; }
+            LOG << nl;
+
+        }
         
     }
             
@@ -122,7 +140,7 @@ int main( int argc, char *argv[] )
             
             }
 
-            for( auto fl : acceptable_face_list ) LOG << fl << space;
+            for( auto fl : acceptable_face_list ) LOG << (bool)fl << space;
             LOG << nl;
 
             
@@ -158,7 +176,7 @@ int main( int argc, char *argv[] )
     }
 
 
-    // return 0;
+    return 0;
 
     // LOG << M.text() << nl;
 
@@ -387,3 +405,5 @@ int main( int argc, char *argv[] )
     
     return 0;
 }
+
+
