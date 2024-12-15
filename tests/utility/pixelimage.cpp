@@ -5,9 +5,10 @@
 
 using namespace std;
 
-int main( int argc, char** argv ) {
+int main( int argc, char** argv ) 
+{    
     
-    
+    LOG << "Unit Test for image manipulation" << nl;
 
     // auto pim = readPixelImage("lena_color.tiff");
     // auto pim = readPixelImage("aurora.jpeg");

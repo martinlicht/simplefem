@@ -12,7 +12,7 @@ static              std::default_random_engine random_engine(0);
 #endif
 static thread_local std::uniform_int_distribution<int> distribution(0, std::numeric_limits<int>::max());
 
-const unsigned int maximum_random_integer = 1000; // magic number
+const constexpr unsigned int maximum_random_integer = 1000; // magic number
 
 void seed_random_integer()
 {
@@ -32,7 +32,7 @@ unsigned int random_integer()
     return ret;
 }
 
-unsigned int random_integer_maximum()
+constexpr unsigned int random_integer_maximum()
 {
     assert( maximum_random_integer > 0 );
     return maximum_random_integer;
@@ -49,7 +49,7 @@ unsigned int flip_coin( Float prob_zero )
 Float random_uniform()
 {
     // Float ret = static_cast<Float>( rand() ) / static_cast<Float>( RAND_MAX );
-    Float ret = static_cast<Float>( random_integer() ) / std::numeric_limits<int>::max();
+    Float ret = static_cast<Float>( random_integer() ) / random_integer_maximum();
     Assert( 0. <= ret and ret <= 1. );
     return ret;
 }
