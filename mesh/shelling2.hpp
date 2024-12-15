@@ -136,34 +136,41 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
         
         const Float nu_l = sqrt( 1. + square( nu_l_part ) ) + nu_l_part;
 
-        assert( not std::isnan( kappa ) && kappa > 0 );
+        assert( not std::isnan( kappa  ) && kappa > 0 );
         assert( not std::isnan( Ctheta ) && Ctheta > 0 );
-        assert( not std::isnan( mu_l ) && mu_l > 0 );
-        assert( not std::isnan( nu_l ) && nu_l > 0 );
+        assert( not std::isnan( mu_l   ) && mu_l > 0 );
+        assert( not std::isnan( nu_l   ) && nu_l > 0 );
 
         for( int k = 0; k <= dim; k++ )
         {
             
             C5[i][l][k]   = mu_l * nu_l * power_numerical( mu_l * kappa * Ctheta * (l+1.), k - n/2. );
 
-            Assert( not std::isnan( C5[i][l][k] ), k );
+            Assert( not std::isnan( C5[i][l][k] ), k ); Assert( C5[i][l][k] > 0. ); 
         
             C6[i][l][k]   = mu_l * nu_l * power_numerical(        kappa * Ctheta * (l+1.), k - n/2. );
 
+            Assert( not std::isnan( C6[i][l][k] ), k ); Assert( C6[i][l][k] > 0. ); 
+        
             const Float temp = 1. + 3./2. * (l+1) * kappa;
         
             C7[i][l][k]   = temp * nu_l * power_numerical( mu_l * kappa * Ctheta * (l+1.), k - n/2. ) * power_numerical(2,n/2.);
         
+            Assert( not std::isnan( C7[i][l][k] ), k ); Assert( C7[i][l][k] > 0. ); 
+        
             C8[i][l][k]   = temp * nu_l * power_numerical(        kappa * Ctheta * (l+1.), k - n/2. ) * power_numerical(2,n/2.);
-
+            
+            Assert( not std::isnan( C8[i][l][k] ), k ); Assert( C8[i][l][k] > 0. ); 
+        
+            
         }
 
     }
 
-    for( auto a : C5 ) for( auto b : a ) for( auto c : b ) assert( not std::isnan(c) );
-    for( auto a : C6 ) for( auto b : a ) for( auto c : b ) assert( not std::isnan(c) );
-    for( auto a : C7 ) for( auto b : a ) for( auto c : b ) assert( not std::isnan(c) );
-    for( auto a : C8 ) for( auto b : a ) for( auto c : b ) assert( not std::isnan(c) );
+    for( auto a : C5 ) for( auto b : a ) for( auto c : b ) assert( not std::isnan(c) && c > 0. );
+    for( auto a : C6 ) for( auto b : a ) for( auto c : b ) assert( not std::isnan(c) && c > 0. );
+    for( auto a : C7 ) for( auto b : a ) for( auto c : b ) assert( not std::isnan(c) && c > 0. );
+    for( auto a : C8 ) for( auto b : a ) for( auto c : b ) assert( not std::isnan(c) && c > 0. );
     
     for( auto a : aspect_condition_number ) assert( not std::isnan(a) );
 
@@ -242,14 +249,12 @@ void generate_shellings2(
 
         Float estimate1 = 0.;
 
-        // skip the first one
-        for( int i = 1; i < counts[dim]; i++ )
-        for( int j = 1; j < counts[dim]; j++ )
-        {
-            estimate1 += square( coefficient_table[i][j] );
+        LOG << "FOUND: ";
+        for( int i = 0; i < counts[dim]; i++ ) {
+            estimate1 += coefficient_table[i].l2norm();
+            LOGPRINTF( "%i %f\t", current_prefix[i], estimate1 );
         }
-
-        LOG << "found" << sqrt( estimate1 ) << nl;
+        LOG << nl;
         
         return;
     }
@@ -275,7 +280,7 @@ void generate_shellings2(
     for( int s : remaining_nodes ) for( int p : current_prefix ) assert( s != p );
     
     
-    // for each unused node, collect the active faces 
+    // for each as-of-now unused node, collect the active faces 
 
     std::vector<int>               how_many_connected_faces( remaining_nodes.size(), -1                         );
     std::vector<std::vector<bool>> face_is_connected       ( remaining_nodes.size(), std::vector<bool>( dim+1 ) );
@@ -319,7 +324,6 @@ void generate_shellings2(
     
     }
 
-
     // unless we are at the start: 
     // delete all the non-reachable nodes, that is, those without active faces 
     if( current_prefix.size() > 0 )
@@ -341,7 +345,9 @@ void generate_shellings2(
         assert( remaining_nodes.size() == how_many_connected_faces.size() );
     }
 
+    // LOG << "remaining nodes: "; for( auto node : remaining_nodes ) LOG << node << space; LOG << nl;
 
+    
 
 
     
@@ -349,11 +355,15 @@ void generate_shellings2(
     
     // compute the weight associated with the extension along each possible node 
 
+    assert( remaining_nodes.size() > 0 );
+
     std::vector<int>   shared_subsimplex_dim( remaining_nodes.size(), -1    );
     std::vector<bool>  shelling_compatible  ( remaining_nodes.size(), true );
 
     std::vector<Float> weight_for_node_1( remaining_nodes.size(), std::numeric_limits<Float>::infinity() );
     std::vector<Float> weight_for_node_2( remaining_nodes.size(), std::numeric_limits<Float>::infinity() );
+    
+    std::vector<FloatVector> coefficient_vectors( remaining_nodes.size(), FloatVector( counts[dim], notanumber ) );
 
     for( int i = 0; i < remaining_nodes.size(); i++ ) 
         assert( std::isfinite( weight_for_node_1[i] ) == std::isfinite( weight_for_node_1[i] ) );
@@ -369,9 +379,12 @@ void generate_shellings2(
         
         // What is the dimension of the subsimplex around which the interface is made?        
         int k = dim - how_many_connected_faces[i];
-        Assert( i == 0 or k < dim, i, k );
+        Assert( i == 0 or k <= dim, i, k );
 
-        // Determine the common subsimplex
+        
+        // Determine whether the new simplex can be part of a shelling,
+        // and if yes, what is the common subsimplex
+
         int common_subsimplex = mesh.nullindex; 
 
         {
@@ -415,24 +428,30 @@ void generate_shellings2(
 
 
 
-        // Having computed the coefficients, let us now compute the next vector in the coefficient table
+        // Having determined whether the next volume is compatible, 
+        // let us now compute the next vector in the coefficient table
         {
+
             Float PF = 1. / Constants::pi ; 
 
             Float A = PF;
-            Float B = PF * info.C5[i][k][form_degree];
-            Float C =      info.C5[i][k][form_degree];
+            Float B = PF * info.C5[current_node][k][form_degree];
+            Float C =      info.C5[current_node][k][form_degree];
 
             // obtain all previous indices of the common subsimplex of dimension n-k
-            const auto& relevant_volumes = mesh.getsupersimplices( dim, dim-1, common_subsimplex );
+            const auto& relevant_volumes = mesh.getsupersimplices( dim, k, common_subsimplex );
 
-            FloatVector new_coefficients( counts[dim], notanumber );
+            FloatVector new_coefficients( counts[dim], 0. );
 
-            new_coefficients[i] = A;
+            new_coefficients[current_node] = A;
 
-            for( int j = 0; j < i; j++ )
+            // for( auto p : relevant_volumes ) LOG << p << space; LOG << nl;
+
+            for( int j = 0; j < current_prefix.size(); j++ )
             {
-                bool is_relevant = std::find( relevant_volumes.begin(), relevant_volumes.end(), current_prefix[j] ) != relevant_volumes.end();
+                int previous_node = current_prefix[j];
+
+                bool is_relevant = std::find( relevant_volumes.begin(), relevant_volumes.end(), previous_node ) != relevant_volumes.end();
 
                 if( not is_relevant ) continue;
 
@@ -441,9 +460,11 @@ void generate_shellings2(
                 new_coefficients += C * coefficient_table[j];
             }
 
+            coefficient_vectors[i] = new_coefficients;
+            
             weight_for_node_1[i] = new_coefficients.l2norm();
 
-            weight_for_node_2[i] = info.C7[i][k][form_degree] * info.C8[i][k][form_degree]; // TODO: which form degree?
+            weight_for_node_2[i] = info.C7[current_node][k][form_degree] * info.C8[current_node][k][form_degree]; // TODO: which form degree?
 
         }
     
@@ -459,6 +480,7 @@ void generate_shellings2(
         while( i < remaining_nodes.size() )
         {
             if( shelling_compatible[i] ) {
+                assert( not std::isnan( weight_for_node_1[i] ) );
                 i++;
             } else {
                 remaining_nodes.erase(          remaining_nodes.begin() + i          );
@@ -466,6 +488,7 @@ void generate_shellings2(
                 how_many_connected_faces.erase( how_many_connected_faces.begin() + i );
                 shared_subsimplex_dim.erase(    shared_subsimplex_dim.begin() + i    );
                 shelling_compatible.erase(      shelling_compatible.begin() + i      );
+                coefficient_vectors.erase(      coefficient_vectors.begin() + i      );
                 weight_for_node_1.erase(        weight_for_node_1.begin() + i        );
                 weight_for_node_2.erase(        weight_for_node_2.begin() + i        );
             }
@@ -476,6 +499,7 @@ void generate_shellings2(
         assert( remaining_nodes.size() == how_many_connected_faces.size() );
         assert( remaining_nodes.size() == shared_subsimplex_dim.size()    );
         assert( remaining_nodes.size() == shelling_compatible.size()      );
+        assert( remaining_nodes.size() == coefficient_vectors.size()      );
         assert( remaining_nodes.size() == weight_for_node_1.size()        );
         assert( remaining_nodes.size() == weight_for_node_2.size()        );
     }
@@ -483,27 +507,31 @@ void generate_shellings2(
     // unless we are at the start:
     // sort nodes by priority
     // simply some lazy bubble sort
-    if( current_prefix.size() > 0 )
+    /////if( current_prefix.size() > 0 )
     for( int i = 0; i < remaining_nodes.size(); i++ )
-    for( int j = 0; j < remaining_nodes.size(); j++ )
+    for( int j = 1; j < remaining_nodes.size(); j++ )
     {
-        bool correct_order = weight_for_node_1[i] < weight_for_node_1[j];
+        bool correct_order = weight_for_node_1[j-1] <= weight_for_node_1[j];
 
         if( correct_order ) continue;
 
-        std::swap( remaining_nodes[i],          remaining_nodes[j]          );
-        std::swap( how_many_connected_faces[i], how_many_connected_faces[j] );
-        std::swap( face_is_connected[i],        face_is_connected[j]        );
-        std::swap( shared_subsimplex_dim[i],    shared_subsimplex_dim[j]    );
-        std::swap( shelling_compatible[i],      shelling_compatible[j]      );
-        std::swap( weight_for_node_1[i],        weight_for_node_1[j]        );
-        std::swap( weight_for_node_2[i],        weight_for_node_2[j]        );
+        std::swap( remaining_nodes[j-1],          remaining_nodes[j]          );
+        std::swap( how_many_connected_faces[j-1], how_many_connected_faces[j] );
+        std::swap( face_is_connected[j-1],        face_is_connected[j]        );
+        std::swap( shared_subsimplex_dim[j-1],    shared_subsimplex_dim[j]    );
+        std::swap( shelling_compatible[j-1],      shelling_compatible[j]      );
+        std::swap( coefficient_vectors[j-1],      coefficient_vectors[j]      );
+        std::swap( weight_for_node_1[j-1],        weight_for_node_1[j]        );
+        std::swap( weight_for_node_2[j-1],        weight_for_node_2[j]        );
+
+        Assert( weight_for_node_1[j-1] <= weight_for_node_1[j], weight_for_node_1[j-1], weight_for_node_1[j] );
     }
+
+    for( int i = 1; i < remaining_nodes.size(); i++ ) Assert( weight_for_node_1[i] >= weight_for_node_1[i-1], weight_for_node_1[i], weight_for_node_1[i-1] );
     
 
     // only reachable nodes are left and they are ordered by priority 
 
-    if( current_prefix.size() > 0 )
     for( int i = 0; i < remaining_nodes.size(); i++ )
     {
         int node = remaining_nodes[i];
@@ -511,7 +539,12 @@ void generate_shellings2(
         auto next_prefix = current_prefix;
         next_prefix.push_back( node );
 
-        generate_shellings2( mesh, form_degree, info, shellings_found, next_prefix, coefficient_table );
+        auto next_coefficient_table = coefficient_table;
+        next_coefficient_table.push_back( coefficient_vectors[i] );
+
+        assert( next_prefix.size() == next_coefficient_table.size() );
+
+        generate_shellings2( mesh, form_degree, info, shellings_found, next_prefix, next_coefficient_table );
     }
     
 }

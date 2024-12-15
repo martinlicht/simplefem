@@ -86,6 +86,7 @@ int main( int argc, char *argv[] )
     }
             
     
+    // if(false)
     {
         const auto shellings_found = generate_shellings2( M, 1 );
 

@@ -24,9 +24,11 @@ unsigned int random_integer()
 {
     // int ret = rand();
     unsigned int ret = distribution( random_engine );
+    
     Assert( 0 <= ret and ret <= std::numeric_limits<int>::max() );
-    LOG << ret << space << random_integer_maximum() << nl;
+    
     ret = ret % random_integer_maximum();
+    
     return ret;
 }
 
