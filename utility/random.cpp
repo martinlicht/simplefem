@@ -12,6 +12,8 @@ static              std::default_random_engine random_engine(0);
 #endif
 static thread_local std::uniform_int_distribution<int> distribution(0, std::numeric_limits<int>::max());
 
+const unsigned int maximum_random_integer = 1000; // magic number
+
 void seed_random_integer()
 {
     // srand(0);
@@ -23,7 +25,15 @@ unsigned int random_integer()
     // int ret = rand();
     unsigned int ret = distribution( random_engine );
     Assert( 0 <= ret and ret <= std::numeric_limits<int>::max() );
+    LOG << ret << space << random_integer_maximum() << nl;
+    ret = ret % random_integer_maximum();
     return ret;
+}
+
+unsigned int random_integer_maximum()
+{
+    assert( maximum_random_integer > 0 );
+    return maximum_random_integer;
 }
 
 
@@ -53,7 +63,7 @@ inline Float gaussrand_1()
     Float x = 0;
     
     for( int i = 0; i < NSUM; i++) 
-        x += random_integer() / static_cast<Float>(RAND_MAX);
+        x += random_integer() / static_cast<Float>(random_integer_maximum());
     
     x -= NSUM / 2.0;
     x /= std::sqrt( NSUM / 12.0 );
@@ -71,8 +81,8 @@ inline Float gaussrand_2()
     if( phase ) {
         Z = std::sqrt( -2. * std::log(U) ) * std::cos( 2. * PI * V );
     } else {
-        U = ( random_integer() + 1. ) / ( RAND_MAX + 2. );
-        V = random_integer() / ( RAND_MAX + 1. );
+        U = ( random_integer() + 1. ) / ( random_integer_maximum() + 2. );
+        V = random_integer() / ( random_integer_maximum() + 1. );
         Z = std::sqrt( -2. * std::log(U) ) * std::sin( 2. * PI * V );
     }
         
@@ -86,7 +96,7 @@ inline Float gaussrand_3( Float mean = 0., Float std_dev = 1. )
 {
     Assert( std_dev > machine_epsilon );
 
-    Float x = random_integer() / (RAND_MAX + 1.0);   /* 0.0 <= x < 1.0 */
+    Float x = random_integer() / (random_integer_maximum() + 1.0);   /* 0.0 <= x < 1.0 */
     
     bool large = (x < 0.5) ? false : true;
     
@@ -99,12 +109,17 @@ inline Float gaussrand_3( Float mean = 0., Float std_dev = 1. )
 inline Float gaussrand_4()
 {
     const Float PI = 3.14159265358979323846;
-    Float U = ( random_integer() + 1. ) / ( RAND_MAX + 2. );
-    Float V = ( random_integer()      ) / ( RAND_MAX + 1. );
-    return std::sqrt( -2. * std::log(U) ) * std::sin( 2. * PI * V );
+    Float U = ( random_integer() + 1. ) / ( random_integer_maximum() + 2. );
+    Float V = ( random_integer()      ) / ( random_integer_maximum() + 1. );
+
+    Float result = std::sqrt( -2. * std::log(U) ) * std::sin( 2. * PI * V );
+
+    return result;
 }
 
 Float gaussrand()
 {
-    return gaussrand_4();
+    Float ret = gaussrand_4();
+    assert( std::isfinite(ret) );
+    return ret;
 }
