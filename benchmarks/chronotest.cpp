@@ -27,8 +27,11 @@ int main( int argc, char *argv[] )
     std::clock_t c_start = std::clock();
     auto t_start = std::chrono::high_resolution_clock::now();
     
-    foo = 1.;
-    for( int t = 0; t < 1200000; t++) foo *= ( t - 1. ) / ( t + 1. );
+    // we implement the logistic map, just to kill some time. The value r is selected to ensure chaotic behavior
+    // https://en.wikipedia.org/wiki/Logistic_map
+    const long double r = 3.6;
+    foo = 0.5;
+    for( int t = 0; t < 1200000; t++) foo = r * foo * ( 1. - foo );
     
     std::clock_t c_end = std::clock();
     auto t_end = std::chrono::high_resolution_clock::now();

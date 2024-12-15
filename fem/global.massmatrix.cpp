@@ -103,7 +103,7 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
 
             Assert( delta.is_numerically_small(), GPM, foo );
             
-            // LOGPRINTF("%.15Le\n", (long double)delta.sumnorm() );
+            // LOGPRINTF("%.15le\n", (double)(safedouble)delta.sumnorm() );
 
             // GPM = foo;
         }
@@ -145,7 +145,7 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
                     auto D = QRIteration( foo );
                     LOG << k << ":EINS:"<< D << nl;
                 }
-                // LOGPRINTF("%.15Le\n", (long double)delta.sumnorm() );
+                // LOGPRINTF("%.15le\n", (double)(safedouble)delta.sumnorm() );
 
                 // formMM = foo;
             }
@@ -171,7 +171,7 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
                     auto D = QRIteration( foo );
                     LOG << k << ":ZWEI:"<< D << nl;
                 }
-                // LOGPRINTF("%.15Le\n", (long double)delta.sumnorm() );
+                // LOGPRINTF("%.15le\n", (double)(safedouble)delta.sumnorm() );
                 
                 // formMM = foo;
             }
@@ -192,7 +192,7 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
                     auto D = QRIteration( foo );
                     LOG << k << ":DREI:"<< D << nl; // INDICATES WORSE PERFORMANCE
                 }
-                // LOGPRINTF("%.15Le\n", (long double)delta.sumnorm() );
+                // LOGPRINTF("%.15le\n", (double)(safedouble)delta.sumnorm() );
 
                 // formMM = foo;
             }

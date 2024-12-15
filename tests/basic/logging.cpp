@@ -20,8 +20,8 @@ int main( int argc, char *argv[] )
     PING;
     LOG << "This is a test! " << 5 << nl;
     LOGPRINTF( "%i%c%d\n", 1, '-', 3 );
-    LOGPRINTF( "0.123456789e-7: %e\n",   (double)     0.1234567890123456789e-7 );
-    LOGPRINTF( "0.123456789e-7: % Le\n", (long double)0.1234567890123456789e-7 );
+    LOGPRINTF( "double      0.123456789e-7: %e\n",   (double)     0.1234567890123456789e-7 );
+    LOGPRINTF( "long double 0.123456789e-7: % Le\n", (long double)0.1234567890123456789e-7 );
     PING;
     // openContext();
     NOTE "";

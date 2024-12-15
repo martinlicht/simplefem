@@ -28,11 +28,12 @@ int main( int argc, char *argv[] )
         }
 
         // Set entries and check values
-        FloatVector v(5, 0.0);
+        FloatVector v4(5, 0.0);
         for (int i = 0; i < 5; ++i) {
-            v.setentry( i, static_cast<Float>(i) );
-            assert( v.getentry(i) == i );
+            v4.setentry( i, static_cast<Float>(i) );
+            assert( v4.getentry(i) == i );
         }
+
     }
     
 
@@ -230,6 +231,15 @@ int main( int argc, char *argv[] )
         assert( is_numerically_one( norm_d_normalized ) );
         
     }
+    
+    {
+        // Set entries and check values
+        FloatVector w(5,0.);
+        LOG << w << nl;
+        w.random();
+        LOG << w << nl;
+    }
+        
 
     LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
 
