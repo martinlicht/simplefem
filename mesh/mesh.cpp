@@ -152,6 +152,17 @@ int Mesh::count_subsimplices( int sup, int sub ) const
 
 
 
+
+std::vector<int> Mesh::count_simplices() const
+{
+    const int dim = getinnerdimension();
+    std::vector<int> counts( dim+1 );
+    for( int d = 0; d <= dim; d++ ) counts[d] = count_simplices(d);
+    return counts;
+}
+
+
+
  /*
   * 
   * Accessing subsimplices 
@@ -346,6 +357,22 @@ void Mesh::automatic_dirichlet_flags()
             set_flag( full-1, s, SimplexFlag::SimplexFlagDirichlet );
         }
         
+    for( int s = 0; s < count_simplices(full-1); s++ )
+        if( get_flag( full-1, s ) == SimplexFlag::SimplexFlagDirichlet )
+            for( int d = 0; d < full-1; d++ )
+                for( int subindex = 0; subindex < count_subsimplices( full-1, d ); subindex++ ) 
+                    set_flag( d, get_subsimplex( full-1, d, s, subindex ), SimplexFlag::SimplexFlagDirichlet );
+
+}
+
+
+void Mesh::complete_dirichlet_flags_from_facets()
+{
+    const int full = getinnerdimension();
+    
+    assert( has_dimension_counted(full-1) );
+    assert( has_supersimplices_listed(full,full-1) );
+    
     for( int s = 0; s < count_simplices(full-1); s++ )
         if( get_flag( full-1, s ) == SimplexFlag::SimplexFlagDirichlet )
             for( int d = 0; d < full-1; d++ )

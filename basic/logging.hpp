@@ -2,6 +2,7 @@
 #define INCLUDEGUARD_LOGGING_HPP
 
 #include "basic.hpp"
+#include "safedouble.hpp"
 
 
 
@@ -121,11 +122,29 @@ class Logger //: public std::ostringstream
         //     return *this;
         // }
 
-        template <typename T>
-        typename std::enable_if<std::is_floating_point<T>::value, Logger&>::type
-        operator<<( T input ) {
-            char buffer[ std::numeric_limits<float>::max_digits10 + std::numeric_limits<float>::max_exponent10 + 10 + 1];
-            std::snprintf( buffer, sizeof(buffer), "%.10Lg", (long double)input );
+        // template <typename T>
+        // typename std::enable_if<std::is_floating_point<T>::value, Logger&>::type
+        // operator<<( T input ) {
+        //     char buffer[ std::numeric_limits<float>::max_digits10 + std::numeric_limits<float>::max_exponent10 + 10 + 1];
+        //     std::snprintf( buffer, sizeof(buffer), "%.10lg", (double)(safedouble)input );
+        //     internal += buffer;
+        //     return *this;
+        // }
+
+        Logger& operator<<( float input ) {
+            return *this << (double)input;
+        }
+
+        Logger& operator<<( double input ) {
+            char buffer[ std::numeric_limits<double>::max_digits10 + std::numeric_limits<double>::max_exponent10 + 10 + 1];
+            std::snprintf( buffer, sizeof(buffer), "%.10g", input );
+            internal += buffer;
+            return *this;
+        }
+
+        Logger& operator<<( long double input ) {
+            char buffer[ std::numeric_limits<long double>::max_digits10 + std::numeric_limits<long double>::max_exponent10 + 10 + 1];
+            std::snprintf( buffer, sizeof(buffer), "%.10lg", (double)(safedouble)input );
             internal += buffer;
             return *this;
         }

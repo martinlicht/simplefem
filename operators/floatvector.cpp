@@ -166,7 +166,7 @@ std::string FloatVector::text() const
     std::string ret = "float vector of dimension: " + std::to_string( getdimension() );
     for( int p = 0; p < getdimension(); p++ ) {
         // ret = ret + "\n" + std::to_string(p) + ": " + std::to_string(getentry(p));
-        ret = ret + "\n" + std::to_string(p) + ": " + printf_into_string( "% .17Le", (long double)getentry(p) );
+        ret = ret + "\n" + std::to_string(p) + ": " + printf_into_string( "% .17le", (double)(safedouble)getentry(p) );
     }
     return ret;
 }
@@ -182,13 +182,13 @@ std::string FloatVector::data_as_text( bool indexed, bool print_rowwise ) const
     if( print_rowwise ){
         if(indexed) for( int p = 0; p < getdimension(); p++ ) ret += printf_into_string(    "%*d ", nc_width, p );
         if(indexed) ret += '\n';
-        for( int p = 0; p < getdimension(); p++ ) ret += printf_into_string( "%*.*Le ", nc_width, nc_precision, (long double)getentry(p) );
+        for( int p = 0; p < getdimension(); p++ ) ret += printf_into_string( "%*.*le ", nc_width, nc_precision, (double)(safedouble)getentry(p) );
     } else {
         for( int p = 0; p < getdimension(); p++ )
             if(indexed) 
-                ret += printf_into_string( "%*d : %*.*Le\n", nc_width, p, nc_width, nc_precision, (long double)getentry(p) );
+                ret += printf_into_string( "%*d : %*.*le\n", nc_width, p, nc_width, nc_precision, (double)(safedouble)getentry(p) );
             else 
-                ret += printf_into_string( "%*.*Le\n", nc_width, nc_precision, (long double)getentry(p) );
+                ret += printf_into_string( "%*.*le\n", nc_width, nc_precision, (double)(safedouble)getentry(p) );
     }
 
     return ret;

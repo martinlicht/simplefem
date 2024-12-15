@@ -250,7 +250,7 @@ std::string DenseMatrix::text() const
     std::string ret = "Dense Matrix " + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) + nl;
     for( int r = 0; r < getdimout(); r++ ) {
         for( int c = 0; c < getdimin(); c++ )
-            ret += printf_into_string( "% .10Le", (long double)at(r,c) ) + "\t";
+            ret += printf_into_string( "% .10le", (double)(safedouble)at(r,c) ) + "\t";
         ret += nl;
     }
     return ret;
@@ -269,9 +269,9 @@ std::string DenseMatrix::data_as_text( bool indexed, bool print_as_list ) const
         for( int r = 0; r < getdimout(); r++ )
         for( int c = 0; c < getdimin(); c++ )
             if(indexed) 
-                ret += printf_into_string("%*d %*d %*.*Le\n", nc_width, r, nc_width, c, nc_width, nc_precision, (long double)(*this)(r,c) );
+                ret += printf_into_string("%*d %*d %*.*le\n", nc_width, r, nc_width, c, nc_width, nc_precision, (double)(safedouble)(*this)(r,c) );
             else
-                ret += printf_into_string("%*.*Le\n", nc_width, nc_precision, (long double)(*this)(r,c) );
+                ret += printf_into_string("%*.*le\n", nc_width, nc_precision, (double)(safedouble)(*this)(r,c) );
         
     } else {
 
@@ -280,7 +280,7 @@ std::string DenseMatrix::data_as_text( bool indexed, bool print_as_list ) const
             if(indexed) ret += printf_into_string( "%*d : ", nc_width, r );
             
             for( int c = 0; c < getdimin(); c++ )
-                ret += printf_into_string( "%*.*Le ", nc_width, nc_precision, (long double)(*this)(r,c) );
+                ret += printf_into_string( "%*.*le ", nc_width, nc_precision, (double)(safedouble)(*this)(r,c) );
             
             ret += '\n'; 
         }
@@ -1083,6 +1083,30 @@ Float DenseMatrix::EigenvalueEstimate() const
 {
     assert( issquare() );
     return maxnorm() * getdimout();
+}
+
+Float DenseMatrix::operator_norm_estimate() const
+{
+    const auto&  M = *this;
+    
+    DenseMatrix Mt( M.getdimin(), M.getdimout() );
+    for( int r = 0; r < M.getdimout(); r++ )
+    for( int c = 0; c < M.getdimin();  c++ )
+        Mt(c,r) = M(r,c);
+
+    DenseMatrix MtM = Mt * M;
+
+    auto vec = MtM.createinputvector();
+    vec.random();
+    assert( vec.isfinite() );
+    for( int i = 0; i < 10; i++ )
+    {
+        vec.normalize();
+        assert( vec.isfinite() );
+        vec = MtM * vec;
+    }
+    return sqrt( vec.norm() );
+    
 }
 
 

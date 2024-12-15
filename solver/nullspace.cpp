@@ -94,7 +94,7 @@ std::vector<FloatVector> computeNullspace(
     
     LOG << "How much nullspace are our vectors? (" << tolerance_residual << ")" << nl;
     for( const auto& nullvector : nullvectorgallery ) {
-        LOGPRINTF( "% 10.5Le\t", (long double)( SystemMatrix * nullvector ).norm( MassMatrix ) );
+        LOGPRINTF( "% 10.5le\t", (double)(safedouble)( SystemMatrix * nullvector ).norm( MassMatrix ) );
     }
     LOG << nl;
     
@@ -102,7 +102,7 @@ std::vector<FloatVector> computeNullspace(
     for( const auto& nullvector1 : nullvectorgallery ) {
         for( const auto& nullvector2 : nullvectorgallery ) {
             Float mass_prod = ( MassMatrix * nullvector1) * nullvector2;
-            LOGPRINTF( "% 10.5Le\t", (long double)mass_prod );
+            LOGPRINTF( "% 10.5le\t", (double)(safedouble)mass_prod );
         }
         LOG << nl;
     }

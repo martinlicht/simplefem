@@ -120,6 +120,8 @@ class Mesh
         virtual bool has_dimension_counted( int dim ) const = 0;
         
         virtual int count_simplices( int dim ) const = 0;
+
+        std::vector<int> count_simplices() const;
         
         
         
@@ -194,6 +196,8 @@ class Mesh
         void set_flags( int dim, std::vector<SimplexFlag> flags );
         
         void automatic_dirichlet_flags();
+        
+        void complete_dirichlet_flags_from_facets();
         
         void check_dirichlet_flags( bool check_for_full_dirichlet = true );
         

@@ -210,3 +210,39 @@ void polar_to_cartesian_coordinates2D( const Float& radius, const Float& angle, 
     y = radius * std::sin( angle );
 }
 
+
+
+
+
+
+
+
+
+
+
+// Function to compute the volume of the n-dimensional unit ball
+Float unitBallVolume( int n ) 
+{
+    Assert( n >= 0 && "Dimension n must be non-negative" );
+    if( n % 2 == 0 ) 
+    {
+        // Even dimension: n = 2k
+        int k = n / 2;
+        return power_numerical( Constants::pi, k) / factorial_numerical(k);
+    } else {
+        // Odd dimension: n = 2k+1
+        int k = (n - 1) / 2;
+        return 2. * factorial_numerical(k) * power_numerical( 4. * Constants::pi, k ) / factorial_numerical(2 * k + 1);
+    }
+}
+
+// Function to compute the surface area of the n-dimensional unit sphere
+Float unitSphereArea(int n) {
+    Assert( n >= 0 && "Dimension n must be non-negative" );
+    return (n+1) * unitBallVolume( n + 1 );
+}
+
+
+
+
+

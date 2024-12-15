@@ -23,6 +23,8 @@ class ConvergenceTable
         std::string table_name;
         bool display_convergence_rates;
         bool print_rowwise_instead_of_columnwise;
+
+        unsigned int minimum_printed_precision; // may increase the displayed precision.
     
     public:
 
