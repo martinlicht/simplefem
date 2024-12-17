@@ -18,7 +18,8 @@
 
 
 #if defined(__GNUC__) or defined(__clang__)
-#define PACKED __attribute__((packed))
+#define PACKED 
+// #define PACKED __attribute__((packed)) // DEACTIVATED BECAUSE IT PREVENTS REFERENCING IN CLANG
 #else 
 #define PACKED
 #endif 

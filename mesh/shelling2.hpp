@@ -17,6 +17,7 @@
 struct mesh_information_for_shelling
 {
     Float max_diameter_ratio = notanumber;
+    Float min_height_of_vertex = notanumber;
     std::vector<Float> diameters;
     std::vector<Float> volumes;
     std::vector<Float> heights;
@@ -65,6 +66,8 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
     // - aspect condition number
     // - algebraic condition number
 
+    min_height_of_vertex = std::numeric_limits<Float>::infinity();
+    
     for( int i = 0; i < counts[dim]; i++ ) 
     {
         diameters[i] = mesh.getDiameter(dim,i);
@@ -78,6 +81,8 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
             heights[f] = dim * volumes[i] / mesh.getMeasure( dim-1, faces[f] );
 
         Float min_height = *min_element( heights.begin(), heights.end() );
+
+        min_height_of_vertex = minimum( min_height, min_height_of_vertex );
 
         aspect_condition_number[i] = diameters[i] / min_height;
 
@@ -152,7 +157,7 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
 
             Assert( not std::isnan( C6[i][l][k] ), k ); Assert( C6[i][l][k] > 0. ); 
         
-            const Float temp = 1. + 3./2. * (l+1) * kappa;
+            const Float temp = 1. + 1./2. * (l+1) * kappa;
         
             C7[i][l][k]   = temp * nu_l * power_numerical( mu_l * kappa * Ctheta * (l+1.), k - n/2. ) * power_numerical(2,n/2.);
         
@@ -519,7 +524,12 @@ void generate_shellings2(
         std::swap( how_many_connected_faces[j-1], how_many_connected_faces[j] );
         std::swap( face_is_connected[j-1],        face_is_connected[j]        );
         std::swap( shared_subsimplex_dim[j-1],    shared_subsimplex_dim[j]    );
-        std::swap( shelling_compatible[j-1],      shelling_compatible[j]      );
+        //std::swap( shelling_compatible[j-1],      shelling_compatible[j]      );
+        {
+            bool temp = shelling_compatible[j-1];
+            shelling_compatible[j-1] = shelling_compatible[i];
+            shelling_compatible[i] = temp;
+        }
         std::swap( coefficient_vectors[j-1],      coefficient_vectors[j]      );
         std::swap( weight_for_node_1[j-1],        weight_for_node_1[j]        );
         std::swap( weight_for_node_2[j-1],        weight_for_node_2[j]        );

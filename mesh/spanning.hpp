@@ -421,7 +421,7 @@ std::vector<std::vector<int>> list_topological_node_sortings_of_subtree(
     int forbidden_node,
     int current_node
 ){
-    assert( forbidden_node == Mesh::nullindex or 0 <= forbidden_node < adjacency_list.size() );
+    assert( forbidden_node == Mesh::nullindex or ( 0 <= forbidden_node and forbidden_node < adjacency_list.size() ) );
     assert( 0 <= current_node and current_node < adjacency_list.size() );
     assert( adjacency_list.size() == mesh.count_simplices( mesh.getinnerdimension() ) );
     for( const auto& vs : adjacency_list ) for( const auto& v : vs ) assert( 0 <= v and v < mesh.count_simplices( mesh.getinnerdimension() ) );
