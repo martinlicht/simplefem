@@ -18,6 +18,7 @@ struct mesh_information_for_shelling
 {
     Float max_diameter_ratio = notanumber;
     Float min_height_of_vertex = notanumber;
+    
     std::vector<Float> diameters;
     std::vector<Float> volumes;
     std::vector<Float> heights;
@@ -106,7 +107,8 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
     // run over all the n-simplices and compare their diameters
     // Lazy estimate 
     
-    Float max_diameter_ratio = 0.;
+    max_diameter_ratio = 0.;
+    
     for( int e1 = 0; e1 < counts[1]; e1++ ) 
     for( int e2 = 0; e2 < counts[1]; e2++ ) 
     {
@@ -118,14 +120,14 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
     LOG << "Max diameter ratio: " << max_diameter_ratio << nl;
 
 
-    C5.resize( counts[dim], std::vector<std::vector<Float>>( dim+1, std::vector<Float>( dim+1, notanumber ) ) );
-    C6.resize( counts[dim], std::vector<std::vector<Float>>( dim+1, std::vector<Float>( dim+1, notanumber ) ) );
-    C7.resize( counts[dim], std::vector<std::vector<Float>>( dim+1, std::vector<Float>( dim+1, notanumber ) ) );
-    C8.resize( counts[dim], std::vector<std::vector<Float>>( dim+1, std::vector<Float>( dim+1, notanumber ) ) );
+    C5.resize( counts[dim], std::vector<std::vector<Float>>( dim, std::vector<Float>( dim+1, notanumber ) ) );
+    C6.resize( counts[dim], std::vector<std::vector<Float>>( dim, std::vector<Float>( dim+1, notanumber ) ) );
+    C7.resize( counts[dim], std::vector<std::vector<Float>>( dim, std::vector<Float>( dim+1, notanumber ) ) );
+    C8.resize( counts[dim], std::vector<std::vector<Float>>( dim, std::vector<Float>( dim+1, notanumber ) ) );
 
     // Compute the coefficients 
     for( int i = 0; i < counts[dim]; i++ ) 
-    for( int l = 0; l <= dim; l++ )
+    for( int l = 0; l < dim; l++ )
     {
         const   int n = dim;
 
@@ -180,6 +182,8 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
     for( auto a : aspect_condition_number ) assert( not std::isnan(a) );
 
     for( auto a : algebraic_condition_number ) assert( not std::isnan(a) );
+
+    LOG << "Finished collecting information about the mesh." << nl;
     
 }
 
@@ -386,6 +390,9 @@ void generate_shellings2(
         int k = dim - how_many_connected_faces[i];
         Assert( i == 0 or k <= dim, i, k );
 
+        if( k == dim ) assert( current_prefix.size() == 0 );
+        if( current_prefix.size() == 0 ) assert( k == dim );
+
         
         // Determine whether the new simplex can be part of a shelling,
         // and if yes, what is the common subsimplex
@@ -440,8 +447,8 @@ void generate_shellings2(
             Float PF = 1. / Constants::pi ; 
 
             Float A = PF;
-            Float B = PF * info.C5[current_node][k][form_degree];
-            Float C =      info.C5[current_node][k][form_degree];
+            Float B = PF * ( k != dim ? info.C5[current_node][k][form_degree] : 0. );
+            Float C =      ( k != dim ? info.C5[current_node][k][form_degree] : 0. );
 
             // obtain all previous indices of the common subsimplex of dimension n-k
             const auto& relevant_volumes = mesh.getsupersimplices( dim, k, common_subsimplex );
@@ -469,7 +476,7 @@ void generate_shellings2(
             
             weight_for_node_1[i] = new_coefficients.l2norm();
 
-            weight_for_node_2[i] = info.C7[current_node][k][form_degree] * info.C8[current_node][k][form_degree]; // TODO: which form degree?
+            weight_for_node_2[i] = ( k != dim ? info.C7[current_node][k][form_degree] * info.C8[current_node][k][form_degree] : PF ); // TODO: which form degree?
 
         }
     
