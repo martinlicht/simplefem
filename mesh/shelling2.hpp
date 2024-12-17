@@ -18,7 +18,8 @@ struct mesh_information_for_shelling
 {
     Float max_diameter_ratio = notanumber;
     Float min_height_of_vertex = notanumber;
-    
+    Float max_volume_ratio   = notanumber;
+
     std::vector<Float> diameters;
     std::vector<Float> volumes;
     std::vector<Float> heights;
@@ -119,6 +120,20 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
 
     LOG << "Max diameter ratio: " << max_diameter_ratio << nl;
 
+    Float max_volume_ratio = 0.;
+    for( int f = 0; f < counts[dim-1]; f++ )
+    {
+        const auto parents = mesh.getsupersimplices(dim,dim-1,f);
+        if( parents.size() == 1 ) continue;
+        assert( parents.size() == 2 );
+        const auto p0 = parents[0];
+        const auto p1 = parents[1];
+        Float v0 = mesh.getMeasure( dim-1, p0 );
+        Float v1 = mesh.getMeasure( dim-1, p1 );
+        Float v1v0 = v1 / v0;
+        Float v0v1 = v0 / v1;
+        max_volume_ratio = maximum( max_volume_ratio, v1v0, v0v1 );
+    }
 
     C5.resize( counts[dim], std::vector<std::vector<Float>>( dim, std::vector<Float>( dim+1, notanumber ) ) );
     C6.resize( counts[dim], std::vector<std::vector<Float>>( dim, std::vector<Float>( dim+1, notanumber ) ) );
@@ -143,19 +158,86 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
         
         const Float nu_l = sqrt( 1. + square( nu_l_part ) ) + nu_l_part;
 
-        assert( not std::isnan( kappa  ) && kappa > 0 );
+        assert( not std::isnan( kappa  ) && kappa  > 0 );
         assert( not std::isnan( Ctheta ) && Ctheta > 0 );
-        assert( not std::isnan( mu_l   ) && mu_l > 0 );
-        assert( not std::isnan( nu_l   ) && nu_l > 0 );
+        assert( not std::isnan( mu_l   ) && mu_l   > 0 );
+        assert( not std::isnan( nu_l   ) && nu_l   > 0 );
+
+        if(false) // TODO: use with improved estimates 
+        for( int k = 0; k <= dim; k++ )
+        {
+            Float smax    = 0.;
+            Float sinvmin = 0.;
+            Float sdet    = 0.;
+            
+            if ( k == 0 ) {
+                C5[i][l][k] = power_numerical( sdet, -n/2. );
+                C6[i][l][k] = power_numerical( sdet, -n/2. );
+            } else if( 0 < k && k < dim ) {
+                C5[i][l][k] = smax * power_numerical( sdet, -n/2. );
+                C6[i][l][k] = smax * power_numerical( sdet, -n/2. );
+            } else {
+                assert( k == dim );
+                C5[i][l][k] = power_numerical( sdet, 1.-n/2. );
+                C6[i][l][k] = power_numerical( sdet, 1.-n/2. );
+            }
+
+            Float tmax    = 0.;
+            Float tinvmin = 0.;
+            Float tdet    = 0.;
+            
+            if ( k == 0 ) {
+                C7[i][l][k] = power_numerical( tdet, -n/2. );
+                C8[i][l][k] = power_numerical( tdet, -n/2. );
+            } else if( 0 < k && k < dim ) {
+                C7[i][l][k] = smax * power_numerical( tdet, -n/2. );
+                C8[i][l][k] = smax * power_numerical( tdet, -n/2. );
+            } else {
+                assert( k == dim );
+                C7[i][l][k] = power_numerical( tdet, 1.-n/2. );
+                C8[i][l][k] = power_numerical( tdet, 1.-n/2. );
+            }
+
+            
+        }
 
         for( int k = 0; k <= dim; k++ )
         {
             
             C5[i][l][k]   = mu_l * nu_l * power_numerical( mu_l * kappa * Ctheta * (l+1.), k - n/2. );
 
+            if( l == dim-1 ) {
+                
+                C5[i][l][k] 
+                =
+                0.5 * 
+                (
+                    sqrt( square( Ctheta * kappa + 1. ) + kappa )
+                    +
+                    sqrt( square( Ctheta * kappa - 1. ) + kappa )
+                ) 
+                *
+                max_volume_ratio;
+
+            }
+            
             Assert( not std::isnan( C5[i][l][k] ), k ); Assert( C5[i][l][k] > 0. ); 
         
             C6[i][l][k]   = mu_l * nu_l * power_numerical(        kappa * Ctheta * (l+1.), k - n/2. );
+
+            if( l == dim-1 ) {
+
+                C6[i][l][k] 
+                =
+                0.5 * 
+                (
+                    sqrt( square( Ctheta * kappa + 1. ) + kappa )
+                    +
+                    sqrt( square( Ctheta * kappa - 1. ) + kappa )
+                ) 
+                *
+                max_volume_ratio;
+            }
 
             Assert( not std::isnan( C6[i][l][k] ), k ); Assert( C6[i][l][k] > 0. ); 
         
@@ -202,7 +284,8 @@ void generate_shellings2(
     const mesh_information_for_shelling& info,
     std::vector<std::vector<int>>& shellings_found,
     const std::vector<int>& current_prefix,
-    const std::vector<FloatVector>& coefficient_table
+    const std::vector<FloatVector>& coefficient_table,
+    Float multweight
 );
 
 std::vector<std::vector<int>> generate_shellings2( 
@@ -218,7 +301,11 @@ std::vector<std::vector<int>> generate_shellings2(
 
     std::vector<FloatVector> coefficient_table;
 
-    generate_shellings2( mesh, form_degree, info, shellings_found, current_prefix, coefficient_table );
+    Float multweight = 1.;
+
+    current_prefix.reserve( mesh.count_simplices(mesh.getinnerdimension()) );
+
+    generate_shellings2( mesh, form_degree, info, shellings_found, current_prefix, coefficient_table, multweight );
 
     return shellings_found;
 }
@@ -230,7 +317,8 @@ void generate_shellings2(
     const mesh_information_for_shelling& info,
     std::vector<std::vector<int>>& shellings_found,
     const std::vector<int>& current_prefix,
-    const std::vector<FloatVector>& coefficient_table
+    const std::vector<FloatVector>& coefficient_table,
+    Float multweight
 ){
 
     // check that input mesh is reasonable 
@@ -261,9 +349,9 @@ void generate_shellings2(
         LOG << "FOUND: ";
         for( int i = 0; i < counts[dim]; i++ ) {
             estimate1 += coefficient_table[i].l2norm();
-            LOGPRINTF( "%i %f\t", current_prefix[i], estimate1 );
+            LOGPRINTF( "%i %.4f\t", current_prefix[i], estimate1 );
         }
-        LOG << nl;
+        LOG << "w2=" << multweight << nl;
         
         return;
     }
@@ -446,9 +534,11 @@ void generate_shellings2(
 
             Float PF = 1. / Constants::pi ; 
 
+            Float pullbackfactor = ( k != dim ? info.C5[current_node][k][form_degree] : 0. );
+
             Float A = PF;
-            Float B = PF * ( k != dim ? info.C5[current_node][k][form_degree] : 0. );
-            Float C =      ( k != dim ? info.C5[current_node][k][form_degree] : 0. );
+            Float B = PF * pullbackfactor;
+            Float C =      pullbackfactor;
 
             // obtain all previous indices of the common subsimplex of dimension n-k
             const auto& relevant_volumes = mesh.getsupersimplices( dim, k, common_subsimplex );
@@ -476,7 +566,7 @@ void generate_shellings2(
             
             weight_for_node_1[i] = new_coefficients.l2norm();
 
-            weight_for_node_2[i] = ( k != dim ? info.C7[current_node][k][form_degree] * info.C8[current_node][k][form_degree] : PF ); // TODO: which form degree?
+            weight_for_node_2[i] = ( k != dim ? info.C7[current_node][k][form_degree] * info.C8[current_node][k][form_degree+1] : PF ); // TODO: which form degree?
 
         }
     
@@ -561,7 +651,9 @@ void generate_shellings2(
 
         assert( next_prefix.size() == next_coefficient_table.size() );
 
-        generate_shellings2( mesh, form_degree, info, shellings_found, next_prefix, next_coefficient_table );
+        Float next_multweight = multweight * weight_for_node_2[i];
+
+        generate_shellings2( mesh, form_degree, info, shellings_found, next_prefix, next_coefficient_table, next_multweight );
     }
     
 }
