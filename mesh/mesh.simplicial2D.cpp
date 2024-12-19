@@ -3280,9 +3280,10 @@ UNUSED inline int leading_digits( double num )
     if( order >= 0 ) return order + 1; else return 1;
 }
 
-inline std::string render_number( double num, unsigned int tail = 8 )
+inline std::string render_number( double num, int tail = 8 )
 {
     assert( std::isfinite(num) );
+    assert( tail > 0 );
     
     // int lead = leading_digits( num );
     // const int str_number_of_chars = 1+lead+1+tail+1;

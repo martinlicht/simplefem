@@ -57,8 +57,6 @@ int main( int argc, char *argv[] )
             count[c]++;
         }
 
-        unsigned int max   = random_integer_maximum();
-        
         const Float TOLERANCE = 1e-1;
 
         double share0 = count[0]/(double)M; 

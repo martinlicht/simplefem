@@ -554,10 +554,65 @@ Float Mesh::getHeight( int dim, int cell, int vertexindex ) const
     Float vol_t = getMeasure( dim, cell );
     Float vol_f = getMeasure( dim-1, oppositeface );
 
+    // DEBUG
+    auto opposite_face_vertices = getsubsimplices(dim-1,0,oppositeface).getvalues();
+    for( const auto v : opposite_face_vertices ) assert( v != get_subsimplex( dim, 0, cell, vertexindex ) );
+
     // vol_t = vol_f * height / dim 
 
     return ( vol_t / vol_f ) * (dim);
 }
+
+FloatVector Mesh::getHeightVector( int dim, int cell, int vertexindex ) const
+{
+    assert( 0 <= dim && dim <= getinnerdimension() );
+    assert( 0 <= cell && cell <= count_simplices(dim) );
+    assert( 0 <= vertexindex && vertexindex <= dim );
+    
+    DenseMatrix temp = getVertexCoordinateMatrix( dim, cell );
+    std::vector<FloatVector> columns; columns.reserve(dim+1);
+    for( int c = 0; c <= dim; c++ )
+        columns.push_back( temp.getcolumn(c) );
+    // DenseMatrix columns( getouterdimension(), dim+1, notanumber ); // = this->getVertexCoordinateMatrix( dim, cell );
+    // assert( columns.getdimout() == getouterdimension() and columns.getdimin() == dim+1 );
+    // for( int c = 0; c <= dim; c++ ) 
+    // for( int d = 0; d < dim; d++ ) 
+    //     columns( d, c ) = getcoordinates().getdata( get_subsimplex(dim,0,cell,c), d );
+    // assert( columns.isfinite() );
+    // LOG << getVertexCoordinateMatrix( dim, cell ) << nl;
+
+    std::swap( columns[dim], columns[vertexindex] );
+    
+    for( int c = 1; c <= dim; c++ )
+    {
+        columns[c] -= columns[0];
+    }
+
+    // use Gram-Schmidt ...
+    for( int c = 1; c < dim; c++ )
+    {
+        FloatVector& curr = columns[c];
+        curr.normalize();
+        
+        for( int n = c+1; n <= dim; n++ ) 
+        {
+            FloatVector& next = columns[n];
+            next -= next.scalarproductwith(curr) * curr;
+        }
+        
+        LOG << c << nl << DenseMatrix(dim,dim+1,columns) << nl;
+    
+    } 
+
+    FloatVector result = columns[dim];
+    
+    auto tempheight = getHeight( dim, cell, vertexindex );
+    LOGPRINTF( "%e %e \n", result.norm(), tempheight );
+    assert( is_numerically_close( result.norm(), tempheight ) );
+
+    return result;
+}
+        
 
 
 Float Mesh::getHeightQuotient( int dim, int cell ) const

@@ -215,6 +215,7 @@ class Mesh
         Float getMeasure( int dim, int index ) const;
         
         Float getHeight( int dim, int index, int vertexindex ) const;
+        FloatVector getHeightVector( int dim, int index, int vertexindex ) const;
         
         Float getHeightQuotient( int dim, int index ) const;
         Float getHeightQuotient( int dim ) const;

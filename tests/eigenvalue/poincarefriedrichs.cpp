@@ -88,16 +88,20 @@ int main( int argc, char *argv[] )
     
     // if(false)
     {
-        const auto shellings_found = generate_shellings2( M, 1 );
+        auto shellings_found = generate_shellings2( M, 1 );
 
         LOG << shellings_found.size() << nl;
+
+        typedef decltype(shellings_found[0]) shelling;
+
+        std::sort( shellings_found.begin(), shellings_found.end(), [=]( const shelling& s1, const shelling& s2 ){ return s1.weight_reflection < s2.weight_reflection; } );
 
         for( int t = 0; t < shellings_found.size(); t++ )
         {
             const auto& shelling = shellings_found[t];
             LOG << t << "\t:\t";
             for( const auto& s : shelling ) { LOG << s << space; }
-            LOG << nl;
+            LOG << "\t" << shelling.weight_reflection << nl;
 
         }
         

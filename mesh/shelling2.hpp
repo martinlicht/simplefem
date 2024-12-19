@@ -29,6 +29,10 @@ struct mesh_information_for_shelling
     
     std::vector<Float> aspect_condition_number;
     std::vector<Float> algebraic_condition_number;
+
+    std::vector<std::vector<FloatVector>> midpoints;            // [dimension][simplex index]
+    std::vector<std::vector<Float>>       heights_of_vertex;    // [volume index][local vertex index]
+    std::vector<std::vector<FloatVector>> heightvectors_of_vertex;    // [volume index][local vertex index]
     
     std::vector<std::vector<std::vector<Float>>> C5;
     std::vector<std::vector<std::vector<Float>>> C6;
@@ -50,6 +54,23 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
 
     const auto counts = mesh.count_simplices();
 
+    // collect the midpoints of all simplices 
+    for( int d = 0; d <= dim; d++ )
+    {
+        std::vector<FloatVector> midpoints_d;
+        midpoints_d.reserve( counts[dim] );
+
+        for( int s = 0; s < counts[d]; s++ ) {
+            auto midpoint = mesh.get_midpoint( d, s );
+            assert( midpoint.isfinite() );
+            midpoints_d.push_back( midpoint );
+        }
+
+        midpoints.push_back( midpoints_d );
+    }
+    assert( midpoints.size() == dim+1 );
+    for( int d = 0; d < midpoints.size(); d++ ) assert( midpoints[d].size() == counts[d] );
+    
     // Initialize vectors with required sizes and fill them with notanumber
     
     diameters.resize(counts[dim], notanumber);
@@ -67,14 +88,22 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
     // - volume
     // - aspect condition number
     // - algebraic condition number
+    // - minimum height 
+    // - heights of all vertices in each simplex 
 
     min_height_of_vertex = std::numeric_limits<Float>::infinity();
+
+    heights_of_vertex.resize( counts[dim], std::vector<Float>( dim+1, notanumber ) );
     
     for( int i = 0; i < counts[dim]; i++ ) 
     {
+        // collect diameter and volume 
+
         diameters[i] = mesh.getDiameter(dim,i);
         
         volumes[i] = mesh.getMeasure(dim,i);
+
+        // collect the heights 
 
         const auto faces = mesh.getsubsimplices(dim,dim-1,i).getvalues();
 
@@ -85,6 +114,16 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
         Float min_height = *min_element( heights.begin(), heights.end() );
 
         min_height_of_vertex = minimum( min_height, min_height_of_vertex );
+
+        for( int f = 0; f <= dim; f++ ) {
+            int vi = mesh.get_opposite_subsimplex_index( dim, dim-1, i, f );
+            heights_of_vertex[i][vi] = heights[f];
+        }
+
+        for( int vi = 0; vi <= dim; vi++ ) assert( std::isfinite( heights_of_vertex[i][vi] ) );
+
+        
+        // estimate the aspect / algebraic condition number 
 
         aspect_condition_number[i] = diameters[i] / min_height;
 
@@ -104,6 +143,19 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
         
     LOG << "Max aspect condition number:    " << *std::max_element(    aspect_condition_number.begin(),    aspect_condition_number.end() ) << nl;
     LOG << "Max algebraic condition number: " << *std::max_element( algebraic_condition_number.begin(), algebraic_condition_number.end() ) << nl;
+    
+    
+    heightvectors_of_vertex.resize( counts[dim], std::vector<FloatVector>( dim+1, FloatVector( dim, notanumber ) ) );
+
+    for( int i = 0; i < counts[dim]; i++ ) 
+    for( int d = 0; d <= dim; d++ )
+    {
+        heightvectors_of_vertex[i][d] = mesh.getHeightVector( dim, i, d );
+    }
+
+    for( auto a : heightvectors_of_vertex ) for( auto b : a ) assert( b.isfinite() );
+    
+    
     
     // run over all the n-simplices and compare their diameters
     // Lazy estimate 
@@ -148,109 +200,66 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
 
         const Float Ctheta = max_diameter_ratio;
 
-        const Float kappa = aspect_condition_number[i];
+        const Float kappa  = aspect_condition_number[i];
 
-        const Float mu_l_part = (n-l) * kappa;
+        const Float rho    = minimum( 1., min_height_of_vertex / (l+1.) );
+
         
-        const Float mu_l = sqrt( 1. + square( mu_l_part ) ) + mu_l_part;
 
-        const Float nu_l_part = (l+1) * (1+mu_l) * kappa / 2.;
+        const Float mu_l = 0.5 * sqrt( square(1+rho) + square( square(1+rho) * (n-l) * kappa ) ) + 0.5 * sqrt( square(1-rho) + square( square(1+rho) * (n-l) * kappa ) );
         
-        const Float nu_l = sqrt( 1. + square( nu_l_part ) ) + nu_l_part;
-
+        const Float xi_1 = sqrt( square(2*rho+1) + square( (n-l) * kappa ) ) + sqrt( 1. + square( (n-l) * kappa ) );
+        
+        
         assert( not std::isnan( kappa  ) && kappa  > 0 );
         assert( not std::isnan( Ctheta ) && Ctheta > 0 );
         assert( not std::isnan( mu_l   ) && mu_l   > 0 );
-        assert( not std::isnan( nu_l   ) && nu_l   > 0 );
-
-        if(false) // TODO: use with improved estimates 
+        
         for( int k = 0; k <= dim; k++ )
         {
-            Float smax    = 0.;
-            Float sinvmin = 0.;
-            Float sdet    = 0.;
+            Float smax    = mu_l;
+            Float sinvmin = mu_l / rho;
+            Float sdet    = rho;
+
+            // if(false)
+            if( l == dim-1 ) {
+                smax = 0.5 * ( sqrt( square( Ctheta * kappa + 1. ) + kappa ) + sqrt( square( Ctheta * kappa - 1. ) + kappa ) );
+                sinvmin = smax / max_volume_ratio;
+                sdet = max_volume_ratio;
+            }
             
             if ( k == 0 ) {
                 C5[i][l][k] = power_numerical( sdet, -n/2. );
-                C6[i][l][k] = power_numerical( sdet, -n/2. );
+                C6[i][l][k] = power_numerical( sdet, +n/2. );
             } else if( 0 < k && k < dim ) {
-                C5[i][l][k] = smax * power_numerical( sdet, -n/2. );
-                C6[i][l][k] = smax * power_numerical( sdet, -n/2. );
+                C5[i][l][k] = smax    * power_numerical( sdet, -n/2. );
+                C6[i][l][k] = sinvmin * power_numerical( sdet, +n/2. );
             } else {
                 assert( k == dim );
-                C5[i][l][k] = power_numerical( sdet, 1.-n/2. );
-                C6[i][l][k] = power_numerical( sdet, 1.-n/2. );
+                C5[i][l][k] = power_numerical( sdet, +1.-n/2. );
+                C6[i][l][k] = power_numerical( sdet, -1.+n/2. );
             }
 
-            Float tmax    = 0.;
-            Float tinvmin = 0.;
-            Float tdet    = 0.;
+            Float tmax    = xi_1 / ( 2 * (1.+rho) );
+            Float tinvmin = xi_1 / ( 2 * rho      );
+            Float tdet    =  rho / ( 1 + rho );
             
             if ( k == 0 ) {
                 C7[i][l][k] = power_numerical( tdet, -n/2. );
-                C8[i][l][k] = power_numerical( tdet, -n/2. );
+                C8[i][l][k] = power_numerical( tdet, +n/2. );
             } else if( 0 < k && k < dim ) {
-                C7[i][l][k] = smax * power_numerical( tdet, -n/2. );
-                C8[i][l][k] = smax * power_numerical( tdet, -n/2. );
+                C7[i][l][k] = tmax    * power_numerical( tdet, -n/2. );
+                C8[i][l][k] = tinvmin * power_numerical( tdet, +n/2. );
             } else {
                 assert( k == dim );
-                C7[i][l][k] = power_numerical( tdet, 1.-n/2. );
-                C8[i][l][k] = power_numerical( tdet, 1.-n/2. );
+                C7[i][l][k] = power_numerical( tdet, +1.-n/2. );
+                C8[i][l][k] = power_numerical( tdet, -1.+n/2. );
             }
 
-            
-        }
-
-        for( int k = 0; k <= dim; k++ )
-        {
-            
-            C5[i][l][k]   = mu_l * nu_l * power_numerical( mu_l * kappa * Ctheta * (l+1.), k - n/2. );
-
-            if( l == dim-1 ) {
-                
-                C5[i][l][k] 
-                =
-                0.5 * 
-                (
-                    sqrt( square( Ctheta * kappa + 1. ) + kappa )
-                    +
-                    sqrt( square( Ctheta * kappa - 1. ) + kappa )
-                ) 
-                *
-                max_volume_ratio;
-
-            }
-            
             Assert( not std::isnan( C5[i][l][k] ), k ); Assert( C5[i][l][k] > 0. ); 
-        
-            C6[i][l][k]   = mu_l * nu_l * power_numerical(        kappa * Ctheta * (l+1.), k - n/2. );
-
-            if( l == dim-1 ) {
-
-                C6[i][l][k] 
-                =
-                0.5 * 
-                (
-                    sqrt( square( Ctheta * kappa + 1. ) + kappa )
-                    +
-                    sqrt( square( Ctheta * kappa - 1. ) + kappa )
-                ) 
-                *
-                max_volume_ratio;
-            }
-
             Assert( not std::isnan( C6[i][l][k] ), k ); Assert( C6[i][l][k] > 0. ); 
-        
-            const Float temp = 1. + 1./2. * (l+1) * kappa;
-        
-            C7[i][l][k]   = temp * nu_l * power_numerical( mu_l * kappa * Ctheta * (l+1.), k - n/2. ) * power_numerical(2,n/2.);
-        
             Assert( not std::isnan( C7[i][l][k] ), k ); Assert( C7[i][l][k] > 0. ); 
-        
-            C8[i][l][k]   = temp * nu_l * power_numerical(        kappa * Ctheta * (l+1.), k - n/2. ) * power_numerical(2,n/2.);
-            
             Assert( not std::isnan( C8[i][l][k] ), k ); Assert( C8[i][l][k] > 0. ); 
-        
             
         }
 
@@ -266,6 +275,7 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
     for( auto a : algebraic_condition_number ) assert( not std::isnan(a) );
 
     LOG << "Finished collecting information about the mesh." << nl;
+    LOGPRINTF("%e %e %e\n", max_volume_ratio, min_height_of_vertex, max_diameter_ratio );
     
 }
 
@@ -273,7 +283,34 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
 
 
 
-std::vector<std::vector<int>> generate_shellings2( 
+
+
+
+
+struct shelling
+: public std::vector<int>
+{
+    Float weight_reflection;
+    Float weight_deformation;
+
+    shelling( const std::vector<int>& indices, Float weight_reflection, Float weight_deformation )
+    : std::vector<int>( indices ), weight_reflection( weight_reflection ), weight_deformation( weight_deformation )
+    {}
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+std::vector<shelling> generate_shellings2( 
     const Mesh& mesh,
     int form_degree
 );
@@ -282,20 +319,20 @@ void generate_shellings2(
     const Mesh& mesh,
     int form_degree,
     const mesh_information_for_shelling& info,
-    std::vector<std::vector<int>>& shellings_found,
+    std::vector<shelling>& shellings_found,
     const std::vector<int>& current_prefix,
     const std::vector<FloatVector>& coefficient_table,
     Float multweight
 );
 
-std::vector<std::vector<int>> generate_shellings2( 
+std::vector<shelling> generate_shellings2( 
     const Mesh& mesh,
     int form_degree
 ){
     
     const auto info = mesh_information_for_shelling( mesh );
 
-    std::vector<std::vector<int>> shellings_found;
+    std::vector<shelling> shellings_found;
 
     std::vector<int> current_prefix;
 
@@ -315,7 +352,7 @@ void generate_shellings2(
     const Mesh& mesh,
     int form_degree,
     const mesh_information_for_shelling& info,
-    std::vector<std::vector<int>>& shellings_found,
+    std::vector<shelling>& shellings_found,
     const std::vector<int>& current_prefix,
     const std::vector<FloatVector>& coefficient_table,
     Float multweight
@@ -340,19 +377,20 @@ void generate_shellings2(
     // we can return from this place, there is nothing to do here 
     if( current_prefix.size() == counts[dim] )
     {
-        shellings_found.push_back( current_prefix );
-
-        // Compute the second estimate 
+        // Compute the estimates  
 
         Float estimate1 = 0.;
 
         LOG << "FOUND: ";
         for( int i = 0; i < counts[dim]; i++ ) {
-            estimate1 += coefficient_table[i].l2norm();
+            estimate1 += coefficient_table[i].norm_sq();
             LOGPRINTF( "%i %.4f\t", current_prefix[i], estimate1 );
         }
-        LOG << "w2=" << multweight << nl;
+        estimate1 = sqrt(estimate1);
+        LOGPRINTF( "w1=%e w2=%e\n", estimate1, multweight );
         
+        shellings_found.push_back( shelling( current_prefix, estimate1, multweight ) );
+
         return;
     }
     assert( current_prefix.size() < counts[dim]               );
@@ -457,13 +495,13 @@ void generate_shellings2(
     std::vector<int>   shared_subsimplex_dim( remaining_nodes.size(), -1    );
     std::vector<bool>  shelling_compatible  ( remaining_nodes.size(), true );
 
-    std::vector<Float> weight_for_node_1( remaining_nodes.size(), std::numeric_limits<Float>::infinity() );
-    std::vector<Float> weight_for_node_2( remaining_nodes.size(), std::numeric_limits<Float>::infinity() );
+    std::vector<Float> weight_for_node_reflect( remaining_nodes.size(), std::numeric_limits<Float>::infinity() );
+    std::vector<Float> weight_for_node_morphin( remaining_nodes.size(), std::numeric_limits<Float>::infinity() );
     
     std::vector<FloatVector> coefficient_vectors( remaining_nodes.size(), FloatVector( counts[dim], notanumber ) );
 
     for( int i = 0; i < remaining_nodes.size(); i++ ) 
-        assert( std::isfinite( weight_for_node_1[i] ) == std::isfinite( weight_for_node_1[i] ) );
+        assert( std::isfinite( weight_for_node_reflect[i] ) == std::isfinite( weight_for_node_reflect[i] ) );
 
 
 
@@ -534,11 +572,12 @@ void generate_shellings2(
 
             Float PF = 1. / Constants::pi ; 
 
-            Float pullbackfactor = ( k != dim ? info.C5[current_node][k][form_degree] : 0. );
-
+            Float pullbackfactor_d = ( k != dim ? info.C5[current_node][k][form_degree+1] : 0. );
+            Float pullbackfactor_0 = ( k != dim ? info.C5[current_node][k][form_degree  ] : 0. );
+            
             Float A = PF;
-            Float B = PF * pullbackfactor;
-            Float C =      pullbackfactor;
+            Float B = PF * pullbackfactor_d;
+            Float C =      pullbackfactor_0;
 
             // obtain all previous indices of the common subsimplex of dimension n-k
             const auto& relevant_volumes = mesh.getsupersimplices( dim, k, common_subsimplex );
@@ -564,9 +603,9 @@ void generate_shellings2(
 
             coefficient_vectors[i] = new_coefficients;
             
-            weight_for_node_1[i] = new_coefficients.l2norm();
+            weight_for_node_reflect[i] = new_coefficients.l2norm();
 
-            weight_for_node_2[i] = ( k != dim ? info.C7[current_node][k][form_degree] * info.C8[current_node][k][form_degree+1] : PF ); // TODO: which form degree?
+            weight_for_node_morphin[i] = ( k != dim ? info.C7[current_node][k][form_degree] * info.C8[current_node][k][form_degree+1] : PF ); // TODO: which form degree?
 
         }
     
@@ -582,7 +621,7 @@ void generate_shellings2(
         while( i < remaining_nodes.size() )
         {
             if( shelling_compatible[i] ) {
-                assert( not std::isnan( weight_for_node_1[i] ) );
+                assert( not std::isnan( weight_for_node_reflect[i] ) );
                 i++;
             } else {
                 remaining_nodes.erase(          remaining_nodes.begin() + i          );
@@ -591,8 +630,8 @@ void generate_shellings2(
                 shared_subsimplex_dim.erase(    shared_subsimplex_dim.begin() + i    );
                 shelling_compatible.erase(      shelling_compatible.begin() + i      );
                 coefficient_vectors.erase(      coefficient_vectors.begin() + i      );
-                weight_for_node_1.erase(        weight_for_node_1.begin() + i        );
-                weight_for_node_2.erase(        weight_for_node_2.begin() + i        );
+                weight_for_node_reflect.erase(  weight_for_node_reflect.begin() + i  );
+                weight_for_node_morphin.erase(  weight_for_node_morphin.begin() + i  );
             }
         }
 
@@ -602,8 +641,8 @@ void generate_shellings2(
         assert( remaining_nodes.size() == shared_subsimplex_dim.size()    );
         assert( remaining_nodes.size() == shelling_compatible.size()      );
         assert( remaining_nodes.size() == coefficient_vectors.size()      );
-        assert( remaining_nodes.size() == weight_for_node_1.size()        );
-        assert( remaining_nodes.size() == weight_for_node_2.size()        );
+        assert( remaining_nodes.size() == weight_for_node_reflect.size()  );
+        assert( remaining_nodes.size() == weight_for_node_morphin.size()  );
     }
 
     // unless we are at the start:
@@ -613,7 +652,7 @@ void generate_shellings2(
     for( int i = 0; i < remaining_nodes.size(); i++ )
     for( int j = 1; j < remaining_nodes.size(); j++ )
     {
-        bool correct_order = weight_for_node_1[j-1] <= weight_for_node_1[j];
+        bool correct_order = weight_for_node_reflect[j-1] <= weight_for_node_reflect[j];
 
         if( correct_order ) continue;
 
@@ -627,14 +666,14 @@ void generate_shellings2(
             shelling_compatible[j-1] = shelling_compatible[i];
             shelling_compatible[i] = temp;
         }
-        std::swap( coefficient_vectors[j-1],      coefficient_vectors[j]      );
-        std::swap( weight_for_node_1[j-1],        weight_for_node_1[j]        );
-        std::swap( weight_for_node_2[j-1],        weight_for_node_2[j]        );
+        std::swap(     coefficient_vectors[j-1],     coefficient_vectors[j] );
+        std::swap( weight_for_node_reflect[j-1], weight_for_node_reflect[j] );
+        std::swap( weight_for_node_morphin[j-1], weight_for_node_morphin[j] );
 
-        Assert( weight_for_node_1[j-1] <= weight_for_node_1[j], weight_for_node_1[j-1], weight_for_node_1[j] );
+        Assert( weight_for_node_reflect[j-1] <= weight_for_node_reflect[j], weight_for_node_reflect[j-1], weight_for_node_reflect[j] );
     }
 
-    for( int i = 1; i < remaining_nodes.size(); i++ ) Assert( weight_for_node_1[i] >= weight_for_node_1[i-1], weight_for_node_1[i], weight_for_node_1[i-1] );
+    for( int i = 1; i < remaining_nodes.size(); i++ ) Assert( weight_for_node_reflect[i] >= weight_for_node_reflect[i-1], weight_for_node_reflect[i], weight_for_node_reflect[i-1] );
     
 
     // only reachable nodes are left and they are ordered by priority 
@@ -651,7 +690,7 @@ void generate_shellings2(
 
         assert( next_prefix.size() == next_coefficient_table.size() );
 
-        Float next_multweight = multweight * weight_for_node_2[i];
+        Float next_multweight = multweight * weight_for_node_morphin[i];
 
         generate_shellings2( mesh, form_degree, info, shellings_found, next_prefix, next_coefficient_table, next_multweight );
     }
