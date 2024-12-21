@@ -155,7 +155,8 @@ void generateShellings(
         
         bool acceptable_connection = false;
         
-        for( int index_f = 0; index_f <= dim; index_f++ ){
+        for( int index_f = 0; index_f <= dim; index_f++ )
+        {
             
             const auto face = faces_of_node[index_f];
             
@@ -286,7 +287,7 @@ std::vector<std::vector<std::pair<int,Float>>> generate_ranked_shelling(
 
     std::vector<std::vector<std::pair<int,Float>>> ret;
 
-    for( int t = 0; t < mesh.count_simplices(dim); t++ ) 
+    for( int node = 0; node < mesh.count_simplices(dim); node++ ) 
     {
         std::vector<std::vector<std::pair<int,Float>>> shellings_found;
         
@@ -294,17 +295,16 @@ std::vector<std::vector<std::pair<int,Float>>> generate_ranked_shelling(
 
         std::vector<std::pair<int,Float>> remaining_nodes;
         remaining_nodes.reserve( mesh.count_simplices( dim ) );
-        for( int s = 0; s < mesh.count_simplices(dim); s++ ) 
-            if( s != t ) 
-                remaining_nodes.push_back( { s, std::numeric_limits<Float>::infinity() } );
+        for( int other = 0; other < mesh.count_simplices(dim); other++ ) 
+            if( node != other ) 
+                remaining_nodes.push_back( { other, std::numeric_limits<Float>::infinity() } );
 
-        current_prefix.push_back( { t, 0. } );
+        current_prefix.push_back( { node, 0. } );
 
-        // CHECK that current and remaining nodes are disjoint
+        // DEBUG CHECK that current and remaining nodes are disjoint
         for( const auto& node1 : current_prefix ) 
         for( const auto& node2 : remaining_nodes ) 
             assert( node1.first != node2.first );
-
 
         generate_ranked_shelling( mesh, shellings_found, current_prefix, remaining_nodes );
         
@@ -337,7 +337,7 @@ void generate_ranked_shelling(
 
     
     // if enough shellings have been found already, then return 
-    if( true and shellings_found.size() >= 1 )
+    if( true and shellings_found.size() >= 3 )
         return;
 
 
@@ -355,7 +355,6 @@ void generate_ranked_shelling(
         current_prefix[0].second = 0;
     }
 
-    // TODO:
     // re-eval the ranks of the remaining_nodes and sort them 
     for( auto& node : remaining_nodes )
     {
@@ -400,7 +399,7 @@ void generate_ranked_shelling(
         
         
         {
-            for( auto t : current_prefix ) LOG << t.first << " (" << t.second << ")" << space;
+            for( auto prefixnode : current_prefix ) LOG << prefixnode.first << " (" << prefixnode.second << ")" << space;
             LOG << node.first << " (" << node.second << ")" << nl;    
         }
         
@@ -538,8 +537,8 @@ void generate_ranked_shelling(
             for( int k_sub : k_subsimplices_of_node ) 
             {
                 bool is_match = true;
-                for( int f = 0; f < faces_of_node.size() && is_match; f++ )
-                    if( face_is_connected[f] and not mesh.is_subsimplex( dim-1, k, faces_of_node[f], k_sub ) )
+                for( int index_f = 0; index_f < faces_of_node.size() && is_match; index_f++ )
+                    if( face_is_connected[index_f] and not mesh.is_subsimplex( dim-1, k, faces_of_node[index_f], k_sub ) )
                         is_match = false;
 
                 if( is_match ) assert( common_subsimplex == k_sub );
@@ -551,14 +550,14 @@ void generate_ranked_shelling(
             const auto& parents = mesh.getsupersimplices( dim, k, common_subsimplex );
             std::vector<bool> parent_is_already_here( parents.size(), false );
 
-            for( int p = 0; p < parents.size(); p++ )
+            for( int parent_index = 0; parent_index < parents.size(); parent_index++ )
             {
-                parent_is_already_here[p] 
+                parent_is_already_here[parent_index] 
                 =
-                ( parents[p] == node.first ) 
+                ( parents[parent_index] == node.first ) 
                 or
                 std::any_of( current_prefix.begin(), current_prefix.end(), 
-                    [&]( const std::pair<int,Float>& item ){ return item.first == parents[p]; }
+                    [&]( const std::pair<int,Float>& item ){ return item.first == parents[parent_index]; }
                 );
             }
 
@@ -599,7 +598,6 @@ void generate_ranked_shelling(
             for( const auto& node1 : next_prefix ) 
             for( const auto& node2 : next_remaining_nodes ) 
                 assert( node1.first != node2.first );
-
 
             generate_ranked_shelling( mesh, shellings_found, next_prefix, next_remaining_nodes );
         }
@@ -647,8 +645,8 @@ Float estimate_shelling_quality(
         const auto faces = mesh.getsubsimplices(dim,dim-1,i).getvalues();
 
         std::vector<Float> heights( dim+1 );
-        for( int f = 0; f < faces.size(); f++ ) 
-            heights[f] = dim * volume / mesh.getMeasure( dim-1, faces[f] );
+        for( int face_index = 0; face_index < faces.size(); face_index++ ) 
+            heights[face_index] = dim * volume / mesh.getMeasure( dim-1, faces[face_index] );
 
         Float height = *min_element( heights.begin(), heights.end() );
 
@@ -767,8 +765,8 @@ Float estimate_shelling_quality(
             for( int k_sub : k_subsimplices_of_node ) 
             {
                 bool is_match = true;
-                for( int f = 0; f < faces_of_node.size() && is_match; f++ )
-                    if( face_is_connected[f] and not mesh.is_subsimplex( dim-1, k, faces_of_node[f], k_sub ) )
+                for( int face_index = 0; face_index < faces_of_node.size() && is_match; face_index++ )
+                    if( face_is_connected[face_index] and not mesh.is_subsimplex( dim-1, k, faces_of_node[face_index], k_sub ) )
                         is_match = false;
 
                 assert( not is_match or common_subsimplex == mesh.nullindex );
@@ -781,8 +779,8 @@ Float estimate_shelling_quality(
             for( int k_sub : k_subsimplices_of_node ) 
             {
                 bool is_match = true;
-                for( int f = 0; f < faces_of_node.size() && is_match; f++ )
-                    if( face_is_connected[f] and not mesh.is_subsimplex( dim-1, k, faces_of_node[f], k_sub ) )
+                for( int face_index = 0; face_index < faces_of_node.size() && is_match; face_index++ )
+                    if( face_is_connected[face_index] and not mesh.is_subsimplex( dim-1, k, faces_of_node[face_index], k_sub ) )
                         is_match = false;
 
                 assert( not is_match or common_subsimplex == k_sub );
@@ -796,19 +794,19 @@ Float estimate_shelling_quality(
 
             
             LOG << "Parents ";
-            for( int p = 0; p < parents.size(); p++ ) LOG << space << parents[p];
+            for( int parent_index = 0; parent_index < parents.size(); parent_index++ ) LOG << space << parents[parent_index];
             LOG << nl;
             LOG << "Shelling ";
             for( int j = 0; j <= i; j++ ) LOG << shelling[j] << tab;
             LOG << nl;
                 
             
-            for( int p = 0; p < parents.size(); p++ )
+            for( int parent_index = 0; parent_index < parents.size(); parent_index++ )
             {
-                if ( parents[p] == shelling[i] ) parent_is_already_here[p] = true;
+                if ( parents[parent_index] == shelling[i] ) parent_is_already_here[parent_index] = true;
 
                 for( int j = 0; j < i; j++ ) { 
-                    if ( parents[p] == shelling[j] ) parent_is_already_here[p] = true;
+                    if ( parents[parent_index] == shelling[j] ) parent_is_already_here[parent_index] = true;
                 }
             }
 
@@ -822,7 +820,7 @@ Float estimate_shelling_quality(
 
         // We can now compute all the relevant quantities 
         {
-            const   int n = dim;
+            const int n = dim;
 
             const Float B = sqrt( 1. + square( (n-k)*aspect_condition_number[i] ) ) - (n-k)*aspect_condition_number[i];
 

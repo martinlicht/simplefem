@@ -178,7 +178,7 @@ bool Mesh::is_subsimplex( int sup, int sub, int cellsup, int cellsub ) const
 int  Mesh::get_subsimplex_index( int sup, int sub, int cellsup, int cellsub ) const
 {
   const IndexMap im = getsubsimplices( sup, sub, cellsup );
-  assert( im.has_value_in_range( cellsub ) );
+  Assert( im.has_value_in_range( cellsub ), sup, sub, cellsup, cellsub, im );
   return im.preimageof( cellsub );
 }
 
@@ -569,10 +569,10 @@ FloatVector Mesh::getHeightVector( int dim, int cell, int vertexindex ) const
     assert( 0 <= cell && cell <= count_simplices(dim) );
     assert( 0 <= vertexindex && vertexindex <= dim );
     
-    DenseMatrix temp = getVertexCoordinateMatrix( dim, cell );
+    const DenseMatrix positions = getVertexCoordinateMatrix( dim, cell );
     std::vector<FloatVector> columns; columns.reserve(dim+1);
     for( int c = 0; c <= dim; c++ )
-        columns.push_back( temp.getcolumn(c) );
+        columns.push_back( positions.getcolumn(c) );
     // DenseMatrix columns( getouterdimension(), dim+1, notanumber ); // = this->getVertexCoordinateMatrix( dim, cell );
     // assert( columns.getdimout() == getouterdimension() and columns.getdimin() == dim+1 );
     // for( int c = 0; c <= dim; c++ ) 
@@ -600,15 +600,26 @@ FloatVector Mesh::getHeightVector( int dim, int cell, int vertexindex ) const
             next -= next.scalarproductwith(curr) * curr;
         }
         
-        LOG << c << nl << DenseMatrix(dim,dim+1,columns) << nl;
+        // LOG << c << nl << DenseMatrix(dim,dim+1,columns) << nl;
     
     } 
 
     FloatVector result = columns[dim];
     
-    auto tempheight = getHeight( dim, cell, vertexindex );
-    LOGPRINTF( "%e %e \n", result.norm(), tempheight );
-    assert( is_numerically_close( result.norm(), tempheight ) );
+    // DEBUG 1
+    {
+        Float temp = getHeight( dim, cell, vertexindex );
+        // LOGPRINTF( "%e %e \n", result.norm(), temp );
+        Assert( is_numerically_close( result.norm(), temp ), result.norm(), temp );
+    }
+
+    // DEBUG 2
+    {
+        FloatVector temp = positions.getcolumn(vertexindex) - positions.getcolumn( (vertexindex+1) % dim+1 );
+        Float h = result.scalarproductwith( temp ) / result.norm();
+        assert( h > 0. );
+        Assert( is_numerically_close( h, result.norm() ), h, result.norm() );
+    }
 
     return result;
 }

@@ -82,7 +82,8 @@ int main( int argc, char *argv[] )
         }
 
         LOG << "PF estimate via shellings: " << PF_estimate_via_shellings << nl;
-        
+
+        return 0;
     }
             
     
@@ -94,6 +95,7 @@ int main( int argc, char *argv[] )
 
         typedef decltype(shellings_found[0]) shelling;
 
+        if(false)
         std::sort( shellings_found.begin(), shellings_found.end(), [=]( const shelling& s1, const shelling& s2 ){ return s1.weight_reflection < s2.weight_reflection; } );
 
         for( int t = 0; t < shellings_found.size(); t++ )
@@ -104,7 +106,8 @@ int main( int argc, char *argv[] )
             LOG << "\t" << shelling.weight_reflection << nl;
 
         }
-        
+
+        return 0;
     }
             
     
