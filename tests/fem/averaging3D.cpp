@@ -149,7 +149,7 @@ int main( int argc, char *argv[] )
             LOG << "Distortion..." << nl;
         
             M.shake_interior_vertices();
-            // for( auto& x : M.getcoordinates().raw() )
+            // for( auto& x : M.getCoordinates().raw() )
             // {
             //     x = sqrt(x);
             // }

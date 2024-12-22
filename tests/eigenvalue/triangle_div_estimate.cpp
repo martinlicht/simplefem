@@ -32,7 +32,7 @@ int main( int argc, char *argv[] )
     LOG << "Initial mesh..." << nl;
     
     MeshSimplicial2D M = UnitTriangle2D();
-    M.getcoordinates().scale( Constants::pi );
+    M.getCoordinates().scale( Constants::pi );
     
     M.check();
     

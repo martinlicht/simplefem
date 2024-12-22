@@ -60,7 +60,7 @@ MeshSimplicial1D::MeshSimplicial1D(
     
 {
     
-    getcoordinates() = coords;
+    getCoordinates() = coords;
     
     /* 1. Count edges, transfer data */ 
     /* DONE */
@@ -141,7 +141,7 @@ MeshSimplicial1D::MeshSimplicial1D(
     
 {
     
-    getcoordinates() = coords;
+    getCoordinates() = coords;
     
     /* set the flags to the Null flag */    
     for( int e =  0; e  <  counter_edges;    e++  ) flags_edges.at( e )    = SimplexFlag::SimplexFlagNull;
@@ -174,7 +174,7 @@ bool MeshSimplicial1D::is_equal_to( const MeshSimplicial1D& mesh ) const
          &&
          getouterdimension() == mesh.getouterdimension()
          &&
-         getcoordinates() == mesh.getcoordinates()
+         getCoordinates() == mesh.getCoordinates()
          &&
          flags_edges == mesh.flags_edges
          &&
@@ -197,7 +197,7 @@ void MeshSimplicial1D::check() const
     assert( counter_edges == data_edge_nextparents_of_vertices.size() );
     assert( counter_vertices == data_vertex_firstparent_edge.size() );
     
-    assert( count_vertices() == getcoordinates().getnumber() );
+    assert( count_vertices() == getCoordinates().getnumber() );
     
     assert( counter_edges    == flags_edges.size()    );
     assert( counter_vertices == flags_vertices.size() );
@@ -362,7 +362,7 @@ bool MeshSimplicial1D::has_subsimplices_listed( int sup, int sub ) const
     return true;
 }
 
-IndexMap MeshSimplicial1D::getsubsimplices( int sup, int sub, int cell ) const
+IndexMap MeshSimplicial1D::get_subsimplices( int sup, int sub, int cell ) const
 {
   assert( 0 <= sub && sub <= sup && sup <= 1 );
   assert( 0 <= cell );
@@ -400,7 +400,7 @@ bool MeshSimplicial1D::has_supersimplices_listed( int sup, int sub ) const
     return true;
 }
 
-const std::vector<int> MeshSimplicial1D::getsupersimplices( int sup, int sub, int cell ) const
+const std::vector<int> MeshSimplicial1D::get_supersimplices( int sup, int sub, int cell ) const
 {
   if( sup == 0 && sub == 0 ) {
     
@@ -679,7 +679,7 @@ void MeshSimplicial1D::bisect_edge( int e )
       
     }    
     
-    getcoordinates().append( midcoordinate );
+    getCoordinates().append( midcoordinate );
 
     
     flags_edges   [ne] = flags_edges[e];
@@ -709,7 +709,7 @@ void MeshSimplicial1D::uniformrefinement()
     data_edge_vertices.reserve               ( 2 * old_counter_edges );
     data_vertex_firstparent_edge.reserve     ( old_counter_vertices  );
     
-    getcoordinates().addcapacity( old_counter_edges     );
+    getCoordinates().addcapacity( old_counter_edges     );
     
     for( int e = 0; e < old_counter_edges; e++ )
       bisect_edge( e );
@@ -729,7 +729,7 @@ void MeshSimplicial1D::improved_uniformrefinement()
     data_edge_vertices.resize               ( counter_edges * 2                );
     data_vertex_firstparent_edge.resize     ( counter_edges + counter_vertices );
     
-    getcoordinates().addcoordinates         ( counter_edges                    );
+    getCoordinates().addcoordinates         ( counter_edges                    );
     
     flags_edges.resize   ( counter_edges    * 2,             SimplexFlag::SimplexFlagInvalid );
     flags_vertices.resize( counter_vertices + counter_edges, SimplexFlag::SimplexFlagInvalid );
@@ -738,7 +738,7 @@ void MeshSimplicial1D::improved_uniformrefinement()
     
     for( int e = 0; e < counter_edges; e++ )
     {
-      getcoordinates().loadvector( counter_vertices + e, get_edge_midpoint( e ) );
+      getCoordinates().loadvector( counter_vertices + e, get_edge_midpoint( e ) );
     }
     
     
@@ -865,8 +865,8 @@ FloatVector MeshSimplicial1D::get_edge_midpoint    ( int e ) const
     assert( 0 <= e && e < counter_edges );
     FloatVector mid( getouterdimension() );
     for( int d = 0; d < getouterdimension(); d++ )
-      mid[d] = (   getcoordinates().getdata( get_edge_vertices(e)[0], d ) 
-                 + getcoordinates().getdata( get_edge_vertices(e)[1], d )
+      mid[d] = (   getCoordinates().getdata( get_edge_vertices(e)[0], d ) 
+                 + getCoordinates().getdata( get_edge_vertices(e)[1], d )
                 ) / 2.;
     return mid;
 }
@@ -939,7 +939,7 @@ void MeshSimplicial1D::merge( const MeshSimplicial1D& mesh )
     counter_vertices += mesh.counter_vertices;
     counter_edges    += mesh.counter_edges;
     
-    getcoordinates().append( mesh.getcoordinates() );
+    getCoordinates().append( mesh.getCoordinates() );
     
     check();
 }
@@ -955,7 +955,7 @@ std::size_t MeshSimplicial1D::memorysize() const
 {
     std::size_t ret = 0;
 
-    ret += getcoordinates().memorysize();
+    ret += getCoordinates().memorysize();
 
     ret += sizeof(getinnerdimension());
     ret += sizeof(getouterdimension());

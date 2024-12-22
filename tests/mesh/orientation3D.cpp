@@ -35,12 +35,12 @@ int main( int argc, char *argv[] )
             
             auto ftp = M.get_tetrahedron_parents_of_face(f);
 
-            auto fv = M.getsubsimplices(2,0,f);
+            auto fv = M.get_subsimplices(2,0,f);
 
             for( auto t : ftp ) 
             {
                 
-                auto tv = M.getsubsimplices(3,0,t);
+                auto tv = M.get_subsimplices(3,0,t);
 
                 int index = 0;
                 for( ; index < face_inclusions.size(); index++ )

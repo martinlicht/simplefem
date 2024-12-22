@@ -25,43 +25,43 @@ class VTKWriter
         VTKWriter( const Mesh& m, std::ostream& os, const std::string& name, const std::function<Float(int)>& func_z );
         
         
-        VTKWriter writeVertexScalarData( const std::function<Float(int)>& datafunction,                  const std::string& name, Float scaling = 1. );
-        VTKWriter writeVertexScalarData( const std::function<Float(const FloatVector&)>& function,       const std::string& name, Float scaling = 1. );
-        VTKWriter writeVertexScalarData( const std::function<FloatVector(const FloatVector&)>& function, const std::string& name, Float scaling = 1. );
-        VTKWriter writeVertexScalarData( const FloatVector& pointvalues,                                 const std::string& name, Float scaling = 1. );
+        VTKWriter write_vertex_scalar_data( const std::function<Float(int)>& datafunction,                  const std::string& name, Float scaling = 1. );
+        VTKWriter write_vertex_scalar_data( const std::function<Float(const FloatVector&)>& function,       const std::string& name, Float scaling = 1. );
+        VTKWriter write_vertex_scalar_data( const std::function<FloatVector(const FloatVector&)>& function, const std::string& name, Float scaling = 1. );
+        VTKWriter write_vertex_scalar_data( const FloatVector& pointvalues,                                 const std::string& name, Float scaling = 1. );
         
-        VTKWriter writeCellScalarData( const std::function<Float(int)>& datafunction,                  const std::string& name, Float scaling = 1. );
-        VTKWriter writeCellScalarData( const std::function<Float(const FloatVector&)>& function,       const std::string& name, Float scaling = 1. );
-        VTKWriter writeCellScalarData( const std::function<FloatVector(const FloatVector&)>& function, const std::string& name, Float scaling = 1. );
-        VTKWriter writeCellScalarData( const FloatVector& cellvalues,                                  const std::string& name, Float scaling = 1. );
-        VTKWriter writeCellScalarData_barycentricvolumes(
-                                       const FloatVector& volumevalues,                                const std::string& name, Float scaling = 1. );
+        VTKWriter write_cell_scalar_data( const std::function<Float(int)>& datafunction,                  const std::string& name, Float scaling = 1. );
+        VTKWriter write_cell_scalar_data( const std::function<Float(const FloatVector&)>& function,       const std::string& name, Float scaling = 1. );
+        VTKWriter write_cell_scalar_data( const std::function<FloatVector(const FloatVector&)>& function, const std::string& name, Float scaling = 1. );
+        VTKWriter write_cell_scalar_data( const FloatVector& cellvalues,                                  const std::string& name, Float scaling = 1. );
+        VTKWriter write_cell_scalar_data_barycentricvolumes(
+                                          const FloatVector& volumevalues,                                const std::string& name, Float scaling = 1. );
         
-        VTKWriter writeCellVectorData( const std::function<FloatVector(int)>& datafunction,            const std::string& name, Float scaling = 1. );
-        VTKWriter writeCellVectorData( const std::function<FloatVector(const FloatVector&)>& function, const std::string& name, Float scaling = 1. );
-        VTKWriter writeCellVectorData( const FloatVector& x, 
-                                       const FloatVector& y, 
-                                       const FloatVector& z,                                           const std::string& name, Float scaling = 1. );
-        VTKWriter writeCellVectorData_barycentricgradients(
-                                       const FloatVector& gradvalues,                                  const std::string& name, Float scaling = 1. );
-        VTKWriter writeCellVectorData_barycentriccrosses(
-                                       const FloatVector& crossvalues,                                 const std::string& name, Float scaling = 1. );
-        VTKWriter writeCellVectorData_Euclidean(
-                                       int outerdim, 
-                                       const FloatVector& directions,                                  const std::string& name, Float scaling = 1. );
+        VTKWriter write_cell_vector_data( const std::function<FloatVector(int)>& datafunction,            const std::string& name, Float scaling = 1. );
+        VTKWriter write_cell_vector_data( const std::function<FloatVector(const FloatVector&)>& function, const std::string& name, Float scaling = 1. );
+        VTKWriter write_cell_vector_data( const FloatVector& x, 
+                                          const FloatVector& y, 
+                                          const FloatVector& z,                                           const std::string& name, Float scaling = 1. );
+        VTKWriter write_cell_vector_data_barycentricgradients(
+                                          const FloatVector& gradvalues,                                  const std::string& name, Float scaling = 1. );
+        VTKWriter write_cell_vector_data_barycentriccrosses(
+                                          const FloatVector& crossvalues,                                 const std::string& name, Float scaling = 1. );
+        VTKWriter write_cell_vector_data_Euclidean(
+                                          int outerdim, 
+                                          const FloatVector& directions,                                  const std::string& name, Float scaling = 1. );
 
-        VTKWriter writePointCloud( const DenseMatrix& coords );
+        VTKWriter write_point_cloud( const DenseMatrix& coords );
 
 
     private:
         
-        VTKWriter writePreamble( const std::string& name );
+        VTKWriter write_preamble( const std::string& name );
     
-        VTKWriter writeCoordinateBlock();
-        VTKWriter writeCoordinateBlock( const FloatVector& z );
-        VTKWriter writeCoordinateBlock( const std::function<Float(int)>& func_z );
+        VTKWriter write_coordinate_block();
+        VTKWriter write_coordinate_block( const FloatVector& z );
+        VTKWriter write_coordinate_block( const std::function<Float(int)>& func_z );
         
-        VTKWriter writeTopDimensionalCells();
+        VTKWriter write_top_dimensional_cells();
         
         
         const Mesh& mesh;

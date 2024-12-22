@@ -403,7 +403,7 @@ MatrixCSR LagrangeCoefficientMassMatrix( const Mesh& mesh, int r, int w, const s
         
         C[ A[v] + (counter++) ] = v;
         
-        auto parent_edges = mesh.getsupersimplices(1,0,v);
+        auto parent_edges = mesh.get_supersimplices(1,0,v);
 
         for( const auto e : parent_edges )
         {
@@ -625,7 +625,7 @@ MatrixCSR LagrangeCoefficientStiffnessMatrix( const Mesh& mesh, int r, int w, co
         
         C[ A[v] + (counter++) ] = v;
         
-        auto parent_edges = mesh.getsupersimplices(1,0,v);
+        auto parent_edges = mesh.get_supersimplices(1,0,v);
 
         for( const auto e : parent_edges )
         {

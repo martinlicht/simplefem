@@ -289,9 +289,9 @@ int main( int argc, char *argv[] )
                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
                             
-                            vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
-                            vtk.writeCellScalarData( low_interpol_sol, "interpolated_solution" , 1.0 );
-                            vtk.writeCellVectorData_barycentricgradients( computed_grad, "gradient_interpolation" , 1.0 );
+                            vtk.write_vertex_scalar_data( sol, "iterativesolution_scalar_data" , 1.0 );
+                            vtk.write_cell_scalar_data( low_interpol_sol, "interpolated_solution" , 1.0 );
+                            vtk.write_cell_vector_data_barycentricgradients( computed_grad, "gradient_interpolation" , 1.0 );
                             
                             fs.close();
                         }

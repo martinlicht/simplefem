@@ -54,7 +54,7 @@ int main( int argc, char *argv[] )
             for( int i = 0; i < 3; i++ )
             {
                 auto M2 = Mx;
-                M2.getcoordinates().shift( FloatVector{ i * 3.0, 0.0 } );
+                M2.getCoordinates().shift( FloatVector{ i * 3.0, 0.0 } );
                 M.merge( M2 );
             }
                         
@@ -313,7 +313,7 @@ int main( int argc, char *argv[] )
                         
                         auto reduced_nullvector = interpol_matrix * incmatrix * nullvector;
 
-                        vtk.writeCellScalarData( reduced_nullvector,  "nullvector" , 1.0 );
+                        vtk.write_cell_scalar_data( reduced_nullvector,  "nullvector" , 1.0 );
                         
                         fs.close();
                 

@@ -105,7 +105,7 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
 
         // collect the heights 
 
-        const auto faces = mesh.getsubsimplices(dim,dim-1,i).getvalues(); assert( faces.size() == dim+1 );
+        const auto faces = mesh.get_subsimplices(dim,dim-1,i).getvalues(); assert( faces.size() == dim+1 );
 
         std::vector<Float> heights( dim+1 );
         for( int face_index = 0; face_index < faces.size(); face_index++ ) heights[face_index] = dim * volumes[i] / mesh.getMeasure( dim-1, faces[face_index] );
@@ -174,7 +174,7 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
     Float max_volume_ratio = 0.;
     for( int face = 0; face < counts[dim-1]; face++ )
     {
-        const auto parents = mesh.getsupersimplices(dim,dim-1,face);
+        const auto parents = mesh.get_supersimplices(dim,dim-1,face);
         if( parents.size() == 1 ) continue;
         assert( parents.size() == 2 );
         const auto p0 = parents[0];
@@ -196,22 +196,6 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
     for( int form_degree = 0; form_degree <= dim; form_degree++ )
     for( int level = 0; level < dim; level++ )
     {
-        const   int n = dim;
-
-        const Float Ctheta = max_diameter_ratio;
-
-        const Float kappa  = aspect_condition_number[i];
-
-        const Float rho    = minimum( 1., min_height_of_vertex / (level+1.) );
-
-        const Float mu_l = 0.5 * sqrt( square(1+rho) + square( square(1+rho) * (n-level) * kappa ) ) + 0.5 * sqrt( square(1-rho) + square( square(1+rho) * (n-level) * kappa ) );
-        
-        const Float xi_1 = sqrt( square(2*rho+1) + square( (n-level) * kappa ) ) + sqrt( 1. + square( (n-level) * kappa ) );
-
-        assert( not std::isnan( kappa  ) && kappa  > 0 );
-        assert( not std::isnan( Ctheta ) && Ctheta > 0 );
-        assert( not std::isnan( mu_l   ) && mu_l   > 0 );
-
         const int num_of_subsimplices = binomial_integer(dim+1,level+1);
 
         C5[i][form_degree][level] = std::vector<Float>( num_of_subsimplices );
@@ -221,25 +205,185 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
         
         for( int sub_index = 0; sub_index < num_of_subsimplices; sub_index++ )
         {
-            Float smax    = mu_l;
-            Float sinvmin = mu_l / rho;
-            Float sdet    = rho;
+        
+            Float singular_max     = 0.;
+            Float singular_min_inv = 0.;
+            Float singular_prod    = 0.;
 
-            // if(false)
-            if( level == dim-1 ) {
-                smax = 0.5 * sqrt( square( Ctheta * kappa + 1. ) + kappa ) + 0.5 * sqrt( square( Ctheta * kappa - 1. ) + kappa );
-                sinvmin = smax / max_volume_ratio;
-                sdet = max_volume_ratio;
-            }
+            Float tmax    = 0.;
+            Float tinvmin = 0.;
+            Float tdet    = 0.;
             
+            const int n = dim;
+
+            // rough initial estimates 
+            {
+                const Float Ctheta = max_diameter_ratio;
+
+                const Float kappa  = aspect_condition_number[i];
+
+                const Float rho    = minimum( 1., min_height_of_vertex / (level+1.) );
+
+                const Float mu_l   = 0.5 * sqrt( square(1+rho) + square( square(1+rho) * (n-level) * kappa ) ) + 0.5 * sqrt( square(1-rho) + square( square(1+rho) * (n-level) * kappa ) );
+                
+                const Float xi_l   = sqrt( square(2*rho+1) + square( (n-level) * kappa ) ) + sqrt( 1. + square( (n-level) * kappa ) );
+
+                assert( std::isfinite( Ctheta ) && Ctheta > 0 );
+                assert( std::isfinite( kappa  ) && kappa  > 0 );
+                assert( std::isfinite( mu_l   ) && mu_l   > 0 );
+
+                singular_max     = mu_l;
+                singular_min_inv = mu_l / rho;
+                singular_prod    = rho;
+            
+                tmax    = xi_l / ( 2 * (1.+rho) );
+                tinvmin = xi_l / ( 2 * rho      );
+                tdet    = rho / ( 1 + rho );
+                
+            }
+
+            // improved estimates, simplex by simplex 
+            // if(false)
+            {
+                // find the radius that we can use
+
+                Float rho = 1.;
+
+                const int k = level;
+
+                int subsimplex = mesh.get_subsimplex( dim, k, i, sub_index );
+
+                auto parents  = mesh.get_supersimplices( dim, k, subsimplex );
+                auto vertices = mesh.get_subsimplices  (   k, 0, subsimplex ).getvalues();
+
+                for( int vertex : vertices )
+                for( int parent : parents  )
+                {
+                    int vertex_localindex = mesh.get_subsimplex_index( dim, 0, parent, vertex );
+                    Float height = mesh.getHeight( dim, parent, vertex_localindex );
+                    rho = minimum( rho, height / (k+1) );
+                }
+
+                // find the heights 
+
+                int index_oppsite_subsimplex = mesh.get_opposite_subsimplex_index( dim, k, i, sub_index );
+                int opposite_subsimplex      = mesh.get_subsimplex( dim, dim - k - 1, i, index_oppsite_subsimplex );
+
+                auto other_vertices = mesh.get_subsimplices( dim-k-1, 0, opposite_subsimplex ).getvalues();
+                
+                auto zs = mesh.get_midpoint(       k,          subsimplex );
+                auto zc = mesh.get_midpoint( dim-k-1, opposite_subsimplex );
+
+                std::vector<FloatVector> height_vectors( dim-k, FloatVector(dim,notanumber) );
+
+                for( int vi = 0; vi <= dim-k-1; vi++ ) {
+                    height_vectors[vi] = mesh.getHeightVector( dim, i, vi );
+                    // LOGPRINTF( "(%d %e) ", vi, height_vectors[vi].scalarproductwith( zc - zs ) );
+                } 
+                // LOG << nl;
+
+                // computation 
+                // when S has got k+1 vertices, then S' must have dim-k vertices 
+                // Then S has got dimension k and S' has got dimension dim-k-1
+                
+                Float improved_singular_max = 0.; 
+
+                Float matrixwise_singular_max = 0.; 
+                
+                for( int vi = 0; vi <= dim-k-1; vi++ ) 
+                {
+                    
+                    auto z = zc - zs;
+                    auto h = height_vectors[vi] / ( dim-k );
+                    auto b = z - h; //( z.scalarproductwith(h) / h.norm_sq() ) * h;
+                    Assert( ( z - h - b ).is_numerically_small(), z, '\n', h, '\n', b );
+                    auto tanbeta = b.norm() / h.norm();
+
+                    Float proposed_improved_singular_max 
+                    = 
+                    0.5 * sqrt( square( 1. + rho ) + square( ( 1. + rho ) * tanbeta ) ) 
+                    +
+                    0.5 * sqrt( square( 1. - rho ) + square( ( 1. + rho ) * tanbeta ) );
+
+                    improved_singular_max = maximum( improved_singular_max, proposed_improved_singular_max );
+                }
+
+                for( int v1 = 0; v1 <=       k; v1++ ) 
+                for( int v2 = 0; v2 <= dim-k-1; v2++ ) 
+                {
+
+                    std::vector<FloatVector> columns;
+                    columns.reserve( dim );
+
+                    for( int w1 = 0; w1 <= k; w1++ ) 
+                        if( v1 != w1 ) 
+                            columns.push_back( mesh.getCoordinates().getvectorclone(       vertices[w1] ) - zs );
+
+                    for( int w2 = 0; w2 <= dim-k-1; w2++ ) 
+                        if( v2 != w2 ) 
+                            columns.push_back( mesh.getCoordinates().getvectorclone( other_vertices[w2] ) - zs );
+
+                    columns.push_back( zc - zs );
+
+                    assert( columns.size() == dim );
+
+                    DenseMatrix trafo1( dim, dim, columns );
+
+                    auto trafo1inv = Inverse( trafo1 );
+
+                    assert( ( trafo1 * trafo1inv ).is_numerically_identity() );
+
+                    columns.back().scale( -rho );
+
+                    DenseMatrix trafo2( dim, dim, columns );
+
+                    auto fulltrafo = trafo2 * trafo1inv;
+
+                    Float proposed_matrixwise_singular_max = fulltrafo.operator_norm_estimate();
+
+                    matrixwise_singular_max = maximum( matrixwise_singular_max, proposed_matrixwise_singular_max );
+
+                    // LOG << "DET " << Determinant( fulltrafo ) / (-rho) << nl;
+                    // LOG << "MAX " << fulltrafo.operator_norm_estimate() / singular_max << nl;
+                    
+                }
+                
+                assert( improved_singular_max > 0. );
+                
+                assert( matrixwise_singular_max > 0. );
+
+                LOG << "SMAX " << improved_singular_max / matrixwise_singular_max << nl;
+
+                singular_max = minimum( singular_max, improved_singular_max, matrixwise_singular_max );
+                
+                assert( singular_max > 0. ); 
+
+                singular_prod = rho;
+                singular_min_inv = singular_max / rho;
+            
+            }
+
+
+            // slight improvement in the case of faces 
             // if(false)
             if( level == dim-1 ) {
                 
-                smax = 0.5 * sqrt( square( Ctheta * kappa + 1. ) + kappa ) + 0.5 * sqrt( square( Ctheta * kappa - 1. ) + kappa );
-                sinvmin = smax / max_volume_ratio;
-                sdet = max_volume_ratio;
+                const Float Ctheta = max_diameter_ratio;
 
+                const Float kappa  = aspect_condition_number[i];
 
+                Float facebased_singular_max = 0.5 * sqrt( square( Ctheta * kappa + 1. ) + kappa ) + 0.5 * sqrt( square( Ctheta * kappa - 1. ) + kappa );
+
+                singular_max = minimum( singular_max, facebased_singular_max );
+
+                singular_min_inv = singular_max / max_volume_ratio;
+                singular_prod = max_volume_ratio;
+            }
+            
+            // better improvement in the case of faces 
+            // if(false)
+            if( level == dim-1 ) {
+                
                 assert( 0 <= sub_index and sub_index < binomial_integer(dim+1,level+1) );
                 assert( 0 <= sub_index and sub_index < binomial_integer(dim+1,dim) );
                     
@@ -247,15 +391,14 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
 
                 assert( 0 <= face and face < counts[dim-1] );
 
-                auto parents = mesh.getsupersimplices(dim,dim-1,face);
+                auto parents = mesh.get_supersimplices(dim,dim-1,face);
                 
                 if( parents.size() == 2 ) 
                 {
-
-                    LOG << "DO" << nl;
-
                     assert( parents[0] == i or parents[1] == i );
+
                     int other_parent = ( parents[0] == i ? parents[1] : parents[0] );
+                    
                     assert( other_parent != i and 0 <= other_parent and other_parent < counts[dim-1] );
 
                     int localindex_face_first = sub_index;
@@ -274,48 +417,46 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
 
                     Float a = height_vector_other.norm() /  height_vector_first.norm();
 
-                    LOG << vertex_first << space << vertex_other << nl;
+                    // LOG << vertex_first << space << vertex_other << nl;
 
-                    auto z_first = mesh.getcoordinates().getvectorclone( vertex_first );
-                    auto z_other = mesh.getcoordinates().getvectorclone( vertex_other );
+                    auto z_first = mesh.getCoordinates().getvectorclone( vertex_first );
+                    auto z_other = mesh.getCoordinates().getvectorclone( vertex_other );
 
                     auto b_first = z_first - z_first.scalarproductwith(height_vector_first) / height_vector_first.norm_sq() * height_vector_first;
                     auto b_other = z_other - z_other.scalarproductwith(height_vector_other) / height_vector_other.norm_sq() * height_vector_other;
 
                     Float c = ( b_first - b_other ).norm() / height_vector_first.norm();
 
-                    smax = 0.5 * sqrt( square( a + 1. ) + c ) + 0.5 * sqrt( square( a - 1. ) + c );
-                    sinvmin = smax / a;
-                    sdet = a;
-                
-                    LOG << "DONE" << nl;
-                    /*
-                    */
+                    Float facebased_singular_max = 0.5 * sqrt( square( a + 1. ) + c ) + 0.5 * sqrt( square( a - 1. ) + c );
                     
-                } 
-                else {
+
+                    singular_max = minimum( singular_max, facebased_singular_max );
+
+                    singular_min_inv = singular_max / a;
+                    singular_prod = a;
+
+                } else {
+
                     assert( parents.size() == 1 );
                     assert( parents[0] == i );
+
                 }
 
             }
             
+
             if( form_degree == 0 ) {
-                C5[i][form_degree][level][sub_index] = power_numerical( sdet, -n/2. );
-                C6[i][form_degree][level][sub_index] = power_numerical( sdet, +n/2. );
+                C5[i][form_degree][level][sub_index] = power_numerical( singular_prod, -n/2. );
+                C6[i][form_degree][level][sub_index] = power_numerical( singular_prod, +n/2. );
             } else if( 0 < form_degree && form_degree < dim ) {
-                C5[i][form_degree][level][sub_index] = smax    * power_numerical( sdet, -n/2. );
-                C6[i][form_degree][level][sub_index] = sinvmin * power_numerical( sdet, +n/2. );
+                C5[i][form_degree][level][sub_index] = singular_max    * power_numerical( singular_prod, -n/2. );
+                C6[i][form_degree][level][sub_index] = singular_min_inv * power_numerical( singular_prod, +n/2. );
             } else {
                 assert( form_degree == dim );
-                C5[i][form_degree][level][sub_index] = power_numerical( sdet, +1.-n/2. );
-                C6[i][form_degree][level][sub_index] = power_numerical( sdet, -1.+n/2. );
+                C5[i][form_degree][level][sub_index] = power_numerical( singular_prod, +1.-n/2. );
+                C6[i][form_degree][level][sub_index] = power_numerical( singular_prod, -1.+n/2. );
             }
 
-            Float tmax    = xi_1 / ( 2 * (1.+rho) );
-            Float tinvmin = xi_1 / ( 2 * rho      );
-            Float tdet    =  rho / ( 1 + rho );
-            
             if( form_degree == 0 ) {
                 C7[i][form_degree][level][sub_index] = power_numerical( tdet, -n/2. );
                 C8[i][form_degree][level][sub_index] = power_numerical( tdet, +n/2. );
@@ -432,7 +573,7 @@ void generate_shellings2(
     Float multweight
 ){
 
-    const bool sort_nodes_by_priority = false;
+    const bool sort_nodes_by_priority = true;
 
     // check that input mesh is reasonable 
     const int dim = mesh.getinnerdimension();
@@ -511,7 +652,7 @@ void generate_shellings2(
         
         assert( 0 <= node and node < counts[dim] );
         
-        const auto faces_of_node = mesh.getsubsimplices( dim, dim-1, node ).getvalues();
+        const auto faces_of_node = mesh.get_subsimplices( dim, dim-1, node ).getvalues();
 
         assert( faces_of_node.size() == face_is_connected[i].size() );
 
@@ -521,7 +662,7 @@ void generate_shellings2(
         {
             const int face = faces_of_node[index_f];
             
-            const auto parents = mesh.getsupersimplices( dim, dim-1, face );
+            const auto parents = mesh.get_supersimplices( dim, dim-1, face );
             
             assert( 1 <= parents.size() and parents.size() <= 2 );
 
@@ -614,9 +755,9 @@ void generate_shellings2(
         {
 
             // get the subsimplices of the proposed node of dimension k
-            const auto k_subsimplices_of_node = mesh.getsubsimplices( dim, k, current_node ).getvalues();
+            const auto k_subsimplices_of_node = mesh.get_subsimplices( dim, k, current_node ).getvalues();
 
-            const auto faces_of_node = mesh.getsubsimplices( dim, dim-1, current_node ).getvalues();
+            const auto faces_of_node = mesh.get_subsimplices( dim, dim-1, current_node ).getvalues();
 
             for( int k_sub : k_subsimplices_of_node ) 
             {
@@ -636,11 +777,11 @@ void generate_shellings2(
                 assert( 0 <= common_subsimplex and common_subsimplex < mesh.count_simplices(k) );
                 const int index = mesh.get_subsimplex_index( dim, k, current_node, common_subsimplex );
                 assert( 0 <= index and index < mesh.count_subsimplices(dim,k) );
-                assert( mesh.getsubsimplices(dim,k,current_node)[index] == common_subsimplex );
+                assert( mesh.get_subsimplices(dim,k,current_node)[index] == common_subsimplex );
             }
 
             // check that all parents of the k subsimplex are here
-            const auto& parents = mesh.getsupersimplices( dim, k, common_subsimplex );
+            const auto& parents = mesh.get_supersimplices( dim, k, common_subsimplex );
             std::vector<bool> parent_is_already_here( parents.size(), false );
 
             for( int p = 0; p < parents.size(); p++ )
@@ -667,9 +808,9 @@ void generate_shellings2(
 
             int sub_index = 0;
             // const int binom = binomial_integer(dim+1,k+1);
-            // while( sub_index < binom ) { if( mesh.getsubsimplices(dim,k,current_node)[sub_index] == shared_subsimplex[current_node] ) break; sub_index++; } assert( sub_index < binom ); 
+            // while( sub_index < binom ) { if( mesh.get_subsimplices(dim,k,current_node)[sub_index] == shared_subsimplex[current_node] ) break; sub_index++; } assert( sub_index < binom ); 
             sub_index = mesh.get_subsimplex_index( dim, k, current_node, shared_subsimplex[i] );
-            assert( mesh.getsubsimplices(dim,k,current_node)[sub_index] == shared_subsimplex[i] );
+            assert( mesh.get_subsimplices(dim,k,current_node)[sub_index] == shared_subsimplex[i] );
 
             Float PF = 2. / Constants::pi ; // needs to be made rigorous
 
@@ -681,7 +822,7 @@ void generate_shellings2(
             Float C =      pullbackfactor_0;
 
             // obtain all previous indices of the common subsimplex of dimension n-k
-            const auto& relevant_volumes = mesh.getsupersimplices( dim, k, common_subsimplex );
+            const auto& relevant_volumes = mesh.get_supersimplices( dim, k, common_subsimplex );
 
             FloatVector new_coefficients( counts[dim], 0. );
 
@@ -759,11 +900,14 @@ void generate_shellings2(
 
     if( remaining_nodes.size() == 0 ) return;
 
-    LOG << "current nodes:   "; for( auto node : current_prefix  ) LOG << node << space; 
-    LOG << tab << tab << shellings_found.size();
-    if( shellings_found.size() > 0 ) LOG << tab << shellings_found.front().weight_reflection << "--" << shellings_found.back().weight_reflection << tab;
-    LOG << nl;
-    LOG << "remaining nodes: "; for( auto node : remaining_nodes ) LOG << node << space; LOG << nl;
+    if(false)
+    {
+        LOG << "current nodes:   "; for( auto node : current_prefix  ) LOG << node << space; 
+        LOG << tab << tab << shellings_found.size();
+        if( shellings_found.size() > 0 ) LOG << tab << shellings_found.front().weight_reflection << "--" << shellings_found.back().weight_reflection << tab;
+        LOG << nl;
+        LOG << "remaining nodes: "; for( auto node : remaining_nodes ) LOG << node << space; LOG << nl;
+    }
 
 
 

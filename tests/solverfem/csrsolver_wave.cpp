@@ -32,7 +32,7 @@ int main( int argc, char *argv[] )
     
     MeshSimplicial2D M = StandardSquare2D();
     
-    M.getcoordinates().scale( 1.1 );
+    M.getCoordinates().scale( 1.1 );
     
     M.check();
     

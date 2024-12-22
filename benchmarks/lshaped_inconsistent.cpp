@@ -55,8 +55,8 @@ int main( int argc, char *argv[] )
                 int v0 = M.get_edge_vertex( e, 0 );
                 int v1 = M.get_edge_vertex( e, 1 );
 
-                auto cs0 = M.getcoordinates().getvectorclone( v0 );
-                auto cs1 = M.getcoordinates().getvectorclone( v1 );
+                auto cs0 = M.getCoordinates().getvectorclone( v0 );
+                auto cs1 = M.getCoordinates().getvectorclone( v1 );
 
                 if( cs0[1] == cs1[1] ) {
                     M0.set_flag( 0, v0, SimplexFlag::SimplexFlagDirichlet );
@@ -231,16 +231,16 @@ int main( int argc, char *argv[] )
                             FloatVector z_values( M.count_vertices() );
 
                             // for( int v = 0; v < M.count_vertices(); v++ ) {
-                            //     Float c0 = M.getcoordinates().getdata( v, 0 );
-                            //     Float c1 = M.getcoordinates().getdata( v, 1 );
+                            //     Float c0 = M.getCoordinates().getdata( v, 0 );
+                            //     Float c1 = M.getCoordinates().getdata( v, 1 );
                             //     Float z  = sin( c0 * Constants::twopi ) * sin( c0 * Constants::twopi );
                             //     z_values[v] = z;
                             // }
 
 
                             VTKWriter vtk( M, fs, getbasename(__FILE__) /*, z_values*/ );
-                            // vtk.writeCoordinateBlock();
-                            // vtk.writeTopDimensionalCells();
+                            // vtk.write_coordinate_block();
+                            // vtk.write_top_dimensional_cells();
 
                             auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 0, 0, r );
 
@@ -250,8 +250,8 @@ int main( int argc, char *argv[] )
                             auto x_cellvalues = interpol_matrix * scalar_incmatrix0 * x_vertexvalues;
                             auto y_cellvalues = interpol_matrix * scalar_incmatrix1 * y_vertexvalues;
 
-                            if( r == 1 ) vtk.writeVertexScalarData( x_vertexvalues, "solution_x_vertex");
-                            if( r == 1 ) vtk.writeVertexScalarData( y_vertexvalues, "solution_y_vertex");
+                            if( r == 1 ) vtk.write_vertex_scalar_data( x_vertexvalues, "solution_x_vertex");
+                            if( r == 1 ) vtk.write_vertex_scalar_data( y_vertexvalues, "solution_y_vertex");
 
                             FloatVector interlaced( 3 * x_cellvalues.getdimension() );
                             for( int i = 0; i < x_cellvalues.getdimension(); i++ ) {
@@ -261,11 +261,11 @@ int main( int argc, char *argv[] )
                             }
 
 
-                            vtk.writeCellVectorData_Euclidean( 3, interlaced, "solution_cell" );
-                            vtk.writeCellVectorData( x_cellvalues, y_cellvalues, FloatVector( M.count_triangles(), 0. ), "solution_cell" );
+                            vtk.write_cell_vector_data_Euclidean( 3, interlaced, "solution_cell" );
+                            vtk.write_cell_vector_data( x_cellvalues, y_cellvalues, FloatVector( M.count_triangles(), 0. ), "solution_cell" );
                             
-                            vtk.writeCellScalarData( x_cellvalues, "solution_x_cell" );
-                            vtk.writeCellScalarData( y_cellvalues, "solution_y_cell" );
+                            vtk.write_cell_scalar_data( x_cellvalues, "solution_x_cell" );
+                            vtk.write_cell_scalar_data( y_cellvalues, "solution_y_cell" );
 
                             DenseMatrix triangle_midpoints( M.count_triangles(), 2);
 
@@ -274,7 +274,7 @@ int main( int argc, char *argv[] )
                                 triangle_midpoints.setrow( t, midpoint );
                             }
 
-                            vtk.writePointCloud( triangle_midpoints );
+                            vtk.write_point_cloud( triangle_midpoints );
                             
                             fs.close();
                         }

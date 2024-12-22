@@ -172,7 +172,7 @@ std::vector<Link> get_nodes_of_links( const Mesh& mesh )
     
     for( int f = 0; f < num_faces; f++ ) 
     {
-        const auto parent_volumes = mesh.getsupersimplices( dim, dim-1, f );
+        const auto parent_volumes = mesh.get_supersimplices( dim, dim-1, f );
         
         if( parent_volumes.size() == 1 ) continue; 
         

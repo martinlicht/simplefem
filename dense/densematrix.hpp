@@ -195,7 +195,7 @@ class DenseMatrix final
         // Crude eigenvalue and singular value estimate 
 
         Float EigenvalueEstimate() const;
-        Float operator_norm_estimate() const;
+        Float operator_norm_estimate( int sample_numbers = 5, int iteration_numbers = 10 ) const;
 
 
         

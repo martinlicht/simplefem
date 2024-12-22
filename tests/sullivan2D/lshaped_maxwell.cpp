@@ -38,7 +38,7 @@ int main( int argc, char *argv[] )
             
             MeshSimplicial2D M = LShapedDomain2D();
             
-            M.getcoordinates().scale( 1.0 );
+            M.getCoordinates().scale( 1.0 );
             
             M.check();
             
@@ -193,14 +193,14 @@ int main( int argc, char *argv[] )
                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
 
-                            vtk.writeCellVectorData( function_rhs, "rhs_field" );
+                            vtk.write_cell_vector_data( function_rhs, "rhs_field" );
                             
                             {
                                 auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r );
                                 auto lowest_sol = interpol_matrix * computed_sol;
                                 auto lowest_rhs = interpol_matrix * interpol_rhs;
-                                vtk.writeCellVectorData_barycentricgradients( lowest_rhs,   "righthandside" );
-                                vtk.writeCellVectorData_barycentricgradients( lowest_sol,   "solution_calculation" );
+                                vtk.write_cell_vector_data_barycentricgradients( lowest_rhs,   "righthandside" );
+                                vtk.write_cell_vector_data_barycentricgradients( lowest_sol,   "solution_calculation" );
 
                                 auto constant_field = [](const FloatVector& vec) -> FloatVector{
                                     assert( vec.getdimension() == 2 );
@@ -210,20 +210,20 @@ int main( int argc, char *argv[] )
                                 auto interpolated_constant_r = Interpolation( M, M.getinnerdimension(), 1, r, constant_field );
                                 auto interpolated_constant_0 = Interpolation( M, M.getinnerdimension(), 1, 0, constant_field );
 
-                                vtk.writeCellVectorData_barycentricgradients( interpol_matrix * interpolated_constant_r, "constant_r" );
-                                vtk.writeCellVectorData_barycentricgradients(                   interpolated_constant_0, "constant_0" );
+                                vtk.write_cell_vector_data_barycentricgradients( interpol_matrix * interpolated_constant_r, "constant_r" );
+                                vtk.write_cell_vector_data_barycentricgradients(                   interpolated_constant_0, "constant_0" );
                             }
 
                             {
                                 auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 0, 0, r+1 );
                                 auto lowest_ndiv = interpol_matrix * scalar_incmatrix * x_A;
-                                vtk.writeCellScalarData( lowest_ndiv, "negative_divergence" );
+                                vtk.write_cell_scalar_data( lowest_ndiv, "negative_divergence" );
                             }
                             
                             {
                                 auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 2, 0, r-1 );
                                 auto lowest_curl = interpol_matrix * vector_diffmatrix * computed_sol; 
-                                vtk.writeCellScalarData_barycentricvolumes( lowest_curl, "curl" );
+                                vtk.write_cell_scalar_data_barycentricvolumes( lowest_curl, "curl" );
                             }
 
                             fs.close();

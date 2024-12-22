@@ -114,8 +114,8 @@ SparseMatrix FEECSullivanAveragingMatrix( const Mesh& mesh, int n, int k, int r,
         
         // get inclusion index map
                 
-        IndexMap volume_vertices = mesh.getsubsimplices( n, 0, s        );
-        IndexMap face_vertices   = mesh.getsubsimplices( d, 0, index_fi );
+        IndexMap volume_vertices = mesh.get_subsimplices( n, 0, s        );
+        IndexMap face_vertices   = mesh.get_subsimplices( d, 0, index_fi );
         int inclusion_index = 0;
         for( ; inclusion_index < subsimplex_inclusions[d].size(); inclusion_index++ )
             if( face_vertices == volume_vertices * subsimplex_inclusions[d][inclusion_index] )
@@ -164,7 +164,7 @@ SparseMatrix FEECSullivanAveragingMatrix( const Mesh& mesh, int n, int k, int r,
                        ;
 
         
-        const auto list_of_supersimplices = mesh.getsupersimplices( n, d, index_fi );
+        const auto list_of_supersimplices = mesh.get_supersimplices( n, d, index_fi );
 
         Float value = notanumber; 
 
