@@ -2593,13 +2593,13 @@ DenseMatrix MeshSimplicial3D::get_reflection_along_face( int f ) const
     M1.setcolumn( 0, vec_f1 - vec_f0 );
     M1.setcolumn( 1, vec_f2 - vec_f0 );
     M1.setcolumn( 2, vec_v1 - vec_f0 );
-    assert( M0.isfinite() and M1.isfinite() );
+    assert( M0.is_finite() and M1.is_finite() );
 
     const auto M0inv = Inverse(M0);
     const auto ret = M1 * M0inv;
     
     assert( (M0*M0inv).is_numerically_identity() );
-    assert( ret.isfinite() );
+    assert( ret.is_finite() );
 
     return ret;
 }

@@ -671,7 +671,7 @@ Float FloatVector::lpnorm( Float p, Float innerweight ) const
 
 
 
-bool FloatVector::isfinite() const 
+bool FloatVector::is_finite() const 
 {
     check();
     for( int d = 0; d < getdimension(); d++ )
@@ -680,7 +680,7 @@ bool FloatVector::isfinite() const
     return true;
 }
 
-bool FloatVector::iszero() const 
+bool FloatVector::is_zero() const 
 {
     check();
     for( int d = 0; d < getdimension(); d++ )
@@ -689,7 +689,7 @@ bool FloatVector::iszero() const
     return true;
 }
 
-bool FloatVector::ispositive() const 
+bool FloatVector::is_positive() const 
 {
     check();
     for( int d = 0; d < getdimension(); d++ )
@@ -698,7 +698,7 @@ bool FloatVector::ispositive() const
     return true;
 }
 
-bool FloatVector::isnegative() const 
+bool FloatVector::is_negative() const 
 {
     check();
     for( int d = 0; d < getdimension(); d++ )
@@ -707,7 +707,7 @@ bool FloatVector::isnegative() const
     return true;
 }
 
-bool FloatVector::isnonnegative() const 
+bool FloatVector::is_nonnegative() const 
 {
     check();
     for( int d = 0; d < getdimension(); d++ )
@@ -716,7 +716,7 @@ bool FloatVector::isnonnegative() const
     return true;
 }
 
-bool FloatVector::isnonpositive() const 
+bool FloatVector::is_nonpositive() const 
 {
     check();
     for( int d = 0; d < getdimension(); d++ )

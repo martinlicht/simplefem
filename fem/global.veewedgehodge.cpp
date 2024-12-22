@@ -28,7 +28,7 @@ SparseMatrix FEECBrokenVeeMatrix( const Mesh& mesh, int n, int k, int r , int l,
     assert( k >= 0 && k <= n );
     assert( l >= 0 && l <= n );
     assert( k >= l );
-    assert( field.isfinite() );
+    assert( field.is_finite() );
 
     assert( k == l ); // restricted special case for now...
     
@@ -80,11 +80,11 @@ SparseMatrix FEECBrokenVeeMatrix( const Mesh& mesh, int n, int k, int r , int l,
         
         DenseMatrix GPM    = mesh.getGradientProductMatrix( n, s );
         DenseMatrix formMM = SubdeterminantMatrix( GPM, k );
-        assert( formMM.isfinite() );
+        assert( formMM.is_finite() );
 
-        assert( not formMM.iszero() );
-        assert( formMM.issquare() );
-        assert( formMM.issymmetric() );
+        assert( not formMM.is_zero() );
+        assert( formMM.is_square() );
+        assert( formMM.is_symmetric() );
 
         for( int coupling_index = 0; coupling_index < couplings.size();        coupling_index++ ) 
         for( int f_i            = 0;            f_i < binomial_integer(n+1,k); f_i++            )
@@ -110,7 +110,7 @@ SparseMatrix FEECBrokenVeeMatrix( const Mesh& mesh, int n, int k, int r , int l,
         
     }
     
-    assert( ret.isfinite() );
+    assert( ret.is_finite() );
 
     return ret;
 }
@@ -138,7 +138,7 @@ SparseMatrix FEECBrokenWedgeMatrix( const Mesh& mesh, int n, int k, int r , int 
     assert( s >= 0 );
     assert( k >= 0 && k <= n );
     assert( l >= 0 && l <= n );
-    assert( field.isfinite() );
+    assert( field.is_finite() );
 
     // Auxiliary calculations and preparations
     
@@ -244,7 +244,7 @@ SparseMatrix FEECBrokenWedgeMatrix( const Mesh& mesh, int n, int k, int r , int 
         assert( local_index_of_entry == mi_couplings.size() * sigma_couplings.size() );
     }
     
-    assert( ret.isfinite() );
+    assert( ret.is_finite() );
 
     return ret;
 }
@@ -275,14 +275,14 @@ SparseMatrix FEECBrokenHodgeMatrix( const Mesh& mesh, int n, int k, int r )
     auto sigmas_input  = generateSigmas( IndexRange(1,k  ), IndexRange(0,n) );
     auto sigmas_test   = generateSigmas( IndexRange(1,k  ), IndexRange(0,n) );
     auto applejack_test = std::remove_if( sigmas_test.begin(), sigmas_test.end(),
-                    [k](IndexMap im) -> bool { assert( im.isstrictlyascending() ); return   k != 0 and im[1] == 0; }
+                    [k](IndexMap im) -> bool { assert( im.is_strictly_ascending() ); return   k != 0 and im[1] == 0; }
     );
     sigmas_test.erase( applejack_test, sigmas_test.end() );
 
     auto sigmas_output = generateSigmas( IndexRange(1,n-k), IndexRange(0,n) );
     auto sigmas_hodge  = generateSigmas( IndexRange(1,n-k), IndexRange(0,n) );
     auto applejack_hodge = std::remove_if( sigmas_hodge.begin(), sigmas_hodge.end(),
-                    [n,k](IndexMap im) -> bool { assert( im.isstrictlyascending() ); return n-k != 0 and im[1] == 0; }
+                    [n,k](IndexMap im) -> bool { assert( im.is_strictly_ascending() ); return n-k != 0 and im[1] == 0; }
     );
     sigmas_hodge.erase( applejack_hodge, sigmas_hodge.end() );
 
@@ -316,14 +316,14 @@ SparseMatrix FEECBrokenHodgeMatrix( const Mesh& mesh, int n, int k, int r )
 
         // LOG << sigma_prod << nl << volume_form << nl;
 
-        assert( sigma_prod.isstrictlyascending() );
+        assert( sigma_prod.is_strictly_ascending() );
 
         assert( sigma_prod == volume_form );
 
         wedge_matrix( s_t, s_h ) = signum;
     }
 
-    assert( wedge_matrix.issquare() );
+    assert( wedge_matrix.is_square() );
 
     const DenseMatrix wedge_matrix_inv = Inverse( wedge_matrix ); // TODO: This inversion can be made much simpler ... 
 
@@ -343,7 +343,7 @@ SparseMatrix FEECBrokenHodgeMatrix( const Mesh& mesh, int n, int k, int r )
         }
     }
 
-    assert( wedge_matrix_inv_full.isfinite() );
+    assert( wedge_matrix_inv_full.is_finite() );
     // for( auto x : sigmas_output ) LOG << x << nl;
     // for( auto x : sigmas_input ) LOG << x << nl;
     // LOG << nl << wedge_matrix_inv_full << nl;
@@ -372,11 +372,11 @@ SparseMatrix FEECBrokenHodgeMatrix( const Mesh& mesh, int n, int k, int r )
         
         const DenseMatrix formMM            = SubdeterminantMatrix( GPM, k );
 
-        assert( formMM.isfinite() );
+        assert( formMM.is_finite() );
         
         const DenseMatrix full_local_matrix = wedge_matrix_inv_full * formMM;
 
-        assert( full_local_matrix.isfinite() );
+        assert( full_local_matrix.is_finite() );
         
         const Float scaling = mesh.getMeasure( n, s ) * factorial_integer(n);
     

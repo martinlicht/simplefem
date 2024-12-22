@@ -503,8 +503,8 @@ int main( int argc, char *argv[] )
                         
                             DiagonalOperator invprecon = InverseDiagonalPreconditioner( system_prelim );
 //                             invprecon.setentries( 1. );
-                            assert( invprecon.getdiagonal().isfinite() );
-                            assert( invprecon.getdiagonal().isnonnegative() );
+                            assert( invprecon.getdiagonal().is_finite() );
+                            assert( invprecon.getdiagonal().is_nonnegative() );
                             
                             FloatVector mysol( N*N );
                             mysol.zero();
@@ -541,8 +541,8 @@ int main( int argc, char *argv[] )
                             LOG << "CGM SSOR preconditioner CSR" << nl;
                         
                             FloatVector diagonal = system.getDiagonal();
-                            assert( diagonal.isfinite() );
-                            assert( diagonal.isnonnegative() );
+                            assert( diagonal.is_finite() );
+                            assert( diagonal.is_nonnegative() );
                             
                             FloatVector mysol( N*N );
                             mysol.zero();
@@ -580,8 +580,8 @@ int main( int argc, char *argv[] )
                             LOG << "CHEBYSHEV CSR" << nl;
                         
                             DiagonalOperator invprecon = InverseDiagonalPreconditioner( system_prelim );
-                            assert( invprecon.getdiagonal().isfinite() );
-                            assert( invprecon.getdiagonal().ispositive() );
+                            assert( invprecon.getdiagonal().is_finite() );
+                            assert( invprecon.getdiagonal().is_positive() );
                             
                             FloatVector mysol( N*N );
                             mysol.zero();
@@ -620,8 +620,8 @@ int main( int argc, char *argv[] )
                             LOG << "CGM Rainbow-SSOR preconditioner CSR" << nl;
                         
                             FloatVector diagonal = system.getDiagonal();
-                            assert( diagonal.isfinite() );
-                            assert( diagonal.isnonnegative() );
+                            assert( diagonal.is_finite() );
+                            assert( diagonal.is_nonnegative() );
                             
                             FloatVector mysol( N*N );
                             mysol.zero();

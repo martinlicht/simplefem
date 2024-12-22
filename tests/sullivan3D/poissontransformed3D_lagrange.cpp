@@ -322,8 +322,8 @@ int main( int argc, char *argv[] )
             LOG << "Size of mass matrix: " << sizeof(int) * ( mass.getdimout() + mass.getnumberofentries() ) + sizeof(Float) * mass.getnumberofentries() << nl;
             LOG << "Size of mass matrix: " << sizeof(int) * ( stiffness.getdimout() + stiffness.getnumberofentries() ) + sizeof(Float) * stiffness.getnumberofentries() << nl;
 
-            assert( mass.isfinite() );
-            assert( stiffness.isfinite() );
+            assert( mass.is_finite() );
+            assert( stiffness.is_finite() );
 
 
 
@@ -365,7 +365,7 @@ int main( int argc, char *argv[] )
 
                 }
 
-                assert( rhs.isfinite() );
+                assert( rhs.is_finite() );
 
                 
                 LOG << "...iterative solver" << nl;
@@ -445,8 +445,8 @@ int main( int argc, char *argv[] )
 
                     FloatVector error   = sol - old_sol;
 
-                    assert( error.isfinite() );
-                    assert( ( mass * error ).isfinite() );
+                    assert( error.is_finite() );
+                    assert( ( mass * error ).is_finite() );
 
 
 

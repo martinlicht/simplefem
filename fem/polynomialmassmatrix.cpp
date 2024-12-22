@@ -46,13 +46,13 @@ DenseMatrix polynomialmassmatrix( int n, int r )
 
     }
     
-    assert( ret.isfinite() );
+    assert( ret.is_finite() );
     
-    if( not ret.ispositive() )
+    if( not ret.is_positive() )
         LOG << ret;
     
-    assert( ret.isnonnegative() );
-    assert( ret.ispositive() );
+    assert( ret.is_nonnegative() );
+    assert( ret.is_positive() );
     
     return ret;
 }
@@ -97,13 +97,13 @@ DenseMatrix polynomialmassmatrix( int n, int r, const MultiIndex& base )
 
     }
     
-    assert( ret.isfinite() );
+    assert( ret.is_finite() );
     
-    if( not ret.ispositive() )
+    if( not ret.is_positive() )
         LOG << ret;
     
-    assert( ret.isnonnegative() );
-    assert( ret.ispositive() );
+    assert( ret.is_nonnegative() );
+    assert( ret.is_positive() );
     
     return ret;
 }

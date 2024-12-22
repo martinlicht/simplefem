@@ -225,7 +225,7 @@ void SparseMatrix::scale ( Float s )
     for( auto& e : this->entries ) e.value *= s;
 }
 
-bool SparseMatrix::isfinite() const
+bool SparseMatrix::is_finite() const
 {
     for( const MatrixEntry& rcv : entries )
         if( not std::isfinite( rcv.value ) )
@@ -786,7 +786,7 @@ DiagonalOperator InverseDiagonalPreconditioner( const SparseMatrix& mat )
 
 Float norm_sq_of_vector( const SparseMatrix& A, const FloatVector& vec )
 {
-    assert( A.issquare() );
+    assert( A.is_square() );
     assert( A.getdimin() == vec.getdimension() );
 
     const auto& entries = A.getentries();

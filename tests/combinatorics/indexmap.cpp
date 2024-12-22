@@ -29,14 +29,14 @@ int main( int argc, char *argv[] )
         for( int a : irA ) 
         {
             assert( id.has_value_in_range( a ) );
-            assert( id.preimageof( a ) == a );
+            assert( id.get_preimage_of( a ) == a );
             assert( id[ a ] == a );
         }
         
-        assert( id.isbijective()  );
-        assert( id.isinjective()  );
-        assert( id.issurjective() );
-        assert( id.isstrictlyascending() );
+        assert( id.is_bijective()  );
+        assert( id.is_injective()  );
+        assert( id.is_surjective() );
+        assert( id.is_strictly_ascending() );
         
         assert( id.is_comparable_with( id ) );
         assert( id.is_equal_to( id ) );
@@ -56,10 +56,10 @@ int main( int argc, char *argv[] )
         
         assert( leer == identityIndexMap( IndexRange( 0,-1 ) ) );
         
-        assert( leer.isbijective()  );
-        assert( leer.isinjective()  );
-        assert( leer.issurjective() );
-        assert( leer.isstrictlyascending() );
+        assert( leer.is_bijective()  );
+        assert( leer.is_injective()  );
+        assert( leer.is_surjective() );
+        assert( leer.is_strictly_ascending() );
         
         assert( leer.is_comparable_with( leer ) );
         assert( leer.is_equal_to( leer ) );
@@ -80,8 +80,8 @@ int main( int argc, char *argv[] )
         
         inj.check();
         
-        assert( inj.isinjective() );
-        assert( !inj.issurjective() );
+        assert( inj.is_injective() );
+        assert( !inj.is_surjective() );
         assert( inj.getSourceRange() == irB );
         assert( inj.getTargetRange() == irA );
         assert( inj.has_value_in_range( 4 ) );
@@ -97,8 +97,8 @@ int main( int argc, char *argv[] )
 
         sur.check();
         
-        assert( !sur.isinjective() );
-        assert( sur.issurjective() );
+        assert( !sur.is_injective() );
+        assert( sur.is_surjective() );
         assert( sur.getSourceRange() == irD );
         assert( sur.getTargetRange() == irB );
         
@@ -120,9 +120,9 @@ int main( int argc, char *argv[] )
         assert( prod == test );
         
         assert( test.has_value_in_range( 3 ) );
-        assert( test.preimageof( 3 ) == 0 );
+        assert( test.get_preimage_of( 3 ) == 0 );
         assert( test.has_value_in_range( 2 ) );
-        assert( test.preimageof( 2 ) == 1 );
+        assert( test.get_preimage_of( 2 ) == 1 );
         assert( not test.has_value_in_range( 5 ) );
         
     }

@@ -228,7 +228,7 @@ int main( int argc, char *argv[] )
                                 // Solver.max_iteration_count = 4 * candidate.getdimension();
                                 // Solver.solve( candidate, rhs );
                             
-                                assert( candidate.isfinite() );
+                                assert( candidate.is_finite() );
                                 
                                 LOG << "\t\t\t (eucl) delta:     " << ( residual - rhs + X * candidate ).norm() << nl;
                                 LOG << "\t\t\t (mass) delta:     " << ( residual - rhs + X * candidate ).norm( mass ) << nl;
@@ -243,7 +243,7 @@ int main( int argc, char *argv[] )
                                 
                                 candidate.normalize( mass );
                                 
-                                assert( candidate.isfinite() );
+                                assert( candidate.is_finite() );
                                 
                                 LOG << "\t\t\t (norm eucl) x:         " << candidate.norm() << nl;
                                 LOG << "\t\t\t (norm mass) x:         " << candidate.norm( mass ) << nl;
@@ -281,7 +281,7 @@ int main( int argc, char *argv[] )
                             continue;
                         }
                         
-                        assert( candidate.isfinite() );
+                        assert( candidate.is_finite() );
                         
                         LOG << "Accept vector #" << nullvectorgallery.size() + 1 << nl;
                     

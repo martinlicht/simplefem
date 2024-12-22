@@ -43,7 +43,7 @@ void LinearOperator::check() const
 //     os << text();
 // }
 
-bool LinearOperator::issquare() const
+bool LinearOperator::is_square() const
 {
     check();
     return getdimin() == getdimout();

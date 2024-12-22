@@ -194,30 +194,30 @@ class DenseMatrix final
 
         // Crude eigenvalue and singular value estimate 
 
-        Float EigenvalueEstimate() const;
+        Float eigenvalue_estimate() const;
         Float operator_norm_estimate( int sample_numbers = 5, int iteration_numbers = 10 ) const;
 
 
         
         /* Investigations */
         
-        bool issquare() const;
+        bool is_square() const;
         
-        bool issymmetric() const;
+        bool is_symmetric() const;
         
-        bool isantisymmetric() const;
+        bool is_antisymmetric() const;
         
-        bool isfinite() const;
+        bool is_finite() const;
         
-        bool iszero() const;
+        bool is_zero() const;
         
-        bool ispositive() const;
+        bool is_positive() const;
         
-        bool isnegative() const;
+        bool is_negative() const;
         
-        bool isnonnegative() const;
+        bool is_nonnegative() const;
         
-        bool isnonpositive() const;
+        bool is_nonpositive() const;
         
         
         bool is_numerically_small( Float threshold = desired_closeness ) const;

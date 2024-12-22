@@ -59,7 +59,7 @@ SparseMatrix FEECBrokenDiffMatrix( const Mesh& mesh, int n, int k, int r )
         int new_form_index = find_index( sigmas_dest, new_form );
         
         assert( new_form.getSourceRange().min() == 1 );
-        int signum = sign_power( new_form.preimageof(p) - 1 );
+        int signum = sign_power( new_form.get_preimage_of(p) - 1 );
         
         SparseMatrix::MatrixEntry entry;
         

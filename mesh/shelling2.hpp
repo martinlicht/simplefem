@@ -16,9 +16,9 @@
 
 struct mesh_information_for_shelling
 {
-    Float max_diameter_ratio = notanumber;
+    Float max_diameter_ratio   = notanumber;
     Float min_height_of_vertex = notanumber;
-    Float max_volume_ratio   = notanumber;
+    Float max_volume_ratio     = notanumber;
 
     std::vector<Float> diameters;
     std::vector<Float> volumes;
@@ -34,7 +34,7 @@ struct mesh_information_for_shelling
     std::vector<std::vector<Float>>       heights_of_vertex;        // [volume index][local vertex index]
     std::vector<std::vector<FloatVector>> heightvectors_of_vertex;  // [volume index][local vertex index]
     
-    std::vector<std::vector<std::vector<std::vector<Float>>>> C5;
+    std::vector<std::vector<std::vector<std::vector<Float>>>> C5;   // [volume index][form_degree][level][subsimplex]
     std::vector<std::vector<std::vector<std::vector<Float>>>> C6;
     std::vector<std::vector<std::vector<std::vector<Float>>>> C7;
     std::vector<std::vector<std::vector<std::vector<Float>>>> C8;
@@ -62,7 +62,7 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
 
         for( int s = 0; s < counts[d]; s++ ) {
             auto midpoint = mesh.get_midpoint( d, s );
-            assert( midpoint.isfinite() );
+            assert( midpoint.is_finite() );
             midpoints_d.push_back( midpoint );
         }
 
@@ -120,7 +120,6 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
         }
 
         for( int vi = 0; vi <= dim; vi++ ) assert( std::isfinite( heights_of_vertex[i][vi] ) );
-
         
         // estimate the aspect / algebraic condition number 
 
@@ -132,8 +131,8 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
         trafo_singular_max[i] =         trafo.operator_norm_estimate();
         trafo_singular_min[i] = 1. / invtrafo.operator_norm_estimate();
 
-        assert( trafo.isfinite() );
-        assert( invtrafo.isfinite() );
+        assert( trafo.is_finite() );
+        assert( invtrafo.is_finite() );
         Assert( trafo_singular_max[i] > 0., trafo_singular_max[i] );
         assert( trafo_singular_min[i] > 0. );
 
@@ -152,7 +151,7 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
         heightvectors_of_vertex[i][vertex_index] = mesh.getHeightVector( dim, i, vertex_index );
     }
 
-    for( auto a : heightvectors_of_vertex ) for( auto b : a ) assert( b.isfinite() );
+    for( auto a : heightvectors_of_vertex ) for( auto b : a ) assert( b.is_finite() );
     
     
     
@@ -196,7 +195,7 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
     for( int form_degree = 0; form_degree <= dim; form_degree++ )
     for( int level = 0; level < dim; level++ )
     {
-        const int num_of_subsimplices = binomial_integer(dim+1,level+1);
+        const int num_of_subsimplices = binomial_integer( dim + 1, level + 1 );
 
         C5[i][form_degree][level] = std::vector<Float>( num_of_subsimplices );
         C6[i][form_degree][level] = std::vector<Float>( num_of_subsimplices );
@@ -228,9 +227,9 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
                 
                 const Float xi_l   = sqrt( square(2*rho+1) + square( (n-level) * kappa ) ) + sqrt( 1. + square( (n-level) * kappa ) );
 
-                assert( std::isfinite( Ctheta ) && Ctheta > 0 );
-                assert( std::isfinite( kappa  ) && kappa  > 0 );
-                assert( std::isfinite( mu_l   ) && mu_l   > 0 );
+                assert( std::isfinite( Ctheta ) && Ctheta > 0. );
+                assert( std::isfinite( kappa  ) && kappa  > 0. );
+                assert( std::isfinite( mu_l   ) && mu_l   > 0. );
 
                 singular_max     = mu_l;
                 singular_min_inv = mu_l / rho;
@@ -296,7 +295,7 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
                     auto z = zc - zs;
                     auto h = height_vectors[vi] / ( dim-k );
                     auto b = z - h; //( z.scalarproductwith(h) / h.norm_sq() ) * h;
-                    Assert( ( z - h - b ).is_numerically_small(), z, '\n', h, '\n', b );
+                    Assert( ( z - h - b ).is_numerically_small(), z, '\n\n', h, '\n\n', b );
                     auto tanbeta = b.norm() / h.norm();
 
                     Float proposed_improved_singular_max 
@@ -429,7 +428,6 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
 
                     Float facebased_singular_max = 0.5 * sqrt( square( a + 1. ) + c ) + 0.5 * sqrt( square( a - 1. ) + c );
                     
-
                     singular_max = minimum( singular_max, facebased_singular_max );
 
                     singular_min_inv = singular_max / a;
@@ -892,7 +890,7 @@ void generate_shellings2(
 
     for( int j = 0; j < remaining_nodes.size(); j++ )
     {
-        assert( coefficient_vectors[j].isfinite()           );
+        assert( coefficient_vectors[j].is_finite()           );
         assert( std::isfinite( weight_for_node_reflect[j] ) );
         assert( std::isfinite( weight_for_node_morphin[j] ) );
     }

@@ -79,7 +79,7 @@ int main( int argc, char *argv[] )
                     field.random();
                     field.normalize();
                     
-                    assert( field.isfinite() );
+                    assert( field.is_finite() );
                     
                     const auto error_mass = ( field - interpol * elevation * field ).norm();
                     

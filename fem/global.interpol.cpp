@@ -47,7 +47,7 @@ SparseMatrix FEECBrokenInterpolationMatrix( const Mesh& mesh, int n, int k, int 
 
     const DenseMatrix pvom      = PointValuesOfMonomials( r         , bcs );
 
-    assert( pvom.issquare() );
+    assert( pvom.is_square() );
 
     const DenseMatrix lpc = LagrangePolynomialCoefficients( n, r );
     const DenseMatrix lpc_inv = Inverse(lpc);

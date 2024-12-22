@@ -11,7 +11,7 @@
 DenseMatrix GaussJordan( DenseMatrix mat )
 {
     
-    assert( mat.issquare() );
+    assert( mat.is_square() );
     
     const int n = mat.getdimout();
 //     std::vector<int> pivotcol( n, -17 );
@@ -85,7 +85,7 @@ DenseMatrix GaussJordan( DenseMatrix mat )
 DenseMatrix GaussJordanInplace( DenseMatrix mat, bool pivoting )
 {
     
-    assert( mat.issquare() );
+    assert( mat.is_square() );
     
     const int n = mat.getdimout();
     
@@ -172,7 +172,7 @@ DenseMatrix CholeskyDecomposition( const DenseMatrix& A )
 DenseMatrix CholeskyDecompositionBanachchiewicz( const DenseMatrix& A )
 {
     A.check();
-    assert( A.issquare() );
+    assert( A.is_square() );
 
     DenseMatrix L = A;
     L.set( 0. );
@@ -219,7 +219,7 @@ void QRFactorization( const DenseMatrix& A, DenseMatrix& Q, DenseMatrix& R )
     assert( Q.getdimin()  == R.getdimout() );
     assert( A.getdimin()  == R.getdimin()  ); 
     assert( A.getdimin()  <= A.getdimout() );
-    assert( R.issquare() );
+    assert( R.is_square() );
     
     R.zeromatrix();
     
@@ -245,7 +245,7 @@ void LQFactorization( const DenseMatrix& A, DenseMatrix& L, DenseMatrix& Q )
     assert( A.getdimin()  == Q.getdimin()  ); 
     assert( Q.getdimout() == L.getdimin() );
     assert( A.getdimout() <= A.getdimin() );
-    assert( L.issquare() );
+    assert( L.is_square() );
     
     L.zeromatrix();
     
@@ -280,7 +280,7 @@ FloatVector SolveOverconstrained( const DenseMatrix& A, const FloatVector& b )
 
 FloatVector QRIteration( DenseMatrix A, int repetitions ) 
 {
-    assert( A.issquare() && A.issymmetric() );
+    assert( A.is_square() && A.is_symmetric() );
     
     const int dim = A.getdimin();
     

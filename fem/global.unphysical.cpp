@@ -49,7 +49,7 @@ SparseMatrix FEECCanonicalizeBroken( const Mesh& mesh, int n, int k, int r )
     
     const DenseMatrix Aux = SubdeterminantMatrix( Aux1, k );
 
-    assert( Aux.issquare() and Aux.getdimout() == form_size );
+    assert( Aux.is_square() and Aux.getdimout() == form_size );
 
     #if defined(_OPENMP)
     #pragma omp parallel for
@@ -121,7 +121,7 @@ SparseMatrix FEECRandomizeBroken( const Mesh& mesh, int n, int k, int r, Float b
         
         const DenseMatrix Aux2 = SubdeterminantMatrix( Aux1, k );
 
-        assert( Aux2.issquare() and Aux2.getdimout() == form_size );        
+        assert( Aux2.is_square() and Aux2.getdimout() == form_size );        
 
         auxiliaries[t] = Aux2;
     }

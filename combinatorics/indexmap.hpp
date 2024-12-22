@@ -65,15 +65,15 @@ class IndexMap
         
         const IndexRange& getTargetRange() const;
         
-        bool isempty() const;
+        bool is_empty() const;
         
-        bool isinjective() const;
+        bool is_injective() const;
         
-        bool issurjective() const;
+        bool is_surjective() const;
         
-        bool isbijective() const;
+        bool is_bijective() const;
         
-        bool isstrictlyascending() const;
+        bool is_strictly_ascending() const;
         
         
         
@@ -90,7 +90,7 @@ class IndexMap
                 
         bool has_value_in_range( int value ) const;
         
-        int preimageof( int value ) const;
+        int get_preimage_of( int value ) const;
         
         
         
@@ -191,7 +191,7 @@ inline IndexMap identityIndexMap( int low, int high )
 // inline IndexMap toss_entry( const IndexMap& original, int p )
 // {
     
-//     assert( not original.getSourceRange().isempty() );
+//     assert( not original.getSourceRange().is_empty() );
 //     assert( original.getSourceRange().contains(p) );
     
 //     IndexRange new_source_range = IndexRange( original.getSourceRange().min()+1, original.getSourceRange().max() );

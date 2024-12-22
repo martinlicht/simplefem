@@ -169,8 +169,8 @@ int main( int argc, char *argv[] )
                     SparseMatrix contractionmatrix0_t = contractionmatrix0.getTranspose();
                     SparseMatrix contractionmatrix1_t = contractionmatrix1.getTranspose();
                     
-                    assert( dir0.isfinite() and dir1.isfinite() );
-                    assert( contractionmatrix0.isfinite() and contractionmatrix1.isfinite() );
+                    assert( dir0.is_finite() and dir1.is_finite() );
+                    assert( contractionmatrix0.is_finite() and contractionmatrix1.is_finite() );
 
                     // const int dimension0 = scalar_incmatrix0.getdimin();
                     // const int dimension1 = scalar_incmatrix1.getdimin();
@@ -220,7 +220,7 @@ int main( int argc, char *argv[] )
         
                         LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                         
-                        assert( sol.isfinite() );
+                        assert( sol.is_finite() );
 
                         
                         

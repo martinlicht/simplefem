@@ -88,7 +88,7 @@ public LinearOperator /* every matrix is a linear operator */
         
         void scale( Float s );
 
-        bool isfinite() const;
+        bool is_finite() const;
         
         FloatVector getDiagonal() const;
         

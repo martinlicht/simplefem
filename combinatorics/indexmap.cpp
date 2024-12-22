@@ -40,7 +40,7 @@ IndexMap::IndexMap( const IndexRange& range, const std::function<int(int)>& gene
 IndexMap::IndexMap( const IndexRange& from, const IndexRange& to, const std::function<int(int)>& generator )
 : src(from), dest(to), values()
 {
-    if( from.isempty() ) {
+    if( from.is_empty() ) {
     
         values.resize(0);
     
@@ -86,18 +86,18 @@ void IndexMap::check() const
     
     if( values.size() > 0 ) {
         
-        assert( ! getSourceRange().isempty() );
+        assert( ! getSourceRange().is_empty() );
         
         assert( maximum( src.max() - src.min() + 1, 0 ) == values.size() );
     
-        assert( ! getTargetRange().isempty() );
+        assert( ! getTargetRange().is_empty() );
         
         for( int a = src.min(); a <= src.max(); a++ )
             assert( dest.contains( values.at( a - src.min() ) ) );
         
     } else {
         
-        assert( getSourceRange().isempty() );
+        assert( getSourceRange().is_empty() );
         
     }
         
@@ -143,7 +143,7 @@ const IndexRange& IndexMap::getTargetRange() const
 int& IndexMap::at( int i ) &
 {
     check();
-    assert( !src.isempty() );
+    assert( !src.is_empty() );
     assert( src.contains(i) );
     assert( 0 <= i - src.min() );
     assert( i - src.min() < values.size() );
@@ -153,7 +153,7 @@ int& IndexMap::at( int i ) &
 const int& IndexMap::at( int i ) const&
 {
     check();
-    assert( !src.isempty() );
+    assert( !src.is_empty() );
     assert( src.contains(i) );
     assert( 0 <= i - src.min() );
     assert( i - src.min() < values.size() );
@@ -163,7 +163,7 @@ const int& IndexMap::at( int i ) const&
 int& IndexMap::operator[]( int i ) &
 {
     check();
-    assert( !src.isempty() );
+    assert( !src.is_empty() );
     assert( src.contains(i) );
     assert( 0 <= i - src.min() );
     assert( i - src.min() < values.size() );
@@ -173,7 +173,7 @@ int& IndexMap::operator[]( int i ) &
 const int& IndexMap::operator[]( int i ) const&
 {
     check();
-    assert( !src.isempty() );
+    assert( !src.is_empty() );
     assert( src.contains(i) );
     assert( 0 <= i - src.min() );
     assert( i - src.min() < values.size() );
@@ -189,18 +189,18 @@ const std::vector<int>& IndexMap::getvalues() const &
 
 
 
-bool IndexMap::isempty() const 
+bool IndexMap::is_empty() const 
 {
     check();
-    return getSourceRange().isempty();
+    return getSourceRange().is_empty();
 }
 
 
-bool IndexMap::isinjective() const 
+bool IndexMap::is_injective() const 
 {
     check();
     
-    if( getSourceRange().isempty() )
+    if( getSourceRange().is_empty() )
         return true;
     
     for( int a = src.min(); a <= src.max(); a++ )
@@ -211,11 +211,11 @@ bool IndexMap::isinjective() const
     return true;
 }
 
-bool IndexMap::issurjective() const 
+bool IndexMap::is_surjective() const 
 {
     check();
     
-    if( getSourceRange().isempty() )
+    if( getSourceRange().is_empty() )
         return true;
     
     for( int a = dest.min(); a <= dest.max(); a++ ) 
@@ -231,17 +231,17 @@ bool IndexMap::issurjective() const
     return true;
 }
 
-bool IndexMap::isbijective() const 
+bool IndexMap::is_bijective() const 
 {
     check();
-    return isinjective() && issurjective();
+    return is_injective() && is_surjective();
 }
 
-bool IndexMap::isstrictlyascending() const
+bool IndexMap::is_strictly_ascending() const
 {
     check();
     
-    if( getSourceRange().isempty() )
+    if( getSourceRange().is_empty() )
         return true;
     
     for( int a = src.min(); a < src.max(); a++ )
@@ -261,7 +261,7 @@ bool IndexMap::has_value_in_range( int p ) const
     return false;
 } 
 
-int IndexMap::preimageof( int p ) const
+int IndexMap::get_preimage_of( int p ) const
 {
     check();
     assert( getTargetRange().contains(p) );
@@ -305,8 +305,8 @@ bool IndexMap::is_less_than( const IndexMap& im ) const
 IndexMap mergeSigmas( const IndexMap& left, const IndexMap& right, int& sign )
 {
     sign = 1;
-    if( left.getSourceRange().isempty()  ) return right;
-    if( right.getSourceRange().isempty() ) return left;
+    if( left.getSourceRange().is_empty()  ) return right;
+    if( right.getSourceRange().is_empty() ) return left;
 
     assert(  left.getSourceRange().min() == 1 );
     assert( right.getSourceRange().min() == 1 );
@@ -354,10 +354,10 @@ IndexMap expand_zero( const IndexMap& im, int p )
     const auto& src_range = im.getSourceRange();
     const auto& dst_range = im.getTargetRange();
     
-    assert( not dst_range.isempty() );
+    assert( not dst_range.is_empty() );
     assert( dst_range.min() == 0    );
     
-    if( src_range.isempty() ) {
+    if( src_range.is_empty() ) {
         
         return IndexMap( IndexRange(0,0), dst_range, {p} );
         
@@ -368,7 +368,7 @@ IndexMap expand_zero( const IndexMap& im, int p )
         new_values.push_back( p );
         std::sort( new_values.begin(), new_values.end() );
         const auto ret = IndexMap( IndexRange(0,src_range.max()+1), dst_range, new_values );
-        assert( ret.isstrictlyascending() );
+        assert( ret.is_strictly_ascending() );
         return ret;
         
     }
@@ -380,10 +380,10 @@ IndexMap expand_one( const IndexMap& im, int p )
     const auto& src_range = im.getSourceRange();
     const auto& dst_range = im.getTargetRange();
     
-    assert( not dst_range.isempty() );
+    assert( not dst_range.is_empty() );
     assert( dst_range.min() == 0    );
     
-    if( src_range.isempty() ) {
+    if( src_range.is_empty() ) {
         
         return IndexMap( IndexRange(1,1), dst_range, {p} );
         
@@ -394,7 +394,7 @@ IndexMap expand_one( const IndexMap& im, int p )
         new_values.push_back( p );
         std::sort( new_values.begin(), new_values.end() );
         const auto ret = IndexMap( IndexRange(1,src_range.max()+1), dst_range, new_values );
-        assert( ret.isstrictlyascending() );
+        assert( ret.is_strictly_ascending() );
         return ret;
         
     }
@@ -408,18 +408,18 @@ IndexMap complement_sigma( const IndexMap& sigma, const int n )
     const auto target_range = sigma.getTargetRange();
 
     assert( n >= 0 );
-    assert( not target_range.isempty() );
+    assert( not target_range.is_empty() );
     assert( target_range.min() == 0 );
     assert( target_range.max() == n );
 
-    if( source_range.isempty() )
+    if( source_range.is_empty() )
         return IndexMap( IndexRange(0,n), IndexRange(0,n), [](int i)->int{return i;} );
 
     const unsigned int k = source_range.max();
 
     assert( source_range.min() == 1 );
     assert( source_range.max() <= n );
-    assert( sigma.isstrictlyascending() );
+    assert( sigma.is_strictly_ascending() );
 
     std::vector<int> rho_values( n+1-k, -1 );
     
@@ -458,25 +458,25 @@ int sign_of_rho_sigma( const IndexMap& sigma )
     const auto source_range = sigma.getSourceRange();
     const auto target_range = sigma.getTargetRange();
 
-    assert( not target_range.isempty() );
+    assert( not target_range.is_empty() );
     
     const unsigned int n = target_range.max();
 
     assert( target_range.min() == 0 );
     assert( target_range.max() == n );
 
-    if( source_range.isempty() )
+    if( source_range.is_empty() )
         return 1;
 
     const unsigned int k = source_range.max();
 
     assert( source_range.min() == 1 );
     assert( source_range.max() <= n );
-    assert( sigma.isstrictlyascending() );
+    assert( sigma.is_strictly_ascending() );
 
     const auto rho = complement_sigma( sigma, n );
 
-    assert( not rho.getSourceRange().isempty() and rho.getSourceRange().max() == n-k );
+    assert( not rho.getSourceRange().is_empty() and rho.getSourceRange().max() == n-k );
 
     const auto sigma_values = sigma.getvalues();
     const auto rho_values   =   rho.getvalues();

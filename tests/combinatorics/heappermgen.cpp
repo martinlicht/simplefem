@@ -39,7 +39,7 @@ int main( int argc, char *argv[] )
             assert( perms.size() == factorial_integer(N) );
             
             for( const auto& some_perm : perms )
-                assert( IndexMap( IndexRange(0,N-1), some_perm ).isbijective() );
+                assert( IndexMap( IndexRange(0,N-1), some_perm ).is_bijective() );
             
             for( int i = 0; i < perms.size(); i++ )
             for( int j = 0; j < perms.size(); j++ )

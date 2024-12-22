@@ -166,7 +166,7 @@ int main( int argc, char *argv[] )
                 
                 }
                 
-                assert( im.isbijective() );
+                assert( im.is_bijective() );
                 
                 if( signPermutation( im ) == 1 ) 
                     number_of_even_permutations++;
@@ -220,7 +220,7 @@ int main( int argc, char *argv[] )
             
                 }
             
-                assert( sigma.isstrictlyascending() );
+                assert( sigma.is_strictly_ascending() );
                 
             }
             

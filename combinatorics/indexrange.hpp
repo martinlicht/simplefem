@@ -50,13 +50,13 @@ class IndexRange final
         
         int cardinality() const;
         
-        bool isempty() const;
+        bool is_empty() const;
         
         bool contains( int element ) const;
         
         bool contains( const IndexRange& subir ) const;
         
-        bool isequal( const IndexRange& ir ) const;
+        bool is_equal( const IndexRange& ir ) const;
         
         int element2position( int element ) const;
         
@@ -138,7 +138,7 @@ inline Stream& operator<<( Stream&& os, const IndexRange& ir )
 
 inline bool operator== ( const IndexRange& ir1, const IndexRange& ir2 )
 {
-    return ir1.isequal( ir2 );
+    return ir1.is_equal( ir2 );
 }
 
 inline bool operator!= ( const IndexRange& ir1, const IndexRange& ir2 )

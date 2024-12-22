@@ -13,7 +13,7 @@
 Rainbow::Rainbow( const MatrixCSR& mat, bool do_shuffle )
 {
     mat.check();
-    assert( mat.issquare() );
+    assert( mat.is_square() );
 
     // const std::vector<int>& A = mat.getA();
     // const std::vector<int>& C = mat.getC();

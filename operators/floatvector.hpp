@@ -188,17 +188,17 @@ class FloatVector
         
         /* Investigations */
         
-        bool isfinite() const;
+        bool is_finite() const;
         
-        bool iszero() const;
+        bool is_zero() const;
         
-        bool ispositive() const;
+        bool is_positive() const;
         
-        bool isnegative() const;
+        bool is_negative() const;
         
-        bool isnonnegative() const;
+        bool is_nonnegative() const;
         
-        bool isnonpositive() const;
+        bool is_nonpositive() const;
         
         
         bool is_numerically_small( Float threshold = desired_closeness ) const;

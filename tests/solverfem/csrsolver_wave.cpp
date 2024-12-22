@@ -659,8 +659,8 @@ int main( int argc, char *argv[] )
                         LOG << "CHEBYSHEV CSR" << nl;
                     
                         DiagonalOperator invprecon = InverseDiagonalPreconditioner( SystemMatrix );
-                        assert( invprecon.getdiagonal().isfinite() );
-                        assert( invprecon.getdiagonal().isnonnegative() );
+                        assert( invprecon.getdiagonal().is_finite() );
+                        assert( invprecon.getdiagonal().is_nonnegative() );
                         
                         FloatVector residual( rhs );
                         // auto max_iteration_count = sol.getdimension();
@@ -689,7 +689,7 @@ int main( int argc, char *argv[] )
 
                     assert( runtime >= 0. and iteration_count >= 0 );
 
-                    assert( sol.isfinite() );
+                    assert( sol.is_finite() );
 
                     LOG << "...compute error and residual:" << k << nl;
 

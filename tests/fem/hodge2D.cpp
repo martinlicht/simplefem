@@ -69,8 +69,8 @@ int main( int argc, char *argv[] )
                 assert( broken_hodge_matrix.getdimin()  == broken_mass_matrix.getdimin()  );
                 assert( broken_hodge_matrix.getdimout() == broken_mass_hodged_matrix.getdimout() );
 
-                assert( broken_mass_matrix.isfinite() );
-                assert( broken_hodge_matrix.isfinite() );
+                assert( broken_mass_matrix.is_finite() );
+                assert( broken_hodge_matrix.is_finite() );
                 
                 errors[k][ l ][ r ] = 0.;
                 
@@ -80,7 +80,7 @@ int main( int argc, char *argv[] )
                     field.random();
                     field.normalize();
                     
-                    assert( field.isfinite() );
+                    assert( field.is_finite() );
 
                     const auto hodged_field = broken_hodge_matrix * field;
                     

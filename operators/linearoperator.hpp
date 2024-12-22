@@ -62,7 +62,7 @@ class LinearOperator
 
         int getdimout() const;
         
-        bool issquare() const;
+        bool is_square() const;
         
         /* Apply the operator */
         

@@ -283,7 +283,7 @@ FloatVector Coordinates::getShiftPart( const IndexMap& im ) const
 {
     assert( im.getTargetRange() == getIndexRange() );
     IndexRange imsrc = im.getSourceRange();
-    assert( !(im.isempty()) && imsrc.min() == 0 && imsrc.max() <= getdimension() );
+    assert( !(im.is_empty()) && imsrc.min() == 0 && imsrc.max() <= getdimension() );
     int index = im[0];
     return getvectorclone( index );
 }

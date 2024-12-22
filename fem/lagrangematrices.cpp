@@ -482,7 +482,7 @@ MatrixCSR LagrangeCoefficientMassMatrix( const Mesh& mesh, int r, int w, const s
             local_mass_matrix += fullMM;
         }
 
-        assert( local_mass_matrix.isfinite() );
+        assert( local_mass_matrix.is_finite() );
 
         for( int v1 = 0; v1 <= n; v1++ )
         for( int v2 = 0; v2 <= n; v2++ )
@@ -496,7 +496,7 @@ MatrixCSR LagrangeCoefficientMassMatrix( const Mesh& mesh, int r, int w, const s
 
         }
 
-        assert( local_mass_matrix.isfinite() );
+        assert( local_mass_matrix.is_finite() );
 
         for( int v1 = 0; v1 <= n; v1++ )
         for( int v2 = 0; v2 <= n; v2++ )
@@ -725,7 +725,7 @@ MatrixCSR LagrangeCoefficientStiffnessMatrix( const Mesh& mesh, int r, int w, co
 
 
 
-        assert( local_mass_matrix.isfinite() );
+        assert( local_mass_matrix.is_finite() );
 
         for( int v1 = 0; v1 <= n; v1++ )
         for( int v2 = 0; v2 <= n; v2++ )
@@ -739,7 +739,7 @@ MatrixCSR LagrangeCoefficientStiffnessMatrix( const Mesh& mesh, int r, int w, co
 
         }
 
-        assert( local_mass_matrix.isfinite() );
+        assert( local_mass_matrix.is_finite() );
 
         for( int v1 = 0; v1 <= n; v1++ )
         for( int v2 = 0; v2 <= n; v2++ )
