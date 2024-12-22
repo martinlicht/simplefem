@@ -35,7 +35,11 @@ int main( int argc, char *argv[] )
     LOG << "Initial mesh..." << nl;
     
     MeshSimplicial3D M = UnitCube3D();
+    // MeshSimplicial3D M = StandardCubeFive3D();
+    // MeshSimplicial3D M = CrossedBricks_Five3D();
+    // MeshSimplicial3D M = CrossedBricks3D();
     M.check();
+    M.getCoordinates().shake_random();
 
     LOG << "Number of tetrahedra: " << M.count_tetrahedra() << nl;
     

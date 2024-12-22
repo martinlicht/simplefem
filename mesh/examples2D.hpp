@@ -196,8 +196,8 @@ inline MeshSimplicial2D UnitSquare2D()
 {
     auto M = StandardSquare2D();
     
-    M.getcoordinates().shift( FloatVector{1.,1.} );
-    M.getcoordinates().scale( 0.5 );
+    M.getCoordinates().shift( FloatVector{1.,1.} );
+    M.getCoordinates().scale( 0.5 );
     
     return M;
 }
@@ -206,8 +206,8 @@ inline MeshSimplicial2D UnitSquare2D_alternative()
 {
     auto M = StandardSquare2D_alternative();
     
-    M.getcoordinates().shift( FloatVector{1.,1.} );
-    M.getcoordinates().scale( 0.5 );
+    M.getCoordinates().shift( FloatVector{1.,1.} );
+    M.getCoordinates().scale( 0.5 );
     
     return M;
 }
@@ -216,8 +216,8 @@ inline MeshSimplicial2D UnitSquare2D_centered()
 {
     auto M = StandardSquare2D_centered();
     
-    M.getcoordinates().shift( FloatVector{1.,1.} );
-    M.getcoordinates().scale( 0.5 );
+    M.getCoordinates().shift( FloatVector{1.,1.} );
+    M.getCoordinates().scale( 0.5 );
     
     return M;
 }
@@ -226,8 +226,8 @@ inline MeshSimplicial2D UnitSquare2D_strange14()
 {
     auto M = StandardSquare2D_strange14();
     
-    M.getcoordinates().shift( FloatVector{1.,1.} );
-    M.getcoordinates().scale( 0.5 );
+    M.getCoordinates().shift( FloatVector{1.,1.} );
+    M.getCoordinates().scale( 0.5 );
     
     return M;
 }
@@ -792,11 +792,11 @@ inline MeshSimplicial2D SphericalSurface2D( int L = 0 )
     for( int l = 0; l < L; l++ )
         ret.uniformrefinement();
     
-    for( int n = 0; n < ret.getcoordinates().getnumber(); n++ )
+    for( int n = 0; n < ret.getCoordinates().getnumber(); n++ )
     {
-        FloatVector point = ret.getcoordinates().getvectorclone( n );
+        FloatVector point = ret.getCoordinates().getvectorclone( n );
         point.normalize();
-        ret.getcoordinates().loadvector( n, point );
+        ret.getCoordinates().loadvector( n, point );
     }
     
     return ret;

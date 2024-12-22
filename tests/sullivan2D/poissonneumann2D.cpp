@@ -234,19 +234,19 @@ int main( int argc, char *argv[] )
                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
                             
                             if( r == 1 ) { 
-                                vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
+                                vtk.write_vertex_scalar_data( sol, "iterativesolution_scalar_data" , 1.0 );
                             } 
                             
                             {
                                 const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 0, 0, r );
                                 const auto printable_sol = interpol_matrix * incmatrix * sol; 
-                                vtk.writeCellScalarData( printable_sol, "iterativesolution_scalar_data_cellwise" , 1.0 );
+                                vtk.write_cell_scalar_data( printable_sol, "iterativesolution_scalar_data_cellwise" , 1.0 );
                             }
                             
                             {
                                 const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r-1 );
                                 const auto printable_grad = interpol_matrix * computed_grad; 
-                                vtk.writeCellVectorData_barycentricgradients( printable_grad, "gradient_interpolation" , 1.0 );
+                                vtk.write_cell_vector_data_barycentricgradients( printable_grad, "gradient_interpolation" , 1.0 );
                             }
                             
                             fs.close();

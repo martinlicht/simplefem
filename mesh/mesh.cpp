@@ -66,12 +66,12 @@ int Mesh::getouterdimension() const
   return outerdimension;
 }
 
-Coordinates& Mesh::getcoordinates()
+Coordinates& Mesh::getCoordinates()
 {
   return coordinates;
 }
 
-const Coordinates& Mesh::getcoordinates() const
+const Coordinates& Mesh::getCoordinates() const
 {
   return coordinates;
 }
@@ -171,20 +171,20 @@ std::vector<int> Mesh::count_simplices() const
 
 bool Mesh::is_subsimplex( int sup, int sub, int cellsup, int cellsub ) const
 {
-  const IndexMap im = getsubsimplices( sup, sub, cellsup );
+  const IndexMap im = get_subsimplices( sup, sub, cellsup );
   return im.has_value_in_range( cellsub );
 }
 
 int  Mesh::get_subsimplex_index( int sup, int sub, int cellsup, int cellsub ) const
 {
-  const IndexMap im = getsubsimplices( sup, sub, cellsup );
+  const IndexMap im = get_subsimplices( sup, sub, cellsup );
   Assert( im.has_value_in_range( cellsub ), sup, sub, cellsup, cellsub, im );
   return im.preimageof( cellsub );
 }
 
 int Mesh::get_subsimplex( int sup, int sub, int cellsup, int localindex ) const
 {
-  const IndexMap im = getsubsimplices( sup, sub, cellsup );
+  const IndexMap im = get_subsimplices( sup, sub, cellsup );
   return im[ localindex ];  
 }
 
@@ -198,7 +198,7 @@ int Mesh::get_opposite_subsimplex_index( int sup, int sub, int cellsup, int loca
     
     assert( 0 <= cellsub && cellsub <= count_simplices(sub) );
     
-    const auto my_vertices = getsubsimplices( sub, 0, cellsub );
+    const auto my_vertices = get_subsimplices( sub, 0, cellsub );
     
     for( int opposite_index = 0; opposite_index < count_subsimplices(sup,sup-sub-1); opposite_index++ )
     {
@@ -208,7 +208,7 @@ int Mesh::get_opposite_subsimplex_index( int sup, int sub, int cellsup, int loca
         
         assert( 0 <= opposite_cell && opposite_cell <= count_simplices(sup-sub-1) );
     
-        const auto other_vertices = getsubsimplices( sup-sub-1, 0, opposite_cell ); // BUG HERE????
+        const auto other_vertices = get_subsimplices( sup-sub-1, 0, opposite_cell ); // BUG HERE????
         
         bool alive = true;
         for( int i = 0; i <    my_vertices.getSourceRange().cardinality() and alive; i++ )
@@ -241,7 +241,7 @@ bool Mesh::is_supersimplex( int sup, int sub, int cellsup, int cellsub ) const
   } else {
     
     assert( has_supersimplices_listed( sup, sub ) );
-    std::vector<int> parents = getsupersimplices( sup, sub, cellsub );
+    std::vector<int> parents = get_supersimplices( sup, sub, cellsub );
     return std::find( parents.begin(), parents.end(), cellsup ) != parents.end();
     
   }
@@ -251,14 +251,14 @@ bool Mesh::is_supersimplex( int sup, int sub, int cellsup, int cellsub ) const
 int Mesh::get_firstparent_of_subsimplex( int sup, int sub, int cellsub ) const
 {
   assert( has_supersimplices_listed( sup, sub ) );
-  std::vector<int> parents = getsupersimplices( sup, sub, cellsub );
+  std::vector<int> parents = get_supersimplices( sup, sub, cellsub );
   return parents[0];
 }
 
 int Mesh::get_nextparent_of_subsimplex( int sup, int sub, int cellsup, int cellsub ) const
 {
   assert( has_supersimplices_listed( sup, sub ) );
-  std::vector<int> parents = getsupersimplices( sup, sub, cellsub );
+  std::vector<int> parents = get_supersimplices( sup, sub, cellsub );
   auto it = std::find( parents.begin(), parents.end(), cellsup );
   assert( it != parents.end() );
   it++;
@@ -272,8 +272,8 @@ int Mesh::get_nextparent_by_localindex( int sup, int sub, int cellsup, int local
 {
   assert( has_supersimplices_listed( sup, sub ) );
   assert( has_subsimplices_listed( sup, sub ) );
-  int cellsub = getsubsimplices( sup, sub, cellsup )[localindex];
-  std::vector<int> parents = getsupersimplices( sup, sub, cellsub );
+  int cellsub = get_subsimplices( sup, sub, cellsup )[localindex];
+  std::vector<int> parents = get_supersimplices( sup, sub, cellsub );
   auto it = std::find( parents.begin(), parents.end(), cellsup );
   assert( it != parents.end() );
   it++;
@@ -286,7 +286,7 @@ int Mesh::get_nextparent_by_localindex( int sup, int sub, int cellsup, int local
 int Mesh::get_index_of_supersimplex( int sup, int sub, int cellsup, int cellsub ) const
 {
   assert( has_supersimplices_listed( sup, sub ) );
-  std::vector<int> parents = getsupersimplices( sup, sub, cellsub );
+  std::vector<int> parents = get_supersimplices( sup, sub, cellsub );
   auto it = std::find( parents.begin(), parents.end(), cellsup );
   assert( it != parents.end() );
   return it - parents.begin();
@@ -295,7 +295,7 @@ int Mesh::get_index_of_supersimplex( int sup, int sub, int cellsup, int cellsub 
 int Mesh::get_supersimplex_by_index( int sup, int sub, int cellsub, int parentindex ) const
 {
   assert( has_supersimplices_listed( sup, sub ) );
-  std::vector<int> parents = getsupersimplices( sup, sub, cellsub );
+  std::vector<int> parents = get_supersimplices( sup, sub, cellsub );
   return parents[ parentindex ];
 }
 
@@ -555,7 +555,7 @@ Float Mesh::getHeight( int dim, int cell, int vertexindex ) const
     Float vol_f = getMeasure( dim-1, oppositeface );
 
     // DEBUG
-    auto opposite_face_vertices = getsubsimplices(dim-1,0,oppositeface).getvalues();
+    auto opposite_face_vertices = get_subsimplices(dim-1,0,oppositeface).getvalues();
     for( const auto v : opposite_face_vertices ) assert( v != get_subsimplex( dim, 0, cell, vertexindex ) );
 
     // vol_t = vol_f * height / dim 
@@ -577,7 +577,7 @@ FloatVector Mesh::getHeightVector( int dim, int cell, int vertexindex ) const
     // assert( columns.getdimout() == getouterdimension() and columns.getdimin() == dim+1 );
     // for( int c = 0; c <= dim; c++ ) 
     // for( int d = 0; d < dim; d++ ) 
-    //     columns( d, c ) = getcoordinates().getdata( get_subsimplex(dim,0,cell,c), d );
+    //     columns( d, c ) = getCoordinates().getdata( get_subsimplex(dim,0,cell,c), d );
     // assert( columns.isfinite() );
     // LOG << getVertexCoordinateMatrix( dim, cell ) << nl;
 
@@ -695,7 +695,7 @@ int Mesh::getVertexPatchSize() const
     int ret = 0;
     for( int s = 0; s < count_simplices(0); s++ )
     {
-        int count = getsupersimplices( getinnerdimension(), 0, s ).size();
+        int count = get_supersimplices( getinnerdimension(), 0, s ).size();
         ret = maximum(ret,count);
     }
     return ret;
@@ -708,7 +708,7 @@ int Mesh::getSupersimplexSize( int dim ) const
     int ret = 0;
     for( int s = 0; s < count_simplices(dim); s++ )
     {
-        int count = getsupersimplices( dim+1, dim, s ).size();
+        int count = get_supersimplices( dim+1, dim, s ).size();
         ret = maximum(ret,count);
     }
     return ret;
@@ -723,7 +723,7 @@ Float Mesh::getComparisonQuotient() const
     Float physical_ratio = 1.;
     for( int s = 0; s < count_simplices(n); s++ )
     {
-        auto edges = getsubsimplices( n, 1, s ).getvalues();
+        auto edges = get_subsimplices( n, 1, s ).getvalues();
         Float diameter = getDiameter( n, s );
         for( auto e : edges )
         {
@@ -735,8 +735,8 @@ Float Mesh::getComparisonQuotient() const
     Float vertex_ratio = 1.;
     for( int v = 0; v < count_simplices(0); v++ )
     {
-        auto volumes = getsupersimplices( n, 0, v );
-        auto edges  = getsupersimplices( 1, 0, v );
+        auto volumes = get_supersimplices( n, 0, v );
+        auto edges  = get_supersimplices( 1, 0, v );
 
         Float max_diameter = 0.;
         for( auto t : volumes ) max_diameter = maximum( max_diameter, getDiameter( n, t ) );
@@ -779,7 +779,7 @@ FloatVector Mesh::get_midpoint( int dim, int index ) const
     
     for( int v = 0; v <= dim; v++ )
     for( int d = 0; d < getouterdimension(); d++ )
-      mid[d] += getcoordinates().getdata( get_subsimplex( dim, 0, index, v ), d );
+      mid[d] += getCoordinates().getdata( get_subsimplex( dim, 0, index, v ), d );
     
     for( int d = 0; d < getouterdimension(); d++ )
       mid[d] /= dim + 1;
@@ -798,7 +798,7 @@ FloatVector Mesh::getPointFromBarycentric( int dim, int index, const FloatVector
     
     for( int v = 0; v <= dim; v++ )
     for( int d = 0; d < getouterdimension(); d++ )
-      ret[d] += barycoords[v] * getcoordinates().getdata( get_subsimplex( dim, 0, index, v ), d );
+      ret[d] += barycoords[v] * getCoordinates().getdata( get_subsimplex( dim, 0, index, v ), d );
     
     return ret;
 }
@@ -1036,8 +1036,8 @@ FloatVector Mesh::transform_whitney_to_euclidean( int dim, const FloatVector& wh
 
 void Mesh::shake_interior_vertices( Float intensity, Float probability )
 {
-    assert( 0. <= probability and probability <= 1.0 );
     assert( 0. <= intensity and intensity <= 1.0 );
+    assert( 0. <= probability and probability <= 1.0 );
     assert( getinnerdimension() == getouterdimension() ); 
     
     const int dim = getinnerdimension();
@@ -1046,13 +1046,13 @@ void Mesh::shake_interior_vertices( Float intensity, Float probability )
     {
         if( random_uniform() > probability ) continue; 
 
-        const auto es = getsupersimplices( 1, 0, v );
+        const auto es = get_supersimplices( 1, 0, v );
 
         bool boundary_detected = false;
 
         for( const int e : es )
         {
-            const auto ts = getsupersimplices( dim, 1, e );
+            const auto ts = get_supersimplices( dim, 1, e );
             assert( ts.size() >= 1 );
             if( ts.size() == 1 ) boundary_detected = true;
         }
@@ -1062,7 +1062,7 @@ void Mesh::shake_interior_vertices( Float intensity, Float probability )
 
         Float radius = std::numeric_limits<Float>::infinity();
 
-        const auto ts = getsupersimplices( dim, 0, v );
+        const auto ts = get_supersimplices( dim, 0, v );
 
         for( const int t : ts )
         {
@@ -1080,7 +1080,7 @@ void Mesh::shake_interior_vertices( Float intensity, Float probability )
         shift *= sqrt( random_uniform() ) * radius * intensity;
 
         for( int c = 0; c < dim; c++ )
-            getcoordinates().setdata( v, c, getcoordinates().getdata( v, c ) + shift[c] );
+            getCoordinates().setdata( v, c, getCoordinates().getdata( v, c ) + shift[c] );
 
     }
 }

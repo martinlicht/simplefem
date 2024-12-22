@@ -54,7 +54,7 @@ void writeMeshSimplicial1D( std::ostream& out, const MeshSimplicial1D& mesh, boo
     out << mesh.count_vertices() << nl;
     
     if( sugar ) out << "external dimension: " << nl;
-    out << mesh.getcoordinates().getdimension() << nl;
+    out << mesh.getCoordinates().getdimension() << nl;
     
     /* edge -> vertices */
     if( sugar ) out << "for each edge, the vertices: " << nl;
@@ -96,7 +96,7 @@ void writeMeshSimplicial1D( std::ostream& out, const MeshSimplicial1D& mesh, boo
     
     assert( out.good() );
     
-    writeCoordinates( out, mesh.getcoordinates(), sugar );
+    writeCoordinates( out, mesh.getCoordinates(), sugar );
 }
 
 

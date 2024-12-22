@@ -42,7 +42,7 @@ int main( int argc, char *argv[] )
     auto green = pim.get_interpolated_green();
     auto blue  = pim.get_interpolated_blue();
     
-    M.getcoordinates().scale( 
+    M.getCoordinates().scale( 
         FloatVector{ 
             (Float)pim.getwidth(), (Float)pim.getheight() 
         }

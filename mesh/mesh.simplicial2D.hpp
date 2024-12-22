@@ -88,11 +88,11 @@ class MeshSimplicial2D
         
         virtual bool has_subsimplices_listed( int sup, int sub ) const override;
         
-        virtual IndexMap getsubsimplices( int sup, int sub, int cell ) const override;
+        virtual IndexMap get_subsimplices( int sup, int sub, int cell ) const override;
         
         virtual bool has_supersimplices_listed( int sup, int sub ) const override;
         
-        virtual const std::vector<int> getsupersimplices( int sup, int sub, int cell ) const override;
+        virtual const std::vector<int> get_supersimplices( int sup, int sub, int cell ) const override;
         
         
         virtual SimplexFlag get_flag( int dim, int index ) const override;

@@ -71,11 +71,11 @@ SparseMatrix FEECBrokenTraceMatrix( const Mesh& mesh, int n, int k, int r, bool 
         
         // Find the inclusion of the face f in the cell s
         
-        const auto vertices_of_cell = mesh.getsubsimplices( n, 0, s );
+        const auto vertices_of_cell = mesh.get_subsimplices( n, 0, s );
 
         const int face = mesh.get_subsimplex( n, n-1, s, fi );
         
-        const auto vertices_of_face = mesh.getsubsimplices( n-1, 0, face );
+        const auto vertices_of_face = mesh.get_subsimplices( n-1, 0, face );
 
         assert( vertices_of_cell.getSourceRange() == IndexRange(0,n  ) );
         assert( vertices_of_face.getSourceRange() == IndexRange(0,n-1) );

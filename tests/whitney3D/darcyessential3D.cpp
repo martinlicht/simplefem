@@ -272,7 +272,7 @@ int main( int argc, char *argv[] )
                         {
                             const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 2, 0, r );
                             const auto printable_grad = interpol_matrix * vector_incmatrix * grad; 
-                            vtk.writeCellVectorData_barycentriccrosses( printable_grad, "computed_grad" , 1.0 );
+                            vtk.write_cell_vector_data_barycentriccrosses( printable_grad, "computed_grad" , 1.0 );
                         }
                     
                         {
@@ -280,13 +280,13 @@ int main( int argc, char *argv[] )
                             const auto printable_sol = interpol_matrix * volume_incmatrix * sol; 
                             Assert( printable_sol.getdimension() == (M.getinnerdimension()+1) * M.count_simplices(M.getinnerdimension()), 
                                             printable_sol.getdimension(), M.count_simplices(M.getinnerdimension()) );
-                            vtk.writeCellScalarData_barycentricvolumes( printable_sol, "computed_sol" , 1.0 );
+                            vtk.write_cell_scalar_data_barycentricvolumes( printable_sol, "computed_sol" , 1.0 );
                         }
                         
-                        vtk.writeCellVectorData( function_grad, "function_grad", 1.0 );
-                        vtk.writeCellScalarData( function_sol,  "function_sol" , 1.0 );
+                        vtk.write_cell_vector_data( function_grad, "function_grad", 1.0 );
+                        vtk.write_cell_scalar_data( function_sol,  "function_sol" , 1.0 );
 
-                        vtk.writeCellScalarData( function_rhs,  "function_rhs" , 1.0 );
+                        vtk.write_cell_scalar_data( function_rhs,  "function_rhs" , 1.0 );
                     
                         fs.close();
                     }

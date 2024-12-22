@@ -44,7 +44,7 @@ int main( int argc, char *argv[] )
             
             MeshSimplicial2D M = LShapedDomain2D();
             
-            M.getcoordinates().scale( 1.1 );
+            M.getCoordinates().scale( 1.1 );
             
             M.check();
             
@@ -221,28 +221,28 @@ int main( int argc, char *argv[] )
                         
                             // auto converter = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r );
                             // auto printed_sol = converter * computed_sol;
-                            // vtk.writeCellVectorData_barycentricgradients( printed_sol,  "solution_calculation" );
+                            // vtk.write_cell_vector_data_barycentricgradients( printed_sol,  "solution_calculation" );
                         
-                            vtk.writeCellVectorData( function_rhs, "rhs_field" );
+                            vtk.write_cell_vector_data( function_rhs, "rhs_field" );
                             
                             {
                                 auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r );
                                 auto lowest_sol = interpol_matrix * computed_sol;
                                 auto lowest_rhs = interpol_matrix * interpol_rhs;
-                                vtk.writeCellVectorData_barycentricgradients( lowest_rhs,   "righthandside" );
-                                vtk.writeCellVectorData_barycentricgradients( lowest_sol,   "solution_calculation" );
+                                vtk.write_cell_vector_data_barycentricgradients( lowest_rhs,   "righthandside" );
+                                vtk.write_cell_vector_data_barycentricgradients( lowest_sol,   "solution_calculation" );
                             }
 
                             {
                                 auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 0, 0, r );
                                 auto lowest_ndiv = interpol_matrix * scalar_incmatrix * x_A;
-                                vtk.writeCellScalarData( lowest_ndiv, "negative_divergence" );
+                                vtk.write_cell_scalar_data( lowest_ndiv, "negative_divergence" );
                             }
                             
                             {
                                 auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 2, 0, r-1 );
                                 auto lowest_curl = interpol_matrix * vector_diffmatrix * computed_sol;
-                                vtk.writeCellScalarData_barycentricvolumes( lowest_curl, "curl" );
+                                vtk.write_cell_scalar_data_barycentricvolumes( lowest_curl, "curl" );
                             }
 
                             fs.close();

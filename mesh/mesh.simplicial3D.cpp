@@ -110,7 +110,7 @@ MeshSimplicial3D::MeshSimplicial3D(
 
 {
     
-    getcoordinates() = coords;
+    getCoordinates() = coords;
 
     /* 0. sort the tetrahedron vertices */
     
@@ -527,7 +527,7 @@ MeshSimplicial3D::MeshSimplicial3D(
 
 {
     
-    getcoordinates() = coords;
+    getCoordinates() = coords;
     
     /* set the flags to the Null flag */
     for( int t =  0; t  <  counter_tetrahedra; t++  ) flags_tetrahedra.at( t ) = SimplexFlag::SimplexFlagNull;
@@ -594,7 +594,7 @@ bool MeshSimplicial3D::is_equal_to( const MeshSimplicial3D& mesh ) const
          &&
          getouterdimension() == mesh.getouterdimension()
          &&
-         getcoordinates() == mesh.getcoordinates()
+         getCoordinates() == mesh.getCoordinates()
          &&
          flags_tetrahedra == mesh.flags_tetrahedra
          &&
@@ -665,7 +665,7 @@ void MeshSimplicial3D::check() const
     assert( counter_vertices == data_vertex_firstparent_face.size() );
     assert( counter_vertices == data_vertex_firstparent_tetrahedron.size() );
     
-    assert( count_vertices() == getcoordinates().getnumber() );
+    assert( count_vertices() == getCoordinates().getnumber() );
     
     
     assert( counter_tetrahedra == flags_tetrahedra.size() );
@@ -1643,7 +1643,7 @@ bool MeshSimplicial3D::has_subsimplices_listed( int sup, int sub ) const
     return true;
 }
 
-IndexMap MeshSimplicial3D::getsubsimplices( int sup, int sub, int cell ) const
+IndexMap MeshSimplicial3D::get_subsimplices( int sup, int sub, int cell ) const
 {
   assert( 0 <= sub && sub <= sup && sup <= 3 );
   assert( 0 <= cell );
@@ -1722,7 +1722,7 @@ bool MeshSimplicial3D::has_supersimplices_listed( int sup, int sub ) const
     return true;
 }
 
-const std::vector<int> MeshSimplicial3D::getsupersimplices( int sup, int sub, int cell ) const
+const std::vector<int> MeshSimplicial3D::get_supersimplices( int sup, int sub, int cell ) const
 {
   
   if( sup == 3 && sub == 3 ) {
@@ -2579,11 +2579,11 @@ DenseMatrix MeshSimplicial3D::get_reflection_along_face( int f ) const
     const auto v0 = get_subsimplex( 3, 0, t0, local_v0 );
     const auto v1 = get_subsimplex( 3, 0, t1, local_v1 );
 
-    const auto vec_f0 = getcoordinates().getvectorclone( face_vertices[0] );  assert( vec_f0.getdimension() == 3 );
-    const auto vec_f1 = getcoordinates().getvectorclone( face_vertices[1] );  assert( vec_f1.getdimension() == 3 );
-    const auto vec_f2 = getcoordinates().getvectorclone( face_vertices[2] );  assert( vec_f2.getdimension() == 3 );
-    const auto vec_v0 = getcoordinates().getvectorclone( v0 );                assert( vec_v0.getdimension() == 3 );
-    const auto vec_v1 = getcoordinates().getvectorclone( v1 );                assert( vec_v1.getdimension() == 3 );
+    const auto vec_f0 = getCoordinates().getvectorclone( face_vertices[0] );  assert( vec_f0.getdimension() == 3 );
+    const auto vec_f1 = getCoordinates().getvectorclone( face_vertices[1] );  assert( vec_f1.getdimension() == 3 );
+    const auto vec_f2 = getCoordinates().getvectorclone( face_vertices[2] );  assert( vec_f2.getdimension() == 3 );
+    const auto vec_v0 = getCoordinates().getvectorclone( v0 );                assert( vec_v0.getdimension() == 3 );
+    const auto vec_v1 = getCoordinates().getvectorclone( v1 );                assert( vec_v1.getdimension() == 3 );
 
     DenseMatrix M0( 3, 3 );
     DenseMatrix M1( 3, 3 );
@@ -2609,10 +2609,10 @@ FloatVector MeshSimplicial3D::get_tetrahedron_midpoint( int t ) const
     assert( 0 <= t && t < counter_tetrahedra );
     FloatVector mid( getouterdimension() );
     for( int d = 0; d < getouterdimension(); d++ )
-      mid[d] = (   getcoordinates().getdata( get_tetrahedron_vertices(t)[0], d ) 
-                 + getcoordinates().getdata( get_tetrahedron_vertices(t)[1], d ) 
-                 + getcoordinates().getdata( get_tetrahedron_vertices(t)[2], d ) 
-                 + getcoordinates().getdata( get_tetrahedron_vertices(t)[3], d )
+      mid[d] = (   getCoordinates().getdata( get_tetrahedron_vertices(t)[0], d ) 
+                 + getCoordinates().getdata( get_tetrahedron_vertices(t)[1], d ) 
+                 + getCoordinates().getdata( get_tetrahedron_vertices(t)[2], d ) 
+                 + getCoordinates().getdata( get_tetrahedron_vertices(t)[3], d )
                 ) / 4.;
     return mid;
 }
@@ -2622,9 +2622,9 @@ FloatVector MeshSimplicial3D::get_face_midpoint( int f ) const
     assert( 0 <= f && f < counter_faces );
     FloatVector mid( getouterdimension() );
     for( int d = 0; d < getouterdimension(); d++ )
-      mid[d] = (   getcoordinates().getdata( get_face_vertices(f)[0], d ) 
-                 + getcoordinates().getdata( get_face_vertices(f)[1], d ) 
-                 + getcoordinates().getdata( get_face_vertices(f)[2], d )
+      mid[d] = (   getCoordinates().getdata( get_face_vertices(f)[0], d ) 
+                 + getCoordinates().getdata( get_face_vertices(f)[1], d ) 
+                 + getCoordinates().getdata( get_face_vertices(f)[2], d )
                 ) / 3.;
     return mid;
 }
@@ -2634,8 +2634,8 @@ FloatVector MeshSimplicial3D::get_edge_midpoint    ( int e ) const
     assert( 0 <= e && e < counter_edges );
     FloatVector mid( getouterdimension() );
     for( int d = 0; d < getouterdimension(); d++ )
-      mid[d] = (   getcoordinates().getdata( get_edge_vertices(e)[0], d ) 
-                 + getcoordinates().getdata( get_edge_vertices(e)[1], d )
+      mid[d] = (   getCoordinates().getdata( get_edge_vertices(e)[0], d ) 
+                 + getCoordinates().getdata( get_edge_vertices(e)[1], d )
                 ) / 2.;
     return mid;
 }
@@ -2645,7 +2645,7 @@ Float MeshSimplicial3D::get_edge_length( int e ) const
     assert( 0 <= e && e < counter_edges );
     Float length = 0.;
     for( int d = 0; d < getouterdimension(); d++ )
-      length += power_numerical( getcoordinates().getdata( get_edge_vertices(e)[0], d ) - getcoordinates().getdata( get_edge_vertices(e)[1], d ), 2. );
+      length += power_numerical( getCoordinates().getdata( get_edge_vertices(e)[0], d ) - getCoordinates().getdata( get_edge_vertices(e)[1], d ), 2. );
     return std::sqrt( length );
 }
 
@@ -2983,7 +2983,7 @@ void MeshSimplicial3D::merge( const MeshSimplicial3D& mesh )
     counter_faces      += mesh.counter_faces;
     counter_tetrahedra += mesh.counter_tetrahedra;
     
-    getcoordinates().append( mesh.getcoordinates() );
+    getCoordinates().append( mesh.getCoordinates() );
     
     check();
 }
@@ -2999,7 +2999,7 @@ std::string MeshSimplicial3D::outputTikZ( bool boundary_only ) const
 {
     std::ostringstream os;
     
-    const auto& coords = getcoordinates();
+    const auto& coords = getCoordinates();
     
     for( int n = 0; n < coords.getnumber(); n++ )
     {
@@ -3033,7 +3033,7 @@ std::size_t MeshSimplicial3D::memorysize() const
 {
     std::size_t ret = 0;
 
-    ret += getcoordinates().memorysize();
+    ret += getCoordinates().memorysize();
 
     ret += sizeof(getinnerdimension());
     ret += sizeof(getouterdimension());

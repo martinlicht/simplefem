@@ -303,7 +303,7 @@ int main( int argc, char *argv[] )
                     
                     assert( r == 1 );
 
-                    vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
+                    vtk.write_vertex_scalar_data( sol, "iterativesolution_scalar_data" , 1.0 );
                     
                     fs.close();
                 }

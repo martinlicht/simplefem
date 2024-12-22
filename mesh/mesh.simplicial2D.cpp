@@ -85,7 +85,7 @@ MeshSimplicial2D::MeshSimplicial2D(
 
 {
     
-    getcoordinates() = coords;
+    getCoordinates() = coords;
     
     /* 0. sort the triangle vertices */
 
@@ -291,7 +291,7 @@ MeshSimplicial2D::MeshSimplicial2D(
 
 {
     
-    getcoordinates() = coords;
+    getCoordinates() = coords;
     
     /* set the flags to the Null flag */
     flags_edges.resize   ( counter_edges    );
@@ -341,7 +341,7 @@ bool MeshSimplicial2D::is_equal_to( const MeshSimplicial2D& mesh ) const
          &&
          getouterdimension() == mesh.getouterdimension()
          &&
-         getcoordinates() == mesh.getcoordinates()
+         getCoordinates() == mesh.getCoordinates()
          &&
          flags_triangles == mesh.flags_triangles
          &&
@@ -382,7 +382,7 @@ void MeshSimplicial2D::check() const
     assert( counter_vertices == data_vertex_firstparent_edge.size() );
     assert( counter_vertices == data_vertex_firstparent_triangle.size() );
     
-    assert( count_vertices() == getcoordinates().getnumber() );
+    assert( count_vertices() == getCoordinates().getnumber() );
     
     assert( counter_triangles == flags_triangles.size() );
     assert( counter_edges     == flags_edges.size()     );
@@ -826,7 +826,7 @@ bool MeshSimplicial2D::has_subsimplices_listed( int sup, int sub ) const
     return true;
 }
 
-IndexMap MeshSimplicial2D::getsubsimplices( int sup, int sub, int cell ) const
+IndexMap MeshSimplicial2D::get_subsimplices( int sup, int sub, int cell ) const
 {
   assert( 0 <= sub && sub <= sup && sup <= 2 );
   assert( 0 <= cell );
@@ -881,7 +881,7 @@ bool MeshSimplicial2D::has_supersimplices_listed( int sup, int sub ) const
     return true;
 }
 
-const std::vector<int> MeshSimplicial2D::getsupersimplices( int sup, int sub, int cell ) const
+const std::vector<int> MeshSimplicial2D::get_supersimplices( int sup, int sub, int cell ) const
 {
   
   if( sup == 2 && sub == 2 ) {
@@ -1777,7 +1777,7 @@ void MeshSimplicial2D::bisect_edge( int e )
       
     }
     
-    getcoordinates().append( midcoordinate );
+    getCoordinates().append( midcoordinate );
     
     
     /*
@@ -2205,7 +2205,7 @@ void MeshSimplicial2D::uniformrefinement()
     data_vertex_firstparent_edge.resize     ( counter_vertices + counter_edges         , nullindex                );
     data_edge_nextparents_of_vertices.resize( 2 * counter_edges + 3 * counter_triangles, { nullindex, nullindex } );
     
-    getcoordinates().addcoordinates( counter_edges );
+    getCoordinates().addcoordinates( counter_edges );
     
     
     /*
@@ -2244,7 +2244,7 @@ void MeshSimplicial2D::uniformrefinement()
     
     for( int e = 0; e < counter_edges; e++ )
     {
-      getcoordinates().loadvector( counter_vertices + e, get_edge_midpoint( e ) );
+      getCoordinates().loadvector( counter_vertices + e, get_edge_midpoint( e ) );
     }
     
     
@@ -2755,12 +2755,12 @@ void MeshSimplicial2D::midpoint_refinement( int t )
     data_vertex_firstparent_edge.resize     ( counter_vertices + 1,             nullindex   );
     data_edge_nextparents_of_vertices.resize( counter_edges + 3,   { nullindex, nullindex } );
     
-    getcoordinates().addcoordinates( 1 );
+    getCoordinates().addcoordinates( 1 );
     
     
     /* load the new coordinate */
     
-    getcoordinates().loadvector( counter_vertices, get_triangle_midpoint( t ) );
+    getCoordinates().loadvector( counter_vertices, get_triangle_midpoint( t ) );
     
     
     /* assemble the data and auxiliary variables */
@@ -2994,9 +2994,9 @@ FloatVector MeshSimplicial2D::get_triangle_midpoint( int t ) const
     assert( 0 <= t && t < counter_triangles );
     FloatVector mid( getouterdimension() );
     for( int d = 0; d < getouterdimension(); d++ )
-      mid[d] = (   getcoordinates().getdata( get_triangle_vertices(t)[0], d ) 
-                 + getcoordinates().getdata( get_triangle_vertices(t)[1], d ) 
-                 + getcoordinates().getdata( get_triangle_vertices(t)[2], d )
+      mid[d] = (   getCoordinates().getdata( get_triangle_vertices(t)[0], d ) 
+                 + getCoordinates().getdata( get_triangle_vertices(t)[1], d ) 
+                 + getCoordinates().getdata( get_triangle_vertices(t)[2], d )
                 ) / 3.;
     return mid;
 }
@@ -3006,8 +3006,8 @@ FloatVector MeshSimplicial2D::get_edge_midpoint    ( int e ) const
     assert( 0 <= e && e < counter_edges );
     FloatVector mid( getouterdimension() );
     for( int d = 0; d < getouterdimension(); d++ )
-      mid[d] = (   getcoordinates().getdata( get_edge_vertices(e)[0], d ) 
-                 + getcoordinates().getdata( get_edge_vertices(e)[1], d )
+      mid[d] = (   getCoordinates().getdata( get_edge_vertices(e)[0], d ) 
+                 + getCoordinates().getdata( get_edge_vertices(e)[1], d )
                 ) / 2.;
     return mid;
 }
@@ -3017,7 +3017,7 @@ Float MeshSimplicial2D::get_edge_length( int e ) const
     assert( 0 <= e && e < counter_edges );
     Float length = 0.;
     for( int d = 0; d < getouterdimension(); d++ )
-      length += power_numerical( getcoordinates().getdata( get_edge_vertices(e)[0], d ) - getcoordinates().getdata( get_edge_vertices(e)[1], d ), 2. );
+      length += power_numerical( getCoordinates().getdata( get_edge_vertices(e)[0], d ) - getCoordinates().getdata( get_edge_vertices(e)[1], d ), 2. );
     return std::sqrt( length );
 }
         
@@ -3196,7 +3196,7 @@ void MeshSimplicial2D::merge( const MeshSimplicial2D& mesh )
     counter_edges     += mesh.counter_edges;
     counter_triangles += mesh.counter_triangles;
     
-    getcoordinates().append( mesh.getcoordinates() );
+    getCoordinates().append( mesh.getCoordinates() );
     
     check();
 }
@@ -3224,7 +3224,7 @@ std::string MeshSimplicial2D::outputTikZ() const
 {
     std::ostringstream os;
     
-    const auto& coords = getcoordinates();
+    const auto& coords = getCoordinates();
     
     for( int n = 0; n < coords.getnumber(); n++ )
     {
@@ -3308,11 +3308,11 @@ std::string MeshSimplicial2D::outputSVG(
 ) const {
     std::ostringstream os;
 
-    auto coords = getcoordinates();
+    auto coords = getCoordinates();
 
     coords.shift( FloatVector{ 
-        -getcoordinates().getmin(0), 
-        -getcoordinates().getmin(1) 
+        -getCoordinates().getmin(0), 
+        -getCoordinates().getmin(1) 
     } );
 
     os << "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.200000\" width=\"100%\" height=\"100%\" "
@@ -3395,11 +3395,11 @@ std::string MeshSimplicial2D::outputLinearSVG(
     std::ostringstream os;
 
     // 1. copy coordinates and shift them 
-    auto coords = getcoordinates();
+    auto coords = getCoordinates();
 
     coords.shift( FloatVector{ 
-        -getcoordinates().getmin(0), 
-        -getcoordinates().getmin(1) 
+        -getCoordinates().getmin(0), 
+        -getCoordinates().getmin(1) 
     } );
 
     // 2. preamble 
@@ -3512,7 +3512,7 @@ std::size_t MeshSimplicial2D::memorysize() const
 {
     std::size_t ret = 0;
 
-    ret += getcoordinates().memorysize();
+    ret += getCoordinates().memorysize();
 
     ret += sizeof(getinnerdimension());
     ret += sizeof(getouterdimension());

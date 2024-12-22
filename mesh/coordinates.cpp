@@ -8,6 +8,7 @@
 #include <iterator>
 #include <vector>
 
+#include "../utility/random.hpp"
 #include "coordinates.hpp"
 
 
@@ -201,6 +202,15 @@ void Coordinates::shift( const FloatVector& add )
         FloatVector temp = getvectorclone( n );
         temp += add;
         loadvector( n, temp );
+    }
+}
+
+void Coordinates::shake_random( Float epsilon )
+{
+    for( int n = 0; n < number; n++ )
+    for( int d = 0; d < dimension; d++ )
+    {
+        data[ n * dimension + d ] += epsilon * random_uniform();
     }
 }
 

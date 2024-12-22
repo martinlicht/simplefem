@@ -240,7 +240,7 @@ int main( int argc, char *argv[] )
     
     for( int s = 0; s < M.count_simplices(2); s++ ) 
     {
-        if( M.getsupersimplices(3,2,s).size() > 1 ) continue;
+        if( M.get_supersimplices(3,2,s).size() > 1 ) continue;
         
         auto midpoint = M.get_midpoint(2,s);
 
@@ -471,8 +471,8 @@ int main( int argc, char *argv[] )
                     fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                     VTKWriter vtk( M, fs, getbasename(__FILE__) );
                     
-                    vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
-                    // vtk.writeCellVectorData_barycentricgradients( computed_grad, "gradient_interpolation" , 1.0 );
+                    vtk.write_vertex_scalar_data( sol, "iterativesolution_scalar_data" , 1.0 );
+                    // vtk.write_cell_vector_data_barycentricgradients( computed_grad, "gradient_interpolation" , 1.0 );
                     fs.close();
                 }
 

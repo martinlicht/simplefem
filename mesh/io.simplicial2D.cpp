@@ -57,7 +57,7 @@ void writeMeshSimplicial2D( std::ostream& out, const MeshSimplicial2D& mesh, boo
     out << mesh.count_vertices() << nl;
     
     if( sugar ) out << "external dimension: " << nl;
-    out << mesh.getcoordinates().getdimension() << nl;
+    out << mesh.getCoordinates().getdimension() << nl;
     
     /* triangle -> edges */
     
@@ -166,7 +166,7 @@ void writeMeshSimplicial2D( std::ostream& out, const MeshSimplicial2D& mesh, boo
     
     assert( out.good() );
     
-    writeCoordinates( out, mesh.getcoordinates(), sugar );
+    writeCoordinates( out, mesh.getCoordinates(), sugar );
 }
 
 

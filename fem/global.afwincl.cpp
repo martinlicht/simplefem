@@ -110,8 +110,8 @@ SparseMatrix FEECAFWInclusionMatrix( const Mesh& mesh, int n, int k, int r )
         
         // get inclusion index map
                 
-        IndexMap volume_vertices = mesh.getsubsimplices( n, 0, s        );
-        IndexMap face_vertices   = mesh.getsubsimplices( d, 0, index_fi );
+        IndexMap volume_vertices = mesh.get_subsimplices( n, 0, s        );
+        IndexMap face_vertices   = mesh.get_subsimplices( d, 0, index_fi );
         int inclusion_index = 0;
         for( ; inclusion_index < subsimplex_inclusions[d].size(); inclusion_index++ )
             if( face_vertices == volume_vertices * subsimplex_inclusions[d][inclusion_index] )
