@@ -800,8 +800,8 @@ int main( int argc, char *argv[] )
                             LOG << "CHEBYSHEV CSR" << nl;
                         
                             DiagonalOperator invprecon = InverseDiagonalPreconditioner( stiffness_csr_prelim );
-                            assert( invprecon.getdiagonal().isfinite() );
-                            assert( invprecon.getdiagonal().isnonnegative() );
+                            assert( invprecon.getdiagonal().is_finite() );
+                            assert( invprecon.getdiagonal().is_nonnegative() );
                             
                             FloatVector sol = sol_original;
                             const FloatVector rhs = rhs_original;

@@ -77,7 +77,7 @@ int main( int argc, char *argv[] )
                     field.random();
                     field.normalize();
                     
-                    assert( field.isfinite() );
+                    assert( field.is_finite() );
                     
                     const auto path_direct   = elevation_r_g * field;
                     

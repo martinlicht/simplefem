@@ -103,7 +103,7 @@ int main( int argc, char *argv[] )
                 field = flagmatrix * field;
                 if ( field.norm() > 0 ) field.normalize();
                 
-                assert( field.isfinite() );
+                assert( field.is_finite() );
                 
                 const auto included = inclusion * field;
                 

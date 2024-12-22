@@ -246,7 +246,7 @@ void MatrixCSR::scale ( Float s )
     for( auto& v : this->V ) v *= s;
 }
 
-bool MatrixCSR::isfinite() const 
+bool MatrixCSR::is_finite() const 
 {
     for( const Float& value : V )
         if( not std::isfinite(value) ) 

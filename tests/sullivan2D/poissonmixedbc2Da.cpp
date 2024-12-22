@@ -197,8 +197,8 @@ int main( int argc, char *argv[] )
                             FloatVector residual( rhs );
                             
                             const FloatVector diagonal = stiffness_csr.getDiagonal();
-                            assert( diagonal.isfinite() );
-                            assert( diagonal.isnonnegative() );
+                            assert( diagonal.is_finite() );
+                            assert( diagonal.is_nonnegative() );
                             
                             ConjugateGradientSolverCSR_SSOR( 
                                 sol.getdimension(), 

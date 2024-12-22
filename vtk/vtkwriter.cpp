@@ -10,7 +10,7 @@ VTKWriter::VTKWriter( const Mesh& m, std::ostream& os, const std::string& name )
 VTKWriter::VTKWriter( const Mesh& m, std::ostream& os, const std::string& name, const FloatVector& z )
 : VTKWriter( m, os, name, [&](int i) -> Float { return z[i]; } )
 {
-    assert( z.isfinite() );
+    assert( z.is_finite() );
 }
 
 VTKWriter::VTKWriter( const Mesh& m, std::ostream& os, const std::string& name, const std::function<Float(int)>& func_z )
@@ -67,7 +67,7 @@ VTKWriter VTKWriter::write_coordinate_block()
 VTKWriter VTKWriter::write_coordinate_block( const FloatVector& z )
 {
     assert( mesh.count_simplices(0) == z.getdimension() );
-    assert( z.isfinite() );
+    assert( z.is_finite() );
     write_coordinate_block( [&](int i)->Float { return z.at(i); } );
     return *this;
 }
@@ -262,7 +262,7 @@ VTKWriter VTKWriter::write_vertex_scalar_data( const std::function<FloatVector(c
 VTKWriter VTKWriter::write_vertex_scalar_data( const FloatVector& data, const std::string& name, Float scaling )
 {
     assert( data.getdimension() == mesh.count_simplices(0) );
-    assert( data.isfinite() );
+    assert( data.is_finite() );
 
     auto datafunction = [&](int v) -> Float { 
         assert( 0 <= v and v < this->mesh.count_simplices(0) );
@@ -314,7 +314,7 @@ VTKWriter VTKWriter::write_cell_scalar_data( const FloatVector& data, const std:
     const int topdim = mesh.getinnerdimension();
 
     assert( data.getdimension() == mesh.count_simplices(topdim) );
-    assert( data.isfinite() );
+    assert( data.is_finite() );
 
     auto datafunction = [&](int c) -> Float { 
         assert( 0 <= c and c < this->mesh.count_simplices(topdim) );
@@ -331,7 +331,7 @@ VTKWriter VTKWriter::write_cell_scalar_data_barycentricvolumes( const FloatVecto
     const int topdim = mesh.getinnerdimension();
     
     assert( v.getdimension() == mesh.count_simplices(topdim) * (mesh.getinnerdimension()+1) );
-    assert( v.isfinite() );
+    assert( v.is_finite() );
 
     auto sigmas = generateSigmas( IndexRange(1,topdim), IndexRange(0,topdim) );
 
@@ -433,9 +433,9 @@ VTKWriter VTKWriter::write_cell_vector_data(
     assert( datax.getdimension() == dataz.getdimension() );
     assert( datax.getdimension() == mesh.count_simplices(topdim) );
 
-    assert( datax.isfinite() );
-    assert( datay.isfinite() );
-    assert( dataz.isfinite() );
+    assert( datax.is_finite() );
+    assert( datay.is_finite() );
+    assert( dataz.is_finite() );
 
     
     auto datafunction = [&](int c) -> FloatVector { 
@@ -483,7 +483,7 @@ VTKWriter VTKWriter::write_cell_vector_data_barycentricgradients( const FloatVec
     const int topdim = mesh.getinnerdimension();
     
     assert( v.getdimension() == mesh.count_simplices(topdim) * (mesh.getinnerdimension()+1) );
-    assert( v.isfinite() );
+    assert( v.is_finite() );
 
     auto sigmas = generateSigmas( IndexRange(1,1), IndexRange(0,topdim) );
 
@@ -522,7 +522,7 @@ VTKWriter VTKWriter::write_cell_vector_data_barycentriccrosses( const FloatVecto
     assert( topdim == 3 );
     
     assert( v.getdimension() == 6 * mesh.count_simplices(topdim) );
-    assert( v.isfinite() );
+    assert( v.is_finite() );
 
     auto sigmas = generateSigmas( IndexRange(1,2), IndexRange(0,topdim) );
 
@@ -612,7 +612,7 @@ VTKWriter VTKWriter::write_cell_vector_data_Euclidean( int outerdim, const Float
     const int topdim = mesh.getinnerdimension();
     
     assert( v.getdimension() == mesh.count_simplices(topdim) * (mesh.getinnerdimension()+1) );
-    assert( v.isfinite() );
+    assert( v.is_finite() );
    
     auto datafunction = [&](int c) -> FloatVector {    
         
@@ -636,7 +636,7 @@ VTKWriter VTKWriter::write_point_cloud( const DenseMatrix& coords )
     current_stage = Stage::appendix;
     
     assert( coords.getdimin() == 2 or coords.getdimin() == 3 );
-    assert( coords.isfinite() );
+    assert( coords.is_finite() );
 
 
     os << "DATASET POLYDATA" << nl;

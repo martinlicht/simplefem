@@ -178,7 +178,7 @@ int main( int argc, char *argv[] )
         
                         LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                         
-                        assert( sol.isfinite() );
+                        assert( sol.is_finite() );
 
                         LOG << "...compute residual" << nl;
 

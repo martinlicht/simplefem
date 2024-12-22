@@ -153,7 +153,7 @@ int main( int argc, char *argv[] )
                     
                     auto commutator_error = interpol_exterior - scalar_diffmatrix * interpol_function;
                     
-                    assert( commutator_error.isfinite() );
+                    assert( commutator_error.is_finite() );
                     
                     Float commutator_error_mass = commutator_error * ( vector_massmatrix * commutator_error );
                     
@@ -174,7 +174,7 @@ int main( int argc, char *argv[] )
                     
                     auto commutator_error = interpol_exterior - vector_diffmatrix * interpol_function;
                     
-                    assert( commutator_error.isfinite() );
+                    assert( commutator_error.is_finite() );
                     
                     Float commutator_error_mass = commutator_error * ( pseudo_massmatrix * commutator_error );
                     
@@ -195,7 +195,7 @@ int main( int argc, char *argv[] )
                     
                     auto commutator_error = interpol_exterior - pseudo_diffmatrix * interpol_function;
                     
-                    assert( commutator_error.isfinite() );
+                    assert( commutator_error.is_finite() );
                     
                     Float commutator_error_mass = commutator_error * ( volume_massmatrix * commutator_error );
                     

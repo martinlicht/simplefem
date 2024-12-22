@@ -30,7 +30,7 @@ int main( int argc, char *argv[] )
             
             const auto EM = PointValuesOfMonomials( r, lpsbc );
             
-            assert( EM.issquare() );
+            assert( EM.is_square() );
         
             const auto EMinv = Inverse( EM );
         

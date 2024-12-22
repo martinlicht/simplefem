@@ -540,8 +540,8 @@ int main( int argc, char *argv[] )
                         
                             DiagonalOperator invprecon = InverseDiagonalPreconditioner( mass_prelim_csr );
 //                             invprecon.setentries( 1. );
-                            assert( invprecon.getdiagonal().isfinite() );
-                            assert( invprecon.getdiagonal().isnonnegative() );
+                            assert( invprecon.getdiagonal().is_finite() );
+                            assert( invprecon.getdiagonal().is_nonnegative() );
                             
                             FloatVector sol = sol_original;
                             const FloatVector rhs = rhs_original;
@@ -582,8 +582,8 @@ int main( int argc, char *argv[] )
                             LOG << "CGM SSOR preconditioner CSR" << nl;
                         
                             FloatVector diagonal = mass.getDiagonal();
-                            assert( diagonal.isfinite() );
-                            assert( diagonal.isnonnegative() );
+                            assert( diagonal.is_finite() );
+                            assert( diagonal.is_nonnegative() );
                             
                             FloatVector sol = sol_original;
                             const FloatVector rhs = rhs_original;
@@ -625,8 +625,8 @@ int main( int argc, char *argv[] )
                             LOG << "CGM Eisenstat-SSOR preconditioner CSR" << nl;
                         
                             FloatVector diagonal = mass.getDiagonal();
-                            assert( diagonal.isfinite() );
-                            assert( diagonal.isnonnegative() );
+                            assert( diagonal.is_finite() );
+                            assert( diagonal.is_nonnegative() );
                             
                             FloatVector sol = sol_original;
                             const FloatVector rhs = rhs_original;
@@ -668,8 +668,8 @@ int main( int argc, char *argv[] )
                             LOG << "CGM Rainbow-SSOR preconditioner CSR" << nl;
                         
                             FloatVector diagonal = mass.getDiagonal();
-                            assert( diagonal.isfinite() );
-                            assert( diagonal.isnonnegative() );
+                            assert( diagonal.is_finite() );
+                            assert( diagonal.is_nonnegative() );
                             
                             Rainbow rainbow( mass );
                         
@@ -714,8 +714,8 @@ int main( int argc, char *argv[] )
                             LOG << "CGM Eisenstat-Rainbow-SSOR preconditioner CSR" << nl;
                         
                             FloatVector diagonal = mass.getDiagonal();
-                            assert( diagonal.isfinite() );
-                            assert( diagonal.isnonnegative() );
+                            assert( diagonal.is_finite() );
+                            assert( diagonal.is_nonnegative() );
                             
                             Rainbow rainbow( mass );
                         
@@ -760,8 +760,8 @@ int main( int argc, char *argv[] )
                             LOG << "CHEBYSHEV CSR" << nl;
                         
                             DiagonalOperator invprecon = InverseDiagonalPreconditioner( mass_prelim_csr );
-                            assert( invprecon.getdiagonal().isfinite() );
-                            assert( invprecon.getdiagonal().isnonnegative() );
+                            assert( invprecon.getdiagonal().is_finite() );
+                            assert( invprecon.getdiagonal().is_nonnegative() );
                             
                             FloatVector sol = sol_original;
                             const FloatVector rhs = rhs_original;

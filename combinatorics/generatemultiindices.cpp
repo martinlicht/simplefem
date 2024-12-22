@@ -23,14 +23,14 @@ std::vector<MultiIndex> generateMultiIndices( const IndexRange& ir, int degree )
     
     /* if the index range is empty and the degree is zero, then only the empty mapping is returned */
     
-    if( ir.isempty() && degree == 0) {
+    if( ir.is_empty() && degree == 0) {
       ret.push_back( MultiIndex(ir) );
       return ret;
     }
     
     /* if the index range is empty and the degree is non-zero, we return an empty list */
     
-    if( ir.isempty() && degree > 0) {
+    if( ir.is_empty() && degree > 0) {
       assert( ret.size() == 0 );
       return ret;
     }

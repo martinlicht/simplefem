@@ -33,7 +33,7 @@ static Float lowest( const FloatVector vec, Float threshold )
 
 static Float PowerMethod( const LinearOperator& A, int repetitions )
 {
-    assert( A.issquare() );
+    assert( A.is_square() );
 
     auto x = FloatVector( A.getdimin() );
     x.random(); x.normalize();
@@ -49,7 +49,7 @@ static Float PowerMethod( const LinearOperator& A, int repetitions )
 
 UNUSED static Float InversePowerMethod( const LinearOperator& A, int repetitions )
 {
-    assert( A.issquare() );
+    assert( A.is_square() );
 
     auto x = FloatVector( A.getdimin() );
     x.random(); x.normalize();
@@ -71,7 +71,7 @@ UNUSED static Float InversePowerMethod( const LinearOperator& A, int repetitions
 
 // static FloatVector Eigenvalues( DenseMatrix A, int repetitions, Float shift = 0. )
 // {
-//     assert( A.issquare() );
+//     assert( A.is_square() );
 //     const int dim = A.getdimin();
 //     DenseMatrix Q(dim,dim), R(dim,dim);
 //     for( int p = 0; p < dim; p++) A(p,p) += shift;
@@ -87,7 +87,7 @@ UNUSED static Float InversePowerMethod( const LinearOperator& A, int repetitions
 
 static FloatVector Eigenvalues( DenseMatrix A, int repetitions, Float shift = 0. )
 {
-    assert( A.issquare() );
+    assert( A.is_square() );
     const int dim = A.getdimin();
     DenseMatrix L(dim,dim);
     for( int p = 0; p < dim; p++) A(p,p) += shift;
@@ -103,7 +103,7 @@ static FloatVector Eigenvalues( DenseMatrix A, int repetitions, Float shift = 0.
 
 // static FloatVector Eigenvalues( DenseMatrix A, int repetitions, Float shift = 0. )
 // {
-//     assert( A.issquare() );
+//     assert( A.is_square() );
 //     const int dim = A.getdimin();
 //     for( int p = 0; p < dim; p++) A(p,p) += shift;
     
@@ -122,7 +122,7 @@ static FloatVector Eigenvalues( DenseMatrix A, int repetitions, Float shift = 0.
 
 // static FloatVector Eigenvalues( DenseMatrix A, int repetitions, Float shift = 0. )
 // {
-//     assert( A.issquare() );
+//     assert( A.is_square() );
 //     const int dim = A.getdimin();
 //     for( int p = 0; p < dim; p++) A(p,p) += shift;
 //     DenseMatrix X(dim,dim), Q(dim,dim), R(dim,dim);
@@ -242,14 +242,14 @@ int main( int argc, char *argv[] )
                 auto w_stiff_vector = Transpose(w_incmatrix_vector) * stiffmatrix_vector * w_incmatrix_vector;
                 auto w_stiff_pseudo = Transpose(w_incmatrix_pseudo) * stiffmatrix_pseudo * w_incmatrix_pseudo;
                 
-                assert( s_mass_scalar.isfinite() ); assert( w_mass_scalar.isfinite() ); 
-                assert( s_mass_vector.isfinite() ); assert( w_mass_vector.isfinite() );
-                assert( s_mass_pseudo.isfinite() ); assert( w_mass_pseudo.isfinite() ); 
-                assert( s_mass_volume.isfinite() ); assert( w_mass_volume.isfinite() ); 
+                assert( s_mass_scalar.is_finite() ); assert( w_mass_scalar.is_finite() ); 
+                assert( s_mass_vector.is_finite() ); assert( w_mass_vector.is_finite() );
+                assert( s_mass_pseudo.is_finite() ); assert( w_mass_pseudo.is_finite() ); 
+                assert( s_mass_volume.is_finite() ); assert( w_mass_volume.is_finite() ); 
                 
-                assert( s_stiff_scalar.isfinite() ); assert( w_stiff_scalar.isfinite() ); 
-                assert( s_stiff_vector.isfinite() ); assert( w_stiff_vector.isfinite() );
-                assert( s_stiff_pseudo.isfinite() ); assert( w_stiff_pseudo.isfinite() ); 
+                assert( s_stiff_scalar.is_finite() ); assert( w_stiff_scalar.is_finite() ); 
+                assert( s_stiff_vector.is_finite() ); assert( w_stiff_vector.is_finite() );
+                assert( s_stiff_pseudo.is_finite() ); assert( w_stiff_pseudo.is_finite() ); 
                 
                 LOG << "...diagonalize" << nl;
                 
@@ -275,23 +275,23 @@ int main( int argc, char *argv[] )
                 auto w_diagonal_stiff_vector = Eigenvalues( w_stiff_vector, repetitions, shift );
                 auto w_diagonal_stiff_pseudo = Eigenvalues( w_stiff_pseudo, repetitions, shift );
                 
-                assert( s_diagonal_mass_scalar.isfinite() ); assert( s_diagonal_mass_scalar.isnonnegative() );
-                assert( s_diagonal_mass_vector.isfinite() ); assert( s_diagonal_mass_vector.isnonnegative() );
-                assert( s_diagonal_mass_pseudo.isfinite() ); assert( s_diagonal_mass_pseudo.isnonnegative() );
-                assert( s_diagonal_mass_volume.isfinite() ); assert( s_diagonal_mass_volume.isnonnegative() );
+                assert( s_diagonal_mass_scalar.is_finite() ); assert( s_diagonal_mass_scalar.is_nonnegative() );
+                assert( s_diagonal_mass_vector.is_finite() ); assert( s_diagonal_mass_vector.is_nonnegative() );
+                assert( s_diagonal_mass_pseudo.is_finite() ); assert( s_diagonal_mass_pseudo.is_nonnegative() );
+                assert( s_diagonal_mass_volume.is_finite() ); assert( s_diagonal_mass_volume.is_nonnegative() );
                 
-                assert( w_diagonal_mass_scalar.isfinite() ); assert( w_diagonal_mass_scalar.isnonnegative() );
-                assert( w_diagonal_mass_vector.isfinite() ); assert( w_diagonal_mass_vector.isnonnegative() );
-                assert( w_diagonal_mass_pseudo.isfinite() ); assert( w_diagonal_mass_pseudo.isnonnegative() );
-                assert( w_diagonal_mass_volume.isfinite() ); assert( w_diagonal_mass_volume.isnonnegative() );
+                assert( w_diagonal_mass_scalar.is_finite() ); assert( w_diagonal_mass_scalar.is_nonnegative() );
+                assert( w_diagonal_mass_vector.is_finite() ); assert( w_diagonal_mass_vector.is_nonnegative() );
+                assert( w_diagonal_mass_pseudo.is_finite() ); assert( w_diagonal_mass_pseudo.is_nonnegative() );
+                assert( w_diagonal_mass_volume.is_finite() ); assert( w_diagonal_mass_volume.is_nonnegative() );
 
-                assert( s_diagonal_stiff_scalar.isfinite() ); assert( s_diagonal_stiff_scalar.isnonnegative() );
-                assert( s_diagonal_stiff_vector.isfinite() ); assert( s_diagonal_stiff_vector.isnonnegative() );
-                assert( s_diagonal_stiff_pseudo.isfinite() ); assert( s_diagonal_stiff_pseudo.isnonnegative() );
+                assert( s_diagonal_stiff_scalar.is_finite() ); assert( s_diagonal_stiff_scalar.is_nonnegative() );
+                assert( s_diagonal_stiff_vector.is_finite() ); assert( s_diagonal_stiff_vector.is_nonnegative() );
+                assert( s_diagonal_stiff_pseudo.is_finite() ); assert( s_diagonal_stiff_pseudo.is_nonnegative() );
                 
-                assert( w_diagonal_stiff_scalar.isfinite() ); assert( w_diagonal_stiff_scalar.isnonnegative() );
-                assert( w_diagonal_stiff_vector.isfinite() ); assert( w_diagonal_stiff_vector.isnonnegative() );
-                assert( w_diagonal_stiff_pseudo.isfinite() ); assert( w_diagonal_stiff_pseudo.isnonnegative() );
+                assert( w_diagonal_stiff_scalar.is_finite() ); assert( w_diagonal_stiff_scalar.is_nonnegative() );
+                assert( w_diagonal_stiff_vector.is_finite() ); assert( w_diagonal_stiff_vector.is_nonnegative() );
+                assert( w_diagonal_stiff_pseudo.is_finite() ); assert( w_diagonal_stiff_pseudo.is_nonnegative() );
                 
                 max_s_scalar_mass[r-r_min] = s_diagonal_mass_scalar.maxnorm();
                 max_s_vector_mass[r-r_min] = s_diagonal_mass_vector.maxnorm();

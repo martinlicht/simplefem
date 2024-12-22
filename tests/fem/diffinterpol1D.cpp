@@ -91,7 +91,7 @@ int main( int argc, char *argv[] )
                     
                     auto commutator_error = interpol_exterior - scalar_diffmatrix * interpol_function;
                     
-                    assert( commutator_error.isfinite() );
+                    assert( commutator_error.is_finite() );
                     
                     Float commutator_error_mass = commutator_error * ( vector_massmatrix * commutator_error );
                     

@@ -133,7 +133,7 @@ SparseMatrix FEECBrokenTraceMatrix( const Mesh& mesh, int n, int k, int r, bool 
             const MultiIndex cell_multi = MultiIndex( IndexRange(0,n), [&face_multi,&inclusion_face_to_cell]( int p ) -> int {
                                             assert( inclusion_face_to_cell.getTargetRange().contains(p) ); 
                                             if( inclusion_face_to_cell.has_value_in_range(p) )
-                                                return face_multi.at( inclusion_face_to_cell.preimageof(p) );
+                                                return face_multi.at( inclusion_face_to_cell.get_preimage_of(p) );
                                             else
                                                 return 0;
                                         } );
@@ -169,7 +169,7 @@ SparseMatrix FEECBrokenTraceMatrix( const Mesh& mesh, int n, int k, int r, bool 
     
     }
 
-    assert( ret.isfinite() );
+    assert( ret.is_finite() );
     return ret;
     
 }

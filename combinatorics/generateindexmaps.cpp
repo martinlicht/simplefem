@@ -18,7 +18,7 @@ std::vector<IndexMap> generateEmptyMap( const IndexRange& from, const IndexRange
     
     from.check();
     to.check();
-    assert( from.isempty() );
+    assert( from.is_empty() );
     
     const IndexMap myempty = IndexMap( from, to, std::vector<int>(0) );
     myempty.check();
@@ -49,10 +49,10 @@ std::vector<IndexMap> generateIndexMaps( const IndexRange& from, const IndexRang
     from.check();
     to.check();
     
-    if( from.isempty() )
+    if( from.is_empty() )
         return generateEmptyMap( from, to );
     
-    if( to.isempty() )
+    if( to.is_empty() )
         return std::vector<IndexMap>();
     
     assert( from.cardinality() > 0 );
@@ -111,11 +111,11 @@ std::vector<IndexMap> generatePermutations( const IndexRange& ir )
     ret.reserve( factorial_integer( ir.cardinality() ) );
     
     for( const auto& mapping : allmappings )
-        if( mapping.isbijective() )
+        if( mapping.is_bijective() )
         ret.push_back( mapping );
             
     for( const auto& perm : ret )
-        assert( (perm.check(),true) && perm.isbijective() );
+        assert( (perm.check(),true) && perm.is_bijective() );
     
     if( /* DISABLES CODE */ ( false ) ){ 
         std::mt19937 g( 456789123 );
@@ -130,7 +130,7 @@ int signPermutation( const IndexMap& im )
 {
     
     im.check();
-    assert( im.isbijective() );
+    assert( im.is_bijective() );
     assert( im.getSourceRange() == im.getTargetRange() );
     
     const IndexRange& ir = im.getSourceRange();
@@ -198,18 +198,18 @@ std::vector<IndexMap> generateSigmas( const IndexRange& from, const IndexRange& 
     
     std::vector<IndexMap> ret;
     
-    if( from.isempty() ) 
+    if( from.is_empty() ) 
         assert( allmappings.size() == 1 ); 
     
     ret.reserve( binomial_integer( to.cardinality(), from.cardinality() ) );
     
     for( const auto& mapping : allmappings )
-        if( mapping.isstrictlyascending() )
+        if( mapping.is_strictly_ascending() )
             ret.push_back( mapping );
             
     for( const auto& sigma : ret ) {
         sigma.check();
-        assert( sigma.isstrictlyascending() );
+        assert( sigma.is_strictly_ascending() );
     }
     
     if( /* DISABLES CODE */ ( false ) ){ 

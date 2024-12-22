@@ -120,7 +120,7 @@ void TransposeSquareInSitu( DenseMatrix& src )
 
 Float Determinant( const DenseMatrix& A )
 {
-    assert( A.issquare() );
+    assert( A.is_square() );
 
     // LOG << A.getdimin() << nl;
     
@@ -199,7 +199,7 @@ Float Determinant( const DenseMatrix& A )
 
 Float Determinant_laplaceexpansion( const DenseMatrix& A )
 {
-    assert( A.issquare() );
+    assert( A.is_square() );
     
     if( A.getdimin() == 0 )
         return 1.;
@@ -234,7 +234,7 @@ Float Determinant_laplaceexpansion( const DenseMatrix& A )
 
 Float Determinant_gauss( DenseMatrix A )
 {
-    assert( A.issquare() );
+    assert( A.is_square() );
     
     if( A.getdimin() == 0 )
         return 1.;
@@ -288,7 +288,7 @@ Float Determinant_gauss( DenseMatrix A )
 
 Float Determinant_bareiss( DenseMatrix A )
 {
-    assert( A.issquare() );
+    assert( A.is_square() );
     
     if( A.getdimin() == 0 )
         return 1.;
@@ -355,7 +355,7 @@ Float Determinant_bareiss( DenseMatrix A )
 
 DenseMatrix CofactorMatrix( const DenseMatrix& A )
 {
-  assert( A.issquare() );
+  assert( A.is_square() );
   
   if( A.getdimin() == 0 ) 
     return DenseMatrix( 0, 0 );
@@ -413,7 +413,7 @@ DenseMatrix CofactorMatrix( const DenseMatrix& A )
 DenseMatrix Inverse( DenseMatrix A )
 {
     
-    assert( A.issquare() );
+    assert( A.is_square() );
     if( A.getdimin() == 1 ) {
 
         return DenseMatrix( 1, 1, 1. / A(0,0) );
@@ -466,7 +466,7 @@ void Inverse_InSitu( DenseMatrix& A )
 
 void Inverse_CramersRule_InSitu( DenseMatrix& A )
 {
-    assert( A.issquare() ); 
+    assert( A.is_square() ); 
     // Float det = Determinant_laplaceexpansion( A );
     // assert( absolute( det ) > machine_epsilon );
     
@@ -484,7 +484,7 @@ void Inverse_CramersRule_InSitu( DenseMatrix& A )
 void Inverse_gauss_InSitu( DenseMatrix& mat, bool pivoting )
 {
     
-    assert( mat.issquare() );
+    assert( mat.is_square() );
     
     const int n = mat.getdimout();
     
@@ -567,7 +567,7 @@ void Inverse_gauss_InSitu( DenseMatrix& mat, bool pivoting )
 
 // void InverseAndDeterminant( const DenseMatrix& A, DenseMatrix& Ainv, Float& Adet )
 // {
-//     assert( A.issquare() ); 
+//     assert( A.is_square() ); 
 //     DenseMatrix Cof = CofactorMatrix( A );
 //     Adet = Determinant( A );
 //     Ainv = Cof / Adet;
@@ -589,7 +589,7 @@ void Inverse_gauss_InSitu( DenseMatrix& mat, bool pivoting )
 DenseMatrix SubdeterminantMatrixSquare( const DenseMatrix& A, int k )
 {
     A.check();
-    assert( A.issquare() );
+    assert( A.is_square() );
     assert( 0 <= k && k <= A.getdimin() );
 
     // performance "hacks", which can be disabled at any time
@@ -618,7 +618,7 @@ DenseMatrix SubdeterminantMatrix( const DenseMatrix& A, int k )
     A.check();
     assert( 0 <= k && k <= A.getdimin() && k <= A.getdimout() );
 
-    if( A.issquare() ) return SubdeterminantMatrixSquare(A,k);
+    if( A.is_square() ) return SubdeterminantMatrixSquare(A,k);
 
     // performance "hacks", which can be disabled at any time
     if( k == 0 ) return DenseMatrix(1,1,1.);

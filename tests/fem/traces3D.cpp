@@ -137,9 +137,9 @@ int main( int argc, char *argv[] )
 
                 auto traces_of_field = trace * included_field;
 
-                assert( field.isfinite()           );
-                assert( included_field.isfinite()  );
-                assert( traces_of_field.isfinite() );
+                assert( field.is_finite()           );
+                assert( included_field.is_finite()  );
+                assert( traces_of_field.is_finite() );
 
                 if( k != M.getinnerdimension() )
                 for( int e = 0; e < M.count_simplices(M.getinnerdimension()-1); e++ )

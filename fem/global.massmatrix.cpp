@@ -58,7 +58,7 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
     
     DenseMatrix polyMM = polynomialmassmatrix( n, r );
 
-    assert( polyMM.issquare() );
+    assert( polyMM.is_square() );
     assert( polyMM.getdimin() == binomial_integer( n+r, n ) );
     
     #if defined(_OPENMP)
@@ -74,10 +74,10 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
         DenseMatrix GPM    = mesh.getGradientProductMatrix( n, s );
         // DenseMatrix GPM    = calcAtA( mesh.getGradientMatrix( n, s ) );
             
-        assert( GPM.isfinite() );
+        assert( GPM.is_finite() );
         if( not ( GPM - calcAtA( mesh.getGradientMatrix( n, s ) ) ).is_numerically_small() ){
             const auto AtA = calcAtA( mesh.getGradientMatrix( n, s ) );
-            assert( AtA.isfinite() );
+            assert( AtA.is_finite() );
             LOG << AtA << nl;
             LOG << GPM << nl;
             LOG << ( GPM - AtA ).norm() << nl;

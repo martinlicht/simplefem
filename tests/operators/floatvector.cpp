@@ -128,70 +128,70 @@ int main( int argc, char *argv[] )
 
         LOG << FloatVector {3} << nl;
 
-        LOG << "positive:     (no ) " << a.ispositive() << nl;
-        LOG << "negative:     (no ) " << a.isnegative() << nl;
-        LOG << "non-negative: (yes) " << a.isnonnegative() << nl;
-        LOG << "non-positive: (no ) " << a.isnonpositive() << nl;
-        LOG << "zero:         (no ) " << a.iszero() << nl;
+        LOG << "positive:     (no ) " << a.is_positive() << nl;
+        LOG << "negative:     (no ) " << a.is_negative() << nl;
+        LOG << "non-negative: (yes) " << a.is_nonnegative() << nl;
+        LOG << "non-positive: (no ) " << a.is_nonpositive() << nl;
+        LOG << "zero:         (no ) " << a.is_zero() << nl;
 
-        LOG << "positive:     (no ) " << b.ispositive() << nl;
-        LOG << "negative:     (no ) " << b.isnegative() << nl;
-        LOG << "non-negative: (no ) " << b.isnonnegative() << nl;
-        LOG << "non-positive: (yes) " << b.isnonpositive() << nl;
-        LOG << "zero:         (no ) " << b.iszero() << nl;
+        LOG << "positive:     (no ) " << b.is_positive() << nl;
+        LOG << "negative:     (no ) " << b.is_negative() << nl;
+        LOG << "non-negative: (no ) " << b.is_nonnegative() << nl;
+        LOG << "non-positive: (yes) " << b.is_nonpositive() << nl;
+        LOG << "zero:         (no ) " << b.is_zero() << nl;
 
-        LOG << "positive:     (yes) " << c.ispositive() << nl;
-        LOG << "negative:     (no ) " << c.isnegative() << nl;
-        LOG << "non-positive: (no ) " << c.isnonpositive() << nl;
-        LOG << "non-negative: (yes) " << c.isnonnegative() << nl;
-        LOG << "zero:         (no ) " << c.iszero() << nl;
+        LOG << "positive:     (yes) " << c.is_positive() << nl;
+        LOG << "negative:     (no ) " << c.is_negative() << nl;
+        LOG << "non-positive: (no ) " << c.is_nonpositive() << nl;
+        LOG << "non-negative: (yes) " << c.is_nonnegative() << nl;
+        LOG << "zero:         (no ) " << c.is_zero() << nl;
 
-        LOG << "positive:     (no ) " << d.ispositive()   << nl;
-        LOG << "negative:     (yes) " << d.isnegative() << nl;
-        LOG << "non-positive: (yes) " << d.isnonpositive() << nl;
-        LOG << "non-negative: (no ) " << d.isnonnegative() << nl;
-        LOG << "zero:         (no ) " << d.iszero() << nl;
+        LOG << "positive:     (no ) " << d.is_positive()   << nl;
+        LOG << "negative:     (yes) " << d.is_negative() << nl;
+        LOG << "non-positive: (yes) " << d.is_nonpositive() << nl;
+        LOG << "non-negative: (no ) " << d.is_nonnegative() << nl;
+        LOG << "zero:         (no ) " << d.is_zero() << nl;
 
-        LOG << "positive:     (no ) " << e.ispositive()   << nl;
-        LOG << "negative:     (no ) " << e.isnegative()   << nl;
-        LOG << "non-positive: (yes) " << e.isnonpositive() << nl;
-        LOG << "non-negative: (yes) " << e.isnonnegative() << nl;
-        LOG << "zero:         (yes) " << e.iszero()       << nl;
+        LOG << "positive:     (no ) " << e.is_positive()   << nl;
+        LOG << "negative:     (no ) " << e.is_negative()   << nl;
+        LOG << "non-positive: (yes) " << e.is_nonpositive() << nl;
+        LOG << "non-negative: (yes) " << e.is_nonnegative() << nl;
+        LOG << "zero:         (yes) " << e.is_zero()       << nl;
 
         // Assertions for vector a
-        assert(a.ispositive() == false);
-        assert(a.isnegative() == false);
-        assert(a.isnonnegative() == true);
-        assert(a.isnonpositive() == false);
-        assert(a.iszero() == false);
+        assert(a.is_positive() == false);
+        assert(a.is_negative() == false);
+        assert(a.is_nonnegative() == true);
+        assert(a.is_nonpositive() == false);
+        assert(a.is_zero() == false);
 
         // Assertions for vector b
-        assert(b.ispositive() == false);
-        assert(b.isnegative() == false);
-        assert(b.isnonnegative() == false);
-        assert(b.isnonpositive() == true);
-        assert(b.iszero() == false);
+        assert(b.is_positive() == false);
+        assert(b.is_negative() == false);
+        assert(b.is_nonnegative() == false);
+        assert(b.is_nonpositive() == true);
+        assert(b.is_zero() == false);
 
         // Assertions for vector c
-        assert(c.ispositive() == true);
-        assert(c.isnegative() == false);
-        assert(c.isnonnegative() == true);
-        assert(c.isnonpositive() == false);
-        assert(c.iszero() == false);
+        assert(c.is_positive() == true);
+        assert(c.is_negative() == false);
+        assert(c.is_nonnegative() == true);
+        assert(c.is_nonpositive() == false);
+        assert(c.is_zero() == false);
 
         // Assertions for vector d
-        assert(d.ispositive() == false);
-        assert(d.isnegative() == true);
-        assert(d.isnonnegative() == false);
-        assert(d.isnonpositive() == true);
-        assert(d.iszero() == false);
+        assert(d.is_positive() == false);
+        assert(d.is_negative() == true);
+        assert(d.is_nonnegative() == false);
+        assert(d.is_nonpositive() == true);
+        assert(d.is_zero() == false);
 
         // Assertions for vector e
-        assert(e.ispositive() == false);
-        assert(e.isnegative() == false);
-        assert(e.isnonnegative() == true);
-        assert(e.isnonpositive() == true);
-        assert(e.iszero() == true);
+        assert(e.is_positive() == false);
+        assert(e.is_negative() == false);
+        assert(e.is_nonnegative() == true);
+        assert(e.is_nonpositive() == true);
+        assert(e.is_zero() == true);
 
         // LOG << "norm: (3.162)" << a.norm() << space << a.normalize().norm() << nl;
         // LOG << "norm: (3.162)" << b.norm() << space << b.normalize().norm() << nl;

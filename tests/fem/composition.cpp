@@ -118,7 +118,7 @@ int main( int argc, char *argv[] )
                     vec.zero();
                     vec.random();
                     vec.normalize();
-                    assert( vec.isfinite() );
+                    assert( vec.is_finite() );
                     
                     // vs COO1
                     {

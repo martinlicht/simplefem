@@ -47,9 +47,9 @@ DenseMatrix InterpolationPointsInBarycentricCoordinates( int n, int r )
         ret.setcolumn( i, FloatVector( multi_indices[i].getvalues() ).shift( delta ).scaleinverse( r + (n+1) * delta ) );
     // The scaling factor ensures that the entries define a convex combination 
 
-    assert( ret.isfinite() );
+    assert( ret.is_finite() );
     for( int i = 0; i < ret.getdimin(); i++ ) {
-        assert( ret.getcolumn(i).isnonnegative() );
+        assert( ret.getcolumn(i).is_nonnegative() );
         assert( ret.getcolumn(i).sumnorm() > 0.9999 && ret.getcolumn(i).sumnorm() < 1.0001 );
     }
     
@@ -102,7 +102,7 @@ DenseMatrix PointValuesOfMonomials( int r, const DenseMatrix& bcs )
                 ret(row,col) *= power_numerical( bcs(d,row), mis[col][d] );
     }
     
-    assert( ret.isfinite() );
+    assert( ret.is_finite() );
     
     return ret;
     
@@ -164,7 +164,7 @@ DenseMatrix LagrangePolynomialCoefficients( int n, int r )
 //     for( int c = 0; c < J.getdimout(); c++ )
 //         ret( r+1, c ) = F(r,c);
     
-//     assert( ret.isfinite() );
+//     assert( ret.is_finite() );
     
 //     return ret;
 // }
@@ -197,7 +197,7 @@ DenseMatrix EvaluateField(
     assert( 0 <= outerdim );
     assert( 0 <= k && k <= outerdim );
     assert( lagrangepoints_eucl.getdimout() == outerdim );
-    assert( lagrangepoints_eucl.isfinite() );
+    assert( lagrangepoints_eucl.is_finite() );
     
     const auto fielddim = binomial_integer(outerdim,k);
     
@@ -209,11 +209,11 @@ DenseMatrix EvaluateField(
     {
         const auto evaluation_point = lagrangepoints_eucl.getcolumn(p);
 
-        assert( evaluation_point.isfinite() );
+        assert( evaluation_point.is_finite() );
         
         const auto value = field( evaluation_point );
         
-        Assert( value.isfinite(), evaluation_point, value );
+        Assert( value.is_finite(), evaluation_point, value );
         
         assert( value.getdimension() == binomial_integer( outerdim, k ) );
         
@@ -277,8 +277,8 @@ FloatVector Interpolation(
     assert( lagrangepoints_baryc.getdimout() == dim+1 );
     assert( M.getdimout()    == SullivanSpanSize(dim,0,r) );
     assert( M.getdimin()     == SullivanSpanSize(dim,0,r) );
-    assert( M.isfinite()    );
-    assert( Minv.isfinite() );
+    assert( M.is_finite()    );
+    assert( Minv.is_finite() );
     
     #if defined(_OPENMP)
     #pragma omp parallel for
@@ -335,18 +335,18 @@ FloatVector Interpolation(
 
         #ifndef NDEBUG
 
-        assert( lagrangepoints_eucl.isfinite() );
-        assert( P.isfinite() );
-        assert( InterpolationMatrix.isfinite() );
-        assert( Evaluations.isfinite()      );
-        assert( EvaluationVector.isfinite() );
+        assert( lagrangepoints_eucl.is_finite() );
+        assert( P.is_finite() );
+        assert( InterpolationMatrix.is_finite() );
+        assert( Evaluations.is_finite()      );
+        assert( EvaluationVector.is_finite() );
         
-        assert( localResult.isfinite() );
+        assert( localResult.is_finite() );
 
         if( k == 0 ) {
             
-            assert( ( P - DenseMatrix( 1, 1, 1. ) ).iszero() );
-            assert( ( InterpolationMatrix - Minv ).iszero() );
+            assert( ( P - DenseMatrix( 1, 1, 1. ) ).is_zero() );
+            assert( ( InterpolationMatrix - Minv ).is_zero() );
             assert( ( InterpolationMatrix - Minv ).is_numerically_small() );
             
             if( not ( M * localResult - EvaluationVector ).is_numerically_small() ) {

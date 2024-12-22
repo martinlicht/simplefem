@@ -18,9 +18,9 @@ int main( int argc, char *argv[] )
         IndexRange irE2(  5,  1 );
         IndexRange irE3( -2, -3 );
         
-        assert( irE1.isempty() );
-        assert( irE2.isempty() );
-        assert( irE3.isempty() );
+        assert( irE1.is_empty() );
+        assert( irE2.is_empty() );
+        assert( irE3.is_empty() );
         
         assert( irE1.cardinality() == 0 );
         assert( irE2.cardinality() == 0 );
@@ -48,10 +48,10 @@ int main( int argc, char *argv[] )
         IndexRange irC(-2,-2 );
         IndexRange irD( 4, 9 );
         
-        assert( not irA.isempty() );
-        assert( not irB.isempty() );
-        assert( not irC.isempty() );
-        assert( not irD.isempty() );
+        assert( not irA.is_empty() );
+        assert( not irB.is_empty() );
+        assert( not irC.is_empty() );
+        assert( not irD.is_empty() );
         
         assert( irA.cardinality() == 5 );
         assert( irB.cardinality() == 1 );
@@ -104,7 +104,7 @@ int main( int argc, char *argv[] )
 
         for( auto ir : irs ){
 
-            assert( ! ir.isempty() );
+            assert( ! ir.is_empty() );
         
             LOG << "For each loop " << ir.min() << space << ir.max() << nl << tab;
             for( int i : ir ) {
@@ -152,7 +152,7 @@ int main( int argc, char *argv[] )
 
         for( auto ir : irs ){
 
-            assert( ! ir.isempty() );
+            assert( ! ir.is_empty() );
         
             LOG << "For each loop " << ir.min() << space << ir.max() << nl << tab;
             for( int i : ir ) {

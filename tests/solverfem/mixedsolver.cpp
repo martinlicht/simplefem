@@ -423,7 +423,7 @@ int main( int argc, char *argv[] )
 
                             assert( runtime >= 0. and iteration_count >= 0 );
 
-                            assert( sol.isfinite() );
+                            assert( sol.is_finite() );
 
                             auto ndiv = inv(A,desired_precision) * Bt * sol;
                             

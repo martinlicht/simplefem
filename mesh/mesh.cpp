@@ -179,7 +179,7 @@ int  Mesh::get_subsimplex_index( int sup, int sub, int cellsup, int cellsub ) co
 {
   const IndexMap im = get_subsimplices( sup, sub, cellsup );
   Assert( im.has_value_in_range( cellsub ), sup, sub, cellsup, cellsub, im );
-  return im.preimageof( cellsub );
+  return im.get_preimage_of( cellsub );
 }
 
 int Mesh::get_subsimplex( int sup, int sub, int cellsup, int localindex ) const
@@ -499,7 +499,7 @@ Float Mesh::getDiameter( int dim, int index ) const
     for( int j = 0; j <= dim; j++ )
         dist(i,j) = ( vcm.getcolumn(i) - vcm.getcolumn(j) ).norm();
     
-    assert( dist.isnonnegative() && dist.isfinite() );
+    assert( dist.is_nonnegative() && dist.is_finite() );
     
     return dist.maxabsoluteentry();
 }
@@ -534,7 +534,7 @@ Float Mesh::getMeasure( int dim, int index ) const
 
     Float det;
     
-    if( Jac.issquare() )
+    if( Jac.is_square() )
         det = absolute( Determinant( Jac ) ); 
     else
         det = std::sqrt( absolute( Determinant( Transpose(Jac) * Jac ) ) );
@@ -578,7 +578,7 @@ FloatVector Mesh::getHeightVector( int dim, int cell, int vertexindex ) const
     // for( int c = 0; c <= dim; c++ ) 
     // for( int d = 0; d < dim; d++ ) 
     //     columns( d, c ) = getCoordinates().getdata( get_subsimplex(dim,0,cell,c), d );
-    // assert( columns.isfinite() );
+    // assert( columns.is_finite() );
     // LOG << getVertexCoordinateMatrix( dim, cell ) << nl;
 
     std::swap( columns[dim], columns[vertexindex] );
@@ -895,7 +895,7 @@ DenseMatrix Mesh::getBarycentricProjectionMatrix( int dim, int index ) const
     for( int c = 0; c < Jac.getdimout(); c++ )
         ret( r+1, c ) = Jac(c,r);
     
-    assert( ret.isfinite() );
+    assert( ret.is_finite() );
     
     return ret;
 }
@@ -1076,7 +1076,7 @@ void Mesh::shake_interior_vertices( Float intensity, Float probability )
         FloatVector shift(dim,0.);
         shift.random_within_range(-1.,1.);
         shift /= shift.l2norm();
-        assert( shift.isfinite() );
+        assert( shift.is_finite() );
         shift *= sqrt( random_uniform() ) * radius * intensity;
 
         for( int c = 0; c < dim; c++ )

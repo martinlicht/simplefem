@@ -163,10 +163,10 @@ int main( int argc, char *argv[] )
             
             SparseMatrix massmatrix_volume = FEECBrokenMassMatrix( M, M.getinnerdimension(), 3, r_ref );
             
-            assert( massmatrix_scalar.isfinite() );
-            assert( massmatrix_vector.isfinite() );
-            assert( massmatrix_pseudo.isfinite() );
-            assert( massmatrix_volume.isfinite() );
+            assert( massmatrix_scalar.is_finite() );
+            assert( massmatrix_vector.is_finite() );
+            assert( massmatrix_pseudo.is_finite() );
+            assert( massmatrix_volume.is_finite() );
                 
             for( int r = r_min; r <= r_max; r++ ) 
             {
@@ -183,10 +183,10 @@ int main( int argc, char *argv[] )
                 
                 SparseMatrix elevation_volume = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 3, r, r_ref - r );
                 
-                assert( elevation_scalar.isfinite() );
-                assert( elevation_vector.isfinite() );
-                assert( elevation_pseudo.isfinite() );
-                assert( elevation_volume.isfinite() );
+                assert( elevation_scalar.is_finite() );
+                assert( elevation_vector.is_finite() );
+                assert( elevation_pseudo.is_finite() );
+                assert( elevation_volume.is_finite() );
                 
                 LOG << "experiments..." << nl;
                 

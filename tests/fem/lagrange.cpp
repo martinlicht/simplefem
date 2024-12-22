@@ -95,14 +95,14 @@ int main( int argc, char *argv[] )
                 
                 auto feec_whitney_inc_t = feec_whitney_inc.getTranspose();
             
-                assert( feec_broken_mass.isfinite() );
-                assert( feec_vectormass.isfinite() );
-                assert( feec_diff.isfinite() );
-                assert( feec_diff_t.isfinite() );
-                assert( feec_inc.isfinite() );
-                assert( feec_inc_t.isfinite() );
-                assert( feec_whitney_inc.isfinite() );
-                assert( feec_whitney_inc_t.isfinite() );
+                assert( feec_broken_mass.is_finite() );
+                assert( feec_vectormass.is_finite() );
+                assert( feec_diff.is_finite() );
+                assert( feec_diff_t.is_finite() );
+                assert( feec_inc.is_finite() );
+                assert( feec_inc_t.is_finite() );
+                assert( feec_whitney_inc.is_finite() );
+                assert( feec_whitney_inc_t.is_finite() );
                     
                 LOG << "...composed FEEC matrices" << nl;
                 
@@ -113,13 +113,13 @@ int main( int argc, char *argv[] )
                 auto feec_whitney_stiffness        = feec_whitney_inc_t  & feec_broken_stiffness & feec_whitney_inc;
                 auto feec_whitney_mass             = feec_whitney_inc_t  & feec_broken_mass      & feec_whitney_inc;
                 
-                assert( feec_broken_stiffness.isfinite() );
+                assert( feec_broken_stiffness.is_finite() );
                 
-                assert( feec_stiffness.isfinite()        );
-                assert( feec_mass.isfinite()             );
+                assert( feec_stiffness.is_finite()        );
+                assert( feec_mass.is_finite()             );
                 
-                assert( feec_whitney_stiffness.isfinite() );
-                assert( feec_whitney_mass.isfinite()      );
+                assert( feec_whitney_stiffness.is_finite() );
+                assert( feec_whitney_mass.is_finite()      );
                 
                 LOG << "...basic Lagrange matrices" << nl;
                 
@@ -144,7 +144,7 @@ int main( int argc, char *argv[] )
                     vec.zero();
                     vec.random();
                     vec.normalize();
-                    assert( vec.isfinite() );
+                    assert( vec.is_finite() );
                     
                     // inclusion matrices
                     {
@@ -202,7 +202,7 @@ int main( int argc, char *argv[] )
                     vec.zero();
                     vec.random();
                     vec.normalize();
-                    assert( vec.isfinite() );
+                    assert( vec.is_finite() );
                     
                     /*broken mass*/
                     {

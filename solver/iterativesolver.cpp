@@ -970,7 +970,7 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
     assert( x.getdimension() == b.getdimension() );
     assert( A.getdimin()  == x.getdimension() );
     assert( A.getdimout() == b.getdimension() );
-    assert( x.isfinite() and b.isfinite() );
+    assert( x.is_finite() and b.is_finite() );
     
     const int dimension = A.getdimin();
 

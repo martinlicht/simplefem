@@ -167,10 +167,10 @@ int main( int argc, char *argv[] )
                 
                 SparseMatrix massmatrix_volume = FEECBrokenMassMatrix( M, M.getinnerdimension(), 3, r );
                 
-                assert( massmatrix_scalar.isfinite() );
-                assert( massmatrix_vector.isfinite() );
-                assert( massmatrix_pseudo.isfinite() );
-                assert( massmatrix_volume.isfinite() );
+                assert( massmatrix_scalar.is_finite() );
+                assert( massmatrix_vector.is_finite() );
+                assert( massmatrix_pseudo.is_finite() );
+                assert( massmatrix_volume.is_finite() );
                 
                 LOG << "experiments..." << nl;
                 
