@@ -35,12 +35,12 @@ int main( int argc, char *argv[] )
             
             auto etp = M.get_triangle_parents_of_edge(e);
 
-            auto ev = M.getsubsimplices(1,0,e);
+            auto ev = M.get_subsimplices(1,0,e);
 
             for( auto t : etp ) 
             {
                 
-                auto tv = M.getsubsimplices(2,0,t);
+                auto tv = M.get_subsimplices(2,0,t);
 
                 int index = 0;
                 for( ; index < edge_inclusions.size(); index++ )

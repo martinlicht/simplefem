@@ -11,13 +11,13 @@ class safedouble {
 public:
     
     // Constructor from float
-    safedouble( float v ) : value( static_cast<double>(v) ) {}
+    explicit safedouble( float v ) : value( static_cast<double>(v) ) {}
 
     // Constructor from double
-    safedouble( double v ) : value(v) {}
+    explicit safedouble( double v ) : value(v) {}
 
     // Constructor from long double with range check
-    safedouble( long double v ) : value( static_cast<double>(v) )
+    explicit safedouble( long double v ) : value( static_cast<double>(v) )
     {
         assert( not( v < std::numeric_limits<double>::lowest() || v > std::numeric_limits<double>::max() ) );
     }

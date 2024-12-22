@@ -85,6 +85,7 @@ class Coordinates
         void scale( Float alpha );
         void scale( FloatVector alphas );
         void shift( const FloatVector& add );
+        void shake_random( Float epsilon = 0.001 );
         void lineartransform( const LinearOperator& op );
         
         /* Add additional coordiantes */

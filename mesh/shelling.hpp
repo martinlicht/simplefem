@@ -42,7 +42,7 @@ std::vector<std::vector<int>> generateShellings(
     
     for( int face = 0; face < mesh.count_simplices(dim-1); face++ ) 
     {
-        const auto& parents = mesh.getsupersimplices(dim,dim-1,face);
+        const auto& parents = mesh.get_supersimplices(dim,dim-1,face);
         acceptable_face_list[face] = ( parents.size() != 1 );
     }
 
@@ -122,14 +122,14 @@ void generateShellings(
         // list the faces adjacent to the node
         // and check whether it is connected to one of the prefix nodes  
         
-        const auto faces_of_node = mesh.getsubsimplices( dim, dim-1, node ).getvalues();
+        const auto faces_of_node = mesh.get_subsimplices( dim, dim-1, node ).getvalues();
         assert( faces_of_node.size() == dim+1 );
         std::vector<bool> face_is_connected( dim+1, false );
 
         for( int index_f = 0; index_f < faces_of_node.size(); index_f++ )
         {
             const int face = faces_of_node[index_f];
-            const auto parents = mesh.getsupersimplices( dim, dim-1, face );
+            const auto parents = mesh.get_supersimplices( dim, dim-1, face );
             
             assert( 1 <= parents.size() and parents.size() <= 2 );
 
@@ -155,7 +155,8 @@ void generateShellings(
         
         bool acceptable_connection = false;
         
-        for( int index_f = 0; index_f <= dim; index_f++ ){
+        for( int index_f = 0; index_f <= dim; index_f++ )
+        {
             
             const auto face = faces_of_node[index_f];
             
@@ -180,7 +181,7 @@ void generateShellings(
         {
             if( not is_compatible ) break;
             
-            const auto subsimplices_of_node = mesh.getsubsimplices( dim, d, node ).getvalues();
+            const auto subsimplices_of_node = mesh.get_subsimplices( dim, d, node ).getvalues();
 
             // For each such proper subsimplex of the node ...
             for( const auto sub : subsimplices_of_node )
@@ -189,7 +190,7 @@ void generateShellings(
                 if( not is_compatible ) break;
 
                 // check whether it has got a supersimplex within the prefix
-                const auto supersimplices_of_sub = mesh.getsupersimplices( dim, d, sub );
+                const auto supersimplices_of_sub = mesh.get_supersimplices( dim, d, sub );
 
                 bool sub_of_prefix = std::any_of( 
                     supersimplices_of_sub.begin(), supersimplices_of_sub.end(),
@@ -202,7 +203,7 @@ void generateShellings(
                 // otherwise, check whether its contained within one of the active faces 
                 bool within_connected_face = false;
 
-                const auto faces_containing_sub = mesh.getsupersimplices( dim-1, d, sub );
+                const auto faces_containing_sub = mesh.get_supersimplices( dim-1, d, sub );
 
                 for( int index_f = 0; index_f < faces_of_node.size(); index_f++ ){
                     if( not face_is_connected[index_f] ) continue;
@@ -286,7 +287,7 @@ std::vector<std::vector<std::pair<int,Float>>> generate_ranked_shelling(
 
     std::vector<std::vector<std::pair<int,Float>>> ret;
 
-    for( int t = 0; t < mesh.count_simplices(dim); t++ ) 
+    for( int node = 0; node < mesh.count_simplices(dim); node++ ) 
     {
         std::vector<std::vector<std::pair<int,Float>>> shellings_found;
         
@@ -294,17 +295,16 @@ std::vector<std::vector<std::pair<int,Float>>> generate_ranked_shelling(
 
         std::vector<std::pair<int,Float>> remaining_nodes;
         remaining_nodes.reserve( mesh.count_simplices( dim ) );
-        for( int s = 0; s < mesh.count_simplices(dim); s++ ) 
-            if( s != t ) 
-                remaining_nodes.push_back( { s, std::numeric_limits<Float>::infinity() } );
+        for( int other = 0; other < mesh.count_simplices(dim); other++ ) 
+            if( node != other ) 
+                remaining_nodes.push_back( { other, std::numeric_limits<Float>::infinity() } );
 
-        current_prefix.push_back( { t, 0. } );
+        current_prefix.push_back( { node, 0. } );
 
-        // CHECK that current and remaining nodes are disjoint
+        // DEBUG CHECK that current and remaining nodes are disjoint
         for( const auto& node1 : current_prefix ) 
         for( const auto& node2 : remaining_nodes ) 
             assert( node1.first != node2.first );
-
 
         generate_ranked_shelling( mesh, shellings_found, current_prefix, remaining_nodes );
         
@@ -337,7 +337,7 @@ void generate_ranked_shelling(
 
     
     // if enough shellings have been found already, then return 
-    if( true and shellings_found.size() >= 1 )
+    if( true and shellings_found.size() >= 3 )
         return;
 
 
@@ -355,17 +355,16 @@ void generate_ranked_shelling(
         current_prefix[0].second = 0;
     }
 
-    // TODO:
     // re-eval the ranks of the remaining_nodes and sort them 
     for( auto& node : remaining_nodes )
     {
         
-        const auto faces = mesh.getsubsimplices( dim, dim-1, node.first ).getvalues();
+        const auto faces = mesh.get_subsimplices( dim, dim-1, node.first ).getvalues();
         
         for( int index_f = 0; index_f < faces.size(); index_f++ )
         {
             const int face = faces[index_f];
-            const auto parents = mesh.getsupersimplices( dim, dim-1, face );
+            const auto parents = mesh.get_supersimplices( dim, dim-1, face );
             
             assert( contains( parents, node.first ) );
 
@@ -400,7 +399,7 @@ void generate_ranked_shelling(
         
         
         {
-            for( auto t : current_prefix ) LOG << t.first << " (" << t.second << ")" << space;
+            for( auto prefixnode : current_prefix ) LOG << prefixnode.first << " (" << prefixnode.second << ")" << space;
             LOG << node.first << " (" << node.second << ")" << nl;    
         }
         
@@ -408,14 +407,14 @@ void generate_ranked_shelling(
         // list the faces adjacent to the node
         // and check whether it is connected to one of th prefix nodes  
         
-        const auto faces_of_node = mesh.getsubsimplices( dim, dim-1, node.first ).getvalues();
+        const auto faces_of_node = mesh.get_subsimplices( dim, dim-1, node.first ).getvalues();
         assert( faces_of_node.size() == dim+1 );
         std::vector<bool> face_is_connected( dim+1, false );
 
         for( int index_f = 0; index_f < faces_of_node.size(); index_f++ )
         {
             const int face = faces_of_node[index_f];
-            const auto parents = mesh.getsupersimplices( dim, dim-1, face );
+            const auto parents = mesh.get_supersimplices( dim, dim-1, face );
             
             assert( 1 <= parents.size() and parents.size() <= 2 );
 
@@ -448,7 +447,7 @@ void generate_ranked_shelling(
         {
             if( not is_compatible ) break;
             
-            const auto subsimplices_of_node = mesh.getsubsimplices( dim, d, node.first ).getvalues();
+            const auto subsimplices_of_node = mesh.get_subsimplices( dim, d, node.first ).getvalues();
 
             // For each of those proper subsimplices of node ...
             for( const auto sub : subsimplices_of_node )
@@ -457,7 +456,7 @@ void generate_ranked_shelling(
                 if( not is_compatible ) break;
 
                 // check whether it has got a supersimplex within the prefix
-                const auto supersimplices_of_sub = mesh.getsupersimplices( dim, d, sub );
+                const auto supersimplices_of_sub = mesh.get_supersimplices( dim, d, sub );
 
                 bool sub_of_prefix = std::any_of( 
                     supersimplices_of_sub.begin(), supersimplices_of_sub.end(),
@@ -479,7 +478,7 @@ void generate_ranked_shelling(
                 // and we check whether the subsimplex contained within one of the active faces 
                 bool within_connected_face = false;
 
-                const auto faces_containing_sub = mesh.getsupersimplices( dim-1, d, sub );
+                const auto faces_containing_sub = mesh.get_supersimplices( dim-1, d, sub );
 
                 for( int index_f = 0; index_f < faces_of_node.size(); index_f++ ){
                     if( not face_is_connected[index_f] ) continue;
@@ -515,7 +514,7 @@ void generate_ranked_shelling(
         if( k < dim-1 )
         {
             // get the subsimplices of the proposed node of dimension k
-            const auto k_subsimplices_of_node = mesh.getsubsimplices( dim, k, node.first ).getvalues();
+            const auto k_subsimplices_of_node = mesh.get_subsimplices( dim, k, node.first ).getvalues();
 
             // find the node which is contained in all connected faces
             
@@ -538,8 +537,8 @@ void generate_ranked_shelling(
             for( int k_sub : k_subsimplices_of_node ) 
             {
                 bool is_match = true;
-                for( int f = 0; f < faces_of_node.size() && is_match; f++ )
-                    if( face_is_connected[f] and not mesh.is_subsimplex( dim-1, k, faces_of_node[f], k_sub ) )
+                for( int index_f = 0; index_f < faces_of_node.size() && is_match; index_f++ )
+                    if( face_is_connected[index_f] and not mesh.is_subsimplex( dim-1, k, faces_of_node[index_f], k_sub ) )
                         is_match = false;
 
                 if( is_match ) assert( common_subsimplex == k_sub );
@@ -548,17 +547,17 @@ void generate_ranked_shelling(
             // we have found the common subsimplex 
             
             // check that all of its parents are here
-            const auto& parents = mesh.getsupersimplices( dim, k, common_subsimplex );
+            const auto& parents = mesh.get_supersimplices( dim, k, common_subsimplex );
             std::vector<bool> parent_is_already_here( parents.size(), false );
 
-            for( int p = 0; p < parents.size(); p++ )
+            for( int parent_index = 0; parent_index < parents.size(); parent_index++ )
             {
-                parent_is_already_here[p] 
+                parent_is_already_here[parent_index] 
                 =
-                ( parents[p] == node.first ) 
+                ( parents[parent_index] == node.first ) 
                 or
                 std::any_of( current_prefix.begin(), current_prefix.end(), 
-                    [&]( const std::pair<int,Float>& item ){ return item.first == parents[p]; }
+                    [&]( const std::pair<int,Float>& item ){ return item.first == parents[parent_index]; }
                 );
             }
 
@@ -599,7 +598,6 @@ void generate_ranked_shelling(
             for( const auto& node1 : next_prefix ) 
             for( const auto& node2 : next_remaining_nodes ) 
                 assert( node1.first != node2.first );
-
 
             generate_ranked_shelling( mesh, shellings_found, next_prefix, next_remaining_nodes );
         }
@@ -644,11 +642,11 @@ Float estimate_shelling_quality(
         
         Float volume = mesh.getMeasure(dim,i);
 
-        const auto faces = mesh.getsubsimplices(dim,dim-1,i).getvalues();
+        const auto faces = mesh.get_subsimplices(dim,dim-1,i).getvalues();
 
         std::vector<Float> heights( dim+1 );
-        for( int f = 0; f < faces.size(); f++ ) 
-            heights[f] = dim * volume / mesh.getMeasure( dim-1, faces[f] );
+        for( int face_index = 0; face_index < faces.size(); face_index++ ) 
+            heights[face_index] = dim * volume / mesh.getMeasure( dim-1, faces[face_index] );
 
         Float height = *min_element( heights.begin(), heights.end() );
 
@@ -713,7 +711,7 @@ Float estimate_shelling_quality(
         
         // list the faces adjacent to the i-th node among the previous nodes 
         
-        const auto faces_of_node = mesh.getsubsimplices( dim, dim-1, current_node ).getvalues();
+        const auto faces_of_node = mesh.get_subsimplices( dim, dim-1, current_node ).getvalues();
         std::vector<bool> face_is_connected( dim+1, false );
         assert( faces_of_node.size() == face_is_connected.size() );
 
@@ -721,7 +719,7 @@ Float estimate_shelling_quality(
         {
             const int face = faces_of_node[index_f];
             
-            const auto parents = mesh.getsupersimplices( dim, dim-1, face );
+            const auto parents = mesh.get_supersimplices( dim, dim-1, face );
             
             assert( 1 <= parents.size() and parents.size() <= 2 );
 
@@ -758,7 +756,7 @@ Float estimate_shelling_quality(
             LOGPRINTF( "Subsimplex of dimension %i shared by %i-th simplex, which is %i\n", k, i, current_node );
             
             // get the subsimplices of the proposed node of dimension k
-            const auto k_subsimplices_of_node = mesh.getsubsimplices( dim, k, current_node ).getvalues();
+            const auto k_subsimplices_of_node = mesh.get_subsimplices( dim, k, current_node ).getvalues();
 
             // find the node which is contained in all connected faces
             
@@ -767,8 +765,8 @@ Float estimate_shelling_quality(
             for( int k_sub : k_subsimplices_of_node ) 
             {
                 bool is_match = true;
-                for( int f = 0; f < faces_of_node.size() && is_match; f++ )
-                    if( face_is_connected[f] and not mesh.is_subsimplex( dim-1, k, faces_of_node[f], k_sub ) )
+                for( int face_index = 0; face_index < faces_of_node.size() && is_match; face_index++ )
+                    if( face_is_connected[face_index] and not mesh.is_subsimplex( dim-1, k, faces_of_node[face_index], k_sub ) )
                         is_match = false;
 
                 assert( not is_match or common_subsimplex == mesh.nullindex );
@@ -781,8 +779,8 @@ Float estimate_shelling_quality(
             for( int k_sub : k_subsimplices_of_node ) 
             {
                 bool is_match = true;
-                for( int f = 0; f < faces_of_node.size() && is_match; f++ )
-                    if( face_is_connected[f] and not mesh.is_subsimplex( dim-1, k, faces_of_node[f], k_sub ) )
+                for( int face_index = 0; face_index < faces_of_node.size() && is_match; face_index++ )
+                    if( face_is_connected[face_index] and not mesh.is_subsimplex( dim-1, k, faces_of_node[face_index], k_sub ) )
                         is_match = false;
 
                 assert( not is_match or common_subsimplex == k_sub );
@@ -791,24 +789,24 @@ Float estimate_shelling_quality(
             
 
             // check that all of its parents are here
-            const auto& parents = mesh.getsupersimplices( dim, k, common_subsimplex );
+            const auto& parents = mesh.get_supersimplices( dim, k, common_subsimplex );
             std::vector<bool> parent_is_already_here( parents.size(), false );
 
             
             LOG << "Parents ";
-            for( int p = 0; p < parents.size(); p++ ) LOG << space << parents[p];
+            for( int parent_index = 0; parent_index < parents.size(); parent_index++ ) LOG << space << parents[parent_index];
             LOG << nl;
             LOG << "Shelling ";
             for( int j = 0; j <= i; j++ ) LOG << shelling[j] << tab;
             LOG << nl;
                 
             
-            for( int p = 0; p < parents.size(); p++ )
+            for( int parent_index = 0; parent_index < parents.size(); parent_index++ )
             {
-                if ( parents[p] == shelling[i] ) parent_is_already_here[p] = true;
+                if ( parents[parent_index] == shelling[i] ) parent_is_already_here[parent_index] = true;
 
                 for( int j = 0; j < i; j++ ) { 
-                    if ( parents[p] == shelling[j] ) parent_is_already_here[p] = true;
+                    if ( parents[parent_index] == shelling[j] ) parent_is_already_here[parent_index] = true;
                 }
             }
 
@@ -822,7 +820,7 @@ Float estimate_shelling_quality(
 
         // We can now compute all the relevant quantities 
         {
-            const   int n = dim;
+            const int n = dim;
 
             const Float B = sqrt( 1. + square( (n-k)*aspect_condition_number[i] ) ) - (n-k)*aspect_condition_number[i];
 
@@ -878,7 +876,7 @@ Float estimate_shelling_quality(
             Float C =      C5[i] * power_numerical( C5prime[i], form_degree-1 ) * sqrt( C6det[i] );
 
             // obtain all previous indices of the common subsimplex of dimension n-k
-            const auto& relevant_volumes = mesh.getsupersimplices( dim, dim-1, common_subsimplex );
+            const auto& relevant_volumes = mesh.get_supersimplices( dim, dim-1, common_subsimplex );
 
             coefficient_table[i][i] = A;
 

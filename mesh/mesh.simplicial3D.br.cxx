@@ -212,7 +212,7 @@ void MeshSimplicial3D::bisect_edge( int e )
     /*                   */
     /*********************/
     
-    getcoordinates().append( midcoordinate );
+    getCoordinates().append( midcoordinate );
     
     
     

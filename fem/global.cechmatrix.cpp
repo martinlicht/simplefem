@@ -47,7 +47,7 @@ SparseMatrix FEECCechMassMatrix( const Mesh& mesh, int n, int k, int ss )
         if( k > 0 ) {
             diameter = mesh.getDiameter( k, index );
         } else {
-            auto edges = mesh.getsupersimplices( 1, 0, index );
+            auto edges = mesh.get_supersimplices( 1, 0, index );
             for( int e : edges )
                 diameter = maximum( diameter, mesh.getDiameter(1,e) );
         }
@@ -98,10 +98,10 @@ SparseMatrix FEECCechDiffMatrix( const Mesh& mesh, int n, int k )
         
         const int face_index = mesh.get_subsimplex( k+1, k, s, i );
 
-        auto std_vector_cellvertices = mesh.getsubsimplices( k+1, 0, s ).getvalues();
+        auto std_vector_cellvertices = mesh.get_subsimplices( k+1, 0, s ).getvalues();
         std::sort( std_vector_cellvertices.begin(), std_vector_cellvertices.end() );
         
-        auto std_vector_facevertices = mesh.getsubsimplices( k, 0, face_index ).getvalues();
+        auto std_vector_facevertices = mesh.get_subsimplices( k, 0, face_index ).getvalues();
         std::sort( std_vector_facevertices.begin(), std_vector_facevertices.end() );
 
         int gap_index = 0;

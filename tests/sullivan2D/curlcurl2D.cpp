@@ -285,13 +285,13 @@ int main( int argc, char *argv[] )
                 {
                     const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 0, 0, r+1 );
                     const auto printable_aux = interpol_matrix * scalar_incmatrix * aux; 
-                    vtk.writeCellScalarData( printable_aux, "computed_aux" , 1.0 );
+                    vtk.write_cell_scalar_data( printable_aux, "computed_aux" , 1.0 );
                 }
                 
                 {
                     const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r );
                     const auto printable_sol = interpol_matrix * vector_incmatrix * sol; 
-                    vtk.writeCellVectorData_barycentricgradients( printable_sol, "computed_solution" , 1.0 );
+                    vtk.write_cell_vector_data_barycentricgradients( printable_sol, "computed_solution" , 1.0 );
                 }
                 
                 {
@@ -299,15 +299,15 @@ int main( int argc, char *argv[] )
                      const auto printable_curl = interpol_matrix * vector_diffmatrix * vector_incmatrix * sol; 
                      Assert( printable_curl.getdimension() == (M.getinnerdimension()+1) * M.count_simplices(M.getinnerdimension()), 
                                     printable_curl.getdimension(), M.count_simplices(M.getinnerdimension()) );
-                     vtk.writeCellScalarData_barycentricvolumes( printable_curl, "computed_curl" , 1.0 );
+                     vtk.write_cell_scalar_data_barycentricvolumes( printable_curl, "computed_curl" , 1.0 );
                 }
                             
                 assert( function_aux( FloatVector{0.0,0.0 }).getdimension() == 1 );
-                vtk.writeCellScalarData( function_aux,  "function_aux" , 1.0 );
-                vtk.writeCellVectorData( function_sol,  "function_sol" , 1.0 );
-                vtk.writeCellScalarData( function_curl, "function_curl" , 1.0 );
+                vtk.write_cell_scalar_data( function_aux,  "function_aux" , 1.0 );
+                vtk.write_cell_vector_data( function_sol,  "function_sol" , 1.0 );
+                vtk.write_cell_scalar_data( function_curl, "function_curl" , 1.0 );
 
-                vtk.writeCellVectorData( function_rhs,  "function_rhs" , 1.0 );
+                vtk.write_cell_vector_data( function_rhs,  "function_rhs" , 1.0 );
             
                 fs.close();
             }

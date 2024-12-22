@@ -44,7 +44,7 @@ int main( int argc, char *argv[] )
             
             MeshSimplicial3D M = StandardCube3D();
             
-            M.getcoordinates().scale( 1.1 );
+            M.getCoordinates().scale( 1.1 );
             
             M.check();
             
@@ -342,13 +342,13 @@ int main( int argc, char *argv[] )
                             {
                                 const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 0, 0, r );
                                 const auto printable_sol = interpol_matrix * scalar_incmatrix * ndiv; 
-                                vtk.writeCellScalarData( printable_sol, "computed_negative_divergence" , 1.0 );
+                                vtk.write_cell_scalar_data( printable_sol, "computed_negative_divergence" , 1.0 );
                             }
                         
                             {
                                 const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r );
                                 const auto printable_sol = interpol_matrix * vector_incmatrix * sol; 
-                                vtk.writeCellVectorData_barycentricgradients( printable_sol, "computed_solution" , 1.0 );
+                                vtk.write_cell_vector_data_barycentricgradients( printable_sol, "computed_solution" , 1.0 );
                             }
                         
                             {
@@ -356,14 +356,14 @@ int main( int argc, char *argv[] )
                                 const auto printable_curl = interpol_matrix * vector_diffmatrix * vector_incmatrix * sol; 
                                 Assert( printable_curl.getdimension() == 6 * M.count_simplices(M.getinnerdimension()), 
                                                 M.count_simplices(M.getinnerdimension()) );
-                                vtk.writeCellVectorData_barycentriccrosses( printable_curl, "computed_curl" , 1.0 );
+                                vtk.write_cell_vector_data_barycentriccrosses( printable_curl, "computed_curl" , 1.0 );
                             }
                             
-                            vtk.writeCellScalarData( function_ndiv, "function_ndiv" , 1.0 );
-                            vtk.writeCellVectorData( function_sol,  "function_sol"  , 1.0 );
-                            vtk.writeCellVectorData( function_curl, "function_curl" , 1.0 );
+                            vtk.write_cell_scalar_data( function_ndiv, "function_ndiv" , 1.0 );
+                            vtk.write_cell_vector_data( function_sol,  "function_sol"  , 1.0 );
+                            vtk.write_cell_vector_data( function_curl, "function_curl" , 1.0 );
 
-                            vtk.writeCellVectorData( function_rhs,  "function_rhs" , 1.0 );
+                            vtk.write_cell_vector_data( function_rhs,  "function_rhs" , 1.0 );
                         
                             fs.close();
                         }

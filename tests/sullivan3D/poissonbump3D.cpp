@@ -43,7 +43,7 @@ int main( int argc, char *argv[] )
            
             M.check_dirichlet_flags();
 
-            M.getcoordinates().scale(1.1);
+            M.getCoordinates().scale(1.1);
             
             LOG << "Prepare scalar fields for testing..." << nl;
             
@@ -218,20 +218,20 @@ int main( int argc, char *argv[] )
                             fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                             VTKWriter vtk( M, fs, getbasename(__FILE__) );
                             
-                            vtk.writeVertexScalarData( [&](FloatVector vec) -> Float{ return function_sol(vec)[0]; }, "interpolated_vertex_sol" );
-                            vtk.writeVertexScalarData( [&](FloatVector vec) -> Float{ return function_rhs(vec)[0]; }, "interpolated_vertex_rhs" );
+                            vtk.write_vertex_scalar_data( [&](FloatVector vec) -> Float{ return function_sol(vec)[0]; }, "interpolated_vertex_sol" );
+                            vtk.write_vertex_scalar_data( [&](FloatVector vec) -> Float{ return function_rhs(vec)[0]; }, "interpolated_vertex_rhs" );
 
                             if( r == 1) {
-                                vtk.writeVertexScalarData( sol, "iterativesolution_scalar_data" , 1.0 );
+                                vtk.write_vertex_scalar_data( sol, "iterativesolution_scalar_data" , 1.0 );
                             }
                             
-                            vtk.writeCellScalarData( [&](FloatVector vec) -> Float{ return function_sol(vec)[0]; }, "interpolated_sol" );
-                            vtk.writeCellScalarData( [&](FloatVector vec) -> Float{ return function_rhs(vec)[0]; }, "interpolated_rhs" );
+                            vtk.write_cell_scalar_data( [&](FloatVector vec) -> Float{ return function_sol(vec)[0]; }, "interpolated_sol" );
+                            vtk.write_cell_scalar_data( [&](FloatVector vec) -> Float{ return function_rhs(vec)[0]; }, "interpolated_rhs" );
 
                             {
                                 const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 0, 0, r );
                                 const auto printable_sol = interpol_matrix * incmatrix * sol; 
-                                vtk.writeCellScalarData( printable_sol, "iterativesolution_scalar_data_cellwise" , 1.0 );
+                                vtk.write_cell_scalar_data( printable_sol, "iterativesolution_scalar_data_cellwise" , 1.0 );
                             }
                             
 
@@ -239,14 +239,14 @@ int main( int argc, char *argv[] )
                                 const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r-1 );
                                 const auto printable_grad = interpol_matrix * diffmatrix * incmatrix * sol;
                             
-                                vtk.writeCellVectorData_barycentricgradients( printable_grad,  "gradient_calculation" );
-                                vtk.writeCellVectorData( function_grad,  "gradient_interpolation" );
+                                vtk.write_cell_vector_data_barycentricgradients( printable_grad,  "gradient_calculation" );
+                                vtk.write_cell_vector_data( function_grad,  "gradient_interpolation" );
                             }
                             
                             {
                                 const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r-1 );
                                 const auto printable_grad = interpol_matrix * computed_grad; 
-                                vtk.writeCellVectorData_barycentricgradients( printable_grad, "gradient_interpolation" , 1.0 );
+                                vtk.write_cell_vector_data_barycentricgradients( printable_grad, "gradient_interpolation" , 1.0 );
                             }
                             
                             fs.close();

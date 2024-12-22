@@ -1,4 +1,8 @@
 
+#include <cmath>
+#include <limits>
+
+
 #include "../basic/basic.hpp"
 #include "random.hpp"
 
@@ -32,7 +36,7 @@ unsigned int random_integer()
     return ret;
 }
 
-constexpr unsigned int random_integer_maximum()
+unsigned int random_integer_maximum()
 {
     assert( maximum_random_integer > 0 );
     return maximum_random_integer;

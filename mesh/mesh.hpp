@@ -99,9 +99,9 @@ class Mesh
         
         int getouterdimension() const;
         
-        Coordinates& getcoordinates();
+        Coordinates& getCoordinates();
         
-        const Coordinates& getcoordinates() const;
+        const Coordinates& getCoordinates() const;
         
         
         
@@ -138,7 +138,7 @@ class Mesh
         
         virtual bool has_subsimplices_listed( int sup, int sub ) const = 0;
         
-        virtual IndexMap getsubsimplices( int sup, int sub, int cell ) const = 0;
+        virtual IndexMap get_subsimplices( int sup, int sub, int cell ) const = 0;
         
         virtual bool is_subsimplex( int sup, int sub, int cellsup, int cellsub ) const;
         
@@ -162,7 +162,7 @@ class Mesh
         
         virtual bool has_supersimplices_listed( int sup, int sub ) const = 0;
         
-        virtual const std::vector<int> getsupersimplices( int sup, int sub, int cell ) const = 0;
+        virtual const std::vector<int> get_supersimplices( int sup, int sub, int cell ) const = 0;
         
         virtual bool is_supersimplex( int sup, int sub, int cellsup, int cellsub ) const;
         
@@ -215,6 +215,7 @@ class Mesh
         Float getMeasure( int dim, int index ) const;
         
         Float getHeight( int dim, int index, int vertexindex ) const;
+        FloatVector getHeightVector( int dim, int index, int vertexindex ) const;
         
         Float getHeightQuotient( int dim, int index ) const;
         Float getHeightQuotient( int dim ) const;

@@ -219,7 +219,7 @@ void MeshSimplicial3D::uniformrefinement()
     
     /* coordinates */
     
-    getcoordinates().addcoordinates( counter_edges );
+    getCoordinates().addcoordinates( counter_edges );
     
     
     
@@ -230,7 +230,7 @@ void MeshSimplicial3D::uniformrefinement()
     
     for( int e = 0; e < counter_edges; e++ )
     {
-      getcoordinates().loadvector( counter_vertices + e, get_edge_midpoint( e ) );
+      getCoordinates().loadvector( counter_vertices + e, get_edge_midpoint( e ) );
     }
     
     

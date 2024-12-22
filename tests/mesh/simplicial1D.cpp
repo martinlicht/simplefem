@@ -63,7 +63,7 @@ int main( int argc, char *argv[] )
         
         LOG << "check mesh equivalence..." << nl;
         M2.check();
-        assert( M.getcoordinates() == M2.getcoordinates() );
+        assert( M.getCoordinates() == M2.getCoordinates() );
         assert( M == M2 );
     }
 

@@ -34,10 +34,40 @@ int main( int argc, char *argv[] )
     
     LOG << "Initial mesh..." << nl;
     
-    MeshSimplicial3D M = UnitCube3D();
+    // MeshSimplicial3D M = UnitCube3D();
+    // MeshSimplicial3D M = StandardCubeFive3D();
+    MeshSimplicial3D M = CrossedBricks_Five3D();
+    // MeshSimplicial3D M = CrossedBricks3D();
+    // MeshSimplicial3D M = FicheraCorner3D();
     M.check();
+    M.getCoordinates().shake_random();
 
     LOG << "Number of tetrahedra: " << M.count_tetrahedra() << nl;
+    
+    Float PF_estimate_via_shellings = std::numeric_limits<Float>::infinity();
+
+    // if(false)
+    {
+        auto shellings_found = generate_shellings2( M, 0 );
+
+        LOG << shellings_found.size() << nl;
+
+        typedef decltype(shellings_found[0]) shelling;
+
+        if(false)
+        std::sort( shellings_found.begin(), shellings_found.end(), [=]( const shelling& s1, const shelling& s2 ){ return s1.weight_reflection < s2.weight_reflection; } );
+
+        for( int t = 0; t < shellings_found.size(); t++ )
+        {
+            const auto& shelling = shellings_found[t];
+            LOG << t << "\t:\t";
+            for( const auto& s : shelling ) { LOG << s << space; }
+            LOG << "\t" << shelling.weight_reflection << nl;
+        }
+
+        return 0;
+    }
+            
     
     if(false)
     {
@@ -57,8 +87,6 @@ int main( int argc, char *argv[] )
     }
             
     
-    Float PF_estimate_via_shellings = std::numeric_limits<Float>::infinity();
-
     if(false)
     {
         const auto shellings_found = generate_ranked_shelling( M );
@@ -82,25 +110,8 @@ int main( int argc, char *argv[] )
         }
 
         LOG << "PF estimate via shellings: " << PF_estimate_via_shellings << nl;
-        
-    }
-            
-    
-    // if(false)
-    {
-        const auto shellings_found = generate_shellings2( M, 1 );
 
-        LOG << shellings_found.size() << nl;
-
-        for( int t = 0; t < shellings_found.size(); t++ )
-        {
-            const auto& shelling = shellings_found[t];
-            LOG << t << "\t:\t";
-            for( const auto& s : shelling ) { LOG << s << space; }
-            LOG << nl;
-
-        }
-        
+        return 0;
     }
             
     

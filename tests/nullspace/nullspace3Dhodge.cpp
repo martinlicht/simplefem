@@ -58,7 +58,7 @@ int main( int argc, char *argv[] )
             for( int i = 0; i < 1; i++ )
             {
                 auto M2 = Mx;
-                M2.getcoordinates().shift( FloatVector{ i * 3.0, 0.0 } );
+                M2.getCoordinates().shift( FloatVector{ i * 3.0, 0.0 } );
                 M.merge( M2 );
             }
                         
@@ -330,7 +330,7 @@ int main( int argc, char *argv[] )
 
                         auto reduced_nullvector = interpol_matrix * vector_incmatrix * nullvector;
 
-                        vtk.writeCellVectorData_barycentricgradients( reduced_nullvector, "nullvector_Hcurl" , 1.0 );
+                        vtk.write_cell_vector_data_barycentricgradients( reduced_nullvector, "nullvector_Hcurl" , 1.0 );
                         
                         fs.close();
                 

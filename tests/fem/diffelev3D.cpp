@@ -153,11 +153,11 @@ int main( int argc, char *argv[] )
             
                 M.uniformrefinement();
 
-                LOG << M.getcoordinates().text() << nl;
+                LOG << M.getCoordinates().text() << nl;
 
                 M.shake_interior_vertices();
 
-                LOG << M.getcoordinates().text() << nl;
+                LOG << M.getCoordinates().text() << nl;
             }
             
             
