@@ -340,7 +340,7 @@ int main( int argc, char *argv[] )
                         rhs_sol, 
                         rhs_aux, 
                         A, Bt, B, C, 
-                        desired_precision * sqrt(desired_precision),
+                        desired_precision * std::sqrt(desired_precision),
                         -1,
                         // IdentityMatrix( A.getdimin() ), IdentityMatrix( C.getdimin() ) 
                         PAinv, PCinv
@@ -359,7 +359,7 @@ int main( int argc, char *argv[] )
 
                     newratio = candidate_A_product / candidate_M_product;
 
-                    candidate /= sqrt(candidate_M_product); // Optional step
+                    candidate /= std::sqrt(candidate_M_product); // Optional step
 
                     LOG << "current ratio: " << newratio << " (" << t << "/" << max_inverseiterations << ")" << nl;
 
@@ -394,8 +394,8 @@ int main( int argc, char *argv[] )
                 
                 contables[r-min_r] << newratio;
                 contables[r-min_r] << curratio;
-                contables[r-min_r] << sqrt(curratio);
-                contables[r-min_r] << PF_estimate_via_shellings / sqrt(curratio);
+                contables[r-min_r] << std::sqrt(curratio);
+                contables[r-min_r] << PF_estimate_via_shellings / std::sqrt(curratio);
                 contables[r-min_r] << u_massnorm;
                 contables[r-min_r] << ucurl_massnorm;
                 contables[r-min_r] << Float( end - start );

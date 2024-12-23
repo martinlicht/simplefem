@@ -310,9 +310,9 @@ int main( int argc, char *argv[] )
                         assert( errornorm_sol_sq  >= 0 );
                         assert( errornorm_curl_sq >= 0 );
 
-                        Float errornorm_ndiv = sqrt( errornorm_ndiv_sq );
-                        Float errornorm_sol  = sqrt( errornorm_sol_sq  );
-                        Float errornorm_curl = sqrt( errornorm_curl_sq );
+                        Float errornorm_ndiv = std::sqrt( errornorm_ndiv_sq );
+                        Float errornorm_sol  = std::sqrt( errornorm_sol_sq  );
+                        Float errornorm_curl = std::sqrt( errornorm_curl_sq );
                         
                         LOG << "div  error sq: " << errornorm_ndiv_sq << nl;
                         LOG << "sol  error sq: " << errornorm_sol_sq << nl;

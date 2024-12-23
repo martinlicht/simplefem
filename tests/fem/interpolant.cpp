@@ -45,7 +45,7 @@ int main( int argc, char *argv[] )
     
         auto scalarfield = [](const FloatVector& vec) -> FloatVector{
             assert( vec.getdimension() == 2 );
-            return FloatVector({ sqrt( vec[0]*vec[0] + vec[1]*vec[1] ) });
+            return FloatVector({ std::sqrt( vec[0]*vec[0] + vec[1]*vec[1] ) });
             // return FloatVector({ 1 + vec[0] + vec[1] * vec[1] });
         };
         
@@ -85,7 +85,7 @@ int main( int argc, char *argv[] )
         
         auto scalarfield = [](const FloatVector& vec) -> FloatVector{
             assert( vec.getdimension() == 3 );
-            return FloatVector({ sqrt( vec[0]*vec[0] + vec[1]*vec[2] ) });
+            return FloatVector({ std::sqrt( vec[0]*vec[0] + vec[1]*vec[2] ) });
         };
         
         auto vectorfield = [](const FloatVector& vec) -> FloatVector{

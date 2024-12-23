@@ -107,7 +107,7 @@ constexpr typename std::enable_if< std::is_floating_point<T>::value, T>::type Sq
     T x = a;
     // assert( x >= 0. );
     if( not ( x > 0. ) ) return 0.;
-    while ( i --> 0 ) x = ( x + a / x ) / 2.;
+    while ( i --> 0 ) x = ( x + a / x ) / 2.f;
     return x;    
     // return SqrtHelper( a, a, i );
 }

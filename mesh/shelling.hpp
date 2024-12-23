@@ -612,7 +612,11 @@ void generate_ranked_shelling(
 
 
 
-
+Float estimate_shelling_quality( 
+    const Mesh& mesh,
+    std::vector<int> shelling,
+    int form_degree
+);
 
 Float estimate_shelling_quality( 
     const Mesh& mesh,
@@ -822,7 +826,7 @@ Float estimate_shelling_quality(
         {
             const int n = dim;
 
-            const Float B = sqrt( 1. + square( (n-k)*aspect_condition_number[i] ) ) - (n-k)*aspect_condition_number[i];
+            const Float B = std::sqrt( 1. + square( (n-k)*aspect_condition_number[i] ) ) - (n-k)*aspect_condition_number[i];
 
             const Float Ctheta = max_diameter_ratio;
 
@@ -832,7 +836,7 @@ Float estimate_shelling_quality(
 
 
             const Float Psi_estimate1 = ( 1. + (k+1) * (1+B) * kappa );
-            const Float Psi_estimate = sqrt( 1. + square( (k+1) * (1+B) * kappa ) / 4 ) + ( (k+1) * (1+B) * kappa ) / 2;
+            const Float Psi_estimate = std::sqrt( 1. + square( (k+1) * (1+B) * kappa ) / 4 ) + ( (k+1) * (1+B) * kappa ) / 2;
             // LOG << Psi_estimate1 << space << Psi_estimate << nl;
             
 
@@ -872,8 +876,8 @@ Float estimate_shelling_quality(
             Float PF = 1. / Constants::pi ; // * 2. * power_numerical( algebraic_condition_number[i], form_degree+1 ) / trafo_singular_min[i];
 
             Float A = PF;
-            Float B = PF * C5[i] * power_numerical( C5prime[i], form_degree   ) * sqrt( C6det[i] );
-            Float C =      C5[i] * power_numerical( C5prime[i], form_degree-1 ) * sqrt( C6det[i] );
+            Float B = PF * C5[i] * power_numerical( C5prime[i], form_degree   ) * std::sqrt( C6det[i] );
+            Float C =      C5[i] * power_numerical( C5prime[i], form_degree-1 ) * std::sqrt( C6det[i] );
 
             // obtain all previous indices of the common subsimplex of dimension n-k
             const auto& relevant_volumes = mesh.get_supersimplices( dim, dim-1, common_subsimplex );
@@ -909,7 +913,7 @@ Float estimate_shelling_quality(
         estimate1 += square( coefficient_table[i][j] );
     }
 
-    LOG << "First estimate: " << sqrt( estimate1 ) << nl;
+    LOG << "First estimate: " << std::sqrt( estimate1 ) << nl;
 
 
     Float estimate2 = 1.;
@@ -917,7 +921,7 @@ Float estimate_shelling_quality(
     // skip the first one
     for( int i = 1; i < shelling.size(); i++ )
     {
-        estimate2 *= C8[i] * power_numerical( C8prime[i], form_degree ) * C7[i] * power_numerical( C7prime[i], form_degree-1 ) * sqrt( C8det[i] * C7det[i] );
+        estimate2 *= C8[i] * power_numerical( C8prime[i], form_degree ) * C7[i] * power_numerical( C7prime[i], form_degree-1 ) * std::sqrt( C8det[i] * C7det[i] );
         LOG << i << tab << estimate2 << nl;
     }
 

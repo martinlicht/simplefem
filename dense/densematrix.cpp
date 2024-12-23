@@ -1115,7 +1115,7 @@ Float DenseMatrix::operator_norm_estimate( int sample_number, int iteration_numb
             vec = MtM * vec;
         }
         
-        ret = maximum( ret, sqrt( vec.norm() ) );
+        ret = maximum( ret, std::sqrt( vec.norm() ) );
 
     }
     

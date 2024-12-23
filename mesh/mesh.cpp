@@ -1077,7 +1077,7 @@ void Mesh::shake_interior_vertices( Float intensity, Float probability )
         shift.random_within_range(-1.,1.);
         shift /= shift.l2norm();
         assert( shift.is_finite() );
-        shift *= sqrt( random_uniform() ) * radius * intensity;
+        shift *= std::sqrt( random_uniform() ) * radius * intensity;
 
         for( int c = 0; c < dim; c++ )
             getCoordinates().setdata( v, c, getCoordinates().getdata( v, c ) + shift[c] );

@@ -243,8 +243,8 @@ int main( int argc, char *argv[] )
                     auto errornorm_aux_sol  = volume_elevationmatrix * interpol_sol  - volume_incmatrix *  sol;
                     auto errornorm_aux_grad = interpol_grad - vector_incmatrix * grad;
 
-                    Float errornorm_sol  = sqrt( errornorm_aux_sol  * ( volume_massmatrix *  errornorm_aux_sol ) );
-                    Float errornorm_grad = sqrt( errornorm_aux_grad * ( vector_massmatrix * errornorm_aux_grad ) );
+                    Float errornorm_sol  = std::sqrt( errornorm_aux_sol  * ( volume_massmatrix *  errornorm_aux_sol ) );
+                    Float errornorm_grad = std::sqrt( errornorm_aux_grad * ( vector_massmatrix * errornorm_aux_grad ) );
                     Float residual_sol   = ( rhs - B * grad ).norm();
                     Float residual_grad  = ( - A * grad + Bt * sol ).norm();
 

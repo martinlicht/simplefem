@@ -221,11 +221,11 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
 
                 const Float kappa  = aspect_condition_number[i];
 
-                const Float rho    = minimum( 1., min_height_of_vertex / (level+1.) );
+                const Float rho    = minimum( (Float)1., min_height_of_vertex / (level+1.) );
 
-                const Float mu_l   = 0.5 * sqrt( square(1+rho) + square( square(1+rho) * (n-level) * kappa ) ) + 0.5 * sqrt( square(1-rho) + square( square(1+rho) * (n-level) * kappa ) );
+                const Float mu_l   = 0.5 * std::sqrt( square(1+rho) + square( square(1+rho) * (n-level) * kappa ) ) + 0.5 * std::sqrt( square(1-rho) + square( square(1+rho) * (n-level) * kappa ) );
                 
-                const Float xi_l   = sqrt( square(2*rho+1) + square( (n-level) * kappa ) ) + sqrt( 1. + square( (n-level) * kappa ) );
+                const Float xi_l   = std::sqrt( square(2*rho+1) + square( (n-level) * kappa ) ) + std::sqrt( 1. + square( (n-level) * kappa ) );
 
                 assert( std::isfinite( Ctheta ) && Ctheta > 0. );
                 assert( std::isfinite( kappa  ) && kappa  > 0. );
@@ -295,14 +295,14 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
                     auto z = zc - zs;
                     auto h = height_vectors[vi] / ( dim-k );
                     auto b = z - h; //( z.scalarproductwith(h) / h.norm_sq() ) * h;
-                    Assert( ( z - h - b ).is_numerically_small(), z, '\n\n', h, '\n\n', b );
+                    Assert( ( z - h - b ).is_numerically_small(), z, "\n\n", h, "\n\n", b );
                     auto tanbeta = b.norm() / h.norm();
 
                     Float proposed_improved_singular_max 
                     = 
-                    0.5 * sqrt( square( 1. + rho ) + square( ( 1. + rho ) * tanbeta ) ) 
+                    0.5 * std::sqrt( square( 1. + rho ) + square( ( 1. + rho ) * tanbeta ) ) 
                     +
-                    0.5 * sqrt( square( 1. - rho ) + square( ( 1. + rho ) * tanbeta ) );
+                    0.5 * std::sqrt( square( 1. - rho ) + square( ( 1. + rho ) * tanbeta ) );
 
                     improved_singular_max = maximum( improved_singular_max, proposed_improved_singular_max );
                 }
@@ -371,7 +371,7 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
 
                 const Float kappa  = aspect_condition_number[i];
 
-                Float facebased_singular_max = 0.5 * sqrt( square( Ctheta * kappa + 1. ) + kappa ) + 0.5 * sqrt( square( Ctheta * kappa - 1. ) + kappa );
+                Float facebased_singular_max = 0.5 * std::sqrt( square( Ctheta * kappa + 1. ) + kappa ) + 0.5 * std::sqrt( square( Ctheta * kappa - 1. ) + kappa );
 
                 singular_max = minimum( singular_max, facebased_singular_max );
 
@@ -426,7 +426,7 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
 
                     Float c = ( b_first - b_other ).norm() / height_vector_first.norm();
 
-                    Float facebased_singular_max = 0.5 * sqrt( square( a + 1. ) + c ) + 0.5 * sqrt( square( a - 1. ) + c );
+                    Float facebased_singular_max = 0.5 * std::sqrt( square( a + 1. ) + c ) + 0.5 * std::sqrt( square( a - 1. ) + c );
                     
                     singular_max = minimum( singular_max, facebased_singular_max );
 
@@ -601,7 +601,7 @@ void generate_shellings2(
             estimate1 += coefficient_table[i].norm_sq();
             LOGPRINTF( "%i %.4f\t", current_prefix[i], estimate1 );
         }
-        estimate1 = sqrt(estimate1);
+        estimate1 = std::sqrt(estimate1);
 
         LOGPRINTF( "w1=%e w2=%e\n", estimate1, multweight );
 
@@ -948,7 +948,7 @@ void generate_shellings2(
     {
         Float weight_here = coefficient_vectors[i].norm_sq();
 
-        if( shellings_found.size() > 0 and sqrt( weight_here + weight_reflection_so_far ) >= shellings_found.front().weight_reflection ) 
+        if( shellings_found.size() > 0 and std::sqrt( weight_here + weight_reflection_so_far ) >= shellings_found.front().weight_reflection ) 
             if( sort_nodes_by_priority )
                 break;
             else 
