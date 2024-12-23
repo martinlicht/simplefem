@@ -204,7 +204,7 @@ Float Determinant_laplaceexpansion( const DenseMatrix& A )
     if( A.getdimin() == 0 )
         return 1.;
     
-    Float ret = 0.;
+    long double ret = 0.;
     int signum  = 1;
     
     int i = 77;
@@ -216,7 +216,7 @@ Float Determinant_laplaceexpansion( const DenseMatrix& A )
     
     do {
         
-        Float summand = signum;
+        long double summand = signum;
         for( int r = 0; r < A.getdimout(); r++ )
             summand *= A( r, perm[r] );
         
@@ -446,8 +446,8 @@ DenseMatrix Inverse( DenseMatrix A )
            +D_02/D, -D_12/D, +D_22/D           
         } );
 
-    } else if( A.getdimin() <= 6 ) {
-        Inverse_CramersRule_InSitu( A );
+    // } else if( A.getdimin() <= 6 ) {
+    //     Inverse_CramersRule_InSitu( A );
     } else {
         Inverse_gauss_InSitu( A );
     }
