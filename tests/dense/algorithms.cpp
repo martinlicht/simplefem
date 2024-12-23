@@ -257,8 +257,8 @@ int main( int argc, char *argv[] )
             LOG << 1. / Determinant(A) - Determinant( Ainv ) << nl;
             LOG << A - Inverse( Ainv ) << nl;
 
-            assert( ( Ainv * A ).is_numerically_identity() );
-            assert( ( A * Ainv ).is_numerically_identity() );
+            Assert( ( Ainv * A ).is_numerically_identity(), Ainv, A, Ainv*A );
+            Assert( ( A * Ainv ).is_numerically_identity(), A, Ainv, Ainv*A );
         }
     }
     

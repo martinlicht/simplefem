@@ -1245,9 +1245,9 @@ DenseMatrix InvHilbertMatrix( int n )
         const int i = r+1;
         const int j = c+1;
         return sign_power(i+j) * (i+j-1)
-               * binomial_integer( n+i-1, n-j )
-               * binomial_integer( n+j-1, n-i )
-               * square( binomial_integer(i+j-2,i-1) );
+               * binomial_numerical( n+i-1, n-j )
+               * binomial_numerical( n+j-1, n-i )
+               * square( binomial_numerical(i+j-2,i-1) );
     };
 
     return DenseMatrix( n, invhilbertmatrix_generator );
