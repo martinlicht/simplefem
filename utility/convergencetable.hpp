@@ -10,7 +10,7 @@
 
 class ConvergenceTable
 {
-    typedef long double EntryType; 
+    typedef Float EntryType; 
     
     private:
         
@@ -66,11 +66,11 @@ class ConvergenceTable
         // stream operators 
 
         ConvergenceTable& operator<<( float entry );
-
         ConvergenceTable& operator<<( double entry );
-
         ConvergenceTable& operator<<( long double entry );
 
+        // ConvergenceTable& operator<<( Float entry );
+        
         ConvergenceTable& operator<<( const std::string& seriesheader );
 
         ConvergenceTable& operator<<( char code );

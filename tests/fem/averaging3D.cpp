@@ -151,7 +151,7 @@ int main( int argc, char *argv[] )
             M.shake_interior_vertices();
             // for( auto& x : M.getCoordinates().raw() )
             // {
-            //     x = sqrt(x);
+            //     x = std::sqrt(x);
             // }
 
         }

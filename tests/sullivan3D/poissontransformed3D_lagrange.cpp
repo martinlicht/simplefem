@@ -101,7 +101,7 @@ DenseMatrix jacobian(const FloatVector& vec) {
     Float li  = maximum(ax,maximum(ay,az));
     Float lis = li*li;
     Float l2s = x*x + y*y + z*z;
-    Float l2  = sqrt( l2s );
+    Float l2  = std::sqrt( l2s );
     Float l2c = l2*l2s;
 
     Float a     = std::exp( 1. - 1. / li );

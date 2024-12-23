@@ -185,7 +185,7 @@ int main( int argc, char *argv[] )
                         rhs_sol, 
                         rhs_aux, 
                         A[k], Bt[k], B[k], C[k], 
-                        desired_precision * sqrt(desired_precision),
+                        desired_precision * std::sqrt(desired_precision),
                         0,
                         IdentityMatrix( A[k].getdimin() ), IdentityMatrix( C[k].getdimin() ) 
                     );
@@ -205,7 +205,7 @@ int main( int argc, char *argv[] )
                 
                     rayleigh_quotient = candidate_A_product / candidate_M_product;
 
-                    candidate /= sqrt(candidate_M_product); // Optional step
+                    candidate /= std::sqrt(candidate_M_product); // Optional step
 
                     LOG << "current ratio: " << rayleigh_quotient << " (" << t << "/" << max_inverseiterations << ")" << nl;
 

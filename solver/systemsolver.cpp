@@ -118,7 +118,7 @@ int BlockHerzogSoodhalterMethod(
             z_C = PCinv * v1_C;
             
             // 3
-            gamma = sqrt( v1_A * z_A + v1_C * z_C );
+            gamma = std::sqrt( v1_A * z_A + v1_C * z_C );
             
             assert( gamma >= 0. );
             
@@ -139,8 +139,8 @@ int BlockHerzogSoodhalterMethod(
 
             // 7 
             eta = gamma; 
-            eta_A = gamma * sqrt( psi_A );
-            eta_C = gamma * sqrt( psi_C );
+            eta_A = gamma * std::sqrt( psi_A );
+            eta_C = gamma * std::sqrt( psi_C );
             
             s0 = s1 = 0;
             c0 = c1 = 1;
@@ -220,8 +220,8 @@ int BlockHerzogSoodhalterMethod(
 
             // 27 -- 28 
             eta   = -sn * eta;
-            eta_A = eta * sqrt( psi_A );
-            eta_C = eta * sqrt( psi_C );
+            eta_A = eta * std::sqrt( psi_A );
+            eta_C = eta * std::sqrt( psi_C );
 
 
             // update 
@@ -241,7 +241,7 @@ int BlockHerzogSoodhalterMethod(
 
             FloatVector r_A = b_A - A * x_A - Bt * x_C;
             FloatVector r_C = b_C - B * x_A - C  * x_C;
-            Float r = sqrt( r_A * r_A + r_C * r_C );
+            Float r = std::sqrt( r_A * r_A + r_C * r_C );
 
             bool print_condition = ( print_modulo > 0 and recent_iteration_count % print_modulo == 0 );
             

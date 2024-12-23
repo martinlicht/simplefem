@@ -33,7 +33,7 @@ int main( int argc, char *argv[] )
 
         assert( S.trace()         == 3-1+1+0 );
         assert( S.sumnorm()       == 7+6+11+3 );
-        assert( S.frobeniusnorm() == std::sqrt(91) );
+        assert( S.frobeniusnorm() == std::sqrt((Float)91) );
         assert( S.maxnorm()       == 6 );
         
         Float p = 1.01;

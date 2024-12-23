@@ -216,8 +216,8 @@ int main( int argc, char *argv[] )
                         auto errornorm_aux_s = interpol_sol  - computed_sol_s;
                         auto graderror_aux_s = interpol_grad - computed_grad_s;
                         
-                        Float errornorm_s     = sqrt( errornorm_aux_s * ( scalar_massmatrix * errornorm_aux_s ) );
-                        Float graderrornorm_s = sqrt( graderror_aux_s * ( vector_massmatrix * graderror_aux_s ) );
+                        Float errornorm_s     = std::sqrt( errornorm_aux_s * ( scalar_massmatrix * errornorm_aux_s ) );
+                        Float graderrornorm_s = std::sqrt( graderror_aux_s * ( vector_massmatrix * graderror_aux_s ) );
                         Float residualnorm_s  = ( rhs_s - stiffness_s * sol_s ).norm();
                         
                         LOG << "error:     " << errornorm_s     << nl;
@@ -243,8 +243,8 @@ int main( int argc, char *argv[] )
                         auto errornorm_aux_w = interpol_sol  - computed_sol_w;
                         auto graderror_aux_w = interpol_grad - computed_grad_w;
                         
-                        Float errornorm_w     = sqrt( errornorm_aux_w * ( scalar_massmatrix * errornorm_aux_w ) );
-                        Float graderrornorm_w = sqrt( graderror_aux_w * ( vector_massmatrix * graderror_aux_w ) );
+                        Float errornorm_w     = std::sqrt( errornorm_aux_w * ( scalar_massmatrix * errornorm_aux_w ) );
+                        Float graderrornorm_w = std::sqrt( graderror_aux_w * ( vector_massmatrix * graderror_aux_w ) );
                         Float residualnorm_w  = ( rhs_w - stiffness_w * sol_w ).norm();
                         
                         LOG << "error:     " << errornorm_w     << nl;

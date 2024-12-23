@@ -219,7 +219,7 @@ int main( int argc, char *argv[] )
 
                         // rhs_original.zero();
                         
-                        // const Float desired_precision = sqrt( machine_epsilon );
+                        // const Float desired_precision = std::sqrt( machine_epsilon );
 
                         if( do_cgmpp )
                         {

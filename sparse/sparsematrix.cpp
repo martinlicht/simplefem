@@ -815,6 +815,8 @@ Float norm_sq_of_vector( const SparseMatrix& A, const FloatVector& vec )
     }
     
     // return static_cast<Float>( ret1 + 2. * ret2 );
+    assert( is_numerically_close( ret, ret1 + 2. * ret2 ) );
+
     return (Float)(double)(safedouble)( ret );
 }
 

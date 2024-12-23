@@ -206,10 +206,10 @@ int main( int argc, char *argv[] )
         Float norm_e = e.norm();
 
         // Assertions for norms
-        Assert(norm_a == std::sqrt(10), norm_a ); // Approximately sqrt(10)
-        assert(norm_b == std::sqrt(10) ); // Approximately sqrt(10)
-        assert(norm_c == std::sqrt(21) ); // Approximately sqrt(21)
-        assert(norm_d == std::sqrt(50) ); // Approximately sqrt(50)
+        Assert(norm_a == std::sqrt((Float)10), norm_a ); // Approximately std::sqrt(10)
+        assert(norm_b == std::sqrt((Float)10) ); // Approximately std::sqrt(10)
+        assert(norm_c == std::sqrt((Float)21) ); // Approximately std::sqrt(21)
+        assert(norm_d == std::sqrt((Float)50) ); // Approximately std::sqrt(50)
         assert(norm_e == 0. );
 
         // Normalize vectors
