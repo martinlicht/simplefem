@@ -19,7 +19,8 @@ public:
     // Constructor from long double with range check
     explicit safedouble( long double v ) : value( static_cast<double>(v) )
     {
-        assert( not( v < std::numeric_limits<double>::lowest() || v > std::numeric_limits<double>::max() ) );
+        if( std::isfinite(v) )
+            assert( not( v < std::numeric_limits<double>::lowest() || v > std::numeric_limits<double>::max() ) );
     }
 
     // Explicit conversion operator to double

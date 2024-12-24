@@ -548,7 +548,7 @@ Float FloatVector::scalarproductwith( const FloatVector& right ) const
 {
     check();
     assert( getdimension() == right.getdimension() );
-    Float ret = 0.;
+    long double ret = 0.;
     for( int p = 0; p < getdimension(); p++ )
         ret += getentry(p) * right.getentry(p);
     return ret;
@@ -558,7 +558,7 @@ Float FloatVector::scalarproductwith( const FloatVector& right, const std::vecto
 {
     check();
     assert( getdimension() == right.getdimension() );
-    Float ret = 0.;
+    long double ret = 0.;
     for( int p = 0; p < getdimension(); p++ )
         if( not mask[p] )
             ret += getentry(p) * right.getentry(p);
@@ -589,7 +589,7 @@ Float FloatVector::sum() const
 {
     check();
     assert( getdimension() > 0 );
-    Float ret = 0.;
+    long double ret = 0.;
     for( int d = 0; d < getdimension(); d++ )
         ret = ret + pointer[d];
     return ret;
@@ -603,7 +603,7 @@ Float FloatVector::norm() const
 Float FloatVector::norm_sq() const 
 {
     check();
-    Float ret = 0.;
+    long double ret = 0.;
     for( int d = 0; d < getdimension(); d++ )
         ret += absolute( pointer[d] * pointer[d] );
     return ret;
@@ -618,7 +618,7 @@ Float FloatVector::norm_sq( const LinearOperator& op) const
 {
     check();
     op.check();
-    Float ret = (*this) * ( op * (*this) );
+    long double ret = (*this) * ( op * (*this) );
     assert( std::isfinite(ret) );
     assert( ret >= 0 );
     return ret;
@@ -638,7 +638,7 @@ Float FloatVector::sumnorm() const
 {
     check();
     assert( getdimension() > 0 );
-    Float ret = 0.;
+    long double ret = 0.;
     for( int d = 0; d < getdimension(); d++ )
         ret = ret + absolute( pointer[d] );
     return ret;
@@ -657,7 +657,7 @@ Float FloatVector::lpnorm( Float p, Float innerweight ) const
     assert( std::isnormal(p) );
     assert( std::isfinite(innerweight) and innerweight > 0. );
     
-    Float ret = 0.;
+    long double ret = 0.;
     for( int d = 0; d < getdimension(); d++ )
         ret += power_numerical( absolute( pointer[d] ), p );
     ret *= innerweight;
