@@ -435,9 +435,9 @@ int main( int argc, char *argv[] )
                             auto errornorm_aux_sol  = interpol_sol  - vector_incmatrix *  sol;
                             auto errornorm_aux_curl = interpol_curl -                    curl;
 
-                            Float errornorm_ndiv = sqrt( errornorm_aux_ndiv * ( scalar_massmatrix * errornorm_aux_ndiv ) );
-                            Float errornorm_sol  = sqrt( errornorm_aux_sol  * ( vector_massmatrix * errornorm_aux_sol  ) );
-                            Float errornorm_curl = sqrt( errornorm_aux_curl * ( volume_massmatrix * errornorm_aux_curl ) );
+                            Float errornorm_ndiv = std::sqrt( errornorm_aux_ndiv * ( scalar_massmatrix * errornorm_aux_ndiv ) );
+                            Float errornorm_sol  = std::sqrt( errornorm_aux_sol  * ( vector_massmatrix * errornorm_aux_sol  ) );
+                            Float errornorm_curl = std::sqrt( errornorm_aux_curl * ( volume_massmatrix * errornorm_aux_curl ) );
                             Float residualnorm   = ( rhs - SystemMatrix * sol ).norm();
                             
                             contable_sigma << errornorm_ndiv;

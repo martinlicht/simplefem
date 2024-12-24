@@ -226,8 +226,8 @@ int main( int argc, char *argv[] )
                         auto errornorm_aux = interpol_sol  - computed_sol;
                         auto graderror_aux = interpol_grad - computed_grad;
                         
-                        Float errornorm     = sqrt( errornorm_aux * ( scalar_massmatrix * errornorm_aux ) );
-                        Float graderrornorm = sqrt( graderror_aux * ( vector_massmatrix * graderror_aux ) );
+                        Float errornorm     = std::sqrt( errornorm_aux * ( scalar_massmatrix * errornorm_aux ) );
+                        Float graderrornorm = std::sqrt( graderror_aux * ( vector_massmatrix * graderror_aux ) );
                         Float residualnorm  = ( rhs - stiffness * sol ).norm();
                         
                         LOG << "error:     " << errornorm    << nl;

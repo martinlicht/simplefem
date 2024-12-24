@@ -41,7 +41,7 @@ int main( int argc, char *argv[] )
             FloatVector cellwisemass = FloatVector( M.count_triangles(), 
                 [&M]( int t ) -> Float{
                     FloatVector mp = M.get_triangle_midpoint(t);
-                    return exp( - sqrt( mp[0]*mp[0] + mp[1]*mp[1] ) );
+                    return exp( - std::sqrt( mp[0]*mp[0] + mp[1]*mp[1] ) );
                 }
             );
             

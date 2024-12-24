@@ -344,9 +344,9 @@ int main( int argc, char *argv[] )
             auto errornorm_aux_curl = interpol_curl - pseudo_elevmatrix * vector_diffmatrix * vector_incmatrix * sol;
             auto errornorm_aux_aux  = interpol_aux  - scalar_elevmatrix * scalar_incmatrix * aux;
 
-            Float errornorm_sol  = sqrt( errornorm_aux_sol  * ( vector_massmatrix * errornorm_aux_sol  ) );
-            Float errornorm_curl = sqrt( errornorm_aux_curl * ( pseudo_massmatrix * errornorm_aux_curl ) );
-            Float errornorm_aux  = sqrt( errornorm_aux_aux  * ( scalar_massmatrix * errornorm_aux_aux  ) );
+            Float errornorm_sol  = std::sqrt( errornorm_aux_sol  * ( vector_massmatrix * errornorm_aux_sol  ) );
+            Float errornorm_curl = std::sqrt( errornorm_aux_curl * ( pseudo_massmatrix * errornorm_aux_curl ) );
+            Float errornorm_aux  = std::sqrt( errornorm_aux_aux  * ( scalar_massmatrix * errornorm_aux_aux  ) );
             
             Float residual_sol  = ( rhs_sol - A * sol - Bt * aux ).norm();
             Float residual_aux  = ( rhs_aux - B * sol -  C * aux ).norm();

@@ -13,7 +13,7 @@ int main( int argc, char *argv[] )
     {
         DenseMatrix A(dim,dim);
         A.randommatrix();
-
+        
         FloatVector b(dim);
         b.random();
 
@@ -35,7 +35,7 @@ int main( int argc, char *argv[] )
 
             auto PartInv2 = Part;
             InvertDiagonal( PartInv2 );
-            assert( ( PartInv - PartInv2 ).is_numerically_small() );
+            Assert( ( PartInv - PartInv2 ).is_numerically_small(), A, b, Part, PartInv, PartInv2 );
 
             Float det = DiagonalDeterminant( Part );
             assert( is_numerically_close( det, Determinant(Part) ) );

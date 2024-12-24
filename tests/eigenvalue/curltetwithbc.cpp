@@ -68,9 +68,9 @@ int main( int argc, char *argv[] )
         *
         1. // condition number 
         *
-        sqrt(n)
+        std::sqrt(n)
         *
-        sqrt(2.) // diameter
+        std::sqrt(2.) // diameter
         ;
     }        
 
@@ -87,9 +87,9 @@ int main( int argc, char *argv[] )
         *
         (4./3.) * Constants::pi
         * 
-        power_numerical( sqrt(2), 3 ) / ( 1. / factorial_numerical(n) )
+        power_numerical( std::sqrt(2), 3 ) / ( 1. / factorial_numerical(n) )
         *
-        sqrt(2);
+        std::sqrt(2);
     }
     
     
@@ -247,7 +247,7 @@ int main( int argc, char *argv[] )
                         rhs_sol, 
                         rhs_aux, 
                         A, Bt, B, C, 
-                        desired_precision * sqrt(desired_precision),
+                        desired_precision * std::sqrt(desired_precision),
                         -1,
                         // IdentityMatrix( A.getdimin() ), IdentityMatrix( C.getdimin() ) 
                         PAinv, PCinv
@@ -266,7 +266,7 @@ int main( int argc, char *argv[] )
 
                     newratio = candidate_A_product / candidate_M_product;
 
-                    candidate /= sqrt(candidate_M_product); // Optional step
+                    candidate /= std::sqrt(candidate_M_product); // Optional step
 
                     LOG << "current ratio: " << newratio << " (" << t << "/" << max_inverseiterations << ")" << nl;
 
@@ -296,7 +296,7 @@ int main( int argc, char *argv[] )
                         rhs_sol.raw(), 
                         A.getA(), A.getC(), A.getV(),
                         residual.raw(),
-                        desired_precision * sqrt(desired_precision),
+                        desired_precision * std::sqrt(desired_precision),
                         -1
                     );
                     
@@ -313,7 +313,7 @@ int main( int argc, char *argv[] )
 
                     newratio = candidate_A_product / candidate_M_product;
 
-                    candidate /= sqrt(candidate_M_product); // Optional step
+                    candidate /= std::sqrt(candidate_M_product); // Optional step
 
                     LOG << "current ratio: " << newratio << " (" << t << "/" << max_inverseiterations << ")" << nl;
 
@@ -349,9 +349,9 @@ int main( int argc, char *argv[] )
                 // contables[r-min_r] << "L eigen" << "PF comp" << "PF est" << "ratio" << "u_mass" << "du_mass" << "time" << nl;
 
                 contables[r-min_r] << newratio;
-                contables[r-min_r] << sqrt(newratio);
+                contables[r-min_r] << std::sqrt(newratio);
                 contables[r-min_r] << poincare_friedrichs_estimate; 
-                contables[r-min_r] << poincare_friedrichs_estimate / sqrt(newratio);
+                contables[r-min_r] << poincare_friedrichs_estimate / std::sqrt(newratio);
                 
                 contables[r-min_r] << u_massnorm;
                 contables[r-min_r] << ucurl_massnorm;

@@ -209,7 +209,7 @@ std::string ConvergenceTable::text_standard( bool display_convergence_rates ) co
                 
                     if( entries[i][j] > 0. and entries[i-1][j] > 0. ) {
 
-                        const long double computed_rate = (long double)std::log2( entries[i-1][j] / entries[i][j] );
+                        const Float computed_rate = std::log2( entries[i-1][j] / entries[i][j] );
                         
                         if( rates_are_float ) { 
                             printf_into_stream( ss, "%*.*le", nc_rate_width, nc_rate_precision, (double)(safedouble)computed_rate  );
@@ -320,7 +320,7 @@ std::string ConvergenceTable::text_transpose( bool display_convergence_rates ) c
                 
                     if( entries[i][j] > 0. and entries[i-1][j] > 0. ) {
 
-                        const long double computed_rate = (long double)std::log2( entries[i-1][j] / entries[i][j] );
+                        const Float computed_rate = std::log2( entries[i-1][j] / entries[i][j] );
                         
                         if( rates_are_float ) { 
                             printf_into_stream( ss, "% *.*le%s", nc_rate_width, nc_rate_precision, (double)(safedouble)computed_rate, cell_separator );
@@ -458,7 +458,7 @@ std::string ConvergenceTable::TeXtabular( const std::vector<bool>& show_column )
                 
                     if( entries[i][j] > 0. and entries[i-1][j] > 0. ) {
 
-                        const long double computed_rate = std::log2( entries[i-1][j] / entries[i][j] );
+                        const Float computed_rate = std::log2( entries[i-1][j] / entries[i][j] );
                         
                         if( rates_are_float ) { 
                             printf_into_stream( ss, "%*.*le", nc_rate_width, nc_rate_precision, (double)(safedouble)computed_rate  );
@@ -510,6 +510,13 @@ std::string ConvergenceTable::TeXtabular( const std::vector<bool>& show_column )
 
 
 
+// ConvergenceTable& ConvergenceTable::operator<<( Float entry )
+// {
+//     ConvergenceTable& contable = *this;
+//     contable.insert_numerical_entry( entry );
+//     return contable;
+// }
+
 ConvergenceTable& ConvergenceTable::operator<<( float entry )
 {
     ConvergenceTable& contable = *this;
@@ -527,7 +534,7 @@ ConvergenceTable& ConvergenceTable::operator<<( double entry )
 ConvergenceTable& ConvergenceTable::operator<<( long double entry )
 {
     ConvergenceTable& contable = *this;
-    contable.insert_numerical_entry( entry );
+    contable.insert_numerical_entry( (Float)(double)(safedouble)entry ); // TODO : kind of pointless, in need of a better solution
     return contable;
 }
 

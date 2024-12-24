@@ -215,7 +215,7 @@ int main( int argc, char *argv[] )
                             rhs_sol, 
                             rhs_aux, 
                             A, Bt, B, C, 
-                            desired_precision * sqrt(desired_precision),
+                            desired_precision * std::sqrt(desired_precision),
                             -1,
                             IdentityMatrix( A.getdimin() ), IdentityMatrix( C.getdimin() ) 
                         );
@@ -243,7 +243,7 @@ int main( int argc, char *argv[] )
 
                     newratio = candidate_A_product / candidate_M_product;
 
-                    candidate /= sqrt(candidate_M_product); // Optional step
+                    candidate /= std::sqrt(candidate_M_product); // Optional step
 
                     LOG << "current ratio: " << newratio << " (" << t << "/" << max_inverseiterations << ")" << nl;
                     
@@ -273,7 +273,7 @@ int main( int argc, char *argv[] )
                 LOG << "u mass:      " << u_massnorm << nl;
                 LOG << "u grad mass: " << ugrad_massnorm << nl;
 
-                LOG << "PF constant estimates: " << sqrt(curratio) << space  << sqrt(newratio) << nl;
+                LOG << "PF constant estimates: " << std::sqrt(curratio) << space  << std::sqrt(newratio) << nl;
                 
                 const Float true_eigenvalue = ( do_neumann ? 1.0 : 3.0 );
                 // 1.0 is the true value 
@@ -342,14 +342,14 @@ int main( int argc, char *argv[] )
                 Cxi = maximum( Cxi, singular_value );
             }
             
-            //Float Cxi = ( 1. + sqrt(6.) * sqrt(6.) );
-            // Float Cxi = sqrt( 1. + power_numerical( sqrt(6.) * sqrt(6.), 2 ) );
-            //Float Cxi = ( 1. + sqrt(6.) ) * sqrt(6.);
+            //Float Cxi = ( 1. + std::sqrt(6.) * std::sqrt(6.) );
+            // Float Cxi = std::sqrt( 1. + power_numerical( std::sqrt(6.) * std::sqrt(6.), 2 ) );
+            //Float Cxi = ( 1. + std::sqrt(6.) ) * std::sqrt(6.);
 
-            assert( Cxi <= ( 1. + sqrt(6.) ) * sqrt(6.) );
+            assert( Cxi <= ( 1. + std::sqrt(6.) ) * std::sqrt(6.) );
 
-            Float A  = maxdiameter / sqrt(2.);
-            Float Ap = maxdiameter / sqrt(2.) * sqrt( volumeratio ) * Cxi;
+            Float A  = maxdiameter / std::sqrt(2.);
+            Float Ap = maxdiameter / std::sqrt(2.) * std::sqrt( volumeratio ) * Cxi;
             Float B = power_numerical( volumeratio, 1./2. );
             
             
@@ -482,7 +482,7 @@ int main( int argc, char *argv[] )
 
             }
 
-            LOG << "minimal costs, sqrt : " << minimal_costs << space << sqrt(minimal_costs) << nl;
+            LOG << "minimal costs, std::sqrt : " << minimal_costs << space << std::sqrt(minimal_costs) << nl;
 
         }
         
