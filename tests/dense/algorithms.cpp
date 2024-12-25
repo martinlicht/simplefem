@@ -48,8 +48,8 @@ int main( int argc, char *argv[] )
                      << "Row " << p2 << space 
                      << S.norm_col_row( p1, p2 ) << nl;
         
-        Assert( is_numerically_close( 10, S.norm_row_col( p1, p2 ) ), S.norm_row_col( p1, p2 ) );
-        Assert( is_numerically_close( 11, S.norm_col_row( p1, p2 ) ), S.norm_col_row( p1, p2 ) );
+        Assert( is_numerically_close( 10, S.norm_row_col( p1, p2 ), 1e-7 ), S.norm_row_col( p1, p2 ) );
+        Assert( is_numerically_close( 11, S.norm_col_row( p1, p2 ), 1e-7 ), S.norm_col_row( p1, p2 ) );
         
         
         LOG << nl << "Row " << 1. << space

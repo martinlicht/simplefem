@@ -36,11 +36,11 @@ int main( int argc, char *argv[] )
     
     // MeshSimplicial3D M = UnitCube3D();
     // MeshSimplicial3D M = StandardCubeFive3D();
-    MeshSimplicial3D M = CrossedBricks_Five3D();
+    // MeshSimplicial3D M = CrossedBricks_Five3D();
     // MeshSimplicial3D M = CrossedBricks3D();
-    // MeshSimplicial3D M = FicheraCorner3D();
+    MeshSimplicial3D M = FicheraCorner3D();
     M.check();
-    M.getCoordinates().shake_random();
+    // M.getCoordinates().shake_random();
 
     LOG << "Number of tetrahedra: " << M.count_tetrahedra() << nl;
     

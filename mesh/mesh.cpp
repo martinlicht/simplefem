@@ -1041,46 +1041,69 @@ void Mesh::shake_interior_vertices( Float intensity, Float probability )
     assert( getinnerdimension() == getouterdimension() ); 
     
     const int dim = getinnerdimension();
+    
+    const int num_vertices = count_simplices(0);
 
-    for( int v = 0; v < count_simplices(0); v++ )
+    for( int v = 0; v < num_vertices; v++ )
     {
+        // roll dice whether we shake this vertex at all 
         if( random_uniform() > probability ) continue; 
 
-        const auto es = get_supersimplices( 1, 0, v );
+
+        /// check whether the vertex is a boundary vertex 
+        const auto face_parents = get_supersimplices( dim-1, 0, v );
 
         bool boundary_detected = false;
 
-        for( const int e : es )
+        for( const int face : face_parents )
         {
-            const auto ts = get_supersimplices( dim, 1, e );
-            assert( ts.size() >= 1 );
-            if( ts.size() == 1 ) boundary_detected = true;
+            const auto volume_parents = get_supersimplices( dim, dim-1, face );
+            assert( volume_parents.size() >= 1 );
+
+            if( volume_parents.size() == 1 ) {
+                boundary_detected = true;
+            } else {
+                assert( volume_parents.size() == 2 );
+            }
         }
 
         if( boundary_detected ) 
             continue;
 
+
+        // its an interior vertex 
+        // first, find the maximum admissible radius 
+
         Float radius = std::numeric_limits<Float>::infinity();
 
-        const auto ts = get_supersimplices( dim, 0, v );
+        const auto volume_parents = get_supersimplices( dim, 0, v );
 
-        for( const int t : ts )
+        for( const int parent : volume_parents )
         {
-            int vi = get_subsimplex_index( dim, 0, t, v );
-            Float height = getHeight( dim, t, vi );
+            int vi = get_subsimplex_index( dim, 0, parent, v );
+            Float height = getHeight( dim, parent, vi );
             radius = minimum( height, radius );
         }
 
         assert( std::isfinite(radius) && radius >= 0. );
 
+        // pick a random direction ...
         FloatVector shift(dim,0.);
         shift.random_within_range(-1.,1.);
-        shift /= shift.l2norm();
+        assert( shift.l2norm() >= 0. );
+        shift.normalize();
         assert( shift.is_finite() );
+
+        // pick a random intensity within 0 to radius*intensity
         shift *= std::sqrt( random_uniform() ) * radius * intensity;
 
-        for( int c = 0; c < dim; c++ )
-            getCoordinates().setdata( v, c, getCoordinates().getdata( v, c ) + shift[c] );
+        for( int c = 0; c < dim; c++ ) {
+            
+            auto position = getCoordinates().getdata( v, c );
+            
+            getCoordinates().setdata( v, c, position + shift[c] );
+
+        }
 
     }
 }

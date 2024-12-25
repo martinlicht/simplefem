@@ -171,7 +171,7 @@ inline std::string Concat2String()
 template< typename T >
 inline std::string Concat2String( const T& t )
 {
-    std::ostringstream ss;
+    std::ostringstream ss; ss.flags( std::ios::scientific ); ss.precision( 15 );
     ss << t;
     return ss.str();
 }
@@ -181,7 +181,7 @@ inline std::string Concat2String( const T& t )
 template< typename T, typename... Params >
 inline std::string Concat2String( const T& t, const Params&... params )
 {
-    std::ostringstream ss;
+    std::ostringstream ss; ss.flags( std::ios::scientific ); ss.precision( 15 );
     ss << t << '\t' << Concat2String( params... );
     return ss.str();
 }
