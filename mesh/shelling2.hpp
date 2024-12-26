@@ -309,9 +309,10 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
                     auto z = zc - zs;
                     auto h = height_vectors[vi] / ( dim-k );
                     auto b = z - h; //( z.scalarproductwith(h) / h.norm_sq() ) * h;
-                    Assert( ( z - h - b ).is_numerically_small(), z, "\n\n", h, "\n\n", b );
                     auto tanbeta = b.norm() / h.norm();
 
+                    Assert( ( z - h - b ).is_numerically_small(), z, "\n\n", h, "\n\n", b );
+                    
                     Float proposed_improved_singular_max 
                     = 
                     0.5 * std::sqrt( square( 1. + rho ) + square( ( 1. + rho ) * tanbeta ) ) 
