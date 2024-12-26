@@ -2,6 +2,7 @@
 #define INCLUDEGUARD_EXAMPLES_3D_HPP
 
 
+#include "../utility/random.hpp"
 #include "mesh.hpp"
 #include "mesh.simplicial3D.hpp"
 
@@ -436,6 +437,70 @@ inline MeshSimplicial3D CrossedBricks_Five3D()
 
 
 
+
+
+inline MeshSimplicial3D RandomPolyhedralSphere( int number_of_iterations )
+{
+    assert( number_of_iterations >= 0 );
+
+    auto M = MeshSimplicial3D(
+      3,  
+      Coordinates( 3, 5, {
+          //  0.00, 0.00, 0.00, // 0
+          //  1.00, 1.00, 0.00, // 1
+          //  1.00, 0.00, 1.00, // 2
+          //  0.00, 1.00, 1.00, // 3
+         +1.00,  0.00, -1./sqrt(2.), // 0
+         -1.00,  0.00, -1./sqrt(2.), // 1
+          0.00, +1.00, +1./sqrt(2.), // 2
+          0.00, -1.00, +1./sqrt(2.), // 3
+          0.00,  0.00, 0.00          // 4 (mid)
+      } ),
+      {
+        // { 0, 1, 2, 3 },
+        { 4, 1, 2, 3 },
+        { 0, 4, 2, 3 },
+        { 0, 1, 4, 3 },
+        { 0, 1, 2, 4 }
+      }
+    );
+
+    // M.getCoordinates().shift( -FloatVector{0.25, 0.25, 0.25} );
+
+    while( number_of_iterations > 0 )
+    {
+        int edge = M.nullindex;
+
+        while( edge == M.nullindex ) {
+            int e = random_integer() % M.count_edges();
+            
+            bool is_boundary = false;
+
+            for( auto f : M.get_face_parents_of_edge(e) ) is_boundary = is_boundary or ( M.count_face_tetrahedron_parents(f) == 1 );
+
+            if( is_boundary ) edge = e;
+        }
+
+        M.bisect_edge(edge);
+
+        number_of_iterations--;
+    }
+
+    for( int n = 0; n < M.count_vertices(); n++ )
+    {
+      if( n == 4 ) continue;
+      auto position = M.getCoordinates().getvectorclone(n);
+      // LOG << position << nl;
+      position.normalize();
+      LOG << position << nl;
+      assert( is_numerically_close( position.norm(), 1. ) );
+      M.getCoordinates().loadvector( n, position );
+    }
+
+
+
+    return M;
+}
 
 
 
