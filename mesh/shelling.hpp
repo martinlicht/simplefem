@@ -668,16 +668,27 @@ Float estimate_shelling_quality(
     LOG << "Max aspect condition number:    " << *std::max_element(    aspect_condition_number.begin(),    aspect_condition_number.end() ) << nl;
     LOG << "Max algebraic condition number: " << *std::max_element( algebraic_condition_number.begin(), algebraic_condition_number.end() ) << nl;
 
+    
     // run over all the n-simplices and compare their diameters
     // Lazy estimate 
     
-    Float max_diameter_ratio = 0.;
-    for( int e1 = 0; e1 < counts[1]; e1++ ) 
-    for( int e2 = 0; e2 < counts[1]; e2++ ) 
-    {
-        Float diam1 = mesh.getDiameter(1,e1);
-        Float diam2 = mesh.getDiameter(1,e2);
-        max_diameter_ratio = maximum( max_diameter_ratio, diam1/diam2 );
+    Float max_diameter_ratio = 1.;
+    
+    for( int v = 0; v < counts[0]; v++ ) {
+
+        auto parents = mesh.get_supersimplices(dim,0,v);
+        assert( parents.size() >= 1 );
+
+        Float d_ratio = 1.;
+        for( int p1 = 0; p1 < parents.size(); p1++ )
+        for( int p2 = 0; p2 < parents.size(); p2++ )
+        {
+            auto d1 = mesh.getDiameter(dim,p1);
+            auto d2 = mesh.getDiameter(dim,p2);
+            d_ratio = maximum( d_ratio, d1/d2, d2/d1 );
+        }
+
+        max_diameter_ratio = maximum( max_diameter_ratio, d_ratio );
     }
 
     LOG << "Max diameter ratio: " << max_diameter_ratio << nl;

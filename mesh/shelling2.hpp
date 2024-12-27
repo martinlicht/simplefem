@@ -165,16 +165,16 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
         auto parents = mesh.get_supersimplices(dim,0,v);
         assert( parents.size() >= 1 );
 
-        Float v_ratio = 1.;
+        Float d_ratio = 1.;
         for( int p1 = 0; p1 < parents.size(); p1++ )
         for( int p2 = 0; p2 < parents.size(); p2++ )
         {
             auto d1 = diameters[p1]; 
             auto d2 = diameters[p2]; 
-            v_ratio = maximum( v_ratio, d1/d2, d2/d1 );
+            d_ratio = maximum( d_ratio, d1/d2, d2/d1 );
         }
 
-        max_diameter_ratio = maximum( max_diameter_ratio, v_ratio );
+        max_diameter_ratio = maximum( max_diameter_ratio, d_ratio );
     }
 
     LOG << "Max diameter ratio: " << max_diameter_ratio << nl;
