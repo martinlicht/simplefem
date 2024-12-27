@@ -125,7 +125,7 @@ int main( int argc, char *argv[] )
         {
             if( j != 0 )
                 // Antihor(i,j) = std::sqrt( n / ( ( 2. + n ) * j*j ) * power_numerical( radii_quotient[i] + 1., n ) ) * ( 1. + 1./radii_quotient[i] ) ;
-                Antihor(i,j) = 2. / ( Constants::pi * std::sqrt(j) );
+                Antihor(i,j) = 2. / ( Constants::pi * std::sqrt((Float)j) );
             
             Antihor(0,1) = 1. / Constants::pi;
             

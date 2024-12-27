@@ -63,7 +63,7 @@ int main( int argc, char *argv[] )
                     assert( vec.getdimension() == 2 );
                     Float x = vec[0]; Float y = vec[1];
                     Float k = 2*Constants::pi;
-                    return FloatVector({ square( sin(k*x) * sin(k*y) ) });
+                    return FloatVector({ square( std::sin(k*x) * std::sin(k*y) ) });
                 };
             
 
@@ -73,8 +73,8 @@ int main( int argc, char *argv[] )
                     Float x = vec[0]; Float y = vec[1];
                     Float k = 2*Constants::pi;
                     return FloatVector( { 
-                        k * sin( 2*k*x ) * sin(k*y) * sin(k*y),
-                        k * sin( 2*k*y ) * sin(k*x) * sin(k*x),
+                        k * std::sin( 2*k*x ) * std::sin(k*y) * std::sin(k*y),
+                        k * std::sin( 2*k*y ) * std::sin(k*x) * std::sin(k*x),
                     });
                 };
             
@@ -85,7 +85,7 @@ int main( int argc, char *argv[] )
                     Float x  =  vec[0]; Float y  =  vec[1];
                     Float k = 2*Constants::pi;
                     return FloatVector({ 
-                        - k*k * ( cos(2*k*x) - cos( 2*k*(x - y) ) + cos(2*k*y) - cos( 2*k*(x + y) ) ) 
+                        - k*k * ( std::cos(2*k*x) - std::cos( 2*k*(x - y) ) + std::cos(2*k*y) - std::cos( 2*k*(x + y) ) ) 
                      });
                 };
             

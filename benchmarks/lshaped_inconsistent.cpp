@@ -233,7 +233,7 @@ int main( int argc, char *argv[] )
                             // for( int v = 0; v < M.count_vertices(); v++ ) {
                             //     Float c0 = M.getCoordinates().getdata( v, 0 );
                             //     Float c1 = M.getCoordinates().getdata( v, 1 );
-                            //     Float z  = sin( c0 * Constants::twopi ) * sin( c0 * Constants::twopi );
+                            //     Float z  = std::sin( c0 * Constants::twopi ) * std::sin( c0 * Constants::twopi );
                             //     z_values[v] = z;
                             // }
 

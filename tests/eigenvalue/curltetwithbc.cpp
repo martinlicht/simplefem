@@ -68,7 +68,7 @@ int main( int argc, char *argv[] )
         *
         1. // condition number 
         *
-        std::sqrt(n)
+        std::sqrt((Float)n)
         *
         std::sqrt(2.) // diameter
         ;
@@ -87,9 +87,9 @@ int main( int argc, char *argv[] )
         *
         (4./3.) * Constants::pi
         * 
-        power_numerical( std::sqrt(2), 3 ) / ( 1. / factorial_numerical(n) )
+        power_numerical( std::sqrt((Float)2), 3 ) / ( 1. / factorial_numerical(n) )
         *
-        std::sqrt(2);
+        std::sqrt((Float)2);
     }
     
     

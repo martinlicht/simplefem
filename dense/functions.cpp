@@ -254,7 +254,7 @@ Float Determinant_gauss( DenseMatrix A )
             }
         
         // make swappings in the range i..n
-        assert( r >= i and r >= i );
+        assert( r >= i and c >= i );
         if( r != i ) { signum = -signum; A.swaprow   ( r, i ); }
         if( c != i ) { signum = -signum; A.swapcolumn( c, i ); }
         
@@ -310,7 +310,7 @@ Float Determinant_bareiss( DenseMatrix A )
             }
         
         // make swappings in the range i..n
-        assert( r >= i and r >= i );
+        assert( r >= i and c >= i );
         if( r != i ) { signum = -signum; A.swaprow   ( r, i ); }
         if( c != i ) { signum = -signum; A.swapcolumn( c, i ); }
         
@@ -323,7 +323,7 @@ Float Determinant_bareiss( DenseMatrix A )
 
         
 
-        //Apply formula
+        //Apply formula: TODO the names of these variables are shadowing the outer variables
         for (int r = i + 1; r < n; r++) 
         for (int c = i + 1; c < n; c++) 
         {

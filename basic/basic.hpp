@@ -86,7 +86,6 @@
 #error Cannot request extended and single precision at the same time!
 #endif
 
-
 #if defined(EXTENDED_PRECISION)
 typedef long double Float;
 #elif defined(SINGLE_PRECISION)
