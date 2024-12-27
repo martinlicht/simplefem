@@ -159,19 +159,28 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
     // run over all the n-simplices and compare their diameters
     // Lazy estimate 
     
-    max_diameter_ratio = 0.;
+    max_diameter_ratio = 1.;
     
-    for( int e1 = 0; e1 < counts[1]; e1++ ) 
-    for( int e2 = 0; e2 < counts[1]; e2++ ) 
-    {
-        Float diam1 = mesh.getDiameter(1,e1);
-        Float diam2 = mesh.getDiameter(1,e2);
-        max_diameter_ratio = maximum( max_diameter_ratio, diam1/diam2 );
+    for( int v = 0; v < counts[0]; v++ ) {
+
+        auto parents = mesh.get_supersimplices(dim,0,v);
+        assert( parents.size() >= 1 );
+
+        Float v_ratio = 1.;
+        for( int p1 = 0; p1 < parents.size(); p1++ )
+        for( int p2 = 0; p2 < parents.size(); p2++ )
+        {
+            auto d1 = diameters[p1]; 
+            auto d2 = diameters[p2]; 
+            v_ratio = maximum( v_ratio, d1/d2, d2/d1 );
+        }
+
+        max_diameter_ratio = maximum( max_diameter_ratio, v_ratio );
     }
 
     LOG << "Max diameter ratio: " << max_diameter_ratio << nl;
 
-    Float max_volume_ratio = 0.;
+    Float max_volume_ratio = 1.;
     for( int face = 0; face < counts[dim-1]; face++ )
     {
         const auto parents = mesh.get_supersimplices(dim,dim-1,face);
@@ -206,13 +215,13 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
         for( int sub_index = 0; sub_index < num_of_subsimplices; sub_index++ )
         {
         
-            Float singular_max     = 0.;
-            Float singular_min_inv = 0.;
-            Float singular_prod    = 0.;
+            Float singular_max     = std::numeric_limits<Float>::infinity();
+            Float singular_min_inv = std::numeric_limits<Float>::infinity();
+            Float singular_prod    = std::numeric_limits<Float>::infinity();
 
-            Float tmax    = 0.;
-            Float tinvmin = 0.;
-            Float tdet    = 0.;
+            Float tmax    = std::numeric_limits<Float>::infinity();
+            Float tinvmin = std::numeric_limits<Float>::infinity();
+            Float tdet    = std::numeric_limits<Float>::infinity();
             
             const int n = dim;
 
@@ -232,9 +241,11 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
                 assert( std::isfinite( kappa  ) && kappa  > 0. );
                 assert( std::isfinite( mu_l   ) && mu_l   > 0. );
 
-                singular_max     = mu_l;
-                singular_min_inv = mu_l / rho;
-                singular_prod    = rho;
+                if(false) {
+                    singular_max     = mu_l;
+                    singular_min_inv = mu_l / rho;
+                    singular_prod    = rho;
+                }
             
                 tmax    = xi_l / ( 2 * (1.+rho) );
                 tinvmin = xi_l / ( 2 * rho      );
@@ -245,10 +256,6 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
             // improved estimates, simplex by simplex 
             // if(false)
             {
-                // find the radius that we can use
-
-                Float rho = 1.;
-
                 const int k = level;
 
                 int subsimplex = mesh.get_subsimplex( dim, k, i, sub_index );
@@ -256,12 +263,16 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
                 auto parents  = mesh.get_supersimplices( dim, k, subsimplex );
                 auto vertices = mesh.get_subsimplices  (   k, 0, subsimplex ).getvalues();
 
+                // find the radius that is maximally possible.
+
+                Float varrho = std::numeric_limits<Float>::infinity();
+
                 for( int vertex : vertices )
                 for( int parent : parents  )
                 {
                     int vertex_localindex = mesh.get_subsimplex_index( dim, 0, parent, vertex );
                     Float height = mesh.getHeight( dim, parent, vertex_localindex );
-                    rho = minimum( rho, height / (k+1) );
+                    varrho = minimum( varrho, height / (k+1) );
                 }
 
                 // find the heights 
@@ -271,9 +282,6 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
 
                 auto other_vertices = mesh.get_subsimplices( dim-k-1, 0, opposite_subsimplex ).getvalues();
                 
-                auto zs = mesh.get_midpoint(       k,          subsimplex );
-                auto zc = mesh.get_midpoint( dim-k-1, opposite_subsimplex );
-
                 std::vector<FloatVector> height_vectors( dim-k, FloatVector(dim,notanumber) );
 
                 for( int vi = 0; vi <= dim-k-1; vi++ ) {
@@ -290,15 +298,22 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
 
                 Float matrixwise_singular_max = 0.; 
                 
+                auto zs = mesh.get_midpoint(       k,          subsimplex );
+                auto zc = mesh.get_midpoint( dim-k-1, opposite_subsimplex );
+
+                Float rho = minimum( 1., varrho / (zc-zs).norm() );
+                // rho = varrho;
+
                 for( int vi = 0; vi <= dim-k-1; vi++ ) 
                 {
                     
                     auto z = zc - zs;
                     auto h = height_vectors[vi] / ( dim-k );
                     auto b = z - h; //( z.scalarproductwith(h) / h.norm_sq() ) * h;
-                    Assert( ( z - h - b ).is_numerically_small(), z, "\n\n", h, "\n\n", b );
                     auto tanbeta = b.norm() / h.norm();
 
+                    Assert( ( z - h - b ).is_numerically_small(), z, "\n\n", h, "\n\n", b );
+                    
                     Float proposed_improved_singular_max 
                     = 
                     0.5 * std::sqrt( square( 1. + rho ) + square( ( 1. + rho ) * tanbeta ) ) 
@@ -443,29 +458,32 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
 
             }
             
+            assert( singular_max > 0 );
+            assert( singular_min_inv > 0 );
+            assert( singular_prod > 0 );
 
             if( form_degree == 0 ) {
-                C5[i][form_degree][level][sub_index] = power_numerical( singular_prod, -n/2. );
-                C6[i][form_degree][level][sub_index] = power_numerical( singular_prod, +n/2. );
+                C5[i][form_degree][level][sub_index] = power_numerical( singular_prod, -1/2. );
+                C6[i][form_degree][level][sub_index] = power_numerical( singular_prod, +1/2. );
             } else if( 0 < form_degree && form_degree < dim ) {
-                C5[i][form_degree][level][sub_index] = singular_max    * power_numerical( singular_prod, -n/2. );
-                C6[i][form_degree][level][sub_index] = singular_min_inv * power_numerical( singular_prod, +n/2. );
+                C5[i][form_degree][level][sub_index] = singular_max    * power_numerical( singular_prod, -1/2. );
+                C6[i][form_degree][level][sub_index] = singular_min_inv * power_numerical( singular_prod, +1/2. );
             } else {
                 assert( form_degree == dim );
-                C5[i][form_degree][level][sub_index] = power_numerical( singular_prod, +1.-n/2. );
-                C6[i][form_degree][level][sub_index] = power_numerical( singular_prod, -1.+n/2. );
+                C5[i][form_degree][level][sub_index] = power_numerical( singular_prod, +1.-1/2. );
+                C6[i][form_degree][level][sub_index] = power_numerical( singular_prod, -1.+1/2. );
             }
 
             if( form_degree == 0 ) {
-                C7[i][form_degree][level][sub_index] = power_numerical( tdet, -n/2. );
-                C8[i][form_degree][level][sub_index] = power_numerical( tdet, +n/2. );
+                C7[i][form_degree][level][sub_index] = power_numerical( tdet, -1/2. );
+                C8[i][form_degree][level][sub_index] = power_numerical( tdet, +1/2. );
             } else if( 0 < form_degree && form_degree < dim ) {
-                C7[i][form_degree][level][sub_index] = tmax    * power_numerical( tdet, -n/2. );
-                C8[i][form_degree][level][sub_index] = tinvmin * power_numerical( tdet, +n/2. );
+                C7[i][form_degree][level][sub_index] = tmax    * power_numerical( tdet, -1/2. );
+                C8[i][form_degree][level][sub_index] = tinvmin * power_numerical( tdet, +1/2. );
             } else {
                 assert( form_degree == dim );
-                C7[i][form_degree][level][sub_index] = power_numerical( tdet, +1.-n/2. );
-                C8[i][form_degree][level][sub_index] = power_numerical( tdet, -1.+n/2. );
+                C7[i][form_degree][level][sub_index] = power_numerical( tdet, +1.-1/2. );
+                C8[i][form_degree][level][sub_index] = power_numerical( tdet, -1.+1/2. );
             }
 
             Assert( not std::isnan( C5[i][form_degree][level][sub_index] ), form_degree ); Assert( C5[i][form_degree][level][sub_index] > 0. ); 

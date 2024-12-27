@@ -231,7 +231,7 @@ inline constexpr T absolute( const T& x )
 template<typename T>
 inline constexpr T sign( const T& x )
 {
-    Assert( std::isfinite(x) );
+    // Assert( std::isfinite(x) );
     if( x > 0 ) return  1;
     if( x < 0 ) return -1;
     else        return  0;
@@ -240,12 +240,13 @@ inline constexpr T sign( const T& x )
 template<typename T>
 inline constexpr int sign_integer( const T& x )
 {
-    Assert( std::isfinite(x) );
+    // Assert( std::isfinite(x) );
     if( x > 0 ) return  1;
     if( x < 0 ) return -1;
     else        return  0;
 }
 
+/*
 template<typename T>
 inline constexpr T maximum( const T& a, const T& b )
 {
@@ -255,7 +256,58 @@ inline constexpr T maximum( const T& a, const T& b )
     return a;
 //     Assert( a >= b or a <= b ); if( a >= b ) return a; else return b;
 }
+*/
 
+template<typename T>
+inline constexpr T maximum( const T& a )
+{
+    return a;
+}
+
+template<typename T, typename... Args >
+inline constexpr T maximum( T a, Args... args )
+{
+    const T& b = maximum( args... );
+    if( a >= b ) return a;
+    if( a <= b ) return b;
+    Assert( ( not std::isfinite(a) ) or ( not std::isfinite(b) ) );
+    return a;
+//     Assert( a >= b or a <= b ); if( a >= b ) return a; else return b;
+}
+
+
+template<typename T>
+inline constexpr T maxabs( const T& a )
+{
+    return a;
+}
+
+template<typename T, typename... Args >
+inline constexpr T maxabs( T a, Args... args )
+{
+    const T& b = maxabs( args... );
+    return maximum( absolute(a), absolute(b) );
+}
+
+
+template<typename T>
+inline constexpr T minimum( const T& a )
+{
+    return a;
+}
+
+template<typename T, typename... Args >
+inline constexpr T minimum( T a, Args... args )
+{
+    const T& b = minimum( args... );
+    if( a >= b ) return b;
+    if( a <= b ) return a;
+    Assert( ( not std::isfinite(a) ) or ( not std::isfinite(b) ) );
+    return b;
+//     Assert( a >= b or a <= b ); if( a >= b ) return a; else return b;
+}
+
+/*
 template<typename T>
 inline constexpr T maxabs( const T& a, const T& b )
 {
@@ -272,24 +324,25 @@ inline constexpr T minimum( const T& a, const T& b )
 //     Assert( a >= b or a <= b ); if( a >= b ) return b; else return a;
 }
 
-
 template<typename T, typename... Args >
 inline constexpr T maximum( T t, Args... args )
 {
-    return maximum( t, maximum( args... ) );
+    return maximum( t, static_cast<T>( maximum( args... ) ) );
 }
 
 template<typename T, typename... Args >
 inline constexpr T maxabs( T t, Args... args )
 {
-    return maxabs( t, maxabs( args... ) );
+    return maxabs( t, static_cast<T>( maxabs( args... ) ) );
 }
 
 template<typename T, typename... Args >
 inline constexpr T minimum( T t, Args... args )
 {
-    return minimum( t, minimum( args... ) );
+    return minimum( t, static_cast<T>( minimum( args... ) ) );
 }
+*/
+
 
 template<typename T>
 inline constexpr T square( const T& x )
@@ -302,10 +355,12 @@ inline constexpr bool is_numerically_small( Float value, Float threshold = desir
     return absolute(value) < threshold;
 }
 
+#include<iostream>
+
 inline constexpr bool is_numerically_close( Float value1, Float value2, Float threshold = desired_closeness )
-{
-    if( std::isinf( value1) and std::isinf( value2) ) return true;
-    if( std::isinf(-value1) and std::isinf(-value2) ) return true;
+{    
+    if( std::isinf(value1) or std::isinf(value2) ) return value1 == value2;
+    assert( std::isfinite(value1) and std::isfinite(value2) );
     return is_numerically_small( value1 - value2, threshold );
 }
 
@@ -347,11 +402,13 @@ inline constexpr int power_integer( int base, int exponent )
 
 inline constexpr int power_of_two( int exponent )
 {
-    return power_integer( 2, exponent );
+    assert( exponent >= 0 );
+    return 1 << exponent; // power_integer( 2, exponent );
 }
 
 inline constexpr int sign_power( int exponent )
 {
+    assert( exponent >= 0 );
     return exponent % 2 == 0 ? 1. : -1;
 }
 
