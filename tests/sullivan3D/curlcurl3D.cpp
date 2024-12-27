@@ -119,7 +119,7 @@ int main( int argc, char *argv[] )
             assert( vec.getdimension() == 3 );
             return FloatVector({ 
                 // blob_dev(vec[0]) * blob(vec[1]) * blob(vec[2]) 
-                Constants::pi * cos(Constants::pi * vec[0]) * sin(Constants::pi * vec[1]) * sin(Constants::pi * vec[2]) 
+                Constants::pi * std::cos(Constants::pi * vec[0]) * std::sin(Constants::pi * vec[1]) * std::sin(Constants::pi * vec[2]) 
                 +
                 (
                 - (   blob( vec[0] ) * blob_devdev( vec[1] ) * blob_dev( vec[2] ) + blob( vec[0] ) * blob_devdevdev( vec[1] ) * blob( vec[2] ) ) // u_yy
@@ -129,7 +129,7 @@ int main( int argc, char *argv[] )
                 )
                 ,
                 //blob(vec[0]) * blob_dev(vec[1]) * blob(vec[2]) 
-                Constants::pi * sin(Constants::pi * vec[0]) * cos(Constants::pi * vec[1]) * sin(Constants::pi * vec[2]) 
+                Constants::pi * std::sin(Constants::pi * vec[0]) * std::cos(Constants::pi * vec[1]) * std::sin(Constants::pi * vec[2]) 
                 + 
                 (
                 - (   blob_devdev( vec[0] ) * blob( vec[1] ) * blob_dev( vec[2] ) - blob_devdevdev( vec[0] ) * blob( vec[1] ) * blob( vec[2] ) ) // v_xx 
@@ -139,7 +139,7 @@ int main( int argc, char *argv[] )
                 )
                 ,
                 //blob(vec[0]) * blob(vec[1]) * blob_dev(vec[2])
-                Constants::pi * sin(Constants::pi * vec[0]) * sin(Constants::pi * vec[1]) * cos(Constants::pi * vec[2]) 
+                Constants::pi * std::sin(Constants::pi * vec[0]) * std::sin(Constants::pi * vec[1]) * std::cos(Constants::pi * vec[2]) 
                 + 
                 (
                 - ( - blob_devdevdev( vec[0] ) * blob( vec[1] ) * blob( vec[2] ) - blob_devdev( vec[0] ) * blob_dev( vec[1] ) * blob( vec[2] ) ) // w_xx 
@@ -186,7 +186,7 @@ int main( int argc, char *argv[] )
             // return FloatVector({ 1. });
             return FloatVector( { 
                 //blob(vec[0])*blob(vec[1])*blob(vec[2])
-                sin(Constants::pi * vec[0]) * sin(Constants::pi * vec[1]) * sin(Constants::pi * vec[2]) 
+                std::sin(Constants::pi * vec[0]) * std::sin(Constants::pi * vec[1]) * std::sin(Constants::pi * vec[2]) 
             });
         };
     

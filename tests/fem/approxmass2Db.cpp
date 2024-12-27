@@ -116,7 +116,7 @@ int main( int argc, char *argv[] )
             }
         );
 
-        // int_(-1)^(1) int_(-1)^(1) exp(x-y)^2 + exp(x-y)^2 dx dy
+        // int_(-1)^(1) int_(-1)^(1) std::exp(x-y)^2 + std::exp(x-y)^2 dx dy
         experiments_vector_value.push_back( 26.308232836016486629201989612067059822501324553083772160298096942 );
         
 
