@@ -116,7 +116,7 @@ int main( int argc, char *argv[] )
             }
         );
 
-        // int_(-1)^(1) int_(-1)^(1) exp(x-y)^2 + exp(x-y)^2 dx dy
+        // int_(-1)^(1) int_(-1)^(1) std::exp(x-y)^2 + std::exp(x-y)^2 dx dy
         experiments_vector_value.push_back( 26.308232836016486629201989612067059822501324553083772160298096942 );
         
 
@@ -348,7 +348,7 @@ int main( int argc, char *argv[] )
         
         
         
-        LOG << "Check that differences are small: " << desired_closeness << nl;
+        LOG << "Check that differences are below: " << desired_closeness << nl;
         
         for( int l      = l_min; l      <=      l_max; l++      ) 
         for( int r      = r_min; r      <=      r_max; r++      ) 

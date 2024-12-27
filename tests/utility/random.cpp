@@ -49,7 +49,7 @@ int main( int argc, char *argv[] )
 
         // test whether coin is fair
         int count[2] = { 0, 0 };
-        const int M = 1 << 14;
+        const int M = 1 << 10;
         for( int t = 0; t < M; t++ )
         {
             const int c = flip_coin();

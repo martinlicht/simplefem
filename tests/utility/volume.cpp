@@ -46,7 +46,7 @@ int main( int argc, char *argv[] )
     for( int n = 0; n <= 9; n++ )
     {
         Float computedArea = unitSphereArea(n);
-        LOGPRINTF("Dimension %2i-dimensional area sphere: %.10f / %.10f\n", n, unitSphereArea(n), referenceAreas[n] );
+        LOGPRINTF("Dimension %2i-dimensional area sphere: %.10f / %.10f\n", n, (double)(safedouble)unitSphereArea(n), (double)(safedouble)referenceAreas[n] );
         Float ra = absolute( computedArea / referenceAreas[n] );
         Assert( is_numerically_one(ra,1e-10), n, computedArea,   referenceAreas[n]   );
     }
@@ -54,7 +54,7 @@ int main( int argc, char *argv[] )
     for( int n = 0; n <= 9; n++ )
     {
         Float computedVolume = unitBallVolume(n);
-        LOGPRINTF("Dimension %2i-dimensional volume ball: %.10f / %.10f\n", n, unitBallVolume(n), referenceVolumes[n] );
+        LOGPRINTF("Dimension %2i-dimensional volume ball: %.10f / %.10f\n", n, (double)(safedouble)unitBallVolume(n), (double)(safedouble)referenceVolumes[n] );
         Float rv = absolute( computedVolume / referenceVolumes[n] );
         Assert( is_numerically_one(rv,1e-10), n, computedVolume, referenceVolumes[n] );
     }

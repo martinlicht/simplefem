@@ -198,9 +198,9 @@ inline MeshSimplicial3D Simplex3D_tent( Float height )
     return MeshSimplicial3D(
       3,  
       Coordinates( 3, 4, {
-         cos( 0./3. * Constants::twopi ), sin( 0./3. * Constants::twopi ), 0.0, // 0
-         cos( 1./3. * Constants::twopi ), sin( 1./3. * Constants::twopi ), 0.0, // 0
-         cos( 2./3. * Constants::twopi ), sin( 2./3. * Constants::twopi ), 0.0, // 0
+         std::cos( 0./3. * Constants::twopi ), std::sin( 0./3. * Constants::twopi ), 0.0, // 0
+         std::cos( 1./3. * Constants::twopi ), std::sin( 1./3. * Constants::twopi ), 0.0, // 0
+         std::cos( 2./3. * Constants::twopi ), std::sin( 2./3. * Constants::twopi ), 0.0, // 0
          0.0,   0.0,   height  // 3
       } ),
       {

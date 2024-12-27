@@ -7,6 +7,12 @@
 	
 #	----------- UPKEEP & MINOR FIXES -------------
 
+[ ] The sqrt of a result subject to more than a machine epsilon error will be subject to more than the sqrt of the machine epsilon error
+[ ] convergence tables should handle different precisions, one way or the other 
+[ ] stb in external seems subject to floating point redefinition?
+[ ] CONSTANT_FLOATINGPOINT_DATATYPE
+[ ] std::exp and the like: single precision versions
+
 [ ] remove commutativity check in the FEM tests 
 
 [ ] augmented integration for error checks

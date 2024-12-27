@@ -246,6 +246,7 @@ inline constexpr int sign_integer( const T& x )
     else        return  0;
 }
 
+/*
 template<typename T>
 inline constexpr T maximum( const T& a, const T& b )
 {
@@ -255,7 +256,58 @@ inline constexpr T maximum( const T& a, const T& b )
     return a;
 //     Assert( a >= b or a <= b ); if( a >= b ) return a; else return b;
 }
+*/
 
+template<typename T>
+inline constexpr T maximum( const T& a )
+{
+    return a;
+}
+
+template<typename T, typename... Args >
+inline constexpr T maximum( T a, Args... args )
+{
+    const T& b = maximum( args... );
+    if( a >= b ) return a;
+    if( a <= b ) return b;
+    Assert( ( not std::isfinite(a) ) or ( not std::isfinite(b) ) );
+    return a;
+//     Assert( a >= b or a <= b ); if( a >= b ) return a; else return b;
+}
+
+
+template<typename T>
+inline constexpr T maxabs( const T& a )
+{
+    return a;
+}
+
+template<typename T, typename... Args >
+inline constexpr T maxabs( T a, Args... args )
+{
+    const T& b = maxabs( args... );
+    return maximum( absolute(a), absolute(b) );
+}
+
+
+template<typename T>
+inline constexpr T minimum( const T& a )
+{
+    return a;
+}
+
+template<typename T, typename... Args >
+inline constexpr T minimum( T a, Args... args )
+{
+    const T& b = minimum( args... );
+    if( a >= b ) return b;
+    if( a <= b ) return a;
+    Assert( ( not std::isfinite(a) ) or ( not std::isfinite(b) ) );
+    return b;
+//     Assert( a >= b or a <= b ); if( a >= b ) return a; else return b;
+}
+
+/*
 template<typename T>
 inline constexpr T maxabs( const T& a, const T& b )
 {
@@ -275,20 +327,22 @@ inline constexpr T minimum( const T& a, const T& b )
 template<typename T, typename... Args >
 inline constexpr T maximum( T t, Args... args )
 {
-    return maximum( t, maximum( args... ) );
+    return maximum( t, static_cast<T>( maximum( args... ) ) );
 }
 
 template<typename T, typename... Args >
 inline constexpr T maxabs( T t, Args... args )
 {
-    return maxabs( t, maxabs( args... ) );
+    return maxabs( t, static_cast<T>( maxabs( args... ) ) );
 }
 
 template<typename T, typename... Args >
 inline constexpr T minimum( T t, Args... args )
 {
-    return minimum( t, minimum( args... ) );
+    return minimum( t, static_cast<T>( minimum( args... ) ) );
 }
+*/
+
 
 template<typename T>
 inline constexpr T square( const T& x )

@@ -139,7 +139,7 @@ int main( int argc, char *argv[] )
         
         
         
-        LOG << "Check that differences are small: " << desired_closeness << nl;
+        LOG << "Check that differences are below: " << desired_closeness << nl;
         
         for( int k      =     0; k      <= n; k++      ) 
         for( int l      = l_min; l      <=                 l_max; l++      ) 
