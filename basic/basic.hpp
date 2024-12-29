@@ -111,6 +111,55 @@ constexpr typename std::enable_if< std::is_floating_point<T>::value, T>::type Sq
     // return SqrtHelper( a, a, i );
 }
 
+// template<typename T>
+// constexpr typename std::enable_if< std::is_floating_point<T>::value, T>::type ThirdRoot( T a, int i = 100 )
+// {
+//     T x = a;
+//     // assert( x >= 0. );
+//     if( not ( x > 0. ) ) return 0.;
+//     while ( i --> 0 ) x = ( 2.f * x + a / (x*x) ) / 3.f;
+//     return x;    
+//     // return SqrtHelper( a, a, i );
+// }
+
+
+/*
+// 1. Integer exponentiation at compile time
+template<typename T>
+constexpr typename std::enable_if< std::is_floating_point<T>::value, T>::type ipow( T base, unsigned exp )
+{
+    T result = 1.0;
+    for (unsigned i = 0; i < exp; ++i)
+        result *= base;
+    return result;
+}
+
+// 2. Newton iteration for x^p = a.
+//    We'll do a fixed number of iterations here (e.g., steps=20).
+template<typename T>
+constexpr typename std::enable_if< std::is_floating_point<T>::value, T>::type newtonRoot(T a, unsigned p, T initialGuess, int steps = 35 )
+{
+    T x = initialGuess;
+    for (int i = 0; i < steps; ++i) {
+        // f(x)   = x^p - a
+        // f'(x)  = p * x^(p-1)
+        const T f      = ipow(x, p) - a;
+        const T fPrime = p * ipow(x, p - 1);
+
+        // Newton’s method: x_{n+1} = x_n - f(x_n)/f'(x_n)
+        x -= f / fPrime;
+    }
+    return x;
+}
+
+template<typename T>
+constexpr typename std::enable_if< std::is_floating_point<T>::value, T>::type ThirdRoot( T a )
+{
+    return newtonRoot( a, 3, (T)1.f );
+}
+*/
+
+
 // constexpr Float Sqrt_( Float a, bool init = true, unsigned int i = 40, Float x = 0. )
 // {
 //     return ( init ) ? Sqrt_( a, false, i, a ) : ( i==0 ? x : Sqrt_( a, false, i-1, ( a / x + x ) / 2 ) );
@@ -129,6 +178,9 @@ static const constexpr Float desired_precision =
 
 static const constexpr Float desired_closeness = 
                                     sizeof(Float) == sizeof(float) ? 1e-5 : Sqrt( machine_epsilon );
+
+static const constexpr Float desired_closeness_for_sqrt = 
+                                    sizeof(Float) == sizeof(float) ? 1e-5 : 100 * desired_closeness;
 
 
 
@@ -278,7 +330,7 @@ inline constexpr T maximum( T a, Args... args )
 template<typename T>
 inline constexpr T maxabs( const T& a )
 {
-    return a;
+    return absolute(a);
 }
 
 template<typename T, typename... Args >
@@ -354,7 +406,10 @@ inline constexpr bool is_numerically_small( Float value, Float threshold = desir
     return absolute(value) < threshold;
 }
 
-#include<iostream>
+inline constexpr bool is_numerically_small_sqrt( Float value, Float threshold = desired_closeness_for_sqrt )
+{
+    return absolute(value) < threshold;
+}
 
 inline constexpr bool is_numerically_close( Float value1, Float value2, Float threshold = desired_closeness )
 {    

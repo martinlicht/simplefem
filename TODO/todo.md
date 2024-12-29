@@ -12,6 +12,7 @@
 [ ] stb in external seems subject to floating point redefinition?
 [ ] CONSTANT_FLOATINGPOINT_DATATYPE
 [ ] std::exp and the like: single precision versions
+[ ] what is the numerically stable way to compute the determinant? 
 
 [ ] remove commutativity check in the FEM tests 
 

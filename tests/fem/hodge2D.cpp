@@ -142,7 +142,7 @@ int main( int argc, char *argv[] )
         for( int k = 0; k <= n; k++ ) 
         {
             contables[k].lg(); 
-            LOG << "-------------------" << nl;
+            LOG << "                   " << nl;
         }
         
         

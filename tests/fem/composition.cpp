@@ -222,7 +222,7 @@ int main( int argc, char *argv[] )
             for( int d = 0; d < 3; d++ ) {
                 LOG << "Dimension: " << d+1 << '\n';
                 contables[d].lg();
-                LOG << "----------------------------------" << nl;
+                LOG << "                   ---------------" << nl;
             }
 
         }
