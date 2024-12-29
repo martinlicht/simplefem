@@ -122,6 +122,8 @@ Float Determinant( const DenseMatrix& A )
 {
     assert( A.is_square() );
 
+    return Determinant_bareiss( A );
+    
     // LOG << A.getdimin() << nl;
     
     if( A.getdimin() == 0 ) {

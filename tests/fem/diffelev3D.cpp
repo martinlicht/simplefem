@@ -139,7 +139,7 @@ int main( int argc, char *argv[] )
                 // Float commutator_error_mass = commutator_error * ( csr_product * commutator_error );
 
                 assert( std::isfinite( commutator_error_mass ) );
-                if( commutator_error_mass < 0. ) { LOG << "ALERT: Squared norm is negative" << nl; }
+                if( commutator_error_mass < 0. ) { LOG << "ALERT: Squared norm is negative: " << commutator_error_mass/desired_closeness << nl; }
                 Assert( commutator_error_mass >= -desired_closeness, commutator_error_mass );
                                 
                 errors[k][l-l_min][r-r_min][r_plus] = std::sqrt( std::fabs( commutator_error_mass ) );

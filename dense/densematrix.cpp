@@ -849,6 +849,70 @@ bool DenseMatrix::is_antisymmetric() const
     return true;
 }
 
+
+
+        
+bool DenseMatrix::is_diagonal() const
+{
+    if( not is_square() ) return false;
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimout(); c++ )
+    {
+        if( r == c ) continue;
+        if( get(r,c) != 0 ) return false;
+    }
+    return true;
+}
+
+bool DenseMatrix::is_lowerlefttriangular() const
+{
+    if( not is_square() ) return false;
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimout(); c++ )
+    {
+        if( r >= c ) continue;
+        if( get(r,c) != 0 ) return false;
+    }
+    return true;
+}
+
+bool DenseMatrix::is_lowerrighttriangular() const
+{
+    if( not is_square() ) return false;
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimout(); c++ )
+    {
+        if( getdimout()-1 - r >= c ) continue;
+        if( get(r,c) != 0 ) return false;
+    }
+    return true;
+}
+
+bool DenseMatrix::is_upperlefttriangular() const
+{
+    if( not is_square() ) return false;
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimout(); c++ )
+    {
+        if( getdimout()-1 - r <= c ) continue;
+        if( get(r,c) != 0 ) return false;
+    }
+    return true;
+}
+
+bool DenseMatrix::is_upperrighttriangular() const
+{
+    if( not is_square() ) return false;
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimout(); c++ )
+    {
+        if( r <= c ) continue;
+        if( get(r,c) != 0 ) return false;
+    }
+    return true;
+}
+
+
 bool DenseMatrix::is_finite() const
 {
     for( int r = 0; r < getdimout(); r++ )

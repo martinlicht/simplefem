@@ -296,3 +296,67 @@ FloatVector QRIteration( DenseMatrix A, int repetitions )
 
 
 
+
+
+
+DenseMatrix Inverse_via_LQ( const DenseMatrix& A )
+{
+    assert( A.is_square() );
+    const int n = A.getdimin();
+
+    // 1. Factor A = L * Q
+    DenseMatrix L(n), Q(n);
+    LQFactorization(A, L, Q);
+
+    // 2. We have Ainv = Qinv * Linv = Qt * Linv 
+
+    // 2.1. Invert the right-upper triangular matrix R
+    DenseMatrix& Linv = L;
+    InvertLowerTriangular(Linv);
+
+    // 2.2. Invert the matrix Q
+    DenseMatrix& Qt = Q;
+    TransposeSquareInSitu(Qt);
+
+    // 3. Return AInv = Q^t * L^-1
+    return Qt * Linv;
+}
+DenseMatrix Inverse_via_QR( const DenseMatrix& A )
+{
+    assert( A.is_square() );
+    const int n = A.getdimin();
+
+    // 1. Factor A = Q * R
+    DenseMatrix Q(n), R(n);
+    QRFactorization(A, Q, R);
+
+    // 2. We have Ainv = Rinv * Qinv = Rinv * Qt
+
+    // 2.1. Invert the right-upper triangular matrix R
+    DenseMatrix& Rinv = R;
+    InvertUpperTriangular(Rinv);
+
+    // 2.2. Invert the matrix Q
+    DenseMatrix& Qt = Q;
+    TransposeSquareInSitu(Qt);
+
+    // 3. Return AInv = R^-1 * Qt
+    return Rinv * Qt;
+}
+
+
+DenseMatrix Inverse_via_Cholesky(const DenseMatrix& A)
+{
+    // 1. Compute Cholesky factor: A = L * L^T, where L is lower-triangular.
+    DenseMatrix L = CholeskyDecomposition(A);
+
+    // 2. Invert the lower-triangular L in place.
+    DenseMatrix& Linv = L;
+    InvertLowerTriangular(Linv);
+
+    // 3. Form L^-1^T by transposing the inverted L
+    DenseMatrix Linvt = Transpose(Linv);
+
+    // 4. Compute A^-1 = (L^-1)^T * L^-1
+    return Linvt * Linv;
+}

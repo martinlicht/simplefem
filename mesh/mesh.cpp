@@ -9,7 +9,7 @@
 #include "../utility/random.hpp"
 #include "../combinatorics/generateindexmaps.hpp"
 #include "../dense/factorization.hpp"
-#include "../dense/factorization.hpp"
+#include "../dense/simplesolver.hpp"
 #include "mesh.hpp"
 
 
@@ -955,13 +955,29 @@ DenseMatrix Mesh::getGradientProductMatrix( int dim, int index ) const
     
     DenseMatrix Jac    = getTransformationJacobian( dim, index );
     
-    // DenseMatrix middle = Inverse( Transpose(Jac) * Jac );
-    // return Transpose(multiplier) * middle * multiplier;
+    /*
+        Different methods for computing the return matrix have been tried
+        and tested via diffelev3D
+        Best one:
+        - First branch, using Inverse (Gauss-Jordan in situ or determinant)
+        Other options:
+        - " ", using LQ or Cholesky for the inner Inverse
+        - First branch, using special case for square matrices (Inverse)
+        - First branch, using special case for square matrices (Inverse_via_LQ)
+        - Second branch (either Inverse or UpperTriangularInverse)
+        It is unclear where the problems stem from 
+    */
+
+    DenseMatrix middle = Inverse( Transpose(Jac) * Jac );
+    // if( Jac.is_square() ) { auto JacInv = Inverse_via_LQ(Jac); auto JacInvT = Transpose(JacInv); middle = JacInv * JacInvT; }
+    return Transpose(multiplier) * middle * multiplier;
 
     DenseMatrix R( Jac.getdimin() );
     DenseMatrix Q( Jac.getdimout(), Jac.getdimin() );
     QRFactorization( Jac, Q, R );
-    DenseMatrix Rinv( Inverse(R) );
+    // DenseMatrix Rinv( Inverse(R) );
+    DenseMatrix Rinv = UpperTriangularInverse(R); 
+    assert( Rinv.is_upperrighttriangular() );
     return Transpose(multiplier) * ( Rinv * Transpose(Rinv) ) * multiplier;
 }
         

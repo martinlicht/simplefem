@@ -26,6 +26,11 @@ FloatVector SolveOverconstrained( const DenseMatrix& A, const FloatVector& v );
 
 
 
+DenseMatrix Inverse_via_LQ( const DenseMatrix& A );
+DenseMatrix Inverse_via_QR( const DenseMatrix& A );
+DenseMatrix Inverse_via_Cholesky(const DenseMatrix& A);
+
+
 
  
 

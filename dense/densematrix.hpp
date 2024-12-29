@@ -207,6 +207,16 @@ class DenseMatrix final
         
         bool is_antisymmetric() const;
         
+        bool is_diagonal() const;
+        
+        bool is_lowerlefttriangular() const;
+        
+        bool is_lowerrighttriangular() const;
+        
+        bool is_upperlefttriangular() const;
+        
+        bool is_upperrighttriangular() const;
+        
         bool is_finite() const;
         
         bool is_zero() const;

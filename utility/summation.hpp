@@ -5,6 +5,8 @@
 
 #include "../basic.hpp"
 
+
+
 template<typename NumericalType>
 class NaiveSum {
 private:
@@ -39,6 +41,8 @@ public:
         return getSum();
     }
 };
+
+
 
 
 template<typename NumericalType>
@@ -80,6 +84,8 @@ public:
         return getSum();
     }
 };
+
+
 
 
 
@@ -125,6 +131,8 @@ public:
         return getSum();
     }
 };
+
+
 
 
 #endif
