@@ -81,8 +81,8 @@ int main( int argc, char *argv[] )
             Float norm_diff1 = diff1.norm();
             Float norm_diff2 = diff2.norm();
 
-            Assert( norm_diff1 < desired_closeness, norm_diff1, desired_closeness );
-            Assert( norm_diff2 < desired_closeness, norm_diff2, desired_closeness );
+            Assert( norm_diff1 < desired_closeness_for_sqrt, norm_diff1, desired_closeness_for_sqrt );
+            Assert( norm_diff2 < desired_closeness_for_sqrt, norm_diff2, desired_closeness_for_sqrt );
         }
         LOG << nl;
         

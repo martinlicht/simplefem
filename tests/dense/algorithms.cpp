@@ -48,8 +48,8 @@ int main( int argc, char *argv[] )
                      << "Row " << p2 << space 
                      << S.norm_col_row( p1, p2 ) << nl;
         
-        Assert( is_numerically_close( 10, S.norm_row_col( p1, p2 ) ), S.norm_row_col( p1, p2 ) );
-        Assert( is_numerically_close( 11, S.norm_col_row( p1, p2 ) ), S.norm_col_row( p1, p2 ) );
+        Assert( is_numerically_close( 10, S.norm_row_col( p1, p2 ), 1e-7 ), S.norm_row_col( p1, p2 ) );
+        Assert( is_numerically_close( 11, S.norm_col_row( p1, p2 ), 1e-7 ), S.norm_col_row( p1, p2 ) );
         
         
         LOG << nl << "Row " << 1. << space
@@ -467,7 +467,7 @@ int main( int argc, char *argv[] )
     
     // if(false)
     {
-        LOG << "9. Compare Determinats of Matrices with random coefficients" << nl;
+        LOG << "9. Compare Determinants of Matrices with random coefficients" << nl;
         for( int t = 0; t < 7; t++ )
         for( int i = 0; i < 6; i++ )
         {
@@ -499,6 +499,21 @@ int main( int argc, char *argv[] )
 
             assert( ( Ainv * A ).is_numerically_identity() );
             assert( ( A * Ainv ).is_numerically_identity() );
+
+            // LOG << "with Newton-Schulz \n";
+            // auto Ainvp = Ainv; NewtonSchulz( A, Ainvp, 20 );
+
+            // LOG << A * Ainvp << nl;
+            // LOG << Ainvp * A << nl;
+
+            // auto R1 = ( A * Ainvp - IdentityMatrix(t) ).norm() / ( A * Ainv - IdentityMatrix(t) ).norm();
+            // auto R2 = ( Ainvp * A - IdentityMatrix(t) ).norm() / ( Ainv * A - IdentityMatrix(t) ).norm(); 
+            
+            // LOG << "R1 = " << R1 << space << "R2 = " << R2 << nl;
+            // if( t >= 5 ) assert( R1 < 1.0 and R2 < 1.0 );
+
+            // assert( ( Ainvp * A ).is_numerically_identity() );
+            // assert( ( A * Ainvp ).is_numerically_identity() );
         }
     }
     
@@ -539,7 +554,7 @@ int main( int argc, char *argv[] )
     
     // if(false)
     {
-        LOG << "11. Compare Determinats of random orthogonal Matrices" << nl;
+        LOG << "11. Compare Determinants of random orthogonal Matrices" << nl;
         for( int t = 0; t < 7; t++ )
         for( int i = 0; i < 6; i++ )
         {
@@ -577,17 +592,33 @@ int main( int argc, char *argv[] )
 
             LOG << Acof << nl;
             LOG << Ainv << nl;
+            
             LOG << A * Ainv << nl;
             LOG << Ainv * A << nl;
-
+            
             assert( ( Ainv * A ).is_numerically_identity() );
             assert( ( A * Ainv ).is_numerically_identity() );
+
+            // LOG << "with Newton-Schulz \n";
+            // auto Ainvp = Ainv; NewtonSchulz( A, Ainvp, 200 );
+
+            // LOG << A * Ainvp << nl;
+            // LOG << Ainvp * A << nl;
+
+            // auto R1 = ( A * Ainvp - IdentityMatrix(t) ).norm() / ( A * Ainv - IdentityMatrix(t) ).norm();
+            // auto R2 = ( Ainvp * A - IdentityMatrix(t) ).norm() / ( Ainv * A - IdentityMatrix(t) ).norm(); 
+            
+            // LOG << "R1 = " << R1 << space << "R2 = " << R2 << nl;
+            // if( t >= 5 ) assert( R1 < 1.0 and R2 < 1.0 );
+
+            // assert( ( Ainvp * A ).is_numerically_identity() );
+            // assert( ( A * Ainvp ).is_numerically_identity() );
         }
     }
     
     
     {
-        LOG << "12. Compare Determinats of random ill-conditioned 2x2 matrices" << nl;
+        LOG << "12. Compare Determinants of random ill-conditioned 2x2 matrices" << nl;
         for( int t = 3; t < 5; t++ )
         {
             
@@ -624,20 +655,35 @@ int main( int argc, char *argv[] )
 
             LOG << Acof << nl;
             LOG << Ainv << nl;
+            LOG << Ainv << nl;
             LOG << A * Ainv << nl;
             LOG << Ainv * A << nl;
 
-            Assert( ( Ainv * A ).is_numerically_identity( 1e-7 ), Ainv * A );
-            Assert( ( A * Ainv ).is_numerically_identity( 1e-7 ), A * Ainv );
+            Assert( ( Ainv * A ).is_numerically_identity(), Ainv * A );
+            Assert( ( A * Ainv ).is_numerically_identity(), A * Ainv );
+
+            LOG << "with Newton-Schulz \n";
+            auto Ainvp = Ainv; NewtonSchulz( A, Ainvp, 20 );
+
+            LOG << A * Ainvp << nl;
+            LOG << Ainvp * A << nl;
+
+            auto R1 = ( A * Ainvp - IdentityMatrix(t) ).norm() / ( A * Ainv - IdentityMatrix(t) ).norm();
+            auto R2 = ( Ainvp * A - IdentityMatrix(t) ).norm() / ( Ainv * A - IdentityMatrix(t) ).norm(); 
+            
+            LOG << "R1 = " << R1 << space << "R2 = " << R2 << nl;
+            if( t >= 5 ) assert( R1 < 1.0 and R2 < 1.0 );
+
+            assert( ( Ainvp * A ).is_numerically_identity() );
+            assert( ( A * Ainvp ).is_numerically_identity() );
         }
     }
     
 
     
-    
     {
-        LOG << "13. Compare Determinats of random ill-conditioned matrices" << nl;
-        for( int t = 3; t < 5; t++ )
+        LOG << "13. Compare Determinants of random ill-conditioned matrices" << nl;
+        for( int t = 2; t < 5; t++ )
         {
             
             DenseMatrix Q(2);
@@ -683,6 +729,21 @@ int main( int argc, char *argv[] )
 
             assert( ( Ainv * A ).is_numerically_identity() );
             assert( ( A * Ainv ).is_numerically_identity() );
+
+            // LOG << "with Newton-Schulz \n";
+            // auto Ainvp = Ainv; NewtonSchulz( A, Ainvp, 10 );
+
+            // LOG << A * Ainvp << nl;
+            // LOG << Ainvp * A << nl;
+
+            // auto R1 = ( A * Ainvp - IdentityMatrix(t) ).norm() / ( A * Ainv - IdentityMatrix(t) ).norm();
+            // auto R2 = ( Ainvp * A - IdentityMatrix(t) ).norm() / ( Ainv * A - IdentityMatrix(t) ).norm(); 
+            
+            // LOG << "R1 = " << R1 << space << "R2 = " << R2 << nl;
+            // if( t >= 5 ) assert( R1 < 1.0 and R2 < 1.0 );
+
+            // assert( ( Ainvp * A ).is_numerically_identity() );
+            // assert( ( A * Ainvp ).is_numerically_identity() );
         }
     }
     

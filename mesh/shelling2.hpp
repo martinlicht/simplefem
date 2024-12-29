@@ -5,6 +5,7 @@
 #include <vector>
 #include <queue>
 #include <utility> // For std::pair
+#include <thread>
 
 #include "../basic.hpp"
 #include "../utility/stl.hpp"
@@ -165,16 +166,16 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
         auto parents = mesh.get_supersimplices(dim,0,v);
         assert( parents.size() >= 1 );
 
-        Float v_ratio = 1.;
+        Float d_ratio = 1.;
         for( int p1 = 0; p1 < parents.size(); p1++ )
         for( int p2 = 0; p2 < parents.size(); p2++ )
         {
             auto d1 = diameters[p1]; 
             auto d2 = diameters[p2]; 
-            v_ratio = maximum( v_ratio, d1/d2, d2/d1 );
+            d_ratio = maximum( d_ratio, d1/d2, d2/d1 );
         }
 
-        max_diameter_ratio = maximum( max_diameter_ratio, v_ratio );
+        max_diameter_ratio = maximum( max_diameter_ratio, d_ratio );
     }
 
     LOG << "Max diameter ratio: " << max_diameter_ratio << nl;
@@ -506,7 +507,7 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
     for( auto a : algebraic_condition_number ) assert( not std::isnan(a) );
 
     LOG << "Finished collecting information about the mesh." << nl;
-    LOGPRINTF("%e %e %e\n", max_volume_ratio, min_height_of_vertex, max_diameter_ratio );
+    LOGPRINTF("%e %e %e\n", (double)(safedouble)max_volume_ratio, (double)(safedouble)min_height_of_vertex, (double)(safedouble)max_diameter_ratio );
     
 }
 
@@ -548,7 +549,7 @@ std::vector<shelling> generate_shellings2(
 
 void generate_shellings2(
     const Mesh& mesh,
-    int form_degree,
+    const int form_degree,
     const mesh_information_for_shelling& info,
     std::vector<shelling>& shellings_found,
     const std::vector<int>& current_prefix,
@@ -558,7 +559,7 @@ void generate_shellings2(
 
 std::vector<shelling> generate_shellings2( 
     const Mesh& mesh,
-    int form_degree
+    const int form_degree
 ){
     
     const auto info = mesh_information_for_shelling( mesh );
@@ -581,7 +582,7 @@ std::vector<shelling> generate_shellings2(
 
 void generate_shellings2(
     const Mesh& mesh,
-    int form_degree,
+    const int form_degree,
     const mesh_information_for_shelling& info,
     std::vector<shelling>& shellings_found,
     const std::vector<int>& current_prefix,
@@ -589,7 +590,13 @@ void generate_shellings2(
     Float multweight
 ){
 
-    const bool sort_nodes_by_priority = true;
+    const unsigned int max_number_of_shellings = 1; 
+    // const unsigned int max_number_of_shellings = std::numeric_limits<unsigned int>::max();
+
+    // const bool sort_nodes_by_priority = true;
+    const bool sort_nodes_by_priority = false;
+
+    const bool special_initialization = true;
 
     // check that input mesh is reasonable 
     const int dim = mesh.getinnerdimension();
@@ -601,7 +608,7 @@ void generate_shellings2(
 
 
     // if enough shellings have been found already, then return 
-    if( false and shellings_found.size() >= 1 )
+    if( shellings_found.size() >= max_number_of_shellings )
         return;
 
 
@@ -617,11 +624,11 @@ void generate_shellings2(
         Float estimate1 = 0.;
         for( int i = 0; i < counts[dim]; i++ ) {
             estimate1 += coefficient_table[i].norm_sq();
-            LOGPRINTF( "%i %.4f\t", current_prefix[i], estimate1 );
+            LOGPRINTF( "%i %.4f\t", current_prefix[i], (double)(safedouble)estimate1 );
         }
         estimate1 = std::sqrt(estimate1);
 
-        LOGPRINTF( "w1=%e w2=%e\n", estimate1, multweight );
+        LOGPRINTF( "w1=%e w2=%e\n", (double)(safedouble)estimate1, (double)(safedouble)multweight );
 
         auto insertion_point = shellings_found.begin();
         while( insertion_point != shellings_found.end() && insertion_point->weight_reflection < estimate1 ) insertion_point++;
@@ -854,7 +861,8 @@ void generate_shellings2(
 
                 if( not is_relevant ) continue;
 
-                new_coefficients[j] += B;
+                new_coefficients[ current_prefix[j] ] += B; // ?????? [j] or ....
+                // new_coefficients[j] += B; // ?????? [j] or ....
 
                 new_coefficients += C * coefficient_table[j];
             }
@@ -962,30 +970,106 @@ void generate_shellings2(
     Float weight_reflection_so_far = 0.;
     for( auto coefficient : coefficient_table ) weight_reflection_so_far += coefficient.norm_sq();
 
-    for( int i = 0; i < remaining_nodes.size(); i++ )
+    if( current_prefix.size() == 0 ) assert( remaining_nodes.size() == counts[dim] );
+
+
+    // We introduce a special case: when 
+
+    if( special_initialization and current_prefix.size() == 0 ) {
+
+        std::vector<std::vector<shelling>> shellings_found_from_node( counts[dim] );
+
+        std::vector<std::vector<int>>         next_prefix_from_node           ;
+        std::vector<std::vector<FloatVector>> next_coefficient_table_from_node;
+        std::vector<Float>                    next_multweight_from_node       ;
+
+        for( int s = 0; s < counts[dim]; s++ )
+        {
+            int node = s; // remaining_nodes[s];
+            
+            auto next_prefix = current_prefix;
+            next_prefix.push_back( node );
+
+            auto next_coefficient_table = coefficient_table;
+            next_coefficient_table.push_back( coefficient_vectors[s] );
+
+            assert( next_prefix.size() == next_coefficient_table.size() );
+            assert( next_prefix.size() > 0 );
+
+            Float next_multweight = multweight * weight_for_node_morphin[s];
+
+            next_prefix_from_node.push_back           ( next_prefix            );
+            next_coefficient_table_from_node.push_back( next_coefficient_table );
+            next_multweight_from_node.push_back       ( next_multweight        );
+        }
+
+        for( int s = 0; s < counts[dim]; s++ ) Assert( next_prefix_from_node[s].size() > 0, s );
+
+        std::vector<std::thread> threads;
+
+        for( int s = 0; s < counts[dim]; s++ )
+        {
+            threads.emplace_back(
+                [&,s]() {
+                    LOG << "Thread processing parameter: " << s << "\n";
+                    
+                    // Simulate work
+                    // std::this_thread::sleep_for(std::chrono::seconds(1));
+
+                    Assert( next_prefix_from_node[s].size() > 0 );
+                    
+                    generate_shellings2( mesh, form_degree, info, 
+                                         shellings_found_from_node[s], 
+                                         next_prefix_from_node[s], 
+                                         next_coefficient_table_from_node[s], 
+                                         next_multweight_from_node[s] 
+                                        );
+
+                    LOG << "Thread finished processing parameter: " << s << "\n";
+                }
+            );
+        }
+
+        // Wait for all threads to finish
+        for (std::thread &t : threads) { if (t.joinable()) {t.join();} }
+
+        LOG << "All threads finished.\n";
+
+        for( int s = 0; s < counts[dim]; s++ ) for( auto& S : shellings_found_from_node[s] ) shellings_found.push_back(S);
+
+        std::sort( shellings_found.begin(), shellings_found.end(), []( const shelling& left, const shelling& right ) -> auto{ return left.weight_reflection < right.weight_reflection; } );
+
+    } 
+    else 
     {
-        Float weight_here = coefficient_vectors[i].norm_sq();
+    
+        for( int i = 0; i < remaining_nodes.size(); i++ )
+        {
+            Float weight_here = coefficient_vectors[i].norm_sq();
 
-        if( shellings_found.size() > 0 and std::sqrt( weight_here + weight_reflection_so_far ) >= shellings_found.front().weight_reflection ) 
-            if( sort_nodes_by_priority )
-                break;
-            else 
-                continue;
-        
-        
-        int node = remaining_nodes[i];
-        
-        auto next_prefix = current_prefix;
-        next_prefix.push_back( node );
+            if( shellings_found.size() > 0 and std::sqrt( weight_here + weight_reflection_so_far ) >= shellings_found.front().weight_reflection ) {
+                if( sort_nodes_by_priority )
+                    break;
+                else 
+                    continue;
+            }
+            
+            
+            int node = remaining_nodes[i];
+            
+            auto next_prefix = current_prefix;
+            next_prefix.push_back( node );
 
-        auto next_coefficient_table = coefficient_table;
-        next_coefficient_table.push_back( coefficient_vectors[i] );
+            auto next_coefficient_table = coefficient_table;
+            next_coefficient_table.push_back( coefficient_vectors[i] );
 
-        assert( next_prefix.size() == next_coefficient_table.size() );
+            assert( next_prefix.size() == next_coefficient_table.size() );
 
-        Float next_multweight = multweight * weight_for_node_morphin[i];
+            Float next_multweight = multweight * weight_for_node_morphin[i];
 
-        generate_shellings2( mesh, form_degree, info, shellings_found, next_prefix, next_coefficient_table, next_multweight );
+            generate_shellings2( mesh, form_degree, info, shellings_found, next_prefix, next_coefficient_table, next_multweight );
+        }
+
     }
 
     static int call_counter = 0;

@@ -256,7 +256,7 @@ inline MeshSimplicial2D Triangle_by_angle_and_length( Float angle, Float length 
       Coordinates( 2, 3, {
         0., 0., // 0
         1., 0., // 1
-        length * cos(angle) , length * sin(angle)  // 2
+        length * std::cos(angle) , length * std::sin(angle)  // 2
       } ),
       {
         { 0, 1, 2 }

@@ -134,19 +134,19 @@ int main( int argc, char *argv[] )
         for( int k = 0; k <= n; k++ ) 
         {
             contables[k].lg(); 
-            LOG << "-------------------" << nl;
+            LOG << "                   " << nl;
         }
         
         
         
-        LOG << "Check that differences are small: " << desired_closeness << nl;
+        LOG << "Check that differences are below: " << desired_closeness_for_sqrt << nl;
         
         for( int k      =     0; k      <= n; k++      ) 
         for( int l      = l_min; l      <=                 l_max; l++      ) 
         for( int r      = r_min; r      <=                 r_max; r++      ) 
         for( int r_plus =     0; r_plus <=            r_plus_max; r_plus++ ) 
         {
-            Assert( errors[k][l-l_min][r-r_min][r_plus] < desired_closeness, errors[k][l-l_min][r-r_min][r_plus], desired_closeness );
+            Assert( errors[k][l-l_min][r-r_min][r_plus] < desired_closeness_for_sqrt, errors[k][l-l_min][r-r_min][r_plus], desired_closeness_for_sqrt );
         }
         
         

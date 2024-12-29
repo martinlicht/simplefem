@@ -65,11 +65,11 @@ int main( int argc, char *argv[] )
 
                     Float u_p = (-1)*r*r/(6*pi) 
                                 * 
-                                ( 3 * pi / 2 + 2 * log( r ) * sin( 2 * theta ) + ( 2 * theta - 3 / 2 * pi ) * cos(2*theta) );
+                                ( 3 * pi / 2 + 2 * log( r ) * std::sin( 2 * theta ) + ( 2 * theta - 3 / 2 * pi ) * std::cos(2*theta) );
 
                     const int j = 1; // only odd indices count ... 
                     const Float alpha_j = 0.40192487;
-                    Float u = alpha_j * power_numerical( r, 2 * j / 3. ) * sin( 2./3. * j * theta );
+                    Float u = alpha_j * power_numerical( r, 2 * j / 3. ) * std::sin( 2./3. * j * theta );
 
                     return FloatVector({ u + u_p });
                 };

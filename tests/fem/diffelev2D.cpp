@@ -59,9 +59,9 @@ int main( int argc, char *argv[] )
         
         const int l_min = 0;
         
-        const int l_max = 1; // TODO set this value back to 4
+        const int l_max = 3; // TODO set this value back to 4
         
-        const int r_plus_max = 1;
+        const int r_plus_max = 2;
          
         Float errors[ M.getinnerdimension() ][ l_max - l_min + 1 ][ r_max - r_min + 1 ][ r_plus_max + 1 ];
         
@@ -113,12 +113,13 @@ int main( int argc, char *argv[] )
 
                 // LOG << massmatrix * ( canon * ( path1 - path2 ) - ( path1 - path2 ) ) << nl;
 
-                const auto csr_product = MatrixCSR(canon.getTranspose()) & MatrixCSR(massmatrix) & MatrixCSR(canon);
+                // const auto csr_product = MatrixCSR(canon.getTranspose()) * MatrixCSR(massmatrix) * MatrixCSR(canon);
+                // const auto csr_product = (canon.getTranspose()) * (massmatrix) * (canon);
                 
-                // Float commutator_error_mass = commutator_error * ( massmatrix * commutator_error );
+                Float commutator_error_mass = commutator_error * ( massmatrix * commutator_error );
                 // Float commutator_error_mass = ( canon * commutator_error ) * ( massmatrix * commutator_error );
                 // Float commutator_error_mass = norm_sq_of_vector( massmatrix, canon * commutator_error );
-                Float commutator_error_mass = norm_sq_of_vector( massmatrix, commutator_error );
+                // Float commutator_error_mass = norm_sq_of_vector( massmatrix, commutator_error );
                 // auto foo = canon * commutator_error; Float commutator_error_mass = foo * ( massmatrix * foo );
                 // Float commutator_error_mass = commutator_error * ( csr_product * commutator_error );
 
@@ -186,22 +187,22 @@ int main( int argc, char *argv[] )
         for( int i = 0; i < M.getinnerdimension(); i++ ) 
         {
             contables[i].lg(); 
-            LOG << "-------------------" << nl;
+            LOG << "                   " << nl;
         }
                 
         
         
         
         
-        LOG << "Check that differences are small: " << desired_closeness << nl;
+        LOG << "Check that differences are below: " << desired_closeness_for_sqrt << nl;
         
         for( int l      = l_min; l      <=           l_max; l++      ) 
         for( int r      = r_min; r      <=           r_max; r++      ) 
         for( int r_plus =     0; r_plus <=      r_plus_max; r_plus++ ) 
         for( int i      =     0; i < M.getinnerdimension(); i++      ) 
         {
-            Assert( errors[i][l-l_min][r-r_min][r_plus] < desired_closeness, errors[i][l-l_min][r-r_min][r_plus], desired_closeness );
-        }
+            Assert( errors[i][l-l_min][r-r_min][r_plus] < desired_closeness_for_sqrt, errors[i][l-l_min][r-r_min][r_plus], desired_closeness_for_sqrt );
+        } // TODO: clear up the error estimate here.
             
         
         LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;

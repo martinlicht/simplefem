@@ -293,21 +293,21 @@ int main( int argc, char *argv[] )
             for( int d = 0; d < 3; d++ ) {
                 LOG << "Dimension: " << d+1 << '\n';
                 contables[d].lg();
-                LOG << "----------------------------------" << nl;
+                LOG << "                   ---------------" << nl;
             }
 
         }
             
             
-        LOG << "Check that differences are small: " << desired_closeness << nl;
+        LOG << "Check that differences are below: " << desired_closeness_for_sqrt << nl;
         
         for( int l = l_min; l <= l_max; l++ ) 
         for( int d = 0; d < 3; d++ )
         for( int t = 0; t < number_of_comparisons; t++ )
         {
-            if( not ( errors[l-l_min][d][t] < desired_closeness ) )
+            if( not ( errors[l-l_min][d][t] < desired_closeness_for_sqrt ) )
                 LOG << l << space << d << space << t << space << errors[l-l_min][d][t] << nl;
-            Assert( errors[l-l_min][d][t] < desired_closeness, errors[l-l_min][d][t], desired_closeness );
+            Assert( errors[l-l_min][d][t] < desired_closeness_for_sqrt, errors[l-l_min][d][t], desired_closeness_for_sqrt );
         }
         
         

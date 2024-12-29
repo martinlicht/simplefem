@@ -49,6 +49,8 @@ DenseMatrix SubdeterminantMatrixSquare( const DenseMatrix& A, int k );
 
 DenseMatrix SubdeterminantMatrix( const DenseMatrix& A, int k );
 
+void NewtonSchulz( const DenseMatrix& A, DenseMatrix& X, int iterations = 10 );
+
 
 
 Float Determinant_laplaceexpansion( const DenseMatrix& );

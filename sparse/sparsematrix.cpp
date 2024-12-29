@@ -783,6 +783,8 @@ DiagonalOperator InverseDiagonalPreconditioner( const SparseMatrix& mat )
 }
 
 
+#include "../utility/summation.hpp"
+
 
 Float norm_sq_of_vector( const SparseMatrix& A, const FloatVector& vec )
 {
@@ -793,7 +795,8 @@ Float norm_sq_of_vector( const SparseMatrix& A, const FloatVector& vec )
 
     assert( entries.size() > 0 );
 
-    long double ret = 0.;
+    // long double ret = 0.;
+    NeumaierSum<Float> ret;
     
     for( const auto& entry : entries )
     {
@@ -814,10 +817,11 @@ Float norm_sq_of_vector( const SparseMatrix& A, const FloatVector& vec )
             ret2 += entry.value * vec[ entry.row ] * vec[ entry.column ];
     }
     
-    // return static_cast<Float>( ret1 + 2. * ret2 );
     assert( is_numerically_close( ret, ret1 + 2. * ret2 ) );
-
-    return (Float)(double)(safedouble)( ret );
+    
+    // return static_cast<Float>( ret1 + 2. * ret2 );
+    // return (Float)(double)(safedouble)( ret );
+    return ret.getSum();
 }
 
 

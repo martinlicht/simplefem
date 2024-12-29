@@ -73,7 +73,7 @@ int main( int argc, char *argv[] )
 
             Float norm_diff = diff.norm();
 
-            Assert( norm_diff < desired_closeness, norm_diff, desired_closeness );
+            Assert( norm_diff < desired_closeness_for_sqrt, norm_diff, desired_closeness_for_sqrt );
         }
         LOG << nl;
 

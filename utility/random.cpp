@@ -14,9 +14,9 @@ static thread_local std::default_random_engine random_engine(0);
 #else 
 static              std::default_random_engine random_engine(0);
 #endif
-static thread_local std::uniform_int_distribution<int> distribution(0, std::numeric_limits<int>::max());
+static thread_local std::uniform_int_distribution<unsigned int> distribution(0, std::numeric_limits<unsigned int>::max());
 
-const constexpr unsigned int maximum_random_integer = 2 << 15; // magic number
+const constexpr unsigned int maximum_random_integer = std::numeric_limits<unsigned int>::max() - 10; // magic number
 
 void seed_random_integer()
 {
@@ -29,7 +29,7 @@ unsigned int random_integer()
     // int ret = rand();
     unsigned int ret = distribution( random_engine );
     
-    Assert( 0 <= ret and ret <= std::numeric_limits<int>::max() );
+    Assert( 0 <= ret and ret <= std::numeric_limits<unsigned int>::max() );
     
     ret = ret % random_integer_maximum();
     

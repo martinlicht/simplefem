@@ -122,6 +122,8 @@ Float Determinant( const DenseMatrix& A )
 {
     assert( A.is_square() );
 
+    return Determinant_bareiss( A );
+    
     // LOG << A.getdimin() << nl;
     
     if( A.getdimin() == 0 ) {
@@ -640,6 +642,21 @@ DenseMatrix SubdeterminantMatrix( const DenseMatrix& A, int k )
     ret.check();
     return ret;
 }
+
+
+void NewtonSchulz( const DenseMatrix& A, DenseMatrix& X, int iterations )
+{
+    while( iterations > 0 ) {
+        X = 2. * X - X * A * X;
+        iterations--;
+    }
+}
+
+
+
+
+
+
 
 
 

@@ -180,12 +180,12 @@ Float blob_devdevdev( Float x )
 
 Float sinpy( Float x )
 {
-    return sin( Constants::pi * x );
+    return std::sin( Constants::pi * x );
 }
 
 Float cospy( Float x )
 {
-    return cos( Constants::pi * x );
+    return std::cos( Constants::pi * x );
 }
 
 
