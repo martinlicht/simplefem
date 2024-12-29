@@ -762,9 +762,9 @@ Float Mesh::getRadiiQuotient( int dim ) const
     
     Float shape_measure = getShapemeasure();
     
-    Float sigma = factorial_numerical(n) / ( power_numerical( n, n / 2. ) * shape_measure * std::sqrt(2) );
+    Float sigma = factorial_numerical(n) / ( power_numerical( n, n / 2. ) * shape_measure * std::sqrt((Float)2) );
     
-    return comparison_quotient * std::sqrt(n) * (n+1) / sigma;
+    return comparison_quotient * std::sqrt((Float)n) * (n+1) / sigma;
 }
 
 
