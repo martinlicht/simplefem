@@ -642,6 +642,21 @@ DenseMatrix SubdeterminantMatrix( const DenseMatrix& A, int k )
 }
 
 
+void NewtonSchulz( const DenseMatrix& A, DenseMatrix& X, int iterations )
+{
+    while( iterations > 0 ) {
+        X = 2. * X - X * A * X;
+        iterations--;
+    }
+}
+
+
+
+
+
+
+
+
 
 
 

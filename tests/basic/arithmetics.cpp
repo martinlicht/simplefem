@@ -191,22 +191,46 @@ int main() {
     
     LOG << "Test maximum, maxabs, minimum with multiple arguments or only one \n";
 
-    LOG << "Test maximum with 3, 4 arguments\n";
+    LOG << "Test maximum with 1, 3, 4 arguments\n";
+    
+    assert(maximum<int>( 7 ) ==  7);
+    assert(maximum<int>( 0 ) ==  0);
+    assert(maximum<int>(-7 ) == -7);
     
     assert(maximum<int>( 7,  7,  7) ==  7);
     assert(maximum<int>( 0,  0,  0) ==  0);
     assert(maximum<int>(-7, -7, -7) == -7);
     
+    assert(maximum<Float>( 7 ) ==  7);
+    assert(maximum<Float>( 0 ) ==  0);
+    assert(maximum<Float>(-7 ) == -7);
+    
+    assert(maximum<Float>( 7,  7,  7) ==  7);
+    assert(maximum<Float>( 0,  0,  0) ==  0);
+    assert(maximum<Float>(-7, -7, -7) == -7);
+
     assert(maximum<int>(10, 20, 5, 30) == 30);
     assert(maximum<Float>(-10.5, 10.5, 0.0) == 10.5);
     assert(maximum<Float>(-10.5, 30.0, 10.5, 0.0) == 30.0);
 
     LOG << "Test maxabs with 3, 4 arguments\n";
 
+    assert(maxabs<int>( 7 ) ==  7);
+    assert(maxabs<int>( 0 ) ==  0);
+    assert(maxabs<int>(-7 ) ==  7);
+    
     assert(maxabs<int>( 7,  7,  7) ==  7);
     assert(maxabs<int>( 0,  0,  0) ==  0);
     assert(maxabs<int>(-7, -7, -7) ==  7);
     
+    assert(maxabs<Float>( 7 ) ==  7);
+    assert(maxabs<Float>( 0 ) ==  0);
+    assert(maxabs<Float>(-7 ) ==  7);
+    
+    assert(maxabs<Float>( 7,  7,  7) ==  7);
+    assert(maxabs<Float>( 0,  0,  0) ==  0);
+    assert(maxabs<Float>(-7, -7, -7) ==  7);
+
     assert(maxabs<int>(-10, 20, -5) == 20);
     assert(maxabs<int>(-10, 20, -5, 30) == 30);
     assert(maxabs<Float>(-10.5,  10.5, -5.0) == 10.5);
@@ -215,9 +239,21 @@ int main() {
 
     LOG << "Test minimum with 3, 4 arguments\n";
     
+    assert(minimum<int>( 7 ) ==  7);
+    assert(minimum<int>( 0 ) ==  0);
+    assert(minimum<int>(-7 ) == -7);
+    
     assert(minimum<int>( 7,  7,  7) ==  7);
     assert(minimum<int>( 0,  0,  0) ==  0);
     assert(minimum<int>(-7, -7, -7) == -7);
+    
+    assert(minimum<Float>( 7 ) ==  7);
+    assert(minimum<Float>( 0 ) ==  0);
+    assert(minimum<Float>(-7 ) == -7);
+    
+    assert(minimum<Float>( 7,  7,  7) ==  7);
+    assert(minimum<Float>( 0,  0,  0) ==  0);
+    assert(minimum<Float>(-7, -7, -7) == -7);
     
     assert(minimum<int>(10, 20, 5) == 5);
     assert(minimum<int>(10, 20, 5, -30) == -30);

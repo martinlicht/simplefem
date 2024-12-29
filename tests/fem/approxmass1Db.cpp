@@ -192,14 +192,14 @@ int main( int argc, char *argv[] )
         }
             
         for( int i = 0; i < experiments_scalar_field.size(); i++ ) contable_scalar[i].lg(); 
-        LOG << "-------------------" << nl;
+        LOG << "                   " << nl;
         for( int i = 0; i < experiments_volume_field.size(); i++ ) contable_volume[i].lg(); 
         
         
         
         
         
-        LOG << "Check that differences are below: " << desired_closeness << nl;
+        LOG << "Check that differences are below: " << desired_closeness_for_sqrt << nl;
         
         for( int l      = l_min; l      <=      l_max; l++      ) 
         for( int r      = r_min; r      <=      r_max; r++      ) 
@@ -209,10 +209,10 @@ int main( int argc, char *argv[] )
             
             continue; // TODO: find a meaningful test here 
             for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
-                Assert( errors_scalar[i][l-l_min][r-r_min] < desired_closeness, errors_scalar[i][l-l_min][r-r_min], desired_closeness );
+                Assert( errors_scalar[i][l-l_min][r-r_min] < desired_closeness_for_sqrt, errors_scalar[i][l-l_min][r-r_min], desired_closeness_for_sqrt );
             
             for( int i = 0; i < experiments_volume_field.size(); i++ )
-                Assert( errors_volume[i][l-l_min][r-r_min] < desired_closeness, errors_volume[i][l-l_min][r-r_min], desired_closeness );
+                Assert( errors_volume[i][l-l_min][r-r_min] < desired_closeness_for_sqrt, errors_volume[i][l-l_min][r-r_min], desired_closeness_for_sqrt );
         }
         
         

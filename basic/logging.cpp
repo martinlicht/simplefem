@@ -237,9 +237,138 @@ void System_Reporter::output()
     #endif
 
 
+
+
+
+    LOG << "###\tFLT_EVAL_METHOD: " << FLT_EVAL_METHOD << space;
+
+    switch (FLT_EVAL_METHOD) {
+        case -1:
+            LOG << "The default precision is not known." << nl;
+            break;
+        case 0:
+            LOG << "All operations and constants evaluate in the range and precision of the type used." << nl;
+            break;
+        case 1:
+            LOG << "All operations and constants evaluate in the range and precision of double." << nl;
+            break;
+        case 2:
+            LOG << "All operations and constants evaluate in the range and precision of long double." << nl;
+            break;
+        default:
+            if (FLT_EVAL_METHOD < 0) {
+                LOG << "Implementation-defined behavior." << nl;
+            } else {
+                LOG << "Unknown evaluation mode." << nl;
+            }
+            break;
+    }
+
+
+    LOG << "###\tFLT_ROUNDS: " << FLT_ROUNDS << space;
+
+    switch (FLT_ROUNDS) {
+        case std::round_indeterminate:
+            LOG << "Rounding style cannot be determined." << nl;
+            break;
+        case std::round_toward_zero:
+            LOG << "Rounding toward zero." << nl;
+            break;
+        case std::round_to_nearest:
+            LOG << "Rounding toward nearest representable value." << nl;
+            break;
+        case std::round_toward_infinity:
+            LOG << "Rounding toward positive infinity." << nl;
+            break;
+        case std::round_toward_neg_infinity:
+            LOG << "Rounding toward negative infinity." << nl;
+            break;
+        default:
+            LOG << "Unknown rounding style." << nl;
+            break;
+    }
+
+
+
+    LOG << "###\tFLT_HAS_SUBNORM: " << FLT_HAS_SUBNORM << space;
+    switch (FLT_HAS_SUBNORM) {
+        case -1:
+            LOG << "Support for subnormal numbers in float is indeterminable." << nl;
+            break;
+        case 0:
+            LOG << "Float type does not support subnormal numbers." << nl;
+            break;
+        case 1:
+            LOG << "Float type supports subnormal numbers." << nl;
+            break;
+        default:
+            LOG << "Unknown value for FLT_HAS_SUBNORM." << nl;
+            break;
+    }
+
+    LOG << "###\tDBL_HAS_SUBNORM: " << DBL_HAS_SUBNORM << space;
+    switch (DBL_HAS_SUBNORM) {
+        case -1:
+            LOG << "Support for subnormal numbers in double is indeterminable." << nl;
+            break;
+        case 0:
+            LOG << "Double type does not support subnormal numbers." << nl;
+            break;
+        case 1:
+            LOG << "Double type supports subnormal numbers." << nl;
+            break;
+        default:
+            LOG << "Unknown value for DBL_HAS_SUBNORM." << nl;
+            break;
+    }
+
+    LOG << "###\tLDBL_HAS_SUBNORM: " << LDBL_HAS_SUBNORM << space;
+    switch (LDBL_HAS_SUBNORM) {
+        case -1:
+            LOG << "Support for subnormal numbers in long double is indeterminable." << nl;
+            break;
+        case 0:
+            LOG << "Long double type does not support subnormal numbers." << nl;
+            break;
+        case 1:
+            LOG << "Long double type supports subnormal numbers." << nl;
+            break;
+        default:
+            LOG << "Unknown value for LDBL_HAS_SUBNORM." << nl;
+            break;
+    }
+
+    
+    #if true and defined(_WIN32)
+    {
+        // Query the current floating-point control word
+        unsigned int currentControlWord = _controlfp(0, 0);
+        
+        // Check precision control bits
+        switch(currentControlWord & _MCW_PC) {
+            case _PC_24: 
+                LOG << "###\tPrecision control: 24-bit (single precision)." << nl;
+                break;
+            case _PC_53:
+                LOG << "###\tPrecision control: 53-bit (double precision)." << nl;
+                break;
+            case _PC_64:
+                LOG << "###\tPrecision control: 64-bit (extended precision)." << nl;
+                break;
+            default:
+                LOG << "###\tPrecision control: unknown." << nl;
+                break;
+        }
+    }    
+    #endif
+
     #if true and defined(_WIN32)
     LOGPRINTF("###\tFlushing subnormal numbers\n");
     _controlfp_s( nullptr, _DN_FLUSH, _MCW_DN ); // Flush denormals, both operands and results, to zero 
+    #elif defined(__SSE__)
+    LOGPRINTF("###\tFlushing subnormal numbers\n"); // ??? xmmintrin.h
+    _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
+    _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);
     #endif
 
 }

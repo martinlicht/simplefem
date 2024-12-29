@@ -229,27 +229,28 @@ int main( int argc, char *argv[] )
         }
             
         for( int i = 0; i < experiments_scalar_function.size(); i++ ) contable_scalar[i].lg(); 
-        LOG << "-------------------" << nl;
+        LOG << "                   " << nl;
         for( int i = 0; i < experiments_vector_function.size(); i++ ) contable_vector[i].lg(); 
         
         
         
         
+        /*
+        No meaningful test for convergence possible as of now
+        LOG << "Check that differences are below: " << desired_closeness_for_sqrt << nl;
         
-//         TODO : check for convergence        
-        // LOG << "Check that differences are below: " << desired_closeness << nl;
+        for( int l = l_min; l <= l_max; l++ ) 
+        for( int r = r_min; r <= r_max; r++ ) 
+        {
+            // if( r < r_max || l < 8 ) continue;
         
-        // for( int l = l_min; l <= l_max; l++ ) 
-        // for( int r = r_min; r <= r_max; r++ ) 
-        // {
-        //     if( r < r_max || l < 8 ) continue;
-        // 
-        //     for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
-        //         Assert( errors_scalar[i][l-l_min][r-r_min] < desired_closeness, errors_scalar[i][l-l_min][r-r_min], desired_closeness );
-        //    
-        //     for( int i = 0; i < experiments_vector_function.size(); i++ ) 
-        //         Assert( errors_vector[i][l-l_min][r-r_min] < desired_closeness, errors_vector[i][l-l_min][r-r_min], desired_closeness );
-        // }
+            for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
+                Assert( errors_scalar[i][l-l_min][r-r_min] < desired_closeness_for_sqrt, errors_scalar[i][l-l_min][r-r_min], desired_closeness_for_sqrt );
+           
+            for( int i = 0; i < experiments_vector_function.size(); i++ ) 
+                Assert( errors_vector[i][l-l_min][r-r_min] < desired_closeness_for_sqrt, errors_vector[i][l-l_min][r-r_min], desired_closeness_for_sqrt );
+        }
+        */
         
         
         LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;

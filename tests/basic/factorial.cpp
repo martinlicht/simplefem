@@ -42,7 +42,7 @@ int main( int argc, char *argv[] )
         if( 24 <= n && n <= 124 ) Assert( x == 4 );
     }
 
-    
+    LOG << "Integers: ";
     for( int i = 0; i <= largest_factorial_base<int>(); i++ ) {
 
         int64_t f1 = factorial_integer( i );
@@ -50,16 +50,23 @@ int main( int argc, char *argv[] )
         int64_t f3 = factorial_integer_table( i );
         int64_t f4 = factorial_integer_loop( i );
 
+        LOG << i << space;
+
         assert( f1 == f2 and f2 == f3 and f3 == f4 );
 
     }
 
+    LOG << nl;
+
+    LOG << "Float: ";
     for( int i = 0; i < 20; i++ ) {
 
         Float f1 = factorial_numerical( i );
         Float f2 = factorial_numerical_naive( i );
         Float f3 = factorial_numerical_table( i );
         Float f4 = factorial_numerical_loop( i );
+
+        LOG << i << space;
 
         assert( is_numerically_close( f1/f2, 1. ) );
         assert( is_numerically_close( f1/f3, 1. ) );
@@ -70,6 +77,8 @@ int main( int argc, char *argv[] )
         assert( is_numerically_close( f1, f4 ) );
 
     }
+
+    LOG << nl;
 
 
     LOG << "\nChecking binomial implementations...\n";

@@ -63,7 +63,7 @@ int main( int argc, char *argv[] )
     
     int * p = new (nothrow) int[10000];
     
-    cout << p[8] << endl;
+    cout << "some arbitrary integer from the memory: " << p[8] << endl;
     
     return 0;
 }
