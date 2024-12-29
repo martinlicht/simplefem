@@ -7,10 +7,10 @@
 	
 #	----------- UPKEEP & MINOR FIXES -------------
 
-[ ] The sqrt of a result subject to more than a machine epsilon error will be subject to more than the sqrt of the machine epsilon error
-[ ] convergence tables should handle different precisions, one way or the other 
-[ ] stb in external seems subject to floating point redefinition?
-[ ] CONSTANT_FLOATINGPOINT_DATATYPE
+[!] The sqrt of a result subject to more than a machine epsilon error will be subject to more than the sqrt of the machine epsilon error
+[ ] convergence tables should handle different precisions, one way or the other: best to internally use long double. Requires settling the printf issue
+[ ] use custom printf implementation for that handles long doubles
+[x] CONSTANT_FLOATINGPOINT_DATATYPE: uses the same macro case distinction as the other ones
 [ ] std::exp and the like: single precision versions
 [ ] what is the numerically stable way to compute the determinant? 
 
