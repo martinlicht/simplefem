@@ -355,11 +355,12 @@ int main( int argc, char *argv[] )
                 LOG << "Matrix A * Rinv * Q^t:\n" << A * Rinv * Qt;
             }
 
-            if( /* DISABLES CODE */ (false) )
+            // if( /* DISABLES CODE */ (false) )
             {
                 DenseMatrix Q(dim,dim), R(dim,dim);
                 
                 QRFactorization_via_Householder( A, Q, R );
+                // TransposeSquareInSitu(Q);
                 
                 DenseMatrix Rinv =   Inverse(R);
                 DenseMatrix Qt   = Transpose(Q);

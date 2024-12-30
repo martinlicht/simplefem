@@ -383,6 +383,8 @@ Float QRFactorization_via_Householder(const DenseMatrix& A_in, DenseMatrix& Q_ou
     //  det(Q) = (-1)^(num_reflectors) because each nontrivial Householder has det = -1.
     //  det(R) = product of diagonal entries.
 
+    TransposeSquareInSitu(Q_out);
+
     // 1) diagonal product of R
     Float diag_product = 1.0;
     for (size_t i = 0; i < n; i++) {
