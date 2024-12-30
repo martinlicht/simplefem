@@ -74,7 +74,8 @@ double hilbert_determinant2(int n) {
 
 
 
-int main() {
+int main( int argc, char *argv[] )
+{
 
     std::cout.precision(30);
     std::cout << std::scientific;
@@ -250,5 +251,6 @@ int main() {
 
     }
 
+    LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
     return 0;
 }
