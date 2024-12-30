@@ -16,13 +16,13 @@ int main( int argc, char *argv[] )
     // LOG << std::showpos;
     
     {
-        LOG << "A. Scalar functions of matrices" << nl;
+        LOG << "1. Scalar functions of matrices" << nl;
        
         DenseMatrix S( 4, 4 );
         S(0,0) =  3; S(0,1) =  0; S(0,2) = -6; S(0,3) =  0; 
         S(1,0) =  1; S(1,1) = -1; S(1,2) =  0; S(1,3) =  2; 
         S(2,0) = -1; S(2,1) =  1; S(2,2) =  1; S(2,3) = -1; 
-        S(3,0) =  2; S(3,1) = -4; S(3,2) =  4; S(3,3) =  0; 
+        S(3,0) =  2; S(3,1) = -4; S(3,2) =  4; S(3,3) =  0;
         
         
         LOG << S << nl;
@@ -115,9 +115,9 @@ int main( int argc, char *argv[] )
     
     
     {
-        LOG << "B. Transposing dense matrices" << nl;
+        LOG << "2. Transposing dense matrices" << nl;
         
-        LOG << "Transpose of square matrices" << nl;
+        LOG << "2.A. Transpose of square matrices" << nl;
         
         for( int dim = 0; dim < 4; dim++ ) 
         {
@@ -145,7 +145,7 @@ int main( int argc, char *argv[] )
             
         }
         
-        LOG << "Transpose of non-square matrices" << nl;
+        LOG << "2.B. Transpose of non-square matrices" << nl;
         
         for( int dimr = 0; dimr < 4; dimr++ ) 
         for( int dimc = 0; dimc < 4; dimc++ ) 
@@ -176,7 +176,7 @@ int main( int argc, char *argv[] )
     
     {
         
-        LOG << "1. Cholesky decomposition" << nl;
+        LOG << "3. Cholesky decomposition of a fixed sample matrix" << nl;
         
         DenseMatrix A(3,3);
         
@@ -191,18 +191,17 @@ int main( int argc, char *argv[] )
         ActualL(1,0) =  6; ActualL(1,1) = 1; ActualL(1,2) = 0; 
         ActualL(2,0) = -8; ActualL(2,1) = 5; ActualL(2,2) = 3; 
         
-        //LOG << "Original matrix:" << A << nl;
-        //LOG << "Factor matrix:" << L << nl;
-        //LOG << "Product matrix:" << L * Transpose(L) << nl;
+        //LOG << "Original matrix:\n" << A << nl;
+        //LOG << "Factor matrix:\n" << L << nl;
+        //LOG << "Product matrix:\n" << L * Transpose(L) << nl;
 
         assert( ( ActualL - L ).is_numerically_small() );
         assert( ( L * Transpose(L) - A ).is_numerically_small() );
-        
     }
       
     {
     
-        LOG << "2. Cholesky decomposition" << nl;
+        LOG << "4. Cholesky decompositions of a series of matrices" << nl;
         
         for( int dim = 0; dim <= 3; dim++ ) 
         {
@@ -225,80 +224,12 @@ int main( int argc, char *argv[] )
         }
         
     }
-    
-    {
-        LOG << "3. Matrix determinant, inverse, cofactor matrix" << nl;
-        
-        for( int dim = 0; dim < 6; dim++ ) 
-        {
-            DenseMatrix A = HilbertMatrix( dim );
-            
-            LOG << A << nl;
-            
-            Float det = Determinant(A);
-            Float det_l = Determinant_laplaceexpansion(A);
-            Float det_g = Determinant_gauss(A);
-            Float det_b = Determinant_bareiss(A);
 
-            LOG << "Determinant (default): " << det << nl;
-            LOG << "Determinant (laplace): " << det_l << nl;
-            LOG << "Determinant (gauss):   " << det_g << nl;
-            LOG << "Determinant (bareiss): " << det_b << nl;
 
-            assert( is_numerically_close( det, det_l ) && is_numerically_close( det, det_g ) && is_numerically_close( det, det_b ) );
-
-            const auto Acof = CofactorMatrix( A );
-            const auto Ainv = Inverse( A );
-
-            LOG << Acof << nl;
-            LOG << Ainv << nl;
-            LOG << A * Ainv << nl;
-            LOG << Ainv * A << nl;
-            LOG << 1. / Determinant(A) - Determinant( Ainv ) << nl;
-            LOG << A - Inverse( Ainv ) << nl;
-
-            Assert( ( Ainv * A ).is_numerically_identity(), Ainv, A, Ainv*A );
-            Assert( ( A * Ainv ).is_numerically_identity(), A, Ainv, Ainv*A );
-        }
-    }
-    
-    {
-      
-        LOG << "4. Matrix determinant, inverse, cofactor matrix" << nl;
-
-        DenseMatrix A( 3 );
-        A(0,0) = -2; A(0,1) =  2; A(0,2) = -3; 
-        A(1,0) = -1; A(1,1) =  1; A(1,2) =  3; 
-        A(2,0) =  2; A(2,1) =  0; A(2,2) = -1; 
-
-        Float det = Determinant(A);
-        Float det_l = Determinant_laplaceexpansion(A);
-        Float det_g = Determinant_gauss(A);
-        Float det_b = Determinant_bareiss(A);
-
-        LOG << "Determinant (default): " << det << nl;
-        LOG << "Determinant (laplace): " << det_l << nl;
-        LOG << "Determinant (gauss):   " << det_g << nl;
-        LOG << "Determinant (bareiss): " << det_b << nl;
-
-        assert( is_numerically_close( det, det_l ) && is_numerically_close( det, det_g ) && is_numerically_close( det, det_b ) );
-
-        const auto Acof = CofactorMatrix( A );
-        const auto Ainv = Inverse( A );
-
-        LOG << Acof << nl;
-        LOG << Ainv << nl;
-        LOG << A * Ainv << nl;
-        LOG << Ainv * A << nl;
-
-        assert( ( Ainv * A ).is_numerically_identity() );
-        assert( ( A * Ainv ).is_numerically_identity() );
-      
-    }
     
     {
         
-        LOG << "5. Gauss Jordan algorithm" << nl;
+        LOG << "5. Gauss Jordan algorithm with a fixed sample matrix" << nl;
     
         DenseMatrix A(4,4);
         
@@ -316,26 +247,29 @@ int main( int argc, char *argv[] )
 //         A(1,0) = 0; A(1,1) = 1; A(1,2) = 0; 
 //         A(2,0) = 1; A(2,1) = 0; A(2,2) = 1; 
         
-        LOG << "Original matrix:" << A << nl;
+        LOG << "Original matrix:\n" << A << nl;
         
         const DenseMatrix Ainv = GaussJordanInplace( A );
         
-        LOG << "Proposed Inverse:" << Ainv << nl;
+        LOG << "Proposed Inverse:\n" << Ainv << nl;
         
-        LOG << "Product of both:" << Ainv * A << nl;
+        LOG << "Product of both:\n" << Ainv * A << nl;
 
         assert( ( Ainv * A ).is_numerically_identity() );
+        assert( ( A * Ainv ).is_numerically_identity() );
         
     }
     
     {
-        LOG << "6. Gauss Jordan algorithm" << nl;
-        for( int i = 0; i < 6; i++ )
+        LOG << "6. Gauss Jordan algorithm with several random integer matrices" << nl;
+        for( int d = 0; d <= 8; d++ )
+        for( int i = 0; i <  6; i++ )
         {
             
-            DenseMatrix A(8);
-            LOG << A << nl;
+            DenseMatrix A(d);
+            // LOG << A << nl;
             A.randomintegermatrix(-2,2);
+            A += 30. * IdentityMatrix(d);
             LOG << A << nl;
             
             
@@ -349,37 +283,35 @@ int main( int argc, char *argv[] )
             LOG << "Determinant (gauss):   " << det_g << nl;
             LOG << "Determinant (bareiss): " << det_b << nl;
             
-            LOG << A << nl;
+            // LOG << A << nl;
 
-            assert( is_numerically_close( det, det_l ) && is_numerically_close( det, det_g ) && is_numerically_close( det, det_b ) );
+            Assert( is_numerically_one( det / det_l ), det, det_l );
+            Assert( is_numerically_one( det / det_g ), det, det_g );
+            Assert( is_numerically_one( det / det_b ), det, det_b );
 
             const auto Ainv = GaussJordanInplace(A);
             
-            LOG << Ainv * A << nl;
+            // LOG << Ainv * A << nl;
 
             assert( ( Ainv * A ).is_numerically_identity() );
+            assert( ( A * Ainv ).is_numerically_identity() );
         }
     }
 
     {
-        LOG << "7. Gauss Jordan algorithm" << nl;
+        LOG << "7. Gauss Jordan algorithm with Hilbert matrices" << nl;
     
-        for( int N = 1; N <= 7; N++ )
+        for( int N = 1; N <= 6; N++ )
         {
             DenseMatrix C(N);
             for( int i = 0; i < N; i++ )
             for( int j = 0; j < N; j++ )
                 C(i,j) = 1. / ( i+j+1 );
             
-            LOG << C * GaussJordanInplace(C,true) << nl;
+            auto Cinv = GaussJordanInplace(C);
             
-            {
-                auto Cinv = GaussJordanInplace(C);
-                const auto I = IdentityMatrix(N);
-                // Float relaxation = Cinv.norm();
-
-                Assert( ( C * Cinv ).is_numerically_identity(), C * Cinv );
-            }
+            Assert( ( C * Cinv ).is_numerically_identity(), C * Cinv );
+            Assert( ( Cinv * C ).is_numerically_identity(), Cinv * C );
         }
         
         
@@ -409,18 +341,44 @@ int main( int argc, char *argv[] )
                 assert( ( Q * R - A ).is_numerically_small() );
                 assert( ( Q * Qt ).is_numerically_identity() );
                 
-                LOG << "Matrix A:" << A;
-                LOG << "Matrix Q:" << Q;
-                LOG << "Matrix R:" << R;
-                LOG << "Matrix Q * R:" << Q * R;
-                LOG << "Matrix Q^t:" << Qt;
-                LOG << "Matrix Rinv:" << Rinv;
-                LOG << "Matrix R * Rinv:" << R * Rinv;
-                LOG << "Matrix Rinv * R:" << Rinv * R;
-                LOG << "Matrix Q * Qinv:" << Q * Qt;
-                LOG << "Matrix Qinv * Q:" << Qt * Q;
-                LOG << "Matrix Rinv * Q^t * A:" << Rinv * Qt * A;
-                LOG << "Matrix A * Rinv * Q^t:" << A * Rinv * Qt;
+                LOG << "Matrix A:\n" << A;
+                LOG << "Matrix Q:\n" << Q;
+                LOG << "Matrix R:\n" << R;
+                LOG << "Matrix Q * R:\n" << Q * R;
+                LOG << "Matrix Q^t:\n" << Qt;
+                LOG << "Matrix Rinv:\n" << Rinv;
+                LOG << "Matrix R * Rinv:\n" << R * Rinv;
+                LOG << "Matrix Rinv * R:\n" << Rinv * R;
+                LOG << "Matrix Q * Qinv:\n" << Q * Qt;
+                LOG << "Matrix Qinv * Q:\n" << Qt * Q;
+                LOG << "Matrix Rinv * Q^t * A:\n" << Rinv * Qt * A;
+                LOG << "Matrix A * Rinv * Q^t:\n" << A * Rinv * Qt;
+            }
+
+            if( /* DISABLES CODE */ (false) )
+            {
+                DenseMatrix Q(dim,dim), R(dim,dim);
+                
+                QRFactorization_via_Householder( A, Q, R );
+                
+                DenseMatrix Rinv =   Inverse(R);
+                DenseMatrix Qt   = Transpose(Q);
+                
+                LOG << "Matrix A:\n" << A;
+                LOG << "Matrix Q:\n" << Q;
+                LOG << "Matrix R:\n" << R;
+                LOG << "Matrix Q * R:\n" << Q * R;
+                LOG << "Matrix Q^t:\n" << Qt;
+                LOG << "Matrix Rinv:\n" << Rinv;
+                LOG << "Matrix R * Rinv:\n" << R * Rinv;
+                LOG << "Matrix Rinv * R:\n" << Rinv * R;
+                LOG << "Matrix Q * Qinv:\n" << Q * Qt;
+                LOG << "Matrix Qinv * Q:\n" << Qt * Q;
+                LOG << "Matrix Rinv * Q^t * A:\n" << Rinv * Qt * A;
+                LOG << "Matrix A * Rinv * Q^t:\n" << A * Rinv * Qt;
+                
+                assert( ( Q * R - A ).is_numerically_small() );
+                assert( ( Q * Qt ).is_numerically_identity() );
             }
 
             {
@@ -434,18 +392,18 @@ int main( int argc, char *argv[] )
                 assert( ( L * Q - A ).is_numerically_small() );
                 assert( ( Q * Qt ).is_numerically_identity() );
                 
-                LOG << "Matrix A:" << A;
-                LOG << "Matrix Q:" << Q;
-                LOG << "Matrix L:" << L;
-                LOG << "Matrix L * Q:" << L * Q;
-                LOG << "Matrix Q^t:" << Qt;
-                LOG << "Matrix Linv:" << Linv;
-                LOG << "Matrix L * Linv:" << L * Linv;
-                LOG << "Matrix Linv * L:" << Linv * L;
-                LOG << "Matrix Q * Qinv:" << Q * Qt;
-                LOG << "Matrix Qinv * Q:" << Qt * Q;
-                LOG << "Matrix Q^t * Linv * A:" << Qt * Linv * A;
-                LOG << "Matrix A * Qt * Linv:" << A * Qt * Linv;
+                LOG << "Matrix A:\n" << A;
+                LOG << "Matrix Q:\n" << Q;
+                LOG << "Matrix L:\n" << L;
+                LOG << "Matrix L * Q:\n" << L * Q;
+                LOG << "Matrix Q^t:\n" << Qt;
+                LOG << "Matrix Linv:\n" << Linv;
+                LOG << "Matrix L * Linv:\n" << L * Linv;
+                LOG << "Matrix Linv * L:\n" << Linv * L;
+                LOG << "Matrix Q * Qinv:\n" << Q * Qt;
+                LOG << "Matrix Qinv * Q:\n" << Qt * Q;
+                LOG << "Matrix Q^t * Linv * A:\n" << Qt * Linv * A;
+                LOG << "Matrix A * Qt * Linv:\n" << A * Qt * Linv;
             }
 
             {
@@ -465,287 +423,8 @@ int main( int argc, char *argv[] )
         
     }
     
-    // if(false)
-    {
-        LOG << "9. Compare Determinants of Matrices with random coefficients" << nl;
-        for( int t = 0; t < 7; t++ )
-        for( int i = 0; i < 6; i++ )
-        {
-            
-            DenseMatrix A(t);
-            A.randomintegermatrix(10,80);
-            
-            Float det = Determinant(A);
-            Float det_l = Determinant_laplaceexpansion(A);
-            Float det_g = Determinant_gauss(A);
-            Float det_b = Determinant_bareiss(A);
-
-            LOG << "Determinant (default): " << det << nl;
-            LOG << "Determinant (laplace): " << det_l << nl;
-            LOG << "Determinant (gauss):   " << det_g << nl;
-            LOG << "Determinant (bareiss): " << det_b << nl;
-
-            // LOGPRINTF( "%.17e %.17e %.17e %.17e \n", det, det_l, det_g, det_b );
-
-            assert( is_numerically_one( det / det_l ) && is_numerically_one( det / det_g ) && is_numerically_one( det / det_b ) );
-            
-            const auto Acof = CofactorMatrix( A );
-            const auto Ainv = Inverse( A );
-
-            LOG << Acof << nl;
-            LOG << Ainv << nl;
-            LOG << A * Ainv << nl;
-            LOG << Ainv * A << nl;
-
-            assert( ( Ainv * A ).is_numerically_identity() );
-            assert( ( A * Ainv ).is_numerically_identity() );
-
-            // LOG << "with Newton-Schulz \n";
-            // auto Ainvp = Ainv; NewtonSchulz( A, Ainvp, 20 );
-
-            // LOG << A * Ainvp << nl;
-            // LOG << Ainvp * A << nl;
-
-            // auto R1 = ( A * Ainvp - IdentityMatrix(t) ).norm() / ( A * Ainv - IdentityMatrix(t) ).norm();
-            // auto R2 = ( Ainvp * A - IdentityMatrix(t) ).norm() / ( Ainv * A - IdentityMatrix(t) ).norm(); 
-            
-            // LOG << "R1 = " << R1 << space << "R2 = " << R2 << nl;
-            // if( t >= 5 ) assert( R1 < 1.0 and R2 < 1.0 );
-
-            // assert( ( Ainvp * A ).is_numerically_identity() );
-            // assert( ( A * Ainvp ).is_numerically_identity() );
-        }
-    }
-    
-    {
-        LOG << "10. Inverse and determinants of unit matrices" << nl;
-        for( int t = 0; t < 7; t++ )
-        {
-            
-            DenseMatrix A = 3. * IdentityMatrix(t);
-            
-            // LOG << A << nl;
-            
-            Float det = Determinant(A);
-            Float det_l = Determinant_laplaceexpansion(A);
-            Float det_g = Determinant_gauss(A);
-            Float det_b = Determinant_bareiss(A);
-
-            LOG << "Determinant (default): " << det << nl;
-            LOG << "Determinant (laplace): " << det_l << nl;
-            LOG << "Determinant (gauss):   " << det_g << nl;
-            LOG << "Determinant (bareiss): " << det_b << nl;
-
-            assert( is_numerically_close( det, det_l ) && is_numerically_close( det, det_g ) && is_numerically_close( det, det_b ) );
-            
-            const auto Acof = CofactorMatrix( A );
-            const auto Ainv = GaussJordanInplace( A );
-
-            LOG << Acof << nl;
-            LOG << Ainv << nl;
-            LOG << A * Ainv << nl;
-            LOG << Ainv * A << nl;
-
-            assert( ( Ainv * A ).is_numerically_identity() );
-            assert( ( A * Ainv ).is_numerically_identity() );
-        }
-    }
-
-    
-    // if(false)
-    {
-        LOG << "11. Compare Determinants of random orthogonal Matrices" << nl;
-        for( int t = 0; t < 7; t++ )
-        for( int i = 0; i < 6; i++ )
-        {
-            
-            DenseMatrix A(t);
-            A.random_orthogonal_matrix();
-
-            LOG << A << nl;
-            
-            Float det = Determinant(A);
-            Float det_l = Determinant_laplaceexpansion(A);
-            Float det_g = Determinant_gauss(A);
-            Float det_b = Determinant_bareiss(A);
-
-            LOG << "Determinant (default): " << det << nl;
-            LOG << "Determinant (laplace): " << det_l << nl;
-            LOG << "Determinant (gauss):   " << det_g << nl;
-            LOG << "Determinant (bareiss): " << det_b << nl;
-
-            assert( is_numerically_close( det, det_l ) && is_numerically_close( det, det_g ) && is_numerically_close( det, det_b ) );
-            
-            {
-                const int dim = t;
-                DenseMatrix Q(dim,dim), R(dim,dim);
-                QRFactorization( A, Q, R );
-                Float detR = UpperTriangularDeterminant(R); Float detQ = Determinant(Q);
-                LOG << "Determinant (QR): " << detR << nl;
-                Assert( is_numerically_one( detQ ) or is_numerically_one( -detQ ) );
-                Assert( is_numerically_close( det, detQ * detR ) );
-
-            }
-            
-            const auto Acof = CofactorMatrix( A );
-            const auto Ainv = Inverse( A );
-
-            LOG << Acof << nl;
-            LOG << Ainv << nl;
-            
-            LOG << A * Ainv << nl;
-            LOG << Ainv * A << nl;
-            
-            assert( ( Ainv * A ).is_numerically_identity() );
-            assert( ( A * Ainv ).is_numerically_identity() );
-
-            // LOG << "with Newton-Schulz \n";
-            // auto Ainvp = Ainv; NewtonSchulz( A, Ainvp, 200 );
-
-            // LOG << A * Ainvp << nl;
-            // LOG << Ainvp * A << nl;
-
-            // auto R1 = ( A * Ainvp - IdentityMatrix(t) ).norm() / ( A * Ainv - IdentityMatrix(t) ).norm();
-            // auto R2 = ( Ainvp * A - IdentityMatrix(t) ).norm() / ( Ainv * A - IdentityMatrix(t) ).norm(); 
-            
-            // LOG << "R1 = " << R1 << space << "R2 = " << R2 << nl;
-            // if( t >= 5 ) assert( R1 < 1.0 and R2 < 1.0 );
-
-            // assert( ( Ainvp * A ).is_numerically_identity() );
-            // assert( ( A * Ainvp ).is_numerically_identity() );
-        }
-    }
     
     
-    {
-        LOG << "12. Compare Determinants of random ill-conditioned 2x2 matrices" << nl;
-        for( int t = 3; t < 5; t++ )
-        {
-            
-            DenseMatrix A(2,2);
-            A(0,0) = power_numerical( 10, t );
-            A(0,1) = power_numerical( 10, t ) - 1;
-            A(1,0) = power_numerical( 10, t ) - 1;
-            A(1,1) = power_numerical( 10, t ) - 2;
-            
-            Float det = Determinant(A);
-            Float det_l = Determinant_laplaceexpansion(A);
-            Float det_g = Determinant_gauss(A);
-            Float det_b = Determinant_bareiss(A);
-
-            LOG << t << " Determinant (default): " << det << nl;
-            LOG << t << " Determinant (laplace): " << det_l << nl;
-            LOG << t << " Determinant (gauss):   " << det_g << nl;
-            LOG << t << " Determinant (bareiss): " << det_b << nl;
-
-            assert( is_numerically_close( det, det_l ) && is_numerically_close( det, det_g ) && is_numerically_close( det, det_b ) );
-            
-            {
-                const int dim = 2;
-                DenseMatrix Q(dim,dim), R(dim,dim);
-                QRFactorization( A, Q, R );
-                Float detR = UpperTriangularDeterminant(R); Float detQ = Determinant(Q);
-                LOG << "Determinant (QR): " << detR << nl;
-                Assert( is_numerically_one( detQ ) or is_numerically_one( -detQ ) );
-                Assert( is_numerically_close( det, detQ * detR ) );
-            }
-            
-            const auto Acof = CofactorMatrix( A );
-            const auto Ainv = Inverse( A );
-
-            LOG << Acof << nl;
-            LOG << Ainv << nl;
-            LOG << Ainv << nl;
-            LOG << A * Ainv << nl;
-            LOG << Ainv * A << nl;
-
-            Assert( ( Ainv * A ).is_numerically_identity(), Ainv * A );
-            Assert( ( A * Ainv ).is_numerically_identity(), A * Ainv );
-
-            LOG << "with Newton-Schulz \n";
-            auto Ainvp = Ainv; NewtonSchulz( A, Ainvp, 20 );
-
-            LOG << A * Ainvp << nl;
-            LOG << Ainvp * A << nl;
-
-            auto R1 = ( A * Ainvp - IdentityMatrix(t) ).norm() / ( A * Ainv - IdentityMatrix(t) ).norm();
-            auto R2 = ( Ainvp * A - IdentityMatrix(t) ).norm() / ( Ainv * A - IdentityMatrix(t) ).norm(); 
-            
-            LOG << "R1 = " << R1 << space << "R2 = " << R2 << nl;
-            if( t >= 5 ) assert( R1 < 1.0 and R2 < 1.0 );
-
-            assert( ( Ainvp * A ).is_numerically_identity() );
-            assert( ( A * Ainvp ).is_numerically_identity() );
-        }
-    }
-    
-
-    
-    {
-        LOG << "13. Compare Determinants of random ill-conditioned matrices" << nl;
-        for( int t = 2; t < 5; t++ )
-        {
-            
-            DenseMatrix Q(2);
-            Q.random_orthogonal_matrix();
-
-            DenseMatrix M(2,2);
-            M(0,0) = power_numerical( 10, t );
-            M(0,1) = 0.;
-            M(1,0) = 0.;
-            M(1,1) = 1. / power_numerical( 10, t );
-
-            DenseMatrix A = Transpose(Q) * M * Q;
-            
-            Float det = Determinant(A);
-            Float det_l = Determinant_laplaceexpansion(A);
-            Float det_g = Determinant_gauss(A);
-            Float det_b = Determinant_bareiss(A);
-
-            LOG << t << " Determinant (default): " << det << nl;
-            LOG << t << " Determinant (laplace): " << det_l << nl;
-            LOG << t << " Determinant (gauss):   " << det_g << nl;
-            LOG << t << " Determinant (bareiss): " << det_b << nl;
-
-            assert( is_numerically_close( det, det_l ) && is_numerically_close( det, det_g ) && is_numerically_close( det, det_b ) );
-            
-            {
-                const int dim = 2;
-                DenseMatrix Q(dim,dim), R(dim,dim);
-                QRFactorization( A, Q, R );
-                Float detR = UpperTriangularDeterminant(R); Float detQ = Determinant(Q);
-                LOG << "Determinant (QR): " << detR << nl;
-                Assert( is_numerically_one( detQ ) or is_numerically_one( -detQ ) );
-                Assert( is_numerically_close( det, detQ * detR ) );
-            }
-            
-            const auto Acof = CofactorMatrix( A );
-            const auto Ainv = Inverse( A );
-
-            LOG << Acof << nl;
-            LOG << Ainv << nl;
-            LOG << A * Ainv << nl;
-            LOG << Ainv * A << nl;
-
-            assert( ( Ainv * A ).is_numerically_identity() );
-            assert( ( A * Ainv ).is_numerically_identity() );
-
-            // LOG << "with Newton-Schulz \n";
-            // auto Ainvp = Ainv; NewtonSchulz( A, Ainvp, 10 );
-
-            // LOG << A * Ainvp << nl;
-            // LOG << Ainvp * A << nl;
-
-            // auto R1 = ( A * Ainvp - IdentityMatrix(t) ).norm() / ( A * Ainv - IdentityMatrix(t) ).norm();
-            // auto R2 = ( Ainvp * A - IdentityMatrix(t) ).norm() / ( Ainv * A - IdentityMatrix(t) ).norm(); 
-            
-            // LOG << "R1 = " << R1 << space << "R2 = " << R2 << nl;
-            // if( t >= 5 ) assert( R1 < 1.0 and R2 < 1.0 );
-
-            // assert( ( Ainvp * A ).is_numerically_identity() );
-            // assert( ( A * Ainvp ).is_numerically_identity() );
-        }
-    }
     
     LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
 

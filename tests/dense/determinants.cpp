@@ -34,7 +34,7 @@ int main( int argc, char *argv[] )
     LOG << "Unit Test for Determinant computation" << nl;
 
     {
-        LOG << "Vandermonde Matrices" << nl;
+        LOG << nl << nl << "Vandermonde Matrices" << nl;
 
         // List of coefficient vectors for Vandermonde matrices
         std::vector<std::vector<Float>> coefficientVectors = {
@@ -59,7 +59,7 @@ int main( int argc, char *argv[] )
         assert( referenceDeterminants.size() == coefficientVectors.size() );
 
         // Test each Vandermonde matrix
-        for( size_t i = 0; i < coefficientVectors.size(); ++i ) 
+        for( int i = 0; i < coefficientVectors.size(); ++i ) 
         {
             const auto& coeffs = coefficientVectors[i];
             Float referenceDet = referenceDeterminants[i];
@@ -72,10 +72,10 @@ int main( int argc, char *argv[] )
                 matrix(r,c) = matrix(r,c-1) * coeffs[r];
             }
 
-            LOG << matrix << nl;
+            // LOG << matrix << nl;
 
             // Compute determinant
-            const int num_algorithms = 5;
+            const int num_algorithms = 6;
             
             Float computedDet[num_algorithms];
             computedDet[0] = Determinant(matrix);
@@ -83,6 +83,14 @@ int main( int argc, char *argv[] )
             computedDet[2] = Determinant_gauss(matrix);
             computedDet[3] = Determinant_laplaceexpansion(matrix);
             computedDet[4] = Determinant_ModifiedGramSchmidt(matrix);
+            {
+                DenseMatrix Q(matrix); DenseMatrix R(matrix);
+                computedDet[5] = QRFactorization_via_Householder(matrix,Q,R);
+                // LOG << matrix << nl << Q << nl << R << nl;
+                // // LOG << matrix*Transpose(matrix) << nl << Q*Transpose(Q) << nl;
+                // LOG << Transpose(matrix)*matrix << nl << Transpose(Q)*Q << nl;
+                // LOG << machine_epsilon <<nl;
+            }
 
             const char* names[num_algorithms];
             names[0] = "Determinant";
@@ -90,20 +98,22 @@ int main( int argc, char *argv[] )
             names[2] = "Gauss";
             names[3] = "Laplace";
             names[4] = "Gram-Schmidt";
+            names[5] = "Householder";
 
             // Print results
             for( int j = 0; j < num_algorithms; j++ )
             {
-                LOGPRINTF("Test %lli %12s: computed=%.17le reference=%.17le ratio=%.17le\n", 
+                LOGPRINTF("Test %i %12s: computed=%.17le reference=%.17le ratio=%.17le\n", 
                     i+1, names[j], referenceDet, computedDet[j], (computedDet[j]/referenceDet) );            
                 assert( is_numerically_close( referenceDet, computedDet[j] ) );
             }
+            LOG << nl;
         }    
     }
     
     
     {
-        LOG << nl << "Hilbert Matrices" << nl;
+        LOG << nl << nl << "Hilbert Matrices" << nl;
 
         for( int h = 0; h <= 8; h++ )
         {
@@ -117,7 +127,7 @@ int main( int argc, char *argv[] )
             // LOG << matrix << nl;
 
             // Compute determinant
-            const int num_algorithms = 5;
+            const int num_algorithms = 6;
             
             Float computedDet[num_algorithms];
             computedDet[0] = Determinant(matrix);
@@ -125,6 +135,14 @@ int main( int argc, char *argv[] )
             computedDet[2] = Determinant_gauss(matrix);
             computedDet[3] = Determinant_laplaceexpansion(matrix);
             computedDet[4] = Determinant_ModifiedGramSchmidt(matrix);
+            {
+                DenseMatrix Q(matrix); DenseMatrix R(matrix);
+                computedDet[5] = QRFactorization_via_Householder(matrix,Q,R);
+                LOG << matrix << nl << Q << nl << R << nl;
+                // // LOG << matrix*Transpose(matrix) << nl << Q*Transpose(Q) << nl;
+                // LOG << Transpose(matrix)*matrix << nl << Transpose(Q)*Q << nl;
+                // LOG << machine_epsilon <<nl;
+            }
             
             const char* names[num_algorithms];
             names[0] = "Determinant";
@@ -132,6 +150,7 @@ int main( int argc, char *argv[] )
             names[2] = "Gauss";
             names[3] = "Laplace";
             names[4] = "Gram-Schmidt";
+            names[5] = "Householder";
 
             // Print results
             for( int j = 0; j < num_algorithms; j++ )
@@ -149,7 +168,7 @@ int main( int argc, char *argv[] )
     
 
     {
-        LOG << nl << "Random orthogonal matrices" << nl;
+        LOG << nl << nl << "Random orthogonal matrices" << nl;
 
         for( int h = 0; h <= 8; h++ )
         {
@@ -157,10 +176,18 @@ int main( int argc, char *argv[] )
             matrix.random_orthogonal_matrix();
             Float referenceDet = 1.;
 
+            matrix.randommatrix();
+            for( int i = 0; i < 1; i++ )
+            {
+                DenseMatrix Q(matrix); DenseMatrix R(matrix);
+                QRFactorization_via_Householder(matrix,Q,R);
+                matrix = Q;
+            }
+            
             // LOG << matrix << nl;
 
             // Compute determinant
-            const int num_algorithms = 5;
+            const int num_algorithms = 6;
             
             Float computedDet[num_algorithms];
             computedDet[0] = Determinant(matrix);
@@ -168,6 +195,15 @@ int main( int argc, char *argv[] )
             computedDet[2] = Determinant_gauss(matrix);
             computedDet[3] = Determinant_laplaceexpansion(matrix);
             computedDet[4] = Determinant_ModifiedGramSchmidt(matrix);
+            {
+                DenseMatrix Q(matrix); DenseMatrix R(matrix);
+                computedDet[5] = QRFactorization_via_Householder(matrix,Q,R);
+                // LOG << matrix << nl << Q << nl << R << nl;
+                // // LOG << matrix*Transpose(matrix) << nl << Q*Transpose(Q) << nl;
+                // LOG << Transpose(matrix)*matrix << nl << Transpose(Q)*Q << nl;
+                // LOG << machine_epsilon <<nl;
+            }
+            
             
             const char* names[num_algorithms];
             names[0] = "Determinant";
@@ -175,6 +211,7 @@ int main( int argc, char *argv[] )
             names[2] = "Gauss";
             names[3] = "Laplace";
             names[4] = "Gram-Schmidt";
+            names[5] = "Householder";
 
             // Print results
             for( int j = 0; j < num_algorithms; j++ )
