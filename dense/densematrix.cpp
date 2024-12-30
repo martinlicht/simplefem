@@ -864,7 +864,7 @@ bool DenseMatrix::is_diagonal() const
     return true;
 }
 
-bool DenseMatrix::is_lowerlefttriangular() const
+bool DenseMatrix::is_lower_left_triangular() const
 {
     if( not is_square() ) return false;
     for( int r = 0; r < getdimout(); r++ )
@@ -876,31 +876,43 @@ bool DenseMatrix::is_lowerlefttriangular() const
     return true;
 }
 
-bool DenseMatrix::is_lowerrighttriangular() const
+bool DenseMatrix::is_lower_right_triangular() const
 {
     if( not is_square() ) return false;
+
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimout(); c++ )
     {
-        if( getdimout()-1 - r >= c ) continue;
+        bool skip_me = ( c >= getdimout() - r - 1 );
+
+        // LOG << ( skip_me ? '1' : '0' );
+        // if( c == getdimout()-1) LOG << nl;
+
+        if( skip_me ) continue;
         if( get(r,c) != 0 ) return false;
     }
     return true;
 }
 
-bool DenseMatrix::is_upperlefttriangular() const
+bool DenseMatrix::is_upper_left_triangular() const
 {
     if( not is_square() ) return false;
+    
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimout(); c++ )
     {
-        if( getdimout()-1 - r <= c ) continue;
+        bool skip_me = ( r <= getdimin()-1-c );
+
+        // LOG << ( skip_me ? '1' : '0' );
+        // if( c == getdimout()-1) LOG << nl;
+
+        if( skip_me ) continue;
         if( get(r,c) != 0 ) return false;
     }
     return true;
 }
 
-bool DenseMatrix::is_upperrighttriangular() const
+bool DenseMatrix::is_upper_right_triangular() const
 {
     if( not is_square() ) return false;
     for( int r = 0; r < getdimout(); r++ )
