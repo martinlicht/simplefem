@@ -6,7 +6,8 @@
 #include "../../basic.hpp"
 
 
-int main() {
+int main( int argc, char *argv[] )
+{
 
     LOG << "Test absolute\n";
     
@@ -339,7 +340,7 @@ int main() {
         assert(sign_power(3) == -1);
     }
 
-    LOG << "All tests passed successfully!" << nl;
+    LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
     return 0;
 }
 

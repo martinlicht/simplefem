@@ -977,7 +977,7 @@ DenseMatrix Mesh::getGradientProductMatrix( int dim, int index ) const
     QRFactorization( Jac, Q, R );
     // DenseMatrix Rinv( Inverse(R) );
     DenseMatrix Rinv = UpperTriangularInverse(R); 
-    assert( Rinv.is_upperrighttriangular() );
+    assert( Rinv.is_upper_right_triangular() );
     return Transpose(multiplier) * ( Rinv * Transpose(Rinv) ) * multiplier;
 }
         

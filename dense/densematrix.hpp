@@ -209,13 +209,13 @@ class DenseMatrix final
         
         bool is_diagonal() const;
         
-        bool is_lowerlefttriangular() const;
+        bool is_lower_left_triangular() const;
         
-        bool is_lowerrighttriangular() const;
+        bool is_lower_right_triangular() const;
         
-        bool is_upperlefttriangular() const;
+        bool is_upper_left_triangular() const;
         
-        bool is_upperrighttriangular() const;
+        bool is_upper_right_triangular() const;
         
         bool is_finite() const;
         

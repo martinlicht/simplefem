@@ -288,6 +288,48 @@ Float Determinant_gauss( DenseMatrix A )
 
 
 
+Float Determinant_ModifiedGramSchmidt( DenseMatrix A )
+{
+    assert( A.is_square() );
+    
+    if( A.getdimin() == 0 )
+        return 1.;
+    
+    const int n = A.getdimin();
+    
+    FloatVector diag( n, notanumber );
+
+    for( int i = 0; i < n; i++ )
+    {
+        auto col_i = A.getcolumn(i);
+        
+        diag[i] = col_i.norm();
+        
+        col_i /= diag[i];
+
+        A.setcolumn( i, col_i );
+
+        for( int j = 0; j < n; j++ )
+        {
+            auto col_j = A.getcolumn(j);
+
+            col_j -= ( col_j * col_i ) * col_i;
+
+            A.setcolumn( j, col_j );
+        }
+    }
+    
+    Float ret = 1.;
+    for( int i = 0; i < n; i++ ) ret *= diag[i];
+    
+    return ret;
+    
+}
+
+
+
+
+
 Float Determinant_bareiss( DenseMatrix A )
 {
     assert( A.is_square() );
