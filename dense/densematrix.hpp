@@ -262,7 +262,8 @@ DenseMatrix MatrixTripleMult( const DenseMatrix& A, const DenseMatrix& B );
 DenseMatrix HilbertMatrix( int n );
 
 DenseMatrix InvHilbertMatrix( int n );
-    
+
+Float HilbertDeterminant( int n );
 
 
 
