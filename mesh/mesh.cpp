@@ -754,15 +754,15 @@ Float Mesh::getComparisonQuotient() const
 
 Float Mesh::getRadiiQuotient( int dim ) const
 {
-    int n = getinnerdimension();
+    const int n = getinnerdimension();
 
-    return getHeightQuotient() * (dim+1);
-    
     Float comparison_quotient = getComparisonQuotient();
     
     Float shape_measure = getShapemeasure();
     
     Float sigma = factorial_numerical(n) / ( power_numerical( n, n / 2. ) * shape_measure * std::sqrt((Float)2) );
+    
+    return getHeightQuotient() * (dim+1);
     
     return comparison_quotient * std::sqrt((Float)n) * (n+1) / sigma;
 }
@@ -977,7 +977,7 @@ DenseMatrix Mesh::getGradientProductMatrix( int dim, int index ) const
     QRFactorization( Jac, Q, R );
     // DenseMatrix Rinv( Inverse(R) );
     DenseMatrix Rinv = UpperTriangularInverse(R); 
-    assert( Rinv.is_upperrighttriangular() );
+    assert( Rinv.is_upper_right_triangular() );
     return Transpose(multiplier) * ( Rinv * Transpose(Rinv) ) * multiplier;
 }
         

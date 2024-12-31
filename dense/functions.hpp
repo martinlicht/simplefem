@@ -59,6 +59,8 @@ Float Determinant_gauss( DenseMatrix );
 
 Float Determinant_bareiss( DenseMatrix A );
 
+Float Determinant_ModifiedGramSchmidt( DenseMatrix A );
+
 void Inverse_CramersRule_InSitu( DenseMatrix& );
 
 void Inverse_gauss_InSitu( DenseMatrix&, bool pivoting = true );

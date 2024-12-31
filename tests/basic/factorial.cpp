@@ -137,9 +137,9 @@ int main( int argc, char *argv[] )
         Assert( i == f, n, k, i, f );
     }
 
-    for (int n = 1; n <= 12; n++) 
+    for( int n = 1; n <= 12; n++ ) 
     {
-        for (int k = 1; k < n; k++ ) 
+        for( int k = 1; k < n; k++ ) 
         {
             // Pascal's identity: C(n, k) = C(n-1, k-1) + C(n-1, k)
             int left  = binomial_integer(n, k);

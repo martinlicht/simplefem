@@ -20,6 +20,8 @@ void QRFactorization( const DenseMatrix& A, DenseMatrix& Q, DenseMatrix& R );
 
 void LQFactorization( const DenseMatrix& A, DenseMatrix& L, DenseMatrix& Q );
 
+Float QRFactorization_via_Householder( const DenseMatrix& A, DenseMatrix& Q, DenseMatrix& R );
+
 FloatVector QRIteration( DenseMatrix A, int repetitions = 100 );
 
 FloatVector SolveOverconstrained( const DenseMatrix& A, const FloatVector& v );

@@ -1031,7 +1031,7 @@ void generate_shellings2(
         }
 
         // Wait for all threads to finish
-        for (std::thread &t : threads) { if (t.joinable()) {t.join();} }
+        for( std::thread &t : threads) { if (t.joinable()) {t.join();} }
 
         LOG << "All threads finished.\n";
 

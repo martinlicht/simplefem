@@ -290,7 +290,7 @@ void System_Reporter::output()
     }
 
 
-
+    #if __cplusplus >= 201703L
     LOG << "###\tFLT_HAS_SUBNORM: " << FLT_HAS_SUBNORM << space;
     switch (FLT_HAS_SUBNORM) {
         case -1:
@@ -338,6 +338,7 @@ void System_Reporter::output()
             LOG << "Unknown value for LDBL_HAS_SUBNORM." << nl;
             break;
     }
+    #endif 
 
     
     #if true and defined(_WIN32)
@@ -366,7 +367,7 @@ void System_Reporter::output()
     #if true and defined(_WIN32)
     LOGPRINTF("###\tFlushing subnormal numbers\n");
     _controlfp_s( nullptr, _DN_FLUSH, _MCW_DN ); // Flush denormals, both operands and results, to zero 
-    #elif defined(__SSE__)
+    #elif false and defined(__SSE__) // TODO: fix this stuff in gcc
     LOGPRINTF("###\tFlushing subnormal numbers\n"); // ??? xmmintrin.h
     _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
     _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);

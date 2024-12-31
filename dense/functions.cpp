@@ -228,7 +228,7 @@ Float Determinant_laplaceexpansion( const DenseMatrix& A )
         
     } while ( HeapsAlgorithmStep( i, aux, perm ) );
     
-    return ret;
+    return static_cast<Float>(ret);
     
 }
 
@@ -288,6 +288,48 @@ Float Determinant_gauss( DenseMatrix A )
 
 
 
+Float Determinant_ModifiedGramSchmidt( DenseMatrix A )
+{
+    assert( A.is_square() );
+    
+    if( A.getdimin() == 0 )
+        return 1.;
+    
+    const int n = A.getdimin();
+    
+    FloatVector diag( n, notanumber );
+
+    for( int i = 0; i < n; i++ )
+    {
+        auto col_i = A.getcolumn(i);
+        
+        diag[i] = col_i.norm();
+        
+        col_i /= diag[i];
+
+        A.setcolumn( i, col_i );
+
+        for( int j = 0; j < n; j++ )
+        {
+            auto col_j = A.getcolumn(j);
+
+            col_j -= ( col_j * col_i ) * col_i;
+
+            A.setcolumn( j, col_j );
+        }
+    }
+    
+    Float ret = 1.;
+    for( int i = 0; i < n; i++ ) ret *= diag[i];
+    
+    return ret;
+    
+}
+
+
+
+
+
 Float Determinant_bareiss( DenseMatrix A )
 {
     assert( A.is_square() );
@@ -326,8 +368,8 @@ Float Determinant_bareiss( DenseMatrix A )
         
 
         //Apply formula: TODO the names of these variables are shadowing the outer variables
-        for (int r = i + 1; r < n; r++) 
-        for (int c = i + 1; c < n; c++) 
+        for( int r = i + 1; r < n; r++ ) 
+        for( int c = i + 1; c < n; c++ ) 
         {
             A(r,c) = A(i,i) * A(r,c) - A(r,i) * A(i,c);
             if(i != 0) { A(r,c) /= A(i-1,i-1); }

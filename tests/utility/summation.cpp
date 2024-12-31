@@ -14,7 +14,7 @@
 
 
 // Function to compute factorial
-long double factorial(int n) {
+inline static long double factorial(int n) {
     if (n <= 1) return 1;
     return n * factorial(n - 1);
 }
@@ -24,11 +24,11 @@ long double factorial(int n) {
 
 
 // Function to compute the determinant of the Hilbert matrix
-double hilbert_determinant(int n) {
+inline static double hilbert_determinant(int n) {
     
     long double detinv = 1.;
 
-    for (int k = 1; k <= n-1; k++) 
+    for( int k = 1; k <= n-1; k++ ) 
     {
         long double aux1 = factorial(2*k);
         long double aux2 = factorial(k)*factorial(k);
@@ -38,7 +38,7 @@ double hilbert_determinant(int n) {
     
     std::cout << "H1: " << 1./(double)detinv << std::endl;
     // The determinant is c_n / denominator
-    return (double)1./detinv;
+    return 1./static_cast<double>(detinv);
 }
 
 
@@ -49,14 +49,14 @@ double hilbert_determinant2(int n) {
     long double denominator = 1; // Start with 1 for the denominator
 
     // Compute the numerator: c_n = product of (j - i) for 0 <= i < j < n
-    for (int i = 0; i < n; i++) {
-        for (int j = i + 1; j < n; j++) {
+    for( int i = 0; i < n; i++ ) {
+        for( int j = i + 1; j < n; j++ ) {
             numerator *= (j - i);
         }
     }
 
     // Compute the denominator: product of (2i - 1)!
-    for (int i = 1; i <= n; i++) {
+    for( int i = 1; i <= n; i++ ) {
         denominator *= factorial(2 * i - 1);
     }
 
@@ -74,7 +74,8 @@ double hilbert_determinant2(int n) {
 
 
 
-int main() {
+int main( int argc, char *argv[] )
+{
 
     std::cout.precision(30);
     std::cout << std::scientific;
@@ -84,21 +85,21 @@ int main() {
 
     // Naive summation
     NaiveSum<double> naiveSum;
-    for (double val : values) {
+    for( double val : values) {
         naiveSum.add(val);
     }
     std::cout << "Naive Sum:\t" << naiveSum.getSum() << std::endl;
 
     // Kahan summation
     KahanSum<double> kahanSum;
-    for (double val : values) {
+    for( double val : values) {
         kahanSum.add(val);
     }
     std::cout << "Kahan Sum:\t" << kahanSum.getSum() << std::endl;
 
     // Neumaier summation
     NeumaierSum<double> neumaierSum;
-    for (double val : values) {
+    for( double val : values) {
         neumaierSum.add(val);
     }
     std::cout << "Neumaier Sum:\t" << neumaierSum.getSum() << std::endl;
@@ -111,26 +112,26 @@ int main() {
 
         // Example 1: Alternating small and large values // should be 0.
         std::vector<double> dataset1(1000);
-        for (size_t i = 0; i < dataset1.size(); ++i) {
+        for( size_t i = 0; i < dataset1.size(); i++ ) {
             dataset1[i] = (i % 2 == 0) ? 1e10 : -1e10; // Alternating large positive and negative values
         }
 
         // Example 2: Very small incremental values // should be 1e-7
         std::vector<double> dataset2(1000);
-        for (size_t i = 0; i < dataset2.size(); ++i) {
+        for( size_t i = 0; i < dataset2.size(); i++ ) {
             dataset2[i] = 1e-10; // All values are very small
 
         }
 
         // Example 3: Combination of large and small values // should be 1e13/2 + 1e-7/2 = 5e12 + 5e-8
         std::vector<double> dataset3(1000);
-        for (size_t i = 0; i < dataset3.size(); ++i) {
+        for( size_t i = 0; i < dataset3.size(); i++ ) {
             dataset3[i] = (i % 2 == 0) ? 1e10 : 1e-10; // Alternating between very large and very small values
         }
 
         // Example 4: Summing up 0.1 with 10,000,000 ...
         std::vector<double> dataset4(10'000'000);
-        for (size_t i = 0; i < dataset4.size(); ++i) {
+        for( size_t i = 0; i < dataset4.size(); i++ ) {
             dataset4[i] = 0.1;
         }
 
@@ -216,7 +217,7 @@ int main() {
             KahanSum<double> kahanSum;
             NeumaierSum<double> neumaierSum;
 
-            for (double val : dataset) {
+            for( double val : dataset) {
                 naiveSum.add(val);
                 kahanSum.add(val);
                 neumaierSum.add(val);
@@ -250,5 +251,6 @@ int main() {
 
     }
 
+    LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
     return 0;
 }

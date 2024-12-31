@@ -12,7 +12,7 @@ int main( int argc, char *argv[] )
     for( int t   = 0;   t <= dim+1; t++   )
     {
         DenseMatrix A(dim,dim);
-        A.randommatrix();
+        A.random_matrix();
         
         FloatVector b(dim);
         b.random();
