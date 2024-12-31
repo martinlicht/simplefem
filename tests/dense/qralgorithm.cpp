@@ -22,7 +22,7 @@ int main( int argc, char *argv[] )
         for( int t = 0; t < dim; t++ )
             A(s,t) = 3 * kronecker(s,t) - kronecker(s,t-1) - kronecker(s,t+1);
             
-        int repetitions = 4000;
+        // int repetitions = 4000;
 
         FloatVector D = QRIteration( A );
         

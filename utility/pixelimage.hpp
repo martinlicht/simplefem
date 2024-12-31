@@ -34,14 +34,16 @@ struct PixelColor
 
 class PixelImage
 {
+    typedef int indextype;
+
     private:
-        size_t height;
-        size_t width;
+        indextype height;
+        indextype width;
         std::vector<PixelColor> data;
 
     public:
 
-        PixelImage( size_t height, size_t width ) 
+        PixelImage( indextype height, indextype width ) 
         : height(height), width(width), data( width*height, {128,128,128} ) 
         {}
         
@@ -50,16 +52,18 @@ class PixelImage
         
         ~PixelImage() {}
 
-        size_t getheight() const { return height; }
+        indextype getheight() const { return height; }
 
-        size_t getwidth() const { return width; }
+        indextype getwidth() const { return width; }
 
-        PixelColor& operator()( size_t row, size_t col ) {
+        PixelColor& operator()( indextype row, indextype col ) {
+            assert( row >= 0 && row < height && col >= 0 && col < width );
             assert( row >= 0 && row < height && col >= 0 && col < width );
             return data.at( row * width + col );
         }
         
-        PixelColor operator()( size_t row, size_t col ) const {
+        PixelColor operator()( indextype row, indextype col ) const {
+            assert( row >= 0 && row < height && col >= 0 && col < width );
             assert( row >= 0 && row < height && col >= 0 && col < width );
             return data.at( row * width + col );
         }

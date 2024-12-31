@@ -228,7 +228,7 @@ Float Determinant_laplaceexpansion( const DenseMatrix& A )
         
     } while ( HeapsAlgorithmStep( i, aux, perm ) );
     
-    return ret;
+    return static_cast<Float>(ret);
     
 }
 

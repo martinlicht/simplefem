@@ -21,7 +21,7 @@ inline double hilbert_determinant(int n) {
     
     // LOG << "H1: " << 1./(double)detinv << std::endl;
     // The determinant is c_n / denominator
-    return (double)1./detinv;
+    return static_cast<double>(1./detinv);
 }
 
 

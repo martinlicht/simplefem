@@ -197,7 +197,7 @@ endif
 #                                             #
 ###############################################
 
-CXXFLAGS_LANG := -std=c++20 -pedantic -fno-rtti -D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES 
+CXXFLAGS_LANG := -std=c++17 -pedantic -fno-rtti -D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES 
 
 
 

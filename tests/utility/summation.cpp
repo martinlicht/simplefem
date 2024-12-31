@@ -14,7 +14,7 @@
 
 
 // Function to compute factorial
-long double factorial(int n) {
+inline static long double factorial(int n) {
     if (n <= 1) return 1;
     return n * factorial(n - 1);
 }
@@ -24,7 +24,7 @@ long double factorial(int n) {
 
 
 // Function to compute the determinant of the Hilbert matrix
-double hilbert_determinant(int n) {
+inline static double hilbert_determinant(int n) {
     
     long double detinv = 1.;
 
@@ -38,7 +38,7 @@ double hilbert_determinant(int n) {
     
     std::cout << "H1: " << 1./(double)detinv << std::endl;
     // The determinant is c_n / denominator
-    return (double)1./detinv;
+    return 1./static_cast<double>(detinv);
 }
 
 
