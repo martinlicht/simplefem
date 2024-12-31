@@ -129,7 +129,7 @@ template<typename T>
 constexpr typename std::enable_if< std::is_floating_point<T>::value, T>::type ipow( T base, unsigned exp )
 {
     T result = 1.0;
-    for (unsigned i = 0; i < exp; ++i)
+    for( unsigned i = 0; i < exp; i++ )
         result *= base;
     return result;
 }
@@ -140,7 +140,7 @@ template<typename T>
 constexpr typename std::enable_if< std::is_floating_point<T>::value, T>::type newtonRoot(T a, unsigned p, T initialGuess, int steps = 35 )
 {
     T x = initialGuess;
-    for (int i = 0; i < steps; ++i) {
+    for( int i = 0; i < steps; i++ ) {
         // f(x)   = x^p - a
         // f'(x)  = p * x^(p-1)
         const T f      = ipow(x, p) - a;
@@ -644,7 +644,7 @@ inline unsigned long long binomial_integer_secured( unsigned int n, unsigned int
     
     unsigned long long result = 1;
 
-    for( unsigned int i = 1; i <= k; ++i ) 
+    for( unsigned int i = 1; i <= k; i++ ) 
     {
         // Check for overflow before multiplication
         Assert( result <= std::numeric_limits<unsigned long long>::max() / (n - i + 1) );
@@ -875,7 +875,7 @@ __attribute__ (( format (printf,1,2) ));
 // operator<<( Stream& stream, const Container& container )
 // {
 //     for( const auto& item : container ) stream << item << space;
-// 	return stream;
+//     return stream;
 // }
 
 // template< typename Stream >
@@ -901,15 +901,15 @@ __attribute__ (( format (printf,1,2) ));
 // {
 //     static_assert( has_text<Object>::value );
 //     stream << object.text(); 
-// 	return stream;
+//     return stream;
 // }
 
 // template< typename Stream, typename Container, typename = decltype( std::begin( std::declval<Container>() ) ) >
 // inline Stream& operator<<( Stream&& stream, const Container& container )
 // {
-// 	for( const auto& item : container )
+//     for( const auto& item : container )
 //         stream << item << space;
-// 	return stream;
+//     return stream;
 // }
 
 // // TODO: Move into separate include file 

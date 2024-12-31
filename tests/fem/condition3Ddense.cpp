@@ -74,14 +74,14 @@ UNUSED static Float InversePowerMethod( const LinearOperator& A, int repetitions
 //     assert( A.is_square() );
 //     const int dim = A.getdimin();
 //     DenseMatrix Q(dim,dim), R(dim,dim);
-//     for( int p = 0; p < dim; p++) A(p,p) += shift;
+//     for( int p = 0; p < dim; p++ ) A(p,p) += shift;
 //     while ( repetitions --> 0 )
 //     {
 //         QRFactorization( A, Q, R );
 //         A = R * Q;
 //     }
 //     FloatVector ret(dim);
-//     for( int p = 0; p < dim; p++) ret[p] = A(p,p);
+//     for( int p = 0; p < dim; p++ ) ret[p] = A(p,p);
 //     return ret;        
 // }
 
@@ -90,14 +90,14 @@ static FloatVector Eigenvalues( DenseMatrix A, int repetitions, Float shift = 0.
     assert( A.is_square() );
     const int dim = A.getdimin();
     DenseMatrix L(dim,dim);
-    for( int p = 0; p < dim; p++) A(p,p) += shift;
+    for( int p = 0; p < dim; p++ ) A(p,p) += shift;
     while ( repetitions --> 0 )
     {
         L = CholeskyDecomposition( A );
         A = Transpose(L) * L;
     }
     FloatVector ret(dim);
-    for( int p = 0; p < dim; p++) ret[p] = A(p,p);
+    for( int p = 0; p < dim; p++ ) ret[p] = A(p,p);
     return ret;        
 }
 
@@ -105,7 +105,7 @@ static FloatVector Eigenvalues( DenseMatrix A, int repetitions, Float shift = 0.
 // {
 //     assert( A.is_square() );
 //     const int dim = A.getdimin();
-//     for( int p = 0; p < dim; p++) A(p,p) += shift;
+//     for( int p = 0; p < dim; p++ ) A(p,p) += shift;
     
 //     for( int i = 0; i < dim; i++ )
 //     for( int r1 =    0; r1 < dim; r1++ )
@@ -116,7 +116,7 @@ static FloatVector Eigenvalues( DenseMatrix A, int repetitions, Float shift = 0.
 //     }
 
 //     FloatVector ret(dim);
-//     for( int p = 0; p < dim; p++) ret[p] = A(p,p);
+//     for( int p = 0; p < dim; p++ ) ret[p] = A(p,p);
 //     return ret;        
 // }
 
@@ -124,9 +124,9 @@ static FloatVector Eigenvalues( DenseMatrix A, int repetitions, Float shift = 0.
 // {
 //     assert( A.is_square() );
 //     const int dim = A.getdimin();
-//     for( int p = 0; p < dim; p++) A(p,p) += shift;
+//     for( int p = 0; p < dim; p++ ) A(p,p) += shift;
 //     DenseMatrix X(dim,dim), Q(dim,dim), R(dim,dim);
-//     X.randommatrix();
+//     X.random_matrix();
 //     while ( repetitions --> 0 )
 //     {
 //         X = A * X;
@@ -134,7 +134,7 @@ static FloatVector Eigenvalues( DenseMatrix A, int repetitions, Float shift = 0.
 //         X = Q;
 //     }
 //     FloatVector ret(dim);
-//     for( int p = 0; p < dim; p++) ret[p] = R(p,p);
+//     for( int p = 0; p < dim; p++ ) ret[p] = R(p,p);
 //     return ret;        
 // }
     

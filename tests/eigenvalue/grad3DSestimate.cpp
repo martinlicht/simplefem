@@ -452,16 +452,16 @@ int main( int argc, char *argv[] )
                 
                 
                 // Check that each cell has been visited (except the root)
-                for( int i = 0; i < num_cells; i++) {
+                for( int i = 0; i < num_cells; i++ ) {
                     if( i != curr_root) {
                         assert(curr_tree[i] != i);
                     }
                 }
 
                 // Check that each cell leads to the root and distance is descending along that path to the root
-                for( int i = 0; i < num_cells; i++) {
+                for( int i = 0; i < num_cells; i++ ) {
                     int c = i;
-                    for( int j = 0; j < num_cells && c != curr_root; j++) {
+                    for( int j = 0; j < num_cells && c != curr_root; j++ ) {
                         assert(curr_cost[c] >= curr_cost[curr_tree[c]]); // Ensure non-increasing distances
                         c = curr_tree[c];  // Follow the path to the root
                     }
@@ -474,7 +474,7 @@ int main( int argc, char *argv[] )
 
                 // output: structure of graph
                 // Float total_edge_costs = 0.;
-                // for( int i = 0; i < num_cells; i++) {
+                // for( int i = 0; i < num_cells; i++ ) {
                 //     LOG << " At " << i << " prec " << curr_tree[i] << " rank " << curr_rank[i] << " cost " << curr_cost[i] << nl;
                 // }
 

@@ -122,7 +122,7 @@ DenseMatrix LowerTriangularInverse( const DenseMatrix& A )
 {
     assert( A.is_square() );
     DenseMatrix Ret( A );
-    Ret.zeromatrix();
+    Ret.zero_matrix();
     
     for( int r = 0; r < A.getdimout(); r++ ) {
         for( int c = 0; c < r; c++ ) {
@@ -141,7 +141,7 @@ DenseMatrix LowerUnitTriangularInverse( const DenseMatrix& A, bool writediagonal
 {
     assert( A.is_square() );
     DenseMatrix Ret( A );
-    Ret.zeromatrix();
+    Ret.zero_matrix();
     
     for( int r = 0; r < A.getdimout(); r++ ) {
         for( int c = 0; c < r; c++ ) {
@@ -159,7 +159,7 @@ DenseMatrix UpperTriangularInverse( const DenseMatrix& A )
 {
     assert( A.is_square() );
     DenseMatrix Ret( A );
-    Ret.zeromatrix();
+    Ret.zero_matrix();
     
     for( int r = 0; r < A.getdimout(); r++ ) {
         for( int c = 0; c < r; c++ ) {
@@ -178,7 +178,7 @@ DenseMatrix UpperUnitTriangularInverse( const DenseMatrix& A, bool writediagonal
 {
     assert( A.is_square() );
     DenseMatrix Ret( A );
-    Ret.zeromatrix();
+    Ret.zero_matrix();
     
     for( int r = 0; r < A.getdimout(); r++ ) {
         for( int c = 0; c < r; c++ ) {

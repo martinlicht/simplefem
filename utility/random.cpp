@@ -68,7 +68,7 @@ inline Float gaussrand_1()
     
     Float x = 0;
     
-    for( int i = 0; i < NSUM; i++) 
+    for( int i = 0; i < NSUM; i++ ) 
         x += random_integer() / static_cast<Float>(random_integer_maximum());
     
     x -= NSUM / 2.0;

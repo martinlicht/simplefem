@@ -12,7 +12,7 @@ int main( int argc, char *argv[] )
         LOG << "Random matrix A of size 3x4, and 3*A" << nl;
 
         DenseMatrix A( 3, 4 );
-        A.randommatrix();
+        A.random_matrix();
 
         const auto Ax3 = 3 * A;
 
@@ -26,7 +26,7 @@ int main( int argc, char *argv[] )
         LOG << "Random matrix B of size 3x4, and A+B" << nl;
 
         DenseMatrix B( 3, 4 );
-        B.randommatrix();
+        B.random_matrix();
 
         const auto C = A + B; 
 
@@ -43,12 +43,12 @@ int main( int argc, char *argv[] )
         LOG << "Unit Matrices of size 3x3 and 4x4" << nl;
 
         DenseMatrix A( 3, 4 );
-        A.randommatrix();
+        A.random_matrix();
 
         DenseMatrix I3(3,3);
-        I3.unitmatrix();
+        I3.identity_matrix();
         DenseMatrix I4(4,4);
-        I4.unitmatrix();
+        I4.identity_matrix();
         LOG << I3 << I4 << nl;
         
         LOG << "I3 * A and A * I4" << nl;
