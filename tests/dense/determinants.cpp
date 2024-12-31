@@ -11,7 +11,7 @@ inline double hilbert_determinant(int n) {
     
     long double detinv = 1.;
 
-    for (int k = 1; k <= n-1; k++) 
+    for( int k = 1; k <= n-1; k++ ) 
     {
         long double aux1 = factorial_numerical(2*k);
         long double aux2 = factorial_numerical(k)*factorial_numerical(k);
@@ -176,7 +176,7 @@ int main( int argc, char *argv[] )
             matrix.random_orthogonal_matrix();
             Float referenceDet = 1.;
 
-            matrix.randommatrix();
+            matrix.random_matrix();
             for( int i = 0; i < 1; i++ )
             {
                 DenseMatrix Q(matrix); DenseMatrix R(matrix);

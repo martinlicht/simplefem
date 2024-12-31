@@ -496,7 +496,7 @@ FloatVector DenseMatrix::flattenrows() const
 
 
 
-void DenseMatrix::zeromatrix()
+void DenseMatrix::zero_matrix()
 {
     check();
     for( int r = 0; r < getdimout(); r++ )
@@ -504,7 +504,7 @@ void DenseMatrix::zeromatrix()
         (*this)(r,c) = 0.;
 }
 
-void DenseMatrix::unitmatrix()
+void DenseMatrix::identity_matrix()
 {
     check();
     assert( getdimout() == getdimin() );
@@ -516,7 +516,7 @@ void DenseMatrix::unitmatrix()
             (*this)(r,c) = 0.;
 }
 
-void DenseMatrix::randommatrix()
+void DenseMatrix::random_matrix()
 {
     check();
     for( int r = 0; r < getdimout(); r++ )
@@ -524,7 +524,7 @@ void DenseMatrix::randommatrix()
         (*this)(r,c) = gaussrand();
 }
 
-void DenseMatrix::randomintegermatrix( int min, int max )
+void DenseMatrix::random_integer_matrix( int min, int max )
 {
     check();
     assert( min < max );
@@ -734,7 +734,7 @@ void DenseMatrix::indexmapping( const IndexMap& im )
     assert( im.getSourceRange().max() == getdimin() - 1 );
     assert( im.getTargetRange().min() == 0 );
     assert( im.getTargetRange().max() == getdimout() - 1 );
-    zeromatrix();
+    zero_matrix();
     for( int c = 0; c < im.getSourceRange().max() - 1; c++ )
         (*this)( im[c], c ) = 1.;
     check();
@@ -1073,7 +1073,7 @@ Float DenseMatrix::norm_col_row( Float p, Float q ) const
     return ret;
 }
 
-Float DenseMatrix::NormOperatorL1() const 
+Float DenseMatrix::norm_operator_l1() const 
 {
     check();
     Float ret = 0.;
@@ -1086,7 +1086,7 @@ Float DenseMatrix::NormOperatorL1() const
     return ret;
 }
 
-Float DenseMatrix::NormOperatorMax() const 
+Float DenseMatrix::norm_operator_max() const 
 {
     check();
     Float ret = 0.;
@@ -1329,3 +1329,21 @@ DenseMatrix InvHilbertMatrix( int n )
 
     return DenseMatrix( n, invhilbertmatrix_generator );
 }
+
+Float HilbertDeterminant(int n) {
+    
+    long double detinv = 1.;
+
+    for( int k = 1; k <= n-1; k++ ) 
+    {
+        long double aux1 = factorial_numerical(2*k);
+        long double aux2 = factorial_numerical(k)*factorial_numerical(k);
+        long double binom = aux1/aux2;
+        detinv *= (2*k+1) * binom*binom;
+    }
+    
+    // LOG << "H1: " << 1./(double)detinv << std::endl;
+    // The determinant is c_n / denominator
+    return (Float)1./detinv;
+}
+

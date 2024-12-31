@@ -127,11 +127,11 @@ class DenseMatrix final
         
         /* Generate standard matrices */
         
-        void zeromatrix();
-        void randommatrix();
-        void randomintegermatrix( int min, int max );
+        void zero_matrix();
+        void random_matrix();
+        void random_integer_matrix( int min, int max );
         void random_orthogonal_matrix();
-        void unitmatrix();
+        void identity_matrix();
         void indexmapping( const IndexMap& );
         
         /* Basic manipulation */
@@ -177,9 +177,9 @@ class DenseMatrix final
 
         Float norm_col_row( Float p, Float q ) const;
 
-        Float NormOperatorL1() const;
+        Float norm_operator_l1() const;
 
-        Float NormOperatorMax() const;
+        Float norm_operator_max() const;
         
 
         // matrix trace 

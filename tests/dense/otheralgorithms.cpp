@@ -89,7 +89,7 @@ int main( int argc, char *argv[] )
         {
             
             DenseMatrix A(t);
-            A.randomintegermatrix(10,80);
+            A.random_integer_matrix(10,80);
             
             Float det = Determinant(A);
             Float det_l = Determinant_laplaceexpansion(A);

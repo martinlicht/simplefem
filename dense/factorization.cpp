@@ -20,7 +20,7 @@ DenseMatrix GaussJordan( DenseMatrix mat )
 
     
     DenseMatrix ret(n);
-    ret.unitmatrix();
+    ret.identity_matrix();
     
     // 1. eliminate lower triangular part, save coeffecients
     
@@ -221,7 +221,7 @@ void QRFactorization( const DenseMatrix& A, DenseMatrix& Q, DenseMatrix& R )
     assert( A.getdimin()  <= A.getdimout() );
     assert( R.is_square() );
     
-    R.zeromatrix();
+    R.zero_matrix();
     
     for( int c = 0; c < A.getdimin(); c++ ) {
         FloatVector u = A.getcolumn(c);
@@ -247,7 +247,7 @@ void LQFactorization( const DenseMatrix& A, DenseMatrix& L, DenseMatrix& Q )
     assert( A.getdimout() <= A.getdimin() );
     assert( L.is_square() );
     
-    L.zeromatrix();
+    L.zero_matrix();
     
     for( int r = 0; r < A.getdimout(); r++ ) {
         FloatVector v = A.getrow(r);
@@ -288,12 +288,12 @@ Float QRFactorization_via_Householder(const DenseMatrix& A_in, DenseMatrix& Q_ou
     size_t num_reflectors = 0;
 
     // Householder transformations
-    for (size_t k = 0; k < n; k++)
+    for( size_t k = 0; k < n; k++ )
     {
         // 1) Extract the subvector x = R[k..n-1, k]
         //    We'll store it in a local std::vector<Float> x.
         FloatVector x(n - k, 0.0);
-        for (size_t i = k; i < n; i++) {
+        for( size_t i = k; i < n; i++ ) {
             x[i - k] = R_out(i,k);  // R[i, k]
         }
 
@@ -335,16 +335,16 @@ Float QRFactorization_via_Householder(const DenseMatrix& A_in, DenseMatrix& Q_ou
         //
         //    Here v = x, which has length n-k, so we must offset row indices.
 
-        for (size_t j = k; j < n; j++)
+        for( size_t j = k; j < n; j++ )
         {
             // Compute w = dot(v, col_j_subvector)
             Float w = 0.0;
-            for (size_t i = k; i < n; i++) {
+            for( size_t i = k; i < n; i++ ) {
                 w += x[i - k] * R_out(i,j);  // R[i, j]
             }
 
             // Subtract 2 * v * w from that subvector in R
-            for (size_t i = k; i < n; i++) {
+            for( size_t i = k; i < n; i++ ) {
                 R_out(i,j) -= 2.0 * x[i - k] * w;
             }
         }
@@ -357,13 +357,13 @@ Float QRFactorization_via_Householder(const DenseMatrix& A_in, DenseMatrix& Q_ou
         //            For each column j in [0..n-1], 
         //            we do: Q_out[k..n-1, j] -= 2 * v * dot(v, Q_out[k..n-1, j])
 
-        for (size_t j = 0; j < n; j++)
+        for( size_t j = 0; j < n; j++ )
         {
             Float w = 0.0;
-            for (size_t i = k; i < n; i++) {
+            for( size_t i = k; i < n; i++ ) {
                 w += x[i - k] * Q_out(i,j);  // Q[i, j]
             }
-            for (size_t i = k; i < n; i++) {
+            for( size_t i = k; i < n; i++ ) {
                 Q_out(i,j) -= 2.0 * x[i - k] * w;
             }
         }
@@ -387,7 +387,7 @@ Float QRFactorization_via_Householder(const DenseMatrix& A_in, DenseMatrix& Q_ou
 
     // 1) diagonal product of R
     Float diag_product = 1.0;
-    for (size_t i = 0; i < n; i++) {
+    for( size_t i = 0; i < n; i++ ) {
         diag_product *= R_out(i,i);  // R[i, i]
     }
 

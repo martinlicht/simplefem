@@ -89,12 +89,12 @@ int main( int argc, char *argv[] )
         
         
         
-        LOG << "Norm Operator L1:  " << S.NormOperatorL1() << nl;
-        LOG << "Norm Operator Max: " << S.NormOperatorMax() << nl;
+        LOG << "Norm Operator L1:  " << S.norm_operator_l1() << nl;
+        LOG << "Norm Operator Max: " << S.norm_operator_max() << nl;
         LOG << nl;
 
-        assert( S.NormOperatorL1()  == 11 );
-        assert( S.NormOperatorMax() == 10 );
+        assert( S.norm_operator_l1()  == 11 );
+        assert( S.norm_operator_max() == 10 );
         
         const auto GR = S.GerschgorinRow();
         const auto GC = S.GerschgorinColumn();
@@ -207,7 +207,7 @@ int main( int argc, char *argv[] )
         {
             DenseMatrix A(dim);
             
-            A.zeromatrix();
+            A.zero_matrix();
             for( int s = 0; s < dim; s++ )
             for( int t = 0; t < dim; t++ )
                 A(s,t) = 3 * kronecker(s,t) - kronecker(s,t-1) - kronecker(s,t+1);
@@ -268,7 +268,7 @@ int main( int argc, char *argv[] )
             
             DenseMatrix A(d);
             // LOG << A << nl;
-            A.randomintegermatrix(-2,2);
+            A.random_integer_matrix(-2,2);
             A += 30. * IdentityMatrix(d);
             LOG << A << nl;
             
@@ -325,7 +325,7 @@ int main( int argc, char *argv[] )
             
             DenseMatrix A(dim,dim);
         
-            A.zeromatrix();
+            A.zero_matrix();
             for( int s = 0; s < dim; s++ )
             for( int t = 0; t < dim; t++ )
                 A(s,t) = 3 * kronecker(s,t) - kronecker(s,t-1) - kronecker(s,t+1);

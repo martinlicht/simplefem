@@ -17,7 +17,7 @@ int main( int argc, char *argv[] )
         const int dim = 4;
         DenseMatrix A(dim,dim);
 
-        A.zeromatrix();
+        A.zero_matrix();
         for( int s = 0; s < dim; s++ )
         for( int t = 0; t < dim; t++ )
             A(s,t) = 3 * kronecker(s,t) - kronecker(s,t-1) - kronecker(s,t+1);
@@ -39,7 +39,7 @@ int main( int argc, char *argv[] )
         const int rows = 40;
         
         DenseMatrix A(rows,cols);
-        A.randommatrix();
+        A.random_matrix();
         
         FloatVector b( A.getdimout() );
         b.random();

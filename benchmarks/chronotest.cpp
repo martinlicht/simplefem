@@ -14,8 +14,8 @@
 UNUSED static void f()
 {
     volatile double d = 0;
-    for(int n=0; n<10000; ++n)
-       for(int m=0; m<10000; ++m)
+    for(int n=0; n<10000; n++ )
+       for(int m=0; m<10000; m++ )
            d = d + d*n*m;
 }
 
@@ -31,7 +31,7 @@ int main( int argc, char *argv[] )
     // https://en.wikipedia.org/wiki/Logistic_map
     const long double r = 3.6;
     foo = 0.5;
-    for( int t = 0; t < 1200000; t++) foo = r * foo * ( 1. - foo );
+    for( int t = 0; t < 1200000; t++ ) foo = r * foo * ( 1. - foo );
     
     std::clock_t c_end = std::clock();
     auto t_end = std::chrono::high_resolution_clock::now();
