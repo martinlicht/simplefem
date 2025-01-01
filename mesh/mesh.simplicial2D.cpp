@@ -1392,7 +1392,7 @@ void MeshSimplicial2D::bisect_edge( int e )
     FloatVector midcoordinate = get_edge_midpoint( e );
     
     
-    SimplexFlag e_flag = flags_edges[e];
+    SimplexFlag e_flag UNUSED = flags_edges[e];
     
     
     /*

@@ -19,24 +19,26 @@ int main( int argc, char *argv[] )
 
         for( int i = 0; i < 7; i++ ) {
             for( int j = 0; j < 5; j++ )
-                Contable << ( (Float)10. * i + j + 1 );
+                Contable << sign_power(j) * ( (Float)10. * i + j + 1 );
             Contable << nl;
         }
 
-        for( int i = 0; i < 5; i++ )
-            Contable << -1.999 - i;
-        Contable << nl;
+        // for( int i = 0; i < 5; i++ )
+        //     Contable << -1.999 - i;
+        // Contable << nl;
             
-        for( int i = 0; i < 7; i++ ) {
-            for( int j = 0; j < 5; j++ )
-                Contable << std::exp(-i*j);
-            Contable << nl;
-        }
+        // for( int i = 0; i < 7; i++ ) {
+        //     for( int j = 0; j < 5; j++ )
+        //         Contable << std::exp(-i*j);
+        //     Contable << nl;
+        // }
 
+        assert( not Contable.print_rowwise_instead_of_columnwise );
+
+        Contable.print_rowwise_instead_of_columnwise = false;        
         Contable.lg();
         
-        Contable.print_rowwise_instead_of_columnwise = true;
-        
+        Contable.print_rowwise_instead_of_columnwise = true;        
         Contable.lg();
         
         LOG << Contable.TeXtabular();

@@ -61,17 +61,19 @@ void ConvergenceTable::insert_newline()
 }
 
 
-Float ConvergenceTable::get_convergence_rate( int row_index, int column_index )
+ConvergenceTable::EntryType ConvergenceTable::get_convergence_rate( int row_index, int column_index )
 {
     assert( 1 <= row_index    and row_index    < entries.size()       );
     assert( 0 <= column_index and column_index < seriesheaders.size() );
     assert( 0 <= column_index and column_index < entries[row_index].size() );
     assert( 0 <= column_index and column_index < entries[row_index-1].size() );
     
-    Float value_current = entries[row_index  ][column_index];
-    Float value_before  = entries[row_index-1][column_index];
+    EntryType value_current = entries[row_index  ][column_index];
+    EntryType value_before  = entries[row_index-1][column_index];
 
-    return std::log2( value_before / value_current );
+    EntryType rate = std::log2( value_before / value_current );
+
+    return static_cast<Float>(rate);
 }
 
 
@@ -86,7 +88,6 @@ std::string ConvergenceTable::text() const
         
 void ConvergenceTable::lg() const
 {
-    //LOG << "\n\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n\n" << text();
     const auto str = text();
     LOG << str;
 }
@@ -209,7 +210,7 @@ std::string ConvergenceTable::text_standard( bool display_convergence_rates ) co
                 
                     if( entries[i][j] > 0. and entries[i-1][j] > 0. ) {
 
-                        const Float computed_rate = std::log2( entries[i-1][j] / entries[i][j] );
+                        const EntryType computed_rate = std::log2( entries[i-1][j] / entries[i][j] );
                         
                         if( rates_are_float ) { 
                             printf_into_stream( ss, "%*.*le", nc_rate_width, nc_rate_precision, (double)(safedouble)computed_rate  );
@@ -259,7 +260,7 @@ std::string ConvergenceTable::text_transpose( bool display_convergence_rates ) c
     const int nc_cell_width = 6 + nc_cell_precision + 2;
     // 12; sign + digit + . + e + sign + two digits = 6 chars 
 
-    const int nc_rate_width = maximum( nc_cell_width, ( rates_are_float ? ( 7 + nc_rate_precision ) : 3 + nc_rate_precision ) + 0 );
+    const int nc_rate_width = maximum( nc_cell_width, ( rates_are_float ? ( 7 + nc_rate_precision ) : ( 3 + nc_rate_precision ) ) + 0 );
     // see above ....
 
     // First line is the name of the table 
@@ -307,7 +308,7 @@ std::string ConvergenceTable::text_transpose( bool display_convergence_rates ) c
         {
             
             if( not seriesheaders.empty() )
-                printf_into_stream( ss,  "%s%s", std::string( nc_header_width, ' ' ).c_str(), cell_separator );
+                printf_into_stream( ss,  "## %s%s", std::string( nc_header_width, ' ' ).c_str(), cell_separator );
 
             for( int i = 0; i < num_entries_per_series; i++ )
             {
@@ -320,7 +321,7 @@ std::string ConvergenceTable::text_transpose( bool display_convergence_rates ) c
                 
                     if( entries[i][j] > 0. and entries[i-1][j] > 0. ) {
 
-                        const Float computed_rate = std::log2( entries[i-1][j] / entries[i][j] );
+                        const EntryType computed_rate = std::log2( entries[i-1][j] / entries[i][j] );
                         
                         if( rates_are_float ) { 
                             printf_into_stream( ss, "% *.*le%s", nc_rate_width, nc_rate_precision, (double)(safedouble)computed_rate, cell_separator );
@@ -330,7 +331,7 @@ std::string ConvergenceTable::text_transpose( bool display_convergence_rates ) c
 
                     } else {
                         
-                        printf_into_stream( ss,  "%s%s", std::string( nc_rate_width, '$' ).c_str(), cell_separator ); //printf_into_stream( ss,  "%s", "$$$$$$$$$$" );
+                        printf_into_stream( ss,  "  %s%s", std::string( nc_rate_width-2, '$' ).c_str(), cell_separator ); //printf_into_stream( ss,  "%s", "$$$$$$$$$$" );
 
                     }
                 
@@ -458,7 +459,7 @@ std::string ConvergenceTable::TeXtabular( const std::vector<bool>& show_column )
                 
                     if( entries[i][j] > 0. and entries[i-1][j] > 0. ) {
 
-                        const Float computed_rate = std::log2( entries[i-1][j] / entries[i][j] );
+                        const EntryType computed_rate = std::log2( entries[i-1][j] / entries[i][j] );
                         
                         if( rates_are_float ) { 
                             printf_into_stream( ss, "%*.*le", nc_rate_width, nc_rate_precision, (double)(safedouble)computed_rate  );
@@ -520,21 +521,21 @@ std::string ConvergenceTable::TeXtabular( const std::vector<bool>& show_column )
 ConvergenceTable& ConvergenceTable::operator<<( float entry )
 {
     ConvergenceTable& contable = *this;
-    contable.insert_numerical_entry( entry );
+    contable.insert_numerical_entry( (EntryType)(double)(safedouble)entry );
     return contable;
 }
 
 ConvergenceTable& ConvergenceTable::operator<<( double entry )
 {
     ConvergenceTable& contable = *this;
-    contable.insert_numerical_entry( entry );
+    contable.insert_numerical_entry( (EntryType)(double)(safedouble)entry );
     return contable;
 }
 
 ConvergenceTable& ConvergenceTable::operator<<( long double entry )
 {
     ConvergenceTable& contable = *this;
-    contable.insert_numerical_entry( (Float)(double)(safedouble)entry ); // TODO : kind of pointless, in need of a better solution
+    contable.insert_numerical_entry( (EntryType)(double)(safedouble)entry ); // TODO : kind of pointless, in need of a better solution
     return contable;
 }
 

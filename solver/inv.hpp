@@ -2,9 +2,6 @@
 #define INCLUDEGUARD_SOLVER_INVERSEOPERATOR
 
 
-#include <cassert>
-
-
 #include "../basic.hpp"
 
 #include "../operators/floatvector.hpp"

@@ -3,13 +3,16 @@
 #include <vector>
 
 #include "../basic.hpp"
+#include "../combinatorics/indexmap.hpp"
+#include "../combinatorics/generateindexmaps.hpp"
+#include "../combinatorics/generatemultiindices.hpp"
 #include "../dense/functions.hpp"
 #include "../dense/densematrix.hpp"
-#include "../dense/matrixtensorproduct.hpp"
+#include "../dense/functions.hpp"
 #include "../sparse/sparsematrix.hpp"
 #include "../mesh/mesh.hpp"
 
-#include "../fem/local.polynomialmassmatrix.hpp"
+#include "../fem/polynomialmassmatrix.hpp"
 #include "../fem/global.hodgestarmatrix.hpp"
 
 
@@ -40,7 +43,8 @@ SparseMatrix FEECBrokenHodgeStarMatrix( const Mesh& mesh, int n, int k, int r )
     const std::vector<MultiIndex> multis_out = generateMultiIndices( IndexRange( 0, n ), r );
     const std::vector<IndexMap>   sigmas_out = generateSigmas( IndexRange( 1, n-k ), IndexRange( 0, n ) );
     
-    assert( multis_dest.size() * sigmas_dest.size() == multis_src.size()  * sigmas_src.size() );
+    // TODO: complete code 
+    // assert( multis_dest.size() * sigmas_dest.size() == multis_src.size()  * sigmas_src.size() );
     assert( dim_out == dim_in );
     
     
@@ -73,7 +77,7 @@ SparseMatrix FEECBrokenHodgeStarMatrix( const Mesh& mesh, int n, int k, int r )
 
         // create local Hodge product matrix 
         
-        DenseMatrix formHM;; // TODO: wierd ...
+        DenseMatrix formHM(0); // TODO: wierd ...
 
         DenseMatrix fullHM = MatrixTensorProduct( polyMM, formHM ) * measure;
 

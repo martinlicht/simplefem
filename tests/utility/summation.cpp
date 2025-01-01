@@ -1,6 +1,5 @@
 
 #include <iostream>
-#include <cassert>
 #include <cstdio>
 #include <cmath>
 #include <vector>

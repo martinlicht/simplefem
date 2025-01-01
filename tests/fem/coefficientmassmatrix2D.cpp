@@ -2,8 +2,6 @@
 
 /**/
 
-#include <fstream>
-
 #include "../../basic.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"

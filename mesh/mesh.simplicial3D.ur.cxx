@@ -1,12 +1,4 @@
 
-#include <string>
-#include <vector>
-#include <map>
-#include <utility>
-#include <algorithm>
-#include <iostream>
-#include <fstream>
-
 
 #include "../basic.hpp"
 #include "../combinatorics/indexrange.hpp"

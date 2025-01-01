@@ -2,10 +2,6 @@
 
 /**/
 
-#include <ostream>
-// #include <fstream>
-// #include <iomanip>
-
 #include "../../basic.hpp"
 #include "../../utility/convergencetable.hpp"
 #include "../../sparse/sparsematrix.hpp"

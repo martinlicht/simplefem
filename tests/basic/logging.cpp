@@ -1,6 +1,6 @@
 // g++ sorthacktest.cpp -o sorthacktest
 
-#include <cassert>
+
 #include <cstdlib>
 
 #include <algorithm>

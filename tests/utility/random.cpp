@@ -1,5 +1,3 @@
-#include <iostream>
-#include <cassert>
 
 #include "../../basic.hpp"
 #include "../../utility/random.hpp"
@@ -32,7 +30,7 @@ int main( int argc, char *argv[] )
     }
 
     {
-        std::cout << "Test coin flip...\n";
+        LOG << "Test coin flip...\n";
         seed_random_integer();
         
         // Test flipping a coin with a 50% probability
@@ -69,7 +67,7 @@ int main( int argc, char *argv[] )
 
 
     {
-        std::cout << "test random uniform...\n";
+        LOG << "test random uniform...\n";
 
         seed_random_integer();
         
@@ -83,7 +81,7 @@ int main( int argc, char *argv[] )
     }
 
     {
-        std::cout << "test_gaussrand...\n";
+        LOG << "test_gaussrand...\n";
         seed_random_integer();
         
         // Generate a random Gaussian number

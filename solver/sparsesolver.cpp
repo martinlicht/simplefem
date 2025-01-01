@@ -5,7 +5,6 @@
 #include "sparsesolver.hpp"
 
 
-#include <cassert>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>

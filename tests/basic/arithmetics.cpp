@@ -1,5 +1,4 @@
-#include <iostream>
-#include <cassert>
+
 #include <limits>
 #include <cmath>
 
@@ -214,7 +213,7 @@ int main( int argc, char *argv[] )
     assert(maximum<Float>(-10.5, 10.5, 0.0) == 10.5);
     assert(maximum<Float>(-10.5, 30.0, 10.5, 0.0) == 30.0);
 
-    LOG << "Test maxabs with 3, 4 arguments\n";
+    LOG << "Test maxabs with 1, 3, 4 arguments\n";
 
     assert(maxabs<int>( 7 ) ==  7);
     assert(maxabs<int>( 0 ) ==  0);
@@ -238,7 +237,7 @@ int main( int argc, char *argv[] )
     assert(maxabs<Float>(-10.5,   4.5,  0.0) == 10.5);
     assert(maxabs<Float>(-10.5, -30.0,  1.5, 0.0) == 30.);
 
-    LOG << "Test minimum with 3, 4 arguments\n";
+    LOG << "Test minimum with 1, 3, 4 arguments\n";
     
     assert(minimum<int>( 7 ) ==  7);
     assert(minimum<int>( 0 ) ==  0);
