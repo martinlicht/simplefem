@@ -11,7 +11,8 @@
 
 [?] what is the numerically stable way to compute the determinant? 
 
-[!] The sqrt of a result subject to more than a machine epsilon error will be subject to more than the sqrt of the machine epsilon error
+[!] The sqrt of a result subject to more than a machine epsilon error 
+    will be subject to more than the sqrt of the machine epsilon error
 
 [x] remove includes from the definition of cxx files; test the cxx files
 
@@ -24,7 +25,7 @@
     #define UNUSED_VARIABLE(x) (void)x
     __attribute__((unused))
 
-[ ] clean the print out of convergence tables
+[ ] clean the printing methods of the convergence tables
 
 [ ] enable exceptions and adapt the unit tests ...
 
@@ -50,7 +51,7 @@
 
 [x] correct the computation in the nullspace test 
 
-[x] diffinterpol2D/3D hat komische ausgaben 
+[ ] Does diffinterpol2D/3D still have strange output?
 
 [x] Check debug.hpp for errors 
 

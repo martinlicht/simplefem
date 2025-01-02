@@ -1,5 +1,6 @@
 
 #include <cstdio>
+// #include <cstring>
 // #include <ostream>
 // #include <iomanip>
 #include <string>
@@ -130,7 +131,7 @@ std::string ConvergenceTable::text_standard( bool display_convergence_rates ) co
     
     const char* column_separator = "   ";
 
-    const bool rates_are_float = false;
+    const bool rates_are_float = true;
     
     const int nc_indent_width = 8;
     
@@ -249,27 +250,35 @@ std::string ConvergenceTable::text_transpose( bool display_convergence_rates ) c
     
     const char* cell_separator = "   ";
 
-    const bool rates_are_float = false;
-    
     const int nc_header_width = 14;
     
-    const int nc_cell_precision = ( minimum_printed_precision > 8 ) ? minimum_printed_precision : 8;
+    const int nc_floating_point_extra = 7;
+    // sign/space + digit + . + e + sign + two digits = 7 chars 
+
+    const int nc_fixed_point_extra = 3;
+    // sign/space + digit + .
+
+    const int nc_cell_precision = maximum( minimum_printed_precision, 8 ); 
 
     const int nc_rate_precision = 4;
 
-    const int nc_cell_width = 6 + nc_cell_precision + 2;
-    // 12; sign + digit + . + e + sign + two digits = 6 chars 
+    const int nc_cell_width = nc_floating_point_extra + nc_cell_precision;
+    
+    const bool rates_are_float = true;
+    
+    const int nc_rate_width = rates_are_float ? ( nc_floating_point_extra + nc_rate_precision ) : ( nc_fixed_point_extra + nc_rate_precision );
 
-    const int nc_rate_width = maximum( nc_cell_width, ( rates_are_float ? ( 7 + nc_rate_precision ) : ( 3 + nc_rate_precision ) ) + 0 );
-    // see above ....
+    const int nc_column_width = maximum( nc_cell_width, nc_rate_width );
 
-    // First line is the name of the table 
-    printf_into_stream( ss,  "\n>> %s\n", table_name.c_str() );
+    const char* line_prefix = ">> ";
+
+    // First line is the name of the table. We add an extra new line before everything.
+    printf_into_stream( ss,  "\n%s%s\n", line_prefix, table_name.c_str() );
 
     const int num_entries_per_series = entries.size(); 
     
     if( entries.empty() ) {
-        printf_into_stream( ss,  "----------- Table is empty!\n" );
+        printf_into_stream( ss,  "%s----------- Table is empty!\n", line_prefix );
         return ss.str();
     }
     
@@ -290,7 +299,7 @@ std::string ConvergenceTable::text_transpose( bool display_convergence_rates ) c
                 seriesheader[ nc_header_width-1 ] = '~';
             }
 
-            printf_into_stream( ss,  ">> %*s%s", nc_header_width, seriesheader.c_str(), cell_separator );
+            printf_into_stream( ss,  "%s%*s%s", line_prefix, nc_header_width, seriesheader.c_str(), cell_separator );
 
         }
 
@@ -298,7 +307,7 @@ std::string ConvergenceTable::text_transpose( bool display_convergence_rates ) c
 
             assert( entries[i].size() == num_series );
             
-            printf_into_stream( ss, "% *.*le%s", nc_cell_width, nc_cell_precision, (double)(safedouble) entries[i][j], cell_separator );
+            printf_into_stream( ss, "% *.*le%s", nc_column_width, nc_cell_precision, (double)(safedouble) entries[i][j], cell_separator );
             
         }
 
@@ -308,14 +317,14 @@ std::string ConvergenceTable::text_transpose( bool display_convergence_rates ) c
         {
             
             if( not seriesheaders.empty() )
-                printf_into_stream( ss,  "## %s%s", std::string( nc_header_width, ' ' ).c_str(), cell_separator );
+                printf_into_stream( ss,  "%s%s%s", line_prefix, std::string( nc_header_width, ' ' ).c_str(), cell_separator );
 
             for( int i = 0; i < num_entries_per_series; i++ )
             {
 
                 if( i == 0 ) {
                         
-                    printf_into_stream( ss,  "%s%s", std::string( nc_rate_width, '-' ).c_str(), cell_separator ); //printf_into_stream( ss, "----------");
+                    printf_into_stream( ss,  "%s%s", std::string( nc_column_width, ' ' ).c_str(), cell_separator ); //printf_into_stream( ss, "----------");
                     
                 } else {
                 
@@ -324,14 +333,14 @@ std::string ConvergenceTable::text_transpose( bool display_convergence_rates ) c
                         const EntryType computed_rate = std::log2( entries[i-1][j] / entries[i][j] );
                         
                         if( rates_are_float ) { 
-                            printf_into_stream( ss, "% *.*le%s", nc_rate_width, nc_rate_precision, (double)(safedouble)computed_rate, cell_separator );
+                            printf_into_stream( ss, "% *.*le%s", nc_column_width, nc_rate_precision, (double)(safedouble)computed_rate, cell_separator );
                         } else {
-                            printf_into_stream( ss, "% *.*lf%s", nc_rate_width, nc_rate_precision, (double)(safedouble)computed_rate, cell_separator );
+                            printf_into_stream( ss, "% *.*lf%s", nc_column_width, nc_rate_precision, (double)(safedouble)computed_rate, cell_separator );
                         }
 
                     } else {
                         
-                        printf_into_stream( ss,  "  %s%s", std::string( nc_rate_width-2, '$' ).c_str(), cell_separator ); //printf_into_stream( ss,  "%s", "$$$$$$$$$$" );
+                        printf_into_stream( ss,  "%*s%s", nc_column_width, std::string( nc_rate_width, '$' ).c_str(), cell_separator ); 
 
                     }
                 
@@ -381,7 +390,7 @@ std::string ConvergenceTable::TeXtabular( const std::vector<bool>& show_column )
     
     const char* column_separator = " & ";
 
-    const bool rates_are_float = false;
+    const bool rates_are_float = true;
     
     const int nc_indent_width = 8;
     
