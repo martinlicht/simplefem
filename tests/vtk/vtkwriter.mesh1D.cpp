@@ -1,7 +1,4 @@
 
-#include <ostream>
-#include <fstream>
-
 #include "../../basic.hpp"
 #include "../../mesh/mesh.simplicial1D.hpp"
 #include "../../vtk/vtkwriter.hpp"

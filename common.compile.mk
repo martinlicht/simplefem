@@ -180,7 +180,7 @@ endif
 
 ifeq ($(FLAG_CXX),GCC)
 
-  CXX := g++ -D__USE_MINGW_ANSI_STDIO=1
+  CXX := g++ 
   #-ftime-report
   #-fuse-ld=lld
   
@@ -1004,7 +1004,10 @@ ifeq ($(FLAG_COLORED_OUTPUT),yes)
 CPPFLAGS += -DUSE_COLORED_OUTPUT
 endif
 
-
+# If Windows, then we are probably using MinGW32, and switch to the MinGW32 implementation 
+ifeq ($(OS),Windows_NT)
+CPPFLAGS += -D __USE_MINGW_ANSI_STDIO=1
+endif
 
 ifeq ($(FLAG_DISABLE_STDLIBDEBUG),yes)
 else 

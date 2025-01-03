@@ -81,7 +81,7 @@ int main( int argc, char *argv[] )
                     
                     Float r2 = vec.norm_sq();
                     
-                    Float val = 0.25 + 3 * log(r2) / ( 32 * log(2) ) - r2/4.;
+                    Float val = 0.25 + 3 * log(r2) / ( 32 * std::log((Float)2) ) - r2/4.;
 
                     return FloatVector({ val });
                 };
@@ -91,8 +91,8 @@ int main( int argc, char *argv[] )
                     assert( vec.getdimension() == 2 );
                     Float l2sq = vec.norm_sq();
                     return FloatVector( { 
-                            vec[0] * ( 3. / ( log(2) * l2sq ) - 8. ) / 16., 
-                            vec[1] * ( 3. / ( log(2) * l2sq ) - 8. ) / 16. // TODO: actual solution gradient
+                            vec[0] * ( 3. / ( std::log((Float)2) * l2sq ) - 8. ) / 16., 
+                            vec[1] * ( 3. / ( std::log((Float)2) * l2sq ) - 8. ) / 16. // TODO: actual solution gradient
                         });
                 };
             

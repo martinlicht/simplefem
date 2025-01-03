@@ -320,27 +320,29 @@ int main( int argc, char *argv[] )
         
         
         
-        LOG << "Check that differences are below: " << desired_closeness_for_sqrt << nl;
+        const Float threshold = 0.1;
+
+        LOG << "Check that differences are below: " << threshold << nl;
         
         for( int l      = l_min; l      <=      l_max; l++      ) 
         for( int r      = r_min; r      <=      r_max; r++      ) 
         {
-            if( r < r_max or l < 3 ) 
+            if( r < r_max or l < 2 ) 
                 continue;
             
-            continue; // TODO: find a meaningful test here 
+            // continue; // TODO: find a meaningful test here 
 
             for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
-                Assert( errors_scalar[i][l-l_min][r-r_min] < desired_closeness_for_sqrt, errors_scalar[i][l-l_min][r-r_min], desired_closeness_for_sqrt );
+                Assert( errors_scalar[i][l-l_min][r-r_min] < threshold, errors_scalar[i][l-l_min][r-r_min], threshold );
             
             for( int i = 0; i < experiments_vector_field.size(); i++ ) 
-                Assert( errors_vector[i][l-l_min][r-r_min] < desired_closeness_for_sqrt, errors_vector[i][l-l_min][r-r_min], desired_closeness_for_sqrt );
+                Assert( errors_vector[i][l-l_min][r-r_min] < threshold, errors_vector[i][l-l_min][r-r_min], threshold );
             
             for( int i = 0; i < experiments_pseudo_field.size(); i++ ) 
-                Assert( errors_pseudo[i][l-l_min][r-r_min] < desired_closeness_for_sqrt, errors_pseudo[i][l-l_min][r-r_min], desired_closeness_for_sqrt );
+                Assert( errors_pseudo[i][l-l_min][r-r_min] < threshold, errors_pseudo[i][l-l_min][r-r_min], threshold );
             
             for( int i = 0; i < experiments_volume_field.size(); i++ )
-                Assert( errors_volume[i][l-l_min][r-r_min] < desired_closeness_for_sqrt, errors_volume[i][l-l_min][r-r_min], desired_closeness_for_sqrt );
+                Assert( errors_volume[i][l-l_min][r-r_min] < threshold, errors_volume[i][l-l_min][r-r_min], threshold );
         }
         
         

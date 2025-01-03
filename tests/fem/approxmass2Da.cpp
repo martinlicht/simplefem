@@ -174,7 +174,7 @@ int main( int argc, char *argv[] )
         
         const int l_min = 0;
         
-        const int l_max = 2;
+        const int l_max = 4;
         
         Float errors_scalar[ experiments_scalar_field.size() ][ l_max - l_min + 1 ][ r_max - r_min + 1 ];
         Float errors_vector[ experiments_vector_field.size() ][ l_max - l_min + 1 ][ r_max - r_min + 1 ];
@@ -328,7 +328,9 @@ int main( int argc, char *argv[] )
         
         
         
-        LOG << "Check that differences are below: " << desired_closeness_for_sqrt << nl;
+        const Float threshold = 0.1;
+
+        LOG << "Check that differences are below: " << threshold << nl;
         
         for( int l      = l_min; l      <=      l_max; l++      ) 
         for( int r      = r_min; r      <=      r_max; r++      ) 
@@ -336,16 +338,16 @@ int main( int argc, char *argv[] )
             if( r < r_max or l < 3 ) 
                 continue;
             
-            continue; // TODO: find a meaningful test here 
+            // continue; // TODO: find a meaningful test here 
 
             for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
-                Assert( errors_scalar[i][l-l_min][r-r_min] < desired_closeness_for_sqrt, errors_scalar[i][l-l_min][r-r_min], desired_closeness_for_sqrt );
+                Assert( errors_scalar[i][l-l_min][r-r_min] < threshold, errors_scalar[i][l-l_min][r-r_min], threshold );
             
             for( int i = 0; i < experiments_vector_field.size(); i++ ) 
-                Assert( errors_vector[i][l-l_min][r-r_min] < desired_closeness_for_sqrt, errors_vector[i][l-l_min][r-r_min], desired_closeness_for_sqrt );
+                Assert( errors_vector[i][l-l_min][r-r_min] < threshold, errors_vector[i][l-l_min][r-r_min], threshold );
             
             for( int i = 0; i < experiments_volume_field.size(); i++ )
-                Assert( errors_volume[i][l-l_min][r-r_min] < desired_closeness_for_sqrt, errors_volume[i][l-l_min][r-r_min], desired_closeness_for_sqrt );
+                Assert( errors_volume[i][l-l_min][r-r_min] < threshold, errors_volume[i][l-l_min][r-r_min], threshold );
         }
         
         

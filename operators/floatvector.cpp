@@ -551,7 +551,7 @@ Float FloatVector::scalarproductwith( const FloatVector& right ) const
     long double ret = 0.;
     for( int p = 0; p < getdimension(); p++ )
         ret += getentry(p) * right.getentry(p);
-    return ret;
+    return static_cast<Float>(ret);
 }
 
 Float FloatVector::scalarproductwith( const FloatVector& right, const std::vector<bool>& mask ) const
@@ -562,7 +562,7 @@ Float FloatVector::scalarproductwith( const FloatVector& right, const std::vecto
     for( int p = 0; p < getdimension(); p++ )
         if( not mask[p] )
             ret += getentry(p) * right.getentry(p);
-    return ret;
+    return static_cast<Float>(ret);
 }
 
 
@@ -592,7 +592,7 @@ Float FloatVector::sum() const
     long double ret = 0.;
     for( int d = 0; d < getdimension(); d++ )
         ret = ret + pointer[d];
-    return ret;
+    return static_cast<Float>(ret);
 }
 
 Float FloatVector::norm() const 
@@ -606,7 +606,7 @@ Float FloatVector::norm_sq() const
     long double ret = 0.;
     for( int d = 0; d < getdimension(); d++ )
         ret += absolute( pointer[d] * pointer[d] );
-    return ret;
+    return static_cast<Float>(ret);
 }
 
 Float FloatVector::norm( const LinearOperator& op ) const 
@@ -621,7 +621,7 @@ Float FloatVector::norm_sq( const LinearOperator& op) const
     long double ret = (*this) * ( op * (*this) );
     assert( std::isfinite(ret) );
     assert( ret >= 0 );
-    return ret;
+    return static_cast<Float>(ret);
 }
 
 Float FloatVector::maxnorm() const
@@ -641,7 +641,7 @@ Float FloatVector::sumnorm() const
     long double ret = 0.;
     for( int d = 0; d < getdimension(); d++ )
         ret = ret + absolute( pointer[d] );
-    return ret;
+    return static_cast<Float>(ret);
 }
 
 Float FloatVector::l2norm() const 
@@ -661,7 +661,7 @@ Float FloatVector::lpnorm( Float p, Float innerweight ) const
     for( int d = 0; d < getdimension(); d++ )
         ret += power_numerical( absolute( pointer[d] ), p );
     ret *= innerweight;
-    return power_numerical( ret, 1./p );
+    return power_numerical( static_cast<Float>(ret), 1./p );
 }
 
 

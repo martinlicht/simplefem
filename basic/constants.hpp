@@ -1,7 +1,18 @@
 #ifndef INCLUDEGUARD_CONSTANTS_HPP
 #define INCLUDEGUARD_CONSTANTS_HPP
 
+#if defined(EXTENDED_PRECISION) && defined(SINGLE_PRECISION)
+#error Cannot request extended and single precision at the same time!
+#endif
+
+#if defined(EXTENDED_PRECISION)
+#define CONSTANT_FLOATINGPOINT_DATATYPE long double
+#elif defined(SINGLE_PRECISION)
+#define CONSTANT_FLOATINGPOINT_DATATYPE float 
+#else 
 #define CONSTANT_FLOATINGPOINT_DATATYPE double
+#endif
+
 
 namespace Constants
 {

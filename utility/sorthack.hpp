@@ -1,13 +1,11 @@
 #ifndef INCLUDEGUARD_SORTHACK_HPP
 #define INCLUDEGUARD_SORTHACK_HPP
 
-#include <cassert>
-
 #include <algorithm>
 #include <utility>
 #include <vector>
 
-#include <vector>
+#include "../basic.hpp"
 
 template<typename T>
 void insertionSort( std::vector<T>& vec, int low, int high )

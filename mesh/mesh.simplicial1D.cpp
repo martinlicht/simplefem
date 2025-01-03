@@ -590,8 +590,8 @@ void MeshSimplicial1D::bisect_edge( int e )
     int vertex_front      = data_edge_vertices[e][1];
     int nextparent_back   = data_edge_nextparents_of_vertices[e][0];
     int nextparent_front  = data_edge_nextparents_of_vertices[e][1];
-    int firstparent_back  = data_vertex_firstparent_edge[vertex_back ];
-    int firstparent_front = data_vertex_firstparent_edge[vertex_front];
+    int firstparent_back  UNUSED = data_vertex_firstparent_edge[vertex_back ];
+    int firstparent_front UNUSED = data_vertex_firstparent_edge[vertex_front];
     
     int back_previousparent            = nullindex;
     int back_previousparent_localindex = nullindex;
@@ -630,7 +630,7 @@ void MeshSimplicial1D::bisect_edge( int e )
     int front_backnextparent  = nullindex;
     int front_frontnextparent = nextparent_front;
     
-    int firstparent_newvertex = nv;
+    int firstparent_newvertex UNUSED = nv;
     
     /* Allocate memory */
     

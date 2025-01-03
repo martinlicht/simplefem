@@ -1,9 +1,8 @@
 
-#include <assert.h>
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #include <string>
 
@@ -42,8 +41,8 @@ PixelImage readPixelImage( const std::string& str )
 
     PixelImage ret( height, width ); 
     
-    for( int row = 0; row < height; row++) 
-    for( int col = 0; col < width; col++)
+    for( int row = 0; row < height; row++ ) 
+    for( int col = 0; col < width; col++ )
     {
         ret(row,col).red   = image[ channels * ( row * width + col ) + 0 ];
         ret(row,col).green = image[ channels * ( row * width + col ) + 1 ];
@@ -108,8 +107,8 @@ void savePixelImage( const PixelImage& pim, const std::string& str )
     // // Get the pixel values and store them in the arrays
     // Pixels view(image);
     // PixelPacket* pixel_cache = view.get(0, 0, width, height);
-    // for( size_t row = 0; row < height; row++) {
-    //     for( size_t col = 0; col < width; col++) {
+    // for( size_t row = 0; row < height; row++ ) {
+    //     for( size_t col = 0; col < width; col++ ) {
     //         size_t index = row * width + col;
     //         pixels_r[row][col] = pixel_cache[index].red;
     //         pixels_g[row][col] = pixel_cache[index].green;
@@ -126,8 +125,8 @@ void savePixelImage( const PixelImage& pim, const std::string& str )
     // image.write("enal_color.tiff");
 
     // // Print the pixel values
-    // for( size_t row = 0; row < height; row++) {
-    //     for( size_t col = 0; col < width; col++) {
+    // for( size_t row = 0; row < height; row++ ) {
+    //     for( size_t col = 0; col < width; col++ ) {
     //         std::cout << "(" << (int)pixels_r[row][col] << "," << (int)pixels_g[row][col] << "," << (int)pixels_b[row][col] << ") ";
     //     }
     //     std::cout << std::endl;

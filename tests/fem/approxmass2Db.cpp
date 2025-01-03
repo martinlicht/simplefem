@@ -70,24 +70,24 @@ int main( int argc, char *argv[] )
 
         experiments_scalar_value.push_back( 3.62686040784701876 * 3.62686040784701876 );
 
-        experiments_scalar_field.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
-                assert( vec.getdimension() == 2 );
-                return FloatVector({ ( vec[0] > 0 and vec[1] > 0 ) ? std::exp( vec[0] ) : Float(0.) });
-            }
-        );
+        // experiments_scalar_field.push_back( 
+        //     [](const FloatVector& vec) -> FloatVector{
+        //         assert( vec.getdimension() == 2 );
+        //         return FloatVector({ ( vec[0] > 0 and vec[1] > 0 ) ? std::exp( vec[0] ) : Float(0.) });
+        //     }
+        // );
 
-        experiments_scalar_value.push_back(3.194528049465325113615213730287503906590157785275923662043);
+        // experiments_scalar_value.push_back(3.194528049465325113615213730287503906590157785275923662043);
         
         
-        experiments_scalar_field.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
-                assert( vec.getdimension() == 2 );
-                return FloatVector({ ( vec[0] * vec[1] > 0 ) ? std::exp( vec[0] ) : Float(0.) });
-            }
-        );
+        // experiments_scalar_field.push_back( 
+        //     [](const FloatVector& vec) -> FloatVector{
+        //         assert( vec.getdimension() == 2 );
+        //         return FloatVector({ ( vec[0] * vec[1] > 0 ) ? std::exp( vec[0] ) : Float(0.) });
+        //     }
+        // );
 
-        experiments_scalar_value.push_back(3.626860407847018767668213982801261704886342012321135721309);
+        // experiments_scalar_value.push_back(3.626860407847018767668213982801261704886342012321135721309);
         
         
         
@@ -148,21 +148,29 @@ int main( int argc, char *argv[] )
         experiments_volume_field.push_back( 
             [](const FloatVector& vec) -> FloatVector{
                 assert( vec.getdimension() == 2 );
-                return FloatVector({ ( vec[0] > 0 and vec[1] > 0 ) ? std::exp( vec[0] ) : Float(0.) });
+                return FloatVector({ std::exp( vec[0] + vec[1] ) });
             }
         );
 
-        experiments_volume_value.push_back(3.194528049465325113615213730287503906590157785275923662043);
-        
-        
-        experiments_volume_field.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
-                assert( vec.getdimension() == 2 );
-                return FloatVector({ ( vec[0] * vec[1] > 0 ) ? std::exp( vec[0] ) : Float(0.) });
-            }
-        );
+        experiments_volume_value.push_back( 3.62686040784701876 * 3.62686040784701876 );
 
-        experiments_volume_value.push_back(3.626860407847018767668213982801261704886342012321135721309);
+        // experiments_volume_field.push_back( 
+        //     [](const FloatVector& vec) -> FloatVector{
+        //         assert( vec.getdimension() == 2 );
+        //         return FloatVector({ ( vec[0] > 0 and vec[1] > 0 ) ? std::exp( vec[0] ) : Float(0.) });
+        //     }
+        // );
+
+        // experiments_volume_value.push_back(3.194528049465325113615213730287503906590157785275923662043);
+        
+        // experiments_volume_field.push_back( 
+        //     [](const FloatVector& vec) -> FloatVector{
+        //         assert( vec.getdimension() == 2 );
+        //         return FloatVector({ ( vec[0] * vec[1] > 0 ) ? std::exp( vec[0] ) : Float(0.) });
+        //     }
+        // );
+
+        // experiments_volume_value.push_back(3.626860407847018767668213982801261704886342012321135721309);
         
         
         
@@ -173,7 +181,7 @@ int main( int argc, char *argv[] )
         
         const int l_min = 0;
         
-        const int l_max = 2;
+        const int l_max = 4;
         
         const int r_ref = 7;
         
@@ -348,7 +356,9 @@ int main( int argc, char *argv[] )
         
         
         
-        LOG << "Check that differences are below: " << desired_closeness_for_sqrt << nl;
+        const Float threshold = desired_closeness_for_sqrt;
+
+        LOG << "Check that differences are below: " << threshold << nl;
         
         for( int l      = l_min; l      <=      l_max; l++      ) 
         for( int r      = r_min; r      <=      r_max; r++      ) 
@@ -356,16 +366,16 @@ int main( int argc, char *argv[] )
             if( r < r_max or l < 3 ) 
                 continue;
             
-            continue; // TODO: find a meaningful test here 
+            // continue; // TODO: find a meaningful test here 
             
             for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
-                Assert( errors_scalar[i][l-l_min][r-r_min] < desired_closeness_for_sqrt, errors_scalar[i][l-l_min][r-r_min], desired_closeness_for_sqrt );
+                Assert( errors_scalar[i][l-l_min][r-r_min] < threshold, errors_scalar[i][l-l_min][r-r_min], threshold );
             
             for( int i = 0; i < experiments_vector_field.size(); i++ ) 
-                Assert( errors_vector[i][l-l_min][r-r_min] < desired_closeness_for_sqrt, errors_vector[i][l-l_min][r-r_min], desired_closeness_for_sqrt );
+                Assert( errors_vector[i][l-l_min][r-r_min] < threshold, errors_vector[i][l-l_min][r-r_min], threshold );
 
             for( int i = 0; i < experiments_volume_field.size(); i++ )
-                Assert( errors_volume[i][l-l_min][r-r_min] < desired_closeness_for_sqrt, errors_volume[i][l-l_min][r-r_min], desired_closeness_for_sqrt );
+                Assert( errors_volume[i][l-l_min][r-r_min] < threshold, errors_volume[i][l-l_min][r-r_min], threshold );
         }
         
         

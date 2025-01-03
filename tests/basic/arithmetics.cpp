@@ -1,12 +1,12 @@
-#include <iostream>
-#include <cassert>
+
 #include <limits>
 #include <cmath>
 
 #include "../../basic.hpp"
 
 
-int main() {
+int main( int argc, char *argv[] )
+{
 
     LOG << "Test absolute\n";
     
@@ -20,7 +20,7 @@ int main() {
     assert(absolute<Float>(-std::numeric_limits<Float>::infinity() ) == std::numeric_limits<Float>::infinity() );
     
 
-	assert(absolute(0) == 0);
+    assert(absolute(0) == 0);
     assert(absolute(-5) == 5);
     assert(absolute(5) == 5);
     assert(absolute(0.) == 0.);
@@ -69,7 +69,7 @@ int main() {
     assert(sign_integer( std::numeric_limits<Float>::infinity() ) ==  1 );
     assert(sign_integer(-std::numeric_limits<Float>::infinity() ) == -1 );
 
-	LOG << "Test maximum\n";
+    LOG << "Test maximum\n";
     
     assert(maximum<int>(-7, -7) == -7);
     assert(maximum<int>( 0,  0) ==  0);
@@ -90,7 +90,7 @@ int main() {
     assert(maximum<Float>(  std::numeric_limits<Float>::infinity(), 1.0 ) == std::numeric_limits<Float>::infinity() );
     assert(maximum<Float>( -std::numeric_limits<Float>::infinity(), 1.0 ) == 1.0 );
     
-	assert(maximum(-10, 10) == 10);
+    assert(maximum(-10, 10) == 10);
     assert(maximum( 10,-10) == 10);
     assert(maximum(  0,-10) ==  0);
     assert(maximum( 10,-20) == 10);
@@ -129,7 +129,7 @@ int main() {
     assert(maxabs<Float>( std::numeric_limits<Float>::infinity(), -std::numeric_limits<Float>::infinity() )  == std::numeric_limits<Float>::infinity() );
     assert(maxabs<Float>( std::numeric_limits<Float>::infinity(), -std::numeric_limits<Float>::infinity() )  == std::numeric_limits<Float>::infinity() );
     
-	assert(maxabs(-10, 10) == 10);
+    assert(maxabs(-10, 10) == 10);
     assert(maxabs( 10,-10) == 10);
     assert(maxabs(  0,-10) == 10);
     assert(maxabs(-10,-20) == 20);
@@ -168,7 +168,7 @@ int main() {
     assert(minimum<Float>(  std::numeric_limits<Float>::infinity(), 1.0 ) == 1.0 );
     assert(minimum<Float>( -std::numeric_limits<Float>::infinity(), 1.0 ) == -std::numeric_limits<Float>::infinity() );
     
-	assert(minimum(-10, 10) ==-10);
+    assert(minimum(-10, 10) ==-10);
     assert(minimum( 10,-10) ==-10);
     assert(minimum(  0,-10) ==-10);
     assert(minimum( 10,-20) ==-20);
@@ -213,7 +213,7 @@ int main() {
     assert(maximum<Float>(-10.5, 10.5, 0.0) == 10.5);
     assert(maximum<Float>(-10.5, 30.0, 10.5, 0.0) == 30.0);
 
-    LOG << "Test maxabs with 3, 4 arguments\n";
+    LOG << "Test maxabs with 1, 3, 4 arguments\n";
 
     assert(maxabs<int>( 7 ) ==  7);
     assert(maxabs<int>( 0 ) ==  0);
@@ -237,7 +237,7 @@ int main() {
     assert(maxabs<Float>(-10.5,   4.5,  0.0) == 10.5);
     assert(maxabs<Float>(-10.5, -30.0,  1.5, 0.0) == 30.);
 
-    LOG << "Test minimum with 3, 4 arguments\n";
+    LOG << "Test minimum with 1, 3, 4 arguments\n";
     
     assert(minimum<int>( 7 ) ==  7);
     assert(minimum<int>( 0 ) ==  0);
@@ -339,7 +339,7 @@ int main() {
         assert(sign_power(3) == -1);
     }
 
-    LOG << "All tests passed successfully!" << nl;
+    LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
     return 0;
 }
 
