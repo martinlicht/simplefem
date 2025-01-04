@@ -56,8 +56,9 @@ int main( int argc, char *argv[] )
             sort_and_remove_duplicates( markededges );
             
             LOG << c << "/" << c_max << " Refine " << markedcells.size() << "/" << M.count_triangles() << " ... ";
-            M.newest_vertex_bisection_recursive( markededges );
+            int counter = M.newest_vertex_bisection_recursive( markededges );
             LOG << "Ratio=" << ( M.count_triangles() - cell_count_initial )/(Float)( cell_marked_count ) << nl;
+            LOG << "Bisected " << counter << " edges" << nl;
         
         }
         
