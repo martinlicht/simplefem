@@ -1256,7 +1256,7 @@ void MeshSimplicial3D::longest_edge_bisection( std::vector<int> edges )
  * * * * * LONGEST EDGE VERTEX BISECTION
  */
 
-void MeshSimplicial3D::longest_edge_bisection_recursive( const std::vector<int>& edges )
+int MeshSimplicial3D::longest_edge_bisection_recursive( const std::vector<int>& edges )
 {
     check();
 
@@ -1265,6 +1265,7 @@ void MeshSimplicial3D::longest_edge_bisection_recursive( const std::vector<int>&
     for( const int& e : edges )
         assert( 0 <= e && e < counter_edges );
 
+    int counter = 0;
 
     // 1. run over the edges and apply the recursion
 
@@ -1275,7 +1276,7 @@ void MeshSimplicial3D::longest_edge_bisection_recursive( const std::vector<int>&
         if( get_edge_vertex( e, 0 ) >= old_vertex_count || get_edge_vertex(e,1) >= old_vertex_count )
             continue;
 
-        longest_edge_bisection_recursive( e );
+        counter += longest_edge_bisection_recursive( e );
 
     }
 
@@ -1285,14 +1286,18 @@ void MeshSimplicial3D::longest_edge_bisection_recursive( const std::vector<int>&
         assert( get_edge_vertex( e, 0 ) >= old_vertex_count || get_edge_vertex(e,1) >= old_vertex_count );
     
     check();
+
+    return counter;
 }
 
 
-void MeshSimplicial3D::longest_edge_bisection_recursive( const int e )
+int MeshSimplicial3D::longest_edge_bisection_recursive( const int e )
 {
     assert( 0 <= e && e < counter_edges );
 
     int longest_edge = nullindex;
+
+    int counter = 0;
         
     do{
 
@@ -1308,12 +1313,15 @@ void MeshSimplicial3D::longest_edge_bisection_recursive( const int e )
         }
 
         if( longest_edge != e )
-            longest_edge_bisection_recursive( longest_edge );
+            counter += longest_edge_bisection_recursive( longest_edge );
 
     } while ( longest_edge != e );
 
     bisect_edge( e );
 
+    counter += 1;
+    
+    return counter;
 }
 
 

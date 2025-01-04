@@ -201,12 +201,12 @@ class MeshSimplicial2D
         void bisect_edge( int e );
 
         // void longest_edge_bisection( std::vector<int> edges );
-        void longest_edge_bisection_recursive( const std::vector<int>& edges );
-        void longest_edge_bisection_recursive( const int e );
+        int longest_edge_bisection_recursive( const std::vector<int>& edges );
+        int longest_edge_bisection_recursive( const int e );
 
         // void newest_vertex_bisection( std::vector<int> edges );
-        void newest_vertex_bisection_recursive( const std::vector<int>& edges );
-        void newest_vertex_bisection_recursive( int e );
+        int newest_vertex_bisection_recursive( const std::vector<int>& edges );
+        int newest_vertex_bisection_recursive( int e );
         
         void uniformrefinement();
         
