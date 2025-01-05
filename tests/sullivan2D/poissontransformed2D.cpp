@@ -142,10 +142,10 @@ int main( int argc, char *argv[] )
                     // Float y = vec[1];
                     // Float sx = sign(x);
                     // Float sy = sign(y);
-                    // Float other_det = ( ( abs(x) + abs(y) ) * (sx*x+sy*y) / (x*x+y*y) );
+                    // Float other_det = ( ( std::abs(x) + std::abs(y) ) * (sx*x+sy*y) / (x*x+y*y) );
                     // LOG << x << tab << y << tab << sx << tab << sy << tab << det << tab << other_det << nl;
                     // assert(
-                    //     is_numerically_close( det, ( ( abs(x) + abs(y) ) * (sx*x+sy*y) / (x*x+y*y) ) )
+                    //     is_numerically_close( det, ( ( std::abs(x) + std::abs(y) ) * (sx*x+sy*y) / (x*x+y*y) ) )
                     // );
 
                     return absolute(det) * Inverse( Transpose(jac) * jac );

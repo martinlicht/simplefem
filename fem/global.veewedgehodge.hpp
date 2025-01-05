@@ -24,6 +24,10 @@ SparseMatrix FEECBrokenWedgeMatrix( const Mesh& mesh, int n, int k, int r, int l
 
 SparseMatrix FEECBrokenHodgeMatrix( const Mesh& mesh, int n, int k, int r );
 
+FloatVector FEECVolumeFormIntegral( const Mesh& mesh, int n, int r );
+
+FloatVector FEECScalarIntegral( const Mesh& mesh, int n, int r );
+
 
 
 #endif

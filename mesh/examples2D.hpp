@@ -191,6 +191,24 @@ inline MeshSimplicial2D StandardSquare2D()
 
 
 
+inline MeshSimplicial2D UnitSquare2D_simple()
+{
+    return MeshSimplicial2D(
+      2,
+      Coordinates( 2, 4, {
+         0.,  0., // 0
+         1.,  0., // 1
+         0.,  1., // 2
+         1.,  1.  // 3
+      } ),
+      {
+        { 0, 1, 3 },
+        { 0, 2, 3 }
+      }
+    );
+}
+
+
 
 inline MeshSimplicial2D UnitSquare2D()
 {

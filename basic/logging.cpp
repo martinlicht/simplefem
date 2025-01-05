@@ -55,7 +55,7 @@ Logger::Logger(
         filename( filename ),
         linenumber( linenumber )
         {
-            //*this << std::setprecision(10);
+            // *this << std::setprecision(10);
         }
 
 
@@ -349,13 +349,13 @@ void System_Reporter::output()
         // Check precision control bits
         switch(currentControlWord & _MCW_PC) {
             case _PC_24: 
-                LOG << "###\tPrecision control: 24-bit (single precision)." << nl;
+                LOG << "###\tPrecision control: 24-bit." << nl;
                 break;
             case _PC_53:
-                LOG << "###\tPrecision control: 53-bit (double precision)." << nl;
+                LOG << "###\tPrecision control: 53-bit." << nl;
                 break;
             case _PC_64:
-                LOG << "###\tPrecision control: 64-bit (extended precision)." << nl;
+                LOG << "###\tPrecision control: 64-bit." << nl;
                 break;
             default:
                 LOG << "###\tPrecision control: unknown." << nl;

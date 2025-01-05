@@ -1,43 +1,34 @@
-
-
-
-
-
-
 	
 #	----------- UPKEEP & MINOR FIXES -------------
 
 [x] CONSTANT_FLOATINGPOINT_DATATYPE: uses the same macro case distinction as the other ones
-
 [?] what is the numerically stable way to compute the determinant? 
-
 [!] The sqrt of a result subject to more than a machine epsilon error 
     will be subject to more than the sqrt of the machine epsilon error
-
 [x] remove includes from the definition of cxx files; test the cxx files
-
 [x] enable compilation in different C++ modes and remove the error messages. 
     [x] 14
     [x] 17
     [x] 20
-
 [x] how to turn off particular unused variable warnings? -> Blog post
     #define UNUSED_VARIABLE(x) (void)x
     __attribute__((unused))
+[x] clean the printing methods of the convergence tables
+    convergence tables should handle different precisions, one way or the other: best to internally use long double. Requires settling the printf issue
 
-[ ] clean the printing methods of the convergence tables
+[ ] fix the vee product; make the tests run in 2D and 3D
+    [ ] integrate volume forms and scalar fields 
+    Make the second Hodge star work
 
 [ ] enable exceptions and adapt the unit tests ...
 
 [ ] How to enable DLLs? You can use a .def file...
 
-[x] convergence tables should handle different precisions, one way or the other: best to internally use long double. Requires settling the printf issue
-
 [x] Use custom printf implementation for that handles long doubles
     #define __USE_MINGW_ANSI_STDIO 1
     The above macro enables the MinGW Printf implementation
 
-[ ] std::exp and the like: single precision versions
+[x] std::exp and the like: single precision versions
 
 [ ] augmented integration for error checks
 
