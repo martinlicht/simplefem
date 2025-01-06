@@ -482,10 +482,8 @@ FloatVector FEECVolumeFormIntegral( const Mesh& mesh, int n, int r )
     // Auxiliary calculations and preparations
     
     const int num_simplices = mesh.count_simplices( n );
-    
-    const int localdim = binomial_integer( n + r, n ) * (n+1);
-    
-    const int num_entries = num_simplices * localdim;
+    const int localdim      = binomial_integer( n + r, n ) * (n+1);
+    const int num_entries   = num_simplices * localdim;
     
     FloatVector ret( num_entries );
 	
@@ -502,8 +500,7 @@ FloatVector FEECVolumeFormIntegral( const Mesh& mesh, int n, int r )
 	for( int index_poly = 0; index_poly < N; index_poly++ )
     {
         MultiIndex alpha = multis[index_poly];
-        assert( absolute( alpha ) == r ); 
-        // n! alpha! / (n+|alpha|)!
+        assert( absolute( alpha ) == r ); // n! alpha! / (n+|alpha|)!
         polynomial_weights[index_poly] = factorial_numerical(n) * alpha.factorial_numerical() / factorial_numerical( n + r ); 
     }
 
@@ -525,10 +522,11 @@ FloatVector FEECVolumeFormIntegral( const Mesh& mesh, int n, int r )
 		
         assert( not std::isfinite( signs[index_form] ) );
 
-        signs[index_form] = sign_power( p )  / factorial_numerical( n );
+        signs[index_form] = sign_power( p );
 
         if( p == 0 ) assert( sign_power(p) ==  1 );
         if( p == 1 ) assert( sign_power(p) == -1 );
+        if( p == 2 ) assert( sign_power(p) ==  1 );
 	}
     
 	// Fill in the data into the return vector 
@@ -539,9 +537,11 @@ FloatVector FEECVolumeFormIntegral( const Mesh& mesh, int n, int r )
 	{
 		auto Jac = mesh.getTransformationJacobian(n,s);
         assert( Jac.is_square() );
-        auto orientation = sign( Determinant(Jac) );
+        auto orientation = sign_integer( Determinant(Jac) );
+
+        LOG << s << space << orientation << space << signs[index_form] << nl;
         
-        Float value = orientation * signs[index_form] * polynomial_weights[index_poly];
+        Float value = orientation * signs[index_form] * polynomial_weights[index_poly] / factorial_numerical( n );
 
         ret[ s * (n+1) * N + index_form * N + index_poly] = value; 
 	}

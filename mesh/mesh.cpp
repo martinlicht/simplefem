@@ -880,6 +880,22 @@ DenseMatrix Mesh::getTransformationJacobian( int dim, int index ) const
 }
 
 
+Float Mesh::getOrientation( int index ) const 
+{
+    const int dim = getinnerdimension();
+
+    assert( 0 <= index && index < count_simplices(dim) );
+    
+    DenseMatrix trafo = getTransformationJacobian( dim, index );
+
+    Assert( trafo.is_square(), trafo, dim, index );
+    
+    Float det = Determinant( trafo );
+
+    return sign( det );
+}
+
+
 DenseMatrix Mesh::getBarycentricProjectionMatrix( int dim, int index ) const
 {
     assert( 0 <= dim && dim <= getinnerdimension() );
