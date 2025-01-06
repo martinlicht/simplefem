@@ -69,7 +69,7 @@ int main( int argc, char *argv[] )
                 SparseMatrix elevation_r_3 = FEECBrokenElevationMatrix( M, M.getinnerdimension(), k, r+2, 1 );
                 SparseMatrix elevation_r_g = FEECBrokenElevationMatrix( M, M.getinnerdimension(), k, r  , 3 );
                 
-                errors[k][ l ][ r ] = 0.;
+                errors[k][ l-l_min ][ r-r_min ] = 0.;
                 
                 for( int i = 0; i < number_of_samples; i++ ){
 

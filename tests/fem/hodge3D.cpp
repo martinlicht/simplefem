@@ -72,7 +72,7 @@ int main( int argc, char *argv[] )
                 assert( broken_mass_matrix.is_finite() );
                 assert( broken_hodge_matrix.is_finite() );
                 
-                errors[k][ l ][ r ] = 0.;
+                errors[k][ l-l_min ][ r-r_min ] = 0.;
                 
                 for( int i = 0; i < number_of_samples; i++ ){
 

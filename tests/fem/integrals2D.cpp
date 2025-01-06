@@ -22,7 +22,8 @@ int main( int argc, char *argv[] )
         LOG << "Initial mesh..." << nl;
         
         // auto M = UnitSquare2D_simple();
-        auto M = UnitTriangle2D();
+        auto M = UnitSquare2D_strange14();
+        // auto M = UnitTriangle2D();
         
         M.check();
 
@@ -43,26 +44,26 @@ int main( int argc, char *argv[] )
                 });
             }
         );
-        experiments_scalar_value.push_back( 1./2. );
+        experiments_scalar_value.push_back( 1. );
 
-        // experiments_scalar_field.push_back( 
-        //     [](const FloatVector& vec) -> FloatVector{
-        //         assert( vec.getdimension() == 2 );
-        //         return FloatVector({ 
-        //             std::sin( Constants::twopi * vec[0] ) * std::sin( Constants::twopi * vec[1] ) 
-        //         });
-        //     }
-        // );
-        // experiments_scalar_value.push_back( 0. );
+        experiments_scalar_field.push_back( 
+            [](const FloatVector& vec) -> FloatVector{
+                assert( vec.getdimension() == 2 );
+                return FloatVector({ 
+                    std::sin( Constants::twopi * vec[0] ) * std::sin( Constants::twopi * vec[1] ) 
+                });
+            }
+        );
+        experiments_scalar_value.push_back( 0. );
 
-        // experiments_scalar_field.push_back( 
-        //     [](const FloatVector& vec) -> FloatVector{
-        //         assert( vec.getdimension() == 2 );
-        //         return FloatVector({ std::exp( vec[0] + vec[1] ) });
-        //     }
-        // );
-        // experiments_scalar_value.push_back( std::exp(2.) - 2 * std::exp(1.) + 1. );
-        // experiments_scalar_value.push_back( 1. );
+        experiments_scalar_field.push_back( 
+            [](const FloatVector& vec) -> FloatVector{
+                assert( vec.getdimension() == 2 );
+                return FloatVector({ std::exp( vec[0] + vec[1] ) });
+            }
+        );
+        experiments_scalar_value.push_back( std::exp(2.) - 2 * std::exp(1.) + 1. );
+        experiments_scalar_value.push_back( 1. );
 
         std::vector<std::function<FloatVector(const FloatVector&)>> experiments_volume_field = experiments_scalar_field;
         std::vector<Float>                                          experiments_volume_value = experiments_scalar_value;
@@ -70,13 +71,13 @@ int main( int argc, char *argv[] )
 
 
 
-        const int r_min = 1;
+        const int r_min = 0;
         
-        const int r_max = 1;
+        const int r_max = 3;
         
         const int l_min = 0;
         
-        const int l_max = 2;
+        const int l_max = 3;
 
         const int n = 2;
         // const int n = M.getinnerdimension();
@@ -104,8 +105,8 @@ int main( int argc, char *argv[] )
 
                 LOG << "assemble matrices..." << nl;
         
-                errors_scalar[ l ][ r ] = 0.;
-                errors_volume[ l ][ r ] = 0.;
+                errors_scalar[ l-l_min ][ r-r_min ] = 0.;
+                errors_volume[ l-l_min ][ r-r_min ] = 0.;
                 
                 FloatVector scalar_integrals = FEECScalarIntegral( M, M.getinnerdimension(), r );
 
@@ -115,10 +116,10 @@ int main( int argc, char *argv[] )
                 {
                     FloatVector unitvector = FloatVector( scalar_integrals.getdimension(), 1.);
                     Float unit = scalar_integrals * unitvector;
-                    Assert( is_numerically_close( unit, 1./2. ), unit );
+                    Assert( is_numerically_close( unit, 1. ), unit );
                 }
 
-                if( false and r <= 1 )
+                if( r <= 1 )
                 {
                     FloatVector unitvector = FloatVector( volume_integrals.getdimension(), 1. );
                     
@@ -162,11 +163,11 @@ int main( int argc, char *argv[] )
 
                     auto interpol = Interpolation( M, M.getinnerdimension(), n, r, volumefield );
 
-                    LOG << n << space << volume_integrals.getdimension() << space << interpol.getdimension() << nl;
+                    // LOG << n << space << volume_integrals.getdimension() << space << interpol.getdimension() << nl;
                     auto interpol_integral = volume_integrals * interpol;
 
-                    LOG << interpol_integral << space << experiments_volume_value[i] << nl;
-                    if( r == 0 and l == 0 ) { LOG << volume_integrals << nl << interpol << nl; }
+                    // LOG << interpol_integral << space << experiments_volume_value[i] << nl;
+                    // if( r == 0 and l == 0 ) { LOG << volume_integrals << nl << interpol << nl; }
 
                     auto error = absolute( interpol_integral - experiments_volume_value[i] );
                     

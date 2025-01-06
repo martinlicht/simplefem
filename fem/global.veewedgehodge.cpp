@@ -532,18 +532,18 @@ FloatVector FEECVolumeFormIntegral( const Mesh& mesh, int n, int r )
 	// Fill in the data into the return vector 
 	
     for( int s = 0;          s < num_simplices;          s++          )
-	for( int index_form = 0; index_form < sigmas.size(); index_form++ )
     for( int index_poly = 0; index_poly < N;             index_poly++ )
+	for( int index_form = 0; index_form < sigmas.size(); index_form++ )
 	{
 		auto Jac = mesh.getTransformationJacobian(n,s);
         assert( Jac.is_square() );
         auto orientation = sign_integer( Determinant(Jac) );
 
-        LOG << s << space << orientation << space << signs[index_form] << nl;
+        // LOG << s << space << orientation << space << signs[index_form] << nl;
         
         Float value = orientation * signs[index_form] * polynomial_weights[index_poly] / factorial_numerical( n );
 
-        ret[ s * (n+1) * N + index_form * N + index_poly] = value; 
+        ret[ s * N * (n+1) + index_poly * (n+1) + index_form] = value; 
 	}
 
 

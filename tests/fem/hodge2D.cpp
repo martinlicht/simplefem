@@ -64,9 +64,9 @@ int main( int argc, char *argv[] )
 
                 LOG << "assemble matrices..." << nl;
         
-                errors_mass [k][ l ][ r ] = 0.;
-                errors_vee  [k][ l ][ r ] = 0.;
-                errors_wedge[k][ l ][ r ] = 0.;
+                errors_mass [k][ l-l_min ][ r-r_min ] = 0.;
+                errors_vee  [k][ l-l_min ][ r-r_min ] = 0.;
+                errors_wedge[k][ l-l_min ][ r-r_min ] = 0.;
                 
                 SparseMatrix broken_mass_primal_matrix = FEECBrokenMassMatrix ( M, M.getinnerdimension(),   k, r );
                 SparseMatrix broken_mass_dual_matrix   = FEECBrokenMassMatrix ( M, M.getinnerdimension(), n-k, r );

@@ -71,7 +71,7 @@ int main( int argc, char *argv[] )
                 SparseMatrix elevation = FEECBrokenElevationMatrix    ( M, M.getinnerdimension(), k, r, r_plus );
                 SparseMatrix interpol  = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), k, r, r_plus );
                 
-                errors[k][ l ][ r ][ r_plus ] = 0.;
+                errors[k][ l-l_min ][ r-r_min ][ r_plus ] = 0.;
                 
                 for( int i = 0; i < number_of_samples; i++ ){
 
