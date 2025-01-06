@@ -4,8 +4,8 @@
 
 #include "../../basic.hpp"
 #include "../../operators/composedoperators.hpp"
-#include "../../mesh/mesh.simplicial2D.hpp"
-#include "../../mesh/examples2D.hpp"
+#include "../../mesh/mesh.simplicial3D.hpp"
+#include "../../mesh/examples3D.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.veewedgehodge.hpp"
 #include "../../fem/utilities.hpp"
@@ -17,13 +17,11 @@ using namespace std;
 int main( int argc, char *argv[] )
 {
         
-        LOG << "Unit Test: (2D) Integrating scalar fields and volume forms" << nl;
+        LOG << "Unit Test: (3D) Integrating scalar fields and volume forms" << nl;
         
         LOG << "Initial mesh..." << nl;
         
-        // auto M = UnitSquare2D_simple();
-        auto M = UnitSquare2D_strange14();
-        // auto M = UnitTriangle2D();
+        auto M = UnitCube3D();
         
         M.check();
 
@@ -38,7 +36,7 @@ int main( int argc, char *argv[] )
         
         experiments_scalar_field.push_back( 
             [](const FloatVector& vec) -> FloatVector{
-                assert( vec.getdimension() == 2 );
+                assert( vec.getdimension() == 3 );
                 return FloatVector({ 
                     1.
                 });
@@ -48,9 +46,9 @@ int main( int argc, char *argv[] )
 
         experiments_scalar_field.push_back( 
             [](const FloatVector& vec) -> FloatVector{
-                assert( vec.getdimension() == 2 );
+                assert( vec.getdimension() == 3 );
                 return FloatVector({ 
-                    std::sin( Constants::twopi * vec[0] ) * std::sin( Constants::twopi * vec[1] ) 
+                    std::sin( Constants::twopi * vec[0] ) * std::sin( Constants::twopi * vec[1] ) * std::sin( Constants::twopi * vec[2] ) 
                 });
             }
         );
@@ -58,13 +56,12 @@ int main( int argc, char *argv[] )
 
         experiments_scalar_field.push_back( 
             [](const FloatVector& vec) -> FloatVector{
-                assert( vec.getdimension() == 2 );
-                return FloatVector({ std::exp( vec[0] + vec[1] ) });
+                assert( vec.getdimension() == 3 );
+                return FloatVector({ std::exp( vec[0] + vec[1] + vec[2] ) });
             }
         );
-        experiments_scalar_value.push_back( std::exp(2.) - 2 * std::exp(1.) + 1. );
-        experiments_scalar_value.push_back( 1. );
-
+        experiments_scalar_value.push_back( power_numerical( Constants::euler - 1., 3 ) );
+        
         std::vector<std::function<FloatVector(const FloatVector&)>> experiments_volume_field = experiments_scalar_field;
         std::vector<Float>                                          experiments_volume_value = experiments_scalar_value;
 
@@ -73,13 +70,13 @@ int main( int argc, char *argv[] )
 
         const int r_min = 0;
         
-        const int r_max = 3;
+        const int r_max = 2;
         
         const int l_min = 0;
         
-        const int l_max = 3;
+        const int l_max = 2;
 
-        // const int n = 2;
+        // const int n = 3;
         const int n = M.getinnerdimension();
         assert( n == M.getinnerdimension() );
         
