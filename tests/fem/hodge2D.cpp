@@ -25,8 +25,70 @@ int main( int argc, char *argv[] )
         
         M.check();
         
+        const int n = M.getinnerdimension();
+        
+        
 
 
+        std::vector<std::vector<std::function<FloatVector(const FloatVector&)>>> experiments_field(n+1);
+        std::vector<std::vector<Float>>                                          experiments_value(n+1);
+        
+        experiments_field[0].push_back( 
+            [](const FloatVector& vec) -> FloatVector{
+                assert( vec.getdimension() == 2 );
+                return FloatVector({ 
+                    1.
+                });
+            }
+        );
+        experiments_value[0].push_back( 1. );
+
+        
+        experiments_field[0].push_back( 
+            [](const FloatVector& vec) -> FloatVector{
+                assert( vec.getdimension() == 2 );
+                return FloatVector({ 
+                    vec[0]*vec[1]*vec[1] + std::exp( vec[0] * vec[1] )
+                });
+            }
+        );
+        experiments_value[0].push_back( 1./3. * 1./5. + square( Constants::euler*Constants::euler/2. - 1. ));
+
+        
+        experiments_field[1].push_back( 
+            [](const FloatVector& vec) -> FloatVector{
+                assert( vec.getdimension() == 2 );
+                return FloatVector({ 
+                    1., 1.
+                });
+            }
+        );
+        experiments_value[1].push_back( sqrt(2.) );
+
+        experiments_field[1].push_back( 
+            [](const FloatVector& vec) -> FloatVector{
+                assert( vec.getdimension() == 2 );
+                return FloatVector({ 
+                    vec[0]*vec[1]*vec[1] + std::exp( vec[0] * vec[1] ),
+                    5.
+                });
+            }
+        );
+        experiments_value[1].push_back( 1./3. * 1./5. + square( Constants::euler*Constants::euler/2. - 1. ) + 25. );
+
+
+        
+        experiments_field[2] = experiments_field[0];
+        experiments_value[2] = experiments_value[0];
+        
+        
+        
+        
+        
+        
+        
+        
+        
         const int r_min = 0;
         
         const int r_max = 2;
@@ -35,9 +97,7 @@ int main( int argc, char *argv[] )
         
         const int l_max = 2;
 
-        const int n = M.getinnerdimension();
-        
-        const int number_of_samples = 10;
+        const int number_of_samples = 1;
         
            
         
@@ -84,14 +144,19 @@ int main( int argc, char *argv[] )
 
                 LOG << "sampling..." << nl;
         
-                for( int i = 0; i < number_of_samples; i++ ){
+                for( int i = 0; i < experiments_field[k].size(); i++ ){
 
                     // LOG << "compare mass of u and star u...\t";
                     
-                    auto field = broken_mass_primal_matrix.createinputvector();
-                    field.random();
-                    field.normalize();
+                    // auto field = broken_mass_primal_matrix.createinputvector();
+                    // field.random();
+                    // field.normalize();
 
+                    auto current_field = experiments_field[k][i];
+                    auto current_value = experiments_value[k][i];
+
+                    auto field = Interpolation( M, n, k, r, current_field );
+                    
                     assert( field.is_finite() );
 
                     const auto dual_field = broken_hodge_primal_matrix * field;
@@ -111,25 +176,6 @@ int main( int argc, char *argv[] )
                     errors_mass[k][l-l_min][r-r_min] = maximum( errors_mass[k][l-l_min][r-r_min], error_mass );
 
                     {
-                        LOG << "integrate u wedge star u\t"; 
-
-                        SparseMatrix broken_wedge_with_dual_matrix  = FEECBrokenWedgeMatrix( M, M.getinnerdimension(), k, r, n-k, r, dual_field );
-
-                        const auto wedge_volume = broken_wedge_with_dual_matrix * field;
-
-                        Assert( volume_integrals.getdimension() == wedge_volume.getdimension(), volume_integrals.getdimension(), wedge_volume.getdimension() );
-                        const Float wedge_mass = volume_integrals * wedge_volume;
-                        // const Float wedge_mass = wedge_volume * ( broken_mass_volume_matrix * wedge_volume );
-
-                        if( k == n )
-                        LOG << mass_primal << space << wedge_mass << space << wedge_mass / mass_primal << nl;
-
-                        Float error_wedge = absolute( wedge_mass - mass_primal );
-                        
-                        errors_wedge[k][l-l_min][r-r_min] = maximum( errors_wedge[k][l-l_min][r-r_min], error_wedge );
-                    }
-
-                    {
                         // LOG << "integrate u vee u\t\t";
 
                         SparseMatrix broken_vee_with_primal_matrix  = FEECBrokenVeeMatrix( M, M.getinnerdimension(), k, r, k, r, field );
@@ -144,6 +190,25 @@ int main( int argc, char *argv[] )
                         Float error_vee = absolute( vee_mass - mass_primal );
                         
                         errors_vee[k][l-l_min][r-r_min] = maximum( errors_vee[k][l-l_min][r-r_min], error_vee );
+                    }
+
+                    {
+                        LOG << "integrate u wedge star u\t"; 
+
+                        SparseMatrix broken_wedge_with_primal_matrix  = FEECBrokenWedgeMatrix( M, M.getinnerdimension(), n-k, r, k, r, field );
+
+                        const auto wedge_volume = broken_wedge_with_primal_matrix * dual_field;
+
+                        Assert( volume_integrals.getdimension() == wedge_volume.getdimension(), volume_integrals.getdimension(), wedge_volume.getdimension() );
+                        const Float wedge_mass = volume_integrals * wedge_volume;
+                        // const Float wedge_mass = wedge_volume * ( broken_mass_volume_matrix * wedge_volume );
+
+                        // if( k == n )
+                        LOGPRINTF("primal mass %le vs wedge mass %le, ratio=%le\n", mass_primal, wedge_mass, wedge_mass / mass_primal );
+
+                        Float error_wedge = absolute( wedge_mass - mass_primal );
+                        
+                        errors_wedge[k][l-l_min][r-r_min] = maximum( errors_wedge[k][l-l_min][r-r_min], error_wedge );
                     }
 
                 }

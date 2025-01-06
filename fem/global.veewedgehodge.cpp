@@ -214,7 +214,7 @@ SparseMatrix FEECBrokenWedgeMatrix( const Mesh& mesh, int n, int k, int r , int 
         
         int local_index_of_entry = 0;
 
-        for( int mi_coupling_index = 0;    mi_coupling_index < mi_couplings.size();       mi_coupling_index++    ) 
+        for( int mi_coupling_index = 0;    mi_coupling_index    < mi_couplings.size();    mi_coupling_index++    ) 
         for( int sigma_coupling_index = 0; sigma_coupling_index < sigma_couplings.size(); sigma_coupling_index++ ) 
         {
 
@@ -231,7 +231,7 @@ SparseMatrix FEECBrokenWedgeMatrix( const Mesh& mesh, int n, int k, int r , int 
             SparseMatrix::MatrixEntry entry;
             entry.row    =                s * mis_output.size() * binomial_integer(n+1,k+l) + m_o * binomial_integer(n+1,k+l) + s_o;
             entry.column =                s * mis_input.size()  * binomial_integer(n+1,k  ) + m_i * binomial_integer(n+1,k  ) + s_i;
-            entry.value = signum * field[ s * mis_factor.size() * binomial_integer(n+1,  l) + m_f * binomial_integer(n+1,  l) + s_f ];
+            entry.value = signum * field[ s * mis_factor.size() * binomial_integer(n+1,  l) + m_f * binomial_integer(n+1,  l) + s_f ] * mesh.getOrientation(s);
             
             assert( std::isfinite(entry.value) );
 
