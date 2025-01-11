@@ -181,8 +181,6 @@ int main( int argc, char *argv[] )
 
                 M.shake_interior_vertices();
             }
-            
-            
 
         } 
         
@@ -216,10 +214,10 @@ int main( int argc, char *argv[] )
             {
                 
                 for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
-                    contable_scalar[i] << errors_scalar[i][l-l_min][r-r_min]; // Assert( errors_scalar[i][l-l_min][r-r_min] >= -desired_closeness ); //
+                    contable_scalar[i] << errors_scalar[i][l-l_min][r-r_min]; 
             
                 for( int i = 0; i < experiments_vector_function.size(); i++ ) 
-                    contable_vector[i] << errors_vector[i][l-l_min][r-r_min]; // Assert( errors_vector[i][l-l_min][r-r_min] >= -desired_closeness ); //
+                    contable_vector[i] << errors_vector[i][l-l_min][r-r_min]; 
             
             }
             

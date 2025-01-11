@@ -99,7 +99,7 @@ int main( int argc, char *argv[] )
         
         const int l_min = 0;
         
-        const int l_max = 2;
+        const int l_max = 1;
 
         const int number_of_samples = 1;
         
