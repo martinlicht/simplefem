@@ -196,33 +196,33 @@ int main( int argc, char *argv[] )
 
                 LOG << "...assemble mass matrices" << nl;
                 
-                auto massmatrix_scalar = DenseMatrix( FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r ) );
-                auto massmatrix_vector = DenseMatrix( FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r ) );
-                auto massmatrix_pseudo = DenseMatrix( FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r ) );  
-                auto massmatrix_volume = DenseMatrix( FEECBrokenMassMatrix( M, M.getinnerdimension(), 3, r ) );
+                auto massmatrix_scalar = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r ).getDenseMatrix();
+                auto massmatrix_vector = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r ).getDenseMatrix();
+                auto massmatrix_pseudo = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r ).getDenseMatrix();  
+                auto massmatrix_volume = FEECBrokenMassMatrix( M, M.getinnerdimension(), 3, r ).getDenseMatrix();
                 
-                auto stiffmatrix_scalar = Transpose(DenseMatrix( FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r   ) )) *
-                                          DenseMatrix( FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 ) ) *
-                                          DenseMatrix( FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r   ) );
+                auto stiffmatrix_scalar = Transpose(FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r   ) ).getDenseMatrix() *
+                                          FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 ).getDenseMatrix() *
+                                          FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r   ).getDenseMatrix();
 
-                auto stiffmatrix_vector = Transpose(DenseMatrix( FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r   ) )) *
-                                          DenseMatrix( FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r-1 ) ) *
-                                          DenseMatrix( FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r   ) );
+                auto stiffmatrix_vector = Transpose(FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r   ) ).getDenseMatrix() *
+                                          FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r-1 ).getDenseMatrix() *
+                                          FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r   ).getDenseMatrix();
                                          
-                auto stiffmatrix_pseudo = Transpose(DenseMatrix( FEECBrokenDiffMatrix( M, M.getinnerdimension(), 2, r   ) )) *
-                                          DenseMatrix( FEECBrokenMassMatrix( M, M.getinnerdimension(), 3, r-1 ) ) *
-                                          DenseMatrix( FEECBrokenDiffMatrix( M, M.getinnerdimension(), 2, r   ) );
+                auto stiffmatrix_pseudo = Transpose(FEECBrokenDiffMatrix( M, M.getinnerdimension(), 2, r   ) ).getDenseMatrix() *
+                                          FEECBrokenMassMatrix( M, M.getinnerdimension(), 3, r-1 ).getDenseMatrix() *
+                                          FEECBrokenDiffMatrix( M, M.getinnerdimension(), 2, r   ).getDenseMatrix();
                                          
                 
-                auto s_incmatrix_scalar = DenseMatrix( FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r ) );
-                auto s_incmatrix_vector = DenseMatrix( FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 1, r ) );
-                auto s_incmatrix_pseudo = DenseMatrix( FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 2, r ) );
-                auto s_incmatrix_volume = DenseMatrix( FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 3, r ) );
+                auto s_incmatrix_scalar = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r ).getDenseMatrix();
+                auto s_incmatrix_vector = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 1, r ).getDenseMatrix();
+                auto s_incmatrix_pseudo = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 2, r ).getDenseMatrix();
+                auto s_incmatrix_volume = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 3, r ).getDenseMatrix();
 
-                auto w_incmatrix_scalar = DenseMatrix( FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 0, r ) );
-                auto w_incmatrix_vector = DenseMatrix( FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 1, r ) );
-                auto w_incmatrix_pseudo = DenseMatrix( FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 2, r ) );
-                auto w_incmatrix_volume = DenseMatrix( FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 3, r ) );
+                auto w_incmatrix_scalar = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 0, r ).getDenseMatrix();
+                auto w_incmatrix_vector = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 1, r ).getDenseMatrix();
+                auto w_incmatrix_pseudo = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 2, r ).getDenseMatrix();
+                auto w_incmatrix_volume = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 3, r ).getDenseMatrix();
 
                 auto s_mass_scalar = Transpose(s_incmatrix_scalar) * massmatrix_scalar * s_incmatrix_scalar;
                 auto s_mass_vector = Transpose(s_incmatrix_vector) * massmatrix_vector * s_incmatrix_vector;

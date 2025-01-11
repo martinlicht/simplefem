@@ -14,7 +14,7 @@ class SparseMatrix;
 #include "../operators/floatvector.hpp"
 #include "../operators/linearoperator.hpp"
 #include "../operators/simpleoperators.hpp"
-#include "../sparse/sparsematrix.hpp"
+// #include "../sparse/sparsematrix.hpp"
 
 
 
@@ -46,7 +46,7 @@ class DenseMatrix final
 
         explicit DenseMatrix( const ScalingOperator& );
         explicit DenseMatrix( const DiagonalOperator& );
-        explicit DenseMatrix( const SparseMatrix& );
+        // explicit DenseMatrix( const SparseMatrix& );
         explicit DenseMatrix( const FloatVector& );
                 
         DenseMatrix( int number_of_blocks, const DenseMatrix& mat, Float scaling );

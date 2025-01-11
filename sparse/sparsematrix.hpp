@@ -132,6 +132,10 @@ public LinearOperator /* every matrix is a linear operator */
 
         SparseMatrix getTranspose() const;
 
+        /* obtain a transpose */
+
+        DenseMatrix getDenseMatrix() const;
+
         /* Memory size */
         
         std::size_t memorysize() const;

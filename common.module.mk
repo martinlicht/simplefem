@@ -17,6 +17,22 @@ $(error Expect 'moddir')
 endif
 
 
+external.previous      :=
+basic.previous         :=
+utility.previous       := external basic 
+combinatorics.previous := utility basic 
+operators.previous     := utility basic 
+dense.previous         := combinatorics operators utility basic 
+sparse.previous        := dense operators combinatorics utility basic 
+solver.previous        := operators basic 
+mesh.previous          := dense operators combinatorics utility basic 
+vtk.previous           := mesh dense operators combinatorics utility basic 
+fem.previous           := mesh sparse dense operators combinatorics utility basic 
+
+$(module).importdirectories := $(patsubst %, -L$(moddir)/../%/., $($(module).previous) )
+$(module).importfiles := $(patsubst %, -l:lib%.dll, $($(module).previous) )
+
+
 ######################################################################################
 # Set the variables for this file 
 # determine whether to use static or dynamic linking 
@@ -31,6 +47,7 @@ $(module).dependencies := $(patsubst %.cpp,$($(module).depdir)/%.d,$(notdir $($(
 $(module).libraryobject := $(moddir)/lib$(module).o
 $(module).sharedlibrary := $(moddir)/lib$(module).so
 $(module).staticlibrary := $(moddir)/lib$(module).a
+$(module).dlllibrary    := $(moddir)/lib$(module).dll
 
 # Set target specific variables for all recipes
 $(module).%: mymodule := $(module)
@@ -75,6 +92,7 @@ $(moddir)/$($(module).objects): %.o: %.cpp $($(module).depdir)/%.d | $($(module)
 #	 @echo libobject     $($(mymodule).libraryobject)
 #	 @echo so            $($(mymodule).sharedlibrary)
 #	 @echo a             $($(mymodule).staticlibrary)
+#	 @echo dll           $($(mymodule).dlllibrary)
 #	 @echo target:       $@
 #	 @echo target(red.)  $*
 #	 @echo source file:  $<
@@ -82,7 +100,7 @@ $(moddir)/$($(module).objects): %.o: %.cpp $($(module).depdir)/%.d | $($(module)
 #	 @echo DEPFLAGS:     $(DEPFLAGS)
 #	 @echo $($(mymodule).depdir)/$(notdir $*.d)
 	@echo Compiling and listing dependencies: $@ 
-#	$(CXX) $(CXXFLAGS) $(CPPFLAGS)                       $< -c -o $@ $(DEPFLAGS)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS)                       $< -c -o $@ $(DEPFLAGS)
 	@touch $@
 
 # Set target specific variables for all recipes
@@ -105,6 +123,7 @@ $(moddir)/.all.o: $($(module).sources) $(moddir)/.all.cpp $($(module).depdir)/.a
 #	 @echo libobject     $($(mymodule).libraryobject)
 #	 @echo so            $($(mymodule).sharedlibrary)
 #	 @echo a             $($(mymodule).staticlibrary)
+#	 @echo dll           $($(mymodule).dlllibrary)
 #	 @echo target:       $@
 #	 @echo target_red    $*
 #	 @echo source file:  $<
@@ -113,7 +132,7 @@ $(moddir)/.all.o: $($(module).sources) $(moddir)/.all.cpp $($(module).depdir)/.a
 #	 @echo Compiling and listing dependencies: $($(mymodule).libraryobject)
 #	 @echo Compiling and listing dependencies: $@
 	@echo Compiling and listing dependencies: $(mymoddir)
-	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(mymoddir)/.all.cpp -c -o $@  $(DEPFLAGS)
+	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(mymoddir)/.all.cpp -c -o $@  $(DEPFLAGS) 
 	@touch $@
 
 $($(module).depdir)/.all.d:
@@ -144,6 +163,14 @@ $($(module).sharedlibrary): $($(module).libraryobject)
 	@echo Shared library: $@
 	@$(CXX) $(CXXFLAGS) -shared -o $@ $^ $(LDLIBS)
 
+$($(module).dlllibrary): $($(module).libraryobject)
+	@echo DLL-type library: $@
+# @echo FUCK $($(mymodule).previous)
+# @echo FUCK $($(mymodule).importdirectories)
+# @echo FUCK $(mymodule).importdirectories
+# @echo FUCK $($(mymodule).importfiles)
+	$(CXX) $(CXXFLAGS) -shared -o $@ $^ $(LDLIBS) -Wl,-v -Wl,--export-all-symbols $($(mymodule).importdirectories) $($(mymodule).importfiles)   -static-libgcc -static-libstdc++
+
 $($(module).staticlibrary): $($(module).libraryobject)
 	@echo Static library: $@
 	@ar crs $($(mymodule).staticlibrary) $($(mymodule).libraryobject)
@@ -155,16 +182,18 @@ $($(module).staticlibrary): $($(module).libraryobject)
 # Finally, determine the build target depending on whether shared libraries are poossible or not
 
 .PHONY: buildobjects buildso builda
-.PHONY: $(module).buildobjects $(module).buildso $(module).builda
+.PHONY: $(module).buildobjects $(module).buildso $(module).builddll $(module).builda
 .PHONY: $(module).build
 
 $(module).buildobjects: $($(module).objects)
 $(module).buildso:      $($(module).sharedlibrary)
+$(module).builddll:     $($(module).dlllibrary)
 $(module).builda:       $($(module).staticlibrary)
 
 buildobjects: $(module).buildobjects
 buildso:      $(module).buildso
 builda:       $(module).builda
+builddll:     $(module).builddll
 
 
 ifeq ($(LINKINGTYPE),objectfile)
@@ -176,7 +205,11 @@ else
 ifeq ($(LINKINGTYPE),dynamic)
 $(module).build: $(module).buildso
 else 
+ifeq ($(LINKINGTYPE),dlllibrary)
+$(module).build: $(module).builddll
+else 
 $(error Unknown linkingtype $(LINKINGTYPE))
+endif 
 endif 
 endif 
 endif
@@ -207,6 +240,7 @@ $(module).list_of_objects:
 	@echo Headers:           $($(mymodule).headers);
 	@echo Static lib:        $($(mymodule).staticlibrary);
 	@echo Shared lib:        $($(mymodule).sharedlibrary);
+	@echo DLL-type lib:      $($(mymodule).dlllibrary);
 	@echo Objects:           $($(mymodule).objects);
 	@echo Dependencies:      $($(mymodule).dependencies);
 	@echo Build:             $($(mymodule).build);
@@ -294,6 +328,12 @@ $(module).grepissues:
 #	@-grep --line-number --color -E '([0-9]+e[0-9]+)|([0-9]+\.[0-9]+)|((+-\ )\.[0-9]+)|((+-\ )[0-9]+\.)' $(mymoddir)/*pp
 
 endif
+
+
+
+
+
+
 
 
 

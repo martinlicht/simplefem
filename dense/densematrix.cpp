@@ -156,17 +156,17 @@ DenseMatrix::DenseMatrix( const DiagonalOperator& dia )
     DenseMatrix::check();
 }
         
-DenseMatrix::DenseMatrix( const SparseMatrix& matrix )
-: LinearOperator( matrix.getdimout(), matrix.getdimin() ), 
-  entries( new (std::nothrow) Float[ matrix.getdimout() * matrix.getdimin() ]() )
-{
-    assert( entries != nullptr );
-    for( const SparseMatrix::MatrixEntry& entry : matrix.getentries() )
-    {
-        (*this)( entry.row, entry.column ) += entry.value;
-    }
-    DenseMatrix::check();
-}
+// DenseMatrix::DenseMatrix( const SparseMatrix& matrix )
+// : LinearOperator( matrix.getdimout(), matrix.getdimin() ), 
+//   entries( new (std::nothrow) Float[ matrix.getdimout() * matrix.getdimin() ]() )
+// {
+//     assert( entries != nullptr );
+//     for( const SparseMatrix::MatrixEntry& entry : matrix.getentries() )
+//     {
+//         (*this)( entry.row, entry.column ) += entry.value;
+//     }
+//     DenseMatrix::check();
+// }
         
 DenseMatrix::DenseMatrix( const FloatVector& myvector )
 : LinearOperator( myvector.getdimension(), 1 ), 

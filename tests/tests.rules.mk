@@ -60,9 +60,10 @@ linkerprefix       :=-Wl,
 $(context).rpath_t := $(patsubst %,-rpath=$(pathvar)/%,$(affix.$(context))) 
 $(context).rpath   := $(patsubst %,$(linkerprefix)%,$($(context).rpath_t)) 
 
-$(context).olib    := $(foreach X, $(affix.$(context)), $(projectdir)/$(X)/lib$(X).o  )
-$(context).alib    := $(foreach X, $(affix.$(context)), $(projectdir)/$(X)/lib$(X).a  )
-$(context).solib   := $(foreach X, $(affix.$(context)), $(projectdir)/$(X)/lib$(X).so )
+$(context).olib    := $(foreach X, $(affix.$(context)), $(projectdir)/$(X)/lib$(X).o   )
+$(context).alib    := $(foreach X, $(affix.$(context)), $(projectdir)/$(X)/lib$(X).a   )
+$(context).solib   := $(foreach X, $(affix.$(context)), $(projectdir)/$(X)/lib$(X).so  )
+$(context).dlllib  := $(foreach X, $(affix.$(context)), $(projectdir)/$(X)/lib$(X).dll )
 
 # $(context).olib    := $(patsubst %,$(projectdir)/%/.all.o, $(affix.$(context)))
 # $(context).alib    := $(patsubst %,$(projectdir)/%/lib%.a, $(affix.$(context)))
@@ -71,16 +72,18 @@ $(context).solib   := $(foreach X, $(affix.$(context)), $(projectdir)/$(X)/lib$(
 $(context).linklib     := $(patsubst %,-l%,$(affix.$(context)))
 $(context).linkalib    := $(patsubst %,-l:lib%.a,$(affix.$(context)))
 $(context).linksolib   := $(patsubst %,-l:lib%.so,$(affix.$(context)))
+$(context).linkdlllib  := $(patsubst %,-l:lib%.dll,$(affix.$(context)))
 
 $(context).relevantlibs := 
 
 
 ifeq ($(LINKINGTYPE),static)
 
-$(context).mylib := $($(context).linkalib)
+$(context).mylib        := $($(context).linkalib)
 $(context).relevantlibs := $($(context).alib)
 
 else ifeq ($(LINKINGTYPE),dynamic)
+
 $(context).mylib := $($(context).linksolib)
 #$(context).relevantlibs := 
 
@@ -88,6 +91,11 @@ else ifeq ($(LINKINGTYPE),objectfile)
 
 $(context).mylib := $($(context).olib)
 $(context).relevantlibs := $($(context).olib)
+
+else ifeq ($(LINKINGTYPE),dlllibrary)
+
+$(context).mylib := $($(context).dlllib)
+$(context).relevantlibs := $($(context).dlllib)
 
 else ifeq ($(LINKINGTYPE),unspecified)
 
@@ -150,8 +158,10 @@ else ifeq ($(LINKINGTYPE),static)
 	@$(CXX) $(CXXFLAGS_EXECUTABLE) $(CPPFLAGS) $< $($(mycontext).include)                       $($(mycontext).mylib) -o $@ $(LDFLAGS) $(LDLIBS) $(DEPFLAGS)
 else ifeq ($(LINKINGTYPE),objectfile)
 	@$(CXX) $(CXXFLAGS_EXECUTABLE) $(CPPFLAGS) $< $($(mycontext).include)                       $($(mycontext).mylib) -o $@ $(LDFLAGS) $(LDLIBS) $(DEPFLAGS)
+else ifeq ($(LINKINGTYPE),dlllibrary)
+	@$(CXX) $(CXXFLAGS_EXECUTABLE) $(CPPFLAGS) $< $($(mycontext).include)                       $($(mycontext).mylib) -o $@ $(LDFLAGS) $(LDLIBS) $(DEPFLAGS) -static-libgcc -static-libstdc++
 else 
-	@echo Unable to compile the final object $@!
+	@echo Unable to compile the final object $@! $(LINKINGTYPE)
 endif
 	@touch $@
 	

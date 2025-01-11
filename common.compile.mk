@@ -74,7 +74,7 @@ FLAG_NO_EXCEPTIONS=yes
 
 # Do you want to ENABLE excessive warning options?
 # Uncomment the following line to enable excessive warning options
-FLAG_EXCESSIVE_WARNINGS=yes
+# FLAG_EXCESSIVE_WARNINGS=yes
 
 # Do you want to ENABLE either extended precision or single precision?
 # Uncomment one the following lines to switch from double precision
@@ -167,6 +167,7 @@ endif
 #                                             #
 #         Set the compiler command            #
 #       (see also language std below)         #
+#                                             #
 ###############################################
 
 ifeq ($(FLAG_CXX),GCC)
@@ -197,7 +198,27 @@ endif
 #                                             #
 ###############################################
 
-CXXFLAGS_LANG := -std=c++20 -pedantic -fno-rtti -D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES 
+CXXFLAGS_LANG := -std=c++20 -pedantic -fno-rtti
+
+ifeq ($(FLAG_NO_EXCEPTIONS),yes)
+	CXXFLAGS_LANG += -fno-exceptions
+endif
+
+ifeq ($(FLAG_DO_USE_SINGLE_PRECISION),yes)
+	CXXFLAGS_LANG += -fsingle-precision-constant
+endif
+
+# CXXFLAGS_LANG += -fvisibility=default
+
+CXXFLAGS_LANG += -fvisibility-inlines-hidden
+
+# enums can only take values in the enumeration type 
+CXXFLAGS_LANG += -fstrict-enums
+
+# CXXFLAGS_LANG += -fstrict-eval-order
+
+# TODO: exceptions, visibility, and strict enums are C++ dialect options and should be placed somewhere else
+
 
 
 
@@ -284,29 +305,10 @@ endif
 
 CXXFLAGS_CODEGEN := 
 
-ifeq ($(FLAG_NO_EXCEPTIONS),yes)
-	CXXFLAGS_CODEGEN += -fno-exceptions
-endif
-
-ifeq ($(FLAG_DO_USE_SINGLE_PRECISION),yes)
-	CXXFLAGS_CODEGEN += -fsingle-precision-constant
-endif
-
 # If we are NOT on Windows, then use position-independent code. Also, avoid the procedure linkage table 
 ifneq ($(OS),Windows_NT)
 	CXXFLAGS_CODEGEN += -fpic -fno-plt 
 endif
-
-# CXXFLAGS_CODEGEN += -fvisibility=default
-
-CXXFLAGS_CODEGEN += -fvisibility-inlines-hidden
-
-# enums can only take values in the enumeration type 
-CXXFLAGS_CODEGEN += -fstrict-enums
-
-# CXXFLAGS_CODEGEN += -fstrict-eval-order
-
-
 
 
 
@@ -828,7 +830,8 @@ ifeq ($(FLAG_DO_USE_SANITIZER),yes)
 
 	endif
 
-	SANITIZERS :=$(SANITIZERS)address,leak,
+	SANITIZERS :=$(SANITIZERS)address
+	#,leak,
 	# SANITIZERS :=$(SANITIZERS)thread 
 
 	# thread cannot be combined with address and leak 
@@ -961,6 +964,7 @@ endif
 
 CPPFLAGS := 
 
+CPPFLAGS +=  -D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES 
 
 CURRENT_COMMIT_ID := $(shell git rev-parse HEAD)
 
@@ -1052,6 +1056,7 @@ ifeq ($(FLAG_DO_OPTIMIZE),yes)
 else
 ifeq ($(OS),Windows_NT)
 	LINKINGTYPE:=static
+	# LINKINGTYPE:=dlllibrary
 else 
 	LINKINGTYPE:=dynamic
 endif

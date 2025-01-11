@@ -564,6 +564,15 @@ SparseMatrix SparseMatrix::getTranspose() const
 }
 
 
+DenseMatrix SparseMatrix::getDenseMatrix() const
+{
+    DenseMatrix ret( getdimout(), getdimin(), 0. );
+    for( MatrixEntry entry : this->entries )
+    {
+        ret( entry.row, entry.column ) += entry.value;
+    }
+    return ret;
+}
 
 // FloatVector InverseDiagonalPreconditioner( const SparseMatrix& mat ) const
 // { 
