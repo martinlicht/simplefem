@@ -1,12 +1,4 @@
 
-#include <string>
-#include <vector>
-#include <map>
-#include <utility>
-#include <algorithm>
-#include <iostream>
-#include <fstream>
-
 
 #include "../basic.hpp"
 #include "../combinatorics/indexrange.hpp"
@@ -29,7 +21,7 @@
 
 void MeshSimplicial3D::midpoint_refinement( int t )
 {
-    check();
+    // check();
     
 //     assert( 0 <= t && t < counter_faces );
 //     
@@ -59,12 +51,12 @@ void MeshSimplicial3D::midpoint_refinement( int t )
 //     data_vertex_firstparent_edge.resize     ( counter_vertices + 1,             nullindex   );
 //     data_edge_nextparents_of_vertices.resize( counter_edges + 4,   { nullindex, nullindex } );
 //     
-//     getcoordinates().addcoordinates( 1 );
+//     getCoordinates().addcoordinates( 1 );
 //     
 //     
 //     /* load the new coordinate */
 //     
-//     getcoordinates().loadvector( counter_vertices, get_face_midpoint( t ) );
+//     getCoordinates().loadvector( counter_vertices, get_face_midpoint( t ) );
 //     
 //     
 //     /* assemble the data and auxiliary variables */

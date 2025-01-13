@@ -2,28 +2,21 @@
 
 /**/
 
-#include <iostream>
-#include <fstream>
-
 #include "../../basic.hpp"
-#include "../../mesh/coordinates.hpp"
-#include "../../mesh/mesh.simplicial2D.hpp"
-#include "../../mesh/examples2D.hpp"
-#include "../../mesh/examples3D.hpp"
 #include "../../fem/finitediff.hpp"
 
 
 using namespace std;
 
-int main()
+int main( int argc, char *argv[] )
 {
-        LOG << "Unit Test for Fields and Finite Differences" << endl;
+        LOG << "Unit Test for Fields and Finite Differences" << nl;
         
         //TODO: Brush up these tests
         
         {
             
-            LOG << "Two-dimensional setting" << endl;
+            LOG << "Two-dimensional setting" << nl;
         
             auto scalar = []( const FloatVector& point ) -> FloatVector { 
                 return FloatVector({ 
@@ -41,21 +34,24 @@ int main()
             
             AlternatingForm bar = foo.laplacian(h);
             
-            FloatVector point = {1.*3.14159/2,0.};
+            FloatVector point = FloatVector({1.*Constants::pi/2,0.});
 
-//             LOG << h/2.0 << space << ( foo( {0.+h,0.} ) - foo( {0.,0.} ) )[0] / h << std::endl << std::endl;
-//             LOG << h/2.0 << space << ( 2 * foo( {0.,0.} ) - foo( {0.+h,0.} ) - foo( {0.-h,0.} ) )[0] / (h*h) << std::endl;
+//             LOG << h/2.0 << space << ( foo( {0.+h,0.} ) - foo( {0.,0.} ) )[0] / h << nl << nl;
+//             LOG << h/2.0 << space << ( 2 * foo( {0.,0.} ) - foo( {0.+h,0.} ) - foo( {0.-h,0.} ) )[0] / (h*h) << nl;
+            
+            auto ext = foo.exteriorderivative(h)(point);
+            
+            auto extext = foo.exteriorderivative(h).exteriorderivative(h)( FloatVector({2., 3.}) );
 
-            LOG << foo( point ) << space << foo.exteriorderivative(h)(point) << space << bar( point ) << std::endl;
+            LOG << foo( point ) << nl << ext << nl << bar( point ) << nl;
 
-            LOG << foo.exteriorderivative(h).exteriorderivative(h)( {2., 3.} ) << std::endl;
+            LOG << extext << nl;
         
         }
         
-        
         {
             
-            LOG << "Three-dimensional setting" << endl;
+            LOG << "Three-dimensional setting" << nl;
         
             auto scalarfield = []( const FloatVector& point ) -> FloatVector { 
                 return FloatVector({ 
@@ -86,7 +82,7 @@ int main()
             for( int k = 0; k < 5; k++ ){
                 FloatVector v(3); 
                 v.random();
-                LOG << d_form1(v) << endl;
+                LOG << d_form1(v) << nl;
             }
             
             
@@ -95,7 +91,7 @@ int main()
 
         {
             
-            LOG << "Six-dimensional setting" << endl;
+            LOG << "Six-dimensional setting" << nl;
         
             auto scalarfield = []( const FloatVector& point ) -> FloatVector { 
                 return FloatVector({ 
@@ -115,12 +111,14 @@ int main()
             for( int k = 0; k < 5; k++ ){
                 FloatVector v(6); 
                 v.random();
-                LOG << dd_form0(v) << endl;
+                LOG << dd_form0(v) << nl;
             }
             
             
         
         }
 
+        LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
+        
         return 0;
 }

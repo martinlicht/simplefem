@@ -1,0 +1,48 @@
+name: Unit tests for finite element methods
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 11 * * SUN'
+  
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    timeout-minutes: 600
+
+    steps:
+    - name: Show Processor Information (Linux)
+      run: lscpu
+    - name: Install OpenMP
+      run: sudo apt-get install -y libomp-dev
+#    - name: install valgrind here 
+#      run: sudo apt install -y valgrind
+    - name: show information on the current node
+      run: lscpu
+    - name: checkout repository...
+      uses: actions/checkout@v4
+    - name: build project...
+      run: make OPTIMIZED_DEBUG=yes 
+    - name: run tests (solverfem)...
+      run: cd tests/ && make solverfem.run && cd .. 
+#      continue-on-error: true
+    - name: run tests (nullspace)...
+      run: cd tests/ && make nullspace.run && cd .. 
+#      continue-on-error: true
+    - name: run tests (sullivan2D)...
+      run: cd tests/ && make sullivan2D.run && cd .. 
+#      continue-on-error: true
+#     - name: run tests (sullivan3D)...
+#       run: cd tests/ && make sullivan3D.run && cd ..  
+##       continue-on-error: true
+    - name: run tests (whitney2D)...
+      run: cd tests/ && make whitney2D.run && cd .. 
+#      continue-on-error: true
+#     - name: run tests (whitney3D)...
+#       run: cd tests/ && make whitney3D.run && cd .. 
+##       continue-on-error: true
+#     - name: run tests (nullspace)...
+#       run: cd tests/ && make nullspace.run && cd .. 
+##       continue-on-error: true

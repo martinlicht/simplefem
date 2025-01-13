@@ -45,26 +45,26 @@ MeshSimplicial3D readMeshSimplicial3D( const char* filename )
 void writeMeshSimplicial3D( std::ostream& out, const MeshSimplicial3D& mesh, bool sugar )
 {
     /* Preamble */
-    if( sugar ) out << "Writing simplicial 3D Mesh..." << std::endl;
+    if( sugar ) out << "Writing simplicial 3D Mesh..." << nl;
     
-    if( sugar ) out << "number of tetrahedra: " << std::endl;;
-    out << mesh.count_tetrahedra() << std::endl;
+    if( sugar ) out << "number of tetrahedra: " << nl;;
+    out << mesh.count_tetrahedra() << nl;
     
-    if( sugar ) out << "number of faces: " << std::endl;;
-    out << mesh.count_faces() << std::endl;
+    if( sugar ) out << "number of faces: " << nl;;
+    out << mesh.count_faces() << nl;
     
-    if( sugar ) out << "number of edges: " << std::endl;;
-    out << mesh.count_edges() << std::endl;
+    if( sugar ) out << "number of edges: " << nl;;
+    out << mesh.count_edges() << nl;
     
-    if( sugar ) out << "number of vertices: " << std::endl;
-    out << mesh.count_vertices() << std::endl;
+    if( sugar ) out << "number of vertices: " << nl;
+    out << mesh.count_vertices() << nl;
     
-    if( sugar ) out << "external dimension: " << std::endl;
-    out << mesh.getcoordinates().getdimension() << std::endl;
+    if( sugar ) out << "external dimension: " << nl;
+    out << mesh.getCoordinates().getdimension() << nl;
     
     /* tetrahedron -> faces */
     
-    if( sugar ) out << "for each tetrahedron, the faces: " << std::endl;
+    if( sugar ) out << "for each tetrahedron, the faces: " << nl;
     for( int t = 0; t < mesh.count_tetrahedra(); t++ ) {
         if( sugar ) out << t << ": ";
         out << mesh.get_tetrahedron_face( t, 0 )
@@ -73,17 +73,17 @@ void writeMeshSimplicial3D( std::ostream& out, const MeshSimplicial3D& mesh, boo
             << space
             << mesh.get_tetrahedron_face( t, 2 )
             << space
-            << mesh.get_tetrahedron_face( t, 3 ) << std::endl;
+            << mesh.get_tetrahedron_face( t, 3 ) << nl;
     }
     
-    if( sugar ) out << "for each face, the first parent tetrahedron: " << std::endl;
+    if( sugar ) out << "for each face, the first parent tetrahedron: " << nl;
     for( int f = 0; f < mesh.count_faces(); f++ ) {
         if( sugar ) out << f << ": ";
         out << mesh.get_face_firstparent_tetrahedron( f )
-            << std::endl;
+            << nl;
     }
     
-    if( sugar ) out << "for each tetrahedron, the next neighbors: " << std::endl;
+    if( sugar ) out << "for each tetrahedron, the next neighbors: " << nl;
     for( int t = 0; t < mesh.count_tetrahedra(); t++ ) {
         if( sugar ) out << t << ": ";
         out << mesh.get_tetrahedron_nextparent_of_face( t, 0 )
@@ -93,12 +93,12 @@ void writeMeshSimplicial3D( std::ostream& out, const MeshSimplicial3D& mesh, boo
             << mesh.get_tetrahedron_nextparent_of_face( t, 2 )
             << space
             << mesh.get_tetrahedron_nextparent_of_face( t, 3 )
-            << std::endl;
+            << nl;
     }
     
     /* tetrahedron -> edges */
     
-    if( sugar ) out << "for each tetrahedron, the edges: " << std::endl;
+    if( sugar ) out << "for each tetrahedron, the edges: " << nl;
     for( int t = 0; t < mesh.count_tetrahedra(); t++ ) {
         if( sugar ) out << t << ": ";
         out << mesh.get_tetrahedron_edge( t, 0 )
@@ -111,17 +111,17 @@ void writeMeshSimplicial3D( std::ostream& out, const MeshSimplicial3D& mesh, boo
             << space
             << mesh.get_tetrahedron_edge( t, 4 )
             << space
-            << mesh.get_tetrahedron_edge( t, 5 ) << std::endl;
+            << mesh.get_tetrahedron_edge( t, 5 ) << nl;
     }
     
-    if( sugar ) out << "for each edge, the first parent tetrahedron: " << std::endl;
+    if( sugar ) out << "for each edge, the first parent tetrahedron: " << nl;
     for( int e = 0; e < mesh.count_edges(); e++ ) {
         if( sugar ) out << e << ": ";
         out << mesh.get_edge_firstparent_tetrahedron( e )
-            << std::endl;
+            << nl;
     }
     
-    if( sugar ) out << "for each tetrahedron, the next neighbors: " << std::endl;
+    if( sugar ) out << "for each tetrahedron, the next neighbors: " << nl;
     for( int t = 0; t < mesh.count_tetrahedra(); t++ ) {
         if( sugar ) out << t << ": ";
         out << mesh.get_tetrahedron_nextparent_of_edge( t, 0 )
@@ -135,12 +135,12 @@ void writeMeshSimplicial3D( std::ostream& out, const MeshSimplicial3D& mesh, boo
             << mesh.get_tetrahedron_nextparent_of_edge( t, 4 )
             << space
             << mesh.get_tetrahedron_nextparent_of_edge( t, 5 )
-            << std::endl;
+            << nl;
     }
     
     /* tetrahedron -> vertices */
     
-    if( sugar ) out << "for each tetrahedron, the vertices: " << std::endl;
+    if( sugar ) out << "for each tetrahedron, the vertices: " << nl;
     for( int t = 0; t < mesh.count_tetrahedra(); t++ ) {
         if( sugar ) out << t << ": ";
         out << mesh.get_tetrahedron_vertex( t, 0 )
@@ -149,17 +149,17 @@ void writeMeshSimplicial3D( std::ostream& out, const MeshSimplicial3D& mesh, boo
             << space
             << mesh.get_tetrahedron_vertex( t, 2 )
             << space
-            << mesh.get_tetrahedron_vertex( t, 3 ) << std::endl;
+            << mesh.get_tetrahedron_vertex( t, 3 ) << nl;
     }
     
-    if( sugar ) out << "for each vertex, the first parent tetrahedron: " << std::endl;
+    if( sugar ) out << "for each vertex, the first parent tetrahedron: " << nl;
     for( int v = 0; v < mesh.count_vertices(); v++ ) {
         if( sugar ) out << v << ": ";
         out << mesh.get_vertex_firstparent_tetrahedron( v )
-            << std::endl;
+            << nl;
     }
     
-    if( sugar ) out << "for each tetrahedron, the next neighbors: " << std::endl;
+    if( sugar ) out << "for each tetrahedron, the next neighbors: " << nl;
     for( int t = 0; t < mesh.count_tetrahedra(); t++ ) {
         if( sugar ) out << t << ": ";
         out << mesh.get_tetrahedron_nextparent_of_vertex( t, 0 )
@@ -169,31 +169,31 @@ void writeMeshSimplicial3D( std::ostream& out, const MeshSimplicial3D& mesh, boo
             << mesh.get_tetrahedron_nextparent_of_vertex( t, 2 )
             << space
             << mesh.get_tetrahedron_nextparent_of_vertex( t, 3 )
-            << std::endl;
+            << nl;
     }
     
     assert( out.good() );
     
     /* face -> edges */
     
-    if( sugar ) out << "for each face, the edges: " << std::endl;
+    if( sugar ) out << "for each face, the edges: " << nl;
     for( int f = 0; f < mesh.count_faces(); f++ ) {
         if( sugar ) out << f << ": ";
         out << mesh.get_face_edge( f, 0 )
             << space
             << mesh.get_face_edge( f, 1 )
             << space
-            << mesh.get_face_edge( f, 2 ) << std::endl;
+            << mesh.get_face_edge( f, 2 ) << nl;
     }
     
-    if( sugar ) out << "for each edge, the first parent face: " << std::endl;
+    if( sugar ) out << "for each edge, the first parent face: " << nl;
     for( int e = 0; e < mesh.count_edges(); e++ ) {
         if( sugar ) out << e << ": ";
         out << mesh.get_edge_firstparent_face( e )
-            << std::endl;
+            << nl;
     }
     
-    if( sugar ) out << "for each face, the next neighbors: " << std::endl;
+    if( sugar ) out << "for each face, the next neighbors: " << nl;
     for( int f = 0; f < mesh.count_faces(); f++ ) {
         if( sugar ) out << f << ": ";
         out << mesh.get_face_nextparent_of_edge( f, 0 )
@@ -201,29 +201,29 @@ void writeMeshSimplicial3D( std::ostream& out, const MeshSimplicial3D& mesh, boo
             << mesh.get_face_nextparent_of_edge( f, 1 )
             << space
             << mesh.get_face_nextparent_of_edge( f, 2 )
-            << std::endl;
+            << nl;
     }
     
     /* face -> vertices */
     
-    if( sugar ) out << "for each face, the vertices: " << std::endl;
+    if( sugar ) out << "for each face, the vertices: " << nl;
     for( int f = 0; f < mesh.count_faces(); f++ ) {
         if( sugar ) out << f << ": ";
         out << mesh.get_face_vertex( f, 0 )
             << space
             << mesh.get_face_vertex( f, 1 )
             << space
-            << mesh.get_face_vertex( f, 2 ) << std::endl;
+            << mesh.get_face_vertex( f, 2 ) << nl;
     }
     
-    if( sugar ) out << "for each vertex, the first parent face: " << std::endl;
+    if( sugar ) out << "for each vertex, the first parent face: " << nl;
     for( int v = 0; v < mesh.count_vertices(); v++ ) {
         if( sugar ) out << v << ": ";
         out << mesh.get_vertex_firstparent_face( v )
-            << std::endl;
+            << nl;
     }
     
-    if( sugar ) out << "for each face, the next neighbors: " << std::endl;
+    if( sugar ) out << "for each face, the next neighbors: " << nl;
     for( int f = 0; f < mesh.count_faces(); f++ ) {
         if( sugar ) out << f << ": ";
         out << mesh.get_face_nextparent_of_vertex( f, 0 )
@@ -231,40 +231,62 @@ void writeMeshSimplicial3D( std::ostream& out, const MeshSimplicial3D& mesh, boo
             << mesh.get_face_nextparent_of_vertex( f, 1 )
             << space
             << mesh.get_face_nextparent_of_vertex( f, 2 )
-            << std::endl;
+            << nl;
     }
     
     assert( out.good() );
     
     /* edge -> vertices */
     
-    if( sugar ) out << "for each edge, the vertices: " << std::endl;
+    if( sugar ) out << "for each edge, the vertices: " << nl;
     for( int e = 0; e < mesh.count_edges(); e++ ) {
         if( sugar ) out << e << ": ";
         out << mesh.get_edge_vertex( e, 0 )
             << space
-            << mesh.get_edge_vertex( e, 1 ) << std::endl;
+            << mesh.get_edge_vertex( e, 1 ) << nl;
     }
     
-    if( sugar ) out << "for each vertex, the first parent edge: " << std::endl;
+    if( sugar ) out << "for each vertex, the first parent edge: " << nl;
     for( int v = 0; v < mesh.count_vertices(); v++ ) {
         if( sugar ) out << v << ": ";
         out << mesh.get_vertex_firstparent_edge( v )
-            << std::endl;
+            << nl;
     }
     
-    if( sugar ) out << "for each edge, the next neighbors: " << std::endl;
+    if( sugar ) out << "for each edge, the next neighbors: " << nl;
     for( int e = 0; e < mesh.count_edges(); e++ ) {
         if( sugar ) out << e << ": ";
         out << mesh.get_edge_nextparent_of_vertex( e, 0 )
             << space
             << mesh.get_edge_nextparent_of_vertex( e, 1 )
-            << std::endl;
+            << nl;
+    }
+    
+    assert( out.good() );
+
+    for( int t = 0; t < mesh.count_tetrahedra(); t++ ) {
+        if( sugar ) out << t << ": ";
+        out << static_cast<int>( mesh.get_flag(3,t) ) << nl;
+    }
+
+    for( int f = 0; f < mesh.count_faces(); f++ ) {
+        if( sugar ) out << f << ": ";
+        out << static_cast<int>( mesh.get_flag(2,f) ) << nl;
+    }
+
+    for( int e = 0; e < mesh.count_edges(); e++ ) {
+        if( sugar ) out << e << ": ";
+        out << static_cast<int>( mesh.get_flag(1,e) ) << nl;
+    }
+
+    for( int v = 0; v < mesh.count_vertices(); v++ ) {
+        if( sugar ) out << v << ": ";
+        out << static_cast<int>( mesh.get_flag(0,v) ) << nl;
     }
     
     assert( out.good() );
     
-    writeCoordinates( out, mesh.getcoordinates(), sugar );
+    writeCoordinates( out, mesh.getCoordinates(), sugar );
 }
 
 
@@ -415,6 +437,39 @@ MeshSimplicial3D readMeshSimplicial3D( std::istream& in )
     
     assert( in.good() );
     
+    /* flags */
+
+    std::vector<SimplexFlag> flags_tetrahedra( counter_tetrahedra, SimplexFlag::SimplexFlagInvalid );
+    std::vector<SimplexFlag> flags_faces     ( counter_faces,      SimplexFlag::SimplexFlagInvalid );
+    std::vector<SimplexFlag> flags_edges     ( counter_edges,      SimplexFlag::SimplexFlagInvalid );
+    std::vector<SimplexFlag> flags_vertices  ( counter_vertices,   SimplexFlag::SimplexFlagInvalid );
+    
+    for( int t = 0; t < counter_tetrahedra; t++ ) {
+        int temp; 
+        in >> temp;
+        flags_tetrahedra[t] = static_cast<SimplexFlag>( temp );
+    }
+
+    for( int f = 0; f < counter_faces; f++ ) {
+        int temp; 
+        in >> temp;
+        flags_faces[f] = static_cast<SimplexFlag>( temp );
+    }
+
+    for( int e = 0; e < counter_edges; e++ ) {
+        int temp; 
+        in >> temp;
+        flags_edges[e] = static_cast<SimplexFlag>( temp );
+    }
+
+    for( int v = 0; v < counter_vertices; v++ ) {
+        int temp; 
+        in >> temp;
+        flags_vertices[v] = static_cast<SimplexFlag>( temp );
+    }
+    
+    assert( in.good() );
+    
     /* coordinates */
     
     Coordinates coords = readCoordinates( in );
@@ -423,14 +478,21 @@ MeshSimplicial3D readMeshSimplicial3D( std::istream& in )
     
     /* return */
     
-    return MeshSimplicial3D( dim, coords, 
+    auto ret = MeshSimplicial3D( dim, coords, 
                              tetrahedron_faces,    face_firstparent_tetrahedron,   tetrahedron_nextparents_of_faces, 
                              tetrahedron_edges,    edge_firstparent_tetrahedron,   tetrahedron_nextparents_of_edges, 
                              tetrahedron_vertices, vertex_firstparent_tetrahedron, tetrahedron_nextparents_of_vertices, 
                              face_edges,           edge_firstparent_face,          face_nextparents_of_edges, 
                              face_vertices,        vertex_firstparent_face,        face_nextparents_of_vertices, 
                              edge_vertices,        vertex_firstparent_edge,        edge_nextparents_of_vertices
-                           );    
+                           );
+
+    ret.set_flags( 3, flags_tetrahedra );
+    ret.set_flags( 2, flags_faces      );
+    ret.set_flags( 1, flags_edges      );
+    ret.set_flags( 0, flags_vertices   );
+
+    return ret;
 }
 
 

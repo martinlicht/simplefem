@@ -1,11 +1,14 @@
 
 
-// #include <cassert>
+
 #include <algorithm>
-#include <iostream>
+#include <istream>
+#include <ostream>
+#include <sstream>
 #include <iterator>
 #include <vector>
 
+#include "../utility/random.hpp"
 #include "coordinates.hpp"
 
 
@@ -29,39 +32,49 @@ Coordinates::Coordinates( int dimension, int number, const std::vector<Float>& d
 
 Coordinates::~Coordinates()
 {
-    Coordinates::check();
+    // Coordinates::check();
 }
 
 void Coordinates::check() const
 {
     assert( dimension >= 0 && number >= 0 );
-    assert( data.size() == dimension * number );
+    if( data.size() != 0 )
+        assert( data.size() == dimension * number );
 }
 
 
 
-void Coordinates::print( std::ostream& os ) const
+// void Coordinates::print( std::ostream& os ) const 
+// {
+//     os << text();
+// }
+
+std::string Coordinates::text() const
 {
-    os << "dimension: " << dimension << " - #vertices: " << number << std::endl;
+    std::stringstream os;
+    
+    os << "dimension: " << dimension << " - #vertices: " << number << nl;
     for( int n = 0; n < number; n++ ) {
         for( int d = 0; d < dimension; d++ )
             os << getdata( n, d ) << " ";
-        os << std::endl;
+        os << nl;
     }
+
+    return os.str();
 }
 
 
-void Coordinates::read( std::istream& is ) 
-{
-    for( int n = 0; n < number; n++ ) {
-        for( int d = 0; d < dimension; d++ ) {
-            Float temp;
-            is >> temp;
-            setdata( n, d, temp );
-            assert( ! is.fail() );
-        }
-    }
-}
+// void Coordinates::read( std::istream& is ) 
+// {
+//     for( int n = 0; n < number; n++ ) {
+//         for( int d = 0; d < dimension; d++ ) {
+//             Float temp;
+//             is >> temp;
+//             setdata( n, d, temp );
+//             assert( ! is.fail() );
+//         }
+//     }
+// }
 
 
 
@@ -102,6 +115,25 @@ FloatVector Coordinates::getvectorclone( int n ) const
     return getvectorclone( n, 1. );
 }
 
+/* get range of coordinates */
+        
+Float Coordinates::getmin( int d ) const {
+    assert( 0 <= d && d < dimension );
+    Float ret = getdata(0,d);
+    for( int n = 1; n < number; n++ )
+        ret = minimum(ret,getdata(n,d));
+    return ret;
+}
+Float Coordinates::getmax( int d ) const {
+    assert( 0 <= d && d < dimension );
+    Float ret = getdata(0,d);
+    for( int n = 1; n < number; n++ )
+        ret = maximum(ret,getdata(n,d));
+    return ret;
+}
+        
+        
+        
 FloatVector Coordinates::getvectorclone( int n, Float scale ) const
 {
     assert( 0 <= n && n < number );
@@ -128,7 +160,7 @@ void Coordinates::loadvector( int n, const FloatVector& input, Float scale )
 
 /* get/set coordinates as vectors  */
         
-FloatVector Coordinates::getdimensionclone( int d, Float s ) const // TODO: Test these routines 
+FloatVector Coordinates::getdimensionclone( int d, Float s ) const 
 {
     assert( 0 <= d && d < dimension );
     FloatVector ret( number );
@@ -156,6 +188,13 @@ void Coordinates::scale( Float alpha )
             data.at( n * dimension + d ) *= alpha;
 }
                                 
+void Coordinates::scale( FloatVector alphas )
+{
+    for( int n = 0; n < number; n++ )
+        for( int d = 0; d < dimension; d++ )
+            data.at( n * dimension + d ) *= alphas[d];
+}
+                                
 void Coordinates::shift( const FloatVector& add )
 {
     assert( add.getdimension() == dimension );
@@ -163,6 +202,15 @@ void Coordinates::shift( const FloatVector& add )
         FloatVector temp = getvectorclone( n );
         temp += add;
         loadvector( n, temp );
+    }
+}
+
+void Coordinates::shake_random( Float epsilon )
+{
+    for( int n = 0; n < number; n++ )
+    for( int d = 0; d < dimension; d++ )
+    {
+        data[ n * dimension + d ] += epsilon * random_uniform();
     }
 }
 
@@ -195,10 +243,10 @@ void Coordinates::append( const FloatVector& v )
 }
 
 
-void Coordinates::addcapacity( int capacity )
+void Coordinates::addcapacity( int additional_capacity )
 {
-    assert( capacity >= 0 );
-    data.reserve( data.size() + dimension * capacity );
+    assert( additional_capacity >= 0 );
+    data.reserve( data.size() + dimension * additional_capacity );
 }
 
 void Coordinates::addcoordinates( int add_number )
@@ -219,9 +267,9 @@ DenseMatrix Coordinates::getLinearPart( const IndexMap& im ) const
     IndexRange imsrc = im.getSourceRange();
     assert( imsrc.min() == 0 && imsrc.max() <= getdimension() );
     
-    DenseMatrix ret( getdimension(), std::max(0,imsrc.max()-1) );
+    DenseMatrix ret( getdimension(), maximum(0,imsrc.max()-1) );
     assert( ret.getdimout() == getdimension() );
-    assert( ret.getdimin() == std::max(0,imsrc.max()-1) );
+    assert( ret.getdimin() == maximum(0,imsrc.max()-1) );
     
     for( int p = 1; p <= imsrc.max(); p++ )
         ret.setcolumn( p-1, 
@@ -235,7 +283,7 @@ FloatVector Coordinates::getShiftPart( const IndexMap& im ) const
 {
     assert( im.getTargetRange() == getIndexRange() );
     IndexRange imsrc = im.getSourceRange();
-    assert( !(im.isempty()) && imsrc.min() == 0 && imsrc.max() <= getdimension() );
+    assert( !(im.is_empty()) && imsrc.min() == 0 && imsrc.max() <= getdimension() );
     int index = im[0];
     return getvectorclone( index );
 }
@@ -256,7 +304,31 @@ FloatVector Coordinates::getCenter() const
 
 
 
-bool compare( const Coordinates& coords_left, const Coordinates& coords_right, Float tolerance )
+std::vector<Float>& Coordinates::raw()
+{
+    return data;
+}
+
+const std::vector<Float>& Coordinates::raw() const
+{
+    return data;
+}
+
+
+
+
+        
+
+
+std::size_t Coordinates::memorysize() const
+{
+    return sizeof(*this) + data.size() * sizeof(Float);
+}
+
+
+
+
+bool Coordinates::is_equal_to( const Coordinates& coords_left, const Coordinates& coords_right )
 {
     if( coords_left.getnumber() != coords_right.getnumber() )
       return false;
@@ -266,7 +338,7 @@ bool compare( const Coordinates& coords_left, const Coordinates& coords_right, F
     
     for( int n = 0; n < coords_left.getnumber(); n++ )
     for( int d = 0; d < coords_left.getdimension(); d++ )
-      if( absolute( coords_left.getdata( n, d ) - coords_right.getdata( n, d ) ) > tolerance )
+      if( not is_numerically_close( coords_left.getdata( n, d ), coords_right.getdata( n, d ), 0.1 ) )
         return false;
     
     return true;

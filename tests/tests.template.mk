@@ -3,28 +3,29 @@
 # within the 'tests' folder. It imports all the stuff it needs.
 # 
 
-
+.PHONY: default 
 default: build
 
-include ../../common.recipe.mk 
+context    :=$(notdir $(CURDIR))
+contextdir :=.
+testsdir   :=../
+projectdir :=../../
+pathvar    :=$(CURDIR)/../../
 
-include ../../common.upkeep.mk
+include ../../common.compile.mk 
 
 include ../tests.affices.mk
 
-projectdir:=../../
-pathvar:=$(shell pwd)/../../
-
-# should be a subdirectory of where the sources are
-depdir := .deps
-
-contextdir:=.
-
-context:=$(shell basename $$(pwd))
-
-
+.PHONY: build 
 build: $(context).tests
 
 include ../tests.rules.mk
-# include ../tests.run.mk
 
+# clean:
+# 	echo $(cleanfiles)
+
+# outputclean:
+# 	echo $(outputcleanfiles)
+
+# depclean:
+# 	echo $(depcleanfiles)

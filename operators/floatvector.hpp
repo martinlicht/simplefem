@@ -1,10 +1,9 @@
 #ifndef INCLUDEGUARD_OPERATOR_FLOATVECTOR_HPP
 #define INCLUDEGUARD_OPERATOR_FLOATVECTOR_HPP
 
-#include <cassert>
 #include <functional>
 #include <initializer_list>
-#include <ostream>
+// #include <ostream>
 #include <vector>
 
 #include "../basic.hpp"
@@ -24,47 +23,48 @@ class FloatVector
     
     public:
         
+        /* Constructors */
+        
+        explicit FloatVector( int dim, Float initivalue = notanumber );
+        
+        explicit FloatVector( const FloatVector&, Float scaling );
+        explicit FloatVector( FloatVector&&, Float scaling );
+        
+        explicit FloatVector( const std::vector<Float>&, Float scaling = 1. );
+        explicit FloatVector( const std::vector<int>&, Float scaling = 1. );
+
+        explicit FloatVector( const std::initializer_list<Float>& l );
+        
+        explicit FloatVector( int dimension, const std::function<Float(int)>& generator, Float scaling = 1. );
+
+
+        /* standard interface */ 
+        
         FloatVector() = delete;
-        
         FloatVector( const FloatVector& );
-        
-        explicit FloatVector( FloatVector&& );
-        
+        FloatVector( FloatVector&& );
         FloatVector& operator=( const FloatVector& vec );
-        
         FloatVector& operator=( FloatVector&& vec );
 
         virtual ~FloatVector();
         
         
-        explicit FloatVector( int dim, Float initivalue = notanumber );
         
-        explicit FloatVector( const FloatVector&, Float scaling );
-        
-        explicit FloatVector( FloatVector&&, Float scaling );
-        
-        explicit FloatVector( const std::vector<Float>&, Float scaling = 1. );
-        
-        explicit FloatVector( const std::vector<int>&, Float scaling = 1. );
-
-                 FloatVector( const std::initializer_list<Float>& l );
-        
-        explicit FloatVector( int dimension, const std::function<Float(int)>& generator, Float scaling = 1. );
-
-        
-        
+        /* standard methods */
 
         void check() const;
         
-        void print( std::ostream& ) const;
+        std::string text() const; 
+
+        std::string data_as_text( bool indexed = true, bool rowwise = false ) const; 
+
+        // void print( std::ostream& ) const;
         
-        void printplain( std::ostream& ) const;
-        
-        void lg() const;
-        
-        void lgplain() const;
+        // void lg() const { LOG << text() << nl; };
         
         
+        /* OTHER METHODS */
+
         /* Cloning */
 
         FloatVector clone() const;
@@ -72,29 +72,33 @@ class FloatVector
 
         /* information and data access */
         
-        int getdimension() const;
+        HOTCALL int getdimension() const;
         
-        Float setentry( int, Float );
+        Float setentry( int p, Float value );
         
-        Float getentry( int ) const;
+        Float getentry( int p ) const;
         
 
-        Float& at( int ) &;
+        Float& at( int p ) &;
         
-        const Float& at( int ) const &;
+        const Float& at( int p ) const &;
         
-        Float& operator[]( int ) &;
+        Float& operator[]( int p ) &;
         
-        const Float& operator[]( int ) const &;
+        const Float& operator[]( int p ) const &;
         
         const std::vector<Float> getdata() const;
         
         
         /* load values */
         
-        void setentries( Float );
+        void setentries( Float uniform_value );
         
         void random();
+        
+        void random_within_range( Float min, Float max );
+        
+        void to_absolute();
         
         void zero();
         
@@ -109,53 +113,55 @@ class FloatVector
         
         FloatVector& normalize();
         
-        FloatVector& normalize( const LinearOperator& );
+        FloatVector& normalize( const LinearOperator& op );
         
-        FloatVector& scale( Float );
+        FloatVector& scale( Float factor );
         
-        FloatVector& scaleinverse( Float );
+        FloatVector& scaleinverse( Float divisor );
         
-        FloatVector& shift( Float );
+        FloatVector& shift( Float value );
         
-        FloatVector& shiftnegative( Float );
+        FloatVector& shiftnegative( Float value );
         
         
         /* slices */
         
-        FloatVector getslice( int, int ) const;
+        FloatVector getslice( int base, int len ) const;
         
-        void setslice( int, int, Float );
+        void setslice( int base, int len, Float uniform_value );
         
-        void setslice( int, const FloatVector& );
+        void setslice( int base, const FloatVector& src );
         
-        void addslice( int, const FloatVector&, Float );
+        void addslice( int base, const FloatVector& summand, Float factor );
         
         
         /* arithmetics and assignments */
         
-        void copydatafrom( const FloatVector& );
+        void copydatafrom( const FloatVector& src );
         
-        void copydatafrom( Float, const FloatVector& );
-        
-        
-        void generatedatafrom( const std::function<Float(int)>& );
-        
-        void generatedatafrom( Float, const std::function<Float(int)>& );
+        void copydatafrom( Float base, const FloatVector& src );
         
         
-        void adddatafrom( const FloatVector& );
+        void generatedatafrom( const std::function<Float(int)>& generator );
         
-        void adddatafrom( Float, const FloatVector& );
-        
-        void adddatafrom( Float, Float, const FloatVector& );
+        void generatedatafrom( Float factor, const std::function<Float(int)>& generator );
         
         
-        Float scalarproductwith( const FloatVector& ) const;
+        void adddatafrom( const FloatVector& summand );
         
-        Float scalarproductwith( const FloatVector&, const std::vector<bool>& ) const;
+        void adddatafrom( Float scalingsrc, const FloatVector& summand );
+        
+        void adddatafrom( Float scalingdest, Float scalingsrc, const FloatVector& summand );
+        
+        
+        Float scalarproductwith( const FloatVector& other ) const;
+        
+        Float scalarproductwith( const FloatVector& other, const std::vector<bool>& mask ) const;
         
         
         /* Calculations */
+        
+        Float min() const;
         
         Float average() const;
         
@@ -165,9 +171,9 @@ class FloatVector
         
         Float norm_sq() const;
         
-        Float norm( const LinearOperator& ) const;
+        Float norm( const LinearOperator& op ) const;
         
-        Float norm_sq( const LinearOperator& ) const;
+        Float norm_sq( const LinearOperator& op ) const;
         
         Float maxnorm() const;
         
@@ -175,27 +181,27 @@ class FloatVector
         
         Float l2norm() const;
         
-        Float lpnorm( Float ) const;
+        Float lpnorm( Float p, Float inner_weight = 1. ) const;
         
         
         
         
         /* Investigations */
         
-        bool isfinite() const;
+        bool is_finite() const;
         
-        bool iszero() const;
+        bool is_zero() const;
         
-        bool ispositive() const;
+        bool is_positive() const;
         
-        bool isnegative() const;
+        bool is_negative() const;
         
-        bool isnonnegative() const;
+        bool is_nonnegative() const;
         
-        bool isnonpositive() const;
+        bool is_nonpositive() const;
         
         
-        bool issmall( Float eps = 1.000e-5 ) const;
+        bool is_numerically_small( Float threshold = desired_closeness ) const;
         
 
 
@@ -206,6 +212,13 @@ class FloatVector
         Float* raw();
         
         const Float* raw() const;
+        
+        
+        
+        
+        /* Memory size */
+        
+        std::size_t memorysize() const;
         
         
         
@@ -318,6 +331,20 @@ class FloatVector
         int dimension;
         Float* pointer;
 
+    public:
+
+        static bool is_equal_to( const FloatVector& vector_left, const FloatVector& vector_right );
+
+        friend inline bool operator==( const FloatVector& vector_left, const FloatVector& vector_right )
+        {
+            return is_equal_to( vector_left, vector_right );
+        }
+
+        friend inline bool operator!=( const FloatVector& vector_left, const FloatVector& vector_right )
+        {
+            return not is_equal_to( vector_left, vector_right );
+        }
+
 };
 
 
@@ -414,9 +441,12 @@ inline Float operator*( const FloatVector& left, const FloatVector& right )
 
 
 /* Output stream notation */
-inline std::ostream& operator<<( std::ostream& out, const FloatVector& vec )
+// inline std::ostream& operator<<( std::ostream& out, const FloatVector& vec )
+template<typename Stream>
+// inline std::ostream& operator<<( std::ostream& out, const FloatVector& vec )
+inline Stream& operator<<( Stream&& out, const FloatVector& vec )
 {
-    vec.print( out );
+    out << vec.text(); // vec.print( out );
     return out;
 }
 
@@ -429,6 +459,27 @@ inline FloatVector unitvector( int d, int i )
     ret[ i ] = 1.0;
     return ret;
 }
+
+
+
+
+// Base function to end recursion
+inline FloatVector concatFloatVector( const FloatVector& vec ) {
+    return vec;
+}
+
+// Template function to concatenate strings
+template <typename... Args>
+inline FloatVector concatFloatVector( const FloatVector& first, Args... args) {
+    auto others = concatFloatVector(args...);
+    FloatVector ret( first.getdimension() + others.getdimension() );
+    ret.setslice( 0, first );
+    ret.setslice( first.getdimension(), others );
+    return ret;
+}
+
+//
+FloatVector interlace( const FloatVector& first, const FloatVector& second );
 
 
 

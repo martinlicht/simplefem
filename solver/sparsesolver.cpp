@@ -5,29 +5,29 @@
 #include "sparsesolver.hpp"
 
 
-#include <cassert>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <new>
 #include <utility>
 
-#ifdef _OPENMP
+#if defined(_OPENMP)
 #include <omp.h>
 #endif
 
 
+static const bool csr_restart_on_full_dimension = false;
+static const bool csr_restart_before_finish     = false;
 
 
 
-
-void ConjugateGradientSolverCSR( 
+int ConjugateGradientSolverCSR( 
     const int N, 
     Float* __restrict__ x, 
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ residual,
-    const Float threshold,
+    const Float tolerance,
     int print_modulo
 ) {
     
@@ -38,7 +38,7 @@ void ConjugateGradientSolverCSR(
     assert( csrcolumns );
     assert( csrvalues );
     assert( residual );
-    assert( threshold > 0 );
+    assert( tolerance > 0 );
     assert( print_modulo >= -1 );
     
     Float* __restrict__ direction = new (std::nothrow) Float[N];
@@ -50,13 +50,16 @@ void ConjugateGradientSolverCSR(
 
     int K = 0;
     
+    if( print_modulo >= 0 ) 
+        LOGPRINTF( "START Conjugate Gradient CSR\n" );
+
     while( K < N ){
         
-        bool restart_condition = ( K == 0 ); // or K % 1000 == 0;
+        bool restart_condition = ( K == 0 ) or ( csr_restart_on_full_dimension and K % N == 0 );
         
-        bool residual_seems_small = ( K != 0 ) and absolute(r_r) < threshold*threshold;
+        bool residual_seems_small = ( K != 0 ) and absolute(r_r) < tolerance*tolerance;
 
-        if( restart_condition or residual_seems_small ) {
+        if( restart_condition or ( residual_seems_small and csr_restart_before_finish ) ) UNLIKELY {
             
             r_r = 0.;
         
@@ -73,19 +76,23 @@ void ConjugateGradientSolverCSR(
                 direction[c] = residual[c]; // this line seems to slow down performance ....
                 
                 r_r += residual[c] * residual[c];
+
             }
+
+            if( print_modulo >= 0 ) 
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(r_r), (double)(safedouble) tolerance );
+
         
         }
         
         /* printing information */
 
         if( print_modulo > 0 and K % print_modulo == 0 ) 
-            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
-                   K, N, (long double)(r_r), (long double) threshold*threshold );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(r_r), (double)(safedouble) tolerance );
 
         /* Check whether residual is small */
                 
-        bool residual_is_small = absolute(r_r) < threshold*threshold;
+        bool residual_is_small = absolute(r_r) < tolerance*tolerance;
         
         if( residual_is_small )
             break;
@@ -112,16 +119,16 @@ void ConjugateGradientSolverCSR(
         
         
         bool denominator_is_unreasonable = not std::isfinite(d_Ad) or d_Ad < 0.;
-        bool denominator_is_small    = sqrt(absolute(d_Ad)) < machine_epsilon;
+        bool denominator_is_small    = std::sqrt(absolute(d_Ad)) < machine_epsilon;
         
-        if( denominator_is_unreasonable ) {
-            if( print_modulo >= 0 ) printf( "Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
+        if( denominator_is_unreasonable ) UNLIKELY {
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient energy is unreasonable with %.9le\n", K, N, (double)(safedouble)d_Ad );
             break;
         }
         
-        if( denominator_is_small ) {
-            if( print_modulo >= 0 ) printf( "Gradient energy is small with %.9Le while residual is %.9Le vs %.9Le\n", 
-                                            (long double)d_Ad, (long double)r_r, (long double)threshold*threshold );
+        if( denominator_is_small ) UNLIKELY {
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(r_r), (double)(safedouble) tolerance );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   WARNING: Gradient energy is small with %.9le\n", K, N, (double)(safedouble)d_Ad );
             break;
         }
         
@@ -161,12 +168,13 @@ void ConjugateGradientSolverCSR(
     
     
     if( print_modulo >= 0 ) 
-        printf( "Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
-                K, N, (long double)(r_r), (long double) threshold*threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(r_r), (double)(safedouble) tolerance );
 
     
     delete[] ( direction ); 
     delete[] ( auxiliary );
+
+    return K;
 
 }
 
@@ -188,13 +196,13 @@ void ConjugateGradientSolverCSR(
 
 
 
-void ConjugateGradientSolverCSR_DiagonalPreconditioner( 
+int ConjugateGradientSolverCSR_DiagonalPreconditioner( 
     const int N, 
     Float* __restrict__ x, 
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ residual,
-    const Float threshold,
+    const Float tolerance,
     int print_modulo,
     const Float* __restrict__ precon
 ) {
@@ -206,7 +214,7 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
     assert( csrcolumns );
     assert( csrvalues );
     assert( residual );
-    assert( threshold > 0 );
+    assert( tolerance > 0 );
     assert( print_modulo >= -1 );
     assert( precon );
     
@@ -221,13 +229,16 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
 
     int K = 0;
     
+    if( print_modulo >= 0 ) 
+        LOGPRINTF( "START Conjugate Gradient CSR (Diag)\n" );
+
     while( K < N ){
         
-        bool restart_condition = ( K == 0 ); // or K % 1000 == 0;
+        bool restart_condition = ( K == 0 ) or ( csr_restart_on_full_dimension and K % N == 0 );
         
-        bool preconresidual_seems_small = ( K != 0 ) and absolute(z_r) < threshold*threshold;
+        bool preconresidual_seems_small = ( K != 0 ) and absolute(z_r) < tolerance*tolerance;
 
-        if( restart_condition or preconresidual_seems_small ) {
+        if( restart_condition or ( preconresidual_seems_small and csr_restart_before_finish ) ) UNLIKELY {
             
             z_r = 0.;
         
@@ -252,18 +263,21 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
                 z_r += zirconium[c] * residual[c];
             
             }
+
+            if( print_modulo >= 0 ) 
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
+
             
         }
         
         /* printing information */
 
-        if( print_modulo > 0 and K % print_modulo == 0 ) 
-            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n",
-                   K, N, (long double)(z_r), (long double) threshold*threshold );
+        if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
         
         /* Check whether residual is small */
                 
-        bool preconresidual_is_small = absolute(z_r) < threshold*threshold;
+        bool preconresidual_is_small = absolute(z_r) < tolerance*tolerance;
         
         if( preconresidual_is_small )
             break;
@@ -292,16 +306,16 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
         
         
         bool denominator_is_unreasonable = not std::isfinite(d_Ad) or d_Ad < 0.;
-        bool denominator_is_small    = sqrt(absolute(d_Ad)) < machine_epsilon;
+        bool denominator_is_small    = std::sqrt(absolute(d_Ad)) < machine_epsilon;
         
-        if( denominator_is_unreasonable ) {
-            if( print_modulo >= 0 ) printf( "Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
+        if( denominator_is_unreasonable ) UNLIKELY {
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient energy is unreasonable with %.9le\n", K, N, (double)(safedouble)d_Ad );
             break;
         }
         
-        if( denominator_is_small ) {
-            if( print_modulo >= 0 ) printf( "Gradient energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
-                                            (long double)d_Ad, (long double)z_r, (long double)threshold*threshold );
+        if( denominator_is_small ) UNLIKELY {
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   WARNING: Gradient energy is small with %.9le\n", K, N, (double)(safedouble)d_Ad );
             break;
         }
         
@@ -348,13 +362,14 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
     
     
     if( print_modulo >= 0 ) 
-        printf( "Residual after %d of max. %d iterations: %.9Le (%.9Le)\n",
-                K, N, (long double)(z_r), (long double) threshold*threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
 
     
     delete[] ( direction ); 
     delete[] ( zirconium ); 
     delete[] ( auxiliary );
+
+    return K;
 
 }
 
@@ -386,13 +401,13 @@ void ConjugateGradientSolverCSR_DiagonalPreconditioner(
 
 
 
-void ConjugateGradientSolverCSR_SSOR( 
+int ConjugateGradientSolverCSR_SSOR( 
     const int N, 
     Float* __restrict__ x, 
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ residual,
-    const Float threshold,
+    const Float tolerance,
     int print_modulo,
     const Float* __restrict__ diagonal,
     Float omega
@@ -405,7 +420,7 @@ void ConjugateGradientSolverCSR_SSOR(
     assert( csrcolumns );
     assert( csrvalues );
     assert( residual );
-    assert( threshold > 0 );
+    assert( tolerance > 0 );
     assert( print_modulo >= -1 );
     assert( diagonal );
     
@@ -425,14 +440,20 @@ void ConjugateGradientSolverCSR_SSOR(
 
     int K = 0;
     
+    if( print_modulo >= 0 ) 
+        LOGPRINTF( "START Conjugate Gradient CSR (SSOR)\n" );
+
     while( K < N ){
         
-        bool restart_condition = ( K == 0 ); // or K % 1000 == 0;
+        bool restart_condition = ( K == 0 ) or ( csr_restart_on_full_dimension and K % N == 0 );
         
-        bool preconresidual_seems_small = false and absolute(z_r) < threshold*threshold;
+        bool preconresidual_seems_small = ( K != 0 ) and absolute(z_r) < tolerance*tolerance;
 
-        if( restart_condition or preconresidual_seems_small ) {
+        if( restart_condition or ( preconresidual_seems_small and csr_restart_before_finish ) ) UNLIKELY {
             
+            #if defined(_OPENMP)
+            #pragma omp parallel for
+            #endif
             for( int c = 0; c < N; c++ ) {
                 
                 if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
@@ -446,6 +467,7 @@ void ConjugateGradientSolverCSR_SSOR(
             
             // inv( L^t + D/omega ) * D * inv( L + D/omega )
             
+            // NOTE: Don't parallelize
             for( int c = 0; c < N; c++ ) {
                 
                 if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
@@ -460,6 +482,9 @@ void ConjugateGradientSolverCSR_SSOR(
                 
             }
         
+            #if defined(_OPENMP)
+            #pragma omp parallel for
+            #endif
             for( int c = 0; c < N; c++ ) {
             
                 if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
@@ -469,6 +494,7 @@ void ConjugateGradientSolverCSR_SSOR(
                 mittlerer[c] *= ( 2. - omega ) / omega;
             }
             
+            // NOTE: Don't parallelize
             for( int c = N-1; c >= 0; c-- ) {
                 
                 if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
@@ -485,6 +511,9 @@ void ConjugateGradientSolverCSR_SSOR(
             
             z_r = 0.;
         
+            #if defined(_OPENMP)
+            #pragma omp parallel for reduction( + : z_r )
+            #endif
             for( int c = 0; c < N; c++ ) {
                             
                 if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
@@ -494,18 +523,21 @@ void ConjugateGradientSolverCSR_SSOR(
                 z_r += zirconium[c] * residual[c];
             
             }
+
+            if( print_modulo >= 0 ) UNLIKELY 
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
+
             
         }
         
         /* printing information */
 
-        if( print_modulo > 0 and K % print_modulo == 0 ) 
-            printf( "Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
-                    K, N, (long double)(z_r), (long double) threshold*threshold );
+        if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
         
         /* Check whether residual is small */
                 
-        bool preconresidual_is_small = absolute(z_r) < threshold*threshold;
+        bool preconresidual_is_small = absolute(z_r) < tolerance*tolerance;
         
         if( preconresidual_is_small )
             break;
@@ -517,6 +549,9 @@ void ConjugateGradientSolverCSR_SSOR(
         
         Float d_Ad = 0.;
         
+        #if defined(_OPENMP)
+        #pragma omp parallel for reduction( + : d_Ad ) 
+        #endif
         for( int c = 0; c < N; c++ )
         {
             auxiliary[c] = 0.;
@@ -531,22 +566,23 @@ void ConjugateGradientSolverCSR_SSOR(
         
         
         bool denominator_is_unreasonable = not std::isfinite(d_Ad) or d_Ad < 0.;
-        bool denominator_is_small    = sqrt(absolute(d_Ad)) < machine_epsilon;
+        bool denominator_is_small    = std::sqrt(absolute(d_Ad)) < machine_epsilon;
         
-        if( denominator_is_unreasonable ) {
-            if( print_modulo >= 0 ) printf( "Gradient energy is unreasonable with %.9Le\n", (long double)d_Ad );
+        if( denominator_is_unreasonable ) UNLIKELY {
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient energy is unreasonable with %.9le\n", K, N, (double)(safedouble)d_Ad );
             break;
         }
         
-        if( denominator_is_small ) {
-            if( print_modulo >= 0 ) printf( "Gradient energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
-                                            (long double)d_Ad, (long double)z_r, (long double)threshold*threshold );
+        if( denominator_is_small ) UNLIKELY {
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   WARNING: Gradient energy is small with %.9le\n", K, N, (double)(safedouble)d_Ad );
             break;
         }
         
         
-        Float alpha = z_r / d_Ad;
+        const Float alpha = z_r / d_Ad;
     
+        // NOTE: Don't parallelize 
         for( int c = 0; c < N; c++ )
         {
             
@@ -572,6 +608,7 @@ void ConjugateGradientSolverCSR_SSOR(
 //         
 //         }
         
+        // NOTE: Don't parallelize
         for( int c = N-1; c >= 0; c-- ) {
             
             if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
@@ -592,10 +629,264 @@ void ConjugateGradientSolverCSR_SSOR(
             
         }
         
-        Float beta = z_r_new / z_r;
+        const Float beta = z_r_new / z_r;
         
         z_r = z_r_new;
         
+        #if defined(_OPENMP)
+        #pragma omp parallel for 
+        #endif
+        for( int c = 0; c < N; c++ ) {
+            
+            if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+            
+            direction[c] = zirconium[c] + beta * direction[c];
+            
+        }
+        
+        K++;
+        
+    }
+    
+    if( print_modulo >= 0 ) UNLIKELY 
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
+
+    
+    delete[] ( direction ); 
+    delete[] ( zirconium ); 
+    delete[] ( mittlerer ); 
+    delete[] ( auxiliary );
+
+    return K;
+
+}
+
+
+
+
+
+int ConjugateGradientSolverCSR_SSOR_Eisenstat( 
+    const int N, 
+    Float* __restrict__ x, 
+    const Float* __restrict__ b, 
+    const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
+    Float* __restrict__ residual,
+    const Float tolerance,
+    int print_modulo,
+    const Float* __restrict__ diagonal,
+    Float omega
+) {
+    
+    assert( N > 0 );
+    assert( x );
+    assert( b );
+    assert( csrrows );
+    assert( csrcolumns );
+    assert( csrvalues );
+    assert( residual );
+    assert( tolerance > 0 );
+    assert( print_modulo >= -1 );
+    assert( diagonal );
+    
+    Float* __restrict__ direction = new (std::nothrow) Float[N];
+    Float* __restrict__ zirconium = new (std::nothrow) Float[N];
+    Float* __restrict__ technical = new (std::nothrow) Float[N];
+    Float* __restrict__ auxiliary = new (std::nothrow) Float[N];
+    assert( direction );
+    assert( zirconium );
+    assert( technical );
+    assert( auxiliary );
+    
+//     for( int i = 0; i < N; i++ )
+//         direction[i] = zirconium[i] = technical[i] = auxiliary[i] = 0.; 
+    
+    Float z_r = notanumber;
+
+    int K = 0;
+    
+    if( print_modulo >= 0 ) 
+        LOGPRINTF( "START Conjugate Gradient CSR (SSOR-Eisenstat)\n" );
+
+    while( K < N ){
+        
+        bool restart_condition = ( K == 0 ) or ( csr_restart_on_full_dimension and K % N == 0 );
+        
+        bool preconresidual_seems_small = ( K != 0 ) and absolute(z_r) < tolerance*tolerance;
+
+        if( restart_condition or ( preconresidual_seems_small and csr_restart_before_finish ) ) UNLIKELY {
+            
+
+            // compute the residual, save it in 'auxiliary'
+            #if defined(_OPENMP)
+            #pragma omp parallel for
+            #endif
+            for( int c = 0; c < N; c++ ) {
+                
+                if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+            
+                Float aux = b[c];
+                
+                for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                    if( diagonal[csrcolumns[d]] != 0. )
+                        aux -= csrvalues[ d ] * x[ csrcolumns[d] ];
+
+                auxiliary[c] = aux;
+                
+            }
+
+            // Lower-left solve, save it in 'residual'
+            // NOTE: Don't parallelize
+            for( int c = 0; c < N; c++ ) {
+                
+                if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+                    
+                Float aux = auxiliary[c];
+                
+                for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                    if( csrcolumns[d] < c && diagonal[csrcolumns[d]] != 0. )
+                        aux -= csrvalues[ d ] * residual[ csrcolumns[d] ];
+                
+                residual[c] = aux * omega / diagonal[c];
+                
+            }
+        
+            z_r = 0.;
+        
+            // compute z_r, z, and d from the vector r
+            #if defined(_OPENMP)
+            #pragma omp parallel for reduction( + : z_r )
+            #endif
+            for( int c = 0; c < N; c++ ) {
+            
+                if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+                
+                zirconium[c] = residual[c] * diagonal[c] * ( 2. - omega ) / omega;
+                
+                direction[c] = zirconium[c];
+            
+                z_r += zirconium[c] * residual[c];
+            }
+            
+            if( print_modulo >= 0 ) UNLIKELY 
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
+
+            
+        }
+        
+        /* printing information */
+
+        if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
+        
+        /* Check whether residual is small */
+                
+        bool preconresidual_is_small = absolute(z_r) < tolerance*tolerance;
+        
+        if( preconresidual_is_small ) UNLIKELY 
+            break;
+
+
+
+        /* now the main work of the entire algorithm */
+        
+        // NOTE The calculation of d_r is reduced to z_r, which is already known.
+        
+        Float d_Ad = 0.;
+
+        // NOTE: Don't parallelize
+        // Upper right solve, save in 'technical'
+        for( int c = N-1; c >= 0; c-- ) {
+            
+            if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+            
+            Float aux = direction[c];
+            
+            for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                if( csrcolumns[d] > c && diagonal[csrcolumns[d]] != 0. )
+                    aux -= csrvalues[ d ] * technical[ csrcolumns[d] ];
+            
+            technical[c] = aux * omega / diagonal[c];
+            
+        }
+
+        // NOTE: Don't parallelize (UPDATE d_Ad )
+        // Lower left solve, save in 'auxiliary'
+        for( int c = 0; c < N; c++ )
+        {
+            
+            if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+            
+            Float aux = direction[c] - ( 2. / omega - 1. ) * diagonal[c] * technical[c];
+            
+            for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                if( csrcolumns[d] < c && diagonal[csrcolumns[d]] != 0. )
+                    aux -= csrvalues[ d ] * auxiliary[ csrcolumns[d] ];
+            
+            auxiliary[c] = aux * omega / diagonal[c];
+            
+        }
+        
+        
+        
+        #if defined(_OPENMP)
+        #pragma omp parallel for reduction( + : d_Ad )
+        #endif
+        for( int c = 0; c < N; c++ )
+        {
+            if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+            
+            auxiliary[c] += technical[c];
+
+            d_Ad += auxiliary[c] * direction[c];
+
+        } // NOTE: with extra memory or extra additions, we can get rid of the extra loop 
+        
+        
+        
+        bool denominator_is_unreasonable = not std::isfinite(d_Ad) or d_Ad < 0.;
+        bool denominator_is_small    = std::sqrt(absolute(d_Ad)) < machine_epsilon;
+        
+        if( denominator_is_unreasonable ) UNLIKELY {
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient energy is unreasonable with %.9le\n", K, N, (double)(safedouble)d_Ad );
+            break;
+        }
+        
+        if( denominator_is_small ) UNLIKELY {
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   WARNING: Gradient energy is small with %.9le\n", K, N, (double)(safedouble)d_Ad );
+            break;
+        }
+        
+        
+        const Float alpha = z_r / d_Ad;
+    
+        Float z_r_new = 0.;
+        
+        #if defined(_OPENMP)
+        #pragma omp parallel for reduction( + : z_r_new )
+        #endif
+        for( int c = 0; c < N; c++ )
+        {
+            
+            if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+            
+            x[c] += alpha * technical[c];
+            
+            residual[c] -= alpha * auxiliary[c];
+
+            zirconium[c] = residual[c] * ( diagonal[c] * ( 2. - omega ) / omega );
+
+            z_r_new += zirconium[c] * residual[c];
+            
+        }
+        
+        const Float beta = z_r_new / z_r;
+        
+        z_r = z_r_new;
+        
+        #if defined(_OPENMP)
+        #pragma omp parallel for 
+        #endif
         for( int c = 0; c < N; c++ ) {
             
             if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
@@ -609,14 +900,625 @@ void ConjugateGradientSolverCSR_SSOR(
     }
     
     if( print_modulo >= 0 ) 
-        printf( "Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
-                K, N, (long double)(z_r), (long double) threshold*threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
+
+    
+    delete[] ( direction ); 
+    delete[] ( zirconium ); 
+    delete[] ( auxiliary );
+    delete[] ( technical );
+
+    return K;
+
+}
+
+
+
+
+
+
+int ConjugateGradientSolverCSR_Rainbow( 
+    const int N, 
+    Float* __restrict__ x, 
+    const Float* __restrict__ b, 
+    const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
+    Float* __restrict__ residual,
+    const Float tolerance,
+    int print_modulo,
+    const Float* __restrict__ diagonal,
+    Float omega,
+    int num_colors, const int* __restrict__ F, const int* __restrict__ B, const int* __restrict__ R
+) {
+    
+    assert( N > 0 );
+    assert( x );
+    assert( b );
+    assert( csrrows );
+    assert( csrcolumns );
+    assert( csrvalues );
+    assert( residual );
+    assert( tolerance > 0 );
+    assert( print_modulo >= -1 );
+    assert( diagonal );
+
+    assert( num_colors >= 0 );
+    assert( F );
+    assert( B );
+    assert( R );
+    
+    Float* __restrict__ direction = new (std::nothrow) Float[N];
+    Float* __restrict__ zirconium = new (std::nothrow) Float[N];
+    Float* __restrict__ auxiliary = new (std::nothrow) Float[N];
+    Float* __restrict__ mittlerer = new (std::nothrow) Float[N];
+    assert( direction );
+    assert( zirconium );
+    assert( mittlerer );
+    assert( auxiliary );
+    
+    for( int i = 0; i < N; i++ )
+        direction[i] = zirconium[i] = auxiliary[i] = mittlerer[i] = 0.;
+    
+    Float z_r = notanumber;
+
+    int K = 0;
+    
+    if( print_modulo >= 0 ) 
+        LOGPRINTF( "START Conjugate Gradient CSR (SSOR-Rainbow)\n" );
+
+    while( K < N ){
+        
+        bool restart_condition = ( K == 0 ) or ( csr_restart_on_full_dimension and K % N == 0 );
+        
+        bool preconresidual_seems_small = ( K != 0 ) and absolute(z_r) < tolerance*tolerance;
+
+        if( restart_condition or ( preconresidual_seems_small and csr_restart_before_finish ) ) UNLIKELY {
+            
+            #if defined(_OPENMP)
+            #pragma omp parallel for
+            #endif
+            for( int c = 0; c < N; c++ ) {
+                
+                if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+            
+                residual[c] = b[c];
+                
+                for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                    residual[c] -= csrvalues[ d ] * x[ csrcolumns[d] ];
+                
+            }
+            
+            // (2-omega)/omega * inv( L^t + D/omega ) * D * inv( L + D/omega )
+            
+            // NOTE: Rainbow-ing of CSR matrix used here 
+            for( int color = 0; color < num_colors; color++ ) {
+            
+                #if defined(_OPENMP)
+                #pragma omp parallel for
+                #endif
+                for( int i = B[color]; i < B[color+1]; i++ ) {
+
+                    int c = R[i];
+                    
+                    // assert( F[c] == color );
+                    
+                    if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+
+                    Assert( F[c] == color, N, c, F[c], color );
+                    
+                    Float aux = residual[c];
+                    
+                    for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                        if( F[csrcolumns[d]] < F[c] )
+                            aux -= csrvalues[ d ] * mittlerer[ csrcolumns[d] ];
+                    
+                    mittlerer[c] = aux * omega /  diagonal[c];
+                    
+                }
+
+            }
+            
+            #if defined(_OPENMP)
+            #pragma omp parallel for
+            #endif
+            for( int c = 0; c < N; c++ ) {
+            
+                if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+                
+                mittlerer[c] *= diagonal[c];
+                
+                mittlerer[c] *= ( 2. - omega ) / omega;
+            }
+            
+            // NOTE: Rainbow-ing of CSR matrix used here 
+            for( int color = num_colors - 1; color >= 0; color-- ) {
+            
+                #if defined(_OPENMP)
+                #pragma omp parallel for
+                #endif
+                for( int i = B[color]; i < B[color+1]; i++ ) {
+
+                    int c = R[i];
+                    
+                    if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+                
+                    // assert( F[c] == color );
+                    
+                    Float aux = mittlerer[c];
+                    
+                    for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                        if( F[csrcolumns[d]] > F[c] )
+                            aux -= csrvalues[ d ] * zirconium[ csrcolumns[d] ];
+                    
+                    zirconium[c] = aux * omega /  diagonal[c];
+                
+                }
+            
+            }
+            
+            z_r = 0.;
+        
+            #if defined(_OPENMP)
+            #pragma omp parallel for reduction( + : z_r )
+            #endif
+            for( int c = 0; c < N; c++ ) {
+                            
+                if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+            
+                direction[c] = zirconium[c];
+                       
+                z_r += zirconium[c] * residual[c];
+            
+            }
+
+            if( print_modulo >= 0 ) UNLIKELY 
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
+
+            
+        }
+        
+        /* printing information */
+
+        if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
+        
+        /* Check whether residual is small */
+                
+        bool preconresidual_is_small = absolute(z_r) < tolerance*tolerance;
+        
+        if( preconresidual_is_small )
+            break;
+
+
+        /* now the main work of the entire algorithm */
+        
+        // NOTE The calculation of d_r is reduced to r_r, which is already known.
+        
+        Float d_Ad = 0.;
+        
+        #if defined(_OPENMP)
+        #pragma omp parallel for reduction( + : d_Ad ) 
+        #endif
+        for( int c = 0; c < N; c++ )
+        {
+            auxiliary[c] = 0.;
+            
+            if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+            
+            for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                auxiliary[c] += csrvalues[ d ] * direction[ csrcolumns[d] ];
+                    
+            d_Ad += direction[c] * auxiliary[c];
+        }
+        
+        
+        bool denominator_is_unreasonable = not std::isfinite(d_Ad) or d_Ad < 0.;
+        bool denominator_is_small    = std::sqrt(absolute(d_Ad)) < machine_epsilon;
+        
+        if( denominator_is_unreasonable ) UNLIKELY {
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient energy is unreasonable with %.9le\n", K, N, (double)(safedouble)d_Ad );
+            break;
+        }
+        
+        if( denominator_is_small ) UNLIKELY {
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   WARNING: Gradient energy is small with %.9le\n", K, N, (double)(safedouble)d_Ad );
+            break;
+        }
+        
+        
+        const Float alpha = z_r / d_Ad;
+    
+        // NOTE: Rainbow-ing of CSR matrix used here 
+        for( int color = 0; color < num_colors; color++ ) {
+        
+            #if defined(_OPENMP)
+            #pragma omp parallel for
+            #endif
+            for( int i = B[color]; i < B[color+1]; i++ ) {
+
+                int c = R[i];
+                
+                if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+                
+                // assert( F[c] == color );
+                    
+                x[c] += alpha * direction[c];
+                
+                residual[c] -= alpha * auxiliary[c];
+                
+                Float aux = residual[c];
+                
+                for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                    if( F[csrcolumns[d]] < F[c] )
+                        aux -= csrvalues[ d ] * mittlerer[ csrcolumns[d] ];
+                
+                mittlerer[c] = aux * omega / diagonal[c];
+            
+            }
+
+        }
+        
+        Float z_r_new = 0.;
+        
+//         for( int c = 0; c < N; c++ ) {
+//         
+//         }
+        
+        // NOTE: Rainbow-ing of CSR matrix used here 
+        for( int color = num_colors - 1; color >= 0; color-- ) {
+        
+            Float z_r_new_local = 0.; 
+
+            #if defined(_OPENMP)
+            #pragma omp parallel for reduction( + : z_r_new_local ) 
+            #endif
+            for( int i = B[color]; i < B[color+1]; i++ ) {
+
+                int c = R[i];
+                
+                if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+                
+                // assert( F[c] == color );
+                    
+                mittlerer[c] *= diagonal[c];
+                
+                mittlerer[c] *= ( 2. - omega ) / omega;
+            
+                Float aux = mittlerer[c];
+                
+                for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                    if( F[csrcolumns[d]] > F[c] )
+                        aux -= csrvalues[ d ] * zirconium[ csrcolumns[d] ];
+                
+                zirconium[c] = aux * omega / diagonal[c];
+                
+                z_r_new_local += zirconium[c] * residual[c];
+                
+            }
+
+            z_r_new += z_r_new_local;
+
+        }
+        
+        const Float beta = z_r_new / z_r;
+        
+        z_r = z_r_new;
+        
+        #if defined(_OPENMP)
+        #pragma omp parallel for 
+        #endif
+        for( int c = 0; c < N; c++ ) {
+            
+            if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+            
+            direction[c] = zirconium[c] + beta * direction[c];
+            
+        }
+        
+        K++;
+        
+    }
+    
+    if( print_modulo >= 0 ) UNLIKELY 
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
 
     
     delete[] ( direction ); 
     delete[] ( zirconium ); 
     delete[] ( mittlerer ); 
     delete[] ( auxiliary );
+
+    return K;
+
+}
+
+
+
+
+
+
+int ConjugateGradientSolverCSR_Eisenstat_Rainbow( 
+    const int N, 
+    Float* __restrict__ x, 
+    const Float* __restrict__ b, 
+    const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
+    Float* __restrict__ residual,
+    const Float tolerance,
+    int print_modulo,
+    const Float* __restrict__ diagonal,
+    Float omega,
+    int num_colors, const int* __restrict__ F, const int* __restrict__ B, const int* __restrict__ R
+) {
+    
+    assert( N > 0 );
+    assert( x );
+    assert( b );
+    assert( csrrows );
+    assert( csrcolumns );
+    assert( csrvalues );
+    assert( residual );
+    assert( tolerance > 0 );
+    assert( print_modulo >= -1 );
+    assert( diagonal );
+
+    assert( num_colors >= 0 );
+    assert( F );
+    assert( B );
+    assert( R );
+    
+    Float* __restrict__ direction = new (std::nothrow) Float[N];
+    Float* __restrict__ zirconium = new (std::nothrow) Float[N];
+    Float* __restrict__ technical = new (std::nothrow) Float[N];
+    Float* __restrict__ auxiliary = new (std::nothrow) Float[N];
+    assert( direction );
+    assert( zirconium );
+    assert( technical );
+    assert( auxiliary );
+    
+    Float z_r = notanumber;
+
+    for( int c = 0; c < N; c++ ) direction[c] = zirconium[c] = technical[c] = auxiliary[c] = notanumber;
+
+    int K = 0;
+    
+    if( print_modulo >= 0 ) 
+        LOGPRINTF( "START Conjugate Gradient CSR (SSOR-Rainbow-Eisenstat)\n" );
+
+    while( K < N ){
+        
+        bool restart_condition = ( K == 0 ) or ( csr_restart_on_full_dimension and K % N == 0 );
+        
+        bool preconresidual_seems_small = ( K != 0 ) and absolute(z_r) < tolerance*tolerance;
+
+        if( restart_condition or ( preconresidual_seems_small and csr_restart_before_finish ) ) UNLIKELY {
+            
+
+            // compute the residual, save it in 'auxiliary'
+            #if defined(_OPENMP)
+            #pragma omp parallel for
+            #endif
+            for( int c = 0; c < N; c++ ) {
+                
+                if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+            
+                Float aux = b[c];
+                
+                for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                    if( diagonal[csrcolumns[d]] != 0. )
+                        aux -= csrvalues[ d ] * x[ csrcolumns[d] ];
+
+                auxiliary[c] = aux;
+                
+            }
+
+            // Lower-left solve, from 'auxiliary' into 'residual'
+            // NOTE: Rainbow-ing of CSR matrix used here 
+            for( int color = 0; color < num_colors; color++ ) {
+            
+                #if defined(_OPENMP)
+                #pragma omp parallel for
+                #endif
+                for( int i = B[color]; i < B[color+1]; i++ ) {
+
+                    const int c = R[i]; // assert( F[c] == color );
+                    
+                    if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+                    
+                    Float aux = auxiliary[c];
+                    
+                    for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                        if( F[csrcolumns[d]] < F[c] && diagonal[csrcolumns[d]] != 0. )
+                            aux -= csrvalues[ d ] * residual[ csrcolumns[d] ];
+                    
+                    residual[c] = aux * omega / diagonal[c];
+
+                    assert( std::isfinite(residual[c]) );
+                
+                }
+
+            }
+
+            z_r = 0.;
+        
+            // compute z_r, z, and d from the vector r
+            #if defined(_OPENMP)
+            #pragma omp parallel for reduction( + : z_r )
+            #endif
+            for( int c = 0; c < N; c++ ) {
+            
+                if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+                
+                zirconium[c] = residual[c] * diagonal[c] * ( 2. - omega ) / omega;
+                
+                direction[c] = zirconium[c];
+            
+                z_r += zirconium[c] * residual[c];
+            }
+            
+            if( print_modulo >= 0 ) 
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
+
+            
+        }
+        
+        /* printing information */
+
+        if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
+        
+        /* Check whether residual is small */
+                
+        bool preconresidual_is_small = absolute(z_r) < tolerance*tolerance;
+        
+        if( preconresidual_is_small )
+            break;
+
+
+
+        /* now the main work of the entire algorithm */
+        
+        // NOTE The calculation of d_r is reduced to z_r, which is already known.
+        
+        Float d_Ad = 0.;
+
+        // Upper right solve, from 'direction' into 'technical'
+        // NOTE: Rainbow-ing of CSR matrix used here 
+        for( int color = num_colors - 1; color >= 0; color-- ) {
+        
+            // Float z_r_new_local = 0.; // TODO: understand whether that variable is needed or whether it is a relic
+
+            #if defined(_OPENMP)
+            // #pragma omp parallel for reduction( + : z_r_new_local ) 
+            #endif
+            for( int i = B[color]; i < B[color+1]; i++ ) {
+
+                int c = R[i]; // assert( F[c] == color );
+                
+                if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+                
+                Float aux = direction[c];
+                
+                for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                    if( F[csrcolumns[d]] > F[c] )
+                        aux -= csrvalues[ d ] * technical[ csrcolumns[d] ];
+                
+                technical[c] = aux * omega / diagonal[c];
+
+                assert( std::isfinite(technical[c]) );
+                
+            }
+
+        }
+        
+        
+        // Lower left solve, into 'auxiliary'
+        // NOTE: Rainbow-ing of CSR matrix used here 
+        for( int color = 0; color < num_colors; color++ ) {
+        
+            #if defined(_OPENMP)
+            #pragma omp parallel for
+            #endif
+            for( int i = B[color]; i < B[color+1]; i++ ) {
+
+                int c = R[i]; // assert( F[c] == color );
+                
+                if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+                
+                Float aux = direction[c] - ( 2. / omega - 1. ) * diagonal[c] * technical[c];
+                
+                for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                    if( F[csrcolumns[d]] < F[c] )
+                        aux -= csrvalues[ d ] * auxiliary[ csrcolumns[d] ];
+                
+                auxiliary[c] = aux * omega / diagonal[c];
+            
+            }
+
+        }
+        
+        
+        
+        #if defined(_OPENMP)
+        #pragma omp parallel for reduction( + : d_Ad )
+        #endif
+        for( int c = 0; c < N; c++ )
+        {
+            if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+
+            auxiliary[c] += technical[c];
+
+            d_Ad += auxiliary[c] * direction[c];
+
+        } // NOTE: with extra memory or extra additions, we can get rid of the extra loop 
+        
+        
+        
+        bool denominator_is_unreasonable = not std::isfinite(d_Ad) or d_Ad < 0.;
+        bool denominator_is_small    = std::sqrt(absolute(d_Ad)) < machine_epsilon;
+        
+        if( denominator_is_unreasonable ) UNLIKELY {
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient energy is unreasonable with %.9le\n", K, N, (double)(safedouble)d_Ad );
+            break;
+        }
+        
+        if( denominator_is_small ) UNLIKELY {
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   WARNING: Gradient energy is small with %.9le\n", K, N, (double)(safedouble)d_Ad );
+            break;
+        }
+        
+        
+        const Float alpha = z_r / d_Ad;
+    
+        Float z_r_new = 0.;
+        
+        #if defined(_OPENMP)
+        #pragma omp parallel for reduction( + : z_r_new )
+        #endif
+        for( int c = 0; c < N; c++ )
+        {
+            
+            if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+            
+            x[c] += alpha * technical[c];
+            
+            residual[c] -= alpha * auxiliary[c];
+
+            zirconium[c] = residual[c] * ( diagonal[c] * ( 2. - omega ) / omega );
+
+            z_r_new += zirconium[c] * residual[c];
+            
+        }
+        
+        const Float beta = z_r_new / z_r;
+        
+        z_r = z_r_new;
+        
+        #if defined(_OPENMP)
+        #pragma omp parallel for 
+        #endif
+        for( int c = 0; c < N; c++ ) {
+            
+            if( diagonal[c] == 0. ) continue; // NOTE: guard against shadowed variables 
+            
+            direction[c] = zirconium[c] + beta * direction[c];
+            
+        }
+        
+        K++;
+        
+    }
+    
+    if( print_modulo >= 0 ) 
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
+
+    
+    delete[] ( direction ); 
+    delete[] ( zirconium ); 
+    delete[] ( auxiliary );
+    delete[] ( technical );
+
+    return K;
 
 }
 
@@ -660,13 +1562,13 @@ void ConjugateGradientSolverCSR_SSOR(
 
 
 
-void ConjugateResidualSolverCSR( 
+int ConjugateResidualSolverCSR( 
     const int N, 
     Float* __restrict__ x, 
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ res,
-    const Float threshold,
+    const Float tolerance,
     int print_modulo
 ) {
     
@@ -677,7 +1579,7 @@ void ConjugateResidualSolverCSR(
     assert( csrcolumns );
     assert( csrvalues );
     assert( res );
-    assert( threshold > 0 );
+    assert( tolerance > 0 );
     assert( print_modulo >= -1 );
     
     Float* __restrict__  dir = new (std::nothrow) Float[N];
@@ -696,13 +1598,16 @@ void ConjugateResidualSolverCSR(
     
     int K = 0;
     
+    if( print_modulo >= 0 ) 
+        LOGPRINTF( "START Conjugate Residual CSR\n" );
+
     while( K < N ){
         
-        bool restart_condition = ( K == 0 ); // or K % 1000 == 0;
+        bool restart_condition = ( K == 0 ) or ( csr_restart_on_full_dimension and K % N == 0 );
         
-        bool residualenergy_seems_small = ( K != 0 ) and absolute(Ad_r) < threshold*threshold;
+        bool residualenergy_seems_small = ( K != 0 ) and absolute(Ad_r) < tolerance*tolerance;
 
-        if( restart_condition or residualenergy_seems_small ) {
+        if( restart_condition or ( residualenergy_seems_small and csr_restart_before_finish ) ) UNLIKELY {
             
             #if defined(_OPENMP)
             #pragma omp parallel for
@@ -738,36 +1643,43 @@ void ConjugateResidualSolverCSR(
                 
             }
             
+            if( print_modulo >= 0 ) 
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Ad_r), (double)(safedouble) tolerance );
             
         }
         
         /* printing information */
 
-        if( print_modulo > 0 and K % print_modulo == 0 ) 
-            printf( "Square Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
-                    K, N, (long double)(Ad_r), (long double) threshold*threshold );
+        if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Ad_r), (double)(safedouble) tolerance );
 
         
         /* Check whether res is small */
                 
-        bool residualenergy_is_small = absolute(Ad_r) < threshold*threshold;
+        bool residualenergy_is_small = absolute(Ad_r) < tolerance*tolerance;
+        bool residualenergy_is_unreasonable = not std::isfinite(Ad_r) or Ad_r < 0.;
         
+        if( residualenergy_is_unreasonable ) UNLIKELY {
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Residual energy is unreasonable with %.9le\n", K, N, (double)(safedouble)Ad_r );
+            break;
+        }
+
         if( residualenergy_is_small )
             break;
         
         
         
         bool denominator_is_unreasonable = not std::isfinite(Ad_Ad) or Ad_Ad < 0.;
-        bool denominator_is_small    = sqrt(absolute(Ad_Ad)) < machine_epsilon;
+        bool denominator_is_small    = std::sqrt(absolute(Ad_Ad)) < machine_epsilon;
         
-        if( denominator_is_unreasonable ) {
-            if( print_modulo >= 0 ) printf( "Gradient double energy is unreasonable with %.9Le\n", (long double)Ad_Ad );
+        if( denominator_is_unreasonable ) UNLIKELY {
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient double energy is unreasonable with %.9le\n", K, N, (double)(safedouble)Ad_Ad );
             break;
         }
         
-        if( denominator_is_small ) {
-            if( print_modulo >= 0 ) printf( "Gradient double energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
-                                    (long double)Ad_Ad, (long double)Ad_r, (long double)threshold*threshold );
+        if( denominator_is_small ) UNLIKELY {
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Ad_r), (double)(safedouble) tolerance );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   WARNING: Gradient double energy is small with %.9le\n", K, N, (double)(safedouble)Ad_Ad );
             break;
         }
         
@@ -823,8 +1735,7 @@ void ConjugateResidualSolverCSR(
     }
     
     if( print_modulo >= 0 ) 
-        printf( "Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
-                K, N, (long double)(Ad_r), (long double) threshold*threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Ad_r), (double)(safedouble) tolerance );
 
     
     delete[] (  dir );
@@ -832,6 +1743,8 @@ void ConjugateResidualSolverCSR(
     delete[] ( Ares );
 
     delete[] ( vil );
+
+    return K;
 
 }
 
@@ -862,13 +1775,13 @@ void ConjugateResidualSolverCSR(
 
 
 
-void ConjugateResidualSolverCSR_textbook( 
+int ConjugateResidualSolverCSR_textbook( 
     const int N, 
     Float* __restrict__ x, 
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ res,
-    const Float threshold,
+    const Float tolerance,
     int print_modulo
 ) {
     
@@ -879,7 +1792,7 @@ void ConjugateResidualSolverCSR_textbook(
     assert( csrcolumns );
     assert( csrvalues );
     assert( res );
-    assert( threshold > 0 );
+    assert( tolerance > 0 );
     assert( print_modulo >= -1 );
     
     Float* __restrict__  dir = new (std::nothrow) Float[N];
@@ -898,13 +1811,16 @@ void ConjugateResidualSolverCSR_textbook(
 
     int K = 0;
     
+    if( print_modulo >= 0 ) 
+        LOGPRINTF( "START Conjugate Residual CSR (textbook)\n" );
+
     while( K < N ){
         
-        bool restart_condition = ( K == 0 ); // or K % 1000 == 0;
+        bool restart_condition = ( K == 0 ) or ( csr_restart_on_full_dimension and K % N == 0 );
         
-        bool residualenergy_seems_small = ( K != 0 ) and absolute(Ar_r) < threshold*threshold;
+        bool residualenergy_seems_small = ( K != 0 ) and absolute(Ar_r) < tolerance*tolerance;
 
-        if( restart_condition or residualenergy_seems_small ) {
+        if( restart_condition or ( residualenergy_seems_small and csr_restart_before_finish ) ) UNLIKELY {
             
             #if defined(_OPENMP)
             #pragma omp parallel for
@@ -939,35 +1855,42 @@ void ConjugateResidualSolverCSR_textbook(
                 Ad_Ad += Adir[c] * Adir[c];
                 
             }
-            
+
+            if( print_modulo >= 0 ) 
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Ar_r), (double)(safedouble) tolerance );
             
         }
         
         /* printing information */
 
-        if( print_modulo > 0 and K % print_modulo == 0 )
-            printf( "Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
-                    K, N, (long double)(Ar_r), (long double) threshold*threshold );
+        if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Ar_r), (double)(safedouble) tolerance );
         
         /* Check whether res is small */
                 
-        bool residualenergy_is_small = absolute(Ar_r) < threshold*threshold;
+        bool residualenergy_is_unreasonable = not std::isfinite(Ar_r) or Ar_r < 0.;
+        bool residualenergy_is_small = absolute(Ar_r) < tolerance*tolerance;
         
+        if( residualenergy_is_unreasonable ) UNLIKELY {
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Residual energy is unreasonable with %.9le\n", K, N, (double)(safedouble)Ar_r );
+            break;
+        }
+  
         if( residualenergy_is_small )
             break;
 
 
         bool denominator_is_unreasonable = not std::isfinite(Ad_Ad) or Ad_Ad < 0.;
-        bool denominator_is_small    = sqrt(absolute(Ad_Ad)) < machine_epsilon;
+        bool denominator_is_small    = std::sqrt(absolute(Ad_Ad)) < machine_epsilon;
         
-        if( denominator_is_unreasonable ) {
-            if( print_modulo >= 0 ) printf( "Gradient energy is unreasonable with %.9Le\n", (long double)Ar_r );
+        if( denominator_is_unreasonable ) UNLIKELY {
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient double energy is unreasonable with %.9le\n", K, N, (double)(safedouble)Ad_Ad );
             break;
         }
         
-        if( denominator_is_small ) {
-            if( print_modulo >= 0 ) printf( "Gradient energy is small with %.9Le while precon-residual is %.9Le vs %.9Le\n", 
-                                            (long double)Ad_Ad, (long double)Ar_r, (long double)threshold*threshold );
+        if( denominator_is_small ) UNLIKELY {
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Ar_r), (double)(safedouble) tolerance );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   WARNING: Gradient double energy is small with %.9le\n", K, N, (double)(safedouble)Ad_Ad );
             break;
         }
         
@@ -1021,8 +1944,7 @@ void ConjugateResidualSolverCSR_textbook(
     }
     
     if( print_modulo >= 0 ) 
-        printf( "Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", 
-                K, N, (long double)(Ar_r), (long double) threshold*threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Ar_r), (double)(safedouble) tolerance );
 
     
     delete[] (  dir );
@@ -1030,6 +1952,8 @@ void ConjugateResidualSolverCSR_textbook(
     delete[] ( Ares );
 
     delete[] ( vil );
+
+    return K;
 
 }
 
@@ -1073,13 +1997,13 @@ void ConjugateResidualSolverCSR_textbook(
 
 
 
-void MINRESCSR( 
+int MINRESCSR( 
     const int N, 
     Float* __restrict__ x, 
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ res,
-    const Float threshold,
+    const Float tolerance,
     int print_modulo
 ) {
     
@@ -1090,7 +2014,7 @@ void MINRESCSR(
     assert( csrcolumns );
     assert( csrvalues );
     assert( res );
-    assert( threshold > 0 );
+    assert( tolerance > 0 );
     assert( print_modulo >= -1 );
     
     Float* __restrict__ v0 = new (std::nothrow) Float[N];
@@ -1121,14 +2045,17 @@ void MINRESCSR(
 
     int K = 0;
 
+    if( print_modulo >= 0 ) 
+        LOGPRINTF( "START MINRES CSR\n" );
+
     while( K < N ){
         
         
-        bool restart_condition = (K == 0);
+        bool restart_condition = (K == 0) or ( csr_restart_on_full_dimension and K % N == 0 );
         
-        bool residual_seems_small = ( K != 0 ) and (eta < threshold);
+        bool residual_seems_small = ( K != 0 ) and ( absolute(eta) < tolerance );
         
-        if( restart_condition or residual_seems_small ) {
+        if( restart_condition or ( residual_seems_small and csr_restart_before_finish ) ) {
             
             Float gamma_sq = 0.;
             
@@ -1163,17 +2090,20 @@ void MINRESCSR(
             c0 = c1 = 1.;
             
             eta = gamma;
+
+            if( print_modulo >= 0 ) 
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) absolute(eta), (double)(safedouble) tolerance );
+
             
         }
         
-        bool residual_is_small = (eta < threshold);
+        bool residual_is_small = ( absolute(eta) < tolerance);
         
         if( residual_is_small )
             break;
 
-        Float temp = gamma;
 //         if( K % 100 == 0 )
-//         LOG << K << space << temp << space << eta << space << temp/eta;
+//             LOG << K << space << gamma << space << eta << space << gamma/eta << nl;
             
         {
             
@@ -1237,8 +2167,8 @@ void MINRESCSR(
             
             eta = - sn * eta;
             
-//             LOG << "\t" << alpha_0 << space << alpha_1 << space << alpha_2 << space << alpha_3;
-//             LOG << "\t" << cn << space << sn << space << eta;
+//             LOG << "\t" << alpha_0 << space << alpha_1 << space << alpha_2 << space << alpha_3 << nl;
+//             LOG << "\t" << cn << space << sn << space << eta << nl;
             
             
             std::swap( v0, v1 );
@@ -1260,15 +2190,15 @@ void MINRESCSR(
         }
 
         
-        if( print_modulo > 0 and K % print_modulo == 0 )
-            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)eta, (long double) threshold );
+        if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble)eta, (double)(safedouble) tolerance );
         
         K++;
         
     }
     
     if( print_modulo >= 0 ) 
-        printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)eta, (long double) threshold );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble)eta, (double)(safedouble) tolerance );
 
     
     delete[] ( v0 );
@@ -1279,6 +2209,8 @@ void MINRESCSR(
     delete[] ( vn );
     delete[] ( wn );
     delete[] (  p );
+
+    return K;
     
 }
 
@@ -1289,16 +2221,36 @@ void MINRESCSR(
 
 
 
-// This one is taken from Wikipedia, I don't know what it is.
 
-void WHATEVER( 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// The Convergence of Inexact Chebyshev and Richardson Iterative Methods for Solving Linear Systems
+
+
+int ChebyshevIteration_DiagonalPreconditioner( 
     const int N, 
     Float* __restrict__ x, 
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
-    Float* __restrict__ res,
-    const Float threshold,
-    int print_modulo
+    Float* __restrict__ residual,
+    const Float tolerance,
+    int print_modulo,
+    const Float* __restrict__ precon,
+    const Float lower,
+    const Float upper
 ) {
     
     assert( N > 0 );
@@ -1307,187 +2259,141 @@ void WHATEVER(
     assert( csrrows );
     assert( csrcolumns );
     assert( csrvalues );
-    assert( res );
-    assert( threshold > 0 );
-    assert( print_modulo >= -1 );
+    assert( residual );
+    assert( tolerance > 0 );
+    assert( print_modulo >= 0 );
+    assert( precon );
     
-    Float* __restrict__  r = new (std::nothrow) Float[N];
-    Float* __restrict__ p0 = new (std::nothrow) Float[N];
-    Float* __restrict__ p1 = new (std::nothrow) Float[N];
-    Float* __restrict__ p2 = new (std::nothrow) Float[N];
-    Float* __restrict__ s0 = new (std::nothrow) Float[N];
-    Float* __restrict__ s1 = new (std::nothrow) Float[N];
-    Float* __restrict__ s2 = new (std::nothrow) Float[N];
+    Float* __restrict__ zaratite = new (std::nothrow) Float[N];
+    assert( zaratite );
     
-    assert(  r );
-    assert( p0 );
-    assert( p1 );
-    assert( p2 );
-    assert( s0 );
-    assert( s1 );
-    assert( s2 );
+    Float* x_prev = new (std::nothrow) Float[N];
+    Float* x_curr = new (std::nothrow) Float[N];
+    Float* x_next = new (std::nothrow) Float[N];
+    assert( x_prev );
+    assert( x_curr );
+    assert( x_next );
 
-    Float r_r = 0.;
+    LOG << lower << space << upper << nl;
     
-    #if defined(_OPENMP)
-    #pragma omp parallel for reduction(+:r_r)
-    #endif 
-    for( int c = 0; c < N; c++ ) {
-        
-        r[c] = b[c];
-        
-        for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
-            r[c] -= csrvalues[ d ] * x[ csrcolumns[d] ];
-        
-        p0[c] =  r[c];
-        p1[c] = p0[c];
-        
-        r_r += r[c] * r[c];
-                
-    }
+    const Float alpha = 2. / ( upper + lower );
+    const Float mu    = ( upper + lower ) / ( upper - lower );
     
-    #if defined(_OPENMP)
-    #pragma omp parallel for
-    #endif 
-    for( int c = 0; c < N; c++ ) {
-        
-        s0[c] = 0.;
-        
-        for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
-            s0[c] += csrvalues[ d ] * p0[ csrcolumns[d] ];
-        
-        s1[c] = s0[c];
-                
-    }
+    Float gamma_prev = notanumber;
+    Float gamma_curr = notanumber;
+    //Float gamma_next = notanumber;
+    
+    Float r_r = notanumber;
     
     int K = 0;
+    
+    if( print_modulo >= 0 ) 
+        LOGPRINTF( "START Chebyshev (Diag) CSR\n" );
 
     while( K < N ){
         
-        Float  r_s1 = 0.;
-        Float s0_s0 = 0.;
-        
-        #if defined(_OPENMP)
-        #pragma omp parallel for reduction(+:r_s1,s0_s0)
-        #endif 
-        for( int c = 0; c < N; c++ ) {
+        bool restart_condition = ( K == 0 ) or ( csr_restart_on_full_dimension and K % N == 0 );
+
+        bool residual_seems_small = ( K != 0 ) and std::sqrt(r_r) < tolerance;
+
+        if( restart_condition or ( residual_seems_small and csr_restart_before_finish ) ) UNLIKELY {
             
-            p2[c] = p1[c];
-            p1[c] = p0[c];
+            gamma_prev = 1.;
             
-            s2[c] = s1[c];
-            s1[c] = s0[c];
+            gamma_curr = mu;
             
-             r_s1 +=  r[c] * s1[c];
-            s0_s0 += s1[c] * s1[c];
-                    
-        }
-        
-        Float alpha = r_s1 / s0_s0;
-    
-        r_r = 0.;
-        
-        #if defined(_OPENMP)
-        #pragma omp parallel for reduction(+:r_r)
-        #endif 
-        for( int c = 0; c < N; c++ ) {
-            
-            x[c] += alpha * p1[c];
-            r[c] -= alpha * s1[c];
-            
-            r_r += r[c] * r[c];
-        }
-        
-        if( std::sqrt(r_r) < threshold )
-            break;
-        
-        Float s0_s1 = 0.;
-        Float s1_s1 = 0.;
-        
-        #if defined(_OPENMP)
-        #pragma omp parallel for reduction(+:s0_s1,s1_s1)
-        #endif 
-        for( int c = 0; c < N; c++ ) {
-            
-            p0[c] = s1[c];
-            
-            s0[c] = 0.;
-            for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
-                s0[c] += csrvalues[ d ] * s1[ csrcolumns[d] ];
-            
-            s0_s1 += s0[c] * s1[c];
-            s1_s1 += s1[c] * s1[c];
-            
-        }
-        
-        Float beta = s0_s1 / s1_s1;
-        
-        Float s0_s2 = 0.;
-        Float s2_s2 = 0.;
-        
-        #if defined(_OPENMP)
-        #pragma omp parallel for reduction(+:s0_s2,s2_s2)
-        #endif 
-        for( int c = 0; c < N; c++ ) {
-            
-            p0[c] -= beta * p1[c];
-            s0[c] -= beta * s1[c];
-            
-            s0_s2 += s0[c] * s2[c];
-            s2_s2 += s2[c] * s2[c];
-        }
-        
-        if( K > 0 )
-        {
-            
-            Float gamma = s0_s2 / s2_s2;
+            r_r = 0.;
             
             #if defined(_OPENMP)
             #pragma omp parallel for 
-            #endif 
+            #endif
+            for( int c = 0; c < N; c++ )
+                x_prev[c] = x[c];
+            
+            #if defined(_OPENMP)
+            #pragma omp parallel for reduction(+:r_r)
+            #endif
             for( int c = 0; c < N; c++ ) {
                 
-                p0[c] -= gamma * p2[c];
-                s0[c] -= gamma * s2[c];
+                residual[c] = b[c];
+                
+                for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                    residual[c] -= csrvalues[ d ] * x_prev[ csrcolumns[d] ];
+                
+                zaratite[c] = precon[c] * residual[c];
+                
+                x_curr[c] = x_prev[c] + alpha * zaratite[c];
+                
+                assert( std::isfinite( x_curr[c] ) );
+                
+                r_r += residual[c] * residual[c];
                 
             }
+        
+        }
+        
+        /* Check whether residual is small */
+                
+        bool residual_is_small = std::sqrt(r_r) < tolerance;
+        
+        if( residual_is_small )
+            break;
+
+
+        /* now the main work of the entire algorithm */
+        
+        Float gamma_next = 2. * mu * gamma_curr - gamma_prev; 
+        
+        Float omega = 2. * mu * gamma_curr / gamma_next; 
+        
+        r_r = 0.;
+            
+        #if defined(_OPENMP)
+        #pragma omp parallel for reduction(+:r_r) 
+        #endif 
+        for( int c = 0; c < N; c++ )
+        {
+            
+            residual[c] = b[c];
+            
+            for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+                residual[c] -= csrvalues[ d ] * x_curr[ csrcolumns[d] ];
+            
+            zaratite[c] = precon[c] * residual[c];
+            
+            x_next[c] = x_prev[c] + omega * ( alpha * zaratite[c] + x_curr[c] - x_prev[c] );
+            
+            r_r += residual[c] * residual[c];
             
         }
-            
-            
         
-        if( print_modulo > 0 and K % print_modulo == 0 ) 
-            printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), (long double) threshold );
+        gamma_prev = gamma_curr; 
+        gamma_curr = gamma_next; 
+        // std::swap( gamma_curr, gamma_prev );
+        // std::swap( gamma_next, gamma_curr );
+        std::swap( x_curr, x_prev );
+        std::swap( x_next, x_curr );
+        
+        
+        if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble)std::sqrt(r_r), (double)(safedouble) tolerance );
         
         K++;
         
     }
     
-    if( print_modulo >= 0 ) 
-        printf("Residual after %d of max. %d iterations: %.9Le (%.9Le)\n", K, N, (long double)std::sqrt(r_r), (long double) threshold );
+    LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble)std::sqrt(r_r), (double)(safedouble) tolerance );
 
     
-    delete[] (  r );
-    delete[] ( p0 );
-    delete[] ( p1 );
-    delete[] ( p2 );
-    delete[] ( s0 );
-    delete[] ( s1 );
-    delete[] ( s2 );
-    
+    delete[] ( x_prev );
+    delete[] ( x_curr );
+    delete[] ( x_next );
+
+    delete[] ( zaratite );
+
+    return K;
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1614,7 +2520,7 @@ void WHATEVER(
 //     int maxiter = 10 * (M + pdim);
 //     int iter = 0;
 //     
-//     const Float threshold = threshold;
+//     const Float tolerance = tolerance;
 //     
 //     /*************/
 //     /* MAIN LOOP */
@@ -1622,7 +2528,7 @@ void WHATEVER(
 //     
 //     while( iter < maxiter ) {
 //         
-//         printf("@@@@@@@@@@ Uzawa-CRM Iteration %d / %d: unorm is %f\n", iter, maxiter, vectornorm(pdim,u) );
+//         LOGPRINTF( "@@@@@@@@@@ Uzawa-CRM Iteration %d / %d: unorm is %f\n", iter, maxiter, vectornorm(pdim,u) );
 //         
 //         /* Start or Restart condition check */
 //         if( iter == 0 or ( false && iter % 1000 == 0 ) ) {
@@ -1693,10 +2599,10 @@ void WHATEVER(
 // 
 //         Float residualnorm = vectornorm( pdim, r );
 // 
-//         printf( "@@@@@@@@@@ Residual norm: %f\n", residualnorm );
+//         LOGPRINTF( "@@@@@@@@@@ Residual norm: %f\n", residualnorm );
 //         
-//         if( residualnorm < threshold ) {
-//             printf("@@@@@@@@@@ Threshold deceeded.\n");
+//         if( residualnorm < tolerance ) {
+//             LOGPRINTF( "@@@@@@@@@@ Threshold deceeded.\n" );
 //             break;
 //         }
 //         
@@ -1867,8 +2773,8 @@ void WHATEVER(
 //         
 //     }
 //     
-// //     printf( "@@@@@@@@@@ Residual sigma %f \n", vectornorm( M, ressigma ) );
-// //     printf( "@@@@@@@@@@ Residual u     %f \n", vectornorm( pdim, resu  ) );
+// //     LOGPRINTF( "@@@@@@@@@@ Residual sigma %f \n", vectornorm( M, ressigma ) );
+// //     LOGPRINTF( "@@@@@@@@@@ Residual u     %f \n", vectornorm( pdim, resu  ) );
 //     
 //     if(true){
 //     
@@ -1893,8 +2799,8 @@ void WHATEVER(
 //         addscaled( r, (const Float*)tempN, pdim, -1. );
 //         FREEZE( r, nShadowedU, shadowU );
 //         
-// //         printf( "@@@@@@@@@@ Other residual sigma %f \n", vectornorm( M, ressigma ) );
-// //         printf( "@@@@@@@@@@ Other residual u     %f \n", vectornorm( pdim, resu  ) );
+// //         LOGPRINTF( "@@@@@@@@@@ Other residual sigma %f \n", vectornorm( M, ressigma ) );
+// //         LOGPRINTF( "@@@@@@@@@@ Other residual u     %f \n", vectornorm( pdim, resu  ) );
 //     
 //     }
 //     
@@ -1912,8 +2818,8 @@ void WHATEVER(
 //                                     
 //         sub( ressigma, (const Float*)tempM, M );
 //         
-//         printf( "@@@@@@@@@@ One more Residual sigma %f \n", vectornorm( M, ressigma ) );
-//         printf( "@@@@@@@@@@ One more Residual u     %f \n", vectornorm( pdim, resu  ) );
+//         LOGPRINTF( "@@@@@@@@@@ One more Residual sigma %f \n", vectornorm( M, ressigma ) );
+//         LOGPRINTF( "@@@@@@@@@@ One more Residual u     %f \n", vectornorm( pdim, resu  ) );
 //     
 //     }
 //     
@@ -1945,7 +2851,7 @@ void WHATEVER(
 //     delete[] ( csrrowsBt );
 //     delete[] ( csrcolumnsBt );
 //     
-//     printf( "@@@@@@@@@@ Exit: %f %f\n", vectornorm( M, ressigma ), vectornorm( pdim, resu  ) );
+//     LOGPRINTF( "@@@@@@@@@@ Exit: %f %f\n", vectornorm( M, ressigma ), vectornorm( pdim, resu  ) );
 //     
 //     
 // }                            
@@ -2086,7 +2992,7 @@ void WHATEVER(
 //     int maxiter = 10 * (M + pdim);
 //     int iter = 0;
 //     
-//     const Float threshold = threshold;
+//     const Float tolerance = tolerance;
 //     
 //     /*************/
 //     /* MAIN LOOP */
@@ -2094,7 +3000,7 @@ void WHATEVER(
 //     
 //     while( iter < maxiter ) {
 //         
-//         printf("@@@@@@@@@@ Uzawa-CRM Iteration %d / %d: unorm is %f\n", iter, maxiter, vectornorm(pdim,u) );
+//         LOGPRINTF( "@@@@@@@@@@ Uzawa-CRM Iteration %d / %d: unorm is %f\n", iter, maxiter, vectornorm(pdim,u) );
 //         
 //         /* Start or Restart condition check */
 //         if( iter == 0 or ( iter % 1000 == 0 ) )
@@ -2144,10 +3050,10 @@ void WHATEVER(
 // 
 //         Float residualnorm = vectornorm( pdim, r );
 // 
-//         printf( "@@@@@@@@@@ Residual norm: %f\n", residualnorm );
+//         LOGPRINTF( "@@@@@@@@@@ Residual norm: %f\n", residualnorm );
 //         
-//         if( residualnorm < threshold ) {
-//             printf("@@@@@@@@@@ Threshold deceeded.\n");
+//         if( residualnorm < tolerance ) {
+//             LOGPRINTF( "@@@@@@@@@@ Threshold deceeded.\n" );
 //             break;
 //         }
 //         
@@ -2306,8 +3212,8 @@ void WHATEVER(
 //         
 //     }
 //     
-// //     printf( "@@@@@@@@@@ Residual sigma %f \n", vectornorm( M, ressigma ) );
-// //     printf( "@@@@@@@@@@ Residual u     %f \n", vectornorm( pdim, resu  ) );
+// //     LOGPRINTF( "@@@@@@@@@@ Residual sigma %f \n", vectornorm( M, ressigma ) );
+// //     LOGPRINTF( "@@@@@@@@@@ Residual u     %f \n", vectornorm( pdim, resu  ) );
 //     
 //     if(true){
 //     
@@ -2332,8 +3238,8 @@ void WHATEVER(
 //         addscaled( r, (const Float*)tempN, pdim, -1. );
 //         FREEZE( r, nShadowedU, shadowU );
 //         
-// //         printf( "@@@@@@@@@@ Other residual sigma %f \n", vectornorm( M, ressigma ) );
-// //         printf( "@@@@@@@@@@ Other residual u     %f \n", vectornorm( pdim, resu  ) );
+// //         LOGPRINTF( "@@@@@@@@@@ Other residual sigma %f \n", vectornorm( M, ressigma ) );
+// //         LOGPRINTF( "@@@@@@@@@@ Other residual u     %f \n", vectornorm( pdim, resu  ) );
 //     
 //     }
 //     
@@ -2351,8 +3257,8 @@ void WHATEVER(
 //                                     
 //         sub( ressigma, (const Float*)tempM, M );
 //         
-//         printf( "@@@@@@@@@@ One more Residual sigma %f \n", vectornorm( M, ressigma ) );
-//         printf( "@@@@@@@@@@ One more Residual u     %f \n", vectornorm( pdim, resu  ) );
+//         LOGPRINTF( "@@@@@@@@@@ One more Residual sigma %f \n", vectornorm( M, ressigma ) );
+//         LOGPRINTF( "@@@@@@@@@@ One more Residual u     %f \n", vectornorm( pdim, resu  ) );
 //     
 //     }
 //     
@@ -2384,7 +3290,7 @@ void WHATEVER(
 //     delete[] ( csrrowsBt );
 //     delete[] ( csrcolumnsBt );
 //     
-//     printf( "@@@@@@@@@@ Exit: %f %f\n", vectornorm( M, ressigma ), vectornorm( pdim, resu  ) );
+//     LOGPRINTF( "@@@@@@@@@@ Exit: %f %f\n", vectornorm( M, ressigma ), vectornorm( pdim, resu  ) );
 //     
 //     
 // }         

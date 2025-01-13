@@ -2,7 +2,12 @@
 
 default: build
 
-include ../common.recipe.mk 
-include ../common.rules.mk 
-include ../common.upkeep.mk
+projectdir   :=..
+include $(projectdir)/common.compile.mk
 
+moddir :=.
+module:=$(notdir $(CURDIR))
+
+include $(projectdir)/common.module.mk
+
+build: $(module).build

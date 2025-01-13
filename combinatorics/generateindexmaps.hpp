@@ -12,6 +12,7 @@
 /***************
 *** 
 ***  Generate Index Maps of different kinds 
+*** 
 ***  0) generate empty mapping 
 ***  1) generate all possible mappings 
 ***  2) generate Permuations, and tell their sign 
@@ -24,10 +25,6 @@
 
 
 std::vector<IndexMap> generateEmptyMap( const IndexRange& from, const IndexRange& to );
-
-
-
-
 
 
 /*****
@@ -54,13 +51,6 @@ std::vector<IndexMap> generateIndexMaps( const IndexRange& range );
 std::vector<IndexMap> generateIndexMaps( const IndexRange& from, const IndexRange& to );
 
 
-
-
-
-
-
-
-
 /*****
  * 
  * Generate all permutations of the range `ir`.
@@ -74,11 +64,6 @@ std::vector<IndexMap> generateIndexMaps( const IndexRange& from, const IndexRang
 std::vector<IndexMap> generatePermutations( const IndexRange& ir );
 
 int signPermutation( const IndexMap& im );
-
-
-
-
-
 
 
 /*****

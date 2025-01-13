@@ -2,96 +2,140 @@
 #define INCLUDEGUARD_SOLVER_CLASSICALSOLVERS
 
 
-#include <new>
-
 #include "../basic.hpp"
 
 
 
 // Solves the sparse matrix system with conjugate gradients
 
-void ConjugateGradientSolverCSR( 
+int ConjugateGradientSolverCSR( 
     const int N, 
     Float* x, 
     const Float* b, 
     const int* csrrows, const int* csrcolumns, const Float* csrvalues, 
     Float* residual,
-    Float threshold,
+    Float tolerance,
     int print_modulo
 );
 
-void ConjugateGradientSolverCSR_DiagonalPreconditioner( 
+int ConjugateGradientSolverCSR_DiagonalPreconditioner( 
     const int N, 
     Float* x, 
     const Float* b, 
     const int* csrrows, const int* csrcolumns, const Float* csrvalues, 
     Float* residual,
-    Float threshold,
+    Float tolerance,
     int print_modulo,
     const Float* precon 
 );
 
 
-void ConjugateGradientSolverCSR_SSOR( 
+int ConjugateGradientSolverCSR_SSOR( 
     const int N, 
     Float* x, 
     const Float* b, 
     const int* csrrows, const int* csrcolumns, const Float* csrvalues, 
     Float* residual,
-    Float threshold,
+    Float tolerance,
     int print_modulo,
     const Float* precon,
     Float omega
 );
 
 
+int ConjugateGradientSolverCSR_SSOR_Eisenstat( 
+    const int N, 
+    Float* x, 
+    const Float* b, 
+    const int* csrrows, const int* csrcolumns, const Float* csrvalues, 
+    Float* residual,
+    Float tolerance,
+    int print_modulo,
+    const Float* precon,
+    Float omega
+);
+
+
+int ConjugateGradientSolverCSR_Rainbow( 
+    const int N, 
+    Float* x, 
+    const Float* b, 
+    const int* csrrows, const int* csrcolumns, const Float* csrvalues, 
+    Float* residual,
+    Float tolerance,
+    int print_modulo,
+    const Float* precon,
+    Float omega,
+    int num_colors, const int* F, const int* B, const int* R
+);
+
+
+int ConjugateGradientSolverCSR_Eisenstat_Rainbow( 
+    const int N, 
+    Float* x, 
+    const Float* b, 
+    const int* csrrows, const int* csrcolumns, const Float* csrvalues, 
+    Float* residual,
+    Float tolerance,
+    int print_modulo,
+    const Float* precon,
+    Float omega,
+    int num_colors, const int* F, const int* B, const int* R
+);
+
+
 // Solves the sparse matrix system with conjugate residuals
 
-void ConjugateResidualSolverCSR( 
+int ConjugateResidualSolverCSR( 
     const int N, 
     Float* x, 
     const Float* b, 
     const int* csrrows, const int* csrcolumns, const Float* csrvalues, 
     Float* residual,
-    Float threshold,
+    Float tolerance,
     int print_modulo
 );
 
-void ConjugateResidualSolverCSR_textbook( 
+int ConjugateResidualSolverCSR_textbook( 
     const int N, 
     Float* x, 
     const Float* b, 
     const int* csrrows, const int* csrcolumns, const Float* csrvalues, 
     Float* residual,
-    Float threshold,
+    Float tolerance,
     int print_modulo
 );
 
 
 
 
-void MINRESCSR( 
+int MINRESCSR( 
     const int N, 
     Float* __restrict__ x, 
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ res,
-    const Float threshold,
+    const Float tolerance,
     int print_modulo
 );
 
 
 
-void WHATEVER( 
+// The Convergence of Inexact Chebyshev and Richardson Iterative Methods for Solving Linear Systems
+
+
+int ChebyshevIteration_DiagonalPreconditioner( 
     const int N, 
     Float* __restrict__ x, 
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
-    Float* __restrict__ res,
-    const Float threshold,
-    int print_modulo
+    Float* __restrict__ residual,
+    const Float allowed_error,
+    int print_modulo,
+    const Float* __restrict__ precon,
+    const Float lower,
+    const Float upper
 );
-
 
 
 

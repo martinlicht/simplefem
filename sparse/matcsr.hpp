@@ -1,7 +1,6 @@
 #ifndef INCLUDEGUARD_SPARSE_MATCSR_HPP
 #define INCLUDEGUARD_SPARSE_MATCSR_HPP
 
-#include <memory>
 #include <utility>
 #include <vector>
 
@@ -29,36 +28,47 @@ public LinearOperator /* every matrix is a linear operator */
 
     public:
 
+        /* Constructors */
+        
         explicit MatrixCSR( int rows, int columns, 
                             const std::vector<int>& A, 
                             const std::vector<int>& C, 
                             const std::vector<Float>& V );
 
+        explicit MatrixCSR( int rows, int columns, 
+                            const std::vector<int>&& A, 
+                            const std::vector<int>&& C, 
+                            const std::vector<Float>&& V );
+
         explicit MatrixCSR( const SparseMatrix& mat );
 
-        virtual ~MatrixCSR( );
+        explicit MatrixCSR( int rows, int columns );
 
+        /* standard interface */ 
+        
+        MatrixCSR() = delete;
         MatrixCSR( const MatrixCSR& );
         MatrixCSR& operator=( const MatrixCSR& );
         MatrixCSR( MatrixCSR&& );
         MatrixCSR& operator=( MatrixCSR&& );
+        virtual ~MatrixCSR( );
 
-        virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override
-        {
-            std::shared_ptr<MatrixCSR> cloned = std::make_shared<MatrixCSR>( *this );
-            return cloned;
-        }
         
-        virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override
-        {
-            std::unique_ptr<MatrixCSR> heir = std::make_unique<MatrixCSR>( std::move(*this) );
-            return heir;
-        }
+        /* standard methods for operators */
         
         virtual void check() const override;
-        virtual void print( std::ostream& ) const override;
-        virtual void printplain( std::ostream& ) const;
+        virtual std::string text() const override;
+        // virtual void printplain( std::ostream& ) const;
 
+
+        /* OTHER METHODS */
+        
+        virtual MatrixCSR* pointer_to_heir() && override
+        {
+            return new typename std::remove_reference<decltype(*this)>::type( std::move(*this) );
+        }
+        
+        
         using LinearOperator::apply;
         virtual void apply( FloatVector& dest, const FloatVector& add, Float scaling ) const override;
         
@@ -67,9 +77,11 @@ public LinearOperator /* every matrix is a linear operator */
         
         void scale ( Float s ); 
 
-        bool isfinite() const;
+        bool is_finite() const;
         
-        FloatVector diagonal() const;
+        FloatVector getDiagonal() const;
+
+        MatrixCSR getTranspose() const;
 
         
         /* access and information to internal data */
@@ -84,7 +96,15 @@ public LinearOperator /* every matrix is a linear operator */
 
         int getnumberofzeroentries() const;
 
-//         void sortentries() const;
+        int getmaxrowwidth() const;
+
+        Float eigenvalueupperbound() const;
+
+        void compressentries() const;
+
+        /* Memory size */
+        
+        std::size_t memorysize() const;
         
         
         
@@ -99,18 +119,30 @@ public LinearOperator /* every matrix is a linear operator */
 
 
 
+MatrixCSR MatrixCSRMultiplication( const MatrixCSR& mat1, const MatrixCSR& mat2 );
+
+MatrixCSR MatrixCSRMultiplication_reduced( const MatrixCSR& mat1, const MatrixCSR& mat2 );
+
+MatrixCSR MatrixCSRAddition( const MatrixCSR& mat1, const MatrixCSR& mat2, Float s1, Float s2 );
 
 DiagonalOperator InverseDiagonalPreconditioner( const MatrixCSR& mat );
 
 
 
-
-
-inline MatrixCSR operator*( const MatrixCSR& mat, Float s )
+inline MatrixCSR operator+( const MatrixCSR& mat1, const MatrixCSR& mat2 )
 {
-    auto foo = mat;
-    foo.scale(s);
-    return foo;
+//     LOG << "ADD" << nl; 
+    return MatrixCSRAddition( mat1, mat2, 1., 1. );
+}
+
+inline MatrixCSR operator-( const MatrixCSR& mat1, const MatrixCSR& mat2 )
+{
+    return MatrixCSRAddition( mat1, mat2, 1., -1. );
+}
+
+inline MatrixCSR operator&( const MatrixCSR& mat1, const MatrixCSR& mat2 )
+{
+    return MatrixCSRMultiplication_reduced( mat1, mat2 );
 }
 
 inline MatrixCSR operator*( Float s, const MatrixCSR& mat )
@@ -119,6 +151,12 @@ inline MatrixCSR operator*( Float s, const MatrixCSR& mat )
     foo.scale(s);
     return foo;
 }
+
+inline MatrixCSR operator*( const MatrixCSR& mat, Float s )
+{
+    return s * mat;
+}
+
 
 
 

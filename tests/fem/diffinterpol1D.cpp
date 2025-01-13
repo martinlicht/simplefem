@@ -1,14 +1,7 @@
-#include <iostream>
-#include <fstream>
-#include <iomanip>
-
 #include "../../basic.hpp"
 #include "../../operators/composedoperators.hpp"
-#include "../../dense/densematrix.hpp"
-#include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial1D.hpp"
 #include "../../mesh/examples1D.hpp"
-#include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/utilities.hpp"
@@ -17,15 +10,15 @@
 
 using namespace std;
 
-int main()
+int main( int argc, char *argv[] )
 {
         
-        LOG << "Unit Test: (1D) exterior derivative and interpolation" << endl;
+        LOG << "Unit Test: (1D) exterior derivative and interpolation" << nl;
         
-        LOG << std::setprecision(10);
+        // LOG << std::setprecision(10);
 
         
-        LOG << "Initial mesh..." << endl;
+        LOG << "Initial mesh..." << nl;
         
         MeshSimplicial1D M = StandardInterval1D();
         
@@ -72,21 +65,21 @@ int main()
             
         for( int l = l_min; l <= l_max; l++ ){
             
-            LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << endl;
+            LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << nl;
             
             for( int r = r_min; r <= r_max; r++ ) 
             {
                 
-                LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << endl;
+                LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << nl;
 
-                LOG << "assemble matrices..." << endl;
+                LOG << "assemble matrices..." << nl;
         
                 SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
                 
                 SparseMatrix scalar_diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r );
 
                 
-                LOG << "...experiments" << endl;
+                LOG << "...experiments" << nl;
         
                 for( int i = 0; i < experiments_scalar_function.size(); i++ ){
 
@@ -98,11 +91,12 @@ int main()
                     
                     auto commutator_error = interpol_exterior - scalar_diffmatrix * interpol_function;
                     
-                    assert( commutator_error.isfinite() );
+                    assert( commutator_error.is_finite() );
                     
                     Float commutator_error_mass = commutator_error * ( vector_massmatrix * commutator_error );
                     
                     assert( std::isfinite( commutator_error_mass ) );
+                    Assert( commutator_error_mass >= -desired_closeness, commutator_error_mass );
                     
                     errors_scalar[i][l-l_min][r-r_min] = std::sqrt( std::fabs( commutator_error_mass ) );
             
@@ -112,9 +106,11 @@ int main()
 
             if( l != l_max )
             {
-                LOG << "Refinement..." << endl;
+                LOG << "Refinement..." << nl;
             
                 M.uniformrefinement();
+
+                // M.shake_interior_vertices(); // The inner and outer dimension may differ.
             }
             
             
@@ -126,6 +122,19 @@ int main()
     
         ConvergenceTable contable_scalar[ experiments_scalar_function.size() ];
         
+        for( int r = r_min; r <= r_max; r++ ) 
+        {
+            for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
+                contable_scalar[i].table_name = "Numerical errors scalar E" + std::to_string(i);
+            
+            for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
+                contable_scalar[i] << printf_into_string("R%d", r );
+
+        }
+        for( int i = 0; i < experiments_scalar_function.size(); i++ ) contable_scalar[i] << nl; 
+
+        
+        
         for( int l = l_min; l <= l_max; l++ ) 
         {
             
@@ -133,7 +142,7 @@ int main()
             {
                 
                 for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
-                    contable_scalar[i] << errors_scalar[i][l-l_min][r-r_min]; // assert( errors_scalar[i][l-l_min][r-r_min] >= 0. ); //
+                    contable_scalar[i] << errors_scalar[i][l-l_min][r-r_min]; // Assert( errors_scalar[i][l-l_min][r-r_min] >= -desired_closeness ); //
             
             }
             
@@ -146,18 +155,21 @@ int main()
         
         
         
-//         TODO : check for convergence        
-//         LOG << "Check that differences are small" << nl;
-//         
-//         for( int l = l_min; l <= l_max; l++ ) 
-//         for( int r = r_min; r <= r_max; r++ ) 
-//         {
-//             for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
-//                 assert( errors_scalar[i][l-l_min][r-r_min] < 10e-6 );            
-//         }
+        /*
+        No meaningful test for convergence possible as of now
+        LOG << "Check that differences are below: " << desired_closeness_for_sqrt << nl;
         
+        for( int l = l_min; l <= l_max; l++ ) 
+        for( int r = r_min; r <= r_max; r++ ) 
+        {
+            if( r < r_max || l < 8 ) continue;
+
+            for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
+                Assert( errors_scalar[i][l-l_min][r-r_min] < desired_closeness_for_sqrt, errors_scalar[i][l-l_min][r-r_min], desired_closeness_for_sqrt, r, l );
+        }
+        */
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
         
         return 0;
 }

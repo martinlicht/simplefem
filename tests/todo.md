@@ -4,11 +4,11 @@
 There are several issues in the management of unit tests
 that need be addressed in the future of this project.
 
+## Global testing routine 
 
-
-## Return values
-
-All tests should return 0 on successful completion
+How can we organize the unit tests such that 
+the testing is automatized. Maybe all the tests are run
+and errors are just collected.
 
 
 ## structure of tests 
@@ -31,29 +31,6 @@ involves the data and is only written to demonstrate the results
 of the computation. It's length does depend on data.
 The logging output is of interest to the general debugging,
 whereas the data output is only helpful for visual inspection.
-
-
-## Global structure
-
-It makes sense to order the tests mimicking the source directory:
-./unittests/subtopic/classname.cpp 
-
-This allows to simplify the file names of the tests.
-
-The makefile should remain within the test directory.
-
-
-## Global testing routine 
-
-How can we organize the unit tests such that 
-the testing is automatized. Maybe all the tests are run
-and errors are just collected.
-
-
-## valgrind and other flags 
-
-if tests are automated, then they should include flags 
-such as valgrind.
 
 
 ## Virtual files 

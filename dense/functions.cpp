@@ -1,7 +1,6 @@
 
 #include "functions.hpp"
 
-#include <cassert>
 #include <new>
 #include <vector>
 
@@ -41,44 +40,48 @@ DenseMatrix TransposeSquare( const DenseMatrix& src )
     return Transpose( src );
 }
 
-void TransposeInSitu( DenseMatrix& src )
-{
-    src.check();
-    const int numrows = src.getdimout();
-    const int numcols = src.getdimin();
-
-    for( int start = 0; start < numcols * numrows; ++start )
-    {
-
-        int next = start;
-        int i = 0;
-
-        do {
-            ++i;
-            next = (next % numrows) * numcols + next / numrows;
-        } while ( next > start );
-
-        if ( next >= start && i != 1 )
-        {
-            const Float tmp = src( start / numcols, start % numcols );
-            next = start;
-            do {
-                i = (next % numrows) * numcols + next / numrows;
-                src( next / numcols, next % numcols ) = ( i == start ) ? tmp : src( i / numcols, i % numcols );
-                next = i;
-            } while (next > start);
-        }
-
-    }
-  
-}
+// void TransposeInSitu( DenseMatrix& src )
+// {
+//     src.check();
+//     const int numrows = src.getdimout();
+//     const int numcols = src.getdimin();
+// 
+//     for( int start = 0; start < numcols * numrows; ++start )
+//     {
+// 
+//         int next = start;
+//         int i = 0;
+// 
+//         do {
+//             ++i;
+//             next = (next % numrows) * numcols + next / numrows;
+//         } while ( next > start );
+// 
+//         if( next >= start && i != 1 )
+//         {
+//             const Float tmp = src( start / numcols, start % numcols );
+//             next = start;
+//             do {
+//                 i = (next % numrows) * numcols + next / numrows;
+//                 src( next / numcols, next % numcols ) = ( i == start ) ? tmp : src( i / numcols, i % numcols );
+//                 next = i;
+//             } while( next > start );
+//         }
+// 
+//     }
+// 
+//     // We cannot change the dimensions of the matrix `src`
+// 
+// }
 
 void TransposeSquareInSitu( DenseMatrix& src ) 
 {
     src.check();
-    for( int r = 0; r < src.getdimout(); r++ )
-    for( int c = r+1; c < src.getdimin(); c++ )
-        { Float t = src(c,r); src(c,r) = src(r,c); src(r,c) = t; };
+    for( int r =   0; r < src.getdimout(); r++ )
+    for( int c = r+1; c <  src.getdimin(); c++ )
+    { 
+        Float t = src(c,r); src(c,r) = src(r,c); src(r,c) = t; 
+    }
     src.check();
 }
 
@@ -89,6 +92,20 @@ void TransposeSquareInSitu( DenseMatrix& src )
 
 
 
+
+// DenseMatrix skip_row( int r, const DenseMatrix& mat )
+// {
+//     assert( 0 <= r and r < mat.getdimout() );
+//     DenseMatrix ret( mat.getdimout()-1, mat.getdimin() );
+//     for( int i = 0;   i < r;               i++ ) ret.setrow( i,   mat.getrow(i) );
+//     for( int i = r+1; i < mat.getdimout(); i++ ) ret.setrow( i-1, mat.getrow(i) );
+//     return ret; 
+// }
+
+// DenseMatrix skip_column( int c, const DenseMatrix& mat )
+// {
+//     return Transpose( skip_row(c, Transpose(mat) ) );
+// }
 
 
 
@@ -103,7 +120,11 @@ void TransposeSquareInSitu( DenseMatrix& src )
 
 Float Determinant( const DenseMatrix& A )
 {
-    assert( A.issquare() );
+    assert( A.is_square() );
+
+    return Determinant_bareiss( A );
+    
+    // LOG << A.getdimin() << nl;
     
     if( A.getdimin() == 0 ) {
         
@@ -119,49 +140,49 @@ Float Determinant( const DenseMatrix& A )
         
     } else if( A.getdimin() == 3 ) {
         
-//          TODO: use this one after all unit tests are in place.
-//         return + A(0,0) * ( A(1,1)*A(2,2) - A(2,1)*A(1,2) )
-//                - A(1,0) * ( A(0,1)*A(2,2) - A(2,1)*A(0,2) )
-//                + A(2,0) * ( A(0,1)*A(1,2) - A(1,1)*A(0,2) );
-        
-        return + A(0,0) * A(1,1) * A(2,2) // 1 2 3 + 
-               - A(0,0) * A(1,2) * A(2,1) // 1 3 2 - 
-               - A(0,1) * A(1,0) * A(2,2) // 2 1 3 - 
-               + A(0,1) * A(1,2) * A(2,0) // 2 3 1 + 
-               - A(0,2) * A(1,1) * A(2,0) // 3 2 1 - 
-               + A(0,2) * A(1,0) * A(2,1) // 3 1 2 + 
+        return + A(0,0) * ( A(1,1)*A(2,2) - A(2,1)*A(1,2) )
+               - A(1,0) * ( A(0,1)*A(2,2) - A(2,1)*A(0,2) )
+               + A(2,0) * ( A(0,1)*A(1,2) - A(1,1)*A(0,2) )
                ;
         
-    } else if( A.getdimin() == 4 ) {
+        // return + A(0,0) * A(1,1) * A(2,2) // 1 2 3 + 
+        //        - A(0,0) * A(1,2) * A(2,1) // 1 3 2 - 
+        //        - A(0,1) * A(1,0) * A(2,2) // 2 1 3 - 
+        //        + A(0,1) * A(1,2) * A(2,0) // 2 3 1 + 
+        //        - A(0,2) * A(1,1) * A(2,0) // 3 2 1 - 
+        //        + A(0,2) * A(1,0) * A(2,1) // 3 1 2 + 
+        //        ;
         
-        return + A(0,0) * A(1,1) * A(2,2) * A(3,3) // 0 1 2 3 + 
-               - A(0,0) * A(1,2) * A(2,1) * A(3,3) // 0 2 1 3 - 
-               - A(0,1) * A(1,0) * A(2,2) * A(3,3) // 1 0 2 3 - 
-               + A(0,1) * A(1,2) * A(2,0) * A(3,3) // 1 2 0 3 + 
-               - A(0,2) * A(1,1) * A(2,0) * A(3,3) // 2 1 0 3 - 
-               + A(0,2) * A(1,0) * A(2,1) * A(3,3) // 2 0 1 3 + 
+    // } else if( A.getdimin() == 4 ) {
+        
+    //     return + A(0,0) * A(1,1) * A(2,2) * A(3,3) // 0 1 2 3 + 
+    //            - A(0,0) * A(1,2) * A(2,1) * A(3,3) // 0 2 1 3 - 
+    //            - A(0,1) * A(1,0) * A(2,2) * A(3,3) // 1 0 2 3 - 
+    //            + A(0,1) * A(1,2) * A(2,0) * A(3,3) // 1 2 0 3 + 
+    //            - A(0,2) * A(1,1) * A(2,0) * A(3,3) // 2 1 0 3 - 
+    //            + A(0,2) * A(1,0) * A(2,1) * A(3,3) // 2 0 1 3 + 
                
-               - A(0,0) * A(1,1) * A(2,3) * A(3,2) // 0 1 3 2 - 
-               + A(0,0) * A(1,2) * A(2,3) * A(3,1) // 0 2 3 1 + 
-               + A(0,1) * A(1,0) * A(2,3) * A(3,2) // 1 0 3 2 + 
-               - A(0,1) * A(1,2) * A(2,3) * A(3,0) // 1 2 3 0 - 
-               + A(0,2) * A(1,1) * A(2,3) * A(3,0) // 2 1 3 0 + 
-               - A(0,2) * A(1,0) * A(2,3) * A(3,1) // 2 0 3 1 - 
+    //            - A(0,0) * A(1,1) * A(2,3) * A(3,2) // 0 1 3 2 - 
+    //            + A(0,0) * A(1,2) * A(2,3) * A(3,1) // 0 2 3 1 + 
+    //            + A(0,1) * A(1,0) * A(2,3) * A(3,2) // 1 0 3 2 + 
+    //            - A(0,1) * A(1,2) * A(2,3) * A(3,0) // 1 2 3 0 - 
+    //            + A(0,2) * A(1,1) * A(2,3) * A(3,0) // 2 1 3 0 + 
+    //            - A(0,2) * A(1,0) * A(2,3) * A(3,1) // 2 0 3 1 - 
                
-               + A(0,0) * A(1,3) * A(2,1) * A(3,2) // 0 3 1 2 + 
-               - A(0,0) * A(1,3) * A(2,2) * A(3,1) // 0 3 2 1 - 
-               - A(0,1) * A(1,3) * A(2,0) * A(3,2) // 1 3 0 2 - 
-               + A(0,1) * A(1,3) * A(2,2) * A(3,0) // 1 3 2 0 + 
-               - A(0,2) * A(1,3) * A(2,1) * A(3,0) // 2 3 1 0 - 
-               + A(0,2) * A(1,3) * A(2,0) * A(3,1) // 2 3 0 1 + 
+    //            + A(0,0) * A(1,3) * A(2,1) * A(3,2) // 0 3 1 2 + 
+    //            - A(0,0) * A(1,3) * A(2,2) * A(3,1) // 0 3 2 1 - 
+    //            - A(0,1) * A(1,3) * A(2,0) * A(3,2) // 1 3 0 2 - 
+    //            + A(0,1) * A(1,3) * A(2,2) * A(3,0) // 1 3 2 0 + 
+    //            - A(0,2) * A(1,3) * A(2,1) * A(3,0) // 2 3 1 0 - 
+    //            + A(0,2) * A(1,3) * A(2,0) * A(3,1) // 2 3 0 1 + 
                
-               - A(0,3) * A(1,0) * A(2,1) * A(3,2) // 3 0 1 2 - 
-               + A(0,3) * A(1,0) * A(2,2) * A(3,1) // 3 0 2 1 + 
-               + A(0,3) * A(1,1) * A(2,0) * A(3,2) // 3 1 0 2 + 
-               - A(0,3) * A(1,1) * A(2,2) * A(3,0) // 3 1 2 0 - 
-               + A(0,3) * A(1,2) * A(2,1) * A(3,0) // 3 2 1 0 + 
-               - A(0,3) * A(1,2) * A(2,0) * A(3,1) // 3 2 0 1 - 
-               ;
+    //            - A(0,3) * A(1,0) * A(2,1) * A(3,2) // 3 0 1 2 - 
+    //            + A(0,3) * A(1,0) * A(2,2) * A(3,1) // 3 0 2 1 + 
+    //            + A(0,3) * A(1,1) * A(2,0) * A(3,2) // 3 1 0 2 + 
+    //            - A(0,3) * A(1,1) * A(2,2) * A(3,0) // 3 1 2 0 - 
+    //            + A(0,3) * A(1,2) * A(2,1) * A(3,0) // 3 2 1 0 + 
+    //            - A(0,3) * A(1,2) * A(2,0) * A(3,1) // 3 2 0 1 - 
+    //            ;
         
     } else if( 2 <= A.getdimin() and A.getdimin() <= 8 ) {
       
@@ -169,7 +190,7 @@ Float Determinant( const DenseMatrix& A )
         
     } else {
         
-        return Determinant_gauss( A );
+        return Determinant_bareiss( A );
         
     }
 }
@@ -180,13 +201,13 @@ Float Determinant( const DenseMatrix& A )
 
 Float Determinant_laplaceexpansion( const DenseMatrix& A )
 {
-    assert( A.issquare() );
+    assert( A.is_square() );
     
     if( A.getdimin() == 0 )
         return 1.;
     
-    Float ret = 0.;
-    int sign  = 1;
+    long double ret = 0.;
+    int signum  = 1;
     
     int i = 77;
     std::vector<int>  aux( A.getdimin() );
@@ -197,17 +218,17 @@ Float Determinant_laplaceexpansion( const DenseMatrix& A )
     
     do {
         
-        Float summand = sign;
+        long double summand = signum;
         for( int r = 0; r < A.getdimout(); r++ )
             summand *= A( r, perm[r] );
         
         ret += summand;
         
-        sign = -sign;
+        signum = -signum;
         
     } while ( HeapsAlgorithmStep( i, aux, perm ) );
     
-    return ret;
+    return static_cast<Float>(ret);
     
 }
 
@@ -215,14 +236,14 @@ Float Determinant_laplaceexpansion( const DenseMatrix& A )
 
 Float Determinant_gauss( DenseMatrix A )
 {
-    assert( A.issquare() );
+    assert( A.is_square() );
     
     if( A.getdimin() == 0 )
         return 1.;
     
     const int n = A.getdimin();
     
-    int sign = 1;
+    int signum = 1;
     
     for( int i = 0; i < n; i++ )
     {
@@ -235,8 +256,13 @@ Float Determinant_gauss( DenseMatrix A )
             }
         
         // make swappings in the range i..n
-        if( r != i ) { sign = -sign; A.swaprow   ( r, i ); }
-        if( c != i ) { sign = -sign; A.swapcolumn( c, i ); }
+        assert( r >= i and c >= i );
+        if( r != i ) { signum = -signum; A.swaprow   ( r, i ); }
+        if( c != i ) { signum = -signum; A.swapcolumn( c, i ); }
+        
+        for( int s = i; s < n; s++ )
+        for( int d = i; d < n; d++ )
+            assert( absolute(A(s,d)) <= absolute(A(i,i)) );
         
         if( absolute( A(i,i) ) == 0.0 )
             return 0.; 
@@ -251,12 +277,114 @@ Float Determinant_gauss( DenseMatrix A )
         }
     }
     
-    Float ret = sign;
+    Float ret = signum;
     for( int i = 0; i < n; i++ ) ret *= A(i,i);
     
     return ret;
     
 }
+
+
+
+
+
+Float Determinant_ModifiedGramSchmidt( DenseMatrix A )
+{
+    assert( A.is_square() );
+    
+    if( A.getdimin() == 0 )
+        return 1.;
+    
+    const int n = A.getdimin();
+    
+    FloatVector diag( n, notanumber );
+
+    for( int i = 0; i < n; i++ )
+    {
+        auto col_i = A.getcolumn(i);
+        
+        diag[i] = col_i.norm();
+        
+        col_i /= diag[i];
+
+        A.setcolumn( i, col_i );
+
+        for( int j = 0; j < n; j++ )
+        {
+            auto col_j = A.getcolumn(j);
+
+            col_j -= ( col_j * col_i ) * col_i;
+
+            A.setcolumn( j, col_j );
+        }
+    }
+    
+    Float ret = 1.;
+    for( int i = 0; i < n; i++ ) ret *= diag[i];
+    
+    return ret;
+    
+}
+
+
+
+
+
+Float Determinant_bareiss( DenseMatrix A )
+{
+    assert( A.is_square() );
+    
+    if( A.getdimin() == 0 )
+        return 1.;
+    
+    const int n = A.getdimin();
+    
+    
+    int signum = 1;
+
+    for( int i = 0; i < n - 1; i++ )
+    {
+
+        int r = i, c = i;
+
+        for( int s = i; s < n; s++ )
+        for( int d = i; d < n; d++ )
+            if( absolute(A(s,d)) > absolute(A(r,c)) ) {
+                r = s; c = d;
+            }
+        
+        // make swappings in the range i..n
+        assert( r >= i and c >= i );
+        if( r != i ) { signum = -signum; A.swaprow   ( r, i ); }
+        if( c != i ) { signum = -signum; A.swapcolumn( c, i ); }
+        
+        for( int s = i; s < n; s++ )
+        for( int d = i; d < n; d++ )
+            assert( absolute(A(s,d)) <= absolute(A(i,i)) );
+        
+        if( absolute( A(i,i) ) == 0.0 )
+            return 0.; 
+
+        
+
+        //Apply formula: TODO the names of these variables are shadowing the outer variables
+        for( int r = i + 1; r < n; r++ ) 
+        for( int c = i + 1; c < n; c++ ) 
+        {
+            A(r,c) = A(i,i) * A(r,c) - A(r,i) * A(i,c);
+            if(i != 0) { A(r,c) /= A(i-1,i-1); }
+        }
+    }
+
+    return signum * A(n-1,n-1);
+}
+
+
+
+
+
+
+
 
 
 
@@ -271,7 +399,7 @@ Float Determinant_gauss( DenseMatrix A )
 
 DenseMatrix CofactorMatrix( const DenseMatrix& A )
 {
-  assert( A.issquare() );
+  assert( A.is_square() );
   
   if( A.getdimin() == 0 ) 
     return DenseMatrix( 0, 0 );
@@ -293,7 +421,7 @@ DenseMatrix CofactorMatrix( const DenseMatrix& A )
     for( int c = 0; c < A.getdimin(); c++ )
     {
       
-      int sign_entry = signpower( r+c );
+      int sign_entry = sign_power( r+c );
       
       assert( sign_perm * sign_entry == 1 or sign_perm * sign_entry == -1 );
       Float summand = sign_perm * sign_entry;
@@ -329,9 +457,41 @@ DenseMatrix CofactorMatrix( const DenseMatrix& A )
 DenseMatrix Inverse( DenseMatrix A )
 {
     
-    assert( A.issquare() );
-    if( A.getdimin() <= 6 ) {
-        Inverse_CramersRule_InSitu( A );
+    assert( A.is_square() );
+    if( A.getdimin() == 1 ) {
+
+        return DenseMatrix( 1, 1, 1. / A(0,0) );
+    
+    } else if( A.getdimin() == 2 ) {
+
+        Float D = A(0,0) * A(1,1) - A(0,1) * A(1,0);
+        
+        return DenseMatrix( 2, 2, { A(1,1)/D, -A(0,1)/D, -A(1,0)/D, A(0,0)/D } );
+
+    } else if( A.getdimin() == 3 ) {
+
+        Float D_00 = A(1,1) * A(2,2) - A(2,1) * A(1,2);
+        Float D_01 = A(1,0) * A(2,2) - A(2,0) * A(1,2);
+        Float D_02 = A(1,0) * A(2,1) - A(2,0) * A(1,1);
+        
+        Float D_10 = A(0,1) * A(2,2) - A(2,1) * A(0,2);
+        Float D_11 = A(0,0) * A(2,2) - A(2,0) * A(0,2);
+        Float D_12 = A(0,0) * A(2,1) - A(2,0) * A(0,1);
+        
+        Float D_20 = A(0,1) * A(1,2) - A(1,1) * A(0,2);
+        Float D_21 = A(0,0) * A(1,2) - A(1,0) * A(0,2);
+        Float D_22 = A(0,0) * A(1,1) - A(1,0) * A(0,1);
+
+        Float D = A(0,0) * D_00 - A(0,1) * D_01 + A(0,2) * D_02;
+        
+        return DenseMatrix( 3, 3, {
+           +D_00/D, -D_10/D, +D_20/D,
+           -D_01/D, +D_11/D, -D_21/D,
+           +D_02/D, -D_12/D, +D_22/D           
+        } );
+
+    // } else if( A.getdimin() <= 6 ) {
+    //     Inverse_CramersRule_InSitu( A );
     } else {
         Inverse_gauss_InSitu( A );
     }
@@ -350,10 +510,17 @@ void Inverse_InSitu( DenseMatrix& A )
 
 void Inverse_CramersRule_InSitu( DenseMatrix& A )
 {
-    assert( A.issquare() ); 
+    assert( A.is_square() ); 
     // Float det = Determinant_laplaceexpansion( A );
     // assert( absolute( det ) > machine_epsilon );
-    A = CofactorMatrix( A ) / Determinant( A );
+    
+    // auto B = CofactorMatrix( A ); B /= Determinant( A );
+    // auto C = ( CofactorMatrix( A ) /  Determinant( A ) );
+    // LOG << A << nl << B << nl << C << nl;
+    // LOG << A*B << nl << A*C << nl;
+    // assert( ( C - B ).is_numerically_small() );
+
+    A = CofactorMatrix( A ) /  Determinant( A );
 }
 
 
@@ -361,7 +528,7 @@ void Inverse_CramersRule_InSitu( DenseMatrix& A )
 void Inverse_gauss_InSitu( DenseMatrix& mat, bool pivoting )
 {
     
-    assert( mat.issquare() );
+    assert( mat.is_square() );
     
     const int n = mat.getdimout();
     
@@ -444,7 +611,7 @@ void Inverse_gauss_InSitu( DenseMatrix& mat, bool pivoting )
 
 // void InverseAndDeterminant( const DenseMatrix& A, DenseMatrix& Ainv, Float& Adet )
 // {
-//     assert( A.issquare() ); 
+//     assert( A.is_square() ); 
 //     DenseMatrix Cof = CofactorMatrix( A );
 //     Adet = Determinant( A );
 //     Ainv = Cof / Adet;
@@ -466,7 +633,7 @@ void Inverse_gauss_InSitu( DenseMatrix& mat, bool pivoting )
 DenseMatrix SubdeterminantMatrixSquare( const DenseMatrix& A, int k )
 {
     A.check();
-    assert( A.issquare() );
+    assert( A.is_square() );
     assert( 0 <= k && k <= A.getdimin() );
 
     // performance "hacks", which can be disabled at any time
@@ -494,16 +661,18 @@ DenseMatrix SubdeterminantMatrix( const DenseMatrix& A, int k )
 {
     A.check();
     assert( 0 <= k && k <= A.getdimin() && k <= A.getdimout() );
-    
+
+    if( A.is_square() ) return SubdeterminantMatrixSquare(A,k);
+
     // performance "hacks", which can be disabled at any time
     if( k == 0 ) return DenseMatrix(1,1,1.);
     if( k == 1 ) return A;
 
-    IndexRange range_from = IndexRange( 0, k-1 );
-    IndexRange range_rows = IndexRange( 0, A.getdimout()-1 );
-    IndexRange range_cols = IndexRange( 0, A.getdimin()-1 );
-    std::vector<IndexMap> sigmas_rows = generateSigmas( range_from, range_rows );
-    std::vector<IndexMap> sigmas_cols = generateSigmas( range_from, range_cols );
+    const IndexRange range_from = IndexRange( 0, k-1 );
+    const IndexRange range_rows = IndexRange( 0, A.getdimout()-1 );
+    const IndexRange range_cols = IndexRange( 0, A.getdimin()-1 );
+    const std::vector<IndexMap> sigmas_rows = generateSigmas( range_from, range_rows );
+    const std::vector<IndexMap> sigmas_cols = generateSigmas( range_from, range_cols );
     
     DenseMatrix ret( SIZECAST( sigmas_rows.size() ), SIZECAST( sigmas_cols.size() ), 0. );
     for( int rim = 0; rim < sigmas_rows.size(); rim++ )
@@ -517,7 +686,51 @@ DenseMatrix SubdeterminantMatrix( const DenseMatrix& A, int k )
 }
 
 
+void NewtonSchulz( const DenseMatrix& A, DenseMatrix& X, int iterations )
+{
+    while( iterations > 0 ) {
+        X = 2. * X - X * A * X;
+        iterations--;
+    }
+}
 
 
 
+
+
+
+
+
+
+
+
+
+DenseMatrix MatrixTensorProduct( const DenseMatrix& A, const DenseMatrix& B )
+{
+    A.check(); B.check();
+    const int newrows = A.getdimout() * B.getdimout();
+    const int newcols = A.getdimin()  * B.getdimin();
+    
+    DenseMatrix ret( newrows, newcols );
+    assert( ret.getdimout() == newrows );
+    assert( ret.getdimin()  == newcols );
+
+    const int num_A_rows = A.getdimout();
+    const int num_A_cols  = A.getdimin();
+    const int num_B_rows = B.getdimout();
+    const int num_B_cols  = B.getdimin();
+    
+    for( int rl = 0; rl < num_A_rows; rl++ )
+    for( int cl = 0; cl < num_A_cols; cl++ )
+    for( int rr = 0; rr < num_B_rows; rr++ )
+    for( int cr = 0; cr < num_B_cols; cr++ )
+    {
+        ret( rl * num_B_rows + rr, cl * num_B_cols + cr )
+        =
+        A( rl, cl ) * B( rr, cr );
+    }
+    
+    ret.check();
+    return ret;
+}
 

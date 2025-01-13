@@ -9,7 +9,7 @@
 
 /***************
 *** 
-***  Generate Permutations using Heaps algorithm
+***  Generate Permutations using Heaps Algorithm
 ***  
 ***  The variables `seed` and `memo` are just auxiliary data,
 ***  whereas `perm` contains the proper data.
@@ -33,13 +33,32 @@
 ***  } while( HeapsAlgorithmInit( seed, memo, perm ) );
 ***  
 ***  
-***  
-***  
 ***************/
 
 void HeapsAlgorithmInit( int& seed, std::vector<int>& memo, const std::vector<int>& perm );
 
 bool HeapsAlgorithmStep( int& seed, std::vector<int>& memo,       std::vector<int>& perm );
+
+
+struct HeapAlgorithmState
+{
+    int seed;
+    std::vector<int> memo;
+    std::vector<int> perm;
+};
+
+inline void HeapsAlgorithmInit( HeapAlgorithmState& state )
+{
+    HeapsAlgorithmInit( state.seed, state.memo, state.perm );
+}
+
+inline bool HeapsAlgorithmStep( HeapAlgorithmState& state )
+{
+    return HeapsAlgorithmStep( state.seed, state.memo, state.perm );
+}
+
+
+
 
 
 #endif

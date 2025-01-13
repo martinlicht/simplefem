@@ -1,7 +1,6 @@
 #ifndef INCLUDEGUARD_SPARSE_SPARSEMATRIX_HPP
 #define INCLUDEGUARD_SPARSE_SPARSEMATRIX_HPP
 
-#include <memory>
 #include <utility>
 #include <vector>
 
@@ -29,59 +28,69 @@ public LinearOperator /* every matrix is a linear operator */
 
     public:
 
-        struct MatrixEntry
+        struct PACKED MatrixEntry
         {
+            MatrixEntry(int row, int column, Float value) : row(row), column(column), value(value) {}
+            MatrixEntry(){}
             int row;
             int column;
             Float value;
         };
 
-        enum class MatrixEntrySorting {
+        // static_assert( sizeof(MatrixEntry) == 2 * sizeof(int) + sizeof(Float), "MatrixEntry takes too much memory" );
+
+        enum class MatrixEntrySorting : unsigned char {
             rowwise,
             columnwise
         };
 
+        /* Constructors */
+        
         explicit SparseMatrix( int dimout, int dimin, int numentries = 0, 
-                               std::function<MatrixEntry(int)> generator = [](int i __attribute__((unused)) )->MatrixEntry{ return {0,0,notanumber}; } ); 
-        explicit SparseMatrix( int dimout, int dimin, const std::vector<MatrixEntry>& );
-        explicit SparseMatrix( int dimout, int dimin, const std::initializer_list<MatrixEntry>& );
+                               std::function<MatrixEntry(int)> generator = [](int)->MatrixEntry{ return MatrixEntry(0,0,notanumber); } ); 
+        // explicit SparseMatrix( int dimout, int dimin );
+        explicit SparseMatrix( int dimout, int dimin, const std::vector<MatrixEntry>& entries );
+        explicit SparseMatrix( int dimout, int dimin, const std::initializer_list<MatrixEntry>& entries );
+        explicit SparseMatrix( const FloatVector& diagonal );
         explicit SparseMatrix( const ScalingOperator& matrix );
         explicit SparseMatrix( const DiagonalOperator& matrix );
-        explicit SparseMatrix( const DenseMatrix& );
-        virtual ~SparseMatrix();
-
+        explicit SparseMatrix( const DenseMatrix& matrix );
+        
+        /* standard interface */ 
+        
+        SparseMatrix() = delete;
         SparseMatrix( const SparseMatrix& );
         SparseMatrix& operator=( const SparseMatrix& );
         SparseMatrix( SparseMatrix&& );
         SparseMatrix& operator=( SparseMatrix&& );
+        virtual ~SparseMatrix();
 
-        virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override
-        {
-            std::shared_ptr<SparseMatrix> cloned = std::make_shared<SparseMatrix>( *this );
-            return cloned;
-        }
-        
-        virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override
-        {
-            std::unique_ptr<SparseMatrix> heir = std::make_unique<SparseMatrix>( std::move(*this) );
-            return heir;
-        }
+        /* standard methods for operators */
         
         virtual void check() const override;
-        virtual void print( std::ostream& ) const override;
-        virtual void printplain( std::ostream& ) const;
+        virtual std::string text() const override;
+        // virtual void printplain( std::ostream& ) const;
 
+
+        /* OTHER METHODS */
+        
+        virtual SparseMatrix* pointer_to_heir() && override
+        {
+            return new typename std::remove_reference<decltype(*this)>::type( std::move(*this) );
+        }
+        
+        
         using LinearOperator::apply;
         virtual void apply( FloatVector& dest, const FloatVector& add, Float scaling ) const override;
 
         
         /* manipulation and information */
         
-        void scale ( Float s );
+        void scale( Float s );
 
-        bool isfinite() const;
+        bool is_finite() const;
         
-        FloatVector diagonal() const;
+        FloatVector getDiagonal() const;
         
         int getnumberofzeroentries() const;
         
@@ -113,15 +122,19 @@ public LinearOperator /* every matrix is a linear operator */
         
         void setentry( int, MatrixEntry );
         
-        void addentry( int, int, Float );
+        void appendentry( int, int, Float );
         
-        void addentry( MatrixEntry );
+        void appendentry( MatrixEntry );
         
         void clearentries();
         
         /* obtain a transpose */
 
         SparseMatrix getTranspose() const;
+
+        /* Memory size */
+        
+        std::size_t memorysize() const;
         
     private:
 
@@ -139,16 +152,14 @@ DiagonalOperator InverseDiagonalPreconditioner( const SparseMatrix& mat );
 
 
 
+inline SparseMatrix Transpose( const SparseMatrix& op )
+{
+    return op.getTranspose();
+}
+
 inline SparseMatrix operator&( const SparseMatrix& left, const SparseMatrix& right )
 {
     return SparseMatrixMultiplication( left, right );
-}
-
-inline SparseMatrix operator*( const SparseMatrix& mat, Float s )
-{
-    auto foo = mat;
-    foo.scale(s);
-    return foo;
 }
 
 inline SparseMatrix operator*( Float s, const SparseMatrix& mat )
@@ -157,6 +168,13 @@ inline SparseMatrix operator*( Float s, const SparseMatrix& mat )
     foo.scale(s);
     return foo;
 }
+
+inline SparseMatrix operator*( const SparseMatrix& mat, Float s )
+{
+    return s * mat;
+}
+
+Float norm_sq_of_vector( const SparseMatrix& A, const FloatVector& vec );
 
 
 

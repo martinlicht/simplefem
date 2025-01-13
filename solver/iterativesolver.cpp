@@ -6,6 +6,8 @@
 #include "../operators/floatvector.hpp"
 
 
+static const bool cpp_restart_on_full_dimension = false;
+static const bool cpp_restart_before_finish     = false;
 
 
 
@@ -16,30 +18,57 @@
 
 
 
-
-
-ConjugateGradientMethod::ConjugateGradientMethod( const LinearOperator& op )
-: IterativeSolver(), A( op )
+std::string ConjugateGradientMethod::text() const
 {
-    this->max_iteration_count = op.getdimin();
-    ConjugateGradientMethod::check();
+    return "Solver: Conjugate Gradient Method";
 }
 
-ConjugateGradientMethod::~ConjugateGradientMethod()
+std::string ConjugateResidualMethod::text() const
 {
-    ConjugateGradientMethod::check();
+    return "Solver: Conjugate Residual Method";
 }
 
-void ConjugateGradientMethod::check() const
+
+PreconditionedConjugateResidualMethod::PreconditionedConjugateResidualMethod( const LinearOperator& op, const LinearOperator& M )
+: IterativeSolver( op ), M( M )
+{
+    PreconditionedConjugateResidualMethod::check();
+}
+
+void PreconditionedConjugateResidualMethod::check() const
 {
     IterativeSolver::check();
-    assert( A.getdimin() == A.getdimout() );
+    M.check();
+    assert( M.getdimin() == M.getdimout() );
+    assert( A.getdimin() == M.getdimout() );
 }
 
-void ConjugateGradientMethod::print( std::ostream& os ) const
+std::string PreconditionedConjugateResidualMethod::text() const
 {
-    os << "Print Conjugate Gradient Method." << std::endl;
+    return "Solver: Preconditioned Conjugate Residual Method.";
 }
+
+
+std::string HerzogSoodhalterMethod::text() const
+{
+    return "Solver: Herzog-Soodhalter Method";
+}
+
+std::string ResidualDescentMethod::text() const
+{
+    return "Solver: Residual Descent Method";
+}
+
+std::string MinimumResidualMethod::text() const
+{
+    return "Solver: Minimum Residual Method";
+}
+
+
+
+
+
+
 
 
 
@@ -68,33 +97,37 @@ void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) cons
     FloatVector Ad( dimension, 0. );
     
     recent_iteration_count = 0;
+
+    // Float sigma_min_sq = b * ( A * b ) / (b*b);
     
-    if( verbosity >= VerbosityLevel::verbose ) LOG << "Begin Conjugate Gradient iteration";
+    if( verbosity >= VerbosityLevel::verbose ) LOG << "START Conjugate Gradient iteration" << nl;
         
     while( recent_iteration_count < max_iteration_count )
     {
         
-        bool restart_condition = ( recent_iteration_count % x.getdimension() == 0 );
+        bool restart_condition = ( recent_iteration_count == 0 ) or ( cpp_restart_on_full_dimension and recent_iteration_count % x.getdimension() == 0 );
         
-        bool residual_seems_small = absolute( r * r ) < threshold*threshold;
+        bool residual_seems_small = ( recent_iteration_count != 0 ) and absolute( r * r ) < tolerance*tolerance;
         
         /* Start / Restart CRM process */
-        if( restart_condition or residual_seems_small ) {
+        if( restart_condition or ( residual_seems_small and cpp_restart_before_finish ) ) UNLIKELY {
         
             r = b - A * x;
             d = r;
 
+            if( verbosity >= VerbosityLevel::verbose )
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(r*r), (double)(safedouble)tolerance );
+            
         }
 
-        bool residual_is_small = absolute( r * r ) < threshold*threshold;
+        bool residual_is_small = absolute( r * r ) < tolerance*tolerance;
         
         /* Print information */
         
         bool print_condition = ( print_modulo > 0 and recent_iteration_count % print_modulo == 0 );
         
         if( verbosity >= VerbosityLevel::verbose and print_condition )
-            LOG << "Result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
-                << absolute(r * r) << "(" << threshold*threshold << ")"; 
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(r*r), (double)(safedouble)tolerance );
         
         /* If exit condition met, exit */
         
@@ -109,18 +142,23 @@ void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) cons
             Float rr_old = r * r;
             Float Ad_d  = Ad * d;
             Float alpha = rr_old / Ad_d;
-            
+
+            assert( Ad_d >= 0 );
+
+            // sigma_min_sq = minimum( sigma_min_sq, Ad_d / (d*d) );
+            // LOG << "@" << recent_iteration_count << " : " << std::sqrt( rr_old / ( sigma_min_sq * (x*x) ) ) << " with eigenvalue bound " << std::sqrt(sigma_min_sq) << nl;
+
             bool denominator_is_unreasonable = not std::isfinite(Ad_d) or Ad_d < 0.;
-            bool denominator_is_small    = sqrt(absolute(Ad_d)) < machine_epsilon;
+            bool denominator_is_small    = std::sqrt(absolute(Ad_d)) < machine_epsilon;
             
             if( denominator_is_unreasonable ) {
-                LOG << "Gradient energy is unreasonable with "  << Ad_d;
+                LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient energy is unreasonable with %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble)Ad_d );
                 break;
             }
             
             if( denominator_is_small ) {
-                LOG << "Gradient energy is small with " << Ad_d << " while residual is "
-                    << rr_old << "  vs " << threshold*threshold;
+                LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(rr_old), (double)(safedouble)tolerance );
+                LOGPRINTF( "(%d/%d)   WARNING: Gradient energy is small with %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble)Ad_d );
                 break;
             }
             
@@ -140,10 +178,8 @@ void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) cons
     recent_deviation = absolute(r * r);
     
     if( verbosity >= VerbosityLevel::resultonly and print_modulo >= 0 ) 
-        LOG << "Result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
-            << recent_deviation << "(" << threshold*threshold << ")"; 
-
-
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(recent_deviation), (double)(safedouble)tolerance ); 
+        
     
 }
 
@@ -235,42 +271,6 @@ void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) cons
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-ConjugateResidualMethod::ConjugateResidualMethod( const LinearOperator& op )
-: IterativeSolver(), A( op )
-{
-    this->max_iteration_count = op.getdimin();
-    ConjugateResidualMethod::check();
-}
-
-ConjugateResidualMethod::~ConjugateResidualMethod()
-{
-    ConjugateResidualMethod::check();
-}
-
-void ConjugateResidualMethod::check() const
-{
-    IterativeSolver::check();
-    assert( A.getdimin() == A.getdimout() );
-}
-
-void ConjugateResidualMethod::print( std::ostream& os ) const
-{
-    os << "Print Conjugate Residual Method." << std::endl;
-}
 
 
 
@@ -325,17 +325,17 @@ void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector&
     
     recent_iteration_count = 0;
     
-    if( verbosity >= VerbosityLevel::verbose ) LOG << "Begin Conjugate Residual iteration";
+    if( verbosity >= VerbosityLevel::verbose ) LOG << "START Conjugate Residual (explicit) iteration" << nl;
         
     while( recent_iteration_count < max_iteration_count )
     {
         
         /* Start / Restart CRM process */
-        bool restart_condition = ( recent_iteration_count == 0 ) or ( recent_iteration_count % x.getdimension() == 0 );
+        bool restart_condition = ( recent_iteration_count == 0 ) or ( cpp_restart_on_full_dimension and recent_iteration_count % x.getdimension() == 0 );
         
-        bool residual_seems_small = absolute( r * r ) < threshold*threshold or absolute( rAr ) < threshold*threshold;
+        bool residual_seems_small = ( recent_iteration_count != 0 ) and ( absolute( r * r ) < tolerance*tolerance or absolute( rAr ) < tolerance*tolerance );
         
-        if( restart_condition or residual_seems_small ) {
+        if( restart_condition or ( residual_seems_small and cpp_restart_before_finish ) ) UNLIKELY {
         
             /* r = b - A x */
             r = b - A * x;
@@ -350,26 +350,35 @@ void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector&
             Ad = A * d; // A.apply( Ad, (const FloatVector&) d );
 
             /* rho is r.A.r */
-            rAr = r * Ar;
+            rAr = Ar * r;
+            if( rAr < 0. ) LOG << rAr << nl;
             assert( rAr >= 0. );
+
+            if( verbosity >= VerbosityLevel::verbose )
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(rAr), (double)(safedouble)tolerance );
+            
+
             
         }
 
-        bool residual_is_small = absolute( r * r ) < threshold*threshold or absolute( rAr ) < threshold*threshold; 
+        bool residual_is_small = absolute( r * r ) < tolerance*tolerance or absolute( rAr ) < tolerance*tolerance; 
         
         /* Print information */
         
         bool print_condition = ( print_modulo > 0 and recent_iteration_count % print_modulo == 0 );
         
         if( verbosity >= VerbosityLevel::verbose and print_condition )
-            LOG << "Result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
-                << rAr << "(" << threshold*threshold << ")"; 
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(rAr), (double)(safedouble)tolerance ); 
         
         /* If exit condition met, exit */
+        if( residual_is_small ) 
+            break;
+            
         
         /* Perform iteration step */
         {
 
+            if( rAr < 0. ) LOG << rAr << nl;
             assert( rAr >= 0. );
             
             AAd = A * Ad;
@@ -379,16 +388,16 @@ void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector&
             Float alpha = rAr / Ad_Ad;
 
             bool denominator_is_unreasonable = not std::isfinite(Ad_Ad) or Ad_Ad < 0.;
-            bool denominator_is_small    = sqrt(absolute(Ad_Ad)) < machine_epsilon;
+            bool denominator_is_small    = std::sqrt(absolute(Ad_Ad)) < machine_epsilon;
             
             if( denominator_is_unreasonable ) {
-                LOG << "Gradient double energy is unreasonable with "  << Ad_Ad;
+                LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient double energy is unreasonable with %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble)Ad_Ad );
                 break;
             }
             
             if( denominator_is_small ) {
-                LOG << "Gradient double energy is small with " << Ad_Ad << " while residual energy is "
-                    << rAr << "  vs " << threshold*threshold;
+                LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(rAr), (double)(safedouble)tolerance ); 
+                LOGPRINTF( "(%d/%d)   WARNING: Gradient double energy is small with %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble)Ad_Ad );
                 break;
             }
             
@@ -400,8 +409,15 @@ void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector&
             Ar -= alpha * AAd;
 
             Float tau = rAr;
-            rAr = r * ( A * r ); //r * ( A * r ); //r * Ar;
+            rAr = r * Ar; //r * ( A * r ); //r * Ar;
             Float beta = rAr / tau;
+            
+            if( rAr < 0. ) {
+                LOGPRINTF( "(%d/%d) BREAKDOWN: Residual energy is unreasonable with %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble)rAr );
+                // rAr = 0.; 
+                break;
+            }
+
             assert( rAr >= 0. );
             
             d = r + beta * d;
@@ -418,35 +434,19 @@ void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector&
     recent_deviation = rAr;
     
     if( verbosity >= VerbosityLevel::resultonly and print_modulo >= 0 ) 
-        LOG << "Result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
-            << recent_deviation << "(" << threshold*threshold << ")"; 
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(recent_deviation), (double)(safedouble)tolerance ); 
 
     
 }
-  
 
-  
 
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
 void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b ) const
 {
     check();
@@ -467,34 +467,40 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
     
     recent_iteration_count = 0;
     
-    if( verbosity >= VerbosityLevel::verbose ) LOG << "Begin Conjugate Residual iteration";
+    if( verbosity >= VerbosityLevel::verbose ) LOG << "START Conjugate Residual (robust) iteration" << nl;
         
     while( recent_iteration_count < max_iteration_count )
     {
         
-        bool restart_condition = ( recent_iteration_count == 0 ) or ( recent_iteration_count % x.getdimension() == 0 );
+        bool restart_condition = ( recent_iteration_count == 0 ) or ( cpp_restart_on_full_dimension and recent_iteration_count % x.getdimension() == 0 );
         
-        bool residual_seems_small = absolute( r * r ) < threshold*threshold;
-        
-        if( restart_condition ) {
+        bool residual_seems_small = ( recent_iteration_count != 0 ) and ( absolute( r * r ) < tolerance*tolerance or absolute( r * Ar ) < tolerance*tolerance );
+        // first criterion is not in fast 
+
+        if( restart_condition or ( residual_seems_small and cpp_restart_before_finish ) ) UNLIKELY {
         
             r  = b - A * x;
             d  = r;
             
-            Ad = A * d;
-            Ar = Ad;
+            Ar = A * r;
+            Ad = Ar;
+
+            // fast and explicit: Ar_r = Ar * r;
+
+            if( verbosity >= VerbosityLevel::verbose )
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt( r * Ar ), (double)(safedouble)tolerance );
 
         }
 
-        bool residual_is_small = absolute( r * r ) < threshold*threshold; 
+        bool residual_is_small = absolute( r * r ) < tolerance*tolerance or absolute( r * Ar ) < tolerance*tolerance; 
+        // first criterion is in explicit but not in fast (for speed reasons)
         
         /* Print information */
         
         bool print_condition = ( print_modulo > 0 and recent_iteration_count % print_modulo == 0 );
         
         if( verbosity >= VerbosityLevel::verbose and print_condition )
-            LOG << "Result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
-                << absolute( r * r ) << "(" << threshold*threshold << ")"; 
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt( Ar * r ), (double)(safedouble)tolerance ); 
         
         /* If exit condition met, exit */
         
@@ -505,20 +511,20 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
             p = A * Ad;
             Float Ad_Ad = Ad * Ad; assert( Ad_Ad >= 0 ); 
             
-            Float Ad_r  = Ad * r;
+            Float Ad_r  = Ad * r; // fast/explicit uses and maintains Ar_r
             Float alpha = Ad_r / Ad_Ad;
             
             bool denominator_is_unreasonable = not std::isfinite(Ad_Ad) or Ad_Ad < 0.;
-            bool denominator_is_small    = sqrt(absolute(Ad_Ad)) < machine_epsilon;
+            bool denominator_is_small        = std::sqrt(absolute(Ad_Ad)) < machine_epsilon;
             
             if( denominator_is_unreasonable ) {
-                LOG << "Gradient double energy is unreasonable with "  << Ad_Ad;
+                LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient double energy is unreasonable with %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble)Ad_Ad );
                 break;
             }
             
             if( denominator_is_small ) {
-                LOG << "Gradient double energy is small with " << Ad_Ad << " while residual energy is "
-                    << Ad_r << "  vs " << threshold*threshold;
+                LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt( Ar * r ), (double)(safedouble)tolerance ); 
+                LOGPRINTF( "(%d/%d)   WARNING: Gradient double energy is small with %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble)Ad_Ad );
                 break;
             }
             
@@ -527,8 +533,10 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
             Ar = Ar - alpha * p;
             
             Float Ar_r_new = Ar * r;
-            Float beta = Ar_r_new / Ad_r;
+            Float beta = Ar_r_new / Ad_r; // fast uses and maintains Ar_r 
             
+            // assert( Ar_r_new >= 0. );
+
             d  =  r + beta *  d;
             Ad = Ar + beta * Ad;
             
@@ -538,26 +546,12 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
     }
     
     
-    recent_deviation = absolute( r * r );
+    recent_deviation = absolute( r * Ar );
     
     if( verbosity >= VerbosityLevel::resultonly and print_modulo >= 0 ) 
-        LOG << "Result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
-            << recent_deviation << "(" << threshold*threshold << ")"; 
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(recent_deviation), (double)(safedouble)tolerance ); 
     
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -589,36 +583,38 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
     
     Float Ar_r = notanumber;
     
-    if( verbosity >= VerbosityLevel::verbose ) LOG << "Begin Conjugate Residual iteration";
+    if( verbosity >= VerbosityLevel::verbose ) LOG << "START Conjugate Residual (fast) iteration" << nl;
         
     while( recent_iteration_count < max_iteration_count )
     {
         
-        bool restart_condition = ( recent_iteration_count == 0 ) or ( recent_iteration_count % x.getdimension() == 0 );
+        bool restart_condition = ( recent_iteration_count == 0 ) or ( cpp_restart_on_full_dimension and recent_iteration_count % x.getdimension() == 0 );
         
-        bool residual_seems_small = absolute( r * r ) < threshold*threshold;
+        bool residual_seems_small = ( recent_iteration_count != 0 ) and absolute( Ar * r ) < tolerance*tolerance;
         
-        if( restart_condition ) {
+        if( restart_condition or ( residual_seems_small and cpp_restart_before_finish ) ) UNLIKELY {
         
             r  = b - A * x;
             d  = r;
             
-            Ad = A * d;
-            Ar = Ad;
+            Ar = A * r;
+            Ad = Ar;
             
             Ar_r = Ar * r;
 
+            if( verbosity >= VerbosityLevel::verbose )
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(Ar_r), (double)(safedouble)tolerance );
+
         }
 
-        bool residual_is_small = absolute( r * r ) < threshold*threshold; 
+        bool residual_is_small = absolute( Ar * r ) < tolerance*tolerance; 
         
         /* Print information */
         
         bool print_condition = ( print_modulo > 0 and recent_iteration_count % print_modulo == 0 );
         
         if( verbosity >= VerbosityLevel::verbose and print_condition )
-            LOG << "Result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
-                << absolute( r * r ) << "(" << threshold*threshold << ")"; 
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt( Ar * r ), (double)(safedouble)tolerance );
         
         /* If exit condition met, exit */
         
@@ -633,16 +629,16 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
             Float alpha = Ar_r / Ad_Ad;
             
             bool denominator_is_unreasonable = not std::isfinite(Ad_Ad) or Ad_Ad < 0.;
-            bool denominator_is_small    = sqrt(absolute(Ad_Ad)) < machine_epsilon;
+            bool denominator_is_small    = std::sqrt(absolute(Ad_Ad)) < machine_epsilon;
             
             if( denominator_is_unreasonable ) {
-                LOG << "Gradient double energy is unreasonable with "  << Ad_Ad;
+                LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient double energy is unreasonable with %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble)Ad_Ad );
                 break;
             }
             
             if( denominator_is_small ) {
-                LOG << "Gradient double energy is small with " << Ad_Ad << " while residual energy is "
-                        << Ar_r << "  vs " << threshold*threshold;
+                LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt( Ar * r ), (double)(safedouble)tolerance );
+                LOGPRINTF( "(%d/%d)   WARNING: Gradient double energy is small with %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble)Ad_Ad );
                 break;
             }
             
@@ -653,6 +649,8 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
             Float Ar_r_new = Ar * r;
             Float beta = Ar_r_new / Ar_r;
             
+            // assert( Ar_r_new >= 0. );
+
             d  =  r + beta *  d;
             Ad = Ar + beta * Ad;
             
@@ -664,11 +662,10 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
     }
     
     
-    recent_deviation = absolute( r * r );
+    recent_deviation = absolute( Ar * r );
     
     if( verbosity >= VerbosityLevel::resultonly and print_modulo >= 0 ) 
-        LOG << "Result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
-            << recent_deviation << "(" << threshold*threshold << ")"; 
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(recent_deviation), (double)(safedouble)tolerance );
     
 }
 
@@ -783,35 +780,6 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
 
 
 
-  
-PreconditionedConjugateResidualMethod::PreconditionedConjugateResidualMethod( const LinearOperator& op, const LinearOperator& M )
-: IterativeSolver(), A( op ), M( M )
-{
-    this->max_iteration_count = op.getdimin();
-    PreconditionedConjugateResidualMethod::check();
-}
-
-PreconditionedConjugateResidualMethod::~PreconditionedConjugateResidualMethod()
-{
-    PreconditionedConjugateResidualMethod::check();
-}
-  
-void PreconditionedConjugateResidualMethod::check() const
-{
-    IterativeSolver::check();
-    assert( A.getdimin() == A.getdimout() );
-    assert( M.getdimin() == M.getdimout() );
-    assert( A.getdimin() == M.getdimout() );
-}
-
-void PreconditionedConjugateResidualMethod::print( std::ostream& os ) const
-{
-    os << "Print Preconditioned Conjugate Residual Methop." << std::endl;
-}
-
-
-
-
 
 void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
 {
@@ -843,13 +811,17 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
         
     recent_iteration_count = 0;
     
-    if( verbosity >= VerbosityLevel::verbose ) LOG << "Begin Preconditioned Conjugate Residual iteration";
+    if( verbosity >= VerbosityLevel::verbose ) LOG << "START Preconditioned Conjugate Residual iteration" << nl;
         
     while( recent_iteration_count < max_iteration_count )
     {
         
+        bool restart_condition = ( recent_iteration_count == 0 ) or ( cpp_restart_on_full_dimension and recent_iteration_count % x.getdimension() == 0 );
+        
+        bool residual_seems_small = ( recent_iteration_count != 0 ) and absolute( rMAMr ) < tolerance*tolerance;
+        
         /* Start / Restart PCRM process */
-        if( recent_iteration_count % x.getdimension() == 0 ) {
+        if( restart_condition or ( residual_seems_small and cpp_restart_before_finish ) ) UNLIKELY {
         
             {
                 
@@ -874,23 +846,25 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
                 /* rho is Mr.A.Mr */
                 rMAMr = Mr * AMr;
                 
+                if( verbosity >= VerbosityLevel::verbose )
+                    LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(rMAMr), (double)(safedouble)tolerance );
+
             }
 
         }
 
-        bool continue_condition = rMAMr > threshold;
+        /* If exit condition met, exit */
+
+        bool residual_is_small = absolute( rMAMr ) < tolerance*tolerance;
         
+        if( residual_is_small ) 
+            break;
+            
         /* Print information */
         
         if( print_modulo > 0 and recent_iteration_count % print_modulo == 0 ) 
-            LOG << "Result after" << recent_iteration_count << " of max. " << max_iteration_count << "iterations: "
-                << rMAMr << "/" << threshold*threshold;
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(rMAMr), (double)(safedouble)tolerance );
 
-        /* If exit condition met, exit */
-
-        if( not continue_condition ) 
-            break;
-            
         /* Perform iteration step */
         {
             
@@ -901,16 +875,16 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
             Float alpha = rMAMr / ( AMp_MAMp );
 
             bool denominator_is_unreasonable = not std::isfinite(AMp_MAMp) or AMp_MAMp < 0.;
-            bool denominator_is_small    = sqrt(absolute(AMp_MAMp)) < machine_epsilon;
+            bool denominator_is_small    = std::sqrt(absolute(AMp_MAMp)) < machine_epsilon;
             
             if( denominator_is_unreasonable ) {
-                LOG << "Gradient double energy is unreasonable with "  << AMp_MAMp;
+                LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient double energy is unreasonable with %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble)AMp_MAMp );
                 break;
             }
             
             if( denominator_is_small ) {
-                LOG << "Gradient double energy is small with " << AMp_MAMp << " while residual energy is "
-                    << Mr * AMr << "  vs " << threshold*threshold;
+                LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(Mr * AMr), (double)(safedouble)tolerance );
+                LOGPRINTF( "(%d/%d)   WARNING: Gradient double energy is small with %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble)AMp_MAMp );
                 break;
             }
             
@@ -942,8 +916,7 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
     recent_deviation = rMAMr;
     
     if( verbosity >= VerbosityLevel::resultonly and print_modulo >= 0 ) 
-        LOG << "Result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
-            << recent_deviation << "(" << threshold*threshold << ")"; 
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(recent_deviation), (double)(safedouble)tolerance );
 
     
 }
@@ -984,32 +957,6 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
 
 
 
-
-
-
-
-MinimumResidualMethod::MinimumResidualMethod( const LinearOperator& op )
-: IterativeSolver(), A( op )
-{
-    this->max_iteration_count = op.getdimin();
-    MinimumResidualMethod::check();
-}
-
-MinimumResidualMethod::~MinimumResidualMethod()
-{
-    MinimumResidualMethod::check();
-}
-
-void MinimumResidualMethod::check() const
-{
-    IterativeSolver::check();
-    assert( A.getdimin() == A.getdimout() );
-}
-
-void MinimumResidualMethod::print( std::ostream& os ) const
-{
-    os << "Print MinimumResidualMethod." << std::endl;
-}
 
 
 
@@ -1023,7 +970,7 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
     assert( x.getdimension() == b.getdimension() );
     assert( A.getdimin()  == x.getdimension() );
     assert( A.getdimout() == b.getdimension() );
-    assert( x.isfinite() and b.isfinite() );
+    assert( x.is_finite() and b.is_finite() );
     
     const int dimension = A.getdimin();
 
@@ -1047,26 +994,24 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
     
 //     Float recent_alpha = notanumber;
     
-    if( verbosity >= VerbosityLevel::verbose ) LOG << "Begin Minimal Residual iteration";
+    if( verbosity >= VerbosityLevel::verbose ) LOG << "START Minimal Residual iteration" << nl;
         
     while( recent_iteration_count < max_iteration_count )
     {
         
-        bool restart_condition = ( recent_iteration_count == 0 ) or ( recent_iteration_count % x.getdimension() == 0 );
+        bool restart_condition = ( recent_iteration_count == 0 ) or ( cpp_restart_on_full_dimension and recent_iteration_count % x.getdimension() == 0 );
         
-        bool residual_seems_small = absolute( rr ) < threshold*threshold;
+        bool residual_seems_small = ( recent_iteration_count != 0 ) and absolute( rr ) < tolerance*tolerance;
         
         /* Start / Restart MinimumResidualMethod process */
-        if( restart_condition or residual_seems_small ) {
+        if( restart_condition or ( residual_seems_small and cpp_restart_before_finish ) ) UNLIKELY {
         
-            LOG << "Restart **************************";
-            
             r = b - A * x;
             
             rr = r * r;
             
             assert( std::isfinite(rr) );
-            if( rr < threshold*threshold )
+            if( rr < tolerance*tolerance )
                 break;
             
             p0 = r;
@@ -1076,7 +1021,7 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
             Float s0_s0 = s0 * s0;
             
             assert( std::isfinite(s0_s0) );
-            if( s0_s0 < threshold*threshold )
+            if( s0_s0 < tolerance*tolerance )
                 break;
             
             p0 /= std::sqrt(s0_s0);
@@ -1090,11 +1035,11 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
             rr = r * r;
             
             assert( std::isfinite(rr) );
-            if( rr < threshold*threshold )
+            if( rr < tolerance*tolerance )
                 break;
             
             
-            p1 = r;
+            p1 = r; 
             s1 = A * r;
             
             Float beta0 = s0 * s1;
@@ -1105,7 +1050,7 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
             Float s1_s1 = s1 * s1;
             
             assert( std::isfinite(s1_s1) );
-            if( s1_s1 < threshold*threshold )
+            if( s1_s1 < tolerance*tolerance )
                 break;
             
             p1 /= std::sqrt(s1_s1);
@@ -1119,18 +1064,21 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
             rr = r * r;
             
 //             recent_alpha = alpha1;
+
+            if( verbosity >= VerbosityLevel::verbose )
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(rr), (double)(safedouble)tolerance );
+
             
         }
 
-        bool residual_is_small = absolute( rr ) < threshold*threshold; 
+        bool residual_is_small = absolute( rr ) < tolerance*tolerance; 
         
         /* Print information */
         
         bool print_condition = ( print_modulo > 0 and recent_iteration_count % print_modulo == 0 );
         
         if( verbosity >= VerbosityLevel::verbose and print_condition )
-            LOG << "Result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
-                << absolute(rr) << "(" << threshold*threshold; // << "). Last alpha = " << recent_alpha; 
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(rr), (double)(safedouble)tolerance );
         
         /* If exit condition met, exit */
         
@@ -1151,7 +1099,7 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
                 p2 = p2 - beta0 * p0;
                 s2 = s2 - beta0 * s0;
                 
-                LOG << beta0 / ( A * r ).norm_sq();
+//                 LOG << beta0 / ( A * r ).norm_sq() << nl;
                 
                 
                 Float beta1 = s1 * s2;
@@ -1165,9 +1113,11 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
             Float s2_s2 = s2 * s2;
             
             assert( std::isfinite(s2_s2) ); 
-            if( s2_s2 < threshold*threshold ) {
-                LOG << "Norm of search direction below threshold: " << s2_s2 << " (" << threshold*threshold << ")";
-                break;
+            if( s2_s2 < machine_epsilon ) {
+                LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(rr), (double)(safedouble) tolerance );
+                LOGPRINTF( "(%d/%d)   WARNING: Norm of search direction is small with %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(s2_s2) );
+                LOGPRINTF( "(%d/%d)   WARNING: Machine Epsilon: %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) machine_epsilon );
+                // break;
             }
             
             Float mysqrt = std::sqrt(s2_s2);
@@ -1186,7 +1136,7 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
 //             recent_alpha = alpha2;
             
             assert( std::isfinite(rr) );
-            if( rr < threshold*threshold )
+            if( std::sqrt(rr) < tolerance )
                 break;
             
             
@@ -1205,20 +1155,9 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
     recent_deviation = absolute(rr);
     
     if( verbosity >= VerbosityLevel::resultonly and print_modulo >= 0 ) 
-        LOG << "Result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
-            << recent_deviation << "(" << threshold*threshold << ")"; 
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(recent_deviation), (double)(safedouble)tolerance );
     
 }
-
-
-
-
-
-
-
-
-
-
 
 /*  
 function [x,r] = minres(A,b,x0,maxit,tol)
@@ -1240,7 +1179,7 @@ function [x,r] = minres(A,b,x0,maxit,tol)
     x += alpha * p1;
     r -= alpha * s1;
     
-    if ( r * r < tol*tol )
+    if( r * r < tol*tol )
         break;
     
     p0 = s1;
@@ -1263,7 +1202,7 @@ function [x,r] = minres(A,b,x0,maxit,tol)
     x += alpha * p1;
     r -= alpha * s1;
     
-    if ( r * r < tol*tol )
+    if( r * r < tol*tol )
         break;
     
     p0 = s1;
@@ -1273,7 +1212,7 @@ function [x,r] = minres(A,b,x0,maxit,tol)
     p0 -= beta1 * p1;
     s0 -= beta1 * s1;
     
-    if ( iter > 1 ) {
+    if( iter > 1 ) {
     
       Float beta2 = ( s0 * s2 ) / (s2 * s2 );
       p0 -= beta2 * p2;
@@ -1314,32 +1253,6 @@ end*/
 
 
 
-
-ResidualDescentMethod::ResidualDescentMethod( const LinearOperator& op )
-: IterativeSolver(), A( op )
-{
-    this->max_iteration_count = op.getdimin();
-    ResidualDescentMethod::check();
-}
-
-ResidualDescentMethod::~ResidualDescentMethod()
-{
-    ResidualDescentMethod::check();
-}
-
-void ResidualDescentMethod::check() const
-{
-    IterativeSolver::check();
-    assert( A.getdimin() == A.getdimout() );
-}
-
-void ResidualDescentMethod::print( std::ostream& os ) const
-{
-    os << "Print Residual Descent Method." << std::endl;
-}
-
-
-
 // NOTE
 // This method solves a possibly non-symmetric least squares system 
 // by shifting the solution vector x within the span of the residual.
@@ -1368,7 +1281,7 @@ void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
     
     recent_iteration_count = 0;
     
-    if( verbosity >= VerbosityLevel::verbose ) LOG << "Begin Residual iteration";
+    if( verbosity >= VerbosityLevel::verbose ) LOG << "START Residual iteration" << nl;
                 
     while( recent_iteration_count < max_iteration_count )
     {
@@ -1382,19 +1295,19 @@ void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
             
             assert( r_r >= 0. );
             
-            LOG << "threshold: " << threshold;//;
+            if( verbosity >= VerbosityLevel::verbose )
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(r_r), (double)(safedouble)tolerance );
 
         }
 
-        bool continue_condition = r_r > threshold;
+        bool continue_condition = r_r > tolerance;
         
         /* Print information */
         
         bool print_condition = ( print_modulo > 0 and recent_iteration_count % print_modulo == 0 );
         
         if( verbosity >= VerbosityLevel::verbose and print_condition )
-            LOG << "Result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
-                << r_r << "(" << threshold*threshold << ")"; 
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(r_r), (double)(safedouble)tolerance );
         
         /* If exit condition met, exit */
         
@@ -1427,8 +1340,7 @@ void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
     recent_deviation = r_r;
     
     if( verbosity >= VerbosityLevel::resultonly and print_modulo >= 0 ) 
-        LOG << "Result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
-            << recent_deviation << "(" << threshold*threshold << ")"; 
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(recent_deviation), (double)(safedouble)tolerance );
 
     
 }
@@ -1488,33 +1400,6 @@ void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
 
 
 
-
-
-HerzogSoodhalterMethod::HerzogSoodhalterMethod( const LinearOperator& op )
-: IterativeSolver(), A( op )
-{
-    this->max_iteration_count = op.getdimin();
-    HerzogSoodhalterMethod::check();
-}
-
-HerzogSoodhalterMethod::~HerzogSoodhalterMethod()
-{
-    HerzogSoodhalterMethod::check();
-}
-
-void HerzogSoodhalterMethod::check() const
-{
-    IterativeSolver::check();
-    assert( A.getdimin() == A.getdimout() );
-}
-
-void HerzogSoodhalterMethod::print( std::ostream& os ) const
-{
-    os << "Print Herzog-Soodhalter Method." << std::endl;
-}
-
-
-
   
 void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
 {
@@ -1547,33 +1432,42 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
     
     recent_iteration_count = 0;
 
+    if( verbosity >= VerbosityLevel::verbose ) LOG << "START Herzog-Soodhalter iteration" << nl;
+                
     while( recent_iteration_count < max_iteration_count ){
         
+        bool restart_condition = ( recent_iteration_count == 0 ) or ( cpp_restart_on_full_dimension and recent_iteration_count % x.getdimension() == 0 );;
         
-        bool restart_condition = (recent_iteration_count == 0);
+        bool residual_seems_small = ( recent_iteration_count != 0 ) and ( absolute(eta) < tolerance );
         
-        bool residual_seems_small = (eta < threshold);
-        
-        if( restart_condition or residual_seems_small ) {
+        if( restart_condition or ( residual_seems_small and cpp_restart_before_finish ) ) UNLIKELY {
             
+            // 1 -- 2 
             v0.zero();
             w0.zero();
             v1 = b - A * x;
             w1.zero();
             
+            // 3
             gamma = v1.norm();
             v1 /= gamma;
             
             assert( gamma > 0. );
             
+            // 7
             s0 = s1 = 0;
             c0 = c1 = 1;
             
             eta = gamma;
             
+            if( verbosity >= VerbosityLevel::verbose ) {
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) eta, (double)(safedouble)tolerance );
+                LOGPRINTF( "(%d/%d)            Gamma: %.9le Res: %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble)gamma, (double)(safedouble)(b - A * x).norm() );
+            }
+
         }
         
-        bool residual_is_small = (eta < threshold);
+        bool residual_is_small = ( absolute(eta) < tolerance );
         
         if( residual_is_small )
             break;
@@ -1582,29 +1476,37 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
         {
             
 
-            FloatVector p = A * v1;
+            // 9 
+            /*FloatVector*/ p = A * v1;
  
             Float delta = p * v1;
  
-            FloatVector vn = p - delta * v1 - gamma * v0;
+            // 10 
+            /*FloatVector*/ vn = p - delta * v1 - gamma * v0;
  
+            // 12 -- 13
             Float gamma_n = vn.norm();
             vn /= gamma_n;
             assert( gamma_n > 0. );
  
+            // 15 - 18
             Float alpha_0 = c1 * delta - c0 * s1 * gamma;
+            assert( alpha_0 * alpha_0 + gamma_n * gamma_n > 0. );
             Float alpha_1 = std::sqrt( alpha_0 * alpha_0 + gamma_n * gamma_n );
             Float alpha_2 = s1 * delta + c0 * c1 * gamma;
             Float alpha_3 = s0 * gamma;
  
             assert( alpha_1 > 0. );
 
+            // 19 
             Float cn = alpha_0 / alpha_1;
             Float sn = gamma_n / alpha_1;
             
-            FloatVector wn = ( v1 - alpha_2 * w1 - alpha_3 * w0 ) / alpha_1;
+            // 23 -- 24
+            /*FloatVector*/ wn = ( v1 - alpha_2 * w1 - alpha_3 * w0 ) / alpha_1;
             x = x + cn * eta * wn;
  
+            // 27 
             eta = - sn * eta;
             
             
@@ -1622,6 +1524,7 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
 
         }
 
+        recent_deviation = eta;
         
         
         
@@ -1629,13 +1532,10 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
         
         bool print_condition = ( print_modulo > 0 and recent_iteration_count % print_modulo == 0 );
         
-        recent_deviation = ( b - A * x ).norm_sq();
-        
-        if( verbosity >= VerbosityLevel::verbose and print_condition )
-            LOG << "Result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
-                << recent_deviation << "(" << threshold*threshold << ")"; 
-        
-        
+        if( verbosity >= VerbosityLevel::verbose and print_condition ) {
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) recent_deviation, (double)(safedouble)tolerance );
+            LOGPRINTF( "(%d/%d)   INTERIM: Gamma: %.9le Eta: %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble)gamma, (double)(safedouble)eta );
+        }
         
         recent_iteration_count++;
         
@@ -1646,8 +1546,7 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
     recent_deviation = ( b - A * x ).norm_sq();
     
     if( verbosity >= VerbosityLevel::resultonly and print_modulo >= 0 ) 
-        LOG << "Result after " << recent_iteration_count << " of max. " << max_iteration_count << " iterations: " 
-            << recent_deviation << "(" << threshold*threshold << ")"; 
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(recent_deviation), (double)(safedouble)tolerance );
 
     
 }
@@ -1685,7 +1584,7 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
  *  v_new /= gamma
  *  
  *  alpha_0 = c1 delta - c0 s1 gamma
- *  alpha_1 = sqrt( alpha_0 * alpha_0 + gamma_new * gamma_new )
+ *  alpha_1 = std::sqrt( alpha_0 * alpha_0 + gamma_new * gamma_new )
  *  alpha_2 = s1 delta - c0 c1 gamma 
  *  alpha_3 = s0 gamma 
  * 

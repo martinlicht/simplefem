@@ -1,14 +1,13 @@
 
-#include "multiindex.hpp"
-
-#include <cassert>
-#include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
 #include "../basic.hpp"
 
 #include "indexrange.hpp"
+
+#include "multiindex.hpp"
 
 
 
@@ -61,19 +60,19 @@ std::string MultiIndex::text( bool embellish ) const
     for( int p : getIndexRange() )
         ss << at( p ) << "\t";
     if( embellish ) 
-        ss << std::endl;
+        ss << nl;
     
     return ss.str();
 }
 
-void MultiIndex::print( std::ostream& os, bool embellish ) const
-{
-    check();
-    for( int p : getIndexRange() )
-        os << at( p ) << "\t";
-    if( embellish ) 
-        os << std::endl;
-}
+// void MultiIndex::print( std::ostream& os, bool embellish ) const
+// {
+//     check();
+//     for( int p : getIndexRange() )
+//         os << at( p ) << "\t";
+//     if( embellish ) 
+//         os << nl;
+// }
 
 IndexRange MultiIndex::getIndexRange() const
 {
@@ -238,7 +237,7 @@ void MultiIndex::add( const MultiIndex& mi )
     check();
     mi.check();
     assert( getIndexRange() == mi.getIndexRange() );
-    assert( comparablewith( mi ) );
+    assert( is_comparable_with( mi ) );
     for( int p : getIndexRange() )
         add( p, mi.at( p ) );
     check();
@@ -249,7 +248,7 @@ void MultiIndex::sub( const MultiIndex& mi )
     check();
     mi.check();
     assert( getIndexRange() == mi.getIndexRange() );
-    assert( comparablewith( mi ) );
+    assert( is_comparable_with( mi ) );
     for( int p : getIndexRange() )
         sub( p , mi.at( p ) );
     check();
@@ -260,7 +259,7 @@ void MultiIndex::sub( const MultiIndex& mi )
 
 
 
-bool MultiIndex::comparablewith( const MultiIndex& mi ) const 
+bool MultiIndex::is_comparable_with( const MultiIndex& mi ) const 
 {
     check();
     mi.check();
@@ -268,22 +267,22 @@ bool MultiIndex::comparablewith( const MultiIndex& mi ) const
 }
 
 
-bool MultiIndex::less( const MultiIndex& mi ) const 
+bool MultiIndex::is_less_than( const MultiIndex& mi ) const 
 {
     check();
     mi.check();
-    assert( comparablewith( mi ) );
+    assert( is_comparable_with( mi ) );
     for( int p : getIndexRange() )
         if( at( p ) >= mi.at( p ) )
             return false;
     return true;
 }
 
-bool MultiIndex::equals( const MultiIndex& mi ) const
+bool MultiIndex::is_equal_to( const MultiIndex& mi ) const
 {
     check();
     mi.check();
-    assert( comparablewith( mi ) );
+    assert( is_comparable_with( mi ) );
     for( int p : getIndexRange() )
         if( at( p ) != mi.at( p ) )
             return false;

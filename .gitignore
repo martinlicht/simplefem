@@ -1,6 +1,12 @@
 
-
+OVERWRITE.COMPILE.mk
+.stuff/
+.CUDA/
 .private/
+.playground/
+.legacy/
+.vs/
+.idea/
 
 # Eclipse project settings
 *cproject
@@ -24,6 +30,9 @@ Dox
 *.ko
 *.obj
 *.elf
+
+# Output from compiler tracer
+*.json 
 
 # Linker output
 *.ilk
@@ -119,6 +128,17 @@ cachegrind.out.*
 *.pvtr
 *.pvts
 *.pvtu
+
+# SVG output
+*.svg
+
+# other files 
+*.zip 
+*.tiff 
+*.jpg 
+*.jpeg 
+*.png 
+*.webp 
 
 
 # Temporary file

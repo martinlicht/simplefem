@@ -1,8 +1,5 @@
 
-
-/**/
-
-#include <iostream>
+#include <algorithm>
 #include <fstream>
 
 #include "../../basic.hpp"
@@ -15,9 +12,9 @@
 
 using namespace std;
 
-int main()
+int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for VTK output of Simplicial Mesh" << endl;
+    LOG << "Unit Test for VTK output of Simplicial Mesh" << nl;
     
     // MeshSimplicial2D M = UnitCubeTriangulation(3,3);
     MeshSimplicial2D M = LShapedDomain2D();
@@ -26,25 +23,25 @@ int main()
 
     for( int l = 0; l < 7; l++ )
     {
-        LOG << "Print VTK-type file" << endl;
+        LOG << "Print VTK-type file" << nl;
         LOG << "T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
         
         fstream fs( string("./locallshaped") + std::to_string(l) + string(".vtk"), std::fstream::out );
 
         VTKWriter vtk( M, fs, "L-Shaped Domain" );
-        vtk.writeCoordinateBlock();
-        vtk.writeTopDimensionalCells();
+        // vtk.write_coordinate_block();
+        // vtk.write_top_dimensional_cells();
 
         fs.close();
 
-        LOG << "Refine" << endl;
+        LOG << "Refine" << nl;
 
         if( l != l_max ) {
             
             FloatVector cellwisemass = FloatVector( M.count_triangles(), 
                 [&M]( int t ) -> Float{
                     FloatVector mp = M.get_triangle_midpoint(t);
-                    return exp( - sqrt( mp[0]*mp[0] + mp[1]*mp[1] ) );
+                    return std::exp( - std::sqrt( mp[0]*mp[0] + mp[1]*mp[1] ) );
                 }
             );
             
@@ -81,7 +78,7 @@ int main()
         
         
     
-    LOG << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
 
     return 0;
 }

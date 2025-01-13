@@ -1,12 +1,14 @@
 SHELL = /bin/sh
 
+.PHONY: default 
 default: build
 
-include ../common.recipe.mk 
+.PHONY: build 
+# build is set up below 
 
-include tests.affices.mk
+projectdir :=..
 
-
+include ../common.compile.mk 
 
 components:=
 components+=basic
@@ -18,18 +20,23 @@ components+=sparse
 components+=solver
 components+=mesh
 components+=vtk
-components+=matrixmarket
+#components+=matrixmarket
 components+=fem
+components+=image
+components+=solverfem
+components+=sullivan2D
+components+=sullivan3D
+components+=whitney2D
+components+=whitney3D
+components+=eigenvalue
+components+=afem
+components+=nullspace
 
+include tests.affices.mk
 
-
-%.out: ./makefile tests.rules.mk ../common.recipe.mk
-
-
-depdir := .deps
-
+testsdir:=.
 projectdir:=../
-pathvar:=$(shell pwd)/../
+pathvar:=$(CURDIR)/../
 
 contextdir:=./basic
 context:=basic
@@ -85,11 +92,11 @@ include tests.rules.mk
 #include tests.run.mk
 build: vtk.tests
 
-contextdir:=./matrixmarket
-context:=matrixmarket
-include tests.rules.mk
-#include tests.run.mk
-build: matrixmarket.tests
+# contextdir:=./matrixmarket
+# context:=matrixmarket
+# include tests.rules.mk
+# #include tests.run.mk
+# build: matrixmarket.tests
 
 contextdir:=./fem
 context:=fem
@@ -97,11 +104,47 @@ include tests.rules.mk
 #include tests.run.mk
 build: fem.tests
 
-contextdir:=./experiments
-context:=experiments
+contextdir:=./image
+context:=image
 include tests.rules.mk
 #include tests.run.mk
-build: experiments.tests
+build: image.tests
+
+contextdir:=./solverfem
+context:=solverfem
+include tests.rules.mk
+#include tests.run.mk
+build: solverfem.tests
+
+contextdir:=./sullivan2D
+context:=sullivan2D
+include tests.rules.mk
+#include tests.run.mk
+build: sullivan2D.tests
+
+contextdir:=./sullivan3D
+context:=sullivan3D
+include tests.rules.mk
+#include tests.run.mk
+build: sullivan3D.tests
+
+contextdir:=./whitney2D
+context:=whitney2D
+include tests.rules.mk
+#include tests.run.mk
+build: whitney2D.tests
+
+contextdir:=./whitney3D
+context:=whitney3D
+include tests.rules.mk
+#include tests.run.mk
+build: whitney3D.tests
+
+contextdir:=./eigenvalue
+context:=eigenvalue
+include tests.rules.mk
+#include tests.run.mk
+build: eigenvalue.tests
 
 contextdir:=./afem
 context:=afem
@@ -109,67 +152,95 @@ include tests.rules.mk
 #include tests.run.mk
 build: afem.tests
 
+contextdir:=./nullspace
+context:=nullspace
+include tests.rules.mk
+#include tests.run.mk
+build: nullspace.tests
 
 
 
-
-# 
-
-clean.components :=$(patsubst %,.clean.%,$(components) )
-
-.PHONY: $(clean.components)
-$(clean.components): .clean.%: 
-	@cd ./$* && $(MAKE) --no-print-directory clean
 
 .PHONY: clean
-clean: $(clean.components)
-	@$(MAKE) --no-print-directory -f ../common.upkeep.mk clean
-	@echo "finished cleaning." 
+clean:
+	@echo "Finished cleaning test directory." 
 
-
-dependclean.components :=$(patsubst %,.dependclean.%,$(components) )
-
-.PHONY: $(dependclean.components)
-$(dependclean.components): .dependclean.%: 
-	@cd ./$* && $(MAKE) --no-print-directory dependclean
 
 .PHONY: dependclean
-dependclean: $(dependclean.components)
-	$(MAKE) --no-print-directory -f ../common.upkeep.mk dependclean
-	@echo "finished cleaning dependency information files." 
+dependclean:
+	@echo "Finished cleaning test directory dependency information files." 
 
 
-vtkclean.components :=$(patsubst %,.vtkclean.%,$(components) )
-
-.PHONY: $(vtkclean.components)
-$(vtkclean.components): .vtkclean.%: 
-	@cd ./$* && $(MAKE) --no-print-directory vtkclean
-
-.PHONY: vtkclean
-vtkclean: $(vtkclean.components)
-	$(MAKE) --no-print-directory -f ../common.upkeep.mk vtkclean
-	@echo "finished cleaning .vtk files." 
+.PHONY: outputclean
+outputclean:
+	@rm -f ./*.vtk ./*/*.vtk ./*/*/*.vtk ./*.svg ./*/*.svg ./*/*/*.svg
+	@echo "Finished cleaning test directory output files."
 
 
-tidy.components :=$(patsubst %,.tidy.%,$(components) )
-
-.PHONY: $(tidy.components)
-$(tidy.components): .tidy.%: 
-	@cd ./$* && $(MAKE) --no-print-directory tidy
-
-.PHONY: tidy
-tidy: $(tidy.components)
-	$(MAKE) --no-print-directory -f ../common.upkeep.mk tidy
 
 
-cppcheck.components :=$(patsubst %,.cppcheck.%,$(components) )
 
-.PHONY: $(cppcheck.components)
-$(cppcheck.components): .cppcheck.%: 
-	@cd ./$* && $(MAKE) --no-print-directory cppcheck
 
-.PHONY: cppcheck
-cppcheck: $(cppcheck.components)
-	$(MAKE) --no-print-directory -f ../common.upkeep.mk cppcheck
+	
+
+
+
+
+# clean.components :=$(patsubst %,.clean.%,$(components) )
+
+# .PHONY: $(clean.components)
+# $(clean.components): .clean.%: 
+# 	@cd ./$* && $(MAKE) --no-print-directory clean
+
+# .PHONY: clean
+# clean: $(clean.components)
+# 	@$(MAKE) --no-print-directory -f ../common.upkeep.mk clean
+# 	@echo "Finished cleaning." 
+
+
+# dependclean.components :=$(patsubst %,.dependclean.%,$(components) )
+
+# .PHONY: $(dependclean.components)
+# $(dependclean.components): .dependclean.%: 
+# 	@cd ./$* && $(MAKE) --no-print-directory dependclean
+
+# .PHONY: dependclean
+# dependclean: $(dependclean.components)
+# 	$(MAKE) --no-print-directory -f ../common.upkeep.mk dependclean
+# 	@echo "Finished cleaning dependency information files." 
+
+
+# outputclean.components :=$(patsubst %,.outputclean.%,$(components) )
+
+# .PHONY: $(outputclean.components)
+# $(outputclean.components): .outputclean.%: 
+# 	@cd ./$* && $(MAKE) --no-print-directory outputclean
+
+# .PHONY: outputclean
+# outputclean: $(outputclean.components)
+# 	$(MAKE) --no-print-directory -f ../common.upkeep.mk outputclean
+# 	@echo "Finished cleaning .vtk files." 
+
+
+# tidy.components :=$(patsubst %,.tidy.%,$(components) )
+
+# .PHONY: $(tidy.components)
+# $(tidy.components): .tidy.%: 
+# 	@cd ./$* && $(MAKE) --no-print-directory tidy
+
+# .PHONY: tidy
+# tidy: $(tidy.components)
+# 	$(MAKE) --no-print-directory -f ../common.upkeep.mk tidy
+
+
+# cppcheck.components :=$(patsubst %,.cppcheck.%,$(components) )
+
+# .PHONY: $(cppcheck.components)
+# $(cppcheck.components): .cppcheck.%: 
+# 	@cd ./$* && $(MAKE) --no-print-directory cppcheck
+
+# .PHONY: cppcheck
+# cppcheck: $(cppcheck.components)
+# 	$(MAKE) --no-print-directory -f ../common.upkeep.mk cppcheck
 
 

@@ -2,16 +2,9 @@
 
 /**/
 
-#include <iostream>
-#include <fstream>
-#include <iomanip>
-
 #include "../../basic.hpp"
-#include "../../dense/densematrix.hpp"
-#include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
-#include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.elevation.hpp"
 #include "../../fem/utilities.hpp"
@@ -20,14 +13,14 @@
 
 using namespace std;
 
-int main()
+int main( int argc, char *argv[] )
 {
         
-        LOG << "Unit Test: (2D) degree elevation of interpolation preserves mass" << endl;
+        LOG << "Unit Test: (2D) degree elevation of interpolation preserves mass" << nl;
         
-        LOG << std::setprecision(10);
+        // LOG << std::setprecision(10);
 
-        LOG << "Initial mesh..." << endl;
+        LOG << "Initial mesh..." << nl;
         
         MeshSimplicial2D M = StandardSquare2D();
         
@@ -124,16 +117,16 @@ int main()
 
         for( int l = l_min; l <= l_max; l++ ){
             
-            LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << endl;
+            LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << nl;
             
             for( int r      = r_min; r      <=      r_max; r++      ) 
             for( int r_plus =     0; r_plus <= r_plus_max; r_plus++ ) 
             {
                 
-                LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << endl;
-                LOG << "Adding: 0 <= " << r_plus << " <= " << r_plus_max << endl;
+                LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << nl;
+                LOG << "Adding: 0 <= " << r_plus << " <= " << r_plus_max << nl;
 
-                LOG << "assemble mass matrices..." << endl;
+                LOG << "assemble mass matrices..." << nl;
 
                 SparseMatrix massmatrix_scalar      = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
                 
@@ -147,7 +140,7 @@ int main()
                 
                 SparseMatrix massmatrix_volume_plus = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r + r_plus );
                 
-                LOG << "assemble degree elevation matrices..." << endl;
+                LOG << "assemble degree elevation matrices..." << nl;
 
                 SparseMatrix elevation_scalar       = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 0, r, r_plus );
 
@@ -168,6 +161,9 @@ int main()
 
                     Float mass_elev = interpol_elev * ( massmatrix_scalar_plus * interpol_elev );
 
+                    Assert( mass >= -desired_closeness, mass );
+                    Assert( mass_elev >= -desired_closeness, mass_elev);
+                    
                     Float error_mass = mass - mass_elev;
                     
                     errors_scalar[i][l-l_min][r-r_min][r_plus] = error_mass;
@@ -186,6 +182,9 @@ int main()
 
                     Float mass_elev = interpol_elev * ( massmatrix_vector_plus * interpol_elev );
 
+                    Assert( mass >= -desired_closeness, mass );
+                    Assert( mass_elev >= -desired_closeness, mass_elev);
+                    
                     Float error_mass = mass - mass_elev;
                     
                     errors_vector[i][l-l_min][r-r_min][r_plus] = error_mass;
@@ -204,6 +203,9 @@ int main()
 
                     Float mass_elev = interpol_elev * ( massmatrix_volume_plus * interpol_elev );
 
+                    Assert( mass >= -desired_closeness, mass );
+                    Assert( mass_elev >= -desired_closeness, mass_elev);
+                    
                     Float error_mass = mass - mass_elev;
                     
                     errors_volume[i][l-l_min][r-r_min][r_plus] = error_mass;
@@ -214,9 +216,11 @@ int main()
             
             if( l != l_max )
             {
-                LOG << "Refinement..." << endl;
+                LOG << "Refinement..." << nl;
             
                 M.uniformrefinement();
+
+                M.shake_interior_vertices();
             }
             
         } 
@@ -226,6 +230,27 @@ int main()
         ConvergenceTable contable_scalar[ experiments_scalar_field.size() ];
         ConvergenceTable contable_vector[ experiments_vector_field.size() ];
         ConvergenceTable contable_volume[ experiments_volume_field.size() ];
+        
+        for( int r = r_min; r <= r_max; r++ ) 
+        {
+            for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
+                contable_scalar[i].table_name = "Rounding errors scalar E" + std::to_string(i);
+            for( int i = 0; i < experiments_vector_field.size(); i++ ) 
+                contable_vector[i].table_name = "Rounding errors vector E" + std::to_string(i);
+            for( int i = 0; i < experiments_volume_field.size(); i++ ) 
+                contable_volume[i].table_name = "Rounding errors volume E" + std::to_string(i);
+
+            for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
+                contable_scalar[i] << printf_into_string("R%d+%d", r-r_min, r_plus_max );
+            for( int i = 0; i < experiments_vector_field.size(); i++ ) 
+                contable_vector[i] << printf_into_string("R%d+%d", r-r_min, r_plus_max );
+            for( int i = 0; i < experiments_volume_field.size(); i++ ) 
+                contable_volume[i] << printf_into_string("R%d+%d", r-r_min, r_plus_max );
+
+        }
+        for( int i = 0; i < experiments_scalar_field.size(); i++ ) contable_scalar[i] << nl; 
+        for( int i = 0; i < experiments_vector_field.size(); i++ ) contable_vector[i] << nl; 
+        for( int i = 0; i < experiments_volume_field.size(); i++ ) contable_volume[i] << nl; 
         
         for( int l = l_min; l <= l_max; l++ ) 
         {
@@ -256,45 +281,45 @@ int main()
         for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
         {
             contable_scalar[i].lg(); 
-            LOG << "-------------------" << nl;
+            LOG << "                   " << nl;
         }
         
         LOG << "Convergence tables: vectors" << nl;
         for( int i = 0; i < experiments_vector_field.size(); i++ ) 
         {
             contable_vector[i].lg(); 
-            LOG << "-------------------" << nl;
+            LOG << "                   " << nl;
         }
         
         LOG << "Convergence tables: volumes" << nl;
         for( int i = 0; i < experiments_volume_field.size(); i++ )
         {
             contable_volume[i].lg(); 
-            LOG << "-------------------" << nl;
+            LOG << "                   " << nl;
         }
         
         
         
         
         
-        LOG << "Check that differences are small" << nl;
+        LOG << "Check that differences are below: " << desired_precision << nl;
         
         for( int l      = l_min; l      <=      l_max; l++      ) 
         for( int r      = r_min; r      <=      r_max; r++      ) 
         for( int r_plus =     0; r_plus <= r_plus_max; r_plus++ ) 
         {
             for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
-                assert( errors_scalar[i][l-l_min][r-r_min][r_plus] < 10e-12 );
+                Assert( errors_scalar[i][l-l_min][r-r_min][r_plus] < desired_precision, errors_scalar[i][l-l_min][r-r_min][r_plus], desired_precision );
             
             for( int i = 0; i < experiments_vector_field.size(); i++ ) 
-                assert( errors_vector[i][l-l_min][r-r_min][r_plus] < 10e-12 );
+                Assert( errors_vector[i][l-l_min][r-r_min][r_plus] < desired_precision, errors_vector[i][l-l_min][r-r_min][r_plus], desired_precision );
             
             for( int i = 0; i < experiments_volume_field.size(); i++ )
-                assert( errors_volume[i][l-l_min][r-r_min][r_plus] < 10e-12 );
+                Assert( errors_volume[i][l-l_min][r-r_min][r_plus] < desired_precision, errors_volume[i][l-l_min][r-r_min][r_plus], desired_precision );
         }
             
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
         
         return 0;
 }

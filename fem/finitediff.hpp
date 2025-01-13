@@ -2,12 +2,11 @@
 #define INCLUDEGUARD_FEM_FINITEDIFF_HPP
 
 
-// #include <cassert>
 #include <functional>
-#include <iostream>
 #include <vector>
 
 #include "../basic.hpp"
+#include "../utility/stl.hpp"
 #include "../combinatorics/indexrange.hpp"
 #include "../combinatorics/indexmap.hpp"
 #include "../combinatorics/multiindex.hpp"
@@ -15,7 +14,6 @@
 #include "../combinatorics/generateindexmaps.hpp"
 #include "../operators/floatvector.hpp"
 #include "../dense/densematrix.hpp"
-#include "../operators/linearoperator.hpp"
 
 
 
@@ -35,6 +33,9 @@ class AlternatingForm
             check();
         }   
         
+        AlternatingForm( const AlternatingForm& ) = default;
+        AlternatingForm( AlternatingForm&& ) = default;
+
         virtual ~AlternatingForm() = default;
         
         void check()
@@ -62,9 +63,10 @@ class AlternatingForm
         }
         
         
-        AlternatingForm exteriorderivative( Float stepsize = 0.00001 ) const 
+        AlternatingForm exteriorderivative( Float stepsize = desired_closeness ) const 
         {
-            
+            if( stepsize < 0 ) stepsize = std::cbrt( std::numeric_limits<Float>::epsilon() );
+
             const std::vector<IndexMap> sigmas_dst = generateSigmas( IndexRange( 1, k+1 ), IndexRange( 0, d-1 ) );
             const std::vector<IndexMap> sigmas_src  = generateSigmas( IndexRange( 1, k   ), IndexRange( 0, d-1 ) );
             
@@ -81,11 +83,11 @@ class AlternatingForm
                 assert( pattern[p].getdimin()  == sigmas_src.size() );
                 assert( pattern[p].getdimout() == sigmas_dst.size() );
                 
-                if( not src_form.rangecontains(p) ) {
+                if( not src_form.has_value_in_range(p) ) {
                     
                     IndexMap new_form = expand_one( src_form, p );
                     int new_form_index = find_index( sigmas_dst, new_form );
-                    pattern.at(p).at( new_form_index, src_form_index ) = signpower( new_form.preimageof(p) );
+                    pattern.at(p).at( new_form_index, src_form_index ) = sign_power( new_form.get_preimage_of(p) );
                     
                 }
                 
@@ -95,14 +97,15 @@ class AlternatingForm
             int k = this->k;
             const auto formula = this->formula;
             
-            const auto newformula = [k,d,pattern,formula,stepsize]( const FloatVector& point ) -> FloatVector {
+            // const auto newformula = [k,d,pattern,formula,stepsize]( const FloatVector& point ) -> FloatVector {
+            const auto newformula = [=]( const FloatVector& point ) -> FloatVector {
                 
                 int dim_src = binomial_integer(d,k  );
                 int dim_dst = binomial_integer(d,k+1);
                 
-                FloatVector ret( dim_dst );
+                FloatVector ret( dim_dst, 0. );
                 
-//                 LOG << dim_src << space << dim_dst << space << pattern.size() << std::endl;
+//                 LOG << dim_src << space << dim_dst << space << pattern.size() << nl;
                 
                 assert( point.getdimension() == d );
                 assert( pattern.size() == d );
@@ -115,6 +118,7 @@ class AlternatingForm
                     FloatVector backward = formula( point - stepsize * unitvector(d,i) );
                     FloatVector diff = 0.5 * ( forward - backward ) / stepsize;
                     diffs.push_back( diff );
+                    assert( diff.getdimension() == dim_src );
                 }
                 
                 for( int i = 0; i < d; i++ )
@@ -130,9 +134,11 @@ class AlternatingForm
         
         
         
-        AlternatingForm laplacian( Float stepsize = 0.00001 ) const 
+        AlternatingForm laplacian( Float stepsize = desired_closeness ) const 
         {
             
+            if( stepsize < 0 ) stepsize = std::cbrt( std::numeric_limits<Float>::epsilon() );
+
             int d = this->d;
             int k = this->k;
             const auto formula = this->formula;

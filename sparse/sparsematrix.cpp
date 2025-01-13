@@ -1,18 +1,17 @@
 
-#include <cassert>
 #include <cstdlib>
 
 #include <algorithm>
 #include <functional>
 #include <initializer_list>
-#include <iostream>
+#include <ostream>
 #include <utility>
 #include <vector>
 
 #include "sparsematrix.hpp"
 #include "../dense/densematrix.hpp"
-#include "../utility/utility.hpp"
 
+const bool sparse_matrix_verbosity = false;
 
 
 SparseMatrix::SparseMatrix( int dimout, int dimin, int numentries, std::function<MatrixEntry(int)> generator )
@@ -20,6 +19,10 @@ SparseMatrix::SparseMatrix( int dimout, int dimin, int numentries, std::function
   entries(0)
 {
     assert( 0 <= numentries );
+    assert( numentries <= entries.max_size() );
+    
+    if( sparse_matrix_verbosity ) LOG << "SparseMatrix allocation: " << numentries << nl;
+    
     entries.reserve( numentries );
     
     for( int i = 0; i < numentries; i++ ) 
@@ -35,6 +38,12 @@ SparseMatrix::SparseMatrix( int dimout, int dimin, int numentries, std::function
     SparseMatrix::check();    
 }
 
+// SparseMatrix::SparseMatrix( int dimout, int dimin )
+// : SparseMatrix( dimout, dimin, std::vector<MatrixEntry>(0) )
+// {
+//     SparseMatrix::check();
+// }
+
 SparseMatrix::SparseMatrix( int dimout, int dimin, const std::vector<MatrixEntry>& entries )
 : LinearOperator( dimout, dimin ), entries(entries)
 {
@@ -47,6 +56,16 @@ SparseMatrix::SparseMatrix( int dimout, int dimin, const std::initializer_list<M
     entries.reserve( ent.size() );
     std::copy( ent.begin(), ent.end(), entries.begin() );
     assert( ent.size() == entries.size() );
+}
+
+SparseMatrix::SparseMatrix( const FloatVector& diagonal )
+: LinearOperator( diagonal.getdimension() ),
+  entries( diagonal.getdimension() )
+{
+    assert( getdimin() == getdimout() );
+    for( int r = 0; r < getdimout(); r++ )
+        entries[r] = { r, r, diagonal.at(r) };
+    SparseMatrix::check();    
 }
 
 SparseMatrix::SparseMatrix( const ScalingOperator& matrix )
@@ -152,21 +171,21 @@ void SparseMatrix::check() const
     }
 }
 
-void SparseMatrix::print( std::ostream& os ) const
+std::string SparseMatrix::text() const
 {
-    os << "print SparseMatrix" << std::endl;
-    os << "Entries:" << std::endl;
+    std::string ret = "SparseMatrix " + std::to_string(getdimout()) + "x" + std::to_string(getdimin());
     for( const MatrixEntry& entry : entries )
-        os << entry.row << " " << entry.column << " : " << entry.value << std::endl; 
-    os << std::endl;
+        ret += ( "\n" + std::to_string(entry.row) + " " + std::to_string(entry.column) + " : " + std::to_string(entry.value) );
+        // ret += ( "\n" + std::to_string(entry.row) + " " + std::to_string(entry.column) + " : " + printf_into_string("%.17le",entry.value) );
+    return ret;
 }
 
-void SparseMatrix::printplain( std::ostream& os ) const
-{
-    for( const MatrixEntry& entry : entries )
-        os << entry.row << " " << entry.column << " " << entry.value << nl;
-    os << std::endl;
-}
+// void SparseMatrix::printplain( std::ostream& os ) const
+// {
+//     for( const MatrixEntry& entry : entries )
+//         os << entry.row << " " << entry.column << " " << entry.value << nl;
+//     os << nl;
+// }
 
 
 void SparseMatrix::apply( FloatVector& dest, const FloatVector& add, Float scaling ) const 
@@ -180,8 +199,15 @@ void SparseMatrix::apply( FloatVector& dest, const FloatVector& add, Float scali
 
     dest.zero();
     
-    for( const MatrixEntry& rcv : entries )
-        dest.setentry( rcv.row, dest.getentry( rcv.row ) + scaling * rcv.value * add.getentry( rcv.column ) );
+    // for( const MatrixEntry& rcv : entries )
+    //     dest.setentry( rcv.row, dest.getentry( rcv.row ) + scaling * rcv.value * add.getentry( rcv.column ) );
+
+    for( int e = 0; e < entries.size(); e++ ){
+        
+        dest[ entries[e].row ] += scaling * entries[e].value * add[ entries[e].column ];
+        
+    }
+
 
 }
 
@@ -199,7 +225,7 @@ void SparseMatrix::scale ( Float s )
     for( auto& e : this->entries ) e.value *= s;
 }
 
-bool SparseMatrix::isfinite() const
+bool SparseMatrix::is_finite() const
 {
     for( const MatrixEntry& rcv : entries )
         if( not std::isfinite( rcv.value ) )
@@ -207,7 +233,7 @@ bool SparseMatrix::isfinite() const
     return true;
 }
 
-FloatVector SparseMatrix::diagonal() const
+FloatVector SparseMatrix::getDiagonal() const
 { 
     check();
     assert( getdimin() == getdimout() );
@@ -293,7 +319,7 @@ bool SparseMatrix::is_sorted( SparseMatrix::MatrixEntrySorting manner ) const
 }
 
 
-static int internal_compare_rowfirst( const void* _a, const void* _b )
+UNUSED static int internal_compare_rowfirst( const void* _a, const void* _b )
 {
     const SparseMatrix::MatrixEntry* a = static_cast<const SparseMatrix::MatrixEntry*>(_a);
     const SparseMatrix::MatrixEntry* b = static_cast<const SparseMatrix::MatrixEntry*>(_b);
@@ -311,7 +337,7 @@ static int internal_compare_rowfirst( const void* _a, const void* _b )
     }
 }
     
-static int internal_compare_colfirst( const void* _a, const void* _b )
+UNUSED static int internal_compare_colfirst( const void* _a, const void* _b )
 {
     const SparseMatrix::MatrixEntry* a = static_cast<const SparseMatrix::MatrixEntry*>(_a);
     const SparseMatrix::MatrixEntry* b = static_cast<const SparseMatrix::MatrixEntry*>(_b);
@@ -334,19 +360,19 @@ const SparseMatrix& SparseMatrix::sortentries( SparseMatrix::MatrixEntrySorting 
 {
     check();
 
-    if( manner == MatrixEntrySorting::rowwise )
-        std::qsort( entries.data(), entries.size(), sizeof(MatrixEntry), &internal_compare_rowfirst );
-    else 
-        std::qsort( entries.data(), entries.size(), sizeof(MatrixEntry), &internal_compare_colfirst );
+    // if( manner == MatrixEntrySorting::rowwise )
+    //     std::qsort( entries.data(), entries.size(), sizeof(MatrixEntry), &internal_compare_rowfirst );
+    // else 
+    //     std::qsort( entries.data(), entries.size(), sizeof(MatrixEntry), &internal_compare_colfirst );
 
-//     if( manner == MatrixEntrySorting::rowwise )
-//         std::sort( entries.begin(), entries.end(), []( const MatrixEntry& a, const MatrixEntry& b) {
-//             return a.row < b.row || ( a.row == b.row && a.column < b.column );   
-//         });
-//     else 
-//         std::sort( entries.begin(), entries.end(), []( const MatrixEntry& a, const MatrixEntry& b) {
-//             return a.column < b.column || ( a.column == b.column && a.row < b.row );   
-//         });
+    if( manner == MatrixEntrySorting::rowwise )
+        std::sort( entries.begin(), entries.end(), []( const MatrixEntry& a, const MatrixEntry& b) {
+            return a.row < b.row || ( a.row == b.row && a.column < b.column );   
+        });
+    else 
+        std::sort( entries.begin(), entries.end(), []( const MatrixEntry& a, const MatrixEntry& b) {
+            return a.column < b.column || ( a.column == b.column && a.row < b.row );   
+        });
     
     
 //     const int N = getnumberofentries();
@@ -372,8 +398,28 @@ const SparseMatrix& SparseMatrix::sortentries( SparseMatrix::MatrixEntrySorting 
 const SparseMatrix& SparseMatrix::sortandcompressentries( SparseMatrix::MatrixEntrySorting manner ) const
 {
     check();
+
+    if( sparse_matrix_verbosity ) LOG << "SparseMatrix: Remove zeroes..." << nl;
+    
+    {
+        
+        // for( int c = 0; c < entries.size(); c++ ) 
+        //     if( entries[c].value == 0 ) { entries.erase( entries.begin()+c ); c--; }
+        
+        auto it = std::remove_if(entries.begin(), entries.end(), 
+                    []( const SparseMatrix::MatrixEntry& e ){ return e.value == 0.; } 
+                  );
+        entries.erase( it, entries.end() );
+        
+        for( int c = 0; c < entries.size(); c++ ) assert( entries[c].value != 0. );
+        
+    }
+    
+    if( sparse_matrix_verbosity ) LOG << "SparseMatrix: Sorting..." << nl;
     
     sortentries( manner );
+    
+    if( sparse_matrix_verbosity ) LOG << "SparseMatrix: Compressing..." << nl;
     
     assert( is_sorted(manner) );
     
@@ -407,27 +453,7 @@ const SparseMatrix& SparseMatrix::sortandcompressentries( SparseMatrix::MatrixEn
     
     assert( is_sorted(manner) );
     
-    {
-        
-//         for( int c = 0; c < entries.size(); c++ ){
-//             if( entries[c].value == 0 ) {
-//                 entries.erase( entries.begin()+c );
-//                 c--;
-//             }
-//         }
-        
-        
-        entries.erase(
-            std::remove_if(entries.begin(), entries.end(), []( const SparseMatrix::MatrixEntry e ){ return e.value == 0.; } ),
-            entries.end()
-        );
-        
-        for( int c = 0; c < entries.size(); c++ ) assert( entries[c].value != 0. );
-        
-        
-    }
-    
-    assert( is_sorted(manner) );
+    if( sparse_matrix_verbosity ) LOG << "SparseMatrix: Done!" << nl;
     
     return *this;
 }
@@ -483,18 +509,18 @@ void SparseMatrix::setentry( int i, MatrixEntry entry )
 }
         
         
-void SparseMatrix::addentry( int r, int c, Float v )
+void SparseMatrix::appendentry( int r, int c, Float v )
 {
 //     check();
     SparseMatrix::MatrixEntry temp;
     temp.row = r;
     temp.column = c;
     temp.value = v;
-    addentry( temp );
+    appendentry( temp );
 //     check();
 }
 
-void SparseMatrix::addentry( SparseMatrix::MatrixEntry entry )
+void SparseMatrix::appendentry( SparseMatrix::MatrixEntry entry )
 {
 //     check();
     assert( 0 <= entry.row && entry.row <= getdimout() );
@@ -557,19 +583,14 @@ SparseMatrix SparseMatrix::getTranspose() const
 
 
 
+/* Memory size */
+        
+std::size_t SparseMatrix::memorysize() const
+{
+    return sizeof(*this) + entries.size() * sizeof(decltype(entries)::value_type);
+}
 
 
-
-
-
-
-
-
-
-// TODO: Figure out the difference between & and the multiplication function below. 
-// Then merge both methods into one 
-
-// SparseMatrix operator&( const SparseMatrix& left, const SparseMatrix& right )
 
 
 
@@ -583,16 +604,15 @@ SparseMatrix SparseMatrixMultiplication( const SparseMatrix& left, const SparseM
 
     assert( left.getdimin() == right.getdimout() );
     
-//     LOG << "--- SparseMatrix Product" << std::endl;
-//     LOG << "--- Sort and compress" << std::endl;
+//     LOG << "--- SparseMatrix Product" << nl;
+//     LOG << "--- Sort and compress" << nl;
 
-    TimeBeacon beacon;
+    // SectionProfiler beacon;
     
     left.sortandcompressentries( SparseMatrix::MatrixEntrySorting::columnwise );
     right.sortandcompressentries( SparseMatrix::MatrixEntrySorting::rowwise );
 
-    beacon.ping("Sorted");
-//     LOG << "--- Counting" << std::endl;
+    // beacon.ping("Sorted"); // LOG << "--- Counting" << nl;
     
     const int lnum = left.getnumberofentries();
     const int rnum = right.getnumberofentries();
@@ -605,67 +625,91 @@ SparseMatrix SparseMatrixMultiplication( const SparseMatrix& left, const SparseM
         int lbase = 0; int rbase = 0;
         
         while( lbase < lnum and rbase < rnum ){
-            assert( lbase < lnum and rbase < rnum );
-            while( lbase < lnum and ldata[lbase].column < rdata[rbase].row ) lbase++;
-            if( lbase == lnum ) break;
-            while( rbase < rnum and rdata[rbase].row < ldata[lbase].column ) rbase++;
-            if( rbase == rnum ) break;
-            assert( lbase < lnum and rbase < rnum );
-            assert( ldata[lbase].column == rdata[rbase].row );
-            int index = ldata[lbase].column;
-            int lnext = lbase; int rnext = rbase;
-            while( lnext < lnum and ldata[lnext].column == index ) lnext++;
-            while( rnext < rnum and rdata[rnext].row == index  ) rnext++;
-            counter = counter + ( lnext - lbase ) * ( rnext - rbase );
-            lbase = lnext; rbase = rnext;
+
+            if( ldata[lbase].column == rdata[rbase].row ) {
+                
+                int index = ldata[lbase].column;
+                assert( index == rdata[rbase].row );
+                int lnext = lbase;
+                int rnext = rbase;
+                while( lnext < lnum and ldata[lnext].column == index ) lnext++;
+                while( rnext < rnum and rdata[rnext].row    == index  ) rnext++;
+                counter = counter + ( lnext - lbase ) * ( rnext - rbase );
+                lbase = lnext;
+                rbase = rnext;
+                
+            } else if( ldata[lbase].column < rdata[rbase].row ) {
+                
+                lbase++;
+                
+            } else if( rdata[rbase].row < ldata[lbase].column ) {
+                
+                rbase++;
+                
+            } else {
+                unreachable();
+            }
+
         }
 
     }
-
-//     LOG << "--- Assemble" << std::endl;
     
-    beacon.ping("Counted");
+    // beacon.ping("Counted"); // LOG << "--- Assemble" << nl;
 
     std::vector<SparseMatrix::MatrixEntry> new_entries;
     new_entries.reserve( counter );
     
     {
-        
+
         int lbase = 0; int rbase = 0;
         
         while( lbase < lnum and rbase < rnum ){
-            assert( lbase < lnum and rbase < rnum );
-            while( lbase < lnum and ldata[lbase].column < rdata[rbase].row ) lbase++;
-            if( lbase == lnum ) break;
-            while( rbase < rnum and rdata[rbase].row < ldata[lbase].column ) rbase++;
-            if( rbase == rnum ) break;
-            assert( lbase < lnum and rbase < rnum );
-            assert( ldata[lbase].column == rdata[rbase].row );
-            int index = ldata[lbase].column;
-            int lnext = lbase; int rnext = rbase;
-            while( lnext < lnum and ldata[lnext].column == index ) lnext++;
-            while( rnext < rnum and rdata[rnext].row == index  ) rnext++;
-            for( int lcurr = lbase; lcurr < lnext; lcurr++ )
-            for( int rcurr = rbase; rcurr < rnext; rcurr++ )
-                new_entries.push_back( { 
-                                        ldata[lcurr].row, 
-                                        rdata[rcurr].column, 
-                                        ldata[lcurr].value * rdata[rcurr].value
-                                       } );
-            lbase = lnext; rbase = rnext;
+
+            if( ldata[lbase].column == rdata[rbase].row ) {
+                
+                int index = ldata[lbase].column;
+                assert( index == rdata[rbase].row );
+                int lnext = lbase;
+                int rnext = rbase;
+                while( lnext < lnum and ldata[lnext].column == index ) lnext++;
+                while( rnext < rnum and rdata[rnext].row    == index ) rnext++;
+                
+                for( int lcurr = lbase; lcurr < lnext; lcurr++ )
+                for( int rcurr = rbase; rcurr < rnext; rcurr++ )
+                    new_entries.push_back( { 
+                        ldata[lcurr].row, 
+                        rdata[rcurr].column, 
+                        ldata[lcurr].value * rdata[rcurr].value
+                    } );
+                
+                lbase = lnext;
+                rbase = rnext;
+                
+            } else if( ldata[lbase].column < rdata[rbase].row ) {
+                
+                lbase++;
+                
+            } else if( rdata[rbase].row < ldata[lbase].column ) {
+                
+                rbase++;
+                
+            } else {
+                unreachable();
+            }
+
         }
 
     }
 
-    beacon.ping("Assembled");
+    // beacon.ping("Assembled"); // LOG << "--- Construct" << nl;
 
     assert( new_entries.size() == counter );
 
-//     LOG << "--- Construct" << std::endl;
     SparseMatrix ret( left.getdimout(), right.getdimin(), new_entries );
         
-    // LOG << "--- Sort and compress again" << std::endl;
-    // ret.sortandcompressentries();
+    // beacon.ping("Re-sort"); // LOG << "--- Sort and compress again" << nl;
+    
+    ret.sortandcompressentries();
     
     return ret;
     
@@ -673,13 +717,13 @@ SparseMatrix SparseMatrixMultiplication( const SparseMatrix& left, const SparseM
 
 // {
 // 
-//     LOG << "--- SparseMatrix Product" << std::endl;
-//     LOG << "--- Sort and compress" << std::endl;
+//     LOG << "--- SparseMatrix Product" << nl;
+//     LOG << "--- Sort and compress" << nl;
 //     
 //     left.sortandcompressentries( SparseMatrix::MatrixEntrySorting::columnwise );
 //     right.sortandcompressentries( SparseMatrix::MatrixEntrySorting::rowwise );
 // 
-//     LOG << "--- Counting" << std::endl;
+//     LOG << "--- Counting" << nl;
 //     
 //     int counter = 0;
 //     for( SparseMatrix::MatrixEntry l : left.getentries()  )
@@ -687,7 +731,7 @@ SparseMatrix SparseMatrixMultiplication( const SparseMatrix& left, const SparseM
 //         if( l.column == r.row ) 
 //             counter++;
 // 
-//     LOG << "--- Assemble" << std::endl;
+//     LOG << "--- Assemble" << nl;
 //     
 //     std::vector<SparseMatrix::MatrixEntry> new_entries;
 //     new_entries.reserve( counter );
@@ -698,10 +742,10 @@ SparseMatrix SparseMatrixMultiplication( const SparseMatrix& left, const SparseM
 //     
 //     assert( new_entries.size() == counter );
 // 
-//     LOG << "--- Construct" << std::endl;
+//     LOG << "--- Construct" << nl;
 //     SparseMatrix ret( left.getdimout(), right.getdimin(), new_entries );
 //         
-//     LOG << "--- Sort and compress again" << std::endl;
+//     LOG << "--- Sort and compress again" << nl;
 //     ret.sortandcompressentries();
 //     
 //     return ret;
@@ -729,7 +773,7 @@ DiagonalOperator InverseDiagonalPreconditioner( const SparseMatrix& mat )
 //         assert( diag.at( i ) > 0. );
     
     for( int i = 0; i < diag.getdimension(); i++ )
-        if( not issmall( diag.at( i ) ) )
+        if( not is_numerically_small( diag.at( i ) ) )
             diag.at( i ) = 1. / diag.at( i );
         else
             diag.at( i ) = 0.;
@@ -738,5 +782,46 @@ DiagonalOperator InverseDiagonalPreconditioner( const SparseMatrix& mat )
 
 }
 
+
+#include "../utility/summation.hpp"
+
+
+Float norm_sq_of_vector( const SparseMatrix& A, const FloatVector& vec )
+{
+    assert( A.is_square() );
+    assert( A.getdimin() == vec.getdimension() );
+
+    const auto& entries = A.getentries();
+
+    assert( entries.size() > 0 );
+
+    // long double ret = 0.;
+    NeumaierSum<Float> ret;
+    
+    for( const auto& entry : entries )
+    {
+        // LOGPRINTF("%d %d %f\n", entry.row, entry.column, entry.value );
+        ret += entry.value * vec[ entry.row ] * vec[ entry.column ];
+    }
+    // LOG << ret << nl;
+
+    long double ret1 = 0.;
+    long double ret2 = 0.;
+    
+    for( const auto& entry : entries )
+    {
+        // LOGPRINTF("%d %d %f\n", entry.row, entry.column, entry.value );
+        if( entry.row == entry.column )
+            ret1 += entry.value * vec[ entry.row ] * vec[ entry.row ];
+        if ( entry.row < entry.column )
+            ret2 += entry.value * vec[ entry.row ] * vec[ entry.column ];
+    }
+    
+    assert( is_numerically_close( ret.getSum(), static_cast<Float>( ret1 + 2. * ret2 ) ) );
+    
+    // return static_cast<Float>( ret1 + 2. * ret2 );
+    // return (Float)(double)(safedouble)( ret );
+    return ret.getSum();
+}
 
 

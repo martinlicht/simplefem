@@ -2,8 +2,6 @@
 
 #include "linearoperator.hpp"
 
-#include <cassert>
-
 #include "floatvector.hpp"
 
 LinearOperator::LinearOperator( int out, int in )
@@ -40,13 +38,12 @@ void LinearOperator::check() const
     assert( dimout >= 0 && dimin >= 0 );
 }
 
-void LinearOperator::print( std::ostream& os ) const
-{
-    check();
-    os << "Linear operator" << std::endl;
-}
+// void LinearOperator::print( std::ostream& os ) const
+// {
+//     os << text();
+// }
 
-bool LinearOperator::issquare() const
+bool LinearOperator::is_square() const
 {
     check();
     return getdimin() == getdimout();

@@ -2,8 +2,6 @@
 #include "simpleoperators.hpp"
 
 #include <cmath>
-#include <functional>
-#include <ostream>
 
 #include "../basic.hpp"
 #include "floatvector.hpp"
@@ -26,9 +24,9 @@ void IdentityOperator::check() const
     LinearOperator::check();
 }
 
-void IdentityOperator::print( std::ostream& os ) const  
+std::string IdentityOperator::text() const 
 {
-    os << "Print Identity Operator" << std::endl;
+    return "Identity Operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin());
 }
 
 void IdentityOperator::apply( FloatVector& dest, const FloatVector& src, Float s ) const 
@@ -44,6 +42,58 @@ void IdentityOperator::apply( FloatVector& dest, const FloatVector& src, Float s
     for( int p = 0; p < getdimin(); p++ )
         dest.setentry( p, s * src.getentry( p ) );
         
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ZeroOperator::ZeroOperator( int dimension )
+: LinearOperator( dimension, dimension )
+{
+    ZeroOperator::check();
+}
+
+ZeroOperator::ZeroOperator( int dimout, int dimin )
+: LinearOperator( dimout, dimin )
+{
+    ZeroOperator::check();
+}
+
+ZeroOperator::~ZeroOperator()
+{
+    ZeroOperator::check();
+}
+
+void ZeroOperator::check() const  
+{
+    LinearOperator::check();
+}
+
+std::string ZeroOperator::text() const 
+{
+    return "Zero Operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin());
+}
+
+void ZeroOperator::apply( FloatVector& dest, const FloatVector& src, Float s ) const 
+{
+    check();
+    src.check();
+    dest.check();
+    
+    assert( getdimin() == src.getdimension() );
+    assert( getdimout() == dest.getdimension() );
+    
+    dest.clear();
 }
 
 
@@ -76,9 +126,9 @@ void ScalingOperator::check() const
     LinearOperator::check();
 }
 
-void ScalingOperator::print( std::ostream& os ) const  
+std::string ScalingOperator::text() const 
 {
-    os << "Print Scaling Operator with scaling: " << scaling << std::endl;
+    return "Scaling Operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) + ": s = " + std::to_string( scaling );
 }
 
 
@@ -158,7 +208,7 @@ DiagonalOperator::DiagonalOperator( int dimension, const std::function<Float(int
 
 DiagonalOperator::~DiagonalOperator()
 {
-        /* Nothing */ 
+    /* Nothing */ 
 }
 
 void DiagonalOperator::check() const  
@@ -169,10 +219,15 @@ void DiagonalOperator::check() const
     assert( getdimin() == diagonal.getdimension() );
 }
 
-void DiagonalOperator::print( std::ostream& os ) const  
+std::string DiagonalOperator::text() const 
 {
-    os << "Print Diagonal Operator with diagonal: " 
-        << diagonal << std::endl;
+    return text( false ); 
+}
+
+std::string DiagonalOperator::text( const bool embellish ) const 
+{
+    return "Diagonal operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) 
+            + ( embellish ? "\n" + tab_each_line( diagonal.text() ) : "" );
 }
 
 
@@ -210,3 +265,57 @@ const DiagonalOperator DiagonalOperator::sqrt() const
     } );
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+LambdaOperator::LambdaOperator( int n, std::function<FloatVector(const FloatVector&)> func )
+: LambdaOperator( n, n, func )
+{
+    LambdaOperator::check();
+}
+
+LambdaOperator::LambdaOperator( int dimout, int dimin, std::function<FloatVector(const FloatVector&)> func )
+: LinearOperator( dimout, dimin ), func(func)
+{
+    LambdaOperator::check();
+}
+
+LambdaOperator::~LambdaOperator()
+{
+    LambdaOperator::check();
+}
+
+void LambdaOperator::check() const  
+{
+    LinearOperator::check();
+}
+
+std::string LambdaOperator::text() const 
+{
+    return "Lambda Operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin());
+}
+
+void LambdaOperator::apply( FloatVector& dest, const FloatVector& src, Float s ) const 
+{
+    check();
+    src.check();
+    dest.check();
+    
+    assert( getdimin() == getdimout() );
+    assert( getdimin() == src.getdimension() );
+    assert( getdimout() == dest.getdimension() );
+
+    dest = s * func( src );
+        
+}

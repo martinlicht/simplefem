@@ -1,125 +1,75 @@
 
-
-/**/
-
-#include <iostream>
 #include "../../basic.hpp"
 #include "../../combinatorics/generatemultiindices.hpp"
 
 
-using namespace std;
-
-int main()
+int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for Multiindex Generators" << endl;
-    
-    if(true)
-    {
-        
-        LOG << "First bulk" << endl;
-    
-        IndexRange ir( 1, 4 );
-        std::vector<MultiIndex> vmi = generateMultiIndices( ir, 2);
-        
-        for( const auto& mi : vmi )
-            LOG << mi;
-        LOG << endl;
-        
-    }
-    
-    if(true)
-    {
-        
-        LOG << "Second bulk" << endl;
-    
-        IndexRange ir( 0, 2 );
-        std::vector<MultiIndex> vmi = generateMultiIndices( ir, 2);
-        
-        for( const auto& mi : vmi )
-            LOG << mi;
-        LOG << endl;
-    
-    }
-    
-    if(true)
-    {
-        
-        LOG << "Third bulk" << endl;
-    
-        IndexRange ir( 0, 2 );
-        std::vector<MultiIndex> vmi = generateMultiIndices( ir, 3);
-
-        for( const auto& mi : vmi )
-            LOG << mi;
-        LOG << endl;
-        
-    }
-    
-    if(true)
-    {
-      
-        LOG << "Zero degree" << endl;
-    
-        IndexRange ir( 0, 2 );
-        std::vector<MultiIndex> vmi = generateMultiIndices( ir, 0);
-
-        for( const auto& mi : vmi )
-            LOG << mi;
-        LOG << endl;
-      
-    }
-    
-    if(true)
-    {
-      
-        LOG << "First degree" << endl;
-    
-        IndexRange ir( 0, 2 );
-        std::vector<MultiIndex> vmi = generateMultiIndices( ir, 1);
-
-        for( const auto& mi : vmi )
-            LOG << mi;
-        LOG << endl;
-      
-    }
-    
-    if(true)
-    {
-      
-        LOG << "Degree 7 in one variable" << endl;
-    
-        IndexRange ir( 2, 2 );
-        std::vector<MultiIndex> vmi = generateMultiIndices( ir, 7);
-
-        for( const auto& mi : vmi )
-            LOG << mi;
-        LOG << endl;
-      
-    }
-    
-    if(true)
-    {
-
-        LOG << "MultiIndex over empty range " << endl;
-    
-        IndexRange ir( 2, -3 );
-        std::vector<MultiIndex> vmi = generateMultiIndices( ir, 3);
-
-        for( const auto& mi : vmi )
-            LOG << mi;
-        LOG << endl;
-    
-    }
-    
-    
+    LOG << "Unit Test for Multiindex Generators" << nl;
     
     if(true)
     {
             
-        LOG << "Test generator for general multiindices" << endl;
+        LOG << "1. Selected combinations" << nl;
         
-        const std::vector<int> Ns = { /*-1, 0,*/ 1, 2, 3, 4 };
-        const std::vector<int> Rs = { 0, 1, 2, 3, 4, 5, 6 };
+        const std::vector<int> mins = { 1, 0, 0, 0, 0, 2,  2 };
+        const std::vector<int> maxs = { 4, 2, 2, 2, 2, 2, -3 };
+        const std::vector<int> pows = { 2, 2, 3, 0, 1, 7,  3 };
+    
+        assert( mins.size() == maxs.size() && mins.size() == pows.size() );
+    
+        for( int m = 0; m < mins.size(); m++ )
+        {
+            
+            int min = mins[m]; int max = maxs[m]; int pow = pows[m];
+            
+            LOG << "Check: " << min << space << max << space << pow << nl;
+        
+            IndexRange ir( min, max );
+            std::vector<MultiIndex> vmi = generateMultiIndices( ir, pow );
+
+            if( ir.cardinality() == 0 ) {
+
+                LOG << vmi.size() << nl;
+                
+                for( const auto& mi : vmi ) 
+                    LOG << mi << space << mi.absolute() << nl;
+                
+                Assert( vmi.size() == 0 );
+                
+                continue;
+            }
+
+            assert( vmi.size() == binomial_integer(ir.cardinality() - 1 + pow, ir.cardinality() - 1 ) );
+            assert( vmi.size() == binomial_integer(ir.cardinality() - 1 + pow, pow                  ) );
+            
+            for( int i = 0; i < vmi.size(); i++ ) 
+            for( int j = 0; j < vmi.size(); j++ ) 
+            {
+                if( i != j ) 
+                    assert( vmi[i] != vmi[j] );
+            }
+
+            for( int i = 0; i < vmi.size(); i++ ) 
+            {
+                assert( vmi[i].absolute() == pow );
+            }
+            
+            for( const auto& mi : vmi ) 
+                LOG << mi << nl;
+            LOG << nl;
+            
+        }
+    
+    }
+
+    if(true)
+    {
+            
+        LOG << "2. Test generator for general multiindices from 1 to ..." << nl;
+        
+        const std::vector<int> Ns = { -1, 0, 1, 2, 3, 4 };
+        const std::vector<int> Rs = {  0, 1, 2, 3, 4, 5, 6 };
         
         
         for( const int& N : Ns ) 
@@ -131,6 +81,19 @@ int main()
             const IndexRange bereich( 1, N );
         
             const std::vector<MultiIndex> all = generateMultiIndices( bereich, R );
+
+            if( bereich.cardinality() == 0 and R == 0 ){
+                assert( all.size() == 1 );
+                assert( all[0].absolute() == 0 );
+                continue;
+            }
+
+            if( bereich.cardinality() == 0 and R > 0 ){
+                assert( all.size() == 0 );
+                continue;
+            }
+
+            
             
             assert( all.size() == binomial_integer( bereich.cardinality() + R - 1, R ) );
             
@@ -144,16 +107,16 @@ int main()
             }
                 
             for( const MultiIndex& mi : all )
-                LOG << mi << endl;
+                LOG << mi << nl;
             
             
         }
         
-        LOG << "Tested" << endl;
+        LOG << "Tested" << nl;
             
     }
     
-    LOG << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
     
     return 0;
 }

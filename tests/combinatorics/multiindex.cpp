@@ -1,24 +1,18 @@
 
-
-/**/
-
-#include <iostream>
 #include "../../basic.hpp"
 #include "../../combinatorics/indexrange.hpp"
 #include "../../combinatorics/indexmap.hpp"
 #include "../../combinatorics/multiindex.hpp"
 
 
-using namespace std;
-
-int main()
+int main( int argc, char *argv[] )
 {
     
-    LOG << "Unit Test for Multi-Indices" << endl;
+    LOG << "Unit Test for Multi-Indices" << nl;
         
     if( true )
     {
-        LOG << "Basic functionality" << endl;
+        LOG << "1. Basic functionality" << nl;
         
         IndexRange irA( 2, 5 );
         MultiIndex miA( irA );
@@ -62,7 +56,7 @@ int main()
     
     if( true )
     {
-        LOG << "Comparison and arithmetics" << endl;
+        LOG << "2. Comparison and arithmetics" << nl;
         
         IndexRange irA( 2, 5 );
         IndexRange irB( 1, 4 );
@@ -71,10 +65,10 @@ int main()
         MultiIndex miA2( irA );
         MultiIndex miB ( irB );
         
-        assert( miA1.comparablewith( miA2 ) );
-        assert( miA2.comparablewith( miA1 ) );
-        assert( not miA1.comparablewith( miB ) );
-        assert( not miB.comparablewith( miA1 ) );
+        assert( miA1.is_comparable_with( miA2 ) );
+        assert( miA2.is_comparable_with( miA1 ) );
+        assert( not miA1.is_comparable_with( miB ) );
+        assert( not miB.is_comparable_with( miA1 ) );
         
         miA1 += 4;
         miA1 += 4;
@@ -88,22 +82,22 @@ int main()
         miA2 += 4;
         miA2 += 2;
         
-        assert( miA1.comparablewith( miA2 ) );
-        assert( miA2.comparablewith( miA1 ) );
+        assert( miA1.is_comparable_with( miA2 ) );
+        assert( miA2.is_comparable_with( miA1 ) );
         assert( miA1 == miA2 );
         assert( miA2 == miA1 );
         
         miA2 -= 4;
         
-        assert( miA1.comparablewith( miA2 ) );
-        assert( miA2.comparablewith( miA1 ) );
+        assert( miA1.is_comparable_with( miA2 ) );
+        assert( miA2.is_comparable_with( miA1 ) );
         assert( miA1 != miA2 );
         assert( miA2 != miA1 );
         
         miA1 -= 4;
         
-        assert( miA1.comparablewith( miA2 ) );
-        assert( miA2.comparablewith( miA1 ) );
+        assert( miA1.is_comparable_with( miA2 ) );
+        assert( miA2.is_comparable_with( miA1 ) );
         assert( miA1 == miA2 );
         assert( miA2 == miA1 );
         
@@ -113,8 +107,8 @@ int main()
         miA3[4] = 2;
         miA3[5] = 0;
 
-        assert( miA3.comparablewith( miA1+miA2 ) );
-        assert( ( miA1+miA2 ).comparablewith( miA3 ) );
+        assert( miA3.is_comparable_with( miA1+miA2 ) );
+        assert( ( miA1+miA2 ).is_comparable_with( miA3 ) );
         assert( miA3 == ( miA1+miA2 ) );
         assert( ( miA1+miA2 ) == miA3 );
         
@@ -123,10 +117,10 @@ int main()
         assert( ( miA1-miA2 ).at(4) == 0 );
         assert( ( miA1-miA2 ).at(5) == 0 );
         
-        LOG << "Comparison and arithmetics done" << endl;
+        LOG << "Comparison and arithmetics done" << nl;
     }
     
-    LOG << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
     
     return 0;
 }

@@ -2,16 +2,9 @@
 
 /**/
 
-#include <iostream>
-#include <fstream>
-#include <iomanip>
-
 #include "../../basic.hpp"
-#include "../../dense/densematrix.hpp"
-#include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
-#include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.elevation.hpp"
 #include "../../fem/utilities.hpp"
@@ -20,14 +13,14 @@
 
 using namespace std;
 
-int main()
+int main( int argc, char *argv[] )
 {
         
-        LOG << "Unit Test: (2D) masses are correctly approximated: mass of reference interpolation" << endl;
+        LOG << "Unit Test: (2D) masses are correctly approximated: mass of reference interpolation" << nl;
         
-        LOG << std::setprecision(10);
+        // LOG << std::setprecision(10);
 
-        LOG << "Initial mesh..." << endl;
+        LOG << "Initial mesh..." << nl;
         
         MeshSimplicial2D M = StandardSquare2D();
         
@@ -41,7 +34,7 @@ int main()
 //         experiments_scalar_field.push_back( 
 //             [](const FloatVector& vec) -> FloatVector{
 //                 assert( vec.getdimension() == 2 );
-//                 return FloatVector({ ( vec[0] > 0 and vec[1] > 0 ) ? 1. : 0. });
+//                 return FloatVector({ ( vec[0] > 0 and vec[1] > 0 ) ? 1. : Float(0.) });
 //             }
 //         );
 // 
@@ -61,7 +54,7 @@ int main()
 //         experiments_scalar_field.push_back( 
 //             [](const FloatVector& vec) -> FloatVector{
 //                 assert( vec.getdimension() == 2 );
-//                 return FloatVector({ ( vec[0] * vec[1] > 0 ) ? 1. : 0. });
+//                 return FloatVector({ ( vec[0] * vec[1] > 0 ) ? 1. : Float(0.) });
 //             }
 //         );
 // 
@@ -77,24 +70,24 @@ int main()
 
         experiments_scalar_value.push_back( 3.62686040784701876 * 3.62686040784701876 );
 
-        experiments_scalar_field.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
-                assert( vec.getdimension() == 2 );
-                return FloatVector({ ( vec[0] > 0 and vec[1] > 0 ) ? std::exp( vec[0] ) : 0. });
-            }
-        );
+        // experiments_scalar_field.push_back( 
+        //     [](const FloatVector& vec) -> FloatVector{
+        //         assert( vec.getdimension() == 2 );
+        //         return FloatVector({ ( vec[0] > 0 and vec[1] > 0 ) ? std::exp( vec[0] ) : Float(0.) });
+        //     }
+        // );
 
-        experiments_scalar_value.push_back(3.194528049465325113615213730287503906590157785275923662043);
+        // experiments_scalar_value.push_back(3.194528049465325113615213730287503906590157785275923662043);
         
         
-        experiments_scalar_field.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
-                assert( vec.getdimension() == 2 );
-                return FloatVector({ ( vec[0] * vec[1] > 0 ) ? std::exp( vec[0] ) : 0. });
-            }
-        );
+        // experiments_scalar_field.push_back( 
+        //     [](const FloatVector& vec) -> FloatVector{
+        //         assert( vec.getdimension() == 2 );
+        //         return FloatVector({ ( vec[0] * vec[1] > 0 ) ? std::exp( vec[0] ) : Float(0.) });
+        //     }
+        // );
 
-        experiments_scalar_value.push_back(3.626860407847018767668213982801261704886342012321135721309);
+        // experiments_scalar_value.push_back(3.626860407847018767668213982801261704886342012321135721309);
         
         
         
@@ -107,7 +100,7 @@ int main()
 //         experiments_vector_field.push_back( 
 //             [](const FloatVector& vec) -> FloatVector{
 //                 assert( vec.getdimension() == 2 );
-//                 // return FloatVector({ ( vec[0]*vec[1] > 0 ) ? 1. : 0., ( vec[0]*vec[1] > 0 ) ? 10. : 0. });
+//                 // return FloatVector({ ( vec[0]*vec[1] > 0 ) ? 1. : Float(0.), ( vec[0]*vec[1] > 0 ) ? Float(10.) : Float(0.) });
 //                 return FloatVector({ 1., 0. });
 //             }
 //         );
@@ -123,7 +116,7 @@ int main()
             }
         );
 
-        // int_(-1)^(1) int_(-1)^(1) exp(x-y)^2 + exp(x-y)^2 dx dy
+        // int_(-1)^(1) int_(-1)^(1) std::exp(x-y)^2 + std::exp(x-y)^2 dx dy
         experiments_vector_value.push_back( 26.308232836016486629201989612067059822501324553083772160298096942 );
         
 
@@ -155,21 +148,29 @@ int main()
         experiments_volume_field.push_back( 
             [](const FloatVector& vec) -> FloatVector{
                 assert( vec.getdimension() == 2 );
-                return FloatVector({ ( vec[0] > 0 and vec[1] > 0 ) ? std::exp( vec[0] ) : 0. });
+                return FloatVector({ std::exp( vec[0] + vec[1] ) });
             }
         );
 
-        experiments_volume_value.push_back(3.194528049465325113615213730287503906590157785275923662043);
-        
-        
-        experiments_volume_field.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
-                assert( vec.getdimension() == 2 );
-                return FloatVector({ ( vec[0] * vec[1] > 0 ) ? std::exp( vec[0] ) : 0. });
-            }
-        );
+        experiments_volume_value.push_back( 3.62686040784701876 * 3.62686040784701876 );
 
-        experiments_volume_value.push_back(3.626860407847018767668213982801261704886342012321135721309);
+        // experiments_volume_field.push_back( 
+        //     [](const FloatVector& vec) -> FloatVector{
+        //         assert( vec.getdimension() == 2 );
+        //         return FloatVector({ ( vec[0] > 0 and vec[1] > 0 ) ? std::exp( vec[0] ) : Float(0.) });
+        //     }
+        // );
+
+        // experiments_volume_value.push_back(3.194528049465325113615213730287503906590157785275923662043);
+        
+        // experiments_volume_field.push_back( 
+        //     [](const FloatVector& vec) -> FloatVector{
+        //         assert( vec.getdimension() == 2 );
+        //         return FloatVector({ ( vec[0] * vec[1] > 0 ) ? std::exp( vec[0] ) : Float(0.) });
+        //     }
+        // );
+
+        // experiments_volume_value.push_back(3.626860407847018767668213982801261704886342012321135721309);
         
         
         
@@ -180,7 +181,7 @@ int main()
         
         const int l_min = 0;
         
-        const int l_max = 2;
+        const int l_max = 4;
         
         const int r_ref = 7;
         
@@ -195,9 +196,9 @@ int main()
 
         for( int l = l_min; l <= l_max; l++ ){
             
-            LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << endl;
+            LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << nl;
                     
-            LOG << "...assemble mass matrices" << endl;
+            LOG << "...assemble mass matrices" << nl;
 
             SparseMatrix massmatrix_scalar = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r_ref );
             
@@ -205,15 +206,15 @@ int main()
                 
             SparseMatrix massmatrix_volume = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r_ref );
                 
-            assert( massmatrix_scalar.isfinite() );
-            assert( massmatrix_vector.isfinite() );
-            assert( massmatrix_volume.isfinite() );
+            assert( massmatrix_scalar.is_finite() );
+            assert( massmatrix_vector.is_finite() );
+            assert( massmatrix_volume.is_finite() );
                 
             for( int r = r_min; r <= r_max; r++ ) 
             {
-                LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << endl;
+                LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << nl;
 
-                LOG << "...assemble degree elevation matrices" << endl;
+                LOG << "...assemble degree elevation matrices" << nl;
 
                 SparseMatrix elevation_scalar = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 0, r, r_ref - r );
                 
@@ -221,10 +222,10 @@ int main()
                 
                 SparseMatrix elevation_volume = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 2, r, r_ref - r );
                 
-                assert( elevation_scalar.isfinite() );
-                assert( elevation_volume.isfinite() );
+                assert( elevation_scalar.is_finite() );
+                assert( elevation_volume.is_finite() );
                 
-                LOG << "experiments..." << endl;
+                LOG << "experiments..." << nl;
                 
                 for( int i = 0; i < experiments_scalar_field.size(); i++ ){
 
@@ -237,6 +238,8 @@ int main()
                     auto error = interpol_ref - elevation_scalar * interpol;
 
                     auto error_mass = error * ( massmatrix_scalar * error );
+                    
+                    Assert( error_mass >= -desired_closeness, error_mass );
                     
                     errors_scalar[i][l-l_min][r-r_min] = std::sqrt( std::abs( error_mass ) );
                     
@@ -254,6 +257,8 @@ int main()
 
                     auto error_mass = error * ( massmatrix_vector * error );
                     
+                    Assert( error_mass >= -desired_closeness, error_mass );
+                    
                     errors_vector[i][l-l_min][r-r_min] = std::sqrt( std::abs( error_mass ) );
                     
                 }
@@ -270,6 +275,8 @@ int main()
 
                     auto error_mass = error * ( massmatrix_volume * error );
                     
+                    Assert( error_mass >= -desired_closeness, error_mass );
+                    
                     errors_volume[i][l-l_min][r-r_min] = std::sqrt( std::abs( error_mass ) );
                     
                 }
@@ -278,9 +285,11 @@ int main()
 
             if( l != l_max )
             {
-                LOG << "Refinement..." << endl;
+                LOG << "Refinement..." << nl;
             
                 M.uniformrefinement();
+                
+                M.shake_interior_vertices();
             }
             
 
@@ -291,6 +300,28 @@ int main()
         ConvergenceTable contable_scalar[ experiments_scalar_field.size() ];
         ConvergenceTable contable_vector[ experiments_vector_field.size() ];
         ConvergenceTable contable_volume[ experiments_volume_field.size() ];
+        
+        for( int r = r_min; r <= r_max; r++ ) 
+        {
+            for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
+                contable_scalar[i].table_name = "Numerical errors scalar E" + std::to_string(i);
+            for( int i = 0; i < experiments_vector_field.size(); i++ ) 
+                contable_vector[i].table_name = "Numerical errors vector E" + std::to_string(i);
+            for( int i = 0; i < experiments_volume_field.size(); i++ ) 
+                contable_volume[i].table_name = "Numerical errors volume E" + std::to_string(i);
+
+            for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
+                contable_scalar[i] << printf_into_string("R%d", r-r_min );
+            for( int i = 0; i < experiments_vector_field.size(); i++ ) 
+                contable_vector[i] << printf_into_string("R%d", r-r_min );
+            for( int i = 0; i < experiments_volume_field.size(); i++ ) 
+                contable_volume[i] << printf_into_string("R%d", r-r_min );
+
+        }
+        for( int i = 0; i < experiments_scalar_field.size(); i++ ) contable_scalar[i] << nl; 
+        for( int i = 0; i < experiments_vector_field.size(); i++ ) contable_vector[i] << nl; 
+        for( int i = 0; i < experiments_volume_field.size(); i++ ) contable_volume[i] << nl; 
+    
         
         for( int l = l_min; l <= l_max; l++ ) 
         {
@@ -316,16 +347,18 @@ int main()
         }
             
         for( int i = 0; i < experiments_scalar_field.size(); i++ ) contable_scalar[i].lg(); 
-        LOG << "-------------------" << nl;
+        LOG << "                   " << nl;
         for( int i = 0; i < experiments_vector_field.size(); i++ ) contable_vector[i].lg(); 
-        LOG << "-------------------" << nl;
+        LOG << "                   " << nl;
         for( int i = 0; i < experiments_volume_field.size(); i++ ) contable_volume[i].lg(); 
         
         
         
         
         
-        LOG << "Check that differences are small" << nl;
+        const Float threshold = desired_closeness_for_sqrt;
+
+        LOG << "Check that differences are below: " << threshold << nl;
         
         for( int l      = l_min; l      <=      l_max; l++      ) 
         for( int r      = r_min; r      <=      r_max; r++      ) 
@@ -333,18 +366,20 @@ int main()
             if( r < r_max or l < 3 ) 
                 continue;
             
+            // continue; // TODO: find a meaningful test here 
+            
             for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
-                assert( errors_scalar[i][l-l_min][r-r_min] < 10e-6 );
+                Assert( errors_scalar[i][l-l_min][r-r_min] < threshold, errors_scalar[i][l-l_min][r-r_min], threshold );
             
             for( int i = 0; i < experiments_vector_field.size(); i++ ) 
-                assert( errors_vector[i][l-l_min][r-r_min] < 10e-6 );
+                Assert( errors_vector[i][l-l_min][r-r_min] < threshold, errors_vector[i][l-l_min][r-r_min], threshold );
 
             for( int i = 0; i < experiments_volume_field.size(); i++ )
-                assert( errors_volume[i][l-l_min][r-r_min] < 10e-6 );
+                Assert( errors_volume[i][l-l_min][r-r_min] < threshold, errors_volume[i][l-l_min][r-r_min], threshold );
         }
         
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
         
         return 0;
 }

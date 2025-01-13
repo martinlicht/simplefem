@@ -1,7 +1,7 @@
 #ifndef INCLUDEGUARD_DENSE_DENSEMATRIX_HPP
 #define INCLUDEGUARD_DENSE_DENSEMATRIX_HPP
 
-#include <memory>
+#include <initializer_list>
 #include <utility>
 #include <vector>
 
@@ -32,41 +32,52 @@ class DenseMatrix final
 
     public:
         
-        DenseMatrix( const DenseMatrix& );
-        DenseMatrix( DenseMatrix&& );
-        DenseMatrix& operator=( const DenseMatrix& );
-        DenseMatrix& operator=( DenseMatrix&& );
+        /* Constructors */
         
         explicit DenseMatrix( int dim, Float initialvalue = notanumber );
         DenseMatrix( int dim, const std::function<Float(int,int)>& generator );
         DenseMatrix( int dim, const std::vector<FloatVector>& coldata );
+        DenseMatrix( int dim, const std::initializer_list<Float>& rowdata );
         
         DenseMatrix( int rows, int columns, Float initialvalue = notanumber );
         DenseMatrix( int rows, int columns, const std::function<Float(int,int)>& generator );
         DenseMatrix( int rows, int columns, const std::vector<FloatVector>& coldata );
-        
+        DenseMatrix( int rows, int columns, const std::initializer_list<Float>& rowdata );
+
         explicit DenseMatrix( const ScalingOperator& );
         explicit DenseMatrix( const DiagonalOperator& );
         explicit DenseMatrix( const SparseMatrix& );
         explicit DenseMatrix( const FloatVector& );
+                
+        DenseMatrix( int number_of_blocks, const DenseMatrix& mat, Float scaling );
+
+        explicit DenseMatrix( const DenseMatrix&, Float scaling );
+        explicit DenseMatrix( DenseMatrix&&, Float scaling );
+
         
+        /* standard interface */ 
+        
+        DenseMatrix() = delete;
+        DenseMatrix( const DenseMatrix& );
+        DenseMatrix( DenseMatrix&& );
+        DenseMatrix& operator=( const DenseMatrix& );
+        DenseMatrix& operator=( DenseMatrix&& );
         virtual ~DenseMatrix();
         
-        virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override 
-        {
-            std::shared_ptr<DenseMatrix> cloned = std::make_shared<DenseMatrix>( *this );
-            return cloned;
-        }
-        
-        virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override 
-        {
-            std::unique_ptr<DenseMatrix> heir = std::make_unique<DenseMatrix>( std::move(*this) );
-            return heir;
-        }
-        
+        /* standard methods for operators */
+
         virtual void check() const override;
-        virtual void print( std::ostream& ) const override;
-        virtual void printplain( std::ostream& ) const;
+        virtual std::string text() const override;
+        
+        std::string data_as_text( bool indexed, bool print_as_list = false ) const;
+        
+        /* OTHER METHODS */
+
+        virtual DenseMatrix* pointer_to_heir() && override
+        {
+            return new typename std::remove_reference<decltype(*this)>::type( std::move(*this) );
+        }
+        
         
         
         DenseMatrix clone() const;
@@ -82,12 +93,12 @@ class DenseMatrix final
         
         /* Access entries */
         
-        Float get(int,int) const;
-        void set(int,int,Float);
-        Float& at( int, int ) &;
-        const Float& at( int, int ) const &;
-        Float& operator()( int, int ) &;
-        const Float& operator()( int, int ) const &;
+        HOTCALL Float get( int r, int c ) const;
+        HOTCALL void set( int r,int c, Float v );
+        HOTCALL Float& at( int r, int c ) &;
+        HOTCALL const Float& at( int r, int c ) const &;
+        HOTCALL Float& operator()( int r, int c ) &;
+        HOTCALL const Float& operator()( int r, int c ) const &;
         
         /* Access rows and columns */
         
@@ -116,27 +127,30 @@ class DenseMatrix final
         
         /* Generate standard matrices */
         
-        void zeromatrix();
-        void randommatrix();
-        void randomintegermatrix( int min, int max );
-        void unitmatrix();
+        void zero_matrix();
+        void random_matrix();
+        void random_integer_matrix( int min, int max );
+        void random_orthogonal_matrix();
+        void identity_matrix();
         void indexmapping( const IndexMap& );
         
         /* Basic manipulation */
         
-        void scale( Float );
-        void set( Float );
-        void add( Float );
+        void scale( Float s );
+        void set( Float s );
+        void add( Float s );
         
         /* Special operations */
         
         DenseMatrix submatrix( const IndexMap& rows, const IndexMap& columns ) const;
         
+        FloatVector getDiagonal() const;
+        
         /* Arithmetic operations */
         
-        void add( const DenseMatrix& );
-        void add( Float, const DenseMatrix& );
-        void add( Float, Float, const DenseMatrix& );
+        void add( const DenseMatrix& summand );
+        void add( Float scalingsrc, const DenseMatrix& summand );
+        void add( Float scalingdest, Float scalingsrc, const DenseMatrix& summand );
         
         
         /* Measurements */
@@ -151,39 +165,82 @@ class DenseMatrix final
         
         Float norm() const;
         
+        Float frobeniusnorm() const;
+        
         Float maxnorm() const;
         
         Float sumnorm() const;
         
         Float lpnorm( Float ) const;
+
+        Float norm_row_col( Float p, Float q ) const;
+
+        Float norm_col_row( Float p, Float q ) const;
+
+        Float norm_operator_l1() const;
+
+        Float norm_operator_max() const;
         
+
+        // matrix trace 
+
+        Float trace() const;
+
+        // Gerschgorin circles : row/column 
+
+        DenseMatrix Gerschgorin() const;
+        DenseMatrix GerschgorinRow() const;
+        DenseMatrix GerschgorinColumn() const;
+
+        // Crude eigenvalue and singular value estimate 
+
+        Float eigenvalue_estimate() const;
+        Float operator_norm_estimate( int sample_numbers = 5, int iteration_numbers = 10 ) const;
+
+
         
         /* Investigations */
         
-        bool issquare() const;
+        bool is_square() const;
         
-        bool issymmetric() const;
+        bool is_symmetric() const;
         
-        bool isantisymmetric() const;
+        bool is_antisymmetric() const;
         
-        bool isfinite() const;
+        bool is_diagonal() const;
         
-        bool iszero() const;
+        bool is_lower_left_triangular() const;
         
-        bool ispositive() const;
+        bool is_lower_right_triangular() const;
         
-        bool isnegative() const;
+        bool is_upper_left_triangular() const;
         
-        bool isnonnegative() const;
+        bool is_upper_right_triangular() const;
         
-        bool isnonpositive() const;
+        bool is_finite() const;
+        
+        bool is_zero() const;
+        
+        bool is_positive() const;
+        
+        bool is_negative() const;
+        
+        bool is_nonnegative() const;
+        
+        bool is_nonpositive() const;
         
         
-        bool issmall( Float eps = 0.000001 ) const;
+        bool is_numerically_small( Float threshold = desired_closeness ) const;
+        
+        bool is_numerically_identity( Float threshold = desired_closeness ) const;
         
         
         Float* raw();
         const Float* raw() const;
+
+        /* Memory size */
+        
+        std::size_t memorysize() const;
 
     private:
         
@@ -195,79 +252,48 @@ class DenseMatrix final
 
 
 
-inline DenseMatrix IdentityMatrix( int dim )
+DenseMatrix IdentityMatrix( int dim );
+
+DenseMatrix MatrixMult( const DenseMatrix& left, const DenseMatrix& right );
+
+DenseMatrix MatrixTripleMult( const DenseMatrix& A, const DenseMatrix& B );
+
+
+DenseMatrix HilbertMatrix( int n );
+
+DenseMatrix InvHilbertMatrix( int n );
+
+Float HilbertDeterminant( int n );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+inline DenseMatrix operator+( const DenseMatrix& mat )
 {
-    return DenseMatrix( dim, []( int r, int c ) -> Float{ return r==c ? 1. : 0.; } );
+    return mat;
 }
 
-
-
-
-inline DenseMatrix MatrixMult( const DenseMatrix& left, const DenseMatrix& right )
+inline DenseMatrix operator-( const DenseMatrix& mat )
 {
-    left.check();
-    right.check();
-
-    const int lin = left.getdimin();
-    const int lout = left.getdimout();
-    const int rin = right.getdimin();
-    const int rout = right.getdimout();
-
-    assert( lin == rout );
-
-    DenseMatrix ret( lout, rin, 0. );
-    
-    for( int lo = 0; lo < lout; lo++ )
-    for( int ri = 0; ri < rin; ri++ )
-    for( int m = 0; m < rout; m++ )
-        ret( lo, ri ) += left( lo, m ) * right( m, ri );
-
-    ret.check();
-    return ret;
+    DenseMatrix ret( mat, -1. ); 
+    return mat;
 }
-
-
-inline DenseMatrix HilbertMatrix( int n )
-{
-    std::function<Float(int,int)> hilbertmatrix_generator = [](int r, int c) { return 1. / (r+c+1); };
-
-    return DenseMatrix( n, hilbertmatrix_generator );
-}
-
-inline DenseMatrix InvHilbertMatrix( int n )
-{
-    std::function<Float(int,int)> invhilbertmatrix_generator = [=](int r, int c) { 
-        // https://mathoverflow.net/questions/47561/deriving-inverse-of-hilbert-matrix
-        const int i = r+1;
-        const int j = c+1;
-        return signpower(i+j) * (i+j-1)
-               * binomial_integer( n+i-1, n-j )
-               * binomial_integer( n+j-1, n-i )
-               * square( binomial_integer(i+j-2,i-1) );
-    };
-
-    return DenseMatrix( n, invhilbertmatrix_generator );
-}
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 inline DenseMatrix& operator+=( DenseMatrix& left, const DenseMatrix& right )
 {
@@ -283,9 +309,8 @@ inline DenseMatrix& operator-=( DenseMatrix& left, const DenseMatrix& right )
 
 inline DenseMatrix& operator*=( DenseMatrix& left, const DenseMatrix& right )
 {
-    DenseMatrix temp( left );
-    temp = MatrixMult( left, right );
-    left = temp;
+    DenseMatrix temp = MatrixMult( left, right );
+    left = std::move(temp);
     return left;
 }
 
@@ -333,17 +358,15 @@ inline DenseMatrix operator*( Float left, const DenseMatrix& right )
     return ret;
 }
 
-inline DenseMatrix operator*( const DenseMatrix& left, Float right )
+inline DenseMatrix operator*( const DenseMatrix& mat, Float s )
 {
-    DenseMatrix ret( left );
-    ret *= right;
-    return ret;
+    return s * mat;
 }
 
-inline DenseMatrix operator/( const DenseMatrix& left, Float right )
+inline DenseMatrix operator/( const DenseMatrix& mat, Float s )
 {
-    DenseMatrix ret( left );
-    ret /= right;
+    DenseMatrix ret( mat );
+    ret /= s;
     return ret;
 }
 

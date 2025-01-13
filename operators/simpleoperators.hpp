@@ -1,12 +1,6 @@
 #ifndef INCLUDEGUARD_OPERATOR_SIMPLEOPERATORS_HPP
 #define INCLUDEGUARD_OPERATOR_SIMPLEOPERATORS_HPP
 
-#include <cassert>
-#include <functional>
-#include <memory>
-#include <ostream>
-#include <utility>
-
 #include "../basic.hpp"
 #include "floatvector.hpp"
 #include "linearoperator.hpp"
@@ -25,28 +19,32 @@ class IdentityOperator final
 
     public:
 
-        IdentityOperator()                                         = delete;
-        IdentityOperator( const IdentityOperator& )                = default;
-        IdentityOperator( IdentityOperator&& )                     = default;
-        IdentityOperator& operator=( const IdentityOperator& vec ) = default;
-        IdentityOperator& operator=( IdentityOperator&& vec )      = default; 
+        /* Constructors */
         
         explicit IdentityOperator( int n );
+        
+        /* standard interface */
+        
+        IdentityOperator()                                        = delete;
+        IdentityOperator( const IdentityOperator& )               = default;
+        IdentityOperator( IdentityOperator&& )                    = default;
+        IdentityOperator& operator=( const IdentityOperator& op ) = default;
+        IdentityOperator& operator=( IdentityOperator&& op )      = default; 
         virtual ~IdentityOperator();
 
-        virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
-            std::shared_ptr<IdentityOperator> cloned = std::make_shared<IdentityOperator>( *this );
-            return cloned;
-        }
-        
-        virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {
-            std::unique_ptr<IdentityOperator> heir = std::make_unique<IdentityOperator>( *this );
-            return heir;
-        }
+        /* standard methods for operators */
         
         virtual void check() const override;
-        virtual void print( std::ostream& ) const override;
+        
+        virtual std::string text() const override;
 
+        /* OTHER METHODS */
+        
+        virtual IdentityOperator* pointer_to_heir() && override
+        {
+            return new typename std::remove_reference<decltype(*this)>::type( std::move(*this) );
+        }
+        
         using LinearOperator::apply;
         virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override;
     
@@ -68,6 +66,59 @@ inline IdentityOperator operator*( const IdentityOperator& left, const IdentityO
 
 /************************
 ****
+****  Class for Zero Operators 
+****  
+************************/
+
+
+class ZeroOperator final
+: public LinearOperator
+{
+
+    public:
+
+        /* Constructors */
+        
+        explicit ZeroOperator( int dim );
+        explicit ZeroOperator( int dimout, int dimin );
+        
+        /* standard interface */
+        
+        ZeroOperator()                                    = delete;
+        ZeroOperator( const ZeroOperator& )               = default;
+        ZeroOperator( ZeroOperator&& )                    = default;
+        ZeroOperator& operator=( const ZeroOperator& op ) = default;
+        ZeroOperator& operator=( ZeroOperator&& op )      = default; 
+        virtual ~ZeroOperator();
+
+        /* standard methods for operators */
+        
+        virtual void check() const override;
+        
+        virtual std::string text() const override;
+
+        /* OTHER METHODS */
+        
+        virtual ZeroOperator* pointer_to_heir() && override
+        {
+            return new typename std::remove_reference<decltype(*this)>::type( std::move(*this) );
+        }
+        
+        using LinearOperator::apply;
+        virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override;
+    
+};
+  
+  
+
+
+
+
+
+
+
+/************************
+****
 ****  Class for Scalings 
 ****  - instantiates LinearOperator
 ****  
@@ -80,28 +131,31 @@ class ScalingOperator final
 
     public:
 
-        ScalingOperator()                                        = delete;
-        ScalingOperator( const ScalingOperator& )                = default;
-        ScalingOperator( ScalingOperator&& )                     = default;
-        ScalingOperator& operator=( const ScalingOperator& vec ) = default;
-        ScalingOperator& operator=( ScalingOperator&& vec )      = default; 
+        /* Constructors */
         
         explicit ScalingOperator( int, Float s );
         virtual ~ScalingOperator();
 
-        virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
-            std::shared_ptr<ScalingOperator> clone = std::make_shared<ScalingOperator>( *this );
-            return clone;
-        }
+        /* standard methods for operators */
+        ScalingOperator()                                       = delete;
+        ScalingOperator( const ScalingOperator& )               = default;
+        ScalingOperator( ScalingOperator&& )                    = default;
+        ScalingOperator& operator=( const ScalingOperator& op ) = default;
+        ScalingOperator& operator=( ScalingOperator&& op )      = default; 
         
-        virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {
-            std::unique_ptr<ScalingOperator> heir = std::make_unique<ScalingOperator>( *this );
-            return heir;
-        }
+        /* standard interface */
         
         virtual void check() const override;
-        virtual void print( std::ostream& ) const override;
+        
+        virtual std::string text() const override;
 
+        /* OTHER METHODS */
+        
+        virtual ScalingOperator* pointer_to_heir() && override
+        {
+            return new typename std::remove_reference<decltype(*this)>::type( std::move(*this) );
+        }
+        
         Float getscaling() const;
         void setscaling( Float s );
 
@@ -142,32 +196,39 @@ class DiagonalOperator final
 
     public:
 
-        DiagonalOperator()                                         = delete;
-        DiagonalOperator( const DiagonalOperator& )                = default;
-        DiagonalOperator( DiagonalOperator&& )                     = default;
-        DiagonalOperator& operator=( const DiagonalOperator& vec ) = default;
-        DiagonalOperator& operator=( DiagonalOperator&& vec )      = default; 
-
+        /* Constructors */
+        
         explicit DiagonalOperator( int, Float s );
         explicit DiagonalOperator( const FloatVector& dia );
         explicit DiagonalOperator( FloatVector&& dia );
         explicit DiagonalOperator( int, const ScalingOperator& scaling );
         explicit DiagonalOperator( int, const std::function<Float(int)>& );
+        
+        /* standard methods for operators */
+        
+        DiagonalOperator()                                        = delete;
+        DiagonalOperator( const DiagonalOperator& )               = default;
+        DiagonalOperator( DiagonalOperator&& )                    = default;
+        DiagonalOperator& operator=( const DiagonalOperator& op ) = default;
+        DiagonalOperator& operator=( DiagonalOperator&& op )      = default; 
+
         virtual ~DiagonalOperator();
         
-        virtual std::shared_ptr<LinearOperator> get_shared_pointer_to_clone() const& override {
-            std::shared_ptr<DiagonalOperator> clone = std::make_shared<DiagonalOperator>( *this );
-            return clone;
-        }
+        /* standard interface */
         
-        virtual std::unique_ptr<LinearOperator> get_unique_pointer_to_heir() && override {
-            std::unique_ptr<DiagonalOperator> heir = std::make_unique<DiagonalOperator>( *this );
-            return heir;
-        }
-        
-
         virtual void check() const override;
-        virtual void print( std::ostream& ) const override;
+        
+        virtual std::string text() const override;
+        
+        virtual std::string text( const bool embellish ) const;
+
+        /* OTHER METHODS */
+        
+        virtual DiagonalOperator* pointer_to_heir() && override
+        {
+            return new typename std::remove_reference<decltype(*this)>::type( std::move(*this) );
+        }
+        
 
         FloatVector& getdiagonal();
         const FloatVector& getdiagonal() const;
@@ -195,13 +256,13 @@ inline DiagonalOperator operator*( const DiagonalOperator& left, const DiagonalO
     
     const FloatVector& leftdia = left.getdiagonal();
     const FloatVector& rightdia = right.getdiagonal();
-    const int dimension = leftdia.getdimension();
+    // const int dimension = leftdia.getdimension();
     
     assert( leftdia.getdimension() == rightdia.getdimension() );
     
     return DiagonalOperator( FloatVector( leftdia.getdimension(), 
                                           [&](int d) -> Float { 
-                                            assert( 0 <= d && d < dimension ); 
+                                            assert( 0 <= d && d < leftdia.getdimension() ); 
                                             return leftdia[d] * rightdia[d];
                                           }
                                         )
@@ -211,5 +272,72 @@ inline DiagonalOperator operator*( const DiagonalOperator& left, const DiagonalO
   
   
   
+
+
+
+
+
+
+
+
+
+class LambdaOperator final
+: public LinearOperator
+{
+
+    public:
+
+        /* Constructors */
+        
+        explicit LambdaOperator( int dim, std::function<FloatVector(const FloatVector&)> );
+        explicit LambdaOperator( int dimout, int dimin, std::function<FloatVector(const FloatVector&)> );
+        
+        /* standard interface */
+        
+        LambdaOperator()                                      = delete;
+        LambdaOperator( const LambdaOperator& )               = default;
+        LambdaOperator( LambdaOperator&& )                    = default;
+        LambdaOperator& operator=( const LambdaOperator& op ) = delete;
+        LambdaOperator& operator=( LambdaOperator&& op )      = delete; 
+        virtual ~LambdaOperator();
+
+        /* standard methods for operators */
+        
+        virtual void check() const override;
+        
+        virtual std::string text() const override;
+
+        /* OTHER METHODS */
+        
+        virtual LambdaOperator* pointer_to_heir() && override
+        {
+            return new typename std::remove_reference<decltype(*this)>::type( std::move(*this) );
+        }
+        
+        using LinearOperator::apply;
+        virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override;
+
+    private:
+
+        const std::function<FloatVector(const FloatVector&)> func;
+    
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #endif

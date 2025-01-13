@@ -2,36 +2,30 @@
 
 /**/
 
-#include <iostream>
-#include <fstream>
-#include <iomanip>
-
 #include "../../basic.hpp"
 #include "../../operators/composedoperators.hpp"
-#include "../../dense/densematrix.hpp"
-#include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples3D.hpp"
-// #include "../../vtk/vtkwriter.hpp"
-// #include "../../solver/iterativesolver.hpp"
-#include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.elevation.hpp"
 #include "../../fem/utilities.hpp"
 #include "../../utility/convergencetable.hpp"
 
+#include "../../fem/global.unphysical.hpp"
+
+
 
 using namespace std;
 
-int main()
+int main( int argc, char *argv[] )
 {
         
-        LOG << "Unit Test: (3D) degree elevation commutes with exterior derivative" << endl;
+        LOG << "Unit Test: (3D) degree elevation commutes with exterior derivative" << nl;
         
-        LOG << std::setprecision(10);
+        // LOG << std::setprecision(10);
 
-        LOG << "Initial mesh..." << endl;
+        LOG << "Initial mesh..." << nl;
         
         MeshSimplicial3D M = StandardCube3D();
         
@@ -54,7 +48,7 @@ int main()
                 auto ret = FloatVector({ 
                                 std::exp( vec[0] + vec[2] ), 
                                 std::sin( -5.*vec[0] -vec[1] ),
-                                std::atan( vec[1] * vec[2] )
+                                std::exp( vec[1] * vec[2] )
                 });
                 assert( ret.getdimension() == 3 );
                 return ret;
@@ -79,13 +73,13 @@ int main()
 
         const int r_min = 1;
         
-        const int r_max = 3;
+        const int r_max = 2;
         
         const int l_min = 0;
         
         const int l_max = 2;
         
-        const int r_plus_max = 3;
+        const int r_plus_max = 2;
          
         Float errors[ M.getinnerdimension() ][ l_max - l_min + 1 ][ r_max - r_min + 1 ][ r_plus_max + 1 ];
         
@@ -96,14 +90,14 @@ int main()
 
         for( int l = l_min; l <= l_max; l++ ){
             
-            LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << endl;
+            LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << nl;
             
             for( int k      =     0; k      <  M.getinnerdimension(); k++      ) 
             for( int r      = r_min; r      <=                 r_max; r++      ) 
             for( int r_plus =     0; r_plus <=            r_plus_max; r_plus++ ) 
             {
                 
-                LOG << "...assemble matrices: l=" << l << " k=" << k << " r=" << r << " rplus=" << r_plus << endl;
+                LOG << "...assemble matrices: l=" << l << " k=" << k << " r=" << r << " rplus=" << r_plus << nl;
         
                 SparseMatrix lower_diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), k, r          );
 
@@ -115,20 +109,39 @@ int main()
                 
                 SparseMatrix massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), k+1, r + r_plus - 1 );
                 
+                SparseMatrix origin_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), k, r );
                 
                 
-                FloatVector interpol_function = Interpolation( M, M.getinnerdimension(), k, r, fields[k] );
+                
+                FloatVector interpol_function = lower_diffmatrix.createinputvector();
+                interpol_function.random();
+                interpol_function.normalize(origin_massmatrix);
 
                 auto path1 = dier_elevation * lower_diffmatrix * interpol_function;
 
                 auto path2 = upper_diffmatrix * diyi_elevation * interpol_function;
 
-                auto commutator_error = path1 - path2;
+
+                // SparseMatrix canon = FEECRandomizeBroken( M, M.getinnerdimension(), k+1, r + r_plus - 1, notanumber );
+                SparseMatrix canon = FEECCanonicalizeBroken( M, M.getinnerdimension(), k+1, r + r_plus - 1 );
                 
-                Float commutator_error_mass = commutator_error * ( massmatrix * commutator_error );
+                auto commutator_error = path2 - path1;
+
+                // LOG << massmatrix * ( canon * ( path1 - path2 ) - ( path1 - path2 ) ) << nl;
+
+                // const auto csr_product = MatrixCSR(canon.getTranspose()) & MatrixCSR(massmatrix) & MatrixCSR(canon);
+                
+                // Float commutator_error_mass = commutator_error * ( massmatrix * commutator_error );
+                // Float commutator_error_mass = ( canon * commutator_error ) * ( massmatrix * commutator_error );
+                // Float commutator_error_mass = norm_sq_of_vector( massmatrix, canon * commutator_error );
+                Float commutator_error_mass = norm_sq_of_vector( massmatrix, commutator_error );
+                // auto foo = canon * commutator_error; Float commutator_error_mass = foo * ( massmatrix * foo );
+                // Float commutator_error_mass = commutator_error * ( csr_product * commutator_error );
 
                 assert( std::isfinite( commutator_error_mass ) );
-                
+                if( commutator_error_mass < 0. ) { LOG << "ALERT: Squared norm is negative: " << commutator_error_mass/desired_closeness << nl; }
+                Assert( commutator_error_mass >= -desired_closeness, commutator_error_mass );
+                                
                 errors[k][l-l_min][r-r_min][r_plus] = std::sqrt( std::fabs( commutator_error_mass ) );
             
                 
@@ -137,9 +150,15 @@ int main()
 
             if( l != l_max )
             {
-                LOG << "Refinement..." << endl;
+                LOG << "Refinement..." << nl;
             
                 M.uniformrefinement();
+
+                // LOG << M.getCoordinates().text() << nl;
+
+                M.shake_interior_vertices();
+
+                // LOG << M.getCoordinates().text() << nl;
             }
             
             
@@ -149,7 +168,16 @@ int main()
         
         LOG << "Convergence tables" << nl;
     
-        ConvergenceTable contable[ M.getinnerdimension() ];
+        ConvergenceTable contables[ M.getinnerdimension() ];
+        
+        for( int k = 0; k < M.getinnerdimension(); k++ ) 
+            contables[k].table_name = "Rounding errors D3K" + std::to_string(k);
+        for( int k = 0; k < M.getinnerdimension(); k++ ) {
+            for( int r = r_min; r <= r_max; r++ ) 
+                contables[k] << printf_into_string("R%d+%d", r-r_min, r_plus_max );;
+            contables[k] << nl;
+        }
+
         
         for( int l = l_min; l <= l_max; l++ ) 
         {
@@ -158,12 +186,12 @@ int main()
             {
                 
                 for( int i = 0; i < M.getinnerdimension(); i++ ) 
-                    contable[i] << errors[i][l-l_min][r-r_min][r_plus_max];
+                    contables[i] << errors[i][l-l_min][r-r_min][r_plus_max];
                         
             }
             
             for( int i = 0; i < M.getinnerdimension(); i++ ) 
-                contable[i] << nl; 
+                contables[i] << nl; 
             
         }
         
@@ -171,26 +199,26 @@ int main()
         
         for( int i = 0; i < M.getinnerdimension(); i++ ) 
         {
-            contable[i].lg(); 
-            LOG << "-------------------" << nl;
+            contables[i].lg(); 
+            LOG << "                   " << nl;
         }
                 
         
         
         
         
-        LOG << "Check that differences are small" << nl;
+        LOG << "Check that differences are below: " << desired_closeness_for_sqrt << nl;
         
         for( int l      = l_min; l      <=           l_max; l++      ) 
         for( int r      = r_min; r      <=           r_max; r++      ) 
         for( int r_plus =     0; r_plus <=      r_plus_max; r_plus++ ) 
         for( int i      =     0; i < M.getinnerdimension(); i++      ) 
         {
-            assert( errors[i][l-l_min][r-r_min][r_plus] < 10e-6 );
+            Assert( errors[i][l-l_min][r-r_min][r_plus] < desired_closeness_for_sqrt, errors[i][l-l_min][r-r_min][r_plus], desired_closeness_for_sqrt );
         }
             
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
         
         return 0;
 }

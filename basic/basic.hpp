@@ -2,27 +2,61 @@
 #define INCLUDEGUARD_BASIC_HPP
 
 
-#if __cplusplus < 201703L
-#error Compilation of this software requires at least C++14. C++17 is recommended.
+#if __cplusplus < 201402L
+#error Compilation of this software requires at least C++14.
 #endif
 
 
-#include <cassert>     /* assert macro */
-#include <cmath>     
-#include <cstdint>     
-#include <cstdio>     
-#include <cstdlib>     
-#include <ctime>     
+#ifdef ELIDE_HOT_FUNCTIONS
+#if defined(__GNUC__) or defined(__clang__)
+#define HOTCALL __attribute__((hot,warning("Performance-critical function call not elided.")))
+#endif // defined(__GCNUC__) or defined(__clang__)
+#else 
+#define HOTCALL 
+// #warning No hot calls
+#endif // ELIDE_HOT_FUNCTIONS
 
-#include <algorithm>
+
+#if defined(__GNUC__) or defined(__clang__)
+#define PACKED 
+// #define PACKED __attribute__((packed)) // DEACTIVATED BECAUSE IT PREVENTS REFERENCING IN CLANG
+#else 
+#define PACKED
+#endif 
+
+
+#if __cplusplus < 202002L
+#define LIKELY
+#define UNLIKELY
+#else
+#define LIKELY   [[likely]]
+#define UNLIKELY [[unlikely]]
+#endif
+
+
+#if defined(__GNUC__) || defined(__clang__)
+#define UNUSED __attribute__((unused))
+#else
+#define UNUSED
+#endif
+
+
+
+
+#include <cmath>
+#include <cstdint>
+#include <cstdio>
+#include <cstdlib>
+// #include <ctime>
+
+// #include <algorithm>
 #include <array>
-#include <chrono>
-#include <functional>
-#include <iostream>
-#include <iomanip>
-#include <iterator>
+// #include <chrono>
+// #include <functional>
+// #include <iterator>
+// #include <list>
+// #include <ostream>
 #include <limits>
-#include <list>
 #include <string>
 #include <type_traits>
 #include <utility>
@@ -42,17 +76,126 @@
 //                                             //
 /////////////////////////////////////////////////
 
-#ifndef EXTENDED_PRECISION
-typedef double Float;
-#else 
-typedef long double Float;
+// #ifndef EXTENDED_PRECISION
+// typedef double Float;
+// #else 
+// typedef long double Float;
+// #endif
+
+#if defined(EXTENDED_PRECISION) && defined(SINGLE_PRECISION)
+#error Cannot request extended and single precision at the same time!
 #endif
 
-inline const constexpr Float notanumber = std::numeric_limits<Float>::quiet_NaN();
+#if defined(EXTENDED_PRECISION)
+typedef long double Float;
+#elif defined(SINGLE_PRECISION)
+typedef float Float;
+#else 
+typedef double Float;
+#endif
 
-inline const constexpr Float machine_epsilon = std::numeric_limits<Float>::epsilon();
 
-inline const constexpr Float desired_precision = 100. * machine_epsilon;
+// constexpr Float SqrtHelper( Float a, Float x, unsigned int i )
+// {
+//     return ( i == 0 ) ? x : SqrtHelper( a, ( a / x + x ) / 2, i-1 );
+// }
+
+template<typename T>
+constexpr typename std::enable_if< std::is_floating_point<T>::value, T>::type Sqrt( T a, int i = 40 )
+{
+    T x = a;
+    // assert( x >= 0. );
+    if( not ( x > 0. ) ) return 0.;
+    while ( i --> 0 ) x = ( x + a / x ) / 2.f;
+    return x;    
+    // return SqrtHelper( a, a, i );
+}
+
+// template<typename T>
+// constexpr typename std::enable_if< std::is_floating_point<T>::value, T>::type ThirdRoot( T a, int i = 100 )
+// {
+//     T x = a;
+//     // assert( x >= 0. );
+//     if( not ( x > 0. ) ) return 0.;
+//     while ( i --> 0 ) x = ( 2.f * x + a / (x*x) ) / 3.f;
+//     return x;    
+//     // return SqrtHelper( a, a, i );
+// }
+
+
+/*
+// 1. Integer exponentiation at compile time
+template<typename T>
+constexpr typename std::enable_if< std::is_floating_point<T>::value, T>::type ipow( T base, unsigned exp )
+{
+    T result = 1.0;
+    for( unsigned i = 0; i < exp; i++ )
+        result *= base;
+    return result;
+}
+
+// 2. Newton iteration for x^p = a.
+//    We'll do a fixed number of iterations here (e.g., steps=20).
+template<typename T>
+constexpr typename std::enable_if< std::is_floating_point<T>::value, T>::type newtonRoot(T a, unsigned p, T initialGuess, int steps = 35 )
+{
+    T x = initialGuess;
+    for( int i = 0; i < steps; i++ ) {
+        // f(x)   = x^p - a
+        // f'(x)  = p * x^(p-1)
+        const T f      = ipow(x, p) - a;
+        const T fPrime = p * ipow(x, p - 1);
+
+        // Newton’s method: x_{n+1} = x_n - f(x_n)/f'(x_n)
+        x -= f / fPrime;
+    }
+    return x;
+}
+
+template<typename T>
+constexpr typename std::enable_if< std::is_floating_point<T>::value, T>::type ThirdRoot( T a )
+{
+    return newtonRoot( a, 3, (T)1.f );
+}
+*/
+
+
+// constexpr Float Sqrt_( Float a, bool init = true, unsigned int i = 40, Float x = 0. )
+// {
+//     return ( init ) ? Sqrt_( a, false, i, a ) : ( i==0 ? x : Sqrt_( a, false, i-1, ( a / x + x ) / 2 ) );
+// }
+
+
+
+
+
+static const constexpr Float notanumber = std::numeric_limits<Float>::quiet_NaN();
+
+static const constexpr Float machine_epsilon = std::numeric_limits<Float>::epsilon();
+
+static const constexpr Float desired_precision = 
+                                    sizeof(Float) == sizeof(float) ? 1e-5 : Sqrt( machine_epsilon );
+
+static const constexpr Float desired_closeness = 
+                                    sizeof(Float) == sizeof(float) ? 1e-5 : Sqrt( machine_epsilon );
+
+static const constexpr Float desired_closeness_for_sqrt = 
+                                    sizeof(Float) == sizeof(float) ? 1e-5 : 100 * desired_closeness;
+
+
+
+                                    
+/////////////////////////////////////////////////
+//                                             //
+//          TEMPLATE INSTANTIATIONS            //
+//                                             //
+/////////////////////////////////////////////////
+
+extern template class std::vector<char>;
+extern template class std::vector<int>;
+extern template class std::vector<std::size_t>;
+extern template class std::vector<Float>;
+
 
 
 
@@ -67,17 +210,42 @@ inline const constexpr Float desired_precision = 100. * machine_epsilon;
 //                                             //
 /////////////////////////////////////////////////
 
-inline const constexpr char space = ' ';
+static const constexpr char space = ' ';
 
-inline const constexpr char* emptystring = "";
+static const constexpr char* emptystring = "";
 
-inline const constexpr char nl = '\n';
+static const constexpr char nl = '\n';
 
-inline const constexpr char tab = '\t';
-
-
+static const constexpr char tab = '\t';
 
 
+
+
+
+
+
+/////////////////////////////////////////////////////////
+//                                                     //
+//    use this to safely cast size_types to C++ int    //
+//                                                     //
+/////////////////////////////////////////////////////////
+
+inline constexpr int SIZECAST( std::uintmax_t size )
+{
+    Assert( size < std::numeric_limits<int>::max() );
+    return static_cast<int>( size );
+}
+
+/////////////////////////////////////////////////////////
+//                                                     //
+//          use this to safely get array length        //
+//                                                     //
+/////////////////////////////////////////////////////////
+
+template < class T, size_t N >
+constexpr size_t countof( const T (&array)[N] ) {
+  return N;
+}
 
 
 
@@ -101,26 +269,100 @@ inline constexpr int kronecker( const T& i, const T& j )
 
 
 template<typename T>
-inline constexpr T absolute( const T& n )
+inline constexpr T absolute( const T& x )
 {
-    if( n >= 0 ) return  n;
-    if( n <= 0 ) return -n;
-    assert( not std::isfinite(n) );
-    return n;
+    if( std::is_integral<T>::value && std::is_signed<T>::value )
+        assert( x != std::numeric_limits<T>::min() );
+    if( x >= 0 ) return  x;
+    if( x <= 0 ) return -x;
+    Assert( not std::isfinite(x) );
+    return x;
 }
 
+template<typename T>
+inline constexpr T sign( const T& x )
+{
+    // Assert( std::isfinite(x) );
+    if( x > 0 ) return  1;
+    if( x < 0 ) return -1;
+    else        return  0;
+}
+
+template<typename T>
+inline constexpr int sign_integer( const T& x )
+{
+    // Assert( std::isfinite(x) );
+    if( x > 0 ) return  1;
+    if( x < 0 ) return -1;
+    else        return  0;
+}
+
+/*
 template<typename T>
 inline constexpr T maximum( const T& a, const T& b )
 {
     if( a >= b ) return a;
     if( a <= b ) return b;
-    assert( ( not std::isfinite(a) ) or ( not std::isfinite(b) ) );
+    Assert( ( not std::isfinite(a) ) or ( not std::isfinite(b) ) );
     return a;
-//     assert( a >= b or a <= b );
-//     if( a >= b )
-//         return a;
-//     else
-//         return b;
+//     Assert( a >= b or a <= b ); if( a >= b ) return a; else return b;
+}
+*/
+
+template<typename T>
+inline constexpr T maximum( const T& a )
+{
+    return a;
+}
+
+template<typename T, typename... Args >
+inline constexpr T maximum( T a, Args... args )
+{
+    const T& b = maximum( args... );
+    if( a >= b ) return a;
+    if( a <= b ) return b;
+    Assert( ( not std::isfinite(a) ) or ( not std::isfinite(b) ) );
+    return a;
+//     Assert( a >= b or a <= b ); if( a >= b ) return a; else return b;
+}
+
+
+template<typename T>
+inline constexpr T maxabs( const T& a )
+{
+    return absolute(a);
+}
+
+template<typename T, typename... Args >
+inline constexpr T maxabs( T a, Args... args )
+{
+    const T& b = maxabs( args... );
+    return maximum( absolute(a), absolute(b) );
+}
+
+
+template<typename T>
+inline constexpr T minimum( const T& a )
+{
+    return a;
+}
+
+template<typename T, typename... Args >
+inline constexpr T minimum( T a, Args... args )
+{
+    const T& b = minimum( args... );
+    if( a >= b ) return b;
+    if( a <= b ) return a;
+    Assert( ( not std::isfinite(a) ) or ( not std::isfinite(b) ) );
+    return b;
+//     Assert( a >= b or a <= b ); if( a >= b ) return a; else return b;
+}
+
+/*
+template<typename T>
+inline constexpr T maxabs( const T& a, const T& b )
+{
+    return maximum( absolute(a), absolute(b) );
 }
 
 template<typename T>
@@ -128,14 +370,29 @@ inline constexpr T minimum( const T& a, const T& b )
 {
     if( a <= b ) return a;
     if( a >= b ) return b;
-    assert( ( not std::isfinite(a) ) or ( not std::isfinite(b) ) );
+    Assert( ( not std::isfinite(a) ) or ( not std::isfinite(b) ) );
     return a;
-//     assert( a >= b or a <= b );
-//     if( a >= b )
-//         return a;
-//     else
-//         return b;
+//     Assert( a >= b or a <= b ); if( a >= b ) return b; else return a;
 }
+
+template<typename T, typename... Args >
+inline constexpr T maximum( T t, Args... args )
+{
+    return maximum( t, static_cast<T>( maximum( args... ) ) );
+}
+
+template<typename T, typename... Args >
+inline constexpr T maxabs( T t, Args... args )
+{
+    return maxabs( t, static_cast<T>( maxabs( args... ) ) );
+}
+
+template<typename T, typename... Args >
+inline constexpr T minimum( T t, Args... args )
+{
+    return minimum( t, static_cast<T>( minimum( args... ) ) );
+}
+*/
 
 
 template<typename T>
@@ -144,19 +401,29 @@ inline constexpr T square( const T& x )
     return x * x;
 }
 
-
-
-inline constexpr bool issmall( Float value, Float threshold = 100. * std::numeric_limits<Float>::epsilon() )
+inline constexpr bool is_numerically_small( Float value, Float threshold = desired_closeness )
 {
     return absolute(value) < threshold;
 }
 
-inline constexpr bool isabout( Float value1, Float value2, Float threshold = 100. * std::numeric_limits<Float>::epsilon() )
+inline constexpr bool is_numerically_small_sqrt( Float value, Float threshold = desired_closeness_for_sqrt )
 {
-    return issmall( value1 - value2, threshold );
+    return absolute(value) < threshold;
 }
 
+inline constexpr bool is_numerically_close( Float value1, Float value2, Float threshold = desired_closeness )
+{    
+    if( std::isinf(value1) or std::isinf(value2) ) return value1 == value2;
+    assert( std::isfinite(value1) and std::isfinite(value2) );
+    return is_numerically_small( value1 - value2, threshold );
+}
 
+inline constexpr bool is_numerically_one( Float value, Float threshold = desired_closeness )
+{
+    return is_numerically_close( value, 1., threshold );
+}
+
+// https://codingnest.com/the-little-things-comparing-floating-point-numbers/
 
 
 
@@ -170,16 +437,6 @@ inline constexpr bool isabout( Float value1, Float value2, Float threshold = 100
 /////////////////////////////////////////////////
 
 
-// template<typename T>
-// inline constexpr T power( const T& base, const T& exponent )
-// {
-//     static_assert( not std::is_floating_point<T>::value );
-//     assert( base != 0 );
-//     assert( exponent >= 0 );
-//     if( exponent == 0 ) return 1;
-//     return base * power( base, exponent - 1 );
-// }
-
 inline /*constexpr*/ Float power_numerical( Float base, Float exponent )
 {
     return std::pow( base, exponent );
@@ -187,19 +444,25 @@ inline /*constexpr*/ Float power_numerical( Float base, Float exponent )
 
 inline constexpr int power_integer( int base, int exponent )
 {
-    assert( base != 0 or exponent != 0 );
-    assert( exponent >= 0 );
+    Assert( base != 0 or exponent != 0 );
+    Assert( exponent >= 0 );
     if( exponent == 0 ) return 1;
-    return base * power_integer( base, exponent - 1 );
+    if( base == 0 ) return 0;
+    int rec = power_integer( base, exponent - 1 );
+    int ret = base * rec;
+    Assert( ret / base == rec );
+    return ret;
 }
 
-inline constexpr int poweroftwo( int exponent )
+inline constexpr int power_of_two( int exponent )
 {
-    return power_integer( 2, exponent );
+    assert( exponent >= 0 );
+    return 1 << exponent; // power_integer( 2, exponent );
 }
 
-inline constexpr int signpower( int exponent )
+inline constexpr int sign_power( int exponent )
 {
+    assert( exponent >= 0 );
     return exponent % 2 == 0 ? 1. : -1;
 }
 
@@ -207,24 +470,24 @@ inline constexpr int signpower( int exponent )
 
 
 
-/////////////////////////////////////////////////
-//                                             //
-//        INTEGRAL FACTORIAL, BINOMIALS        //
-//               AND AUXILIARIES               //
-//                                             //
-//   NOTE:                                     //
-//   For small inputs, the naive method seems  //
-//   to perform best, the table method is only //
-//   slightly slower, and the loop method is   //
-//   consistently slowest. The differences     //
-//   are in the range of 5%, so fairly small   //
-//   practically.                              //
-//                                             //
-/////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
+//                                                                                           //
+//                   INTEGRAL FACTORIAL, BINOMIALS AND AUXILIARIES                           //
+//                                                                                           //
+//   NOTE:                                                                                   //
+//   For small inputs, the naive method seems to perform best,                               //
+//   the table method is only slightly slower, and the loop method is consistently slowest.  // 
+//   The differences are in the range of 5%, so fairly small for practical purposes.         //
+//                                                                                           //
+///////////////////////////////////////////////////////////////////////////////////////////////
 
+/*
+ * Recursively divide the integer n by larger and larger numbers 1, 2, 3, ... without remainder
+ * until the divisor is larger than n. That divisor is the largest numbers whose factorial is at most n.
+ */
 
 template<typename T>
-inline constexpr uintmax_t largest_factorial_base_AUX( T n, uintmax_t k )
+inline constexpr uintmax_t largest_factorial_base_AUX( T n, intmax_t k )
 {
     static_assert( std::is_fundamental<T>::value and std::is_integral<T>::value, "T must be a fundamental integral value." );
 
@@ -255,7 +518,7 @@ inline constexpr uintmax_t largest_factorial_base()
 
 
 
-inline constexpr uintmax_t factorial_integer_table_old( uintmax_t n )
+inline constexpr uintmax_t factorial_integer_table_old( intmax_t n )
 {
     switch(n){
         case 0: 
@@ -286,9 +549,10 @@ inline constexpr uintmax_t factorial_integer_table_old( uintmax_t n )
         // case 25: return 15511210043330985984000000ll;
         default: unreachable();
     }
+    unreachable();
 }
 
-inline constexpr uintmax_t factorial_integer_table( uintmax_t n )
+inline constexpr uintmax_t factorial_integer_table( intmax_t n )
 {
     constexpr uintmax_t facs[21] = {
         1,
@@ -314,13 +578,13 @@ inline constexpr uintmax_t factorial_integer_table( uintmax_t n )
         2432902008176640000ll,
     };
 
-    assert( 0 <= n and n <= 20 );
+    Assert( 0 <= n and n <= 20 );
     return facs[n];
 }
 
-inline constexpr uintmax_t factorial_integer_naive( uintmax_t n )
+inline constexpr uintmax_t factorial_integer_naive( intmax_t n )
 {
-    assert( 0 <= n and n <= 20 );
+    Assert( 0 <= n and n <= 20 );
     if( n == 0 ) { 
         return 1;
     } else {
@@ -328,9 +592,9 @@ inline constexpr uintmax_t factorial_integer_naive( uintmax_t n )
     }
 }
 
-inline constexpr uintmax_t factorial_integer_loop( uintmax_t n )
+inline constexpr uintmax_t factorial_integer_loop( intmax_t n )
 {
-    assert( 0 <= n and n <= 20 );
+    Assert( 0 <= n and n <= 20 );
     uintmax_t ret = 1;
     while( n > 0 ) ret *= n--;
     return ret;
@@ -341,31 +605,56 @@ inline constexpr uintmax_t factorial_integer_loop( uintmax_t n )
 
 
 
-inline constexpr int factorial_integer( int n )
+inline constexpr int factorial_integer( intmax_t n )
 {
-    assert( n >= 0 );
-    assert( n <= 20 );
-    assert( n <= largest_factorial_base<decltype(n)>() );
+    Assert( n >= 0 );
+    Assert( n <= 20 );
+    Assert( n <= largest_factorial_base<decltype(n)>() );
     
     #ifdef NDEBUG 
-    uintmax_t result = factorial_integer_loop( n );
+    uintmax_t result = factorial_integer_table( n );
     #else
     uintmax_t result = factorial_integer_table( n );
     #endif
     
-    assert( result <= std::numeric_limits<int>::max() );
+    Assert( result <= std::numeric_limits<int>::max() );
     return static_cast<int>(result);
 }
 
-inline constexpr int binomial_integer( int n, int k )
+inline constexpr int binomial_integer( intmax_t n, intmax_t k )
 {
-    if( 0 > n ) std::cout << n << std::endl;
-    assert( 0 <= n );
+    Assert( 0 <= n, "Negative n for integer binomial: ", n ); 
+    Assert( 0 <= n );
+    
     if( k < 0 or n < k )
         return 0;
     uintmax_t result = factorial_integer(n) / ( factorial_integer(k) * factorial_integer(n-k) );
-    assert( result <= std::numeric_limits<int>::max() );
+    
+    Assert( result <= std::numeric_limits<int>::max() );
     return static_cast<int>(result);
+}
+
+inline unsigned long long binomial_integer_secured( unsigned int n, unsigned int k )
+{
+    Assert( k <= n ); 
+
+    if( k > n - k ) { 
+        k = n - k;
+    }
+    
+    unsigned long long result = 1;
+
+    for( unsigned int i = 1; i <= k; i++ ) 
+    {
+        // Check for overflow before multiplication
+        Assert( result <= std::numeric_limits<unsigned long long>::max() / (n - i + 1) );
+        
+        // Multiply result by (n - i + 1) and then divide result by i (guaranteed to be exact)
+        result *= (n - i + 1);
+        result /= i;
+    }
+
+    return result;
 }
 
 
@@ -373,23 +662,21 @@ inline constexpr int binomial_integer( int n, int k )
 
 
 
+//////////////////////////////////////////////////
+//                                              //
+//       NUMERICAL FACTORIAL, BINOMIALS         //
+//               AND AUXILIARIES                //
+//                                              //
+//   NOTE:                                      //
+//   For small inputs, the loop method seems    //
+//   to be fastest, whereas the recursive form  //
+//   of the factorial performs 10% slower.      //
+//                                              //
+//////////////////////////////////////////////////
 
-
-/////////////////////////////////////////////////
-//                                             //
-//       NUMERICAL FACTORIAL, BINOMIALS        //
-//               AND AUXILIARIES               //
-//                                             //
-//   NOTE:                                     //
-//   For small inputs, the loop method seems   //
-//   to be fastest, whereas the recursive form //
-//   of the faculty performs 10% slower.       //
-//                                             //
-/////////////////////////////////////////////////
-
-inline constexpr Float factorial_numerical_naive( int64_t n )
+inline constexpr Float factorial_numerical_naive( intmax_t n )
 {
-    assert( 0 <= n );
+    Assert( 0 <= n );
     if( n == 0 ) { 
         return 1.;
     } else {
@@ -397,15 +684,15 @@ inline constexpr Float factorial_numerical_naive( int64_t n )
     }
 }
 
-inline constexpr Float factorial_numerical_loop( int64_t n )
+inline constexpr Float factorial_numerical_loop( intmax_t n )
 {
-    assert( 0 <= n );
+    Assert( 0 <= n );
     Float ret = 1.;
     while( n > 0 ) ret *= static_cast<Float>(n--);
     return ret;
 }
 
-inline constexpr Float factorial_numerical_table( int64_t n )
+inline constexpr Float factorial_numerical_table( intmax_t n )
 {
     constexpr Float facs[21] = {
         1.,
@@ -431,19 +718,19 @@ inline constexpr Float factorial_numerical_table( int64_t n )
         2432902008176640000.,
     };
 
-    assert( 0 <= n and n <= 20 );
+    Assert( 0 <= n and n <= 20 );
     return facs[n];
 }
 
-inline constexpr Float factorial_numerical( int64_t n )
+inline constexpr Float factorial_numerical( intmax_t n )
 {
-    return factorial_numerical_table( n );
+    return factorial_numerical_naive( n );
 }
 
 
-inline constexpr Float binomial_numerical( int64_t n, int64_t k )
+inline constexpr Float binomial_numerical( intmax_t n, intmax_t k )
 {
-    assert( 0 <= n );
+    Assert( 0 <= n );
     if( k < 0 or n < k )
         return 0.;
     return factorial_numerical(n) / ( factorial_numerical(k) * factorial_numerical(n-k) );
@@ -458,134 +745,8 @@ inline constexpr Float binomial_numerical( int64_t n, int64_t k )
 
 
 
-/////////////////////////////////////////////////
-//                                             //
-//            GAUSSIAN VARIABLES               //
-//                                             //
-/////////////////////////////////////////////////
 
 
-
-
-inline void seed_random_integer()
-{
-    srand(0);
-}
-
-inline int random_integer()
-{
-    int ret = rand();
-    assert( 0 <= ret and ret <= RAND_MAX );
-    return ret;
-}
-
-inline Float random_uniform()
-{
-    Float ret = rand() / static_cast<Float>( RAND_MAX );
-    assert( 0. <= ret and ret <= RAND_MAX );
-    return ret;
-}
-
-
-// Based on the implementations in the C-FAQ:
-// http://c-faq.com/lib/gaussian.html
-
-inline Float gaussrand_1()
-{
-    const int NSUM = 25;
-    
-    Float x = 0;
-    
-    for( int i = 0; i < NSUM; i++) 
-        x += rand() / static_cast<Float>(RAND_MAX);
-    
-    x -= NSUM / 2.0;
-    x /= std::sqrt( NSUM / 12.0 );
-    
-    return x;
-}
-
-inline Float gaussrand_2()
-{
-    static bool phase = false;
-    static Float U, V;
-    const Float PI = 3.14159265358979323846;
-    Float Z;
-
-    if( phase ) {
-        Z = std::sqrt( -2. * std::log(U) ) * std::cos( 2. * PI * V );
-    } else {
-        U = ( rand() + 1. ) / ( RAND_MAX + 2. );
-        V = rand() / ( RAND_MAX + 1. );
-        Z = std::sqrt( -2. * std::log(U) ) * std::sin( 2. * PI * V );
-    }
-        
-    phase = not phase;
-
-    return Z;
-}
-
-
-// http://c-faq.com/lib/gaussrand.luben.html
-inline Float gaussrand_3( Float mean = 0., Float std_dev = 1. )
-{
-    assert( std_dev > machine_epsilon );
-
-    Float x = rand() / (RAND_MAX + 1.0);   /* 0.0 <= y < 1.0 */
-    
-    unsigned low = (x < 0.5) ? 0 : 1;
-    
-    Float y = std::abs(x - 1.0);                        /* 0.0 < y <= 1.0 */
-    Float z = std_dev * std::sqrt( -2.0 * std::log(y) );
-
-    return low ? (mean + z) : (mean - z);
-}
-
-
-inline Float gaussrand()
-{
-    return gaussrand_1();
-}
-
-
-
-
-
-/*
-inline void random_unit_vector( Float* values, const int N )
-{
-    assert( N >= 0 );
-    assert( values != nullptr );
-    
-    const Float PI = 3.14159265358979323846;
-    
-    Float norm_sq = 0;
-    
-    for( int k = 0; k < N/2; k++ ) {
-        
-        int k1 = 2*k;
-        int k2 = k1+1;
-        
-        Float U = ( rand() + 1. ) / ( RAND_MAX + 2. );
-        Float V = rand() / ( RAND_MAX + 1. );
-        
-        Float radius_sq = -2. * std::log( U );
-        Float radius = std::sqrt( radius_sq );
-        
-        values[k1] = radius * std::sin( 2. * PI * V );
-        values[k2] = radius * std::cos( 2. * PI * V );
-        
-        norm_sq += radius_sq;
-    }
-    
-    if( N % 2 == 1 ) {
-        values[N-1] = gaussrand();
-        norm_sq += values[N-1] * values[N-1];
-    }
-    
-    
-}
-*/
 
 
 
@@ -607,64 +768,19 @@ inline void random_unit_vector( Float* values, const int N )
 //                                             //
 /////////////////////////////////////////////////
 
-
-static_assert( std::is_integral< decltype( std::chrono::time_point_cast<std::chrono::milliseconds>( std::chrono::steady_clock::now() ).time_since_epoch().count() ) >::value , "Time measurement must be integral" );
-
-
 typedef uintmax_t timestamp;
 
-inline timestamp gettimestamp()
-{
-    
-    static timestamp start_timestamp = std::chrono::time_point_cast<std::chrono::milliseconds>( std::chrono::steady_clock::now() ).time_since_epoch().count();
-    
-    timestamp now = std::chrono::time_point_cast<std::chrono::milliseconds>( std::chrono::steady_clock::now() ).time_since_epoch().count();
-    
-    assert( now >= start_timestamp );
-    
-    return now - start_timestamp;
-}
+timestamp timestampnow();
 
+// TODO: move to utility 
 
+std::string timestamp2measurement( const timestamp& t );
 
-inline std::string timestamp2measurement( const timestamp& t )
-{
-    return std::to_string( static_cast<long double>(t) ) + "ms";
-}
+std::string measurementnow();
 
-// inline std::string measurementnow( const timestamp& t ) // TODO Remove this line 
-inline std::string measurementnow()
-{
-    return timestamp2measurement( gettimestamp() );
-}
+std::string timestamp2digitalcode( const timestamp& t );
 
-
-
-inline std::string timestamp2digitalcode( const timestamp& t )
-{
-    std::ostringstream ss;
-//     ss.reserve(12);
-//     ss << std::setw(14) << t;
-    ss << std::hex << std::setfill('_') << std::setw(8) << t;
-    return ss.str();
-}
-
-inline std::string digitalcodenow()
-{
-    return timestamp2digitalcode( gettimestamp() );
-}
-
-
-
-inline std::string protocolprefixnow()
-{
-    // static const std::string foo = std::string("\e[36m[");
-    // static const std::string bar = std::string("]\e[39m\t");
-    static const std::string foo = std::string("[");
-    static const std::string bar = std::string("]\t");
-    return foo + digitalcodenow() + bar;
-}
-
+std::string digitalcodenow();
 
 
 
@@ -683,383 +799,128 @@ inline std::string protocolprefixnow()
 
 /////////////////////////////////////////////////
 //                                             //
-//       SUM INTEGERS PRODUCED BY LAMBDA       //
+//            STRING UTILITIES                 //
 //                                             //
 /////////////////////////////////////////////////
-
-inline int sum_int( int from, int to, const std::function<int(int)>& calc )
-{
-    if( from > to )
-        return 0;
-    int ret = 0;
-    for( int i = from; i <= to; i++ )
-        ret += calc( i );
-    return ret;
-}
-
-inline int sum_int( int to, const std::function<int(int)>& calc )
-{
-    return sum_int( 0, to, calc );
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-inline Float bumpfunction( Float x )
-{
-    Float delta = x*x - 1.;
-
-    if( absolute(x) < 0.99999999 ) {
-
-        return std::exp( 1. / delta );
-
-    } else {
-
-        return 0;
-        
-    }
-}
-
-inline Float bumpfunction_dev( Float x )
-{
-    
-    Float delta = x*x - 1.;
-    Float delta_sq = delta*delta;
-
-    if( absolute(x) < 0.99999999 ) {
-        
-        return -2. * x * std::exp( 1. / delta ) / delta_sq;
-        
-    } else {
-        
-        return 0;
-        
-    }
-}
-
-inline Float bumpfunction_devdev( Float x )
-{
-    
-    
-//     Float t1 = std::exp( -1. / ( 1. - x*x ) );
-//     Float t2 = std::exp( 1 - x*x );
-// 
-//     if( x*x < 1 )
-//         return
-//             t1 * ( 4*x*x*pow(t2,-4.) - 2*pow(t2,-2.) - 8*x*x*pow(t2,-3.) );
-//     else
-//         return
-//             0.;
-                            
-
-    
-    
-    Float delta = x*x - 1.;
-    
-    Float delta_sq = delta    * delta;
-    Float delta_p4 = delta_sq * delta_sq;
-
-    if( absolute(x) < 0.99999999 ) {
-        
-        return std::exp( 1. / delta ) * (  6.*x*x*x*x - 2. ) / delta_p4;
-        
-    } else {
-        
-        return 0.;
-        
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-inline void cartesian_to_polar_coordinates2D( const Float& x, const Float& y, Float& radius, Float& angle )
-{
-    radius = std::sqrt( x*x + y*y );
-    angle  = std::atan2( x, y );
-}
-
-inline void polar_to_cartesian_coordinates2D( const Float& radius, const Float& angle, Float& x, Float& y )
-{
-    x = radius * std::cos( angle );
-    y = radius * std::sin( angle );
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/////////////////////////////////////////////////
-//                                             //
-//          MISC LIBRARY HACKS                 //
-//                                             //
-/////////////////////////////////////////////////
-
-
-
-/******************************************************/
-/*    use this to safely cast size_types to C++ int   */
-/******************************************************/
-
-inline int SIZECAST( std::uintmax_t size )
-{
-    assert( size < std::numeric_limits<int>::max() );
-    return static_cast<int>( size );
-}
-
 
 /******************************************************/
 /*      count the white space within STL string       */
 /******************************************************/
 
-inline int count_white_space( const std::string& str ) 
-{ 
-    int ret = 0;
-    
-    for( int c = 0; c < str.size(); c++ ) 
-        if( isspace( str[c] ) ) 
-            ret++; 
-    
-    return ret;
-} 
-
+int count_white_space( const std::string& str ); // TODO: Move to utilities 
 
 /******************************************************/
-/*        write zero-based range into vector          */
+/*          insert tabs before each line              */
 /******************************************************/
 
-inline std::vector<int> range( int to )
-{
-    assert( to >= 0 );
-    std::vector<int> ret(to+1);
-    for( int i = 0; i <= to; i++ ) ret.at(i) = i;
-    assert( ret.size() == to+1 );
-    return ret;
-}
+std::string tab_each_line( std::string str ); // TODO: Move to utilities 
 
 
-/******************************************************/
-/*   remove duplicates from random access container   */
-/******************************************************/
-
-template< typename T >
-inline void sort_and_remove_duplicates( T& t )
-{
-    std::sort( t.begin(), t.end() );
-    auto last = std::unique( t.begin(), t.end() );
-    t.erase( last, t.end() );
-}
 
 
-/******************************************************/
-/*      find index of element with STL vector         */
-/******************************************************/
 
-template<typename T>
-int find_index( const std::vector<T>& vec, const T& t )
-{
-   const auto it = std::find( vec.begin(), vec.end(), t );
-   assert( it != vec.end() );
-   const auto ret = std::distance( vec.begin(), it );
-   assert( ret >= 0 );
-   assert( ret < vec.size() );
-   return SIZECAST( ret );
-}
 
+
+
+
+
+
+
+
+
+
+/////////////////////////////////////////////////
+//                                             //
+//            GENERIC STREAMING                //
+//                                             //
+/////////////////////////////////////////////////
 
 /******************************************************/
-/*            merge two sorted STL lists              */
+/*       printf into C++ strings and streams          */
 /******************************************************/
 
-template<typename T>
-void mergeelementsinsortedlist
-( std::list<T>& L, 
-  const std::function<T( const T&, const T& )>& merge,
-  const std::function<bool( const T&, const T& )>& compare
-) {
-    typename std::list<T>::iterator it = L.begin();
-    while( it != L.end() ){
+std::string printf_into_string( const char* formatstring, ... ) 
+__attribute__ (( format (printf,1,2) ));
 
-        typename std::list<T>::iterator now = it; 
-        typename std::list<T>::iterator next = ++it;
-
-        if( next == L.end() ) return;
-
-        if( compare( *it, *next ) )
-        {
-            *now = merge( *now, *next );
-            L.erase( next );
-            it = now;
-        } 
-
-    }
-}
-
-
-
-
-/***********************************************/
-/*   GENERIC STREAM TEMPLATE FOR std::array    */ 
-/***********************************************/
-
-template <typename T, size_t N>
-std::ostream& operator<<( std::ostream& stream, const std::array<T, N>& v)
-{
-    for( const auto& item : v )
-        stream << item << space;
-    stream << nl;
-    return stream;
-}
-
-
-
-
-/***********************************************/
-/*         make_unique HACK                    */ 
-/***********************************************/
-
-#if __cplusplus < 201402L
-
-/****
- * 
- * A very imperfect solution for make_unique in C++11
- * We are undefined behavior territory here
- * 
- ****/
-#warning \
-This code extends the std namespace so that `make_unique` \
-is available throughout the code. This was triggered by a C++ version \
-below C++14. While this may be a practical workaround, it is officially \
-considered undefined behavior in the C++ standard. Please try to compile \
-with C++14 or higher.
-
-#include <memory>
-
-namespace std
-{
-template <typename T, typename ...Args> 
-std::unique_ptr<T> make_unique(Args && ...args)
-{
-  return std::unique_ptr<T>( new T(std::forward<Args>(args)...) );
-}
-}
-
+#if __cplusplus < 202002L
+#define printf_into_stream( stream, ... ) { stream << printf_into_string( __VA_ARGS__ ); }
+#else
+#define printf_into_stream( stream, formatstring, ... ) { stream << printf_into_string( formatstring __VA_OPT__(,) __VA_ARGS__ ); }
 #endif
-
-
-
-
-
-
-
-
-
-// template<typename T>
-// inline void setmemory( T* pointer, size_t number, const T& value )
+// template< typename L, typename... Params >
+// inline void printf_into_stream( L& stream, const char* formatstring, Params... args )
 // {
-//     assert( pointer != nullptr );
-//     assert( number >= 0 );
-//     for( int i = 0; i < number; i++ ) pointer[i] = value;
+//     stream << printf_into_string( formatstring, args... );
 // }
 
 
 
-// inline void sort_integers( int* start, int length )
+
+
+/***********************************************/
+/*   GENERIC STREAM TEMPLATE FOR ITERABLES     */ 
+/***********************************************/
+
+// template< typename Stream, typename Container, 
+//           typename = decltype( std::begin( std::declval<Container>() ) )
+//         //   ,
+//         //   typename = std::enable_if< not std::is_same<Container,const std::string>::value && not std::is_same<Container,std::string>::value && not std::is_same<Container,char*>::value && not std::is_same<Container,const char*>::value >,
+//         //   typename = std::enable_if< not std::is_same<Container,std::string>::value >,
+//         //   typename = std::enable_if< not std::is_same<Container,const std::string>::value >,
+//         //   typename = std::enable_if< not std::is_same<Container,char*>::value >,
+//         //   typename = std::enable_if< not std::is_same<Container,const char*>::value >
+//         >
+// inline 
+// typename std::enable_if< not std::is_same<Container,const std::string>::value && not std::is_same<Container,std::string>::value && not std::is_same<Container,char*>::value && not std::is_same<Container,const char*>::value, Stream& >::type
+// operator<<( Stream& stream, const Container& container )
 // {
-//     assert( start != nullptr && length >= 0 );
-//     for( int i = 1; i < length; i++ )
-//     for( int j = 1; j < length; j++ )
-//         if( start[j-1] > start[j] ) 
-//             std::swap( start[j-1], start[j] );
+//     for( const auto& item : container ) stream << item << space;
+//     return stream;
 // }
 
+// template< typename Stream >
+// inline Stream& operator<<( Stream&& stream, const std::string&& container )
+// {
+//     return operator<< <Stream,const char*>( stream, container.c_str() ); 
+// }
 
+// // TODO: Move into separate include file 
+// template <typename StreamType, typename T, size_t N>
+// inline StreamType& operator<<( StreamType& stream, const std::array<T, N>& v)
+// // Define a helper structure template to check for to_text existence
+// template <typename T, typename = void>
+// struct has_text : std::false_type {};
+// 
+// // Specialization that deduces to std::true_type only when to_text method exists
+// template <typename T>
+// struct has_text<T, decltype(std::declval<T>().text(), void())> : std::true_type {};
+// 
+// template< typename Stream, typename Object >
+// // inline Stream& operator<< < Stream, Object, decltype( std::declval<Object>().text() ) >( Stream& stream, const Object& object )
+// inline Stream& operator<<( Stream&& stream, const Object& object )
+// {
+//     static_assert( has_text<Object>::value );
+//     stream << object.text(); 
+//     return stream;
+// }
+
+// template< typename Stream, typename Container, typename = decltype( std::begin( std::declval<Container>() ) ) >
+// inline Stream& operator<<( Stream&& stream, const Container& container )
+// {
+//     for( const auto& item : container )
+//         stream << item << space;
+//     return stream;
+// }
+
+// // TODO: Move into separate include file 
+// template <typename StreamType, typename T, size_t N>
+// inline StreamType& operator<<( StreamType&& stream, const std::array<T, N>& v)
+// {
+//     for( const auto& item : v )
+//         stream << "" << item << space;
+//     stream << nl;
+//     return stream;
+// }
 
 
 

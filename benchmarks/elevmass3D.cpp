@@ -2,16 +2,11 @@
 
 /**/
 
-#include <iostream>
-#include <fstream>
-#include <iomanip>
-
 #include "../basic.hpp"
 #include "../dense/densematrix.hpp"
 #include "../mesh/coordinates.hpp"
 #include "../mesh/mesh.simplicial3D.hpp"
 #include "../mesh/examples3D.hpp"
-#include "../fem/local.polynomialmassmatrix.hpp"
 #include "../fem/global.massmatrix.hpp"
 #include "../fem/global.elevation.hpp"
 #include "../fem/utilities.hpp"
@@ -20,13 +15,13 @@
 
 using namespace std;
 
-int main()
+int main( int argc, char *argv[] )
 {
-        LOG << "Unit Test: (3D) degree elevation of interpolation has the mass of higher order interpolation";// << endl;
+        LOG << "Unit Test: (3D) degree elevation of interpolation has the mass of higher order interpolation" << nl;
         
-        LOG << std::setprecision(10);
+        // LOG << std::setprecision(10);
 
-        LOG << "Initial mesh...";// << endl;
+        LOG << "Initial mesh..." << nl;
         
         MeshSimplicial3D M = StandardCube3D();
         
@@ -156,7 +151,7 @@ int main()
 
         for( int l = l_min; l <= l_max; l++ ){
             
-            LOG << "Numerical calculations...";// << endl;
+            LOG << "Numerical calculations..." << nl;
             
             for( int r      = r_min; r      <=      r_max; r++      ) 
             for( int r_plus =     0; r_plus <= r_plus_max; r_plus++ ) 
@@ -245,13 +240,13 @@ int main()
                 
             }
             
-            LOG << "Refinement...";// << endl;
+            LOG << "Refinement..." << nl;
         
             M.uniformrefinement();
             
         } 
     
-        LOG << "Convergence tables for the case of largest degree jump";// << nl;
+        LOG << "Convergence tables for the case of largest degree jump" << nl;
     
         ConvergenceTable contable_scalar[ experiments_scalar_field.size() ];
         ConvergenceTable contable_vector[ experiments_vector_field.size() ];
@@ -287,32 +282,32 @@ int main()
         
         
         
-        LOG << "Convergence tables: scalars";// << nl;
+        LOG << "Convergence tables: scalars" << nl;
         for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
         {
             LOG << contable_scalar[i].text(); 
-            LOG << "-------------------";// << nl;
+            LOG << "-------------------" << nl;
         }
         
-        LOG << "Convergence tables: vectors";// << nl;
+        LOG << "Convergence tables: vectors" << nl;
         for( int i = 0; i < experiments_vector_field.size(); i++ ) 
         {
             LOG << contable_vector[i].text(); 
-            LOG << "-------------------";// << nl;
+            LOG << "-------------------" << nl;
         }
         
-        LOG << "Convergence tables: pseudos";// << nl;
+        LOG << "Convergence tables: pseudos" << nl;
         for( int i = 0; i < experiments_pseudo_field.size(); i++ ) 
         {
             LOG << contable_pseudo[i].text(); 
-            LOG << "-------------------";// << nl;
+            LOG << "-------------------" << nl;
         }
         
-        LOG << "Convergence tables: volumes";// << nl;
+        LOG << "Convergence tables: volumes" << nl;
         for( int i = 0; i < experiments_volume_field.size(); i++ )
         {
             LOG << contable_volume[i].text(); 
-            LOG << "-------------------";// << nl;
+            LOG << "-------------------" << nl;
         }
         
         
@@ -320,27 +315,27 @@ int main()
         
         
         
-//         LOG << "Check that differences are small" << nl;
+//         LOG << "Check that differences are small: " << desired_closeness << nl;
 //         
 //         for( int l      = l_min; l      <=      l_max; l++      ) 
 //         for( int r      = r_min; r      <=      r_max; r++      ) 
 //         for( int r_plus =     0; r_plus <= r_plus_max; r_plus++ ) 
 //         {
 //             for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
-//                 assert( errors_scalar[i][l-l_min][r-r_min][r_plus] < 10e-14 );
+//                 assert( errors_scalar[i][l-l_min][r-r_min][r_plus] < desired_closeness );
 //             
 //             for( int i = 0; i < experiments_vector_field.size(); i++ ) 
-//                 assert( errors_vector[i][l-l_min][r-r_min][r_plus] < 10e-14 );
+//                 assert( errors_vector[i][l-l_min][r-r_min][r_plus] < desired_closeness );
 //             
 //             for( int i = 0; i < experiments_pseudo_field.size(); i++ ) 
-//                 assert( errors_pseudo[i][l-l_min][r-r_min][r_plus] < 10e-14 );
+//                 assert( errors_pseudo[i][l-l_min][r-r_min][r_plus] < desired_closeness );
 //             
 //             for( int i = 0; i < experiments_volume_field.size(); i++ )
-//                 assert( errors_volume[i][l-l_min][r-r_min][r_plus] < 10e-14 );
+//                 assert( errors_volume[i][l-l_min][r-r_min][r_plus] < desired_closeness );
 //         }
             
         
-        LOG << "Finished Unit Test";// << endl;
+        LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
         
         return 0;
 }

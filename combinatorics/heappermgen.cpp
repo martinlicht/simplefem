@@ -1,7 +1,6 @@
 
 #include "heappermgen.hpp"
 
-#include <cassert>
 #include <utility>
 #include <vector>
 

@@ -1,10 +1,4 @@
 
-
-/**/
-
-#include <iostream>
-#include <fstream>
-
 #include "../../basic.hpp"
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
@@ -12,26 +6,31 @@
 
 using namespace std;
 
-int main()
+int main( int argc, char *argv[] )
 {
-        LOG << "Unit Test for Simplicial 2D Module" << endl;
-        
-        MeshSimplicial2D M = StandardSquare2D();
-        
-        M.check();
-        
-        LOG << "Refinement" << endl;
-        
-        for( int c = 0; c < 5; c++ ) {
+    LOG << "Unit Test for Simplicial 2D Module" << nl;
+    
+    MeshSimplicial2D M = StandardSquare2D();
+    
+    M.check();
 
-            M.midpoint_refinement_global();
-          
-        }
-          
+    M.automatic_dirichlet_flags();
+
+    M.check_dirichlet_flags();
+    
+    LOG << "Refinement" << nl;
+    
+    for( int c = 0; c < 5; c++ ) {
+
+        M.midpoint_refinement_global();
         
-        M.check();
+    }
         
-        LOG << "Finished Unit Test" << endl;
-        
-        return 0;
+    M.check();
+
+    M.check_dirichlet_flags();
+    
+    LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
+    
+    return 0;
 }

@@ -2,16 +2,9 @@
 
 /**/
 
-#include <iostream>
-#include <fstream>
-#include <iomanip>
-
 #include "../../basic.hpp"
-#include "../../dense/densematrix.hpp"
-#include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial1D.hpp"
 #include "../../mesh/examples1D.hpp"
-#include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.elevation.hpp"
 #include "../../fem/utilities.hpp"
@@ -20,14 +13,14 @@
 
 using namespace std;
 
-int main()
+int main( int argc, char *argv[] )
 {
         
-        LOG << "Unit Test: (1D) masses are correctly approximated: mass of reference interpolation" << endl;
+        LOG << "Unit Test: (1D) masses are correctly approximated: mass of reference interpolation" << nl;
         
-        LOG << std::setprecision(10);
+        // LOG << std::setprecision(10);
 
-        LOG << "Initial mesh..." << endl;
+        LOG << "Initial mesh..." << nl;
         
         MeshSimplicial1D M = UnitInterval1D();
         
@@ -49,7 +42,7 @@ int main()
                 assert( vec.getdimension() == 1 );
                 auto x = vec[0];
                 return FloatVector({ 
-                    ( x*x - 1. ) / ( x*x + 1. ) 
+                    ( x*x - Float(1.) ) / ( x*x + Float(1.) ) 
                 });
             }
         );
@@ -82,31 +75,31 @@ int main()
 
         for( int l = l_min; l <= l_max; l++ ){
             
-            LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << endl;
+            LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << nl;
         
-            LOG << "...assemble mass matrices" << endl;
+            LOG << "...assemble mass matrices" << nl;
         
             SparseMatrix massmatrix_scalar = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r_ref );
             
             SparseMatrix massmatrix_volume = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r_ref );
                 
-            assert( massmatrix_scalar.isfinite() );
-            assert( massmatrix_volume.isfinite() );
+            assert( massmatrix_scalar.is_finite() );
+            assert( massmatrix_volume.is_finite() );
                 
             for( int r = r_min; r <= r_max; r++ ) 
             {
-                LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << endl;
+                LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << nl;
 
-                LOG << "...assemble degree elevation matrices" << endl;
+                LOG << "...assemble degree elevation matrices" << nl;
         
                 SparseMatrix elevation_scalar = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 0, r, r_ref - r );
                 
                 SparseMatrix elevation_volume = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 1, r, r_ref - r );
                 
-                assert( elevation_scalar.isfinite() );
-                assert( elevation_volume.isfinite() );
+                assert( elevation_scalar.is_finite() );
+                assert( elevation_volume.is_finite() );
                 
-                LOG << "experiments..." << endl;
+                LOG << "experiments..." << nl;
                 
                 for( int i = 0; i < experiments_scalar_field.size(); i++ ){
 
@@ -119,6 +112,8 @@ int main()
                     auto error = interpol_ref - elevation_scalar * interpol;
 
                     auto error_mass = error * ( massmatrix_scalar * error );
+                    
+                    Assert( error_mass >= -desired_closeness, error_mass );
                     
                     errors_scalar[i][l-l_min][r-r_min] = std::sqrt( std::abs( error_mass ) );
                     
@@ -136,6 +131,8 @@ int main()
 
                     auto error_mass = error * ( massmatrix_volume * error );
                     
+                    Assert( error_mass >= -desired_closeness, error_mass );
+                    
                     errors_volume[i][l-l_min][r-r_min] = std::sqrt( std::abs( error_mass ) );
                     
                 }
@@ -144,9 +141,11 @@ int main()
 
             if( l != l_max )
             {
-                LOG << "Refinement..." << endl;
+                LOG << "Refinement..." << nl;
             
                 M.uniformrefinement();
+                
+                M.shake_interior_vertices();
             }
             
         } 
@@ -155,6 +154,23 @@ int main()
     
         ConvergenceTable contable_scalar[ experiments_scalar_field.size() ];
         ConvergenceTable contable_volume[ experiments_volume_field.size() ];
+        
+        for( int r = r_min; r <= r_max; r++ ) 
+        {
+            for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
+                contable_scalar[i].table_name = "Numerical errors scalar E" + std::to_string(i);
+            for( int i = 0; i < experiments_volume_field.size(); i++ ) 
+                contable_volume[i].table_name = "Numerical errors volume E" + std::to_string(i);
+
+            for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
+                contable_scalar[i] << printf_into_string("R%d", r-r_min );
+            for( int i = 0; i < experiments_volume_field.size(); i++ ) 
+                contable_volume[i] << printf_into_string("R%d", r-r_min );
+
+        }
+        for( int i = 0; i < experiments_scalar_field.size(); i++ ) contable_scalar[i] << nl; 
+        for( int i = 0; i < experiments_volume_field.size(); i++ ) contable_volume[i] << nl; 
+    
         
         for( int l = l_min; l <= l_max; l++ ) 
         {
@@ -176,14 +192,14 @@ int main()
         }
             
         for( int i = 0; i < experiments_scalar_field.size(); i++ ) contable_scalar[i].lg(); 
-        LOG << "-------------------" << nl;
+        LOG << "                   " << nl;
         for( int i = 0; i < experiments_volume_field.size(); i++ ) contable_volume[i].lg(); 
         
         
         
         
         
-        LOG << "Check that differences are small" << nl;
+        LOG << "Check that differences are below: " << desired_closeness_for_sqrt << nl;
         
         for( int l      = l_min; l      <=      l_max; l++      ) 
         for( int r      = r_min; r      <=      r_max; r++      ) 
@@ -191,15 +207,16 @@ int main()
             if( r < r_max or l < 3 ) 
                 continue;
             
+            // continue; // TODO: find a meaningful test here 
             for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
-                assert( errors_scalar[i][l-l_min][r-r_min] < 10e-6 );
+                Assert( errors_scalar[i][l-l_min][r-r_min] < desired_closeness_for_sqrt, errors_scalar[i][l-l_min][r-r_min], desired_closeness_for_sqrt );
             
             for( int i = 0; i < experiments_volume_field.size(); i++ )
-                assert( errors_volume[i][l-l_min][r-r_min] < 10e-6 );
+                Assert( errors_volume[i][l-l_min][r-r_min] < desired_closeness_for_sqrt, errors_volume[i][l-l_min][r-r_min], desired_closeness_for_sqrt );
         }
         
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
         
         return 0;
 }

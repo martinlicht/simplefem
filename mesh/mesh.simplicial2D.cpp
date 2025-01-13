@@ -1,8 +1,7 @@
 
 #include <cmath>
 #include <algorithm>
-#include <fstream>
-#include <iostream>
+#include <sstream>
 #include <list>
 #include <map>
 #include <stack> 
@@ -12,6 +11,7 @@
 
 
 #include "../basic.hpp"
+#include "../utility/sorthack.hpp"
 #include "../combinatorics/indexrange.hpp"
 #include "../combinatorics/indexmap.hpp"
 #include "../combinatorics/generateindexmaps.hpp"
@@ -44,9 +44,9 @@ MeshSimplicial2D::MeshSimplicial2D( int outerdim )
     data_vertex_firstparent_edge(0),
     data_edge_nextparents_of_vertices(0),
     
-    flags_triangles( 0, SimplexFlagNull ),
-    flags_edges    ( 0, SimplexFlagNull ),
-    flags_vertices ( 0, SimplexFlagNull )
+    flags_triangles( 0, SimplexFlag::SimplexFlagNull ),
+    flags_edges    ( 0, SimplexFlag::SimplexFlagNull ),
+    flags_vertices ( 0, SimplexFlag::SimplexFlagNull )
     
 {
     MeshSimplicial2D::check();
@@ -78,14 +78,14 @@ MeshSimplicial2D::MeshSimplicial2D(
     data_vertex_firstparent_edge( 0 ),
     data_edge_nextparents_of_vertices( 0 ),
     
-    flags_triangles( counter_triangles, SimplexFlagNull ),
-    flags_edges    ( 0, SimplexFlagNull ),
-    flags_vertices ( 0, SimplexFlagNull )
+    flags_triangles( counter_triangles, SimplexFlag::SimplexFlagNull ),
+    flags_edges    ( 0, SimplexFlag::SimplexFlagNull ),
+    flags_vertices ( 0, SimplexFlag::SimplexFlagNull )
     
 
 {
     
-    getcoordinates() = coords;
+    getCoordinates() = coords;
     
     /* 0. sort the triangle vertices */
 
@@ -241,12 +241,12 @@ MeshSimplicial2D::MeshSimplicial2D(
     
     
     /* Coda: set the flags to the Null flag */
-    flags_edges.resize   ( counter_edges,    SimplexFlagInvalid );
-    flags_vertices.resize( counter_vertices, SimplexFlagInvalid );
+    flags_edges.resize   ( counter_edges,    SimplexFlag::SimplexFlagInvalid );
+    flags_vertices.resize( counter_vertices, SimplexFlag::SimplexFlagInvalid );
     
-    for( int t =  0; t  <  counter_triangles; t++  ) flags_triangles.at( t ) = SimplexFlagNull;
-    for( int e =  0; e  <  counter_edges;     e++  ) flags_edges.at( e )     = SimplexFlagNull;
-    for( int v =  0; v  <  counter_vertices;  v++  ) flags_vertices.at( v )  = SimplexFlagNull;
+    for( int t =  0; t  <  counter_triangles; t++  ) flags_triangles.at( t ) = SimplexFlag::SimplexFlagNull;
+    for( int e =  0; e  <  counter_edges;     e++  ) flags_edges.at( e )     = SimplexFlag::SimplexFlagNull;
+    for( int v =  0; v  <  counter_vertices;  v++  ) flags_vertices.at( v )  = SimplexFlag::SimplexFlagNull;
     
     
     MeshSimplicial2D::check();
@@ -285,21 +285,21 @@ MeshSimplicial2D::MeshSimplicial2D(
     data_vertex_firstparent_edge( vertex_firstparent_edge ),
     data_edge_nextparents_of_vertices( edge_nextparents_of_vertices ),
     
-    flags_triangles( counter_triangles, SimplexFlagNull ),
-    flags_edges    ( counter_edges,     SimplexFlagNull ),
-    flags_vertices ( counter_vertices,  SimplexFlagNull )
+    flags_triangles( counter_triangles, SimplexFlag::SimplexFlagNull ),
+    flags_edges    ( counter_edges,     SimplexFlag::SimplexFlagNull ),
+    flags_vertices ( counter_vertices,  SimplexFlag::SimplexFlagNull )
 
 {
     
-    getcoordinates() = coords;
+    getCoordinates() = coords;
     
     /* set the flags to the Null flag */
     flags_edges.resize   ( counter_edges    );
     flags_vertices.resize( counter_vertices );
     
-    for( int t =  0; t  <  counter_triangles; t++  ) flags_triangles.at( t ) = SimplexFlagNull;
-    for( int e =  0; e  <  counter_edges;     e++  ) flags_edges.at( e )     = SimplexFlagNull;
-    for( int v =  0; v  <  counter_vertices;  v++  ) flags_vertices.at( v )  = SimplexFlagNull;
+    for( int t =  0; t  <  counter_triangles; t++  ) flags_triangles.at( t ) = SimplexFlag::SimplexFlagNull;
+    for( int e =  0; e  <  counter_edges;     e++  ) flags_edges.at( e )     = SimplexFlag::SimplexFlagNull;
+    for( int v =  0; v  <  counter_vertices;  v++  ) flags_vertices.at( v )  = SimplexFlag::SimplexFlagNull;
 
     MeshSimplicial2D::check();
 }
@@ -311,7 +311,7 @@ MeshSimplicial2D::~MeshSimplicial2D()
 }
 
 
-bool MeshSimplicial2D::compare( const MeshSimplicial2D& mesh ) const 
+bool MeshSimplicial2D::is_equal_to( const MeshSimplicial2D& mesh ) const 
 {
   return counter_triangles == mesh.counter_triangles
          &&
@@ -341,7 +341,7 @@ bool MeshSimplicial2D::compare( const MeshSimplicial2D& mesh ) const
          &&
          getouterdimension() == mesh.getouterdimension()
          &&
-         getcoordinates() == mesh.getcoordinates()
+         getCoordinates() == mesh.getCoordinates()
          &&
          flags_triangles == mesh.flags_triangles
          &&
@@ -366,7 +366,7 @@ void MeshSimplicial2D::check() const
     
     #ifdef NDEBUG
     return;
-    #endif
+    #else
     
     /****************************/
     /* 1. Check the array sizes */
@@ -382,7 +382,7 @@ void MeshSimplicial2D::check() const
     assert( counter_vertices == data_vertex_firstparent_edge.size() );
     assert( counter_vertices == data_vertex_firstparent_triangle.size() );
     
-    assert( count_vertices() == getcoordinates().getnumber() );
+    assert( count_vertices() == getCoordinates().getnumber() );
     
     assert( counter_triangles == flags_triangles.size() );
     assert( counter_edges     == flags_edges.size()     );
@@ -707,13 +707,13 @@ void MeshSimplicial2D::check() const
      */
     
     for( int t  = 0; t  <  counter_triangles; t++ )
-        assert( flags_triangles[t] != SimplexFlagInvalid );
+        assert( flags_triangles[t] != SimplexFlag::SimplexFlagInvalid );
 
     for( int e  = 0; e  <  counter_edges; e++ )
-        assert( flags_edges[e] != SimplexFlagInvalid );
+        assert( flags_edges[e] != SimplexFlag::SimplexFlagInvalid );
 
     for( int v  = 0; v  <  counter_vertices; v++ )
-        assert( flags_vertices[v] != SimplexFlagInvalid );
+        assert( flags_vertices[v] != SimplexFlag::SimplexFlagInvalid );
     
     
     
@@ -724,7 +724,7 @@ void MeshSimplicial2D::check() const
     /*************************************/
     
     Mesh::check();
-    
+    #endif
 }
 
 
@@ -732,25 +732,27 @@ void MeshSimplicial2D::check() const
 
 
 
-void MeshSimplicial2D::print( std::ostream& os ) const
+std::string MeshSimplicial2D::text() const
 {
-    os << "Printe Triangulation of 2D Manifold!" << std::endl;
+    std::ostringstream os;
+    
+    os << "Triangulation of 2D Manifold!" << nl;
     
     os << counter_triangles << space << counter_edges << space << counter_vertices << nl;
     
     
     
-    os << "Triangle edges" << std::endl;
+    os << "Triangle edges" << nl;
     
     for( const auto& triple : data_triangle_edges )
       os << triple[0] << space << triple[1] << space << triple[2] << nl;
     
-    os << "Edge first parent triangles" << std::endl;
+    os << "Edge first parent triangles" << nl;
     
     for( int fp : data_edge_firstparent_triangle )
       os << fp << nl;
     
-    os << "Triangle next parents of edges" << std::endl;
+    os << "Triangle next parents of edges" << nl;
     
     for( const auto& triple : data_triangle_nextparents_of_edges )
       os << triple[0] << space << triple[1] << space << triple[2] << nl;
@@ -758,40 +760,41 @@ void MeshSimplicial2D::print( std::ostream& os ) const
     
     
     
-    os << "Triangle vertices" << std::endl;
+    os << "Triangle vertices" << nl;
     
     for( const auto& triple : data_triangle_vertices )
       os << triple[0] << space << triple[1] << space << triple[2] << nl;
     
-    os << "Edge first parent triangles" << std::endl;
+    os << "Vertex first parent triangles" << nl;
     
     for( int fp : data_vertex_firstparent_triangle )
       os << fp << nl;
     
-    os << "Triangle next parents of edges" << std::endl;
+    os << "Triangle next parents of vertices" << nl;
     
     for( const auto& triple : data_triangle_nextparents_of_vertices )
       os << triple[0] << space << triple[1] << space << triple[2] << nl;
     
     
     
-    os << "Edge vertices" << std::endl;
+    os << "Edge vertices" << nl;
     
     for( const auto& duple : data_edge_vertices )
       os << duple[0] << space << duple[1] << nl;
     
-    os << "Vertex first parents" << std::endl;
+    os << "Vertex first parents" << nl;
     
     for( int fp : data_vertex_firstparent_edge )
       os << fp << nl;
     
-    os << "Edge next parents " << std::endl;
+    os << "Edge next parents of vertices" << nl;
     
     for( const auto& duple : data_edge_nextparents_of_vertices )
       os << duple[0] << space << duple[1] << nl;
     
     os << "Finished printing" << nl;
     
+    return os.str();
 }
 
 
@@ -799,7 +802,7 @@ void MeshSimplicial2D::print( std::ostream& os ) const
 
 
 
-bool MeshSimplicial2D::dimension_counted( int dim ) const
+bool MeshSimplicial2D::has_dimension_counted( int dim ) const
 {
     assert( 0 <= dim && dim <= 2 );
     return true;
@@ -817,14 +820,19 @@ int MeshSimplicial2D::count_simplices( int dim ) const
     unreachable();
 }
 
-bool MeshSimplicial2D::subsimplices_listed( int sup, int sub ) const
+bool MeshSimplicial2D::has_subsimplices_listed( int sup, int sub ) const
 {
     assert( 0 <= sub && sub <= sup && sup <= 2 );
     return true;
 }
 
-IndexMap MeshSimplicial2D::getsubsimplices( int sup, int sub, int cell ) const
+IndexMap MeshSimplicial2D::get_subsimplices( int sup, int sub, int cell ) const
 {
+  assert( 0 <= sub && sub <= sup && sup <= 2 );
+  assert( 0 <= cell );
+  if( sup == 0 ) assert( cell <= count_vertices()  );
+  if( sup == 1 ) assert( cell <= count_edges()     );
+  if( sup == 2 ) assert( cell <= count_triangles() );
   
   if( sup == 2 && sub == 2 ) {
     
@@ -867,13 +875,13 @@ IndexMap MeshSimplicial2D::getsubsimplices( int sup, int sub, int cell ) const
    
 }
 
-bool MeshSimplicial2D::supersimplices_listed( int sup, int sub ) const
+bool MeshSimplicial2D::has_supersimplices_listed( int sup, int sub ) const
 {
     assert( 0 <= sub && sub <= sup && sup <= 2 );
     return true;
 }
 
-const std::vector<int> MeshSimplicial2D::getsupersimplices( int sup, int sub, int cell ) const
+const std::vector<int> MeshSimplicial2D::get_supersimplices( int sup, int sub, int cell ) const
 {
   
   if( sup == 2 && sub == 2 ) {
@@ -885,13 +893,13 @@ const std::vector<int> MeshSimplicial2D::getsupersimplices( int sup, int sub, in
     
     assert( 0 <= cell && cell < count_edges() );
     auto temp = get_triangle_parents_of_edge( cell ); 
-    return std::vector<int>( temp.begin(), temp.end() );
+    return temp; //return std::vector<int>( temp.begin(), temp.end() );
     
   } else if( sup == 2 && sub == 0 ) {
     
     assert( 0 <= cell && cell < count_vertices() );
     auto temp = get_triangle_parents_of_vertex( cell ); 
-    return std::vector<int>( temp.begin(), temp.end() );
+    return temp; //return std::vector<int>( temp.begin(), temp.end() );
     
   } else if( sup == 1 && sub == 1 ) {
     
@@ -902,7 +910,7 @@ const std::vector<int> MeshSimplicial2D::getsupersimplices( int sup, int sub, in
     
     assert( 0 <= cell && cell < count_vertices() );
     auto temp = get_edge_parents_of_vertex( cell ); 
-    return std::vector<int>( temp.begin(), temp.end() );
+    return temp; //return std::vector<int>( temp.begin(), temp.end() );
     
   } else if( sup == 0 && sub == 0 ) {
     
@@ -981,8 +989,6 @@ int MeshSimplicial2D::count_vertices() const
 
 
 
-
-// TODO: Proofread the following methods 
 
 /* subsimplex relation of triangles and edges */
 
@@ -1090,7 +1096,6 @@ const std::array<int,2> MeshSimplicial2D::get_edge_vertices( int e ) const
 
 
 
-// TODO: Proofread the following methods 
 
 /* triangle parents of a edge */
 
@@ -1151,10 +1156,12 @@ std::vector<int> MeshSimplicial2D::get_triangle_parents_of_edge( int e ) const
   
   std::vector<int> ret;
   
-  for( int t = 0; t < count_triangles(); t++ ) 
-    for( int te : get_triangle_edges(t) )
-      if( e == te )
-        ret.push_back( t );
+  int t = get_edge_firstparent_triangle(e);
+  while( t != nullindex )
+  {
+    ret.push_back(t);
+    t = this->get_edge_nextparent_triangle(e,t);
+  }
   
   return ret;
 }
@@ -1219,11 +1226,13 @@ std::vector<int> MeshSimplicial2D::get_triangle_parents_of_vertex( int v ) const
   
   std::vector<int> ret;
   
-  for( int t = 0; t < count_triangles(); t++ ) 
-    for( int tv : get_triangle_vertices(t) )
-      if( v == tv )
-        ret.push_back( t );
-  
+  int t = get_vertex_firstparent_triangle(v);
+  while( t != nullindex )
+  {
+    ret.push_back(t);
+    t = this->get_vertex_nextparent_triangle(v,t);
+  }
+
   return ret;
 }
 
@@ -1287,11 +1296,13 @@ std::vector<int> MeshSimplicial2D::get_edge_parents_of_vertex( int v ) const
   
   std::vector<int> ret;
   
-  for( int e = 0; e < count_edges(); e++ ) 
-    for( int ev : get_edge_vertices(e) )
-      if( v == ev )
-        ret.push_back( e );
-  
+  int e = get_vertex_firstparent_edge(v);
+  while( e != nullindex )
+  {
+    ret.push_back(e);
+    e = this->get_vertex_nextparent_edge(v,e);
+  }
+
   return ret;
 }
 
@@ -1305,7 +1316,7 @@ std::vector<int> MeshSimplicial2D::get_edge_parents_of_vertex( int v ) const
 void MeshSimplicial2D::bisect_edge( int e )
 {
     assert( 0 <= e && e < counter_edges );
-    check();
+    // check();
     
     /* 
      * DESCRIPTION
@@ -1381,7 +1392,7 @@ void MeshSimplicial2D::bisect_edge( int e )
     FloatVector midcoordinate = get_edge_midpoint( e );
     
     
-    SimplexFlag e_flag = flags_edges[e];
+    SimplexFlag e_flag UNUSED = flags_edges[e];
     
     
     /*
@@ -1401,9 +1412,9 @@ void MeshSimplicial2D::bisect_edge( int e )
     data_vertex_firstparent_edge.resize     ( counter_vertices + 1,                                       nullindex );
     
     
-    flags_triangles.resize( counter_triangles + old_triangles.size(),     SimplexFlagInvalid );
-    flags_edges.resize    ( counter_edges     + old_triangles.size() + 1, SimplexFlagInvalid );
-    flags_vertices.resize ( counter_vertices  + 1,                        SimplexFlagInvalid );
+    flags_triangles.resize( counter_triangles + old_triangles.size(),     SimplexFlag::SimplexFlagInvalid );
+    flags_edges.resize    ( counter_edges     + old_triangles.size() + 1, SimplexFlag::SimplexFlagInvalid );
+    flags_vertices.resize ( counter_vertices  + 1,                        SimplexFlag::SimplexFlagInvalid );
     
 
     
@@ -1766,7 +1777,7 @@ void MeshSimplicial2D::bisect_edge( int e )
       
     }
     
-    getcoordinates().append( midcoordinate );
+    getCoordinates().append( midcoordinate );
     
     
     /*
@@ -1783,7 +1794,7 @@ void MeshSimplicial2D::bisect_edge( int e )
     
     /* Done */
     
-    check();
+    // check();
     
 }
 
@@ -2194,16 +2205,16 @@ void MeshSimplicial2D::uniformrefinement()
     data_vertex_firstparent_edge.resize     ( counter_vertices + counter_edges         , nullindex                );
     data_edge_nextparents_of_vertices.resize( 2 * counter_edges + 3 * counter_triangles, { nullindex, nullindex } );
     
-    getcoordinates().addcoordinates( counter_edges );
+    getCoordinates().addcoordinates( counter_edges );
     
     
     /*
      * update the flags of the 
      */
     
-    flags_triangles.resize ( 4 * counter_triangles                    , SimplexFlagInvalid );
-    flags_edges.resize     ( 2 * counter_edges + 3 * counter_triangles, SimplexFlagInvalid );
-    flags_vertices.resize  ( counter_vertices + counter_edges         , SimplexFlagInvalid );
+    flags_triangles.resize ( 4 * counter_triangles                    , SimplexFlag::SimplexFlagInvalid );
+    flags_edges.resize     ( 2 * counter_edges + 3 * counter_triangles, SimplexFlag::SimplexFlagInvalid );
+    flags_vertices.resize  ( counter_vertices + counter_edges         , SimplexFlag::SimplexFlagInvalid );
     
     // flags of newly created vertices
     for( int e = 0; e < counter_edges; e++ ) flags_vertices[ counter_vertices + e ] = flags_edges[e];
@@ -2233,7 +2244,7 @@ void MeshSimplicial2D::uniformrefinement()
     
     for( int e = 0; e < counter_edges; e++ )
     {
-      getcoordinates().loadvector( counter_vertices + e, get_edge_midpoint( e ) );
+      getCoordinates().loadvector( counter_vertices + e, get_edge_midpoint( e ) );
     }
     
     
@@ -2726,7 +2737,7 @@ void MeshSimplicial2D::uniformrefinement()
 
 void MeshSimplicial2D::midpoint_refinement( int t )
 {
-    MeshSimplicial2D::check();
+    // MeshSimplicial2D::check();
     
     assert( 0 <= t && t < counter_triangles );
     
@@ -2744,12 +2755,12 @@ void MeshSimplicial2D::midpoint_refinement( int t )
     data_vertex_firstparent_edge.resize     ( counter_vertices + 1,             nullindex   );
     data_edge_nextparents_of_vertices.resize( counter_edges + 3,   { nullindex, nullindex } );
     
-    getcoordinates().addcoordinates( 1 );
+    getCoordinates().addcoordinates( 1 );
     
     
     /* load the new coordinate */
     
-    getcoordinates().loadvector( counter_vertices, get_triangle_midpoint( t ) );
+    getCoordinates().loadvector( counter_vertices, get_triangle_midpoint( t ) );
     
     
     /* assemble the data and auxiliary variables */
@@ -2919,9 +2930,9 @@ void MeshSimplicial2D::midpoint_refinement( int t )
      * update the flags of the 
      */
     
-    flags_triangles.resize ( counter_triangles + 2, SimplexFlagInvalid );
-    flags_edges.resize     ( counter_edges + 3    , SimplexFlagInvalid );
-    flags_vertices.resize  ( counter_vertices + 1 , SimplexFlagInvalid );
+    flags_triangles.resize ( counter_triangles + 2, SimplexFlag::SimplexFlagInvalid );
+    flags_edges.resize     ( counter_edges + 3    , SimplexFlag::SimplexFlagInvalid );
+    flags_vertices.resize  ( counter_vertices + 1 , SimplexFlag::SimplexFlagInvalid );
     
     flags_vertices[ counter_vertices ] = flags_triangles[t];
     
@@ -2943,7 +2954,7 @@ void MeshSimplicial2D::midpoint_refinement( int t )
     
     /* DONE */
     
-    MeshSimplicial2D::check();
+    // MeshSimplicial2D::check();
 }
 
 
@@ -2955,7 +2966,7 @@ void MeshSimplicial2D::midpoint_refinement_global()
     int N = counter_triangles;
     
     for( int t = 0; t < N; t++ ) {
-      LOG << t << std::endl;
+      LOG << t << nl;
       midpoint_refinement( t );
       
     }
@@ -2983,9 +2994,9 @@ FloatVector MeshSimplicial2D::get_triangle_midpoint( int t ) const
     assert( 0 <= t && t < counter_triangles );
     FloatVector mid( getouterdimension() );
     for( int d = 0; d < getouterdimension(); d++ )
-      mid[d] = (   getcoordinates().getdata( get_triangle_vertices(t)[0], d ) 
-                 + getcoordinates().getdata( get_triangle_vertices(t)[1], d ) 
-                 + getcoordinates().getdata( get_triangle_vertices(t)[2], d )
+      mid[d] = (   getCoordinates().getdata( get_triangle_vertices(t)[0], d ) 
+                 + getCoordinates().getdata( get_triangle_vertices(t)[1], d ) 
+                 + getCoordinates().getdata( get_triangle_vertices(t)[2], d )
                 ) / 3.;
     return mid;
 }
@@ -2995,8 +3006,8 @@ FloatVector MeshSimplicial2D::get_edge_midpoint    ( int e ) const
     assert( 0 <= e && e < counter_edges );
     FloatVector mid( getouterdimension() );
     for( int d = 0; d < getouterdimension(); d++ )
-      mid[d] = (   getcoordinates().getdata( get_edge_vertices(e)[0], d ) 
-                 + getcoordinates().getdata( get_edge_vertices(e)[1], d )
+      mid[d] = (   getCoordinates().getdata( get_edge_vertices(e)[0], d ) 
+                 + getCoordinates().getdata( get_edge_vertices(e)[1], d )
                 ) / 2.;
     return mid;
 }
@@ -3006,7 +3017,7 @@ Float MeshSimplicial2D::get_edge_length( int e ) const
     assert( 0 <= e && e < counter_edges );
     Float length = 0.;
     for( int d = 0; d < getouterdimension(); d++ )
-      length += power_numerical( getcoordinates().getdata( get_edge_vertices(e)[0], d ) - getcoordinates().getdata( get_edge_vertices(e)[1], d ), 2. );
+      length += power_numerical( getCoordinates().getdata( get_edge_vertices(e)[0], d ) - getCoordinates().getdata( get_edge_vertices(e)[1], d ), 2. );
     return std::sqrt( length );
 }
         
@@ -3185,7 +3196,7 @@ void MeshSimplicial2D::merge( const MeshSimplicial2D& mesh )
     counter_edges     += mesh.counter_edges;
     counter_triangles += mesh.counter_triangles;
     
-    getcoordinates().append( mesh.getcoordinates() );
+    getCoordinates().append( mesh.getCoordinates() );
     
     check();
 }
@@ -3209,9 +3220,11 @@ void MeshSimplicial2D::merge( const MeshSimplicial2D& mesh )
 
 
 
-void MeshSimplicial2D::outputTikZ( std::ostream& os ) const
+std::string MeshSimplicial2D::outputTikZ() const
 {
-    const auto& coords = getcoordinates();
+    std::ostringstream os;
+    
+    const auto& coords = getCoordinates();
     
     for( int n = 0; n < coords.getnumber(); n++ )
     {
@@ -3237,34 +3250,296 @@ void MeshSimplicial2D::outputTikZ( std::ostream& os ) const
         os << "cycle;" << nl;
     }
     
+    return os.str();
 }
         
 
 
+inline std::string rgb_to_string( unsigned char r, unsigned char g, unsigned char b )
+{
+    char result[8] = {0,0,0,0,0,0,0,0};
+    snprintf(result, countof(result), "#%02x%02x%02x", r, g, b);
+    return std::string( result );
+}
+
+inline unsigned char float_to_color( Float f )
+{
+  if( f >= 255.) f = 255.;
+  if( f <= 0.  ) f = 0.;
+  return (unsigned char)f;
+}
+
+UNUSED inline int leading_digits( double num )
+{
+    // If the number is negative, take its absolute value
+    // Calculate the order of magnitude of the number
+    // If the number is greater than 1, return the integer part of the order, else, return 0
+    
+    if( num < 0 ) num = -num;
+    int order = static_cast<int>( ceil( log10(num) ) );
+    if( order >= 0 ) return order + 1; else return 1;
+}
+
+inline std::string render_number( double num, int tail = 8 )
+{
+    assert( std::isfinite(num) );
+    assert( tail > 0 );
+    
+    // int lead = leading_digits( num );
+    // const int str_number_of_chars = 1+lead+1+tail+1;
+    // char str[str_number_of_chars];
+    // snprintf( str, str_number_of_chars, "% *.*f", 1+lead+1+tail, tail, num);
+
+    const int str_number_of_printed_chars = ( 1 + 1 + 1 ) + tail + 1 + (4);
+    assert( str_number_of_printed_chars >= 0 );
+    char str[str_number_of_printed_chars+1];
+    snprintf( str, str_number_of_printed_chars, "%.*e", tail, num );
+    
+    return std::string(str);
+}
+
+std::string MeshSimplicial2D::outputSVG( 
+    Float stroke_width,
+    const std::string& fill,
+    const std::string& stroke,
+    const FloatVector* triangle_red,
+    const FloatVector* triangle_green,
+    const FloatVector* triangle_blue
+) const {
+    std::ostringstream os;
+
+    auto coords = getCoordinates();
+
+    coords.shift( FloatVector{ 
+        -getCoordinates().getmin(0), 
+        -getCoordinates().getmin(1) 
+    } );
+
+    os << "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.200000\" width=\"100%\" height=\"100%\" "
+       << "viewBox=\""
+       << coords.getmin(0) << space << coords.getmin(1) << space 
+       << coords.getmax(0) << space << coords.getmax(1) << "\""
+       << " shape-rendering=\"crispEdges\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">"
+       << nl;
+
+    for( int t = 0; t < this->count_triangles(); t++ ) {
+      
+      int v0 = this->get_triangle_vertex(t,0);
+      int v1 = this->get_triangle_vertex(t,1);
+      int v2 = this->get_triangle_vertex(t,2);
+      
+      Float x0 = coords.getdata(v0,0);
+      Float y0 = coords.getdata(v0,1);
+      Float x1 = coords.getdata(v1,0);
+      Float y1 = coords.getdata(v1,1);
+      Float x2 = coords.getdata(v2,0);
+      Float y2 = coords.getdata(v2,1);
+      
+      os << "<polygon points=\"" 
+         << render_number(x0) << "," << render_number(y0) << " " 
+         << render_number(x1) << "," << render_number(y1) << " " 
+         << render_number(x2) << "," << render_number(y2) << "\"";
+      
+      if( fill == "array" ){
+      
+        assert( triangle_red ); assert( triangle_green ); assert( triangle_blue );
+      
+        double channel_red   = triangle_red->at(t);
+        double channel_green = triangle_green->at(t);
+        double channel_blue  = triangle_blue->at(t);
+
+        // LOG << channel_blue << space << channel_green << space << channel_red << nl;
+
+        assert( 0. <= channel_red   and channel_red   <= 255. );
+        assert( 0. <= channel_green and channel_green <= 255. );
+        assert( 0. <= channel_blue  and channel_blue  <= 255. );
+      
+        std::string colorstring = rgb_to_string( 
+            (unsigned char)channel_red, 
+            (unsigned char)channel_green, 
+            (unsigned char)channel_blue );
+
+        os << " fill=\"" << colorstring << "\"";
+      } else {
+        os << " fill=\"" << "red"       << "\"";
+      }
+      os << " stroke=\"" << stroke << "\"";
+      os << " stroke-width=\"" << render_number(stroke_width) << "\"";
+      os << "></polygon>";
+      os << nl;
+        
+    }
+    
+    os << "</svg>";
+    
+    return os.str();
+}
+
+inline void computeProjection( Float x0, Float y0, Float x1, Float y1, Float x2, Float y2, Float& px, Float& py ) 
+{
+    Float dx = x2 - x1; Float dy = y2 - y1;
+    Float norm_sq = dx * dx + dy * dy;
+    Float lambda = ( (x0 - x1) * dx + (y0 - y1) * dy ) / norm_sq;
+    px = x1 + lambda * dx; 
+    py = y1 + lambda * dy;
+}
+
+std::string MeshSimplicial2D::outputLinearSVG( 
+    const FloatVector& triangle_red,
+    const FloatVector& triangle_green,
+    const FloatVector& triangle_blue,
+    Float stroke_width,
+    const std::string& fill,
+    const std::string& stroke
+) const {
+    std::ostringstream os;
+
+    // 1. copy coordinates and shift them 
+    auto coords = getCoordinates();
+
+    coords.shift( FloatVector{ 
+        -getCoordinates().getmin(0), 
+        -getCoordinates().getmin(1) 
+    } );
+
+    // 2. preamble 
+    os << "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.200000\" width=\"100%\" height=\"100%\" "
+       << "viewBox=\""
+       << coords.getmin(0) << space << coords.getmin(1) << space 
+       << coords.getmax(0) << space << coords.getmax(1) << "\""
+       << " shape-rendering=\"crispEdges\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">"
+       << nl;
+
+    // 2. print the defs of the linear gradients 
+    os << "<defs>" << nl;
+    for( int t = 0; t < this->count_triangles(); t++ ) {
+      
+      int v0 = this->get_triangle_vertex(t,0);
+      int v1 = this->get_triangle_vertex(t,1);
+      int v2 = this->get_triangle_vertex(t,2);
+      
+      Float x0 = coords.getdata(v0,0); Float y0 = coords.getdata(v0,1);
+      Float x1 = coords.getdata(v1,0); Float y1 = coords.getdata(v1,1);
+      Float x2 = coords.getdata(v2,0); Float y2 = coords.getdata(v2,1);
+
+      Float cx0, cx1, cx2, cy0, cy1, cy2;
+      computeProjection( x0, y0, x1, y1, x2, y2, cx0, cy0 );
+      computeProjection( x1, y1, x0, y0, x2, y2, cx1, cy1 );
+      computeProjection( x2, y2, x1, y1, x0, y0, cx2, cy2 );
+
+      // Float cx0 = ( x1 + x2 ) / 2.;
+      // Float cy0 = ( y1 + y2 ) / 2.;
+      // Float cx1 = ( x0 + x2 ) / 2.;
+      // Float cy1 = ( y0 + y2 ) / 2.;
+      // Float cx2 = ( x0 + x1 ) / 2.;
+      // Float cy2 = ( y0 + y1 ) / 2.;
+
+      //std::string rgb_to_string( unsigned char r, unsigned char g, unsigned char b )
+
+      unsigned char r0 = float_to_color( triangle_red  [3*t+0] );
+      unsigned char g0 = float_to_color( triangle_green[3*t+0] );
+      unsigned char b0 = float_to_color( triangle_blue [3*t+0] );
+      unsigned char r1 = float_to_color( triangle_red  [3*t+1] );
+      unsigned char g1 = float_to_color( triangle_green[3*t+1] );
+      unsigned char b1 = float_to_color( triangle_blue [3*t+1] );
+      unsigned char r2 = float_to_color( triangle_red  [3*t+2] );
+      unsigned char g2 = float_to_color( triangle_green[3*t+2] );
+      unsigned char b2 = float_to_color( triangle_blue [3*t+2] );
+      
+      std::string color0 = rgb_to_string( r0, g0, b0 );
+      std::string color1 = rgb_to_string( r1, g1, b1 );
+      std::string color2 = rgb_to_string( r2, g2, b2 );
+      
+      std::ostringstream grad0;
+      std::ostringstream grad1;
+      std::ostringstream grad2;
+
+      grad0 << "<linearGradient gradientUnits=\"userSpaceOnUse\" id=\"myshade0_" << t << "\" x1=\"" << render_number(x0) << "\" y1=\"" << render_number(y0) << "\" x2=\"" << render_number(cx0) << "\" y2=\"" << render_number(cy0) << "\" >"
+            << "<stop offset=\"0%\" stop-color=\"" << color0 << "\" stop-opacity=\"100%\" />"
+            << "<stop offset=\"100%\" stop-color=\"" << color0 << "\" stop-opacity=\"100%\" />"
+            << "</linearGradient>";
+      grad1 << "<linearGradient gradientUnits=\"userSpaceOnUse\" id=\"myshade1_" << t << "\" x1=\"" << render_number(x1) << "\" y1=\"" << render_number(y1) << "\" x2=\"" << render_number(cx1) << "\" y2=\"" << render_number(cy1) << "\" >"
+            << "<stop offset=\"0%\" stop-color=\"" << color1 << "\" stop-opacity=\"100%\" />"
+            << "<stop offset=\"100%\" stop-color=\"" << color1 << "\" stop-opacity=\"0%\" />"
+            << "</linearGradient>";
+      grad2 << "<linearGradient gradientUnits=\"userSpaceOnUse\" id=\"myshade2_" << t << "\" x1=\"" << render_number(x2) << "\" y1=\"" << render_number(y2) << "\" x2=\"" << render_number(cx2) << "\" y2=\"" << render_number(cy2) << "\" >"
+            << "<stop offset=\"0%\" stop-color=\"" << color2 << "\" stop-opacity=\"100%\" />"
+            << "<stop offset=\"100%\" stop-color=\"" << color2 << "\" stop-opacity=\"0%\" />"
+            << "</linearGradient>";
+      
+      os << grad0.str() << nl;
+      os << grad1.str() << nl;
+      os << grad2.str() << nl;
+    }
+    os << "</defs>" << nl;
+    
+    
+    // 3. print the triangles 
+    for( int t = 0; t < this->count_triangles(); t++ ) {
+      
+      int v0 = this->get_triangle_vertex(t,0);
+      int v1 = this->get_triangle_vertex(t,1);
+      int v2 = this->get_triangle_vertex(t,2);
+      
+      Float x0 = coords.getdata(v0,0); Float y0 = coords.getdata(v0,1);
+      Float x1 = coords.getdata(v1,0); Float y1 = coords.getdata(v1,1);
+      Float x2 = coords.getdata(v2,0); Float y2 = coords.getdata(v2,1);
+      
+      std::ostringstream tri_start; tri_start << "<polygon points=\"" << render_number(x0) << "," << render_number(y0) << " " << render_number(x1) << "," << render_number(y1) << " " << render_number(x2) << "," << render_number(y2) << "\"";
+      std::ostringstream tri_fill0; tri_fill0 << " fill=\"url(#myshade0_" << t << ")\" ";
+      std::ostringstream tri_fill1; tri_fill1 << " fill=\"url(#myshade1_" << t << ")\" ";
+      std::ostringstream tri_fill2; tri_fill2 << " fill=\"url(#myshade2_" << t << ")\" ";
+      std::ostringstream tri_end  ; tri_end   << " stroke=\"" << stroke << "\" stroke-width=\"" << render_number(stroke_width) << "\"></polygon>";
+      
+      os << tri_start.str() << tri_fill0.str() << tri_end.str() << nl;
+      os << tri_start.str() << tri_fill1.str() << tri_end.str() << nl;
+      os << tri_start.str() << tri_fill2.str() << tri_end.str() << nl;
+        
+    }
+    
+    // 4. close the SVG 
+    os << "</svg>";
+    
+    return os.str();
+}
 
 
 
 
-//         if( data_edge_firstparent_triangle[ t_e2 ] == t_old ) {
-//           
-//           data_edge_firstparent_triangle[ t_e2 ] = counter_triangles + ot;
-//           
-//         } else {
-//           
-//           int current_edge = data_vertex_firstparent_edge[ e_front_vertex ];
-//           while( data_edge_nextparents_of_vertices[ current_edge ][ indexof_edge_vertex( current_edge, e_front_vertex ) ] != e )
-//             current_edge = data_edge_nextparents_of_vertices[ current_edge ][ indexof_edge_vertex( current_edge, e_front_vertex ) ];
-//           data_edge_nextparents_of_vertices[ current_edge ][ indexof_edge_vertex( current_edge, e_front_vertex ) ] = counter_edge;
-//           
-//         }
-//       
-//         /* TODO: triangle parents of opposing vertex */
-//         if( data_vertex_firstparent_triangle[ t_v2 ] == t_old ) { 
-//           int nextparent_tri = data_triangle_nextparents_of_vertices[ current_tri ][ 2 ];
-//           data_vertex_firstparent_triangle[ t_v2 ] = counter_edges;
-//         } else {
-//           int current_tri = data_vertex_firstparent_triangle[ t_v2 ];
-//           while( data_triangle_nextparents_of_vertices[ current_tri ][ 2 ] != t_old )
-//             current_tri = data_triangle_nextparents_of_vertices[ current_tri ][ 2 ];
-//           data_triangle_nextparents_of_vertices[ current_tri ][ 2 ] = counter_edge;
-//         }
+
+
+std::size_t MeshSimplicial2D::memorysize() const
+{
+    std::size_t ret = 0;
+
+    ret += getCoordinates().memorysize();
+
+    ret += sizeof(getinnerdimension());
+    ret += sizeof(getouterdimension());
+
+    ret += sizeof( counter_triangles );
+    ret += sizeof( counter_edges     );
+    ret += sizeof( counter_vertices  );
+
+    { const auto& D = data_triangle_edges;                   ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_edge_firstparent_triangle;        ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_triangle_nextparents_of_edges;    ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    
+    { const auto& D = data_triangle_vertices;                ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_vertex_firstparent_triangle;      ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_triangle_nextparents_of_vertices; ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    
+    { const auto& D = data_edge_vertices;                    ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_vertex_firstparent_edge;          ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = data_edge_nextparents_of_vertices;     ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    
+    { const auto& D = flags_triangles; ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = flags_edges;     ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+    { const auto& D = flags_vertices;  ret += sizeof(D) + D.size() * sizeof( std::remove_reference<decltype(D)>::type::value_type); };
+
+    return ret;
+}
+
+
+
+

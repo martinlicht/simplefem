@@ -1,76 +1,24 @@
 
-
-/**/
-
-#include <iostream>
-#include <fstream>
-
 #include "../../basic.hpp"
-#include "../../utility/utility.hpp"
-#include "../../mesh/coordinates.hpp"
-#include "../../mesh/mesh.hpp"
-// #include "../../mesh/mesh.simplicialND.hpp"
-#include "../../vtk/vtkwriter.hpp"
+#include "../../utility/stl.hpp"
 #include "../../mesh/examples3D.hpp"
+#include "../../vtk/vtkwriter.hpp"
 
 
 using namespace std;
 
+#include "vtk.testsnippet.cxx"
 
-
-
-
-inline void internal_print( const MeshSimplicial3D& M, std::string meshname )
+int main( int argc, char *argv[] )
 {
-    
-    fstream fs( experimentfile( getbasename(__FILE__)), std::fstream::out );
-    
-    VTKWriter vtk( M, fs, meshname );
-    vtk.writeCoordinateBlock();
-    vtk.writeTopDimensionalCells();
-    
-    {
-        FloatVector V( M.count_simplices(0), 
-                        [&M](int i)->Float{
-                        FloatVector point = M.getcoordinates().getvectorclone(i);
-                        return point[0] * std::sin( 10 * 2 * 3.14159 * point[1] ) + point[2];
-                    });
-        
-        vtk.writeVertexScalarData( V, "testing_scalar_data", 1.0 );
-    }
-    
-    vtk.writeCellScalarData( FloatVector(M.count_simplices(3), 2.5 ), "cell_scalar_data" );
-    
-    vtk.writeCellVectorData( 
-        FloatVector( M.count_simplices(3),  1.5 ),
-        FloatVector( M.count_simplices(3),  2.5 ),
-        FloatVector( M.count_simplices(3), -3.5 ),
-        "cell_vector_data"
-    );
-
-    fs.close();
-}
-
-
-
-
-
-
-
-int main()
-{
-    LOG << "Unit Test for VTK output of Simplicial Mesh (3D)" << endl;
+    LOG << "Unit Test for VTK output of Simplicial Mesh (3D)" << nl;
     
     {
         
-        const MeshSimplicial3D Mx = StandardCube3D();  std::string meshname = "Standard Cube 3D";
+        const MeshSimplicial3D Mx = FicheraCorner3D();  std::string meshname = "Fichera Corner 3D";
         
         internal_print( Mx, meshname );
         
-        
-        
-        
-        //if(false)
         {
             
             auto M = Mx;
@@ -78,6 +26,8 @@ int main()
             for( int c = 0; c < 3; c++ ) {
             
                 M.uniformrefinement();
+
+                M.shake_interior_vertices();
                 
                 internal_print( M, meshname );
             
@@ -85,9 +35,6 @@ int main()
             
         }    
         
-        
-        
-        //if(false)
         {
             
             auto M = Mx;
@@ -97,7 +44,7 @@ int main()
                 std::vector<int> refinementedges;
                 
                 for( int k = 0; k < 3 + M.count_edges() / 10; k++ )
-                    refinementedges.push_back( rand() % M.count_edges() );
+                    refinementedges.push_back( random_integer() % M.count_edges() );
                 
                 sort_and_remove_duplicates( refinementedges );
                 
@@ -108,13 +55,10 @@ int main()
             }
             
         }    
-        
 
     }
     
-        
-    
-    LOG << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
 
     return 0;
 }

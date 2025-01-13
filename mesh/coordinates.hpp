@@ -2,8 +2,8 @@
 #define INCLUDEGUARD_MESH_COORDINATES_HPP
 
 
-// #include <cassert>
-#include <iostream>
+#include <array>
+// #include <ostream>
 #include <vector>
 
 #include "../basic.hpp"
@@ -46,9 +46,13 @@ class Coordinates
         virtual ~Coordinates();
         
         void check() const;
-        void print( std::ostream& ) const;
+        // void print( std::ostream& ) const;
+        std::string text() const;
+        
+        // // void lg() const { LOG << *this << nl; };
+        
 
-        void read( std::istream& ) ;
+        // void read( std::istream& ) ;
 
         int getdimension() const;
         int getnumber() const;
@@ -56,8 +60,13 @@ class Coordinates
         
         /* get/set coordinates as per point  */
         
-        Float getdata( int n, int d) const;
+        Float getdata( int n, int d ) const;
         void setdata( int n, int d, Float v );
+        
+        /* get range of coordinates */
+        
+        Float getmin( int d) const;
+        Float getmax( int d) const;
         
         /* get/set points as vectors  */
         
@@ -73,51 +82,69 @@ class Coordinates
         
         /* transform all coordinates  */
         
-        void scale( Float );
-        void shift( const FloatVector& );
-        void lineartransform( const LinearOperator& );
+        void scale( Float alpha );
+        void scale( FloatVector alphas );
+        void shift( const FloatVector& add );
+        void shake_random( Float epsilon = 0.001 );
+        void lineartransform( const LinearOperator& op );
         
         /* Add additional coordiantes */
         
-        void append( const Coordinates& );
-        void append( const FloatVector& );
-        void append( const std::vector<FloatVector>& );
+        void append( const Coordinates& co );
+        void append( const FloatVector& v );
+        // void append( const std::vector<FloatVector>& );
         
-        void addcapacity( int );
-        void addcoordinates( int );
+        void addcapacity( int additional_capacity );
+        void addcoordinates( int add_number );
         
         /* Obtain information about reference transformation of simplex */
         
-        DenseMatrix getLinearPart( const IndexMap& ) const;
-        FloatVector getShiftPart( const IndexMap& ) const;
+        DenseMatrix getLinearPart( const IndexMap& im ) const;
+        FloatVector getShiftPart( const IndexMap& im ) const;
         
         FloatVector getCenter() const;
+
+
+        /* other */ 
+
+        std::vector<Float>& raw();
+        const std::vector<Float>& raw() const;
+        
+        std::size_t memorysize() const;
         
     private:
             
         int dimension;
         int number;
         std::vector<Float> data;
-        
+
+    public:
+
+        static bool is_equal_to( const Coordinates& coords_left, const Coordinates& coords_right );
+
+        friend inline bool operator==( const Coordinates& coords_left, const Coordinates& coords_right )
+        {
+            return is_equal_to( coords_left, coords_right );
+        }
+
+        friend inline bool operator!=( const Coordinates& coords_left, const Coordinates& coords_right )
+        {
+            return ! ( coords_left == coords_right );
+        }
+
+        friend inline std::ostream& operator<<( std::ostream& os, const Coordinates& co )
+        {
+            os << co.text(); // co.print( os );
+            return os;
+        }
+
+
 };
 
-bool compare( const Coordinates& coords_left, const Coordinates& coords_right, Float tolerance = 0.00001 );
 
-inline std::ostream& operator<<( std::ostream& os, const Coordinates& ir )
-{
-    ir.print( os );
-    return os;
-}
 
-inline bool operator==( const Coordinates& coords_left, const Coordinates& coords_right )
-{
-    return compare( coords_left, coords_right, 0.00001 );
-}
 
-inline bool operator!=( const Coordinates& coords_left, const Coordinates& coords_right )
-{
-    return ! ( coords_left == coords_right );
-}
+
 
 
 #endif

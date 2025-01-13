@@ -1,14 +1,7 @@
-#include <iostream>
-#include <fstream>
-#include <iomanip>
-
 #include "../../basic.hpp"
 #include "../../operators/composedoperators.hpp"
-#include "../../dense/densematrix.hpp"
-#include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples3D.hpp"
-#include "../../fem/local.polynomialmassmatrix.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/utilities.hpp"
@@ -17,15 +10,15 @@
 
 using namespace std;
 
-int main()
+int main( int argc, char *argv[] )
 {
         
-        LOG << "Unit Test: (3D) exterior derivative and interpolation" << endl;
+        LOG << "Unit Test: (3D) exterior derivative and interpolation" << nl;
         
-        LOG << std::setprecision(10);
+        // LOG << std::setprecision(10);
 
         
-        LOG << "Initial mesh..." << endl;
+        LOG << "Initial mesh..." << nl;
         
         MeshSimplicial3D M = StandardCube3D();
         
@@ -61,9 +54,9 @@ int main()
             [](const FloatVector& vec) -> FloatVector{
                 assert( vec.getdimension() == 3 );
                 return FloatVector( { 
-                        -vec[1],
-                        vec[0]*vec[1],
-                        vec[2] 
+                        std::exp( 2. * vec[1] ),
+                        std::exp( -3. * vec[0] ),
+                        0.
                     });
             }
         );
@@ -72,9 +65,9 @@ int main()
             [](const FloatVector& vec) -> FloatVector{
                 assert( vec.getdimension() == 3 );
                 return FloatVector( { 
-                        0, 
-                        vec[0], 
-                        1.
+                        -2. * std::exp( 2. * vec[1] ) + -3. * std::exp( -3. * vec[0] ), 
+                        0., 
+                        0.
                     });
             }
         );
@@ -87,9 +80,9 @@ int main()
             [](const FloatVector& vec) -> FloatVector{
                 assert( vec.getdimension() == 3 );
                 return FloatVector( { 
-                        vec[0],
+                        vec[2]*vec[2]*vec[2], 
                         vec[1]*vec[1],
-                        vec[2]*vec[2]*vec[2] 
+                        vec[0],
                     });
             }
         );
@@ -98,7 +91,7 @@ int main()
             [](const FloatVector& vec) -> FloatVector{
                 assert( vec.getdimension() == 3 );
                 return FloatVector( { 
-                        1. - 2. * vec[1] + 3. * vec[2]*vec[2]
+                        3. * vec[2]*vec[2] - 2. * vec[1] + 1.
                     });
             }
         );
@@ -111,7 +104,7 @@ int main()
         
         const int l_min = 0;
         
-        const int l_max = 2;
+        const int l_max = 3;
         
         
         for( int l = 0; l < l_min; l++ )
@@ -126,14 +119,14 @@ int main()
             
         for( int l = l_min; l <= l_max; l++ ){
             
-            LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << endl;
+            LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << nl;
             
             for( int r = r_min; r <= r_max; r++ ) 
             {
                 
-                LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << endl;
+                LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << nl;
 
-                LOG << "assemble matrices..." << endl;
+                LOG << "assemble matrices..." << nl;
         
                 SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
                 
@@ -148,7 +141,7 @@ int main()
                 SparseMatrix pseudo_diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 2, r );
 
                 
-                LOG << "...experiments" << endl;
+                LOG << "...experiments" << nl;
         
                 for( int i = 0; i < experiments_scalar_function.size(); i++ ){
 
@@ -160,11 +153,12 @@ int main()
                     
                     auto commutator_error = interpol_exterior - scalar_diffmatrix * interpol_function;
                     
-                    assert( commutator_error.isfinite() );
+                    assert( commutator_error.is_finite() );
                     
                     Float commutator_error_mass = commutator_error * ( vector_massmatrix * commutator_error );
                     
                     assert( std::isfinite( commutator_error_mass ) );
+                    Assert( commutator_error_mass >= -desired_closeness, commutator_error_mass );
                     
                     errors_scalar[i][l-l_min][r-r_min] = std::sqrt( std::fabs( commutator_error_mass ) );
             
@@ -180,11 +174,12 @@ int main()
                     
                     auto commutator_error = interpol_exterior - vector_diffmatrix * interpol_function;
                     
-                    assert( commutator_error.isfinite() );
+                    assert( commutator_error.is_finite() );
                     
                     Float commutator_error_mass = commutator_error * ( pseudo_massmatrix * commutator_error );
                     
                     assert( std::isfinite( commutator_error_mass ) );
+                    Assert( commutator_error_mass >= -desired_closeness, commutator_error_mass );
                     
                     errors_vector[i][l-l_min][r-r_min] = std::sqrt( std::fabs( commutator_error_mass ) );
             
@@ -200,11 +195,12 @@ int main()
                     
                     auto commutator_error = interpol_exterior - pseudo_diffmatrix * interpol_function;
                     
-                    assert( commutator_error.isfinite() );
+                    assert( commutator_error.is_finite() );
                     
                     Float commutator_error_mass = commutator_error * ( volume_massmatrix * commutator_error );
                     
                     assert( std::isfinite( commutator_error_mass ) );
+                    Assert( commutator_error_mass >= -desired_closeness, commutator_error_mass );
                     
                     errors_pseudo[i][l-l_min][r-r_min] = std::sqrt( std::fabs( commutator_error_mass ) );
             
@@ -214,9 +210,11 @@ int main()
 
             if( l != l_max )
             {
-                LOG << "Refinement..." << endl;
+                LOG << "Refinement..." << nl;
             
                 M.uniformrefinement();
+
+                M.shake_interior_vertices();
             }
             
             
@@ -230,6 +228,28 @@ int main()
         ConvergenceTable contable_vector[ experiments_vector_function.size() ];
         ConvergenceTable contable_pseudo[ experiments_pseudo_function.size() ];
         
+        for( int r = r_min; r <= r_max; r++ ) 
+        {
+            for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
+                contable_scalar[i].table_name = "Numerical errors scalar E" + std::to_string(i);
+            for( int i = 0; i < experiments_vector_function.size(); i++ ) 
+                contable_vector[i].table_name = "Numerical errors vector E" + std::to_string(i);
+            for( int i = 0; i < experiments_pseudo_function.size(); i++ ) 
+                contable_pseudo[i].table_name = "Numerical errors pseudo E" + std::to_string(i);
+        
+            for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
+                contable_scalar[i] << printf_into_string("R%d", r );
+            for( int i = 0; i < experiments_vector_function.size(); i++ ) 
+                contable_vector[i] << printf_into_string("R%d", r );
+            for( int i = 0; i < experiments_pseudo_function.size(); i++ ) 
+                contable_pseudo[i] << printf_into_string("R%d", r );
+
+        }
+        for( int i = 0; i < experiments_scalar_function.size(); i++ ) contable_scalar[i] << nl; 
+        for( int i = 0; i < experiments_vector_function.size(); i++ ) contable_vector[i] << nl; 
+        for( int i = 0; i < experiments_pseudo_function.size(); i++ ) contable_pseudo[i] << nl; 
+        
+        
         for( int l = l_min; l <= l_max; l++ ) 
         {
             
@@ -237,13 +257,13 @@ int main()
             {
                 
                 for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
-                    contable_scalar[i] << errors_scalar[i][l-l_min][r-r_min]; // assert( errors_scalar[i][l-l_min][r-r_min] >= 0. ); //
+                    contable_scalar[i] << errors_scalar[i][l-l_min][r-r_min]; // Assert( errors_scalar[i][l-l_min][r-r_min] >= -desired_closeness ); //
             
                 for( int i = 0; i < experiments_vector_function.size(); i++ ) 
-                    contable_vector[i] << errors_vector[i][l-l_min][r-r_min]; // assert( errors_vector[i][l-l_min][r-r_min] >= 0. ); //
+                    contable_vector[i] << errors_vector[i][l-l_min][r-r_min]; // Assert( errors_vector[i][l-l_min][r-r_min] >= -desired_closeness ); //
             
                 for( int i = 0; i < experiments_pseudo_function.size(); i++ ) 
-                    contable_pseudo[i] << errors_pseudo[i][l-l_min][r-r_min]; // assert( errors_vector[i][l-l_min][r-r_min] >= 0. ); //
+                    contable_pseudo[i] << errors_pseudo[i][l-l_min][r-r_min]; // Assert( errors_pseudo[i][l-l_min][r-r_min] >= -desired_closeness ); //
             
             }
             
@@ -254,33 +274,34 @@ int main()
         }
             
         for( int i = 0; i < experiments_scalar_function.size(); i++ ) contable_scalar[i].lg(); 
-        LOG << "-------------------" << nl;
+        LOG << "                   " << nl;
         for( int i = 0; i < experiments_vector_function.size(); i++ ) contable_vector[i].lg(); 
-        LOG << "-------------------" << nl;
+        LOG << "                   " << nl;
         for( int i = 0; i < experiments_pseudo_function.size(); i++ ) contable_pseudo[i].lg(); 
         
         
         
         
         
-//         TODO : check for convergence        
-//         LOG << "Check that differences are small" << nl;
-//         
-//         for( int l = l_min; l <= l_max; l++ ) 
-//         for( int r = r_min; r <= r_max; r++ ) 
-//         {
-//             for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
-//                 assert( errors_scalar[i][l-l_min][r-r_min] < 10e-6 );
-//             
-//             for( int i = 0; i < experiments_vector_function.size(); i++ ) 
-//                 assert( errors_vector[i][l-l_min][r-r_min] < 10e-6 );
-// 
-//             for( int i = 0; i < experiments_pseudo_function.size(); i++ ) 
-//                 assert( errors_pseudo[i][l-l_min][r-r_min] < 10e-6 );
-//         }
+        /*
+        No meaningful test for convergence possible as of now
+        LOG << "Check that differences are below: " << desired_closeness_for_sqrt << nl;
         
+        for( int l = l_min; l <= l_max; l++ ) 
+        for( int r = r_min; r <= r_max; r++ ) 
+        {
+            for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
+                Assert( errors_scalar[i][l-l_min][r-r_min] < desired_closeness_for_sqrt, errors_scalar[i][l-l_min][r-r_min], desired_closeness_for_sqrt );
+            
+            for( int i = 0; i < experiments_vector_function.size(); i++ ) 
+                Assert( errors_vector[i][l-l_min][r-r_min] < desired_closeness_for_sqrt, errors_vector[i][l-l_min][r-r_min], desired_closeness_for_sqrt );
+
+            for( int i = 0; i < experiments_pseudo_function.size(); i++ ) 
+                Assert( errors_pseudo[i][l-l_min][r-r_min] < desired_closeness_for_sqrt, errors_pseudo[i][l-l_min][r-r_min], desired_closeness_for_sqrt );
+        }
+        */
         
-        LOG << "Finished Unit Test" << endl;
+        LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
         
         return 0;
 }

@@ -1,5 +1,4 @@
 
-#include <cassert>
 #include <cmath>
 #include <algorithm>
 #include <new>
@@ -8,6 +7,7 @@
 #include "../basic.hpp"
 #include "floatvector.hpp"
 #include "linearoperator.hpp"
+#include "../utility/random.hpp"
 
 
 
@@ -15,7 +15,7 @@
 
 
 FloatVector::FloatVector( const FloatVector& src )
-: dimension( src.getdimension() ), pointer( new (std::nothrow) Float[ src.getdimension() ] )
+: dimension( src.dimension ), pointer( new (std::nothrow) Float[ src.dimension ] )
 {
     assert( dimension >= 0 and pointer != nullptr );
     for( int p = 0; p < dimension; p++ ) pointer[p] = src.pointer[p];
@@ -23,7 +23,7 @@ FloatVector::FloatVector( const FloatVector& src )
 }
 
 FloatVector::FloatVector( FloatVector&& src )
-: dimension( src.getdimension() ), pointer( src.pointer )
+: dimension( src.dimension ), pointer( src.pointer )
 {
     assert( dimension >= 0 and pointer != nullptr and pointer == src.pointer and dimension == src.dimension );
     src.pointer = nullptr;
@@ -32,9 +32,7 @@ FloatVector::FloatVector( FloatVector&& src )
 
 FloatVector& FloatVector::operator=( const FloatVector& vec )
 {
-    assert( pointer     != nullptr );
-    assert( vec.pointer != nullptr );
-    assert( getdimension() == vec.getdimension() );
+    assert( dimension == vec.dimension );
     
     if( this != &vec ) {
         for( int p = 0; p < dimension; p++ ) pointer[p] = vec.pointer[p];
@@ -46,14 +44,13 @@ FloatVector& FloatVector::operator=( const FloatVector& vec )
 
 FloatVector& FloatVector::operator=( FloatVector&& vec )
 {
-//     assert( pointer     != nullptr );
-    assert( vec.pointer != nullptr );
-    assert( getdimension() == vec.getdimension() );
+    assert( dimension == vec.dimension );
     
     if( this != &vec ) {
-        delete[] this->pointer;
-        this->pointer = vec.pointer;
-        vec.pointer = nullptr;
+        std::swap( this->pointer, vec.pointer );
+        // delete[] this->pointer;
+        // this->pointer = vec.pointer;
+        // vec.pointer = nullptr;
     }
     
     check();
@@ -89,7 +86,7 @@ FloatVector::FloatVector( int dim, Float initialvalue )
 }
 
 FloatVector::FloatVector( const FloatVector& src, Float alpha )
-: dimension( src.getdimension() ), pointer( new (std::nothrow) Float[ src.getdimension() ] )
+: dimension( src.dimension ), pointer( new (std::nothrow) Float[ src.dimension ] )
 {
     assert( dimension >= 0 and pointer != nullptr );
     for( int p = 0; p < dimension; p++ ) pointer[p] = alpha * src.pointer[p];
@@ -97,7 +94,7 @@ FloatVector::FloatVector( const FloatVector& src, Float alpha )
 }
 
 FloatVector::FloatVector( FloatVector&& src, Float alpha )
-: dimension( src.getdimension() ), pointer( src.pointer )
+: dimension( src.dimension ), pointer( src.pointer )
 {
     assert( dimension >= 0 and pointer != nullptr and pointer == src.pointer and dimension == src.dimension );
     src.pointer = nullptr;
@@ -159,40 +156,52 @@ void FloatVector::check() const
     return;
     #endif
     assert( dimension >= 0 );
-//     if( dimension > 0 ) assert( pointer != nullptr );
+    // if( pointer == nullptr ) assert( dimension == 0 );
+    // if( dimension > 0 ) assert( pointer != nullptr );
 }
 
-void FloatVector::print( std::ostream& output ) const 
+std::string FloatVector::text() const 
 {
     check();
-    output << "float vector of dimension: " << getdimension() << std::endl;
-    for( int p = 0; p < getdimension(); p++ )
-        output << p << ": " << getentry(p) << std::endl;
+    std::string ret = "float vector of dimension: " + std::to_string( getdimension() );
+    for( int p = 0; p < getdimension(); p++ ) {
+        // ret = ret + "\n" + std::to_string(p) + ": " + std::to_string(getentry(p));
+        ret = ret + "\n" + std::to_string(p) + ": " + printf_into_string( "% .17le", (double)(safedouble)getentry(p) );
+    }
+    return ret;
 }
 
-void FloatVector::printplain( std::ostream& output ) const 
+std::string FloatVector::data_as_text( bool indexed, bool print_rowwise ) const
 {
-    check();
-    output << getdimension() << nl;
-    for( int p = 0; p < getdimension(); p++ )
-        output << getentry(p) << nl;
+    const int nc_precision = 10;
+
+    const int nc_width = 7 + nc_precision;
+    
+    std::string ret;
+
+    if( print_rowwise ){
+        if(indexed) for( int p = 0; p < getdimension(); p++ ) ret += printf_into_string(    "%*d ", nc_width, p );
+        if(indexed) ret += '\n';
+        for( int p = 0; p < getdimension(); p++ ) ret += printf_into_string( "%*.*le ", nc_width, nc_precision, (double)(safedouble)getentry(p) );
+    } else {
+        for( int p = 0; p < getdimension(); p++ )
+            if(indexed) 
+                ret += printf_into_string( "%*d : %*.*le\n", nc_width, p, nc_width, nc_precision, (double)(safedouble)getentry(p) );
+            else 
+                ret += printf_into_string( "%*.*le\n", nc_width, nc_precision, (double)(safedouble)getentry(p) );
+    }
+
+    return ret;
 }
 
-void FloatVector::lg() const 
-{
-    check();
-    LOG << "float vector of dimension: " << getdimension() << std::endl;
-    for( int p = 0; p < getdimension(); p++ )
-        LOG << p << ": " << getentry(p) << std::endl;
-}
 
-void FloatVector::lgplain() const 
-{
-    check();
-    LOG << getdimension() << std::endl;
-    for( int p = 0; p < getdimension(); p++ )
-        LOG << getentry(p) << nl;
-}
+// void FloatVector::print( std::ostream& output ) const 
+// {
+//     check();
+//     output << "float vector of dimension: " << getdimension() << nl;
+//     for( int p = 0; p < getdimension(); p++ )
+//         output << p << ": " << getentry(p) << nl;
+// }
 
 
 
@@ -313,6 +322,24 @@ void FloatVector::random()
         setentry( p, gaussrand() ); 
 }
 
+void FloatVector::random_within_range( Float min, Float max )
+{
+    check();
+    for( int p = 0; p < getdimension(); p++ ) {
+        Float value = (max-min)*random_uniform() + min; 
+        assert( min <= value and value <= max );
+        setentry( p, value ); 
+    }   
+}
+        
+void FloatVector::to_absolute() 
+{
+    check();
+    for( int p = 0; p < getdimension(); p++ )
+        setentry( p, absolute( getentry(p) ) ); 
+}
+
+        
 void FloatVector::zero() 
 {
     check();
@@ -373,9 +400,9 @@ FloatVector& FloatVector::normalize( const LinearOperator& op )
     assert( std::isfinite(value) );
     assert( value >= 0 );
     
-    value = sqrt(value);
+    Float value_sqrt = std::sqrt(value);
     
-    this->scaleinverse( value );
+    this->scaleinverse( value_sqrt );
     
     return *this;
 }
@@ -424,7 +451,7 @@ FloatVector FloatVector::getslice( int base, int len ) const
     assert( 0 <= base+len && base+len <= getdimension() );
     FloatVector ret( len );
     for( int p = 0; p < len; p++ )
-      ret[p] = pointer[ base + p ];
+        ret[p] = pointer[ base + p ];
     return ret;
 }
 
@@ -446,7 +473,7 @@ void FloatVector::setslice( int base, const FloatVector& slice )
     assert( 0 <= len && len <= getdimension() );
     assert( 0 <= base+len && base+len <= getdimension() );
     for( int p = 0; p < len; p++ )
-      pointer[ base + p ] = slice[p];
+        pointer[ base + p ] = slice[p];
 }
 
 void FloatVector::addslice( int base, const FloatVector& slice, Float s )
@@ -457,7 +484,7 @@ void FloatVector::addslice( int base, const FloatVector& slice, Float s )
     assert( 0 <= len && len <= getdimension() );
     assert( 0 <= base+len && base+len <= getdimension() );
     for( int p = 0; p < len; p++ )
-      pointer[ base + p ] += s * slice[p];
+        pointer[ base + p ] += s * slice[p];
 }
 
 
@@ -521,27 +548,37 @@ Float FloatVector::scalarproductwith( const FloatVector& right ) const
 {
     check();
     assert( getdimension() == right.getdimension() );
-    Float ret = 0.;
+    long double ret = 0.;
     for( int p = 0; p < getdimension(); p++ )
         ret += getentry(p) * right.getentry(p);
-    return ret;
+    return static_cast<Float>(ret);
 }
 
 Float FloatVector::scalarproductwith( const FloatVector& right, const std::vector<bool>& mask ) const
 {
     check();
     assert( getdimension() == right.getdimension() );
-    Float ret = 0.;
+    long double ret = 0.;
     for( int p = 0; p < getdimension(); p++ )
         if( not mask[p] )
             ret += getentry(p) * right.getentry(p);
-    return ret;
+    return static_cast<Float>(ret);
 }
 
 
 
 
 
+
+Float FloatVector::min() const 
+{
+    check();
+    assert( getdimension() > 0 );
+    Float ret = pointer[0];
+    for( int d = 1; d < getdimension(); d++ )
+        ret = ( ret < pointer[d] ) ? ret : pointer[d];
+    return ret;
+}
 
 Float FloatVector::average() const 
 {
@@ -552,10 +589,10 @@ Float FloatVector::sum() const
 {
     check();
     assert( getdimension() > 0 );
-    Float ret = 0.;
+    long double ret = 0.;
     for( int d = 0; d < getdimension(); d++ )
         ret = ret + pointer[d];
-    return ret;
+    return static_cast<Float>(ret);
 }
 
 Float FloatVector::norm() const 
@@ -566,10 +603,10 @@ Float FloatVector::norm() const
 Float FloatVector::norm_sq() const 
 {
     check();
-    Float ret = 0.;
+    long double ret = 0.;
     for( int d = 0; d < getdimension(); d++ )
-        ret += absolute( pointer[d] ) * absolute( pointer[d] );
-    return ret;
+        ret += absolute( pointer[d] * pointer[d] );
+    return static_cast<Float>(ret);
 }
 
 Float FloatVector::norm( const LinearOperator& op ) const 
@@ -581,10 +618,10 @@ Float FloatVector::norm_sq( const LinearOperator& op) const
 {
     check();
     op.check();
-    Float ret = (*this) * ( op * (*this) );
+    long double ret = (*this) * ( op * (*this) );
     assert( std::isfinite(ret) );
     assert( ret >= 0 );
-    return ret;
+    return static_cast<Float>(ret);
 }
 
 Float FloatVector::maxnorm() const
@@ -593,7 +630,7 @@ Float FloatVector::maxnorm() const
     assert( getdimension() > 0 );
     Float ret = 0.;
     for( int d = 0; d < getdimension(); d++ )
-        ret = std::max( ret, absolute( pointer[d] ) );
+        ret = maximum( ret, absolute( pointer[d] ) );
     return ret;
 }
 
@@ -601,10 +638,10 @@ Float FloatVector::sumnorm() const
 {
     check();
     assert( getdimension() > 0 );
-    Float ret = 0.;
+    long double ret = 0.;
     for( int d = 0; d < getdimension(); d++ )
         ret = ret + absolute( pointer[d] );
-    return ret;
+    return static_cast<Float>(ret);
 }
 
 Float FloatVector::l2norm() const 
@@ -612,17 +649,19 @@ Float FloatVector::l2norm() const
     return norm();
 }
 
-Float FloatVector::lpnorm( Float p ) const
+Float FloatVector::lpnorm( Float p, Float innerweight ) const
 {
     check();
     assert( p > 0 );
     assert( std::isfinite(p) );
     assert( std::isnormal(p) );
+    assert( std::isfinite(innerweight) and innerweight > 0. );
     
-    Float ret = 0.;
+    long double ret = 0.;
     for( int d = 0; d < getdimension(); d++ )
         ret += power_numerical( absolute( pointer[d] ), p );
-    return power_numerical( ret, 1./p );
+    ret *= innerweight;
+    return power_numerical( static_cast<Float>(ret), 1./p );
 }
 
 
@@ -632,7 +671,7 @@ Float FloatVector::lpnorm( Float p ) const
 
 
 
-bool FloatVector::isfinite() const 
+bool FloatVector::is_finite() const 
 {
     check();
     for( int d = 0; d < getdimension(); d++ )
@@ -641,7 +680,7 @@ bool FloatVector::isfinite() const
     return true;
 }
 
-bool FloatVector::iszero() const 
+bool FloatVector::is_zero() const 
 {
     check();
     for( int d = 0; d < getdimension(); d++ )
@@ -650,7 +689,7 @@ bool FloatVector::iszero() const
     return true;
 }
 
-bool FloatVector::ispositive() const 
+bool FloatVector::is_positive() const 
 {
     check();
     for( int d = 0; d < getdimension(); d++ )
@@ -659,7 +698,7 @@ bool FloatVector::ispositive() const
     return true;
 }
 
-bool FloatVector::isnegative() const 
+bool FloatVector::is_negative() const 
 {
     check();
     for( int d = 0; d < getdimension(); d++ )
@@ -668,7 +707,7 @@ bool FloatVector::isnegative() const
     return true;
 }
 
-bool FloatVector::isnonnegative() const 
+bool FloatVector::is_nonnegative() const 
 {
     check();
     for( int d = 0; d < getdimension(); d++ )
@@ -677,7 +716,7 @@ bool FloatVector::isnonnegative() const
     return true;
 }
 
-bool FloatVector::isnonpositive() const 
+bool FloatVector::is_nonpositive() const 
 {
     check();
     for( int d = 0; d < getdimension(); d++ )
@@ -688,10 +727,10 @@ bool FloatVector::isnonpositive() const
 
 
 
-bool FloatVector::issmall( Float eps ) const 
+bool FloatVector::is_numerically_small( Float threshold ) const 
 {
     check();
-    return this->norm() < eps;
+    return this->norm() < threshold;
 }
 
 
@@ -710,10 +749,36 @@ const Float* FloatVector::raw() const
 
 
 
+/* Memory size */
+        
+std::size_t FloatVector::memorysize() const
+{
+    return sizeof(*this) + this->dimension * sizeof(decltype(*pointer));
+}
+
+
+bool FloatVector::is_equal_to( const FloatVector& vector_left, const FloatVector& vector_right )
+{
+    assert( vector_left.getdimension() == vector_right.getdimension() );
+    for( int i = 0; i < vector_left.getdimension(); i++ )
+        if( vector_left[i] != vector_right[i] )
+            return false;
+    return true;
+}
+
+        
 
 
 
 
-
-
-
+FloatVector interlace( const FloatVector& first, const FloatVector& second )
+{
+    Assert( first.getdimension() == second.getdimension() );
+    FloatVector ret( first.getdimension() * 2 );
+    for( int i = 0; i < first.getdimension(); i++ )
+    {
+        ret[2*i+0] = first[i];
+        ret[2*i+1] = second[i];
+    }
+    return ret;
+}

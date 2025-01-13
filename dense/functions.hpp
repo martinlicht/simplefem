@@ -11,13 +11,18 @@
 
 DenseMatrix Transpose( const DenseMatrix& ); 
 
-void TransposeInSitu( DenseMatrix& );
+// void TransposeInSitu( DenseMatrix& ); // The interface does not allow changing the dimension of the matrix
 
 DenseMatrix TransposeSquare( const DenseMatrix& ); 
 
 void TransposeSquareInSitu( DenseMatrix& ); 
 
 
+
+
+// remove single rows or columns
+// DenseMatrix skip_row( int i, const DenseMatrix& mat );
+// DenseMatrix skip_column( int i, const DenseMatrix& mat );
 
 
 
@@ -44,23 +49,24 @@ DenseMatrix SubdeterminantMatrixSquare( const DenseMatrix& A, int k );
 
 DenseMatrix SubdeterminantMatrix( const DenseMatrix& A, int k );
 
+void NewtonSchulz( const DenseMatrix& A, DenseMatrix& X, int iterations = 10 );
 
 
-/*
- *
- * Internal functions 
- * 
- */
 
 Float Determinant_laplaceexpansion( const DenseMatrix& );
 
 Float Determinant_gauss( DenseMatrix );
+
+Float Determinant_bareiss( DenseMatrix A );
+
+Float Determinant_ModifiedGramSchmidt( DenseMatrix A );
 
 void Inverse_CramersRule_InSitu( DenseMatrix& );
 
 void Inverse_gauss_InSitu( DenseMatrix&, bool pivoting = true );
 
 
+DenseMatrix MatrixTensorProduct( const DenseMatrix& left, const DenseMatrix& right );
 
 
 

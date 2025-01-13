@@ -4,7 +4,7 @@
 
 #include <functional>
 #include <initializer_list>
-#include <iostream>
+// #include <ostream>
 #include <string>
 #include <vector>
 
@@ -27,10 +27,14 @@ class MultiIndex final
 
     public:
 
+        /* Constructors */
+        
         explicit MultiIndex( const IndexRange& ir );
         MultiIndex( const IndexRange& ir, const std::vector<int>& );
         MultiIndex( const IndexRange&, const std::function<int(int)>& );
         MultiIndex( const IndexRange&, const std::initializer_list<int>& );
+        
+        /* standard interface */ 
         
         MultiIndex( const MultiIndex& )             = default;
         MultiIndex& operator =( const MultiIndex& ) = default;
@@ -39,11 +43,19 @@ class MultiIndex final
         
         virtual ~MultiIndex() = default;
         
+        /* standard methods */
+        
         void check() const;
 
         std::string text( bool embellish = false ) const;
         
-        void print( std::ostream&, bool embellish = false ) const;
+        // void print( std::ostream&, bool embellish = false ) const;
+
+        // void lg() const { LOG << text() << nl; }
+        
+        
+        
+        /* OTHER METHODS */
         
         IndexRange getIndexRange() const;
 
@@ -62,25 +74,25 @@ class MultiIndex final
         int max() const;
         
 
-        void add( int );
+        void add( int p );
 
-        void sub( int );
+        void sub( int p );
         
-        void add( int, int );
+        void add( int p, int n );
 
-        void sub( int, int );
+        void sub( int p, int n );
         
-        void add( const MultiIndex& );
+        void add( const MultiIndex& mi );
 
-        void sub( const MultiIndex& );
+        void sub( const MultiIndex& mi );
                 
 
-        bool comparablewith( const MultiIndex& ) const;
+        bool is_comparable_with( const MultiIndex& mi ) const;
 
-        bool less( const MultiIndex& ) const;
-
-        bool equals( const MultiIndex& ) const;
+        bool is_equal_to( const MultiIndex& mi ) const;
                 
+        bool is_less_than( const MultiIndex& mi ) const;
+
 };
 
 
@@ -94,10 +106,11 @@ inline MultiIndex ZeroMultiIndex( const IndexRange& ir )
 
 
 
-inline std::ostream& operator<<( std::ostream& os, const MultiIndex& mi )
+template<typename Stream>
+inline Stream& operator<<( Stream&& os, const MultiIndex& mi )
 {
     mi.check();
-    mi.print( os );
+    os << mi.text(); // mi.print( os );
     return os;
 }
 
@@ -175,7 +188,7 @@ inline bool operator==( const MultiIndex& it, const MultiIndex& mi)
 {
     it.check();
     mi.check();
-    return it.equals( mi );
+    return it.is_equal_to( mi );
 }
                 
 inline bool operator!=( const MultiIndex& it, const MultiIndex& mi)
@@ -189,7 +202,7 @@ inline bool operator<( const MultiIndex& it, const MultiIndex& mi)
 {
     it.check();
     mi.check();
-    return it.less( mi );
+    return it.is_less_than( mi );
 }
                 
 inline bool operator>( const MultiIndex& it, const MultiIndex& mi)

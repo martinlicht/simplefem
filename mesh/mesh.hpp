@@ -2,10 +2,7 @@
 #define INCLUDEGUARD_MESH_MESH_HPP
 
 
-#include <iostream>
-#include <fstream>
-#include <map>
-#include <string>
+// #include <ostream>
 #include <utility>
 #include <vector>
 
@@ -30,12 +27,18 @@
 *******************/
 
 
-typedef unsigned int SimplexFlag;
+enum class SimplexFlag : unsigned char
+{
+    SimplexFlagNull      = 0x1B,
+    SimplexFlagInvalid   = 0x77,
+    SimplexFlagDirichlet = 0xF1 
+};
 
-const SimplexFlag SimplexFlagNull    = 0x1B1B1B1B;
-const SimplexFlag SimplexFlagInvalid = 0x77777777;
+// const SimplexFlag SimplexFlagNull    = 0x1B;
+// const SimplexFlag SimplexFlagInvalid = 0x77;
 
-const SimplexFlag SimplexFlagDirichlet = 0xF1F1F1F1;
+// const SimplexFlag SimplexFlagDirichlet = 0xF1;
+
 
 
 /*******************
@@ -51,24 +54,36 @@ const SimplexFlag SimplexFlagDirichlet = 0xF1F1F1F1;
 ****  
 *******************/
 
-
 class Mesh
 {
     
     public:
         
+        /* Constructors */
+        
+        Mesh( int inner, int outer );
+        
+        /* standard interface */
+        
         Mesh( const Mesh& ) = default;
         Mesh& operator=( const Mesh& ) = default;
         Mesh( Mesh&& ) = default;
         Mesh& operator=( Mesh&& ) = default;
-        
-        
-        Mesh( int inner, int outer );
         virtual ~Mesh();
+        
+        
+        /* standard methods for operators */
         
         void check() const;
         
-        virtual void print( std::ostream& out ) const = 0;
+        // void print( std::ostream& out ) const;
+        
+        virtual std::string text() const = 0;
+        
+        // // void lg() const { LOG << *this << nl; };
+        
+        
+        /* OTHER METHODS */
         
         static const int nullindex; 
         
@@ -84,9 +99,9 @@ class Mesh
         
         int getouterdimension() const;
         
-        Coordinates& getcoordinates();
+        Coordinates& getCoordinates();
         
-        const Coordinates& getcoordinates() const;
+        const Coordinates& getCoordinates() const;
         
         
         
@@ -102,9 +117,11 @@ class Mesh
         
         /* Counting simplices */
         
-        virtual bool dimension_counted( int dim ) const = 0;
+        virtual bool has_dimension_counted( int dim ) const = 0;
         
         virtual int count_simplices( int dim ) const = 0;
+
+        std::vector<int> count_simplices() const;
         
         
         
@@ -119,15 +136,17 @@ class Mesh
          * 
          */
         
-        virtual bool subsimplices_listed( int sup, int sub ) const = 0;
+        virtual bool has_subsimplices_listed( int sup, int sub ) const = 0;
         
-        virtual IndexMap getsubsimplices( int sup, int sub, int cell ) const = 0;
+        virtual IndexMap get_subsimplices( int sup, int sub, int cell ) const = 0;
         
         virtual bool is_subsimplex( int sup, int sub, int cellsup, int cellsub ) const;
         
         virtual int get_subsimplex_index( int sup, int sub, int cellsup, int cellsub ) const;
         
         virtual int get_subsimplex( int sup, int sub, int cellsup, int localindex ) const;
+        
+        int get_opposite_subsimplex_index( int sup, int sub, int cellsup, int localindex ) const;
         
         
         
@@ -141,9 +160,9 @@ class Mesh
          * 
          */
         
-        virtual bool supersimplices_listed( int sup, int sub ) const = 0;
+        virtual bool has_supersimplices_listed( int sup, int sub ) const = 0;
         
-        virtual const std::vector<int> getsupersimplices( int sup, int sub, int cell ) const = 0;
+        virtual const std::vector<int> get_supersimplices( int sup, int sub, int cell ) const = 0;
         
         virtual bool is_supersimplex( int sup, int sub, int cellsup, int cellsub ) const;
         
@@ -158,12 +177,7 @@ class Mesh
         virtual int get_index_of_supersimplex( int sup, int sub, int cellsup, int cellsub ) const;
         
         virtual int get_supersimplex_by_index( int sup, int sub, int cellsub, int parentindex ) const;
-        
-        // TODO: Iterator interface
-        // ContainerInterface -- container.hpp 
-        // derive from that class 
-        
-        
+
         
         /* 
          * 
@@ -183,7 +197,9 @@ class Mesh
         
         void automatic_dirichlet_flags();
         
-        void check_dirichlet_flags();
+        void complete_dirichlet_flags_from_facets();
+        
+        void check_dirichlet_flags( bool check_for_full_dirichlet = true );
         
         
         /* 
@@ -193,20 +209,64 @@ class Mesh
         
         Float getDiameter( int dim, int index ) const;
         
+        Float getMaximumDiameter() const;
+        Float getMinimumDiameter() const;
+        
         Float getMeasure( int dim, int index ) const;
+        
+        Float getHeight( int dim, int index, int vertexindex ) const;
+        FloatVector getHeightVector( int dim, int index, int vertexindex ) const;
+        
+        Float getHeightQuotient( int dim, int index ) const;
+        Float getHeightQuotient( int dim ) const;
+        Float getHeightQuotient() const;
         
         Float getShapemeasure( int dim, int index ) const;
         Float getShapemeasure( int dim ) const;
         Float getShapemeasure() const;
+
+        int getVertexPatchSize() const;
+        
+        int getSupersimplexSize( int dim ) const;
+        
+        Float getComparisonQuotient() const;
+
+        Float getRadiiQuotient( int dim ) const;
+        
+        FloatVector get_midpoint( int dim, int index ) const;
+
+        FloatVector get_random_point( int dim, int index ) const;
+
+        FloatVector getPointFromBarycentric( int dim, int index, const FloatVector& barycoords ) const;
+
+        
+        int get_longest_edge_index( int dim, int index ) const;
         
         DenseMatrix getVertexCoordinateMatrix( int dim, int index ) const;
         
         DenseMatrix getTransformationJacobian( int dim, int index ) const;
+
+        DenseMatrix getBarycentricProjectionMatrix( int dim, int index ) const; 
+        
+        DenseMatrix getGradientMatrix( int dim, int index ) const;
         
         DenseMatrix getGradientProductMatrix( int dim, int index ) const;
         
         DenseMatrix getGradientProductMatrixRightFactor( int dim, int index ) const;
+
+
+        FloatVector transform_whitney_to_euclidean( int dim, const FloatVector& whitneyvalues, int zero_padding = 0 ) const;
+
         
+        /* 
+         * Manipulation
+         * 
+         */
+        
+        void shake_interior_vertices( Float intensity = 0.10, Float probability = 0.5 );
+        
+
+        virtual std::size_t memorysize() const = 0;
         
     private:
         
@@ -217,29 +277,32 @@ class Mesh
         
     private:
         
-        std::vector< std::vector< std::vector<IndexMap> > > auxdata;
+        // std::vector< std::vector< std::vector<IndexMap> > > auxdata;
         
     public: 
         
 #if __cplusplus >= 201402L
-        const auto& getauxdata() { return auxdata; }
+        // const auto& getauxdata() { return auxdata; }
 #else
-        const decltype(auxdata)& getauxdata() { return auxdata; }
+        // const decltype(auxdata)& getauxdata() { return auxdata; }
 #endif
         
+        template<typename Stream>
+        friend inline Stream& operator<<( Stream&& os, const Mesh& mesh )
+        {
+            os << mesh.text(); // mesh.print( os );
+            return os;
+        }
+
 };
 
 
 
 
-inline std::ostream& operator<<( std::ostream& os, const Mesh& mesh )
-{
-    mesh.print( os );
-    return os;
-}
 
 
 
+FloatVector get_random_barycentric_coordinates( int dim );
 
 // static inline int countsubsimplices( int n, int k )
 // {

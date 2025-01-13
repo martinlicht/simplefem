@@ -1,8 +1,4 @@
 
-
-/**/
-
-#include <iostream>
 #include <sstream>
 #include "../../basic.hpp"
 #include "../../mesh/coordinates.hpp"
@@ -11,12 +7,11 @@
 
 using namespace std;
 
-int main()
+int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for Coordinates" << endl;
+    LOG << "Unit Test for Coordinates" << nl;
     
-    {
-        
+    {        
         Coordinates coords(5,0);
         
         assert( coords == coords );
@@ -34,7 +29,7 @@ int main()
         assert( coords == coords2 );
     }
     
-    LOG << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
     
     return 0;
 }

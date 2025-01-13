@@ -2,9 +2,7 @@
 #define INCLUDEGUARD_MESH_SIMPLICIAL_2D_HPP
 
 
-#include <fstream>
-#include <iostream>
-#include <map>
+#include <array>
 #include <string>
 #include <utility>
 #include <vector>
@@ -36,11 +34,7 @@ class MeshSimplicial2D
 
     public:
     
-        MeshSimplicial2D( const MeshSimplicial2D& ) = default;
-        MeshSimplicial2D& operator=( const MeshSimplicial2D& ) = default;
-        MeshSimplicial2D( MeshSimplicial2D&& ) = default;
-        MeshSimplicial2D& operator=( MeshSimplicial2D&& ) = default;
-
+        /* Constructors */
         
         explicit MeshSimplicial2D( int outerdim = 2 );
         
@@ -65,27 +59,40 @@ class MeshSimplicial2D
         );
         
         
+        /* standard methods for operators */
+        
+        MeshSimplicial2D( const MeshSimplicial2D& ) = default;
+        MeshSimplicial2D& operator=( const MeshSimplicial2D& ) = default;
+        MeshSimplicial2D( MeshSimplicial2D&& ) = default;
+        MeshSimplicial2D& operator=( MeshSimplicial2D&& ) = default;
         virtual ~MeshSimplicial2D();
+        
+        /* standard interface */
         
         virtual void check() const;
         
-        virtual void print( std::ostream& out ) const override;
+        // virtual void print( std::ostream& out ) const override;
+
+        virtual std::string text() const override;
+
+        /* OTHER METHODS */
         
-        bool compare( const MeshSimplicial2D& mesh ) const;
+        
+        bool is_equal_to( const MeshSimplicial2D& mesh ) const;
         
         /* inherited methods */
         
-        virtual bool dimension_counted( int dim ) const override;
+        virtual bool has_dimension_counted( int dim ) const override;
         
         virtual int count_simplices( int dim ) const override;
         
-        virtual bool subsimplices_listed( int sup, int sub ) const override;
+        virtual bool has_subsimplices_listed( int sup, int sub ) const override;
         
-        virtual IndexMap getsubsimplices( int sup, int sub, int cell ) const override;
+        virtual IndexMap get_subsimplices( int sup, int sub, int cell ) const override;
         
-        virtual bool supersimplices_listed( int sup, int sub ) const override;
+        virtual bool has_supersimplices_listed( int sup, int sub ) const override;
         
-        virtual const std::vector<int> getsupersimplices( int sup, int sub, int cell ) const override;
+        virtual const std::vector<int> get_supersimplices( int sup, int sub, int cell ) const override;
         
         
         virtual SimplexFlag get_flag( int dim, int index ) const override;
@@ -223,7 +230,30 @@ class MeshSimplicial2D
         
         /* TikZ */
         
-        void outputTikZ( std::ostream& os ) const;
+        std::string outputTikZ() const;
+
+        std::string outputSVG( 
+            Float stroke_width = 0.01,
+            const std::string& fill   = "white",
+            const std::string& stroke = "black",
+            const FloatVector* triangle_red   = nullptr,
+            const FloatVector* triangle_green = nullptr,
+            const FloatVector* triangle_blue  = nullptr
+        ) const;
+
+        std::string outputLinearSVG( 
+            const FloatVector& triangle_red,
+            const FloatVector& triangle_green,
+            const FloatVector& triangle_blue, 
+            Float stroke_width = 0.01,
+            const std::string& fill   = "red",
+            const std::string& stroke = "blue"
+        ) const;
+
+
+        /* other */ 
+        
+        virtual std::size_t memorysize() const override;
         
         
         
@@ -251,6 +281,20 @@ class MeshSimplicial2D
         std::vector<SimplexFlag> flags_vertices;
 
 
+    public:
+
+        inline bool operator==( const MeshSimplicial2D& m2 ) const 
+        {
+            return this->is_equal_to( m2 );
+        }
+
+        inline bool operator!=( const MeshSimplicial2D& m2 ) const 
+        {
+            return !( *this == m2 );
+        }
+
+
+
 };
 
 
@@ -263,19 +307,6 @@ class MeshSimplicial2D
 // }
 
 
-
-
-
-
-inline bool operator==( const MeshSimplicial2D& m1, const MeshSimplicial2D& m2 )
-{
-    return m1.compare( m2 );
-}
-
-inline bool operator!=( const MeshSimplicial2D& m1, const MeshSimplicial2D& m2 )
-{
-    return !( m1 == m2 );
-}
 
 
 

@@ -1,10 +1,8 @@
 
-#include <cassert>
 #include <cmath>
 #include <cstdlib>
 #include <algorithm>
 #include <functional>
-#include <iostream>
 #include <limits>
 #include <memory>
 #include <new>
@@ -18,6 +16,7 @@
 #include "../operators/floatvector.hpp"
 #include "../operators/simpleoperators.hpp"
 #include "../sparse/sparsematrix.hpp"
+#include "../utility/random.hpp"
 
 
 DenseMatrix::DenseMatrix( const DenseMatrix& mat )
@@ -31,7 +30,7 @@ DenseMatrix::DenseMatrix( const DenseMatrix& mat )
 }
         
 DenseMatrix::DenseMatrix( DenseMatrix&& mat )
-: LinearOperator( mat.getdimout(), mat.getdimin() ), entries( mat.entries )
+: LinearOperator( mat.getdimout(), mat.getdimin() ), entries( std::move(mat.entries) )
 {
     assert( entries != nullptr );
     mat.entries = nullptr;
@@ -122,6 +121,18 @@ DenseMatrix::DenseMatrix( int rows, int columns, const std::vector<FloatVector>&
     DenseMatrix::check();
 }
 
+DenseMatrix::DenseMatrix( int rows, int columns, const std::initializer_list<Float>& rowdata )
+: LinearOperator( rows, columns ), entries( new (std::nothrow) Float[ rows * columns ] )
+{
+    assert( rowdata.size() == rows * columns );
+    assert( entries != nullptr );
+
+    int i = 0;
+    for( const Float& f : rowdata ) entries[i++] = f;
+    DenseMatrix::check();
+}
+
+
 
 DenseMatrix::DenseMatrix( const ScalingOperator& scaling )
 : LinearOperator( scaling.getdimout(), scaling.getdimin() ), 
@@ -147,7 +158,7 @@ DenseMatrix::DenseMatrix( const DiagonalOperator& dia )
         
 DenseMatrix::DenseMatrix( const SparseMatrix& matrix )
 : LinearOperator( matrix.getdimout(), matrix.getdimin() ), 
-  entries( new (std::nothrow) Float[ matrix.getdimout() * matrix.getdimin() ] )
+  entries( new (std::nothrow) Float[ matrix.getdimout() * matrix.getdimin() ]() )
 {
     assert( entries != nullptr );
     for( const SparseMatrix::MatrixEntry& entry : matrix.getentries() )
@@ -168,6 +179,47 @@ DenseMatrix::DenseMatrix( const FloatVector& myvector )
     }
     DenseMatrix::check();
 }
+
+
+DenseMatrix::DenseMatrix( int number_of_blocks, const DenseMatrix& mat, Float scaling )
+: LinearOperator( mat.getdimout() * number_of_blocks, mat.getdimin() * number_of_blocks), 
+  entries( new (std::nothrow) Float[ number_of_blocks * number_of_blocks * mat.getdimout() * mat.getdimin() ] ) // wierd
+{
+    assert( number_of_blocks >= 0);
+    assert( entries != nullptr );
+    
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimin(); c++ )
+        (*this)( r, c ) = 0.;
+    
+    for( int b = 0; b < number_of_blocks; b++ )
+    for( int r = 0; r < mat.getdimout(); r++ )
+    for( int c = 0; c < mat.getdimin(); c++ )
+        (*this)( b * mat.getdimout() + r, b * mat.getdimin() + c ) = scaling * mat( r, c );
+    DenseMatrix::check();
+}
+
+DenseMatrix::DenseMatrix( const DenseMatrix& mat, Float scaling )
+: LinearOperator( mat.getdimout(), mat.getdimin() ), entries( new (std::nothrow) Float[ mat.getdimout() * mat.getdimin() ] ) // wierd
+{
+    assert( entries != nullptr );
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimin(); c++ )
+        (*this)(r,c) = scaling * mat(r,c);
+    DenseMatrix::check();
+}
+
+DenseMatrix::DenseMatrix( DenseMatrix&& mat, Float scaling )
+: LinearOperator( mat.getdimout(), mat.getdimin() ), entries( std::move(mat.entries) )
+{
+    assert( entries != nullptr );
+    mat.entries = nullptr;
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimin(); c++ )
+        (*this)(r,c) *= scaling;
+    DenseMatrix::check();
+}
+
         
 DenseMatrix::~DenseMatrix()
 {
@@ -192,28 +244,49 @@ void DenseMatrix::check() const
 //     assert( entries != nullptr );
 }
 
-void DenseMatrix::print( std::ostream& os ) const
+std::string DenseMatrix::text() const
 {
     check();
-    os << "Print Matrix " << getdimout() << "x" << getdimin() << nl;
+    std::string ret = "Dense Matrix " + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) + nl;
     for( int r = 0; r < getdimout(); r++ ) {
         for( int c = 0; c < getdimin(); c++ )
-            os << (*this)(r,c) << "\t";
-        os << nl;
+            ret += printf_into_string( "% .10le", (double)(safedouble)at(r,c) ) + "\t";
+        ret += nl;
     }
-    os << std::endl;
+    return ret;
 }
 
-void DenseMatrix::printplain( std::ostream& os ) const
+std::string DenseMatrix::data_as_text( bool indexed, bool print_as_list ) const
 {
-    check();
-    os << getdimout() << space << getdimin() << nl;
-    for( int r = 0; r < getdimout(); r++ ) {
+    const int nc_precision = 10;
+
+    const int nc_width = 7 + nc_precision;
+    
+    std::string ret;
+
+    if( print_as_list ){
+        
+        for( int r = 0; r < getdimout(); r++ )
         for( int c = 0; c < getdimin(); c++ )
-            os << (*this)(r,c) << "\t";
-        os << nl;
-    }
-    os << std::endl;
+            if(indexed) 
+                ret += printf_into_string("%*d %*d %*.*le\n", nc_width, r, nc_width, c, nc_width, nc_precision, (double)(safedouble)(*this)(r,c) );
+            else
+                ret += printf_into_string("%*.*le\n", nc_width, nc_precision, (double)(safedouble)(*this)(r,c) );
+        
+    } else {
+
+        for( int r = 0; r < getdimout(); r++ ) {
+
+            if(indexed) ret += printf_into_string( "%*d : ", nc_width, r );
+            
+            for( int c = 0; c < getdimin(); c++ )
+                ret += printf_into_string( "%*.*le ", nc_width, nc_precision, (double)(safedouble)(*this)(r,c) );
+            
+            ret += '\n'; 
+        }
+            }
+
+    return ret;
 }
 
 
@@ -322,10 +395,19 @@ DenseMatrix DenseMatrix::submatrix( const IndexMap& rows, const IndexMap& column
     rows.check(); 
     columns.check();
     
-    assert( rows.isstrictlyascending()    );
-    assert( columns.isstrictlyascending() );
+    assert( rows.getSourceRange().min() == 0 );
+    assert( rows.getSourceRange().max() <= getdimout() - 1 );
+    assert( rows.getTargetRange().min() == 0 );
+    assert( rows.getTargetRange().max() == getdimout() - 1 );
+    assert( columns.getSourceRange().min() == 0 );
+    assert( columns.getSourceRange().max() <= getdimin() - 1 );
+    assert( columns.getTargetRange().min() == 0 );
+    assert( columns.getTargetRange().max() == getdimin() - 1 );
+
+    assert( rows.is_strictly_ascending()    );
+    assert( columns.is_strictly_ascending() );
     
-    DenseMatrix ret( rows.getSourceRange().cardinality(), columns.getSourceRange().cardinality(), 0. );
+    DenseMatrix ret( rows.getSourceRange().cardinality(), columns.getSourceRange().cardinality(), notanumber );
     
     for( int nr = 0; nr < ret.getdimout(); nr++ )
     for( int nc = 0; nc < ret.getdimin();  nc++ )
@@ -349,11 +431,11 @@ DenseMatrix DenseMatrix::submatrix( const IndexMap& rows, const IndexMap& column
 //     assert( columns.getSourceRange().max() <= getdimin() - 1 );
 //     assert( columns.getTargetRange().min() == 0 );
 //     assert( columns.getTargetRange().max() == getdimin() - 1 );
-//     assert( rows.isstrictlyascending() );
-//     assert( columns.isstrictlyascending() );
+//     assert( rows.is_strictly_ascending() );
+//     assert( columns.is_strictly_ascending() );
 //     
-//     DenseMatrix ret( std::max(0,rows.getSourceRange().max() - 1), 
-//                     std::max(0,columns.getSourceRange().max() - 1) );
+//     DenseMatrix ret( maximum(0,rows.getSourceRange().max() - 1), 
+//                     maximum(0,columns.getSourceRange().max() - 1) );
 //     for( int nr = 0; nr < ret.getdimout(); nr++ )
 //     for( int nc = 0; nc < ret.getdimin();  nc++ )
 //         ret( nr, nc ) = (*this)( rows[nr], columns[nc] );
@@ -363,7 +445,14 @@ DenseMatrix DenseMatrix::submatrix( const IndexMap& rows, const IndexMap& column
     
 }
 
-
+FloatVector DenseMatrix::getDiagonal() const {
+    int dim = minimum( getdimin(), getdimout() );
+    FloatVector ret( dim );
+    for( int d = 0; d < dim; d++ ) ret[d] = at(d,d);
+    return ret;
+}
+        
+        
 
 
 FloatVector DenseMatrix::flattencolumns() const
@@ -407,7 +496,7 @@ FloatVector DenseMatrix::flattenrows() const
 
 
 
-void DenseMatrix::zeromatrix()
+void DenseMatrix::zero_matrix()
 {
     check();
     for( int r = 0; r < getdimout(); r++ )
@@ -415,7 +504,7 @@ void DenseMatrix::zeromatrix()
         (*this)(r,c) = 0.;
 }
 
-void DenseMatrix::unitmatrix()
+void DenseMatrix::identity_matrix()
 {
     check();
     assert( getdimout() == getdimin() );
@@ -427,7 +516,7 @@ void DenseMatrix::unitmatrix()
             (*this)(r,c) = 0.;
 }
 
-void DenseMatrix::randommatrix()
+void DenseMatrix::random_matrix()
 {
     check();
     for( int r = 0; r < getdimout(); r++ )
@@ -435,13 +524,49 @@ void DenseMatrix::randommatrix()
         (*this)(r,c) = gaussrand();
 }
 
-void DenseMatrix::randomintegermatrix( int min, int max )
+void DenseMatrix::random_integer_matrix( int min, int max )
 {
     check();
+    assert( min < max );
     assert( min+2 <= max );
+    unsigned long int diff = max - min;
+    assert( diff+1 > 0 );
+    // LOG << diff << nl << max << nl << min << nl;
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin(); c++ )
-        (*this)(r,c) = min + random_integer() % (max-min);
+    {
+        unsigned int random_int = random_integer();
+        Float value = random_int % (diff+1) + (Float)min; // force the addition to be floating-point, avoid unsigned arithmetic
+        assert( min <= value and value <= max );
+        (*this)(r,c) = value;
+    }
+        
+}
+
+void DenseMatrix::random_orthogonal_matrix()
+{
+    check();
+    assert( is_square() );
+
+    const auto N = getdimin();
+    auto rows = std::vector<FloatVector>( N, FloatVector(N) );
+    
+    for( auto& row : rows ) { 
+        row.random(); 
+        row.normalize(); 
+        assert( row.is_finite() ); 
+        assert( std::isfinite( row.norm() ) ); 
+    }
+    
+    for( int i = 0; i < N; i++ ) {
+        for( int j = 0; j < i; j++ )
+            rows[i] -= (rows[i]*rows[j]) * rows[j];
+        rows[i].normalize();
+    }
+    
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimin(); c++ )
+        (*this)(r,c) = rows[r][c];
 }
 
 void DenseMatrix::scale( Float s )
@@ -603,13 +728,13 @@ void DenseMatrix::indexmapping( const IndexMap& im )
 {
     check();
     im.check();
-    if( im.getSourceRange().isempty() )
+    if( im.getSourceRange().is_empty() )
         return;
     assert( im.getSourceRange().min() == 0 );
     assert( im.getSourceRange().max() == getdimin() - 1 );
     assert( im.getTargetRange().min() == 0 );
     assert( im.getTargetRange().max() == getdimout() - 1 );
-    zeromatrix();
+    zero_matrix();
     for( int c = 0; c < im.getSourceRange().max() - 1; c++ )
         (*this)( im[c], c ) = 1.;
     check();
@@ -622,12 +747,22 @@ void DenseMatrix::indexmapping( const IndexMap& im )
         
 void DenseMatrix::add( const DenseMatrix& addendum )
 {
-    add( 1., addendum );
+    check();
+    addendum.check();
+    for( int r = 0; r < getdimout(); r++ )
+        for( int c = 0; c < getdimin(); c++ )
+            (*this)(r,c) = (*this)(r,c) + addendum(r,c);
+    check();
 }
 
-void DenseMatrix::add( Float s, const DenseMatrix& addendum )
+void DenseMatrix::add( Float t, const DenseMatrix& addendum )
 {
-    add( 1., s, addendum );
+    check();
+    addendum.check();
+    for( int r = 0; r < getdimout(); r++ )
+        for( int c = 0; c < getdimin(); c++ )
+            (*this)(r,c) = (*this)(r,c) + t * addendum(r,c);
+    check();
 }
 
 void DenseMatrix::add( Float s, Float t, const DenseMatrix& addendum )
@@ -645,7 +780,7 @@ void DenseMatrix::add( Float s, Float t, const DenseMatrix& addendum )
 
 DenseMatrix DenseMatrix::symmetricPart() const 
 {
-    assert( issquare() );
+    assert( is_square() );
     DenseMatrix ret( getdimout() );
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin();  c++ )
@@ -655,7 +790,7 @@ DenseMatrix DenseMatrix::symmetricPart() const
 
 DenseMatrix DenseMatrix::antisymmetricPart() const 
 {
-    assert( issquare() );
+    assert( is_square() );
     DenseMatrix ret( getdimout() );
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin();  c++ )
@@ -674,7 +809,7 @@ Float DenseMatrix::maxabsoluteentry() const
     Float ret = - std::numeric_limits<Float>::infinity();
     for( int r = 0; r < getdimout(); r++ )
         for( int c = 0; c < getdimin(); c++ )
-            ret = std::max( ret, (*this)(r,c) );
+            ret = maximum( ret, (*this)(r,c) );
     return ret;
 }
 
@@ -686,36 +821,112 @@ Float DenseMatrix::maxabsoluteentry() const
 
 
 
-bool DenseMatrix::issquare() const
+bool DenseMatrix::is_square() const
 {
     return getdimout() == getdimin();
 }
 
-bool DenseMatrix::issymmetric() const
+bool DenseMatrix::is_symmetric() const
 {
-    if( not issquare() ) return false;
+    if( not is_square() ) return false;
     
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c <= r; c++ )
-        if( not isabout( get(r,c), get(c,r) ) ) 
+        if( not is_numerically_close( get(r,c), get(c,r) ) ) 
             return false;
     
     return true;
 }
 
-bool DenseMatrix::isantisymmetric() const
+bool DenseMatrix::is_antisymmetric() const
 {
-    if( not issquare() ) return false;
+    if( not is_square() ) return false;
     
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c <= r; c++ )
-        if( not isabout( get(r,c), -get(c,r) ) ) 
+        if( not is_numerically_close( get(r,c), -get(c,r) ) ) 
             return false;
     
     return true;
 }
 
-bool DenseMatrix::isfinite() const
+
+
+        
+bool DenseMatrix::is_diagonal() const
+{
+    if( not is_square() ) return false;
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimout(); c++ )
+    {
+        if( r == c ) continue;
+        if( get(r,c) != 0 ) return false;
+    }
+    return true;
+}
+
+bool DenseMatrix::is_lower_left_triangular() const
+{
+    if( not is_square() ) return false;
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimout(); c++ )
+    {
+        if( r >= c ) continue;
+        if( get(r,c) != 0 ) return false;
+    }
+    return true;
+}
+
+bool DenseMatrix::is_lower_right_triangular() const
+{
+    if( not is_square() ) return false;
+
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimout(); c++ )
+    {
+        bool skip_me = ( c >= getdimout() - r - 1 );
+
+        // LOG << ( skip_me ? '1' : '0' );
+        // if( c == getdimout()-1) LOG << nl;
+
+        if( skip_me ) continue;
+        if( get(r,c) != 0 ) return false;
+    }
+    return true;
+}
+
+bool DenseMatrix::is_upper_left_triangular() const
+{
+    if( not is_square() ) return false;
+    
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimout(); c++ )
+    {
+        bool skip_me = ( r <= getdimin()-1-c );
+
+        // LOG << ( skip_me ? '1' : '0' );
+        // if( c == getdimout()-1) LOG << nl;
+
+        if( skip_me ) continue;
+        if( get(r,c) != 0 ) return false;
+    }
+    return true;
+}
+
+bool DenseMatrix::is_upper_right_triangular() const
+{
+    if( not is_square() ) return false;
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimout(); c++ )
+    {
+        if( r <= c ) continue;
+        if( get(r,c) != 0 ) return false;
+    }
+    return true;
+}
+
+
+bool DenseMatrix::is_finite() const
 {
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin();  c++ )
@@ -724,7 +935,7 @@ bool DenseMatrix::isfinite() const
     return true;
 }
 
-bool DenseMatrix::iszero() const
+bool DenseMatrix::is_zero() const
 {
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin();  c++ )
@@ -735,7 +946,7 @@ bool DenseMatrix::iszero() const
 
 
 
-bool DenseMatrix::ispositive() const 
+bool DenseMatrix::is_positive() const 
 {
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin();  c++ )
@@ -744,7 +955,7 @@ bool DenseMatrix::ispositive() const
     return true;
 }
 
-bool DenseMatrix::isnegative() const
+bool DenseMatrix::is_negative() const
 {
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin();  c++ )
@@ -753,7 +964,7 @@ bool DenseMatrix::isnegative() const
     return true;
 }
 
-bool DenseMatrix::isnonnegative() const
+bool DenseMatrix::is_nonnegative() const
 {
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin();  c++ )
@@ -762,7 +973,7 @@ bool DenseMatrix::isnonnegative() const
     return true;
 }
 
-bool DenseMatrix::isnonpositive() const
+bool DenseMatrix::is_nonpositive() const
 {
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin();  c++ )
@@ -771,9 +982,22 @@ bool DenseMatrix::isnonpositive() const
     return true;
 }
 
-bool DenseMatrix::issmall( Float eps ) const
+bool DenseMatrix::is_numerically_small( Float threshold ) const
 {
-    return this->norm() < eps;
+    return this->sumnorm() < threshold;
+}
+
+bool DenseMatrix::is_numerically_identity( Float threshold ) const
+{
+    //Float sum = 0.;
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimin();  c++ )
+    {
+        if ( r == c and absolute( get(r,c) - 1.0 ) >= threshold ) return false;
+
+        if ( r != c and absolute( get(r,c) ) >= threshold ) return false;
+    }
+    return true;
 }
 
 
@@ -786,12 +1010,17 @@ Float DenseMatrix::norm() const
     return std::sqrt( ret );
 }
 
+Float DenseMatrix::frobeniusnorm() const
+{
+    return norm();
+}
+
 Float DenseMatrix::maxnorm() const
 {
     Float ret = 0.;
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin();  c++ )
-        ret = std::max( ret, get(r,c) );
+        ret = maximum( ret, absolute( get(r,c) ) );
     return ret;
 }
 
@@ -806,13 +1035,174 @@ Float DenseMatrix::sumnorm() const
 
 Float DenseMatrix::lpnorm( Float p ) const
 {
-    assert( p > 1. );
+    assert( p >= 1. );
     Float ret = 0.;
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin();  c++ )
         ret += power_numerical( absolute( get(r,c) ), p );
     return power_numerical( ret, 1. / p );
 }
+
+Float DenseMatrix::norm_row_col( Float p, Float q ) const 
+{
+    check();
+    assert( 1. <= p && 1. <= q );
+    Float ret = 0.;
+    for( int r = 0; r < getdimout(); r++ ) {
+        Float zeile = 0.;
+        for( int c = 0; c < getdimin(); c++ )
+            zeile += power_numerical( absolute( get(r,c) ), q );
+        ret += power_numerical( zeile, p/q );
+    }
+    ret = power_numerical( ret, 1. / p );
+    return ret;
+}
+
+Float DenseMatrix::norm_col_row( Float p, Float q ) const 
+{
+    check();
+    assert( 1. <= p && 1. <= q );
+    Float ret = 0.;
+    for( int c = 0; c < getdimin(); c++ ) {
+        Float spalte = 0.;
+        for( int r = 0; r < getdimout(); r++ )
+            spalte += power_numerical( absolute( get(r,c) ), q );
+        ret += power_numerical( spalte, p/q );
+    }
+    ret = power_numerical( ret, 1. / p );
+    return ret;
+}
+
+Float DenseMatrix::norm_operator_l1() const 
+{
+    check();
+    Float ret = 0.;
+    for( int c = 0; c < getdimin(); c++ ) {
+        Float spalte = 0.;
+        for( int r = 0; r < getdimout(); r++ )
+            spalte += absolute( get(r,c) );
+        ret = maximum( ret, spalte );
+    }
+    return ret;
+}
+
+Float DenseMatrix::norm_operator_max() const 
+{
+    check();
+    Float ret = 0.;
+    for( int r = 0; r < getdimout(); r++ ) {
+        Float zeile = 0.;
+        for( int c = 0; c < getdimin(); c++ )
+            zeile += absolute( get(r,c) );
+        ret = maximum( ret, zeile );
+    }
+    return ret;
+}
+
+
+
+
+
+
+Float DenseMatrix::trace() const 
+{
+    check();
+    assert( is_square() );
+    Float ret = 0.;
+    for( int i = 0; i < getdimout(); i++ )
+      ret += get(i,i);
+    return ret;
+}
+
+
+DenseMatrix DenseMatrix::Gerschgorin() const 
+{
+    check();
+    assert( is_square() );
+    return GerschgorinRow();
+}
+
+DenseMatrix DenseMatrix::GerschgorinRow() const 
+{
+    check();
+    assert( is_square() );
+    DenseMatrix ret( getdimout(), 2 );
+    for( int r = 0; r < getdimout(); r++ )
+    {
+        ret( r, 0 ) = get(r,r);
+        ret( r, 1 ) = 0.;
+        for( int c = 0; c < r; c++ )
+            ret( r, 1 ) += absolute( get(r,c) );
+        for( int c = r+1; c < getdimout(); c++ )
+            ret( r, 1 ) += absolute( get(r,c) );
+    }
+    return ret;
+}
+
+DenseMatrix DenseMatrix::GerschgorinColumn() const
+{
+    check();
+    assert( is_square() );
+    DenseMatrix ret( getdimout(), 2 );
+    for( int c = 0; c < getdimout(); c++ )
+    {
+        ret( c, 0 ) = get(c,c);
+        ret( c, 1 ) = 0.;
+        for( int r = 0; r < c; r++ )
+            ret( c, 1 ) += absolute( get(r,c) );
+        for( int r = c+1; r < getdimout(); r++ )
+            ret( c, 1 ) += absolute( get(r,c) );
+    }
+    return ret;
+}
+
+Float DenseMatrix::eigenvalue_estimate() const 
+{
+    assert( is_square() );
+    return maxnorm() * getdimout();
+}
+
+Float DenseMatrix::operator_norm_estimate( int sample_number, int iteration_number ) const
+{
+    assert( sample_number    > 0 );
+    assert( iteration_number > 0 );
+
+    const auto&  M = *this;
+    
+    DenseMatrix Mt( M.getdimin(), M.getdimout() );
+    for( int r = 0; r < M.getdimout(); r++ )
+    for( int c = 0; c < M.getdimin();  c++ )
+        Mt(c,r) = M(r,c);
+
+    DenseMatrix MtM = Mt * M;
+
+    Float ret = 0.;
+
+    auto vec = MtM.createinputvector();
+
+    for( int s1 = 0; s1 < sample_number; s1++ )
+    {
+        vec.random();
+        assert( vec.is_finite() );
+
+        for( int i = 0; i < iteration_number; i++ )
+        {
+            vec.normalize();
+            assert( vec.is_finite() );
+            vec = MtM * vec;
+        }
+        
+        ret = maximum( ret, std::sqrt( vec.norm() ) );
+
+    }
+    
+    return ret;
+}
+
+
+
+
+
 
 
 Float* DenseMatrix::raw()
@@ -824,3 +1214,136 @@ const Float* DenseMatrix::raw() const
 {
     return entries;
 }
+
+/* Memory size */
+        
+std::size_t DenseMatrix::memorysize() const
+{
+    return sizeof(*this) + getdimin() * getdimout() * sizeof(this->entries[0]);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DenseMatrix IdentityMatrix( int dim )
+{
+    return DenseMatrix( dim, []( int r, int c ) -> Float{ return r==c ? 1. : 0.; } );
+}
+
+
+
+
+DenseMatrix MatrixMult( const DenseMatrix& left, const DenseMatrix& right )
+{
+    left.check();
+    right.check();
+
+    const int lin = left.getdimin();
+    const int lout = left.getdimout();
+    const int rin = right.getdimin();
+    const int rout = right.getdimout();
+
+    assert( lin == rout );
+
+    DenseMatrix ret( lout, rin, 0. );
+    
+    for( int lo = 0; lo < lout; lo++ )
+    for( int ri = 0; ri < rin; ri++ )
+    for( int m = 0; m < rout; m++ )
+        ret( lo, ri ) += left( lo, m ) * right( m, ri );
+
+    ret.check();
+    return ret;
+}
+
+
+DenseMatrix MatrixTripleMult( const DenseMatrix& A, const DenseMatrix& B )
+{
+    A.check();
+    B.check();
+
+    assert( A.is_square());
+
+    const int a = A.getdimin();
+    const int b = B.getdimin();
+    
+    assert( a == B.getdimout() );
+
+    DenseMatrix ret( b, b, 0. );
+
+    for( int j = 0; j < b; j++ )
+    for( int k = 0; k < a; k++ ) 
+    {
+        Float AB_kj = 0;
+    
+        for( int l = 0; l < a; l++ )
+            AB_kj += A(k,l) * B(l,j);
+    
+        for( int i = 0; i < b; i++ )
+            ret(i,j) += B(k,i) * AB_kj;
+    }
+
+
+    // for( int i = 0; i < b; i++ )
+    // for( int k = 0; k < a; k++ )
+    // for( int j = 0; j < b; j++ )
+    // for( int l = 0; l < a; l++ )
+    //     ret( i, j ) += B(k,i) * A(k,l) * B(l,j);
+
+    ret.check();
+    return ret;
+}
+
+
+DenseMatrix HilbertMatrix( int n )
+{
+    std::function<Float(int,int)> hilbertmatrix_generator = [](int r, int c) { return 1. / (r+c+1); };
+
+    return DenseMatrix( n, hilbertmatrix_generator );
+}
+
+DenseMatrix InvHilbertMatrix( int n )
+{
+    std::function<Float(int,int)> invhilbertmatrix_generator = [=](int r, int c) { 
+        // https://mathoverflow.net/questions/47561/deriving-inverse-of-hilbert-matrix
+        const int i = r+1;
+        const int j = c+1;
+        return sign_power(i+j) * (i+j-1)
+               * binomial_numerical( n+i-1, n-j )
+               * binomial_numerical( n+j-1, n-i )
+               * square( binomial_numerical(i+j-2,i-1) );
+    };
+
+    return DenseMatrix( n, invhilbertmatrix_generator );
+}
+
+Float HilbertDeterminant(int n) {
+    
+    long double detinv = 1.;
+
+    for( int k = 1; k <= n-1; k++ ) 
+    {
+        long double aux1 = factorial_numerical(2*k);
+        long double aux2 = factorial_numerical(k)*factorial_numerical(k);
+        long double binom = aux1/aux2;
+        detinv *= (2*k+1) * binom*binom;
+    }
+    
+    // LOG << "H1: " << 1./(double)detinv << std::endl;
+    // The determinant is c_n / denominator
+    return (Float)1./detinv;
+}
+

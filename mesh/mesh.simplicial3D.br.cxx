@@ -1,14 +1,12 @@
 
-#include <string>
-#include <vector>
-#include <stack> // TODO: change to something else such as list 
-#include <list>
-#include <map>
 #include <set>
-#include <utility>
-#include <algorithm>
-#include <iostream>
-#include <fstream>
+#include <vector>
+// #include <string>
+// #include <stack> // TODO: change to something else such as list 
+// #include <list>
+// #include <map>
+// #include <utility>
+// #include <algorithm>
 
 
 #include "../basic.hpp"
@@ -42,7 +40,7 @@
 void MeshSimplicial3D::bisect_edge( int e )
 {
     assert( 0 <= e && e < counter_edges );
-    check();
+    // check();
     
     
     
@@ -180,10 +178,10 @@ void MeshSimplicial3D::bisect_edge( int e )
     
     /* flags */
     {
-        flags_tetrahedra.resize( counter_tetrahedra + old_tetrahedra.size(),               SimplexFlagInvalid );
-        flags_faces.resize     ( counter_faces + old_faces.size() + old_tetrahedra.size(), SimplexFlagInvalid );
-        flags_edges.resize     ( counter_edges + 1 + old_faces.size(),                     SimplexFlagInvalid );
-        flags_vertices.resize  ( counter_vertices + 1,                                     SimplexFlagInvalid );
+        flags_tetrahedra.resize( counter_tetrahedra + old_tetrahedra.size(),               SimplexFlag::SimplexFlagInvalid );
+        flags_faces.resize     ( counter_faces + old_faces.size() + old_tetrahedra.size(), SimplexFlag::SimplexFlagInvalid );
+        flags_edges.resize     ( counter_edges + 1 + old_faces.size(),                     SimplexFlag::SimplexFlagInvalid );
+        flags_vertices.resize  ( counter_vertices + 1,                                     SimplexFlag::SimplexFlagInvalid );
         
         SimplexFlag flag_e = flags_edges[e];
         flags_vertices[ counter_vertices ] = flag_e;
@@ -212,7 +210,7 @@ void MeshSimplicial3D::bisect_edge( int e )
     /*                   */
     /*********************/
     
-    getcoordinates().append( midcoordinate );
+    getCoordinates().append( midcoordinate );
     
     
     
@@ -1057,7 +1055,7 @@ void MeshSimplicial3D::bisect_edge( int e )
     
     /* Done */
     
-    check();
+    // check();
     
 }
 

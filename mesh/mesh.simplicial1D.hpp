@@ -2,9 +2,7 @@
 #define INCLUDEGUARD_MESH_SIMPLICIAL_1D_HPP
 
 
-#include <fstream>
-#include <iostream>
-#include <map>
+#include <array>
 #include <string>
 #include <utility>
 #include <vector>
@@ -42,11 +40,7 @@ class MeshSimplicial1D
 
     public:
     
-        MeshSimplicial1D( const MeshSimplicial1D& ) = default;
-        MeshSimplicial1D& operator=( const MeshSimplicial1D& ) = default;
-        MeshSimplicial1D( MeshSimplicial1D&& ) = default;
-        MeshSimplicial1D& operator=( MeshSimplicial1D&& ) = default;
-
+        /* Constructors */
         
         explicit MeshSimplicial1D( int outerdim = 1 );
         
@@ -64,29 +58,41 @@ class MeshSimplicial1D
             const std::vector<int              >& vertex_firstparent_edge
         );
         
+        /* standard methods for operators */
         
+        MeshSimplicial1D( const MeshSimplicial1D& ) = default;
+        MeshSimplicial1D& operator=( const MeshSimplicial1D& ) = default;
+        MeshSimplicial1D( MeshSimplicial1D&& ) = default;
+        MeshSimplicial1D& operator=( MeshSimplicial1D&& ) = default;
         virtual ~MeshSimplicial1D();
         
-        bool compare( const MeshSimplicial1D& ) const;
+        /* standard interface */
         
         virtual void check() const;
         
-        virtual void print( std::ostream& out ) const override;
+        // virtual void print( std::ostream& out ) const override;
+        
+        virtual std::string text() const override;
+        
+        
+        /* OTHER METHODS */
+        
+        bool is_equal_to( const MeshSimplicial1D& mesh ) const;
         
         
         /* inherited methods */
         
-        virtual bool dimension_counted( int dim ) const override;
+        virtual bool has_dimension_counted( int dim ) const override;
         
         virtual int count_simplices( int dim ) const override;
         
-        virtual bool subsimplices_listed( int sup, int sub ) const override;
+        virtual bool has_subsimplices_listed( int sup, int sub ) const override;
         
-        virtual IndexMap getsubsimplices( int sup, int sub, int cell ) const override;
+        virtual IndexMap get_subsimplices( int sup, int sub, int cell ) const override;
         
-        virtual bool supersimplices_listed( int sup, int sub ) const override;
+        virtual bool has_supersimplices_listed( int sup, int sub ) const override;
         
-        virtual const std::vector<int> getsupersimplices( int sup, int sub, int cell ) const override;
+        virtual const std::vector<int> get_supersimplices( int sup, int sub, int cell ) const override;
         
         
         virtual SimplexFlag get_flag( int dim, int index ) const override;
@@ -147,7 +153,9 @@ class MeshSimplicial1D
         
         FloatVector get_edge_midpoint( int e ) const;
         
-        void merge( const MeshSimplicial1D& );
+        void merge( const MeshSimplicial1D& other );
+
+        virtual std::size_t memorysize() const override;
         
     private:
 
@@ -160,6 +168,20 @@ class MeshSimplicial1D
         
         std::vector<SimplexFlag> flags_edges;
         std::vector<SimplexFlag> flags_vertices;
+
+
+    public:
+
+        inline bool operator==( const MeshSimplicial1D& m2 ) const 
+        {
+            return this->is_equal_to( m2 );
+        }
+
+        inline bool operator!=( const MeshSimplicial1D& m2 ) const 
+        {
+            return !( *this == m2 );
+        }
+
         
         
 };
@@ -175,16 +197,6 @@ class MeshSimplicial1D
 
 
 
-
-inline bool operator==( const MeshSimplicial1D& m1, const MeshSimplicial1D& m2 )
-{
-    return m1.compare( m2 );
-}
-
-inline bool operator!=( const MeshSimplicial1D& m1, const MeshSimplicial1D& m2 )
-{
-    return !( m1 == m2 );
-}
 
 
 

@@ -2,8 +2,10 @@
 
 #include "generatemultiindices.hpp"
 
-#include <cassert>
 #include <vector>
+
+#include <algorithm>
+#include <random>
 
 #include "../basic.hpp"
 
@@ -19,10 +21,17 @@ std::vector<MultiIndex> generateMultiIndices( const IndexRange& ir, int degree )
     ir.check();
     std::vector<MultiIndex> ret;
     
-    /* if the index range is empty, then only the empty mapping is returned */
+    /* if the index range is empty and the degree is zero, then only the empty mapping is returned */
     
-    if( ir.isempty() ) {
+    if( ir.is_empty() && degree == 0) {
       ret.push_back( MultiIndex(ir) );
+      return ret;
+    }
+    
+    /* if the index range is empty and the degree is non-zero, we return an empty list */
+    
+    if( ir.is_empty() && degree > 0) {
+      assert( ret.size() == 0 );
       return ret;
     }
     
@@ -31,9 +40,9 @@ std::vector<MultiIndex> generateMultiIndices( const IndexRange& ir, int degree )
     
     ret.reserve( binomial_integer( ir.cardinality()-1 + degree, ir.cardinality()-1 ) );
     
-    int max_candidate = power_integer( degree+1, ir.cardinality() );
-    int min_index = ir.min();
-    int max_index = ir.max();
+    const int max_candidate = power_integer( degree+1, ir.cardinality() );
+    const int min_index = ir.min();
+    const int max_index = ir.max();
     
     for( int candidate = degree; candidate < max_candidate; candidate++ ) {
         
@@ -52,6 +61,11 @@ std::vector<MultiIndex> generateMultiIndices( const IndexRange& ir, int degree )
         
     }
     
+    if( /* DISABLES CODE */ ( false ) ){ 
+        std::mt19937 g( 123456789 );
+        std::shuffle( ret.begin(), ret.end(), g );
+    }
+
     assert( ret.size() == binomial_integer( ir.cardinality()-1 + degree, ir.cardinality()-1 ) );
     
     assert( ret.size() == ret.capacity() );

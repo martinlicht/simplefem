@@ -1,9 +1,10 @@
 
 #include "generateindexmaps.hpp"
 
-#include <cassert>
-#include <algorithm>
 #include <vector>
+
+#include <algorithm>
+#include <random>
 
 #include "../basic.hpp"
 #include "indexrange.hpp"
@@ -17,15 +18,20 @@ std::vector<IndexMap> generateEmptyMap( const IndexRange& from, const IndexRange
     
     from.check();
     to.check();
-    assert( from.isempty() );
+    assert( from.is_empty() );
     
-    IndexMap myempty = IndexMap( from, to, std::vector<int>(0) );
+    const IndexMap myempty = IndexMap( from, to, std::vector<int>(0) );
     myempty.check();
     
     std::vector<IndexMap> ret;
     ret.push_back( myempty );
-    return ret;
+
+    if( /* DISABLES CODE */ ( false ) ){ 
+        std::mt19937 g( 234567891 );
+        std::shuffle( ret.begin(), ret.end(), g );
+    }
     
+    return ret;    
 }
 
 
@@ -43,10 +49,10 @@ std::vector<IndexMap> generateIndexMaps( const IndexRange& from, const IndexRang
     from.check();
     to.check();
     
-    if( from.isempty() )
+    if( from.is_empty() )
         return generateEmptyMap( from, to );
     
-    if( to.isempty() )
+    if( to.is_empty() )
         return std::vector<IndexMap>();
     
     assert( from.cardinality() > 0 );
@@ -76,6 +82,11 @@ std::vector<IndexMap> generateIndexMaps( const IndexRange& from, const IndexRang
     for( const auto& foo : ret )
         foo.check();
     
+    if( /* DISABLES CODE */ ( false ) ){ 
+        std::mt19937 g( 345678912 );
+        std::shuffle( ret.begin(), ret.end(), g );
+    }
+    
     return ret;
     
 }
@@ -94,17 +105,22 @@ std::vector<IndexMap> generatePermutations( const IndexRange& ir )
 {
     
     ir.check();
-    std::vector<IndexMap> allmappings = generateIndexMaps( ir, ir );
+    const std::vector<IndexMap> allmappings = generateIndexMaps( ir, ir );
     
     std::vector<IndexMap> ret;
     ret.reserve( factorial_integer( ir.cardinality() ) );
     
     for( const auto& mapping : allmappings )
-        if( mapping.isbijective() )
+        if( mapping.is_bijective() )
         ret.push_back( mapping );
             
     for( const auto& perm : ret )
-        assert( (perm.check(),true) && perm.isbijective() );
+        assert( (perm.check(),true) && perm.is_bijective() );
+    
+    if( /* DISABLES CODE */ ( false ) ){ 
+        std::mt19937 g( 456789123 );
+        std::shuffle( ret.begin(), ret.end(), g );
+    }
     
     return ret;
     
@@ -114,7 +130,7 @@ int signPermutation( const IndexMap& im )
 {
     
     im.check();
-    assert( im.isbijective() );
+    assert( im.is_bijective() );
     assert( im.getSourceRange() == im.getTargetRange() );
     
     const IndexRange& ir = im.getSourceRange();
@@ -178,18 +194,28 @@ std::vector<IndexMap> generateSigmas( const IndexRange& from, const IndexRange& 
     from.check();
     to.check();
     
-    std::vector<IndexMap> allmappings = generateIndexMaps( from, to );
+    const std::vector<IndexMap> allmappings = generateIndexMaps( from, to );
     
     std::vector<IndexMap> ret;
-    assert( to.cardinality() >= from.cardinality() ); // TODO: Handle this warning
+    
+    if( from.is_empty() ) 
+        assert( allmappings.size() == 1 ); 
+    
     ret.reserve( binomial_integer( to.cardinality(), from.cardinality() ) );
     
     for( const auto& mapping : allmappings )
-        if( mapping.isstrictlyascending() )
+        if( mapping.is_strictly_ascending() )
             ret.push_back( mapping );
             
-    for( const auto& sigma : ret )
-        assert( (sigma.check(),true) and sigma.isstrictlyascending() );
+    for( const auto& sigma : ret ) {
+        sigma.check();
+        assert( sigma.is_strictly_ascending() );
+    }
+    
+    if( /* DISABLES CODE */ ( false ) ){ 
+        std::mt19937 g( 567891234 );
+        std::shuffle( ret.begin(), ret.end(), g );
+    }
     
     return ret;
     

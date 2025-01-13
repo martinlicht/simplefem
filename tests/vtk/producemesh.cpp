@@ -1,12 +1,9 @@
 
-
-/**/
-
-#include <iostream>
+#include <ostream>
 #include <fstream>
 
 #include "../../basic.hpp"
-#include "../../utility/utility.hpp"
+#include "../../utility/convergencetable.hpp"
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
@@ -17,57 +14,25 @@
 using namespace std;
 
 
-inline void internal_print( const MeshSimplicial2D& M, std::string meshname, const char* filename = nullptr )
+#include "vtk.testsnippet.cxx"
+
+
+
+
+
+
+int main( int argc, char *argv[] )
 {
-    
-    std::string basename = ( filename == nullptr ) ? getbasename(__FILE__) : filename;
-    
-    fstream fs( experimentfile( basename ), std::fstream::out );
-    
-    VTKWriter vtk( M, fs, meshname );
-    vtk.writeCoordinateBlock();
-    vtk.writeTopDimensionalCells();
-    
-    {
-        FloatVector V( M.count_simplices(0), 
-                        [&M](int i)->Float{
-                        FloatVector point = M.getcoordinates().getvectorclone(i);
-                        return std::pow( point[0], 2.0 ) + std::cos( 1.0 * 2 * 3.14159 * point[1] );
-                    });
-        
-        vtk.writeVertexScalarData( V, "testing_scalar_data", 1.0 );
-    }
-    
-    vtk.writeCellScalarData( FloatVector(M.count_simplices(2), 2.5 ), "cell_scalar_data" );
-    
-    vtk.writeCellVectorData( 
-        FloatVector( M.count_simplices(2),  1.5 ),
-        FloatVector( M.count_simplices(2),  2.5 ),
-        FloatVector( M.count_simplices(2), -3.5 ),
-        "cell_vector_data"
-    );
-
-    fs.close();
-}
-
-
-
-
-
-
-int main()
-{
-    LOG << "Output of a few important meshes" << endl;
+    LOG << "Output of a few important meshes" << nl;
     
     
-    //if(false)
     {
         
         const int L = 5;
     
         MeshSimplicial2D M = SphericalSurface2D(L);
             
-        LOG << L << ":\t" << M.getShapemeasure() << endl;
+        LOG << L << ":\t" << M.getShapemeasure() << nl;
         
         internal_print( M, "spherical surface 2D", "sphere" );
         
@@ -75,14 +40,13 @@ int main()
     
     
     
-    //if(false)
     {
         
         const int L = 5;
     
         MeshSimplicial2D M = LShapedDomain2D();
             
-        LOG << L << ":\t" << M.getShapemeasure() << endl;
+        LOG << L << ":\t" << M.getShapemeasure() << nl;
         
         internal_print( M, "L shaped domain 2D", "lshaped" );
         
@@ -90,9 +54,8 @@ int main()
     
     
     
-    //if(false)
     {
-        LOG << "Unit Test for VTK output of Simplicial Mesh" << endl;
+        LOG << "Unit Test for VTK output of Simplicial Mesh" << nl;
         
         const int K = 4;
         const int L = 12;
@@ -105,21 +68,37 @@ int main()
     
     
     
-    //if(false)
     {
-        const int Lmin = 3;
-        const int Lmax = 9;
+        const int Lmin = 4;
+        const int Lmax = 4;
         
         for( int L = Lmin; L <= Lmax; L++ )
         {
             
             MeshSimplicial2D M = UnitDisk(L);
             
-            LOG << L << ":\t" << M.getShapemeasure() << endl;
+            LOG << L << ":\t" << M.getShapemeasure() << nl;
             
+            int last_original_vertex = M.count_vertices()-1;
+            for( int t = 0; t < 15; t++ ) {
+                int target_edge1         = M.get_vertex_firstparent_edge(last_original_vertex);
+                int target_edge2         = M.get_vertex_nextparent_edge(last_original_vertex,target_edge1);
+                int target_edge3         = M.get_vertex_nextparent_edge(last_original_vertex,target_edge2);
+                assert( target_edge1 != Mesh::nullindex && target_edge2 != Mesh::nullindex && target_edge3 != Mesh::nullindex );
+                // M.newest_vertex_bisection_recursive( target_edge1 );
+                // M.newest_vertex_bisection_recursive( target_edge2 );
+                // M.newest_vertex_bisection_recursive( target_edge3 );
+                // M.newest_vertex_bisection_recursive( target_edge2 );
+                // M.newest_vertex_bisection_recursive( target_edge1 );
+                // M.newest_vertex_bisection_recursive( target_edge3 );
+                // M.newest_vertex_bisection_recursive( target_edge2 );
+                M.newest_vertex_bisection_recursive( random_integer() % M.count_edges() );
+            }    
+
             {
-                fstream fs( string("./rounddisk.tex"), std::fstream::out );
-                M.outputTikZ( fs );
+                fstream fs( string("./rounddisk.svg"), std::fstream::out );
+                // fs << M.outputTikZ();
+                fs << M.outputSVG();
                 fs.close();
             }
             
@@ -131,7 +110,6 @@ int main()
     
     
     
-    //if(false)
     {
         
         const int Lmin = 3;
@@ -144,7 +122,7 @@ int main()
     }
         
     
-    LOG << "Finished Unit Test" << endl;
+    LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
 
     return 0;
 }

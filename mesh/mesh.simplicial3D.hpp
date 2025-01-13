@@ -2,9 +2,7 @@
 #define INCLUDEGUARD_MESH_SIMPLICIAL_3D_HPP
 
 
-#include <iostream>
-#include <fstream>
-#include <map>
+#include <array>
 #include <string>
 #include <utility>
 #include <vector>
@@ -36,11 +34,7 @@ class MeshSimplicial3D
 
     public:
     
-        MeshSimplicial3D( const MeshSimplicial3D& ) = default;
-        MeshSimplicial3D& operator=( const MeshSimplicial3D& ) = default;
-        MeshSimplicial3D( MeshSimplicial3D&& ) = default;
-        MeshSimplicial3D& operator=( MeshSimplicial3D&& ) = default;
-
+        /* Constructors */
         
         explicit MeshSimplicial3D( int outerdim = 3 );
         
@@ -72,29 +66,41 @@ class MeshSimplicial3D
             const std::vector<int              >& vertex_firstparent_edge,
             const std::vector<std::array<int,2>>& edge_nextparents_of_vertices
         );
+
+        /* standard interface */
         
-        
+        MeshSimplicial3D( const MeshSimplicial3D& ) = default;
+        MeshSimplicial3D& operator=( const MeshSimplicial3D& ) = default;
+        MeshSimplicial3D( MeshSimplicial3D&& ) = default;
+        MeshSimplicial3D& operator=( MeshSimplicial3D&& ) = default;
         virtual ~MeshSimplicial3D();
+        
+        /* standard methods for operators */
         
         virtual void check() const;
         
-        virtual void print( std::ostream& out ) const override;
+        // virtual void print( std::ostream& out ) const override;
+
+        virtual std::string text() const override;
+
+
+        /* OTHER METHODS */
         
-        bool compare( const MeshSimplicial3D& mesh ) const;
+        bool is_equal_to( const MeshSimplicial3D& mesh ) const;
         
         /* inherited methods */
         
-        virtual bool dimension_counted( int dim ) const override;
+        virtual bool has_dimension_counted( int dim ) const override;
         
         virtual int count_simplices( int dim ) const override;
         
-        virtual bool subsimplices_listed( int sup, int sub ) const override;
+        virtual bool has_subsimplices_listed( int sup, int sub ) const override;
         
-        virtual IndexMap getsubsimplices( int sup, int sub, int cell ) const override;
+        virtual IndexMap get_subsimplices( int sup, int sub, int cell ) const override;
         
-        virtual bool supersimplices_listed( int sup, int sub ) const override;
+        virtual bool has_supersimplices_listed( int sup, int sub ) const override;
         
-        virtual const std::vector<int> getsupersimplices( int sup, int sub, int cell ) const override;
+        virtual const std::vector<int> get_supersimplices( int sup, int sub, int cell ) const override;
         
         
         virtual SimplexFlag get_flag( int dim, int index ) const override;
@@ -308,16 +314,27 @@ class MeshSimplicial3D
         
         /* other things */
         
+        DenseMatrix get_reflection_along_face( int f ) const;
         FloatVector get_tetrahedron_midpoint( int t ) const;
         FloatVector get_face_midpoint( int f ) const;
         FloatVector get_edge_midpoint( int e ) const;
         Float get_edge_length( int e ) const;
         
-        void merge( const MeshSimplicial3D& );
+        void merge( const MeshSimplicial3D& other );
         
 
         int get_oldest_edge( int t ) const;
         
+
+
+        /* TikZ */
+        
+        std::string outputTikZ( bool boundary_only = false ) const;
+
+
+        /* other */ 
+        
+        virtual std::size_t memorysize() const override;
         
     private:
 
@@ -357,14 +374,28 @@ class MeshSimplicial3D
         std::vector<SimplexFlag> flags_vertices;
 
 
+    public:
+
+        inline bool operator==( const MeshSimplicial3D& m2 ) const 
+        {
+            return this->is_equal_to( m2 );
+        }
+
+        inline bool operator!=( const MeshSimplicial3D& m2 ) const 
+        {
+            return !( *this == m2 );
+        }
+
+
+
 };
 
 
 
 
-// inline std::ostream& operator<<( std::ostream& os, const MeshSimplicial3D& mt2d )
+// inline std::ostream& operator<<( std::ostream& os, const MeshSimplicial3D& mt3d )
 // {
-//     mt2d.print( os );
+//     mt3d.print( os );
 //     return os;
 // }
 
@@ -376,15 +407,6 @@ class MeshSimplicial3D
 
 
 
-inline bool operator==( const MeshSimplicial3D& m1, const MeshSimplicial3D& m2 )
-{
-    return m1.compare( m2 );
-}
-
-inline bool operator!=( const MeshSimplicial3D& m1, const MeshSimplicial3D& m2 )
-{
-    return !( m1 == m2 );
-}
 
 
 
