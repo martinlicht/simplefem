@@ -230,9 +230,10 @@ CXXFLAGS_LANG := -std=c++17 -pedantic -fno-rtti -D_LIBCPP_REMOVE_TRANSITIVE_INCL
 
 CXXFLAGS_OPTIMIZE:=
 
-# CXXFLAGS_OPTIMIZE += -march=native -mtune=native 
 
 ifeq ($(FLAG_DO_OPTIMIZE),yes)
+
+	CXXFLAGS_OPTIMIZE += -march=native -mtune=native 
 
 	ifeq ($(FLAG_CXX),ICC)
 		CXXFLAGS_OPTIMIZE += -march=core-avx2
