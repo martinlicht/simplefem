@@ -16,39 +16,17 @@
 [x] clean the printing methods of the convergence tables
     convergence tables should handle different precisions, one way or the other: best to internally use long double. Requires settling the printf issue
 
-[ ] fix the vee product; make the tests run in 2D and 3D
-    [ ] integrate volume forms and scalar fields 
-    Make the second Hodge star work
-
-[ ] enable exceptions and adapt the unit tests ...
-
-[ ] How to enable DLLs? You can use a .def file...
-
 [x] Use custom printf implementation for that handles long doubles
     #define __USE_MINGW_ANSI_STDIO 1
     The above macro enables the MinGW Printf implementation
 
 [x] std::exp and the like: single precision versions
 
-[ ] augmented integration for error checks
-
-[ ] augmented integration for rhs? First, understand integration better. 
-
-[ ] interpolation points: what are best interpolation points with smallest lebesgue constant?
-
-[ ] adaptive interpolation 
-
-[ ] Handle self-assignment in operator=
-
 [x] correct the computation in the nullspace test 
-
-[ ] Does diffinterpol2D/3D still have strange output?
 
 [x] Check debug.hpp for errors 
 
 [x] cpp file which contains the logging
-
-[ ] Why does CLOG go into stderr?
 
 [x] tests output into logs 
   [x] create a silent option for each run in the makefile 
@@ -60,6 +38,26 @@
   [x] git repo transferieren 
   [x] job framework aufsetzen 
   
+[ ] Make the second Hodge star work
+
+[ ] enable exceptions and adapt the unit tests ...
+
+[ ] How to enable DLLs? You can use a .def file...
+
+[ ] augmented integration for error checks
+
+[ ] augmented integration for rhs? First, understand integration better. 
+
+[ ] interpolation points: what are best interpolation points with smallest lebesgue constant?
+
+[ ] adaptive interpolation 
+
+[ ] Handle self-assignment in operator=
+
+[ ] Does diffinterpol2D/3D still have strange output?
+
+[ ] Why does CLOG go into stderr?
+
 [ ] experiments:
   Die Konvergenztabellen sollen immer aussagen was gerade approximiert wird 
   Der Printmodulo soll immer ein 1/20 der max-iteration betragen 
