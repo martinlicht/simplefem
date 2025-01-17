@@ -11,6 +11,7 @@
 
 #	----------- UPKEEP & MINOR FIXES -------------
 
+[ ] add Neumann BC to mixed FEM for Poisson
 [ ] Make the second Hodge star work as intended
 [ ] enable exceptions and adapt the unit tests ...
 [ ] How to enable DLLs? You can use a .def file...
