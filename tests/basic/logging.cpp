@@ -12,7 +12,6 @@
 
 int main( int argc, char *argv[] )
 {
-    
     LOG << "This is a line" << nl;
     NOTE "This is a note";
     PING;

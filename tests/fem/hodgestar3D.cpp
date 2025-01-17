@@ -47,11 +47,11 @@ int main( int argc, char *argv[] )
         
         const int r_min = 0;
         
-        const int r_max = 2;
+        const int r_max = 1;
         
         const int l_min = 0;
         
-        const int l_max = 2;
+        const int l_max = 1;
 
         const int number_of_random_trial_samples = 10;
         
@@ -177,10 +177,10 @@ int main( int argc, char *argv[] )
         for( int l = l_min; l <= l_max; l++ ) 
         for( int r = r_min; r <= r_max; r++ ) 
         {
-            contable_scalar << mass_errors_scalar[l-l_min][r-r_min];
-            contable_vector << mass_errors_vector[l-l_min][r-r_min];
-            contable_pseudo << mass_errors_pseudo[l-l_min][r-r_min];
-            contable_volume << mass_errors_volume[l-l_min][r-r_min];
+            contable_scalar << mass_errors_scalar[l-l_min][r-r_min] / machine_epsilon;
+            contable_vector << mass_errors_vector[l-l_min][r-r_min] / machine_epsilon;
+            contable_pseudo << mass_errors_pseudo[l-l_min][r-r_min] / machine_epsilon;
+            contable_volume << mass_errors_volume[l-l_min][r-r_min] / machine_epsilon;
 
             contable_scalar << nl; 
             contable_vector << nl; 

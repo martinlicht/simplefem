@@ -90,7 +90,7 @@ SparseMatrix FEECBrokenHodgeStarMatrix( const Mesh& mesh, int n, int k, int r )
     const int dim_in      = num_simplices * localdim;
     const int dim_out     = num_simplices * localdim;
     const int num_entries = num_simplices * localdim * localdim;
-
+    
     const std::vector<MultiIndex> multis_in  = generateMultiIndices( IndexRange( 0, n ), r );
     const std::vector<IndexMap>   sigmas_in  = generateSigmas( IndexRange( 1, k   ), IndexRange( 0, n ) );
     

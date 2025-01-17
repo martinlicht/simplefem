@@ -255,9 +255,9 @@ int main( int argc, char *argv[] )
         for (int l = l_min; l <= l_max; l++) 
         {
             for (int r = r_min; r <= r_max; r++) {
-                contables_mass[k]  << errors_mass [k][l - l_min][r - r_min];
-                contables_vee[k]   << errors_vee  [k][l - l_min][r - r_min];
-                contables_wedge[k] << errors_wedge[k][l - l_min][r - r_min];
+                contables_mass[k]  << errors_mass [k][l - l_min][r - r_min] / machine_epsilon;
+                contables_vee[k]   << errors_vee  [k][l - l_min][r - r_min] / machine_epsilon;
+                contables_wedge[k] << errors_wedge[k][l - l_min][r - r_min] / machine_epsilon;
             }
             contables_mass[k]  << nl;
             contables_vee[k]   << nl;
