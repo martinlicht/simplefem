@@ -581,6 +581,7 @@ FloatVector Mesh::getHeightVector( int dim, int cell, int vertexindex ) const
     // assert( columns.is_finite() );
     // LOG << getVertexCoordinateMatrix( dim, cell ) << nl;
 
+    // the vertex of interest is now at the very end 
     std::swap( columns[dim], columns[vertexindex] );
     
     for( int c = 1; c <= dim; c++ )
@@ -600,25 +601,25 @@ FloatVector Mesh::getHeightVector( int dim, int cell, int vertexindex ) const
             next -= next.scalarproductwith(curr) * curr;
         }
         
-        // LOG << c << nl << DenseMatrix(dim,dim+1,columns) << nl;
-    
     } 
 
     FloatVector result = columns[dim];
     
-    // DEBUG 1
+    // DEBUG 1: the norm of the result corresponds to the return value of the other height computation 
     {
         Float temp = getHeight( dim, cell, vertexindex );
         // LOGPRINTF( "%e %e \n", result.norm(), temp );
         Assert( is_numerically_close( result.norm(), temp ), result.norm(), temp );
     }
 
-    // DEBUG 2
+    // DEBUG 2: the vector from any other vertex up to the vertex of interest has positive angle to the vertex of interest 
+    for( int i = 1; i <= dim; i++ )
     {
-        FloatVector temp = positions.getcolumn(vertexindex) - positions.getcolumn( (vertexindex+1) % dim+1 );
+        int j = (vertexindex+i) % (dim+1);
+        FloatVector temp = positions.getcolumn(vertexindex) - positions.getcolumn( j );
         Float h = result.scalarproductwith( temp ) / result.norm();
-        assert( h > 0. );
-        Assert( is_numerically_close( h, result.norm() ), h, result.norm() );
+        Assert( h > 0., result, nl, temp, nl, i, j, vertexindex );
+        Assert( is_numerically_close( h, result.norm() ), h, nl, result.norm(), nl, i, j, vertexindex );
     }
 
     return result;

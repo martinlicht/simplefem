@@ -395,10 +395,12 @@ int main( int argc, char *argv[] )
                 LOG << "u curl mass          " << ucurl_massnorm << nl;
                 LOG << "u defect mass:       " << u_defectmass << nl;
                 
+                LOG << "PF constant estimates: " << 1./std::sqrt(curratio) << space  << 1./std::sqrt(newratio) << nl;
+                    
                 contables[r-min_r] << newratio;
                 contables[r-min_r] << curratio;
                 contables[r-min_r] << std::sqrt(curratio);
-                contables[r-min_r] << PF_estimate_via_shellings / std::sqrt(curratio);
+                contables[r-min_r] << PF_estimate_via_shellings * std::sqrt(curratio);
                 contables[r-min_r] << u_massnorm;
                 contables[r-min_r] << ucurl_massnorm;
                 contables[r-min_r] << Float( end - start );

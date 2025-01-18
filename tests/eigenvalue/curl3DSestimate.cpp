@@ -247,6 +247,8 @@ int main( int argc, char *argv[] )
                 LOG << "u curl mass      " << ucurl_massnorm << nl;
                 LOG << "u defect mass:   " << u_defectmass << nl;
                 
+                LOG << "PF constant estimates: " << 1./std::sqrt(curratio) << space  << 1./std::sqrt(newratio) << nl;
+                
                 const Float true_eigenvalue = 2.; // 3.0 is the true value 
 
                 contables[r-min_r] << newratio;

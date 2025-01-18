@@ -450,6 +450,74 @@ inline MeshSimplicial2D SlitDomain2D()
 
 
 
+inline MeshSimplicial2D SlitDomain2D_noncentered()
+{
+    return MeshSimplicial2D(
+      2,
+      Coordinates( 2, 10, {
+         0.,  0., // 0
+         1.,  0., // 1 +++
+         1.,  1., // 2
+         0.,  1., // 3
+        -1.,  1., // 4
+        -1.,  0., // 5
+        -1., -1., // 6
+         0., -1., // 7
+         1., -1., // 8
+         1.,  0.  // 9 ---
+      } ),
+      {
+        { 0, 1, 3 }, // 0
+        { 0, 3, 5 }, // 1
+        { 0, 5, 7 }, // 2
+        { 0, 7, 9 }, // 3
+        
+        { 1, 2, 3 }, // 4
+        { 3, 4, 5 }, // 5
+        { 5, 6, 7 }, // 6
+        { 7, 8, 9 }  // 7
+      }
+    );
+}
+
+
+inline MeshSimplicial2D SlitDomain2D_fivetriangles()
+{
+    return MeshSimplicial2D(
+      2,
+      Coordinates( 2, 7, {
+          0.,  0., // 0   origin 
+         -1.,  1., // 1   left top
+         -1., -1., // 2   left bottom
+
+          1.,  1., // 3   right top
+          1., -1., // 4   right bottom
+
+          1.,  0., // 5   from top
+          1.,  0., // 6   from bottom 
+      } ),
+      {
+        { 0, 1, 2 }, // 0
+
+        { 0, 1, 3 }, // 1
+        { 0, 2, 4 }, // 2
+
+        { 0, 3, 5 }, // 3
+        { 0, 4, 6 }  // 4
+        
+      }
+    );
+}
+
+
+
+
+
+
+
+
+
+
 inline MeshSimplicial2D RhombicAnnulus2D()
 {
     return MeshSimplicial2D(
