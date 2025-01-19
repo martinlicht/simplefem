@@ -56,7 +56,7 @@ int main( int argc, char *argv[] )
             // const Float yfeq = 2.;
             
             std::function<FloatVector(const FloatVector&)> experiment_sol = 
-                [=](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector {
                     Assert( vec.getdimension() == 2 );
                     // return FloatVector({ 1. });
                     return FloatVector({ 
@@ -68,7 +68,7 @@ int main( int argc, char *argv[] )
             
 
             std::function<FloatVector(const FloatVector&)> experiment_ndiv = 
-                [=](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector {
                     Assert( vec.getdimension() == 2 );
                     // return FloatVector({ 1. });
                     return FloatVector( { 
@@ -81,7 +81,7 @@ int main( int argc, char *argv[] )
             
 
             std::function<FloatVector(const FloatVector&)> experiment_curl = 
-                [=](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector {
                     Assert( vec.getdimension() == 2 );
                     // return FloatVector({ 1. });
                     return FloatVector( { // - partial_y + partial_x
@@ -97,7 +97,7 @@ int main( int argc, char *argv[] )
             
 
             std::function<FloatVector(const FloatVector&)> experiment_rhs = 
-                [=](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector {
                     Assert( vec.getdimension() == 2 );
                     
                     

@@ -32,14 +32,14 @@ int main( int argc, char *argv[] )
         std::vector<std::function<FloatVector(const FloatVector&)>> experiments_scalar_field;
         
         experiments_scalar_field.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 2 );
                 return FloatVector({ std::exp( vec[0] ) });
             }
         );
 
         experiments_scalar_field.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 2 );
                 auto x = vec[0];
                 return FloatVector({ 
@@ -52,7 +52,7 @@ int main( int argc, char *argv[] )
         std::vector<std::function<FloatVector(const FloatVector&)>> experiments_vector_field;
         
         experiments_vector_field.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 2 );
                 return FloatVector({ 
                     std::exp( vec[0] ), 
@@ -62,7 +62,7 @@ int main( int argc, char *argv[] )
         );
 
         experiments_vector_field.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 2 );
                 auto x = vec[0];
                 auto y = vec[1];
@@ -77,14 +77,14 @@ int main( int argc, char *argv[] )
         std::vector<std::function<FloatVector(const FloatVector&)>> experiments_volume_field;
         
         experiments_volume_field.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 2 );
                 return FloatVector({ std::exp( vec[0] ) });
             }
         );
         
         experiments_volume_field.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 2 );
                 auto x = vec[0];
                 return FloatVector({ 

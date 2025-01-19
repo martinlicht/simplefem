@@ -53,7 +53,7 @@ int main( int argc, char *argv[] )
             
             
             std::function<FloatVector(const FloatVector&)> experiment_rhs = 
-                [=](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector {
                     Assert( vec.getdimension() == 2 );
                     return FloatVector({
                         1.0

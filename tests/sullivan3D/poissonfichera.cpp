@@ -44,7 +44,7 @@ int main( int argc, char *argv[] )
             
 
             std::function<FloatVector(const FloatVector&)> constant_one
-                = [](const FloatVector& vec) -> FloatVector{
+                = [](const FloatVector& vec) -> FloatVector {
                         assert( vec.getdimension() == 3 );
                         return FloatVector({ 1. });
                     };
@@ -56,7 +56,7 @@ int main( int argc, char *argv[] )
 
             
             std::function<FloatVector(const FloatVector&)> experiment_sol = 
-                [=](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector {
                     assert( vec.getdimension() == 3 );
                     Float r; 
                     Float theta;
@@ -76,7 +76,7 @@ int main( int argc, char *argv[] )
         
         
             std::function<FloatVector(const FloatVector&)> experiment_rhs = 
-                [=](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector {
                     assert( vec.getdimension() == 3 );
                     return FloatVector({
                         1.0

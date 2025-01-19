@@ -36,14 +36,14 @@ int main( int argc, char *argv[] )
         std::vector<std::function<FloatVector(const FloatVector&)>> fields;
         
         fields.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 3 );
                 return FloatVector({ std::exp( vec[0] + vec[1] - vec[2] ) });
             }
         );
 
         fields.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 3 );
                 auto ret = FloatVector({ 
                                 std::exp( vec[0] + vec[2] ), 
@@ -56,7 +56,7 @@ int main( int argc, char *argv[] )
         );
 
         fields.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 3 );
                 auto ret = FloatVector({ 
                                 std::cos( -5.*vec[0]*vec[0] ), 

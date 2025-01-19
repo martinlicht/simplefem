@@ -34,7 +34,7 @@ int main( int argc, char *argv[] )
         std::vector<std::vector<Float>>                                          experiments_value(n+1);
         
         experiments_field[0].push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 3 );
                 return FloatVector({ 
                     1.
@@ -45,7 +45,7 @@ int main( int argc, char *argv[] )
 
         
         experiments_field[0].push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 3 );
                 return FloatVector({ 
                     vec[0]*vec[1]*vec[1] + std::exp( vec[0] * vec[1] )
@@ -56,7 +56,7 @@ int main( int argc, char *argv[] )
 
         
         experiments_field[1].push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 3 );
                 return FloatVector({ 
                     1., 1., 1.
@@ -66,7 +66,7 @@ int main( int argc, char *argv[] )
         experiments_value[1].push_back( sqrt(3.) );
 
         experiments_field[1].push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 3 );
                 return FloatVector({ 
                     vec[0]*vec[1]*vec[1] + std::exp( vec[0] * vec[1] ),

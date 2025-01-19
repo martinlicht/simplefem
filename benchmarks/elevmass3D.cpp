@@ -33,7 +33,7 @@ int main( int argc, char *argv[] )
         std::vector<Float>                                          experiments_scalar_value;
         
 //         experiments_scalar_field.push_back( 
-//             [](const FloatVector& vec) -> FloatVector{
+//             [](const FloatVector& vec) -> FloatVector {
 //                     assert( vec.getdimension() == 3 );
 //                     return FloatVector({ 1. });
 //                 }
@@ -43,7 +43,7 @@ int main( int argc, char *argv[] )
 //         
 //         
 //         experiments_scalar_field.push_back( 
-//             [](const FloatVector& vec) -> FloatVector{
+//             [](const FloatVector& vec) -> FloatVector {
 //                     assert( vec.getdimension() == 3 );
 //                     return FloatVector({ vec.sum() < 1. ? 1. : 0. });
 //                 }
@@ -53,7 +53,7 @@ int main( int argc, char *argv[] )
         
         
         experiments_scalar_field.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 3 );
                 return FloatVector({ std::exp( vec[0] + vec[1] + vec[2] ) });
             }
@@ -72,7 +72,7 @@ int main( int argc, char *argv[] )
         std::vector<Float>                                          experiments_vector_value;
         
 //         experiments_vector_field.push_back( 
-//         [](const FloatVector& vec) -> FloatVector{
+//         [](const FloatVector& vec) -> FloatVector {
 //                 assert( vec.getdimension() == 3 );
 //                 return FloatVector({ 1.,0.,0. });
 //             }
@@ -82,7 +82,7 @@ int main( int argc, char *argv[] )
 //         
 //         
 //         experiments_vector_field.push_back( 
-//         [](const FloatVector& vec) -> FloatVector{
+//         [](const FloatVector& vec) -> FloatVector {
 //                 assert( vec.getdimension() == 3 );
 //                 return FloatVector({ 1.,-3.,-2. });
 //             }
@@ -92,7 +92,7 @@ int main( int argc, char *argv[] )
         
         
         experiments_vector_field.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                     assert( vec.getdimension() == 3 );
                     Float x = vec[0]; Float y = vec[1]; Float z = vec[2]; 
                     return FloatVector({ std::sin( x*y ), std::cos( z ), std::exp(x+y+z) });

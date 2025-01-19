@@ -29,14 +29,14 @@ int main( int argc, char *argv[] )
         std::vector<std::function<FloatVector(const FloatVector&)>> experiments_scalar_exterior;
         
         experiments_scalar_function.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 2 );
                 return FloatVector({ std::exp( Constants::pi * vec[0] ) });
             }
         );
 
         experiments_scalar_exterior.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 2 );
                 return FloatVector( { 
                         Constants::pi * std::exp( Constants::pi * vec[0] ),

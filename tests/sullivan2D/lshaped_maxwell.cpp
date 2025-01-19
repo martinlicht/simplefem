@@ -47,7 +47,7 @@ int main( int argc, char *argv[] )
             
             
             std::function<FloatVector(const FloatVector&)> function_rhs = 
-                [=](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector {
                     Assert( vec.getdimension() == 2 );
                     return FloatVector({
                         -1.0
@@ -202,7 +202,7 @@ int main( int argc, char *argv[] )
                                 vtk.write_cell_vector_data_barycentricgradients( lowest_rhs,   "righthandside" );
                                 vtk.write_cell_vector_data_barycentricgradients( lowest_sol,   "solution_calculation" );
 
-                                auto constant_field = [](const FloatVector& vec) -> FloatVector{
+                                auto constant_field = [](const FloatVector& vec) -> FloatVector {
                                     assert( vec.getdimension() == 2 );
                                     return FloatVector({ 1., 1. });
                                 };

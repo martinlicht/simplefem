@@ -76,7 +76,7 @@ int main( int argc, char *argv[] )
 
             
             std::function<FloatVector(const FloatVector&)> vectorfield_rhs = 
-                [=](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector {
                     Assert( vec.getdimension() == 2 );
                     return FloatVector({
                         -1.0
@@ -86,7 +86,7 @@ int main( int argc, char *argv[] )
                 };
 
             std::function<FloatVector(const FloatVector&)> vectorfield_x = 
-                [=](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector {
                     Assert( vec.getdimension() == 2 );
                     return FloatVector({
                         1.0
@@ -96,7 +96,7 @@ int main( int argc, char *argv[] )
                 };
 
             std::function<FloatVector(const FloatVector&)> vectorfield_y = 
-                [=](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector {
                     Assert( vec.getdimension() == 2 );
                     return FloatVector({
                         0.0
@@ -106,7 +106,7 @@ int main( int argc, char *argv[] )
                 };
 
             std::function<FloatVector(const FloatVector&)> scalarfield_constantone = 
-                [=](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector {
                     Assert( vec.getdimension() == 2 );
                     return FloatVector({
                         1.0

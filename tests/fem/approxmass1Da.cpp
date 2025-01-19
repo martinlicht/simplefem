@@ -31,7 +31,7 @@ int main( int argc, char *argv[] )
         std::vector<Float>                                          experiments_scalar_value;
         
         experiments_scalar_field.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 1 );
                 return FloatVector({ std::exp( vec[0] ) });
             }
@@ -40,7 +40,7 @@ int main( int argc, char *argv[] )
         experiments_scalar_value.push_back( 3.194528049465325113615213730287503906590 );
 
         experiments_scalar_field.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 1 );
                 auto x = vec[0];
                 return FloatVector({ 

@@ -37,7 +37,7 @@ int main( int argc, char *argv[] )
         std::vector<Float>                                          experiments_scalar_value;
         
         experiments_scalar_field.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 2 );
                 return FloatVector({ 
                     1.
@@ -47,7 +47,7 @@ int main( int argc, char *argv[] )
         experiments_scalar_value.push_back( 1. );
 
         experiments_scalar_field.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 2 );
                 return FloatVector({ 
                     std::sin( Constants::twopi * vec[0] ) * std::sin( Constants::twopi * vec[1] ) 
@@ -57,7 +57,7 @@ int main( int argc, char *argv[] )
         experiments_scalar_value.push_back( 0. );
 
         experiments_scalar_field.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 2 );
                 return FloatVector({ std::exp( vec[0] + vec[1] ) });
             }

@@ -31,7 +31,7 @@ int main( int argc, char *argv[] )
         std::vector<Float>                                          experiments_scalar_value;
         
 //         experiments_scalar_field.push_back( 
-//             [](const FloatVector& vec) -> FloatVector{
+//             [](const FloatVector& vec) -> FloatVector {
 //                 Assert( vec.getdimension() == 2 );
 //                 return FloatVector({ ( vec[0] > 0 and vec[1] > 0 ) ? 1. : Float(0.) });
 //             }
@@ -41,7 +41,7 @@ int main( int argc, char *argv[] )
 //         
 //         
 //         experiments_scalar_field.push_back( 
-//             [](const FloatVector& vec) -> FloatVector{
+//             [](const FloatVector& vec) -> FloatVector {
 //                 Assert( vec.getdimension() == 2 );
 //                 return FloatVector({ 1. });
 //             }
@@ -51,7 +51,7 @@ int main( int argc, char *argv[] )
 //         
 //         
 //         experiments_scalar_field.push_back( 
-//             [](const FloatVector& vec) -> FloatVector{
+//             [](const FloatVector& vec) -> FloatVector {
 //                 Assert( vec.getdimension() == 2 );
 //                 return FloatVector({ ( vec[0] * vec[1] > 0 ) ? 1. : Float(0.) });
 //             }
@@ -61,7 +61,7 @@ int main( int argc, char *argv[] )
         
         
         experiments_scalar_field.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 Assert( vec.getdimension() == 2 );
                 return FloatVector({ std::exp( vec[0] + vec[1] ) });
             }
@@ -70,7 +70,7 @@ int main( int argc, char *argv[] )
         experiments_scalar_value.push_back( 3.62686040784701876 * 3.62686040784701876 );
 
         experiments_scalar_field.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 Assert( vec.getdimension() == 2 );
                 return FloatVector({ ( vec[0] > 0 and vec[1] > 0 ) ? std::exp( vec[0] ) : Float(0.) });
             }
@@ -80,7 +80,7 @@ int main( int argc, char *argv[] )
         
         
         experiments_scalar_field.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 Assert( vec.getdimension() == 2 );
                 return FloatVector({ ( vec[0] * vec[1] > 0 ) ? std::exp( vec[0] ) : Float(0.) });
             }
@@ -97,7 +97,7 @@ int main( int argc, char *argv[] )
         std::vector<Float>                                          experiments_vector_value;
         
 //         experiments_vector_field.push_back( 
-//             [](const FloatVector& vec) -> FloatVector{
+//             [](const FloatVector& vec) -> FloatVector {
 //                 Assert( vec.getdimension() == 2 );
 //                 // return FloatVector({ ( vec[0]*vec[1] > 0 ) ? 1. : 0., ( vec[0]*vec[1] > 0 ) ? 10. : Float(0.) });
 //                 return FloatVector({ 1., Float(0.) });
@@ -108,7 +108,7 @@ int main( int argc, char *argv[] )
         
         
         experiments_vector_field.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 Assert( vec.getdimension() == 2 );
                 Float x = vec[0]; Float y = vec[1];
                 return FloatVector({ std::exp(x-y), std::exp(x-y) });
@@ -125,7 +125,7 @@ int main( int argc, char *argv[] )
         std::vector<Float>                                          experiments_volume_value;
 
 //         experiments_volume_field.push_back( 
-//             [](const FloatVector& vec) -> FloatVector{
+//             [](const FloatVector& vec) -> FloatVector {
 //                 Assert( vec.getdimension() == 2 );
 //                 return FloatVector({ ( vec[0] > 0 and vec[1] > 0 ) ? 1. : Float(0.) });
 //             }
@@ -135,7 +135,7 @@ int main( int argc, char *argv[] )
 //         
 //         
 //         experiments_volume_field.push_back( 
-//             [](const FloatVector& vec) -> FloatVector{
+//             [](const FloatVector& vec) -> FloatVector {
 //                 Assert( vec.getdimension() == 2 );
 //                 return FloatVector({ ( vec[0] * vec[1] > 0 ) ? 1. : Float(0.) });
 //             }
@@ -145,7 +145,7 @@ int main( int argc, char *argv[] )
         
         
         experiments_volume_field.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 Assert( vec.getdimension() == 2 );
                 return FloatVector({ ( vec[0] > 0 and vec[1] > 0 ) ? std::exp( vec[0] ) : Float(0.) });
             }
@@ -155,7 +155,7 @@ int main( int argc, char *argv[] )
         
         
         experiments_volume_field.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 Assert( vec.getdimension() == 2 );
                 return FloatVector({ ( vec[0] * vec[1] > 0 ) ? std::exp( vec[0] ) : Float(0.) });
             }

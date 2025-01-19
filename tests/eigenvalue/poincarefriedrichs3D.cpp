@@ -17,6 +17,7 @@
 #include "../../solver/inv.hpp"
 #include "../../solver/systemsolver.hpp"
 #include "../../solver/systemsparsesolver.hpp"
+#include "../../fem/global.avgsullivan.hpp"
 #include "../../fem/global.elevation.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
@@ -288,6 +289,11 @@ int main( int argc, char *argv[] )
             SparseMatrix pseudo_elevationmatrix_t = pseudo_elevationmatrix.getTranspose();
 
 
+            LOG << "averaging matrix for scalar fields" << nl;
+
+            SparseMatrix scalar_averaging = FEECSullivanAveragingMatrix( M, M.getinnerdimension(), 0, r, FEECAveragingMode::weighted_uniformly );
+
+            
 
 
 
@@ -328,6 +334,14 @@ int main( int argc, char *argv[] )
 
                     Float newratio = -1;
                     
+                    FloatVector interpol_one  = Interpolation( M, M.getinnerdimension(), 0, r, 
+                    [](const FloatVector& vec) -> FloatVector { return FloatVector({ 1. }); }
+                    );
+
+                    FloatVector conforming_one = scalar_averaging * interpol_one;
+
+                    Float mass_of_conforming_one  = ( scalar_massmatrix * interpol_one ) * interpol_one;
+
                     timestamp start = timestampnow();
                     
                     for( int t = 0; t <= max_inverseiterations; t++ )
@@ -337,10 +351,8 @@ int main( int argc, char *argv[] )
                         // find the next candidate
 
                         {
-                            auto constant_one = FloatVector( scalar_incmatrix.getdimin(), 1. );
-                            Float average = ( scalar_massmatrix * scalar_incmatrix * candidate    ) * ( scalar_incmatrix * constant_one );
-                            Float weight  = ( scalar_massmatrix * scalar_incmatrix * constant_one ) * ( scalar_incmatrix * constant_one );
-                            candidate = candidate - ( average / weight ) * constant_one;
+                            Float average = ( scalar_massmatrix * scalar_incmatrix * candidate ) * interpol_one;
+                            candidate = candidate - ( average / mass_of_conforming_one ) * conforming_one;
                         }
 
                         FloatVector sol( A.getdimout(), 0. );
@@ -348,10 +360,8 @@ int main( int argc, char *argv[] )
                         FloatVector rhs_sol = ( scalar_incmatrix_t * scalar_massmatrix * scalar_incmatrix ) * candidate;
                         
                         {
-                            auto constant_one = FloatVector( scalar_incmatrix.getdimin(), 1. );
-                            Float average = ( scalar_massmatrix * scalar_incmatrix * rhs_sol      ) * ( scalar_incmatrix * constant_one );
-                            Float weight  = ( scalar_massmatrix * scalar_incmatrix * constant_one ) * ( scalar_incmatrix * constant_one );
-                            rhs_sol = rhs_sol - ( average / weight ) * constant_one;
+                            Float average = ( scalar_massmatrix * scalar_incmatrix * rhs_sol ) * interpol_one;
+                            rhs_sol = rhs_sol - ( average / mass_of_conforming_one ) * conforming_one;
                         }
 
                         auto residual = sol;
@@ -388,10 +398,8 @@ int main( int argc, char *argv[] )
                         }
 
                         {
-                            auto constant_one = FloatVector( scalar_incmatrix.getdimin(), 1. );
-                            Float average = ( scalar_massmatrix * scalar_incmatrix * sol          ) * ( scalar_incmatrix * constant_one );
-                            Float weight  = ( scalar_massmatrix * scalar_incmatrix * constant_one ) * ( scalar_incmatrix * constant_one );
-                            sol = sol - ( average / weight ) * constant_one;
+                            Float average = ( scalar_massmatrix * scalar_incmatrix * sol ) * interpol_one;
+                            sol = sol - ( average / mass_of_conforming_one ) * conforming_one;
                         }
                         
                         candidate = sol;

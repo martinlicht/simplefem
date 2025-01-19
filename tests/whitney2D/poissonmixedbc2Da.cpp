@@ -47,7 +47,7 @@ int main( int argc, char *argv[] )
             
 
             std::function<FloatVector(const FloatVector&)> constant_one
-                = [](const FloatVector& vec) -> FloatVector{
+                = [](const FloatVector& vec) -> FloatVector {
                         assert( vec.getdimension() == 2 );
                         return FloatVector({ 1. });
                     };
@@ -59,7 +59,7 @@ int main( int argc, char *argv[] )
 
             
             std::function<FloatVector(const FloatVector&)> experiment_sol = 
-                [](const FloatVector& vec) -> FloatVector{
+                [](const FloatVector& vec) -> FloatVector {
                     assert( vec.getdimension() == 2 );
                     Float x = vec[0]; Float y = vec[1];
                     return FloatVector({ square((square(x)-1)*(square(y)-1)) });
@@ -67,7 +67,7 @@ int main( int argc, char *argv[] )
             
 
             std::function<FloatVector(const FloatVector&)> experiment_grad = 
-                [](const FloatVector& vec) -> FloatVector{
+                [](const FloatVector& vec) -> FloatVector {
                     assert( vec.getdimension() == 2 );
                     Float x = vec[0]; Float y = vec[1];
                     return FloatVector( { 
@@ -78,7 +78,7 @@ int main( int argc, char *argv[] )
             
 
             std::function<FloatVector(const FloatVector&)> experiment_rhs = 
-                [](const FloatVector& vec) -> FloatVector{
+                [](const FloatVector& vec) -> FloatVector {
                     assert( vec.getdimension() == 2 );
                     Float x  =  vec[0]; Float y  =  vec[1];
                     Float x2 =     x*x; Float y2 =     y*y;

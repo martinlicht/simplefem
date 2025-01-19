@@ -44,7 +44,7 @@ int main( int argc, char *argv[] )
     
 
     std::function<FloatVector(const FloatVector&)> constant_one
-        = [](const FloatVector& vec) -> FloatVector{
+        = [](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 2 );
                 return FloatVector({ 1. });
             };
@@ -56,7 +56,7 @@ int main( int argc, char *argv[] )
 
             
     std::function<FloatVector(const FloatVector&)> experiment_sol = 
-        [=](const FloatVector& vec) -> FloatVector{
+        [=](const FloatVector& vec) -> FloatVector {
             assert( vec.getdimension() == 2 );
             // return FloatVector({ 1. });
             return FloatVector({ 
@@ -69,13 +69,13 @@ int main( int argc, char *argv[] )
         };
     
     std::function<FloatVector(const FloatVector&)> experiment_curl = 
-        [=](const FloatVector& vec) -> FloatVector{
+        [=](const FloatVector& vec) -> FloatVector {
             assert( vec.getdimension() == 2 );
             return FloatVector({ 17. });
         };
     
     std::function<FloatVector(const FloatVector&)> experiment_rhs = 
-        [=](const FloatVector& vec) -> FloatVector{
+        [=](const FloatVector& vec) -> FloatVector {
             assert( vec.getdimension() == 2 );
             return FloatVector({ 
                 blob_dev(vec[0])*blob(vec[1]) 
@@ -91,7 +91,7 @@ int main( int argc, char *argv[] )
         };
     
     std::function<FloatVector(const FloatVector&)> experiment_aux = 
-        [=](const FloatVector& vec) -> FloatVector{
+        [=](const FloatVector& vec) -> FloatVector {
             assert( vec.getdimension() == 2 );
             // return FloatVector({ 1. });
             return FloatVector( 1, blob(vec[0])*blob(vec[1]) );
