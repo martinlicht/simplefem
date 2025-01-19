@@ -11,18 +11,20 @@
 
 #	----------- UPKEEP & MINOR FIXES -------------
 
+[ ] add Neumann BC to mixed FEM for Poisson
 [ ] Make the second Hodge star work as intended
 [ ] enable exceptions and adapt the unit tests ...
 [ ] How to enable DLLs? You can use a .def file...
+[ ] interpolation points: what are best interpolation points with smallest lebesgue constant?
+[ ] non-uniform interpolation of fields
 [ ] augmented integration for error checks
 [ ] augmented integration for rhs? First, understand integration better. 
 [ ] Why does CLOG go into stderr?
 [ ] print modulo shall always print 1/20 of the max iteration
+[ ] in tests that involve solvers, the convergence tables should indicate the current solver 
+[ ] print modulo should always be a 1/20th of the current max iteration 
 
-[x] Convergence tables shall say what's being approximated: include captions
 [x] Does diffinterpol2D/3D still have strange output?
-[o] interpolation points: what are the best interpolation points with smallest Lebesgue constant?
-[?] adaptive interpolation 
 [?] what is the numerically stable way to compute the determinant? 
 [!] The sqrt of a result subject to more than a machine epsilon error 
     will be subject to more than the sqrt of the machine epsilon error
@@ -36,8 +38,8 @@
 [x] how to turn off particular unused variable warnings? -> Blog post
     #define UNUSED_VARIABLE(x) (void)x
     __attribute__((unused))
+[x] convergence tables should handle different precisions, one way or the other: best to internally use long double. Requires settling the printf issue
 [x] Clean the printing methods of the convergence tables. 
-    The convergence tables should handle different precisions, one way or the other: best to internally use long double. Requires settling the printf issue
 [x] Check debug.hpp for errors 
 [x] cpp file which contains the logging
 [x] fix the vee product; make the tests run in 2D and 3D
@@ -46,6 +48,7 @@
     #define __USE_MINGW_ANSI_STDIO 1
     The above macro enables the MinGW Printf implementation
 [x] std::exp and the like: single precision versions
+
 [x] correct the computation in the nullspace test 
 [x] tests output into logs 
   [x] create a silent option for each run in the makefile 
@@ -56,6 +59,8 @@
   [x] git repo transferieren 
   [x] job framework aufsetzen 
   
+
+
 	
 
 
@@ -151,10 +156,6 @@
 [ ] solver logging 
   make the logging more reasonable, 
   e.g., give out iteration numbers at the beginning
-
-[ ] solver unit tests:
-  Die Konvergenztabellen sollen immer den Namen des Solvers enthalten 
-  Der Printmodulo soll immer ein 1/20 der max-iteration betragen 
 
 [ ] im gesamten code durchweg desired_precision anwenden
     das kann in der solver klasse so gesetzt werden 

@@ -55,19 +55,37 @@ int main( int argc, char *argv[] )
     
     LOG << "Initial mesh..." << nl;
     
+    // MeshSimplicial3D M = UnitSimplex3D(); 
     // MeshSimplicial3D M = UnitCube3D(); 
     // MeshSimplicial3D M = FicheraCorner3D();
     MeshSimplicial3D M = CrossedBricks3D();
     
     M.check();
     
-    bool do_neumann = true;
+    bool do_neumann = false;
+    // if( not do_neumann ){
+    //     M.automatic_dirichlet_flags();
+    //     M.check_dirichlet_flags();
+    // }
 
-    if( not do_neumann ){
-        M.automatic_dirichlet_flags();
-        M.check_dirichlet_flags();
+    if(false)
+    {
+        LOG << "Fine-tuned boundary conditions" << nl;
+        int first_bc_face = 1;
+        for( int f = first_bc_face; f <= 3; f++ ) {
+            M.set_flag( 2, f, SimplexFlag::SimplexFlagDirichlet );
+        }
+        M.complete_dirichlet_flags_from_facets();
+        M.check_dirichlet_flags(false);
+    
     }
 
+    for( int f = 0; f < M.count_faces(); f++ )
+    {
+        LOG << f << ": ";
+        for( int i = 0; i <= 2; i++ ) LOG << M.get_subsimplex( 2, 0, f, i ) << space;
+        LOG << " > " << (int)M.get_flag( 2, f ) << nl;
+    }
     
     LOG << "Prepare scalar fields for testing..." << nl;
     
@@ -84,11 +102,11 @@ int main( int argc, char *argv[] )
 
     LOG << "Estimating Poincare-Friedrichs constant of grad operator (Sullivan)" << nl;
 
-    const int min_l = 0; 
+    const int min_l = 3; 
     const int max_l = 3;
     
-    const int min_r = 2;
-    const int max_r = 2;
+    const int min_r = 1;
+    const int max_r = 1;
     
     
     std::vector<ConvergenceTable> contables(max_r-min_r+1); //();
@@ -295,8 +313,8 @@ int main( int argc, char *argv[] )
             
         }
 
-        // estimate the PF constant using one of the recursive estimates 
-        if( l == 0 )
+        // estimate the Neumann eigenvalue using one of the recursive estimates 
+        if( l == 0 and do_neumann )
         {
         
             LOG << "Estimate PF constant using recursive construction" << nl;
