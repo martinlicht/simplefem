@@ -20,7 +20,7 @@
 #include "../../fem/global.elevation.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
-#include "../../fem/global.sullivanincl.hpp"
+#include "../../fem/global.whitneyincl.hpp"
 #include "../../fem/utilities.hpp"
 #include "../../vtk/vtkwriter.hpp"
 
@@ -33,10 +33,14 @@ int main( int argc, char *argv[] )
     LOG << "Unit Test: 3D curl PF estimates using shellings" << nl;
     
     LOG << "Initial mesh..." << nl;
+
+    const bool do_gradient   = true;
+    const bool do_curl       = true;
+    const bool do_divergence = true;
     
     // MeshSimplicial3D M = UnitCube3D();
-    MeshSimplicial3D M = StandardCubeFive3D();
-    // MeshSimplicial3D M = CrossedBricks_Five3D();
+    // MeshSimplicial3D M = StandardCubeFive3D();
+    MeshSimplicial3D M = CrossedBricks_Five3D();
     // MeshSimplicial3D M = CrossedBricks3D();
     // MeshSimplicial3D M = FicheraCorner3D();
     // MeshSimplicial3D M = RandomPolyhedralSphere(0);
@@ -47,17 +51,20 @@ int main( int argc, char *argv[] )
 
     LOG << "Number of tetrahedra: " << M.count_tetrahedra() << nl;
     
-    Float PF_estimate_via_shellings = std::numeric_limits<Float>::infinity();
+    Float PF_estimate_via_shellings[3] = { notanumber, notanumber, notanumber };
 
     // if(false)
+    for( int k = 0; k < 3; k++ )
     {
-        auto shellings_found = generate_shellings2( M, 0 );
+        
+        PF_estimate_via_shellings[k] = std::numeric_limits<Float>::infinity();
+
+        auto shellings_found = generate_shellings2( M, k );
 
         LOG << shellings_found.size() << nl;
 
         typedef decltype(shellings_found[0]) shelling;
 
-        if(false)
         std::sort( shellings_found.begin(), shellings_found.end(), [=]( const shelling& s1, const shelling& s2 ){ return s1.weight_reflection < s2.weight_reflection; } );
 
         for( int t = 0; t < shellings_found.size(); t++ )
@@ -68,10 +75,11 @@ int main( int argc, char *argv[] )
             LOG << "\t" << shelling.weight_reflection << nl;
         }
 
-        return 0;
+        PF_estimate_via_shellings[k] = shellings_found.front().weight_reflection;
+            
     }
             
-    
+    /*
     if(false)
     {
         const auto shellings_found = generateShellings( M );
@@ -109,7 +117,7 @@ int main( int argc, char *argv[] )
             for( int i = 0; i < shelling.size(); i++ ) indices[i] = shelling[i].first;
             Float estimate = estimate_shelling_quality( M, indices, 1 );
 
-            PF_estimate_via_shellings = minimum( PF_estimate_via_shellings, estimate );
+            PF_estimate_via_shellings[0] = minimum( PF_estimate_via_shellings[0], estimate );
         }
 
         LOG << "PF estimate via shellings: " << PF_estimate_via_shellings << nl;
@@ -175,10 +183,6 @@ int main( int argc, char *argv[] )
 
         }
         
-
-
-
-
         // LOG << "Print ordered spanning trees..." << nl;
         // for( int t = 0; t < trees.size(); t++ )
         // {
@@ -191,29 +195,38 @@ int main( int argc, char *argv[] )
     }
 
 
-    return 0;
-
     // LOG << M.text() << nl;
+    */
+    
+    
+    
+    
 
     
-    
-    
 
-    
-
-    LOG << "Estimating Poincare-Friedrichs constant of curl operator (Sullivan)" << nl;
+    LOG << "Estimating Poincare-Friedrichs constant of curl operator (Whitney)" << nl;
 
     const int min_l = 1; 
-    const int max_l = 4;
+    const int max_l = 1;
     
     const int min_r = 1;
     const int max_r = 1;
     
     
-    std::vector<ConvergenceTable> contables(max_r-min_r+1); //();
-    for( int r = min_r; r <= max_r; r++ ){
-        contables[r-min_r].table_name = "Mass error and numerical residuals r=" + std::to_string(r);
-        contables[r-min_r] << "eigenvalue (iterated)" << "eigenvalue (post)" << "PF (post)" << "PF ratio" << "u_mass" << "du_mass" << "time" << nl;
+    std::vector<ConvergenceTable> contables_scalar(max_r-min_r+1);
+    std::vector<ConvergenceTable> contables_vector(max_r-min_r+1);
+    std::vector<ConvergenceTable> contables_pseudo(max_r-min_r+1);
+    
+    for( int r = min_r; r <= max_r; r++ )
+    {
+        contables_scalar[r-min_r].table_name = "Mass error and numerical residuals r=" + std::to_string(r);
+        contables_scalar[r-min_r] << "eigenvalue (iterated)" << "eigenvalue (post)" << "PF (post)" << "PF ratio" << "u_mass" << "du_mass" << "time" << nl;
+
+        contables_vector[r-min_r].table_name = "Mass error and numerical residuals r=" + std::to_string(r);
+        contables_vector[r-min_r] << "eigenvalue (iterated)" << "eigenvalue (post)" << "PF (post)" << "PF ratio" << "u_mass" << "du_mass" << "time" << nl;
+
+        contables_pseudo[r-min_r].table_name = "Mass error and numerical residuals r=" + std::to_string(r);
+        contables_pseudo[r-min_r] << "eigenvalue (iterated)" << "eigenvalue (post)" << "PF (post)" << "PF ratio" << "u_mass" << "du_mass" << "time" << nl;
     } 
 
     
@@ -237,180 +250,546 @@ int main( int argc, char *argv[] )
                     
             LOG << "... assemble mass matrices" << nl;
     
-            SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r+1 );
+            SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r   );
             SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   );
-            SparseMatrix pseudo_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r-1 );
+            SparseMatrix pseudo_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r   );
+            SparseMatrix volume_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 3, r-1 );
 
             LOG << "... assemble inclusion matrices" << nl;
     
-            SparseMatrix scalar_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r+1 );
+            SparseMatrix scalar_incmatrix   = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 0, r   );
             SparseMatrix scalar_incmatrix_t = scalar_incmatrix.getTranspose();
 
-            SparseMatrix vector_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 1, r   );
+            SparseMatrix vector_incmatrix   = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 1, r   );
             SparseMatrix vector_incmatrix_t = vector_incmatrix.getTranspose();
+
+            SparseMatrix pseudo_incmatrix   = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 2, r   );
+            SparseMatrix pseudo_incmatrix_t = pseudo_incmatrix.getTranspose();
 
             LOG << "... assemble algebraic matrices" << nl;
     
-            SparseMatrix scalar_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r+1 );
+            SparseMatrix scalar_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r );
             SparseMatrix scalar_diffmatrix_t = scalar_diffmatrix.getTranspose();
 
             SparseMatrix vector_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r );
             SparseMatrix vector_diffmatrix_t = vector_diffmatrix.getTranspose();
 
-            LOG << "... compose system matrices" << nl;
-    
-            auto mat_A  = vector_incmatrix_t & vector_diffmatrix_t & pseudo_massmatrix & vector_diffmatrix & vector_incmatrix;
-            mat_A.sortandcompressentries();
+            SparseMatrix pseudo_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 2, r );
+            SparseMatrix pseudo_diffmatrix_t = pseudo_diffmatrix.getTranspose();
+
+
+            SparseMatrix scalar_elevationmatrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 0, r-1, 1 );
+            SparseMatrix scalar_elevationmatrix_t = scalar_elevationmatrix.getTranspose();
+
+            SparseMatrix vector_elevationmatrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 1, r-1, 1 );
+            SparseMatrix vector_elevationmatrix_t = vector_elevationmatrix.getTranspose();
+
+            SparseMatrix pseudo_elevationmatrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 2, r-1, 1 );
+            SparseMatrix pseudo_elevationmatrix_t = pseudo_elevationmatrix.getTranspose();
+
+
+
+
+
+
+            if( do_gradient ) {
                 
-            auto mat_Bt = vector_incmatrix_t & vector_massmatrix & scalar_diffmatrix & scalar_incmatrix; // upper right
-            mat_Bt.sortandcompressentries();
-            
-            auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & pseudo_massmatrix & diffmatrix & vector_incmatrix; // lower bottom
-            mat_B.sortandcompressentries();
-            
-            LOG << "... compose CSR system matrices" << nl;
-    
-            auto A  = MatrixCSR( mat_A  );
-            auto Bt = MatrixCSR( mat_Bt );
-            auto B  = MatrixCSR( mat_B  );
-            
-            auto C  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
-            
-            // TODO: develop preconditioners 
-            // auto PA = IdentityMatrix( A.getdimin() );
-            // auto PC = IdentityMatrix( C.getdimin() );
+                LOG << "... compose system matrices (SCALAR)" << nl;
 
-            auto PA = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix )
-                      + 
-                      MatrixCSR( vector_incmatrix_t & vector_diffmatrix_t & pseudo_massmatrix & vector_diffmatrix & vector_incmatrix );
-            auto PC = MatrixCSR( scalar_incmatrix_t & scalar_massmatrix & scalar_incmatrix )
-                      + 
-                      MatrixCSR( scalar_incmatrix_t & scalar_diffmatrix_t & vector_massmatrix & scalar_diffmatrix & scalar_incmatrix );
-            // LOG << "share zero PA = " << PA.getnumberofzeroentries() << "/" <<  PA.getnumberofentries() << nl;
-            // LOG << "share zero PC = " << PC.getnumberofzeroentries() << "/" <<  PC.getnumberofentries() << nl;
-                        
-
-            LOG << "...begin inverse iteration" << nl;
-            
-            const int max_attempts = 1;
-
-            for( int s = 0; s < max_attempts; s++ )
-            {
-
-                FloatVector candidate = FloatVector( A.getdimout(), 0. ); 
-                candidate.random(); 
-                candidate = A * candidate;
-                candidate.normalize( vector_incmatrix_t * vector_massmatrix * vector_incmatrix ); 
+                // PING;
+                // scalar_diffmatrix & scalar_incmatrix;
+                // PING;
+                // vector_elevationmatrix & scalar_diffmatrix;
+                // PING;
+                // vector_massmatrix & scalar_elevationmatrix;
+                // PING;
+                auto mat_A  = scalar_incmatrix_t & scalar_diffmatrix_t & vector_elevationmatrix_t & vector_massmatrix & vector_elevationmatrix & scalar_diffmatrix & scalar_incmatrix;
+                mat_A.sortandcompressentries();
+                    
+                LOG << "... compose CSR system matrices (SCALAR)" << nl;
+        
+                auto A  = MatrixCSR( mat_A  );
                 
-                const int max_inverseiterations = 10;
+                            
 
-                Float newratio = -1;
+                LOG << "...begin inverse iteration" << nl;
                 
-                timestamp start = timestampnow();
+                const int max_attempts = 1;
 
-                for( int t = 0; t < max_inverseiterations; t++ )
+                for( int s = 0; s < max_attempts; s++ )
                 {
+
+                    FloatVector candidate = FloatVector( A.getdimout(), 0. ); 
+                    candidate.random(); 
+                    candidate = A * candidate;
+                    candidate.normalize( scalar_incmatrix_t * scalar_massmatrix * scalar_incmatrix ); 
                     
+                    const int max_inverseiterations = 10;
+
+                    Float newratio = -1;
                     
-                    // find the next candidate
-
-                    FloatVector sol( A.getdimout(), 0. );
-                    FloatVector aux( B.getdimout(), 0. );
-
-                    const FloatVector rhs_sol = ( vector_incmatrix_t * vector_massmatrix * vector_incmatrix ) * candidate;
-                    const FloatVector rhs_aux = FloatVector( B.getdimout(), 0. );
-
-                    // auto residual = sol;
-                    // ConjugateResidualSolverCSR_textbook( 
-                    //     sol.getdimension(), 
-                    //     sol.raw(), 
-                    //     rhs_sol.raw(), 
-                    //     A.getA(), A.getC(), A.getV(),
-                    //     residual.raw(),
-                    //     desired_precision,
-                    //     -1
-                    // );
+                    timestamp start = timestampnow();
                     
-                    // const auto PAinv = pinv(PA,desired_precision,-1);
-                    // const auto PCinv = pinv(PC,desired_precision,-1);
-                    // sol = PAinv * rhs_sol;
+                    for( int t = 0; t <= max_inverseiterations; t++ )
+                    {
+                        
+                        
+                        // find the next candidate
+
+                        {
+                            auto constant_one = FloatVector( scalar_incmatrix.getdimin(), 1. );
+                            Float average = ( scalar_massmatrix * scalar_incmatrix * candidate    ) * ( scalar_incmatrix * constant_one );
+                            Float weight  = ( scalar_massmatrix * scalar_incmatrix * constant_one ) * ( scalar_incmatrix * constant_one );
+                            candidate = candidate - ( average / weight ) * constant_one;
+                        }
+
+                        FloatVector sol( A.getdimout(), 0. );
+                        
+                        FloatVector rhs_sol = ( scalar_incmatrix_t * scalar_massmatrix * scalar_incmatrix ) * candidate;
+                        
+                        {
+                            auto constant_one = FloatVector( scalar_incmatrix.getdimin(), 1. );
+                            Float average = ( scalar_massmatrix * scalar_incmatrix * rhs_sol      ) * ( scalar_incmatrix * constant_one );
+                            Float weight  = ( scalar_massmatrix * scalar_incmatrix * constant_one ) * ( scalar_incmatrix * constant_one );
+                            rhs_sol = rhs_sol - ( average / weight ) * constant_one;
+                        }
+
+                        auto residual = sol;
+                        
+                        // ConjugateResidualSolverCSR( 
+                        //     sol.getdimension(), 
+                        //     sol.raw(), 
+                        //     rhs_sol.raw(), 
+                        //     A.getA(), A.getC(), A.getV(),
+                        //     residual.raw(),
+                        //     desired_precision,
+                        //     -1
+                        // );
+
+                        {
+                            DenseMatrix Bt( A.getdimout(), 1, 1. );
+                            DenseMatrix B = Transpose(Bt);
+                            DenseMatrix C(1,1,0.);
+                            
+                            auto aux     = FloatVector(1,0.);
+                            auto rhs_aux = FloatVector(1,0.);
+                            
+                            BlockHerzogSoodhalterMethod( 
+                                sol, 
+                                aux, 
+                                rhs_sol, 
+                                rhs_aux, 
+                                A, Bt, B, C, 
+                                desired_precision * std::sqrt(desired_precision),
+                                -1,
+                                IdentityMatrix( A.getdimin() ), IdentityMatrix( C.getdimin() ) 
+                            );
+
+                        }
+
+                        {
+                            auto constant_one = FloatVector( scalar_incmatrix.getdimin(), 1. );
+                            Float average = ( scalar_massmatrix * scalar_incmatrix * sol          ) * ( scalar_incmatrix * constant_one );
+                            Float weight  = ( scalar_massmatrix * scalar_incmatrix * constant_one ) * ( scalar_incmatrix * constant_one );
+                            sol = sol - ( average / weight ) * constant_one;
+                        }
+                        
+                        candidate = sol;
+                        
+                        
+                        // assess this new candidate 
+
+                        const auto A_candidate = A * candidate;
+                        const auto M_candidate = ( scalar_incmatrix_t * scalar_massmatrix * scalar_incmatrix ) * candidate; 
+                        
+                        const auto candidate_A_product = candidate * A_candidate; 
+                        const auto candidate_M_product = candidate * M_candidate; 
+
+                        newratio = candidate_A_product / candidate_M_product;
+
+                        candidate /= std::sqrt(candidate_M_product); // Optional step
+
+                        LOG << "current ratio: " << newratio << " (" << t << "/" << max_inverseiterations << ")" << nl;
+                        
+                        Float u_residualmass_sq   = ( A * sol - rhs_sol ).norm_sq(); // ( scalar_incmatrix_t * scalar_massmatrix * scalar_incmatrix ); 
+                        
+                        LOG << "current residual: " << u_residualmass_sq << nl;
+
+                        
+                    }
+
+                    timestamp end = timestampnow();
+
+                    // ... computed the solution
+
+                    LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                     
-                    const auto PAinv = inv(PA,desired_precision,-1);
-                    const auto PCinv = inv(PC,desired_precision,-1);
-                    BlockHerzogSoodhalterMethod( 
-                        sol, 
-                        aux, 
-                        rhs_sol, 
-                        rhs_aux, 
-                        A, Bt, B, C, 
-                        desired_precision * std::sqrt(desired_precision),
-                        -1,
-                        // IdentityMatrix( A.getdimin() ), IdentityMatrix( C.getdimin() ) 
-                        PAinv, PCinv
-                    );
+                    LOG << "...compute error and residual" << nl;
 
-                    candidate = sol;
+                    auto sol = candidate; 
+
+                    Float u_massnorm     = sol * ( scalar_incmatrix_t * ( scalar_massmatrix * scalar_incmatrix * sol  ) );
+                    Float ugrad_massnorm = sol * ( mat_A * sol );
+                    Float curratio       = ugrad_massnorm / u_massnorm;
                     
+                    LOG << "ratio:       " << newratio << nl;
+                    LOG << "ratio:       " << curratio << nl;
+                    LOG << "u mass:      " << u_massnorm << nl;
+                    LOG << "u grad mass: " << ugrad_massnorm << nl;
+
+                    LOG << "PF constant estimates: " << 1./std::sqrt(curratio) << space  << 1./std::sqrt(newratio) << nl;
                     
-                    // assess the current candidate 
+                    const Float true_eigenvalue = 1.;
+                    // 1.0 is the true value 
+                    // 3.0 is the true value 
 
-                    const auto A_candidate = A * candidate;
-                    const auto M_candidate = ( vector_incmatrix_t * vector_massmatrix * vector_incmatrix ) * candidate; 
-                    
-                    const auto candidate_A_product = candidate * A_candidate; 
-                    const auto candidate_M_product = candidate * M_candidate; 
+                    contables_scalar[r-min_r] << newratio;
+                    contables_scalar[r-min_r] << curratio;
+                    contables_scalar[r-min_r] << std::sqrt(curratio);
+                    contables_scalar[r-min_r] << PF_estimate_via_shellings[1] * std::sqrt(curratio);
+                    contables_scalar[r-min_r] << u_massnorm;
+                    contables_scalar[r-min_r] << ugrad_massnorm;
+                    contables_scalar[r-min_r] << Float( end - start );
+                    contables_scalar[r-min_r] << nl;
 
-                    newratio = candidate_A_product / candidate_M_product;
-
-                    candidate /= std::sqrt(candidate_M_product); // Optional step
-
-                    LOG << "current ratio: " << newratio << " (" << t << "/" << max_inverseiterations << ")" << nl;
-
-                    Float u_residualmass_sq   = ( A * sol + Bt * aux - rhs_sol ).norm_sq(); // ( scalar_incmatrix_t * scalar_massmatrix * scalar_incmatrix ); 
-                    Float aux_residualmass_sq = ( B * sol            - rhs_aux ).norm_sq(); // ( vector_incmatrix_t * vector_massmatrix * vector_incmatrix ); 
-                    
-                    LOG << "current residuals: " << u_residualmass_sq << tab << aux_residualmass_sq << nl;
-
-                    
+                    contables_scalar[r-min_r].lg();
+                
                 }
-
-                timestamp end = timestampnow();
-
-                // ... computed the solution
-
-                LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                 
-                LOG << "...compute error and residual" << nl;
+            }
 
-                auto sol = candidate; 
 
-                Float u_massnorm     = sol * ( vector_incmatrix_t * ( vector_massmatrix * vector_incmatrix * sol  ) );
-                Float ucurl_massnorm = sol * ( mat_A * sol );
-                Float curratio       = ucurl_massnorm / u_massnorm;
-                Float u_defectmass   = ( B * sol ).norm_sq( scalar_incmatrix_t * scalar_massmatrix * scalar_incmatrix ); 
+
+
+
+
+
+            if( do_curl ) {
                 
-                LOG << "ratio (iteration):   " << newratio << nl;
-                LOG << "ratio (postprocess): " << curratio << nl;
-                LOG << "u mass:              " << u_massnorm << nl;
-                LOG << "u curl mass          " << ucurl_massnorm << nl;
-                LOG << "u defect mass:       " << u_defectmass << nl;
-                
-                LOG << "PF constant estimates: " << 1./std::sqrt(curratio) << space  << 1./std::sqrt(newratio) << nl;
+                LOG << "... compose system matrices (VECTOR)" << nl;
+    
+                auto mat_A  = vector_incmatrix_t & vector_diffmatrix_t & pseudo_elevationmatrix_t & pseudo_massmatrix & pseudo_elevationmatrix & vector_diffmatrix & vector_incmatrix;
+                mat_A.sortandcompressentries();
                     
-                contables[r-min_r] << newratio;
-                contables[r-min_r] << curratio;
-                contables[r-min_r] << std::sqrt(curratio);
-                contables[r-min_r] << PF_estimate_via_shellings * std::sqrt(curratio);
-                contables[r-min_r] << u_massnorm;
-                contables[r-min_r] << ucurl_massnorm;
-                contables[r-min_r] << Float( end - start );
-                contables[r-min_r] << nl;
+                auto mat_Bt = vector_incmatrix_t & vector_massmatrix & vector_elevationmatrix & scalar_diffmatrix & scalar_incmatrix; // upper right
+                mat_Bt.sortandcompressentries();
+                
+                auto mat_B = mat_Bt.getTranspose(); // lower left
+                mat_B.sortandcompressentries();
+                
+                LOG << "... compose CSR system matrices (VECTOR)" << nl;
+        
+                auto A  = MatrixCSR( mat_A  );
+                auto Bt = MatrixCSR( mat_Bt );
+                auto B  = MatrixCSR( mat_B  );
+                
+                auto C  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
+                
+                // TODO: develop preconditioners 
+                // auto PA = IdentityMatrix( A.getdimin() );
+                // auto PC = IdentityMatrix( C.getdimin() );
 
-                contables[r-min_r].lg();
+                auto PA = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix )
+                          + 
+                          MatrixCSR( vector_incmatrix_t & vector_diffmatrix_t & pseudo_elevationmatrix_t & pseudo_massmatrix & pseudo_elevationmatrix & vector_diffmatrix & vector_incmatrix );
+                
+                auto PC = MatrixCSR( scalar_incmatrix_t & scalar_massmatrix & scalar_incmatrix )
+                          + 
+                          MatrixCSR( scalar_incmatrix_t & scalar_diffmatrix_t & vector_elevationmatrix_t & vector_massmatrix & vector_elevationmatrix & scalar_diffmatrix & scalar_incmatrix );
+                // LOG << "share zero PA = " << PA.getnumberofzeroentries() << "/" <<  PA.getnumberofentries() << nl;
+                // LOG << "share zero PC = " << PC.getnumberofzeroentries() << "/" <<  PC.getnumberofentries() << nl;
+                            
+
+                LOG << "...begin inverse iteration (VECTOR)" << nl;
+            
+                const int max_attempts = 1;
+
+                for( int s = 0; s < max_attempts; s++ )
+                {
+
+                    FloatVector candidate = FloatVector( A.getdimout(), 0. ); 
+                    candidate.random(); 
+                    candidate = A * candidate;
+                    candidate.normalize( vector_incmatrix_t * vector_massmatrix * vector_incmatrix ); 
+                    
+                    const int max_inverseiterations = 10;
+
+                    Float newratio = -1;
+                    
+                    timestamp start = timestampnow();
+
+                    for( int t = 0; t < max_inverseiterations; t++ )
+                    {
+                        
+                        
+                        // find the next candidate
+
+                        FloatVector sol( A.getdimout(), 0. );
+                        FloatVector aux( B.getdimout(), 0. );
+
+                        const FloatVector rhs_sol = ( vector_incmatrix_t * vector_massmatrix * vector_incmatrix ) * candidate;
+                        const FloatVector rhs_aux = FloatVector( B.getdimout(), 0. );
+
+                        // auto residual = sol;
+                        // ConjugateResidualSolverCSR_textbook( 
+                        //     sol.getdimension(), 
+                        //     sol.raw(), 
+                        //     rhs_sol.raw(), 
+                        //     A.getA(), A.getC(), A.getV(),
+                        //     residual.raw(),
+                        //     desired_precision,
+                        //     -1
+                        // );
+                        
+                        // const auto PAinv = pinv(PA,desired_precision,-1);
+                        // const auto PCinv = pinv(PC,desired_precision,-1);
+                        // sol = PAinv * rhs_sol;
+                        
+                        const auto PAinv = inv(PA,desired_precision,-1);
+                        const auto PCinv = inv(PC,desired_precision,-1);
+                        BlockHerzogSoodhalterMethod( 
+                            sol, 
+                            aux, 
+                            rhs_sol, 
+                            rhs_aux, 
+                            A, Bt, B, C, 
+                            desired_precision * std::sqrt(desired_precision),
+                            -1,
+                            // IdentityMatrix( A.getdimin() ), IdentityMatrix( C.getdimin() ) 
+                            PAinv, PCinv
+                        );
+
+                        candidate = sol;
+                        
+                        
+                        // assess the current candidate 
+
+                        const auto A_candidate = A * candidate;
+                        const auto M_candidate = ( vector_incmatrix_t * vector_massmatrix * vector_incmatrix ) * candidate; 
+                        
+                        const auto candidate_A_product = candidate * A_candidate; 
+                        const auto candidate_M_product = candidate * M_candidate; 
+
+                        newratio = candidate_A_product / candidate_M_product;
+
+                        candidate /= std::sqrt(candidate_M_product); // Optional step
+
+                        LOG << "current ratio: " << newratio << " (" << t << "/" << max_inverseiterations << ")" << nl;
+
+                        Float u_residualmass_sq   = ( A * sol + Bt * aux - rhs_sol ).norm_sq(); // ( scalar_incmatrix_t * scalar_massmatrix * scalar_incmatrix ); 
+                        Float aux_residualmass_sq = ( B * sol            - rhs_aux ).norm_sq(); // ( vector_incmatrix_t * vector_massmatrix * vector_incmatrix ); 
+                        
+                        LOG << "current residuals: " << u_residualmass_sq << tab << aux_residualmass_sq << nl;
+
+                        
+                    }
+
+                    timestamp end = timestampnow();
+
+                    // ... computed the solution
+
+                    LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
+                    
+                    LOG << "...compute error and residual (VECTOR)" << nl;
+
+                    auto sol = candidate; 
+
+                    Float u_massnorm     = sol * ( vector_incmatrix_t * ( vector_massmatrix * vector_incmatrix * sol  ) );
+                    Float ucurl_massnorm = sol * ( mat_A * sol );
+                    Float curratio       = ucurl_massnorm / u_massnorm;
+                    Float u_defectmass   = ( B * sol ).norm_sq( scalar_incmatrix_t * scalar_massmatrix * scalar_incmatrix ); 
+                    
+                    LOG << "ratio (iteration):   " << newratio << nl;
+                    LOG << "ratio (postprocess): " << curratio << nl;
+                    LOG << "u mass:              " << u_massnorm << nl;
+                    LOG << "u curl mass          " << ucurl_massnorm << nl;
+                    LOG << "u defect mass:       " << u_defectmass << nl;
+                    
+                    LOG << "PF constant estimates: " << 1./std::sqrt(curratio) << space  << 1./std::sqrt(newratio) << nl;
+                        
+                    contables_vector[r-min_r] << newratio;
+                    contables_vector[r-min_r] << curratio;
+                    contables_vector[r-min_r] << std::sqrt(curratio);
+                    contables_vector[r-min_r] << PF_estimate_via_shellings[1] * std::sqrt(curratio);
+                    contables_vector[r-min_r] << u_massnorm;
+                    contables_vector[r-min_r] << ucurl_massnorm;
+                    contables_vector[r-min_r] << Float( end - start );
+                    contables_vector[r-min_r] << nl;
+
+                    contables_vector[r-min_r].lg();
+                
+                }
             
             }
+
+
+
+
+
+
+
+            if( do_divergence ) {
+                
+                LOG << "... compose system matrices (PSEUDO)" << nl;
+    
+                auto mat_A  = pseudo_incmatrix_t & pseudo_diffmatrix_t & volume_massmatrix & pseudo_diffmatrix & pseudo_incmatrix;
+                mat_A.sortandcompressentries();
+                    
+                auto mat_Bt = pseudo_incmatrix_t & pseudo_massmatrix & pseudo_elevationmatrix & vector_diffmatrix & vector_incmatrix; // upper right
+                mat_Bt.sortandcompressentries();
+                
+                auto mat_B = mat_Bt.getTranspose(); // lower left
+                mat_B.sortandcompressentries();
+                
+                LOG << "... compose CSR system matrices (PSEUDO)" << nl;
+        
+                auto A  = MatrixCSR( mat_A  );
+                auto Bt = MatrixCSR( mat_Bt );
+                auto B  = MatrixCSR( mat_B  );
+                
+                auto C  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
+                
+                // TODO: develop preconditioners 
+                // auto PA = IdentityMatrix( A.getdimin() );
+                // auto PC = IdentityMatrix( C.getdimin() );
+
+                auto PA = MatrixCSR( pseudo_incmatrix_t & pseudo_massmatrix & pseudo_incmatrix )
+                          + 
+                          MatrixCSR( pseudo_incmatrix_t & pseudo_diffmatrix_t & volume_massmatrix & pseudo_diffmatrix & pseudo_incmatrix );
+
+                auto PC = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix )
+                          + 
+                          MatrixCSR( vector_incmatrix_t & vector_diffmatrix_t & pseudo_elevationmatrix_t & pseudo_massmatrix & pseudo_elevationmatrix & vector_diffmatrix & vector_incmatrix );
+
+                // LOG << "share zero PA = " << PA.getnumberofzeroentries() << "/" <<  PA.getnumberofentries() << nl;
+                // LOG << "share zero PC = " << PC.getnumberofzeroentries() << "/" <<  PC.getnumberofentries() << nl;
+                            
+
+                LOG << "...begin inverse iteration (PSEUDO)" << nl;
             
+                const int max_attempts = 1;
+
+                for( int s = 0; s < max_attempts; s++ )
+                {
+
+                    FloatVector candidate = FloatVector( A.getdimout(), 0. ); 
+                    candidate.random(); 
+                    candidate = A * candidate;
+                    candidate.normalize( pseudo_incmatrix_t * pseudo_massmatrix * pseudo_incmatrix ); 
+                    
+                    const int max_inverseiterations = 10;
+
+                    Float newratio = -1;
+                    
+                    timestamp start = timestampnow();
+
+                    for( int t = 0; t < max_inverseiterations; t++ )
+                    {
+                        
+                        
+                        // find the next candidate
+
+                        FloatVector sol( A.getdimout(), 0. );
+                        FloatVector aux( B.getdimout(), 0. );
+
+                        const FloatVector rhs_sol = ( pseudo_incmatrix_t * pseudo_massmatrix * pseudo_incmatrix ) * candidate;
+                        const FloatVector rhs_aux = FloatVector( B.getdimout(), 0. );
+
+                        // auto residual = sol;
+                        // ConjugateResidualSolverCSR_textbook( 
+                        //     sol.getdimension(), 
+                        //     sol.raw(), 
+                        //     rhs_sol.raw(), 
+                        //     A.getA(), A.getC(), A.getV(),
+                        //     residual.raw(),
+                        //     desired_precision,
+                        //     -1
+                        // );
+                        
+                        // const auto PAinv = pinv(PA,desired_precision,-1);
+                        // const auto PCinv = pinv(PC,desired_precision,-1);
+                        // sol = PAinv * rhs_sol;
+                        
+                        const auto PAinv = inv(PA,desired_precision,-1);
+                        const auto PCinv = inv(PC,desired_precision,-1);
+                        BlockHerzogSoodhalterMethod( 
+                            sol, 
+                            aux, 
+                            rhs_sol, 
+                            rhs_aux, 
+                            A, Bt, B, C, 
+                            desired_precision * std::sqrt(desired_precision),
+                            -1,
+                            // IdentityMatrix( A.getdimin() ), IdentityMatrix( C.getdimin() ) 
+                            PAinv, PCinv
+                        );
+
+                        candidate = sol;
+                        
+                        
+                        // assess the current candidate 
+
+                        const auto A_candidate = A * candidate;
+                        const auto M_candidate = ( pseudo_incmatrix_t * pseudo_massmatrix * pseudo_incmatrix ) * candidate; 
+                        
+                        const auto candidate_A_product = candidate * A_candidate; 
+                        const auto candidate_M_product = candidate * M_candidate; 
+
+                        newratio = candidate_A_product / candidate_M_product;
+
+                        candidate /= std::sqrt(candidate_M_product); // Optional step
+
+                        LOG << "current ratio: " << newratio << " (" << t << "/" << max_inverseiterations << ")" << nl;
+
+                        Float u_residualmass_sq   = ( A * sol + Bt * aux - rhs_sol ).norm_sq(); // ( vector_incmatrix_t * vector_massmatrix * vector_incmatrix ); 
+                        Float aux_residualmass_sq = ( B * sol            - rhs_aux ).norm_sq(); // ( pseudo_incmatrix_t * pseudo_massmatrix * pseudo_incmatrix ); 
+                        
+                        LOG << "current residuals: " << u_residualmass_sq << tab << aux_residualmass_sq << nl;
+
+                        
+                    }
+
+                    timestamp end = timestampnow();
+
+                    // ... computed the solution
+
+                    LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
+                    
+                    LOG << "...compute error and residual (PSEUDO)" << nl;
+
+                    auto sol = candidate; 
+
+                    Float u_massnorm     = sol * ( pseudo_incmatrix_t * ( pseudo_massmatrix * pseudo_incmatrix * sol  ) );
+                    Float ucurl_massnorm = sol * ( mat_A * sol );
+                    Float curratio       = ucurl_massnorm / u_massnorm;
+                    Float u_defectmass   = ( B * sol ).norm_sq( vector_incmatrix_t * vector_massmatrix * vector_incmatrix ); 
+                    
+                    LOG << "ratio (iteration):   " << newratio << nl;
+                    LOG << "ratio (postprocess): " << curratio << nl;
+                    LOG << "u mass:              " << u_massnorm << nl;
+                    LOG << "u curl mass          " << ucurl_massnorm << nl;
+                    LOG << "u defect mass:       " << u_defectmass << nl;
+                    
+                    LOG << "PF constant estimates: " << 1./std::sqrt(curratio) << space  << 1./std::sqrt(newratio) << nl;
+                        
+                    contables_pseudo[r-min_r] << newratio;
+                    contables_pseudo[r-min_r] << curratio;
+                    contables_pseudo[r-min_r] << std::sqrt(curratio);
+                    contables_pseudo[r-min_r] << PF_estimate_via_shellings[2] * std::sqrt(curratio);
+                    contables_pseudo[r-min_r] << u_massnorm;
+                    contables_pseudo[r-min_r] << ucurl_massnorm;
+                    contables_pseudo[r-min_r] << Float( end - start );
+                    contables_pseudo[r-min_r] << nl;
+
+                    contables_pseudo[r-min_r].lg();
+                
+                }
+            
+            }
+
+
         }
+
 
         if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
         

@@ -58,30 +58,25 @@ int main( int argc, char *argv[] )
     {
         PF_estimate_via_shellings[k] = std::numeric_limits<Float>::infinity();
 
+        auto shellings_found = generate_shellings2( M, 0 );
+
+        LOG << shellings_found.size() << nl;
+
+        typedef decltype(shellings_found[0]) shelling;
+
+        std::sort( shellings_found.begin(), shellings_found.end(), 
+                    [=]( const shelling& s1, const shelling& s2 ){ return s1.weight_reflection < s2.weight_reflection; } 
+                    );
+
+        for( int t = 0; t < shellings_found.size(); t++ )
         {
-            auto shellings_found = generate_shellings2( M, 0 );
-
-            LOG << shellings_found.size() << nl;
-
-            typedef decltype(shellings_found[0]) shelling;
-
-            std::sort( shellings_found.begin(), shellings_found.end(), 
-                       [=]( const shelling& s1, const shelling& s2 ){ return s1.weight_reflection < s2.weight_reflection; } 
-                     );
-
-            for( int t = 0; t < shellings_found.size(); t++ )
-            {
-                const auto& shelling = shellings_found[t];
-                LOG << "k=" << k << "\t" << t << "\t:\t";
-                for( const auto& s : shelling ) { LOG << s << space; }
-                LOG << "\t" << shelling.weight_reflection << "\t" << shelling.weight_deformation << nl;
-            }
-
-            PF_estimate_via_shellings[k] = shellings_found.front().weight_reflection;
-            
+            const auto& shelling = shellings_found[t];
+            LOG << "k=" << k << "\t" << t << "\t:\t";
+            for( const auto& s : shelling ) { LOG << s << space; }
+            LOG << "\t" << shelling.weight_reflection << "\t" << shelling.weight_deformation << nl;
         }
 
-
+        PF_estimate_via_shellings[k] = shellings_found.front().weight_reflection;
     
     }
 
@@ -169,7 +164,7 @@ int main( int argc, char *argv[] )
                 auto mat_Bt = vector_incmatrix_t & vector_massmatrix & scalar_diffmatrix & scalar_incmatrix; // upper right
                 mat_Bt.sortandcompressentries();
                 
-                auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & volume_massmatrix & diffmatrix & vector_incmatrix; // lower bottom
+                auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & volume_massmatrix & diffmatrix & vector_incmatrix; // lower left
                 mat_B.sortandcompressentries();
                 
                 LOG << "... compose CSR system matrices (SCALAR)" << nl;
@@ -386,7 +381,7 @@ int main( int argc, char *argv[] )
                 
                 PING;
                     
-                auto mat_B = mat_Bt.getTranspose(); //vector_incmatrix_t & vector_massmatrix & vector_diffmatrix & vector_incmatrix; // lower bottom
+                auto mat_B = mat_Bt.getTranspose(); //vector_incmatrix_t & vector_massmatrix & vector_diffmatrix & vector_incmatrix; // lower left
                 mat_B.sortandcompressentries();
                 
                 LOG << "... compose CSR system matrices (VECTOR)" << nl;

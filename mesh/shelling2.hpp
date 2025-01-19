@@ -256,12 +256,12 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
             // improved estimates, simplex by simplex 
             // if(false)
             {
-                const int k = level;
+                const int m = level;
 
-                int subsimplex = mesh.get_subsimplex( dim, k, i, sub_index );
+                int subsimplex = mesh.get_subsimplex( dim, m, i, sub_index );
 
-                auto parents  = mesh.get_supersimplices( dim, k, subsimplex );
-                auto vertices = mesh.get_subsimplices  (   k, 0, subsimplex ).getvalues();
+                auto parents  = mesh.get_supersimplices( dim, m, subsimplex );
+                auto vertices = mesh.get_subsimplices  (   m, 0, subsimplex ).getvalues();
 
                 // find the radius that is maximally possible.
 
@@ -272,43 +272,43 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
                 {
                     int vertex_localindex = mesh.get_subsimplex_index( dim, 0, parent, vertex );
                     Float height = mesh.getHeight( dim, parent, vertex_localindex );
-                    varrho = minimum( varrho, height / (k+1) );
+                    varrho = minimum( varrho, height / (m+1) );
                 }
 
                 // find the heights 
 
-                int index_oppsite_subsimplex = mesh.get_opposite_subsimplex_index( dim, k, i, sub_index );
-                int opposite_subsimplex      = mesh.get_subsimplex( dim, dim - k - 1, i, index_oppsite_subsimplex );
+                int index_oppsite_subsimplex = mesh.get_opposite_subsimplex_index( dim, m, i, sub_index );
+                int opposite_subsimplex      = mesh.get_subsimplex( dim, dim - m - 1, i, index_oppsite_subsimplex );
 
-                auto other_vertices = mesh.get_subsimplices( dim-k-1, 0, opposite_subsimplex ).getvalues();
+                auto other_vertices = mesh.get_subsimplices( dim-m-1, 0, opposite_subsimplex ).getvalues();
                 
-                std::vector<FloatVector> height_vectors( dim-k, FloatVector(dim,notanumber) );
+                std::vector<FloatVector> height_vectors( dim-m, FloatVector(dim,notanumber) );
 
-                for( int vi = 0; vi <= dim-k-1; vi++ ) {
+                for( int vi = 0; vi <= dim-m-1; vi++ ) {
                     height_vectors[vi] = mesh.getHeightVector( dim, i, vi );
                     // LOGPRINTF( "(%d %e) ", vi, height_vectors[vi].scalarproductwith( zc - zs ) );
                 } 
                 // LOG << nl;
 
                 // computation 
-                // when S has got k+1 vertices, then S' must have dim-k vertices 
-                // Then S has got dimension k and S' has got dimension dim-k-1
+                // when S has got m+1 vertices, then S' must have dim-m vertices 
+                // Then S has got dimension m and S' has got dimension dim-m-1
                 
                 Float improved_singular_max = 0.; 
 
                 Float matrixwise_singular_max = 0.; 
                 
-                auto zs = mesh.get_midpoint(       k,          subsimplex );
-                auto zc = mesh.get_midpoint( dim-k-1, opposite_subsimplex );
+                auto zs = mesh.get_midpoint(       m,          subsimplex );
+                auto zc = mesh.get_midpoint( dim-m-1, opposite_subsimplex );
 
                 Float rho = minimum( 1., varrho / (zc-zs).norm() );
                 // rho = varrho;
 
-                for( int vi = 0; vi <= dim-k-1; vi++ ) 
+                for( int vi = 0; vi <= dim-m-1; vi++ ) 
                 {
                     
                     auto z = zc - zs;
-                    auto h = height_vectors[vi] / ( dim-k );
+                    auto h = height_vectors[vi] / ( dim-m );
                     auto b = z - h; //( z.scalarproductwith(h) / h.norm_sq() ) * h;
                     auto tanbeta = b.norm() / h.norm();
 
@@ -323,18 +323,18 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
                     improved_singular_max = maximum( improved_singular_max, proposed_improved_singular_max );
                 }
 
-                for( int v1 = 0; v1 <=       k; v1++ ) 
-                for( int v2 = 0; v2 <= dim-k-1; v2++ ) 
+                for( int v1 = 0; v1 <=       m; v1++ ) 
+                for( int v2 = 0; v2 <= dim-m-1; v2++ ) 
                 {
 
                     std::vector<FloatVector> columns;
                     columns.reserve( dim );
 
-                    for( int w1 = 0; w1 <= k; w1++ ) 
+                    for( int w1 = 0; w1 <= m; w1++ ) 
                         if( v1 != w1 ) 
                             columns.push_back( mesh.getCoordinates().getvectorclone(       vertices[w1] ) - zs );
 
-                    for( int w2 = 0; w2 <= dim-k-1; w2++ ) 
+                    for( int w2 = 0; w2 <= dim-m-1; w2++ ) 
                         if( v2 != w2 ) 
                             columns.push_back( mesh.getCoordinates().getvectorclone( other_vertices[w2] ) - zs );
 
@@ -590,8 +590,8 @@ void generate_shellings2(
     Float multweight
 ){
 
-    // const unsigned int max_number_of_shellings = 1; 
-    const unsigned int max_number_of_shellings = std::numeric_limits<unsigned int>::max();
+    const unsigned int max_number_of_shellings = 1; 
+    // const unsigned int max_number_of_shellings = std::numeric_limits<unsigned int>::max();
 
     const bool sort_nodes_by_priority = true;
     // const bool sort_nodes_by_priority = false;
@@ -825,11 +825,11 @@ void generate_shellings2(
         assert( 0 <= current_node and current_node < counts[dim] );
         
         // What is the dimension of the subsimplex around which the interface is made?        
-        int k = dim - how_many_connected_faces[i];
-        Assert( i == 0 or k <= dim, i, k );
-        // Assert( k >= 0, k, i, how_many_connected_faces[i] );
+        int m = dim - how_many_connected_faces[i];
+        Assert( i == 0 or m <= dim, i, m );
+        // Assert( m >= 0, m, i, how_many_connected_faces[i] );
 
-        shared_subsimplex_dim[i] = k;
+        shared_subsimplex_dim[i] = m;
 
         if(false){ 
             LOG << "PREFIX "; for( auto v : current_prefix  ) LOG << v << space; LOG << nl;
@@ -839,8 +839,8 @@ void generate_shellings2(
             for( auto f : temp ) LOG << f << space; LOG << nl;
         }
 
-        Assert( ( k == dim ) == ( current_prefix.size() == 0 ), k, current_node );
-        if( k ==  -1 ) Assert( current_prefix.size() == counts[dim]-1, k, current_node );
+        Assert( ( m == dim ) == ( current_prefix.size() == 0 ), m, current_node );
+        if( m ==  -1 ) Assert( current_prefix.size() == counts[dim]-1, m, current_node );
         
 
         
@@ -849,44 +849,44 @@ void generate_shellings2(
 
         int common_subsimplex = mesh.nullindex; 
 
-        if( k != -1 ) // if not all faces are connected
+        if( m != -1 ) // if not all faces are connected
         {
 
             // find the shared subsimplices of the proposed node of dimension k
             
             // LOGPRINTF("dim %i k %i current_node %i\n", dim, k, current_node );
             
-            const auto k_subsimplices_of_node = mesh.get_subsimplices( dim, k, current_node ).getvalues();
+            const auto m_subsimplices_of_node = mesh.get_subsimplices( dim, m, current_node ).getvalues();
 
-            for( int k_sub : k_subsimplices_of_node ) 
+            for( int m_sub : m_subsimplices_of_node ) 
             {
                 bool is_match = true;
                 for( int f = 0; f < faces_of_node[i].size() && is_match; f++ )
-                    if( face_is_connected[i][f] and not mesh.is_subsimplex( dim-1, k, faces_of_node[i][f], k_sub ) )
+                    if( face_is_connected[i][f] and not mesh.is_subsimplex( dim-1, m, faces_of_node[i][f], m_sub ) )
                         is_match = false;
 
                 Assert( not is_match or common_subsimplex == mesh.nullindex, is_match, common_subsimplex );
                 
-                if( is_match ) common_subsimplex = k_sub;
+                if( is_match ) common_subsimplex = m_sub;
 
                 // if( common_subsimplex != mesh.nullindex )
                 // {
-                //     LOG << k << space << k_sub << space << common_subsimplex << nl;
-                //     auto temp1 = mesh.get_subsimplices( k, 0, k_sub );
+                //     LOG << k << space << m_sub << space << common_subsimplex << nl;
+                //     auto temp1 = mesh.get_subsimplices( k, 0, m_sub );
                 // }
             }
 
             assert( common_subsimplex != mesh.nullindex );
 
             {
-                assert( 0 <= common_subsimplex and common_subsimplex < mesh.count_simplices(k) );
-                const int index = mesh.get_subsimplex_index( dim, k, current_node, common_subsimplex );
-                assert( 0 <= index and index < mesh.count_subsimplices(dim,k) );
-                assert( mesh.get_subsimplices(dim,k,current_node)[index] == common_subsimplex );
+                assert( 0 <= common_subsimplex and common_subsimplex < mesh.count_simplices(m) );
+                const int index = mesh.get_subsimplex_index( dim, m, current_node, common_subsimplex );
+                assert( 0 <= index and index < mesh.count_subsimplices(dim,m) );
+                assert( mesh.get_subsimplices(dim,m,current_node)[index] == common_subsimplex );
             }
 
             // check that all parents of the k subsimplex are here
-            const auto parents = mesh.get_supersimplices( dim, k, common_subsimplex );
+            const auto parents = mesh.get_supersimplices( dim, m, common_subsimplex );
             std::vector<bool> parent_is_already_here( parents.size(), false );
 
             for( int p = 0; p < parents.size(); p++ )
@@ -908,13 +908,13 @@ void generate_shellings2(
         
         if( shared_subsimplex[i] != mesh.nullindex )
         {
-            assert( 0 <= shared_subsimplex[i] and shared_subsimplex[i] < counts[k] );
+            assert( 0 <= shared_subsimplex[i] and shared_subsimplex[i] < counts[m] );
 
             // what is the local index of the shared subsimplex ?
 
             int sub_index = 0;
-            sub_index = mesh.get_subsimplex_index( dim, k, current_node, shared_subsimplex[i] );
-            assert( mesh.get_subsimplices(dim,k,current_node)[sub_index] == shared_subsimplex[i] );
+            sub_index = mesh.get_subsimplex_index( dim, m, current_node, shared_subsimplex[i] );
+            assert( mesh.get_subsimplices(dim,m,current_node)[sub_index] == shared_subsimplex[i] );
 
             // set local Poincare constant upper estimate. Can it be improved? 
 
@@ -922,16 +922,16 @@ void generate_shellings2(
 
             // TODO: what is being computed here?
             
-            Float pullbackfactor_d = ( k != dim ? info.C5[current_node][form_degree+1][k][sub_index] : 0. );
-            Float pullbackfactor_0 = ( k != dim ? info.C5[current_node][form_degree  ][k][sub_index] : 0. );
+            Float pullbackfactor_d = ( m != dim ? info.C5[current_node][form_degree+1][m][sub_index] : 0. );
+            Float pullbackfactor_0 = ( m != dim ? info.C5[current_node][form_degree  ][m][sub_index] : 0. );
             
             Float A = PF;
             Float B = PF * pullbackfactor_d;
             Float C =      pullbackfactor_0;
 
-            // obtain all previous indices of the common subsimplex of dimension n-k
+            // obtain all previous indices of the common subsimplex of dimension n-m
             
-            const auto relevant_volumes = mesh.get_supersimplices( dim, k, common_subsimplex );
+            const auto relevant_volumes = mesh.get_supersimplices( dim, m, common_subsimplex );
 
             FloatVector new_coefficients( counts[dim], 0. );
 
@@ -956,7 +956,7 @@ void generate_shellings2(
             
             weight_for_node_reflect[i] = new_coefficients.l2norm();
 
-            weight_for_node_morphin[i] = ( k != dim ? info.C7[current_node][form_degree][k][sub_index] * info.C8[current_node][form_degree+1][k][sub_index] : PF ); // TODO: which form degree?
+            weight_for_node_morphin[i] = ( m != dim ? info.C7[current_node][form_degree][m][sub_index] * info.C8[current_node][form_degree+1][m][sub_index] : PF ); // TODO: which form degree?
 
         }
     

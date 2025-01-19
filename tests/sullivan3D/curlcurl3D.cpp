@@ -271,7 +271,7 @@ int main( int argc, char *argv[] )
             auto mat_Bt = vector_incmatrix_t & ( vector_elevmatrix_t & vector_massmatrix & vector_elevmatrix ) & scalar_diffmatrix & scalar_incmatrix; // upper right
             mat_Bt.sortandcompressentries();
             
-            auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & pseudo_massmatrix & diffmatrix & vector_incmatrix; // lower bottom
+            auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & pseudo_massmatrix & diffmatrix & vector_incmatrix; // lower left
             mat_B.sortandcompressentries();
             
             LOG << "... compose CSR system matrices" << nl;

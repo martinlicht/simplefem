@@ -11,6 +11,7 @@
 
 #	----------- UPKEEP & MINOR FIXES -------------
 
+[ ] make sure that allone vectors are not used for constant functions. That only works if r=1. Name: constant_one
 [ ] add Neumann BC to mixed FEM for Poisson
 [ ] Make the second Hodge star work as intended
 [ ] enable exceptions and adapt the unit tests ...

@@ -117,7 +117,7 @@ int main( int argc, char *argv[] )
             auto mat_Bt = pseudo_incmatrix_t & pseudo_massmatrix & vector_diffmatrix & vector_incmatrix; // upper right
             mat_Bt.sortandcompressentries();
             
-            auto mat_B = mat_Bt.getTranspose(); //pseudo_incmatrix_t & pseudo_massmatrix & vector_diffmatrix & vector_incmatrix; // lower bottom
+            auto mat_B = mat_Bt.getTranspose(); //pseudo_incmatrix_t & pseudo_massmatrix & vector_diffmatrix & vector_incmatrix; // lower left
             mat_B.sortandcompressentries();
             
             LOG << "... compose CSR system matrices" << nl;
