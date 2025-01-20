@@ -135,6 +135,7 @@ cachegrind.out.*
 # other files 
 *.zip 
 *.tiff 
+*.bmp
 *.jpg 
 *.jpeg 
 *.png 

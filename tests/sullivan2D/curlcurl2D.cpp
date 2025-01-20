@@ -43,13 +43,6 @@ int main( int argc, char *argv[] )
     LOG << "Prepare scalar fields for testing..." << nl;
     
 
-    std::function<FloatVector(const FloatVector&)> constant_one
-        = [](const FloatVector& vec) -> FloatVector {
-                assert( vec.getdimension() == 2 );
-                return FloatVector({ 1. });
-            };
-    
-    
     // u dx + v dy -> ( v_x - u_y ) dxdy -> ( - u_yy + v_xy , - v_xx + u_xy )
     
     // const Float A = Constants::twopi;

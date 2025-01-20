@@ -62,13 +62,6 @@ int main( int argc, char *argv[] )
             }
                         
             
-            std::function<FloatVector(const FloatVector&)> constant_one
-                = [](const FloatVector& vec) -> FloatVector {
-                        assert( vec.getdimension() == 2 );
-                        return FloatVector({ 1. });
-                    };
-            
-
             LOG << "Nullspace computation" << nl;
 
             ConvergenceTable contable("Number of nullvectors");

@@ -1,6 +1,7 @@
 # ----------- PAPER ----------------------------
 
-1. The different bases and spanning sets for spaces on simplices; how to convert, embed, and reduce 
+1. The different bases and spanning sets for spaces on simplices; how to convert between them, embed them, and reduce to them (averaging)
+   How to elevate or reduce the polynomial degree
 2. Lagrangian interpolation in different bases 
 3. The exterior derivative in different bases 
 4. The wedge in different bases 
@@ -11,6 +12,8 @@
 
 #	----------- UPKEEP & MINOR FIXES -------------
 
+[ ] lshaped maxwell: correct stuff 
+[ ] neumann estimate 
 [ ] make sure that allone vectors are not used for constant functions. That only works if r=1. Name: constant_one
 [ ] add Neumann BC to mixed FEM for Poisson
 [ ] Make the second Hodge star work as intended
