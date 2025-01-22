@@ -259,7 +259,8 @@ class Mesh
 
         FloatVector transform_whitney_to_euclidean( int dim, const FloatVector& whitneyvalues, int zero_padding = 0 ) const;
 
-        
+        DenseMatrix get_reflection_Jacobian_along_face( int f ) const;
+                
         /* 
          * Manipulation
          * 

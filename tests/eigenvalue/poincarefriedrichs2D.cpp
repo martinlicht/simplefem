@@ -10,6 +10,7 @@
 #include "../../sparse/matcsr.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
+#include "../../mesh/neumannestimate.hpp"
 #include "../../mesh/spanning.hpp"
 #include "../../mesh/shelling.hpp"
 #include "../../mesh/shelling2.hpp"
@@ -38,8 +39,8 @@ int main( int argc, char *argv[] )
     const bool do_divergence = true;
     
     // MeshSimplicial2D M = UnitSquare2D_simple();
-    MeshSimplicial2D M = UnitSquare2D_strange14();
-    // MeshSimplicial2D M = LShapedDomain2D();
+    // MeshSimplicial2D M = UnitSquare2D_strange14();
+    MeshSimplicial2D M = LShapedDomain2D();
     // MeshSimplicial2D M = SlitDomain2D();
     // MeshSimplicial2D M = SlitDomain2D_noncentered();
     // MeshSimplicial2D M = SlitDomain2D_fivetriangles();
@@ -50,6 +51,12 @@ int main( int argc, char *argv[] )
     LOG << M << nl;
 
     LOG << "Number of triangles: " << M.count_triangles() << nl;
+
+    Float grad_estimate = NeumannEstimate( M );
+
+    LOG << grad_estimate << nl;
+
+    return 0;
     
     Float PF_estimate_via_shellings[2] = { notanumber, notanumber };
 

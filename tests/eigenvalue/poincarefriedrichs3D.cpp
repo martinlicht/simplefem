@@ -10,6 +10,7 @@
 #include "../../sparse/matcsr.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples3D.hpp"
+#include "../../mesh/neumannestimate.hpp"
 #include "../../mesh/spanning.hpp"
 #include "../../mesh/shelling.hpp"
 #include "../../mesh/shelling2.hpp"
@@ -54,6 +55,13 @@ int main( int argc, char *argv[] )
     
     Float PF_estimate_via_shellings[3] = { notanumber, notanumber, notanumber };
 
+    Float grad_estimate = NeumannEstimate( M );
+
+    LOG << grad_estimate << nl;
+
+    return 0;
+    
+    
     // if(false)
     for( int k = 0; k < 3; k++ )
     {

@@ -17,14 +17,14 @@
 
 
 #include <algorithm>
-#include <numeric>
 #include <limits>
+#include <numeric>
 #include <queue>
 #include <utility>
 #include <vector>
 
-#include "../../basic.hpp"
-#include "../../mesh/mesh.hpp"
+#include "../basic.hpp"
+#include "../mesh/mesh.hpp"
 
 
 
@@ -90,7 +90,7 @@ Float NeumannEstimate( const Mesh& M ) {
 
     assert( Cxi <= ( 1. + std::sqrt(6.) ) * std::sqrt(6.) );
 
-    // get the coefficients for the recursion 
+    // for later use, fix the coefficients for the recursion 
     
     Float A  = maxdiameter / std::sqrt(2.);
     Float Ap = maxdiameter / std::sqrt(2.) * std::sqrt( volumeratio ) * Cxi;
@@ -98,7 +98,7 @@ Float NeumannEstimate( const Mesh& M ) {
     
     LOG << "Constructing the trees. Number of roots: " << num_cells << nl;
 
-    // a tree consists of 1. array of precursors 2. array of rank 3. array of costs 
+    // a tree consists of 1. array of precursors 2. array of rank (level from origin) 3. array of costs 
     // we save the precursors and the costs. The rank will be used in the final computation.
 
     typedef std::vector<int>   array_prec;
@@ -109,8 +109,8 @@ Float NeumannEstimate( const Mesh& M ) {
     std::vector<array_rank> arrays_of_rank( num_cells, array_rank(num_cells,-1)                                      );
     std::vector<array_cost> arrays_of_cost( num_cells, array_cost(num_cells, std::numeric_limits<Float>::infinity()) );
 
-    // keep the minimal costs among the trees
-    Float minimal_cost_of_tree = numeric_limits<Float>::infinity();
+    // Each tree has got a cost. Keep track of the minimal cost
+    Float minimal_cost_of_tree = std::numeric_limits<Float>::infinity();
     
     // iterate over all the possible roots 
     for( int curr_root = 0; curr_root < num_cells; curr_root++ )
@@ -120,100 +120,118 @@ Float NeumannEstimate( const Mesh& M ) {
         auto& curr_cost = arrays_of_cost[curr_root];
         
         // construct the tree coming from that root 
+        
+        // Priority queue to store {cell, distance} pairs, sorted by distance
+        std::priority_queue<std::pair<int, Float>, std::vector<std::pair<int, Float>>, Compare> pq;
+
+        // Initialize root data: no precursor, rank zero, some initial costs 
+        curr_prec[curr_root] = -1;
+        curr_rank[curr_root] = 0;
+        curr_cost[curr_root] = A*A;
+        pq.push( { curr_root, curr_cost[curr_root] } );
+
+        int security_counter = 0; // if cycles occur    
+        while( not pq.empty() )  // && security_counter < num_cells+10
         {
-            // Priority queue to store {cell, distance} pairs, sorted by distance
-            std::priority_queue<std::pair<int, Float>, std::vector<std::pair<int, Float>>, Compare> pq;
+            const auto top_entry = pq.top();
+            pq.pop();
+            
+            const int   cell = top_entry.first;
+            const Float cost = top_entry.second;
+            
+            // If this distance is greater than the distance already found, then skip
+            // In this version of Dijkstra, the PQ may have multiple instances of the same node 
+            
+            if( cost > curr_cost[cell] ) continue;
 
-            // Initialize root data: no precursor, rank zero, some initial costs 
-            curr_prec[curr_root] = -1;
-            curr_rank[curr_root] = 0;
-            curr_cost[curr_root] = A*A;
-            pq.push( { curr_root, curr_cost[curr_root] } );
+            // We have retrieved this cell at already the minimum cost and the predecessor is real predecessor
+            // the rank of this cell is the rank of the predecessor + 1
+            
+            if( curr_prec[cell] == -1 ) assert( cell == curr_root );
 
-            //int security_counter = 0; // if cycles occur    
-            while( not pq.empty() )  // && security_counter++ < num_cells+10
+            if( curr_prec[cell] != -1 ) curr_rank[cell] = 1 + curr_rank[ curr_prec[cell] ];
+
+            
+            // Collect all the adjacent cells
+            
+            std::vector<int> adjacent_cells;
+
+            for( int fi = 0; fi <= dim; fi++ )
             {
-                const auto top_entry = pq.top();
-                pq.pop();
+                const int face = M.get_subsimplex( dim, dim-1, cell, fi );
                 
-                const int   cell = top_entry.first;
-                const Float cost = top_entry.second;
+                const auto& parents = M.get_supersimplices( dim, dim-1, face );
                 
-                // If this distance is greater than the distance already found, then skip
-                // In this version of Dijkstra, the PQ may have multiple instances of the same node 
-                
-                if( cost > curr_cost[cell] ) continue;
+                assert( 1 <= parents.size() && parents.size() <= 2 );
 
-                // We have retrieved this cell at already the minimum cost and the predecessor is real predecessor
-                // the rank of this cell is the rank of the predecessor + 1
+                if( parents.size() == 1 ){
+                    assert( parents[0] == cell );
+                    continue;
+                }
                 
-                if( curr_prec[cell] == -1 ) assert( cell == curr_root );
+                assert( parents[0] == cell or parents[1] == cell );
+                if( parents[0] != cell ) adjacent_cells.push_back( parents[0] );
+                if( parents[1] != cell ) adjacent_cells.push_back( parents[1] );
+            }
 
-                if( curr_prec[cell] != -1 ) curr_rank[cell] = 1 + curr_rank[ curr_prec[cell] ];
+            LOG << "cell " << cell << " has " << adjacent_cells.size() << " other adjacent cells\n";
 
+            // Having collected the adjacent cells, iterate over adjacent cells and compute the costs of each
+
+            std::vector<Float> adjacent_cells_new_costs( adjacent_cells.size() );
+
+            for( int i = 0; i < adjacent_cells.size(); i++ )
+            {
+                int neighbor = adjacent_cells[i];
                 
-                // Collect all the adjacent cells
+                // compute the costs of going from the current cell to one its neighbors 
+
+                // TODO: use reflection mapping 
                 
-                std::vector<int> adjacent_cells;
+                auto volume_ratio = maximum( volumes[cell] / volumes[neighbor], volumes[neighbor] / volumes[cell] );
+                
+                Float edge_cost_additive       = volume_ratio; 
 
-                for( int fi = 0; fi <= dim; fi++ )
-                {
-                    const int face = M.get_subsimplex( dim, dim-1, cell, fi );
-                    const auto& parents = M.get_supersimplices( dim, dim-1, face );
-                    
-                    assert( 1 <= parents.size() && parents.size() <= 2 );
+                Float edge_cost_multiplicative = volume_ratio; 
+                
+                // Calculate potential new costs
 
-                    if( parents.size() == 1 ){
-                        assert( parents[0] == cell );
-                        continue;
-                    }
-                    
-                    assert( parents[0] == cell or parents[1] == cell );
-                    if( parents[0] != cell ) adjacent_cells.push_back( parents[0] );
-                    if( parents[1] != cell ) adjacent_cells.push_back( parents[1] );
+                if( curr_rank[cell] == 0 ) {
+                    edge_cost_additive       = (Ap+A*B)*(Ap+A*B);
+                    edge_cost_multiplicative = 1.; 
+                } else {
+                    edge_cost_additive       = (Ap+A*B)*(Ap+A*B) * power_numerical(B*B,curr_rank[cell]);
+                    edge_cost_multiplicative = 1.; 
                 }
 
-                // Having collected the adjacent cells, iterate over adjacent cells 
-                // compute the costs of each
+                Float new_cost = ( edge_cost_additive + edge_cost_multiplicative * curr_cost[cell] );
 
-                for( int neighbor : adjacent_cells )
-                {
-                    // compute the costs of going from the current cell to one its neighbors 
-                    
-                    auto volume_ratio = maximum( volumes[cell] / volumes[neighbor], volumes[neighbor] / volumes[cell] );
-                    
-                    Float edge_cost_additive       = volume_ratio; 
+                adjacent_cells_new_costs[i] = new_cost;
 
-                    Float edge_cost_multiplicative = volume_ratio; 
-                    
-                    // Calculate potential new costs
-
-                    if( curr_rank[cell] == 0 ) {
-                        edge_cost_additive       = (Ap+A*B)*(Ap+A*B);
-                        edge_cost_multiplicative = 1.; 
-                    } else {
-                        edge_cost_additive       = (Ap+A*B)*(Ap+A*B) * power_numerical(B*B,curr_rank[cell]);
-                        edge_cost_multiplicative = 1.; 
-                    }
-
-                    Float new_cost = ( edge_cost_additive + edge_cost_multiplicative * curr_cost[cell] );
-                    
-                    // If a shorter path is found
-
-                    if( new_cost < curr_cost[neighbor] )
-                    {
-                        curr_cost[neighbor] = new_cost;
-                        curr_prec[neighbor] = cell;  // Set the predecessor
-                        pq.push({neighbor, new_cost});
-                    }
+            }
                 
+            for( int i = 0; i < adjacent_cells.size(); i++ )
+            { 
+                int neighbor = adjacent_cells[i];
+
+                Float new_cost = adjacent_cells_new_costs[i];
+
+                // If a shorter path is found
+
+                if( new_cost < curr_cost[neighbor] )
+                {
+                    curr_cost[neighbor] = new_cost;
+                    curr_prec[neighbor] = cell;  // Set the predecessor
+                    pq.push({neighbor, new_cost});
                 }
             
             }
-            //assert( security_counter == num_cells );
-
+        
+            security_counter++;
         }
         
+        Assert( security_counter == num_cells, security_counter, num_cells );
+
         // We have constructed the tree!
         
         // DEBUG
@@ -250,6 +268,7 @@ Float NeumannEstimate( const Mesh& M ) {
 
     LOG << "minimal costs, std::sqrt : " << minimal_cost_of_tree << space << std::sqrt(minimal_cost_of_tree) << nl;
 
+    return minimal_cost_of_tree;
 }
 
 
