@@ -1085,8 +1085,8 @@ DenseMatrix Mesh::get_reflection_Jacobian_along_face( int f ) const
     const auto t0 = parents[0];
     const auto t1 = parents[1];
 
-    DenseMatrix jacobian0(dim);
-    DenseMatrix jacobian1(dim);
+    DenseMatrix jacobian0(dim,dim);
+    DenseMatrix jacobian1(dim,dim);
 
     int local_0 = get_subsimplex( dim-1, 0, f, 0 );
 
@@ -1116,8 +1116,8 @@ DenseMatrix Mesh::get_reflection_Jacobian_along_face( int f ) const
     const auto pos_opp_0 = getCoordinates().getvectorclone( v0 );
     const auto pos_opp_1 = getCoordinates().getvectorclone( v1 );
 
-    jacobian0.setcolumn( dim, pos_opp_0 - pos_origin );
-    jacobian1.setcolumn( dim, pos_opp_1 - pos_origin );
+    jacobian0.setcolumn( dim-1, pos_opp_0 - pos_origin );
+    jacobian1.setcolumn( dim-1, pos_opp_1 - pos_origin );
 
     assert( jacobian0.is_finite() and jacobian1.is_finite() );
 

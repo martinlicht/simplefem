@@ -70,7 +70,7 @@ FLAG_NO_EXCEPTIONS=yes
 
 # Do you want to ENABLE the use of openMP?
 # Uncomment the following line to enable compilation with openMP
-# FLAG_ENABLE_OPENMP=yes
+FLAG_ENABLE_OPENMP=yes
 
 # Do you want to ENABLE excessive warning options?
 # Uncomment the following line to enable excessive warning options
@@ -1034,7 +1034,9 @@ ifeq ($(FLAG_USE_TCMALLOC),yes)
 endif
 
 ifeq ($(FLAG_ENABLE_OPENMP),yes)
+ifneq ($(OS),Windows_NT)	
 	LDLIBS +=-latomic
+endif
 endif
 
 LDLIBS := $(strip $(LDLIBS))

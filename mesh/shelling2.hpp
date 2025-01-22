@@ -590,7 +590,7 @@ void generate_shellings2(
     Float multweight
 ){
 
-    const unsigned int max_number_of_shellings = 1; 
+    const unsigned int max_number_of_shellings = 10; 
     // const unsigned int max_number_of_shellings = std::numeric_limits<unsigned int>::max();
 
     const bool sort_nodes_by_priority = true;
@@ -1145,7 +1145,7 @@ void generate_shellings2(
             // if we sort by priority, we ditch those that are too heavy all at once
             // else, we ditch the heavy ones step by step
 
-            if( shellings_found.size() > 0 and std::sqrt( weight_here + weight_reflection_so_far ) >= shellings_found.front().weight_reflection )
+            if( shellings_found.size() > 0 and std::sqrt( weight_here + weight_reflection_so_far ) > shellings_found.front().weight_reflection )
             {
                 if( sort_nodes_by_priority )
                     break;

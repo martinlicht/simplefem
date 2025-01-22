@@ -42,12 +42,12 @@ int main( int argc, char *argv[] )
     
     // MeshSimplicial3D M = UnitCube3D();
     // MeshSimplicial3D M = StandardCubeFive3D();
-    MeshSimplicial3D M = CrossedBricks_Five3D();
+    // MeshSimplicial3D M = CrossedBricks_Five3D();
     // MeshSimplicial3D M = CrossedBricks3D();
-    // MeshSimplicial3D M = FicheraCorner3D();
+    MeshSimplicial3D M = FicheraCorner3D();
     // MeshSimplicial3D M = RandomPolyhedralSphere(0);
     M.check();
-    // M.getCoordinates().shake_random();
+    M.getCoordinates().shake_random();
 
     // return 0;
 
@@ -59,10 +59,9 @@ int main( int argc, char *argv[] )
 
     LOG << grad_estimate << nl;
 
-    return 0;
     
     
-    // if(false)
+    if(false)
     for( int k = 0; k < 3; k++ )
     {
         
@@ -133,9 +132,10 @@ int main( int argc, char *argv[] )
 
         return 0;
     }
+    */
             
     
-    if(false)
+    if(true)
     {
         LOG << "Generate spanning trees..." << nl;
         const std::pair< std::vector<int>, std::vector<std::vector<int>> > index2face_and_trees = list_face_spanning_trees( M );
@@ -205,7 +205,6 @@ int main( int argc, char *argv[] )
 
 
     // LOG << M.text() << nl;
-    */
     
     
     
@@ -215,8 +214,8 @@ int main( int argc, char *argv[] )
 
     LOG << "Estimating Poincare-Friedrichs constant of curl operator (Whitney)" << nl;
 
-    const int min_l = 1; 
-    const int max_l = 1;
+    const int min_l = 3; 
+    const int max_l = 3;
     
     const int min_r = 1;
     const int max_r = 1;
@@ -317,7 +316,9 @@ int main( int argc, char *argv[] )
                 // PING;
                 // vector_massmatrix & scalar_elevationmatrix;
                 // PING;
-                auto mat_A  = scalar_incmatrix_t & scalar_diffmatrix_t & vector_elevationmatrix_t & vector_massmatrix & vector_elevationmatrix & scalar_diffmatrix & scalar_incmatrix;
+                auto temp_scalar = vector_elevationmatrix & scalar_diffmatrix & scalar_incmatrix;
+                auto temp_scalar_t = temp_scalar.getTranspose();
+                auto mat_A  = temp_scalar_t & vector_massmatrix & temp_scalar;
                 mat_A.sortandcompressentries();
                     
                 LOG << "... compose CSR system matrices (SCALAR)" << nl;
@@ -374,15 +375,15 @@ int main( int argc, char *argv[] )
 
                         auto residual = sol;
                         
-                        // ConjugateResidualSolverCSR( 
-                        //     sol.getdimension(), 
-                        //     sol.raw(), 
-                        //     rhs_sol.raw(), 
-                        //     A.getA(), A.getC(), A.getV(),
-                        //     residual.raw(),
-                        //     desired_precision,
-                        //     -1
-                        // );
+                        ConjugateResidualSolverCSR( 
+                            sol.getdimension(), 
+                            sol.raw(), 
+                            rhs_sol.raw(), 
+                            A.getA(), A.getC(), A.getV(),
+                            residual.raw(),
+                            desired_precision,
+                            -1
+                        );
 
                         {
                             DenseMatrix Bt( A.getdimout(), 1, 1. );

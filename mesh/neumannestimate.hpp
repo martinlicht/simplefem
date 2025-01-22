@@ -78,7 +78,7 @@ Float NeumannEstimate( const Mesh& M ) {
     for( int f = 0; f < num_faces; f++ ) 
     {
         if( M.get_supersimplices(dim,dim-1,f).size() != 2 ) continue;
-        const auto reflection_matrix_jacobian = IdentityMatrix(1); // TODO: Replace this computation with something more universal
+        const auto reflection_matrix_jacobian = M.get_reflection_Jacobian_along_face(f);
         const auto singular_value             = reflection_matrix_jacobian.operator_norm_estimate();
         LOG << singular_value << nl;
         Cxi = maximum( Cxi, singular_value );
