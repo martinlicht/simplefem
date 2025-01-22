@@ -10,6 +10,7 @@
 #include "../../sparse/matcsr.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples3D.hpp"
+#include "../../mesh/neumannestimate.hpp"
 #include "../../mesh/spanning.hpp"
 #include "../../mesh/shelling.hpp"
 #include "../../mesh/shelling2.hpp"
@@ -54,7 +55,13 @@ int main( int argc, char *argv[] )
     
     Float PF_estimate_via_shellings[3] = { notanumber, notanumber, notanumber };
 
-    // if(false)
+    Float grad_estimate = NeumannEstimate( M );
+
+    LOG << grad_estimate << nl;
+
+    
+    
+    if(false)
     for( int k = 0; k < 3; k++ )
     {
         
@@ -125,9 +132,10 @@ int main( int argc, char *argv[] )
 
         return 0;
     }
+    */
             
     
-    if(false)
+    if(true)
     {
         LOG << "Generate spanning trees..." << nl;
         const std::pair< std::vector<int>, std::vector<std::vector<int>> > index2face_and_trees = list_face_spanning_trees( M );
@@ -197,7 +205,6 @@ int main( int argc, char *argv[] )
 
 
     // LOG << M.text() << nl;
-    */
     
     
     
