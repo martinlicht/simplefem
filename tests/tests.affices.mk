@@ -18,4 +18,5 @@ affix.whitney3D     := fem vtk mesh solver dense sparse operators combinatorics 
 affix.eigenvalue    := fem vtk mesh solver dense sparse operators combinatorics utility basic external
 affix.nullspace     := fem vtk mesh solver dense sparse operators combinatorics utility basic external
 affix.afem          := fem vtk mesh solver dense sparse operators combinatorics utility basic external
+affix.benchmark     := fem vtk mesh solver dense sparse operators combinatorics utility basic external
 # TODO: Descending order for these lists ...

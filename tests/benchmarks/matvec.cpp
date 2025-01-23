@@ -21,7 +21,7 @@ int main( int argc, char *argv[] )
 
     LOG << "Initial mesh..." << nl;
     
-    MeshSimplicial2D M = StandardSquare2D();
+    MeshSimplicial2D M = StandardSquare2D_simple();
     
     M.check();
 

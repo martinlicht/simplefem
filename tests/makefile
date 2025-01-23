@@ -29,8 +29,9 @@ components+=sullivan3D
 components+=whitney2D
 components+=whitney3D
 components+=eigenvalue
-components+=afem
 components+=nullspace
+components+=afem
+components+=benchmark
 
 include tests.affices.mk
 
