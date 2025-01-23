@@ -39,9 +39,9 @@ int main( int argc, char *argv[] )
     const bool do_gradient   = true;
     const bool do_divergence = true;
     
-    // MeshSimplicial2D M = UnitSquare2D_simple();
+    MeshSimplicial2D M = UnitSquare2D_simple();
     // MeshSimplicial2D M = UnitSquare2D_strange14();
-    MeshSimplicial2D M = LShapedDomain2D();
+    // MeshSimplicial2D M = LShapedDomain2D();
     // MeshSimplicial2D M = SlitDomain2D();
     // MeshSimplicial2D M = SlitDomain2D_noncentered();
     // MeshSimplicial2D M = SlitDomain2D_fivetriangles();
@@ -57,7 +57,7 @@ int main( int argc, char *argv[] )
 
     LOG << grad_estimate << nl;
 
-    return 0;
+    // return 0;
     
     Float PF_estimate_via_shellings[2] = { notanumber, notanumber };
 

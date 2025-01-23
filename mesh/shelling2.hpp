@@ -428,7 +428,7 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
                     auto height_vector_first = mesh.getHeightVector( dim,            i, opposite_vertex_localindex_first );
                     auto height_vector_other = mesh.getHeightVector( dim, other_parent, opposite_vertex_localindex_other );
 
-                    auto midpoint_of_face = mesh.get_midpoint( dim-1, face );
+                    // auto midpoint_of_face = mesh.get_midpoint( dim-1, face );
 
                     Float a = height_vector_other.norm() /  height_vector_first.norm();
 
@@ -918,7 +918,7 @@ void generate_shellings2(
 
             // set local Poincare constant upper estimate. Can it be improved? 
 
-            Float PF = 2. / Constants::pi; 
+            Float PF = 2. / Constants::pi * info.diameters[current_node]; // this is an upper bound when there are boundary conditions
 
             // TODO: what is being computed here?
             

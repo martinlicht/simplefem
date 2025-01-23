@@ -50,51 +50,36 @@ Float NeumannEstimate( const Mesh& M ) {
     const int num_cells = M.count_simplices(dim);
     const int num_faces = M.count_simplices(dim-1);
 
-    // for later use, collect volumes and diameters of all cells 
+    // for later use, collect volumes and diameters of all cells, as well as reflection norms 
     
     std::vector<Float> volumes( num_cells );
     std::vector<Float> diameters( num_cells );
-
+    
     for( int c = 0; c < num_cells; c++ ) 
     {
         volumes[c]   = M.getMeasure( dim, c );
         diameters[c] = M.getDiameter( dim, c );
     }
 
-    // for later use, compute the max diameter and the max volume ratio 
-    
-    Float volumeratio = 1.;
-    Float maxdiameter = 0.;
-    for( int c1 =    0; c1 < num_cells; c1++ ) 
-    for( int c2 = c1+1; c2 < num_cells; c2++ ) 
-    {
-        volumeratio = maximum( volumeratio, volumes[c1] / volumes[c2] );
-        maxdiameter = maximum( maxdiameter, diameters[c1] );
-    }
-    
-    // for later use, compute the xi coefficient
-    
-    Float Cxi = 0.;
+    std::vector<Float> reflectionnorms( num_faces );
+
     for( int f = 0; f < num_faces; f++ ) 
     {
         if( M.get_supersimplices(dim,dim-1,f).size() != 2 ) continue;
+        
         const auto reflection_matrix_jacobian = M.get_reflection_Jacobian_along_face(f);
         const auto singular_value             = reflection_matrix_jacobian.operator_norm_estimate();
-        LOG << singular_value << nl;
-        Cxi = maximum( Cxi, singular_value );
+        const auto singular_value_inv         = Inverse(reflection_matrix_jacobian).operator_norm_estimate();
+        
+        reflectionnorms[f] = maximum( singular_value, singular_value_inv );
     }
     
-    //Float Cxi = ( 1. + std::sqrt(6.) * std::sqrt(6.) );
-    // Float Cxi = std::sqrt( 1. + power_numerical( std::sqrt(6.) * std::sqrt(6.), 2 ) );
-    //Float Cxi = ( 1. + std::sqrt(6.) ) * std::sqrt(6.);
-
-    assert( Cxi <= ( 1. + std::sqrt(6.) ) * std::sqrt(6.) );
-
-    // for later use, fix the coefficients for the recursion 
+    for( auto v : volumes )         assert( std::isfinite( v ) );
+    for( auto d : diameters )       assert( std::isfinite( d ) );
+    for( auto r : reflectionnorms ) assert( std::isfinite( r ) );
     
-    Float A  = maxdiameter / std::sqrt(2.);
-    Float Ap = maxdiameter / std::sqrt(2.) * std::sqrt( volumeratio ) * Cxi;
-    Float B = power_numerical( volumeratio, 1./2. );
+    
+    // for later use, fix the coefficients for the recursion 
     
     LOG << "Constructing the trees. Number of roots: " << num_cells << nl;
 
@@ -105,9 +90,11 @@ Float NeumannEstimate( const Mesh& M ) {
     typedef std::vector<int>   array_rank;
     typedef std::vector<Float> array_cost;
     
-    std::vector<array_prec> arrays_of_prec( num_cells, array_prec(num_cells,-1)                                      );
-    std::vector<array_rank> arrays_of_rank( num_cells, array_rank(num_cells,-1)                                      );
-    std::vector<array_cost> arrays_of_cost( num_cells, array_cost(num_cells, std::numeric_limits<Float>::infinity()) );
+    std::vector<array_prec> arrays_of_prec( num_cells, array_prec( num_cells, -1 )                                    );
+    std::vector<array_rank> arrays_of_rank( num_cells, array_rank( num_cells, -1 )                                    );
+    std::vector<array_cost> arrays_of_cost( num_cells, array_cost( num_cells, std::numeric_limits<Float>::infinity()) );
+
+    std::vector<std::vector<FloatVector>> coefficients( num_cells, std::vector<FloatVector>(num_cells, FloatVector(num_cells,0.) ) );
 
     // Each tree has got a cost. Keep track of the minimal cost
     Float minimal_cost_of_tree = std::numeric_limits<Float>::infinity();
@@ -118,16 +105,24 @@ Float NeumannEstimate( const Mesh& M ) {
         auto& curr_prec = arrays_of_prec[curr_root];
         auto& curr_rank = arrays_of_rank[curr_root];
         auto& curr_cost = arrays_of_cost[curr_root];
+
+        auto& curr_coefficients = coefficients[curr_root];
         
-        // construct the tree coming from that root 
+        // we will construct the tree coming from that root 
         
         // Priority queue to store {cell, distance} pairs, sorted by distance
         std::priority_queue<std::pair<int, Float>, std::vector<std::pair<int, Float>>, Compare> pq;
 
         // Initialize root data: no precursor, rank zero, some initial costs 
         curr_prec[curr_root] = -1;
+        
         curr_rank[curr_root] = 0;
-        curr_cost[curr_root] = A*A;
+        
+        curr_coefficients[curr_root][curr_root] = diameters[curr_root] / Constants::pi;
+
+        curr_cost[curr_root] = curr_coefficients[curr_root].norm_sq();
+
+        
         pq.push( { curr_root, curr_cost[curr_root] } );
 
         int security_counter = 0; // if cycles occur    
@@ -146,6 +141,8 @@ Float NeumannEstimate( const Mesh& M ) {
 
             // We have retrieved this cell at already the minimum cost and the predecessor is real predecessor
             // the rank of this cell is the rank of the predecessor + 1
+
+            LOG << "processing " << cell << nl;
             
             if( curr_prec[cell] == -1 ) assert( cell == curr_root );
 
@@ -155,6 +152,7 @@ Float NeumannEstimate( const Mesh& M ) {
             // Collect all the adjacent cells
             
             std::vector<int> adjacent_cells;
+            std::vector<int> connecting_faces;
 
             for( int fi = 0; fi <= dim; fi++ )
             {
@@ -170,45 +168,101 @@ Float NeumannEstimate( const Mesh& M ) {
                 }
                 
                 assert( parents[0] == cell or parents[1] == cell );
+                assert( parents[0] != cell or parents[1] != cell );
                 if( parents[0] != cell ) adjacent_cells.push_back( parents[0] );
                 if( parents[1] != cell ) adjacent_cells.push_back( parents[1] );
+                
+                connecting_faces.push_back(face);
             }
 
-            LOG << "cell " << cell << " has " << adjacent_cells.size() << " other adjacent cells\n";
+            // LOG << "cell " << cell << " has " << adjacent_cells.size() << " other adjacent cells\n";
+            assert( adjacent_cells.size() == connecting_faces.size() );
 
             // Having collected the adjacent cells, iterate over adjacent cells and compute the costs of each
 
             std::vector<Float> adjacent_cells_new_costs( adjacent_cells.size() );
 
+            std::vector<FloatVector> adjacent_cells_new_coeffs( adjacent_cells.size(), FloatVector(num_cells) );
+
             for( int i = 0; i < adjacent_cells.size(); i++ )
             {
                 int neighbor = adjacent_cells[i];
-                
-                // compute the costs of going from the current cell to one its neighbors 
 
-                // TODO: use reflection mapping 
-                
-                auto volume_ratio = maximum( volumes[cell] / volumes[neighbor], volumes[neighbor] / volumes[cell] );
-                
-                Float edge_cost_additive       = volume_ratio; 
+                int face = connecting_faces[i];
 
-                Float edge_cost_multiplicative = volume_ratio; 
                 
-                // Calculate potential new costs
+                Float volumeratio = volumes[neighbor] / volumes[cell]; // ratio of next cell vs current cell 
 
-                if( curr_rank[cell] == 0 ) {
-                    edge_cost_additive       = (Ap+A*B)*(Ap+A*B);
-                    edge_cost_multiplicative = 1.; 
-                } else {
-                    edge_cost_additive       = (Ap+A*B)*(Ap+A*B) * power_numerical(B*B,curr_rank[cell]);
-                    edge_cost_multiplicative = 1.; 
+                Float reflectionnorm = reflectionnorms[face];
+
+                {
+                    assert( cell != neighbor );
+
+                    int fi_index_cell = M.get_subsimplex_index( dim, dim-1, cell,     face );
+                    int fi_index_next = M.get_subsimplex_index( dim, dim-1, neighbor, face );
+
+                    int vi_opp_cell = M.get_opposite_subsimplex_index( dim, dim-1, cell,     fi_index_cell );
+                    int vi_opp_next = M.get_opposite_subsimplex_index( dim, dim-1, neighbor, fi_index_next );
+
+                    int v_opp_cell = M.get_subsimplex( dim, 0, cell,     vi_opp_cell );
+                    int v_opp_next = M.get_subsimplex( dim, 0, neighbor, vi_opp_next );
+                    
+                    auto h_cell = M.getHeightVector( dim, cell,     vi_opp_cell );
+                    auto h_next = M.getHeightVector( dim, neighbor, vi_opp_next );
+                    
+                    Float a = h_cell.norm() / h_next.norm();
+                    
+                    auto z_cell = M.getCoordinates().getvectorclone( v_opp_cell );
+                    auto z_next = M.getCoordinates().getvectorclone( v_opp_next );
+
+                    auto b_cell = z_cell - ( z_cell * h_cell ) / h_cell.norm_sq() * h_cell;
+                    auto b_next = z_next - ( z_next * h_next ) / h_next.norm_sq() * h_next;
+
+                    Float c = ( b_cell - b_next ).norm() / h_next.norm();
+
+                    Float facebased_singular_max = 0.5 * std::sqrt( square( a + 1. ) + c ) + 0.5 * std::sqrt( square( a - 1. ) + c );
+
+                    LOG << "Reflection estimates " << reflectionnorm << space << facebased_singular_max << nl;
+
+                    reflectionnorm = minimum( reflectionnorm, facebased_singular_max );
+
+                    Assert( a == volumeratio, a, volumeratio );
                 }
 
-                Float new_cost = ( edge_cost_additive + edge_cost_multiplicative * curr_cost[cell] );
+                Float pf_simplex_with_bc = 2. / Constants::pi * diameters[cell]; // diameters[neighbor] / sqrt(2.);
+                
+                // Float pf_patch           = sqrt( 2 * dim ) * volumeratio * maximum( diameters[cell], diameters[neighbor] ); 
+                
+                // Float  A_via_patch = sqrt( 1. + volumeratio ) * pf_patch;
+                // Float Ap_via_patch = sqrt( 1. + volumeratio ) * pf_patch;
+                
+                Float  A_via_bc = pf_simplex_with_bc;
+                Float Ap_via_bc = sqrt(volumeratio) * reflectionnorm * pf_simplex_with_bc;
+
+                Float A  =  A_via_bc;
+
+                Float Ap = Ap_via_bc;
+
+                Float B  = sqrt( volumeratio ); // this is the recursive coefficient
+
+                FloatVector new_coeffs = B * curr_coefficients[cell];
+
+                new_coeffs[cell] += Ap;
+
+                // assert( new_coeffs[neighbor] == 0. );
+
+                new_coeffs[neighbor] += A;
+
+                Float new_cost = new_coeffs.norm_sq();
 
                 adjacent_cells_new_costs[i] = new_cost;
 
+                adjacent_cells_new_coeffs[i] = new_coeffs;
             }
+
+            for( auto t : adjacent_cells_new_coeffs ) assert( t.is_finite() );
+
+            // Having found the costs, do the relevant updates 
                 
             for( int i = 0; i < adjacent_cells.size(); i++ )
             { 
@@ -220,11 +274,15 @@ Float NeumannEstimate( const Mesh& M ) {
 
                 if( new_cost < curr_cost[neighbor] )
                 {
+                    // LOG << "update: " << curr_cost[neighbor] << " to " << new_cost << nl;
+                    
                     curr_cost[neighbor] = new_cost;
-                    curr_prec[neighbor] = cell;  // Set the predecessor
+                    curr_prec[neighbor] = cell;  
+
+                    curr_coefficients[neighbor] = adjacent_cells_new_coeffs[i];
+
                     pq.push({neighbor, new_cost});
                 }
-            
             }
         
             security_counter++;
@@ -242,25 +300,37 @@ Float NeumannEstimate( const Mesh& M ) {
         }
 
         // DEBUG
+        // Check that each cell has costs corresponding to the coefficient vectors l2 norm squared
+        for( int i = 0; i < num_cells; i++ ) {
+            Float norm = curr_coefficients[i].norm_sq();
+            Assert( curr_cost[i] == norm, curr_cost[i], norm );
+        }
+
+        // DEBUG
         // Check that each cell leads to the root and distance is descending along that path to the root
         for( int i = 0; i < num_cells; i++ ) {
             int c = i;
             for( int j = 0; j < num_cells && c != curr_root; j++ ) {
-                assert(curr_cost[c] >= curr_cost[curr_prec[c]]); // Ensure non-increasing distances
+                // Assert( curr_cost[c] >= curr_cost[curr_prec[c]], curr_cost[c], curr_cost[curr_prec[c]], c, curr_prec[c] ); // Ensure non-increasing distances
                 c = curr_prec[c];  // Follow the path to the root
             }
             assert(c == curr_root);  // Ensure the cell eventually leads to the root
         }
 
         // output: total costs of tree
-        Float total_costs = std::accumulate( curr_cost.begin(), curr_cost.end(), 0.);
-        LOG << "From root " << curr_root << " the total costs are " << total_costs << nl;
+        Float total_costs = 0.;
+        for( auto& vec : curr_coefficients ) total_costs += vec.norm_sq();
+
+        LOG << "From root " << curr_root << " the total costs are " << total_costs << " -> " << sqrt(total_costs) << nl;
 
         // DEBUG: output the structure of the tree
-        // Float total_edge_costs = 0.;
-        // for( int i = 0; i < num_cells; i++ ) {
-        //     LOG << " At " << i << " prec " << curr_prec[i] << " rank " << curr_rank[i] << " cost " << curr_cost[i] << nl;
-        // }
+        for( int i = 0; i < num_cells; i++ ) {
+            LOG << " At " << i << " prec " << curr_prec[i] << " rank " << curr_rank[i] << " cost " << curr_cost[i] << nl;
+        }
+        for( int i = 0; i < num_cells; i++ ) {
+            LOG << curr_coefficients[i] << nl;
+        }
+        
 
         minimal_cost_of_tree = minimum( minimal_cost_of_tree, total_costs );
 
