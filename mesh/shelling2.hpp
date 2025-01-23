@@ -920,8 +920,8 @@ void generate_shellings2(
 
             Float PF = 2. / Constants::pi * info.diameters[current_node]; // this is an upper bound when there are boundary conditions
 
-            // TODO: what is being computed here?
-            
+            if( current_prefix.size() == 0 ) PF = 1. / Constants::pi * info.diameters[current_node];
+
             Float pullbackfactor_d = ( m != dim ? info.C5[current_node][form_degree+1][m][sub_index] : 0. );
             Float pullbackfactor_0 = ( m != dim ? info.C5[current_node][form_degree  ][m][sub_index] : 0. );
             
@@ -956,7 +956,8 @@ void generate_shellings2(
             
             weight_for_node_reflect[i] = new_coefficients.l2norm();
 
-            weight_for_node_morphin[i] = ( m != dim ? info.C7[current_node][form_degree][m][sub_index] * info.C8[current_node][form_degree+1][m][sub_index] : PF ); // TODO: which form degree?
+            weight_for_node_morphin[i] = ( m != dim ? info.C7[current_node][form_degree][m][sub_index] * info.C8[current_node][form_degree+1][m][sub_index] : 1. / Constants::pi * info.diameters[current_node] ); 
+            // TODO: which form degree?
 
         }
     

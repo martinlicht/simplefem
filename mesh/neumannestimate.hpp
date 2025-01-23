@@ -52,16 +52,16 @@ Float NeumannEstimate( const Mesh& M ) {
 
     // for later use, collect volumes and diameters of all cells, as well as reflection norms 
     
-    std::vector<Float> volumes( num_cells );
-    std::vector<Float> diameters( num_cells );
+    std::vector<Float> diameters( num_cells, notanumber );
+    std::vector<Float> volumes( num_cells, notanumber );
     
     for( int c = 0; c < num_cells; c++ ) 
     {
-        volumes[c]   = M.getMeasure( dim, c );
         diameters[c] = M.getDiameter( dim, c );
+        volumes[c]   = M.getMeasure( dim, c );
     }
 
-    std::vector<Float> reflectionnorms( num_faces );
+    std::vector<Float> reflectionnorms( num_faces, notanumber );
 
     for( int f = 0; f < num_faces; f++ ) 
     {
@@ -72,11 +72,12 @@ Float NeumannEstimate( const Mesh& M ) {
         const auto singular_value_inv         = Inverse(reflection_matrix_jacobian).operator_norm_estimate();
         
         reflectionnorms[f] = maximum( singular_value, singular_value_inv );
+
+        assert( std::isfinite( reflectionnorms[f] ) );
     }
     
-    for( auto v : volumes )         assert( std::isfinite( v ) );
-    for( auto d : diameters )       assert( std::isfinite( d ) );
-    for( auto r : reflectionnorms ) assert( std::isfinite( r ) );
+    for( auto v : volumes )   assert( std::isfinite( v ) );
+    for( auto d : diameters ) assert( std::isfinite( d ) );
     
     
     // for later use, fix the coefficients for the recursion 
@@ -118,14 +119,14 @@ Float NeumannEstimate( const Mesh& M ) {
         
         curr_rank[curr_root] = 0;
         
-        curr_coefficients[curr_root][curr_root] = diameters[curr_root] / Constants::pi;
+        curr_coefficients[curr_root][curr_root] = diameters[curr_root] / Constants::pi; // PF constant for convex domains
 
         curr_cost[curr_root] = curr_coefficients[curr_root].norm_sq();
 
         
         pq.push( { curr_root, curr_cost[curr_root] } );
 
-        int security_counter = 0; // if cycles occur    
+        int security_counter = 0; // check that we count correctly 
         while( not pq.empty() )  // && security_counter < num_cells+10
         {
             const auto top_entry = pq.top();
@@ -190,7 +191,6 @@ Float NeumannEstimate( const Mesh& M ) {
 
                 int face = connecting_faces[i];
 
-                
                 Float volumeratio = volumes[neighbor] / volumes[cell]; // ratio of next cell vs current cell 
 
                 Float reflectionnorm = reflectionnorms[face];
@@ -212,6 +212,8 @@ Float NeumannEstimate( const Mesh& M ) {
                     
                     Float a = h_cell.norm() / h_next.norm();
                     
+                    Assert( a == volumeratio, a, volumeratio );
+                
                     auto z_cell = M.getCoordinates().getvectorclone( v_opp_cell );
                     auto z_next = M.getCoordinates().getvectorclone( v_opp_next );
 
@@ -226,10 +228,9 @@ Float NeumannEstimate( const Mesh& M ) {
 
                     reflectionnorm = minimum( reflectionnorm, facebased_singular_max );
 
-                    Assert( a == volumeratio, a, volumeratio );
                 }
 
-                Float pf_simplex_with_bc = 2. / Constants::pi * diameters[cell]; // diameters[neighbor] / sqrt(2.);
+                Float pf_simplex_with_bc = minimum( 2. / Constants::pi, 1./sqrt(2.) ) * diameters[cell];
                 
                 // Float pf_patch           = sqrt( 2 * dim ) * volumeratio * maximum( diameters[cell], diameters[neighbor] ); 
                 
@@ -270,6 +271,8 @@ Float NeumannEstimate( const Mesh& M ) {
 
                 Float new_cost = adjacent_cells_new_costs[i];
 
+                auto new_coeffs = adjacent_cells_new_coeffs[i];
+
                 // If a shorter path is found
 
                 if( new_cost < curr_cost[neighbor] )
@@ -277,9 +280,10 @@ Float NeumannEstimate( const Mesh& M ) {
                     // LOG << "update: " << curr_cost[neighbor] << " to " << new_cost << nl;
                     
                     curr_cost[neighbor] = new_cost;
+                
                     curr_prec[neighbor] = cell;  
 
-                    curr_coefficients[neighbor] = adjacent_cells_new_coeffs[i];
+                    curr_coefficients[neighbor] = new_coeffs;
 
                     pq.push({neighbor, new_cost});
                 }
@@ -295,8 +299,19 @@ Float NeumannEstimate( const Mesh& M ) {
         // DEBUG
         // Check that each cell has been visited (except the root)
         // Either it is the current root or the precursor has is not -1
+        // Additionally, check that the rank makes sense
         for( int i = 0; i < num_cells; i++ ) {
-            assert( i == curr_root || curr_prec[i] != -1 );
+            
+            if( i == curr_root ) 
+            {
+                assert( curr_prec[i] == -1 );
+                assert( curr_rank[i] == 0 );
+                continue;
+            };
+            
+            assert( curr_prec[i] != -1 );
+            assert( 0 <= curr_prec[i] && curr_prec[i] < num_cells );
+            assert( curr_rank[i] == 1 + curr_rank[curr_prec[i]] );
         }
 
         // DEBUG

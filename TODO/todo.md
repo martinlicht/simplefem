@@ -158,24 +158,24 @@
 [ ] alle C++ solvers mit preconditioner 
 
 [ ] solver logging 
-  make the logging more reasonable, 
-  e.g., give out iteration numbers at the beginning
+    make the logging more reasonable, 
+    e.g., give out iteration numbers at the beginning
 
 [ ] im gesamten code durchweg desired_precision anwenden
     das kann in der solver klasse so gesetzt werden 
 
 [ ] Unified solver interface: 
-  Es macht wenig Sinn, einen solver als Klasse aufzuziehen. 
-  Besser altmodisch mit Parametern, eventuell mit speziellen Default-Werten 
-  Idee: Zur Not kann man einen Solver dann einer Klasse verpacken 
+    Es macht wenig Sinn, einen solver als Klasse aufzuziehen. 
+    Besser altmodisch mit Parametern, eventuell mit speziellen Default-Werten 
+    Idee: Zur Not kann man einen Solver dann einer Klasse verpacken 
         mittels einer Template-Konstruktion?
       
-  Funktionen sind:
-  - Matrix, initial guess, rhs
-  - residual
-  - max steps, desired precision
-  - print modus 
-  - Preconditioner?
+Funktionen sind:
+- Matrix, initial guess, rhs
+- residual
+- max steps, desired precision
+- print modus 
+- Preconditioner?
 
 # ------------- SOLVERS, important stuff ---------------
 
