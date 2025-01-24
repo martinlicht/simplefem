@@ -333,8 +333,9 @@ Float NeumannEstimate( const Mesh& M ) {
         }
 
         // output: total costs of tree
-        Float total_costs = 0.;
-        for( auto& vec : curr_coefficients ) total_costs += vec.norm_sq();
+        Float total_costs = std::accumulate( curr_cost.begin(), curr_cost.end(), 0.);
+        // Float total_costs = 0.; for( auto& vec : curr_coefficients ) total_costs += vec.norm_sq();
+
 
         LOG << "From root " << curr_root << " the total costs are " << total_costs << " -> " << sqrt(total_costs) << nl;
 
