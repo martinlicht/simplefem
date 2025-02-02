@@ -416,6 +416,35 @@ inline MeshSimplicial2D LShapedDomain2D()
 
 
 
+inline MeshSimplicial2D LShapedDomain2D_centered()
+{
+    return MeshSimplicial2D(
+      2,
+      Coordinates( 2, 8, {
+         0.,  0.,  // 0
+         0., -1.,  // 1
+        -1., -1.,  // 2
+        -1.,  0.,  // 3
+        -1.,  1.,  // 4
+         0.,  1.,  // 5
+         1.,  1.,  // 6
+         1.,  0.   // 7
+      } ),
+      {
+        { 0, 1, 2 },
+        { 0, 2, 3 },
+        { 0, 3, 4 },
+        { 0, 4, 5 },
+        { 0, 5, 6 },
+        { 0, 6, 7 }         
+      }
+    );
+}
+
+
+
+
+
 inline MeshSimplicial2D SlitDomain2D()
 {
     return MeshSimplicial2D(

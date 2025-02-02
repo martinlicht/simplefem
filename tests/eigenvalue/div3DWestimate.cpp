@@ -33,8 +33,9 @@ int main( int argc, char *argv[] )
     
     MeshSimplicial3D M = UnitSimplex3D(); 
     // MeshSimplicial3D M = UnitCube3D(); M.getCoordinates().scale( Constants::pi );
-    M.getCoordinates().scale( 3. );
-    M.getCoordinates().setdata(3, 2, 1./3. );
+    
+    // TODO: This is to get a badly-shaped simplex 
+    M.getCoordinates().scale( 3. ); M.getCoordinates().setdata(3, 2, 1./3. );
     
     M.check();
     

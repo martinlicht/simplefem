@@ -40,11 +40,13 @@ int main( int argc, char *argv[] )
     const bool do_divergence = true;
     
     // MeshSimplicial2D M = UnitSquare2D_simple();
-    // MeshSimplicial2D M = UnitSquare2D_strange14();
     // MeshSimplicial2D M = LShapedDomain2D();
-    // MeshSimplicial2D M = SlitDomain2D();
+    // MeshSimplicial2D M = LShapedDomain2D_centered();
+    MeshSimplicial2D M = SlitDomain2D(); // centered 
     // MeshSimplicial2D M = SlitDomain2D_noncentered();
-    MeshSimplicial2D M = SlitDomain2D_fivetriangles();
+    // MeshSimplicial2D M = SlitDomain2D_fivetriangles();
+    
+    // MeshSimplicial2D M = UnitSquare2D_strange14();
     M.check();
     
     LOG << M.getCoordinates().text() << nl;
@@ -64,7 +66,7 @@ int main( int argc, char *argv[] )
     {
         PF_estimate_via_shellings[k] = std::numeric_limits<Float>::infinity();
 
-        auto shellings_found = generate_shellings2( M, 0 );
+        auto shellings_found = generate_shellings2( M, k );
 
         LOG << shellings_found.size() << nl;
 
@@ -79,7 +81,7 @@ int main( int argc, char *argv[] )
             const auto& shelling = shellings_found[t];
             LOG << "k=" << k << "\t" << t << "\t:\t";
             for( const auto& s : shelling ) { LOG << s << space; }
-            LOG << "\t" << shelling.weight_reflection << "\t" << shelling.weight_deformation << nl;
+            LOGPRINTF( "\t %.9f %.9f \n", shelling.weight_reflection, shelling.weight_deformation );
         }
 
         PF_estimate_via_shellings[k] = shellings_found.front().weight_reflection;
