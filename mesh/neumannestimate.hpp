@@ -230,7 +230,7 @@ Float NeumannEstimate( const Mesh& M ) {
 
                 }
 
-                Float pf_simplex_with_bc = minimum( 2. / Constants::pi, 1./sqrt(2.) ) * diameters[cell];
+                Float pf_simplex_with_bc = minimum( 1. / Constants::pi, 1./sqrt(2.) ) * diameters[cell];
                 
                 // Float pf_patch           = sqrt( 2 * dim ) * volumeratio * maximum( diameters[cell], diameters[neighbor] ); 
                 
@@ -240,11 +240,13 @@ Float NeumannEstimate( const Mesh& M ) {
                 Float  A_via_bc = pf_simplex_with_bc;
                 Float Ap_via_bc = sqrt(volumeratio) * reflectionnorm * pf_simplex_with_bc;
 
-                Float A  =  A_via_bc;
+                Float A  =  A_via_bc; // coefficient of new 
 
-                Float Ap = Ap_via_bc;
+                Float Ap = Ap_via_bc; // coefficient of previous 
 
                 Float B  = sqrt( volumeratio ); // this is the recursive coefficient
+
+                LOGPRINTF( "SCALAR A=%f Ap=%f B=%f \n", A, Ap, B );
 
                 FloatVector new_coeffs = B * curr_coefficients[cell];
 

@@ -31,18 +31,18 @@ int main( int argc, char *argv[] )
     
     LOG << "Initial mesh..." << nl;
     
-    // MeshSimplicial3D M = UnitSimplex3D(); 
-    MeshSimplicial3D M = UnitCube3D(); M.getCoordinates().scale( Constants::pi );
+    MeshSimplicial3D M = UnitSimplex3D(); 
+    // MeshSimplicial3D M = UnitCube3D(); M.getCoordinates().scale( Constants::pi );
     
     M.check();
     
     // M.automatic_dirichlet_flags();
     // M.check_dirichlet_flags();
 
-    if(false)
+    // if(false)
     {
         LOG << "Fine-tuned boundary conditions" << nl;
-        int first_bc_face = 4;
+        int first_bc_face = 1;
         for( int f = first_bc_face; f <= 3; f++ ) {
             M.set_flag( 2, f, SimplexFlag::SimplexFlagDirichlet );
         }

@@ -229,13 +229,13 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
             {
                 const Float Ctheta = max_diameter_ratio;
 
-                const Float kappa  = aspect_condition_number[i];
+                const Float kappa = aspect_condition_number[i];
 
-                const Float rho    = minimum( (Float)1., min_height_of_vertex / (level+1.) );
+                const Float rho   = minimum( (Float)1., min_height_of_vertex / (level+1.) );
 
-                const Float mu_l   = 0.5 * std::sqrt( square(1+rho) + square( square(1+rho) * (n-level) * kappa ) ) + 0.5 * std::sqrt( square(1-rho) + square( square(1+rho) * (n-level) * kappa ) );
+                const Float mu_l  = 0.5 * std::sqrt( square(1+rho) + square( square(1+rho) * (n-level) * kappa ) ) + 0.5 * std::sqrt( square(1-rho) + square( square(1+rho) * (n-level) * kappa ) );
                 
-                const Float xi_l   = std::sqrt( square(2*rho+1) + square( (n-level) * kappa ) ) + std::sqrt( 1. + square( (n-level) * kappa ) );
+                const Float xi_l  = std::sqrt( square(2*rho+1) + square( (n-level) * kappa ) ) + std::sqrt( 1. + square( (n-level) * kappa ) );
 
                 assert( std::isfinite( Ctheta ) && Ctheta > 0. );
                 assert( std::isfinite( kappa  ) && kappa  > 0. );
@@ -254,7 +254,6 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
             }
 
             // improved estimates, simplex by simplex 
-            // if(false)
             {
                 const int m = level;
 
@@ -380,7 +379,6 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
 
 
             // slight improvement in the case of faces 
-            // if(false)
             if( level == dim-1 ) {
                 
                 const Float Ctheta = max_diameter_ratio;
@@ -396,7 +394,6 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
             }
             
             // better improvement in the case of faces 
-            // if(false)
             if( level == dim-1 ) {
                 
                 assert( 0 <= sub_index and sub_index < binomial_integer(dim+1,level+1) );
@@ -466,7 +463,7 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
                 C5[i][form_degree][level][sub_index] = power_numerical( singular_prod, -1/2. );
                 C6[i][form_degree][level][sub_index] = power_numerical( singular_prod, +1/2. );
             } else if( 0 < form_degree && form_degree < dim ) {
-                C5[i][form_degree][level][sub_index] = singular_max    * power_numerical( singular_prod, -1/2. );
+                C5[i][form_degree][level][sub_index] = singular_max     * power_numerical( singular_prod, -1/2. );
                 C6[i][form_degree][level][sub_index] = singular_min_inv * power_numerical( singular_prod, +1/2. );
             } else {
                 assert( form_degree == dim );
@@ -920,6 +917,8 @@ void generate_shellings2(
 
             Float PF = 2. / Constants::pi * info.diameters[current_node]; // this is an upper bound when there are boundary conditions
 
+            if( form_degree == 0 ) PF = 1. / Constants::pi * info.diameters[current_node];
+
             if( current_prefix.size() == 0 ) PF = 1. / Constants::pi * info.diameters[current_node];
 
             Float pullbackfactor_d = ( m != dim ? info.C5[current_node][form_degree+1][m][sub_index] : 0. );
@@ -928,6 +927,8 @@ void generate_shellings2(
             Float A = PF;
             Float B = PF * pullbackfactor_d;
             Float C =      pullbackfactor_0;
+
+            LOGPRINTF( "k=%i A=%f B=%f C=%f \n", form_degree, A, B, C );
 
             // obtain all previous indices of the common subsimplex of dimension n-m
             
@@ -1105,7 +1106,8 @@ void generate_shellings2(
 
         for( int s = 0; s < counts[dim]; s++ )
         {
-            threads.emplace_back([&,s]() 
+            // threads.emplace_back(
+                [&,s]() 
                 {
                     LOG << "Thread processing parameter: " << s << "\n";
                     
@@ -1123,7 +1125,8 @@ void generate_shellings2(
 
                     LOG << "Thread finished processing parameter: " << s << "\n";
                 }
-            );
+                ();
+            // );
         }
 
         // Wait for all threads to finish. Even works if no threads have started.
