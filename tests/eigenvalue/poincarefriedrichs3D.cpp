@@ -40,11 +40,11 @@ int main( int argc, char *argv[] )
     const bool do_curl       = true;
     const bool do_divergence = true;
     
-    // MeshSimplicial3D M = UnitCube3D();
+    MeshSimplicial3D M = UnitCube3D();
     // MeshSimplicial3D M = StandardCubeFive3D();
     // MeshSimplicial3D M = CrossedBricks_Five3D();
     // MeshSimplicial3D M = CrossedBricks3D();
-    MeshSimplicial3D M = FicheraCorner3D();
+    // MeshSimplicial3D M = FicheraCorner3D();
     // MeshSimplicial3D M = RandomPolyhedralSphere(0);
     M.check();
     M.getCoordinates().shake_random();
@@ -61,7 +61,7 @@ int main( int argc, char *argv[] )
 
     
     
-    if(false)
+    // if(false)
     for( int k = 0; k < 3; k++ )
     {
         
@@ -86,6 +86,9 @@ int main( int argc, char *argv[] )
         PF_estimate_via_shellings[k] = shellings_found.front().weight_reflection;
             
     }
+
+    return 0;
+    
             
     /*
     if(false)
@@ -135,7 +138,7 @@ int main( int argc, char *argv[] )
     */
             
     
-    if(true)
+    if(false)
     {
         LOG << "Generate spanning trees..." << nl;
         const std::pair< std::vector<int>, std::vector<std::vector<int>> > index2face_and_trees = list_face_spanning_trees( M );
@@ -205,7 +208,6 @@ int main( int argc, char *argv[] )
 
 
     // LOG << M.text() << nl;
-    
     
     
     

@@ -118,8 +118,13 @@ Float NeumannEstimate( const Mesh& M ) {
         curr_prec[curr_root] = -1;
         
         curr_rank[curr_root] = 0;
+
+        // we try to be a bit better than the Payne-Weinberger bound whenever feasible
+        Float Bessel_J11 = 3.83170597020751231561443588630816076656454527428780192876229898991883930951;
+
+        Float natural_poincare_constant = ( dim==2 ? 1./Bessel_J11 : 1./Constants::pi );
         
-        curr_coefficients[curr_root][curr_root] = diameters[curr_root] / Constants::pi; // PF constant for convex domains
+        curr_coefficients[curr_root][curr_root] = natural_poincare_constant * diameters[curr_root]; // PF constant for convex domains
 
         curr_cost[curr_root] = curr_coefficients[curr_root].norm_sq();
 
@@ -230,7 +235,12 @@ Float NeumannEstimate( const Mesh& M ) {
 
                 }
 
-                Float pf_simplex_with_bc = minimum( 2. / Constants::pi, 1./sqrt(2.) ) * diameters[cell];
+                // we try to be a bit better than the Payne-Weinberger bound whenever feasible
+                Float Bessel_J11 = 3.83170597020751231561443588630816076656454527428780192876229898991883930951;
+
+                Float natural_poincare_constant = ( dim==2 ? 1./Bessel_J11 : 1./Constants::pi );
+                
+                Float pf_simplex_with_bc = minimum( natural_poincare_constant, 1./sqrt(2.) ) * diameters[cell];
                 
                 // Float pf_patch           = sqrt( 2 * dim ) * volumeratio * maximum( diameters[cell], diameters[neighbor] ); 
                 

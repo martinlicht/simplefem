@@ -864,18 +864,30 @@ DenseMatrix Mesh::getVertexCoordinateMatrix( int dim, int index ) const
 }
 
 
-DenseMatrix Mesh::getTransformationJacobian( int dim, int index ) const 
+DenseMatrix Mesh::getTransformationJacobian( int dim, int index, int vertexindex ) const 
 {
     assert( 0 <= dim && dim <= getinnerdimension() );
     assert( 0 <= index && index < count_simplices(dim) );
+    assert( 0 <= vertexindex && vertexindex <= dim );
     
     DenseMatrix ret( getouterdimension(), dim );
     
     DenseMatrix vcm = getVertexCoordinateMatrix( dim, index );
     
     for( int v = 0; v < dim; v++ )
-    for( int c = 0; c < getouterdimension(); c++ )
-        ret( c, v ) = vcm( c, v+1 ) - vcm( c, 0 );
+    for( int c = 0; c < getouterdimension(); c++ ) 
+    {
+        int base = vertexindex;
+
+        int source = ( v < base ? v : v+1 );
+
+        assert( 0 <= base   && base   <= dim );
+        assert( 0 <= source && source <= dim );
+        
+        ret( c, v ) = vcm( c, source ) - vcm( c, base );
+    }
+
+    assert( ret.is_finite() );
     
     return ret;
 }

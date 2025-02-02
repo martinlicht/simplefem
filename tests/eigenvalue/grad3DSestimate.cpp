@@ -56,10 +56,13 @@ int main( int argc, char *argv[] )
     
     LOG << "Initial mesh..." << nl;
     
-    // MeshSimplicial3D M = UnitSimplex3D(); 
+    MeshSimplicial3D M = UnitSimplex3D(); 
+    M.getCoordinates().scale( 3. );
+    M.getCoordinates().setdata(3, 2, 1./3. );
+    
     // MeshSimplicial3D M = UnitCube3D(); 
     // MeshSimplicial3D M = FicheraCorner3D();
-    MeshSimplicial3D M = CrossedBricks3D();
+    // MeshSimplicial3D M = CrossedBricks3D();
     
     M.check();
     
@@ -69,15 +72,45 @@ int main( int argc, char *argv[] )
     //     M.check_dirichlet_flags();
     // }
 
-    if(false)
     {
         LOG << "Fine-tuned boundary conditions" << nl;
-        int first_bc_face = 1;
+
+        int first_bc_face = 0;
+        
+        if( argc > 1 )
+        {
+            // Parse using strtol
+            char* end = nullptr;
+            long val = std::strtol(argv[1], &end, 10);
+
+            // Check if the entire argument was parsed and within int range
+            if( *end != '\0' ) {
+
+                LOG << "Error: The provided argument is not a valid integer:" << argv[1] << "\n";
+
+            } else if( val != static_cast<int>(val) ) {
+
+                LOG << "Error: The provided argument is out of 'int' range.\n";
+
+            } else {
+                
+                int number = static_cast<int>(val);
+                LOG << "Command-line argument provided: " << number << nl;
+
+                first_bc_face = number;
+
+            }
+        } else {
+            LOG << "Dirichlet faces start, per default, at " << first_bc_face << nl;
+        }
+
         for( int f = first_bc_face; f <= 3; f++ ) {
             M.set_flag( 2, f, SimplexFlag::SimplexFlagDirichlet );
         }
         M.complete_dirichlet_flags_from_facets();
         M.check_dirichlet_flags(false);
+
+        if( first_bc_face > 3 ) do_neumann = true;
     
     }
 
@@ -184,7 +217,7 @@ int main( int argc, char *argv[] )
 
                 Float newratio = -1;
                 
-                FloatVector interpol_one  = Interpolation( M, M.getinnerdimension(), 0, r, 
+                FloatVector interpol_one  = Interpolation( M, M.getinnerdimension(), 0, r+1, 
                     [](const FloatVector& vec) -> FloatVector { return FloatVector({ 1. }); }
                     );
 
@@ -218,17 +251,20 @@ int main( int argc, char *argv[] )
 
                     auto residual = sol;
                     
-                    // ConjugateResidualSolverCSR( 
-                    //     sol.getdimension(), 
-                    //     sol.raw(), 
-                    //     rhs_sol.raw(), 
-                    //     A.getA(), A.getC(), A.getV(),
-                    //     residual.raw(),
-                    //     desired_precision,
-                    //     -1
-                    // );
+                    if( not do_neumann ) {
 
-                    {
+                        ConjugateResidualSolverCSR( 
+                            sol.getdimension(), 
+                            sol.raw(), 
+                            rhs_sol.raw(), 
+                            A.getA(), A.getC(), A.getV(),
+                            residual.raw(),
+                            desired_precision,
+                            -1
+                        );
+
+                    } else {
+                        
                         DenseMatrix Bt( A.getdimout(), 1, 1. );
                         DenseMatrix B = Transpose(Bt);
                         DenseMatrix C(1,1,0.);

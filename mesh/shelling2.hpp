@@ -918,10 +918,22 @@ void generate_shellings2(
 
             // set local Poincare constant upper estimate. Can it be improved? 
 
-            Float PF = 2. / Constants::pi * info.diameters[current_node]; // this is an upper bound when there are boundary conditions
+            // we try to be a bit better than the Payne-Weinberger bound whenever feasible
+            Float Bessel_J11 = 3.83170597020751231561443588630816076656454527428780192876229898991883930951;
 
-            if( current_prefix.size() == 0 ) PF = 1. / Constants::pi * info.diameters[current_node];
+            Float natural_poincare_constant = ( dim==2 ? 1./Bessel_J11 : 1./Constants::pi );
 
+            // for any sort of boundary condition, we can use double the Poincare constant 
+            Float PF = 2. * natural_poincare_constant * info.diameters[current_node]; 
+            
+            // In the case of zero forms, or at the beginning without boundary conditions, we can improve this
+            
+            if( form_degree == 0 or current_prefix.size() == 0 ) {
+
+                PF = natural_poincare_constant * info.diameters[current_node]; 
+            
+            }
+            
             Float pullbackfactor_d = ( m != dim ? info.C5[current_node][form_degree+1][m][sub_index] : 0. );
             Float pullbackfactor_0 = ( m != dim ? info.C5[current_node][form_degree  ][m][sub_index] : 0. );
             
