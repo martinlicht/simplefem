@@ -256,7 +256,7 @@ Float NeumannEstimate( const Mesh& M ) {
 
                 Float C = sqrt( volumeratio ); // this is the recursive coefficient
 
-                LOGPRINTF( "SCALAR nat=%f diam=%f A=%f B=%f C=%f \n", natural_poincare_constant, diameters[cell],  A, B, C );
+                // LOGPRINTF( "SCALAR nat=%f diam=%f A=%f B=%f C=%f \n", natural_poincare_constant, diameters[cell],  A, B, C );
 
                 FloatVector new_coeffs = C * curr_coefficients[cell];
 

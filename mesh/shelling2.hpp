@@ -371,7 +371,7 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
 
                 // LOG << "SMAX " << improved_singular_max / matrixwise_singular_max << nl;
 
-                LOGPRINTF( "singular max = %f vs improved_singular_max = %f vs matrixwise_singular_max = %f\n", singular_max, improved_singular_max, matrixwise_singular_max );
+                // LOGPRINTF( "singular max = %f vs improved_singular_max = %f vs matrixwise_singular_max = %f\n", singular_max, improved_singular_max, matrixwise_singular_max );
 
                 singular_max = minimum( singular_max, improved_singular_max, matrixwise_singular_max );
                 
@@ -448,7 +448,7 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
                     
                     singular_max = minimum( singular_max, facebased_singular_max );
 
-                    LOGPRINTF( "facebased singular max = %f vs singular_max = %f\n", facebased_singular_max, singular_max );
+                    // LOGPRINTF( "facebased singular max = %f vs singular_max = %f\n", facebased_singular_max, singular_max );
 
                     singular_min_inv = singular_max / a;
                     singular_prod = a;
@@ -994,7 +994,7 @@ void generate_shellings2(
 
                 Assert( std::isfinite( pullbackfactor_for_BC ), pullbackfactor_for_BC, dim, m, comparison_counter );
 
-                LOGPRINTF( "pullback correction: %f\n", pullbackfactor_for_BC );
+                // LOGPRINTF( "pullback correction: %f\n", pullbackfactor_for_BC );
 
                 PF *= pullbackfactor_for_BC;
 
@@ -1015,7 +1015,7 @@ void generate_shellings2(
             Float B = PF * pullbackfactor_d;    // coefficient of previous
             Float C =      pullbackfactor_0;    // recursive 
 
-            LOGPRINTF( "k=%i nat=%f d=%f A=%f B=%f C=%f \n", form_degree, natural_poincare_constant, info.diameters[current_node], A, B, C );
+            // LOGPRINTF( "k=%i nat=%f d=%f A=%f B=%f C=%f \n", form_degree, natural_poincare_constant, info.diameters[current_node], A, B, C );
 
             // obtain all previous indices of the common subsimplex of dimension n-m
             
