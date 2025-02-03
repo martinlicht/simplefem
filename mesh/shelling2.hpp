@@ -241,7 +241,8 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
                 assert( std::isfinite( kappa  ) && kappa  > 0. );
                 assert( std::isfinite( mu_l   ) && mu_l   > 0. );
 
-                if(false) {
+                //if(false) 
+                {
                     singular_max     = mu_l;
                     singular_min_inv = mu_l / rho;
                     singular_prod    = rho;
@@ -343,13 +344,15 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
 
                     DenseMatrix trafo1( dim, dim, columns );
 
-                    auto trafo1inv = Inverse( trafo1 );
-
-                    assert( ( trafo1 * trafo1inv ).is_numerically_identity() );
-
                     columns.back().scale( -rho );
 
                     DenseMatrix trafo2( dim, dim, columns );
+
+                    auto trafo1inv = Inverse( trafo1 );
+                    auto trafo2inv = Inverse( trafo2 );
+
+                    assert( ( trafo1 * trafo1inv ).is_numerically_identity() );
+                    assert( ( trafo2 * trafo2inv ).is_numerically_identity() );
 
                     auto fulltrafo = trafo2 * trafo1inv;
 
@@ -367,6 +370,8 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
                 assert( matrixwise_singular_max > 0. );
 
                 // LOG << "SMAX " << improved_singular_max / matrixwise_singular_max << nl;
+
+                LOGPRINTF( "singular max = %f vs improved_singular_max = %f vs matrixwise_singular_max = %f\n", singular_max, improved_singular_max, matrixwise_singular_max );
 
                 singular_max = minimum( singular_max, improved_singular_max, matrixwise_singular_max );
                 
@@ -442,6 +447,8 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
                     Float facebased_singular_max = 0.5 * std::sqrt( square( a + 1. ) + c ) + 0.5 * std::sqrt( square( a - 1. ) + c );
                     
                     singular_max = minimum( singular_max, facebased_singular_max );
+
+                    LOGPRINTF( "facebased singular max = %f vs singular_max = %f\n", facebased_singular_max, singular_max );
 
                     singular_min_inv = singular_max / a;
                     singular_prod = a;
@@ -930,15 +937,85 @@ void generate_shellings2(
                 PF = natural_poincare_constant * info.diameters[current_node]; 
             
             }
+
+            // PF is now an upper bound for the Poincare constant on the reference domain.
+            // We still need to include the effect of the transformation to and from the reference domain
+            // (unless all faces have boundary conditions, or we have zero forms)
+            
+            if( m != dim and form_degree > 0 ) {
+                
+                Float pullbackfactor_for_BC = std::numeric_limits<Float>::infinity();
+
+                int comparison_counter = 0;
+                
+                for( int vertexindex = 0; vertexindex <= dim; vertexindex++ ) 
+                {
+                    // shared_subsimplex[i] is the shared subsimplex. Any vertexindex not contained in that face will be admissible.
+
+                    int vertex = mesh.get_subsimplex( dim, 0, current_node, vertexindex );
+
+                    if( mesh.is_subsimplex( m, 0, shared_subsimplex[i], vertex ) ) continue;
+
+                    comparison_counter++;
+
+                    auto Jacobian = mesh.getTransformationJacobian( dim, current_node, vertexindex );
+
+                    Float max_sing     = Jacobian.operator_norm_estimate();
+                    Float min_sing_inv = Inverse(Jacobian).operator_norm_estimate();
+                    Float det          = Determinant(Jacobian);
+
+                    Float pullbackfactor_for_BC_with_vertexindex = 1.;
+
+                    if( 2 <= dim && dim <= 3 ) {
+
+                        // If the dimension is between 2 and 3, then we generally use the following formula ...
+                        
+                        pullbackfactor_for_BC_with_vertexindex = max_sing;
+
+                        // unless the preimage is a form of degree 1 (curl)
+
+                        if( dim == 3 && form_degree == 1 ) pullbackfactor_for_BC_with_vertexindex = det / ( min_sing_inv * min_sing_inv );
+
+                    } else {
+
+                        // For general dimensions, the following formula is safe (though not very efficient)
+
+                        pullbackfactor_for_BC_with_vertexindex = power_numerical( max_sing, form_degree+1 ) * power_numerical( min_sing_inv, form_degree );
+
+                    }
+
+                    Assert( std::isfinite( pullbackfactor_for_BC_with_vertexindex ), pullbackfactor_for_BC_with_vertexindex, dim, m, comparison_counter );
+
+                    pullbackfactor_for_BC = minimum( pullbackfactor_for_BC, pullbackfactor_for_BC_with_vertexindex );
+
+                }
+
+                Assert( comparison_counter == dim-m, comparison_counter, m );
+
+                Assert( std::isfinite( pullbackfactor_for_BC ), pullbackfactor_for_BC, dim, m, comparison_counter );
+
+                LOGPRINTF( "pullback correction: %f\n", pullbackfactor_for_BC );
+
+                PF *= pullbackfactor_for_BC;
+
+            }
+
+            // If we try to get a potential for the divergence, we can also use the following upper bound:
+
+            if( form_degree == dim-1 ) {
+                PF = minimum( PF, 1/sqrt(2.) );
+            }
+
+            // Having estimated the Poincare constant with boundary conditions, we proceed 
             
             Float pullbackfactor_d = ( m != dim ? info.C5[current_node][form_degree+1][m][sub_index] : 0. );
             Float pullbackfactor_0 = ( m != dim ? info.C5[current_node][form_degree  ][m][sub_index] : 0. );
             
-            Float A = PF;
-            Float B = PF * pullbackfactor_d;
-            Float C =      pullbackfactor_0;
+            Float A = PF;                       // coefficient of new 
+            Float B = PF * pullbackfactor_d;    // coefficient of previous
+            Float C =      pullbackfactor_0;    // recursive 
 
-            LOGPRINTF( "k=%i A=%f B=%f C=%f \n", form_degree, A, B, C );
+            LOGPRINTF( "k=%i nat=%f d=%f A=%f B=%f C=%f \n", form_degree, natural_poincare_constant, info.diameters[current_node], A, B, C );
 
             // obtain all previous indices of the common subsimplex of dimension n-m
             

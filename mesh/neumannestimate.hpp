@@ -250,17 +250,17 @@ Float NeumannEstimate( const Mesh& M ) {
                 Float  A_via_bc = pf_simplex_with_bc;
                 Float Ap_via_bc = sqrt(volumeratio) * reflectionnorm * pf_simplex_with_bc;
 
-                Float A  =  A_via_bc; // coefficient of new 
+                Float A =  A_via_bc; // coefficient of new 
 
-                Float Ap = Ap_via_bc; // coefficient of previous 
+                Float B = Ap_via_bc; // coefficient of previous 
 
-                Float B  = sqrt( volumeratio ); // this is the recursive coefficient
+                Float C = sqrt( volumeratio ); // this is the recursive coefficient
 
-                LOGPRINTF( "SCALAR A=%f Ap=%f B=%f \n", A, Ap, B );
+                LOGPRINTF( "SCALAR nat=%f diam=%f A=%f B=%f C=%f \n", natural_poincare_constant, diameters[cell],  A, B, C );
 
-                FloatVector new_coeffs = B * curr_coefficients[cell];
+                FloatVector new_coeffs = C * curr_coefficients[cell];
 
-                new_coeffs[cell] += Ap;
+                new_coeffs[cell] += B;
 
                 // assert( new_coeffs[neighbor] == 0. );
 
