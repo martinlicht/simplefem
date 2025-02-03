@@ -36,14 +36,14 @@ int main( int argc, char *argv[] )
         std::vector<std::function<FloatVector(const FloatVector&)>> fields;
         
         fields.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 2 );
                 return FloatVector({ std::exp( vec[0] + vec[1] ) });
             }
         );
 
         fields.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 2 );
                 auto ret = FloatVector({ std::exp( vec[0] + vec[1] ), std::exp( - 2. * vec[0] - 3. * vec[1] ) });
                 assert( ret.getdimension() == 2 );

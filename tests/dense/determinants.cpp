@@ -104,7 +104,10 @@ int main( int argc, char *argv[] )
             for( int j = 0; j < num_algorithms; j++ )
             {
                 LOGPRINTF("Test %i %12s: computed=%.17le reference=%.17le ratio=%.17le\n", 
-                    i+1, names[j], referenceDet, computedDet[j], (computedDet[j]/referenceDet) );            
+                          i+1, names[j], 
+                          (double)(safedouble)referenceDet, 
+                          (double)(safedouble)computedDet[j], 
+                          (double)(safedouble)(computedDet[j]/referenceDet) );            
                 assert( is_numerically_close( referenceDet, computedDet[j] ) );
             }
             LOG << nl;
@@ -156,7 +159,10 @@ int main( int argc, char *argv[] )
             for( int j = 0; j < num_algorithms; j++ )
             {
                 LOGPRINTF("Test %i %12s: reference=%.17le computed=%.17le ratio=%.17le\n", 
-                    h, names[j], referenceDet, computedDet[j], (computedDet[j]/(double)referenceDet) );            
+                            h, names[j], 
+                            (double)(safedouble)referenceDet, 
+                            (double)(safedouble)computedDet[j], 
+                            (double)(safedouble)(computedDet[j]/(double)referenceDet) );
                 assert( is_numerically_close( referenceDet, computedDet[j] ) );
             }
             LOG << nl;
@@ -218,7 +224,10 @@ int main( int argc, char *argv[] )
             {
                 computedDet[j] = absolute( computedDet[j] );
                 LOGPRINTF("Test %i %12s: reference=%.17le computed=%.17le ratio=%.17le\n", 
-                    h, names[j], referenceDet, computedDet[j], (computedDet[j]/referenceDet) );            
+                            h, names[j], 
+                            (double)(safedouble)referenceDet, 
+                            (double)(safedouble)computedDet[j], 
+                            (double)(safedouble)(computedDet[j]/referenceDet) );            
                 assert( is_numerically_close( referenceDet, computedDet[j] ) );
             }
             LOG << nl;

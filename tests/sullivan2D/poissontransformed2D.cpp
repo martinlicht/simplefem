@@ -76,7 +76,7 @@ int main( int argc, char *argv[] )
 
             
             auto physical_u = 
-                [=](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector {
                     assert( vec.getdimension() == 2 );
                     
                     Float r2 = vec.norm_sq();
@@ -87,7 +87,7 @@ int main( int argc, char *argv[] )
                 };
             
             auto physical_gradu = 
-                [=](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector {
                     assert( vec.getdimension() == 2 );
                     Float l2sq = vec.norm_sq();
                     return FloatVector( { 
@@ -97,7 +97,7 @@ int main( int argc, char *argv[] )
                 };
             
             auto physical_f = 
-                [=](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector {
                     assert( vec.getdimension() == 2 );
                     return FloatVector({ 
                         1.
@@ -105,17 +105,17 @@ int main( int argc, char *argv[] )
                 };
             
             auto parametric_u = 
-                [=](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector {
                     return physical_u ( trafo( vec ) );
                 };
             
             auto parametric_gradu = 
-                [=](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector {
                     return Transpose(jacobian(vec)) * physical_gradu ( trafo( vec ) );
                 };
             
             auto parametric_f = 
-                [=](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector {
                     return physical_f( trafo(vec) );
                 };
             
@@ -142,10 +142,10 @@ int main( int argc, char *argv[] )
                     // Float y = vec[1];
                     // Float sx = sign(x);
                     // Float sy = sign(y);
-                    // Float other_det = ( ( abs(x) + abs(y) ) * (sx*x+sy*y) / (x*x+y*y) );
+                    // Float other_det = ( ( std::abs(x) + std::abs(y) ) * (sx*x+sy*y) / (x*x+y*y) );
                     // LOG << x << tab << y << tab << sx << tab << sy << tab << det << tab << other_det << nl;
                     // assert(
-                    //     is_numerically_close( det, ( ( abs(x) + abs(y) ) * (sx*x+sy*y) / (x*x+y*y) ) )
+                    //     is_numerically_close( det, ( ( std::abs(x) + std::abs(y) ) * (sx*x+sy*y) / (x*x+y*y) ) )
                     // );
 
                     return absolute(det) * Inverse( Transpose(jac) * jac );

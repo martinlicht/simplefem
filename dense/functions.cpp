@@ -367,12 +367,11 @@ Float Determinant_bareiss( DenseMatrix A )
 
         
 
-        //Apply formula: TODO the names of these variables are shadowing the outer variables
-        for( int r = i + 1; r < n; r++ ) 
-        for( int c = i + 1; c < n; c++ ) 
+        for( int s = i + 1; s < n; s++ ) 
+        for( int d = i + 1; d < n; d++ ) 
         {
-            A(r,c) = A(i,i) * A(r,c) - A(r,i) * A(i,c);
-            if(i != 0) { A(r,c) /= A(i-1,i-1); }
+            A(s,d) = A(i,i) * A(s,d) - A(s,i) * A(i,d);
+            if(i != 0) { A(s,d) /= A(i-1,i-1); }
         }
     }
 

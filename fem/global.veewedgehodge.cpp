@@ -214,7 +214,7 @@ SparseMatrix FEECBrokenWedgeMatrix( const Mesh& mesh, int n, int k, int r , int 
         
         int local_index_of_entry = 0;
 
-        for( int mi_coupling_index = 0;    mi_coupling_index < mi_couplings.size();       mi_coupling_index++    ) 
+        for( int mi_coupling_index = 0;    mi_coupling_index    < mi_couplings.size();    mi_coupling_index++    ) 
         for( int sigma_coupling_index = 0; sigma_coupling_index < sigma_couplings.size(); sigma_coupling_index++ ) 
         {
 
@@ -231,7 +231,7 @@ SparseMatrix FEECBrokenWedgeMatrix( const Mesh& mesh, int n, int k, int r , int 
             SparseMatrix::MatrixEntry entry;
             entry.row    =                s * mis_output.size() * binomial_integer(n+1,k+l) + m_o * binomial_integer(n+1,k+l) + s_o;
             entry.column =                s * mis_input.size()  * binomial_integer(n+1,k  ) + m_i * binomial_integer(n+1,k  ) + s_i;
-            entry.value = signum * field[ s * mis_factor.size() * binomial_integer(n+1,  l) + m_f * binomial_integer(n+1,  l) + s_f ];
+            entry.value = signum * field[ s * mis_factor.size() * binomial_integer(n+1,  l) + m_f * binomial_integer(n+1,  l) + s_f ] * mesh.getOrientation(s);
             
             assert( std::isfinite(entry.value) );
 
@@ -273,6 +273,7 @@ SparseMatrix FEECBrokenHodgeMatrix( const Mesh& mesh, int n, int k, int r )
     const int num_simplices = mesh.count_simplices( n );
 
     auto sigmas_input  = generateSigmas( IndexRange(1,k  ), IndexRange(0,n) );
+    
     auto sigmas_test   = generateSigmas( IndexRange(1,k  ), IndexRange(0,n) );
     auto applejack_test = std::remove_if( sigmas_test.begin(), sigmas_test.end(),
                     [k](IndexMap im) -> bool { assert( im.is_strictly_ascending() ); return   k != 0 and im[1] == 0; }
@@ -280,6 +281,7 @@ SparseMatrix FEECBrokenHodgeMatrix( const Mesh& mesh, int n, int k, int r )
     sigmas_test.erase( applejack_test, sigmas_test.end() );
 
     auto sigmas_output = generateSigmas( IndexRange(1,n-k), IndexRange(0,n) );
+    
     auto sigmas_hodge  = generateSigmas( IndexRange(1,n-k), IndexRange(0,n) );
     auto applejack_hodge = std::remove_if( sigmas_hodge.begin(), sigmas_hodge.end(),
                     [n,k](IndexMap im) -> bool { assert( im.is_strictly_ascending() ); return n-k != 0 and im[1] == 0; }
@@ -299,9 +301,9 @@ SparseMatrix FEECBrokenHodgeMatrix( const Mesh& mesh, int n, int k, int r )
     
     // 1. Assemble the algebraic matrix
 
-    DenseMatrix wedge_matrix( sigmas_test.size(), sigmas_hodge.size(), 0. );
+    const IndexMap standard_volume_form( IndexRange(1,n), IndexRange(0,n), [](int i)->int{ return i; } );
 
-    const IndexMap volume_form( IndexRange(1,n), IndexRange(0,n), [](int i)->int{return i;});
+    DenseMatrix wedge_matrix( sigmas_test.size(), sigmas_hodge.size(), 0. );
 
     for( int s_h = 0; s_h < sigmas_hodge.size(); s_h++ )
     for( int s_t = 0; s_t < sigmas_test.size();  s_t++ )
@@ -316,9 +318,7 @@ SparseMatrix FEECBrokenHodgeMatrix( const Mesh& mesh, int n, int k, int r )
 
         // LOG << sigma_prod << nl << volume_form << nl;
 
-        assert( sigma_prod.is_strictly_ascending() );
-
-        assert( sigma_prod == volume_form );
+        assert( sigma_prod.is_strictly_ascending() and sigma_prod == standard_volume_form );
 
         wedge_matrix( s_t, s_h ) = signum;
     }
@@ -400,3 +400,166 @@ SparseMatrix FEECBrokenHodgeMatrix( const Mesh& mesh, int n, int k, int r )
     
     return ret;
 }
+
+
+
+
+
+
+
+
+
+
+
+FloatVector FEECScalarIntegral( const Mesh& mesh, int n, int r )
+{
+    
+    // check whether the parameters are right 
+    // only lowest order here
+    
+    assert( r >= 0 );
+    assert( n >= 0 && n <= mesh.getinnerdimension() );
+    assert( binomial_integer( n+r, n ) == binomial_integer( n+r, r ) );
+    
+    // Auxiliary calculations and preparations
+    
+	const int num_simplices = mesh.count_simplices( n );
+    
+    const int localdim = binomial_integer( n + r, n );
+    
+    const int num_entries = num_simplices * localdim;
+    
+    FloatVector ret( num_entries );
+	
+	// Numerical data : for the standard volume form
+    
+    FloatVector polynomial_weights( binomial_integer( n + r, n ) );
+	
+	std::vector<MultiIndex> multis = generateMultiIndices( IndexRange(0,n), r );
+    
+    const int N = multis.size();
+    
+    assert( N == binomial_integer( n + r , r ) );
+    
+    for( int index_poly = 0; index_poly < N; index_poly++ )
+    {
+        MultiIndex alpha = multis[index_poly];
+        assert( absolute( alpha ) == r ); 
+        // n! alpha! / (n+|alpha|)!
+        polynomial_weights[index_poly] = factorial_numerical(n) * alpha.factorial_numerical() / factorial_numerical( n + r ); 
+    }
+	
+	if( r == 0 )
+    for( auto w : polynomial_weights ) Assert( is_numerically_one( w ) );
+	
+	// Fill in the data into the return vector 
+	for( int s = 0;          s < num_simplices; s++          )
+	for( int index_poly = 0; index_poly < N;    index_poly++ )
+	{
+		Float volume = mesh.getMeasure( n, s );
+        ret[ s * N + index_poly] = volume * polynomial_weights[index_poly];
+	}
+
+    for( auto v : ret ) assert( v > 0. );
+	
+	return ret; 
+}
+
+
+
+
+
+
+FloatVector FEECVolumeFormIntegral( const Mesh& mesh, int n, int r )
+{
+    // check whether the parameters are right 
+    // only lowest order here
+    
+    assert( r >= 0 );
+    assert( n >= 0 && n <= mesh.getinnerdimension() );
+    assert( binomial_integer( n+r, n ) == binomial_integer( n+r, r ) );
+    
+    // Auxiliary calculations and preparations
+    
+    const int num_simplices = mesh.count_simplices( n );
+    const int localdim      = binomial_integer( n + r, n ) * (n+1);
+    const int num_entries   = num_simplices * localdim;
+    
+    FloatVector ret( num_entries );
+	
+	// Numerical data : for the standard volume form
+    
+    std::vector<MultiIndex> multis = generateMultiIndices( IndexRange(0,n), r );
+    
+    const int N = multis.size();
+    
+    assert( N == binomial_integer( n + r , r ) );
+    
+    FloatVector polynomial_weights( N );
+	
+	for( int index_poly = 0; index_poly < N; index_poly++ )
+    {
+        MultiIndex alpha = multis[index_poly];
+        assert( absolute( alpha ) == r ); // n! alpha! / (n+|alpha|)!
+        polynomial_weights[index_poly] = factorial_numerical(n) * alpha.factorial_numerical() / factorial_numerical( n + r ); 
+    }
+
+    // Numerical data: catalog the signs
+	
+	std::vector<IndexMap> sigmas = generateSigmas( IndexRange(1,n), IndexRange(0,n) );
+    assert( sigmas.size() == n+1 );
+	
+	FloatVector signs( sigmas.size() );
+	
+    for( int index_form = 0; index_form < sigmas.size(); index_form++ )
+	for( int p = 0;          p <= n;                     p++          )
+	{
+		const auto& sigma = sigmas[index_form];
+		
+		bool p_found = sigma.has_value_in_range(p);
+
+        if( p_found ) continue;
+		
+        assert( not std::isfinite( signs[index_form] ) );
+
+        signs[index_form] = sign_power( p );
+
+        if( p == 0 ) assert( sign_power(p) ==  1 );
+        if( p == 1 ) assert( sign_power(p) == -1 );
+        if( p == 2 ) assert( sign_power(p) ==  1 );
+	}
+    
+	// Fill in the data into the return vector 
+	
+    for( int s = 0;          s < num_simplices;          s++          )
+    for( int index_poly = 0; index_poly < N;             index_poly++ )
+	for( int index_form = 0; index_form < sigmas.size(); index_form++ )
+	{
+		auto Jac = mesh.getTransformationJacobian(n,s);
+        assert( Jac.is_square() );
+        auto orientation = sign_integer( Determinant(Jac) );
+
+        // LOG << s << space << orientation << space << signs[index_form] << nl;
+        
+        Float value = orientation * signs[index_form] * polynomial_weights[index_poly] / factorial_numerical( n );
+
+        ret[ s * N * (n+1) + index_poly * (n+1) + index_form] = value; 
+	}
+
+
+	
+	return ret; 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

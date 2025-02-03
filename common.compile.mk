@@ -70,7 +70,7 @@ FLAG_NO_EXCEPTIONS=yes
 
 # Do you want to ENABLE the use of openMP?
 # Uncomment the following line to enable compilation with openMP
-# FLAG_ENABLE_OPENMP=yes
+FLAG_ENABLE_OPENMP=yes
 
 # Do you want to ENABLE excessive warning options?
 # Uncomment the following line to enable excessive warning options
@@ -87,7 +87,7 @@ FLAG_EXCESSIVE_WARNINGS=yes
 
 # Do you want to ENABLE the Clang sanitizer?
 # Uncomment the following line to enable compilation with the Clang sanitizer
-# FLAG_DO_USE_SANITIZER=yes
+FLAG_DO_USE_SANITIZER=yes
 
 # Do you want to enable static analysis during the compilation process
 # Uncomment the following line to enable static analysis
@@ -176,6 +176,7 @@ endif
 #                                             #
 #         Set the compiler command            #
 #       (see also language std below)         #
+#                                             #
 ###############################################
 
 ifeq ($(FLAG_CXX),GCC)
@@ -208,6 +209,22 @@ endif
 
 CXXFLAGS_LANG := -std=c++17 -pedantic -fno-rtti -D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES 
 
+ifeq ($(FLAG_NO_EXCEPTIONS),yes)
+	CXXFLAGS_LANG += -fno-exceptions
+endif
+
+ifeq ($(FLAG_DO_USE_SINGLE_PRECISION),yes)
+	CXXFLAGS_LANG += -fsingle-precision-constant
+endif
+
+CXXFLAGS_LANG += -fvisibility-inlines-hidden
+
+# enums can only take values in the enumeration type 
+CXXFLAGS_LANG += -fstrict-enums
+
+# CXXFLAGS_LANG += -fstrict-eval-order
+# CXXFLAGS_LANG += -fvisibility=default
+
 
 
 
@@ -229,7 +246,6 @@ CXXFLAGS_LANG := -std=c++17 -pedantic -fno-rtti -D_LIBCPP_REMOVE_TRANSITIVE_INCL
 # In the absence of optimization, we set O0
 
 CXXFLAGS_OPTIMIZE:=
-
 
 ifeq ($(FLAG_DO_OPTIMIZE),yes)
 
@@ -294,27 +310,11 @@ endif
 
 CXXFLAGS_CODEGEN := 
 
-ifeq ($(FLAG_NO_EXCEPTIONS),yes)
-	CXXFLAGS_CODEGEN += -fno-exceptions
-endif
-
-ifeq ($(FLAG_DO_USE_SINGLE_PRECISION),yes)
-	CXXFLAGS_CODEGEN += -fsingle-precision-constant
-endif
-
 # If we are NOT on Windows, then use position-independent code. Also, avoid the procedure linkage table 
 ifneq ($(OS),Windows_NT)
 	CXXFLAGS_CODEGEN += -fpic -fno-plt 
 endif
 
-# CXXFLAGS_CODEGEN += -fvisibility=default
-
-CXXFLAGS_CODEGEN += -fvisibility-inlines-hidden
-
-# enums can only take values in the enumeration type 
-CXXFLAGS_CODEGEN += -fstrict-enums
-
-# CXXFLAGS_CODEGEN += -fstrict-eval-order
 
 
 
@@ -838,7 +838,8 @@ ifeq ($(FLAG_DO_USE_SANITIZER),yes)
 
 	endif
 
-	SANITIZERS :=$(SANITIZERS)address,leak,
+	SANITIZERS :=$(SANITIZERS)address,
+	# SANITIZERS :=$(SANITIZERS)leak,
 	# SANITIZERS :=$(SANITIZERS)thread 
 
 	# thread cannot be combined with address and leak 
@@ -1035,10 +1036,16 @@ CPPFLAGS := $(strip $(CPPFLAGS))
 #                                             #
 ###############################################
 
+LDLIBS :=
+
 ifeq ($(FLAG_USE_TCMALLOC),yes)
-	LDLIBS :=-l:libtcmalloc.so.4
-else
-	LDLIBS :=
+	LDLIBS +=-l:libtcmalloc.so.4
+endif
+
+ifeq ($(FLAG_ENABLE_OPENMP),yes)
+ifneq ($(OS),Windows_NT)	
+	LDLIBS +=-latomic
+endif
 endif
 
 LDLIBS := $(strip $(LDLIBS))

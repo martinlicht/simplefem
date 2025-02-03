@@ -6,6 +6,7 @@
 #include "global.massmatrix.cpp"
 #include "global.coefficientmassmatrix.cpp"
 #include "global.veewedgehodge.cpp"
+#include "global.hodgestarmatrix.cpp"
 #include "global.elevation.cpp"
 #include "global.interpol.cpp"
 #include "global.flags.cpp"

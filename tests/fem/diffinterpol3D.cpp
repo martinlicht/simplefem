@@ -29,14 +29,14 @@ int main( int argc, char *argv[] )
         std::vector<std::function<FloatVector(const FloatVector&)>> experiments_scalar_exterior;
         
         experiments_scalar_function.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 3 );
                 return FloatVector({ std::exp( Constants::pi * vec[0] * vec[1] * vec[2] ) });
             }
         );
 
         experiments_scalar_exterior.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 3 );
                 return FloatVector( { 
                         Constants::pi * vec[1] * vec[2] * std::exp( Constants::pi * vec[0] * vec[1] * vec[2] ),
@@ -51,7 +51,7 @@ int main( int argc, char *argv[] )
         std::vector<std::function<FloatVector(const FloatVector&)>> experiments_vector_exterior;
         
         experiments_vector_function.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 3 );
                 return FloatVector( { 
                         std::exp( 2. * vec[1] ),
@@ -62,7 +62,7 @@ int main( int argc, char *argv[] )
         );
 
         experiments_vector_exterior.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 3 );
                 return FloatVector( { 
                         -2. * std::exp( 2. * vec[1] ) + -3. * std::exp( -3. * vec[0] ), 
@@ -77,7 +77,7 @@ int main( int argc, char *argv[] )
         std::vector<std::function<FloatVector(const FloatVector&)>> experiments_pseudo_exterior;
         
         experiments_pseudo_function.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 3 );
                 return FloatVector( { 
                         vec[2]*vec[2]*vec[2], 
@@ -88,7 +88,7 @@ int main( int argc, char *argv[] )
         );
 
         experiments_pseudo_exterior.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 3 );
                 return FloatVector( { 
                         3. * vec[2]*vec[2] - 2. * vec[1] + 1.

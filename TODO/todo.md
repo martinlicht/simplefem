@@ -1,77 +1,69 @@
+# ----------- PAPER ----------------------------
 
+1. The different bases and spanning sets for spaces on simplices; how to convert between them, embed them, and reduce to them (averaging)
+   How to elevate or reduce the polynomial degree
+2. Lagrangian interpolation in different bases 
+3. The exterior derivative in different bases 
+4. The wedge in different bases 
+5. The trace in different bases 
+6. The mass product in different bases
+7. The vee product in different bases 
+7. The Hodge star in different bases 
 
-
-
-
-
-	
 #	----------- UPKEEP & MINOR FIXES -------------
 
-[x] CONSTANT_FLOATINGPOINT_DATATYPE: uses the same macro case distinction as the other ones
+[ ] lshaped maxwell: correct stuff 
+[ ] neumann estimate 
+[ ] make sure that allone vectors are not used for constant functions. That only works if r=1. Name: constant_one
+[ ] add Neumann BC to mixed FEM for Poisson
+[ ] Make the second Hodge star work as intended
+[ ] enable exceptions and adapt the unit tests ...
+[ ] How to enable DLLs? You can use a .def file...
+[ ] interpolation points: what are best interpolation points with smallest lebesgue constant?
+[ ] non-uniform interpolation of fields
+[ ] augmented integration for error checks
+[ ] augmented integration for rhs? First, understand integration better. 
+[ ] Why does CLOG go into stderr?
+[ ] print modulo shall always print 1/20 of the max iteration
+[ ] in tests that involve solvers, the convergence tables should indicate the current solver 
+[ ] print modulo should always be a 1/20th of the current max iteration 
 
+[x] Does diffinterpol2D/3D still have strange output?
 [?] what is the numerically stable way to compute the determinant? 
-
 [!] The sqrt of a result subject to more than a machine epsilon error 
     will be subject to more than the sqrt of the machine epsilon error
-
+[x] Handle self-assignment in operator=
+[x] CONSTANT_FLOATINGPOINT_DATATYPE: uses the same macro case distinction as the other ones
 [x] remove includes from the definition of cxx files; test the cxx files
-
 [x] enable compilation in different C++ modes and remove the error messages. 
     [x] 14
     [x] 17
     [x] 20
-
 [x] how to turn off particular unused variable warnings? -> Blog post
     #define UNUSED_VARIABLE(x) (void)x
     __attribute__((unused))
-
-[ ] clean the printing methods of the convergence tables
-
-[ ] enable exceptions and adapt the unit tests ...
-
-[ ] How to enable DLLs? You can use a .def file...
-
 [x] convergence tables should handle different precisions, one way or the other: best to internally use long double. Requires settling the printf issue
-
+[x] Clean the printing methods of the convergence tables. 
+[x] Check debug.hpp for errors 
+[x] cpp file which contains the logging
+[x] fix the vee product; make the tests run in 2D and 3D
+[x] integrate volume forms and scalar fields 
 [x] Use custom printf implementation for that handles long doubles
     #define __USE_MINGW_ANSI_STDIO 1
     The above macro enables the MinGW Printf implementation
-
-[ ] std::exp and the like: single precision versions
-
-[ ] augmented integration for error checks
-
-[ ] augmented integration for rhs? First, understand integration better. 
-
-[ ] interpolation points: what are best interpolation points with smallest lebesgue constant?
-
-[ ] adaptive interpolation 
-
-[ ] Handle self-assignment in operator=
+[x] std::exp and the like: single precision versions
 
 [x] correct the computation in the nullspace test 
-
-[ ] Does diffinterpol2D/3D still have strange output?
-
-[x] Check debug.hpp for errors 
-
-[x] cpp file which contains the logging
-
-[ ] Why does CLOG go into stderr?
-
 [x] tests output into logs 
   [x] create a silent option for each run in the makefile 
   [x] make sure the tests only output into stdout 
   [x] adapt makefile to create a log  		
-  
 [x] Zum laufen bringen auf SCITAS 
   [x] login SCITAS shell 
   [x] git repo transferieren 
   [x] job framework aufsetzen 
   
-[ ] experiments:
-  Die Konvergenztabellen sollen immer aussagen was gerade approximiert wird 
-  Der Printmodulo soll immer ein 1/20 der max-iteration betragen 
+
 
 	
 
@@ -79,15 +71,13 @@
 # ------------------ Makefile ---------------------------------------------
 
 [ ] de-clutter the makefiles
-  include links to the manual in the makefiles for quicker reference 
+[ ] include links to the manual in the makefiles for quicker reference 
 
 [ ] makefile structure 
   [x] common.recipe -> common.compile.mk
-  [ ] vtkclean -> outputclean 
-  [ ] 
+  [x] vtkclean -> outputclean 
 
-[ ] Die automatische dependency generation funktioniert noch nicht 
-  werden alte dependency angaben erased?
+[ ] Die automatische dependency generation funktioniert noch nicht. Werden alte dependency angaben erased?
 
 
   
@@ -144,52 +134,48 @@
 [ ] can you return anon structs?
 
 [ ] SparseMatrix, CSR-Matrix
-  Wieviele eintraege sind mindest/durchschnittlich/maximal in einer Reihe um die Diagonale?
-  Ausgabe mittels statistics substruktur -> return stat struct 
+    Wieviele eintraege sind mindest/durchschnittlich/maximal in einer Reihe um die Diagonale?
+    Ausgabe mittels statistics substruktur -> return stat struct 
 
 [ ] check symmetry 
-  schreibe eine methode um die deviation von der symmetry zu untersuchen
-  du kannst annehmen, dass sort+compress angewendet worden ist 
-  use a map datastructure to investigate that
+    schreibe eine methode um die deviation von der symmetry zu untersuchen
+    du kannst annehmen, dass sort+compress angewendet worden ist 
+    use a map datastructure to investigate that
 
 [ ] Die Sortierung und Kompression der SparseMatrix braucht nicht soviel Zeit
-  Lasse den Output weg 
+    Lasse den Output weg 
 
 
 
 # ------------- SOLVERS, upkeep ---------------
 
 [ ] vereinfache die verschiedenen CR solver 
-  [ ] finde die unterschiede und markiere sie im Code 
-  [ ] mache fallunterscheidungen und vereinheitliche 
-  [ ] commit und merge 
+[ ] finde die unterschiede und markiere sie im Code 
+[ ] mache fallunterscheidungen und vereinheitliche 
+[ ] commit und merge 
   
 
 [ ] alle C++ solvers mit preconditioner 
 
 [ ] solver logging 
-  make the logging more reasonable, 
-  e.g., give out iteration numbers at the beginning
-
-[ ] solver unit tests:
-  Die Konvergenztabellen sollen immer den Namen des Solvers enthalten 
-  Der Printmodulo soll immer ein 1/20 der max-iteration betragen 
+    make the logging more reasonable, 
+    e.g., give out iteration numbers at the beginning
 
 [ ] im gesamten code durchweg desired_precision anwenden
     das kann in der solver klasse so gesetzt werden 
 
 [ ] Unified solver interface: 
-  Es macht wenig Sinn, einen solver als Klasse aufzuziehen. 
-  Besser altmodisch mit Parametern, eventuell mit speziellen Default-Werten 
-  Idee: Zur Not kann man einen Solver dann einer Klasse verpacken 
+    Es macht wenig Sinn, einen solver als Klasse aufzuziehen. 
+    Besser altmodisch mit Parametern, eventuell mit speziellen Default-Werten 
+    Idee: Zur Not kann man einen Solver dann einer Klasse verpacken 
         mittels einer Template-Konstruktion?
       
-  Funktionen sind:
-  - Matrix, initial guess, rhs
-  - residual
-  - max steps, desired precision
-  - print modus 
-  - Preconditioner?
+Funktionen sind:
+- Matrix, initial guess, rhs
+- residual
+- max steps, desired precision
+- print modus 
+- Preconditioner?
 
 # ------------- SOLVERS, important stuff ---------------
 

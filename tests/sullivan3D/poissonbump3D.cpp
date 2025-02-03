@@ -50,7 +50,7 @@ int main( int argc, char *argv[] )
 
 
             std::function<FloatVector(const FloatVector&)> experiment_sol = 
-                [=](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector {
                     assert( vec.getdimension() == 3 );
                     // return FloatVector({ 1. });
                     return FloatVector({ 
@@ -59,7 +59,7 @@ int main( int argc, char *argv[] )
                 };
             
             std::function<FloatVector(const FloatVector&)> experiment_grad = 
-                [=](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector {
                     assert( vec.getdimension() == 3 );
                     return FloatVector( { 
                             bumpfunction_dev(vec[0]) *     bumpfunction(vec[1]) *     bumpfunction(vec[2]),
@@ -70,7 +70,7 @@ int main( int argc, char *argv[] )
             
 
             std::function<FloatVector(const FloatVector&)> experiment_rhs = 
-                [=](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector {
                     assert( vec.getdimension() == 3 );
                     return FloatVector({ 
                         -

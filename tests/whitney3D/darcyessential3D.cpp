@@ -50,13 +50,6 @@ int main( int argc, char *argv[] )
         
         LOG << "Prepare scalar fields for testing..." << nl;
         
-
-        std::function<FloatVector(const FloatVector&)> constant_one
-            = [](const FloatVector& vec) -> FloatVector{
-                    assert( vec.getdimension() == 3 );
-                    return FloatVector({ 1. });
-                };
-        
         
         
         
@@ -75,7 +68,7 @@ int main( int argc, char *argv[] )
         // phi -> ( - phi_y, phi_x ) -> ( - phi_xx - phi_yy ) dxdy
         
         std::function<FloatVector(const FloatVector&)> experiment_sol = 
-            [=](const FloatVector& vec) -> FloatVector{
+            [=](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 3 );
                 return FloatVector({ std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] ) * std::sin( zfeq * Constants::twopi * vec[2] ) });
                 // return FloatVector({ blob( vec[0] ) * blob( vec[1] ) * blob( vec[2] ) });
@@ -83,7 +76,7 @@ int main( int argc, char *argv[] )
         
         
         std::function<FloatVector(const FloatVector&)> experiment_grad = 
-            [=](const FloatVector& vec) -> FloatVector{
+            [=](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 3 );
                 return FloatVector( { 
                         -zfeq * Constants::twopi * std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] ) * std::cos( zfeq * Constants::twopi * vec[2] ), //xy
@@ -97,7 +90,7 @@ int main( int argc, char *argv[] )
         
         
         std::function<FloatVector(const FloatVector&)> experiment_rhs = 
-            [=](const FloatVector& vec) -> FloatVector{
+            [=](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 3 );
                 return FloatVector({ 
                     xfeq*xfeq * Constants::fourpisquare * std::sin( xfeq * Constants::twopi * vec[0] ) * std::sin( yfeq * Constants::twopi * vec[1] ) * std::sin( zfeq * Constants::twopi * vec[2] )
@@ -169,7 +162,7 @@ int main( int argc, char *argv[] )
                 auto mat_Bt = vector_incmatrix_t & diffmatrix_t & volume_elevationmatrix_t & volume_massmatrix & volume_incmatrix; // upper right
                 mat_Bt.sortandcompressentries();
                 
-                auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & volume_massmatrix & diffmatrix & vector_incmatrix; // lower bottom
+                auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & volume_massmatrix & diffmatrix & vector_incmatrix; // lower left
                 mat_B.sortandcompressentries();
                 
                 auto A  = MatrixCSR( mat_A  );

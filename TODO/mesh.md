@@ -1,18 +1,14 @@
 
-# (LOW) Bisection method return value 
+# (DONE) Bisection method return value 
 
-The bisection methods should return the number of triangles that have been bisected. 
-That should not depend on the order of the edges being listed for marking,
-that can essentially just be a set.
+The bisection methods should return the count of triangles that have been bisected. 
+That should not depend on the order of the edges being listed for marking, which can essentially just be a set.
 Generally speaking, it should be a transversable container. 
-
-
 
 # Mesh module
 
 The mesh module provides an abstract base class for the management of meshes
 and several implementations 
-
 
   - Mesh
     - manifold 2D

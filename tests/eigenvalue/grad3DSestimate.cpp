@@ -14,6 +14,7 @@
 #include "../../solver/inv.hpp"
 #include "../../solver/systemsolver.hpp"
 #include "../../solver/systemsparsesolver.hpp"
+#include "../../fem/global.avgsullivan.hpp"
 #include "../../fem/global.elevation.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
@@ -55,19 +56,37 @@ int main( int argc, char *argv[] )
     
     LOG << "Initial mesh..." << nl;
     
+    // MeshSimplicial3D M = UnitSimplex3D(); 
     // MeshSimplicial3D M = UnitCube3D(); 
     // MeshSimplicial3D M = FicheraCorner3D();
     MeshSimplicial3D M = CrossedBricks3D();
     
     M.check();
     
-    bool do_neumann = true;
+    bool do_neumann = false;
+    // if( not do_neumann ){
+    //     M.automatic_dirichlet_flags();
+    //     M.check_dirichlet_flags();
+    // }
 
-    if( not do_neumann ){
-        M.automatic_dirichlet_flags();
-        M.check_dirichlet_flags();
+    if(false)
+    {
+        LOG << "Fine-tuned boundary conditions" << nl;
+        int first_bc_face = 1;
+        for( int f = first_bc_face; f <= 3; f++ ) {
+            M.set_flag( 2, f, SimplexFlag::SimplexFlagDirichlet );
+        }
+        M.complete_dirichlet_flags_from_facets();
+        M.check_dirichlet_flags(false);
+    
     }
 
+    for( int f = 0; f < M.count_faces(); f++ )
+    {
+        LOG << f << ": ";
+        for( int i = 0; i <= 2; i++ ) LOG << M.get_subsimplex( 2, 0, f, i ) << space;
+        LOG << " > " << (int)M.get_flag( 2, f ) << nl;
+    }
     
     LOG << "Prepare scalar fields for testing..." << nl;
     
@@ -84,11 +103,11 @@ int main( int argc, char *argv[] )
 
     LOG << "Estimating Poincare-Friedrichs constant of grad operator (Sullivan)" << nl;
 
-    const int min_l = 0; 
+    const int min_l = 3; 
     const int max_l = 3;
     
-    const int min_r = 2;
-    const int max_r = 2;
+    const int min_r = 1;
+    const int max_r = 1;
     
     
     std::vector<ConvergenceTable> contables(max_r-min_r+1); //();
@@ -134,6 +153,10 @@ int main( int argc, char *argv[] )
             SparseMatrix scalar_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r+1 );
             SparseMatrix scalar_diffmatrix_t = scalar_diffmatrix.getTranspose();
 
+            LOG << "averaging matrix for scalar fields" << nl;
+
+            SparseMatrix scalar_averaging = FEECSullivanAveragingMatrix( M, M.getinnerdimension(), 0, r+1, FEECAveragingMode::weighted_uniformly );
+
             LOG << "... compose system matrices" << nl;
 
             auto mat_A  = scalar_incmatrix_t & scalar_diffmatrix_t & ( vector_massmatrix ) & scalar_diffmatrix & scalar_incmatrix;
@@ -161,6 +184,14 @@ int main( int argc, char *argv[] )
 
                 Float newratio = -1;
                 
+                FloatVector interpol_one  = Interpolation( M, M.getinnerdimension(), 0, r, 
+                    [](const FloatVector& vec) -> FloatVector { return FloatVector({ 1. }); }
+                    );
+
+                FloatVector conforming_one = scalar_averaging * interpol_one;
+
+                Float mass_of_conforming_one  = ( scalar_massmatrix * interpol_one ) * interpol_one;
+
                 timestamp start = timestampnow();
                 
                 for( int t = 0; t <= max_inverseiterations; t++ )
@@ -171,10 +202,8 @@ int main( int argc, char *argv[] )
 
                     if( do_neumann )
                     {
-                        auto constant_one = FloatVector( scalar_incmatrix.getdimin(), 1. );
-                        Float average = ( scalar_massmatrix * scalar_incmatrix * candidate    ) * ( scalar_incmatrix * constant_one );
-                        Float weight  = ( scalar_massmatrix * scalar_incmatrix * constant_one ) * ( scalar_incmatrix * constant_one );
-                        candidate = candidate - ( average / weight ) * constant_one;
+                        Float average = ( scalar_massmatrix * scalar_incmatrix * candidate ) * interpol_one;
+                        candidate = candidate - ( average / mass_of_conforming_one ) * conforming_one;
                     }
 
                     FloatVector sol( A.getdimout(), 0. );
@@ -183,10 +212,8 @@ int main( int argc, char *argv[] )
                     
                     if( do_neumann )
                     {
-                        auto constant_one = FloatVector( scalar_incmatrix.getdimin(), 1. );
-                        Float average = ( scalar_massmatrix * scalar_incmatrix * rhs_sol      ) * ( scalar_incmatrix * constant_one );
-                        Float weight  = ( scalar_massmatrix * scalar_incmatrix * constant_one ) * ( scalar_incmatrix * constant_one );
-                        rhs_sol = rhs_sol - ( average / weight ) * constant_one;
+                        Float average = ( scalar_massmatrix * scalar_incmatrix * rhs_sol ) * interpol_one;
+                        rhs_sol = rhs_sol - ( average / mass_of_conforming_one ) * conforming_one;
                     }
 
                     auto residual = sol;
@@ -224,10 +251,8 @@ int main( int argc, char *argv[] )
 
                     if( do_neumann )
                     {
-                        auto constant_one = FloatVector( scalar_incmatrix.getdimin(), 1. );
-                        Float average = ( scalar_massmatrix * scalar_incmatrix * sol          ) * ( scalar_incmatrix * constant_one );
-                        Float weight  = ( scalar_massmatrix * scalar_incmatrix * constant_one ) * ( scalar_incmatrix * constant_one );
-                        sol = sol - ( average / weight ) * constant_one;
+                        Float average = ( scalar_massmatrix * scalar_incmatrix * sol ) * interpol_one;
+                        sol = sol - ( average / mass_of_conforming_one ) * conforming_one;
                     }
                     
                     candidate = sol;
@@ -273,7 +298,7 @@ int main( int argc, char *argv[] )
                 LOG << "u mass:      " << u_massnorm << nl;
                 LOG << "u grad mass: " << ugrad_massnorm << nl;
 
-                LOG << "PF constant estimates: " << std::sqrt(curratio) << space  << std::sqrt(newratio) << nl;
+                LOG << "PF constant estimates: " << 1./std::sqrt(curratio) << space  << 1./std::sqrt(newratio) << nl;
                 
                 const Float true_eigenvalue = ( do_neumann ? 1.0 : 3.0 );
                 // 1.0 is the true value 
@@ -295,23 +320,17 @@ int main( int argc, char *argv[] )
             
         }
 
-        // estimate the eigenvalue using one of the recursive estimates 
-        if( l == 0 )
+        // estimate the Neumann eigenvalue using one of the recursive estimates 
+        if( l == 0 and do_neumann )
         {
         
-            LOG << "Estimate Eigenvalue using recursive construction" << nl;
+            LOG << "Estimate PF constant using recursive construction" << nl;
             
-            const int num_cells    = M.count_tetrahedra();
-            const int num_faces    = M.count_faces();
+            const int num_cells = M.count_tetrahedra();
+            const int num_faces = M.count_faces();
 
-            typedef std::vector<int>   array_prec;
-            typedef std::vector<int>   array_rank;
-            typedef std::vector<Float> array_cost;
-            std::vector<array_prec> arrays_of_prec( num_cells, array_prec(num_cells,-1)                                      );
-            std::vector<array_rank> arrays_of_rank( num_cells, array_rank(num_cells,-1)                                      );
-            std::vector<array_cost> arrays_of_cost( num_cells, array_cost(num_cells, std::numeric_limits<Float>::infinity()) );
-
-            // collect volumes and diameters of all cells 
+            // for later use, collect volumes and diameters of all cells 
+            
             std::vector<Float> volumes( num_cells );
             std::vector<Float> diameters( num_cells );
 
@@ -321,8 +340,8 @@ int main( int argc, char *argv[] )
                 diameters[c] = M.getDiameter( M.getinnerdimension(), c );
             }
 
-            LOG << "Compute coefficients: " << num_cells << nl;
-
+            // for later use, compute the max diameter and the max volume ratio 
+            
             Float volumeratio = 1.;
             Float maxdiameter = 0.;
             for( int c1 =    0; c1 < num_cells; c1++ ) 
@@ -331,6 +350,8 @@ int main( int argc, char *argv[] )
                 volumeratio = maximum( volumeratio, volumes[c1] / volumes[c2] );
                 maxdiameter = maximum( maxdiameter, diameters[c1] );
             }
+            
+            // for later use, compute the xi coefficient
             
             Float Cxi = 0.;
             for( int f = 0; f < num_faces; f++ ) 
@@ -348,56 +369,72 @@ int main( int argc, char *argv[] )
 
             assert( Cxi <= ( 1. + std::sqrt(6.) ) * std::sqrt(6.) );
 
+            // get the coefficients for the recursion 
+            
             Float A  = maxdiameter / std::sqrt(2.);
             Float Ap = maxdiameter / std::sqrt(2.) * std::sqrt( volumeratio ) * Cxi;
             Float B = power_numerical( volumeratio, 1./2. );
             
-            
+            LOG << "Constructing the trees. Number of roots: " << num_cells << nl;
 
-            LOG << "Attempt different roots: " << num_cells << nl;
+            // a tree consists of 1. array of precursors 2. array of rank 3. array of costs 
+            // we save the precursors and the costs. The rank will be used in the final computation.
 
-            Float minimal_costs = numeric_limits<Float>::infinity();
+            typedef std::vector<int>   array_prec;
+            typedef std::vector<int>   array_rank;
+            typedef std::vector<Float> array_cost;
             
+            std::vector<array_prec> arrays_of_prec( num_cells, array_prec(num_cells,-1)                                      );
+            std::vector<array_rank> arrays_of_rank( num_cells, array_rank(num_cells,-1)                                      );
+            std::vector<array_cost> arrays_of_cost( num_cells, array_cost(num_cells, std::numeric_limits<Float>::infinity()) );
+
+            // keep the minimal costs among the trees
+            Float minimal_cost_of_tree = numeric_limits<Float>::infinity();
+            
+            // iterate over all the possible roots 
             for( int curr_root = 0; curr_root < num_cells; curr_root++ )
             {
-                auto& curr_tree = arrays_of_prec[curr_root];
+                auto& curr_prec = arrays_of_prec[curr_root];
                 auto& curr_rank = arrays_of_rank[curr_root];
                 auto& curr_cost = arrays_of_cost[curr_root];
                 
-                // construct the trees
+                // construct the tree coming from that root 
                 {
                     // Priority queue to store {cell, distance} pairs, sorted by distance
                     std::priority_queue<std::pair<int, Float>, std::vector<std::pair<int, Float>>, Compare> pq;
 
-                    // Initialize root distance
-                    curr_tree[curr_root] = -1;
+                    // Initialize root data: no precursor, rank zero, some initial costs 
+                    curr_prec[curr_root] = -1;
                     curr_rank[curr_root] = 0;
                     curr_cost[curr_root] = A*A;
                     pq.push( { curr_root, curr_cost[curr_root] } );
 
                     //int security_counter = 0; // if cycles occur    
-                    while( not pq.empty()  )  // && security_counter++ < num_cells+10
+                    while( not pq.empty() )  // && security_counter++ < num_cells+10
                     {
-                        const auto   top_entry = pq.top();
+                        const auto top_entry = pq.top();
                         pq.pop();
                         
                         const int   cell = top_entry.first;
                         const Float cost = top_entry.second;
                         
-                        // If this distance is greater than the already found distance, skip
+                        // If this distance is greater than the distance already found, then skip
                         // In this version of Dijkstra, the PQ may have multiple instances of the same node 
+                        
                         if( cost > curr_cost[cell] ) continue;
 
-                        // cell is already at minimum cost and the predecessor is real predecessor
+                        // We have retrieved this cell at already the minimum cost and the predecessor is real predecessor
+                        // the rank of this cell is the rank of the predecessor + 1
                         
-                        if( curr_tree[cell] == -1 ) assert( cell == curr_root );
-                        if( curr_tree[cell] != -1 ) {
-                            curr_rank[cell] = 1 + curr_rank[ curr_tree[cell] ];
-                        }
+                        if( curr_prec[cell] == -1 ) assert( cell == curr_root );
+
+                        if( curr_prec[cell] != -1 ) curr_rank[cell] = 1 + curr_rank[ curr_prec[cell] ];
 
                         
-                        // Get adjacent cells
+                        // Collect all the adjacent cells
+                        
                         std::vector<int> adjacent_cells;
+
                         for( int fi = 0; fi <= M.getinnerdimension(); fi++ )
                         {
                             const int face = M.get_tetrahedron_face( cell, fi );
@@ -415,16 +452,21 @@ int main( int argc, char *argv[] )
                             if( parents[1] != cell ) adjacent_cells.push_back( parents[1] );
                         }
 
-                        // iterate over adjacent cells 
+                        // Having collected the adjacent cells, iterate over adjacent cells 
+                        // compute the costs of each
+
                         for( int neighbor : adjacent_cells )
                         {
+                            // compute the costs of going from the current cell to one its neighbors 
+                            
                             auto volume_ratio = maximum( volumes[cell] / volumes[neighbor], volumes[neighbor] / volumes[cell] );
                             
                             Float edge_cost_additive       = volume_ratio; 
 
                             Float edge_cost_multiplicative = volume_ratio; 
                             
-                            // Calculate potential new distance
+                            // Calculate potential new costs
+
                             if( curr_rank[cell] == 0 ) {
                                 edge_cost_additive       = (Ap+A*B)*(Ap+A*B);
                                 edge_cost_multiplicative = 1.; 
@@ -433,15 +475,17 @@ int main( int argc, char *argv[] )
                                 edge_cost_multiplicative = 1.; 
                             }
 
-                            Float new_dist = ( edge_cost_additive + edge_cost_multiplicative * curr_cost[cell] );
+                            Float new_cost = ( edge_cost_additive + edge_cost_multiplicative * curr_cost[cell] );
                             
                             // If a shorter path is found
-                            if( new_dist < curr_cost[neighbor] )
+
+                            if( new_cost < curr_cost[neighbor] )
                             {
-                                curr_cost[neighbor] = new_dist;
-                                curr_tree[neighbor] = cell;  // Set the predecessor
-                                pq.push({neighbor, new_dist});
+                                curr_cost[neighbor] = new_cost;
+                                curr_prec[neighbor] = cell;  // Set the predecessor
+                                pq.push({neighbor, new_cost});
                             }
+                        
                         }
                     
                     }
@@ -449,21 +493,22 @@ int main( int argc, char *argv[] )
 
                 }
                 
+                // We have constructed the tree!
                 
-                
+                // DEBUG
                 // Check that each cell has been visited (except the root)
+                // Either it is the current root or the precursor has is not -1
                 for( int i = 0; i < num_cells; i++ ) {
-                    if( i != curr_root) {
-                        assert(curr_tree[i] != i);
-                    }
+                    assert( i == curr_root || curr_prec[i] != -1 );
                 }
 
+                // DEBUG
                 // Check that each cell leads to the root and distance is descending along that path to the root
                 for( int i = 0; i < num_cells; i++ ) {
                     int c = i;
                     for( int j = 0; j < num_cells && c != curr_root; j++ ) {
-                        assert(curr_cost[c] >= curr_cost[curr_tree[c]]); // Ensure non-increasing distances
-                        c = curr_tree[c];  // Follow the path to the root
+                        assert(curr_cost[c] >= curr_cost[curr_prec[c]]); // Ensure non-increasing distances
+                        c = curr_prec[c];  // Follow the path to the root
                     }
                     assert(c == curr_root);  // Ensure the cell eventually leads to the root
                 }
@@ -472,17 +517,17 @@ int main( int argc, char *argv[] )
                 Float total_costs = std::accumulate( curr_cost.begin(), curr_cost.end(), 0.);
                 LOG << "From root " << curr_root << " the total costs are " << total_costs << nl;
 
-                // output: structure of graph
+                // DEBUG: output the structure of the tree
                 // Float total_edge_costs = 0.;
                 // for( int i = 0; i < num_cells; i++ ) {
-                //     LOG << " At " << i << " prec " << curr_tree[i] << " rank " << curr_rank[i] << " cost " << curr_cost[i] << nl;
+                //     LOG << " At " << i << " prec " << curr_prec[i] << " rank " << curr_rank[i] << " cost " << curr_cost[i] << nl;
                 // }
 
-                minimal_costs = minimum( minimal_costs, total_costs );
+                minimal_cost_of_tree = minimum( minimal_cost_of_tree, total_costs );
 
             }
 
-            LOG << "minimal costs, std::sqrt : " << minimal_costs << space << std::sqrt(minimal_costs) << nl;
+            LOG << "minimal costs, std::sqrt : " << minimal_cost_of_tree << space << std::sqrt(minimal_cost_of_tree) << nl;
 
         }
         

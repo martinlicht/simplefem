@@ -40,7 +40,7 @@ int main( int argc, char *argv[] )
             const Float yfeq = 1.;
 
             std::function<FloatVector(const FloatVector&)> experiment_rhs = 
-                [=](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector {
                     assert( vec.getdimension() == 2 );
                     return FloatVector({ 
                         

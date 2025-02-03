@@ -1807,7 +1807,7 @@ void MeshSimplicial2D::bisect_edge( int e )
  * * * * * LONGEST EDGE VERTEX BISECTION
  */
 
-void MeshSimplicial2D::longest_edge_bisection_recursive( const std::vector<int>& edges )
+int MeshSimplicial2D::longest_edge_bisection_recursive( const std::vector<int>& edges )
 {
     check();
 
@@ -1816,9 +1816,10 @@ void MeshSimplicial2D::longest_edge_bisection_recursive( const std::vector<int>&
     for( const int& e : edges )
         assert( 0 <= e && e < counter_edges );
 
-
     // 1. run over the edges and apply the recursion
 
+    int counter = 0;
+    
     const int old_vertex_count = counter_vertices;
 
     for( const int& e: edges ) {
@@ -1826,7 +1827,7 @@ void MeshSimplicial2D::longest_edge_bisection_recursive( const std::vector<int>&
         if( get_edge_vertex( e, 0 ) >= old_vertex_count || get_edge_vertex(e,1) >= old_vertex_count )
             continue;
 
-        longest_edge_bisection_recursive( e );
+        counter += longest_edge_bisection_recursive( e );
 
     }
 
@@ -1836,14 +1837,18 @@ void MeshSimplicial2D::longest_edge_bisection_recursive( const std::vector<int>&
         assert( get_edge_vertex( e, 0 ) >= old_vertex_count || get_edge_vertex(e,1) >= old_vertex_count );
     
     check();
+
+    return counter;
 }
 
 
-void MeshSimplicial2D::longest_edge_bisection_recursive( const int e )
+int MeshSimplicial2D::longest_edge_bisection_recursive( const int e )
 {
     assert( 0 <= e && e < counter_edges );
 
     int longest_edge = nullindex;
+
+    int counter = 0;
         
     do{
 
@@ -1858,13 +1863,18 @@ void MeshSimplicial2D::longest_edge_bisection_recursive( const int e )
                 longest_edge = other_e;
         }
 
-        if( longest_edge != e )
-            longest_edge_bisection_recursive( longest_edge );
+        if( longest_edge != e ) {
+            counter += longest_edge_bisection_recursive( longest_edge );
+        }
+            
 
     } while ( longest_edge != e );
 
     bisect_edge( e );
 
+    counter += 1;
+
+    return counter; 
 }
 
 
@@ -2010,7 +2020,7 @@ void MeshSimplicial2D::longest_edge_bisection_recursive( const int e )
 
 
 
-void MeshSimplicial2D::newest_vertex_bisection_recursive( const std::vector<int>& edges )
+int MeshSimplicial2D::newest_vertex_bisection_recursive( const std::vector<int>& edges )
 {
     check();
 
@@ -2019,6 +2029,7 @@ void MeshSimplicial2D::newest_vertex_bisection_recursive( const std::vector<int>
     for( const int& e : edges )
         assert( 0 <= e && e < counter_edges );
 
+    int counter = 0;
 
     // 1. run over the edges and apply the recursion
 
@@ -2029,7 +2040,7 @@ void MeshSimplicial2D::newest_vertex_bisection_recursive( const std::vector<int>
         if( get_edge_vertex( e, 0 ) >= old_vertex_count || get_edge_vertex(e,1) >= old_vertex_count )
             continue;
 
-        newest_vertex_bisection_recursive( e );
+        counter += newest_vertex_bisection_recursive( e );
 
     }
 
@@ -2039,14 +2050,18 @@ void MeshSimplicial2D::newest_vertex_bisection_recursive( const std::vector<int>
         assert( get_edge_vertex( e, 0 ) >= old_vertex_count || get_edge_vertex(e,1) >= old_vertex_count );
     
     check();
+
+    return counter;
 }
 
 
-void MeshSimplicial2D::newest_vertex_bisection_recursive( const int e )
+int MeshSimplicial2D::newest_vertex_bisection_recursive( const int e )
 {
     assert( 0 <= e && e < counter_edges );
 
     int bisection_edge = nullindex;
+
+    int counter = 0;
         
     do{
 
@@ -2072,12 +2087,15 @@ void MeshSimplicial2D::newest_vertex_bisection_recursive( const int e )
         }
         
         if( bisection_edge != e )
-            newest_vertex_bisection_recursive( bisection_edge );
+            counter += newest_vertex_bisection_recursive( bisection_edge );
 
     } while ( bisection_edge != e );
 
     bisect_edge( e );
 
+    counter += 1;
+
+    return counter; 
 }
 
 

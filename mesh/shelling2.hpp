@@ -126,8 +126,8 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
 
         aspect_condition_number[i] = diameters[i] / min_height;
 
-        const auto& trafo    = mesh.getTransformationJacobian(dim,i);
-        const auto& invtrafo = Inverse(trafo);
+        const auto trafo    = mesh.getTransformationJacobian(dim,i);
+        const auto invtrafo = Inverse(trafo);
 
         trafo_singular_max[i] =         trafo.operator_norm_estimate();
         trafo_singular_min[i] = 1. / invtrafo.operator_norm_estimate();
@@ -229,13 +229,13 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
             {
                 const Float Ctheta = max_diameter_ratio;
 
-                const Float kappa  = aspect_condition_number[i];
+                const Float kappa = aspect_condition_number[i];
 
-                const Float rho    = minimum( (Float)1., min_height_of_vertex / (level+1.) );
+                const Float rho   = minimum( (Float)1., min_height_of_vertex / (level+1.) );
 
-                const Float mu_l   = 0.5 * std::sqrt( square(1+rho) + square( square(1+rho) * (n-level) * kappa ) ) + 0.5 * std::sqrt( square(1-rho) + square( square(1+rho) * (n-level) * kappa ) );
+                const Float mu_l  = 0.5 * std::sqrt( square(1+rho) + square( square(1+rho) * (n-level) * kappa ) ) + 0.5 * std::sqrt( square(1-rho) + square( square(1+rho) * (n-level) * kappa ) );
                 
-                const Float xi_l   = std::sqrt( square(2*rho+1) + square( (n-level) * kappa ) ) + std::sqrt( 1. + square( (n-level) * kappa ) );
+                const Float xi_l  = std::sqrt( square(2*rho+1) + square( (n-level) * kappa ) ) + std::sqrt( 1. + square( (n-level) * kappa ) );
 
                 assert( std::isfinite( Ctheta ) && Ctheta > 0. );
                 assert( std::isfinite( kappa  ) && kappa  > 0. );
@@ -254,14 +254,13 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
             }
 
             // improved estimates, simplex by simplex 
-            // if(false)
             {
-                const int k = level;
+                const int m = level;
 
-                int subsimplex = mesh.get_subsimplex( dim, k, i, sub_index );
+                int subsimplex = mesh.get_subsimplex( dim, m, i, sub_index );
 
-                auto parents  = mesh.get_supersimplices( dim, k, subsimplex );
-                auto vertices = mesh.get_subsimplices  (   k, 0, subsimplex ).getvalues();
+                auto parents  = mesh.get_supersimplices( dim, m, subsimplex );
+                auto vertices = mesh.get_subsimplices  (   m, 0, subsimplex ).getvalues();
 
                 // find the radius that is maximally possible.
 
@@ -272,43 +271,43 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
                 {
                     int vertex_localindex = mesh.get_subsimplex_index( dim, 0, parent, vertex );
                     Float height = mesh.getHeight( dim, parent, vertex_localindex );
-                    varrho = minimum( varrho, height / (k+1) );
+                    varrho = minimum( varrho, height / (m+1) );
                 }
 
                 // find the heights 
 
-                int index_oppsite_subsimplex = mesh.get_opposite_subsimplex_index( dim, k, i, sub_index );
-                int opposite_subsimplex      = mesh.get_subsimplex( dim, dim - k - 1, i, index_oppsite_subsimplex );
+                int index_oppsite_subsimplex = mesh.get_opposite_subsimplex_index( dim, m, i, sub_index );
+                int opposite_subsimplex      = mesh.get_subsimplex( dim, dim - m - 1, i, index_oppsite_subsimplex );
 
-                auto other_vertices = mesh.get_subsimplices( dim-k-1, 0, opposite_subsimplex ).getvalues();
+                auto other_vertices = mesh.get_subsimplices( dim-m-1, 0, opposite_subsimplex ).getvalues();
                 
-                std::vector<FloatVector> height_vectors( dim-k, FloatVector(dim,notanumber) );
+                std::vector<FloatVector> height_vectors( dim-m, FloatVector(dim,notanumber) );
 
-                for( int vi = 0; vi <= dim-k-1; vi++ ) {
+                for( int vi = 0; vi <= dim-m-1; vi++ ) {
                     height_vectors[vi] = mesh.getHeightVector( dim, i, vi );
                     // LOGPRINTF( "(%d %e) ", vi, height_vectors[vi].scalarproductwith( zc - zs ) );
                 } 
                 // LOG << nl;
 
                 // computation 
-                // when S has got k+1 vertices, then S' must have dim-k vertices 
-                // Then S has got dimension k and S' has got dimension dim-k-1
+                // when S has got m+1 vertices, then S' must have dim-m vertices 
+                // Then S has got dimension m and S' has got dimension dim-m-1
                 
                 Float improved_singular_max = 0.; 
 
                 Float matrixwise_singular_max = 0.; 
                 
-                auto zs = mesh.get_midpoint(       k,          subsimplex );
-                auto zc = mesh.get_midpoint( dim-k-1, opposite_subsimplex );
+                auto zs = mesh.get_midpoint(       m,          subsimplex );
+                auto zc = mesh.get_midpoint( dim-m-1, opposite_subsimplex );
 
                 Float rho = minimum( 1., varrho / (zc-zs).norm() );
                 // rho = varrho;
 
-                for( int vi = 0; vi <= dim-k-1; vi++ ) 
+                for( int vi = 0; vi <= dim-m-1; vi++ ) 
                 {
                     
                     auto z = zc - zs;
-                    auto h = height_vectors[vi] / ( dim-k );
+                    auto h = height_vectors[vi] / ( dim-m );
                     auto b = z - h; //( z.scalarproductwith(h) / h.norm_sq() ) * h;
                     auto tanbeta = b.norm() / h.norm();
 
@@ -323,18 +322,18 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
                     improved_singular_max = maximum( improved_singular_max, proposed_improved_singular_max );
                 }
 
-                for( int v1 = 0; v1 <=       k; v1++ ) 
-                for( int v2 = 0; v2 <= dim-k-1; v2++ ) 
+                for( int v1 = 0; v1 <=       m; v1++ ) 
+                for( int v2 = 0; v2 <= dim-m-1; v2++ ) 
                 {
 
                     std::vector<FloatVector> columns;
                     columns.reserve( dim );
 
-                    for( int w1 = 0; w1 <= k; w1++ ) 
+                    for( int w1 = 0; w1 <= m; w1++ ) 
                         if( v1 != w1 ) 
                             columns.push_back( mesh.getCoordinates().getvectorclone(       vertices[w1] ) - zs );
 
-                    for( int w2 = 0; w2 <= dim-k-1; w2++ ) 
+                    for( int w2 = 0; w2 <= dim-m-1; w2++ ) 
                         if( v2 != w2 ) 
                             columns.push_back( mesh.getCoordinates().getvectorclone( other_vertices[w2] ) - zs );
 
@@ -367,7 +366,7 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
                 
                 assert( matrixwise_singular_max > 0. );
 
-                LOG << "SMAX " << improved_singular_max / matrixwise_singular_max << nl;
+                // LOG << "SMAX " << improved_singular_max / matrixwise_singular_max << nl;
 
                 singular_max = minimum( singular_max, improved_singular_max, matrixwise_singular_max );
                 
@@ -380,7 +379,6 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
 
 
             // slight improvement in the case of faces 
-            // if(false)
             if( level == dim-1 ) {
                 
                 const Float Ctheta = max_diameter_ratio;
@@ -396,7 +394,6 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
             }
             
             // better improvement in the case of faces 
-            // if(false)
             if( level == dim-1 ) {
                 
                 assert( 0 <= sub_index and sub_index < binomial_integer(dim+1,level+1) );
@@ -428,7 +425,7 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
                     auto height_vector_first = mesh.getHeightVector( dim,            i, opposite_vertex_localindex_first );
                     auto height_vector_other = mesh.getHeightVector( dim, other_parent, opposite_vertex_localindex_other );
 
-                    auto midpoint_of_face = mesh.get_midpoint( dim-1, face );
+                    // auto midpoint_of_face = mesh.get_midpoint( dim-1, face );
 
                     Float a = height_vector_other.norm() /  height_vector_first.norm();
 
@@ -466,7 +463,7 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
                 C5[i][form_degree][level][sub_index] = power_numerical( singular_prod, -1/2. );
                 C6[i][form_degree][level][sub_index] = power_numerical( singular_prod, +1/2. );
             } else if( 0 < form_degree && form_degree < dim ) {
-                C5[i][form_degree][level][sub_index] = singular_max    * power_numerical( singular_prod, -1/2. );
+                C5[i][form_degree][level][sub_index] = singular_max     * power_numerical( singular_prod, -1/2. );
                 C6[i][form_degree][level][sub_index] = singular_min_inv * power_numerical( singular_prod, +1/2. );
             } else {
                 assert( form_degree == dim );
@@ -590,24 +587,28 @@ void generate_shellings2(
     Float multweight
 ){
 
-    const unsigned int max_number_of_shellings = 1; 
+    const unsigned int max_number_of_shellings = 10; 
     // const unsigned int max_number_of_shellings = std::numeric_limits<unsigned int>::max();
 
-    // const bool sort_nodes_by_priority = true;
-    const bool sort_nodes_by_priority = false;
+    const bool sort_nodes_by_priority = true;
+    // const bool sort_nodes_by_priority = false;
 
     const bool special_initialization = true;
+    // const bool special_initialization = false;
 
     // check that input mesh is reasonable 
+    
     const int dim = mesh.getinnerdimension();
     assert( dim >= 1 );
 
 
     // count all the simplices of the mesh 
+    
     const auto counts = mesh.count_simplices();
 
 
     // if enough shellings have been found already, then return 
+    
     if( shellings_found.size() >= max_number_of_shellings )
         return;
 
@@ -615,10 +616,9 @@ void generate_shellings2(
     // if the current prefix is already containing all volumes, 
     // then a shelling has been found and can be added to the list
     // we can return from this place, there is nothing to do here 
+    
     if( current_prefix.size() == counts[dim] )
     {
-        // Compute the estimates  
-
         LOG << "FOUND: ";
         
         Float estimate1 = 0.;
@@ -652,7 +652,8 @@ void generate_shellings2(
     std::vector<int> remaining_nodes;
     for( int s = 0; s < counts[dim]; s++ )
     {
-        bool already_in_prefix = std::any_of( current_prefix.begin(), current_prefix.end(), [=]( const int node ){ return node == s; } );
+        bool already_in_prefix = std::any_of( current_prefix.begin(), current_prefix.end(), 
+                                                    [=]( const int node ){ return node == s; } );
 
         if( current_prefix.size() == 0 ) assert( not already_in_prefix );
 
@@ -665,9 +666,10 @@ void generate_shellings2(
     
     
     // for each as-of-now unused node, collect the active faces 
-
-    std::vector<int>               how_many_connected_faces( remaining_nodes.size(), -1                         );
+    
+    std::vector<int>               how_many_connected_faces( remaining_nodes.size(), -10                        );
     std::vector<std::vector<bool>> face_is_connected       ( remaining_nodes.size(), std::vector<bool>( dim+1 ) );
+    std::vector<std::vector<int>>  faces_of_node           ( remaining_nodes.size(), std::vector<int>( dim+1 )  );
 
     for( int i = 0; i < remaining_nodes.size(); i++ )
     {
@@ -675,22 +677,22 @@ void generate_shellings2(
         
         assert( 0 <= node and node < counts[dim] );
         
-        const auto faces_of_node = mesh.get_subsimplices( dim, dim-1, node ).getvalues();
+        faces_of_node[i] = mesh.get_subsimplices( dim, dim-1, node ).getvalues();
 
-        assert( faces_of_node.size() == face_is_connected[i].size() );
+        assert( faces_of_node[i].size() == face_is_connected[i].size() );
 
         how_many_connected_faces[i] = 0;
 
-        for( int index_f = 0; index_f < faces_of_node.size(); index_f++ )
+        for( int index_f = 0; index_f < faces_of_node[i].size(); index_f++ )
         {
-            const int face = faces_of_node[index_f];
+            const int face = faces_of_node[i][index_f];
             
             const auto parents = mesh.get_supersimplices( dim, dim-1, face );
             
             assert( 1 <= parents.size() and parents.size() <= 2 );
 
             if( parents.size() == 1 ) { 
-                assert( mesh.is_subsimplex(dim,dim-1,parents[0],face) ); 
+                assert( mesh.is_subsimplex( dim, dim-1, parents[0], face ) ); 
                 face_is_connected[i][index_f] = false;
                 continue; 
             }
@@ -705,42 +707,100 @@ void generate_shellings2(
         }
 
         assert( how_many_connected_faces[i] == std::count_if( face_is_connected[i].begin(), face_is_connected[i].end(), [=](bool b){return b;} ) );
+
+        assert( 0 <= how_many_connected_faces[i] && how_many_connected_faces[i] <= dim+1 );
     
     }
 
     // unless we are at the start: 
     // delete all the non-reachable nodes, that is, those without active faces 
+    
+    // TODO:
+    // All the candidate nodes have the property that their intersection with the prefix nodes is a collection of faces. 
+    // That is the case if and only if all subsimplices shared with a prefix node are contained in one the active faces.
+    // Otherwise, there is a subsimplex shared with a prefix node but not within one of the active faces.
+    // We already know that the condition is true for the active faces (by definition) and it remains to check the other ones
+    // These must be checked separately
+    
+    // LOG << "PREFIX "; for( int j : current_prefix  ) LOG << j << space; LOG << nl;
+    // LOG << "REMAIN "; for( int j : remaining_nodes ) LOG << j << space; LOG << nl;
     if( current_prefix.size() > 0 )
     {
         int i = 0;
         while( i < remaining_nodes.size() )
         {
-            if( how_many_connected_faces[i] > 0 ) {
+            bool keep_condition_satisfied = ( how_many_connected_faces[i] > 0 );
+
+            const auto current_node = remaining_nodes[i];
+
+            // iterate over all dimensions and corresponding subsimplices ...
+            for( int d = 0; d < dim-1 && keep_condition_satisfied; d++ ){
+                
+                const auto d_subsimplices = mesh.get_subsimplices( dim, d, current_node ).getvalues();
+                
+                for( auto& d_subsimplex : d_subsimplices ){
+                    
+                    // ... check whether they intersect with the active faces ...
+                    
+                    bool shared_with_active_face = false;
+
+                    auto& faces = faces_of_node[i];
+
+                    for( int f = 0; f <= dim; f++ ){
+                        int face = faces[f];
+                        if( not face_is_connected[i][f] ) continue;
+                        shared_with_active_face = shared_with_active_face or mesh.is_subsimplex( dim-1, d, face, d_subsimplex );
+                    }
+
+                    // ... if it is contained within an active face, there is nothing to check 
+
+                    if( shared_with_active_face ) continue;
+
+                    // ... otherwise it is not in an active face. We check the containment within the prefix nodes ... 
+
+                    bool shared_with_prefix_nodes = false;
+
+                    for( int prefix : current_prefix )
+                    {
+                        shared_with_prefix_nodes = shared_with_prefix_nodes or mesh.is_subsimplex( dim, d, prefix, d_subsimplex );
+                    }
+
+                    keep_condition_satisfied = not shared_with_prefix_nodes;
+                }
+
+            }
+            
+            if( keep_condition_satisfied ) {
                 i++;
             } else {
                 remaining_nodes.erase(          remaining_nodes.begin() + i          );
                 face_is_connected.erase(        face_is_connected.begin() + i        );
                 how_many_connected_faces.erase( how_many_connected_faces.begin() + i );
+                faces_of_node.erase(            faces_of_node.begin() + i            );
             }
         }
 
         assert( remaining_nodes.size() > 0 );
+        
         assert( remaining_nodes.size() == face_is_connected.size()        );
         assert( remaining_nodes.size() == how_many_connected_faces.size() );
+        assert( remaining_nodes.size() == faces_of_node.size()            );
     }
-
-
-    
-
-
-    
-    
-    
-    // compute the weight associated with the extension along each possible node 
+    // LOG << "REMAIN "; for( int j : remaining_nodes ) LOG << j << space; LOG << nl;
 
     assert( remaining_nodes.size() > 0 );
+    assert( remaining_nodes.size() == face_is_connected.size()        );
+    assert( remaining_nodes.size() == how_many_connected_faces.size() );
+    assert( remaining_nodes.size() == faces_of_node.size()            );
 
-    std::vector<int>   shared_subsimplex_dim( remaining_nodes.size(), -1    );
+
+
+    
+    
+    
+    // we will compute the weight associated with the extension along each possible node 
+    
+    std::vector<int>   shared_subsimplex_dim( remaining_nodes.size(), -17            );
     std::vector<int>   shared_subsimplex    ( remaining_nodes.size(), mesh.nullindex );
 
     std::vector<Float> weight_for_node_reflect( remaining_nodes.size(), std::numeric_limits<Float>::infinity() );
@@ -749,11 +809,12 @@ void generate_shellings2(
     std::vector<FloatVector> coefficient_vectors( remaining_nodes.size(), FloatVector( counts[dim], notanumber ) );
 
     for( int i = 0; i < remaining_nodes.size(); i++ ) 
-        assert( std::isfinite( weight_for_node_reflect[i] ) == std::isfinite( weight_for_node_reflect[i] ) );
+        assert( std::isfinite( weight_for_node_reflect[i] ) == std::isfinite( weight_for_node_morphin[i] ) );
 
 
 
     // start computing the relevant data on each node  
+    
     for( int i = 0; i < remaining_nodes.size(); i++ ) 
     {
         
@@ -761,13 +822,23 @@ void generate_shellings2(
         assert( 0 <= current_node and current_node < counts[dim] );
         
         // What is the dimension of the subsimplex around which the interface is made?        
-        int k = dim - how_many_connected_faces[i];
-        Assert( i == 0 or k <= dim, i, k );
+        int m = dim - how_many_connected_faces[i];
+        Assert( i == 0 or m <= dim, i, m );
+        // Assert( m >= 0, m, i, how_many_connected_faces[i] );
 
-        shared_subsimplex_dim[i] = k;
+        shared_subsimplex_dim[i] = m;
 
-        if( k == dim ) assert( current_prefix.size() == 0 );
-        if( current_prefix.size() == 0 ) assert( k == dim );
+        if(false){ 
+            LOG << "PREFIX "; for( auto v : current_prefix  ) LOG << v << space; LOG << nl;
+            LOG << "REMAIN "; for( auto v : remaining_nodes ) LOG << v << space; LOG << nl;
+            LOG << current_node << nl; 
+            auto temp = mesh.get_subsimplices(dim,dim-1,current_node).getvalues(); 
+            for( auto f : temp ) LOG << f << space; LOG << nl;
+        }
+
+        Assert( ( m == dim ) == ( current_prefix.size() == 0 ), m, current_node );
+        if( m ==  -1 ) Assert( current_prefix.size() == counts[dim]-1, m, current_node );
+        
 
         
         // Determine whether the new simplex can be part of a shelling,
@@ -775,36 +846,44 @@ void generate_shellings2(
 
         int common_subsimplex = mesh.nullindex; 
 
+        if( m != -1 ) // if not all faces are connected
         {
 
-            // get the subsimplices of the proposed node of dimension k
-            const auto k_subsimplices_of_node = mesh.get_subsimplices( dim, k, current_node ).getvalues();
+            // find the shared subsimplices of the proposed node of dimension k
+            
+            // LOGPRINTF("dim %i k %i current_node %i\n", dim, k, current_node );
+            
+            const auto m_subsimplices_of_node = mesh.get_subsimplices( dim, m, current_node ).getvalues();
 
-            const auto faces_of_node = mesh.get_subsimplices( dim, dim-1, current_node ).getvalues();
-
-            for( int k_sub : k_subsimplices_of_node ) 
+            for( int m_sub : m_subsimplices_of_node ) 
             {
                 bool is_match = true;
-                for( int f = 0; f < faces_of_node.size() && is_match; f++ )
-                    if( face_is_connected[i][f] and not mesh.is_subsimplex( dim-1, k, faces_of_node[f], k_sub ) )
+                for( int f = 0; f < faces_of_node[i].size() && is_match; f++ )
+                    if( face_is_connected[i][f] and not mesh.is_subsimplex( dim-1, m, faces_of_node[i][f], m_sub ) )
                         is_match = false;
 
-                assert( not is_match or common_subsimplex == mesh.nullindex );
+                Assert( not is_match or common_subsimplex == mesh.nullindex, is_match, common_subsimplex );
                 
-                if( is_match ) common_subsimplex = k_sub;
+                if( is_match ) common_subsimplex = m_sub;
+
+                // if( common_subsimplex != mesh.nullindex )
+                // {
+                //     LOG << k << space << m_sub << space << common_subsimplex << nl;
+                //     auto temp1 = mesh.get_subsimplices( k, 0, m_sub );
+                // }
             }
 
             assert( common_subsimplex != mesh.nullindex );
 
             {
-                assert( 0 <= common_subsimplex and common_subsimplex < mesh.count_simplices(k) );
-                const int index = mesh.get_subsimplex_index( dim, k, current_node, common_subsimplex );
-                assert( 0 <= index and index < mesh.count_subsimplices(dim,k) );
-                assert( mesh.get_subsimplices(dim,k,current_node)[index] == common_subsimplex );
+                assert( 0 <= common_subsimplex and common_subsimplex < mesh.count_simplices(m) );
+                const int index = mesh.get_subsimplex_index( dim, m, current_node, common_subsimplex );
+                assert( 0 <= index and index < mesh.count_subsimplices(dim,m) );
+                assert( mesh.get_subsimplices(dim,m,current_node)[index] == common_subsimplex );
             }
 
             // check that all parents of the k subsimplex are here
-            const auto& parents = mesh.get_supersimplices( dim, k, common_subsimplex );
+            const auto parents = mesh.get_supersimplices( dim, m, common_subsimplex );
             std::vector<bool> parent_is_already_here( parents.size(), false );
 
             for( int p = 0; p < parents.size(); p++ )
@@ -821,31 +900,39 @@ void generate_shellings2(
             shared_subsimplex[i] = ( all_parents_are_here ? common_subsimplex : mesh.nullindex );
         }
 
-
-
-        // Having determined whether the next volume is compatible, 
+        // Having determined whether the proposed cell is compatible, 
         // let us now compute the next vector in the coefficient table
+        
         if( shared_subsimplex[i] != mesh.nullindex )
         {
-            assert( 0 <= shared_subsimplex[i] and shared_subsimplex[i] < counts[k] );
+            assert( 0 <= shared_subsimplex[i] and shared_subsimplex[i] < counts[m] );
+
+            // what is the local index of the shared subsimplex ?
 
             int sub_index = 0;
-            // const int binom = binomial_integer(dim+1,k+1);
-            // while( sub_index < binom ) { if( mesh.get_subsimplices(dim,k,current_node)[sub_index] == shared_subsimplex[current_node] ) break; sub_index++; } assert( sub_index < binom ); 
-            sub_index = mesh.get_subsimplex_index( dim, k, current_node, shared_subsimplex[i] );
-            assert( mesh.get_subsimplices(dim,k,current_node)[sub_index] == shared_subsimplex[i] );
+            sub_index = mesh.get_subsimplex_index( dim, m, current_node, shared_subsimplex[i] );
+            assert( mesh.get_subsimplices(dim,m,current_node)[sub_index] == shared_subsimplex[i] );
 
-            Float PF = 2. / Constants::pi ; // needs to be made rigorous
+            // set local Poincare constant upper estimate. Can it be improved? 
 
-            Float pullbackfactor_d = ( k != dim ? info.C5[current_node][form_degree+1][k][sub_index] : 0. );
-            Float pullbackfactor_0 = ( k != dim ? info.C5[current_node][form_degree  ][k][sub_index] : 0. );
+            Float PF = 2. / Constants::pi * info.diameters[current_node]; // this is an upper bound when there are boundary conditions
+
+            if( form_degree == 0 ) PF = 1. / Constants::pi * info.diameters[current_node];
+
+            if( current_prefix.size() == 0 ) PF = 1. / Constants::pi * info.diameters[current_node];
+
+            Float pullbackfactor_d = ( m != dim ? info.C5[current_node][form_degree+1][m][sub_index] : 0. );
+            Float pullbackfactor_0 = ( m != dim ? info.C5[current_node][form_degree  ][m][sub_index] : 0. );
             
             Float A = PF;
             Float B = PF * pullbackfactor_d;
             Float C =      pullbackfactor_0;
 
-            // obtain all previous indices of the common subsimplex of dimension n-k
-            const auto& relevant_volumes = mesh.get_supersimplices( dim, k, common_subsimplex );
+            LOGPRINTF( "k=%i A=%f B=%f C=%f \n", form_degree, A, B, C );
+
+            // obtain all previous indices of the common subsimplex of dimension n-m
+            
+            const auto relevant_volumes = mesh.get_supersimplices( dim, m, common_subsimplex );
 
             FloatVector new_coefficients( counts[dim], 0. );
 
@@ -861,9 +948,8 @@ void generate_shellings2(
 
                 if( not is_relevant ) continue;
 
-                new_coefficients[ current_prefix[j] ] += B; // ?????? [j] or ....
-                // new_coefficients[j] += B; // ?????? [j] or ....
-
+                new_coefficients[ current_prefix[j] ] += B; 
+                
                 new_coefficients += C * coefficient_table[j];
             }
 
@@ -871,7 +957,8 @@ void generate_shellings2(
             
             weight_for_node_reflect[i] = new_coefficients.l2norm();
 
-            weight_for_node_morphin[i] = ( k != dim ? info.C7[current_node][form_degree][k][sub_index] * info.C8[current_node][form_degree+1][k][sub_index] : PF ); // TODO: which form degree?
+            weight_for_node_morphin[i] = ( m != dim ? info.C7[current_node][form_degree][m][sub_index] * info.C8[current_node][form_degree+1][m][sub_index] : 1. / Constants::pi * info.diameters[current_node] ); 
+            // TODO: which form degree?
 
         }
     
@@ -881,6 +968,8 @@ void generate_shellings2(
     
     // unless we are at the start:
     // delete all the nodes that don't give a shelling 
+    // otherwise, there is nothing to discard
+    
     if( current_prefix.size() > 0 )
     {
         int i = 0;
@@ -895,6 +984,7 @@ void generate_shellings2(
                 remaining_nodes.erase(          remaining_nodes.begin() + i          );
                 face_is_connected.erase(        face_is_connected.begin() + i        );
                 how_many_connected_faces.erase( how_many_connected_faces.begin() + i );
+                faces_of_node.erase(            faces_of_node.begin() + i            );
                 shared_subsimplex_dim.erase(    shared_subsimplex_dim.begin() + i    );
                 shared_subsimplex.erase(        shared_subsimplex.begin() + i        );
                 coefficient_vectors.erase(      coefficient_vectors.begin() + i      );
@@ -905,6 +995,7 @@ void generate_shellings2(
 
         assert( remaining_nodes.size() == face_is_connected.size()        );
         assert( remaining_nodes.size() == how_many_connected_faces.size() );
+        assert( remaining_nodes.size() == faces_of_node.size()            );
         assert( remaining_nodes.size() == shared_subsimplex_dim.size()    );
         assert( remaining_nodes.size() == shared_subsimplex.size()        );
         assert( remaining_nodes.size() == coefficient_vectors.size()      );
@@ -916,18 +1007,16 @@ void generate_shellings2(
 
     for( int j = 0; j < remaining_nodes.size(); j++ )
     {
-        assert( coefficient_vectors[j].is_finite()           );
+        assert( coefficient_vectors[j].is_finite()          );
         assert( std::isfinite( weight_for_node_reflect[j] ) );
         assert( std::isfinite( weight_for_node_morphin[j] ) );
     }
 
 
-    if( remaining_nodes.size() == 0 ) return;
-
     if(false)
     {
         LOG << "current nodes:   "; for( auto node : current_prefix  ) LOG << node << space; 
-        LOG << tab << tab << shellings_found.size();
+        LOG << nl << tab << shellings_found.size();
         if( shellings_found.size() > 0 ) LOG << tab << shellings_found.front().weight_reflection << "--" << shellings_found.back().weight_reflection << tab;
         LOG << nl;
         LOG << "remaining nodes: "; for( auto node : remaining_nodes ) LOG << node << space; LOG << nl;
@@ -944,6 +1033,11 @@ void generate_shellings2(
     for( int i = 0; i < remaining_nodes.size(); i++ )
     for( int j = 1; j < remaining_nodes.size(); j++ )
     {
+        
+        // How to order? 
+        // First, prioritze those with few connected faces.
+        // Second, prioritize those with low reflection weight
+
         bool correct_order = ( false and how_many_connected_faces[j-1] < how_many_connected_faces[j] ) or ( weight_for_node_reflect[j-1] <= weight_for_node_reflect[j] );
 
         if( correct_order ) continue;
@@ -951,6 +1045,7 @@ void generate_shellings2(
         std::swap( remaining_nodes[j-1],          remaining_nodes[j]          );
         std::swap( how_many_connected_faces[j-1], how_many_connected_faces[j] );
         std::swap( face_is_connected[j-1],        face_is_connected[j]        );
+        std::swap( faces_of_node[j-1],            faces_of_node[j]            );
         std::swap( shared_subsimplex_dim[j-1],    shared_subsimplex_dim[j]    );
         std::swap( shared_subsimplex[j-1],        shared_subsimplex[j]        );
         // { bool temp = shared_subsimplex[j-1]; shared_subsimplex[j-1] = shared_subsimplex[i]; shared_subsimplex[i] = temp; }
@@ -973,8 +1068,10 @@ void generate_shellings2(
     if( current_prefix.size() == 0 ) assert( remaining_nodes.size() == counts[dim] );
 
 
-    // We introduce a special case: when 
-
+    // When we are at the beginning (empty prefix) and want to use a special initialization,
+    // then multithread the construction of shellings, starting at different nodes
+    // otherwise, we build shellings recursively
+    
     if( special_initialization and current_prefix.size() == 0 ) {
 
         std::vector<std::vector<shelling>> shellings_found_from_node( counts[dim] );
@@ -1009,8 +1106,9 @@ void generate_shellings2(
 
         for( int s = 0; s < counts[dim]; s++ )
         {
-            threads.emplace_back(
-                [&,s]() {
+            // threads.emplace_back(
+                [&,s]() 
+                {
                     LOG << "Thread processing parameter: " << s << "\n";
                     
                     // Simulate work
@@ -1027,10 +1125,11 @@ void generate_shellings2(
 
                     LOG << "Thread finished processing parameter: " << s << "\n";
                 }
-            );
+                ();
+            // );
         }
 
-        // Wait for all threads to finish
+        // Wait for all threads to finish. Even works if no threads have started.
         for( std::thread &t : threads) { if (t.joinable()) {t.join();} }
 
         LOG << "All threads finished.\n";
@@ -1039,22 +1138,27 @@ void generate_shellings2(
 
         std::sort( shellings_found.begin(), shellings_found.end(), []( const shelling& left, const shelling& right ) -> auto{ return left.weight_reflection < right.weight_reflection; } );
 
-    } 
-    else 
-    {
+    } else {
     
+        // run over all the remaining nodes ...
+
         for( int i = 0; i < remaining_nodes.size(); i++ )
         {
             Float weight_here = coefficient_vectors[i].norm_sq();
 
-            if( shellings_found.size() > 0 and std::sqrt( weight_here + weight_reflection_so_far ) >= shellings_found.front().weight_reflection ) {
+            // if we sort by priority, we ditch those that are too heavy all at once
+            // else, we ditch the heavy ones step by step
+
+            if( shellings_found.size() > 0 and std::sqrt( weight_here + weight_reflection_so_far ) > shellings_found.front().weight_reflection )
+            {
                 if( sort_nodes_by_priority )
                     break;
                 else 
                     continue;
             }
             
-            
+            // ... create the next entry
+
             int node = remaining_nodes[i];
             
             auto next_prefix = current_prefix;
@@ -1074,7 +1178,8 @@ void generate_shellings2(
 
     static int call_counter = 0;
     call_counter++;
-    if( current_prefix.size() == 0 ) LOG << "Calls: " << call_counter << nl;
+    if( current_prefix.size() == 0 ) LOG << "Calls: " << call_counter << " Shellings: " << shellings_found.size() << nl;
+
     
 }
 

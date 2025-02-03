@@ -62,13 +62,6 @@ int main( int argc, char *argv[] )
             }
                         
             
-            std::function<FloatVector(const FloatVector&)> constant_one
-                = [](const FloatVector& vec) -> FloatVector{
-                        assert( vec.getdimension() == 2 );
-                        return FloatVector({ 1. });
-                    };
-            
-
             LOG << "Nullspace computation" << nl;
 
             ConvergenceTable contable("Number of nullvectors");
@@ -132,7 +125,7 @@ int main( int argc, char *argv[] )
                     auto mat_Bt = vector_incmatrix_t & diffmatrix_t & volume_massmatrix & volume_incmatrix; // upper right
                     mat_Bt.sortandcompressentries();
                     
-                    auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & volume_massmatrix & diffmatrix & vector_incmatrix; // lower bottom
+                    auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & volume_massmatrix & diffmatrix & vector_incmatrix; // lower left
                     mat_B.sortandcompressentries();
                     
                     auto A  = MatrixCSR( mat_A  );

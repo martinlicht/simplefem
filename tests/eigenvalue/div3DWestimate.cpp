@@ -31,18 +31,33 @@ int main( int argc, char *argv[] )
     
     LOG << "Initial mesh..." << nl;
     
-    MeshSimplicial3D M = UnitCube3D();
-    M.getCoordinates().scale( Constants::pi );
+    MeshSimplicial3D M = UnitSimplex3D(); 
+    // MeshSimplicial3D M = UnitCube3D(); M.getCoordinates().scale( Constants::pi );
     
     M.check();
     
     // M.automatic_dirichlet_flags();
     // M.check_dirichlet_flags();
 
-    
-    LOG << "Prepare vector fields for testing..." << nl;
-    
+    // if(false)
+    {
+        LOG << "Fine-tuned boundary conditions" << nl;
+        int first_bc_face = 1;
+        for( int f = first_bc_face; f <= 3; f++ ) {
+            M.set_flag( 2, f, SimplexFlag::SimplexFlagDirichlet );
+        }
+        M.complete_dirichlet_flags_from_facets();
+        M.check_dirichlet_flags(false);
+    }
 
+    for( int f = 0; f < M.count_faces(); f++ )
+    {
+        LOG << f << ": ";
+        for( int i = 0; i <= 2; i++ ) LOG << M.get_subsimplex( 2, 0, f, i ) << space;
+        LOG << " > " << (int)M.get_flag( 2, f ) << nl;
+    }
+    
+    
     
             
     
@@ -55,11 +70,11 @@ int main( int argc, char *argv[] )
 
     LOG << "Estimating Poincare-Friedrichs constant of div operator (Whitney)" << nl;
 
-    const int min_l = 0; 
+    const int min_l = 3; 
     const int max_l = 3;
     
     const int min_r = 1;
-    const int max_r = 2;
+    const int max_r = 1;
     
     
     std::vector<ConvergenceTable> contables(max_r-min_r+1); //();
@@ -121,7 +136,7 @@ int main( int argc, char *argv[] )
             auto mat_Bt = pseudo_incmatrix_t & pseudo_massmatrix & pseudo_elevationmatrix & vector_diffmatrix & vector_incmatrix; // upper right
             mat_Bt.sortandcompressentries();
             
-            auto mat_B = mat_Bt.getTranspose(); //pseudo_incmatrix_t & pseudo_massmatrix & vector_diffmatrix & vector_incmatrix; // lower bottom
+            auto mat_B = mat_Bt.getTranspose(); //pseudo_incmatrix_t & pseudo_massmatrix & vector_diffmatrix & vector_incmatrix; // lower left
             mat_B.sortandcompressentries();
             
             LOG << "... compose CSR system matrices" << nl;
@@ -250,6 +265,8 @@ int main( int argc, char *argv[] )
                 LOG << "u mass:        " << u_massnorm << nl;
                 LOG << "u div mass     " << udiv_massnorm << nl;
                 LOG << "u defect mass: " << u_defectmass << nl;
+                
+                LOG << "PF constant estimates: " << 1./std::sqrt(curratio) << space  << 1./std::sqrt(newratio) << nl;
                 
                 const Float true_eigenvalue = 3.; // 3.0 is the true value 
 

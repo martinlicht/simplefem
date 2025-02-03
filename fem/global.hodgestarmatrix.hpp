@@ -1,6 +1,7 @@
 #ifndef INCLUDEGUARD_FEM_FEECBROKENHODGESTARMATRIX
 #define INCLUDEGUARD_FEM_FEECBROKENHODGESTARMATRIX
 
+#include "../dense/densematrix.hpp"
 #include "../sparse/sparsematrix.hpp"
 #include "../mesh/mesh.hpp"
 
@@ -15,6 +16,8 @@
 //                                                  //
 //////////////////////////////////////////////////////
 
-SparseMatrix FEECBrokenHodgeStarMatrix( const Mesh& mesh, int n, int k, int r );
+DenseMatrix EuclideanHodgeStar( int n, int k );
+
+SparseMatrix FEECBrokenHodgeStarPairingMatrix( const Mesh& mesh, int n, int k, int r );
 
 #endif

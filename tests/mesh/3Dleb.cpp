@@ -57,9 +57,10 @@ int main( int argc, char *argv[] )
             sort_and_remove_duplicates( markededges );
             
             LOG << c << "/" << c_max << " Refine " << markedcells.size() << "/" << M.count_tetrahedra() << " ... ";
-            M.longest_edge_bisection_recursive( markededges );
+            int counter = M.longest_edge_bisection_recursive( markededges );
             LOG << "Ratio of tetrahedra generated vs marked=" << ( M.count_tetrahedra() - cell_count_initial )/(Float)( cell_marked_count ) << nl;
-            
+            LOG << "Bisected " << counter << " edges" << nl;
+
             M.check_dirichlet_flags();
         
         }

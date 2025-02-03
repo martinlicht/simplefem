@@ -31,14 +31,14 @@ int main( int argc, char *argv[] )
         std::vector<std::function<FloatVector(const FloatVector&)>> experiments_scalar_field;
         
         experiments_scalar_field.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 1 );
                 return FloatVector({ std::exp( vec[0] ) });
             }
         );
 
         experiments_scalar_field.push_back( 
-            [](const FloatVector& vec) -> FloatVector{
+            [](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 1 );
                 auto x = vec[0];
                 return FloatVector({ 

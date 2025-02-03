@@ -48,7 +48,7 @@ int main( int argc, char *argv[] )
 
             
     std::function<FloatVector(const FloatVector&)> experiment_sol = 
-        [=](const FloatVector& vec) -> FloatVector{
+        [=](const FloatVector& vec) -> FloatVector {
             assert( vec.getdimension() == 3 );
             // return FloatVector({ 1. });
             return FloatVector({ 
@@ -69,7 +69,7 @@ int main( int argc, char *argv[] )
     // ( v_x - u_y ) dxy + ( w_x - u_z ) dxz + ( w_y - v_z ) dyz
     
     std::function<FloatVector(const FloatVector&)> experiment_curl = 
-        [=](const FloatVector& vec) -> FloatVector{
+        [=](const FloatVector& vec) -> FloatVector {
             assert( vec.getdimension() == 3 );
             // return FloatVector({ 1. });
             return FloatVector({ 
@@ -115,7 +115,7 @@ int main( int argc, char *argv[] )
     // -> multiply by (-1)^(n(k-1)+1) = (-1)^(3(2-1)+1) = 1
 
     std::function<FloatVector(const FloatVector&)> experiment_rhs = 
-        [=](const FloatVector& vec) -> FloatVector{
+        [=](const FloatVector& vec) -> FloatVector {
             assert( vec.getdimension() == 3 );
             return FloatVector({ 
                 // blob_dev(vec[0]) * blob(vec[1]) * blob(vec[2]) 
@@ -151,7 +151,7 @@ int main( int argc, char *argv[] )
         };
     
     std::function<FloatVector(const FloatVector&)> experiment_rhs2 = 
-        [=](const FloatVector& vec) -> FloatVector{
+        [=](const FloatVector& vec) -> FloatVector {
             assert( vec.getdimension() == 3 );
             return FloatVector({ 
                 blob_dev(vec[0]) * blob(vec[1]) * blob(vec[2]) 
@@ -181,7 +181,7 @@ int main( int argc, char *argv[] )
         };
     
     std::function<FloatVector(const FloatVector&)> experiment_aux = 
-        [=](const FloatVector& vec) -> FloatVector{
+        [=](const FloatVector& vec) -> FloatVector {
             assert( vec.getdimension() == 3 );
             // return FloatVector({ 1. });
             return FloatVector( { 
@@ -271,7 +271,7 @@ int main( int argc, char *argv[] )
             auto mat_Bt = vector_incmatrix_t & ( vector_elevmatrix_t & vector_massmatrix & vector_elevmatrix ) & scalar_diffmatrix & scalar_incmatrix; // upper right
             mat_Bt.sortandcompressentries();
             
-            auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & pseudo_massmatrix & diffmatrix & vector_incmatrix; // lower bottom
+            auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & pseudo_massmatrix & diffmatrix & vector_incmatrix; // lower left
             mat_B.sortandcompressentries();
             
             LOG << "... compose CSR system matrices" << nl;

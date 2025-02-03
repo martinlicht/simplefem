@@ -56,7 +56,7 @@ int main( int argc, char *argv[] )
             // const Float yfeq = 2.;
             
             std::function<FloatVector(const FloatVector&)> experiment_sol = 
-                [=](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector {
                     Assert( vec.getdimension() == 2 );
                     // return FloatVector({ 1. });
                     return FloatVector({ 
@@ -68,7 +68,7 @@ int main( int argc, char *argv[] )
             
 
             std::function<FloatVector(const FloatVector&)> experiment_ndiv = 
-                [=](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector {
                     Assert( vec.getdimension() == 2 );
                     // return FloatVector({ 1. });
                     return FloatVector( { 
@@ -81,7 +81,7 @@ int main( int argc, char *argv[] )
             
 
             std::function<FloatVector(const FloatVector&)> experiment_curl = 
-                [=](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector {
                     Assert( vec.getdimension() == 2 );
                     // return FloatVector({ 1. });
                     return FloatVector( { // - partial_y + partial_x
@@ -97,7 +97,7 @@ int main( int argc, char *argv[] )
             
 
             std::function<FloatVector(const FloatVector&)> experiment_rhs = 
-                [=](const FloatVector& vec) -> FloatVector{
+                [=](const FloatVector& vec) -> FloatVector {
                     Assert( vec.getdimension() == 2 );
                     
                     
@@ -218,7 +218,7 @@ int main( int argc, char *argv[] )
                     auto mat_Bt = scalar_incmatrix_t & scalar_diffmatrix_t & vector_elevationmatrix_t & vector_massmatrix & vector_incmatrix; // upper right
                     mat_Bt.sortandcompressentries();
                     
-                    auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & volume_massmatrix & vector_elevationmatrix & diffmatrix & vector_incmatrix; // lower bottom
+                    auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & volume_massmatrix & vector_elevationmatrix & diffmatrix & vector_incmatrix; // lower left
                     mat_B.sortandcompressentries();
                     
                     auto mat_C  = vector_incmatrix_t & vector_diffmatrix_t & volume_elevationmatrix_t & volume_massmatrix & volume_elevationmatrix & vector_diffmatrix & vector_incmatrix;

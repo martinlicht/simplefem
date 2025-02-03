@@ -581,6 +581,7 @@ FloatVector Mesh::getHeightVector( int dim, int cell, int vertexindex ) const
     // assert( columns.is_finite() );
     // LOG << getVertexCoordinateMatrix( dim, cell ) << nl;
 
+    // the vertex of interest is now at the very end 
     std::swap( columns[dim], columns[vertexindex] );
     
     for( int c = 1; c <= dim; c++ )
@@ -600,25 +601,25 @@ FloatVector Mesh::getHeightVector( int dim, int cell, int vertexindex ) const
             next -= next.scalarproductwith(curr) * curr;
         }
         
-        // LOG << c << nl << DenseMatrix(dim,dim+1,columns) << nl;
-    
     } 
 
     FloatVector result = columns[dim];
     
-    // DEBUG 1
+    // DEBUG 1: the norm of the result corresponds to the return value of the other height computation 
     {
         Float temp = getHeight( dim, cell, vertexindex );
         // LOGPRINTF( "%e %e \n", result.norm(), temp );
         Assert( is_numerically_close( result.norm(), temp ), result.norm(), temp );
     }
 
-    // DEBUG 2
+    // DEBUG 2: the vector from any other vertex up to the vertex of interest has positive angle to the vertex of interest 
+    for( int i = 1; i <= dim; i++ )
     {
-        FloatVector temp = positions.getcolumn(vertexindex) - positions.getcolumn( (vertexindex+1) % dim+1 );
+        int j = (vertexindex+i) % (dim+1);
+        FloatVector temp = positions.getcolumn(vertexindex) - positions.getcolumn( j );
         Float h = result.scalarproductwith( temp ) / result.norm();
-        assert( h > 0. );
-        Assert( is_numerically_close( h, result.norm() ), h, result.norm() );
+        Assert( h > 0., result, nl, temp, nl, i, j, vertexindex );
+        Assert( is_numerically_close( h, result.norm() ), h, nl, result.norm(), nl, i, j, vertexindex );
     }
 
     return result;
@@ -880,6 +881,22 @@ DenseMatrix Mesh::getTransformationJacobian( int dim, int index ) const
 }
 
 
+Float Mesh::getOrientation( int index ) const 
+{
+    const int dim = getinnerdimension();
+
+    assert( 0 <= index && index < count_simplices(dim) );
+    
+    DenseMatrix trafo = getTransformationJacobian( dim, index );
+
+    Assert( trafo.is_square(), trafo, dim, index );
+    
+    Float det = Determinant( trafo );
+
+    return sign( det );
+}
+
+
 DenseMatrix Mesh::getBarycentricProjectionMatrix( int dim, int index ) const
 {
     assert( 0 <= dim && dim <= getinnerdimension() );
@@ -1044,6 +1061,76 @@ FloatVector Mesh::transform_whitney_to_euclidean( int dim, const FloatVector& wh
         
     return ret;
 }
+
+
+
+
+
+
+
+DenseMatrix Mesh::get_reflection_Jacobian_along_face( int f ) const
+{
+    int dim = getinnerdimension();
+
+    int counter_faces = count_simplices(dim-1);
+    
+    assert( 0 <= f && f < counter_faces );
+    
+    const auto parents = get_supersimplices(dim,dim-1,f); 
+    
+    assert( parents.size() == 2 );
+
+    assert( getouterdimension() == dim );
+
+    const auto t0 = parents[0];
+    const auto t1 = parents[1];
+
+    DenseMatrix jacobian0(dim,dim);
+    DenseMatrix jacobian1(dim,dim);
+
+    int local_0 = get_subsimplex( dim-1, 0, f, 0 );
+
+    const auto pos_origin = getCoordinates().getvectorclone( local_0 );
+
+    for( int v = 1; v <= dim-1; v++ )
+    {
+        int local_v = get_subsimplex( dim-1, 0, f, v );
+        
+        const auto pos_v = getCoordinates().getvectorclone( local_v );
+
+        const auto col = pos_v - pos_origin;
+
+        jacobian0.setcolumn( v-1, col );
+        jacobian1.setcolumn( v-1, col );
+    }
+
+    const auto local_f0 = this->get_subsimplex_index( dim, dim-1, t0, f );
+    const auto local_f1 = this->get_subsimplex_index( dim, dim-1, t1, f );
+
+    const auto local_opp_0 = this->get_opposite_subsimplex_index( dim, dim-1, t0, local_f0 );
+    const auto local_opp_1 = this->get_opposite_subsimplex_index( dim, dim-1, t1, local_f1 );
+
+    const auto v0 = get_subsimplex( dim, 0, t0, local_opp_0 );
+    const auto v1 = get_subsimplex( dim, 0, t1, local_opp_1 );
+
+    const auto pos_opp_0 = getCoordinates().getvectorclone( v0 );
+    const auto pos_opp_1 = getCoordinates().getvectorclone( v1 );
+
+    jacobian0.setcolumn( dim-1, pos_opp_0 - pos_origin );
+    jacobian1.setcolumn( dim-1, pos_opp_1 - pos_origin );
+
+    assert( jacobian0.is_finite() and jacobian1.is_finite() );
+
+    const auto jacobian0inv = Inverse(jacobian0);
+    const auto ret = jacobian1 * jacobian0inv;
+
+    assert( (jacobian0*jacobian0inv).is_numerically_identity() );
+    assert( ret.is_finite() );
+
+    return ret;
+}
+                
+        
 
 
 

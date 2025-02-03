@@ -246,6 +246,8 @@ class Mesh
         
         DenseMatrix getTransformationJacobian( int dim, int index ) const;
 
+        Float getOrientation( int index ) const;
+
         DenseMatrix getBarycentricProjectionMatrix( int dim, int index ) const; 
         
         DenseMatrix getGradientMatrix( int dim, int index ) const;
@@ -257,7 +259,8 @@ class Mesh
 
         FloatVector transform_whitney_to_euclidean( int dim, const FloatVector& whitneyvalues, int zero_padding = 0 ) const;
 
-        
+        DenseMatrix get_reflection_Jacobian_along_face( int f ) const;
+                
         /* 
          * Manipulation
          * 
