@@ -87,7 +87,7 @@ FLAG_EXCESSIVE_WARNINGS=yes
 
 # Do you want to ENABLE the Clang sanitizer?
 # Uncomment the following line to enable compilation with the Clang sanitizer
-FLAG_DO_USE_SANITIZER=yes
+# FLAG_DO_USE_SANITIZER=yes
 
 # Do you want to enable static analysis during the compilation process
 # Uncomment the following line to enable static analysis
