@@ -32,14 +32,15 @@ int main( int argc, char *argv[] )
         for( int n = 1; n <= 5; n++ )
         for( int k = 0; k <= n; k++ )
         {
-            auto hodge = EuclideanHodgeStar( n, k );
-            auto other = EuclideanHodgeStar( n, k );
+            auto hodge = EuclideanHodgeStar( n,   k );
+            auto other = EuclideanHodgeStar( n, n-k );
 
             auto prod = other * hodge;
 
             auto signed_identity = sign_power( k * (n-k) ) * IdentityMatrix( other.getdimout() );
 
-            Assert( ( prod - signed_identity ).norm() == 0. );
+            LOG << prod << nl << signed_identity << nl;
+            Assert( ( prod - signed_identity ).norm() == 0., prod, signed_identity );
         }
         
 
@@ -51,7 +52,7 @@ int main( int argc, char *argv[] )
         
         const int l_min = 0;
         
-        const int l_max = 1;
+        const int l_max = 3;
 
         const int number_of_random_trial_samples = 10;
         
@@ -167,25 +168,29 @@ int main( int argc, char *argv[] )
             contable_pseudo << printf_into_string("R%d", r-r_min );
             contable_volume << printf_into_string("R%d", r-r_min );
 
-            contable_scalar << nl; 
-            contable_vector << nl; 
-            contable_pseudo << nl; 
-            contable_volume << nl; 
         }
         
+        contable_scalar << nl; 
+        contable_vector << nl; 
+        contable_pseudo << nl; 
+        contable_volume << nl; 
+
         
         for( int l = l_min; l <= l_max; l++ ) 
-        for( int r = r_min; r <= r_max; r++ ) 
         {
-            contable_scalar << mass_errors_scalar[l-l_min][r-r_min] / machine_epsilon;
-            contable_vector << mass_errors_vector[l-l_min][r-r_min] / machine_epsilon;
-            contable_pseudo << mass_errors_pseudo[l-l_min][r-r_min] / machine_epsilon;
-            contable_volume << mass_errors_volume[l-l_min][r-r_min] / machine_epsilon;
-
+            for( int r = r_min; r <= r_max; r++ ) 
+            {
+                contable_scalar << mass_errors_scalar[l-l_min][r-r_min] / machine_epsilon;
+                contable_vector << mass_errors_vector[l-l_min][r-r_min] / machine_epsilon;
+                contable_pseudo << mass_errors_pseudo[l-l_min][r-r_min] / machine_epsilon;
+                contable_volume << mass_errors_volume[l-l_min][r-r_min] / machine_epsilon;
+            }
+        
             contable_scalar << nl; 
             contable_vector << nl; 
             contable_pseudo << nl; 
             contable_volume << nl; 
+        
         }
             
         contable_scalar.lg(); 
