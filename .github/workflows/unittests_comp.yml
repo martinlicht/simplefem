@@ -3,7 +3,7 @@ name: Unit tests for finite element methods
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 11 * * SUN'
+    - cron: '0 14 * * MON'
   
 jobs:
   build:

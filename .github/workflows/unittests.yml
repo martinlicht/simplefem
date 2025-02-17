@@ -3,7 +3,7 @@ name: Unit tests
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 11 * * SUN'
+    - cron: '0 11 * * MON'
   
 jobs:
   build:
