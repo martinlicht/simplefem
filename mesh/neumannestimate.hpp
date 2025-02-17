@@ -118,8 +118,13 @@ Float NeumannEstimate( const Mesh& M ) {
         curr_prec[curr_root] = -1;
         
         curr_rank[curr_root] = 0;
+
+        // we try to be a bit better than the Payne-Weinberger bound whenever feasible
+        Float Bessel_J11 = 3.83170597020751231561443588630816076656454527428780192876229898991883930951;
+
+        Float natural_poincare_constant = ( dim==2 ? 1./Bessel_J11 : 1./Constants::pi );
         
-        curr_coefficients[curr_root][curr_root] = diameters[curr_root] / Constants::pi; // PF constant for convex domains
+        curr_coefficients[curr_root][curr_root] = natural_poincare_constant * diameters[curr_root]; // PF constant for convex domains
 
         curr_cost[curr_root] = curr_coefficients[curr_root].norm_sq();
 
@@ -230,7 +235,12 @@ Float NeumannEstimate( const Mesh& M ) {
 
                 }
 
-                Float pf_simplex_with_bc = minimum( 1. / Constants::pi, 1./sqrt(2.) ) * diameters[cell];
+                // we try to be a bit better than the Payne-Weinberger bound whenever feasible
+                Float Bessel_J11 = 3.83170597020751231561443588630816076656454527428780192876229898991883930951;
+
+                Float natural_poincare_constant = ( dim==2 ? 1./Bessel_J11 : 1./Constants::pi );
+                
+                Float pf_simplex_with_bc = minimum( natural_poincare_constant, 1./sqrt(2.) ) * diameters[cell];
                 
                 // Float pf_patch           = sqrt( 2 * dim ) * volumeratio * maximum( diameters[cell], diameters[neighbor] ); 
                 
@@ -240,17 +250,17 @@ Float NeumannEstimate( const Mesh& M ) {
                 Float  A_via_bc = pf_simplex_with_bc;
                 Float Ap_via_bc = sqrt(volumeratio) * reflectionnorm * pf_simplex_with_bc;
 
-                Float A  =  A_via_bc; // coefficient of new 
+                Float A =  A_via_bc; // coefficient of new 
 
-                Float Ap = Ap_via_bc; // coefficient of previous 
+                Float B = Ap_via_bc; // coefficient of previous 
 
-                Float B  = sqrt( volumeratio ); // this is the recursive coefficient
+                Float C = sqrt( volumeratio ); // this is the recursive coefficient
 
-                LOGPRINTF( "SCALAR A=%f Ap=%f B=%f \n", A, Ap, B );
+                // LOGPRINTF( "SCALAR nat=%f diam=%f A=%f B=%f C=%f \n", natural_poincare_constant, diameters[cell],  A, B, C );
 
-                FloatVector new_coeffs = B * curr_coefficients[cell];
+                FloatVector new_coeffs = C * curr_coefficients[cell];
 
-                new_coeffs[cell] += Ap;
+                new_coeffs[cell] += B;
 
                 // assert( new_coeffs[neighbor] == 0. );
 
@@ -335,8 +345,9 @@ Float NeumannEstimate( const Mesh& M ) {
         }
 
         // output: total costs of tree
-        Float total_costs = 0.;
-        for( auto& vec : curr_coefficients ) total_costs += vec.norm_sq();
+        Float total_costs = std::accumulate( curr_cost.begin(), curr_cost.end(), 0.);
+        // Float total_costs = 0.; for( auto& vec : curr_coefficients ) total_costs += vec.norm_sq();
+
 
         LOG << "From root " << curr_root << " the total costs are " << total_costs << " -> " << sqrt(total_costs) << nl;
 

@@ -31,23 +31,54 @@ int main( int argc, char *argv[] )
     
     LOG << "Initial mesh..." << nl;
     
-    // MeshSimplicial3D M = UnitSimplex3D(); 
-    MeshSimplicial3D M = UnitCube3D(); M.getCoordinates().scale( Constants::pi );
+    MeshSimplicial3D M = UnitSimplex3D(); 
+    // MeshSimplicial3D M = UnitCube3D(); M.getCoordinates().scale( Constants::pi );
+    M.getCoordinates().scale( 3. );
+    M.getCoordinates().setdata(3, 2, 1./3. );
     
     M.check();
     
     // M.automatic_dirichlet_flags();
     // M.check_dirichlet_flags();
 
-    if(false)
     {
         LOG << "Fine-tuned boundary conditions" << nl;
-        int first_bc_face = 4;
+
+        int first_bc_face = 0;
+        
+        if( argc > 1 )
+        {
+            // Parse using strtol
+            char* end = nullptr;
+            long val = std::strtol(argv[1], &end, 10);
+
+            // Check if the entire argument was parsed and within int range
+            if( *end != '\0' ) {
+
+                LOG << "Error: The provided argument is not a valid integer:" << argv[1] << "\n";
+
+            } else if( val != static_cast<int>(val) ) {
+
+                LOG << "Error: The provided argument is out of 'int' range.\n";
+
+            } else {
+                
+                int number = static_cast<int>(val);
+                LOG << "Command-line argument provided: " << number << nl;
+
+                first_bc_face = number;
+
+            }
+        } else {
+            LOG << "Dirichlet faces start, per default, at " << first_bc_face << nl;
+        }
+
         for( int f = first_bc_face; f <= 3; f++ ) {
             M.set_flag( 2, f, SimplexFlag::SimplexFlagDirichlet );
         }
         M.complete_dirichlet_flags_from_facets();
         M.check_dirichlet_flags(false);
+    
     }
 
     for( int f = 0; f < M.count_faces(); f++ )
@@ -64,8 +95,8 @@ int main( int argc, char *argv[] )
 
     LOG << "Estimating Poincare-Friedrichs constant of curl operator (Sullivan)" << nl;
 
-    const int min_l = 3; 
-    const int max_l = 3;
+    const int min_l = 4; 
+    const int max_l = 4;
     
     const int min_r = 1;
     const int max_r = 1;

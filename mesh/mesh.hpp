@@ -244,7 +244,7 @@ class Mesh
         
         DenseMatrix getVertexCoordinateMatrix( int dim, int index ) const;
         
-        DenseMatrix getTransformationJacobian( int dim, int index ) const;
+        DenseMatrix getTransformationJacobian( int dim, int index, int vertexindex = 0 ) const;
 
         Float getOrientation( int index ) const;
 

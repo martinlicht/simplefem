@@ -1,3 +1,13 @@
+2D pullback:
+k=1	max		| PF |             = max                          = max 
+k=2	max * min       | PF |  max        = max * min / min              = max
+
+3D pullback:
+k=1	max 		| PF |             = max 			  = max 
+k=2	max * mid       | PF |  max 	   = max * mid / min 		  = max/min * mid 
+k=3	max * mid * min | PF |  max * mid  = max * mid * min / min * mid  = max 
+
+
 --- PRODUCT NAME:
 
   Coffeec.org

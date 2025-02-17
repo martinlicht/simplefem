@@ -36,62 +36,27 @@ int main( int argc, char *argv[] )
     // MeshSimplicial3D M = UnitCube3D();
     
     M.check();
-    
-    int last_flagged_face = 1;
 
-    for( int f = 0; f <= last_flagged_face; f++ ) 
-        M.set_flag( 2, last_flagged_face - f, SimplexFlag::SimplexFlagDirichlet );
+    LOG << M;
+    
+    int first_dirichlet_face = 4;
+
+    // Face 0 : 0 1 2 
+    // Face 1 : 0 1 3
+    // Face 2 : 0 2 3
+    // Face 3 : 1 2 3 
+    
+    for( int f = first_dirichlet_face; f <= 3; f++ ) 
+        M.set_flag( 2, f, SimplexFlag::SimplexFlagDirichlet );
     M.complete_dirichlet_flags_from_facets();
     
-    // M.automatic_dirichlet_flags();
-
     M.check_dirichlet_flags( false );
     
     
     LOG << "Prepare scalar fields for testing..." << nl;
     
 
-    Float poincare_friedrichs_estimate = 0.;
-
-    {
-        int n = 3;
-        int k = 2;
-        
-        poincare_friedrichs_estimate
-        =
-        n * power_numerical( 2, (n-(last_flagged_face)/2. + n + 1. ) )
-        *
-        //power_integer( 2, k-1 ) // CB, simplified
-        ( 1./n + 1./2. )
-        *
-        (4./3.) * Constants::pi * factorial_numerical(n) / (last_flagged_face+1)
-        *
-        1. // condition number 
-        *
-        std::sqrt((Float)n)
-        *
-        std::sqrt(2.) // diameter
-        ;
-    }        
-
-    if( last_flagged_face == 3 )
-    {
-        int n = 3;
-        int k = 2;
-        
-        poincare_friedrichs_estimate
-        =
-        n 
-        *
-        ( 1./n + 1./2. )
-        *
-        (4./3.) * Constants::pi
-        * 
-        power_numerical( std::sqrt((Float)2), 3 ) / ( 1. / factorial_numerical(n) )
-        *
-        std::sqrt((Float)2);
-    }
-    
+    const Float poincare_friedrichs_estimate = 2. / Constants::pi * M.getDiameter(3,0);
     
     
     
@@ -110,7 +75,7 @@ int main( int argc, char *argv[] )
     
     std::vector<ConvergenceTable> contables(max_r-min_r+1); //();
     for( int r = min_r; r <= max_r; r++ ){
-        contables[r-min_r].table_name = "Mass error and numerical residuals r=" + std::to_string(r) + " fs=" + std::to_string(last_flagged_face);
+        contables[r-min_r].table_name = "Mass error and numerical residuals r=" + std::to_string(r) + " fs=" + std::to_string(first_dirichlet_face);
         contables[r-min_r] << "L eigen" << "PF comp" << "PF est" << "ratio" << "u_mass" << "du_mass" << "time" << nl;
         contables[r-min_r].minimum_printed_precision = 8;
     } 
