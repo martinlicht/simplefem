@@ -27,7 +27,7 @@ DenseMatrix EuclideanHodgeStar( int n, int k )
     const std::vector<IndexMap>   sigmas_in  = generateSigmas( IndexRange( 1, k   ), IndexRange( 0, n ) );
     const std::vector<IndexMap>   sigmas_out = generateSigmas( IndexRange( 1, n-k ), IndexRange( 0, n ) );
 
-    assert( sigmas_in.size() == sigmas_out.size() );
+    Assert( sigmas_in.size() == sigmas_out.size(), k, n );
 
     DenseMatrix ret( sigmas_in.size(), sigmas_out.size(), 0. );
 
