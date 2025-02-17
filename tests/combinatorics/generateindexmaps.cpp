@@ -186,7 +186,7 @@ int main( int argc, char *argv[] )
     if(true)
     {
             
-        LOG << "Testing generator for sigmas [1,N] -> [2,L]" << nl;
+        LOG << "7. Testing generator for sigmas [1,N] -> [2,L]" << nl;
         
         const std::vector<int> Ns = { -1, 0, 1, 2, 3, 5 };
         const std::vector<int> Ls = {  1, 2, 3, 4, 5, 7, 9 };
@@ -235,7 +235,7 @@ int main( int argc, char *argv[] )
     if(true)
     {
         
-        LOG << "Testing generator for sigmas in 2D:" << nl;
+        LOG << "8. Testing generator for sigmas in 2D:" << nl;
         
         const std::vector<IndexRange> sources = { IndexRange(1,1), IndexRange(1,2) };
         const IndexRange target( 0,2 );
@@ -250,10 +250,12 @@ int main( int argc, char *argv[] )
         
     }
     
+
+    
     if(true)
     {
         
-        LOG << "Testing generator for sigmas in 3D:" << nl;
+        LOG << "9. Testing generator for sigmas in 3D:" << nl;
         
         const std::vector<IndexRange> sources = { IndexRange(1,1), IndexRange(1,2), IndexRange(1,3) };
         const IndexRange target( 0,3 );
@@ -264,6 +266,31 @@ int main( int argc, char *argv[] )
             for( const IndexMap& im : sigmas ) LOG << im << nl;
             assert( sigmas.size() == binomial_integer( 4, source.max() ) );
         }
+        LOG << "Tested" << nl;
+        
+    }
+    
+    
+    
+    
+    
+
+    
+    if(true)
+    {
+        
+        LOG << "10. Testing symmetry of generated index maps:" << nl;
+        
+        for( int n = 0; n <= 5; n++ )
+        for( int k = 0; k <= n; k++ )
+        {
+            const std::vector<IndexMap> sigmas_eins = generateSigmas( IndexRange( 1, k   ), IndexRange( 1, n ) );
+            const std::vector<IndexMap> sigmas_zwei = generateSigmas( IndexRange( 1, n-k ), IndexRange( 1, n ) );
+    
+            Assert( sigmas_eins.size() == sigmas_zwei.size(), n, k, sigmas_eins.size(), sigmas_zwei.size() );
+            Assert( sigmas_eins.size() == sigmas_zwei.size(), n, k, sigmas_eins.size(), sigmas_zwei.size() );
+        }
+        
         LOG << "Tested" << nl;
         
     }
