@@ -1,3 +1,4 @@
+affix.external      := 
 affix.basic         := basic
 affix.utility       := utility basic external
 affix.combinatorics := combinatorics basic external
