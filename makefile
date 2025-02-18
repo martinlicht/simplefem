@@ -14,15 +14,14 @@ SHELL = /bin/sh
 #  - all 
 #  - build 
 #  - tests
-#  - benchmarks
 # The default target builds all files  
 
 default: build
 
-all: build tests # benchmarks 
+all: build tests
 	@echo "Finished all"
 
-.PHONY: default all build tests # benchmarks 
+.PHONY: default all build tests
 
 
 
@@ -34,20 +33,19 @@ help:
 	@echo "Use one of the following targets:"
 	@echo ""
 	@echo " help:         Print this help."
-	@echo " build:        Build all FEECpp libraries, and compile the tests and benchmarks."
+	@echo " build:        Build all FEECpp libraries, and compile the tests."
 	@echo " tests:        Run all tests for all modules."
-	# @echo " benchmarks:   Perform the benchmarks." 
-	@echo " all:          build, test, and benchmark"
+	@echo " all:          build and tests"
 	@echo " parameters:   Display the build parameters."
 	@echo " checkheaders: Run a static code analysis tool. The particular tool is not specified."
 	@echo " checksources: Run a static code analysis tool. The particular tool is not specified."
 	@echo " check:        Run a static code analysis tool. The particular tool is not specified."
-	@echo " clean:        Clean all output from previous builds, tests, and benchmarks,"
+	@echo " clean:        Clean all output from previous builds, tests,"
 	@echo "               including all VTK output"
 	@echo ""
 	@echo " The default target is [build]"
 	@echo ""
-	@echo " build, tests, and benchmark require a C++14 compiler and GNU Make."
+	@echo " build and tests require a C++14 compiler and GNU Make."
 
 
 
@@ -150,21 +148,18 @@ build: .buildmodules .buildtests # .buildbenchmarks
 	@echo Built modules 
 	
 .buildtests: .buildmodules
-	@echo Building tests...
 	@cd ./tests/ && $(MAKE) --no-print-directory build
+	@echo Built tests
 
-# .buildbenchmarks: .buildmodules
-# 	@echo Building benchmarks...
-# 	@cd ./benchmarks/ && $(MAKE) --no-print-directory build
 
 
 
 
 # The target 'test' runs all the tests in the test directory 
-# The target 'benchmark' runs all the benchmarks in the benchmark directory
 
 test:
 	@cd ./tests && $(MAKE) --no-print-directory run
+	@echo Run all tests
 
 # benchmarks:
 # 	@cd ./benchmarks && $(MAKE) --no-print-directory 
@@ -183,21 +178,18 @@ test:
 .PHONY: clean
 clean: 
 	@cd ./tests && $(MAKE) --no-print-directory clean
-	# @cd ./benchmarks && $(MAKE) --no-print-directory clean
 	@rm -f ./*.vtk ./*/*.vtk ./*/*/*.vtk ./*.svg ./*/*.svg ./*/*/*.svg ./*.tex ./*/*.tex ./*/*/*.tex
 	@echo "Finished cleaning."
 
 .PHONY: outputclean
 outputclean:
 	@cd ./tests && $(MAKE) --no-print-directory outputclean
-	# @cd ./benchmarks && $(MAKE) --no-print-directory outputclean
 	@rm -f ./*.vtk ./*/*.vtk ./*/*/*.vtk ./*.svg ./*/*.svg ./*/*/*.svg ./*.tex ./*/*.tex ./*/*/*.tex
 	@echo "Finished cleaning output files."
 
 .PHONY: dependclean
 dependclean:
 	@cd ./tests && $(MAKE) --no-print-directory dependclean
-	# @cd ./benchmarks && $(MAKE) --no-print-directory dependclean
 	@echo "Finished cleaning dependency information files."
 
 .PHONY: tidy
