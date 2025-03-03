@@ -17,7 +17,7 @@ using namespace std;
 extern const char* TestName;
 #define TESTNAME( cstr ) const char* TestName = cstr
 
-TESTNAME( "Solve SPD system: CSR Solvers" );
+TESTNAME( "Solve SPD system: CSR solvers" );
 
 int main( int argc, char *argv[] )
 {
@@ -218,17 +218,17 @@ int main( int argc, char *argv[] )
                     
                         FloatVector mysol( N*N );
                         mysol.zero();
-                        ConjugateGradientMethod Solver( system );
-                        Solver.print_modulo        = mysol.getdimension() / 20;
-                        Solver.max_iteration_count =     4 * mysol.getdimension();
+                        ConjugateGradientMethod solver( system );
+                        solver.print_modulo        = mysol.getdimension() / 20;
+                        solver.max_iteration_count =     4 * mysol.getdimension();
                         timestamp start = timestampnow();
-                        Solver.solve( mysol, rhs );
+                        solver.solve( mysol, rhs );
                         timestamp end = timestampnow();
                         LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                         
                         auto stat_sol = Float( ( sol - mysol ).norm() );
                         auto stat_res = Float( ( system * mysol - rhs ).norm() );
-                        auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                        auto stat_num = Float( solver.recent_iteration_count ) / solver.max_iteration_count;
                         contable_sol << stat_sol;
                         contable_res << stat_res;
                         contable_num << stat_num;
@@ -241,19 +241,19 @@ int main( int argc, char *argv[] )
                     
                         FloatVector mysol( N*N );
                         mysol.zero();
-                        ConjugateResidualMethod Solver( system );
-                        Solver.print_modulo        = mysol.getdimension() / 20;
-                        Solver.max_iteration_count = 4 * mysol.getdimension();
+                        ConjugateResidualMethod solver( system );
+                        solver.print_modulo        = mysol.getdimension() / 20;
+                        solver.max_iteration_count = 4 * mysol.getdimension();
                         
                         timestamp start = timestampnow();
-                        Solver.solve_explicit( mysol, rhs );
+                        solver.solve_explicit( mysol, rhs );
                         timestamp end = timestampnow();
                         
                         LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                         
                         auto stat_sol = Float( ( sol - mysol ).norm() );
                         auto stat_res = Float( ( system * mysol - rhs ).norm() );
-                        auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                        auto stat_num = Float( solver.recent_iteration_count ) / solver.max_iteration_count;
                         contable_sol << stat_sol;
                         contable_res << stat_res;
                         contable_num << stat_num;
@@ -266,19 +266,19 @@ int main( int argc, char *argv[] )
                     
                         FloatVector mysol( N*N );
                         mysol.zero();
-                        ConjugateResidualMethod Solver( system );
-                        Solver.print_modulo        = mysol.getdimension() / 20;
-                        Solver.max_iteration_count = 4 * mysol.getdimension();
+                        ConjugateResidualMethod solver( system );
+                        solver.print_modulo        = mysol.getdimension() / 20;
+                        solver.max_iteration_count = 4 * mysol.getdimension();
                         
                         timestamp start = timestampnow();
-                        Solver.solve_robust( mysol, rhs );
+                        solver.solve_robust( mysol, rhs );
                         timestamp end = timestampnow();
                         
                         LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                         
                         auto stat_sol = Float( ( sol - mysol ).norm() );
                         auto stat_res = Float( ( system * mysol - rhs ).norm() );
-                        auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                        auto stat_num = Float( solver.recent_iteration_count ) / solver.max_iteration_count;
                         contable_sol << stat_sol;
                         contable_res << stat_res;
                         contable_num << stat_num;
@@ -291,19 +291,19 @@ int main( int argc, char *argv[] )
                     
                         FloatVector mysol( N*N );
                         mysol.zero();
-                        ConjugateResidualMethod Solver( system );
-                        Solver.print_modulo        = mysol.getdimension() / 20;
-                        Solver.max_iteration_count = 4 * mysol.getdimension();
+                        ConjugateResidualMethod solver( system );
+                        solver.print_modulo        = mysol.getdimension() / 20;
+                        solver.max_iteration_count = 4 * mysol.getdimension();
                         
                         timestamp start = timestampnow();
-                        Solver.solve_fast( mysol, rhs );
+                        solver.solve_fast( mysol, rhs );
                         timestamp end = timestampnow();
                         
                         LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                         
                         auto stat_sol = Float( ( sol - mysol ).norm() );
                         auto stat_res = Float( ( system * mysol - rhs ).norm() );
-                        auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                        auto stat_num = Float( solver.recent_iteration_count ) / solver.max_iteration_count;
                         contable_sol << stat_sol;
                         contable_res << stat_res;
                         contable_num << stat_num;
@@ -316,18 +316,18 @@ int main( int argc, char *argv[] )
                     
                         FloatVector mysol( N*N );
                         mysol.zero();
-                        MinimumResidualMethod Solver( system );
-                        Solver.print_modulo        = 4 * mysol.getdimension();
-                        Solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
-                        Solver.max_iteration_count =     4 * mysol.getdimension();
+                        MinimumResidualMethod solver( system );
+                        solver.print_modulo        = 4 * mysol.getdimension();
+                        solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
+                        solver.max_iteration_count =     4 * mysol.getdimension();
                         timestamp start = timestampnow();
-                        Solver.solve( mysol, rhs );
+                        solver.solve( mysol, rhs );
                         timestamp end = timestampnow();
                         LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
 
                         auto stat_sol = Float( ( sol - mysol ).norm() );
                         auto stat_res = Float( ( system * mysol - rhs ).norm() );
-                        auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                        auto stat_num = Float( solver.recent_iteration_count ) / solver.max_iteration_count;
                         contable_sol << stat_sol;
                         contable_res << stat_res;
                         contable_num << stat_num;
@@ -340,18 +340,18 @@ int main( int argc, char *argv[] )
                     
                         FloatVector mysol( N*N );
                         mysol.zero();
-                        HerzogSoodhalterMethod Solver( system );
-                        Solver.print_modulo        = 4 * mysol.getdimension();
-                        Solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
-                        Solver.max_iteration_count =     4 * mysol.getdimension();
+                        HerzogSoodhalterMethod solver( system );
+                        solver.print_modulo        = 4 * mysol.getdimension();
+                        solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
+                        solver.max_iteration_count =     4 * mysol.getdimension();
                         timestamp start = timestampnow();
-                        Solver.solve( mysol, rhs );
+                        solver.solve( mysol, rhs );
                         timestamp end = timestampnow();
                         LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
 
                         auto stat_sol = Float( ( sol - mysol ).norm() );
                         auto stat_res = Float( ( system * mysol - rhs ).norm() );
-                        auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                        auto stat_num = Float( solver.recent_iteration_count ) / solver.max_iteration_count;
                         contable_sol << stat_sol;
                         contable_res << stat_res;
                         contable_num << stat_num;

@@ -69,7 +69,7 @@ public LinearOperator /* every matrix is a linear operator */
         }
         
         
-        using LinearOperator::apply;
+         using LinearOperator::apply; // import any 'apply' into the derived class' methods
         virtual void apply( FloatVector& dest, const FloatVector& add, Float scaling ) const override;
         
         
@@ -105,6 +105,10 @@ public LinearOperator /* every matrix is a linear operator */
         /* Memory size */
         
         std::size_t memorysize() const;
+
+        /* graphical output */
+
+        void save_graphics( const char* filepath ) const;
         
         
         

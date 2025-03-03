@@ -45,7 +45,7 @@ class IdentityOperator final
             return new typename std::remove_reference<decltype(*this)>::type( std::move(*this) );
         }
         
-        using LinearOperator::apply;
+         using LinearOperator::apply; // import any 'apply' into the derived class' methods
         virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override;
     
 };
@@ -104,7 +104,7 @@ class ZeroOperator final
             return new typename std::remove_reference<decltype(*this)>::type( std::move(*this) );
         }
         
-        using LinearOperator::apply;
+         using LinearOperator::apply; // import any 'apply' into the derived class' methods
         virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override;
     
 };
@@ -159,7 +159,7 @@ class ScalingOperator final
         Float getscaling() const;
         void setscaling( Float s );
 
-        using LinearOperator::apply;
+         using LinearOperator::apply; // import any 'apply' into the derived class' methods
         virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override;
 
     private:
@@ -233,7 +233,7 @@ class DiagonalOperator final
         FloatVector& getdiagonal();
         const FloatVector& getdiagonal() const;
         
-        using LinearOperator::apply;
+         using LinearOperator::apply; // import any 'apply' into the derived class' methods
         virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override;
         
         const DiagonalOperator sqrt() const;
@@ -314,7 +314,7 @@ class LambdaOperator final
             return new typename std::remove_reference<decltype(*this)>::type( std::move(*this) );
         }
         
-        using LinearOperator::apply;
+         using LinearOperator::apply; // import any 'apply' into the derived class' methods
         virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override;
 
     private:

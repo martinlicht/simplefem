@@ -187,8 +187,8 @@ int main( int argc, char *argv[] )
 
                     {
                         sol_s.zero();
-                        ConjugateGradientMethod Solver( stiffness_csr_s );
-                        Solver.solve( sol_s, rhs_s );
+                        ConjugateGradientMethod solver( stiffness_csr_s );
+                        solver.solve( sol_s, rhs_s );
                     }
 
                     timestamp end_s = timestampnow();
@@ -199,8 +199,8 @@ int main( int argc, char *argv[] )
 
                     {
                         sol_w.zero();
-                        ConjugateGradientMethod Solver( stiffness_csr_w );
-                        Solver.solve( sol_w, rhs_w );
+                        ConjugateGradientMethod solver( stiffness_csr_w );
+                        solver.solve( sol_w, rhs_w );
                     }
 
                     timestamp end_w = timestampnow();

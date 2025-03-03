@@ -197,8 +197,8 @@ int main( int argc, char *argv[] )
                     
                     {
                         sol.zero();
-                        ConjugateResidualMethod Solver( stiffness_csr );
-                        Solver.solve( sol, rhs );
+                        ConjugateResidualMethod solver( stiffness_csr );
+                        solver.solve( sol, rhs );
                     }
 
                     timestamp end = timestampnow();

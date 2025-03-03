@@ -8,6 +8,7 @@
 #include <numeric>
 
 #include "matcsr.hpp"
+#include "../utility/pixelimage.hpp"
 
 const bool csr_matrix_verbosity = false;
 
@@ -1003,6 +1004,26 @@ DiagonalOperator InverseDiagonalPreconditioner( const MatrixCSR& mat )
 
 
 
+void MatrixCSR::save_graphics( const char* filepath ) const 
+{
+    PixelImage pim( getdimout(), getdimin() );
+    
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimout(); c++ )
+    {
+        pim( r, c ) = { 255, 255, 255 };
+    }
+
+    for( int r = 0; r < getdimout(); r++ )
+    for( int j = A[r]; j < A[r+1]; j++ )
+    {
+        int c = C[j];
+        
+        pim( r, c ) = ( V[j] > 0. ) ? PixelColor({ 255,128,0 }) : PixelColor({ 255,0,128 });
+    }
+
+    savePixelImage( pim, filepath );
+}
 
 
 

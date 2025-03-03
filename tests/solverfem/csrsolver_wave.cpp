@@ -302,102 +302,102 @@ int main( int argc, char *argv[] )
                     {
                         LOG << "CGM C++" << nl;
                     
-                        ConjugateGradientMethod Solver( SystemMatrix );
-                        Solver.print_modulo        = 0;
-                        Solver.tolerance           = desired_precision;
-                        Solver.max_iteration_count = 1 * sol.getdimension();
+                        ConjugateGradientMethod solver( SystemMatrix );
+                        solver.print_modulo        = 0;
+                        solver.tolerance           = desired_precision;
+                        solver.max_iteration_count = 1 * sol.getdimension();
                         timestamp start = timestampnow();
-                        Solver.solve( sol, rhs );
+                        solver.solve( sol, rhs );
                         timestamp end = timestampnow();
                         LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                         
                         runtime  = static_cast<Float>( end - start );
-                        iteration_count = Solver.recent_iteration_count;
+                        iteration_count = solver.recent_iteration_count;
                     }
 
                     if( k == 1 and do_crmpp_expl )
                     {
                         LOG << "CRM C++" << nl;
                     
-                        ConjugateResidualMethod Solver( SystemMatrix );
-                        Solver.print_modulo        = 0;
-                        Solver.tolerance           = desired_precision;
-                        Solver.max_iteration_count = 1 * sol.getdimension();
+                        ConjugateResidualMethod solver( SystemMatrix );
+                        solver.print_modulo        = 0;
+                        solver.tolerance           = desired_precision;
+                        solver.max_iteration_count = 1 * sol.getdimension();
                         timestamp start = timestampnow();
-                        Solver.solve_explicit( sol, rhs );
+                        solver.solve_explicit( sol, rhs );
                         timestamp end = timestampnow();
                         LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                         
                         runtime  = static_cast<Float>( end - start );
-                        iteration_count = Solver.recent_iteration_count;
+                        iteration_count = solver.recent_iteration_count;
                     }
 
                     if( k == 2 and do_crmpp_robt )
                     {
                         LOG << "CRM C++" << nl;
                     
-                        ConjugateResidualMethod Solver( SystemMatrix );
-                        Solver.print_modulo        = 0;
-                        Solver.tolerance           = desired_precision;
-                        Solver.max_iteration_count = 1 * sol.getdimension();
+                        ConjugateResidualMethod solver( SystemMatrix );
+                        solver.print_modulo        = 0;
+                        solver.tolerance           = desired_precision;
+                        solver.max_iteration_count = 1 * sol.getdimension();
                         timestamp start = timestampnow();
-                        Solver.solve_robust( sol, rhs );
+                        solver.solve_robust( sol, rhs );
                         timestamp end = timestampnow();
                         LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                         
                         runtime  = static_cast<Float>( end - start );
-                        iteration_count = Solver.recent_iteration_count;
+                        iteration_count = solver.recent_iteration_count;
                     }
 
                     if( k == 3 and do_crmpp_fast )
                     {
                         LOG << "CRM C++" << nl;
                     
-                        ConjugateResidualMethod Solver( SystemMatrix );
-                        Solver.print_modulo        = 0;
-                        Solver.tolerance           = desired_precision;
-                        Solver.max_iteration_count = 1 * sol.getdimension();
+                        ConjugateResidualMethod solver( SystemMatrix );
+                        solver.print_modulo        = 0;
+                        solver.tolerance           = desired_precision;
+                        solver.max_iteration_count = 1 * sol.getdimension();
                         timestamp start = timestampnow();
-                        Solver.solve_fast( sol, rhs );
+                        solver.solve_fast( sol, rhs );
                         timestamp end = timestampnow();
                         LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                         
                         runtime  = static_cast<Float>( end - start );
-                        iteration_count = Solver.recent_iteration_count;
+                        iteration_count = solver.recent_iteration_count;
                     }
 
                     if( k == 4 and do_minres )
                     {
                         LOG << "MINRES C++" << nl;
                     
-                        MinimumResidualMethod Solver( SystemMatrix );
-                        Solver.print_modulo        = 0;
-                        Solver.tolerance           = desired_precision;
-                        Solver.max_iteration_count = 1 * sol.getdimension();
+                        MinimumResidualMethod solver( SystemMatrix );
+                        solver.print_modulo        = 0;
+                        solver.tolerance           = desired_precision;
+                        solver.max_iteration_count = 1 * sol.getdimension();
                         timestamp start = timestampnow();
-                        Solver.solve( sol, rhs );
+                        solver.solve( sol, rhs );
                         timestamp end = timestampnow();
                         LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
 
                         runtime  = static_cast<Float>( end - start );
-                        iteration_count = Solver.recent_iteration_count;
+                        iteration_count = solver.recent_iteration_count;
                     }
 
                     if( k == 5 and do_herzog )
                     {
                         LOG << "HERZOG SOODHALTER C++" << nl;
                     
-                        HerzogSoodhalterMethod Solver( SystemMatrix );
-                        Solver.print_modulo        = 0;
-                        Solver.tolerance           = desired_precision;
-                        Solver.max_iteration_count = 1 * sol.getdimension();
+                        HerzogSoodhalterMethod solver( SystemMatrix );
+                        solver.print_modulo        = 0;
+                        solver.tolerance           = desired_precision;
+                        solver.max_iteration_count = 1 * sol.getdimension();
                         timestamp start = timestampnow();
-                        Solver.solve( sol, rhs );
+                        solver.solve( sol, rhs );
                         timestamp end = timestampnow();
                         LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
 
                         runtime  = static_cast<Float>( end - start );
-                        iteration_count = Solver.recent_iteration_count;
+                        iteration_count = solver.recent_iteration_count;
                     }
                     
                     if( k == 6 and do_cgm_csr )

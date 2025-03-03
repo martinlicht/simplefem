@@ -211,11 +211,11 @@ int main( int argc, char *argv[] )
                             //     0
                             // );
                             
-                            // ConjugateResidualMethod Solver( X );
-                            // Solver.tolerance           = desired_precision;
-                            // Solver.print_modulo        = 100;
-                            // Solver.max_iteration_count = 4 * candidate.getdimension();
-                            // Solver.solve( candidate, rhs );
+                            // ConjugateResidualMethod solver( X );
+                            // solver.tolerance           = desired_precision;
+                            // solver.print_modulo        = 100;
+                            // solver.max_iteration_count = 4 * candidate.getdimension();
+                            // solver.solve( candidate, rhs );
                         
                             assert( candidate.is_finite() );
                             

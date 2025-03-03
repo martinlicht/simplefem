@@ -16,7 +16,7 @@ using namespace std;
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Tests: some basic tests of Solvers" << nl;
+    LOG << "Unit Tests: some basic tests of solvers" << nl;
 
     {
         

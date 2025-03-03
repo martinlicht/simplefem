@@ -177,8 +177,8 @@ int main( int argc, char *argv[] )
                     
                     {
                         sol.zero();
-                        ConjugateGradientMethod Solver( stiffness_csr );
-                        Solver.solve( sol, rhs );
+                        ConjugateGradientMethod solver( stiffness_csr );
+                        solver.solve( sol, rhs );
                     }
 
                     timestamp end = timestampnow();

@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "sparsematrix.hpp"
+#include "../utility/pixelimage.hpp"
 #include "../dense/densematrix.hpp"
 
 const bool sparse_matrix_verbosity = false;
@@ -825,3 +826,26 @@ Float norm_sq_of_vector( const SparseMatrix& A, const FloatVector& vec )
 }
 
 
+
+
+
+
+
+
+void SparseMatrix::save_graphics( const char* filepath ) const 
+{
+    PixelImage pim( getdimout(), getdimin() );
+    
+    for( int r = 0; r < getdimout(); r++ )
+    for( int c = 0; c < getdimout(); c++ )
+    {
+        pim( r, c ) = { 255, 255, 255 };
+    }
+
+    for( const auto& entry : entries )
+    {
+        pim( entry.row, entry.column ) = ( entry.value > 0. ) ? PixelColor({ 255,128,0 }) : PixelColor({ 255,0,128 });
+    }
+
+    savePixelImage( pim, filepath );
+}

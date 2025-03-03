@@ -59,7 +59,7 @@ class InverseOperator
                     + tab_each_line( op.text() );
         }
         
-        using LinearOperator::apply;
+         using LinearOperator::apply; // import any 'apply' into the derived class' methods
         virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling = 1. ) const override;
         
     protected:
@@ -110,7 +110,7 @@ class PseudoInverseOperator final
                     + tab_each_line( op.text() );
         }
         
-        using LinearOperator::apply;
+         using LinearOperator::apply; // import any 'apply' into the derived class' methods
         virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling = 1. ) const override;
         
     
@@ -133,13 +133,13 @@ void InverseOperator<T>::apply( FloatVector& dest, const FloatVector& src, Float
     else 
         dest.zero();
 
-    ConjugateResidualMethod Solver( op );
+    ConjugateResidualMethod solver( op );
     
-    Solver.max_iteration_count = op.getdimin();
-    Solver.print_modulo        = print_modulo;
-    Solver.verbosity           = ConjugateResidualMethod::VerbosityLevel::silent;
+    solver.max_iteration_count = op.getdimin();
+    solver.print_modulo        = print_modulo;
+    solver.verbosity           = ConjugateResidualMethod::VerbosityLevel::silent;
     
-    Solver.solve( dest, src );
+    solver.solve( dest, src );
     
     dest *= scaling;
     
@@ -215,13 +215,13 @@ void PseudoInverseOperator::apply( FloatVector& dest, const FloatVector& src, Fl
     else 
         dest.zero();
 
-    ConjugateResidualMethod Solver( op );
+    ConjugateResidualMethod solver( op );
     
-    Solver.max_iteration_count = op.getdimin();
-    Solver.print_modulo        = print_modulo;
-    Solver.verbosity           = ConjugateResidualMethod::VerbosityLevel::silent;
+    solver.max_iteration_count = op.getdimin();
+    solver.print_modulo        = print_modulo;
+    solver.verbosity           = ConjugateResidualMethod::VerbosityLevel::silent;
     
-    Solver.solve( dest, src );
+    solver.solve( dest, src );
     
     dest *= scaling;
     

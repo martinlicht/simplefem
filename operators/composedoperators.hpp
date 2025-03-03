@@ -100,7 +100,7 @@ class RepeatedDiagonalBlockOperator final
                      + tab_each_line( internal->text() );
         }
         
-        using LinearOperator::apply;
+         using LinearOperator::apply; // import any 'apply' into the derived class' methods
         virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override {
             check();
             src.check();
@@ -293,7 +293,7 @@ class ProduktOperator final
                      + tab_each_line( left->text() + '\n' + right->text() );
         }
         
-        using LinearOperator::apply;
+         using LinearOperator::apply; // import any 'apply' into the derived class' methods
         void apply( FloatVector& dest, const FloatVector& add, Float scaling ) const override {
             dest = scaling * left->apply( right->apply(add) );
         }
@@ -408,7 +408,7 @@ class SummOperator final
         }
         
         
-        using LinearOperator::apply;
+         using LinearOperator::apply; // import any 'apply' into the derived class' methods
         void apply( FloatVector& dest, const FloatVector& add, Float scaling ) const override
         {
             dest = scaling * left->apply( add ) + scaling * right->apply( add );
@@ -491,7 +491,7 @@ class DiffOperator final
         }
         
         
-        using LinearOperator::apply;
+         using LinearOperator::apply; // import any 'apply' into the derived class' methods
         void apply( FloatVector& dest, const FloatVector& add, Float scaling ) const override
         {
             dest = scaling * left->apply( add ) - scaling * right->apply( add );
@@ -620,7 +620,7 @@ class Block2x2Operator
         ){}
         
 
-        using LinearOperator::apply;
+         using LinearOperator::apply; // import any 'apply' into the derived class' methods
         void apply( FloatVector& dest, const FloatVector& add, Float scaling ) const override {
             
             assert( dest.getdimension() == upperleft->getdimout()  + lowerleft->getdimout()  );

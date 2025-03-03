@@ -50,6 +50,12 @@ bool LinearOperator::is_square() const
 }
 
 /* x := A y */
+FloatVector LinearOperator::apply( const FloatVector& src ) const
+{
+    return apply( src, 1. );
+}
+
+/* x := A y */
 FloatVector LinearOperator::apply( const FloatVector& src, Float scaling ) const
 {
     check();

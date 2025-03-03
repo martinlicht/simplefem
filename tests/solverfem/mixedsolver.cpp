@@ -273,18 +273,18 @@ int main( int argc, char *argv[] )
                         {
                             sol.zero();
                             
-                            ConjugateResidualMethod Solver( SystemMatrix );
-                            Solver.print_modulo        = 100;
-                            Solver.max_iteration_count = 1 * sol.getdimension();
+                            ConjugateResidualMethod solver( SystemMatrix );
+                            solver.print_modulo        = 100;
+                            solver.max_iteration_count = 1 * sol.getdimension();
 
                             timestamp start = timestampnow();
-                            Solver.solve( sol, rhs );
+                            solver.solve( sol, rhs );
                             timestamp end = timestampnow();
 
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             runtime  = static_cast<Float>( end - start );
 
-                            iteration_count = Solver.recent_iteration_count;
+                            iteration_count = solver.recent_iteration_count;
                         }
 
 
@@ -301,12 +301,12 @@ int main( int argc, char *argv[] )
                             rhs_whole.setslice( 0, A.getdimout(), 0. );
                             rhs_whole.setslice( A.getdimout(), rhs );
                             
-                            HerzogSoodhalterMethod Solver( X );
-                            Solver.print_modulo        = 100;
-                            Solver.max_iteration_count = 1 * sol_whole.getdimension();
+                            HerzogSoodhalterMethod solver( X );
+                            solver.print_modulo        = 100;
+                            solver.max_iteration_count = 1 * sol_whole.getdimension();
 
                             timestamp start = timestampnow();
-                            Solver.solve( sol_whole, rhs_whole );
+                            solver.solve( sol_whole, rhs_whole );
                             timestamp end = timestampnow();
 
                             sol = sol_whole.getslice( A.getdimout(), B.getdimout() );
@@ -314,7 +314,7 @@ int main( int argc, char *argv[] )
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             runtime  = static_cast<Float>( end - start );
 
-                            iteration_count = Solver.recent_iteration_count;
+                            iteration_count = solver.recent_iteration_count;
                         }
 
 
@@ -331,12 +331,12 @@ int main( int argc, char *argv[] )
                             rhs_whole.setslice( 0, A.getdimout(), 0. );
                             rhs_whole.setslice( A.getdimout(), rhs );
                             
-                            MinimumResidualMethod Solver( X );
-                            Solver.print_modulo        = 100;
-                            Solver.max_iteration_count = 1 * sol_whole.getdimension();
+                            MinimumResidualMethod solver( X );
+                            solver.print_modulo        = 100;
+                            solver.max_iteration_count = 1 * sol_whole.getdimension();
 
                             timestamp start = timestampnow();
-                            Solver.solve( sol_whole, rhs_whole );
+                            solver.solve( sol_whole, rhs_whole );
                             timestamp end = timestampnow();
 
                             sol = sol_whole.getslice( A.getdimout(), B.getdimout() );
@@ -344,7 +344,7 @@ int main( int argc, char *argv[] )
                             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                             runtime  = static_cast<Float>( end - start );
 
-                            iteration_count = Solver.recent_iteration_count;
+                            iteration_count = solver.recent_iteration_count;
                         }
 
 

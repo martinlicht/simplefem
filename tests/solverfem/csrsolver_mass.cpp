@@ -221,12 +221,12 @@ int main( int argc, char *argv[] )
                     
                         FloatVector sol = sol_original;
                         const FloatVector rhs = rhs_original;
-                        ConjugateGradientMethod Solver( mass );
-                        Solver.print_modulo        = 0;
-                        Solver.tolerance        = desired_precision;
-                        Solver.max_iteration_count =     1 * sol.getdimension();
+                        ConjugateGradientMethod solver( mass );
+                        solver.print_modulo        = 0;
+                        solver.tolerance        = desired_precision;
+                        solver.max_iteration_count =     1 * sol.getdimension();
                         timestamp start = timestampnow();
-                        Solver.solve( sol, rhs );
+                        solver.solve( sol, rhs );
                         timestamp end = timestampnow();
                         LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                         
@@ -235,7 +235,7 @@ int main( int argc, char *argv[] )
                         auto runtime  = static_cast<Float>( end - start );
                         // auto stat_sol = Float( ( sol - ... ).norm() );
                         auto stat_res = Float( ( mass * sol - rhs ).norm() );
-                        auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                        auto stat_num = Float( solver.recent_iteration_count ) / solver.max_iteration_count;
                         
                         //contable_sol << stat_sol;
                         contable_res << stat_res;
@@ -249,12 +249,12 @@ int main( int argc, char *argv[] )
                     
                         FloatVector sol = sol_original;
                         const FloatVector rhs = rhs_original;
-                        ConjugateResidualMethod Solver( mass );
-                        Solver.print_modulo        = 0;
-                        Solver.tolerance        = desired_precision;
-                        Solver.max_iteration_count =     1 * sol.getdimension();
+                        ConjugateResidualMethod solver( mass );
+                        solver.print_modulo        = 0;
+                        solver.tolerance        = desired_precision;
+                        solver.max_iteration_count =     1 * sol.getdimension();
                         timestamp start = timestampnow();
-                        Solver.solve_explicit( sol, rhs );
+                        solver.solve_explicit( sol, rhs );
                         timestamp end = timestampnow();
                         LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                         
@@ -263,7 +263,7 @@ int main( int argc, char *argv[] )
                         auto runtime  = static_cast<Float>( end - start );
                         // auto stat_sol = Float( ( sol - ... ).norm() );
                         auto stat_res = Float( ( mass * sol - rhs ).norm() );
-                        auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                        auto stat_num = Float( solver.recent_iteration_count ) / solver.max_iteration_count;
                         
                         //contable_sol << stat_sol;
                         contable_res << stat_res;
@@ -277,12 +277,12 @@ int main( int argc, char *argv[] )
                     
                         FloatVector sol = sol_original;
                         const FloatVector rhs = rhs_original;
-                        ConjugateResidualMethod Solver( mass );
-                        Solver.print_modulo        = 0;
-                        Solver.tolerance        = desired_precision;
-                        Solver.max_iteration_count =     1 * sol.getdimension();
+                        ConjugateResidualMethod solver( mass );
+                        solver.print_modulo        = 0;
+                        solver.tolerance        = desired_precision;
+                        solver.max_iteration_count =     1 * sol.getdimension();
                         timestamp start = timestampnow();
-                        Solver.solve_robust( sol, rhs );
+                        solver.solve_robust( sol, rhs );
                         timestamp end = timestampnow();
                         LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                         
@@ -291,7 +291,7 @@ int main( int argc, char *argv[] )
                         auto runtime  = static_cast<Float>( end - start );
                         // auto stat_sol = Float( ( sol - ... ).norm() );
                         auto stat_res = Float( ( mass * sol - rhs ).norm() );
-                        auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                        auto stat_num = Float( solver.recent_iteration_count ) / solver.max_iteration_count;
                         
                         //contable_sol << stat_sol;
                         contable_res << stat_res;
@@ -305,12 +305,12 @@ int main( int argc, char *argv[] )
                     
                         FloatVector sol = sol_original;
                         const FloatVector rhs = rhs_original;
-                        ConjugateResidualMethod Solver( mass );
-                        Solver.print_modulo        = 0;
-                        Solver.tolerance        = desired_precision;
-                        Solver.max_iteration_count =     1 * sol.getdimension();
+                        ConjugateResidualMethod solver( mass );
+                        solver.print_modulo        = 0;
+                        solver.tolerance        = desired_precision;
+                        solver.max_iteration_count =     1 * sol.getdimension();
                         timestamp start = timestampnow();
-                        Solver.solve_fast( sol, rhs );
+                        solver.solve_fast( sol, rhs );
                         timestamp end = timestampnow();
                         LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                         
@@ -319,7 +319,7 @@ int main( int argc, char *argv[] )
                         auto runtime  = static_cast<Float>( end - start );
                         // auto stat_sol = Float( ( sol - ... ).norm() );
                         auto stat_res = Float( ( mass * sol - rhs ).norm() );
-                        auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                        auto stat_num = Float( solver.recent_iteration_count ) / solver.max_iteration_count;
                         
                         //contable_sol << stat_sol;
                         contable_res << stat_res;
@@ -333,12 +333,12 @@ int main( int argc, char *argv[] )
                     
                         FloatVector sol = sol_original;
                         const FloatVector rhs = rhs_original;
-                        MinimumResidualMethod Solver( mass );
-                        Solver.print_modulo        = 0;
-                        Solver.tolerance        = desired_precision;
-                        Solver.max_iteration_count =     1 * sol.getdimension();
+                        MinimumResidualMethod solver( mass );
+                        solver.print_modulo        = 0;
+                        solver.tolerance        = desired_precision;
+                        solver.max_iteration_count =     1 * sol.getdimension();
                         timestamp start = timestampnow();
-                        Solver.solve( sol, rhs );
+                        solver.solve( sol, rhs );
                         timestamp end = timestampnow();
                         LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
 
@@ -347,7 +347,7 @@ int main( int argc, char *argv[] )
                         auto runtime  = static_cast<Float>( end - start );
                         // auto stat_sol = Float( ( sol - ... ).norm() );
                         auto stat_res = Float( ( mass * sol - rhs ).norm() );
-                        auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                        auto stat_num = Float( solver.recent_iteration_count ) / solver.max_iteration_count;
                         
                         //contable_sol << stat_sol;
                         contable_res << stat_res;
@@ -361,12 +361,12 @@ int main( int argc, char *argv[] )
                     
                         FloatVector sol = sol_original;
                         const FloatVector rhs = rhs_original;
-                        HerzogSoodhalterMethod Solver( mass );
-                        Solver.print_modulo        = 0;
-                        Solver.tolerance        = desired_precision;
-                        Solver.max_iteration_count =     1 * sol.getdimension();
+                        HerzogSoodhalterMethod solver( mass );
+                        solver.print_modulo        = 0;
+                        solver.tolerance        = desired_precision;
+                        solver.max_iteration_count =     1 * sol.getdimension();
                         timestamp start = timestampnow();
-                        Solver.solve( sol, rhs );
+                        solver.solve( sol, rhs );
                         timestamp end = timestampnow();
                         LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
 
@@ -375,7 +375,7 @@ int main( int argc, char *argv[] )
                         auto runtime  = static_cast<Float>( end - start );
                         // auto stat_sol = Float( ( sol - ... ).norm() );
                         auto stat_res = Float( ( mass * sol - rhs ).norm() );
-                        auto stat_num = Float( Solver.recent_iteration_count ) / Solver.max_iteration_count;
+                        auto stat_num = Float( solver.recent_iteration_count ) / solver.max_iteration_count;
                         
                         //contable_sol << stat_sol;
                         contable_res << stat_res;

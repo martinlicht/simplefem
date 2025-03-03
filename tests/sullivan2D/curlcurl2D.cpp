@@ -213,8 +213,8 @@ int main( int argc, char *argv[] )
             //     rhs_full.setslice(             0, rhs_sol );
             //     rhs_full.setslice( A.getdimout(), rhs_aux );
             //     //
-            //     HerzogSoodhalterMethod Solver( X );
-            //     Solver.solve( sol_full, rhs_full );
+            //     HerzogSoodhalterMethod solver( X );
+            //     solver.solve( sol_full, rhs_full );
             //     //
             //     sol = sol_full.getslice(             0, A.getdimout() );
             //     aux = sol_full.getslice( A.getdimout(), B.getdimout() );
