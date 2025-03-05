@@ -138,7 +138,7 @@ int main( int argc, char *argv[] )
                 
                 auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. );
 //                     auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
-                LOG << "Average value of diagonal preconditioner: " << stiffness_invprecon.getdiagonal().average() << nl;
+                LOG << "Average value of diagonal preconditioner: " << stiffness_invprecon.getDiagonal().average() << nl;
 
                 {
 
@@ -206,11 +206,11 @@ int main( int argc, char *argv[] )
                         fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                         VTKWriter vtk( M, fs, getbasename(__FILE__) );
 
-                        vtk.write_vertex_scalar_data( [&](FloatVector vec) -> Float{ return function_sol(vec)[0]; }, "interpolated_sol" );
-                        vtk.write_vertex_scalar_data( [&](FloatVector vec) -> Float{ return function_rhs(vec)[0]; }, "interpolated_rhs" );
+                        vtk.write_vertex_scalar_data( [&]( const FloatVector& vec) -> Float{ return function_sol(vec)[0]; }, "interpolated_sol" );
+                        vtk.write_vertex_scalar_data( [&]( const FloatVector& vec) -> Float{ return function_rhs(vec)[0]; }, "interpolated_rhs" );
 
-                        vtk.write_cell_scalar_data( [&](FloatVector vec) -> Float{ return function_sol(vec)[0]; }, "interpolated_sol" );
-                        vtk.write_cell_scalar_data( [&](FloatVector vec) -> Float{ return function_rhs(vec)[0]; }, "interpolated_rhs" );
+                        vtk.write_cell_scalar_data( [&]( const FloatVector& vec) -> Float{ return function_sol(vec)[0]; }, "interpolated_sol" );
+                        vtk.write_cell_scalar_data( [&]( const FloatVector& vec) -> Float{ return function_rhs(vec)[0]; }, "interpolated_rhs" );
 
                         if( r == 1 ) { 
                             vtk.write_vertex_scalar_data( sol, "iterativesolution_scalar_data" , 1.0 );

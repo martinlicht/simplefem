@@ -518,7 +518,7 @@ int main( int argc, char *argv[] )
                             residual.raw(),
                             desired_precision,
                             0,
-                            precon.getdiagonal().raw()
+                            precon.getDiagonal().raw()
                         );
 
                         timestamp end = timestampnow();
@@ -659,8 +659,8 @@ int main( int argc, char *argv[] )
                         LOG << "CHEBYSHEV CSR" << nl;
                     
                         DiagonalOperator invprecon = InverseDiagonalPreconditioner( SystemMatrix );
-                        assert( invprecon.getdiagonal().is_finite() );
-                        assert( invprecon.getdiagonal().is_nonnegative() );
+                        assert( invprecon.getDiagonal().is_finite() );
+                        assert( invprecon.getDiagonal().is_nonnegative() );
                         
                         FloatVector residual( rhs );
                         // auto max_iteration_count = sol.getdimension();
@@ -674,9 +674,9 @@ int main( int argc, char *argv[] )
                             residual.raw(),
                             desired_precision,
                             10,
-                            invprecon.getdiagonal().raw(),
+                            invprecon.getDiagonal().raw(),
                             0.,
-                            100 * invprecon.getdiagonal().maxnorm()
+                            100 * invprecon.getDiagonal().maxnorm()
                         );
                         timestamp end = timestampnow();
                         LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;

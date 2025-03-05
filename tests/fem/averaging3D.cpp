@@ -83,7 +83,7 @@ int main( int argc, char *argv[] )
                         sum += matrix.getV()[i];
                     }
 
-                    if( flagmatrix.getdiagonal()[row] == 0. )
+                    if( flagmatrix.getDiagonal()[row] == 0. )
                         Assert( sum == 0., sum );
                     else 
                         Assert( is_numerically_one( sum ), sum );

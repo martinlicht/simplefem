@@ -478,8 +478,8 @@ int sign_of_rho_sigma( const IndexMap& sigma )
 
     assert( not rho.getSourceRange().is_empty() and rho.getSourceRange().max() == n-k );
 
-    const auto sigma_values = sigma.getvalues();
-    const auto rho_values   =   rho.getvalues();
+    const auto& sigma_values = sigma.getvalues();
+    const auto& rho_values   =   rho.getvalues();
 
     auto values = std::vector<int>();
     values.reserve(n+1);

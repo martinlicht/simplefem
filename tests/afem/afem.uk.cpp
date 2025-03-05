@@ -142,7 +142,7 @@ int main( int argc, char *argv[] )
             
             //auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. );
             auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
-            LOG << "Average value of diagonal preconditioner: " << stiffness_invprecon.getdiagonal().average() << nl;
+            LOG << "Average value of diagonal preconditioner: " << stiffness_invprecon.getDiagonal().average() << nl;
 
             const auto& function_sol = experiments_sol[0];
             const auto& function_grad= experiments_grad[0];
@@ -216,7 +216,7 @@ int main( int argc, char *argv[] )
 
                 LOG << "Refinement..." << nl;
         
-                FloatVector vec = interpol_grad;
+                const FloatVector& vec = interpol_grad;
 
                 FloatVector cellwisemass = 
                     FEECBrokenMassMatrix_cellwisemass( M, M.getinnerdimension(), 1, 0, vec )

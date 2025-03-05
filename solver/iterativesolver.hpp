@@ -23,7 +23,7 @@ struct IterativeSolver
     
     enum class VerbosityLevel : unsigned char {
         silent = 0,
-        resultonly = 1,
+        startandfinish = 1,
         verbose = 2
     };
     
@@ -111,6 +111,26 @@ struct ConjugateGradientMethod
         virtual void solve( FloatVector&, const FloatVector& ) const override;
 
 };
+
+struct PreconditionedConjugateGradientMethod
+: public IterativeSolver
+{
+
+    explicit PreconditionedConjugateGradientMethod( const LinearOperator& op, const LinearOperator& M );
+    virtual void check() const override;
+    virtual std::string text() const override;
+    virtual void solve( FloatVector&, const FloatVector& ) const override;
+    
+private:
+
+    const LinearOperator& M;
+
+};
+
+
+
+
+
 
 
 struct ConjugateResidualMethod

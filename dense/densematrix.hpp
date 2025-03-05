@@ -83,7 +83,7 @@ class DenseMatrix final
         DenseMatrix clone() const;
         
         
-         using LinearOperator::apply; // import any 'apply' into the derived class' methods
+        using LinearOperator::apply; // import any 'apply' into the derived class' methods
         virtual void apply( FloatVector& dest, const FloatVector& add, Float scaling ) const override;
         
         /* matrix level point of view */

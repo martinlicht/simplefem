@@ -28,9 +28,9 @@ MatrixCSR::MatrixCSR(
 MatrixCSR::MatrixCSR( 
     int rows,
     int columns,
-    const std::vector<int>&& A, 
-    const std::vector<int>&& C, 
-    const std::vector<Float>&& V
+    std::vector<int>&& A, 
+    std::vector<int>&& C, 
+    std::vector<Float>&& V
 ): LinearOperator( rows, columns ),
    A(std::move(A)), C(std::move(C)), V(std::move(V)) 
 {
@@ -125,10 +125,13 @@ MatrixCSR& MatrixCSR::operator=( const MatrixCSR& mat )
     LOG << "*************************************************\n";
     assert( getdimin() == mat.getdimin() );
     assert( getdimout() == mat.getdimout() );
-    this->A = mat.A;
-    this->C = mat.C;
-    this->V = mat.V;
-    check();
+    if( this != &mat )
+    {
+        this->A = mat.A;
+        this->C = mat.C;
+        this->V = mat.V;
+        check();
+    }
     return *this;
 }
 
@@ -145,10 +148,13 @@ MatrixCSR& MatrixCSR::operator=( MatrixCSR&& mat )
 {
     assert( getdimin() == mat.getdimin() );
     assert( getdimout() == mat.getdimout() );
-    this->A = std::move( mat.A );
-    this->C = std::move( mat.C );
-    this->V = std::move( mat.V );
-    check();
+    if( this != &mat )
+    {
+        this->A = std::move( mat.A );
+        this->C = std::move( mat.C );
+        this->V = std::move( mat.V );
+        check();
+    }
     return *this;
 }
 

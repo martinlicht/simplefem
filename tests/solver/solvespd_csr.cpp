@@ -499,8 +499,8 @@ int main( int argc, char *argv[] )
                     
                         DiagonalOperator invprecon = InverseDiagonalPreconditioner( system_prelim );
 //                             invprecon.setentries( 1. );
-                        assert( invprecon.getdiagonal().is_finite() );
-                        assert( invprecon.getdiagonal().is_nonnegative() );
+                        assert( invprecon.getDiagonal().is_finite() );
+                        assert( invprecon.getDiagonal().is_nonnegative() );
                         
                         FloatVector mysol( N*N );
                         mysol.zero();
@@ -516,7 +516,7 @@ int main( int argc, char *argv[] )
                             residual.raw(),
                             desired_precision,
                             0,
-                            invprecon.getdiagonal().raw()
+                            invprecon.getDiagonal().raw()
                         );
                         timestamp end = timestampnow();
 
@@ -576,8 +576,8 @@ int main( int argc, char *argv[] )
                         LOG << "CHEBYSHEV CSR" << nl;
                     
                         DiagonalOperator invprecon = InverseDiagonalPreconditioner( system_prelim );
-                        assert( invprecon.getdiagonal().is_finite() );
-                        assert( invprecon.getdiagonal().is_positive() );
+                        assert( invprecon.getDiagonal().is_finite() );
+                        assert( invprecon.getDiagonal().is_positive() );
                         
                         FloatVector mysol( N*N );
                         mysol.zero();
@@ -593,7 +593,7 @@ int main( int argc, char *argv[] )
                             residual.raw(),
                             desired_precision,
                             0,
-                            invprecon.getdiagonal().raw(),
+                            invprecon.getDiagonal().raw(),
                             0.,
                             system.eigenvalueupperbound()
                         );

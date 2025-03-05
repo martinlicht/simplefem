@@ -15,7 +15,7 @@
 const bool sparse_matrix_verbosity = false;
 
 
-SparseMatrix::SparseMatrix( int dimout, int dimin, int numentries, std::function<MatrixEntry(int)> generator )
+SparseMatrix::SparseMatrix( int dimout, int dimin, int numentries, const std::function<MatrixEntry(int)>& generator )
 : LinearOperator( dimout, dimin ), 
   entries(0)
 {
@@ -85,7 +85,7 @@ SparseMatrix::SparseMatrix( const DiagonalOperator& matrix )
 {
     assert( getdimin() == getdimout() );
     for( int r = 0; r < getdimout(); r++ )
-        entries[r] = { r, r, matrix.getdiagonal().at(r) };
+        entries[r] = { r, r, matrix.getDiagonal().at(r) };
     SparseMatrix::check();    
 }
 
@@ -128,8 +128,11 @@ SparseMatrix& SparseMatrix::operator=( const SparseMatrix& mat )
     LOG << "*************************************************\n";
     assert( getdimin() == mat.getdimin() );
     assert( getdimout() == mat.getdimout() );
-    this->entries = mat.entries;
-    check();
+    if( this != &mat ) 
+    {
+        this->entries = mat.entries;
+        check();
+    }
     return *this;
 }
 
@@ -144,8 +147,11 @@ SparseMatrix& SparseMatrix::operator=( SparseMatrix&& mat )
 {
     assert( getdimin() == mat.getdimin() );
     assert( getdimout() == mat.getdimout() );
-    this->entries = std::move( mat.entries );
-    check();
+    if( this != &mat ) 
+    {
+        this->entries = std::move( mat.entries );
+        check();
+    }
     return *this;
 }
 

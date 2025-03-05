@@ -214,7 +214,7 @@ int main( int argc, char *argv[] )
                         LOG << "CGM C++" << nl;
                     
                         FloatVector sol = sol_original;
-                        const FloatVector rhs = rhs_original;
+                        const FloatVector& rhs = rhs_original;
                         ConjugateGradientMethod solver( mass );
                         solver.print_modulo        = 0;
                         solver.tolerance        = desired_precision;
@@ -242,7 +242,7 @@ int main( int argc, char *argv[] )
                         LOG << "CRM C++" << nl;
                     
                         FloatVector sol = sol_original;
-                        const FloatVector rhs = rhs_original;
+                        const FloatVector& rhs = rhs_original;
                         ConjugateResidualMethod solver( mass );
                         solver.print_modulo        = 0;
                         solver.tolerance        = desired_precision;
@@ -270,7 +270,7 @@ int main( int argc, char *argv[] )
                         LOG << "CRM C++" << nl;
                     
                         FloatVector sol = sol_original;
-                        const FloatVector rhs = rhs_original;
+                        const FloatVector& rhs = rhs_original;
                         ConjugateResidualMethod solver( mass );
                         solver.print_modulo        = 0;
                         solver.tolerance        = desired_precision;
@@ -298,7 +298,7 @@ int main( int argc, char *argv[] )
                         LOG << "CRM C++" << nl;
                     
                         FloatVector sol = sol_original;
-                        const FloatVector rhs = rhs_original;
+                        const FloatVector& rhs = rhs_original;
                         ConjugateResidualMethod solver( mass );
                         solver.print_modulo        = 0;
                         solver.tolerance        = desired_precision;
@@ -326,7 +326,7 @@ int main( int argc, char *argv[] )
                         LOG << "MINRES C++" << nl;
                     
                         FloatVector sol = sol_original;
-                        const FloatVector rhs = rhs_original;
+                        const FloatVector& rhs = rhs_original;
                         MinimumResidualMethod solver( mass );
                         solver.print_modulo        = 0;
                         solver.tolerance        = desired_precision;
@@ -354,7 +354,7 @@ int main( int argc, char *argv[] )
                         LOG << "HERZOG SOODHALTER C++" << nl;
                     
                         FloatVector sol = sol_original;
-                        const FloatVector rhs = rhs_original;
+                        const FloatVector& rhs = rhs_original;
                         HerzogSoodhalterMethod solver( mass );
                         solver.print_modulo        = 0;
                         solver.tolerance        = desired_precision;

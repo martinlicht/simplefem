@@ -152,7 +152,7 @@ DenseMatrix::DenseMatrix( const DiagonalOperator& dia )
     assert( entries != nullptr );
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin(); c++ )
-        (*this)(r,c) = ( ( r == c ) ? dia.getdiagonal().at(r) : 0. );
+        (*this)(r,c) = ( ( r == c ) ? dia.getDiagonal().at(r) : 0. );
     DenseMatrix::check();
 }
         

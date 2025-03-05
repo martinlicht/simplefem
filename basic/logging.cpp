@@ -158,12 +158,12 @@ Logger::~Logger()
 #include <omp.h>
 #endif // #if defined(_OPENMP)
 
-System_Reporter::System_Reporter()
+System_Reporter::System_Reporter() noexcept
 {
     output();
 }
 
-System_Reporter::~System_Reporter()
+System_Reporter::~System_Reporter() noexcept
 {
     #if defined(_OPENMP)
     // LOG << "###\tSystem Reporter: finished\n";

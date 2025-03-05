@@ -51,7 +51,7 @@ int ConjugateGradientSolverCSR(
     int K = 0;
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "START Conjugate Gradient CSR\n" );
+        LOGPRINTF( "(%d) START Conjugate Gradient CSR\n", N );
 
     while( K < N ){
         
@@ -230,7 +230,7 @@ int ConjugateGradientSolverCSR_DiagonalPreconditioner(
     int K = 0;
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "START Conjugate Gradient CSR (Diag)\n" );
+        LOGPRINTF( "(%d) START Conjugate Gradient CSR (Diag)\n", N );
 
     while( K < N ){
         
@@ -441,7 +441,7 @@ int ConjugateGradientSolverCSR_SSOR(
     int K = 0;
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "START Conjugate Gradient CSR (SSOR)\n" );
+        LOGPRINTF( "(%d) START Conjugate Gradient CSR (SSOR)\n", N );
 
     while( K < N ){
         
@@ -705,7 +705,7 @@ int ConjugateGradientSolverCSR_SSOR_Eisenstat(
     int K = 0;
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "START Conjugate Gradient CSR (SSOR-Eisenstat)\n" );
+        LOGPRINTF( "(%d) START Conjugate Gradient CSR (SSOR-Eisenstat)\n", N );
 
     while( K < N ){
         
@@ -963,7 +963,7 @@ int ConjugateGradientSolverCSR_Rainbow(
     int K = 0;
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "START Conjugate Gradient CSR (SSOR-Rainbow)\n" );
+        LOGPRINTF( "(%d) START Conjugate Gradient CSR (SSOR-Rainbow)\n", N );
 
     while( K < N ){
         
@@ -1282,7 +1282,7 @@ int ConjugateGradientSolverCSR_Eisenstat_Rainbow(
     int K = 0;
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "START Conjugate Gradient CSR (SSOR-Rainbow-Eisenstat)\n" );
+        LOGPRINTF( "(%d) START Conjugate Gradient CSR (SSOR-Rainbow-Eisenstat)\n", N );
 
     while( K < N ){
         
@@ -1599,7 +1599,7 @@ int ConjugateResidualSolverCSR(
     int K = 0;
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "START Conjugate Residual CSR\n" );
+        LOGPRINTF( "(%d) START Conjugate Residual CSR\n", N );
 
     while( K < N ){
         
@@ -1812,7 +1812,7 @@ int ConjugateResidualSolverCSR_textbook(
     int K = 0;
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "START Conjugate Residual CSR (textbook)\n" );
+        LOGPRINTF( "(%d) START Conjugate Residual CSR (textbook)\n", N );
 
     while( K < N ){
         
@@ -2046,7 +2046,7 @@ int MINRESCSR(
     int K = 0;
 
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "START MINRES CSR\n" );
+        LOGPRINTF( "(%d) START MINRES CSR\n", N );
 
     while( K < N ){
         
@@ -2288,7 +2288,7 @@ int ChebyshevIteration_DiagonalPreconditioner(
     int K = 0;
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "START Chebyshev (Diag) CSR\n" );
+        LOGPRINTF( "(%d) START Chebyshev (Diag) CSR\n", N );
 
     while( K < N ){
         

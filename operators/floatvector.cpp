@@ -439,6 +439,16 @@ FloatVector& FloatVector::shiftnegative( Float delta )
     return *this;
 }
 
+FloatVector& FloatVector::inverse()
+{
+    check();
+    for( int p = 0; p < getdimension(); p++ )
+        setentry( p, 1./getentry( p ) ); 
+    return *this;
+}
+        
+        
+
 
 
 

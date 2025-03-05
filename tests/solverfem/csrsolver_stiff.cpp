@@ -258,7 +258,7 @@ int main( int argc, char *argv[] )
                         LOG << "CGM C++" << nl;
                     
                         FloatVector sol = sol_original;
-                        const FloatVector rhs = rhs_original;
+                        const FloatVector& rhs = rhs_original;
                         ConjugateGradientMethod solver( stiffness );
                         solver.print_modulo        = 0;
                         solver.tolerance           = desired_precision;
@@ -286,7 +286,7 @@ int main( int argc, char *argv[] )
                         LOG << "CRM C++" << nl;
                     
                         FloatVector sol = sol_original;
-                        const FloatVector rhs = rhs_original;
+                        const FloatVector& rhs = rhs_original;
                         ConjugateResidualMethod solver( stiffness );
                         // solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
                         // solver.print_modulo        = 1;
@@ -316,7 +316,7 @@ int main( int argc, char *argv[] )
                         LOG << "CRM C++" << nl;
                     
                         FloatVector sol = sol_original;
-                        const FloatVector rhs = rhs_original;
+                        const FloatVector& rhs = rhs_original;
                         ConjugateResidualMethod solver( stiffness );
                         // solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
                         // solver.print_modulo        = 1;
@@ -346,7 +346,7 @@ int main( int argc, char *argv[] )
                         LOG << "CRM C++" << nl;
                     
                         FloatVector sol = sol_original;
-                        const FloatVector rhs = rhs_original;
+                        const FloatVector& rhs = rhs_original;
                         ConjugateResidualMethod solver( stiffness );
                         // solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
                         // solver.print_modulo        = 1;
@@ -376,7 +376,7 @@ int main( int argc, char *argv[] )
                         LOG << "MINRES C++" << nl;
                     
                         FloatVector sol = sol_original;
-                        const FloatVector rhs = rhs_original;
+                        const FloatVector& rhs = rhs_original;
                         MinimumResidualMethod solver( stiffness );
                         // solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
                         // solver.print_modulo        = 1;
@@ -406,7 +406,7 @@ int main( int argc, char *argv[] )
                         LOG << "HERZOG SOODHALTER C++" << nl;
                     
                         FloatVector sol = sol_original;
-                        const FloatVector rhs = rhs_original;
+                        const FloatVector& rhs = rhs_original;
                         HerzogSoodhalterMethod solver( stiffness );
                         // solver.verbosity        = MinimumResidualMethod::VerbosityLevel::verbose;
                         // solver.print_modulo        = 1;
@@ -436,7 +436,7 @@ int main( int argc, char *argv[] )
                         LOG << "CGM - CSR Classic" << nl;
                     
                         FloatVector sol = sol_original;
-                        const FloatVector rhs = rhs_original;
+                        const FloatVector& rhs = rhs_original;
                         FloatVector residual( rhs );
                         auto max_iteration_count = sol.getdimension();
                         timestamp start = timestampnow();
@@ -472,7 +472,7 @@ int main( int argc, char *argv[] )
                         LOG << "CRM - CSR Classic" << nl;
                     
                         FloatVector sol = sol_original;
-                        const FloatVector rhs = rhs_original;
+                        const FloatVector& rhs = rhs_original;
                         FloatVector residual( rhs );
                         auto max_iteration_count = sol.getdimension();
                         timestamp start = timestampnow();
@@ -508,7 +508,7 @@ int main( int argc, char *argv[] )
                         LOG << "CRM - CSR Textbook" << nl;
                     
                         FloatVector sol = sol_original;
-                        const FloatVector rhs = rhs_original;
+                        const FloatVector& rhs = rhs_original;
                         FloatVector residual( rhs );
                         auto max_iteration_count = sol.getdimension();
                         timestamp start = timestampnow();
@@ -544,7 +544,7 @@ int main( int argc, char *argv[] )
                         LOG << "MINRES CSR" << nl;
                     
                         FloatVector sol = sol_original;
-                        const FloatVector rhs = rhs_original;
+                        const FloatVector& rhs = rhs_original;
                         FloatVector residual( rhs );
                         auto max_iteration_count = sol.getdimension();
                         timestamp start = timestampnow();
@@ -583,7 +583,7 @@ int main( int argc, char *argv[] )
 
                         
                         FloatVector sol = sol_original;
-                        const FloatVector rhs = rhs_original;
+                        const FloatVector& rhs = rhs_original;
                         FloatVector residual( rhs );
                         auto max_iteration_count = sol.getdimension();
                         timestamp start = timestampnow();
@@ -596,7 +596,7 @@ int main( int argc, char *argv[] )
                             residual.raw(),
                             desired_precision,
                             0,
-                            precon.getdiagonal().raw()
+                            precon.getDiagonal().raw()
                         );
 
                         timestamp end = timestampnow();
@@ -623,7 +623,7 @@ int main( int argc, char *argv[] )
 
                         
                         FloatVector sol = sol_original;
-                        const FloatVector rhs = rhs_original;
+                        const FloatVector& rhs = rhs_original;
                         FloatVector residual( rhs );
                         auto max_iteration_count = sol.getdimension();
                         timestamp start = timestampnow();
@@ -667,7 +667,7 @@ int main( int argc, char *argv[] )
 
                         
                         FloatVector sol = sol_original;
-                        const FloatVector rhs = rhs_original;
+                        const FloatVector& rhs = rhs_original;
                         FloatVector residual( rhs );
                         auto max_iteration_count = sol.getdimension();
                         timestamp start = timestampnow();
@@ -710,7 +710,7 @@ int main( int argc, char *argv[] )
                         Rainbow rainbow( stiffness );
                         
                         FloatVector sol = sol_original;
-                        const FloatVector rhs = rhs_original;
+                        const FloatVector& rhs = rhs_original;
                         FloatVector residual( rhs );
                         auto max_iteration_count = sol.getdimension();
                         timestamp start = timestampnow();
@@ -754,7 +754,7 @@ int main( int argc, char *argv[] )
                         Rainbow rainbow( stiffness );
                         
                         FloatVector sol = sol_original;
-                        const FloatVector rhs = rhs_original;
+                        const FloatVector& rhs = rhs_original;
                         FloatVector residual( rhs );
                         auto max_iteration_count = sol.getdimension();
                         timestamp start = timestampnow();
@@ -794,11 +794,11 @@ int main( int argc, char *argv[] )
                         LOG << "CHEBYSHEV CSR" << nl;
                     
                         DiagonalOperator invprecon = InverseDiagonalPreconditioner( stiffness_csr_prelim );
-                        assert( invprecon.getdiagonal().is_finite() );
-                        assert( invprecon.getdiagonal().is_nonnegative() );
+                        assert( invprecon.getDiagonal().is_finite() );
+                        assert( invprecon.getDiagonal().is_nonnegative() );
                         
                         FloatVector sol = sol_original;
-                        const FloatVector rhs = rhs_original;
+                        const FloatVector& rhs = rhs_original;
                         FloatVector residual( rhs );
                         auto max_iteration_count = sol.getdimension();
                         timestamp start = timestampnow();
@@ -811,9 +811,9 @@ int main( int argc, char *argv[] )
                             residual.raw(),
                             desired_precision,
                             10,
-                            invprecon.getdiagonal().raw(),
+                            invprecon.getDiagonal().raw(),
                             0.,
-                            100 * invprecon.getdiagonal().maxnorm()
+                            100 * invprecon.getDiagonal().maxnorm()
                         );
 
                         timestamp end = timestampnow();

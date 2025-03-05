@@ -160,8 +160,8 @@ int main( int argc, char *argv[] )
                 
                 auto stiffness_invprecon_s = DiagonalOperator( stiffness_s.getdimin(), 1. );
                 auto stiffness_invprecon_w = DiagonalOperator( stiffness_w.getdimin(), 1. );
-                LOG << "Average value of diagonal preconditioner (Sullivan): " << stiffness_invprecon_s.getdiagonal().average() << nl;
-                LOG << "Average value of diagonal preconditioner (Whitney) : " << stiffness_invprecon_w.getdiagonal().average() << nl;
+                LOG << "Average value of diagonal preconditioner (Sullivan): " << stiffness_invprecon_s.getDiagonal().average() << nl;
+                LOG << "Average value of diagonal preconditioner (Whitney) : " << stiffness_invprecon_w.getDiagonal().average() << nl;
 
                 {
 

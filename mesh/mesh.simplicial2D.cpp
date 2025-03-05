@@ -3276,7 +3276,7 @@ std::string MeshSimplicial2D::outputTikZ() const
 inline std::string rgb_to_string( unsigned char r, unsigned char g, unsigned char b )
 {
     char result[8] = {0,0,0,0,0,0,0,0};
-    snprintf(result, countof(result), "#%02x%02x%02x", r, g, b);
+    (void_discard)snprintf(result, countof(result), "#%02x%02x%02x", r, g, b);
     return std::string( result );
 }
 
@@ -3306,12 +3306,12 @@ inline std::string render_number( double num, int tail = 8 )
     // int lead = leading_digits( num );
     // const int str_number_of_chars = 1+lead+1+tail+1;
     // char str[str_number_of_chars];
-    // snprintf( str, str_number_of_chars, "% *.*f", 1+lead+1+tail, tail, num);
+    // (void_discard)snprintf( str, str_number_of_chars, "% *.*f", 1+lead+1+tail, tail, num);
 
     const int str_number_of_printed_chars = ( 1 + 1 + 1 ) + tail + 1 + (4);
     assert( str_number_of_printed_chars >= 0 );
     char str[str_number_of_printed_chars+1];
-    snprintf( str, str_number_of_printed_chars, "%.*e", tail, num );
+    (void_discard)snprintf( str, str_number_of_printed_chars, "%.*e", tail, num );
     
     return std::string(str);
 }

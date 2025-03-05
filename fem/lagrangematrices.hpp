@@ -31,7 +31,7 @@ SparseMatrix LagrangeBrokenMassMatrix( const Mesh& mesh, int r );
 ///////////////////////////////////////////////////////
 
 SparseMatrix LagrangeMassMatrix( const Mesh& mesh, int r );
-MatrixCSR LagrangeCoefficientMassMatrix( const Mesh& mesh, int r, int w, const std::function<Float(const FloatVector&)> weight );
+MatrixCSR LagrangeCoefficientMassMatrix( const Mesh& mesh, int r, int w, const std::function<Float(const FloatVector&)>& weight );
 
 
 
@@ -57,7 +57,7 @@ SparseMatrix LagrangeBrokenStiffnessMatrix( const Mesh& mesh, int r );
 //////////////////////////////////////////////////////////////
 
 SparseMatrix LagrangeStiffnessMatrix( const Mesh& mesh, int r );
-MatrixCSR LagrangeCoefficientStiffnessMatrix( const Mesh& mesh, int r, int w, const std::function<DenseMatrix(const FloatVector&)> weight );
+MatrixCSR LagrangeCoefficientStiffnessMatrix( const Mesh& mesh, int r, int w, const std::function<DenseMatrix(const FloatVector&)>& weight );
 
 
 

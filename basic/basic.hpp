@@ -63,7 +63,7 @@
 #include <vector>
 
 
-
+typedef void void_discard;
 
 
 #include "debug.hpp"

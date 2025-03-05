@@ -16,7 +16,7 @@
 
 
 
-SparseMatrix FEECBrokenVeeMatrix( const Mesh& mesh, int n, int k, int r , int l, int s, FloatVector field )
+SparseMatrix FEECBrokenVeeMatrix( const Mesh& mesh, int n, int k, int r , int l, int s, const FloatVector& field )
 {
     
     // check whether the parameters are right 
@@ -127,7 +127,7 @@ SparseMatrix FEECBrokenVeeMatrix( const Mesh& mesh, int n, int k, int r , int l,
 
 
 
-SparseMatrix FEECBrokenWedgeMatrix( const Mesh& mesh, int n, int k, int r , int l, int s, FloatVector field )
+SparseMatrix FEECBrokenWedgeMatrix( const Mesh& mesh, int n, int k, int r , int l, int s, const FloatVector& field )
 {
     
     // check whether the parameters are right 

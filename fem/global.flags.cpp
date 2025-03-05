@@ -66,7 +66,7 @@ DiagonalOperator FEECSullivanFlagMatrix( const Mesh& mesh, int n, int k, int r )
 
         assert( 0 <= continuous_index and continuous_index < dim_continuous  );
 
-        ret.getdiagonal().setentry( continuous_index, mesh.get_flag( d, f ) == SimplexFlag::SimplexFlagDirichlet ? 0. : 1. );
+        ret.getDiagonal().setentry( continuous_index, mesh.get_flag( d, f ) == SimplexFlag::SimplexFlagDirichlet ? 0. : 1. );
         
     }
     
@@ -126,7 +126,7 @@ DiagonalOperator FEECWhitneyFlagMatrix( const Mesh& mesh, int n, int k, int r )
 
         assert( 0 <= continuous_index and continuous_index < dim_continuous  );
 
-        ret.getdiagonal().setentry( continuous_index, mesh.get_flag( d, f ) == SimplexFlag::SimplexFlagDirichlet ? 0. : 1. );
+        ret.getDiagonal().setentry( continuous_index, mesh.get_flag( d, f ) == SimplexFlag::SimplexFlagDirichlet ? 0. : 1. );
 
     }
     

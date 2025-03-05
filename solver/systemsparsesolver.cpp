@@ -128,7 +128,7 @@ int HodgeConjugateResidualSolverCSR_diagonal(
     
     int k = 0;
     
-    if( print_modulo >= 0 ) LOGPRINTF( "START Hodge Conjugate Residual (diag) CSR\n" );
+    if( print_modulo >= 0 ) LOGPRINTF( "(%d) START Hodge Conjugate Residual (diag) CSR\n", N );
 
     while( k < N ){
         
@@ -482,7 +482,7 @@ int HodgeConjugateResidualSolverCSR_SSOR(
     
     int k = 0;
     
-    if( print_modulo >= 0 ) LOGPRINTF( "START Hodge Conjugate Residual (SSOR) CSR\n" );
+    if( print_modulo >= 0 ) LOGPRINTF( "(%d) START Hodge Conjugate Residual (SSOR) CSR\n", N );
 
     while( k < N ){
         
@@ -818,7 +818,7 @@ int HodgeConjugateResidualSolverCSR_textbook(
     
     int k = 0;
     
-    if( print_modulo >= 0 ) LOGPRINTF( "START Hodge Conjugate Residual (textbook) CSR\n" );
+    if( print_modulo >= 0 ) LOGPRINTF( "(%d) START Hodge Conjugate Residual (textbook) CSR\n", N );
 
     while( k < N ){
         
@@ -1169,7 +1169,7 @@ int HodgeHerzogSoodhalterMethod(
         assert( PCvalues );
     }
     
-    if( print_modulo >= 0 ) LOGPRINTF( "START Hodge Herzog-Soodhalter CSR\n" );
+    if( print_modulo >= 0 ) LOGPRINTF( "(%d) START Hodge Herzog-Soodhalter CSR\n", max_iteration_count );
     
     if( precon_A_available ) LOGPRINTF("      Preconditioner for A detected\n");
     if( precon_C_available ) LOGPRINTF("      Preconditioner for C detected\n");

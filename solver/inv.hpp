@@ -59,7 +59,7 @@ class InverseOperator
                     + tab_each_line( op.text() );
         }
         
-         using LinearOperator::apply; // import any 'apply' into the derived class' methods
+        using LinearOperator::apply; // import any 'apply' into the derived class' methods
         virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling = 1. ) const override;
         
     protected:
@@ -110,7 +110,7 @@ class PseudoInverseOperator final
                     + tab_each_line( op.text() );
         }
         
-         using LinearOperator::apply; // import any 'apply' into the derived class' methods
+        using LinearOperator::apply; // import any 'apply' into the derived class' methods
         virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling = 1. ) const override;
         
     

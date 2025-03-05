@@ -78,7 +78,7 @@ class Logger //: public std::ostringstream
 
         Logger& operator<<( const void* input ) {
             char buffer[ sizeof(decltype(input)) * 2 + 10 + 1 ]; // how pointers are printed is implementation-defined 
-            std::snprintf( buffer, sizeof(buffer), "%p", input );
+            (void_discard)std::snprintf( buffer, sizeof(buffer), "%p", input );
             internal += buffer;
             return *this;
         }
@@ -87,7 +87,7 @@ class Logger //: public std::ostringstream
         typename std::enable_if< std::is_integral<T>::value && std::is_signed<T>::value, Logger&>::type
         operator<<(T input) {
             char buffer[ std::numeric_limits<T>::digits10+1 + 1 + 1];
-            std::snprintf(buffer, sizeof(buffer), "%jd", static_cast<intmax_t>(input));
+            (void_discard)std::snprintf(buffer, sizeof(buffer), "%jd", static_cast<intmax_t>(input));
             internal += buffer;
             return *this;
         }
@@ -96,7 +96,7 @@ class Logger //: public std::ostringstream
         typename std::enable_if< std::is_integral<T>::value && std::is_unsigned<T>::value, Logger&>::type
         operator<<(T input) {
             char buffer[ std::numeric_limits<T>::digits10+1 + 1 + 1];
-            std::snprintf(buffer, sizeof(buffer), "%ju", static_cast<uintmax_t>(input));
+            (void_discard)std::snprintf(buffer, sizeof(buffer), "%ju", static_cast<uintmax_t>(input));
             internal += buffer;
             return *this;
         }
@@ -110,14 +110,14 @@ class Logger //: public std::ostringstream
     
         // Logger& operator<<( intmax_t input ) {
         //     char buffer[ sizeof(decltype(input)) * 3 + 1 + 1 ];
-        //     std::snprintf( buffer, sizeof(buffer), "%jd", input );
+        //     (void_discard)std::snprintf( buffer, sizeof(buffer), "%jd", input );
         //     internal += buffer;
         //     return *this;
         // }
 
         // Logger& operator<<( uintmax_t input ) {
         //     char buffer[ sizeof(decltype(input)) * 3 + 1 + 1 ];
-        //     std::snprintf( buffer, sizeof(buffer), "%ju", input );
+        //     (void_discard)std::snprintf( buffer, sizeof(buffer), "%ju", input );
         //     internal += buffer;
         //     return *this;
         // }
@@ -126,7 +126,7 @@ class Logger //: public std::ostringstream
         // typename std::enable_if<std::is_floating_point<T>::value, Logger&>::type
         // operator<<( T input ) {
         //     char buffer[ std::numeric_limits<float>::max_digits10 + std::numeric_limits<float>::max_exponent10 + 10 + 1];
-        //     std::snprintf( buffer, sizeof(buffer), "%.10lg", (double)(safedouble)input );
+        //     (void_discard)std::snprintf( buffer, sizeof(buffer), "%.10lg", (double)(safedouble)input );
         //     internal += buffer;
         //     return *this;
         // }
@@ -137,14 +137,14 @@ class Logger //: public std::ostringstream
 
         Logger& operator<<( double input ) {
             char buffer[ std::numeric_limits<double>::max_digits10 + std::numeric_limits<double>::max_exponent10 + 10 + 1];
-            std::snprintf( buffer, sizeof(buffer), "%.10g", input );
+            (void_discard)std::snprintf( buffer, sizeof(buffer), "%.10g", input );
             internal += buffer;
             return *this;
         }
 
         Logger& operator<<( long double input ) {
             char buffer[ std::numeric_limits<long double>::max_digits10 + std::numeric_limits<long double>::max_exponent10 + 10 + 1];
-            std::snprintf( buffer, sizeof(buffer), "%.10lg", (double)(safedouble)input );
+            (void_discard)std::snprintf( buffer, sizeof(buffer), "%.10lg", (double)(safedouble)input );
             internal += buffer;
             return *this;
         }
@@ -216,7 +216,7 @@ class Logger //: public std::ostringstream
     
 //     // std::size_t length = std::snprintf(nullptr, 0, formatstring, args... ) + 1;
 //     // char* str = new char[length];
-//     // std::snprintf( str, length, formatstring, args... );
+//     // (void_discard)std::snprintf( str, length, formatstring, args... );
     
 //     // logger << str;
 
@@ -340,8 +340,8 @@ class Logger //: public std::ostringstream
 
 struct System_Reporter
 {
-    System_Reporter();
-    ~System_Reporter();
+    System_Reporter() noexcept;
+    ~System_Reporter() noexcept;
     void output();
 };
 
