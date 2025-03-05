@@ -66,7 +66,7 @@ void Inverse_CramersRule_InSitu( DenseMatrix& );
 void Inverse_gauss_InSitu( DenseMatrix&, bool pivoting = true );
 
 
-DenseMatrix MatrixTensorProduct( const DenseMatrix& left, const DenseMatrix& right );
+DenseMatrix MatrixTensorProduct( const DenseMatrix& A, const DenseMatrix& B );
 
 
 

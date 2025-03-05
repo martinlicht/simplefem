@@ -95,9 +95,9 @@ class MeshSimplicial2D
         virtual const std::vector<int> get_supersimplices( int sup, int sub, int cell ) const override;
         
         
-        virtual SimplexFlag get_flag( int dim, int index ) const override;
+        virtual SimplexFlag get_flag( int dim, int cell ) const override;
         
-        virtual void set_flag( int dim, int index, SimplexFlag flag ) override;
+        virtual void set_flag( int dim, int cell, SimplexFlag flag ) override;
         
         
         

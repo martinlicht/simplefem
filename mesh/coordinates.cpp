@@ -32,7 +32,7 @@ Coordinates::Coordinates( int dimension, int number, const std::vector<Float>& d
 
 Coordinates::~Coordinates()
 {
-    // Coordinates::check();
+    Coordinates::check();
 }
 
 void Coordinates::check() const

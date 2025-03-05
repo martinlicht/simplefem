@@ -185,9 +185,9 @@ class Mesh
          * 
          */
         
-        virtual SimplexFlag get_flag( int dim, int index ) const = 0;
+        virtual SimplexFlag get_flag( int dim, int cell ) const = 0;
         
-        virtual void set_flag( int dim, int index, SimplexFlag flag ) = 0;
+        virtual void set_flag( int dim, int cell, SimplexFlag flag ) = 0;
         
         void set_flags( int dim, SimplexFlag flag );
         
@@ -199,7 +199,7 @@ class Mesh
         
         void complete_dirichlet_flags_from_facets();
         
-        void check_dirichlet_flags( bool check_for_full_dirichlet = true );
+        void check_dirichlet_flags( bool check_for_full_dirichlet = true ) const;
         
         
         /* 
@@ -212,12 +212,12 @@ class Mesh
         Float getMaximumDiameter() const;
         Float getMinimumDiameter() const;
         
-        Float getMeasure( int dim, int index ) const;
+        Float getMeasure( int dim, int cell ) const;
         
-        Float getHeight( int dim, int index, int vertexindex ) const;
-        FloatVector getHeightVector( int dim, int index, int vertexindex ) const;
+        Float getHeight( int dim, int cell, int vertexindex ) const;
+        FloatVector getHeightVector( int dim, int cell, int vertexindex ) const;
         
-        Float getHeightQuotient( int dim, int index ) const;
+        Float getHeightQuotient( int dim, int cell ) const;
         Float getHeightQuotient( int dim ) const;
         Float getHeightQuotient() const;
         

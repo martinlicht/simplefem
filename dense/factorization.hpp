@@ -6,14 +6,14 @@
 #include "densematrix.hpp"
 
 
-DenseMatrix GaussJordan( DenseMatrix mat );
+DenseMatrix GaussJordan( DenseMatrix A );
 
-DenseMatrix GaussJordanInplace( DenseMatrix mat, bool pivoting = true );
+DenseMatrix GaussJordanInplace( DenseMatrix A, bool pivoting = true );
 
 
-DenseMatrix CholeskyDecomposition( const DenseMatrix& src );
+DenseMatrix CholeskyDecomposition( const DenseMatrix& A );
 
-DenseMatrix CholeskyDecompositionBanachchiewicz( const DenseMatrix& src );
+DenseMatrix CholeskyDecompositionBanachchiewicz( const DenseMatrix& A );
 
 
 void QRFactorization( const DenseMatrix& A, DenseMatrix& Q, DenseMatrix& R );
@@ -24,7 +24,7 @@ Float QRFactorization_via_Householder( const DenseMatrix& A, DenseMatrix& Q, Den
 
 FloatVector QRIteration( DenseMatrix A, int repetitions = 100 );
 
-FloatVector SolveOverconstrained( const DenseMatrix& A, const FloatVector& v );
+FloatVector SolveOverconstrained( const DenseMatrix& A, const FloatVector& b );
 
 
 

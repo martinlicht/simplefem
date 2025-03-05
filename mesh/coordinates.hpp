@@ -72,8 +72,8 @@ class Coordinates
         
         FloatVector getvectorclone( int n ) const;
         FloatVector getvectorclone( int n, Float s ) const;
-        void loadvector( int n, const FloatVector& value );
-        void loadvector( int n, const FloatVector& value, Float s );
+        void loadvector( int n, const FloatVector& input );
+        void loadvector( int n, const FloatVector& input, Float s );
         
         /* get/set coordinates as vectors  */
         

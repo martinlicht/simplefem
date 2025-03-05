@@ -29,9 +29,9 @@
 
 
 
-Float alpha(const Float x);
+Float alpha(const Float& x);
 
-Float alpha_dev(const Float x);
+Float alpha_dev(const Float& x);
 
 FloatVector trafo(const FloatVector& vec);
 
@@ -54,12 +54,12 @@ FloatVector IncreaseResolution( const MeshSimplicial3D& mesh, const FloatVector&
 
 
 
-Float alpha(const Float x) { 
+Float alpha(const Float& x) { 
     Float maxnorm = absolute(x);
     return std::exp( 1 - 1. / maxnorm );
 }
 
-Float alpha_dev(const Float x) { 
+Float alpha_dev(const Float& x) { 
     Float maxnorm = absolute(x);
     Float maxnorm_sq = square(maxnorm);            
     return std::exp( 1 - 1. / maxnorm ) / ( maxnorm_sq );
@@ -400,7 +400,7 @@ int main( int argc, char *argv[] )
                 LOG << "...update saved old solutions:" << nl;
                 if( l > min_l )
                 {
-                    std::vector<FloatVector> new_solutions;
+                    std::vector<FloatVector> new_solutions; new_solutions.reserve( solutions.size() );
 
                     const auto& old_M = meshes[ l - min_l - 1 ];
 

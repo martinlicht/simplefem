@@ -12,12 +12,13 @@
 #include "convergencetable.hpp"
 
 
+const int standard_minimum_printed_precision = 15;
 
 ConvergenceTable::ConvergenceTable( const std::string& table_name )
 : table_name(table_name), 
     display_convergence_rates( true ),
     print_rowwise_instead_of_columnwise(false),
-    minimum_printed_precision( 15 )
+    minimum_printed_precision( standard_minimum_printed_precision )
 {
     make_new_row = true;
     LOG << "Table created! " << this << nl;
@@ -108,7 +109,9 @@ std::string ConvergenceTable::text( bool display_convergence_rates ) const
 {
     std::ostringstream ss;
 
-    ss << std::string( 80, '-' ) << nl;
+    const std::size_t separator_stripe_length = 80;
+
+    ss << std::string( separator_stripe_length, '-' ) << nl;
     
     if( print_rowwise_instead_of_columnwise )
         ss << text_transpose( display_convergence_rates );
@@ -117,7 +120,7 @@ std::string ConvergenceTable::text( bool display_convergence_rates ) const
     
     ss << nl;
     
-    ss << std::string( 80, '-' ) << nl;
+    ss << std::string( separator_stripe_length, '-' ) << nl;
 
     return ss.str();
 }

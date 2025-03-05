@@ -236,7 +236,7 @@ class DiagonalOperator final
         using LinearOperator::apply; // import any 'apply' into the derived class' methods
         virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override;
         
-        const DiagonalOperator sqrt() const;
+        DiagonalOperator sqrt() const;
 
     private:
 

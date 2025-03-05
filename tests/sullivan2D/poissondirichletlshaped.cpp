@@ -218,7 +218,7 @@ int main( int argc, char *argv[] )
                 LOG << "...update saved old solutions:" << nl;
                 if( l > min_l )
                 {
-                    std::vector<FloatVector> new_solutions;
+                    std::vector<FloatVector> new_solutions; new_solutions.reserve( solutions.size() );
 
                     const auto& old_M = meshes[ l - min_l - 1 ];
 

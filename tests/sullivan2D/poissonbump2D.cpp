@@ -142,7 +142,7 @@ int main( int argc, char *argv[] )
                 
                 auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. );
 //                     auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
-                LOG << "Average value of diagonal preconditioner: " << stiffness_invprecon.getdiagonal().average() << nl;
+                LOG << "Average value of diagonal preconditioner: " << stiffness_invprecon.getDiagonal().average() << nl;
 
                 {
 
