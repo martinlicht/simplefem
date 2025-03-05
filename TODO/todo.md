@@ -12,6 +12,9 @@
 
 #	----------- UPKEEP & MINOR FIXES -------------
 
+[ ] make sure that self-assignment is handled _explicitly_ whenever assignment operators are defined
+[ ] move constructors and assignment operators should be marked noexcept 
+
 [ ] lshaped maxwell: correct stuff 
 [ ] neumann estimate 
 [ ] make sure that allone vectors are not used for constant functions. That only works if r=1. Name: constant_one

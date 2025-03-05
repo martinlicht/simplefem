@@ -47,7 +47,7 @@ public LinearOperator /* every matrix is a linear operator */
         /* Constructors */
         
         explicit SparseMatrix( int dimout, int dimin, int numentries = 0, 
-                               std::function<MatrixEntry(int)> generator = [](int)->MatrixEntry{ return MatrixEntry(0,0,notanumber); } ); 
+                               const std::function<MatrixEntry(int)>& generator = [](int)->MatrixEntry{ return MatrixEntry(0,0,notanumber); } ); 
         // explicit SparseMatrix( int dimout, int dimin );
         explicit SparseMatrix( int dimout, int dimin, const std::vector<MatrixEntry>& entries );
         explicit SparseMatrix( int dimout, int dimin, const std::initializer_list<MatrixEntry>& entries );
@@ -80,7 +80,7 @@ public LinearOperator /* every matrix is a linear operator */
         }
         
         
-        using LinearOperator::apply;
+        using LinearOperator::apply; // import any 'apply' into the derived class' methods
         virtual void apply( FloatVector& dest, const FloatVector& add, Float scaling ) const override;
 
         
@@ -135,6 +135,10 @@ public LinearOperator /* every matrix is a linear operator */
         /* Memory size */
         
         std::size_t memorysize() const;
+
+        /* graphical output */
+
+        void save_graphics( const char* filepath ) const;
         
     private:
 

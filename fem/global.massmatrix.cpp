@@ -391,7 +391,7 @@ SparseMatrix FEECBrokenMassMatrixRightFactor( const Mesh& mesh, int n, int k, in
 
 
 
-FloatVector FEECBrokenMassMatrix_cellwisemass( const Mesh& mesh, int n, int k, int r, const FloatVector vec )
+FloatVector FEECBrokenMassMatrix_cellwisemass( const Mesh& mesh, int n, int k, int r, const FloatVector& vec )
 {
     
     // check whether the parameters are right 

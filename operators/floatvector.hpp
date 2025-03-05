@@ -123,6 +123,9 @@ class FloatVector
         
         FloatVector& shiftnegative( Float value );
         
+        /* inverse */
+
+        FloatVector& inverse();
         
         /* slices */
         

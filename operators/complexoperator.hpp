@@ -102,7 +102,7 @@ class ComplexOperator final
             return new typename std::remove_reference<decltype(*this)>::type( std::move(*this) );
         }
         
-        using LinearOperator::apply;
+        using LinearOperator::apply; // import any 'apply' into the derived class' methods
         virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override;
         
     private:

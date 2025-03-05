@@ -39,7 +39,7 @@ DenseMatrix EuclideanHodgeStar( int n, int k )
 
         for( ; c < sigmas_in.size(); c++ ) 
         {
-            auto sigma_in = sigmas_in[c];
+            const auto& sigma_in = sigmas_in[c];
 
             bool common_index = false;
 

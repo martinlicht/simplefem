@@ -21,7 +21,7 @@ using namespace std;
 
 // TODO: replace by pivoted row and column elimination
 
-static Float lowest( const FloatVector vec, Float threshold )
+static Float lowest( const FloatVector& vec, Float threshold )
 {
     assert( vec.getdimension() > 0 and threshold >= -desired_closeness );
     Float ret = vec[0];

@@ -45,7 +45,7 @@ class IdentityOperator final
             return new typename std::remove_reference<decltype(*this)>::type( std::move(*this) );
         }
         
-        using LinearOperator::apply;
+        using LinearOperator::apply; // import any 'apply' into the derived class' methods
         virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override;
     
 };
@@ -104,7 +104,7 @@ class ZeroOperator final
             return new typename std::remove_reference<decltype(*this)>::type( std::move(*this) );
         }
         
-        using LinearOperator::apply;
+        using LinearOperator::apply; // import any 'apply' into the derived class' methods
         virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override;
     
 };
@@ -159,7 +159,7 @@ class ScalingOperator final
         Float getscaling() const;
         void setscaling( Float s );
 
-        using LinearOperator::apply;
+        using LinearOperator::apply; // import any 'apply' into the derived class' methods
         virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override;
 
     private:
@@ -230,10 +230,10 @@ class DiagonalOperator final
         }
         
 
-        FloatVector& getdiagonal();
-        const FloatVector& getdiagonal() const;
+        FloatVector& getDiagonal();
+        const FloatVector& getDiagonal() const;
         
-        using LinearOperator::apply;
+        using LinearOperator::apply; // import any 'apply' into the derived class' methods
         virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override;
         
         const DiagonalOperator sqrt() const;
@@ -254,8 +254,8 @@ inline DiagonalOperator operator*( const DiagonalOperator& left, const DiagonalO
     assert( left.getdimin() == right.getdimout() );
     assert( left.getdimout() == right.getdimin() );
     
-    const FloatVector& leftdia = left.getdiagonal();
-    const FloatVector& rightdia = right.getdiagonal();
+    const FloatVector& leftdia = left.getDiagonal();
+    const FloatVector& rightdia = right.getDiagonal();
     // const int dimension = leftdia.getdimension();
     
     assert( leftdia.getdimension() == rightdia.getdimension() );
@@ -289,8 +289,8 @@ class LambdaOperator final
 
         /* Constructors */
         
-        explicit LambdaOperator( int dim, std::function<FloatVector(const FloatVector&)> );
-        explicit LambdaOperator( int dimout, int dimin, std::function<FloatVector(const FloatVector&)> );
+        explicit LambdaOperator( int dim, const std::function<FloatVector(const FloatVector&)>& );
+        explicit LambdaOperator( int dimout, int dimin, const std::function<FloatVector(const FloatVector&)>& );
         
         /* standard interface */
         
@@ -314,7 +314,7 @@ class LambdaOperator final
             return new typename std::remove_reference<decltype(*this)>::type( std::move(*this) );
         }
         
-        using LinearOperator::apply;
+        using LinearOperator::apply; // import any 'apply' into the derived class' methods
         virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const override;
 
     private:

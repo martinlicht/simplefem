@@ -16,7 +16,7 @@ using namespace std;
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Tests: some basic tests of Solvers" << nl;
+    LOG << "Unit Tests: some basic tests of solvers" << nl;
 
     {
         
@@ -69,41 +69,76 @@ int main( int argc, char *argv[] )
         }
         // A.sortentries();
         
-        SparseMatrix M( dimension, dimension );
-        M.reserve( dimension );
+        auto M = IdentityOperator( dimension );
         
-        for( int i = 0; i < dimension; i++ ){
-            M.appendentry( i, i, 1./2.51 );
-        }
-        // A.sortentries();
+        // SparseMatrix M( dimension, dimension );
+        // M.reserve( dimension );
+        // for( int i = 0; i < dimension; i++ ){
+        //     M.appendentry( i, i, 1./2.51 );
+        // }
+        // // M.sortentries();
         
         LOG << "Compute stuff." << nl;
         
         FloatVector b = A * x;
+
+        FloatVector y_original( dimension ); y_original.random();
         
         {
-            FloatVector y( dimension );
-            srand(0);
-            y.random();
-            
-            ConjugateResidualMethod CRM(A);
-            CRM.max_iteration_count = dimension;
-            CRM.tolerance = desired_precision;
+            FloatVector y = y_original;
+
+            ConjugateGradientMethod CGM(A);
+            CGM.verbosity = IterativeSolver::VerbosityLevel::startandfinish;
+            CGM.print_modulo = 0;
+            CGM.max_iteration_count = 2 * dimension;
+            CGM.tolerance = desired_precision;
             
             timestamp start, end;
             start = timestampnow();
-            CRM.solve(y,b);
+            CGM.solve(y,b);
             end = timestampnow();
             LOG << timestamp2measurement( end - start ) << nl;
         }
         
         {
-            FloatVector y( dimension );
-            srand(0);
-            y.random();
+            FloatVector y = y_original;
+
+            PreconditionedConjugateGradientMethod PCGM(A,M);
+            PCGM.verbosity = IterativeSolver::VerbosityLevel::startandfinish;
+            PCGM.print_modulo = 0;
+            PCGM.max_iteration_count = 2 * dimension;
+            PCGM.tolerance = desired_precision;
+            
+            timestamp start, end;
+            start = timestampnow();
+            PCGM.solve(y,b);
+            end = timestampnow();
+            LOG << timestamp2measurement( end - start ) << nl;
+        }
+        
+        {
+            FloatVector y = y_original;
+            
+            ConjugateResidualMethod CRM(A);
+            CRM.verbosity = IterativeSolver::VerbosityLevel::startandfinish;
+            CRM.print_modulo = 0;
+            CRM.max_iteration_count = 2 * dimension;
+            CRM.tolerance = desired_precision;
+            
+            timestamp start, end;
+            start = timestampnow();
+            CRM.solve_explicit(y,b);
+            end = timestampnow();
+            LOG << timestamp2measurement( end - start ) << nl;
+        }
+        
+        {
+            FloatVector y = y_original;
             
             PreconditionedConjugateResidualMethod PCRM(A,M);
-            PCRM.max_iteration_count = dimension;
+            PCRM.verbosity = IterativeSolver::VerbosityLevel::startandfinish;
+            PCRM.print_modulo = 0;
+            PCRM.max_iteration_count = 2 * dimension;
             PCRM.tolerance = desired_precision;
             
             timestamp start, end;
@@ -114,12 +149,12 @@ int main( int argc, char *argv[] )
         }
         
         {
-            FloatVector y( dimension );
-            srand(0);
-            y.random();
+            FloatVector y = y_original;
             
             MinimumResidualMethod MINRES(A);
-            MINRES.max_iteration_count = dimension;
+            MINRES.verbosity = IterativeSolver::VerbosityLevel::startandfinish;
+            MINRES.print_modulo = 0;
+            MINRES.max_iteration_count = 2 * dimension;
             MINRES.tolerance = desired_precision;
             
             timestamp start, end;
@@ -158,12 +193,10 @@ int main( int argc, char *argv[] )
         FloatVector b = A * x;
         
         {
-            FloatVector y( dimension );
-            srand(0);
-            y.random();
+            FloatVector y( dimension ); srand(0); y.random();
             
             MinimumResidualMethod MINRES(A);
-            MINRES.max_iteration_count = dimension;
+            MINRES.max_iteration_count = 2 * dimension;
             MINRES.tolerance = desired_precision;
             
             timestamp start, end;

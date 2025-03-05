@@ -36,9 +36,9 @@ public LinearOperator /* every matrix is a linear operator */
                             const std::vector<Float>& V );
 
         explicit MatrixCSR( int rows, int columns, 
-                            const std::vector<int>&& A, 
-                            const std::vector<int>&& C, 
-                            const std::vector<Float>&& V );
+                            std::vector<int>&& A, 
+                            std::vector<int>&& C, 
+                            std::vector<Float>&& V );
 
         explicit MatrixCSR( const SparseMatrix& mat );
 
@@ -69,7 +69,7 @@ public LinearOperator /* every matrix is a linear operator */
         }
         
         
-        using LinearOperator::apply;
+        using LinearOperator::apply; // import any 'apply' into the derived class' methods
         virtual void apply( FloatVector& dest, const FloatVector& add, Float scaling ) const override;
         
         
@@ -105,6 +105,10 @@ public LinearOperator /* every matrix is a linear operator */
         /* Memory size */
         
         std::size_t memorysize() const;
+
+        /* graphical output */
+
+        void save_graphics( const char* filepath ) const;
         
         
         
@@ -131,7 +135,6 @@ DiagonalOperator InverseDiagonalPreconditioner( const MatrixCSR& mat );
 
 inline MatrixCSR operator+( const MatrixCSR& mat1, const MatrixCSR& mat2 )
 {
-//     LOG << "ADD" << nl; 
     return MatrixCSRAddition( mat1, mat2, 1., 1. );
 }
 

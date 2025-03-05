@@ -67,8 +67,9 @@ class LinearOperator
         /* Apply the operator */
         
         /* x := s A y */
-        virtual FloatVector apply( const FloatVector& src, Float scaling = 1. ) const;
-        virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling = 1. ) const = 0;
+        virtual FloatVector apply( const FloatVector& src ) const;
+        virtual FloatVector apply( const FloatVector& src, Float scaling ) const;
+        virtual void apply( FloatVector& dest, const FloatVector& src, Float scaling ) const = 0;
         
         FloatVector createinputvector() const;
         FloatVector createoutputvector() const;
@@ -88,7 +89,7 @@ inline FloatVector operator*( const LinearOperator& op, const FloatVector& vec )
     op.check();
     vec.check();
     FloatVector ret( op.getdimout() );
-    op.apply( ret, vec );
+    op.apply( ret, vec, 1. );
     vec.check();
     return ret;
 }

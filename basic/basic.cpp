@@ -68,7 +68,7 @@ std::string printf_into_string( const char* formatstring, ... )
     char* c_str = new char[length];
     
     va_start( args, formatstring );
-    std::vsnprintf( c_str, length, formatstring, args );
+    (void_discard)std::vsnprintf( c_str, length, formatstring, args );
     va_end( args );
     
     std::string ret( c_str );
@@ -127,7 +127,7 @@ std::string timestamp2digitalcode( const timestamp& t )
     const int fulllength = numdigits+1;
     char digits[fulllength];
     assert( t < 9999999999 ); // ca. 115 days 
-    snprintf( digits, fulllength, "%*ju", numdigits, (uintmax_t)t );
+    (void_discard)snprintf( digits, fulllength, "%*ju", numdigits, (uintmax_t)t );
     for( int i = 0; i < numdigits; i++ ) if( digits[i] == ' ' ) digits[i] = '_';
     return std::string(digits);
 }

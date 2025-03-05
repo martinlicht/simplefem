@@ -323,7 +323,7 @@ SparseMatrix LagrangeInclusionMatrix( const Mesh& mesh, int n, int r )
 
 
 
-MatrixCSR LagrangeCoefficientMassMatrix( const Mesh& mesh, int r, int w, const std::function<Float(const FloatVector&)> weight )
+MatrixCSR LagrangeCoefficientMassMatrix( const Mesh& mesh, int r, int w, const std::function<Float(const FloatVector&)>& weight )
 {
     
     // check whether the parameters are right 
@@ -542,7 +542,7 @@ MatrixCSR LagrangeCoefficientMassMatrix( const Mesh& mesh, int r, int w, const s
 
 
 
-MatrixCSR LagrangeCoefficientStiffnessMatrix( const Mesh& mesh, int r, int w, const std::function<DenseMatrix(const FloatVector&)> weight )
+MatrixCSR LagrangeCoefficientStiffnessMatrix( const Mesh& mesh, int r, int w, const std::function<DenseMatrix(const FloatVector&)>& weight )
 {
     
     // check whether the parameters are right 

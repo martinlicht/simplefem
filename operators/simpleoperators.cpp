@@ -231,12 +231,12 @@ std::string DiagonalOperator::text( const bool embellish ) const
 }
 
 
-FloatVector& DiagonalOperator::getdiagonal()
+FloatVector& DiagonalOperator::getDiagonal()
 {
     return diagonal;
 }
 
-const FloatVector& DiagonalOperator::getdiagonal() const
+const FloatVector& DiagonalOperator::getDiagonal() const
 {
     return diagonal;
 }
@@ -279,13 +279,13 @@ const DiagonalOperator DiagonalOperator::sqrt() const
 
 
 
-LambdaOperator::LambdaOperator( int n, std::function<FloatVector(const FloatVector&)> func )
+LambdaOperator::LambdaOperator( int n, const std::function<FloatVector(const FloatVector&)>& func )
 : LambdaOperator( n, n, func )
 {
     LambdaOperator::check();
 }
 
-LambdaOperator::LambdaOperator( int dimout, int dimin, std::function<FloatVector(const FloatVector&)> func )
+LambdaOperator::LambdaOperator( int dimout, int dimin, const std::function<FloatVector(const FloatVector&)>& func )
 : LinearOperator( dimout, dimin ), func(func)
 {
     LambdaOperator::check();

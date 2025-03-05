@@ -12,11 +12,55 @@ int main( int argc, char *argv[] )
     
     {
     
+        LOG << "Unit Test for Zero Operator" << nl;
+
+        int dim = 10;
+
+        FloatVector vec(dim); vec.random();
+        
+        ZeroOperator zop(dim);
+
+        auto vec2 = zop * vec; 
+
+        assert( vec2.is_zero() );
+
+        LinearOperator& op = zop;
+
+        auto vec3 = op * vec; 
+
+        assert( vec3.is_zero() );
+
+    }
+    
+    {
+    
+        LOG << "Unit Test for Identity Operator" << nl;
+
+        int dim = 10;
+
+        FloatVector vec(dim); vec.random();
+        
+        IdentityOperator iop(dim);
+
+        auto vec2 = iop * vec; 
+
+        assert( vec2 == vec );
+
+        LinearOperator& op = iop;
+
+        auto vec3 = op * vec; 
+
+        assert( vec3 == vec );
+
+    }
+    
+    
+    {
+    
         LOG << "Unit Test for Scaling Operator" << nl;
 
         FloatVector a(5);
-        for( int i = 0; i < 5; i++ )
-                a.setentry( i, i+1 );
+        for( int i = 0; i < 5; i++ ) a.setentry( i, i+1 );
         
         ScalingOperator S( 5, Constants::pi );
         
