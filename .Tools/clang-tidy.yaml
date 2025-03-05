@@ -1,19 +1,18 @@
 ---
 Checks: "portability*,\
+        bugprone*,- bugprone-narrowing-conversions,-bugprone-easily-swappable-parameters,-bugprone-sizeof-container,-bugprone-implicit-widening-of-multiplication-result,-bugprone-suspicious-include,\
         -clang-diagnostic*,-clang-diagnostic-vla-cxx-extension,-clang-diagnostic-ignored-reference-qualifiers,
         -clang-analyzer*,-clang-analyzer-deadcode.DeadStores,\
         cert*,-cert-dcl50-cpp,-cert-dcl03-c,-cert-msc32-c,-cert-msc51-cpp,-cert-err33-c,-cert-err58-cpp,\
         concurrency*,\
-        hicpp*,\
         openmp*,\
         performance*,-performance-inefficient-string-concatenation,-performance-avoid-endl,\
+        readability*,\
         -llvm*"
         # 
-        # bugprone*,\
-        # clang-diagnostic-*,\
+        # hicpp*,-hicpp-braces-around-statements,\
         # misc*,\
         # modernize*,\
-        # readability*,\
 
 # question: remove cert-dcl58-cpp
 # question: remove cert-env33-c
@@ -23,7 +22,8 @@ Checks: "portability*,\
 # question: remove cert-err60-cpp
 # question: remove cert-mem57-cpp
 # question: remove cert-msc32-c, cert-msc51-cpp ? Concerns random numbers
-# question: remove 
+# question: remove bugprone-easily-swappable-parameters ? 
+# question: remove bugprone-implicit-widening-of-multiplication-result
 
 WarningsAsErrors: ''
 HeaderFilterRegex: ''

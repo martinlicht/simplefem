@@ -1,6 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>  // for atexit()
-#include <time.h>    // For measuring time
+#include <cstdio>
+#include <cstdlib>  // for atexit()
+#include <ctime>    // For measuring time
 
 #if defined(__linux__) or defined(__unix__)
 #include <fcntl.h>   // file control

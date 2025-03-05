@@ -9,9 +9,9 @@ bool log_has_a_fresh_line = true;
 #include <ctime>
 
 // For controlling the floating-point behavior
-#include <fenv.h>
+#include <cfenv>
 #include <xmmintrin.h>
-#include <float.h>
+#include <cfloat>
 
 
 

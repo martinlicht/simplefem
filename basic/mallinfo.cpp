@@ -1,11 +1,11 @@
-#include <stdio.h>
+#include <cstdio>
 
 #include "mallinfo.hpp"
 
 #if defined(__linux__) && (__GLIBC__ >= 2) and (__GLIBC_MINOR__ >= 33)
 
 #include <malloc.h>
-#include <stdio.h>
+#include <cstdio>
 
 void display_mallinfo( bool full )
 {
@@ -39,7 +39,7 @@ void display_mallinfo( bool full )
 #elif defined(__linux__) && (__GLIBC__ >= 2) and (__GLIBC_MINOR__ >= 15)
 
 #include <malloc.h>
-#include <stdio.h>
+#include <cstdio>
 
 void display_mallinfo( bool full )
 {
@@ -72,7 +72,7 @@ void display_mallinfo( bool full )
 
 #else 
 
-#include <stdio.h>
+#include <cstdio>
 void display_mallinfo( bool full )
 {
     fprintf( stderr, "Heap usage statistics: requested but not available in this implementation.\n");
