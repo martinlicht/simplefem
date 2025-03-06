@@ -342,7 +342,7 @@ struct System_Reporter
 {
     System_Reporter() noexcept;
     ~System_Reporter() noexcept;
-    void output();
+    static void output();
 };
 
 extern const System_Reporter system_reporter;

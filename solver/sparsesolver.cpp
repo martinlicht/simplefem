@@ -2200,6 +2200,13 @@ int MINRESCSR(
     if( print_modulo >= 0 ) 
         LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble)eta, (double)(safedouble) tolerance );
 
+
+    for( int c = 0; c < N; c++ ) {
+        res[c] = b[c];
+        for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+            res[c] -= csrvalues[ d ] * x[ csrcolumns[d] ];
+    }
+
     
     delete[] ( v0 );
     delete[] ( v1 );
@@ -2273,6 +2280,14 @@ int ChebyshevIteration_DiagonalPreconditioner(
     assert( x_prev );
     assert( x_curr );
     assert( x_next );
+
+    #if defined(_OPENMP)
+    #pragma omp parallel for 
+    #endif
+    for( int c = 0; c < N; c++ )
+        x_prev[c] = x_curr[c] = x_next[c] = x[c];
+            
+            
 
     LOG << lower << space << upper << nl;
     
@@ -2385,6 +2400,13 @@ int ChebyshevIteration_DiagonalPreconditioner(
     LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble)std::sqrt(r_r), (double)(safedouble) tolerance );
 
     
+    #if defined(_OPENMP)
+    #pragma omp parallel for 
+    #endif
+    for( int c = 0; c < N; c++ )
+        x[c] = x_next[c];
+            
+            
     delete[] ( x_prev );
     delete[] ( x_curr );
     delete[] ( x_next );

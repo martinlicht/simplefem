@@ -755,23 +755,23 @@ void DenseMatrix::add( const DenseMatrix& addendum )
     check();
 }
 
-void DenseMatrix::add( Float t, const DenseMatrix& addendum )
+void DenseMatrix::add( Float scaling, const DenseMatrix& addendum )
 {
     check();
     addendum.check();
     for( int r = 0; r < getdimout(); r++ )
         for( int c = 0; c < getdimin(); c++ )
-            (*this)(r,c) = (*this)(r,c) + t * addendum(r,c);
+            (*this)(r,c) = (*this)(r,c) + scaling * addendum(r,c);
     check();
 }
 
-void DenseMatrix::add( Float s, Float t, const DenseMatrix& addendum )
+void DenseMatrix::add( Float s, Float scaling, const DenseMatrix& addendum )
 {
     check();
     addendum.check();
     for( int r = 0; r < getdimout(); r++ )
         for( int c = 0; c < getdimin(); c++ )
-            (*this)(r,c) = s * (*this)(r,c) + t * addendum(r,c);
+            (*this)(r,c) = s * (*this)(r,c) + scaling * addendum(r,c);
     check();
 }
         

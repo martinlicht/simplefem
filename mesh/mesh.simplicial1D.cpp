@@ -123,7 +123,7 @@ MeshSimplicial1D::MeshSimplicial1D(
     int outerdim,
     const Coordinates& coords,
     const std::vector<std::array<int,2>>& edge_vertices,
-    const std::vector<std::array<int,2>>& edge_nextparent_of_vertices,
+    const std::vector<std::array<int,2>>& edge_nextparents_of_vertices,
     const std::vector<int              >& vertex_firstparent_edge
 )
 :
@@ -134,7 +134,7 @@ MeshSimplicial1D::MeshSimplicial1D(
     
     data_edge_vertices( edge_vertices ),
     data_vertex_firstparent_edge( vertex_firstparent_edge ),
-    data_edge_nextparents_of_vertices( edge_nextparent_of_vertices ),
+    data_edge_nextparents_of_vertices( edge_nextparents_of_vertices ),
 
     flags_edges   ( counter_edges,    SimplexFlag::SimplexFlagInvalid ),
     flags_vertices( counter_vertices, SimplexFlag::SimplexFlagInvalid )

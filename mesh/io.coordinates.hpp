@@ -17,11 +17,11 @@
 *******************/
 
 
-void writeCoordinates( std::ostream& out, const Coordinates& coordinates, bool sugar = false );
+void writeCoordinates( std::ostream& out, const Coordinates& coords, bool sugar = false );
 
 Coordinates readCoordinates( std::istream& in );
 
-void writeCoordinates( const char* filename, const Coordinates& coordinates, bool sugar = false );
+void writeCoordinates( const char* filename, const Coordinates& coords, bool sugar = false );
 
 Coordinates readCoordinates( const char* filename );
 

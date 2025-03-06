@@ -1,19 +1,70 @@
 ---
 Checks: "portability*,\
-        bugprone*,- bugprone-narrowing-conversions,-bugprone-easily-swappable-parameters,-bugprone-sizeof-container,-bugprone-implicit-widening-of-multiplication-result,-bugprone-suspicious-include,\
-        -clang-diagnostic*,-clang-diagnostic-vla-cxx-extension,-clang-diagnostic-ignored-reference-qualifiers,
-        -clang-analyzer*,-clang-analyzer-deadcode.DeadStores,\
-        cert*,-cert-dcl50-cpp,-cert-dcl03-c,-cert-msc32-c,-cert-msc51-cpp,-cert-err33-c,-cert-err58-cpp,\
+        bugprone*,\
+        -bugprone-narrowing-conversions,\
+        -bugprone-easily-swappable-parameters,\
+        -bugprone-sizeof-container,\
+        -bugprone-implicit-widening-of-multiplication-result,\
+        -bugprone-suspicious-include,\
+        cert*,\
+        -cert-dcl50-cpp,\
+        -cert-dcl03-c,\
+        -cert-msc32-c,\
+        -cert-msc51-cpp,\
+        -cert-err33-c,\
+        -cert-err58-cpp,\
         concurrency*,\
         openmp*,\
-        performance*,-performance-inefficient-string-concatenation,-performance-avoid-endl,\
+        performance*,\
+        -performance-inefficient-string-concatenation,\
+        -performance-avoid-endl,\
         readability*,\
+        -readability-identifier-length,\
+        -readability-braces-around-statements,\
+        -readability-redundant-string-init,\
+        -readability-magic-numbers,\
+        -readability-magic-numbers,\
+        -readability-isolate-declaration,\
+        -readability-misleading-indentation,\
+        -readability-redundant-casting,\
+        -readability-avoid-unconditional-preprocessor-if,\
+        -readability-container-size-empty,\
+        -readability-function-cognitive-complexity,\
+        -readability-else-after-return,\
+        -readability-delete-null-pointer,\
+        -readability-use-anyofallof,\
+        -readability-implicit-bool-conversion,\
+        -readability-redundant-member-init,\
+        -readability-simplify-boolean-expr,\
+        -readability-suspicious-call-argument,\
+        -readability-const-return-type,\
+        misc*,\
+        -misc-include-cleaner,\
+        -misc-use-anonymous-namespace,\
+        -misc-const-correctness,\
+        -misc-static-assert,\
+        -misc-unused-parameters,\
+        -misc-no-recursion,\
+        modernize*,\
+        -modernize-use-trailing-return-type,\
+        -modernize-loop-convert,\
+        -modernize-type-traits,\
+        -modernize-return-braced-init-list,\
+        -modernize-avoid-c-arrays,\
+        -modernize-use-emplace,\
+        -modernize-pass-by-value,\
+        -modernize-raw-string-literal,\
+        -modernize-use-auto,\
+        -clang-diagnostic*,\
+        -clang-diagnostic-vla-cxx-extension,\
+        -clang-diagnostic-ignored-reference-qualifiers,\
+        -clang-analyzer*,\
+        -clang-analyzer-deadcode.DeadStores,\
         -llvm*"
         # 
         # hicpp*,-hicpp-braces-around-statements,\
-        # misc*,\
-        # modernize*,\
 
+        
 # question: remove cert-dcl58-cpp
 # question: remove cert-env33-c
 # question: remove cert-err33-c, unsued return values?
@@ -22,8 +73,6 @@ Checks: "portability*,\
 # question: remove cert-err60-cpp
 # question: remove cert-mem57-cpp
 # question: remove cert-msc32-c, cert-msc51-cpp ? Concerns random numbers
-# question: remove bugprone-easily-swappable-parameters ? 
-# question: remove bugprone-implicit-widening-of-multiplication-result
 
 WarningsAsErrors: ''
 HeaderFilterRegex: ''
@@ -51,16 +100,15 @@ CheckOptions:
     value:           'NULL'
   - key:             modernize-loop-convert.NamingStyle
     value:           CamelCase
-
-  # - key:             cert-msc51-cpp.DisallowedSeedTypes
-  #   value:           
-
   - key:              hicpp-ignored-remove-result.AllowCastToVoid
     value:            true 
   - key:              hicpp-ignored-remove-result.WarnOnMissingElse
     value:            false 
+  - key:              readability-implicit-bool-conversion.AllowPointerConditions
+    value:            true
     
-
+  # - key:             cert-msc51-cpp.DisallowedSeedTypes
+  #   value:           
   # - key:             portability-restrict-system-includes.Includes
   #   value:           [include list]
   # - key:             portability-simd-intrinsics.Suggest

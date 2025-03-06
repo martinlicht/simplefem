@@ -382,7 +382,7 @@ void Mesh::complete_dirichlet_flags_from_facets()
 }
 
 
-void Mesh::check_dirichlet_flags( bool check_for_full_dirichlet )
+void Mesh::check_dirichlet_flags( bool check_for_full_dirichlet ) const
 {
     const int full = getinnerdimension();
     
@@ -523,12 +523,12 @@ Float Mesh::getMinimumDiameter() const
         
         
 
-Float Mesh::getMeasure( int dim, int index ) const 
+Float Mesh::getMeasure( int dim, int cell ) const 
 {
-    assert( 0 <= dim   && dim <= getinnerdimension() );
-    assert( 0 <= index && index < count_simplices(dim) );
+    assert( 0 <= dim  && dim  <= getinnerdimension() );
+    assert( 0 <= cell && cell < count_simplices(dim) );
     
-    DenseMatrix Jac = getTransformationJacobian( dim, index );
+    DenseMatrix Jac = getTransformationJacobian( dim, cell );
     
 //     DenseMatrix temp = Transpose( Jac ) * Jac;
 

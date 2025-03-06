@@ -101,7 +101,7 @@ int BlockHerzogSoodhalterMethod(
 
     while( recent_iteration_count < max_iteration_count ){
         
-        bool restart_condition = ( recent_iteration_count == 0 ) or ( cppsys_restart_on_full_dimension and recent_iteration_count );;
+        bool restart_condition = ( recent_iteration_count == 0 ) or ( cppsys_restart_on_full_dimension and recent_iteration_count != 0 );
         
         bool residual_seems_small = ( recent_iteration_count != 0 ) and ( absolute(eta) < tolerance );
         

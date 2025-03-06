@@ -30,7 +30,7 @@ template class std::vector<Float>;
 int count_white_space( const std::string& str ) 
 { 
     int ret = 0;  
-    for( int c = 0; c < str.size(); c++ ) if( std::isspace( str[c] ) ) ret++; 
+    for( int c = 0; c < str.size(); c++ ) if( 0 != std::isspace( str[c] ) ) ret++; 
     return ret;
 } 
 
@@ -62,7 +62,7 @@ std::string printf_into_string( const char* formatstring, ... )
     va_list args;
     
     va_start( args, formatstring );
-    std::size_t length = std::vsnprintf(nullptr, 0, formatstring, args ) + 1;
+    const std::size_t length = std::vsnprintf(nullptr, 0, formatstring, args ) + 1;
     va_end( args );
     
     char* c_str = new char[length];

@@ -148,9 +148,9 @@ class DenseMatrix final
         
         /* Arithmetic operations */
         
-        void add( const DenseMatrix& summand );
-        void add( Float scalingsrc, const DenseMatrix& summand );
-        void add( Float scalingdest, Float scalingsrc, const DenseMatrix& summand );
+        void add( const DenseMatrix& addendum );
+        void add( Float scaling, const DenseMatrix& addendum );
+        void add( Float s, Float scaling, const DenseMatrix& addendum );
         
         
         /* Measurements */

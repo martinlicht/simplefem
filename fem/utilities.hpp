@@ -106,7 +106,7 @@ DenseMatrix LagrangePolynomialCoefficients( int n, int r );
 
 DenseMatrix EvaluateField( 
             int outerdim, int k,  
-            const DenseMatrix& lps, 
+            const DenseMatrix& lagrangepoints_eucl, 
             const std::function< FloatVector( const FloatVector& ) >& field
             );
 

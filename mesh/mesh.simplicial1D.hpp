@@ -95,9 +95,9 @@ class MeshSimplicial1D
         virtual const std::vector<int> get_supersimplices( int sup, int sub, int cell ) const override;
         
         
-        virtual SimplexFlag get_flag( int dim, int index ) const override;
+        virtual SimplexFlag get_flag( int dim, int cell ) const override;
         
-        virtual void set_flag( int dim, int index, SimplexFlag flag ) override;
+        virtual void set_flag( int dim, int cell, SimplexFlag flag ) override;
         
         /* General management */
         
@@ -153,7 +153,7 @@ class MeshSimplicial1D
         
         FloatVector get_edge_midpoint( int e ) const;
         
-        void merge( const MeshSimplicial1D& other );
+        void merge( const MeshSimplicial1D& mesh );
 
         virtual std::size_t memorysize() const override;
         

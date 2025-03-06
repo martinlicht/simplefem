@@ -72,10 +72,10 @@ bool IndexRange::is_empty() const
     return minimum > maximum;
 }
 
-bool IndexRange::contains( int i ) const
+bool IndexRange::contains( int element ) const
 {
     check();
-    return minimum <= i && i <= maximum;
+    return minimum <= element && element <= maximum;
 }
 
 bool IndexRange::contains( const IndexRange& subir ) const
@@ -104,19 +104,19 @@ bool IndexRange::is_equal( const IndexRange& other ) const
         return this->minimum == other.minimum && this->maximum == other.maximum;
 }
 
-int IndexRange::element2position( int i ) const
+int IndexRange::element2position( int element ) const
 {
     check();
-    assert( contains(i) );
-    return i - minimum;
+    assert( contains(element) );
+    return element - minimum;
 }
 
-int IndexRange::position2element( int i ) const
+int IndexRange::position2element( int position ) const
 {
     check();
     assert( !is_empty() );
-    assert( 0 <= i && i <= maximum - minimum );
-    int ret = i + minimum;
+    assert( 0 <= position && position <= maximum - minimum );
+    int ret = position + minimum;
     assert( contains(ret) );
     return ret;
 }

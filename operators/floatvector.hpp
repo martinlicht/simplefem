@@ -25,7 +25,7 @@ class FloatVector
         
         /* Constructors */
         
-        explicit FloatVector( int dim, Float initivalue = notanumber );
+        explicit FloatVector( int dim, Float initialvalue = notanumber );
         
         explicit FloatVector( const FloatVector&, Float scaling );
         explicit FloatVector( FloatVector&&, Float scaling );
@@ -87,7 +87,7 @@ class FloatVector
         
         const Float& operator[]( int p ) const &;
         
-        const std::vector<Float> getdata() const;
+        std::vector<Float> getdata() const;
         
         
         /* load values */
@@ -119,9 +119,9 @@ class FloatVector
         
         FloatVector& scaleinverse( Float divisor );
         
-        FloatVector& shift( Float value );
+        FloatVector& shift( Float delta );
         
-        FloatVector& shiftnegative( Float value );
+        FloatVector& shiftnegative( Float delta );
         
         /* inverse */
 
@@ -133,33 +133,33 @@ class FloatVector
         
         void setslice( int base, int len, Float uniform_value );
         
-        void setslice( int base, const FloatVector& src );
+        void setslice( int base, const FloatVector& source );
         
-        void addslice( int base, const FloatVector& summand, Float factor );
+        void addslice( int base, const FloatVector& summand, Float scaling );
         
         
         /* arithmetics and assignments */
         
-        void copydatafrom( const FloatVector& src );
+        void copydatafrom( const FloatVector& source );
         
-        void copydatafrom( Float base, const FloatVector& src );
+        void copydatafrom( Float scaling, const FloatVector& source );
         
         
         void generatedatafrom( const std::function<Float(int)>& generator );
         
-        void generatedatafrom( Float factor, const std::function<Float(int)>& generator );
+        void generatedatafrom( Float scaling, const std::function<Float(int)>& generator );
         
         
         void adddatafrom( const FloatVector& summand );
         
-        void adddatafrom( Float scalingsrc, const FloatVector& summand );
+        void adddatafrom( Float scalingsummand, const FloatVector& summand );
         
-        void adddatafrom( Float scalingdest, Float scalingsrc, const FloatVector& summand );
+        void adddatafrom( Float scalingdest, Float scalingsummand, const FloatVector& summand );
         
         
-        Float scalarproductwith( const FloatVector& other ) const;
+        Float scalarproductwith( const FloatVector& right ) const;
         
-        Float scalarproductwith( const FloatVector& other, const std::vector<bool>& mask ) const;
+        Float scalarproductwith( const FloatVector& right, const std::vector<bool>& mask ) const;
         
         
         /* Calculations */

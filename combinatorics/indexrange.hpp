@@ -56,7 +56,7 @@ class IndexRange final
         
         bool contains( const IndexRange& subir ) const;
         
-        bool is_equal( const IndexRange& ir ) const;
+        bool is_equal( const IndexRange& other ) const;
         
         int element2position( int element ) const;
         

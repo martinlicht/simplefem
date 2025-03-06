@@ -5,7 +5,6 @@
 #include "../../basic.hpp"
 #include "../../dense/densematrix.hpp"
 #include "../../dense/factorization.hpp"
-#include "../../dense/factorization.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples3D.hpp"
 #include "../../fem/global.massmatrix.hpp"

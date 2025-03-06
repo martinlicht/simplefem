@@ -104,12 +104,12 @@ inline Float gaussrand_3( Float mean = 0., Float std_dev = 1. )
 
     Float x = random_integer() / (random_integer_maximum() + 1.0);   /* 0.0 <= x < 1.0 */
     
-    bool large = (x < 0.5) ? false : true;
+    bool x_is_large = (x >= 0.5);
     
     Float y = std::abs(x - 1.0);                        /* 0.0 < y <= 1.0 */
     Float z = std_dev * std::sqrt( -2.0 * std::log(y) );
 
-    return large ? (mean + z) : (mean - z);
+    return x_is_large ? (mean + z) : (mean - z);
 }
 
 inline Float gaussrand_4()
