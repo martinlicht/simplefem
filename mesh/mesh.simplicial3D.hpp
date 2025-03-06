@@ -73,7 +73,7 @@ class MeshSimplicial3D
         MeshSimplicial3D& operator=( const MeshSimplicial3D& ) = default;
         MeshSimplicial3D( MeshSimplicial3D&& ) = default;
         MeshSimplicial3D& operator=( MeshSimplicial3D&& ) = default;
-        virtual ~MeshSimplicial3D();
+        virtual ~MeshSimplicial3D() noexcept;
         
         /* standard methods for operators */
         

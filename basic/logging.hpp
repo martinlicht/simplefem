@@ -149,7 +149,7 @@ class Logger //: public std::ostringstream
             return *this;
         }
 
-        ~Logger();
+        ~Logger() noexcept;
 
 };
 

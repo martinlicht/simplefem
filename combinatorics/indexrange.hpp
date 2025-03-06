@@ -30,7 +30,7 @@ class IndexRange final
         IndexRange& operator =( const IndexRange& ) = default;
         IndexRange( IndexRange&& )                  = default;
         IndexRange& operator =( IndexRange&& )      = default;
-        ~IndexRange()                               = default;
+        ~IndexRange() noexcept                      = default;
         
         /* standard methods */
 

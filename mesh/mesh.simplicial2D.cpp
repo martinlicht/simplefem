@@ -305,7 +305,7 @@ MeshSimplicial2D::MeshSimplicial2D(
 }
 
 
-MeshSimplicial2D::~MeshSimplicial2D()
+MeshSimplicial2D::~MeshSimplicial2D() noexcept
 {
     MeshSimplicial2D::check();
 }

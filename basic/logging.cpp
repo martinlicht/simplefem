@@ -61,7 +61,7 @@ Logger::Logger(
 
 // auto digitalcodenow() -> std::string;
 
-Logger::~Logger()
+Logger::~Logger() noexcept
 {
     
     FILE* f = ( use_cerr ? stderr : stdout );

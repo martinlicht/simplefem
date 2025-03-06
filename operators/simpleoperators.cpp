@@ -14,7 +14,7 @@ IdentityOperator::IdentityOperator( int dimension )
     IdentityOperator::check();
 }
 
-IdentityOperator::~IdentityOperator()
+IdentityOperator::~IdentityOperator() noexcept
 {
     IdentityOperator::check();
 }
@@ -69,7 +69,7 @@ ZeroOperator::ZeroOperator( int dimout, int dimin )
     ZeroOperator::check();
 }
 
-ZeroOperator::~ZeroOperator()
+ZeroOperator::~ZeroOperator() noexcept
 {
     ZeroOperator::check();
 }
@@ -116,7 +116,7 @@ ScalingOperator::ScalingOperator( int dimension, Float s )
     ScalingOperator::check();
 }
 
-ScalingOperator::~ScalingOperator()
+ScalingOperator::~ScalingOperator() noexcept
 {
     ScalingOperator::check();
 }
@@ -206,7 +206,7 @@ DiagonalOperator::DiagonalOperator( int dimension, const std::function<Float(int
 }
         
 
-DiagonalOperator::~DiagonalOperator()
+DiagonalOperator::~DiagonalOperator() noexcept
 {
     LinearOperator::check();
 }
@@ -291,7 +291,7 @@ LambdaOperator::LambdaOperator( int dimout, int dimin, const std::function<Float
     LambdaOperator::check();
 }
 
-LambdaOperator::~LambdaOperator()
+LambdaOperator::~LambdaOperator() noexcept
 {
     LambdaOperator::check();
 }

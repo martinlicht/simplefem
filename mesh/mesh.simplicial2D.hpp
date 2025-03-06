@@ -65,7 +65,7 @@ class MeshSimplicial2D
         MeshSimplicial2D& operator=( const MeshSimplicial2D& ) = default;
         MeshSimplicial2D( MeshSimplicial2D&& ) = default;
         MeshSimplicial2D& operator=( MeshSimplicial2D&& ) = default;
-        virtual ~MeshSimplicial2D();
+        virtual ~MeshSimplicial2D() noexcept;
         
         /* standard interface */
         

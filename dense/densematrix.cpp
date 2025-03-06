@@ -221,7 +221,7 @@ DenseMatrix::DenseMatrix( DenseMatrix&& mat, Float scaling )
 }
 
         
-DenseMatrix::~DenseMatrix()
+DenseMatrix::~DenseMatrix() noexcept
 {
     // DenseMatrix::check(); // explicitly disabled, might be in moved-from state 
     

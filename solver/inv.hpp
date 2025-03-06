@@ -40,7 +40,7 @@ class InverseOperator
             } 
         }
         
-        virtual ~InverseOperator() = default;
+        virtual ~InverseOperator() noexcept = default;
 
         virtual InverseOperator* pointer_to_heir() && override
         {
@@ -98,7 +98,7 @@ class PseudoInverseOperator final
             }
         }
         
-        virtual ~PseudoInverseOperator() = default;
+        virtual ~PseudoInverseOperator() noexcept = default;
 
         virtual PseudoInverseOperator* pointer_to_heir() && override
         {

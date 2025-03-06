@@ -15,11 +15,11 @@
 const int standard_minimum_printed_precision = 15;
 
 ConvergenceTable::ConvergenceTable( const std::string& table_name )
-: table_name(table_name), 
-    make_new_row( true ),
-    display_convergence_rates( true ),
-    print_rowwise_instead_of_columnwise(false),
-    minimum_printed_precision( standard_minimum_printed_precision )
+: make_new_row( true ),
+  table_name(table_name), 
+  display_convergence_rates( true ),
+  print_rowwise_instead_of_columnwise(false),
+  minimum_printed_precision( standard_minimum_printed_precision )
 {
     LOG << "Table created! " << this << nl;
 }

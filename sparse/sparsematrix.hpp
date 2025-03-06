@@ -63,7 +63,7 @@ public LinearOperator /* every matrix is a linear operator */
         SparseMatrix& operator=( const SparseMatrix& );
         SparseMatrix( SparseMatrix&& );
         SparseMatrix& operator=( SparseMatrix&& );
-        virtual ~SparseMatrix();
+        virtual ~SparseMatrix() noexcept;
 
         /* standard methods for operators */
         

@@ -50,7 +50,7 @@ Mesh::Mesh( int inner, int outer )
   
 }
 
-Mesh::~Mesh()
+Mesh::~Mesh() noexcept
 {
   Mesh::check();
 }

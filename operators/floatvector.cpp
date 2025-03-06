@@ -57,7 +57,7 @@ FloatVector& FloatVector::operator=( FloatVector&& vec )
     return *this;
 }
 
-FloatVector::~FloatVector()
+FloatVector::~FloatVector() noexcept
 {
     FloatVector::check();
     if( pointer != nullptr ){

@@ -34,7 +34,7 @@ FloatVector ComplexFloatVector( const FloatVector& real, const FloatVector& imag
 
 
 
-ComplexOperator::~ComplexOperator()
+ComplexOperator::~ComplexOperator() noexcept
 {
     if( part_real != nullptr && managing_real ) delete part_real;
     if( part_imag != nullptr && managing_imag ) delete part_imag;

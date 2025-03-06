@@ -51,7 +51,7 @@ public LinearOperator /* every matrix is a linear operator */
         MatrixCSR& operator=( const MatrixCSR& );
         MatrixCSR( MatrixCSR&& );
         MatrixCSR& operator=( MatrixCSR&& );
-        virtual ~MatrixCSR( );
+        virtual ~MatrixCSR( ) noexcept;
 
         
         /* standard methods for operators */

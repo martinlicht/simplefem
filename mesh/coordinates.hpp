@@ -43,7 +43,7 @@ class Coordinates
         
         Coordinates( int dimension, int number );
         Coordinates( int dimension, int number, const std::vector<Float>& );
-        virtual ~Coordinates();
+        virtual ~Coordinates() noexcept;
         
         void check() const;
         // void print( std::ostream& ) const;

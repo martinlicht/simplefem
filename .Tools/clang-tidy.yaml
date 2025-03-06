@@ -14,6 +14,25 @@ Checks: "portability*,\
         -cert-err33-c,\
         -cert-err58-cpp,\
         concurrency*,\
+        cppcoreguidelines*,\
+        -cppcoreguidelines-pro-type-vararg,\
+        -cppcoreguidelines-pro-bounds-array-to-pointer-decay,\
+        -cppcoreguidelines-avoid-c-arrays,\
+        -cppcoreguidelines-owning-memory,\
+        -cppcoreguidelines-narrowing-conversions,\
+        -cppcoreguidelines-pro-bounds-pointer-arithmetic,\
+        -cppcoreguidelines-init-variables,\
+        -cppcoreguidelines-avoid-magic-numbers,\
+        -cppcoreguidelines-pro-type-const-cast,\
+        -cppcoreguidelines-avoid-goto,\
+        -cppcoreguidelines-avoid-non-const-global-variables,\
+        -cppcoreguidelines-avoid-do-while,\
+        -cppcoreguidelines-pro-type-union-access,\
+        -cppcoreguidelines-pro-bounds-constant-array-index,\
+        -cppcoreguidelines-pro-type-member-init,\
+        google-explicit-constructor,\
+        -google-readability-casting,\
+        google-runtime-operator,\
         openmp*,\
         performance*,\
         -performance-inefficient-string-concatenation,\
@@ -79,33 +98,55 @@ HeaderFilterRegex: ''
 # AnalyzeTemporaryDtors: false
 FormatStyle:     none
 User:            martin
+SystemHeaders:   false  
+
+ExtraArgs: ['--std=c++17','-fno-exceptions']
+
+
 CheckOptions:
-  - key:             cert-str34-c.DiagnoseSignedUnsignedCharComparisons
-    value:           'false'
-  - key:             cert-err33-c.CheckedFunctions
-    value:           '::aligned_alloc;::asctime_s;::at_quick_exit;::atexit;::bsearch;::bsearch_s;::btowc;::c16rtomb;::c32rtomb;::calloc;::clock;::cnd_broadcast;::cnd_init;::cnd_signal;::cnd_timedwait;::cnd_wait;::ctime_s;::fclose;::fflush;::fgetc;::fgetpos;::fgets;::fgetwc;::fopen;::fopen_s;::fprintf;::fprintf_s;::fputc;::fputs;::fputwc;::fputws;::fread;::freopen;::freopen_s;::fscanf;::fscanf_s;::fseek;::fsetpos;::ftell;::fwprintf;::fwprintf_s;::fwrite;::fwscanf;::fwscanf_s;::getc;::getchar;::getenv;::getenv_s;::gets_s;::getwc;::getwchar;::gmtime;::gmtime_s;::localtime;::localtime_s;::malloc;::mbrtoc16;::mbrtoc32;::mbsrtowcs;::mbsrtowcs_s;::mbstowcs;::mbstowcs_s;::memchr;::mktime;::mtx_init;::mtx_lock;::mtx_timedlock;::mtx_trylock;::mtx_unlock;::printf_s;::putc;::putwc;::raise;::realloc;::remove;::rename;::scanf;::scanf_s;::setlocale;::setvbuf;::signal;::snprintf;::snprintf_s;::sprintf;::sprintf_s;::sscanf;::sscanf_s;::strchr;::strerror_s;::strftime;::strpbrk;::strrchr;::strstr;::strtod;::strtof;::strtoimax;::strtok;::strtok_s;::strtol;::strtold;::strtoll;::strtoul;::strtoull;::strtoumax;::strxfrm;::swprintf;::swprintf_s;::swscanf;::swscanf_s;::thrd_create;::thrd_detach;::thrd_join;::thrd_sleep;::time;::timespec_get;::tmpfile;::tmpfile_s;::tmpnam;::tmpnam_s;::tss_create;::tss_get;::tss_set;::ungetc;::ungetwc;::vfprintf;::vfprintf_s;::vfscanf;::vfscanf_s;::vfwprintf;::vfwprintf_s;::vfwscanf;::vfwscanf_s;::vprintf_s;::vscanf;::vscanf_s;::vsnprintf;::vsnprintf_s;::vsprintf;::vsprintf_s;::vsscanf;::vsscanf_s;::vswprintf;::vswprintf_s;::vswscanf;::vswscanf_s;::vwprintf_s;::vwscanf;::vwscanf_s;::wcrtomb;::wcschr;::wcsftime;::wcspbrk;::wcsrchr;::wcsrtombs;::wcsrtombs_s;::wcsstr;::wcstod;::wcstof;::wcstoimax;::wcstok;::wcstok_s;::wcstol;::wcstold;::wcstoll;::wcstombs;::wcstombs_s;::wcstoul;::wcstoull;::wcstoumax;::wcsxfrm;::wctob;::wctrans;::wctype;::wmemchr;::wprintf_s;::wscanf;::wscanf_s;'
-  - key:             cert-oop54-cpp.WarnOnlyIfThisHasSuspiciousField
-    value:           'false'
-  - key:             cert-dcl16-c.NewSuffixes
-    value:           'L;LL;LU;LLU'
-  - key:             modernize-loop-convert.MinConfidence
-    value:           reasonable
-  - key:             modernize-replace-auto-ptr.IncludeStyle
-    value:           llvm
-  - key:             modernize-loop-convert.MaxCopySize
-    value:           '16'
-  - key:             modernize-pass-by-value.IncludeStyle
-    value:           llvm
-  - key:             modernize-use-nullptr.NullMacros
-    value:           'NULL'
-  - key:             modernize-loop-convert.NamingStyle
-    value:           CamelCase
-  - key:              hicpp-ignored-remove-result.AllowCastToVoid
-    value:            true 
-  - key:              hicpp-ignored-remove-result.WarnOnMissingElse
-    value:            false 
-  - key:              readability-implicit-bool-conversion.AllowPointerConditions
-    value:            true
+  # General options
+  readability-identifier-naming.IgnoreMainLikeFunctions: true
+  # Variable naming
+  readability-identifier-naming.VariableCase: aNy_CasE
+  # Function naming
+  readability-identifier-naming.FunctionCase: aNy_CasE
+  # Class naming
+  readability-identifier-naming.ClassCase: CamelCase
+  # Struct naming
+  readability-identifier-naming.StructCase: CamelCase
+  # Enum naming
+  readability-identifier-naming.EnumCase: CamelCase
+  # Enum constant naming
+  readability-identifier-naming.EnumConstantCase: lower_case
+  readability-identifier-naming.EnumConstantIgnoredRegexp: '[a-zA-Z][a-zA-Z0-9_]*' # Any case
+  
+  # CheckOptions:
+  # - key:             cert-str34-c.DiagnoseSignedUnsignedCharComparisons
+  #   value:           'false'
+  # - key:             cert-err33-c.CheckedFunctions
+  #   value:           '::aligned_alloc;::asctime_s;::at_quick_exit;::atexit;::bsearch;::bsearch_s;::btowc;::c16rtomb;::c32rtomb;::calloc;::clock;::cnd_broadcast;::cnd_init;::cnd_signal;::cnd_timedwait;::cnd_wait;::ctime_s;::fclose;::fflush;::fgetc;::fgetpos;::fgets;::fgetwc;::fopen;::fopen_s;::fprintf;::fprintf_s;::fputc;::fputs;::fputwc;::fputws;::fread;::freopen;::freopen_s;::fscanf;::fscanf_s;::fseek;::fsetpos;::ftell;::fwprintf;::fwprintf_s;::fwrite;::fwscanf;::fwscanf_s;::getc;::getchar;::getenv;::getenv_s;::gets_s;::getwc;::getwchar;::gmtime;::gmtime_s;::localtime;::localtime_s;::malloc;::mbrtoc16;::mbrtoc32;::mbsrtowcs;::mbsrtowcs_s;::mbstowcs;::mbstowcs_s;::memchr;::mktime;::mtx_init;::mtx_lock;::mtx_timedlock;::mtx_trylock;::mtx_unlock;::printf_s;::putc;::putwc;::raise;::realloc;::remove;::rename;::scanf;::scanf_s;::setlocale;::setvbuf;::signal;::snprintf;::snprintf_s;::sprintf;::sprintf_s;::sscanf;::sscanf_s;::strchr;::strerror_s;::strftime;::strpbrk;::strrchr;::strstr;::strtod;::strtof;::strtoimax;::strtok;::strtok_s;::strtol;::strtold;::strtoll;::strtoul;::strtoull;::strtoumax;::strxfrm;::swprintf;::swprintf_s;::swscanf;::swscanf_s;::thrd_create;::thrd_detach;::thrd_join;::thrd_sleep;::time;::timespec_get;::tmpfile;::tmpfile_s;::tmpnam;::tmpnam_s;::tss_create;::tss_get;::tss_set;::ungetc;::ungetwc;::vfprintf;::vfprintf_s;::vfscanf;::vfscanf_s;::vfwprintf;::vfwprintf_s;::vfwscanf;::vfwscanf_s;::vprintf_s;::vscanf;::vscanf_s;::vsnprintf;::vsnprintf_s;::vsprintf;::vsprintf_s;::vsscanf;::vsscanf_s;::vswprintf;::vswprintf_s;::vswscanf;::vswscanf_s;::vwprintf_s;::vwscanf;::vwscanf_s;::wcrtomb;::wcschr;::wcsftime;::wcspbrk;::wcsrchr;::wcsrtombs;::wcsrtombs_s;::wcsstr;::wcstod;::wcstof;::wcstoimax;::wcstok;::wcstok_s;::wcstol;::wcstold;::wcstoll;::wcstombs;::wcstombs_s;::wcstoul;::wcstoull;::wcstoumax;::wcsxfrm;::wctob;::wctrans;::wctype;::wmemchr;::wprintf_s;::wscanf;::wscanf_s;'
+  # - key:             cert-oop54-cpp.WarnOnlyIfThisHasSuspiciousField
+  #   value:           'false'
+  # - key:             cert-dcl16-c.NewSuffixes
+  #   value:           'L;LL;LU;LLU'
+  # - key:             modernize-loop-convert.MinConfidence
+  #   value:           reasonable
+  # - key:             modernize-replace-auto-ptr.IncludeStyle
+  #   value:           llvm
+  # - key:             modernize-loop-convert.MaxCopySize
+  #   value:           '16'
+  # - key:             modernize-pass-by-value.IncludeStyle
+  #   value:           llvm
+  # - key:             modernize-use-nullptr.NullMacros
+  #   value:           'NULL'
+  # - key:             modernize-loop-convert.NamingStyle
+  #   value:           CamelCase
+  # - key:              hicpp-ignored-remove-result.AllowCastToVoid
+  #   value:            true 
+  # - key:              hicpp-ignored-remove-result.WarnOnMissingElse
+  #   value:            false 
+  # - key:              readability-implicit-bool-conversion.AllowPointerConditions
+  #   value:            true
     
   # - key:             cert-msc51-cpp.DisallowedSeedTypes
   #   value:           

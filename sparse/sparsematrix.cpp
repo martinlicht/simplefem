@@ -99,7 +99,7 @@ SparseMatrix::SparseMatrix( const DenseMatrix& matrix )
     SparseMatrix::check();    
 }
 
-SparseMatrix::~SparseMatrix()
+SparseMatrix::~SparseMatrix() noexcept
 {
     SparseMatrix::check();    
 }

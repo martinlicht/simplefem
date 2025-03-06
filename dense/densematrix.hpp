@@ -62,7 +62,7 @@ class DenseMatrix final
         DenseMatrix( DenseMatrix&& );
         DenseMatrix& operator=( const DenseMatrix& );
         DenseMatrix& operator=( DenseMatrix&& );
-        virtual ~DenseMatrix();
+        virtual ~DenseMatrix() noexcept;
         
         /* standard methods for operators */
 

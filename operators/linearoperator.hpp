@@ -41,7 +41,7 @@ class LinearOperator
         explicit LinearOperator( LinearOperator&& )           = default;
         LinearOperator& operator=( const LinearOperator& op ) = default;
         LinearOperator& operator=( LinearOperator&& op )      = default;
-        virtual ~LinearOperator();
+        virtual ~LinearOperator() noexcept;
 
         /* standard interface */
         

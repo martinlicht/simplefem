@@ -49,7 +49,7 @@ class PixelImage
         PixelImage( const PixelImage& ) = default;
         PixelImage( PixelImage&& ) = default;
         
-        ~PixelImage() {}
+        ~PixelImage()  noexcept = default;
 
         indextype getheight() const { return height; }
 

@@ -46,7 +46,7 @@ class FloatVector
         FloatVector& operator=( const FloatVector& vec );
         FloatVector& operator=( FloatVector&& vec );
 
-        virtual ~FloatVector();
+        virtual ~FloatVector() noexcept;
         
         
         

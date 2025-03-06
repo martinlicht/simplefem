@@ -151,7 +151,7 @@ MeshSimplicial1D::MeshSimplicial1D(
 }
 
 
-MeshSimplicial1D::~MeshSimplicial1D()
+MeshSimplicial1D::~MeshSimplicial1D() noexcept
 {
     MeshSimplicial1D::check();
 }

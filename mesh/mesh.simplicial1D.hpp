@@ -64,7 +64,7 @@ class MeshSimplicial1D
         MeshSimplicial1D& operator=( const MeshSimplicial1D& ) = default;
         MeshSimplicial1D( MeshSimplicial1D&& ) = default;
         MeshSimplicial1D& operator=( MeshSimplicial1D&& ) = default;
-        virtual ~MeshSimplicial1D();
+        virtual ~MeshSimplicial1D() noexcept;
         
         /* standard interface */
         

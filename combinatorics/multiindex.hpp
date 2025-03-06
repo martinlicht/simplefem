@@ -41,7 +41,7 @@ class MultiIndex final
         MultiIndex( MultiIndex&& )                  = default;
         MultiIndex& operator =( MultiIndex&& )      = default;
         
-        virtual ~MultiIndex() = default;
+        virtual ~MultiIndex() noexcept = default;
         
         /* standard methods */
         

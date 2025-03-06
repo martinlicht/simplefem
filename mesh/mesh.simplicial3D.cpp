@@ -539,7 +539,7 @@ MeshSimplicial3D::MeshSimplicial3D(
 }
 
 
-MeshSimplicial3D::~MeshSimplicial3D()
+MeshSimplicial3D::~MeshSimplicial3D() noexcept
 {
     MeshSimplicial3D::check();
 }

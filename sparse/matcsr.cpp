@@ -95,7 +95,7 @@ MatrixCSR::MatrixCSR( int rows, int columns )
 
 
 
-MatrixCSR::~MatrixCSR()
+MatrixCSR::~MatrixCSR() noexcept
 {
     MatrixCSR::check();
 }

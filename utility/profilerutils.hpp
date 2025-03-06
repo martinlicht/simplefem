@@ -28,7 +28,7 @@ class SectionProfiler
         SectionProfiler& operator=( const SectionProfiler& ) = delete;
         SectionProfiler& operator=( const SectionProfiler&& ) = delete;
         
-        virtual ~SectionProfiler() {
+        virtual ~SectionProfiler() noexcept {
 
             ping("FINISH");
 
