@@ -10,7 +10,7 @@
 template<typename NumericalType>
 struct SqrtTest
 {
-    struct sqrt_results{ 
+    struct SqrtResults{ 
         NumericalType cpp; 
         NumericalType fem; 
     };
@@ -20,7 +20,7 @@ struct SqrtTest
         unsigned int i;
     };
 
-    sqrt_results calculate_sqrts( NumericalType x ) {
+    SqrtResults calculate_sqrts( NumericalType x ) {
         NumericalType cpp = std::sqrt(x);
         NumericalType fem = Sqrt(x);
         // LOGPRINTF( "result %c x=%.30e cpp=%.10e fem=%.10e \n", std::isnormal(x) ? 'n' : 's', (double)x, (double)cpp, (double)fem );

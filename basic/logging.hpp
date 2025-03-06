@@ -345,7 +345,7 @@ struct System_Reporter
     void output();
 };
 
-extern System_Reporter  omp_reporter;
+extern const System_Reporter system_reporter;
 
 // #endif // _OPENMP
 

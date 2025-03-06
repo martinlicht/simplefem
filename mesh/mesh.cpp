@@ -135,11 +135,11 @@ void Mesh::index_to_pair( int index, int& sup, int& sub ) const
 {
   // FIXME: improve this incredibly ineffecient computation.
   assert( 0 <= sub && sub <= sup && sup <= innerdimension );
-  for( int _sup = 1; _sup <= innerdimension; _sup++ )
-  for( int _sub = 0; _sub <=            sup; _sub++ )
-    if( index == index_from_pair( _sup, _sub ) )
+  for( int t_sup = 1; t_sup <= innerdimension; t_sup++ )
+  for( int t_sub = 0; t_sub <=            sup; t_sub++ )
+    if( index == index_from_pair( t_sup, t_sub ) )
     {
-      sup = _sup; sub = _sub; return;
+      sup = t_sup; sub = t_sub; return;
     }
 }
 

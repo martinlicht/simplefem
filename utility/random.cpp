@@ -64,15 +64,15 @@ Float random_uniform()
 
 inline Float gaussrand_1()
 {
-    const int NSUM = 25;
+    const int n = 25;
     
     Float x = 0;
     
-    for( int i = 0; i < NSUM; i++ ) 
+    for( int i = 0; i < n; i++ ) 
         x += random_integer() / static_cast<Float>(random_integer_maximum());
     
-    x -= NSUM / 2.0;
-    x /= std::sqrt( NSUM / 12.0 );
+    x -= n / 2.0;
+    x /= std::sqrt( n / 12.0 );
     
     return x;
 }
@@ -80,21 +80,21 @@ inline Float gaussrand_1()
 inline Float gaussrand_2()
 {
     static bool phase = false;
-    static Float U, V;
-    const Float PI = 3.14159265358979323846;
-    Float Z;
+    static Float u, v;
+    const Float pi = 3.14159265358979323846;
+    Float z;
 
     if( phase ) {
-        Z = std::sqrt( -2. * std::log(U) ) * std::cos( 2. * PI * V );
+        z = std::sqrt( -2. * std::log(u) ) * std::cos( 2. * pi * v );
     } else {
-        U = ( random_integer() + 1. ) / ( random_integer_maximum() + 2. );
-        V = random_integer() / ( random_integer_maximum() + 1. );
-        Z = std::sqrt( -2. * std::log(U) ) * std::sin( 2. * PI * V );
+        u = ( random_integer() + 1. ) / ( random_integer_maximum() + 2. );
+        v = random_integer() / ( random_integer_maximum() + 1. );
+        z = std::sqrt( -2. * std::log(u) ) * std::sin( 2. * pi * v );
     }
         
     phase = not phase;
 
-    return Z;
+    return z;
 }
 
 // http://c-faq.com/lib/gaussrand.luben.html
@@ -114,11 +114,11 @@ inline Float gaussrand_3( Float mean = 0., Float std_dev = 1. )
 
 inline Float gaussrand_4()
 {
-    const Float PI = 3.14159265358979323846;
-    Float U = ( random_integer() + 1. ) / ( random_integer_maximum() + 2. );
-    Float V = ( random_integer()      ) / ( random_integer_maximum() + 1. );
+    const Float pi = 3.14159265358979323846;
+    Float u = ( random_integer() + 1. ) / ( random_integer_maximum() + 2. );
+    Float v = ( random_integer()      ) / ( random_integer_maximum() + 1. );
 
-    Float result = std::sqrt( -2. * std::log(U) ) * std::sin( 2. * PI * V );
+    Float result = std::sqrt( -2. * std::log(u) ) * std::sin( 2. * pi * v );
 
     return result;
 }

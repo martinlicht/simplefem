@@ -375,7 +375,7 @@ void System_Reporter::output()
 
 }
 
-System_Reporter  omp_reporter;
+const System_Reporter system_reporter;
 
 
 
