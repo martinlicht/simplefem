@@ -144,31 +144,6 @@ int main( int argc, char *argv[] )
             stiffness.sortentries();
             auto stiffness_csr = MatrixCSR( stiffness );
             
-            auto stiffness_unity = DiagonalOperator( stiffness.getdimin(), 1. );
-            
-            auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
-            LOG << "Average value of diagonal preconditioner: " << stiffness_invprecon.getDiagonal().average() << nl;
-
-            // auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. ); // TODO: clean up
-            // // auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
-            // LOG << "Average value of diagonal preconditioner: " << stiffness_invprecon.getDiagonal().average() << nl;
-
-            // auto stiffness_blockprecon = cluster_inversion( stiffness_csr, MatrixCSR_disjoint_clusters( stiffness_csr, 0 ) );
-
-            stiffness.save_graphics( ( getbasename(__FILE__) + "_stiffness.png" ).c_str() );
-
-            stiffness_csr.save_graphics( ( getbasename(__FILE__) + "_stiffness_csr.png" ).c_str() );
-
-            // stiffness_blockprecon.save_graphics( ( getbasename(__FILE__) + "_stiffness_blockprecon.png" ).c_str() );
-
-            // SparseMatrix preconblock = stiffness_blockprecon;
-            // preconblock.scale(-1);
-            // for( int i = 0; i < preconblock.getdimout(); i++ ) preconblock.appendentry({i,i,1.});
-            // preconblock.sortandcompressentries();
-
-            
-
-
             {
 
                 const auto& function_sol  = experiment_sol;
@@ -186,6 +161,28 @@ int main( int argc, char *argv[] )
                 FloatVector sol( incmatrix.getdimin(), 0. );
                 
                 LOG << "...iterative solver" << nl;
+                
+                auto stiffness_unity = DiagonalOperator( stiffness.getdimin(), 1. );
+            
+                auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
+                LOG << "Average value of diagonal preconditioner: " << stiffness_invprecon.getDiagonal().average() << nl;
+
+                // auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. ); // TODO: clean up
+                // // auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
+                // LOG << "Average value of diagonal preconditioner: " << stiffness_invprecon.getDiagonal().average() << nl;
+
+                // auto stiffness_blockprecon = cluster_inversion( stiffness_csr, MatrixCSR_disjoint_clusters( stiffness_csr, 0 ) );
+
+                stiffness.save_graphics( ( getbasename(__FILE__) + "_stiffness.png" ).c_str() );
+
+                stiffness_csr.save_graphics( ( getbasename(__FILE__) + "_stiffness_csr.png" ).c_str() );
+
+                // stiffness_blockprecon.save_graphics( ( getbasename(__FILE__) + "_stiffness_blockprecon.png" ).c_str() );
+
+                // SparseMatrix preconblock = stiffness_blockprecon;
+                // preconblock.scale(-1);
+                // for( int i = 0; i < preconblock.getdimout(); i++ ) preconblock.appendentry({i,i,1.});
+                // preconblock.sortandcompressentries();
                 
                 timestamp start = timestampnow();
 
