@@ -3,11 +3,12 @@
 #include <cmath>
 #include <algorithm>
 #include <limits>
+#include <vector>
 
 
 #include "../basic.hpp"
 #include "../utility/random.hpp"
-#include "../combinatorics/generateindexmaps.hpp"
+#include "../combinatorics/indexmap.hpp"
 #include "../dense/factorization.hpp"
 #include "../dense/simplesolver.hpp"
 #include "mesh.hpp"
@@ -50,7 +51,7 @@ Mesh::Mesh( int inner, int outer )
   
 }
 
-Mesh::~Mesh()
+Mesh::~Mesh() noexcept
 {
   Mesh::check();
 }
@@ -135,11 +136,11 @@ void Mesh::index_to_pair( int index, int& sup, int& sub ) const
 {
   // FIXME: improve this incredibly ineffecient computation.
   assert( 0 <= sub && sub <= sup && sup <= innerdimension );
-  for( int _sup = 1; _sup <= innerdimension; _sup++ )
-  for( int _sub = 0; _sub <=            sup; _sub++ )
-    if( index == index_from_pair( _sup, _sub ) )
+  for( int t_sup = 1; t_sup <= innerdimension; t_sup++ )
+  for( int t_sub = 0; t_sub <=            sup; t_sub++ )
+    if( index == index_from_pair( t_sup, t_sub ) )
     {
-      sup = _sup; sub = _sub; return;
+      sup = t_sup; sub = t_sub; return;
     }
 }
 
@@ -382,7 +383,7 @@ void Mesh::complete_dirichlet_flags_from_facets()
 }
 
 
-void Mesh::check_dirichlet_flags( bool check_for_full_dirichlet )
+void Mesh::check_dirichlet_flags( bool check_for_full_dirichlet ) const
 {
     const int full = getinnerdimension();
     
@@ -523,12 +524,12 @@ Float Mesh::getMinimumDiameter() const
         
         
 
-Float Mesh::getMeasure( int dim, int index ) const 
+Float Mesh::getMeasure( int dim, int cell ) const 
 {
-    assert( 0 <= dim   && dim <= getinnerdimension() );
-    assert( 0 <= index && index < count_simplices(dim) );
+    assert( 0 <= dim  && dim  <= getinnerdimension() );
+    assert( 0 <= cell && cell < count_simplices(dim) );
     
-    DenseMatrix Jac = getTransformationJacobian( dim, index );
+    DenseMatrix Jac = getTransformationJacobian( dim, cell );
     
 //     DenseMatrix temp = Transpose( Jac ) * Jac;
 

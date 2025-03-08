@@ -1,4 +1,8 @@
 
+#include <cmath>
+
+#include <functional>
+
 #include "../../basic.hpp"
 #include "../../utility/convergencetable.hpp"
 #include "../../utility/math.hpp"
@@ -7,7 +11,6 @@
 #include "../../sparse/matcsr.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
-#include "../../solver/sparsesolver.hpp"
 #include "../../solver/iterativesolver.hpp"
 #include "../../solver/inv.hpp"
 #include "../../solver/systemsparsesolver.hpp"
@@ -24,8 +27,6 @@ int main( int argc, char *argv[] )
     
     LOG << "Unit Test: 2D Maxwell System" << nl;
     
-    // LOG << std::setprecision(10);
-
     if(true){
 
         LOG << "Initial mesh..." << nl;

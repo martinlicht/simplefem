@@ -2,6 +2,7 @@
 #include "../../utility/utility.hpp"
 #include "../../operators/floatvector.hpp"
 #include "../../mesh/coordinates.hpp"
+#include "../../vtk/vtkwriter.hpp"
 
 
     

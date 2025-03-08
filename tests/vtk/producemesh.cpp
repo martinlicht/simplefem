@@ -1,13 +1,8 @@
 
-#include <ostream>
 #include <fstream>
 
 #include "../../basic.hpp"
-#include "../../utility/convergencetable.hpp"
-#include "../../mesh/coordinates.hpp"
-#include "../../mesh/mesh.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
-#include "../../vtk/vtkwriter.hpp"
 #include "../../mesh/examples2D.hpp"
 
 

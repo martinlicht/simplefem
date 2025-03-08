@@ -2,17 +2,17 @@
 
 /**/
 #include <algorithm>
+#include <fstream>
+#include <string>
+#include <utility>
 #include <vector>
 
 #include "../../basic.hpp"
 #include "../../utility/files.hpp"
 #include "../../utility/pixelimage.hpp"
-#include "../../utility/random.hpp"
-#include "../../dense/functions.hpp"
 #include "../../dense/factorization.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
-#include "../../fem/utilities.hpp"
 
 
 using namespace std;

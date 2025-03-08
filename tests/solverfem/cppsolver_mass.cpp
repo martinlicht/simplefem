@@ -1,4 +1,8 @@
 
+#include <cmath>
+
+#include <functional>
+
 #include "../../basic.hpp"
 #include "../../utility/convergencetable.hpp"
 #include "../../operators/composedoperators.hpp"
@@ -6,15 +10,8 @@
 #include "../../sparse/matcsr.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
-#include "../../solver/sparsesolver.hpp"
 #include "../../solver/iterativesolver.hpp"
-// #include "../../solver/cgm.hpp"
-// #include "../../solver/crm.hpp"
-// #include "../../solver/herzogsoodhalter.hpp"
-// #include "../../solver/pcrm.hpp"
-// #include "../../solver/minres.hpp"
 #include "../../fem/global.massmatrix.hpp"
-#include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.sullivanincl.hpp"
 #include "../../fem/utilities.hpp"
 
@@ -24,8 +21,6 @@ int main( int argc, char *argv[] )
     
     LOG << "Unit Test: Compare numerical solvers CRM vs MINRES\n           for Solution of Dirichlet Problem" << nl;
     
-    // LOG << std::setprecision(10);
-
     if(true){
 
         LOG << "Initial mesh..." << nl;

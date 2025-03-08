@@ -1,12 +1,10 @@
 
-#include <ostream>
 #include <vector>
 
 #include "../basic.hpp"
 #include "../combinatorics/indexmap.hpp"
 #include "../combinatorics/generateindexmaps.hpp"
 #include "../combinatorics/generatemultiindices.hpp"
-#include "../dense/functions.hpp"
 #include "../dense/densematrix.hpp"
 #include "../dense/functions.hpp"
 #include "../sparse/sparsematrix.hpp"

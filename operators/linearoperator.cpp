@@ -16,7 +16,7 @@ LinearOperator::LinearOperator( int dim )
     LinearOperator::check();
 }
 
-LinearOperator::~LinearOperator()
+LinearOperator::~LinearOperator() noexcept
 {
     LinearOperator::check();
 }

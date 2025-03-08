@@ -3,15 +3,16 @@
 #ifndef USE_PRIMITIVE_LOGGING
 bool log_has_a_fresh_line = true;
 
-// #include <iostream>
-// #include <iomanip>
+#include <cmath>
 #include <cstdio>
 #include <ctime>
 
+#include <limits> // for std::float_round_style
+
 // For controlling the floating-point behavior
-#include <fenv.h>
+#include <cfenv>
 #include <xmmintrin.h>
-#include <float.h>
+#include <cfloat>
 
 
 
@@ -61,7 +62,7 @@ Logger::Logger(
 
 // auto digitalcodenow() -> std::string;
 
-Logger::~Logger()
+Logger::~Logger() noexcept
 {
     
     FILE* f = ( use_cerr ? stderr : stdout );
@@ -94,7 +95,7 @@ Logger::~Logger()
     // reserve enough space so that (in principle) each nl can be prefixed
 
     int number_of_newlines = 0;
-    for( char character : message_string ) 
+    for( const char character : message_string ) 
         if( character == '\n' )
             number_of_newlines++;
 
@@ -115,7 +116,7 @@ Logger::~Logger()
     
     for( int c = 0; c < message_string.length(); c++ ) {
     
-        char character = message_string[c];
+        const char character = message_string[c];
 
         output_string += character;
         // fputc( character, f );
@@ -177,9 +178,9 @@ void System_Reporter::output()
     LOG << "###\tCurrent Git commit ID: " << GIT_COMMIT_ID << nl;
     #endif
 
-    time_t t = std::time(nullptr);
-    tm tm = *std::localtime(&t);
-    LOGPRINTF("###\t%d-%02d-%02d %02d:%02d:%02d\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+    const time_t t = std::time(nullptr);
+    const tm zeit = *std::localtime(&t);
+    LOGPRINTF("###\t%d-%02d-%02d %02d:%02d:%02d\n", zeit.tm_year + 1900, zeit.tm_mon + 1, zeit.tm_mday, zeit.tm_hour, zeit.tm_min, zeit.tm_sec );
     
     #if defined(_OPENMP)
     LOG << "###\tOpenMP Value: " << _OPENMP << nl;
@@ -375,7 +376,7 @@ void System_Reporter::output()
 
 }
 
-System_Reporter  omp_reporter;
+const System_Reporter system_reporter;
 
 
 

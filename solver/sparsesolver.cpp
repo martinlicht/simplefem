@@ -2,14 +2,16 @@
 
 
 
-#include "sparsesolver.hpp"
-
-
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
+
+#include <algorithm>
 #include <new>
 #include <utility>
+
+#include "sparsesolver.hpp"
+
 
 #if defined(_OPENMP)
 #include <omp.h>
@@ -41,8 +43,8 @@ int ConjugateGradientSolverCSR(
     assert( tolerance > 0 );
     assert( print_modulo >= -1 );
     
-    Float* __restrict__ direction = new (std::nothrow) Float[N];
-    Float* __restrict__ auxiliary = new (std::nothrow) Float[N];
+    Float* __restrict__ direction = new (std::nothrow) Float[N]; std::fill_n(direction,N,notanumber);
+    Float* __restrict__ auxiliary = new (std::nothrow) Float[N]; std::fill_n(auxiliary,N,notanumber);
     assert( direction );
     assert( auxiliary );
     
@@ -218,9 +220,9 @@ int ConjugateGradientSolverCSR_DiagonalPreconditioner(
     assert( print_modulo >= -1 );
     assert( precon );
     
-    Float* __restrict__ direction = new (std::nothrow) Float[N];
-    Float* __restrict__ zirconium = new (std::nothrow) Float[N];
-    Float* __restrict__ auxiliary = new (std::nothrow) Float[N];
+    Float* __restrict__ direction = new (std::nothrow) Float[N]; std::fill_n(direction,N,notanumber);
+    Float* __restrict__ zirconium = new (std::nothrow) Float[N]; std::fill_n(zirconium,N,notanumber);
+    Float* __restrict__ auxiliary = new (std::nothrow) Float[N]; std::fill_n(auxiliary,N,notanumber);
     assert( direction );
     assert( zirconium );
     assert( auxiliary );
@@ -424,10 +426,10 @@ int ConjugateGradientSolverCSR_SSOR(
     assert( print_modulo >= -1 );
     assert( diagonal );
     
-    Float* __restrict__ direction = new (std::nothrow) Float[N];
-    Float* __restrict__ zirconium = new (std::nothrow) Float[N];
-    Float* __restrict__ auxiliary = new (std::nothrow) Float[N];
-    Float* __restrict__ mittlerer = new (std::nothrow) Float[N];
+    Float* __restrict__ direction = new (std::nothrow) Float[N]; std::fill_n(direction,N,notanumber);
+    Float* __restrict__ zirconium = new (std::nothrow) Float[N]; std::fill_n(zirconium,N,notanumber);
+    Float* __restrict__ auxiliary = new (std::nothrow) Float[N]; std::fill_n(auxiliary,N,notanumber);
+    Float* __restrict__ mittlerer = new (std::nothrow) Float[N]; std::fill_n(mittlerer,N,notanumber);
     assert( direction );
     assert( zirconium );
     assert( mittlerer );
@@ -688,10 +690,10 @@ int ConjugateGradientSolverCSR_SSOR_Eisenstat(
     assert( print_modulo >= -1 );
     assert( diagonal );
     
-    Float* __restrict__ direction = new (std::nothrow) Float[N];
-    Float* __restrict__ zirconium = new (std::nothrow) Float[N];
-    Float* __restrict__ technical = new (std::nothrow) Float[N];
-    Float* __restrict__ auxiliary = new (std::nothrow) Float[N];
+    Float* __restrict__ direction = new (std::nothrow) Float[N]; std::fill_n(direction,N,notanumber);
+    Float* __restrict__ zirconium = new (std::nothrow) Float[N]; std::fill_n(zirconium,N,notanumber);
+    Float* __restrict__ technical = new (std::nothrow) Float[N]; std::fill_n(technical,N,notanumber);
+    Float* __restrict__ auxiliary = new (std::nothrow) Float[N]; std::fill_n(auxiliary,N,notanumber);
     assert( direction );
     assert( zirconium );
     assert( technical );
@@ -946,10 +948,10 @@ int ConjugateGradientSolverCSR_Rainbow(
     assert( B );
     assert( R );
     
-    Float* __restrict__ direction = new (std::nothrow) Float[N];
-    Float* __restrict__ zirconium = new (std::nothrow) Float[N];
-    Float* __restrict__ auxiliary = new (std::nothrow) Float[N];
-    Float* __restrict__ mittlerer = new (std::nothrow) Float[N];
+    Float* __restrict__ direction = new (std::nothrow) Float[N]; std::fill_n(direction,N,notanumber);
+    Float* __restrict__ zirconium = new (std::nothrow) Float[N]; std::fill_n(zirconium,N,notanumber);
+    Float* __restrict__ auxiliary = new (std::nothrow) Float[N]; std::fill_n(auxiliary,N,notanumber);
+    Float* __restrict__ mittlerer = new (std::nothrow) Float[N]; std::fill_n(mittlerer,N,notanumber);
     assert( direction );
     assert( zirconium );
     assert( mittlerer );
@@ -1266,10 +1268,10 @@ int ConjugateGradientSolverCSR_Eisenstat_Rainbow(
     assert( B );
     assert( R );
     
-    Float* __restrict__ direction = new (std::nothrow) Float[N];
-    Float* __restrict__ zirconium = new (std::nothrow) Float[N];
-    Float* __restrict__ technical = new (std::nothrow) Float[N];
-    Float* __restrict__ auxiliary = new (std::nothrow) Float[N];
+    Float* __restrict__ direction = new (std::nothrow) Float[N]; std::fill_n(direction,N,notanumber);
+    Float* __restrict__ zirconium = new (std::nothrow) Float[N]; std::fill_n(zirconium,N,notanumber);
+    Float* __restrict__ technical = new (std::nothrow) Float[N]; std::fill_n(technical,N,notanumber);
+    Float* __restrict__ auxiliary = new (std::nothrow) Float[N]; std::fill_n(auxiliary,N,notanumber);
     assert( direction );
     assert( zirconium );
     assert( technical );
@@ -1582,9 +1584,9 @@ int ConjugateResidualSolverCSR(
     assert( tolerance > 0 );
     assert( print_modulo >= -1 );
     
-    Float* __restrict__  dir = new (std::nothrow) Float[N];
-    Float* __restrict__ Adir = new (std::nothrow) Float[N];
-    Float* __restrict__ Ares = new (std::nothrow) Float[N];
+    Float* __restrict__  dir = new (std::nothrow) Float[N]; std::fill_n( dir,N,notanumber);
+    Float* __restrict__ Adir = new (std::nothrow) Float[N]; std::fill_n(Adir,N,notanumber);
+    Float* __restrict__ Ares = new (std::nothrow) Float[N]; std::fill_n(Ares,N,notanumber);
     assert(  dir );
     assert( Adir );
     assert( Ares );
@@ -1795,9 +1797,9 @@ int ConjugateResidualSolverCSR_textbook(
     assert( tolerance > 0 );
     assert( print_modulo >= -1 );
     
-    Float* __restrict__  dir = new (std::nothrow) Float[N];
-    Float* __restrict__ Adir = new (std::nothrow) Float[N];
-    Float* __restrict__ Ares = new (std::nothrow) Float[N];
+    Float* __restrict__  dir = new (std::nothrow) Float[N]; std::fill_n( dir,N,notanumber);
+    Float* __restrict__ Adir = new (std::nothrow) Float[N]; std::fill_n(Adir,N,notanumber);
+    Float* __restrict__ Ares = new (std::nothrow) Float[N]; std::fill_n(Ares,N,notanumber);
     assert(  dir );
     assert( Adir );
     assert( Ares );
@@ -2017,19 +2019,19 @@ int MINRESCSR(
     assert( tolerance > 0 );
     assert( print_modulo >= -1 );
     
-    Float* __restrict__ v0 = new (std::nothrow) Float[N];
-    Float* __restrict__ v1 = new (std::nothrow) Float[N];
-    Float* __restrict__ w0 = new (std::nothrow) Float[N];
-    Float* __restrict__ w1 = new (std::nothrow) Float[N];
+    Float* __restrict__ v0 = new (std::nothrow) Float[N]; std::fill_n(v0,N,notanumber);
+    Float* __restrict__ v1 = new (std::nothrow) Float[N]; std::fill_n(v1,N,notanumber);
+    Float* __restrict__ w0 = new (std::nothrow) Float[N]; std::fill_n(w0,N,notanumber);
+    Float* __restrict__ w1 = new (std::nothrow) Float[N]; std::fill_n(w1,N,notanumber);
     
     assert( v0 );
     assert( v1 );
     assert( w0 );
     assert( w1 );
     
-    Float* __restrict__ vn = new (std::nothrow) Float[N];
-    Float* __restrict__ wn = new (std::nothrow) Float[N];
-    Float* __restrict__  p = new (std::nothrow) Float[N];
+    Float* __restrict__ vn = new (std::nothrow) Float[N]; std::fill_n(vn,N,notanumber);
+    Float* __restrict__ wn = new (std::nothrow) Float[N]; std::fill_n(wn,N,notanumber);
+    Float* __restrict__  p = new (std::nothrow) Float[N]; std::fill_n( p,N,notanumber);
     
     assert( vn );
     assert( wn );
@@ -2200,6 +2202,13 @@ int MINRESCSR(
     if( print_modulo >= 0 ) 
         LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble)eta, (double)(safedouble) tolerance );
 
+
+    for( int c = 0; c < N; c++ ) {
+        res[c] = b[c];
+        for( int d = csrrows[c]; d < csrrows[c+1]; d++ )
+            res[c] -= csrvalues[ d ] * x[ csrcolumns[d] ];
+    }
+
     
     delete[] ( v0 );
     delete[] ( v1 );
@@ -2267,12 +2276,20 @@ int ChebyshevIteration_DiagonalPreconditioner(
     Float* __restrict__ zaratite = new (std::nothrow) Float[N];
     assert( zaratite );
     
-    Float* x_prev = new (std::nothrow) Float[N];
-    Float* x_curr = new (std::nothrow) Float[N];
-    Float* x_next = new (std::nothrow) Float[N];
+    Float* x_prev = new (std::nothrow) Float[N]; std::fill_n(x_prev,N,notanumber);
+    Float* x_curr = new (std::nothrow) Float[N]; std::fill_n(x_curr,N,notanumber);
+    Float* x_next = new (std::nothrow) Float[N]; std::fill_n(x_next,N,notanumber);
     assert( x_prev );
     assert( x_curr );
     assert( x_next );
+
+    #if defined(_OPENMP)
+    #pragma omp parallel for 
+    #endif
+    for( int c = 0; c < N; c++ )
+        x_prev[c] = x_curr[c] = x_next[c] = x[c];
+            
+            
 
     LOG << lower << space << upper << nl;
     
@@ -2385,6 +2402,13 @@ int ChebyshevIteration_DiagonalPreconditioner(
     LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble)std::sqrt(r_r), (double)(safedouble) tolerance );
 
     
+    #if defined(_OPENMP)
+    #pragma omp parallel for 
+    #endif
+    for( int c = 0; c < N; c++ )
+        x[c] = x_next[c];
+            
+            
     delete[] ( x_prev );
     delete[] ( x_curr );
     delete[] ( x_next );

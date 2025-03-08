@@ -1,6 +1,10 @@
 
 #include <algorithm>
+#include <functional>
+#include <initializer_list>
+#include <string>
 #include <sstream>
+#include <vector>
 
 #include "indexrange.hpp"
 #include "indexmap.hpp"
@@ -251,22 +255,22 @@ bool IndexMap::is_strictly_ascending() const
     return true;
 }
 
-bool IndexMap::has_value_in_range( int p ) const
+bool IndexMap::has_value_in_range( int value ) const
 {
     check();
-    assert( getTargetRange().contains(p) );
+    assert( getTargetRange().contains(value) );
     for( int i : src )
-        if( at(i) == p )
+        if( at(i) == value )
             return true;
     return false;
 } 
 
-int IndexMap::get_preimage_of( int p ) const
+int IndexMap::get_preimage_of( int value ) const
 {
     check();
-    assert( getTargetRange().contains(p) );
+    assert( getTargetRange().contains(value) );
     for( int i : src )
-        if( at(i) == p )
+        if( at(i) == value )
             return i;
     unreachable();
 } 

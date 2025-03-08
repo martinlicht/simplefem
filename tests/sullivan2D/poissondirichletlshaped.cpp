@@ -2,21 +2,23 @@
 
 /**/
 
+#include <cmath>
+
+#include <fstream>
+#include <functional>
+#include <utility>
+#include <vector>
+
 #include "../../basic.hpp"
 #include "../../utility/convergencetable.hpp"
 #include "../../utility/files.hpp"
-#include "../../operators/composedoperators.hpp"
-#include "../../dense/factorization.hpp"
-#include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
 #include "../../sparse/rainbow.hpp"
-#include "../../solver/iterativesolver.hpp"
 #include "../../solver/sparsesolver.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
 #include "../../vtk/vtkwriter.hpp"
 #include "../../fem/lagrangematrices.hpp"
-#include "../../fem/utilities.hpp"
 
 
 
@@ -218,7 +220,7 @@ int main( int argc, char *argv[] )
                 LOG << "...update saved old solutions:" << nl;
                 if( l > min_l )
                 {
-                    std::vector<FloatVector> new_solutions;
+                    std::vector<FloatVector> new_solutions; new_solutions.reserve( solutions.size() );
 
                     const auto& old_M = meshes[ l - min_l - 1 ];
 

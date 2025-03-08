@@ -2,16 +2,17 @@
 
 /**/
 
+#include <cmath>
+
+#include <vector>
+#include <string>
+
 #include "../../basic.hpp"
-#include "../../operators/composedoperators.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples3D.hpp"
-#include "../../sparse/matcsr.hpp"
 #include "../../fem/global.massmatrix.hpp"
-#include "../../fem/global.elevation.hpp"
 #include "../../fem/utilities.hpp"
 #include "../../fem/global.sullivanincl.hpp"
-#include "../../fem/global.flags.hpp"
 #include "../../utility/convergencetable.hpp"
 
 #include "../../fem/global.trace.hpp"

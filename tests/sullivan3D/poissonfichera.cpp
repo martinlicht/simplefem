@@ -2,6 +2,11 @@
 
 /**/
 
+#include <cmath>
+
+#include <fstream>
+#include <functional>
+
 #include "../../basic.hpp"
 #include "../../utility/convergencetable.hpp"
 #include "../../utility/files.hpp"
@@ -58,11 +63,11 @@ int main( int argc, char *argv[] )
 
                 Float u_p = (-1)*r*r/(6*pi) 
                             * 
-                            ( 3 * pi / 2 + 2 * log( r ) * std::sin( 2 * theta ) + ( 2 * theta - 3 / 2 * pi ) * std::cos(2*theta) );
+                            ( 3 * pi / 2 + 2 * log( r ) * std::sin( 2 * theta ) + ( 2 * theta - 3. / 2. * pi ) * std::cos(2*theta) );
 
                 const int j = 1; // only odd indices count ... 
                 const Float alpha_j = 0.40192487;
-                Float u = alpha_j * power_numerical( r, 2 * j / 3. ) * std::sin( 2./3. * j * theta );
+                Float u = alpha_j * power_numerical( r, 2. * j / 3. ) * std::sin( 2./3. * j * theta );
 
                 return FloatVector({ u + u_p });
             };
@@ -126,7 +131,7 @@ int main( int argc, char *argv[] )
             
             LOG << "...compose matrices" << nl;
     
-            auto opr  = aug_diffmatrix;
+            const auto& opr  = aug_diffmatrix;
             auto opl  = opr.getTranspose(); 
             auto opm = opl & ( aug_vector_massmatrix & opr );
 

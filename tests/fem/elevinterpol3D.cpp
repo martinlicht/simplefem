@@ -2,14 +2,17 @@
 
 /**/
 
+#include <cmath>
+
+#include <vector>
+#include <string>
+
 #include "../../basic.hpp"
 #include "../../operators/composedoperators.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples3D.hpp"
-#include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.elevation.hpp"
 #include "../../fem/global.interpol.hpp"
-#include "../../fem/utilities.hpp"
 #include "../../utility/convergencetable.hpp"
 
 
@@ -19,10 +22,6 @@ int main( int argc, char *argv[] )
 {
     
     LOG << "Unit Test: (3D) degree elevations commute" << nl;
-    
-    // LOG << std::setprecision(10);
-
-    LOG << "Initial mesh..." << nl;
     
     auto M = UnitCube3D();
     

@@ -85,7 +85,7 @@ class ComplexOperator final
         // }
 
 
-        virtual ~ComplexOperator();
+        virtual ~ComplexOperator() noexcept;
         
         /* standard interface */
         

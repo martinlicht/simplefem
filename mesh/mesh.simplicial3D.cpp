@@ -1,11 +1,12 @@
 
 #include <cmath>
+#include <cstddef>
+
 #include <algorithm>
 #include <array>
 #include <sstream>
-#include <map>
 #include <string>
-#include <utility>
+#include <type_traits>
 #include <vector>
 
 
@@ -179,7 +180,7 @@ MeshSimplicial3D::MeshSimplicial3D(
     
     /* 3. Count vertices */
     
-    counter_vertices = 0;
+    assert( counter_vertices == 0 );
     for( const auto& quartett : data_tetrahedron_vertices )
     for( const int& vertex : quartett )
       counter_vertices = counter_vertices < vertex ? vertex : counter_vertices; 
@@ -539,7 +540,7 @@ MeshSimplicial3D::MeshSimplicial3D(
 }
 
 
-MeshSimplicial3D::~MeshSimplicial3D()
+MeshSimplicial3D::~MeshSimplicial3D() noexcept
 {
     MeshSimplicial3D::check();
 }

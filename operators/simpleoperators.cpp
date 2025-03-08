@@ -3,6 +3,10 @@
 
 #include <cmath>
 
+#include <functional>
+#include <string>
+#include <utility>
+
 #include "../basic.hpp"
 #include "floatvector.hpp"
 #include "linearoperator.hpp"
@@ -14,7 +18,7 @@ IdentityOperator::IdentityOperator( int dimension )
     IdentityOperator::check();
 }
 
-IdentityOperator::~IdentityOperator()
+IdentityOperator::~IdentityOperator() noexcept
 {
     IdentityOperator::check();
 }
@@ -69,7 +73,7 @@ ZeroOperator::ZeroOperator( int dimout, int dimin )
     ZeroOperator::check();
 }
 
-ZeroOperator::~ZeroOperator()
+ZeroOperator::~ZeroOperator() noexcept
 {
     ZeroOperator::check();
 }
@@ -116,7 +120,7 @@ ScalingOperator::ScalingOperator( int dimension, Float s )
     ScalingOperator::check();
 }
 
-ScalingOperator::~ScalingOperator()
+ScalingOperator::~ScalingOperator() noexcept
 {
     ScalingOperator::check();
 }
@@ -206,9 +210,9 @@ DiagonalOperator::DiagonalOperator( int dimension, const std::function<Float(int
 }
         
 
-DiagonalOperator::~DiagonalOperator()
+DiagonalOperator::~DiagonalOperator() noexcept
 {
-    /* Nothing */ 
+    LinearOperator::check();
 }
 
 void DiagonalOperator::check() const  
@@ -257,7 +261,7 @@ void DiagonalOperator::apply( FloatVector& dest, const FloatVector& src, Float s
     
 }
 
-const DiagonalOperator DiagonalOperator::sqrt() const
+DiagonalOperator DiagonalOperator::sqrt() const
 {
     return DiagonalOperator( getdimin(), [this](int i) -> Float {
         assert( this->diagonal[i] >= 0 ); 
@@ -279,8 +283,8 @@ const DiagonalOperator DiagonalOperator::sqrt() const
 
 
 
-LambdaOperator::LambdaOperator( int n, const std::function<FloatVector(const FloatVector&)>& func )
-: LambdaOperator( n, n, func )
+LambdaOperator::LambdaOperator( int dim, const std::function<FloatVector(const FloatVector&)>& func )
+: LambdaOperator( dim, dim, func )
 {
     LambdaOperator::check();
 }
@@ -291,7 +295,7 @@ LambdaOperator::LambdaOperator( int dimout, int dimin, const std::function<Float
     LambdaOperator::check();
 }
 
-LambdaOperator::~LambdaOperator()
+LambdaOperator::~LambdaOperator() noexcept
 {
     LambdaOperator::check();
 }

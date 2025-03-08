@@ -4,7 +4,6 @@
 #include "../../basic.hpp"
 #include "../../utility/random.hpp"
 #include "../../utility/stl.hpp"
-#include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples3D.hpp"
 
@@ -44,15 +43,16 @@ int main( int argc, char *argv[] )
         
         for( int c = 0; c <= c_max; c++ ) {
         
-            std::vector<int> markedcells;
-            
             unsigned int p = 20;
+            
+            std::vector<int> markedcells; markedcells.reserve( M.count_tetrahedra() / p );
+            
             for( int t = 0; t < M.count_tetrahedra(); t++ )
                 if( random_integer() % p == 0 ) 
                     markedcells.push_back( t );
             cell_marked_count += markedcells.size();
             
-            std::vector<int> markededges;
+            std::vector<int> markededges; markededges.reserve( markedcells.size() );
             for( int t : markedcells ) markededges.push_back( M.get_oldest_edge( t ) );
             sort_and_remove_duplicates( markededges );
             

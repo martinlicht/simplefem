@@ -2,25 +2,27 @@
 
 /**/
 
+#include <cmath>
+#include <cstdlib>
+
+#include <limits>
+#include <string>
+#include <vector>
+
 #include "../../basic.hpp"
 #include "../../utility/convergencetable.hpp"
-#include "../../utility/files.hpp"
 #include "../../operators/composedoperators.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples3D.hpp"
-#include "../../solver/iterativesolver.hpp"
-#include "../../solver/inv.hpp"
+#include "../../solver/sparsesolver.hpp"
 #include "../../solver/systemsolver.hpp"
-#include "../../solver/systemsparsesolver.hpp"
 #include "../../fem/global.avgsullivan.hpp"
-#include "../../fem/global.elevation.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.sullivanincl.hpp"
 #include "../../fem/utilities.hpp"
-#include "../../vtk/vtkwriter.hpp"
 
 
 #include <queue>

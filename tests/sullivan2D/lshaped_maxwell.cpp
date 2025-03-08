@@ -2,7 +2,11 @@
 
 /**/
 
+#include <cmath>
+
 #include <fstream>
+#include <functional>
+
 
 
 #include "../../basic.hpp"
@@ -13,8 +17,6 @@
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
 #include "../../vtk/vtkwriter.hpp"
-#include "../../solver/sparsesolver.hpp"
-#include "../../solver/iterativesolver.hpp"
 #include "../../solver/inv.hpp"
 #include "../../solver/systemsparsesolver.hpp"
 #include "../../solver/systemsolver.hpp"
@@ -173,6 +175,28 @@ int main( int argc, char *argv[] )
                             1,
                             PAinv, PCinv
                         );
+
+                        if(false){ // TODO: fix 
+                    
+                            FloatVector res = sol;
+                            
+                            HodgeConjugateResidualSolverCSR_SSOR( 
+                                B.getdimout(), 
+                                A.getdimout(), 
+                                sol.raw(), 
+                                rhs.raw(), 
+                                A.getA(),   A.getC(),  A.getV(), 
+                                B.getA(),   B.getC(),  B.getV(), 
+                                Bt.getA(), Bt.getC(), Bt.getV(), 
+                                C.getA(),   C.getC(),  C.getV(), 
+                                res.raw(),
+                                desired_precision,
+                                1,
+                                desired_precision,
+                                0
+                            );
+                        
+                        }
                     
                     timestamp end = timestampnow();
     

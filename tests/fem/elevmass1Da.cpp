@@ -2,6 +2,12 @@
 
 /**/
 
+#include <cmath>
+
+#include <functional>
+#include <vector>
+#include <string>
+
 #include "../../basic.hpp"
 #include "../../mesh/mesh.simplicial1D.hpp"
 #include "../../mesh/examples1D.hpp"
@@ -18,8 +24,6 @@ int main( int argc, char *argv[] )
     
     LOG << "Unit Test: (1D) degree elevation of interpolation preserves mass" << nl;
     
-    // LOG << std::setprecision(10);
-
     LOG << "Initial mesh..." << nl;
     
     MeshSimplicial1D M = StandardInterval1D();

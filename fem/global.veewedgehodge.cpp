@@ -1,7 +1,9 @@
 
+#include <cmath>
+
 #include <algorithm>
+#include <array>
 #include <vector>
-#include <tuple>
 
 #include "../basic.hpp"
 #include "../combinatorics/generatemultiindices.hpp"

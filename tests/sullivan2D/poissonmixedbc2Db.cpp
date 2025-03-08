@@ -2,7 +2,11 @@
 
 /**/
 
+#include <cmath>
+
 #include <fstream>
+#include <functional>
+
 
 #include "../../basic.hpp"
 #include "../../utility/convergencetable.hpp"
@@ -14,6 +18,7 @@
 #include "../../mesh/examples2D.hpp"
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/iterativesolver.hpp"
+#include "../../solver/sparsesolver.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.sullivanincl.hpp"
@@ -28,8 +33,6 @@ int main( int argc, char *argv[] )
     
     LOG << "Unit Test: 2D Poisson problem, mixed BC on two sides" << nl;
     
-    // LOG << std::setprecision(10);
-
     if(true){
 
         LOG << "Initial mesh..." << nl;
@@ -179,6 +182,23 @@ int main( int argc, char *argv[] )
                         sol.zero();
                         ConjugateGradientMethod solver( stiffness_csr );
                         solver.solve( sol, rhs );
+                    }
+
+                    if(false)
+                    {
+                        auto residual = sol;
+                        auto diagonal = stiffness_csr.getDiagonal();
+                        ConjugateGradientSolverCSR_SSOR( 
+                            sol.getdimension(), 
+                            sol.raw(), 
+                            rhs.raw(), 
+                            stiffness_csr.getA(), stiffness_csr.getC(), stiffness_csr.getV(),
+                            residual.raw(),
+                            desired_precision,
+                            0,
+                            diagonal.raw(),
+                            1.0
+                        );
                     }
 
                     timestamp end = timestampnow();

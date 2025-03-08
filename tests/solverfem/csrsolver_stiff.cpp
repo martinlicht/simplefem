@@ -1,10 +1,13 @@
 
+#include <cmath>
+
+#include <functional>
+
 #include "../../basic.hpp"
 #include "../../utility/convergencetable.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
 #include "../../sparse/rainbow.hpp"
-#include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
 #include "../../solver/sparsesolver.hpp"
@@ -20,8 +23,6 @@ int main( int argc, char *argv[] )
     
     LOG << "Unit Test: Compare numerical solvers CRM vs MINRES\n           for Solution of Dirichlet Problem" << nl;
     
-    // LOG << std::setprecision(10);
-
     if(true){
 
         LOG << "Initial mesh..." << nl;

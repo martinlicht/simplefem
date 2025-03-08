@@ -46,7 +46,7 @@ class IndexMap
         IndexMap& operator =( const IndexMap& ) = default;
         IndexMap( IndexMap&& )                  = default;
         IndexMap& operator =( IndexMap&& )      = default;
-        virtual ~IndexMap()                     = default; // dtor virtualization is a bit shady here
+        virtual ~IndexMap() noexcept            = default; // dtor virtualization is a bit shady here
         
         /* standard methods */
         

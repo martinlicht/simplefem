@@ -2,13 +2,11 @@
 #include <vector>
 
 #include "../basic.hpp"
-#include "../utility/stl.hpp"
 #include "../combinatorics/indexrange.hpp"
 #include "../combinatorics/indexmap.hpp"
 #include "../combinatorics/multiindex.hpp"
 #include "../combinatorics/generateindexmaps.hpp"
 #include "../combinatorics/generatemultiindices.hpp"
-#include "../operators/floatvector.hpp"
 #include "../dense/densematrix.hpp"
 #include "../dense/functions.hpp"
 #include "../sparse/sparsematrix.hpp"

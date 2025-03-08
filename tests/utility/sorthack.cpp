@@ -5,7 +5,6 @@
 
 #include <algorithm>
 #include <functional>
-#include <iostream>
 #include <vector>
 
 #include "../../utility/random.hpp"
@@ -48,7 +47,7 @@ static int partition( std::vector<T>& vec, int low, int high )
 
     T pivot = vec[high];
 
-    for( ; 1; i++, j-- )
+    for( ; true; i++, j-- )
     {
         while( vec[i] < pivot )
             i++;

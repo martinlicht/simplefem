@@ -2,7 +2,11 @@
 
 /**/
 
+#include <cmath>
+
 #include <fstream>
+#include <functional>
+
 
 #include "../../basic.hpp"
 #include "../../utility/convergencetable.hpp"

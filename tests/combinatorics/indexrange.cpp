@@ -1,5 +1,8 @@
 
 
+#include <limits>
+#include <vector>
+
 #include "../../basic.hpp"
 #include "../../combinatorics/indexrange.hpp"
 

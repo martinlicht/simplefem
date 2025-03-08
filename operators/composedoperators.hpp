@@ -81,7 +81,7 @@ class RepeatedDiagonalBlockOperator final
             RepeatedDiagonalBlockOperator::check();
         }
         
-        virtual ~RepeatedDiagonalBlockOperator() {
+        virtual ~RepeatedDiagonalBlockOperator() noexcept {
             if( internal != nullptr && managing_internal ) delete internal;
         }
         
@@ -208,7 +208,7 @@ class ComposedOperator
             ComposedOperator::check();
         }
         
-        virtual ~ComposedOperator() { 
+        virtual ~ComposedOperator() noexcept { 
             if( left  != nullptr && managing_left  ) delete left;
             if( right != nullptr && managing_right ) delete right;
         }
@@ -273,7 +273,7 @@ class ProduktOperator final
             ComposedOperator::check();
         }
 
-        virtual ~ProduktOperator()
+        virtual ~ProduktOperator() noexcept
         {
 //             ProduktOperator::check();
         }
@@ -383,7 +383,7 @@ class SummOperator final
             ComposedOperator::check();
         }
 
-        virtual ~SummOperator()
+        virtual ~SummOperator() noexcept
         {
 //             SummOperator::check();
         }
@@ -466,7 +466,7 @@ class DiffOperator final
             ComposedOperator::check();
         }
         
-        virtual ~DiffOperator()
+        virtual ~DiffOperator() noexcept
         {
 //             DiffOperator::check();
         }
@@ -644,7 +644,7 @@ class Block2x2Operator
         
         
         
-        virtual ~Block2x2Operator() {
+        virtual ~Block2x2Operator() noexcept {
             if( upperleft  != nullptr && managing_upperleft  ) delete upperleft;
             if( upperright != nullptr && managing_upperright ) delete upperright;
             if( lowerleft  != nullptr && managing_lowerleft  ) delete lowerleft;

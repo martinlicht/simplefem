@@ -3,9 +3,6 @@
 
 #include <cstdlib>
 
-#include <algorithm>
-#include <vector>
-
 #include "../../basic.hpp"
 
 

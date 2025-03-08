@@ -2,7 +2,11 @@
 
 /**/
 
+#include <cmath>
+
 #include <fstream>
+#include <functional>
+
 
 #include "../../basic.hpp"
 #include "../../utility/convergencetable.hpp"
@@ -13,6 +17,7 @@
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
 #include "../../vtk/vtkwriter.hpp"
+#include "../../solver/iterativesolver.hpp"
 #include "../../solver/sparsesolver.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
@@ -166,6 +171,12 @@ int main( int argc, char *argv[] )
                     
                     timestamp start = timestampnow();
 
+                    if(false)
+                    {
+                        ConjugateGradientMethod CGM( stiffness_csr ); 
+                        CGM.solve( sol, rhs );
+                    }
+
                     {
                         FloatVector residual( rhs );
                         
@@ -177,6 +188,26 @@ int main( int argc, char *argv[] )
                             residual.raw(),
                             desired_precision,
                             1
+                        );
+
+                    }
+
+                    if(false)
+                    {
+                        FloatVector residual( rhs );
+                        
+                        const Float* precon = stiffness_invprecon.getDiagonal().raw();
+
+                        ConjugateGradientSolverCSR_SSOR( 
+                            sol.getdimension(), 
+                            sol.raw(), 
+                            rhs.raw(), 
+                            stiffness_csr.getA(), stiffness_csr.getC(), stiffness_csr.getV(),
+                            residual.raw(),
+                            desired_precision,
+                            1,
+                            precon,
+                            1.
                         );
 
                     }

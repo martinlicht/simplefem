@@ -3,6 +3,7 @@
 /**/
 
 #include <fstream>
+#include <vector>
 
 #include "../../basic.hpp"
 #include "../../utility/convergencetable.hpp"
@@ -14,12 +15,10 @@
 #include "../../mesh/examples2D.hpp"
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/sparsesolver.hpp"
-#include "../../solver/iterativesolver.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.sullivanincl.hpp"
 #include "../../fem/global.interpol.hpp"
-#include "../../fem/utilities.hpp"
 
 
 using namespace std;
@@ -31,8 +30,6 @@ int main( int argc, char *argv[] )
     
     LOG << "Unit Test: Nullspace computation (2D) scalar" << nl;
     
-    // LOG << std::setprecision(10);
-
     if(true){
 
         LOG << "Initial mesh..." << nl;

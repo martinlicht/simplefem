@@ -1,4 +1,6 @@
 
+#include <limits>
+
 #include "../../basic.hpp"
 #include "../../utility/random.hpp"
 #include "../../dense/densematrix.hpp"
@@ -188,7 +190,7 @@ int main( int argc, char *argv[] )
             for( int r = 0; r < m; r++ ) 
             for( int c = 0; c < n; c++ ) 
             {
-                mat( r, c ) = (r+c) * (r!=c?r>c?-1:1:0);
+                mat( r, c ) = (r+c) * (r!=c?(r>c?-1:1):0);
             }
             assert( mat.is_symmetric()     == (m==1 and n==1) );
             assert( mat.is_antisymmetric() == (m==n) );

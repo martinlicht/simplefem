@@ -1,6 +1,10 @@
 
 #include <cstdio>
 #include <cfloat>
+#include <cmath>
+
+#include <limits>
+
 #include "../../basic.hpp"
 
 using namespace std;

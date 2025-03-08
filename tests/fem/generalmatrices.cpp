@@ -2,6 +2,8 @@
 
 /**/
 
+#include <cmath>
+
 #include "../../basic.hpp"
 #include "../../mesh/mesh.simplicial1D.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
@@ -28,7 +30,7 @@ int main( int argc, char *argv[] )
     {
         LOG << "Case 1D" << nl;
         
-        MeshSimplicial2D M = StandardSquare2D();
+        MeshSimplicial1D M = UnitInterval1D();
         
         M.check();
         

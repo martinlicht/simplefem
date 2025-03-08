@@ -2,8 +2,9 @@
 
 /**/
 
+#include <cmath>
+
 #include "../../basic.hpp"
-#include "../../fem/global.massmatrix.hpp"
 #include "../../fem/utilities.hpp"
 
 

@@ -1,10 +1,11 @@
 
+#include <cmath>
+
+#include <functional>
+
 #include "../../basic.hpp"
 #include "../../dense/factorization.hpp"
 #include "../../dense/functions.hpp"
-#include "../../dense/factorization.hpp"
-#include "../../dense/simplesolver.hpp"
-// #include "../../dense/scalarfunctions.hpp"
 
 
 int main( int argc, char *argv[] )

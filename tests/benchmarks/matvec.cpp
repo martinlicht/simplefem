@@ -17,8 +17,6 @@ int main( int argc, char *argv[] )
 {
     LOG << "Benchmark: (2D) CSR-matrix vector product" << nl;
     
-    // LOG << std::setprecision(10);
-
     LOG << "Initial mesh..." << nl;
     
     MeshSimplicial2D M = StandardSquare2D_simple();

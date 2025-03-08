@@ -73,7 +73,7 @@ class MeshSimplicial3D
         MeshSimplicial3D& operator=( const MeshSimplicial3D& ) = default;
         MeshSimplicial3D( MeshSimplicial3D&& ) = default;
         MeshSimplicial3D& operator=( MeshSimplicial3D&& ) = default;
-        virtual ~MeshSimplicial3D();
+        virtual ~MeshSimplicial3D() noexcept;
         
         /* standard methods for operators */
         
@@ -103,9 +103,9 @@ class MeshSimplicial3D
         virtual const std::vector<int> get_supersimplices( int sup, int sub, int cell ) const override;
         
         
-        virtual SimplexFlag get_flag( int dim, int index ) const override;
+        virtual SimplexFlag get_flag( int dim, int cell ) const override;
         
-        virtual void set_flag( int dim, int index, SimplexFlag flag ) override;
+        virtual void set_flag( int dim, int cell, SimplexFlag flag ) override;
         
         
         /* General management */
@@ -320,7 +320,7 @@ class MeshSimplicial3D
         FloatVector get_edge_midpoint( int e ) const;
         Float get_edge_length( int e ) const;
         
-        void merge( const MeshSimplicial3D& other );
+        void merge( const MeshSimplicial3D& mesh );
         
 
         int get_oldest_edge( int t ) const;

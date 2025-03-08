@@ -1,4 +1,6 @@
 
+#include <cmath>
+
 #include "../basic/basic.hpp"
 #include "math.hpp"
 

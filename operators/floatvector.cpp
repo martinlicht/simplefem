@@ -1,8 +1,13 @@
 
 #include <cmath>
+#include <cstddef>
+
 #include <algorithm>
+#include <functional>
+#include <initializer_list>
 #include <new>
-#include <ostream>
+#include <string>
+#include <vector>
 
 #include "../basic.hpp"
 #include "floatvector.hpp"
@@ -57,7 +62,7 @@ FloatVector& FloatVector::operator=( FloatVector&& vec )
     return *this;
 }
 
-FloatVector::~FloatVector()
+FloatVector::~FloatVector() noexcept
 {
     FloatVector::check();
     if( pointer != nullptr ){
@@ -85,31 +90,31 @@ FloatVector::FloatVector( int dim, Float initialvalue )
     FloatVector::check();
 }
 
-FloatVector::FloatVector( const FloatVector& src, Float alpha )
+FloatVector::FloatVector( const FloatVector& src, Float scaling )
 : dimension( src.dimension ), pointer( new (std::nothrow) Float[ src.dimension ] )
 {
     assert( dimension >= 0 and pointer != nullptr );
-    for( int p = 0; p < dimension; p++ ) pointer[p] = alpha * src.pointer[p];
+    for( int p = 0; p < dimension; p++ ) pointer[p] = scaling * src.pointer[p];
     FloatVector::check();
 }
 
-FloatVector::FloatVector( FloatVector&& src, Float alpha )
+FloatVector::FloatVector( FloatVector&& src, Float scaling )
 : dimension( src.dimension ), pointer( src.pointer )
 {
     assert( dimension >= 0 and pointer != nullptr and pointer == src.pointer and dimension == src.dimension );
     src.pointer = nullptr;
-    scale( alpha );
+    scale( scaling );
     FloatVector::check();
 }
 
-FloatVector::FloatVector( const std::vector<Float>& vals, Float alpha )
-: FloatVector( SIZECAST( vals.size() ), [&vals](int i) -> Float{ return vals.at(i); }, alpha )
+FloatVector::FloatVector( const std::vector<Float>& vals, Float scaling )
+: FloatVector( SIZECAST( vals.size() ), [&vals](int i) -> Float{ return vals.at(i); }, scaling )
 {
     FloatVector::check();
 }
 
-FloatVector::FloatVector( const std::vector<int>& vals, Float alpha )
-: FloatVector( SIZECAST( vals.size() ), [&vals](int i) -> Float{ return vals.at(i); }, alpha )
+FloatVector::FloatVector( const std::vector<int>& vals, Float scaling )
+: FloatVector( SIZECAST( vals.size() ), [&vals](int i) -> Float{ return vals.at(i); }, scaling )
 {
     FloatVector::check();
 }
@@ -123,11 +128,11 @@ FloatVector::FloatVector( const std::initializer_list<Float>& l )
     FloatVector::check();
 }
 
-FloatVector::FloatVector( int dimension, const std::function<Float(int)>& generator, Float alpha )
+FloatVector::FloatVector( int dimension, const std::function<Float(int)>& generator, Float scaling )
 : dimension( dimension ), pointer( new (std::nothrow) Float[dimension] )
 {
     assert( dimension >= 0 and pointer != nullptr );
-    generatedatafrom( alpha, generator );
+    generatedatafrom( scaling, generator );
     FloatVector::check();
 }
 
@@ -286,7 +291,7 @@ const Float& FloatVector::operator[]( int p ) const &
     return pointer[p];
 }
                 
-const std::vector<Float> FloatVector::getdata() const
+std::vector<Float> FloatVector::getdata() const
 {
     // check();
     std::vector<Float> ret( dimension );
@@ -407,19 +412,19 @@ FloatVector& FloatVector::normalize( const LinearOperator& op )
     return *this;
 }
 
-FloatVector& FloatVector::scale( Float alpha ) 
+FloatVector& FloatVector::scale( Float factor ) 
 {
     check();
     for( int p = 0; p < getdimension(); p++ )
-        setentry( p, alpha * getentry( p ) ); 
+        setentry( p, factor * getentry( p ) ); 
     return *this;
 }
 
-FloatVector& FloatVector::scaleinverse( Float alpha ) 
+FloatVector& FloatVector::scaleinverse( Float divisor ) 
 {
     check();
     for( int p = 0; p < getdimension(); p++ )
-        setentry( p, getentry( p ) / alpha ); 
+        setentry( p, getentry( p ) / divisor ); 
     return *this;
 }
 
@@ -465,36 +470,36 @@ FloatVector FloatVector::getslice( int base, int len ) const
     return ret;
 }
 
-void FloatVector::setslice( int base, int len, Float value ) 
+void FloatVector::setslice( int base, int len, Float uniform_value ) 
 {
     check();
     assert( 0 <= base && base < getdimension() );
     assert( 0 <= len && len <= getdimension() );
     assert( 0 <= base+len && base+len <= getdimension() );
     
-    for( int p = 0; p < len; p++ ) pointer[ base + p ] = value;
+    for( int p = 0; p < len; p++ ) pointer[ base + p ] = uniform_value;
 }
 
-void FloatVector::setslice( int base, const FloatVector& slice )
+void FloatVector::setslice( int base, const FloatVector& source )
 {
     check();
-    const int len = slice.getdimension();
+    const int len = source.getdimension();
     assert( 0 <= base && base < getdimension() );
     assert( 0 <= len && len <= getdimension() );
     assert( 0 <= base+len && base+len <= getdimension() );
     for( int p = 0; p < len; p++ )
-        pointer[ base + p ] = slice[p];
+        pointer[ base + p ] = source[p];
 }
 
-void FloatVector::addslice( int base, const FloatVector& slice, Float s )
+void FloatVector::addslice( int base, const FloatVector& summand, Float scaling )
 {
     check();
-    const int len = slice.getdimension();
+    const int len = summand.getdimension();
     assert( 0 <= base && base < getdimension() );
     assert( 0 <= len && len <= getdimension() );
     assert( 0 <= base+len && base+len <= getdimension() );
     for( int p = 0; p < len; p++ )
-        pointer[ base + p ] += s * slice[p];
+        pointer[ base + p ] += scaling * summand[p];
 }
 
 
@@ -533,24 +538,24 @@ void FloatVector::generatedatafrom( Float scaling, const std::function<Float(int
 }
         
         
-void FloatVector::adddatafrom( const FloatVector& source )
+void FloatVector::adddatafrom( const FloatVector& summand )
 {
     check();
-    adddatafrom( 1., source );
+    adddatafrom( 1., summand );
 }
 
-void FloatVector::adddatafrom( Float scalingsource, const FloatVector& source )
+void FloatVector::adddatafrom( Float scalingsummand, const FloatVector& summand )
 {
     check();
-    adddatafrom( 1., scalingsource, source );
+    adddatafrom( 1., scalingsummand, summand );
 }
         
-void FloatVector::adddatafrom( Float scalingself, Float scalingsource, const FloatVector& source )
+void FloatVector::adddatafrom( Float scalingdest, Float scalingsummand, const FloatVector& summand )
 {
     check();
-    assert( getdimension() == source.getdimension() );
+    assert( getdimension() == summand.getdimension() );
         for( int p = 0; p < getdimension(); p++ )
-            setentry( p, scalingself * getentry( p ) + scalingsource * source.getentry( p ) );         
+            setentry( p, scalingdest * getentry( p ) + scalingsummand * summand.getentry( p ) );         
 }
 
 
@@ -659,18 +664,18 @@ Float FloatVector::l2norm() const
     return norm();
 }
 
-Float FloatVector::lpnorm( Float p, Float innerweight ) const
+Float FloatVector::lpnorm( Float p, Float inner_weight ) const
 {
     check();
     assert( p > 0 );
     assert( std::isfinite(p) );
     assert( std::isnormal(p) );
-    assert( std::isfinite(innerweight) and innerweight > 0. );
+    assert( std::isfinite(inner_weight) and inner_weight > 0. );
     
     long double ret = 0.;
     for( int d = 0; d < getdimension(); d++ )
         ret += power_numerical( absolute( pointer[d] ), p );
-    ret *= innerweight;
+    ret *= inner_weight;
     return power_numerical( static_cast<Float>(ret), 1./p );
 }
 

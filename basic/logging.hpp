@@ -149,7 +149,7 @@ class Logger //: public std::ostringstream
             return *this;
         }
 
-        ~Logger();
+        ~Logger() noexcept;
 
 };
 
@@ -342,10 +342,10 @@ struct System_Reporter
 {
     System_Reporter() noexcept;
     ~System_Reporter() noexcept;
-    void output();
+    static void output();
 };
 
-extern System_Reporter  omp_reporter;
+extern const System_Reporter system_reporter;
 
 // #endif // _OPENMP
 
@@ -358,11 +358,11 @@ extern System_Reporter  omp_reporter;
 
 // LEGACY DEFINITIONS:
 
-// inline void ping() { std::clog << "ping" << std::endl; }
-// inline void pong() { std::clog << "pong" << std::endl; }
-// inline void peng() { std::clog << "peng" << std::endl; }
-// inline void pang() { std::clog << "pang" << std::endl; }
-// inline void pung() { std::clog << "pung" << std::endl; }
+// inline void ping() { std::clog << "ping" << '\n'; }
+// inline void pong() { std::clog << "pong" << '\n'; }
+// inline void peng() { std::clog << "peng" << '\n'; }
+// inline void pang() { std::clog << "pang" << '\n'; }
+// inline void pung() { std::clog << "pung" << '\n'; }
 // 
 // 
 // static std::ostream* lognotice = &std::clog;

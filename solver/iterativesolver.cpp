@@ -1,4 +1,7 @@
 
+#include <cmath>
+
+#include <string>
 #include <utility>
 
 #include "iterativesolver.hpp"

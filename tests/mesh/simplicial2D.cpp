@@ -2,11 +2,11 @@
 #include <cstdio>
 
 #include <fstream>
+#include <ios>
 #include <sstream>
 
 #include "../../basic.hpp"
 #include "../../utility/files.hpp"
-#include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/io.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"

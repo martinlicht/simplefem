@@ -1,4 +1,9 @@
 
+#include <functional>
+#include <ostream>
+#include <string>
+#include <vector>
+
 #include "vtkwriter.hpp"
 #include "../combinatorics/generateindexmaps.hpp"
 
@@ -259,8 +264,10 @@ VTKWriter VTKWriter::write_vertex_scalar_data( const std::function<FloatVector(c
     return *this;
 }
 
-VTKWriter VTKWriter::write_vertex_scalar_data( const FloatVector& data, const std::string& name, Float scaling )
+VTKWriter VTKWriter::write_vertex_scalar_data( const FloatVector& pointvalues, const std::string& name, Float scaling )
 {
+    const auto& data = pointvalues;
+
     assert( data.getdimension() == mesh.count_simplices(0) );
     assert( data.is_finite() );
 
@@ -309,8 +316,10 @@ VTKWriter VTKWriter::write_cell_scalar_data( const std::function<FloatVector(con
     return *this;
 }
 
-VTKWriter VTKWriter::write_cell_scalar_data( const FloatVector& data, const std::string& name, Float scaling )
+VTKWriter VTKWriter::write_cell_scalar_data( const FloatVector& cellvalues, const std::string& name, Float scaling )
 {
+    const auto& data = cellvalues;
+    
     const int topdim = mesh.getinnerdimension();
 
     assert( data.getdimension() == mesh.count_simplices(topdim) );
@@ -326,9 +335,10 @@ VTKWriter VTKWriter::write_cell_scalar_data( const FloatVector& data, const std:
     return *this;
 }
 
-VTKWriter VTKWriter::write_cell_scalar_data_barycentricvolumes( const FloatVector& v, const std::string& name, Float scaling )
+VTKWriter VTKWriter::write_cell_scalar_data_barycentricvolumes( const FloatVector& volumevalues, const std::string& name, Float scaling )
 {
     const int topdim = mesh.getinnerdimension();
+    const auto& v = volumevalues;
     
     assert( v.getdimension() == mesh.count_simplices(topdim) * (mesh.getinnerdimension()+1) );
     assert( v.is_finite() );
@@ -478,9 +488,10 @@ VTKWriter VTKWriter::write_cell_vector_data( const std::function<FloatVector(con
 
 
 
-VTKWriter VTKWriter::write_cell_vector_data_barycentricgradients( const FloatVector& v, const std::string& name, Float scaling )
+VTKWriter VTKWriter::write_cell_vector_data_barycentricgradients( const FloatVector& gradvalues, const std::string& name, Float scaling )
 {
     const int topdim = mesh.getinnerdimension();
+    const auto& v = gradvalues;
     
     assert( v.getdimension() == mesh.count_simplices(topdim) * (mesh.getinnerdimension()+1) );
     assert( v.is_finite() );
@@ -515,9 +526,11 @@ VTKWriter VTKWriter::write_cell_vector_data_barycentricgradients( const FloatVec
 
 
 
-VTKWriter VTKWriter::write_cell_vector_data_barycentriccrosses( const FloatVector& v, const std::string& name, Float scaling )
+VTKWriter VTKWriter::write_cell_vector_data_barycentriccrosses( const FloatVector& crossvalues, const std::string& name, Float scaling )
 {
     const int topdim = mesh.getinnerdimension();
+
+    const auto& v = crossvalues;
 
     assert( topdim == 3 );
     
@@ -607,9 +620,10 @@ VTKWriter VTKWriter::write_cell_vector_data_barycentriccrosses( const FloatVecto
 }
 
 
-VTKWriter VTKWriter::write_cell_vector_data_Euclidean( int outerdim, const FloatVector& v, const std::string& name, Float scaling )
+VTKWriter VTKWriter::write_cell_vector_data_Euclidean( int outerdim, const FloatVector& directions, const std::string& name, Float scaling )
 {
     const int topdim = mesh.getinnerdimension();
+    const auto& v = directions;
     
     assert( v.getdimension() == mesh.count_simplices(topdim) * (mesh.getinnerdimension()+1) );
     assert( v.is_finite() );

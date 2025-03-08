@@ -2,7 +2,11 @@
 
 /**/
 
+#include <cmath>
+
 #include <fstream>
+#include <functional>
+
 
 #include "../../basic.hpp"
 #include "../../utility/convergencetable.hpp"
@@ -10,7 +14,6 @@
 #include "../../operators/composedoperators.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
-#include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
 #include "../../vtk/vtkwriter.hpp"
@@ -204,6 +207,14 @@ int main( int argc, char *argv[] )
                             diagonal.raw(),
                             1.0
                         );
+
+                        if(false){
+                            sol.zero();
+                            ConjugateGradientMethod solver( stiffness_csr );
+                            solver.solve( sol, rhs );
+                        }
+
+                    
 
                     }
 

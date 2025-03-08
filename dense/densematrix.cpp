@@ -1,11 +1,13 @@
 
 #include <cmath>
 #include <cstdlib>
+
 #include <algorithm>
 #include <functional>
+#include <initializer_list>
 #include <limits>
-#include <memory>
 #include <new>
+#include <string>
 #include <utility>
 #include <vector>
 
@@ -221,7 +223,7 @@ DenseMatrix::DenseMatrix( DenseMatrix&& mat, Float scaling )
 }
 
         
-DenseMatrix::~DenseMatrix()
+DenseMatrix::~DenseMatrix() noexcept
 {
     // DenseMatrix::check(); // explicitly disabled, might be in moved-from state 
     
@@ -755,23 +757,23 @@ void DenseMatrix::add( const DenseMatrix& addendum )
     check();
 }
 
-void DenseMatrix::add( Float t, const DenseMatrix& addendum )
+void DenseMatrix::add( Float scaling, const DenseMatrix& addendum )
 {
     check();
     addendum.check();
     for( int r = 0; r < getdimout(); r++ )
         for( int c = 0; c < getdimin(); c++ )
-            (*this)(r,c) = (*this)(r,c) + t * addendum(r,c);
+            (*this)(r,c) = (*this)(r,c) + scaling * addendum(r,c);
     check();
 }
 
-void DenseMatrix::add( Float s, Float t, const DenseMatrix& addendum )
+void DenseMatrix::add( Float s, Float scaling, const DenseMatrix& addendum )
 {
     check();
     addendum.check();
     for( int r = 0; r < getdimout(); r++ )
         for( int c = 0; c < getdimin(); c++ )
-            (*this)(r,c) = s * (*this)(r,c) + t * addendum(r,c);
+            (*this)(r,c) = s * (*this)(r,c) + scaling * addendum(r,c);
     check();
 }
         
@@ -1342,7 +1344,7 @@ Float HilbertDeterminant(int n) {
         detinv *= (2*k+1) * binom*binom;
     }
     
-    // LOG << "H1: " << 1./(double)detinv << std::endl;
+    // LOG << "H1: " << 1./(double)detinv << '\n';
     // The determinant is c_n / denominator
     return (Float)1./detinv;
 }

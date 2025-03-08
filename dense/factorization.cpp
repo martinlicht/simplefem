@@ -1,19 +1,21 @@
 
+#include <cmath>
+
+#include <new>
+
 #include "densematrix.hpp"
 #include "functions.hpp"
 #include "simplesolver.hpp"
 #include "factorization.hpp"
 
-#include <new>
-
  // LR factorization, column pivot, 
  
-DenseMatrix GaussJordan( DenseMatrix mat )
+DenseMatrix GaussJordan( DenseMatrix A )
 {
     
-    assert( mat.is_square() );
+    assert( A.is_square() );
     
-    const int n = mat.getdimout();
+    const int n = A.getdimout();
 //     std::vector<int> pivotcol( n, -17 );
 //     std::vector<int> colperm ( n, -17 );
 //     for( int c = 0; c < n; c++ ) colperm[c] = c;
@@ -30,10 +32,10 @@ DenseMatrix GaussJordan( DenseMatrix mat )
             
             if( i == k ) continue; 
             
-            Float coeff = - mat( k, i ) / mat( i, i );
+            Float coeff = - A( k, i ) / A( i, i );
             
             for( int j = i; j < n; j++ ) {
-                mat( k, j ) = mat( k, j ) + coeff * mat( i, j );
+                A( k, j ) = A( k, j ) + coeff * A( i, j );
             }
 
             for( int j = 0; j <= i; j++ ) {
@@ -42,14 +44,14 @@ DenseMatrix GaussJordan( DenseMatrix mat )
             
         }
         
-        Float coeff = 1. / mat(i,i);
+        Float coeff = 1. / A(i,i);
         
         for( int j = 0; j <= i; j++ ) {
             ret(i,j) *= coeff;
         }
         
         for( int j = i; j < n; j++ ) {
-            mat(i,j) *= coeff;
+            A(i,j) *= coeff;
         }
             
     }
@@ -58,10 +60,10 @@ DenseMatrix GaussJordan( DenseMatrix mat )
 //     
 //     for( int i = 0; i < n; i++ ) {
 //         
-//         Float coeff = 1. / mat(i,i);
+//         Float coeff = 1. / A(i,i);
 //         
 //         for( int k = 0; k < n; k++ ) {
-//             mat(i,k) *= coeff;
+//             A(i,k) *= coeff;
 //             ret(i,k) *= coeff;
 //         }
         
@@ -70,7 +72,7 @@ DenseMatrix GaussJordan( DenseMatrix mat )
     
     // finished!
     
-    // LOG << mat;
+    // LOG << A;
     // LOG << ret;
     
     return ret;
@@ -82,12 +84,12 @@ DenseMatrix GaussJordan( DenseMatrix mat )
  
  
  
-DenseMatrix GaussJordanInplace( DenseMatrix mat, bool pivoting )
+DenseMatrix GaussJordanInplace( DenseMatrix A, bool pivoting )
 {
     
-    assert( mat.is_square() );
+    assert( A.is_square() );
     
-    const int n = mat.getdimout();
+    const int n = A.getdimout();
     
     int* pivots = nullptr;
     if(pivoting) pivots = new (std::nothrow) int[n];
@@ -98,11 +100,11 @@ DenseMatrix GaussJordanInplace( DenseMatrix mat, bool pivoting )
             
             int c_max = i;
             for( int c = i+1; c < n; c++ )
-                if( absolute(mat(i,c)) > absolute(mat(i,c_max)) ) 
+                if( absolute(A(i,c)) > absolute(A(i,c_max)) ) 
                     c_max = c;
             
             pivots[i] = c_max;
-            mat.swapcolumn( c_max, i );
+            A.swapcolumn( c_max, i );
             
         }
         
@@ -110,32 +112,32 @@ DenseMatrix GaussJordanInplace( DenseMatrix mat, bool pivoting )
             
             if( i == k ) continue; 
             
-            assert( absolute(mat(i,i)) != 0.0 );
+            assert( absolute(A(i,i)) != 0.0 );
             
-            Float coeff = - mat( k, i ) / mat( i, i );
+            Float coeff = - A( k, i ) / A( i, i );
             
             for( int j = i+1; j < n; j++ ) {
-                mat( k, j ) = mat( k, j ) + coeff * mat( i, j );
+                A( k, j ) = A( k, j ) + coeff * A( i, j );
             }
 
-            mat( k, i ) = coeff;
+            A( k, i ) = coeff;
             
             for( int j = 0; j < i; j++ ) {
-                mat( k, j ) = mat( k, j ) + coeff * mat( i, j );
+                A( k, j ) = A( k, j ) + coeff * A( i, j );
             }
             
         }
         
-        Float coeff = 1. / mat(i,i);
+        Float coeff = 1. / A(i,i);
         
         for( int j = 0; j < i; j++ ) {
-            mat(i,j) *= coeff;
+            A(i,j) *= coeff;
         }
         
-        mat(i,i) = coeff;
+        A(i,i) = coeff;
         
         for( int j = i+1; j < n; j++ ) {
-            mat(i,j) *= coeff;
+            A(i,j) *= coeff;
         }
             
     }
@@ -145,7 +147,7 @@ DenseMatrix GaussJordanInplace( DenseMatrix mat, bool pivoting )
 //         for( int i = 0; i < n; i++ ) 
         {
 //             LOG << "swap " << i << space << pivots[i] << nl;
-            mat.swaprow( i, pivots[i] );
+            A.swaprow( i, pivots[i] );
         }
     }
     
@@ -153,7 +155,7 @@ DenseMatrix GaussJordanInplace( DenseMatrix mat, bool pivoting )
     
     if( pivoting ) delete[] pivots;
     
-    return mat;
+    return A;
 }
 
 

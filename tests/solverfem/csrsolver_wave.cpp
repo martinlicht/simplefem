@@ -1,4 +1,8 @@
 
+#include <cmath>
+
+#include <functional>
+
 #include "../../basic.hpp"
 #include "../../utility/convergencetable.hpp"
 #include "../../utility/math.hpp"
@@ -11,12 +15,8 @@
 #include "../../mesh/examples2D.hpp"
 #include "../../solver/sparsesolver.hpp"
 #include "../../solver/iterativesolver.hpp"
-#include "../../solver/inv.hpp"
-#include "../../solver/systemsparsesolver.hpp"
-#include "../../solver/systemsolver.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
-#include "../../fem/global.elevation.hpp"
 #include "../../fem/global.sullivanincl.hpp"
 #include "../../fem/utilities.hpp"
 
@@ -26,8 +26,6 @@ int main( int argc, char *argv[] )
         
     LOG << "Unit Test: 2D Maxwell System" << nl;
     
-    // LOG << std::setprecision(10);
-
     LOG << "Initial mesh..." << nl;
     
     MeshSimplicial2D M = StandardSquare2D();

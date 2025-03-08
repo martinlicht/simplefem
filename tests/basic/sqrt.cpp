@@ -10,7 +10,7 @@
 template<typename NumericalType>
 struct SqrtTest
 {
-    struct sqrt_results{ 
+    struct SqrtResults{ 
         NumericalType cpp; 
         NumericalType fem; 
     };
@@ -20,7 +20,7 @@ struct SqrtTest
         unsigned int i;
     };
 
-    sqrt_results calculate_sqrts( NumericalType x ) {
+    SqrtResults calculate_sqrts( NumericalType x ) {
         NumericalType cpp = std::sqrt(x);
         NumericalType fem = Sqrt(x);
         // LOGPRINTF( "result %c x=%.30e cpp=%.10e fem=%.10e \n", std::isnormal(x) ? 'n' : 's', (double)x, (double)cpp, (double)fem );
@@ -51,7 +51,7 @@ struct SqrtTest
         { 
             LOG << "SQRT: very big integer" << nl;
             numerical_container u;
-            u.f = std::numeric_limits<unsigned int>::max() >> 4;
+            u.f = std::numeric_limits<unsigned int>::max() >> 6;
             // LOG << u.i << ' ' << (double)u.f << nl;
             auto result = calculate_sqrts( u.f );
             LOGPRINTF( "epsilon x=%.30e cpp=%.10e fem=%.10e \n", 
@@ -167,7 +167,7 @@ struct ThirdRootTest
         { 
             LOG << "3RD: very big integer" << nl;
             numerical_container u;
-            u.f = std::numeric_limits<unsigned int>::max() >> 4;
+            u.f = std::numeric_limits<unsigned int>::max() >> 6;
             // LOG << u.i << ' ' << (double)u.f << nl;
             auto result = calculate_thirdroots( u.f );
             LOGPRINTF( "epsilon x=%.30e cpp=%.10e fem=%.10e \n", 

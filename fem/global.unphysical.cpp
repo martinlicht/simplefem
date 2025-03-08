@@ -1,15 +1,10 @@
 
-#include "../basic.hpp"
-#include "../combinatorics/indexrange.hpp"
-#include "../combinatorics/indexmap.hpp"
-#include "../combinatorics/multiindex.hpp"
-#include "../combinatorics/generateindexmaps.hpp"
-#include "../combinatorics/generatemultiindices.hpp"
-#include "../operators/linearoperator.hpp"
-#include "../mesh/mesh.hpp"
-#include "../utility/random.hpp"
+#include <vector>
 
-#include "indexfunctions.hpp"
+#include "../basic.hpp"
+#include "../mesh/mesh.hpp"
+#include "../sparse/sparsematrix.hpp"
+#include "../utility/random.hpp"
 
 #include "../fem/global.unphysical.hpp"
 

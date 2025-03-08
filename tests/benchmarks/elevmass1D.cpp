@@ -19,8 +19,6 @@ int main( int argc, char *argv[] )
 {
     LOG << "Unit Test: (1D) degree elevation of interpolation has the mass of higher order interpolation" << nl;
     
-    // LOG << std::setprecision(10);
-
     LOG << "Initial mesh..." << nl;
     
     MeshSimplicial1D M = StandardInterval1D();

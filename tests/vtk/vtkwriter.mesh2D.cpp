@@ -1,8 +1,11 @@
+
+#include <string>
+#include <vector>
+
 #include "../../basic.hpp"
 #include "../../utility/stl.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
-#include "../../vtk/vtkwriter.hpp"
 
 
 
@@ -43,9 +46,12 @@ int main( int argc, char *argv[] )
             
             for( int c = 0; c < 6; c++ ) {
             
-                std::vector<int> refinementedges;
+                int number_of_refinement_edges = 3 + M.count_edges() / 10;
                 
-                for( int k = 0; k < 3 + M.count_edges() / 10; k++ )
+                std::vector<int> refinementedges;
+                refinementedges.reserve( number_of_refinement_edges );
+                
+                for( int k = 0; k < number_of_refinement_edges; k++ )
                     refinementedges.push_back( random_integer() % M.count_edges() );
                 
                 sort_and_remove_duplicates( refinementedges );
@@ -64,9 +70,12 @@ int main( int argc, char *argv[] )
             
             for( int c = 0; c < 6; c++ ) {
                 
-                std::vector<int> refinementedges;
+                int number_of_refinement_edges = 3 + M.count_edges() / 10;
                 
-                for( int k = 0; k < 3 + M.count_edges() / 10; k++ )
+                std::vector<int> refinementedges;
+                refinementedges.reserve( number_of_refinement_edges );
+                
+                for( int k = 0; k < number_of_refinement_edges; k++ )
                     refinementedges.push_back( random_integer() % M.count_edges() );
                 
                 sort_and_remove_duplicates( refinementedges );

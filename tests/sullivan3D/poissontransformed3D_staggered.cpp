@@ -4,24 +4,23 @@
 
 #include <cmath>
 
-#include <algorithm>
+// #include <algorithm>
 #include <fstream>
+#include <utility>
 #include <vector>
 
 #include "../../basic.hpp"
 #include "../../utility/convergencetable.hpp"
 #include "../../utility/files.hpp"
-#include "../../operators/composedoperators.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples3D.hpp"
 #include "../../vtk/vtkwriter.hpp"
-#include "../../solver/iterativesolver.hpp"
 #include "../../solver/sparsesolver.hpp"
 #include "../../sparse/rainbow.hpp"
 #include "../../fem/global.elevation.hpp"
-#include "../../fem/global.coefficientmassmatrix.hpp"
+#include "../../fem/global.coefficientmassmatrix.hpp" // TODO: check what is being computed here 
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.sullivanincl.hpp"
@@ -29,9 +28,9 @@
 
 
 
-Float alpha(const Float x);
+Float alpha(const Float& x);
 
-Float alpha_dev(const Float x);
+Float alpha_dev(const Float& x);
 
 FloatVector trafo(const FloatVector& vec);
 
@@ -54,12 +53,12 @@ FloatVector IncreaseResolution( const MeshSimplicial3D& mesh, const FloatVector&
 
 
 
-Float alpha(const Float x) { 
+Float alpha(const Float& x) { 
     Float maxnorm = absolute(x);
     return std::exp( 1 - 1. / maxnorm );
 }
 
-Float alpha_dev(const Float x) { 
+Float alpha_dev(const Float& x) { 
     Float maxnorm = absolute(x);
     Float maxnorm_sq = square(maxnorm);            
     return std::exp( 1 - 1. / maxnorm ) / ( maxnorm_sq );
@@ -397,10 +396,10 @@ int main( int argc, char *argv[] )
                 LOG << "time:      " << Float( solver_time ) << nl;
                 
                 
-                LOG << "...update saved old solutions:" << nl;
+                LOG << "...update saved old solutions:" << nl; // TODO: remove std::move and replace it with std::transform
                 if( l > min_l )
                 {
-                    std::vector<FloatVector> new_solutions;
+                    std::vector<FloatVector> new_solutions; new_solutions.reserve( solutions.size() );
 
                     const auto& old_M = meshes[ l - min_l - 1 ];
 

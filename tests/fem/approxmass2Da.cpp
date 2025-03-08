@@ -2,6 +2,12 @@
 
 /**/
 
+#include <cmath>
+
+#include <functional>
+#include <vector>
+#include <string>
+
 #include "../../basic.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
@@ -17,8 +23,6 @@ int main( int argc, char *argv[] )
     
     LOG << "Unit Test: (2D) masses are correctly approximated: precomputed mass" << nl;
     
-    // LOG << std::setprecision(10);
-
     LOG << "Initial mesh..." << nl;
     
     MeshSimplicial2D M = StandardSquare2D();

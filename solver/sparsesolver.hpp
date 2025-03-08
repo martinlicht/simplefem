@@ -38,7 +38,7 @@ int ConjugateGradientSolverCSR_SSOR(
     Float* residual,
     Float tolerance,
     int print_modulo,
-    const Float* precon,
+    const Float* diagonal,
     Float omega
 );
 
@@ -51,7 +51,7 @@ int ConjugateGradientSolverCSR_SSOR_Eisenstat(
     Float* residual,
     Float tolerance,
     int print_modulo,
-    const Float* precon,
+    const Float* diagonal,
     Float omega
 );
 
@@ -64,7 +64,7 @@ int ConjugateGradientSolverCSR_Rainbow(
     Float* residual,
     Float tolerance,
     int print_modulo,
-    const Float* precon,
+    const Float* diagonal,
     Float omega,
     int num_colors, const int* F, const int* B, const int* R
 );
@@ -78,7 +78,7 @@ int ConjugateGradientSolverCSR_Eisenstat_Rainbow(
     Float* residual,
     Float tolerance,
     int print_modulo,
-    const Float* precon,
+    const Float* diagonal,
     Float omega,
     int num_colors, const int* F, const int* B, const int* R
 );
@@ -130,7 +130,7 @@ int ChebyshevIteration_DiagonalPreconditioner(
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ residual,
-    const Float allowed_error,
+    const Float tolerance,
     int print_modulo,
     const Float* __restrict__ precon,
     const Float lower,

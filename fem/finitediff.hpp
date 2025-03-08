@@ -36,7 +36,7 @@ class AlternatingForm
         AlternatingForm( const AlternatingForm& ) = default;
         AlternatingForm( AlternatingForm&& ) = default;
 
-        virtual ~AlternatingForm() = default;
+        virtual ~AlternatingForm() noexcept = default;
         
         void check()
         {

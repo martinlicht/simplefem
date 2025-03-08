@@ -3,10 +3,11 @@
 
 #include <cmath>
 
+#include <string>
+
 #include "../basic.hpp"
 #include "floatvector.hpp"
 #include "linearoperator.hpp"
-#include "simpleoperators.hpp"
 
 
 FloatVector RealPart( const FloatVector& vec )
@@ -34,7 +35,7 @@ FloatVector ComplexFloatVector( const FloatVector& real, const FloatVector& imag
 
 
 
-ComplexOperator::~ComplexOperator()
+ComplexOperator::~ComplexOperator() noexcept
 {
     if( part_real != nullptr && managing_real ) delete part_real;
     if( part_imag != nullptr && managing_imag ) delete part_imag;

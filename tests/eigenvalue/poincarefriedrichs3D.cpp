@@ -2,9 +2,16 @@
 
 /**/
 
+#include <cmath>
+
+#include <algorithm>
+#include <limits>
+#include <string>
+#include <utility>
+#include <vector>
+
 #include "../../basic.hpp"
 #include "../../utility/convergencetable.hpp"
-#include "../../utility/files.hpp"
 #include "../../operators/composedoperators.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
@@ -14,17 +21,15 @@
 #include "../../mesh/spanning.hpp"
 #include "../../mesh/shelling.hpp"
 #include "../../mesh/shelling2.hpp"
-#include "../../solver/iterativesolver.hpp"
 #include "../../solver/inv.hpp"
+#include "../../solver/sparsesolver.hpp"
 #include "../../solver/systemsolver.hpp"
-#include "../../solver/systemsparsesolver.hpp"
 #include "../../fem/global.avgsullivan.hpp"
 #include "../../fem/global.elevation.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.whitneyincl.hpp"
 #include "../../fem/utilities.hpp"
-#include "../../vtk/vtkwriter.hpp"
 
 
 using namespace std;

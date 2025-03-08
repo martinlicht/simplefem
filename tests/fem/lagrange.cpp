@@ -2,6 +2,10 @@
 
 /**/
 
+#include <cmath>
+
+#include <string>
+
 #include "../../basic.hpp"
 #include "../../operators/composedoperators.hpp"
 #include "../../mesh/mesh.simplicial1D.hpp"
@@ -25,8 +29,6 @@ int main( int argc, char *argv[] )
     
     LOG << "Unit Test: (?D) Lagrange matrices agree with FEEC analogues" << nl;
     
-    // LOG << std::setprecision(10);
-
     LOG << "Initial mesh..." << nl;
     
     MeshSimplicial1D M1 = UnitInterval1D();
@@ -227,7 +229,7 @@ int main( int argc, char *argv[] )
 //                     lagr_stiffness.lg();
 //                     lagr_broken_stiffness.lg();
 //                     feec_stiffness.lg();
-//                     exit(0);
+//                     std::exit(0);
 //                 }
             
             

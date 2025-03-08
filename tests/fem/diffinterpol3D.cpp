@@ -1,5 +1,11 @@
+
+#include <cmath>
+
+#include <functional>
+#include <vector>
+#include <string>
+
 #include "../../basic.hpp"
-#include "../../operators/composedoperators.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples3D.hpp"
 #include "../../fem/global.massmatrix.hpp"
@@ -15,8 +21,6 @@ int main( int argc, char *argv[] )
     
     LOG << "Unit Test: (3D) exterior derivative and interpolation" << nl;
     
-    // LOG << std::setprecision(10);
-
     
     LOG << "Initial mesh..." << nl;
     

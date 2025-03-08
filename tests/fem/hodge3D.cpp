@@ -2,8 +2,13 @@
 
 /**/
 
+#include <cmath>
+
+#include <functional>
+#include <vector>
+#include <string>
+
 #include "../../basic.hpp"
-#include "../../operators/composedoperators.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples3D.hpp"
 #include "../../fem/global.massmatrix.hpp"

@@ -1,12 +1,12 @@
 
 #include <cmath>
+#include <cstddef>
+
 #include <algorithm>
+#include <array>
 #include <sstream>
-#include <list>
-#include <map>
-#include <stack> 
 #include <string>
-#include <utility>
+#include <type_traits>
 #include <vector>
 
 
@@ -14,7 +14,6 @@
 #include "../utility/sorthack.hpp"
 #include "../combinatorics/indexrange.hpp"
 #include "../combinatorics/indexmap.hpp"
-#include "../combinatorics/generateindexmaps.hpp"
 #include "../operators/floatvector.hpp"
 #include "coordinates.hpp"
 #include "mesh.hpp"
@@ -128,7 +127,7 @@ MeshSimplicial2D::MeshSimplicial2D(
     
     /* 2. Count vertices, allocate memory */
     
-    counter_vertices = 0;
+    assert( counter_vertices == 0 );
     for( const auto& duple : data_edge_vertices )
     for( const int& vertex : duple )
       counter_vertices = counter_vertices < vertex ? vertex : counter_vertices; 
@@ -305,7 +304,7 @@ MeshSimplicial2D::MeshSimplicial2D(
 }
 
 
-MeshSimplicial2D::~MeshSimplicial2D()
+MeshSimplicial2D::~MeshSimplicial2D() noexcept
 {
     MeshSimplicial2D::check();
 }
@@ -2415,7 +2414,7 @@ void MeshSimplicial2D::uniformrefinement()
       
       assert( p != nullindex && 0 <= p && p < counter_triangles );
       
-      int vi = data_triangle_vertices[p][0] == v ? 0 : data_triangle_vertices[p][1] == v ? 1 : 2;
+      int vi = data_triangle_vertices[p][0] == v ? 0 : ( data_triangle_vertices[p][1] == v ? 1 : 2 );
       
       assert( data_triangle_vertices[p][0] == v || data_triangle_vertices[p][1] == v  || data_triangle_vertices[p][2] == v );
       assert( data_triangle_vertices[p][vi] == v );
@@ -2439,7 +2438,7 @@ void MeshSimplicial2D::uniformrefinement()
         
       } else {
         
-        int vinp = data_triangle_vertices[q][0] == v ? 0 : data_triangle_vertices[q][1] == v ? 1 : 2;
+        int vinp = data_triangle_vertices[q][0] == v ? 0 : ( data_triangle_vertices[q][1] == v ? 1 : 2 );
         
         assert( data_triangle_vertices[q][0] == v || data_triangle_vertices[q][1] == v || data_triangle_vertices[q][2] == v );
         assert( data_triangle_vertices[q][vinp] == v );

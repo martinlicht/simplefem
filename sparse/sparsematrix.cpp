@@ -1,10 +1,11 @@
 
+#include <cmath>
 #include <cstdlib>
 
 #include <algorithm>
 #include <functional>
 #include <initializer_list>
-#include <ostream>
+#include <string>
 #include <utility>
 #include <vector>
 
@@ -99,7 +100,7 @@ SparseMatrix::SparseMatrix( const DenseMatrix& matrix )
     SparseMatrix::check();    
 }
 
-SparseMatrix::~SparseMatrix()
+SparseMatrix::~SparseMatrix() noexcept
 {
     SparseMatrix::check();    
 }
@@ -326,10 +327,10 @@ bool SparseMatrix::is_sorted( SparseMatrix::MatrixEntrySorting manner ) const
 }
 
 
-UNUSED static int internal_compare_rowfirst( const void* _a, const void* _b )
+UNUSED static int internal_compare_rowfirst( const void* p_a, const void* p_b )
 {
-    const SparseMatrix::MatrixEntry* a = static_cast<const SparseMatrix::MatrixEntry*>(_a);
-    const SparseMatrix::MatrixEntry* b = static_cast<const SparseMatrix::MatrixEntry*>(_b);
+    const SparseMatrix::MatrixEntry* a = static_cast<const SparseMatrix::MatrixEntry*>(p_a);
+    const SparseMatrix::MatrixEntry* b = static_cast<const SparseMatrix::MatrixEntry*>(p_b);
     
     if( a->row < b->row ) {
         return -1;
@@ -344,10 +345,10 @@ UNUSED static int internal_compare_rowfirst( const void* _a, const void* _b )
     }
 }
     
-UNUSED static int internal_compare_colfirst( const void* _a, const void* _b )
+UNUSED static int internal_compare_colfirst( const void* p_a, const void* p_b )
 {
-    const SparseMatrix::MatrixEntry* a = static_cast<const SparseMatrix::MatrixEntry*>(_a);
-    const SparseMatrix::MatrixEntry* b = static_cast<const SparseMatrix::MatrixEntry*>(_b);
+    const SparseMatrix::MatrixEntry* a = static_cast<const SparseMatrix::MatrixEntry*>(p_a);
+    const SparseMatrix::MatrixEntry* b = static_cast<const SparseMatrix::MatrixEntry*>(p_b);
     
     if( a->column < b->column ) {
         return -1;

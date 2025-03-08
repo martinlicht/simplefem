@@ -2,19 +2,20 @@
 
 /**/
 
+#include <cmath>
+
+#include <fstream>
+#include <functional>
+
+
 #include "../../basic.hpp"
 #include "../../utility/convergencetable.hpp"
 #include "../../utility/files.hpp"
-#include "../../utility/math.hpp"
 #include "../../operators/composedoperators.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples3D.hpp"
-#include "../../solver/iterativesolver.hpp"
-// #include "../../solver/crm.hpp"
-// #include "../../solver/minres.hpp"
-// #include "../../solver/herzogsoodhalter.hpp"
 #include "../../solver/inv.hpp"
 #include "../../solver/systemsparsesolver.hpp"
 #include "../../solver/systemsolver.hpp"
@@ -34,8 +35,6 @@ int main( int argc, char *argv[] )
     
     LOG << "Unit Test: 3D Darcy problem" << nl;
     
-    // LOG << std::setprecision(10);
-
     if(true){
 
         LOG << "Initial mesh..." << nl;
@@ -223,6 +222,28 @@ int main( int argc, char *argv[] )
                             1,
                             PAinv, PCinv
                         );
+
+                        if(false){
+                    
+                            FloatVector res = sol;
+                            
+                            HodgeConjugateResidualSolverCSR_SSOR( 
+                                B.getdimout(), 
+                                A.getdimout(), 
+                                sol.raw(), 
+                                rhs.raw(), 
+                                A.getA(),   A.getC(),  A.getV(), 
+                                B.getA(),   B.getC(),  B.getV(), 
+                                Bt.getA(), Bt.getC(), Bt.getV(), 
+                                C.getA(),   C.getC(),  C.getV(), 
+                                res.raw(),
+                                desired_precision,
+                                1,
+                                desired_precision,
+                                0
+                            );
+                        
+                        }
 
                     // }
                     

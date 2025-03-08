@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <cstdio>
 int main()
 {
 	long double x = 1.0;

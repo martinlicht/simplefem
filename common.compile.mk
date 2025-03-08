@@ -30,8 +30,8 @@ endif
 
 
 # Uncomment your choice of compiler below
-FLAG_CXX := CLANG
-# FLAG_CXX := GCC
+# FLAG_CXX := CLANG
+FLAG_CXX := GCC
 # FLAG_CXX := ICC
 
 
@@ -207,7 +207,7 @@ endif
 #                                             #
 ###############################################
 
-CXXFLAGS_LANG := -std=c++17 -pedantic -fno-rtti -D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES 
+CXXFLAGS_LANG := -std=c++14 -pedantic -fno-rtti -D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES 
 
 ifeq ($(FLAG_NO_EXCEPTIONS),yes)
 	CXXFLAGS_LANG += -fno-exceptions

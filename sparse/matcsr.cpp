@@ -1,6 +1,8 @@
 
+#include <cstddef>
 #include <cmath>
-#include <ostream>
+
+#include <string>
 #include <utility>
 #include <vector>
 
@@ -95,7 +97,7 @@ MatrixCSR::MatrixCSR( int rows, int columns )
 
 
 
-MatrixCSR::~MatrixCSR()
+MatrixCSR::~MatrixCSR() noexcept
 {
     MatrixCSR::check();
 }

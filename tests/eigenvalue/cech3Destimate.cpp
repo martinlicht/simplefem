@@ -2,21 +2,18 @@
 
 /**/
 
+#include <cmath>
+
+#include <string>
+#include <vector>
+
 #include "../../basic.hpp"
 #include "../../utility/convergencetable.hpp"
-#include "../../utility/files.hpp"
-#include "../../operators/composedoperators.hpp"
 #include "../../sparse/sparsematrix.hpp"
-#include "../../sparse/matcsr.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples3D.hpp"
-#include "../../solver/iterativesolver.hpp"
-#include "../../solver/inv.hpp"
 #include "../../solver/systemsolver.hpp"
-#include "../../solver/systemsparsesolver.hpp"
 #include "../../fem/global.cechmatrix.hpp"
-#include "../../fem/global.diffmatrix.hpp"
-#include "../../fem/utilities.hpp"
 
 
 using namespace std;

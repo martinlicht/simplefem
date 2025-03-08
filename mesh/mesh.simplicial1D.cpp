@@ -1,17 +1,18 @@
 
+#include <cstddef>
+
 #include <algorithm>
+#include <array>
 #include <sstream>
-#include <map>
 #include <string>
-#include <utility>
+#include <type_traits>
 #include <vector>
 
 
 #include "../basic.hpp"
-#include "../utility/sorthack.hpp"
+// #include "../utility/sorthack.hpp"
 #include "../combinatorics/indexrange.hpp"
 #include "../combinatorics/indexmap.hpp"
-#include "../combinatorics/generateindexmaps.hpp"
 #include "../operators/floatvector.hpp"
 #include "coordinates.hpp"
 #include "mesh.hpp"
@@ -67,7 +68,7 @@ MeshSimplicial1D::MeshSimplicial1D(
     
     
     /* 2. Count vertices, allocate memory */
-    counter_vertices = 0;
+    assert( counter_vertices == 0 );
     for( const auto& duple : data_edge_vertices )
     for( const int& vertex : duple )
       counter_vertices = counter_vertices < vertex ? vertex : counter_vertices; 
@@ -123,7 +124,7 @@ MeshSimplicial1D::MeshSimplicial1D(
     int outerdim,
     const Coordinates& coords,
     const std::vector<std::array<int,2>>& edge_vertices,
-    const std::vector<std::array<int,2>>& edge_nextparent_of_vertices,
+    const std::vector<std::array<int,2>>& edge_nextparents_of_vertices,
     const std::vector<int              >& vertex_firstparent_edge
 )
 :
@@ -134,7 +135,7 @@ MeshSimplicial1D::MeshSimplicial1D(
     
     data_edge_vertices( edge_vertices ),
     data_vertex_firstparent_edge( vertex_firstparent_edge ),
-    data_edge_nextparents_of_vertices( edge_nextparent_of_vertices ),
+    data_edge_nextparents_of_vertices( edge_nextparents_of_vertices ),
 
     flags_edges   ( counter_edges,    SimplexFlag::SimplexFlagInvalid ),
     flags_vertices( counter_vertices, SimplexFlag::SimplexFlagInvalid )
@@ -151,7 +152,7 @@ MeshSimplicial1D::MeshSimplicial1D(
 }
 
 
-MeshSimplicial1D::~MeshSimplicial1D()
+MeshSimplicial1D::~MeshSimplicial1D() noexcept
 {
     MeshSimplicial1D::check();
 }

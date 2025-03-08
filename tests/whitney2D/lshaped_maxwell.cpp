@@ -2,7 +2,10 @@
 
 /**/
 
+#include <cmath>
+
 #include <fstream>
+#include <functional>
 
 #include "../../basic.hpp"
 #include "../../utility/files.hpp"
@@ -12,15 +15,9 @@
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
 #include "../../vtk/vtkwriter.hpp"
-#include "../../solver/sparsesolver.hpp"
-#include "../../solver/iterativesolver.hpp"
 #include "../../solver/inv.hpp"
 #include "../../solver/systemsparsesolver.hpp"
 #include "../../solver/systemsolver.hpp"
-// #include "../../solver/cgm.hpp"
-// #include "../../solver/crm.hpp"
-// #include "../../solver/pcrm.hpp"
-// #include "../../solver/minres.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.whitneyincl.hpp"
@@ -36,8 +33,6 @@ int main( int argc, char *argv[] )
     
     LOG << "Unit Test: 2D Maxwell System on L-shaped domain" << nl;
     
-    // LOG << std::setprecision(10);
-
     if(true){
 
         LOG << "Initial mesh..." << nl;
@@ -200,6 +195,30 @@ int main( int argc, char *argv[] )
                             1,
                             PAinv, PCinv
                         );
+
+                        if(false){
+                    
+                            FloatVector res = sol;
+                            
+                            HodgeConjugateResidualSolverCSR_SSOR( 
+                                B.getdimout(), 
+                                A.getdimout(), 
+                                sol.raw(), 
+                                rhs.raw(), 
+                                A.getA(),   A.getC(),  A.getV(), 
+                                B.getA(),   B.getC(),  B.getV(), 
+                                Bt.getA(), Bt.getC(), Bt.getV(), 
+                                C.getA(),   C.getC(),  C.getV(), 
+                                res.raw(),
+                                desired_precision,
+                                1,
+                                desired_precision,
+                                0
+                            );
+                        
+                        }
+
+
 
                     timestamp end = timestampnow();
     

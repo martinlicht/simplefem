@@ -12,6 +12,8 @@
 
 #	----------- UPKEEP & MINOR FIXES -------------
 
+[ ] https://clang.llvm.org/extra/clang-tidy/checks/performance/noexcept-destructor.html
+[ ] https://clang.llvm.org/extra/clang-tidy/checks/performance/noexcept-move-constructor.html
 [ ] make sure that self-assignment is handled _explicitly_ whenever assignment operators are defined
 [ ] move constructors and assignment operators should be marked noexcept 
 

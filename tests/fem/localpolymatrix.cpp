@@ -2,12 +2,13 @@
 
 /**/
 
+#include <cmath>
+
 #include "../../basic.hpp"
 #include "../../dense/densematrix.hpp"
 #include "../../dense/factorization.hpp"
-#include "../../mesh/coordinates.hpp"
+#include "../../dense/functions.hpp"
 #include "../../fem/polynomialmassmatrix.hpp"
-#include "../../fem/utilities.hpp"
 
 
 using namespace std;
@@ -16,8 +17,6 @@ int main( int argc, char *argv[] )
 {
     LOG << "Unit Test for Inverse of Poly Matrix" << nl;
     
-    // LOG << std::setprecision(10);
-
     const int r_min = 1;
     const int r_max = 9;
 

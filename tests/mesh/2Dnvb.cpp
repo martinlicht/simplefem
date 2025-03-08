@@ -4,7 +4,6 @@
 #include "../../basic.hpp"
 #include "../../utility/random.hpp"
 #include "../../utility/stl.hpp"
-#include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
 
@@ -42,16 +41,17 @@ int main( int argc, char *argv[] )
         
         for( int c = 0; c < c_max; c++ ) {
         
-            std::vector<int> markedcells;
-            
             unsigned int p = 40;
+            
+            std::vector<int> markedcells; markedcells.reserve( M.count_triangles() / p );
+            
             for( int t = 0; t < M.count_triangles(); t++ )
                 if( random_integer() % p == 0 ) 
                     markedcells.push_back( t );
             markedcells.push_back( 0 );
             cell_marked_count += markedcells.size();
             
-            std::vector<int> markededges;
+            std::vector<int> markededges; markededges.reserve( markedcells.size() );
             for( int t : markedcells ) markededges.push_back( M.get_oldest_edge( t ) );
             sort_and_remove_duplicates( markededges );
             
@@ -96,16 +96,17 @@ int main( int argc, char *argv[] )
         
         for( int c = 0; c < c_max; c++ ) {
         
-            std::vector<int> markedcells;
-            
             unsigned int p = 10;
+            
+            std::vector<int> markedcells; markedcells.reserve( M.count_triangles() / p );
+            
             for( int t = 0; t < M.count_triangles(); t++ )
                 if( random_integer() % p == 0 ) 
                     markedcells.push_back( t );
             markedcells.push_back( 0 );
             cell_marked_count += markedcells.size();
             
-            std::vector<int> markededges;
+            std::vector<int> markededges; markededges.reserve( markedcells.size() );
             for( int t : markedcells ) markededges.push_back( M.get_oldest_edge( t ) );
             sort_and_remove_duplicates( markededges );
             
@@ -144,7 +145,7 @@ int main( int argc, char *argv[] )
         
             std::vector<int> markededges;
             markededges.push_back( random_integer() % M.count_edges() );
-            sort_and_remove_duplicates( markededges );
+            // sort_and_remove_duplicates( markededges );
 
             edges_marked_count += markededges.size();
             
@@ -184,7 +185,7 @@ int main( int argc, char *argv[] )
         
             std::vector<int> markededges;
             markededges.push_back( 0 );
-            sort_and_remove_duplicates( markededges );
+            // sort_and_remove_duplicates( markededges );
 
             edges_marked_count += markededges.size();
             

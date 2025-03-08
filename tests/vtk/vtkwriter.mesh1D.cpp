@@ -1,7 +1,8 @@
 
+#include <string>
+
 #include "../../basic.hpp"
 #include "../../mesh/mesh.simplicial1D.hpp"
-#include "../../vtk/vtkwriter.hpp"
 #include "../../mesh/examples1D.hpp"
 
 
