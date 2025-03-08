@@ -1,10 +1,12 @@
 
+#include <cmath>
+
+#include <new>
+
 #include "densematrix.hpp"
 #include "functions.hpp"
 #include "simplesolver.hpp"
 #include "factorization.hpp"
-
-#include <new>
 
  // LR factorization, column pivot, 
  

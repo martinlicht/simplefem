@@ -1,6 +1,7 @@
 #ifndef INCLUDEGUARD_VTK_VTKWRITER
 #define INCLUDEGUARD_VTK_VTKWRITER
 
+#include <functional>
 #include <ostream>
 #include <string>
 
@@ -67,7 +68,7 @@ class VTKWriter
         const Mesh& mesh;
         std::ostream& os;
 
-        enum class Stage : signed char {
+        enum class Stage : int8_t {
             nothing      = -1,
             preamble     =  0,
             coordinate   =  1,

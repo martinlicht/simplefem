@@ -1,11 +1,9 @@
 
+#include <cstddef>
 
-
-#include <algorithm>
-#include <istream>
 #include <ostream>
 #include <sstream>
-#include <iterator>
+#include <string>
 #include <vector>
 
 #include "../utility/random.hpp"

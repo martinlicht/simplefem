@@ -12,7 +12,7 @@
 
 #include "../basic.hpp"
 
-enum class ColorChannel : unsigned char { red = 0, green = 1, blue = 2 };
+enum class ColorChannel : uint8_t { red = 0, green = 1, blue = 2 };
 
 struct PixelColor
 {

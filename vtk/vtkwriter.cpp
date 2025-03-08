@@ -1,4 +1,9 @@
 
+#include <functional>
+#include <ostream>
+#include <string>
+#include <vector>
+
 #include "vtkwriter.hpp"
 #include "../combinatorics/generateindexmaps.hpp"
 

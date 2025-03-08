@@ -1,9 +1,11 @@
 
 #include <algorithm>
+#include <array>
 #include <fstream>
+#include <ios>
 #include <istream>
-#include <ostream>
 #include <map>
+#include <ostream>
 #include <string>
 #include <vector>
 #include <utility>

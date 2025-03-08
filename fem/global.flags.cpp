@@ -1,13 +1,11 @@
 
+#include <utility>
 #include <vector>
 
 #include "../basic.hpp"
-#include "../utility/stl.hpp"
 #include "../combinatorics/indexrange.hpp"
 #include "../combinatorics/indexmap.hpp"
 #include "../combinatorics/multiindex.hpp"
-#include "../combinatorics/generateindexmaps.hpp"
-#include "../combinatorics/generatemultiindices.hpp"
 #include "../operators/simpleoperators.hpp"
 #include "../mesh/mesh.hpp"
 

@@ -19,7 +19,7 @@ UNUSED static void f()
            d = d + d*n*m;
 }
 
-volatile static long double foo;
+static volatile long double foo;
 
 int main( int argc, char *argv[] )
 {

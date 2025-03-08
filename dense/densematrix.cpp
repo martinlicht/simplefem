@@ -1,11 +1,13 @@
 
 #include <cmath>
 #include <cstdlib>
+
 #include <algorithm>
 #include <functional>
+#include <initializer_list>
 #include <limits>
-#include <memory>
 #include <new>
+#include <string>
 #include <utility>
 #include <vector>
 
@@ -1342,7 +1344,7 @@ Float HilbertDeterminant(int n) {
         detinv *= (2*k+1) * binom*binom;
     }
     
-    // LOG << "H1: " << 1./(double)detinv << std::endl;
+    // LOG << "H1: " << 1./(double)detinv << '\n';
     // The determinant is c_n / denominator
     return (Float)1./detinv;
 }

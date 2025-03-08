@@ -1,4 +1,7 @@
 
+#include <string>
+#include <vector>
+
 #include "../../basic.hpp"
 #include "../../utility/stl.hpp"
 #include "../../mesh/examples3D.hpp"

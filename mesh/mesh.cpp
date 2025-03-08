@@ -3,6 +3,7 @@
 #include <cmath>
 #include <algorithm>
 #include <limits>
+#include <vector>
 
 
 #include "../basic.hpp"

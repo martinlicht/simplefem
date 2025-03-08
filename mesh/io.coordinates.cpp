@@ -1,20 +1,13 @@
 
-#include <algorithm>
 #include <fstream>
+#include <ios>
 #include <istream>
-#include <map>
 #include <ostream>
-#include <string>
 #include <vector>
-#include <utility>
 
 
 
 #include "../basic.hpp"
-#include "../combinatorics/indexrange.hpp"
-#include "../combinatorics/indexmap.hpp"
-#include "../combinatorics/generateindexmaps.hpp"
-#include "../operators/floatvector.hpp"
 #include "coordinates.hpp"
 #include "io.coordinates.hpp"
 

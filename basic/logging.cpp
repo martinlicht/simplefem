@@ -3,10 +3,11 @@
 #ifndef USE_PRIMITIVE_LOGGING
 bool log_has_a_fresh_line = true;
 
-// #include <iostream>
-// #include <iomanip>
+#include <cmath>
 #include <cstdio>
 #include <ctime>
+
+#include <limits> // for std::float_round_style
 
 // For controlling the floating-point behavior
 #include <cfenv>

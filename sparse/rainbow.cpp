@@ -1,6 +1,7 @@
 
 #include <algorithm> // for shuffle 
 #include <random> // for shuffle 
+#include <string>
 #include <vector>
 
 #include "../basic.hpp"

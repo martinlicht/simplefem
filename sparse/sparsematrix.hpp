@@ -39,7 +39,8 @@ public LinearOperator /* every matrix is a linear operator */
 
         // static_assert( sizeof(MatrixEntry) == 2 * sizeof(int) + sizeof(Float), "MatrixEntry takes too much memory" );
 
-        enum class MatrixEntrySorting : unsigned char {
+        enum class MatrixEntrySorting : bool 
+        {
             rowwise,
             columnwise
         };

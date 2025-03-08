@@ -35,7 +35,7 @@ inline static double hilbert_determinant(int n) {
         detinv *= (2*k+1) * binom*binom;
     }
     
-    std::cout << "H1: " << 1./(double)detinv << std::endl;
+    std::cout << "H1: " << 1./(double)detinv << '\n';
     // The determinant is c_n / denominator
     return 1./static_cast<double>(detinv);
 }
@@ -59,8 +59,8 @@ double hilbert_determinant2(int n) {
         denominator *= factorial(2 * i - 1);
     }
 
-    std::cout << (double)numerator << "/" << (double)denominator << std::endl;
-    std::cout << "H2: " << (double)( numerator / denominator ) << std::endl;
+    std::cout << (double)numerator << "/" << (double)denominator << '\n';
+    std::cout << "H2: " << (double)( numerator / denominator ) << '\n';
     // The determinant is c_n / denominator
     return (double)numerator / denominator;
 }
@@ -87,23 +87,23 @@ int main( int argc, char *argv[] )
     for( double val : values) {
         naiveSum.add(val);
     }
-    std::cout << "Naive Sum:\t" << naiveSum.getSum() << std::endl;
+    std::cout << "Naive Sum:\t" << naiveSum.getSum() << '\n';
 
     // Kahan summation
     KahanSum<double> kahanSum;
     for( double val : values) {
         kahanSum.add(val);
     }
-    std::cout << "Kahan Sum:\t" << kahanSum.getSum() << std::endl;
+    std::cout << "Kahan Sum:\t" << kahanSum.getSum() << '\n';
 
     // Neumaier summation
     NeumaierSum<double> neumaierSum;
     for( double val : values) {
         neumaierSum.add(val);
     }
-    std::cout << "Neumaier Sum:\t" << neumaierSum.getSum() << std::endl;
+    std::cout << "Neumaier Sum:\t" << neumaierSum.getSum() << '\n';
 
-    std::cout << std::endl;
+    std::cout << '\n';
 
     { 
         // Example 0: Something simple
@@ -157,7 +157,7 @@ int main( int argc, char *argv[] )
                 i[4] = (k/( 216*6)) % 6;
                 i[5] = (k/(216*36)) % 6;
 
-                // for( auto u : i ) printf("%i ", u ); std::cout << std::endl;
+                // for( auto u : i ) printf("%i ", u ); std::cout << '\n';
 
                 int sign = 1;
 
@@ -202,9 +202,9 @@ int main( int argc, char *argv[] )
             // for( int r = 0; r < 6; r++ ) {
             //     for( int c = 0; c < 6; c++ )
             //         std::cout << matrix[r][c] << ' ';
-            //     std::cout << std::endl;
+            //     std::cout << '\n';
             // }
-            // std::cout << std::endl;
+            // std::cout << '\n';
             for( int r = 0; r < 6; r++ ) reference_value5 *= matrix[r][r];
             reference_value5 = hilbert_determinant(6);
         }
@@ -222,9 +222,9 @@ int main( int argc, char *argv[] )
                 neumaierSum.add(val);
             }
 
-            std::cout << "Naive Sum:\t"    << naiveSum.getSum() << std::endl;
-            std::cout << "Kahan Sum:\t"    << kahanSum.getSum() << std::endl;
-            std::cout << "Neumaier Sum:\t" << neumaierSum.getSum() << std::endl;
+            std::cout << "Naive Sum:\t"    << naiveSum.getSum() << '\n';
+            std::cout << "Kahan Sum:\t"    << kahanSum.getSum() << '\n';
+            std::cout << "Neumaier Sum:\t" << neumaierSum.getSum() << '\n';
         };
 
         // Test each dataset
@@ -246,7 +246,7 @@ int main( int argc, char *argv[] )
 
         std::cout << "\nExample 5: Laplace expansion of 6x6 determinant\n";
         testSummation(dataset5);
-        std::cout << "Reference:\t" << (double)reference_value5 << std::endl;
+        std::cout << "Reference:\t" << (double)reference_value5 << '\n';
 
     }
 

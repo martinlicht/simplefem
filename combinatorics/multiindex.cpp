@@ -1,4 +1,6 @@
 
+#include <functional>
+#include <initializer_list>
 #include <sstream>
 #include <string>
 #include <vector>

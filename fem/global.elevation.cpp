@@ -8,7 +8,6 @@
 #include "../combinatorics/multiindex.hpp"
 #include "../combinatorics/generateindexmaps.hpp"
 #include "../combinatorics/generatemultiindices.hpp"
-#include "../operators/floatvector.hpp"
 #include "../dense/densematrix.hpp"
 #include "../sparse/sparsematrix.hpp"
 #include "../mesh/mesh.hpp"

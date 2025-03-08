@@ -3,6 +3,10 @@
 
 #include <cmath>
 
+#include <functional>
+#include <string>
+#include <utility>
+
 #include "../basic.hpp"
 #include "floatvector.hpp"
 #include "linearoperator.hpp"

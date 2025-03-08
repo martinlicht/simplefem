@@ -1,6 +1,8 @@
 
 #include <algorithm>
+#include <array>
 #include <fstream>
+#include <ios>
 #include <istream>
 #include <map>
 #include <ostream>

@@ -27,7 +27,7 @@
 *******************/
 
 
-enum class SimplexFlag : unsigned char
+enum class SimplexFlag : uint8_t
 {
     SimplexFlagNull      = 0x1B,
     SimplexFlagInvalid   = 0x77,

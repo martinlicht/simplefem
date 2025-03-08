@@ -37,7 +37,7 @@ PixelImage readPixelImage( const std::string& str )
         Assert( image != nullptr );
     }
     
-    // std::cout << "Loaded image with a width of " << width << ", a height of " << height << " and " << channels << " channels" << std::endl;
+    // std::cout << "Loaded image with a width of " << width << ", a height of " << height << " and " << channels << " channels" << '\n';
 
     PixelImage ret( height, width ); 
     
@@ -129,7 +129,7 @@ void savePixelImage( const PixelImage& pim, const std::string& str )
     //     for( size_t col = 0; col < width; col++ ) {
     //         std::cout << "(" << (int)pixels_r[row][col] << "," << (int)pixels_g[row][col] << "," << (int)pixels_b[row][col] << ") ";
     //     }
-    //     std::cout << std::endl;
+    //     std::cout << '\n';
     // }
 
     // // Terminate ImageMagick library    
@@ -201,7 +201,7 @@ void savePixelImage( const PixelImage& pim, const std::string& str )
 
     int main() {
         std::string polygonString = generatePolygonString(10, 20, 30, 40, 50, 60, "#FF3399", "none");
-        std::cout << polygonString << std::endl;
+        std::cout << polygonString << '\n';
         return 0;
     }
 

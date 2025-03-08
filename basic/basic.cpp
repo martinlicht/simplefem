@@ -3,6 +3,9 @@
 #include <cstdarg>
 
 #include <chrono>
+#include <cctype>
+#include <string>
+#include <type_traits>
 #include <vector>
 
 #include "basic.hpp"

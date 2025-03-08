@@ -1,8 +1,13 @@
 
 #include <cmath>
+#include <cstddef>
+
 #include <algorithm>
+#include <functional>
+#include <initializer_list>
 #include <new>
-#include <ostream>
+#include <string>
+#include <vector>
 
 #include "../basic.hpp"
 #include "floatvector.hpp"

@@ -19,7 +19,7 @@ inline double hilbert_determinant(int n) {
         detinv *= (2*k+1) * binom*binom;
     }
     
-    // LOG << "H1: " << 1./(double)detinv << std::endl;
+    // LOG << "H1: " << 1./(double)detinv << '\n';
     // The determinant is c_n / denominator
     return static_cast<double>(1./detinv);
 }

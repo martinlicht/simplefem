@@ -1,6 +1,10 @@
 
 #include <algorithm>
+#include <functional>
+#include <initializer_list>
+#include <string>
 #include <sstream>
+#include <vector>
 
 #include "indexrange.hpp"
 #include "indexmap.hpp"

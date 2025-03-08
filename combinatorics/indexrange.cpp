@@ -1,6 +1,7 @@
 
 #include "indexrange.hpp"
 
+#include <limits>
 #include <ostream>
 #include <sstream>
 #include <string>
@@ -62,7 +63,7 @@ int IndexRange::max() const
 int IndexRange::cardinality() const
 {
     check();
-    assert( std::max( 0, maximum - minimum + 1 ) == maximum - minimum + 1 );
+    assert( ::maximum( 0, maximum - minimum + 1 ) == maximum - minimum + 1 );
     return maximum - minimum + 1;
 }
 

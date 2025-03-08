@@ -1,6 +1,10 @@
 
-#include "systemsparsesolver.hpp"
+#include <cmath>
 
+#include <new>
+#include <utility>
+
+#include "systemsparsesolver.hpp"
 
 #include "sparsesolver.hpp"
 

@@ -1,4 +1,6 @@
 
+#if 0 
+
 #include <cstdlib>
 #include <cstdio>
 #include <cstddef>
@@ -6,7 +8,6 @@
 
 void display_mallinfo();
 
-#if 0 
 void* operator new( decltype(sizeof(0)) size )
 {
     if( size == 0 )

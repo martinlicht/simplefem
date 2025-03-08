@@ -3,10 +3,11 @@
 
 #include <cmath>
 
+#include <string>
+
 #include "../basic.hpp"
 #include "floatvector.hpp"
 #include "linearoperator.hpp"
-#include "simpleoperators.hpp"
 
 
 FloatVector RealPart( const FloatVector& vec )

@@ -16,7 +16,7 @@
 //                                                  //
 //////////////////////////////////////////////////////
 
-enum class FEECAveragingMode
+enum class FEECAveragingMode : uint8_t
 {
     weighted_uniformly,
     arbitrary_choice,
